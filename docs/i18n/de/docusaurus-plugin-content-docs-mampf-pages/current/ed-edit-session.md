@@ -13,7 +13,7 @@ Auf die Seite „Sitzung bearbeiten“ gelangt man über die [Seite der Sitzung]
   <li>
      <a href="/mampf/de/mampf-pages/session" target="_self"><b>Seite der Sitzung</b></a>
   </li>
-  Oben links neben dem Titel der Sitzung befindet sich das Symbol <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Sitzung bearbeiten“ führt.
+  Oben links neben dem Titel der Sitzung befindet sich das Symbol <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button>, das einen auf die Seite „Sitzung bearbeiten“ führt.
   <li>
      <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><b>„Vorlesung bearbeiten“</b></a>
   </li>
@@ -47,13 +47,13 @@ Nun werden die Bedienelemente der Seite „Abschnitt bearbeiten“ beschrieben. 
 ### Kopf
 In diesem Bereich gibt es Bedienelemente zur Navigation und der Übernahme von Änderungen.
 
-* <a href="/mampf/de/mampf-pages/session" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/session" target="_self">Seite der Sitzung</a>.
+* <a href="/mampf/de/mampf-pages/session" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" width="12" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/session" target="_self">Seite der Sitzung</a>.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem die Sitzung bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem die Sitzung bearbeitet worden ist.
 * <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button>zur Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
 * <button>Löschen</button> Lösche die Sitzung. Zur Sitzung assoziierte Medien werden dabei nicht gelöscht, sondern mit der Vorlesung assoziiert.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left.png" height="12"/></button> Wechsel zur Bearbeitungsseite der vorigen Sitzung. (Auf der Bearbeitungsseite der ersten Sitzung ist dieser Button nicht vorhanden.)
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" height="12"/></button> Wechsel zur Bearbeitungsseite der nächsten Sitzung. (Auf der Bearbeitungsseite der letzten Sitzung ist dieser Button nicht vorhanden.)
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-left.png" width="12" height="12"/></button> Wechsel zur Bearbeitungsseite der vorigen Sitzung. (Auf der Bearbeitungsseite der ersten Sitzung ist dieser Button nicht vorhanden.)
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/keyboard-arrow-right.png" width="12" height="12"/></button> Wechsel zur Bearbeitungsseite der nächsten Sitzung. (Auf der Bearbeitungsseite der letzten Sitzung ist dieser Button nicht vorhanden.)
 
 ### Basisdaten
 In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü und Button vor.
@@ -64,7 +64,7 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
         <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sitzung_bearbeiten_basisdaten_cut.png" width="3000" />
         <ul>
            <li>
-              Sitzungsdatum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-xmark-solid.png" height="15"/></button>
+              Sitzungsdatum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-xmark-solid.png" width="15" height="15"/></button>
            </li>
               Lösche das Sitzungsdatum. Dabei ist zu beachten, dass ein Sitzungsdatum angegeben werden muss.
            <li>
@@ -81,7 +81,7 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
      <td valign="top">
         <ul>
           <li>
-              Medien <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> Öffne das Formular zum Anlegen eines neuen Mediums.
+              Medien <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button> Öffne das Formular zum Anlegen eines neuen Mediums.
           </li>
           <li>
              <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Medientitel</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a>.
@@ -96,11 +96,11 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
               Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Abschnitte und wähle die aus, die mit der Sitzung verknüpft werden sollen.
           </li>
           <li>
-              Verknüpfter Abschnitt <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+              Verknüpfter Abschnitt <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
           </li>
               Löse die Verknüpfung von Abschnitt und Sitzung auf. Dabei ist zu beachten, dass mindestens ein Abschnitt zur Sitzung assoziiert sein muss.
           <li>
-              Verknüpfte Tags <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> Öffne das Formular zum Anlegen eines neuen Tags.
+              Verknüpfte Tags <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button> Öffne das Formular zum Anlegen eines neuen Tags.
           </li>
           <li>
               <form>
@@ -112,7 +112,7 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
               Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Tags und wähle die aus, die mit der Sitzung verknüpft werden sollen.
           </li>
           <li>
-              Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+              Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
           </li>
               Löse die Verknüpfung von Tag und Sitzung auf.
         </ul>
@@ -121,7 +121,7 @@ In der Box „Basisdaten“ kommen die Bedienelemente Eingabefeld, Dropdownmenü
 </table>
 
 #### Dialogfeld „Medium anlegen“
-Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> bei <i>Medien</i> geklickt worden ist.
+Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button> bei <i>Medien</i> geklickt worden ist.
 
 <table>
   <tr>
@@ -168,7 +168,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
 </table>
 
 #### Dialogfeld „Tag anlegen“
-Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> bei <i>Verknüpfte Tags</i> geklickt worden ist.
+Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button> bei <i>Verknüpfte Tags</i> geklickt worden ist.
 
 <table>
   <tr>
@@ -223,7 +223,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
               Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Tags und wähle die aus, die mit dem Tag verknüpft werden sollen.
            </li>
            <li>
-           Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+           Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
            </li>
            Löse die Verknüpfung der Tags auf.
            <li>
@@ -236,7 +236,7 @@ Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://m
               Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Module und wähle die aus, die mit dem Tag verknüpft werden sollen.
            </li>
            <li>
-           Module <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+           Module <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
            </li>
            Löse die Verknüpfung von Tag und Modul auf.
            <li>
@@ -296,56 +296,56 @@ Die folgenden Bedienelemente können vorhanden sein:
                Eingabefeld für den Beschreibungstext.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-bold.png" height="12"/></button> Beginne bzw. beende Fettdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text fett bzw. stelle den Fettdruck ab.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-bold.png" width="12" height="12"/></button> Beginne bzw. beende Fettdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text fett bzw. stelle den Fettdruck ab.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" width="12" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
         </li>
       </ul>
     </td>
     <td>
       <ul>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" width="12" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" width="12" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" width="12" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-quote.png" height="8"/></button> Beginne bzw. beende ein Zitat an der Stelle, an der sich der Cursor befindet, oder mache aus dem markierten Text ein Zitat bzw. aus dem markierten Zitat einfachen Text.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-quote.png" width="16" height="8"/></button> Beginne bzw. beende ein Zitat an der Stelle, an der sich der Cursor befindet, oder mache aus dem markierten Text ein Zitat bzw. aus dem markierten Zitat einfachen Text.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" width="12" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" width="12" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" width="12" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" width="12" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" width="16" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
         </li>
         <li>
-          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/redo.png" height="8"/></button> Wiederhole die letzte Aktion. Dazu muss die letzte Aktion zuvor rückgängig gemacht worden sein.
+          <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/redo.png" width="16" height="8"/></button> Wiederhole die letzte Aktion. Dazu muss die letzte Aktion zuvor rückgängig gemacht worden sein.
         </li>
       </ul>
       Extrahierter Inhalt
         <ul>
           <li>
-            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen.
+            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/menu-book.png" width="12" height="12"/></button> Öffne das Skript an der entsprechenden Stelle in einem neuen Tab. Dieses Bedienelement kann nur in skriptbasierten Vorlesungen vorkommen.
           </li>
           <li>
-            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" height="12"/></button> Öffne das Video an der entsprechenden Stelle in <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a>.
+            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/video-library.png" width="12" height="12"/></button> Öffne das Video an der entsprechenden Stelle in <a href="/mampf/de/mampf-pages/thyme" target="_self">THymE</a>.
           </li>
           <li>
-            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" height="12"/></button> Öffne das PDF in einem neuen Tab.
+            <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/library-books.png" width="12" height="12"/></button> Öffne das PDF in einem neuen Tab.
           </li>
         </ul>
     </td>

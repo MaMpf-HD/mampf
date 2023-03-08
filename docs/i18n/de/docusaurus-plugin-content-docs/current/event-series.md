@@ -36,7 +36,7 @@ Die eigentliche Seite besteht ebenfalls aus drei Teilbereichen: der Überschrift
 
 ### Aktuelles
 * <button name="button">alle erledigen</button> Entferne alle Mitteilung. Daraufhin verschwindet die Box „Aktuelles“ und erscheint erst wieder, wenn es neue Mitteilungen in der Veranstaltung gibt.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" height="12"/></button> Entferne die ausgewählte Mitteilung aus der Box „Aktuelles“.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" width="12" height="12"/></button> Entferne die ausgewählte Mitteilung aus der Box „Aktuelles“.
 * <button name="button">Forum</button> Öffne das Forum.
 
 ### Veranstaltungsinhalt

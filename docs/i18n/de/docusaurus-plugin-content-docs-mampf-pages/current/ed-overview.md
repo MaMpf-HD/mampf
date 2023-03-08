@@ -7,7 +7,7 @@ Die Übersichtsseite ist die Startseite der Administration. Dort können Editor\
 ![](/img/uebersicht.png)
 
 ## Navigation zu dieser Seite
-Diese Seite ist über die [Navigationsleiste](nav-bar) erreichbar. Je nachdem, ob man sich im Administrationsmodus befindet oder nicht, führt <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/home-solid.png" height="12"/></button> bzw. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tools-solid.png" height="12"/></button> zur Übersicht.
+Diese Seite ist über die [Navigationsleiste](nav-bar) erreichbar. Je nachdem, ob man sich im Administrationsmodus befindet oder nicht, führt <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/home-solid.png" width="12" height="12"/></button> bzw. <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/tools-solid.png" width="12" height="12"/></button> zur Übersicht.
 
 ## Bereiche der Seite
 Die Übersicht gliedert sich in gliedert sich in zwei große Teilbereiche: die eigentliche Seite und die [Navigationsleiste](nav-bar). Die Bereiche sind exemplarisch in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -53,7 +53,7 @@ Folgende Bedienelemente sind in der Box „Meine Veranstaltungen“ verfügbar:
                 <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button>Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>.
             </li>
             <li>
-                <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> Öffne das Formular zum Anlegen einer Veranstaltung.
+                <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="12" height="12"/></button> Öffne das Formular zum Anlegen einer Veranstaltung.
             </li>
         </ul>
      </td>
@@ -63,7 +63,7 @@ Folgende Bedienelemente sind in der Box „Meine Veranstaltungen“ verfügbar:
 \* Editorenrechte können auf den Seiten [„Veranstaltung bearbeiten“](ed-edit-event-series) und [„Modul bearbeiten“](ed-edit-module) angepasst werden.
 
 #### Formular zum Anlegen einer Veranstaltung
-Moduleditor\*innen und Administrator\*innen können Veranstaltungen anlegen. Das dafür erforderliche Fomular öffnet sich in der Box „Meine Veranstaltungen“, nachdem man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> geklickt hat. In diesem Formular finden sich die folgenden Bedienelemente:
+Moduleditor\*innen und Administrator\*innen können Veranstaltungen anlegen. Das dafür erforderliche Fomular öffnet sich in der Box „Meine Veranstaltungen“, nachdem man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="12" height="12"/></button> geklickt hat. In diesem Formular finden sich die folgenden Bedienelemente:
 
 <table>
   <tr>
@@ -76,7 +76,7 @@ Moduleditor\*innen und Administrator\*innen können Veranstaltungen anlegen. Das
                   <option value="a">Modul 1</option>
                   <option value="b">Modul 2</option>
                  <option value="c">Modul 3</option>
-               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung des Moduls, zu dem die Veranstaltung gehören soll. In diesem Menü werden alle Module aufgeführt, für die man Moduleditorenrechte hat. Um die Auswahl wieder auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>. Es muss genau ein Modul ausgewählt werden. Diese Einstellung kann nicht nachträglich verändert werden.
+               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung des Moduls, zu dem die Veranstaltung gehören soll. In diesem Menü werden alle Module aufgeführt, für die man Moduleditorenrechte hat. Um die Auswahl wieder auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button>. Es muss genau ein Modul ausgewählt werden. Diese Einstellung kann nicht nachträglich verändert werden.
            </li>
            <li>
               Semester <label for="cars"></label><br></br>
@@ -96,7 +96,7 @@ Moduleditor\*innen und Administrator\*innen können Veranstaltungen anlegen. Das
                   <option value="a">Nutzer*in 1 x</option>
                   <option value="b">Nutzer*in 2 x</option>
                   <option value="c">Nutzer*in  3 x</option>
-               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung der Dozent*in der Veranstaltung. Standardmäßig ist man zunächst selbst als Dozent*in eingetragen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> (funktioniert nicht). Es muss genau ein*e Dozent*in ausgewählt werden. Diese Einstellung kann nachträglich verändert werden.
+               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung der Dozent*in der Veranstaltung. Standardmäßig ist man zunächst selbst als Dozent*in eingetragen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button> (funktioniert nicht). Es muss genau ein*e Dozent*in ausgewählt werden. Diese Einstellung kann nachträglich verändert werden.
             </li>
             <li>
                 Typ <label for="cars"></label><br></br>
@@ -149,7 +149,7 @@ In der Box „Meine Module“ werden alle Module aufgeführt, für die man auf d
                 <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button>Modul</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self">„Modul bearbeiten“</a>.
             </li>
             <li>
-                <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> Öffne das Formular zum Anlegen eines Moduls.
+                <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="12" height="12"/></button> Öffne das Formular zum Anlegen eines Moduls.
             </li>
         </ul>
      </td>
@@ -157,7 +157,7 @@ In der Box „Meine Module“ werden alle Module aufgeführt, für die man auf d
 </table>
 
 #### Formular zum Anlegen eines Moduls
-Administrator\*innen können Module anlegen. Das dafür erforderliche Fomular öffnet sich in der Box „Meine Module“, nachdem man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> geklickt hat. In diesem Formular finden sich die folgenden Bedienelemente:
+Administrator\*innen können Module anlegen. Das dafür erforderliche Fomular öffnet sich in der Box „Meine Module“, nachdem man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="12" height="12"/></button> geklickt hat. In diesem Formular finden sich die folgenden Bedienelemente:
 
 <table>
   <tr>
@@ -190,7 +190,7 @@ Administrator\*innen können Module anlegen. Das dafür erforderliche Fomular ö
                   <option value="a">Nutzer*in 1 x</option>
                   <option value="b">Nutzer*in 2 x</option>
                  <option value="c">Nutzer*in  3 x</option>
-               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung der Moduleditor*innen. Standardmäßig ist man zunächst selbst als Moduleditor*in eingetragen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>. Es muss mindestens ein*e Moduleditor*in ausgewählt werden und nachträglich bearbeitet werden.
+               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung der Moduleditor*innen. Standardmäßig ist man zunächst selbst als Moduleditor*in eingetragen. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button>. Es muss mindestens ein*e Moduleditor*in ausgewählt werden und nachträglich bearbeitet werden.
             </li>
             <li>
                Teilbereiche <label for="cars"></label><br></br>
@@ -198,7 +198,7 @@ Administrator\*innen können Module anlegen. Das dafür erforderliche Fomular ö
                   <option value="a">Teilbereich 1 x</option>
                   <option value="b">Teilbereich 2 x</option>
                   <option value="c">Teilbereich 3 x</option>
-               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung der Teilbereiche. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button>. Dieses Feld kann frei gelassen werden. Diese Einstellung kann nachträglich verändert werden.
+               </select><br></br><br></br> Dropdown-Menü mit Eingabefeld zur Festlegung der Teilbereiche. Um die Auswahl auzuheben, klickt man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button>. Dieses Feld kann frei gelassen werden. Diese Einstellung kann nachträglich verändert werden.
             </li>
             <li>
                <form><input type="checkbox" id="not" name="ev"></input>
@@ -263,7 +263,7 @@ In der Box „Meine Clicker“ gibt es keine Unterschiede zwischen Veranstaltung
      </td>
      <td valign="top">
         <b>Keine Clicker angelegt</b><br></br><br></br>
-        <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> Öffne das Formular zum Anlegen eines Clickers.
+        <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="12" height="12"/></button> Öffne das Formular zum Anlegen eines Clickers.
      </td>
   </tr>
   <tr>
@@ -277,7 +277,7 @@ In der Box „Meine Clicker“ gibt es keine Unterschiede zwischen Veranstaltung
                 <button>Clicker</button> Wechsel zum Clicker.
             </li>
             <li>
-                <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> Öffne das Formular zum Anlegen eines Clickers.
+                <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="12" height="12"/></button> Öffne das Formular zum Anlegen eines Clickers.
             </li>
         </ul>
      </td>
@@ -285,7 +285,7 @@ In der Box „Meine Clicker“ gibt es keine Unterschiede zwischen Veranstaltung
 </table>
 
 #### Formular zum Anlegen eines Clickers
-Veranstaltungseditor\*innen, Moduleditor\*innen und Administrator\*innen können Clicker anlegen. Das dafür erforderliche Fomular öffnet sich in der Box „Meine Clicker“, nachdem man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="12"/></button> geklickt hat. In diesem Formular finden sich die folgenden Bedienelemente:
+Veranstaltungseditor\*innen, Moduleditor\*innen und Administrator\*innen können Clicker anlegen. Das dafür erforderliche Fomular öffnet sich in der Box „Meine Clicker“, nachdem man auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="12" height="12"/></button> geklickt hat. In diesem Formular finden sich die folgenden Bedienelemente:
 
 <table>
   <tr>

@@ -9,7 +9,7 @@ Auf der Seite „Profil“ kann der Account verwaltet werden. Dort ist es mögli
 ![](/img/settings.png)
 
 ## Navigation zu dieser Seite
-Die Seite „Profil“ erreicht man, indem auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></button> in der [Navigationsleiste](nav-bar.md) klickt. Auf diese Seite wird man auch direkt nach der Aktivierung des Accounts geleitet.
+Die Seite „Profil“ erreicht man, indem auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" width="12" height="12"/></button> in der [Navigationsleiste](nav-bar.md) klickt. Auf diese Seite wird man auch direkt nach der Aktivierung des Accounts geleitet.
 
 ## Bereiche der Seite
 Die Seite „Profil“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Profil“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -55,8 +55,8 @@ Die Box „Module“ besteht aus einem Akkordeon, in dessen Feldern Studiengäng
 |Abonniertes Modul ausgewählt|Nicht abonniertes Modul ausgewählt|
 
 * <button name="button">Studiengang</button> Klappe alle zu diesem Studiengang verfügbaren Module aus.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" height="12"/> Modul&nbsp;</button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check-circle-solid.png" height="12"/> Modul&nbsp;</button> Klappe alle zu diesem  verfügbaren Veranstaltungen aus. Dieses Bedienelement erscheint erst, wenn ein Studiengang angeklickt worden ist. Der Haken wird nur angezeigt, wenn in einem Modul eine Veranstaltung abonniert ist.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" height="12"/> Veranstaltung&nbsp;</button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check-square-regular.png" height="12"/> Veranstaltung&nbsp;</button> Beginne bzw. beende ein Veranstaltungsabo durch Setzen bzw. Entfernen eines Hakens. Dieses Bedienelement erscheint erst, nachdem ein Modul angeklickt worden ist.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-regular.png" width="12" height="12"/> Modul&nbsp;</button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check-circle-solid.png" width="12" height="12"/> Modul&nbsp;</button> Klappe alle zu diesem  verfügbaren Veranstaltungen aus. Dieses Bedienelement erscheint erst, wenn ein Studiengang angeklickt worden ist. Der Haken wird nur angezeigt, wenn in einem Modul eine Veranstaltung abonniert ist.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/square-regular.png" width="12" height="12"/> Veranstaltung&nbsp;</button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check-square-regular.png" width="12" height="12"/> Veranstaltung&nbsp;</button> Beginne bzw. beende ein Veranstaltungsabo durch Setzen bzw. Entfernen eines Hakens. Dieses Bedienelement erscheint erst, nachdem ein Modul angeklickt worden ist.
 
 Abonnements werden erst durch das Klicken auf den Button <button name="button">Profil updaten</button> am Seitenanfang abgeschlossen bzw. beendet.
 

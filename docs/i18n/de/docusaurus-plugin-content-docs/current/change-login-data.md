@@ -6,7 +6,7 @@ Auf der Seite „Zugangsdaten ändern“ kann man die E-Mail-Adresse und das Pas
 ![](/img/Zugangsdaten_aendern_thumb.png)
 
 ## Navigation zu dieser Seite
-Die Seite „Zugangsdaten ändern“ erreicht man, indem man zunächst über den Button <button name="button"><a href="/mampf/de/docs/profile" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" height="12"/></a></button> in der Navigationsleiste zur Seite [„Profil“](profile.md) navigiert. Dort betätigt man dann den Button <button name="button">Zugangsdaten ändern</button>.
+Die Seite „Zugangsdaten ändern“ erreicht man, indem man zunächst über den Button <button name="button"><a href="/mampf/de/docs/profile" target="_self"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-cog-solid.png" width="12" height="12"/></a></button> in der Navigationsleiste zur Seite [„Profil“](profile.md) navigiert. Dort betätigt man dann den Button <button name="button">Zugangsdaten ändern</button>.
 
 ## Bereiche der Seite
 Die Seite „Zugangsdaten ändern“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Zugangsdaten ändern“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.

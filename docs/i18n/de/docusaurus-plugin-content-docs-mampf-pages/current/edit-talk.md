@@ -13,11 +13,11 @@ Vortragende können diese Seite über die [persönliche Startseite](my-home-page
   <li>
      <a href="/mampf/de/mampf-pages/my-home-page" target="_self"><b>Persönliche Startseite</b></a> (Vortragende)
   </li>
-  Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
+  Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
   <li>
      <a href="/mampf/de/mampf-pages/talk" target="_self"><b>Seite des Vortrags</b></a> (Vortragende und Editor*innen)
   </li>
-  Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
+  Unter der Rubrik „Meine Vorträge“ befindet sich oben rechts auf der Vortragskachel das Symbol <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button>, das einen auf die Seite „Vortrag bearbeiten“ führt.
   <li>
      <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self"><b>Seite „Seminar bearbeiten“</b></a> (Editor*innen)
   </li>
@@ -67,7 +67,7 @@ Nun werden die Bedienelemente der Seite „Vortrag bearbeiten“ beschrieben. Da
 In diesem Bereich gibt es Steuerelemente zur Navigation und der Übernahme von Änderungen. Editor\*innen verfügen über einen zusätzlichen Button.
 
 #### Gemeinsame Bedienelemente
-* <a href="/mampf/de/mampf-pages/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/talk" target="_self">Seite des Vortrags</a>.
+* <a href="/mampf/de/mampf-pages/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" width="12" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/talk" target="_self">Seite des Vortrags</a>.
 * <button>Speichern</button> Übernimm die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Vortrag bearbeitet worden ist. Wenn dieser Button nicht angeklickt wird, gehen alle Änderungen verloren.
 * <button>Verwerfen</button> Verwirf die vorgenommenen Änderungen. Dieser Button erscheint erst, nachdem der Vortrag bearbeitet worden ist.
 * <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Veranstaltung</button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-seminar" target="_self">„Seminar bearbeiten“</a>.
@@ -99,11 +99,11 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
      <td valign="top">
         <ul>
            <li>
-              Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+              Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
            </li>
            Löse die bestehende Verknüpfung von Vortrag und Tag auf.
            <li>
-              Verknüpfte Medien <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>
+              Verknüpfte Medien <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button></a>
            </li>
            Lege ein neues Medium an und wechsel danach auf die Seite <a href="/mampf/de/mampf-pages/edit-medium" target="_self">„Medium bearbeiten“</a> bzw. <a href="/mampf/de/mampf-pages/edit-quiz" target="_self">„Quiz bearbeiten“</a>.
            <li>
@@ -118,7 +118,7 @@ Editor\*innen stehen in der Box „Basisdaten“ alle Bedienelemente zur Verfüg
 Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
 ##### Dialogfeld „Medium anlegen“
-Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a> bei <i>Verknüpfte Medien</i> geklickt worden ist.
+Das folgende Dialogfenster öffnet sich, nachdem auf <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button></a> bei <i>Verknüpfte Medien</i> geklickt worden ist.
 
 <table>
   <tr>
@@ -184,23 +184,23 @@ Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unters
      <td valign="top">
         <ul>
            <li>
-              Datum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button>
+              Datum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button>
            </li>Füge ein Vortragsdatum hinzu.
            <li>
-              Datum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-xmark-solid.png" height="15"/></button>
+              Datum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-xmark-solid.png" width="15" height="15"/></button>
            </li>
            Lösche das Vortragsdatum. Dieses Bedienelement ist nur vorhanden, wenn bereits Vortragsdaten angelegt worden sind.
            <li>
-              TT.MM.JJJJ <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" height="15"/></button>
-           </li> Lösche das Vortragsdatum. Dieses Bedienelement ist erst vorhanden, nachdem auf Datum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> geklickt worden ist.
+              TT.MM.JJJJ <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/trash-alt-solid.png" width="15" height="15"/></button>
+           </li> Lösche das Vortragsdatum. Dieses Bedienelement ist erst vorhanden, nachdem auf Datum <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button> geklickt worden ist.
            <li>
-              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button> Vortragender
+              <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button> Vortragender
            </li> Entziehe dem Vortragenden den Vortrag.
            <li>
-              Vortragende <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+              Vortragende <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
            </li> Entziehe allen Vortragenden den Vortrag.
            <li>
-              Verknüpfte Tags <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button>
+              Verknüpfte Tags <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button>
            </li> Lege einen neuen Tag an.
            <li>
               Positionierung nach Vortrag</li><label for="cars"></label>
@@ -219,7 +219,7 @@ Die Editorenansicht weicht von der Vortragendenansicht ab, daher sind die Unters
 Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
 ##### Dialogfeld „Tag anlegen“
-Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button> bei <i>Verknüpfte Tags</i> geklickt worden ist.
+Das folgende Dialogfenster öffnet sich, nachdem auf <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button> bei <i>Verknüpfte Tags</i> geklickt worden ist.
 
 <table>
   <tr>
@@ -290,18 +290,18 @@ Sowohl Vortragende als auch Editor\*innen können einen Text für die [Vortragss
 #### Gemeinsame Bedienelemente
 Vortragenden und Editor\*innen stehen dieselben Bedienelemente zur Textformatierung und -bearbeitung zur Verfügung:
 
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-bold.png" height="12"/></button> Beginne bzw. beende Fettdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text fett bzw. stelle den Fettdruck ab.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-quote.png" height="8"/></button> Beginne bzw. beende ein Zitat an der Stelle, an der sich der Cursor befindet, oder mache aus dem markierten Text ein Zitat bzw. aus dem markierten Zitat einfachen Text.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/redo.png" height="8"/></button> Wiederhole die letzte Aktion. Dazu muss die letzte Aktion zuvor rückgängig gemacht worden sein.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-bold.png" width="12" height="12"/></button> Beginne bzw. beende Fettdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text fett bzw. stelle den Fettdruck ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-italic.png" width="12" height="12"/></button> Beginne bzw. beende Kursivdruck an der Stelle, an der sich der Cursor befindet, oder mache den markierten Text kurisv bzw. stelle den Kursivdruck ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/strikethrough.png" width="12" height="12"/></button> Beginne bzw. beende das Durchstreichen des Texts an der Stelle, an der sich der Cursor befindet, oder streiche den markierten Text durch bzw. stelle das Durchstreichen ab.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/link-solid.png" width="12" height="12"/></button> Füge einen Hyperlink ein oder mache aus dem markierten Text einen Hyperlink bzw. mache aus dem Hyperlink einfachen Text.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-size.png" width="12" height="12"/></button> Vergrößere Text in Standardgröße bzw. verkleinere großen Text.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-quote.png" width="16" height="8"/></button> Beginne bzw. beende ein Zitat an der Stelle, an der sich der Cursor befindet, oder mache aus dem markierten Text ein Zitat bzw. aus dem markierten Zitat einfachen Text.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-bulleted.png" width="12" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine unnummierte Liste bzw. mache aus dem markierten Text eine unnummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-list-numbered.png" width="12" height="12"/></button> Falls es an dieser Stelle noch keine Liste gibt, beginne an der Stelle, an der sich der Cursor befindet, eine nummierte Liste bzw. mache aus dem markierten Text eine nummierte Liste. Falls es bereits eine Liste gibt, verschiebe den markierten Eintrag bzw. den Eintrag, an dem sich der Cursor befindet, auf die nächsthöhere Ebene. Falls es keine nächsthöhere Ebene gibt, mache aus der Liste Fließtext.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-decrease.png" width="12" height="12"/></button> Setze den Listeintrag auf die nächsthöhere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/format-indent-increase.png" width="12" height="12"/></button> Setze den Listeneintrag auf die nächsttiefere Ebene. Dieses Bedienelmente ist nur bei Listen vorhanden, wenn es einen Eintrag aus derselben Ebene gibt.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/undo.png" width="16" height="8"/></button> Mache die letzte Aktion rückgängig. Dazu muss zuvor etwas am Text verändert worden sein.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/redo.png" width="16" height="8"/></button> Wiederhole die letzte Aktion. Dazu muss die letzte Aktion zuvor rückgängig gemacht worden sein.
 
 Alle vorgenommenen Änderungen müssen gespeichert werden, sonst werden sie nicht übernommen.
 
@@ -359,10 +359,10 @@ Von der Seite „Vortrag bearbeiten“ aus gelangt man zu den Seiten „Seminar�
 Die Seminarseite enthält aktuelle Informationen und die Gliederung des Seminars. Von ihr aus gelangt man zu Seminarinhalten (Videos, PDF-Dateien, Mindmaps, Quizzes und Beispielen), Informationen zum Seminar, Diskussionsforen, der Zettelabgabe, Vorträgen und Bearbeitungsseiten für den eigenen Vortrag. Um auf diese Seite zu wechseln, klickt man auf <a href="/mampf/de/mampf-pages/seminar" target="_self"><button>Veranstaltung</button></a>.
 
 ### [Vortragsseite](talk)
-Auf der Vortragsseite finden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Sie ist über <a href="/mampf/de/mampf-pages/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> erreichbar.
+Auf der Vortragsseite finden sich grundlegende Informationen zum Vortrag (Vortragende, Datum sowie eine Vortragsbeschreibung). Außerdem kann über diese Seite auf Medien, die zum Vortrag gehören, zugegriffen werden. Sie ist über <a href="/mampf/de/mampf-pages/talk" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" width="12" height="12"/></button></a> erreichbar.
 
 ### [Seite „Medium bearbeiten“](edit-medium)
-Auf dieser Seite können Medien bearbeiten werden. Dabei können Medientyp und -titel und die Sprache geändert, ein Inhaltstext verfasst oder bearbeitet sowie Tags und Dateien hinzugefügt oder entfernt werden. Zu Videos kann außerdem eine Gliederung angelegt werden. Ferner kann der Öffentlichkeitsstatus den Mediums eingesehen und bearbeitet werden. Diese Seite öffnet sich durch Klicken auf den <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Medientitel</button></a> und nach dem Dialog zum Anlegen eines Mediums. Diesen erreicht man wiederum über <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" height="15"/></button></a>.
+Auf dieser Seite können Medien bearbeiten werden. Dabei können Medientyp und -titel und die Sprache geändert, ein Inhaltstext verfasst oder bearbeitet sowie Tags und Dateien hinzugefügt oder entfernt werden. Zu Videos kann außerdem eine Gliederung angelegt werden. Ferner kann der Öffentlichkeitsstatus den Mediums eingesehen und bearbeitet werden. Diese Seite öffnet sich durch Klicken auf den <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button>Medientitel</button></a> und nach dem Dialog zum Anlegen eines Mediums. Diesen erreicht man wiederum über <a href="/mampf/de/mampf-pages/edit-medium" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/circle-plus-solid.png" width="15" height="15"/></button></a>.
 
 ### [Seite „Quiz bearbeiten“](edit-quiz)
 Auf der Seite „Quiz bearbeiten“ kann der [Quizeditor](quiz-editor) geöffnet werden. Mit diesem können komplexe Quizzes wie angeleitete Beweise angelegt und bearbeitet werden. Im Gegensatz zu einer Quizfrage kann ein Quiz aus mehreren Fragen bestehen und über antwortabhängige Verzweigungen verfügen. Auf der Seite „Quiz bearbeiten“ können außerdem der Titel, die Sprache, der Inhaltstext und die Öffentlichkeitseinstellungen des Quizzes bearbeitet sowie Tags hinzugefügt oder entfernt werden.

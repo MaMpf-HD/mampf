@@ -8,7 +8,7 @@ Die persönliche Startseite ist die Seite, auf die man gelangt, nachdem man sich
 ![](/img/pers_Startseite_thumb.png)
 
 ## Navigation zu dieser Seite
-Die persönliche Startseite erreicht man, indem auf <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/> oben links in der [Navigationsleiste](nav-bar.md) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geschickt.
+Die persönliche Startseite erreicht man, indem auf <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" width="15" height="15"/> oben links in der [Navigationsleiste](nav-bar.md) klickt. Auf die Seite wird man auch direkt nach dem Einloggen geschickt.
 
 ## Bereiche der Seite
 Die persönliche Startseite gliedert sich in drei große Teilbereiche: die eigentliche Seite, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -28,12 +28,12 @@ Die eigentliche Seite besteht aus einem Akkordeon mit den Rubriken „Mein Semes
 ### Veranstaltungscards
 #### Abonnierte Veranstaltungen
 * <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Veranstaltungstitel</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" height="12"/></button> Nimm die Veranstaltung in den Schnellzugriff auf bzw. entferne sie aus diesem.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" height="12"/></button> Beende das Veranstaltungsabo.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/baseline-bookmark-black.png" width="12" height="12"/></button> Nimm die Veranstaltung in den Schnellzugriff auf bzw. entferne sie aus diesem.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/minus-square-regular.png" width="12" height="12"/></button> Beende das Veranstaltungsabo.
 * <a href="/mampf/de/docs/event-series" target="_self"><button name="button">Thumbnail</button></a> Wechsel zur <a href="/mampf/de/docs/event-series" target="_self">Veranstaltungsseite</a>.
 
 #### Nicht abonnierte Veranstaltungen
-<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/plus-square-regular.png" height="12"/></button> Beginne ein Veranstaltungsabo.
+<button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/plus-square-regular.png" width="12" height="12"/></button> Beginne ein Veranstaltungsabo.
 
 ### Veranstaltungssuche
 

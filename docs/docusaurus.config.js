@@ -4,7 +4,7 @@ module.exports = {
   tagline: 'Mathematische Medienplattform',
   url: 'https://mampf-hd.github.io/',
   baseUrl: '/mampf/',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'img/favicon.ico',
   organizationName: 'MaMpf-HD', // Usually your GitHub org/user name.
@@ -115,7 +115,7 @@ module.exports = {
     ],
   ],
   i18n: {
-    defaultLocale: 'en',
+    defaultLocale: 'de',
     locales: ['en', 'de'],
     localeConfigs: {
       en: {

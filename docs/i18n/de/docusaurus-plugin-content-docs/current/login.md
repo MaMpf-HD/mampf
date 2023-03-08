@@ -7,7 +7,7 @@ Auf der Loginseite kann man sich einloggen, wenn man bereits einen MaMpf-Account
 ![](/img/Login_thumb.png)
 
 ## Navigation zu dieser Seite
-Zur Loginseite gelangt man, indem man <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sign-in-alt-solid.png" height="12"/></button> in der [Navigationsleiste](nav-bar.md) anklickt. Dieser Button ist nur vorhanden, wenn auf dem verwendeten Gerät gerade niemand auf MaMpf eingeloggt ist.
+Zur Loginseite gelangt man, indem man <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/sign-in-alt-solid.png" width="12" height="12"/></button> in der [Navigationsleiste](nav-bar.md) anklickt. Dieser Button ist nur vorhanden, wenn auf dem verwendeten Gerät gerade niemand auf MaMpf eingeloggt ist.
 
 ## Bereiche der Seite
 Die Seite „Login“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Login“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.

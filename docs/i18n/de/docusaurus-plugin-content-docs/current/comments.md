@@ -1,12 +1,12 @@
 ---
 title: Kommentare
 ---
-Die Kommentarseite gibt einen Überblick über Diskussionen in abonnierten Veranstaltungen. Von dort können Diskussionen angesteuert und zur Kenntnis genommen sowie Diskussionsabos zentral verwaltet werden. Auf der [Kommentarseite eines Mediums](comments-medium.md) hingegen können Beiträge zu einem Medium gelesen und verfasst werden. Die Kommentarseite eines Mediums kann von der Kommentarseite aus geöffnet werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Wenn ein neuer Diskussionbeitrag in einer abonnierten Veranstaltung veröffentlicht worden ist, so färbt sich das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" height="12"/> in der [Navigationsleiste](nav-bar.md) blau.
+Die Kommentarseite gibt einen Überblick über Diskussionen in abonnierten Veranstaltungen. Von dort können Diskussionen angesteuert und zur Kenntnis genommen sowie Diskussionsabos zentral verwaltet werden. Auf der [Kommentarseite eines Mediums](comments-medium.md) hingegen können Beiträge zu einem Medium gelesen und verfasst werden. Die Kommentarseite eines Mediums kann von der Kommentarseite aus geöffnet werden. Über abonnierte Diskussionen wird man per E-Mail auf dem Laufenden gehalten. Wenn ein neuer Diskussionbeitrag in einer abonnierten Veranstaltung veröffentlicht worden ist, so färbt sich das Icon <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" width="12" height="12"/> in der [Navigationsleiste](nav-bar.md) blau.
 
 ![](/img/Kommentare_thumb.png)
 
 ## Navigation zu dieser Seite
-Zur Seite „Kommentare“ gelangt man, indem man in der [Navigationsleiste](nav-bar.md) auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" height="12"/></button> klickt.
+Zur Seite „Kommentare“ gelangt man, indem man in der [Navigationsleiste](nav-bar.md) auf <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/comments-regular.png" width="12" height="12"/></button> klickt.
 
 ## Bereiche der Seite
 Die Seite „Kommentare“ gliedert sich in drei große Teilbereiche: die eigentliche Seite „Kommentare“, die [Navigationsleiste](nav-bar.md) und den [Footer](footer.md). Die Bereiche sind exemplarisch in den folgenden Screenshots einer Seite „Sitzung“ eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -27,8 +27,8 @@ Auf der Seite „Kommentare“ gibt es folgende Bedienelemente:
 * <button name="button">alle erledigen</button> Lösche alle in der Tabelle aufgeführten neuen Diskussionsbeiträge.
 * <a href="/mampf/de/docs/medium" target="_self"><button name="button">Medium</button></a> Öffne die <a href="/mampf/de/docs/medium" target="_self">Seite des diskutierten Mediums</a>. Dort können Diskussionbeiträge gelesen und verfasst werden. Zudem werden weitere Informationen zum Medium aufgeführt.
 * <a href="/mampf/de/docs/comments-medium" target="_self"><button name="button">n Kommentare</button></a> Öffne die <a href="/mampf/de/docs/comments-medium" target="_self">Kommentarseite des Mediums</a>. Dort können Diskussionbeiträge gelesen und verfasst werden.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/outline-toggle-off.png" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/toggle-on.png" height="12"/></button> Aktiviere bzw. deaktiviere E-Mail-Benachrichtungen bei neuem Diskussionsbeitrag für diese Diskussion.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/times-circle.png" height="12"/></button> Erledige diesen Beitrag. Lösche diesen Beitrag aus der Tabelle der neuen Diskussionsbeiträge.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/outline-toggle-off.png" width="12" height="12"/></button> bzw. <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/toggle-on.png" width="12" height="12"/></button> Aktiviere bzw. deaktiviere E-Mail-Benachrichtungen bei neuem Diskussionsbeitrag für diese Diskussion.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/times-circle.png" width="12" height="12"/></button> Erledige diesen Beitrag. Lösche diesen Beitrag aus der Tabelle der neuen Diskussionsbeiträge.
 
 ## Hinweis zum Fehlen von Bedienelementen
 Bedienelemente zur Seitennavigation sind nur vorhanden, wenn die neuen Diskussionbeiträge mehr als eine Seite beanspruchen.

@@ -7,7 +7,7 @@ Auf der Seite „Erweiterte Suche“ können Editor\*innen nach Medien, Veransta
 ![](/img/suche_thumb.png)
 
 ## Navigation zu dieser Seite
-Diese Seite ist nur im Administrationsmodus über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/magnifying-glass-solid.png" height="12"/></button> in der [Navigationsleiste](nav-bar) erreichbar.
+Diese Seite ist nur im Administrationsmodus über <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/magnifying-glass-solid.png" width="12" height="12"/></button> in der [Navigationsleiste](nav-bar) erreichbar.
 
 ## Bereiche der Seite
 Die Seite gliedert sich in zwei große Teilbereiche: die eigentliche Seite und die [Navigationsleiste](nav-bar). Die Bereiche sind exemplarisch in den folgenden Screenshots eingezeichnet. Dieser Artikel widmet sich der eigentlichen Seite.
@@ -88,7 +88,7 @@ In der Suchmaske kommen die Bedienelemente Dropdownmenü, Eingabefeld, Checkbox,
                 Checkbox und bei nicht gesetztem Haken auch Eingabefeld mit Dropdownmenü. Im Dropdownmenü können Typ / Assoziationen / verknüpfte Tags / Editor*innen des Mediums ausgewählt werden.
            </li>
            <li>
-              Typ bzw. Assoziiert zu bzw. Verknüpfte Tags bzw. EditorInnen <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="12"/></button> Entferne den Medientyp bzw. die Veranstaltung oder das Modul bzw. den Begriff bzw. den/die EditorIn aus dem Feld.
+              Typ bzw. Assoziiert zu bzw. Verknüpfte Tags bzw. EditorInnen <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="12" height="12"/></button> Entferne den Medientyp bzw. die Veranstaltung oder das Modul bzw. den Begriff bzw. den/die EditorIn aus dem Feld.
            </li>
            <li>
              Assoziiert zu <form>
@@ -184,11 +184,11 @@ Die Zugänglichkeit der Medien wird mittels Icons angezeigt. Die Bedeutung der I
 
 | Symbol | Bedeutung |  Konsequenz |
 | :---: | :---: | :--- |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/public.png" height="12"/> | frei | Alle Personen können über den entsprechenden Link auf das Medium zugreifen. Dazu ist kein MaMpf-Account erforderlich. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-solid.png" height="12"/> | nur registrierte MaMpf-NutzerInnen | Alle Personen mit MaMpf-Account können über den entsprechenden Link auf das Medium zugreifen. Dazu müssen sie sich einloggen. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-plus-solid.png" height="12"/> | nur AbonnentInnen | Alle Personen, die eine Veranstaltung abonniert haben, können über den entsprechenden Link auf das Medium zugreifen. Manche Veranstaltungen können nur mit einem Zugangsschlüssel abonniert werden. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid.png" height="12"/> | gesperrt | Einfache Nutzer*innen können das Medium nicht mehr öfnnen. |
-| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/> | unveröffentlicht | Einfache Nutzer*inne können das Medium noch nicht öffnen. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/public.png" width="12" height="12"/> | frei | Alle Personen können über den entsprechenden Link auf das Medium zugreifen. Dazu ist kein MaMpf-Account erforderlich. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-solid.png" width="12" height="12"/> | nur registrierte MaMpf-NutzerInnen | Alle Personen mit MaMpf-Account können über den entsprechenden Link auf das Medium zugreifen. Dazu müssen sie sich einloggen. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/user-plus-solid.png" width="12" height="12"/> | nur AbonnentInnen | Alle Personen, die eine Veranstaltung abonniert haben, können über den entsprechenden Link auf das Medium zugreifen. Manche Veranstaltungen können nur mit einem Zugangsschlüssel abonniert werden. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/lock-solid.png" width="12" height="12"/> | gesperrt | Einfache Nutzer*innen können das Medium nicht mehr öfnnen. |
+| <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" width="12" height="12"/> | unveröffentlicht | Einfache Nutzer*inne können das Medium noch nicht öffnen. |
 
 #### Vorschau
 In der Vorschau kommen je nach gewähltem Medium und Rechten von Nutzer\*innen unterschiedliche Bedienelemente vor.
@@ -255,7 +255,7 @@ Für das Bearbeiten von Tags stehen die nachfolgenden Bedienelemente zur Verfüg
               Eingabefeld und Dropdown-Menü. Tippe in das Eingabefeld oder scrolle durch die Liste verfügbarer Tags und wähle die aus, die mit dem Medium verknüpft werden sollen.
            </li>      
            <li>
-              Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" height="15"/></button>
+              Verknüpfter Tag <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/xmark-solid.png" width="15" height="15"/></button>
            </li> Löse die bestehende Verknüpfung von Medium und Tag auf.
            <li>
               <button>Speichern</button> Übernimm die Änderungen, sofern welche vorgenommen worden sind, und kehre zur vorigen Ansicht zurück.
@@ -380,8 +380,8 @@ Die Treffer werden in einer Tabelle mit den fünf Spalten „Titel“, „Semest
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/suche_veranstaltungen_treffer.png" width="5000"/>
 
-* <a href="/mampf/de/mampf-pages/event-series" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>. Falls diese Veranstaltung nicht abonniert ist, schlägt MaMpf vor, ein Abo zu beginnen. (Aufforderung zum Abonnieren -> to do)
-* <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>. Dieser Button ist nur bei Veranstaltungseditor*innen vorhanden.
+* <a href="/mampf/de/mampf-pages/event-series" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/eye-solid.png" width="12" height="12"/></button></a> Wechsel auf die <a href="/mampf/de/mampf-pages/event-series" target="_self">Seite der Veranstaltung</a>. Falls diese Veranstaltung nicht abonniert ist, schlägt MaMpf vor, ein Abo zu beginnen. (Aufforderung zum Abonnieren -> to do)
+* <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-event-series" target="_self">„Veranstaltung bearbeiten“</a>. Dieser Button ist nur bei Veranstaltungseditor*innen vorhanden.
 
 ### Tab „Modulsuche“
 Im Tab „Modulsuche“ gibt es die drei Bereiche „Suchmaske“ (oben), „Seitennavigation“ (in der Seitenmitte rechts) und „Treffer“ (unten). Diese sind in den folgenden Screenshots eingezeichnet und werden im Folgenden nacheinander beschrieben.
@@ -479,7 +479,7 @@ Wenn es mehr Treffer, als pro Seite angezeigt werden sollen, gibt, stehen folgen
 * <button name="button">Letzte</button> bzw. <button name="button">Erste</button> Wechsel auf die letzte bzw. erste Seite.
 
 #### Treffer
-Die Treffer werden in einer Tabelle mit den vier Spalten „Titel“, „Division“, „EditorInnen“, und „Aktion“ präsentiert. Die Anzahl der Zeilen kann in der Suchmaske festgelegt werden. In jeder Zeile gibt es in der Spalte „Aktion“ das Bedienelment <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a>, sofern man über Moduleditorenrechten für dieses Modul verfügt. Das Bedienelement führt auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self">„Modul bearbeiten“</a>.
+Die Treffer werden in einer Tabelle mit den vier Spalten „Titel“, „Division“, „EditorInnen“, und „Aktion“ präsentiert. Die Anzahl der Zeilen kann in der Suchmaske festgelegt werden. In jeder Zeile gibt es in der Spalte „Aktion“ das Bedienelment <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a>, sofern man über Moduleditorenrechten für dieses Modul verfügt. Das Bedienelement führt auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self">„Modul bearbeiten“</a>.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/suche_module_treffer.png" width="5000"/>
 
@@ -560,7 +560,7 @@ Wenn es mehr Treffer, als pro Seite angezeigt werden sollen, gibt, stehen folgen
 * <button name="button">Letzte</button> bzw. <button name="button">Erste</button> Wechsel auf die letzte bzw. erste Seite.
 
 #### Treffer
-Die Treffer werden in einer Tabelle mit den vier Spalten „Titel“, „Module“, „Verknüpfte Tags“, und „Aktionen“ (-> sollte Aktion heißen) präsentiert. Die Anzahl der Zeilen kann in der Suchmaske festgelegt werden. In der Spalte „Verknüpfte Tags“ können Bedienelemente <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><button>Verknüpfter Tag</button></a> vorkommen, die auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> führen. Außerdem gibt es in jeder Zeile der Spalte „Aktion“ das Bedienelment <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a>, mit dem man auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> gelangt.
+Die Treffer werden in einer Tabelle mit den vier Spalten „Titel“, „Module“, „Verknüpfte Tags“, und „Aktionen“ (-> sollte Aktion heißen) präsentiert. Die Anzahl der Zeilen kann in der Suchmaske festgelegt werden. In der Spalte „Verknüpfte Tags“ können Bedienelemente <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><button>Verknüpfter Tag</button></a> vorkommen, die auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> führen. Außerdem gibt es in jeder Zeile der Spalte „Aktion“ das Bedienelment <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self"><button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a>, mit dem man auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-tag" target="_self">„Tag bearbeiten“</a> gelangt.
 
 <img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/suche_tags_treffer.png" width="5000"/>
 

@@ -13,7 +13,7 @@ Um auf eine Vorlesungsseite zugreifen zu können, muss man die entsprechende Vor
   <li>
      <a href="/mampf/de/mampf-pages/my-home-page" target="_self"><b>Persönliche Startseite</b></a>
   </li>
-     Die persönliche Startseite erreicht man über das Logo <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" height="15"/></button> oben links in der <a href="/mampf/de/mampf-pages/nav-bar" target="_self">Navigationsleiste</a>. Dort wählt man die gewünschte Vorlesung aus.
+     Die persönliche Startseite erreicht man über das Logo <button><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/mampf-logo.png" width="15" height="15"/></button> oben links in der <a href="/mampf/de/mampf-pages/nav-bar" target="_self">Navigationsleiste</a>. Dort wählt man die gewünschte Vorlesung aus.
   <li>
      <b>Schnellzugriff</b>
   </li>
@@ -38,11 +38,11 @@ In allen erwähnten Seitenbereichen gibt es Bedienelemente. Diese werde nun aufg
 
 ### Überschrift
 * <a href="/mampf/de/mampf-pages/lecturer" target="_self"><button name="button">DozentIn</button></a> Wechsel zur <a href="/mampf/de/mampf-pages/lecturer" target="_self">Seite der Dozent*in</a>.
-* <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> (nur bei Editor*innen) Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
+* <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> (nur bei Editor*innen) Wechsel auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
 
 ### Aktuelles
 * <button name="button">alle erledigen</button> Entferne alle Mitteilungen. Daraufhin verschwindet die Box „Aktuelles“ und erscheint erst wieder, wenn es neue Mitteilungen in der Veranstaltung gibt.
-* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" height="12"/></button> Entferne die ausgewählte Mitteilung aus der Box „Aktuelles“.
+* <button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/check.png" width="12" height="12"/></button> Entferne die ausgewählte Mitteilung aus der Box „Aktuelles“.
 * <button name="button">Forum</button> Öffne das Forum.
 
 ### Veranstaltungsinhalt
@@ -67,7 +67,7 @@ Auf dieser Seite können Editor\*innen
 * Beispiele und Medien importieren und
 * den Text für [Organisatorisches](general-information) bearbeiten, anzeigen oder verschwinden lassen.
 
-Diese Seite ist über das Symbol <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> neben der Überschrift erreichbar.
+Diese Seite ist über das Symbol <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> neben der Überschrift erreichbar.
 
 ### [Seite des Abschnitts](section)
 Auf der Abschnittsseite kann man sich einen Überblick über den Inhalt des Abschnitts sowie über verknüpfte Begriffe, Medien und Sitzungen verschaffen. Über die Inhaltsübersicht können PDF-Dateien und Videos an der gewünschten Stelle geöffnet werden. Diese Seite öffnet sich, wenn man auf den <a href="/mampf/de/mampf-pages/section" target="_self"><button name="button">Abschnittstitel</button></a> in der Vorlesungsgliederung klickt.
@@ -98,7 +98,7 @@ Zu den Seiten mit Veranstaltungsinformationen gehören:
 * [Modul](module)
 
 ## Hinweis für Editor*innen
-Editor\*innen gelangen über das Icon <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" height="12"/></button></a> auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
+Editor\*innen gelangen über das Icon <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self"><button name="button"><img src="https://media.githubusercontent.com/media/MaMpf-HD/mampf/docs/docs/static/img/edit-regular.png" width="12" height="12"/></button></a> auf die Seite <a href="/mampf/de/mampf-pages/ed-edit-lecture" target="_self">„Vorlesung bearbeiten“</a>.
 
 ## Verwandte Seiten
 ### Gleichrangige Seite
