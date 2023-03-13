@@ -16,11 +16,11 @@ services:
         source: ../../solr/development/conf/
         target: /solrconfig/
         read_only: true
-#    command: ["bash -c \"solr-precreate development /solrconfig ; solr-precreate test /solrconfig \""]
+    # command: ["bash -c \"solr-precreate development /solrconfig ; solr-precreate test /solrconfig \""]
     entrypoint:
-    - bash
-    - "-c"
-    - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
+      - bash
+      - "-c"
+      - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
     image: postgres
@@ -110,6 +110,7 @@ services:
       - mailcatcher
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: worker
+
   webpacker:
     build:
       context: ./../..
