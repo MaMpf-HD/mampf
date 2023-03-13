@@ -8,7 +8,7 @@ gem "rails", "~> 7.0.2.3"
 # Use dalli for caching to memcached in production
 gem "dalli", ">= 2.7"
 # Ruby wrapper for UglifyJS JavaScript compressor
-gem "uglifier"
+gem "terser"
 # Use nulldb adapter for assets precompilation in production
 gem "activerecord-nulldb-adapter"
 # Use sqlite3 as the database for Active Record

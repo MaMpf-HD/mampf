@@ -620,6 +620,8 @@ GEM
     sync (0.5.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
+    terser (1.1.14)
+      execjs (>= 0.3.0, < 3)
     thor (1.2.1)
     tilt (2.0.10)
     timeago_js (3.0.2.2)
@@ -634,8 +636,6 @@ GEM
     turbolinks-source (5.2.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.1)
@@ -746,11 +746,11 @@ DEPENDENCIES
   streamio-ffmpeg
   sunspot_rails!
   sunspot_solr
+  terser
   thredded!
   thredded-markdown_katex!
   trix-rails
   turbolinks (~> 5)
-  uglifier
   web-console (>= 3.3.0)
   webdrivers
   webpacker (~> 5.x)
