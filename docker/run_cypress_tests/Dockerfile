@@ -4,6 +4,7 @@ FROM golang:1.20 AS build-pdfcomprezzor
 WORKDIR /go/src
 COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
+RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
 FROM ruby:3.1.2
@@ -23,9 +24,11 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 WORKDIR /usr/src/app
 
-COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /usr/src/app/public/pdfcomprezzor/pdfcomprezzor.wasm
-COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm  /pdfcomprezzor.wasm
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
+
+COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
+COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
+
 COPY  ./ /usr/src/app/
 RUN RAILS_ENV=test TEST_DATABASE_ADAPTER=postgresql rake assets:precompile
