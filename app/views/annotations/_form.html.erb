@@ -19,8 +19,22 @@
   <br><br>
 
   <!-- COLOR SELECTION -->
+  <b>Color:</b>
+  <div id="annotation-color-picker">
+    <% for i in 1..15 do %>
+      <%= f.radio_button :color,
+                         annotation_color(i),
+                         id: "annotation_color#{i}" %>
+        <%= f.label :color,
+                    "annotation_color#{i}",
+                    for: "annotation_color#{i}" do %>
+          <span class="annotation_color<%=i%>"></span>
+          <% end %>
+    <% end %>
+  </div>
+  <!-- SIMPLE COLOR PICKER
   <b>Color: &nbsp</b>
-  <%= f.color_field :color %>
+  <%= f.color_field :color %> -->
 
   <br><br>
 
