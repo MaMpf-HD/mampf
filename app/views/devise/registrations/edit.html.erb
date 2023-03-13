@@ -11,34 +11,19 @@
   <div class="mb-3">
     <%= f.label :current_password, t('devise.edit.current_password'),
                 class: "form-label" %>
-    <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-bs-toggle="popover" data-trigger="focus"
-             title="Info"
-             data-content="<%= t('devise.edit.need_password') %>">
-    </i>
+    <%= helpdesk(t('devise.edit.need_password'), true) %>
     <%= f.password_field :current_password, class: 'form-control' %>
   </div>
   <div class="mb-3">
     <%= f.label :password, t('devise.edit.new_password'),
                 class: "form-label" %>
-    <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-bs-toggle="popover" data-trigger="focus"
-             title="Info"
-             data-content="<%= t('devise.edit.no_change') %>">
-    </i>
+    <%= helpdesk(t('devise.edit.no_change'), true) %>
     <%= f.password_field :password, autocomplete: "off", class: 'form-control' %>
   </div>
   <div class="mb-3">
     <%= f.label :password_confirmation, t('devise.edit.confirm_new_password'),
                 class: "form-label" %>
-    <i class="far fa-question-circle helpdesk"
-             tabindex="-1"
-             data-bs-toggle="popover" data-trigger="focus"
-             title="Info"
-             data-content="<%= t('devise.edit.no_change') %>">
-    </i>
+    <%= helpdesk(t('devise.edit.no_change'), true) %>
     <%= f.password_field :password_confirmation, class: 'form-control'  %>
   </div>
 
