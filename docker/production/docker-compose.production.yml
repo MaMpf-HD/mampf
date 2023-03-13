@@ -2,7 +2,7 @@ version: '3.4'
 x-mampf:
   &mampf
   build:
-    context: git@github.com:MaMpf-HD/mampf.git#production
+    context: https://github.com/MaMpf-HD/mampf.git#production
     dockerfile: docker/production/Dockerfile
   env_file: docker.env
   networks:
@@ -52,8 +52,8 @@ services:
 
   dockergen:
     build:
-      context: git@github.com:MaMpf-HD/mampf.git#production
       dockerfile: docker/production/Dockerfile.dockergen
+      context: https://github.com/MaMpf-HD/mampf.git#production
     command: -notify-sighup mampf-docker-proxy -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
     restart: always
     volumes:
