@@ -12,9 +12,16 @@
             id: "commontator-thread-#{thread.id}-#{sub_string}",
             class: sub_string,
             remote: true %>
+tag.i class: 'far fa-question-circle helpdesk ms-2',
+          tabindex: -1,
+          'data-bs-toggle': 'popover',
+          'data-bs-trigger': 'focus',
+          'data-bs-content': text,
+          'data-bs-html': html,
+          title: title
 <%= tag.i class: 'far fa-question-circle helpdesk subscriptionInfo',
           tabindex: -1,
-          data: { toggle: 'popover',
-                  trigger: 'focus',
-                  content: t("commontator.subscription.actions.info.#{sub_string}") },
+          'data-bs-toggle': 'popover',
+          'data-bs-trigger': 'focus',
+          'data-bs-content': t("commontator.subscription.actions.info.#{sub_string}"),
           title: t('info') %>

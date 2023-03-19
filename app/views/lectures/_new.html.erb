@@ -46,7 +46,7 @@
         <%= f.select :term_id,
                      options_for_select(Term.select_terms),
                      {},
-                     { class: 'form-control',
+                     { class: 'form-select',
                        disabled: term_independent } %>
         <div class="invalid-feedback"
              id="new-lecture-term-error">
@@ -79,7 +79,7 @@
                      options_for_select(Lecture.sort_localized.invert.to_a,
                                         'lecture'),
                      {},
-                     { class: 'form-control'} %>
+                     { class: 'form-select'} %>
       </div>
     </div>
     <div class="row">

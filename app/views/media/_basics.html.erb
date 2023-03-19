@@ -12,7 +12,7 @@
       <%= f.select :sort,
                    options_for_select(medium.select_sorts_with_self, medium.sort),
                    {},
-                   { class: 'form-control',
+                   { class: 'form-select',
                      disabled: medium.sort.in?(['Script', 'Quiz',
                                                 'Question', 'Remark']) }%>
       <div class="invalid-feedback"

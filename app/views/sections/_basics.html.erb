@@ -28,7 +28,7 @@
       <%= f.select :chapter_id,
                    options_for_select(lecture_chapters_for_select(section),
                                       section.chapter.id), {},
-                   { class: 'form-control'} %>
+                   { class: 'form-select'} %>
     </div>
     <div class="col-8 mb-3">
       <%= f.label :predecessor,
@@ -39,7 +39,7 @@
                    options_for_select(section_positions_for_select(section),
                                       section.position - 1) ,
                                       {},
-                                      { class: 'form-control' } %>
+                                      { class: 'form-select' } %>
     </div>
     <div class="col-4 mb-3">
       <%= f.label :display_number,

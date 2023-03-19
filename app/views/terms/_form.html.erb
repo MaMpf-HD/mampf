@@ -3,13 +3,13 @@
     <div class="col-2">
       <%= f.select :year,
                    (2016...2025).to_a,
-                   {}, { class: 'form-control' }%>
+                   {}, { class: 'form-select' }%>
     </div>
     <div class="col-2">
       <%= f.select :season,
                    ['WS', 'SS'],
                    {},
-                   { class: 'form-control' } %>
+                   { class: 'form-select' } %>
     </div>
     <div class="col-4">
       <ul>

@@ -30,7 +30,7 @@
         <%= f.select :sort,
                      Item.inverted_sorts.to_a.natural_sort_by { |s| s.first },
                      {},
-                     { class: 'form-control' } %>
+                     { class: 'form-select' } %>
       </div>
     </div>
     <% if item.medium.sort == 'Kaviar' &&

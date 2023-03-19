@@ -14,18 +14,18 @@
         <% if !@watchlist.present? %>
           <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
             <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                         {}, { class: 'form-control is-invalid', id: 'watchlistSelect' } %>
+                         {}, { class: 'form-select is-invalid', id: 'watchlistSelect' } %>
           <% else %>
             <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                         {}, { class: 'form-control', id: 'watchlistSelect' } %>
+                         {}, { class: 'form-select', id: 'watchlistSelect' } %>
           <% end %>
         <% else %>
           <% if @watchlist_entry.present? && @watchlist_entry.errors.any? %>
             <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
-                         {}, { class: 'form-control is-invalid', id: 'watchlistSelect' } %>
+                         {}, { class: 'form-select is-invalid', id: 'watchlistSelect' } %>
           <% else %>
             <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name, @watchlist.id),
-                         {}, { class: 'form-control', id: 'watchlistSelect' } %>
+                         {}, { class: 'form-select', id: 'watchlistSelect' } %>
           <% end %>
         <% end %>
       <% else %>

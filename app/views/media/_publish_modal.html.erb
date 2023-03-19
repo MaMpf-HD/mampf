@@ -113,7 +113,7 @@
                              options_for_select(Assignment.accepted_file_types
                                                           .map { |t| [t,t] }),
                      {},
-                     { class: 'form-control' } %>
+                     { class: 'form-select' } %>
               </div>
               <div class="mb-3 col-3">
                 <%= f.label :assignment_deletion_date,
@@ -121,7 +121,7 @@
                 <%= f.select :assignment_deletion_date,
                             Term.possible_deletion_dates_localized,
                             {},
-                            class: 'form-control' %>
+                            class: 'form-select' %>
                 <div class="invalid-feedback"
                     id="assignment-deletion-date-error">
                 </div>

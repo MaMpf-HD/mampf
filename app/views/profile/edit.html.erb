@@ -31,12 +31,7 @@
             <%= f.label :name,
                         t('profile.name'),
                         class: "form-label" %>
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-bs-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="<%= t('profile.name_information') %>">
-            </i>
+            <%= helpdesk(t('profile.name_information'), true) %>
             <%= f.text_field_without_bootstrap :name,
                                                class: 'form-control' %>
             <div class="invalid-feedback"
@@ -47,12 +42,7 @@
             <%= f.label :name_in_tutorials,
                         t('profile.name_in_tutorials'),
                         class: "form-label" %>
-            <i class="far fa-question-circle helpdesk"
-               tabindex="-1"
-               data-bs-toggle="popover" data-trigger="focus"
-               title="Info"
-               data-content="<%= t('profile.name_in_tutorials_information') %>">
-            </i>
+            <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
             <%= f.text_field_without_bootstrap :name_in_tutorials,
                                                class: 'form-control' %>
           </div>

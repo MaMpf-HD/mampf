@@ -183,16 +183,17 @@
                       data: { color: 'btn-outline-primary' } %>
         <% end %>
         <% if assignment.in_grace_period? %>
-          <i class="fas fa-2x fa-exclamation-circle clickable"
-             id="late-submission-warning"
-             data-bs-toggle="popover"
-             data-content="<%= t('submission.late_submission_warning_html',
-                          friendly_deadline: l(assignment.friendly_deadline,
-                                               format: :short)) %>"
-             data-html="true"
-             data-trigger="hover"
-             title="<%= t('basics.attention') %>">
-          </i>
+          <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ms-2',
+                    tabindex: -1,
+                    'data-bs-toggle': 'popover',
+                    'data-bs-trigger': 'hover',
+                    'data-bs-placement': 'left',
+                    'data-bs-container': 'body',
+                    'data-bs-content': t('submission.late_submission_warning_html',
+                                         friendly_deadline: l(assignment.friendly_deadline,
+                                         format: :short)) ,
+                    'data-bs-html': true,
+                    title: t('basics.attention') %>
         <% end %>
       </div>
     </div>

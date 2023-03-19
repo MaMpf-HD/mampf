@@ -264,14 +264,14 @@ module ApplicationHelper
     value ? 'no_display' : ''
   end
 
-  def helpdesk(text, html)
+  def helpdesk(text, html, title=t('info'))
     tag.i class: 'far fa-question-circle helpdesk ms-2',
           tabindex: -1,
           'data-bs-toggle': 'popover',
           'data-bs-trigger': 'focus',
           'data-bs-content': text,
           'data-bs-html': html,
-          title: t('info')
+          title: title
   end
 
   def realization_path(realization)

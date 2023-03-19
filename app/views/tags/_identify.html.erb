@@ -47,7 +47,7 @@
                     <%= n.select :title,
                                  options_for_select([[]]),
                                  {},
-                                 { class: 'form-control',
+                                 { class: 'form-select',
                                    data: { id: tag.id.to_i,
                                            locale: n.object.locale } } %>
                     <%= n.hidden_field :locale,

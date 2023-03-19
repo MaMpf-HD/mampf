@@ -70,13 +70,7 @@
         "commontator-comment-#{comment.id}-edit-body-switch" %>">
       <%= t('basics.preview') %>
     </label>
-    <%= tag.i class: 'far fa-question-circle helpdesk subscriptionInfo',
-              tabindex: -1,
-              data: { toggle: 'popover',
-                      trigger: 'focus',
-                      content: t("commontator.comment.actions.preview"),
-                      html: true },
-              title: t('info') %>
+    <%= helpdesk(t("commontator.comment.actions.preview"), true) %>
   </div>
   <div id='<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-preview" :

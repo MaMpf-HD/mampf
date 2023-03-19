@@ -59,14 +59,7 @@
         <%= t('basics.note') %>.
       </span>
       <%= t('test.notation') %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-bs-toggle="popover"
-         data-trigger="focus"
-         title="<%= t('test.notation_header') %>"
-         data-content="<%= t('test.notation_examples_html') %>"
-         data-html="true">
-      </i>
+      <%= helpdesk(t('test.notation_examples_html'), true, title: t('test.notation_header')) %>
     </div>
     <div class="row mt-4">
       <div class="col-12">
