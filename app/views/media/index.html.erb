@@ -10,7 +10,7 @@
                                                   all: params[:all],
                                                   per: params[:per],
                                                   visibility: params[:visibility] }),
-                      class: 'btn btn-sm bg-gray-400' %>
+                      class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
         </li>
         <li class="nav-item ps-1 pr-1">
           <% unless @media.page(1).total_pages == 1 || params[:all] %>
@@ -22,7 +22,7 @@
                                                     all: true,
                                                     per: params[:per],
                                                     visibility: params[:visibility] }),
-                        class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
+                        class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
           <% end %>
         </li>
         <li class="nav-item ps-1 pr-1">

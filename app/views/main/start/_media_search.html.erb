@@ -3,7 +3,7 @@
               remote: true,
               method: :get do |f| %>
   <div class="row p-2">
-    <div class="col-6 col-lg-4">
+    <div class="col-6 col-lg-4 mb-3">
       <%= f.label :types,
                   t('basics.types'),
                   class: 'form-label' %>
@@ -31,7 +31,7 @@
                     { class: 'form-check-label' } %>
       </div>
     </div>
-    <div class="col-6 col-lg-4">
+    <div class="col-6 col-lg-4 mb-3">
       <%= f.label :tag_ids,
                   t('basics.related_tags'),
                   class: 'form-label' %>
@@ -78,8 +78,10 @@
                     class: 'custom-control-label' %>
       </div>
     </div>
-    <div class="col-6 col-lg-4 form-group">
-      <%= f.label :teacher_ids, t('basics.teachers') %>
+    <div class="col-6 col-lg-4 mb-3 form-group">
+      <%= f.label :teacher_ids,
+                  t('basics.teachers'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.search_teachers'), true) %>
       <%= f.select :teacher_ids,
                   options_for_select(add_prompt(User.select_teachers)),
@@ -92,7 +94,7 @@
       <div class="form-check mb-2">
         <%= f.check_box :all_teachers,
                         id: 'search_all_media_teachers',
-                        class: 'custom-control-input',
+                        class: 'form-check-input',
                         checked: true,
                         data: { id: 'search_media_teacher_ids' } %>
         <%= f.label :all_media_teachers,
@@ -100,7 +102,7 @@
                     { class: 'form-check-label' } %>
       </div>
     </div>
-    <div class="col-6 col-lg-4 form-group">
+    <div class="col-6 col-lg-4 mb-3 form-group">
       <%= f.label :teachable_ids, t('basics.lectures') %>
       <%= helpdesk(t('search.media.lectures'), true) %>
       <div class="custom-control custom-radio mb-2">
@@ -143,16 +145,20 @@
                       disabled: true,
                       required: true } %>
     </div>
-    <div class="col-6 col-lg-4 form-group">
-      <%= f.label :fulltext, t('basics.title') %>
+    <div class="col-6 col-lg-4 mb-3 form-group">
+      <%= f.label :fulltext,
+                  t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('search.media.title'), false) %>
       <%= f.text_field :fulltext,
                         id: 'media_fulltext',
                         class: 'form-control',
                         placeholder: t('search.media.title_placeholder') %>
     </div>
-    <div class="col-6 col-lg-4 form-group">
-      <%= f.label :per, t('basics.hits_per_page') %>
+    <div class="col-6 col-lg-4 mb-3 form-group">
+      <%= f.label :per,
+                  t('basics.hits_per_page'),
+                  class: "form-label" %>
       <%= f.select :per,
                    options_for_select(hits_per_page(results_as_list),
                                       default_hits_per_page(results_as_list)),

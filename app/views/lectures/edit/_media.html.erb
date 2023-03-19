@@ -11,9 +11,11 @@
       <div class="col-6">
         <%= link_to t('buttons.create_medium'),
                     new_medium_path(params:
-                                      { sort: 'Kaviar',
-                                        teachable_id: lecture.id,
-                                        teachable_type: 'Lecture' }),
+                                    { 
+                                      sort: 'Kaviar',
+                                      teachable_id: lecture.id,
+                                      teachable_type: 'Lecture'
+                                    }),
                     class: 'btn btn-sm btn-secondary new-in-lecture',
                     id: 'create-new-medium',
                     remote: true %>
