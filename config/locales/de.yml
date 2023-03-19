@@ -77,7 +77,7 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2022. MaMpf ist auf %{github}.
+      &copy; MaMpf Team 2023. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
       Bugs meldest Du am besten %{bugs}.
@@ -3047,6 +3047,64 @@ de:
       Hash:%{hash}
     data_request_mail_body: >
       %{mail} mit User-Id: %{id} hat ihre Daten angefordert.
+    data_provide_mail_subject: Anfrage nach Daten
+    data_provide_mail_body: >
+      Hallo, %{name}!<br>
+
+      Du hast uns eine Anforderung deiner Daten geschickt. Dem kommen wir gerne nach.
+      Zunächst gibt es mit dir direkt verknüpfte Daten:<br>
+
+      Deine Emailadresse: %{email}<br>
+      Account-Erstellung: %{created_at}<br>
+      Letzte Account-Änderung: %{updated_at}<br>
+      Admin: %{admin}<br>
+      Abo-Typ: %{subscription_type}<br>
+      Name: %{name}<br>
+      Homepage: %{homepage}<br>
+      Keine Benachrichtigungen: %{no_notifications}<br>
+      Sprache: %{_locale}<br>
+      Emails für Medien: %{email_for_medium}<br>
+      Emails für Ankündigungen: %{email_for_announcement}<br>
+      Emails für Vorlesungen: %{email_for_teachable}<br>
+      Emails für Neuigkeiten: %{email_for_news}<br>
+      Ungelesene Kommentare: %{unread_comments}<br>
+      Studien-Teilnehmer: %{study_participant}<br>
+      Emails für Abgaben-Upload: %{email_for_submission_upload}<br>
+      Emails für Abgaben-Löschung: %{email_for_submission_removal}<br>
+      Emails für Abgaben-Beitritt: %{email_for_submission_join}<br>
+      Emails für Abgaben-Verlassen: %{email_for_submission_leave}<br>
+      Emails für Korrektur-Upload: %{email_for_correction_upload}<br>
+      Emails für Abgabe-Entscheidung: %{email_for_submission_decision}<br>
+      Name in Tutorials: %{name_in_tutorials}<br>
+      Archiviert: %{archived}<br>
+      Bild-Daten: %{image_data}<br>
+
+      Über die Bedeutung der einzelnen Daten kannst du gerne mit uns Kontakt aufnehmen.
+      Weiterhin gibt es Daten, die mit anderen Datenbankeinträgen verknüpft sind, nämlich<br>
+
+      -abonnierte Vorlesungen<br>
+      -Favoritenvorlesungen<br>
+      -Module als Moduleditor<br>
+      -Vorlesungen als Vorlesungeditor<br>
+      -editierte Medien<br>
+      -gehaltene Vorlesungen<br>
+      -gehaltene Tutorien<br>
+      -Vorträge<br>
+      -erhaltene Notifications (z.B. über neue Medien etc.)<br>
+      -erstellte Announcements<br>
+      -registrierte Clicker<br>
+      -Zettelabgaben<br>
+      -Watchlists<br>
+      -Quizzertifikate<br>
+      -Forenbeiträge<br>
+      -Kommentare<br>
+
+      Einige dieser Daten mögen nicht auf dich zutreffen.<br>
+
+      Bei weiterem Interesse kontaktiere uns bitte.<br>
+
+      Mit freundlichen Grüßen,<br>
+      Dein MaMpf-Team
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'

@@ -130,6 +130,7 @@ class ProfileController < ApplicationController
 
   def request_data
     MathiMailer.data_request_email(current_user).deliver_later
+    MathiMailer.data_provide_email(current_user).deliver_later
     redirect_to edit_profile_path, notice: t('profile.data_request_sent')
   end
 
