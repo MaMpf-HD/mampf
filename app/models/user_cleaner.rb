@@ -74,7 +74,7 @@ class UserCleaner
 
     @users.each do |user|
       user.update(ghost_hash: Digest::SHA256.hexdigest(Time.now.to_i.to_s))
-      MathiMailer.ghost_email(user).deliver_later
+      MathiMailer.ghost_email(user).deliver_now
       move_mail(@email_dict[user])
     end
   end
@@ -82,7 +82,7 @@ class UserCleaner
   def delete_ghosts
     @hash_dict.each do |mail, hash|
       u = User.find_by(email: mail, ghost_hash: hash)
-      move_mail(@email_dict[mail]) if u.present?
+      move_mail(@email_dict[mail]) if u.present? and @email_dict.present?
       u.destroy! if u&.generic?
     end
   end

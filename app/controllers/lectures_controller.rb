@@ -26,6 +26,25 @@ class LecturesController < ApplicationController
   end
 
   def update
+    editor_ids = lecture_params[:editor_ids]
+    if editor_ids != nil
+      # removes the empty String "" in the NEW array of editor ids
+      # and converts it into an array of integers
+      all_ids = editor_ids.map(&:to_i) - [0]
+      old_ids = @lecture.editor_ids
+      new_ids = all_ids - old_ids
+
+      # returns an array of Users that match the given ids
+      recipients = User.where(id: new_ids)
+
+      recipients.each do |r|
+        NotificationMailer.with(recipient: r,
+                                locale: r.locale,
+                                lecture: @lecture)
+                          .new_editor_email.deliver_later
+      end
+    end
+    
     @lecture.update(lecture_params)
     if structure_params.present?
       structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys

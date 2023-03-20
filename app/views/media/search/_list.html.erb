@@ -1,0 +1,140 @@
+<div class="row">
+  <div class="<%= purpose == 'media' ? 'col-9' : 'col-8' %>">
+    <div class="row bg-mdb-color-lighten-5 mx-2 py-3"
+          id="searchResultsHeader">
+      <div class="col-5">
+        <strong>
+          <%= t('basics.description') %>
+        </strong>
+      </div>
+      <div class="col-1">
+        <strong>
+          <%= t('basics.associated_to_short') %>
+        </strong>
+      </div>
+      <div class="col-3">
+        <strong>
+          <%= t('basics.related_tags') %>
+        </strong>
+      </div>
+      <div class="col-2">
+        <strong>
+          <%= t('basics.editors') %>
+        </strong>
+      </div>
+      <div class="col-1">
+      </div>
+    </div>
+    <div id="mediaTable"
+          class="mx-2 pl-2">
+      <% media.each do |m| %>
+        <%# cache [m, purpose] do %>
+          <div class="row border-bottom mx-2"
+                id="row-medium-<%= m.id %>"
+                data-id="<%= m.id %>"
+                data-type="<%= m.type %>"
+                data-purpose="<%= purpose %>"
+                style="cursor: pointer;">
+            <div class="col-5">
+              <%= purpose.in?(['media', 'import']) ? m.title_for_viewers : m.details %>
+            </div>
+            <div class="col-1">
+              <% if m.teachable_type == 'Course' %>
+                <% if current_user.admin || current_user.in?(m.teachable.editors) %>
+                  <%= link_to m.teachable.short_title,
+                              edit_course_path(m.teachable) %>
+                <% end %>
+              <% elsif m.teachable_type == 'Lecture' %>
+                <%= link_to m.teachable.short_title,
+                            edit_or_show_lecture_path(m.teachable) %>
+              <% else %>
+                <%= link_to m.teachable&.short_title_with_lecture_date,
+                            edit_or_show_lecture_path(m.teachable&.lecture) %>
+              <% end %>
+            </div>
+            <div class="col-3 mediumTags"
+                  data-medium="<%= m.id %>">
+              <% m.tags.each do |t| %>
+                <%= link_to t.short_title,
+                            edit_tag_path(t),
+                            class:'badge badge-light',
+                            data: { toggle: 'tooltip', placement: 'top'},
+                            title: t.title %>
+              <% end %>
+            </div>
+            <div class="col-2">
+              <ul class="list-unstyled">
+                <% m.editors.each do |e| %>
+                  <li>
+                    <%= e.name_or_email  %>
+                  </li>
+                <% end %>
+              </ul>
+            </div>
+            <div class="col-1">
+              <%= render partial: 'media/catalog/access_info',
+                          locals: { medium: m } %>
+            </div>
+          </div>
+        <%# end %>
+      <% end %>
+    </div>
+  </div>
+  <% if purpose.in?(['media', 'clicker']) %>
+    <div class="<%= purpose == 'media' ? 'col-3' : 'col-4' %>">
+      <div class="row bg-mdb-color-lighten-5 mb-2 py-2">
+        <div class="col-12">
+          <strong>
+            <%= t('basics.preview') %>
+          </strong>
+        </div>
+      </div>
+      <% if purpose == 'media' %>
+        <%= render partial: 'media/catalog/tags_form' %>
+      <% end %>
+      <div class="row">
+        <div class="col-12">
+          <div id="mediumActions">
+          </div>
+        </div>
+        <div class="col-12">
+          <div id="mediumPreview">
+          </div>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="col-4">
+      <div class="row bg-mdb-color-lighten-5 ml-2 py-2 mb-3">
+        <div class="col-12">
+          <strong>
+            <%= t('basics.selection') %>
+            <span id="selectionCounter">
+            </span>
+          </strong>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12">
+          <div id="importMediaForm">
+          </div>
+        </div>
+      </div>
+      <div class="row bg-mdb-color-lighten-5 mx-2 mt-3 py-2"
+            id="previewHeader"
+            style="display: none;">
+        <div class="col-12">
+          <strong>
+            <%= t('basics.preview') %>
+          </strong>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <div id="mediumPreview" class="p-2">
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

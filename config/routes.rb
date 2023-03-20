@@ -219,7 +219,7 @@ Rails.application.routes.draw do
 
   get 'lectures/search',
       to: 'lectures#search',
-      as: 'search_lectures'
+      as: 'lecture_search'
 
   get 'lectures/:id/display_course',
       to: 'lectures#display_course',
@@ -441,6 +441,9 @@ Rails.application.routes.draw do
 
   patch 'profile/unstar_lecture',
         as: 'unstar_lecture'
+
+  get 'profile/request_data',
+      as: 'request_data'
 
   # programs routes
 

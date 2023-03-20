@@ -5,7 +5,7 @@ class MediumAbility
     user ||= User.new
     clear_aliased_actions
 
-    can [:index, :new], Medium
+    can [:index, :new, :search], Medium
 
     can [:show, :show_comments], Medium do |medium|
       medium.visible_for_user?(user)  &&
@@ -28,7 +28,7 @@ class MediumAbility
       user.can_edit?(medium.teachable)
     end
 
-    can [:search, :fill_teachable_select, :fill_media_select,
+    can [:fill_teachable_select, :fill_media_select,
          :fill_medium_preview, :render_medium_actions,
          :render_import_media, :render_import_vertex,
          :cancel_import_media, :cancel_import_vertex,

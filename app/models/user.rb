@@ -525,6 +525,10 @@ class User < ApplicationRecord
     return false unless lecture.is_a?(Lecture)
     return false if lecture.in?(lectures)
     lectures << lecture
+    
+    # make sure subscribed_users is updated in media
+    Sunspot.index! lecture.media
+
     true
   end
 
@@ -533,6 +537,9 @@ class User < ApplicationRecord
     return false unless lecture.in?(lectures)
     lectures.delete(lecture)
     favorite_lectures.delete(lecture)
+
+    # make sure subscribed_users is updated in media
+    Sunspot.index! lecture.media
     true
   end
 

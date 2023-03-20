@@ -143,9 +143,9 @@ compareToSolution = (solutionInput) ->
   solutionString = $('#question_nerd').val()
   type = $('#question_solution_type').val()
   params = $('#solution-form').data('parameters')
-  if params
+  unless $.isEmptyObject(params)
     try
-      solutionString = nerdamer(solutionString, params).toString()
+      solutionString = nerdamer(solutionString, params).evaluate().toString()
     catch err
       solutionString = 'Error'
   solution = MampfSolution.fromExpression(type, solutionString)
