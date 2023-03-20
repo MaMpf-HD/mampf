@@ -41,7 +41,7 @@
                  id="<%= s %>-tab"
                  data-bs-toggle="tab" href="#<%= s %>-media" role="tab"
                  aria-controls="<%= s%>-media" aria-selected="true"
-                 data-bs-sort="<%= media_types[s].first %>">
+                 data-sort="<%= media_types[s].first %>">
                 <%= media_names[s] %>
                 (<%= media.select { |m| m.sort.in?(media_types[s]) }.size %>)
               </a>
