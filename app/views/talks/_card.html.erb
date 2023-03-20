@@ -1,55 +1,57 @@
-<div class="card bg-mdb-color-lighten-5 %>">
-  <div id="<%= dom_id(talk) %>"
-       class="card-header <%= talk_card_color(talk, current_user) %>">
-    <div class="row">
-      <div class="col-12 talkheader">
-        <div>
-        <% if edit %>
-          <%= link_to talk.to_label,
-                      edit_talk_path(talk),
-                      class: 'text-light' %>
-        <% else %>
-          <%= link_to talk.to_label,
-                      talk_path(talk),
-                      class: 'text-light' %>
-          <% if current_user.in?(talk.speakers) %>
-            <%= link_to '',
-                        assemble_talk_path(talk),
-                        class: 'far fa-edit text-light text-end',
-                        data: { toggle: 'tooltip',
-                                placement: 'bottom' },
-                        title: t('buttons.edit'),
-                        style: 'text-decoration: none; ' +
-                               'display: inline;' %>
-          <% end %>
-        <% end %>
-        </div>
-        <div>
-          <% talk.dates.each do |d| %>
-            <%= link_to localize(d, format: :concise),
-                        talk_path(talk),
-                        class: 'badge bg-secondary' %>
-          <% end %>
-        </div>
-      </div>
-    </div>
-    <% if talk.speakers.any? %>
+<div class="col-sm-12 col-lg-6" >
+  <div class="card bg-mdb-color-lighten-5 %>">
+    <div id="<%= dom_id(talk) %>"
+        class="card-header <%= talk_card_color(talk, current_user) %>">
       <div class="row">
-        <div class="col-12">
-          <span class="text-light">
-            (<%= speaker_list(talk) %>)
-          </span>
+        <div class="col-12 talkheader">
+          <div>
+          <% if edit %>
+            <%= link_to talk.to_label,
+                        edit_talk_path(talk),
+                        class: 'text-light' %>
+          <% else %>
+            <%= link_to talk.to_label,
+                        talk_path(talk),
+                        class: 'text-light' %>
+            <% if current_user.in?(talk.speakers) %>
+              <%= link_to '',
+                          assemble_talk_path(talk),
+                          class: 'far fa-edit text-light text-end',
+                          data: { toggle: 'tooltip',
+                                  placement: 'bottom' },
+                          title: t('buttons.edit'),
+                          style: 'text-decoration: none; ' +
+                                'display: inline;' %>
+            <% end %>
+          <% end %>
+          </div>
+          <div>
+            <% talk.dates.each do |d| %>
+              <%= link_to localize(d, format: :concise),
+                          talk_path(talk),
+                          class: 'badge bg-secondary' %>
+            <% end %>
+          </div>
         </div>
       </div>
-    <% end %>
-  </div>
-  <div class="card-body">
-    <%= sanitize talk.details %>
-    <div class="row">
-      <div class="col-12 mt-2">
-        <%= render partial: 'tags/show/tag',
-                   collection: talk.tags,
-                   cached: true %>
+      <% if talk.speakers.any? %>
+        <div class="row">
+          <div class="col-12">
+            <span class="text-light">
+              (<%= speaker_list(talk) %>)
+            </span>
+          </div>
+        </div>
+      <% end %>
+    </div>
+    <div class="card-body">
+      <%= sanitize talk.details %>
+      <div class="row">
+        <div class="col-12 mt-2">
+          <%= render partial: 'tags/show/tag',
+                    collection: talk.tags,
+                    cached: true %>
+        </div>
       </div>
     </div>
   </div>

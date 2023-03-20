@@ -35,7 +35,7 @@
 </div>
 <% privileged = current_user.admin ||
                   current_user.in?(@lecture.editors_with_inheritance) %>
-<div class="row" data-masonry='{"percentPosition": true}' >
+<div class="row" >
   <% if @notifications.present? || @new_topics_count.positive? %>
     <div class="col-12">
       <%= render partial: 'lectures/news_card',
