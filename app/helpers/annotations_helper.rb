@@ -30,38 +30,24 @@ module AnnotationsHelper
   end
   
   def annotation_color(int)
-    case int
-    when 1
-      return '#DB2828'
-    when 2
-      return '#F2711C'
-    when 3
-      return '#FBBD08'
-    when 4
-      return '#B5CC18'
-    when 5
-      return '#21BA45'
-    when 6
-      return '#00B5AD'
-    when 7
-      return '#2185D0'
-    when 8
-      return '#6435C9'
-    when 9
-      return '#A333C8'
-    when 10
-      return '#E03997'
-    when 11
-      return '#d05d41'
-    when 12
-      return '#924129'
-    when 13
-      return '#444444'
-    when 14
-      return '#999999'
-    when 15
-      return '#eeeeee'
-    end
+    color_map = {
+       1 => '#DB2828',
+       2 => '#F2711C',
+       3 => '#FBBD08',
+       4 => '#B5CC18',
+       5 => '#21BA45',
+       6 => '#00B5AD',
+       7 => '#2185D0',
+       8 => '#6435C9',
+       9 => '#A333C8',
+      10 => '#E03997',
+      11 => '#d05d41',
+      12 => '#924129',
+      13 => '#444444',
+      14 => '#999999',
+      15 => '#eeeeee'
+    }
+    color_map[int] || '#000000'
   end
   
 end
