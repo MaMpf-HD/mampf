@@ -18,7 +18,7 @@ class UserCleaner
     # Mails containing multiple email addresses (Subject: "Undelivered Mail Returned to Sender")
     @imap.search(['SUBJECT', 'Undelivered Mail Returned to Sender']).each do |message_id|
       body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
-      if match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/)
+      if match = body.scan(/<([^>]+)>\s+\(expanded\s+from\s+<([^>]+)>\):\s+User\s+has\s+moved\s+to\s+ERROR:\s+Account\s+expired/)
         match = match.flatten.uniq
         match.each do |email|
           add_mail(email, message_id)
