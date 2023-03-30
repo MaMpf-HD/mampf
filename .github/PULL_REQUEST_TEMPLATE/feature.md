@@ -1,15 +1,14 @@
 This pull request questionaire is for features and bugs
 
 * **Please check if the PR fulfills these requirements**
-
-- [ ] E2E Tests for the changes have been added  via Cypress
-- [ ] Meaningful rspec tests have been added
-- [ ] Docs have been added / updated 
-- Linter
-    - [ ] `rubocop` reports equal or less errors and warnings **in total**
-    - [ ] `yarn lint` reports equal or less errors and warnings **in total**
-    - [ ] `coffeelint .` reports equal or less errors and warnings **in total**
-    - [ ] `erblint .` reports equal or less errors and warnings **in total**
+  - [ ] E2E Tests for the changes have been added  via Cypress
+  - [ ] Meaningful rspec tests have been added
+  - [ ] Docs have been added / updated 
+  - Linter
+      - [ ] `rubocop` reports equal or less errors and warnings **in total**
+      - [ ] `yarn lint` reports equal or less errors and warnings **in total**
+      - [ ] `coffeelint .` reports equal or less errors and warnings **in total**
+      - [ ] `erblint .` reports equal or less errors and warnings **in total**
 
 * **What kind of change does this PR introduce?** (Bug fix, feature, docs update, ...)
 

@@ -2870,6 +2870,64 @@ en:
       Hash:%{hash}
     data_request_mail_body: >
       %{mail} with user-id: %{id} has requested his data.
+    data_provide_mail_subject: Data request
+    data_provide_mail_body: >
+      Hello, %{name}!<br>
+
+      You have sent us a request for your data. We are happy to comply with it.
+      First, there is data directly linked to you:<br>
+
+      Your email address: %{email}<br>
+      Account creation: %{created_at}<br>
+      Last account change: %{updated_at}<br>
+      Admin: %{admin}<br>
+      Subscription type: %{subscription_type}<br>
+      Name: %{name}<br>
+      Homepage: %{homepage}<br>
+      No notifications: %{no_notifications}<br>
+      Language: %{_locale}<br>
+      Emails for media: %{email_for_medium}<br>
+      Emails for announcements: %{email_for_announcement}<br>
+      Emails for lectures: %{email_for_teachable}<br>
+      Emails for news: %{email_for_news}<br>
+      Unread comments: %{unread_comments}<br>
+      Study participant: %{study_participant}<br>
+      Emails for submission Upload: %{email_for_submission_upload}<br>
+      Emails for submission deletion: %{email_for_submission_removal}<br>
+      Emails for submission joining: %{email_for_submission_join}<br>
+      Emails for submission leave: %{email_for_submission_leave}<br>
+      Emails for correction upload: %{email_for_correction_upload}<br>
+      Emails for submission decision: %{email_for_submission_decision}<br>
+      Name in tutorials: %{name_in_tutorials}<br>
+      Archived: %{archived}<br>
+      Image data: %{image_data}<br>
+
+      You are welcome to contact us about the meaning of the individual data.
+      Furthermore there are data which are linked to other database entries, namely<br>
+
+      -subscribed lectures<br>
+      -Favorite lectures<br>
+      -modules as module editor<br>
+      -lectures as lecture editor<br>
+      -edited media<br>
+      -held lectures<br>
+      -held tutorials<br>
+      -lectures<br>
+      -received notifications (e.g. about new media etc.)<br>
+      -created Announcements<br>
+      -registered clickers<br>
+      -Note submissions<br>
+      -watchlists<br>
+      -quizzes certificates<br>
+      -forum posts<br>
+      -comments<br>
+
+      Note that not all of these data may apply to you.<br>
+
+      For further insight, please contact us.<br>
+
+      With kind regards,<br>
+      Your MaMpf-Team
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
