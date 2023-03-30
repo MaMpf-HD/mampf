@@ -3,7 +3,7 @@ on: [push]
 jobs:
   rubocop:
     runs-on: ubuntu-latest
-    name: A job to codecov report.
+    name: Unit tests & Codecov report
     steps:
     - uses: actions/checkout@v2
       with:
