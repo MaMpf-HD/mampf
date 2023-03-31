@@ -11,8 +11,7 @@ NOTE: Please make sure to clone recursively as the pdf compression feature is in
 
 If you have an already checked out version simply run:
 ```
-git submodule init
-git submodule update
+git submodule update --init
 ```
 
 You now have the following things ready:
