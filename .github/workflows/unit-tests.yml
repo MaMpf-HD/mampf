@@ -1,0 +1,62 @@
+name: Unit tests
+
+on:
+  push:
+    branches:
+      - main
+      - mampf-next
+      - production
+      - experimental
+  pull_request:
+
+jobs:
+  unit-test-job:
+    name: Execute unit tests & upload to Codecov
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    # Pull the latest image to build, and avoid caching pull-only images.
+    # (docker pull is faster than caching in most cases.)
+    - name: Pull docker images
+      run: docker compose pull
+      working-directory: docker/development
+
+    # In this step, this action saves a list of existing images,
+    # the cache is created without them in the post run.
+    # It also restores the cache if it exists.
+    # https://github.com/jpribyl/action-docker-layer-caching
+    - name: Use Docker layer caching
+      uses: jpribyl/action-docker-layer-caching@v0.1.1
+      continue-on-error: true
+
+    - name: Build and start docker containers
+      working-directory: docker/development
+      run: |
+        docker compose up --build --detach
+
+    - name: Create and prepare test database
+      working-directory: docker/development
+      run: |
+          docker compose exec mampf sh -c "RAILS_ENV=test rails db:create"
+          docker compose exec mampf sh -c "RAILS_ENV=test rails db:migrate"
+          docker compose exec mampf sh -c "RAILS_ENV=test rails db:test:prepare"
+
+    - name: Reindex sunspot
+      working-directory: docker/development
+      run: |
+        docker compose exec mampf sh -c "RAILS_ENV=test rake sunspot:reindex"
+
+    - name: Run unit tests
+      working-directory: docker/development
+      run: docker compose exec mampf sh -c "RAILS_ENV=test rails spec"
+
+    - name: Send test coverage report to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        directory: ./coverage
+        fail_ci_if_error: true
+        verbose: true
