@@ -22,7 +22,7 @@ jobs:
     # Pull the latest image to build, and avoid caching pull-only images.
     # (docker pull is faster than caching in most cases.)
     - name: Pull docker images
-      run: docker compose pull
+      run: docker compose pull --ignore-buildable
       working-directory: docker/development
 
     # In this step, this action saves a list of existing images,
