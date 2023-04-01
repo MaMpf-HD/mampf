@@ -1,3 +1,7 @@
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
 #signin-box {
     background-color: white;
     max-width: 1100px;
@@ -5,7 +9,12 @@
     padding: 70px 40px;
     border-radius: 8px;
     box-shadow: 1px 4px 7px rgba(0, 0, 0, 0.13);
+
+    @include media-breakpoint-down(sm) {
+        border-radius: 0;
+    }
 }
+
 
 #landing-body {
     background-image: image-url('landing-background.jpg');
