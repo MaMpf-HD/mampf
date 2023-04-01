@@ -13,9 +13,19 @@
             <%= image_tag '/MaMpf-Logo_96x96.png', class: 'img-fluid mr-2' %>
             <%= t('mampf') %>
           </h1>
+
           <h5>
             <%= t('main.welcome') %>
+            <small>
+            <% I18n.available_locales.each do |l| %>
+              <% unless l == I18n.locale %>
+                <%= link_to l.to_s,
+                            { locale: l } %>
+              <% end %>
+            <% end %>
+            </small>
           </h5>
+
           <%= t('main.about') %>
           <ul>
             <li>
@@ -58,6 +68,7 @@
         </div>
       </div>
     </div>
+    
     <footer class="container-fluid p-0">
       <%= render partial: 'shared/footer' %>
     </footer>
