@@ -865,6 +865,11 @@ Rails.application.routes.draw do
 		end
 	end
 
+	# Allow /login besides /users/sign_in
+	devise_scope :user do
+    get "/login" => "devise/sessions#new"
+  end
+
   get 'error',
       to: 'main#error'
 
