@@ -1,0 +1,28 @@
+.sidebar-item {
+    border-radius: 10px;
+
+    a {
+        color: rgb(85, 85, 85);
+        text-decoration: none;
+    }
+
+    :hover {
+        border-radius: 8px;
+        background-color: #EBF0FE;
+    }
+
+}
+
+#sidebar-container {
+    background-color: white;
+    box-shadow: 7px 0 7px -8px #0000003b;
+}
+
+.active-sidebar-item {
+    background-color: #EBF0FE;
+
+    a {
+        color: #4E6ED9;
+        font-weight: 500;
+    }
+}

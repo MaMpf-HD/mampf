@@ -1,139 +1,144 @@
+<%= stylesheet_link_tag 'sidebar' %>
+
 <% I18n.with_locale(lecture&.locale_with_inheritance) do %>
 <ul class="nav nav-pills flex-column">
-  <li class="nav-item">
+
+  <% project_name = 'kaviar' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
     <% if !lecture || !lecture.kaviar?(current_user) %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.kaviar.plural') %>
       </span>
     <% else %>
-      <%= link_to t('categories.kaviar.plural'),
-                  lecture_food_path(lecture,
-                                    params:
-                                      { project: 'kaviar' }),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.kaviar.plural'), fullpath, class:'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+  
+  <% project_name = 'script' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
     <% if !lecture || !lecture.script?(current_user) %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.script.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.script.singular'),
-                  lecture_food_path(lecture,
-                                    params: { project: 'script' }),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.script.singular'), fullpath, class: 'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+
+  <% project_name = 'nuesse' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
     <% if !lecture || !lecture.nuesse?(current_user) %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.exercises.plural') %>
       </span>
     <% else %>
-      <%= link_to t('categories.exercises.plural'),
-                  lecture_food_path(lecture,
-                                    params:
-                                      { project: 'nuesse' }),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.exercises.plural'), fullpath, class: 'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+
+  <% project_name = 'keks' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
     <% if !lecture || !lecture.keks?(current_user) %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.quiz.plural') %>
       </span>
     <% else %>
-      <%= link_to t('categories.quiz.plural'),
-                    lecture_food_path(lecture,
-                                      params: { project: 'keks' }),
-                    class: 'nav-link' %>
+      <%= link_to t('categories.quiz.plural'), fullpath, class: 'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+
+  <% path = show_random_quizzes_path(lecture) %>
+  <li class="sidebar-item <%= get_class_for_path(path) %>">
     <% if !lecture || !lecture.course.enough_questions? %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.test.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.test.singular'),
-                  show_random_quizzes_path(lecture),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.test.singular'), path, class: 'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+
+  <% project_name = 'sesam' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
     <% if !lecture || !lecture.sesam?(current_user) %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.sesam.plural') %>
       </span>
     <% else %>
-      <%= link_to t('categories.sesam.plural'),
-                  lecture_food_path(lecture,
-                                    params: { project: 'sesam' }),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.sesam.plural'), fullpath, class: 'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+
+  <% path = show_structures_path(lecture) %>
+  <li class="sidebar-item <%= get_class_for_path(path) %>">
     <% if !lecture || !lecture.structure_ids.any? %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.erdbeere.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.erdbeere.singular'),
-                  show_structures_path(lecture),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.erdbeere.singular'), path, class: 'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+
+  <% project_name = 'kiwi' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
     <% if !lecture || !lecture.kiwi?(current_user) %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.kiwi.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.kiwi.singular'),
-                  lecture_food_path(lecture,
-                                    params: { project: 'kiwi' }),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.kiwi.singular'), fullpath, class: 'nav-link' %>
     <% end %>
   </li>
-  <li class="nav-item">
+
+  <% project_name = 'reste' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
     <% if !lecture || !lecture.reste?(current_user) %>
-      <span class="nav-link disabled">
+      <span class="nav-link">
         <%= t('categories.reste.singular') %>
       </span>
     <% else %>
-      <%= link_to t('categories.reste.singular'),
-                  lecture_food_path(lecture,
-                                    params: { project: 'reste' }),
-                  class: 'nav-link' %>
+      <%= link_to t('categories.reste.singular'), fullpath, class: 'nav-link' %>
     <% end %>
   </li>
+
+
   <% if lecture %>
     <span class="border-top my-3">
     </span>
-    <li class="nav-item">
+
+    <% path = organizational_path(lecture) %>
+    <li class="sidebar-item <%= get_class_for_path(path) %>">
       <% if lecture.organizational %>
-        <%= link_to t('categories.organizational_html'),
-                    organizational_path(lecture),
-                    class: 'nav-link' %>
+        <%= link_to t('categories.organizational_html'), path, class: 'nav-link' %>
       <% else %>
-        <span class="nav-link disabled">
+        <span class="nav-link">
           <%= t('categories.organizational_html') %>
         </span>
       <% end %>
     </li>
+
     <% if lecture.announcements.exists? %>
-      <%= link_to t('categories.announcements'),
-                  show_announcements_path(lecture),
-                  class: 'nav-link' %>
+      <% path = show_announcements_path(lecture) %>
+      <li class="sidebar-item <%= get_class_for_path(path) %>">
+        <%= link_to t('categories.announcements'), path, class: 'nav-link' %>
+      </li>
     <% else %>
-      <li class="nav-link disabled">
+      <li class="nav-link">
         <%= t('categories.announcements') %>
       </li>
     <% end %>
-    <li class="nav-item">
+
+    <li class="sidebar-item">
       <% if !lecture.forum? %>
-        <span class="nav-link disabled">
+        <span class="nav-link">
           <%= t('categories.board') %>
         </span>
       <% else %>
@@ -145,18 +150,22 @@
         </a>
       <% end %>
     </li>
-    <li class="nav-item">
+
+    <li class="sidebar-item <%= get_class_for_any_path(
+      [lecture_tutorials_path(lecture),
+      lecture_tutorial_overview_path(lecture),
+      lecture_submissions_path(lecture)]) %>">
       <% if current_user.in?(lecture.tutors) %>
         <%= link_to t('categories.tutorials'),
-                    lecture_tutorials_path(lecture),
-                    class: 'nav-link' %>
+                      lecture_tutorials_path(lecture),
+                      class: 'nav-link' %>
       <% elsif current_user.editor_or_teacher_in?(lecture) %>
         <% if lecture.tutorials.any? %>
           <%= link_to t('categories.tutorials'),
                       lecture_tutorial_overview_path(lecture),
                       class: 'nav-link' %>
         <% else %>
-          <span class="nav-link disabled">
+          <span class="nav-link">
             <%= t('categories.tutorials') %>
           </span>
         <% end %>
@@ -166,13 +175,14 @@
                       lecture_submissions_path(lecture),
                       class: 'nav-link' %>
         <% else %>
-          <span class="nav-link disabled">
+          <span class="nav-link">
             <%= t('categories.submissions') %>
           </span>
         <% end %>
       <% end %>
     </li>
-    <li class="nav-item">
+
+    <li class="sidebar-item">
       <% if lecture.muesli %>
         <a href="<%= DefaultSetting::MUESLI_LINK %>"
            class="nav-link"
@@ -181,15 +191,15 @@
           <i class="fas fa-external-link-alt fa-xs"></i>
         </a>
       <% else %>
-        <span class="nav-link disabled">
+        <span class="nav-link">
           <%= t('categories.muesli') %>
         </span>
       <% end %>
     </li>
-    <li class="nav-item">
-      <%= link_to t('categories.course'),
-                  display_course_path(lecture),
-                  class: 'nav-link' %>
+
+    <% path = display_course_path(lecture) %>
+    <li class="sidebar-item <%= get_class_for_path(path) %>">
+      <%= link_to t('categories.course'), path, class: 'nav-link' %>
     </li>
   <% end %>
 </ul>

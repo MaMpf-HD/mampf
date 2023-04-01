@@ -283,4 +283,24 @@ module ApplicationHelper
                 .natural_sort_by(&:title)
                &.first&.term_independent
   end
+
+  # Navbar items styling based on which page we are on
+  # https://gist.github.com/mynameispj/5692162
+  def get_class_for_project(project)
+    return request.params['project'] == project ? 'active-sidebar-item' : ''
+  end
+
+  def get_class_for_path(path)
+    return request.path == path ? 'active-sidebar-item' : ''
+  end
+
+  def get_class_for_any_path(paths)
+    for path in paths do
+      if request.path == path
+        return 'active-sidebar-item'
+      end
+    end
+    return ''
+  end
+
 end

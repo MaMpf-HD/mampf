@@ -2,16 +2,19 @@
 <html>
   <head>
     <%= render partial: 'layouts/head' %>
+    <%= stylesheet_link_tag 'sidebar' %>
   </head>
   <body data-locale="<%= I18n.locale %>">
     <%= render partial: 'shared/navbar' %>
     <div class="container-fluid">
       <div class="row">
-        <nav id="sidebar"
-             class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
-          <%= render partial: 'shared/sidebar',
-                     locals: { lecture: @lecture || current_lecture } %>
-        </nav>
+        <div id="sidebar-container"
+          class="col-sm-3 col-md-2 pt-3">
+          <nav id="sidebar">
+            <%= render partial: 'shared/sidebar',
+                      locals: { lecture: @lecture || current_lecture } %>
+          </nav>
+        </div>
         <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
           <div class="alert alert-danger" id="js-messages" role="alert"
                style="display: none;">
