@@ -848,9 +848,22 @@ Rails.application.routes.draw do
       to: 'erdbeere#fill_realizations_select',
       as: 'fill_realizations_select'
 
+
   # main routes
 
-  root to: redirect("/users/sign_in")
+	# Ruby set root based on whether user is authenticated or not
+	# https://stackoverflow.com/questions/37261620/change-root-depending-on-whether-a-user-is-logged-in-or-not-without-devise-on-ru
+	# https://github.com/heartcombo/devise/blob/3926e6d9eb139cc839faec8ea6c8f8cefa2d95f6/lib/devise/rails/routes.rb#L296-L334
+	# https://stackoverflow.com/a/27507722/
+	devise_scope :user do
+		authenticated :user do
+			root to: 'main#start'
+		end
+	
+		unauthenticated do
+			root to: 'devise/sessions#new', as: :unauthenticated_root
+		end
+	end
 
   get 'error',
       to: 'main#error'
