@@ -4,7 +4,7 @@
     <%= render partial: 'layouts/head' %>
     <%= stylesheet_link_tag 'landing' %>
   </head>
-  <body data-locale="<%= I18n.locale %>" class="d-flex flex-column overflow-hidden min-vh-100 vh-100">
+  <body data-locale="<%= I18n.locale %>" class="d-flex flex-column min-vh-100 vh-100" id="landing-body">
     <div class="container-sm d-flex align-items-center justify-content-center vh-100">
       <div id="signin-box" class="row">
 
@@ -27,7 +27,7 @@
           </h5>
 
           <%= t('main.about') %>
-          <ul>
+          <ul class="ul-no-indentation">
             <li>
               <%= t('main.kaviar_html') %>
             </li>
@@ -73,7 +73,7 @@
       </div>
     </div>
     
-    <footer class="container-fluid p-0">
+    <footer class="container-fluid p-0 mt-4">
       <%= render partial: 'shared/footer' %>
     </footer>
   </body>

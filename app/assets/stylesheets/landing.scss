@@ -1,5 +1,4 @@
 #signin-box {
-    // background-color: rgb(248, 245, 255);
     background-color: white;
     max-width: 1100px;
     width: 1100px;
@@ -8,7 +7,11 @@
     box-shadow: 1px 4px 7px rgba(0, 0, 0, 0.13);
 }
 
-body {
+#landing-body {
     background-image: image-url('landing-background.jpg');
     background-size: cover;
+}
+
+.ul-no-indentation {
+    padding-left: 1.1rem;
 }
