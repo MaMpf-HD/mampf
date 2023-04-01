@@ -1,7 +1,7 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
 <div class="container-fluid bg-grey-lighten-6 p-3">
   <div class="row">
-    <div class="col-5 text-md-left">
+    <div class="col text-md-left">
       <%= t('footer.text_html',
              github: link_to('GitHub',
                              'https://github.com/MaMpf-HD/mampf',
@@ -35,7 +35,7 @@
                            target: :blank),
              feedback: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
     </div>
-    <div class="col-7 text-md-right">
+    <div class="col text-md-right">
       <%= t('footer.sponsors_html',
             sponsors: link_to(t('basics.sponsors'),
                               sponsors_path)) %>
