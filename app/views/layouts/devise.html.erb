@@ -2,12 +2,45 @@
 <html>
   <head>
     <%= render partial: 'layouts/head' %>
+    <%= stylesheet_link_tag 'landing' %>
   </head>
-  <body data-locale="<%= I18n.locale %>">
-    <%= render partial: 'shared/navbar' %>
-    <div class="container-fluid">
-      <div class="row">
-        <main class="col-12 pt-3" role="main">
+  <body data-locale="<%= I18n.locale %>" class="d-flex flex-column overflow-hidden min-vh-100 vh-100">
+    <div class="container-sm d-flex align-items-center justify-content-center vh-100">
+      <div id="signin-box" class="row">
+
+        <div class="col-lg-7">
+          <h1>
+            <%= image_tag '/MaMpf-Logo_96x96.png', class: 'img-fluid mr-2' %>
+            <%= t('mampf') %>
+          </h1>
+          <h5>
+            <%= t('main.welcome') %>
+          </h5>
+          <%= t('main.about') %>
+          <ul>
+            <li>
+              <%= t('main.kaviar_html') %>
+            </li>
+            <li>
+              <%= t('main.sesam_html') %>
+            </li>
+            <li>
+              <%= t('main.keks_html') %>
+            </li>
+          </ul>
+          <%= t('main.interested_html',
+                blog: link_to(t('main.blog'),
+                              DefaultSetting::BLOG_LINK, target: :_blank),
+                researchgate: link_to(t('main.researchgate'),
+                                      DefaultSetting::RESEARCHGATE_LINK, target: :_blank),
+                guided_tour: link_to(t('here_capital'),
+                                    DefaultSetting::TOUR_LINK, target: :_blank),
+                resources: link_to(t('main.resources'),
+                                  DefaultSetting::RESOURCES_LINK,
+                                  target: :_blank)) %>
+        </div>
+
+        <div class="signin-form col-lg-5">
           <div class="alert alert-danger" id="js-messages" role="alert"
                style="display: none;">
           </div>
@@ -22,11 +55,12 @@
             </div>
           <% end %>
           <%= yield %>
-        </main>
+        </div>
       </div>
     </div>
-    <footer>
+    <footer class="container-fluid p-0">
       <%= render partial: 'shared/footer' %>
     </footer>
   </body>
+  
 </html>
