@@ -64,7 +64,11 @@
               <%= sanitize notice, :tags => %w(br) %>
             </div>
           <% end %>
-          <%= yield %>
+
+          <%# Actual login form %>
+          <div class="pt-4">
+            <%= yield %>
+          </div>
         </div>
       </div>
     </div>
