@@ -850,7 +850,7 @@ Rails.application.routes.draw do
 
   # main routes
 
-  root 'main#home'
+  root to: redirect("/users/sign_in")
 
   get 'error',
       to: 'main#error'
