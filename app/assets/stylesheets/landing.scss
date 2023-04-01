@@ -15,6 +15,21 @@
     }
 }
 
+#language-switch {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #00243db8;
+    border-radius: 0 8px;
+    box-shadow: inset 1px 4px 5px rgba(0, 0, 0, 0.03);
+
+    a {
+        color: white;
+        font-size: medium;
+    }
+}
 
 #landing-body {
     background-image: image-url('landing-background.jpg');

@@ -8,7 +8,17 @@
       class="d-flex flex-column min-vh-100"
       id="landing-body">
     <div class="container-sm d-flex align-items-center justify-content-center h-100 flex-grow-1">
-      <div id="signin-box" class="row">
+
+      <div id="signin-box" class="row position-relative">
+
+        <div id="language-switch" title="language switch">
+            <% I18n.available_locales.each do |l| %>
+              <% unless l == I18n.locale %>
+                <%= link_to l.to_s,
+                            { locale: l } %>
+              <% end %>
+            <% end %>
+        </div>
 
         <div class="col-lg-7">
           <h1>
@@ -18,14 +28,6 @@
 
           <h5>
             <%= t('main.welcome') %>
-            <small>
-            <% I18n.available_locales.each do |l| %>
-              <% unless l == I18n.locale %>
-                <%= link_to l.to_s,
-                            { locale: l } %>
-              <% end %>
-            <% end %>
-            </small>
           </h5>
 
           <%= t('main.about') %>
