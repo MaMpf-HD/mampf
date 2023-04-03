@@ -283,4 +283,12 @@ module ApplicationHelper
                 .natural_sort_by(&:title)
                &.first&.term_independent
   end
+
+  def get_announcements
+    return Announcement
+      .where(on_main_page: true, lecture: nil)
+      .pluck(:details)
+      .join
+  end
+
 end

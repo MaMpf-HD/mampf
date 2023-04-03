@@ -76,12 +76,13 @@
       </div>
 
       <%# Announcements %>
-      <% if @announcements.present? %>
+      <% announcements = get_announcements() %>
+      <% if announcements.present? %>
         <div id="announcement-box" class="landing-box">
           <i class="bi bi-megaphone p-1"></i>
           <%= t('announcements')%>
           <hr>
-          <%= @announcements.html_safe %>
+          <%= get_announcements().html_safe %>
         </div>
       <% end %>
 
