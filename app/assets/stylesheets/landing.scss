@@ -38,6 +38,10 @@
         color: white;
         font-size: medium;
     }
+
+    @include media-breakpoint-down(sm) {
+        border-radius: 0;
+    }
 }
 
 #landing-body {
