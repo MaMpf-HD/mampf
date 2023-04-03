@@ -3,185 +3,154 @@
 <% I18n.with_locale(lecture&.locale_with_inheritance) do %>
 <ul class="nav nav-pills flex-column">
 
+  <%# Lectures (Kaviar) %>
   <% project_name = 'kaviar' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
-    <% if !lecture || !lecture.kaviar?(current_user) %>
-      <span class="nav-link">
-        <%= t('categories.kaviar.plural') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.kaviar.plural'), fullpath, class:'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.kaviar?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-collection-play<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.kaviar.plural') %>
+    </a>
   </li>
   
+  <%# Script %>
   <% project_name = 'script' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
-    <% if !lecture || !lecture.script?(current_user) %>
-      <span class="nav-link">
-        <%= t('categories.script.singular') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.script.singular'), fullpath, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.script?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-file-earmark<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.script.singular') %>
+    </a>
   </li>
 
+  <%# Exercises (Nüsse) %>
   <% project_name = 'nuesse' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
-    <% if !lecture || !lecture.nuesse?(current_user) %>
-      <span class="nav-link">
-        <%= t('categories.exercises.plural') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.exercises.plural'), fullpath, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.nuesse?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.exercises.plural') %>
+    </a>
   </li>
 
+  <%# Divider %>
+  <span class="border-top my-3"></span>
+
+  <%# Quiz (Keks) %>
   <% project_name = 'keks' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
-    <% if !lecture || !lecture.keks?(current_user) %>
-      <span class="nav-link">
-        <%= t('categories.quiz.plural') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.quiz.plural'), fullpath, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.keks?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.quiz.plural') %>
+    </a>
   </li>
 
+  <%# Self test %>
   <% path = show_random_quizzes_path(lecture) %>
-  <li class="sidebar-item <%= get_class_for_path(path) %>">
-    <% if !lecture || !lecture.course.enough_questions? %>
-      <span class="nav-link">
-        <%= t('categories.test.singular') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.test.singular'), path, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_path(path) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.course.enough_questions? ? "disabled" : ""%>">
+    <a href="<%= url_for(path)%>">
+      <i class="bi bi-star<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.test.singular') %>
+    </a>
   </li>
 
+  <%# Worked Examples (Sesam) %>
   <% project_name = 'sesam' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
-    <% if !lecture || !lecture.sesam?(current_user) %>
-      <span class="nav-link">
-        <%= t('categories.sesam.plural') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.sesam.plural'), fullpath, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.sesam?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-mortarboard<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.sesam.plural') %>
+    </a>
   </li>
 
+  <%# Examples (Erdbeere) %>
   <% path = show_structures_path(lecture) %>
-  <li class="sidebar-item <%= get_class_for_path(path) %>">
-    <% if !lecture || !lecture.structure_ids.any? %>
-      <span class="nav-link">
-        <%= t('categories.erdbeere.singular') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.erdbeere.singular'), path, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_path(path) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.structure_ids.any? ? "disabled" : ""%>">
+    <a href="<%= url_for(path)%>">
+      <i class="bi bi-box<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.erdbeere.plural') %>
+    </a>
   </li>
 
+  <%# Repetition (Kiwi) %>
   <% project_name = 'kiwi' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
-    <% if !lecture || !lecture.kiwi?(current_user) %>
-      <span class="nav-link">
-        <%= t('categories.kiwi.singular') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.kiwi.singular'), fullpath, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.kiwi?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-shield<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.kiwi.singular') %>
+    </a>
   </li>
 
+  <%# Diverse (Rest) %>
   <% project_name = 'reste' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <li class="sidebar-item <%= get_class_for_project(project_name) %>">
-    <% if !lecture || !lecture.reste?(current_user) %>
-      <span class="nav-link">
-        <%= t('categories.reste.singular') %>
-      </span>
-    <% else %>
-      <%= link_to t('categories.reste.singular'), fullpath, class: 'nav-link' %>
-    <% end %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.reste?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-triangle<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.reste.singular') %>
+    </a>
   </li>
 
 
   <% if lecture %>
-    <span class="border-top my-3">
-    </span>
+    <%# Divider %>
+    <span class="border-top my-3"></span>
 
-    <% path = organizational_path(lecture) %>
-    <li class="sidebar-item <%= get_class_for_path(path) %>">
-      <% if lecture.organizational %>
-        <%= link_to t('categories.organizational_html'), path, class: 'nav-link' %>
-      <% else %>
-        <span class="nav-link">
-          <%= t('categories.organizational_html') %>
-        </span>
-      <% end %>
+    <%# Forum %>
+    <% path = "/forum/" + lecture.forum.slug %>
+    <li class="sidebar-item nav-link <%= !lecture.forum? ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <%# Will never become active as this is an external link %>
+        <i class="bi bi-chat"></i>
+        <%= t('categories.board') %>
+      </a>
     </li>
 
-    <% if lecture.announcements.exists? %>
-      <% path = show_announcements_path(lecture) %>
-      <li class="sidebar-item <%= get_class_for_path(path) %>">
-        <%= link_to t('categories.announcements'), path, class: 'nav-link' %>
-      </li>
-    <% else %>
-      <li class="nav-link">
-        <%= t('categories.announcements') %>
-      </li>
-    <% end %>
-
-    <li class="sidebar-item">
-      <% if !lecture.forum? %>
-        <span class="nav-link">
-          <%= t('categories.board') %>
-        </span>
-      <% else %>
-        <a href="<%= '/forum/' + lecture.forum.slug %>"
-           class="nav-link"
-           target="_blank">
-          <%= t('categories.board') %>
-          <i class="fas fa-external-link-alt fa-xs"></i>
-        </a>
-      <% end %>
+    <%# Tutorien %>
+    <% if current_user.in?(lecture.tutors)
+        link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
+        exists = true
+      elsif current_user.editor_or_teacher_in?(lecture)
+        link_text, path = [t('categories.tutorials'), lecture_tutorial_overview_path(lecture)]
+        exists = lecture.tutorials.any?
+      else
+        link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
+        exists = lecture.assignments.any? && lecture.tutorials.any?
+      end %>
+    <% active_class = get_class_for_any_path(
+        [lecture_tutorials_path(lecture),
+        lecture_tutorial_overview_path(lecture),
+        lecture_submissions_path(lecture)]) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !exists ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= link_text %>
+      </a>
     </li>
 
-    <li class="sidebar-item <%= get_class_for_any_path(
-      [lecture_tutorials_path(lecture),
-      lecture_tutorial_overview_path(lecture),
-      lecture_submissions_path(lecture)]) %>">
-      <% if current_user.in?(lecture.tutors) %>
-        <%= link_to t('categories.tutorials'),
-                      lecture_tutorials_path(lecture),
-                      class: 'nav-link' %>
-      <% elsif current_user.editor_or_teacher_in?(lecture) %>
-        <% if lecture.tutorials.any? %>
-          <%= link_to t('categories.tutorials'),
-                      lecture_tutorial_overview_path(lecture),
-                      class: 'nav-link' %>
-        <% else %>
-          <span class="nav-link">
-            <%= t('categories.tutorials') %>
-          </span>
-        <% end %>
-      <% else %>
-        <% if lecture.assignments.any? && lecture.tutorials.any? %>
-          <%= link_to t('categories.submissions'),
-                      lecture_submissions_path(lecture),
-                      class: 'nav-link' %>
-        <% else %>
-          <span class="nav-link">
-            <%= t('categories.submissions') %>
-          </span>
-        <% end %>
-      <% end %>
-    </li>
-
+    <%# Müsli (external link) %>
     <li class="sidebar-item">
       <% if lecture.muesli %>
         <a href="<%= DefaultSetting::MUESLI_LINK %>"
@@ -197,9 +166,40 @@
       <% end %>
     </li>
 
+    <%# Divider %>
+    <span class="border-top my-3"></span>
+
+
+    <%# Organizational %>
+    <% path = organizational_path(lecture) %>
+    <% active_class = get_class_for_path(path) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !lecture.organizational ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t('categories.organizational_html') %>
+      </a>
+    </li>
+
+    <%# Announcements %>
+    <% path = show_announcements_path(lecture) %>
+    <% active_class = get_class_for_path(path) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !lecture.announcements.exists? ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <i class="bi bi-megaphone<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t('categories.announcements') %>
+      </a>
+    </li>
+
+    <%# Modul %>
     <% path = display_course_path(lecture) %>
-    <li class="sidebar-item <%= get_class_for_path(path) %>">
-      <%= link_to t('categories.course'), path, class: 'nav-link' %>
+    <% active_class = get_class_for_path(path) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !lecture.announcements.exists? ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <%= t('categories.course') %>
+      </a>
     </li>
   <% end %>
 </ul>

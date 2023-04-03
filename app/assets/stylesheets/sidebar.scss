@@ -1,16 +1,19 @@
 .sidebar-item {
+    margin: 3px 0;
     border-radius: 10px;
+    padding: 0;
 
     a {
+        display: block;
         color: rgb(85, 85, 85);
         text-decoration: none;
+        padding: 8px 6px;
     }
 
-    :hover {
+    &:hover {
         border-radius: 8px;
         background-color: #EBF0FE;
     }
-
 }
 
 #sidebar-container {
@@ -24,5 +27,14 @@
     a {
         color: #4E6ED9;
         font-weight: 500;
+    }
+}
+
+li {
+    display: flex;
+    align-items: center;
+
+    i {
+        padding: 0.25rem;
     }
 }

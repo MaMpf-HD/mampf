@@ -80,7 +80,8 @@ en:
       plural: 'Quiz Remarks'
       short: 'Rem'
     erdbeere:
-      singular: 'Examples'
+      singular: 'Example'
+      plural: 'Examples'
       short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
