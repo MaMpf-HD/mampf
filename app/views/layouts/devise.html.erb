@@ -7,9 +7,8 @@
   <body data-locale="<%= I18n.locale %>"
       class="d-flex flex-column min-vh-100"
       id="landing-body">
-    <div class="container-sm d-flex align-items-center justify-content-center h-100 flex-grow-1">
-
-      <div id="signin-box" class="row position-relative">
+    <div class="container-sm d-flex flex-column align-items-center justify-content-center h-100 flex-grow-1">
+      <div id="signin-box" class="row landing-box position-relative">
 
         <div id="language-switch" title="language switch">
             <% I18n.available_locales.each do |l| %>
@@ -75,7 +74,19 @@
           </div>
         </div>
       </div>
+
+      <%# Announcements %>
+      <% if @announcements.present? %>
+        <div id="announcement-box" class="landing-box">
+          <i class="bi bi-megaphone p-1"></i>
+          <%= t('announcements')%>
+          <hr>
+          <%= @announcements.html_safe %>
+        </div>
+      <% end %>
+
     </div>
+    
     
     <footer class="container-fluid mt-4 p-0">
       <%= render partial: 'shared/footer' %>

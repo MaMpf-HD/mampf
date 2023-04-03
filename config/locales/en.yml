@@ -2384,6 +2384,7 @@ en:
   sign_up_html: >
     Don't have an account yet? Just %{path}.
   sign_up: 'sign up'
+  announcements: 'Announcements'
   main:
     welcome:
       Welcome to MaMpf, the Mathematical

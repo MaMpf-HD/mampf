@@ -2537,6 +2537,7 @@ de:
     Du hast noch keinen Account? Dann kannst Du dich mit Deiner E-Mail-Adresse
     %{path}.
   sign_up: 'registrieren'
+  announcements: 'Ankündigungen'
   main:
     welcome:
       Herzlich willkommen auf MaMpf, der Mathematischen

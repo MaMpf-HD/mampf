@@ -2,17 +2,26 @@
 @import "bootstrap/variables";
 @import "bootstrap/mixins";
 
-#signin-box {
+.landing-box {
     background-color: white;
     max-width: 1100px;
-    width: 1100px;
-    padding: 70px 40px;
+    width: 100%;
     border-radius: 8px;
     box-shadow: 1px 4px 7px rgba(0, 0, 0, 0.13);
 
     @include media-breakpoint-down(sm) {
         border-radius: 0;
     }
+}
+
+#signin-box {
+    padding: 70px 40px;
+}
+
+#announcement-box {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.96);
 }
 
 #language-switch {
