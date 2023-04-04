@@ -8,8 +8,18 @@
       class="d-flex flex-column min-vh-100"
       id="landing-body">
     <div class="container-sm d-flex flex-column align-items-center justify-content-center h-100 flex-grow-1">
-      <div id="signin-box" class="row landing-box position-relative">
 
+      <%# Announcements %>
+        <% if Announcement.active_on_main.exists? %>
+          <div id="announcement-box" class="landing-box">
+            <i class="bi bi-megaphone p-1"></i>
+            <%= t('announcements')%>
+            <hr>
+            <%= get_announcements().html_safe %>
+          </div>
+        <% end %>
+
+      <div id="signin-box" class="row landing-box position-relative">
         <div id="language-switch" title="language switch">
             <% I18n.available_locales.each do |l| %>
               <% unless l == I18n.locale %>
@@ -74,16 +84,6 @@
           </div>
         </div>
       </div>
-
-      <%# Announcements %>
-      <% if Announcement.active_on_main.exists? %>
-        <div id="announcement-box" class="landing-box">
-          <i class="bi bi-megaphone p-1"></i>
-          <%= t('announcements')%>
-          <hr>
-          <%= get_announcements().html_safe %>
-        </div>
-      <% end %>
 
     </div>
     
