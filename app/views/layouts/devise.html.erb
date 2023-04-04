@@ -76,8 +76,7 @@
       </div>
 
       <%# Announcements %>
-      <% announcements = get_announcements() %>
-      <% if announcements.present? %>
+      <% if Announcement.active_on_main.exists? %>
         <div id="announcement-box" class="landing-box">
           <i class="bi bi-megaphone p-1"></i>
           <%= t('announcements')%>
