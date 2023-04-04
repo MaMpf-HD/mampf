@@ -29,58 +29,62 @@
             <% end %>
         </div>
 
-        <div class="col-lg-7">
-          <h1>
-            <%= image_tag '/MaMpf-Logo_96x96.png', class: 'img-fluid mr-2' %>
-            <%= t('mampf') %>
+        <div class="row mb-2">
+          <h1 class="col-12">
+              <%= image_tag "MaMpf-Logo.svg", class: 'img-fluid mr-2', id:'mampf-logo' %>
+              <%= t('mampf') %>
           </h1>
-
-          <h5>
-            <%= t('main.welcome') %>
-          </h5>
-
-          <%= t('main.about') %>
-          <ul class="ul-no-indentation">
-            <li>
-              <%= t('main.kaviar_html') %>
-            </li>
-            <li>
-              <%= t('main.sesam_html') %>
-            </li>
-            <li>
-              <%= t('main.keks_html') %>
-            </li>
-          </ul>
-          <%= t('main.interested_html',
-                blog: link_to(t('main.blog'),
-                              DefaultSetting::BLOG_LINK, target: :_blank),
-                researchgate: link_to(t('main.researchgate'),
-                                      DefaultSetting::RESEARCHGATE_LINK, target: :_blank),
-                guided_tour: link_to(t('here_capital'),
-                                    DefaultSetting::TOUR_LINK, target: :_blank),
-                resources: link_to(t('main.resources'),
-                                  DefaultSetting::RESOURCES_LINK,
-                                  target: :_blank)) %>
         </div>
 
-        <div class="signin-form col-lg-5 pr-2">
-          <div class="alert alert-danger" id="js-messages" role="alert"
-               style="display: none;">
-          </div>
-          <% if alert.present? %>
-            <div class="alert alert-danger" role="alert">
-              <%= sanitize alert, :tags => %w(br) %>
-            </div>
-          <% end %>
-          <% if notice.present? %>
-            <div class="alert alert-secondary" role="alert">
-              <%= sanitize notice, :tags => %w(br) %>
-            </div>
-          <% end %>
+        <div class="row">
+          <div class="col-lg-7">
+            <h5>
+              <%= t('main.welcome') %>
+            </h5>
 
-          <%# Actual login form %>
-          <div class="pt-4">
-            <%= yield %>
+            <%= t('main.about') %>
+            <ul class="ul-no-indentation">
+              <li>
+                <%= t('main.kaviar_html') %>
+              </li>
+              <li>
+                <%= t('main.sesam_html') %>
+              </li>
+              <li>
+                <%= t('main.keks_html') %>
+              </li>
+            </ul>
+            <%= t('main.interested_html',
+                  blog: link_to(t('main.blog'),
+                                DefaultSetting::BLOG_LINK, target: :_blank),
+                  researchgate: link_to(t('main.researchgate'),
+                                        DefaultSetting::RESEARCHGATE_LINK, target: :_blank),
+                  guided_tour: link_to(t('here_capital'),
+                                      DefaultSetting::TOUR_LINK, target: :_blank),
+                  resources: link_to(t('main.resources'),
+                                    DefaultSetting::RESOURCES_LINK,
+                                    target: :_blank)) %>
+          </div>
+
+          <div class="signin-form col-lg-5 pr-2">
+            <div class="alert alert-danger" id="js-messages" role="alert"
+                style="display: none;">
+            </div>
+            <% if alert.present? %>
+              <div class="alert alert-danger" role="alert">
+                <%= sanitize alert, :tags => %w(br) %>
+              </div>
+            <% end %>
+            <% if notice.present? %>
+              <div class="alert alert-secondary" role="alert">
+                <%= sanitize notice, :tags => %w(br) %>
+              </div>
+            <% end %>
+
+            <%# Actual login form %>
+            <div id="login-form">
+              <%= yield %>
+            </div>
           </div>
         </div>
       </div>

@@ -15,7 +15,8 @@
 }
 
 #signin-box {
-    padding: 70px 40px;
+    padding: 50px 40px;
+
 }
 
 #announcement-box {
@@ -51,4 +52,14 @@
 
 .ul-no-indentation {
     padding-left: 1.1rem;
+}
+
+#mampf-logo {
+    width: 100px;
+}
+
+#login-form {
+    @include media-breakpoint-down(sm) {
+        margin-top: 20px;
+    }
 }
