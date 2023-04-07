@@ -4,10 +4,11 @@
     <%= render partial: 'layouts/head' %>
     <%= stylesheet_link_tag 'sidebar' %>
   </head>
-  <body data-locale="<%= I18n.locale %>">
+  <body data-locale="<%= I18n.locale %>"
+      class="d-flex flex-column min-vh-100">
     <%= render partial: 'shared/navbar' %>
-    <div class="container-fluid">
-      <div class="row">
+    <div class="d-flex container-fluid flex-grow-1">
+      <div class="row min-vw-100">
         <div id="sidebar-container"
           class="col-sm-4 col-md-3 col-xl-2">
           <nav id="sidebar">
@@ -34,7 +35,7 @@
       </div>
     </div>
     <div id="modal-container"></div>
-    <footer>
+    <footer class="container-fluid mt-4 p-0">
       <%= render partial: 'shared/footer' %>
     </footer>
   </body>

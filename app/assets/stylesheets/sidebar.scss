@@ -17,9 +17,11 @@
 }
 
 #sidebar-container {
+    height: fit-content;
     padding: 1rem 0.8rem;
     background-color: white;
-    box-shadow: 7px 0 7px -8px #0000003b;
+    box-shadow: 5px 6px 9px -6px #0000001a;
+    border-radius: 0 0 10px 0;
 }
 
 .active-sidebar-item {
