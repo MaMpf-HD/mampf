@@ -166,6 +166,16 @@
     <%# Divider %>
     <span class="border-top my-3"></span>
 
+    <%# Announcements %>
+    <% path = show_announcements_path(lecture) %>
+    <% active_class = get_class_for_path(path) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !lecture.announcements.exists? ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <i class="bi bi-megaphone<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t('categories.announcements') %>
+      </a>
+    </li>
 
     <%# Organizational %>
     <% path = organizational_path(lecture) %>
@@ -175,17 +185,6 @@
       <a href="<%= url_for(path)%>">
         <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
         <%= t('categories.organizational_html') %>
-      </a>
-    </li>
-
-    <%# Announcements %>
-    <% path = show_announcements_path(lecture) %>
-    <% active_class = get_class_for_path(path) %>
-    <li class="sidebar-item nav-link <%= active_class %>
-            <%= !lecture.announcements.exists? ? "disabled" : ""%>">
-      <a href="<%= url_for(path)%>">
-        <i class="bi bi-megaphone<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('categories.announcements') %>
       </a>
     </li>
 
