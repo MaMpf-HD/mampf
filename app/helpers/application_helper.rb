@@ -283,4 +283,9 @@ module ApplicationHelper
                 .natural_sort_by(&:title)
                &.first&.term_independent
   end
+
+  def get_announcements
+    return Announcement.active_on_main.pluck(:details).join
+  end
+
 end
