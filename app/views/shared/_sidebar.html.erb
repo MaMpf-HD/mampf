@@ -3,6 +3,17 @@
 <% I18n.with_locale(lecture&.locale_with_inheritance) do %>
 <ul class="nav nav-pills flex-column">
 
+  <%# Overview %>
+  <% fullpath = lecture_path(lecture)%>
+  <% active_class = get_class_for_path(lecture_path()) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('basics.overview') %>
+    </a>
+  </li>
+
   <%# Lectures (Kaviar) %>
   <% project_name = 'kaviar' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
