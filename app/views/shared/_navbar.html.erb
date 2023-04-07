@@ -1,5 +1,6 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
-<nav class="navbar navbar-expand navbar-dark bg-dark" id="firstnav">
+<%= stylesheet_link_tag 'navbar' %>
+<nav class="navbar navbar-expand" id="firstnav">
   <%= link_to image_tag('/MaMpf-Logo_32x32.png',
                         class: 'img-fluid mr-2'),
               home_path %>
@@ -120,7 +121,7 @@
     <% end %>
   </div>
 </nav>
-<nav class="navbar navbar-expand navbar-dark bg-dark" id="secondnav"
+<nav class="navbar navbar-expand" id="secondnav"
      style="display: none;">
 </nav>
 <% end %>
