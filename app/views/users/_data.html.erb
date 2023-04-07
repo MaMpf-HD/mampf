@@ -44,7 +44,7 @@
       </div>
       <div class="card-body">
         <% if user.edited_courses.any? || user.edited_lectures.any? ||
-              user.given_lectures.any? %>
+              user.given_lectures.any? || user.edited_media.any? %>
           <%= render partial: 'users/content',
                      locals: { user: user,
                                f: f } %>
