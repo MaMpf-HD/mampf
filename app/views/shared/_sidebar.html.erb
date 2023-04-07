@@ -95,7 +95,7 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.kiwi?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
-      <i class="bi bi-shield<%= active_class.present? ? "-fill" : "" %>"></i>
+      <i class="bi bi-layers<%= active_class.present? ? "-fill" : "" %>"></i>
       <%= t('categories.kiwi.singular') %>
     </a>
   </li>
@@ -107,7 +107,7 @@
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.reste?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
-      <i class="bi bi-triangle<%= active_class.present? ? "-fill" : "" %>"></i>
+      <i class="bi bi-circle<%= active_class.present? ? "-fill" : "" %>"></i>
       <%= t('categories.reste.singular') %>
     </a>
   </li>
@@ -154,6 +154,7 @@
     <li class="sidebar-item nav-link">
       <% if lecture.muesli %>
         <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
+          <i class="bi bi-list-check<%= active_class.present? ? "-fill" : "" %>"></i>
           <%= t('categories.muesli') %>
         </a>
       <% else %>
@@ -194,6 +195,7 @@
     <li class="sidebar-item nav-link <%= active_class %>
             <%= !lecture.announcements.exists? ? "disabled" : ""%>">
       <a href="<%= url_for(path)%>">
+        <i class="bi bi-hexagon<%= active_class.present? ? "-fill" : "" %>"></i>
         <%= t('categories.course') %>
       </a>
     </li>
