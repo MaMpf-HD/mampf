@@ -31,9 +31,12 @@
                                'https://basecamp.com/',
                                target: :_blank),
              bugs: link_to(t('here'),
-                           'https://github.com/MaMpf-HD/mampf/issues',
-                           target: :blank),
-             feedback: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+                            'https://github.com/MaMpf-HD/mampf/issues',
+                            target: :_blank),
+             feedback: mail_to(DefaultSetting::PROJECT_EMAIL, nil),
+             background_photo_credit: link_to('Junpeng Ouyang',
+                            'https://unsplash.com/photos/nGs0d1dGFng',
+                            target: :_blank)) %>
     </div>
     <div class="col text-md-right">
       <%= t('footer.sponsors_html',

@@ -82,6 +82,7 @@ de:
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
+      Hintergrundbild von %{background_photo_credit}.
     sponsors_html: >
       %{sponsors}:
   sponsors:
