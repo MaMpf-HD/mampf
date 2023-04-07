@@ -120,7 +120,7 @@
     <%# Forum %>
     <% path = "/forum/" + lecture.forum.slug %>
     <li class="sidebar-item nav-link <%= !lecture.forum? ? "disabled" : ""%>">
-      <a href="<%= url_for(path)%>">
+      <a href="<%= url_for(path)%>" target="_blank">
         <%# Will never become active as this is an external link %>
         <i class="bi bi-chat"></i>
         <%= t('categories.board') %>
