@@ -284,6 +284,10 @@ module ApplicationHelper
                &.first&.term_independent
   end
 
+  def get_announcements
+    return Announcement.active_on_main.pluck(:details).join
+  end
+
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
   $active_css_class = "active-sidebar-item"

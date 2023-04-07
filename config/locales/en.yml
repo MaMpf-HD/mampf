@@ -103,9 +103,10 @@ en:
     text_html: >
       &copy; MaMpf Team 2023. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
+      Background image by %{background_photo_credit}.
     sponsors_html: >
       %{sponsors}:
   sponsors:
@@ -2385,41 +2386,23 @@ en:
   sign_up_html: >
     Don't have an account yet? Just %{path}.
   sign_up: 'sign up'
+  announcements: 'Announcements'
   main:
     welcome:
       Welcome to MaMpf, the Mathematical
       Media platform of Heidelberg University.
     about: >
-      MaMpf is a constantly growing project offering various
-      e-learning services. MaMpf's tagging system helps you find
-      all existing media to a keyword quickly and easily.
-      In addition, MaMpf links keywords and visualizes their relations
-      in Mind maps. In MaMpf you have the following at your disposal:
-    kaviar_html:
-      '<strong>
-        Hypervideos:
-      </strong>
-      Lecture recordings, worked examples and repetition videos with
-      content structure and links to related materials'
-    sesam_html:
-      '<strong>
-        Hypertexts:
-      </strong>
-      Lecture notes, exercise sheets and additional materials with links and outlines
-      that can be searched in MaMpf'
-    keks_html:
-      '<strong>
-        Quizzes:
-      </strong>
-      compiled from a large collection of multiple choice questions and calculation tasks, and
-      guided proofs'
+      MaMpf combines various e-learning services: lecture videos and scripts
+      with content outlines, a comprehensive collection of multiple choice questions
+      and assignments including guided proofs and much more. Thanks to the
+      tagging system, you can find all existing media to a keyword quickly
+      in a mind map.
     interested_html: >
-      Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
-      %{guided_tour} you can find a guided tour of MaMpf. Resources for editors
-      (e.g. the MaMpf LaTEX package) are available %{resources}.
-    resources: here
+      Curious? Then take a look at our %{blog} (including a %{guided_tour} of MaMpf
+      and additional %{resources} for editors). Or register now to try MaMpf on your own.
+    resources: resources
     blog: Blog
-    researchgate: Researchgate
+    guided_tour: guided tour
   math:
     number: 'number'
     complex_number: 'complex number'

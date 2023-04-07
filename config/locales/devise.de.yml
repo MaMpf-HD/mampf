@@ -8,7 +8,8 @@ de:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail, mit der Du Deine Registrierung bestätigen kannst."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Du Deine Registrierung bestätigen kannst."
       new:
-        resend_confirmation_instructions: 'Anleitung zur Bestätigung des Accounts erneut versenden'
+        resend_confirmation_instructions: 'Bestätigungs-E-Mail erneut senden'
+        resend: "Erneut senden"
     failure:
       already_authenticated: "Du bist bereits angemeldet."
       inactive: "Dein Account ist nicht aktiv."
@@ -56,7 +57,7 @@ de:
       new:
         forgot_password: 'Passwort vergessen?'
         email: 'Email'
-        instructions: 'Schick mir eine Anleitung zur Änderung meines Passwortes'
+        instructions: 'Passwort zurücksetzen'
       edit:
         change_password: 'Passwort ändern'
         new_password: 'Neues Passwort'
@@ -91,13 +92,13 @@ de:
         email: 'Email'
         password: 'Passwort'
         remember: 'Erinnere dich an mich (hierzu wird ein Cookie gesetzt)'
-        login: 'Einloggen'
+        login: 'Login'
     shared:
       links:
-        login: 'Einloggen'
+        login: 'Login'
         sign_up: 'Registrieren'
         forgot_password: 'Passwort vergessen?'
-        didn_t_receive_confirmation_instructions: 'Anleitung zur Bestätigung des Accounts nicht erhalten?'
+        didn_t_receive_confirmation_instructions: 'Bestätigungs-E-Mail nicht erhalten?'
     unlocks:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
