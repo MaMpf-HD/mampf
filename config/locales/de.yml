@@ -2542,37 +2542,20 @@ de:
     welcome:
       Herzlich willkommen auf MaMpf, der Mathematischen
       Medienplattform der Universität Heidelberg.
-    about:
-      'MaMpf ist ein ständig wachsendes Projekt, das verschiedene
-      E-Learning-Angebote bündelt. Dank des Tagging-Systems findest Du in
-      MaMpf schnell und einfach alle vorhandenen Medien zu einem Schlagwort.
-      Außerdem vernetzt MaMpf Schlagwörter und präsentiert sie Dir in
-      übersichtlichen Mind-Maps. Auf MaMpf stehen Dir zur Verfügung:'
-    kaviar_html:
-      '<strong>
-        Hypervideos:
-      </strong>
-      Vorlesungs-, Beispiel- und Wiederholungsvideos mit
-      inhaltlicher Gliederung und Links zu verwandten Materialien'
-    sesam_html:
-      '<strong>
-        Hypertexte:
-      </strong>
-      Vorlesungsskripte, Übungsblätter und Zusatzmaterialien mit inhaltlicher Gliederung
-      und Links zu verwandten Materialien'
-    keks_html:
-      '<strong>
-      Quizzes:
-      </strong>
-      zusammengestellt aus einer umfangreichen Sammlung von Multiple-Choice-Fragen und
-      Rechenaufgaben sowie angeleitete Beweise'
-    interested_html:
-      Neugierig geworden? Auf unserem %{blog} und auf %{researchgate} findest Du weitere Informationen über
-      und Neuigkeiten zu MaMpf. %{guided_tour} gibt es eine geführte Tour durch MaMpf.
-      Außerdem gelangst Du auf diesem %{resources} zu Ressourcen für EditorInnen (z.B. zum MaMpf-LaTeX-Paket).
-    resources: Weg
+    about: >
+      MaMpf bündelt verschiedene E-Learning-Angebote:
+      Vorlesungsvideos und Skripte mit inhaltlicher Gliederung,
+      Übungsblätter, eine umfangreiche Sammlung von Multiple-Choice-Fragen
+      und Quizaufgaben inklusive angeleiteter Beweise und vieles mehr.
+      Dank des Tagging-Systems kannst du alle Inhalte schnell nach Schlagworten
+      in einer Mind-Map durchsuchen.
+    interested_html: >
+      Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
+      durch MaMpf und weiteren %{resources} für Editor:innen). Oder registriere dich
+      und probiere MaMpf einfach selbst aus.
+    resources: Ressourcen
     blog: Blog
-    researchgate: Researchgate
+    guided_tour: geführter Tour
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'

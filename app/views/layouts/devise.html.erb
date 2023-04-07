@@ -47,28 +47,21 @@
               <%= t('main.welcome') %>
             </h5>
 
-            <%= t('main.about') %>
-            <ul class="ul-no-indentation">
-              <li>
-                <%= t('main.kaviar_html') %>
-              </li>
-              <li>
-                <%= t('main.sesam_html') %>
-              </li>
-              <li>
-                <%= t('main.keks_html') %>
-              </li>
-            </ul>
-            <%= t('main.interested_html',
-                  blog: link_to(t('main.blog'),
-                                DefaultSetting::BLOG_LINK, target: :_blank),
-                  researchgate: link_to(t('main.researchgate'),
-                                        DefaultSetting::RESEARCHGATE_LINK, target: :_blank),
-                  guided_tour: link_to(t('here_capital'),
-                                      DefaultSetting::TOUR_LINK, target: :_blank),
-                  resources: link_to(t('main.resources'),
-                                    DefaultSetting::RESOURCES_LINK,
-                                    target: :_blank)) %>
+            <p>
+              <%= t('main.about') %>
+            </p>
+            <p>
+              <%= t('main.interested_html',
+                    blog: link_to(t('main.blog'),
+                                  DefaultSetting::BLOG_LINK, target: :_blank),
+                    researchgate: link_to(t('main.researchgate'),
+                                          DefaultSetting::RESEARCHGATE_LINK, target: :_blank),
+                    guided_tour: link_to(t('main.guided_tour'),
+                                        DefaultSetting::TOUR_LINK, target: :_blank),
+                    resources: link_to(t('main.resources'),
+                                      DefaultSetting::RESOURCES_LINK,
+                                      target: :_blank)) %>
+            </p>
           </div>
 
           <div class="signin-form col-lg-5 pr-2">
