@@ -151,13 +151,10 @@
     </li>
 
     <%# Müsli (external link) %>
-    <li class="sidebar-item">
+    <li class="sidebar-item nav-link">
       <% if lecture.muesli %>
-        <a href="<%= DefaultSetting::MUESLI_LINK %>"
-           class="nav-link"
-           target="_blank" %>
+        <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
           <%= t('categories.muesli') %>
-          <i class="fas fa-external-link-alt fa-xs"></i>
         </a>
       <% else %>
         <span class="nav-link">
