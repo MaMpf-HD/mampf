@@ -162,17 +162,11 @@
     </li>
 
     <%# Müsli (external link) %>
-    <li class="sidebar-item nav-link">
-      <% if lecture.muesli %>
-        <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
-          <i class="bi bi-list-check<%= active_class.present? ? "-fill" : "" %>"></i>
-          <%= t('categories.muesli') %>
-        </a>
-      <% else %>
-        <span class="nav-link">
-          <%= t('categories.muesli') %>
-        </span>
-      <% end %>
+    <li class="sidebar-item nav-link <%= !lecture.muesli ? "disabled" : ""%>">
+      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
+        <i class="bi bi-list-check"></i>
+        <%= t('categories.muesli') %>
+      </a>
     </li>
 
     <%# Divider %>
