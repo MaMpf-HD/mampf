@@ -15,8 +15,7 @@
 }
 
 #signin-box {
-    padding: 50px 40px;
-
+    padding: 70px 40px;
 }
 
 #announcement-box {
@@ -59,9 +58,7 @@
 }
 
 #login-form {
-    @include media-breakpoint-down(sm) {
-        margin-top: 20px;
-    }
+    margin-top: 20px;
 }
 
 #logo-area {
