@@ -7,7 +7,7 @@ RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
-FROM ruby:3.1.2
+FROM ruby:3.1.4
 ENV RAILS_ENV=production
 EXPOSE 3000
 
@@ -17,7 +17,7 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
     curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     apt-get install --no-install-recommends -y ffmpeg ghostscript imagemagick \
-            libarchive-tools nodejs pdftk postgresql-client-12 sqlite3 wget \
+            libarchive-tools nodejs pdftk postgresql-client-13 sqlite3 wget \
             wait-for-it yarn shared-mime-info && \
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
