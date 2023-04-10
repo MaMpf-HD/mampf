@@ -290,19 +290,19 @@ RSpec.describe MediumPublisher, type: :model do
 
     it 'returns an assignment title error if assignment is to be created but ' \
        'title of an already existing assignment in the lecture is given' do
-      # Assignment.create(lecture: @medium.teachable, medium: @medium,
-      #                   title: 'Blatt 1', deadline: Time.zone.now + 1.day,
-      #                   accepted_file_type: '.pdf')
-      # publisher = FactoryBot.build(:medium_publisher,
-      #                              medium_id: @medium.id,
-      #                              user_id: @user.id,
-      #                              release_now: true,
-      #                              create_assignment: true,
-      #                              assignment_title: 'Blatt 1',
-      #                              assignment_deadline: Time.zone.now + 2.days,
-      #                              assignment_deletion_date: Time.zone.today + 2.days,
-      #                              assignment_file_type: '.pdf')
-      # expect(publisher.errors[:assignment_title]).not_to be_nil
+      Assignment.create(lecture: @medium.teachable, medium: @medium,
+                        title: 'Blatt 1', deadline: Time.zone.now + 1.day,
+                        accepted_file_type: '.pdf')
+      publisher = FactoryBot.build(:medium_publisher,
+                                   medium_id: @medium.id,
+                                   user_id: @user.id,
+                                   release_now: true,
+                                   create_assignment: true,
+                                   assignment_title: 'Blatt 1',
+                                   assignment_deadline: Time.zone.now + 2.days,
+                                   assignment_deletion_date: Time.zone.today + 2.days,
+                                   assignment_file_type: '.pdf')
+      expect(publisher.errors[:assignment_title]).not_to be_nil
     end
   end
 end
