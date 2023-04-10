@@ -129,8 +129,9 @@
     <span class="border-top my-3"></span>
 
     <%# Forum %>
-    <% path = "/forum/" + lecture.forum.slug %>
-    <li class="sidebar-item nav-link <%= !lecture.forum? ? "disabled" : ""%>">
+    <% forum_present = lecture.forum? %>
+    <% path = forum_present ? "/forum/" + lecture.forum.slug : "nothing" %>
+    <li class="sidebar-item nav-link <%= !forum_present ? "disabled" : ""%>">
       <a href="<%= url_for(path)%>" target="_blank">
         <%# Will never become active as this is an external link %>
         <i class="bi bi-chat"></i>
