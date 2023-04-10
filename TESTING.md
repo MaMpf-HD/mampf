@@ -12,7 +12,7 @@
 
 ## Writing own tests
 
-The describing test files can be found/ must be placed in `spec/cypress/integration/*.js`.
+The describing test files can be found/ must be placed in `spec/cypress/e2e/*.cy.js`.
 You can call arbitrary functions/files in mampf by calling `cy.app("clean")` for example located in `spec/cypress/app_commands`.
 Furthermore, you can setup special scenarios by providing a file in `spec/cypress/app_commands/scenarios/`,
 that can be called by `cy.appScenario("setup")` for example. Always try to 

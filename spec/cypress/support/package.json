@@ -2,7 +2,6 @@
     "name": "mampf-cypress",
     "private": true,
     "devDependencies": {
-        "cypress": "6.5.0",
-        "cypress-file-upload": "^4.1.1"
+        "cypress": "12"
     }
 }

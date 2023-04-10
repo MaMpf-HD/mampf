@@ -21,8 +21,8 @@ describe("Authentication", function () {
             cy.get('input[type="submit"]').click();
             cy.visit(`/administration/profile`);
             cy.contains("Profile Image").should("exist");
-            const yourFixturePath = 'files/image.png';
-            cy.get('#upload-image').attachFile(yourFixturePath);
+            const yourFixturePath = 'cypress/fixtures/files/image.png';
+            cy.get('#upload-image').selectFile(yourFixturePath,{force:true});
             cy.wait(100);
             cy.contains("Upload").click();
             cy.wait(100);

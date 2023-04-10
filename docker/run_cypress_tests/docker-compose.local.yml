@@ -80,9 +80,9 @@ services:
       CYPRESS_baseUrl: http://mampf:3000
     entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done; npx cypress run $$@"
     volumes:
-      - ../../spec/cypress/integration:/cypress/integration:ro
+      - ../../spec/cypress/e2e:/cypress/e2e:ro
       - ../../spec/cypress/fixtures:/cypress/fixtures:ro
-      - ../../spec/cypress.json:/cypress.json:ro
+      - ../../spec/cypress.config.js:/cypress.config.js:ro
       - ../../.git:/.git:ro
       # cypress outputs are saved here (needed only locally)
       - ../../cypress/videos:/cypress/videos

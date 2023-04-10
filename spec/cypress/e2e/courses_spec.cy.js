@@ -55,8 +55,8 @@ describe("Courses", function () {
                 cy.visit(`/courses/${records[0].id}/edit`);
                 cy.contains("Bild").should("exist");
                 cy.get("#image_heading").contains("Ein-/Ausklappen").click();
-                const yourFixturePath = 'files/image.png';
-                cy.get('#upload-image').attachFile(yourFixturePath);
+                const yourFixturePath = 'cypress/fixtures/files/image.png';
+                cy.get('#upload-image').selectFile(yourFixturePath,{force: true});
                 cy.contains("Upload").click();
                 cy.wait(100);
                 cy.contains("Speichern").click();
@@ -74,8 +74,8 @@ describe("Courses", function () {
                     'user_id':1
                 }]
             ]).then((records) => {
-                cy.server();
-                cy.route('**/new').as('new');
+                // cy.server();
+                // cy.route('**/new').as('new');
                 //cy.route('POST', '/lectures').as('courses');
                 cy.visit('/administration');
                 cy.get('a[title="Veranstaltung anlegen"]').click();
@@ -127,8 +127,8 @@ describe("Courses", function () {
                 ['create_list', 'lecture', 6, 'released_for_all']
             ]).then((records) => {
                 cy.visit("/main/start");
-                cy.contains("Veranstaltungssuche").click();
                 //cy.get('input[name="search[fulltext]"]').type(records[0][0].title)
+                cy.contains("Veranstaltungssuche").click();
                 cy.contains("Suche").click();
                 cy.get('[title="abonnieren"]').first().click();
                 cy.get('[title="abbestellen"]').should("exist");
