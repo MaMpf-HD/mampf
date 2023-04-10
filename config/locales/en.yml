@@ -106,7 +106,7 @@ en:
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
-      Background images by %{background_photo_credit_1} and %{background_photo_credit_2}.
+      Background image by %{background_photo_credit}.
     sponsors_html: >
       %{sponsors}:
   sponsors:
