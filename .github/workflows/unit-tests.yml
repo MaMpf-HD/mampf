@@ -41,6 +41,7 @@ jobs:
     - name: Create and prepare test database
       working-directory: docker/development
       run: |
+          docker compose exec mampf sh -c "RAILS_ENV=test rake assets:precompile"
           docker compose exec mampf sh -c "RAILS_ENV=test rails db:create"
           docker compose exec mampf sh -c "RAILS_ENV=test rails db:migrate"
           docker compose exec mampf sh -c "RAILS_ENV=test rails db:test:prepare"
