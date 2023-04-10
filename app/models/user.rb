@@ -308,7 +308,7 @@ class User < ApplicationRecord
   # a user is an editor iff he/she is a course editor or lecture editor or
   # editor of media that are not associated to talks
   def editor?
-    teachable_editor ||
+    teachable_editor? ||
       edited_media.where.not(teachable_type: 'Talk').any?
   end
 
