@@ -14,8 +14,12 @@ class UserAbility
       user.admin? || (!user.generic? && user == given_user)
     end
 
-    can [:fill_user_select, :list, :list_generic_users], User do
-      !user.generic?
+    can :fill_user_select, User do
+      !user.can_edit_teachables?
+    end
+
+    can :list_generic_users, User do
+      user.admin?
     end
   end
 end

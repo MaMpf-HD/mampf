@@ -7,7 +7,7 @@ class QuizCertificateAbility
     can :claim, QuizCertificate
 
     can :validate, QuizCertificate do
-      user.tutor? || !user.generic?
+      user.tutor? || user.can_edit_teachables?
     end
   end
 end

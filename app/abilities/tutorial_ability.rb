@@ -24,7 +24,7 @@ class TutorialAbility
     end
 
     can :validate_certificate, Tutorial do
-      user.tutor? || !user.generic?
+      user.tutor? || user.can_edit_teachables?
     end
   end
 end

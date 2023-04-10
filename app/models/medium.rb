@@ -282,7 +282,7 @@ class Medium < ApplicationRecord
                                                    .teachables_as_strings
     search_params[:editor_ids] = [] if search_params[:all_editors] == '1' || search_params[:all_editors].nil?
     # add media without term to current term
-    
+
     search_params[:all_terms] = '1' if search_params[:all_terms].blank?
     search_params[:all_teachers] = '1' if search_params[:all_teachers].blank?
     search_params[:term_ids].push('0') if search_params[:term_ids].present?
@@ -452,6 +452,19 @@ class Medium < ApplicationRecord
       [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
     return result unless teachable.is_a?(Talk)
     (result + teachable.speakers).uniq
+  end
+
+  # returns the array of users that are eligible to obtain editing rights
+  # for the given medium from the given user
+  def eligible_editors(user)
+    result = editors_with_inheritance
+
+    if teachable.is_a?(Talk) && user.can_edit?(lecture)
+      result += lecture.speakers
+    end
+
+    result << user if user.admin?
+    result.uniq
   end
 
 
@@ -1201,5 +1214,5 @@ class Medium < ApplicationRecord
     return -1 unless type == 'Question'
     becomes(Question).answers.count
   end
-  
+
 end

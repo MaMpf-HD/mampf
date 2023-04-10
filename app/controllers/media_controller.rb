@@ -213,7 +213,7 @@ class MediaController < ApplicationController
     authorize! :search, Medium.new
 
     # get all media, then set them to only those that are visible to the current user
-    if current_user.generic? || search_params[:access].blank?
+    if !current_user.can_edit_teachables? || search_params[:access].blank?
       filter_media = true
       params["search"]["access"] = 'irrelevant'
     end
@@ -224,7 +224,7 @@ class MediaController < ApplicationController
     results = search.results
     @total = search.total
 
-    # in the case of a search with tag_operator 'or', we 
+    # in the case of a search with tag_operator 'or', we
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
     if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2

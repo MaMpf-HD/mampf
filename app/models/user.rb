@@ -293,10 +293,22 @@ class User < ApplicationRecord
     given_lectures.any?
   end
 
+  def teachable_editor?
+    edited_courses.any? || edited_lectures.any?
+  end
+
+  def teachable_editor_or_teacher?
+    teachable_editor? || teacher?
+  end
+
+  def can_edit_teachables?
+    admin? || teachable_editor_or_teacher?
+  end
+
   # a user is an editor iff he/she is a course editor or lecture editor or
   # editor of media that are not associated to talks
   def editor?
-    edited_courses.any? || edited_lectures.any? ||
+    teachable_editor ||
       edited_media.where.not(teachable_type: 'Talk').any?
   end
 
@@ -525,7 +537,7 @@ class User < ApplicationRecord
     return false unless lecture.is_a?(Lecture)
     return false if lecture.in?(lectures)
     lectures << lecture
-    
+
     # make sure subscribed_users is updated in media
     Sunspot.index! lecture.media
 

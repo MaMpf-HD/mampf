@@ -775,10 +775,6 @@ Rails.application.routes.draw do
       to: 'users#fill_user_select',
       as: 'fill_user_select'
 
-  get 'users/list',
-      to: 'users#list',
-      as: 'list_users'
-
   get 'users/delete_account',
       to: 'users#delete_account',
       as: 'delete_account'
@@ -859,7 +855,7 @@ Rails.application.routes.draw do
     authenticated :user do
       root to: 'main#start'
     end
-	
+
     unauthenticated do
       root to: 'devise/sessions#new', as: :unauthenticated_root
     end

@@ -1082,7 +1082,8 @@ en:
         editors: >
           This is the list of all persons that are responsible for this
           medium as editor. At least one person has to be given here, and each
-          of these persons gets editing access to this medium
+          of these persons gets editing access to this medium. Only eligible
+          persons can be selected.
           <br>
           Note: Independently from this setting, this medium can be edited
           by people with hiher access rights, e.g. editors of the associated
@@ -2357,7 +2358,7 @@ en:
       title: >
         You can search the titles of media or related sessions. If you do not wantto use
         this criterion, leave the input box empty.
-      title_placeholder: leave free or enter at least 2 letters 
+      title_placeholder: leave free or enter at least 2 letters
       lectures: >
         Select the event series you want to search. You can choose all event series, the
         ones you are subscribed to, or make up your own selection. If you opt for your own
@@ -2372,7 +2373,7 @@ en:
       type: >
         Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
         <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
-        The operator used is the inclusive <i>OR</i>. 
+        The operator used is the inclusive <i>OR</i>.
     tag_title: >
       enter at least 2 letters (or leave free for all tags)
   errors:

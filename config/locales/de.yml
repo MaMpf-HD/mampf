@@ -1140,7 +1140,7 @@ de:
           Dies die Liste aller Personen, die für dieses Medium
           als Editor verantwortlich sind. Es muss mindestens eine angegeben
           werden, jede dieser Personen erhält das Bearbeitungsrecht für das
-          Medium.
+          Medium. Es stehen nur Personen zur Auswahl, die berechtigt sind.
           <br>
           Anmerkung: Unabhängig davon kann das Medium auch von Personen mit
           höheren Rechten bearbeitet werden, beispielsweise von ModuleditorInnen
@@ -2052,7 +2052,7 @@ de:
     data_request: >
       Daten anfordern
     data_request_sent: >
-      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnah schicken. 
+      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnah schicken.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

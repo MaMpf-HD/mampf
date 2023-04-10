@@ -771,6 +771,16 @@ class Lecture < ApplicationRecord
     end
   end
 
+  def speakers
+    return User.none unless seminar?
+    User.where(id: SpeakerTalkJoin.where(talk: talks).pluck(:speaker_id))
+  end
+
+  def older_than?(timespan)
+    return true unless term
+    term.begin_date < Term.active.begin_date - timespan
+  end
+
   private
 
   # used for after save callback
