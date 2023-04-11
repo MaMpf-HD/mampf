@@ -1,7 +1,0 @@
-{
-    "name": "mampf-cypress",
-    "private": true,
-    "devDependencies": {
-        "cypress": "12"
-    }
-}
