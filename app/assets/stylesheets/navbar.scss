@@ -20,3 +20,9 @@
     box-shadow: 1px 4px 7px -2px rgba(0, 0, 0, 0.1);
     z-index: 1000; // place navbar and its shadow on top of everything
 }
+
+#navbar-buttons a {
+    text-decoration: none;
+    font-size: 1.3rem;
+    padding: 0 9px;
+}
