@@ -1,4 +1,4 @@
-name: Run e2e tests and upload results to cypress
+name: Integration tests
 on:
   push:
     branches:
@@ -8,7 +8,8 @@ on:
       - experimental
   pull_request:
 jobs:
-  build:
+  e2e-test-job:
+    name: Run E2E tests & upload results to Cypress
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
