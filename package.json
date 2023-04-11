@@ -20,9 +20,5 @@
   },
   "scripts": {
     "lint": "eslint ."
-  },
-  "devDependencies": {
-    "cypress": "9.5.1",
-    "@rails/webpacker": "5.4.3"
   }
 }
