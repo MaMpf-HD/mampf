@@ -71,7 +71,6 @@ services:
       dockerfile: docker/run_cypress_tests/Dockerfile_cypress
     environment:
       CYPRESS_baseUrl: http://mampf:3000
-    entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done; npx cypress run $$@"
     volumes:
       - ../../spec/cypress/e2e:/cypress/e2e:ro
       - ../../spec/cypress/fixtures:/cypress/fixtures:ro
