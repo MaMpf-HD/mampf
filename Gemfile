@@ -18,7 +18,7 @@ gem "puma", "~> 4.1"
 # Use SCSS for stylesheets
 gem "sass-rails", ">= 6"
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-# gem 'webpacker', '~> 4.0'
+gem 'webpacker', '~> 5.x'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
 gem "turbolinks", "~> 5"
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -104,7 +104,6 @@ gem "premailer-rails"
 gem "clipboard-rails"
 gem "rubyzip", "~> 2.3.0"
 gem "exception_handler", "~> 0.8.0.0"
-gem 'webpacker', '~> 5.x'
 gem 'net-smtp'
 
 group :development, :docker_development, :test do
