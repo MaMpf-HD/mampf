@@ -13,14 +13,14 @@
       <ul class="navbar-nav mr-auto" id="navbar-buttons">
         <li class="nav-item">
           <a href="<%= start_path %>"
-            class="nav-link text-light bi bi-house-fill"
+            class="nav-link bi bi-house-fill"
             data-toggle="tooltip"
             title="<%= t('navbar.home') %>">
           </a>
         </li>
         <li class="nav-item">
           <a href="<%= edit_profile_path %>"
-            class="nav-link text-light bi bi-person-circle"
+            class="nav-link bi bi-person-circle"
             data-toggle="tooltip"
             title="<%= t('navbar.profile') %>">
           </a>
@@ -28,7 +28,7 @@
         <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
-              class="nav-link text-light bi bi-wrench-adjustable-circle-fill"
+              class="nav-link bi bi-wrench-adjustable-circle-fill"
               data-toggle="tooltip"
               title="<%= t('navbar.administration') %>">
             </a>
@@ -37,7 +37,7 @@
         <li class="nav-item">
           <a href="<%= watchlists_path %>"
             id="watchlistsIcon"
-            class="nav-link text-light bi bi-tv-fill"
+            class="nav-link bi bi-tv-fill"
             data-toggle="tooltip"
             title="<%= t('navbar.watchlist') %>">
           </a>
@@ -45,28 +45,28 @@
         <li class="nav-item">
           <a href="<%= comments_path %>"
             id="commentsIcon"
-            class="nav-link bi bi-chat-quote-fill <%= current_user.unread_comments ? 'text-primary' : 'text-light' %> nav-link"
+            class="nav-link bi bi-chat-quote-fill <%= current_user.unread_comments ? 'new-comment' : '' %>"
             data-toggle="tooltip"
             title="<%= t('navbar.comments') %>">
           </a>
         </li>
         <li class="nav-item">
           <a href="<%= news_path %>"
-            class="nav-link text-light bi bi-megaphone-fill"
+            class="nav-link bi bi-megaphone-fill"
             data-toggle="tooltip"
             title="<%= t('navbar.news') %>">
           </a>
         </li>
         <li class="nav-item">
           <a href="<%= DefaultSetting::BLOG_LINK %>"
-            class="nav-link text-light bi bi-newspaper"
+            class="nav-link bi bi-newspaper"
             data-toggle="tooltip"
             title="<%= t('navbar.blog') %>">
           </a>
         </li>
         <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
-            class="nav-link text-light bi bi-box-arrow-right"
+            class="nav-link bi bi-box-arrow-right"
             data-toggle="tooltip"
             data-method="delete"
             title="<%= t('navbar.logout') %>">
