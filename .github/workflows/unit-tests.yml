@@ -25,35 +25,31 @@ jobs:
       run: docker compose pull --ignore-buildable
       working-directory: docker/development
 
-    # In this step, this action saves a list of existing images,
-    # the cache is created without them in the post run.
+    # This action saves a list of existing images.
     # It also restores the cache if it exists.
-    # https://github.com/jpribyl/action-docker-layer-caching
+    # see https://github.com/jpribyl/action-docker-layer-caching
     - name: Use Docker layer caching
       uses: jpribyl/action-docker-layer-caching@v0.1.1
       continue-on-error: true
 
-    - name: Build and start docker containers
+    - name: Build docker containers
       working-directory: docker/development
-      run: |
-        docker compose up --build --detach
+      run: docker compose build
 
     - name: Create and prepare test database
       working-directory: docker/development
-      run: |
-          docker compose exec mampf sh -c "RAILS_ENV=test rake assets:precompile"
-          docker compose exec mampf sh -c "RAILS_ENV=test rails db:create"
-          docker compose exec mampf sh -c "RAILS_ENV=test rails db:migrate"
-          docker compose exec mampf sh -c "RAILS_ENV=test rails db:test:prepare"
+      run: docker compose run mampf --entrypoint=""
+            sh -c "RAILS_ENV=test rails db:create db:migrate db:test:prepare"
 
-    - name: Reindex sunspot
+    - name: Prepare for test execution
       working-directory: docker/development
-      run: |
-        docker compose exec mampf sh -c "RAILS_ENV=test rake sunspot:reindex"
+      run: docker compose run mampf --entrypoint=""
+            sh -c "RAILS_ENV=test rake assets:precompile sunspot:reindex"
 
     - name: Run unit tests
       working-directory: docker/development
-      run: docker compose exec mampf sh -c "RAILS_ENV=test rails spec"
+      run: docker compose run mampf --entrypoint=""
+            sh -c "RAILS_ENV=test rails spec"
 
     - name: Send test coverage report to Codecov
       uses: codecov/codecov-action@v3
