@@ -13,6 +13,7 @@ jobs:
   unit-test-job:
     name: Execute unit tests & upload to Codecov
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
