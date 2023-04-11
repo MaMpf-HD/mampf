@@ -6,8 +6,6 @@ services:
 
   solr:
     image: "solr:8.11.1"
-    ports:
-      - "127.0.0.1:8983:8983"
     volumes:
       - type: bind
         source: ../../solr/development/conf/
@@ -29,8 +27,6 @@ services:
       context: ./../..
       dockerfile: docker/run_cypress_tests/Dockerfile
     image: mampf:tests
-    ports:
-      - "127.0.0.1:3000:3000"
     # TODO: Use this
     # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
     entrypoint: /usr/src/app/entrypoint.sh
@@ -54,6 +50,8 @@ services:
       PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
     volumes:
@@ -67,7 +65,7 @@ services:
       - mailcatcher
 
   cypress_runner:
-    image: mampf-cypress:6.5.0
+    image: mampf-cypress
     build:
       context: ./../..
       dockerfile: docker/run_cypress_tests/Dockerfile_cypress
