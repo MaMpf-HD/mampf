@@ -1,5 +1,12 @@
-name: test-integration
-on: [push]
+name: Run e2e tests and upload results to cypress
+on:
+  push:
+    branches:
+      - main
+      - mampf-next
+      - production
+      - experimental
+  pull_request:
 jobs:
   build:
     runs-on: ubuntu-latest
