@@ -26,7 +26,11 @@ secondsToTime = (seconds) ->
 # convert time in H:MM:SS to seconds
 timeToSeconds = (time) ->
   array = time.split(':')
-  return (+array[0]) * 3600 + (+array[1]) * 60 + (+array[2])
+  return (+array[0]) * 3600 + (+array[1]) * 60 + (+array[2]) + (+array[3]) * .0001
+
+# converts a json timestamp to a double containing the absolute count of millitseconds
+timestampToMillis = (timestamp) ->
+  return 3600 * timestamp.hours + 60 * timestamp.minutes + timestamp.seconds + 0.001 * timestamp.milliseconds
 
 # lightens up a given color (given in a string in hexadecimal
 # representation "#xxyyzz") such that e.g. black becomes dark grey.
@@ -41,7 +45,7 @@ sortAnnotations = ->
   if annotations == null
     return
   annotations.sort (ann1, ann2) ->
-    timeToSeconds(ann1.timestamp) - timeToSeconds(ann2.timestamp)
+    timestampToMillis(ann1.timestamp) - timestampToMillis(ann2.timestamp)
   return
 
 # return the start time of the next chapter relative to a given time in seconds
@@ -644,16 +648,12 @@ $(document).on 'turbolinks:load', ->
   # Event handler for the emergency button
   emergencyButton.addEventListener 'click', ->
     video.pause()
-    # round time to full seconds
-    time = video.currentTime
-    roundTime = Math.floor(time)
-    mediumId = thyme.dataset.medium
     $.ajax Routes.new_annotation_path(),
       type: 'GET'
       dataType: 'script'
       data: {
-        timestamp: secondsToTime(roundTime)
-        mediumId: mediumId
+        total_seconds: video.currentTime
+        mediumId: thyme.dataset.medium
       }
     # When the modal opens, all key listeners must be
     # deactivated until the modal gets closed again
@@ -945,7 +945,7 @@ $(document).on 'turbolinks:load', ->
     # set the correct position for the marker
     marker = $('#marker-' + annotation.id)
     size = seekBar.clientWidth - 15
-    ratio = timeToSeconds(annotation.timestamp) / video.duration
+    ratio = timestampToMillis(annotation.timestamp) / video.duration
     offset = marker.parent().offset().left + ratio * size + 3
     marker.offset({ left: offset })
     marker.on 'click', ->
@@ -982,7 +982,7 @@ $(document).on 'turbolinks:load', ->
           updateAnnotationArea(annotations[i + 1])
     # goto listener
     $('#annotation-goto-button').on 'click', ->
-      video.currentTime = timeToSeconds(annotation.timestamp)
+      video.currentTime = timestampToMillis(annotation.timestamp)
     # edit listener
     $('#annotation-edit-button').on 'click', ->
       lockKeyListeners = true

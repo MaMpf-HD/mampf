@@ -1,11 +1,11 @@
 <%= form_with model: @annotation do |f| %>
-  <b>Time:</b> &nbsp <%= @timestamp %>
+  <b>Time:</b> &nbsp <%= TimeStamp.new(total_seconds: @total_seconds).hms_colon_string %>
 
   <br><br>
 
   <!-- HIDDEN FIELDS -->
   <%= f.hidden_field :medium_id, value: @medium_id %>
-  <%= f.hidden_field :timestamp, value: @timestamp %>
+  <%= f.hidden_field :total_seconds, value: @total_seconds %>
   <div hidden>
     <div id="annotation_id">
       <%= @annotation.id %>
@@ -21,15 +21,33 @@
   <!-- COLOR SELECTION -->
   <b>Color:</b>
   <div id="annotation-color-picker">
-    <% for i in 1..15 do %>
+    <!-- if the annotation is being created, select the
+         1st possible color as default -->
+    <% if @annotation.color == nil %>
+      <%= f.radio_button :color,
+                         annotation_color(1),
+                         id: "annotation_color#{1}",
+                         checked: true %>
+    <% else %>
+      <%= f.radio_button :color,
+                       annotation_color(1),
+                       id: "annotation_color#{1}" %>
+    <% end %>
+    <%= f.label :color,
+                "annotation_color#{1}",
+                for: "annotation_color#{1}" do %>
+        <span class="annotation_color<%=1%>"></span>
+      <% end %>
+    <!-- -->
+    <% for i in 2..15 do %>
       <%= f.radio_button :color,
                          annotation_color(i),
                          id: "annotation_color#{i}" %>
-        <%= f.label :color,
-                    "annotation_color#{i}",
-                    for: "annotation_color#{i}" do %>
+      <%= f.label :color,
+                  "annotation_color#{i}",
+                  for: "annotation_color#{i}" do %>
           <span class="annotation_color<%=i%>"></span>
-          <% end %>
+        <% end %>
     <% end %>
   </div>
   <!-- SIMPLE COLOR PICKER
@@ -38,13 +56,56 @@
 
   <br><br>
 
+  <!-- CATEGORY RADIO BUTTON -->
+  <b>Category:</b>
+  <div class="form-row ml-2">
+    <div class="custom-control custom-radio custom-control-inline">
+      <%= f.radio_button :category,
+                         :note,
+                         class: 'custom-control-input' %>
+      <%= f.label :category,
+                  'note',
+                  value: :note,
+                  class: 'custom-control-label' %>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+      <%= f.radio_button :category,
+                         :content,
+                         class: 'custom-control-input' %>
+      <%= f.label :category,
+                  'content',
+                  value: :content,
+                  class: 'custom-control-label' %>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+      <%= f.radio_button :category,
+                         :mistake,
+                         class: 'custom-control-input' %>
+      <%= f.label :category,
+                  'mistake',
+                  value: :mistake,
+                  class: 'custom-control-label' %>
+    </div>
+    <div class="custom-control custom-radio custom-control-inline">
+      <%= f.radio_button :category,
+                         :presentation,
+                         class: 'custom-control-input' %>
+      <%= f.label :category,
+                  'presentation',
+                  value: :presentation,
+                  class: 'custom-control-label' %>
+    </div>
+  </div>
+
   <!-- CATEGORY SELECT LIST -->
-  <b>Category: &nbsp</b>
+  <!--- <b>Category: &nbsp</b>
   <%= f.select :category_text,
-    ['Need help!', 'Found a mistake', 'Give a comment', 'Note',
-     'Other'],
+    ['I want to create a personal note.',
+     'I have a problem with understanding the content.',
+     'I found a mistake.',
+     'I can\'t read everything in this part.'],
     { selected: @category_text },
-    { class: 'form-control' } %>
+    { class: 'form-control' } %> --->
 
   <br><br>
 

@@ -1,31 +1,27 @@
 module AnnotationsHelper
   def category_text_to_int(text)
     case text
-    when 'Need help!'
-      return Annotation.categories[:help]
-    when 'Found a mistake'
-      return Annotation.categories[:mistake]
-    when 'Give a comment'
-      return Annotation.categories[:comment]
-    when 'Note'
+    when 'I want to create a personal note.'
       return Annotation.categories[:note]
-    when 'Other'
-      return Annotation.categories[:other]
+    when 'I have a problem with understanding the content.'
+      return Annotation.categories[:content]
+    when 'I found a mistake.'
+      return Annotation.categories[:mistake]
+    when 'I can\'t read everything in this part.'
+      return Annotation.categories[:presentation]
     end
   end
   
   def category_token_to_text(token)
     case token
-    when 'help'
-      return 'Need help!'
-    when 'mistake'
-      return 'Found a mistake'
-    when 'comment'
-      return 'Give a comment'
     when 'note'
-      return "Note"
-    when 'other'
-      return 'Other'
+      return 'I want to create a personal note.'
+    when 'content'
+      return 'I have a problem with understanding the content.'
+    when 'mistake'
+      return 'I found a mistake.'
+    when 'presentation'
+      return 'I can\'t read everything in this part.'
     end
   end
   
