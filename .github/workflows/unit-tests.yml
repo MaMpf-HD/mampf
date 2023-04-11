@@ -25,13 +25,6 @@ jobs:
       run: docker compose pull --ignore-buildable
       working-directory: docker/development
 
-    # This action saves a list of existing images.
-    # It also restores the cache if it exists.
-    # see https://github.com/jpribyl/action-docker-layer-caching
-    - name: Use Docker layer caching
-      uses: jpribyl/action-docker-layer-caching@v0.1.1
-      continue-on-error: true
-
     - name: Build docker containers
       working-directory: docker/development
       run: docker compose build
