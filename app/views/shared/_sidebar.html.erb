@@ -38,6 +38,47 @@
     </a>
   </li>
 
+  <% if lecture %>
+    <%# Forum %>
+    <% forum_present = lecture.forum? %>
+    <% path = forum_present ? "/forum/" + lecture.forum.slug : "nothing" %>
+    <li class="sidebar-item nav-link <%= !forum_present ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>" target="_blank">
+        <%# Will never become active as this is an external link %>
+        <i class="bi bi-chat"></i>
+        <%= t('categories.board') %>
+      </a>
+    </li>
+  <% end %>
+
+  <%# Divider %>
+  <span class="border-top my-3"></span>
+
+  <%# Tutorien %>
+  <% if lecture %>
+    <% if current_user.in?(lecture.tutors)
+        link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
+        exists = true
+      elsif current_user.editor_or_teacher_in?(lecture)
+        link_text, path = [t('categories.tutorials'), lecture_tutorial_overview_path(lecture)]
+        exists = lecture.tutorials.any?
+      else
+        link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
+        exists = lecture.assignments.any? && lecture.tutorials.any?
+      end %>
+    <% active_class = get_class_for_any_path(
+        [lecture_tutorials_path(lecture),
+        lecture_tutorial_overview_path(lecture),
+        lecture_submissions_path(lecture)]) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !exists ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= link_text %>
+      </a>
+    </li>
+  <% end %>
+
   <%# Exercises (Nüsse) %>
   <% project_name = 'nuesse' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
@@ -49,6 +90,16 @@
       <%= t('categories.exercises.plural') %>
     </a>
   </li>
+
+  <% if lecture %>
+    <%# Müsli (external link) %>
+    <li class="sidebar-item nav-link <%= !lecture.muesli ? "disabled" : ""%>">
+      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
+        <i class="bi bi-list-check"></i>
+        <%= t('categories.muesli') %>
+      </a>
+    </li>
+  <% end %>
 
   <%# Divider %>
   <span class="border-top my-3"></span>
@@ -123,53 +174,7 @@
     </a>
   </li>
 
-
   <% if lecture %>
-    <%# Divider %>
-    <span class="border-top my-3"></span>
-
-    <%# Forum %>
-    <% forum_present = lecture.forum? %>
-    <% path = forum_present ? "/forum/" + lecture.forum.slug : "nothing" %>
-    <li class="sidebar-item nav-link <%= !forum_present ? "disabled" : ""%>">
-      <a href="<%= url_for(path)%>" target="_blank">
-        <%# Will never become active as this is an external link %>
-        <i class="bi bi-chat"></i>
-        <%= t('categories.board') %>
-      </a>
-    </li>
-
-    <%# Tutorien %>
-    <% if current_user.in?(lecture.tutors)
-        link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
-        exists = true
-      elsif current_user.editor_or_teacher_in?(lecture)
-        link_text, path = [t('categories.tutorials'), lecture_tutorial_overview_path(lecture)]
-        exists = lecture.tutorials.any?
-      else
-        link_text, path = [t('categories.submissions'), lecture_submissions_path(lecture)]
-        exists = lecture.assignments.any? && lecture.tutorials.any?
-      end %>
-    <% active_class = get_class_for_any_path(
-        [lecture_tutorials_path(lecture),
-        lecture_tutorial_overview_path(lecture),
-        lecture_submissions_path(lecture)]) %>
-    <li class="sidebar-item nav-link <%= active_class %>
-            <%= !exists ? "disabled" : ""%>">
-      <a href="<%= url_for(path)%>">
-        <i class="bi bi-people<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= link_text %>
-      </a>
-    </li>
-
-    <%# Müsli (external link) %>
-    <li class="sidebar-item nav-link <%= !lecture.muesli ? "disabled" : ""%>">
-      <a href="<%= DefaultSetting::MUESLI_LINK %>" target="_blank" %>
-        <i class="bi bi-list-check"></i>
-        <%= t('categories.muesli') %>
-      </a>
-    </li>
-
     <%# Divider %>
     <span class="border-top my-3"></span>
 
