@@ -38,4 +38,4 @@ jobs:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: docker compose run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} --entrypoint="" cypress_runner sh -c "while ! curl -s http://mampf:3000 ; do echo waiting for MaMpf to come online at http://mampf:3000; sleep 1; done; cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}"
+        run: docker compose run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} --entrypoint="" cypress_runner sh -c "while ! curl  http://mampf:3000 ; do echo waiting for MaMpf to come online at http://mampf:3000; sleep 1; done; cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}"
