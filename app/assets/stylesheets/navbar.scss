@@ -26,6 +26,16 @@
     font-size: 1.35rem;
     padding: 0 9px;
     color: white;
+
+    &::after {
+        &.active-item {
+            content: "\2022";
+            font-size: 1rem;
+            position: absolute;
+            top: 21px;
+            left: 16px;
+        }
+    }
 }
 
 .new-comment {

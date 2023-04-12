@@ -12,19 +12,23 @@
                 id: 'mampfbrand' %>
       <ul class="navbar-nav mr-auto" id="navbar-buttons">
         <li class="nav-item">
+          <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
+            || !get_class_for_path(root_path()).empty? %>
           <a href="<%= start_path %>"
-            class="nav-link bi bi-house-fill"
+            class="nav-link bi bi-house-fill <%= is_home_active ? $active_css_class : '' %>"
             data-toggle="tooltip"
-            title="<%= t('navbar.home') %>">
+            title="<%= root_path() %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= edit_profile_path %>"
-            class="nav-link bi bi-person-circle"
+            class="nav-link bi bi-person-circle <%= get_class_for_path(edit_profile_path()) %>"
             data-toggle="tooltip"
             title="<%= t('navbar.profile') %>">
           </a>
         </li>
+
         <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
@@ -34,29 +38,35 @@
             </a>
           </li>
         <% end %>
+
         <li class="nav-item">
           <a href="<%= watchlists_path %>"
             id="watchlistsIcon"
-            class="nav-link bi bi-tv-fill"
+            class="nav-link bi bi-tv-fill <%= get_class_for_path_startswith(watchlists_path()) %>"
             data-toggle="tooltip"
             title="<%= t('navbar.watchlist') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= comments_path %>"
             id="commentsIcon"
-            class="nav-link bi bi-chat-quote-fill <%= current_user.unread_comments ? 'new-comment' : '' %>"
+            class="nav-link bi bi-chat-quote-fill
+                <%= current_user.unread_comments ? 'new-comment' : '' %>
+                <%= get_class_for_path(comments_path()) %>"
             data-toggle="tooltip"
             title="<%= t('navbar.comments') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= news_path %>"
-            class="nav-link bi bi-megaphone-fill"
+            class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"
             data-toggle="tooltip"
             title="<%= t('navbar.news') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= DefaultSetting::BLOG_LINK %>"
             class="nav-link bi bi-newspaper"
@@ -64,6 +74,7 @@
             title="<%= t('navbar.blog') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
             class="nav-link bi bi-box-arrow-right"
@@ -73,26 +84,20 @@
           </a>
         </li>
       </ul>
-      <% if user_signed_in? %>
-        <ul class="navbar-nav mr-auto" id="lecturesDropdown">
-          <%= render partial: 'shared/dropdown_lectures',
-                    locals: { lecture: @lecture || current_lecture } %>
-        </ul>
-        <%= render partial: 'shared/dropdown_notifications'%>
-        <%= form_tag(search_index_path,
-                    method: 'get',
-                    class: 'form-inline mt-2 mt-md-0',
-                    id: 'searchField') do %>
-          <%= search_field_tag 'search',
-                              nil,
-                              class: 'form-control mr-sm-2',
-                              placeholder: t('navbar.search') %>
-        <% end %>
-      <% end %>
-      <% if !user_signed_in?  && I18n.available_locales.count > 1 %>
-        <ul class="navbar-nav" id="languagesDrop">
-          <%= render partial: 'shared/dropdown_locales' %>
-        </ul>
+
+      <ul class="navbar-nav mr-auto" id="lecturesDropdown">
+        <%= render partial: 'shared/dropdown_lectures',
+                  locals: { lecture: @lecture || current_lecture } %>
+      </ul>
+      <%= render partial: 'shared/dropdown_notifications'%>
+      <%= form_tag(search_index_path,
+                  method: 'get',
+                  class: 'form-inline mt-2 mt-md-0',
+                  id: 'searchField') do %>
+        <%= search_field_tag 'search',
+                            nil,
+                            class: 'form-control mr-sm-2',
+                            placeholder: t('navbar.search') %>
       <% end %>
   </nav>
   <nav class="navbar navbar-expand" id="secondnav"

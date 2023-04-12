@@ -290,7 +290,7 @@ module ApplicationHelper
 
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
-  $active_css_class = "active-sidebar-item"
+  $active_css_class = "active-item"
   
   def get_class_for_project(project)
     return request.params['project'] == project ? $active_css_class : ''
@@ -300,9 +300,22 @@ module ApplicationHelper
     return request.path == path ? $active_css_class : ''
   end
 
+  def get_class_for_path_startswith(path)
+    return request.path.starts_with?(path) ? $active_css_class : ''
+  end
+
   def get_class_for_any_path(paths)
     for path in paths do
       if request.path == path
+        return $active_css_class
+      end
+    end
+    return ''
+  end
+
+  def get_class_for_any_path_startswith(paths)
+    for path in paths do
+      if request.path.starts_with?(path)
         return $active_css_class
       end
     end
