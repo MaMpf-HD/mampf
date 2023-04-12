@@ -69,3 +69,18 @@
 #github-corner-svg {
     filter: drop-shadow(1px 4px 7px rgba(0, 0, 0, 0.13));
 }
+
+.remember-me-box {
+    white-space: nowrap;
+}
+
+#user_remember_me {
+    vertical-align: top;
+    position: relative;
+    top: 6px;
+}
+
+#remember-me-text {
+    white-space: normal;
+    display: contents;
+}
