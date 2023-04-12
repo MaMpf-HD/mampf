@@ -70,6 +70,10 @@
 
 #github-corner-svg {
     filter: drop-shadow(1px 4px 7px rgba(0, 0, 0, 0.13));
+
+    @include media-breakpoint-down(sm) {
+        opacity: 0.4;
+    }
 }
 
 .remember-me-box {
