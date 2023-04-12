@@ -1,8 +1,13 @@
 ---
 version: "3.4"
+networks:
+  frontend:
+  backend:
 services:
   redis:
     image: "redis:6.2.6-alpine"
+    networks:
+      - backend
 
   solr:
     image: "solr:8.11.1"
@@ -12,16 +17,22 @@ services:
         target: /solrconfig/
         read_only: true
     command: ["solr-precreate", "test", "/solrconfig"]
+    networks:
+      - backend
 
   db:
     image: postgres
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
+    networks:
+      - backend
 
   mailcatcher:
     restart: on-failure:10
     image: dockage/mailcatcher:latest
+    networks:
+      - backend
   mampf:
     build:
       context: ./../..
@@ -63,6 +74,9 @@ services:
       - solr
       - redis
       - mailcatcher
+    networks:
+      - backend
+      - frontend
 
   cypress_runner:
     image: mampf-cypress
@@ -81,3 +95,5 @@ services:
       #- ../../cypress/screenshots:/cypress/screenshots
     depends_on:
       - mampf
+    networks:
+      - frontend
