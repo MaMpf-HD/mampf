@@ -32,7 +32,7 @@
         <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
-              class="nav-link bi bi-wrench-adjustable-circle-fill"
+              class="nav-link bi bi-tools"
               data-toggle="tooltip"
               title="<%= t('navbar.administration') %>">
             </a>
