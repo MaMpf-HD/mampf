@@ -38,21 +38,20 @@
     </a>
   </li>
 
-  <% if lecture %>
-    <%# Forum %>
-    <% forum_present = lecture.forum? %>
-    <% path = forum_present ? "/forum/" + lecture.forum.slug : "nothing" %>
-    <li class="sidebar-item nav-link <%= !forum_present ? "disabled" : ""%>">
-      <a href="<%= url_for(path)%>" target="_blank">
-        <%# Will never become active as this is an external link %>
-        <i class="bi bi-chat"></i>
-        <%= t('categories.board') %>
-      </a>
-    </li>
-  <% end %>
-
   <%# Divider %>
   <span class="border-top my-3"></span>
+
+  <%# Exercises (Nüsse) %>
+  <% project_name = 'nuesse' %>
+  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.nuesse?(current_user) ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
+      <%= t('categories.exercises.plural') %>
+    </a>
+  </li>
 
   <%# Tutorien %>
   <% if lecture %>
@@ -78,18 +77,6 @@
       </a>
     </li>
   <% end %>
-
-  <%# Exercises (Nüsse) %>
-  <% project_name = 'nuesse' %>
-  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <% active_class = get_class_for_project(project_name) %>
-  <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.nuesse?(current_user) ? "disabled" : ""%>">
-    <a href="<%= url_for(fullpath)%>">
-      <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.exercises.plural') %>
-    </a>
-  </li>
 
   <% if lecture %>
     <%# Müsli (external link) %>
@@ -177,6 +164,17 @@
   <% if lecture %>
     <%# Divider %>
     <span class="border-top my-3"></span>
+
+    <%# Forum %>
+    <% forum_present = lecture.forum? %>
+    <% path = forum_present ? "/forum/" + lecture.forum.slug : "nothing" %>
+    <li class="sidebar-item nav-link <%= !forum_present ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>" target="_blank">
+        <%# Will never become active as this is an external link %>
+        <i class="bi bi-chat"></i>
+        <%= t('categories.board') %>
+      </a>
+    </li>
 
     <%# Announcements %>
     <% path = show_announcements_path(lecture) %>
