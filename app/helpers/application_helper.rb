@@ -309,10 +309,8 @@ module ApplicationHelper
   end
 
   def get_class_for_any_path_startswith(paths)
-    for path in paths do
-      if request.path.starts_with?(path)
-        return $active_css_class
-      end
+    if paths.any? { |path| request.path.starts_with?(path) }
+      return  $active_css_class
     end
     return ''
   end
