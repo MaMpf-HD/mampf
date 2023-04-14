@@ -305,12 +305,7 @@ module ApplicationHelper
   end
 
   def get_class_for_any_path(paths)
-    for path in paths do
-      if request.path == path
-        return $active_css_class
-      end
-    end
-    return ''
+    return paths.include?(request.path) ? $active_css_class : ''
   end
 
   def get_class_for_any_path_startswith(paths)
