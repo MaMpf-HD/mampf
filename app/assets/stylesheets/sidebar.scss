@@ -22,14 +22,14 @@
     background-color: white;
     box-shadow: 5px 6px 9px -6px #00000054;
     border-radius: 0 0 10px 0;
-}
 
-.active-sidebar-item {
-    background-color: #EBF0FE;
+    .active-item {
+        background-color: #EBF0FE;
 
-    a {
-        color: #4E6ED9;
-        font-weight: 500;
+        a {
+            color: #4E6ED9;
+            font-weight: 500;
+        }
     }
 }
 
