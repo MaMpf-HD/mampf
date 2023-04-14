@@ -39,7 +39,7 @@ services:
     entrypoint: ./entrypoint.sh
     environment:
       RAILS_ENV: test
-      TEST_DATABASE_ADAPTER: postgresql
+      TEST_DATABASE_ADAPTER: postgresql:13
       TEST_DATABASE_DATABASE: mampf
       TEST_DATABASE_INTERACTIONS: interactions
       TEST_DATABASE_USERNAME: mampf
