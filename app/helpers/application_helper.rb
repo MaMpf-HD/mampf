@@ -288,4 +288,20 @@ module ApplicationHelper
     return Announcement.active_on_main.pluck(:details).join
   end
 
+  # Navbar items styling based on which page we are on
+  # https://gist.github.com/mynameispj/5692162
+  $active_css_class = "active-sidebar-item"
+  
+  def get_class_for_project(project)
+    return request.params['project'] == project ? $active_css_class : ''
+  end
+
+  def get_class_for_path(path)
+    return request.path == path ? $active_css_class : ''
+  end
+
+  def get_class_for_any_path(paths)
+    return paths.include?(request.path) ? $active_css_class : ''
+  end
+
 end

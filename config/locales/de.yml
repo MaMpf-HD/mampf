@@ -56,7 +56,8 @@ de:
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
     erdbeere:
-      singular: 'Beispiel-Datenbank'
+      singular: 'Beispiel'
+      plural: 'Beispiele'
       short: 'DB'
     muesli: 'MÜSLI'
     board: 'Forum'
