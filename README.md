@@ -1,8 +1,13 @@
-# README
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37160523/228801673-236a081f-40e9-47ca-add6-da1b2d6de3fa.png" width="200px" />
 
-## About
+  <h3 align="center">MaMpf</h3>
+  <p align="center">Mathematische Medienplattform</p>
+</p>
 
-MaMpf (*Mathematische Medienplattform*) is an innovative open source E-Learning platform for the mathematical sciences.
+## 💡 About
+
+**MaMpf (*Mathematische Medienplattform*)** is an innovative open source E-Learning platform for the mathematical sciences.
 Central point is the interconnection between different content in the sense
 of a hypermedia system.
 
@@ -46,18 +51,19 @@ There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/ga
 
 MaMpf is implemented in Ruby on Rails.
 
-* Ruby version: 3.0.3
-* Rails Version: 7.0.2.3
+* Ruby version: 3.1.4
+* Rails Version: 7.0.4.3
 * Test suite: rspec, cypress
 * support for I18n
 
-## Installation (with docker-compose)
+## 💻 Installation (with docker compose)
 
-To simply try out mampf you can use docker-compose. Simply clone the mampf repository and run docker-compose by executing
+To easily try out MaMpf you can use `docker compose`. Clone the MaMpf repository and run `docker compose`:
+
 ```
-git clone -b main --recursive git@github.com:fosterfarrell9/mampf.git
+git clone -b main --recursive https://github.com/MaMpf-HD/mampf.git
 cd mampf/docker/development/
-docker-compose up
+docker compose up
 ```
-For more information about that visit [INSTALL.md](./INSTALL.md).
 
+See the full installation guide [here](./INSTALL.md).

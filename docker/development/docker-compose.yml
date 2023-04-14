@@ -2,7 +2,7 @@
 version: '3.4'
 services:
   redis:
-    image: "redis:alpine"
+    image: "redis:6.2.6-alpine"
 
   solr:
     image: "solr:8.11.1"
@@ -23,7 +23,7 @@ services:
       - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
@@ -93,6 +93,7 @@ services:
       PROJECT_EMAIL_USERNAME: mampf
       PROJECT_EMAIL_PASSWORD: mampf
       PROJECT_EMAIL_MAILBOX: INBOX
+      BLOG: https://mampf.blog
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
       # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20220923120841_mampf.sql&dl=1"
       # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/1c4804dcd78446139fd9/?dl=1"
