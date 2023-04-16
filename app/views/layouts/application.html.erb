@@ -9,13 +9,16 @@
     <%= render partial: 'shared/navbar' %>
     <div class="d-flex container-fluid flex-grow-1">
       <div class="row" id="main-content-row">
-        <div id="sidebar-container"
-          class="col-sm-4 col-md-3 col-xl-2">
-          <nav id="sidebar">
-            <%= render partial: 'shared/sidebar',
-                      locals: { lecture: @lecture || current_lecture } %>
-          </nav>
-        </div>
+        <% lecture = @lecture || current_lecture %>
+        <% if lecture %>
+          <div id="sidebar-container"
+            class="col-sm-4 col-md-3 col-xl-2">
+            <nav id="sidebar">
+              <%= render partial: 'shared/sidebar',
+                         locals: { lecture: lecture } %>
+            </nav>
+          </div>
+        <% end %>
         <main class="col-sm-8 ml-auto col-md-9 col-xl-10 pt-3" role="main">
           <div class="alert alert-danger" id="js-messages" role="alert"
                style="display: none;">
