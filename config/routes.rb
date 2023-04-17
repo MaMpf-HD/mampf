@@ -884,7 +884,7 @@ Rails.application.routes.draw do
       as: 'comments'
 
   get 'main/sponsors',
-      to: 'main#sponsors',
+      to: redirect('#sponsors'),
       as: 'sponsors'
 
   get 'main/start',
