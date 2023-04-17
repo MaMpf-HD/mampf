@@ -1,4 +1,4 @@
-$(document).ready(() => {
+document.addEventListener("turbolinks:load", function () {
     if (window.location.hash == "#sponsors") {
         $('#sponsors').modal('show');
     }
