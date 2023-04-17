@@ -142,9 +142,9 @@ describe("Tutorials", () => {
                 cy.contains("Akzeptieren").click();
                 cy.reload();
                 cy.get(".correction-column").contains("Hochladen").click();
-                const yourFixturePath = 'files/manuscript.pdf';
+                const yourFixturePath = 'cypress/fixtures/files/manuscript.pdf';
                 cy.get(".correction-column").contains("Datei").click();
-                cy.get(`#upload-correction-${lectures[5].id}`).attachFile(yourFixturePath);
+                cy.get(`#upload-correction-${lectures[5].id}`).selectFile(yourFixturePath,{force:true});
                 cy.contains("Upload").click();
                 cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
@@ -256,8 +256,8 @@ describe("Tutorials", () => {
                 cy.contains("Akzeptieren").click();
                 cy.reload();
                 cy.get(".correction-column").contains("Hochladen").click();
-                const yourFixturePath = 'files/manuscript.pdf';
-                cy.get(`#upload-correction-${lectures[6].id}`).attachFile(yourFixturePath);
+                const yourFixturePath = 'cypress/fixtures/files/manuscript.pdf';
+                cy.get(`#upload-correction-${lectures[6].id}`).selectFile(yourFixturePath,{force:true});
                 cy.contains("Upload").click();
                 cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();

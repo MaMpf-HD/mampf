@@ -20,8 +20,5 @@
   },
   "scripts": {
     "lint": "eslint ."
-  },
-  "devDependencies": {
-    "cypress": "9.5.1"
   }
 }

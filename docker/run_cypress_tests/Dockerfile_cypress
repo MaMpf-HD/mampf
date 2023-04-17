@@ -1,5 +1,5 @@
-FROM cypress/included:7.6.0
+FROM cypress/included:12.9.0
 
 COPY ./spec/cypress/support /cypress/support
 # install the needed support stuff
-RUN cd /cypress/support && yarn install
+RUN apt-get update && apt-get install curl -y
