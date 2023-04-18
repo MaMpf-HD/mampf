@@ -32,7 +32,7 @@ services:
       dockerfile: docker/run_tests/Dockerfile
     image: mampf:tests
     container_name: mampf_mampf_test
-    entrypoint: ./docker/run_tests/run_tests.sh
+    # entrypoint: ./docker/run_tests/run_tests.sh
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
