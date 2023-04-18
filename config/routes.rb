@@ -859,7 +859,7 @@ Rails.application.routes.draw do
     authenticated :user do
       root to: 'main#start'
     end
-	
+
     unauthenticated do
       root to: 'devise/sessions#new', as: :unauthenticated_root
     end
@@ -872,8 +872,6 @@ Rails.application.routes.draw do
 
   get 'error',
       to: 'main#error'
-
-  get 'main/home'
 
   get 'main/news',
       to: 'main#news',
