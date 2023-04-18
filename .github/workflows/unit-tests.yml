@@ -36,7 +36,7 @@ jobs:
     - name: Prepare for test execution
       working-directory: docker/run_tests
       run: docker compose run --entrypoint="" mampf
-            sh -c "RAILS_ENV=test rake assets:precompile sunspot:reindex"
+            sh -c "RAILS_ENV=test rails assets:precompile && rake sunspot:reindex"
 
     - name: Run unit tests
       working-directory: docker/run_tests
