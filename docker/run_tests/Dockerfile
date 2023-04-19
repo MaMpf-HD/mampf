@@ -15,6 +15,7 @@ RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app
 WORKDIR /usr/src/app
 USER app
 
-COPY --chown=app:app ./Gemfile ./Gemfile.lock /usr/src/app/
+COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
+
 COPY --chown=app:app ./ /usr/src/app/
