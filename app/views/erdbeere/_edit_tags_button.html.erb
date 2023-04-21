@@ -1,0 +1,11 @@
+<% if can? :edit_tags, :erdbeere %>
+    <%= link_to '',
+            edit_erdbeere_tags_path,
+            remote: true,
+            id: 'erdbeere-tags-edit-button',
+            class: 'far fa-edit text-dark',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.edit'),
+            style: 'text-decoration: none;' %>
+<% end %>

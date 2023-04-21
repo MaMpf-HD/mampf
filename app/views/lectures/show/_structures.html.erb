@@ -1,0 +1,42 @@
+<div class="row p-2">
+  <div class="col-auto">
+    <h4>
+      <%= I18n.t('erdbeere.show_structures') %>
+      (<%= lecture.short_title %>)
+    </h4>
+  </div>
+  <div class="col-auto">
+    <%= link_to search_examples_path(lecture),
+                class: ' btn btn-lg btn-outline-secondary' do %>
+      <span>
+        <i class="fa fa-search">
+        </i>
+      </span>
+      <span>
+        <%= t('erdbeere.search_examples') %>
+      </span>
+    <% end %>
+  </div>
+</div>
+<div class="card-columns">
+  <% structures.each do |s| %>
+    <div class="card">
+      <div class="card-header">
+        <h4 class="title">
+          <%= link_to s['attributes']['name'],
+                      erdbeere_structure_path(s['id']) %>
+        </h4>
+      </div>
+      <div class="card-body">
+        <ul>
+          <% s['relationships']['original_properties']['data'].each do |p| %>
+            <li>
+              <%= link_to properties.find { |r| r['id'] == p['id'] }['attributes']['name'],
+                          erdbeere_property_path(p['id']) %>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+</div>

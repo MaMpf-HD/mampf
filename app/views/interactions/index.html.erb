@@ -1,0 +1,44 @@
+<h5 class="mt-3">
+	<%= t('admin.interaction.export_interactions') %>
+</h5>
+<%= form_with url: export_interactions_path(format: 'csv'),
+							scope: 'interactions',
+							local: true,
+							method: :get do |f| %>
+	<div class="row mt-2 p-2">
+		<div class="col-12">
+			<%= f.label :start_date,
+									t('admin.interaction.start') %>
+			<%= f.date_field :start_date, required: true %>
+			<%= f.label :end_date,
+									t('admin.interaction.end'),
+									class: 'ml-3' %>
+			<%= f.date_field :end_date, required: true %>
+			<%= f.submit t('buttons.export'),
+									 class: 'btn btn-primary ml-3',
+									 data: { disable_with: false } %>
+		</div>
+	</div>
+<% end %>
+<h5 class="mt-3">
+	<%= t('admin.interaction.export_probes') %>
+</h5>
+<%= form_with url: export_probes_path(format: 'csv'),
+							scope: 'interactions',
+							local: true,
+							method: :get do |f| %>
+	<div class="row mt-2 p-2">
+		<div class="col-12">
+			<%= f.label :start_date,
+									t('admin.interaction.start') %>
+			<%= f.date_field :start_date, required: true %>
+			<%= f.label :end_date,
+									t('admin.interaction.end'),
+									class: 'ml-3' %>
+			<%= f.date_field :end_date, required: true %>
+			<%= f.submit t('buttons.export'),
+									 class: 'btn btn-primary ml-3',
+									 data: { disable_with: false } %>
+		</div>
+	</div>
+<% end %>

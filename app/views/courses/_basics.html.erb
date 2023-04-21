@@ -61,7 +61,8 @@
                      style: 'display: none;',
                      data: { ajax: true,
                              model: 'user',
-                             filled: false } } %>
+                             filled: false,
+                             placeholder: t('basics.enter_two_letters') } } %>
     </div>
   <% else %>
     <%= t('basics.editors') %>
@@ -77,14 +78,16 @@
     <div class="col-12">
       <%= t('basics.lectures') %>
       <%= helpdesk(t('admin.course.info.lectures'), false) %>
-      <%= link_to '',
-                  new_lecture_path(params: { from: 'course',
-                                             course: course.id }),
-                  class: 'fas fa-plus-circle text-dark',
-                  id: 'new-lecture-button',
-                  data: { remote: true,
-                          toggle: 'tooltip' },
-                  title: t('buttons.create_lecture') %>
+      <% unless course.term_independent && course.lectures.any? %>
+        <%= link_to '',
+                    new_lecture_path(params: { from: 'course',
+                                               course: course.id }),
+                    class: 'fas fa-plus-circle text-dark',
+                    id: 'new-lecture-button',
+                    data: { remote: true,
+                            toggle: 'tooltip' },
+                    title: t('buttons.create_lecture') %>
+      <% end %>
     </div>
     <div class="col-12">
       <% if course.lectures.exists? %>
@@ -92,47 +95,47 @@
           <% course.lectures_by_date.each do |l| %>
             <li>
               <%= link_to l.term_teacher_info,
-                          edit_or_inspect_lecture_path(l),
+                          edit_lecture_path(l),
                           class: lectures_color(l)  %>
             </li>
           <% end %>
         </ul>
+        <% if course.term_independent %>
+          <%= t('admin.course.term_independence') %>
+          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+        <% end %>
       <% else %>
         <%= t('admin.course.no_lectures') %>
+        <div class="custom-control custom-checkbox">
+          <%= f.check_box :term_independent,
+                          class: 'custom-control-input' %>
+          <%= f.label :term_independent,
+                      t('admin.course.term_independent'),
+                      { class: 'custom-control-label' } %>
+          <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+        </div>
       <% end %>
     </div>
   </div>
-  <div class="row">
-    <div class="col-12">
-      <%= t('categories.board') %>
-    </div>
-  </div>
-  <div class="row mb-2">
-    <div class="col-12 mt-2">
-      <% if course.forum? %>
-        <% if course.forum.locked %>
-          <%= link_to t('buttons.unlock_board'),
-                      unlock_course_forum_path(course),
-                      class: 'btn btn-sm btn-outline-primary' %>
-        <% else %>
-          <%= link_to t('buttons.lock_board'),
-                      lock_course_forum_path(course),
-                      class: 'btn btn-sm btn-outline-primary' %>
-        <% end %>
-          <%= link_to t('buttons.delete_board'),
-                      destroy_course_forum_path(course),
-                      class: 'btn btn-sm btn-outline-danger' %>
-      <% else %>
-        <%= link_to t('buttons.add_board'),
-                    add_course_forum_path(course),
-                    class: 'btn btn-sm btn-outline-primary' %>
-      <% end %>
+  <div class="row mt-2">
+    <div class="col-12 form-group">
+      <%= f.label :division_ids,
+                  t('admin.course.divisions') %>
+      <%= helpdesk(t('admin.course.info.divisions'), false) %>
+      <%= f.select :division_ids,
+                   options_for_select(Division.all.map { |d| [d.name_with_program, d.id] },
+                                      course.division_ids),
+                   {},
+                   { class: 'selectize',
+                     multiple: true,
+                     style: 'display: none;',
+                     data: { ajax: false } } %>
     </div>
   </div>
   <div class="row">
     <div class="col-12">
       <%= t('basics.subscribers_count',
-          count: course.users&.count) %>
+          count: course.users.count) %>
       <%= helpdesk(t('admin.course.info.subscribers_count'), false) %>
     </div>
   </div>

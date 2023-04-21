@@ -1,0 +1,10 @@
+docker/developement/docker-compose.yml
+docker/developement/Dockerfile
+docker/run_tests/docker-compose.yml
+docker/run_tests/Dockerfile
+**/.git
+.travis*
+LICENSE
+README.md
+mampf-gui-transparent.png
+.dockerignore

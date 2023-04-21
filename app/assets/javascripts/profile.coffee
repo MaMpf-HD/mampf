@@ -4,55 +4,34 @@
 
 $(document).on 'turbolinks:load', ->
 
-  # auto(un)check/disable radio buttons and checkboxes for lectures and extras
-  # when courses are (un)selected
-  $(document).on 'change', '[id^="course-"]', ->
-    courseId = this.dataset.course
-    if courseId?
-      $boxes = $('#collapse-course-' + courseId).find('input:checkbox')
-      $radios = $('#collapse-course-' + courseId).find('input:radio')
-      if $(this).prop('checked') == true
-        if $radios.length > 1 && $radios.last().prop('checked')
-          $radios.first().prop('checked', true).trigger('change')
-        $boxes.prop('disabled', false)
-        $radios.prop('disabled', false)
-      else
-        $boxes.prop('disabled', true)
-        $radios.prop('disabled', true)
+  $('#profileForm').on 'change', ->
+    console.log 'Änderung'
+    $('#profileChange').show()
     return
 
-  # auto(un)check/disable checkboxes for secondary lectures when
-  # primary lectures are selected
-  $('input:radio[name^="user[primary_lecture-"]').on 'change',  ->
-    primaryLecture = $(this).val()
+  $('input:checkbox[name^="user[lecture"]').on 'change',  ->
     courseId = this.dataset.course
-    authRequiredLectureIds = $('#pass-primary-' + courseId).data('authorize')
-    course = 'course-' + courseId + '-'
-    secondaries = '#secondaries-course-' + courseId
-    if primaryLecture == '0'
-      $(secondaries).hide()
-      $(secondaries + ' .form-check-input').prop('checked', false)
-        .prop('disabled', true)
-      $('#pass-primary-' + courseId).hide()
+    lectureId = this.dataset.lecture
+    checkedCount = $('input:checked[data-course="'+courseId+'"]').length
+    authRequiredLectureIds = $('#lectures-for-course-' + courseId).data('authorize')
+    if $(this).prop('checked') and parseInt(lectureId) in authRequiredLectureIds
+      $('#pass-lecture-' + lectureId).show()
     else
-      $(secondaries + ' .form-check-input').prop('checked', false)
-        .prop('disabled', false).trigger('change')
-      $(secondaries).show()
-      $('[id^="' + course + '"]').show()
-      $('#' + course + primaryLecture).hide()
-      if parseInt(primaryLecture) in authRequiredLectureIds
-        $('#pass-primary-' + courseId).show()
+      $('#pass-lecture-' + lectureId).hide()
+      if checkedCount == 0
+        $('.courseSubInfo[data-course="'+courseId+'"]').removeClass('fas fa-check-circle')
+          .addClass('far fa-circle')
       else
-        $('#pass-primary-' + courseId).hide()
+        $('.courseSubInfo[data-course="'+courseId+'"]').removeClass('far fa-circle')
+          .addClass('fas fa-check-circle')
     return
 
-   $('input:checkbox[name^="user[lecture-"]').on 'change',  ->
-     courseId = this.dataset.course
-     lectureId = this.dataset.lecture
-     authRequiredLectureIds = $('#pass-primary-' + courseId).data('authorize')
-     if $(this).prop('checked') and parseInt(lectureId) in authRequiredLectureIds
-       $('#pass-lecture-' + lectureId).show()
-     else
-       $('#pass-lecture-' + lectureId).hide()
-     return
+  $('.programCollapse').on 'show.bs.collapse', ->
+    program = $(this).data('program')
+    $('#program-' + program + '-collapse').find('.coursePlaceholder').each ->
+      course = $(this).data('course')
+      $(this).append($('#course-card-' + course))
+      $('#course-card-' + course).show()
+    return
+
   return

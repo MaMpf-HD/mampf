@@ -31,7 +31,7 @@ $('#item-description-error').append('<%= @errors[:description].join(' ') %>')
 # item was updated from within edit item view
 # rerender toc box, scroll item into view and colorize it properly
 $('#toc-area').empty()
-  .append('<%= j render partial: 'media/toc',
+  .append('<%= j render partial: "media/toc",
                         locals: { medium: @item.medium } %>')
 tocArea = document.getElementById('toc-area')
 renderMathInElement tocArea,
@@ -81,7 +81,7 @@ setTimeout (->
 $('#newItemModal').modal('hide')
 
 # update item selection field in referral edit view
-itemSelector = document.getElementById('referral_item_id').selectize
+itemSelector = document.getElementById('referral_item_id').tomselect
 itemSelector.addOption
   value: <%= @item.id %>
   text: 'extern <%= @item.description %>'

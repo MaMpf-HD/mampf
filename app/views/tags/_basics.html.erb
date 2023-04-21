@@ -1,3 +1,4 @@
+<% modal ||= false %>
 <div class="card-header">
   <div class="row">
     <div class="col-12">
@@ -87,12 +88,16 @@
                    [[]],
                    {},
                    { multiple: true,
+                     id: "tag_related_tag_ids-#{tag.id.to_i}-#{modal && 1 || 0}",
                      class: 'selectize',
                      data: { id: tag.id.to_i,
                              ajax: true,
                              model: 'tag',
                              filled: false,
-                             locale: I18n.locale } } %>
+                             locale: I18n.locale,
+                             placeholder: t('basics.enter_two_letters'),
+                             no_results: t('basics.no_results'),
+                             modal: modal } } %>
       <div class="invalid-feedback"
            id="tag-related-tags-error-<%= tag.id.to_i %>">
       </div>
@@ -107,7 +112,8 @@
                  options_for_select(Course.select_by_title,
                                     tag.course_ids),
                  {},
-                 { multiple: true,
+                 { id: "tag_related_course_ids-#{tag.id.to_i}-#{modal && 1 || 0}",
+                   multiple: true,
                    class: 'selectize',
                    data: { id: tag.id.to_i } } %>
     <div class="invalid-feedback"
@@ -126,7 +132,7 @@
           <ul>
             <% tag.extra_lectures.each do |l| %>
               <li>
-                <%= link_to l.title, edit_or_inspect_lecture_path(l) %>
+                <%= link_to l.title, edit_or_show_lecture_path(l) %>
               </li>
             <% end %>
           </ul>
@@ -143,7 +149,7 @@
           <ul>
             <% tag.missing_lectures.each do |l| %>
               <li>
-                <%= link_to l.title, edit_or_inspect_lecture_path(l) %>
+                <%= link_to l.title, edit_or_show_lecture_path(l) %>
               </li>
             <% end %>
           </ul>
@@ -158,5 +164,9 @@
   <% if from == 'lesson' %>
     <%= f.hidden_field :lesson_id,
                        value: tag.lesson_ids.first %>
+  <% end %>
+  <% if from == 'talk' %>
+    <%= f.hidden_field :talk_id,
+                       value: tag.talk_ids.first %>
   <% end %>
 </div>

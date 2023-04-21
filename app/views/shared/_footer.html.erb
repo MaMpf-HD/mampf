@@ -1,10 +1,10 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
-<div class="container-fluid bg-grey-lighten-4">
+<div class="container-fluid bg-grey-lighten-6 p-3">
   <div class="row">
-    <div class="col-12 pt-3 pb-3 text-md-left text-center">
+    <div class="col text-md-left">
       <%= t('footer.text_html',
              github: link_to('GitHub',
-                             'https://github.com/fosterfarrell9/mampf',
+                             'https://github.com/MaMpf-HD/mampf',
                              target: :blank),
              rails:  link_to('Rails',
                              'http://rubyonrails.org/',
@@ -22,7 +22,7 @@
                             'https://katex.org',
                             target: :_blank),
              thredded: link_to('Thredded',
-                               'https://thredded.org',
+                               'https://github.com/thredded/thredded',
                                target: :_blank),
              docker: link_to('Docker',
                              'https://www.docker.com/',
@@ -31,22 +31,21 @@
                                'https://basecamp.com/',
                                target: :_blank),
              bugs: link_to(t('here'),
-                           'https://github.com/fosterfarrell9/mampf/issues',
-                           target: :blank),
-             feedback: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+                            'https://github.com/MaMpf-HD/mampf/issues',
+                            target: :_blank),
+             feedback: mail_to(DefaultSetting::PROJECT_EMAIL, nil),
+             background_photo_credit: link_to('Junpeng Ouyang',
+                            'https://unsplash.com/photos/nGs0d1dGFng',
+                            target: :_blank)) %>
     </div>
-  </div>
-
-  <div class="row">
-    <div class="col-md pt-3 pb-3 text-md-left text-center">
+    <div class="col text-md-right">
       <%= t('footer.sponsors_html',
             sponsors: link_to(t('basics.sponsors'),
                               sponsors_path)) %>
-    </div>
-    <div class="col-md pt-3 pb-3 text-center text-md-right">
+      <span style="margin-left: 20px;"></span>
       <a href="https://hse-heidelberg.de/"
          target="_blank"
-         style="text-decoration: none;">
+         style="text-decoration: none">
         <img src="/HD-HSE-Logo_RGB_210dpi.png" height="60" align="middle">
       </a>
       <a href="https://uni-heidelberg.de"
@@ -58,7 +57,7 @@
   </div>
 
   <div class="row">
-    <div class="col-sm text-center bg-grey-lighten-5 text-md-right">
+    <div class="col-sm text-center text-md-right">
       <%= link_to t('disclosure'),
                    'https://www.uni-heidelberg.de/impressum.html',
                    target: :_blank, class:'mr-2' %>

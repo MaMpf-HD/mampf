@@ -1,0 +1,16 @@
+<optgroup label="<%= t('erdbeere.structures') %>">
+  <% structures.each do |s| %>
+    <option value='<%= "Structure-#{s[:id]}" %>' <%= ['Structure', s[:id].to_i].in?(@tag.realizations) ? 'selected' : '' %>>
+      <%= s[:name] %>
+    </option>
+  <% end %>
+</optgroup>
+<% structures.each do |s| %>
+  <optgroup label="<%= s[:name] %>">
+    <% s[:properties].each do |p| %>
+      <option value='<%= "Property-#{p}" %>' <%= ['Property', p.to_i].in?(@tag.realizations) ? 'selected' : '' %>>
+        <%= properties.find { |q| q[:id] == p }[:name] %>
+      </option>
+    <% end %>
+  </optgroup>
+<% end %>

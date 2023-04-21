@@ -74,4 +74,10 @@ module NotificationsHelper
            end
     text.html_safe
   end
+
+  def items_card_size(small, comments_below)
+    return '30vh' if comments_below
+    return '60vh' if small
+    '70vh'
+  end
 end

@@ -1,8 +1,20 @@
 # ApplicationHelper module
 module ApplicationHelper
+
+  #returns the path that is associated to the MaMpf brand in the navbar
+  def home_path
+    return start_path if user_signed_in?
+    root_path(params: { locale: I18n.locale})
+  end
+
+  # get current lecture from session object
+  def current_lecture
+    Lecture.find_by_id(cookies[:current_lecture_id])
+  end
+
   # Returns the complete url for the media upload folder if in production
   def host
-    Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['MEDIA_FOLDER'] : ''
+    Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['INSTANCE_NAME'] : ''
   end
 
   # The HTML download attribute only works for files within the domain of
@@ -16,7 +28,7 @@ module ApplicationHelper
 
   # Returns the full title on a per-page basis.
   def full_title(page_title = '')
-    return 'THymE' if action_name == 'play' && controller_name == 'media'
+    return page_title if action_name == 'play' && controller_name == 'media'
     return 'Quiz' if action_name == 'take' && controller_name == 'quizzes'
     base_title = 'MaMpf'
     if user_signed_in? && current_user.notifications.any?
@@ -54,6 +66,14 @@ module ApplicationHelper
 
   def show_tab(value)
     value ? 'show active' : ''
+  end
+
+  def text_dark(value)
+    value ? '' : 'text-dark'
+  end
+
+  def text_dark_link(value)
+    value ? 'text-primary' : 'text-dark'
   end
 
   # media_sort -> database fields
@@ -100,14 +120,14 @@ module ApplicationHelper
   # For a given list of media, returns the array of courses and lectures
   # the given media are associated to.
   def lecture_course_teachables(media)
-    lecture_ids = Lecture.select do |l|
-      (l.media_with_inheritance.pluck(:id) & media.pluck(:id)).present?
-    end
-                         .uniq
-    course_ids = course_media(media).pluck(:teachable_id).uniq
-    lectures = Lecture.where(id: lecture_ids)
-    courses = Course.where(id: course_ids)
-    courses + lectures
+    teachables = media.pluck(:teachable_type, :teachable_id).uniq
+    course_ids = teachables.select { |t| t.first == 'Course'}.map(&:second)
+    lecture_ids = teachables.select { |t| t.first == 'Lecture'}.map(&:second)
+    lesson_ids = teachables.select { |t| t.first == 'Lesson'}.map(&:second)
+    talk_ids = teachables.select { |t| t.first == 'Talk'}.map(&:second)
+    lecture_ids += Lesson.where(id: lesson_ids).pluck(:lecture_id).uniq
+    lecture_ids += Talk.where(id: talk_ids).pluck(:lecture_id).uniq
+    Course.where(id: course_ids) + Lecture.where(id: lecture_ids.uniq)
   end
 
   # For a given list of media and a given (a)course/(b)lecture,
@@ -135,14 +155,6 @@ module ApplicationHelper
     tail = groups.pop(diff).first(diff).flatten
     groups.last.concat(tail)
     groups
-  end
-
-  # Determines current course id form cookie.
-  # Is used for the rendering of the sidebar.
-  def course_id_from_cookie
-    return cookies[:current_course].to_i unless cookies[:current_course].nil?
-    return if current_user.nil?
-    return current_user.courses.first.id unless current_user.courses.empty?
   end
 
   # returns true for 'media#enrich' action
@@ -188,34 +200,13 @@ module ApplicationHelper
     list
   end
 
-  # Returns the path for the inspect or edit action of a given course,
+  # Returns the path for the show or edit action of a given lecture,
   # depending on  whether the current user has editor rights for the course.
-  def edit_or_inspect_course_path(course)
-    if current_user.admin || course.editors.include?(current_user)
-      return edit_course_path(course)
-    end
-    inspect_course_path(course)
-  end
-
-  # Returns the fontawesome icon name for inspecting or editing a given course,
-  # depending on  whether the current user has editor rights for the course.
-  def edit_or_inspect_course_icon(course)
-    if current_user.admin || course.editors.include?(current_user)
-      return 'far fa-edit'
-    end
-    'far fa-eye'
-  end
-
-  # Returns the path for the inspect or edit action of a given lecture,
-  # depending on  whether the current user has editor rights for the course.
-  # Editor rights are determnined by inheritance, e.g. module editors
+  # Editor rights are determined by inheritance, e.g. module editors
   # can edit all lectures associated to the course.
-  def edit_or_inspect_lecture_path(lecture)
-    if current_user.admin ||
-       lecture.editors_with_inheritance.include?(current_user)
-      return edit_lecture_path(lecture)
-    end
-    inspect_lecture_path(lecture)
+  def edit_or_show_lecture_path(lecture)
+    return edit_lecture_path(lecture) if current_user.can_edit?(lecture)
+    lecture_path(lecture)
   end
 
   # Returns the path for the inspect or edit action of a given medium,
@@ -227,19 +218,6 @@ module ApplicationHelper
       return edit_medium_path(medium)
     end
     inspect_medium_path(medium)
-  end
-
-
-  # Returns the fontawesome icon name for inspecting or editing a given lecture,
-  # depending on  whether the current user has editor rights for the course.
-  # Editor rights are determnined by inheritance, e.g. module editors
-  # can edit all lectures associated to the course.
-  def edit_or_inspect_lecture_icon(lecture)
-    if current_user.admin ||
-       lecture.editors_with_inheritance.include?(current_user)
-      return 'far fa-edit'
-    end
-    'far fa-eye'
   end
 
   # returns the given date in a more human readable form
@@ -295,4 +273,46 @@ module ApplicationHelper
                           html: html },
                   title: t('info')
   end
+
+  def realization_path(realization)
+    "/#{realization.first.downcase.pluralize}/#{realization.second}"
+  end
+
+  def first_course_independent?
+    current_user.administrated_courses
+                .natural_sort_by(&:title)
+               &.first&.term_independent
+  end
+
+  def get_announcements
+    return Announcement.active_on_main.pluck(:details).join
+  end
+
+  # Navbar items styling based on which page we are on
+  # https://gist.github.com/mynameispj/5692162
+  $active_css_class = "active-item"
+  
+  def get_class_for_project(project)
+    return request.params['project'] == project ? $active_css_class : ''
+  end
+
+  def get_class_for_path(path)
+    return request.path == path ? $active_css_class : ''
+  end
+
+  def get_class_for_path_startswith(path)
+    return request.path.starts_with?(path) ? $active_css_class : ''
+  end
+
+  def get_class_for_any_path(paths)
+    return paths.include?(request.path) ? $active_css_class : ''
+  end
+
+  def get_class_for_any_path_startswith(paths)
+    if paths.any? { |path| request.path.starts_with?(path) }
+      return  $active_css_class
+    end
+    return ''
+  end
+
 end

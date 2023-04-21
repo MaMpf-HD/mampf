@@ -1,17 +1,19 @@
 # TagsController
 class TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :edit, :destroy, :update, :inspect,
+  before_action :set_tag, only: [:show, :edit, :destroy, :update,
                                  :display_cyto, :identify, :take_random_quiz]
   before_action :set_related_tags_for_user, only: [:show, :display_cyto]
-  before_action :set_related_tags, only: [:edit, :inspect]
+  before_action :set_related_tags, only: [:edit]
   before_action :check_for_consent
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]
-  authorize_resource
+  authorize_resource except: [:new, :modal, :search, :postprocess,
+                              :render_tag_title]
   layout 'administration'
 
-  def index
-    I18n.locale = current_user.locale
+
+  def current_ability
+    @current_ability ||= TagAbility.new(current_user)
   end
 
   def show
@@ -33,6 +35,7 @@ class TagsController < ApplicationController
                              description: @tag.notions.pluck(:title) +
                                             @tag.aliases.pluck(:title))
                       .where.not(pdf_destination: [nil, ''])
+    @realizations = @tag.realizations
     render layout: 'application_no_sidebar'
   end
 
@@ -41,12 +44,7 @@ class TagsController < ApplicationController
     render layout: 'cytoscape'
   end
 
-  def inspect
-    set_related_tags
-  end
-
   def edit
-    set_related_tags
     # build notions for missing locales
     (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
       @tag.notions.new(locale: l)
@@ -56,6 +54,7 @@ class TagsController < ApplicationController
 
   def new
     @tag = Tag.new
+    authorize! :new, @tag
     set_notions
     @tag.aliases.new(locale: I18n.locale)
   end
@@ -65,6 +64,7 @@ class TagsController < ApplicationController
     return if @errors.present?
     @tag.update(tag_params)
     if @tag.valid?
+      @tag.update(realizations: realization_params)
       # make sure the tag is touched even if only some relations have been
       # modified (important for caching)
       @tag.touch
@@ -82,9 +82,6 @@ class TagsController < ApplicationController
       return
     end
     @tag.update(tag_params)
-    # append newly created tag at the end of the *ordered* tags for
-    # the relevant sections
-    update_sections if @tag.valid? && tag_params[:section_ids]
     if @tag.valid? && !@modal
       redirect_to edit_tag_path(@tag)
       return
@@ -95,17 +92,19 @@ class TagsController < ApplicationController
 
   def destroy
     @tag.destroy
-    redirect_to tags_path
+    redirect_to administration_path
   end
 
   # prepare new tag instance for modal
   def modal
     set_up_tag
+    authorize! :modal, @tag
     @tag.aliases.new(locale: I18n.locale)
     add_course
     add_section
     add_medium
     add_lesson
+    add_talk
     @from = params[:from]
     @locale = locale
   end
@@ -122,6 +121,11 @@ class TagsController < ApplicationController
     if params[:locale].in?(I18n.available_locales.map(&:to_s))
       I18n.locale = params[:locale]
     end
+    if params[:q]
+      result = Tag.select_with_substring(params[:q])
+      render json: result
+      return
+    end
     result = Tag.select_by_title_cached
     render json: result
   end
@@ -133,27 +137,26 @@ class TagsController < ApplicationController
   end
 
   def search
+    authorize! :search, Tag.new
+    per_page = search_params[:per] || 10
     search = Sunspot.new_search(Tag)
     search.build do
       fulltext search_params[:title]
     end
-    if search_params[:course_ids] == ['']
-      search.build do
-        with(:course_ids, nil)
-      end
-    else
-      search.build do
-        with(:course_ids, search_params[:course_ids])
-      end
-    end
+    course_ids = if search_params[:all_courses] == '1'
+                   []
+                 elsif search_params[:course_ids] != ['']
+                   search_params[:course_ids]
+                 end
     search.build do
-      paginate page: params[:page], per_page: 10
+      with(:course_ids, course_ids)
+      paginate page: params[:page], per_page: per_page
     end
     search.execute
     results = search.results
     @total = search.total
     @tags = Kaminari.paginate_array(results, total_count: @total)
-                    .page(params[:page]).per(10)
+                    .page(params[:page]).per(per_page)
   end
 
   def take_random_quiz
@@ -162,6 +165,7 @@ class TagsController < ApplicationController
   end
 
   def postprocess
+    authorize! :postprocess, Tag.new
     @tags_hash = params[:tags]
     @tags_hash.each do |t, section_data|
       tag = Tag.find_by_id(t)
@@ -172,7 +176,6 @@ class TagsController < ApplicationController
         next unless section
         if !tag.in?(section.tags)
           section.tags << tag
-          section.update(tags_order: section.tags_order.push(tag.id))
         end
       end
     end
@@ -181,6 +184,13 @@ class TagsController < ApplicationController
       return
     end
     redirect_to edit_medium_path(Medium.find_by_id(params[:id]))
+  end
+
+  def render_tag_title
+    authorize! :render_tag_title, Tag.new
+    tag = Tag.find_by_id(params[:tag_id])
+    @identified_tag = Tag.find_by_id(params[:identified_tag_id])
+    @common_titles = tag.common_titles(@identified_tag)
   end
 
   private
@@ -265,6 +275,14 @@ class TagsController < ApplicationController
     end
   end
 
+  def add_talk
+    talk = Talk.find_by_id(params[:talk])
+    if talk
+      @tag.talks << talk
+      I18n.locale = talk.lecture.locale || current_user.locale
+    end
+  end
+
   def check_for_consent
     redirect_to consent_profile_path unless current_user.consents
   end
@@ -278,7 +296,14 @@ class TagsController < ApplicationController
                                 course_ids: [],
                                 section_ids: [],
                                 lesson_ids: [],
+                                talk_ids: [],
                                 media_ids: [])
+  end
+
+  def realization_params
+    (params.require(:tag).permit(realizations: [])[:realizations] - [''])
+      .map { |r| r.split('-') }
+      .map { |x| [x.first, x.second.to_i] }
   end
 
   def check_permissions
@@ -314,13 +339,6 @@ class TagsController < ApplicationController
     Course.where(id: tag_params[:course_ids]) - @tag.courses
   end
 
-  def update_sections
-    sections = Section.where(id: tag_params[:section_ids])
-    sections.each do |s|
-      s.update(tags_order: s.tags_order.to_a + [@tag.id])
-    end
-  end
-
   def set_notions
     @tag.notions.new(locale: I18n.locale)
     (I18n.available_locales - [I18n.locale]).each do |l|
@@ -345,7 +363,7 @@ class TagsController < ApplicationController
   end
 
   def search_params
-    params.require(:search).permit(:title, course_ids: [])
+    params.require(:search).permit(:title, :all_courses, :per, course_ids: [])
   end
 
 end

@@ -42,15 +42,10 @@
                   <% split_list(relevant, 2).each do |media_list| %>
                     <div class="col-6">
                       <ul>
-                        <% media_list.each do |m| %>
-                          <% unless m.nil? %>
-                            <li>
-                              <%= link_to m.local_info_for_admins,
-                                          edit_or_inspect_medium_path(m),
-                                          class: textcolor(m) %>
-                            </li>
-                          <% end %>
-                        <% end %>
+                        <%= render partial: 'media/table/entry',
+                                   collection: media_list.compact,
+                                   as: :medium,
+                                   cached: true %>
                       </ul>
                     </div>
                   <% end %>
@@ -59,7 +54,7 @@
               <% if relevant.size == 50 %>
                 <%= t('admin.medium.use_search_html',
                       media_search: link_to(t('admin.main.media_search'),
-                                            media_catalog_path)) %>
+                                            administration_search_path)) %>
               <% end %>
             </div>
           <% end %>

@@ -1,7 +1,5 @@
 de:
   mampf: 'MaMpf'
-  send_me_reset_password_instructions: >
-    Schick mir die Anleitung zur Änderung meines Passworts.
   views:
     pagination:
       first: "&laquo; Erste"
@@ -22,6 +20,7 @@ de:
       short: 'Lek'
     exercises:
       singular: 'Übung'
+      singular_updated: 'Übung (aktualisiert)'
       plural: 'Übungen'
       short: 'Ü'
     examples:
@@ -57,17 +56,21 @@ de:
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
     erdbeere:
-      singular: 'Beispiel-Datenbank'
+      singular: 'Beispiel'
+      plural: 'Beispiele'
       short: 'DB'
     muesli: 'MÜSLI'
     board: 'Forum'
-    organizational: 'Organisatorisches'
+    comments: 'Kommentare'
+    organizational_html: 'Organisa&shy;torisches'
     announcements: 'Mitteilungen'
     reste:
       singular: 'Sonstiges'
       short: 'Sns'
     course: 'Modul'
     mampf_news: 'MaMpf-News'
+    submissions: 'Abgaben'
+    tutorials: 'Tutorien'
   unauthorized:
     default: >
       Du bist nicht berechtigt, auf diese Seite zuzugreifen.
@@ -75,11 +78,12 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2019. MaMpf ist auf %{github}.
+      &copy; MaMpf Team 2023. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
+      Hintergrundbild von %{background_photo_credit}.
     sponsors_html: >
       %{sponsors}:
   sponsors:
@@ -113,26 +117,38 @@ de:
       Im Rahmen des Projekts heiSTART2.0 haben
       %{hendrik}, %{oli} und %{denis} zusammen mit der %{fs_mathphysinfo}
       Mittel zur Einrichtung eines MaMpf-unterstützten Mathematik-Helpdesks für
-      die Studieneingangsphase eingeworben. Der Helpdesk kommt im laufenden
-      Wintersemester 2019/20 bereits zum Einsatz.
+      die Studieneingangsphase eingeworben. Der Helpdesk ist seither eine
+      wichtige Unterstützung in den ersten Semestern des Mathematikstudiums.
     physics_html: >
       Die %{physics_faculty} unterstützte MaMpf durch die Anschaffung
-      medientechnischer Ausstatttung.
+      medientechnischer Ausstattung.
     math_html: >
       Die %{math_faculty} unterstützt MaMpf durch Finanzierung
       studentischer und wissenschaftlicher Hilfskräfte.
+    heiquality_html: >
+      Im Rahmen des heiQUALITY-Programms Lehre konnten von %{hendrik} und
+      %{denis} erfolgreich Mittel zur Umsetzung des Projektes MaMpf-Back
+      eingeworben werden. Hierbei handelt sich um ein niederschwelliges
+      Feedbacksystem für die asynchrone digitale Lehre.
   here: 'hier'
   here_capital: 'Hier'
   disclosure: 'Impressum'
   policy: 'Datenschutzerklärung'
   navbar:
+    home: 'Home'
     search: 'Suche'
     profile: 'Profil'
     administration: 'Administration'
+    comments: 'Kommentare'
     news: 'News'
     blog: 'Blog'
     logout: 'Logout'
+    watchlist: 'Watchlist'
     login: 'Login'
+    favorite_lectures: 'Schnellzugriff Veranstaltungen'
+    no_favorite_lectures_yet: >
+      Du hast dem Schnellzugriff noch keine Veranstaltung hinzugefügt.
+    quick_access: 'Schnellzugriff'
   info: 'Info'
   admin:
     navbar:
@@ -141,9 +157,14 @@ de:
       current_lecture: 'Aktuelle Veranstaltung'
       logout: 'Logout'
       media_search: 'Mediensuche'
-      tags: 'Tagübersicht'
+      tags: 'Tagsuche'
+      teachables: 'Veranstaltungssuche'
       terms: 'Semester'
+      classification: 'Systematik'
       news: 'News'
+      boards: 'Foren'
+      stats: 'Zugriffsstatistik'
+      export_stats: 'Statistiken exportieren'
       users: 'Nutzerverwaltung'
       course: 'Modul'
       profile: 'Mein Profil'
@@ -156,6 +177,18 @@ de:
         subscriber_medium: >
           Dieses Medium ist nur für AbonnentInnen der entsprechenden
           Lehrveranstaltung zugänglich.
+    teachables:
+      teachables: Veranstaltungssuche
+      courses: Modulsuche
+      info:
+        action: >
+          Je nachdem, ob Du EditorIn dieser Veranstaltung bist, kannst Du sie
+          betrachten oder auch editieren. Beim Betrachten wirst Du
+          aufgefordert werden, sie vorher zu abonnieren, falls Du das bisher
+          noch nicht getan hast.
+    classification:
+      programs: 'Studiengänge'
+      divisions: 'Teilbereiche'
     main:
       my_lectures: 'Meine Veranstaltungen'
       type: 'Typ'
@@ -210,9 +243,9 @@ de:
           Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
           Bearbeitungsrechte an diesen Veranstaltungen.
-        lectures_as_module_editor: >
+        lectures_as_course_editor: >
           Dies ist eine Liste aller Veranstaltungen, die zu
-          Modulen gehören, für die du EditorIn bist, abzüglich der
+          Modulen gehören, für die Du EditorIn bist, abzüglich der
           Veranstaltungen, die Du selbst als DozentIn gehalten hast.
           Durch Deine Rechte als ModuleditorIn erbst Du
           Bearbeitungsrechte an diesen Veranstaltungen.
@@ -293,9 +326,19 @@ de:
       editors: 'EditorInnen'
     announcement:
       help: >
-        Hier kannst Du den Text eingeben. Du kannst LaTEX benutzen
-        (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
+        Hier kannst Du den Text eingeben. Du kannst LaTeX benutzen
+        (indem Du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
         siehst Du unten.
+      on_main_page: >
+        auf Startseite anzeigen
+      main_page: auf Startseite
+      propagate: auf Startseite setzen
+      expel: von Startseite nehmen
+      info:
+        on_main_page: >
+          Wenn Du diesen Haken setzt, wird die Mitteilung auf der
+          MaMpf-Homepage angezeigt. Das bietet sich z.B. an, wenn die Mitteilung
+          eine Ankündigung für Wartungsarbeiten betrifft.
     lecture:
       lecture: 'Vorlesung'
       lecture_short: 'V'
@@ -309,6 +352,9 @@ de:
       oberseminar: 'Oberseminar'
       oberseminar_short: 'OS'
       oberseminar_content: 'Oberseminarinhalt'
+      special: 'Special'
+      special_short: ''
+      special_content: 'Inhalt'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'
       no_terms_yet: 'Es muss zunächst ein Semester angelegt werden.'
@@ -323,7 +369,22 @@ de:
         unveröffentlichte verknüpfte Medien weiterhin unveröffentlicht
         bleiben.
       import_media: 'Medien importieren'
+      close_comments: 'Kommentare für alle zugehörigen Medien deaktivieren'
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
+      comments_disabled: >
+        Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
+      new_notifications: 'neue Benachrichtigungen'
+      new_media: 'neue Medien'
+      new_posts: 'neue Forenbeiträge'
+      no_rights: >
+        Du hast keine Berechtigung, diese Veranstaltung zu abonnieren.
+      disable_teacher_display: Anzeige des DozentInnen-Namens unterdrücken
+      submission_max_team_size: maximale Größe von Abgabegruppen
+      submission_grace_period: Kulanzfrist für Abgaben (in Minuten)
+      import_toc: Gliederung aus anderer Veranstaltung importieren
+      import_chapters: Kapitel importieren
+      import_sections: Abschnitte importieren
+      import_tags: Tags importieren
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -363,7 +424,7 @@ de:
           skriptbasiert:
           </i>
           Hier ist es notwendig, in der .tex-Datei für das Manuskript das
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Paket</a>
           einzubinden
           und alles, was gelabelt werden soll, mit \mampflabels zu versehen.
           Das so entstandene Skript wird in Mampf hochgeladen und die
@@ -400,7 +461,7 @@ de:
           bzw. diejenigen, die beim Editieren der Sitzung davon ausgewählt
           wurden. Damit das funktioniert, müssen die MaMpf-Labels im
           LaTeX-File für das Manuskript mit dem
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Paket</a>
           erzeugt werden
           und nach dem Hochladen des Skriptes in MaMpf übernommen werden.
           </li>
@@ -448,6 +509,9 @@ de:
           stehende Text. Als Vorschlag gibt es von uns einen
           Mustertext, den Du beliebig editieren kannst
           (und solltest).
+        organizational_on_top: >
+          Wenn Du diesen Haken setzt, wird die Seite "Organisatorisches"
+          als Startseite für diese Veranstaltung erscheinen.
         muesli: >
           Wenn Du diesen Haken setzt, wird in der
           Sidebar für diese Veranstaltung der Link zu MUESLI aktiviert.
@@ -480,6 +544,13 @@ de:
           Hier kannst Du auswählen, an welcher Stelle das Kapitel (bzw. der Vortrag
           im Fall eines Seminars) eingefügt werden soll, indem Du das
           Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
+        date: >
+          Hier kannst Du auswählen, wann die Sitzung stattfand.
+        sections: >
+          Hier kannst Du auswählen, welche Abschnitte in dieser Sitzung
+          behandelt wurde. Standardmäßig wird diese Sitzung mit allen Tags
+          verknüpft, die  zu diesen Abschnitten gehört. Beim Bearbeiten kannst
+          Du die Tagauswahl verfeinern.
         section_title: >
           Hier kannst Du den Titel des Abschnitts angeben.
         insert_after_section: >
@@ -492,6 +563,58 @@ de:
           gestellt sind. Die Zugriffsrechte werden hierbei zur Laufzeit ermittelt, d.h. das Medium wird
           sichtbar, sobald die Zugriffsrechte auf einen der beiden für importierte Medien zulässigen Werte
           geändert werden.
+        close_comments: >
+          Wenn Du dieses Feld aktivierst, werden alle Diskussionen zu Medien,
+          die zu dieser Veranstaltung oder ihren Sitzungen gehören, geschlossen.
+        comments_disabled: >
+          Standardmäßig sind Kommentare für neu veröffentlichte Medien erlaubt,
+          Du kannst bei der Veröffentlichung aber Kommentare deaktivieren.
+          Hier kannst Du dises Verhaltenb umdrehen.
+        search_type: >
+          Hier kannst Du einen, mehrere oder alle der folgenden Veranstaltungstypen auswählen: <i>Lektion</i>,
+          <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i>. Dabei wird der Operator inklusives
+          <i>ODER</i> verwendet.
+        search_program: >
+          Hier musst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, zu welchen Studiengängen die Veranstaltung gehören soll.
+        search_teacher: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, wer die DozentInnen der Veranstaltung sein sollen.
+        search_term: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, in welchem Semester die Veranstaltungen stattgefunden
+          oder stattfinden.
+        search_fulltext: >
+          Hier kannst Du Text eingeben, nach dem im Titel der Veranstaltung
+          gesucht wird. Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
+          eingibst), wird es bei der Suche ignoriert.
+        disable_teacher_display: >
+          Wenn Du dieses Feld aktivierst, wird auf der Vorlesungs-Karten auf der
+          Startseite und auf der Vorlesungsseite für generische Nutzer
+          der DozentInnen-Name nicht angezeigt. Das macht z.B. Sinn, wenn
+          eine semesterunabhängige Veranstaltung von jemandem nur administrativ
+          als "DozentIn" begleitet wird.
+        submission_max_team_size: >
+          Hier kannst Du angeben, wieviele Personen maximal zu einer Abgabgruppe
+          gehören dürfen. Wenn Du nichts angibst, gibt es keine Begrenzung.
+          Änderungen werden sofort wirksam.
+          Beachte aber: Eine Reduktion dieser Zahl gilt nicht rückwirkend
+          - bereits erstellte Abgaben von Teams mit mehr Mitgliedern bleiben
+          gültig.
+        submission_grace_period: >
+          Hier kannst Du angeben, wieviele Minuten nach dem Abgabeschluss für
+          Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
+          aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
+        section_needed: Bitte erstelle zuerst einen Abschnitt
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -500,6 +623,7 @@ de:
           unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
+      no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
       course_tags_html: >
@@ -518,8 +642,9 @@ de:
         eingetragen.
       imported_media: 'Importierte Medien'
       organizational_visible: 'Organisatorisches sichtbar'
+      organizational_on_top: 'Organisatorisches als Startseite'
       uses_muesli: 'Veranstaltung verwendet MÜSLI'
-      first_chapter: 'Nummer des ersten Kapitels/Vortrags'
+      first_chapter: 'Nummer des ersten Kapitels'
       first_section: 'Nummer des ersten Abschnitts'
       absolute_numbering: 'absolute Nummerierung'
       passphrase: 'Zugangsschlüssel'
@@ -559,6 +684,14 @@ de:
       no_lectures: 'Für diesen Kurs gibt es noch keine Veranstaltungen.'
       additional_information: 'Weitere Informationen'
       additional_information_visible: 'Weitere Informationen sichtbar'
+      programs: 'Studiengänge'
+      divisions: 'Teilbereiche'
+      term_independent: 'semesterunabhängig'
+      term_independence: 'Dieses Modul ist semesterunabhängig.'
+      image: 'Bild'
+      no_image: >
+        Es wurde noch kein Bild hochgeladen. Deshalb wird für die
+        Veranstaltungs-Cards das Standard-Bild verwendet.
       info:
         title: >
           Hier musst Du den Titel des Moduls eintragen.
@@ -583,8 +716,8 @@ de:
           Dies ist die Liste aller Veranstaltungen zu diesem Modul.
           Unveröffentlichte Veranstaltungen sind in rötlicher Farbe gekennzeichnet.
         subscribers_count: >
-          Das ist die Zahl aller NutzerInnen, die diese
-          Veranstaltung in ihrem Profil abonniert haben.
+          Das ist die Zahl aller NutzerInnen, die Veranstaltungen aus
+          diesem Modul abonniert haben.
         tags: >
           Das ist die Liste aller zu diesem Modul
           assoziierten Tags. Diese korrespondieren typischerweise
@@ -605,6 +738,27 @@ de:
           insofern relevant, als dass Nutzer in ihren Profileinstellungen
           festlegen können, ob ihnen verknüpfte Materialien auch von inhaltlich
           vorher einzuordnenden Modulen angezeigt werden sollen.
+        divisions: >
+          Hier kannst Du angeben, zu welchen Teilbereichen welcher Fächer
+          dieses Modul gehört.
+        programs: >
+          Hier kannst Du angeben, zu welchen Studiengängen welcher Fächer
+          dieses Modul gehört.
+        term_independent: >
+          Semesterunabhängige Module sind Module, die nicht in das "klassische"
+          Schema passen, in dem Sinne, das semesterabhängig Veranstaltungen
+          dazu angeboten werden. Das kann z.B. Help-Desks oder Lernlandschaften
+          betreffen. Diese Eigenschaft kann nur geändert werden, solange
+          es in diesem Modul noch keine Veranstaltungen gibt.
+        image: >
+          Du kannst ein Bild zu diesem Modul hochladen. Dieses wird für
+          Visualisierungen verwendet, z.B. in den Cards auf der
+          MaMpf-Startseite. Das Seitenverhältnis sollte idealerweise 3:2
+          betragen, das hochgeladene Bild wird dann von MaMpf herunterskaliert
+          (auf maximal 405 Pixel Breite, 270 Pixel Höhe).
+        action:
+          Falls Du Editor des jeweiligen Moduls bist, wird hier ein Link zum
+          Bearbeiten angezeigt.
     chapter:
       edit: '%{chapter} bearbeiten'
       position: 'Positionierung nach %{chapter_name}'
@@ -613,11 +767,10 @@ de:
       no_sections: 'Für dieses Kapitel wurden noch keine Abschnitte angelegt.'
       info:
         title: >
-          Hier kannst Du den Titel des Kapitels bzw. Vortrags angeben.
+          Hier kannst Du den Titel des Kapitels angeben.
         position: >
           Hier kannst Du auswählen, an welcher Stelle das Kapitel
-          (bzw. der Vortrag) positioniert werden soll, indem Du das
-          Vorgängerkapitel (bzw. den Vorgängervortrag) auswählst.
+          positioniert werden soll, indem Du das Vorgängerkapitel auswählst.
         display_number: >
           Wird eine Anzeigenummer angegeben, so überschreibt diese
           die berechnete Nummer. Das macht z.B. Sinn, wenn Du statt
@@ -669,13 +822,70 @@ de:
         details: >
           Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
-          Veranstaltungsseite angezeigt werden. Du kannst LaTEX benutzen
-          (indem du den Ausdruck in $...$ setzt).
+          Veranstaltungsseite angezeigt werden. Du kannst LaTeX benutzen
+          (indem Du den Ausdruck in $...$ setzt).
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
         extracted_content: >
           Hier steht der Inhalt, der aus Medien extrahiert wurde, die zu
           Sitzungen aus diesem Abschnitt verknüpft sind.
+    talk:
+      speakers: Vortragende(r)
+      no_media: Für diesen Vortrag sind keine Medien vorhanden.
+      next_talk: 'nächster Vortrag'
+      previous_talk: 'voriger Vortrag'
+      no_talks: Es sind keine Vorträge von Dir vorhanden.
+      display_description: Text auf Vortragsseite anzeigen
+      display_description_teacher: Inhalt auf Vortragsseite anzeigen
+      description_warning: >
+        Du hast Text eingetragen, dieser wird jedoch erst auf der
+        Vortragsseite angezeigt, wenn Du den obigen Haken setzt und
+        abspeicherst.
+      info:
+        details: >
+          Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
+          und wichtige Details anzugeben (wie etwa Literatur zu dem
+          Vortrag). Du kannst LaTeX benutzen (indem Du den Ausdruck in $...$
+          setzt). Dieser Text erscheint auf der Seminarhauptseite und der Seite
+          des Vortrags und kann von den Vortragenden nicht bearbeitet werden.
+        details_info: >
+          Das ist eine Beschreibung des Vortrags durch die DozentIn.
+        description: >
+          Hier hast Du die Möglichkeit, optional einen Text zum Inhalt des
+          Vortrages zu schreiben. Du kannst LaTeX benutzen (indem Du den
+          Ausdruck in $...$ setzt).
+        description_info: >
+          Das ist ein Text über den Vortrag, der von den Vortragenden stammt.
+        description_for_editor: >
+          Das ist ein Text über den Vortrag, der von den Vortragenden
+          stammt.
+        media: >
+          Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
+          sind. Du kannst neue Medien hinzufügen.
+        tags: >
+          Das ist die Liste der Tags, die zu diesem Vortrag assoziiert sind.
+          Diese kann nicht von den Vortragenden bearbeitet werden.
+        by_speakers: >
+          (Eintragung durch die Vortragenden)
+        title:
+          Hier kannst Du den Titel des Vortrags angeben.
+        position: >
+          Hier kannst Du auswählen, an welcher Stelle der Vortrag positioniert
+          werden soll, indem Du das den Vorgängervortrag auswählst.
+        tags: >
+          Das ist die Liste aller Tags, die zu diesem Vortrag assoziiert sind.
+        cospeakers: Mitvortragende
+        display_description: >
+          Damit der Text auf der Vortragsseite angezeigt wird, musst Du
+          diesen Haken setzen. Ohne den Haken wird der Text nicht angezeigt,
+          was z.B. sinnvoll sein kann, wenn es sich bei der aktuellen Fassung
+          nur um einen Entwurf handelt.
+        display_description_teacher: >
+          Die Vortragenden können entscheiden, ob ihr Text zum Inhalt auf
+          der Vortragsseite angezeigt wird (dieser Haken wird typischerweise
+          nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
+          handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
+          entfernen.
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -683,7 +893,13 @@ de:
       no_sections: 'Zu dieser Sitzung sind keine Abschnitte assoziiert.'
       start_item: 'Anfangs-Item'
       end_item: 'End-Item'
+      content: >
+        Dies ist der Inhalt, der aus veröffentlichten Medien, die mit dieser
+        Sitzung verknüpft sind, extrahiert wurde. Dies verwendet Inhaltsverzeichnisse
+        von Videos, die mit dem ThymE-Editor bearbeitet wurden, Inhaltsbeschreibungen
+        von Medien und Skriptmetadaten (wenn die Vorlesung auf einem Skript aufbaut).
       destroyed: 'Sitzung gelöscht'
+      tags_without_section: 'Tags ohne Abschnittsassozierung'
       info:
         date: >
           Hier kannst Du das Datum auswählen, an dem die
@@ -728,6 +944,9 @@ de:
           (im Falle skriptbasierter Vorlesungen) verwendet.
         list: >
           Dies ist die Liste aller assoziierten Sitzungen.
+        tags_without_section: >
+          Da nicht klar ist, welche Tags zu  diesem Abschnitt gehören,
+          kannst Du sie hier zu ordnen.
     medium:
       course_medium_html: >
         Es gibt ein Medium dieses Typs, das auf der Ebene des
@@ -743,7 +962,7 @@ de:
         Rot eingefärbte Medien sind noch nicht veröffentlicht oder gesperrt.
       sort: 'Typ'
       edited_by: 'editiert von %{editors}'
-      publish: 'Publish Medium'
+      publish: 'Medium veröffentlichen'
       media_search: 'Mediensuche'
       create: 'Medium anlegen'
       edit: 'Medium bearbeiten'
@@ -769,6 +988,27 @@ de:
       disclaimer: >
         Ich bestätige hiermit, dass durch die Veröffentlichung des
         Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.
+      lock_comments: Kommentare für dieses Medium deaktivieren
+      comments_locked: Kommentare deaktiviert
+      release_date: 'Veröffentlichungsdatum'
+      boost: Boost
+      invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
+      scheduled_for_release: >
+        Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
+      scheduled_for_release_short: >
+        Geplante Veröffentlichung: %{release_date}
+      assignment_to_be_created: >
+        Es wird eine Hausaufgabe dazu angelegt werden. Diese ist am %{deadline}
+        abzugeben.
+      create_assignment: Hausaufgabe zu diesem Medium anlegen
+      invalid_assignment_deadline: >
+        Dies ist kein gültiges Datum nach dem Veröffentlichungsdatum des
+        Mediums.
+      invalid_assignment_title: >
+        Dieser Hausaufgabentitel ist nicht zulässig.
+      manage_publication: Veröffentlichung des Mediums verwalten
+      publication_settings: Veröffentlichungseinstellungen
+      media_settings: Medieneinstellungen
       info:
         locked: >
           Dieses Medium wurde gesperrt. Du kannst es unter
@@ -833,7 +1073,7 @@ de:
           Pro Veranstaltung kann es höchstens ein Skript geben.
           Skripte können nicht in andere Medientypen umgewandelt werden,
           dasselbe gilt auch andersherum. Verwendest Du das
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Paket</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Paket</a>
           für LaTeX, kann MaMpf aus dem pdf zusätzliche Informationen
           extrahieren.
           </li>
@@ -923,8 +1163,8 @@ de:
           Tags, die Du diesem Medium hinzufügst, werden auch der Sitzung
           hinzugefügt.
         content: >
-          Hier hast Du die Mögflichkeit, eine Inhaltsangabe machen. Du kannst LaTEX benutzen
-          (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
+          Hier hast Du die Möglichkeit, eine Inhaltsangabe machen. Du kannst LaTeX benutzen
+          (indem Du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
           siehst Du unten.
         linked_media: >
           Dies ist eine Liste aller Medien, die mit diesem Medium
@@ -991,14 +1231,12 @@ de:
         import_warning: >
           Achtung: Die Struktur des Manuskripts wurde noch nicht übernommen.
         search_type: >
-          Hier kannst Du (im Sinne von
-          <i>
-          ODER
-          </i>
-          ) auswählen,
-          was der Typ des Mediums sein soll.
+          Hier kannst Du einen, mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
+          <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i>,
+          <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i>, <i>Beispiel-Datenbank</i> und <i>Sonstiges</i>.
+          Dabei wird der Operator inklusives <i>ODER</i> verwendet.
         search_teachable: >
-          Hier kannst Du (im Sinne von
+          Hier musst Du (im Sinne von
           <i>
           ODER
           </i>
@@ -1013,17 +1251,23 @@ de:
           bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
           die mit Sitzungen dieser Veranstaltung verknüpft sind.
         search_tags: >
-          Hier kannst Du (im Sinne von
-          <i>
-          ODER/UND
-          </i>
-          ) die Tags auswählen, mit denen das Medium verknüpft sein soll.
+          Mit einem Medium verknüpfte Begriffe werden als <span class="badge badge-light">Beispielbegriff</span>
+          auf der Medienkachel angezeigt. Hier kannst Du Begriffe, mit denen das Medium verknüpft sein soll, aus
+          der Datenbank auswählen. Dabei kannst Du einen, mehrere oder alle dieser Begriffe in die Auswahl aufnehmen.
+          Außerdem kannst Du entscheiden, ob das Medium entweder mit mindestens einem der gewählten Begriffe
+          (inklusives <i>ODER</i>) oder mit allen gewählten Begriffen (<i>UND</i>) versehen sein soll.
         search_editors: >
           Hier kannst Du (im Sinne von
           <i>
           ODER
           </i>
           ) auswählen, wer die EditorInnen des Mediums sein sollen.
+          Beachte, dass jedes Medium mindestens eine EditorIn hat.
+          Ist die "alle"-Checkbox deaktiviert und keine EditorIn ausgewählt,
+          wird die Suche keine Treffer liefern.
+        search_teachers: >
+          Hier kannst Du die DozentInnen einstellen. Wähle eine/n, mehrere oder alle aus.
+          Dabei wird der Operator inklusives <i>ODER</i> verwendet.
         search_fulltext: >
           Hier kannst Du Text eingeben, nach dem in den Feldern Beschreibung,
           Fragen- bzw. Antworttext sowie Bemerkungstext gesucht wird.
@@ -1046,11 +1290,30 @@ de:
         extracted_content: >
           Hier steht der Inhalt, der aus den assoziierten Dokumenten
           extrahiert wurde (z.B. aus Inhaltsverzeichnissen von Videos,
-          die mit dem THymE-Editor bearebitet wurden).
+          die mit dem THymE-Editor bearbeitet wurden).
         details_warning: >
           Es wurden Details geändert, die noch nicht übernommen wurden.
+        boost: >
+          Über den Boost kannst Du die Reihenfolge überschreiben, in der
+          standardmäßig Medien angeordnet werden, die zu Modulen bzw.
+          Veranstaltungen gehören (der Boost wirkt sich nicht auf Medien aus,
+          die zu einer Sitzung assoziiert sind). Der Standardwert ist 0,
+          Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
+          niedrigerem Boost weiter hinten.
+        scheduled_release: >
+          Die Veröffentlichung erfolgt nicht sekundengenau, sollte jedoch
+          spätestens etwa eine Minute nach der angegebenen Uhrzeit erfolgen.
+        assignment_settings: >
+          Einstellungen, die für <i>jede</i> Hausaufgabe in dieser
+          Veranstaltung gelten, wie die Teamgröße für Abgaben und die
+          Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
+          einstellen.
+        answer_count: >
+          Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
+          wieviele Antworten die Quizfrage haben soll. Bei allen anderen
+          Medientypen wird diese Einstellung ignoriert.
     tag:
-      index: 'Tagübersicht'
+      index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
       extra_lectures: 'Zusätzliche Veranstaltungen'
       missing_lectures: 'Fehlende Veranstaltungen'
@@ -1114,6 +1377,7 @@ de:
           dann eine Verknüpfung mit diesen Tags.
     term:
       index: 'Semesterübersicht'
+      active_term: 'aktuelles Semester'
     item:
       safe_delete_from_quarantine: >
         Der Eintrag wird von nirgendwo referenziert. Du kannst ihn also
@@ -1126,6 +1390,7 @@ de:
       no_section: 'kein zugeordneter Abschnitt aus der Datenbank'
       create_external: 'Externen Eintrag anlegen'
       explanation: 'Erläuterung'
+      chapter_short: 'Kap.'
       sort:
         definition: 'Definition'
         remark: 'Bemerkung'
@@ -1243,6 +1508,7 @@ de:
       take_time: 'Zeit aus Video übernehmen'
       external_references: 'Externe Referenzen'
       external_all: 'extern (alle)'
+      additional_medium: 'zusätzliches Medium'
       info:
         start_time: >
           Hier kannst Du die Zeit eingeben, an der die
@@ -1295,6 +1561,8 @@ de:
         media: >
           Hier wird Dir angezeigt, in welchen Medienformen
           der zu referenzierende Eintrag vorliegt.
+        additional_medium:
+          Der Eintrag ist mit zusätzlichen Medien verknüpft.
         explanation: >
           Hier kannst Du den zu referenzierenden Eintrag noch
           mit einer (optionalen) zusätzlichen Beschreibung versehen.
@@ -1329,6 +1597,7 @@ de:
     user:
       current_lecture: 'Aktuelle Veranstaltung'
       homepage: 'Homepage'
+      profile_image: 'Profilbild'
       index: 'NutzerInnenübersicht'
       edited_content: 'Betreute Inhalte'
       no_content: 'Es gibt noch keine entsprechenden Inhalte.'
@@ -1345,8 +1614,8 @@ de:
           Hier kannst Du den Anzeigename eingeben. Der Anzeigename
           wird bei der Anzeige von DozentInnen, EditorInnen etc. verwendet.
         email: >
-          Hier kannst Du die Emailadresse eingeben. Mit dieser erfolgt
-          dann auch die Nutzeranmeldung, außerdem werden Emails bezüglich
+          Hier kannst Du die E-Mail-Adresse eingeben. Mit dieser erfolgt
+          dann auch die Nutzeranmeldung, außerdem werden E-Mails bezüglich
           Passwortzurücksetzung dorthin geschickt.
         administrator: >
           Hier kannst Du anklicken, ob die NutzerIn
@@ -1485,7 +1754,20 @@ de:
       edit: 'Bemerkung bearbeiten'
       initial_text: 'Dummytext'
       copy_marker: '-KOPIE-'
+      text_input: Texteingabefeld aktiv
+      input: 'Eingabe'
+      preview: 'Vorschau'
+      documents: 'Zu dieser Erläuterung gibt es die folgenden Dokumente:'
       info:
+        preview: >
+          <i>
+          Hinweis.
+          </i>
+          Du kannst LaTeX benutzen, indem Du den LaTeX-Code
+          zwischen Dollarzeichen schreibst (bzw. doppelte Dollarzeichen für
+          abgesetzte Inhalte). Eine Liste der unterstützten Symbole gibt es
+          <a href="https://katex.org/docs/supported.html" target="_blank">
+          hier</a>.
         about: >
           Eine Bemerkung korrespondiert zu einem Passus im Quiz,
           in dem man der NutzerIn Dinge erklärt, Sachverhalte einordnet oder
@@ -1521,6 +1803,8 @@ de:
       video_info: 'Erklärvideo im THymE-Player'
       manuscript: 'Manuskript'
       manuscript_info: 'Manuskript als pdf'
+      geogebra: 'Geogebra-Applet'
+      geogebra_info: 'Geogebra-Applet in neuem Tab'
       medium_for_remark_html: >
         Es gibt ein %{medium} zu dieser Erläuterung.
       media_for_remark_html: >
@@ -1552,6 +1836,7 @@ de:
       finale_html: >
         Du hast es geschafft! Zur Belohnung gibt es ein %{xkcd_link}-Comic:
       xkcd: 'XKCD'
+      xkcd_error: 'Leider gab es einen Fehler beim Anzeigen des XKCD-Comics.'
       errors: 'Achtung, das Quiz enthält noch Fehler'
       undefined_targets: 'Es gibt undefinierte Verzweigungen'
       no_end: 'Keine Verzweigung führt zum Ende'
@@ -1562,7 +1847,7 @@ de:
         Diese Abzweigung wurde nicht implementiert.
       none_correct: 'Keine der angegebenen Optionen war korrekt.'
       undefined: 'undefined'
-      dafault: 'default'
+      default: 'default'
       graph: Quiz-Graph
       create_graph: 'Quiz-Graph anlegen'
       unreleased_vertices: >
@@ -1590,6 +1875,10 @@ de:
         typischerweise Quiz-Fragen, die nur im Kontext eines konkreten Quizzes
         Sinn ergeben (beispielsweise, weil in vorangegangenen Fragen spezielle
         Voraussetzungen festgelegt wurden).
+      course_disclaimer: >
+        Dieses Quiz ist semesterübergreifend auf der Ebene des Moduls
+        %{course} angesiedelt, das Material stammt also aus verschiedenen
+        Veranstaltungen und von verschiedenen DozentInnen.
       info:
         graph: >
           Der Quiz-Graph ist der gerichtete Graph, der zu dem
@@ -1609,16 +1898,43 @@ de:
         publish_vertices: >
           Das bezieht sich nur auf unveröffentlichte oder gesperrte Quiz-Fragen
           und Quiz-Erläuterungen, für die Du die entsprechenden Rechte hast.
-          Für diejenigen, für die du diese Rechte besitzt, werden die
+          Für diejenigen, für die Du diese Rechte besitzt, werden die
           Zugriffsrechte für die NutzerInnen genauso gesetzt wie beim Quiz
           ausgewählt.
+    subject:
+      edit: 'Fach bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Fach anlegen'
+    program:
+      edit: 'Studiengang bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Studiengang anlegen'
+      no_courses: 'Es gibt noch keine Kurse in diesem Studiengang.'
+    division:
+      edit: 'Teilbereich bearbeiten'
+      name: 'Bezeichnung'
+      new: 'Teilbereich anlegen'
+      no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
+    interaction:
+      export_interactions: Interaktionen exportieren
+      export_probes: Quizdaten exportieren
+      start: Startdatum
+      end: Enddatum
+    tutorial:
+      new: 'Neues Tutorium anlegen'
+    assignment:
+      new: 'Neue Hausaufgabe anlegen'
   profile:
     account: 'Account'
     name: 'Anzeigename'
     name_information: >
-      Bei Deinen Forenbeiträgen wird dieser Name angezeigt werden.
+      Bei Deinen Forenbeiträgen und Kommentaren wird dieser Name angezeigt
+      werden.
+    name_in_tutorials: Name in Übungsgruppen
+    name_in_tutorials_information: >
+      Dieser Name wird Deinem Tutor bei Deinen Abgaben angezeigt. Wenn
+      Du dieses Feld leerlässt, wird dafür der Anzeigename verwendet.
     change_data: 'Zugangsdaten ändern'
-    delete_account: 'Account löschen'
     courses: 'Module'
     primary_lecture: 'Primäre Veranstaltung'
     secondary_lectures: 'Weitere Veranstaltungen'
@@ -1639,15 +1955,15 @@ de:
       neue Mitteilungen oder neue Features über das MaMpf-interne
       Benachrichtigungssystem erhalten und in MaMpf angezeigt bekommen.
     email_notifications: >
-      Ich möchte per Email über Folgendes benachrichtigt werden:
+      Ich möchte per E-Mail über Folgendes benachrichtigt werden:
     email_for_announcement:
-      neue Mitteilungen in von mir abonnierten Veranstaltungen.
+      neue Mitteilungen in von mir abonnierten Veranstaltungen
     email_for_medium:
-      neue Medien in von mir abonnierten Veranstaltungen oder Modulen.
+      neue Medien in von mir abonnierten Veranstaltungen oder Modulen
     email_for_teachable:
-      neue angelegte Veranstaltungen oder Module.
+      neue angelegte Veranstaltungen oder Module
     email_for_news:
-      Neuigkeiten über MaMpf.
+      Neuigkeiten über MaMpf
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
     please_update: >
@@ -1657,6 +1973,87 @@ de:
     no_consent:
       Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
+    subscribe_lecture: 'Veranstaltung abonnieren'
+    passphrase_required: >
+      Du möchtest die Veranstaltung %{lecture_title} abonnieren. Diese ist
+      durch einen Zugangsschlüssel geschützt. Gib diesen bitte hier ein.
+    my_term_html: Mein Semester &ndash; %{term}
+    inactive_lectures: Weitere abonnierte Veranstaltungen
+    active_nonsubscribed_lectures_html: >
+      Aktuelle Veranstaltungen &ndash; %{term}
+    lecture_search: Veranstaltungssuche
+    no_current_stuff: >
+      Du hast keine Veranstaltungen aus dem aktuellen Semester abonniert.
+    no_inactive_stuff: >
+      Du hast keine Veranstaltungen außerhalb des aktuellen Semesters abonniert.
+    no_current_at_all: >
+      Im aktuellen Semester sind noch keine Veranstaltungen veröffentlicht
+      worden.
+    other_preferences: >
+      Sonstige Einstellungen
+    changes_made: >
+      Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
+      damit die Änderungen wirksam werden.
+    email_for_submissions: >
+      Bezüglich der Abgabe von Übungsblättern möchte ich per E-Mail von MaMpf
+      benachrichtigt werden, wenn:
+    email_for_submission_upload: >
+      erfolgreiches Hochladen einer Datei durch ein Teammitglied
+    email_for_submission_removal: >
+      Löschen einer Datei durch ein anderes Teammitglied
+    email_for_submission_join: >
+      Beitritt eines Teammitglieds
+    email_for_submission_leave: >
+      Austritt eines Teammitglieds
+    email_for_correction_upload: >
+      Verfügbarkeit der Korrektur
+    email_for_submission_decision: >
+      Annahme oder Ablehnung einer verspäteten Korrektur
+    delete_account: Account löschen
+    stored_submissions: >
+      Von Dir sind %{submissions} Abgaben zu Hausaufgaben im System gespeichert,
+      bei denen eine Datei hochgeladen wurde. Diese teilen sich auf in:
+    single_submissions: '%{single_submissions} Einzelabgaben'
+    team_submissions: '%{team_submissions} Teamabgaben'
+    submission_deletion: >
+      Die Einzelabgaben und zugehörigen Korrekturen werden alle gelöscht,
+      die Abgaben und zugehörigen Korrekturen, bei denen Du Mitglied
+      eines größeren Teams warst, dessen Mitglieder noch einen Account haben,
+      bleiben im System bis zum vorgesehenen Löschdatum.
+    confirm_account_deletion: >
+      Bitte bestätige die Löschung Deines Accounts, indem Du Dein Passwort
+      eingibst und den roten Button drückst.
+    thanks_for_contributions: >
+      Vielen Dank dafür, dass Du auf MaMpf als Editor tätig warst!
+      Von Dir gibt es auf MaMpf
+    given_lectures: '%{lectures} Vorlesung als DozentIn'
+    edited_media: '%{media} Medien als MedieneditorIn'
+    contributions_remain: >
+      Die Standardeinstellung sieht vor, dass diese in MaMpf belassen werden.
+      Hier kannst Du eingeben, unter welchem Namen diese künftig angezeigt
+      werden sollen:
+    manual_deletion: >
+      Wenn Du nicht möchtest, dass die Materialien in MaMpf verbleiben, musst
+      Du diese vor der Löschung des Accounts manuell löschen.
+    email_notifications_header: E-Mail-Benachrichtigungen
+    lectures_and_courses: Veranstaltungen und Module
+    submissions: Abgabe von Übungsaufgaben
+    miscellaneous: Sonstiges
+    star_lecture: Veranstaltung dem Schnellzugriff hinzufügen
+    unstar_lecture: Veranstaltung aus dem Schnellzugriff entfernen
+    my_talks: Meine Vorträge
+    media_search: Mediensuche
+    my_data: Welchen Daten werden über mich gespeichert?
+    data_explanation: >
+      Im Rahmen des Services, die Mampf anbietet, werden einige Daten über Nutzer
+      gespeichert. Neben den oben aufgeführten Daten werden essentielle Informationen
+      wie deine abonnierten Vorlesungen oder eingereichten Abgaben gespeichert. Mit dem
+      folgenden Knopf kannst Du alle Daten, die wir über dich speichern, anfordern. Wir
+      werden sie an deine bei MaMpf hinterlegte E-Mail schicken.
+    data_request: >
+      Daten anfordern
+    data_request_sent: >
+      Wir haben deine Anfrage erhalten und werden dir deine Daten zeitnah schicken. 
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -1664,6 +2061,7 @@ de:
   notifications:
     title: 'Neue Benachrichtigungen'
     check_notifications: 'alle erledigen'
+    check: 'erledigen'
     new_medium_in: 'Neues Medium in '
     new_medium: 'Neues Medium angelegt:'
     new_announcement: 'Neue Mitteilung:'
@@ -1672,10 +2070,12 @@ de:
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
     subscribe_course: 'Abonniere es in Deinem Profil.'
     subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
+    goto_profile: 'Zu deinen Profileinstellungen'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
     new_lecture: 'Neue Veranstaltung %{title}'
+    edit_lecture: 'Veranstaltung bearbeiten'
     subscribe_lecture: 'Abonniere sie in Deinem Profil.'
     subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
     new_lecture_created_html: >
@@ -1692,6 +2092,12 @@ de:
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
+    no_tutorials_yet: >
+      Für diese Veranstaltung wurden noch keine Tutorien angelegt.
+    tutorials: >
+      Für diese Veranstaltung gibt es die folgenden Tutorien:
+    no_submissions_yet: >
+      Es waren bisher noch keine Hausaufgaben abzugeben.
   sure: 'Bist Du sicher?'
   details: 'Details'
   none: 'keine'
@@ -1716,7 +2122,7 @@ de:
   no_related_tags: 'Es liegen keine verknüpften Begriffe vor.'
   tags_in_neighbourhood: 'im weiteren Umfeld'
   related_lessons: 'Verknüpfte Sitzungen'
-  no_related_lessons: 'Es sind keine verknüpften Sizungen vorhanden.'
+  no_related_lessons: 'Es sind keine verknüpften Sitzungen vorhanden.'
   related_media: 'Verknüpfte Medien'
   related_questions: 'Verknüpfte Fragen'
   no_related_media: 'Es sind keine verknüpften Medien vorhanden.'
@@ -1739,28 +2145,115 @@ de:
     unpublished: 'Dieses Medium ist nicht veröffentlicht.'
     locked: 'Dieses Medium ist gesperrt.'
     imported: 'Dieses Medium wurde importiert.'
+    theme_based: 'zu bereits Behandeltem'
+    lecture_only: 'keine'
+    improve_visibility: >
+      Indem Du bei Zusatzmaterialien "alle" auswählst, kannst Du dir auch Medien
+      anzeigen lassen, die auf der Ebene des Moduls %{course} angesiedelt sind,
+      deren Inhalte in der aktuellen Vorlesung aber noch nicht behandelt wurden.
     waiting_for_tag: >
       Dieses Medium ist auf Modulebene angesiedelt und bezieht sich auf Tags,
       die in der vorliegenden Veranstaltung (noch) nicht behandelt wurden.
-      Es ist für AbonnentInnen dieser Veranstaltung deshalb im Augenblick nicht
-      sichtbar. Es wird erst dann sichtbar, wenn mindestens einer der
+      Es ist für AbonnentInnen dieser Veranstaltung deshalb nicht
+      sichtbar, wenn die Standardeinstellung für die Zusatzmaterialien
+      "zu bereits Behandeltem" ausgewählt ist.
+      Es wird bei dieser Auswahl erst dann sichtbar, wenn mindestens einer der
       assoziierten Tags in einem Abschnitt dieser Vorlesung auftaucht oder
       zu einem veröffentlichten Medium auf Veranstaltungsebene assoziiert ist.
+    info:
+      visibility_html: >
+        Hier kannst Du einstellen, welche Zusatzmaterialien angezeigt werden sollen.
+        Du hast die folgenden Möglichkeiten:
+        <ul>
+        <li>
+        <i>
+        zu bereits Behandeltem:
+        </i>
+        Das ist die Standardeinstellung und auch die empfohlene
+        Einstellung. Dir werden alle Medien aus der aktuellen Veranstaltung
+        angezeigt. Darüber hinaus werden Medien angezeigt, die zu dem Modul
+        gehören (die also unabhängig davon, wer die Veranstaltung hält, passen
+        sollten), jedoch nur solche, deren Inhalt bereits in der aktuellen
+        Veranstaltung behandelt wurde.
+        </li>
+        <li>
+        <i>
+        keine:
+        </i>
+        Dir werden nur Medien aus der aktuellen Veranstaltung angezeigt.
+        </li>
+        <li>
+        <i>
+        alle:
+        </i>
+        Dir werden alle Medien aus der aktuellen Veranstaltung und alle Zusatzmaterialien
+        zu diesem Modul angezeigt.
+        </li>
+        </ul>
+  watchlist:
+    add: 'Zu meiner Watchlist hinzufügen'
+    select: 'Auswählen'
+    name: 'Name'
+    description: 'Beschreibung'
+    enter_name: 'Namen eingeben'
+    enter_description: 'Beschreibung eingeben (optional)'
+    none: 'Noch keine Watchlist angelegt'
+    empty: 'Diese Watchlist ist leer.'
+    none_added: 'Du hast noch keine Medien zu dieser Liste hinzugefügt.'
+    create: 'Erstellen'
+    creation_confirm: >
+      Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
+      Bist Du sicher, dass Du das Medium zu folgender Watchlist hinzufügen willst:
+    creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
+    creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
+    change: 'Bearbeiten'
+    save_change: 'Übernehmen'
+    change_success: 'Die Watchlist wurde bearbeitet.'
+    new: 'Neu'
+    delete: 'Löschen'
+    delete_confirm: 'Bist Du Dir sicher, dass Du diese Watchlist löschen willst?'
+    delete_success: 'Die Watchlist wurde erfolgreich gelöscht.'
+    delete_failed: 'Die Watchlist konnte nicht gelöscht werden.'
+    close: 'Schließen'
+    confirm: 'Hinzufügen'
+    public: 'Öffentlich'
+    public_help: 'Wenn Du dieses Kästchen markierst, können andere Personen deine Watchlist sehen. Teile dafür einfach die momentane URL.'
+    order_help: 'Du kannst die Reihenfolge der Medien per Drag-and-Drop beliebig verändern.'
+  watchlist_entry:
+    add_success: 'Das Medium wurde erfolgreich zur Watchlist hinzufügt.'
+    add_fail: 'Es gab einen Fehler beim Hinzufügen zur Watchlist.'
+    remove: 'Medium aus der Watchlist entfernen'
+    remove_confirm: 'Bist Du Dir sicher, dass Du dieses Medium aus der Watchlist entfernen willst?'
+    deletion: 'Das Medium wurde aus der Watchlist entfernt.'
+    list: {
+      zero: 'Dieses Medium gehört zu keiner ihrer Watchlisten.',
+      one: 'Dieses Medium gehört zur folgenden Watchlist: %{watchlists}',
+      other: 'Dieses Medium gehört zu folgenden Watchlisten: %{watchlists}'
+    }
   video:
     video: 'Video'
+    no_video: 'Es gibt kein Video.'
     play: 'THymE-Player'
     download: 'Video herunterladen'
     length: 'Länge'
     resolution: 'Auflösung'
     size: 'Größe'
+  image:
+    resolution: 'Abmessungen'
   manuscript:
     manuscript: 'Manuskript'
+    no_manuscript: 'Es gibt kein Manuskript.'
     view: 'pdf im Browser betrachten'
+    view_script: 'Skript im Browser betrachten'
     download: 'Manuskript herunterladen'
     length: 'Länge'
     size: 'Größe'
+    updated: 'Aktualisiert'
     pages: 'S'
     destinations: 'Destinations'
+    structure: 'Struktur des Manuskripts'
+    chapter: 'Kapitel'
+    section: 'Abschnitt'
     one_contradiction: >
       Es wurde ein Widerspruch gefunden. Wenn Du die Struktur des
       Skriptes in MaMpf importieren möchtest, musst Du erst den
@@ -1809,6 +2302,19 @@ de:
     quarantine_info: >
       Aus diesem Grund wurden sie in Quarantäne verschoben. Dort
       kannst Du sie weiterverarbeiten.
+    version_info_html: >
+      Das Manuskript wurde nicht mit der aktuellen Version %{current_version}
+      des MaMpf-LaTeX-Paketes kompiliert, sondern mit %{version}. Es kann
+      daher kein Import von Daten erfolgen. Bitte kompiliere das Manuskript
+      mit der aktuellen Version. Du kannst sie %{package} herunterladen.
+    version_unknown_html: >
+      Das Manuskript wurde mit einer unbekannten Version des MaMpf-LaTeX-Paketes
+      kompiliert. Es kann daher kein Import von Daten erfolgen.
+      Bitte kompiliere das Manuskript mit der aktuellen Version
+      %{current_version}. Du kannst sie %{package} herunterladen.
+    version_correct: >
+      Das Skript wurde mit der aktuellen Version %{current_version}
+      des MaMpf-LaTeX-Paketes kompiliert.
     info:
       quarantined_items: >
         Dies ist eine Liste aller Items, die in Quarantäne
@@ -1829,7 +2335,7 @@ de:
     quiz: 'Quiz'
     start: 'Quiz beginnen'
     compile_tags: >
-      Inhalts-Spezifikation
+      Inhaltsspezifikation
     question_tags_info: >
       Hier ist eine Übersicht aller Begriffe des Moduls, zu denen
       Fragen existieren:
@@ -1846,6 +2352,21 @@ de:
     number_of_questions: 'Anzahl der Fragen: %{count}'
     quiz_level: 'Schwierigkeitsgrad: %{level}'
     number_of_questions_label: 'Anzahl der Fragen'
+    certificate_info: >
+      Du kannst ein Zertifikat dafür bekommen, dass Du dieses Quiz vollständig
+      absolviert hast. Wenn Du den Button drückst, erhältst Du das Zertifikat in
+      Form eines Codes aus 6 Zeichen.
+    certify: Zertifikat anfordern
+    obtained_certificate: >
+      Du hast für dieses Quiz folgenden Zertifikatscode bekommen: %{code}
+    certificate_info_on_use: >
+      Falls Deine Vorlesung zertifizierte MaMpf-Quizzes im Übungsbetrieb
+      verwendet, wirst Du den Code an geeigneter Stelle angeben müssen
+      (z.B. auf Deinem Übungsblatt), Deine TutorIn wird ihn später validieren.
+      Bei der Validierung kann die TutorIn Deinen Namen
+      einsehen (und zwar denjenigen, den Du unter "Name in Übungsgruppen"
+      angegeben hast), nicht jedoch Informationen darüber, inwieweit Du die
+      Fragen korrekt oder inkorrekt beantwortet hast.
     level:
       not_set: 'nicht gesetzt'
       easy: 'leicht'
@@ -1913,6 +2434,7 @@ de:
   time:
     formats:
       concise: '%d.%m.%Y'
+      publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
@@ -1975,7 +2497,37 @@ de:
     settings: 'Profileinstellungen'
     alternative: 'Meintest Du vielleicht etwas anderes?'
     similar: 'Zum Suchbegriff %{search_string} ähnliche Begriffe'
+    courses_with_similar_titles: >
+      Du könntest es mit folgenden Volltext-Suchbegriffen probieren und die
+      Suche anschließend neu starten:
+    click_and_paste: >
+      Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
+    media:
+      title: >
+        Hier kannst Du den Medien- bzw. Sitzungstitel in die Suche miteinbeziehen. Lass das Feld
+        frei, falls Du dieses Suchkriterium nicht verwenden möchtest.
+      title_placeholder: frei lassen oder mind. 2 Zeichen eingeben
+      lectures: >
+        Hier kannst Du bestimmen, aus welcher Veranstaltung das Medium stammen soll. Dabei kannst
+        Du alle, nur die von Dir abonnierten oder eine eigene Auswahl an Veranstaltungen berücksichtigen
+        lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator
+        inklusives <i>ODER</i> verwendet.
+      lecture_options:
+        subscribed: 'abonnierte'
+        all: 'alle'
+        own_selection: 'eigene Auswahl'
+        all_media: 'alle Medien'
+        only_extras: 'nur Zusatzmaterialien'
+      type: >
+        Hier kannst Du einen,   mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
+        <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i> und
+        <i>Sonstiges</i>. Dabei wird der Operator inklusives <i>ODER</i> verwendet.
+    tag_title: >
+      mind. 2 Zeichen eingeben (frei lassen für alle Tags)
   errors:
+    not_subscribed: >
+      Aktuell hast Du diese Veranstaltung nicht abonniert.
+      Um sie betrachten zu können, musst Du sie vorher abonnieren.
     profile:
       passphrase: 'Falscher Zugangsschlüssel'
     thyme:
@@ -1984,42 +2536,28 @@ de:
         Dein Browser wird von ThymE leider nicht unterstützt.
         Du kannst das Video nur mit dem Browser-Player anschauen.
   sign_up_html: >
-    Du hast noch keinen Account? Dann kannst Du dich mit Deiner Emailadresse
+    Du hast noch keinen Account? Dann kannst Du dich mit Deiner E-Mail-Adresse
     %{path}.
   sign_up: 'registrieren'
+  announcements: 'Ankündigungen'
   main:
     welcome:
       Herzlich willkommen auf MaMpf, der Mathematischen
       Medienplattform der Universität Heidelberg.
-    about:
-      'MaMpf ist ein ständig wachsendes Projekt, das verschiedene
-      E-Learning-Angebote bündelt. Dank des Tagging-Systems findest Du in
-      MaMpf schnell und einfach alle vorhandenen Medien zu einem Schlagwort.
-      Außerdem vernetzt MaMpf Schlagwörter und präsentiert sie Dir in
-      übersichtlichen Mind-Maps. Auf MaMpf stehen Dir zur Verfügung:'
-    kaviar_html:
-      '<strong>
-        Hypervideos:
-      </strong>
-      Vorlesungs-, Beispiel- und Wiederholungsvideos mit
-      inhaltlicher Gliederung und Links zu verwandten Materialien'
-    sesam_html:
-      '<strong>
-        Hypertexte:
-      </strong>
-      Vorlesungsskripte, Übungsblätter und Zusatzmaterialien mit inhaltlicher Gliederung
-      und Links zu verwandten Materialien'
-    keks_html:
-      '<strong>
-      Quizzes:
-      </strong>
-      zusammengestellt aus einer umfangreichen Sammlung von Multiple-Choice-Fragen und
-      Rechenaufgaben sowie angeleitete Beweise'
-    interested_html:
-      Neugierig geworden? Auf unserem %{blog} und auf %{researchgate} findest du weitere Informationen über
-      und Neuigkeiten zu MaMpf. %{guided_tour} findest Du eine geführte Tour durch MaMpf.
+    about: >
+      MaMpf bündelt und vernetzt verschiedene E-Learning-Angebote:
+      Vorlesungsvideos und Skripte mit inhaltlicher Gliederung,
+      Übungsblätter, eine umfangreiche Sammlung von Multiple-Choice-Fragen
+      und Quizaufgaben inklusive angeleiteter Beweise und vieles mehr.
+      Dank des Tagging-Systems findest Du schnell und einfach
+      alle für Dich relevanten Medien.
+    interested_html: >
+      Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
+      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere dich
+      und probiere MaMpf einfach selbst aus.
+    resources: Ressourcen
     blog: Blog
-    researchgate: Researchgate
+    guided_tour: geführter Tour
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
@@ -2067,41 +2605,498 @@ de:
       nicht als 3,000
       </li>
       </ul>
+  comments:
+    title: Neue Kommentare zu Medien aus Deinen Veranstaltungen
+    latest_post: Neuster Beitrag
+    thread_subscribed: Abo
+    who_and_when: vor %{when} von %{who}
+    comment_verb: Kommentieren
+    no_comments: Es liegen keine neuen Kommentare vor.
+    media_comments: >
+      Anzahl der Medien in von den von Dir abonnierten
+      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
+  submission:
+    invalid_code: Der eingegebene Code ist ungültig.
+    invalid_code_for_assignment: >
+      Der eingegebene Code ist ungültig für %{assignment}.
+    assignment_expired: Die Frist für diese Hausaufgabe ist bereits abgelaufen.
+    already_in: Bei dieser Abgabe bist Du schon dabei.
+    lecture_not_subscribed: Du hast die zugehörige Veranstaltung icht abonniert.
+    no_partners_no_leave: >
+      Du kannst nicht austreten, da Du die einzige Person in der Abgabegruppe
+      bist. Dafür kannst Du die Abgabe löschen.
+    nothing_here: >
+      Hier ist noch nichts hinterlegt - lege eine Abgabe an oder tritt einer
+      bei.
+    nothing_here_past: >
+      Zu dieser Hausaufgabe hast Du nichts abgegeben.
+    invitations_to: Einladungen an
+    joined_successfully: >
+      Du bist der Abgabe zu %{assignment} erfolgreich beigetreten.
+    failed_redemption: >
+      Die Einlösung des Codes ist fehlgeschlagen: %{message}
+    current: Aktuelle Abgabe
+    previous: Vorige Abgabe
+    old_ones: Ältere Abgaben
+    future_ones: Zukünftige Abgaben
+    no_old_ones: Es wurde noch nichts abgegeben.
+    no_future_ones: >
+      Es sind keine Hausaufgaben jenseits der aktuellen vorhanden.
+    no_manuscript_yet: Es ist keine Datei hinterlegt.
+    exists_no_longer: Diese Abgabe existiert nicht.
+    correct_file_size: Die Datei hat die richtige Größe.
+    optimize: Optimieren
+    missing_consent: Du musst den Bedingungen zustimmen.
+    working: Arbeite
+    optimization_log: Log (anzeigen)
+    optimization_failed: >
+      Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
+    upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
+    file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
+    optimization_help_html: >
+      <b>Optimieren:</b> Verwende diesen Knopf, um automatisch
+      im Browser eine Optimierung durchzuführen. Dies dauert 1-2 Minuten. Wir
+      empfehlen bei der Nutzung dieses experimentellen Features die Abgabe nach dem Speichern
+      herunterzuladen und zu überprüfen.
+    optimization_info: >
+      Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
+       So bleiben die Daten auf deinem Gerät, bis Du sie hochgeladen hast.
+    assure_third_party: >
+      Ich versichere, dass durch die Datei keine Rechte Dritter verletzt werden.
+    removal_notice_html: >
+      <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
+      Wir übernehmen keine Haftung für mögliche Datenverluste.
+    submission_not_upload_notice_html: >
+      <b>Wichtig</b>: Bitte drücke auf "Hochladen" und dann auf "Speichern", ansonsten werden deine
+       Änderungen verworfen, wenn Du die Seite verlässt.
+    submission_upload_notice_html: >
+      <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
+       Änderungen verworfen, wenn Du die Seite verlässt.
+    deletion_date: Löschdatum
+    multiple_files_selected: Es wurden mehrere Dateien ausgewählt.
+    merging_help_html: >
+      <b>Zusammenführen:</b> Verwende diesen Knopf um die Dateien in der obigen
+      Reihenfolge zusammenzuführen.
+    merging_info: >
+      Dazu wird ein kleines Zusatzprogramm heruntergeladen und in deinem Browser
+      ausgeführt. Deine Dateien bleiben also auf deinem Gerät für diesen Vorgang.
+    merge: Zusammenführen
+    merging_failed: Zusammenführen fehlgeschlagen.
+    no_correction_yet: Es ist keine Datei hinterlegt.
+    move_to_tutorial: verschieben in Tutorium
+    manuscript_no_pdf: Die hochgeladene Datei ist keine gültige pdf-Datei.
+    manuscript_size_too_big: >
+      Die hochgeladene Datei ist zu groß (sie darf höchstens %{max_size} groß
+      sein).
+    wrong_file_type: >
+      Die Datei hat den falschen Dateityp %{file_type}. Erwartet wird eine Datei
+      vom Typ %{accepted_file_type}.
+    wrong_mime_type: >
+      Die Datei hat den falschen MIME Type %{mime_type}. Erwartet wird eine
+      Datei vom MIME Type %{accepted_mime_types}.
+    correction_size_too_big: >
+      Die hochgeladene Datei ist zu groß (sie darf höchstens 15 MB groß sein).
+    too_late_no_saving: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit kann diese Änderung nicht mehr gespeichert werden.
+    too_late_no_editing: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit kann diese Abgabe nicht mehr bearbeitet werden.
+    too_late_no_inviting: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit können zu dieser Abgabe keine Einladungen mehr versandt werden.
+    too_late_no_destroying: >
+      Die Abgabefrist ist leider überschritten. Außerdem ist die Kulanzfrist
+      abgelaufen, oder Deine TutorIn hat bereits eine Korrektur hochgeladen.
+      Damit kann diese Abgabe nicht mehr gelöscht werden.
+    late_submission_warning_html: >
+      Du kannst innerhalb der Kulanzfrist noch bis %{friendly_deadline}
+      Änderungen vornehmen, jedoch nur solange Dein TutorIn noch keine
+      Korrektur zur Abgabe hochgeladen hat. Allerdings
+      wird die Abgabe dann als <b>verspätet</b> eingestuft. Es liegt im Ermessen
+      der DozentIn und der TutorInnen, ob und wie diese gewertet wird.
+      <br>
+      <i>Hinweis.</i>
+      Als Änderung zählen hierbei die folgenden Aktionen:
+      <ul>
+      <li>
+      Anlegen der Abgabe
+      </li>
+      <li>
+      Erfolgreiches Hochladen oder Ersetzen der Datei
+      </li>
+      <li>
+      Beitritt eines Teammitglieds
+      </li>
+      </ul>
+    last_modification: >
+      letzte Änderung
+    last_modification_info_html: >
+      Hier ist protokolliert, wann die letzte Änderung an der Abgabe durch
+      Teammitglieder war.
+      Hierbei wird Folgendes berücksichtigt:
+      <ul>
+      <li>
+      Anlegen der Abgabe
+      </li>
+      <li>
+      Erfolgreiches Hochladen oder Ersetzen der Datei
+      </li>
+      <li>
+      Beitritt eines Teammitglieds
+      </li>
+      </ul>
+      Liegt die letzte Änderung vor dem Abgabetermin, ist die Abgabe gültig.
+      Andernfalls wird sie als verspätet gekennzeichnet.
+    okay: Alles bestens!
+    no_file: Es ist keine Datei hinterlegt.
+    nothing: Es ist keine Abgabe angelegt.
+    with_correction: >
+      Alles bestens! Deine TutorIn hat die Korrektur zu Deiner Abgabe
+      hochgeladen.
+    too_late: >
+      Die Abgabe ist als "zu spät" markiert, da die letzte Änderung
+      nach dem Abgabeschluss erfolgte. Es liegt im Ermessen
+      der DozentIn und der der TutorInnen, ob und wie sie gewertet wird.
+    too_late_accepted: >
+      Deine TutorIn hat die als "zu spät" gekennzeichnete Abgabe akzeptiert
+      und ist jetzt mit der Korrektur beschäftigt.
+    too_late_rejected: >
+      Deine als "zu spät" gekennzeichnete Abgabe wurde abgelehnt.
+    under_review: >
+      Die Abgabe wurde erfolgreich übermittelt, Deine TutorIn ist mit der
+      Korrektur beschäftigt.
+    already_corrected: >
+      Für diese Hausaufgabe wurde bereits eine Korrektur hochgeladen. Deshalb
+      kannst Du nicht mehr beitreten.
+    late: verspätete Abgabe
+    late_submissions: verspätetete Abgaben
+    rejected: abgelehnt
+    bulk_download_submissions: Paketdownload der Abgaben
+    bulk_download_corrections: Paketdownload der Korrekturen
+    bulk_upload: Paketupload der Korrekturen
+    code_explanation: >
+      Durch Kenntnis und Eingabe dieses Code können andere Personen dieser
+      Abgabe beitreten. Das Beitreten über einen Code bietet sich insbesondere
+      dann an, wenn die entsprechende Person in dieser Veranstaltung noch keine
+      Abgabe zusammen mit Dir hatte. Personen, mit denen Du schon
+      zusammengearbeitet hast, kannst Du über den "Einladen"-Button eine
+      Einladung zu dieser Abgabe zukommen lassen (diesen Button gibt es nur in
+      dem Fall, dass entsprechende Personen existieren, nicht schon Teammitglied
+      sind und die Teamgröße unterhalb der Schranke für die Teamgröße liegt).
+    profile_info_html: >
+      In Deinen %{profile} kannst Du diverse Einstellungen vornehmen, über
+      welche Ereignisse im Hinblick auf Abgaben Du per Email informiert werden
+      möchtest. Das beinhaltet erfolgreichen Upload oder Entfernen von Dateien,
+      Beitritt oder Austritt von Teammitgliedern, Entscheidung über verspätete
+      Abgaben und den Upload von Korrekturen durch Deine TutorIn.
+    deletion_date_info: >
+      Bei Abgaben handelt es sich um persönliche Daten, die wir aus
+      Datenschutzgründen im nachfolgenden Semester löschen. Das genaue Löschdatum
+      kannst Du der Tabelle entnehmen. Du wirst außerdem rechtzeitig per E-Mail
+      an die Löschung erinnert, damit Du Deine Daten sichern kannst.
+    team_info: >
+      Hier sieht Du Dein Abgabeteam. Du kannst Dein Team vergrößern, indem Du
+      anderen Personen den Abgabecode weitergibst, so dass diese beitreten
+      können, oder indem Du Personen, mit denen Du in dieser Veranstaltung schon
+      gemeinsame Abgaben hattest, einlädst, so dass diese beitreten können.
+      Das Team kann aber nur so groß werden wie die maximale Teamgröße, die
+      in der Veranstaltung gilt.
+    file_format: Abgabeformat
+  assignment:
+    expired: Die Abgabefrist ist abgelaufen.
+    not_in_this_lecture: >
+      In dieser Vorlesung wurden noch keine Hausaufgaben
+      angelegt. Deswegen gibt es auch keine Abgaben.
+    no_current: >
+      Aktuell steht nichts zur Abgabe an.
+    no_previous: >
+      Es wurde noch nichts abgegeben.
+    nothing_yet_in_lecture: >
+      In dieser Vorlesung war bisher noch nichts abzugeben.
+    deletion_date: Löschdatum
+    destruction_info:
+      <i>
+      Hinweis.
+      </i>
+      Eine Hausaufgabe kann nur dann gelöscht werden, wenn keine Abgaben, die
+      Dateiuploads beinhalten, dafür hochgeladen wurden.
+    info:
+      scheduled_assignment:
+        Diese Hausaufgabe wird bei der Veröffentlichung des assoziierten
+        Mediums angelegt werden. Um Änderungen vorzunehmen, musst Du die
+        Veröffentlichungseinstellungen des Mediums bearbeiten.
+  tutorial:
+    no_submissions_for_assignment: >
+      Zu dieser Hausaufgabe liegen in diesem Tutorium keine Abgaben vor.
+    destruction_info:
+      <i>
+      Hinweis.
+      </i>
+      Ein Tutorium kann nur dann gelöscht werden, wenn keine Abgaben, die
+      Dateiuploads beinhalten, dafür hochgeladen wurden.
+    late_submission_decision: >
+      Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
+    own_tutorials: >
+      Eigene Tutorien
+    other_tutorials: >
+      Sonstige Tutorien
+    deadline_warning: >
+      Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
+      können Korrekturen hochgeladen werden.
+    grace_period_warning: >
+      Bis %{friendly_deadline} läuft noch die Kulanzfrist, innerhalb derer
+      Abgaben und nachträgliche Änderungen durch die Studierenden noch möglich
+      sind (was jedoch zur Einstufung der entsprechenden Abgaben als
+      verspätet führt).
+    certificate_check: Quiz-Zertifikat validieren
+    certificate_check_info: >
+      Hier kannst Du Zertifikats-Codes überprüfen, die NutzerInnen nach dem
+      vollständigen Absolvieren eines Quizzes erhalten haben. Bei Eingabe eines
+      gültigen Codes erhältst Du Informationen darüber, zu welcher NutzerIn und
+      welchem Quiz das Zertifikat gehört.
+    certificate_valid: >
+      Der Code ist gültig. Er gehört zu NutzerIn %{user} und zum Quiz %{quiz}.
+    certificate_invalid: Der Code ist ungültig.
+    teams_as_csv: Teams als .csv
+    bulk_upload:
+      report: Bericht zum Paketupload der Korrekturen
+      number_of_submissions: Anzahl der Abgaben
+      successfully_saved: Anzahl der erfolgreich gespeicherten Korrrekturen
+      invalid_filenames: ungültige Dateinamen
+      invalid_files: ungültige Dateien
+      invalid_submission_id: ungültige Abgabe-ID
+      no_decision: noch keine Entscheidung über Akzeptanz getroffen
+      rejected: Korrektur bereits abgelehnt
+      files_in_cache: Datei(en) erfolgreich in den Zwischenspeicher hochgeladen.
+      info:
+        general_info: >
+          Hier kannst Du mehrere Korrekturen gleichzeitig hochladen.
+          Damit diese von MaMpf zugeordnet werden können, sollten die Dateinamen
+          idealerweise mit den Dateinamen der Abgaben übereinstimmen.
+        invalid_filenames: >
+          Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
+          die nicht in das von MaMpf vorgegebene Namensschema passen.
+        invalid_files: >
+          Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
+          die zwar einer Abgabe zugeordnet werden konnten, deren Speichern aber
+          daran scheitert, dass sie nicht den Anforderungen genügen, die MaMpf
+          an Korrekturdateien stellt (z.B. falscher Dateityp, Überschreiten der
+          Größenbeschränkung etc.)
+        invalid_submission_id: >
+          Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
+          die zwar in das von MaMpf vorgegebene Namensschema passen, deren dort
+          enthaltene Abgaben-ID aber zu keiner Abgabe passt.
+        no_decision: >
+          Hier sind diejenigen Abgabeteams aufgelistet, für die eine
+          Korrektur hochgeladen wurde, aber noch keine Entscheidung darüber
+          getroffen wurde, ob die verspätete Abgabe akzeptiert wird. Die
+          entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
+        rejected: >
+          Hier sind diejenigen Abgabeteams aufgelistet, für die eine
+          Korrektur hochgeladen wurde, aber bereits entschieden wurde,
+          dass die verspätete Abgabe nicht akzeptiert wird. Die
+          entsprechenden Korrekturen wurden deshalb nicht hochgeladen.
+      error: >
+        Dein Bundle-Upload ist leider fehlgeschlagen. Versuch es bitte nochmal.<br>
+        Falls Du diese Fehlermeldung zum wiederholten Mal siehst:<br>
+        - schließe Deinen Browser, öffne ihn wieder und versuch es nochmal.<br>
+        - fahre Dein Gerät herunter, starte es erneut und versuch es nochmal.<br>
+        - lade die Dateien einzeln hoch.<br>
+        Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
+  package:
+    no_zip: Die Datei ist kein .zip-Archiv.
+    to_big: Die Datei ist zu groß.
   locales:
-    en: 'englisch'
-    de: 'deutsch'
+    en: 'Englisch'
+    de: 'Deutsch'
   mailer:
     notification: 'MaMpf-Benachrichtigung'
     notification_header: 'Benachrichtigung von MaMpf'
     medium_subject: 'Neues Medium'
     new_medium: 'Es wurde ein neues Medium veröffentlicht: %{title}'
     unsubscribe_html: >
-      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf erhalten
+      Wenn Du in Zukunft keine E-Mails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen %{profile} deaktivieren.
     unsubscribe_text: >
-      Wenn Du in Zukunft keine Emails mehr über Aktivitäten in MaMpf erhalten
+      Wenn Du in Zukunft keine E-Mails mehr über Aktivitäten in MaMpf erhalten
       möchtest, kannst Du dieses Feature in Deinen Profileinstellungen
       deaktivieren.
+    non_working_links: >
+      Falls ein Link aus dieser Mail nicht funktioniert, wenn Du ihn aus Deinem
+      Mailclient heraus aufrufst, kannst Du versuchen, ihn per Copy and Paste
+      die Adresszeile Deines Browsers zu kopieren und dann aufzurufen.
     announcement_subject: 'Neue Mitteilung'
     mampf_news: 'über MaMpf'
     new_announcement: 'Es gibt eine neue Mitteilung'
     author: 'VerfasserIn'
     text: 'Text'
+    new_editor_subject: 'EditorInnenrechte für %{title}'
+    new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
-    subscribe_lecture_html: 'Du kannst sie über Deine %{profile} abonnieren.'
+    subscribe_lecture: >
+      Du kannst sie über Deine Profileinstellungen abonnieren.
     subscribe_lecture_text: >
       Du kannst sie über Deine Profileinstellungen abonnieren.
     new_course_subject: 'Neues Modul %{title}'
     new_course: 'Es wurde ein neues Modul angelegt: %{title}.'
-    subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
+    subscribe_course: 'Du kannst es über Deine Profileinstellungen abonnieren.'
     subscribe_course_text: >
       Du kannst es über Deine Profileinstellungen abonnieren.
+    submission_invitation_subject: >
+      Einladung zu Abgabe für %{assignment} in %{lecture}
+    submission_invitation_html: >
+      %{issuer} hat Dich eingeladen, einer Abgabe zu %{assignment} in %{lecture}
+      beizutreten. Der Code zum Beitreten lautet: %{code}. Du kannst ihn MaMpf
+      selbst eingeben und einlösen oder diesen %{link} benutzen.
+    submission_upload_subject: >
+      Erfolgreicher Upload für Abgabe zu %{assignment} in %{lecture}
+    submission_upload_html: >
+      Du hast erfolgreich die Datei "%{filename}" für die Abgabe zu
+      %{assignment} in %{lecture} hochgeladen. Du kannst die aktuelle Datei
+      unter diesem %{link} einsehen.
+    submission_upload_by_others_html: >
+      %{uploader} hat erfolgreich die Datei "%{filename}" für die Abgabe zu
+      %{assignment} in %{lecture} hochgeladen. Du kannst die aktuelle Datei
+      unter diesem %{link} einsehen.
+    submission_upload_removal_subject: >
+      Datei für Abgabe zu %{assignment} in %{lecture} entfernt
+    submission_upload_removal_html: >
+      Du hast die Datei "%{filename}" für die Abgabe zu %{assignment} in
+      %{lecture} entfernt.
+    submission_upload_removal_by_others_html: >
+      %{remover} hat die Datei "%{filename}" für die Abgabe zu %{assignment} in
+      %{lecture} entfernt.
+    submission_join_subject: >
+      %{user} beigetreten zu Abgabe zu %{assignment} in %{lecture}
+    submission_join: >
+      %{user} ist der Abgabe zu %{assignment} in %{lecture}
+      beigetreten.
+    submission_leave_subject: >
+      %{user} hat Abgabe zu %{assignment} in %{lecture} verlassen
+    submission_leave: >
+      %{user} hat die Abgabe zu %{assignment} in %{lecture} verlassen.
+    correction_upload_subject: >
+      Korrektur zu %{assignment} in %{lecture} hinzugefügt
+    correction_upload_html: >
+      %{tutor} hat die Korrektur für die Abgabe zu %{assignment} in %{lecture}
+      hochgeladen. Du kannst sie unter diesem %{link} einsehen.
+    submission_acceptance_subject: >
+      Verspätete Abgabe zu %{assignment} in %{lecture} akzeptiert
+    submission_acceptance: >
+      Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde akzeptiert
+      und wird korrigiert und gewertet werden.
+    submission_rejection_subject: >
+      Verspätete Abgabe zu %{assignment} in %{lecture} abgelehnt
+    submission_rejection: >
+      Deine verspätete Abgabe zu %{assignment} in %{lecture} wurde abgelehnt
+      und wird nicht korrigiert und nicht gewertet werden.
+    submission_deletion_subject: >
+      Löschung von Abgaben und Korrekturen
+    submission_deletion_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf von Dir gespeicherten
+      Abgaben und Korrekturen mit Löschdatum <b>%{deletion_date}</b> an dem
+      betreffenden Tag automatisch gelöscht. Bitte lade diese rechtzeitig
+      herunter, wenn Du sie weiterhin verwenden möchtest.
+    submission_deletion_lectures: >
+      Betroffen von der Löschung sind die folgenden Veranstaltungen in MaMpf:
+    submission_deletion_lecture_subject: >
+      Löschung von Abgaben und Korrekturen [%{lecture}]
+    submission_deletion_lecture_text_html: >
+      Aus Datenschutzgründen werden sämtliche in MaMpf gespeicherten
+      Abgaben und Korrekturen der Veranstaltung %{lecture} mit
+      Löschdatum <b>%{deletion_date}</b> an dem betreffenden Tag automatisch gelöscht.
+      Sollten sie anderweitig gespeichert werden müssen, so muss dies außerhalb
+      von MaMpf geschehen, und die Dateien müssen rechtzeitig heruntergeladen werden.
+    submission_destruction_subject: >
+      Löschung von Abgaben und Korrekturen
+    submission_destruction_text_html: >
+      Aus Datenschutzgründen wurden sämtliche in MaMpf von Dir gespeicherten
+      Abgaben und Korrekturen mit Löschdatum %{deletion_date} automatisch gelöscht.
+    submission_destruction_lecture_subject: >
+      Löschung von Abgaben und Korrekturen [%{lecture}]
+    submission_destruction_lecture_text_html: >
+      Aus Datenschutzgründen wurden sämtliche in MaMpf gespeicherten
+      Abgaben und Korrekturen der Veranstaltung %{lecture} mit dem
+      Löschdatum %{deletion_date} automatisch gelöscht.
+    hash_mail_subject: Überprüfung der Emailadresse
+    hash_mail_body: >
+      Hallo, %{name}!
+      Du erhältst diese Email, weil eine frühere Email von MaMpf nicht zugestellt werden konnte.
+      Mit dieser Email wird überprüft, ob Dein Emailkonto noch existiert. Da dies der Fall ist,
+      werden keine Änderungen an Deinem Account vorgenommen. Du kannst diese Email daher ignorieren.
+      Hash:%{hash}
+    data_request_mail_body: >
+      %{mail} mit User-Id: %{id} hat ihre Daten angefordert.
+    data_provide_mail_subject: Anfrage nach Daten
+    data_provide_mail_body: >
+      Hallo, %{name}!<br>
+
+      Du hast uns eine Anforderung deiner Daten geschickt. Dem kommen wir gerne nach.
+      Zunächst gibt es mit dir direkt verknüpfte Daten:<br>
+
+      Deine Emailadresse: %{email}<br>
+      Account-Erstellung: %{created_at}<br>
+      Letzte Account-Änderung: %{updated_at}<br>
+      Admin: %{admin}<br>
+      Abo-Typ: %{subscription_type}<br>
+      Name: %{name}<br>
+      Homepage: %{homepage}<br>
+      Keine Benachrichtigungen: %{no_notifications}<br>
+      Sprache: %{_locale}<br>
+      Emails für Medien: %{email_for_medium}<br>
+      Emails für Ankündigungen: %{email_for_announcement}<br>
+      Emails für Vorlesungen: %{email_for_teachable}<br>
+      Emails für Neuigkeiten: %{email_for_news}<br>
+      Ungelesene Kommentare: %{unread_comments}<br>
+      Studien-Teilnehmer: %{study_participant}<br>
+      Emails für Abgaben-Upload: %{email_for_submission_upload}<br>
+      Emails für Abgaben-Löschung: %{email_for_submission_removal}<br>
+      Emails für Abgaben-Beitritt: %{email_for_submission_join}<br>
+      Emails für Abgaben-Verlassen: %{email_for_submission_leave}<br>
+      Emails für Korrektur-Upload: %{email_for_correction_upload}<br>
+      Emails für Abgabe-Entscheidung: %{email_for_submission_decision}<br>
+      Name in Tutorials: %{name_in_tutorials}<br>
+      Archiviert: %{archived}<br>
+      Bild-Daten: %{image_data}<br>
+
+      Über die Bedeutung der einzelnen Daten kannst Du gerne mit uns Kontakt aufnehmen.
+      Weiterhin gibt es Daten, die mit anderen Datenbankeinträgen verknüpft sind, nämlich<br>
+
+      -abonnierte Vorlesungen<br>
+      -Favoritenvorlesungen<br>
+      -Module als Moduleditor<br>
+      -Vorlesungen als Vorlesungeditor<br>
+      -editierte Medien<br>
+      -gehaltene Vorlesungen<br>
+      -gehaltene Tutorien<br>
+      -Vorträge<br>
+      -erhaltene Notifications (z.B. über neue Medien etc.)<br>
+      -erstellte Announcements<br>
+      -registrierte Clicker<br>
+      -Zettelabgaben<br>
+      -Watchlists<br>
+      -Quizzertifikate<br>
+      -Forenbeiträge<br>
+      -Kommentare<br>
+
+      Einige dieser Daten mögen nicht auf dich zutreffen.<br>
+
+      Bei weiterem Interesse kontaktiere uns bitte.<br>
+
+      Mit freundlichen Grüßen,<br>
+      Dein MaMpf-Team
   statistics:
     video_thyme: 'THymE-Aufrufe'
     video_downloads: 'Downloads'
     manuscript_access: 'Zugriffe'
-    quiz: 'vollständige Zugriffe'
+    quiz_access: 'Aufrufe'
+    quiz_full_access: 'beendete Durchläufe'
     median: 'Median'
     lower_quartile: 'Unteres Quartil'
     upper_quartile: 'Oberes Quartil'
@@ -2113,11 +3108,35 @@ de:
     number_of_users: 'Anzahl der Nutzerinnen'
     number_of_correct_answers: >
       Anzahl der korrekt beantworteten Fragen
+    calls: 'Aufrufstatistik'
+    success: 'Erfolgsstatistik'
+    no_finishes_yet: 'Das Quiz wurde bis jetzt von niemandem beendet.'
+    date: 'Datum'
+    count: 'Anzahl'
+    plays: 'Aufrufe'
+  erdbeere:
+    show_structures: Strukturen, Eigenschaften und Beispiele
+    select_structures: Strukturen auswählen
+    info:
+      structures:
+        Hier kannst Du wählen, welche Strukturen aus der ErDBeere-Datenbank
+        für diese Vorlesung angezeigt werden sollen.
+    structures: 'Strukturen'
+    structure_index: 'zur Strukturenübersicht'
+    properties: 'Eigenschaften'
+    edit_realizations: 'Realisierungen bearbeiten'
+    no_realizations: 'Es sind keine Realisierungen vorhanden.'
+    search_examples: 'Beispiele suchen'
+    no_structures: >
+      Zu dieser Vorlesung sind keine Strukturen aus der Beispieldatenbank
+      assoziiert.
   basics:
+    error: Fehler
     course: 'Modul'
     courses: 'Module'
     term: 'Semester'
     teacher: 'DozentIn'
+    teachers: 'DozentInnen'
     title: 'Titel'
     short_title: 'Kurztitel'
     editors: 'EditorInnen'
@@ -2131,7 +3150,7 @@ de:
     course_editors: 'ModuleditorInnen'
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
-    email: 'E-Mail-Addresse'
+    email: 'E-Mail-Adresse'
     preferences: 'Einstellungen'
     language: 'Sprache'
     date: 'Datum'
@@ -2150,13 +3169,15 @@ de:
     action: 'Aktion'
     actions: 'Aktionen'
     search: 'Suche'
+    post_processing: 'Stelle fertig...'
     mampf_package: 'MaMpf-Paket'
     associated_to: 'Assoziiert zu'
     associated_to_short: 'Ass. zu'
     associated_with_inheritance: 'Assoziiert mit Vererbung zu'
-    assoicated_to_short: 'Ass. zu'
+    associated_to_short: 'Ass. zu'
     description: 'Beschreibung'
     type: 'Typ'
+    types: 'Typen'
     label: 'Label'
     related_media: 'Verknüpfte Medien'
     related_questions: 'Verknüpfte Fragen'
@@ -2212,7 +3233,7 @@ de:
     question: 'Frage'
     answer: 'Antwort'
     answers: 'Antworten'
-    none: 'none'
+    none: 'keine'
     remark: 'Bemerkung'
     latex: 'LaTeX'
     quiz: 'Quiz'
@@ -2229,7 +3250,7 @@ de:
     warning: 'Warnung'
     aliases: 'Aliase'
     translations_aliases: 'Übersetzungen, Aliase'
-    answer_count: 'Anzahl der Antworten (nur für Quiz-Fragen)'
+    answer_count: 'Anzahl der Antworten'
     multiple_choice: 'Multiple Choice'
     free: 'freie Antwort'
     solution: 'Lösung'
@@ -2241,18 +3262,62 @@ de:
     documents: 'Dokumente'
     optional: 'optional'
     statistics: 'Statistik'
+    loading_data: 'Lade Daten...'
+    realizations: 'Realisierungen'
+    comments: 'Kommentare'
+    comment: 'Kommentar'
+    comments_for: 'Kommentare für %{subject}'
+    unsubscribe: 'abbestellen'
+    subscribe: 'abonnieren'
+    programs: 'Studiengänge'
+    visibility: 'Zusatzmaterialien'
+    tutor: 'TutorIn'
+    tutors: 'TutorInnen'
+    tutorials: 'Tutorien'
+    assignments: 'Hausaufgaben'
+    deadline: 'Abgabetermin'
+    tutorial: 'Tutorium'
+    code: 'Code'
+    files: 'Dateien'
+    partners: 'PartnerInnen'
+    team: 'Team'
+    expired: 'abgelaufen'
+    you: 'Du'
+    and_you: 'und Du'
+    invited: 'Eingeladen'
+    nobody: 'niemand'
+    submission: 'Abgabe'
+    correction: 'Korrektur'
+    submissions: 'Abgaben'
+    corrections: 'Korrekturen'
+    overview: Übersicht
+    tba: N.N.
+    due: bis
+    as: als
+    as_file_type: als %{type}-Datei
+    code_copied_to_clipboard: Der Code wurde in die Zwischenablage kopiert.
+    emails_copied_to_clipboard: Die Adressen wurden in die Zwischenablage kopiert.
+    lecture_search: Veranstaltungssuche
+    course_search: Modulsuche
+    immediately: sofort
+    at_time: zum folgenden Zeitpunkt
+    assignment: Hausaufgabe
+    reminder: Erinnerung
+    together_with: zusammen mit
+    enter_two_letters: mind. 2 Zeichen eingeben
+    no_results: Keine Resultate gefunden
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
     users: 'nur registrierte MaMpf-NutzerInnen'
-    subscribers: 'nur AbonenntInnen'
+    subscribers: 'nur AbonnentInnen'
     locked: 'gesperrt'
     referenced_from: 'referenziert in'
     irrelevant: 'egal'
   buttons:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
-    save_and_edit: 'Speichern und Bearbeiten'
+    save_and_edit: 'Speichern und bearbeiten'
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
@@ -2260,6 +3325,7 @@ de:
     parent_lecture: 'zur Veranstaltung'
     parent_lesson: 'zur Sitzung'
     parent_medium: 'zum Medium'
+    parent_talk: 'zum Vortrag'
     create_chapter: 'Kapitel anlegen'
     create_talk: 'Vortrag anlegen'
     create_lesson: 'Sitzung anlegen'
@@ -2267,6 +3333,10 @@ de:
     create_medium: 'Medium anlegen'
     create_announcement: 'Mitteilung anlegen'
     create_lecture: 'Veranstaltung anlegen'
+    create_program: 'Studiengang anlegen'
+    create_subject: 'Fach anlegen'
+    create_division: 'Teilbereich anlegen'
+    create: 'Anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
     hide_media: 'Medien ausblenden'
@@ -2319,13 +3389,34 @@ de:
     interpret: 'Interpretieren'
     import_media: 'Medien importieren'
     view: 'Ansehen'
+    import_script_items: 'Inhaltsverzeichnis aus Skript übernehmen'
+    close_comments: 'Diskussionen für alle Medien schließen'
+    open_comments: 'Geschlossene Diskussionen alle wieder öffnen'
+    join: 'Beitreten'
+    copy_to_clipboard: 'in die Zwischenablage kopieren'
+    copy_email_to_clipboard: 'E-Mail-Adressen in die Zwischenablage kopieren'
+    leave: 'Austreten'
+    upload: 'Hochladen'
+    upload_success: 'Erfolgreich hochgeladen'
+    refresh_token: 'Code erneuern'
+    invite: 'Einladen'
+    send: 'Versenden'
+    download: 'Herunterladen'
+    move: 'Verschieben'
+    accept: 'Akzeptieren'
+    reject: 'Ablehnen'
+    dismiss: 'Ausblenden'
+    validate: 'Validieren'
+    cancel_publication: 'Stornieren'
+    import_lecture_toc: 'Gliederung importieren'
+    import_toc: 'Importieren'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
     unsaved_changes: >
       Achtung, es gibt ungespeicherte Änderungen!
   confirmation:
-    generic: 'Bist du sicher?'
+    generic: 'Bist Du sicher?'
     delete_graph: >
       Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
       nicht das Medium.
@@ -2355,6 +3446,10 @@ de:
       Bist Du sicher? Die dazugehörigen Sitzungen werden nicht gelöscht,
       sondern werden - bis Du eine andere Abschnittszuordnung vornimmst -
       als "verwaist" geführt.
+    active_term: >
+      Bist Du sicher? Damit wird sich für alle NutzerInnen die Startseite
+      ändern, da die aktuellen Vorlesungen über das aktuelle Semester bestimmt
+      werden.
   privacy_html: >
     Wir nehmen den Umgang mit Deinen Daten ernst. Im Rahmen der
     Datenschutz-Grundverordnung (DSGVO) benötigen wir Deine Zustimmung zur
@@ -2374,12 +3469,13 @@ de:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
     session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
     no_chapter: 'Ein Kapitel mit der angeforderten id existiert nicht.'
+    no_talk: Ein Vortrag mit dieser id existiert nicht.
     no_course: 'Ein Modul mit der angeforderten id existiert nicht.'
     no_test: 'Für dieses Modul gibt es keinen Test.'
     no_lecture: 'Eine Veranstaltung mit der angeforderten id existiert nicht.'
     no_lesson: 'Eine Sitzung mit der angeforderten id existiert nicht.'
     no_page: >
-      Die angeforderte Seit existiert nicht. Du wurdest auf die
+      Die angeforderte Seite existiert nicht. Du wurdest auf die
       MaMpf-Homepage umgeleitet.
     no_video: 'Zu diesem Medium existiert kein Video.'
     no_manuscript: 'Zu diesem Medium existiert kein Manuskript.'
@@ -2397,7 +3493,7 @@ de:
     quiz_has_error: >
       Dieses Quiz hat einen Fehler.
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
-    no_search_string: >
+    no_search_term: >
       Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
     search_term_short: >
       Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
@@ -2413,7 +3509,56 @@ de:
     no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
     no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
     no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
-  activerecord:
+    no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
+    no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
+    no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
+    no_tutorial: 'Ein Tutorium mit der angeforderten id existiert nicht.'
+    no_submission: Eine Abgabe mit der angeforderten id existiert nicht.
+    no_assignment: Eine Hausaufgabe mit der angeforderten id existiert nicht.
+    no_lecture_given: Es wurde keine oder eine ungültige Vorlesung angegeben.
+    no_tutor_in_this_lecture: >
+      In dieser Veranstaltung bist Du keine TutorIn.
+    no_editor_or_teacher: >
+      In dieser Veranstaltung bist Du weder DozentIn noch EditorIn.
+    no_student_status_in_lecture: >
+      In dieser Veranstaltung bist Du nicht abgabeberechtigt.
+    no_tutorials_in_lecture: >
+      In dieser Veranstaltung gibt es keine Tutorien, deswegen kann auch nichts
+      abgegeben werden.
+    no_assignments_in_lecture: >
+      In dieser Veranstaltung gibt es bisher keine Hausaufgaben.
+    tutorials:
+      destruction_failed: >
+        Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
+        dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen wurden.
+      bulk_download_failed: >
+        Es gab ein Problem beim Erstellen der Zip-Datei: %{message}
+    assignments:
+      destruction_failed: >
+        Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
+        liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
+        wurden.
+    certificate_already_claimed: >
+      Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
+    no_announcement: >
+      Eine Mitteilung mit dieser id existiert nicht.
+    no_watchlist: 'Watchlist existiert nicht oder ist privat.'
+    created_lecture_success: >
+      Die Veranstaltung %{lecture} wurde erfolgreich angelegt.
+    created_course_success: >
+      Das Modul %{course} (Editor(Innen): %{editors}) wurde erfolgreich
+      angelegt.
+    unauthorized: >
+      Die hast keine Berechtigung für diese Aktion.
+  exception:
+    title: Fehler
+    exception: Exception auf %{host}
+    exception_report: 'Es gab eine Exception auf %{host}:'
+    user_text: >
+      Ups, das hätte nicht passieren sollen. Das ist ein Bug in MaMpf.
+    will_be_repaired: >
+      Das MaMpf-Team hat eine Benachrichtigung über diesen Bug erhalten, wir
+      werden versuchen, ihn so schnell wie möglich zu beheben.
   activerecord:
     errors:
       no_valid_url: 'Das ist keine gültige URL.'
@@ -2422,6 +3567,22 @@ de:
           attributes:
             details:
               blank: 'Es muss ein Text angegeben werden.'
+        assignment:
+          attributes:
+            title:
+              taken: >
+                Dieser Hausaufgabentitel ist für diese Veranstaltung bereits
+                vergeben.
+              blank: >
+                Es muss ein Titel angegeben werden.
+            deadline:
+              blank: >
+                Es muss ein Abgabetermin angegeben werden.
+            deletion_date:
+              blank: >
+                Es muss ein Löschdatum angegeben werden.
+              in_past: >
+                Löschdatum darf nicht in der Vergangenheit liegen.
         chapter:
           attributes:
             title:
@@ -2431,6 +3592,12 @@ de:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
               taken: 'Dieser Titel ist bereits vergeben.'
+        clicker_vote:
+          attributes:
+            clicker:
+              clicker_closed: 'Der zugehörige Clicker ist geschlossen.'
+            value:
+              out_of_range: 'Der Wert ist außerhalb des zulässigen Bereichs.'
         course:
           attributes:
             title:
@@ -2464,16 +3631,23 @@ de:
                 Eine Veranstaltung mit derselben Kombination aus Modul, Semester
                 DozentIn und Typ existiert bereits.
               required: 'Es muss ein Modul angegeben werden.'
+              already_present: >
+                Für Module mit der Eigenschaft 'semesterunabhängig' kann es
+                höchstens eine Veranstaltung geben.
             content_mode:
               inclusion: 'Ungültiger Modus.'
             term:
               required: 'Es muss ein Semester angegeben werden.'
+              present: >
+                Semester angeben, assoziiertes Modul ist jedoch
+                semesterunabhängig
             teacher:
               required: 'Es muss ein(e) DozentIn angegeben werden.'
         link:
           attributes:
             linked_medium:
               uniqueness: 'Diese Verknüpfung gibt es bereits.'
+              taken: 'Diese Verknüpfung gibt es bereits.'
         lesson:
           attributes:
             date:
@@ -2491,6 +3665,12 @@ de:
                 assoziiert werden.
               no_video: >
                 Medien vom Typ "Skript" beinhalten kein Video.
+              no_conversion_from_script: >
+                Ein Medium vom Typ "Manuskript" kann  nicht in einen anderen
+                Medientyp umgewandelt werden.
+              no_conversion_to_script: >
+                Ein Medium von einem anderen Typ als  "Manuskript" kann  nicht
+                in ein solches umgewandelt werden.
             teachable:
               blank: >
                 Es muss eine Assoziation zu einem Modul/Veranstaltung/Sitzung
@@ -2530,6 +3710,17 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
+        submission:
+          lecture_not_matching: >
+            Die zum Tutorium assoziierte Vorlesung sollte mit der zur
+            Hausaufgabe assoziierten Vorlesung übereinstimmen.
+          attributes:
+            tutorial:
+              blank: Es muss ein gültiges Tutorium angegeben werden.
+            user_submission_joins:
+              invalid: >
+                Es gibt schon eine Abgabe von Dir oder die Teamgröße ist
+                überschritten.
         tag:
           attributes:
             notions:
@@ -2538,17 +3729,38 @@ de:
                 werden.
             aliases:
               invalid: 'Die Angaben sind ungültig.'
+        talk:
+          attributes:
+            title:
+              blank: Es muss ein Titel angegeben werden.
         term:
           attributes:
+            active:
+              taken: 'Es kann nur ein aktives Semester geben.'
             season:
               inclusion: 'Ungültiger Typ.'
               taken: 'Dieses Semester existiert bereits.'
+        tutorial:
+          attributes:
+            title:
+              taken: >
+                Dieser Tutoriumstitel ist für diese Veranstaltung bereits
+                vergeben.
+              blank: >
+                Es muss ein Titel angegeben werden.
         user:
           attributes:
             courses:
               blank: 'Es muss mindestens ein Modul abonniert werden.'
             name:
               blank: 'Es muss ein Anzeigename angegeben werden.'
+        user_submission_join:
+          only_one_per_assignment: >
+            Es wurde schon eine Abgabe zu dieser Hausaufgabe angelegt.
+            Jede NutzerIn darf pro Hausaufgabe nur eine Abgabe vornehmen.
+          team_size: >
+            Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
+            hätte als erlaubt.
         vote:
           attributes:
             clicker:
@@ -2557,3 +3769,13 @@ de:
               out_of_range: >
                 Das abgegebene Votum ist leider außerhalb des zulässingen
                 Bereiches.
+        watchlist_entry:
+          attributes:
+            medium_id:
+              taken:
+                ist schon in dieser Watchlist.
+        watchlist:
+          attributes:
+            name:
+              taken:
+                'Eine Watchlist mit diesem Namen existiert bereits.'

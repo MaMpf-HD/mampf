@@ -1,5 +1,4 @@
-<div class="card bg-light"
-     style="max-height: 80vh;">
+<div class="card bg-light">
   <div class="card-header">
     <div class="row">
       <div class="col-6">
@@ -11,13 +10,14 @@
         <button type="button"
                 class="btn btn-sm btn-outline-secondary"
                 id="showMediaStatistics"
-                data-medium="<%= medium.id %>">
+                data-medium="<%= medium.id %>"
+                <%= "disabled" unless medium.collects_statistics %>>
           <%= t('basics.statistics') %>
         </button>
       </div>
     </div>
   </div>
-  <div class="card-body">
+  <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
     <% if medium.sort =='Question' %>
       <%= render partial: 'media/question',
                  locals: { question: medium.becomes(Question) } %>
@@ -26,7 +26,8 @@
                  locals: { remark: medium.becomes(Remark) } %>
     <% elsif medium.sort == 'Quiz' %>
       <%= render partial: 'media/quiz',
-                 locals: { quiz: medium.becomes(Quiz) } %>
+                 locals: { quiz: medium.becomes(Quiz),
+                           f: f } %>
     <% end %>
     <% unless medium.sort.in?(['Script', 'Quiz']) %>
       <%= render partial: 'media/video',
@@ -43,7 +44,7 @@
       <%= render partial: 'media/external_link',
                  locals: { f: f } %>
     <% end %>
-    <% if medium.sort == 'Sesam' %>
+    <% if medium.sort.in?(['Sesam', 'Remark']) %>
       <%= render partial: 'media/geogebra',
                  locals: { medium: medium,
                            f: f } %>

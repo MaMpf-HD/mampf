@@ -1,4 +1,4 @@
-<% cache [media, inspection] do%>
+<% cache media do%>
 <div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
     <div class="row">
@@ -9,16 +9,14 @@
         </h5>
       </div>
       <div class="col-6">
-        <% unless inspection %>
-          <%= link_to t('buttons.create_medium'),
-                      new_medium_path(params:
-                                        { sort: 'Kaviar',
-                                          teachable_id: lecture.id,
-                                          teachable_type: 'Lecture' }),
-                      class: 'btn btn-sm btn-secondary new-in-lecture',
-                      id: 'create-new-medium',
-                      remote: true %>
-        <% end %>
+        <%= link_to t('buttons.create_medium'),
+                    new_medium_path(params:
+                                      { sort: 'Kaviar',
+                                        teachable_id: lecture.id,
+                                        teachable_type: 'Lecture' }),
+                    class: 'btn btn-sm btn-secondary new-in-lecture',
+                    id: 'create-new-medium',
+                    remote: true %>
       </div>
       <div class="col-2 text-right">
         <i id="hide-media-button"
@@ -64,12 +62,14 @@
                         .each do |m| %>
                   <li>
                     <%= link_to m.local_info_for_admins,
-                                inspect_or_edit_medium_path(m, inspection),
+                                inspect_or_edit_medium_path(m, false),
                                 id: "lecture-#{dom_id(m)}",
                                 class: textcolor(m),
+                                title: release_date_info(m),
                                 data: { type: m.teachable.class.to_s,
                                         id: m.teachable.id,
-                                        tags: m.tags.pluck(:id) } %>
+                                        tags: m.tags.pluck(:id),
+                                        toggle: 'tooltip' } %>
                   </li>
                 <% end %>
               </ul>
@@ -77,20 +77,18 @@
                          .size > 50 %>
                 <%= t('admin.medium.use_search_html',
                       media_search: link_to(t('admin.main.media_search'),
-                                            media_catalog_path)) %>
+                                            administration_search_path)) %>
               <% end %>
               <% course_material = Medium.where(teachable: lecture.course,
                                                 sort: media_types[s]).load %>
               <% if course_material.any? %>
                 <% if course_material.size == 1 %>
                   <%= t('admin.medium.course_medium_html',
-                        course: link_to(lecture.course.title,
-                                        edit_or_inspect_course_path(lecture.course))) %>
+                        course: course_link_or_text(lecture.course, current_user)) %>
                 <% else %>
                   <%= t('admin.medium.course_media_html',
                         count: course_material.size,
-                        course: link_to(lecture.course.title,
-                                        edit_or_inspect_course_path(lecture.course))) %>
+                        course: course_link_or_text(lecture.course, current_user)) %>
                 <% end %>
               <% end %>
             </div>

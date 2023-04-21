@@ -4,6 +4,9 @@ removeResidues = ->
   $('.send-it').prop 'disabled', true
   $('.send-it').addClass 'no_display'
   $('.click-it').prop 'disabled', true
+  $('.type-it').prop 'disabled', true
+  $('.type-it').addClass 'no_display'
+  $('.type-it-label').remove()
   $('.remark-infotainment-text').remove()
   $('.remark-infotainment-icons').show()
   return
@@ -21,6 +24,7 @@ changeBackground = ->
 
 renderFinale = (finale) ->
   $('#<%= quiz_id%>').append finale
+  $('[data-toggle="popover"]').popover()
   $('#finale').delay(1000).slideDown 'slow'
   $('html, body').delay(500)
     .animate { scrollTop: document.body.scrollHeight }, 2000
@@ -67,7 +71,9 @@ renderNext = (round) ->
 displayNext = ->
   <% if @quiz_round.progress == -1 %>
   renderFinale('<%= j render partial: "quizzes/finale",
-                             locals: { xkcd: XKCD.img } %>')
+                             locals: { xkcd: Xkcd.random,
+                                       certificate:
+                                       @quiz_round.certificate } %>')
   <% elsif @quiz_round.progress == 0 %>
   renderError('<%= j render partial: "quizzes/error" %>')
   <% else %>

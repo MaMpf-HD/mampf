@@ -1,0 +1,99 @@
+---
+version: "3.4"
+networks:
+  frontend:
+  backend:
+services:
+  redis:
+    image: "redis:6.2.6-alpine"
+    networks:
+      - backend
+
+  solr:
+    image: "solr:8.11.1"
+    volumes:
+      - type: bind
+        source: ../../solr/development/conf/
+        target: /solrconfig/
+        read_only: true
+    command: ["solr-precreate", "test", "/solrconfig"]
+    networks:
+      - backend
+
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=mampf
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    networks:
+      - backend
+
+  mailcatcher:
+    restart: on-failure:10
+    image: dockage/mailcatcher:latest
+    networks:
+      - backend
+  mampf:
+    build:
+      context: ./../..
+      dockerfile: docker/run_cypress_tests/Dockerfile
+    image: mampf:tests
+    # TODO: Use this
+    # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
+    entrypoint: /usr/src/app/entrypoint.sh
+    environment:
+      RAILS_ENV: test
+      TEST_DATABASE_ADAPTER: postgresql
+      TEST_DATABASE_DATABASE: mampf
+      TEST_DATABASE_INTERACTIONS: interactions
+      TEST_DATABASE_USERNAME: mampf
+      TEST_DATABASE_HOST: db
+      TEST_DATABASE_PORT: 5432
+      MAILSERVER: mailcatcher
+      FROM_ADDRESS: development@localhost
+      URL_HOST: mampf
+      URL_HOST_SHORT: mampf
+      SECRET_KEY_BASE: testenvironment
+      ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
+      ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
+      MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
+      PROJECT_EMAIL: project@localhost
+      PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
+      MEDIA_FOLDER: mampf
+      REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
+      SOLR_PATH: /solr/test
+      SPROCKETS_CACHE: /cache
+    volumes:
+        - type: bind
+          source: ../../spec/
+          target: /usr/src/app/spec/
+    depends_on:
+      - db
+      - solr
+      - redis
+      - mailcatcher
+    networks:
+      - backend
+      - frontend
+
+  cypress_runner:
+    image: mampf-cypress
+    build:
+      context: ./../..
+      dockerfile: docker/run_cypress_tests/Dockerfile_cypress
+    environment:
+      CYPRESS_baseUrl: http://mampf:3000
+    volumes:
+      - ../../spec/cypress/e2e:/cypress/e2e:ro
+      - ../../spec/cypress/fixtures:/cypress/fixtures:ro
+      - ../../spec/cypress.config.js:/cypress.config.js:ro
+      - ../../.git:/.git:ro
+      # cypress outputs are saved here (needed only locally)
+      #- ../../cypress/videos:/cypress/videos
+      #- ../../cypress/screenshots:/cypress/screenshots
+    depends_on:
+      - mampf
+    networks:
+      - frontend

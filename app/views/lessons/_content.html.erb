@@ -6,53 +6,47 @@
   </div>
   <div class="card-body">
     <% if lesson.lecture.content_mode == 'manuscript' %>
-      <% unless inspection %>
-        <div class="form-group">
-          <div class="form-row">
-            <div class="col-6">
-              <%= f.label :start_destination,
-                          t('admin.lesson.start_item') %>
-              <%= helpdesk(t('admin.lesson.info.start_item'), false) %>
-              <%= f.select :start_destination,
-                           options_for_select(select_script_items(lesson.lecture),
+      <div class="form-group">
+        <div class="form-row">
+          <div class="col-6">
+            <%= f.label :start_destination,
+                        t('admin.lesson.start_item') %>
+            <%= helpdesk(t('admin.lesson.info.start_item'), false) %>
+            <%= f.select :start_destination,
+                         options_for_select(select_script_items(lesson.lecture),
                                               lesson.guess_start_destination),
-                           { prompt: t('basics.select') },
-                           { class: 'selectize' } %>
-            </div>
-            <div class="col-6">
-              <%= f.label :end_destination,
-                          t('admin.lesson.end_item') %>
-              <%= helpdesk(t('admin.lesson.info.end_item'), false) %>
-              <%= f.select :end_destination,
-                           options_for_select(select_script_items(lesson.lecture),
-                                              lesson.guess_end_destination),
-                           { prompt: t('basics.select') },
-                           { class: 'selectize' } %>
-            </div>
+                         { prompt: t('basics.select') },
+                         { class: 'selectize' } %>
           </div>
-        </div>
-      <% end %>
-    <% end %>
-    <div class="mb-2">
-      <%= t('basics.details') %>
-      <% unless inspection %>
-        <%= helpdesk(t('admin.lesson.info.details'), false) %>
-      <% end %>
-    </div>
-    <% unless inspection %>
-      <%= f.trix_editor :details,
-                        class: 'bg-light',
-                        id: 'lesson-details-trix',
-                        data: { content: lesson.details } %>
-      <div class="row my-2">
-        <div class="col-12">
-          <%= t('basics.preview') %>
+          <div class="col-6">
+            <%= f.label :end_destination,
+                        t('admin.lesson.end_item') %>
+            <%= helpdesk(t('admin.lesson.info.end_item'), false) %>
+            <%= f.select :end_destination,
+                         options_for_select(select_script_items(lesson.lecture),
+                                            lesson.guess_end_destination),
+                         { prompt: t('basics.select') },
+                         { class: 'selectize' } %>
+          </div>
         </div>
       </div>
     <% end %>
+    <div class="mb-2">
+      <%= t('basics.details') %>
+      <%= helpdesk(t('admin.lesson.info.details'), false) %>
+    </div>
+    <%= f.trix_editor :details,
+                      class: 'bg-light',
+                      id: 'lesson-details-trix',
+                      data: { content: lesson.details } %>
+    <div class="row my-2">
+      <div class="col-12">
+        <%= t('basics.preview') %>
+      </div>
+    </div>
     <div class="alert alert-dark bg-mdb-color-lighten-6"
          id="lesson-details-preview">
-        <%= raw(lesson.details) %>
+        <%= sanitize lesson.details %>
     </div>
     <div class="row mb-2">
       <div class="col-12">

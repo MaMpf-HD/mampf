@@ -1,0 +1,27 @@
+<div class="card bg-light">
+    <div class="card-header clickable"
+         role="tab"
+         id="erdbeere_structures_heading"
+         data-toggle="collapse"
+         data-target="#erdbeere_structures_collapse"
+         data-lecture="<%= lecture.id %>"
+         data-loading="<%= t('basics.loading_data') %>"
+         aria-expanded="false" aria-controls="erdbeere_structures_collapse">
+      <div class="row">
+        <div class="col-12">
+          <h5 id="erdbeereStructures"
+              data-lecture="<%= lecture.id %>">
+            <%= t('categories.erdbeere.singular') %>
+          </h5>
+        </div>
+      </div>
+    </div>
+    <div id="erdbeere_structures_collapse"
+         class="collapse"
+         role="tabpanel"
+         aria-labelledby="heading"
+         data-parent="#lectureAccordion">
+      <div class="card-body" id="erdbeereStructuresBody">
+      </div>
+    </div>
+</div>

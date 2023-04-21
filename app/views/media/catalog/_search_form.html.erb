@@ -1,38 +1,44 @@
 <%= form_with url: media_search_path,
               scope: 'search',
               remote: true,
-              method: 'get' do |f| %>
+              method: :get do |f| %>
   <div class="form-row p-2">
     <div class="col-6 col-lg-3 form-group">
-      <%= f.label :types, t('basics.type') %>
+      <%= f.label :types, t('basics.types') %>
       <%= helpdesk(t('admin.medium.info.search_type'), true) %>
-      <% if purpose == 'media' %>
-        <div class="custom-control custom-checkbox mb-2">
-          <%= f.check_box :all_types,
-                          class: 'custom-control-input',
-                          checked: true,
-                          data: { id: 'search_types'} %>
-          <%= f.label :all_types,
-                      t('basics.all'),
-                      { class: 'custom-control-label' } %>
-        </div>
-      <% else %>
-        <%= f.hidden_field :all_types, value: '0' %>
-      <% end %>
       <%= f.select :types,
                    options_for_select(media_sorts_select(purpose),
                                       sort_preselect(purpose)),
                    {},
-                   { multiple: purpose.in?(['media', 'import']),
+                   { id: 'search_media_types',
+                     multiple: purpose.in?(['media', 'import']),
                      class: 'selectize',
-                     disabled: purpose.in?(['media', 'clicker']) } %>
+                     disabled: purpose.in?(['media', 'clicker']),
+                     required: true } %>
       <% if purpose == 'clicker' %>
         <%= f.hidden_field :types, value: ['Question'] %>
       <% end %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_types,
+                        id: 'search_all_media_types',
+                        class: 'custom-control-input',
+                        checked: purpose.in?(['media', 'clicker']),
+                        data: { id: 'search_media_types'} %>
+        <%= f.label :all_media_types,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
     </div>
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :teachable_ids, t('basics.associated_to') %>
       <%= helpdesk(t('admin.medium.info.search_teachable'), true) %>
+      <%= f.select :teachable_ids,
+                   grouped_options_for_select(grouped_teachable_list_alternative),
+                   { prompt: t('basics.select')},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true,
+                     required: true } %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_teachables,
                         class: 'custom-control-input',
@@ -42,12 +48,6 @@
                     t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
-      <%= f.select :teachable_ids,
-                   grouped_options_for_select(grouped_teachable_list_alternative),
-                   { prompt: t('basics.select')},
-                   { multiple: true,
-                     class: 'selectize',
-                     disabled: true } %>
       <div class="custom-control custom-radio custom-control-inline">
         <%= f.radio_button :teachable_inheritance,
                            '1',
@@ -72,6 +72,19 @@
       <%= f.label :tag_ids,
                   t('basics.related_tags') %>
       <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
+      <%= f.select :tag_ids,
+                   options_for_select([[]]),
+                   { prompt: t('basics.select')},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true,
+                     required: true,
+                     data: { filled: false,
+                             ajax: true,
+                             model: 'tag',
+                             locale: I18n.locale,
+                             placeholder: t('basics.enter_two_letters'),
+                             no_results: t('basics.no_results') } } %>
       <div class="custom-control custom-checkbox mb-2">
         <%= f.check_box :all_tags,
                         class: 'custom-control-input',
@@ -81,17 +94,6 @@
                     t('basics.all'),
                     { class: 'custom-control-label' } %>
       </div>
-      <%= f.select :tag_ids,
-                   options_for_select([[]]),
-                   {},
-                   { multiple: true,
-                     class: 'selectize',
-                     style: 'display: none;',
-                     disabled: true,
-                     data: { filled: false,
-                             ajax: true,
-                             model: 'tag',
-                             locale: I18n.locale } } %>
       <div class="custom-control custom-radio custom-control-inline">
         <%= f.radio_button :tag_operator,
                            'or',
@@ -115,27 +117,32 @@
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :editor_ids, t('basics.editors') %>
       <%= helpdesk(t('admin.medium.info.search_editors'), true) %>
-      <div class="custom-control custom-checkbox mb-2">
-        <%= f.check_box :all_editors,
-                        class: 'custom-control-input',
-                        checked: true,
-                        data: { id: 'search_editor_ids' } %>
-        <%= f.label :all_editors,
-                    t('basics.all'),
-                    { class: 'custom-control-label' } %>
-      </div>
       <%= f.select :editor_ids,
                    options_for_select(add_prompt(User.only_editors_selection)),
                    {},
-                   { multiple: true,
+                   { id: 'search_media_editor_ids',
+                     multiple: true,
                      class: 'selectize',
-                     disabled: true } %>
+                     disabled: true,
+                     required: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_editors,
+                        id: 'search_all_media_editors',
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_media_editor_ids' } %>
+        <%= f.label :all_media_editors,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
     </div>
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :fulltext, t('basics.fulltext') %>
       <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
       <%= f.text_field :fulltext,
-                        class: 'form-control' %>
+                        id: 'media_fulltext',
+                        class: 'form-control',
+                        placeholder: t('search.media.title_placeholder') %>
     </div>
     <div class="col-6 col-lg-3 form-.group">
       <%= f.label :access, t('basics.access_rights') %>
@@ -151,8 +158,9 @@
                    { class: 'form-control'} %>
     </div>
     <% unless purpose == 'import' %>
-      <div class="col-6 col-lg-3 form-.group">
+      <div class="col-6 col-lg-3 form-group">
         <%= f.label :answers_count, t('basics.answer_count') %>
+        <%= helpdesk(t('admin.medium.info.answer_count'), false) %>
         <%= f.select :answers_count,
                      options_for_select([[t('access.irrelevant'), 'irrelevant'],
                                          [1,1],[2,2],[3,3],[4,4],[5,5], [6,6],
@@ -162,16 +170,19 @@
 
       </div>
     <% end %>
-    <div class="col-6 col-lg-3 form-.group">
+    <div class="col-6 col-lg-3 form-group">
       <%= f.label :per, t('basics.hits_per_page') %>
       <%= f.select :per,
                    options_for_select([[10,10],[20,20],[50,50]],[10]),
                    {},
-                   { class: 'form-control'} %>
+                   { id: 'media_per',
+                     class: 'form-control'} %>
 
     </div>
   </div>
   <%= f.hidden_field :purpose, value: purpose %>
+  <%= f.hidden_field :results_as_list,
+                     value: 'true' %>
   <div class="row mb-3">
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),

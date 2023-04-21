@@ -1,12 +1,41 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :user, aliases: [:teacher] do
     email { Faker::Internet.email }
-    password {Faker::Internet.password}
-    # subscription_type Faker::Number.between(1, 3)
-    # consents true
-    # name Faker::Name.name
-    trait :with_lectures do
-      after(:build) { |user| user.lectures = FactoryBot.create_list(:lecture, 2) }
+    password { Faker::Internet.password }
+    name { Faker::Name.name }
+    locale { I18n.available_locales.map(&:to_s).sample }
+
+    transient do
+      lecture_count { 2 }
     end
+
+    trait :skip_confirmation_notification do
+      after(:build, &:skip_confirmation_notification!)
+    end
+
+    trait :auto_confirmed do
+      after(:create, &:confirm)
+    end
+
+    trait :consented do
+      after(:create) do |user|
+        user.update(consents: true, consented_at: Time.now)
+      end
+    end
+
+    # call it with build(:user, :with_lectures, lecture_count: n) if you want
+    # n subscribed lectures associated to the user
+    trait :with_lectures do
+      after(:build) do |user, evaluator|
+        user.lectures = FactoryBot.create_list(:lecture,
+                                               evaluator.lecture_count)
+      end
+    end
+
+    factory :confirmed_user, traits: [:skip_confirmation_notification,
+                                      :auto_confirmed,
+                                      :consented]
   end
 end

@@ -1,0 +1,9 @@
+<div class="col-12 mb-3">
+  <%= t('profile.data_explanation') %>
+</div>
+<div class="col-12 text-center">
+  <%= link_to t('profile.data_request'),
+              request_data_path,
+              class: 'btn btn-sm btn-primary',
+              data: { confirm: t('confirmation.generic') } %>
+</div>

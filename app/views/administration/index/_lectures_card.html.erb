@@ -15,11 +15,11 @@
     </div>
   </div>
   <% lectures.each do |l| %>
-    <a href="<%= edit_or_inspect_lecture_path(l) %>"
+    <a href="<%= edit_lecture_path(l) %>"
        class="list-group-item list-group-item-action">
       <div class="row">
         <div class="col-2">
-          <%= l.term.to_label_short %>
+          <%= l.term_to_label_short %>
         </div>
         <div class="col-1">
           <%= l.sort_localized_short %>

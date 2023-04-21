@@ -1,0 +1,74 @@
+<div class="row mt-3 p-2">
+  <div class="col-10">
+    <h4>
+      <%= t('admin.tag.index') %>
+    </h4>
+  </div>
+  <div class="col-2">
+    <%= link_to t('admin.tag.create'),
+                new_tag_path,
+                class: 'btn btn-sm btn-secondary',
+                id: 'create-new-tag' %>
+  </div>
+</div>
+<%= form_with url: tags_search_path,
+              scope: 'search',
+              remote: true,
+              method: :get do |f| %>
+
+  <div class="form-row mb-3 p-2">
+    <div class="form-group col-4 mx-3">
+      <%= f.label :title, t('basics.title') %>
+      <%= helpdesk(t('admin.tag.info.search_title'), false) %>
+      <%= f.text_field :title,
+                       { class: 'form-control',
+                         placeholder: t('search.tag_title') } %>
+    </div>
+    <div class="form-group col-5">
+      <%= f.label :course_ids, t('basics.courses') %>
+      <%= helpdesk(t('admin.tag.info.search_course'), true) %>
+      <%= f.select :course_ids,
+                   options_for_select(Course.all
+                                            .pluck(:title, :id)
+                                            .natural_sort_by(&:first),
+                                      nil),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :all_courses,
+                        class: 'custom-control-input',
+                        checked: true,
+                        data: { id: 'search_course_ids' } %>
+        <%= f.label :all_courses,
+                    t('basics.all'),
+                    { class: 'custom-control-label' } %>
+      </div>
+      <button id="tags-edited-courses"
+              type="button"
+              class="btn btn-sm btn-outline-info"
+              data-courses="<%= current_user.edited_courses.map(&:id)
+                                            .to_json %>">
+        <%= t('buttons.edited_courses') %>
+      </button>
+    </div>
+    <div class="col-2 form-group">
+      <%= f.label :per, t('basics.hits_per_page') %>
+      <%= f.select :per,
+                   options_for_select([[10,10],[20,20],[50,50]],[10]),
+                   {},
+                   {  id: 'tags_per',
+                      class: 'form-control'} %>
+
+    </div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= f.submit t('basics.search'),
+                   class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
+<div id="tag-search-results">
+</div>

@@ -7,7 +7,7 @@
         </h5>
       </div>
       <div class="col-12 col-sm-2 text-right">
-        <% if announcements.present? %>
+        <% if notifications.present? %>
           <%= link_to t('notifications.check_notifications'),
                       destroy_lecture_notifications_path(params: { lecture_id: lecture.id }),
                       class: 'btn btn-sm btn-outline-secondary',
@@ -18,31 +18,24 @@
     </div>
   </div>
   <div class="card-body">
-    <% if announcements.present? %>
+    <% if notifications.present? %>
       <div class="mb-2 activeAnnouncementsCounter"
            data-lecture="<%= lecture.id %>"
-           data-count="<%= announcements.size %>">
-        <% if announcements.size == 1 %>
+           data-count="<%= notifications.size %>">
+        <% if notifications.size == 1 %>
           <%= t('notifications.lecture.one_new') %>
         <% else %>
           <%= t('notifications.lecture.more_new') %>
         <% end %>
       </div>
       <div class="list-group mb-2" style="max-height: 10vh; overflow-y: scroll;">
-        <% announcements.sort_by(&:created_at).reverse.each do |a| %>
-          <div class="list-group-item list-group-item-info"
-               data-listItemNotification="<%= current_user.matching_notification(a)&.id %>">
-            <div class="row">
-              <%= render partial: 'announcements/row_for_lecture',
-                         locals: { announcement: a,
-                                   lecture: lecture,
-                                   notification: current_user.matching_notification(a) } %>
-            </div>
-          </div>
-       <% end %>
+        <%= render partial: 'announcements/row_for_lecture',
+                   locals: { lecture: lecture },
+                   collection: notifications,
+                   as: :notification %>
       </div>
     <% end %>
-    <% if lecture.forum? && posts_count&.positive? %>
+    <% if lecture.forum? && posts_count.positive? %>
       <div id="unreadPosts">
         <% if posts_count == 1 %>
           <%= t('notifications.lecture.new_post_html',

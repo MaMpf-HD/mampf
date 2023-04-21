@@ -2,16 +2,28 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <style>
-      /* Email styles need to be inline */
-    </style>
+    <%= stylesheet_link_tag :email %>
   </head>
 
   <body>
-    <%= yield %>
-    <hr>
-    <%= t('mailer.unsubscribe_html',
-          profile: link_to(t('notifications.profile'),
-                           edit_profile_url)) %>
+    <div class='container text-center'>
+      <%= email_image_tag('/MaMpf-Logo_96x96.png',
+                          class: 'img-fluid mb-2 pt-4 pb-3') %>
+      <div class="jumbotron">
+
+        <%= yield %>
+
+      </div>
+    </div>
+
+    <div class="small text-center">
+      <small class="text-muted">
+        <%= t('mailer.unsubscribe_html',
+              profile: link_to(t('notifications.profile'),
+                               edit_profile_url)) %>
+        <br>
+        <%= t('mailer.non_working_links') %>
+      </small>
+    </div>
   </body>
 </html>

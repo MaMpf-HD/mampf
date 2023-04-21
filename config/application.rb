@@ -9,15 +9,53 @@ Bundler.require(*Rails.groups)
 module Mampf
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 5.1
+    config.load_defaults 7.0
     config.autoloader = :zeitwerk
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
     config.time_zone = 'Berlin'
+    # config.eager_load_paths << Rails.root.join("extras")
+    # Make `form_with` generate remote forms by default.
+    config.action_view.form_with_generates_remote_forms = true
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+    config.exception_handler = {
+      email:      ENV['ERROR_EMAIL'], # sends exception emails to a listed email (string // "you@email.com")
+
+      # All keys interpolated as strings, so you can use symbols, strings or integers where necessary
+      exceptions: {
+
+        all:  {
+          layout: "application_no_sidebar", # define layout
+          notification: true # (false by default)
+        }
+      }
+    }
+    config.to_prepare do
+    # some monkey patches for sidekiq-cron
+    # see https://github.com/ondrejbartas/sidekiq-cron/issues/310
+      Sidekiq::Cron::Job.class_eval do
+        def self.all
+          job_hashes = nil
+          Sidekiq.redis do |conn|
+            set_members = conn.smembers(jobs_key)
+            job_hashes = conn.pipelined do |pipeline|
+              set_members.each do |key|
+                pipeline.hgetall(key)
+              end
+            end
+          end
+          job_hashes.compact.reject(&:empty?).collect do |h|
+            # no need to fetch missing args from redis since we just got
+            # this hash from there
+            Sidekiq::Cron::Job.new(h.merge(fetch_missing_args: false))
+          end
+        end
+      end
+    end
   end
 end
+

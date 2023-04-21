@@ -5,31 +5,79 @@
 #   gem 'sqlite3'
 #
 default: &default
-  adapter: sqlite3
+  adapter: postgresql
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
 
 development:
   primary:
     <<: *default
-    database: db/development.sqlite3
+    database: mampf
+    encoding: unicode
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    template: template0
   interactions:
     <<: *default
-    database: db/interactions.sqlite3
+    database: interactions
+    encoding: unicode
+    database: interactions
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    template: template0
+    migrations_paths: db/interactions_migrate
+
+
+docker_development:
+  primary:
+    <<: *default
+    adapter: <%= ENV['DEVELOPMENT_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['DEVELOPMENT_DATABASE_ENCODING'] %>
+    database: <%= ENV['DEVELOPMENT_DATABASE_DATABASE'] %>
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    host: <%= ENV['DEVELOPMENT_DATABASE_HOST'] %>
+    port: <%= ENV['DEVELOPMENT_DATABASE_PORT'] %>
+  interactions:
+    <<: *default
+    adapter: <%= ENV['DEVELOPMENT_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['DEVELOPMENT_DATABASE_ENCODING'] %>
+    database: <%= ENV['DEVELOPMENT_DATABASE_INTERACTIONS'] %>
+    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
+    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
+    host: <%= ENV['DEVELOPMENT_DATABASE_HOST'] %>
+    port: <%= ENV['DEVELOPMENT_DATABASE_PORT'] %>
     migrations_paths: db/interactions_migrate
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
-  <<: *default
-  database: db/test.sqlite3
+  primary:
+    <<: *default
+    adapter: <%= ENV['TEST_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
+    database: <%= ENV['TEST_DATABASE_DATABASE'] %>
+    username: <%= ENV['TEST_DATABASE_USERNAME'] %>
+    password: <%= ENV['TEST_DATABASE_PASSWORD'] %>
+    host: <%= ENV['TEST_DATABASE_HOST'] %>
+    port: <%= ENV['TEST_DATABASE_PORT'] %>
+  interactions:
+    <<: *default
+    adapter: <%= ENV['TEST_DATABASE_ADAPTER'] %>
+    encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
+    database: <%= ENV['TEST_DATABASE_INTERACTIONS'] %>
+    username: <%= ENV['TEST_DATABASE_USERNAME'] %>
+    password: <%= ENV['TEST_DATABASE_PASSWORD'] %>
+    host: <%= ENV['TEST_DATABASE_HOST'] %>
+    port: <%= ENV['TEST_DATABASE_PORT'] %>
+    migrations_paths: db/interactions_migrate
 
 production:
   # <<: *default
   # database: db/development.sqlite3
   primary:
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
     encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
     database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
     username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
@@ -37,7 +85,7 @@ production:
     host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
     port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
   interactions:
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] %>
+    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
     encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
     database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
     username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>

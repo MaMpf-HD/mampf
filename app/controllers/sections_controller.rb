@@ -1,8 +1,12 @@
 # SectionController
 class SectionsController < ApplicationController
   before_action :set_section, except: [:new, :create]
-  authorize_resource
+  authorize_resource except: [:new, :create]
   layout 'administration'
+
+  def current_ability
+    @current_ability ||= SectionAbility.new(current_user)
+  end
 
   def show
     I18n.locale = @section.lecture.locale_with_inheritance
@@ -16,11 +20,13 @@ class SectionsController < ApplicationController
   def new
     @chapter = Chapter.find_by_id(params[:chapter_id])
     @section = Section.new(chapter: @chapter)
+    authorize! :new, @section
     I18n.locale = @section.lecture.locale_with_inheritance
   end
 
   def create
     @section = Section.new(section_params)
+    authorize! :create, @section
     insert_or_save
     @errors = @section.errors
   end
@@ -86,6 +92,10 @@ class SectionsController < ApplicationController
 
   def update_tags_order
     tags_order = params[:section][:tag_ids].map(&:to_i) - [0]
-    @section.update(tags_order: tags_order)
+    SectionTagJoin.acts_as_list_no_update do
+      @section.section_tag_joins.each do |st|
+        st.update(tag_position: tags_order.index(st.tag_id))
+      end
+    end
   end
 end

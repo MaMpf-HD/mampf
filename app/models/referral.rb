@@ -33,8 +33,24 @@ class Referral < ApplicationRecord
   # provide metadata for vtt file
   def vtt_properties
     link = item.link.present? ? item.link : item.medium_link
-    { 'video' => item.video_link, 'manuscript' => item.manuscript_link,
-      'link' => link, 'quiz' => item.quiz_link,
+    # at the moment, relations between items can be only of the form
+    # script <-> video, which means that between them there will be at most
+    # one script, one manuscript and one video
+    if item.medium&.sort == 'Script'
+      script = item.manuscript_link
+      if item.related_items_visible?
+        video = item.related_items&.first&.video_link
+        manuscript = item.related_items&.first&.manuscript_link
+      end
+    else
+      if item.related_items_visible?
+        script = item.related_items&.first&.manuscript_link
+      end
+      manuscript = item.manuscript_link
+      video = item.video_link
+    end
+    { 'video' => video, 'manuscript' => manuscript,
+      'script' => script, 'link' => link, 'quiz' => item.quiz_link,
       'reference' => item.vtt_meta_reference(medium),
       'text' => item.vtt_text, 'explanation' => vtt_explanation }.compact
   end
@@ -59,40 +75,31 @@ class Referral < ApplicationRecord
   # returns true iff the referral's item's medium has an associated video, but
   # the item is not a pdf destination
   def video?
-    if item.present? && item.video? && item.sort != 'pdf_destination'
-      return true
-    end
-    false
+    !!item&.video? && item.sort != 'pdf_destination'
   end
 
   def manuscript?
-    return true if item.present? && item.manuscript?
-    false
+    !!item&.manuscript?
   end
 
   def quiz?
-    return true if item.present? && item.quiz?
-    false
+    !!item&.quiz?
   end
 
   def medium_link?
-    return true if item.present? && item.medium_link?
-    false
+    !!item&.medium_link?
   end
 
   def item_published?
-    return true unless item && item.medium
-    item.medium.published?
+    !item&.medium || item.medium.published?
   end
 
   def item_locked?
-    return false unless item && item.medium
-    item.medium.locked?
+    !!item&.medium&.locked?
   end
 
   def item_in_quarantine?
-    return false unless item && item.quarantine
-    true
+    !!item&.quarantine
   end
 
   private
@@ -122,7 +129,7 @@ class Referral < ApplicationRecord
   end
 
   def start_time_not_too_late
-    return true if medium.nil?
+    return true if medium.nil? || !medium.video
     return true unless start_time.valid?
     return true if start_time.total_seconds <= medium.video_duration
     errors.add(:start_time, :too_late)
@@ -130,7 +137,7 @@ class Referral < ApplicationRecord
   end
 
   def end_time_not_too_late
-    return true if medium.nil?
+    return true if medium.nil? || !medium.video
     return true unless end_time.valid?
     return true if end_time.total_seconds <= medium.video_duration
     errors.add(:end_time, :too_late)
@@ -138,8 +145,8 @@ class Referral < ApplicationRecord
   end
 
   def end_time_not_too_soon
-    return true unless start_time.valid?
-    return true unless end_time.valid?
+    return true unless start_time&.valid?
+    return true unless end_time&.valid?
     return true if start_time.total_seconds < end_time.total_seconds
     errors.add(:end_time, :too_soon)
     false

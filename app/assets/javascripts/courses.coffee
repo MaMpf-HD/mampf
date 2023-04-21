@@ -22,16 +22,14 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#course-concept-trix')
   if trixElement?
-    trixElement.addEventListener 'trix-initialize', ->
-      content = this.dataset.content
-      editor = trixElement.editor
-      editor.setSelectedRange([0,65535])
-      editor.deleteInDirection("forward")
-      editor.insertHTML(content)
-      document.activeElement.blur()
-      trixElement.addEventListener 'trix-change', ->
-        showWarning()
-        return
+    content = trixElement.dataset.content
+    editor = trixElement.editor
+    editor.setSelectedRange([0,65535])
+    editor.deleteInDirection("forward")
+    editor.insertHTML(content)
+    document.activeElement.blur()
+    trixElement.addEventListener 'trix-change', ->
+      showWarning()
       return
 
 
@@ -51,13 +49,10 @@ $(document).on 'turbolinks:load', ->
       $('.admin-index-button').show()
     return
 
-  $(document).on 'change', '#search_tag_ids', ->
-    courseId = $('#start_random_quiz').data('course')
-    tagIds = $('#search_tag_ids').val()
-    count = $('#random_quiz_count').val()
+  $(document).on 'change', '#search_course_tag_ids', ->
+    courseId = $(this).data('course')
+    tagIds = $('#search_course_tag_ids').val()
     $('#questionCounter').empty()
-    $('#start_random_quiz').removeClass('disabled')
-      .prop('href', Routes.random_quiz_path(courseId, {tag_ids: tagIds, count: count}))
     return if tagIds.length == 0
     $.ajax Routes.render_question_counter_path(courseId),
       type: 'GET'
@@ -69,16 +64,24 @@ $(document).on 'turbolinks:load', ->
         console.log("AJAX Error: #{textStatus}")
     return
 
-  $(document).on 'change', '#random_quiz_count', ->
-    courseId = $('#start_random_quiz').data('course')
-    tagIds = $('#search_tag_ids').val()
-    count = $(this).val()
-    $('#start_random_quiz').removeClass('disabled')
-      .prop('href', Routes.random_quiz_path(courseId, {tag_ids: tagIds, count: count}))
-  return
+  # if user detaches image, adjust hidden values
+  # (relevant on media edit page)
+  $('#detach-image').on 'click', ->
+    $('#upload-image-hidden').val('')
+    $('#image-meta').hide()
+    $('#image-preview').hide()
+    $('#course_detach_image').val('true')
+    $('#course-basics-warning').show()
+    $('#user-basics-warning').show()
+    return
+
+  $(document).on 'click', '.courseAlternativeSearch', ->
+    $('#search_fulltext').val($(this).data('title'))
+    return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'
-  $(document).off 'change', '#search_tag_ids'
+  $(document).off 'change', '#search_course_tag_ids'
+  $(document).off 'click', '.courseAlternativeSearch'
   return

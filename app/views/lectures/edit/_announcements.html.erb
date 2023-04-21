@@ -1,20 +1,16 @@
   <div class="card bg-light">
-    <div class="card-header" role="tab" id="announcements_heading">
+    <div class="card-header clickable"
+         role="tab"
+         id="announcements_heading"
+         data-toggle="collapse"
+         data-target="#announcements_collapse"
+         aria-expanded="false" aria-controls="announcements_collapse">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h5>
             <%= t('categories.announcements') %>
             (<%= lecture.announcements.size %>)
           </h5>
-        </div>
-        <div class="col-6 text-right">
-          <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
-             href="#announcements_collapse"
-             id="announcements_collapse_button"
-             aria-expanded="false" aria-controls="announcements_collapse">
-            <%= t('buttons.toggle') %>
-          </a>
         </div>
       </div>
     </div>
@@ -24,21 +20,19 @@
          aria-labelledby="heading"
          data-parent="#lectureAccordion">
       <div class="card-body">
-        <% unless inspection %>
-          <div class="row mb-2">
-            <div class="col-12 text-center">
-              <%= link_to t('buttons.create_announcement'),
-                          new_announcement_path(params: { lecture: lecture.id }),
-                          class: 'btn btn-sm btn-secondary',
-                          id: 'new-announcement-button',
-                          remote: true %>
-            </div>
+        <div class="row mb-2">
+          <div class="col-12 text-center">
+            <%= link_to t('buttons.create_announcement'),
+                        new_announcement_path(params: { lecture: lecture.id }),
+                        class: 'btn btn-sm btn-secondary',
+                        id: 'new-announcement-button',
+                        remote: true %>
           </div>
-        <% end %>
+        </div>
         <% announcements.each do |a| %>
           <div class="row border-bottom mx-2 px-4 py-2"
                id="row-announcement-<%= a.id %>">
-            <%= render partial: 'announcements/row',
+            <%= render partial: 'announcements/row_for_lecture_edit',
                        locals: { announcement: a }%>
           </div>
         <% end %>

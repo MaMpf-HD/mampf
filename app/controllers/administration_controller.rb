@@ -7,20 +7,25 @@ class AdministrationController < ApplicationController
   authorize_resource class: false
   layout 'administration'
 
+  def current_ability
+    @current_ability ||= AdministrationAbility.new(current_user)
+  end
+
   def index
   end
 
   def exit
-    course_id = cookies[:current_course]
-    # redirect to course view of the course that was selected
-    # before admin mode was entered
-    if course_id.present?
-      redirect_to course_path(course_id)
-      return
-    end
-    redirect_to root_path
+    redirect_to start_path
   end
 
   def profile
+  end
+
+  def classification
+    @subjects = Subject.includes(programs: [:divisions]).all
+  end
+
+  def search
+    @tags = params[:sort] == 'tag'
   end
 end

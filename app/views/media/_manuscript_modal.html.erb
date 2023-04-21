@@ -23,6 +23,29 @@
       </div>
       <div class="modal-body"
            id="manuscript-modal-content">
+        <div class="mb-2">
+          <% if manuscript.contradictions['version'].empty?%>
+            <%= t('manuscript.version_correct',
+                  current_version: DefaultSetting::MAMPF_STY_VERSION) %>
+          <% elsif manuscript.contradictions['version'].first.present? %>
+            <span class="redtext">
+              &#x26a1;
+              <%= t('manuscript.version_info_html',
+                    version: manuscript.contradictions['version'].first,
+                    current_version: DefaultSetting::MAMPF_STY_VERSION,
+                    package: link_to(t('here'),
+                               'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
+            </span>
+          <% else %>
+            <span class="redtext">
+              &#x26a1;
+              <%= t('manuscript.version_unknown_html',
+                    current_version: DefaultSetting::MAMPF_STY_VERSION,
+                    package: link_to(t('here'),
+                               'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
+            </span>
+          <% end %>
+        </div>
         <%= render partial: 'media/destination_cards',
                    locals: { manuscript: manuscript} %>
         <%= render partial: 'media/manuscript_comments',

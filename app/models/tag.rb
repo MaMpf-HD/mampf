@@ -8,6 +8,10 @@ class Tag < ApplicationRecord
   has_many :lesson_tag_joins, dependent: :destroy
   has_many :lessons, through: :lesson_tag_joins
 
+  # a tag appears in many talks
+  has_many :talk_tag_joins, dependent: :destroy
+  has_many :talks, through: :talk_tag_joins
+
   # a tag appears in many sections
   has_many :section_tag_joins, dependent: :destroy
   has_many :sections, through: :section_tag_joins
@@ -31,6 +35,8 @@ class Tag < ApplicationRecord
                      dependent: :destroy
   has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
 
+  serialize :realizations, Array
+
   accepts_nested_attributes_for :notions,
     reject_if: lambda {|attributes| attributes['title'].blank?},
     allow_destroy: true
@@ -49,16 +55,17 @@ class Tag < ApplicationRecord
   after_save :touch_lectures
   after_save :touch_sections
 
-  # remove tag from all section tag orderings
-  # execute this callback before all others, as otherwise associated sections
-  # will already have been deleted
-  before_destroy :remove_from_section_tags_order, prepend: true
-
   searchable do
     text :titles do
       title_join
     end
     integer :course_ids, multiple: true
+  end
+
+  def self.find_erdbeere_tags(sort, id)
+    Tag.where(id: Tag.pluck(:id, :realizations)
+                     .select { |x| [sort, id].in?(x.second) }
+                     .map(&:first))
   end
 
   def title
@@ -124,6 +131,20 @@ class Tag < ApplicationRecord
     notions.map { |n| [n.locale, n.title] }.to_h
   end
 
+  def self.select_with_substring(search_string)
+    return {} unless search_string
+    return {} unless search_string.length >= 2
+
+    search = Sunspot.new_search(Tag)
+    search.build do
+      fulltext search_string
+    end
+    search.execute
+    result = search.results
+                   .map { |t| { value: t.id, text: t.title } }
+  end
+
+
   # returns all tags whose title is close to the given search string
   # wrt to the JaroWinkler metric
   def self.similar_tags(search_string)
@@ -177,6 +198,12 @@ class Tag < ApplicationRecord
     result
   end
 
+  def realizations_cached
+    Rails.cache.fetch("#{cache_key_with_version}/realizations") do
+      realizations
+    end
+  end
+
   # returns the ARel of all tags or whose id is among a given array of ids
   # search params is a hash having keys :all_tags, :tag_ids
   def self.search_tags(search_params)
@@ -220,6 +247,14 @@ class Tag < ApplicationRecord
 
   def in_lectures?(lectures)
     lectures.any? { |l| in_lecture?(l) }
+  end
+
+  def in_course?(course)
+    in?(course.tags)
+  end
+
+  def in_courses?(courses)
+    courses.any? { |c| in_course?(c) }
   end
 
   # returns the ARel of lectures the tag is associated to
@@ -307,12 +342,12 @@ class Tag < ApplicationRecord
     related_tags << (tag.related_tags - related_tags)
     related_tags.delete(tag)
     tag.sections.each do |s|
-      new_order = if !id.in?(s.tags_order)
-                    s.tags_order.map { |t| t == tag.id ? id : t }
-                  else
-                    s.tags_order - [tag.id]
-                  end
-      s.update(tags_order: new_order)
+      next unless self.in?(s.tags)
+      old_section_tag = SectionTagJoin.find_by(section: s, tag: tag)
+      position = old_section_tag.tag_position
+      new_section_tag = SectionTagJoin.find_by(section: s, tag: self)
+      new_section_tag.insert_at(position)
+      old_section_tag.move_to_bottom
     end
     tag.aliases.update_all(aliased_tag_id: id)
   end
@@ -347,12 +382,6 @@ class Tag < ApplicationRecord
   def destroy_relations(related_tag)
     Relation.where(tag: [self, related_tag],
                    related_tag: [self, related_tag]).delete_all
-  end
-
-  def remove_from_section_tags_order
-    sections.each do |s|
-      s.update(tags_order: s.tags_order - [id])
-    end
   end
 
   def title_join

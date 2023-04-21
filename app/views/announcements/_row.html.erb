@@ -4,6 +4,22 @@
 <div class="col-2">
   <%= announcement.announcer.name %>
 </div>
-<div class="col-8">
+<div class="col-5">
   <%= announcement.details.html_safe %>
+</div>
+<div class="col-1">
+  <%= ballot_box(announcement.on_main_page) %>
+</div>
+<div class="col-2">
+  <% if announcement.on_main_page %>
+  	<%= link_to t('admin.announcement.expel'),
+  							expel_announcement_path(announcement),
+  							class: 'btn btn-sm btn-primary',
+  							method: :post %>
+  <% else %>
+  	<%= link_to t('admin.announcement.propagate'),
+  							propagate_announcement_path(announcement),
+  							class: 'btn btn-sm btn-primary',
+  							method: :post %>
+  <% end %>
 </div>

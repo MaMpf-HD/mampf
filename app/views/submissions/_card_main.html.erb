@@ -1,0 +1,200 @@
+<div class="card-body submissionBody"
+     data-id="<%= assignment.id %>">
+  <% if submission %>
+    <table class="table table-bordered submission-table-bordered">
+      <tbody>
+        <tr>
+          <th scope="row">
+            <%= t('basics.tutorial') %>
+          </th>
+          <td>
+            <%= submission.tutorial.title_with_tutors %>
+          </td>
+        </tr>
+        <% if assignment.semiactive? %>
+          <tr>
+            <th scope="row">
+              <%= t('basics.code') %>
+              <%= helpdesk(t('submission.code_explanation'), false) %>
+            </th>
+            <td>
+              <span class="submissionToken" data-id="<%= submission.id %>">
+                <%= submission.token %>
+              </span>
+              <i class="clipboardpopup far fa-copy clickable
+                        text-secondary clipboard-btn ml-3
+                        clipboard-button"
+                data-clipboard-text="<%= submission.token %>"
+                data-toggle="tooltip"
+                data-id="<%= assignment.id %>"
+                title="<%= t('buttons.copy_to_clipboard') %>">
+                <span class="clipboardpopuptext token-clipboard-popup"
+                      data-id="<%= assignment.id %>">
+                  <%= t('basics.code_copied_to_clipboard') %>
+                </span>
+              </i>
+              <%= link_to '',
+                          refresh_submission_token_path(submission),
+                          class: 'fas fa-sync-alt text-secondary ml-2',
+                          id: 'refreshTokenButton',
+                          data: { toggle: 'tooltip',
+                                  placement: 'bottom' },
+                          title: t('buttons.refresh_token'),
+                          style: 'text-decoration: none;',
+                          remote: true,
+                          method: :patch %>
+            </td>
+          </tr>
+        <% end %>
+        <tr>
+          <th scope="row">
+            <%= t('basics.files') %>
+          </th>
+          <td>
+            <% if submission.manuscript %>
+              <%= link_to raw(t('basics.submission') + ' &darr;'),
+                          show_submission_manuscript_path(submission),
+                          target: :_blank,
+                          class: 'badge badge-secondary' %>
+              <% if submission.correction %>
+                <%= link_to raw(t('basics.correction') + ' &darr;') ,
+                          show_correction_path(submission),
+                          target: :_blank,
+                          class: 'badge badge-secondary' %>
+              <% end %>
+            <% else %>
+              <%= t('submission.no_manuscript_yet') %>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <%= t('submission.last_modification') %>
+            <%= helpdesk(t('submission.last_modification_info_html'), true) %>
+          </th>
+          <td>
+            <%= I18n.l(submission.last_modification_by_users_at ||
+                         submission.created_at,
+                       format: :short) %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <%= t('submission.deletion_date') %>
+            <%= helpdesk(t('submission.deletion_date_info'), false) %>
+          </th>
+          <td>
+          <%= I18n.l(assignment.deletion_date,
+                      format: :long) %>
+          </td>
+        </tr>
+        <tr>
+          <th scope="row">
+            <%= t('basics.team') %>
+            <%= helpdesk(t('submission.team_info'), false) %>
+          </th>
+          <td>
+            <% if submission.users.count == 1 %>
+              <%= t('basics.you') %>
+            <% else %>
+              <%= submission.partners_of_user(current_user).map(&:tutorial_name)
+                            .join(', ') + ' ' + t('basics.and_you') %>
+            <% end %>
+          </td>
+        </tr>
+        <% if assignment.active? %>
+          <tr>
+            <th scope="row">
+              <%= t('basics.invited') %>
+            </th>
+            <td>
+              <% if submission.invited_users.any? %>
+                <%= submission.invited_users.map(&:tutorial_name)
+                              .join(', ') %>
+              <% else %>
+                <%= t('basics.nobody') %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <% if assignment.current? %>
+      <%= t('submission.nothing_here') %>
+    <% elsif assignment.active? %>
+      <%= t('submission.nothing_here') %>
+    <% else %>
+      <%= t('submission.nothing_here_past') %>
+    <% end %>
+  <% end %>
+</div>
+<% if show_submission_footer?(submission, assignment) %>
+  <div class="card-footer submissionFooter"
+       data-id="<%= assignment.id %>">
+    <div class="row">
+      <div class="col-12 text-center">
+        <% if submission %>
+          <% edit_button_class = submission.not_updatable? ? "secondary disabled" : "primary" %>
+          <%= link_to t('buttons.edit'),
+                      edit_submission_path(submission),
+                      class: "btn btn-sm btn-outline-#{edit_button_class}",
+                      remote: true,
+                      data: { color: 'btn-outline-primary'} %>
+          <% if invitations_possible?(submission, current_user) %>
+            <%= link_to t('buttons.invite'),
+                        enter_submission_invitees_path(submission),
+                        class: 'btn btn-sm btn-outline-primary',
+                        remote: true,
+                        data: { color: 'btn-outline-primary'} %>
+          <% end %>
+          <% if submission.users.count == 1 %>
+            <% delete_button_class = submission.not_updatable? ? "disabled" : "" %>
+            <%= link_to t('buttons.delete'),
+                        submission_path(submission),
+                        class: "btn btn-sm btn-outline-danger #{delete_button_class}",
+                        method: :delete,
+                        remote: true,
+                        data: { confirm: t('confirmation.generic'),
+                                color: 'btn-outline-danger' } %>
+          <% else %>
+            <%= link_to t('buttons.leave'),
+                        leave_submission_path(submission),
+                        class: 'btn btn-sm btn-outline-danger',
+                        method: :delete,
+                        remote: true,
+                        data: { confirm: t('confirmation.generic'),
+                                color: 'btn-outline-danger' } %>
+          <% end %>
+        <% else %>
+          <%= link_to t('buttons.create'),
+                      new_submission_path(params:
+                                            { assignment_id: assignment.id }),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary' } %>
+          <%= link_to t('buttons.join'),
+                      enter_submission_code_path(submission,
+                                                  params:
+                                                    { assignment_id:
+                                                        assignment.id }),
+                      class: 'btn btn-sm btn-outline-primary',
+                      remote: true,
+                      data: { color: 'btn-outline-primary' } %>
+        <% end %>
+        <% if assignment.in_grace_period? %>
+          <i class="fas fa-2x fa-exclamation-circle clickable"
+             id="late-submission-warning"
+             data-toggle="popover"
+             data-content="<%= t('submission.late_submission_warning_html',
+                          friendly_deadline: l(assignment.friendly_deadline,
+                                               format: :short)) %>"
+             data-html="true"
+             data-trigger="hover"
+             title="<%= t('basics.attention') %>">
+          </i>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

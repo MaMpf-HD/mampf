@@ -1,0 +1,19 @@
+<div class="row mb-2">
+  <div class="col-12">
+    <%= t('profile.passphrase_required', lecture_title: lecture.title) %>
+  </div>
+</div>
+<%= form_with url: subscribe_lecture_path,
+              method: 'patch',
+              scope: 'lecture' do |f|%>
+  <%= f.text_field :passphrase,
+                   class: 'form-control',
+                   value: passphrase %>
+  <div class="invalid-feedback"
+       id="passphrase-error" >
+  </div>
+  <%= f.hidden_field :id,
+                     value: lecture.id %>
+  <%= f.hidden_field :parent,
+                     value: parent %>
+<% end %>

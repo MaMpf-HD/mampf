@@ -31,6 +31,12 @@
 
 en:
   mampf: 'MaMpf'
+  views:
+    pagination:
+      first: "&laquo; First"
+      last: "Last &raquo;"
+      previous: "&lsaquo; Previous"
+      next: "Next &rsaquo;"
   categories:
     kaviar:
       singular: 'Lesson'
@@ -38,6 +44,7 @@ en:
       short: 'Les'
     exercises:
       singular: 'Exercise'
+      singular_updated: 'Exercise (updated)'
       plural: 'Exercises'
       short: 'Exc'
     examples:
@@ -73,27 +80,33 @@ en:
       plural: 'Quiz Remarks'
       short: 'Rem'
     erdbeere:
-      singular: 'Examples'
+      singular: 'Example'
+      plural: 'Examples'
       short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
-    organizational: 'General Information'
+    comments: 'Comments'
+    organizational_html: 'General Information'
     announcements: 'Announcements'
     reste:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
+    mampf_news: 'MaMpf-News'
+    submissions: 'Submissions'
+    tutorials: 'Tutorials'
   unauthorized:
     default: >
       You are not authorized to access this page.
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2019. MaMpf is on %{github}.
+      &copy; MaMpf Team 2023. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
+      Background image by %{background_photo_credit}.
     sponsors_html: >
       %{sponsors}:
   sponsors:
@@ -123,23 +136,37 @@ en:
       %{hendrik}, %{oli} and %{denis} together with the %{fs_mathphysinfo}
       have obtained funding to set up a MaMpf-supported math helpdesk for
       the introductory phase of math studies.
+      Since then, the helpdesk has been an
+      important support system in the first semesters of mathematics studies.
     physics_html: >
       The %{physics_faculty} has supported MaMpf by acquiring media technology
       equipment.
     math_html: >
       The %{math_faculty} has supported MaMpf by financing assistants since 2017.
+    heiquality_html: >
+      Within the framework of the heiQUALITY program Teaching, %{hendrik} and
+      %{denis} successfully raised funds for the implementation of the project
+      MaMpf-Back project. This is a low-threshold feedback system for
+      asynchronous digital teaching.
   here: 'here'
   here_capital: 'Here'
   disclosure: 'Legal disclosure'
   policy: 'Privacy Policy'
   navbar:
+    home: 'Home'
     search: 'Search'
     profile: 'Profile'
     administration: 'Administration'
     news: 'News'
+    comments: 'Comments'
     blog: 'Blog'
     logout: 'Logout'
+    watchlist: 'Watchlist'
     login: 'Login'
+    favorite_lectures: 'Fast access to favorite lectures'
+    no_favorite_lectures_yet: >
+      You have not yet added any lectures as favorites.
+    quick_access: 'Quick Access'
   info: 'Info'
   admin:
     navbar:
@@ -148,9 +175,14 @@ en:
       current_lecture: 'Current event series'
       logout: 'Logout'
       media_search: 'Search media'
-      tags: 'Tag overview'
+      tags: 'Search tags'
+      teachables: 'Search lectures'
       terms: 'Terms'
+      classification: 'Classification'
       news: 'News'
+      boards: 'Messageboards'
+      stats: 'Access statistics'
+      export_stats: 'Export statistics'
       users: 'User administration'
       course: 'Course'
       profile: 'My Profile'
@@ -161,6 +193,17 @@ en:
         free_medium: 'This medium is free.'
         user_medium: 'This medium is only available for MaMpf users.'
         subscriber_medium: 'This medium is only available for subscribers.'
+    teachables:
+      teachables: Lecture Search
+      courses: Course Search
+      info:
+        action: >
+          Depending on whether you are an editor of this lecture you can view
+          or edit this lecture. Upon viewing you will be asked to subscribe the
+          lecture if you habe not done this before.
+    classification:
+      programs: 'Study Paths'
+      divisions: 'Divisions'
     main:
       my_lectures: 'My event series'
       type: 'type'
@@ -182,7 +225,7 @@ en:
         Only the last 25 recently updated media are shown.
         You can find more by doing a %{media_search} or in your
         %{profile}.
-      media_search: 'media search'
+      media_search: 'Search media'
       user_profile: 'user profile'
       no_media: >
         You are not listed as an editor for any media.
@@ -278,7 +321,7 @@ en:
           This is the list of courses you cannot edit.
           (Except if you are an admin :-P )
       term: 'Term'
-      term/type: 'Term/Type'
+      term_type: 'Term/Type'
       title: 'Title'
       teacher: 'Teacher'
       editors: 'Editors'
@@ -287,6 +330,17 @@ en:
         Here you can enter a text. You may use LaTeX (by putting the
         corresponding expression inside $...$). A preview of your
         text is shown below.
+      on_main_page: >
+        Display on home page
+      main_page: >
+        On Home Page
+      propagate: set on home page
+      expel: remove from home page
+      info:
+        on_main_page: >
+          If you check this box, the announcement will be displayed on the MaMpf
+          homepage. This can be useful if it is an announcement of a server
+          downtime.
     lecture:
       lecture: 'Lecture'
       lecture_short: 'L'
@@ -300,6 +354,9 @@ en:
       oberseminar: 'Research Seminar'
       oberseminar_short: 'RS'
       oberseminar_content: 'Research Seminar Contents'
+      special: 'Special'
+      special_short: ''
+      special_content: 'Content'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'
       no_terms_yet: 'You have to create a term first.'
@@ -314,6 +371,22 @@ en:
         leave all related media unpublished.
       import_media: 'Import Media'
       no_imported_media: 'There are no imported media.'
+      close_comments: 'Close all threads for related media'
+      comments_disabled: >
+        Comments for newly published media are disabled by default
+      new_notifications: 'new notifications'
+      new_media: 'new media'
+      new_posts: 'new forum posts'
+      no_rights: 'You are not authorized to subscribe this event series.'
+      disable_teacher_display: disable the display of the teacher's name
+      submission_max_team_size: >
+        maximal team size for submissions
+      submission_grace_period: >
+        grace period for submissions (in minutes)
+      import_toc: Import table of contents from other lecture
+      import_chapters: import chapters
+      import_sections: import sections
+      import_tags: import tags
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -345,8 +418,8 @@ en:
           <i>
           script based:
           </i>
-          It is necessary to include the
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
+          It is necessary to include the latest
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Package</a>
           into the manuscript's .tex-file and to provide anything
           that is labelled with \mampflabels.
           When you upload the resulting script to MaMpf, you can import the
@@ -382,7 +455,7 @@ en:
           file of the manuscript and all items selected in the editing process
           of the session. For this to work, you need to create MaMpf labels in
           the script's LaTeX file using the
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf-Package</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf-Package</a>
           and import them to MaMpf after uploading the script.
           </li>
           </ul>
@@ -419,6 +492,9 @@ en:
           the sidebar).
           The text they see will be the text below. As a suggestion, we have
           a default text that you may edit as you wish.
+        organizational_on_top: >
+          If you check this box, the page for general information will be the
+          starting page for this event series.
         muesli: >
           If you check this box, the link to MUESLI will be activated in the
           sidebar for this event series.
@@ -461,12 +537,63 @@ en:
           are neither "free" nor "only registered MaMpf users". The access rights are checked at runtime,
           so the medium becomes visible when the access rights are changed to one of the two admissible
           values for imported media.
+        close_comments: >
+          If you activate this switch, all threads related to media that belong
+          to this event series or its' lessons will be closed.
+        comments_disabled: >
+          By default, comments for newly published media are enabled, and you
+          can disable them upon publishing. Here you can reverse this.
+        search_type: >
+          Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>,
+          <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is the inclusive <i>OR</i>.
+        search_program: >
+          Here you have to select (in the sense of
+          <i>
+          OR
+          </i>
+          ) to which program the event series belongs to.
+        search_teacher: >
+          Here you can select the teacher of the event series (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        search_term: >
+          Here you can select in which term the event series took places or
+          takes place, respectively (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        search_fulltext: >
+          Here you can enter text that will be searched for in the title of the
+          event series. If you leave the text field empty (or enter less than two letters),
+          it will be ignored.
+        disable_teacher_display: >
+          If you check this box, the teacher's name will be omitted from the
+          lecture card on the start page and from the lecture page for generic
+          users. This could make sense e.g. if a lecture that is term
+          independent is only administratively supervised by a "teacher".
+        submission_max_team_size: >
+          Here you can enter how many persons are maximally allowed for
+          one submission. If you enter nothing, there will be no restriction on
+          the team size. Changes will apply imediately. Note however
+          that a reduction of this number does not hold retroactively:
+          Already existing submissions of teams with more members will remain
+          valid.
+        submission_grace_period: >
+          Here you can enter what the grace period (in minutes) is for
+          submissions. Files that are uploaded after the deadline but before the
+          grace period is expired will be accepted by the system, but will be
+          timestamped and marked as "too late".
+        section_needed: Please create a section first
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
       video_based: 'media based'
       script_based: 'using a manuscript generated by the MaMpf LaTeX package'
       no_chapters: 'There are no chapters yet.'
+      no_talks: 'There are no talks yet.'
       orphaned_lessons: 'Orphaned Sessions'
       related_tags: 'Related tags'
       course_tags_html: >
@@ -484,6 +611,7 @@ en:
         There are no additional event series editors.
       imported_media: 'Imported Media'
       organizational_visible: 'General information visible'
+      organizational_on_top: 'General Information as start page'
       uses_muesli: 'Event series uses MUESLI'
       first_chapter: 'Number of the first chapter (talk)'
       first_section: 'Nummer of the first section'
@@ -525,6 +653,14 @@ en:
       no_lectures: 'There are no event series for this course.'
       additional_information: 'Additional information'
       additional_information_visible: 'Additional information visible'
+      divisions: 'Divisions'
+      programs: 'Study Paths'
+      term_independent: 'independent of terms'
+      term_independence: 'This course is independent of terms.'
+      image: 'Image'
+      no_image: >
+        No image has been uploaded yet. Therefore, the generic image will be
+        used for event cards.
       info:
         title: >
           Here you can enter the title of the course. Typically, this should be
@@ -546,8 +682,8 @@ en:
           This is the list of event series for this course.
           Unpublished event series are displayed in red.
         subscribers_count: >
-          This is the number of all users who have subscribed this event series in
-          their profile settings.
+          This is the number of all users who have subscribed event series
+          associated to this course.
         tags: >
           This is the list of all tags that are associated to this course.
           Typically they correspond to the content of the module handbook.
@@ -563,6 +699,26 @@ en:
           courses to Algebra 1.
           This is relevant because users can adjust their settings so
           that they are shown related materials form preceding courses.
+        divisions: >
+          Here you can choose to which divisions of which subjects the course is
+          associated to.
+        programs: >
+          Here you can select to ehich study paths of which subjects this course
+          is associated to.
+        term_independent: >
+          Check this box for courses that do not match the usual pattern of
+          courses that have lectures, seminars and so on by the semester, but
+          are independent of the term. This might be useful for things like
+          a Help Deks for students. This setting can only be changed as long
+          as there is no event series associated to this course.
+        image: >
+          You can upload an image that visualizes this course. It will be used
+          in the cards that appear in MaMpf's start page. The suggested
+          aspect ratio is 3:2. The uploaded image will be downscaled by MaMpf
+          (maximal width 405 pixels, maximal height 270 pixels).
+        action:
+          If you are an editor of the corresponding module, a link for editing
+          will be displayed here.
     chapter:
       edit: 'Edit %{chapter}'
       position: 'Position after %{chapter_name}'
@@ -571,10 +727,10 @@ en:
       no_sections: For this chapter, no sections have yet been created.
       info:
         title: >
-          Here you can enter the title of the chapter (or talk).
+          Here you can enter the title of the chapter.
         position: >
-          Here you can select at which position the chapter/talk is placed by
-          selecting the previous chapter/talk.
+          Here you can select at which position the chapter is placed by
+          selecting the previous chapter.
         display_number: >
           If a display number is given, it will overwrite the calculated number.
           That makes sense e.g. if you want 'Chapter A. My Chapter' as title
@@ -628,6 +784,59 @@ en:
         extracted_content: >
           This is all cantent that has been extracted form media that are
           associated to sessions for this section.
+    talk:
+      speakers: Speaker(s)
+      no_media: There are no media associated  to this talk.
+      next_talk: next talk
+      previous_talk: previous talk
+      no_talks: There a no talks yet.
+      display_description: Display text on talk's page
+      display_description_teacher: Display content on the talk's page
+      description_warning: >
+        You have entered text, but this will only be displayed on the talk's
+        page if you check this box and save.
+      info:
+        details: >
+          Here you can give a description of the talk and important details
+          (e.g. literature). You can use LaTEX (by putting the expression in
+          $...$). This text will appear on the seminar's main page and
+          the talk's page and can not be edited by the speakers.
+        details_info: >
+          This is a description of the talk by the teacher.
+        description: >
+          Here you can optionally enter a text related to the content
+          of the talk. You can use LaTEX (by putting the expression in
+          $...$).
+        description_info: >
+          This is a text about the talk given by the speakers.
+        description_for_editor: >
+          This is a text about the talk (to be) provided by the speakers.
+        media: >
+          Here you can see the list of media associated to this talk.
+          You can add new media.
+        talks: >
+          This is the list of tags that are associated to this talk.
+          This list cannot be edited by the speakers of the talk.
+        by_speakers: >
+          (provided by the speakers)
+        title: >
+          Here you can enter the title of the talk.
+        position: >
+          Here you can select at which position the talk is placed by
+          selecting the previous talk.
+        tags: >
+          This is the list of all tags associated to this talk.
+        cospeakers: Cospeakers
+        display_description: >
+          In order that the text is displayed on the talks's page, you have to
+          check this box. Without this box being checked, the text is not
+          displayed which can make sense e.g. if the current version of the text
+          is only preliminary.
+        display_description_teacher: >
+          The speakers can decide whether their text will be displayed on the
+          talk's page (this box will typically be unchecked if the text is
+          still preliminary). You can remove the text from the talk's page
+          as teacher.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -677,6 +886,11 @@ en:
         end_item: >
           Here you can select the manuscript item with which the
           session ended.
+        content: >
+          Here is the content extracted from media that is linked to this session.
+          This is done by extracting table of contents from videos, that have been
+          edited by the ThymE-Editor, contents descriptions and metadata from
+          scripts (for script-based lectures).
         list: >
           This is the list of all associated sessions.
         tags_without_section: >
@@ -701,6 +915,7 @@ en:
       media_search: 'Search Media'
       create: 'Create Medium'
       edit: 'Edit Medium'
+      edit_tags: 'Edit Tags'
       inspect: 'Inspect Medium'
       no_media: 'No media found.'
       deleted: 'This medium has been deleted.'
@@ -710,7 +925,7 @@ en:
         no_title: 'untitled'
         to_session: 'to Session %{number}, %{date}'
         question: 'Question %{id}'
-        question: 'Remark %{id}'
+        remark: 'Remark %{id}'
       content: 'Content'
       preview_content: 'Content preview'
       tags_without_lesson: 'Tags missing in session'
@@ -722,6 +937,25 @@ en:
       disclaimer: >
         I hereby confirm that by publishing this medium on the MaMpf platform,
         no rights of third parties are infringed.
+      lock_comments: 'Disable comments for this medium'
+      comments_locked: 'Comments disabled'
+      release_date: 'Publication date'
+      boost: 'Boost'
+      invalid_publish_date: This is not a valid datetime in the future.
+      scheduled_for_release: >
+        This medium is scheduled for release on %{release_date}.
+      scheduled_for_release_short: >
+        Scheduled release: %{release_date}
+      assignment_to_be_created: >
+        An assignment will be created. Its deadline will be %{deadline}.
+      create_assignment: Create an assignment for this medium
+      invalid_assignment_deadline: >
+        This is not a valid datetime after the publication of the medium.
+      invalid_assignment_title: >
+        This assignment title is invalid.
+      manage_publication: Manage the Publication of this Medium
+      publication_settings: Publication settings
+      media_settings: Media settings
       info:
         locked: >
           This medium has been locked. It can be unlocked via
@@ -784,7 +1018,7 @@ en:
           There can be only one manuscript per event series.
           Manuscripts cannot be converted to other media types, the same goes
           in the other direction. If you use the
-          <a href='/mampf.sty' download='mampf.sty'>MaMpf Package</a>
+          <a href='https://github.com/MaMpf-HD/mampf-sty/releases/'>MaMpf Package</a>
           for LaTeX, MaMpf can extract additional information from the pdf.
           </li>
           <li>
@@ -921,18 +1155,18 @@ en:
         manuscript_structure: >
           This is the structure of the manuscript that was extracted from the
           pdf. You can import chapters, sections and tags to MaMpf if no
-          contradisctions are displayed.
+          contradictions are displayed. Note that the language of the manuscript
+          in which it was TeXed is expected to coincide with the language that
+          is set in the lecture preferences.
         import_warning: >
           Attention: The structure of the manuscript has not yet been imported
           to MaMpf.
         search_type: >
-          Here you can select (in the sense of
-          <i>
-          OR
-          </i>
-          ) of what type the medium is.
+          Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
+          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i>,
+          <i>example</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
         search_teachable: >
-          Here you can select (in the sense of
+          Here you have to select (in the sense of
           <i>
           OR
           </i>
@@ -946,17 +1180,21 @@ en:
           if you select a event series, media that are associated to the event series's
           sessions will be shown as well.
         search_tags: >
-          Here you can select the tags (in the sense of
-          <i>
-          OR/AND
-          </i>
-          ) which are associated to the medium.
+          Tags related to a medium are displayed as <span class="badge badge-light">example tag</span> on the media card.
+          If you are looking for media with specific tags, you can select tags from the data base. You can choose one,
+          several, or all of them. Moreover, you can decide whether the medium has to be related to either at least one
+          of the selected tags (inclusive <i>OR</i>) or all of them (<i>AND</i>).
         search_editors: >
           Here you can select the editors of the medium (in the sense of
           <i>
           OR
           </i>
           ).
+          Note that every medium has at least one editor. If the "all-checkbox"
+          is deselected and no editor is selected, the search will yield no
+          results.
+        search_teachers: >
+          Select the teachers. Choose one, several, or all. The operator used is the inclusive <i>OR</i>.
         search_fulltext: >
           Here you can enter text that will be searched for in the fields
           description, question text, remark text, answer text.
@@ -979,8 +1217,24 @@ en:
           editor.
         details_warning: >
           Details have been changed that have not yet been imported.
+        boost: >
+          Via the boost you can override the way in ehich media are ordered
+          by default (for media that belong to a course or an event series,
+          it does not affect media associated to a session). The default value
+          is 0, Media with a higher boost will be displayed in the first places,
+          media with lower boost at the end.
+        scheduled_release: >
+          The publication will not precisely occur at the right second, but it
+          should not be later than around a minute after the given time.
+        assignment_settings: >
+          Settings that will hold for <i>all</i> assignments in this lecture
+          can be adjusted on the lecture page under "Assignments".
+        answer_count: >
+          If you are searching for (quiz) questions, you can select here how
+          many anwers the equestions is supposed to have. This option
+          will not be considered for other media types.
     tag:
-      index: 'Tag Index'
+      index: 'Search Tags'
       related_tags: 'Related Tags'
       extra_lectures: 'Addictional event series'
       missing_lectures: 'Missing event series'
@@ -1039,6 +1293,7 @@ en:
           tags.
     term:
       index: 'Term Index'
+      active_term: 'Current Term'
     quiz:
       graph: 'Quiz Graph'
       create_graph: 'Create Quiz Graph'
@@ -1057,6 +1312,7 @@ en:
       no_section: 'no associated section from the database'
       create_external: 'Create external item'
       explanation: 'Explanation'
+      chapter_short: 'Chap.'
       sort:
         definition: 'Definition'
         remark: 'Remark'
@@ -1168,6 +1424,7 @@ en:
       take_time: 'Take time from video'
       external_references: 'external references'
       external_all: 'external (all)'
+      additional_medium: 'additional_medium'
       info:
         start_time: >
           Here you can enter the time at which the reference is supposed to
@@ -1211,6 +1468,8 @@ en:
           displayed.
         media: >
           Here it is shown in which media forms the referened item occurs.
+        additional_medium:
+          This item is related to additional media.
         explanation: >
           Here you can give an optional additional explanation for the
           referenced item.
@@ -1386,7 +1645,20 @@ en:
       edit: 'Edit Remark'
       initial_text: 'Initial text'
       copy_marker: '-COPY-'
+      text_input: Text Input active
+      input: 'Input'
+      preview: 'Preview'
+      documents: 'For this remark there are the following documents:'
       info:
+        preview: >
+          <i>
+          Note.
+          </i>
+          You can use LaTeX in your posts by writing the LaTeX code between
+          dollar signs (or double dollar signs).
+          A list of supported symbols can be found
+          <a href="https://katex.org/docs/supported.html" target="_blank">
+          here</a>.
         about: >
           A remark corresponds to a passage in a quiz in which you explain
           material to the user, often as a link between successive questions.
@@ -1419,6 +1691,8 @@ en:
       video_info: 'Explanation Video in THymEPlayer'
       manuscript: 'Manuscript'
       manuscript_info: 'Manuskript as pdf'
+      geogebra: 'Geogebra Applet'
+      geogebra_info: 'Geogebra Applet in new tab'
       medium_for_remark_html: >
         There is a %{medium} for this remark.
       media_for_remark_html: >
@@ -1450,6 +1724,7 @@ en:
       finale_html: >
         You made it! As a small reward there is an %{xkcd_link} comic:
       xkcd: 'XKCD'
+      xkcd_error: 'Unfortunately there was an error while displaying the XKCD comic.'
       errors: 'Attention, the quiz contains errors'
       undefined_targets: 'There are undefined targets'
       no_end: 'No way leads to the end'
@@ -1484,6 +1759,9 @@ en:
         Questions that only make sense in the context of a
         certain quiz (e.g., because special assumptions have been made
         in the questions before)
+      course_disclaimer: >
+        This quiz is located at the level of the course %{course}, in particular
+        it covers material from different semesters and from different teachers.
       info:
         graph: >
           The Quiz Graph is the directed graph corresponding to this quiz.
@@ -1504,11 +1782,38 @@ en:
           for which you have the right to do so. For those where you have the
           rights, access for users will be the same as the one you select for
           the quiz.
+    subject:
+      edit: 'Edit Subject'
+      name: 'Title'
+      new: 'Create new Subject'
+    program:
+      edit: 'Edit Study Path'
+      name: 'Title'
+      new: 'Create new program'
+      no_courses: 'There are no courses in this program yet.'
+    division:
+      edit: 'Edit Division'
+      name: 'Title'
+      new: 'Create new division'
+      no_courses: 'There are no courses in this division yet.'
+    interaction:
+      export_interactions: Export Interactions
+      export_probes: Export Probes
+      start: Start Date
+      end: End Date
+    tutorial:
+      new: 'Add tutorial'
+    assignment:
+      new: 'Add assignment'
   profile:
     account: 'Account'
     name: 'Display name'
     name_information: >
-      This name will be displayed in your board posts.
+      This name will be displayed in your board posts and comments.
+    name_in_tutorials: 'Name in tutorials'
+    name_in_tutorials_information: >
+      This name will be displayed to your tutor for your submissions.
+      If you leave this field empty, your display name will be used for that.
     change_data: 'Change login data'
     delete_account: 'Delete Account'
     courses: 'Courses'
@@ -1530,13 +1835,13 @@ en:
     email_notifications: >
       I want to receive email notifications about:
     email_for_announcement:
-      new announcements in event series I have subscribed to.
+      new announcements in event series I have subscribed to
     email_for_medium:
-      new media in event series or courses I have subscribed to.
+      new media in event series or courses I have subscribed to
     email_for_teachable:
-      new event series or courses.
+      new event series or courses
     email_for_news:
-      news about MaMpf.
+      news about MaMpf
     update: 'Update profile'
     success: 'Profil was updated successfully.'
     please_update: >
@@ -1545,8 +1850,83 @@ en:
       You consented to our privacy policy.
     no_consent: >
       You have not consented to our privacy policy.
-    sure: 'Are you sure?'
     locale: 'Language'
+    subscribe_lecture: 'Subscribe event series'
+    passphrase_required: >
+      You want to subscribe the event series %{lecture_title}. It is protected
+      by a pass phrase. Please enter it here.
+    my_term_html: My term &ndash; %{term}
+    inactive_lectures: Further subscribed event series
+    active_nonsubscribed_lectures_html: >
+      Current event series &ndash; %{term}
+    lecture_search: Search event series
+    no_current_stuff: >
+      You have not yet subscribed any event series of the current term.
+    no_inactive_stuff: >
+      You have not yet subscribed any event series outside of the current term.
+    no_current_at_all: >
+      In the current term, no event series have yet been published.
+    other_preferences: >
+      Other Preferences
+    changes_made: >
+      There are unsaved changes. In order to make them apply you have to save
+      them.
+    email_for_submissions: >
+      Regarding the submission of homework assignments I wand to be notified by
+      MaMpf via email if
+    email_for_submission_upload: >
+      succesful upload of a file by a team member
+    email_for_submission_removal: >
+      removal of a files by another team member
+    email_for_submission_join: >
+      joining of a new team member
+    email_for_submission_leave: >
+      leaving of a team member
+    email_for_correction_upload: >
+      availability of correction
+    email_for_submission_decision: >
+      acceptance or rejection of a late submission
+    delete_account: Delete Account
+    stored_submissions: >
+      There are %{submissions} submissions to assignments from you in the
+      system.
+    single_submissions: >
+      %{single_submissions} single submissions (i.e. submissions in which you
+      had no partners)
+    team_submissions: '%{team_submissions} team submissions'
+    submission_deletion: >
+      The single submissions and their corresponding corrections will be
+      deleted, while the team submissions will remain in the system until the
+      scheduled deletion date.
+    confirm_account_deletion: >
+      Please confirm the deletion of your account by entering your password and
+      pushing the red button.
+    thanks_for_contributions: >
+      Thank you for being a contributor to MaMpf! Your contributions include
+    given_lectures: '%{lectures} event series as teacher'
+    edited_media: '%{media} meia as media editor'
+    contributions_remain: >
+      The defalut setting is that these remain in MaMpf. Here you can enter
+      under which name they will be shown in the future:
+    manual_deletion: >
+      If you do not want these materials to remain in MaMpf you must delete them
+      manually before deleting the account.
+    email_notifications_header: E-Mail Notifications
+    lectures_and_courses: Lectures and courses
+    submissions: Submission of homework assignments
+    miscellaneous: Miscellaneous
+    star_lecture: Add Lecture to Fast Access
+    unstar_lecture: Remove Lecture from Fast Access
+    my_talks: My talks
+    media_search: Search media
+    my_data: What data is saved about me?
+    data_explanation: >
+      Within the framework of the services offered by Mampf, some data about users will be
+      stored. All of your data that is not listed above are listed here.
+    data_request: >
+      Request data
+    data_request_sent: >
+      We have received your request and will send you your data as soon as possible.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -1554,6 +1934,7 @@ en:
   notifications:
     title: 'New notifications'
     check_notifications: 'Clear all'
+    check: Clear
     new_medium_in: 'New medium in '
     new_medium: 'New medium created:'
     new_announcement: 'New announcement:'
@@ -1563,9 +1944,11 @@ en:
     subscribe_course: 'You can subscribe it via your profile.'
     subscribe_course_html: 'You can subscribe it via your %{profile}.'
     profile: 'profile'
+    goto_profile: "Visit your profile"
     mampf_announcement: 'New announcement about MaMpf'
     lecture_announcement: 'New announcement in %{title}'
     new_lecture: 'New event series %{title}'
+    edit_lecture: 'Edit event'
     subscribe_lecture: 'You can subscribe it via your profile.'
     subscribe_lecture_html: 'You can subscribe it via your %{profile}.'
     new_lecture_created_html: >
@@ -1582,6 +1965,13 @@ en:
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
+    no_tutorials_yet: >
+      For this event series, no tutorials have been created yet.
+    tutorials: >
+      For this event series there are the following tutorials:
+    no_submissions_yet: >
+      No assignments have been due yet.
+  sure: 'Are you sure?'
   details: 'Details'
   none: 'none'
   back: 'Back'
@@ -1607,6 +1997,7 @@ en:
   related_lessons: 'Related sessions'
   no_related_lessons: 'There are no related sessions.'
   related_media: 'Related media'
+  related_questions: 'Related questions'
   no_related_media: 'There are no related media.'
   no_related_questions: >
     There are no related questions that are associated to courses or event series
@@ -1620,13 +2011,19 @@ en:
   next_lesson: 'next session'
   previous_lesson: 'previous session'
   mampf_map: 'MaMpf Map'
-  external_render: 'render in external tab'
+  external_render: 'render in an external tab'
   medium:
     details: 'view details'
     different_language: 'This medium is in %{language}.'
     unpublished: 'This medium is unpublished.'
     locked: 'This medium is locked.'
     imported: 'This medium has been imported.'
+    theme_based: 'on topics dealt with'
+    lecture_only: 'no'
+    improve_visibility: >
+      Set additional material to "all" to see see media at the level of the
+      course %{course} dealing with topics that have not been addressed in the current
+      event series.
     waiting_for_tag: >
       This medium ist situated at course level and refers to tags,
       that have not (yet) been treated in the current event series.
@@ -1634,24 +2031,98 @@ en:
       moment. It will become visible for subscribers as soon as at least one
       tag of this medium will be assciated to at least one section of this
       lecture or to a published medium associated to this event series.
+    info:
+      visibility_html: >
+        Here you can adjust which additional material will be displayed. You have the
+        following options
+        <ul>
+        <li>
+        <i>
+        on topics dealt with:
+        </i>
+        This is the default setting and also recommended.
+        All media from the current event series will be displayed.
+        Furthermore, all media that are associated to the course
+        will be displayed (which should fit no matter who the teacher of the
+        event series is), but only those dealing with topics
+        treated in the current event series.
+        </li>
+        <li>
+        <i>
+        no:
+        </i>
+        All media from the current event series will be displayed.
+        </li>
+        <li>
+        <i>
+        all:
+        </i>
+        All media from the current event series and all media associated to the
+        course will be displayed.
+        </li>
+        </ul>
+  watchlist:
+    add: 'Add to my watchlist'
+    select: 'Select'
+    name: 'Name'
+    description: 'Description'
+    enter_name: 'Enter name'
+    enter_description: 'Enter description (optional)'
+    none: 'No watchlist created yet'
+    empty: 'This watchlist is empty'
+    none_added: 'You have not added any media to this watchlist yet.'
+    create: 'Create'
+    creation_confirm: 'The textfield for creating a watchlist is not empty.
+                       Are you sure you want to add the medium to the watchlist "%{watchlist}"?'
+    creation_success: 'Watchlist was successfully created'
+    creation_fail: 'Watchlist could not be created'
+    change: 'Change'
+    change_success: 'Watchlist was changed'
+    new: 'New'
+    delete: 'Delete'
+    delete_confirm: 'Are you sure you want to delete this watchlist?'
+    delete_success: 'The watchlist was successfully deleted.'
+    delete_failed: 'Watchlist could not be deleted.'
+    close: 'Close'
+    confirm: 'Add'
+    public: 'Public'
+    public_help: 'Checking this box enables other people to view this watchlist. To do this, simply share the current url.'
+    order_help: 'By dragging the dark blue area of a medium, you can change the order as you wish.'
+  watchlist_entry:
+    add_success: 'The medium was added to your watchlist successfully'
+    add_fail: 'There was an error adding the medium to your watchlist'
+    remove: 'Remove medium from watchlist'
+    remove_confirm: 'Are you sure you want to remove this medium from the watchlist?'
+    deletion: 'The medium was removed from the current watchlist'
+    list: {
+      zero: 'This medium does not belong to any of your watchlists.',
+      one: 'This medium belongs to the following watchlist: %{watchlists}',
+      other: 'This medium belongs to the following watchlists: %{watchlists}'
+    }
   video:
     video: 'Video'
-    no_video: 'There is no video present.'
+    no_video: 'There is no video.'
     play: 'THymE Player'
     download: 'download video'
     length: 'Length'
     resolution: 'Resolution'
     size: 'Size'
+  image:
+    resolution: 'Resolution'
   manuscript:
     manuscript: 'Manuscript'
     no_manuscript: 'There is no manuscript present.'
     view: 'view pdf in browser'
+    view_script: 'view script in browser'
     download: 'download manuscript'
     length: 'Length'
     size: 'Size'
+    updated: 'Updated'
     pages: 'p'
     destinations: 'destinations'
     structure: 'Structure of the manuscript'
+    chapter: 'chapter'
+    section: 'section'
     one_contradiction: >
       A contradiction has been found. If you want to import the manuscript's
       structure to MaMpf, you have to resolve that contradiction first.
@@ -1697,6 +2168,19 @@ en:
     quarantine_info: >
       For that reason, they have been moved to Quarantine. There you can
       decide what do about them.
+    version_info_html: >
+      The manuscript has not been compiled using the current version
+      %{current_version} of the MaMpf LaTeX package, but with version
+      %{version}. Therefore no import of data is possible. Please recompile it
+      using the current version. You can download it %{package}.
+    version_unknown_html: >
+      The manuscript has been compiled using an unknown version of the MaMpf
+      LaTeX package. Therefore no import of data is possible. Please recompile it
+      using the current version %{current_version}.
+      You can find download it %{package}.
+    version_correct: >
+      The manuscript has been compiled using the current version
+      %{current_version} of the MaMpf LaTeX package.
     info:
       quarantined_items: >
         This is the list of all items that are in quarantine.
@@ -1739,6 +2223,20 @@ en:
       easy: 'easy'
       medium: 'medium'
       difficult: 'difficult'
+    certificate_info: >
+      You can get a certificate for the completion of this quiz. If you click
+      the button you will get a certificate in form of a code consisting of 6
+      characters.
+    certify: Request Certificate
+    obtained_certificate: >
+      You obtained the following certificate code for this quiz: %{code}
+    certificate_info_on_use: >
+      If your lecture uses certified MaMpf quizzes in the tutorials
+      you will have to give present this code in some form (e.g. your homework
+      solutions), your tutor will later validate it. Upon validation your tutor
+      can see your name (the one you gave as "name in turorials"), but no
+      information about whether you answered the questions correctly or
+      incorrectly.
     info:
       compile_tags: >
         Here you can specify which contents are relevant for the quiz.
@@ -1795,6 +2293,7 @@ en:
   time:
     formats:
       concise: '%Y-%m-%d'
+      publication_time: '%A, %B %d, %Y at %I:%M %p'
   thyme:
     back: 'back'
     back_to: 'back to '
@@ -1850,7 +2349,34 @@ en:
     settings: 'profile settings'
     alternative: 'Did you mean something else?'
     similar: 'Tags similar to %{search_string}'
+    courses_with_similar_titles: >
+      You might try the following fulltext terms and start the search again.
+    click_and_paste: >
+      If you click this term, it will be copied to the "fulltext" field.
+    media:
+      title: >
+        You can search the titles of media or related sessions. If you do not wantto use
+        this criterion, leave the input box empty.
+      title_placeholder: leave free or enter at least 2 letters 
+      lectures: >
+        Select the event series you want to search. You can choose all event series, the
+        ones you are subscribed to, or make up your own selection. If you opt for your own
+        selection, you can choose one or several event series. The operator used is the
+        inclusive <i>OR</i>.
+      lecture_options:
+        subscribed: 'subscribed'
+        all: 'all'
+        own_selection: 'custom selection'
+        all_media: 'all media'
+        only_extras: 'only extra material'
+      type: >
+        Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
+        <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
+        The operator used is the inclusive <i>OR</i>. 
+    tag_title: >
+      enter at least 2 letters (or leave free for all tags)
   errors:
+    not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
     thyme:
@@ -1859,39 +2385,22 @@ en:
   sign_up_html: >
     Don't have an account yet? Just %{path}.
   sign_up: 'sign up'
+  announcements: 'Announcements'
   main:
     welcome:
       Welcome to MaMpf, the Mathematical
       Media platform of Heidelberg University.
     about: >
-      MaMpf is a constantly growing project offering various
-      e-learning services. MaMpf's tagging system helps you find
-      all existing media to a keyword quickly and easily.
-      In addition, MaMpf links keywords and visualizes their relations
-      in Mind maps. In MaMpf you have the following at your disposal:
-    kaviar_html:
-      '<strong>
-        Hypervideos:
-      </strong>
-      Lecture recordings, worked examples and repetition videos with
-      content structure and links to related materials'
-    sesam_html:
-      '<strong>
-        Hypertexts:
-      </strong>
-      Lecture notes, exercise sheets and additional materials with links and outlines
-      that can be searched in MaMpf'
-    keks_html:
-      '<strong>
-        Quizzes:
-      </strong>
-      compiled from a large collection of multiple choice questions and calculation tasks, and
-      guided proofs'
+      MaMpf combines and connects various e-learning services: lecture videos and scripts
+      with content outlines, a comprehensive collection of multiple choice questions
+      and assignments including guided proofs and much more. Thanks to the
+      tagging system, you can easily find all the media relevant to you.
     interested_html: >
-     Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
-     %{guided_tour} you can find a guided tour of MaMpf.
+      Curious? Then take a look at our %{blog} (including a %{guided_tour} of MaMpf
+      and additional %{resources} for editors). Or register now to try MaMpf on your own.
+    resources: resources
     blog: Blog
-    researchgate: Researchgate
+    guided_tour: guided tour
   math:
     number: 'number'
     complex_number: 'complex number'
@@ -1939,9 +2448,293 @@ en:
       3,000.
       </li>
       </ul>
+  comments:
+    title: Comments on media in your event series and courses
+    latest_post: Latest post
+    thread_subscribed: Subscribed
+    who_and_when: '%{when} ago by %{who}'
+    comment_verb: Add Comment
+    no_comments: There are no new comments.
+    media_comments: >
+      Number of media in your subscribed courses and event series
+      for which there are new comments for %{count}:
   locales:
     en: 'English'
     de: 'German'
+  submission:
+    invalid_code_for_assignment: >
+      The code you entered is invalid for %{assignment}.
+    invalid_code: The code you entered is invalid.
+    assignment_expired: >
+      The due date for this homework assignment has already
+      expired.
+    already_in: You are already a partner for this assgnment.
+    lecture_not_subscribed: >
+      You are not subscribed to the coresponding event series.
+    no_partners_no_leave: >
+      You cannot leave as you are the only person in this group (but you
+      you can delete this submission).
+    nothing_here: >
+      There is nothing here yet. Create a new submission or join one.
+    nothing_here_past: >
+      Nothing was submitted for this assignment.
+    invitations_to: Invitations to
+    joined_successfully: >
+      You successfully joind the submission to %{assignment}.
+    failed_redemption: >
+      Redemption of submission code failed: %{message}.
+    current: Current Submission
+    previous: Previous Submission
+    old_ones: Old Submissions
+    future_ones: Future Submissions
+    no_old_ones: Nothing has been submitted yet.
+    no_future_ones: >
+      There are no assignments beyond the current one.
+    no_manuscript_yet: Currently, no file is stored.
+    exists_no_longer: This submission does not exist.
+    no_manuscript_yet: No file has yet been uploaded.
+    missing_consent: You must consent to upload file.
+    optimize: Optimize
+    optimization_log: Log (show)
+    optimization_failed: >
+      Optimization failed: File is still to big.
+    upload_failure: "Error while uploading! Please try again."
+    correct_file_size: The filesize does not exceed the limit.
+    file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
+    file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
+    optimization_help_html: >
+      <b>Optimizing:</b> Use this button to optimize your file with your browser.
+      This process takes about 1-2 minutes. We strongly suggest downloading the resulting
+      pdf as this feature is marked experimental.
+    optimization_info: >
+      For this purpose, a small additional program is downloaded and executed <i> in the browser </i>.
+        Your file will remain on your device until you have uploaded them.
+    assure_third_party: >
+      I assure that the file does not infringe any rights of third parties.
+    removal_notice_html: >
+      <b>Notice:</b> Files will be deleted at the end of the semester.
+       We do not assume any liability for possible data loss.
+    submission_upload_notice_html: >
+      <b> Important </b>: Please press "Save", otherwise your
+        Changes are discarded when you leave the site.
+    submission_not_upload_notice_html: >
+      <b>Important </b>: Please press "Upload" and then "Save", otherwise your
+        Changes are discarded when you leave the site.
+    no_manuscript_yet: Currently, no file is stored.
+    exists_no_longer: This submission does not exist.
+    working: Working
+    deletion_date: Deletion Date
+    multiple_files_selected: Multiple files have been selected.
+    merging_help_html: >
+      <b>Merging:</b> Use this button to merge the files in the order given above.
+    merging_info: >
+      In order to do so, a small programm will be loaded by your browser. Your files
+      are kept on your device until you upload them.
+    merge: Merge
+    merging_failed: Merging failed
+    no_correction_yet: Currently, no file is stored.
+    move_to_tutorial: move to tutorial
+    manuscript_no_pdf: The uploaded file is not a valid pdf file.
+    manuscript_size_too_big: >
+      The uploaded file is too big (maximum allowed size is 10 MB).
+    wrong_file_type: >
+      This file has the wrong file type %{file_type}.Expected file type:
+      %{accepted_file_type}.
+    wrong_mime_type: >
+      File has wrong MIME type %{mime_type}. Expected MIME type:
+      %{accepted_mime_types}.
+    correction_size_too_big: >
+      The uploaded file is too big. Maximum file size is 15 MB.
+    too_late_no_saving:
+      The due date for this assignment has expired, therefore this change
+      cannot be saved.
+    too_late_no_editing:
+      The due date for this assignment has expired, therefore this submission
+      cannot be edited.
+    too_late_no_inviting:
+      The due date for this assignment has expired, therefore invitations to
+      this submission are no longer possible.
+    too_late_no_destroying:
+      The due date for this assignment has expired, therefore this submission
+      cannot be deleted.
+    late_submission_warning_html: >
+      You can make changes within the grace period until %{friendly_deadline}.
+      However, if you do so, the submission will be declared as
+      <b>'too late'</b>.
+      It is within the discretion of the teacher and the tutor if and how the
+      submission will be graded.
+    last_modification: >
+      last modification
+    last_modification_info_html: >
+      It is logged when the last change to the submission by a team member took
+      place. The following is taken into account:
+      <ul>
+      <li>
+      creation of the submission
+      </li>
+      <li>
+      successful first upload or replacement of the file
+      </li>
+      <li>
+      the joining of a team member
+      </li>
+      <li>
+      the leaving of a team member
+      </li>
+      </ul>
+      If the last modification ist before the due date, the submission is valid.
+      Otherwise it will be marked as <b>too late</b>.
+    okay: Everything is fine.
+    no_file: No file is stored.
+    nothing: No submission was created.
+    with_correction: >
+      Everything is fine. You tutor has uploaded the correction to this
+      submission.
+    too_late: >
+      The submission is marked as "late", because the last change was after
+      the due date. It is at the discretion of the teacher and the tutor
+      if and how it is graded.
+    too_late_accepted: >
+      You tutor accepted the submission that was marked as "late" and is now
+      working on the correction.
+    too_late_rejected: >
+      Your submission that was marked as "late" was rejected.
+    under_review: >
+      Your tutor is currently reviewing the submission.
+    already_corrected: >
+      For this assignment a correction was already uploaded. Therefore you
+      cannot join anymore.
+    late: late submission
+    late_submissions: late submissions
+    rejected: rejected
+    bulk_download_submissions: Bulk download of submissions
+    bulk_download_corrections: Bulk download of corrections
+    bulk_upload: Bulk upload of corrections
+    code_explanation: >
+      By knowledge and input of this code, other persons can join this
+      submission. Joining via a code is particularly recommended when the
+      other person has not yet cooperated with you in this event series.
+      Perosns that you have already cooperated with can be invited using
+      the "Invite" button (this button only exists in the case that such persons
+      exist, are not yet a member of this team and the team size is below
+      the maximal allowed size for teams).
+    profile_info_html: >
+      In your %{profile} you can set your preferences about which events in the
+      context of submissions you want to be notified about via email. This
+      includes successful upload and removal of files, joining or leaving of
+      team members, decisions about the acceptance of late submissions and
+      upload of corrections by your tutor.
+    deletion_date_info: >
+      The data you submit is personal data that we delete in the following semester
+      for data privacy reasons. You can find the exact deletion date in the table.
+      You will also be reminded of the deletion in advance by e-mail so that you
+      can back up your data.
+    team_info: >
+      Here you can see your submission team. You can enlarge
+      your team by giving other persons the submission code so that they can
+      join or by inviting persons that you have already had submissions with in
+      this event series, so that they can join. The team can become only as
+      large as the maximal team size allowed in this event series.
+    file_format: Submission format
+  assignment:
+    expired: The due date has expired.
+    not_in_this_lecture: >
+      In this lecture, no assignments have yet been created. Therefore, there
+      are no submissions.
+    no_current: >
+      Currently, there is no assignment for which something could be submitted.
+    no_previous: >
+      Nothing has yet been submitted.
+    nothing_yet_in_lecture: >
+      In this lecture nothing had yet to be submitted.
+    deletion_date: Deletion date
+    destruction_info: >
+      <i>
+      Note.
+      </i>
+      An assignment can only be deleted if there are no submissions for it that
+      include uploaded files.
+    info:
+      scheduled_assignment:
+        This assignment will be created when the associated medium is published.
+        In order to change things please edit the publication settings for the
+        medium.
+  tutorial:
+    no_submissions_for_assignment: >
+      There are no submissions for this assignment.
+    destruction_info: >
+      <i>
+      Note.
+      </i>
+      A tutorial can only be deleted if there are no submissions for it that
+      include uploaded files.
+    late_submission_decision: >
+      You can decide whether you accept it or reject it.
+    own_tutorials: >
+      Own Tutorials
+    deadline_warning: >
+      The deadline for submission is still %{deadline}. Only after the deadline
+      corrections can be uploaded.
+    grace_period_warning: >
+      The grace period lasts until %{friendly_deadline}. Within the grace
+      period, submisions and retrospective changes by the students are possible
+      (the corresponding submissions will be marked as late.)
+    certificate_check: >
+      Validate Quiz Certificate
+    certificate_check_info: >
+      Here you can validate certificate codes that users have obtained after
+      successfully completing a quiz. If the entered code is valid will be
+      informed about the user and the quiz that this certificate belongs to.
+    certificate_valid: >
+      The code is valid. It belongs to user %{user} and quiz %{quiz}.
+    teams_as_csv: Teams as .csv
+    certificate_invalid: This code is invalid.
+    bulk_upload:
+      report: Report on the bulk upload of the corrections
+      number_of_submissions: Number of submissions
+      successfully_saved: Number of successfully saved corrections
+      invalid_filenames: invalid filenames
+      invalid_files: invalid files
+      invalid_submission_id: invalid submision id
+      no_decision: no decision abou acceptance yet
+      rejected: correction already rejected
+      files_in_cache: file(s) successfully uploaded to temporary storage
+      info:
+        general_info: >
+          Here you can upload several corrections. In order that MaMpf can
+          associate them to the correct submissions it would be ideal if
+          the filenames would match the filenames of the submissions.
+        invalid_filenames: >
+          This is the list of all uploaded files that do not
+          fit into the naming scheme that is provided by MaMpf.
+        invalid_files: >
+          This is the list of all uploaded files that can be
+          matched to a submission but whose saving fails because they violate
+          some rule (e.g. size is too large or they are not of the right file
+          type).
+        invalid_submission_id: >
+          This is the list of all uploaded files that fit into
+          the naming schem provided by MaMpf, but whose submission ids do not
+          match any submissions.
+        no_decision: >
+          This is the list of submission teams for which you uploaded a
+          correction but have not yet made a decision on whether to accept the
+          late  submission. The corresponding corrections have not been
+          uploaded.
+        rejected: >
+          This is the list of submission teams for which you uploaded a correction
+          but have already decided to reject the submission. The corresponding
+          corrections have not been uploaded.
+      error: >
+        Unfortunately, your bundle upload failed. Please try again..<br>
+        If you see this error message repeatedly:<br>
+        - close your browser, open it again and try again.<br>
+        - shut down your device, restart it and try again.<br>
+        - upload the files one by one.<br>
+        In case of repeated occurrence please contact the MaMpf team.
+  package:
+    no_zip: This file is not a .zip archive.
+    to_big: This file is too big.
   mailer:
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
@@ -1953,26 +2746,176 @@ en:
     unsubscribe_text:
       If you do not want to receive emails about activities in MaMpf,
       you can disable that feature in your profile settings.
+    non_working_links: >
+      If a link from this mail does not work when you click it form your mail
+      client you can try to copy and paste the link to the address bar of your
+      browser and open it afterwards.
     announcement_subject: 'New announcement'
     mampf_news: 'about MaMpf'
     new_announcement: 'There is a new announcement'
     author: 'Author'
     text: 'Text'
+    new_editor_subject: 'Editing Rights for %{title}'
+    new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
-    subscribe_lecture_html: 'You can subscribe to it in your %{profile}.'
+    subscribe_lecture: 'You can subscribe to it in your profile settings.'
     subscribe_lecture_text: >
       You can subscribe to it in your profile settings.
     new_course_subject: 'New Course %{title}'
     new_course: 'A new course has been made available: %{title}.'
-    subscribe_course_html: 'You can subscribe to it in your %{profile}.'
+    subscribe_course: 'You can subscribe to it in your profile settings.'
     subscribe_course_text: >
       You can subscribe to it in your profile settings.
+    submission_invitation_subject: >
+      Invitation to submission of %{assignment} in %{lecture}
+    submission_invitation_html: >
+      %{issuer} issuer has invited you to join a submission to %{assignment}
+      in %{lecture}. The code to join is: %{code}. You can enter and redeem
+      it in MaMpf manually or follow this %{link}.
+    submission_upload_subject: >
+      Successful upload for submission to %{assignment} in %{lecture}
+    submission_upload_html: >
+      You have succesfully uploaded the file "%{filename}" to submission
+      to %{assignment} in %{lecture}. You can view the current file via this
+      %{link}.
+    submission_upload_by_others_html: >
+      %{uploader} has succesfully uploaded the file "%{filename}" to submission
+      to %{assignment} in %{lecture}. You can view the current file via this
+      %{link}
+    submission_upload_removal_subject: >
+      File for submission to %{assignment} in %{lecture} removed
+    submission_upload_removal_html: >
+      You have removed the file "%{filename}" for the submission
+      to %{assignment} in %{lecture}.
+    submission_upload_removal_by_others_html: >
+      %{remover} has removed the file "%{filename}" for the submission
+      to %{assignment} in %{lecture}.
+    submission_join_subject: >
+      %{user} has joined the submission for %{assignment} in %{lecture}
+    submission_join: >
+      %{user} has joined the submission for %{assignment} in %{lecture}.
+    submission_leave_subject: >
+      %{user} has left the submission for %{assignment} in %{lecture}
+    submission_leave: >
+      %{user} has left the submission for %{assignment} in %{lecture}.
+    correction_upload_subject: >
+      Correction added to %{assignment} in %{lecture}
+    correction_upload_html: >
+      %{tutor} has uploaded the correction for the submission to
+      %{assignment} in %{lecture}. You can view it via this %{link}.
+    submission_acceptance_subject: >
+      Late submission for %{assignment} in %{lecture} accepted
+    submission_acceptance: >
+      Your late submission for %{assignment} in %{lecture} has been accepted
+      and will be graded.
+    submission_rejection_subject: >
+      Late submission to %{assignment} in %{lecture} rejected
+    submission_rejection: >
+      Your late submission to %{assignment} in %{lecture} has been rejected
+      and will not be graded.
+    submission_deletion_subject: >
+      Deletion of submissions and corrections
+    submission_deletion_text_html: >
+      For GDPR reasons, all of your submissions and corrections from
+      with deletion date <b>%{deletion_date}</b> will be automatically deleted at
+      the corresponding date. If you want to use them in the future,
+      please download them before.
+    submission_deletion_lecture_subject: >
+      Deletion of submissions and corrections from [%{lecture}]
+    submission_deletion_lecture_text_html: >
+      For GDPR reasons, all submissions and corrections of the lecture
+      %{lecture} with deletion date <b>%{deletion_date}</b> will be automatically
+      deleted at the corresponding date. In for some reason they have to be
+      stored longer, this has to happen outside of MaMpf. In that case the files
+      have to be downloaded in time.
+    submission_deletion_lectures: >
+      The following lectures in MaMpf are affected by the deletion:
+    submission_destruction_subject: >
+      Deletion of submissions and corrections
+    submission_destruction_text_html: >
+      For GDPR reasons, all of your submissions and corrections with
+      deletion date %{deletion_date} that were stored in MaMpf have been automatically
+      deleted.
+    submission_destruction_lecture_subject: >
+      Deletion of submissions and corrections from %{lecture}
+    submission_destruction_lecture_text_html: >
+      For GDPR reasons, all submissions and corrections of the lecture
+      %{lecture} with deletion date %{deletion_date} that were stored in MaMpf
+      have been automatically deleted.
+    hash_mail_subject: Email address verification
+    hash_mail_body: >
+      Hello, %{name}!
+      You are receiving this email because a previous email from MaMpf could not be delivered.
+      This email is to check if your email account still exists. Since this is the case, no changes
+      will be made to your account. You can therefore ignore this email.
+      Hash:%{hash}
+    data_request_mail_body: >
+      %{mail} with user-id: %{id} has requested his data.
+    data_provide_mail_subject: Data request
+    data_provide_mail_body: >
+      Hello, %{name}!<br>
+
+      You have sent us a request for your data. We are happy to comply with it.
+      First, there is data directly linked to you:<br>
+
+      Your email address: %{email}<br>
+      Account creation: %{created_at}<br>
+      Last account change: %{updated_at}<br>
+      Admin: %{admin}<br>
+      Subscription type: %{subscription_type}<br>
+      Name: %{name}<br>
+      Homepage: %{homepage}<br>
+      No notifications: %{no_notifications}<br>
+      Language: %{_locale}<br>
+      Emails for media: %{email_for_medium}<br>
+      Emails for announcements: %{email_for_announcement}<br>
+      Emails for lectures: %{email_for_teachable}<br>
+      Emails for news: %{email_for_news}<br>
+      Unread comments: %{unread_comments}<br>
+      Study participant: %{study_participant}<br>
+      Emails for submission Upload: %{email_for_submission_upload}<br>
+      Emails for submission deletion: %{email_for_submission_removal}<br>
+      Emails for submission joining: %{email_for_submission_join}<br>
+      Emails for submission leave: %{email_for_submission_leave}<br>
+      Emails for correction upload: %{email_for_correction_upload}<br>
+      Emails for submission decision: %{email_for_submission_decision}<br>
+      Name in tutorials: %{name_in_tutorials}<br>
+      Archived: %{archived}<br>
+      Image data: %{image_data}<br>
+
+      You are welcome to contact us about the meaning of the individual data.
+      Furthermore there are data which are linked to other database entries, namely<br>
+
+      -subscribed lectures<br>
+      -Favorite lectures<br>
+      -modules as module editor<br>
+      -lectures as lecture editor<br>
+      -edited media<br>
+      -held lectures<br>
+      -held tutorials<br>
+      -lectures<br>
+      -received notifications (e.g. about new media etc.)<br>
+      -created Announcements<br>
+      -registered clickers<br>
+      -Note submissions<br>
+      -watchlists<br>
+      -quizzes certificates<br>
+      -forum posts<br>
+      -comments<br>
+
+      Note that not all of these data may apply to you.<br>
+
+      For further insight, please contact us.<br>
+
+      With kind regards,<br>
+      Your MaMpf-Team
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
     manuscript_access: 'Accesses'
-    quiz: 'complete accesses'
+    quiz_access: 'Accessses'
+    quiz_full_access: 'Finished runs'
     median: 'Median'
     lower_quartile: 'Lower Quartile (correctly answered questions)'
     upper_quartile: 'Upper Quartile (correctly answered questions)'
@@ -1981,14 +2924,37 @@ en:
     question_details: 'Detailled statistics for questions'
     no_question_statistics: >
       For this question, there no data available yet.
+    number_of_users: 'Number of users'
     number_of_correct_answers: >
-      number of correctly answered questions
-    number_of_users: 'Anzahl der Nutzerinnen'
+      Number of correctly answered questions
+    calls: 'Call statistics'
+    success: 'Success statistics'
+    no_finishes_yet: 'The quiz was not finished by anyone yet.'
+    date: 'Date'
+    count: 'Count'
+    plays: 'Plays'
+  erdbeere:
+    show_structures: 'Structures, properties and examples'
+    select_structures: Select Structures
+    structure_index: 'Structure Index'
+    info:
+      structures:
+        Here you can select which structures from the ErDBeere database
+        are displayed for this lecture.
+    structures: 'Structures'
+    properties: 'Properties'
+    edit_realizations: 'Edit Realizations'
+    no_realizations: 'There are no realizations.'
+    search_examples: 'Search for Examples'
+    no_structures: >
+      There are no structures associated to this lecture.
   basics:
+    error: Error
     course: 'Course'
     courses: 'Courses'
     term: 'Term'
     teacher: 'Teacher'
+    teachers: 'Teachers'
     title: 'Title'
     short_title: 'Short title'
     editors: 'Editors'
@@ -2006,6 +2972,7 @@ en:
     preferences: 'Preferences'
     language: 'Language'
     date: 'Date'
+    section: 'Section'
     sections: 'Sections'
     at_the_beginning: 'At the beginning'
     at_beginning_of_chapter: 'At the beginning of the chapter'
@@ -2019,6 +2986,7 @@ en:
     basics: 'Basics'
     action: 'Action'
     actions: 'Actions'
+    post_processing: 'Post process...'
     search: 'Search'
     mampf_package: 'MaMpf package'
     associated_to: 'Associated to'
@@ -2027,6 +2995,7 @@ en:
     associated_to_short: 'Ass. to'
     description: 'Description'
     type: 'Type'
+    types: 'Types'
     label: 'Label'
     related_media: 'Related media'
     related_questions: 'Related questions'
@@ -2098,7 +3067,7 @@ en:
     warning: 'Warning'
     aliases: 'Aliases'
     translations_aliases: 'Translations, Aliases'
-    answer_count: 'Number of answers (only for Questions)'
+    answer_count: 'Number of answers'
     multiple_choice: 'Multiple Choice'
     free: 'free answer'
     solution: 'Solution'
@@ -2110,6 +3079,50 @@ en:
     documents: 'Documents'
     optional: 'optional'
     statistics: 'Statistics'
+    loading_data: 'Loading data...'
+    realizations: 'Realizations'
+    comments: 'Comments'
+    comment: 'Comment'
+    comments_for: 'Comments for %{subject}'
+    unsubscribe: 'Unsubscribe'
+    subscribe: 'Subscribe'
+    programs: 'Programs'
+    visibility: 'Additional material'
+    tutorials: 'Tutorials'
+    tutor: 'Tutor'
+    tutors: 'Tutors'
+    assignments: 'Assignments'
+    deadline: 'Due date'
+    tutorial: 'Tutorial'
+    code: 'Code'
+    files: 'Files'
+    partners: 'Partners'
+    team: 'Team'
+    expired: 'expired'
+    you: 'You'
+    and_you: 'and You'
+    invited: 'Invited'
+    nobody: 'nobody'
+    submission: 'Submission'
+    correction: 'Correction'
+    submissions: 'Submissions'
+    corrections: 'Corrections'
+    overview: Overview
+    tba: tba
+    due: due
+    as: as
+    as_file_type: as %{type} file
+    code_copied_to_clipboard: Code has been copied to the clipboard.
+    emails_copied_to_clipboard: Mail adresses have been copied to the clipboard.
+    lecture_search: Lecture Search
+    course_search: Course Search
+    immediately: immediately
+    at_time: at the following time
+    assignment: Assignment
+    reminder: Reminder
+    together_with: together with
+    enter_two_letters: enter at least 2 letters
+    no_results: No results found
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -2133,6 +3146,7 @@ en:
     parent_lecture: 'Parent Event Series'
     parent_lesson: 'Parent Session'
     parent_medium: 'Parent Medium'
+    parent_talk: 'Parent Talk'
     create_chapter: 'Create Chapter'
     create_talk: 'Create Talk'
     create_lesson: 'Create Session'
@@ -2140,6 +3154,10 @@ en:
     create_medium: 'Create Medium'
     create_announcement: 'Create Announcement'
     create_lecture: 'Create Event Series'
+    create_program: 'Create Study Path'
+    create_subject: 'Create Subject'
+    create_division: 'Create Division'
+    create: 'Create'
     edit: 'Edit'
     content: 'Content'
     hide_media: 'Hide Media'
@@ -2192,6 +3210,27 @@ en:
     interpret: 'Interpret'
     import_media: 'Import Media'
     view: 'View'
+    import_script_items: 'Import table of contents from manuscript'
+    close_comments: 'Close discussions for all related media'
+    open_comments: 'Reopen all closed discussions'
+    join: 'Join'
+    copy_to_clipboard: 'Copy to Clipboard'
+    copy_email_to_clipboard: 'Copy mail adresses to Clipboard'
+    leave: 'Leave'
+    upload: 'Upload'
+    upload_success: 'Upload successful'
+    refresh_token: 'Refresh Code'
+    invite: 'Invite'
+    send: 'Send'
+    download: 'Download'
+    move: 'Move'
+    accept: 'Accept'
+    reject: 'Reject'
+    dismiss: 'Dismiss'
+    validate: 'Validate'
+    cancel_publication: 'Cancel'
+    import_lecture_toc: 'Import TOC'
+    import_toc: 'Import'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -2223,6 +3262,10 @@ en:
       Are you sure? The associated sessions will not be deleted, but they will
       be - until you assign them to a different section - considered
       as "orphaned".
+    active_term: >
+      Are you sure? This will in particular mean that the starting page for all
+      users will be different as the current lectures are computed from the
+      current term.
   privacy_html: >
     We care about handling your data responsibly. By
     GDPR, we need your consent for storing and processing
@@ -2241,6 +3284,7 @@ en:
     no_answer: 'There is no answer with this id.'
     session_expired: 'Your session has expired. Please login again.'
     no_chapter: 'There is no chapter with this id.'
+    no_talk: There is no talk with this id.
     no_course: 'There is no course with this id.'
     no_test: 'There is no test for this course.'
     no_lecture: 'There is no event series with this id.'
@@ -2278,6 +3322,52 @@ en:
     no_teacher: 'There is no teacher with this id.'
     no_clicker: 'There is no clicker with this id.'
     no_clicker_access: 'You cannot to edit this clicker.'
+    no_subject: 'There is no subject with this id.'
+    no_program: 'There is no program with this id.'
+    no_division: 'There is no division with this id.'
+    no_tutorial: 'There is no tutorial with this id.'
+    no_submission: There is no submission with this id.
+    no_assignment: There is no assignment with this id.
+    no_lecture_given: Invalid or no lecture was given.
+    no_tutor_in_this_lecture: You are not a tutor in this lecture.
+    no_editor_or_teacher: >
+      In this event series you are neither teacher nor editor.
+    no_student_status_in_lecture: >
+      In this event series you are allowed to submit.
+    no_tutorials_in_lecture: >
+      In this event series there are no tutorials, hence no submissions can be
+      made.
+    no_assignments_in_lecture: >
+      In this event series there are no assigments yet.
+    tutorials:
+      destruction_failed: >
+        The tutorial could not be deleted. That may be because there are already
+        submissions for it that include uploaded files.
+      bulk_download_failed: >
+        An error happened in the creation of the zip archive: %{message}
+    assignments:
+      destruction_failed: >
+        The assignment could not be deleted. That may be because there are
+        already submissions for it that include uploaded files.
+    certificate_already_claimed: >
+      The certificate has already been claimed by another user.
+    no_announcement: There is no announcement with this id.
+    created_lecture_success: >
+      The lecture %{lecture} has been successfully created.
+    created_course_success: >
+      The course %{course} (editors: %{editors}) has been successfully
+      created.
+    unauthorized: >
+      You are not authorized for this action.
+  exception:
+    title: Error
+    exception: Exception on %{host}
+    exception_report: 'There was an exception on %{host}:'
+    user_text: >
+      Oops, that should not have happened. This is a bug in MaMpf.
+    will_be_repaired: >
+      The MaMpf Team has been notified about this bug, we will try to fix it as
+      soon as possible.
   activerecord:
     errors:
       no_valid_url: 'This is not a valid URL.'
@@ -2286,6 +3376,17 @@ en:
           attributes:
             details:
               blank: 'You need to give a text.'
+        assignment:
+          attributes:
+            title:
+              taken: >
+                This assignment title is already taken for this event series.
+              blank: You need to give a title.
+            deadline:
+              blank: You need to give a due date.
+            deletion_date:
+              blank: You need to give a deletion date.
+              in_past: Deletion date can't lie in the past.
         chapter:
           attributes:
             title:
@@ -2295,6 +3396,12 @@ en:
             title:
               blank: 'You need to give a title.'
               taken: 'This title is already taken.'
+        clicker_vote:
+          attributes:
+            clicker:
+              clicker_closed: 'The associated clicker is closed.'
+            value:
+              out_of_range: 'The value is out of the admissible range.'
         course:
           attributes:
             title:
@@ -2329,10 +3436,15 @@ en:
                 An event series with the same combination of course, term and teacher
                 already exists.
               required: 'You need to give a course.'
+              already_present: >
+                For courses that are term independent there can be only one
+                'event series'.
             content_mode:
               inclusion: 'Invalid mode.'
             term:
               required: 'You need to give a term.'
+              present: >
+                Term was given, but associated course is independent of terms
             teacher:
               required: 'You need to give a teacher.'
         lesson:
@@ -2345,6 +3457,7 @@ en:
           attributes:
             linked_medium:
               taken: 'This link already exists.'
+              uniqueness: 'This link already exists.'
         medium:
           attributes:
             sort:
@@ -2397,23 +3510,52 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
+        submission:
+          lecture_not_matching: >
+            The tutorial should belong to the same lecture as the assignment.
+          attributes:
+            tutorial:
+              blank: A valid tutorial has to be supplied.
+            user_submission_joins:
+              invalid: >
+                There is already a submission from you or the team has already
+                reached its maximal size.
         tag:
           attributes:
             notions:
               blank: 'You need to give a title for at least one language.'
             aliases:
               invalid: 'The input is invalid.'
+        talk:
+          attributes:
+            title:
+              blank: You need to give a title.
         term:
           attributes:
+            active:
+              taken: 'There can be only one active term.'
             season:
               inclusion: 'Not a valid type.'
               taken: 'This term already exists.'
+        tutorial:
+          attributes:
+            title:
+              taken: >
+                This tutorium title is already taken for this event series.
+              blank: You need to giv a title.
         user:
           attributes:
             courses:
               blank: 'You need to subscribe at least one course.'
             name:
               blank: 'You need to give a display name.'
+        user_submission_join:
+          only_one_per_assignment: >
+            A submission to this assignment has already been created.
+            Each user is only allowed one submission per assignment.
+          team_size: >
+            You are not allowed to join as otherwise the submission team would
+            have more members than allowed.
         vote:
           attributes:
             clicker:
@@ -2421,3 +3563,13 @@ en:
             value:
               out_of_range: >
                 Your vote is outside of the allowed range.
+        watchlist_entry:
+          attributes:
+            medium_id:
+              taken:
+                is already in this watchlist.
+        watchlist:
+          attributes:
+            name:
+              taken:
+                'A watchlist with that name already exists.'

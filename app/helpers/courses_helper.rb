@@ -22,4 +22,23 @@ module CoursesHelper
                        edit_profile_path,
                        class: 'darkblue'))
   end
+
+  def course_link_or_text(course, user)
+    unless user.admin || user.in?(course.editors)
+      return course.title
+    end
+    link_to(course.title, edit_course_path(course))
+  end
+
+  def course_edit_icon(course)
+    link_to edit_course_path(course),
+            class: 'text-dark mr-2',
+            style: 'text-decoration: none;',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.edit') do
+      tag.i class: 'far fa-edit'
+    end
+  end
+
 end

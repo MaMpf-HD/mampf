@@ -1,0 +1,26 @@
+<%= form_with url: validate_certificate_path,
+              method: :post do |f| %>
+  <%= f.label :code, t('basics.code') %>
+  <%= helpdesk(t('tutorial.certificate_check_info'), false) %>
+  <%= f.text_field :code,
+                   { class: 'form-control' } %>
+  <div class="row mt-3">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.validate'),
+                   class: 'btn btn-sm btn-primary' %>
+      <button type="button"
+              class="btn btn-sm btn-secondary"
+              data-dismiss="modal">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+  <%= f.hidden_field :lecture_id,
+                     value: @lecture.id %>
+<% end %>
+<div class="row mt-3">
+  <div class="col-12">
+    <div id="validationResult">
+    </div>
+  </div>
+</div>

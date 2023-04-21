@@ -143,9 +143,9 @@ compareToSolution = (solutionInput) ->
   solutionString = $('#question_nerd').val()
   type = $('#question_solution_type').val()
   params = $('#solution-form').data('parameters')
-  if params
+  unless $.isEmptyObject(params)
     try
-      solutionString = nerdamer(solutionString, params).toString()
+      solutionString = nerdamer(solutionString, params).evaluate().toString()
     catch err
       solutionString = 'Error'
   solution = MampfSolution.fromExpression(type, solutionString)
@@ -206,12 +206,9 @@ $(document).on 'turbolinks:load', ->
 # restore status quo if editing of question basics is cancelled
 
   $(document).on 'click', '#question-basics-cancel', ->
-    $.ajax Routes.cancel_question_basics_path(),
+    $.ajax Routes.cancel_question_basics_path($(this).data('id')),
       type: 'GET'
       dataType: 'script'
-      data: {
-        question_id: $(this).data('id')
-      }
       error: (jqXHR, textStatus, errorThrown) ->
         console.log("AJAX Error: #{textStatus}")
     return
@@ -231,12 +228,9 @@ $(document).on 'turbolinks:load', ->
 # restore status quo if editing of question basics is cancelled
 
   $(document).on 'click', '#question-solution-cancel', ->
-    $.ajax Routes.cancel_solution_edit_path(),
+    $.ajax Routes.cancel_solution_edit_path($(this).data('id')),
       type: 'GET'
       dataType: 'script'
-      data: {
-        question_id: $(this).data('id')
-      }
     return
 
   $(document).on 'change', '.solutionType', ->
@@ -329,12 +323,11 @@ $(document).on 'turbolinks:load', ->
     return
 
   $(document).on 'keyup', '[id^="tex-area-question-"]', ->
-    $.ajax Routes.render_question_parameters_path(),
+    $.ajax Routes.render_question_parameters_path($(this).data('id')),
       type: 'GET'
       dataType: 'script'
       data: {
         text: $(this).val()
-        id: $(this).data('id')
       }
     return
     return
@@ -355,4 +348,5 @@ $(document).on 'turbolinks:before-cache', ->
   $(document).off 'keyup', '[id^="question_solution_content"]'
   $(document).off 'click', '#interpretExpression'
   $(document).off 'keyup', '[id^="tex-area-question-"]'
+  $(document).off 'click', '#question-solution-cancel'
   return

@@ -9,6 +9,15 @@
             <%= t('basics.tag') %>
           </span>
           <%= tag.title %>
+          <% unless new_tag %>
+            <%= link_to '',
+                        tag_path(tag),
+                        class: 'fas fa-eye text-dark mt-3',
+                        data: { toggle: 'tooltip',
+                                placement: 'bottom' },
+                        title: t('buttons.show'),
+                        style: 'text-decoration: none;' %>
+          <% end %>
         </h4>
       </div>
       <div class="col-6">
@@ -28,7 +37,7 @@
       </div>
       <div class="col-3 text-right">
         <%= link_to t('admin.tag.index'),
-                    tags_path,
+                    administration_search_path(params: {sort: 'tag' }),
                     class: 'btn btn-sm btn-outline-primary' %>
         <% if tag.id.present? && (current_user.admin? ||
               (tag.courses & current_user.edited_courses).any?) %>
@@ -51,7 +60,8 @@
                          f: f,
                          new_tag: new_tag,
                          from: from,
-                         graph_elements: graph_elements } %>
+                         graph_elements: graph_elements,
+                         modal: false } %>
     <%= f.hidden_field :modal, value: false %>
     <%= f.hidden_field :from, value: from %>
   <% end %>

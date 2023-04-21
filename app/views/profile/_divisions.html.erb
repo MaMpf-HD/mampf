@@ -1,0 +1,19 @@
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4">
+	<% divisions.each do |d| %>
+		<div class="col mb-3">
+			<div class="mb-2">
+				<strong>
+					<%= d.name %>
+				</strong>
+			</div>
+			<% if d.courses.any? %>
+				<%= render partial: 'profile/courses',
+									 locals: { courses: d.courses,
+									 					 division: d,
+									 					 f: f } %>
+			<% else %>
+				<%= t('admin.division.no_courses') %>
+			<% end %>
+		</div>
+	<% end %>
+</div>

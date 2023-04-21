@@ -43,9 +43,7 @@ module MediaHelper
   def medium_notification_card_header(medium)
     teachable = medium.teachable
     if teachable.media_scope.class.to_s == 'Course'
-      return link_to(teachable.media_scope.title_for_viewers,
-                     course_path(medium.teachable.media_scope),
-                     class: 'text-dark')
+      return teachable.media_scope.title_for_viewers
     end
     link_to(teachable.media_scope.title_for_viewers,
             medium.teachable.media_scope.path(current_user),
@@ -72,6 +70,7 @@ module MediaHelper
   def textcolor(medium)
     return '' if medium.visible?
     return 'locked' if medium.locked?
+    return 'scheduled_release' if medium.publisher.present?
     'unpublished'
   end
 
@@ -103,6 +102,7 @@ module MediaHelper
     return add_prompt(Medium.select_quizzables) if purpose == 'quiz'
     return Medium.select_question if purpose == 'clicker'
     return add_prompt(Medium.select_importables) if purpose == 'import'
+    return add_prompt(Medium.select_generic) if !current_user.admin?
     add_prompt(Medium.select_sorts)
   end
 
@@ -120,5 +120,18 @@ module MediaHelper
       hash[s] = media_in_s unless media_in_s.blank?
     end
     hash
+  end
+
+  def release_date_info(medium)
+    return unless medium.publisher.present?
+    t('admin.medium.scheduled_for_release_short',
+      release_date: I18n.l(medium.publisher&.release_date,
+                           format: :long,
+                           locale: I18n.locale))
+  end
+
+  def edit_or_show_medium_path(medium)
+    return edit_medium_path(medium) if current_user.can_edit?(medium)
+    medium_path(medium)
   end
 end

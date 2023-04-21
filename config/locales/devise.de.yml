@@ -8,7 +8,8 @@ de:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail, mit der Du Deine Registrierung bestätigen kannst."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Du Deine Registrierung bestätigen kannst."
       new:
-        resend_confirmation_instructions: 'Anleitung zur Bestätigung des Accounts erneut versenden'
+        resend_confirmation_instructions: 'Bestätigungmail erneut senden'
+        resend: "Erneut senden"
     failure:
       already_authenticated: "Du bist bereits angemeldet."
       inactive: "Dein Account ist nicht aktiv."
@@ -32,17 +33,23 @@ de:
       reset_password_instructions:
         subject: "Anleitung für das Zurücksetzen Deines MaMpf-Passworts"
         greetings: 'Hallo, %{name}!'
+        no_name_fallback: "Du"
         change_password: 'Passwort ändern'
         instruction: "Jemand hat einen Link zur Änderung deines MaMpf-Passworts angefordert. Klicke auf den unten aufgeführten Link, um dein MaMpf-Passwort zu ändern:"
-        instruction_2: "Bitte ignoriere diese E-Mail, wenn du kein neues MaMpf-Passwort angefordert hast."
-        instruction_3: "Dein MaMpf-Passwort wird nicht geändert, bis du den obenstehenden Link abrufst und ein neues MaMpf-Passwort bestimmst."
+        instruction: "Klicke auf den unten aufgeführten Link, um dein MaMpf-Passwort zu ändern:"
+        instruction_2: "Bitte ignoriere diese E-Mail, wenn Du kein neues MaMpf-Passwort angefordert hast."
+        instruction_3: "Dein MaMpf-Passwort wird nicht geändert, bis Du den obenstehenden Link abrufst und ein neues MaMpf-Passwort bestimmst."
+        reason: >
+          Du hast diese Mail bekommen, weil kürzlich das Passwort eines ein
+          MaMpf-Accounts, der auf diese Email registriert wurde, resetted
+          wurde. Falls Du dies nicht getan hast, ignoriere diese Email bitte.
       unlock_instructions:
         subject: "Anleitung um Deinen Account freizuschalten"
     omniauth_callbacks:
       failure: "Du konntest nicht Deinem %{kind}-Account angemeldet werden, weil '%{reason}'."
       success: "Du hast Dich erfolgreich mit Deinem %{kind}-Account angemeldet."
     passwords:
-      no_token: "Du kannst diese Seite nur von dem Link aus einer E-Mail zum Passwort-Zurücksetzen aufrufen. Wenn du einen solchen Link aufgerufen hast stelle bitte sicher, dass du die vollständige Adresse aufrufst."
+      no_token: "Du kannst diese Seite nur von dem Link aus einer E-Mail zum Passwort-Zurücksetzen aufrufen. Wenn Du einen solchen Link aufgerufen hast stelle bitte sicher, dass Du die vollständige Adresse aufrufst."
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Dein Passwort zurücksetzen kannst."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Dein Passwort zurücksetzen können."
       updated: "Dein Passwort wurde geändert. Du bist jetzt angemeldet."
@@ -50,13 +57,15 @@ de:
       new:
         forgot_password: 'Passwort vergessen?'
         email: 'Email'
-        instructions: 'Schick mir eine Anleitung zur Änderung meines Passwortes'
+        instructions: 'Passwort zurücksetzen'
       edit:
         change_password: 'Passwort ändern'
         new_password: 'Neues Passwort'
         confirm_new_password: 'Neues Passwort bestätigen'
     registrations:
       destroyed: "Dein Account wurde gelöscht."
+      not_destroyed: "Es gab ein Problem bei der Löschung Deines Accounts. Bitte wende Dich an die MaMpf-Administratoren."
+      password_incorrect: "Dein Account wurde nicht gelöscht, da das von Dir angegebene Passwort inkorrekt ist."
       signed_up: "Du hast dich erfolgreich registriert. Bitte nimm Dir eine Minute, um Dein Profil zu vervollständigen"
       signed_up_but_inactive: "Du hast dich erfolgreich registriert. Wir konnten Dich noch nicht anmelden, da Dein Account inaktiv ist."
       signed_up_but_locked: "Du hast dich erfolgreich registriert. Wir konnten Dich noch nicht anmelden, da Dein Account gesperrt ist."
@@ -72,6 +81,9 @@ de:
           Ich stimme der Speicherung und Verarbeitung meiner Daten gemäß der
           %{policy} der Universität Heidelberg zu.
         policy: 'Datenschutzerklärung'
+      user:
+        captcha_error: Das Captcha-Test wurde nicht richtig gelöst.
+        too_many_registrations: In letzter Zeit sind zu viele Registrierungen versucht worden, bitte versuche es später erneut.
     sessions:
       signed_in: "Du hast Dich erfolgreich angemeldet."
       signed_out: "Du hast Dich erfolgreich abgemeldet."
@@ -79,14 +91,14 @@ de:
       new:
         email: 'Email'
         password: 'Passwort'
-        remember: 'Erinnere dich an mich (hierzu wird ein Cookie gesetzt)'
-        login: 'Einloggen'
+        remember: 'Erinnere Dich an mich (hierzu wird ein Cookie gesetzt)'
+        login: 'Login'
     shared:
       links:
-        login: 'Einloggen'
+        login: 'Login'
         sign_up: 'Registrieren'
         forgot_password: 'Passwort vergessen?'
-        didn_t_receive_confirmation_instructions: 'Anleitung zur Bestätigung des Accounts nicht erhalten?'
+        didn_t_receive_confirmation_instructions: 'Bestätigungsmail nicht erhalten?'
     unlocks:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."

@@ -1,0 +1,115 @@
+version: '3.4'
+x-mampf:
+  &mampf
+  build:
+    context: https://github.com/MaMpf-HD/mampf.git#production
+    dockerfile: docker/production/Dockerfile
+  env_file: docker.env
+  networks:
+    - solr
+    - mampf
+    - postgres
+  restart: always
+  depends_on:
+    - redis
+    - cache
+
+services:
+  master:
+    <<: *mampf
+    entrypoint: /usr/src/app/docker/production/entrypoint-master.sh
+    volumes:
+      - "media:/private/media:nocopy"
+      - "submissions:/private/submissions:nocopy"
+      - "public:/usr/src/app/public"
+      - "caches:/caches:nocopy"
+
+  worker:
+    <<: *mampf
+    entrypoint: /usr/src/app/docker/production/entrypoint-worker.sh
+    volumes:
+      - "media:/private/media:nocopy"
+      - "submissions:/private/submissions:nocopy"
+      - "caches:/caches:nocopy"
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: worker
+
+  nginx:
+    image: openresty/openresty:alpine
+    ports:
+      - "127.0.0.1:3000:80"
+    # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
+    container_name: mampf-docker-proxy
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      - "submissions:/private/submissions:ro,nocopy"
+      - "public:/public:ro"
+    restart: always
+    depends_on:
+      - master
+    networks:
+      - mampf
+
+  dockergen:
+    build:
+      dockerfile: docker/Dockerfile.dockergen
+      context: https://github.com/MaMpf-HD/mampf.git#production
+    command: -notify-sighup mampf-docker-proxy -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    restart: always
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      - "/var/run/docker.sock:/tmp/docker.sock"
+    depends_on:
+      - master
+    networks:
+      - mampf
+
+  redis:
+    restart: always
+    image: redis:6-alpine
+    networks:
+      - mampf
+
+  cache:
+    restart: always
+    image: memcached:alpine
+    networks:
+      - default
+
+  solr:
+    image: solr:8.11
+    container_name: solr
+    ports:
+      - "127.0.0.1:8983:8983"
+    volumes:
+      - /path/to/persistent/var_solr:/var/solr
+    networks:
+      - default
+    restart: always
+
+networks:
+  postgres:
+    external: true
+  solr:
+    external: true
+  mampf:
+    external: true
+
+volumes:
+  media:
+    driver_opts:
+      type: "nfs"
+      o: "addr=yourfileserverdomain,noatime,nolock,soft,vers=4.2,rw"
+      device: ":/mampf/media/mampf"
+  submissions:
+    driver_opts:
+      type: "nfs"
+      o: "addr=yourfileserverdomain,noatime,nolock,soft,vers=4.2,rw"
+      device: ":/mampf/submissions/mampf"
+  public:
+  nginx-conf-d:
+  caches:
+    driver_opts:
+      type: "nfs"
+      o: "addr=yourfileserverdomain,noatime,nolock,soft,vers=4.2,rw"
+      device: ":/mampf/caches/mampf"

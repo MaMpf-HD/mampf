@@ -1,0 +1,16 @@
+<% if @recipient == @uploader %>
+  <%= t('mailer.submission_upload_html',
+        assignment: @assignment.title,
+        lecture: @assignment.lecture.short_title,
+        filename: @filename,
+        link: link_to(t('basics.link'),
+                      show_submission_manuscript_url(@submission))) %>
+<% else %>
+  <%= t('mailer.submission_upload_by_others_html',
+        assignment: @assignment.title,
+        lecture: @assignment.lecture.short_title,
+        uploader: @uploader.tutorial_name,
+        filename: @filename,
+        link: link_to(t('basics.link'),
+                      show_submission_manuscript_url(@submission))) %>
+<% end %>

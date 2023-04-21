@@ -1,0 +1,17 @@
+<div class="form-group">
+  <%= f.label :ralizations,
+              t('basics.realizations') %>
+  <%= f.select :realizations,
+                [[]],
+                {},
+                { multiple: true } %>
+  <div class="row mt-3">
+    <div class="col-12 text-center">
+      <button type="button"
+              class="btn btn-sm btn-secondary"
+              id="cancelSelectRealizations">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+</div>

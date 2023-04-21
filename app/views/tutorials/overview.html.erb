@@ -1,0 +1,87 @@
+<% if @lecture.tutorials.present? %>
+  <% if @assignments.present? %>
+      <%= render partial: 'tutorials/header_overview',
+               locals: { assignment: @assignment,
+                         tutorial: @tutorial,
+                         stack: @stack } %>
+      <table class="table table-bordered mt-3">
+        <thead class="thead-light">
+          <tr>
+            <th sope="col">
+              <%= t('basics.tutorial') %>
+            </th>
+            <th scope="col">
+              <%= t('basics.tutors') %>
+            </th>
+            <th scope="col">
+              <%= t('basics.submissions') %>
+            </th>
+            <th scope="col">
+              <%= t('basics.corrections') %>
+            </th>
+            <th scope="col">
+              <%= t('submission.late_submissions') %>
+            </th>
+          </tr>
+        </thead>
+        <tbody style="max-height: 50px; overflow-y: scroll;">
+          <% @lecture.tutorials.natural_sort_by(&:title).each do |t| %>
+            <tr>
+              <td>
+                <%= link_to t.title,
+                            lecture_tutorials_path(@lecture,
+                                                  params:
+                                                    { assignment: @assignment.id,
+                                                      tutorial: t.id }) %>
+              </td>
+              <td>
+                <%= t.tutor_names || t('basics.tba') %>
+              </td>
+              <td>
+                <%= Submission.number_of_submissions(t, @assignment) %>
+              </td>
+              <td>
+                <%= Submission.number_of_corrections(t, @assignment) %>
+              </td>
+              <td>
+                <%= Submission.number_of_late_submissions(t, @assignment) %>
+              </td>
+            </tr>
+          <% end %>
+          <% if @lecture.tutorials.size > 1 %>
+            <tr>
+              <td>
+              </td>
+              <td>
+              </td>
+              <td class="table-secondary">
+                <%= Submission.submissions_total(@assignment) %>
+              </td>
+              <td class="table-secondary">
+                <%= Submission.corrections_total(@assignment) %>
+              </td>
+              <td  class="table-secondary">
+                <%= Submission.late_submissions_total(@assignment) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <div class="jumbotron">
+        <%= t('lecture.tutorials') %>
+        <ul>
+          <% @lecture.tutorials.each do |t| %>
+            <li>
+              <%= t.title_with_tutors %>
+            </li>
+          <% end %>
+        </ul>
+        <%= t('lecture.no_submissions_yet') %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="jumbotron">
+      <%= t('lecture.no_tutorials_yet') %>
+    </div>
+<% end %>

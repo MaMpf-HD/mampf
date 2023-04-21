@@ -6,7 +6,8 @@
                    locals: { tag: tag,
                              f: f,
                              new_tag: true,
-                             from: from } %>
+                             from: from,
+                             modal: modal } %>
       </div>
     </div>
   </div>
@@ -53,37 +54,25 @@
           </div>
         </div>
         <div class="col-6 col-xxl-4">
-          <div class="card mb-2 bg-light"
-               id="relatedTagsEdit">
-            <div class="card-header">
-              <div class="row">
-                <div class="col-9">
-                  <h5>
-                    <%= t('admin.tag.related_tags') %>
-                  </h5>
-                </div>
-                <div class="col-3 text-right">
-                  <i class="far fa-edit clickable"
-                     id="selectRelatedTags"
-                     data-remote="true"
-                     data-toggle="tooltip"
-                     title="<%= t('admin.tag.edit_related_tags') %>">
-                  </i>
-                </div>
+          <div class="row">
+            <div class="col-12">
+              <div class="card mb-2 bg-light"
+                   id="relatedTagsEdit">
+                <%= render partial: 'tags/related_tags',
+                           locals: { tag: tag,
+                                     f: f,
+                                     new_tag: false,
+                                     from: from } %>
               </div>
             </div>
-            <div class="card-body" id="relatedTagsBodyEdit">
-              <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
-                <%= link_to t.short_title,
-                            edit_tag_path(t),
-                            class: "badge badge-light",
-                            id: 'related-' + dom_id(t),
-                            data: { toggle: 'tooltip',
-                                    placement: 'top',
-                                    id: t.id },
-                            title: t.title %>
-                <br>
-              <% end %>
+            <div class="col-12">
+              <div class="card mb-2 bg-light">
+                <%= render partial: 'tags/realizations',
+                           locals: { tag: tag,
+                                     f: f,
+                                     new_tag: false,
+                                     from: from } %>
+              </div>
             </div>
           </div>
         </div>
@@ -94,9 +83,13 @@
               <span id="tagActionHeader">
                 <%= t('basics.action') %>
               </span>
-              <span id="tagActionType"
+              <span id="tagActionTypeRelated"
                     style="display: none;">
                 <%= t('admin.tag.edit_related_tags') %>
+              </span>
+              <span id="tagActionTypeRealizations"
+                    style="display: none;">
+                <%= t('erdbeere.edit_realizations') %>
               </span>
             </div>
             <div class="card-body"
@@ -104,6 +97,12 @@
               <div id="selectRelatedTagsForm"
                    style="display: none;">
                 <%= render partial: 'tags/select_related_tags',
+                           locals: { tag: tag, f: f } %>
+              </div>
+              <div id="selectTagRealizationsForm"
+                   style="display: none;"
+                   data-id="<%= tag.id %>">
+                <%= render partial: 'tags/edit/select_realizations',
                            locals: { tag: tag, f: f } %>
               </div>
             </div>
@@ -126,13 +125,11 @@
       <div class="row">
         <div class="col-12 mb-2">
           <%= render partial: 'sections/card',
-                     locals: { sections: tag.sections,
-                               inspection: false } %>
+                     locals: { sections: tag.sections } %>
         </div>
         <div class="col-12">
           <%= render partial: 'lessons/card',
-                     locals: { lessons: tag.lessons,
-                               inspection: false } %>
+                     locals: { lessons: tag.lessons } %>
         </div>
       </div>
     </div>

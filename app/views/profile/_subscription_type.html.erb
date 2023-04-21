@@ -29,21 +29,4 @@
                          custom: true %>
     <% end %>
   </div>
-  <div class="col-12">
-    <%= f.form_group :email_notifications,
-                      label: { text: t('profile.email_notifications') } do %>
-      <%= f.check_box :email_for_announcement,
-                      label: t('profile.email_for_announcement'),
-                      custom: true %>
-      <%= f.check_box :email_for_medium,
-                      label: t('profile.email_for_medium'),
-                      custom: true %>
-      <%= f.check_box :email_for_teachable,
-                      label: t('profile.email_for_teachable'),
-                      custom: true %>
-      <%= f.check_box :email_for_news,
-                      label: t('profile.email_for_news'),
-                      custom: true %>
-    <% end %>
-  </div>
 </div>

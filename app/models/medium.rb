@@ -5,6 +5,7 @@ class Medium < ApplicationRecord
 
   # a teachable is a course/lecture/lesson
   belongs_to :teachable, polymorphic: true, optional: true
+  acts_as_list scope: [:teachable_id, :teachable_type], top_of_list: 0
 
   # a teachable may belong to a quizzable (quiz/question/remark)
   belongs_to :quizzable, polymorphic: true, optional: true
@@ -46,9 +47,19 @@ class Medium < ApplicationRecord
   has_many :importing_courses, through: :imports,
            source: :teachable, source_type: 'Course'
 
+  has_many :quiz_certificates, foreign_key: 'quiz_id', dependent: :destroy
+
+  # a medium can be in watchlists of multiple users
+  has_many :watchlist_entries, dependent: :destroy
+  has_many :watchlist_users, through: :watchlist_entries, source: :user
+
+  has_many :assignments
+
   serialize :quiz_graph, QuizGraph
 
   serialize :solution, Solution
+
+  serialize :publisher, MediumPublisher
 
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem
@@ -101,6 +112,9 @@ class Medium < ApplicationRecord
   # keep track of copies (in particular for Questions, Remarks)
   acts_as_tree
 
+  # media can be commented on
+  acts_as_commontable dependent: :destroy
+
   # scope for published/locally visible media
   # locally visible media are published (without inheritance) and unlocked
   # (they may not be globally visible as their lecture may be unpublished)
@@ -111,7 +125,9 @@ class Medium < ApplicationRecord
   scope :expired, -> { where(sort: 'RandomQuiz').where('created_at < ?', 1.day.ago) }
 
   searchable do
-    text :description
+    text :description do
+      caption
+    end
     text :text do
       text_join
     end
@@ -130,6 +146,16 @@ class Medium < ApplicationRecord
     integer :tag_ids, multiple: true
     integer :editor_ids, multiple: true
     integer :answers_count
+    integer :term_id do
+      term_id || 0
+    end
+    integer :teacher_id do
+      supervising_teacher_id
+    end
+    integer :subscribed_users, multiple: true
+    integer :lecture do
+      lecture&.id
+    end
   end
 
   # these are all the sorts of food(=projects) we currently serve
@@ -173,6 +199,18 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except('RandomQuiz').map { |k, v| [v, k] }
   end
 
+  def self.advanced_sorts
+    ['RandomQuiz', 'Question', 'Remark', 'Erdbeere']
+  end
+
+  def self.generic_sorts
+    ['Kaviar', 'Sesam', 'Nuesse', 'Script', 'Kiwi', 'Quiz', 'Reste']
+  end
+
+  def self.select_generic
+    Medium.sort_localized.slice(*Medium.generic_sorts).map { |k, v| [v, k] }
+  end
+
   def self.select_quizzables
     Medium.sort_localized.slice('Question', 'Remark').map { |k, v| [v, k] }
   end
@@ -187,21 +225,18 @@ class Medium < ApplicationRecord
   end
 
   # returns the array of all media subject to the conditions
-  # provided by the params hash (keys: :course_id, :lecture_id, :project)
+  # provided by the params hash (keys: :id, :project)
+  # :id represents the lecture id
   def self.search_all(params)
-    course = Course.find_by_id(params[:course_id])
-    return Medium.none if course.nil?
+    lecture = Lecture.find_by_id(params[:id])
+    return Medium.none if lecture.nil?
     media_in_project = Medium.media_in_project(params[:project])
-    # first case: media sitting at course level (no lecture_id given)
+    # media sitting at course level
     course_media_in_project = media_in_project.includes(:tags)
-                                              .where(teachable: course)
-                                              .natural_sort_by(&:caption)
-    unless params[:lecture_id].present?
-      return course_media_in_project
-    end
-    # second case: media sitting at lecture level
-    lecture = Lecture.find_by_id(params[:lecture_id].to_i)
-    return Medium.none unless course.lectures.include?(lecture)
+                                              .where(teachable: lecture.course)
+                                              .order(boost: :desc,
+                                                     description: :asc)
+    # media sitting at lecture level
     # append results at course level to lecture/lesson level results
     lecture.lecture_lesson_results(media_in_project) + course_media_in_project
   end
@@ -210,7 +245,7 @@ class Medium < ApplicationRecord
   def self.media_in_project(project)
     return Medium.none unless project.present?
     sort = project == 'keks' ? 'Quiz' : project.capitalize
-    Medium.where(sort: sort).order(:id)
+    Medium.where(sort: sort)
   end
 
   # returns the array of all media (by title), together with their ids
@@ -231,24 +266,38 @@ class Medium < ApplicationRecord
     search_params[:types] || []
   end
 
+  def self.lecture_search_option
+    {
+      '0' => 'all',
+      '1' => 'subscribed',
+      '2' => 'custom'
+    }
+  end
+
   # returns search results for the media search with search_params provided
   # by the controller
   def self.search_by(search_params, page)
     search_params[:types] = [] if search_params[:all_types] == '1'
-    if search_params[:teachable_inheritance] == '1'
-      search_params[:teachable_ids] = Course.search_inherited_teachables(search_params)
-    end
-    search_params[:teachable_ids] = [] if search_params[:all_teachables] == '1'
-    search_params[:editor_ids] = [] if search_params[:all_editors] == '1'
+    search_params[:teachable_ids] = TeachableParser.new(search_params)
+                                                   .teachables_as_strings
+    search_params[:editor_ids] = [] if search_params[:all_editors] == '1' || search_params[:all_editors].nil?
+    # add media without term to current term
+    
+    search_params[:all_terms] = '1' if search_params[:all_terms].blank?
+    search_params[:all_teachers] = '1' if search_params[:all_teachers].blank?
+    search_params[:term_ids].push('0') if search_params[:term_ids].present?
     if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
       search_params[:tag_ids] = Tag.pluck(:id)
     end
+    admin = User.find_by(id: search_params[:user_id])&.admin?
     search = Sunspot.new_search(Medium)
     search.build do
       with(:sort, search_params[:types])
-      without(:sort, 'RandomQuiz')
+      without(:sort, Medium.advanced_sorts) unless admin
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
+      with(:term_id, search_params[:term_ids]) unless search_params[:all_terms] == '1'
+      with(:teacher_id, search_params[:teacher_ids]) unless search_params[:all_teachers] == '1'
     end
     if search_params[:purpose] == 'clicker'
       search.build do
@@ -268,7 +317,7 @@ class Medium < ApplicationRecord
     unless search_params[:all_tags] == '1' &&
              search_params[:tag_operator] == 'or'
       if search_params[:tag_ids]
-        if search_params[:tag_operator] == 'or'
+        if search_params[:tag_operator] == 'or' || search_params[:all_tags] == '1'
           search.build do
             with(:tag_ids).any_of(search_params[:tag_ids])
           end
@@ -276,10 +325,6 @@ class Medium < ApplicationRecord
           search.build do
             with(:tag_ids).all_of(search_params[:tag_ids])
           end
-        end
-      else
-        search.build do
-          with(:tag_ids, nil)
         end
       end
     end
@@ -290,8 +335,21 @@ class Medium < ApplicationRecord
         end
       end
     end
+    if search_params[:lecture_option].present?
+      case Medium.lecture_search_option[search_params[:lecture_option]]
+      when 'subscribed'
+        search.build do
+          with(:subscribed_users, search_params[:user_id])
+        end
+      when 'custom'
+        search.build do
+          with(:lecture, search_params[:media_lectures])
+        end
+      end
+    end
+    # this is needed for kaminari to function correctly
     search.build do
-      paginate page: page, per_page: search_params[:per]
+      paginate page: 1, per_page: Medium.all.count
     end
     search
   end
@@ -305,6 +363,14 @@ class Medium < ApplicationRecord
       paginate per_page: Question.count
     end
     search
+  end
+
+  def self.similar_courses(search_string)
+    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
+    titles = Medium.pluck(:description)
+    titles.select do |t|
+      jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
+    end
   end
 
   def restricted?
@@ -327,6 +393,7 @@ class Medium < ApplicationRecord
   def vanished_items
     return [] unless sort == 'Script'
     Item.where(medium: self)
+        .where.not(sort: 'self')
         .where.not(pdf_destination: manuscript_destinations)
   end
 
@@ -375,42 +442,48 @@ class Medium < ApplicationRecord
     return true if teachable&.lecture&.editors&.include?(user)
     return true if teachable&.lecture&.teacher == user
     return true if teachable&.course&.editors&.include?(user)
+    return true if teachable&.is_a?(Talk) && user.in?(teachable.speakers)
     false
   end
 
   def editors_with_inheritance
-    (editors&.to_a + teachable.lecture&.editors.to_a +
+    return [] if sort == 'RandomQuiz'
+    result = (editors&.to_a + teachable.lecture&.editors.to_a +
       [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
+    return result unless teachable.is_a?(Talk)
+    (result + teachable.speakers).uniq
   end
 
-  # creates a .vtt file (and returns its path), which contains
+
+  # creates a .vtt tmp file (and returns it), which contains
   # all data needed by the thyme player to realize the toc
   def toc_to_vtt
-    path = toc_path
-    File.open(path, 'w+:UTF-8') do |f|
-      f.write vtt_start
-      proper_items_by_time.reject(&:hidden).each do |i|
-        f.write i.vtt_time_span
-        f.write i.vtt_reference
-      end
+    file = Tempfile.new(['toc-', '.vtt'], encoding: 'UTF-8')
+    file.write vtt_start
+    proper_items_by_time.reject(&:hidden).each do |i|
+      file.write i.vtt_time_span
+      file.write i.vtt_reference
     end
-    path
+    file
   end
 
-  # creates a .vtt file (and returns its path), which contains
+  # creates a .vtt file (and returns it), which contains
   # all data needed by the thyme player to realize references
   # Note: Only references to unlocked media will be incorporated.
   def references_to_vtt
-    path = references_path
-    File.open(path, 'w+:UTF-8') do |f|
-      f.write vtt_start
-      referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
-                       .each do |r|
-        f.write r.vtt_time_span
-        f.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
-      end
+    file = Tempfile.new(['ref-', '.vtt'], encoding: 'UTF-8')
+    file.write vtt_start
+    referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
+                     .each do |r|
+      file.write r.vtt_time_span
+      file.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
     end
-    path
+    file
+  end
+
+  def create_vtt_container!
+    VttContainer.create(table_of_contents: toc_to_vtt,
+                        references: references_to_vtt)
   end
 
   # some plain methods for items and referrals
@@ -495,6 +568,7 @@ class Medium < ApplicationRecord
   end
 
   def manuscript_url_with_host
+    return manuscript_url(host: host) + "/"+manuscript_filename if ENV["REWRITE_ENABLED"]=="1"
     manuscript_url(host: host)
   end
 
@@ -568,8 +642,18 @@ class Medium < ApplicationRecord
     Medium.sort_localized_short[sort]
   end
 
+  def card_tooltip
+    return Medium.sort_localized[sort] unless sort == 'Nuesse' && file_last_edited
+    I18n.t('categories.exercises.singular_updated')
+  end
+
   def sort_localized
     Medium.sort_localized[sort]
+  end
+
+  def subheader_style
+    return 'badge badge-secondary' unless sort == 'Nuesse' && file_last_edited
+    'badge badge-danger'
   end
 
   def cache_key
@@ -608,7 +692,7 @@ class Medium < ApplicationRecord
     if teachable_type == 'Course'
       return false if restricted? && !teachable.in?(user.courses)
     end
-    if teachable_type.in?(['Lecture', 'Lesson'])
+    if teachable_type.in?(['Lecture', 'Lesson', 'Talk'])
       return false if restricted? && !teachable.lecture.in?(user.lectures)
     end
     true
@@ -637,12 +721,6 @@ class Medium < ApplicationRecord
   def teachable_select
     return nil unless teachable.present?
     teachable_type + '-' + teachable_id.to_s
-  end
-
-  # returns the position of this medium among all media of the same sort
-  # associated to the same teachable (by id)
-  def position
-    teachable.media.where(sort: sort).order(:id).pluck(:id).index(id) + 1
   end
 
   # media associated to the same teachable and of the same sort
@@ -813,7 +891,14 @@ class Medium < ApplicationRecord
              else
                Medium.sort_localized.slice(sort)
              end
+    if teachable_type == 'Talk'
+      result.except!('RandomQuiz', 'Question', 'Remark', 'Erdbeere', 'Script')
+    end
     result.map { |k, v| [v, k] }
+  end
+
+  def select_sorts_with_self
+    (select_sorts + [[Medium.sort_localized[sort], sort]]).uniq
   end
 
   def extracted_linked_media
@@ -855,6 +940,109 @@ class Medium < ApplicationRecord
     end
     result.push content unless content.blank?
     result
+  end
+
+  def script_items_importable?
+    return unless teachable_type == 'Lesson'
+    return unless teachable.lecture.content_mode == 'manuscript'
+    return unless teachable.script_items.any?
+    true
+  end
+
+  def import_script_items!
+    return unless teachable_type == 'Lesson'
+    return unless teachable.lecture.content_mode == 'manuscript'
+    items = teachable.script_items
+    return unless items.any?
+    items.each_with_index.each do |i, j|
+      Item.create(start_time: TimeStamp.new(h: 0, m:0, s: 0, ms: j),
+                  sort: i.sort, description: i.description,
+                  medium: self, section: i.section,
+                  ref_number: i.ref_number,
+                  related_items: [i])
+    end
+  end
+
+  def scoped_teachable
+    Rails.cache.fetch("#{cache_key_with_version}/scoped_teachable") do
+      teachable&.media_scope
+    end
+  end
+
+  def publish!
+    return if published?
+    return unless publisher
+    success = publisher.publish!
+    update(publisher: nil) if success
+  end
+
+  def release_date_set?
+    return false unless publisher
+    return false unless publisher.release_date
+    true
+  end
+
+  def planned_release_date
+    return unless publisher
+    publisher.release_date
+  end
+
+  def planned_comment_lock?
+    return publisher.lock_comments if publisher
+    !!teachable.media_scope.try(:comments_disabled)
+  end
+
+  def becomes_quizzable
+    return unless type.in?(['Question', 'Remark'])
+    return becomes(Question) if type == 'Question'
+    becomes(Remark)
+  end
+
+  def containingWatchlists(user)
+    Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
+                    user: user)
+  end
+
+  def containingWatchlistsNames(user)
+    watchlists = containingWatchlists(user)
+    if !watchlists.empty?
+      containingWatchlists(user).pluck(:name)
+    else
+      ''
+    end
+  end
+
+  def collects_statistics
+    video.present? || manuscript.present? || sort == 'Quiz'
+  end
+
+  def term_id
+    teachable.term_id if teachable.class.to_s == 'Lecture'
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).term_id
+  end
+
+  def supervising_teacher_id
+    return teachable.teacher_id if teachable.class.to_s == 'Lecture'
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).teacher_id
+  end
+
+  def supervising_teacher_id
+    return teachable.teacher_id if teachable.class.to_s == 'Lecture'
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).teacher_id
+  end
+
+  def subscribed_users
+
+    return teachable.user_ids if ['Lecture', 'Course'].include? teachable.class.to_s
+    return unless teachable.class.to_s == 'Lesson'
+
+    Lecture.find_by(id: teachable.lecture_id).user_ids
   end
 
   private
@@ -901,16 +1089,11 @@ class Medium < ApplicationRecord
     if teachable.lecture.present? && teachable.lecture.persisted?
       teachable.lecture.touch
     end
-    return unless teachable.lesson.present? && teachable.lesson.persisted?
-    teachable.lesson.touch
-  end
-
-  def toc_path
-    Rails.root.join('public', 'tmp').to_s + '/toc-' + SecureRandom.hex + '.vtt'
-  end
-
-  def references_path
-    Rails.root.join('public', 'tmp').to_s + '/ref-' + SecureRandom.hex + '.vtt'
+    if teachable.lesson.present? && teachable.lesson.persisted?
+      teachable.lesson.touch
+    end
+    return unless teachable.talk.present? && teachable.talk.persisted?
+    teachable.talk.touch
   end
 
   def vtt_start
@@ -1018,4 +1201,5 @@ class Medium < ApplicationRecord
     return -1 unless type == 'Question'
     becomes(Question).answers.count
   end
+  
 end

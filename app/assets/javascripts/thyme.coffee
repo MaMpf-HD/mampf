@@ -245,6 +245,14 @@ setupHypervideo = ->
           target: '_blank')
         $manRef.append($manIcon)
         $manRef.hide() unless meta.manuscript?
+        $scriptIcon = $('<i/>',
+          text: 'menu_book'
+          class: 'material-icons')
+        $scriptRef = $('<a/>',
+          href: meta.script
+          target: '_blank')
+        $scriptRef.append($scriptIcon)
+        $scriptRef.hide() unless meta.script?
         $quizIcon = $('<i/>',
           text: 'videogame_asset'
           class: 'material-icons')
@@ -271,7 +279,7 @@ setupHypervideo = ->
         $details.append($link).append($description).append($explanation)
         $icons = $('<div/>',
           style: 'flex-shrink: 3; display: flex; flex-direction: column;')
-        $icons.append($videoRef).append($manRef).append($quizRef).append($extRef)
+        $icons.append($videoRef).append($manRef).append($scriptRef).append($quizRef).append($extRef)
         $listItem.append($details).append($icons)
         $metaList.append($listItem)
         $videoRef.on 'click', ->
@@ -344,7 +352,7 @@ setupHypervideo = ->
   # Originally (and more appropriately, according to the standards),
   # only the 'loadedmetadata' event was used. However, Firefox triggers this event to soon,
   # i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
-  # for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp  
+  # for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp
   initialChapters = true
   initialMetadata = true
   video.addEventListener 'loadedmetadata', ->
@@ -441,6 +449,13 @@ $(document).on 'turbolinks:load', ->
     $('#caption').show()
     $('#video-controlBar').show()
     video.style.width = '82%'
+    # directly closes the IA again, if the IA-button status is "-"
+    if iaButton.dataset.status == 'false'
+      iaButton.innerHTML = 'remove_from_queue'
+      $('#caption').hide()
+      video.style.width = '100%'
+      $('#video-controlBar').css('width', '100%')
+      $(window).trigger('resize')
     return
 
   # display native control bar if screen is very small
@@ -683,7 +698,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   # Event listener for the volume bar
-  volumeBar.addEventListener 'change', ->
+  volumeBar.addEventListener 'input', ->
     value = volumeBar.value
     video.volume = value
     return
@@ -693,6 +708,14 @@ $(document).on 'turbolinks:load', ->
     volumeBar.value = value
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' +
     ' #2497E3, #2497E3 ' + value*100 + '%, #ffffff ' + value*100 + '%, #ffffff)'
+    return
+
+  video.addEventListener 'click', ->
+    if video.paused == true
+      video.play()
+    else
+      video.pause()
+    showControlBar()
     return
 
   # thyme can be used by keyboard as well

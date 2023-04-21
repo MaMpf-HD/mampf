@@ -1,72 +1,50 @@
 # CoursesController
 class CoursesController < ApplicationController
-  before_action :check_for_course, only: [:show]
-  before_action :set_course, only: [:show, :display, :take_random_quiz,
-                                    :show_random_quizzes,
-                                    :render_question_counter,
-                                    :add_forum, :lock_forum, :unlock_forum,
-                                    :destroy_forum]
-  before_action :set_course_admin, only: [:edit, :update, :destroy, :inspect]
-  before_action :check_if_enough_questions, only: [:show_random_quizzes,
-                                                   :take_random_quiz]
+  before_action :set_course, only: [:take_random_quiz, :render_question_counter]
+  before_action :set_course_admin, only: [:edit, :update, :destroy]
+  before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent
-  authorize_resource
+  authorize_resource except: [:create, :search]
   layout 'administration'
+
+  def current_ability
+    @current_ability ||= CourseAbility.new(current_user)
+  end
 
   def edit
     I18n.locale = @course.locale || I18n.default_locale
-    cookies[:edited_course] = params[:id]
   end
 
   def update
     I18n.locale = @course.locale || I18n.default_locale
+    old_image_data = @course.image_data
     @course.update(course_params)
+    @errors = @course.errors
+    return unless @errors.empty?
+    @course.update(image: nil) if params[:course][:detach_image] == 'true'
+    changed_image = @course.image_data != old_image_data
+    if @course.image.present? && changed_image
+      @course.image_derivatives!
+      @course.save
+    end
     @errors = @course.errors
   end
 
   def create
     @course = Course.new(course_params)
+    authorize! :create, @course
     @course.save
     if @course.valid?
       # set organizational_concept to default
       set_organizational_defaults
-      create_notifications
-      send_notification_email
-      redirect_to administration_path
+      redirect_to administration_path,
+                  notice: I18n.t('controllers.created_course_success',
+                                 course: @course.title,
+                                 editors: @course.editors.map(&:name)
+                                                         .join(', '))
       return
     end
     @errors = @course.errors
-  end
-
-  def show
-    cookies[:current_course] = @course.id
-    @lecture = @course.primary_lecture(current_user)
-    # deactivate http caching for the moment
-    # "refused to execute script because its mime type is not executable
-    #  error in Chrome"...
-    if stale?(etag: @lecture || @course,
-              last_modified: [current_user.updated_at, @course.updated_at,
-                              Time.parse(ENV['RAILS_CACHE_ID']),
-                              @lecture&.updated_at || current_user.updated_at,
-                              Thredded::UserDetail.find_by(user_id: current_user.id)
-                                                  &.last_seen_at || current_user.updated_at,
-                              @lecture&.forum&.updated_at || current_user.updated_at,
-                              @course&.forum&.updated_at || current_user.updated_at].max)
-      unless @course.in?(current_user.courses) && @lecture
-        cookies[:current_lecture] = nil
-        I18n.locale = @course.locale || I18n.default_locale
-        render layout: 'application'
-        return
-      end
-      cookies[:current_lecture] = @lecture.id
-      I18n.locale = @lecture.locale_with_inheritance || I18n.default_locale
-      @lecture = @course.primary_lecture(current_user, eagerload: true)
-      render template: 'lectures/show', layout: 'application'
-    end
-  end
-
-  def inspect
-    I18n.locale = @course.locale || I18n.default_locale
   end
 
   def destroy
@@ -76,24 +54,9 @@ class CoursesController < ApplicationController
     redirect_to administration_path
   end
 
-  def display
-    I18n.locale = @course.locale || I18n.default_locale
-    render layout: 'application'
-  end
-
-  def show_random_quizzes
-    lecture = Lecture.find_by_id(params[:lecture_id])
-    I18n.locale = if lecture
-                    lecture.locale_with_inheritance
-                  else
-                    @course.locale
-                  end
-    render layout: 'application'
-  end
-
   def take_random_quiz
-    tags = Tag.where(id: tag_params[:tag_ids])
-    random_quiz = @course.create_random_quiz!(tags, tag_params[:count].to_i)
+    tags = Tag.where(id: random_quiz_params[:search_course_tag_ids])
+    random_quiz = @course.create_random_quiz!(tags, random_quiz_params[:random_quiz_count].to_i)
     redirect_to take_quiz_path(random_quiz)
   end
 
@@ -102,43 +65,17 @@ class CoursesController < ApplicationController
     @count = @course.question_count(tags)
   end
 
-  # add forum for this course
-  def add_forum
-    unless @course.forum?
-      forum = Thredded::Messageboard.new(name: @course.forum_title)
-      forum.save
-      @course.update(forum_id: forum.id) if forum.valid?
-    end
-    redirect_to edit_course_path(@course)
-  end
-
-  # lock forum for this course
-  def lock_forum
-    @course.forum.update(locked: true) if @course.forum?
-    @course.touch
-    redirect_to edit_course_path(@course)
-  end
-
-  # unlock forum for this course
-  def unlock_forum
-    @course.forum.update(locked: false) if @course.forum?
-    @course.touch
-    redirect_to edit_course_path(@course)
-  end
-
-  # destroy forum for this lecture
-  def destroy_forum
-    @course.forum.destroy if @course.forum?
-    @course.update(forum_id: nil)
-    redirect_to edit_course_path(@course)
+  def search
+    authorize! :search, Course.new
+    search = Course.search_by(search_params, params[:page])
+    search.execute
+    results = search.results
+    @total = search.total
+    @courses = Kaminari.paginate_array(results, total_count: @total)
+                        .page(params[:page]).per(search_params[:per])
   end
 
   private
-
-  def check_for_course
-    return if Course.exists?(params[:id])
-    redirect_to :root, alert: I18n.t('controllers.no_course')
-  end
 
   def set_course
     @course = Course.find_by_id(params[:id])
@@ -155,38 +92,27 @@ class CoursesController < ApplicationController
   def course_params
     params.require(:course).permit(:title, :short_title, :organizational,
                                    :organizational_concept, :locale,
+                                   :term_independent, :image,
                                    tag_ids: [],
                                    preceding_course_ids: [],
-                                   editor_ids: [])
+                                   editor_ids: [],
+                                   division_ids: [])
   end
 
   def tag_params
     params.permit(:count, tag_ids: [])
   end
 
-  # create notifications to all users about creation of new course
-  def create_notifications
-    notifications = []
-    User.find_each do |u|
-      notifications << Notification.new(recipient: u,
-                                        notifiable_id: @course.id,
-                                        notifiable_type: 'Course',
-                                        action: 'create')
-    end
-    Notification.import notifications
+  def search_params
+    params.require(:search).permit(:all_editors, :all_programs, :fulltext,
+                                   :term_independent, :per,
+                                   editor_ids: [],
+                                   program_ids: [])
   end
 
-  def send_notification_email
-    recipients = User.where(email_for_teachable: true)
-    I18n.available_locales.each do |l|
-      local_recipients = recipients.where(locale: l)
-      if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients,
-                                locale: l,
-                                course: @course)
-                          .new_course_email.deliver_now
-      end
-    end
+  def random_quiz_params
+    params.require(:quiz).permit(:random_quiz_count,
+                                 search_course_tag_ids: [])
   end
 
   # destroy all notifications related to this course

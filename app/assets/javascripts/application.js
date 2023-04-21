@@ -16,10 +16,9 @@
 //= require rails-ujs
 //= require activestorage
 //= require js-routes
-//= require selectize
-//= require jquery.fileDownload
 //= require jquery-ui
 //= require trix
+//= require clipboard
 //= require _selectize_turbolinks_fix
 //= require administration
 //= require announcements
@@ -44,7 +43,10 @@
 //= require registration
 //= require remarks
 //= require sections
+//= require submissions
+//= require tutorials
 //= require tags
+//= require talks
 //= require terms
 //= require tex_preview
 //= require thyme
@@ -52,4 +54,5 @@
 //= require upload
 //= require users
 //= require vertices
+//= require watchlists
 //= require turbolinks

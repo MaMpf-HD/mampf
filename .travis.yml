@@ -1,5 +1,15 @@
 language: ruby
-rvm:
-- 2.5.1
-env:
-  secure: 3woFiaot31/VVfQ2nh1BcmacJGjN916B44OzgI5Kn62fxLUGlNxnKmyKy6lc/Dwv/vbbnEwXOS+PUZznNS6705sb97x7ZSsk19OQY9MTMGifN8Oaz/kSN9aJUGJxPeZSMe3bjR2xnpGCB3VXTRKeu3c00+YjVOMe09U8QXLOrKaGpapQpdv1bKf6XKaKy6vMTQMxljKklGoi4kPjPKBcOaY2VC2Roocyqi5hRS5gF12G7zyhdBDCqkex60OPRo88BurzEsbIJGFZxMoEPT+1O+FzihVT/CbduUAzmpHO+6t0MpWQL2z9wz4efpfk9ypqKkqQNLaERDDS6BuPBW5QOGgKo9MRG9F1Ra5TsshJaN+OhNNfjV2UX8fzPEpZaSX36EL4wLKwDWBU81e30plc05cLue1Vr7grr6kPM3aC7ukp/YrkpA8Eh0yW7rHxBoidh4QQwc0JQKCMmSsLOl9qSKzlhhFaG3zRrxc2VGY3RQRuhNZP6IkzwaRM0TU2MroWYXbwUJAD1EJqeeHD83xXI41TpADB1QF4t4lA1NpZ5L7V6+kdbUCjBEjyvFF1PvnABFX60008tnyvvDIbZRoHi68Jz9g4lt5MmByXQS5yFFs4RLSx9g4dNsLXG9Qbpc7kLJsdf3SFs7y953EPEURldJQhOFtSpY0fBQFpIQK/kb4=
+service:
+  - docker
+
+
+before_install:
+  - cd docker/run_tests/
+
+install:
+  - docker-compose build
+
+before_script:
+
+script:
+  - docker-compose up --abort-on-container-exit

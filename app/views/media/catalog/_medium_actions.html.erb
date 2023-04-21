@@ -10,7 +10,7 @@
                     class: 'btn btn-sm btn-primary' %>
       <% elsif medium.sort == 'Remark' %>
         <%= link_to t('admin.remark.edit'),
-                    edit_question_path(medium.becomes(Remark)),
+                    edit_remark_path(medium.becomes(Remark)),
                     class: 'btn btn-sm btn-primary' %>
       <% elsif medium.sort == 'Quiz' %>
         <%= link_to t('admin.quiz.edit'),

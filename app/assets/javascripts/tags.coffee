@@ -5,17 +5,9 @@
 $(document).on 'turbolinks:load', ->
   # fill courses selector in admin tag search with user's edited courses
   $('#tags-edited-courses').on 'click', ->
-    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
-    return
-
- # fill courses selector in admin tag search with all courses
-  $('#tags-all-courses').on 'click', ->
-    inputCourses.selectize.setValue(JSON.parse(this.dataset.courses))
-    return
-
-  # fill courses selector in admin tag with no courses at all
-  $('#tags-no-courses').on 'click', ->
-    inputCourses.selectize.setValue()
+    search_course_ids.tomselect.setValue(JSON.parse(this.dataset.courses))
+    search_course_ids.tomselect.enable()
+    $('#search_all_courses').prop('checked', false)
     return
 
   # issue a warning if tag form has changed
@@ -34,15 +26,34 @@ $(document).on 'turbolinks:load', ->
   # prepare action box when related tags are edited
   $('#selectRelatedTags').on 'click', ->
     $('#selectRelatedTagsForm').show()
-    $('#tagActionType').show()
+    $('#tagActionTypeRelated').show()
     $(this).hide()
+    $('#selectTagRealizations').hide()
+    $('#tagActionHeader').hide()
+    return
+
+  # prepare action box when related tags are edited
+  $('#selectTagRealizations').on 'click', ->
+    $('#selectTagRealizationsForm').show()
+    $('#tagActionTypeRealizations').show()
+    $(this).hide()
+    $('#selectRelatedTags').hide()
     $('#tagActionHeader').hide()
     return
 
   $('#cancelSelectRelatedTags').on 'click', ->
     $('#selectRelatedTagsForm').hide()
-    $('#tagActionType').hide()
+    $('#tagActionTypeRelated').hide()
     $('#tagActionHeader').show()
+    $('#selectRelatedTags').show()
+    $('#selectTagRealizations').show()
+    return
+
+  $('#cancelSelectRealizations').on 'click', ->
+    $('#selectTagRealizationsForm').hide()
+    $('#tagActionTypeRealizations').hide()
+    $('#tagActionHeader').show()
+    $('#selectTagRealizations').show()
     $('#selectRelatedTags').show()
     return
 
@@ -127,6 +138,8 @@ $(document).on 'turbolinks:load', ->
         course: this.dataset.course
         section: this.dataset.section
         medium: this.dataset.medium
+        lesson: this.dataset.lesson
+        talk: this.dataset.talk
         from: this.dataset.from
       }
     return
@@ -152,6 +165,41 @@ $(document).on 'turbolinks:load', ->
   $(document).on 'click', '.cancel-section-association', ->
     location.reload(true)
     return
+
+  $erdbeereTags = $('#erdbeereTags')
+  if $erdbeereTags.length > 0
+    $.ajax Routes.find_erdbeere_tags_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        sort: $erdbeereTags.data('sort')
+        id: $erdbeereTags.data('id')
+      }
+    return
+
+  $erdbeereRealizations = $('.erdbeere-realization')
+  $erdbeereRealizations.each ->
+    $.ajax Routes.display_erdbeere_info_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        sort: $(this).data('sort')
+        id: $(this).data('id')
+      }
+    return
+
+  $selectTagRealizations = $('#selectTagRealizationsForm')
+  if $selectTagRealizations.length > 0
+    $.ajax Routes.fill_realizations_select_path(),
+      type: 'GET'
+      dataType: 'script'
+      data: {
+        id: $selectTagRealizations.data('id')
+      }
+    return
+
+
+
   return
 # clean up before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->

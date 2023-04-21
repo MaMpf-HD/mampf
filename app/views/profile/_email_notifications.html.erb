@@ -1,0 +1,56 @@
+<div class="row">
+  <div class="col-12 mb-2">
+    <%= t('profile.email_notifications') %>
+  </div>
+  <div class="col-12">
+    <h5>
+      <%= t('profile.lectures_and_courses') %>
+    </h5>
+    <%= f.form_group :email_notifications do %>
+      <%= f.check_box :email_for_announcement,
+                      label: t('profile.email_for_announcement'),
+                      custom: true %>
+      <%= f.check_box :email_for_medium,
+                      label: t('profile.email_for_medium'),
+                      custom: true %>
+      <%= f.check_box :email_for_teachable,
+                      label: t('profile.email_for_teachable'),
+                      custom: true %>
+    <% end %>
+  </div>
+  <div class="col-12">
+    <h5>
+      <%= t('profile.submissions') %>
+    </h5>
+    <%= f.form_group :submission_emails do %>
+      <%= f.check_box :email_for_submission_upload,
+                      label: t('profile.email_for_submission_upload'),
+                      custom: true %>
+      <%= f.check_box :email_for_submission_removal,
+                      label: t('profile.email_for_submission_removal'),
+                      custom: true %>
+      <%= f.check_box :email_for_submission_join,
+                      label: t('profile.email_for_submission_join'),
+                      custom: true %>
+      <%= f.check_box :email_for_submission_leave,
+                      label: t('profile.email_for_submission_leave'),
+                      custom: true %>
+      <%= f.check_box :email_for_correction_upload,
+                      label: t('profile.email_for_correction_upload'),
+                      custom: true %>
+      <%= f.check_box :email_for_submission_decision,
+                      label: t('profile.email_for_submission_decision'),
+                      custom: true %>
+    <% end %>
+  </div>
+  <div class="col-12">
+    <h5>
+      <%= t('profile.miscellaneous') %>
+    </h5>
+    <%= f.form_group :other_email_notifications do %>
+      <%= f.check_box :email_for_news,
+                      label: t('profile.email_for_news'),
+                      custom: true %>
+    <% end %>
+  </div>
+</div>

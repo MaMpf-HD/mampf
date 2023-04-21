@@ -1,106 +1,79 @@
 <% if medium.sort == 'Quiz' %>
-  <div class="row">
+  <div class="row mt-3">
     <div class="col-12">
       <strong>
-        <%= t('basics.quiz') %>
+        <%= t('quiz.quiz') %>
       </strong>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-12">
-      <%= "#{quiz_access} #{t('statistics.quiz')}" %>
-    </div>
-  </div>
-  <% if quiz_access.positive? %>
-    <div class="row mt-3">
-      <div class="col-12">
-        <strong>
-          <%= t('statistics.quiz_questions') %>
-        </strong>
+      <div class="row">
+        <div class="col-6 text-right">
+          <%= t('statistics.quiz_access') %>
+        </div>
+        <div class="col-6 text-left">
+          <span id="quizCount"><%= quiz_plays_count %></span>
+        </div>
       </div>
-    </div>
-    <div style="height: 30vh;">
-      <canvas id="successChart">
-      </canvas>
-    </div>
-    <div class="row">
-      <div class="col-12">
-        <%= "#{t('statistics.question_number')}: #{question_count}." %>
-        <%= "#{t('statistics.median')}: #{global_success[:median]}." %>
-        <%= "#{t('statistics.lower_quartile')}: #{global_success[:lower_quartile]}." %>
-        <%= "#{t('statistics.upper_quartile')}: #{global_success[:upper_quartile]}." %>
+      <div class="row">
+        <div class="col-6 text-right">
+          <%= t('statistics.quiz_full_access') %>
+        </div>
+        <div class="col-6 text-left">
+          <span id="quizFinishedCount"><%= quiz_finished_count %></span>
+        </div>
       </div>
-    </div>
-  <% end %>
-  <div class="row my-2">
-    <div class="col-12">
-      <strong>
-        <%= t('statistics.question_details') %>
-      </strong>
-    </div>
-  </div>
-  <div class="row"
-       id="questionStatistics">
-    <div class="col-8"
-         id="questionStatisticsBox">
-      <div id="questionStatisticsArea" >
-        <% medium.becomes(Quiz).questions.each do |q| %>
-          <div id="row-medium-<%= q.id %>"
-               data-id="<%= q.id %>"
-               data-purpose="statistics">
-            <%= render partial: 'media/statistics/question',
-                       locals: { local_success: local_success,
-                                 question: q } %>
-          </div>
-        <% end %>
-      </div>
-    </div>
-    <div class="col-4"
-         id="mediumActions">
-      <div id="mediumPreview">
+      <div style="height: 20vh">
+        <canvas id="quizStats" >
+        </canvas>
       </div>
     </div>
   </div>
 <% end %>
 <% if medium.video.present? %>
-  <div class="row">
+  <div class="row mt-3">
     <div class="col-12">
       <strong>
         <%= t('video.video') %>
       </strong>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-8">
-      <%= t('statistics.video_thyme') %>
-    </div>
-    <div class="col-4 text-right">
-      <%= video_thyme %>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-8">
-      <%= t('statistics.video_downloads') %>
-    </div>
-    <div class="col-4 text-right">
-      <%= video_downloads %>
+      <div class="row">
+        <div class="col-6 text-right">
+          <%= t('statistics.video_thyme') %>
+        </div>
+        <div class="col-6 text-left">
+          <span id="videoCount"><%= @video_thyme_count %></span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-6 text-right">
+          <%= t('statistics.video_downloads') %>
+        </div>
+        <div class="col-6 text-left">
+          <span id="downloadCount"><%= @video_downloads_count %></span>
+        </div>
+      </div>
+      <div style="height: 20vh">
+        <canvas id="videoStats" >
+        </canvas>
+      </div>
     </div>
   </div>
 <% end %>
 <% if medium.manuscript.present? %>
-  <div class="row">
+  <div class="row mt-3">
     <div class="col-12">
       <strong>
         <%= t('manuscript.manuscript') %>
       </strong>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-8">
-      <%= t('statistics.manuscript_access') %>
-    </div>
-    <div class="col-4 text-right">
-      <%= manuscript_access %>
+      <div class="row">
+        <div class="col-6 text-right">
+          <%= t('statistics.manuscript_access') %>
+        </div>
+        <div class="col-6 text-left">
+          <span id="manuscriptCount"><%= @manuscript_access_count %></span>
+        </div>
+      </div>
+      <div style="height: 20vh">
+        <canvas id="manuscriptStats" >
+        </canvas>
+      </div>
     </div>
   </div>
 <% end %>

@@ -1,10 +1,8 @@
-<% if @user.edited_profile %>
-  <%= link_to t('profile.change_data'),
+<%= link_to t('profile.change_data'),
               edit_user_registration_path,
               class: "btn btn-outline-secondary mb-2" %>
-<% end %>
 <%= link_to t('profile.delete_account'),
-            user_registration_path,
+            delete_account_path,
             class: "btn btn-outline-danger mb-2",
-            data: { confirm: t('sure') },
-            method: :delete %>
+            remote: true %>
+

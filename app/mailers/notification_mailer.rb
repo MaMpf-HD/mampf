@@ -1,5 +1,27 @@
 class NotificationMailer < ApplicationMailer
-  before_action :set_up
+  before_action :set_sender_and_locale
+  before_action :set_recipients, only: [:medium_email, :announcement_email,
+                                        :new_lecture_email,
+                                        :new_editor_email,
+                                        :submission_deletion_email,
+                                        :submission_deletion_lecture_email,
+                                        :submission_destruction_email,
+                                        :submission_destruction_lecture_email]
+  before_action :set_recipient_and_submission,
+                only: [:submission_upload_email,
+                       :submission_upload_removal_email,
+                       :submission_join_email,
+                       :submission_leave_email,
+                       :correction_upload_email,
+                       :submission_acceptance_email,
+                       :submission_rejection_email]
+  before_action :set_filename,
+                only: [:submission_upload_email,
+                       :submission_upload_removal_email]
+  before_action :set_user,
+                only: [:submission_join_email,
+                       :submission_leave_email]
+
 
   def medium_email
     @medium = params[:medium]
@@ -28,22 +50,153 @@ class NotificationMailer < ApplicationMailer
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: t('mailer.new_lecture_subject',
-                    title: @lecture.title_for_viewers))
+         title: @lecture.title_for_viewers))
+  end
+  
+  def new_editor_email
+    @lecture = params[:lecture]
+    @recipient = params[:recipient]
+    @username = @recipient.tutorial_name
+
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.new_editor_subject',
+         title: @lecture.title_for_viewers))
+  end
+  
+  def submission_invitation_email
+    @recipient = params[:recipient]
+    @assignment = params[:assignment]
+    @code = params[:code]
+    @issuer = params[:issuer]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_invitation_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
   end
 
-  def new_course_email
-    @course = params[:course]
+  def submission_upload_email
+    @uploader = params[:uploader]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_upload_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_upload_removal_email
+    @remover = params[:remover]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_upload_removal_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_join_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_join_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title,
+                    user: @user.tutorial_name))
+  end
+
+  def submission_leave_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_leave_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title,
+                    user: @user.tutorial_name))
+  end
+
+  def correction_upload_email
+    @tutor = params[:tutor]
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.correction_upload_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_acceptance_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_acceptance_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_rejection_email
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t('mailer.submission_rejection_subject',
+                    assignment: @assignment.title,
+                    lecture: @assignment.lecture.short_title))
+  end
+
+  def submission_deletion_email
+    @deletion_date = params[:deletion_date]
+    @lectures = params[:lectures]
+    subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
+    subject += t('mailer.submission_deletion_subject')
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t('mailer.new_course_subject',
-                    title: @course.title))
+         subject: subject)
+  end
+
+  def submission_deletion_lecture_email
+    @lecture = params[:lecture]
+    @deletion_date = params[:deletion_date]
+    subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
+    subject += t('mailer.submission_deletion_lecture_subject',
+                 lecture: @lecture.title)
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: subject)
+  end
+
+  def submission_destruction_email
+    @deletion_date = params[:deletion_date]
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.submission_destruction_subject',
+                    deletion_date: @deletion_date.strftime(I18n.t('date.formats.concise'))))
+  end
+
+  def submission_destruction_lecture_email
+    @lecture = params[:lecture]
+    @deletion_date = params[:deletion_date]
+    mail(from: @sender,
+         bcc: @recipients.pluck(:email),
+         subject: t('mailer.submission_destruction_lecture_subject',
+                    lecture: @lecture.title))
   end
 
   private
 
-  def set_up
+  def set_sender_and_locale
+    @sender = "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
     I18n.locale = params[:locale]
-    @recipients = params[:recipients]
-    @sender = "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_EMAIL}>"
+  end
+
+  def set_recipients
+    @recipients = User.where(id: params[:recipients])
+  end
+
+  def set_recipient_and_submission
+    @recipient = params[:recipient]
+    @submission = params[:submission]
+    @assignment = @submission.assignment
+  end
+
+  def set_filename
+    @filename = params[:filename]
+  end
+
+  def set_user
+    @user = params[:user]
   end
 end

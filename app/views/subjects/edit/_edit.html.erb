@@ -1,0 +1,26 @@
+<%= form_with model: subject do |f| %>
+	<div class="row">
+		<div class="col-12">
+			<strong>
+				<%= t('admin.subject.name') %>
+			</strong>
+		</div>
+	</div>
+	<% I18n.available_locales.each do |l| %>
+		<%= f.label "name_#{l}",
+								"#{l}" %>
+		<%= f.text_field "name_#{l}",
+										 { class: 'form-control mb-2',
+										 	 required: true } %>
+	<% end %>
+  <div class="row mt-3">
+    <div class="col-12 text-center">
+      <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
+      <button type="button"
+              class="btn btn-sm btn-secondary"
+              data-dismiss="modal">
+        <%= t('buttons.cancel') %>
+      </button>
+    </div>
+  </div>
+<% end %>

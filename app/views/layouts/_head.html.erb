@@ -1,6 +1,10 @@
 <title>
   <%= full_title(yield(:title)) %>
 </title>
+
+
+<link rel="icon" href="/MaMpf-Logo_96x96.png">
+
 <%= csrf_meta_tags %>
 <%= stylesheet_link_tag 'application',
                         media: 'all',
@@ -9,31 +13,20 @@
       href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.12.0/css/all.min.css"
       integrity="sha256-ybRkN9dBjhcS2qrW1z+hfCxq+1aBdwyQM5wlQoQVt/0="
       crossorigin="anonymous">
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet">
-<link href='https://fonts.googleapis.com/css?family=Roboto'
-      rel='stylesheet'>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
 <%= javascript_include_tag 'application',
                            'data-turbolinks-track': 'reload' %>
 <script src="https://cdn.jsdelivr.net/npm/babel-polyfill@6.26.0/dist/polyfill.min.js"
         integrity="sha256-WRc/eG3R84AverJv0zmqxAmdwQxstUpqkiE+avJ3WSo="
         crossorigin="anonymous">
 </script>
-<script src="https://cdn.jsdelivr.net/npm/uppy@1.6.0/dist/uppy.min.js"
-        integrity="sha256-VTaZROThWnFZMapEvbriYH+QGtv4daV+Qg05jCQm4d8="
-        crossorigin="anonymous">
-</script>
-<link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/uppy@1.6.0/dist/uppy.min.css"
-      integrity="sha256-9JCV064MsCdQInjm5Ji6u8dEqrDU3F74ZJwJrdhQG9g="
-      crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/cytoscape@3.12.1/dist/cytoscape.min.js"
         integrity="sha256-vaWKzwOlHpJzvE1q0q9nfurKXD8xeGaOhdMa6eea+wM="
         crossorigin="anonymous">
 </script>
 <link rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css"
-      integrity="sha256-V8SV2MO1FUb63Bwht5Wx9x6PVHNa02gv8BgH/uH3ung="
+      href="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/katex.min.css"
+      integrity="sha384-r/BYDnh2ViiCwqZt5VJVWuADDic3NnnTIEOv4hOh05nSfB6tjWpKmn1kUHOVkMXc"
       crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/nerdamer@1.1.0/nerdamer.core.min.js">
 </script>
@@ -41,19 +34,29 @@
         integrity="sha256-rADF2WO6GbkNb5O9gqHdjQ/XhrfnXDtPdHdRe5KQmek="
         crossorigin="anonymous">
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sanitize-html@1.27.0/dist/sanitize-html.min.js" integrity="sha256-+Tha6wUu+wzAOUzilJ7AmF4OXc3CsY1aMsWopnCVwb4=" crossorigin="anonymous"></script>
 <script defer
-        src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js"
-        integrity="sha256-F/Xda58SPdcUCr+xhSGz9MA2zQBPb0ASEYKohl8UCHc="
+        src="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/katex.min.js"
+        integrity="sha384-zDIgORxjImEWftZXZpWLs2l57fMX9B3yWFPN5Ecabe211Hm5ZG/OIz2b07DYPUcH"
         crossorigin="anonymous">
 </script>
 <script defer
-        src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js"
-        integrity="sha256-90d2pnfw0r4K8CZAWPko4rpFXQsZvJhTBGYNkipDprI="
+        src="https://cdn.jsdelivr.net/npm/katex@0.13.9/dist/contrib/auto-render.min.js"
+        integrity="sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl"
         crossorigin="anonymous">
 </script>
+<link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.default.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
 <!--[if lt IE 9]>
   <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js">
   </script>
 <![endif]-->
 <meta name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+ <%= javascript_pack_tag 'application' %>
+ <%= stylesheet_pack_tag 'application' %>
+ <script type="application/javascript">
+
+</script>

@@ -1,0 +1,36 @@
+<% cache item do %>
+<% if item.video_link %>
+  <%= link_to item.video_link,
+              class: ['text-secondary', 'new-in-lecture',
+                      'material-icons', 'mr-2'],
+              style: 'text-decoration:none; font-size: 1em',
+              data: { toggle: "tooltip" },
+                      title: t('video.play'),
+                      target: :_blank do %>
+    video_library
+  <% end %>
+<% end %>
+<% if item.manuscript_link %>
+  <% if item.medium&.sort == 'Script' %>
+    <%= link_to item.manuscript_link,
+                class: ['text-secondary', 'new-in-lecture',
+                        'material-icons'],
+                style: 'text-decoration:none; font-size: 1em;',
+                data: { toggle: 'tooltip' },
+                        title: t('manuscript.view_script'),
+                        target: :_blank do %>
+      menu_book
+    <% end %>
+  <% else %>
+    <%= link_to item.manuscript_link,
+                class: ['text-secondary', 'new-in-lecture',
+                        'material-icons'],
+                style: 'text-decoration:none; font-size: 1em;',
+                data: { toggle: 'tooltip' },
+                        title: t('manuscript.view'),
+                        target: :_blank do %>
+      library_books
+    <% end %>
+  <% end %>
+<% end %>
+<% end %>

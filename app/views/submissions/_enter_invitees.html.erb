@@ -1,0 +1,35 @@
+<%= form_with url: invite_to_submission_path(submission),
+              method: :post,
+              scope: 'submission' do |f| %>
+  <div class="card-body submissionBody"
+       data-id="<%= assignment.id %>">
+    <div class="row mb-2">
+      <div class="col-12">
+        <%= f.label :invitee_ids,
+                    t('submission.invitations_to') %>
+        <%= f.select :invitee_ids,
+                     options_for_select(admissible_invitee_selection(current_user,
+                                                                     submission,
+                                                                     lecture),
+                                        probable_invitee_ids(current_user,
+                                                             submission,
+                                                             lecture)),
+                     {},
+                     { multiple: true } %>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer submissionFooter"
+       data-id="<%= assignment.id %>">
+    <div class="row">
+      <div class="col-12 text-center">
+        <%= f.submit t('buttons.send'),
+                     class: 'btn btn-sm btn-primary mr-2' %>
+        <%= link_to t('buttons.cancel'),
+                    cancel_editing_submission_path(submission),
+                    class: 'btn btn-sm btn-secondary',
+                    remote: true %>
+      </div>
+    </div>
+  </div>
+<% end %>

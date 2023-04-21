@@ -1,0 +1,9 @@
+<%= tag.div class: 'col mb-4 lectureCard',
+            data: { id: lecture.id,
+                    parent: parent } do %>
+  <%= render partial: 'main/start/lecture_card',
+             locals: { lecture: lecture,
+                       current: current,
+                       subscribed: subscribed,
+                       parent: parent } %>
+<% end %>

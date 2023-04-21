@@ -15,6 +15,14 @@ class Item < ApplicationRecord
   has_many :referrals, dependent: :destroy
   has_many :referring_media, through: :referrals, source: :medium
 
+  # an tag has many related items
+  has_many :item_self_joins, dependent: :destroy
+  # an update of the related items only triggers a deletion of the item
+  # self join table entry, but we need it to be destroyed as there is
+  # the symmetrization callback on item_self_joins
+  has_many :related_items, through: :item_self_joins,
+                           after_remove: :destroy_joins
+
   # an item that corresponds to a toc entry of a video has a start time
   # start_time is a TimeStamp object (which is serialized for the db)
   serialize :start_time, TimeStamp
@@ -139,6 +147,7 @@ class Item < ApplicationRecord
   def title_within_course
     return '' unless medium.present? && medium.proper?
     return local_reference if medium.teachable_type == 'Course'
+    return local_reference unless medium.teachable.media_scope.term
     medium.teachable.media_scope.term.to_label_short + ', ' + local_reference
   end
 
@@ -269,6 +278,11 @@ class Item < ApplicationRecord
     Referral.where(item: self).map(&:medium)
   end
 
+  def related_items_visible?
+    !!related_items&.first&.medium&.published? &&
+      !related_items&.first&.medium&.locked?
+  end
+
   private
 
   def math_items
@@ -318,8 +332,10 @@ class Item < ApplicationRecord
   end
 
   def chapter_reference
-    return 'Kap. ' + ref_number if ref_number.present?
-    'Kap.'
+    chapter_short = I18n.t('admin.item.chapter_short',
+                           locale: locale)
+    return "#{chapter_short} #{ref_number}" if ref_number.present?
+    chapter_short
   end
 
   def toc_reference
@@ -395,7 +411,6 @@ class Item < ApplicationRecord
     Rails.application.routes.url_helpers.take_quiz_path(medium.id)
   end
 
-
   # the next methods are used for validations
 
   def valid_start_time
@@ -407,7 +422,7 @@ class Item < ApplicationRecord
 
   def start_time_not_required
     medium.nil? || medium.sort == 'Script' || sort == 'self' ||
-      sort == 'pdf_destination' || !start_time.valid?
+      sort == 'pdf_destination' || !start_time&.valid? || !medium.video
   end
 
   def start_time_not_too_late
@@ -445,5 +460,15 @@ class Item < ApplicationRecord
   def touch_medium
     return unless medium.present? && medium.persisted?
     medium.touch
+  end
+
+  # simulates the after_destroy callback for item_self_joins
+  def destroy_joins(related_item)
+    ItemSelfJoin.where(item: [self, related_item],
+                       related_item: [self, related_item]).delete_all
+  end
+
+  def locale
+    medium&.locale || I18n.default_locale
   end
 end

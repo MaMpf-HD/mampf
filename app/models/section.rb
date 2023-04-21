@@ -14,7 +14,8 @@ class Section < ApplicationRecord
 
   # a section has many lessons
   has_many :lesson_section_joins, dependent: :destroy
-  has_many :lessons, through: :lesson_section_joins
+  has_many :lessons, -> { order(date: :asc, id: :asc) },
+                     through: :lesson_section_joins
 
   # a section needs to have a title
   validates :title, presence: true
@@ -36,14 +37,7 @@ class Section < ApplicationRecord
   before_destroy :touch_media
 
   def lecture
-    Rails.cache.fetch("#{cache_key_with_version}/lecture") do
-      lecture_uncached
-    end
-  end
-
-  def lecture_uncached
-    return unless chapter.present?
-    chapter.lecture
+    chapter&.lecture
   end
 
   def reference_number
@@ -84,13 +78,6 @@ class Section < ApplicationRecord
    # visible media are published with inheritance and unlocked
   def visible_media_for_user(user)
     media.select { |m| m.visible_for_user?(user) }
-  end
-
-  # reorders the tags as given by the order in tags_order
-  # returns an array
-  def ordered_tags
-    return tags.to_a unless tag_ids.sort == tags_order.sort
-    tags.index_by(&:id).values_at(*tags_order)
   end
 
   def visible_for_user?(user)
@@ -172,6 +159,15 @@ class Section < ApplicationRecord
 
   def cache_key
     super + '-' + I18n.locale.to_s
+  end
+
+  def duplicate_in_chapter(new_chapter, import_tags)
+    new_section = dup
+    new_section.chapter = new_chapter
+    new_section.save
+    return unless import_tags
+    new_section.update(tags_order: tags_order)
+    new_section.tags << tags
   end
 
   private

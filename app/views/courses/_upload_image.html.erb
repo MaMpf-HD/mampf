@@ -1,0 +1,50 @@
+<div id="image-uploadArea" class="form-group">
+  <div class="row mb-2">
+    <div class="col-12"
+         id="image-informer">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-12" id="image-progressBar">
+    </div>
+  </div>
+  <div class="row" id="image-wait">
+    <div class="col-12">
+      <%= t('basics.please_wait') %>
+    </div>
+  </div>
+  <div class="row p-2">
+    <div id="image-meta"
+         class="col-12 meta rounded"
+         style="display:<%= show(course.image.present?) %>">
+      <div class="row">
+        <div class="col-11">
+          <%= t('basics.file') %>:
+          <span id="image-file">
+            <%= course.image_filename %>
+          </span>
+        </div>
+        <i id="detach-image"
+           class="material-icons detach">
+          close
+        </i>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <%= t('basics.size') %>:
+          <span id="image-size">
+            <%= number_to_human_size(course.image_size) %>
+          </span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <%= t('image.resolution') %>:
+          <span id="image-resolution">
+            <%= course.image_resolution %>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

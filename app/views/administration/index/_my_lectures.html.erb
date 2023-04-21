@@ -1,4 +1,4 @@
-<div class="card">
+<div class="card card-fixed-xxl">
   <div class="card-header bg-primary text-white">
     <div class="row">
       <div class="col-8">
@@ -6,53 +6,58 @@
         <%= helpdesk(t('admin.main.info.lecture_definition'), true) %>
       </div>
       <div class="col-4 text-right">
-        <%= link_to '', new_lecture_path,
-                    class: 'fas fa-plus-circle text-light admin-index-button',
-                    id: 'new-lecture-button',
-                    data: { remote: true, toggle: 'tooltip' },
-                    title: t('admin.main.create_lecture') %>
+        <% if LectureAbility.new(current_user).can? :new, Lecture.new %>
+          <%= link_to '', new_lecture_path,
+                      class: 'fas fa-plus-circle text-light admin-index-button',
+                      id: 'new-lecture-button',
+                      data: { remote: true, toggle: 'tooltip' },
+                      title: t('admin.main.create_lecture') %>
+        <% end %>
       </div>
     </div>
   </div>
-  <div class="card-body card-compact">
+  <div class="card-body scrollable">
     <div id="new-lecture-area"
          class="bg-green-lighten-4 p-3 mb-3 rounded"
          style="display: none;">
     </div>
     <% if current_user.given_lectures.any? %>
-      <%= t('admin.main.as_teacher') %>
-      (<%= current_user.given_lectures.size %>)
-      <%=  helpdesk(t('admin.main.info.given_lectures'), true) %>
+      <div class="mb-2">
+        <%= t('admin.main.as_teacher') %>
+        (<%= current_user.given_lectures.size %>)
+        <%=  helpdesk(t('admin.main.info.given_lectures'), true) %>
+      </div>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.given_lectures),
-                           inspection: false,
                            teacher: false } %>
     <% end %>
     <% if current_user.edited_lectures.any? %>
-      <%= t('admin.main.as_editor') %>
-      (<%= current_user.edited_lectures.size %>)
-      <%= helpdesk(t('admin.main.info.edited_lectures'), false) %>
+      <div class="mb-2">
+        <%= t('admin.main.as_editor') %>
+        (<%= current_user.edited_lectures.size %>)
+        <%= helpdesk(t('admin.main.info.edited_lectures'), false) %>
+      </div>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user.edited_lectures),
-                           inspection: false,
                            teacher: true } %>
     <% end %>
-    <% if current_user.lectures_as_module_editor.present? %>
-      <%= t('admin.main.as_course_editor') %>
-      (<%= current_user.lectures_as_module_editor.count %>)
-      <%= helpdesk(t('admin.main.info.lectures_as_course_editor'), false) %>
+    <% if current_user.lectures_as_course_editor.present? %>
+      <div class="mb-2">
+        <%= t('admin.main.as_course_editor') %>
+        (<%= current_user.lectures_as_course_editor.count %>)
+        <%= helpdesk(t('admin.main.info.lectures_as_course_editor'), false) %>
+      </div>
       <%= render partial: 'administration/index/lectures_card',
                  locals: { lectures:
                              Lecture.sort_by_date(current_user
-                                                    .lectures_as_module_editor),
-                           inspection: false,
+                                                    .lectures_as_course_editor),
                            teacher: true } %>
     <% end %>
     <% if current_user.given_lectures.empty? &&
             current_user.edited_lectures.empty? &&
-            current_user.lectures_as_module_editor.empty? %>
+            current_user.lectures_as_course_editor.empty? %>
       <%= t('admin.main.no_lectures_taught') %>
     <% end %>
   </div>

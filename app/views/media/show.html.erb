@@ -15,13 +15,23 @@
         </span>
       <% end %>
       <%= @medium.caption %>
+      <% if current_user.admin ||
+            @medium.edited_with_inheritance_by?(current_user) %>
+        <%= link_to '',
+                    edit_medium_path(@medium),
+                    class: 'far fa-edit fa-sm text-dark',
+                    data: { toggle: 'tooltip',
+                            placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none;' %>
+      <% end %>
     </h2>
   </div>
-  <div class="col-4 pt-2">
+  <div class="col-4 col-xl-6 pt-2">
     <strong>
       <%= t('from') %>:
     </strong>
-    <% if @medium.teachable_type == 'Course' && @medium.teachable %>
+    <% if @medium.teachable.is_a?(Course) %>
       <% if current_user.courses.include?(@medium.teachable) %>
         <%= link_to @medium.teachable.to_label,
                     @medium.teachable,
@@ -32,7 +42,7 @@
         </span>
       <% end %>
     <% end %>
-    <% if @medium.teachable_type == 'Lecture' && @medium.teachable %>
+    <% if @medium.teachable.is_a?(Lecture) %>
       <% if current_user.lectures.include?(@medium.teachable) %>
         <%= link_to @medium.teachable.to_label,
                     @medium.teachable.path(current_user),
@@ -43,7 +53,7 @@
         </span>
       <% end %>
     <% end %>
-    <% if @medium.teachable_type == 'Lesson' && @medium.teachable %>
+    <% if @medium.teachable.is_a?(Lesson) || @medium.teachable.is_a?(Talk) %>
       <% if current_user.lectures.include?(@medium.teachable.lecture) %>
         <%= link_to @medium.teachable.lecture.title_for_viewers,
                     @medium.teachable.lecture.path(current_user),
@@ -59,19 +69,28 @@
       <% end %>
     <% end %>
   </div>
-  <div class="col-12 col-xl-2 text-right">
-    <% if current_user.admin ||
-          @medium.edited_with_inheritance_by?(current_user) %>
-      <%= link_to '',
-                  edit_medium_path(@medium),
-                  class: 'far fa-edit fa-lg text-secondary',
-                  data: { toggle: 'tooltip',
-                          placement: 'bottom' },
-                  title: t('buttons.edit'),
-                  style: 'text-decoration: none;' %>
-    <% end %>
-  </div>
 </div>
+<% if @medium.publisher&.release_date.present? %>
+  <div class="row mb-3">
+    <div class="col-12">
+      <span class="badge badge-warning">
+        <%= t('admin.medium.scheduled_for_release',
+              release_date: I18n.l(@medium.publisher&.release_date,
+                                   format: :long,
+                                   locale: I18n.locale)) %>
+      </span>
+      <% if @medium.publisher.create_assignment %>
+        <br>
+        <span class="badge badge-warning">
+          <%= t('admin.medium.assignment_to_be_created',
+                deadline: I18n.l(@medium.publisher&.assignment_deadline,
+                                 format: :publication_time,
+                                 locale: I18n.locale)) %>
+        </span>
+      <% end %>
+    </div>
+  </div>
+<% end %>
 <div class="row mb-2">
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
@@ -117,7 +136,7 @@
                                small: true} %>
         </div>
       <% end %>
-      <div class="col-12">
+      <div class="col-12 mb-2">
         <% if @medium.sort == 'Script' %>
           <%= render partial: 'items/items',
                      locals: { items: @medium.toc_items,
@@ -129,10 +148,15 @@
           <%= render partial: 'items/items',
                      locals: { items: @medium.proper_items_by_time,
                                small: true,
+                               comments_below: true,
                                embedded: false,
                                section_links: false,
                                content: @medium.extended_content } %>
         <% end %>
+      </div>
+      <div class="col-12">
+        <%= render partial: 'media/comments/comments',
+                   locals: { medium: @medium } %>
       </div>
     </div>
   </div>

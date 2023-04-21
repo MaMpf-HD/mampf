@@ -1,9 +1,15 @@
 # AnnouncementsController
 class AnnouncementsController < ApplicationController
-  authorize_resource
   layout 'administration'
+  before_action :set_announcement, except: [:new, :create, :index]
+  authorize_resource except: [:new, :create, :index]
+
+  def current_ability
+    @current_ability ||= AnnouncementAbility.new(current_user)
+  end
 
   def index
+    authorize! :index, Announcement.new
     @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
                                                          .order(:created_at)
                                                          .reverse)
@@ -13,11 +19,13 @@ class AnnouncementsController < ApplicationController
   def new
     @lecture = Lecture.find_by_id(params[:lecture])
     @announcement = Announcement.new(announcer: current_user, lecture: @lecture)
+    authorize! :new, @announcement
   end
 
   def create
     @announcement = Announcement.new(announcement_params)
     @announcement.announcer = current_user
+    authorize! :create, @announcement
     @announcement.save
     if @announcement.valid?
       # trigger creation of notifications for all relevant users
@@ -35,10 +43,20 @@ class AnnouncementsController < ApplicationController
     @errors = @announcement.errors[:details].join(', ')
   end
 
+  def propagate
+    @announcement.update(on_main_page: true)
+    redirect_to announcements_path
+  end
+
+  def expel
+    @announcement.update(on_main_page: false)
+    redirect_to announcements_path
+  end
+
   private
 
   def announcement_params
-    params.require(:announcement).permit(:details, :lecture_id)
+    params.require(:announcement).permit(:details, :lecture_id, :on_main_page)
   end
 
   def create_notifications
@@ -69,11 +87,17 @@ class AnnouncementsController < ApplicationController
     I18n.available_locales.each do |l|
       local_recipients = recipients.where(locale: l)
       if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients,
+        NotificationMailer.with(recipients: local_recipients.pluck(:id),
                                 locale: l,
                                 announcement: @announcement)
-                          .announcement_email.deliver_now
+                          .announcement_email.deliver_later
       end
     end
+  end
+
+  def set_announcement
+    @announcement = Announcement.find_by_id(params[:id])
+    return if @announcement.present?
+    redirect_to :root, alert: I18n.t('controllers.no_announcement')
   end
 end

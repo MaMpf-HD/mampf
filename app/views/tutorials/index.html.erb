@@ -1,0 +1,23 @@
+<% if @assignments.present? %>
+  <div class="row">
+    <div class="col-12">
+      <%= render partial: 'tutorials/header_index',
+               locals: { assignment: @assignment,
+                         tutorial: @tutorial,
+                         stack: @stack } %>
+    </div>
+  </div>
+  <div id="tutorial-table">
+    <%= render partial: 'tutorials/table',
+               locals: { assignment: @assignment,
+                         tutorial: @tutorial,
+                         stack: @stack } %>
+  </div>
+<% else %>
+  <div class="jumbotron">
+    <%= t('assignment.nothing_yet_in_lecture') %>
+  </div>
+<% end %>
+<%= render partial: 'shared/generic_modal',
+           locals: { sort: 'validateCertificate',
+                     title: t('tutorial.certificate_check') } %>

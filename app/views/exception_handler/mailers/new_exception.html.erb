@@ -1,0 +1,13 @@
+<%= t('exception.exception_report',
+			host: ENV['URL_HOST']) %>
+<strong>
+	<%= @exception.response %> (<%= @exception.status %>)
+</strong>
+<p>
+	<%= @exception.message %>
+</p>
+<div><pre><%= @exception.trace %></pre></div>
+<div>
+<h3>Request Params</h3>
+<%= ActiveSupport::ParameterFilter.new(Rails.application.config.filter_parameters).filter(@exception.request.params) %>
+%></div>

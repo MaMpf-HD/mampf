@@ -1,8 +1,13 @@
-# README
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/37160523/228801673-236a081f-40e9-47ca-add6-da1b2d6de3fa.png" width="200px" />
 
-## About
+  <h3 align="center">MaMpf</h3>
+  <p align="center">Mathematische Medienplattform</p>
+</p>
 
-MaMpf (*Mathematische Medienplattform*) is an innovative open source E-Learning platform for the mathematical sciences.
+## 💡 About
+
+**MaMpf (*Mathematische Medienplattform*)** is an innovative open source E-Learning platform for the mathematical sciences.
 Central point is the interconnection between different content in the sense
 of a hypermedia system.
 
@@ -41,71 +46,24 @@ For more information see this [blog](https://mampfdev.wordpress.com).
 There you can also find a [screenshot gallery](https://mampfdev.wordpress.com/gallery/).
 ## System background
 
+[![MaMpf](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/v45wg9/main&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/v45wg9/runs)
+[![codecov](https://codecov.io/gh/MaMpf-HD/mampf/branch/main/graph/badge.svg?token=x7Zq3m5lVH)](https://codecov.io/gh/MaMpf-HD/mampf)
+
 MaMpf is implemented in Ruby on Rails.
 
-* Ruby version: 2.7.0
-* Rails Version: 6.0.2.1
-* Test suite: rspec
+* Ruby version: 3.1.4
+* Rails Version: 7.0.4.3
+* Test suite: rspec, cypress
 * support for I18n
 
-## Installation (with docker-compose)
+## 💻 Installation (with docker compose)
 
-To simply try out mampf you can use docker-compose. Simply clone the mampf repository and run docker-compose by executing
+To easily try out MaMpf you can use `docker compose`. Clone the MaMpf repository and run `docker compose`:
+
 ```
-git clone -b master git@github.com:fosterfarrell9/mampf.git
-docker-compose up
+git clone -b main --recursive https://github.com/MaMpf-HD/mampf.git
+cd mampf/docker/development/
+docker compose up
 ```
 
-
-## Installation in production mode (with Docker)
-
- 1. Install Database Server (e.g. PostgreSQL) and create Database.
-   (Don't forget to allow access for the docker network)
-```
-createuser mampf
-createdb -O mampf mampf
-psql -c "ALTER USER mampf PASSWORD '$PASSWORD'"
-```
- 2. Create an environment file like this:
-```
-RAILS_ENV=production
-PRODUCTION_DATABASE_ADAPTER=postgresql
-PRODUCTION_DATABASE_DATABASE=mampf
-PRODUCTION_DATABASE_USERNAME=mampf
-PRODUCTION_DATABASE_PASSWORD=$DATABASE_PASSWORD
-PRODUCTION_DATABASE_HOST=172.17.0.1
-PRODUCTION_DATABASE_PORT=5432
-MAILSERVER=localhost
-FROM_ADDRESS=mampf@localhost
-URL_HOST=localhost
-RAILS_MASTER_KEY=$MASTER_KEY
-ERDBEERE_SERVER = your_erdbeere_server
-MUESLI_SERVER = your_muesli_server
-PROJECT_EMAIL = your_project_email
-MEDIA_FOLDER=mampf
-```
- 3. Execute the following commands to install and run the service:
-```
-git clone -b master git@github.com:fosterfarrell9/mampf.git
-docker build --label "mampf" mampf
-docker create --name mampf --env-file $ENVFILE -p $OUTSIDEPORT:3000 $IMAGEID
-docker run --rm --env-file $ENVFILE $IMAGEID 'rm config/credentials.yml.enc && bundle exec rails credentials:edit'
-docker start mampf
-docker exec mampf bundle exec rake db:migrate
-docker exec mampf bundle exec rake db:seed
-docker exec mampf bundle exec rake assets:precompile
-docker stop mampf
-docker start mampf
-```
-Now you can access *mampf* via `http://localhost:$OUTSIDEPORT`.
-
-Use the GUI to register your future admin user.
-Open a rails console inside the docker container.
-```
-rails c
-```
-Give admin rights to this user:
-```
-User.first.update(admin: true)
-```
-That's it. Everything else can be done entirely via the GUI. In a production environment you might want to delete upload caches `/usr/src/app/public/uploads/cache/*` and expired quizzes (`bundle exec rake cleanup:destroy_random_quizzes`) regularly.
+See the full installation guide [here](./INSTALL.md).

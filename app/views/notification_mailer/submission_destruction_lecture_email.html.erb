@@ -1,0 +1,3 @@
+<%= t('mailer.submission_destruction_lecture_text_html',
+      deletion_date: @deletion_date.strftime(I18n.t('date.formats.concise')),
+      lecture: @lecture.title_no_term) %>

@@ -12,6 +12,23 @@
                 remote: true %>
   </div>
 </div>
+<div class="row p-2">
+  <div class="col-12">
+    <%= form_with url: set_active_term_path,
+                  method: 'post',
+                  html: { class: 'form-inline' } do |f|%>
+      <%= f.label :active_term,
+                  t('admin.term.active_term') %>
+      <%= f.select :active_term,
+                   options_for_select(Term.select_terms, Term.active&.id),
+                   {},
+                   { class: 'custom-select custom-select-sm ml-3' }  %>
+      <%= f.submit t('buttons.save'),
+                   class: 'btn btn-sm btn-primary ml-3',
+                   data: { confirm: t('confirmation.generic') } %>
+    <% end %>
+  </div>
+</div>
 <div class="row mt-1 p-2">
   <div class="col-8">
   </div>
@@ -19,23 +36,23 @@
     <%= paginate @terms %>
   </div>
 </div>
-<div class="row bg-mdb-color-lighten-2 mx-2 px-4 py-3">
-  <div class="col-2 text-light">
+<div class="row bg-mdb-color-lighten-5 mx-2 px-4 py-3">
+  <div class="col-2">
     <strong>
       <%= t('basics.year') %>
     </strong>
   </div>
-  <div class="col-2 text-light">
+  <div class="col-2">
     <strong>
       <%= t('basics.type') %>
     </strong>
   </div>
-  <div class="col-4 text-light">
+  <div class="col-4">
     <strong>
       <%= t('basics.lectures') %>
     </strong>
   </div>
-  <div class="col-4 text-light">
+  <div class="col-4">
     <strong>
       <%= t('basics.actions') %>
     </strong>

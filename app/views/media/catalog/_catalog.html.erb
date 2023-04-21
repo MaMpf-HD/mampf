@@ -1,0 +1,11 @@
+<div class="row mt-3 p-2">
+  <div class="col-12">
+    <h4>
+      <%= t('admin.medium.media_search') %>
+    </h4>
+  </div>
+</div>
+<%= render partial: 'media/catalog/search_form',
+           locals: { purpose: 'media' } %>
+<div id="media-search-results">
+</div>

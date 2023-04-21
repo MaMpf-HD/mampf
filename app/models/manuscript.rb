@@ -5,7 +5,7 @@ class Manuscript
 
   attr_reader :medium, :lecture, :chapters, :sections, :content,
               :contradictions, :contradiction_count, :count,
-              :content_descriptions
+              :content_descriptions, :version
 
   def initialize(medium)
     unless medium && medium.sort == 'Script' &&
@@ -15,6 +15,10 @@ class Manuscript
     end
     @medium = medium
     @lecture = medium.teachable.lecture
+    @locale = @lecture.locale_with_inheritance || I18n.default_locale
+    @chapter_marker = I18n.t('manuscript.chapter', locale: @locale)
+    @section_marker = I18n.t('manuscript.section', locale: @locale)
+    @version = medium.manuscript.metadata['version']
     bookmarks = medium.manuscript.metadata['bookmarks'] || []
     @chapters = get_chapters(bookmarks)
     match_mampf_chapters
@@ -246,7 +250,6 @@ class Manuscript
   def update_tags!(filter_boxes)
     sections_with_content.each do |s|
       section = s['mampf_section']
-      added_tag_ids = []
       content_in_section(s).each do |c|
         # if tag for content already exists, add tag to the section and course
         if c['tag_id']
@@ -255,7 +258,6 @@ class Manuscript
           next unless section
           next if section.in?(tag.sections)
           tag.sections |= [section]
-          added_tag_ids.push(tag.id)
           tag.courses |= [@lecture.course]
           next
         end
@@ -267,10 +269,6 @@ class Manuscript
         tag.notions.new(title: c['description'],
                         locale: @lecture.locale || I18n.default_locale)
         tag.save
-        added_tag_ids.push(tag.id)
-      end
-      if added_tag_ids.any?
-        section.update(tags_order: section.tags_order + added_tag_ids)
       end
     end
   end
@@ -321,18 +319,18 @@ class Manuscript
 #  private
 
   def get_chapters(bookmarks)
-    bookmarks.select { |b| b['sort'] == 'Kapitel' }
+    bookmarks.select { |b| b['sort'] == @chapter_marker }
              .sort_by { |c| c['counter'] }
              .each_with_index { |c, i| c['new_position'] = i + 1 }
   end
 
   def get_sections(bookmarks)
-    bookmarks.select { |b| b['sort'] == 'Abschnitt' }
+    bookmarks.select { |b| b['sort'] == @section_marker }
              .sort_by { |s| s['counter'] }
   end
 
   def get_content(bookmarks)
-    bookmarks.reject { |b| b['sort'].in?(['Kapitel', 'Abschnitt']) }
+    bookmarks.reject { |b| b['sort'].in?([@chapter_marker, @section_marker]) }
              .sort_by { |c| c['counter'] }
   end
 
@@ -386,12 +384,19 @@ class Manuscript
     { 'chapters' => @chapters.select { |c| c['contradiction'] },
       'sections' => @sections.select { |s| s['contradiction'] },
       'content' => @content.select { |c| c['contradiction'] },
-      'multiplicities' => destinations_with_higher_multiplicities }
+      'multiplicities' => destinations_with_higher_multiplicities,
+      'version' => version_info }
   end
 
   def determine_contradiction_count
     @contradictions['chapters'].size + @contradictions['sections'].size +
-      @contradictions['content'].size + @contradictions['multiplicities'].size
+      @contradictions['content'].size + @contradictions['multiplicities'].size +
+      @contradictions['version'].size
+  end
+
+  def version_info
+    return [] if @version == DefaultSetting::MAMPF_STY_VERSION
+    [@version.to_s]
   end
 
   # chapters in the manuscript not represented in mampf

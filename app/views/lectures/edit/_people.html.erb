@@ -1,21 +1,15 @@
   <div class="card bg-light">
-    <div class="card-header"
+    <div class="card-header clickable"
          role="tab"
-         id="people_heading">
+         id="people_heading"
+         data-toggle="collapse"
+         data-target="#people_collapse"
+         aria-expanded="false" aria-controls="people_collapse"         >
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h5>
             <%= t('basics.people') %>
           </h5>
-        </div>
-        <div class="col-6 text-right">
-          <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
-             href="#people_collapse"
-             id="people_collapse_button"
-             aria-expanded="false" aria-controls="people_collapse">
-            <%= t('buttons.toggle') %>
-          </a>
         </div>
       </div>
     </div>
@@ -31,25 +25,21 @@
               <%= f.label :teacher_id,
                           t('basics.teacher') %>
               <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
-              <% if inspection %>
-                <div id="lecture_teacher_info">
-                  <%= lecture.teacher.name %>
+              <div id="lecture_teacher_select" %>
+                <%= f.select :teacher_id,
+                             options_for_select([[lecture.teacher.info,
+                                                  lecture.teacher.id]],
+                                                  lecture.teacher.id),
+                             {},
+                             { class: 'selectize',
+                               data: { ajax: true,
+                                       model: 'user',
+                                       filled: false,
+                                       placeholder: t('basics.enter_two_letters'),
+                                       no_results: t('basics.no_results') } } %>
+                <div class="invalid-feedback" id="lecture-teacher-error">
                 </div>
-              <% else %>
-                <div id="lecture_teacher_select" %>
-                  <%= f.select :teacher_id,
-                                 options_for_select([[lecture.teacher.info,
-                                                      lecture.teacher.id]],
-                                                    lecture.teacher.id),
-                                 {},
-                                 { class: 'selectize',
-                                   data: { ajax: true,
-                                           model: 'user',
-                                           filled: false } } %>
-                  <div class="invalid-feedback" id="lecture-teacher-error">
-                  </div>
-                </div>
-              <% end %>
+              </div>
             </div>
             <div class="col-4">
               <%= t('basics.course_editors') %>
@@ -71,35 +61,20 @@
               <%= f.label :editor_ids,
                           t('basics.lecture_editors') %>
               <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
-              <% if inspection %>
-                <div id="lecture_editors_info">
-                  <% if lecture.editors.present? %>
-                    <ul>
-                      <% lecture.editors.each do |e| %>
-                        <li>
-                          <%= e.name %>
-                        </li>
-                      <% end %>
-                    </ul>
-                  <% else %>
-                    <br>
-                    <%= t('admin.lecture.no_lecture_editors') %>
-                  <% end %>
-                </div>
-              <% else %>
-                <div id="lecture_editors_select" %>
-                  <%= f.select :editor_ids,
-                               options_for_select([[t('none'), '']] +
-                                                  lecture.select_editors,
-                                                  lecture.editors.map(&:id)),
-                               {},
-                               { multiple: true,
-                                 class: 'selectize',
-                                 data: { ajax: true,
-                                         model: 'user',
-                                         filled: false } } %>
-                </div>
-              <% end %>
+              <div id="lecture_editors_select" %>
+                <%= f.select :editor_ids,
+                             options_for_select([[t('none'), '']] +
+                                                lecture.select_editors,
+                                                lecture.editors.map(&:id)),
+                             {},
+                             { multiple: true,
+                               class: 'selectize',
+                               data: { ajax: true,
+                                       model: 'user',
+                                       filled: false,
+                                       placeholder: t('basics.enter_two_letters'),
+                                       no_results: t('basics.no_results') } } %>
+              </div>
             </div>
           </div>
           <div class="row mb-3">
@@ -108,7 +83,7 @@
               <span id="lectureUserCounter">
               </span>
               <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
-              <% if !inspection && lecture.users.any? %>
+              <% if lecture.users.any? %>
                 <button type="button"
                         id="lectureUserModalButton"
                         class="ml-3 btn btn-outline-primary btn-sm"

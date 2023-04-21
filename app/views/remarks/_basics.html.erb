@@ -21,7 +21,7 @@
                   class="btn btn-secondary btn-sm"
                   id="remark-basics-cancel"
                   data-id="<%= remark.id %>">
-            <%= t('button.discard') %>
+            <%= t('buttons.discard') %>
           </button>
         </span>
       </div>
@@ -35,6 +35,14 @@
     <%= f.text_area :text, id: 'tex-area-remark-' + remark.id.to_s,
                            label: t('basics.latex'),
                            rows: 6 %>
+    <% if current_user.admin %>
+      <div class="row mb-3">
+        <div class="col-12">
+          <%= f.check_box :text_input,
+                          label: t('admin.remark.text_input') %>
+        </div>
+      </div>
+    <% end %>
     <%= render partial: 'remarks/options', locals: { remark: remark } %>
   </div>
 <% end %>

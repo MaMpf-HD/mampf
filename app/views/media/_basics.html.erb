@@ -9,7 +9,7 @@
       <%= f.label :sort, t('admin.medium.sort') %>
       <%= helpdesk(t('admin.medium.info.sort'), true) %>
       <%= f.select :sort,
-                   options_for_select(medium.select_sorts, medium.sort),
+                   options_for_select(medium.select_sorts_with_self, medium.sort),
                    {},
                    { class: 'form-control',
                      disabled: medium.sort.in?(['Script', 'Quiz',
@@ -21,8 +21,8 @@
            style="display: <%= show(medium.sort == 'Script') %>">
         <%= t('admin.medium.info.latex_package_html',
               package: link_to(t('basics.mampf_package'),
-                               '/mampf.sty',
-                               download: 'mampf.sty')) %>
+                               'https://github.com/MaMpf-HD/mampf-sty/releases/'
+                               )) %>
       </div>
     </div>
     <% if medium.sort.in?(['Script', 'Quiz', 'Question', 'Remark']) %>
@@ -30,39 +30,54 @@
                          value: medium.sort,
                          id: 'medium_sort_backup' %>
     <% end %>
-    <div class="form-group">
-      <%= f.label :teachable, t('basics.associated_to') %>
-      <%= helpdesk(t('admin.medium.info.teachable'), true) %>
-      <%= f.select :teachable,
-                   options_for_select([[medium.teachable&.title_for_viewers,
-                                        medium.teachable_select]],
-                                      medium.teachable_select),
-                   { prompt: t('basics.select') },
-                   { class: 'selectize',
-                     style: 'display: none;',
-                     disabled: medium.sort == 'Script',
-                     data: { ajax: medium.sort != 'Script',
-                             model: 'teachable',
-                             filled: false } } %>
-      <div class="invalid-feedback"
-           id="medium-teachable-error">
+    <% if current_user.admin || current_user.editor? %>
+      <div class="form-group">
+        <%= f.label :teachable, t('basics.associated_to') %>
+        <%= helpdesk(t('admin.medium.info.teachable'), true) %>
+        <%= f.select :teachable,
+                     options_for_select([[medium.teachable&.title_for_viewers,
+                                          medium.teachable_select]],
+                                        medium.teachable_select),
+                     { prompt: t('basics.select') },
+                     { class: 'selectize',
+                       style: 'display: none;',
+                       disabled: medium.sort == 'Script',
+                      data: { ajax: medium.sort != 'Script',
+                              model: 'teachable',
+                              filled: false } } %>
+        <div class="invalid-feedback"
+             id="medium-teachable-error">
+        </div>
       </div>
-    </div>
+    <% end %>
     <div class="form-group">
       <%= f.label :editor_ids,
                   t('basics.editors') %>
-      <%= helpdesk(t('admin.medium.info.editors'), false) %>
-      <%= f.select :editor_ids,
-                   options_for_select(add_prompt(medium.editors
-                                                       .map { |e| [e.info, e.id] }),
-                                      medium.editors.map(&:id)),
-                   {},
-                   { multiple: true,
-                     class: 'selectize',
-                     style: 'display: none;',
-                     data: { ajax: true,
-                             filled: false,
-                             model: 'user' } } %>
+      <%= helpdesk(t('admin.medium.info.editors'), true) %>
+      <% if current_user.admin || current_user.editor? %>
+        <%= f.select :editor_ids,
+                     options_for_select(add_prompt(medium.editors
+                                                         .map { |e| [e.info, e.id] }),
+                                        medium.editors.map(&:id)),
+                     {},
+                     { multiple: true,
+                       class: 'selectize',
+                       style: 'display: none;',
+                       data: { ajax: true,
+                               filled: false,
+                               model: 'user',
+                               placeholder: t('basics.enter_two_letters'),
+                               no_results: t('basics.no_results') } } %>
+      <% else %>
+        <%= f.select :editor_ids,
+                     options_for_select((medium.teachable.speakers | medium.editors).map { |e| [e.info, e.id] },
+                                        medium.editors.map(&:id)),
+                     {},
+                     { multiple: true,
+                       class: 'selectize',
+                       style: 'display: none;',
+                       data: { ajax: false } } %>
+      <% end %>
       <div class="invalid-feedback"
            id="medium-editors-error">
       </div>
@@ -81,14 +96,16 @@
       <%= f.label :tag_ids,
                   t('basics.related_tags') %>
       <%= helpdesk(t('admin.medium.info.related_tags'), false) %>
-      <a class="fas fa-plus-circle clickable"
-         id="new-tag-button"
-         data-toggle="tooltip"
-         title="<%= t('admin.tag.create') %>"
-         data-course="<%= medium.course.id %>"
-         data-medium="<%= medium.id %>"
-         data-from="medium">
-      </a>
+      <% if current_user.admin || current_user.editor? %>
+        <a class="fas fa-plus-circle clickable text-dark"
+           id="new-tag-button"
+           data-toggle="tooltip"
+           title="<%= t('admin.tag.create') %>"
+           data-course="<%= medium.course.id %>"
+           data-medium="<%= medium.id %>"
+          data-from="medium">
+        </a>
+      <% end %>
       <%= f.select :tag_ids,
                    options_for_select(medium.tags.map { |t| [t.extended_title, t.id] },
                                       medium.tags.map(&:id)),
@@ -99,32 +116,46 @@
                      data: { ajax: true,
                              filled: false,
                              model: 'tag',
-                             locale: I18n.locale } } %>
+                             locale: I18n.locale,
+                             placeholder: t('basics.enter_two_letters'),
+                             no_results: t('basics.no_results') } } %>
       <div class="invalid-feedback"
            id="medium-tags-error">
       </div>
     </div>
     <% end %>
-    <div class="form-group">
-      <%= f.label :linked_medium_ids,
-                  t('basics.related_media') %>
-      <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
-      <%= f.select :linked_medium_ids,
-                   options_for_select(medium.linked_media
-                                            .map{ |m| [m.title_for_viewers,
-                                                       m.id] },
-                                      medium.linked_media.pluck(:id)),
-                   {},
-                   { multiple: true,
-                     class: 'selectize',
-                     data: { ajax: true,
-                             model: 'medium',
-                             filled: false } } %>
-    </div>
+    <% if current_user.admin || current_user.editor? %>
+      <div class="form-group">
+        <%= f.label :linked_medium_ids,
+                    t('basics.related_media') %>
+        <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
+        <%= f.select :linked_medium_ids,
+                     options_for_select(medium.linked_media
+                                              .map{ |m| [m.title_for_viewers,
+                                                         m.id] },
+                                        medium.linked_media.pluck(:id)),
+                     {},
+                     { multiple: true,
+                       class: 'selectize',
+                      data: { ajax: true,
+                              model: 'medium',
+                              filled: false,
+                              placeholder: t('basics.enter_two_letters'),
+                              no_results: t('basics.no_results') } } %>
+      </div>
+    <% end %>
     <% if medium.published? %>
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
                  medium: medium } %>
+      <div class="custom-control custom-checkbox mb-2">
+        <%= f.check_box :comments_locked,
+                         class: 'custom-control-input',
+                         checked:  medium.commontator_thread.is_closed? %>
+        <%= f.label :comments_locked,
+                    t('admin.medium.comments_locked'),
+                    { class: 'custom-control-label' } %>
+      </div>
     <% end %>
     <div class="form-group">
       <%= t('basics.language') %>
@@ -143,6 +174,14 @@
         <% end %>
       </div>
     </div>
+    <% if current_user.admin || current_user.editor? %>
+      <div class="form-group">
+        <%= t('admin.medium.boost') %>
+        <%= helpdesk(t('admin.medium.info.boost'), false) %>
+        <%= f.text_field :boost,
+                         class: 'form-control' %>
+      </div>
+    <% end %>
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
     <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
   </div>

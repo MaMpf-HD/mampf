@@ -1,0 +1,66 @@
+<div class="row mt-2 mb-3">
+  <div id="lecture-details" class="col-12 text-center mb-3">
+    <h4>
+      <span class="badge badge-secondary">
+        <%= @lecture.sort_localized %>
+      </span>
+      <span id="lecture-title" class="mr-3">
+        <%= @lecture.title_term_info_no_type %>
+      </span>
+      <% if @lecture.term || !@lecture.disable_teacher_display %>
+        <span>
+          <% if !@lecture.teacher.archived %>
+            <%= link_to @lecture.teacher.name,
+                        teacher_path(@lecture.teacher),
+                        id: 'lecture-teacher',
+                        class: 'text-dark' %>
+          <% else %>
+            <%= @lecture.teacher.name %>
+          <% end %>
+        </span>
+      <% end %>
+    </h4>
+  </div>
+  <div class="alert alert-info error-jumbo">
+    <div>
+      <h5 class="text-dark">
+        <%=t("basics.attention") %>
+      </h5>
+      <p>
+        <%= t("errors.not_subscribed") %>
+      </p>
+      <p>
+        <% if @lecture.restricted? %>
+          <%= t('profile.passphrase_required', lecture_title: @lecture.title) %>
+          <%= form_with url: subscribe_lecture_path,
+                        method: 'patch',
+                        scope: 'lecture' do |f|%>
+            <p>
+              <%= f.text_field :passphrase,
+                               class: 'form-control',
+                               value: "" %>
+              <div class="invalid-feedback"
+                   id="passphrase-error" >
+              </div>
+              <%= f.hidden_field :id,
+                                  value: @lecture.id %>
+              <%= f.hidden_field :parent,
+                                 value: "redirect" %>
+            </p>
+            <%= f.submit t("profile.subscribe_lecture"),
+                         class: "btn btn-primary"%>
+          <% end %>
+        <% else %>
+          <%= link_to t("profile.subscribe_lecture"),
+                      subscribe_lecture_path(params:
+                                               { lecture:
+                                                   { id: @lecture.id,
+                                                     parent: "redirect" } }),
+                      method: :patch,
+                      remote: true,
+                      class: "btn btn-primary" %>
+        <% end %>
+      </p>
+    </div>
+  </div>
+</div>

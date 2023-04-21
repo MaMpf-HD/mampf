@@ -1,0 +1,63 @@
+<%= form_with url: user_registration_path,
+              method: :delete do |f| %>
+<%= t('profile.confirm_account_deletion') %>
+<%= f.password_field :password,
+                     class: 'form-control my-2',
+                     required: true %>
+<% if current_user.contributor? %>
+  <div class="row mt-2">
+    <div class="col-12">
+      <%= t('profile.thanks_for_contributions') %>
+      <ul>
+        <% if current_user.teacher? %>
+          <li>
+            <%= t('profile.given_lectures',
+                  lectures: current_user.given_lectures.size) %>
+          </li>
+        <% end %>
+        <% if current_user.media_editor? %>
+          <li>
+            <%= t('profile.edited_media',
+                  media: current_user.edited_media.size) %>
+          </li>
+        <% end %>
+      </ul>
+      <%= t('profile.contributions_remain') %>
+      <%= f.text_field :archive_name,
+                       class: 'form-control my-2',
+                       value: current_user.name,
+                       required: true %>
+      <%= t('profile.manual_deletion') %>
+    </div>
+  </div>
+<% end %>
+<% if current_user.proper_submissions_count.positive? %>
+  <div class="row mt-2">
+    <div class="col-12">
+      <b>
+        <%= t('basics.attention') %>.
+      </b>
+      <%= t('profile.stored_submissions',
+          submissions: current_user.proper_submissions_count) %>
+      <ul>
+        <li>
+          <%= t('profile.single_submissions',
+                single_submissions:
+                  current_user.proper_single_submissions_count) %>
+        </li>
+        <li>
+          <%= t('profile.team_submissions',
+                team_submissions: current_user.proper_team_submissions_count) %>
+        </li>
+      </ul>
+      <%= t('profile.submission_deletion') %>
+    </div>
+  </div>
+<% end %>
+<div class="row mt-3">
+  <div class="col-12 text-center">
+    <%= f.submit t('profile.delete_account'),
+                 class: "btn btn-danger mb-2" %>
+  </div>
+</div>
+<% end %>

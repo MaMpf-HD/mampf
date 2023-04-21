@@ -1,21 +1,15 @@
   <div class="card bg-light">
-    <div class="card-header"
+    <div class="card-header clickable"
          role="tab"
-         id="organizational_heading">
+         id="organizational_heading"
+         data-toggle="collapse"
+         data-target="#organizational_collapse"
+         aria-expanded="false" aria-controls="organizational_collapse">
       <div class="row">
-        <div class="col-6">
+        <div class="col-12">
           <h5>
-            <%= t('categories.organizational') %>
+            <%= t('categories.organizational_html') %>
           </h5>
-        </div>
-        <div class="col-6 text-right">
-          <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
-             href="#organizational_collapse"
-             id="organizational_collapse_button"
-             aria-expanded="false" aria-controls="organizational_collapse">
-            <%= t('buttons.toggle') %>
-          </a>
         </div>
       </div>
     </div>
@@ -31,36 +25,42 @@
             <div class="col-6">
               <div class="custom-control custom-checkbox">
                 <%= f.check_box :organizational,
-                                class: 'custom-control-input',
-                                disabled: inspection %>
+                                class: 'custom-control-input' %>
                 <%= f.label :organizational,
                             t('admin.lecture.organizational_visible'),
                             { class: 'custom-control-label' } %>
                 <%= helpdesk(t('admin.lecture.info.organizational'), false) %>
-                </i>
               </div>
             </div>
             <div class="col-6">
               <div class="custom-control custom-checkbox">
                 <%= f.check_box :muesli,
-                                class: 'custom-control-input',
-                                disabled: inspection %>
+                                class: 'custom-control-input' %>
                 <%= f.label :muesli,
                             t('admin.lecture.uses_muesli'),
                             { class: 'custom-control-label' } %>
                 <%= helpdesk(t('admin.lecture.info.muesli'), false) %>
               </div>
             </div>
+            <% if !lecture.term && lecture.organizational %>
+              <div class="col-6">
+                <div class="custom-control custom-checkbox">
+                  <%= f.check_box :organizational_on_top,
+                                  class: 'custom-control-input' %>
+                  <%= f.label :organizational_on_top,
+                              t('admin.lecture.organizational_on_top'),
+                                { class: 'custom-control-label' } %>
+                  <%= helpdesk(t('admin.lecture.info.organizational_on_top'),
+                               false) %>
+                </div>
+              </div>
+            <% end %>
           </div>
           <div class="row">
             <div class="col-12">
-              <% if inspection %>
-                <%= lecture.organizational_concept&.html_safe %>
-              <% else %>
-                <%= f.trix_editor :organizational_concept,
-                                  id: 'lecture-concept-trix',
-                                  data: { content: lecture.organizational_concept } %>
-              <% end %>
+              <%= f.trix_editor :organizational_concept,
+                                id: 'lecture-concept-trix',
+                                data: { content: lecture.organizational_concept } %>
             </div>
           </div>
           <div class="row mt-3">

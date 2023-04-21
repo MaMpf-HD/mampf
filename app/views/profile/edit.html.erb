@@ -1,4 +1,16 @@
-<%= bootstrap_form_with url: profile_update_path, scope: 'user' do |f| %>
+<%= bootstrap_form_with url: profile_update_path, scope: 'user',
+                        html: { id: 'profileForm'} do |f| %>
+  <div class="alert alert-secondary" id="profileChange">
+    <div class="profileChangeWarning" style="display: flex; justify-content: space-between;">
+      <div>
+        <%= t('profile.changes_made') %>
+      </div>
+      <div>
+        <%= f.submit t('profile.update'),
+                     class: 'btn btn-info' %>
+      </div>
+    </div>
+  </div>
   <div class="row mb-3">
     <div class="col-12">
       <div class="card">
@@ -29,6 +41,18 @@
             <div class="invalid-feedback"
                  id="username-error">
             </div>
+          </div>
+          <div class="form-group">
+            <%= f.label :name_in_tutorials,
+                        t('profile.name_in_tutorials') %>
+            <i class="far fa-question-circle helpdesk"
+               tabindex="-1"
+               data-toggle="popover" data-trigger="focus"
+               title="Info"
+               data-content="<%= t('profile.name_in_tutorials_information') %>">
+            </i>
+            <%= f.text_field_without_bootstrap :name_in_tutorials,
+                                               class: 'form-control' %>
           </div>
         </div>
       </div>
@@ -73,9 +97,43 @@
     </div>
   </div>
   <div class="row mb-3">
-    <div class="col-12 text-center">
-      <%= f.submit t('profile.update'),
-                   class: 'btn btn-info' %>
+    <div class="col-12">
+      <div class="card bg-light">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-12">
+              <h5>
+                <%= t('profile.email_notifications_header') %>
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'profile/email_notifications',
+                     locals: { f: f } %>
+        </div>
+      </div>
     </div>
   </div>
 <% end %>
+<div class="row mb-3">
+    <div class="col-12">
+      <div class="card bg-light">
+        <div class="card-header">
+          <div class="row">
+            <div class="col-12">
+              <h5>
+                <%= t('profile.my_data') %>
+              </h5>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <%= render partial: 'profile/data' %>
+        </div>
+      </div>
+    </div>
+  </div>
+<%= render partial: 'shared/generic_modal',
+           locals: { sort: 'deleteAccount',
+                     title: t('profile.delete_account') } %>

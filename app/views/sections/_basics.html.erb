@@ -53,7 +53,7 @@
     <%= f.label :tag_ids,
                 t('basics.related_tags') %>
     <%= helpdesk(t('admin.section.info.related_tags'), false) %>
-    <a class="fas fa-plus-circle clickable"
+    <a class="fas fa-plus-circle clickable text-dark"
        id="new-tag-button"
        data-toggle="tooltip"
        title="Tag anlegen"
@@ -62,8 +62,8 @@
        data-from="section">
     </a>
     <%= f.select :tag_ids,
-                 options_for_select(section.tags_order
-                                           .map { |t| [Tag.find_by_id(t)&.extended_title, t] },
+                 options_for_select(section.tags
+                                           .map { |t| [t.extended_title, t.id] },
                                     section.tag_ids),
                  {},
                  { multiple: true,
@@ -74,7 +74,9 @@
                            filled: false,
                            model: 'tag',
                            drag: true,
-                           locale: I18n.locale },
+                           locale: I18n.locale,
+                           placeholder: t('basics.enter_two_letters'),
+                           no_results: t('basics.no_results') },
                    id: 'section_tag_ids_' + section.id.to_s } %>
     <div class="invalid-feedback"
          id="section-tags-error-<%= section.id %>">

@@ -11,7 +11,7 @@
     </div>
     <div class="col-6">
       <%= render partial: 'lectures/show/lesson',
-                 collection: section.lessons.includes(:tags).order(:date),
+                 collection: section.lessons.includes(:tags),
                  cached: true %>
     </div>
     <% unless section.details.blank? %>
@@ -21,7 +21,7 @@
     <% end %>
     <div class="col-12 mt-2">
       <%= render partial: 'lectures/show/tag',
-                 collection: section.ordered_tags,
+                 collection: section.tags,
                  cached: true %>
     </div>
   </div>

@@ -55,7 +55,7 @@
   overflow-y: scroll;
 }
 
-#manuscript-informer, #video-informer, #geogebra-informer {
+#manuscript-informer, #video-informer, #geogebra-informer, #userManuscript-informer {
   height: 1em;
 }
 
@@ -80,8 +80,8 @@
 #video-edit {
   border: 1px solid gray;
   position: relative;
-  max-width: 600px;
-  max-height: 500px;
+  max-width: 100%;
+  max-height: calc(100% - 60px);
 }
 
 #thyme-edit {
@@ -308,4 +308,24 @@
 
 .details-warning {
   display: none;
+}
+
+#remove-screenshot, #export-screenshot, #export-toc, #export-references,
+#import-script-items {
+  text-decoration: none;
+}
+
+.tab-content {
+  display: flex;
+}
+
+.tab-content > .tab-pane {
+  display: block; /* undo "display: none;" */
+  visibility: hidden;
+  margin-right: -100%;
+  width: 100%;
+}
+
+.tab-content > .active {
+  visibility: visible;
 }

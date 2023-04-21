@@ -5,7 +5,7 @@
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  
+
   config.cache_classes = false
 
   # Do not eager load code on boot. This avoids loading your whole application
@@ -39,10 +39,27 @@ Rails.application.configure do
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
   config.action_mailer.delivery_method = :test
+  config.active_job.queue_adapter = :test
 
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
+  # Raise exceptions for disallowed deprecations.
+  config.active_support.disallowed_deprecation = :raise
+
+  # Tell Active Support which deprecation messages to disallow.
+  config.active_support.disallowed_deprecation_warnings = []
+
   # Raises error for missing translations.
-  # config.action_view.raise_on_missing_translations = true
+  # config.i18n.raise_on_missing_translations = true
+   # Don't care if the mailer can't send.
+   config.action_mailer.perform_deliveries = true
+   config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+   config.action_mailer.raise_delivery_errors = true
+
+   config.action_mailer.perform_caching = false
+   config.i18n.default_locale = :de
+
+   # Annotate rendered view with file names.
+   # config.action_view.annotate_rendered_view_with_filenames = true
 end

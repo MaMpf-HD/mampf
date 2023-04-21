@@ -21,9 +21,12 @@
   <div class="col-6">
     <div class="row">
       <div class="col-12 mb-3">
-          <%= render partial: 'courses/organizational',
-                     locals: { course: course, f: f,
-                               inspection: false } %>
+        <%= render partial: 'courses/organizational',
+                   locals: { course: course, f: f } %>
+      </div>
+      <div class="col-12 mb-3">
+        <%= render partial: 'courses/image',
+                   locals: { course: course, f: f } %>
       </div>
       <div class="col-12">
         <div class="card bg-light">
@@ -36,7 +39,7 @@
                 </h5>
               </div>
               <div class="col-8 text-right">
-                <a class="fas fa-plus-circle fa-lg clickable"
+                <a class="fas fa-plus-circle fa-lg clickable text-dark"
                    id="new-tag-button"
                    data-toggle="tooltip"
                    title="<%= t('buttons.create_tag') %>"

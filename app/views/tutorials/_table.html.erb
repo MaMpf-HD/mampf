@@ -1,0 +1,33 @@
+<% if stack.any? %>
+  <ul class="list-group my-3">
+    <li class="list-group-item bg-light">
+      <div class="row">
+        <b class="col-3">
+          <%= t('basics.team') %>
+        </b>
+        <b class="col-3">
+          <%= t('basics.submission') %>
+          (<%= assignment.accepted_file_type %>)
+        </b>
+        <b class="col-3">
+          <%= t('basics.correction') %>
+          (<%= assignment.accepted_file_type %>)
+        </b>
+        <% if current_user.in?(@tutorial.tutors) %>
+          <b class="col-3">
+            <%= t('basics.actions') %>
+          </b>
+        <% end %>
+      </div>
+    </li>
+    <div class="tutorialTableContent">
+      <%= render partial: 'tutorials/rows',
+                 collection: stack,
+                 as: :submission %>
+    </div>
+  </ul>
+<% else %>
+  <div class="jumbotron mt-3">
+    <%= t('tutorial.no_submissions_for_assignment') %>
+  </div>
+<% end %>

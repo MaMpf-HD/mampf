@@ -1,26 +1,48 @@
 <div class="row">
-  <div class="col-10">
+  <div class="col-12">
     <h2>
       <span class="badge badge-secondary mr-3">
         <%= t('tag') %>
       </span>
       <%= @tag.title %>
+      <% if current_user.editor? %>
+        <%= link_to '',
+                    edit_tag_path(@tag),
+                    class: 'far fa-edit text-secondary',
+                    data: { toggle: 'tooltip', placement: 'bottom' },
+                    title: t('buttons.edit'),
+                    style: 'text-decoration: none;' %>
+      <% end %>
     </h2>
-  </div>
-  <div class="col-2 text-right">
-    <% if current_user.editor? %>
-      <%= link_to '',
-                  edit_tag_path(@tag),
-                  class: 'far fa-edit fa-lg text-secondary',
-                  data: { toggle: 'tooltip', placement: 'bottom' },
-                  title: t('buttons.edit'),
-                  style: 'text-decoration: none;' %>
-    <% end %>
   </div>
 </div>
 <div class="row mt-2 mb-2">
   <div class="col-12 col-lg-4 col-xl-3 col-xxl-2">
     <div class="row">
+      <% if @realizations.any? %>
+        <div class="col-12">
+          <div class="card bg-light mb-2">
+            <div class="card-header bg-generic-card-header">
+              <h5>
+                <%= t('basics.realizations') %>
+              </h5>
+            </div>
+            <div class="card-body">
+              <% @realizations.each do |r| %>
+                <div class="row">
+                  <div class="col-12">
+                    <%= link_to t('basics.loading_data'),
+                                realization_path(r),
+                                class: 'erdbeere-realization',
+                                data: { sort: r.first,
+                                        id: r.second } %>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
       <div class="col-12">
         <div class="card bg-light mb-2">
           <div class="card-header bg-generic-card-header">
@@ -103,12 +125,12 @@
     <div class="card">
       <div class="card-header bg-generic-card-header">
         <div class="row">
-          <div class="col-3">
+          <div class="col-12 col-sm-3">
             <h5>
               <%= t('mampf_map') %>
             </h5>
           </div>
-          <div class="col-6 d-flex">
+          <div class="col-12 col-sm-6 mb-2 d-flex">
             <div class="dropdown mr-2">
               <button class="btn btn-sm btn-secondary dropdown-toggle"
                       type="button"
@@ -148,7 +170,7 @@
               </div>
             </div>
           </div>
-          <div class="col-3 text-right">
+          <div class="col-12 col-sm-3 text-right">
             <%= link_to t('external_render'),
                         display_cyto_tag_path(@tag,
                                               params: { selection: @selection_type,

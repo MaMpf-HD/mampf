@@ -1,0 +1,168 @@
+---
+version: '3.4'
+services:
+  redis:
+    image: "redis:6.2.6-alpine"
+
+  solr:
+    image: "solr:8.11.1"
+    ports:
+      - "127.0.0.1:8983:8983"
+    volumes:
+      - type: volume
+        source: solr-data
+        target: /var/solr
+      - type: bind
+        source: ../../solr/development/conf/
+        target: /solrconfig/
+        read_only: true
+    # command: ["bash -c \"solr-precreate development /solrconfig ; solr-precreate test /solrconfig \""]
+    entrypoint:
+      - bash
+      - "-c"
+      - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=mampf
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
+
+  mailcatcher:
+    restart: on-failure:10
+    image: dockage/mailcatcher:latest
+    ports:
+      - "127.0.0.1:1080:1080"
+
+  imap:
+    image: antespi/docker-imap-devel:latest
+    ports:
+      - "1025:25"
+      - "10143:143"
+      - "10993:993"
+    environment:
+      - MAILNAME=localhost
+      - MAIL_ADDRESS=mampf@localhost
+      - MAIL_PASS=mampf
+
+  mampf:
+    build:
+      context: ./../..
+      dockerfile: docker/development/Dockerfile
+    image: mampf:development
+    environment:
+      RAILS_ENV: docker_development
+      DEVELOPMENT_DATABASE_ADAPTER: postgresql
+      DEVELOPMENT_DATABASE_DATABASE: mampf
+      DEVELOPMENT_DATABASE_INTERACTIONS: interactions
+      DEVELOPMENT_DATABASE_USERNAME: mampf
+      DEVELOPMENT_DATABASE_HOST: db
+      DEVELOPMENT_DATABASE_PORT: 5432
+      TEST_DATABASE_ADAPTER: postgresql
+      TEST_DATABASE_DATABASE: mampf-test
+      TEST_DATABASE_INTERACTIONS: interactions-test
+      TEST_DATABASE_USERNAME: mampf
+      TEST_DATABASE_HOST: db
+      TEST_DATABASE_PORT: 5432
+      MAILSERVER: mailcatcher
+      FROM_ADDRESS: development@localhost
+      URL_HOST: localhost
+      URL_HOST_SHORT: localhost
+      SECRET_KEY_BASE: testenvironment
+      ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
+      ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
+      MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
+      PROJECT_EMAIL: project@localhost
+      PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
+      ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
+      INSTANCE_PATH: mampf
+      REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
+      SOLR_PATH: /solr/development
+      SPROCKETS_CACHE: /cache
+      WEBPACKER_DEV_SERVER_HOST: webpacker
+      MAMPF_REGISTRATION_TIMEFRAME: 25
+      MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
+      IMAPSERVER: imap:10993
+      IMAP_TLS_IGNORE_CERT: 1
+      PROJECT_EMAIL_USERNAME: mampf
+      PROJECT_EMAIL_PASSWORD: mampf
+      PROJECT_EMAIL_MAILBOX: INBOX
+      BLOG: https://mampf.blog
+      # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
+      # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20220923120841_mampf.sql&dl=1"
+      # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/1c4804dcd78446139fd9/?dl=1"
+    volumes:
+      - type: bind
+        source: ../../
+        target: /usr/src/app/
+      - type: volume
+        source: sprockets-cache
+        target: /cache
+    depends_on:
+      - db
+      - solr
+      - redis
+      - mailcatcher
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: worker
+
+  webpacker:
+    build:
+      context: ./../..
+      dockerfile: docker/development/Dockerfile
+    environment:
+      NODE_ENV: development
+      RAILS_ENV: development
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+    entrypoint: ["sh", "-c", "yarn && ./bin/webpack-dev-server"]
+    volumes:
+      - type: bind
+        source: ../../
+        target: /usr/src/app/
+      - type: volume
+        source: sprockets-cache
+        target: /cache
+    ports:
+      - '127.0.0.1:3035:3035'
+    depends_on:
+      - db
+      - solr
+      - redis
+      - mailcatcher
+
+  nginx:
+    image: openresty/openresty:alpine
+    # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
+    container_name: mampf-docker-nginx
+    ports:
+      - "127.0.0.1:3000:80"
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      # Submissions are served by nginx but are still authenticated by MaMpf. (accel_redirect)
+      - "submissions:/private/submissions:ro,nocopy"
+      - "public:/public"
+
+  dockergen:
+    build:
+      context: ./../..
+      dockerfile: docker/Dockerfile.dockergen
+    command: -notify-sighup mampf-docker-nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    restart: always
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      - "../nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl"
+      - "/var/run/docker.sock:/tmp/docker.sock"
+
+volumes:
+  nginx-conf-d:
+  submissions:
+  public:
+  db-data:
+  solr-data:
+  sprockets-cache:

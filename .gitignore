@@ -11,6 +11,8 @@
 /db/*.sqlite3
 /db/*.sqlite3-journal
 /db/csv/*
+/db/backups/*
+!/backups/.gitkeep
 /lib/tasks/setup.rake
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -42,3 +44,22 @@ coverage
 
 # Ignore environment variables
 /config/app_environment_variables.rb
+completed_initial_run
+/public/uploads.zip
+/public/pdfcomprezzor/pdfcomprezzor.wasm
+/public/pdfcomprezzor/wasm_exec.js
+
+
+/cypress/videos
+/cypress/screenshots
+# mac specific
+.DS_Store
+
+/public/packs
+/public/packs-test
+/node_modules
+/yarn-error.log
+yarn-debug.log*
+.yarn-integrity
+
+node_modules

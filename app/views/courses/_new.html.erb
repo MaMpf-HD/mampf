@@ -8,7 +8,7 @@
 <%= form_with model: course,
               html: { id: 'new-course-form' } do |f| %>
   <div class="form-row">
-    <div class="col-8 form-group">
+    <div class="col-12 form-group">
       <%= f.label :title, t('basics.title') %>
       <%= helpdesk(t('admin.course.info.title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
@@ -17,7 +17,7 @@
            id="new-course-title-error">
       </div>
     </div>
-    <div class="col-4 form-group">
+    <div class="col-12 form-group">
       <%= f.label :short_title, t('basics.short_title') %>
       <%= helpdesk(t('admin.course.info.short_title'), false) %>
       <%= f.text_field :short_title, { class: 'form-control',
@@ -31,14 +31,41 @@
                   t('basics.editors') %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
-                   options_for_select([[]]),
+                   options_for_select([[current_user.info, current_user.id]],
+                                       current_user.id),
                    {},
                    { class: 'selectize',
+                     required: true,
                      multiple: true,
                      style: 'display: none;',
                      data: { ajax: true,
                              model: 'user',
-                             filled: false } } %>
+                             filled: false,
+                             placeholder: t('basics.enter_two_letters'),
+                             no_results: t('basics.no_results') } } %>
+    </div>
+    <div class="col-12 form-group">
+      <%= f.label :division_ids,
+                  t('admin.course.divisions') %>
+      <%= helpdesk(t('admin.course.info.divisions'), false) %>
+      <%= f.select :division_ids,
+                   options_for_select(Division.all.map { |d| [d.name_with_program, d.id] },
+                                      course.division_ids),
+                   {},
+                   { class: 'selectize',
+                     multiple: true,
+                     style: 'display: none;',
+                     data: { ajax: false } } %>
+    </div>
+    <div class="col-12 form-group">
+      <div class="custom-control custom-checkbox">
+        <%= f.check_box :term_independent,
+                        class: 'custom-control-input' %>
+        <%= f.label :term_independent,
+                    t('admin.course.term_independent'),
+                    { class: 'custom-control-label' } %>
+        <%= helpdesk(t('admin.course.info.term_independent'), false) %>
+      </div>
     </div>
   </div>
   <div class="row">

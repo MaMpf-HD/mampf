@@ -1,12 +1,27 @@
+<% singular_medium ||= false %>
+<% comments_below ||= false %>
 <div class="card bg-light">
   <% unless embedded %>
     <div class="card-header bg-generic-card-header">
       <h5>
-        <%= t('content') %>
+        <div class="row">
+          <div class="col-12 col-lg-4">
+            <%= t('content') %>
+          </div>
+          <div class="col-12 col-lg-8">
+            <% if singular_medium && singular_medium.visible_for_user?(current_user) %>
+              <span style="display: flex; justify-content: flex-start;">
+                  <%= render partial: 'media/medium/buttons',
+                             locals: { medium: singular_medium,
+                                       ref_link: nil } %>
+              </span>
+            <% end %>
+          </div>
+        </div>
       </h5>
     </div>
   <% end %>
-  <div class="card-body" style="max-height: <%= small ? '60vh' : '70vh' %>;
+  <div class="card-body" style="max-height: <%= items_card_size(small, comments_below) %>;
                                 overflow-y: scroll;">
     <%= render partial: 'items/items_list',
                locals: { items: items,

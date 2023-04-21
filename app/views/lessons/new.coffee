@@ -2,7 +2,8 @@
 $('#lesson-modal-content').empty()
   .append('<%= j render partial: "lessons/new",
                         locals: { lesson: @lesson } %>').show()
-$('#lesson-modal-content .selectize').selectize({ plugins: ['remove_button'] })
+$('#lesson-modal-content .selectize').each ->
+  new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
 
 # activate popovers
 $('[data-toggle="popover"]').popover()

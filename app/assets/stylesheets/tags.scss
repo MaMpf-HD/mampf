@@ -18,16 +18,16 @@
   max-height: 50vh;
 }
 
-#tagBasicsBodyEdit {
-  max-height: 45vh;
+#relatedTagsBodyEdit {
+  height: 15vh;
   overflow-y: scroll;
-  overflow-x: hidden;
 }
 
-#relatedTagsBodyEdit {
-  height: 25vh;
+#tagRealizationsBodyEdit {
+  height: 10vh;
   overflow-y: scroll;
 }
+
 
 #tagEditActionBody {
   height: 25vh;

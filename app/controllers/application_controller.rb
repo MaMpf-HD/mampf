@@ -4,9 +4,11 @@ class ApplicationController < ActionController::Base
   # The callback which stores the current location must be added before you
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
   # will halt the filter chain and redirect before the location can be stored.
+  before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   before_action :set_locale
   after_action :store_interaction, if: :user_signed_in?
+
 
   etag { current_user.try :id }
 
@@ -15,16 +17,25 @@ class ApplicationController < ActionController::Base
       return super
     end
     @current_user ||= super.tap do |user|
-      ::ActiveRecord::Associations::Preloader.new
-                                             .preload(user, [:courses,
-                                                             :lectures,
-                                                             :edited_media,
-                                                             :clickers,
-                                                             edited_courses: [:editors, lectures: [:term, :teacher]],
-                                                             edited_lectures: [:course, :term, :teacher],
-                                                             given_lectures: [:course, :term, :teacher],
-                                                             course_user_joins: [:course],
-                                                             notifications: [:notifiable]])
+      ::ActiveRecord::Associations::Preloader.new(records: [user],
+                                                  associations:
+                                                    [:lectures,
+                                                     :edited_media,
+                                                     :clickers,
+                                                     edited_courses:
+                                                       [:editors,
+                                                        lectures: [:term,
+                                                                   :teacher]],
+                                                     edited_lectures:
+                                                       [:course,
+                                                        :term,
+                                                        :teacher],
+                                                     given_lectures:
+                                                      [:course,
+                                                       :term,
+                                                       :teacher],
+                                                     notifications:
+                                                       [:notifiable]]).call
     end
   end
 
@@ -40,14 +51,28 @@ class ApplicationController < ActionController::Base
 
   # determine where to send the user after login
   def after_sign_in_path_for(resource_or_scope)
-    # checks if user consented to DSGVO and has ever edited his/her profile
-    # if profile was never edited, redirect to profil editing
-    stored_location_for(resource_or_scope) || super
+    # see https://github.com/heartcombo/devise/wiki/How-To:-Redirect-back-to-current-page-after-sign-in,-sign-out,-sign-up,-update
+    # see https://www.rubydoc.info/github/plataformatec/devise/Devise%2FControllers%2FHelpers:after_sign_in_path_for
+    stored = stored_location_for(resource_or_scope)
+    if stored.present? && stored != super
+      stored
+    else
+      start_path
+    end
   end
 
-#  def self.default_url_options(options={})
-#    options.merge({ :locale => I18n.locale })
-#  end
+  def prevent_caching
+    response.headers["Cache-Control"] = "no-cache, no-store"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "Mon, 01 Jan 1990 00:00:00 GMT"
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    # add additional paramters to registration
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:locale, :consents])
+  end
 
   private
 
@@ -69,11 +94,8 @@ class ApplicationController < ActionController::Base
   end
 
   def set_locale
-    if params[:locale].in?(I18n.available_locales.map(&:to_s))
-      locale_param = params[:locale]
-    end
     I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookies[:locale] || I18n.default_locale
+                    cookie_locale_param || I18n.default_locale
     unless user_signed_in?
       cookies[:locale] = I18n.locale
     end
@@ -82,14 +104,30 @@ class ApplicationController < ActionController::Base
   def store_interaction
     return if controller_name.in?(['sessions', 'administration', 'users',
                                    'events', 'interactions', 'profile',
-                                   'clickers', 'votes', 'registrations'])
+                                   'clickers', 'clicker_votes', 'registrations'])
     return if controller_name == 'main' && action_name == 'home'
     return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
+    study_participant = current_user.anonymized_id if current_user.study_participant
     # as of Rack 2.0.8, the session_id is wrapped in a class of its own
     # it is not a string anymore
     # see https://github.com/rack/rack/issues/1433
     InteractionSaver.perform_async(request.session_options[:id].public_id,
                                    request.original_fullpath,
-                                   request.referrer)
+                                   request.referrer,
+                                   study_participant)
+  end
+
+  def locale_param
+    return unless params[:locale].in?(available_locales)
+    params[:locale]
+  end
+
+  def cookie_locale_param
+    return unless cookies[:locale].in?(available_locales)
+    cookies[:locale]
+  end
+
+  def available_locales
+    I18n.available_locales.map(&:to_s)
   end
 end

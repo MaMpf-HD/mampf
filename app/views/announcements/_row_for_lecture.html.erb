@@ -1,25 +1,30 @@
-<div class="col-2">
-  <%= human_readable_date(announcement.created_at) %>
-</div>
-<div class="col-2">
-  <%= announcement.announcer.name %>
-</div>
-<div class="col-7">
-  <%= announcement.details.html_safe %>
-</div>
-<div class="col-1 text-right">
-  <%= link_to notification_path(notification),
-              class: 'removeLectureNotification',
-              remote: true,
-              method: :delete,
-              data:
-                { id: notification.id,
-                  lecture: lecture.id,
-                  onenew: t('notifications.lecture.one_new'),
-                  morenew: t('notifications.lecture.more_new') } do %>
-    <i class="fas fa-check text-dark"
-       data-toggle="tooltip"
-       title="<%= t('basics.mark_as_read') %>">
-    </i>
-  <% end %>
+<div class="list-group-item list-group-item-info"
+     data-listItemNotification="<%= notification.id %>">
+  <div class="row">
+    <div class="col-2">
+      <%= human_readable_date(notification.notifiable.created_at) %>
+    </div>
+    <div class="col-2">
+      <%= notification.notifiable.announcer.name %>
+    </div>
+    <div class="col-7">
+      <%= notification.notifiable.details.html_safe %>
+    </div>
+    <div class="col-1 text-right">
+      <%= link_to notification_path(notification),
+                  class: 'removeLectureNotification',
+                  remote: true,
+                  method: :delete,
+                  data:
+                    { id: notification.id,
+                      lecture: lecture.id,
+                      onenew: t('notifications.lecture.one_new'),
+                      morenew: t('notifications.lecture.more_new') } do %>
+        <i class="fas fa-check text-dark"
+           data-toggle="tooltip"
+           title="<%= t('basics.mark_as_read') %>">
+        </i>
+      <% end %>
+    </div>
+  </div>
 </div>

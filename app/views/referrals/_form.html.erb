@@ -62,7 +62,11 @@
                      grouped_options_for_select(grouped_teachable_list,
                                                 teachable_selector(referral)),
                      { prompt: t('basics.select') },
-                     { class: 'selectize' } %>
+                     { class: 'selectize',
+                       data:
+                         { 'can-create-external-link' =>
+                              ItemAbility.new(current_user)
+                                         .can?(:create, Item.new) } } %>
       </div>
     </div>
     <div id="item_select" class="form-group form-row">
@@ -146,81 +150,9 @@
       </div>
     </div>
     <div id="item_details"
-         style="display: <%= hide(show_link(referral) || referral.new_record?) %>">
-      <div class="form-group form-row">
-        <div class="col-2">
-        </div>
-        <div class="col-10">
-          <%= helpdesk(t('admin.referral.info.media'), false) %>
-          <%= t('basics.media') %>:
-          <i class="fas fa-eye-slash fa-lg redtext ml-2"
-             id="unpublished_medium_item"
-             style="display: <%= show_no_block(!referral.item_published?) %>"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('admin.referral.info.unpublished_medium') %>">
-          </i>
-          <i class="fas fa-lock fa-lg redtext ml-2"
-             id="locked_medium_item"
-             style="display: <%= show_no_block(referral.item_locked?) %>"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('admin.referral.info.locked_medium') %>">
-          </i>
-          <i class="fas fa-notes-medical fa-lg redtext ml-2"
-             id="locked_medium_item"
-             style="display: <%= show_no_block(referral.item_in_quarantine?) %>"
-             tabindex="-1"
-             data-toggle="tooltip"
-             title="<%= t('admin.referral.info.quarantine_item') %>">
-          </i>
-          <a id="video-ref"
-             href="<%= referral.item&.video_link %>"
-             class="fas fa-film fa-lg mx-2 text-dark"
-             style="text-decoration: none;
-                    display: <%= show_no_block(referral.video?) %>"
-             data-toggle="tooltip"
-             title="<%= t('video.video') %>"
-             target="_blank">
-          </a>
-          <a id="manuscript-ref"
-             href="<%= referral.item&.manuscript_link %>"
-             class="far fa-file-pdf fa-lg mx-2 text-dark"
-             style="text-decoration: none;
-                    display: <%= show_no_block(referral.manuscript?) %>"
-             data-toggle="tooltip"
-             title="<%= t('manuscript.manuscript') %>"
-             target="_blank">
-          </a>
-          <a id="quiz-ref"
-             href="<%= referral.item&.quiz_link %>"
-             class="fas fa-gamepad fa-lg mx-2 text-dark"
-             style="text-decoration: none;
-                    display: <%= show_no_block(referral.quiz?) %>"
-             data-toggle="tooltip"
-             title="<%= t('quiz.quiz') %>"
-             target="_blank">
-          </a>
-          <a id="medium-link-ref"
-             href="<%= referral.item&.medium_link %>"
-             class="fas fa-link fa-lg mx-2 text-dark"
-             style="text-decoration: none;
-                    display: <%= show_no_block(referral.medium_link?) %>"
-             data-toggle="tooltip"
-             title="externer Link"
-             target="_blank">
-          </a>
-        </div>
-      </div>
-      <div class="row mb-3">
-        <div class="col-2">
-        </div>
-        <div class="col-8">
-          <div class="invalid-feedback"
-               id="ref-error">
-          </div>
-        </div>
-      </div>
+     style="display: <%= hide(show_link(referral) || referral.new_record?) %>">
+      <%= render partial: 'referrals/item_details',
+                 locals: { item: referral.item } %>
     </div>
     <div id="explanation_details"
          style="display: <%= show(show_explanation(referral)) %>;">

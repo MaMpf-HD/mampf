@@ -1,0 +1,67 @@
+---
+version: '3.4'
+services:
+  redis:
+    image: "redis:6.2.6-alpine"
+
+  solr:
+    image: "solr:8.11.1"
+    container_name: mampf_solr_test
+    volumes:
+      - type: bind
+        source: ../../solr/development/conf/
+        target: /solrconfig/
+        read_only: true
+    command: ["solr-precreate", "test", "/solrconfig"]
+
+  db:
+    image: postgres:13
+    container_name: mampf_db_test
+    environment:
+      - POSTGRES_USER=mampf
+      - POSTGRES_DB=mampf
+      - POSTGRES_HOST_AUTH_METHOD=trust
+
+  mailcatcher:
+    restart: on-failure:10
+    image: dockage/mailcatcher:latest
+
+  mampf:
+    build:
+      context: ./../..
+      dockerfile: docker/run_tests/Dockerfile
+    image: mampf:tests
+    container_name: mampf_mampf_test
+    entrypoint: ./docker/run_tests/run_tests.sh
+    environment:
+      RAILS_ENV: test
+      TEST_DATABASE_ADAPTER: postgresql
+      TEST_DATABASE_DATABASE: mampf
+      TEST_DATABASE_INTERACTIONS: interactions
+      TEST_DATABASE_USERNAME: mampf
+      TEST_DATABASE_HOST: db
+      TEST_DATABASE_PORT: 5432
+      MAILSERVER: mailcatcher
+      FROM_ADDRESS: development@localhost
+      URL_HOST: localhost
+      PROJECT_EMAIL: project@localhost
+      PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
+      ERROR_EMAIL: error@localhost
+      INSTANCE_PATH: mampf
+      REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
+      SOLR_PATH: /solr/test
+    volumes:
+      - type: bind
+        source: ../../app/
+        target: /usr/src/app/app/
+      - type: bind
+        source: ../../spec/
+        target: /usr/src/app/spec/
+      - /usr/src/app/completed_initial_run
+    depends_on:
+      - db
+      - solr
+      - redis
+      - mailcatcher

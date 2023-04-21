@@ -78,8 +78,8 @@
         <%= f.label :description, t('basics.description') %>
         <%= helpdesk(t('admin.item.info.description'), false) %>
       </div>
-      <div class="col-auto">
-        <%= f.text_field :description, { size: 50, class: 'form-control' } %>
+      <div class="col-10">
+        <%= f.text_field :description, { class: 'form-control' } %>
       </div>
     </div>
     <% if item.manuscript? %>

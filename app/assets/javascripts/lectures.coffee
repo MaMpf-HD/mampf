@@ -6,7 +6,7 @@ disableExceptOrganizational = ->
   $('#lecture-organizational-warning').show()
   $('.fa-edit').hide()
   $('.new-in-lecture').hide()
-  $('[data-toggle="collapse"]').addClass('disabled')
+  $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
   return
 
 $(document).on 'turbolinks:load', ->
@@ -20,14 +20,29 @@ $(document).on 'turbolinks:load', ->
     $('#lecture-basics-warning').show()
     $('.fa-edit:not(#update-teacher-button,#update-editors-button)').hide()
     $('.new-in-lecture').hide()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     return
 
   # if any input is given to the preferences form, disable other input
   $('#lecture-preferences-form :input').on 'change', ->
     $('#lecture-preferences-warning').show()
-    $('[data-toggle="collapse"]').addClass('disabled')
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.fa-edit').hide()
+    $('.new-in-lecture').hide()
+    return
+
+  # if any input is given to the comments form, disable other input
+  $('#lecture-comments-form :input').on 'change', ->
+    $('#lecture-comments-warning').show()
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
+    $('.fa-edit').hide()
+    $('.new-in-lecture').hide()
+    return
+
+  # if any input is given to the assignments form, disable other input
+  $('#lecture-assignments-form :input').on 'change', ->
+    $('#lecture-assignments-warning').show()
+    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.new-in-lecture').hide()
     return
 
@@ -38,16 +53,15 @@ $(document).on 'turbolinks:load', ->
 
   trixElement = document.querySelector('#lecture-concept-trix')
   if trixElement?
-    trixElement.addEventListener 'trix-initialize', ->
-      content = this.dataset.content
-      editor = trixElement.editor
-      editor.setSelectedRange([0,65535])
-      editor.deleteInDirection("forward")
-      editor.insertHTML(content)
-      document.activeElement.blur()
-      trixElement.addEventListener 'trix-change', ->
-        disableExceptOrganizational()
-        return
+    content = trixElement.dataset.content
+    editor = trixElement.editor
+    editor.setSelectedRange([0,65535])
+    editor.deleteInDirection("forward")
+    editor.insertHTML(content)
+    document.activeElement.blur()
+    trixElement.addEventListener 'trix-change', ->
+      disableExceptOrganizational()
+      return
 
   # if absolute numbering box is checked/unchecked, enable/disable selection of
   # start section
@@ -58,19 +72,30 @@ $(document).on 'turbolinks:load', ->
       $('#lecture_start_section').prop('disabled', true)
     return
 
-  # rewload current page if lecture basics editing is cancelled
+  # reload current page if lecture basics editing is cancelled
   $('#lecture-basics-cancel').on 'click', ->
     location.reload(true)
     return
 
-  # rewload current page if lecture preferences editing is cancelled
+  # reload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-preferences').on 'click', ->
     location.reload(true)
     return
 
-   # rewload current page if lecture preferences editing is cancelled
+   # reload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-organizational').on 'click', ->
     location.reload(true)
+    return
+
+  # restore assignments form if lecture assignments editing is cancelled
+  $('#cancel-lecture-assignments').on 'click', ->
+    $('#lecture-assignments-warning').hide()
+    $('[data-toggle="collapse"]').prop('disabled', false).addClass('clickable')
+    $('.new-in-lecture').show()
+    maxSize = $('#lecture_submission_max_team_size').data('value')
+    $('#lecture_submission_max_team_size').val(maxSize)
+    gracePeriod = $('#lecture_submission_grace_period').data('value')
+    $('#lecture_submission_grace_period').val(gracePeriod)
     return
 
   # hide the media tab if hide media button is clicked
@@ -188,7 +213,7 @@ $(document).on 'turbolinks:load', ->
     $('.tagbadgeshort').show()
     $('.courseMenuItemShort').show()
     $('#secondnav').show()
-    $('#coursesDrop').appendTo($('#secondnav'))
+    $('#lecturesDropdown').appendTo($('#secondnav'))
     $('#notificationDropdown').appendTo($('#secondnav'))
     $('#searchField').appendTo($('#secondnav'))
     $('#second-admin-nav').show()
@@ -199,6 +224,8 @@ $(document).on 'turbolinks:load', ->
     $('#adminMain').css('flex-direction', 'row')
     $('#adminHome').css('padding-right', '0.5rem')
     $('#adminCurrentLecture').css('padding-right', '0.5rem')
+    $('#adminSearch').css('padding-right', '0.5rem')
+    $('#mampfbrand').hide()
     return
 
     # on large display, use normal tag badges and course titles
@@ -208,7 +235,7 @@ $(document).on 'turbolinks:load', ->
     $('.tagbadgeshort').hide()
     $('.courseMenuItemShort').hide()
     $('#secondnav').hide()
-    $('#coursesDrop').appendTo($('#firstnav'))
+    $('#lecturesDropdown').appendTo($('#firstnav'))
     $('#notificationDropdown').appendTo($('#firstnav'))
     $('#searchField').appendTo($('#firstnav'))
     $('#second-admin-nav').hide()
@@ -219,9 +246,11 @@ $(document).on 'turbolinks:load', ->
     $('#adminMain').removeAttr('style')
     $('#adminHome').removeAttr('style')
     $('#adminCurrentLecture').removeAttr('style')
+    $('#adminSearch').removeAttr('style')
+    $('#mampfbrand').show()
     return
 
-    # highlight tagbadges if screen is very small
+  # highlight tagbadges if screen is very small
   if window.matchMedia("screen and (max-width: 767px)").matches
     mobileDisplay()
 
@@ -254,10 +283,70 @@ $(document).on 'turbolinks:load', ->
       largeDisplay()
     return
 
+  $('#erdbeere_structures_heading').on 'click', ->
+    lectureId = $(this).data('lecture')
+    loading = $(this).data('loading')
+    $('#erdbeereStructuresBody').empty().append(loading)
+    $.ajax Routes.edit_structures_path(lectureId),
+      type: 'GET'
+      dataType: 'script'
+    return
+
+  $lectureStructures = $('#lectureStructuresInfo')
+  if $lectureStructures.length > 0
+    structures = $lectureStructures.data('structures')
+    for s in structures
+      $('#structure-item-' + s).show()
+
+  $('#switchGlobalStructureSearch').on 'click', ->
+    if $(this).is(':checked')
+      $('[id^="structure-item-"]').show()
+    else
+      $('[id^="structure-item-"]').hide()
+      structures = $lectureStructures.data('structures')
+      for s in structures
+        $('#structure-item-' + s).show()
+    return
+
+  $(document).on 'change', '#lecture_course_id', ->
+    $('#lecture_term_id').removeClass('is-invalid')
+    $('#new-lecture-term-error').empty()
+    courseId = parseInt($(this).val())
+    termInfo = $(this).data('terminfo').filter (x) -> x[0] == courseId
+    console.log termInfo[0]
+    if (termInfo[0]?)
+      if termInfo[0][1]
+        $('#newLectureTerm').hide()
+        $('#lecture_term_id').prop('disabled', true)
+        $('#newLectureSort').hide()
+      else
+        $('#newLectureTerm').show()
+        $('#lecture_term_id').prop('disabled', false)
+        $('#newLectureSort').show()
+      return
+
+  $(document).on 'change', '#medium_publish_media_0', ->
+    $('[id^="medium_released_"]').attr('disabled', true)
+    $('#access-text').css('color','grey')
+    return
+
+  $(document).on 'change', '#medium_publish_media_1', ->
+    $('[id^="medium_released_"]').attr('disabled', false)
+    $('#access-text').css('color','')
+    return
+
+  $('#import_sections').on 'change', ->
+    if $(this).prop('checked')
+      $('#import_tags').prop('disabled', false)
+    else
+      $('#import_tags').prop('disabled', true).prop('checked', false)
+    return
+
   return
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
   $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
   $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
+  $(document).off 'change', '#lecture_course_id'
   return

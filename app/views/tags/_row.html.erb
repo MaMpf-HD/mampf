@@ -5,8 +5,7 @@
   <ul class="list-unstyled">
     <% tag.courses.each do |c| %>
       <li>
-        <%= link_to c.title,
-                    edit_or_inspect_course_path(c)  %>
+        <%= course_link_or_text(c, current_user) %>
       </li>
     <% end %>
   </ul>
