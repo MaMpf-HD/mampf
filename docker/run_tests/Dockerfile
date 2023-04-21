@@ -16,6 +16,7 @@ WORKDIR /usr/src/app
 USER app
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-RUN bundle install && bundle exec rails webpacker:install webpacker:compile
+RUN bundle install && yarn install --production=false
+RUN bundle exec rails webpacker:install webpacker:compile
 
 COPY --chown=app:app ./ /usr/src/app/
