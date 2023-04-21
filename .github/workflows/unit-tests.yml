@@ -41,11 +41,9 @@ jobs:
     - name: Run unit tests
       working-directory: docker/run_cypress_tests
       run: docker compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test rails spec"
-
     - name: Send test coverage report to Codecov
       uses: codecov/codecov-action@v3
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: coverage/coverage.xml
+        files: ./coverage/coverage.xml
         fail_ci_if_error: true
         verbose: true
