@@ -1977,7 +1977,6 @@ en:
   details: 'Details'
   none: 'none'
   back: 'Back'
-  back_to_home: 'Back to home'
   today: 'today'
   yesterday: 'yesterday'
   chapter: 'Chapter %{number}. %{title}'

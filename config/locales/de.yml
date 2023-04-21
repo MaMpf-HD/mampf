@@ -2103,7 +2103,6 @@ de:
   details: 'Details'
   none: 'keine'
   back: 'Zurück'
-  back_to_home: 'Zurück zur Startseite'
   today: 'heute'
   yesterday: 'gestern'
   chapter: 'Kapitel %{number}. %{title}'
