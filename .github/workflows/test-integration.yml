@@ -29,7 +29,9 @@ jobs:
       - name: Build docker containers
         run: docker compose build
         working-directory: docker/run_cypress_tests
-
+      - name: Create and migrate DB
+        run: docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
+        working-directory: docker/run_cypress_tests
       - name: Run integration tests
         working-directory: docker/run_cypress_tests
         env:

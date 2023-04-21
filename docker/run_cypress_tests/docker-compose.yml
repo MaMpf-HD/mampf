@@ -90,6 +90,7 @@ services:
       - ../../spec/cypress/fixtures:/cypress/fixtures:ro
       - ../../spec/cypress.config.js:/cypress.config.js:ro
       - ../../.git:/.git:ro
+      - ../../coverage:/coverage
       # cypress outputs are saved here (needed only locally)
       #- ../../cypress/videos:/cypress/videos
       #- ../../cypress/screenshots:/cypress/screenshots
