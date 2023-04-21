@@ -16,6 +16,6 @@ WORKDIR /usr/src/app
 USER app
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-RUN bundle install && yarn install
+RUN bundle install
 
 COPY --chown=app:app ./ /usr/src/app/
