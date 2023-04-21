@@ -881,10 +881,6 @@ Rails.application.routes.draw do
       to: 'main#comments',
       as: 'comments'
 
-  get 'main/sponsors',
-      to: 'main#sponsors',
-      as: 'sponsors'
-
   get 'main/start',
       to: 'main#start',
       as: 'start'

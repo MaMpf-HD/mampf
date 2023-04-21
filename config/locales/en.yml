@@ -107,8 +107,6 @@ en:
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
       Background image by %{background_photo_credit}.
-    sponsors_html: >
-      %{sponsors}:
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'

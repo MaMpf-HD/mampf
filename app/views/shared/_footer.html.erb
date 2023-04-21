@@ -1,4 +1,17 @@
+<%= javascript_include_tag :footer_modal %>
+
 <% I18n.with_locale(current_user.try(:locale)) do %>
+
+<%# Sponsors modal %>
+<div id="sponsors" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Sponsors list modal" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-4">
+      <%= render partial: 'main/sponsors' %>
+    </div>
+  </div>
+</div>
+
+<%# Footbar %>
 <div class="container-fluid bg-grey-lighten-6 p-3">
   <div class="row">
     <div class="col text-md-left">
@@ -39,9 +52,8 @@
                             target: :_blank)) %>
     </div>
     <div class="col text-md-right">
-      <%= t('footer.sponsors_html',
-            sponsors: link_to(t('basics.sponsors'),
-                              sponsors_path)) %>
+      <a href="#sponsors" data-toggle="modal"
+          data-target="#sponsors"><%= t('basics.sponsors') %></a>
       <span style="margin-left: 20px;"></span>
       <a href="https://hse-heidelberg.de/"
          target="_blank"
