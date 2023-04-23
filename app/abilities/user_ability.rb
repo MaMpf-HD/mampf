@@ -15,7 +15,7 @@ class UserAbility
     end
 
     can :fill_user_select, User do
-      user.can_edit_teachables?
+      user.active_teachable_editor?
     end
 
     can :list_generic_users, User do

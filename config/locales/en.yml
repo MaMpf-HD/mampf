@@ -620,6 +620,11 @@ en:
       insert_after_chapter: 'Insert after %{chapter_name}'
       insert_after_section: 'Insert after section'
       subscribers: 'Subscribers'
+      no_access_to_users_html: >
+        This lecture is older than 1 year. For reasons of data privacy,
+        only the teahcer and course editors can make changes here.
+        If changes are necessary for some reason, you can contact the
+        site administrators by mail: %{project_mail}.
     clicker:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'

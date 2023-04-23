@@ -650,6 +650,11 @@ de:
       insert_after_chapter: 'Einfügen nach %{chapter_name}'
       insert_after_section: 'Einfügen nach Abschnitt'
       subscribers: 'AbonnentInnen'
+      no_access_to_users_html: >
+        Diese Vorlesung ist älter als ein Jahr. Aus Datenschutzgründen können
+        nur die DozentIn und ModuleditorInnen an dieser Stelle Änderungen
+        vornehmen. Sollten aus wichtigem Grund noch Änderungen an dieser Stelle
+        gemacht werden, kannst Du Dich per Email an %{project_mail} wenden.
     clicker:
       new_clicker: 'Neuen Clicker anlegen'
       user_link: 'Link für NutzerInnen'

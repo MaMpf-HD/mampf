@@ -213,7 +213,7 @@ class MediaController < ApplicationController
     authorize! :search, Medium.new
 
     # get all media, then set them to only those that are visible to the current user
-    if !current_user.can_edit_teachables? || search_params[:access].blank?
+    if !current_user.active_teachable_editor? || search_params[:access].blank?
       filter_media = true
       params["search"]["access"] = 'irrelevant'
     end

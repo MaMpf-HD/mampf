@@ -19,43 +19,48 @@
        aria-labelledby="heading"
        data-parent="#lectureAccordion">
     <div class="card-body">
-      <div class="row mb-3">
-        <div class="col-12 text-center">
-          <%= link_to t('admin.tutorial.new'),
-                      new_tutorial_path(params: { lecture_id: lecture.id }),
-                      class: 'btn btn-sm btn-primary',
-                      id: 'newTutorialButton',
-                      remote: true %>
-        </div>
-      </div>
-      <div class="list-group">
-        <div class="list-group-item bg-light"
-             id="tutorialListHeader"
-             style="display: <%= show(lecture.tutorials.any?) %>">
-          <div class="row">
-            <div class="col-4">
-              <h6>
-                <%= t('basics.title') %>
-              </h6>
-            </div>
-            <div class="col-4">
-              <h6>
-                <%= t('basics.tutors') %>
-              </h6>
-            </div>
-            <div class="col-4">
-              <h6>
-                <%= t('basics.action') %>
-                <%= helpdesk(t('tutorial.destruction_info'), true) %>
-              </h6>
-            </div>
+      <% if current_user.can_view_users?(lecture) %>
+        <div class="row mb-3">
+          <div class="col-12 text-center">
+            <%= link_to t('admin.tutorial.new'),
+                        new_tutorial_path(params: { lecture_id: lecture.id }),
+                        class: 'btn btn-sm btn-primary',
+                        id: 'newTutorialButton',
+                        remote: true %>
           </div>
         </div>
-        <% lecture.tutorials.each do |t| %>
-          <%= render partial: 'tutorials/row',
-                     locals: { tutorial: t } %>
-        <% end %>
-      </div>
+        <div class="list-group">
+          <div class="list-group-item bg-light"
+               id="tutorialListHeader"
+               style="display: <%= show(lecture.tutorials.any?) %>">
+            <div class="row">
+              <div class="col-4">
+                <h6>
+                  <%= t('basics.title') %>
+                </h6>
+              </div>
+              <div class="col-4">
+                <h6>
+                  <%= t('basics.tutors') %>
+                </h6>
+              </div>
+              <div class="col-4">
+                <h6>
+                  <%= t('basics.action') %>
+                  <%= helpdesk(t('tutorial.destruction_info'), true) %>
+                </h6>
+              </div>
+            </div>
+          </div>
+          <% lecture.tutorials.each do |t| %>
+            <%= render partial: 'tutorials/row',
+                       locals: { tutorial: t } %>
+          <% end %>
+        </div>
+      <% else %>
+          <%= t('admin.lecture.no_access_to_users_html',
+                project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+      <% end %>
     </div>
   </div>
 </div>

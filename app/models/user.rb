@@ -305,6 +305,18 @@ class User < ApplicationRecord
     admin? || teachable_editor_or_teacher?
   end
 
+  # if you are not a teacher of lecture or a module editor,
+  # but just an additional editor of some lecture, you
+  # will not be considered active if all of your edited lectures
+  # are older than one year
+  def active_teachable_editor?
+    return false unless can_edit_teachables?
+    return true if admin || course_editor? || teacher?
+
+    edited_lectures.select { |l| l.term.nil? || !l.older_than?(1.year)}
+                   .any?
+  end
+
   # a user is an editor iff he/she is a course editor or lecture editor or
   # editor of media that are not associated to talks
   def editor?
@@ -701,6 +713,17 @@ class User < ApplicationRecord
 
   def generic?
     !(admin? || teacher? || editor?)
+  end
+
+  # for lectures that are older than one year, only the teacher or an editor
+  # of the course it belongs to can view users in forms related to the lecture
+  def can_view_users?(lecture)
+    return false unless can_edit?(lecture)
+    return true if can_edit?(lecture.course) || lecture.teacher == self
+    return true if lecture.course.term_independent
+    return true if !lecture.older_than?(1.year)
+
+    false
   end
 
   private
