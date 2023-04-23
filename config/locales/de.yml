@@ -236,8 +236,7 @@ de:
           Veranstaltungen in rötlicher Farbe sind noch nicht veröffentlicht.
         given_lectures: >
           Dies ist eine Liste aller Veranstaltungen, die Du als
-          Dozent verantwortet hast. Für diese hast Du natürlich die
-          Bearbeitungsberechtigung.
+          Dozent hältst oder gehalten hast. Du kannst sie bearbeiten.
         edited_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
