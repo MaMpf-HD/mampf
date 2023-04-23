@@ -1,0 +1,84 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - main
+      - mampf-next
+      - production
+      - experimental
+  pull_request:
+
+jobs:
+  unit-test-job:
+    name: Execute unit tests & upload to Codecov
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+
+    - name: Pull docker images
+      run: docker compose pull --ignore-buildable
+      working-directory: docker/run_cypress_tests
+
+    - name: Use Docker layer caching # https://github.com/jpribyl/action-docker-layer-caching
+      uses: jpribyl/action-docker-layer-caching@v0.1.1
+      continue-on-error: true
+
+    - name: Build docker containers
+      run: docker compose build
+      working-directory: docker/run_cypress_tests
+    - name: Create and migrate DB
+      run: docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
+      working-directory: docker/run_cypress_tests
+    - name: Reindex sunspot
+      working-directory: docker/run_cypress_tests
+      run: |
+        docker compose run --entrypoint=""  mampf  sh -c "RAILS_ENV=test rake sunspot:reindex"
+
+    - name: Run unit tests
+      working-directory: docker/run_cypress_tests
+      run: docker compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test rails spec"
+    - name: Send test coverage report to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage/coverage.xml
+        fail_ci_if_error: true
+        verbose: true
+  e2e-test-job:
+    name: Run E2E tests & upload results to Cypress
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: unit-test-job
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Pull docker images
+        run: docker compose pull --ignore-buildable
+        working-directory: docker/run_cypress_tests
+
+      - name: Use Docker layer caching # https://github.com/jpribyl/action-docker-layer-caching
+        uses: jpribyl/action-docker-layer-caching@v0.1.1
+        continue-on-error: true
+
+      - name: Build docker containers
+        run: docker compose build
+        working-directory: docker/run_cypress_tests
+      - name: Create and migrate DB
+        run: docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
+        working-directory: docker/run_cypress_tests
+      - name: Run integration tests
+        working-directory: docker/run_cypress_tests
+        env:
+          # pass the Dashboard record key as an environment variable
+          CYPRESS_baseUrl: http://mampf:3000
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          # pass GitHub token to allow accurately detecting a build vs a re-run build
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: docker compose run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} --entrypoint="" cypress_runner sh -c "while ! curl  http://mampf:3000 ; do echo waiting for MaMpf to come online at http://mampf:3000; sleep 3; done; cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}"
+

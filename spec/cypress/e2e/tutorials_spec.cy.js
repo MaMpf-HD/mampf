@@ -43,9 +43,9 @@ describe("Tutorials", () => {
                 cy.visit(`lectures/${lectures[0].id}`);
                 cy.contains("Tutorien").should("exist");
                 cy.contains("Tutorien").click();
-                cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").should("exist");
-                cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").click();
-                cy.get('.col-sm-9 > .dropdown > .dropdown-menu > .dropdown-item').contains(lectures[2].title).click();
+                cy.get('main > .dropdown > .btn').contains("Tutorien").should("exist");
+                cy.get('main > .dropdown > .btn').contains("Tutorien").click();
+                cy.get('main > .dropdown > .dropdown-menu > .dropdown-item').contains(lectures[2].title).click();
                 cy.reload();
                 cy.contains("Übersicht").should("exist");
             });
@@ -87,9 +87,9 @@ describe("Tutorials", () => {
                 cy.visit(`lectures/${lectures[0].id}`);
                 cy.contains("Tutorien").should("exist");
                 cy.contains("Tutorien").click();
-                cy.contains("Übersicht").should("exist");
-                cy.contains("Übersicht").click();
-                cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").click();
+                cy.get('main').contains("Übersicht").should("exist");
+                cy.get('main').contains("Übersicht").click();
+                cy.get('main > .dropdown > .btn').contains("Tutorien").click();
                 cy.contains('Eigene Tutorien').should('exist');
                 cy.contains('Sonstige Tutorien').should('exist');
                 cy.get('.dropdown-menu').contains(lectures[2].title).should("exist");

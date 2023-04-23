@@ -88,8 +88,7 @@ describe("Watchlists", () => {
                 ]
 			]).then((data) => {
 				cy.visit('lectures/1');
-				cy.get('.nav > :nth-child(6) > .nav-link').click();
-                cy.get('.fa-bookmark').click();
+				cy.get('#watchlistsIcon').click();
                 cy.get('#watchlistButton').contains(`${data[0].name}`).should('exist');
 			});
         });
