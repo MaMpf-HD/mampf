@@ -1,26 +1,41 @@
-name: test-integration
-on: [push]
+name: Integration tests
+on:
+  push:
+    branches:
+      - main
+      - mampf-next
+      - production
+      - experimental
+  pull_request:
 jobs:
-  build:
+  e2e-test-job:
+    name: Run E2E tests & upload results to Cypress
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
           submodules: recursive
-      - run: docker-compose pull
+
+      - name: Pull docker images
+        run: docker compose pull --ignore-buildable
         working-directory: docker/run_cypress_tests
-      - uses: satackey/action-docker-layer-caching@v0.0.11
-        # Ignore the failure of a step and avoid terminating the job.
+
+      - name: Use Docker layer caching # https://github.com/jpribyl/action-docker-layer-caching
+        uses: jpribyl/action-docker-layer-caching@v0.1.1
         continue-on-error: true
-      - run: docker-compose build
+
+      - name: Build docker containers
+        run: docker compose build
         working-directory: docker/run_cypress_tests
-      - name: Test
+
+      - name: Run integration tests
         working-directory: docker/run_cypress_tests
         env:
           # pass the Dashboard record key as an environment variable
+          CYPRESS_baseUrl: http://mampf:3000
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: docker-compose run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} cypress_runner cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}
+        run: docker compose run -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} --entrypoint="" cypress_runner sh -c "while ! curl  http://mampf:3000 ; do echo waiting for MaMpf to come online at http://mampf:3000; sleep 3; done; cypress run --record --key ${{ secrets.CYPRESS_RECORD_KEY }}"

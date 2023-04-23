@@ -4,15 +4,17 @@
 <ul class="nav nav-pills flex-column">
 
   <%# Overview %>
-  <% fullpath = lecture_path(lecture)%>
-  <% active_class = get_class_for_path(lecture_path()) %>
-  <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture ? "disabled" : ""%>">
-    <a href="<%= url_for(fullpath)%>">
-      <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('basics.overview') %>
-    </a>
-  </li>
+  <% if lecture %>
+    <% fullpath = lecture_path(lecture)%>
+    <% active_class = get_class_for_path(lecture_path(lecture)) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !lecture ? "disabled" : ""%>">
+      <a href="<%= url_for(fullpath)%>">
+        <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t('basics.overview') %>
+      </a>
+    </li>
+  <% end %>
 
   <%# Lectures (Kaviar) %>
   <% project_name = 'kaviar' %>
@@ -201,8 +203,7 @@
     <%# Modul %>
     <% path = display_course_path(lecture) %>
     <% active_class = get_class_for_path(path) %>
-    <li class="sidebar-item nav-link <%= active_class %>
-            <%= !lecture.announcements.exists? ? "disabled" : ""%>">
+    <li class="sidebar-item nav-link <%= active_class %>">
       <a href="<%= url_for(path)%>">
         <i class="bi bi-hexagon<%= active_class.present? ? "-fill" : "" %>"></i>
         <%= t('categories.course') %>

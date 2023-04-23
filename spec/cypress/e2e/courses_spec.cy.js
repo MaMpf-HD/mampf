@@ -55,8 +55,8 @@ describe("Courses", function () {
                 cy.visit(`/courses/${records[0].id}/edit`);
                 cy.contains("Bild").should("exist");
                 cy.get("#image_heading").contains("Ein-/Ausklappen").click();
-                const yourFixturePath = 'files/image.png';
-                cy.get('#upload-image').attachFile(yourFixturePath);
+                const yourFixturePath = 'cypress/fixtures/files/image.png';
+                cy.get('#upload-image').selectFile(yourFixturePath,{force: true});
                 cy.contains("Upload").click();
                 cy.wait(100);
                 cy.contains("Speichern").click();
@@ -74,17 +74,11 @@ describe("Courses", function () {
                     'user_id':1
                 }]
             ]).then((records) => {
-                cy.server();
-                cy.route('**/new').as('new');
-                //cy.route('POST', '/lectures').as('courses');
                 cy.visit('/administration');
                 cy.get('a[title="Veranstaltung anlegen"]').click();
-                
-                //cy.wait('@new');
 
                 cy.get("#lecture_course_id-ts-control").type(records[0].title).type("{enter}");
                 cy.get("div#new-lecture-area").contains("Speichern").click();
-                //cy.wait('@courses');
                 cy.contains(records[0].title).should("exist");
                 cy.contains(`${records[1].season} ${records[1].year}`).should("exist");
             });
@@ -127,8 +121,8 @@ describe("Courses", function () {
                 ['create_list', 'lecture', 6, 'released_for_all']
             ]).then((records) => {
                 cy.visit("/main/start");
-                cy.contains("Veranstaltungssuche").click();
                 //cy.get('input[name="search[fulltext]"]').type(records[0][0].title)
+                cy.contains("Veranstaltungssuche").click();
                 cy.contains("Suche").click();
                 cy.get('[title="abonnieren"]').first().click();
                 cy.get('[title="abbestellen"]').should("exist");

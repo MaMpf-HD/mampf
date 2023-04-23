@@ -129,6 +129,7 @@ describe("Media", () => {
                 cy.visit(`lectures/${lectures[0].id}/edit`);
                 cy.contains("Medium anlegen").should("exist");
                 cy.contains("Medium anlegen").click();
+                cy.wait(1000);
                 cy.get('input[name="medium[description]"]').type("Media 1");
                 cy.wait(100);
                 cy.get('select[name="medium[sort]"]').select("Übung");

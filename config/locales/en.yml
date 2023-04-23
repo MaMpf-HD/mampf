@@ -107,8 +107,6 @@ en:
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
       Background image by %{background_photo_credit}.
-    sponsors_html: >
-      %{sponsors}:
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
@@ -1977,6 +1975,7 @@ en:
   details: 'Details'
   none: 'none'
   back: 'Back'
+  back_to_home: 'Back to home'
   today: 'today'
   yesterday: 'yesterday'
   chapter: 'Chapter %{number}. %{title}'

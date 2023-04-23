@@ -84,8 +84,6 @@ de:
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
       Hintergrundbild von %{background_photo_credit}.
-    sponsors_html: >
-      %{sponsors}:
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -2103,6 +2101,7 @@ de:
   details: 'Details'
   none: 'keine'
   back: 'Zurück'
+  back_to_home: 'Zurück zur Startseite'
   today: 'heute'
   yesterday: 'gestern'
   chapter: 'Kapitel %{number}. %{title}'

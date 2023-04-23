@@ -30,5 +30,8 @@ RUN bundle install
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
+COPY Gemfile Gemfile.lock package.json yarn.lock /usr/src/app/
+RUN bundle install && \
+    yarn  install --production=false
 COPY  ./ /usr/src/app/
 RUN RAILS_ENV=test TEST_DATABASE_ADAPTER=postgresql rake assets:precompile
