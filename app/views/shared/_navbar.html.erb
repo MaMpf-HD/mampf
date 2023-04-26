@@ -1,106 +1,92 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
-<nav class="navbar navbar-expand navbar-dark bg-dark" id="firstnav">
-  <div class="container-fluid">
-    <%= link_to image_tag('/MaMpf-Logo_32x32.png',
-                          class: 'img-fluid me-2'),
+<%= stylesheet_link_tag 'navbar' %>
+<div class="navbars-container">
+  <nav class="navbar navbar-expand" id="firstnav">
+    <%= link_to image_tag('MaMpf-Logo.svg',
+                          class: 'me-2',
+                          id: 'mampf-logo'),
                 home_path %>
     <%= link_to "MaMpf",
                 home_path,
-                class: 'navbar-brand ',
+                class: 'navbar-brand',
                 style: "text-decoration: none;",
                 id: 'mampfbrand' %>
-    <ul class="navbar-nav me-auto">
-      <% if user_signed_in? %>
+      <ul class="navbar-nav mr-auto" id="navbar-buttons">
+        <li class="nav-item">
+          <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
+            || !get_class_for_path(root_path()).empty? %>
+          <a href="<%= start_path %>"
+            class="nav-link bi bi-house-fill <%= is_home_active ? $active_css_class : '' %>"
+            data-bs-toggle="tooltip"
+            title="<%= t('navbar.home') %>">
+          </a>
+        </li>
+
         <li class="nav-item">
           <a href="<%= edit_profile_path %>"
-            class="fas fa-user-cog fa-lg text-light nav-link"
-            style="text-decoration: none; "
+            class="nav-link bi bi-person-circle <%= get_class_for_path(edit_profile_path()) %>"
             data-bs-toggle="tooltip"
             title="<%= t('navbar.profile') %>">
           </a>
         </li>
+
         <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
-              class="fas fa-tools fa-lg text-light nav-link"
-              style="text-decoration: none; "
+              class="nav-link bi bi-tools"
               data-bs-toggle="tooltip"
               title="<%= t('navbar.administration') %>">
             </a>
           </li>
         <% end %>
+
         <li class="nav-item">
           <a href="<%= watchlists_path %>"
             id="watchlistsIcon"
-            class="fas fa-list fa-lg text-light nav-link"
-            style="text-decoration: none; "
+            class="nav-link bi bi-tv-fill <%= get_class_for_path_startswith(watchlists_path()) %>"
             data-bs-toggle="tooltip"
             title="<%= t('navbar.watchlist') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= comments_path %>"
             id="commentsIcon"
-            class="far fa-comments fa-lg <%= current_user.unread_comments ? 'text-primary' : 'text-light' %> nav-link"
-            style="text-decoration: none; "
+            class="nav-link bi bi-chat-quote-fill
+                <%= current_user.unread_comments ? 'new-comment' : '' %>
+                <%= get_class_for_path(comments_path()) %>"
             data-bs-toggle="tooltip"
             title="<%= t('navbar.comments') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= news_path %>"
-            class="far fa-newspaper fa-lg text-light nav-link"
-            style="text-decoration: none; "
+            class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"
             data-bs-toggle="tooltip"
             title="<%= t('navbar.news') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= DefaultSetting::BLOG_LINK %>"
-            class="fas fa-blog fa-lg text-light nav-link"
-            style="text-decoration: none; "
+            class="nav-link bi bi-newspaper"
             data-bs-toggle="tooltip"
             title="<%= t('navbar.blog') %>">
           </a>
         </li>
+
         <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
-            class="fas fa-sign-out-alt fa-lg text-light nav-link"
-            style="text-decoration: none; "
+            class="nav-link bi bi-box-arrow-right"
             data-bs-toggle="tooltip"
             data-method="delete"
             title="<%= t('navbar.logout') %>">
           </a>
         </li>
-      <% else %>
-        <li class="nav-item">
-          <a href="<%= new_user_session_path(params: { locale: I18n.locale}) %>"
-            class="fas fa-sign-in-alt fa-lg text-light nav-link"
-            style="text-decoration: none; "
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.login') %>">
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="<%= news_path(params: { locale: I18n.locale}) %>"
-            class="far fa-newspaper fa-lg text-light nav-link"
-            style="text-decoration: none; "
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.news') %>">
-          </a>
-        </li>
-        <li class="nav-item">
-          <a href="<%= DefaultSetting::BLOG_LINK %>"
-            class="fas fa-blog fa-lg text-light nav-link"
-            style="text-decoration: none; "
-            data-bs-toggle="tooltip"
-            title="<%= t('navbar.blog') %>">
-          </a>
-        </li>
-      <% end %>
-    </ul>
-    <% if user_signed_in? %>
-      <ul class="navbar-nav me-auto" id="lecturesDropdown">
+      </ul>
+
+      <ul class="navbar-nav ms-auto me-auto" id="lecturesDropdown">
         <%= render partial: 'shared/dropdown_lectures',
                   locals: { lecture: @lecture || current_lecture } %>
       </ul>
@@ -114,15 +100,9 @@
                             class: 'form-control me-sm-2',
                             placeholder: t('navbar.search') %>
       <% end %>
-    <% end %>
-    <% if !user_signed_in?  && I18n.available_locales.count > 1 %>
-      <ul class="navbar-nav" id="languagesDrop">
-        <%= render partial: 'shared/dropdown_locales' %>
-      </ul>
-    <% end %>
-  </div>
-</nav>
-<nav class="navbar navbar-expand navbar-dark bg-dark" id="secondnav"
-     style="display: none;">
-</nav>
+  </nav>
+  <nav class="navbar navbar-expand" id="secondnav"
+      style="display: none;">
+  </nav>
+</div>
 <% end %>

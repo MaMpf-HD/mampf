@@ -2,17 +2,24 @@
 <html>
   <head>
     <%= render partial: 'layouts/head' %>
+    <%= stylesheet_link_tag 'sidebar' %>
   </head>
-  <body data-locale="<%= I18n.locale %>">
+  <body data-locale="<%= I18n.locale %>"
+      class="d-flex flex-column min-vh-100">
     <%= render partial: 'shared/navbar' %>
-    <div class="container-fluid">
-      <div class="row">
-        <nav id="sidebar"
-             class="col-sm-3 col-md-2 d-block bg-blue-gray-lighten-5 pt-3">
-          <%= render partial: 'shared/sidebar',
-                     locals: { lecture: @lecture || current_lecture } %>
-        </nav>
-        <main class="col-sm-9 ms-sm-auto col-md-10 pt-3" role="main">
+    <div class="d-flex container-fluid flex-grow-1">
+      <div class="row" id="main-content-row">
+        <% lecture = @lecture || current_lecture %>
+        <% if lecture %>
+          <div id="sidebar-container"
+            class="col-sm-4 col-md-3 col-xl-2">
+            <nav id="sidebar">
+              <%= render partial: 'shared/sidebar',
+                         locals: { lecture: lecture } %>
+            </nav>
+          </div>
+        <% end %>
+        <main class="col-sm-8 ms-auto col-md-9 col-xl-10 pt-3" role="main">
           <div class="alert alert-danger" id="js-messages" role="alert"
                style="display: none;">
           </div>
@@ -31,7 +38,7 @@
       </div>
     </div>
     <div id="modal-container"></div>
-    <footer>
+    <footer class="container-fluid mt-4 p-0">
       <%= render partial: 'shared/footer' %>
     </footer>
   </body>

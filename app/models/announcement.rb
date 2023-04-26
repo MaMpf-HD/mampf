@@ -8,6 +8,8 @@ class Announcement < ApplicationRecord
 
   paginates_per 10
 
+  scope :active_on_main, -> { where(on_main_page: true, lecture:nil) }
+
   # does there (still) exist a notification for the announcement for
   # the given user
   def active?(user)

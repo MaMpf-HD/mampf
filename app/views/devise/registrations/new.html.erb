@@ -22,7 +22,7 @@
                 class: "form-label" %>
     <%= f.password_field :password_confirmation, class: 'form-control' %>
   </div>
-  <div class="mb-3">
+  <div class="mb-3 d-block">
     <%= f.check_box :consents,
                     id: 'dsgvo-consent',
                     data: { noconsent: t('profile.no_consent') } %>
@@ -30,7 +30,7 @@
                 t('.consent_html',
                   policy: link_to(t('.policy'),
                                   'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
-                                  target: :_blank)) %>
+                                  target: :_blank)), class: "d-inline", for: "dsgvo-consent" %>
   </div>
   <%= f.hidden_field :locale, value: I18n.locale %>
   <% if ENV['USE_CAPTCHA_SERVICE']%>

@@ -1,0 +1,44 @@
+.navbars-container {
+    background: linear-gradient(110deg, #223e62 0%, #405d75 100%);
+}
+
+#mampfbrand {
+    color: white;
+    font-weight: bold;
+    filter: drop-shadow(1px 4px 7px rgba(0, 0, 0, 0.2));
+}
+
+#mampf-logo {
+    width: 35px;
+}
+
+.navbar-nav a {
+    filter: drop-shadow(1px 4px 7px rgba(0, 0, 0, 0.2));
+}
+
+.navbar {
+    box-shadow: 1px 4px 7px -2px rgba(0, 0, 0, 0.1);
+    z-index: 1000; // place navbar and its shadow on top of everything
+    padding: 0.5rem 1rem;
+}
+
+#navbar-buttons a {
+    text-decoration: none;
+    font-size: 1.35rem;
+    padding: 0 9px;
+    color: white;
+
+    &::after {
+        &.active-item {
+            content: "\2022";
+            font-size: 1rem;
+            position: absolute;
+            top: 21px;
+            left: 16px;
+        }
+    }
+}
+
+.new-comment {
+    color: #ffc107 !important;
+}

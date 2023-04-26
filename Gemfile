@@ -1,10 +1,10 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.1.2'
+ruby '3.1.4'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem "rails", "~> 7.0.2.3"
+gem "rails", "~> 7.0.4.3"
 # Use dalli for caching to memcached in production
 gem "dalli", ">= 2.7"
 # Ruby wrapper for UglifyJS JavaScript compressor
@@ -71,13 +71,11 @@ gem "acts_as_tree"
 gem "activerecord-import",
   git: "https://github.com/zdennis/activerecord-import.git",
   branch: "master"
-gem "thredded",
-  git: "https://github.com/MaMpf-HD/thredded.git",
-  branch: "master"
+gem "thredded"
 gem "kramdown-parser-gfm"
 gem "thredded-markdown_katex",
-  github: "thredded/thredded-markdown_katex",
-  branch: "master"
+  git: "https://github.com/thredded/thredded-markdown_katex.git",
+  branch: "main"
 gem "rails-i18n"
 gem "kaminari-i18n"
 gem "trix-rails", require: "trix"

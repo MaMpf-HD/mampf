@@ -100,82 +100,74 @@ trix-toolbar .trix-button-row {
   font-size: 0.75em;
 }
 
-.quiz
-{
+.quiz {
   font-family: 'Cabin', sans-serif;
 }
 
-.correct
-{
+.correct {
   color: green;
 }
 
-.incorrect
-{
+.incorrect {
   color: red;
 }
 
-.card-xl
-{
+.card-xl {
   max-height: 75vh;
   overflow-y: scroll;
 }
 
-.card-large
-{
+.card-large {
   max-height: 70vh;
   overflow-y: scroll;
 }
 
-.card-medium
-{
+.card-medium {
   max-height: 60vh;
   overflow-y: scroll;
 }
 
 
-.card-compact
-{
+.card-compact {
   max-height: 50vh;
   overflow-y: scroll;
 }
 
-.card-tiny
-{
+.card-tiny {
   max-height: 30vh;
   overflow-y: scroll;
 }
 
-.card-fixed-xxl
-{
+.card-fixed-xxl {
   height: 85vh;
 }
 
-.card-fixed-medium
-{
+.card-fixed-medium {
   height: 65vh;
 }
 
-.card-fixed-small
-{
+.card-fixed-small {
   height: 20vh;
 }
 
-.scrollable
-{
+.scrollable {
   overflow-y: scroll;
 }
 
 
-$modal-xl:                    1140px !default;
-$modal-xxl:                   1600px !default;
+$modal-xl: 1140px !default;
+$modal-xxl: 1600px !default;
 
 @include media-breakpoint-up(xl) {
-  .modal-xl { max-width: $modal-xl; }
+  .modal-xl {
+    max-width: $modal-xl;
+  }
 }
 
 @include media-breakpoint-up(xxl) {
-  .modal-xxl { max-width: $modal-xxl; }
+  .modal-xxl {
+    max-width: $modal-xxl;
+  }
 }
 
 
@@ -199,24 +191,31 @@ $modal-xxl:                   1600px !default;
   @include media-breakpoint-only(xxxxl) {
     column-count: 2;
   }
+
   @include media-breakpoint-only(xxxl) {
     column-count: 2;
   }
+
   @include media-breakpoint-only(xxxl) {
     column-count: 2;
   }
+
   @include media-breakpoint-only(xxl) {
     column-count: 2;
   }
+
   @include media-breakpoint-only(xl) {
     column-count: 1;
   }
+
   @include media-breakpoint-only(lg) {
     column-count: 1;
   }
+
   @include media-breakpoint-only(md) {
     column-count: 1;
   }
+
   @include media-breakpoint-only(sm) {
     column-count: 1;
   }
@@ -238,17 +237,16 @@ $modal-xxl:                   1600px !default;
   display: none;
 }
 
-.revertCommontator
-{
+.revertCommontator {
   all: unset;
 }
 
 table.submission-table-bordered th {
-  border:1px solid #c5ccd3;
+  border: 1px solid #c5ccd3;
 }
 
 table.submission-table-bordered td {
-  border:1px solid #c5ccd3;
+  border: 1px solid #c5ccd3;
 }
 
 .exceptionBox {
@@ -292,6 +290,10 @@ table.submission-table-bordered td {
   direction: ltr;
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
+}
+
+#main-content-row {
+  min-width: 100%;
 }
 
 a {
