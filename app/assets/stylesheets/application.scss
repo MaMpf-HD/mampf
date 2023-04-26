@@ -298,8 +298,25 @@ table.submission-table-bordered td {
 
 a {
   text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &.badge {
+
+    &:hover,
+    &:focus {
+      background-color: #545b62 !important;
+    }
+  }
 }
 
-a:hover {
-  text-decoration: underline;
+.badge {
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:hover {
+    text-decoration: none;
+    color: var(--bs-badge-color);
+  }
 }
