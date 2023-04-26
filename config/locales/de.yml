@@ -84,8 +84,6 @@ de:
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
       Hintergrundbild von %{background_photo_credit}.
-    sponsors_html: >
-      %{sponsors}:
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -238,8 +236,7 @@ de:
           Veranstaltungen in rötlicher Farbe sind noch nicht veröffentlicht.
         given_lectures: >
           Dies ist eine Liste aller Veranstaltungen, die Du als
-          Dozent verantwortet hast. Für diese hast Du natürlich die
-          Bearbeitungsberechtigung.
+          Dozent hältst oder gehalten hast. Du kannst sie bearbeiten.
         edited_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
@@ -2103,6 +2100,7 @@ de:
   details: 'Details'
   none: 'keine'
   back: 'Zurück'
+  back_to_home: 'Zurück zur Startseite'
   today: 'heute'
   yesterday: 'gestern'
   chapter: 'Kapitel %{number}. %{title}'

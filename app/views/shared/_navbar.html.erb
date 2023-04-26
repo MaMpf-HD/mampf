@@ -30,6 +30,7 @@
           </a>
         </li>
 
+
         <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
@@ -40,6 +41,7 @@
           </li>
         <% end %>
 
+
         <li class="nav-item">
           <a href="<%= watchlists_path %>"
             id="watchlistsIcon"
@@ -48,6 +50,7 @@
             title="<%= t('navbar.watchlist') %>">
           </a>
         </li>
+
 
         <li class="nav-item">
           <a href="<%= comments_path %>"
@@ -60,6 +63,7 @@
           </a>
         </li>
 
+
         <li class="nav-item">
           <a href="<%= news_path %>"
             class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"
@@ -68,6 +72,7 @@
           </a>
         </li>
 
+
         <li class="nav-item">
           <a href="<%= DefaultSetting::BLOG_LINK %>"
             class="nav-link bi bi-newspaper"
@@ -75,6 +80,7 @@
             title="<%= t('navbar.blog') %>">
           </a>
         </li>
+
 
         <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
@@ -100,6 +106,11 @@
                             class: 'form-control me-sm-2',
                             placeholder: t('navbar.search') %>
       <% end %>
+  </nav>
+  <nav class="navbar navbar-expand" id="secondnav"
+      style="display: none;">
+  </nav>
+</div>
   </nav>
   <nav class="navbar navbar-expand" id="secondnav"
       style="display: none;">

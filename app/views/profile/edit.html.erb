@@ -129,3 +129,10 @@
 <%= render partial: 'shared/generic_modal',
            locals: { sort: 'deleteAccount',
                      title: t('profile.delete_account') } %>
+
+<div>
+  <%= link_to :root, class: "btn btn-sm btn-primary" do %>
+    <span class="bi bi-arrow-left">
+    <%= t('back_to_home') %>
+  <% end %>
+</div>
