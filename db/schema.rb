@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_07_093205) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -350,6 +350,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_07_093205) do
     t.datetime "released_at", precision: nil
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
+    t.text "external_link_description"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
