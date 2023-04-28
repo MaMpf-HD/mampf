@@ -111,7 +111,7 @@ en:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
     go_digital_html: >
-      Within the framework of the joint project %{digital_now}, MaMpf has been 
+      Within the framework of the joint project %{digital_now}, MaMpf has been
       supported by the acquisition of media technology equipment which is going
       to help with meeting the increased demand for hypermedia content.
     fellowship_html: >
@@ -620,7 +620,7 @@ en:
       subscribers: 'Subscribers'
       no_access_to_users_html: >
         This lecture is older than 1 year. For reasons of data privacy,
-        only the teahcer and course editors can make changes here.
+        only the teacher and course editors can make changes here.
         If changes are necessary for some reason, you can contact the
         site administrators by mail: %{project_mail}.
     clicker:
@@ -1086,7 +1086,7 @@ en:
           This is the list of all persons that are responsible for this
           medium as editor. At least one person has to be given here, and each
           of these persons gets editing access to this medium. Only eligible
-          persons can be selected.
+          people can be selected.
           <br>
           Note: Independently from this setting, this medium can be edited
           by people with hiher access rights, e.g. editors of the associated

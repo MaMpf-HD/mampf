@@ -54,7 +54,7 @@
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/publish/publish',
              locals: { lecture: lecture } %>
-  <% unless lecture.older_than?(1.year) %>
+  <% unless lecture.stale? %>
     <%= render partial: 'lectures/edit/user_modal',
                locals: { lecture: lecture } %>
   <% end %>

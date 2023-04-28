@@ -313,7 +313,7 @@ class User < ApplicationRecord
     return false unless can_edit_teachables?
     return true if admin || course_editor? || teacher?
 
-    edited_lectures.select { |l| l.term.nil? || !l.older_than?(1.year)}
+    edited_lectures.select { |l| l.term.nil? || !stale? }
                    .any?
   end
 
@@ -721,9 +721,9 @@ class User < ApplicationRecord
     return false unless can_edit?(lecture)
     return true if can_edit?(lecture.course) || lecture.teacher == self
     return true if lecture.course.term_independent
-    return true if !lecture.older_than?(1.year)
+    return true if !lecture.stale?
 
-    false
+    return false
   end
 
   private

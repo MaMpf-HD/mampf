@@ -87,7 +87,7 @@
                   <%= lecture.users.count %>
                 </span>
                 <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
-                <% if lecture.users.any? && !lecture.older_than?(1.year)%>
+                <% if lecture.users.any? && !lecture.stale? %>
                   <button type="button"
                           id="lectureUserModalButton"
                           class="ml-3 btn btn-outline-primary btn-sm"

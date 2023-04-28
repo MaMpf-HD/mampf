@@ -781,6 +781,10 @@ class Lecture < ApplicationRecord
     term.begin_date < Term.active.begin_date - timespan
   end
 
+  def stale?
+    older_than?(1.year)
+  end
+
   private
 
   # used for after save callback
