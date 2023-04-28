@@ -236,8 +236,7 @@ de:
           Veranstaltungen in rötlicher Farbe sind noch nicht veröffentlicht.
         given_lectures: >
           Dies ist eine Liste aller Veranstaltungen, die Du als
-          Dozent verantwortet hast. Für diese hast Du natürlich die
-          Bearbeitungsberechtigung.
+          Dozent hältst oder gehalten hast. Du kannst sie bearbeiten.
         edited_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
@@ -1176,8 +1175,10 @@ de:
           Informationen z.T. automatisch über die im THymE-editor hinterlegten
           Daten ausgelesen werden können.
         external_link: >
-          Externer Link, der einen Teil diese Mediums ausmacht.
+          Externer Link, der einen Teil dieses Mediums ausmacht.
           Das könnte z.B. ein Link auf das Stacks-Project sein.
+        external_link_description: >
+          Anzeigetext für den Button, der zum externen Link führt.
         access_rights: >
           Die Varianten von Zugriffsrechten sind möglich:
           <ul>
@@ -3182,6 +3183,7 @@ de:
     related_media: 'Verknüpfte Medien'
     related_questions: 'Verknüpfte Fragen'
     external_link: 'Externer Link'
+    external_link_description: 'Anzeigetext'
     editor: 'EditorIn'
     thyme: 'THymE'
     thyme_editor: 'Editor'
