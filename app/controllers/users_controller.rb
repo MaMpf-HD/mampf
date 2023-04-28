@@ -54,6 +54,7 @@ class UsersController < ApplicationController
   end
 
   def list_generic_users
+    authorize! :list_generic_user, @user
     result = User.where.not(id: @elevated_users.pluck(:id))
                  .values_for_select
     render json: result
