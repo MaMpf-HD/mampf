@@ -134,4 +134,11 @@ module MediaHelper
     return edit_medium_path(medium) if current_user.can_edit?(medium)
     medium_path(medium)
   end
+
+  def external_link_description_not_empty(medium)
+    # Uses link display name if not empty, otherwise falls back to the
+    # link url itself.
+    return medium.external_link_description.empty?\
+      ? medium.external_reference_link : medium.external_link_description
+  end
 end

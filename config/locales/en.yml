@@ -1113,6 +1113,8 @@ en:
         external_link: >
           External link that constitutes a part of the medium. E.g., this might
           be a link to the Stacks Project.
+        external_link_description: >
+          Display text for the button pointing to the external link.
         access_rights: >
           There are the following options:
           <ul>
@@ -2999,6 +3001,7 @@ en:
     related_media: 'Related media'
     related_questions: 'Related questions'
     external_link: 'External Link'
+    external_link_description: 'Display text'
     editor: 'Editor'
     thyme: 'THymE'
     thyme_editor: 'Editor'
