@@ -43,9 +43,9 @@ describe("Tutorials", () => {
                 cy.visit(`lectures/${lectures[0].id}`);
                 cy.contains("Tutorien").should("exist");
                 cy.contains("Tutorien").click();
-                cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").should("exist");
-                cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").click();
-                cy.get('.col-sm-9 > .dropdown > .dropdown-menu > .dropdown-item').contains(lectures[2].title).click();
+                cy.get('main > .dropdown > .btn').contains("Tutorien").should("exist");
+                cy.get('main > .dropdown > .btn').contains("Tutorien").click();
+                cy.get('main > .dropdown > .dropdown-menu > .dropdown-item').contains(lectures[2].title).click();
                 cy.reload();
                 cy.contains("Übersicht").should("exist");
             });
@@ -87,9 +87,9 @@ describe("Tutorials", () => {
                 cy.visit(`lectures/${lectures[0].id}`);
                 cy.contains("Tutorien").should("exist");
                 cy.contains("Tutorien").click();
-                cy.contains("Übersicht").should("exist");
-                cy.contains("Übersicht").click();
-                cy.get('.col-sm-9 > .dropdown > .btn').contains("Tutorien").click();
+                cy.get('main').contains("Übersicht").should("exist");
+                cy.get('main').contains("Übersicht").click();
+                cy.get('main > .dropdown > .btn').contains("Tutorien").click();
                 cy.contains('Eigene Tutorien').should('exist');
                 cy.contains('Sonstige Tutorien').should('exist');
                 cy.get('.dropdown-menu').contains(lectures[2].title).should("exist");
@@ -142,9 +142,9 @@ describe("Tutorials", () => {
                 cy.contains("Akzeptieren").click();
                 cy.reload();
                 cy.get(".correction-column").contains("Hochladen").click();
-                const yourFixturePath = 'files/manuscript.pdf';
+                const yourFixturePath = 'cypress/fixtures/files/manuscript.pdf';
                 cy.get(".correction-column").contains("Datei").click();
-                cy.get(`#upload-correction-${lectures[5].id}`).attachFile(yourFixturePath);
+                cy.get(`#upload-correction-${lectures[5].id}`).selectFile(yourFixturePath,{force:true});
                 cy.contains("Upload").click();
                 cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();
@@ -256,8 +256,8 @@ describe("Tutorials", () => {
                 cy.contains("Akzeptieren").click();
                 cy.reload();
                 cy.get(".correction-column").contains("Hochladen").click();
-                const yourFixturePath = 'files/manuscript.pdf';
-                cy.get(`#upload-correction-${lectures[6].id}`).attachFile(yourFixturePath);
+                const yourFixturePath = 'cypress/fixtures/files/manuscript.pdf';
+                cy.get(`#upload-correction-${lectures[6].id}`).selectFile(yourFixturePath,{force:true});
                 cy.contains("Upload").click();
                 cy.get('.correction-upload > .mt-2 > .col-12 > .btn-primary').contains("Speichern").click();
                 cy.reload();

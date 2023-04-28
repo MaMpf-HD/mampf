@@ -869,8 +869,6 @@ Rails.application.routes.draw do
   get 'error',
       to: 'main#error'
 
-  get 'main/home'
-
   get 'main/news',
       to: 'main#news',
       as: 'news'
@@ -878,10 +876,6 @@ Rails.application.routes.draw do
   get 'main/comments',
       to: 'main#comments',
       as: 'comments'
-
-  get 'main/sponsors',
-      to: 'main#sponsors',
-      as: 'sponsors'
 
   get 'main/start',
       to: 'main#start',

@@ -56,7 +56,8 @@ de:
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
     erdbeere:
-      singular: 'Beispiel-Datenbank'
+      singular: 'Beispiel'
+      plural: 'Beispiele'
       short: 'DB'
     muesli: 'MÜSLI'
     board: 'Forum'
@@ -83,8 +84,6 @@ de:
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
       Hintergrundbild von %{background_photo_credit}.
-    sponsors_html: >
-      %{sponsors}:
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -134,6 +133,7 @@ de:
   disclosure: 'Impressum'
   policy: 'Datenschutzerklärung'
   navbar:
+    home: 'Home'
     search: 'Suche'
     profile: 'Profil'
     administration: 'Administration'
@@ -236,15 +236,14 @@ de:
           Veranstaltungen in rötlicher Farbe sind noch nicht veröffentlicht.
         given_lectures: >
           Dies ist eine Liste aller Veranstaltungen, die Du als
-          Dozent verantwortet hast. Für diese hast Du natürlich die
-          Bearbeitungsberechtigung.
+          Dozent hältst oder gehalten hast. Du kannst sie bearbeiten.
         edited_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die
           Du als zusätzlicher Editor eingetragen bist. Dadurch hast Du
           Bearbeitungsrechte an diesen Veranstaltungen.
         lectures_as_course_editor: >
           Dies ist eine Liste aller Veranstaltungen, die zu
-          Modulen gehören, für die du EditorIn bist, abzüglich der
+          Modulen gehören, für die Du EditorIn bist, abzüglich der
           Veranstaltungen, die Du selbst als DozentIn gehalten hast.
           Durch Deine Rechte als ModuleditorIn erbst Du
           Bearbeitungsrechte an diesen Veranstaltungen.
@@ -326,7 +325,7 @@ de:
     announcement:
       help: >
         Hier kannst Du den Text eingeben. Du kannst LaTeX benutzen
-        (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
+        (indem Du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
         siehst Du unten.
       on_main_page: >
         auf Startseite anzeigen
@@ -509,7 +508,7 @@ de:
           Mustertext, den Du beliebig editieren kannst
           (und solltest).
         organizational_on_top: >
-          Wenn du diesen Haken setzt, wird die Seite "Organisatorisches"
+          Wenn Du diesen Haken setzt, wird die Seite "Organisatorisches"
           als Startseite für diese Veranstaltung erscheinen.
         muesli: >
           Wenn Du diesen Haken setzt, wird in der
@@ -563,7 +562,7 @@ de:
           sichtbar, sobald die Zugriffsrechte auf einen der beiden für importierte Medien zulässigen Werte
           geändert werden.
         close_comments: >
-          Wenn du dieses Feld aktivierst, werden alle Diskussionen zu Medien,
+          Wenn Du dieses Feld aktivierst, werden alle Diskussionen zu Medien,
           die zu dieser Veranstaltung oder ihren Sitzungen gehören, geschlossen.
         comments_disabled: >
           Standardmäßig sind Kommentare für neu veröffentlichte Medien erlaubt,
@@ -827,7 +826,7 @@ de:
           Hier hast Du die Möglichkeit, für Dich wichtige Details anzugeben
           (z.B. Literatur zu dem Abschnitt), die für NutzerInnen auf der
           Veranstaltungsseite angezeigt werden. Du kannst LaTeX benutzen
-          (indem du den Ausdruck in $...$ setzt).
+          (indem Du den Ausdruck in $...$ setzt).
         list: >
           Dies ist die Liste aller assoziierten Abschnitte.
         extracted_content: >
@@ -849,14 +848,14 @@ de:
         details: >
           Hier hast Du als DozentIn die Möglichkeit, eine Beschreibung des Vortrags
           und wichtige Details anzugeben (wie etwa Literatur zu dem
-          Vortrag). Du kannst LaTeX benutzen (indem du den Ausdruck in $...$
+          Vortrag). Du kannst LaTeX benutzen (indem Du den Ausdruck in $...$
           setzt). Dieser Text erscheint auf der Seminarhauptseite und der Seite
           des Vortrags und kann von den Vortragenden nicht bearbeitet werden.
         details_info: >
           Das ist eine Beschreibung des Vortrags durch die DozentIn.
         description: >
           Hier hast Du die Möglichkeit, optional einen Text zum Inhalt des
-          Vortrages zu schreiben. Du kannst LaTeX benutzen (indem du den
+          Vortrages zu schreiben. Du kannst LaTeX benutzen (indem Du den
           Ausdruck in $...$ setzt).
         description_info: >
           Das ist ein Text über den Vortrag, der von den Vortragenden stammt.
@@ -1168,7 +1167,7 @@ de:
           hinzugefügt.
         content: >
           Hier hast Du die Möglichkeit, eine Inhaltsangabe machen. Du kannst LaTeX benutzen
-          (indem du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
+          (indem Du den Ausdruck in $...$ setzt). Eine Vorschau Deines Textes
           siehst Du unten.
         linked_media: >
           Dies ist eine Liste aller Medien, die mit diesem Medium
@@ -1181,8 +1180,10 @@ de:
           Informationen z.T. automatisch über die im THymE-editor hinterlegten
           Daten ausgelesen werden können.
         external_link: >
-          Externer Link, der einen Teil diese Mediums ausmacht.
+          Externer Link, der einen Teil dieses Mediums ausmacht.
           Das könnte z.B. ein Link auf das Stacks-Project sein.
+        external_link_description: >
+          Anzeigetext für den Button, der zum externen Link führt.
         access_rights: >
           Die Varianten von Zugriffsrechten sind möglich:
           <ul>
@@ -1902,7 +1903,7 @@ de:
         publish_vertices: >
           Das bezieht sich nur auf unveröffentlichte oder gesperrte Quiz-Fragen
           und Quiz-Erläuterungen, für die Du die entsprechenden Rechte hast.
-          Für diejenigen, für die du diese Rechte besitzt, werden die
+          Für diejenigen, für die Du diese Rechte besitzt, werden die
           Zugriffsrechte für die NutzerInnen genauso gesetzt wie beim Quiz
           ausgewählt.
     subject:
@@ -2052,7 +2053,7 @@ de:
       Im Rahmen des Services, die Mampf anbietet, werden einige Daten über Nutzer
       gespeichert. Neben den oben aufgeführten Daten werden essentielle Informationen
       wie deine abonnierten Vorlesungen oder eingereichten Abgaben gespeichert. Mit dem
-      folgenden Knopf kannst du alle Daten, die wir über dich speichern, anfordern. Wir
+      folgenden Knopf kannst Du alle Daten, die wir über dich speichern, anfordern. Wir
       werden sie an deine bei MaMpf hinterlegte E-Mail schicken.
     data_request: >
       Daten anfordern
@@ -2106,6 +2107,7 @@ de:
   details: 'Details'
   none: 'keine'
   back: 'Zurück'
+  back_to_home: 'Zurück zur Startseite'
   today: 'heute'
   yesterday: 'gestern'
   chapter: 'Kapitel %{number}. %{title}'
@@ -2152,7 +2154,7 @@ de:
     theme_based: 'zu bereits Behandeltem'
     lecture_only: 'keine'
     improve_visibility: >
-      Indem du bei Zusatzmaterialien "alle" auswählst, kannst du dir auch Medien
+      Indem Du bei Zusatzmaterialien "alle" auswählst, kannst Du dir auch Medien
       anzeigen lassen, die auf der Ebene des Moduls %{course} angesiedelt sind,
       deren Inhalte in der aktuellen Vorlesung aber noch nicht behandelt wurden.
     waiting_for_tag: >
@@ -2207,7 +2209,7 @@ de:
     create: 'Erstellen'
     creation_confirm: >
       Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
-      Bist du sicher, dass du das Medium zu folgender Watchlist hinzufügen willst:
+      Bist Du sicher, dass Du das Medium zu folgender Watchlist hinzufügen willst:
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
@@ -2499,7 +2501,7 @@ de:
       Aufgrund deiner %{profile} wurde(n) %{count} Treffer aus der
       Datenbank nicht berücksichtigt.
     settings: 'Profileinstellungen'
-    alternative: 'Meintest du vielleicht etwas anderes?'
+    alternative: 'Meintest Du vielleicht etwas anderes?'
     similar: 'Zum Suchbegriff %{search_string} ähnliche Begriffe'
     courses_with_similar_titles: >
       Du könntest es mit folgenden Volltext-Suchbegriffen probieren und die
@@ -2549,15 +2551,15 @@ de:
       Herzlich willkommen auf MaMpf, der Mathematischen
       Medienplattform der Universität Heidelberg.
     about: >
-      MaMpf bündelt verschiedene E-Learning-Angebote:
+      MaMpf bündelt und vernetzt verschiedene E-Learning-Angebote:
       Vorlesungsvideos und Skripte mit inhaltlicher Gliederung,
       Übungsblätter, eine umfangreiche Sammlung von Multiple-Choice-Fragen
       und Quizaufgaben inklusive angeleiteter Beweise und vieles mehr.
-      Dank des Tagging-Systems kannst du alle Inhalte schnell nach Schlagworten
-      in einer Mind-Map durchsuchen.
+      Dank des Tagging-Systems findest Du schnell und einfach
+      alle für Dich relevanten Medien.
     interested_html: >
       Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
-      durch MaMpf und weiteren %{resources} für Editor:innen). Oder registriere dich
+      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere dich
       und probiere MaMpf einfach selbst aus.
     resources: Ressourcen
     blog: Blog
@@ -2673,10 +2675,10 @@ de:
       Wir übernehmen keine Haftung für mögliche Datenverluste.
     submission_not_upload_notice_html: >
       <b>Wichtig</b>: Bitte drücke auf "Hochladen" und dann auf "Speichern", ansonsten werden deine
-       Änderungen verworfen, wenn du die Seite verlässt.
+       Änderungen verworfen, wenn Du die Seite verlässt.
     submission_upload_notice_html: >
       <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
-       Änderungen verworfen, wenn du die Seite verlässt.
+       Änderungen verworfen, wenn Du die Seite verlässt.
     deletion_date: Löschdatum
     multiple_files_selected: Es wurden mehrere Dateien ausgewählt.
     merging_help_html: >
@@ -3069,7 +3071,7 @@ de:
       Archiviert: %{archived}<br>
       Bild-Daten: %{image_data}<br>
 
-      Über die Bedeutung der einzelnen Daten kannst du gerne mit uns Kontakt aufnehmen.
+      Über die Bedeutung der einzelnen Daten kannst Du gerne mit uns Kontakt aufnehmen.
       Weiterhin gibt es Daten, die mit anderen Datenbankeinträgen verknüpft sind, nämlich<br>
 
       -abonnierte Vorlesungen<br>
@@ -3186,6 +3188,7 @@ de:
     related_media: 'Verknüpfte Medien'
     related_questions: 'Verknüpfte Fragen'
     external_link: 'Externer Link'
+    external_link_description: 'Anzeigetext'
     editor: 'EditorIn'
     thyme: 'THymE'
     thyme_editor: 'Editor'
@@ -3420,7 +3423,7 @@ de:
     unsaved_changes: >
       Achtung, es gibt ungespeicherte Änderungen!
   confirmation:
-    generic: 'Bist du sicher?'
+    generic: 'Bist Du sicher?'
     delete_graph: >
       Bist Du sicher? Es wird nur der Quiz-Graph gelöscht,
       nicht das Medium.

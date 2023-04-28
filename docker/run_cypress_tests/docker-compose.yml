@@ -1,45 +1,49 @@
 ---
 version: "3.4"
+networks:
+  frontend:
+  backend:
 services:
   redis:
     image: "redis:6.2.6-alpine"
+    networks:
+      - backend
 
   solr:
     image: "solr:8.11.1"
-    ports:
-      - "127.0.0.1:8983:8983"
     volumes:
       - type: bind
         source: ../../solr/development/conf/
         target: /solrconfig/
         read_only: true
     command: ["solr-precreate", "test", "/solrconfig"]
+    networks:
+      - backend
 
   db:
     image: postgres
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
+    networks:
+      - backend
 
   mailcatcher:
     restart: on-failure:10
     image: dockage/mailcatcher:latest
-    ports:
-      - "127.0.0.1:1080:1080"
-
+    networks:
+      - backend
   mampf:
     build:
       context: ./../..
       dockerfile: docker/run_cypress_tests/Dockerfile
     image: mampf:tests
-    ports:
-      - "127.0.0.1:3000:3000"
     # TODO: Use this
     # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
     entrypoint: /usr/src/app/entrypoint.sh
     environment:
       RAILS_ENV: test
-      TEST_DATABASE_ADAPTER: postgresql:13
+      TEST_DATABASE_ADAPTER: postgresql
       TEST_DATABASE_DATABASE: mampf
       TEST_DATABASE_INTERACTIONS: interactions
       TEST_DATABASE_USERNAME: mampf
@@ -57,33 +61,40 @@ services:
       PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
+      SOLR_HOST: solr
+      SOLR_PORT: 8983
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
     volumes:
         - type: bind
           source: ../../spec/
           target: /usr/src/app/spec/
+        - ../../coverage:/usr/src/app/coverage
     depends_on:
       - db
       - solr
       - redis
       - mailcatcher
+    networks:
+      - backend
+      - frontend
 
   cypress_runner:
-    image: mampf-cypress:6.5.0
+    image: mampf-cypress
     build:
       context: ./../..
       dockerfile: docker/run_cypress_tests/Dockerfile_cypress
     environment:
       CYPRESS_baseUrl: http://mampf:3000
-    entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done; npx cypress run $$@"
     volumes:
-      - ../../spec/cypress/integration:/cypress/integration:ro
+      - ../../spec/cypress/e2e:/cypress/e2e:ro
       - ../../spec/cypress/fixtures:/cypress/fixtures:ro
-      - ../../spec/cypress.json:/cypress.json:ro
+      - ../../spec/cypress.config.js:/cypress.config.js:ro
       - ../../.git:/.git:ro
       # cypress outputs are saved here (needed only locally)
       #- ../../cypress/videos:/cypress/videos
       #- ../../cypress/screenshots:/cypress/screenshots
     depends_on:
       - mampf
+    networks:
+      - frontend

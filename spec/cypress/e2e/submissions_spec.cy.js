@@ -89,8 +89,8 @@ describe("Submissions", () => {
             ]).then((assignments) => {
                 cy.visit(`lectures/${assignments[0].lecture_id}/submissions`);
                 cy.contains("Anlegen").click();
-                const yourFixturePath = 'files/manuscript.pdf';
-                cy.get('#upload-userManuscript').attachFile(yourFixturePath);
+                const yourFixturePath = 'cypress/fixtures/files/manuscript.pdf';
+                cy.get('#upload-userManuscript').selectFile(yourFixturePath,{force: true});
                 cy.get('input[type="checkbox"]').check();
                 cy.contains("Hochladen").click();
                 cy.get(".submissionFooter").contains("Speichern").click();
@@ -113,10 +113,8 @@ describe("Submissions", () => {
             ]).then((assignments) => {
                 cy.visit(`lectures/${assignments[0].lecture_id}/submissions`);
                 cy.contains("Anlegen").click();
-                const yourFixturePath = 'files/manuscript.pdf';
-                cy.get('#upload-userManuscript').attachFile(yourFixturePath);
-                cy.get('#upload-userManuscript').attachFile(yourFixturePath);
-                cy.get('#upload-userManuscript').attachFile(yourFixturePath);
+                const yourFixturePath = 'cypress/fixtures/files/manuscript.pdf';
+                cy.get('#upload-userManuscript').selectFile([yourFixturePath,yourFixturePath,yourFixturePath],{force: true});
                 cy.get('#userManuscript-merge-btn').should("exist");
                 cy.get('#userManuscript-merge-btn').click();
                 cy.get('#multiple-files-selected').should("have.attr", "style", "display: none;");
