@@ -18,7 +18,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_124528) do
   create_table "annotations", force: :cascade do |t|
     t.bigint "medium_id", null: false
     t.bigint "user_id", null: false
-    t.string "timestamp"
+    t.text "timestamp", null: false
     t.text "comment"
     t.integer "category"
     t.boolean "visible_for_teacher"

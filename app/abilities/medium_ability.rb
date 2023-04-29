@@ -16,7 +16,7 @@ class MediumAbility
       !user.generic? && medium.visible_for_user?(user)
     end
 
-    can [:edit, :update, :enrich, :publish, :destroy, :cancel_publication,
+    can [:edit, :update, :enrich, :feedback, :publish, :destroy, :cancel_publication,
          :add_item, :add_reference, :add_screenshot, :remove_screenshot,
          :import_script_items, :import_manuscript, :get_statistics,
          :render_medium_tags, :fill_quizzable_area,

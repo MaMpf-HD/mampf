@@ -40,7 +40,7 @@ Rails.application.routes.draw do
       as: 'classification'
   
   # annotation routes
-
+  
   get 'annotations/update_markers',
       to: 'annotations#update_markers',
       as: 'update_markers'
@@ -288,7 +288,11 @@ Rails.application.routes.draw do
   get 'media/:id/inspect',
       to: 'media#inspect',
       as: 'inspect_medium'
-
+  
+  get 'media/:id/feedback',
+      to: 'media#feedback',
+      as: 'feedback_medium'
+  
   get 'media/:id/enrich',
       to: 'media#enrich',
       as: 'enrich_medium'

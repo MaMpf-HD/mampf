@@ -3,8 +3,6 @@
   <div id="thyme" data-medium="<%= @medium.id %>">
     <figure id="hypervideo-container">
       <div id="video-container">
-        <div id="annotation-bar">
-        </div>
         <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
           <source src="<%= @medium.video.url(host: host) %>">
             <track kind="chapters"
@@ -161,4 +159,3 @@
 </div>
 
 <%= render partial: "annotations/annotation_modal" %>
-<%#= javascript_include_tag('markers.js') %>

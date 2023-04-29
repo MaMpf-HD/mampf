@@ -11,7 +11,7 @@ annotations = null
 # annotation area
 activeAnnotationId = 0
 
-# if the window width (in px) gets over this threshold value, hide the control bar
+# if the window width (in px) gets below this threshold value, hide the control bar
 # (default value)
 hideControlBarThreshold =
   x: 850
@@ -22,11 +22,6 @@ secondsToTime = (seconds) ->
   date = new Date(null)
   date.setSeconds seconds
   return date.toISOString().substr(12, 7)
-
-# convert time in H:MM:SS to seconds
-timeToSeconds = (time) ->
-  array = time.split(':')
-  return (+array[0]) * 3600 + (+array[1]) * 60 + (+array[2]) + (+array[3]) * .0001
 
 # converts a json timestamp to a double containing the absolute count of millitseconds
 timestampToMillis = (timestamp) ->
@@ -1023,5 +1018,4 @@ $(document).on 'turbolinks:load', ->
       ]
       throwOnError: false
     return
-
   return

@@ -501,6 +501,11 @@ class MediaController < ApplicationController
     isPermitted = medium.annotations_visible?(current_user)
     render json: isPermitted
   end
+  
+  def feedback
+    I18n.locale = @medium.locale_with_inheritance
+    render layout: 'feedback'
+  end
 
   private
 

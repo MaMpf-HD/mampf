@@ -527,3 +527,22 @@ input[type="radio"] {
     }
   }
 }
+
+
+/* THYME FEEDBACK */
+#thyme-feedback {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Roboto';
+}
+
+#feedbackvideo-container {
+  left: 0;
+  font-size: 0;
+  position: relative;
+  background: white;
+  margin: 0;
+}

@@ -51,6 +51,7 @@
 //= require tex_preview
 //= require thyme
 //= require thyme_editor
+//= require thyme_feedback
 //= require upload
 //= require users
 //= require vertices
