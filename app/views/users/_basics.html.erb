@@ -1,8 +1,7 @@
 <div class="form-group">
   <%= f.label :name, t('basics.display_name') %>
   <%= helpdesk(t('admin.user.info.display_name'), false) %>
-  <%= f.text_field :name, { class: 'form-control',
-                            disabled: true } %>
+  <%= f.text_field :name, { class: 'form-control' } %>
   <div class="invalid-feedback" id="user-name-error">
   </div>
 </div>
