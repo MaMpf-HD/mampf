@@ -6,15 +6,15 @@ class UserAbility
 
     can [:delete_account, :teacher], User
 
-    can [:index, :elevate, :destroy], User do
+    can [:index, :elevate, :destroy, :edit], User do
       user.admin?
     end
 
-    can [:edit, :update], User do |given_user|
+    can :update, User do |given_user|
       user.admin? || (!user.generic? && user == given_user)
     end
 
-    can [:fill_user_select, :list, :list_generic_users], User do
+    can [:fill_user_select, :list_generic_users], User do
       !user.generic?
     end
   end
