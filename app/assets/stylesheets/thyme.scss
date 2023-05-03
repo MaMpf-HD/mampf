@@ -466,7 +466,6 @@ figure {
 /* A collection of all colors.
 Be aware that color changes must also be written in the
 AnnotationHelper! */
-
 $annotation_colors: (
   annotation_color1: #DB2828,
   annotation_color2: #F2711C,
@@ -529,20 +528,45 @@ input[type="radio"] {
 }
 
 
+
 /* THYME FEEDBACK */
 #thyme-feedback {
   position: absolute;
-  left: 0;
   top: 0;
   width: 100%;
   height: 100%;
   font-family: 'Roboto';
 }
 
-#feedbackvideo-container {
-  left: 0;
-  font-size: 0;
+#feedback-timeline {
+  position: absolute;
+  display: flex;
+  width: 71%;
+}
+
+#feedback-special-buttons {
+  position: absolute;
+  display: flex;
+  right: 22%;
+}
+
+#feedback-volume-controls {
+  position: absolute;
+  display: flex;
+  width: 10%;
+  right: 10%;
+}
+
+#feedback-speed-control {
+  position: absolute;
+  padding: 3px;
+  font-size: 12px;
+  right: 2%;
+}
+
+#heatmap {
   position: relative;
-  background: white;
-  margin: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }

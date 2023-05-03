@@ -42,7 +42,7 @@ setupHypervideo = ->
   video = $('#video').get 0
   return if !video?
   document.body.style.backgroundColor = 'black'
-
+  
 $(document).on 'turbolinks:load', ->
   thymeContainer = document.getElementById('thyme-feedback')
   # no need for thyme if no thyme container on the page
@@ -84,7 +84,6 @@ $(document).on 'turbolinks:load', ->
     return
 
   setupHypervideo()
-  resizeContainer()
   window.onresize = resizeContainer
   video.onloadedmetadata =  resizeContainer
 
@@ -137,35 +136,6 @@ $(document).on 'turbolinks:load', ->
   seekBar.addEventListener 'input', ->
     time = video.duration * seekBar.value / 100
     video.currentTime = time
-    return
-
-  # if mouse is moved over seek bar, display tooltip with current chapter
-  seekBar.addEventListener 'mousemove', (evt) ->
-    positionInfo = seekBar.getBoundingClientRect()
-    width = positionInfo.width;
-    left = positionInfo.left
-    measuredSeconds = ((evt.pageX - left)/width) * video.duration
-    seconds = Math.min(measuredSeconds, video.duration)
-    seconds = Math.max(seconds, 0)
-    previous = previousChapterStart(seconds)
-    info = $('#c-' + $.escapeSelector(previous)).text().split(':')[0]
-    seekBar.setAttribute('title', info)
-    return
-  
-  # if videomedtadata have been loaded, set up video length, volume bar and
-  # seek bar
-  video.addEventListener 'loadedmetadata', ->
-    maxTime.innerHTML = secondsToTime(video.duration)
-    volumeBar.value = video.volume
-    volumeBar.style.backgroundImage = 'linear-gradient(to right,' +
-      ' #2497E3, #2497E3 ' + video.volume*100 + '%, #ffffff ' +
-      video.volume*100 + '%, #ffffff)'
-    if video.dataset.time?
-      time = video.dataset.time
-      video.currentTime = time
-      seekBar.value = video.currentTime / video.duration * 100
-    else
-      seekBar.value = 0
     return
 
   # Update the seek bar as the video plays
@@ -260,6 +230,7 @@ $(document).on 'turbolinks:load', ->
           return
         for annotation in annotations
           createMarker(annotation)
+        heatmap()
     return
 
   # an auxiliary method for "updateMarkers()" creating a single marker
@@ -279,6 +250,105 @@ $(document).on 'turbolinks:load', ->
     offset = marker.parent().offset().left + ratio * size + 3
     marker.offset({ left: offset })
     marker.on 'click', ->
-      alert "todo"
+      updateAnnotationArea(annotation)
     return
+
+  updateAnnotationArea = (annotation) ->
+    activeAnnotationId = annotation.id
+    comment = annotation.comment.replaceAll('\n', '<br>')
+    headColor = lightenUp(annotation.color, 2)
+    backgroundColor = lightenUp(annotation.color, 3)
+    $('#annotation-infobar').empty().append(annotation.category)
+    $('#annotation-infobar').css('background-color', headColor)
+    $('#annotation-infobar').css('text-align', 'center')
+    $('#annotation-comment').empty().append(comment)
+    $('#annotation-caption').css('background-color', backgroundColor)
+    # remove old listeners
+    $('#annotation-previous-button').off 'click'
+    $('#annotation-next-button').off 'click'
+    $('#annotation-goto-button').off 'click'
+    $('#annotation-close-button').off 'click'
+    # previous annotation listener
+    $('#annotation-previous-button').on 'click', ->
+      for i in [0 .. annotations.length - 1]
+        if i != 0 && annotations[i] == annotation
+          updateAnnotationArea(annotations[i - 1])
+    # next annotation Listener
+    $('#annotation-next-button').on 'click', ->
+      for i in [0 .. annotations.length - 1]
+        if i != annotations.length - 1 && annotations[i] == annotation
+          updateAnnotationArea(annotations[i + 1])
+    # goto listener
+    $('#annotation-goto-button').on 'click', ->
+      video.currentTime = timestampToMillis(annotation.timestamp)
+    # LaTex
+    renderMathInElement document.getElementById('annotation-comment'),
+      delimiters: [
+        {
+          left: '$$'
+          right: '$$'
+          display: true
+        }
+        {
+          left: '$'
+          right: '$'
+          display: false
+        }
+        {
+          left: '\\('
+          right: '\\)'
+          display: false
+        }
+        {
+          left: '\\['
+          right: '\\]'
+          display: true
+        }
+      ]
+      throwOnError: false
+    return
+
+  heatmap = ->
+    if annotations == null
+      return
+    $('#heatmap').empty()
+
+    # variable definitions
+    width = seekBar.clientWidth - 14
+    maxHeight = video.clientHeight / 4
+    pixels = new Array(width).fill(0)
+    radius = 10
+
+    # data calculation
+    for annotation in annotations
+      time = timestampToMillis(annotation.timestamp)
+      position = Math.round(width * (time / video.duration))
+      for x in [Math.max(0, position - radius) .. Math.min(width - 1, position + radius)]
+        pixels[x] += sinX(x, position, radius)
+    maxValue = Math.max.apply(Math, pixels)
+    amplitude = maxHeight * (1 / maxValue)
+
+    # draw heatmap
+    pointsStr = "0," + maxHeight + " "
+    for x in [0 .. width - 1]
+      pointsStr += x + "," + (maxHeight - amplitude * pixels[x]) + " "
+    pointsStr += "" + width + "," + maxHeight
+    heatmapStr = '<svg width=' + width + ' height="' + maxHeight + '">
+                  <polyline points="' + pointsStr +
+                  '" style="fill:lightblue; fill-opacity:0.4; stroke:black; stroke-width:1"/>
+                  </svg>'
+    $('#heatmap').append(heatmapStr)
+    offset = $('#heatmap').parent().offset().left + 79
+    $('#heatmap').offset({ left: offset })
+    $('#heatmap').css('top', -maxHeight - 4) # vertical offset
+    return
+
+  # A modified sine function for building nice graphs around the marker positions.
+  #
+  # x = insert value
+  # position = the position of the maximum value
+  # radius = the distance from a minimum to a maximum of the sine wave
+  sinX = (x, position, radius) ->
+    return (1 + Math.sin(Math.PI / radius * (x - position) + Math.PI / 2)) / 2
+
   return

@@ -1,19 +1,22 @@
 <% content_for :title, "THymE - \"#{@medium.caption}\"" %>
 <div id="thyme-feedback">
   <div id="thyme" data-medium="<%= @medium.id %>">
-    <figure id="feedbackvideo-container">
+    <figure id="hypervideo-container">
       <div id="video-container">
         <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
           <source src="<%= @medium.video.url(host: host) %>">
         </video>
         <div id="video-controlBar">
           <div id="video-controls">
-            <div id="timeline">
+            <div id="feedback-timeline">
               <i id="play-pause" class="material-icons clickable">
                 play_arrow
               </i>
               <span id="current-time">
                 0:00:00
+              </span>
+              <span id="heatmap">
+                <!-- COFFEE SCRIPT INSERTS HEATMAP HERE -->
               </span>
               <span id="markers">
                 <!-- COFFEE SCRIPT INSERTS MARKERS HERE -->
@@ -24,7 +27,7 @@
                 0:00:00
               </span>
             </div>
-            <div id="special-buttons">
+            <div id="feedback-special-buttons">
               <i id="minus-ten" class="material-icons clickable">
                 replay_10
               </i>
@@ -32,14 +35,14 @@
                 forward_10
               </i>
             </div>
-            <div id="volume-controls">
+            <div id="feedback-volume-controls">
               <i id="mute" class="material-icons clickable">
                 volume_up
               </i>
               <input type="range" id="volume-bar"
                      min="0" max="1" step="0.1" value="1">
             </div>
-            <div id="speed-control">
+            <div id="feedback-speed-control">
               <select id="speed" name="speed">
                 <option value="0.85">0.85x</option>
                 <option value="1" selected>1x</option>
@@ -52,6 +55,32 @@
           </div>
         </div>
       </div>
+      <figcaption id="annotation-caption">
+        <div id="annotation-infobar">
+          <!-- ANNOTATION CATEGORY -->
+        </div>
+        <div id="annotation-comment">
+          <!-- ANNOTATION COMMENT -->
+        </div>
+        <!-- ANNOTATION AREA BUTTONS -->
+        <div id="annotation-buttons">
+          <i id="annotation-previous-button"
+             class="fa fa-arrow-left fa-lg clickable"
+             data-toggle="tooltip"
+             title="previous annotation">
+          </i>
+          <i id="annotation-goto-button"
+             class="fa fa-map-marker fa-lg clickable"
+             data-toggle="tooltip"
+             title="go to the annotation's position">
+          </i>
+          <i id="annotation-next-button"
+             class="fa fa-arrow-right fa-lg clickable"
+             data-toggle="tooltip"
+             title="next annotation">
+          </i>
+        </div>
+      </figcaption>
     </figure>
   </div>
 </div>
