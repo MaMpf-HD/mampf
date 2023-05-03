@@ -69,6 +69,7 @@ services:
         - type: bind
           source: ../../spec/
           target: /usr/src/app/spec/
+        - ../../coverage:/usr/src/app/coverage
     depends_on:
       - db
       - solr

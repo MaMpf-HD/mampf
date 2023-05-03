@@ -18,5 +18,12 @@
         <%= t('buttons.test') %>
       </button>
     </div>
+    <div class="col-12 mt-3 form-floating">
+      <%# TODO: Replace with floating label in Bootstrap5 %>
+      <%= f.label :external_link_description, t('basics.external_link_description') %>
+      <%= helpdesk(t('admin.medium.info.external_link_description'), false) %>
+      <%= f.text_field :external_link_description,
+                        class: 'form-control' %>
+    </div>
   </div>
 </div>
