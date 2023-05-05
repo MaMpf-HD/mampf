@@ -460,7 +460,7 @@ class Medium < ApplicationRecord
     result = editors_with_inheritance
 
     if teachable.is_a?(Talk) && user.can_edit?(lecture)
-      result += lecture.speakers
+      result.concat(lecture.speakers)
     end
 
     result << user if user.admin?
