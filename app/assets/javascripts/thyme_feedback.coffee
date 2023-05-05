@@ -21,6 +21,14 @@ secondsToTime = (seconds) ->
 timestampToMillis = (timestamp) ->
   return 3600 * timestamp.hours + 60 * timestamp.minutes + timestamp.seconds + 0.001 * timestamp.milliseconds
 
+# converts a given integer between 0 and 255 into a hexadecimal, s.t. e.g. "15" becomes "0f"
+# (instead of just "f") -> needed for correct format
+toHexaDecimal = (int) ->
+  if int > 15
+    return int.toString(16)
+  else
+    return "0" + int.toString(16)
+
 # lightens up a given color (given in a string in hexadecimal
 # representation "#xxyyzz") such that e.g. black becomes dark grey.
 # The higher the value of "factor" the brighter the colors become.
@@ -28,7 +36,22 @@ lightenUp = (color, factor) ->
   red   = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(5, 2))) / factor)
   green = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(3, 2))) / factor)
   blue  = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(1, 2))) / factor)
-  return "#" + blue.toString(16) + green.toString(16) + red.toString(16)
+  return "#" + toHexaDecimal(blue) + toHexaDecimal(green) + toHexaDecimal(red)
+
+# mixes all colors in the array "colors" (wrtie colors as hexadecimal, e.g. "#1fe67d").
+colorMixer = (colors) ->
+  n = colors.length
+  red = 0
+  green = 0
+  blue = 0
+  for i in [0 .. n - 1]
+    red += Number("0x" + colors[i].substr(5, 2))
+    green += Number("0x" + colors[i].substr(3, 2))
+    blue += Number("0x" + colors[i].substr(1, 2))
+  red = Math.max(0, Math.min(255, Math.round(red / n)))
+  green = Math.max(0, Math.min(255, Math.round(green / n)))
+  blue = Math.max(0, Math.min(255, Math.round(blue / n)))
+  return "#" + toHexaDecimal(blue) + toHexaDecimal(green) + toHexaDecimal(red)
 
 sortAnnotations = ->
   if annotations == null
@@ -36,6 +59,20 @@ sortAnnotations = ->
   annotations.sort (ann1, ann2) ->
     timestampToMillis(ann1.timestamp) - timestampToMillis(ann2.timestamp)
   return
+
+# returns a certain color for every annotation with respect to the annotations
+# category (in the feedback view this gives more information than the original color).
+annotationColor = (cat) ->
+  switch cat
+    when "note" then return "#44ee11" #green
+    when "content" then return "#ff9933" #orange
+    when "mistake" then return "#ee0009" #red
+    when "presentation" then return "#eeee00" #yellow
+  return
+
+# returns a color for the heatmap with respect to the annotation types that are shown.
+heatmapColor = (colors) ->
+  return colorMixer(colors)
 
 # set up everything: read out track data and initialize html elements
 setupHypervideo = ->
@@ -65,6 +102,11 @@ $(document).on 'turbolinks:load', ->
   maxTime = document.getElementById('max-time')
   # ControlBar
   videoControlBar = document.getElementById('video-controlBar')
+  # below-area
+  toggleNoteAnnotations = document.getElementById('toggle-note-annotations-check')
+  toggleContentAnnotations = document.getElementById('toggle-content-annotations-check')
+  toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check')
+  togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check')
 
   # resizes the thyme container to the window dimensions
   resizeContainer = ->
@@ -213,6 +255,23 @@ $(document).on 'turbolinks:load', ->
       $(muteButton).trigger('click')
     return
 
+  # Toggles which annotations are shown
+  toggleNoteAnnotations.addEventListener 'click', ->
+    updateMarkers()
+    return
+
+  toggleContentAnnotations.addEventListener 'click', ->
+    updateMarkers()
+    return
+
+  toggleMistakeAnnotations.addEventListener 'click', ->
+    updateMarkers()
+    return
+
+  togglePresentationAnnotations.addEventListener 'click', ->
+    updateMarkers()
+    return
+
   # updates the annotation markers
   updateMarkers = ->
     mediumId = thyme.dataset.medium
@@ -228,8 +287,9 @@ $(document).on 'turbolinks:load', ->
         $('#markers').empty()
         if annotations == null
           return
-        for annotation in annotations
-          createMarker(annotation)
+        for a in annotations
+          if validAnnotation(a) == true
+            createMarker(a)
         heatmap()
     return
 
@@ -239,7 +299,7 @@ $(document).on 'turbolinks:load', ->
     markerStr = '<span id="marker-' + annotation.id + '">
                   <svg width="15" height="15">
                   <polygon points="1,1 9,1 5,10"
-                  style="fill:' + annotation.color + ';
+                  style="fill:' + annotationColor(annotation.category) + ';
                   stroke:black;stroke-width:1;fill-rule:evenodd;"/>
                  </svg></span>'
     $('#markers').append(markerStr)
@@ -256,8 +316,8 @@ $(document).on 'turbolinks:load', ->
   updateAnnotationArea = (annotation) ->
     activeAnnotationId = annotation.id
     comment = annotation.comment.replaceAll('\n', '<br>')
-    headColor = lightenUp(annotation.color, 2)
-    backgroundColor = lightenUp(annotation.color, 3)
+    headColor = lightenUp(annotationColor(annotation.category), 2)
+    backgroundColor = lightenUp(annotationColor(annotation.category), 3)
     $('#annotation-infobar').empty().append(annotation.category)
     $('#annotation-infobar').css('background-color', headColor)
     $('#annotation-infobar').css('text-align', 'center')
@@ -308,42 +368,75 @@ $(document).on 'turbolinks:load', ->
       throwOnError: false
     return
 
+  # Depending on the toggle switches, which are activated, this method checks, if
+  # an annotation should be displayed or not.
+  validAnnotation = (annotation) ->
+    switch annotation.category
+      when "note" then return $('#toggle-note-annotations-check').is(":checked")
+      when "content" then return $('#toggle-content-annotations-check').is(":checked")
+      when "mistake" then return $('#toggle-mistake-annotations-check').is(":checked")
+      when "presentation" then return $('#toggle-presentation-annotations-check').is(":checked")
+    return
+
   heatmap = ->
     if annotations == null
       return
     $('#heatmap').empty()
 
+    #
     # variable definitions
-    width = seekBar.clientWidth - 14
-    maxHeight = video.clientHeight / 4
-    pixels = new Array(width).fill(0)
-    radius = 10
+    #
+    radius = 10 #total distance from a single peak's maximum to it's minimum
+    width = seekBar.clientWidth + 2 * radius - 35 #width of the video timeline
+    maxHeight = video.clientHeight / 4 #the peaks of the graph should not extend maxHeight
+    # An array for each pixel on the timeline. The indices of this array should be thought
+    # of the x-axis of the heatmap's graph, while its entries should be thought of its
+    # values on the y-axis.
+    pixels = new Array(width + 2 * radius + 1).fill(0)
+    # amplitude should be calculated with respect to all annotations
+    # (even those which are not shown). Otherwise the peaks increase
+    # when turning off certain annotations because the graph has to be
+    # normed. Therefore we need this additional "pixelsAll" array.
+    pixelsAll = new Array(width + 2 * radius + 1).fill(0)
+    # for any visible annotation, this array contains its color (needed for the calculation
+    # of the heatmap color)
+    colors = []
 
+    #
     # data calculation
-    for annotation in annotations
-      time = timestampToMillis(annotation.timestamp)
+    #
+    for a in annotations
+      valid = validAnnotation(a)
+      if valid == true
+        colors.push(annotationColor(a.category))
+      time = timestampToMillis(a.timestamp)
       position = Math.round(width * (time / video.duration))
-      for x in [Math.max(0, position - radius) .. Math.min(width - 1, position + radius)]
-        pixels[x] += sinX(x, position, radius)
-    maxValue = Math.max.apply(Math, pixels)
+      for x in [position - radius .. position + radius]
+        y = sinX(x, position, radius)
+        pixelsAll[x + radius] += y
+        if valid == true
+          pixels[x + radius] += y
+    maxValue = Math.max.apply(Math, pixelsAll)
     amplitude = maxHeight * (1 / maxValue)
 
+    #
     # draw heatmap
+    #
     pointsStr = "0," + maxHeight + " "
-    for x in [0 .. width - 1]
+    for x in [0 .. pixels.length - 1]
       pointsStr += x + "," + (maxHeight - amplitude * pixels[x]) + " "
     pointsStr += "" + width + "," + maxHeight
-    heatmapStr = '<svg width=' + width + ' height="' + maxHeight + '">
+    heatmapStr = '<svg width=' + (width + 35) + ' height="' + maxHeight + '">
                   <polyline points="' + pointsStr +
-                  '" style="fill:lightblue; fill-opacity:0.4; stroke:black; stroke-width:1"/>
-                  </svg>'
+                  '" style="fill:' + heatmapColor(colors) +
+                  '; fill-opacity:0.4; stroke:black; stroke-width:1"/></svg>'
     $('#heatmap').append(heatmapStr)
-    offset = $('#heatmap').parent().offset().left + 79
+    offset = $('#heatmap').parent().offset().left - radius + 79
     $('#heatmap').offset({ left: offset })
     $('#heatmap').css('top', -maxHeight - 4) # vertical offset
     return
 
-  # A modified sine function for building nice graphs around the marker positions.
+  # A modified sine function for building nice peaks around the marker positions.
   #
   # x = insert value
   # position = the position of the maximum value

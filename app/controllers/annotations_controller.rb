@@ -4,8 +4,6 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.new(annotation_params)
     @annotation.timestamp = TimeStamp.new(total_seconds: params[:annotation][:total_seconds])
     @annotation.user_id = current_user.id
-    @annotation.category = helpers.category_text_to_int(
-                           params[:annotation][:category_text])
     @annotation.save
   end
 
@@ -13,13 +11,10 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.find(params[:annotationId])
     @total_seconds = @annotation.timestamp.total_seconds
     @medium_id = @annotation.medium_id
-    # A variable that helps to assign the correct text to
-    # the given category, e.g. "Need help!" for the category 'help'.
-    @category_text = helpers.category_token_to_text(@annotation.category)
   end
 
   def new
-    @annotation = Annotation.new
+    @annotation = Annotation.new(category: :note, color: helpers.annotation_color(1))
     @total_seconds = params[:total_seconds]
     @medium_id = params[:mediumId]
   end
@@ -30,8 +25,6 @@ class AnnotationsController < ApplicationController
 
   def update
     @annotation = Annotation.find(params[:id])
-    @annotation.category = helpers.category_text_to_int(
-                           params[:annotation][:category_text])
     @annotation.update(annotation_params)
   end
 
@@ -63,7 +56,7 @@ class AnnotationsController < ApplicationController
 
     def annotation_params
       params.require(:annotation).permit(
-        :color, :comment, :medium_id, :visible_for_teacher)
+        :category, :color, :comment, :medium_id, :visible_for_teacher)
     end
 
 end

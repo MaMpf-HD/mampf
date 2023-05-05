@@ -27,6 +27,14 @@ secondsToTime = (seconds) ->
 timestampToMillis = (timestamp) ->
   return 3600 * timestamp.hours + 60 * timestamp.minutes + timestamp.seconds + 0.001 * timestamp.milliseconds
 
+# converts a given integer between 0 and 255 into a hexadecimal, s.t. e.g. "15" becomes "0f"
+# (instead of just "f") -> needed for correct format
+toHexaDecimal = (int) ->
+  if int > 15
+    return int.toString(16)
+  else
+    return "0" + int.toString(16)
+
 # lightens up a given color (given in a string in hexadecimal
 # representation "#xxyyzz") such that e.g. black becomes dark grey.
 # The higher the value of "factor" the brighter the colors become.
@@ -34,7 +42,7 @@ lightenUp = (color, factor) ->
   red   = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(5, 2))) / factor)
   green = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(3, 2))) / factor)
   blue  = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(1, 2))) / factor)
-  return "#" + blue.toString(16) + green.toString(16) + red.toString(16)
+  return "#" + toHexaDecimal(blue) + toHexaDecimal(green) + toHexaDecimal(red)
 
 sortAnnotations = ->
   if annotations == null
