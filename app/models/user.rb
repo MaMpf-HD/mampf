@@ -293,6 +293,8 @@ class User < ApplicationRecord
     given_lectures.any?
   end
 
+  # a user is a teachable editor iff he/she is a course editor or lecture
+  # editor
   def teachable_editor?
     edited_courses.any? || edited_lectures.any?
   end
@@ -317,7 +319,7 @@ class User < ApplicationRecord
                    .any?
   end
 
-  # a user is an editor iff he/she is a course editor or lecture editor or
+  # a user is an editor iff he/she is a teachable editor or an
   # editor of media that are not associated to talks
   def editor?
     teachable_editor? ||
