@@ -315,7 +315,7 @@ class User < ApplicationRecord
     return false unless can_edit_teachables?
     return true if admin || course_editor? || teacher?
 
-    edited_lectures.select { |l| l.term.nil? || !stale? }
+    edited_lectures.select { |l| l.term.nil? || !l.stale? }
                    .any?
   end
 
