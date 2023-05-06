@@ -1,6 +1,8 @@
-# TermsController
+# UsersController
 class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
+  before_action :set_user, only: [:edit, :update, :destroy]
+
   layout 'administration'
 
   def current_ability
@@ -13,12 +15,10 @@ class UsersController < ApplicationController
   end
 
   def edit
-    @user = User.find_by_id(params[:id])
     authorize! :edit, @user
   end
 
   def update
-    @user = User.find_by_id(params[:id])
     authorize! :update, @user
     old_image_data = @user.image_data
     @user.update(user_params)
@@ -49,13 +49,13 @@ class UsersController < ApplicationController
   end
 
   def list_generic_users
+    authorize! :list_generic_users, User.new
     result = User.where.not(id: @elevated_users.pluck(:id))
                  .values_for_select
     render json: result
   end
 
   def destroy
-    @user = User.find_by_id(params[:id])
     authorize! :destroy, @user
     @user.destroy unless @user.admin || @user.editor? || @user.teacher?
     redirect_to users_path
@@ -73,6 +73,7 @@ class UsersController < ApplicationController
   end
 
   def fill_user_select
+    authorize! :fill_user_select, User.new
     if params[:q]
       result = User.preferred_name_or_email_like(params[:q])
                    .values_for_select
@@ -94,8 +95,14 @@ class UsersController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :admin, :homepage,
+    params.require(:user).permit(:name, :email, :homepage,
                                  :current_lecture_id,:image)
+  end
+
+  def set_user
+    @user = User.find_by_id(params[:id])
+    return unless @user.nil?
+    redirect_to :root, alert: I18n.t('controllers.no_medium')
   end
 
   def set_elevated_users

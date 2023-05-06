@@ -1,8 +1,7 @@
 <div class="form-group">
   <%= f.label :name, t('basics.display_name') %>
   <%= helpdesk(t('admin.user.info.display_name'), false) %>
-  <%= f.text_field :name, { class: 'form-control',
-                            disabled: true } %>
+  <%= f.text_field :name, { class: 'form-control' } %>
   <div class="invalid-feedback" id="user-name-error">
   </div>
 </div>
@@ -17,20 +16,6 @@
        id="user-email-error">
   </div>
 </div>
-  <div class="form-group form-row"
-       style="display: <%= hide(profile) %>">
-    <div class="col-12">
-      <div class="custom-control custom-checkbox">
-        <%= f.check_box :admin,
-                        class: 'custom-control-input',
-                        disabled: user == current_user %>
-        <%= f.label :admin,
-                    t('basics.administrator'),
-                    { class: 'custom-control-label' } %>
-        <%= helpdesk(t('admin.user.info.administrator'), false) %>
-      </div>
-    </div>
-  </div>
 <div class="form-group">
   <%= f.label :current_lecture_id,
               t('admin.user.current_lecture') %>
