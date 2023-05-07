@@ -306,8 +306,11 @@ class LecturesController < ApplicationController
                       :disable_teacher_display, :content_mode, :passphrase,
                       :sort, :comments_disabled, :submission_max_team_size,
                       :submission_grace_period]
-    if current_user.can_update_personell?(@lecture)
+    if action_name == 'update' && current_user.can_update_personell?(@lecture)
       allowed_params.concat([:teacher_id, editor_ids: []])
+    end
+    if action_name == 'create'
+      allowed_params.concat([:course_id, :teacher_id, editor_ids: []])
     end
     params.require(:lecture).permit(allowed_params)
   end
