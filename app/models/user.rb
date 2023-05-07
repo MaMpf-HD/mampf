@@ -718,8 +718,8 @@ class User < ApplicationRecord
   end
 
   # for lectures that are too old, only the teacher or an editor
-  # of the course it belongs to can view users in forms related to the lecture
-  def can_view_users?(lecture)
+  # of the course it belongs to can update the personell of to the lecture
+  def can_update_personell?(lecture)
     return false unless can_edit?(lecture)
     return true if can_edit?(lecture.course) || lecture.teacher == self
     return true if lecture.course.term_independent

@@ -19,7 +19,7 @@
          aria-labelledby="heading"
          data-parent="#lectureAccordion">
       <div class="card-body">
-        <% if current_user.can_view_users?(lecture) %>
+        <% if current_user.can_update_personell?(lecture) %>
           <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
             <div class="form-row">
               <div class="col-4 form-group">
