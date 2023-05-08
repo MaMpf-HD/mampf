@@ -98,64 +98,69 @@ class QuizzesController < ApplicationController
 
   private
 
-  def set_quiz
-    @quiz = Quiz.find_by_id(params[:id])
-    return if @quiz.present?
-    redirect_to :root, alert: I18n.t('controllers.no_quiz')
-  end
+    def set_quiz
+      @quiz = Quiz.find_by_id(params[:id])
+      return if @quiz.present?
 
-  def init_values
-    quiz_round_params = if params[:question].present? &&
-                          params[:question][:solution_type].present?
-                          params[:question]
-                        else
-                          params
-                        end
-    if user_signed_in? && current_user.study_participant
-      quiz_round_params[:study_participant] = current_user.anonymized_id
+      redirect_to :root, alert: I18n.t('controllers.no_quiz')
     end
-    quiz_round_params[:save_probe] =
-      if !user_signed_in?
-        true
-      elsif current_user.admin?
-        false
-      elsif current_user.in?(Quiz.find(params[:id]).editors_with_inheritance)
-        false
+
+    def init_values
+      quiz_round_params = if params[:question].present? &&
+                             params[:question][:solution_type].present?
+        params[:question]
       else
-        true
+        params
       end
-    @quiz_round = QuizRound.new(quiz_round_params)
-  end
-
-  def quiz_params
-    params.require(:quiz).permit(:label, :root, :level, :id_js)
-  end
-
-  def check_accessibility
-    return if @quiz.sort == 'RandomQuiz'
-    return if user_signed_in? && @quiz.visible_for_user?(current_user)
-    return if !user_signed_in? && @quiz.free?
-    redirect_to :root, alert: I18n.t('controllers.no_quiz_access')
-  end
-
-  def check_vertex_accessibility
-    return if @quiz.sort == 'RandomQuiz'
-    if user_signed_in?
-      return if current_user.in?(@quiz.editors_with_inheritance)
-      return if current_user.admin
-      return if @quiz.quizzables_visible_for_user?(current_user)
+      if user_signed_in? && current_user.study_participant
+        quiz_round_params[:study_participant] = current_user.anonymized_id
+      end
+      quiz_round_params[:save_probe] =
+        if !user_signed_in?
+          true
+        elsif current_user.admin?
+          false
+        elsif current_user.in?(Quiz.find(params[:id]).editors_with_inheritance)
+          false
+        else
+          true
+        end
+      @quiz_round = QuizRound.new(quiz_round_params)
     end
-    return if !user_signed_in? && @quiz.quizzables_free?
-    redirect_to :root, alert: I18n.t('controllers.no_quiz_vertex_access')
-  end
 
-  def check_errors
-    return if @quiz.sort == 'RandomQuiz'
-    return unless @quiz.find_errors&.any?
-    redirect_to :root, alert: I18n.t('controllers.quiz_has_error')
-  end
+    def quiz_params
+      params.require(:quiz).permit(:label, :root, :level, :id_js)
+    end
 
-  def store_access
-    ConsumptionSaver.perform_async(@quiz.id, 'browser', 'quiz')
-  end
+    def check_accessibility
+      return if @quiz.sort == 'RandomQuiz'
+      return if user_signed_in? && @quiz.visible_for_user?(current_user)
+      return if !user_signed_in? && @quiz.free?
+
+      redirect_to :root, alert: I18n.t('controllers.no_quiz_access')
+    end
+
+    def check_vertex_accessibility
+      return if @quiz.sort == 'RandomQuiz'
+
+      if user_signed_in?
+        return if current_user.in?(@quiz.editors_with_inheritance)
+        return if current_user.admin
+        return if @quiz.quizzables_visible_for_user?(current_user)
+      end
+      return if !user_signed_in? && @quiz.quizzables_free?
+
+      redirect_to :root, alert: I18n.t('controllers.no_quiz_vertex_access')
+    end
+
+    def check_errors
+      return if @quiz.sort == 'RandomQuiz'
+      return unless @quiz.find_errors&.any?
+
+      redirect_to :root, alert: I18n.t('controllers.quiz_has_error')
+    end
+
+    def store_access
+      ConsumptionSaver.perform_async(@quiz.id, 'browser', 'quiz')
+    end
 end

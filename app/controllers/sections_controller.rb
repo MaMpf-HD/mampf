@@ -56,46 +56,48 @@ class SectionsController < ApplicationController
 
   private
 
-  def set_section
-    @section = Section.find_by_id(params[:id])
-    return if @section.present?
-    redirect_to :root, alert: I18n.t('controllers.no_section')
-  end
+    def set_section
+      @section = Section.find_by_id(params[:id])
+      return if @section.present?
 
-  def section_params
-    params.require(:section).permit(:title, :display_number, :chapter_id,
-                                    :details, :hidden,
-                                    tag_ids: [], lesson_ids: [])
-  end
-
-  # inserts the section in the correct position if predecessor is given,
-  # otherwise just saves
-  def insert_or_save
-    position = params[:section][:predecessor]
-    if position.present?
-      @section.insert_at(position.to_i + 1)
-    else
-      @section.save
+      redirect_to :root, alert: I18n.t('controllers.no_section')
     end
-  end
 
-  # updates the position of the section if predecessor is given
-  def update_position
-    predecessor = params[:section][:predecessor]
-    return unless predecessor.present?
-    position = predecessor.to_i
-    if position > @section.position && @old_chapter == @section.chapter
-      position -= 1
+    def section_params
+      params.require(:section).permit(:title, :display_number, :chapter_id,
+                                      :details, :hidden,
+                                      tag_ids: [], lesson_ids: [])
     end
-    @section.insert_at(position + 1)
-  end
 
-  def update_tags_order
-    tags_order = params[:section][:tag_ids].map(&:to_i) - [0]
-    SectionTagJoin.acts_as_list_no_update do
-      @section.section_tag_joins.each do |st|
-        st.update(tag_position: tags_order.index(st.tag_id))
+    # inserts the section in the correct position if predecessor is given,
+    # otherwise just saves
+    def insert_or_save
+      position = params[:section][:predecessor]
+      if position.present?
+        @section.insert_at(position.to_i + 1)
+      else
+        @section.save
       end
     end
-  end
+
+    # updates the position of the section if predecessor is given
+    def update_position
+      predecessor = params[:section][:predecessor]
+      return unless predecessor.present?
+
+      position = predecessor.to_i
+      if position > @section.position && @old_chapter == @section.chapter
+        position -= 1
+      end
+      @section.insert_at(position + 1)
+    end
+
+    def update_tags_order
+      tags_order = params[:section][:tag_ids].map(&:to_i) - [0]
+      SectionTagJoin.acts_as_list_no_update do
+        @section.section_tag_joins.each do |st|
+          st.update(tag_position: tags_order.index(st.tag_id))
+        end
+      end
+    end
 end

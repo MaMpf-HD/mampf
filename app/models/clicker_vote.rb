@@ -7,14 +7,15 @@ class ClickerVote < ApplicationRecord
 
   private
 
-  def clicker_open
-    return true if clicker.open?
-    errors.add(:clicker, :clicker_closed)
-  end
+    def clicker_open
+      return true if clicker.open?
 
-  def value_in_range
-    return true if value.in?(1..clicker.alternatives)
-    errors.add(:value, :out_of_range)
-  end
+      errors.add(:clicker, :clicker_closed)
+    end
+
+    def value_in_range
+      return true if value.in?(1..clicker.alternatives)
+
+      errors.add(:value, :out_of_range)
+    end
 end
-

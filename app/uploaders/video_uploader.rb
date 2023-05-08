@@ -16,8 +16,8 @@ class VideoUploader < Shrine
     if options[:action] != :upload
       movie = Shrine.with_file(io) { |file| FFMPEG::Movie.new(file.path) }
 
-      { 'duration'   => movie.duration,
-        'bitrate'    => movie.bitrate,
+      { 'duration' => movie.duration,
+        'bitrate' => movie.bitrate,
         'resolution' => movie.resolution,
         'frame_rate' => movie.frame_rate }
     end

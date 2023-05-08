@@ -36,14 +36,15 @@ class Clicker < ApplicationRecord
   def results
     total = votes.count
     return unless total.positive?
+
     (1..alternatives).map { |i| votes.where(value: i).count / total.to_f }
                      .map { |x| (100 * x).round }
   end
 
   private
 
-  def set_basics
-    self.code = SecureRandom.uuid
-    self.alternatives = 3
-  end
+    def set_basics
+      self.code = SecureRandom.uuid
+      self.alternatives = 3
+    end
 end

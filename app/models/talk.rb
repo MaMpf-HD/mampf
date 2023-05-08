@@ -8,7 +8,7 @@ class Talk < ApplicationRecord
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
-           dependent: :destroy
+                                                 dependent: :destroy
 
   # a talk has many tags
   has_many :talk_tag_joins, dependent: :destroy

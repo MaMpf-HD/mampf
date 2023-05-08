@@ -57,6 +57,7 @@ class Question < Medium
                             question_sort: 'mc',
                             solution: solution)
     return question if question.invalid?
+
     Answer.create(question: question,
                   text: '0',
                   value: true)
@@ -98,6 +99,7 @@ class Question < Medium
 
   def text_with_sample_params(parameters)
     return text unless parameters.present?
+
     result = text
     parameters.keys.each do |p|
       result.gsub!(/\\para{#{Regexp.escape(p)},(.*?)}/, parameters[p].to_s)
@@ -121,14 +123,14 @@ class Question < Medium
 
   private
 
-  def prelim_answer_table
-    table = []
-    size = answer_ids.count
-    (0..2**size - 1).each do |i|
-      hash = {}
-      i.to_bool_a(size).each_with_index.map { |x, j| hash[answer_ids[j]] = x }
-      table.push(hash)
+    def prelim_answer_table
+      table = []
+      size = answer_ids.count
+      (0..2**size - 1).each do |i|
+        hash = {}
+        i.to_bool_a(size).each_with_index.map { |x, j| hash[answer_ids[j]] = x }
+        table.push(hash)
+      end
+      table
     end
-    table
-  end
 end

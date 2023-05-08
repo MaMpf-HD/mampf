@@ -1,5 +1,7 @@
 class Probe < InteractionsRecord
-  scope :created_between, lambda {|start_date, end_date| where(created_at: start_date.beginning_of_day..end_date.end_of_day)}
+  scope :created_between, lambda { |start_date, end_date|
+                            where(created_at: start_date.beginning_of_day..end_date.end_of_day)
+                          }
   require 'csv'
 
   def self.finished_quizzes(quiz)
@@ -35,10 +37,10 @@ class Probe < InteractionsRecord
       rel_incorrect = total.zero? ? nil : 100 - rel_correct
       results[q] = { correct: probes.where(question_id: q,
                                            correct: true).count,
-                    incorrect: probes.where(question_id: q,
-                                            correct: false).count,
-                    rel_correct: rel_correct,
-                    rel_incorrect: rel_incorrect }
+                     incorrect: probes.where(question_id: q,
+                                             correct: false).count,
+                     rel_correct: rel_correct,
+                     rel_incorrect: rel_incorrect }
     end
     results
   end
@@ -51,9 +53,8 @@ class Probe < InteractionsRecord
       csv << attributes
 
       all.each do |probe|
-        csv << attributes.map{ |attr| probe.send(attr) }
+        csv << attributes.map { |attr| probe.send(attr) }
       end
     end
   end
-
 end

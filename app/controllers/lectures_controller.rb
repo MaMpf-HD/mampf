@@ -44,11 +44,11 @@ class LecturesController < ApplicationController
                           .new_editor_email.deliver_later
       end
     end
-    
+
     @lecture.update(lecture_params)
     if structure_params.present?
       structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys
-                        .map(&:to_i)
+                                      .map(&:to_i)
       @lecture.update(structure_ids: structure_ids)
     end
     @lecture.touch
@@ -74,7 +74,8 @@ class LecturesController < ApplicationController
                                   chapters: [:lecture,
                                              sections: [lessons: [:tags],
                                                         chapter: [:lecture],
-                                                        tags: [:notions, :lessons]]])
+                                                        tags: [:notions,
+                                                               :lessons]]])
                         .find_by_id(params[:id])
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
@@ -87,6 +88,7 @@ class LecturesController < ApplicationController
     authorize! :new, @lecture
     @from = params[:from]
     return unless @from == 'course'
+
     # if new action was triggered from inside a course view, add the course
     # info to the lecture
     @lecture.course = Course.find_by_id(params[:course])
@@ -113,7 +115,7 @@ class LecturesController < ApplicationController
       end
       redirect_to edit_course_path(@lecture.course),
                   notice: I18n.t('controllers.created_lecture_success',
-                                   lecture: @lecture.title_with_teacher)
+                                 lecture: @lecture.title_with_teacher)
       return
     end
     @errors = @lecture.errors
@@ -247,6 +249,7 @@ class LecturesController < ApplicationController
     @results_as_list = search_params[:results_as_list] == 'true'
     return unless @total.zero?
     return unless search_params[:fulltext]&.length.to_i > 1
+
     @similar_titles = Course.similar_courses(search_params[:fulltext])
   end
 
@@ -267,7 +270,7 @@ class LecturesController < ApplicationController
 
   def import_toc
     imported_lecture = Lecture
-                         .find_by_id(import_toc_params[:imported_lecture_id])
+                       .find_by_id(import_toc_params[:imported_lecture_id])
     import_sections = import_toc_params[:import_sections] == '1'
     import_tags = import_toc_params[:import_tags] == '1'
     @lecture.import_toc!(imported_lecture, import_sections, import_tags)
@@ -276,154 +279,157 @@ class LecturesController < ApplicationController
 
   private
 
-  def set_lecture
-    @lecture = Lecture.find_by_id(params[:id])
-    return if @lecture
-    redirect_to :root, alert: I18n.t('controllers.no_lecture')
-  end
+    def set_lecture
+      @lecture = Lecture.find_by_id(params[:id])
+      return if @lecture
 
-  def set_lecture_cookie
-    cookies[:current_lecture_id] = @lecture.id
-  end
-
-  def set_view_locale
-    I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
-  end
-
-  def check_for_consent
-    redirect_to consent_profile_path unless current_user.consents
-  end
-
-  def check_for_subscribe
-    redirect_to subscribe_lecture_page_path(@lecture.id) unless @lecture.in?(current_user.lectures)
-  end
-
-  def lecture_params
-    params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
-                                    :start_chapter, :absolute_numbering,
-                                    :start_section, :organizational, :locale,
-                                    :organizational_concept, :muesli,
-                                    :organizational_on_top,
-                                    :disable_teacher_display,
-                                    :content_mode, :passphrase, :sort,
-                                    :comments_disabled,
-                                    :submission_max_team_size,
-                                    :submission_grace_period,
-                                    editor_ids: [])
-  end
-
-  def structure_params
-    params.require(:lecture).permit(structures: {})[:structures]
-  end
-
-  def comment_params
-    params.require(:lecture).permit(:close_comments)
-  end
-
-  def import_toc_params
-    params.permit(:imported_lecture_id, :import_sections, :import_tags)
-  end
-
-  # create notifications to all users about creation of new lecture
-  def create_notifications
-    notifications = []
-    User.find_each do |u|
-      notifications << Notification.new(recipient: u,
-                                        notifiable_id: @lecture.id,
-                                        notifiable_type: 'Lecture',
-                                        action: 'create')
+      redirect_to :root, alert: I18n.t('controllers.no_lecture')
     end
-    Notification.import notifications
-  end
 
-  def send_notification_email
-    recipients = User.where(email_for_teachable: true)
-    I18n.available_locales.each do |l|
-      local_recipients = recipients.where(locale: l)
-      if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients.pluck(:id),
-                                locale: l,
-                                lecture: @lecture)
-                          .new_lecture_email.deliver_later
+    def set_lecture_cookie
+      cookies[:current_lecture_id] = @lecture.id
+    end
+
+    def set_view_locale
+      I18n.locale = @lecture.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
+    end
+
+    def check_for_consent
+      redirect_to consent_profile_path unless current_user.consents
+    end
+
+    def check_for_subscribe
+      redirect_to subscribe_lecture_page_path(@lecture.id) unless @lecture.in?(current_user.lectures)
+    end
+
+    def lecture_params
+      params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
+                                      :start_chapter, :absolute_numbering,
+                                      :start_section, :organizational, :locale,
+                                      :organizational_concept, :muesli,
+                                      :organizational_on_top,
+                                      :disable_teacher_display,
+                                      :content_mode, :passphrase, :sort,
+                                      :comments_disabled,
+                                      :submission_max_team_size,
+                                      :submission_grace_period,
+                                      editor_ids: [])
+    end
+
+    def structure_params
+      params.require(:lecture).permit(structures: {})[:structures]
+    end
+
+    def comment_params
+      params.require(:lecture).permit(:close_comments)
+    end
+
+    def import_toc_params
+      params.permit(:imported_lecture_id, :import_sections, :import_tags)
+    end
+
+    # create notifications to all users about creation of new lecture
+    def create_notifications
+      notifications = []
+      User.find_each do |u|
+        notifications << Notification.new(recipient: u,
+                                          notifiable_id: @lecture.id,
+                                          notifiable_type: 'Lecture',
+                                          action: 'create')
+      end
+      Notification.import notifications
+    end
+
+    def send_notification_email
+      recipients = User.where(email_for_teachable: true)
+      I18n.available_locales.each do |l|
+        local_recipients = recipients.where(locale: l)
+        if local_recipients.any?
+          NotificationMailer.with(recipients: local_recipients.pluck(:id),
+                                  locale: l,
+                                  lecture: @lecture)
+                            .new_lecture_email.deliver_later
+        end
       end
     end
-  end
 
-  # destroy all notifications related to this lecture
-  def destroy_notifications
-    Notification.where(notifiable_id: @lecture.id, notifiable_type: 'Lecture')
-                .delete_all
-  end
-
-  # fill organizational_concept with default view
-  def set_organizational_defaults
-    partial_path = 'lectures/organizational/'
-    partial_path += @lecture.seminar? ? 'seminar' : 'lecture'
-    @lecture.update(organizational_concept:
-                      render_to_string(partial: partial_path,
-                                       formats: :html,
-                                       layout: false))
-  end
-
-  # set language to default language
-  def set_language
-    @lecture.update(locale: I18n.default_locale.to_s)
-  end
-
-  def eager_load_stuff
-    @lecture = Lecture.includes(:teacher, :term, :editors,
-                                :announcements, :imported_media,
-                                course: [:editors],
-                                media: [:teachable, :tags],
-                                lessons: [media: [:tags]],
-                                chapters: [:lecture,
-                                           sections: [lessons: [:tags],
-                                                      chapter: [:lecture],
-                                                      tags: [:notions, :lessons]]])
-                      .find_by_id(params[:id])
-    @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
-    lecture_tags = @lecture.tags
-    @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
-    @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
-    @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
-    @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
-    @terms = Term.select_terms
-  end
-
-  def set_erdbeere_data
-    @structure_ids = @lecture.structure_ids
-    response = Faraday.get(ENV['ERDBEERE_API'] + '/structures')
-    response_hash = if response.status == 200
-                       JSON.parse(response.body)
-                     else
-                       { 'data' => {}, 'included' => {} }
-                     end
-    @all_structures = response_hash['data']
-    @structures = @all_structures.select do |s|
-      s['id'].to_i.in?(@structure_ids)
+    # destroy all notifications related to this lecture
+    def destroy_notifications
+      Notification.where(notifiable_id: @lecture.id, notifiable_type: 'Lecture')
+                  .delete_all
     end
-    @properties = response_hash['included']
-  end
 
-  def search_params
-    types = params[:search][:types]
-    types = [types] if types && !types.kind_of?(Array)
-    types -= [''] if types
-    types = nil if types == []
-    params[:search][:types] = types
-    params[:search][:user_id] = current_user.id
-    params.require(:search).permit(:all_types, :all_terms, :all_programs,
-                                   :all_teachers, :fulltext, :per, :user_id,
-                                   :results_as_list,
-                                   types: [],
-                                   term_ids: [],
-                                   program_ids: [],
-                                   teacher_ids: [])
-  end
+    # fill organizational_concept with default view
+    def set_organizational_defaults
+      partial_path = 'lectures/organizational/'
+      partial_path += @lecture.seminar? ? 'seminar' : 'lecture'
+      @lecture.update(organizational_concept:
+                        render_to_string(partial: partial_path,
+                                         formats: :html,
+                                         layout: false))
+    end
 
-  def check_if_enough_questions
-    return if @lecture.course.enough_questions?
-    redirect_to :root, alert: I18n.t('controllers.no_test')
-  end
+    # set language to default language
+    def set_language
+      @lecture.update(locale: I18n.default_locale.to_s)
+    end
+
+    def eager_load_stuff
+      @lecture = Lecture.includes(:teacher, :term, :editors,
+                                  :announcements, :imported_media,
+                                  course: [:editors],
+                                  media: [:teachable, :tags],
+                                  lessons: [media: [:tags]],
+                                  chapters: [:lecture,
+                                             sections: [lessons: [:tags],
+                                                        chapter: [:lecture],
+                                                        tags: [:notions,
+                                                               :lessons]]])
+                        .find_by_id(params[:id])
+      @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
+      lecture_tags = @lecture.tags
+      @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
+      @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
+      @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
+      @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
+      @terms = Term.select_terms
+    end
+
+    def set_erdbeere_data
+      @structure_ids = @lecture.structure_ids
+      response = Faraday.get(ENV['ERDBEERE_API'] + '/structures')
+      response_hash = if response.status == 200
+        JSON.parse(response.body)
+      else
+        { 'data' => {}, 'included' => {} }
+      end
+      @all_structures = response_hash['data']
+      @structures = @all_structures.select do |s|
+        s['id'].to_i.in?(@structure_ids)
+      end
+      @properties = response_hash['included']
+    end
+
+    def search_params
+      types = params[:search][:types]
+      types = [types] if types && !types.kind_of?(Array)
+      types -= [''] if types
+      types = nil if types == []
+      params[:search][:types] = types
+      params[:search][:user_id] = current_user.id
+      params.require(:search).permit(:all_types, :all_terms, :all_programs,
+                                     :all_teachers, :fulltext, :per, :user_id,
+                                     :results_as_list,
+                                     types: [],
+                                     term_ids: [],
+                                     program_ids: [],
+                                     teacher_ids: [])
+    end
+
+    def check_if_enough_questions
+      return if @lecture.course.enough_questions?
+
+      redirect_to :root, alert: I18n.t('controllers.no_test')
+    end
 end

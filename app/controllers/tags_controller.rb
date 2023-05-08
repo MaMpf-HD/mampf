@@ -11,7 +11,6 @@ class TagsController < ApplicationController
                               :render_tag_title]
   layout 'administration'
 
-
   def current_ability
     @current_ability ||= TagAbility.new(current_user)
   end
@@ -62,6 +61,7 @@ class TagsController < ApplicationController
   def update
     # first, check if errors from check_permission callback are present
     return if @errors.present?
+
     @tag.update(tag_params)
     if @tag.valid?
       @tag.update(realizations: realization_params)
@@ -144,10 +144,10 @@ class TagsController < ApplicationController
       fulltext search_params[:title]
     end
     course_ids = if search_params[:all_courses] == '1'
-                   []
-                 elsif search_params[:course_ids] != ['']
-                   search_params[:course_ids]
-                 end
+      []
+    elsif search_params[:course_ids] != ['']
+      search_params[:course_ids]
+    end
     search.build do
       with(:course_ids, course_ids)
       paginate page: params[:page], per_page: per_page
@@ -170,10 +170,13 @@ class TagsController < ApplicationController
     @tags_hash.each do |t, section_data|
       tag = Tag.find_by_id(t)
       next unless tag
+
       section_data.each do |s, v|
         next if v.to_i == 0
+
         section = Section.find(s)
         next unless section
+
         if !tag.in?(section.tags)
           section.tags << tag
         end
@@ -195,175 +198,176 @@ class TagsController < ApplicationController
 
   private
 
-  def set_tag
-    @tag = Tag.find_by_id(params[:id])
-    return if @tag.present?
-    redirect_to :root, alert: I18n.t('controllers.no_tag')
-  end
+    def set_tag
+      @tag = Tag.find_by_id(params[:id])
+      return if @tag.present?
 
-  # set up cytoscape graph data for neighbourhood subgraph of @tag,
-  # using only neighbourhood tags that are allowd by the user's
-  # profile settings, depending on the parameters (selection/depth) that were
-  # specified by the user)
-  def set_related_tags_for_user
-    @depth = 2
-    depth_param = params[:depth].to_i
-    @depth = depth_param if depth_param.in?([1, 2])
-    overrule_subscription_type = false
-    selection = params[:selection].to_i
-    if selection.in?([1, 2, 3])
-      overrule_subscription_type = selection
+      redirect_to :root, alert: I18n.t('controllers.no_tag')
     end
-    @selection_type = if overrule_subscription_type
-                         selection
-                       else
-                         current_user.subscription_type
-                       end
-    user_tags = current_user.visible_tags(overrule_subscription_type: overrule_subscription_type)
-    @related_tags = @tag.related_tags & user_tags
-    @tags_in_neighbourhood = if @depth == 2
-                               Tag.related_tags(@related_tags) & user_tags
-                             else
-                               []
-                             end
-    @tags = [@tag] + @related_tags + @tags_in_neighbourhood
-    @graph_elements = Tag.to_cytoscape(@tags, @tag,
-                                       highlight_related_tags: @depth == 2)
-  end
 
-  # set up cytoscape graph data for neighbourhood subgraph of @tag,
-  def set_related_tags
-    related_tags = @tag.related_tags
-    tags_in_neighbourhood = Tag.related_tags(related_tags)
-    @graph_elements = Tag.to_cytoscape([@tag] + related_tags +
-                                       tags_in_neighbourhood, @tag)
-  end
-
-  def set_up_tag
-    @tag = Tag.new
-    set_notions
-    related_tag = Tag.find_by_id(params[:related_tag])
-    @tag.related_tags << related_tag if related_tag.present?
-  end
-
-  def add_course
-    course = Course.find_by_id(params[:course])
-    @tag.courses << course if course.present?
-  end
-
-  def add_section
-    section = Section.find_by_id(params[:section])
-    if section
-      @tag.sections << section
-      I18n.locale = section.lecture.locale || current_user.locale
+    # set up cytoscape graph data for neighbourhood subgraph of @tag,
+    # using only neighbourhood tags that are allowd by the user's
+    # profile settings, depending on the parameters (selection/depth) that were
+    # specified by the user)
+    def set_related_tags_for_user
+      @depth = 2
+      depth_param = params[:depth].to_i
+      @depth = depth_param if depth_param.in?([1, 2])
+      overrule_subscription_type = false
+      selection = params[:selection].to_i
+      if selection.in?([1, 2, 3])
+        overrule_subscription_type = selection
+      end
+      @selection_type = if overrule_subscription_type
+        selection
+      else
+        current_user.subscription_type
+      end
+      user_tags = current_user.visible_tags(overrule_subscription_type: overrule_subscription_type)
+      @related_tags = @tag.related_tags & user_tags
+      @tags_in_neighbourhood = if @depth == 2
+        Tag.related_tags(@related_tags) & user_tags
+      else
+        []
+      end
+      @tags = [@tag] + @related_tags + @tags_in_neighbourhood
+      @graph_elements = Tag.to_cytoscape(@tags, @tag,
+                                         highlight_related_tags: @depth == 2)
     end
-  end
 
-  def add_medium
-    medium = Medium.find_by_id(params[:medium])
-    if medium
+    # set up cytoscape graph data for neighbourhood subgraph of @tag,
+    def set_related_tags
+      related_tags = @tag.related_tags
+      tags_in_neighbourhood = Tag.related_tags(related_tags)
+      @graph_elements = Tag.to_cytoscape([@tag] + related_tags +
+                                         tags_in_neighbourhood, @tag)
+    end
+
+    def set_up_tag
+      @tag = Tag.new
+      set_notions
+      related_tag = Tag.find_by_id(params[:related_tag])
+      @tag.related_tags << related_tag if related_tag.present?
+    end
+
+    def add_course
+      course = Course.find_by_id(params[:course])
+      @tag.courses << course if course.present?
+    end
+
+    def add_section
+      section = Section.find_by_id(params[:section])
+      if section
+        @tag.sections << section
+        I18n.locale = section.lecture.locale || current_user.locale
+      end
+    end
+
+    def add_medium
+      medium = Medium.find_by_id(params[:medium])
+      if medium
         I18n.locale = medium.locale_with_inheritance || current_user.locale
         @tag.media << medium
+      end
     end
-  end
 
-  def add_lesson
-    lesson = Lesson.find_by_id(params[:lesson])
-    if lesson
-      @tag.lessons << lesson
-      I18n.locale = lesson.lecture.locale || current_user.locale
+    def add_lesson
+      lesson = Lesson.find_by_id(params[:lesson])
+      if lesson
+        @tag.lessons << lesson
+        I18n.locale = lesson.lecture.locale || current_user.locale
+      end
     end
-  end
 
-  def add_talk
-    talk = Talk.find_by_id(params[:talk])
-    if talk
-      @tag.talks << talk
-      I18n.locale = talk.lecture.locale || current_user.locale
+    def add_talk
+      talk = Talk.find_by_id(params[:talk])
+      if talk
+        @tag.talks << talk
+        I18n.locale = talk.lecture.locale || current_user.locale
+      end
     end
-  end
 
-  def check_for_consent
-    redirect_to consent_profile_path unless current_user.consents
-  end
-
-  def tag_params
-    params.require(:tag).permit(related_tag_ids: [],
-                                notions_attributes: [:title, :locale, :id,
-                                  :_destroy],
-                                aliases_attributes: [:title, :locale, :id,
-                                  :_destroy],
-                                course_ids: [],
-                                section_ids: [],
-                                lesson_ids: [],
-                                talk_ids: [],
-                                media_ids: [])
-  end
-
-  def realization_params
-    (params.require(:tag).permit(realizations: [])[:realizations] - [''])
-      .map { |r| r.split('-') }
-      .map { |x| [x.first, x.second.to_i] }
-  end
-
-  def check_permissions
-    @errors = {}
-    return if current_user.admin?
-    # of current user is not an admin, he can add/remove courses only
-    # as course editor with inheritance/course_editor
-    permission_errors
-  end
-
-  def permission_errors
-    errors = []
-    unless removed_courses.all? { |c| c.removable_by?(current_user) }
-      errors.push(error_hash['remove_course'])
+    def check_for_consent
+      redirect_to consent_profile_path unless current_user.consents
     end
-    unless added_courses.all? { |c| c.addable_by?(current_user) }
-      errors.push(error_hash['add_course'])
+
+    def tag_params
+      params.require(:tag).permit(related_tag_ids: [],
+                                  notions_attributes: [:title, :locale, :id,
+                                                       :_destroy],
+                                  aliases_attributes: [:title, :locale, :id,
+                                                       :_destroy],
+                                  course_ids: [],
+                                  section_ids: [],
+                                  lesson_ids: [],
+                                  talk_ids: [],
+                                  media_ids: [])
     end
-    @errors[:courses] = errors if errors.present?
-  end
 
-  def check_creation_permission
-    @modal = (params[:tag][:modal] == 'true')
-    @tag = Tag.new
-    check_permissions
-  end
-
-  def removed_courses
-    @tag.courses - Course.where(id: tag_params[:course_ids])
-  end
-
-  def added_courses
-    Course.where(id: tag_params[:course_ids]) - @tag.courses
-  end
-
-  def set_notions
-    @tag.notions.new(locale: I18n.locale)
-    (I18n.available_locales - [I18n.locale]).each do |l|
-      @tag.notions.new(locale: l)
+    def realization_params
+      (params.require(:tag).permit(realizations: [])[:realizations] - [''])
+        .map { |r| r.split('-') }
+        .map { |x| [x.first, x.second.to_i] }
     end
-  end
 
-  def locale
-    locale = if params[:from] == 'course'
-               @tag.courses&.first&.locale
-             elsif params[:from] == 'medium'
-               @tag.media&.first&.locale_with_inheritance
-             elsif params[:from] == 'section'
-               @tag.sections&.first&.lecture&.locale_with_inheritance
-             end
-    locale || current_user.locale
-  end
+    def check_permissions
+      @errors = {}
+      return if current_user.admin?
 
-  def error_hash
-    { 'remove_course' => I18n.t('controllers.no_removal_rights'),
-      'add_course' => I18n.t('controllers.no_adding_rights') }
-  end
+      # of current user is not an admin, he can add/remove courses only
+      # as course editor with inheritance/course_editor
+      permission_errors
+    end
 
-  def search_params
-    params.require(:search).permit(:title, :all_courses, :per, course_ids: [])
-  end
+    def permission_errors
+      errors = []
+      unless removed_courses.all? { |c| c.removable_by?(current_user) }
+        errors.push(error_hash['remove_course'])
+      end
+      unless added_courses.all? { |c| c.addable_by?(current_user) }
+        errors.push(error_hash['add_course'])
+      end
+      @errors[:courses] = errors if errors.present?
+    end
 
+    def check_creation_permission
+      @modal = (params[:tag][:modal] == 'true')
+      @tag = Tag.new
+      check_permissions
+    end
+
+    def removed_courses
+      @tag.courses - Course.where(id: tag_params[:course_ids])
+    end
+
+    def added_courses
+      Course.where(id: tag_params[:course_ids]) - @tag.courses
+    end
+
+    def set_notions
+      @tag.notions.new(locale: I18n.locale)
+      (I18n.available_locales - [I18n.locale]).each do |l|
+        @tag.notions.new(locale: l)
+      end
+    end
+
+    def locale
+      locale = if params[:from] == 'course'
+        @tag.courses&.first&.locale
+      elsif params[:from] == 'medium'
+        @tag.media&.first&.locale_with_inheritance
+      elsif params[:from] == 'section'
+        @tag.sections&.first&.lecture&.locale_with_inheritance
+      end
+      locale || current_user.locale
+    end
+
+    def error_hash
+      { 'remove_course' => I18n.t('controllers.no_removal_rights'),
+        'add_course' => I18n.t('controllers.no_adding_rights') }
+    end
+
+    def search_params
+      params.require(:search).permit(:title, :all_courses, :per, course_ids: [])
+    end
 end

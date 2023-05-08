@@ -15,7 +15,7 @@ class Section < ApplicationRecord
   # a section has many lessons
   has_many :lesson_section_joins, dependent: :destroy
   has_many :lessons, -> { order(date: :asc, id: :asc) },
-                     through: :lesson_section_joins
+           through: :lesson_section_joins
 
   # a section needs to have a title
   validates :title, presence: true
@@ -42,6 +42,7 @@ class Section < ApplicationRecord
 
   def reference_number
     return calculated_number unless display_number.present?
+
     display_number
   end
 
@@ -61,11 +62,13 @@ class Section < ApplicationRecord
   def calculated_number
     return relative_position unless lecture.absolute_numbering
     return absolute_position.to_s unless lecture.start_section.present?
+
     (absolute_position + lecture.start_section - 1).to_s
   end
 
   def to_label
     return displayed_number + '. ' + title unless hidden_with_inheritance?
+
     '*' + displayed_number + '. ' + title
   end
 
@@ -75,7 +78,7 @@ class Section < ApplicationRecord
     lessons.map(&:media).flatten
   end
 
-   # visible media are published with inheritance and unlocked
+  # visible media are published with inheritance and unlocked
   def visible_media_for_user(user)
     media.select { |m| m.visible_for_user?(user) }
   end
@@ -85,6 +88,7 @@ class Section < ApplicationRecord
     return true if lecture.edited_by?(user)
     return false unless lecture.published?
     return false unless lecture.visible_for_user?(user)
+
     true
   end
 
@@ -92,8 +96,10 @@ class Section < ApplicationRecord
     return higher_item unless first?
     return if chapter.first?
     return unless previous_chapter
+
     potential_last = previous_chapter.sections.last
     return potential_last if potential_last.last?
+
     potential_last.lower_items.last
   end
 
@@ -112,8 +118,10 @@ class Section < ApplicationRecord
     return lower_item unless last?
     return if chapter.last?
     return unless next_chapter
+
     potential_first = next_chapter.sections.first
     return potential_first if potential_first.first?
+
     potential_first.higher_items.first
   end
 
@@ -150,6 +158,7 @@ class Section < ApplicationRecord
 
   def visible_items
     return visible_items_by_time if lecture.content_mode == 'video'
+
     script_items_by_position
   end
 
@@ -166,48 +175,51 @@ class Section < ApplicationRecord
     new_section.chapter = new_chapter
     new_section.save
     return unless import_tags
+
     new_section.update(tags_order: tags_order)
     new_section.tags << tags
   end
 
   private
 
-  def touch_lecture
-    return unless lecture.present? && lecture.persisted?
-    lecture.touch
-  end
+    def touch_lecture
+      return unless lecture.present? && lecture.persisted?
 
-  def touch_media
-    lecture.media_with_inheritance.update_all(updated_at: Time.current)
-    touch
-  end
+      lecture.touch
+    end
 
-  def touch_self
-    touch
-  end
+    def touch_media
+      lecture.media_with_inheritance.update_all(updated_at: Time.current)
+      touch
+    end
 
-  def touch_toc
-    return unless lecture.absolute_numbering
-    lecture.chapters.update_all(updated_at: Time.now)
-    lecture.sections.update_all(updated_at: Time.now)
-  end
+    def touch_self
+      touch
+    end
 
-  def relative_position
-    chapter.displayed_number + '.' + position.to_s
-  end
+    def touch_toc
+      return unless lecture.absolute_numbering
 
-  def absolute_position
-    chapter.higher_items.includes(:sections).map(&:sections).flatten.size +
-      position
-  end
+      lecture.chapters.update_all(updated_at: Time.now)
+      lecture.sections.update_all(updated_at: Time.now)
+    end
 
-  def next_chapter
-    # actual next chapter may not have any sections
-    chapter.lower_items.find { |c| c.sections.exists? }
-  end
+    def relative_position
+      chapter.displayed_number + '.' + position.to_s
+    end
 
-  def previous_chapter
-    # actual previous chapter may not have any sections
-    chapter.higher_items.find { |c| c.sections.exists? }
-  end
+    def absolute_position
+      chapter.higher_items.includes(:sections).map(&:sections).flatten.size +
+        position
+    end
+
+    def next_chapter
+      # actual next chapter may not have any sections
+      chapter.lower_items.find { |c| c.sections.exists? }
+    end
+
+    def previous_chapter
+      # actual previous chapter may not have any sections
+      chapter.higher_items.find { |c| c.sections.exists? }
+    end
 end

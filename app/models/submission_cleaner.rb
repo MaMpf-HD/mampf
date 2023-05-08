@@ -50,75 +50,75 @@ class SubmissionCleaner
 
   private
 
-  def clear_props
-    @assignments = nil
-    @submitters = nil
-    @lectures = nil
-  end
+    def clear_props
+      @assignments = nil
+      @submitters = nil
+      @lectures = nil
+    end
 
-  def fetch_props
-    clear_props
-    @assignments = Assignment.where(deletion_date: @deletion_date)
-    return if @assignments.empty?
+    def fetch_props
+      clear_props
+      @assignments = Assignment.where(deletion_date: @deletion_date)
+      return if @assignments.empty?
 
-    @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
-    @lectures = Lecture.where(id: @assignments.pluck(:lecture_id))
-  end
+      @submitters = User.where(id: @assignments.flat_map(&:submitter_ids))
+      @lectures = Lecture.where(id: @assignments.pluck(:lecture_id))
+    end
 
-  def send_destruction_mail_to_submitters
-    return if @submitters.blank?
+    def send_destruction_mail_to_submitters
+      return if @submitters.blank?
 
-    I18n.available_locales.each do |l|
-      local_submitter_ids = @submitters.where(locale: l).pluck(:id)
-      next if local_submitter_ids.empty?
+      I18n.available_locales.each do |l|
+        local_submitter_ids = @submitters.where(locale: l).pluck(:id)
+        next if local_submitter_ids.empty?
 
-      local_submitter_ids.in_groups_of(200, false) do |group|
-        NotificationMailer.with(recipients: group,
-                                deletion_date: @deletion_date,
-                                locale: l)
-                          .submission_destruction_email.deliver_now
+        local_submitter_ids.in_groups_of(200, false) do |group|
+          NotificationMailer.with(recipients: group,
+                                  deletion_date: @deletion_date,
+                                  locale: l)
+                            .submission_destruction_email.deliver_now
+        end
       end
     end
-  end
 
-  def send_destruction_mail_to_editors
-    @lectures.each do |l|
-      editor_ids = l.editors.pluck(:id) + [l.teacher.id]
-      NotificationMailer.with(recipients: editor_ids,
-                              lecture: l,
-                              deletion_date: @deletion_date,
-                              locale: l.locale)
-                        .submission_destruction_lecture_email.deliver_now
+    def send_destruction_mail_to_editors
+      @lectures.each do |l|
+        editor_ids = l.editors.pluck(:id) + [l.teacher.id]
+        NotificationMailer.with(recipients: editor_ids,
+                                lecture: l,
+                                deletion_date: @deletion_date,
+                                locale: l.locale)
+                          .submission_destruction_lecture_email.deliver_now
+      end
     end
-  end
 
-  def send_info_mail_to_submitters
-    return if @submitters.blank?
+    def send_info_mail_to_submitters
+      return if @submitters.blank?
 
-    I18n.available_locales.each do |l|
-      local_submitter_ids = @submitters.where(locale: l).pluck(:id)
-      next if local_submitter_ids.empty?
+      I18n.available_locales.each do |l|
+        local_submitter_ids = @submitters.where(locale: l).pluck(:id)
+        next if local_submitter_ids.empty?
 
-      local_submitter_ids.in_groups_of(200, false) do |group|
-        NotificationMailer.with(recipients: group,
+        local_submitter_ids.in_groups_of(200, false) do |group|
+          NotificationMailer.with(recipients: group,
+                                  deletion_date: @deletion_date,
+                                  reminder: @reminder,
+                                  lectures: @lectures,
+                                  locale: l)
+                            .submission_deletion_email.deliver_now
+        end
+      end
+    end
+
+    def send_info_mail_to_editors
+      @lectures.each do |l|
+        editor_ids = l.editors.pluck(:id) + [l.teacher.id]
+        NotificationMailer.with(recipients: editor_ids,
+                                lecture: l,
                                 deletion_date: @deletion_date,
                                 reminder: @reminder,
-                                lectures: @lectures,
-                                locale: l)
-                          .submission_deletion_email.deliver_now
+                                locale: l.locale)
+                          .submission_deletion_lecture_email.deliver_now
       end
     end
-  end
-
-  def send_info_mail_to_editors
-    @lectures.each do |l|
-      editor_ids = l.editors.pluck(:id) + [l.teacher.id]
-      NotificationMailer.with(recipients: editor_ids,
-                              lecture: l,
-                              deletion_date: @deletion_date,
-                              reminder: @reminder,
-                              locale: l.locale)
-                        .submission_deletion_lecture_email.deliver_now
-    end
-  end
 end
