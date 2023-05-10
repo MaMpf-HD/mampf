@@ -65,9 +65,9 @@ sortAnnotations = ->
 annotationColor = (cat) ->
   switch cat
     when "note" then return "#44ee11" #green
-    when "content" then return "#ff9933" #orange
-    when "mistake" then return "#ee0009" #red
-    when "presentation" then return "#eeee00" #yellow
+    when "content" then return "#eeee00" #yellow
+    when "mistake" then return "#ff0000" #red
+    when "presentation" then return "#ff9933" #orange
   return
 
 # returns a color for the heatmap with respect to the annotation types that are shown.
@@ -284,7 +284,7 @@ $(document).on 'turbolinks:load', ->
       success: (annots) ->
         annotations = annots
         sortAnnotations()
-        $('#markers').empty()
+        $('#feedback-markers').empty()
         if annotations == null
           return
         for a in annotations
@@ -296,13 +296,22 @@ $(document).on 'turbolinks:load', ->
   # an auxiliary method for "updateMarkers()" creating a single marker
   createMarker = (annotation) ->
     # create marker
+    if annotation.category == "mistake"
+      polygonPoints = "1,1 9,1 5,14"
+      strokeWidth = 1.5
+      strokeColor = "darkred"
+    else
+      polygonPoints = "1,5 9,5 5,14"
+      strokeWidth = 1
+      strokeColor = "black"
+
     markerStr = '<span id="marker-' + annotation.id + '">
-                  <svg width="15" height="15">
-                  <polygon points="1,1 9,1 5,10"
+                  <svg width="15" height="20">
+                  <polygon points="' + polygonPoints + '"
                   style="fill:' + annotationColor(annotation.category) + ';
-                  stroke:black;stroke-width:1;fill-rule:evenodd;"/>
+                  stroke:' + strokeColor + ';stroke-width:' + strokeWidth + ';fill-rule:evenodd;"/>
                  </svg></span>'
-    $('#markers').append(markerStr)
+    $('#feedback-markers').append(markerStr)
     # set the correct position for the marker
     marker = $('#marker-' + annotation.id)
     size = seekBar.clientWidth - 15
@@ -406,7 +415,7 @@ $(document).on 'turbolinks:load', ->
     # data calculation
     #
     for a in annotations
-      valid = validAnnotation(a)
+      valid = validAnnotation(a) && a.category != "mistake" # <- don't include mistake annotations
       if valid == true
         colors.push(annotationColor(a.category))
       time = timestampToMillis(a.timestamp)

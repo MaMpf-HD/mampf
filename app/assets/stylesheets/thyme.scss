@@ -148,6 +148,9 @@
   top: 50%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
 }
 
 /* The switch - the box around the slider */
@@ -188,10 +191,6 @@
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: #2196F3;
 }
 
 input:focus + .slider {
@@ -564,6 +563,15 @@ input[type="radio"] {
   right: 2%;
 }
 
+#feedback-markers {
+  position: relative;
+  top: -6px;
+  width: 0;
+  height: 0;
+  display: flex;
+  cursor: pointer;
+}
+
 #heatmap {
   position: relative;
   width: 0;
@@ -575,4 +583,28 @@ input[type="radio"] {
   bottom: 0;
   padding: 10px;
   background: #eeefff;
+}
+
+#toggle-mistake-annotations {
+  input:checked + .slider {
+    background-color: #C23939;
+  }
+}
+
+#toggle-content-annotations {
+  input:checked + .slider {
+    background-color: #D5D841;
+  }
+}
+
+#toggle-presentation-annotations {
+  input:checked + .slider {
+    background-color: #D9892E;
+  }
+}
+
+#toggle-note-annotations {
+  input:checked + .slider {
+    background-color: #66B748;
+  }
 }

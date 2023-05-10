@@ -18,7 +18,7 @@
               <span id="heatmap">
                 <!-- COFFEE SCRIPT INSERTS HEATMAP HERE -->
               </span>
-              <span id="markers">
+              <span id="feedback-markers">
                 <!-- COFFEE SCRIPT INSERTS MARKERS HERE -->
               </span>
               <input type="range" id="seek-bar"
@@ -84,22 +84,30 @@
     </figure>
     <div id="below-area">
       <div id="toggles">
-        <label class="switch">
-          <input id="toggle-mistake-annotations-check" type="checkbox" checked="true">
-          <span class="slider round"></span>
-        </label>
-        <label class="switch">
-          <input id="toggle-content-annotations-check" type="checkbox" checked="true">
-          <span class="slider round"></span>
-        </label>
-        <label class="switch">
-          <input id="toggle-presentation-annotations-check" type="checkbox" checked="true">
-          <span class="slider round"></span>
-        </label>
-        <label class="switch">
-          <input id="toggle-note-annotations-check" type="checkbox" checked="true">
-          <span class="slider round"></span>
-        </label>
+        <div id="toggle-mistake-annotations">
+          <label class="switch">
+            <input id="toggle-mistake-annotations-check" type="checkbox" checked="true">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div id="toggle-presentation-annotations">
+          <label class="switch">
+            <input id="toggle-presentation-annotations-check" type="checkbox" checked="true">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div id="toggle-content-annotations">
+          <label class="switch">
+            <input id="toggle-content-annotations-check" type="checkbox" checked="true">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div id="toggle-note-annotations">
+          <label class="switch">
+            <input id="toggle-note-annotations-check" type="checkbox" checked="true">
+            <span class="slider round"></span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
