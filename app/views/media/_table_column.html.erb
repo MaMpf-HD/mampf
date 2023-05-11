@@ -1,63 +1,66 @@
 <% if media.present? %>
   <% if small %>
-    <ul>
-      <% media.each do |m| %>
-        <li>
-          <%= link_to m.local_info,
-                      edit_or_inspect_medium_path(m),
-                      class: textcolor(m) %>
-        </li>
-      <% end %>
-    </ul>
+    <div class="tab-content">
+      <ul>
+        <% media.each do |m| %>
+          <li>
+            <%= link_to m.local_info,
+                        edit_or_inspect_medium_path(m),
+                        class: textcolor(m) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
   <% else %>
     <% teachables = lecture_course_teachables(media) %>
-    <div class="row">
-      <div class="col-3">
-        <div class="nav flex-column nav-tabs"
-             id="v-<%= sort %>-media-tab"
-             role="tablist"
-             aria-orientation="vertical">
-          <% teachables.each_with_index do |t, i| %>
-            <a class="nav-link <%= active(i.zero?) %>"
-               id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>-tab"
-               data-toggle="pill"
-               href="#v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
-               role="tab">
-              <%= t.short_title %>
-            </a>
-          <% end %>
+    <div class="tab-content">
+      <div class="row">
+        <div class="col-3">
+          <div class="nav flex-column nav-tabs"
+              id="v-<%= sort %>-media-tab"
+              role="tablist"
+              aria-orientation="vertical">
+            <% teachables.each_with_index do |t, i| %>
+              <a class="nav-link <%= active(i.zero?) %>"
+                id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>-tab"
+                data-toggle="pill"
+                href="#v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
+                role="tab">
+                <%= t.short_title %>
+              </a>
+            <% end %>
+          </div>
         </div>
-      </div>
-      <div class="col-9">
-        <div class="tab-content"
-             id="v-<%= sort %>-media-tabContent">
-          <% teachables.each_with_index do |t, i| %>
-            <div class="tab-pane fade <%= show_tab(i == 0) %>"
-                 id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
-                 role="tabpanel">
-              <% relevant = relevant_media(t, media, 50)&.sort_by(&:created_at)
-                                                        &.natural_sort_by(&:local_info) %>
-              <% if relevant.present? %>
-                <div class="row">
-                  <% split_list(relevant, 2).each do |media_list| %>
-                    <div class="col-6">
-                      <ul>
-                        <%= render partial: 'media/table/entry',
-                                   collection: media_list.compact,
-                                   as: :medium,
-                                   cached: true %>
-                      </ul>
-                    </div>
-                  <% end %>
-                </div>
-              <% end %>
-              <% if relevant.size == 50 %>
-                <%= t('admin.medium.use_search_html',
-                      media_search: link_to(t('admin.main.media_search'),
-                                            administration_search_path)) %>
-              <% end %>
-            </div>
-          <% end %>
+        <div class="col-9">
+          <div class="tab-content" id="v-<%= sort %>-media-tabContent">
+            <% teachables.each_with_index do |t, i| %>
+              <div class="tab-pane fade <%= show_tab(i == 0) %>"
+                  id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
+                  role="tabpanel">
+                <% relevant = relevant_media(t, media, 50)&.sort_by(&:created_at)
+                                                          &.natural_sort_by(&:local_info) %>
+                <% if relevant.present? %>
+                  <div class="row">
+                    <% split_list(relevant, 2).each do |media_list| %>
+                      <div class="col-6">
+                        <ul>
+                          <%= render partial: 'media/table/entry',
+                                    collection: media_list.compact,
+                                    as: :medium,
+                                    cached: true %>
+                        </ul>
+                      </div>
+                    <% end %>
+                  </div>
+                <% end %>
+                <% if relevant.size == 50 %>
+                  <%= t('admin.medium.use_search_html',
+                        media_search: link_to(t('admin.main.media_search'),
+                                              administration_search_path)) %>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
