@@ -1,7 +1,5 @@
 # https://stackoverflow.com/a/36227664/
-getScrollTop = ->
-  return Math.max(document.body.scrollTop, document.documentElement.scrollTop)
-oldScrollPos = getScrollTop()
+oldScrollPos = Math.max(document.body.scrollTop, document.documentElement.scrollTop)
 
 $('#mediumPreview').empty()
   .append '<%= j render partial: "quizzes/edit/vertex_status",
