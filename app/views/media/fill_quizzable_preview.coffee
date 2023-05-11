@@ -1,4 +1,4 @@
-# https://stackoverflow.com/a/36227664/9655481
+# https://stackoverflow.com/a/36227664/
 getScrollTop = ->
   return Math.max(document.body.scrollTop, document.documentElement.scrollTop)
 oldScrollPos = getScrollTop()
