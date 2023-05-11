@@ -13,32 +13,33 @@ class Relation < ApplicationRecord
 
   private
 
-  def create_inverse
-    self.class.create(inverse_relation_options)
-  end
+    def create_inverse
+      self.class.create(inverse_relation_options)
+    end
 
-  def destroy_inverses
-    inverses.destroy_all
-  end
+    def destroy_inverses
+      inverses.destroy_all
+    end
 
-  def self_inverse?
-    tag_id == related_tag_id
-  end
+    def self_inverse?
+      tag_id == related_tag_id
+    end
 
-  def inverse?
-    self.class.exists?(inverse_relation_options) || self_inverse?
-  end
+    def inverse?
+      self.class.exists?(inverse_relation_options) || self_inverse?
+    end
 
-  def inverses
-    self.class.where(inverse_relation_options)
-  end
+    def inverses
+      self.class.where(inverse_relation_options)
+    end
 
-  def inverse_relation_options
-    { related_tag_id: tag_id, tag_id: related_tag_id }
-  end
+    def inverse_relation_options
+      { related_tag_id: tag_id, tag_id: related_tag_id }
+    end
 
-  def touch_tag
-    return if tag.nil?
-    tag.touch
-  end
+    def touch_tag
+      return if tag.nil?
+
+      tag.touch
+    end
 end

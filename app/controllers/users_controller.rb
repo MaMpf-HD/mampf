@@ -39,6 +39,7 @@ class UsersController < ApplicationController
     @user = User.find(elevate_params[:id])
     admin = elevate_params[:admin] == '1'
     return unless admin
+
     # enforce a name
     if @user.name.blank?
       name = @user.email.split('@')[0]
@@ -90,23 +91,25 @@ class UsersController < ApplicationController
 
   private
 
-  def elevate_params
-    params.require(:generic_user).permit(:id, :admin, :editor, :teacher, :name)
-  end
+    def elevate_params
+      params.require(:generic_user).permit(:id, :admin, :editor, :teacher,
+                                           :name)
+    end
 
-  def user_params
-    params.require(:user).permit(:name, :email, :homepage,
-                                 :current_lecture_id,:image)
-  end
+    def user_params
+      params.require(:user).permit(:name, :email, :homepage,
+                                   :current_lecture_id, :image)
+    end
 
-  def set_user
-    @user = User.find_by_id(params[:id])
-    return unless @user.nil?
-    redirect_to :root, alert: I18n.t('controllers.no_medium')
-  end
+    def set_user
+      @user = User.find_by_id(params[:id])
+      return unless @user.nil?
 
-  def set_elevated_users
-    @elevated_users = User.where(admin: true).or(User.proper_editors)
-                          .or(User.teachers)
-  end
+      redirect_to :root, alert: I18n.t('controllers.no_medium')
+    end
+
+    def set_elevated_users
+      @elevated_users = User.where(admin: true).or(User.proper_editors)
+                            .or(User.teachers)
+    end
 end

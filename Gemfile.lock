@@ -304,6 +304,7 @@ GEM
     js-routes (1.4.9)
       railties (>= 4)
       sprockets-rails
+    json (2.6.3)
     jsonapi-renderer (0.2.2)
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
@@ -377,7 +378,7 @@ GEM
     options (2.3.2)
     orm_adapter (0.5.0)
     pairing_heap (3.0.0)
-    parallel (1.22.1)
+    parallel (1.23.0)
     parser (3.2.2.0)
       ast (~> 2.4.1)
     pdf-reader (2.11.0)
@@ -458,7 +459,7 @@ GEM
       ffi (~> 1.0)
     redis-client (0.14.1)
       connection_pool
-    regexp_parser (2.7.0)
+    regexp_parser (2.8.0)
     request_store (1.5.1)
       rack (>= 1.4)
     responders (3.1.0)
@@ -499,15 +500,16 @@ GEM
       rspec-mocks (~> 3.11)
       rspec-support (~> 3.11)
     rspec-support (3.12.0)
-    rubocop (0.93.1)
+    rubocop (1.50.2)
+      json (~> 2.3)
       parallel (~> 1.10)
-      parser (>= 2.7.1.5)
+      parser (>= 3.2.0.0)
       rainbow (>= 2.2.2, < 4.0)
-      regexp_parser (>= 1.8)
-      rexml
-      rubocop-ast (>= 0.6.0)
+      regexp_parser (>= 1.8, < 3.0)
+      rexml (>= 3.2.5, < 4.0)
+      rubocop-ast (>= 1.28.0, < 2.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 2.0)
+      unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.28.0)
       parser (>= 3.2.1.0)
     rubocop-packaging (0.5.1)
@@ -629,7 +631,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
-    unicode-display_width (1.8.0)
+    unicode-display_width (2.4.2)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -718,7 +720,7 @@ DEPENDENCIES
   rgl
   rqrcode
   rspec-rails
-  rubocop (~> 0.93)
+  rubocop (~> 1.50)
   rubocop-packaging
   rubocop-performance
   rubocop-rails

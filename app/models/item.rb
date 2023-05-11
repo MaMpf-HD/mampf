@@ -62,6 +62,7 @@ class Item < ApplicationRecord
   def end_time
     return unless video?
     return TimeStamp.new(total_seconds: medium.video_duration) if next_item.nil?
+
     TimeStamp.new(total_seconds: next_item.start_time.total_seconds - 0.001)
   end
 
@@ -79,6 +80,7 @@ class Item < ApplicationRecord
   def vtt_text
     return '' if sort == 'pdf_destination'
     return description if sort == 'link'
+
     short_description
   end
 
@@ -88,6 +90,7 @@ class Item < ApplicationRecord
   # "Bem. 29.13: zu freien Moduln\n\n"
   def vtt_reference
     return short_description + "\n\n" unless short_reference.present?
+
     short_reference + ': ' + short_description + "\n\n"
   end
 
@@ -97,6 +100,7 @@ class Item < ApplicationRecord
   # "Verweis auf LA 2 SS 17, Bem. 29.13:"
   def vtt_meta_reference(referring_medium)
     return I18n.t('item.external_reference') if sort == 'link'
+
     ref = local?(referring_medium) ? short_reference : long_reference
     I18n.t('item.internal_reference', ref: ref)
   end
@@ -106,6 +110,7 @@ class Item < ApplicationRecord
   #  "Bem. 29.13"
   def short_reference
     return math_reference if math_items.include?(sort)
+
     toc_reference
   end
 
@@ -116,6 +121,7 @@ class Item < ApplicationRecord
     return short_reference if sort.in?(['self', 'link'])
     return short_ref_with_teachable if section.present?
     return medium.title_for_viewers unless short_reference.present?
+
     medium.title_for_viewers + ', ' + short_reference
   end
 
@@ -124,6 +130,7 @@ class Item < ApplicationRecord
   def short_description
     return section.title if sort == 'section' && section.present?
     return medium.title_for_viewers if sort == 'self'
+
     description.to_s
   end
 
@@ -136,6 +143,7 @@ class Item < ApplicationRecord
   def local_reference
     unless sort.in?(['self', 'link', 'pdf_destination'])
       return short_ref_with_description unless medium&.sort == 'Script'
+
       return 'Skript, ' + short_ref_with_description
     end
     local_non_math_reference
@@ -148,6 +156,7 @@ class Item < ApplicationRecord
     return '' unless medium.present? && medium.proper?
     return local_reference if medium.teachable_type == 'Course'
     return local_reference unless medium.teachable.media_scope.term
+
     medium.teachable.media_scope.term.to_label_short + ', ' + local_reference
   end
 
@@ -165,23 +174,26 @@ class Item < ApplicationRecord
   # lesson's lecture
   def local?(referring_medium)
     return false unless section.present?
+
     in?(referring_medium.teachable.lecture&.items.to_a)
   end
 
   # background color of different item sorts within thyme editor
   def background
     return '#70db70;' if ['remark', 'theorem', 'lemma', 'corollary',
-                       'algorithm', 'Theorem', 'Corollary', 'Lemma',
-                       'proposition'].include?(sort)
+                          'algorithm', 'Theorem', 'Corollary', 'Lemma',
+                          'proposition'].include?(sort)
     return '#75d7f0;' if ['definition', 'annotation', 'example',
                           'figure', 'exercise', 'equation'].include?(sort)
     return 'lightgray;' if sort == 'link' || sort == 'self'
+
     ''
   end
 
   # special background for sections
   def section_background
     return 'beige;' if sort == 'section'
+
     'aliceblue;'
   end
 
@@ -193,6 +205,7 @@ class Item < ApplicationRecord
     return if sort == 'pdf_destination'
     return unless video?
     return video_link_untimed if sort == 'self'
+
     video_link_timed
   end
 
@@ -206,23 +219,25 @@ class Item < ApplicationRecord
     return unless manuscript?
     return manuscript_link_destination if pdf_destination.present?
     return manuscript_link_page if page.present?
+
     manuscript_link_generic
   end
 
   def quiz_link
     return unless quiz?
+
     return quiz_link_generic
   end
-
 
   # if the associated medium contains an external link, it is returned
   def medium_link
     return unless medium_link?
+
     medium.external_reference_link
   end
 
   def self.available_sorts
-    ['definition','remark', 'lemma', 'theorem', 'example', 'annotation',
+    ['definition', 'remark', 'lemma', 'theorem', 'example', 'annotation',
      'algorithm', 'corollary', 'section', 'label', 'subsection', 'Theorem',
      'proposition', 'Lemma', 'Corollary', 'figure', 'chapter', 'exercise',
      'equation']
@@ -285,190 +300,205 @@ class Item < ApplicationRecord
 
   private
 
-  def math_items
-    ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
-     'corollary', 'algorithm', 'Theorem', 'proposition', 'Lemma', 'Corollary',
-     'figure', 'subsection', 'exercise', 'equation']
-  end
-
-  def other_items
-    ['section', 'self', 'link', 'label', 'pdf_destination', 'chapter']
-  end
-
-  def proper_link?
-    sort == 'link' && link.present?
-  end
-
-  def next_item
-    medium.proper_items_by_time.find do |i|
-      i.start_time.total_seconds > start_time.total_seconds
+    def math_items
+      ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
+       'corollary', 'algorithm', 'Theorem', 'proposition', 'Lemma', 'Corollary',
+       'figure', 'subsection', 'exercise', 'equation']
     end
-  end
 
-  def sort_long
-    I18n.t("admin.item.sort_short.#{sort}")
-  end
-
-  # the next methods are used to put together the references and descriptions
-
-  def math_item_number
-    ref_number.to_s
-  end
-
-  def math_reference
-    sort_long + ' ' + math_item_number
-  end
-
-  def special_reference
-    return 'Medium' if sort == 'self'
-    return '' if sort == 'pdf_destination'
-    'extern'
-  end
-
-  def section_reference
-    return section.displayed_number.to_s if section.present?
-    return '§' + ref_number if ref_number.present?
-    ''
-  end
-
-  def chapter_reference
-    chapter_short = I18n.t('admin.item.chapter_short',
-                           locale: locale)
-    return "#{chapter_short} #{ref_number}" if ref_number.present?
-    chapter_short
-  end
-
-  def toc_reference
-    return section_reference if sort == 'section'
-    return chapter_reference if sort == 'chapter'
-    if sort == 'label'
-      return '' if description.present?
-      return 'destination: ' + pdf_destination.to_s
+    def other_items
+      ['section', 'self', 'link', 'label', 'pdf_destination', 'chapter']
     end
-    special_reference
-  end
 
-  def non_math_reference
-    return medium.title_for_viewers if sort == 'self'
-    if sort == 'pdf_destination'
-      return medium.title_for_viewers + ' (pdf) # ' + description
+    def proper_link?
+      sort == 'link' && link.present?
     end
-    'extern ' + description.to_s if sort == 'link'
-  end
 
-  def local_non_math_reference
-    return medium.local_title_for_viewers if sort == 'self'
-    if sort == 'pdf_destination'
-      return medium.local_title_for_viewers + ' (pdf) # ' + description
+    def next_item
+      medium.proper_items_by_time.find do |i|
+        i.start_time.total_seconds > start_time.total_seconds
+      end
     end
-    'extern ' + description.to_s if sort == 'link'
-  end
 
-  def short_ref_with_teachable
-    unless short_reference.present?
-      return medium.teachable.lecture.title_for_viewers
+    def sort_long
+      I18n.t("admin.item.sort_short.#{sort}")
     end
-    medium.teachable.lecture.title_for_viewers + ', ' + short_reference
-  end
 
-  def short_ref_with_description
-    return short_reference + ' ' + description.to_s unless sort == 'section'
-    short_ref_for_sections
-  end
+    # the next methods are used to put together the references and descriptions
 
-  def short_ref_for_sections
-    return short_reference + ' ' + description if description.present?
-    return short_reference + ' ' + section.title if section.present?
-    short_reference
-  end
-
-  # the next two methods get video links using helper methods
-
-  def video_link_untimed
-    Rails.application.routes.url_helpers.play_medium_path(medium.id)
-  end
-
-  def video_link_timed
-    Rails.application.routes.url_helpers
-         .play_medium_path(medium.id, time: start_time.total_seconds)
-  end
-
-  def manuscript_link_generic
-    Rails.application.routes.url_helpers.display_medium_path(medium.id)
-  end
-
-  def manuscript_link_destination
-    Rails.application.routes.url_helpers
-         .display_medium_path(medium.id, destination: pdf_destination)
-  end
-
-  def manuscript_link_page
-    Rails.application.routes.url_helpers
-         .display_medium_path(medium.id, page: page)
-  end
-
-  def quiz_link_generic
-    Rails.application.routes.url_helpers.take_quiz_path(medium.id)
-  end
-
-  # the next methods are used for validations
-
-  def valid_start_time
-    return true if start_time.nil?
-    return true if start_time.valid?
-    errors.add(:start_time, :invalid_format)
-    false
-  end
-
-  def start_time_not_required
-    medium.nil? || medium.sort == 'Script' || sort == 'self' ||
-      sort == 'pdf_destination' || !start_time&.valid? || !medium.video
-  end
-
-  def start_time_not_too_late
-    return true if start_time_not_required
-    return true if start_time.total_seconds <= medium.video.metadata['duration']
-    errors.add(:start_time, :too_late)
-    false
-  end
-
-  def start_times_without
-    (medium.proper_items - [self]).map do |i|
-      [i.start_time.floor_seconds, i.start_time.milliseconds]
+    def math_item_number
+      ref_number.to_s
     end
-  end
 
-  def no_duplicate_start_time
-    return true if start_time_not_required
-    if start_times_without.include?([start_time.floor_seconds,
-                                     start_time.milliseconds])
-      errors.add(:start_time, :taken)
+    def math_reference
+      sort_long + ' ' + math_item_number
+    end
+
+    def special_reference
+      return 'Medium' if sort == 'self'
+      return '' if sort == 'pdf_destination'
+
+      'extern'
+    end
+
+    def section_reference
+      return section.displayed_number.to_s if section.present?
+      return '§' + ref_number if ref_number.present?
+
+      ''
+    end
+
+    def chapter_reference
+      chapter_short = I18n.t('admin.item.chapter_short',
+                             locale: locale)
+      return "#{chapter_short} #{ref_number}" if ref_number.present?
+
+      chapter_short
+    end
+
+    def toc_reference
+      return section_reference if sort == 'section'
+      return chapter_reference if sort == 'chapter'
+
+      if sort == 'label'
+        return '' if description.present?
+
+        return 'destination: ' + pdf_destination.to_s
+      end
+      special_reference
+    end
+
+    def non_math_reference
+      return medium.title_for_viewers if sort == 'self'
+      if sort == 'pdf_destination'
+        return medium.title_for_viewers + ' (pdf) # ' + description
+      end
+
+      'extern ' + description.to_s if sort == 'link'
+    end
+
+    def local_non_math_reference
+      return medium.local_title_for_viewers if sort == 'self'
+      if sort == 'pdf_destination'
+        return medium.local_title_for_viewers + ' (pdf) # ' + description
+      end
+
+      'extern ' + description.to_s if sort == 'link'
+    end
+
+    def short_ref_with_teachable
+      unless short_reference.present?
+        return medium.teachable.lecture.title_for_viewers
+      end
+
+      medium.teachable.lecture.title_for_viewers + ', ' + short_reference
+    end
+
+    def short_ref_with_description
+      return short_reference + ' ' + description.to_s unless sort == 'section'
+
+      short_ref_for_sections
+    end
+
+    def short_ref_for_sections
+      return short_reference + ' ' + description if description.present?
+      return short_reference + ' ' + section.title if section.present?
+
+      short_reference
+    end
+
+    # the next two methods get video links using helper methods
+
+    def video_link_untimed
+      Rails.application.routes.url_helpers.play_medium_path(medium.id)
+    end
+
+    def video_link_timed
+      Rails.application.routes.url_helpers
+           .play_medium_path(medium.id, time: start_time.total_seconds)
+    end
+
+    def manuscript_link_generic
+      Rails.application.routes.url_helpers.display_medium_path(medium.id)
+    end
+
+    def manuscript_link_destination
+      Rails.application.routes.url_helpers
+           .display_medium_path(medium.id, destination: pdf_destination)
+    end
+
+    def manuscript_link_page
+      Rails.application.routes.url_helpers
+           .display_medium_path(medium.id, page: page)
+    end
+
+    def quiz_link_generic
+      Rails.application.routes.url_helpers.take_quiz_path(medium.id)
+    end
+
+    # the next methods are used for validations
+
+    def valid_start_time
+      return true if start_time.nil?
+      return true if start_time.valid?
+
+      errors.add(:start_time, :invalid_format)
       false
     end
-    true
-  end
 
-  def nonempty_link_or_explanation
-    return true if sort != 'link'
-    return true if link.present?
-    return true if explanation.present?
-    errors.add(:link, :blank)
-    errors.add(:explanation, :blank)
-  end
+    def start_time_not_required
+      medium.nil? || medium.sort == 'Script' || sort == 'self' ||
+        sort == 'pdf_destination' || !start_time&.valid? || !medium.video
+    end
 
-  # is used for after save and before destroy callbacks
-  def touch_medium
-    return unless medium.present? && medium.persisted?
-    medium.touch
-  end
+    def start_time_not_too_late
+      return true if start_time_not_required
+      return true if start_time.total_seconds <= medium.video.metadata['duration']
 
-  # simulates the after_destroy callback for item_self_joins
-  def destroy_joins(related_item)
-    ItemSelfJoin.where(item: [self, related_item],
-                       related_item: [self, related_item]).delete_all
-  end
+      errors.add(:start_time, :too_late)
+      false
+    end
 
-  def locale
-    medium&.locale || I18n.default_locale
-  end
+    def start_times_without
+      (medium.proper_items - [self]).map do |i|
+        [i.start_time.floor_seconds, i.start_time.milliseconds]
+      end
+    end
+
+    def no_duplicate_start_time
+      return true if start_time_not_required
+
+      if start_times_without.include?([start_time.floor_seconds,
+                                       start_time.milliseconds])
+        errors.add(:start_time, :taken)
+        false
+      end
+      true
+    end
+
+    def nonempty_link_or_explanation
+      return true if sort != 'link'
+      return true if link.present?
+      return true if explanation.present?
+
+      errors.add(:link, :blank)
+      errors.add(:explanation, :blank)
+    end
+
+    # is used for after save and before destroy callbacks
+    def touch_medium
+      return unless medium.present? && medium.persisted?
+
+      medium.touch
+    end
+
+    # simulates the after_destroy callback for item_self_joins
+    def destroy_joins(related_item)
+      ItemSelfJoin.where(item: [self, related_item],
+                         related_item: [self, related_item]).delete_all
+    end
+
+    def locale
+      medium&.locale || I18n.default_locale
+    end
 end

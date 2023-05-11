@@ -66,7 +66,8 @@ class User < ApplicationRecord
   # if a homepage is given it should at leat be a valid address
   validates :homepage, http_url: true, if: :homepage?
 
-  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) }, if: :locale?
+  validates :locale, inclusion: { in: I18n.available_locales.map(&:to_s) },
+                     if: :locale?
 
   # a user needs to give a display name
   validates :name, presence: true, if: :persisted?
@@ -100,7 +101,6 @@ class User < ApplicationRecord
   searchable do
     text :tutorial_name
   end
-
 
   # returns the array of all teachers
   def self.teachers
@@ -137,6 +137,7 @@ class User < ApplicationRecord
   # search params is a hash having keys :all_editors, :editor_ids
   def self.search_editors(search_params)
     return User.editors unless search_params[:all_editors] == '0'
+
     editor_ids = search_params[:editor_ids] || []
     User.where(id: editor_ids)
   end
@@ -145,7 +146,7 @@ class User < ApplicationRecord
   # (e.g. in a select editors form)
   def self.select_editors
     User.pluck(:name, :email, :id, :name_in_tutorials)
-        .map { |u| [ "#{u.fourth.presence || u.first} (#{u.second})", u.third] }
+        .map { |u| ["#{u.fourth.presence || u.first} (#{u.second})", u.third] }
   end
 
   def self.name_or_email_like(search_string)
@@ -165,14 +166,17 @@ class User < ApplicationRecord
     return User.none unless search_string.length >= 2
 
     where(name_in_tutorials: [nil, '']).name_or_email_like(search_string)
-      .or(where.not(name_in_tutorials: [nil, ''])
+                                       .or(where.not(name_in_tutorials: [nil,
+                                                                         ''])
                .name_in_tutorials_or_email_like(search_string))
   end
 
   def self.values_for_select
     pluck(:id, :name, :name_in_tutorials, :email)
-      .map { |u| { value: u.first,
-                   text: "#{ u.third.presence || u.second } (#{u.fourth})" } }
+      .map { |u|
+      { value: u.first,
+        text: "#{u.third.presence || u.second} (#{u.fourth})" }
+    }
   end
 
   def courses
@@ -186,11 +190,13 @@ class User < ApplicationRecord
   # - all courses that the user has subscribed to (if subscription type is 3)
   def related_courses(overrule_subscription_type: false)
     return if subscription_type.nil?
+
     selection_type = overrule_subscription_type || subscription_type
     if selection_type == 1
       return Course.where(id: preceding_course_ids).includes(:lectures)
     end
     return Course.all.includes(:lectures) if selection_type == 2
+
     courses
   end
 
@@ -214,8 +220,10 @@ class User < ApplicationRecord
   # returns ARel of all those tags from the given tags that belong to
   # the user's related lectures
   def filter_tags(tags)
-    Tag.where(id: tags.select { |t| t.in_lectures?(related_lectures) ||
-                                      t.in_courses?(related_courses) }
+    Tag.where(id: tags.select { |t|
+                    t.in_lectures?(related_lectures) ||
+                                      t.in_courses?(related_courses)
+                  }
                       .map(&:id))
   end
 
@@ -229,9 +237,9 @@ class User < ApplicationRecord
   # the user's related lectures
   def filter_media(media)
     media.where(teachable: related_lectures)
-      .or(media.where(teachable: related_courses))
-      .or(media.where(teachable: Lesson.where(lecture: related_lectures)))
-      .or(media.where(teachable: Talk.where(lecture: related_lectures)))
+         .or(media.where(teachable: related_courses))
+         .or(media.where(teachable: Lesson.where(lecture: related_lectures)))
+         .or(media.where(teachable: Talk.where(lecture: related_lectures)))
   end
 
   # returns array of all those sections from the given sections that belon to
@@ -331,6 +339,7 @@ class User < ApplicationRecord
 
   def info_uncached
     return email unless name.present?
+
     (name_in_tutorials.presence || name) + ' (' + email + ')'
   end
 
@@ -342,6 +351,7 @@ class User < ApplicationRecord
 
   def tutorial_info_uncached
     return email unless tutorial_name.present?
+
     tutorial_name + ' (' + email + ')'
   end
 
@@ -353,6 +363,7 @@ class User < ApplicationRecord
 
   def name_or_email
     return name unless name.blank?
+
     email
   end
 
@@ -362,6 +373,7 @@ class User < ApplicationRecord
 
   def short_info
     return email unless name.present?
+
     name
   end
 
@@ -431,9 +443,10 @@ class User < ApplicationRecord
   #    boards not belonging to lectures
   def thredded_can_read_messageboards
     return Thredded::Messageboard.all if admin?
+
     subscribed_forums =
       Thredded::Messageboard.where(id: lectures.map(&:forum_id))
-        .or(Thredded::Messageboard.where.not(id: Lecture.all.map(&:forum_id)))
+                            .or(Thredded::Messageboard.where.not(id: Lecture.all.map(&:forum_id)))
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
                                                   .map(&:forum_id))
@@ -447,6 +460,7 @@ class User < ApplicationRecord
   #   lecture (they are for admins posts only)
   def thredded_can_write_messageboards
     return Thredded::Messageboard.all if admin?
+
     subscribed_forums =
       Thredded::Messageboard.where(id: lectures.map(&:forum_id))
     if teacher? || edited_courses.any? || edited_lectures.any?
@@ -464,6 +478,7 @@ class User < ApplicationRecord
   # - none otherwise
   def thredded_can_moderate_messageboards
     return Thredded::Messageboard.all if admin?
+
     if teacher? || edited_courses.any? || edited_lectures.any?
       return Thredded::Messageboard.where(id: teaching_related_lectures
                                                 .map(&:forum_id))
@@ -490,25 +505,26 @@ class User < ApplicationRecord
     nonsubscribed_talks = Talk.where(lecture: nonsubscribed_lectures)
     edited_talks = Talk.where(lecture: teaching_related_lectures)
     return media if admin
+
     media.where(teachable: courses, released: ['all', 'subscribers', 'users'])
-      .or(media.where(teachable: nonsubscribed_courses,
-                      released: ['all', 'users']))
-      .or(media.where(teachable: lectures,
-                      released: ['all', 'subscribers', 'users']))
-      .or(media.where(teachable: nonsubscribed_lectures,
-                      released: ['all', 'users']))
-      .or(media.where(teachable: lessons,
-                      released: ['all', 'subscribers', 'users']))
-      .or(media.where(teachable: nonsubscribed_lessons,
-                      released: ['all', 'users']))
-      .or(media.where(teachable: talks,
-                      released: ['all', 'subscribers', 'users']))
-      .or(media.where(teachable: nonsubscribed_talks,
-                      released: ['all', 'users']))
-      .or(media.where(teachable: edited_courses))
-      .or(media.where(teachable: teaching_related_lectures))
-      .or(media.where(teachable: edited_lessons))
-      .or(media.where(teachable: edited_talks))
+         .or(media.where(teachable: nonsubscribed_courses,
+                         released: ['all', 'users']))
+         .or(media.where(teachable: lectures,
+                         released: ['all', 'subscribers', 'users']))
+         .or(media.where(teachable: nonsubscribed_lectures,
+                         released: ['all', 'users']))
+         .or(media.where(teachable: lessons,
+                         released: ['all', 'subscribers', 'users']))
+         .or(media.where(teachable: nonsubscribed_lessons,
+                         released: ['all', 'users']))
+         .or(media.where(teachable: talks,
+                         released: ['all', 'subscribers', 'users']))
+         .or(media.where(teachable: nonsubscribed_talks,
+                         released: ['all', 'users']))
+         .or(media.where(teachable: edited_courses))
+         .or(media.where(teachable: teaching_related_lectures))
+         .or(media.where(teachable: edited_lessons))
+         .or(media.where(teachable: edited_talks))
   end
 
   def subscribed_commentable_media_with_comments
@@ -522,11 +538,13 @@ class User < ApplicationRecord
 
   def media_latest_comments
     subscribed_commentable_media_with_comments
-      .map { |m| { medium: m,
-                   thread: m.commontator_thread,
-                   latest_comment: m.commontator_thread
-                                    .comments.sort_by(&:created_at)
-                                    .last } }
+      .map { |m|
+      { medium: m,
+        thread: m.commontator_thread,
+        latest_comment: m.commontator_thread
+                         .comments.sort_by(&:created_at)
+                         .last }
+    }
       .sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
@@ -550,6 +568,7 @@ class User < ApplicationRecord
   def subscribe_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
     return false if lecture.in?(lectures)
+
     lectures << lecture
 
     # make sure subscribed_users is updated in media
@@ -561,6 +580,7 @@ class User < ApplicationRecord
   def unsubscribe_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
     return false unless lecture.in?(lectures)
+
     lectures.delete(lecture)
     favorite_lectures.delete(lecture)
 
@@ -581,6 +601,7 @@ class User < ApplicationRecord
     unless editor? || teacher?
       return current_lectures.published.sort + no_term_lectures.published.sort
     end
+
     current_lectures.select { |l| l.edited_by?(self) || l.published? }.sort +
       no_term_lectures.select { |l| l.edited_by?(self) || l.published? }.sort
   end
@@ -693,6 +714,7 @@ class User < ApplicationRecord
       raise 'can_edit? was called with incompatible class'
     end
     return true if admin
+
     in?(something.editors_with_inheritance.to_a)
   end
 
@@ -702,6 +724,7 @@ class User < ApplicationRecord
 
   def layout
     return 'administration' if admin_or_editor?
+
     'application_no_sidebar'
   end
 
@@ -730,48 +753,49 @@ class User < ApplicationRecord
 
   private
 
-  def set_defaults
-    self.subscription_type ||= 1
-    self.admin ||= false
-    self.name ||= email.split('@').first
-    self.locale ||= I18n.default_locale.to_s
-  end
+    def set_defaults
+      self.subscription_type ||= 1
+      self.admin ||= false
+      self.name ||= email.split('@').first
+      self.locale ||= I18n.default_locale.to_s
+    end
 
-  # sets time for DSGVO consent to current time
-  def set_consented_at
-    update(consented_at: Time.now)
-  end
+    # sets time for DSGVO consent to current time
+    def set_consented_at
+      update(consented_at: Time.now)
+    end
 
-  # returns array of ids of all courses that preced the subscribed courses
-  def preceding_course_ids
-    courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
-      courses.all.pluck(:id)
-  end
+    # returns array of ids of all courses that preced the subscribed courses
+    def preceding_course_ids
+      courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
+        courses.all.pluck(:id)
+    end
 
-  def destroy_single_submissions
-    Submission.where(id: submissions.select { |s| s.users.count == 1 }
-                                    .map(&:id)).destroy_all
-  end
+    def destroy_single_submissions
+      Submission.where(id: submissions.select { |s| s.users.count == 1 }
+                                      .map(&:id)).destroy_all
+    end
 
-  def archive_email
-    splitting = DefaultSetting::PROJECT_EMAIL.split('@')
-    "#{splitting.first}-archive-#{id}@#{splitting.second}"
-  end
+    def archive_email
+      splitting = DefaultSetting::PROJECT_EMAIL.split('@')
+      "#{splitting.first}-archive-#{id}@#{splitting.second}"
+    end
 
-  def transfer_contributions_to(user)
-    return false unless user && user.valid? && user != self
-    given_lectures.update_all(teacher_id: user.id)
-    EditableUserJoin.where(user: self, editable_type: 'Medium')
-                    .update_all(user_id: user.id)
-  end
+    def transfer_contributions_to(user)
+      return false unless user && user.valid? && user != self
 
-  def archive_user(archive_name)
-    User.create(name: archive_name,
-                email: archive_email,
-                password: SecureRandom.base58(12),
-                consents: true,
-                consented_at: Time.now,
-                confirmed_at: Time.now,
-                archived: true)
-  end
+      given_lectures.update_all(teacher_id: user.id)
+      EditableUserJoin.where(user: self, editable_type: 'Medium')
+                      .update_all(user_id: user.id)
+    end
+
+    def archive_user(archive_name)
+      User.create(name: archive_name,
+                  email: archive_email,
+                  password: SecureRandom.base58(12),
+                  consents: true,
+                  consented_at: Time.now,
+                  confirmed_at: Time.now,
+                  archived: true)
+    end
 end

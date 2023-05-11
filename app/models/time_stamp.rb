@@ -81,27 +81,28 @@ class TimeStamp
 
   private
 
-  def init_with_total_seconds(total_s)
-    floor_s = total_s.floor
-    @milliseconds = ((total_s - floor_s) * 1000).round
-    @minutes = (floor_s / 60) % 60
-    @seconds = floor_s % 60
-    @hours = floor_s / (60 * 60)
-  end
+    def init_with_total_seconds(total_s)
+      floor_s = total_s.floor
+      @milliseconds = ((total_s - floor_s) * 1000).round
+      @minutes = (floor_s / 60) % 60
+      @seconds = floor_s % 60
+      @hours = floor_s / (60 * 60)
+    end
 
-  def init_with_time_string(time_string)
-    return unless /(\d+):([0-5]\d):([0-5]\d).(\d{3})/.match?(time_string)
-    matchdata = /(\d):([0-5]\d):([0-5]\d).(\d{3})/.match(time_string)
-    @hours = matchdata[1].to_i
-    @minutes = matchdata[2].to_i
-    @seconds = matchdata[3].to_i
-    @milliseconds = matchdata[4].to_i
-  end
+    def init_with_time_string(time_string)
+      return unless /(\d+):([0-5]\d):([0-5]\d).(\d{3})/.match?(time_string)
 
-  def init_with_hms(params)
-    @hours = params[:h].to_i
-    @minutes = params[:m].to_i
-    @seconds = params[:s].to_i
-    @milliseconds = params[:ms].to_i
-  end
+      matchdata = /(\d):([0-5]\d):([0-5]\d).(\d{3})/.match(time_string)
+      @hours = matchdata[1].to_i
+      @minutes = matchdata[2].to_i
+      @seconds = matchdata[3].to_i
+      @milliseconds = matchdata[4].to_i
+    end
+
+    def init_with_hms(params)
+      @hours = params[:h].to_i
+      @minutes = params[:m].to_i
+      @seconds = params[:s].to_i
+      @milliseconds = params[:ms].to_i
+    end
 end

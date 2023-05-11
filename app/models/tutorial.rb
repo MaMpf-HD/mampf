@@ -14,19 +14,20 @@ class Tutorial < ApplicationRecord
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
 
   def title_with_tutors
-  	return "#{title}, #{I18n.t('basics.tba')}" unless tutors.any?
-  	"#{title}, #{tutor_names}"
+    return "#{title}, #{I18n.t('basics.tba')}" unless tutors.any?
+
+    "#{title}, #{tutor_names}"
   end
 
   def tutor_names
-  	return unless tutors.any?
-  	tutors.map(&:tutorial_name).join(', ')
+    return unless tutors.any?
+
+    tutors.map(&:tutorial_name).join(', ')
   end
 
   def destructible?
-		Submission.where(tutorial: self).proper.none?
+    Submission.where(tutorial: self).proper.none?
   end
-
 
   def teams_to_csv(assignment)
     submissions = Submission.where(tutorial: self, assignment: assignment)
@@ -37,11 +38,11 @@ class Tutorial < ApplicationRecord
       end
     end
   end
-  
+
   private
 
-  def check_destructibility
-  	throw(:abort) unless destructible?
-  	true
-  end
+    def check_destructibility
+      throw(:abort) unless destructible?
+      true
+    end
 end

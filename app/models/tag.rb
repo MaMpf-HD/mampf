@@ -38,15 +38,19 @@ class Tag < ApplicationRecord
   serialize :realizations, Array
 
   accepts_nested_attributes_for :notions,
-    reject_if: lambda {|attributes| attributes['title'].blank?},
-    allow_destroy: true
+                                reject_if: lambda { |attributes|
+                                             attributes['title'].blank?
+                                           },
+                                allow_destroy: true
 
   validates_presence_of :notions
   validates_associated :notions
 
   accepts_nested_attributes_for :aliases,
-    reject_if: lambda {|attributes| attributes['title'].blank?},
-    allow_destroy: true
+                                reject_if: lambda { |attributes|
+                                             attributes['title'].blank?
+                                           },
+                                allow_destroy: true
 
   validates_associated :aliases
 
@@ -84,6 +88,7 @@ class Tag < ApplicationRecord
     unless other_titles_uncached.any?
       return local_title_uncached + " (#{aliases.pluck(:title).join(', ')})"
     end
+
     local_title_uncached +
       " (#{aliases.pluck(:title).join(', ')}," +
       " #{other_titles_uncached.join(', ')})"
@@ -144,7 +149,6 @@ class Tag < ApplicationRecord
                    .map { |t| { value: t.id, text: t.title } }
   end
 
-
   # returns all tags whose title is close to the given search string
   # wrt to the JaroWinkler metric
   def self.similar_tags(search_string)
@@ -174,7 +178,7 @@ class Tag < ApplicationRecord
   def self.select_by_title_except(excluded_tags)
     Tag.where.not(id: excluded_tags.pluck(:id))
        .map { |t| t.extended_title_id_hash }
-       .natural_sort_by{ |t| t[:title] }.map { |t| [t[:title], t[:id]] }
+       .natural_sort_by { |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
   # converts the subgraph of all tags of distance <= 2 to the given marked tag
@@ -208,6 +212,7 @@ class Tag < ApplicationRecord
   # search params is a hash having keys :all_tags, :tag_ids
   def self.search_tags(search_params)
     return Tag.all unless search_params[:all_tags] == '0'
+
     tag_ids = search_params[:tag_ids] || []
     Tag.where(id: tag_ids)
   end
@@ -238,6 +243,7 @@ class Tag < ApplicationRecord
 
   def short_title(max_letters = 30)
     return title unless title.length > max_letters
+
     title[0, max_letters - 3] + '...'
   end
 
@@ -265,6 +271,7 @@ class Tag < ApplicationRecord
   def create_random_quiz!(user)
     questions = visible_questions(user)
     return unless questions.any?
+
     question_ids = questions.pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
     quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{title} #{Time.now}",
@@ -273,6 +280,7 @@ class Tag < ApplicationRecord
                     sort: 'RandomQuiz')
     quiz.save
     return quiz.errors unless quiz.valid?
+
     quiz
   end
 
@@ -281,6 +289,7 @@ class Tag < ApplicationRecord
   def color(marked_tag, highlight_related_tags: true)
     return '#f00' if self == marked_tag
     return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
+
     '#000'
   end
 
@@ -289,6 +298,7 @@ class Tag < ApplicationRecord
   def background(marked_tag, highlight_related_tags: true)
     return '#f00' if self == marked_tag
     return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
+
     '#666'
   end
 
@@ -313,7 +323,9 @@ class Tag < ApplicationRecord
 
   # published sections are sections that belong to a published lecture
   def visible_sections(user)
-    user.filter_sections(sections).select { |s| s.lecture.visible_for_user?(user) }
+    user.filter_sections(sections).select { |s|
+      s.lecture.visible_for_user?(user)
+    }
   end
 
   def cache_key
@@ -343,6 +355,7 @@ class Tag < ApplicationRecord
     related_tags.delete(tag)
     tag.sections.each do |s|
       next unless self.in?(s.tags)
+
       old_section_tag = SectionTagJoin.find_by(section: s, tag: tag)
       position = old_section_tag.tag_position
       new_section_tag = SectionTagJoin.find_by(section: s, tag: self)
@@ -369,24 +382,25 @@ class Tag < ApplicationRecord
 
   private
 
-  def touch_relations(notion)
-    if persisted?
-      touch
-      touch_lectures
-      touch_sections
-      touch_chapters
+    def touch_relations(notion)
+      if persisted?
+        touch
+        touch_lectures
+        touch_sections
+        touch_chapters
+      end
     end
-  end
 
-  # simulates the after_destroy callback for relations
-  def destroy_relations(related_tag)
-    Relation.where(tag: [self, related_tag],
-                   related_tag: [self, related_tag]).delete_all
-  end
+    # simulates the after_destroy callback for relations
+    def destroy_relations(related_tag)
+      Relation.where(tag: [self, related_tag],
+                     related_tag: [self, related_tag]).delete_all
+    end
 
-  def title_join
-    result = notions.pluck(:title).join(' ')
-    return result unless aliases.any?
-    result + ' ' + aliases.pluck(:title).join(' ')
-  end
+    def title_join
+      result = notions.pluck(:title).join(' ')
+      return result unless aliases.any?
+
+      result + ' ' + aliases.pluck(:title).join(' ')
+    end
 end

@@ -112,20 +112,21 @@ class ClickersController < ApplicationController
 
   private
 
-  def clicker_params
-    params.require(:clicker).permit(:editor_id, :teachable_type,
-                                    :teachable_id, :question_id, :title)
-  end
+    def clicker_params
+      params.require(:clicker).permit(:editor_id, :teachable_type,
+                                      :teachable_id, :question_id, :title)
+    end
 
-  def code_params
-    params.permit(:code)
-  end
+    def code_params
+      params.permit(:code)
+    end
 
-  def set_clicker
-    @clicker = Clicker.find_by_id(params[:id])
-    @code = user_signed_in? ? nil : @clicker&.code
-    @entered_code = code_params[:code]
-    return if @clicker
-    redirect_to :root, alert: I18n.t('controllers.no_clicker')
-  end
+    def set_clicker
+      @clicker = Clicker.find_by_id(params[:id])
+      @code = user_signed_in? ? nil : @clicker&.code
+      @entered_code = code_params[:code]
+      return if @clicker
+
+      redirect_to :root, alert: I18n.t('controllers.no_clicker')
+    end
 end

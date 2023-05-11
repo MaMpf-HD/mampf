@@ -1,46 +1,46 @@
 # ExamplesController
 class ErdbeereController < ApplicationController
   authorize_resource class: false
-	layout 'application'
+  layout 'application'
 
   def current_ability
     @current_ability ||= ErdbeereAbility.new(current_user)
   end
 
-	def show_example
+  def show_example
     response = Faraday.get(ENV['ERDBEERE_API'] + "/examples/#{params[:id]}")
     @content = if response.status == 200
-								 JSON.parse(response.body)['embedded_html']
-							 else
-							 	 'Something went wrong.'
-							 end
-	end
+      JSON.parse(response.body)['embedded_html']
+    else
+      'Something went wrong.'
+    end
+  end
 
-	def show_property
+  def show_property
     response = Faraday.get(ENV['ERDBEERE_API'] + "/properties/#{params[:id]}")
 
-		@content = if response.status == 200
-								 JSON.parse(response.body)['embedded_html']
-							 else
-							 	 'Something went wrong.'
-							 end
-	end
+    @content = if response.status == 200
+      JSON.parse(response.body)['embedded_html']
+    else
+      'Something went wrong.'
+    end
+  end
 
-	def show_structure
-		id = params[:id]
+  def show_structure
+    id = params[:id]
     response = Faraday.get(ENV['ERDBEERE_API'] + "/structures/#{params[:id]}")
     @content = if response.status == 200
-								 JSON.parse(response.body)['embedded_html']
-							 else
-							 	 'Something went wrong.'
-							 end
-	end
+      JSON.parse(response.body)['embedded_html']
+    else
+      'Something went wrong.'
+    end
+  end
 
-	def find_tags
-		@sort = params[:sort]
-		@id = params[:id].to_i
-		@tags = Tag.find_erdbeere_tags(@sort, @id)
-	end
+  def find_tags
+    @sort = params[:sort]
+    @id = params[:id].to_i
+    @tags = Tag.find_erdbeere_tags(@sort, @id)
+  end
 
   def edit_tags
   end
@@ -59,11 +59,11 @@ class ErdbeereController < ApplicationController
       return
     end
     @info = if @sort == 'Structure'
-              @content['data']['attributes']['name']
-            else
-              "#{@content['included'][0]['attributes']['name']}:"\
-              "#{@content['data']['attributes']['name']}"
-            end
+      @content['data']['attributes']['name']
+    else
+      "#{@content['included'][0]['attributes']['name']}:"\
+      "#{@content['data']['attributes']['name']}"
+    end
   end
 
   def update_tags
@@ -93,7 +93,9 @@ class ErdbeereController < ApplicationController
     @structures = hash['data'].map do |d|
       { id: d['id'],
         name: d['attributes']['name'],
-        properties: d['relationships']['original_properties']['data'].map { |x| x['id'] }}
+        properties: d['relationships']['original_properties']['data'].map { |x|
+                      x['id']
+                    } }
     end
     @properties = hash['included'].map do |d|
       { id: d['id'],
@@ -104,21 +106,21 @@ class ErdbeereController < ApplicationController
   def find_example
     response = Faraday.get(ENV['ERDBEERE_API'] + '/find?' + find_params.to_query)
     @content = if response.status == 200
-                 JSON.parse(response.body)['embedded_html']
-               else
-                 'Something went wrong.'
-               end
+      JSON.parse(response.body)['embedded_html']
+    else
+      'Something went wrong.'
+    end
   end
 
   private
 
-  def erdbeere_params
-    params.require(:erdbeere).permit(:sort, :id, tag_ids: [])
-  end
+    def erdbeere_params
+      params.require(:erdbeere).permit(:sort, :id, tag_ids: [])
+    end
 
-  def find_params
-    params.require(:find).permit(:structure_id,
-                                 satisfies: [],
-                                 violates: [])
-  end
+    def find_params
+      params.require(:find).permit(:structure_id,
+                                   satisfies: [],
+                                   violates: [])
+    end
 end

@@ -23,13 +23,13 @@ class SubmissionsController < ApplicationController
     @current_assignments = @lecture.current_assignments
     @previous_assignments = @lecture.previous_assignments
     @old_assignments = @assignments.expired.order('deadline DESC') -
-                         @previous_assignments
+                       @previous_assignments
     @future_assignments = @assignments.active.order(:deadline) -
-                            @current_assignments
+                          @current_assignments
   end
 
   def new
-  	@submission = Submission.new
+    @submission = Submission.new
     @submission.assignment = @assignment
     set_submission_locale
   end
@@ -38,7 +38,8 @@ class SubmissionsController < ApplicationController
   end
 
   def update
-  	return if @too_late
+    return if @too_late
+
     old_manuscript_data = @submission.manuscript_data
     @old_filename = @submission.manuscript_filename
     if submission_manuscript_params[:manuscript].present?
@@ -47,6 +48,7 @@ class SubmissionsController < ApplicationController
                                                              .metadata,
                                                   :manuscript)
       return if @errors.present?
+
       @submission.save
       @errors = @submission.errors
       return unless @submission.valid?
@@ -67,11 +69,12 @@ class SubmissionsController < ApplicationController
   end
 
   def create
-  	@submission = Submission.new(submission_create_params)
+    @submission = Submission.new(submission_create_params)
     @lecture = @submission&.assignment&.lecture
     set_submission_locale
     @too_late = @submission.not_updatable?
-  	return if @too_late
+    return if @too_late
+
     if submission_manuscript_params[:manuscript].present?
       @submission.manuscript = submission_manuscript_params[:manuscript]
       @errors = @submission.check_file_properties(@submission.manuscript
@@ -84,14 +87,17 @@ class SubmissionsController < ApplicationController
     @assignment = @submission.assignment
     @errors = @submission.errors
     return unless @submission.valid?
+
     send_invitation_emails
     @submission.update(last_modification_by_users_at: Time.now)
     return unless @submission.manuscript
+
     send_upload_email(User.where(id: current_user.id))
   end
 
   def destroy
     return if @too_late
+
     @submission.destroy
   end
 
@@ -124,6 +130,7 @@ class SubmissionsController < ApplicationController
 
   def leave
     return if @too_late
+
     if @submission.users.count == 1
       @error = I18n.t('submission.no_partners_no_leave')
       return
@@ -141,8 +148,8 @@ class SubmissionsController < ApplicationController
   def show_manuscript
     if @submission && @submission.manuscript
       send_file @submission.manuscript.to_io,
-      					type: @submission.manuscript_mime_type,
-      					disposition: @disposition,
+                type: @submission.manuscript_mime_type,
+                disposition: @disposition,
                 filename: @submission.manuscript_filename
     elsif @submission
       redirect_to :start, alert: t('submission.no_manuscript_yet')
@@ -165,20 +172,20 @@ class SubmissionsController < ApplicationController
   end
 
   def refresh_token
-  	@submission.update(token: Submission.generate_token)
+    @submission.update(token: Submission.generate_token)
   end
 
   def enter_invitees
-  	@too_late = @submission.assignment.totally_expired?
+    @too_late = @submission.assignment.totally_expired?
   end
 
   def invite
-  	if @too_late
-  		render :create
-  		return
-  	end
-  	send_invitation_emails
-  	render :create
+    if @too_late
+      render :create
+      return
+    end
+    send_invitation_emails
+    render :create
   end
 
   def edit_correction
@@ -188,12 +195,13 @@ class SubmissionsController < ApplicationController
   end
 
   def add_correction
-  	if correction_params[:correction].present?
+    if correction_params[:correction].present?
       @submission.correction = correction_params[:correction]
       @errors = @submission.check_file_properties_any(@submission.correction
                                                              .metadata,
-                                                  :correction)
+                                                      :correction)
       return if @errors.present?
+
       @submission.save
       @errors = @submission.errors
       return unless @submission.valid?
@@ -201,6 +209,7 @@ class SubmissionsController < ApplicationController
     @submission.update(correction_params)
     @errors = @submission.errors
     return if @errors.present?
+
     send_correction_upload_email(@submission.users)
   end
 
@@ -235,212 +244,220 @@ class SubmissionsController < ApplicationController
 
   private
 
-  def set_submission
-    @submission = Submission.find_by_id(params[:id])
-    @assignment = @submission&.assignment
-    @lecture = @assignment&.lecture
-    set_submission_locale
-    return if @submission
-    flash[:alert] = I18n.t('controllers.no_submission')
-    render js: "window.location='#{root_path}'"
-  end
+    def set_submission
+      @submission = Submission.find_by_id(params[:id])
+      @assignment = @submission&.assignment
+      @lecture = @assignment&.lecture
+      set_submission_locale
+      return if @submission
 
-  def submission_create_params
-    params.require(:submission).permit(:tutorial_id, :assignment_id)
-  end
+      flash[:alert] = I18n.t('controllers.no_submission')
+      render js: "window.location='#{root_path}'"
+    end
 
-  # disallow modification of assignment
-  def submission_update_params
-    params.require(:submission).permit(:tutorial_id)
-  end
+    def submission_create_params
+      params.require(:submission).permit(:tutorial_id, :assignment_id)
+    end
 
-  # disallow modification of assignment
-  def submission_manuscript_params
-    params.require(:submission).permit(:manuscript)
-  end
+    # disallow modification of assignment
+    def submission_update_params
+      params.require(:submission).permit(:tutorial_id)
+    end
 
-  def set_assignment
-    @assignment = Assignment.find_by_id(params[:assignment_id])
-    @lecture = @assignment&.lecture
-    set_submission_locale
-    return if @assignment
-    flash[:alert] = I18n.t('controllers.no_assignment')
-    render js: "window.location='#{root_path}'"
-    return
-  end
+    # disallow modification of assignment
+    def submission_manuscript_params
+      params.require(:submission).permit(:manuscript)
+    end
 
-  def set_lecture
-    @lecture = Lecture.find_by_id(params[:id])
-    set_submission_locale and return if @lecture
-    redirect_to :root, alert: I18n.t('controllers.no_lecture')
-  end
+    def set_assignment
+      @assignment = Assignment.find_by_id(params[:assignment_id])
+      @lecture = @assignment&.lecture
+      set_submission_locale
+      return if @assignment
 
-  def set_too_late
-    @too_late = @submission.not_updatable?
-  end
+      flash[:alert] = I18n.t('controllers.no_assignment')
+      render js: "window.location='#{root_path}'"
+      return
+    end
 
-  def set_submission_locale
-    I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
+    def set_lecture
+      @lecture = Lecture.find_by_id(params[:id])
+      set_submission_locale and return if @lecture
+
+      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+    end
+
+    def set_too_late
+      @too_late = @submission.not_updatable?
+    end
+
+    def set_submission_locale
+      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
                     I18n.default_locale
-  end
-
-  def join_params
-    params.require(:join).permit(:code, :assignment_id)
-  end
-
-  def invitation_params
-    params.require(:submission).permit(invitee_ids: [])
-  end
-
-  def correction_params
-    params.require(:submission).permit(:correction)
-  end
-
-  def move_params
-    params.require(:submission).permit(:tutorial_id)
-  end
-
-  def send_invitation_emails
-    invitees = User.where(id: invitation_params[:invitee_ids])
-    invitees.each do |i|
-      NotificationMailer.with(recipient: i,
-                              locale: i.locale,
-                              assignment: @assignment,
-                              code: @submission.token,
-                              issuer: current_user)
-                        .submission_invitation_email.deliver_later
     end
-    @submission.update(invited_user_ids: @submission.invited_user_ids |
-    																			 invitees.pluck(:id))
-  end
 
-  def send_upload_email(users)
-    users.email_for_submission_upload.each do |u|
-      NotificationMailer.with(recipient: u,
-                              locale: u.locale,
-                              submission: @submission,
-                              uploader: current_user,
-                              filename: @submission.manuscript_filename)
-                        .submission_upload_email.deliver_later
+    def join_params
+      params.require(:join).permit(:code, :assignment_id)
     end
-  end
 
-  def send_upload_removal_email(users)
-    users.email_for_submission_removal.each do |u|
-      NotificationMailer.with(recipient: u,
-                              locale: u.locale,
-                              submission: @submission,
-                              remover: current_user,
-                              filename: @old_filename)
-                        .submission_upload_removal_email.deliver_later
+    def invitation_params
+      params.require(:submission).permit(invitee_ids: [])
     end
-  end
 
-  def send_correction_upload_email(users)
-    users.email_for_correction_upload.each do |u|
-      NotificationMailer.with(recipient: u,
-                              locale: u.locale,
-                              submission: @submission,
-                              tutor: current_user)
-                        .correction_upload_email.deliver_later
+    def correction_params
+      params.require(:submission).permit(:correction)
     end
-  end
 
-  def send_acceptance_email(users)
-    users.email_for_submission_decision.each do |u|
-      NotificationMailer.with(recipient: u,
-                              locale: u.locale,
-                              submission: @submission)
-                        .submission_acceptance_email.deliver_later
+    def move_params
+      params.require(:submission).permit(:tutorial_id)
     end
-  end
 
-  def send_rejection_email(users)
-    users.email_for_submission_decision.each do |u|
-      NotificationMailer.with(recipient: u,
-                              locale: u.locale,
-                              submission: @submission)
-                        .submission_rejection_email.deliver_later
+    def send_invitation_emails
+      invitees = User.where(id: invitation_params[:invitee_ids])
+      invitees.each do |i|
+        NotificationMailer.with(recipient: i,
+                                locale: i.locale,
+                                assignment: @assignment,
+                                code: @submission.token,
+                                issuer: current_user)
+                          .submission_invitation_email.deliver_later
+      end
+      @submission.update(invited_user_ids: @submission.invited_user_ids |
+                                             invitees.pluck(:id))
     end
-  end
 
-  def check_code_validity
-    if !@submission && @assignment
-      @error = I18n.t('submission.invalid_code_for_assignment',
-                      assignment: @assignment.title)
-    elsif !@submission
-      @error = I18n.t('submission.invalid_code')
-    elsif @assignment&.totally_expired?
-      @error = I18n.t('submission.assignment_expired')
-    elsif @submission.correction
-      @error = I18n.t('submission.already_corrected')
-    elsif current_user.in?(@submission.users)
-      @error = I18n.t('submission.already_in')
-    elsif !@submission.tutorial.lecture.in?(current_user.lectures)
-      @error = I18n.t('submission.lecture_not_subscribed')
+    def send_upload_email(users)
+      users.email_for_submission_upload.each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: @submission,
+                                uploader: current_user,
+                                filename: @submission.manuscript_filename)
+                          .submission_upload_email.deliver_later
+      end
     end
-  end
 
-  def check_code_and_join
-  	check_code_validity
-  	unless @error
-    	@join = UserSubmissionJoin.new(user: current_user,
-    														 		 submission: @submission)
-    	@join.save
-    	if @join.valid?
-        @submission.update(last_modification_by_users_at: Time.now)
-        send_join_email
-        remove_invitee_status
-      else
-    		@error = @join.errors[:base].join(', ')
-    	end
+    def send_upload_removal_email(users)
+      users.email_for_submission_removal.each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: @submission,
+                                remover: current_user,
+                                filename: @old_filename)
+                          .submission_upload_removal_email.deliver_later
+      end
     end
-  end
 
-  def send_join_email
-    (@submission.users.email_for_submission_join - [current_user]).each do |u|
-      NotificationMailer.with(recipient: u,
-                              locale: u.locale,
-                              submission: @submission,
-                              user: current_user)
-                        .submission_join_email.deliver_later
+    def send_correction_upload_email(users)
+      users.email_for_correction_upload.each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: @submission,
+                                tutor: current_user)
+                          .correction_upload_email.deliver_later
+      end
     end
-  end
 
-  def send_leave_email
-    (@submission.users.email_for_submission_leave - [current_user]).each do |u|
-      NotificationMailer.with(recipient: u,
-                              locale: u.locale,
-                              submission: @submission,
-                              user: current_user)
-                        .submission_leave_email.deliver_later
+    def send_acceptance_email(users)
+      users.email_for_submission_decision.each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: @submission)
+                          .submission_acceptance_email.deliver_later
+      end
     end
-  end
 
-  def remove_invitee_status
-  	@submission.update(invited_user_ids: @submission.invited_user_ids -
-  																				 [current_user.id])
-  end
+    def send_rejection_email(users)
+      users.email_for_submission_decision.each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: @submission)
+                          .submission_rejection_email.deliver_later
+      end
+    end
 
-  def check_student_status
-    return if current_user.proper_student_in?(@lecture)
-    redirect_to :root, alert: I18n.t('controllers.no_student_status_in_lecture')
-  end
+    def check_code_validity
+      if !@submission && @assignment
+        @error = I18n.t('submission.invalid_code_for_assignment',
+                        assignment: @assignment.title)
+      elsif !@submission
+        @error = I18n.t('submission.invalid_code')
+      elsif @assignment&.totally_expired?
+        @error = I18n.t('submission.assignment_expired')
+      elsif @submission.correction
+        @error = I18n.t('submission.already_corrected')
+      elsif current_user.in?(@submission.users)
+        @error = I18n.t('submission.already_in')
+      elsif !@submission.tutorial.lecture.in?(current_user.lectures)
+        @error = I18n.t('submission.lecture_not_subscribed')
+      end
+    end
 
-  def check_if_tutorials
-    return if @lecture.tutorials.any?
-    redirect_to :root, alert: I18n.t('controllers.no_tutorials_in_lecture')
-  end
+    def check_code_and_join
+      check_code_validity
+      unless @error
+        @join = UserSubmissionJoin.new(user: current_user,
+                                       submission: @submission)
+        @join.save
+        if @join.valid?
+          @submission.update(last_modification_by_users_at: Time.now)
+          send_join_email
+          remove_invitee_status
+        else
+          @error = @join.errors[:base].join(', ')
+        end
+      end
+    end
 
-  def check_if_assignments
-    return if @lecture.assignments.any?
-    redirect_to :root, alert: I18n.t('controllers.no_assignments_in_lecture')
-  end
+    def send_join_email
+      (@submission.users.email_for_submission_join - [current_user]).each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: @submission,
+                                user: current_user)
+                          .submission_join_email.deliver_later
+      end
+    end
 
-  def set_disposition
-    @disposition = params[:download] == 'true' ? 'attachment' : 'inline'
-    accepted = @submission.assignment.accepted_file_type
-    return unless accepted.in?(Assignment.non_inline_file_types)
-    @disposition = 'attachment'
-  end
+    def send_leave_email
+      (@submission.users.email_for_submission_leave - [current_user]).each do |u|
+        NotificationMailer.with(recipient: u,
+                                locale: u.locale,
+                                submission: @submission,
+                                user: current_user)
+                          .submission_leave_email.deliver_later
+      end
+    end
+
+    def remove_invitee_status
+      @submission.update(invited_user_ids: @submission.invited_user_ids -
+                                             [current_user.id])
+    end
+
+    def check_student_status
+      return if current_user.proper_student_in?(@lecture)
+
+      redirect_to :root,
+                  alert: I18n.t('controllers.no_student_status_in_lecture')
+    end
+
+    def check_if_tutorials
+      return if @lecture.tutorials.any?
+
+      redirect_to :root, alert: I18n.t('controllers.no_tutorials_in_lecture')
+    end
+
+    def check_if_assignments
+      return if @lecture.assignments.any?
+
+      redirect_to :root, alert: I18n.t('controllers.no_assignments_in_lecture')
+    end
+
+    def set_disposition
+      @disposition = params[:download] == 'true' ? 'attachment' : 'inline'
+      accepted = @submission.assignment.accepted_file_type
+      return unless accepted.in?(Assignment.non_inline_file_types)
+
+      @disposition = 'attachment'
+    end
 end

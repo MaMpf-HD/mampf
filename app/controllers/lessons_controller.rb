@@ -46,9 +46,11 @@ class LessonsController < ApplicationController
     @lesson.update(lesson_params)
     @errors = @lesson.errors
     return unless @errors.blank?
+
     update_media_order if params[:lesson][:media_order]
     @tags_without_section = @lesson.tags_without_section
     return unless @lesson.sections.count == 1 && @tags_without_section.any?
+
     section = @lesson.sections.first
     section.tags << @tags_without_section
   end
@@ -69,28 +71,31 @@ class LessonsController < ApplicationController
 
   private
 
-  def set_lesson
-    @lesson = Lesson.find_by_id(params[:id])
-    return if @lesson.present?
-    redirect_to :root, alert: I18n.t('controllers.no_lesson')
-  end
+    def set_lesson
+      @lesson = Lesson.find_by_id(params[:id])
+      return if @lesson.present?
 
-  def lesson_params
-    params.require(:lesson).permit(:date, :lecture_id, :start_destination,
-                                   :end_destination, :details,
-                                   section_ids: [],
-                                   tag_ids: [])
-  end
+      redirect_to :root, alert: I18n.t('controllers.no_lesson')
+    end
 
-  def update_media_order
-    media_order_from_json = JSON.parse(params[:lesson][:media_order])
-    return unless media_order_from_json.is_a?(Array)
-    media_order = media_order_from_json.map(&:to_i) - [0]
-    return unless media_order.sort == @lesson.media.pluck(:id).sort
-    Medium.acts_as_list_no_update do
-      @lesson.media.each do |m|
-        m.update(position: media_order.index(m.id))
+    def lesson_params
+      params.require(:lesson).permit(:date, :lecture_id, :start_destination,
+                                     :end_destination, :details,
+                                     section_ids: [],
+                                     tag_ids: [])
+    end
+
+    def update_media_order
+      media_order_from_json = JSON.parse(params[:lesson][:media_order])
+      return unless media_order_from_json.is_a?(Array)
+
+      media_order = media_order_from_json.map(&:to_i) - [0]
+      return unless media_order.sort == @lesson.media.pluck(:id).sort
+
+      Medium.acts_as_list_no_update do
+        @lesson.media.each do |m|
+          m.update(position: media_order.index(m.id))
+        end
       end
     end
-  end
 end
