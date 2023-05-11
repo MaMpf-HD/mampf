@@ -13,7 +13,7 @@ class QuizCertificate < ApplicationRecord
 
   private
 
-  def set_code
-    self.code = QuizCertificate.generate_code
-  end
+    def set_code
+      self.code = QuizCertificate.generate_code
+    end
 end

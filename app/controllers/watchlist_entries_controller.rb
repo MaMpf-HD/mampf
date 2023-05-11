@@ -1,6 +1,5 @@
 # WatchlistEntriesController
 class WatchlistEntriesController < ApplicationController
-
   def current_ability
     @current_ability ||= WatchlistEntryAbility.new(current_user)
   end

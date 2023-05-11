@@ -91,6 +91,7 @@ class MediumPublisher
 
   def assignment
     return unless @create_assignment
+
     Assignment.new(lecture: medium.teachable,
                    medium_id: @medium_id,
                    title: @assignment_title,

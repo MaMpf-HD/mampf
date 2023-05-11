@@ -19,6 +19,7 @@ class AnswersController < ApplicationController
     authorize! :create, @answer
     I18n.locale = @answer.question&.locale_with_inheritance
     return unless @answer.save
+
     @success = true
   end
 
@@ -29,6 +30,7 @@ class AnswersController < ApplicationController
   def destroy
     @id = params[:id]
     return unless @answer.destroy
+
     @success = true
   end
 
@@ -39,13 +41,14 @@ class AnswersController < ApplicationController
 
   private
 
-  def set_answer
-    @answer = Answer.find_by_id(params[:id])
-    return if @answer.present?
-    redirect_to root_path, alert: I18n.t('controllers.no_answer')
-  end
+    def set_answer
+      @answer = Answer.find_by_id(params[:id])
+      return if @answer.present?
 
-  def answer_params
-    params.require(:answer).permit(:text, :value, :explanation, :question_id)
-  end
+      redirect_to root_path, alert: I18n.t('controllers.no_answer')
+    end
+
+    def answer_params
+      params.require(:answer).permit(:text, :value, :explanation, :question_id)
+    end
 end

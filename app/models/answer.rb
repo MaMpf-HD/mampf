@@ -12,6 +12,7 @@ class Answer < ApplicationRecord
     unless correct
       return explanation.string_between_markers(':(inkorrekt:', ')')
     end
+
     explanation.string_between_markers('(korrekt:', '):')
   end
 
@@ -26,24 +27,24 @@ class Answer < ApplicationRecord
 
   private
 
-  def question_not_orphaned?
-    throw(:abort) if question.answers.size == 1
-    true
-  end
-
-  def update_quizzes
-    question.quiz_ids.each do |q|
-      quiz = Quiz.find(q)
-      quiz_graph = quiz.quiz_graph
-      vertices = quiz_graph.find_vertices(question)
-      vertices.each do |v|
-        quiz_graph.reset_vertex_answers_change(v)
-      end
-      quiz.update(quiz_graph: quiz_graph)
+    def question_not_orphaned?
+      throw(:abort) if question.answers.size == 1
+      true
     end
-  end
 
-  def touch_medium
-    question.becomes(Medium).update(updated_at: Time.now)
-  end
+    def update_quizzes
+      question.quiz_ids.each do |q|
+        quiz = Quiz.find(q)
+        quiz_graph = quiz.quiz_graph
+        vertices = quiz_graph.find_vertices(question)
+        vertices.each do |v|
+          quiz_graph.reset_vertex_answers_change(v)
+        end
+        quiz.update(quiz_graph: quiz_graph)
+      end
+    end
+
+    def touch_medium
+      question.becomes(Medium).update(updated_at: Time.now)
+    end
 end

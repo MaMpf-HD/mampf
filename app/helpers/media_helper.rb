@@ -32,6 +32,7 @@ module MediaHelper
   # create text for notification about new medium in notification dropdown menu
   def medium_notification_item_header(medium)
     return unless medium.proper?
+
     t('notifications.new_medium_in') + medium.scoped_teachable_title
   end
 
@@ -45,6 +46,7 @@ module MediaHelper
     if teachable.media_scope.class.to_s == 'Course'
       return teachable.media_scope.title_for_viewers
     end
+
     link_to(teachable.media_scope.title_for_viewers,
             medium.teachable.media_scope.path(current_user),
             class: 'text-dark')
@@ -63,14 +65,15 @@ module MediaHelper
 
   def preselected_sections(medium)
     return [] unless medium.teachable.class.to_s == 'Lesson'
+
     medium.teachable.sections.map(&:id)
   end
-
 
   def textcolor(medium)
     return '' if medium.visible?
     return 'locked' if medium.locked?
     return 'scheduled_release' if medium.publisher.present?
+
     'unpublished'
   end
 
@@ -78,6 +81,7 @@ module MediaHelper
     return 'nichts' unless medium.video || medium.manuscript
     return 'ein Video' unless medium.manuscript
     return 'ein Manuskript' unless medium.video
+
     'ein Video und ein Manuskript'
   end
 
@@ -85,16 +89,19 @@ module MediaHelper
     return t('basics.not_set') unless medium.level.present?
     return t('basics.level_easy') if medium.level == 0
     return t('basics.level_medium') if medium.level == 1
+
     t('basics.level_hard')
   end
 
   def independent_to_word(medium)
     return t('basics.no_lc') unless medium.independent
+
     t('basics.yes_lc')
   end
 
   def medium_border(medium)
     return if medium.published? && !medium.locked?
+
     'border-danger'
   end
 
@@ -103,17 +110,19 @@ module MediaHelper
     return Medium.select_question if purpose == 'clicker'
     return add_prompt(Medium.select_importables) if purpose == 'import'
     return add_prompt(Medium.select_generic) if !current_user.admin?
+
     add_prompt(Medium.select_sorts)
   end
 
   def sort_preselect(purpose)
     return '' unless purpose == 'quiz'
+
     'Question'
   end
 
   def related_media_hash(references, media)
     media_list = references.map { |r| [r.medium, r.manuscript_link] } +
-                   media.zip(Array.new(media.size))
+                 media.zip(Array.new(media.size))
     hash = {}
     Medium.sort_enum.each do |s|
       media_in_s = media_list.select { |m| m.first.sort == s }
@@ -124,6 +133,7 @@ module MediaHelper
 
   def release_date_info(medium)
     return unless medium.publisher.present?
+
     t('admin.medium.scheduled_for_release_short',
       release_date: I18n.l(medium.publisher&.release_date,
                            format: :long,
@@ -132,6 +142,7 @@ module MediaHelper
 
   def edit_or_show_medium_path(medium)
     return edit_medium_path(medium) if current_user.can_edit?(medium)
+
     medium_path(medium)
   end
 

@@ -55,49 +55,50 @@ class AnnouncementsController < ApplicationController
 
   private
 
-  def announcement_params
-    params.require(:announcement).permit(:details, :lecture_id, :on_main_page)
-  end
-
-  def create_notifications
-    users_to_notify = if @announcement.lecture.present?
-                        @announcement.lecture.users
-                      else
-                        User
-                      end
-    notifications = []
-    users_to_notify.update_all(updated_at: Time.now)
-    users_to_notify.find_each do |u|
-      notifications << Notification.new(recipient: u,
-                                        notifiable_id: @announcement.id,
-                                        notifiable_type: 'Announcement',
-                                        action: 'create')
+    def announcement_params
+      params.require(:announcement).permit(:details, :lecture_id, :on_main_page)
     end
-    # use activerecord-import gem to use only one SQL instruction
-    Notification.import notifications
-  end
 
-  def send_notification_email
-    recipients = if @announcement.lecture.present?
-                   @announcement.lecture.users
-                                .where(email_for_announcement: true)
-                 else
-                   User.where(email_for_news: true)
-                 end
-    I18n.available_locales.each do |l|
-      local_recipients = recipients.where(locale: l)
-      if local_recipients.any?
-        NotificationMailer.with(recipients: local_recipients.pluck(:id),
-                                locale: l,
-                                announcement: @announcement)
-                          .announcement_email.deliver_later
+    def create_notifications
+      users_to_notify = if @announcement.lecture.present?
+        @announcement.lecture.users
+      else
+        User
+      end
+      notifications = []
+      users_to_notify.update_all(updated_at: Time.now)
+      users_to_notify.find_each do |u|
+        notifications << Notification.new(recipient: u,
+                                          notifiable_id: @announcement.id,
+                                          notifiable_type: 'Announcement',
+                                          action: 'create')
+      end
+      # use activerecord-import gem to use only one SQL instruction
+      Notification.import notifications
+    end
+
+    def send_notification_email
+      recipients = if @announcement.lecture.present?
+        @announcement.lecture.users
+                     .where(email_for_announcement: true)
+      else
+        User.where(email_for_news: true)
+      end
+      I18n.available_locales.each do |l|
+        local_recipients = recipients.where(locale: l)
+        if local_recipients.any?
+          NotificationMailer.with(recipients: local_recipients.pluck(:id),
+                                  locale: l,
+                                  announcement: @announcement)
+                            .announcement_email.deliver_later
+        end
       end
     end
-  end
 
-  def set_announcement
-    @announcement = Announcement.find_by_id(params[:id])
-    return if @announcement.present?
-    redirect_to :root, alert: I18n.t('controllers.no_announcement')
-  end
+    def set_announcement
+      @announcement = Announcement.find_by_id(params[:id])
+      return if @announcement.present?
+
+      redirect_to :root, alert: I18n.t('controllers.no_announcement')
+    end
 end

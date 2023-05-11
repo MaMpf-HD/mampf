@@ -13,6 +13,7 @@ class Manuscript
            medium.manuscript
       return
     end
+
     @medium = medium
     @lecture = medium.teachable.lecture
     @locale = @lecture.locale_with_inheritance || I18n.default_locale
@@ -90,6 +91,7 @@ class Manuscript
   # - creates items and tags for new content, depending on the users choices
   def export_to_db!(filter_boxes)
     return unless @contradiction_count.zero?
+
     create_new_chapters!
     @chapters.each do |c|
       create_new_sections!(c)
@@ -126,6 +128,7 @@ class Manuscript
   # create sections in mampf for those manuscript sections not yet in mampf
   def create_new_sections!(chapter)
     return if chapter['mampf_chapter'].nil?
+
     mampf_chapter = chapter['mampf_chapter']
     new_sections_in_chapter(chapter).each do |s|
       sect = Section.new(chapter_id: mampf_chapter.id, title: s.second)
@@ -156,7 +159,8 @@ class Manuscript
           description: c['description'],
           ref_number: c['label'],
           position: nil,
-          quarantine: nil })
+          quarantine: nil }
+      )
     end
     create_or_update_items!(contents, item_details, item_destinations,
                             item_id_map)
@@ -185,7 +189,8 @@ class Manuscript
           description: s['description'],
           ref_number: s['label'],
           position: -1,
-          quarantine: nil })
+          quarantine: nil }
+      )
     end
     create_or_update_items!(contents, item_details, item_destinations,
                             item_id_map)
@@ -217,7 +222,8 @@ class Manuscript
           ref_number: c['label'],
           position: c['counter'],
           hidden: filter_boxes[c['counter']].third == false,
-          quarantine: nil })
+          quarantine: nil }
+      )
     end
     create_or_update_items!(contents, item_details, item_destinations,
                             item_id_map)
@@ -257,11 +263,13 @@ class Manuscript
           next unless tag
           next unless section
           next if section.in?(tag.sections)
+
           tag.sections |= [section]
           tag.courses |= [@lecture.course]
           next
         end
         next unless filter_boxes[c['counter']].second
+
         # if checkbox for tag creation is checked, create the tag,
         # associate it with course and section
         tag = Tag.new(courses: [@lecture.course],
@@ -316,7 +324,7 @@ class Manuscript
     end
   end
 
-#  private
+  #  private
 
   def get_chapters(bookmarks)
     bookmarks.select { |b| b['sort'] == @chapter_marker }
@@ -340,10 +348,10 @@ class Manuscript
       c['mampf_chapter'] = mampf_chapter
       c['contradiction'] = if mampf_chapter.nil? ||
                               mampf_chapter.title == c['description']
-                             false
-                           else
-                             :different_title
-                           end
+        false
+      else
+        :different_title
+      end
     end
   end
 
@@ -359,10 +367,10 @@ class Manuscript
       s['mampf_section'] = mampf_section
       s['contradiction'] = if mampf_section.nil? ||
                               mampf_section.title == s['description']
-                             false
-                           else
-                             :different_title
-                           end
+        false
+      else
+        :different_title
+      end
     end
   end
 
@@ -371,12 +379,12 @@ class Manuscript
     bookmarked_chapter_counters = @chapters.map { |c| c['chapter'] }
     @content.each do |c|
       c['contradiction'] = if !c['chapter'].in?(bookmarked_chapter_counters)
-                             :missing_chapter
-                           elsif !c['section'].in?(bookmarked_section_counters)
-                             :missing_section
-                           else
-                             false
-                           end
+        :missing_chapter
+      elsif !c['section'].in?(bookmarked_section_counters)
+        :missing_section
+      else
+        false
+      end
     end
   end
 
@@ -396,6 +404,7 @@ class Manuscript
 
   def version_info
     return [] if @version == DefaultSetting::MAMPF_STY_VERSION
+
     [@version.to_s]
   end
 

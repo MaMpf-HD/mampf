@@ -17,11 +17,13 @@ class Quiz < Medium
 
   def publish_vertices!(user, release_state)
     return unless vertices
+
     vertices.keys.each do |v|
       quizzable = quizzable(v)
       next if quizzable.published?
       next if !quizzable.teachable.published?
       next unless user.in?(quizzable.editors_with_inheritance) || user.admin
+
       quizzable.update(released: release_state, released_at: Time.now)
     end
   end
@@ -40,6 +42,7 @@ class Quiz < Medium
 
   def next_vertex(progress, input = {})
     return default_table[progress] if vertices[progress][:type] == 'Remark'
+
     target_vertex(progress, input)
   end
 
@@ -50,32 +53,38 @@ class Quiz < Medium
 
   def vertices
     return if quiz_graph.nil?
+
     quiz_graph.vertices
   end
 
   def edges
     return if quiz_graph.nil?
+
     quiz_graph.edges
   end
 
   def root
     return if quiz_graph.nil?
+
     quiz_graph.root
   end
 
   def default_table
     return if quiz_graph.nil?
+
     quiz_graph.default_table
   end
 
   def question_ids
     return [] unless quiz_graph && quiz_graph.vertices.present?
+
     quiz_graph.vertices.select { |_k, v| v[:type] == 'Question' }
               .values.map { |v| v[:id] }.uniq
   end
 
   def remark_ids
     return [] unless quiz_graph && quiz_graph.vertices.present?
+
     quiz_graph.vertices.select { |_k, v| v[:type] == 'Remark' }.values
               .map { |v| v[:id] }.uniq
   end
@@ -98,6 +107,7 @@ class Quiz < Medium
   def preselected_branch(vertex_id, crosses, fallback)
     successor = next_vertex(vertex_id, crosses)
     return successor unless successor == default_table[vertex_id] && fallback
+
     0
   end
 
@@ -113,6 +123,7 @@ class Quiz < Medium
 
   def questions_count
     return 0 unless quiz_graph
+
     quiz_graph.questions_count
   end
 
@@ -124,8 +135,8 @@ class Quiz < Medium
 
   private
 
-  def target_vertex(progress, input)
-    edges.select { |e, t| e[0] == progress && t.include?(input) }&.keys
-        &.first&.second || default_table[progress]
-  end
+    def target_vertex(progress, input)
+      edges.select { |e, t| e[0] == progress && t.include?(input) }&.keys
+          &.first&.second || default_table[progress]
+    end
 end

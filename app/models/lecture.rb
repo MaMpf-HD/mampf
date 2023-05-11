@@ -16,9 +16,9 @@ class Lecture < ApplicationRecord
 
   # during the term, a lot of lessons take place for this lecture
   has_many :lessons, -> { order(date: :asc, id: :asc) },
-                     dependent: :destroy,
-                     after_add: :touch_siblings,
-                     after_remove: :touch_siblings
+           dependent: :destroy,
+           after_add: :touch_siblings,
+           after_remove: :touch_siblings
 
   # a lecture has many talks, which have positions
   has_many :talks, -> { order(position: :asc) }, dependent: :destroy
@@ -37,7 +37,7 @@ class Lecture < ApplicationRecord
   # a lecture has many users who have starred it (fans)
   has_many :user_favorite_lecture_joins, dependent: :destroy
   has_many :fans, -> { distinct }, through: :user_favorite_lecture_joins,
-           source: :user
+                                   source: :user
 
   # a lecture has many editors
   # these are users different from the teacher who have the right to
@@ -83,7 +83,6 @@ class Lecture < ApplicationRecord
             numericality: { only_integer: true,
                             greater_than: -1 },
             allow_nil: true
-
 
   # as a teacher has editing rights by definition, we do not need him in the
   # list of editors
@@ -161,11 +160,13 @@ class Lecture < ApplicationRecord
 
   def title
     return course.title unless term
+
     "(#{sort_localized_short}) #{course.title}, #{term.to_label}"
   end
 
   def title_no_term
     return course.title unless term
+
     "(#{sort_localized_short}) #{course.title}"
   end
 
@@ -179,6 +180,7 @@ class Lecture < ApplicationRecord
 
   def compact_title
     return course.compact_title unless term
+
     "#{sort_localized_short}.#{course.compact_title}.#{term.compact_title}"
   end
 
@@ -202,6 +204,7 @@ class Lecture < ApplicationRecord
 
   def card_header_path(user)
     return unless user.lectures.include?(self)
+
     lecture_path
   end
 
@@ -218,6 +221,7 @@ class Lecture < ApplicationRecord
     return true if edited_by?(user)
     return false unless published?
     return false if restricted? && !self.in?(user.lectures)
+
     true
   end
 
@@ -276,6 +280,7 @@ class Lecture < ApplicationRecord
   #   and items in quarantine
   def script_items_by_position
     return [] unless manuscript
+
     hidden_chapters = Chapter.where(hidden: true)
     hidden_sections = Section.where(hidden: true)
                              .or(Section.where(chapter: hidden_chapters))
@@ -296,8 +301,8 @@ class Lecture < ApplicationRecord
 
   def media_with_inheritance_uncached
     Medium.proper.where(teachable: self)
-      .or(Medium.proper.where(teachable: self.lessons))
-      .or(Medium.proper.where(teachable: self.talks))
+          .or(Medium.proper.where(teachable: self.lessons))
+          .or(Medium.proper.where(teachable: self.talks))
   end
 
   def media_with_inheritance_uncached_eagerload_stuff
@@ -306,7 +311,6 @@ class Lecture < ApplicationRecord
           .or(Medium.includes(:tags, teachable: [lecture: [:lessons, :talks]])
                     .proper.where(teachable: self.lessons + self.talks))
   end
-
 
   def media_with_inheritance
     Rails.cache.fetch("#{cache_key_with_version}/media_with_inheritance") do
@@ -363,32 +367,36 @@ class Lecture < ApplicationRecord
     project?('reste', user) || imported_any?('reste')
   end
 
-
   # the next methods put together some information on the lecture (teacher,
   # term, title) in various combinations
 
   def short_title
     return course.short_title unless term
+
     "(#{sort_localized_short}) #{course.short_title} #{term.to_label_short}"
   end
 
   def short_title_release
     return short_title if published?
+
     "#{short_title} (#{I18n.t('access.unpublished')})"
   end
 
   def short_title_brackets
     return course.short_title unless term
+
     "(#{sort_localized_short}) #{course.short_title} (#{term.to_label_short})"
   end
 
   def title_with_teacher
     return title unless teacher.present? && teacher.name.present?
+
     "#{title} (#{teacher.name})"
   end
 
   def title_with_teacher_no_type
     return "#{course.title}, (#{teacher.name})" unless term
+
     "#{course.title}, #{term.to_label} (#{teacher.name})"
   end
 
@@ -396,11 +404,13 @@ class Lecture < ApplicationRecord
     return term_to_label unless teacher.present?
     return term_to_label unless teacher.name.present?
     return "#{course.title}, #{teacher.name}" unless term
+
     "(#{sort_localized_short}) #{term_to_label}, #{teacher.name}"
   end
 
   def term_teacher_published_info
     return term_teacher_info if published?
+
     "#{term_teacher_info} (#{I18n.t('access.unpublished')})"
   end
 
@@ -410,11 +420,13 @@ class Lecture < ApplicationRecord
 
   def title_term_info_no_type
     return course.title unless term
+
     "#{course.title}, #{term_to_label}"
   end
 
   def title_teacher_info
     return course.title unless teacher.present? && teacher.name.present?
+
     "(#{sort_localized_short}) #{course.title} (#{teacher.name})"
   end
 
@@ -501,12 +513,14 @@ class Lecture < ApplicationRecord
 
   def edited_by?(user)
     return true if editors_with_inheritance.include?(user)
+
     false
   end
 
   # returns path for show action of the lecture's course,
   def path(user)
     return unless user.lectures.include?(self)
+
     Rails.application.routes.url_helpers
          .lecture_path(self)
   end
@@ -537,8 +551,8 @@ class Lecture < ApplicationRecord
     lecture_results +
       lesson_results.includes(:teachable)
                     .sort_by do |m|
-                      [order_factor*m.lesson.date.jd,
-                       order_factor*m.lesson.id,
+                      [order_factor * m.lesson.date.jd,
+                       order_factor * m.lesson.id,
                        m.position]
                     end +
       talk_results.includes(:teachable).sort_by do |m|
@@ -549,6 +563,7 @@ class Lecture < ApplicationRecord
   def order_factor
     return -1 unless lecture.term.present?
     return -1 if lecture.term.active
+
     1
   end
 
@@ -580,6 +595,7 @@ class Lecture < ApplicationRecord
   # by the user
   def unread_forum_topics_count(user)
     return unless forum?
+
     forum_relation = Thredded::Messageboard.where(id: forum_id)
     forum_view =
       Thredded::MessageboardGroupView.grouped(forum_relation,
@@ -609,11 +625,13 @@ class Lecture < ApplicationRecord
 
   def seminar?
     return true if sort.in?(['seminar', 'proseminar', 'oberseminar'])
+
     false
   end
 
   def chapter_name
     return 'chapter' unless seminar?
+
     'talk'
   end
 
@@ -628,7 +646,7 @@ class Lecture < ApplicationRecord
   end
 
   def open_comments!(user)
-    media_with_inheritance.select { |m| m.commontator_thread.is_closed?}
+    media_with_inheritance.select { |m| m.commontator_thread.is_closed? }
                           .each { |m| m.commontator_thread.reopen }
   end
 
@@ -640,10 +658,11 @@ class Lecture < ApplicationRecord
     return 0 if self == other
     return 1 if self.begin_date < other.begin_date
     return 1 if self.term == other.term &&
-                  ActiveSupport::Inflector.transliterate(self.course.title) >
-                    ActiveSupport::Inflector.transliterate(other.course.title)
+                ActiveSupport::Inflector.transliterate(self.course.title) >
+                ActiveSupport::Inflector.transliterate(other.course.title)
     return 1 if self.term == other.term && self.course == other.course &&
-                  self.sort_localized < other.sort_localized
+                self.sort_localized < other.sort_localized
+
     -1
   end
 
@@ -652,10 +671,14 @@ class Lecture < ApplicationRecord
   end
 
   def self.search_by(search_params, page)
-    search_params[:types] = [] if search_params[:all_types] == '1' || search_params[:types].nil?
-    search_params[:term_ids] = [] if search_params[:all_terms] == '1' || search_params[:term_ids].nil?
-    search_params[:teacher_ids] = [] if search_params[:all_teachers] == '1' || search_params[:teacher_ids].nil?
-    search_params[:program_ids] = [] if search_params[:all_programs] == '1' || search_params[:program_ids].nil?
+    search_params[:types] =
+      [] if search_params[:all_types] == '1' || search_params[:types].nil?
+    search_params[:term_ids] =
+      [] if search_params[:all_terms] == '1' || search_params[:term_ids].nil?
+    search_params[:teacher_ids] =
+      [] if search_params[:all_teachers] == '1' || search_params[:teacher_ids].nil?
+    search_params[:program_ids] =
+      [] if search_params[:all_programs] == '1' || search_params[:program_ids].nil?
     search = Sunspot.new_search(Lecture)
     # add lectures without term to current term
     if Term.active.try(:id).to_i.to_s.in?(search_params[:term_ids])
@@ -663,9 +686,12 @@ class Lecture < ApplicationRecord
     end
     search.build do
       with(:sort, search_params[:types]) unless search_params[:types].empty?
-      with(:teacher_id, search_params[:teacher_ids]) unless search_params[:teacher_ids].empty?
-      with(:program_ids, search_params[:program_ids]) unless search_params[:program_ids].empty?
-      with(:term_id, search_params[:term_ids]) unless search_params[:term_ids].empty?
+      with(:teacher_id,
+           search_params[:teacher_ids]) unless search_params[:teacher_ids].empty?
+      with(:program_ids,
+           search_params[:program_ids]) unless search_params[:program_ids].empty?
+      with(:term_id,
+           search_params[:term_ids]) unless search_params[:term_ids].empty?
     end
     admin = User.find_by_id(search_params[:user_id])&.admin
     unless admin
@@ -692,11 +718,13 @@ class Lecture < ApplicationRecord
 
   def term_to_label
     return term.to_label if term
+
     ''
   end
 
   def term_to_label_short
     return term.to_label_short if term
+
     ''
   end
 
@@ -727,13 +755,13 @@ class Lecture < ApplicationRecord
 
   def scheduled_assignments?
     media.where(sort: 'Nuesse').where.not(publisher: nil)
-          .any? { |m| m.publisher.create_assignment }
+         .any? { |m| m.publisher.create_assignment }
   end
 
   def scheduled_assignments
     media.where(sort: 'Nuesse').where.not(publisher: nil)
-          .select { |m| m.publisher.create_assignment }
-          .map { |m| m.publisher.assignment }
+         .select { |m| m.publisher.create_assignment }
+         .map { |m| m.publisher.assignment }
   end
 
   def assignments?
@@ -762,111 +790,118 @@ class Lecture < ApplicationRecord
 
   def import_toc!(imported_lecture, import_sections, import_tags)
     return unless imported_lecture
+
     imported_lecture.chapters.each do |c|
       new_chapter = c.dup
       new_chapter.lecture = self
       new_chapter.save
       next unless import_sections
+
       c.sections.each { |s| s.duplicate_in_chapter(new_chapter, import_tags) }
     end
   end
 
   private
 
-  # used for after save callback
-  def remove_teacher_as_editor
-    editors.delete(teacher)
-  end
-
-  # looks in the cache if there are any media associated *with inheritance*
-  # to this lecture and a given project (kaviar, sesam etc.)
-  def project_as_user?(project)
-    Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
-      Medium.where(sort: medium_sort[project],
-                   released: ['all', 'users', 'subscribers'],
-                   teachable: self).exists? ||
-      Medium.where(sort: medium_sort[project],
-                   released: ['all', 'users', 'subscribers'],
-                   teachable: lessons).exists? ||
-      Medium.where(sort: medium_sort[project],
-                   released: ['all', 'users', 'subscribers'],
-                   teachable: talks).exists? ||
-      Medium.where(sort: medium_sort[project],
-                   released: ['all', 'users', 'subscribers'],
-                   teachable: course).exists?
+    # used for after save callback
+    def remove_teacher_as_editor
+      editors.delete(teacher)
     end
-  end
 
-  def imported_any?(project)
-    Rails.cache.fetch("#{cache_key_with_version}/imported_#{project}") do
-      imported_media.exists?(sort: medium_sort[project],
-                             released: ['all', 'users'])
+    # looks in the cache if there are any media associated *with inheritance*
+    # to this lecture and a given project (kaviar, sesam etc.)
+    def project_as_user?(project)
+      Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
+        Medium.where(sort: medium_sort[project],
+                     released: ['all', 'users', 'subscribers'],
+                     teachable: self).exists? ||
+          Medium.where(sort: medium_sort[project],
+                       released: ['all', 'users', 'subscribers'],
+                       teachable: lessons).exists? ||
+          Medium.where(sort: medium_sort[project],
+                       released: ['all', 'users', 'subscribers'],
+                       teachable: talks).exists? ||
+          Medium.where(sort: medium_sort[project],
+                       released: ['all', 'users', 'subscribers'],
+                       teachable: course).exists?
+      end
     end
-  end
 
-  def project?(project, user)
-    return project_as_user?(project) unless edited_by?(user) || user.admin
-    course_media = if user.in?(course.editors) || user.admin
-                     Medium.where(sort: medium_sort[project],
-                                  teachable: course).exists?
-                   else
-                      Medium.where(sort: medium_sort[project],
-                                   released: ['all', 'users', 'subscribers'],
-                                   teachable: course).exists?
-                   end
-    lecture_media = Medium.where(sort: medium_sort[project],
-                                 teachable: self).exists?
-    lesson_media = Medium.where(sort: medium_sort[project],
-                                teachable: lessons).exists?
-    talk_media = Medium.where(sort: medium_sort[project],
+    def imported_any?(project)
+      Rails.cache.fetch("#{cache_key_with_version}/imported_#{project}") do
+        imported_media.exists?(sort: medium_sort[project],
+                               released: ['all', 'users'])
+      end
+    end
+
+    def project?(project, user)
+      return project_as_user?(project) unless edited_by?(user) || user.admin
+
+      course_media = if user.in?(course.editors) || user.admin
+        Medium.where(sort: medium_sort[project],
+                     teachable: course).exists?
+      else
+        Medium.where(sort: medium_sort[project],
+                     released: ['all', 'users', 'subscribers'],
+                     teachable: course).exists?
+      end
+      lecture_media = Medium.where(sort: medium_sort[project],
+                                   teachable: self).exists?
+      lesson_media = Medium.where(sort: medium_sort[project],
+                                  teachable: lessons).exists?
+      talk_media = Medium.where(sort: medium_sort[project],
                                 teachable: talks).exists?
-    course_media || lecture_media || lesson_media || talk_media
-  end
+      course_media || lecture_media || lesson_media || talk_media
+    end
 
-  def medium_sort
-    { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
-      'keks' => ['Quiz'], 'nuesse' => ['Nuesse'],
-      'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste']}
-  end
+    def medium_sort
+      { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'], 'kiwi' => ['Kiwi'],
+        'keks' => ['Quiz'], 'nuesse' => ['Nuesse'],
+        'erdbeere' => ['Erdbeere'], 'script' => ['Script'], 'reste' => ['Reste'] }
+    end
 
-  def touch_media
-    media_with_inheritance.update_all(updated_at: Time.now)
-  end
+    def touch_media
+      media_with_inheritance.update_all(updated_at: Time.now)
+    end
 
-  def touch_lessons
-    lessons.update_all(updated_at: Time.now)
-  end
+    def touch_lessons
+      lessons.update_all(updated_at: Time.now)
+    end
 
-  def touch_siblings(lesson)
-    lessons.update_all(updated_at: Time.now)
-    Medium.where(teachable: lessons).update_all(updated_at: Time.now)
-  end
+    def touch_siblings(lesson)
+      lessons.update_all(updated_at: Time.now)
+      Medium.where(teachable: lessons).update_all(updated_at: Time.now)
+    end
 
-  def touch_chapters
-    chapters.update_all(updated_at: Time.now)
-  end
+    def touch_chapters
+      chapters.update_all(updated_at: Time.now)
+    end
 
-  def touch_sections
-    Section.where(chapter: chapters).update_all(updated_at: Time.now)
-  end
+    def touch_sections
+      Section.where(chapter: chapters).update_all(updated_at: Time.now)
+    end
 
-  def destroy_forum
-    return unless forum
-    forum.destroy
-  end
+    def destroy_forum
+      return unless forum
 
-  def term_independent?
-    return false unless course
-    course.term_independent
-  end
+      forum.destroy
+    end
 
-  def absence_of_term
-    return unless term
-    errors.add(:term, :present)
-  end
+    def term_independent?
+      return false unless course
 
-  def only_one_lecture
-    return unless Lecture.where(course: course).any?
-    errors.add(:course, :already_present)
-  end
+      course.term_independent
+    end
+
+    def absence_of_term
+      return unless term
+
+      errors.add(:term, :present)
+    end
+
+    def only_one_lecture
+      return unless Lecture.where(course: course).any?
+
+      errors.add(:course, :already_present)
+    end
 end

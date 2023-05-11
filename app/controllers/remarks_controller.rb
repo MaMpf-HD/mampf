@@ -41,18 +41,19 @@ class RemarksController < MediaController
 
   private
 
-  def set_remark
-    @remark = Remark.find_by_id(params[:id])
-    return if @remark.present?
-    redirect_to remarks_path, alert: I18n.t('controllers.no_remark')
-  end
+    def set_remark
+      @remark = Remark.find_by_id(params[:id])
+      return if @remark.present?
 
-  def set_quizzes
-    @quizzes = params[:remark].select { |_k, v| v == '1' }.keys
-                              .map { |k| k.remove('quiz-').to_i }
-  end
+      redirect_to remarks_path, alert: I18n.t('controllers.no_remark')
+    end
 
-  def remark_params
-    params.require(:remark).permit(:text, :text_input, :type)
-  end
+    def set_quizzes
+      @quizzes = params[:remark].select { |_k, v| v == '1' }.keys
+                                .map { |k| k.remove('quiz-').to_i }
+    end
+
+    def remark_params
+      params.require(:remark).permit(:text, :text_input, :type)
+    end
 end

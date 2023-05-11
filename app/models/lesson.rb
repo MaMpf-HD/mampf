@@ -11,8 +11,8 @@ class Lesson < ApplicationRecord
   # taught in the lesson
   has_many :lesson_section_joins, dependent: :destroy
   has_many :sections, through: :lesson_section_joins,
-           after_remove: :touch_section,
-           after_add: :touch_section
+                      after_remove: :touch_section,
+                      after_add: :touch_section
 
   # being a teachable (course/lecture/lesson), a lesson has associated media
   has_many :media, -> { order(position: :asc) },
@@ -40,6 +40,7 @@ class Lesson < ApplicationRecord
 
   def course
     return unless lecture.present?
+
     lecture.course
   end
 
@@ -100,6 +101,7 @@ class Lesson < ApplicationRecord
 
   def card_header_path(user)
     return unless user.lectures.include?(lecture)
+
     lesson_path
   end
 
@@ -133,11 +135,13 @@ class Lesson < ApplicationRecord
 
   def term
     return unless lecture.present?
+
     lecture.term
   end
 
   def previous
     return unless number > 1
+
     lecture.lessons[number - 2]
   end
 
@@ -149,7 +153,7 @@ class Lesson < ApplicationRecord
     media.published
   end
 
-   # visible media are published with inheritance and unlocked
+  # visible media are published with inheritance and unlocked
   def visible_media_for_user(user)
     media.select { |m| m.visible_for_user?(user) }
   end
@@ -198,6 +202,7 @@ class Lesson < ApplicationRecord
 
   def content_items
     return visible_items if lecture.content_mode == 'video'
+
     script_items
   end
 
@@ -207,6 +212,7 @@ class Lesson < ApplicationRecord
 
   def singular_medium
     return false if media.count != 1
+
     media.first
   end
 
@@ -214,13 +220,16 @@ class Lesson < ApplicationRecord
   # (relevant if lecture content mode is manuscript)
   def script_items
     return [] unless lecture.manuscript && start_destination && end_destination
+
     start_item = Item.where(medium: lecture.manuscript,
                             pdf_destination: start_destination)&.first
     end_item = Item.where(medium: lecture.manuscript,
-                            pdf_destination: end_destination)&.first
+                          pdf_destination: end_destination)&.first
     return [] unless start_item && end_item
+
     range = (start_item.position..end_item.position).to_a
     return [] unless range.present?
+
     hidden_chapters = Chapter.where(hidden: true)
     hidden_sections = Section.where(hidden: true)
                              .or(Section.where(chapter: hidden_chapters))
@@ -260,12 +269,14 @@ class Lesson < ApplicationRecord
   def guess_start_destination
     return start_destination if start_destination
     return unless previous
+
     probable_start_destination
   end
 
   def guess_end_destination
     return end_destination if end_destination
     return unless previous
+
     probable_start_destination
   end
 
@@ -273,11 +284,14 @@ class Lesson < ApplicationRecord
     end_item = Item.where(medium: lecture.manuscript,
                           pdf_destination: previous.end_destination)&.first
     return unless end_item
+
     position = end_item.position
     return unless position
+
     successor = lecture.script_items_by_position.where('position > ?', position)
                        .order(:position)&.first&.pdf_destination
     return successor if successor
+
     end_item.pdf_destination
   end
 
@@ -287,37 +301,37 @@ class Lesson < ApplicationRecord
 
   private
 
-  # path for show lesson action
-  def lesson_path
-    Rails.application.routes.url_helpers.lesson_path(self)
-  end
+    # path for show lesson action
+    def lesson_path
+      Rails.application.routes.url_helpers.lesson_path(self)
+    end
 
-  # used for after save callback
-  def touch_media
-    lecture.media_with_inheritance.update_all(updated_at: Time.now)
-  end
+    # used for after save callback
+    def touch_media
+      lecture.media_with_inheritance.update_all(updated_at: Time.now)
+    end
 
-  def touch_siblings
-    lecture.lessons.update_all(updated_at: Time.now)
-  end
+    def touch_siblings
+      lecture.lessons.update_all(updated_at: Time.now)
+    end
 
-  def touch_sections
-    sections.update_all(updated_at: Time.now)
-    chapters = sections.map(&:chapter)
-    sections.map(&:chapter).each(&:touch)
-    lecture.touch
-  end
+    def touch_sections
+      sections.update_all(updated_at: Time.now)
+      chapters = sections.map(&:chapter)
+      sections.map(&:chapter).each(&:touch)
+      lecture.touch
+    end
 
-  def touch_self
-    touch
-  end
+    def touch_self
+      touch
+    end
 
-  def touch_tags
-    tags.update_all(updated_at: Time.now)
-  end
+    def touch_tags
+      tags.update_all(updated_at: Time.now)
+    end
 
-  def touch_section(section)
-    section.touch
-    section.chapter.touch
-  end
+    def touch_section(section)
+      section.touch
+      section.chapter.touch
+    end
 end

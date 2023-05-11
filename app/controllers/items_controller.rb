@@ -50,27 +50,28 @@ class ItemsController < ApplicationController
 
   private
 
-  def set_item
-    @item = Item.find(params[:id])
-  end
-
-  def set_explanation
-    if @referral_id.zero? || @item != Referral.find(@referral_id).item
-      return @item.explanation
+    def set_item
+      @item = Item.find(params[:id])
     end
-    Referral.find(@referral_id).explanation
-  end
 
-  def item_params
-    # params are cloned and then start time is converted to a TimeStamp object
-    filter = params.require(:item).permit(:sort, :start_time, :section_id,
-                                          :medium_id, :ref_number, :description,
-                                          :link, :page, :pdf_destination,
-                                          :explanation, :hidden).clone
-    if filter[:medium_id].present?
-      filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
+    def set_explanation
+      if @referral_id.zero? || @item != Referral.find(@referral_id).item
+        return @item.explanation
+      end
+
+      Referral.find(@referral_id).explanation
     end
-    filter[:section_id] = nil if filter[:section_id] == ''
-    filter
-  end
+
+    def item_params
+      # params are cloned and then start time is converted to a TimeStamp object
+      filter = params.require(:item).permit(:sort, :start_time, :section_id,
+                                            :medium_id, :ref_number, :description,
+                                            :link, :page, :pdf_destination,
+                                            :explanation, :hidden).clone
+      if filter[:medium_id].present?
+        filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
+      end
+      filter[:section_id] = nil if filter[:section_id] == ''
+      filter
+    end
 end
