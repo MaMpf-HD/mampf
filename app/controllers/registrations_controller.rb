@@ -30,7 +30,7 @@ class RegistrationsController < Devise::RegistrationsController
     if verify_captcha
       super
     else
-      build_resource(sign_up_params)
+      build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
       clean_up_passwords(resource)
       set_flash_message :alert, :captcha_error
       render :new
@@ -64,16 +64,12 @@ class RegistrationsController < Devise::RegistrationsController
 
   def check_registration_limit
     if User.where("users.confirmed_at is NULL and users.created_at > '#{(DateTime.now()-(ENV['MAMPF_REGISTRATION_TIMEFRAME']||15).to_i.minutes)}'").count > (ENV['MAMPF_MAX_REGISTRATION_PER_TIMEFRAME'] || 40).to_i
-      self.resource = resource_class.new sign_up_params
+      self.resource = resource_class.new devise_parameter_sanitizer.sanitize(:sign_up)
       resource.validate # Look for any other validation errors besides reCAPTCHA
       set_flash_message :alert, :too_many_registrations
       set_minimum_password_length
       respond_with_navigational(resource) { render :new }
     end
-  end
-  def sign_up_params
-    params.require(:user).permit(:email, :password, :password_confirmation,
-                                 :locale, :consents)
   end
 
   def deletion_params

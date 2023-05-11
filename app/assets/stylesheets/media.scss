@@ -330,6 +330,10 @@
   visibility: visible;
 }
 
+.break-text-any-where {
+  word-break: break-all;
+}
+
 /* annotation modal */
 #annotation-modal {
 	#annotation_comment {

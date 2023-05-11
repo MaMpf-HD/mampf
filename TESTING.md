@@ -1,12 +1,18 @@
 # Testing with cypress and a docker container as test env
 
-1. Build the docker mampf container by `docker-compose -f docker-compose.local.yml build`
-2. execute the tests `docker-compose -f docker-compose.local.yml run cypress_runner `
+1. Build the docker mampf container by running
+   ```
+   docker-compose -f docker-compose.local.yml build
+   ```
+2. execute the tests
+   ```
+   docker-compose -f docker-compose.local.yml run cypress_runner
+   ```
 3. Review the results in console and the results in `cypress/*` folder.
 
 ## Writing own tests
 
-The describing test files can be found/ must be placed in `spec/cypress/integration/*.js`.
+The describing test files can be found/ must be placed in `spec/cypress/e2e/*.cy.js`.
 You can call arbitrary functions/files in mampf by calling `cy.app("clean")` for example located in `spec/cypress/app_commands`.
 Furthermore, you can setup special scenarios by providing a file in `spec/cypress/app_commands/scenarios/`,
 that can be called by `cy.appScenario("setup")` for example. Always try to 

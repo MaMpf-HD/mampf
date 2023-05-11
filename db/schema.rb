@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_17_124528) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -58,7 +58,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_124528) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.text "accepted_file_type", default: ".pdf"
-    t.date "deletion_date", default: "2020-10-15", null: false
+    t.date "deletion_date", default: "2200-01-01", null: false
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
   end
@@ -366,6 +366,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_124528) do
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
     t.integer "annotations_status"
+    t.text "external_link_description"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end

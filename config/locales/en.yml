@@ -2,7 +2,7 @@
 # and are automatically loaded by Rails. If you want to use locales other
 # than English, add the necessary files in this directory.
 #
-# To use the locales, use `I18n.t`:
+# Use `I18n.t` for locales:
 #
 #     I18n.t 'hello'
 #
@@ -10,11 +10,11 @@
 #
 #     <%= t('hello') %>
 #
-# To use a different locale, set it with `I18n.locale`:
+# If you want to use a different locale, set it with `I18n.locale`:
 #
 #     I18n.locale = :es
 #
-# This would use the information in config/locales/es.yml.
+# This uses the information in config/locales/es.yml.
 #
 # The following keys must be escaped otherwise they will not be retrieved by
 # the default I18n backend:
@@ -26,7 +26,7 @@
 # en:
 #   'true': 'foo'
 #
-# To learn more, please read the Rails Internationalization guide
+# For more information, please read the Rails Internationalization guide
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
@@ -80,7 +80,8 @@ en:
       plural: 'Quiz Remarks'
       short: 'Rem'
     erdbeere:
-      singular: 'Examples'
+      singular: 'Example'
+      plural: 'Examples'
       short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
@@ -100,31 +101,30 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2022. MaMpf is on %{github}.
+      &copy; MaMpf Team 2023. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
-      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.<br>
+      %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
-    sponsors_html: >
-      %{sponsors}:
+      Background image by %{background_photo_credit}.
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
     go_digital_html: >
-      Within the framework of the joint project %{digital_now}, MaMpf is supported by the acquisition of media technology
-      equipment which will make it possible to meet the increased demand for
-      hypermedia content.
+      Within the framework of the joint project %{digital_now}, MaMpf has been 
+      supported by the acquisition of media technology equipment which is going
+      to help with meeting the increased demand for hypermedia content.
     fellowship_html: >
       Within the framework of the joint project %{place},
-      the project %{fellowship_project} of %{hendrik} was carried out in the
+      the project %{fellowship_project} of %{hendrik} has been carried out in the
       context of a PLACE Fellowship. With the entanglement module
       "Geometry and Teaching", a model course which interweaves mathematics and
-      its' didactics was established. The problem of different educational
-      backgrounds was addressed through the use of MaMpf.
+      its didactics has been established. The problem of different educational
+      backgrounds has been addressed by using MaMpf.
     zurlamitmu_html: >
       Within the framework of the joint project %{place},
-      the project %{zurlamitmu_project} of %{markus} und %{denis} was carried
-      out. The aim of this project was to create Worked-Example-Videos for
+      the project %{zurlamitmu_project} of %{markus} and %{denis} has been carried
+      out. The aim of this project has beeen to create Worked-Example-Videos for
       the "Linear Algebra" course using current results from the
       mathematics didactic and multimedia research and to evaluate their
       effectiveness.
@@ -132,16 +132,15 @@ en:
     heistart_html: >
       Within the framework of the project heiSTART2.0,
       %{hendrik}, %{oli} and %{denis} together with the %{fs_mathphysinfo}
-      have obtained the funding to set up a MaMpf-supported math helpdesk for
+      have obtained funding to set up a MaMpf-supported math helpdesk for
       the introductory phase of math studies.
       Since then, the helpdesk has been an
       important support system in the first semesters of mathematics studies.
     physics_html: >
-      The %{physics_faculty} supported MaMpf by through the acquisition of
-      media technology equipment.
+      The %{physics_faculty} has supported MaMpf by acquiring media technology
+      equipment.
     math_html: >
-      The %{math_faculty} has been supporting MaMpf through the financing of
-      assistants since 2017.
+      The %{math_faculty} has supported MaMpf by financing assistants since 2017.
     heiquality_html: >
       Within the framework of the heiQUALITY program Teaching, %{hendrik} and
       %{denis} successfully raised funds for the implementation of the project
@@ -152,6 +151,7 @@ en:
   disclosure: 'Legal disclosure'
   policy: 'Privacy Policy'
   navbar:
+    home: 'Home'
     search: 'Search'
     profile: 'Profile'
     administration: 'Administration'
@@ -247,7 +247,7 @@ en:
           <br>
           Event series in red have not been published yet.
         given_lectures: >
-          This is the list of all event series that you teach/have taught.
+          This is the list of all event series that you are teaching or have taught.
           You can edit them.
         edited_lectures: >
           This is the list of all event series you can edit as an additional editor.
@@ -309,8 +309,8 @@ en:
           </br>
           A <i>Clicker</i> in the sense of MaMpf is
           a feedback channel in the form of a special website.
-          Persons who have the editor link can ask for feedback for a question
-          and persons with the user link can conrtibute feedback.
+          People who have the editor link can ask for feedback for a question,
+          and people with the user link can give feedback.
           You can associate one question to a clicker, but clickers can be reused.
         other_lectures: >
           This is the list of event series you cannot edit.
@@ -325,9 +325,9 @@ en:
       editors: 'Editors'
     announcement:
       help: >
-        Here you can enter the text. You may use LaTEX (by putting the
-        corresponding expression inside $...$). You can see a preview of your
-        text below.
+        Here you can enter a text. You may use LaTeX (by putting the
+        corresponding expression inside $...$). A preview of your
+        text is shown below.
       on_main_page: >
         Display on home page
       main_page: >
@@ -389,8 +389,8 @@ en:
         course: >
           Here you can select the course to which this event series belongs.
         term: >
-          Here you can select the term in which this event series takes place or
-          has taken place.
+          Here you can select the term in which this event series is taking place or
+          took place.
         teacher: >
           Here you can select the teacher of this event series.
           Normally this should be the person that actually gives the event series.
@@ -424,13 +424,13 @@ en:
           structure of the manuscript to MaMpf as well. MaMpf will then automatically
           create chapters and sections.
           Additionally, MaMpf can automatically create corresponding tags.
-          After the script has been uploaded and its structure imported to
+          After the script has been uploaded, and its structure has been imported to
           MaMpf, you can create sessions. For these you can select
           the content from the script's structure.
           </li>
           </ul>
           You can try to combine both variants. Video based event series can
-          have scripts too. You may upload a manuscript and import its structure,
+          have scripts too. You may upload a manuscript and import its structure
           if the manuscript uses MaMpf's LaTeX package.
         variants: >
           Here you can set how MaMpf extracts content information for sections
@@ -462,7 +462,7 @@ en:
           They can emerge if you delete a section that had sessions in it.
         media: >
           This is the list of all media associated with this event series
-          or its sessions. Media in red are not yet published or locked.
+          or its sessions. Media in red are unpublished or locked.
           If there are media on course level of the same course as this event
           series, you are informed about them.
         course_tags: >
@@ -498,7 +498,7 @@ en:
           sidebar for this event series.
           their profile settings.
         first_chapter: >
-          If the first chapter (or talk) is supposed to have a number different from "1",
+          If the first chapter (or talk) is supposed to have a number other than "1",
           you can enter this number here. E.g., this may apply to event series
           where chapter/talk numbering is continued over successive terms as it
           is sometimes done in successive event series.
@@ -511,9 +511,8 @@ en:
           behaviour, sections will be counted across chapter borders.
         passphrase: >
           If you enter something here, users can subscribe to this event series only
-          upon entering this passphrase. Media associated to this event series or
-          any of its sessions are then invisible for users who have not
-          subscribed to this event series.
+          by entering this passphrase. Media associated to this event series or
+          any of its sessions are then invisible for non-subscribers.
         chapter_title: >
           Here you can enter the title of the chapter (or talk).
         insert_after_chapter: >
@@ -522,19 +521,19 @@ en:
         date: >
           Here you can select the date when the session took place.
         sections: >
-          Here you can select which sections of the event series where treated in
-          this session. By default, the session gets assigned all tags that
+          Here you can select which sections of the event series have been treated in
+          this session. By default, the session is assigned all tags that
           belong to these sections. When editing the session, you can refine
           the tag selection.
         section_title: >
           Here you can select the section title.
         insert_after_section: >
-          Here you can select at which position the new section will be placed
+          Here you can select at which position the new section is placed
           by choosing the previous section.
         imported_medium_invisible: >
-          This medium will not be visible for users as an imported medium, since its access rights
+          This medium will not be visible for users as an imported medium since its access rights
           are neither "free" nor "only registered MaMpf users". The access rights are checked at runtime,
-          so the medium will become visible when the access rights are changed to one of the two admissible
+          so the medium becomes visible when the access rights are changed to one of the two admissible
           values for imported media.
         close_comments: >
           If you activate this switch, all threads related to media that belong
@@ -1114,6 +1113,8 @@ en:
         external_link: >
           External link that constitutes a part of the medium. E.g., this might
           be a link to the Stacks Project.
+        external_link_description: >
+          Display text for the button pointing to the external link.
         access_rights: >
           There are the following options:
           <ul>
@@ -1974,6 +1975,7 @@ en:
   details: 'Details'
   none: 'none'
   back: 'Back'
+  back_to_home: 'Back to home'
   today: 'today'
   yesterday: 'yesterday'
   chapter: 'Chapter %{number}. %{title}'
@@ -2384,41 +2386,22 @@ en:
   sign_up_html: >
     Don't have an account yet? Just %{path}.
   sign_up: 'sign up'
+  announcements: 'Announcements'
   main:
     welcome:
       Welcome to MaMpf, the Mathematical
       Media platform of Heidelberg University.
     about: >
-      MaMpf is a constantly growing project offering various
-      e-learning services. MaMpf's tagging system helps you find
-      all existing media to a keyword quickly and easily.
-      In addition, MaMpf links keywords and visualizes their relations
-      in Mind maps. In MaMpf you have the following at your disposal:
-    kaviar_html:
-      '<strong>
-        Hypervideos:
-      </strong>
-      Lecture recordings, worked examples and repetition videos with
-      content structure and links to related materials'
-    sesam_html:
-      '<strong>
-        Hypertexts:
-      </strong>
-      Lecture notes, exercise sheets and additional materials with links and outlines
-      that can be searched in MaMpf'
-    keks_html:
-      '<strong>
-        Quizzes:
-      </strong>
-      compiled from a large collection of multiple choice questions and calculation tasks, and
-      guided proofs'
+      MaMpf combines and connects various e-learning services: lecture videos and scripts
+      with content outlines, a comprehensive collection of multiple choice questions
+      and assignments including guided proofs and much more. Thanks to the
+      tagging system, you can easily find all the media relevant to you.
     interested_html: >
-      Curious? On our %{blog} and on %{researchgate} you can find more information and news about MaMpf.
-      %{guided_tour} you can find a guided tour of MaMpf. Resources for editors
-      (e.g. the MaMpf LaTEX package) are available %{resources}.
-    resources: here
+      Curious? Then take a look at our %{blog} (including a %{guided_tour} of MaMpf
+      and additional %{resources} for editors). Or register now to try MaMpf on your own.
+    resources: resources
     blog: Blog
-    researchgate: Researchgate
+    guided_tour: guided tour
   math:
     number: 'number'
     complex_number: 'complex number'
@@ -2870,6 +2853,64 @@ en:
       Hash:%{hash}
     data_request_mail_body: >
       %{mail} with user-id: %{id} has requested his data.
+    data_provide_mail_subject: Data request
+    data_provide_mail_body: >
+      Hello, %{name}!<br>
+
+      You have sent us a request for your data. We are happy to comply with it.
+      First, there is data directly linked to you:<br>
+
+      Your email address: %{email}<br>
+      Account creation: %{created_at}<br>
+      Last account change: %{updated_at}<br>
+      Admin: %{admin}<br>
+      Subscription type: %{subscription_type}<br>
+      Name: %{name}<br>
+      Homepage: %{homepage}<br>
+      No notifications: %{no_notifications}<br>
+      Language: %{_locale}<br>
+      Emails for media: %{email_for_medium}<br>
+      Emails for announcements: %{email_for_announcement}<br>
+      Emails for lectures: %{email_for_teachable}<br>
+      Emails for news: %{email_for_news}<br>
+      Unread comments: %{unread_comments}<br>
+      Study participant: %{study_participant}<br>
+      Emails for submission Upload: %{email_for_submission_upload}<br>
+      Emails for submission deletion: %{email_for_submission_removal}<br>
+      Emails for submission joining: %{email_for_submission_join}<br>
+      Emails for submission leave: %{email_for_submission_leave}<br>
+      Emails for correction upload: %{email_for_correction_upload}<br>
+      Emails for submission decision: %{email_for_submission_decision}<br>
+      Name in tutorials: %{name_in_tutorials}<br>
+      Archived: %{archived}<br>
+      Image data: %{image_data}<br>
+
+      You are welcome to contact us about the meaning of the individual data.
+      Furthermore there are data which are linked to other database entries, namely<br>
+
+      -subscribed lectures<br>
+      -Favorite lectures<br>
+      -modules as module editor<br>
+      -lectures as lecture editor<br>
+      -edited media<br>
+      -held lectures<br>
+      -held tutorials<br>
+      -lectures<br>
+      -received notifications (e.g. about new media etc.)<br>
+      -created Announcements<br>
+      -registered clickers<br>
+      -Note submissions<br>
+      -watchlists<br>
+      -quizzes certificates<br>
+      -forum posts<br>
+      -comments<br>
+
+      Note that not all of these data may apply to you.<br>
+
+      For further insight, please contact us.<br>
+
+      With kind regards,<br>
+      Your MaMpf-Team
   statistics:
     video_thyme: 'Accessed by THymE'
     video_downloads: 'Downloads'
@@ -2960,6 +3001,7 @@ en:
     related_media: 'Related media'
     related_questions: 'Related questions'
     external_link: 'External Link'
+    external_link_description: 'Display text'
     editor: 'Editor'
     thyme: 'THymE'
     thyme_editor: 'Editor'

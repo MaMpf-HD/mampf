@@ -1,7 +1,6 @@
 # MainController
 class MainController < ApplicationController
-  skip_before_action :authenticate_user!, only: [:home, :about, :news,
-                                                 :sponsors]
+
   before_action :check_for_consent
   authorize_resource class: false, only: :start
   layout 'application_no_sidebar'

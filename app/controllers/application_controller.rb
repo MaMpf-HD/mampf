@@ -4,9 +4,11 @@ class ApplicationController < ActionController::Base
   # The callback which stores the current location must be added before you
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
   # will halt the filter chain and redirect before the location can be stored.
+  before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   before_action :set_locale
   after_action :store_interaction, if: :user_signed_in?
+
 
   etag { current_user.try :id }
 
@@ -63,6 +65,13 @@ class ApplicationController < ActionController::Base
     response.headers["Cache-Control"] = "no-cache, no-store"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "Mon, 01 Jan 1990 00:00:00 GMT"
+  end
+
+  protected
+
+  def configure_permitted_parameters
+    # add additional paramters to registration
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:locale, :consents])
   end
 
   private

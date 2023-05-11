@@ -5,7 +5,7 @@ cd /usr/src/app
 ./initialize.sh &> >(tee -a /usr/src/app/log/initialisation.log)
 
 rm -f tmp/pids/server.pid
-cp /pdfcomprezzor.wasm public/pdfcomprezzor/pdfcomprezzor.wasm
+cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
 echo "running mampf"
 bundle exec sidekiq &
 prometheus_exporter --label "{\"container\": \"${HOSTNAME}\"}" -b 0.0.0.0 -p 9394 -a lib/collectors/mampf_collector.rb &!

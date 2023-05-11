@@ -5,9 +5,10 @@
     </h5>
   </div>
   <div class="card-body text-center">
-    <%= link_to t('click_here'),
+    <%= link_to external_link_description_not_empty(medium),
                 medium.external_reference_link,
-                class: "btn btn-info",
+                class: "btn btn-info break-text-any-where",
+                title: medium.external_reference_link,
                 target: :_blank %>
   </div>
 </div>

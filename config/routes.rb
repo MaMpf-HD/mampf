@@ -791,10 +791,6 @@ Rails.application.routes.draw do
       to: 'users#fill_user_select',
       as: 'fill_user_select'
 
-  get 'users/list',
-      to: 'users#list',
-      as: 'list_users'
-
   get 'users/delete_account',
       to: 'users#delete_account',
       as: 'delete_account'
@@ -864,14 +860,30 @@ Rails.application.routes.draw do
       to: 'erdbeere#fill_realizations_select',
       as: 'fill_realizations_select'
 
+
   # main routes
 
-  root 'main#home'
+  # Ruby set root based on whether user is authenticated or not
+  # https://stackoverflow.com/questions/37261620/change-root-depending-on-whether-a-user-is-logged-in-or-not-without-devise-on-ru
+  # https://github.com/heartcombo/devise/blob/3926e6d9eb139cc839faec8ea6c8f8cefa2d95f6/lib/devise/rails/routes.rb#L296-L334
+  # https://stackoverflow.com/a/27507722/
+  devise_scope :user do
+    authenticated :user do
+      root to: 'main#start'
+    end
+
+    unauthenticated do
+      root to: 'devise/sessions#new', as: :unauthenticated_root
+    end
+  end
+
+  # Allow /login besides /users/sign_in
+  devise_scope :user do
+    get "/login" => "devise/sessions#new"
+  end
 
   get 'error',
       to: 'main#error'
-
-  get 'main/home'
 
   get 'main/news',
       to: 'main#news',
@@ -880,10 +892,6 @@ Rails.application.routes.draw do
   get 'main/comments',
       to: 'main#comments',
       as: 'comments'
-
-  get 'main/sponsors',
-      to: 'main#sponsors',
-      as: 'sponsors'
 
   get 'main/start',
       to: 'main#start',
