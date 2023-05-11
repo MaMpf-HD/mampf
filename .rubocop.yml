@@ -201,6 +201,9 @@ Style/RedundantFreeze:
 Style/SymbolProc:
   Enabled: true
 
+Style/SymbolArray:
+  Enabled: false
+
 # Use `foo {}` not `foo{}`.
 Layout/SpaceBeforeBlockBraces:
   Enabled: true
@@ -322,3 +325,17 @@ Performance/DeletePrefix:
 
 Performance/DeleteSuffix:
   Enabled: true
+
+Metrics/ModuleLength:
+  Enabled: false
+
+Metrics/ClassLength:
+  Enabled: false
+
+Metrics/MethodLength:
+  Exclude:
+    - 'app/abilities/**/*'
+
+Metrics/AbcSize:
+  Exclude:
+    - 'app/abilities/**/*'
