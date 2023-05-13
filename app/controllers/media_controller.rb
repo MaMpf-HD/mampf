@@ -224,7 +224,7 @@ class MediaController < ApplicationController
     results = search.results
     @total = search.total
 
-    # in the case of a search with tag_operator 'or', we 
+    # in the case of a search with tag_operator 'or', we
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
     if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2
@@ -657,7 +657,7 @@ class MediaController < ApplicationController
                   :teachable_inheritance, :fulltext, :per,
                   :clicker, :purpose, :answers_count,
                   :results_as_list, :all_terms, :all_teachers,
-                  :lecture_option, :user_id,
+                  :lecture_option, :user_id, :from,
                   types: [],
                   teachable_ids: [],
                   tag_ids: [],
