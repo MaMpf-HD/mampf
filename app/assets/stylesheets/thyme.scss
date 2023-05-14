@@ -583,6 +583,9 @@ input[type="radio"] {
   bottom: 0;
   padding: 10px;
   background: #eeefff;
+  border: solid;
+  border-width: 1px;
+  border-color: black;
 }
 
 #toggle-mistake-annotations {

@@ -2,9 +2,23 @@ class AnnotationsController < ApplicationController
 
   def create
     @annotation = Annotation.new(annotation_params)
-    @annotation.timestamp = TimeStamp.new(total_seconds: params[:annotation][:total_seconds])
+    @total_seconds = params[:annotation][:total_seconds]
+    @annotation.timestamp = TimeStamp.new(total_seconds: @total_seconds)
     @annotation.user_id = current_user.id
     @annotation.save
+
+    @publish = params[:annotation][:publish]
+    if @publish == "1" #= corresponding checkbox is marked
+      @medium = Medium.find_by_id(params[:annotation][:medium_id])
+      @link = 'Link zur entsprechenden Stelle im Video: <a href="' + play_medium_path(@medium) +
+        '?time=' + @total_seconds + '">' + @annotation.timestamp.hms_colon_string + '</a>'
+      @comment = params[:annotation][:comment] + "\n" + @link
+      @commontator_thread = @medium.commontator_thread
+      @comment = Commontator::Comment.new(
+        thread: @commontator_thread, creator: @current_user, body: @comment
+      )
+      @comment.save
+    end
   end
 
   def edit

@@ -16,7 +16,7 @@
   <b>Comment:</b>
   <%= f.text_area :comment, class: 'form-control' %>
 
-  <br><br>
+  <br>
 
   <!-- COLOR SELECTION -->
   <b>Color:</b>
@@ -36,11 +36,11 @@
   <b>Color: &nbsp</b>
   <%= f.color_field :color %> -->
 
-  <br><br>
+  <br>
 
   <!-- CATEGORY RADIO BUTTON -->
   <b>Category:</b>
-  <div class="form-row ml-2">
+  <div class="form-row ml-2", id="category-radios">
     <div class="custom-control custom-radio custom-control-inline">
       <%= f.radio_button :category,
                          :note,
@@ -79,7 +79,13 @@
     </div>
   </div>
 
-  <br><br>
+  <br>
+
+  <div id="specific">
+    <!-- SPECIFIC CONTENT, DEPENDING ON THE SELECTED CATEGORY, IS INSERTED HERE -->
+  </div>
+
+  <br>
 
   <!-- VISIBLE FOR TEACHER? - CHECKBOX -->
   <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
@@ -91,6 +97,11 @@
   <% elsif annotations_status == -1 %>
     <%= f.hidden_field :visible_for_teacher, value: false %>
   <% end %>
+
+  <br>
+
+  <span><b>Publish in forum? &nbsp</b></span>
+  <%= f.check_box :publish %>
 
   <br>
 
