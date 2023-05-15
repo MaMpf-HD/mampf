@@ -287,10 +287,10 @@ class Medium < ApplicationRecord
     # is seleted
     if search_params[:all_types] == '1'
       search_params[:types] = if search_params[:from] == 'start'
-                                Medium.generic_sorts
-                              else
-                                []
-                              end
+        Medium.generic_sorts
+      else
+        []
+      end
     end
     search_params[:teachable_ids] = TeachableParser.new(search_params)
                                                    .teachables_as_strings
