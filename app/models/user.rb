@@ -301,10 +301,36 @@ class User < ApplicationRecord
     given_lectures.any?
   end
 
-  # a user is an editor iff he/she is a course editor or lecture editor or
+  # a user is a teachable editor iff he/she is a course editor or lecture
+  # editor
+  def teachable_editor?
+    edited_courses.any? || edited_lectures.any?
+  end
+
+  def teachable_editor_or_teacher?
+    teachable_editor? || teacher?
+  end
+
+  def can_edit_teachables?
+    admin? || teachable_editor_or_teacher?
+  end
+
+  # if you are not a teacher of lecture or a module editor,
+  # but just an additional editor of some lecture, you
+  # will not be considered active if all of your edited lectures
+  # are too old
+  def active_teachable_editor?
+    return false unless can_edit_teachables?
+    return true if admin || course_editor? || teacher?
+
+    edited_lectures.select { |l| l.term.nil? || !l.stale? }
+                   .any?
+  end
+
+  # a user is an editor iff he/she is a teachable editor or an
   # editor of media that are not associated to talks
   def editor?
-    edited_courses.any? || edited_lectures.any? ||
+    teachable_editor? ||
       edited_media.where.not(teachable_type: 'Talk').any?
   end
 
@@ -712,6 +738,17 @@ class User < ApplicationRecord
 
   def generic?
     !(admin? || teacher? || editor?)
+  end
+
+  # for lectures that are too old, only the teacher or an editor
+  # of the course it belongs to can update the personell of to the lecture
+  def can_update_personell?(lecture)
+    return false unless can_edit?(lecture)
+    return true if can_edit?(lecture.course) || lecture.teacher == self
+    return true if lecture.course.term_independent
+    return true if !lecture.stale?
+
+    return false
   end
 
   private

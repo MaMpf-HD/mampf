@@ -54,8 +54,10 @@
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/publish/publish',
              locals: { lecture: lecture } %>
-  <%= render partial: 'lectures/edit/user_modal',
-             locals: { lecture: lecture } %>
+  <% unless lecture.stale? %>
+    <%= render partial: 'lectures/edit/user_modal',
+               locals: { lecture: lecture } %>
+  <% end %>
   <% if !lecture.seminar? || lecture.legacy_seminar %>
     <%= render partial: 'chapters/modal',
                locals: { lecture: lecture } %>

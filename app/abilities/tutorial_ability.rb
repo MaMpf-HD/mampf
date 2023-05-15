@@ -6,7 +6,7 @@ class TutorialAbility
 
     can [:new, :create, :edit, :update, :destroy, :cancel_edit,
          :cancel_new], Tutorial do |tutorial|
-      user.can_edit?(tutorial.lecture)
+      user.can_update_personell?(tutorial.lecture)
     end
 
     can :overview, Tutorial do |tutorial, lecture|
@@ -24,7 +24,7 @@ class TutorialAbility
     end
 
     can :validate_certificate, Tutorial do
-      user.tutor? || !user.generic?
+      user.tutor? || user.can_edit_teachables?
     end
   end
 end

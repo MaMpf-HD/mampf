@@ -304,17 +304,19 @@ class LecturesController < ApplicationController
     end
 
     def lecture_params
-      params.require(:lecture).permit(:course_id, :term_id, :teacher_id,
-                                      :start_chapter, :absolute_numbering,
-                                      :start_section, :organizational, :locale,
-                                      :organizational_concept, :muesli,
-                                      :organizational_on_top,
-                                      :disable_teacher_display,
-                                      :content_mode, :passphrase, :sort,
-                                      :comments_disabled,
-                                      :submission_max_team_size,
-                                      :submission_grace_period,
-                                      editor_ids: [])
+      allowed_params = [:term_id, :start_chapter, :absolute_numbering,
+                        :start_section, :organizational, :locale,
+                        :organizational_concept, :muesli,
+                        :organizational_on_top, :disable_teacher_display,
+                        :content_mode, :passphrase, :sort, :comments_disabled,
+                        :submission_max_team_size, :submission_grace_period]
+      if action_name == 'update' && current_user.can_update_personell?(@lecture)
+        allowed_params.concat([:teacher_id, editor_ids: []])
+      end
+      if action_name == 'create'
+        allowed_params.concat([:course_id, :teacher_id, editor_ids: []])
+      end
+      params.require(:lecture).permit(allowed_params)
     end
 
     def structure_params

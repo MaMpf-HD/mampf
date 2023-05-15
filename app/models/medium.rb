@@ -470,6 +470,19 @@ class Medium < ApplicationRecord
     (result + teachable.speakers).uniq
   end
 
+  # returns the array of users that are eligible to obtain editing rights
+  # for the given medium from the given user
+  def eligible_editors(user)
+    result = editors_with_inheritance
+
+    if teachable.is_a?(Talk) && user.can_edit?(lecture)
+      result.concat(lecture.speakers)
+    end
+
+    result << user if user.admin?
+    result.uniq
+  end
+
   # creates a .vtt tmp file (and returns it), which contains
   # all data needed by the thyme player to realize the toc
   def toc_to_vtt
