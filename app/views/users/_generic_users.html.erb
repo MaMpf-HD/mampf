@@ -1,5 +1,5 @@
 <div id="user-search-form">
-  <% if generic_users.present? %>
+  <% if generic_users_count.positive? %>
     <%= form_with url: elevate_user_path,
                   scope: 'generic_user',
                   method: 'get' do |f| %>

@@ -11,7 +11,7 @@ class UsersController < ApplicationController
 
   def index
     authorize! :index, User.new
-    @generic_users = User.where.not(id: @elevated_users.pluck(:id))
+    @generic_users_count = User.where.not(id: @elevated_users.pluck(:id)).count
   end
 
   def edit
