@@ -202,7 +202,7 @@ class Medium < ApplicationRecord
   end
 
   def self.advanced_sorts
-    ['RandomQuiz', 'Question', 'Remark', 'Erdbeere']
+    ['Question', 'Remark', 'Erdbeere']
   end
 
   def self.generic_sorts
@@ -282,7 +282,16 @@ class Medium < ApplicationRecord
   # returns search results for the media search with search_params provided
   # by the controller
   def self.search_by(search_params, page)
-    search_params[:types] = [] if search_params[:all_types] == '1'
+    # If the search is initiated from the start page, you can only get
+    # generic media sorts as results even if the 'all' radio button
+    # is seleted
+    if search_params[:all_types] == '1'
+      search_params[:types] = if search_params[:from] == 'start'
+                                Medium.generic_sorts
+                              else
+                                []
+                              end
+    end
     search_params[:teachable_ids] = TeachableParser.new(search_params)
                                                    .teachables_as_strings
     search_params[:editor_ids] =
@@ -295,11 +304,12 @@ class Medium < ApplicationRecord
     if search_params[:all_tags] == '1' && search_params[:tag_operator] == 'and'
       search_params[:tag_ids] = Tag.pluck(:id)
     end
-    admin = User.find_by(id: search_params[:user_id])&.admin?
+    user = User.find_by(id: search_params[:user_id])
     search = Sunspot.new_search(Medium)
     search.build do
       with(:sort, search_params[:types])
-      without(:sort, Medium.advanced_sorts) unless admin
+      without(:sort, 'RandomQuiz')
+      without(:sort, Medium.advanced_sorts) unless user&.admin_or_editor?
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
       with(:term_id,

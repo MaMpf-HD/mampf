@@ -125,7 +125,7 @@
                             '2',
                             checked: false,
                             class: 'custom-control-input',
-                            data: { type: 'toggle', 
+                            data: { type: 'toggle',
                                     id: 'search_media_lectures'} %>
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.own_selection'),
@@ -162,6 +162,7 @@
   <%= f.hidden_field :purpose, value: purpose %>
   <%= f.hidden_field :results_as_list,
                      value: 'false' %>
+  <%= f.hidden_field :from, value: 'start' %>
   <div class="row mb-3">
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),
