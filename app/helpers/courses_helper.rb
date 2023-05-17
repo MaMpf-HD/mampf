@@ -27,6 +27,7 @@ module CoursesHelper
     unless user.admin || user.in?(course.editors)
       return course.title
     end
+
     link_to(course.title, edit_course_path(course))
   end
 
@@ -40,5 +41,4 @@ module CoursesHelper
       tag.i class: 'far fa-edit'
     end
   end
-
 end

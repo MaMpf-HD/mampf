@@ -1,6 +1,8 @@
-# TermsController
+# UsersController
 class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
+  before_action :set_user, only: [:edit, :update, :destroy]
+
   layout 'administration'
 
   def current_ability
@@ -9,16 +11,15 @@ class UsersController < ApplicationController
 
   def index
     authorize! :index, User.new
-    @generic_users = User.where.not(id: @elevated_users.pluck(:id))
+    @generic_users_count = User.select(:id)
+                               .where.not(id: @elevated_users.pluck(:id)).count
   end
 
   def edit
-    @user = User.find_by_id(params[:id])
     authorize! :edit, @user
   end
 
   def update
-    @user = User.find_by_id(params[:id])
     authorize! :update, @user
     old_image_data = @user.image_data
     @user.update(user_params)
@@ -39,6 +40,7 @@ class UsersController < ApplicationController
     @user = User.find(elevate_params[:id])
     admin = elevate_params[:admin] == '1'
     return unless admin
+
     # enforce a name
     if @user.name.blank?
       name = @user.email.split('@')[0]
@@ -48,19 +50,14 @@ class UsersController < ApplicationController
     end
   end
 
-  def list
-    search = User.search { fulltext params[:term] }
-    @users = search.results
-  end
-
   def list_generic_users
+    authorize! :list_generic_users, User.new
     result = User.where.not(id: @elevated_users.pluck(:id))
                  .values_for_select
     render json: result
   end
 
   def destroy
-    @user = User.find_by_id(params[:id])
     authorize! :destroy, @user
     @user.destroy unless @user.admin || @user.editor? || @user.teacher?
     redirect_to users_path
@@ -78,6 +75,7 @@ class UsersController < ApplicationController
   end
 
   def fill_user_select
+    authorize! :fill_user_select, User.new
     if params[:q]
       result = User.preferred_name_or_email_like(params[:q])
                    .values_for_select
@@ -94,17 +92,25 @@ class UsersController < ApplicationController
 
   private
 
-  def elevate_params
-    params.require(:generic_user).permit(:id, :admin, :editor, :teacher, :name)
-  end
+    def elevate_params
+      params.require(:generic_user).permit(:id, :admin, :editor, :teacher,
+                                           :name)
+    end
 
-  def user_params
-    params.require(:user).permit(:name, :email, :admin, :homepage,
-                                 :current_lecture_id,:image)
-  end
+    def user_params
+      params.require(:user).permit(:name, :email, :homepage,
+                                   :current_lecture_id, :image)
+    end
 
-  def set_elevated_users
-    @elevated_users = User.where(admin: true).or(User.proper_editors)
-                          .or(User.teachers)
-  end
+    def set_user
+      @user = User.find_by_id(params[:id])
+      return unless @user.nil?
+
+      redirect_to :root, alert: I18n.t('controllers.no_medium')
+    end
+
+    def set_elevated_users
+      @elevated_users = User.where(admin: true).or(User.proper_editors)
+                            .or(User.teachers)
+    end
 end

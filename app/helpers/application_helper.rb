@@ -1,15 +1,15 @@
 # ApplicationHelper module
 module ApplicationHelper
-
-  #returns the path that is associated to the MaMpf brand in the navbar
+  # returns the path that is associated to the MaMpf brand in the navbar
   def home_path
     return start_path if user_signed_in?
-    root_path(params: { locale: I18n.locale})
+
+    root_path(params: { locale: I18n.locale })
   end
 
   # get current lecture from session object
   def current_lecture
-    Lecture.find_by_id(cookies[:current_lecture_id])
+    Lecture.find_by(id: cookies[:current_lecture_id])
   end
 
   # Returns the complete url for the media upload folder if in production
@@ -30,6 +30,7 @@ module ApplicationHelper
   def full_title(page_title = '')
     return page_title if action_name == 'play' && controller_name == 'media'
     return 'Quiz' if action_name == 'take' && controller_name == 'quizzes'
+
     base_title = 'MaMpf'
     if user_signed_in? && current_user.notifications.any?
       base_title += " (#{current_user.notifications.size})"
@@ -88,8 +89,8 @@ module ApplicationHelper
 
   # media_sorts
   def media_sorts
-    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse', 'script',
-     'questions', 'remarks', 'reste']
+    %w[kaviar sesam keks kiwi erdbeere nuesse script
+       questions remarks reste]
   end
 
   # media_sort -> acronym
@@ -109,7 +110,7 @@ module ApplicationHelper
   # Selects all media associated to lectures and lessons from a given list
   # of media
   def lecture_media(media)
-    media.where(teachable_type: ['Lecture', 'Lesson'] )
+    media.where(teachable_type: %w[Lecture Lesson])
   end
 
   # Selects all media associated to courses from a given list of media
@@ -121,10 +122,10 @@ module ApplicationHelper
   # the given media are associated to.
   def lecture_course_teachables(media)
     teachables = media.pluck(:teachable_type, :teachable_id).uniq
-    course_ids = teachables.select { |t| t.first == 'Course'}.map(&:second)
-    lecture_ids = teachables.select { |t| t.first == 'Lecture'}.map(&:second)
-    lesson_ids = teachables.select { |t| t.first == 'Lesson'}.map(&:second)
-    talk_ids = teachables.select { |t| t.first == 'Talk'}.map(&:second)
+    course_ids = teachables.select { |t| t.first == 'Course' }.map(&:second)
+    lecture_ids = teachables.select { |t| t.first == 'Lecture' }.map(&:second)
+    lesson_ids = teachables.select { |t| t.first == 'Lesson' }.map(&:second)
+    talk_ids = teachables.select { |t| t.first == 'Talk' }.map(&:second)
     lecture_ids += Lesson.where(id: lesson_ids).pluck(:lecture_id).uniq
     lecture_ids += Talk.where(id: talk_ids).pluck(:lecture_id).uniq
     Course.where(id: course_ids) + Lecture.where(id: lecture_ids.uniq)
@@ -137,10 +138,10 @@ module ApplicationHelper
   # lecture
   def relevant_media(teachable, media, limit)
     result = []
-    if teachable.class == Course
+    if teachable.instance_of?(Course)
       return media.where(teachable: teachable).order(:created_at)
-                                              .reverse_order
-                                              .first(limit)
+                  .reverse_order
+                  .first(limit)
     end
     media_ids = (teachable.media_with_inheritance.pluck(:id) & media.pluck(:id))
     Medium.where(id: media_ids).order(:created_at).reverse_order.first(limit)
@@ -152,6 +153,7 @@ module ApplicationHelper
     groups = list.in_groups_of(group_size)
     diff = groups.count - pieces
     return groups if diff <= 0
+
     tail = groups.pop(diff).first(diff).flatten
     groups.last.concat(tail)
     groups
@@ -160,14 +162,16 @@ module ApplicationHelper
   # returns true for 'media#enrich' action
   def enrich?(controller, action)
     return true if controller == 'media' && action == 'enrich'
+
     false
   end
 
   # cuts off a given string so that a given number of letters is not exceeded
   # string is given ... as ending if it is too long
   def shorten(title, max_letters)
-    return '' unless title.present?
+    return '' if title.blank?
     return title unless title.length > max_letters
+
     title[0, max_letters - 3] + '...'
   end
 
@@ -176,7 +180,8 @@ module ApplicationHelper
   def grouped_teachable_list
     list = []
     Course.all.each do |c|
-      lectures = [[c.short_title + ' (' + t('basics.all') + ')', 'Course-' + c.id.to_s]]
+      lectures = [[c.short_title + ' (' + t('basics.all') + ')',
+                   'Course-' + c.id.to_s]]
       c.lectures.includes(:term).each do |l|
         lectures.push [l.short_title_release, 'Lecture-' + l.id.to_s]
       end
@@ -206,6 +211,7 @@ module ApplicationHelper
   # can edit all lectures associated to the course.
   def edit_or_show_lecture_path(lecture)
     return edit_lecture_path(lecture) if current_user.can_edit?(lecture)
+
     lecture_path(lecture)
   end
 
@@ -217,6 +223,7 @@ module ApplicationHelper
        medium.editors_with_inheritance.include?(current_user)
       return edit_medium_path(medium)
     end
+
     inspect_medium_path(medium)
   end
 
@@ -224,10 +231,13 @@ module ApplicationHelper
   # anything older than today or yesterday gets reduced to the day.month.year
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
-    return t('today')+ ', ' + date.strftime('%H:%M') if date.to_date == Date.today
+    if date.to_date == Date.today
+      return t('today') + ', ' + date.strftime('%H:%M')
+    end
     if date.to_date == Date.yesterday
       return t('yesterday') + ', ' + date.strftime('%H:%M')
     end
+
     I18n.localize date, format: :concise
   end
 
@@ -264,7 +274,7 @@ module ApplicationHelper
     value ? 'no_display' : ''
   end
 
-  def helpdesk(text, html, title=t('info'))
+  def helpdesk(text, html, title = t('info'))
     tag.i class: 'far fa-question-circle helpdesk ms-2',
           tabindex: -1,
           'data-bs-toggle': 'popover',
@@ -285,34 +295,34 @@ module ApplicationHelper
   end
 
   def get_announcements
-    return Announcement.active_on_main.pluck(:details).join
+    Announcement.active_on_main.pluck(:details).join
   end
 
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
-  $active_css_class = "active-item"
-  
+  $active_css_class = 'active-item'
+
   def get_class_for_project(project)
-    return request.params['project'] == project ? $active_css_class : ''
+    request.params['project'] == project ? $active_css_class : ''
   end
 
   def get_class_for_path(path)
-    return request.path == path ? $active_css_class : ''
+    request.path == path ? $active_css_class : ''
   end
 
   def get_class_for_path_startswith(path)
-    return request.path.starts_with?(path) ? $active_css_class : ''
+    request.path.starts_with?(path) ? $active_css_class : ''
   end
 
   def get_class_for_any_path(paths)
-    return paths.include?(request.path) ? $active_css_class : ''
+    paths.include?(request.path) ? $active_css_class : ''
   end
 
   def get_class_for_any_path_startswith(paths)
     if paths.any? { |path| request.path.starts_with?(path) }
-      return  $active_css_class
+      return $active_css_class
     end
-    return ''
-  end
 
+    ''
+  end
 end

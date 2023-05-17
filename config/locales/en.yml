@@ -111,7 +111,7 @@ en:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
     go_digital_html: >
-      Within the framework of the joint project %{digital_now}, MaMpf has been 
+      Within the framework of the joint project %{digital_now}, MaMpf has been
       supported by the acquisition of media technology equipment which is going
       to help with meeting the increased demand for hypermedia content.
     fellowship_html: >
@@ -618,6 +618,11 @@ en:
       insert_after_chapter: 'Insert after %{chapter_name}'
       insert_after_section: 'Insert after section'
       subscribers: 'Subscribers'
+      no_access_to_users_html: >
+        This lecture is older than 1 year. For reasons of data privacy,
+        only the teacher and course editors can make changes here.
+        If changes are necessary for some reason, you can contact the
+        site administrators by mail: %{project_mail}.
     clicker:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'
@@ -1080,7 +1085,8 @@ en:
         editors: >
           This is the list of all persons that are responsible for this
           medium as editor. At least one person has to be given here, and each
-          of these persons gets editing access to this medium
+          of these persons gets editing access to this medium. Only eligible
+          people can be selected.
           <br>
           Note: Independently from this setting, this medium can be edited
           by people with hiher access rights, e.g. editors of the associated
@@ -1113,6 +1119,8 @@ en:
         external_link: >
           External link that constitutes a part of the medium. E.g., this might
           be a link to the Stacks Project.
+        external_link_description: >
+          Display text for the button pointing to the external link.
         access_rights: >
           There are the following options:
           <ul>
@@ -2356,7 +2364,7 @@ en:
       title: >
         You can search the titles of media or related sessions. If you do not wantto use
         this criterion, leave the input box empty.
-      title_placeholder: leave free or enter at least 2 letters 
+      title_placeholder: leave free or enter at least 2 letters
       lectures: >
         Select the event series you want to search. You can choose all event series, the
         ones you are subscribed to, or make up your own selection. If you opt for your own
@@ -2371,7 +2379,7 @@ en:
       type: >
         Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
         <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
-        The operator used is the inclusive <i>OR</i>. 
+        The operator used is the inclusive <i>OR</i>.
     tag_title: >
       enter at least 2 letters (or leave free for all tags)
   errors:
@@ -2999,6 +3007,7 @@ en:
     related_media: 'Related media'
     related_questions: 'Related questions'
     external_link: 'External Link'
+    external_link_description: 'Display text'
     editor: 'Editor'
     thyme: 'THymE'
     thyme_editor: 'Editor'

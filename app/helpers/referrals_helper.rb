@@ -9,16 +9,19 @@ module ReferralsHelper
       return referral.medium.teachable&.media_scope&.selector_value
     end
     return 'external-0' if referral.item.sort == 'link'
+
     referral.item.medium.teachable&.media_scope&.selector_value
   end
 
   def show_link(referral)
     return true if referral.item.present? && referral.item.sort == 'link'
+
     false
   end
 
   def show_explanation(referral)
     return false if referral.item.nil?
+
     true
   end
 
@@ -28,15 +31,17 @@ module ReferralsHelper
   def item_status_color(referral)
     return '' if referral.item.sort == 'link'
     if !referral.item_published? || referral.item_locked? ||
-         referral.item.quarantine
+       referral.item.quarantine
       return 'bg-post-it-pink'
     end
+
     ''
   end
 
   def item_status_color_value(referral)
     return 'white' if referral.item.sort == 'link'
     return '#fad1df' if !referral.item_published? || referral.item_locked?
+
     'white'
   end
 end

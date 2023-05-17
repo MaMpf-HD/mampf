@@ -57,30 +57,15 @@
                   t('basics.editors'),
                   class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.editors'), true) %>
-      <% if current_user.admin || current_user.editor? %>
-        <%= f.select :editor_ids,
-                     options_for_select(add_prompt(medium.editors
-                                                         .map { |e| [e.info, e.id] }),
-                                        medium.editors.map(&:id)),
-                     {},
-                     { multiple: true,
-                       class: 'selectize',
-                       style: 'display: none;',
-                       data: { ajax: true,
-                               filled: false,
-                               model: 'user',
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results') } } %>
-      <% else %>
-        <%= f.select :editor_ids,
-                     options_for_select((medium.teachable.speakers | medium.editors).map { |e| [e.info, e.id] },
-                                        medium.editors.map(&:id)),
-                     {},
-                     { multiple: true,
-                       class: 'selectize',
-                       style: 'display: none;',
-                       data: { ajax: false } } %>
-      <% end %>
+      <%= f.select :editor_ids,
+                   options_for_select(medium.eligible_editors(current_user)
+                                            .map { |e| [e.info, e.id] },
+                                      medium.editors.map(&:id)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
+                     data: { ajax: false } } %>
       <div class="invalid-feedback"
            id="medium-editors-error">
       </div>

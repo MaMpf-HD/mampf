@@ -30,14 +30,14 @@ class PdfUploader < Shrine
           # extract lines that correspond to MaMpf-Label entries from LaTEX
           # package mampf.sty
           structure = if File.file?(structure_path)
-                        open(structure_path, "r") do
-                          |io| io.read.encode("UTF-8", invalid: :replace)
-                        end
-                      end
+            open(structure_path, "r") do |io|
+              io.read.encode("UTF-8", invalid: :replace)
+            end
+          end
           structure ||= ''
           bookmarks = structure.scan(/MaMpf-Label\|(.*?)\n/).flatten
           result = []
-          bookmarks.each_with_index do |b,i|
+          bookmarks.each_with_index do |b, i|
             # extract bookmark data
             # line may look like this:
             # defn:erster-Tag|Definition|1.1|Erster Tag|1

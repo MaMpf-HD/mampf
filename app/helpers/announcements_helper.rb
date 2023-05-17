@@ -6,6 +6,7 @@ module AnnouncementsHelper
     unless announcement.lecture.present?
       return t('notifications.mampf_announcement')
     end
+
     t('notifications.lecture_announcement',
       title: announcement.lecture.title_for_viewers)
   end
@@ -14,6 +15,7 @@ module AnnouncementsHelper
   def news_card_color(announcement)
     return '' unless user_signed_in?
     return 'bg-post-it-blue' if announcement.active?(current_user)
+
     ''
   end
 

@@ -31,12 +31,12 @@
   </div>
   <div class="card-body">
     <div class="row">
-      <div class="col-4">
+      <div class="col-5">
         <ul class="nav flex-column nav-pills"
             id="edited-media-tab"
             role="tablist">
           <% media_sorts.each do |s| %>
-            <li class="nav-item">
+            <li class="nav-item w-100">
               <a class="nav-link <%= active(s == 'kaviar') %>"
                  id="<%= s %>-tab"
                  data-bs-toggle="tab" href="#<%= s %>-media" role="tab"
@@ -49,14 +49,14 @@
           <% end %>
         </ul>
       </div>
-      <div class="col-8">
+      <div class="col-7">
         <div class="tab-content" id="edited-media-tabContent">
           <% media_sorts.each do |s| %>
             <div class="tab-pane fade <%= show_tab(s == 'kaviar') %>"
                  id="<%= s %>-media"
                  role="tabpanel"
                  aria-labelledby="<%= s %>-tab">
-              <ul>
+              <ul class="pl-2">
                 <% media.select { |m| m.sort.in?(media_types[s]) }
                         .sort_by(&:created_at)
                         .reverse

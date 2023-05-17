@@ -323,17 +323,6 @@
   text-decoration: none;
 }
 
-.tab-content {
-  display: flex;
-}
-
-.tab-content > .tab-pane {
-  display: block; /* undo "display: none;" */
-  visibility: hidden;
-  margin-right: -100%;
-  width: 100%;
-}
-
-.tab-content > .active {
-  visibility: visible;
+.break-text-any-where {
+  word-break: break-all;
 }

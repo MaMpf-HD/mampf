@@ -12,6 +12,7 @@ class ProbeSaver
                          study_participant: study_participant,
                          input: input)
     return unless progress == -1
+
     success = Probe.where(session_id: session_id, correct: true).count
     probe.update(success: success)
   end

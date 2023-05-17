@@ -12,8 +12,9 @@ class CourseTagJoin < ApplicationRecord
 
   private
 
-  def touch_tag
-    return unless tag.present? && tag.persisted?
-    tag.touch
-  end
+    def touch_tag
+      return unless tag.present? && tag.persisted?
+
+      tag.touch
+    end
 end

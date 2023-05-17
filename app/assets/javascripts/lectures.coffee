@@ -185,7 +185,6 @@ $(document).on 'turbolinks:load', ->
         lecture: lectureId
       }
       success: (result) ->
-        $('#lectureUserCounter').append(result.length)
         $('#lectureUserModalButton').hide() if result.length == 0
         for u in result
           row = document.createElement('div')

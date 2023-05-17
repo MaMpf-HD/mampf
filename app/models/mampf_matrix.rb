@@ -18,11 +18,12 @@ class MampfMatrix
              'matrix([0,0],[0,0]')
   end
 
-  def entry(i,j)
+  def entry(i, j)
     if i > @row_count || j > @column_count
       return '0'
     end
-    @coefficients[(i - 1) *  @column_count + (j - 1)]
+
+    @coefficients[(i - 1) * @column_count + (j - 1)]
   end
 
   def self.from_hash(content)

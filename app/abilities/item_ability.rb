@@ -6,7 +6,7 @@ class ItemAbility
 
     can [:create, :update, :edit, :destroy], Item do |item|
       (item.medium.nil? && !user.generic?) ||
-      (item.medium && user.can_edit?(item.medium))
+        (item.medium && user.can_edit?(item.medium))
     end
 
     can :display, Item

@@ -30,7 +30,7 @@
 <% end %>
 
 <% if @update_icon %>
-$('#commentsIcon').removeClass('text-light').addClass('text-primary');
+$('#commentsIcon').addClass('new-comment');
 <% end %>
 
 var commontatorComment = $("#commontator-comment-<%= @comment.id %>").hide().fadeIn();

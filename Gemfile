@@ -120,7 +120,7 @@ group :development, :docker_development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"
-  gem "rubocop", "~> 0.93", require: false
+  gem "rubocop", "~> 1.50", require: false
   gem "rubocop-packaging", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails", require: false
