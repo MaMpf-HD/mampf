@@ -53,7 +53,7 @@
   </div>
   <div class="card-body">
     <% if lecture.chapters.any? %>
-      <div class="card-columns">
+      <div class="row" data-masonry='{"percentPosition": true }'>
         <% lecture.chapters.each do |c| %>
           <% cache c do %>
             <%= render partial: 'lectures/edit/chapter',
