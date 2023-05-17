@@ -286,11 +286,12 @@ class Medium < ApplicationRecord
     # generic media sorts as results even if the 'all' radio button
     # is seleted
     if search_params[:all_types] == '1'
-      search_params[:types] = if search_params[:from] == 'start'
-        Medium.generic_sorts
-      else
-        []
-      end
+      search_params[:types] =
+        if search_params[:from] == 'start'
+          Medium.generic_sorts
+        else
+          []
+        end
     end
     search_params[:teachable_ids] = TeachableParser.new(search_params)
                                                    .teachables_as_strings
