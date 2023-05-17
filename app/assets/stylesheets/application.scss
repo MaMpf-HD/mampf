@@ -320,3 +320,9 @@ a {
     color: var(--bs-badge-color);
   }
 }
+
+.btn {
+  &:hover {
+    text-decoration: none;
+  }
+}
