@@ -326,3 +326,11 @@ a {
     text-decoration: none;
   }
 }
+
+.nav-link {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none !important;
+  }
+}
