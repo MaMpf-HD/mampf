@@ -35,6 +35,14 @@
   justify-content: flex-end;
 }
 
+.card-header {
+  padding: 0.75rem 1.25rem;
+}
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+}
+
 #media-card-subheader {
   display: flex;
   justify-content: space-between;
