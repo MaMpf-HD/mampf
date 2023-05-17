@@ -141,8 +141,7 @@ $(document).on 'turbolinks:load', ->
   $('[id^="lecture-lesson_"]').on 'mouseenter', ->
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-light')
-        .addClass('bg-warning')
+      $('.lecture-tag[data-id="'+t+'"]').addClass('bg-warning')
     return
 
   # mouseleave over lesson -> restore original color of tags
@@ -150,7 +149,6 @@ $(document).on 'turbolinks:load', ->
     tags = $(this).data('tags')
     for t in tags
       $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
-        .addClass('bg-light')
     return
 
   # mouseenter over tag -> colorize lessons
@@ -346,7 +344,7 @@ $(document).on 'turbolinks:load', ->
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
-  $('.lecture-tag').removeClass('bg-warning').addClass('bg-light')
+  $('.lecture-tag').removeClass('bg-warning')
   $('.lecture-lesson').removeClass('bg-info').addClass('bg-secondary')
   $(document).off 'change', '#lecture_course_id'
   return
