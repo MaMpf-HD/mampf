@@ -21,9 +21,7 @@ import {
     WidgetInstance
 } from "friendly-challenge";
 var friendlyChallengeWidgetInstance = WidgetInstance
-require(["jquery-datetimepicker"], function (es) {
-    $.datetimepicker.setLocale('de');
-})
+$.datetimepicker.setLocale('de');
 
 
 document.addEventListener("turbolinks:load", function () {
@@ -46,7 +44,7 @@ document.addEventListener("turbolinks:load", function () {
             errorCallback,
             puzzleEndpoint: $('#captcha-widget').data("captcha-url"),
             startMode: "auto",
-            language:$('#captcha-widget').data("lang")
+            language: $('#captcha-widget').data("lang")
         };
         console.log(options)
         widget = new WidgetInstance(element, options);
