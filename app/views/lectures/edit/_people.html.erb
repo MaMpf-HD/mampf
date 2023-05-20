@@ -20,7 +20,7 @@
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#lectureAccordion">
+         data-bs-parent="#lectureAccordion">
       <div class="accordion-body">
         <% if current_user.can_update_personell?(lecture) %>
           <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>

@@ -58,7 +58,7 @@
               </div>
               <div id="<%= 'collapse' + s['counter'].to_s %>"
                    class="collapse"
-                   data-parent="#manuscriptAccordion">
+                   data-bs-parent="#manuscriptAccordion">
                 <div class="card-body">
                   <% if manuscript.content_in_section(s).blank? %>
                     <%= t('manuscript.no_labels') %>
