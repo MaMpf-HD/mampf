@@ -8,27 +8,6 @@ new TomSelect('#assignment_medium_id_', {
     field: 'text',
     direction: 'asc'
   },
-  dropdownParent: document.body,
-  onInitialize:function(){
-    this.popper = Popper.createPopper(this.control,this.dropdown, {
-    placement: "bottom-start",
-    modifiers: [
-      {
-        name: "sameWidth",
-        enabled: true,
-        fn: ({ state }) => {
-          state.styles.popper.width = `${state.rects.reference.width}px`;
-        },
-        phase: "beforeWrite",
-        requires: ["computeStyles"],
-        }
-      ]
-
-  });
-  },
-  onDropdownOpen:function(){
-    this.popper.update();
-  },
   render: {
     no_results: function(data, escape) {
       return '<div class="no-results"><%= t("basics.no_results") %></div>';
