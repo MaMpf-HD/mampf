@@ -70,7 +70,7 @@
         "commontator-comment-#{comment.id}-edit-body-switch" %>">
       <%= t('basics.preview') %>
     </label>
-    <%= helpdesk(t("commontator.comment.actions.preview"), true) %>
+    <%= ApplicationController.helpers.helpdesk(t("commontator.comment.actions.preview"), true) %>
   </div>
   <div id='<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-preview" :
