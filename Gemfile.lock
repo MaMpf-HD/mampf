@@ -1,14 +1,4 @@
 GIT
-  remote: https://github.com/MaMpf-HD/commontator.git
-  revision: 38b25d2f3f4e4e2d1a0a7b608f04c579a93125f9
-  branch: main
-  specs:
-    commontator (7.0.0)
-      rails (>= 6.0)
-      sprockets-rails
-      will_paginate
-
-GIT
   remote: https://github.com/rails/sprockets-rails
   revision: 73e7351abff3506f6dca6b2da8abedfd5c7c0d77
   branch: master
@@ -174,6 +164,10 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    commontator (7.0.0)
+      rails (>= 6.0)
+      sprockets-rails
+      will_paginate
     concurrent-ruby (1.2.2)
     connection_pool (2.4.0)
     content_disposition (1.0.0)
@@ -674,7 +668,7 @@ DEPENDENCIES
   cancancan
   clipboard-rails
   coffee-rails (~> 5.0.0)
-  commontator!
+  commontator
   coveralls
   cypress-on-rails (~> 1.0)
   dalli (>= 2.7)
