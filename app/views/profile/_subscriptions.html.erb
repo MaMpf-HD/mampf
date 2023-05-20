@@ -48,7 +48,7 @@
         <div id="<%= 'program-' + p.id.to_s + '-collapse' %>"
              class="collapse programCollapse"
              data-program="<%= p.id %>"
-             data-bs-parent="#subscriptionsAccordion">
+             data-parent="#subscriptionsAccordion">
           <div class="accordion-body">
             <%= render partial: 'profile/divisions',
                        locals: { divisions: p.divisions.select { |p| p.courses.any? },

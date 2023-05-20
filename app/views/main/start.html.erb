@@ -22,7 +22,7 @@
       </div>
       <div class="subscriptionsCollapse <%= show_collapse(@current_stuff.any?) %>"
            id="collapseCurrentStuff"
-           data-bs-parent="#subscriptionsAccordion"
+           data-parent="#subscriptionsAccordion"
            data-link="#currentStuffLink">
         <div class="accordion-body">
           <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
@@ -60,7 +60,7 @@
     </div>
     <div class="subscriptionsCollapse <%= show_collapse(@current_stuff.empty?) %>"
          id="collapseInactiveLectures"
-         data-bs-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
+         data-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
       <div class="accordion-body">
         <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
              id="collapseInactiveLecturesContent">
@@ -97,7 +97,7 @@
         </button>
       </div>
       <div class="collapse subscriptionsCollapse" id="collapseAllCurrent"
-           data-bs-parent="#subscriptionsAccordion" data-link="#allCurrentLink">
+           data-parent="#subscriptionsAccordion" data-link="#allCurrentLink">
         <div class="accordion-body">
           <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
                id="collapseAllCurrentContent">
@@ -125,7 +125,7 @@
       </button>
     </div>
     <div class="collapse subscriptionsCollapse" id="collapseTalks"
-         data-bs-parent="#subscriptionsAccordion"
+         data-parent="#subscriptionsAccordion"
          data-link="#talkLink">
       <div class="accordion-body">
         <%= render partial: 'main/start/talks',
@@ -148,7 +148,7 @@
       </button>
     </div>
     <div class="collapse subscriptionsCollapse" id="collapseLectureSearch"
-         data-bs-parent="#subscriptionsAccordion"
+         data-parent="#subscriptionsAccordion"
          data-link="#lectureSearchLink">
       <div class="accordion-body">
         <%= render partial: 'main/start/lecture_search',
@@ -173,7 +173,7 @@
       </button>
     </div>
     <div class="collapse subscriptionsCollapse" id="collapseMediaSearch"
-         data-bs-parent="#subscriptionsAccordion"
+         data-parent="#subscriptionsAccordion"
          data-link="#mediaSearchLink">
       <div class="accordion-body">
         <%= render partial: 'main/start/media_search',

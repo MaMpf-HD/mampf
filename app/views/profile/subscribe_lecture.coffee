@@ -1,5 +1,5 @@
 <% if @success %>
-$card = $('.lectureCard[data-id="<%= @lecture.id %>"][data-bs-parent="<%= @parent %>"]')
+$card = $('.lectureCard[data-id="<%= @lecture.id %>"][data-parent="<%= @parent %>"]')
 $card.empty()
   .append('<%= j render partial: "main/start/lecture_card",
                         locals: { lecture: @lecture,
