@@ -10,7 +10,6 @@
     "css-loader": "^5.2.7",
     "friendly-challenge": "^0.9.1",
     "imports-loader": "^1.2.0",
-    "jquery-datetimepicker": "^2.5.21",
     "moment": "^2.29.1",
     "node-sass": "^7.0.1",
     "regenerator-runtime": "^0.13.7",
