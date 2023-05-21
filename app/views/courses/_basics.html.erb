@@ -26,7 +26,7 @@
   </div>
   <div class="mb-3">
     <%= t('basics.language') %>
-    <div class="row ms-2">
+    <div class="ms-2">
     <% I18n.available_locales.each do |locale| %>
       <div class="form-check form-check-inline">
         <%= f.radio_button :locale,
@@ -35,7 +35,7 @@
         <%= f.label :locale,
                     t('locales.' + locale.to_s),
                     value: locale.to_s,
-                    class: 'form-label' %>
+                    class: 'custom-control-label' %>
       </div>
     <% end %>
     </div>
@@ -115,7 +115,7 @@
                           class: 'form-check-input' %>
           <%= f.label :term_independent,
                       t('admin.course.term_independent'),
-                      { class: 'form-label' } %>
+                      { class: 'custom-control-label' } %>
           <%= helpdesk(t('admin.course.info.term_independent'), false) %>
         </div>
       <% end %>

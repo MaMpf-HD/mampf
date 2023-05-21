@@ -151,7 +151,7 @@
     <div class="mb-3">
       <%= t('basics.language') %>
       <%= helpdesk(t('admin.medium.info.language'), false) %>
-      <div class="row ms-2">
+      <div class="ms-2">
         <% I18n.available_locales.each do |locale| %>
           <div class="form-check form-check-inline">
             <%= f.radio_button :locale,
