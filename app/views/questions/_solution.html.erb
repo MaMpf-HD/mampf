@@ -33,7 +33,7 @@
       <span class="me-2">
         <%= t('basics.type') + ':' %>
       </span>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfExpression',
                            class: 'form-check-input solutionType',
@@ -44,7 +44,7 @@
                     value: 'MampfExpression',
                     class: 'custom-control-label' %>
       </div>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfMatrix',
                            class: 'form-check-input solutionType',
@@ -55,7 +55,7 @@
                     value: 'MampfMatrix',
                     class: 'custom-control-label' %>
       </div>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfTuple',
                            class: 'form-check-input solutionType',
@@ -66,7 +66,7 @@
                     value: 'MampfTuple',
                     class: 'custom-control-label' %>
       </div>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfSet',
                            class: 'form-check-input solutionType',

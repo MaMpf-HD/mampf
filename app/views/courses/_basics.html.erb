@@ -28,7 +28,7 @@
     <%= t('basics.language') %>
     <div class="row ms-2">
     <% I18n.available_locales.each do |locale| %>
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :locale,
                            locale.to_s,
                            class: 'form-check-input' %>

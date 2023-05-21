@@ -105,7 +105,7 @@
     <div class="col-6 col-lg-4 mb-3 form-group">
       <%= f.label :teachable_ids, t('basics.lectures') %>
       <%= helpdesk(t('search.media.lectures'), true) %>
-      <div class="custom-control custom-radio mb-2">
+      <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
                             '0',
                             checked: true,
@@ -115,7 +115,7 @@
                     value: '0',
                     class: 'custom-control-label' %>
       </div>
-      <div class="custom-control custom-radio mb-2">
+      <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
                             '1',
                             checked: false,
@@ -125,7 +125,7 @@
                     value: '1',
                     class: 'custom-control-label' %>
       </div>
-      <div class="custom-control custom-radio mb-2">
+      <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
                             '2',
                             checked: false,

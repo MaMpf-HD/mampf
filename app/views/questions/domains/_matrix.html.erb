@@ -5,7 +5,7 @@
     <%= "#{t('math.number_of_rows')}:" %>
   </span>
   <% (1..4).each do |i| %>
-    <div class="custom-control custom-control-inline custom-radio">
+    <div class="form-check form-check-inline">
       <%= f.radio_button 'solution_content[row_count]',
                          i,
                          class: 'form-check-input rowCount',
@@ -25,7 +25,7 @@
     <%= "#{t('math.number_of_columns')}:" %>
   </span>
   <% (1..4).each do |i| %>
-    <div class="custom-control custom-control-inline custom-radio">
+    <div class="form-check form-check-inline">
       <%= f.radio_button 'solution_content[column_count]',
                          i,
                          class: 'form-check-input columnCount',

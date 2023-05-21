@@ -6,7 +6,7 @@
       <%= helpdesk(t('admin.medium.info.access_rights'), true) %>
     </div>
   <% end %>
-  <div class="custom-control custom-radio">
+  <div class="form-check">
     <%= f.radio_button :released,
                        'all',
                        class: 'form-check-input' %>
@@ -15,7 +15,7 @@
                 value: 'all',
                 class: 'custom-control-label' %>
   </div>
-  <div class="custom-control custom-radio">
+  <div class="form-check">
     <%= f.radio_button :released,
                        'users',
                        class: 'form-check-input' %>
@@ -24,7 +24,7 @@
                 value: 'users',
                 class: 'custom-control-label' %>
   </div>
-  <div class="custom-control custom-radio">
+  <div class="form-check">
     <%= f.radio_button :released,
                        'subscribers',
                        class: 'form-check-input' %>
@@ -33,7 +33,7 @@
                 value: 'subscribers',
                 class: 'custom-control-label' %>
   </div>
-  <div class="custom-control custom-radio">
+  <div class="form-check">
     <%= f.radio_button :released,
                        'locked',
                        class: 'form-check-input' %>

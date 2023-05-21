@@ -32,7 +32,7 @@
           <div class="mb-1">
             <%= t('admin.medium.release_date') %>
           </div>
-          <div class="custom-control custom-radio">
+          <div class="form-check">
             <%= f.radio_button :release_now,
                                '1',
                                class: 'form-check-input',
@@ -42,7 +42,7 @@
                         value: '1',
                         class: 'custom-control-label' %>
           </div>
-          <div class="custom-control custom-radio mb-3">
+          <div class="form-check mb-3">
             <%= f.radio_button :release_now,
                                '0',
                                class: 'form-check-input',

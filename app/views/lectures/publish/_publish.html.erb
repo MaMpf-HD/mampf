@@ -28,7 +28,7 @@
           <%= t('admin.lecture.publish_request') %>
           <div class="row mt-2 mb-2">
             <div class="col-12">
-              <div class="custom-control custom-radio">
+              <div class="form-check">
                 <%= f.radio_button :publish_media,
                                    1,
                                    class: 'form-check-input',
@@ -48,7 +48,7 @@
                                      medium: nil,
                                      suppress_label: true } %>
               </div>
-              <div class="custom-control custom-radio">
+              <div class="form-check">
                 <%= f.radio_button :publish_media,
                                     0,
                                     class: 'form-check-input',
