@@ -119,7 +119,7 @@
                                    data-counter="<%= content['counter'] %>"
                                    <%= content['tag_id'].nil? ? '' : 'checked disabled' %>
                                    <%= content['description'].blank? ? 'disabled' : '' %>>
-                              <label class="custom-control-label"
+                              <label class="form-label"
                                      for="tag-<%= content['counter'] %>">
                               </label>
                             </div>
@@ -131,7 +131,7 @@
                                    class="form-check-input"
                                    id="visible-<%= content['counter'] %>"
                                    data-counter="<%= content['counter'] %>">
-                            <label class="custom-control-label"
+                            <label class="form-label"
                                    for="visible-<%= content['counter'] %>">
                             </label>
                           </div>

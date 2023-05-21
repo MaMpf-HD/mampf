@@ -37,7 +37,7 @@
             <%= f.label :release_now,
                         t('basics.immediately'),
                         value: '1',
-                        class: 'custom-control-label' %>
+                        class: 'form-label' %>
           </div>
           <div class="form-check mb-3">
             <%= f.radio_button :release_now,
@@ -47,7 +47,7 @@
             <%= f.label :release_now,
                         t('basics.at_time'),
                         value: '0',
-                        class: 'custom-control-label' %>
+                        class: 'form-label' %>
             <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
           </div>
           <div class="mb-3 col-12">
@@ -72,7 +72,7 @@
                               checked: medium.publisher&.create_assignment %>
               <%= f.label :create_assignment,
                           t('admin.medium.create_assignment'),
-                          { class: 'custom-control-label' } %>
+                          { class: 'form-label' } %>
               <%= helpdesk(t('admin.medium.info.assignment_settings'),
                            true) %>
             </div>
@@ -145,7 +145,7 @@
                             checked: medium.planned_comment_lock? %>
             <%= f.label :lock_comments,
                         t('admin.medium.lock_comments'),
-                        { class: 'custom-control-label' } %>
+                        { class: 'form-label' } %>
           </div>
           <hr>
           <div class="custom-control form-check">
@@ -155,7 +155,7 @@
                             checked: medium.publisher.present? %>
             <%= f.label :disclaimer,
                         t('admin.medium.disclaimer'),
-                        { class: 'custom-control-label' } %>
+                        { class: 'form-label' } %>
           </div>
           <div class="row mb-4">
           </div>

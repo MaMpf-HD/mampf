@@ -75,7 +75,7 @@
         <%= f.label :tag_operator,
                     t('basics.AND'),
                     value: 'and',
-                    class: 'custom-control-label' %>
+                    class: 'form-label' %>
       </div>
     </div>
     <div class="col-6 col-lg-4 mb-3 form-group">
@@ -113,7 +113,7 @@
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.all'),
                     value: '0',
-                    class: 'custom-control-label' %>
+                    class: 'form-label' %>
       </div>
       <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
@@ -123,7 +123,7 @@
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.subscribed'),
                     value: '1',
-                    class: 'custom-control-label' %>
+                    class: 'form-label' %>
       </div>
       <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
@@ -135,7 +135,7 @@
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.own_selection'),
                     value: '2',
-                    class: 'custom-control-label' %>
+                    class: 'form-label' %>
       </div>
       <%= f.select :media_lectures,
                     options_for_select(add_prompt(Lecture.select)),
