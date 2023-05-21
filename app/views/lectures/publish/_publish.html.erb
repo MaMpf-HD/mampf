@@ -15,9 +15,6 @@
                 class="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close">
-          <span aria-hidden="true">
-            &times;
-          </span>
         </button>
       </div>
       <%= form_with model: Medium.new(released: lecture.restricted? ? 'subscribers' : 'all'),
