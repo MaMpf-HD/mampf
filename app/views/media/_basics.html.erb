@@ -145,7 +145,7 @@
                          checked:  medium.commontator_thread.is_closed? %>
         <%= f.label :comments_locked,
                     t('admin.medium.comments_locked'),
-                    { class: 'form-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
     <% end %>
     <div class="mb-3">
@@ -160,7 +160,7 @@
             <%= f.label :locale,
                         t('locales.' + locale.to_s),
                         value: locale.to_s,
-                        class: 'form-label' %>
+                        class: 'form-check-label' %>
           </div>
         <% end %>
       </div>

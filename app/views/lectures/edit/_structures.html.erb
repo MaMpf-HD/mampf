@@ -15,7 +15,7 @@
                       checked: s['id'].to_i.in?(@structure_ids) %>
       <%= f.label "structures[#{s['id']}]",
                   s['attributes']['name'],
-                  { class: 'form-label'} %>
+                  { class: 'form-check-label'} %>
     </div>
   <% end %>
   <div class="row mt-2">

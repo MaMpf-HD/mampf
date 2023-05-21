@@ -28,7 +28,7 @@
                           data: { id: 'search_media_types'} %>
           <%= f.label :all_media_types,
                       t('basics.all'),
-                      { class: 'form-label' } %>
+                      { class: 'form-check-label' } %>
         </div>
       <% else %>
         <%= f.hidden_field :all_types, value: '0' %>
@@ -52,7 +52,7 @@
                         data: { id: 'search_teachable_ids' } %>
         <%= f.label :all_teachables,
                     t('basics.all'),
-                    { class: 'form-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
       <div class="form-check form-check-inline">
         <%= f.radio_button :teachable_inheritance,
@@ -62,7 +62,7 @@
         <%= f.label :teachable_inheritance,
                     t('basics.with_inheritance'),
                     value: '1',
-                    class: 'form-label' %>
+                    class: 'form-check-label' %>
       </div>
       <div class="form-check form-check-inline">
         <%= f.radio_button :teachable_inheritance,
@@ -71,7 +71,7 @@
         <%= f.label :teachable_inheritance,
                     t('basics.without_inheritance'),
                     value: '0',
-                    class: 'form-label' %>
+                    class: 'form-check-label' %>
       </div>
     </div>
     <div class="col-6 col-lg-3 mb-3">
@@ -99,7 +99,7 @@
                         data: { id: 'search_tag_ids' } %>
         <%= f.label :all_tags,
                     t('basics.all'),
-                    { class: 'form-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
       <div class="form-check form-check-inline">
         <%= f.radio_button :tag_operator,
@@ -109,7 +109,7 @@
         <%= f.label :tag_operator,
                     t('basics.OR'),
                     value: 'or',
-                    class: 'form-label' %>
+                    class: 'form-check-label' %>
       </div>
       <div class="form-check form-check-inline">
         <%= f.radio_button :tag_operator,
@@ -118,7 +118,7 @@
         <%= f.label :tag_operator,
                     t('basics.AND'),
                     value: 'and',
-                    class: 'form-label' %>
+                    class: 'form-check-label' %>
       </div>
     </div>
     <div class="col-6 col-lg-3 mb-3">
@@ -141,7 +141,7 @@
                         data: { id: 'search_media_editor_ids' } %>
         <%= f.label :all_media_editors,
                     t('basics.all'),
-                    { class: 'form-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
     </div>
     <div class="col-6 col-lg-3 mb-3">

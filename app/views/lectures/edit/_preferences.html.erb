@@ -83,7 +83,7 @@
                                   class: 'form-check-input' %>
                   <%= f.label :absolute_numbering,
                               t('admin.lecture.absolute_numbering'),
-                              { class: 'form-label' } %>
+                              { class: 'form-check-label' } %>
                   <%= helpdesk(t('admin.lecture.info.absolute_numbering'),
                                false) %>
                 </div>
@@ -112,7 +112,7 @@
                 <%= f.label :locale,
                             t('locales.' + locale.to_s),
                             value: locale.to_s,
-                            class: 'form-label' %>
+                            class: 'form-check-label' %>
               </div>
             <% end %>
             </div>
@@ -129,7 +129,7 @@
                   <%= f.label :content_mode,
                               t('admin.lecture.video_based'),
                               value: 'video',
-                              class: 'form-label' %>
+                              class: 'form-check-label' %>
                 </div>
                 <div class="form-check form-check-inline">
                   <%= f.radio_button :content_mode,
@@ -138,7 +138,7 @@
                   <%= f.label :content_mode,
                               t('admin.lecture.script_based'),
                               value: 'manuscript',
-                              class: 'form-label' %>
+                              class: 'form-check-label' %>
                 </div>
               </div>
             </div>
@@ -151,7 +151,7 @@
                                   class: 'form-check-input' %>
                   <%= f.label :disable_teacher_display,
                               t('admin.lecture.disable_teacher_display'),
-                              { class: 'form-label' } %>
+                              { class: 'form-check-label' } %>
                   <%= helpdesk(t('admin.lecture.info.disable_teacher_display'),
                              false) %>
                 </div>
