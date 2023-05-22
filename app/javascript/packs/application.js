@@ -16,9 +16,13 @@
 // const imagePath = (name) => images(name, true)
 
 // JQuery Datetimepicker fix
-// import '...' does not work, so we use a random name to import the datepicker css and js
-import randomname from 'jquery-datetimepicker/build/jquery.datetimepicker.min.css'
-import randomname2 from 'imports-loader?imports=default%20jquery%20$!./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
+// import '...' does not work, random names for the import don't work either
+// we use "css" and "myLib" imports although these strings do not show up anywhere
+// in our codebase. This is just a hack to make the imports-loader work. Maybe it has
+// to do with how webpacker resolves the imports or how jquery-datetimepicker exports
+// its module.
+import css from 'jquery-datetimepicker/build/jquery.datetimepicker.min.css'
+import myLib from 'imports-loader?imports=default%20jquery%20$!./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
 
 import moment from "moment"; // require
 window.moment = moment;
