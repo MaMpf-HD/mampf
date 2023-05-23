@@ -129,7 +129,7 @@
           <% medium.tags.each do |t| %>
             <%= link_to t.short_title(30),
                         t,
-                        class: "badge bg-light text-dark",
+                        class: "badge text-dark lecture-tag tagbadge",
                         title: t.title,
                         data: { toggle: 'tooltip', placement: 'bottom'} %>
           <% end %>
