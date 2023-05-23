@@ -30,7 +30,7 @@
         <% end %>
       <% else %>
         <%= f.select :watchlist_id, options_from_collection_for_select(Watchlist.where(user: current_user), :id, :name),
-                     { prompt: t('watchlist.none')}, { class: 'form-control', disabled: true } %>
+                     { prompt: t('watchlist.none')}, { class: 'form-select', disabled: true } %>
       <% end %>
       <div class="input-group-append">
         <button class="btn btn-outline-secondary"

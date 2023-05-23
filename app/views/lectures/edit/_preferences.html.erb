@@ -35,7 +35,7 @@
                              options_for_select(@terms,
                                                 lecture.term&.id),
                              {},
-                             { class: 'form-control' } %>
+                             { class: 'form-select' } %>
                 <div class="invalid-feedback"
                      id="lecture-term-error">
                 </div>
@@ -50,7 +50,7 @@
                              options_for_select(Lecture.sort_localized.invert.to_a,
                                                 lecture.sort),
                              {},
-                             { class: 'form-control' } %>
+                             { class: 'form-select' } %>
                 <div class="invalid-feedback"
                      id="lecture-term-error">
                 </div>
