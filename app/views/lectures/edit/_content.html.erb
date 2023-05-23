@@ -70,7 +70,7 @@
       <% lecture.orphaned_lessons.each do |l| %>
         <%= link_to  l.date_localized,
                      edit_lesson_path(l),
-                     class: 'badge bg-light text-dark' %>
+                     class: 'badge text-dark lecture-tag' %>
       <% end %>
     <% end %>
   </div>
