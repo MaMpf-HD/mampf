@@ -995,6 +995,10 @@ $(document).on 'turbolinks:load', ->
       data: {
         annotationId: annotation.id
       }
+      success: (permitted) ->
+        if permitted == "false"
+          alert "You don't have the permission to edit this annotation!"
+      return
     # close listener
     $('#annotation-close-button').on 'click', ->
       activeAnnotationId = 0

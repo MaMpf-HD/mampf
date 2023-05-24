@@ -279,6 +279,7 @@ $(document).on 'turbolinks:load', ->
       type: 'GET'
       dataType: 'json'
       data: {
+        toggled: true
         mediumId: mediumId
       }
       success: (annots) ->

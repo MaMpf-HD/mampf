@@ -35,6 +35,7 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.find(params[:annotationId])
     # only allow editing, if the current user created the annotation
     if @annotation.user_id != current_user.id
+      render json: false
       return
     end
     @total_seconds = @annotation.timestamp.total_seconds
@@ -74,7 +75,7 @@ class AnnotationsController < ApplicationController
       annots = Annotation.where(medium: medium,
                                 user: current_user)
     end
-
+    
     render json: annots
   end
 
