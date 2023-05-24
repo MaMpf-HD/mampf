@@ -60,6 +60,12 @@ sortAnnotations = ->
     timestampToMillis(ann1.timestamp) - timestampToMillis(ann2.timestamp)
   return
 
+annotationIndex = (annotation) ->
+  for i in [0 .. annotations.length - 1]
+    if annotations[i].id == annotation.id
+      return i
+  return
+
 # returns a certain color for every annotation with respect to the annotations
 # category (in the feedback view this gives more information than the original color).
 annotationColor = (cat) ->
@@ -340,14 +346,18 @@ $(document).on 'turbolinks:load', ->
     $('#annotation-close-button').off 'click'
     # previous annotation listener
     $('#annotation-previous-button').on 'click', ->
-      for i in [0 .. annotations.length - 1]
-        if i != 0 && annotations[i] == annotation
-          updateAnnotationArea(annotations[i - 1])
+      j = annotationIndex(annotation)
+      for i in [j - 1 .. 0]
+        if validAnnotation(annotations[i])
+          updateAnnotationArea(annotations[i])
+          return
     # next annotation Listener
     $('#annotation-next-button').on 'click', ->
-      for i in [0 .. annotations.length - 1]
-        if i != annotations.length - 1 && annotations[i] == annotation
-          updateAnnotationArea(annotations[i + 1])
+      j = annotationIndex(annotation)
+      for i in [j + 1 .. annotations.length - 1]
+        if validAnnotation(annotations[i])
+          updateAnnotationArea(annotations[i])
+          return
     # goto listener
     $('#annotation-goto-button').on 'click', ->
       video.currentTime = timestampToMillis(annotation.timestamp)
