@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_23_062844) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -25,6 +25,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
     t.string "color"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "public_comment_id"
+    t.text "subtext"
     t.index ["medium_id"], name: "index_annotations_on_medium_id"
     t.index ["user_id"], name: "index_annotations_on_user_id"
   end

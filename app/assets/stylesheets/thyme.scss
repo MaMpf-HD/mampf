@@ -420,6 +420,22 @@ figure {
  }
 
 
+
+/* annotation modal */
+#annotation-modal {
+  #annotation_comment {
+    height: 150px;
+    resize: none;
+  }
+  #annotation_category_text {
+    width: 200px;
+  }
+  input[type=checkbox] {
+    width: 18px;
+    height: 18px;
+  }
+}
+
 #markers {
   position: relative;
   top: -2px;
@@ -525,7 +541,6 @@ input[type="radio"] {
     }
   }
 }
-
 
 
 /* THYME FEEDBACK */

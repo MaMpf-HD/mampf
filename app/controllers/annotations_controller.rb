@@ -1,28 +1,42 @@
 class AnnotationsController < ApplicationController
 
   def create
+    # Create new annotation and add additional attributes which are not covered by the form
     @annotation = Annotation.new(annotation_params)
     @total_seconds = params[:annotation][:total_seconds]
     @annotation.timestamp = TimeStamp.new(total_seconds: @total_seconds)
     @annotation.user_id = current_user.id
-    @annotation.save
+    
+    # Convert checkbox string "1" into the boolean true
+    if params[:annotation][:post_as_comment] == "1"
+      @post_as_comment = true
+    else
+      @post_as_comment = false
+    end
 
-    @publish = params[:annotation][:publish]
-    if @publish == "1" #= corresponding checkbox is marked
+    # Post comment
+    if @post_as_comment == true
       @medium = Medium.find_by_id(params[:annotation][:medium_id])
-      @link = 'Link zur entsprechenden Stelle im Video: <a href="' + play_medium_path(@medium) +
+      @link = 'Thymestamp: <a href="' + play_medium_path(@medium) +
         '?time=' + @total_seconds + '">' + @annotation.timestamp.hms_colon_string + '</a>'
-      @comment = params[:annotation][:comment] + "\n" + @link
+      @comment = annotation_params[:comment] + "\n" + @link
       @commontator_thread = @medium.commontator_thread
       @comment = Commontator::Comment.new(
         thread: @commontator_thread, creator: @current_user, body: @comment
       )
       @comment.save
+      @annotation.public_comment_id = @comment.id
     end
+
+    @annotation.save
   end
 
   def edit
     @annotation = Annotation.find(params[:annotationId])
+    # only allow editing, if the current user created the annotation
+    if @annotation.user_id != current_user.id
+      return
+    end
     @total_seconds = @annotation.timestamp.total_seconds
     @medium_id = @annotation.medium_id
   end
@@ -70,7 +84,7 @@ class AnnotationsController < ApplicationController
 
     def annotation_params
       params.require(:annotation).permit(
-        :category, :color, :comment, :medium_id, :visible_for_teacher)
+        :category, :color, :comment, :medium_id, :subtext, :visible_for_teacher)
     end
 
 end

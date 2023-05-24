@@ -15,19 +15,36 @@ categoryRadios.addEventListener 'click', (evt) ->
 
 note = ->
   $('#specific').empty()
+  visibleForTeacher(false)
+  postComment(false)
   return
 
 content = ->
   $('#specific').empty().append('<%= j render partial: "annotations/form_content"%>')
-  $('#annotation_visible_for_teacher').prop("checked", true)
+  visibleForTeacher(true)
+  postComment(false)
   return
 
 mistake = ->
-  $('#specific').empty().append('<%= j render partial: "annotations/form_mistake"%>')
-  $('#annotation_visible_for_teacher').prop("checked", true)
+  $('#specific').empty()
+  visibleForTeacher(true)
+  postComment(true)
   return
 
 presentation = ->
   $('#specific').empty().append('<%= j render partial: "annotations/form_presentation"%>')
-  $('#annotation_visible_for_teacher').prop("checked", true)
+  visibleForTeacher(true)
+  postComment(false)
+  return
+
+
+
+# Auxiliary methods
+
+visibleForTeacher = (boolean) ->
+  $('#annotation_visible_for_teacher').prop("checked", boolean)
+  return
+
+postComment = (boolean) ->
+  $('#annotation_post_as_comment').prop("checked", boolean)
   return
