@@ -1,3 +1,5 @@
+# The CommmentsController is copied from the Commontator gem
+# Only minor customizations are made
 class Commontator::CommentsController < Commontator::ApplicationController
   before_action :set_thread, only: [:new, :create]
   before_action :set_comment_and_thread, except: [:new, :create]
@@ -53,13 +55,9 @@ class Commontator::CommentsController < Commontator::ApplicationController
           @commontator_thread.subscribe(@commontator_user) if sub == :a || sub == :b
           subscribe_mentioned if @commontator_thread.config.mentions_enabled
           Commontator::Subscription.comment_created(@comment)
-          medium = @commontator_thread.commontable
-          if medium.released.in?(['all', 'users', 'subscribers'])
-            relevant_users = medium.teachable.media_scope.users
-            relevant_users.where(unread_comments: false)
-                          .update_all(unread_comments: true)
-            @update_icon = relevant_users.exists?(current_user.id)
-          end
+          # The next line constitutes a customization of the original controller
+          update_unread_status
+
           @commontator_page = @commontator_thread.new_comment_page(
             @comment.parent_id, @commontator_show_all
           )
@@ -190,5 +188,18 @@ class Commontator::CommentsController < Commontator::ApplicationController
                  .each do |user|
         @commontator_thread.subscribe(user)
       end
+    end
+
+    # This method ensures that the unread_comments flag is updated
+    # for users affected by the creation of a newly created comment
+    # It constitues a customization
+    def update_unread_status
+      medium = @commontator_thread.commontable
+      return unless medium.released.in?(['all', 'users', 'subscribers'])
+
+      relevant_users = medium.teachable.media_scope.users
+      relevant_users.where(unread_comments: false)
+                    .update_all(unread_comments: true)
+      @update_icon = relevant_users.exists?(current_user.id)
     end
 end
