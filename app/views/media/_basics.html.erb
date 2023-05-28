@@ -139,7 +139,7 @@
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
                  medium: medium } %>
-      <div class="custom-control form-check mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :comments_locked,
                          class: 'form-check-input',
                          checked:  medium.commontator_thread.is_closed? %>

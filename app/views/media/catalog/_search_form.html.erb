@@ -20,7 +20,7 @@
         <%= f.hidden_field :types, value: ['Question'] %>
       <% end %>
       <% if purpose == 'media' %>
-        <div class="custom-control form-check mb-2">
+        <div class="form-check mb-2">
           <%= f.check_box :all_types,
                           id: 'search_all_media_types',
                           class: 'form-check-input',
@@ -45,7 +45,7 @@
                      class: 'selectize',
                      disabled: true,
                      required: true } %>
-      <div class="custom-control form-check mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :all_teachables,
                         class: 'form-check-input',
                         checked: true,
@@ -92,7 +92,7 @@
                              locale: I18n.locale,
                              placeholder: t('basics.enter_two_letters'),
                              no_results: t('basics.no_results') } } %>
-      <div class="custom-control form-check mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :all_tags,
                         class: 'form-check-input',
                         checked: true,
@@ -133,7 +133,7 @@
                      class: 'selectize',
                      disabled: true,
                      required: true } %>
-      <div class="custom-control form-check mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :all_editors,
                         id: 'search_all_media_editors',
                         class: 'form-check-input',

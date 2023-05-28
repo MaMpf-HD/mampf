@@ -35,7 +35,7 @@
       <%= form_with model: lecture,
                     html: { id: 'lecture-comments-form' } do |f| %>
         <div class="row my-3 ms-2">
-          <div class="custom-control form-check">
+          <div class="form-check">
             <%= f.check_box :comments_disabled,
                             class: 'form-check-input' %>
             <%= f.label :comments_disabled,

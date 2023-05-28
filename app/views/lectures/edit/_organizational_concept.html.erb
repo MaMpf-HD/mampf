@@ -26,7 +26,7 @@
                       html: { id: 'lecture-organizational-form' } do |f| %>
           <div class="row mb-3">
             <div class="col-6">
-              <div class="custom-control form-check">
+              <div class="form-check">
                 <%= f.check_box :organizational,
                                 class: 'form-check-input' %>
                 <%= f.label :organizational,
@@ -36,7 +36,7 @@
               </div>
             </div>
             <div class="col-6">
-              <div class="custom-control form-check">
+              <div class="form-check">
                 <%= f.check_box :muesli,
                                 class: 'form-check-input' %>
                 <%= f.label :muesli,
@@ -47,7 +47,7 @@
             </div>
             <% if !lecture.term && lecture.organizational %>
               <div class="col-6">
-                <div class="custom-control form-check">
+                <div class="form-check">
                   <%= f.check_box :organizational_on_top,
                                   class: 'form-check-input' %>
                   <%= f.label :organizational_on_top,
