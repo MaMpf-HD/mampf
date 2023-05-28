@@ -395,7 +395,6 @@ $(document).on 'turbolinks:load', ->
     return
 
   $('#release_date').on 'focus', ->
-    console.log('focussss')
     $('#medium_release_now_0').prop('checked', true)
     $('#release_date').datetimepicker('toggle')
     return
