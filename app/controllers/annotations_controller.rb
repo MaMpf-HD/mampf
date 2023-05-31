@@ -79,6 +79,22 @@ class AnnotationsController < ApplicationController
     render json: annots
   end
 
+  def near_mistake_annotations
+    annots = Annotation.where(medium: params[:mediumId])
+    radius = params[:radius].to_i
+    timestamp = params[:timestamp].to_i
+    validAnnots = []
+    for a in annots
+      if a.category == "mistake" &&
+         (a.timestamp.total_seconds - timestamp).abs() < radius &&
+         a.public_comment_id != nil
+        validAnnots.push(a)
+      end
+    end
+    c = validAnnots.size()
+    render json: c
+  end
+
 
 
   private

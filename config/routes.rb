@@ -40,10 +40,14 @@ Rails.application.routes.draw do
       as: 'classification'
   
   # annotation routes
-  
+
   get 'annotations/update_markers',
       to: 'annotations#update_markers',
       as: 'update_markers'
+
+  get 'annotations/near_mistake_annotations',
+      to: 'annotations#near_mistake_annotations',
+      as: 'near_mistake_annotations'
 
   resources :annotations, only: [:new, :create, :edit, :update, :destroy]
   
