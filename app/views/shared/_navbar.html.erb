@@ -1,5 +1,15 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
 <%= stylesheet_link_tag 'navbar' %>
+
+<%# Feedback modal %>
+<div id="submit-feedback" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Submit feedback" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-4">
+      <%= render partial: 'feedbacks/feedback_form' %>
+    </div>
+  </div>
+</div>
+
 <div class="navbars-container">
   <nav class="navbar navbar-expand" id="firstnav">
     <%= link_to image_tag('MaMpf-Logo.svg',
@@ -89,7 +99,11 @@
         <%= render partial: 'shared/dropdown_lectures',
                   locals: { lecture: @lecture || current_lecture } %>
       </ul>
+
       <%= render partial: 'shared/dropdown_notifications'%>
+
+      <%= render partial: 'feedbacks/feedback_button'%>
+
       <%= form_tag(search_index_path,
                   method: 'get',
                   class: 'form-inline mt-2 mt-md-0',
@@ -104,4 +118,5 @@
       style="display: none;">
   </nav>
 </div>
+
 <% end %>
