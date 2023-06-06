@@ -71,6 +71,7 @@ class WatchlistsController < ApplicationController
     authorize! :show, @watchlist
     @watchlists = current_user.watchlists
     return if @watchlist.watchlist_entries.empty?
+
     @watchlist_entries = paginated_results
     @media = @watchlist_entries.pluck(:medium_id)
   end
@@ -80,7 +81,6 @@ class WatchlistsController < ApplicationController
     @watchlists = current_user.watchlists
     @medium = Medium.find_by_id(params[:medium_id])
   end
-
 
   def update_order
     entries = params[:order].map { |id| WatchlistEntry.find_by_id(id) }
@@ -104,9 +104,11 @@ class WatchlistsController < ApplicationController
   end
 
   private
+
     def set_watchlist
       @watchlist = Watchlist.find_by_id(params[:id])
       return if @watchlist.present?
+
       redirect_to :root, alert: I18n.t('controllers.no_watchlist')
     end
 
@@ -130,6 +132,7 @@ class WatchlistsController < ApplicationController
     def filter_results
       filter_results = @watchlist.watchlist_entries
       return filter_results unless params[:reverse]
+
       filter_results.reverse
     end
 
@@ -140,5 +143,4 @@ class WatchlistsController < ApplicationController
     def create_params
       params.require(:watchlist).permit(:name, :description, :medium_id)
     end
-
 end

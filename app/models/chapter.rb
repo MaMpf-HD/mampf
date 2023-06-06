@@ -16,13 +16,15 @@ class Chapter < ApplicationRecord
                     number: displayed_number,
                     title: title)
     end
-    I18n.t("hidden_#{lecture.chapter_name}", number: displayed_number, title: title)
+    I18n.t("hidden_#{lecture.chapter_name}", number: displayed_number,
+                                             title: title)
   end
 
   # Returns the number of the chapter. Unless the user explicitly specified
   # a display number, this number is calculated
   def displayed_number
     return calculated_number unless display_number.present?
+
     display_number
   end
 
@@ -35,6 +37,7 @@ class Chapter < ApplicationRecord
   # Returns the chapter number based on the position in the chapters list.
   def calculated_number
     return position.to_s unless lecture.start_chapter.present?
+
     (lecture.start_chapter + position - 1).to_s
   end
 

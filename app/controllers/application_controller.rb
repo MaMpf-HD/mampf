@@ -9,13 +9,13 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   after_action :store_interaction, if: :user_signed_in?
 
-
   etag { current_user.try :id }
 
   def current_user
-    unless controller_name == 'administration' &&  action_name == 'index'
+    unless controller_name == 'administration' && action_name == 'index'
       return super
     end
+
     @current_user ||= super.tap do |user|
       ::ActiveRecord::Associations::Preloader.new(records: [user],
                                                   associations:
@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do
     redirect_to main_app.root_url,
-      alert: I18n.t('controllers.session_expired')
+                alert: I18n.t('controllers.session_expired')
   end
 
   # determine where to send the user after login
@@ -69,65 +69,69 @@ class ApplicationController < ActionController::Base
 
   protected
 
-  def configure_permitted_parameters
-    # add additional paramters to registration
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:locale, :consents])
-  end
+    def configure_permitted_parameters
+      # add additional paramters to registration
+      devise_parameter_sanitizer.permit(:sign_up, keys: [:locale, :consents])
+    end
 
   private
 
-  # It's important that the location is NOT stored if:
-  # - The request method is not GET (non idempotent)
-  # - The request is handled by a Devise controller such as
-  #   Devise::SessionsController as that could cause an
-  #   infinite redirect loop.
-  # - The request is an Ajax request as this can lead to very
-  #   unexpected behaviour.
-  def storable_location?
-    request.get? && is_navigational_format? && !devise_controller? &&
-      !request.xhr?
-  end
-
-  def store_user_location!
-    # :user is the scope we are authenticating
-    store_location_for(:user, request.fullpath)
-  end
-
-  def set_locale
-    I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookie_locale_param || I18n.default_locale
-    unless user_signed_in?
-      cookies[:locale] = I18n.locale
+    # It's important that the location is NOT stored if:
+    # - The request method is not GET (non idempotent)
+    # - The request is handled by a Devise controller such as
+    #   Devise::SessionsController as that could cause an
+    #   infinite redirect loop.
+    # - The request is an Ajax request as this can lead to very
+    #   unexpected behaviour.
+    def storable_location?
+      request.get? && is_navigational_format? && !devise_controller? &&
+        !request.xhr?
     end
-  end
 
-  def store_interaction
-    return if controller_name.in?(['sessions', 'administration', 'users',
-                                   'events', 'interactions', 'profile',
-                                   'clickers', 'clicker_votes', 'registrations'])
-    return if controller_name == 'main' && action_name == 'home'
-    return if controller_name == 'tags' && action_name.in?(['fill_tag_select', 'fill_course_tags'])
-    study_participant = current_user.anonymized_id if current_user.study_participant
-    # as of Rack 2.0.8, the session_id is wrapped in a class of its own
-    # it is not a string anymore
-    # see https://github.com/rack/rack/issues/1433
-    InteractionSaver.perform_async(request.session_options[:id].public_id,
-                                   request.original_fullpath,
-                                   request.referrer,
-                                   study_participant)
-  end
+    def store_user_location!
+      # :user is the scope we are authenticating
+      store_location_for(:user, request.fullpath)
+    end
 
-  def locale_param
-    return unless params[:locale].in?(available_locales)
-    params[:locale]
-  end
+    def set_locale
+      I18n.locale = current_user.try(:locale) || locale_param ||
+                    cookie_locale_param || I18n.default_locale
+      unless user_signed_in?
+        cookies[:locale] = I18n.locale
+      end
+    end
 
-  def cookie_locale_param
-    return unless cookies[:locale].in?(available_locales)
-    cookies[:locale]
-  end
+    def store_interaction
+      return if controller_name.in?(['sessions', 'administration', 'users',
+                                     'events', 'interactions', 'profile',
+                                     'clickers', 'clicker_votes', 'registrations'])
+      return if controller_name == 'main' && action_name == 'home'
+      return if controller_name == 'tags' && action_name.in?(['fill_tag_select',
+                                                              'fill_course_tags'])
 
-  def available_locales
-    I18n.available_locales.map(&:to_s)
-  end
+      study_participant = current_user.anonymized_id if current_user.study_participant
+      # as of Rack 2.0.8, the session_id is wrapped in a class of its own
+      # it is not a string anymore
+      # see https://github.com/rack/rack/issues/1433
+      InteractionSaver.perform_async(request.session_options[:id].public_id,
+                                     request.original_fullpath,
+                                     request.referrer,
+                                     study_participant)
+    end
+
+    def locale_param
+      return unless params[:locale].in?(available_locales)
+
+      params[:locale]
+    end
+
+    def cookie_locale_param
+      return unless cookies[:locale].in?(available_locales)
+
+      cookies[:locale]
+    end
+
+    def available_locales
+      I18n.available_locales.map(&:to_s)
+    end
 end

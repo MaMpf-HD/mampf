@@ -33,7 +33,7 @@ class LectureAbility
     end
 
     can :subscribe_page, Lecture do |lecture|
-      lecture.published? || !user.generic?
+      lecture.published? || user.active_teachable_editor?
     end
   end
 end

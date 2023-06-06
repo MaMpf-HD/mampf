@@ -18,16 +18,20 @@
       <% if purpose == 'clicker' %>
         <%= f.hidden_field :types, value: ['Question'] %>
       <% end %>
-      <div class="custom-control custom-checkbox mb-2">
-        <%= f.check_box :all_types,
-                        id: 'search_all_media_types',
-                        class: 'custom-control-input',
-                        checked: purpose.in?(['media', 'clicker']),
-                        data: { id: 'search_media_types'} %>
-        <%= f.label :all_media_types,
-                    t('basics.all'),
-                    { class: 'custom-control-label' } %>
-      </div>
+      <% if purpose == 'media' %>
+        <div class="custom-control custom-checkbox mb-2">
+          <%= f.check_box :all_types,
+                          id: 'search_all_media_types',
+                          class: 'custom-control-input',
+                          checked: purpose.in?(['media', 'clicker']),
+                          data: { id: 'search_media_types'} %>
+          <%= f.label :all_media_types,
+                      t('basics.all'),
+                      { class: 'custom-control-label' } %>
+        </div>
+      <% else %>
+        <%= f.hidden_field :all_types, value: '0' %>
+      <% end %>
     </div>
     <div class="col-6 col-lg-3 form-group">
       <%= f.label :teachable_ids, t('basics.associated_to') %>

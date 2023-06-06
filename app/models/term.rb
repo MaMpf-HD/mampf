@@ -41,6 +41,7 @@ class Term < ApplicationRecord
   # label contains season and year(s) with all digits
   def to_label
     return unless season.present?
+
     season + ' ' + year_corrected
   end
 
@@ -101,12 +102,15 @@ class Term < ApplicationRecord
   end
 
   def self.possible_deletion_dates_localized
-    possible_deletion_dates.map { |d| d.strftime(I18n.t('date.formats.concise')) }
+    possible_deletion_dates.map { |d|
+      d.strftime(I18n.t('date.formats.concise'))
+    }
   end
 
   # array of all terms together with their ids for use in options_for_select
   def self.select_terms(independent = false)
     return ['bla', nil] if independent
+
     Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
   end
 
@@ -120,24 +124,26 @@ class Term < ApplicationRecord
 
   private
 
-  def year_corrected
-    return year.to_s unless season == 'WS'
-    year.to_s + '/' + ((year % 100) + 1).to_s
-  end
+    def year_corrected
+      return year.to_s unless season == 'WS'
 
-  def year_corrected_short
-    return (year % 100).to_s unless season == 'WS'
-    (year % 100).to_s + '/' + ((year % 100) + 1).to_s
-  end
+      year.to_s + '/' + ((year % 100) + 1).to_s
+    end
 
-  def touch_lectures_and_lessons
-    lectures.update_all(updated_at: Time.now)
-    Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
-  end
+    def year_corrected_short
+      return (year % 100).to_s unless season == 'WS'
 
-  def touch_media
-    Medium.where(teachable: lectures).update_all(updated_at: Time.now)
-    Medium.where(teachable: Lesson.where(lecture: lectures))
-          .update_all(updated_at: Time.now)
-  end
+      (year % 100).to_s + '/' + ((year % 100) + 1).to_s
+    end
+
+    def touch_lectures_and_lessons
+      lectures.update_all(updated_at: Time.now)
+      Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+    end
+
+    def touch_media
+      Medium.where(teachable: lectures).update_all(updated_at: Time.now)
+      Medium.where(teachable: Lesson.where(lecture: lectures))
+            .update_all(updated_at: Time.now)
+    end
 end

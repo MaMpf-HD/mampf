@@ -5,6 +5,7 @@ class ReadersController < ApplicationController
   def update
     @thread = Commontator::Thread.find_by_id(reader_params[:thread_id])
     return unless @thread
+
     @reader = Reader.find_or_create_by(user: current_user,
                                        thread: @thread)
     @reader.touch
@@ -32,7 +33,7 @@ class ReadersController < ApplicationController
 
   private
 
-  def reader_params
-    params.permit(:thread_id)
-  end
+    def reader_params
+      params.permit(:thread_id)
+    end
 end

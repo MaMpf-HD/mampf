@@ -1,6 +1,5 @@
 module ExceptionHandler
   class ExceptionMailer < ActionMailer::Base
-
     # Layout
     layout "exception_mailer"
 

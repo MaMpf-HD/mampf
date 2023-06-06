@@ -56,6 +56,10 @@ module Mampf
         end
       end
     end
+    # Make sure that our custom commontator controllers are loaded
+    # instead of the default ones
+    # see https://github.com/lml/commontator/issues/200#issuecomment-1231456146
+    Commontator::Engine.config.autoload_once_paths = []
   end
 end
 

@@ -66,18 +66,19 @@ class TermsController < ApplicationController
 
   private
 
-  def set_term
-    @id = params[:id]
-    @term = Term.find_by_id(@id)
-    return if @term
-    redirect_to terms_path, alert: I18n.t('controllers.no_term')
-  end
+    def set_term
+      @id = params[:id]
+      @term = Term.find_by_id(@id)
+      return if @term
 
-  def term_params
-    params.require(:term).permit(:year, :season)
-  end
+      redirect_to terms_path, alert: I18n.t('controllers.no_term')
+    end
 
-  def active_term_params
-    params.permit(:active_term)
-  end
+    def term_params
+      params.require(:term).permit(:year, :season)
+    end
+
+    def active_term_params
+      params.permit(:active_term)
+    end
 end

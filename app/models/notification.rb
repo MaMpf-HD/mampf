@@ -9,12 +9,12 @@ class Notification < ApplicationRecord
 
   paginates_per 12
 
-# retrieve notifiable defined by notifiable_type and notifiable_id
-#  def notifiable
-#    return unless notifiable_type.in?(Notification.allowed_notifiable_types) &&
-#                  notifiable_id.present?
-#    notifiable_type.constantize.find_by_id(notifiable_id)
-#  end
+  # retrieve notifiable defined by notifiable_type and notifiable_id
+  #  def notifiable
+  #    return unless notifiable_type.in?(Notification.allowed_notifiable_types) &&
+  #                  notifiable_id.present?
+  #    notifiable_type.constantize.find_by_id(notifiable_id)
+  #  end
 
   # returns the lecture associated to a notification of type announcement,
   # and teachable for a notification of type medium, nil otherwise
@@ -22,6 +22,7 @@ class Notification < ApplicationRecord
     return unless notifiable.present?
     return if notifiable_type.in?(['Lecture', 'Course'])
     return notifiable.lecture if notifiable_type == 'Announcement'
+
     # notifiable will be a medium, so return its teachable
     notifiable.teachable
   end
@@ -34,13 +35,16 @@ class Notification < ApplicationRecord
   def path(user)
     return unless notifiable.present?
     return edit_profile_path if notifiable_type.in?(['Course', 'Lecture'])
+
     if notifiable_type == 'Announcement'
       return notifiable.lecture.path(user) if notifiable.lecture.present?
+
       return news_path
     end
     if notifiable_type == 'Medium' && notifiable.sort == 'Quiz'
       return medium_path(notifiable)
     end
+
     polymorphic_url(notifiable, only_path: true)
   end
 
@@ -52,21 +56,25 @@ class Notification < ApplicationRecord
 
   def medium?
     return unless notifiable.present?
+
     notifiable_type == 'Medium'
   end
 
   def course?
     return unless notifiable.present?
+
     notifiable.class.to_s == 'Course'
   end
 
   def lecture?
     return unless notifiable.present?
+
     notifiable.class.to_s == 'Lecture'
   end
 
   def announcement?
     return unless notifiable.present?
+
     notifiable.class.to_s == 'Announcement'
   end
 
