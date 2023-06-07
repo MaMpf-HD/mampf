@@ -1256,7 +1256,7 @@ de:
           bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
           die mit Sitzungen dieser Veranstaltung verknüpft sind.
         search_tags: >
-          Mit einem Medium verknüpfte Begriffe werden als <span class="badge bg-light">Beispielbegriff</span>
+          Mit einem Medium verknüpfte Begriffe werden als <span class="badge text-dark lecture-tag">Beispielbegriff</span>
           auf der Medienkachel angezeigt. Hier kannst Du Begriffe, mit denen das Medium verknüpft sein soll, aus
           der Datenbank auswählen. Dabei kannst Du einen, mehrere oder alle dieser Begriffe in die Auswahl aufnehmen.
           Außerdem kannst Du entscheiden, ob das Medium entweder mit mindestens einem der gewählten Begriffe
