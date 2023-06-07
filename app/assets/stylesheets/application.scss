@@ -295,3 +295,11 @@ a {
     text-decoration: none !important;
   }
 }
+
+.btn-link {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
