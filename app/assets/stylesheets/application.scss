@@ -68,6 +68,8 @@ $container-max-widths: (
 @import "vertices";
 @import "trix";
 
+$badge-color: #545b62;
+
 trix-toolbar .trix-button-row {
   flex-wrap: wrap;
 }
@@ -267,22 +269,16 @@ a {
   &:hover {
     text-decoration: underline;
   }
-
-  &.badge {
-
-    &:hover,
-    &:focus {
-      background-color: #545b62 !important;
-    }
-  }
 }
 
 .badge {
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
-  &:hover {
+  &:hover,
+  &:focus {
     text-decoration: none;
-    color: var(--bs-badge-color);
+    background-color: $badge-color !important;
+    color: white;
   }
 }
 
