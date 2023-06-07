@@ -57,7 +57,7 @@
               <% m.tags.each do |t| %>
                 <%= link_to t.short_title,
                             edit_tag_path(t),
-                            class:'badge bg-light',
+                            class:'badge text-dark lecture-tag',
                             data: { toggle: 'tooltip', placement: 'top'},
                             title: t.title %>
               <% end %>
