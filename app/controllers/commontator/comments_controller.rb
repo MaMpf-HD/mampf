@@ -204,6 +204,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
 
       # make sure that the generated comment is marked as read by the creator
       # so it is not listed as a new comment in the comment index
-      Reader.create(user: current_user, thread: @commontator_thread)
+      Reader.find_or_create_by(user: current_user, thread: @commontator_thread)
+            .touch
     end
 end
