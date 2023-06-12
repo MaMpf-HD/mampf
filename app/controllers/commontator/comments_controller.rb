@@ -198,8 +198,12 @@ class Commontator::CommentsController < Commontator::ApplicationController
       return unless medium.released.in?(['all', 'users', 'subscribers'])
 
       relevant_users = medium.teachable.media_scope.users
-      relevant_users.where(unread_comments: false)
+      relevant_users.where.not(id: current_user.id)
+                    .where(unread_comments: false)
                     .update_all(unread_comments: true)
-      @update_icon = relevant_users.exists?(current_user.id)
+
+      # make sure that the generated comment is marked as read by the creator
+      # so it is not listed as a new comment in the comment index
+      Reader.create(user: current_user, thread: @commontator_thread)
     end
 end
