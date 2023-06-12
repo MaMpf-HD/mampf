@@ -894,6 +894,9 @@ en:
           This is done by extracting table of contents from videos, that have been
           edited by the ThymE-Editor, contents descriptions and metadata from
           scripts (for script-based lectures).
+        details: >
+          Here you can provide a detailed description. You can use LaTeX (by putting
+          the expression in $...$). A preview of your text is shown below.
         list: >
           This is the list of all associated sessions.
         tags_without_section: >

@@ -945,6 +945,10 @@ de:
           Inhaltsverzeichnisse aus Videos, die mit dem THymE-Editor bearbeitet
           wurden, Medieninhaltsangaben und Skript-Metadaten
           (im Falle skriptbasierter Vorlesungen) verwendet.
+        details: >
+          Hier hast Du die Möglichkeit, eine detaillierte Beschreibung einzugeben.
+          Du kannst LaTeX benutzen (indem Du den Ausdruck in $...$ setzt).
+          Eine Vorschau Deines Textes siehst Du unten.
         list: >
           Dies ist die Liste aller assoziierten Sitzungen.
         tags_without_section: >
