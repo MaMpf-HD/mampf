@@ -295,7 +295,9 @@ module ApplicationHelper
   end
 
   def get_announcements
-    Announcement.active_on_main.pluck(:details).join
+    Announcement.active_on_main
+                .pluck(:details)
+                .join('<hr class="my-3 w-100">')
   end
 
   # Navbar items styling based on which page we are on
