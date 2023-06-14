@@ -16,7 +16,6 @@
       <%# Announcements %>
         <% if Announcement.active_on_main.exists? %>
           <div id="announcement-box" class="landing-box">
-            <i class="bi bi-megaphone p-2"></i>
             <%= get_announcements().html_safe %>
           </div>
         <% end %>
