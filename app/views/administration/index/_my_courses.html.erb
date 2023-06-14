@@ -6,11 +6,11 @@
         (<%= current_user.edited_courses.size  %>)
         <%= helpdesk(t('admin.main.info.course_definition'), true) %>
       </div>
-      <div class="col-4 text-right">
+      <div class="col-4 text-end">
         <% if current_user.admin? %>
           <i class="fas fa-plus-circle text-light admin-index-button clickable",
              id="new-course-button"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%= t('admin.main.create_course') %>">
           </i>
         <% end %>

@@ -2,9 +2,11 @@
               scope: 'search',
               remote: true,
               method: :get do |f| %>
-  <div class="form-row p-2">
-    <div class="col-6 col-lg-4 form-group">
-      <%= f.label :types, t('basics.types') %>
+  <div class="row p-2">
+    <div class="col-6 col-lg-4 mb-3">
+      <%= f.label :types,
+                  t('basics.types'),
+                  class: 'form-label' %>
       <%= helpdesk(t('search.media.type'), true) %>
       <%= f.select :types,
                    options_for_select(add_prompt(Medium.select_generic),
@@ -18,20 +20,21 @@
       <% if purpose == 'clicker' %>
         <%= f.hidden_field :types, value: ['Question'] %>
       <% end %>
-      <div class="custom-control custom-checkbox mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :all_types,
                         id: 'search_all_media_types',
-                        class: 'custom-control-input',
+                        class: 'form-check-input',
                         checked: purpose.in?(['media', 'clicker']),
                         data: { id: 'search_media_types'} %>
         <%= f.label :all_media_types,
                     t('basics.all'),
-                    { class: 'custom-control-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
     </div>
-    <div class="col-6 col-lg-4 form-group">
+    <div class="col-6 col-lg-4 mb-3">
       <%= f.label :tag_ids,
-                  t('basics.related_tags') %>
+                  t('basics.related_tags'),
+                  class: 'form-label' %>
       <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
       <%= f.select :tag_ids,
                    options_for_select([[]]),
@@ -46,37 +49,39 @@
                              locale: I18n.locale,
                              placeholder: t('basics.enter_two_letters'),
                              no_results: t('basics.no_results') } } %>
-      <div class="custom-control custom-checkbox mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :all_tags,
-                        class: 'custom-control-input',
+                        class: 'form-check-input',
                         checked: true,
                         data: { id: 'search_tag_ids' } %>
         <%= f.label :all_tags,
                     t('basics.all'),
-                    { class: 'custom-control-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :tag_operator,
                           'or',
                           checked: true,
-                          class: 'custom-control-input' %>
+                          class: 'form-check-input' %>
         <%= f.label :tag_operator,
                     t('basics.OR'),
                     value: 'or',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :tag_operator,
                           'and',
-                          class: 'custom-control-input' %>
+                          class: 'form-check-input' %>
         <%= f.label :tag_operator,
                     t('basics.AND'),
                     value: 'and',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
     </div>
-    <div class="col-6 col-lg-4 form-group">
-      <%= f.label :teacher_ids, t('basics.teachers') %>
+    <div class="col-6 col-lg-4 mb-3 form-group">
+      <%= f.label :teacher_ids,
+                  t('basics.teachers'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.search_teachers'), true) %>
       <%= f.select :teacher_ids,
                   options_for_select(add_prompt(User.select_teachers)),
@@ -86,51 +91,51 @@
                     class: 'selectize',
                     disabled: true,
                     required: true } %>
-      <div class="custom-control custom-checkbox mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :all_teachers,
                         id: 'search_all_media_teachers',
-                        class: 'custom-control-input',
+                        class: 'form-check-input',
                         checked: true,
                         data: { id: 'search_media_teacher_ids' } %>
         <%= f.label :all_media_teachers,
                     t('basics.all'),
-                    { class: 'custom-control-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
     </div>
-    <div class="col-6 col-lg-4 form-group">
+    <div class="col-6 col-lg-4 mb-3 form-group">
       <%= f.label :teachable_ids, t('basics.lectures') %>
       <%= helpdesk(t('search.media.lectures'), true) %>
-      <div class="custom-control custom-radio mb-2">
+      <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
                             '0',
                             checked: true,
-                            class: 'custom-control-input' %>
+                            class: 'form-check-input' %>
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.all'),
                     value: '0',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-radio mb-2">
+      <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
                             '1',
                             checked: false,
-                            class: 'custom-control-input' %>
+                            class: 'form-check-input' %>
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.subscribed'),
                     value: '1',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-radio mb-2">
+      <div class="form-check mb-2">
         <%= f.radio_button :lecture_option,
                             '2',
                             checked: false,
-                            class: 'custom-control-input',
+                            class: 'form-check-input',
                             data: { type: 'toggle',
                                     id: 'search_media_lectures'} %>
         <%= f.label :lecture_option,
                     t('search.media.lecture_options.own_selection'),
                     value: '2',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
       <%= f.select :media_lectures,
                     options_for_select(add_prompt(Lecture.select)),
@@ -140,22 +145,26 @@
                       disabled: true,
                       required: true } %>
     </div>
-    <div class="col-6 col-lg-4 form-group">
-      <%= f.label :fulltext, t('basics.title') %>
+    <div class="col-6 col-lg-4 mb-3 form-group">
+      <%= f.label :fulltext,
+                  t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('search.media.title'), false) %>
       <%= f.text_field :fulltext,
                         id: 'media_fulltext',
                         class: 'form-control',
                         placeholder: t('search.media.title_placeholder') %>
     </div>
-    <div class="col-6 col-lg-4 form-group">
-      <%= f.label :per, t('basics.hits_per_page') %>
+    <div class="col-6 col-lg-4 mb-3 form-group">
+      <%= f.label :per,
+                  t('basics.hits_per_page'),
+                  class: "form-label" %>
       <%= f.select :per,
                    options_for_select(hits_per_page(results_as_list),
                                       default_hits_per_page(results_as_list)),
                    {},
                    { id: 'media_per',
-                     class: 'form-control'} %>
+                     class: 'form-select'} %>
 
     </div>
   </div>

@@ -894,6 +894,9 @@ en:
           This is done by extracting table of contents from videos, that have been
           edited by the ThymE-Editor, contents descriptions and metadata from
           scripts (for script-based lectures).
+        details: >
+          Here you can provide a detailed description. You can use LaTeX (by putting
+          the expression in $...$). A preview of your text is shown below.
         list: >
           This is the list of all associated sessions.
         tags_without_section: >
@@ -1186,7 +1189,7 @@ en:
           if you select a event series, media that are associated to the event series's
           sessions will be shown as well.
         search_tags: >
-          Tags related to a medium are displayed as <span class="badge badge-light">example tag</span> on the media card.
+          Tags related to a medium are displayed as <span class="badge text-dark lecture-tag">example tag</span> on the media card.
           If you are looking for media with specific tags, you can select tags from the data base. You can choose one,
           several, or all of them. Moreover, you can decide whether the medium has to be related to either at least one
           of the selected tags (inclusive <i>OR</i>) or all of them (<i>AND</i>).

@@ -34,7 +34,7 @@
                          locals: { item: i } %>
             <% end %>
             <% i.related_items.each do |j| %>
-              <span class="mr-2">
+              <span class="me-2">
               </span>
               <% if j.medium.visible? %>
                 <%= render partial: 'items/item_links',

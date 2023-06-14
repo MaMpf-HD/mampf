@@ -31,7 +31,7 @@
   </div>
 <% end %>
 <% if @watchlist_entries.present? %>
-  <div class="row pt-2" id="sortableWatchlistMedia">
+  <div class="row pt-2 ps-4 pe-4" id="sortableWatchlistMedia">
     <% @watchlist_entries.each do |entry| %>
       <div class="col-12 col-md-6 col-lg-3 col-xl-2 pb-2">
         <%= render partial: 'watchlist_entries/entry',

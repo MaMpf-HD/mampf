@@ -1,13 +1,13 @@
 <div class="row px-4 py-2 mt-2">
   <div class="col-9">
-    <h4 class="pl-2">
-      <span class="badge badge-secondary">
+    <h4 class="ps-2">
+      <span class="badge bg-secondary">
         <%= t('basics.medium') %>
       </span>
       <%= @medium.title %>
     </h4>
   </div>
-  <div class="col-3 text-right">
+  <div class="col-3 text-end">
     <% teachable_scope = @medium.teachable&.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
         <% if current_user.admin || current_user.in?(@medium.teachable.editors) %>
@@ -125,11 +125,11 @@
         <div class="row">
           <div class="col-3">
             <%= t('video.video') %>
-            <span class="badge badge-secondary">
+            <span class="badge bg-secondary">
               mp4
             </span>
           </div>
-          <div class="col-9 text-right">
+          <div class="col-9 text-end">
             <% if @medium.video.present? %>
               <%= link_to 'Thyme', play_medium_path(@medium),
                           class: 'btn btn-outline-secondary btn-sm',
@@ -201,7 +201,7 @@
       <div class="row">
         <div class="col-12">
           <%= t('manuscript.manuscript') %>
-          <span class="badge badge-secondary">
+          <span class="badge bg-secondary">
             pdf
           </span>
         </div>

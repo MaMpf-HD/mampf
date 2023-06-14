@@ -5,8 +5,9 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-group">
-      <%= f.label :date, t('basics.date') %>
+    <div class="mb-3">
+      <%= f.label :date, t('basics.date'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lesson.info.date'), false) %>
       <div class="row">
         <div class="col-12">
@@ -49,8 +50,9 @@
         <% end %>
       </div>
     </div>
-    <div class="form-group">
-      <%= f.label :section_ids, t('basics.sections') %>
+    <div class="mb-3">
+      <%= f.label :section_ids, t('basics.sections'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lesson.info.sections'), false) %>
       <%= f.select :section_ids,
                    options_for_select(lesson.lecture.section_selection,
@@ -63,12 +65,13 @@
       <div class="invalid-feedback" id="lesson-sections-error">
       </div>
     </div>
-    <div class="form-group">
-      <%= f.label :tag_ids, t('basics.related_tags') %>
+    <div class="mb-3">
+      <%= f.label :tag_ids, t('basics.related_tags'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lesson.info.tags'), false) %>
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-tag-button"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          title="Tag anlegen"
          data-course="<%= lesson.lecture.course.id %>"
          data-lesson="<%= lesson.id %>"

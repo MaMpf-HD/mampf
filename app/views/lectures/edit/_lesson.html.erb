@@ -1,6 +1,6 @@
 <%= link_to lesson.date_localized,
             edit_lesson_path(lesson),
-            class: 'badge badge-secondary lecture-lesson',
+            class: 'badge bg-secondary lecture-lesson',
             id: 'lecture-' + dom_id(lesson),
             data: { id: lesson.id,
                     tags: lesson.tags.map(&:id) } %>

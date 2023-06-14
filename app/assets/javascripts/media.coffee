@@ -18,6 +18,12 @@ fancyTimeFormat = (time) ->
 
 $(document).on 'turbolinks:load', ->
 
+  # init datetimepicker
+  $('#release_date').datetimepicker
+      format: 'd.m.Y H:i'
+      inline: false
+      lang: 'en'
+
   # disable/enable search field on the media search page, depending on
   # whether 'all tags'/'all editors'/... are selected
   $('[id^="search_all_"]').on 'change', ->
@@ -390,10 +396,7 @@ $(document).on 'turbolinks:load', ->
 
   $('#release_date').on 'focus', ->
     $('#medium_release_now_0').prop('checked', true)
-    $('#release_date').datetimepicker
-      format: 'd.m.Y H:i'
-      inline: false
-      lang: 'en'
+    $('#release_date').datetimepicker('toggle')
     return
 
   $('#medium_assignment_deadline').on 'focus', ->

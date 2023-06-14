@@ -16,7 +16,7 @@ $(document).on 'turbolinks:load', ->
     $('#new-lesson-area').empty().hide()
     $('.fa-edit').show()
     $('.new-in-lecture').show()
-    $('[data-toggle="collapse"]').removeClass('disabled')
+    $('[data-bs-toggle="collapse"]').removeClass('disabled')
     return
 
   $(document).on 'click', '.cancel-lesson-edit', ->

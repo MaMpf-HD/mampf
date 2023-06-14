@@ -12,12 +12,9 @@
           <%= t('admin.lecture.import_toc') %>
         </h5>
         <button type="button"
-                class="close"
-                data-dismiss="modal"
+                class="btn-close"
+                data-bs-dismiss="modal"
                 aria-label="Close">
-          <span aria-hidden="true">
-            &times;
-          </span>
         </button>
       </div>
       <%= form_with url: import_lecture_toc_path(lecture),
@@ -27,37 +24,38 @@
           <div class="row mt-2 mb-2">
             <div class="col-12">
               <%= f.label :imported_lecture_id,
-                  t('basics.lecture') %>
+                  t('basics.lecture'),
+                  class: "form-label" %>
               <%= f.select :imported_lecture_id,
                            options_for_select(lecture.neighbours
                                                      .map{ |l| [l.title_with_teacher,
                                                                 l.id]}),
                            {},
-                           { class: 'form-control' } %>
-              <div class="custom-control custom-checkbox my-2">
+                           { class: 'form-select' } %>
+              <div class="form-check my-2">
                 <%= f.check_box :import_chapters,
-                                class: 'custom-control-input',
+                                class: 'form-check-input',
                                 checked: true,
                                 disabled: true %>
                 <%= f.label :import_chapters,
                             t('admin.lecture.import_chapters'),
-                            class: 'custom-control-label' %>
+                            class: 'form-check-label' %>
               </div>
-              <div class="custom-control custom-checkbox mb-2">
+              <div class="form-check mb-2">
                 <%= f.check_box :import_sections,
-                                class: 'custom-control-input',
+                                class: 'form-check-input',
                                 checked: true %>
                 <%= f.label :import_sections,
                             t('admin.lecture.import_sections'),
-                            class: 'custom-control-label' %>
+                            class: 'form-check-label' %>
               </div>
-              <div class="custom-control custom-checkbox">
+              <div class="form-check">
                 <%= f.check_box :import_tags,
-                                class: 'custom-control-input',
+                                class: 'form-check-input',
                                 checked: true %>
                 <%= f.label :import_tags,
                             t('admin.lecture.import_tags'),
-                            class: 'custom-control-label' %>
+                            class: 'form-check-label' %>
               </div>
             </div>
           </div>
@@ -69,7 +67,7 @@
                            class: 'btn btn-sm btn-primary' %>
               <button type="button"
                       class="btn btn-sm btn-secondary"
-                      data-dismiss="modal">
+                      data-bs-dismiss="modal">
                 <%= t('buttons.cancel') %>
               </button>
             </div>

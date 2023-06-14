@@ -7,7 +7,7 @@
         <div class="row">
           <div class="col-12">
             <% if c['mampf_chapter'].nil? %>
-              <span class="badge badge-secondary mr-2">
+              <span class="badge bg-secondary me-2">
                 <%= t('basics.new') %>
               </span>
             <% end %>
@@ -35,14 +35,14 @@
                 <div class="row">
                   <div class="col-12">
                     <% if s['mampf_section'].nil? %>
-                      <span class="badge badge-secondary">
+                      <span class="badge bg-secondary">
                         <%= t('basics.new') %>
                       </span>
                     <% end %>
                     <button class="btn btn-link"
                             type="button"
-                            data-toggle="collapse"
-                            data-target="#<%= 'collapse' + s['counter'].to_s %>">
+                            data-bs-toggle="collapse"
+                            data-bs-target="#<%= 'collapse' + s['counter'].to_s %>">
                       <%= "§#{s['label']}. #{s['description']}" %>
                     </button>
                   </div>
@@ -58,7 +58,7 @@
               </div>
               <div id="<%= 'collapse' + s['counter'].to_s %>"
                    class="collapse"
-                   data-parent="#manuscriptAccordion">
+                   data-bs-parent="#manuscriptAccordion">
                 <div class="card-body">
                   <% if manuscript.content_in_section(s).blank? %>
                     <%= t('manuscript.no_labels') %>
@@ -79,16 +79,16 @@
                           <%= t('basics.description') %>
                         </strong>
                       </div>
-                      <div class="col-1 mt-2 text-right">
+                      <div class="col-1 mt-2 text-end">
                         <i class="fas fa-tag"
-                           data-toggle="tooltip"
+                           data-bs-toggle="tooltip"
                            data-placement="bottom"
                            title="<%= t('admin.tag.create') %>">
                         </i>
                       </div>
                       <div class="col-2 mt-2 text-center">
                         <i class="far fa-eye"
-                           data-toggle="tooltip"
+                           data-bs-toggle="tooltip"
                            data-placement="bottom"
                            title="<%= t('manuscript.visibility') %>">
                         </i>
@@ -111,27 +111,27 @@
                                         edit_tag_path(content['tag_id']) %>
                           <% end %>
                         </div>
-                        <div class="col-1 mt-2 text-right">
-                          <div class="custom-control custom-checkbox">
+                        <div class="col-1 mt-2 text-end">
+                          <div class="form-check">
                             <input type="checkbox"
-                                   class="custom-control-input"
+                                   class="form-check-input"
                                    id="tag-<%= content['counter'] %>"
                                    data-counter="<%= content['counter'] %>"
                                    <%= content['tag_id'].nil? ? '' : 'checked disabled' %>
                                    <%= content['description'].blank? ? 'disabled' : '' %>>
-                              <label class="custom-control-label"
+                              <label class="form-check-label"
                                      for="tag-<%= content['counter'] %>">
                               </label>
                             </div>
                           </div>
                         <div class="col-2 mt-2 text-center">
-                          <div class="custom-control custom-switch">
+                          <div class="form-check custom-switch">
                             <input type="checkbox"
                                    <%= check_status(content) %>
-                                   class="custom-control-input"
+                                   class="form-check-input"
                                    id="visible-<%= content['counter'] %>"
                                    data-counter="<%= content['counter'] %>">
-                            <label class="custom-control-label"
+                            <label class="form-check-label"
                                    for="visible-<%= content['counter'] %>">
                             </label>
                           </div>

@@ -5,8 +5,9 @@
     </h5>
   </div>
   <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
-    <div class="form-group">
-      <%= f.label :content, "#{t('admin.medium.content')} (#{t('basics.optional')})" %>
+    <div class="mb-3">
+      <%= f.label :content, "#{t('admin.medium.content')} (#{t('basics.optional')})",
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.content'), false) %>
       <%= f.trix_editor :content,
                         class: 'bg-light',

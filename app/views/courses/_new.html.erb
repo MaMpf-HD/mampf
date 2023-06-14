@@ -7,9 +7,10 @@
 </div>
 <%= form_with model: course,
               html: { id: 'new-course-form' } do |f| %>
-  <div class="form-row">
-    <div class="col-12 form-group">
-      <%= f.label :title, t('basics.title') %>
+  <div class="row">
+    <div class="col-12 mb-3">
+      <%= f.label :title, t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.course.info.title'), false) %>
       <%= f.text_field :title, { class: 'form-control',
                                  id: 'new_course_title' } %>
@@ -17,8 +18,9 @@
            id="new-course-title-error">
       </div>
     </div>
-    <div class="col-12 form-group">
-      <%= f.label :short_title, t('basics.short_title') %>
+    <div class="col-12 mb-3">
+      <%= f.label :short_title, t('basics.short_title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.course.info.short_title'), false) %>
       <%= f.text_field :short_title, { class: 'form-control',
                                  id: 'new_course_short_title' } %>
@@ -26,9 +28,10 @@
            id="new-course-short-title-error">
       </div>
     </div>
-    <div class="col-12 form-group">
+    <div class="col-12 mb-3">
       <%= f.label :editor_ids,
-                  t('basics.editors') %>
+                  t('basics.editors'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.course.info.editors'), false) %>
       <%= f.select :editor_ids,
                    options_for_select([[current_user.info, current_user.id]],
@@ -44,9 +47,10 @@
                              placeholder: t('basics.enter_two_letters'),
                              no_results: t('basics.no_results') } } %>
     </div>
-    <div class="col-12 form-group">
+    <div class="col-12 mb-3">
       <%= f.label :division_ids,
-                  t('admin.course.divisions') %>
+                  t('admin.course.divisions'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.course.info.divisions'), false) %>
       <%= f.select :division_ids,
                    options_for_select(Division.all.map { |d| [d.name_with_program, d.id] },
@@ -57,13 +61,13 @@
                      style: 'display: none;',
                      data: { ajax: false } } %>
     </div>
-    <div class="col-12 form-group">
-      <div class="custom-control custom-checkbox">
+    <div class="col-12 mb-3">
+      <div class="form-check">
         <%= f.check_box :term_independent,
-                        class: 'custom-control-input' %>
+                        class: 'form-check-input' %>
         <%= f.label :term_independent,
                     t('admin.course.term_independent'),
-                    { class: 'custom-control-label' } %>
+                    class: "form-label" %>
         <%= helpdesk(t('admin.course.info.term_independent'), false) %>
       </div>
     </div>

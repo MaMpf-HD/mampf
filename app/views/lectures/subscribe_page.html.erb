@@ -1,10 +1,10 @@
 <div class="row mt-2 mb-3">
   <div id="lecture-details" class="col-12 text-center mb-3">
     <h4>
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= @lecture.sort_localized %>
       </span>
-      <span id="lecture-title" class="mr-3">
+      <span id="lecture-title" class="me-3">
         <%= @lecture.title_term_info_no_type %>
       </span>
       <% if @lecture.term || !@lecture.disable_teacher_display %>

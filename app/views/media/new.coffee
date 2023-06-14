@@ -4,4 +4,4 @@ $('#medium-modal-content').empty()
                         locals: { medium: @medium } %>').show()
 $('#mediumModal').modal('show')
  # activate popovers
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()

@@ -31,7 +31,7 @@
             <% if s.deletable? %>
               <%= link_to '',
                           subject_path(s),
-                          class: 'fas fa-trash-alt text-secondary ml-1',
+                          class: 'fas fa-trash-alt text-secondary ms-1',
                           data: { toggle: 'tooltip',
                                   placement: 'bottom',
                                   confirm: t('confirmation.generic') },
@@ -58,7 +58,7 @@
 					  		<%= p.name %>
 		            <%= link_to '',
                         edit_program_path(p),
-                        class: 'far fa-edit text-secondary ml-2',
+                        class: 'far fa-edit text-secondary ms-2',
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
                         title: t('buttons.edit'),
@@ -66,7 +66,7 @@
                         remote: true %>
           			<%= link_to '',
                 			      program_path(p),
-                      			class: 'fas fa-trash-alt text-secondary ml-1',
+                      			class: 'fas fa-trash-alt text-secondary ms-1',
                       			data: { toggle: 'tooltip',
                             			  placement: 'bottom',
                               			confirm: t('confirmation.generic') },
@@ -74,7 +74,7 @@
                       			style: 'text-decoration: none;',
                       			remote: true,
                       			method: :delete %>
-                <div class="ml-2">
+                <div class="ms-2">
                   <%= t('admin.classification.divisions') %>:
                   <%= link_to '',
                       new_division_path(params: { program_id: p.id }),
@@ -91,7 +91,7 @@
                       <%= d.name %>
                       <%= link_to '',
                                   edit_division_path(d),
-                                  class: 'far fa-edit text-secondary ml-2',
+                                  class: 'far fa-edit text-secondary ms-2',
                                   data: { toggle: 'tooltip',
                                           placement: 'bottom' },
                                   title: t('buttons.edit'),
@@ -99,7 +99,7 @@
                                   remote: true %>
                       <%= link_to '',
                                   division_path(d),
-                                  class: 'fas fa-trash-alt text-secondary ml-1',
+                                  class: 'fas fa-trash-alt text-secondary ms-1',
                                   data: { toggle: 'tooltip',
                                           placement: 'bottom',
                                           confirm: t('confirmation.generic') },

@@ -6,13 +6,13 @@ disableExceptOrganizational = ->
   $('#lecture-organizational-warning').show()
   $('.fa-edit').hide()
   $('.new-in-lecture').hide()
-  $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
+  $('[data-bs-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
   return
 
 $(document).on 'turbolinks:load', ->
 
   # activate all popovers
-  $('[data-toggle="popover"]').popover()
+  $('[data-bs-toggle="popover"]').popover()
 
   # if any input is given to the lecture form (for people in lecture),
   # disable other input
@@ -20,13 +20,13 @@ $(document).on 'turbolinks:load', ->
     $('#lecture-basics-warning').show()
     $('.fa-edit:not(#update-teacher-button,#update-editors-button)').hide()
     $('.new-in-lecture').hide()
-    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
+    $('[data-bs-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     return
 
   # if any input is given to the preferences form, disable other input
   $('#lecture-preferences-form :input').on 'change', ->
     $('#lecture-preferences-warning').show()
-    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
+    $('[data-bs-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()
     return
@@ -34,7 +34,7 @@ $(document).on 'turbolinks:load', ->
   # if any input is given to the comments form, disable other input
   $('#lecture-comments-form :input').on 'change', ->
     $('#lecture-comments-warning').show()
-    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
+    $('[data-bs-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.fa-edit').hide()
     $('.new-in-lecture').hide()
     return
@@ -42,7 +42,7 @@ $(document).on 'turbolinks:load', ->
   # if any input is given to the assignments form, disable other input
   $('#lecture-assignments-form :input').on 'change', ->
     $('#lecture-assignments-warning').show()
-    $('[data-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
+    $('[data-bs-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
     $('.new-in-lecture').hide()
     return
 
@@ -90,7 +90,7 @@ $(document).on 'turbolinks:load', ->
   # restore assignments form if lecture assignments editing is cancelled
   $('#cancel-lecture-assignments').on 'click', ->
     $('#lecture-assignments-warning').hide()
-    $('[data-toggle="collapse"]').prop('disabled', false).addClass('clickable')
+    $('[data-bs-toggle="collapse"]').prop('disabled', false).addClass('clickable')
     $('.new-in-lecture').show()
     maxSize = $('#lecture_submission_max_team_size').data('value')
     $('#lecture_submission_max_team_size').val(maxSize)
@@ -117,59 +117,57 @@ $(document).on 'turbolinks:load', ->
     if this.dataset.type == 'Lesson'
       lessonId = this.dataset.id
       $('.lecture-lesson[data-id="'+lessonId+'"]')
-        .removeClass('badge-secondary')
-        .addClass('badge-info')
+        .removeClass('bg-secondary')
+        .addClass('bg-info')
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light')
-        .addClass('badge-warning')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-light')
+        .addClass('bg-warning')
     return
 
   # mouseleave over lesson -> restore original color of lessons and tags
   $('[id^="lecture-medium_"]').on 'mouseleave', ->
     if this.dataset.type == 'Lesson'
       lessonId = this.dataset.id
-      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('badge-info')
-        .addClass('badge-secondary')
+      $('.lecture-lesson[data-id="'+lessonId+'"]').removeClass('bg-info')
+        .addClass('bg-secondary')
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning')
-        .addClass('badge-light')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
+        .addClass('bg-light')
     return
 
   # mouseenter over lesson -> colorize tags
   $('[id^="lecture-lesson_"]').on 'mouseenter', ->
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-light')
-        .addClass('badge-warning')
+      $('.lecture-tag[data-id="'+t+'"]').addClass('bg-warning')
     return
 
   # mouseleave over lesson -> restore original color of tags
   $('[id^="lecture-lesson_"]').on 'mouseleave', ->
     tags = $(this).data('tags')
     for t in tags
-      $('.lecture-tag[data-id="'+t+'"]').removeClass('badge-warning')
-        .addClass('badge-light')
+      $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
     return
 
   # mouseenter over tag -> colorize lessons
   $('[id^="lecture-tag_"]').on 'mouseenter', ->
     lessons = $(this).data('lessons')
     for l in lessons
-      $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-secondary')
-        .addClass('badge-info')
+      $('.lecture-lesson[data-id="'+l+'"]').removeClass('bg-secondary')
+        .addClass('bg-info')
     return
 
   # mouseleave over tag -> restore original color of lessons
   $('[id^="lecture-tag_"]').on 'mouseleave', ->
     lessons = $(this).data('lessons')
     for l in lessons
-      $('.lecture-lesson[data-id="'+l+'"]').removeClass('badge-info')
-        .addClass('badge-secondary')
+      $('.lecture-lesson[data-id="'+l+'"]').removeClass('bg-info')
+        .addClass('bg-secondary')
     return
 
-  $('#edited-media-tab a[data-toggle="tab"]').on 'shown.bs.tab', (e) ->
+  $('#edited-media-tab a[data-bs-toggle="tab"]').on 'shown.bs.tab', (e) ->
     sort = e.target.dataset.sort # newly activated tab
     path = $('#create-new-medium').prop('href')
     if path
@@ -345,7 +343,7 @@ $(document).on 'turbolinks:load', ->
 
 # clean up everything before turbolinks caches
 $(document).on 'turbolinks:before-cache', ->
-  $('.lecture-tag').removeClass('badge-warning').addClass('badge-light')
-  $('.lecture-lesson').removeClass('badge-info').addClass('badge-secondary')
+  $('.lecture-tag').removeClass('bg-warning')
+  $('.lecture-lesson').removeClass('bg-info').addClass('bg-secondary')
   $(document).off 'change', '#lecture_course_id'
   return

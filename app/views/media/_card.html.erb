@@ -8,7 +8,7 @@
             <%= helpdesk(t('admin.medium.associated'), false) %>
           </h5>
         </div>
-        <div class="col-6 text-right">
+        <div class="col-6 text-end">
           <% if teachable_id && teachable_type && !inspection %>
             <%= link_to '',
                         new_medium_path(params:
@@ -24,7 +24,7 @@
           <% end %>
           <% if collapsible %>
             <a class="btn btn-primary"
-               data-toggle="collapse"
+               data-bs-toggle="collapse"
                href="#media_collapse"
                aria-expanded="false" aria-controls="media_collapse">
               <%= t('buttons.toggle') %>
@@ -37,7 +37,7 @@
          class="<%= show_collapse(!collapsible) %>"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#media_accordion">
+         data-bs-parent="#media_accordion">
       <div class="card-body p-2">
         <%= render partial: 'media/table',
                    locals: { media: media,

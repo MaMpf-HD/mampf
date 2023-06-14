@@ -1,6 +1,6 @@
 <div class="action-box">
   <%= form_with model: item do |f|%>
-    <div class="form-group form-row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
         <%= t('admin.item.start_time') %>
         <%= helpdesk(t('admin.item.info.start_time'), false) %>
@@ -13,32 +13,34 @@
         </div>
       </div>
       <div class="col-1 col-form-label">
-        <i class="material-icons clickable timer" data-toggle="tooltip"
+        <i class="material-icons clickable timer" data-bs-toggle="tooltip"
            data-placement="right" title="<%= t('admin.item.take_time') %>"
            data-timer="item_start_time">
           timer
         </i>
       </div>
     </div>
-    <div class="form-group form-row">
+    <div class="mb-3 row">
       <div class="col-2 col-form-label">
-        <%= f.label :sort, t('basics.type') %>
+        <%= f.label :sort, t('basics.type'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.item.info.type'), false) %>
       </div>
       <div class="col-auto">
         <%= f.select :sort,
                      Item.inverted_sorts.to_a.natural_sort_by { |s| s.first },
                      {},
-                     { class: 'form-control' } %>
+                     { class: 'form-select' } %>
       </div>
     </div>
     <% if item.medium.sort == 'Kaviar' &&
           item.medium.teachable_type.in?(['Lesson', 'Lecture']) %>
       <div id="item_section_select"
-           class="form-group form-row"
+           class="mb-3 row"
            style="display: <%= show_no_block(item.sort != 'chapter') %>">
         <div class="col-2 col-form-label">
-          <%= f.label :section_id, t('basics.section') %>
+          <%= f.label :section_id, t('basics.section'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.item.info.section'), true) %>
         </div>
         <div class="col-10">
@@ -54,28 +56,30 @@
     <% end %>
     <div id="item_number_field"
          style="display: <%= show_no_block(item.sort != 'label') %>"
-         class="form-group form-row">
+         class="mb-3 row">
       <div class="col-2 col-form-label">
-        <%= f.label :ref_number, t('basics.number') %>
+        <%= f.label :ref_number, t('basics.number'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.item.info.number'), false) %>
       </div>
       <div class="col-4">
         <%= f.text_field :ref_number, class: 'form-control' %>
       </div>
-      <div class="col-6 col-form-label text-right">
-        <div class="custom-control custom-checkbox">
+      <div class="col-6 col-form-label">
+        <div class="form-check">
           <%= f.check_box :hidden,
-                          class: 'custom-control-input' %>
+                          class: 'form-check-input' %>
           <%= f.label :hidden,
                       t('basics.hide'),
-                      { class: 'custom-control-label' } %>
+                      { class: 'form-check-label' } %>
           <%= helpdesk(t('admin.item.info.hide'), false) %>
         </div>
       </div>
     </div>
-    <div id="item_description_field" class="form-group form-row">
+    <div id="item_description_field" class="mb-3 row">
       <div class="col-2 col-form-label">
-        <%= f.label :description, t('basics.description') %>
+        <%= f.label :description, t('basics.description'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.item.info.description'), false) %>
       </div>
       <div class="col-10">
@@ -83,10 +87,11 @@
       </div>
     </div>
     <% if item.manuscript? %>
-      <div id="item_page_field" class="form-group form-row"
+      <div id="item_page_field" class="mb-3 row"
            style="display: <%= show_no_block(item.pdf_destination.blank?) %>">
         <div class="col-2 col-form-label">
-          <%= f.label :page, t('admin.item.page') %>
+          <%= f.label :page, t('admin.item.page'),
+                      class: "form-label" %>
           <%= helpdesk(t('admin.item.info.page'), false) %>
         </div>
         <div class="col-auto">
@@ -106,7 +111,7 @@
       <%= f.hidden_field :medium_id, value: item.medium.id %>
       <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
       <button id="cancel-item"
-              class="btn btn-sm btn-secondary ml-3"
+              class="btn btn-sm btn-secondary ms-3"
               type="button">
         <%= t('buttons.cancel') %>
       </button>
@@ -117,7 +122,7 @@
                   remote: true,
                   data: { confirm: t('confirmation.generic') },
                   id: 'delete-item',
-                  class: 'btn btn-sm btn-danger mr-2' %>
+                  class: 'btn btn-sm btn-danger me-2' %>
       <% end %>
     </div>
   <% end %>

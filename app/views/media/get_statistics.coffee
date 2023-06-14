@@ -14,7 +14,7 @@ $('#calls-stats').empty()
   .show().removeAttr('style')
 
 # activate popovers
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
 
 <% if @medium.sort == 'Quiz' %>
 

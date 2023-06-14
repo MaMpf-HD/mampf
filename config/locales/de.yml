@@ -945,6 +945,10 @@ de:
           Inhaltsverzeichnisse aus Videos, die mit dem THymE-Editor bearbeitet
           wurden, Medieninhaltsangaben und Skript-Metadaten
           (im Falle skriptbasierter Vorlesungen) verwendet.
+        details: >
+          Hier hast Du die Möglichkeit, eine detaillierte Beschreibung einzugeben.
+          Du kannst LaTeX benutzen (indem Du den Ausdruck in $...$ setzt).
+          Eine Vorschau Deines Textes siehst Du unten.
         list: >
           Dies ist die Liste aller assoziierten Sitzungen.
         tags_without_section: >
@@ -1256,7 +1260,7 @@ de:
           bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
           die mit Sitzungen dieser Veranstaltung verknüpft sind.
         search_tags: >
-          Mit einem Medium verknüpfte Begriffe werden als <span class="badge badge-light">Beispielbegriff</span>
+          Mit einem Medium verknüpfte Begriffe werden als <span class="badge text-dark lecture-tag">Beispielbegriff</span>
           auf der Medienkachel angezeigt. Hier kannst Du Begriffe, mit denen das Medium verknüpft sein soll, aus
           der Datenbank auswählen. Dabei kannst Du einen, mehrere oder alle dieser Begriffe in die Auswahl aufnehmen.
           Außerdem kannst Du entscheiden, ob das Medium entweder mit mindestens einem der gewählten Begriffe
@@ -2050,11 +2054,11 @@ de:
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
-      Im Rahmen des Services, die Mampf anbietet, werden einige Daten über Nutzer
+      Im Rahmen der Services, die Mampf anbietet, werden einige Daten über User
       gespeichert. Neben den oben aufgeführten Daten werden essentielle Informationen
-      wie deine abonnierten Vorlesungen oder eingereichten Abgaben gespeichert. Mit dem
-      folgenden Knopf kannst Du alle Daten, die wir über dich speichern, anfordern. Wir
-      werden sie an deine bei MaMpf hinterlegte E-Mail schicken.
+      wie Deine abonnierten Vorlesungen oder eingereichte Abgaben gespeichert. Mit dem
+      folgenden Knopf kannst Du alle Daten, die wir über Dich speichern, anfordern. Wir
+      werden sie an Deine bei MaMpf hinterlegte E-Mail schicken.
     data_request: >
       Daten anfordern
     data_request_sent: >
@@ -2075,7 +2079,7 @@ de:
     new_course_created_html: 'Neues Modul angelegt:<br>%{title}'
     subscribe_course: 'Abonniere es in Deinem Profil.'
     subscribe_course_html: 'Du kannst es über Deine %{profile} abonnieren.'
-    goto_profile: 'Zu deinen Profileinstellungen'
+    goto_profile: 'Zu Deinen Profileinstellungen'
     profile: 'Profileinstellungen'
     mampf_announcement: 'Neue Mitteilung über MaMpf'
     lecture_announcement: 'Neue Mitteilung in %{title}'
@@ -2154,7 +2158,7 @@ de:
     theme_based: 'zu bereits Behandeltem'
     lecture_only: 'keine'
     improve_visibility: >
-      Indem Du bei Zusatzmaterialien "alle" auswählst, kannst Du dir auch Medien
+      Indem Du bei Zusatzmaterialien "alle" auswählst, kannst Du Dir auch Medien
       anzeigen lassen, die auf der Ebene des Moduls %{course} angesiedelt sind,
       deren Inhalte in der aktuellen Vorlesung aber noch nicht behandelt wurden.
     waiting_for_tag: >
@@ -2223,7 +2227,7 @@ de:
     close: 'Schließen'
     confirm: 'Hinzufügen'
     public: 'Öffentlich'
-    public_help: 'Wenn Du dieses Kästchen markierst, können andere Personen deine Watchlist sehen. Teile dafür einfach die momentane URL.'
+    public_help: 'Wenn Du dieses Kästchen markierst, können andere Personen Deine Watchlist sehen. Teile dafür einfach die momentane URL.'
     order_help: 'Du kannst die Reihenfolge der Medien per Drag-and-Drop beliebig verändern.'
   watchlist_entry:
     add_success: 'Das Medium wurde erfolgreich zur Watchlist hinzufügt.'
@@ -2498,7 +2502,7 @@ de:
       Deine Suche nach dem Begriff %{search_string} hat %{count} Treffer
       ergeben.
     omitted_html: >
-      Aufgrund deiner %{profile} wurde(n) %{count} Treffer aus der
+      Aufgrund Deiner %{profile} wurde(n) %{count} Treffer aus der
       Datenbank nicht berücksichtigt.
     settings: 'Profileinstellungen'
     alternative: 'Meintest Du vielleicht etwas anderes?'
@@ -2542,7 +2546,7 @@ de:
         Dein Browser wird von ThymE leider nicht unterstützt.
         Du kannst das Video nur mit dem Browser-Player anschauen.
   sign_up_html: >
-    Du hast noch keinen Account? Dann kannst Du dich mit Deiner E-Mail-Adresse
+    Du hast noch keinen Account? Dann kannst Du Dich mit Deiner E-Mail-Adresse
     %{path}.
   sign_up: 'registrieren'
   announcements: 'Ankündigungen'
@@ -2559,7 +2563,7 @@ de:
       alle für Dich relevanten Medien.
     interested_html: >
       Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
-      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere dich
+      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere Dich
       und probiere MaMpf einfach selbst aus.
     resources: Ressourcen
     blog: Blog
@@ -2667,17 +2671,17 @@ de:
       herunterzuladen und zu überprüfen.
     optimization_info: >
       Dazu wird ein kleines Zusatzprogramm heruntergeladen und <i>im Browser</i> ausgeführt.
-       So bleiben die Daten auf deinem Gerät, bis Du sie hochgeladen hast.
+       So bleiben die Daten auf Deinem Gerät, bis Du sie hochgeladen hast.
     assure_third_party: >
       Ich versichere, dass durch die Datei keine Rechte Dritter verletzt werden.
     removal_notice_html: >
       <b>Hinweis:</b> Dateien werden nach Ablauf des Semesters gelöscht.
       Wir übernehmen keine Haftung für mögliche Datenverluste.
     submission_not_upload_notice_html: >
-      <b>Wichtig</b>: Bitte drücke auf "Hochladen" und dann auf "Speichern", ansonsten werden deine
+      <b>Wichtig</b>: Bitte drücke auf "Hochladen" und dann auf "Speichern", ansonsten werden Deine
        Änderungen verworfen, wenn Du die Seite verlässt.
     submission_upload_notice_html: >
-      <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden deine
+      <b>Wichtig</b>: Bitte drücke auf "Speichern", ansonsten werden Deine
        Änderungen verworfen, wenn Du die Seite verlässt.
     deletion_date: Löschdatum
     multiple_files_selected: Es wurden mehrere Dateien ausgewählt.
@@ -2685,8 +2689,8 @@ de:
       <b>Zusammenführen:</b> Verwende diesen Knopf um die Dateien in der obigen
       Reihenfolge zusammenzuführen.
     merging_info: >
-      Dazu wird ein kleines Zusatzprogramm heruntergeladen und in deinem Browser
-      ausgeführt. Deine Dateien bleiben also auf deinem Gerät für diesen Vorgang.
+      Dazu wird ein kleines Zusatzprogramm heruntergeladen und in Deinem Browser
+      ausgeführt. Deine Dateien bleiben also auf Deinem Gerät für diesen Vorgang.
     merge: Zusammenführen
     merging_failed: Zusammenführen fehlgeschlagen.
     no_correction_yet: Es ist keine Datei hinterlegt.
@@ -3043,8 +3047,8 @@ de:
     data_provide_mail_body: >
       Hallo, %{name}!<br>
 
-      Du hast uns eine Anforderung deiner Daten geschickt. Dem kommen wir gerne nach.
-      Zunächst gibt es mit dir direkt verknüpfte Daten:<br>
+      Du hast uns eine Anforderung Deiner Daten geschickt. Dem kommen wir gerne nach.
+      Zunächst gibt es mit Dir direkt verknüpfte Daten:<br>
 
       Deine Emailadresse: %{email}<br>
       Account-Erstellung: %{created_at}<br>
@@ -3091,7 +3095,7 @@ de:
       -Forenbeiträge<br>
       -Kommentare<br>
 
-      Einige dieser Daten mögen nicht auf dich zutreffen.<br>
+      Einige dieser Daten mögen nicht auf Dich zutreffen.<br>
 
       Bei weiterem Interesse kontaktiere uns bitte.<br>
 
