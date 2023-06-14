@@ -1,3 +1,5 @@
+<%= stylesheet_link_tag 'comments' %>
+
 <%
   # Views that use this partial must provide the following variable:
   # comment
@@ -55,9 +57,10 @@
     %>
   </div>
 <% end %>
-  <div class="form-check custom-switch mb-2">
+  <div id="toggleCommentPreviewWrapper" class="form-check form-switch mb-2">
     <input type="checkbox"
            class="form-check-input commentPreviewSwitch"
+           role="switch"
            id="<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-switch" :
                               "commontator-comment-#{comment.parent.id}-reply-switch" :
