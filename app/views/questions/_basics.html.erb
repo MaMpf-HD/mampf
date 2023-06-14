@@ -47,7 +47,7 @@
                     data: { parse: true, id: question.id } %>
     <%= f.form_group :question_sort,
                      label: { text: t('basics.type') + ':' } do %>
-      <span id="questionSort" class="ml-2">
+      <span id="questionSort" class="ms-2">
         <%= f.radio_button :question_sort,
                            'mc',
                            label: t('basics.multiple_choice'),
@@ -62,7 +62,7 @@
     <% end %>
     <%= f.form_group :level,
                      label: { text: t('basics.level') + ':' } do %>
-      <span id="level" class="ml-2">
+      <span id="level" class="ms-2">
         <%= f.radio_button :level,
                            0,
                            label: t('basics.level_easy'),

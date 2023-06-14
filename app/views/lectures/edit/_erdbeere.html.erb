@@ -1,27 +1,29 @@
-<div class="card bg-light">
-    <div class="card-header clickable"
-         role="tab"
-         id="erdbeere_structures_heading"
-         data-toggle="collapse"
-         data-target="#erdbeere_structures_collapse"
-         data-lecture="<%= lecture.id %>"
-         data-loading="<%= t('basics.loading_data') %>"
-         aria-expanded="false" aria-controls="erdbeere_structures_collapse">
+<div class="accordion-item bg-light">
+  <div class="accordion-header">
+    <button class="accordion-button collapsed"
+            type="button"
+            id="erdbeere_structures_heading"
+            data-bs-toggle="collapse"
+            data-bs-target="#erdbeere_structures_collapse"
+            aria-expanded="false"
+            data-loading="<%= t('basics.loading_data') %>"
+            data-lecture="<%= lecture.id %>"
+            aria-controls="erdbeere_structures_collapse">
       <div class="row">
         <div class="col-12">
-          <h5 id="erdbeereStructures"
-              data-lecture="<%= lecture.id %>">
+          <h5 id="erdbeereStructures" >
             <%= t('categories.erdbeere.singular') %>
           </h5>
         </div>
       </div>
-    </div>
+    </button>
+  </div>
     <div id="erdbeere_structures_collapse"
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#lectureAccordion">
-      <div class="card-body" id="erdbeereStructuresBody">
+         data-bs-parent="#lectureAccordion">
+      <div class="accordion-body" id="erdbeereStructuresBody">
       </div>
     </div>
 </div>

@@ -340,7 +340,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
   single
   ) ->
     # update helpdesk
-    $('[data-toggle="popover"]').popover()
+    $('[data-bs-toggle="popover"]').popover()
     hiddenInput = document.getElementById(hiddenInputElement)
     hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
     fileInput =document.getElementById(fileInputElement)
@@ -440,7 +440,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
 @result = undefined
 @userManuscriptUpload = (fileInput) ->
   # update helpdesk
-  $('[data-toggle="popover"]').popover()
+  $('[data-bs-toggle="popover"]').popover()
   hiddenInput = document.getElementById('upload-userManuscript-hidden')
   hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
   fileInput.style.display = 'none'

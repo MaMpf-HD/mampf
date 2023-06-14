@@ -10,9 +10,9 @@
                                                   all: params[:all],
                                                   per: params[:per],
                                                   visibility: params[:visibility] }),
-                      class: 'nav-link btn btn-sm bg-grey-lighten-4' %>
+                      class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
         </li>
-        <li class="nav-item pl-1 pr-1">
+        <li class="nav-item ps-1 pr-1">
           <% unless @media.page(1).total_pages == 1 || params[:all] %>
             <%= link_to t('all'),
                         lecture_food_path(@lecture,
@@ -22,13 +22,13 @@
                                                     all: true,
                                                     per: params[:per],
                                                     visibility: params[:visibility] }),
-                        class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
+                        class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
           <% end %>
         </li>
-        <li class="nav-item pl-1 pr-1">
-          <div class="dropdown pl-2">
+        <li class="nav-item ps-1 pr-1">
+          <div class="dropdown ps-2">
             <button class="btn btn-sm dropdown-toggle text-primary" type="button"
-                    data-toggle="dropdown"
+                    data-bs-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
               <%= t('per_page') %>
             </button>
@@ -48,11 +48,11 @@
             </div>
           </div>
         </li>
-        <li class="nav-item pl-1">
-          <div class="dropdown pl-2">
+        <li class="nav-item ps-1">
+          <div class="dropdown ps-2">
             <button class="btn btn-sm dropdown-toggle text-primary"
                     type="button"
-                    id="media_visibility" data-toggle="dropdown"
+                    id="media_visibility" data-bs-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">
               <%= t('basics.visibility') %>
             </button>

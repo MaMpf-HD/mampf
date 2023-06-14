@@ -8,5 +8,5 @@ $('#chapter-modal-content').empty()
 $('#chapterModalLabel').empty()
   .append('<%= t("admin.chapter.edit",
                  chapter: @chapter.to_label) %>')
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
 $('#chapterModal').modal('show')

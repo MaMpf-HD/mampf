@@ -5,11 +5,11 @@
         <%= t('admin.tag.related_tags') %>
       </h5>
     </div>
-    <div class="col-3 text-right">
+    <div class="col-3 text-end">
       <i class="far fa-edit clickable"
           id="selectRelatedTags"
           data-remote="true"
-          data-toggle="tooltip"
+          data-bs-toggle="tooltip"
           title="<%= t('admin.tag.edit_related_tags') %>">
       </i>
     </div>
@@ -19,7 +19,7 @@
   <% tag.related_tags.natural_sort_by(&:title).each do |t| %>
     <%= link_to t.short_title,
                 edit_tag_path(t),
-                class: "badge badge-light",
+                class: "badge text-dark lecture-tag",
                 id: 'related-' + dom_id(t),
                 data: { toggle: 'tooltip',
                         placement: 'top',

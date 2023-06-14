@@ -29,56 +29,56 @@
     </div>
   </div>
   <div class="card-body">
-    <div class="form-group">
-      <span class="mr-2">
+    <div class="mb-3">
+      <span class="me-2">
         <%= t('basics.type') + ':' %>
       </span>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfExpression',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfExpression',
                            data: { type: 'MampfExpression' } %>
         <%= f.label :solution_type,
                     t('math.expression'),
                     value: 'MampfExpression',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfMatrix',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfMatrix',
                            data: { type: 'MampfMatrix' } %>
         <%= f.label :solution_type,
                     t('math.matrix'),
                     value: 'MampfMatrix',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfTuple',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfTuple',
                            data: { type: 'MampfTuple' } %>
         <%= f.label :solution_type,
                     t('math.tuple'),
                     value: 'MampfTuple',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-control-inline custom-radio">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :solution_type,
                            'MampfSet',
-                           class: 'custom-control-input solutionType',
+                           class: 'form-check-input solutionType',
                            checked: solution.type == 'MampfSet',
                            data: { type: 'MampfSet' } %>
         <%= f.label :solution_type,
                     t('math.set'),
                     value: 'MampfSet',
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
     </div>
-    <div class="form-group">
+    <div class="mb-3">
       <%= render partial: 'questions/domains/general_form',
                  locals: { f: f,
                            type: solution.type,
@@ -94,7 +94,8 @@
     <div class="row">
       <div class="col-12">
         <%= f.label 'solution_content[explanation]',
-                   t('admin.answer.explanation') %>
+                   t('admin.answer.explanation'),
+                   class: "form-label" %>
         <%= f.text_area 'solution_content[explanation]',
                         class: 'form-control',
                         id: 'tex-area-explanation-s-' +

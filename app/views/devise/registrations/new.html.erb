@@ -7,19 +7,22 @@
 <%= form_for(resource, as: resource_name,
                        url: registration_path(resource_name),
                        html: { role: 'form' }) do |f| %>
-  <div class="form-group">
-    <%= f.label :email, t('.email') %>
+  <div class="mb-3">
+    <%= f.label :email, t('.email'),
+                 class: "form-label" %>
     <%= f.email_field :email, autofocus: true, class: 'form-control' %>
   </div>
-  <div class="form-group">
-    <%= f.label :password, t('.password') %>
+  <div class="mb-3">
+    <%= f.label :password, t('.password'),
+                class: "form-label" %>
     <%= f.password_field :password, class: 'form-control' %>
   </div>
-  <div class="form-group">
-    <%= f.label :password_confirmation, t('.password_confirm') %>
+  <div class="mb-3">
+    <%= f.label :password_confirmation, t('.password_confirm'),
+                class: "form-label" %>
     <%= f.password_field :password_confirmation, class: 'form-control' %>
   </div>
-  <div class="form-group d-block">
+  <div class="mb-3 d-block">
     <%= f.check_box :consents,
                     id: 'dsgvo-consent',
                     data: { noconsent: t('profile.no_consent') } %>
@@ -35,7 +38,7 @@
   <div id="captcha-widget"  data-sitekey="YOUR_SITE_KEY" data-start="auto" data-captcha-url="<%=ENV['CAPTCHA_PUZZLE_URL']%>" data-lang="<%=I18n.locale %>"></div>
   </p>
   <%end %>
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'register-user', disabled:ENV['USE_CAPTCHA_SERVICE'] %>
   </div>
 <% end %>

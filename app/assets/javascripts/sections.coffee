@@ -30,7 +30,7 @@ $(document).on 'turbolinks:load', ->
     $('#new-section-area-' + chapterId).empty().hide()
     $('.fa-edit').show()
     $('.new-in-lecture').show()
-    $('[data-toggle="collapse"]').removeClass('disabled')
+    $('[data-bs-toggle="collapse"]').removeClass('disabled')
     return
 
   # reload page if editing of section is cancelled

@@ -8,7 +8,7 @@
           <%= announcement.announcer&.name %>
         <% end %>
 			</div>
-			<div class="col-2 text-right">
+			<div class="col-2 text-end">
 				<% if user_signed_in? && announcement.active?(current_user) %>
 					<%= link_to notification_path(current_user
           		                          	.matching_notification(announcement)),
@@ -19,7 +19,7 @@
                   			{ id: current_user
                                 .matching_notification(announcement)&.id } do %>
 		      	<i class="fas fa-check text-dark"
-    		    	 data-toggle="tooltip"
+    		    	 data-bs-toggle="tooltip"
         			 title="<%= t('basics.mark_as_read') %>">
       			</i>
     			<% end %>

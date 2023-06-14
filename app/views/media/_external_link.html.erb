@@ -1,7 +1,8 @@
 <hr>
-<div class="form-group">
+<div class="mb-3">
   <%= f.label :external_reference_link,
-              t('basics.external_link') %>
+              t('basics.external_link'),
+              class: "form-label" %>
   <%= helpdesk(t('admin.medium.info.external_link'), false) %>
   <div class="row">
     <div class="col-10">
@@ -18,9 +19,12 @@
         <%= t('buttons.test') %>
       </button>
     </div>
-    <div class="col-12 mt-3 form-floating">
-      <%# TODO: Replace with floating label in Bootstrap5 %>
-      <%= f.label :external_link_description, t('basics.external_link_description') %>
+  </div>
+  <div class="row">
+    <div class="col-12 mt-3">
+      <%= f.label :external_link_description,
+                  t('basics.external_link_description'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.external_link_description'), false) %>
       <%= f.text_field :external_link_description,
                         class: 'form-control' %>

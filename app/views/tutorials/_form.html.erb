@@ -2,7 +2,7 @@
 <div class="list-group-item tutorialRow"
        data-id="<%= tutorial.id.to_i %>">
   <%= form_with model: tutorial do |f| %>
-    <div class="form-row">
+    <div class="row">
       <div class="form-group col-4">
         <%= f.text_field :title,
                          class: 'form-control',
@@ -27,7 +27,7 @@
       </div>
       <div class="form-group col-4">
         <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary ml-2' %>
+                     class: 'btn btn-sm btn-primary ms-2' %>
         <%= link_to t('buttons.cancel'),
                     cancel_editing_tutorial_path(tutorial),
                     class: 'btn btn-sm btn-secondary',

@@ -1,10 +1,10 @@
 <% if medium.video.present? %>
-  <div class="mr-2">
+  <div class="me-2">
     <a href="<%= play_medium_path(medium) %>"
        class="no-deco"
        target="_blank">
       <i class="material-icons text-secondary"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          data-placement="bottom"
          title="<%= t('video.play') %>">
         play_arrow
@@ -14,12 +14,12 @@
 <% end %>
 
 <% if medium.manuscript.present? %>
-  <div class="mr-2">
+  <div class="me-2">
     <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"
        class="no-deco"
        target="_blank">
       <i class="material-icons text-secondary"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          data-placement="bottom"
          title="<%= t('manuscript.view') %>">
         library_books
@@ -29,12 +29,12 @@
 <% end %>
 
 <% if medium.geogebra.present? %>
-  <div class="mr-2">
+  <div class="me-2">
     <a href="<%= geogebra_medium_path(medium) %>"
        class="no-deco"
        target="_blank">
       <i class="material-icons text-secondary"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          data-placement="bottom"
          title="<%= t('geogebra.view') %>">
         leak_add
@@ -44,12 +44,12 @@
 <% end %>
 
 <% if medium.external_reference_link.present? %>
-  <div class="mr-2">
+  <div class="me-2">
     <a href="<%= medium.external_reference_link %>"
        class="no-deco"
        target="_blank">
       <i class="material-icons text-secondary"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          data-placement="bottom"
          title="<%= external_link_description_not_empty(medium) %>">
         link
@@ -59,12 +59,12 @@
 <% end %>
 
 <% if medium.sort == 'Quiz' && medium.quiz_graph %>
-  <div class="mr-2">
+  <div class="me-2">
     <a href="<%= take_quiz_path(medium) %>"
        class="no-deco"
        target="_blank">
       <i class="material-icons text-secondary"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          data-placement="bottom"
          title="<%= t('quiz.start') %>">
         videogame_asset
@@ -73,11 +73,11 @@
   </div>
 <% end %>
 
-<div class="mr-2">
+<div class="me-2">
   <a href="<%= medium_path(medium) %>"
      class="no-deco">
     <i class="material-icons text-secondary"
-       data-toggle="tooltip"
+       data-bs-toggle="tooltip"
        data-placement="bottom"
        title="<%= t('medium.details') %>">
       info
@@ -86,15 +86,15 @@
 </div>
 
 <% if medium.video.present? %>
-  <div class="download-button mr-2">
+  <div class="download-button me-2">
     <a href="<%= medium.video_download_url %>"
        download="<%= video_download_file(medium) %>"
        class="triggerDownload"
        data-medium="<%= medium.id %>"
        data-sort="video">
       <span>
-        <span class="badge badge-secondary"
-              data-toggle="tooltip"
+        <span class="badge bg-secondary"
+              data-bs-toggle="tooltip"
               data-placement="bottom"
               title="<%= t('video.download') %>">
           &darr;mp4
@@ -112,8 +112,8 @@
        data-medium="<%= medium.id %>"
        data-sort="manuscript">
       <span>
-        <span class="badge badge-secondary"
-              data-toggle="tooltip"
+        <span class="badge bg-secondary"
+              data-bs-toggle="tooltip"
               data-placement="bottom"
               title="<%= t('manuscript.download') %>">
           &darr;pdf

@@ -5,9 +5,10 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-row">
-      <div class="col-12 form-group">
-        <%= f.label :title, t('basics.title') %>
+    <div class="row">
+      <div class="col-12 mb-3">
+        <%= f.label :title, t('basics.title'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.talk.info.title'), false) %>
         <%= f.text_field :title,
                          { class: 'form-control' } %>
@@ -15,12 +16,13 @@
         </div>
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12">
-        <%= f.label :date, t('basics.date') %>
+        <%= f.label :date, t('basics.date'),
+                    class: "form-label" %>
         <a class="fas fa-plus-circle clickable text-dark"
            id="new-talk-date-button"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            data-count="<%= talk.dates.size + 1 %>"
            title="<%= t('admin.tag.create') %>">
         </a>
@@ -32,7 +34,7 @@
                    name="talk[dates[<%= i %>]]"
                    value="<%= date %>">
             <% if i > 0 %>
-              <a class="fas fa-trash-alt clickable text-dark ml-2
+              <a class="fas fa-trash-alt clickable text-dark ms-2
                         remove-talk-date"
                  data-count="<%= i %>">
               </a>
@@ -45,10 +47,11 @@
         </div>
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12 mb-3">
         <%= f.label :speaker_ids,
-                    t('admin.talk.speakers') %>
+                    t('admin.talk.speakers'),
+                    class: "form-label" %>
         <%= f.select :speaker_ids,
                      options_for_select(talk.speakers.map { |s| [s.tutorial_info, s.id] },
                        talk.speaker_ids),
@@ -63,7 +66,7 @@
                                no_results: t('basics.no_results') } } %>
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12">
         <%= t('basics.media') %>
         <%= helpdesk(t('admin.talk.info.media'), false) %>
@@ -96,12 +99,13 @@
         <% end %>
       </div>
     </div>
-    <div class="form-group">
-      <%= f.label :tag_ids, t('basics.related_tags') %>
+    <div class="mb-3">
+      <%= f.label :tag_ids, t('basics.related_tags'),
+                   class: "form-label" %>
       <%= helpdesk(t('admin.talk.info.tags'), false) %>
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-tag-button"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          title="Tag anlegen"
          data-course="<%= talk.lecture.course.id %>"
          data-talk="<%= talk.id %>"
@@ -127,17 +131,18 @@
             id="talk-tags-error">
       </div>
     </div>
-    <div class="form-row">
-      <div class="col-12 form-group">
+    <div class="row">
+      <div class="col-12 mb-3">
         <%= f.label :predecessor,
                     t('admin.chapter.position',
-                      chapter_name: t('basics.talk')) %>
+                    chapter_name: t('basics.talk')),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.talk.info.position'), false) %>
         <%= f.select :predecessor,
                      options_for_select(talk_positions_for_select(talk),
                                         talk.position - 1) ,
                                         {},
-                                        { class: 'form-control' } %>
+                                        { class: 'form-select' } %>
       </div>
     </div>
   </div>

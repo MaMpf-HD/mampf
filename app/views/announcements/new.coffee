@@ -5,5 +5,5 @@ $('#new-announcement-modal-content').empty()
                                   lecture: @lecture } %>')
 
 # activate popovers and show modal
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
 $('#newAnnouncementModal').modal('show')

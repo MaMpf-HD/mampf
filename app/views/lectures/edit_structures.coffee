@@ -30,4 +30,4 @@ renderMathInElement structuresBody,
   ]
   throwOnError: false
 
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
