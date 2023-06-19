@@ -2,21 +2,21 @@
   "name": "mampf",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "5.4.3",
-    "@webpack-cli/serve": "^1.6.1",
+    "@rails/webpacker": "5.4.4",
+    "@webpack-cli/serve": "^1.7.0",
     "coffee-loader": "^1.0.1",
     "coffeescript": "2.6.1",
-    "core-js": "^3.21.1",
+    "core-js": "^3.31.0",
     "css-loader": "^5.2.7",
-    "friendly-challenge": "^0.9.1",
+    "friendly-challenge": "^0.9.12",
     "imports-loader": "^1.2.0",
     "jquery-datetimepicker": "^2.5.21",
-    "moment": "^2.29.1",
-    "node-sass": "^7.0.1",
-    "regenerator-runtime": "^0.13.7",
-    "sass-loader": "^10.1.1",
-    "webpack-cli": "^4.9.2",
-    "webpack-dev-server": "^4.7.4"
+    "moment": "^2.29.4",
+    "node-sass": "^7.0.3",
+    "regenerator-runtime": "^0.13.11",
+    "sass-loader": "^10.4.1",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
     "lint": "eslint ."
