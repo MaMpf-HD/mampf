@@ -15,9 +15,11 @@ EXPOSE 9394
 SHELL ["/bin/bash", "-c"] 
 
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash - && \
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash && \
     source /root/.bashrc && \
     nvm install 16 && \
+    nvm use node && \
+    echo "node version: $(node --version)" && \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && \
     apt-get install -y lsb-release && \
