@@ -12,13 +12,21 @@ ENV RAILS_ENV=production
 EXPOSE 3000
 EXPOSE 9394
 
-# https://github.com/nodesource/distributions#installation-instructions
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+SHELL ["/bin/bash", "-c"] 
+
+# https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash - && \
+    source /root/.bashrc && \
+    nvm install 16 && \
     curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
+    apt-get update && \
+    apt-get install -y lsb-release && \
+    # https://wiki.postgresql.org/wiki/Apt
+    echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
+    curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
     apt-get update && \
     apt-get install --no-install-recommends -y ffmpeg ghostscript imagemagick \
-            libarchive-tools nodejs pdftk postgresql-client-13 sqlite3 wget \
+            libarchive-tools pdftk postgresql-client-13 sqlite3 wget \
             wait-for-it yarn shared-mime-info && \
     rm -rf /var/lib/apt/lists/* && apt-get clean
 
