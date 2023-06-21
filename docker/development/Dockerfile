@@ -12,18 +12,25 @@ ENV RAILS_ENV=production
 EXPOSE 3000
 EXPOSE 9394
 
-SHELL ["/bin/bash","--login", "-c"] 
+# use "--login" option, so that .bashrc is sourced in new shells
+SHELL ["/bin/bash", "--login", "-c"] 
 
 # Install Node.js
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
-# https://stackoverflow.com/a/57546198/9655481
+# https://stackoverflow.com/a/57546198/
+# Unfortunately, we have to explicitly specify the node version here
+# and cannot use 16.x as we need to put the node binary into the PATH
+# and therefore require the exact version to find the folder
 ENV NODE_VERSION=16.20.1
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
-RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
-RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
-ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+RUN source $NVM_DIR/nvm.sh && nvm install ${NODE_VERSION} && \
+    nvm use ${NODE_VERSION} && nvm alias default ${NODE_VERSION}
+
+ENV NODE_PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin"
+ENV PATH="${NODE_PATH}:${PATH}"
+
+RUN nvm current
 RUN node --version
 RUN npm --version
 
