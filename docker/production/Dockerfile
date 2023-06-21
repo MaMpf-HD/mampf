@@ -16,15 +16,29 @@ EXPOSE 9394
 
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 
+SHELL ["/bin/bash","--login", "-c"] 
+
+# Install Node.js
+# https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
+# https://stackoverflow.com/a/57546198/9655481
+ENV NODE_VERSION=16.20.1
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+RUN node --version
+RUN npm --version
+
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-RUN curl -sL https://deb.nodesource.com/setup_14.x | bash
-    # update the sources with the repos set up
+# update the sources with the repos set up
 RUN apt-get update
-    # install all the dependencies
+# install all the dependencies
 RUN apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info
-RUN apt-get install -y nodejs yarn
+RUN apt-get install -y yarn
 
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
