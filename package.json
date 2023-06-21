@@ -12,9 +12,8 @@
     "imports-loader": "^1.2.0",
     "jquery-datetimepicker": "^2.5.21",
     "moment": "^2.29.4",
-    "node-sass": "^7.0.3",
     "regenerator-runtime": "^0.13.11",
-    "sass-loader": "^10.4.1",
+    "sass": "^1.63.4",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.15.1"
   },
