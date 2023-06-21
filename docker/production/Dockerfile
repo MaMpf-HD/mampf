@@ -52,14 +52,22 @@ RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xm
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
     mkdir /private /caches && chown app:app /private /caches
 
+# see https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
+# this command copies the currently active nvm node version to /usr/local/ directory
+# so that it can be used by the app user later
+RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/nodejs; chmod 755 $n/bin/node; chmod 755 $n/bin/nvm; chmod 755 $n/bin/npm; cp -r $n/{bin,lib,share} /usr/local
+
+
+# ============= Now switch to the app user
 WORKDIR /usr/src/app
 USER app
+
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-
 RUN bundle install && \
-    yarn  install --production=false
+    yarn install --production=false
+
 COPY --chown=app:app . /usr/src/app
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \
     SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb   bundle exec rails assets:precompile
