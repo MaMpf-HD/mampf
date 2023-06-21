@@ -24,10 +24,10 @@ SHELL ["/bin/bash", "--login", "-c"]
 ENV NODE_VERSION=16.20.1
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
-RUN source $NVM_DIR/nvm.sh && nvm install ${NODE_VERSION} && \
+RUN source ${NVM_DIR}/nvm.sh && nvm install ${NODE_VERSION} && \
     nvm use ${NODE_VERSION} && nvm alias default ${NODE_VERSION}
 
-ENV NODE_PATH="$NVM_DIR/versions/node/v$NODE_VERSION/bin"
+ENV NODE_PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/"
 ENV PATH="${NODE_PATH}:${PATH}"
 
 RUN nvm current
