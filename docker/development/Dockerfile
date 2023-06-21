@@ -12,15 +12,22 @@ ENV RAILS_ENV=production
 EXPOSE 3000
 EXPOSE 9394
 
-SHELL ["/bin/bash", "-c"] 
+SHELL ["/bin/bash","--login", "-c"] 
 
+# Install Node.js
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash && \
-    source /root/.bashrc && \
-    nvm install 16 && \
-    nvm use node && \
-    echo "node version: $(node --version)" && \
-    curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
+# https://stackoverflow.com/a/57546198/9655481
+ENV NODE_VERSION=16.20.1
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm use v${NODE_VERSION}
+RUN . "$NVM_DIR/nvm.sh" && nvm alias default v${NODE_VERSION}
+ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
+RUN node --version
+RUN npm --version
+
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && \
     apt-get install -y lsb-release && \
     # https://wiki.postgresql.org/wiki/Apt
