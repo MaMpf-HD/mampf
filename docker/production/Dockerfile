@@ -45,7 +45,7 @@ RUN apt-get update
 # install all the dependencies
 RUN apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info
-RUN apt-get install -y yarn
+RUN apt-get install --no-install-recommends -y yarn
 
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
