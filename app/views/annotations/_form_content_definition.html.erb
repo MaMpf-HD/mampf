@@ -1,1 +1,12 @@
-DEFINITION
+<div id="emergency-link">
+	<% lecture = Medium.find_by_id(@medium_id).lecture %>
+	<% status = lecture.emergency_link_status %>
+	<% link = lecture.emergency_link %>
+	<% if status == "lecture_link" %>
+	  <% link_name = Lecture.find_by_id(link.tr("^[0-9]", "")).title %>
+	<% elsif status == "direct_link" %>
+    <% link_name = link %>
+  <% end %>
+  You need further help? Then click on: <br>
+	<a href="<%= link %>"><%= link_name %></a>
+</div>

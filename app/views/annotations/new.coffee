@@ -39,7 +39,7 @@ postAsComment.addEventListener 'change', (evt) ->
 
 # CATEGORY
 
-categoryRadios    = document.getElementById('category-radios')
+categoryRadios = document.getElementById('category-radios')
 
 categoryRadios.addEventListener 'click', (evt) ->
   if evt.target && event.target.matches("input[type='radio']")

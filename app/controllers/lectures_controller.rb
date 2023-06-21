@@ -23,6 +23,15 @@ class LecturesController < ApplicationController
                               Time.parse(ENV['RAILS_CACHE_ID'])].max)
       eager_load_stuff
     end
+
+    # emergency link -> prefill form
+    status = @lecture.emergency_link_status
+    link = @lecture.emergency_link
+    if status == "lecture_link"
+      @linked_lecture = Lecture.find_by_id(link.tr("^[0-9]", ""))
+    elsif status == "direct_link"
+      @direct_link = link
+    end
   end
 
   def update
@@ -45,6 +54,14 @@ class LecturesController < ApplicationController
       end
     end
     
+    # emergency link update
+    status = params[:lecture][:emergency_link_status]
+    if status == "lecture_link"
+      params[:lecture][:emergency_link] = params[:lecture][:lecture_link]
+    elsif status == "direct_link"
+      params[:lecture][:emergency_link] = params[:lecture][:direct_link]
+    end
+
     @lecture.update(lecture_params)
     if structure_params.present?
       structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys
@@ -318,6 +335,8 @@ class LecturesController < ApplicationController
                                     :submission_max_team_size,
                                     :submission_grace_period,
                                     :annotations_status,
+                                    :emergency_link_status,
+                                    :emergency_link,
                                     editor_ids: [])
   end
 

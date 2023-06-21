@@ -95,11 +95,10 @@
         <span><b>Visible for teacher? &nbsp</b></span>
         <%= f.check_box :visible_for_teacher %>
       <% end %>
+      <br>
     <% elsif annotations_status == -1 %>
       <%= f.hidden_field :visible_for_teacher, value: false %>
     <% end %>
-
-    <br>
 
     <span><b>Post as comment? &nbsp</b></span>
     <%= f.check_box :post_as_comment, id: "post-as-comment" %>

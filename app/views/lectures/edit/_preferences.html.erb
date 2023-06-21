@@ -149,6 +149,55 @@
               </div>
             </div>
           <% end %>
+          <!-- EMERGENCY BUTTON -->
+          <% if lecture.annotations_status == 1 %>
+            <div class="form-group">
+              Link for emergency button
+              <div class="form-row ml-2", id="emergency-link-status-radios">
+                <div class="custom-control custom-radio custom-control-inline">
+                  <%= f.radio_button :emergency_link_status,
+                                     :no_link,
+                                     class: 'custom-control-input' %>
+                  <%= f.label :emergency_link_status,
+                              'no link',
+                              value: :no_link,
+                              class: 'custom-control-label' %>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <%= f.radio_button :emergency_link_status,
+                                     :lecture_link,
+                                     class: 'custom-control-input' %>
+                  <%= f.label :emergency_link_status,
+                              'lecture link',
+                              value: :lecture_link,
+                              class: 'custom-control-label' %>
+                </div>
+                <div class="custom-control custom-radio custom-control-inline">
+                  <%= f.radio_button :emergency_link_status,
+                                     :direct_link,
+                                     class: 'custom-control-input' %>
+                  <%= f.label :emergency_link_status,
+                              'direct link',
+                              value: :direct_link,
+                              class: 'custom-control-label' %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+          <div id="lecture-link-field">
+            Select Help Desk:
+            <%= f.select :lecture_link,
+                         options_for_select(Lecture.all.map { |l| [l.title, l.lecture_path] },
+                                            [@linked_lecture&.title, @linked_lecture&.lecture_path]) %>
+          </div>
+          <div class="form-row", id="direct-link-field">
+            <div class="col-auto form-group">
+              Enter emergency link:
+              <%= f.text_field :direct_link,
+                               { size: 50,
+                                 value: @direct_link } %>
+            </div>
+          </div>
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">
