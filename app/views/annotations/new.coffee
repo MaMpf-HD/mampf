@@ -90,7 +90,7 @@ mistake = ->
   return
 
 presentation = ->
-  $('#specific').empty().append('<%= j render partial: "annotations/form_presentation"%>')
+  $('#specific').empty()
   submitButton.disabled = false
   visibleForTeacher(true)
   postComment(false)

@@ -90,18 +90,10 @@ mistake = ->
   return
 
 presentation = ->
-  $('#specific').empty().append('<%= j render partial: "annotations/form_presentation"%>')
+  $('#specific').empty()
   submitButton.disabled = false
   visibleForTeacher(true)
   postComment(false)
-  return
-
-
-
-# select correct subcategory
-contentRadio = document.getElementById('annotation_category_content')
-if contentRadio.checked
-  content()
   return
 
 
@@ -115,3 +107,17 @@ visibleForTeacher = (boolean) ->
 postComment = (boolean) ->
   $('#annotation_post_as_comment').prop("checked", boolean)
   return
+
+
+
+# select correct subcategory (this is not automatically done by the rails form
+# as the content is dynamically rendered).
+contentRadio = document.getElementById('annotation_category_content')
+if contentRadio.checked
+  content()
+  submitButton.disabled = false
+  subtext = document.getElementById('annotation_subtext').textContent.replace(/[^a-z]/g, '')
+  switch subtext
+    when "definition" then document.getElementById('content-category-definition').checked = true
+    when "argument" then document.getElementById('content-category-argument').checked = true
+    when "strategy" then document.getElementById('content-category-strategy').checked = true

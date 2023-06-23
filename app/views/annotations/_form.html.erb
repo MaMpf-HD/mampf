@@ -11,6 +11,10 @@
       <div id="annotation_id">
         <%= @annotation.id %>
       </div>
+       <!-- for prefilling the edit form -->
+      <div id="annotation_subtext">
+        <%= @annotation.subtext %>
+      </div>
     </div>
 
     <!-- COMMENT TEXT AREA -->
@@ -83,7 +87,7 @@
     <br>
 
     <div id="specific">
-      <%= j render partial: "annotations/form_content_definition"%>
+      <!-- SPECIFIC CONTENT, DEPENDING ON THE SELECTED CATEGORY, IS INSERTED HERE -->
     </div>
 
     <br>
