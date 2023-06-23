@@ -33,24 +33,35 @@ RUN nvm current
 RUN node --version
 RUN npm --version
 
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && \
-    apt-get install -y lsb-release && \
-    # https://wiki.postgresql.org/wiki/Apt
-    echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
-    curl -sS https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && echo "deb http://apt.postgresql.org/pub/repos/apt/ $(lsb_release -cs)-pgdg main" | tee  /etc/apt/sources.list.d/pgdg.list && \
-    apt-get update && \
-    apt-get install --no-install-recommends -y ffmpeg ghostscript imagemagick \
-            libarchive-tools pdftk postgresql-client-13 sqlite3 wget \
-            wait-for-it yarn shared-mime-info && \
-    rm -rf /var/lib/apt/lists/* && apt-get clean
+# Install Yarn (see https://yarnpkg.com/getting-started/install)
+RUN corepack enable
+RUN corepack prepare yarn@stable --activate
 
+# Setup Postgres repository
+# see https://wiki.postgresql.org/wiki/Apt
+RUN apt-get update
+RUN apt-get install -y lsb-release
+RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+# update again with the new repository for postgres added
+RUN apt-get update
+RUN apt-get install -y postgresql-client-13
+
+# Install other dependencies
+RUN apt-get install -y --no-install-recommends \
+        ffmpeg imagemagick pdftk ghostscript shared-mime-info \
+        libarchive-tools sqlite3 wget wait-for-it
+
+# Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
+
+
 WORKDIR /usr/src/app
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-RUN bundle install && \
-    yarn install --production=false
+RUN bundle install
+RUN yarn plugin import workspace-tools
+RUN yarn workspaces focus
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
