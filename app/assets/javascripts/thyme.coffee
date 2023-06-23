@@ -962,7 +962,11 @@ $(document).on 'turbolinks:load', ->
     comment = annotation.comment.replaceAll('\n', '<br>')
     headColor = lightenUp(annotation.color, 2)
     backgroundColor = lightenUp(annotation.color, 3)
-    $('#annotation-infobar').empty().append(annotation.category)
+    if annotation.subtext != null
+      add = " (" + annotation.subtext + ")"
+    else
+      add = ""
+    $('#annotation-infobar').empty().append(annotation.category + add)
     $('#annotation-infobar').css('background-color', headColor)
     $('#annotation-infobar').css('text-align', 'center')
     $('#annotation-comment').empty().append(comment)
