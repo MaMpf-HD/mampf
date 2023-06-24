@@ -42,11 +42,12 @@ RUN npm --version
 # see https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
 # this command copies the currently active nvm node version to /usr/local/ directory
 # so that it can be used by the app user later
-RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/nodejs; chmod 755 $n/bin/node; chmod 755 $n/bin/nvm; cp -r $n/{bin,lib,share} /usr/local
+RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; cp -r $n/{bin,lib,share} /usr/local
 
 # Install Yarn (see https://yarnpkg.com/getting-started/install)
+# https://github.com/nodejs/corepack#corepack-prepare--nameversion
 RUN corepack enable
-RUN corepack prepare yarn@stable --activate --output /usr/local/yarn-corepack.tgz
+RUN corepack prepare yarn@stable --activate --output "/usr/local/yarn-corepack.tgz"
 
 # Install other dependencies
 RUN apt-get update
