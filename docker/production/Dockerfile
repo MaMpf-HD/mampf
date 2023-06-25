@@ -34,28 +34,35 @@ RUN source "${NVM_DIR}/nvm.sh" && nvm install "${NODE_VERSION}" && \
 ENV NODE_PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/"
 ENV PATH="${NODE_PATH}:${PATH}"
 
-RUN nvm current
-RUN node --version
+RUN nvm current; node --version
 RUN npm --version
-
-# Make Node.js tooling available for other users
-# see https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
-# this command copies the currently active nvm node version to /usr/local/ directory
-# so that it can be used by the app user later
-RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; cp -r $n/{bin,lib,share} /usr/local
 
 # Install Yarn (see https://yarnpkg.com/getting-started/install)
 # https://github.com/nodejs/corepack#corepack-prepare--nameversion
+ENV YARN_VERSION=1.22.19
 RUN corepack enable
-RUN corepack prepare yarn@stable --activate --output "/usr/local/yarn-corepack.tgz"
+RUN corepack prepare "yarn@${YARN_VERSION}" --activate
+RUN which yarn; yarn --version
+# even though this is not specified in the corepack documentation, we need to
+# run "set version", otherwise the app user will have an old version of
+# yarn avaialble instead of our specified version
+RUN yarn set version "${YARN_VERSION}"
+
+# Make Node.js tooling available for other users
+# see https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
+# this command copies the currently active nvm node tooling to /usr/local/
+# so that it can be used by the app user later
+RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/yarn; cp -r $n/{bin,lib,share} /usr/local
 
 # Install other dependencies
 RUN apt-get update
 RUN apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info
 
+# Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
+# Manage users
 RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
     mkdir /private /caches && chown app:app /private /caches
 
@@ -64,15 +71,15 @@ RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
 WORKDIR /usr/src/app
 USER app
 
-# Activate yarn
-RUN corepack hydrate /usr/local/yarn-corepack.tgz --activate
+# Log Node.js tooling versions
+RUN which node; node --version
+RUN which yarn; yarn --version
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus --production
+RUN yarn install
 
 COPY --chown=app:app . /usr/src/app
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \

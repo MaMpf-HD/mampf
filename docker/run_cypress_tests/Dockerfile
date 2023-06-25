@@ -34,8 +34,15 @@ RUN node --version
 RUN npm --version
 
 # Install Yarn (see https://yarnpkg.com/getting-started/install)
+# https://github.com/nodejs/corepack#corepack-prepare--nameversion
+ENV YARN_VERSION=1.22.19
 RUN corepack enable
-RUN corepack prepare yarn@stable --activate
+RUN corepack prepare "yarn@${YARN_VERSION}" --activate
+RUN which yarn; yarn --version
+# even though this is not specified in the corepack documentation, we need to
+# run "set version", otherwise the app user will have an old version of
+# yarn avaialble instead of our specified version
+RUN yarn set version "${YARN_VERSION}"
 
 # Setup Postgres repository
 # see https://wiki.postgresql.org/wiki/Apt
@@ -60,8 +67,7 @@ WORKDIR /usr/src/app
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
-RUN yarn plugin import workspace-tools
-RUN yarn workspaces focus
+RUN yarn install
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
