@@ -26,7 +26,6 @@
 
 /node_modules
 /yarn-error.log
-.yarn
 
 /solr/data
 /solr/test/data
