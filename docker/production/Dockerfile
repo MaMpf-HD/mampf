@@ -78,7 +78,7 @@ COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js 
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
-RUN yarn install
+RUN yarn install --production=true
 
 COPY --chown=app:app . /usr/src/app
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \
