@@ -55,8 +55,8 @@ RUN yarn set version "${YARN_VERSION}"
 RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/yarn; cp -r $n/{bin,lib,share} /usr/local
 
 # Install other dependencies
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info
 
 # Setup ImageMagick
