@@ -57,7 +57,6 @@ RUN apt update && \
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
-
 WORKDIR /usr/src/app
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
