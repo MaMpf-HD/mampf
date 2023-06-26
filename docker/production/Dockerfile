@@ -71,9 +71,8 @@ RUN groupadd -g 501 app && useradd -g 501 -u 501 -m -d /usr/src/app app && \
 WORKDIR /usr/src/app
 USER app
 
-# Log Node.js tooling versions
-RUN which node; node --version
-RUN which yarn; yarn --version
+# Log Node.js tooling versions that the `app` user uses
+RUN which node; node --version; which yarn; yarn --version
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 
