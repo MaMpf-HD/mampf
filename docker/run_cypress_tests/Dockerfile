@@ -7,8 +7,10 @@ RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
-FROM ruby:3.1.4
+# https://hub.docker.com/_/ruby/
+FROM ruby:3.1.4-bullseye
 ENV RAILS_ENV=production
+
 EXPOSE 3000
 
 # use "--login" option, so that .bashrc is sourced in new shells
@@ -44,20 +46,12 @@ RUN which yarn; yarn --version
 # yarn avaialble instead of our specified version
 RUN yarn set version "${YARN_VERSION}"
 
-# Setup Postgres repository
-# see https://wiki.postgresql.org/wiki/Apt
-RUN apt-get update
-RUN apt-get install -y lsb-release
-RUN curl https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor | tee /etc/apt/trusted.gpg.d/apt.postgresql.org.gpg >/dev/null
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-# update again with the new repository for postgres added
-RUN apt-get update
-RUN apt-get install -y postgresql-client-13
-
 # Install other dependencies
+# Note that postgresql-client-13 is available through debian bullseye
+# that the ruby image is based on
 RUN apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools sqlite3 wget wait-for-it
+        libarchive-tools postgresql-client-13 sqlite3 wget wait-for-it
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
