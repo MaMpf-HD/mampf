@@ -46,6 +46,7 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.new(category: :note, color: helpers.annotation_color(1))
     @total_seconds = params[:total_seconds]
     @medium_id = params[:mediumId]
+    render :edit
   end
 
   def show
