@@ -952,8 +952,10 @@ $(document).on 'turbolinks:load', ->
     offset = marker.parent().offset().left + ratio * size + 3
     marker.offset({ left: offset })
     marker.on 'click', ->
-      updateAnnotationArea(annotation)
+      if iaButton.dataset.status == "false"
+        $(iaButton).trigger('click')
       $('#caption').hide()
+      updateAnnotationArea(annotation)
       $('#annotation-caption').show()
     return
 
