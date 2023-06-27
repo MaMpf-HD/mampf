@@ -1,6 +1,6 @@
 <div id="annotation-form">
   <%= form_with model: @annotation do |f| %>
-    <b>Time:</b> &nbsp <%= TimeStamp.new(total_seconds: @total_seconds).hms_colon_string %>
+    <b><%= t('admin.annotation.time') %></b> &nbsp <%= TimeStamp.new(total_seconds: @total_seconds).hms_colon_string %>
 
     <br><br>
 
@@ -18,13 +18,13 @@
     </div>
 
     <!-- COMMENT TEXT AREA -->
-    <b>Comment:</b>
+    <b><%= t('admin.annotation.comment') %></b>
     <%= f.text_area :comment, class: 'form-control' %>
 
     <br>
 
     <!-- COLOR SELECTION -->
-    <b>Color:</b>
+    <b><%= t('admin.annotation.color') %></b>
     <div id="annotation-color-picker">
       <% for i in 1..15 do %>
         <%= f.radio_button :color,
@@ -44,14 +44,14 @@
     <br>
 
     <!-- CATEGORY RADIO BUTTON -->
-    <b>Category:</b>
+    <b><%= t('admin.annotation.category') %></b>
     <div class="form-row ml-2", id="category-radios">
       <div class="custom-control custom-radio custom-control-inline">
         <%= f.radio_button :category,
                            :note,
                            class: 'custom-control-input' %>
         <%= f.label :category,
-                    'note',
+                    t('admin.annotation.note'),
                     value: :note,
                     class: 'custom-control-label' %>
       </div>
@@ -60,7 +60,7 @@
                            :content,
                            class: 'custom-control-input' %>
         <%= f.label :category,
-                    'content',
+                    t('admin.annotation.content'),
                     value: :content,
                     class: 'custom-control-label' %>
       </div>
@@ -69,7 +69,7 @@
                            :mistake,
                            class: 'custom-control-input' %>
         <%= f.label :category,
-                    'mistake',
+                    t('admin.annotation.mistake'),
                     value: :mistake,
                     class: 'custom-control-label' %>
       </div>
@@ -78,7 +78,7 @@
                            :presentation,
                            class: 'custom-control-input' %>
         <%= f.label :category,
-                    'presentation',
+                    t('admin.annotation.presentation'),
                     value: :presentation,
                     class: 'custom-control-label' %>
       </div>
@@ -96,7 +96,7 @@
     <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
     <% if annotations_status == 1 %>
       <%= f.label :visible_for_teacher, class: "checkbox inline" do %>
-        <span><b>Visible for teacher? &nbsp</b></span>
+        <span><b><%= t('admin.annotation.visible_for_teacher') %> &nbsp</b></span>
         <%= f.check_box :visible_for_teacher %>
       <% end %>
       <br>
@@ -104,26 +104,19 @@
       <%= f.hidden_field :visible_for_teacher, value: false %>
     <% end %>
 
-    <span><b>Post as comment? &nbsp</b></span>
+    <span><b><%= t('admin.annotation.post_as_comment') %> &nbsp</b></span>
     <%= f.check_box :post_as_comment, id: "post-as-comment" %>
 
     <br>
 
-    <!-- BUTTONS -->
-    <% if @annotation.id == nil %>
-    <%    button_text = "Create Annotation" %>
-    <% else %>
-    <%    button_text = "Save Changes" %>
-    <% end %>
-
     <div class="modal-footer">
-      <%= f.submit button_text, class: "btn btn-primary", id: "submit-button" %>
+      <%= f.submit t('buttons.save'), class: "btn btn-primary", id: "submit-button" %>
       <% if @annotation.id != nil %>
         <button type="button"
                 id="delete-button"
                 class="btn btn-secondary"
                 data-dismiss="modal">
-        Delete Annotation
+        <%= t('buttons.delete') %>
       <% end %>
       <button type="button"
               class="btn btn-secondary"
@@ -131,4 +124,12 @@
       <%= t('buttons.cancel') %>
     </div>
   <% end %>
+</div>
+
+<div id="warning"
+     data-publishing="<%= t('admin.annotation.warning_message.publishing') %>"
+     data-mistake="<%= t('admin.annotation.warning_message.mistake') %>"
+     data-one-close-annotation="<%= t('admin.annotation.warning_message.one_close_annotation') %>"
+     data-multiple-close-annotations1="<%= t('admin.annotation.warning_message.multiple_close_annotations_1') %>"
+     data-multiple-close-annotations2="<%= t('admin.annotation.warning_message.multiple_close_annotations_2') %>">
 </div>

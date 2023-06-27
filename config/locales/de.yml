@@ -322,6 +322,45 @@ de:
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
+    annotation:
+      inherit_from_lecture: 'von Vorlesung erben'
+      annotations: 'Annotationen'
+      time: 'Zeit:'
+      comment: 'Kommentar'
+      color: 'Farbe'
+      category: 'Kategorie'
+      note: 'Notiz'
+      content: 'Inhalt'
+      mistake: 'Fehler'
+      presentation: 'Darstellung'
+      where_problem: >
+        Wo liegt das Problem?
+      definition: 'Definition'
+      argument: 'Argument'
+      strategy: 'Beweisstrategie'
+      further_help: 'Du brauchst weitere Hilfe? Dann klicke auf:'
+      warning_message:
+        publishing: >
+          Jeder, der diese Vorlesung abonniert hat, wird deinen Kommentar
+          lesen können, sobald du auf "Speichern" klickst.
+          Falls du das nicht möchtest, entferne bitte wieder den Haken
+          dieser Checkbox.
+        mistake: >
+          Bevor du diesen Kommentar abschickst, überprüfe außerdem bitte,
+          ob bereits ein Kommentar zu dem von dir gefundenen Fehler existiert.
+        one_close_annotation: >
+          In der Nähe deiner Annotation gibt es bereits eine veröffentlichte
+          Fehler-Annotation.
+        multiple_close_annotations_1: "In der Nähe deiner Annotation gibt es bereits "
+        multiple_close_annotations_2: " veröffentliche Fehler-Annotationen."
+        permission: "Dir fehlen die Rechte, um diese Annotation zu bearbeiten."
+      visible_for_teacher: 'Für DozentIn sichtbar?'
+      post_as_comment: 'Als Kommentar veröffentlichen?'
+      toggle:
+        note: "Notiz-Annotationen ein-/ausblenden"
+        content: "Inhalt-Annotationen ein-/ausblenden"
+        mistake: "Fehler-Annotationen ein-/ausblenden"
+        presentation: "Darstellung-Annotationen ein-/ausblenden"
     announcement:
       help: >
         Hier kannst Du den Text eingeben. Du kannst LaTeX benutzen
@@ -371,6 +410,7 @@ de:
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       comments_disabled: >
         Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
+      enable_emergency_button: 'Emergency-Button aktivieren?'
       new_notifications: 'neue Benachrichtigungen'
       new_media: 'neue Medien'
       new_posts: 'neue Forenbeiträge'
@@ -620,6 +660,12 @@ de:
       script_based: >
           unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
+      emergency_link: 'Link für den Emergency-Button'
+      emergency_link_no_link: 'kein Link'
+      emergency_link_lecture_link: 'Vorlesungslink'
+      emergency_link_direct_link: 'direkter Link'
+      enter_emergency_link: 'Emergency-Link eingeben:'
+      select_helpdesk: 'Helpdesk auswählen:'
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'

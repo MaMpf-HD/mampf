@@ -6,14 +6,11 @@ submitButton = document.getElementById('submit-button')
 postAsComment = document.getElementById('post-as-comment')
 
 postAsComment.addEventListener 'change', (evt) ->
-  message = "Everyone who subscribed this lecture will be able to read your comment once " +
-            "you click \"Create Annotation\". " +
-            "If this is not what you intended to do, please unselect this checkbox."
+  message = document.getElementById('warning').dataset.publishing
   if this.checked
     mistakeRadio = document.getElementById('annotation_category_mistake')
     if mistakeRadio.checked
-      message += "\n\nBefore submitting, please also check, if someone already posted " +
-                 " a comment concerning this mistake. "
+      message += "\n" + document.getElementById('warning').dataset.mistake
       medId = thyme.dataset.medium
       rad = 60 # annotations that are inside this radius are considered as "near". 
       $.ajax Routes.near_mistake_annotations_path(),
@@ -27,9 +24,11 @@ postAsComment.addEventListener 'change', (evt) ->
         success: (c) ->
           if c != undefined && c != 0
             if c == 1
-              message += "There already is a (public) mistake annotation that is close to yours."
+              message += document.getElementById('warning').dataset.oneCloseAnnotation
             else
-              message += "There are already " + c + " (public) mistake annotations that are close to yours."
+              message += document.getElementById('warning').dataset.multipleCloseAnnotations1 +
+                         "" + c +
+                         document.getElementById('warning').dataset.multipleCloseAnnotations2
             alert message
     else
       alert message

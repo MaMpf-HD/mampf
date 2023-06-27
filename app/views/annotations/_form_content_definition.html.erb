@@ -7,6 +7,6 @@
 	<% elsif status == "direct_link" %>
     <% link_name = link %>
   <% end %>
-  You need further help? Then click on: <br>
+  <%= t('admin.annotation.further_help') %> <br>
 	<a href="<%= link %>"><%= link_name %></a>
 </div>

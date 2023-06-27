@@ -329,16 +329,27 @@ $(document).on 'turbolinks:load', ->
       updateAnnotationArea(annotation)
     return
 
+  categoryLocale = (category, subtext) ->
+    switch category
+      when "note" then c = document.getElementById('annotation-locales').dataset.note
+      when "content" then c = document.getElementById('annotation-locales').dataset.content
+      when "mistake" then c = document.getElementById('annotation-locales').dataset.mistake
+      when "presentation" then c = document.getElementById('annotation-locales').dataset.presentation
+    if subtext == null
+      return c
+    switch subtext
+      when "definition" then s = document.getElementById('annotation-locales').dataset.definition
+      when "strategy" then s = document.getElementById('annotation-locales').dataset.strategy
+      when "presentation" then s = document.getElementById('annotation-locales').dataset.presentation
+    return c + " (" + s + ")"
+
   updateAnnotationArea = (annotation) ->
     activeAnnotationId = annotation.id
+    head = categoryLocale(annotation.category, annotation.subtext)
     comment = annotation.comment.replaceAll('\n', '<br>')
     headColor = lightenUp(annotationColor(annotation.category), 2)
     backgroundColor = lightenUp(annotationColor(annotation.category), 3)
-    if annotation.subtext != null
-      add = " (" + annotation.subtext + ")"
-    else
-      add = ""
-    $('#annotation-infobar').empty().append(annotation.category)
+    $('#annotation-infobar').empty().append(head)
     $('#annotation-infobar').css('background-color', headColor)
     $('#annotation-infobar').css('text-align', 'center')
     $('#annotation-comment').empty().append(comment)

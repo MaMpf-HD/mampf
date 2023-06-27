@@ -87,28 +87,30 @@
         <span id="toggle-mistake-annotations">
           <label class="switch">
             <input id="toggle-mistake-annotations-check" type="checkbox" checked="true">
-            <span class="slider round" data-toggle="tooltip" title="toggle mistake annotations"></span>
+            <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.mistake')%>"></span>
           </label>
         </span>
         <span id="toggle-presentation-annotations">
           <label class="switch">
             <input id="toggle-presentation-annotations-check" type="checkbox" checked="true">
-            <span class="slider round" data-toggle="tooltip" title="toggle presentation annotations"></span>
+            <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.presentation')%>"></span>
           </label>
         </span>
         <span id="toggle-content-annotations">
           <label class="switch">
             <input id="toggle-content-annotations-check" type="checkbox" checked="true">
-            <span class="slider round" data-toggle="tooltip" title="toggle content annotations"></span>
+            <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.content')%>"></span>
           </label>
         </span>
         <span id="toggle-note-annotations">
           <label class="switch">
             <input id="toggle-note-annotations-check" type="checkbox" checked="true">
-            <span class="slider round" data-toggle="tooltip" title="toggle note annotations"></span>
+            <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.note')%>"></span>
           </label>
         </span>
       </div>
     </div>
   </div>
 </div>
+
+<%= render partial: "annotations/annotation_locales" %>

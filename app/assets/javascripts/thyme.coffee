@@ -957,16 +957,27 @@ $(document).on 'turbolinks:load', ->
       $('#annotation-caption').show()
     return
 
+  categoryLocale = (category, subtext) ->
+    switch category
+      when "note" then c = document.getElementById('annotation-locales').dataset.note
+      when "content" then c = document.getElementById('annotation-locales').dataset.content
+      when "mistake" then c = document.getElementById('annotation-locales').dataset.mistake
+      when "presentation" then c = document.getElementById('annotation-locales').dataset.presentation
+    if subtext == null
+      return c
+    switch subtext
+      when "definition" then s = document.getElementById('annotation-locales').dataset.definition
+      when "strategy" then s = document.getElementById('annotation-locales').dataset.strategy
+      when "presentation" then s = document.getElementById('annotation-locales').dataset.presentation
+    return c + " (" + s + ")"
+
   updateAnnotationArea = (annotation) ->
     activeAnnotationId = annotation.id
+    head = categoryLocale(annotation.category, annotation.subtext)
     comment = annotation.comment.replaceAll('\n', '<br>')
     headColor = lightenUp(annotation.color, 2)
     backgroundColor = lightenUp(annotation.color, 3)
-    if annotation.subtext != null
-      add = " (" + annotation.subtext + ")"
-    else
-      add = ""
-    $('#annotation-infobar').empty().append(annotation.category + add)
+    $('#annotation-infobar').empty().append(head)
     $('#annotation-infobar').css('background-color', headColor)
     $('#annotation-infobar').css('text-align', 'center')
     $('#annotation-comment').empty().append(comment)
@@ -1001,7 +1012,7 @@ $(document).on 'turbolinks:load', ->
       }
       success: (permitted) ->
         if permitted == "false"
-          alert "You don't have the permission to edit this annotation!"
+          alert document.getElementById('annotation-locales').dataset.permission
       return
     # close listener
     $('#annotation-close-button').on 'click', ->

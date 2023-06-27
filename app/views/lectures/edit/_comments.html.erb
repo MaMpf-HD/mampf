@@ -44,14 +44,14 @@
           </div>
           <!-- EMERGENCY BUTTON -->
           <div class="form-group">
-            Enable Emergency Button?
+            <%= t('admin.lecture.enable_emergency_button') %>
             <div class="form-row ml-2">
               <div class="custom-control custom-radio custom-control-inline">
                 <%= f.radio_button :annotations_status,
                                    1,
                                    class: 'custom-control-input' %>
                 <%= f.label :annotations_status,
-                            'yes',
+                            t('basics.yes_lc'),
                             value: 1,
                             class: 'custom-control-label' %>
               </div>
@@ -60,7 +60,7 @@
                                    -1,
                                    class: 'custom-control-input' %>
                 <%= f.label :annotations_status,
-                            'no',
+                            t('basics.no_lc'),
                             value: -1,
                             class: 'custom-control-label' %>
               </div>
