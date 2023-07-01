@@ -202,9 +202,21 @@ class Commontator::CommentsController < Commontator::ApplicationController
                     .where(unread_comments: false)
                     .update_all(unread_comments: true)
 
-      # make sure that the generated comment is marked as read by the creator
-      # so it is not listed as a new comment in the comment index
-      Reader.find_or_create_by(user: current_user, thread: @commontator_thread)
-            .update(updated_at: Time.now)
+      # make sure that the thread associated to this comment is marked as read
+      # by the comment creator (unless some other user posted a comment in it
+      # that has not yet been read)
+      @reader = Reader.find_or_create_by(user: current_user,
+                                         thread: @commontator_thread)
+      if unseen_comments?
+        @update_icon = true
+        return
+      end                                  
+      @reader.update(updated_at: Time.now)
+    end
+
+    def unseen_comments?
+      @commontator_thread.comments.any? do |c| 
+        c.creator != current_user && c.created_at > @reader.updated_at
+      end
     end
 end
