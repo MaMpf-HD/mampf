@@ -210,12 +210,12 @@ class Commontator::CommentsController < Commontator::ApplicationController
       if unseen_comments?
         @update_icon = true
         return
-      end                                  
-      @reader.update(updated_at: Time.now)
+      end
+      @reader.update(updated_at: Time.current)
     end
 
     def unseen_comments?
-      @commontator_thread.comments.any? do |c| 
+      @commontator_thread.comments.any? do |c|
         c.creator != current_user && c.created_at > @reader.updated_at
       end
     end
