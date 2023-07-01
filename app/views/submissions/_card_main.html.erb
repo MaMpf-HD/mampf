@@ -22,10 +22,10 @@
                 <%= submission.token %>
               </span>
               <i class="clipboardpopup far fa-copy clickable
-                        text-secondary clipboard-btn ml-3
+                        text-secondary clipboard-btn ms-3
                         clipboard-button"
                 data-clipboard-text="<%= submission.token %>"
-                data-toggle="tooltip"
+                data-bs-toggle="tooltip"
                 data-id="<%= assignment.id %>"
                 title="<%= t('buttons.copy_to_clipboard') %>">
                 <span class="clipboardpopuptext token-clipboard-popup"
@@ -35,7 +35,7 @@
               </i>
               <%= link_to '',
                           refresh_submission_token_path(submission),
-                          class: 'fas fa-sync-alt text-secondary ml-2',
+                          class: 'fas fa-sync-alt text-secondary ms-2',
                           id: 'refreshTokenButton',
                           data: { toggle: 'tooltip',
                                   placement: 'bottom' },
@@ -55,12 +55,12 @@
               <%= link_to raw(t('basics.submission') + ' &darr;'),
                           show_submission_manuscript_path(submission),
                           target: :_blank,
-                          class: 'badge badge-secondary' %>
+                          class: 'badge bg-secondary' %>
               <% if submission.correction %>
                 <%= link_to raw(t('basics.correction') + ' &darr;') ,
                           show_correction_path(submission),
                           target: :_blank,
-                          class: 'badge badge-secondary' %>
+                          class: 'badge bg-secondary' %>
               <% end %>
             <% else %>
               <%= t('submission.no_manuscript_yet') %>
@@ -183,16 +183,17 @@
                       data: { color: 'btn-outline-primary' } %>
         <% end %>
         <% if assignment.in_grace_period? %>
-          <i class="fas fa-2x fa-exclamation-circle clickable"
-             id="late-submission-warning"
-             data-toggle="popover"
-             data-content="<%= t('submission.late_submission_warning_html',
-                          friendly_deadline: l(assignment.friendly_deadline,
-                                               format: :short)) %>"
-             data-html="true"
-             data-trigger="hover"
-             title="<%= t('basics.attention') %>">
-          </i>
+          <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ms-2',
+                    tabindex: -1,
+                    'data-bs-toggle': 'popover',
+                    'data-bs-trigger': 'hover',
+                    'data-bs-placement': 'left',
+                    'data-bs-container': 'body',
+                    'data-bs-content': t('submission.late_submission_warning_html',
+                                         friendly_deadline: l(assignment.friendly_deadline,
+                                         format: :short)) ,
+                    'data-bs-html': true,
+                    title: t('basics.attention') %>
         <% end %>
       </div>
     </div>

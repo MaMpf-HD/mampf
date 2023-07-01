@@ -11,17 +11,19 @@
       <div class="col-6">
         <%= link_to t('buttons.create_medium'),
                     new_medium_path(params:
-                                      { sort: 'Kaviar',
-                                        teachable_id: lecture.id,
-                                        teachable_type: 'Lecture' }),
+                                    { 
+                                      sort: 'Kaviar',
+                                      teachable_id: lecture.id,
+                                      teachable_type: 'Lecture'
+                                    }),
                     class: 'btn btn-sm btn-secondary new-in-lecture',
                     id: 'create-new-medium',
                     remote: true %>
       </div>
-      <div class="col-2 text-right">
+      <div class="col-2 text-end">
         <i id="hide-media-button"
            class="far fa-window-close clickable"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            title="<%= t('buttons.hide_media') %>">
         </i>
       </div>
@@ -37,7 +39,7 @@
             <li class="nav-item w-100">
               <a class="nav-link <%= active(s == 'kaviar') %>"
                  id="<%= s %>-tab"
-                 data-toggle="tab" href="#<%= s %>-media" role="tab"
+                 data-bs-toggle="tab" href="#<%= s %>-media" role="tab"
                  aria-controls="<%= s%>-media" aria-selected="true"
                  data-sort="<%= media_types[s].first %>">
                 <%= media_names[s] %>

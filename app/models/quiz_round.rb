@@ -57,7 +57,7 @@ class QuizRound
   end
 
   def badge
-    'badge badge-' + (@correct ? 'success' : 'danger')
+    'badge bg-' + (@correct ? 'success' : 'danger')
   end
 
   def statement

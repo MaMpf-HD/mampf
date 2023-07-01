@@ -9,13 +9,13 @@
     <% end %>
   </div>
   <% if input == question.answer_scheme %>
-    <div class="col-1 text-right">
+    <div class="col-1 text-end">
       <% unless answer.explanation.blank? %>
-        <span class="text-right">
+        <span class="text-end">
           <i class="far fa-question-circle"
              id="reveal-explanation-<%= old_id %>-<%= answer.id %>"
              style="cursor: pointer;"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              data-placement="right"
              title="<%= t('admin.quiz.why_correct') %>">
           </i>
@@ -37,7 +37,7 @@
        <%= hide_as_class(input == question.answer_scheme || input[answer.id] == answer.value) %>"
        id="explanation-<%= old_id %>-<%= answer.id %>">
     <% unless answer.explanation.blank? %>
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= t('admin.quiz.reason') %>:
       </span>
       <%= answer.conditional_explanation(input[answer.id] == answer.value) %>

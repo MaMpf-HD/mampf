@@ -1,7 +1,8 @@
 <%= form_with model: talk do |f| %>
-  <div class="form-row">
-    <div class="col-12 form-group">
-      <%= f.label :title, t('basics.title') %>
+  <div class="row">
+    <div class="col-12 mb-3">
+      <%= f.label :title, t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.lecture.info.chapter_title'),
                    false) %>
       <%= f.text_field :title, { class: 'form-control',
@@ -14,7 +15,7 @@
       <%= f.label :date, t('basics.date') %>
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-talk-date-button"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          data-count="1"
          title="<%= t('admin.tag.create') %>">
       </a>
@@ -30,7 +31,8 @@
     </div>
     <div class="col-12 mb-3">
       <%= f.label :speaker_ids,
-                  t('admin.talk.speakers') %>
+                  t('admin.talk.speakers'),
+                  class: "form-label" %>
       <%= f.select :speaker_ids,
                    [[]],
                    {},
@@ -45,10 +47,11 @@
                              modal: true } } %>
     </div>
     <% if lecture.talks.exists? %>
-      <div class="col-12 form-group">
+      <div class="col-12 mb-3">
         <%= f.label :predecessor,
                     t('admin.lecture.insert_after_chapter',
-                      chapter_name: t("basics.talk")) %>
+                    chapter_name: t("basics.talk")),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.insert_after_chapter',
                        chapter_name: t("basics.talk")),
                      false) %>
@@ -56,7 +59,7 @@
                      options_for_select([[t('basics.at_the_beginning'), 0]] +
                                         lecture.select_talks,
                                         lecture.last_talk_by_position.position) ,
-                                 {}, { class: 'form-control' } %>
+                                 {}, { class: 'form-select' } %>
       </div>
     <% end %>
   </div>
@@ -85,7 +88,7 @@
       <%= f.submit t('buttons.save'), class: 'btn btn-sm btn-primary' %>
       <button type="button"
               class="btn btn-sm btn-secondary"
-              data-dismiss="modal">
+              data-bs-dismiss="modal">
         <%= t('buttons.cancel') %>
       </button>
     </div>

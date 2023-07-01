@@ -11,23 +11,25 @@
                   method: :post,
                   local: true,
                   html: { target: :_blank } do |f| %>
-      <div class="form-row my-2">
+      <div class="row my-2">
         <div class="col-auto">
           <%= f.label :random_quiz_count,
-                      t('quiz.number_of_questions_label') %>
+                      t('quiz.number_of_questions_label'),
+                      class: "form-label" %>
           <%= helpdesk(t('quiz.info.reduced_questions'), false) %>
         </div>
-        <div class="col-auto ml-2">
+        <div class="col-auto ms-2">
           <%= f.select :random_quiz_count,
                        options_for_select([5, 10, 15]),
                        {},
-                       { class: 'form-control',
+                       { class: 'form-select',
                          data: { course: @course.id } } %>
         </div>
       </div>
       <% if @course.question_tags.count.positive? %>
         <%= f.label :search_course_tag_ids,
-                    t('quiz.compile_tags') %>
+                    t('quiz.compile_tags'),
+                    class: "form-label" %>
         <%= helpdesk(t('quiz.info.compile_tags'), false) %>
         <%= f.select :search_course_tag_ids,
                      [[]],
@@ -53,18 +55,11 @@
       </div>
     <% end %>
     <div class="mt-3">
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= t('basics.note') %>.
       </span>
       <%= t('test.notation') %>
-      <i class="far fa-question-circle helpdesk"
-         tabindex="-1"
-         data-toggle="popover"
-         data-trigger="focus"
-         title="<%= t('test.notation_header') %>"
-         data-content="<%= t('test.notation_examples_html') %>"
-         data-html="true">
-      </i>
+      <%= helpdesk(t('test.notation_examples_html'), true, title: t('test.notation_header')) %>
     </div>
     <div class="row mt-4">
       <div class="col-12">

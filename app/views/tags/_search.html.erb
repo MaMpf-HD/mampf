@@ -16,16 +16,18 @@
               remote: true,
               method: :get do |f| %>
 
-  <div class="form-row mb-3 p-2">
-    <div class="form-group col-4 mx-3">
-      <%= f.label :title, t('basics.title') %>
+  <div class="row mb-3 p-2">
+    <div class="col-4">
+      <%= f.label :title, t('basics.title'),
+                  class: 'form-label' %>
       <%= helpdesk(t('admin.tag.info.search_title'), false) %>
       <%= f.text_field :title,
                        { class: 'form-control',
                          placeholder: t('search.tag_title') } %>
     </div>
-    <div class="form-group col-5">
-      <%= f.label :course_ids, t('basics.courses') %>
+    <div class="col-5">
+      <%= f.label :course_ids, t('basics.courses'),
+                  class: 'form-label' %>
       <%= helpdesk(t('admin.tag.info.search_course'), true) %>
       <%= f.select :course_ids,
                    options_for_select(Course.all
@@ -35,15 +37,16 @@
                    {},
                    { multiple: true,
                      class: 'selectize',
-                     disabled: true } %>
-      <div class="custom-control custom-checkbox mb-2">
+                     disabled: true,
+                     required: true } %>
+      <div class="form-check mb-2">
         <%= f.check_box :all_courses,
-                        class: 'custom-control-input',
+                        class: 'form-check-input',
                         checked: true,
                         data: { id: 'search_course_ids' } %>
         <%= f.label :all_courses,
                     t('basics.all'),
-                    { class: 'custom-control-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
       <button id="tags-edited-courses"
               type="button"
@@ -53,13 +56,14 @@
         <%= t('buttons.edited_courses') %>
       </button>
     </div>
-    <div class="col-2 form-group">
-      <%= f.label :per, t('basics.hits_per_page') %>
+    <div class="col-2">
+      <%= f.label :per, t('basics.hits_per_page'),
+                  class: 'form-label' %>
       <%= f.select :per,
                    options_for_select([[10,10],[20,20],[50,50]],[10]),
                    {},
                    {  id: 'tags_per',
-                      class: 'form-control'} %>
+                      class: 'form-select'} %>
 
     </div>
   </div>

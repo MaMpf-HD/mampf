@@ -6,6 +6,6 @@ $('#lesson-modal-content .selectize').each ->
   new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
 
 # activate popovers
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
 
 $('#lessonModal').modal('show')

@@ -4,6 +4,11 @@
       <div class="col-6">
         <h5>
           <%= t("admin.lecture.#{lecture.sort}_content") %>
+          <i id="show-media-button"
+             class="far fa-list-alt clickable"
+             data-bs-toggle="tooltip"
+             title="<%= t('admin.lecture.show_media') %>">
+          </i>
         </h5>
       </div>
       <div class="col-6">
@@ -17,7 +22,7 @@
   </div>
   <div class="card-body">
     <% if lecture.talks.any? %>
-      <div class="card-columns">
+      <div class="row" data-masonry='{"percentPosition": true }'>
         <% lecture.talks.each do |t| %>
             <%= render partial: 'lectures/edit/talk',
                        locals: { talk: t } %>

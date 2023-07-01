@@ -84,28 +84,6 @@ this.fillOptionsByAjax = function($selectizedSelection) {
         maxOptions: null,
         placeholder: placeholder,
         closeAfterSelect: true,
-        dropdownParent: parent,
-        onInitialize:function(){
-          this.popper = Popper.createPopper(this.control,this.dropdown, {
-          placement: "bottom-start",
-          modifiers: [
-            {
-              name: "sameWidth",
-              enabled: true,
-              fn: ({ state }) => {
-                state.styles.popper.width = `${state.rects.reference.width}px`;
-            },
-            phase: "beforeWrite",
-            requires: ["computeStyles"],
-            }
-          ]
-
-        });
-
-        },
-        onDropdownOpen:function(){
-          this.popper.update();
-        },
         load: function(query, callback) {
           var url;
           if (send_data || !loaded) {

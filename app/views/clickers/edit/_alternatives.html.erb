@@ -6,9 +6,9 @@
       <%= t('admin.clicker.alternatives') %>:
     </div>
     <% (2..6).each do |i| %>
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <input type="radio"
-               class="clickerAlternatives custom-control-input"
+               class="clickerAlternatives form-check-input"
                name="clickerAlternatives"
                id="clickerAlternatives_<%= i %>"
                data-clicker="<%= clicker.id %>"
@@ -16,7 +16,7 @@
                data-code="<%= clicker.code %>"
                <%= clicker.alternatives == i ? 'checked ' : ' ' %>
                <%= clicker.open? ? 'disabled ' : ' ' %>>
-        <label class="custom-control-label"
+        <label class="form-label form-check-label"
                for="clickerAlternatives_<%= i %>">
           <%= i %>
         </label>
@@ -24,7 +24,7 @@
     <% end %>
   </div>
   <% if user_signed_in? %>
-    <div class="col-4 text-right">
+    <div class="col-4 text-end">
       <button role="button"
               class="btn btn-sm btn-outline-secondary mt-2 associateClickerQuestion"
               data-change="false"
@@ -51,7 +51,7 @@
       <%= t('admin.clicker.associated_to_question') %>
     </div>
     <% if user_signed_in? %>
-      <div class="col-6 text-right">
+      <div class="col-6 text-end">
         <%= link_to t('admin.clicker.remove_question'),
                     remove_question_path(clicker),
                     class: 'btn btn-sm btn-outline-secondary mt-2',

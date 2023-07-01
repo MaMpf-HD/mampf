@@ -5,158 +5,184 @@
   </div>
 <% end %>
 <div class="accordion" id="subscriptionsAccordion">
-	<% if Term.active %>
-		<div class="card">
-			<div class="card-header clickable"
-					 role="tab"
-					 data-toggle="collapse"
-					 data-target="#collapseCurrentStuff">
-				<h4 class="<%= text_dark_link(@current_stuff.any?) %>"
-						id="currentStuffLink">
-					<%= t('profile.my_term_html', term: Term.active.to_label) %>
-				</h4>
-			</div>
-			<div class="subscriptionsCollapse <%= show_collapse(@current_stuff.any?) %>" id="collapseCurrentStuff"
-				 	 data-parent="#subscriptionsAccordion" data-link="#currentStuffLink">
-				<div class="card-body">
-					<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
-							 id="collapseCurrentStuffContent">
-						<% if @current_stuff.any? %>
-							<%= render partial: 'main/start/lecture',
-												 collection: @current_stuff,
-												 locals: { current: true,
-										 							 subscribed: true,
-									 								 parent: 'current_subscribed' },
-									 		 	 as: :lecture %>
-						<% end %>
-					</div>
-					<%= tag.div id: 'emptyCurrentStuff',
-											style: @current_stuff.any? ? 'display: none;' : ''  do %>
-						<%= t('profile.no_current_stuff') %>
-					<% end %>
-				</div>
-			</div>
-		</div>
-	<% end %>
-	<div class="card">
-		<div class="card-header clickable"
-				 role="tab"
-				 data-toggle="collapse"
-				 data-target="#collapseInactiveLectures">
-			<h4 class="<%= text_dark_link(@current_stuff.empty?) %>"
-					id="inactiveLecturesLink">
-				<%= t('profile.inactive_lectures') %>
-			</h4>
-		</div>
-		<div class="subscriptionsCollapse <%= show_collapse(@current_stuff.empty?) %>"
-				 id="collapseInactiveLectures"
-				 data-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
-			<div class="card-body">
-				<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
-						 id="collapseInactiveLecturesContent">
-					<% if @current_stuff.empty? %>
-						<%= render partial: 'main/start/lecture',
-											 collection: @inactive_lectures,
-											 locals: { current: false,
-									 							 subscribed: true,
-									 							 parent: 'inactive' },
-		  							 	 as: :lecture %>
-		  		<% end %>
-				</div>
-				<%= tag.div id: 'emptyInactiveLectures',
-									style: @current_stuff.empty? && @inactive_lectures&.empty? ? '' : 'display: none;' do %>
-				<%= t('profile.no_inactive_stuff') %>
-			<% end %>
-			</div>
-		</div>
-	</div>
-	<% if Term.active %>
-		<div class="card">
-			<div class="card-header clickable"
-					 role="tab"
-					 data-toggle="collapse"
-					 data-target="#collapseAllCurrent">
-				<h4 class="text-dark"
-						id="allCurrentLink">
-					<%= t('profile.active_nonsubscribed_lectures_html',
-								term: Term.active.to_label) %>
-				</h4>
-			</div>
-			<div class="collapse subscriptionsCollapse" id="collapseAllCurrent"
-					 data-parent="#subscriptionsAccordion" data-link="#allCurrentLink">
-				<div class="card-body">
-					<div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
-							 id="collapseAllCurrentContent">
-					</div>
-					<%= tag.div id: 'emptyAllCurrent',
-											style: 'display: none;' do %>
-						<%= t('profile.no_current_at_all') %>
-					<% end %>
-				</div>
-			</div>
-		</div>
-	<% end %>
-	<div class="card">
-		<div class="card-header clickable"
-				 role="tab"
-				 data-toggle="collapse"
-				 data-target="#collapseTalks">
-			<h4 class="text-dark"
-					id="talkLink">
-				<%= t('profile.my_talks') %>
-			</h4>
-		</div>
-		<div class="collapse subscriptionsCollapse" id="collapseTalks"
-				 data-parent="#subscriptionsAccordion"
-				 data-link="#talkLink">
-			<div class="card-body">
-				<%= render partial: 'main/start/talks',
-									 locals: { talks: @talks } %>
-			</div>
-		</div>
-	</div>
-	<div class="card">
-		<div class="card-header clickable"
-				 role="tab"
-				 data-toggle="collapse"
-				 data-target="#collapseLectureSearch">
-			<h4 class="text-dark"
-					id="lectureSearchLink">
-				<%= t('profile.lecture_search') %>
-			</h4>
-		</div>
-		<div class="collapse subscriptionsCollapse" id="collapseLectureSearch"
-				 data-parent="#subscriptionsAccordion"
-				 data-link="#lectureSearchLink">
-			<div class="card-body">
-				<%= render partial: 'main/start/lecture_search',
-									 locals: { results_as_list: false } %>
-				<div id="lecture-search-results">
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="card mb-3">
-		<div class="card-header clickable"
-				 role="tab"
-				 data-toggle="collapse"
-				 data-target="#collapseMediaSearch">
-			<h4 class="text-dark"
-					id="mediaSearchLink">
-				<%= t('profile.media_search') %>
-			</h4>
-		</div>
-		<div class="collapse subscriptionsCollapse" id="collapseMediaSearch"
-				 data-parent="#subscriptionsAccordion"
-				 data-link="#mediaSearchLink">
-			<div class="card-body">
-				<%= render partial: 'main/start/media_search',
-									 locals: { results_as_list: false,
-									 		   purpose: 'media' } %>
-				<div id="media-search-results">
-				</div>
-			</div>
-		</div>
-	</div>
+  <% if Term.active %>
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <button class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseCurrentStuff"
+                aria-expanded="true"
+                aria-controls="collapseCurrentStuff">
+          <h4 class="<%= text_dark_link(@current_stuff.any?) %>"
+              id="currentStuffLink">
+            <%= t('profile.my_term_html', term: Term.active.to_label) %>
+          </h4>
+        </button>
+      </div>
+      <div class="subscriptionsCollapse <%= show_collapse(@current_stuff.any?) %>"
+           id="collapseCurrentStuff"
+           data-bs-parent="#subscriptionsAccordion"
+           data-link="#currentStuffLink">
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
+               id="collapseCurrentStuffContent">
+            <% if @current_stuff.any? %>
+              <%= render partial: 'main/start/lecture',
+                         collection: @current_stuff,
+                         locals: { current: true,
+                                    subscribed: true,
+                                    parent: 'current_subscribed' },
+                           as: :lecture %>
+            <% end %>
+          </div>
+          <%= tag.div id: 'emptyCurrentStuff',
+                      style: @current_stuff.any? ? 'display: none;' : ''  do %>
+            <%= t('profile.no_current_stuff') %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="accordion-item">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseInactiveLectures"
+              aria-expanded="false"
+              aria-controls="collapseInactiveLectures">
+        <h4 class="text-dark"
+            id="inactiveLecturesLink">
+          <%= t('profile.inactive_lectures') %>
+        </h4>
+      </button>
+    </div>
+    <div class="subscriptionsCollapse <%= show_collapse(@current_stuff.empty?) %>"
+         id="collapseInactiveLectures"
+         data-bs-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
+      <div class="accordion-body">
+        <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
+             id="collapseInactiveLecturesContent">
+          <% if @current_stuff.empty? %>
+            <%= render partial: 'main/start/lecture',
+                       collection: @inactive_lectures,
+                       locals: { current: false,
+                                  subscribed: true,
+                                  parent: 'inactive' },
+                        as: :lecture %>
+          <% end %>
+        </div>
+        <%= tag.div id: 'emptyInactiveLectures',
+                  style: @current_stuff.empty? && @inactive_lectures&.empty? ? '' : 'display: none;' do %>
+        <%= t('profile.no_inactive_stuff') %>
+      <% end %>
+      </div>
+    </div>
+  </div>
+  <% if Term.active %>
+    <div class="accordion-item">
+      <div class="accordion-header">
+        <button class="accordion-button collapsed"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseAllCurrent"
+                aria-expanded="false"
+                aria-controls="collapseAllCurrent">
+          <h4 class="text-dark"
+              id="allCurrentLink">
+            <%= t('profile.active_nonsubscribed_lectures_html',
+                  term: Term.active.to_label) %>
+          </h4>
+        </button>
+      </div>
+      <div class="collapse subscriptionsCollapse" id="collapseAllCurrent"
+           data-bs-parent="#subscriptionsAccordion" data-link="#allCurrentLink">
+        <div class="accordion-body">
+          <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxxl-6"
+               id="collapseAllCurrentContent">
+          </div>
+          <%= tag.div id: 'emptyAllCurrent',
+                      style: 'display: none;' do %>
+            <%= t('profile.no_current_at_all') %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="accordion-item">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseTalks"
+              aria-expanded="false"
+              aria-controls="collapseTalks">
+        <h4 class="text-dark"
+            id="talkLink">
+          <%= t('profile.my_talks') %>
+        </h4>
+      </button>
+    </div>
+    <div class="collapse subscriptionsCollapse" id="collapseTalks"
+         data-bs-parent="#subscriptionsAccordion"
+         data-link="#talkLink">
+      <div class="accordion-body">
+        <%= render partial: 'main/start/talks',
+                   locals: { talks: @talks } %>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseLectureSearch"
+              aria-expanded="false"
+              aria-controls="collapseLectureSearch">
+        <h4 class="text-dark"
+            id="lectureSearchLink">
+          <%= t('profile.lecture_search') %>
+        </h4>
+      </button>
+    </div>
+    <div class="collapse subscriptionsCollapse" id="collapseLectureSearch"
+         data-bs-parent="#subscriptionsAccordion"
+         data-link="#lectureSearchLink">
+      <div class="accordion-body">
+        <%= render partial: 'main/start/lecture_search',
+                   locals: { results_as_list: false } %>
+        <div id="lecture-search-results">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item mb-3">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseMediaSearch"
+              aria-expanded="false"
+              aria-controls="collapseMediaSearch">
+        <h4 class="text-dark"
+            id="lectureSearchLink">
+          <%= t('profile.media_search') %>
+        </h4>
+      </button>
+    </div>
+    <div class="collapse subscriptionsCollapse" id="collapseMediaSearch"
+         data-bs-parent="#subscriptionsAccordion"
+         data-link="#mediaSearchLink">
+      <div class="accordion-body">
+        <%= render partial: 'main/start/media_search',
+                   locals: { results_as_list: false,
+                             purpose: 'media' } %>
+        <div id="media-search-results">
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 <%= render partial: 'profile/subscription_modal' %>

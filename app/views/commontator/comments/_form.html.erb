@@ -1,3 +1,5 @@
+<%= stylesheet_link_tag 'comments' %>
+
 <%
   # Views that use this partial must provide the following variable:
   # comment
@@ -55,28 +57,22 @@
     %>
   </div>
 <% end %>
-  <div class="custom-control custom-switch mb-2"
-       style="padding-left: 2.5rem;">
+  <div id="toggleCommentPreviewWrapper" class="form-check form-switch mb-2">
     <input type="checkbox"
-           class="custom-control-input commentPreviewSwitch"
+           class="form-check-input commentPreviewSwitch"
+           role="switch"
            id="<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-switch" :
                               "commontator-comment-#{comment.parent.id}-reply-switch" :
         "commontator-comment-#{comment.id}-edit-body-switch" %>">
-    <label class="custom-control-label"
+    <label class="form-check-label"
            for="<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-switch" :
                               "commontator-comment-#{comment.parent.id}-reply-switch" :
         "commontator-comment-#{comment.id}-edit-body-switch" %>">
       <%= t('basics.preview') %>
     </label>
-    <%= tag.i class: 'far fa-question-circle helpdesk subscriptionInfo',
-              tabindex: -1,
-              data: { toggle: 'popover',
-                      trigger: 'focus',
-                      content: t("commontator.comment.actions.preview"),
-                      html: true },
-              title: t('info') %>
+    <%= ApplicationController.helpers.helpdesk(t("commontator.comment.actions.preview"), true) %>
   </div>
   <div id='<%= new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body-preview" :

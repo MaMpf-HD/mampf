@@ -8,7 +8,7 @@
         <%= t('quiz.question_tags') %> (<%= tags.count.to_s %>)
         <%= helpdesk(t('admin.tag.info.list'), false) %>
         <a class="btn btn-sm btn-outline-secondary float-right"
-           data-toggle="collapse"
+           data-bs-toggle="collapse"
            href="#tags_collapse"
            aria-expanded="false"
            aria-controls="tags_collapse">
@@ -20,7 +20,7 @@
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#tags_accordion">
+         data-bs-parent="#tags_accordion">
       <div class="card-body">
         <div class="row">
           <div class="col-12">
@@ -29,7 +29,7 @@
                 <% unless t.nil? %>
                   <%= link_to t.title,
                               tag_path(t),
-                              class: "badge badge-light" %>
+                              class: "badge text-dark lecture-tag" %>
                 <% end %>
               <% end %>
             <% else %>

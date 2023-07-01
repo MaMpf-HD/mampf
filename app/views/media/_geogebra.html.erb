@@ -2,12 +2,12 @@
 <div class="row">
   <div class="col-4">
     <%= t('geogebra.geogebra') %>
-    <span class="badge badge-secondary">
+    <span class="badge bg-secondary">
       ggb
     </span>
     <%= helpdesk(t('admin.medium.info.geogebra'), false) %>
   </div>
-  <div class="col-2 text-right"
+  <div class="col-2 text-end"
        id="geogebra-uploadButton"
        data-choosefiles="<%= t('basics.file') %>">
     
@@ -32,12 +32,12 @@
           <%= t('buttons.upload') %>
   </div>
   </div>
-  <div class="col-6 text-right">
+  <div class="col-6 text-end">
     <% if medium.geogebra_screenshot_url.present? %>
       <button type="button"
               class="btn btn-sm btn-outline-secondary"
-              data-toggle="modal"
-              data-target="#geogebraScreenshotModal">
+              data-bs-toggle="modal"
+              data-bs-target="#geogebraScreenshotModal">
         <%= t('basics.screenshot') %>
       </button>
       <%= link_to t('buttons.view'),
@@ -49,11 +49,12 @@
 </div>
 <div class="row mt-2">
   <div class="col-12">
-    <%= f.label :geogebra_app_name, t('geogebra.app_name') %>
+    <%= f.label :geogebra_app_name, t('geogebra.app_name'),
+                class: "form-label" %>
     <%= f.select :geogebra_app_name,
                  ['classic', 'geometry', 'graphing', '3d'],
                  {},
-                 { class: 'form-control' } %>
+                 { class: 'form-select' } %>
   </div>
 </div>
 <%= render partial: 'media/upload_geogebra',

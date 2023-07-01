@@ -1,13 +1,15 @@
-<div class="form-group">
-  <%= f.label :name, t('basics.display_name') %>
+<div class="mb-3">
+  <%= f.label :name, t('basics.display_name'),
+              class: "form-label" %>
   <%= helpdesk(t('admin.user.info.display_name'), false) %>
   <%= f.text_field :name, { class: 'form-control' } %>
   <div class="invalid-feedback" id="user-name-error">
   </div>
 </div>
-<div class="form-group">
+<div class="mb-3">
   <%= f.label :email,
-              t('basics.email') %>
+              t('basics.email'),
+              class: "form-label" %>
   <%= helpdesk(t('admin.user.info.email'), false) %>
   <%= f.text_field :email,
                    { class: 'form-control',
@@ -18,7 +20,8 @@
 </div>
 <div class="form-group">
   <%= f.label :current_lecture_id,
-              t('admin.user.current_lecture') %>
+              t('admin.user.current_lecture'),
+              class: "form-label" %>
 <%= helpdesk(t('admin.user.info.current_lecture'), false) %>
   <%= f.select :current_lecture_id,
                options_for_select(select_proper_teaching_related_lectures(user),
@@ -26,9 +29,10 @@
                { prompt: t('basics.select') },
                { class: 'selectize' } %>
 </div>
-<div class="form-group">
+<div class="mb-3">
   <%= f.label :homepage,
-              t('admin.user.homepage') %>
+              t('admin.user.homepage'),
+              class: "form-label" %>
   <%= helpdesk(t('admin.user.info.homepage'), false) %>
   <div class="row">
     <div class="col-10">

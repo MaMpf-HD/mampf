@@ -8,9 +8,9 @@
             <%= link_to @user_path,
                         @user_path %>
           </div>
-          <div class="col-4 text-right">
+          <div class="col-4 text-end">
             <button role="button"
-                    class="btn btn-sm btn-outline-secondary ml-3"
+                    class="btn btn-sm btn-outline-secondary ms-3"
                     id="clickerQRButton"
                     data-showqr="false"
                     data-showbutton="<%= t('admin.clicker.show_qr') %>"
@@ -37,9 +37,9 @@
                 ***********
               </span>
             </div>
-            <div class="col-4 text-right">
+            <div class="col-4 text-end">
               <button role="button"
-                      class="btn btn-sm btn-outline-secondary ml-3"
+                      class="btn btn-sm btn-outline-secondary ms-3"
                       id="clickerHideEditorLink"
                       data-showlink="false"
                       data-showbutton="<%= t('buttons.show') %>"
@@ -54,7 +54,7 @@
             <div class="col-8">
               <%= t('admin.clicker.delete') %>
             </div>
-            <div class="col-4 text-right">
+            <div class="col-4 text-end">
               <%= link_to t('buttons.delete'),
                           clicker_path(@clicker),
                           class: 'btn btn-sm btn-danger',
@@ -83,7 +83,7 @@
               <%= t('admin.clicker.last_poll_results') %>
             </h5>
           </div>
-          <div class="col-4 text-right">
+          <div class="col-4 text-end">
             <button role="button"
                     class="btn btn-sm btn-outline-secondary"
                     data-show="true"

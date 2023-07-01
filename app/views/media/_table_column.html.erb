@@ -23,7 +23,7 @@
             <% teachables.each_with_index do |t, i| %>
               <a class="nav-link <%= active(i.zero?) %>"
                 id="v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>-tab"
-                data-toggle="pill"
+                data-bs-toggle="pill"
                 href="#v-pills-<%= sort %>-<%= t.class %>-<%= t.id %>"
                 role="tab">
                 <%= t.short_title %>

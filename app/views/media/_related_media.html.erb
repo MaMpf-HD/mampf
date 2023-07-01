@@ -2,7 +2,7 @@
   <div class="card-header bg-generic-card-header">
     <h5>
       <%= t('basics.related_media') %>
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= media.size + references.size %>
       </span>
     </h5>
@@ -18,16 +18,15 @@
               <% media_hash.each do |sort, media_in_sort| %>
                 <li>
                   <button class="btn btn-link collapsed"
-                          type="button"
-                          data-toggle="collapse"
-                          data-target="#collapse-<%= sort %>"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#collapse-<%= sort %>"
                           style="left: -10px; position: relative;">
                     <%= Medium.sort_localized[sort] %>
                     (<%= media_in_sort.size %>)
                   </button>
                   <div id="collapse-<%= sort %>"
-                       class="collapse pl-3"
-                       data-parent="#relatedMediaAccordion">
+                       class="collapse ps-3"
+                       data-bs-parent="#relatedMediaAccordion">
                       <div class="row">
                         <% media_in_sort.each do |m| %>
                           <div class="col-12 col-md-6 col-lg-4 col-xl-12 mb-3">

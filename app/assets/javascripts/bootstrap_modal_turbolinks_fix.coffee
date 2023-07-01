@@ -7,6 +7,11 @@ $(document).on 'turbolinks:load', ->
 	$('.activeModal').modal('show')
 	# remove active status (this needs to be reestablished before caching)
 	$('.activeModal').removeClass('activeModal')
+
+	popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+	popoverList = popoverTriggerList.map (popoverTriggerEl) ->
+		return new bootstrap.Popover(popoverTriggerEl)
+
 	return
 
 $(document).on 'turbolinks:before-cache', ->

@@ -9,7 +9,7 @@ module ApplicationHelper
 
   # get current lecture from session object
   def current_lecture
-    Lecture.find_by_id(cookies[:current_lecture_id])
+    Lecture.find_by(id: cookies[:current_lecture_id])
   end
 
   # Returns the complete url for the media upload folder if in production
@@ -89,8 +89,8 @@ module ApplicationHelper
 
   # media_sorts
   def media_sorts
-    ['kaviar', 'sesam', 'keks', 'kiwi', 'erdbeere', 'nuesse', 'script',
-     'questions', 'remarks', 'reste']
+    %w[kaviar sesam keks kiwi erdbeere nuesse script
+       questions remarks reste]
   end
 
   # media_sort -> acronym
@@ -110,7 +110,7 @@ module ApplicationHelper
   # Selects all media associated to lectures and lessons from a given list
   # of media
   def lecture_media(media)
-    media.where(teachable_type: ['Lecture', 'Lesson'])
+    media.where(teachable_type: %w[Lecture Lesson])
   end
 
   # Selects all media associated to courses from a given list of media
@@ -138,7 +138,7 @@ module ApplicationHelper
   # lecture
   def relevant_media(teachable, media, limit)
     result = []
-    if teachable.class == Course
+    if teachable.instance_of?(Course)
       return media.where(teachable: teachable).order(:created_at)
                   .reverse_order
                   .first(limit)
@@ -169,7 +169,7 @@ module ApplicationHelper
   # cuts off a given string so that a given number of letters is not exceeded
   # string is given ... as ending if it is too long
   def shorten(title, max_letters)
-    return '' unless title.present?
+    return '' if title.blank?
     return title unless title.length > max_letters
 
     title[0, max_letters - 3] + '...'
@@ -231,7 +231,9 @@ module ApplicationHelper
   # anything older than today or yesterday gets reduced to the day.month.year
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
-    return t('today') + ', ' + date.strftime('%H:%M') if date.to_date == Date.today
+    if date.to_date == Date.today
+      return t('today') + ', ' + date.strftime('%H:%M')
+    end
     if date.to_date == Date.yesterday
       return t('yesterday') + ', ' + date.strftime('%H:%M')
     end
@@ -272,14 +274,14 @@ module ApplicationHelper
     value ? 'no_display' : ''
   end
 
-  def helpdesk(text, html)
-    tag.i class: 'far fa-question-circle helpdesk ml-2',
+  def helpdesk(text, html, title = t('info'))
+    tag.i class: 'far fa-question-circle helpdesk ms-2',
           tabindex: -1,
-          data: { toggle: 'popover',
-                  trigger: 'focus',
-                  content: text,
-                  html: html },
-          title: t('info')
+          'data-bs-toggle': 'popover',
+          'data-bs-trigger': 'focus',
+          'data-bs-content': text,
+          'data-bs-html': html,
+          title: title
   end
 
   def realization_path(realization)
@@ -293,27 +295,32 @@ module ApplicationHelper
   end
 
   def get_announcements
-    return Announcement.active_on_main.pluck(:details).join
+    megaphone_icon_str = '<i class="bi bi-megaphone p-2"></i>'
+    separator_str = "<hr class=\"my-3 w-100\">#{megaphone_icon_str}"
+    Announcement.active_on_main
+                .pluck(:details)
+                .join(separator_str)
+                .prepend(megaphone_icon_str)
   end
 
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
-  $active_css_class = "active-item"
+  $active_css_class = 'active-item'
 
   def get_class_for_project(project)
-    return request.params['project'] == project ? $active_css_class : ''
+    request.params['project'] == project ? $active_css_class : ''
   end
 
   def get_class_for_path(path)
-    return request.path == path ? $active_css_class : ''
+    request.path == path ? $active_css_class : ''
   end
 
   def get_class_for_path_startswith(path)
-    return request.path.starts_with?(path) ? $active_css_class : ''
+    request.path.starts_with?(path) ? $active_css_class : ''
   end
 
   def get_class_for_any_path(paths)
-    return paths.include?(request.path) ? $active_css_class : ''
+    paths.include?(request.path) ? $active_css_class : ''
   end
 
   def get_class_for_any_path_startswith(paths)
@@ -321,6 +328,6 @@ module ApplicationHelper
       return $active_css_class
     end
 
-    return ''
+    ''
   end
 end

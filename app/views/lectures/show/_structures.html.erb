@@ -18,9 +18,9 @@
     <% end %>
   </div>
 </div>
-<div class="card-columns">
+<div class="row ms-2" data-masonry='{"percentPosition": true }'>
   <% structures.each do |s| %>
-    <div class="card">
+    <div class="card p-2">
       <div class="card-header">
         <h4 class="title">
           <%= link_to s['attributes']['name'],
