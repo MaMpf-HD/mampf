@@ -113,6 +113,9 @@ $(document).on 'turbolinks:load', ->
   toggleContentAnnotations = document.getElementById('toggle-content-annotations-check')
   toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check')
   togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check')
+  # set seek bar to 0 and volume bar to 1
+  seekBar.value = 0
+  volumeBar.value = 1
 
   # resizes the thyme container to the window dimensions
   resizeContainer = ->
