@@ -3790,3 +3790,12 @@ de:
             name:
               taken:
                 'Eine Watchlist mit diesem Namen existiert bereits.'
+  feedback:
+    title: Titel (optional)
+    comment: Dein Kommentar
+    description_html: >
+      <p>Wir freuen uns über Dein Feedack zu MaMpf, sei es Lob, Kritik oder
+      Anregungen, wie wir als Entwickler:innen-Team die Plattform voranbringen
+      können. Falls Du einen Bug gefunden hast und einen GitHub-Account hast,
+      dann erstelle am besten direkt auf %{mampf-github} ein Issue. Ansonsten
+      gerne auch über dieses Formular.</p>

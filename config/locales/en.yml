@@ -3584,3 +3584,12 @@ en:
             name:
               taken:
                 'A watchlist with that name already exists.'
+  feedback:
+    title: Title (optional)
+    comment: Your comment
+    description_html: >
+      <p>We are looking forward to your feedback on MaMpf, be it praise, criticism
+      or suggestions on how we as a team of developers can advance the platform.
+      If you have found a bug and have a GitHub account, then create an issue
+      directly on %{github_mampf}. Otherwise, you are welcome to use this
+      form.</p>

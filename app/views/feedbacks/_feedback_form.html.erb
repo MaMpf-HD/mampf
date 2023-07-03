@@ -1,3 +1,5 @@
+<%= javascript_include_tag :feedback %>
+
 <div class="modal-header">
   <h1 class="modal-title fs-5">Submit Feedback</h1>
   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
@@ -5,24 +7,39 @@
 </div>
 
 <div class="modal-body">
-  TODO: Use GitHub Issues instead...
+  <%= t('feedback.description_html',
+    github_mampf: link_to('GitHub', 'https://github.com/MaMpf-HD/mampf/issues', {target: '_blank'})) %>
 
   <%= form_with model: Feedback.new, remote: true do |f| %>
-    <%= f.text_field :title %>
-    <%= f.text_area :feedback %>
-    <%= f.submit t('buttons.save'),
-                 class: "btn btn-sm btn-primary" %>
+    <%# Title %>
+    <div class="form-floating mb-3">
+      <%= f.text_field :title, class: 'form-control', placeholder: '_' %>
+      <%= f.label :title, t('feedback.title') %>
+    </div>
+
+  	<%# Comment %>
+    <div class="form-floating mb-3">
+      <%= f.text_area :feedback,
+            class: 'form-control',
+            placeholder: '_',
+            style: 'height: 200px' %>
+      <%= f.label :feedback, t('feedback.comment') %>
+    </div>
+
+    <%# Submit %>
+    <%# Dummy submit button, the actual submit button is in the modal footer %>
+    <%= f.submit 'Submit', id: 'submit-form-btn', style: 'display: none;'%>
   <% end %>
-
-  Flash part:
-  <p id="feedback-status">
-  </p>
-
-  TODO: clear flash part when reclicking button
-  TODO: remove console.log(...) messages
 </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-  <button type="button" class="btn btn-primary">Another action</button>
+  <%# Cancel %>
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+    <%= t('buttons.cancel') %>
+  </button>
+
+  <%# Submit %>
+  <button type="button" id="submit-form-btn-outside" class="btn btn-primary">
+    <%= t('buttons.save') %>
+  </button>
 </div>
