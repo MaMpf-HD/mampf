@@ -1,113 +1,113 @@
 <div style="min-height: 30vh;">
-	<div class="row">
-		<div class="col-12 col-xl-6">
-			<h5>
-				<%= t('comments.title') %>
-				<span id="mediaCommentsSize"
-							data-size="<%= @media_comments.size %>">
-					(<%= @media_comments.size %>)
-				</span>
-			</h5>
-		</div>
-		<% if @media_comments.size.positive? %>
-			<div class="col-12 col-xl-6 text-right">
-				<%= link_to t('notifications.check_notifications'),
-										update_all_readers_path,
-										class: 'btn btn-secondary mediaCommentsDecoration',
-										method: :patch,
-										remote: true %>
-			</div>
-		<% end %>
-	</div>
-	<div class="row mediaCommentsDecoration">
-		<div class="col-12">
-			<%= paginate @media_array, window: 2 %>
-		</div>
-	</div>
-	<% if @media_array.size.positive? %>
-		<div class="list-group my-3 mediaCommentsDecoration">
-			<div class="list-group-item">
-				<div class="row">
-					<div class="col-4">
-						<strong>
-							<%= t('basics.medium') %>
-						</strong>
-					</div>
-					<div class="col-4">
-						<strong>
-							<%= t('comments.latest_post') %>
-						</strong>
-					</div>
-					<div class="col-2 text-center">
-						<strong>
-							<%= t('comments.thread_subscribed') %>
-						</strong>
-					</div>
-					<div class="col-2">
-					</div>
-				</div>
-			</div>
-			<% @media_array.each do |m| %>
-				<div class="list-group-item readerItem"
-						 data-thread="<%= m[:thread].id %>">
-					<div class="row">
-						<div class="col-4">
-							<div class="row">
-								<div class="col-12">
-									<%= m[:medium].course.title %>
-								</div>
-								<div class="col-12">
-									<%= link_to m[:medium].local_title_for_viewers,
-															medium_path(m[:medium]) %>
-									<br>
-							<%= link_to "#{m[:medium].commontator_thread.comments.size} " \
-              		    "#{m[:medium].commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
-                  		show_media_comments_path(m[:medium]) %>
-            		</div>
-          		</div>
-						</div>
-						<div class="col-4">
-							<%= t('comments.who_and_when',
-										when: time_ago_in_words(m[:latest_comment].created_at),
-										who: m[:latest_comment].creator.name) %>
-						</div>
-						<div class="col-2">
-							<div clas="row">
-								<div class="col-12 text-center">
-									<div class="custom-control custom-switch">
-  									<input type="checkbox"
-  												 class="custom-control-input subscriptionSwitch"
-  										 		 id="subscriptionSwitch-<%= m[:medium].commontator_thread.id %>"
- 			 										 data-id="<%= m[:medium].commontator_thread.id %>"
-  										 		<%= !!m[:medium].commontator_thread.subscription_for(current_user) ? 'checked' : '' %>>
-  									<label class="custom-control-label"
-  					  						 for="subscriptionSwitch-<%= m[:medium].commontator_thread.id %>">
-  									</label>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-2 text-right">
-							<%= link_to update_reader_path(params: { thread_id: m[:thread].id,
-																											 size: @media_comments.size }),
-													method: :patch,
-													remote: true,
-													class: 'no-deco' do %>
-          			<i class="far fa-times-circle fa-lg text-secondary"
-            	 		 data-toggle="tooltip"
-             	 		 data-placement="bottom"
-             	 		 title="<%= t('notifications.check') %>">
-          			</i>
-          		<% end %>
-						</div>
-					</div>
-				</div>
-			<% end %>
-		</div>
-	<% end %>
-	<div class="alert alert-secondary mt-2 pr-2"
-			 id="noCommentsAlert"
-			 style="display: <%= hide(@media_array.size.positive?) %>">
+  <div class="row">
+    <div class="col-12 col-xl-6">
+      <h5>
+        <%= t('comments.title') %>
+        <span id="mediaCommentsSize"
+              data-size="<%= @media_comments.size %>">
+          (<%= @media_comments.size %>)
+        </span>
+      </h5>
+    </div>
+    <% if @media_comments.size.positive? %>
+      <div class="col-12 col-xl-6 text-end">
+        <%= link_to t('notifications.check_notifications'),
+                    update_all_readers_path,
+                    class: 'btn btn-secondary mediaCommentsDecoration',
+                    method: :patch,
+                    remote: true %>
+      </div>
+    <% end %>
+  </div>
+  <div class="row mediaCommentsDecoration">
+    <div class="col-12">
+      <%= paginate @media_array, window: 2 %>
+    </div>
+  </div>
+  <% if @media_array.size.positive? %>
+    <div class="list-group my-3 mediaCommentsDecoration">
+      <div class="list-group-item">
+        <div class="row">
+          <div class="col-4">
+            <strong>
+              <%= t('basics.medium') %>
+            </strong>
+          </div>
+          <div class="col-4">
+            <strong>
+              <%= t('comments.latest_post') %>
+            </strong>
+          </div>
+          <div class="col-2 text-center">
+            <strong>
+              <%= t('comments.thread_subscribed') %>
+            </strong>
+          </div>
+          <div class="col-2">
+          </div>
+        </div>
+      </div>
+      <% @media_array.each do |m| %>
+        <div class="list-group-item readerItem"
+             data-thread="<%= m[:thread].id %>">
+          <div class="row">
+            <div class="col-4">
+              <div class="row">
+                <div class="col-12">
+                  <%= m[:medium].course.title %>
+                </div>
+                <div class="col-12">
+                  <%= link_to m[:medium].local_title_for_viewers,
+                              medium_path(m[:medium]) %>
+                  <br>
+              <%= link_to "#{m[:medium].commontator_thread.comments.size} " \
+                      "#{m[:medium].commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
+                      show_media_comments_path(m[:medium]) %>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <%= t('comments.who_and_when',
+                    when: time_ago_in_words(m[:latest_comment].created_at),
+                    who: m[:latest_comment].creator.name) %>
+            </div>
+            <div class="col-2 d-flex justify-content-center">
+              <div clas="row">
+                <div class="col-12">
+                  <div class="form-check form-switch">
+                    <input type="checkbox"
+                           class="form-check-input subscriptionSwitch"
+                           id="subscriptionSwitch-<%= m[:medium].commontator_thread.id %>"
+                           data-id="<%= m[:medium].commontator_thread.id %>"
+                      <%= !!m[:medium].commontator_thread.subscription_for(current_user) ? 'checked' : '' %>>
+                    <label class="form-check-label"
+                           for="subscriptionSwitch-<%= m[:medium].commontator_thread.id %>">
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-2 text-end">
+              <%= link_to update_reader_path(params: { thread_id: m[:thread].id,
+                                                       size: @media_comments.size }),
+                          method: :patch,
+                          remote: true,
+                          class: 'no-deco' do %>
+                <i class="far fa-times-circle fa-lg text-secondary"
+                    data-bs-toggle="tooltip"
+                    data-placement="bottom"
+                    title="<%= t('notifications.check') %>">
+                </i>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+  <div class="alert alert-secondary mt-2 pr-2"
+       id="noCommentsAlert"
+       style="display: <%= hide(@media_array.size.positive?) %>">
     <%= t('comments.no_comments') %>
   </div>
 </div>

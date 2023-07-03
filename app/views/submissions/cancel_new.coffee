@@ -6,4 +6,4 @@ $('.submissionFooter .btn').prop('disabled', false)
   .removeClass('btn-outline-secondary')
 $('.submissionFooter .btn').each ->
   $(this).addClass($(this).data('color'))
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()

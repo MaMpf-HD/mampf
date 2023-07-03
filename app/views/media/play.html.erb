@@ -63,7 +63,7 @@
                  data-status="true">
                 add_to_queue
               </i>
-              <i id="full-screen" class="material-icons clickable ml-1"
+              <i id="full-screen" class="material-icons clickable ms-1"
                  data-status="false">
                 fullscreen
               </i>
@@ -77,7 +77,7 @@
           <%= @medium.sort_localized %><br>
           <%= @medium.teachable.long_title %><br>
           <span title="<%= @medium.description %>"
-                data-toggle="tooltip" data-placement="bottom">
+                data-bs-toggle="tooltip" data-placement="bottom">
             <%= @medium.description %>
           </span>
           <i id="ia-close" class="material-icons replay"
@@ -90,7 +90,7 @@
         <div id="separator">
           <div>
             <button id="back-button" type="button"
-                    class="badge badge-light"
+                    class="badge text-dark lecture-tag"
                     style="display: none;"
                     data-back="<%= t('thyme.back') %>"
                     data-backto="<%= t('thyme.back_to') %>">

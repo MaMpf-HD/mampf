@@ -1,12 +1,12 @@
 <div class="row px-2 py-2 mt-2">
   <div class="col-4">
-    <h4 class="pl-2">
-      <span class="badge badge-secondary">
+    <h4 class="ps-2">
+      <span class="badge bg-secondary">
         <%= t('basics.medium') %>
       </span>
       <% unless medium.published? %>
-        <span class="badge badge-warning"
-              data-toggle="tooltip"
+        <span class="badge bg-warning"
+              data-bs-toggle="tooltip"
               title="<%= if !medium.teachable.published?
                            t('admin.medium.info.unpublished_lecture')
                          end %>">
@@ -14,8 +14,8 @@
         </span>
       <% end %>
       <% if medium.locked? %>
-        <span class="badge badge-warning"
-              data-toggle="tooltip"
+        <span class="badge bg-warning"
+              data-bs-toggle="tooltip"
               title="<%= t('admin.medium.info.locked') %>">
           <%= t('access.locked') %>
         </span>
@@ -38,7 +38,7 @@
       <%= f.submit t('buttons.save'),
                    class: "btn btn-sm btn-primary" %>
       <button type="button"
-              class="btn btn-sm btn-secondary ml-2"
+              class="btn btn-sm btn-secondary ms-2"
               id="medium-basics-cancel">
         <%= t('buttons.discard') %>
       </button>
@@ -48,7 +48,7 @@
     <%= t('basics.medium') %>
     <%= helpdesk(t('admin.medium.info.medium_definition'), true) %>
   </div>
-  <div class="col-2 text-right">
+  <div class="col-2 text-end">
     <% teachable_scope = medium.teachable.media_scope %>
     <% if teachable_scope.class.to_s == 'Course' %>
       <% if current_user.admin || current_user.in?(medium.teachable.editors) %>
@@ -100,7 +100,7 @@
 <% if medium.publisher&.release_date.present? %>
   <div class="row px-2">
     <div class="col-12">
-      <span class="badge badge-warning">
+      <span class="badge bg-warning">
         <%= t('admin.medium.scheduled_for_release',
               release_date: I18n.l(medium.publisher&.release_date,
                                    format: :publication_time,
@@ -108,7 +108,7 @@
       </span>
       <% if medium.publisher.create_assignment %>
         <br>
-        <span class="badge badge-warning">
+        <span class="badge bg-warning">
           <%= t('admin.medium.assignment_to_be_created',
                 deadline: I18n.l(medium.publisher&.assignment_deadline,
                                  format: :publication_time,
@@ -116,7 +116,7 @@
         </span>
       <% end %>
       <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
-      <button class="btn btn-sm btn-outline-primary ml-2"
+      <button class="btn btn-sm btn-outline-primary ms-2"
               type="button"
               id="publish-medium-button">
         <%= t('buttons.edit') %>

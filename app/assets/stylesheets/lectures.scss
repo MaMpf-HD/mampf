@@ -66,3 +66,11 @@
 #submission-team-size-buttons {
   display: none;
 }
+
+.lecture-tag {
+  background-color: #dae0e5;
+
+  &:hover {
+    color: white !important;
+  }
+}

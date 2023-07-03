@@ -1,59 +1,65 @@
-  <div class="card bg-light">
-    <div class="card-header clickable"
-         role="tab"
-         id="preferences_heading"
-         data-toggle="collapse"
-         data-target="#preferences_collapse"
-         aria-expanded="false" aria-controls="preferences_collapse">
-      <div class="row">
-        <div class="col-12">
-          <h5>
-            <%= t('basics.preferences') %>
-          </h5>
+  <div class="accordion-item bg-light">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              id="preferences_heading"
+              data-bs-toggle="collapse"
+              data-bs-target="#preferences_collapse"
+              aria-expanded="false"
+              aria-controls="preferences_collapse">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              <%= t('basics.preferences') %>
+            </h5>
+          </div>
         </div>
-      </div>
+      </button>
     </div>
     <div id="preferences_collapse"
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#lectureAccordion">
-      <div class="card-body">
+         data-bs-parent="#lectureAccordion">
+      <div class="accordion-body">
         <%= form_with model: lecture,
                       html: { id: 'lecture-preferences-form' } do |f| %>
-          <div class="form-row">
+          <div class="row">
             <% unless lecture.course.term_independent %>
-              <div class="col-6 form-group">
+              <div class="col-6 mb-3">
                 <%= f.label :term_id,
-                            t('basics.term') %>
+                            t('basics.term'),
+                            class: "form-label" %>
                 <%= helpdesk(t('admin.lecture.info.term'), false) %>
                 <%= f.select :term_id,
                              options_for_select(@terms,
                                                 lecture.term&.id),
                              {},
-                             { class: 'form-control' } %>
+                             { class: 'form-select' } %>
                 <div class="invalid-feedback"
                      id="lecture-term-error">
                 </div>
               </div>
             <% end %>
             <% unless lecture.course.term_independent %>
-              <div class="col-6 form-group">
+              <div class="col-6 mb-3">
                 <%= f.label :sort,
-                            t('basics.type') %>
+                            t('basics.type'),
+                            class: "form-label" %>
                 <%= f.select :sort,
                              options_for_select(Lecture.sort_localized.invert.to_a,
                                                 lecture.sort),
                              {},
-                             { class: 'form-control' } %>
+                             { class: 'form-select' } %>
                 <div class="invalid-feedback"
                      id="lecture-term-error">
                 </div>
               </div>
             <% end %>
             <% unless lecture.seminar? %>
-              <div class="col-6 form-group">
-                <%= f.label :start_chapter, t('admin.lecture.first_chapter') %>
+              <div class="col-6 mb-3">
+                <%= f.label :start_chapter, t('admin.lecture.first_chapter'),
+                            class: "form-label" %>
                 <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>
                 <%= f.number_field :start_chapter,
                                    value: lecture.start_chapter || 1,
@@ -62,7 +68,8 @@
               <div class="col-6 mt-6">
                 <div id="start-section-input">
                   <%= f.label :start_section,
-                              t('admin.lecture.first_section') %>
+                              t('admin.lecture.first_section'),
+                              class: "form-label" %>
                   <%= helpdesk(t('admin.lecture.info.first_section'), false) %>
                   <%= f.number_field :start_section,
                                      value: lecture.start_section || 1,
@@ -71,65 +78,67 @@
                 </div>
               </div>
               <div class="col-6 mt-6 mb-3">
-                <div class="custom-control custom-checkbox">
+                <div class="form-check">
                   <%= f.check_box :absolute_numbering,
-                                  class: 'custom-control-input' %>
+                                  class: 'form-check-input' %>
                   <%= f.label :absolute_numbering,
                               t('admin.lecture.absolute_numbering'),
-                              { class: 'custom-control-label' } %>
+                              { class: 'form-check-label' } %>
                   <%= helpdesk(t('admin.lecture.info.absolute_numbering'),
                                false) %>
                 </div>
               </div>
             <% end %>
           </div>
-          <div class="form-row">
-            <div class="col-auto form-group">
-              <%= f.label :passphrase, t('admin.lecture.passphrase') %>
+          <div class="row">
+            <div class="col-auto mb-3">
+              <%= f.label :passphrase,
+                          t('admin.lecture.passphrase'),
+                          class: "form-label" %>
               <%= helpdesk(t('admin.lecture.info.passphrase'), false) %>
               <%= f.text_field :passphrase,
                                { class: 'form-control',
                                  size: 50 } %>
             </div>
           </div>
-          <div class="form-group">
+          <div class="mb-3">
             <%= t('basics.language') %>
-            <div class="form-row ml-2">
+            <div class="row ms-2">
             <% I18n.available_locales.each do |locale| %>
-              <div class="custom-control custom-radio custom-control-inline">
+              <div class="form-check form-check-inline">
                 <%= f.radio_button :locale,
                                    locale.to_s,
-                                   class: 'custom-control-input' %>
+                                   class: 'form-check-input' %>
                 <%= f.label :locale,
                             t('locales.' + locale.to_s),
                             value: locale.to_s,
-                            class: 'custom-control-label' %>
+                            class: 'form-check-label' %>
               </div>
             <% end %>
             </div>
           </div>
           <% unless lecture.seminar? %>
-            <div class="form-group">
+            <div class="mb-3">
               <%= t('admin.lecture.content_mode') %>
               <%= helpdesk(t('admin.lecture.info.variants'), true) %>
-              <div class="form-row ml-2">
-                <div class="custom-control custom-radio custom-control-inline">
+              <div class="row ms-2">
+                <div class="form-check form-check-inline">
                   <%= f.radio_button :content_mode,
                                      'video',
-                                     class: 'custom-control-input' %>
+                                     class: 'form-check-input' %>
                   <%= f.label :content_mode,
                               t('admin.lecture.video_based'),
                               value: 'video',
-                              class: 'custom-control-label' %>
+                              class: 'form-check-label' %>
                 </div>
-                <div class="custom-control custom-radio custom-control-inline">
+                <div class="form-check form-check-inline">
                   <%= f.radio_button :content_mode,
                                      'manuscript',
-                                     class: 'custom-control-input' %>
+                                     class: 'form-check-input' %>
                   <%= f.label :content_mode,
                               t('admin.lecture.script_based'),
                               value: 'manuscript',
-                              class: 'custom-control-label' %>
+                              class: 'form-check-label' %>
                 </div>
               </div>
             </div>
@@ -137,12 +146,12 @@
           <% if !lecture.term %>
             <div class="row">
               <div class="col-12">
-                <div class="custom-control custom-checkbox">
+                <div class="form-check">
                   <%= f.check_box :disable_teacher_display,
-                                  class: 'custom-control-input' %>
+                                  class: 'form-check-input' %>
                   <%= f.label :disable_teacher_display,
                               t('admin.lecture.disable_teacher_display'),
-                              { class: 'custom-control-label' } %>
+                              { class: 'form-check-label' } %>
                   <%= helpdesk(t('admin.lecture.info.disable_teacher_display'),
                              false) %>
                 </div>

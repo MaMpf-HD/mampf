@@ -1,25 +1,28 @@
-  <div class="card bg-light">
-    <div class="card-header clickable"
-         role="tab"
-         id="announcements_heading"
-         data-toggle="collapse"
-         data-target="#announcements_collapse"
-         aria-expanded="false" aria-controls="announcements_collapse">
-      <div class="row">
-        <div class="col-12">
-          <h5>
-            <%= t('categories.announcements') %>
-            (<%= lecture.announcements.size %>)
-          </h5>
+  <div class="accordion-item bg-light">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              id="announcements_heading"
+              data-bs-toggle="collapse"
+              data-bs-target="#announcements_collapse"
+              aria-expanded="false"
+              aria-controls="announcements_collapse">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              <%= t('categories.announcements') %>
+              (<%= lecture.announcements.size %>)
+            </h5>
+          </div>
         </div>
-      </div>
+      </button>
     </div>
     <div id="announcements_collapse"
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#lectureAccordion">
-      <div class="card-body">
+         data-bs-parent="#lectureAccordion">
+      <div class="accordion-body">
         <div class="row mb-2">
           <div class="col-12 text-center">
             <%= link_to t('buttons.create_announcement'),

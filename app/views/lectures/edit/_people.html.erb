@@ -1,30 +1,34 @@
-  <div class="card bg-light">
-    <div class="card-header clickable"
-         role="tab"
-         id="people_heading"
-         data-toggle="collapse"
-         data-target="#people_collapse"
-         aria-expanded="false" aria-controls="people_collapse"         >
-      <div class="row">
-        <div class="col-12">
-          <h5>
-            <%= t('basics.people') %>
-          </h5>
+  <div class="accordion-item bg-light">
+    <div class="accordion-header">
+      <button class="accordion-button collapsed"
+              type="button"
+              id="people_heading"
+              data-bs-toggle="collapse"
+              data-bs-target="#people_collapse"
+              aria-expanded="false"
+              aria-controls="people_collapse">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              <%= t('basics.people') %>
+            </h5>
+          </div>
         </div>
-      </div>
+      </button>
     </div>
     <div id="people_collapse"
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#lectureAccordion">
-      <div class="card-body">
+         data-bs-parent="#lectureAccordion">
+      <div class="accordion-body">
         <% if current_user.can_update_personell?(lecture) %>
           <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
-            <div class="form-row">
-              <div class="col-4 form-group">
+            <div class="row">
+              <div class="col-4 mb-3">
                 <%= f.label :teacher_id,
-                            t('basics.teacher') %>
+                            t('basics.teacher'),
+                          class: "form-label" %>
                 <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
                 <div id="lecture_teacher_select" %>
                   <%= f.select :teacher_id,
@@ -60,9 +64,10 @@
                   <%= t('admin.lecture.no_course_editors') %>
                 <% end %>
               </div>
-              <div class="col-4 form-group">
+              <div class="col-4 mb-3">
                 <%= f.label :editor_ids,
-                            t('basics.lecture_editors') %>
+                            t('basics.lecture_editors'),
+                          class: "form-label" %>
                 <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
                 <div id="lecture_editors_select" %>
                   <%= f.select :editor_ids,
@@ -90,9 +95,9 @@
                 <% if lecture.users.any? && !lecture.stale? %>
                   <button type="button"
                           id="lectureUserModalButton"
-                          class="ml-3 btn btn-outline-primary btn-sm"
-                          data-toggle="modal"
-                          data-target="#lectureUserModal">
+                          class="ms-3 btn btn-outline-primary btn-sm"
+                          data-bs-toggle="modal"
+                          data-bs-target="#lectureUserModal">
                     <%= t('basics.details') %>
                   </button>
                 <% end %>
@@ -105,7 +110,7 @@
                   <%= f.submit t('buttons.save'),
                       class: "btn btn-sm btn-primary" %>
                   <button type="button"
-                          class="btn btn-sm btn-secondary ml-2"
+                          class="btn btn-sm btn-secondary ms-2"
                           id="lecture-basics-cancel"
                           data-id="<%= lecture.id %>">
                     <%= t('buttons.discard') %>

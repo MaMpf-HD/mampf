@@ -10,9 +10,9 @@
             <%= t('admin.course.additional_information') %>
           </h5>
         </div>
-        <div class="col-6 text-right">
+        <div class="col-6 text-end">
           <a class="btn btn-sm btn-outline-primary"
-             data-toggle="collapse"
+             data-bs-toggle="collapse"
              href="#organizational_collapse"
              id="organizational_collapse_button"
              aria-expanded="false" aria-controls="organizational_collapse">
@@ -25,16 +25,16 @@
          class="collapse"
          role="tabpanel"
          aria-labelledby="heading"
-         data-parent="#organizational_accordion">
+         data-bs-parent="#organizational_accordion">
       <div class="card-body">
-        <div class="form-row mb-3">
+        <div class="row mb-3">
           <div class="col-6">
-            <div class="custom-control custom-checkbox">
+            <div class="form-check">
               <%= f.check_box :organizational,
-                              class: 'custom-control-input' %>
+                              class: 'form-check-input' %>
               <%= f.label :organizational,
                           t('admin.course.additional_information_visible'),
-                          { class: 'custom-control-label' } %>
+                          class: "form-check-label" %>
             </div>
           </div>
         </div>

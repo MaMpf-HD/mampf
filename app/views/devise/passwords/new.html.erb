@@ -8,12 +8,13 @@
                        url: password_path(resource_name,
                                           params: { locale: I18n.locale }),
                        html: { method: :post, role: 'form' }) do |f| %>
-  <div class="form-group">
-    <%= f.label :email, t('.email') %>
+  <div class="mb-3">
+    <%= f.label :email, t('.email'),
+                class: "form-label" %>
     <%= f.email_field :email, autofocus: true, class: 'form-control' %>
   </div>
 
-  <div class="form-group">
+  <div class="mb-3">
     <%= f.submit t('.instructions'),
                  class: 'btn btn-primary' %>
   </div>

@@ -1,24 +1,24 @@
 <ul class="nav nav-pills mt-3" role="tablist">
   <li class="nav-item">
-    <a class="nav-link <%= active(!@tags) %>" id="media-tab" data-toggle="pill"
+    <a class="nav-link <%= active(!@tags) %>" id="media-tab" data-bs-toggle="pill"
        href="#media_catalog">
       <%= t('admin.medium.media_search') %>
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="teachable-tab" data-toggle="pill"
+    <a class="nav-link" id="teachable-tab" data-bs-toggle="pill"
        href="#teachable_search">
       <%= t('admin.teachables.teachables') %>
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" id="course-tab" data-toggle="pill"
+    <a class="nav-link" id="course-tab" data-bs-toggle="pill"
        href="#course_search">
       <%= t('admin.teachables.courses') %>
     </a>
   </li>
   <li class="nav-item">
-    <a class="nav-link <%= active(@tags) %>" id="tags-tab" data-toggle="pill"
+    <a class="nav-link <%= active(@tags) %>" id="tags-tab" data-bs-toggle="pill"
        href="#tag_search">
       <%= t('admin.tag.index') %>
     </a>

@@ -12,15 +12,15 @@
         <% unless lecture.published? %>
           <i class="fas fa-eye-slash redtext"
              tabindex="-1"
-             data-toggle="tooltip"
+             data-bs-toggle="tooltip"
              title="<%=t('lecture.unpublished') %>">
           </i>
         <% end %>
       <% end %>
     <% end %>
-    <button class="btn btn-primary btn-sm dropdown-toggle mr-3"
+    <button class="btn btn-primary btn-sm dropdown-toggle me-3"
             type="button"
-            data-toggle="dropdown">
+            data-bs-toggle="dropdown">
     </button>
     <div class="dropdown-menu">
       <% unless lecture.nil? || (controller_name == 'main' && action_name == 'start') %>
@@ -37,7 +37,7 @@
             <% unless l.published? %>
               <i class="fas fa-eye-slash redtext"
                  tabindex="-1"
-                 data-toggle="tooltip"
+                 data-bs-toggle="tooltip"
                  title="<%=t('lecture.unpublished') %>">
               </i>
             <% end %>

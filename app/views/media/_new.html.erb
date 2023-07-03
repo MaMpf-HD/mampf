@@ -1,13 +1,14 @@
 <%= form_with model: medium do |f| %>
   <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
   <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
-  <div class="form-group">
-    <%= f.label :sort, t('admin.medium.sort') %>
+  <div class="mb-3">
+    <%= f.label :sort, t('admin.medium.sort'),
+                class: 'form-label' %>
     <%= helpdesk(t('admin.medium.info.sort'), true) %>
     <%= f.select :sort,
                  options_for_select(medium.select_sorts, medium.sort),
                  {},
-                 { class: 'form-control' } %>
+                 { class: 'form-select' } %>
     <div class="invalid-feedback"
          id="medium-sort-error">
     </div>
@@ -18,8 +19,10 @@
                              'https://github.com/MaMpf-HD/mampf-sty/releases/')) %>
     </div>
   </div>
-  <div class="form-group">
-    <%= f.label :description, t('basics.title') %>
+  <div class="mb-3">
+    <%= f.label :description,
+                t('basics.title'), 
+                class: 'form-label' %>
     <%= helpdesk(t('admin.medium.info.description'), false) %>
     <%= f.text_field :description,
                      class: 'form-control' %>
@@ -27,15 +30,17 @@
          id="medium-description-error">
     </div>
   </div>
-  <div class="form-group">
-    <%= f.label :teachable, t('basics.associated_to') %>
+  <div class="mb-3">
+    <%= f.label :teachable,
+                t('basics.associated_to'),
+                class: 'form-label' %>
     <%= helpdesk(t('admin.medium.info.teachable'), true) %>
     <%= f.select :teachable,
                  options_for_select([[medium.teachable&.title_for_viewers,
                                       medium.teachable_select]],
                                     medium.teachable_select),
                  { prompt: t('basics.select') },
-                 { class: 'form-control',
+                 { class: 'form-select',
                    disabled: true } %>
     <div class="invalid-feedback"
          id="medium-teachable-error">
@@ -47,7 +52,7 @@
                    class: 'btn btn-sm btn-primary' %>
       <button type="button"
               class="btn btn-sm btn-secondary"
-              data-dismiss="modal">
+              data-bs-dismiss="modal">
         <%= t('buttons.cancel') %>
       </button>
     </div>

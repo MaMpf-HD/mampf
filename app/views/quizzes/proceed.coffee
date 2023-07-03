@@ -24,7 +24,7 @@ changeBackground = ->
 
 renderFinale = (finale) ->
   $('#<%= quiz_id%>').append finale
-  $('[data-toggle="popover"]').popover()
+  $('[data-bs-toggle="popover"]').popover()
   $('#finale').delay(1000).slideDown 'slow'
   $('html, body').delay(500)
     .animate { scrollTop: document.body.scrollHeight }, 2000
@@ -79,7 +79,7 @@ displayNext = ->
   <% else %>
   renderNext('<%= j render partial: "quizzes/quiz_round",
                            locals: { hidden: true } %>')
-  $('[data-toggle="popover"]').popover()
+  $('[data-bs-toggle="popover"]').popover()
   <% end %>
   return
 

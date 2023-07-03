@@ -1,0 +1,6 @@
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+
+#toggleCommentPreviewWrapper {
+    padding-left: $form-check-padding-start + $form-check-input-width;
+}
