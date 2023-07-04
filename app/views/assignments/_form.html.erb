@@ -1,3 +1,5 @@
+<%= javascript_include_tag 'datetimepicker' %>
+
 <div class="list-group-item assignmentRow"
        data-id="<%= assignment.id.to_i %>">
   <%= form_with model: assignment do |f| %>
@@ -10,15 +12,33 @@
              id="assignment-title-error">
         </div>
       </div>
+
       <div class="form-group col-2">
-        <%= f.text_field :deadline,
-                         class: 'form-control',
-                         autocomplete: 'off',
-                         id: "assignment_deadline_#{assignment.id}" %>
+        <div class="col-sm-12" id="htmlTarget">
+          <div
+            class="input-group log-event td-picker"
+            id="assignment-picker"
+            data-td-target-input="nearest"
+            data-td-target-toggle="nearest">
+            <%= f.text_field :deadline,
+                id: 'assignment-picker-input',
+                class: 'form-control',
+                'data-td-target': '#assignment-picker' %>
+            <span
+              class="input-group-text"
+              data-td-target="#assignment-picker"
+              data-td-toggle="datetimepicker">
+              <i class="fas fa-calendar"></i>
+            </span>
+          </div>
+        </div>
+
         <div class="invalid-feedback"
              id="assignment-deadline-error">
         </div>
       </div>
+
+
       <div class="form-group col-2">
         <%= f.select :medium_id,
                      options_for_select(Medium.where(teachable: assignment.lecture,
