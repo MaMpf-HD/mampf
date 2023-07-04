@@ -1,16 +1,16 @@
 <div class="row mb-2">
   <div class="col-8 col-xl-6">
     <h2>
-      <span class="badge badge-secondary">
+      <span class="badge bg-secondary">
         <%= @medium.sort_localized %>
       </span>
       <% unless @medium.published? %>
-        <span class="badge badge-warning">
+        <span class="badge bg-warning">
           <%= t('access.unpublished') %>
         </span>
       <% end %>
       <% if @medium.locked? %>
-        <span class="badge badge-warning">
+        <span class="badge bg-warning">
           <%= t('access.locked') %>
         </span>
       <% end %>
@@ -27,7 +27,7 @@
       <% end %>
     </h2>
   </div>
-  <div class="col-4 col-xl-6 pt-2">
+  <div class="col-4 col-xl-6 pt-2 text-end">
     <strong>
       <%= t('from') %>:
     </strong>
@@ -73,7 +73,7 @@
 <% if @medium.publisher&.release_date.present? %>
   <div class="row mb-3">
     <div class="col-12">
-      <span class="badge badge-warning">
+      <span class="badge bg-warning">
         <%= t('admin.medium.scheduled_for_release',
               release_date: I18n.l(@medium.publisher&.release_date,
                                    format: :long,
@@ -81,7 +81,7 @@
       </span>
       <% if @medium.publisher.create_assignment %>
         <br>
-        <span class="badge badge-warning">
+        <span class="badge bg-warning">
           <%= t('admin.medium.assignment_to_be_created',
                 deadline: I18n.l(@medium.publisher&.assignment_deadline,
                                  format: :publication_time,

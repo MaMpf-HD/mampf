@@ -1,10 +1,10 @@
 <%# Select watchlist button %>
-<li class="nav-item pl-2 ml-3">
+<li class="nav-item ps-2 ms-3">
   <div class="input-group">
     <% if @watchlists.size > 1 %>
       <span class="dropdown">
         <button class="btn btn-primary dropdown-toggle"
-            data-toggle="dropdown"
+            data-bs-toggle="dropdown"
             type="button"
             id="watchlistButton"
             data-id=<%= @watchlist.id %>
@@ -43,11 +43,11 @@
 </li>
 <%# Description%>
 <% if @watchlist.present? && @watchlist.description.present? %>
-  <li class="nav-item pl-2">
+  <li class="nav-item ps-2">
     <a class="nav-link btn btn-sm bg-grey-lighten-4"
        id="descriptionButton"
-       data-toggle="collapse"
-       data-target="#collapseDescription"
+       data-bs-toggle="collapse"
+       data-bs-target="#collapseDescription"
        role="button"
        aria-expanded="false"
        aria-controls="collapseDescription">
@@ -57,33 +57,33 @@
 <% end %>
 <% if @watchlist_entries %>
   <%# Reverse order button%>
-  <li class="nav-item pl-2 pr-1">
+  <li class="nav-item ps-2 pr-1">
     <%= link_to t('reverse_order'),
           watchlist_path(@watchlist, params: { reverse: !params[:reverse],
                         all: params[:all],
                         per: params[:per] }),
-          class: 'nav-link btn btn-sm bg-grey-lighten-4',
+          class: 'nav-link btn btn-sm text-primary bg-light text-dark',
           id: 'reverseButton',
           data: { reverse: params[:reverse] } %>
   </li>
   <%= helpdesk(t('watchlist.order_help'), false) %>
   <%# All button%>
   <% unless @watchlist_entries.page(1).total_pages == 1 || params[:all] %>
-    <li class="nav-item pl-2 pr-1">
+    <li class="nav-item ps-2 pr-1">
       <%= link_to t('all'),
             watchlist_path(@watchlist, params: { reverse: params[:reverse],
                           all: true }),
             id: 'allButton',
-            class: 'nav-link btn btn-sm text-primary bg-grey-lighten-4' %>
+            class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
     </li>
   <% end %>
   <%# Per page button %>
-  <li class="nav-item pl-1 pr-1">
-    <div class="dropdown pl-2">
+  <li class="nav-item ps-1 pr-1">
+    <div class="dropdown ps-2">
       <button class="btn btn-sm dropdown-toggle text-primary"
           type="button"
           id="perPageButton"
-          data-toggle="dropdown"
+          data-bs-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
         <%= t('per_page') %>
       </button>

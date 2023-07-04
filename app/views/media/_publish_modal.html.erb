@@ -12,12 +12,9 @@
           <%= t('admin.medium.manage_publication') %>
         </h4>
         <button type="button"
-                class="close"
-                data-dismiss="modal"
+                class="btn-close"
+                data-bs-dismiss="modal"
                 aria-label="Close">
-          <span aria-hidden="true">
-            &times;
-          </span>
         </button>
       </div>
       <div class="modal-body">
@@ -32,28 +29,28 @@
           <div class="mb-1">
             <%= t('admin.medium.release_date') %>
           </div>
-          <div class="custom-control custom-radio">
+          <div class="form-check">
             <%= f.radio_button :release_now,
                                '1',
-                               class: 'custom-control-input',
+                               class: 'form-check-input',
                                checked: !medium.release_date_set? %>
             <%= f.label :release_now,
                         t('basics.immediately'),
                         value: '1',
-                        class: 'custom-control-label' %>
+                        class: 'form-check-label' %>
           </div>
-          <div class="custom-control custom-radio mb-3">
+          <div class="form-check mb-3">
             <%= f.radio_button :release_now,
                                '0',
-                               class: 'custom-control-input',
+                               class: 'form-check-input',
                                checked: medium.release_date_set? %>
             <%= f.label :release_now,
                         t('basics.at_time'),
                         value: '0',
-                        class: 'custom-control-label' %>
+                        class: 'form-check-label' %>
             <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
           </div>
-          <div class="form-group col-12">
+          <div class="mb-3 col-12">
             <%= f.text_field :release_date,
                              class: 'form-control',
                              id: 'release_date',
@@ -69,20 +66,21 @@
             <div class="mb-1">
               <%= t('basics.assignment') %>
             </div>
-            <div class="custom-control custom-checkbox mb-2">
+            <div class="form-check mb-2">
               <%= f.check_box :create_assignment,
-                              class: 'custom-control-input',
+                              class: 'form-check-input',
                               checked: medium.publisher&.create_assignment %>
               <%= f.label :create_assignment,
                           t('admin.medium.create_assignment'),
-                          { class: 'custom-control-label' } %>
+                          { class: 'form-check-label' } %>
               <%= helpdesk(t('admin.medium.info.assignment_settings'),
                            true) %>
             </div>
-            <div class="form-row mb-2 ml-2 <%= medium.publisher&.create_assignment ? '' : 'no_display' %>"
+            <div class="row mb-2 ms-2 <%= medium.publisher&.create_assignment ? '' : 'no_display' %>"
                  id="medium_assignment_row">
-              <div class="form-group col-3">
-                <%= f.label :assignment_title, t('basics.title') %>
+              <div class="mb-3 col-3">
+                <%= f.label :assignment_title, t('basics.title'),
+                            class: "form-label" %>
                 <%= f.text_field :assignment_title,
                                  class: 'form-control',
                                  value: medium.publisher&.assignment_title ||medium.local_info %>
@@ -90,8 +88,9 @@
                      id="assignment-title-error">
                 </div>
               </div>
-              <div class="form-group col-3">
-                <%= f.label :assignment_deadline, t('basics.deadline') %>
+              <div class="mb-3 col-3">
+                <%= f.label :assignment_deadline, t('basics.deadline'),
+                            class: "form-label" %>
                 <%= f.text_field :assignment_deadline,
                                  class: 'form-control',
                                  autocomplete: 'off',
@@ -103,22 +102,23 @@
                      id="assignment-deadline-error">
                 </div>
               </div>
-              <div class="form-group col-3">
+              <div class="mb-3 col-3">
                 <%= f.label :assignment_file_type,
-                            t('submission.file_format') %>
+                            t('submission.file_format'),
+                            class: "form-label" %>
                 <%= f.select :assignment_file_type,
                              options_for_select(Assignment.accepted_file_types
                                                           .map { |t| [t,t] }),
                      {},
-                     { class: 'form-control' } %>
+                     { class: 'form-select' } %>
               </div>
-              <div class="form-group col-3">
+              <div class="mb-3 col-3">
                 <%= f.label :assignment_deletion_date,
                             t('assignment.deletion_date') %>
                 <%= f.select :assignment_deletion_date,
                             Term.possible_deletion_dates_localized,
                             {},
-                            class: 'form-control' %>
+                            class: 'form-select' %>
                 <div class="invalid-feedback"
                     id="assignment-deletion-date-error">
                 </div>
@@ -136,26 +136,26 @@
             <%= render partial: 'media/quiz_rights',
                        locals: { f: f } %>
           <% end %>
-          <div class="mb-1">
+          <div class="mt-3 mb-1">
             <%= t('basics.comments') %>
           </div>
-          <div class="custom-control custom-checkbox">
+          <div class="form-check">
             <%= f.check_box :lock_comments,
-                            class: 'custom-control-input',
+                            class: 'form-check-input',
                             checked: medium.planned_comment_lock? %>
             <%= f.label :lock_comments,
                         t('admin.medium.lock_comments'),
-                        { class: 'custom-control-label' } %>
+                        { class: 'form-check-label' } %>
           </div>
           <hr>
-          <div class="custom-control custom-checkbox">
+          <div class="form-check">
             <%= f.check_box :disclaimer,
-                            class: 'custom-control-input',
+                            class: 'form-check-input',
                             required: true,
                             checked: medium.publisher.present? %>
             <%= f.label :disclaimer,
                         t('admin.medium.disclaimer'),
-                        { class: 'custom-control-label' } %>
+                        { class: 'form-check-label' } %>
           </div>
           <div class="row mb-4">
           </div>

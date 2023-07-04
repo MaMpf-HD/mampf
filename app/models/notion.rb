@@ -11,6 +11,7 @@ class Notion < ApplicationRecord
 
   def presence_of_tag
     return if tag || aliased_tag
+
     errors.add(:tag, :no_tag)
   end
 
@@ -26,9 +27,9 @@ class Notion < ApplicationRecord
 
   private
 
-  def clear_tag_cache
-    I18n.available_locales.each do |l|
-      Rails.cache.delete("tag_select_by_title_#{l}")
+    def clear_tag_cache
+      I18n.available_locales.each do |l|
+        Rails.cache.delete("tag_select_by_title_#{l}")
+      end
     end
-  end
 end

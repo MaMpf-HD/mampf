@@ -65,6 +65,7 @@ class MediaController < ApplicationController
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
+
     # make sure the medium is touched
     # (it will not be touched automatically in some cases (e.g. if you only
     # update the associated tags), causing trouble for caching)
@@ -93,13 +94,13 @@ class MediaController < ApplicationController
       # refreshed_video = @medium.video
       # @medium.update(video_data: refreshed_video.to_json)
     end
-    if @medium.sort == 'Quiz' &&params[:medium][:create_quiz_graph] == '1'
+    if @medium.sort == 'Quiz' && params[:medium][:create_quiz_graph] == '1'
       @medium.becomes(Quiz).update(level: 1,
                                    quiz_graph: QuizGraph.new(vertices: {},
-                                               edges: {},
-                                               root: 0,
-                                               default_table: {},
-                                               hide_solution: []))
+                                                             edges: {},
+                                                             root: 0,
+                                                             default_table: {},
+                                                             hide_solution: []))
     end
     # if changes to the manuscript have been made,
     # remove items that correspond to named destinations that no longer
@@ -123,6 +124,7 @@ class MediaController < ApplicationController
     end
     @tags_without_section = []
     return unless @medium.teachable.class.to_s == 'Lesson'
+
     add_tags_in_lesson_and_sections
   end
 
@@ -154,11 +156,11 @@ class MediaController < ApplicationController
       end
       if @medium.sort == 'Quiz'
         @medium.update(type: 'Quiz')
-        @medium.update(quiz_graph:QuizGraph.new(vertices: {},
-                                                edges: {},
-                                                root: 0,
-                                                default_table: {},
-                                                hide_solution: []),
+        @medium.update(quiz_graph: QuizGraph.new(vertices: {},
+                                                 edges: {},
+                                                 root: 0,
+                                                 default_table: {},
+                                                 hide_solution: []),
                        level: 1)
       end
       redirect_to edit_medium_path(@medium)
@@ -172,6 +174,7 @@ class MediaController < ApplicationController
     publisher = MediumPublisher.parse(@medium, current_user, publish_params)
     @errors = publisher.errors
     return if @errors.present?
+
     @medium.update(publisher: publisher)
     if publisher.release_now
       @medium.publish!
@@ -213,18 +216,19 @@ class MediaController < ApplicationController
     authorize! :search, Medium.new
 
     # get all media, then set them to only those that are visible to the current user
-    if current_user.generic? || search_params[:access].blank?
+    if !current_user.active_teachable_editor? || search_params[:access].blank?
       filter_media = true
       params["search"]["access"] = 'irrelevant'
     end
-    params["search"]["answers_count"] = 'irrelevant' if search_params[:answers_count].blank?
+    params["search"]["answers_count"] =
+      'irrelevant' if search_params[:answers_count].blank?
 
     search = Medium.search_by(search_params, params[:page])
     search.execute
     results = search.results
     @total = search.total
 
-    # in the case of a search with tag_operator 'or', we 
+    # in the case of a search with tag_operator 'or', we
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
     if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2
@@ -304,7 +308,7 @@ class MediaController < ApplicationController
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
     if @medium.sort == 'Kaviar' &&
-        @medium.teachable_type.in?(['Lesson', 'Lecture'])
+       @medium.teachable_type.in?(['Lesson', 'Lecture'])
       @item.section = @medium.teachable&.sections&.first
     end
   end
@@ -341,6 +345,7 @@ class MediaController < ApplicationController
   # remove the video's screenshot
   def remove_screenshot
     return if @medium.screenshot.nil?
+
     @medium.update(screenshot: nil)
   end
 
@@ -376,7 +381,7 @@ class MediaController < ApplicationController
     result = (Course.editable_selection(current_user) +
                 Lecture.editable_selection(current_user) +
                 Lesson.editable_selection(current_user))
-               .map { |t| { value: t[1], text: t[0] } }
+             .map { |t| { value: t[1], text: t[0] } }
     render json: result
   end
 
@@ -402,22 +407,36 @@ class MediaController < ApplicationController
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption.where(sort: 'video',
-                                                  mode: 'download').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
+                                                  mode: 'download').pluck(:created_at).map(&:to_date).tally.map { |k, t|
+        {
+          x: k, y: t
+        }
+      }.to_json
       @video_downloads_count = medium_consumption.where(sort: 'video',
-                                                  mode: 'download').count
+                                                        mode: 'download').count
       @video_thyme = medium_consumption.where(sort: 'video',
-                                              mode: 'thyme').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
+                                              mode: 'thyme').pluck(:created_at).map(&:to_date).tally.map { |k, t|
+        {
+          x: k, y: t
+        }
+      }.to_json
       @video_thyme_count = medium_consumption.where(sort: 'video',
                                                     mode: 'thyme').count
     end
     if @medium.manuscript.present?
-      @manuscript_access = medium_consumption.where(sort: 'manuscript').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
+      @manuscript_access = medium_consumption.where(sort: 'manuscript').pluck(:created_at).map(&:to_date).tally.map { |k, t|
+        { x: k, y: t }
+      }.to_json
       @manuscript_access_count = medium_consumption.where(sort: 'manuscript').count
     end
     if @medium.sort == 'Quiz'
 
-      @quiz_plays = medium_consumption.where(sort: 'quiz', mode: 'browser').pluck(:created_at).map(&:to_date).tally.map{|k,t| {x: k,y:t}}.to_json
-      @quiz_plays_count = medium_consumption.where(sort: 'quiz', mode: 'browser').count
+      @quiz_plays = medium_consumption.where(sort: 'quiz',
+                                             mode: 'browser').pluck(:created_at).map(&:to_date).tally.map { |k, t|
+        { x: k, y: t }
+      }.to_json
+      @quiz_plays_count = medium_consumption.where(sort: 'quiz',
+                                                   mode: 'browser').count
       @quiz_finished_count = Probe.finished_quizzes(@medium)
       @global_success = Probe.global_success_in_quiz(@medium.becomes(Quiz))
       @global_success_details = Probe.global_success_details(@medium.becomes(Quiz))
@@ -509,202 +528,206 @@ class MediaController < ApplicationController
 
   private
 
-  def medium_params
-    params.require(:medium).permit(:sort, :description, :video, :manuscript,
-                                   :external_reference_link,
-                                   :external_link_description,
-                                   :geogebra, :geogebra_app_name,
-                                   :teachable_type, :teachable_id,
-                                   :released, :text, :locale,
-                                   :content, :boost,
-                                   :annotations_status,
-                                   editor_ids: [],
-                                   tag_ids: [],
-                                   linked_medium_ids: [])
-  end
-
-  def publish_params
-    params.require(:medium).permit(:release_now, :released, :release_date,
-                                   :lock_comments, :publish_vertices,
-                                   :create_assignment, :assignment_title,
-                                   :assignment_deadline, :assignment_file_type,
-                                   :assignment_deletion_date)
-  end
-
-  def set_medium
-    @medium = Medium.find_by_id(params[:id])&.becomes(Medium)
-    return if @medium.present? && @medium.sort != 'RandomQuiz'
-    redirect_to :root, alert: I18n.t('controllers.no_medium')
-  end
-
-  def set_lecture
-    @lecture = Lecture.find_by_id(params[:id])
-    # store current lecture in cookie
-    if @lecture
-      cookies[:current_lecture_id] = @lecture.id
-      return
+    def medium_params
+      params.require(:medium).permit(:sort, :description, :video, :manuscript,
+                                     :external_reference_link,
+                                     :external_link_description,
+                                     :geogebra, :geogebra_app_name,
+                                     :teachable_type, :teachable_id,
+                                     :released, :text, :locale,
+                                     :content, :boost,
+                                     :annotations_status,
+                                     editor_ids: [],
+                                     tag_ids: [],
+                                     linked_medium_ids: [])
     end
-    redirect_to :root, alert: I18n.t('controllers.no_lecture')
-  end
 
-  def set_teachable
-    if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson', 'Talk']) &&
-       params[:teachable_id].present?
-      @teachable = params[:teachable_type].constantize
-                                          .find_by_id(params[:teachable_id])
+    def publish_params
+      params.require(:medium).permit(:release_now, :released, :release_date,
+                                     :lock_comments, :publish_vertices,
+                                     :create_assignment, :assignment_title,
+                                     :assignment_deadline, :assignment_file_type,
+                                     :assignment_deletion_date)
     end
-  end
 
-  def detach_components
-    if params[:medium][:detach_video] == 'true'
-      @medium.update(video: nil)
-      @medium.update(screenshot: nil)
+    def set_medium
+      @medium = Medium.find_by_id(params[:id])&.becomes(Medium)
+      return if @medium.present? && @medium.sort != 'RandomQuiz'
+
+      redirect_to :root, alert: I18n.t('controllers.no_medium')
     end
-    if params[:medium][:detach_geogebra] == 'true' || @medium.sort != 'Sesam'
-      @medium.update(geogebra: nil)
+
+    def set_lecture
+      @lecture = Lecture.find_by_id(params[:id])
+      # store current lecture in cookie
+      if @lecture
+        cookies[:current_lecture_id] = @lecture.id
+        return
+      end
+      redirect_to :root, alert: I18n.t('controllers.no_lecture')
     end
-    return unless params[:medium][:detach_manuscript] == 'true'
-    @medium.update(manuscript: nil)
-  end
 
-  def sanitize_params
-    reveal_contradictions
-    sanitize_page!
-    sanitize_per!
-    params[:all] = (params[:all] == 'true') || (cookies[:all] == 'true')
-    cookies[:all] = params[:all]
-    cookies[:per] = false if cookies[:all]
-    params[:reverse] = params[:reverse] == 'true'
-  end
-
-  def check_for_consent
-    redirect_to consent_profile_path unless current_user.consents
-  end
-
-  # paginate results obtained by the search_results method
-  def paginated_results
-    if params[:all]
-      total_count = search_results.count
-      # without the total count parameter, kaminary will consider only only the
-      # first 25 entries
-      return Kaminari.paginate_array(search_results,
-                                     total_count: total_count + 1)
+    def set_teachable
+      if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson', 'Talk']) &&
+         params[:teachable_id].present?
+        @teachable = params[:teachable_type].constantize
+                                            .find_by_id(params[:teachable_id])
+      end
     end
-    Kaminari.paginate_array(search_results).page(params[:page])
-            .per(params[:per])
-  end
 
-  # search is done in search class method for Medium
-  def search_results
-    search_results = Medium.search_all(params)
-    # search_results are ordered in a certain way
-    # the next lines ensure that filtering for visible media does not
-    # mess up the ordering
-    search_arel = Medium.where(id: search_results.pluck(:id))
-    visible_search_results = current_user.filter_visible_media(search_arel)
-    search_results &= visible_search_results
-    total = search_results.size
-    @lecture = Lecture.find_by_id(params[:id])
-    # filter out stuff from course level for generic users
-    if params[:visibility] == 'lecture'
-      search_results.reject! { |m| m.teachable_type == 'Course' }
-      # yields only lecture media and course media
-    elsif params[:visibility] == 'all'
-      # yields all lecture media and course media
-    else
-      # this is the default setting: 'thematic' selection of media
-      # yields all lecture media and course media whose tags have
-      # already been dealt with in the lecture
-      unless current_user.admin || @lecture.edited_by?(current_user)
-        lecture_tags = @lecture.tags_including_media_tags
-        search_results.reject! do |m|
-          m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
+    def detach_components
+      if params[:medium][:detach_video] == 'true'
+        @medium.update(video: nil)
+        @medium.update(screenshot: nil)
+      end
+      if params[:medium][:detach_geogebra] == 'true' || @medium.sort != 'Sesam'
+        @medium.update(geogebra: nil)
+      end
+      return unless params[:medium][:detach_manuscript] == 'true'
+
+      @medium.update(manuscript: nil)
+    end
+
+    def sanitize_params
+      reveal_contradictions
+      sanitize_page!
+      sanitize_per!
+      params[:all] = (params[:all] == 'true') || (cookies[:all] == 'true')
+      cookies[:all] = params[:all]
+      cookies[:per] = false if cookies[:all]
+      params[:reverse] = params[:reverse] == 'true'
+    end
+
+    def check_for_consent
+      redirect_to consent_profile_path unless current_user.consents
+    end
+
+    # paginate results obtained by the search_results method
+    def paginated_results
+      if params[:all]
+        total_count = search_results.count
+        # without the total count parameter, kaminary will consider only only the
+        # first 25 entries
+        return Kaminari.paginate_array(search_results,
+                                       total_count: total_count + 1)
+      end
+      Kaminari.paginate_array(search_results).page(params[:page])
+              .per(params[:per])
+    end
+
+    # search is done in search class method for Medium
+    def search_results
+      search_results = Medium.search_all(params)
+      # search_results are ordered in a certain way
+      # the next lines ensure that filtering for visible media does not
+      # mess up the ordering
+      search_arel = Medium.where(id: search_results.pluck(:id))
+      visible_search_results = current_user.filter_visible_media(search_arel)
+      search_results &= visible_search_results
+      total = search_results.size
+      @lecture = Lecture.find_by_id(params[:id])
+      # filter out stuff from course level for generic users
+      if params[:visibility] == 'lecture'
+        search_results.reject! { |m| m.teachable_type == 'Course' }
+        # yields only lecture media and course media
+      elsif params[:visibility] == 'all'
+        # yields all lecture media and course media
+      else
+        # this is the default setting: 'thematic' selection of media
+        # yields all lecture media and course media whose tags have
+        # already been dealt with in the lecture
+        unless current_user.admin || @lecture.edited_by?(current_user)
+          lecture_tags = @lecture.tags_including_media_tags
+          search_results.reject! do |m|
+            m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
+          end
+        end
+      end
+      sort = params[:project] == 'keks' ? 'Quiz' : params[:project]&.capitalize
+      search_results += @lecture.imported_media
+                                .where(sort: sort)
+                                .locally_visible
+      search_results.uniq!
+      @hidden = search_results.empty? && total.positive?
+      return search_results unless params[:reverse]
+
+      search_results.reverse
+    end
+
+    def reveal_contradictions
+      return unless params[:lecture_id].present?
+      return if params[:lecture_id].to_i.in?(@course.lecture_ids)
+
+      redirect_to :root, alert: I18n.t('controllers.contradiction')
+    end
+
+    def sanitize_page!
+      params[:page] = params[:page].to_i.positive? ? params[:page].to_i : 1
+    end
+
+    def sanitize_per!
+      if params[:per] || cookies[:per].to_i.positive?
+        cookies[:all] = 'false'
+      end
+      params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
+        params[:per].to_i
+      elsif cookies[:per].to_i.positive?
+        cookies[:per].to_i
+      else
+        8
+      end
+      cookies[:per] = params[:per]
+    end
+
+    def search_params
+      types = params[:search][:types] || []
+      types = [types] if types && !types.kind_of?(Array)
+      types -= [''] if types
+      types = nil if types == []
+      params[:search][:types] = types
+      params[:search][:user_id] = current_user.id
+      params.require(:search)
+            .permit(:all_types, :all_teachables, :all_tags,
+                    :all_editors, :tag_operator, :quiz, :access,
+                    :teachable_inheritance, :fulltext, :per,
+                    :clicker, :purpose, :answers_count,
+                    :results_as_list, :all_terms, :all_teachers,
+                    :lecture_option, :user_id, :from,
+                    types: [],
+                    teachable_ids: [],
+                    tag_ids: [],
+                    editor_ids: [],
+                    term_ids: [],
+                    teacher_ids: [],
+                    media_lectures: [])
+      # .with_defaults(access: 'all')
+    end
+
+    # destroy all notifications related to this medium
+    def destroy_notifications
+      Notification.where(notifiable_id: @medium.id, notifiable_type: 'Medium')
+                  .delete_all
+    end
+
+    def add_tags_in_lesson_and_sections
+      @tags_outside_lesson = @medium.tags_outside_lesson
+      if @tags_outside_lesson
+        @medium.teachable.tags << @tags_outside_lesson
+        @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
+        if @medium.teachable.sections.count == 1
+          section = @medium.teachable.sections.first
+          section.tags << @tags_without_section
         end
       end
     end
-    sort = params[:project] == 'keks' ? 'Quiz' : params[:project]&.capitalize
-    search_results +=  @lecture.imported_media
-                               .where(sort: sort)
-                               .locally_visible
-    search_results.uniq!
-    @hidden = search_results.empty? && total.positive?
-    return search_results unless params[:reverse]
-    search_results.reverse
-  end
 
-  def reveal_contradictions
-    return unless params[:lecture_id].present?
-    return if params[:lecture_id].to_i.in?(@course.lecture_ids)
-    redirect_to :root, alert: I18n.t('controllers.contradiction')
-  end
-
-  def sanitize_page!
-    params[:page] = params[:page].to_i.positive? ? params[:page].to_i : 1
-  end
-
-  def sanitize_per!
-    if params[:per] || cookies[:per].to_i.positive?
-      cookies[:all] = 'false'
+    def store_access
+      mode = action_name == 'play' ? 'thyme' : 'pdf_view'
+      sort = action_name == 'play' ? 'video' : 'manuscript'
+      ConsumptionSaver.perform_async(@medium.id, mode, sort)
     end
-    params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
-                     params[:per].to_i
-                   elsif cookies[:per].to_i.positive?
-                     cookies[:per].to_i
-                   else
-                     8
-                   end
-    cookies[:per] = params[:per]
-  end
 
-  def search_params
-    types = params[:search][:types] || []
-    types = [types] if types && !types.kind_of?(Array)
-    types -= [''] if types
-    types = nil if types == []
-    params[:search][:types] = types
-    params[:search][:user_id] = current_user.id
-    params.require(:search)
-          .permit(:all_types, :all_teachables, :all_tags,
-                  :all_editors, :tag_operator, :quiz, :access,
-                  :teachable_inheritance, :fulltext, :per,
-                  :clicker, :purpose, :answers_count,
-                  :results_as_list, :all_terms, :all_teachers,
-                  :lecture_option, :user_id,
-                  types: [],
-                  teachable_ids: [],
-                  tag_ids: [],
-                  editor_ids: [],
-                  term_ids: [],
-                  teacher_ids: [],
-                  media_lectures: [])
-          #.with_defaults(access: 'all')
-  end
-
-  # destroy all notifications related to this medium
-  def destroy_notifications
-    Notification.where(notifiable_id: @medium.id, notifiable_type: 'Medium')
-                .delete_all
-  end
-
-  def add_tags_in_lesson_and_sections
-    @tags_outside_lesson = @medium.tags_outside_lesson
-    if @tags_outside_lesson
-      @medium.teachable.tags << @tags_outside_lesson
-      @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
-      if @medium.teachable.sections.count == 1
-        section = @medium.teachable.sections.first
-        section.tags << @tags_without_section
-      end
+    def store_download
+      ConsumptionSaver.perform_async(@medium.id, 'download', params[:sort])
     end
-  end
-
-  def store_access
-    mode = action_name == 'play' ? 'thyme' : 'pdf_view'
-    sort = action_name == 'play' ? 'video' : 'manuscript'
-    ConsumptionSaver.perform_async(@medium.id, mode, sort)
-  end
-
-  def store_download
-    ConsumptionSaver.perform_async(@medium.id, 'download', params[:sort])
-  end
 end

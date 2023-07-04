@@ -2,7 +2,7 @@
   <%= render partial: 'submissions/correction',
             locals: { submission: submission } %>
 <% elsif submission.accepted == false %>
-  <span class="badge badge-danger">
+  <span class="badge bg-danger">
     <%= t('submission.rejected') %>
   </span>
 <% end %>

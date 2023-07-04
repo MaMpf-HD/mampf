@@ -68,6 +68,8 @@ $container-max-widths: (
 @import "vertices";
 @import "trix";
 
+$badge-color: #545b62;
+
 trix-toolbar .trix-button-row {
   flex-wrap: wrap;
 }
@@ -80,11 +82,11 @@ trix-toolbar .trix-button-row {
   padding-left: 1rem;
 }
 
-.badge-light {
+.bg-light {
   background-color: #dae0e5;
 }
 
-.badge-light[href]:hover {
+.bg-light[href]:hover {
   background-color: #f8f9fa;
 }
 
@@ -100,87 +102,79 @@ trix-toolbar .trix-button-row {
   font-size: 0.75em;
 }
 
-.quiz
-{
+.quiz {
   font-family: 'Cabin', sans-serif;
 }
 
-.correct
-{
+.correct {
   color: green;
 }
 
-.incorrect
-{
+.incorrect {
   color: red;
 }
 
-.card-xl
-{
+.card-xl {
   max-height: 75vh;
   overflow-y: scroll;
 }
 
-.card-large
-{
+.card-large {
   max-height: 70vh;
   overflow-y: scroll;
 }
 
-.card-medium
-{
+.card-medium {
   max-height: 60vh;
   overflow-y: scroll;
 }
 
 
-.card-compact
-{
+.card-compact {
   max-height: 50vh;
   overflow-y: scroll;
 }
 
-.card-tiny
-{
+.card-tiny {
   max-height: 30vh;
   overflow-y: scroll;
 }
 
-.card-fixed-xxl
-{
+.card-fixed-xxl {
   height: 85vh;
 }
 
-.card-fixed-medium
-{
+.card-fixed-medium {
   height: 65vh;
 }
 
-.card-fixed-small
-{
+.card-fixed-small {
   height: 20vh;
 }
 
-.scrollable
-{
+.scrollable {
   overflow-y: scroll;
 }
 
 
-$modal-xl:                    1140px !default;
-$modal-xxl:                   1600px !default;
+$modal-xl: 1140px !default;
+$modal-xxl: 1600px !default;
 
 @include media-breakpoint-up(xl) {
-  .modal-xl { max-width: $modal-xl; }
+  .modal-xl {
+    max-width: $modal-xl;
+  }
 }
 
 @include media-breakpoint-up(xxl) {
-  .modal-xxl { max-width: $modal-xxl; }
+  .modal-xxl {
+    max-width: $modal-xxl;
+  }
 }
 
 
 .dropdown-menu a {
-  text-decoration: none;
+  text-decoration: none !important;
   color: black;
 }
 
@@ -192,34 +186,6 @@ $modal-xxl:                   1600px !default;
   top: 0;
   left: 100%;
   margin-top: -1px;
-}
-
-
-.card-columns {
-  @include media-breakpoint-only(xxxxl) {
-    column-count: 2;
-  }
-  @include media-breakpoint-only(xxxl) {
-    column-count: 2;
-  }
-  @include media-breakpoint-only(xxxl) {
-    column-count: 2;
-  }
-  @include media-breakpoint-only(xxl) {
-    column-count: 2;
-  }
-  @include media-breakpoint-only(xl) {
-    column-count: 1;
-  }
-  @include media-breakpoint-only(lg) {
-    column-count: 1;
-  }
-  @include media-breakpoint-only(md) {
-    column-count: 1;
-  }
-  @include media-breakpoint-only(sm) {
-    column-count: 1;
-  }
 }
 
 .assumption {
@@ -238,17 +204,16 @@ $modal-xxl:                   1600px !default;
   display: none;
 }
 
-.revertCommontator
-{
+.revertCommontator {
   all: unset;
 }
 
 table.submission-table-bordered th {
-  border:1px solid #c5ccd3;
+  border: 1px solid #c5ccd3;
 }
 
 table.submission-table-bordered td {
-  border:1px solid #c5ccd3;
+  border: 1px solid #c5ccd3;
 }
 
 .exceptionBox {
@@ -296,4 +261,45 @@ table.submission-table-bordered td {
 
 #main-content-row {
   min-width: 100%;
+}
+
+a {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.badge {
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    background-color: $badge-color !important;
+    color: white;
+  }
+}
+
+.btn {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.nav-link {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none !important;
+  }
+}
+
+.btn-link {
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

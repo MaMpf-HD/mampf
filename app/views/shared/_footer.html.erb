@@ -14,7 +14,7 @@
 <%# Footbar %>
 <div class="container-fluid bg-grey-lighten-6 p-3">
   <div class="row">
-    <div class="col text-md-left">
+    <div class="col text-md-start">
       <%= t('footer.text_html',
              github: link_to('GitHub',
                              'https://github.com/MaMpf-HD/mampf',
@@ -51,7 +51,7 @@
                             'https://unsplash.com/photos/nGs0d1dGFng',
                             target: :_blank)) %>
     </div>
-    <div class="col text-md-right">
+    <div class="col text-md-end">
       <a href="#sponsors" data-toggle="modal"
           data-target="#sponsors"><%= t('basics.sponsors') %></a>
       <span style="margin-left: 20px;"></span>
@@ -69,10 +69,10 @@
   </div>
 
   <div class="row">
-    <div class="col-sm text-center text-md-right">
+    <div class="col-sm text-center text-md-end">
       <%= link_to t('disclosure'),
                    'https://www.uni-heidelberg.de/impressum.html',
-                   target: :_blank, class:'mr-2' %>
+                   target: :_blank, class:'me-2' %>
       <%= link_to t('policy'),
                   'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
                   target: :_blank %>

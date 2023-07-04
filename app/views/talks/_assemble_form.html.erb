@@ -12,9 +12,10 @@
                                assemble: true } %>
           <div class="row">
             <div class="col-12">
-              <div class="form-group">
+              <div class="mb-3">
                 <strong>
-                  <%= f.label :tag_ids, t('basics.related_tags') %>:
+                  <%= f.label :tag_ids, t('basics.related_tags'),
+                              class: "form-label" %>:
                   <%= helpdesk(t('admin.talk.info.tags'), false) %>
                 </strong>
                 <%= f.select :tag_ids,
@@ -86,19 +87,19 @@
         <div class="card-body">
           <div class="row mb-3">
             <div class="col-12">
-              <div class="custom-control custom-checkbox">
+              <div class="form-check">
                 <%= f.check_box :display_description,
-                                class: 'custom-control-input' %>
+                                class: 'form-check-input' %>
                 <%= f.label :display_description,
                             t('admin.talk.display_description'),
-                            { class: 'custom-control-label' } %>
+                            { class: 'form-check-label' } %>
                 <%= helpdesk(t('admin.talk.info.display_description'),
                              false) %>
               </div>
               <% if talk.description.present? && !talk.display_description %>
-                <div class="col-12 text-dark ml-2 border border-warning
+                <div class="col-12 text-dark ms-2 border border-warning
                             rounded bg-yellow-lighten-5 my-2">
-                  <span class="badge badge-secondary">
+                  <span class="badge bg-secondary">
                     <%= t('basics.info') %>
                   </span>
                   <%= t('admin.talk.description_warning') %>

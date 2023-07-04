@@ -22,6 +22,7 @@ class Referral < ApplicationRecord
   # otherwise, return the item's explanation
   def explain
     return explanation if item.nil?
+
     explanation || item.explanation
   end
 
@@ -104,51 +105,56 @@ class Referral < ApplicationRecord
 
   private
 
-  # explanation provided to the vtt file
-  # returns the referral's explanation if present, the item's explanation
-  # if the item is a link, otherwise nil
-  def vtt_explanation
-    return explanation if explanation.present?
-    return item.explanation if item.sort == 'link' && item.explanation.present?
-  end
+    # explanation provided to the vtt file
+    # returns the referral's explanation if present, the item's explanation
+    # if the item is a link, otherwise nil
+    def vtt_explanation
+      return explanation if explanation.present?
+      return item.explanation if item.sort == 'link' && item.explanation.present?
+    end
 
-  # some method that check for valid start and end time
+    # some method that check for valid start and end time
 
-  def valid_start_time
-    return true if start_time.nil?
-    return true if start_time.valid?
-    errors.add(:start_time, :invalid_format)
-    false
-  end
+    def valid_start_time
+      return true if start_time.nil?
+      return true if start_time.valid?
 
-  def valid_end_time
-    return true if end_time.nil?
-    return true if end_time.valid?
-    errors.add(:end_time, :invalid_format)
-    false
-  end
+      errors.add(:start_time, :invalid_format)
+      false
+    end
 
-  def start_time_not_too_late
-    return true if medium.nil? || !medium.video
-    return true unless start_time.valid?
-    return true if start_time.total_seconds <= medium.video_duration
-    errors.add(:start_time, :too_late)
-    false
-  end
+    def valid_end_time
+      return true if end_time.nil?
+      return true if end_time.valid?
 
-  def end_time_not_too_late
-    return true if medium.nil? || !medium.video
-    return true unless end_time.valid?
-    return true if end_time.total_seconds <= medium.video_duration
-    errors.add(:end_time, :too_late)
-    false
-  end
+      errors.add(:end_time, :invalid_format)
+      false
+    end
 
-  def end_time_not_too_soon
-    return true unless start_time&.valid?
-    return true unless end_time&.valid?
-    return true if start_time.total_seconds < end_time.total_seconds
-    errors.add(:end_time, :too_soon)
-    false
-  end
+    def start_time_not_too_late
+      return true if medium.nil? || !medium.video
+      return true unless start_time.valid?
+      return true if start_time.total_seconds <= medium.video_duration
+
+      errors.add(:start_time, :too_late)
+      false
+    end
+
+    def end_time_not_too_late
+      return true if medium.nil? || !medium.video
+      return true unless end_time.valid?
+      return true if end_time.total_seconds <= medium.video_duration
+
+      errors.add(:end_time, :too_late)
+      false
+    end
+
+    def end_time_not_too_soon
+      return true unless start_time&.valid?
+      return true unless end_time&.valid?
+      return true if start_time.total_seconds < end_time.total_seconds
+
+      errors.add(:end_time, :too_soon)
+      false
+    end
 end

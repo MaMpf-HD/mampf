@@ -11,17 +11,19 @@
       <div class="col-6">
         <%= link_to t('buttons.create_medium'),
                     new_medium_path(params:
-                                      { sort: 'Kaviar',
-                                        teachable_id: lecture.id,
-                                        teachable_type: 'Lecture' }),
+                                    { 
+                                      sort: 'Kaviar',
+                                      teachable_id: lecture.id,
+                                      teachable_type: 'Lecture'
+                                    }),
                     class: 'btn btn-sm btn-secondary new-in-lecture',
                     id: 'create-new-medium',
                     remote: true %>
       </div>
-      <div class="col-2 text-right">
+      <div class="col-2 text-end">
         <i id="hide-media-button"
            class="far fa-window-close clickable"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            title="<%= t('buttons.hide_media') %>">
         </i>
       </div>
@@ -29,15 +31,15 @@
   </div>
   <div class="card-body">
     <div class="row">
-      <div class="col-4">
+      <div class="col-5">
         <ul class="nav flex-column nav-pills"
             id="edited-media-tab"
             role="tablist">
           <% media_sorts.each do |s| %>
-            <li class="nav-item">
+            <li class="nav-item w-100">
               <a class="nav-link <%= active(s == 'kaviar') %>"
                  id="<%= s %>-tab"
-                 data-toggle="tab" href="#<%= s %>-media" role="tab"
+                 data-bs-toggle="tab" href="#<%= s %>-media" role="tab"
                  aria-controls="<%= s%>-media" aria-selected="true"
                  data-sort="<%= media_types[s].first %>">
                 <%= media_names[s] %>
@@ -47,14 +49,14 @@
           <% end %>
         </ul>
       </div>
-      <div class="col-8">
+      <div class="col-7">
         <div class="tab-content" id="edited-media-tabContent">
           <% media_sorts.each do |s| %>
             <div class="tab-pane fade <%= show_tab(s == 'kaviar') %>"
                  id="<%= s %>-media"
                  role="tabpanel"
                  aria-labelledby="<%= s %>-tab">
-              <ul>
+              <ul class="pl-2">
                 <% media.select { |m| m.sort.in?(media_types[s]) }
                         .sort_by(&:created_at)
                         .reverse

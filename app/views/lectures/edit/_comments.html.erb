@@ -1,10 +1,12 @@
-  <div class="card bg-light">
-    <div class="card-header clickable"
-         role="tab"
-         id="comments_heading"
-         data-toggle="collapse"
-         data-target="#comments_collapse"
-         aria-expanded="false" aria-controls="comments_collapse">
+<div class="accordion-item bg-light">
+  <div class="accordion-header">
+    <button class="accordion-button collapsed"
+            type="button"
+            id="comments_heading"
+            data-bs-toggle="collapse"
+            data-bs-target="#comments_collapse"
+            aria-expanded="false"
+            aria-controls="comments_collapse">
       <div class="row">
         <div class="col-12">
           <h5>
@@ -12,34 +14,47 @@
           </h5>
         </div>
       </div>
-    </div>
-    <div id="comments_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-parent="#lectureAccordion">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-12 text-center" id="comments-buttons">
-            <%= link_to t('buttons.close_comments'),
-                        lecture_close_comments_path(lecture),
-                        class: 'btn btn-sm btn-primary' %>
-            <%= link_to t('buttons.open_comments'),
-                        lecture_open_comments_path(lecture),
-                        class: 'btn btn-sm btn-primary' %>
+    </button>
+  </div>
+  <div id="comments_collapse"
+        class="collapse"
+        role="tabpanel"
+        aria-labelledby="heading"
+        data-bs-parent="#lectureAccordion">
+    <div class="accordion-body">
+      <div class="row">
+        <div class="col-12 text-center" id="comments-buttons">
+          <%= link_to t('buttons.close_comments'),
+                      lecture_close_comments_path(lecture),
+                      class: 'btn btn-sm btn-primary' %>
+          <%= link_to t('buttons.open_comments'),
+                      lecture_open_comments_path(lecture),
+                      class: 'btn btn-sm btn-primary' %>
+        </div>
+      </div>
+      <%= form_with model: lecture,
+                    html: { id: 'lecture-comments-form' } do |f| %>
+        <div class="row my-3 ms-2">
+          <div class="form-check">
+            <%= f.check_box :comments_disabled,
+                            class: 'form-check-input' %>
+            <%= f.label :comments_disabled,
+                        t('admin.lecture.comments_disabled'),
+                        { class: 'form-check-label' } %>
+            <%= helpdesk(t('admin.lecture.info.comments_disabled'),
+                      false) %>
           </div>
         </div>
-        <%= form_with model: lecture,
-                      html: { id: 'lecture-comments-form' } do |f| %>
-          <div class="form-row my-3 ml-2">
-            <div class="custom-control custom-checkbox">
-              <%= f.check_box :comments_disabled,
-                              class: 'custom-control-input' %>
-              <%= f.label :comments_disabled,
-                          t('admin.lecture.comments_disabled'),
-                          { class: 'custom-control-label' } %>
-              <%= helpdesk(t('admin.lecture.info.comments_disabled'),
-                       false) %>
+        <div class="row">
+          <div class="col-12 text-center">
+            <div id="lecture-comments-warning">
+              <%= t('warnings.unsaved_changes') %>
+              <%= f.submit t('buttons.save_and_exit'),
+                            class: "btn btn-sm btn-primary" %>
+              <button type="button" id="cancel-lecture-comments"
+                      class="btn btn-sm btn-secondary">
+                <%= t('buttons.cancel') %>
+              </button>
             </div>
           </div>
           <!-- EMERGENCY BUTTON -->
@@ -83,3 +98,4 @@
       </div>
     </div>
   </div>
+</div>

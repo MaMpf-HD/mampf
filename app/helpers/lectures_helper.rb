@@ -41,24 +41,28 @@ module LecturesHelper
   # unpublished lecture get a different link color
   def lectures_color(lecture)
     return '' if lecture.published?
+
     'unpublished'
   end
 
   # hidden chapters get a different color
   def chapter_card_color(chapter)
     return 'bg-mdb-color-lighten-5' unless chapter.hidden
+
     'greyed_out bg-grey'
   end
 
   # hidden chapters get a different header color
   def chapter_header_color(chapter)
     return 'bg-mdb-color-lighten-2' unless chapter.hidden
+
     ''
   end
 
   # hidden sections get a different color
   def section_color(section)
     return '' unless section.hidden
+
     'greyed_out'
   end
 
@@ -67,42 +71,48 @@ module LecturesHelper
     unless !section.chapter.hidden && section.hidden
       return 'bg-mdb-color-lighten-6'
     end
+
     'bg-grey'
   end
 
   def news_color(news_count)
     return '' unless news_count.positive?
+
     'text-primary'
   end
 
   def lecture_header_color(subscribed, lecture)
     return '' unless subscribed
+
     result = 'text-light '
     result += if lecture.term
-                'bg-mdb-color-lighten-1'
-              else
-                'bg-info'
-              end
+      'bg-mdb-color-lighten-1'
+    else
+      'bg-info'
+    end
   end
 
   def circle_icon(subscribed)
     return 'fas fa-check-circle' if subscribed
+
     'far fa-circle'
   end
 
   def lecture_border(lecture)
     return '' if lecture.published?
+
     'border-danger'
   end
 
   def lecture_access_icon(lecture)
     return lecture_edit_icon if current_user.can_edit?(lecture)
+
     lecture_view_icon
   end
 
   def lecture_edit_icon(lecture)
     link_to edit_lecture_path(lecture),
-            class: 'text-dark mr-2',
+            class: 'text-dark me-2',
             style: 'text-decoration: none;',
             data: { toggle: 'tooltip',
                     placement: 'bottom' },
@@ -113,7 +123,7 @@ module LecturesHelper
 
   def lecture_view_icon(lecture)
     link_to lecture_path(lecture),
-            class: 'text-dark mr-2',
+            class: 'text-dark me-2',
             style: 'text-decoration: none;',
             data: { toggle: 'tooltip',
                     placement: 'bottom' },

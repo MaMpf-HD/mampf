@@ -8,7 +8,7 @@ gem "rails", "~> 7.0.4.3"
 # Use dalli for caching to memcached in production
 gem "dalli", ">= 2.7"
 # Ruby wrapper for UglifyJS JavaScript compressor
-gem "uglifier"
+gem "terser"
 # Use nulldb adapter for assets precompilation in production
 gem "activerecord-nulldb-adapter"
 # Use sqlite3 as the database for Active Record
@@ -60,7 +60,7 @@ gem "cancancan"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "js-routes", '1.4.9'
-gem "bootstrap", "~>4"
+gem "bootstrap", "~>5"
 gem "bootstrap_form"
 gem "devise-bootstrap-views"
 gem "fuzzy-string-match"
@@ -91,9 +91,7 @@ gem "sidekiq-cron", "~> 1.1"
 gem "faraday", "~> 1.8"
 gem "globalize"
 gem "globalize-accessors"
-gem "commontator",
-  git: "https://github.com/MaMpf-HD/commontator.git",
-  branch: "main"
+gem "commontator"
 gem "acts_as_votable"
 gem "sprockets-rails",
   git: "https://github.com/rails/sprockets-rails",
@@ -120,7 +118,7 @@ group :development, :docker_development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"
-  gem "rubocop", "~> 0.93", require: false
+  gem "rubocop", "~> 1.50", require: false
   gem "rubocop-packaging", require: false
   gem "rubocop-performance", require: false
   gem "rubocop-rails", require: false

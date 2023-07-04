@@ -49,4 +49,4 @@ $('#link_details').show()
 <% end %>
 
 # activate popovers
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()

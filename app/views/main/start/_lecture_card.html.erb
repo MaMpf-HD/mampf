@@ -11,7 +11,7 @@
           <%= lecture.title_no_term %>
         <% end %>
       </div>
-      <div class="col-4 col-sm-5 col-lg-4 col-xl-4 text-right">
+      <div class="col-4 col-sm-5 col-lg-4 col-xl-4 text-end">
         <% if subscribed %>
           <% if lecture.in?(current_user.favorite_lectures) %>
             <%= link_to '',
@@ -19,7 +19,7 @@
                                               { lecture:
                                                   { id: lecture.id,
                                                     parent: parent } }),
-                        class: 'fas fa-bookmark text-light mr-2',
+                        class: 'fas fa-bookmark text-light me-2',
                         style: 'text-decoration: none;',
                         method: :patch,
                         data: { toggle: 'tooltip',
@@ -32,7 +32,7 @@
                                             { lecture:
                                                 { id: lecture.id,
                                                   parent: parent } }),
-                        class: 'far fa-bookmark text-light mr-2',
+                        class: 'far fa-bookmark text-light me-2',
                         style: 'text-decoration: none;',
                         method: :patch,
                         data: { toggle: 'tooltip',
@@ -108,7 +108,7 @@
                                         .active_notifications(lecture)
                                         .size) do %>
           <%= current_user.active_notifications(lecture).size %>
-          <%= tag.i class: 'far fa-envelope mr-3',
+          <%= tag.i class: 'far fa-envelope me-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('admin.lecture.new_notifications') %>
@@ -117,7 +117,7 @@
                                         .active_media_notifications(lecture)
                                         .size) do %>
           <%= current_user.active_media_notifications(lecture).size %>
-          <%= tag.i class: 'far fa-folder mr-3',
+          <%= tag.i class: 'far fa-folder me-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('admin.lecture.new_media') %>
@@ -126,7 +126,7 @@
                                         .unread_forum_topics_count(current_user)
                                         .to_i) do %>
           <%= lecture.unread_forum_topics_count(current_user).to_i %>
-          <%= tag.i class: 'far fa-comment-alt mr-3',
+          <%= tag.i class: 'far fa-comment-alt me-3',
                     data: { toggle: 'tooltip',
                             placement: 'bottom' },
                     title: t('admin.lecture.new_posts') %>

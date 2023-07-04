@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-10">
     <h4>
-      <span class="badge badge-secondary mr-3">
+      <span class="badge bg-secondary me-3">
         <%= t('basics.talk') %>
       </span>
       <%= @talk.to_label %>
@@ -35,12 +35,12 @@
       <% end %>
     </h4>
   </div>
-  <div class="col-2 text-right ">
+  <div class="col-2 text-end ">
     <% if @talk.previous.present? %>
       <a href="<%= talk_path(@talk.previous) %>"
-         class="text-secondary material-icons mr-2"
+         class="text-secondary material-icons me-2"
          style="text-decoration:none; font-size: 3em;"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          title="<%= t('previous_lesson') %>">
         keyboard_arrow_left
       </a>
@@ -49,7 +49,7 @@
       <a href="<%= talk_path(@talk.next) %>"
          class="text-secondary material-icons"
          style="text-decoration:none; font-size: 3em;"
-         data-toggle="tooltip"
+         data-bs-toggle="tooltip"
          title="<%= t('next_lesson') %>">
         keyboard_arrow_right
       </a>

@@ -12,7 +12,7 @@ $('#tutorial-table').empty()
 												locals: { assignment: @assignment,
 																	tutorial: @tutorial,
 																	stack: @stack } %>')
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
 <% end %>
 <% else %>
 location.reload(true)

@@ -5,9 +5,10 @@
     </h5>
   </div>
   <div class="card-body">
-    <div class="form-row">
-      <div class="col-12 form-group">
-        <%= f.label :title, t('basics.title') %>
+    <div class="row">
+      <div class="col-12">
+        <%= f.label :title, t('basics.title'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.chapter.info.title'), false) %>
         <%= f.text_field :title,
                          { class: 'form-control' } %>
@@ -15,34 +16,36 @@
         </div>
       </div>
     </div>
-    <div class="form-row">
-      <div class="col-10 form-group">
+    <div class="row">
+      <div class="col-10">
         <%= f.label :predecessor,
                     t('admin.chapter.position',
-                      chapter_name: t("basics.#{chapter.lecture.chapter_name}")) %>
+                    chapter_name: t("basics.#{chapter.lecture.chapter_name}")),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.chapter.info.position'), false) %>
         <%= f.select :predecessor,
                      options_for_select(chapter_positions_for_select(chapter),
                                         chapter.position - 1) ,
                                         {},
-                                        { class: 'form-control' } %>
+                                        { class: 'form-select' } %>
       </div>
-      <div class="col-2 form-group">
+      <div class="col-2">
         <%= f.label :display_number,
-                    t('admin.chapter.display_number') %>
+                    t('admin.chapter.display_number'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.chapter.info.display_number'), false) %>
         <%= f.text_field :display_number,
                          { class: 'form-control' } %>
       </div>
     </div>
-    <div class="form-row">
+    <div class="row">
       <div class="col-12">
-        <div class="custom-control custom-checkbox mb-2">
+        <div class="form-checkbox mb-2">
           <%= f.check_box :hidden,
-                          class: 'custom-control-input' %>
+                          class: 'form-check-input' %>
           <%= f.label :hidden,
                       t('admin.chapter.exempt'),
-                      { class: 'custom-control-label' } %>
+                      { class: 'form-label' } %>
           <%= helpdesk(t('admin.chapter.info.exempt'), false) %>
         </div>
       </div>

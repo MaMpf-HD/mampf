@@ -8,8 +8,8 @@ class MediumAbility
     can [:index, :new, :search, :check_annotation_visibility], Medium
 
     can [:show, :show_comments], Medium do |medium|
-      medium.visible_for_user?(user)  &&
-      !(medium.sort.in?(['Question', 'Remark']) && !user.can_edit?(medium))
+      medium.visible_for_user?(user) &&
+        !(medium.sort.in?(['Question', 'Remark']) && !user.can_edit?(medium))
     end
 
     can :inspect, Medium do |medium|
@@ -39,7 +39,7 @@ class MediumAbility
     # guest users can play/display media when their release status 'all'
     can [:play, :display, :geogebra], Medium do |medium|
       (!user.new_record? && medium.visible_for_user?(user)) ||
-      medium.free?
+        medium.free?
     end
 
     can :update_tags, Medium do |medium|
@@ -51,4 +51,3 @@ class MediumAbility
     end
   end
 end
-

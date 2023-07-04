@@ -7,7 +7,7 @@ $('#new-tag-modal-content').empty()
                                   from: @from }%>')
 
 # activate popovers and selectize
-$('[data-toggle="popover"]').popover()
+$('[data-bs-toggle="popover"]').popover()
 fillOptionsByAjax($('#new-tag-modal-content .selectize'))
 
 # store from where the modal was called

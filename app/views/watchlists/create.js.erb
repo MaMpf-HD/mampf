@@ -15,9 +15,9 @@ if(<%= @success %>) {
     $('#watchlistEntrySubmitButton').attr("disabled", false);
     $('#watchlistEntrySubmitButton').removeAttr("data-confirm");
 
-    $('#watchlistSelectForm').append("<span class='badge badge-success'><%= t('watchlist.creation_success')%></span>");
+    $('#watchlistSelectForm').append("<span class='badge bg-success'><%= t('watchlist.creation_success')%></span>");
     setTimeout(function() {
-      $('#watchlistModalBody').find('.badge-success').remove();
+      $('#watchlistModalBody').find('.bg-success').remove();
     }, 2000);
   } else {
     location.reload(true);

@@ -22,7 +22,6 @@ class NotificationMailer < ApplicationMailer
                 only: [:submission_join_email,
                        :submission_leave_email]
 
-
   def medium_email
     @medium = params[:medium]
     mail(from: @sender,
@@ -34,11 +33,11 @@ class NotificationMailer < ApplicationMailer
   def announcement_email
     @announcement = params[:announcement]
     @announcement_details = if @announcement.lecture.present?
-                             t('in') + ' ' +
-                               @announcement.lecture.title_for_viewers
-                            else
-                              t('mailer.mampf_news')
-                            end
+      t('in') + ' ' +
+        @announcement.lecture.title_for_viewers
+    else
+      t('mailer.mampf_news')
+    end
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: t('mailer.announcement_subject') + ' ' +
@@ -50,9 +49,9 @@ class NotificationMailer < ApplicationMailer
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: t('mailer.new_lecture_subject',
-         title: @lecture.title_for_viewers))
+                    title: @lecture.title_for_viewers))
   end
-  
+
   def new_editor_email
     @lecture = params[:lecture]
     @recipient = params[:recipient]
@@ -61,9 +60,9 @@ class NotificationMailer < ApplicationMailer
     mail(from: @sender,
          to: @recipient.email,
          subject: t('mailer.new_editor_subject',
-         title: @lecture.title_for_viewers))
+                    title: @lecture.title_for_viewers))
   end
-  
+
   def submission_invitation_email
     @recipient = params[:recipient]
     @assignment = params[:assignment]
@@ -177,26 +176,26 @@ class NotificationMailer < ApplicationMailer
 
   private
 
-  def set_sender_and_locale
-    @sender = "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
-    I18n.locale = params[:locale]
-  end
+    def set_sender_and_locale
+      @sender = "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
+      I18n.locale = params[:locale]
+    end
 
-  def set_recipients
-    @recipients = User.where(id: params[:recipients])
-  end
+    def set_recipients
+      @recipients = User.where(id: params[:recipients])
+    end
 
-  def set_recipient_and_submission
-    @recipient = params[:recipient]
-    @submission = params[:submission]
-    @assignment = @submission.assignment
-  end
+    def set_recipient_and_submission
+      @recipient = params[:recipient]
+      @submission = params[:submission]
+      @assignment = @submission.assignment
+    end
 
-  def set_filename
-    @filename = params[:filename]
-  end
+    def set_filename
+      @filename = params[:filename]
+    end
 
-  def set_user
-    @user = params[:user]
-  end
+    def set_user
+      @user = params[:user]
+    end
 end

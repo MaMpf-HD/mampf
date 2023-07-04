@@ -8,11 +8,11 @@
         <%= question.text_with_sample_params(parameters) %>
       </div>
       <% if question.hint.present? %>
-        <div class="col-1 text-right">
+        <div class="col-1 text-end">
           <span >
             <i class="far fa-question-circle"
                id="reveal-hint-<%= question.id %>"
-               style="cursor: pointer;" data-toggle="tooltip"
+               style="cursor: pointer;" data-bs-toggle="tooltip"
                data-placement="left" title="<%= t('admin.question.hint') %>">
             </i>
           </span>

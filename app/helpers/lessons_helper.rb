@@ -10,6 +10,7 @@ module LessonsHelper
 
   def edit_or_show_lesson_path(lesson)
     return edit_lesson_path(lesson) if current_user.can_edit?(lesson.lecture)
+
     lesson_path(lesson)
   end
 end

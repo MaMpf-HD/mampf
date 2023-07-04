@@ -1,6 +1,5 @@
 # MainController
 class MainController < ApplicationController
-
   before_action :check_for_consent
   authorize_resource class: false, only: :start
   layout 'application_no_sidebar'
@@ -10,11 +9,8 @@ class MainController < ApplicationController
   end
 
   def home
-    if user_signed_in?
-      cookies[:locale] = current_user.locale
-    end
-    @announcements = Announcement.where(on_main_page: true,
-                                        lecture: nil).pluck(:details).join
+    cookies[:locale] = current_user.locale if user_signed_in?
+    get_announcements
   end
 
   def error
@@ -34,7 +30,7 @@ class MainController < ApplicationController
     @media_comments.select! do |m|
       (Reader.find_by(user: current_user, thread: m[:thread])
             &.updated_at || (Time.now - 1000.years)) < m[:latest_comment].created_at &&
-      m[:medium].visible_for_user?(current_user)
+        m[:medium].visible_for_user?(current_user)
     end
     @media_array = Kaminari.paginate_array(@media_comments)
                            .page(params[:page]).per(10)
@@ -47,20 +43,26 @@ class MainController < ApplicationController
                                                                    :term)
                                        .sort
     end
-    @announcements = Announcement.where(on_main_page: true,
-                                        lecture: nil).pluck(:details).join
+    get_announcements
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }
                          .sort_by do |t|
-                            [-t.lecture.term.begin_date.jd,
-                             t.position]
+                           [-t.lecture.term.begin_date.jd,
+                            t.position]
                          end
   end
 
   private
 
-  def check_for_consent
-    return unless user_signed_in?
-    redirect_to consent_profile_path unless current_user.consents
-  end
+    def check_for_consent
+      return unless user_signed_in?
+
+      redirect_to consent_profile_path unless current_user.consents
+    end
+
+    def get_announcements
+      @announcements = Announcement.where(on_main_page: true, lecture: nil)
+                                   .pluck(:details)
+                                   .join('<hr class="my-3" w-100>')
+    end
 end

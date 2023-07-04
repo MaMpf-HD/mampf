@@ -4,7 +4,8 @@ class UserCleaner
 
   def login
     @imap = Net::IMAP.new(ENV['IMAPSERVER'], port: 993, ssl: true)
-    @imap.authenticate('LOGIN', ENV['PROJECT_EMAIL_USERNAME'], ENV['PROJECT_EMAIL_PASSWORD'])
+    @imap.authenticate('LOGIN', ENV['PROJECT_EMAIL_USERNAME'],
+                       ENV['PROJECT_EMAIL_PASSWORD'])
   end
 
   def logout
@@ -16,8 +17,10 @@ class UserCleaner
     @hash_dict = {}
     @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
     # Mails containing multiple email addresses (Subject: "Undelivered Mail Returned to Sender")
-    @imap.search(['SUBJECT', 'Undelivered Mail Returned to Sender']).each do |message_id|
-      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
+    @imap.search(['SUBJECT',
+                  'Undelivered Mail Returned to Sender']).each do |message_id|
+      body = @imap.fetch(message_id,
+                         "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
       if match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/)
         match = match.flatten.uniq
         match.each do |email|
@@ -34,8 +37,10 @@ class UserCleaner
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User unknown in virtual mailbox table'
     ]
 
-    @imap.search(['SUBJECT', 'Delivery Status Notification (Failure)']).each do |message_id|
-      body = @imap.fetch(message_id, "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
+    @imap.search(['SUBJECT',
+                  'Delivery Status Notification (Failure)']).each do |message_id|
+      body = @imap.fetch(message_id,
+                         "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
       patterns.each do |pattern|
         if match = body.scan(/#{pattern}/)
           match = match.flatten.uniq
@@ -87,10 +92,11 @@ class UserCleaner
     end
   end
 
-  def move_mail(message_ids, attempt=0)
+  def move_mail(message_ids, attempt = 0)
     return if message_ids.blank?
+
     message_ids = Array(message_ids)
-    if attempt>3
+    if attempt > 3
       return
     end
 
@@ -98,7 +104,7 @@ class UserCleaner
       @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
       @imap.move(message_ids, "Other Users/mampf/handled_bounces")
     rescue Net::IMAP::BadResponseError
-      move_mail(message_ids, attempt=attempt+1)
+      move_mail(message_ids, attempt = attempt + 1)
     end
   end
 
@@ -106,11 +112,11 @@ class UserCleaner
     login
     search_emails_and_hashes
     return if @email_dict.blank?
+
     send_hashes
     sleep(10)
     search_emails_and_hashes
     delete_ghosts
     logout
   end
-
 end

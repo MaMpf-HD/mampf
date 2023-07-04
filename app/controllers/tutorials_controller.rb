@@ -26,7 +26,7 @@ class TutorialsController < ApplicationController
     authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order('deadline DESC')
     @assignment = Assignment.find_by_id(params[:assignment]) ||
-                    @assignments&.first
+                  @assignments&.first
     if current_user.editor_or_teacher_in?(@lecture)
       @tutorials = @lecture.tutorials
     else
@@ -41,7 +41,7 @@ class TutorialsController < ApplicationController
     authorize! :overview, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order('deadline DESC')
     @assignment = Assignment.find_by_id(params[:assignment]) ||
-                    @assignments&.first
+                  @assignments&.first
     @tutorials = @lecture.tutorials
   end
 
@@ -117,81 +117,88 @@ class TutorialsController < ApplicationController
   def export_teams
     respond_to do |format|
       format.html { head :ok }
-      format.csv { send_data @tutorial.teams_to_csv(@assignment),
-                             filename: "#{@tutorial.title}-#{@assignment.title}.csv" }
+      format.csv {
+        send_data @tutorial.teams_to_csv(@assignment),
+                  filename: "#{@tutorial.title}-#{@assignment.title}.csv"
+      }
     end
   end
 
   private
 
-  def set_tutorial
-    @tutorial = Tutorial.find_by_id(params[:id])
-    @lecture = @tutorial&.lecture
-    set_tutorial_locale and return if @tutorial
-    redirect_to :root, alert: I18n.t('controllers.no_tutorial')
-  end
+    def set_tutorial
+      @tutorial = Tutorial.find_by_id(params[:id])
+      @lecture = @tutorial&.lecture
+      set_tutorial_locale and return if @tutorial
 
-  def set_assignment
-    @assignment = Assignment.find_by_id(params[:ass_id])
-    return if @assignment
-    redirect_to :root, alert: I18n.t('controllers.no_assignment')
-  end
-
-  def set_lecture
-    @lecture = Lecture.find_by_id(params[:id])
-    set_tutorial_locale and return if @lecture
-    redirect_to :root, alert: I18n.t('controllers.no_lecture')
-  end
-
-  def set_lecture_from_form
-    @lecture = Lecture.find_by_id(tutorial_params[:lecture_id])
-    return if @lecture
-    redirect_to :root, alert: I18n.t('controllers.no_lecture')
-  end
-
-  def set_tutorial_locale
-    I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
-                    I18n.default_locale
-  end
-
-  def can_view_index
-    return if current_user.in?(@lecture.tutors) || current_user.editor_or_teacher_in?(@lecture)
-    redirect_to :root, alert: I18n.t('controllers.no_tutor_in_this_lecture')
-  end
-
-  def tutorial_params
-    params.require(:tutorial).permit(:title, :lecture_id, tutor_ids: [])
-  end
-
-  def bulk_params
-    params.permit(:package)
-  end
-
-  def bulk_download(zipped, end_of_file='')
-    if zipped.is_a?(StringIO)
-    send_data zipped.read,
-              filename: @assignment.title + '@' + @tutorial.title + end_of_file + '.zip',
-              type: 'application/zip',
-              disposition: 'attachment'
-    else
-      flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
-                             message: zipped)
-      redirect_to lecture_tutorials_path(@tutorial.lecture,
-                                         params:
-                                          { assignment: @assignment.id,
-                                            tutorial: @tutorial.id })
+      redirect_to :root, alert: I18n.t('controllers.no_tutorial')
     end
-  end
 
-  def send_correction_upload_emails
-    @report[:successful_saves]&.each do |submission|
-      submission.users.email_for_correction_upload.each do |u|
-        NotificationMailer.with(recipient: u,
-                                locale: u.locale,
-                                submission: submission,
-                                tutor: current_user)
-                          .correction_upload_email.deliver_later
+    def set_assignment
+      @assignment = Assignment.find_by_id(params[:ass_id])
+      return if @assignment
+
+      redirect_to :root, alert: I18n.t('controllers.no_assignment')
+    end
+
+    def set_lecture
+      @lecture = Lecture.find_by_id(params[:id])
+      set_tutorial_locale and return if @lecture
+
+      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+    end
+
+    def set_lecture_from_form
+      @lecture = Lecture.find_by_id(tutorial_params[:lecture_id])
+      return if @lecture
+
+      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+    end
+
+    def set_tutorial_locale
+      I18n.locale = @lecture&.locale_with_inheritance || current_user.locale ||
+                    I18n.default_locale
+    end
+
+    def can_view_index
+      return if current_user.in?(@lecture.tutors) || current_user.editor_or_teacher_in?(@lecture)
+
+      redirect_to :root, alert: I18n.t('controllers.no_tutor_in_this_lecture')
+    end
+
+    def tutorial_params
+      params.require(:tutorial).permit(:title, :lecture_id, tutor_ids: [])
+    end
+
+    def bulk_params
+      params.permit(:package)
+    end
+
+    def bulk_download(zipped, end_of_file = '')
+      if zipped.is_a?(StringIO)
+        send_data zipped.read,
+                  filename: @assignment.title + '@' + @tutorial.title + end_of_file + '.zip',
+                  type: 'application/zip',
+                  disposition: 'attachment'
+      else
+        flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
+                               message: zipped)
+        redirect_to lecture_tutorials_path(@tutorial.lecture,
+                                           params:
+                                            { assignment: @assignment.id,
+                                              tutorial: @tutorial.id })
       end
     end
-  end
+
+    def send_correction_upload_emails
+      @report[:successful_saves]&.each do |submission|
+        submission.users.email_for_correction_upload.each do |u|
+          NotificationMailer.with(recipient: u,
+                                  locale: u.locale,
+                                  submission: submission,
+                                  tutor: current_user)
+                            .correction_upload_email.deliver_later
+        end
+      end
+    end
 end

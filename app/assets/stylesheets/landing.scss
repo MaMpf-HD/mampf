@@ -21,7 +21,9 @@
 #announcement-box {
     display: flex;
     align-items: baseline;
+    flex-wrap: wrap;
     margin-bottom: 20px;
+    margin-top: 20px;
     padding: 15px;
     background-color: rgba(255, 255, 255, 0.96);
 }
@@ -30,6 +32,7 @@
     position: absolute;
     top: 0;
     right: 0;
+    width: auto;
     padding: 10px 20px;
     font-size: 1.2rem;
     background-color: #00243db8;

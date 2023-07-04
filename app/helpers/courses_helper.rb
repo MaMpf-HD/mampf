@@ -27,12 +27,13 @@ module CoursesHelper
     unless user.admin || user.in?(course.editors)
       return course.title
     end
+
     link_to(course.title, edit_course_path(course))
   end
 
   def course_edit_icon(course)
     link_to edit_course_path(course),
-            class: 'text-dark mr-2',
+            class: 'text-dark me-2',
             style: 'text-decoration: none;',
             data: { toggle: 'tooltip',
                     placement: 'bottom' },
@@ -40,5 +41,4 @@ module CoursesHelper
       tag.i class: 'far fa-edit'
     end
   end
-
 end

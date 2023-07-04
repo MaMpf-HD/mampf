@@ -111,7 +111,7 @@ en:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
     go_digital_html: >
-      Within the framework of the joint project %{digital_now}, MaMpf has been 
+      Within the framework of the joint project %{digital_now}, MaMpf has been
       supported by the acquisition of media technology equipment which is going
       to help with meeting the increased demand for hypermedia content.
     fellowship_html: >
@@ -663,6 +663,11 @@ en:
       insert_after_chapter: 'Insert after %{chapter_name}'
       insert_after_section: 'Insert after section'
       subscribers: 'Subscribers'
+      no_access_to_users_html: >
+        This lecture is older than 1 year. For reasons of data privacy,
+        only the teacher and course editors can make changes here.
+        If changes are necessary for some reason, you can contact the
+        site administrators by mail: %{project_mail}.
     clicker:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'
@@ -934,6 +939,9 @@ en:
           This is done by extracting table of contents from videos, that have been
           edited by the ThymE-Editor, contents descriptions and metadata from
           scripts (for script-based lectures).
+        details: >
+          Here you can provide a detailed description. You can use LaTeX (by putting
+          the expression in $...$). A preview of your text is shown below.
         list: >
           This is the list of all associated sessions.
         tags_without_section: >
@@ -1125,7 +1133,8 @@ en:
         editors: >
           This is the list of all persons that are responsible for this
           medium as editor. At least one person has to be given here, and each
-          of these persons gets editing access to this medium
+          of these persons gets editing access to this medium. Only eligible
+          people can be selected.
           <br>
           Note: Independently from this setting, this medium can be edited
           by people with hiher access rights, e.g. editors of the associated
@@ -1225,7 +1234,7 @@ en:
           if you select a event series, media that are associated to the event series's
           sessions will be shown as well.
         search_tags: >
-          Tags related to a medium are displayed as <span class="badge badge-light">example tag</span> on the media card.
+          Tags related to a medium are displayed as <span class="badge text-dark lecture-tag">example tag</span> on the media card.
           If you are looking for media with specific tags, you can select tags from the data base. You can choose one,
           several, or all of them. Moreover, you can decide whether the medium has to be related to either at least one
           of the selected tags (inclusive <i>OR</i>) or all of them (<i>AND</i>).
@@ -2403,7 +2412,7 @@ en:
       title: >
         You can search the titles of media or related sessions. If you do not wantto use
         this criterion, leave the input box empty.
-      title_placeholder: leave free or enter at least 2 letters 
+      title_placeholder: leave free or enter at least 2 letters
       lectures: >
         Select the event series you want to search. You can choose all event series, the
         ones you are subscribed to, or make up your own selection. If you opt for your own
@@ -2418,7 +2427,7 @@ en:
       type: >
         Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
         <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
-        The operator used is the inclusive <i>OR</i>. 
+        The operator used is the inclusive <i>OR</i>.
     tag_title: >
       enter at least 2 letters (or leave free for all tags)
   errors:

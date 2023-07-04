@@ -21,6 +21,7 @@ class CoursesController < ApplicationController
     @course.update(course_params)
     @errors = @course.errors
     return unless @errors.empty?
+
     @course.update(image: nil) if params[:course][:detach_image] == 'true'
     changed_image = @course.image_data != old_image_data
     if @course.image.present? && changed_image
@@ -56,7 +57,8 @@ class CoursesController < ApplicationController
 
   def take_random_quiz
     tags = Tag.where(id: random_quiz_params[:search_course_tag_ids])
-    random_quiz = @course.create_random_quiz!(tags, random_quiz_params[:random_quiz_count].to_i)
+    random_quiz = @course.create_random_quiz!(tags,
+                                              random_quiz_params[:random_quiz_count].to_i)
     redirect_to take_quiz_path(random_quiz)
   end
 
@@ -72,70 +74,73 @@ class CoursesController < ApplicationController
     results = search.results
     @total = search.total
     @courses = Kaminari.paginate_array(results, total_count: @total)
-                        .page(params[:page]).per(search_params[:per])
+                       .page(params[:page]).per(search_params[:per])
   end
 
   private
 
-  def set_course
-    @course = Course.find_by_id(params[:id])
-    return if @course.present?
-    redirect_to :root, alert: I18n.t('controllers.no_course')
-  end
+    def set_course
+      @course = Course.find_by_id(params[:id])
+      return if @course.present?
 
-  def set_course_admin
-    @course = Course.find_by_id(params[:id])
-    return if @course.present?
-    redirect_to administration_path
-  end
+      redirect_to :root, alert: I18n.t('controllers.no_course')
+    end
 
-  def course_params
-    params.require(:course).permit(:title, :short_title, :organizational,
-                                   :organizational_concept, :locale,
-                                   :term_independent, :image,
-                                   tag_ids: [],
-                                   preceding_course_ids: [],
-                                   editor_ids: [],
-                                   division_ids: [])
-  end
+    def set_course_admin
+      @course = Course.find_by_id(params[:id])
+      return if @course.present?
 
-  def tag_params
-    params.permit(:count, tag_ids: [])
-  end
+      redirect_to administration_path
+    end
 
-  def search_params
-    params.require(:search).permit(:all_editors, :all_programs, :fulltext,
-                                   :term_independent, :per,
-                                   editor_ids: [],
-                                   program_ids: [])
-  end
+    def course_params
+      params.require(:course).permit(:title, :short_title, :organizational,
+                                     :organizational_concept, :locale,
+                                     :term_independent, :image,
+                                     tag_ids: [],
+                                     preceding_course_ids: [],
+                                     editor_ids: [],
+                                     division_ids: [])
+    end
 
-  def random_quiz_params
-    params.require(:quiz).permit(:random_quiz_count,
-                                 search_course_tag_ids: [])
-  end
+    def tag_params
+      params.permit(:count, tag_ids: [])
+    end
 
-  # destroy all notifications related to this course
-  def destroy_notifications
-    Notification.where(notifiable_id: @course.id, notifiable_type: 'Course')
-                .delete_all
-  end
+    def search_params
+      params.require(:search).permit(:all_editors, :all_programs, :fulltext,
+                                     :term_independent, :per,
+                                     editor_ids: [],
+                                     program_ids: [])
+    end
 
-  # fill organizational_concept with default view
-  def set_organizational_defaults
-    @course.update(organizational_concept:
-                     render_to_string(partial: 'courses/' \
-                                               'organizational_default',
-                                      formats: :html,
-                                      layout: false))
-  end
+    def random_quiz_params
+      params.require(:quiz).permit(:random_quiz_count,
+                                   search_course_tag_ids: [])
+    end
 
-  def check_if_enough_questions
-    return if @course.enough_questions?
-    redirect_to :root, alert: I18n.t('controllers.no_test')
-  end
+    # destroy all notifications related to this course
+    def destroy_notifications
+      Notification.where(notifiable_id: @course.id, notifiable_type: 'Course')
+                  .delete_all
+    end
 
-  def check_for_consent
-    redirect_to consent_profile_path unless current_user.consents
-  end
+    # fill organizational_concept with default view
+    def set_organizational_defaults
+      @course.update(organizational_concept:
+                       render_to_string(partial: 'courses/' \
+                                                 'organizational_default',
+                                        formats: :html,
+                                        layout: false))
+    end
+
+    def check_if_enough_questions
+      return if @course.enough_questions?
+
+      redirect_to :root, alert: I18n.t('controllers.no_test')
+    end
+
+    def check_for_consent
+      redirect_to consent_profile_path unless current_user.consents
+    end
 end

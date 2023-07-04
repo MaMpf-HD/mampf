@@ -19,6 +19,11 @@
 .navbar {
     box-shadow: 1px 4px 7px -2px rgba(0, 0, 0, 0.1);
     z-index: 1000; // place navbar and its shadow on top of everything
+    padding: 0.5rem 1rem;
+
+    .new-comment {
+        color: #ffc107 !important;
+    }
 }
 
 #navbar-buttons a {
@@ -36,8 +41,4 @@
             left: 16px;
         }
     }
-}
-
-.new-comment {
-    color: #ffc107 !important;
 }

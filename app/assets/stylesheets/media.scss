@@ -35,6 +35,14 @@
   justify-content: flex-end;
 }
 
+.card-header {
+  padding: 0.75rem 1.25rem;
+}
+
+.card-footer {
+  padding: 0.75rem 1.25rem;
+}
+
 #media-card-subheader {
   display: flex;
   justify-content: space-between;
@@ -313,21 +321,6 @@
 #remove-screenshot, #export-screenshot, #export-toc, #export-references,
 #import-script-items {
   text-decoration: none;
-}
-
-.tab-content {
-  display: flex;
-}
-
-.tab-content > .tab-pane {
-  display: block; /* undo "display: none;" */
-  visibility: hidden;
-  margin-right: -100%;
-  width: 100%;
-}
-
-.tab-content > .active {
-  visibility: visible;
 }
 
 .break-text-any-where {

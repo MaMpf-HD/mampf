@@ -5,13 +5,14 @@
     </h5>
   </div>
   <div class="card-body <%= compact ? 'card-compact' : 'card-xl' %>">
-    <div class="form-group">
-      <%= f.label :sort, t('admin.medium.sort') %>
+    <div class="mb-3">
+      <%= f.label :sort, t('admin.medium.sort'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.sort'), true) %>
       <%= f.select :sort,
                    options_for_select(medium.select_sorts_with_self, medium.sort),
                    {},
-                   { class: 'form-control',
+                   { class: 'form-select',
                      disabled: medium.sort.in?(['Script', 'Quiz',
                                                 'Question', 'Remark']) }%>
       <div class="invalid-feedback"
@@ -31,8 +32,9 @@
                          id: 'medium_sort_backup' %>
     <% end %>
     <% if current_user.admin || current_user.editor? %>
-      <div class="form-group">
-        <%= f.label :teachable, t('basics.associated_to') %>
+      <div class="mb-3">
+        <%= f.label :teachable, t('basics.associated_to'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.medium.info.teachable'), true) %>
         <%= f.select :teachable,
                      options_for_select([[medium.teachable&.title_for_viewers,
@@ -50,40 +52,27 @@
         </div>
       </div>
     <% end %>
-    <div class="form-group">
+    <div class="mb-3">
       <%= f.label :editor_ids,
-                  t('basics.editors') %>
+                  t('basics.editors'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.editors'), true) %>
-      <% if current_user.admin || current_user.editor? %>
-        <%= f.select :editor_ids,
-                     options_for_select(add_prompt(medium.editors
-                                                         .map { |e| [e.info, e.id] }),
-                                        medium.editors.map(&:id)),
-                     {},
-                     { multiple: true,
-                       class: 'selectize',
-                       style: 'display: none;',
-                       data: { ajax: true,
-                               filled: false,
-                               model: 'user',
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results') } } %>
-      <% else %>
-        <%= f.select :editor_ids,
-                     options_for_select((medium.teachable.speakers | medium.editors).map { |e| [e.info, e.id] },
-                                        medium.editors.map(&:id)),
-                     {},
-                     { multiple: true,
-                       class: 'selectize',
-                       style: 'display: none;',
-                       data: { ajax: false } } %>
-      <% end %>
+      <%= f.select :editor_ids,
+                   options_for_select(medium.eligible_editors(current_user)
+                                            .map { |e| [e.info, e.id] },
+                                      medium.editors.map(&:id)),
+                   {},
+                   { multiple: true,
+                     class: 'selectize',
+                     style: 'display: none;',
+                     data: { ajax: false } } %>
       <div class="invalid-feedback"
            id="medium-editors-error">
       </div>
     </div>
-    <div class="form-group">
-      <%= f.label :description, t('basics.title') %>
+    <div class="mb-3">
+      <%= f.label :description, t('basics.title'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.description'), false) %>
       <%= f.text_field :description,
                        class: 'form-control' %>
@@ -92,14 +81,15 @@
       </div>
     </div>
     <% unless medium.sort == 'Script' %>
-    <div class="form-group">
+    <div class="mb-3">
       <%= f.label :tag_ids,
-                  t('basics.related_tags') %>
+                  t('basics.related_tags'),
+                  class: "form-label" %>
       <%= helpdesk(t('admin.medium.info.related_tags'), false) %>
       <% if current_user.admin || current_user.editor? %>
         <a class="fas fa-plus-circle clickable text-dark"
            id="new-tag-button"
-           data-toggle="tooltip"
+           data-bs-toggle="tooltip"
            title="<%= t('admin.tag.create') %>"
            data-course="<%= medium.course.id %>"
            data-medium="<%= medium.id %>"
@@ -125,9 +115,10 @@
     </div>
     <% end %>
     <% if current_user.admin || current_user.editor? %>
-      <div class="form-group">
+      <div class="mb-3">
         <%= f.label :linked_medium_ids,
-                    t('basics.related_media') %>
+                    t('basics.related_media'),
+                    class: "form-label" %>
         <%= helpdesk(t('admin.medium.info.linked_media'), true) %>
         <%= f.select :linked_medium_ids,
                      options_for_select(medium.linked_media
@@ -148,34 +139,34 @@
       <%= render partial: 'media/access_rights',
                  locals: { f: f,
                  medium: medium } %>
-      <div class="custom-control custom-checkbox mb-2">
+      <div class="form-check mb-2">
         <%= f.check_box :comments_locked,
-                         class: 'custom-control-input',
+                         class: 'form-check-input',
                          checked:  medium.commontator_thread.is_closed? %>
         <%= f.label :comments_locked,
                     t('admin.medium.comments_locked'),
-                    { class: 'custom-control-label' } %>
+                    { class: 'form-check-label' } %>
       </div>
     <% end %>
-    <div class="form-group">
+    <div class="mb-3">
       <%= t('basics.language') %>
       <%= helpdesk(t('admin.medium.info.language'), false) %>
-      <div class="form-row ml-2">
+      <div class="ms-2">
         <% I18n.available_locales.each do |locale| %>
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="form-check form-check-inline">
             <%= f.radio_button :locale,
                                locale.to_s,
-                               class: 'custom-control-input' %>
+                               class: 'form-check-input' %>
             <%= f.label :locale,
                         t('locales.' + locale.to_s),
                         value: locale.to_s,
-                        class: 'custom-control-label' %>
+                        class: 'form-check-label' %>
           </div>
         <% end %>
       </div>
     </div>
     <% if current_user.admin || current_user.editor? %>
-      <div class="form-group">
+      <div class="mb-3">
         <%= t('admin.medium.boost') %>
         <%= helpdesk(t('admin.medium.info.boost'), false) %>
         <%= f.text_field :boost,

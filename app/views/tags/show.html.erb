@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <h2>
-      <span class="badge badge-secondary mr-3">
+      <span class="badge bg-secondary me-3">
         <%= t('tag') %>
       </span>
       <%= @tag.title %>
@@ -54,14 +54,14 @@
             <% @tag.locales.each do |l| %>
               <%= link_to l.to_s,
                           tag_path(@tag, params: { locale: l }),
-                          class: 'badge badge-light' %>
+                          class: 'badge text-dark lecture-tag' %>
               <%= @tag.notions.where(locale: l)&.first&.title %>
               <br>
             <% end %>
             <% if @tag.aliases.any? %>
               <hr>
               <% @tag.aliases.each do |a| %>
-                <span class="badge badge-light">
+                <span class="badge text-dark lecture-tag">
                   <%= a.locale %>
                 </span>
                 <%= a.title %>
@@ -85,7 +85,7 @@
               <% @related_tags.natural_sort_by(&:title).each do |t| %>
                 <%= link_to t.short_title,
                             tag_path(t),
-                            class: "badge badge-light",
+                            class: "badge text-dark lecture-tag",
                             id: 'related-' + dom_id(t),
                             data: { toggle: 'tooltip',
                                     placement: 'top',
@@ -103,7 +103,7 @@
               <% @tags_in_neighbourhood.natural_sort_by(&:title).each do |t| %>
                 <%= link_to t.short_title,
                             tag_path(t),
-                            class: "badge badge-light",
+                            class: "badge text-dark lecture-tag",
                             id: 'related-' + dom_id(t),
                             data: { toggle: 'tooltip',
                                     placement: 'top',
@@ -131,10 +131,10 @@
             </h5>
           </div>
           <div class="col-12 col-sm-6 mb-2 d-flex">
-            <div class="dropdown mr-2">
+            <div class="dropdown me-2">
               <button class="btn btn-sm btn-secondary dropdown-toggle"
                       type="button"
-                      data-toggle="dropdown">
+                      data-bs-toggle="dropdown">
                 <%= t('admin.tag.visibility') %>
               </button>
               <div class="dropdown-menu">
@@ -155,7 +155,7 @@
             <div class="dropdown">
               <button class="btn btn-sm btn-secondary dropdown-toggle"
                       type="button"
-                      data-toggle="dropdown">
+                      data-bs-toggle="dropdown">
                 <%= t('admin.tag.depth') %>
               </button>
               <div class="dropdown-menu">
@@ -170,7 +170,7 @@
               </div>
             </div>
           </div>
-          <div class="col-12 col-sm-3 text-right">
+          <div class="col-12 col-sm-3 text-end">
             <%= link_to t('external_render'),
                         display_cyto_tag_path(@tag,
                                               params: { selection: @selection_type,

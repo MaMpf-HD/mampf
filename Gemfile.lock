@@ -1,14 +1,4 @@
 GIT
-  remote: https://github.com/MaMpf-HD/commontator.git
-  revision: 38b25d2f3f4e4e2d1a0a7b608f04c579a93125f9
-  branch: main
-  specs:
-    commontator (7.0.0)
-      rails (>= 6.0)
-      sprockets-rails
-      will_paginate
-
-GIT
   remote: https://github.com/rails/sprockets-rails
   revision: 73e7351abff3506f6dca6b2da8abedfd5c7c0d77
   branch: master
@@ -152,9 +142,9 @@ GEM
     bindex (0.8.1)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
-    bootstrap (4.6.2)
+    bootstrap (5.2.1)
       autoprefixer-rails (>= 9.1.0)
-      popper_js (>= 1.16.1, < 2)
+      popper_js (>= 2.11.6, < 3)
       sassc-rails (>= 2.0.0)
     bootstrap_form (5.1.0)
       actionpack (>= 5.2)
@@ -174,6 +164,10 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
+    commontator (7.0.0)
+      rails (>= 6.0)
+      sprockets-rails
+      will_paginate
     concurrent-ruby (1.2.2)
     connection_pool (2.4.0)
     content_disposition (1.0.0)
@@ -304,6 +298,7 @@ GEM
     js-routes (1.4.9)
       railties (>= 4)
       sprockets-rails
+    json (2.6.3)
     jsonapi-renderer (0.2.2)
     kaminari (1.2.2)
       activesupport (>= 4.1.0)
@@ -377,7 +372,7 @@ GEM
     options (2.3.2)
     orm_adapter (0.5.0)
     pairing_heap (3.0.0)
-    parallel (1.22.1)
+    parallel (1.23.0)
     parser (3.2.2.0)
       ast (~> 2.4.1)
     pdf-reader (2.11.0)
@@ -388,7 +383,7 @@ GEM
       ttfunk
     pg (1.4.6)
     pgreset (0.3)
-    popper_js (1.16.1)
+    popper_js (2.11.6)
     pr_geohash (1.0.0)
     premailer (1.21.0)
       addressable
@@ -458,7 +453,7 @@ GEM
       ffi (~> 1.0)
     redis-client (0.14.1)
       connection_pool
-    regexp_parser (2.7.0)
+    regexp_parser (2.8.0)
     request_store (1.5.1)
       rack (>= 1.4)
     responders (3.1.0)
@@ -499,15 +494,16 @@ GEM
       rspec-mocks (~> 3.11)
       rspec-support (~> 3.11)
     rspec-support (3.12.0)
-    rubocop (0.93.1)
+    rubocop (1.50.2)
+      json (~> 2.3)
       parallel (~> 1.10)
-      parser (>= 2.7.1.5)
+      parser (>= 3.2.0.0)
       rainbow (>= 2.2.2, < 4.0)
-      regexp_parser (>= 1.8)
-      rexml
-      rubocop-ast (>= 0.6.0)
+      regexp_parser (>= 1.8, < 3.0)
+      rexml (>= 3.2.5, < 4.0)
+      rubocop-ast (>= 1.28.0, < 2.0)
       ruby-progressbar (~> 1.7)
-      unicode-display_width (>= 1.4.0, < 2.0)
+      unicode-display_width (>= 2.4.0, < 3.0)
     rubocop-ast (1.28.0)
       parser (>= 3.2.1.0)
     rubocop-packaging (0.5.1)
@@ -589,6 +585,8 @@ GEM
     sync (0.5.0)
     term-ansicolor (1.7.1)
       tins (~> 1.0)
+    terser (1.1.14)
+      execjs (>= 0.3.0, < 3)
     thor (1.2.1)
     thredded (1.1.0)
       active_record_union (>= 1.3.0)
@@ -624,12 +622,10 @@ GEM
     turbolinks-source (5.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
-    uglifier (4.2.0)
-      execjs (>= 0.3.0, < 3)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
-    unicode-display_width (1.8.0)
+    unicode-display_width (2.4.2)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -666,13 +662,13 @@ DEPENDENCIES
   acts_as_votable
   barby
   bootsnap (>= 1.4.2)
-  bootstrap (~> 4)
+  bootstrap (~> 5)
   bootstrap_form
   byebug
   cancancan
   clipboard-rails
   coffee-rails (~> 5.0.0)
-  commontator!
+  commontator
   coveralls
   cypress-on-rails (~> 1.0)
   dalli (>= 2.7)
@@ -718,7 +714,7 @@ DEPENDENCIES
   rgl
   rqrcode
   rspec-rails
-  rubocop (~> 0.93)
+  rubocop (~> 1.50)
   rubocop-packaging
   rubocop-performance
   rubocop-rails
@@ -737,11 +733,11 @@ DEPENDENCIES
   streamio-ffmpeg
   sunspot_rails!
   sunspot_solr
-  thredded
+  terser
+  thredded!
   thredded-markdown_katex!
   trix-rails
   turbolinks (~> 5)
-  uglifier
   web-console (>= 3.3.0)
   webdrivers
   webpacker (~> 5.x)
