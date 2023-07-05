@@ -3791,6 +3791,7 @@ de:
               taken:
                 'Eine Watchlist mit diesem Namen existiert bereits.'
   feedback:
+    modal_title: Feedback geben
     title: Titel (optional)
     comment: Dein Kommentar
     description_html: >
@@ -3799,3 +3800,6 @@ de:
       können. Falls Du einen Bug gefunden hast und einen GitHub-Account hast,
       dann erstelle am besten direkt auf %{mampf-github} ein Issue. Ansonsten
       gerne auch über dieses Formular.</p>
+    mail_checkbox: >
+      Erlaube es uns, Dich per E-Mail (%{user_mail}) zu kontaktieren, falls es
+      Rückfragen zu Deinem Feedback gibt.

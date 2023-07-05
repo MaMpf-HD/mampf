@@ -3585,6 +3585,7 @@ en:
               taken:
                 'A watchlist with that name already exists.'
   feedback:
+    modal_title: Submit feedback
     title: Title (optional)
     comment: Your comment
     description_html: >
@@ -3593,3 +3594,6 @@ en:
       If you have found a bug and have a GitHub account, then create an issue
       directly on %{github_mampf}. Otherwise, you are welcome to use this
       form.</p>
+    mail_checkbox: >
+      Allow us to contact you via email (%{user_mail}) if there are questions
+      about your feedback.
