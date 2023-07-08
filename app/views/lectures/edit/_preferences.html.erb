@@ -158,37 +158,37 @@
               </div>
             </div>
           <% end %>
-          <!-- EMERGENCY BUTTON -->
+          <!--- EMERGENCY BUTTON -->
           <% if lecture.annotations_status == 1 %>
             <div class="form-group">
               <%= t('admin.lecture.emergency_link') %>
               <div class="form-row ml-2", id="emergency-link-status-radios">
-                <div class="custom-control custom-radio custom-control-inline">
+                <div class="form-check form-check-inline">
                   <%= f.radio_button :emergency_link_status,
                                      :no_link,
-                                     class: 'custom-control-input' %>
+                                     class: 'form-check-input' %>
                   <%= f.label :emergency_link_status,
                               t('admin.lecture.emergency_link_no_link'),
                               value: :no_link,
-                              class: 'custom-control-label' %>
+                              class: 'form-check-label' %>
                 </div>
-                <div class="custom-control custom-radio custom-control-inline">
+                <div class="form-check form-check-inline">
                   <%= f.radio_button :emergency_link_status,
                                      :lecture_link,
-                                     class: 'custom-control-input' %>
+                                     class: 'form-check-input' %>
                   <%= f.label :emergency_link_status,
                               t('admin.lecture.emergency_link_lecture_link'),
                               value: :lecture_link,
-                              class: 'custom-control-label' %>
+                              class: 'form-check-label' %>
                 </div>
-                <div class="custom-control custom-radio custom-control-inline">
+                <div class="form-check form-check-inline">
                   <%= f.radio_button :emergency_link_status,
                                      :direct_link,
-                                     class: 'custom-control-input' %>
+                                     class: 'form-check-input' %>
                   <%= f.label :emergency_link_status,
                               t('admin.lecture.emergency_link_direct_link'),
                               value: :direct_link,
-                              class: 'custom-control-label' %>
+                              class: 'form-check-label' %>
                 </div>
               </div>
             </div>

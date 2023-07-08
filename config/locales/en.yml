@@ -324,8 +324,9 @@ en:
       teacher: 'Teacher'
       editors: 'Editors'
     annotation:
-      inherit_from_lecture: 'inherit from lecture'
       annotations: 'Annotations'
+      annotation_modal_head: 'Create annotation'
+      inherit_from_lecture: 'inherit from lecture'
       time: 'Time:'
       comment: 'Comment'
       color: 'Color'

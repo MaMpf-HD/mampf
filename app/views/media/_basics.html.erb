@@ -173,42 +173,42 @@
                          class: 'form-control' %>
       </div>
     <% end %>
-    <!-- EMERGENCY BUTTON -->
+    <!--- EMERGENCY BUTTON -->
     <% if medium.video.present? %>
       <div class="form-group">
         <%= t('admin.lecture.enable_emergency_button') %>
         <div class="form-row ml-2">
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="form-check form-check-inline">
             <%= f.radio_button :annotations_status,
                                '0',
-                               class: 'custom-control-input' %>
+                               class: 'form-check-input' %>
             <%= f.label :annotations_status,
                         t('admin.annotation.inherit_from_lecture'),
                         value: '0',
-                        class: 'custom-control-label' %>
+                        class: 'form-check-label' %>
           </div>
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="form-check form-check-inline">
             <%= f.radio_button :annotations_status,
                                '1',
-                               class: 'custom-control-input' %>
+                               class: 'form-check-input' %>
             <%= f.label :annotations_status,
                         t('basics.yes_lc'),
                         value: '1',
-                        class: 'custom-control-label' %>
+                        class: 'form-check-label' %>
           </div>
-          <div class="custom-control custom-radio custom-control-inline">
+          <div class="form-check form-check-inline">
             <%= f.radio_button :annotations_status,
                                '-1',
-                               class: 'custom-control-input' %>
+                               class: 'form-check-input' %>
             <%= f.label :annotations_status,
                         t('basics.no_lc'),
                         value: '-1',
-                        class: 'custom-control-label' %>
+                        class: 'form-check-label' %>
           </div>
         </div>
       </div>
     <% end %>
-    <!-- EMERGENCY BUTTON -->
+    <!--- EMERGENCY BUTTON -->
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
     <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
   </div>

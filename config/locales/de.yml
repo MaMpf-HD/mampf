@@ -323,8 +323,9 @@ de:
       teacher: 'DozentIn'
       editors: 'EditorInnen'
     annotation:
-      inherit_from_lecture: 'von Vorlesung erben'
       annotations: 'Annotationen'
+      annotation_modal_head: 'Annotation anlegen'
+      inherit_from_lecture: 'von Vorlesung erben'
       time: 'Zeit:'
       comment: 'Kommentar'
       color: 'Farbe'

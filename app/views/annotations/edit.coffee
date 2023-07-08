@@ -3,35 +3,39 @@ $('#annotation-modal-content').empty()
 $('#annotation-modal').modal('show')
 
 submitButton = document.getElementById('submit-button')
-postAsComment = document.getElementById('post-as-comment')
+postAsComment = document.getElementById('annotation_post_as_comment')
 
 postAsComment.addEventListener 'change', (evt) ->
-  message = document.getElementById('warning').dataset.publishing
   if this.checked
-    mistakeRadio = document.getElementById('annotation_category_mistake')
-    if mistakeRadio.checked
-      message += "\n" + document.getElementById('warning').dataset.mistake
-      medId = thyme.dataset.medium
-      rad = 60 # annotations that are inside this radius are considered as "near". 
-      $.ajax Routes.near_mistake_annotations_path(),
-        type: 'GET'
-        dataType: 'json'
-        data: {
-          mediumId: medId
-          timestamp: video.currentTime
-          radius: rad
-        }
-        success: (c) ->
-          if c != undefined && c != 0
-            if c == 1
-              message += document.getElementById('warning').dataset.oneCloseAnnotation
-            else
-              message += document.getElementById('warning').dataset.multipleCloseAnnotations1 +
-                         "" + c +
-                         document.getElementById('warning').dataset.multipleCloseAnnotations2
-            alert message
-    else
-      alert message
+    warningMessage()
+  return
+
+warningMessage = () ->
+  message = document.getElementById('warning').dataset.publishing
+  mistakeRadio = document.getElementById('annotation_category_mistake')
+  if mistakeRadio.checked
+    message += "\n" + document.getElementById('warning').dataset.mistake
+    medId = thyme.dataset.medium
+    rad = 60 # annotations that are inside this radius (in seconds) are considered as "near". 
+    $.ajax Routes.near_mistake_annotations_path(),
+      type: 'GET'
+      dataType: 'json'
+      data: {
+        mediumId: medId
+        timestamp: video.currentTime
+        radius: rad
+      }
+      success: (c) ->
+        if c != undefined && c != 0
+          if c == 1
+            message += document.getElementById('warning').dataset.oneCloseAnnotation
+          else
+            message += document.getElementById('warning').dataset.multipleCloseAnnotations1 +
+                       "" + c +
+                       document.getElementById('warning').dataset.multipleCloseAnnotations2
+          alert message
+  else
+    alert message
   return
 
 
@@ -86,6 +90,7 @@ mistake = ->
   submitButton.disabled = false
   visibleForTeacher(true)
   postComment(true)
+  warningMessage()
   return
 
 presentation = ->

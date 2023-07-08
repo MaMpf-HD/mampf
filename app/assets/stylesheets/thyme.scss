@@ -507,19 +507,18 @@ $annotation_colors: (
   box-sizing: border-box;
 }
 
-input[type="radio"] {
-  display: none;
-  &:checked + label {
-    span { transform: scale(1.25); }
-    @each $name, $value in $annotation_colors {
-      .#{$name} {
-        border: 2px solid black;
+#annotation-color-picker {
+  input[type="radio"] {
+    display: none;
+    &:checked + label {
+      span { transform: scale(1.25); }
+      @each $name, $value in $annotation_colors {
+        .#{$name} {
+          border: 2px solid black;
+        }
       }
     }
   }
-}
-
-#annotation-color-picker {
   text-align: center;
   label {
     display: inline-block;

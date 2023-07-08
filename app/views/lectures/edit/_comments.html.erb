@@ -57,27 +57,27 @@
               </button>
             </div>
           </div>
-          <!-- EMERGENCY BUTTON -->
+          <!--- EMERGENCY BUTTON -->
           <div class="form-group">
             <%= t('admin.lecture.enable_emergency_button') %>
             <div class="form-row ml-2">
-              <div class="custom-control custom-radio custom-control-inline">
+              <div class="form-check form-check-inline">
                 <%= f.radio_button :annotations_status,
                                    1,
-                                   class: 'custom-control-input' %>
+                                   class: 'form-check-input' %>
                 <%= f.label :annotations_status,
                             t('basics.yes_lc'),
                             value: 1,
-                            class: 'custom-control-label' %>
+                            class: 'form-check-label' %>
               </div>
-              <div class="custom-control custom-radio custom-control-inline">
+              <div class="form-check form-check-inline">
                 <%= f.radio_button :annotations_status,
                                    -1,
-                                   class: 'custom-control-input' %>
+                                   class: 'form-check-input' %>
                 <%= f.label :annotations_status,
                             t('basics.no_lc'),
                             value: -1,
-                            class: 'custom-control-label' %>
+                            class: 'form-check-label' %>
               </div>
             </div>
           </div>

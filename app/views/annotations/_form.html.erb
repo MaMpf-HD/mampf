@@ -4,26 +4,26 @@
 
     <br><br>
 
-    <!-- HIDDEN FIELDS -->
+    <!--- HIDDEN FIELDS -->
     <%= f.hidden_field :medium_id, value: @medium_id %>
     <%= f.hidden_field :total_seconds, value: @total_seconds %>
     <div hidden>
       <div id="annotation_id">
         <%= @annotation.id %>
       </div>
-       <!-- for prefilling the edit form -->
+       <!--- for prefilling the edit form -->
       <div id="annotation_subtext">
         <%= @annotation.subtext %>
       </div>
     </div>
 
-    <!-- COMMENT TEXT AREA -->
+    <!--- COMMENT TEXT AREA -->
     <b><%= t('admin.annotation.comment') %></b>
     <%= f.text_area :comment, class: 'form-control' %>
 
     <br>
 
-    <!-- COLOR SELECTION -->
+    <!--- COLOR SELECTION -->
     <b><%= t('admin.annotation.color') %></b>
     <div id="annotation-color-picker">
       <% for i in 1..15 do %>
@@ -37,62 +37,62 @@
           <% end %>
       <% end %>
     </div>
-    <!-- SIMPLE COLOR PICKER
+    <!--- SIMPLE COLOR PICKER
     <b>Color: &nbsp</b>
     <%= f.color_field :color %> -->
 
     <br>
 
-    <!-- CATEGORY RADIO BUTTON -->
+    <!--- CATEGORY RADIO BUTTON -->
     <b><%= t('admin.annotation.category') %></b>
     <div class="form-row ml-2", id="category-radios">
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :category,
                            :note,
-                           class: 'custom-control-input' %>
+                           class: 'form-check-input' %>
         <%= f.label :category,
                     t('admin.annotation.note'),
                     value: :note,
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :category,
                            :content,
-                           class: 'custom-control-input' %>
+                           class: 'form-check-input' %>
         <%= f.label :category,
                     t('admin.annotation.content'),
                     value: :content,
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :category,
                            :mistake,
-                           class: 'custom-control-input' %>
+                           class: 'form-check-input' %>
         <%= f.label :category,
                     t('admin.annotation.mistake'),
                     value: :mistake,
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
-      <div class="custom-control custom-radio custom-control-inline">
+      <div class="form-check form-check-inline">
         <%= f.radio_button :category,
                            :presentation,
-                           class: 'custom-control-input' %>
+                           class: 'form-check-input' %>
         <%= f.label :category,
                     t('admin.annotation.presentation'),
                     value: :presentation,
-                    class: 'custom-control-label' %>
+                    class: 'form-check-label' %>
       </div>
     </div>
 
     <br>
 
     <div id="specific">
-      <!-- SPECIFIC CONTENT, DEPENDING ON THE SELECTED CATEGORY, IS INSERTED HERE -->
+      <!--- SPECIFIC CONTENT, DEPENDING ON THE SELECTED CATEGORY, IS INSERTED HERE -->
     </div>
 
     <br>
 
-    <!-- VISIBLE FOR TEACHER? - CHECKBOX -->
+    <!--- VISIBLE FOR TEACHER? - CHECKBOX -->
     <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
     <% if annotations_status == 1 %>
       <%= f.label :visible_for_teacher, class: "checkbox inline" do %>
@@ -105,7 +105,7 @@
     <% end %>
 
     <span><b><%= t('admin.annotation.post_as_comment') %> &nbsp</b></span>
-    <%= f.check_box :post_as_comment, id: "post-as-comment" %>
+    <%= f.check_box :post_as_comment %>
 
     <br>
 
@@ -115,12 +115,12 @@
         <button type="button"
                 id="delete-button"
                 class="btn btn-secondary"
-                data-dismiss="modal">
+                data-bs-dismiss="modal">
         <%= t('buttons.delete') %>
       <% end %>
       <button type="button"
               class="btn btn-secondary"
-              data-dismiss="modal">
+              data-bs-dismiss="modal">
       <%= t('buttons.cancel') %>
     </div>
   <% end %>
