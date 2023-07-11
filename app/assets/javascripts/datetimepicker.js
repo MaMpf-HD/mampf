@@ -12,8 +12,42 @@ var datetimePicker = new tempusDominus.TempusDominus(
         }
     }
 );
+
+// Catch Tempus Dominus error when user types in invalid date
+// see this discussion: https://github.com/Eonasdan/tempus-dominus/discussions/2656
+datetimePicker.dates.oldParseInput = datetimePicker.dates.parseInput;
+datetimePicker.dates.parseInput = (input) => {
+    try {
+        return datetimePicker.dates.oldParseInput(input);
+    } catch (err) {
+        datetimePicker.dates.clear();
+    }
+};
+
+var isButtonInvokingFocus = false;
+
+// Show datetimepicker when user clicks in text field next to button
+// or when input field receives focus
+$('#assignment-picker-input').on('click focusin', (e) => {
+    try {
+        if (!isButtonInvokingFocus) {
+            datetimePicker.show();
+        }
+    }
+    finally {
+        isButtonInvokingFocus = false;
+    }
 });
 
-$('#assignment-picker-input').on('click', () => {
-    $('#assignment-picker-button').click();
+$('#assignment-picker-button').on('click', () => {
+    isButtonInvokingFocus = true;
+    $('#assignment-picker-input').focus();
+});
+
+// Hide datetimepicker when input field loses focus
+$('#assignment-picker-input').blur((e) => {
+    if (!e.relatedTarget) {
+        return;
+    }
+    datetimePicker.hide();
 });
