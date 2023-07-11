@@ -1,5 +1,4 @@
 // see https://getdatepicker.com
-console.log('trying to import datetimepicker');
 $('#assignment-picker').tempusDominus({
     display: {
         sideBySide: true
@@ -9,4 +8,8 @@ $('#assignment-picker').tempusDominus({
         format: 'yyyy-MM-dd HH:mm',
         hourCycle: 'h23'
     }
+});
+
+$('#assignment-picker-input').on('click', () => {
+    $('#assignment-picker-button').click();
 });
