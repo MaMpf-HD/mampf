@@ -23,6 +23,7 @@
             <%= f.text_field :deadline,
                 id: 'assignment-picker-input',
                 class: 'form-control',
+                autocomplete: 'off',
                 'data-td-target': '#assignment-picker' %>
             <span
               class="input-group-text"
@@ -76,6 +77,7 @@
         <%= link_to t('buttons.cancel'),
                     cancel_editing_assignment_path(assignment),
                     class: 'btn btn-sm btn-secondary',
+                    role: 'button',
                     remote: true %>
       </div>
     </div>
