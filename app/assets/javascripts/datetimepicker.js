@@ -60,7 +60,7 @@ $(document).ready(function () {
 
             // If date was selected, close datetimepicker.
             // However: leave the datetimepicker open if user only changed time
-            if (e.oldDate && !hasUserChangedDate(e.oldDate, e.date)) {
+            if (e.oldDate && e.date && !hasUserChangedDate(e.oldDate, e.date)) {
                 datetimePicker.hide();
             }
         });
