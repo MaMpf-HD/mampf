@@ -388,7 +388,7 @@ $(document).on 'turbolinks:load', ->
     return
 
   $('#release_date').on 'focus', ->
-    # Focus other radio button if user clicks on release date input field
+    # Select other option if user clicks on release date input field
     $('#medium_release_now_0').prop('checked', true)
     return
 
