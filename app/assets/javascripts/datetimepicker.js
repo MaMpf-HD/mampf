@@ -16,13 +16,13 @@ var datetimePicker = new tempusDominus.TempusDominus(
 );
 
 // Catch Tempus Dominus error when user types in invalid date
-// see this discussion: https://github.com/Eonasdan/tempus-dominus/discussions/2656
+// this is rather hacky at the moment, see this discussion:
+// https://github.com/Eonasdan/tempus-dominus/discussions/2656
 datetimePicker.dates.oldParseInput = datetimePicker.dates.parseInput;
 datetimePicker.dates.parseInput = (input) => {
     try {
         return datetimePicker.dates.oldParseInput(input);
     } catch (err) {
-        console.log($('.td-error'));
         const errorMsg = $('.td-error').data('td-invalid-date');
         $('.td-error').text(errorMsg).show();
         datetimePicker.dates.clear();
@@ -35,8 +35,6 @@ datetimePicker.subscribe(tempusDominus.Namespace.events.change, (e) => {
         $('.td-error').empty();
     }
 });
-
-
 
 // Show datetimepicker when user clicks in text field next to button
 // or when input field receives focus
