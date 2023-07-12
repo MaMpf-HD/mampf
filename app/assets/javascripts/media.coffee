@@ -17,13 +17,6 @@ fancyTimeFormat = (time) ->
   output
 
 $(document).on 'turbolinks:load', ->
-
-  # init datetimepicker
-  $('#release_date').datetimepicker
-      format: 'd.m.Y H:i'
-      inline: false
-      lang: 'en'
-
   # disable/enable search field on the media search page, depending on
   # whether 'all tags'/'all editors'/... are selected
   $('[id^="search_all_"]').on 'change', ->
