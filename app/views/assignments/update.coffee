@@ -1,6 +1,6 @@
 <% if @errors.present? %>
 # clean up from previous error messages
-$('#assignment_title_').removeClass('is-invalid')
+$('#assignment_title').removeClass('is-invalid')
 $('#assignment-title-error').empty()
 $('#assignment_deadline').removeClass('is-invalid')
 $('#assignment-deadline-error').empty()
@@ -9,7 +9,7 @@ $('#assignment-deadline-error').empty()
 <% if @errors[:title].present? %>
 $('#assignment-title-error')
   .append('<%= @errors[:title].join(" ") %>').show()
-$('#assignment_title_').addClass('is-invalid')
+$('#assignment_title').addClass('is-invalid')
 <% end %>
 <% if @errors[:deadline].present? %>
 $('#assignment-deadline-error')
