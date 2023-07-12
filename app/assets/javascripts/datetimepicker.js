@@ -1,12 +1,14 @@
 // see https://getdatepicker.com
 var datetimePicker = new tempusDominus.TempusDominus(
-    document.getElementById('assignment-picker'),
+    // currently, we only support one datetimepicker on a page
+    document.getElementsByClassName('td-picker')[0],
     {
         display: {
             sideBySide: true,
         },
         localization: {
             startOfTheWeek: 1,
+            // choose format to be compliant with backend time format
             format: 'yyyy-MM-dd HH:mm',
             hourCycle: 'h23',
         }
@@ -20,15 +22,27 @@ datetimePicker.dates.parseInput = (input) => {
     try {
         return datetimePicker.dates.oldParseInput(input);
     } catch (err) {
+        console.log($('.td-error'));
+        const errorMsg = $('.td-error').data('td-invalid-date');
+        $('.td-error').text(errorMsg).show();
         datetimePicker.dates.clear();
     }
 };
 
-var isButtonInvokingFocus = false;
+datetimePicker.subscribe(tempusDominus.Namespace.events.change, (e) => {
+    // see https://getdatepicker.com/6/namespace/events.html#change
+    if (e.isValid && !e.isClear) {
+        $('.td-error').empty();
+    }
+});
+
+
 
 // Show datetimepicker when user clicks in text field next to button
 // or when input field receives focus
-$('#assignment-picker-input').on('click focusin', (e) => {
+var isButtonInvokingFocus = false;
+
+$('.td-input').on('click focusin', (e) => {
     try {
         if (!isButtonInvokingFocus) {
             datetimePicker.show();
@@ -39,13 +53,13 @@ $('#assignment-picker-input').on('click focusin', (e) => {
     }
 });
 
-$('#assignment-picker-button').on('click', () => {
+$('.td-picker-button').on('click', () => {
     isButtonInvokingFocus = true;
-    $('#assignment-picker-input').focus();
+    $('.td-input').focus();
 });
 
 // Hide datetimepicker when input field loses focus
-$('#assignment-picker-input').blur((e) => {
+$('.td-input').blur((e) => {
     if (!e.relatedTarget) {
         return;
     }
