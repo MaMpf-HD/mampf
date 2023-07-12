@@ -388,14 +388,8 @@ $(document).on 'turbolinks:load', ->
     return
 
   $('#release_date').on 'focus', ->
+    # Focus other radio button if user clicks on release date input field
     $('#medium_release_now_0').prop('checked', true)
-    $('#release_date').datetimepicker('toggle')
-    return
-
-  $('#medium_assignment_deadline').on 'focus', ->
-    $(this).datetimepicker
-      format: 'd.m.Y H:i'
-      inline: false
     return
 
   $('#medium_create_assignment').on 'click', ->
