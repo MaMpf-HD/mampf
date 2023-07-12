@@ -13,30 +13,28 @@
         </div>
       </div>
 
-      <div class="form-group col-3">
-        <div class="col-sm-12" id="htmlTarget">
-          <div
-            class="input-group log-event td-picker"
-            id="assignment-picker"
-            data-td-target-input="nearest"
-            data-td-target-toggle="nearest">
-            <%= f.text_field :deadline,
-                class: 'form-control td-input',
-                autocomplete: 'off',
-                'data-td-target': '#assignment-picker' %>
-            <span
-              class="input-group-text td-picker-button"
-              role="button"
-              data-td-target="#assignment-picker"
-              data-td-toggle="datetimepicker">
-              <i class="bi bi-calendar-fill"></i>
-            </span>
+      <%# Datetimepicker for assignment deadline %>
+      <div class="col-3 form-group">
+        <div
+          class="input-group log-event td-picker"
+          id="assignment-picker"
+          data-td-target-input="nearest"
+          data-td-target-toggle="nearest">
+          <%= f.text_field :deadline,
+              class: 'form-control td-input',
+              autocomplete: 'off',
+              'data-td-target': '#assignment-picker' %>
+          <span
+            class="input-group-text td-picker-button"
+            role="button"
+            data-td-target="#assignment-picker"
+            data-td-toggle="datetimepicker">
+            <i class="bi bi-calendar-fill"></i>
+          </span>
+          <div class="invalid-feedback td-error"
+            id="assignment-deadline-error"
+            data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
           </div>
-        </div>
-
-        <div class="invalid-feedback td-error"
-             id="assignment-deadline-error"
-             data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
         </div>
       </div>
 
