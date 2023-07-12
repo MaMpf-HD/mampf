@@ -10,7 +10,6 @@
     "css-loader": "^5.2.7",
     "friendly-challenge": "^0.9.12",
     "imports-loader": "^1.2.0",
-    "moment": "^2.29.4",
     "regenerator-runtime": "^0.13.11",
     "sass": "^1.63.4",
     "sass-loader": "^10.1.1",
