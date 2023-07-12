@@ -2,6 +2,8 @@
 # clean up from previous error messages
 $('#assignment_title_').removeClass('is-invalid')
 $('#assignment-title-error').empty()
+$('#assignment_deadline').removeClass('is-invalid')
+$('#assignment-deadline-error').empty()
 
 # display error message
 <% if @errors[:title].present? %>
