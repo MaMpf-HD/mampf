@@ -52,11 +52,23 @@ $(document).ready(function () {
 
         datetimePicker.subscribe(tempusDominus.Namespace.events.change, (e) => {
             // see https://getdatepicker.com/6/namespace/events.html#change
+
+            // Clear error message
             if (e.isValid && !e.isClear) {
                 element.find('.td-error').empty();
+            }
+
+            // If date was selected, close datetimepicker.
+            // However: leave the datetimepicker open if user only changed time
+            if (e.oldDate && !hasUserChangedDate(e.oldDate, e.date)) {
                 datetimePicker.hide();
             }
         });
+    }
+
+    function hasUserChangedDate(oldDate, newDate) {
+        return oldDate.getHours() != newDate.getHours()
+            || oldDate.getMinutes() != newDate.getMinutes();
     }
 
     function registerFocusHandlers(datetimePicker, element) {
