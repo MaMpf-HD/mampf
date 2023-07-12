@@ -2301,7 +2301,7 @@ en:
     formats:
       concise: '%Y-%m-%d'
   datetimepicker:
-    invalid_date: 'Invalid date format'
+    invalid_date: 'Invalid date time format'
   time:
     formats:
       concise: '%Y-%m-%d'
