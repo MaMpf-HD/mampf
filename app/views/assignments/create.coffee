@@ -1,9 +1,9 @@
 # clean up from previous error messages
-$('#assignment_title').removeClass('is-invalid')
+$('#assignment_title_').removeClass('is-invalid')
 $('#assignment-title-error').empty()
 $('#assignment_deadline').removeClass('is-invalid')
 $('#assignment-deadline-error').empty()
-$('#assignment_deletion_date').removeClass('is-invalid')
+$('#assignment_deletion_date_').removeClass('is-invalid')
 $('#assignment-deletion-date-error').empty()
 
 # display error message
@@ -11,7 +11,7 @@ $('#assignment-deletion-date-error').empty()
 <% if @errors[:title].present? %>
 $('#assignment-title-error')
   .append('<%= @errors[:title].join(" ") %>').show()
-$('#assignment_title').addClass('is-invalid')
+$('#assignment_title_').addClass('is-invalid')
 <% end %>
 <% if @errors[:deadline].present? %>
 $('#assignment-deadline-error')
@@ -21,7 +21,7 @@ $('#assignment_deadline').addClass('is-invalid')
 <% if @errors[:deletion_date].present? %>
 $('#assignment-deletion-date-error')
   .append('<%= @errors[:deletion_date].join(" ") %>').show()
-$('#assignment_deletion_date').addClass('is-invalid')
+$('#assignment_deletion_date_').addClass('is-invalid')
 <% end %>
 <% else %>
 $('.assignmentRow[data-id="0"')
