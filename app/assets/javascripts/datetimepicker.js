@@ -2,7 +2,7 @@
 $(document).ready(startInitialization);
 
 // On page change (e.g. go back and forth in browser)
-document.addEventListener('turbolinks:load', () => {
+$(document).on('turbolinks:before-cache', () => {
     // Remove stale datetimepickers
     $('.tempus-dominus-widget').remove();
 });
