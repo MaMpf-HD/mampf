@@ -4,7 +4,7 @@ default: &default
   source_path: app/javascript
   source_entry_path: packs
   public_root_path: public
-  public_output_path: packs
+  public_output_path: assets/packs
   cache_path: tmp/cache/webpacker
   webpack_compile_output: true
 
@@ -71,6 +71,7 @@ development:
       'Access-Control-Allow-Origin': '*'
     watch_options:
       ignored: '**/node_modules/**'
+
 docker_development:
   <<: *default
   compile: true
@@ -94,7 +95,6 @@ docker_development:
       'Access-Control-Allow-Origin': '*'
     watch_options:
       ignored: '**/node_modules/**'
-
 
 test:
   <<<: *default
