@@ -482,10 +482,10 @@ $(document).on 'turbolinks:load', ->
     $('#thyme-container').css('width', width + 'px')
     $('#thyme-container').css('top', top + 'px')
     $('#thyme-container').css('left', left + 'px')
-    #iaHeight = $('#annotation-caption').css('height')
-    #commentHeight = Number(iaHeight.substr(0, iaHeight.length - 2)) - 110
-    #$('#annotation-comment').css('height', commentHeight + 'px')
-    updateMarkers()
+    if annotations == null
+      updateMarkers()
+    else
+      rearrangeMarkers()
     return
 
   # detect IE/edge and inform user that they are not suppported if necessary,
@@ -919,13 +919,11 @@ $(document).on 'turbolinks:load', ->
       }
       success: (annots) ->
         annotations = annots
-        sortAnnotations()
-        $('#markers').empty()
-        if annotations == null
+        if annotations = null
           return
+        rearrangeMarkers()
         flag = false
         for annotation in annotations
-          createMarker(annotation)
           if annotation.id == activeAnnotationId
             updateAnnotationArea(annotation)
             flag = true
@@ -933,6 +931,13 @@ $(document).on 'turbolinks:load', ->
           $('#annotation-caption').hide()
           $('#caption').show()
         return
+    return
+
+  rearrangeMarkers = ->
+    $('#markers').empty()
+    sortAnnotations()
+    for annotation in annotations
+      createMarker(annotation)
     return
 
   # an auxiliary method for "updateMarkers()" creating a single marker
@@ -1015,6 +1020,8 @@ $(document).on 'turbolinks:load', ->
       success: (permitted) ->
         if permitted == "false"
           alert document.getElementById('annotation-locales').dataset.permission
+      error: (e) ->
+        console.log(e)
       return
     # close listener
     $('#annotation-close-button').on 'click', ->

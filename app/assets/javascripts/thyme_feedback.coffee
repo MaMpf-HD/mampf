@@ -131,7 +131,10 @@ $(document).on 'turbolinks:load', ->
     $('#thyme-feedback').css('width', width + 'px')
     $('#thyme-feedback').css('top', top + 'px')
     $('#thyme-feedback').css('left', left + 'px')
-    updateMarkers()
+    if annotations == null
+      updateMarkers()
+    else
+      rearrangeMarkers()
     return
 
   setupHypervideo()
@@ -293,14 +296,18 @@ $(document).on 'turbolinks:load', ->
       }
       success: (annots) ->
         annotations = annots
-        sortAnnotations()
-        $('#feedback-markers').empty()
         if annotations == null
           return
-        for a in annotations
-          if validAnnotation(a) == true
-            createMarker(a)
+        rearrangeMarkers()
         heatmap()
+    return
+
+  rearrangeMarkers = ->
+    $('#feedback-markers').empty()
+    sortAnnotations()
+    for a in annotations
+      if validAnnotation(a) == true
+        createMarker(a)
     return
 
   # an auxiliary method for "updateMarkers()" creating a single marker
