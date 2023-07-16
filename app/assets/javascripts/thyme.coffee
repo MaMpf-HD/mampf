@@ -51,6 +51,33 @@ sortAnnotations = ->
     timestampToMillis(ann1.timestamp) - timestampToMillis(ann2.timestamp)
   return
 
+renderLatex = (element) ->
+  renderMathInElement element,
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+  return
+
 # return the start time of the next chapter relative to a given time in seconds
 nextChapterStart = (seconds) ->
   chapters = document.getElementById('chapters')
@@ -166,30 +193,7 @@ setupHypervideo = ->
       else
         backInfo = backButton.dataset.backto + backInfo
       $(backButton).empty().append(backInfo).show()
-      renderMathInElement backButton,
-        delimiters: [
-          {
-            left: '$$'
-            right: '$$'
-            display: true
-          }
-          {
-            left: '$'
-            right: '$'
-            display: false
-          }
-          {
-            left: '\\('
-            right: '\\)'
-            display: false
-          }
-          {
-            left: '\\['
-            right: '\\]'
-            display: true
-          }
-        ]
-        throwOnError: false
+      renderLatex(backButton)
     return
 
   # set up the chapter elements
@@ -210,30 +214,7 @@ setupHypervideo = ->
         $link = $("<a/>", { id: 'c-' + start, text: chapterName })
         $chapterList.append($listItem.append($link))
         chapterElement = $link.get(0)
-        renderMathInElement chapterElement,
-          delimiters: [
-            {
-              left: '$$'
-              right: '$$'
-              display: true
-            }
-            {
-              left: '$'
-              right: '$'
-              display: false
-            }
-            {
-              left: '\\('
-              right: '\\)'
-              display: false
-            }
-            {
-              left: '\\['
-              right: '\\]'
-              display: true
-            }
-          ]
-          throwOnError: false
+        renderLatex(chapterElement)
         $link.data('text', chapterName)
         # if a chapter element is clicked, transport to chapter start time
         $link.on 'click', ->
@@ -343,30 +324,7 @@ setupHypervideo = ->
           video.currentTime = this.id.replace('l-','')
           return
         metaElement = $listItem.get(0)
-        renderMathInElement metaElement,
-          delimiters: [
-            {
-              left: '$$'
-              right: '$$'
-              display: true
-            }
-            {
-              left: '$'
-              right: '$'
-              display: false
-            }
-            {
-              left: '\\('
-              right: '\\)'
-              display: false
-            }
-            {
-              left: '\\['
-              right: '\\]'
-              display: true
-            }
-          ]
-          throwOnError: false
+        renderLatex(metaElement)
         ++i
       # store metadata start times as data attribute
       $metaList.get(0).dataset.times = JSON.stringify(times)
@@ -1029,29 +987,5 @@ $(document).on 'turbolinks:load', ->
       $('#annotation-caption').hide()
       $('#caption').show()
     # LaTex
-    renderMathInElement document.getElementById('annotation-comment'),
-      delimiters: [
-        {
-          left: '$$'
-          right: '$$'
-          display: true
-        }
-        {
-          left: '$'
-          right: '$'
-          display: false
-        }
-        {
-          left: '\\('
-          right: '\\)'
-          display: false
-        }
-        {
-          left: '\\['
-          right: '\\]'
-          display: true
-        }
-      ]
-      throwOnError: false
-    return
+    renderLatex(document.getElementById('annotation-comment'))
   return

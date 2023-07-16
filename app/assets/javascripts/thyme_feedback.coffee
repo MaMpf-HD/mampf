@@ -60,6 +60,33 @@ sortAnnotations = ->
     timestampToMillis(ann1.timestamp) - timestampToMillis(ann2.timestamp)
   return
 
+renderLatex = (element) ->
+  renderMathInElement element,
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+  return
+
 annotationIndex = (annotation) ->
   for i in [0 .. annotations.length - 1]
     if annotations[i].id == annotation.id
@@ -387,30 +414,7 @@ $(document).on 'turbolinks:load', ->
     $('#annotation-goto-button').on 'click', ->
       video.currentTime = timestampToMillis(annotation.timestamp)
     # LaTex
-    renderMathInElement document.getElementById('annotation-comment'),
-      delimiters: [
-        {
-          left: '$$'
-          right: '$$'
-          display: true
-        }
-        {
-          left: '$'
-          right: '$'
-          display: false
-        }
-        {
-          left: '\\('
-          right: '\\)'
-          display: false
-        }
-        {
-          left: '\\['
-          right: '\\]'
-          display: true
-        }
-      ]
-      throwOnError: false
+    renderLatex(document.getElementById('annotation-comment'))
     return
 
   # Depending on the toggle switches, which are activated, this method checks, if
