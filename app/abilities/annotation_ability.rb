@@ -2,7 +2,11 @@ class AnnotationAbility
   include CanCan::Ability
 
   def initialize(user)
-  	can :create, Annotation
+  	can [:edit, :update, :destroy], Annotation do |annotation|
+  	  annotation.user == user
+  	end
+  	
+  	can [:new, :create, :update_markers, :near_mistake_annotations], Annotation
   end
   
 end

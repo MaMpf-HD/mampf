@@ -1,5 +1,7 @@
 class AnnotationsController < ApplicationController
-
+  
+  authorize_resource
+  
   def create
     # Create new annotation and add additional attributes which are not covered by the form
     @annotation = Annotation.new(annotation_params)
@@ -94,6 +96,10 @@ class AnnotationsController < ApplicationController
     end
     c = validAnnots.size()
     render json: c
+  end
+  
+  def current_ability
+    @current_ability ||= AnnotationAbility.new(current_user)
   end
 
 
