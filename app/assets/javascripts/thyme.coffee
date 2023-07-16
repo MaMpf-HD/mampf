@@ -919,7 +919,7 @@ $(document).on 'turbolinks:load', ->
       }
       success: (annots) ->
         annotations = annots
-        if annotations = null
+        if annotations == null
           return
         rearrangeMarkers()
         flag = false
