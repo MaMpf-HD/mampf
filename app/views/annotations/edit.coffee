@@ -100,6 +100,35 @@ presentation = ->
   postComment(false)
   return
 
+updatePreview = ->
+  text = document.getElementById('annotation_comment').value
+  $('#annotation-modal-preview').empty()
+  $('#annotation-modal-preview').append(text.replaceAll('\n', '<br>'))
+  renderMathInElement document.getElementById('annotation-modal-preview'),
+    delimiters: [
+      {
+        left: '$$'
+        right: '$$'
+        display: true
+      }
+      {
+        left: '$'
+        right: '$'
+        display: false
+      }
+      {
+        left: '\\('
+        right: '\\)'
+        display: false
+      }
+      {
+        left: '\\['
+        right: '\\]'
+        display: true
+      }
+    ]
+    throwOnError: false
+
 
 
 # Auxiliary methods
@@ -110,6 +139,16 @@ visibleForTeacher = (boolean) ->
 
 postComment = (boolean) ->
   $('#annotation_post_as_comment').prop("checked", boolean)
+  return
+
+previewCSS = (show, modalWidth, contentWidth, previewWidth) ->
+  if show == true
+    $('#annotation-modal-preview').show()
+  else
+    $('#annotation-modal-preview').hide()
+  $('.modal-content').css('width', modalWidth + '%')
+  $('#annotation-modal-content').css('width', contentWidth + '%')
+  $('#annotation-modal-preview').css('width', previewWidth + '%')
   return
 
 
@@ -127,3 +166,17 @@ if contentRadio.checked
     when "argument" then document.getElementById('content-category-argument').checked = true
     when "strategy" then document.getElementById('content-category-strategy').checked = true
   return
+
+# render preview
+annotationComment = document.getElementById('annotation_comment')
+annotationComment.addEventListener 'input', (evt) ->
+  updatePreview()
+
+# preview toggle listener
+previewCSS(false, 100, 100, 0)
+previewToggle = document.getElementById('preview-toggle')
+previewToggle.addEventListener 'change', (evt) ->
+  if $('#preview-toggle-check').is(":checked")
+    previewCSS(true, 150, 65, 35)
+  else
+    previewCSS(false, 100, 100, 0)

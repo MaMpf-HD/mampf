@@ -1,6 +1,6 @@
 <div class="modal fade" id="annotation-modal" tabindex="-1" role="dialog" aria-labelledby="annotation-modal-label" aria-hidden="true">
   <div class="modal-dialog" role="document">
-    <div class="modal-content",>
+    <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title"><%= t('admin.annotation.annotation_modal_head')%></h5>
         <button type="button"
@@ -11,7 +11,10 @@
       </div>
       <div class="modal-body">
         <div class="row">
-          <div class="col-md-12 col-md-offset-3", id="annotation-modal-content">
+          <div class="col-md-6", id="annotation-modal-preview">
+            <!--- LATEX-PREVIEW -->
+          </div>
+          <div class="col-md-6 col-md-offset-3", id="annotation-modal-content">
             <!--- CONTENT -->
           </div>
         </div>
