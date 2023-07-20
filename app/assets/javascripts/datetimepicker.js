@@ -22,24 +22,6 @@ function startInitialization() {
     });
 }
 
-function getDateTimePickerIcons() {
-    // At the moment: continue to use FontAwesome 5 icons
-    // see https://getdatepicker.com/6/plugins/fa5.html
-    // see https://github.com/Eonasdan/tempus-dominus/blob/master/dist/plugins/fa-five.js
-    return {
-        type: 'icons',
-        time: 'fas fa-clock',
-        date: 'fas fa-calendar',
-        up: 'fas fa-arrow-up',
-        down: 'fas fa-arrow-down',
-        previous: 'fas fa-chevron-left',
-        next: 'fas fa-chevron-right',
-        today: 'fas fa-calendar-check',
-        clear: 'fas fa-trash',
-        close: 'fas fa-times',
-    }
-}
-
 function initDatetimePicker(element) {
     // see https://getdatepicker.com
     return new tempusDominus.TempusDominus(
@@ -47,7 +29,6 @@ function initDatetimePicker(element) {
         {
             display: {
                 sideBySide: true, // clock to the right of the calendar
-                icons: getDateTimePickerIcons(),
             },
             localization: {
                 startOfTheWeek: 1,
