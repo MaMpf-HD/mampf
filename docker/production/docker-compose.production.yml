@@ -30,6 +30,7 @@ services:
     volumes:
       - "media:/private/media:nocopy"
       - "submissions:/private/submissions:nocopy"
+      - "public:/usr/src/app/public"
       - "caches:/caches:nocopy"
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: worker
