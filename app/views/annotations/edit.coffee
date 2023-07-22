@@ -142,10 +142,14 @@ postComment = (boolean) ->
   return
 
 previewCSS = (show, modalWidth, contentWidth, previewWidth) ->
+  offset = parseInt($('#annotation-modal').css('left'), 10)
   if show == true
     $('#annotation-modal-preview').show()
+    $('#annotation-modal').css('left', '-250px')
+    updatePreview()
   else
     $('#annotation-modal-preview').hide()
+    $('#annotation-modal').css('left', '0')
   $('.modal-content').css('width', modalWidth + '%')
   $('#annotation-modal-content').css('width', contentWidth + '%')
   $('#annotation-modal-preview').css('width', previewWidth + '%')
@@ -172,8 +176,9 @@ annotationComment = document.getElementById('annotation_comment')
 annotationComment.addEventListener 'input', (evt) ->
   updatePreview()
 
-# preview toggle listener
 previewCSS(false, 100, 100, 0)
+
+# preview toggle listener
 previewToggle = document.getElementById('preview-toggle')
 previewToggle.addEventListener 'change', (evt) ->
   if $('#preview-toggle-check').is(":checked")
