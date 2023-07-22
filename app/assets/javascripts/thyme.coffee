@@ -427,7 +427,8 @@ $(document).on 'turbolinks:load', ->
   # whether the interactive area is displayed or hidden
   resizeContainer = ->
     height = $(window).height()
-    factor = if $('#caption').is(':hidden') then 1 else 1 / 0.82
+    b = $('#caption').is(':hidden') and $('#annotation-caption').is(':hidden')
+    factor = if b then 1 else 1 / 0.82
     width = Math.floor((video.videoWidth * $(window).height() /
     video.videoHeight) * factor)
     if width > $(window).width()
