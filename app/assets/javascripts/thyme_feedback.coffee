@@ -335,6 +335,7 @@ $(document).on 'turbolinks:load', ->
     for a in annotations
       if validAnnotation(a) == true
         createMarker(a)
+    heatmap()
     return
 
   # an auxiliary method for "updateMarkers()" creating a single marker
