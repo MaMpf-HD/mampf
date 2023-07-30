@@ -49,6 +49,7 @@
 //= require talks
 //= require terms
 //= require tex_preview
+//= require thyme_func
 //= require thyme
 //= require thyme_editor
 //= require thyme_feedback

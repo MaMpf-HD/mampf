@@ -17,67 +17,6 @@ hideControlBarThreshold =
   x: 850
   y: 500
 
-# convert time in seconds to string of the form H:MM:SS
-secondsToTime = (seconds) ->
-  date = new Date(null)
-  date.setSeconds seconds
-  return date.toISOString().substr(12, 7)
-
-# converts a json timestamp to a double containing the absolute count of millitseconds
-timestampToMillis = (timestamp) ->
-  return 3600 * timestamp.hours + 60 * timestamp.minutes + timestamp.seconds + 0.001 * timestamp.milliseconds
-
-# converts a given integer between 0 and 255 into a hexadecimal, s.t. e.g. "15" becomes "0f"
-# (instead of just "f") -> needed for correct format
-toHexaDecimal = (int) ->
-  if int > 15
-    return int.toString(16)
-  else
-    return "0" + int.toString(16)
-
-# lightens up a given color (given in a string in hexadecimal
-# representation "#xxyyzz") such that e.g. black becomes dark grey.
-# The higher the value of "factor" the brighter the colors become.
-lightenUp = (color, factor) ->
-  red   = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(5, 2))) / factor)
-  green = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(3, 2))) / factor)
-  blue  = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(1, 2))) / factor)
-  return "#" + toHexaDecimal(blue) + toHexaDecimal(green) + toHexaDecimal(red)
-
-sortAnnotations = ->
-  if annotations == null
-    return
-  annotations.sort (ann1, ann2) ->
-    timestampToMillis(ann1.timestamp) - timestampToMillis(ann2.timestamp)
-  return
-
-renderLatex = (element) ->
-  renderMathInElement element,
-    delimiters: [
-      {
-        left: '$$'
-        right: '$$'
-        display: true
-      }
-      {
-        left: '$'
-        right: '$'
-        display: false
-      }
-      {
-        left: '\\('
-        right: '\\)'
-        display: false
-      }
-      {
-        left: '\\['
-        right: '\\]'
-        display: true
-      }
-    ]
-    throwOnError: false
-  return
-
 # return the start time of the next chapter relative to a given time in seconds
 nextChapterStart = (seconds) ->
   chapters = document.getElementById('chapters')
@@ -894,7 +833,7 @@ $(document).on 'turbolinks:load', ->
 
   rearrangeMarkers = ->
     $('#markers').empty()
-    sortAnnotations()
+    sortAnnotations(annotations)
     for annotation in annotations
       createMarker(annotation)
     return
