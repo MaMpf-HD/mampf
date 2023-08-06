@@ -108,7 +108,9 @@
     <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
     <% if annotations_status == 1 %>
       <%= f.label :visible_for_teacher, class: "checkbox inline" do %>
-        <span><b><%= t('admin.annotation.visible_for_teacher') %> &nbsp</b></span>
+        <span, title="<%= t('admin.annotation.visible_for_teacher_tooltip') %>"><b>
+          <%= t('admin.annotation.visible_for_teacher') %> &nbsp
+        </b></span>
         <%= f.check_box :visible_for_teacher %>
       <% end %>
       <br>
@@ -116,8 +118,10 @@
       <%= f.hidden_field :visible_for_teacher, value: false %>
     <% end %>
 
-    <span><b><%= t('admin.annotation.post_as_comment') %> &nbsp</b></span>
-    <%= f.check_box :post_as_comment %>
+    <%= f.label :visible_for_teacher, class: "checkbox inline" do %>
+      <span><b><%= t('admin.annotation.post_as_comment') %> &nbsp</b></span>
+      <%= f.check_box :post_as_comment %>
+    <% end %>
 
     <br>
 

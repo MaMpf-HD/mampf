@@ -350,7 +350,7 @@ de:
           Jeder, der diese Vorlesung abonniert hat, wird deinen Kommentar
           lesen können, sobald du auf "Speichern" klickst.
           Falls du das nicht möchtest, entferne bitte wieder den Haken
-          dieser Checkbox.
+          bei "Als Kommentar veröffentlichen?".
         mistake: >
           Bevor du diesen Kommentar abschickst, überprüfe außerdem bitte,
           ob bereits ein Kommentar zu dem von dir gefundenen Fehler existiert.
@@ -361,6 +361,9 @@ de:
         multiple_close_annotations_2: " veröffentliche Fehler-Annotationen."
         permission: "Dir fehlen die Rechte, um diese Annotation zu bearbeiten."
       visible_for_teacher: 'Für DozentIn sichtbar?'
+      visible_for_teacher_tooltip: >
+        Falls diese Checkbox ausgewählt ist, kann dein(e) Dozent(in) diese Annotation
+        in ihrem/seinem Thyme-Player (ohne deinen Namen) sehen.
       post_as_comment: 'Als Kommentar veröffentlichen?'
       toggle:
         note: "Notiz-Annotationen ein-/ausblenden"

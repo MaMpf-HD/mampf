@@ -351,7 +351,7 @@ en:
           Everyone who subscribed this lecture will be able to read
           your comment once you click "Save".
           If this is not what you intended to do,
-          please unselect this checkbox.
+          please unselect "Post as comment?".
         mistake: >
           Before submitting, please also check, if someone already posted
           a comment concerning this mistake.
@@ -361,6 +361,9 @@ en:
         multiple_close_annotations_2: " mistake annotations that are close to yours."
         permission: "You don't have the permission to edit this annotation."
       visible_for_teacher: 'Visible for teacher?'
+      visible_for_teacher_tooltip: >
+        If this checkbox is selected your teacher can see this annotation
+        (without your name!) in his own thyme player.
       post_as_comment: 'Post as comment?'
       toggle:
         note: "toggle note annotations"
