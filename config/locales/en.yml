@@ -340,6 +340,11 @@ en:
       definition: 'definition'
       argument: 'argument'
       strategy: 'proof strategy'
+      previous_annotation: 'previous annotation'
+      annotation_position: 'go to annotation'
+      edit_annotation: 'edit annotation'
+      close_annotation_area: 'close area'
+      next_annotation: 'next annotation'
       further_help: 'You need further help? Then click on:'
       warning_message:
         publishing: >

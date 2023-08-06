@@ -339,6 +339,11 @@ de:
       definition: 'Definition'
       argument: 'Argument'
       strategy: 'Beweisstrategie'
+      previous_annotation: 'vorherige Annotation'
+      annotation_position: 'zur Annotation springen'
+      edit_annotation: 'Annotation editieren'
+      close_annotation_area: 'Feld schließen'
+      next_annotation: 'nächste Annotation'
       further_help: 'Du brauchst weitere Hilfe? Dann klicke auf:'
       warning_message:
         publishing: >
