@@ -11,7 +11,12 @@ class FeedbacksController < ApplicationController
       'Something went wrong.'
     end
     @errors = feedback.errors
-    # # redirect_to :root, alert: @errors.full_messages.join(', ')
+    # redirect_to :root, alert: @errors.full_messages.join(', ')
+
+    if successfully_saved
+      FeedbackMailer.with(feedback: feedback).new_user_feedback_email.deliver_later
+    end
+
     respond_to(&:js)
   end
 
