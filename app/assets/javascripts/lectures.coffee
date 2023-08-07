@@ -82,6 +82,11 @@ $(document).on 'turbolinks:load', ->
     location.reload(true)
     return
 
+  # reload current page if lecture comments editing is cancelled
+  $('#cancel-lecture-comments').on 'click', ->
+    location.reload(true)
+    return
+
    # reload current page if lecture preferences editing is cancelled
   $('#cancel-lecture-organizational').on 'click', ->
     location.reload(true)
