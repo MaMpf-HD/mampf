@@ -9,7 +9,8 @@
 
 <div class="modal-body">
   <%= t('feedback.description_html',
-    github_mampf: link_to('GitHub', 'https://github.com/MaMpf-HD/mampf/issues', {target: '_blank'})) %>
+    github_mampf: link_to('GitHub', 'https://github.com/MaMpf-HD/mampf/issues', {target: '_blank'}),
+    feedback_mail: mail_to(DefaultSetting::FEEDBACK_EMAIL, t('basics.mail_noun'))) %>
 
   <%= form_with model: Feedback.new, remote: true do |f| %>
     <%# Title %>

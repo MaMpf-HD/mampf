@@ -3162,6 +3162,7 @@ de:
     course_editors: 'ModuleditorInnen'
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
+    mail_noun: 'E-Mail'
     email: 'E-Mail-Adresse'
     preferences: 'Einstellungen'
     language: 'Sprache'
@@ -3800,8 +3801,8 @@ de:
       <p>Wir freuen uns über Dein Feedack zu MaMpf, sei es Lob, Kritik oder
       Anregungen, wie wir als Entwickler:innen-Team die Plattform voranbringen
       können. Falls Du einen Bug gefunden hast und einen GitHub-Account hast,
-      dann erstelle am besten direkt auf %{mampf-github} ein Issue. Ansonsten
-      gerne auch über dieses Formular.</p>
+      dann erstelle am besten direkt auf %{github_mampf} ein Issue. Ansonsten
+      gerne auch über dieses Formular oder direkt per %{feedback_mail}.</p>
     mail_checkbox: >
       Erlaube es uns, Dich per E-Mail (%{user_mail}) zu kontaktieren, falls es
       Rückfragen zu Deinem Feedback gibt.

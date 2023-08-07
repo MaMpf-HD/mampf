@@ -2980,6 +2980,7 @@ en:
     course_editors: 'Course Editors'
     lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
+    mail_noun: 'email'
     email: 'Email address'
     preferences: 'Preferences'
     language: 'Language'
@@ -3595,7 +3596,7 @@ en:
       or suggestions on how we as a team of developers can advance the platform.
       If you have found a bug and have a GitHub account, then create an issue
       directly on %{github_mampf}. Otherwise, you are welcome to use this
-      form.</p>
+      form or send an %{feedback_mail} directly.</p>
     mail_checkbox: >
       Allow us to contact you via email (%{user_mail}) if there are questions
       about your feedback.
