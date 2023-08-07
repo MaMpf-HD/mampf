@@ -1,6 +1,7 @@
-$(document).on('turbolinks:load', () => {
+$(document).on('turbolinks:load', registerSubmitButtonHandler);
+
+function registerSubmitButtonHandler() {
     $('#submit-form-btn-outside').click(() => {
-        console.log('click');
         $('#submit-form-btn').click();
     });
-});
+}
