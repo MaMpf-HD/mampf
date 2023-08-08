@@ -2496,6 +2496,8 @@ de:
   date:
     formats:
       concise: '%d.%m.%Y'
+  datetimepicker:
+    invalid_date: 'Ungültiges Datums-Zeit-Format.'
   time:
     formats:
       concise: '%d.%m.%Y'

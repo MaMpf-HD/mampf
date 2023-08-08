@@ -198,8 +198,25 @@ class Commontator::CommentsController < Commontator::ApplicationController
       return unless medium.released.in?(['all', 'users', 'subscribers'])
 
       relevant_users = medium.teachable.media_scope.users
-      relevant_users.where(unread_comments: false)
+      relevant_users.where.not(id: current_user.id)
+                    .where(unread_comments: false)
                     .update_all(unread_comments: true)
-      @update_icon = relevant_users.exists?(current_user.id)
+
+      # make sure that the thread associated to this comment is marked as read
+      # by the comment creator (unless some other user posted a comment in it
+      # that has not yet been read)
+      @reader = Reader.find_or_create_by(user: current_user,
+                                         thread: @commontator_thread)
+      if unseen_comments?
+        @update_icon = true
+        return
+      end
+      @reader.update(updated_at: Time.current)
+    end
+
+    def unseen_comments?
+      @commontator_thread.comments.any? do |c|
+        c.creator != current_user && c.created_at > @reader.updated_at
+      end
     end
 end

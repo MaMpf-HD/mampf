@@ -1,3 +1,5 @@
+<%= javascript_include_tag 'datetimepicker' %>
+
 <div class="modal fade"
      id="publishMediumModal"
      tabindex="-1"
@@ -50,18 +52,32 @@
                         class: 'form-check-label' %>
             <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
           </div>
-          <div class="mb-3 col-12">
+
+          <%# Datetimepicker for release date %>
+          <div
+            class="mb-3 input-group td-picker"
+            id="release-date-picker"
+            data-td-target-input="nearest"
+            data-td-target-toggle="nearest">
             <%= f.text_field :release_date,
-                             class: 'form-control',
+                             class: 'form-control td-input',
                              id: 'release_date',
                              autocomplete: 'off',
-                             value: medium.planned_release_date
-                                          .try(:strftime,
-                                               '%d.%m.%Y %H:%M') %>
-            <div class="invalid-feedback"
-                 id="release-date-error">
+                             value: medium.planned_release_date,
+                            'data-td-target': '#release-date-picker'%>
+            <span
+              class="input-group-text td-picker-button"
+              role="button"
+              data-td-target="#release-date-picker"
+              data-td-toggle="datetimepicker">
+              <i class="bi bi-calendar-fill"></i>
+            </span>
+            <div class="invalid-feedback td-error"
+                 id="release-date-error"
+                 data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
             </div>
           </div>
+
           <% if medium.sort == 'Nuesse' && medium.teachable.is_a?(Lecture) %>
             <div class="mb-1">
               <%= t('basics.assignment') %>
@@ -88,21 +104,37 @@
                      id="assignment-title-error">
                 </div>
               </div>
-              <div class="mb-3 col-3">
+
+              <%# Datetimepicker for assignment deadline %>
+              <div class="mb-3 col-4">
                 <%= f.label :assignment_deadline, t('basics.deadline'),
                             class: "form-label" %>
-                <%= f.text_field :assignment_deadline,
-                                 class: 'form-control',
-                                 autocomplete: 'off',
-                                 value: medium.publisher
-                                             &.assignment_deadline
-                                              .try(:strftime,
-                                                   '%d.%m.%Y %H:%M') %>
-                <div class="invalid-feedback"
-                     id="assignment-deadline-error">
+                <div
+                  class="input-group td-picker"
+                  id="assignment-date-picker"
+                  data-td-target-input="nearest"
+                  data-td-target-toggle="nearest">
+                  <%= f.text_field :assignment_deadline,
+                                  class: 'form-control td-input',
+                                  autocomplete: 'off',
+                                  value: medium.publisher
+                                              &.assignment_deadline,
+                                  'data-td-target': '#assignment-date-picker' %>
+                  <span
+                    class="input-group-text td-picker-button"
+                    role="button"
+                    data-td-target="#release-date-picker"
+                    data-td-toggle="datetimepicker">
+                    <i class="bi bi-calendar-fill"></i>
+                  </span>
+                  <div class="invalid-feedback td-error"
+                      id="assignment-deadline-error"
+                      data-td-invalid-date="<%= t('datetimepicker.invalid_date') %>">
+                  </div>
                 </div>
               </div>
-              <div class="mb-3 col-3">
+
+              <div class="mb-3 col-2 col-s-4">
                 <%= f.label :assignment_file_type,
                             t('submission.file_format'),
                             class: "form-label" %>
@@ -114,7 +146,8 @@
               </div>
               <div class="mb-3 col-3">
                 <%= f.label :assignment_deletion_date,
-                            t('assignment.deletion_date') %>
+                            t('assignment.deletion_date'),
+                            class: "form-label" %>
                 <%= f.select :assignment_deletion_date,
                             Term.possible_deletion_dates_localized,
                             {},
