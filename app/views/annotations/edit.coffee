@@ -169,7 +169,6 @@ if contentRadio.checked
     when "definition" then document.getElementById('content-category-definition').checked = true
     when "argument" then document.getElementById('content-category-argument').checked = true
     when "strategy" then document.getElementById('content-category-strategy').checked = true
-  return
 
 # render preview
 annotationComment = document.getElementById('annotation_comment')
