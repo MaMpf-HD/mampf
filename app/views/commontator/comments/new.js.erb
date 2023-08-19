@@ -10,8 +10,8 @@ $('html, body').animate({ scrollTop: commontatorForm.offset().top - window.inner
 
 <%# Initialize preview comment helpdesk popover %>
 <%# See https://getbootstrap.com/docs/5.3/components/popovers/#enable-popovers %>
-const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 
 $("#<%= id %>-link").hide();
 
