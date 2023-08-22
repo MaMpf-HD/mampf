@@ -24,7 +24,9 @@
       <%= f.text_area :feedback,
             class: 'form-control',
             placeholder: '_',
-            style: 'height: 200px' %>
+            style: 'height: 200px',
+            required: '',
+            minlength: '10' %>
       <%= f.label :feedback, t('feedback.comment') %>
     </div>
 
