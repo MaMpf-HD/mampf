@@ -3588,6 +3588,7 @@ en:
               taken:
                 'A watchlist with that name already exists.'
   feedback:
+    tooltip: Submit feedback
     modal_title: Submit feedback
     title: Title (optional)
     comment: Your comment

@@ -3794,6 +3794,7 @@ de:
               taken:
                 'Eine Watchlist mit diesem Namen existiert bereits.'
   feedback:
+    tooltip: Feedback geben
     modal_title: Feedback geben
     title: Titel (optional)
     comment: Dein Kommentar
