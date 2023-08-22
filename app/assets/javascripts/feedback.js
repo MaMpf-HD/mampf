@@ -6,7 +6,7 @@ $(document).on('turbolinks:load', () => {
 TOAST_OPTIONS = {
     animation: true,
     autohide: true,
-    delay: 6000 // autohide after 5s
+    delay: 6000 // autohide after ... milliseconds
 };
 
 function registerToasts() {
@@ -18,6 +18,7 @@ function registerToasts() {
 
 function registerSubmitButtonHandler() {
     $('#submit-form-btn-outside').click(() => {
+        // Invoke the hidden submit button inside the actual Rails form
         $('#submit-form-btn').click();
     });
 }
