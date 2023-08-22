@@ -11,7 +11,6 @@ TOAST_OPTIONS = {
 
 function registerToasts() {
     const toastElements = document.querySelectorAll('.toast');
-    console.log(toastElements);
     const toastList = [...toastElements].map(toast => {
         new bootstrap.Toast(toast, TOAST_OPTIONS);
     });
