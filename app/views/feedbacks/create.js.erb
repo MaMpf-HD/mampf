@@ -1,4 +1,7 @@
-console.log('do it')
-statusMessage = '<%= flash[:status_msg] %>'
-console.log(statusMessage)
-$('#feedback-status').text(statusMessage)
+<% if @feedback_success %>
+    $('#submit-feedback').modal('hide');
+    $('#submit-feedback').find('form').trigger('reset'); // clear form
+    $('#toast-successfully-sent').toast('show');
+<% else %>
+    $('#toast-could-not-send').toast('show');
+<% end %>

@@ -4,16 +4,9 @@ class FeedbacksController < ApplicationController
   def create
     feedback = Feedback.new(feedback_params)
     feedback.user_id = current_user.id
-    successfully_saved = feedback.save
-    flash.now[:status_msg] = if successfully_saved
-      'Feedback successfully sent.'
-    else
-      'Something went wrong.'
-    end
-    @errors = feedback.errors
-    # redirect_to :root, alert: @errors.full_messages.join(', ')
+    @feedback_success = feedback.save
 
-    if successfully_saved
+    if @feedback_success
       FeedbackMailer.with(feedback: feedback).new_user_feedback_email.deliver_later
     end
 

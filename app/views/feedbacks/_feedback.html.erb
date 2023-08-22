@@ -1,0 +1,44 @@
+<%= stylesheet_link_tag 'feedback' %>
+
+<%# Main Modal %>
+<div id="submit-feedback" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Submit feedback" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content p-4">
+      <%= render partial: 'feedbacks/feedback_form' %>
+    </div>
+  </div>
+</div>
+
+<%# Messages toasts %>
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div role="alert" aria-live="assertive" aria-atomic="true"
+    class="toast" id="toast-could-not-send">
+
+    <div class="toast-header text-danger">
+      <i class="bi bi-x-square-fill pe-1"></i>
+      <strong class="me-auto">Could not send feedback</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+
+    <div class="toast-body">
+      Unfortunately, something went wrong while sending your feedback.
+      Please save your feedback by copying it manually and try again later.
+    </div>
+
+  </div>
+
+  <div role="alert" aria-live="assertive" aria-atomic="true"
+    class="toast" id="toast-successfully-sent">
+
+    <div class="toast-header text-success">
+      <i class="bi bi-check-square-fill pe-1"></i>
+      <strong class="me-auto">Feedback successfully sent</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+
+    <div class="toast-body">
+      Thanks a lot for your feedback! We will review it soon.
+    </div>
+  </div>
+
+</div>

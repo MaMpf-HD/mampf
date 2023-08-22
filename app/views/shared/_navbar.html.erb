@@ -1,14 +1,7 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
 <%= stylesheet_link_tag 'navbar' %>
 
-<%# Feedback modal %>
-<div id="submit-feedback" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Submit feedback" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content p-4">
-      <%= render partial: 'feedbacks/feedback_form' %>
-    </div>
-  </div>
-</div>
+<%= render partial: 'feedbacks/feedback' %>
 
 <div class="navbars-container">
   <nav class="navbar navbar-expand" id="firstnav">
@@ -40,7 +33,6 @@
           </a>
         </li>
 
-
         <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
@@ -51,7 +43,6 @@
           </li>
         <% end %>
 
-
         <li class="nav-item">
           <a href="<%= watchlists_path %>"
             id="watchlistsIcon"
@@ -60,7 +51,6 @@
             title="<%= t('navbar.watchlist') %>">
           </a>
         </li>
-
 
         <li class="nav-item">
           <a href="<%= comments_path %>"
@@ -73,7 +63,6 @@
           </a>
         </li>
 
-
         <li class="nav-item">
           <a href="<%= news_path %>"
             class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"
@@ -82,7 +71,6 @@
           </a>
         </li>
 
-
         <li class="nav-item">
           <a href="<%= DefaultSetting::BLOG_LINK %>"
             class="nav-link bi bi-newspaper"
@@ -90,7 +78,6 @@
             title="<%= t('navbar.blog') %>">
           </a>
         </li>
-
 
         <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
@@ -107,9 +94,9 @@
                   locals: { lecture: @lecture || current_lecture } %>
       </ul>
 
-      <%= render partial: 'shared/dropdown_notifications'%>
+      <%= render partial: 'shared/dropdown_notifications' %>
 
-      <%= render partial: 'feedbacks/feedback_button'%>
+      <%= render partial: 'feedbacks/feedback_button' %>
 
       <%= form_tag(search_index_path,
                   method: 'get',
