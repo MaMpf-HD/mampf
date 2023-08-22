@@ -11,33 +11,33 @@
 
 <%# Messages toasts %>
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <%# Error %>
   <div role="alert" aria-live="assertive" aria-atomic="true"
     class="toast" id="toast-could-not-send">
 
     <div class="toast-header text-danger">
       <i class="bi bi-x-square-fill pe-1"></i>
-      <strong class="me-auto">Could not send feedback</strong>
+      <strong class="me-auto"> <%= t('feedback.error_short') %></strong>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
 
     <div class="toast-body">
-      Unfortunately, something went wrong while sending your feedback.
-      Please save your feedback by copying it manually and try again later.
+      <%= t('feedback.error') %>
     </div>
-
   </div>
 
+  <%# Success %>
   <div role="alert" aria-live="assertive" aria-atomic="true"
     class="toast" id="toast-successfully-sent">
 
     <div class="toast-header text-success">
       <i class="bi bi-check-square-fill pe-1"></i>
-      <strong class="me-auto">Feedback successfully sent</strong>
+      <strong class="me-auto"> <%= t('feedback.success_short') %></strong>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
 
     <div class="toast-body">
-      Thanks a lot for your feedback! We will review it soon.
+      <%= t('feedback.success') %>
     </div>
   </div>
 

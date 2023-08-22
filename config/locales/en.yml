@@ -3600,3 +3600,12 @@ en:
     mail_checkbox: >
       Allow us to contact you via email (%{user_mail}) if there are questions
       about your feedback.
+    success_short: >
+      Feedback successfully sent
+    success: >
+      Thanks a lot for your feedback! We will review it soon.
+    error_short: >
+      Error while sending feedback
+    error: >
+      We're sorry, something went wrong while submitting your feedback.
+      Please save your feedback by copying it manually and try again later.

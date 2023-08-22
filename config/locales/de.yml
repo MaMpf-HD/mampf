@@ -3806,3 +3806,13 @@ de:
     mail_checkbox: >
       Erlaube es uns, Dich per E-Mail (%{user_mail}) zu kontaktieren, falls es
       Rückfragen zu Deinem Feedback gibt.
+    success_short: >
+      Feedback erfolgreich gesendet
+    success: >
+      Vielen Dank für Dein Feedback! Wir werden es in Kürze bearbeiten.
+    error_short: >
+      Fehler beim Senden des Feedbacks
+    error: >
+      Entschuldigung, leider ist beim Speichern ein Fehler aufgetreten.
+      Bitte speichere Dein Feedback händisch, indem Du es kopierst,
+      und versuche es später noch einmal.
