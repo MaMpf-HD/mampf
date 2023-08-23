@@ -8,6 +8,8 @@ var commontatorForm = $("#<%= id %>").html("<%= escape_javascript(
 ) %>").hide().fadeIn();
 $('html, body').animate({ scrollTop: commontatorForm.offset().top - window.innerHeight/2 }, 'fast');
 
+initBootstrapPopovers()
+
 $("#<%= id %>-link").hide();
 $('#<%= id %>-body').focus();
 
