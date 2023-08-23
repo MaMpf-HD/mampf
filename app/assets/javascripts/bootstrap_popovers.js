@@ -1,16 +1,16 @@
 $(document).on('turbolinks:load', function () {
-    console.log('I am in bootstrap_popovers.js');
-    reenableBootstrapPopovers();
+    initBootstrapPopovers();
 });
 
 /**
- * Reinitialize all Bootstrap popovers on the page.
+ * Initializes all Bootstrap popovers on the page.
+ * 
  * This function might be used for the first initialization of popovers as well
- * as for the reinitialization, e.g. after a page change via Turbolinks.
+ * as for reinitialization on page changes.
  *
  * See: https://getbootstrap.com/docs/5.3/components/popovers/#enable-popovers
  */
-function reenableBootstrapPopovers() {
+function initBootstrapPopovers() {
     const popoverHtmlElements = document.querySelectorAll('[data-bs-toggle="popover"]');
     for (const element of popoverHtmlElements) {
         new bootstrap.Popover(element);
