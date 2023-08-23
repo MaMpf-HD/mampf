@@ -8,13 +8,7 @@ var commontatorForm = $("#<%= id %>").html("<%= escape_javascript(
 ) %>").hide().fadeIn();
 $('html, body').animate({ scrollTop: commontatorForm.offset().top - window.innerHeight/2 }, 'fast');
 
-<%# Initialize preview comment helpdesk popover %>
-<%# See https://getbootstrap.com/docs/5.3/components/popovers/#enable-popovers %>
-var popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-var popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
-
 $("#<%= id %>-link").hide();
-
 $('#<%= id %>-body').focus();
 
 <%= javascript_proc %>
