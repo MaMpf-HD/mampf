@@ -6,7 +6,7 @@ $('#chapter-modal-content').empty()
                         locals: { chapter: @chapter,
                                   lecture: @chapter.lecture } %>')
 $('#chapterModalLabel').empty()
-  .append('<%= t("admin.chapter.edit",
+  .append('<%= t("initBootstrapPopovers.chapter.edit",
                  chapter: @chapter.to_label) %>')
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 $('#chapterModal').modal('show')

@@ -9,6 +9,6 @@ $('#action-container').empty()
 # activate selectize and popovers
 $('.selectize').each ->
   new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 # bugfix for selectize (which sometimes renders the prompt with a zero width)
 $('input[id$="-selectized"]').css('width', '100%')
