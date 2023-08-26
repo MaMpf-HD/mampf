@@ -6,12 +6,12 @@
                           class: 'me-2',
                           id: 'mampf-logo'),
                 home_path %>
-    <%= link_to "MaMpf",
+    <%= link_to t('mampf'),
                 home_path,
                 class: 'navbar-brand',
                 style: "text-decoration: none;",
                 id: 'mampfbrand' %>
-      <ul class="navbar-nav mr-auto" id="navbar-buttons">
+      <ul class="navbar-nav me-auto">
         <li class="nav-item">
           <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
             || !get_class_for_path(root_path()).empty? %>
@@ -30,7 +30,6 @@
           </a>
         </li>
 
-
         <% if current_user.admin || current_user.editor? || current_user.teacher? %>
           <li class="nav-item">
             <a href="<%= administration_path %>"
@@ -41,7 +40,6 @@
           </li>
         <% end %>
 
-
         <li class="nav-item">
           <a href="<%= watchlists_path %>"
             id="watchlistsIcon"
@@ -50,7 +48,6 @@
             title="<%= t('navbar.watchlist') %>">
           </a>
         </li>
-
 
         <li class="nav-item">
           <a href="<%= comments_path %>"
@@ -63,7 +60,6 @@
           </a>
         </li>
 
-
         <li class="nav-item">
           <a href="<%= news_path %>"
             class="nav-link bi bi-megaphone-fill <%= get_class_for_path(news_path()) %>"
@@ -72,7 +68,6 @@
           </a>
         </li>
 
-
         <li class="nav-item">
           <a href="<%= DefaultSetting::BLOG_LINK %>"
             class="nav-link bi bi-newspaper"
@@ -80,7 +75,6 @@
             title="<%= t('navbar.blog') %>">
           </a>
         </li>
-
 
         <li class="nav-item">
           <a href="<%= destroy_user_session_path(params: { locale: current_user.locale }) %>"
@@ -96,7 +90,7 @@
         <%= render partial: 'shared/dropdown_lectures',
                   locals: { lecture: @lecture || current_lecture } %>
       </ul>
-      <%= render partial: 'shared/dropdown_notifications'%>
+      <%= render partial: 'shared/dropdown_notifications' %>
       <%= form_tag(search_index_path,
                   method: 'get',
                   class: 'form-inline mt-2 mt-md-0',
