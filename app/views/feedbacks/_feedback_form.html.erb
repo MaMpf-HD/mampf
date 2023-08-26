@@ -26,7 +26,10 @@
             placeholder: '_',
             style: 'height: 200px',
             required: '',
-            minlength: '10' %>
+            minlength: Feedback::BODY_MIN_LENGTH,
+            maxlength: Feedback::BODY_MAX_LENGTH,
+            'data-too-short-message': t('feedback.body_too_short_error',
+                                min_length: Feedback::BODY_MIN_LENGTH) %>
       <%= f.label :feedback, t('feedback.comment') %>
     </div>
 

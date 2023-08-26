@@ -3598,6 +3598,8 @@ en:
       If you have found a bug and have a GitHub account, then create an issue
       directly on %{github_mampf}. Otherwise, you are welcome to use this
       form or send an %{feedback_mail} directly.</p>
+    body_too_short_error: >
+      Your feedback is too short. Please enter at least %{min_length} characters.
     mail_checkbox: >
       Allow us to contact you via email (%{user_mail}) if there are questions
       about your feedback.
