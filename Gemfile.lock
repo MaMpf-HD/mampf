@@ -705,7 +705,7 @@ DEPENDENCIES
   premailer-rails
   progress_bar
   prometheus_exporter
-  puma (~> 5)
+  puma (< 7)
   rack
   rails (~> 7.0.4.3)
   rails-erd
