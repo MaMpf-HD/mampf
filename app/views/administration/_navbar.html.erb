@@ -29,7 +29,7 @@
         <li class="nav-item" id="adminCurrentLecture">
           <%= link_to '',
                   edit_lecture_path(Lecture.find_by_id(current_user.current_lecture_id)),
-                  class: 'fas fa-chalkboard-teacher fa-lg text-light nav-link',
+                  class: 'nav-link bi bi-bookmark-fill',
                   data: { 'bs-toggle': "tooltip" },
                   title: t('admin.navbar.current_lecture') %>
         </li>
