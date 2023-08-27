@@ -16,7 +16,7 @@
                 title: t('admin.navbar.exit'),
                 data: { 'bs-toggle': 'tooltip' } %>
 
-    <ul class="navbar-nav admin-buttons me-auto" id="adminHome">
+    <ul class="navbar-nav" id="adminHome">
       <li class="nav-item" id="adminHome">
         <%= link_to '', administration_path,
                 class: 'nav-link bi bi-house-fill',
@@ -49,7 +49,7 @@
       </li>
     </ul>
 
-    <ul class="navbar-nav admin-buttons me-auto" id="adminDetails">
+    <ul class="navbar-nav ms-auto me-auto" id="adminDetails">
       <% if current_user.admin? %>
         <li class="nav-item">
           <%= link_to '', terms_path,
@@ -94,7 +94,7 @@
     </ul>
 
     <% if current_user.admin? %>
-      <ul class="navbar-nav admin-buttons" id="adminUsers">
+      <ul class="navbar-nav" id="adminUsers">
         <li class="nav-item <%= active_controller?('users') %>">
           <%= link_to '', users_path,
                   class: 'nav-link bi bi-people-fill',
@@ -104,7 +104,7 @@
       </ul>
     <% end %>
 
-    <ul class="navbar-nav admin-buttons" id="adminProfile">
+    <ul class="navbar-nav" id="adminProfile">
       <li class="nav-item">
         <%= link_to '', elevated_profile_path,
                 class: 'nav-link bi bi-person-fill',
