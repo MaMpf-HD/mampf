@@ -192,10 +192,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_29_080510) do
   create_table "feedbacks", force: :cascade do |t|
     t.text "title"
     t.text "feedback"
+    t.boolean "can_contact", default: false
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "can_contact"
     t.index ["user_id"], name: "index_feedbacks_on_user_id"
   end
 
