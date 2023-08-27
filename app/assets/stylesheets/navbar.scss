@@ -29,31 +29,31 @@
     .nav-item {
         position: relative;
     }
-}
 
-.navbar .navbar-nav a.nav-link {
-    filter: drop-shadow(1px 4px 7px rgba(0, 0, 0, 0.2));
+    .navbar-nav .nav-link {
+        filter: drop-shadow(1px 4px 7px rgba(0, 0, 0, 0.2));
 
-    &:hover {
-        color: #cee2ff;
-    }
+        &:hover {
+            color: #cee2ff;
+        }
 
-    &:focus {
+        &:focus {
+            color: white;
+        }
+
+        text-decoration: none;
+        font-size: 1.35rem;
+        padding: 0 9px;
         color: white;
-    }
 
-    text-decoration: none;
-    font-size: 1.35rem;
-    padding: 0 9px;
-    color: white;
-
-    &::after {
-        &.active-item {
-            content: "\2022"; // dot
-            font-size: 1rem;
-            position: absolute;
-            top: 21px;
-            left: 16px;
+        &::after {
+            &.active-item {
+                content: "\2022"; // dot
+                font-size: 1rem;
+                position: absolute;
+                top: 21px;
+                left: 16px;
+            }
         }
     }
 }
