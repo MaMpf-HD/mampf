@@ -19,7 +19,7 @@
     <ul class="navbar-nav" id="adminHome">
       <li class="nav-item" id="adminHome">
         <%= link_to '', administration_path,
-                class: 'nav-link bi bi-house-fill',
+                class: 'nav-link bi bi-house-fill ' + get_class_for_path(administration_path()),
                 data: { 'bs-toggle': "tooltip" },
                 title: t('admin.navbar.main') %>
       </li>
@@ -29,7 +29,7 @@
         <li class="nav-item" id="adminCurrentLecture">
           <%= link_to '',
                   edit_lecture_path(Lecture.find_by_id(current_user.current_lecture_id)),
-                  class: 'nav-link bi bi-bookmark-fill',
+                  class: 'nav-link bi bi-bookmark-fill ' + get_class_for_path_startswith(lectures_path()),
                   data: { 'bs-toggle': "tooltip" },
                   title: t('admin.navbar.current_lecture') %>
         </li>
@@ -37,7 +37,7 @@
 
       <li class="nav-item" id="adminSearch">
         <%= link_to '', administration_search_path,
-                  class: 'nav-link bi bi-binoculars-fill',
+                  class: 'nav-link bi bi-binoculars-fill ' + get_class_for_path(administration_search_path()),
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('navbar.search') %>
       </li>
@@ -53,20 +53,20 @@
       <% if current_user.admin? %>
         <li class="nav-item">
           <%= link_to '', terms_path,
-                  class: 'nav-link bi bi-calendar-range-fill',
+                  class: 'nav-link bi bi-calendar-range-fill ' + get_class_for_path(terms_path()),
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('admin.navbar.terms') %>
         </li>
         <li class="nav-item">
           <%= link_to '',
                   classification_path,
-                  class: 'nav-link bi bi-node-plus-fill',
+                  class: 'nav-link bi bi-node-plus-fill ' + + get_class_for_path(classification_path()),
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('admin.navbar.classification') %>
         </li>
         <li>
           <%= link_to '', announcements_path,
-                  class: 'nav-link bi bi-megaphone-fill',
+                  class: 'nav-link bi bi-megaphone-fill ' + get_class_for_path(announcements_path()),
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('admin.navbar.news') %>
         </li>
@@ -86,7 +86,7 @@
         </li>
         <li>
           <%= link_to '', interactions_path,
-                  class: 'nav-link bi-cloud-arrow-down-fill',
+                  class: 'nav-link bi-cloud-arrow-down-fill ' + get_class_for_path(interactions_path()),
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('admin.navbar.export_stats') %>
         </li>
@@ -97,7 +97,7 @@
       <ul class="navbar-nav" id="adminUsers">
         <li class="nav-item <%= active_controller?('users') %>">
           <%= link_to '', users_path,
-                  class: 'nav-link bi bi-people-fill',
+                  class: 'nav-link bi bi-people-fill ' + get_class_for_path(users_path()),
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('admin.navbar.users') %>
         </li>
@@ -107,7 +107,7 @@
     <ul class="navbar-nav" id="adminProfile">
       <li class="nav-item">
         <%= link_to '', elevated_profile_path,
-                class: 'nav-link bi bi-person-fill',
+                class: 'nav-link bi bi-person-fill ' + get_class_for_path(elevated_profile_path()),
                 data: { 'bs-toggle': 'tooltip' },
                 title: t('admin.navbar.profile') %>
       </li>
