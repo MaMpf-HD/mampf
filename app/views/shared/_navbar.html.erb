@@ -11,7 +11,7 @@
                 class: 'navbar-brand',
                 style: "text-decoration: none;",
                 id: 'mampfbrand' %>
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav">
         <li class="nav-item">
           <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
             || !get_class_for_path(root_path()).empty? %>
