@@ -438,6 +438,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
 ###
 @result = undefined
 @userManuscriptUpload = (fileInput) ->
+  initBootstrapPopovers()
   hiddenInput = document.getElementById('upload-userManuscript-hidden')
   hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
   fileInput.style.display = 'none'

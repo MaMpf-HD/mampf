@@ -79,6 +79,7 @@ displayNext = ->
   <% else %>
   renderNext('<%= j render partial: "quizzes/quiz_round",
                            locals: { hidden: true } %>')
+  initBootstrapPopovers()
   <% end %>
   return
 
