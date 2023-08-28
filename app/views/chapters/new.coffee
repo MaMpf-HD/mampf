@@ -4,4 +4,4 @@ $('#chapter-modal-content').empty()
                         locals: { lecture: @lecture,
                                   chapter: @chapter} %>').show()
 $('#chapterModal').modal('show')
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()

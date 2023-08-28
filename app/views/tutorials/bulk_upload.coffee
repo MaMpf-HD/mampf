@@ -11,8 +11,7 @@ $('#tutorial-table').empty()
 	.append('<%= j render partial: "tutorials/table",
 												locals: { assignment: @assignment,
 																	tutorial: @tutorial,
-																	stack: @stack } %>')
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()																	stack: @stack } %>')
 <% end %>
 <% else %>
 location.reload(true)

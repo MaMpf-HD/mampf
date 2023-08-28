@@ -9,4 +9,4 @@ trixElement = document.querySelector('#talk-details-trix')
 trixTalkPreview(trixElement)
 
 $('#talkModal').modal('show')
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
