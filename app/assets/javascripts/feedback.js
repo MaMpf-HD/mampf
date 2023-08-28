@@ -18,9 +18,19 @@ function registerToasts() {
 }
 
 function registerSubmitButtonHandler() {
+    const submitButton = $('#submit-form-btn');
+
+    // Invoke the hidden submit button inside the actual Rails form
     $('#submit-form-btn-outside').click(() => {
-        // Invoke the hidden submit button inside the actual Rails form
-        $('#submit-form-btn').click();
+        submitButton.click();
+    });
+
+    // Submit form by pressing Ctrl + Enter
+    document.addEventListener('keydown', (event) => {
+        const isModalOpen = $('#submit-feedback').is(':visible');
+        if (isModalOpen && event.ctrlKey && event.key == "Enter") {
+            submitButton.click();
+        }
     });
 }
 
