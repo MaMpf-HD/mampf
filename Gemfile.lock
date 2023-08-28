@@ -399,7 +399,7 @@ GEM
     prometheus_exporter (2.0.8)
       webrick
     public_suffix (5.0.1)
-    puma (4.3.12)
+    puma (6.3.1)
       nio4r (~> 2.0)
     pundit (2.3.0)
       activesupport (>= 3.0.0)
@@ -705,7 +705,7 @@ DEPENDENCIES
   premailer-rails
   progress_bar
   prometheus_exporter
-  puma (~> 4.1)
+  puma (< 7)
   rack
   rails (~> 7.0.4.3)
   rails-erd
@@ -734,7 +734,7 @@ DEPENDENCIES
   sunspot_rails!
   sunspot_solr
   terser
-  thredded!
+  thredded
   thredded-markdown_katex!
   trix-rails
   turbolinks (~> 5)
