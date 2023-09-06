@@ -49,6 +49,9 @@
 //= require talks
 //= require terms
 //= require tex_preview
+//= require thyme/attributes
+//= require thyme/key
+//= require thyme/utility
 //= require thyme_func
 //= require thyme
 //= require thyme_editor

@@ -1,102 +1,61 @@
-// a boolean that helps to deactivate all key listeners
-// for the time the annotation modal opens and the user
-// has to write text into the command box
-lockKeyListeners = false;
-
-// when callig the updateMarkersF() method this will be used to save an
-// array containing all annotations
-annotations = null;
-
-// helps to find the annotation that is currently shown in the
-// annotation area
-activeAnnotationId = 0;
-
-annotationIndex = function(annotation) {
-  for (let i = 0; i < annotations.length; i++) {
-    if (annotations[i].id == annotation.id) {
-      return i;
-    }
-  }
-};
-
-// returns a certain color for every annotation with respect to the annotations
-// category (in the feedback view this gives more information than the original color).
-annotationColor = function(cat) {
-  switch (cat) {
-    case "note":
-      return "#44ee11"; //green
-    case "content":
-      return "#eeee00"; //yellow
-    case "mistake":
-      return "#ff0000"; //red
-    case "presentation":
-      return "#ff9933"; //orange
-  }
-};
-
-// returns a color for the heatmap with respect to the annotation types that are shown.
-heatmapColor = function(colors) {
-  return colorMixer(colors);
-};
-
 // set up everything: read out track data and initialize html elements
 setupHypervideoF = function() {
-  var video = $('#video').get(0);
-  if (video == null) {
+  const video = $('#video').get(0);
+  if (video === null) {
     return;
   }
   document.body.style.backgroundColor = 'black';
 };
 
 $(document).on('turbolinks:load', function() {
-  var thymeContainer = document.getElementById('thyme-feedback');
+  const thymeContainer = document.getElementById('thyme-feedback');
   // no need for thyme if no thyme container on the page
-  if (thymeContainer == null) {
+  if (thymeContainer === null) {
     return;
   }
   // Video
-  var video = document.getElementById('video');
-  var thyme = document.getElementById('thyme');
+  const video = document.getElementById('video');
+  const thyme = document.getElementById('thyme');
   // Buttons
-  var playButton = document.getElementById('play-pause');
-  var muteButton = document.getElementById('mute');
-  var plusTenButton = document.getElementById('plus-ten');
-  var minusTenButton = document.getElementById('minus-ten');
+  const playButton = document.getElementById('play-pause');
+  const muteButton = document.getElementById('mute');
+  const plusTenButton = document.getElementById('plus-ten');
+  const minusTenButton = document.getElementById('minus-ten');
   // Sliders
-  var seekBar = document.getElementById('seek-bar');
-  var volumeBar = document.getElementById('volume-bar');
+  const seekBar = document.getElementById('seek-bar');
+  const volumeBar = document.getElementById('volume-bar');
   // Selectors
-  var speedSelector = document.getElementById('speed');
+  const speedSelector = document.getElementById('speed');
   // Time
-  var currentTime = document.getElementById('current-time');
-  var maxTime = document.getElementById('max-time');
+  const currentTime = document.getElementById('current-time');
+  const maxTime = document.getElementById('max-time');
   // ControlBar
-  var videoControlBar = document.getElementById('video-controlBar');
+  const videoControlBar = document.getElementById('video-controlBar');
   // below-area
-  var toggleNoteAnnotations = document.getElementById('toggle-note-annotations-check');
-  var toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
-  var toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check');
-  var togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
+  const toggleNoteAnnotations = document.getElementById('toggle-note-annotations-check');
+  const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
+  const toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check');
+  const togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
   // set seek bar to 0 and volume bar to 1
   seekBar.value = 0;
   volumeBar.value = 1;
 
   // resizes the thyme container to the window dimensions
   resizeContainer = function() {
-    var height = $(window).height();
-    var width = Math.floor(video.videoWidth * $(window).height() / video.videoHeight);
+    let height = $(window).height();
+    let width = Math.floor(video.videoWidth * $(window).height() / video.videoHeight);
     if (width > $(window).width()) {
-      var shrink = $(window).width() / width;
+      const shrink = $(window).width() / width;
       height = Math.floor(height * shrink);
       width = $(window).width();
     }
-    var top = Math.floor(0.5 * ($(window).height() - height));
-    var left = Math.floor(0.5 * ($(window).width() - width));
+    const top = Math.floor(0.5 * ($(window).height() - height));
+    const left = Math.floor(0.5 * ($(window).width() - width));
     $('#thyme-feedback').css('height', height + 'px');
     $('#thyme-feedback').css('width', width + 'px');
     $('#thyme-feedback').css('top', top + 'px');
     $('#thyme-feedback').css('left', left + 'px');
-    if (annotations == null) {
+    if (thymeAttributes.annotations === null) {
       updateMarkersF();
     } else {
       rearrangeMarkersF();
@@ -109,7 +68,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the play/pause button
   playButton.addEventListener('click', function() {
-    if (video.paused == true) {
+    if (video.paused === true) {
       video.play();
     } else {
       video.pause();
@@ -126,7 +85,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the mute button
   muteButton.addEventListener('click', function() {
-    if (video.muted == false) {
+    if (video.muted === false) {
       video.muted = true;
       muteButton.innerHTML = 'volume_off';
     } else {
@@ -159,18 +118,18 @@ $(document).on('turbolinks:load', function() {
 
   // Event listeners for the seek bar
   seekBar.addEventListener('input', function() {
-    var time = video.duration * seekBar.value / 100;
+    const time = video.duration * seekBar.value / 100;
     video.currentTime = time;
   });
 
   // Update the seek bar as the video plays
   // uses a gradient for seekbar video time visualization
   video.addEventListener('timeupdate', function() {
-    var value = 100 / video.duration * video.currentTime;
+    const value = 100 / video.duration * video.currentTime;
     seekBar.value = value;
     seekBar.style.backgroundImage = 'linear-gradient(to right,' +
     ' #2497E3, #2497E3 ' + value + '%, #ffffff ' + value + '%, #ffffff)';
-    currentTime.innerHTML = secondsToTime(video.currentTime);
+    currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
   });
 
   // Pause the video when the seek handle is being dragged
@@ -188,18 +147,18 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the volume bar
   volumeBar.addEventListener('input', function() {
-    var value = volumeBar.value;
+    const value = volumeBar.value;
     video.volume = value;
   });
 
   video.addEventListener('volumechange', function() {
-    var value = video.volume;
+    const value = video.volume;
     volumeBar.value = value;
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value * 100 + '%, #ffffff ' + value * 100 + '%, #ffffff)';
   });
 
   video.addEventListener('click', function() {
-    if (video.paused == true) {
+    if (video.paused === true) {
       video.play();
     } else {
       video.pause();
@@ -207,41 +166,9 @@ $(document).on('turbolinks:load', function() {
     showControlBar();
   });
 
-  // thyme can be used by keyboard as well
-  // Arrow up - next chapter
-  // Arrow down - previous chapter
-  // Arrow right - plus ten seconds
-  // Arrow left - minus ten seconds
-  // Page up - volume up
-  // Page down - volume down
-  // m - mute
-  window.addEventListener('keydown', function(evt) {
-    if (lockKeyListeners == true) {
-      return;
-    }
-    var key = evt.key;
-    if (key == ' ') {
-      if (video.paused == true) {
-        video.play();
-      } else {
-        video.pause();
-      }
-    } else if (key == 'ArrowUp') {
-      $(nextChapterButton).trigger('click');
-    } else if (key == 'ArrowDown') {
-      $(previousChapterButton).trigger('click');
-    } else if (key == 'ArrowRight') {
-      $(plusTenButton).trigger('click');
-    } else if (key == 'ArrowLeft') {
-      $(minusTenButton).trigger('click');
-    } else if (key == 'PageUp') {
-      video.volume = Math.min(video.volume + 0.1, 1);
-    } else if (key == 'PageDown') {
-      video.volume = Math.max(video.volume - 0.1, 0);
-    } else if (key == 'm') {
-      $(muteButton).trigger('click');
-    }
-  });
+  // Add keyboard shortcuts from thyme/key.js
+  thymeKey.addGeneralShortcuts();
+  thymeKey.addFeedbackShortcuts();
 
   // Toggles which annotations are shown
   toggleNoteAnnotations.addEventListener('click', function() {
@@ -262,7 +189,7 @@ $(document).on('turbolinks:load', function() {
 
   // updates the annotation markers
   updateMarkersF = function() {
-    var mediumId = thyme.dataset.medium;
+    const mediumId = thyme.dataset.medium;
     $.ajax(Routes.update_markers_path(), {
       type: 'GET',
       dataType: 'json',
@@ -271,8 +198,8 @@ $(document).on('turbolinks:load', function() {
         mediumId: mediumId
       },
       success: function(annots) {
-        annotations = annots;
-        if (annotations == null) {
+        thymeAttributes.annotations = annots;
+        if (annots === null) {
           return;
         }
         rearrangeMarkersF();
@@ -283,9 +210,9 @@ $(document).on('turbolinks:load', function() {
 
   rearrangeMarkersF = function() {
     $('#feedback-markers').empty();
-    sortAnnotations(annotations);
-    for (const a of annotations) {
-      if (validAnnotation(a) == true) {
+    thymeUtility.annotationSort();
+    for (const a of thymeAttributes.annotations) {
+      if (validAnnotation(a) === true) {
         createMarkerF(a);
       }
     }
@@ -295,8 +222,8 @@ $(document).on('turbolinks:load', function() {
   // an auxiliary method for "updateMarkersF()" creating a single marker
   createMarkerF = function(annotation) {
     // create marker
-    var polygonPoints, strokeColor, strokeWidth;
-    if (annotation.category == "mistake") {
+    let polygonPoints, strokeColor, strokeWidth;
+    if (annotation.category === "mistake") {
       polygonPoints = "1,1 9,1 5,14";
       strokeWidth = 1.5;
       strokeColor = "darkred";
@@ -305,20 +232,20 @@ $(document).on('turbolinks:load', function() {
       strokeWidth = 1;
       strokeColor = "black";
     }
-    var markerStr = '<span id="marker-' + annotation.id + '">' +
-                      '<svg width="15" height="20">' +
-                      '<polygon points="' + polygonPoints + '"' +
-                        'style="fill:' + annotationColor(annotation.category) + ';' +
-                        'stroke:' + strokeColor + ';' +
-                        'stroke-width:' + strokeWidth + ';' +
-                        'fill-rule:evenodd;"/>' +
-                    '</svg></span>'
+    const markerStr = '<span id="marker-' + annotation.id + '">' +
+                        '<svg width="15" height="20">' +
+                        '<polygon points="' + polygonPoints + '"' +
+                          'style="fill:' + thymeUtility.annotationColor(annotation.category) + ';' +
+                          'stroke:' + strokeColor + ';' +
+                          'stroke-width:' + strokeWidth + ';' +
+                          'fill-rule:evenodd;"/>' +
+                      '</svg></span>'
     $('#feedback-markers').append(markerStr);
     // set the correct position for the marker
-    var marker = $('#marker-' + annotation.id);
-    var size = seekBar.clientWidth - 15;
-    var ratio = timestampToMillis(annotation.timestamp) / video.duration;
-    var offset = marker.parent().offset().left + ratio * size + 3;
+    const marker = $('#marker-' + annotation.id);
+    const size = seekBar.clientWidth - 15;
+    const ratio = thymeUtility.timestampToMillis(annotation.timestamp) / video.duration;
+    const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
     marker.on('click', function() {
       updateAnnotationAreaF(annotation);
@@ -326,7 +253,7 @@ $(document).on('turbolinks:load', function() {
   };
 
   categoryLocale = function(category, subtext) {
-    var c, s;
+    let c, s;
     switch (category) {
       case "note":
         c = document.getElementById('annotation-locales').dataset.note;
@@ -340,7 +267,7 @@ $(document).on('turbolinks:load', function() {
       case "presentation":
         c = document.getElementById('annotation-locales').dataset.presentation;
     }
-    if (subtext == null) {
+    if (subtext === null) {
       return c;
     }
     switch (subtext) {
@@ -357,11 +284,11 @@ $(document).on('turbolinks:load', function() {
   };
 
   updateAnnotationAreaF = function(annotation) {
-    var activeAnnotationId = annotation.id;
-    var head = categoryLocale(annotation.category, annotation.subtext);
-    var comment = annotation.comment.replaceAll('\n', '<br>');
-    var headColor = lightenUp(annotationColor(annotation.category), 2);
-    var backgroundColor = lightenUp(annotationColor(annotation.category), 3);
+    thymeAttributes.activeAnnotationId = annotation.id;
+    const head = categoryLocale(annotation.category, annotation.subtext);
+    const comment = annotation.comment.replaceAll('\n', '<br>');
+    const headColor = thymeUtility.lightenUp(thymeUtility.annotationColor(annotation.category), 2);
+    const backgroundColor = thymeUtility.lightenUp(thymeUtility.annotationColor(annotation.category), 3);
     $('#annotation-infobar').empty().append(head);
     $('#annotation-infobar').css('background-color', headColor);
     $('#annotation-infobar').css('text-align', 'center');
@@ -372,28 +299,30 @@ $(document).on('turbolinks:load', function() {
     $('#annotation-next-button').off('click');
     $('#annotation-goto-button').off('click');
     $('#annotation-close-button').off('click');
+    // shorthand
+    const a = thymeAttributes.annotations;
     // previous annotation listener
     $('#annotation-previous-button').on('click', function() {
-      for (var i = 0; i < annotations.length; i++) {
-        if (i != 0 && annotations[i] == annotation) {
-          updateAnnotationAreaF(annotations[i - 1])
+      for (let i = 0; i < a.length; i++) {
+        if (i != 0 && a[i] === annotation) {
+          updateAnnotationAreaF(a[i - 1])
         }
       }
     });
     // next annotation Listener
     $('#annotation-next-button').on('click', function() {
-      for (var i = 0; i < annotations.length; i++) {
-        if (i != annotations.length - 1 && annotations[i] == annotation) {
-          updateAnnotationAreaF(annotations[i + 1])
+      for (let i = 0; i < a.length; i++) {
+        if (i != a.length - 1 && a[i] === annotation) {
+          updateAnnotationAreaF(a[i + 1])
         }
       }
     });
     // goto listener
     $('#annotation-goto-button').on('click', function() {
-      video.currentTime = timestampToMillis(annotation.timestamp);
+      video.currentTime = thymeUtility.timestampToMillis(annotation.timestamp);
     });
     // LaTex
-    renderLatex(document.getElementById('annotation-comment'));
+    thymeUtility.renderLatex(document.getElementById('annotation-comment'));
   };
 
   // Depending on the toggle switches, which are activated, this method checks, if
@@ -412,7 +341,7 @@ $(document).on('turbolinks:load', function() {
   };
 
   heatmap = function() {
-    if (annotations == null) {
+    if (thymeAttributes.annotations === null) {
       return;
     }
     $('#heatmap').empty();
@@ -420,54 +349,54 @@ $(document).on('turbolinks:load', function() {
     //
     // variable definitions
     //
-    var radius = 10; // total distance from a single peak's maximum to it's minimum
-    var width = seekBar.clientWidth + 2 * radius - 35; // width of the video timeline
-    var maxHeight = video.clientHeight / 4; // the peaks of the graph should not extend maxHeight
+    const radius = 10; // total distance from a single peak's maximum to it's minimum
+    const width = seekBar.clientWidth + 2 * radius - 35; // width of the video timeline
+    const maxHeight = video.clientHeight / 4; // the peaks of the graph should not extend maxHeight
     /* An array for each pixel on the timeline. The indices of this array should be thought
        of the x-axis of the heatmap's graph, while its entries should be thought of its
        values on the y-axis. */
-    var pixels = new Array(width + 2 * radius + 1).fill(0);
+    let pixels = new Array(width + 2 * radius + 1).fill(0);
     /* amplitude should be calculated with respect to all annotations
        (even those which are not shown). Otherwise the peaks increase
        when turning off certain annotations because the graph has to be
        normed. Therefore we need this additional "pixelsAll" array. */
-    var pixelsAll = new Array(width + 2 * radius + 1).fill(0);
+    let pixelsAll = new Array(width + 2 * radius + 1).fill(0);
     /* for any visible annotation, this array contains its color (needed for the calculation
        of the heatmap color) */
-    var colors = [];
+    let colors = [];
 
     //
     // data calculation
     //
-    for (const a of annotations) {
-      var valid = validAnnotation(a) && a.category !== "mistake"; // <- don't include mistake annotations
-      if (valid == true) {
-        colors.push(annotationColor(a.category));
+    for (const a of thymeAttributes.annotations) {
+      const valid = validAnnotation(a) && a.category !== "mistake"; // <- don't include mistake annotations
+      if (valid === true) {
+        colors.push(thymeUtility.annotationColor(a.category));
       }
-      var time = timestampToMillis(a.timestamp);
-      var position = Math.round(width * (time / video.duration));
+      const time = thymeUtility.timestampToMillis(a.timestamp);
+      const position = Math.round(width * (time / video.duration));
       for (let x = position - radius; x <= position + radius; x++) {
         y = sinX(x, position, radius);
         pixelsAll[x + radius] += y;
-        if (valid == true) {
+        if (valid === true) {
           pixels[x + radius] += y;
         }
       }
     }
-    var maxValue = Math.max.apply(Math, pixelsAll);
-    var amplitude = maxHeight * (1 / maxValue);
+    const maxValue = Math.max.apply(Math, pixelsAll);
+    const amplitude = maxHeight * (1 / maxValue);
 
     //
     // draw heatmap
     //
-    var pointsStr = "0," + maxHeight + " ";
+    let pointsStr = "0," + maxHeight + " ";
     for (let x = 0; x < pixels.length; x++) {
       pointsStr += x + "," + (maxHeight - amplitude * pixels[x]) + " ";
     }
     pointsStr += "" + width + "," + maxHeight;
     heatmapStr = '<svg width=' + (width + 35) + ' height="' + maxHeight + '">' +
                    '<polyline points="' + pointsStr + '"' +
-                     'style="fill:' + heatmapColor(colors) + ';' +
+                     'style="fill:' + thymeUtility.colorMixer(colors) + ';' +
                      'fill-opacity:0.4;' +
                      'stroke:black;' +
                      'stroke-width:1"/>' +

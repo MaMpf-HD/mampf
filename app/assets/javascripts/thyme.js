@@ -1,31 +1,11 @@
-/* a boolean that helps to deactivate all key listeners
-   for the time the annotation modal opens and the user
-   has to write text into the command box */
-var lockKeyListeners = false;
-
-/* when callig the updateMarkers() method this will be used to save an
-   array containing all annotations */
-var annotations = null;
-
-/* helps to find the annotation that is currently shown in the
-   annotation area */
-var activeAnnotationId = 0;
-
-/* if the window width (in px) gets below this threshold value, hide the control bar
-   (default value) */
-var hideControlBarThreshold = {
-  x: 850,
-  y: 500
-};
-
 // return the start time of the next chapter relative to a given time in seconds
 nextChapterStart = function(seconds) {
-  var chapters = document.getElementById('chapters');
-  var times = JSON.parse(chapters.dataset.times);
-  if (times.length == 0) {
+  const chapters = document.getElementById('chapters');
+  const times = JSON.parse(chapters.dataset.times);
+  if (times.length === 0) {
     return;
   }
-  var i = 0;
+  let i = 0;
   while (i < times.length) {
     if (times[i] > seconds) {
       return times[i];
@@ -35,12 +15,12 @@ nextChapterStart = function(seconds) {
 };
 
 previousChapterStart = function(seconds) {
-  var chapters = document.getElementById('chapters');
-  var times = JSON.parse(chapters.dataset.times);
-  if (times.length == 0) {
+  const chapters = document.getElementById('chapters');
+  const times = JSON.parse(chapters.dataset.times);
+  if (times.length === 0) {
     return;
   }
-  var i = times.length - 1;
+  let i = times.length - 1;
   while (i > -1) {
     if (times[i] < seconds) {
       if (seconds - times[i] > 3) {
@@ -66,7 +46,7 @@ hideControlBar = function() {
 
 // hide control bar after 3 seconds of inactivity
 idleHideControlBar = function() {
-  var t = void 0;
+  let t = void 0;
   resetTimer = function() {
     clearTimeout(t);
     t = setTimeout(hideControlBar, 3000);
@@ -80,13 +60,13 @@ idleHideControlBar = function() {
 
 // material icons that represent different media types
 iconClass = function(type) {
-  if (type == 'video') {
+  if (type === 'video') {
     return 'video_library';
-  } else if (type == 'text') {
+  } else if (type === 'text') {
     return 'library_books';
-  } else if (type == 'quiz') {
+  } else if (type === 'quiz') {
     return 'games';
-  } else if (type == 'info') {
+  } else if (type === 'info') {
     return 'info';
   }
 };
@@ -94,15 +74,15 @@ iconClass = function(type) {
 /* returns the jQuery object of all metadata elements that start after the
    given time in seconds */
 metadataAfter = function(seconds) {
-  var metaList = document.getElementById('metadata');
-  var times = JSON.parse(metaList.dataset.times);
-  if (times.length == 0) {
+  const metaList = document.getElementById('metadata');
+  const times = JSON.parse(metaList.dataset.times);
+  if (times.length === 0) {
     return $();
   }
-  var i = 0;
+  let i = 0;
   while (i < times.length) {
     if (times[i] > seconds) {
-      var $nextMeta = $('#m-' + $.escapeSelector(times[i]));
+      const $nextMeta = $('#m-' + $.escapeSelector(times[i]));
       return $nextMeta.add($nextMeta.nextAll());
     }
     ++i;
@@ -120,9 +100,9 @@ metadataBefore = function(seconds) {
    and hide all that start later */
 metaIntoView = function(time) {
   metadataAfter(time).hide();
-  var $before = metadataBefore(time);
+  const $before = metadataBefore(time);
   $before.show();
-  var previousLength = $before.length;
+  const previousLength = $before.length;
   if (previousLength > 0) {
     $before.get(previousLength - 1).scrollIntoView();
   }
@@ -130,55 +110,55 @@ metaIntoView = function(time) {
 
 // set up everything: read out track data and initialize html elements
 setupHypervideo = function() {
-  var $chapterList = $('#chapters');
-  var $metaList = $('#metadata');
-  var video = $('#video').get(0);
-  var backButton = document.getElementById('back-button');
-  if (video == null) {
+  const $chapterList = $('#chapters');
+  const $metaList = $('#metadata');
+  const video = $('#video').get(0);
+  const backButton = document.getElementById('back-button');
+  if (video === null) {
     return;
   }
   document.body.style.backgroundColor = 'black';
-  var chaptersElement = $('#video track[kind="chapters"]').get(0);
-  var metadataElement = $('#video track[kind="metadata"]').get(0);
+  const chaptersElement = $('#video track[kind="chapters"]').get(0);
+  const metadataElement = $('#video track[kind="metadata"]').get(0);
 
   // set up back button (transports back to the current chapter)
   displayBackButton = function() {
     backButton.dataset.time = video.currentTime;
-    var currentChapter = $('#chapters .current');
+    const currentChapter = $('#chapters .current');
     if (currentChapter.length > 0) {
-      var backInfo = currentChapter.data('text').split(':', 1)[0];
+      let backInfo = currentChapter.data('text').split(':', 1)[0];
       if ((backInfo != null) && backInfo.length > 20) {
         backInfo = backButton.dataset.back;
       } else {
         backInfo = backButton.dataset.backto + backInfo;
       }
       $(backButton).empty().append(backInfo).show();
-      renderLatex(backButton);
+      thymeUtility.renderLatex(backButton);
     }
   };
 
   // set up the chapter elements
   displayChapters = function() {
-    var chaptersTrack;
-    if (chaptersElement.readyState == 2 && (chaptersTrack = chaptersElement.track)) {
+    let chaptersTrack;
+    if (chaptersElement.readyState === 2 && (chaptersTrack = chaptersElement.track)) {
       chaptersTrack.mode = 'hidden';
-      var i = 0;
-      var times = [];
+      let i = 0;
+      let times = [];
       // read out the chapter track cues and generate html elements for chapters,
       // run katex on them
       while (i < chaptersTrack.cues.length) {
-        var cue = chaptersTrack.cues[i];
-        var chapterName = cue.text;
-        var start = cue.startTime;
+        const cue = chaptersTrack.cues[i];
+        const chapterName = cue.text;
+        const start = cue.startTime;
         times.push(start);
-        var $listItem = $("<li/>");
-        var $link = $("<a/>", {
+        const $listItem = $("<li/>");
+        const $link = $("<a/>", {
           id: 'c-' + start,
           text: chapterName
         });
         $chapterList.append($listItem.append($link));
-        var chapterElement = $link.get(0);
-        renderLatex(chapterElement);
+        const chapterElement = $link.get(0);
+        thymeUtility.renderLatex(chapterElement);
         $link.data('text', chapterName);
         // if a chapter element is clicked, transport to chapter start time
         $link.on('click', function() {
@@ -196,8 +176,8 @@ setupHypervideo = function() {
       $(chaptersTrack).on('cuechange', function() {
         $('#chapters li a').removeClass('current');
         if (this.activeCues.length > 0) {
-          var activeStart = this.activeCues[0].startTime;
-          var chapter;
+          const activeStart = this.activeCues[0].startTime;
+          let chapter;
           if (chapter = document.getElementById('c-' + activeStart)) {
             $(chapter).addClass('current');
             chapter.scrollIntoView();
@@ -209,95 +189,95 @@ setupHypervideo = function() {
 
   // set up the metadata elements
   displayMetadata = function() {
-    if (metadataElement.readyState == 2 && (metaTrack = metadataElement.track)) {
+    if (metadataElement.readyState === 2 && (metaTrack = metadataElement.track)) {
       metaTrack.mode = 'hidden';
-      var i = 0;
-      var times = [];
+      let i = 0;
+      let times = [];
       // read out the metadata track cues and generate html elements for
       // metadata, run katex on them
       while (i < metaTrack.cues.length) {
-        var cue = metaTrack.cues[i];
-        var meta = JSON.parse(cue.text);
-        var start = cue.startTime;
+        const cue = metaTrack.cues[i];
+        const meta = JSON.parse(cue.text);
+        const start = cue.startTime;
         times.push(start);
-        var $listItem = $('<li/>', {
+        const $listItem = $('<li/>', {
           id: 'm-' + start
         });
         $listItem.hide();
-        var $link = $('<a/>', {
+        const $link = $('<a/>', {
           text: meta.reference,
           "class": 'item',
           id: 'l-' + start
         });
-        var $videoIcon = $('<i/>', {
+        const $videoIcon = $('<i/>', {
           text: 'video_library',
           "class": 'material-icons'
         });
-        var $videoRef = $('<a/>', {
+        const $videoRef = $('<a/>', {
           href: meta.video,
           target: '_blank'
         });
         $videoRef.append($videoIcon);
-        if (meta.video == null) {
+        if (meta.video === null) {
           $videoRef.hide();
         }
-        var $manIcon = $('<i/>', {
+        const $manIcon = $('<i/>', {
           text: 'library_books',
           "class": 'material-icons'
         });
-        var $manRef = $('<a/>', {
+        const $manRef = $('<a/>', {
           href: meta.manuscript,
           target: '_blank'
         });
         $manRef.append($manIcon);
-        if (meta.manuscript == null) {
+        if (meta.manuscript === null) {
           $manRef.hide();
         }
-        var $scriptIcon = $('<i/>', {
+        const $scriptIcon = $('<i/>', {
           text: 'menu_book',
           "class": 'material-icons'
         });
-        var $scriptRef = $('<a/>', {
+        const $scriptRef = $('<a/>', {
           href: meta.script,
           target: '_blank'
         });
         $scriptRef.append($scriptIcon);
-        if (meta.script == null) {
+        if (meta.script === null) {
           $scriptRef.hide();
         }
-        var $quizIcon = $('<i/>', {
+        const $quizIcon = $('<i/>', {
           text: 'videogame_asset',
           "class": 'material-icons'
         });
-        var $quizRef = $('<a/>', {
+        const $quizRef = $('<a/>', {
           href: meta.quiz,
           target: '_blank'
         });
         $quizRef.append($quizIcon);
-        if (meta.quiz == null) {
+        if (meta.quiz === null) {
           $quizRef.hide();
         }
-        var $extIcon = $('<i/>', {
+        const $extIcon = $('<i/>', {
           text: 'link',
           "class": 'material-icons'
         });
-        var $extRef = $('<a/>', {
+        const $extRef = $('<a/>', {
           href: meta.link,
           target: '_blank'
         });
         $extRef.append($extIcon);
-        if (meta.link == null) {
+        if (meta.link === null) {
           $extRef.hide();
         }
-        var $description = $('<div/>', {
+        const $description = $('<div/>', {
           text: meta.text,
           "class": 'mx-3'
         });
-        var $explanation = $('<div/>', {
+        const $explanation = $('<div/>', {
           text: meta.explanation,
           "class": 'm-3'
         });
-        var $details = $('<div/>');
+        const $details = $('<div/>');
         $details.append($link).append($description).append($explanation);
         $icons = $('<div/>', {
           style: 'flex-shrink: 3; display: flex; flex-direction: column;'
@@ -319,7 +299,7 @@ setupHypervideo = function() {
           video.currentTime = this.id.replace('l-', '');
         });
         metaElement = $listItem.get(0);
-        renderLatex(metaElement);
+        thymeUtility.renderLatex(metaElement);
         ++i;
       }
       // store metadata start times as data attribute
@@ -327,25 +307,25 @@ setupHypervideo = function() {
       // if user jumps to a new position in the video, display all metadata
       // that start before this time and hide all that start later
       $(video).on('seeked', function() {
-        var time = video.currentTime;
+        const time = video.currentTime;
         metaIntoView(time);
       });
       // if the metadata cue changes, highlight all current media and scroll
       // them into view
       $(metaTrack).on('cuechange', function() {
-        var j = 0;
-        var time = video.currentTime;
+        let j = 0;
+        const time = video.currentTime;
         $('#metadata li').removeClass('current');
         while (j < this.activeCues.length) {
-          var activeStart = this.activeCues[j].startTime;
-          var metalink;
+          const activeStart = this.activeCues[j].startTime;
+          let metalink;
           if (metalink = document.getElementById('m-' + activeStart)) {
             $(metalink).show();
             $(metalink).addClass('current');
           }
           ++j;
         }
-        var currentLength = $('#metadata .current').length;
+        const currentLength = $('#metadata .current').length;
         if (currentLength > 0) {
           $('#metadata .current').get(length - 1).scrollIntoView();
         }
@@ -359,26 +339,26 @@ setupHypervideo = function() {
      only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
      i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
      for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-  var initialChapters = true;
-  var initialMetadata = true;
+  let initialChapters = true;
+  let initialMetadata = true;
 
   video.addEventListener('loadedmetadata', function() {
-    if (initialChapters && chaptersElement.readyState == 2) {
+    if (initialChapters && chaptersElement.readyState === 2) {
       displayChapters();
       initialChapters = false;
     }
-    if (initialMetadata && metadataElement.readyState == 2) {
+    if (initialMetadata && metadataElement.readyState === 2) {
       displayMetadata();
       initialMetadata = false;
     }
   });
 
   video.addEventListener('canplay', function() {
-    if (initialChapters && chaptersElement.readyState == 2) {
+    if (initialChapters && chaptersElement.readyState === 2) {
       displayChapters();
       initialChapters = false;
     }
-    if (initialMetadata && metadataElement.readyState == 2) {
+    if (initialMetadata && metadataElement.readyState === 2) {
       displayMetadata();
       initialMetadata = false;
     }
@@ -386,41 +366,41 @@ setupHypervideo = function() {
 };
 
 $(document).on('turbolinks:load', function() {
-  var thymeContainer = document.getElementById('thyme-container');
+  const thymeContainer = document.getElementById('thyme-container');
   // no need for thyme if no thyme container on the page
-  if (thymeContainer == null) {
+  if (thymeContainer === null) {
     return;
   }
   // Video
-  var video = document.getElementById('video');
-  var thyme = document.getElementById('thyme');
+  const video = document.getElementById('video');
+  const thyme = document.getElementById('thyme');
   // Buttons
-  var playButton = document.getElementById('play-pause');
-  var muteButton = document.getElementById('mute');
-  var iaButton = document.getElementById('ia-active');
-  var iaClose = document.getElementById('ia-close');
-  var fullScreenButton = document.getElementById('full-screen');
-  var plusTenButton = document.getElementById('plus-ten');
-  var minusTenButton = document.getElementById('minus-ten');
-  var nextChapterButton = document.getElementById('next-chapter');
-  var previousChapterButton = document.getElementById('previous-chapter');
-  var backButton = document.getElementById('back-button');
-  var emergencyButton = document.getElementById('emergency-button');
-  var annotationsToggle = document.getElementById('annotations-toggle-check');
+  const playButton = document.getElementById('play-pause');
+  const muteButton = document.getElementById('mute');
+  const iaButton = document.getElementById('ia-active');
+  const iaClose = document.getElementById('ia-close');
+  const fullScreenButton = document.getElementById('full-screen');
+  const plusTenButton = document.getElementById('plus-ten');
+  const minusTenButton = document.getElementById('minus-ten');
+  const nextChapterButton = document.getElementById('next-chapter');
+  const previousChapterButton = document.getElementById('previous-chapter');
+  const backButton = document.getElementById('back-button');
+  const emergencyButton = document.getElementById('emergency-button');
+  const annotationsToggle = document.getElementById('annotations-toggle-check');
   // Sliders
-  var seekBar = document.getElementById('seek-bar');
-  var volumeBar = document.getElementById('volume-bar');
+  const seekBar = document.getElementById('seek-bar');
+  const volumeBar = document.getElementById('volume-bar');
   // Selectors
-  var speedSelector = document.getElementById('speed');
+  const speedSelector = document.getElementById('speed');
   // Time
-  var currentTime = document.getElementById('current-time');
-  var maxTime = document.getElementById('max-time');
+  const currentTime = document.getElementById('current-time');
+  const maxTime = document.getElementById('max-time');
   // ControlBar
-  var videoControlBar = document.getElementById('video-controlBar');
+  const videoControlBar = document.getElementById('video-controlBar');
 
   // User is teacher/editor for the given medium?
   // -> show toggle annotations button
-  var mediumId = thyme.dataset.medium;
+  const mediumId = thyme.dataset.medium;
   $.ajax(Routes.check_annotation_visibility_path(mediumId), {
     type: 'GET',
     dataType: 'json',
@@ -429,7 +409,7 @@ $(document).on('turbolinks:load', function() {
         $('#volume-controls').css('left', '66%');
         $('#speed-control').css('left', '77%');
         $('#emergency-button').css('left', '86%');
-        hideControlBarThreshold.x = 960;
+        thymeAttributes.hideControlBarThreshold.x = 960;
         updateControlBarType();
       }
     }
@@ -438,21 +418,21 @@ $(document).on('turbolinks:load', function() {
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
   resizeContainer = function() {
-    var height = $(window).height();
-    var factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
-    var width = Math.floor((video.videoWidth * $(window).height() / video.videoHeight) * factor);
+    const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
+    let height = $(window).height();
+    let width = Math.floor((video.videoWidth * $(window).height() / video.videoHeight) * factor);
     if (width > $(window).width()) {
-      var shrink = $(window).width() / width;
+      const shrink = $(window).width() / width;
       height = Math.floor(height * shrink);
       width = $(window).width();
     }
-    var top = Math.floor(0.5 * ($(window).height() - height));
-    var left = Math.floor(0.5 * ($(window).width() - width));
+    const top = Math.floor(0.5 * ($(window).height() - height));
+    const left = Math.floor(0.5 * ($(window).width() - width));
     $('#thyme-container').css('height', height + 'px');
     $('#thyme-container').css('width', width + 'px');
     $('#thyme-container').css('top', top + 'px');
     $('#thyme-container').css('left', left + 'px');
-    if (annotations == null) {
+    if (thymeAttributes.annotations === null) {
       updateMarkers();
     } else {
       rearrangeMarkers();
@@ -492,7 +472,7 @@ $(document).on('turbolinks:load', function() {
     $('#annotation-caption').show();
     $('#video-controlBar').show();
     video.style.width = '82%';
-    if (iaButton.dataset.status == 'false') {
+    if (iaButton.dataset.status === 'false') {
       iaButton.innerHTML = 'remove_from_queue';
       $('#caption').hide();
       $('#annotation-caption').hide();
@@ -504,41 +484,45 @@ $(document).on('turbolinks:load', function() {
 
   updateControlBarType = function() {
     // display native control bar if screen is very small
-    if (window.matchMedia("screen and (max-width: " + hideControlBarThreshold.x + "px)").matches ||
-       window.matchMedia("screen and (max-height: " + hideControlBarThreshold.y + "px)").matches) {
+    if (window.matchMedia("screen and (max-width: " +
+        thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
+        window.matchMedia("screen and (max-height: " +
+        thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
       mobileDisplay();
     }
 
-    if (window.matchMedia("screen and (max-device-width: " + hideControlBarThreshold.x + "px)").matches ||
-       window.matchMedia("screen and (max-device-height: " + hideControlBarThreshold.y + "px)").matches) {
+    if (window.matchMedia("screen and (max-device-width: " +
+        thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
+        window.matchMedia("screen and (max-device-height: " +
+        thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
       mobileDisplay();
     }
 
     // mediaQuery listener for very small screens
-    var match_verysmall_x = window.matchMedia("screen and (max-width: " +
-      hideControlBarThreshold.x + "px)");
+    const match_verysmall_x = window.matchMedia("screen and (max-width: " +
+      thymeAttributes.hideControlBarThreshold.x + "px)");
     match_verysmall_x.addListener(function(result) {
       if (result.matches) {
         mobileDisplay();
       }
     });
-    var match_verysmall_y = window.matchMedia("screen and (max-height: " +
-      hideControlBarThreshold.y + "px)");
+    const match_verysmall_y = window.matchMedia("screen and (max-height: " +
+      thymeAttributes.hideControlBarThreshold.y + "px)");
     match_verysmall_y.addListener(function(result) {
       if (result.matches) {
         mobileDisplay();
       }
     });
 
-    var match_verysmalldevice_x = window.matchMedia("screen and (max-device-width: " +
-      hideControlBarThreshold.x + "px)");
+    const match_verysmalldevice_x = window.matchMedia("screen and (max-device-width: " +
+      thymeAttributes.hideControlBarThreshold.x + "px)");
     match_verysmalldevice_x.addListener(function(result) {
       if (result.matches) {
         mobileDisplay();
       }
     });
-    var match_verysmalldevice_y = window.matchMedia("screen and (max-device-height: " +
-      hideControlBarThreshold.y + "px)");
+    const match_verysmalldevice_y = window.matchMedia("screen and (max-device-height: " +
+      thymeAttributes.hideControlBarThreshold.y + "px)");
     match_verysmalldevice_y.addListener(function(result) {
       if (result.matches) {
         mobileDisplay();
@@ -546,37 +530,41 @@ $(document).on('turbolinks:load', function() {
     });
 
     // mediaQuery listener for normal screens
-    var match_normal_x = window.matchMedia("screen and (min-width: " + (hideControlBarThreshold.x + 1) + "px)");
+    const match_normal_x = window.matchMedia("screen and (min-width: " +
+      (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
     match_normal_x.addListener(function(result) {
-      var match_normal_y;
-      match_normal_y = window.matchMedia("screen and (min-height: " + (hideControlBarThreshold.y + 1) + "px)");
+      let match_normal_y;
+      match_normal_y = window.matchMedia("screen and (min-height: " +
+        (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
       if (result.matches && match_normal_y.matches) {
         largeDisplay();
       }
     });
-    var match_normal_y = window.matchMedia("screen and (min-height: " + (hideControlBarThreshold.y + 1) + "px)");
+    const match_normal_y = window.matchMedia("screen and (min-height: " +
+      (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
     match_normal_y.addListener(function(result) {
-      match_normal_x = window.matchMedia("screen and (min-width: " + (hideControlBarThreshold.x + 1) + "px)");
+      match_normal_x = window.matchMedia("screen and (min-width: " +
+        (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
       if (result.matches && match_normal_x.matches) {
         largeDisplay();
       }
     });
 
-    var match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
-      (hideControlBarThreshold.x + 1) + "px)");
+    const match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
+      (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
     match_normaldevice_x.addListener(function(result) {
-      var match_normaldevice_y;
+      let match_normaldevice_y;
       match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
-        (hideControlBarThreshold.y + 1) + "px)");
+        (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
       if (result.matches && match_normal_y.matches) {
         largeDisplay();
       }
     });
-    var match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
-      (hideControlBarThreshold.y + 1) + "px)");
+    const match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
+      (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
     match_normaldevice_y.addListener(function(result) {
       match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
-        (hideControlBarThreshold.x + 1) + "px)");
+        (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
       if (result.matches && match_normal_x.matches) {
         largeDisplay();
       }
@@ -597,7 +585,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the play/pause button
   playButton.addEventListener('click', function() {
-    if (video.paused == true) {
+    if (video.paused === true) {
       video.play();
     } else {
       video.pause();
@@ -614,7 +602,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the mute button
   muteButton.addEventListener('click', function() {
-    if (video.muted == false) {
+    if (video.muted === false) {
       video.muted = true;
       muteButton.innerHTML = 'volume_off';
     } else {
@@ -635,7 +623,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event handler for the nextChapter button
   nextChapterButton.addEventListener('click', function() {
-    var next = nextChapterStart(video.currentTime);
+    const next = nextChapterStart(video.currentTime);
     if (next != null) {
       video.currentTime = nextChapterStart(video.currentTime);
     }
@@ -643,7 +631,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event handler for the previousChapter button
   previousChapterButton.addEventListener('click', function() {
-    var previous = previousChapterStart(video.currentTime);
+    const previous = previousChapterStart(video.currentTime);
     if (previous != null) {
       video.currentTime = previousChapterStart(video.currentTime);
     }
@@ -662,9 +650,9 @@ $(document).on('turbolinks:load', function() {
     });
     // When the modal opens, all key listeners must be
     // deactivated until the modal gets closed again
-    lockKeyListeners = true;
+    thymeAttributes.lockKeyListeners = true;
     $('#annotation-modal').on('hidden.bs.modal', function() {
-      lockKeyListeners = false;
+      thymeAttributes.lockKeyListeners = false;
     });
   });
 
@@ -687,7 +675,7 @@ $(document).on('turbolinks:load', function() {
 
   // Update annotations after deleting an annotation
   $(document).on('click', '#delete-button', function() {
-    var annotationId = Number(document.getElementById('annotation_id').textContent);
+    const annotationId = Number(document.getElementById('annotation_id').textContent);
     $.ajax(Routes.annotation_path(annotationId), {
       type: 'DELETE',
       dataType: 'json',
@@ -715,7 +703,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event handler for interactive area activation button
   iaButton.addEventListener('click', function() {
-    if (iaButton.dataset.status == 'true') {
+    if (iaButton.dataset.status === 'true') {
       iaButton.innerHTML = 'remove_from_queue';
       iaButton.dataset.status = 'false';
       $('#caption').hide();
@@ -749,7 +737,7 @@ $(document).on('turbolinks:load', function() {
   // Event listener for the full-screen button
   // unfortunately, lots of brwoser specific code
   fullScreenButton.addEventListener('click', function() {
-    if (fullScreenButton.dataset.status == 'true') {
+    if (fullScreenButton.dataset.status === 'true') {
       if (document.exitFullscreen) {
         document.exitFullscreen();
       } else if (document.mozCancelFullScreen) {
@@ -807,31 +795,31 @@ $(document).on('turbolinks:load', function() {
 
   // Event listeners for the seek bar
   seekBar.addEventListener('input', function() {
-    var time = video.duration * seekBar.value / 100;
+    const time = video.duration * seekBar.value / 100;
     video.currentTime = time;
   });
   
   // if mouse is moved over seek bar, display tooltip with current chapter
   seekBar.addEventListener('mousemove', function(evt) {
-    var positionInfo = seekBar.getBoundingClientRect();
-    var width = positionInfo.width;
-    var left = positionInfo.left;
-    var measuredSeconds = ((evt.pageX - left) / width) * video.duration;
-    var seconds = Math.min(measuredSeconds, video.duration);
+    const positionInfo = seekBar.getBoundingClientRect();
+    const width = positionInfo.width;
+    const left = positionInfo.left;
+    const measuredSeconds = ((evt.pageX - left) / width) * video.duration;
+    let seconds = Math.min(measuredSeconds, video.duration);
     seconds = Math.max(seconds, 0);
-    var previous = previousChapterStart(seconds);
-    var info = $('#c-' + $.escapeSelector(previous)).text().split(':')[0];
+    const previous = previousChapterStart(seconds);
+    const info = $('#c-' + $.escapeSelector(previous)).text().split(':')[0];
     seekBar.setAttribute('title', info);
   });
   
   // if videomedtadata have been loaded, set up video length, volume bar and
   // seek bar
   video.addEventListener('loadedmetadata', function() {
-    maxTime.innerHTML = secondsToTime(video.duration);
+    maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
     volumeBar.value = video.volume;
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + video.volume * 100 + '%, #ffffff ' + video.volume * 100 + '%, #ffffff)';
     if (video.dataset.time != null) {
-      var time = video.dataset.time;
+      const time = video.dataset.time;
       video.currentTime = time;
       seekBar.value = video.currentTime / video.duration * 100;
     } else {
@@ -842,10 +830,11 @@ $(document).on('turbolinks:load', function() {
   // Update the seek bar as the video plays
   // uses a gradient for seekbar video time visualization
   video.addEventListener('timeupdate', function() {
-    var value = 100 / video.duration * video.currentTime;
+    const value = 100 / video.duration * video.currentTime;
     seekBar.value = value;
-    seekBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value + '%, #ffffff ' + value + '%, #ffffff)';
-    currentTime.innerHTML = secondsToTime(video.currentTime);
+    seekBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' +
+      value + '%, #ffffff ' + value + '%, #ffffff)';
+    currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
   });
 
   // Pause the video when the seek handle is being dragged
@@ -863,19 +852,19 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the volume bar
   volumeBar.addEventListener('input', function() {
-    var value = volumeBar.value;
+    const value = volumeBar.value;
     video.volume = value;
   });
 
   video.addEventListener('volumechange', function() {
-    var value = video.volume;
+    const value = video.volume;
     volumeBar.value = value;
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' +
     value * 100 + '%, #ffffff ' + value * 100 + '%, #ffffff)';
   });
 
   video.addEventListener('click', function() {
-    if (video.paused == true) {
+    if (video.paused === true) {
       video.play();
     } else {
       video.pause();
@@ -883,52 +872,14 @@ $(document).on('turbolinks:load', function() {
     showControlBar();
   });
   
-  /* thyme can be used by keyboard as well
-     Arrow up - next chapter
-     Arrow down - previous chapter
-     Arrow right - plus ten seconds
-     Arrow left - minus ten seconds
-     f - fullscreen
-     Page up - volume up
-     Page down - volume down
-     m - mute
-     i - toggle interactive area */
-  window.addEventListener('keydown', function(evt) {
-    if (lockKeyListeners == true) {
-      return;
-    }
-    var key = evt.key;
-    if (key == ' ') {
-      if (video.paused == true) {
-        video.play();
-      } else {
-        video.pause();
-      }
-    } else if (key == 'ArrowUp') {
-      $(nextChapterButton).trigger('click');
-    } else if (key == 'ArrowDown') {
-      $(previousChapterButton).trigger('click');
-    } else if (key == 'ArrowRight') {
-      $(plusTenButton).trigger('click');
-    } else if (key == 'ArrowLeft') {
-      $(minusTenButton).trigger('click');
-    } else if (key == 'f') {
-      $(fullScreenButton).trigger('click');
-    } else if (key == 'PageUp') {
-      video.volume = Math.min(video.volume + 0.1, 1);
-    } else if (key == 'PageDown') {
-      video.volume = Math.max(video.volume - 0.1, 0);
-    } else if (key == 'm') {
-      $(muteButton).trigger('click');
-    } else if (key == 'i') {
-      $(iaButton).trigger('click');
-    }
-  });
+  // Add keyboard shortcuts from thyme/key.js
+  thymeKey.addGeneralShortcuts();
+  thymeKey.addPlayerShortcuts();
   
   // updates the annotation markers
   updateMarkers = function() {
-    var mediumId = thyme.dataset.medium;
-    var toggled = $('#annotations-toggle-check').is(":checked");
+    const mediumId = thyme.dataset.medium;
+    const toggled = $('#annotations-toggle-check').is(":checked");
     $.ajax(Routes.update_markers_path(), {
       type: 'GET',
       dataType: 'json',
@@ -937,19 +888,19 @@ $(document).on('turbolinks:load', function() {
         toggled: toggled
       },
       success: function(annots) {
-        annotations = annots;
-        if (annotations == null) {
+        thymeAttributes.annotations = annots;
+        if (annots === null) {
           return;
         }
         rearrangeMarkers();
-        var flag = false;
-        for (let annotation of annotations) {
-          if (annotation.id == activeAnnotationId) {
+        let flag = false;
+        for (let annotation of thymeAttributes.annotations) {
+          if (annotation.id === thymeAttributes.activeAnnotationId) {
             updateAnnotationArea(annotation);
             flag = true;
           }
         }
-        if (flag == false && $('#annotation-caption').is(":visible") == true) {
+        if (flag === false && $('#annotation-caption').is(":visible") === true) {
           $('#annotation-caption').hide();
           $('#caption').show();
         }
@@ -959,8 +910,8 @@ $(document).on('turbolinks:load', function() {
 
   rearrangeMarkers = function() {
     $('#markers').empty();
-    sortAnnotations(annotations);
-    for (const annotation of annotations) {
+    thymeUtility.annotationSort();
+    for (const annotation of thymeAttributes.annotations) {
       createMarker(annotation);
     }
   };
@@ -968,23 +919,23 @@ $(document).on('turbolinks:load', function() {
   // an auxiliary method for "updateMarkers()" creating a single marker
   createMarker = function(annotation) {
     // create marker
-    var markerStr = '<span id="marker-' + annotation.id + '">' +
-                      '<svg width="15" height="15">' +
-                      '<polygon points="1,1 9,1 5,10"' +
-                        'style="fill:' + annotation.color + ';' +
-                        'stroke:black;' +
-                        'stroke-width:1;' +
-                        'fill-rule:evenodd;"/>' +
-                      '</svg>' +
-                    '</span>';
+    const markerStr = '<span id="marker-' + annotation.id + '">' +
+                        '<svg width="15" height="15">' +
+                        '<polygon points="1,1 9,1 5,10"' +
+                          'style="fill:' + annotation.color + ';' +
+                          'stroke:black;' +
+                          'stroke-width:1;' +
+                          'fill-rule:evenodd;"/>' +
+                        '</svg>' +
+                      '</span>';
     $('#markers').append(markerStr);
-    var marker = $('#marker-' + annotation.id);
-    var size = seekBar.clientWidth - 15;
-    var ratio = timestampToMillis(annotation.timestamp) / video.duration;
-    var offset = marker.parent().offset().left + ratio * size + 3;
+    const marker = $('#marker-' + annotation.id);
+    const size = seekBar.clientWidth - 15;
+    const ratio = thymeUtility.timestampToMillis(annotation.timestamp) / video.duration;
+    const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
     marker.on('click', function() {
-      if (iaButton.dataset.status == "false") {
+      if (iaButton.dataset.status === "false") {
         $(iaButton).trigger('click');
       }
       $('#caption').hide();
@@ -994,7 +945,7 @@ $(document).on('turbolinks:load', function() {
   };
 
   categoryLocale = function(category, subtext) {
-    var c, s;
+    let c, s;
     switch (category) {
       case "note":
         c = document.getElementById('annotation-locales').dataset.note;
@@ -1008,7 +959,7 @@ $(document).on('turbolinks:load', function() {
       case "presentation":
         c = document.getElementById('annotation-locales').dataset.presentation;
     }
-    if (subtext == null) {
+    if (subtext === null) {
       return c;
     }
     switch (subtext) {
@@ -1025,11 +976,11 @@ $(document).on('turbolinks:load', function() {
   };
   
   updateAnnotationArea = function(annotation) {
-    var activeAnnotationId = annotation.id;
-    var head = categoryLocale(annotation.category, annotation.subtext);
-    var comment = annotation.comment.replaceAll('\n', '<br>');
-    var headColor = lightenUp(annotation.color, 2);
-    var backgroundColor = lightenUp(annotation.color, 3);
+    thymeAttributes.activeAnnotationId = annotation.id;
+    const head = categoryLocale(annotation.category, annotation.subtext);
+    const comment = annotation.comment.replaceAll('\n', '<br>');
+    const headColor = thymeUtility.lightenUp(annotation.color, 2);
+    const backgroundColor = thymeUtility.lightenUp(annotation.color, 3);
     $('#annotation-infobar').empty().append(head);
     $('#annotation-infobar').css('background-color', headColor);
     $('#annotation-infobar').css('text-align', 'center');
@@ -1041,29 +992,31 @@ $(document).on('turbolinks:load', function() {
     $('#annotation-goto-button').off('click');
     $('#annotation-edit-button').off('click');
     $('#annotation-close-button').off('click');
+    // shorthand
+    const a = thymeAttributes.annotations;
     // previous annotation listener
     $('#annotation-previous-button').on('click', function() {
-      for (var i = 0; i < annotations.length; i++) {
-        if (i != 0 && annotations[i] == annotation) {
-          updateAnnotationArea(annotations[i - 1])
+      for (let i = 0; i < a.length; i++) {
+        if (i != 0 && a[i] === annotation) {
+          updateAnnotationArea(a[i - 1])
         }
       }
     });
     // next annotation Listener
     $('#annotation-next-button').on('click', function() {
-      for (var i = 0; i < annotations.length; i++) {
-        if (i != annotations.length - 1 && annotations[i] == annotation) {
-          updateAnnotationArea(annotations[i + 1])
+      for (let i = 0; i < a.length; i++) {
+        if (i != a.length - 1 && a[i] === annotation) {
+          updateAnnotationArea(a[i + 1])
         }
       }
     });
     // goto listener
     $('#annotation-goto-button').on('click', function() {
-      video.currentTime = timestampToMillis(annotation.timestamp);
+      video.currentTime = thymeUtility.timestampToMillis(annotation.timestamp);
     });
     // edit listener
     $('#annotation-edit-button').on('click', function() {
-      lockKeyListeners = true;
+      thymeAttributes.lockKeyListeners = true;
       $.ajax(Routes.edit_annotation_path(annotation.id), {
         type: 'GET',
         dataType: 'script',
@@ -1071,7 +1024,7 @@ $(document).on('turbolinks:load', function() {
           annotationId: annotation.id
         },
         success: function(permitted) {
-          if (permitted == "false") {
+          if (permitted === "false") {
             alert(document.getElementById('annotation-locales').dataset.permission);
           }
         },
@@ -1082,11 +1035,11 @@ $(document).on('turbolinks:load', function() {
     });
     // close listener
     $('#annotation-close-button').on('click', function() {
-      activeAnnotationId = 0;
+      thymeAttributes.activeAnnotationId = 0;
       $('#annotation-caption').hide();
       $('#caption').show();
     });
     // LaTex
-    renderLatex(document.getElementById('annotation-comment'));
+    thymeUtility.renderLatex(document.getElementById('annotation-comment'));
   };
 });
