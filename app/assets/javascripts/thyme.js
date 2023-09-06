@@ -874,8 +874,8 @@ $(document).on('turbolinks:load', function() {
   });
   
   // Add keyboard shortcuts from thyme/key.js
-  thymeKey.addGeneralShortcuts();
-  thymeKey.addPlayerShortcuts();
+  thymeKeyShortcuts.addGeneralShortcuts();
+  thymeKeyShortcuts.addPlayerShortcuts();
   
   // updates the annotation markers
   updateMarkers = function() {

@@ -166,8 +166,8 @@ $(document).on('turbolinks:load', function() {
   });
 
   // Add keyboard shortcuts from thyme/key.js
-  thymeKey.addGeneralShortcuts();
-  thymeKey.addFeedbackShortcuts();
+  thymeKeyShortcuts.addGeneralShortcuts();
+  thymeKeyShortcuts.addFeedbackShortcuts();
 
   // Toggles which annotations are shown
   toggleNoteAnnotations.addEventListener('click', function() {

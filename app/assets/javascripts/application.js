@@ -50,7 +50,7 @@
 //= require terms
 //= require tex_preview
 //= require thyme/attributes
-//= require thyme/key
+//= require thyme/key_shortcuts
 //= require thyme/utility
 //= require thyme_func
 //= require thyme
