@@ -1,5 +1,5 @@
 // return the start time of the next chapter relative to a given time in seconds
-nextChapterStart = function(seconds) {
+function nextChapterStart(seconds) {
   const chapters = document.getElementById('chapters');
   const times = JSON.parse(chapters.dataset.times);
   if (times.length === 0) {
@@ -14,7 +14,7 @@ nextChapterStart = function(seconds) {
   }
 };
 
-previousChapterStart = function(seconds) {
+function previousChapterStart(seconds) {
   const chapters = document.getElementById('chapters');
   const times = JSON.parse(chapters.dataset.times);
   if (times.length === 0) {
@@ -34,20 +34,20 @@ previousChapterStart = function(seconds) {
   }
 };
 
-showControlBar = function() {
+function showControlBar() {
   $('#video-controlBar').css('visibility', 'visible');
   $('#video').css('cursor', '');
 };
 
-hideControlBar = function() {
+function hideControlBar() {
   $('#video-controlBar').css('visibility', 'hidden');
   $('#video').css('cursor', 'none');
 };
 
 // hide control bar after 3 seconds of inactivity
-idleHideControlBar = function() {
+function idleHideControlBar() {
   let t = void 0;
-  resetTimer = function() {
+  function resetTimer() {
     clearTimeout(t);
     t = setTimeout(hideControlBar, 3000);
   };
@@ -59,7 +59,7 @@ idleHideControlBar = function() {
 };
 
 // material icons that represent different media types
-iconClass = function(type) {
+function iconClass(type) {
   if (type === 'video') {
     return 'video_library';
   } else if (type === 'text') {
@@ -73,7 +73,7 @@ iconClass = function(type) {
 
 /* returns the jQuery object of all metadata elements that start after the
    given time in seconds */
-metadataAfter = function(seconds) {
+function metadataAfter(seconds) {
   const metaList = document.getElementById('metadata');
   const times = JSON.parse(metaList.dataset.times);
   if (times.length === 0) {
@@ -92,13 +92,13 @@ metadataAfter = function(seconds) {
 
 /* returns the jQuery object of all metadata elements that start before the
    given time in seconds */
-metadataBefore = function(seconds) {
+function metadataBefore(seconds) {
   return $('[id^="m-"]').not(metadataAfter(seconds));
 };
 
 /* for a given time, show all metadata elements that start before this time
    and hide all that start later */
-metaIntoView = function(time) {
+function metaIntoView(time) {
   metadataAfter(time).hide();
   const $before = metadataBefore(time);
   $before.show();
@@ -109,7 +109,7 @@ metaIntoView = function(time) {
 };
 
 // set up everything: read out track data and initialize html elements
-setupHypervideo = function() {
+function setupHypervideo() {
   const $chapterList = $('#chapters');
   const $metaList = $('#metadata');
   const video = $('#video').get(0);
@@ -122,7 +122,7 @@ setupHypervideo = function() {
   const metadataElement = $('#video track[kind="metadata"]').get(0);
 
   // set up back button (transports back to the current chapter)
-  displayBackButton = function() {
+  function displayBackButton() {
     backButton.dataset.time = video.currentTime;
     const currentChapter = $('#chapters .current');
     if (currentChapter.length > 0) {
@@ -138,7 +138,7 @@ setupHypervideo = function() {
   };
 
   // set up the chapter elements
-  displayChapters = function() {
+  function displayChapters() {
     let chaptersTrack;
     if (chaptersElement.readyState === 2 && (chaptersTrack = chaptersElement.track)) {
       chaptersTrack.mode = 'hidden';
@@ -188,7 +188,7 @@ setupHypervideo = function() {
   };
 
   // set up the metadata elements
-  displayMetadata = function() {
+  function displayMetadata() {
     if (metadataElement.readyState === 2 && (metaTrack = metadataElement.track)) {
       metaTrack.mode = 'hidden';
       let i = 0;
@@ -418,7 +418,7 @@ $(document).on('turbolinks:load', function() {
 
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
-  resizeContainer = function() {
+  function resizeContainer() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
     let height = $(window).height();
     let width = Math.floor((video.videoWidth * $(window).height() / video.videoHeight) * factor);
@@ -458,7 +458,7 @@ $(document).on('turbolinks:load', function() {
   setupHypervideo();
 
   // on small mobile display, fall back to standard browser player
-  mobileDisplay = function() {
+  function mobileDisplay() {
     $('#caption').hide();
     $('#annotation-caption').hide();
     $('#video-controlBar').hide();
@@ -467,7 +467,7 @@ $(document).on('turbolinks:load', function() {
   };
 
   // on large display, use anything thyme has to offer, disable native player
-  largeDisplay = function() {
+  function largeDisplay() {
     video.controls = false;
     $('#caption').show();
     $('#annotation-caption').show();
@@ -483,7 +483,7 @@ $(document).on('turbolinks:load', function() {
     }
   };
 
-  updateControlBarType = function() {
+  function updateControlBarType() {
     // display native control bar if screen is very small
     if (window.matchMedia("screen and (max-width: " +
         thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
@@ -878,7 +878,7 @@ $(document).on('turbolinks:load', function() {
   thymeKeyShortcuts.addPlayerShortcuts();
   
   // updates the annotation markers
-  updateMarkers = function() {
+  function updateMarkers() {
     const toggled = $('#annotations-toggle-check').is(":checked");
     $.ajax(Routes.update_markers_path(), {
       type: 'GET',
@@ -908,7 +908,7 @@ $(document).on('turbolinks:load', function() {
     });
   };
 
-  rearrangeMarkers = function() {
+  function rearrangeMarkers() {
     $('#markers').empty();
     thymeUtility.annotationSort();
     for (const annotation of thymeAttributes.annotations) {
@@ -917,7 +917,7 @@ $(document).on('turbolinks:load', function() {
   };
 
   // an auxiliary method for "updateMarkers()" creating a single marker
-  createMarker = function(annotation) {
+  function createMarker(annotation) {
     // create marker
     const markerStr = '<span id="marker-' + annotation.id + '">' +
                         '<svg width="15" height="15">' +
@@ -944,7 +944,7 @@ $(document).on('turbolinks:load', function() {
     });
   };
 
-  categoryLocale = function(category, subtext) {
+  function categoryLocale(category, subtext) {
     let c, s;
     switch (category) {
       case "note":
@@ -975,7 +975,7 @@ $(document).on('turbolinks:load', function() {
     return c + " (" + s + ")";
   };
   
-  updateAnnotationArea = function(annotation) {
+  function updateAnnotationArea(annotation) {
     thymeAttributes.activeAnnotationId = annotation.id;
     const head = categoryLocale(annotation.category, annotation.subtext);
     const comment = annotation.comment.replaceAll('\n', '<br>');

@@ -52,7 +52,6 @@
 //= require thyme/attributes
 //= require thyme/key_shortcuts
 //= require thyme/utility
-//= require thyme_func
 //= require thyme
 //= require thyme_editor
 //= require thyme_feedback

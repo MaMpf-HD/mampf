@@ -1,5 +1,5 @@
 // set up everything: read out track data and initialize html elements
-setupHypervideoF = function() {
+function setupHypervideoF() {
   const video = $('#video').get(0);
   if (video === null) {
     return;
@@ -38,9 +38,12 @@ $(document).on('turbolinks:load', function() {
   const togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
   // medium id
   const mediumId = thyme.dataset.medium;
+  // reset faders
+  video.currentTime = 0;
+  video.volume = 1;
 
   // resizes the thyme container to the window dimensions
-  resizeContainer = function() {
+  function resizeContainer() {
     let height = $(window).height();
     let width = Math.floor(video.videoWidth * $(window).height() / video.videoHeight);
     if (width > $(window).width()) {
@@ -187,7 +190,7 @@ $(document).on('turbolinks:load', function() {
   });
 
   // updates the annotation markers
-  updateMarkersF = function() {
+  function updateMarkersF() {
     $.ajax(Routes.update_markers_path(), {
       type: 'GET',
       dataType: 'json',
@@ -206,7 +209,7 @@ $(document).on('turbolinks:load', function() {
     });
   };
 
-  rearrangeMarkersF = function() {
+  function rearrangeMarkersF() {
     $('#feedback-markers').empty();
     thymeUtility.annotationSort();
     for (const a of thymeAttributes.annotations) {
@@ -218,7 +221,7 @@ $(document).on('turbolinks:load', function() {
   };
 
   // an auxiliary method for "updateMarkersF()" creating a single marker
-  createMarkerF = function(annotation) {
+  function createMarkerF(annotation) {
     // create marker
     let polygonPoints, strokeColor, strokeWidth;
     if (annotation.category === "mistake") {
@@ -250,7 +253,7 @@ $(document).on('turbolinks:load', function() {
     });
   };
 
-  categoryLocale = function(category, subtext) {
+  function categoryLocale(category, subtext) {
     let c, s;
     switch (category) {
       case "note":
@@ -281,7 +284,7 @@ $(document).on('turbolinks:load', function() {
     return c + " (" + s + ")";
   };
 
-  updateAnnotationAreaF = function(annotation) {
+  function updateAnnotationAreaF(annotation) {
     thymeAttributes.activeAnnotationId = annotation.id;
     const head = categoryLocale(annotation.category, annotation.subtext);
     const comment = annotation.comment.replaceAll('\n', '<br>');
@@ -325,7 +328,7 @@ $(document).on('turbolinks:load', function() {
 
   // Depending on the toggle switches, which are activated, this method checks, if
   // an annotation should be displayed or not.
-  validAnnotation = function(annotation) {
+  function validAnnotation(annotation) {
     switch (annotation.category) {
       case "note":
         return $('#toggle-note-annotations-check').is(":checked");
@@ -338,7 +341,7 @@ $(document).on('turbolinks:load', function() {
     }
   };
 
-  heatmap = function() {
+  function heatmap() {
     if (thymeAttributes.annotations === null) {
       return;
     }
@@ -410,7 +413,7 @@ $(document).on('turbolinks:load', function() {
   //   x = insert value
   //   position = the position of the maximum value
   //   radius = the distance from a minimum to a maximum of the sine wave
-  sinX = function(x, position, radius) {
+  function sinX(x, position, radius) {
     return (1 + Math.sin(Math.PI / radius * (x - position) + Math.PI / 2)) / 2;
   };
 });

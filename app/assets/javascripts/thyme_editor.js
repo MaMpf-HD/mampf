@@ -1,7 +1,7 @@
 var dataURLtoBlob, secondsToTime;
 
 // convert given dataURL to Blob, used for converting screenshot canvas to png
-dataURLtoBlob = function(dataURL) {
+function dataURLtoBlob(dataURL) {
   // Decode the dataURL
   var binary = atob(dataURL.split(',')[1]);
   // Create 8-bit unsigned array
