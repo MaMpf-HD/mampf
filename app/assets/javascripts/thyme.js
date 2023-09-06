@@ -397,10 +397,11 @@ $(document).on('turbolinks:load', function() {
   const maxTime = document.getElementById('max-time');
   // ControlBar
   const videoControlBar = document.getElementById('video-controlBar');
+  // medium id
+  const mediumId = thyme.dataset.medium;
 
   // User is teacher/editor for the given medium?
   // -> show toggle annotations button
-  const mediumId = thyme.dataset.medium;
   $.ajax(Routes.check_annotation_visibility_path(mediumId), {
     type: 'GET',
     dataType: 'json',
@@ -645,7 +646,7 @@ $(document).on('turbolinks:load', function() {
       dataType: 'script',
       data: {
         total_seconds: video.currentTime,
-        mediumId: thyme.dataset.medium
+        mediumId: mediumId
       }
     });
     // When the modal opens, all key listeners must be
@@ -878,7 +879,6 @@ $(document).on('turbolinks:load', function() {
   
   // updates the annotation markers
   updateMarkers = function() {
-    const mediumId = thyme.dataset.medium;
     const toggled = $('#annotations-toggle-check').is(":checked");
     $.ajax(Routes.update_markers_path(), {
       type: 'GET',

@@ -36,9 +36,8 @@ $(document).on('turbolinks:load', function() {
   const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
   const toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check');
   const togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
-  // set seek bar to 0 and volume bar to 1
-  seekBar.value = 0;
-  volumeBar.value = 1;
+  // medium id
+  const mediumId = thyme.dataset.medium;
 
   // resizes the thyme container to the window dimensions
   resizeContainer = function() {
@@ -189,7 +188,6 @@ $(document).on('turbolinks:load', function() {
 
   // updates the annotation markers
   updateMarkersF = function() {
-    const mediumId = thyme.dataset.medium;
     $.ajax(Routes.update_markers_path(), {
       type: 'GET',
       dataType: 'json',
