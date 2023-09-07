@@ -67,7 +67,7 @@ class SeekBar extends Button  {
       const measuredSeconds = ((evt.pageX - left) / width) * video.duration;
       let seconds = Math.min(measuredSeconds, video.duration);
       seconds = Math.max(seconds, 0);
-      const previous = previousChapterStart(seconds);
+      const previous = chapters.previousChapterStart(seconds);
       const info = $('#c-' + $.escapeSelector(previous)).text().split(':')[0];
       element.setAttribute('title', info);
     });

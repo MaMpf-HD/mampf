@@ -53,11 +53,14 @@
 //= require thyme/buttons/full_screen_button
 //= require thyme/buttons/minus_ten_button
 //= require thyme/buttons/mute_button
+//= require thyme/buttons/next_chapter_button
 //= require thyme/buttons/play_button
 //= require thyme/buttons/plus_ten_button
+//= require thyme/buttons/previous_chapter_button
 //= require thyme/buttons/seek_bar
 //= require thyme/buttons/volume_bar
 //= require thyme/attributes
+//= require thyme/chapters
 //= require thyme/key_shortcuts
 //= require thyme/utility
 //= require thyme/resize_container

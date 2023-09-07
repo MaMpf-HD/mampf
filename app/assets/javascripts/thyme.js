@@ -1,39 +1,3 @@
-// return the start time of the next chapter relative to a given time in seconds
-function nextChapterStart(seconds) {
-  const chapters = document.getElementById('chapters');
-  const times = JSON.parse(chapters.dataset.times);
-  if (times.length === 0) {
-    return;
-  }
-  let i = 0;
-  while (i < times.length) {
-    if (times[i] > seconds) {
-      return times[i];
-    }
-    ++i;
-  }
-};
-
-function previousChapterStart(seconds) {
-  const chapters = document.getElementById('chapters');
-  const times = JSON.parse(chapters.dataset.times);
-  if (times.length === 0) {
-    return;
-  }
-  let i = times.length - 1;
-  while (i > -1) {
-    if (times[i] < seconds) {
-      if (seconds - times[i] > 3) {
-        return times[i];
-      }
-      if (i > 0) {
-        return times[i - 1];
-      }
-    }
-    --i;
-  }
-};
-
 function showControlBar() {
   $('#video-controlBar').css('visibility', 'visible');
   $('#video').css('cursor', '');
@@ -375,8 +339,10 @@ $(document).on('turbolinks:load', function() {
   (new FullScreenButton(thymeContainer)).add();
   (new MinusTenButton).add();
   (new MuteButton).add();
+  (new NextChapterButton).add();
   (new PlayButton).add();  
   (new PlusTenButton).add();
+  (new PreviousChapterButton).add();
   // Sliders
   (new VolumeBar).add();
   seekBar = new SeekBar();
@@ -389,8 +355,6 @@ $(document).on('turbolinks:load', function() {
   // Buttons
   const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
-  const nextChapterButton = document.getElementById('next-chapter');
-  const previousChapterButton = document.getElementById('previous-chapter');
   const backButton = document.getElementById('back-button');
   const emergencyButton = document.getElementById('emergency-button');
   const annotationsToggle = document.getElementById('annotations-toggle-check');
@@ -575,22 +539,6 @@ $(document).on('turbolinks:load', function() {
   video.addEventListener('mouseover', showControlBar, false);
   video.addEventListener('mousemove', showControlBar, false);
   video.addEventListener('touchstart', showControlBar, false);
-
-  // Event handler for the nextChapter button
-  nextChapterButton.addEventListener('click', function() {
-    const next = nextChapterStart(video.currentTime);
-    if (next != null) {
-      video.currentTime = nextChapterStart(video.currentTime);
-    }
-  });
-
-  // Event handler for the previousChapter button
-  previousChapterButton.addEventListener('click', function() {
-    const previous = previousChapterStart(video.currentTime);
-    if (previous != null) {
-      video.currentTime = previousChapterStart(video.currentTime);
-    }
-  });
 
   // Event handler for the emergency button
   emergencyButton.addEventListener('click', function() {
