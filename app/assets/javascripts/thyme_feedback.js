@@ -38,7 +38,7 @@ $(document).on('turbolinks:load', function() {
   const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
   const toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check');
   const togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
-  // medium id
+  // Medium ID
   const mediumId = thyme.dataset.medium;
   // reset faders
   video.currentTime = 0;
@@ -46,19 +46,7 @@ $(document).on('turbolinks:load', function() {
 
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
-    let height = $(window).height();
-    let width = Math.floor(video.videoWidth * $(window).height() / video.videoHeight);
-    if (width > $(window).width()) {
-      const shrink = $(window).width() / width;
-      height = Math.floor(height * shrink);
-      width = $(window).width();
-    }
-    const top = Math.floor(0.5 * ($(window).height() - height));
-    const left = Math.floor(0.5 * ($(window).width() - width));
-    $('#thyme-feedback').css('height', height + 'px');
-    $('#thyme-feedback').css('width', width + 'px');
-    $('#thyme-feedback').css('top', top + 'px');
-    $('#thyme-feedback').css('left', left + 'px');
+    resize.resizeContainer(thymeContainer, 1);
     if (thymeAttributes.annotations === null) {
       updateMarkersF();
     } else {

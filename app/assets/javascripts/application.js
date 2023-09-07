@@ -50,6 +50,7 @@
 //= require terms
 //= require tex_preview
 //= require thyme/buttons/button
+//= require thyme/buttons/full_screen_button
 //= require thyme/buttons/minus_ten_button
 //= require thyme/buttons/mute_button
 //= require thyme/buttons/play_button
@@ -59,6 +60,7 @@
 //= require thyme/attributes
 //= require thyme/key_shortcuts
 //= require thyme/utility
+//= require thyme/resize_container
 //= require thyme
 //= require thyme_editor
 //= require thyme_feedback

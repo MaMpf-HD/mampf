@@ -372,10 +372,11 @@ $(document).on('turbolinks:load', function() {
     return;
   }
   // Buttons
-  (new PlayButton).add();
-  (new MuteButton).add();
-  (new PlusTenButton).add();
+  (new FullScreenButton(thymeContainer)).add();
   (new MinusTenButton).add();
+  (new MuteButton).add();
+  (new PlayButton).add();  
+  (new PlusTenButton).add();
   // Sliders
   (new VolumeBar).add();
   seekBar = new SeekBar();
@@ -388,7 +389,6 @@ $(document).on('turbolinks:load', function() {
   // Buttons
   const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
-  const fullScreenButton = document.getElementById('full-screen');
   const nextChapterButton = document.getElementById('next-chapter');
   const previousChapterButton = document.getElementById('previous-chapter');
   const backButton = document.getElementById('back-button');
@@ -401,7 +401,7 @@ $(document).on('turbolinks:load', function() {
   const maxTime = document.getElementById('max-time');
   // ControlBar
   const videoControlBar = document.getElementById('video-controlBar');
-  // medium id
+  // Medium ID
   const mediumId = thyme.dataset.medium;
 
   // User is teacher/editor for the given medium?
@@ -424,19 +424,7 @@ $(document).on('turbolinks:load', function() {
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
-    let height = $(window).height();
-    let width = Math.floor((video.videoWidth * $(window).height() / video.videoHeight) * factor);
-    if (width > $(window).width()) {
-      const shrink = $(window).width() / width;
-      height = Math.floor(height * shrink);
-      width = $(window).width();
-    }
-    const top = Math.floor(0.5 * ($(window).height() - height));
-    const left = Math.floor(0.5 * ($(window).width() - width));
-    $('#thyme-container').css('height', height + 'px');
-    $('#thyme-container').css('width', width + 'px');
-    $('#thyme-container').css('top', top + 'px');
-    $('#thyme-container').css('left', left + 'px');
+    resize.resizeContainer(thymeContainer, factor);
     if (thymeAttributes.annotations === null) {
       updateMarkers();
     } else {
@@ -700,65 +688,6 @@ $(document).on('turbolinks:load', function() {
   iaClose.addEventListener('click', function() {
     $(iaButton).trigger('click');
   });
-
-  // Event listener for the full-screen button
-  // unfortunately, lots of brwoser specific code
-  fullScreenButton.addEventListener('click', function() {
-    if (fullScreenButton.dataset.status === 'true') {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.mozCancelFullScreen) {
-        document.mozCancelFullScreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      }
-    } else {
-      if (thymeContainer.requestFullscreen) {
-        thymeContainer.requestFullscreen();
-      } else if (thymeContainer.mozRequestFullScreen) {
-        thymeContainer.mozRequestFullScreen();
-      } else if (thymeContainer.webkitRequestFullscreen) {
-        thymeContainer.webkitRequestFullscreen();
-      }
-    }
-  });
-
-  document.onfullscreenchange = function() {
-    if (document.fullscreenElement !== null) {
-      fullScreenButton.innerHTML = 'fullscreen_exit';
-      fullScreenButton.dataset.status = 'true';
-    } else {
-      fullScreenButton.innerHTML = 'fullscreen';
-      fullScreenButton.dataset.status = 'false';
-      /* brute force patch: apparently, after exiting fullscreen mode,
-        window.onresize is triggered twice(!), the second time with incorrect
-        window height data, which results in a video area not quite filling
-        the whole window. The next line resizes the container again. */
-      setTimeout(resizeContainer, 20);
-    }
-  };
-
-  document.onwebkitfullscreenchange = function() {
-    if (document.webkitFullscreenElement !== null) {
-      fullScreenButton.innerHTML = 'fullscreen_exit';
-      fullScreenButton.dataset.status = 'true';
-    } else {
-      fullScreenButton.innerHTML = 'fullscreen';
-      fullScreenButton.dataset.status = 'false';
-      setTimeout(resizeContainer, 20);
-    }
-  };
-
-  document.onmozfullscreenchange = function() {
-    if (document.mozFullScreenElement !== null) {
-      fullScreenButton.innerHTML = 'fullscreen_exit';
-      fullScreenButton.dataset.status = 'true';
-    } else {
-      fullScreenButton.innerHTML = 'fullscreen';
-      fullScreenButton.dataset.status = 'false';
-      setTimeout(resizeContainer, 20);
-    }
-  };
   
   // if videomedtadata have been loaded, set up video length
   video.addEventListener('loadedmetadata', function() {
