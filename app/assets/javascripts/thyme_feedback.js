@@ -13,17 +13,19 @@ $(document).on('turbolinks:load', function() {
   if (thymeContainer === null) {
     return;
   }
+  // Buttons
+  (new PlayButton).add();
+  (new MuteButton).add();
+  (new PlusTenButton).add();
+  (new MinusTenButton).add();
+  // Sliders
+  (new VolumeBar).add();
+  seekBar = new SeekBar();
+  seekBar.add();
+
   // Video
   const video = document.getElementById('video');
   const thyme = document.getElementById('thyme');
-  // Buttons
-  const playButton = document.getElementById('play-pause');
-  const muteButton = document.getElementById('mute');
-  const plusTenButton = document.getElementById('plus-ten');
-  const minusTenButton = document.getElementById('minus-ten');
-  // Sliders
-  const seekBar = document.getElementById('seek-bar');
-  const volumeBar = document.getElementById('volume-bar');
   // Selectors
   const speedSelector = document.getElementById('speed');
   // Time
@@ -68,44 +70,6 @@ $(document).on('turbolinks:load', function() {
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
 
-  // Event listener for the play/pause button
-  playButton.addEventListener('click', function() {
-    if (video.paused === true) {
-      video.play();
-    } else {
-      video.pause();
-    }
-  });
-
-  video.onplay = function() {
-    playButton.innerHTML = 'pause';
-  };
-
-  video.onpause = function() {
-    playButton.innerHTML = 'play_arrow';
-  };
-
-  // Event listener for the mute button
-  muteButton.addEventListener('click', function() {
-    if (video.muted === false) {
-      video.muted = true;
-      muteButton.innerHTML = 'volume_off';
-    } else {
-      video.muted = false;
-      muteButton.innerHTML = 'volume_up';
-    }
-  });
-
-  // Event handler for the plusTen button
-  plusTenButton.addEventListener('click', function() {
-    video.currentTime = Math.min(video.currentTime + 10, video.duration);
-  });
-
-  // Event handler for the minusTen button
-  minusTenButton.addEventListener('click', function() {
-    video.currentTime = Math.max(video.currentTime - 10, 0);
-  });
-
   // Event handler for speed speed selector
   speedSelector.addEventListener('change', function() {
     if (video.preservesPitch != null) {
@@ -116,47 +80,6 @@ $(document).on('turbolinks:load', function() {
       video.webkitPreservesPitch = true;
     }
     video.playbackRate = this.options[this.selectedIndex].value;
-  });
-
-  // Event listeners for the seek bar
-  seekBar.addEventListener('input', function() {
-    const time = video.duration * seekBar.value / 100;
-    video.currentTime = time;
-  });
-
-  // Update the seek bar as the video plays
-  // uses a gradient for seekbar video time visualization
-  video.addEventListener('timeupdate', function() {
-    const value = 100 / video.duration * video.currentTime;
-    seekBar.value = value;
-    seekBar.style.backgroundImage = 'linear-gradient(to right,' +
-    ' #2497E3, #2497E3 ' + value + '%, #ffffff ' + value + '%, #ffffff)';
-    currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
-  });
-
-  // Pause the video when the seek handle is being dragged
-  seekBar.addEventListener('mousedown', function() {
-    video.dataset.paused = video.paused;
-    video.pause();
-  });
-
-  // Play the video when the seek handle is dropped
-  seekBar.addEventListener('mouseup', function() {
-    if (video.dataset.paused !== 'true') {
-      video.play();
-    }
-  });
-
-  // Event listener for the volume bar
-  volumeBar.addEventListener('input', function() {
-    const value = volumeBar.value;
-    video.volume = value;
-  });
-
-  video.addEventListener('volumechange', function() {
-    const value = video.volume;
-    volumeBar.value = value;
-    volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value * 100 + '%, #ffffff ' + value * 100 + '%, #ffffff)';
   });
 
   video.addEventListener('click', function() {
@@ -244,7 +167,7 @@ $(document).on('turbolinks:load', function() {
     $('#feedback-markers').append(markerStr);
     // set the correct position for the marker
     const marker = $('#marker-' + annotation.id);
-    const size = seekBar.clientWidth - 15;
+    const size = seekBar.element.clientWidth - 15;
     const ratio = thymeUtility.timestampToMillis(annotation.timestamp) / video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
@@ -351,7 +274,7 @@ $(document).on('turbolinks:load', function() {
     // variable definitions
     //
     const radius = 10; // total distance from a single peak's maximum to it's minimum
-    const width = seekBar.clientWidth + 2 * radius - 35; // width of the video timeline
+    const width = seekBar.element.clientWidth + 2 * radius - 35; // width of the video timeline
     const maxHeight = video.clientHeight / 4; // the peaks of the graph should not extend maxHeight
     /* An array for each pixel on the timeline. The indices of this array should be thought
        of the x-axis of the heatmap's graph, while its entries should be thought of its

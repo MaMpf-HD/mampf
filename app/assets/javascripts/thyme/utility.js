@@ -1,7 +1,7 @@
 /*
   This namespace contains some auxiliary functions used by the different thyme player types.
 */
-var thymeUtility = {
+const thymeUtility = {
 
   /* returns a certain color for every annotation with respect to the annotations
      category (in the feedback view this gives more information than the original color). */

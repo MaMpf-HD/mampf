@@ -371,25 +371,29 @@ $(document).on('turbolinks:load', function() {
   if (thymeContainer === null) {
     return;
   }
+  // Buttons
+  (new PlayButton).add();
+  (new MuteButton).add();
+  (new PlusTenButton).add();
+  (new MinusTenButton).add();
+  // Sliders
+  (new VolumeBar).add();
+  seekBar = new SeekBar();
+  seekBar.add();
+  seekBar.addChapterTooltips();
+
   // Video
   const video = document.getElementById('video');
   const thyme = document.getElementById('thyme');
   // Buttons
-  const playButton = document.getElementById('play-pause');
-  const muteButton = document.getElementById('mute');
   const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
   const fullScreenButton = document.getElementById('full-screen');
-  const plusTenButton = document.getElementById('plus-ten');
-  const minusTenButton = document.getElementById('minus-ten');
   const nextChapterButton = document.getElementById('next-chapter');
   const previousChapterButton = document.getElementById('previous-chapter');
   const backButton = document.getElementById('back-button');
   const emergencyButton = document.getElementById('emergency-button');
   const annotationsToggle = document.getElementById('annotations-toggle-check');
-  // Sliders
-  const seekBar = document.getElementById('seek-bar');
-  const volumeBar = document.getElementById('volume-bar');
   // Selectors
   const speedSelector = document.getElementById('speed');
   // Time
@@ -584,44 +588,6 @@ $(document).on('turbolinks:load', function() {
   video.addEventListener('mousemove', showControlBar, false);
   video.addEventListener('touchstart', showControlBar, false);
 
-  // Event listener for the play/pause button
-  playButton.addEventListener('click', function() {
-    if (video.paused === true) {
-      video.play();
-    } else {
-      video.pause();
-    }
-  });
-
-  video.onplay = function() {
-    playButton.innerHTML = 'pause';
-  };
-
-  video.onpause = function() {
-    playButton.innerHTML = 'play_arrow';
-  };
-
-  // Event listener for the mute button
-  muteButton.addEventListener('click', function() {
-    if (video.muted === false) {
-      video.muted = true;
-      muteButton.innerHTML = 'volume_off';
-    } else {
-      video.muted = false;
-      muteButton.innerHTML = 'volume_up';
-    }
-  });
-
-  // Event handler for the plusTen button
-  plusTenButton.addEventListener('click', function() {
-    video.currentTime = Math.min(video.currentTime + 10, video.duration);
-  });
-
-  // Event handler for the minusTen button
-  minusTenButton.addEventListener('click', function() {
-    video.currentTime = Math.max(video.currentTime - 10, 0);
-  });
-
   // Event handler for the nextChapter button
   nextChapterButton.addEventListener('click', function() {
     const next = nextChapterStart(video.currentTime);
@@ -793,75 +759,14 @@ $(document).on('turbolinks:load', function() {
       setTimeout(resizeContainer, 20);
     }
   };
-
-  // Event listeners for the seek bar
-  seekBar.addEventListener('input', function() {
-    const time = video.duration * seekBar.value / 100;
-    video.currentTime = time;
-  });
   
-  // if mouse is moved over seek bar, display tooltip with current chapter
-  seekBar.addEventListener('mousemove', function(evt) {
-    const positionInfo = seekBar.getBoundingClientRect();
-    const width = positionInfo.width;
-    const left = positionInfo.left;
-    const measuredSeconds = ((evt.pageX - left) / width) * video.duration;
-    let seconds = Math.min(measuredSeconds, video.duration);
-    seconds = Math.max(seconds, 0);
-    const previous = previousChapterStart(seconds);
-    const info = $('#c-' + $.escapeSelector(previous)).text().split(':')[0];
-    seekBar.setAttribute('title', info);
-  });
-  
-  // if videomedtadata have been loaded, set up video length, volume bar and
-  // seek bar
+  // if videomedtadata have been loaded, set up video length
   video.addEventListener('loadedmetadata', function() {
     maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
-    volumeBar.value = video.volume;
-    volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + video.volume * 100 + '%, #ffffff ' + video.volume * 100 + '%, #ffffff)';
     if (video.dataset.time != null) {
       const time = video.dataset.time;
       video.currentTime = time;
-      seekBar.value = video.currentTime / video.duration * 100;
-    } else {
-      seekBar.value = 0;
     }
-  });
-  
-  // Update the seek bar as the video plays
-  // uses a gradient for seekbar video time visualization
-  video.addEventListener('timeupdate', function() {
-    const value = 100 / video.duration * video.currentTime;
-    seekBar.value = value;
-    seekBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' +
-      value + '%, #ffffff ' + value + '%, #ffffff)';
-    currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
-  });
-
-  // Pause the video when the seek handle is being dragged
-  seekBar.addEventListener('mousedown', function() {
-    video.dataset.paused = video.paused;
-    video.pause();
-  });
-  
-  // Play the video when the seek handle is dropped
-  seekBar.addEventListener('mouseup', function() {
-    if (video.dataset.paused !== 'true') {
-      video.play();
-    }
-  });
-
-  // Event listener for the volume bar
-  volumeBar.addEventListener('input', function() {
-    const value = volumeBar.value;
-    video.volume = value;
-  });
-
-  video.addEventListener('volumechange', function() {
-    const value = video.volume;
-    volumeBar.value = value;
-    volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' +
-    value * 100 + '%, #ffffff ' + value * 100 + '%, #ffffff)';
   });
 
   video.addEventListener('click', function() {
@@ -930,7 +835,7 @@ $(document).on('turbolinks:load', function() {
                       '</span>';
     $('#markers').append(markerStr);
     const marker = $('#marker-' + annotation.id);
-    const size = seekBar.clientWidth - 15;
+    const size = seekBar.element.clientWidth - 15;
     const ratio = thymeUtility.timestampToMillis(annotation.timestamp) / video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });

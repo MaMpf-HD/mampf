@@ -49,6 +49,13 @@
 //= require talks
 //= require terms
 //= require tex_preview
+//= require thyme/buttons/button
+//= require thyme/buttons/minus_ten_button
+//= require thyme/buttons/mute_button
+//= require thyme/buttons/play_button
+//= require thyme/buttons/plus_ten_button
+//= require thyme/buttons/seek_bar
+//= require thyme/buttons/volume_bar
 //= require thyme/attributes
 //= require thyme/key_shortcuts
 //= require thyme/utility

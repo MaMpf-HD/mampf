@@ -2,7 +2,7 @@
   This file wraps up some attributes that are used in the different
   versions of the thyme player.
 */
-var thymeAttributes = {
+const thymeAttributes = {
 
   /* helps to find the annotation that is currently shown in the
      annotation area */
