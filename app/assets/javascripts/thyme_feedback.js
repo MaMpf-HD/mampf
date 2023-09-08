@@ -40,6 +40,8 @@ $(document).on('turbolinks:load', function() {
   const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
   const toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check');
   const togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
+  // heatmap
+  const heatmap = new Heatmap(null);
   // reset faders
   video.currentTime = 0;
   video.volume = 1;
@@ -115,7 +117,8 @@ $(document).on('turbolinks:load', function() {
           return;
         }
         rearrangeMarkersF();
-        (new Heatmap(validCategories())).draw();
+        heatmap.categories = validCategories();
+        heatmap.draw();
       }
     });
   };
@@ -128,7 +131,8 @@ $(document).on('turbolinks:load', function() {
         createMarkerF(a);
       }
     }
-    (new Heatmap(validCategories())).draw();
+    heatmap.categories = validCategories();
+    heatmap.draw();
   };
 
   // an auxiliary method for "updateMarkersF()" creating a single marker
