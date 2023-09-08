@@ -1,4 +1,4 @@
-/*
+/**
   The basic button class from which every thyme related button (slider, selector, etc.)
   should be a subclass.
 */

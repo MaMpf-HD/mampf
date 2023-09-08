@@ -1,4 +1,4 @@
-/*
+/**
   Use the methods here to resize thyme players.
 */
 const resize = {

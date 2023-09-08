@@ -487,7 +487,7 @@ $(document).on('turbolinks:load', function() {
     });
 
     // mediaQuery listener for normal screens
-    const match_normal_x = window.matchMedia("screen and (min-width: " +
+    let match_normal_x = window.matchMedia("screen and (min-width: " +
       (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
     match_normal_x.addListener(function(result) {
       let match_normal_y;
@@ -507,17 +507,17 @@ $(document).on('turbolinks:load', function() {
       }
     });
 
-    const match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
+    let match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
       (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
+    let match_normaldevice_y;
     match_normaldevice_x.addListener(function(result) {
-      let match_normaldevice_y;
       match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
         (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
       if (result.matches && match_normal_y.matches) {
         largeDisplay();
       }
     });
-    const match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
+    match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
       (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
     match_normaldevice_y.addListener(function(result) {
       match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
@@ -712,7 +712,7 @@ $(document).on('turbolinks:load', function() {
                       '</span>';
     $('#markers').append(markerStr);
     const marker = $('#marker-' + annotation.id);
-    const size = seekBar.element.clientWidth - 15;
+    const size = thymeAttributes.seekBar.element.clientWidth - 15;
     const ratio = thymeUtility.timestampToMillis(annotation.timestamp) / video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });

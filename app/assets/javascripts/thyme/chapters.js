@@ -1,4 +1,4 @@
-/*
+/**
   This file wraps up most functionality of the thyme player(s) concerning chapters.
 */
 const chapters = {

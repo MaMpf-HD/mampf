@@ -1,4 +1,4 @@
-/*
+/**
   All key shortcuts should be bundled here.
 */
 var thymeKeyShortcuts = {

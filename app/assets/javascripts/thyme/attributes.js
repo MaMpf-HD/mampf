@@ -1,4 +1,4 @@
-/*
+/**
   This file wraps up some attributes that are used in the different
   versions of the thyme player.
 */
@@ -23,5 +23,8 @@ const thymeAttributes = {
      for the time the annotation modal opens and the user
      has to write text into the command box */
   lockKeyListeners: false,
+
+  /* Safes a reference on the video's seek bar. */
+  seekBar: undefined,
 
 };

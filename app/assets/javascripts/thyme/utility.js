@@ -1,4 +1,4 @@
-/*
+/**
   This file contains some auxiliary functions used by the different thyme player types.
 */
 const thymeUtility = {
