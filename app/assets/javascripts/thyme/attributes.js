@@ -24,6 +24,10 @@ const thymeAttributes = {
      has to write text into the command box */
   lockKeyListeners: false,
 
+  /* When loading a player, it should save the medium id in this field for later use
+     in different files. */
+  mediumId: undefined,
+
   /* Safes a reference on the video's seek bar. */
   seekBar: undefined,
 

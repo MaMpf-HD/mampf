@@ -26,6 +26,8 @@ $(document).on('turbolinks:load', function() {
   // Video
   const video = document.getElementById('video');
   const thyme = document.getElementById('thyme');
+  // initialize medium id
+  thymeAttributes.mediumId = thyme.dataset.medium;
   // Selectors
   const speedSelector = document.getElementById('speed');
   // Time
@@ -38,8 +40,6 @@ $(document).on('turbolinks:load', function() {
   const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
   const toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check');
   const togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
-  // Medium ID
-  const mediumId = thyme.dataset.medium;
   // reset faders
   video.currentTime = 0;
   video.volume = 1;
@@ -107,7 +107,7 @@ $(document).on('turbolinks:load', function() {
       dataType: 'json',
       data: {
         toggled: true,
-        mediumId: mediumId
+        mediumId: thymeAttributes.mediumId
       },
       success: function(annots) {
         thymeAttributes.annotations = annots;

@@ -336,6 +336,7 @@ $(document).on('turbolinks:load', function() {
     return;
   }
   // Buttons
+  (new EmergencyButton).add();
   (new FullScreenButton(thymeContainer)).add();
   (new MinusTenButton).add();
   (new MuteButton).add();
@@ -352,11 +353,12 @@ $(document).on('turbolinks:load', function() {
   // Video
   const video = document.getElementById('video');
   const thyme = document.getElementById('thyme');
+  // initialize medium id
+  thymeAttributes.mediumId = thyme.dataset.medium;
   // Buttons
   const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
   const backButton = document.getElementById('back-button');
-  const emergencyButton = document.getElementById('emergency-button');
   const annotationsToggle = document.getElementById('annotations-toggle-check');
   // Selectors
   const speedSelector = document.getElementById('speed');
@@ -365,12 +367,10 @@ $(document).on('turbolinks:load', function() {
   const maxTime = document.getElementById('max-time');
   // ControlBar
   const videoControlBar = document.getElementById('video-controlBar');
-  // Medium ID
-  const mediumId = thyme.dataset.medium;
 
   // User is teacher/editor for the given medium?
   // -> show toggle annotations button
-  $.ajax(Routes.check_annotation_visibility_path(mediumId), {
+  $.ajax(Routes.check_annotation_visibility_path(thymeAttributes.mediumId), {
     type: 'GET',
     dataType: 'json',
     success: function(isPermitted) {
@@ -540,25 +540,6 @@ $(document).on('turbolinks:load', function() {
   video.addEventListener('mousemove', showControlBar, false);
   video.addEventListener('touchstart', showControlBar, false);
 
-  // Event handler for the emergency button
-  emergencyButton.addEventListener('click', function() {
-    video.pause();
-    $.ajax(Routes.new_annotation_path(), {
-      type: 'GET',
-      dataType: 'script',
-      data: {
-        total_seconds: video.currentTime,
-        mediumId: mediumId
-      }
-    });
-    // When the modal opens, all key listeners must be
-    // deactivated until the modal gets closed again
-    thymeAttributes.lockKeyListeners = true;
-    $('#annotation-modal').on('hidden.bs.modal', function() {
-      thymeAttributes.lockKeyListeners = false;
-    });
-  });
-
   if (annotationsToggle !== null) {
     annotationsToggle.addEventListener('click', function() {
       updateMarkers();
@@ -666,7 +647,7 @@ $(document).on('turbolinks:load', function() {
       type: 'GET',
       dataType: 'json',
       data: {
-        mediumId: mediumId,
+        mediumId: thymeAttributes.mediumId,
         toggled: toggled
       },
       success: function(annots) {
