@@ -32,9 +32,7 @@ const thymeUtility = {
       return;
     }
     thymeAttributes.annotations.sort(function(ann1, ann2) {
-      const t1 = thymeUtility.timestampToMillis(ann1.timestamp);
-      const t2 = thymeUtility.timestampToMillis(ann2.timestamp)
-      return t1 - t2;
+      return ann1.seconds - ann2.seconds;
     });
   },
 
@@ -102,8 +100,8 @@ const thymeUtility = {
     return date.toISOString().substr(12, 7);
   },
 
-  // converts a json timestamp to a double containing the absolute count of millitseconds
-  timestampToMillis: function(timestamp) {
+  /* converts a json timestamp into a double value containing the absolute value of seconds */
+  timestampToSeconds: function(timestamp) {
     return 3600 * timestamp.hours + 60 * timestamp.minutes + timestamp.seconds + 0.001 * timestamp.milliseconds;
   },
 

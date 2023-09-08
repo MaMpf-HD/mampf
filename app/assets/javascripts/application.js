@@ -60,8 +60,10 @@
 //= require thyme/buttons/previous_chapter_button
 //= require thyme/buttons/seek_bar
 //= require thyme/buttons/volume_bar
+//= require thyme/annotation
 //= require thyme/attributes
 //= require thyme/chapters
+//= require thyme/heatmap
 //= require thyme/key_shortcuts
 //= require thyme/utility
 //= require thyme/resize_container

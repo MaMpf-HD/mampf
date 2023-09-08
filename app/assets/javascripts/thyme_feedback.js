@@ -115,7 +115,7 @@ $(document).on('turbolinks:load', function() {
           return;
         }
         rearrangeMarkersF();
-        heatmap();
+        (new Heatmap(validCategories())).draw();
       }
     });
   };
@@ -128,7 +128,7 @@ $(document).on('turbolinks:load', function() {
         createMarkerF(a);
       }
     }
-    heatmap();
+    (new Heatmap(validCategories())).draw();
   };
 
   // an auxiliary method for "updateMarkersF()" creating a single marker
@@ -156,7 +156,7 @@ $(document).on('turbolinks:load', function() {
     // set the correct position for the marker
     const marker = $('#marker-' + annotation.id);
     const size = seekBar.element.clientWidth - 15;
-    const ratio = thymeUtility.timestampToMillis(annotation.timestamp) / video.duration;
+    const ratio = thymeUtility.timestampToSeconds(annotation.timestamp) / video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
     marker.on('click', function() {
@@ -231,7 +231,7 @@ $(document).on('turbolinks:load', function() {
     });
     // goto listener
     $('#annotation-goto-button').on('click', function() {
-      video.currentTime = thymeUtility.timestampToMillis(annotation.timestamp);
+      video.currentTime = thymeUtility.timestampToSeconds(annotation.timestamp);
     });
     // LaTex
     thymeUtility.renderLatex(document.getElementById('annotation-comment'));
@@ -252,79 +252,24 @@ $(document).on('turbolinks:load', function() {
     }
   };
 
-  function heatmap() {
-    if (thymeAttributes.annotations === null) {
-      return;
+  /*
+    This method returns an array containing the names of all categories
+    of which the corresponding toggle switch is set to true.
+  */
+  function validCategories() {
+    let array = [];
+    if ($('#toggle-mistake-annotations-check').is(":checked")) {
+      array.push("mistake");
     }
-    $('#heatmap').empty();
-
-    //
-    // variable definitions
-    //
-    const radius = 10; // total distance from a single peak's maximum to it's minimum
-    const width = seekBar.element.clientWidth + 2 * radius - 35; // width of the video timeline
-    const maxHeight = video.clientHeight / 4; // the peaks of the graph should not extend maxHeight
-    /* An array for each pixel on the timeline. The indices of this array should be thought
-       of the x-axis of the heatmap's graph, while its entries should be thought of its
-       values on the y-axis. */
-    let pixels = new Array(width + 2 * radius + 1).fill(0);
-    /* amplitude should be calculated with respect to all annotations
-       (even those which are not shown). Otherwise the peaks increase
-       when turning off certain annotations because the graph has to be
-       normed. Therefore we need this additional "pixelsAll" array. */
-    let pixelsAll = new Array(width + 2 * radius + 1).fill(0);
-    /* for any visible annotation, this array contains its color (needed for the calculation
-       of the heatmap color) */
-    let colors = [];
-
-    //
-    // data calculation
-    //
-    for (const a of thymeAttributes.annotations) {
-      const valid = validAnnotation(a) && a.category !== "mistake"; // <- don't include mistake annotations
-      if (valid === true) {
-        colors.push(thymeUtility.annotationColor(a.category));
-      }
-      const time = thymeUtility.timestampToMillis(a.timestamp);
-      const position = Math.round(width * (time / video.duration));
-      for (let x = position - radius; x <= position + radius; x++) {
-        y = sinX(x, position, radius);
-        pixelsAll[x + radius] += y;
-        if (valid === true) {
-          pixels[x + radius] += y;
-        }
-      }
+    if ($('#toggle-presentation-annotations-check').is(":checked")) {
+      array.push("presentation");
     }
-    const maxValue = Math.max.apply(Math, pixelsAll);
-    const amplitude = maxHeight * (1 / maxValue);
-
-    //
-    // draw heatmap
-    //
-    let pointsStr = "0," + maxHeight + " ";
-    for (let x = 0; x < pixels.length; x++) {
-      pointsStr += x + "," + (maxHeight - amplitude * pixels[x]) + " ";
+    if ($('#toggle-content-annotations-check').is(":checked")) {
+      array.push("content");
     }
-    pointsStr += "" + width + "," + maxHeight;
-    heatmapStr = '<svg width=' + (width + 35) + ' height="' + maxHeight + '">' +
-                   '<polyline points="' + pointsStr + '"' +
-                     'style="fill:' + thymeUtility.colorMixer(colors) + ';' +
-                     'fill-opacity:0.4;' +
-                     'stroke:black;' +
-                     'stroke-width:1"/>' +
-                 '</svg>';
-    $('#heatmap').append(heatmapStr);
-    offset = $('#heatmap').parent().offset().left - radius + 79;
-    $('#heatmap').offset({ left: offset });
-    $('#heatmap').css('top', -maxHeight - 4); // vertical offset
-  };
-
-  // A modified sine function for building nice peaks around the marker positions.
-  //
-  //   x = insert value
-  //   position = the position of the maximum value
-  //   radius = the distance from a minimum to a maximum of the sine wave
-  function sinX(x, position, radius) {
-    return (1 + Math.sin(Math.PI / radius * (x - position) + Math.PI / 2)) / 2;
-  };
+    if ($('#toggle-note-annotations-check').is(":checked")) {
+      array.push("note");
+    }
+    return array;
+  }
 });

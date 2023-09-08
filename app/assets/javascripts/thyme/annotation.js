@@ -8,7 +8,7 @@ class Annotation {
     this.color = json.color;
     this.comment = json.comment;
     this.id = json.id;
-    this.seconds = thymeUtility.timestampToMillis(json.timestamp);
+    this.seconds = thymeUtility.timestampToSeconds(json.timestamp);
     this.subtext = json.subtext;
   }
 
@@ -17,7 +17,7 @@ class Annotation {
   */
   updateAnnotationArea() {
     thymeAttributes.activeAnnotationId = this.id;
-    const head = categoryLocale(this.category, this.subtext);
+    const head = this.categoryLocale();
     const comment = this.comment.replaceAll('\n', '<br>');
     const headColor = thymeUtility.lightenUp(this.color, 2);
     const backgroundColor = thymeUtility.lightenUp(this.color, 3);
@@ -33,35 +33,36 @@ class Annotation {
     $('#annotation-edit-button').off('click');
     $('#annotation-close-button').off('click');
     // shorthand
-    const a = thymeAttributes.annotations;
+    const annotations = thymeAttributes.annotations;
+    const a = this;
     // previous annotation listener
     $('#annotation-previous-button').on('click', function() {
-      for (let i = 0; i < a.length; i++) {
-        if (i != 0 && a[i] === this) {
-          a[i - 1].updateAnnotationArea();
+      for (let i = 0; i < annotations.length; i++) {
+        if (i != 0 && annotations[i] === a) {
+          annotations[i - 1].updateAnnotationArea();
         }
       }
     });
     // next annotation Listener
     $('#annotation-next-button').on('click', function() {
-      for (let i = 0; i < a.length; i++) {
-        if (i != a.length - 1 && a[i] === this) {
-          a[i + 1].updateAnnotationArea();
+      for (let i = 0; i < annotations.length; i++) {
+        if (i != annotations.length - 1 && annotations[i] === a) {
+          annotations[i + 1].updateAnnotationArea();
         }
       }
     });
     // goto listener
     $('#annotation-goto-button').on('click', function() {
-      video.currentTime = thymeUtility.timestampToMillis(this.timestamp);
+      video.currentTime = a.seconds;
     });
     // edit listener
     $('#annotation-edit-button').on('click', function() {
       thymeAttributes.lockKeyListeners = true;
-      $.ajax(Routes.edit_annotation_path(this.id), {
+      $.ajax(Routes.edit_annotation_path(a.id), {
         type: 'GET',
         dataType: 'script',
         data: {
-          annotationId: this.id
+          annotationId: a.id
         },
         success: function(permitted) {
           if (permitted === "false") {
@@ -134,22 +135,18 @@ class Annotation {
         toggled: toggled
       },
       success: function(annots) {
-        thymeAttributes.annotations = annots;
+        // update the annotation field in thymeAttributes
+        thymeAttributes.annotations = [];
         if (annots === null) {
           return;
         }
-        updateMarkers();
-        let flag = false;
-        for (let annotation of thymeAttributes.annotations) {
-          if (annotation.id === thymeAttributes.activeAnnotationId) {
-            updateAnnotationArea(annotation);
-            flag = true;
-          }
+        for (const a of annots) {
+          thymeAttributes.annotations.push(new Annotation(a));
         }
-        if (flag === false && $('#annotation-caption').is(":visible") === true) {
-          $('#annotation-caption').hide();
-          $('#caption').show();
-        }
+        // update visual representation on the seek bar
+        Annotation.updateMarkers();
+        // TODO: update annotation area -> this is player specific
+        // and should be done in the player script!
       }
     });
   }
@@ -163,7 +160,8 @@ class Annotation {
   /*
     Creates a single marker on the seek bar.
   */
-  #createMarker() {
+  createMarker() {
+    // HTML for the marker
     const markerStr = '<span id="marker-' + this.id + '">' +
                         '<svg width="15" height="15">' +
                         '<polygon points="1,1 9,1 5,10"' +
@@ -174,19 +172,24 @@ class Annotation {
                         '</svg>' +
                       '</span>';
     $('#markers').append(markerStr);
+
+    // positioning of the marker
     const marker = $('#marker-' + this.id);
     const size = thymeAttributes.seekBar.element.clientWidth - 15;
     const video = document.getElementById('video');
-    const ratio = thymeUtility.timestampToMillis(this.timestamp) / video.duration;
+    const ratio = this.seconds / video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
+
+    // click listener for the marker
+    const a = this;
     marker.on('click', function() {
       const iaButton = document.getElementById('ia-active');
       if (iaButton.dataset.status === "false") {
         $(iaButton).trigger('click');
       }
       $('#caption').hide();
-      this.updateAnnotationArea();
+      a.updateAnnotationArea();
       $('#annotation-caption').show();
     });
   }
@@ -194,7 +197,8 @@ class Annotation {
   /*
     Returns a string with the correct translation of the category and subtext of this annotation.
   */
-  #categoryLocale() {
+  categoryLocale() {
+    let c, s;
     switch (this.category) {
       case "note":
         c = document.getElementById('annotation-locales').dataset.note;

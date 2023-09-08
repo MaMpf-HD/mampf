@@ -390,9 +390,9 @@ $(document).on('turbolinks:load', function() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
     resize.resizeContainer(thymeContainer, factor);
     if (thymeAttributes.annotations === null) {
-      updateMarkers();
+      Annotation.updateAnnotations();
     } else {
-      rearrangeMarkers();
+      Annotation.updateMarkers();
     }
   };
 
@@ -542,7 +542,8 @@ $(document).on('turbolinks:load', function() {
 
   if (annotationsToggle !== null) {
     annotationsToggle.addEventListener('click', function() {
-      updateMarkers();
+      const toggled = $('#annotations-toggle-check').is(":checked");
+      Annotation.updateAnnotations(toggled);
     });
   }
 
@@ -554,7 +555,7 @@ $(document).on('turbolinks:load', function() {
        I couldn't think of an easy way to let the script
        wait for the update to complete (as with the delete button),
        but it might be possible! */
-    setTimeout(updateMarkers, 500);
+    setTimeout(Annotation.updateAnnotations, 500);
   });
 
   // Update annotations after deleting an annotation
@@ -567,7 +568,7 @@ $(document).on('turbolinks:load', function() {
         annotationId: annotationId
       },
       success: function() {
-        updateMarkers();
+        Annotation.updateAnnotations();
         $('#annotation-close-button').click();
       }
     });
@@ -635,174 +636,8 @@ $(document).on('turbolinks:load', function() {
     }
     showControlBar();
   });
-  
+
   // Add keyboard shortcuts from thyme/key.js
   thymeKeyShortcuts.addGeneralShortcuts();
   thymeKeyShortcuts.addPlayerShortcuts();
-  
-  // updates the annotation markers
-  function updateMarkers() {
-    const toggled = $('#annotations-toggle-check').is(":checked");
-    $.ajax(Routes.update_markers_path(), {
-      type: 'GET',
-      dataType: 'json',
-      data: {
-        mediumId: thymeAttributes.mediumId,
-        toggled: toggled
-      },
-      success: function(annots) {
-        thymeAttributes.annotations = annots;
-        if (annots === null) {
-          return;
-        }
-        rearrangeMarkers();
-        let flag = false;
-        for (let annotation of thymeAttributes.annotations) {
-          if (annotation.id === thymeAttributes.activeAnnotationId) {
-            updateAnnotationArea(annotation);
-            flag = true;
-          }
-        }
-        if (flag === false && $('#annotation-caption').is(":visible") === true) {
-          $('#annotation-caption').hide();
-          $('#caption').show();
-        }
-      }
-    });
-  };
-
-  function rearrangeMarkers() {
-    $('#markers').empty();
-    thymeUtility.annotationSort();
-    for (const annotation of thymeAttributes.annotations) {
-      createMarker(annotation);
-    }
-  };
-
-  // an auxiliary method for "updateMarkers()" creating a single marker
-  function createMarker(annotation) {
-    // create marker
-    const markerStr = '<span id="marker-' + annotation.id + '">' +
-                        '<svg width="15" height="15">' +
-                        '<polygon points="1,1 9,1 5,10"' +
-                          'style="fill:' + annotation.color + ';' +
-                          'stroke:black;' +
-                          'stroke-width:1;' +
-                          'fill-rule:evenodd;"/>' +
-                        '</svg>' +
-                      '</span>';
-    $('#markers').append(markerStr);
-    const marker = $('#marker-' + annotation.id);
-    const size = thymeAttributes.seekBar.element.clientWidth - 15;
-    const ratio = thymeUtility.timestampToMillis(annotation.timestamp) / video.duration;
-    const offset = marker.parent().offset().left + ratio * size + 3;
-    marker.offset({ left: offset });
-    marker.on('click', function() {
-      if (iaButton.dataset.status === "false") {
-        $(iaButton).trigger('click');
-      }
-      $('#caption').hide();
-      updateAnnotationArea(annotation);
-      $('#annotation-caption').show();
-    });
-  };
-
-  function categoryLocale(category, subtext) {
-    let c, s;
-    switch (category) {
-      case "note":
-        c = document.getElementById('annotation-locales').dataset.note;
-        break;
-      case "content":
-        c = document.getElementById('annotation-locales').dataset.content;
-        break;
-      case "mistake":
-        c = document.getElementById('annotation-locales').dataset.mistake;
-        break;
-      case "presentation":
-        c = document.getElementById('annotation-locales').dataset.presentation;
-    }
-    if (subtext === null) {
-      return c;
-    }
-    switch (subtext) {
-      case "definition":
-        s = document.getElementById('annotation-locales').dataset.definition;
-        break;
-      case "strategy":
-        s = document.getElementById('annotation-locales').dataset.strategy;
-        break;
-      case "presentation":
-        s = document.getElementById('annotation-locales').dataset.presentation;
-    }
-    return c + " (" + s + ")";
-  };
-  
-  function updateAnnotationArea(annotation) {
-    thymeAttributes.activeAnnotationId = annotation.id;
-    const head = categoryLocale(annotation.category, annotation.subtext);
-    const comment = annotation.comment.replaceAll('\n', '<br>');
-    const headColor = thymeUtility.lightenUp(annotation.color, 2);
-    const backgroundColor = thymeUtility.lightenUp(annotation.color, 3);
-    $('#annotation-infobar').empty().append(head);
-    $('#annotation-infobar').css('background-color', headColor);
-    $('#annotation-infobar').css('text-align', 'center');
-    $('#annotation-comment').empty().append(comment);
-    $('#annotation-caption').css('background-color', backgroundColor);
-    // remove old listeners
-    $('#annotation-previous-button').off('click');
-    $('#annotation-next-button').off('click');
-    $('#annotation-goto-button').off('click');
-    $('#annotation-edit-button').off('click');
-    $('#annotation-close-button').off('click');
-    // shorthand
-    const a = thymeAttributes.annotations;
-    // previous annotation listener
-    $('#annotation-previous-button').on('click', function() {
-      for (let i = 0; i < a.length; i++) {
-        if (i != 0 && a[i] === annotation) {
-          updateAnnotationArea(a[i - 1])
-        }
-      }
-    });
-    // next annotation Listener
-    $('#annotation-next-button').on('click', function() {
-      for (let i = 0; i < a.length; i++) {
-        if (i != a.length - 1 && a[i] === annotation) {
-          updateAnnotationArea(a[i + 1])
-        }
-      }
-    });
-    // goto listener
-    $('#annotation-goto-button').on('click', function() {
-      video.currentTime = thymeUtility.timestampToMillis(annotation.timestamp);
-    });
-    // edit listener
-    $('#annotation-edit-button').on('click', function() {
-      thymeAttributes.lockKeyListeners = true;
-      $.ajax(Routes.edit_annotation_path(annotation.id), {
-        type: 'GET',
-        dataType: 'script',
-        data: {
-          annotationId: annotation.id
-        },
-        success: function(permitted) {
-          if (permitted === "false") {
-            alert(document.getElementById('annotation-locales').dataset.permission);
-          }
-        },
-        error: function(e) {
-          console.log(e);
-        }
-      });
-    });
-    // close listener
-    $('#annotation-close-button').on('click', function() {
-      thymeAttributes.activeAnnotationId = 0;
-      $('#annotation-caption').hide();
-      $('#caption').show();
-    });
-    // LaTex
-    thymeUtility.renderLatex(document.getElementById('annotation-comment'));
-  };
 });
