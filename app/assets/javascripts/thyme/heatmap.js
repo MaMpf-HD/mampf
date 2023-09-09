@@ -43,7 +43,7 @@ class Heatmap {
        data calculation
     */
     for (const a of thymeAttributes.annotations) {
-      const valid = this.validCategory(a.category) &&
+      const valid = this.#validCategory(a.category) &&
                     a.category !== "mistake"; // <- don't include mistake annotations
       if (valid === true) {
         colors.push(thymeUtility.annotationColor(a.category));
@@ -51,7 +51,7 @@ class Heatmap {
       const time = thymeUtility.timestampToSeconds(a.timestamp);
       const position = Math.round(width * (time / video.duration));
       for (let x = position - Heatmap.RADIUS; x <= position + Heatmap.RADIUS; x++) {
-        let y = Heatmap.sinX(x, position, Heatmap.RADIUS);
+        let y = Heatmap.#sinX(x, position, Heatmap.RADIUS);
         pixelsAll[x + Heatmap.RADIUS] += y;
         if (valid === true) {
           pixels[x + Heatmap.RADIUS] += y;
@@ -88,7 +88,7 @@ class Heatmap {
     AUXILIARY METHODS
   */
 
-  validCategory(category) {
+  #validCategory(category) {
     return this.categories.includes(category);
   }
 
@@ -97,7 +97,7 @@ class Heatmap {
        x = insert value
        position = the position of the maximum value
   */
-  static sinX(x, position) {
+  static #sinX(x, position) {
     return (1 + Math.sin(Math.PI / Heatmap.RADIUS * (x - position) + Math.PI / 2)) / 2;
   }
 

@@ -17,7 +17,7 @@ class Annotation {
   */
   updateAnnotationArea() {
     thymeAttributes.activeAnnotationId = this.id;
-    const head = this.categoryLocale();
+    const head = this.#categoryLocale();
     const comment = this.comment.replaceAll('\n', '<br>');
     const headColor = thymeUtility.lightenUp(this.color, 2);
     const backgroundColor = thymeUtility.lightenUp(this.color, 3);
@@ -114,7 +114,7 @@ class Annotation {
     $('#markers').empty();
     thymeUtility.annotationSort();
     for (const annotation of thymeAttributes.annotations) {
-      annotation.createMarker();
+      annotation.#createMarker();
     }
   }
 
@@ -160,7 +160,7 @@ class Annotation {
   /*
     Creates a single marker on the seek bar.
   */
-  createMarker() {
+  #createMarker() {
     // HTML for the marker
     const markerStr = '<span id="marker-' + this.id + '">' +
                         '<svg width="15" height="15">' +
@@ -197,7 +197,7 @@ class Annotation {
   /*
     Returns a string with the correct translation of the category and subtext of this annotation.
   */
-  categoryLocale() {
+  #categoryLocale() {
     let c, s;
     switch (this.category) {
       case "note":
