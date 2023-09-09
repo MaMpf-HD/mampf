@@ -64,6 +64,7 @@
 //= require thyme/annotation
 //= require thyme/attributes
 //= require thyme/chapters
+//= require thyme/display_manager
 //= require thyme/heatmap
 //= require thyme/key_shortcuts
 //= require thyme/utility

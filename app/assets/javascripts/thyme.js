@@ -368,6 +368,10 @@ $(document).on('turbolinks:load', function() {
   // ControlBar
   const videoControlBar = document.getElementById('video-controlBar');
 
+  // large display elements
+  const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
+  const displayManager = new DisplayManager(elements);
+
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
@@ -399,19 +403,13 @@ $(document).on('turbolinks:load', function() {
 
   // on small mobile display, fall back to standard browser player
   function mobileDisplay() {
-    $('#caption').hide();
-    $('#annotation-caption').hide();
-    $('#video-controlBar').hide();
-    video.controls = true;
+    displayManager.mobileDisplay();
     video.style.width = '100%';
   };
 
   // on large display, use anything thyme has to offer, disable native player
   function largeDisplay() {
-    video.controls = false;
-    $('#caption').show();
-    $('#annotation-caption').show();
-    $('#video-controlBar').show();
+    displayManager.largeDisplay();
     video.style.width = '82%';
     if (iaButton.dataset.status === 'false') {
       iaButton.innerHTML = 'remove_from_queue';
@@ -424,92 +422,7 @@ $(document).on('turbolinks:load', function() {
   };
 
   function updateControlBarType() {
-    // display native control bar if screen is very small
-    if (window.matchMedia("screen and (max-width: " +
-        thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
-        window.matchMedia("screen and (max-height: " +
-        thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      mobileDisplay();
-    }
-
-    if (window.matchMedia("screen and (max-device-width: " +
-        thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
-        window.matchMedia("screen and (max-device-height: " +
-        thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      mobileDisplay();
-    }
-
-    // mediaQuery listener for very small screens
-    const match_verysmall_x = window.matchMedia("screen and (max-width: " +
-      thymeAttributes.hideControlBarThreshold.x + "px)");
-    match_verysmall_x.addListener(function(result) {
-      if (result.matches) {
-        mobileDisplay();
-      }
-    });
-    const match_verysmall_y = window.matchMedia("screen and (max-height: " +
-      thymeAttributes.hideControlBarThreshold.y + "px)");
-    match_verysmall_y.addListener(function(result) {
-      if (result.matches) {
-        mobileDisplay();
-      }
-    });
-
-    const match_verysmalldevice_x = window.matchMedia("screen and (max-device-width: " +
-      thymeAttributes.hideControlBarThreshold.x + "px)");
-    match_verysmalldevice_x.addListener(function(result) {
-      if (result.matches) {
-        mobileDisplay();
-      }
-    });
-    const match_verysmalldevice_y = window.matchMedia("screen and (max-device-height: " +
-      thymeAttributes.hideControlBarThreshold.y + "px)");
-    match_verysmalldevice_y.addListener(function(result) {
-      if (result.matches) {
-        mobileDisplay();
-      }
-    });
-
-    // mediaQuery listener for normal screens
-    let match_normal_x = window.matchMedia("screen and (min-width: " +
-      (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-    match_normal_x.addListener(function(result) {
-      let match_normal_y;
-      match_normal_y = window.matchMedia("screen and (min-height: " +
-        (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-      if (result.matches && match_normal_y.matches) {
-        largeDisplay();
-      }
-    });
-    const match_normal_y = window.matchMedia("screen and (min-height: " +
-      (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-    match_normal_y.addListener(function(result) {
-      match_normal_x = window.matchMedia("screen and (min-width: " +
-        (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-      if (result.matches && match_normal_x.matches) {
-        largeDisplay();
-      }
-    });
-
-    let match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
-      (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-    let match_normaldevice_y;
-    match_normaldevice_x.addListener(function(result) {
-      match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
-        (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-      if (result.matches && match_normal_y.matches) {
-        largeDisplay();
-      }
-    });
-    match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
-      (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-    match_normaldevice_y.addListener(function(result) {
-      match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
-        (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-      if (result.matches && match_normal_x.matches) {
-        largeDisplay();
-      }
-    });
+    displayManager.updateControlBarType();
   };
 
   updateControlBarType();
