@@ -335,7 +335,13 @@ $(document).on('turbolinks:load', function() {
   if (thymeContainer === null) {
     return;
   }
+  // Video
+  const video = document.getElementById('video');
+  const thyme = document.getElementById('thyme');
+  // initialize medium id
+  thymeAttributes.mediumId = thyme.dataset.medium;
   // Buttons
+  (new AnnotationsToggle).add();
   (new EmergencyButton).add();
   (new FullScreenButton(thymeContainer)).add();
   (new MinusTenButton).add();
@@ -350,16 +356,10 @@ $(document).on('turbolinks:load', function() {
   seekBar.add();
   seekBar.addChapterTooltips();
 
-  // Video
-  const video = document.getElementById('video');
-  const thyme = document.getElementById('thyme');
-  // initialize medium id
-  thymeAttributes.mediumId = thyme.dataset.medium;
   // Buttons
   const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
   const backButton = document.getElementById('back-button');
-  const annotationsToggle = document.getElementById('annotations-toggle-check');
   // Selectors
   const speedSelector = document.getElementById('speed');
   // Time
@@ -367,22 +367,6 @@ $(document).on('turbolinks:load', function() {
   const maxTime = document.getElementById('max-time');
   // ControlBar
   const videoControlBar = document.getElementById('video-controlBar');
-
-  // User is teacher/editor for the given medium?
-  // -> show toggle annotations button
-  $.ajax(Routes.check_annotation_visibility_path(thymeAttributes.mediumId), {
-    type: 'GET',
-    dataType: 'json',
-    success: function(isPermitted) {
-      if (isPermitted) {
-        $('#volume-controls').css('left', '66%');
-        $('#speed-control').css('left', '77%');
-        $('#emergency-button').css('left', '86%');
-        thymeAttributes.hideControlBarThreshold.x = 960;
-        updateControlBarType();
-      }
-    }
-  });
 
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
@@ -539,13 +523,6 @@ $(document).on('turbolinks:load', function() {
   video.addEventListener('mouseover', showControlBar, false);
   video.addEventListener('mousemove', showControlBar, false);
   video.addEventListener('touchstart', showControlBar, false);
-
-  if (annotationsToggle !== null) {
-    annotationsToggle.addEventListener('click', function() {
-      const toggled = $('#annotations-toggle-check').is(":checked");
-      Annotation.updateAnnotations(toggled);
-    });
-  }
 
   // Update annotations after submitting the annotations form
   $(document).on('click', '#submit-button', function() {

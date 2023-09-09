@@ -85,26 +85,6 @@ class Annotation {
   }
 
   /*
-    When annotations are allowed, teachers see an additional slider on their seek bar.
-    Therefor some CSS attributes of existing buttons etc. have to be adjusted.
-  */
-  static adjustCSS() {
-    $.ajax(Routes.check_annotation_visibility_path(thymeAttributes.mediumId), {
-      type: 'GET',
-      dataType: 'json',
-      success: function(isPermitted) {
-        if (isPermitted) {
-          $('#volume-controls').css('left', '66%');
-          $('#speed-control').css('left', '77%');
-          $('#emergency-button').css('left', '86%');
-          thymeAttributes.hideControlBarThreshold.x = 960;
-          //updateControlBarType(); <-- TODO!
-        }
-      }
-    });
-  }
-
-  /*
     Updates the markers on the timeline, i.e. the visual represention of the annotations.
     This method is e.g. used for rearranging the markers when the window is being resized.
     Don't mix up with updateAnnotatons() which sends an AJAX request and checks for changes

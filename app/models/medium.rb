@@ -1141,12 +1141,16 @@ class Medium < ApplicationRecord
     end
     
     # If the medium is associated to a lecture/course
-    # and the user is a teacher/editor of this lecture,
-    # return true
-    if lecture&.teacher == user ||
-        lecture&.editors&.include?(user) ||
-        editors&.include?(user) ||
-        course&.editors&.include?(user)
+    # and the user is a teacher/editor of this lecture
+    # AND if the emergency button feature is activated
+    # for the given medium.
+    # then return true
+    isTeacher = lecture&.teacher == user or
+                lecture&.editors&.include?(user) or
+                editors&.include?(user) or
+                course&.editors&.include?(user)
+    isActivated = (get_annotations_status == 1)
+    if isTeacher and isActivated
       return true
     else
       return false

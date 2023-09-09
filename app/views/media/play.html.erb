@@ -22,7 +22,7 @@
                 0:00:00
               </span>
               <span id="markers">
-                <!--- COFFEE SCRIPT INSERTS MARKERS HERE -->
+                <!--- JAVA SCRIPT INSERTS MARKERS HERE -->
               </span>
               <input type="range" id="seek-bar"
                      min="0" max="100" step="0.1" value="0">
@@ -68,14 +68,12 @@
               </i>
             </div>
             <!--- TOGGLE FOR TURNING ON/OFF VISIBLE ANNOTATIONS -->
-            <% if @medium.annotations_visible?(current_user) %>
-              <div id="annotations-toggle">
-                <label class="switch">
-                  <input id="annotations-toggle-check" type="checkbox" checked="true">
-                  <span class="slider round"></span>
-                </label>
-              </div>
-            <% end %>
+            <div id="annotations-toggle" style="display: none;">
+              <label class="switch">
+                <input id="annotations-toggle-check" type="checkbox" checked="true">
+                <span class="slider round"></span>
+              </label>
+            </div>
             <div id="size-buttons">
               <i id="ia-active" class="material-icons clickable"
                  data-status="true">
