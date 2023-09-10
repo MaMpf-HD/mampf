@@ -13,21 +13,23 @@ $(document).on('turbolinks:load', function() {
   if (thymeContainer === null) {
     return;
   }
-  // Buttons
-  (new PlayButton).add();
-  (new MuteButton).add();
-  (new PlusTenButton).add();
-  (new MinusTenButton).add();
-  // Sliders
-  (new VolumeBar).add();
-  seekBar = new SeekBar();
-  seekBar.add();
-
   // Video
-  const video = document.getElementById('video');
+  thymeAttributes.video = document.getElementById('video');
+  const video = thymeAttributes.video;
   const thyme = document.getElementById('thyme');
   // initialize medium id
   thymeAttributes.mediumId = thyme.dataset.medium;
+
+  // Buttons
+  (new PlayButton('play-pause')).add();
+  (new MuteButton('mute')).add();
+  (new PlusTenButton('plus-ten')).add();
+  (new MinusTenButton('minus-ten')).add();
+  // Sliders
+  (new VolumeBar('volume-bar')).add();
+  seekBar = new SeekBar('seek-bar');
+  seekBar.add();
+
   // Selectors
   const speedSelector = document.getElementById('speed');
   // Time

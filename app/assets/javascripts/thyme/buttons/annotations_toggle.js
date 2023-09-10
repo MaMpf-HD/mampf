@@ -1,13 +1,16 @@
 class AnnotationsToggle extends Button  {
-  constructor() {
-    super('annotations-toggle-check');
-    this.elementJQ = $('#annotations-toggle-check');
-    this.div = $('#annotations-toggle');
+
+  constructor(element) {
+    super(element);
+    this.id = element;
+    this.check = document.getElementById(this.id + '-check');
+    this.checkJQ = $('#' + this.id + '-check');
+    this.div = $('#' + this.id);
   }
 
   add() {
     const toggle = this;
-    const toggleJQ = this.elementJQ;
+    const checkJQ = this.checkJQ;
 
     /* User is teacher/editor for the given medium and visible_for_teacher ist activated?
        -> add toggle annotations button */
@@ -18,15 +21,14 @@ class AnnotationsToggle extends Button  {
         if (isPermitted) {
           toggle.show();
           toggle.element.addEventListener('click', function() {
-            Annotation.updateAnnotations(toggleJQ.is(":checked"));
+            Annotation.updateAnnotations(checkJQ.is(":checked"));
           });
           // When loading the player, the toggle is set to "true" by default,
           // so we have to trigger updateAnnotations() manually once.
-          Annotation.updateAnnotations(toggleJQ.is(":checked"));
+          Annotation.updateAnnotations(checkJQ.is(":checked"));
         }
       }
     });
-
   }
 
   /*
@@ -40,4 +42,5 @@ class AnnotationsToggle extends Button  {
     this.div.show();
     //updateControlBarType(); TODO
   }
+  
 }

@@ -1,7 +1,4 @@
 class NextChapterButton extends Button  {
-  constructor() {
-    super('next-chapter');
-  }
 
   add() {
     const video = thymeAttributes.video;
@@ -15,4 +12,5 @@ class NextChapterButton extends Button  {
       }
     });
   }
+  
 }

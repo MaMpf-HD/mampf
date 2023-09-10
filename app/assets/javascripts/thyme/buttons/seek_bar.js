@@ -1,6 +1,7 @@
 class SeekBar extends Button  {
-  constructor() {
-    super('seek-bar');
+
+  constructor(element) {
+    super(element);
     thymeAttributes.seekBar = this; // save a reference for this seek bar
   }
 
@@ -73,4 +74,5 @@ class SeekBar extends Button  {
       element.setAttribute('title', info);
     });
   }
+  
 }

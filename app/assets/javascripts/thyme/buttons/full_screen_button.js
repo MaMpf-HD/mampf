@@ -1,6 +1,6 @@
 class FullScreenButton extends Button  {
-  constructor(container) {
-    super('full-screen');
+  constructor(element, container) {
+    super(element);
     this.container = container;
   }
 

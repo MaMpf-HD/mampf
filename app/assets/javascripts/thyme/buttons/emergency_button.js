@@ -1,8 +1,5 @@
 class EmergencyButton extends Button  {
-  constructor() {
-    super('emergency-button');
-  }
-
+  
   add() {
     const video = thymeAttributes.video;
     const element = this.element;
@@ -26,4 +23,5 @@ class EmergencyButton extends Button  {
       });
     });
   }
+
 }

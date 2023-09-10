@@ -1,7 +1,4 @@
 class VolumeBar extends Button  {
-  constructor() {
-    super('volume-bar');
-  }
 
   add() {
     const video = thymeAttributes.video;
@@ -33,4 +30,5 @@ class VolumeBar extends Button  {
                                         '%, #ffffff)';
     });
   }
+  
 }

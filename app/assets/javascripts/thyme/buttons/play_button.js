@@ -1,7 +1,4 @@
 class PlayButton extends Button  {
-  constructor() {
-    super('play-pause');
-  }
 
   add() {
     const video = thymeAttributes.video;
@@ -23,4 +20,5 @@ class PlayButton extends Button  {
       element.innerHTML = 'play_arrow';
     };
   }
+
 }

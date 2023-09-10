@@ -1,7 +1,4 @@
 class MuteButton extends Button {
-  constructor() {
-    super('mute');
-  }
 
   add() {
     const video = thymeAttributes.video;
@@ -17,4 +14,5 @@ class MuteButton extends Button {
       }
     });
   }
+  
 }

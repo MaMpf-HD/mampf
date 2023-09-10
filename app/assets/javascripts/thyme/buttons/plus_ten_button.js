@@ -1,7 +1,4 @@
 class PlusTenButton extends Button  {
-  constructor() {
-    super('plus-ten');
-  }
 
   add() {
     const video = thymeAttributes.video;
@@ -11,4 +8,5 @@ class PlusTenButton extends Button  {
       video.currentTime = Math.min(video.currentTime + 10, video.duration);
     });
   }
+  
 }

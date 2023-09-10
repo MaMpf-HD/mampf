@@ -336,24 +336,24 @@ $(document).on('turbolinks:load', function() {
     return;
   }
   // Video
-  const thyme = document.getElementById('thyme');
-  // initialize video and medium id
   thymeAttributes.video = document.getElementById('video');
   const video = thymeAttributes.video;
+  const thyme = document.getElementById('thyme');
+  // initialize medium id
   thymeAttributes.mediumId = thyme.dataset.medium;
   // Buttons
-  (new AnnotationsToggle).add();
-  (new EmergencyButton).add();
-  (new FullScreenButton(thymeContainer)).add();
-  (new MinusTenButton).add();
-  (new MuteButton).add();
-  (new NextChapterButton).add();
-  (new PlayButton).add();  
-  (new PlusTenButton).add();
-  (new PreviousChapterButton).add();
+  (new AnnotationsToggle('annotations-toggle')).add();
+  (new EmergencyButton('emergency-button')).add();
+  (new FullScreenButton('full-screen', thymeContainer)).add();
+  (new MinusTenButton('minus-ten')).add();
+  (new MuteButton('mute')).add();
+  (new NextChapterButton('next-chapter')).add();
+  (new PlayButton('play-pause')).add();  
+  (new PlusTenButton('plus-ten')).add();
+  (new PreviousChapterButton('previous-chapter')).add();
   // Sliders
-  (new VolumeBar).add();
-  seekBar = new SeekBar();
+  (new VolumeBar('volume-bar')).add();
+  seekBar = new SeekBar('seek-bar');
   seekBar.add();
   seekBar.addChapterTooltips();
 
