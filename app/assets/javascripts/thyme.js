@@ -351,6 +351,7 @@ $(document).on('turbolinks:load', function() {
   (new PlayButton('play-pause')).add();  
   (new PlusTenButton('plus-ten')).add();
   (new PreviousChapterButton('previous-chapter')).add();
+  (new SpeedSelector('speed')).add();
   // Sliders
   (new VolumeBar('volume-bar')).add();
   seekBar = new SeekBar('seek-bar');
@@ -361,8 +362,6 @@ $(document).on('turbolinks:load', function() {
   const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
   const backButton = document.getElementById('back-button');
-  // Selectors
-  const speedSelector = document.getElementById('speed');
   // Time
   const currentTime = document.getElementById('current-time');
   const maxTime = document.getElementById('max-time');
@@ -454,18 +453,6 @@ $(document).on('turbolinks:load', function() {
         $('#annotation-close-button').click();
       }
     });
-  });
-
-  // Event handler for speed speed selector
-  speedSelector.addEventListener('change', function() {
-    if (video.preservesPitch != null) {
-      video.preservesPitch = true;
-    } else if (video.mozPreservesPitch != null) {
-      video.mozPreservesPitch = true;
-    } else if (video.webkitPreservesPitch != null) {
-      video.webkitPreservesPitch = true;
-    }
-    video.playbackRate = this.options[this.selectedIndex].value;
   });
 
   // Event handler for interactive area activation button

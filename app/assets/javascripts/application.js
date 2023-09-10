@@ -60,6 +60,7 @@
 //= require thyme/buttons/plus_ten_button
 //= require thyme/buttons/previous_chapter_button
 //= require thyme/buttons/seek_bar
+//= require thyme/buttons/speed_selector
 //= require thyme/buttons/volume_bar
 //= require thyme/annotation
 //= require thyme/attributes
