@@ -4,7 +4,6 @@
 */
 class Button {
   constructor(element) {
-    this.video = document.getElementById('video');
     this.element = document.getElementById(element);
   }
 

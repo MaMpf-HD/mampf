@@ -4,7 +4,7 @@ class MuteButton extends Button {
   }
 
   add() {
-    const video = this.video;
+    const video = thymeAttributes.video;
     const element = this.element;
     
     element.addEventListener('click', function() {

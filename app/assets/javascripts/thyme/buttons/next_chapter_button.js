@@ -4,7 +4,7 @@ class NextChapterButton extends Button  {
   }
 
   add() {
-    const video = this.video;
+    const video = thymeAttributes.video;
     const element = this.element;
 
     // Event handler for the nextChapter button

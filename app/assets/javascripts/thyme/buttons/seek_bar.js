@@ -5,7 +5,7 @@ class SeekBar extends Button  {
   }
 
   add() {
-    const video = this.video;
+    const video = thymeAttributes.video;
     const element = this.element;
 
     // Event listeners for the seek bar
@@ -58,7 +58,7 @@ class SeekBar extends Button  {
     (only use this if the given thyme player provides chapters!).
   */
   addChapterTooltips() {
-    const video = this.video;
+    const video = thymeAttributes.video;
     const element = this.element;
 
     element.addEventListener('mousemove', function(evt) {

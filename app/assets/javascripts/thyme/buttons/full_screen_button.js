@@ -5,7 +5,7 @@ class FullScreenButton extends Button  {
   }
 
   add() {
-    const video = this.video;
+    const video = thymeAttributes.video;
     const element = this.element;
     const container = this.container;
 
