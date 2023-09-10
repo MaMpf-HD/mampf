@@ -145,7 +145,7 @@
   position: absolute;
   display: flex;
   left: 89%;
-  top: 50%;
+  top: 40%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
   input:checked + .slider {
@@ -578,26 +578,19 @@ $annotation_colors: (
 #feedback-timeline {
   position: absolute;
   display: flex;
-  width: 71%;
+  width: 78%;
 }
 
 #feedback-special-buttons {
   position: absolute;
   display: flex;
-  right: 22%;
+  right: 14%;
 }
 
 #feedback-volume-controls {
   position: absolute;
   display: flex;
   width: 10%;
-  right: 10%;
-}
-
-#feedback-speed-control {
-  position: absolute;
-  padding: 3px;
-  font-size: 12px;
   right: 2%;
 }
 

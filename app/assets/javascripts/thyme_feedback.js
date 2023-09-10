@@ -30,8 +30,6 @@ $(document).on('turbolinks:load', function() {
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
 
-  // Selectors
-  const speedSelector = document.getElementById('speed');
   // Time
   const currentTime = document.getElementById('current-time');
   const maxTime = document.getElementById('max-time');
@@ -61,18 +59,6 @@ $(document).on('turbolinks:load', function() {
   setupHypervideoF();
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
-
-  // Event handler for speed speed selector
-  speedSelector.addEventListener('change', function() {
-    if (video.preservesPitch != null) {
-      video.preservesPitch = true;
-    } else if (video.mozPreservesPitch != null) {
-      video.mozPreservesPitch = true;
-    } else if (video.webkitPreservesPitch != null) {
-      video.webkitPreservesPitch = true;
-    }
-    video.playbackRate = this.options[this.selectedIndex].value;
-  });
 
   video.addEventListener('click', function() {
     if (video.paused === true) {
