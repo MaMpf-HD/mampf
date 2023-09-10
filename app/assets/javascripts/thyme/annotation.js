@@ -107,7 +107,7 @@ class Annotation {
     made visible for teachers; otherwise they see only their own.
   */
   static updateAnnotations(toggled) {
-    $.ajax(Routes.update_markers_path(), {
+    $.ajax(Routes.update_annotations_path(), {
       type: 'GET',
       dataType: 'json',
       data: {

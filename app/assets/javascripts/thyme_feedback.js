@@ -92,7 +92,7 @@ $(document).on('turbolinks:load', function() {
 
   // updates the annotation markers
   function updateMarkersF() {
-    $.ajax(Routes.update_markers_path(), {
+    $.ajax(Routes.update_annotations_path(), {
       type: 'GET',
       dataType: 'json',
       data: {

@@ -65,7 +65,7 @@ class AnnotationsController < ApplicationController
     render json: []
   end
 
-  def update_markers
+  def update_annotations
     medium = Medium.find_by_id(params[:mediumId])
     toggled = params[:toggled]
 

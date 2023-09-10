@@ -41,9 +41,9 @@ Rails.application.routes.draw do
   
   # annotation routes
 
-  get 'annotations/update_markers',
-      to: 'annotations#update_markers',
-      as: 'update_markers'
+  get 'annotations/update_annotations',
+      to: 'annotations#update_annotations',
+      as: 'update_annotations'
 
   get 'annotations/near_mistake_annotations',
       to: 'annotations#near_mistake_annotations',
