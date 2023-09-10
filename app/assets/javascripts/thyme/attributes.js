@@ -31,4 +31,7 @@ const thymeAttributes = {
   /* Safes a reference on the video's seek bar. */
   seekBar: undefined,
 
+  /* Safes a reference on the video itself */
+  video: undefined,
+
 };

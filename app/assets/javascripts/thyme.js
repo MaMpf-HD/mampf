@@ -336,9 +336,9 @@ $(document).on('turbolinks:load', function() {
     return;
   }
   // Video
-  const video = document.getElementById('video');
   const thyme = document.getElementById('thyme');
-  // initialize medium id
+  // initialize video and medium id
+  thymeAttributes.video = document.getElementById('video');
   thymeAttributes.mediumId = thyme.dataset.medium;
   // Buttons
   (new AnnotationsToggle).add();
@@ -368,9 +368,20 @@ $(document).on('turbolinks:load', function() {
   // ControlBar
   const videoControlBar = document.getElementById('video-controlBar');
 
-  // large display elements
+  // Manage large and small display
+  function largeDisplayFunc() {
+    thymeAttributes.video.style.width = '82%';
+    if (iaButton.dataset.status === 'false') {
+      iaButton.innerHTML = 'remove_from_queue';
+      $('#caption').hide();
+      $('#annotation-caption').hide();
+      thymeAttributes.video.style.width = '100%';
+      $('#video-controlBar').css('width', '100%');
+      $(window).trigger('resize');
+    }
+  }
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
-  const displayManager = new DisplayManager(elements);
+  const displayManager = new DisplayManager(elements, largeDisplayFunc);
 
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
@@ -391,8 +402,8 @@ $(document).on('turbolinks:load', function() {
     $('#caption').hide();
     $('#annotation-caption').hide();
     $('#video-controlBar').hide();
-    video.style.width = '100%';
-    video.controls = true;
+    thymeAttributes.video.style.width = '100%';
+    thymeAttributes.video.controls = true;
     document.body.style.backgroundColor = 'black';
     resizeContainer();
     window.onresize = resizeContainer;
@@ -401,26 +412,6 @@ $(document).on('turbolinks:load', function() {
 
   setupHypervideo();
 
-  // on small mobile display, fall back to standard browser player
-  function mobileDisplay() {
-    displayManager.mobileDisplay();
-    video.style.width = '100%';
-  };
-
-  // on large display, use anything thyme has to offer, disable native player
-  function largeDisplay() {
-    displayManager.largeDisplay();
-    video.style.width = '82%';
-    if (iaButton.dataset.status === 'false') {
-      iaButton.innerHTML = 'remove_from_queue';
-      $('#caption').hide();
-      $('#annotation-caption').hide();
-      video.style.width = '100%';
-      $('#video-controlBar').css('width', '100%');
-      $(window).trigger('resize');
-    }
-  };
-
   function updateControlBarType() {
     displayManager.updateControlBarType();
   };
@@ -428,14 +419,14 @@ $(document).on('turbolinks:load', function() {
   updateControlBarType();
 
   window.onresize = resizeContainer;
-  video.onloadedmetadata = resizeContainer;
+  thymeAttributes.video.onloadedmetadata = resizeContainer;
 
   idleHideControlBar();
 
   // if mouse is moved or screen is toiched, show control bar
-  video.addEventListener('mouseover', showControlBar, false);
-  video.addEventListener('mousemove', showControlBar, false);
-  video.addEventListener('touchstart', showControlBar, false);
+  thymeAttributes.video.addEventListener('mouseover', showControlBar, false);
+  thymeAttributes.video.addEventListener('mousemove', showControlBar, false);
+  thymeAttributes.video.addEventListener('touchstart', showControlBar, false);
 
   // Update annotations after submitting the annotations form
   $(document).on('click', '#submit-button', function() {
@@ -466,14 +457,14 @@ $(document).on('turbolinks:load', function() {
 
   // Event handler for speed speed selector
   speedSelector.addEventListener('change', function() {
-    if (video.preservesPitch != null) {
-      video.preservesPitch = true;
-    } else if (video.mozPreservesPitch != null) {
-      video.mozPreservesPitch = true;
-    } else if (video.webkitPreservesPitch != null) {
-      video.webkitPreservesPitch = true;
+    if (thymeAttributes.video.preservesPitch != null) {
+      thymeAttributes.video.preservesPitch = true;
+    } else if (thymeAttributes.video.mozPreservesPitch != null) {
+      thymeAttributes.video.mozPreservesPitch = true;
+    } else if (thymeAttributes.video.webkitPreservesPitch != null) {
+      thymeAttributes.video.webkitPreservesPitch = true;
     }
-    video.playbackRate = this.options[this.selectedIndex].value;
+    thymeAttributes.video.playbackRate = this.options[this.selectedIndex].value;
   });
 
   // Event handler for interactive area activation button
@@ -483,13 +474,13 @@ $(document).on('turbolinks:load', function() {
       iaButton.dataset.status = 'false';
       $('#caption').hide();
       $('#annotation-caption').hide();
-      video.style.width = '100%';
+      thymeAttributes.video.style.width = '100%';
       $('#video-controlBar').css('width', '100%');
       $(window).trigger('resize');
     } else {
       iaButton.innerHTML = 'add_to_queue';
       iaButton.dataset.status = 'true';
-      video.style.width = '82%';
+      thymeAttributes.video.style.width = '82%';
       $('#video-controlBar').css('width', '82%');
       $('#caption').show();
       $('#annotation-caption').show();
@@ -499,7 +490,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event Handler for Back Button
   backButton.addEventListener('click', function() {
-    video.currentTime = this.dataset.time;
+    thymeAttributes.video.currentTime = this.dataset.time;
     $(backButton).hide();
     $('#back-reference').hide();
   });
@@ -510,19 +501,19 @@ $(document).on('turbolinks:load', function() {
   });
   
   // if videomedtadata have been loaded, set up video length
-  video.addEventListener('loadedmetadata', function() {
-    maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
+  thymeAttributes.video.addEventListener('loadedmetadata', function() {
+    maxTime.innerHTML = thymeUtility.secondsToTime(thymeAttributes.video.duration);
     if (video.dataset.time != null) {
       const time = video.dataset.time;
       video.currentTime = time;
     }
   });
 
-  video.addEventListener('click', function() {
-    if (video.paused === true) {
-      video.play();
+  thymeAttributes.video.addEventListener('click', function() {
+    if (thymeAttributes.video.paused === true) {
+      thymeAttributes.video.play();
     } else {
-      video.pause();
+      thymeAttributes.video.pause();
     }
     showControlBar();
   });

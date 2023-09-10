@@ -4,33 +4,36 @@
  */
 class DisplayManager {
 
-  constructor(elements) {
-    // elements must be an array containing all JQuery references on HTML-elements
-    // that should be hidden on small devices.
+  constructor(elements, func) {
+    /*
+      elements = An array containing JQuery references on the HTML elements
+                 that should be hidden, when the display is too small.
+
+      func = A reference on a function that is called when the display
+             changes from small to large. Use this for player specific behaviour.
+     */
     this.elements = elements;
-    this.video = document.getElementById('video');
+    this.func = func;
   }
 
 
 
-  addElements(elements) {
-    this.elements.push(elements);
-  }
-
-  // on small mobile display, fall back to standard browser player
-  mobileDisplay() {
+  // on small display, fall back to standard browser player
+  smallDisplay() {
     for (let e of this.elements) {
       e.hide();
     }
-    this.video.controls = true;
+    thymeAttributes.video.style.width = '100';
+    thymeAttributes.video.controls = true;
   }
 
   // on large display, use anything thyme has to offer, disable native player
   largeDisplay() {
-    this.video.controls = false;
+    thymeAttributes.video.controls = false;
     for (let e of this.elements) {
       e.show();
     }
+    this.func();
   }
 
   // Check screen size and trigger the right method
@@ -41,14 +44,14 @@ class DisplayManager {
         thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
         window.matchMedia("screen and (max-height: " +
         thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      dm.mobileDisplay();
+      dm.smallDisplay();
     }
 
     if (window.matchMedia("screen and (max-device-width: " +
         thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
         window.matchMedia("screen and (max-device-height: " +
         thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      dm.mobileDisplay();
+      dm.smallDisplay();
     }
 
     // mediaQuery listener for very small screens
@@ -56,14 +59,14 @@ class DisplayManager {
       thymeAttributes.hideControlBarThreshold.x + "px)");
     match_verysmall_x.addListener(function(result) {
       if (result.matches) {
-        dm.mobileDisplay();
+        dm.smallDisplay();
       }
     });
     const match_verysmall_y = window.matchMedia("screen and (max-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
     match_verysmall_y.addListener(function(result) {
       if (result.matches) {
-        dm.mobileDisplay();
+        dm.smallDisplay();
       }
     });
 
@@ -71,14 +74,14 @@ class DisplayManager {
       thymeAttributes.hideControlBarThreshold.x + "px)");
     match_verysmalldevice_x.addListener(function(result) {
       if (result.matches) {
-        dm.mobileDisplay();
+        dm.smallDisplay();
       }
     });
     const match_verysmalldevice_y = window.matchMedia("screen and (max-device-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
     match_verysmalldevice_y.addListener(function(result) {
       if (result.matches) {
-        dm.mobileDisplay();
+        dm.smallDisplay();
       }
     });
 
