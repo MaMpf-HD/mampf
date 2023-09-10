@@ -341,8 +341,11 @@ $(document).on('turbolinks:load', function() {
   const thyme = document.getElementById('thyme');
   // initialize medium id
   thymeAttributes.mediumId = thyme.dataset.medium;
+  // initialize marker bar
+  thymeAttributes.markerBarID = 'markers';
   // Buttons
-  (new AnnotationsToggle('annotations-toggle')).add();
+  annotationsToggle = new AnnotationsToggle('annotations-toggle');
+  annotationsToggle.add();
   (new EmergencyButton('emergency-button')).add();
   (new FullScreenButton('full-screen', thymeContainer)).add();
   (new MinusTenButton('minus-ten')).add();
@@ -357,14 +360,10 @@ $(document).on('turbolinks:load', function() {
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
   seekBar.addChapterTooltips();
-
   // Buttons
   const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
   const backButton = document.getElementById('back-button');
-  // Time
-  const currentTime = document.getElementById('current-time');
-  const maxTime = document.getElementById('max-time');
 
   // Manage large and small display
   function largeDisplayFunc() {
@@ -381,15 +380,28 @@ $(document).on('turbolinks:load', function() {
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
   const displayManager = new DisplayManager(elements, largeDisplayFunc);
 
+  // Annotation Manager
+  function colorFunc(annotation) {
+    return annotation.color;
+  }
+  function strokeColorFunc(annotation) {
+    return 'black';
+  }
+  function sizeFunc(annotation) {
+    return false;
+  }
+  annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc);
+  thymeAttributes.annotationManager = annotationManager;
+
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
     resize.resizeContainer(thymeContainer, factor);
     if (thymeAttributes.annotations === null) {
-      Annotation.updateAnnotations();
+      annotationManager.updateAnnotations(annotationsToggle.getValue());
     } else {
-      Annotation.updateMarkers();
+      annotationManager.updateMarkers();
     }
   };
 
@@ -434,7 +446,7 @@ $(document).on('turbolinks:load', function() {
        I couldn't think of an easy way to let the script
        wait for the update to complete (as with the delete button),
        but it might be possible! */
-    setTimeout(Annotation.updateAnnotations, 500);
+    setTimeout(annotationManager.updateAnnotations(annotationsToggle.getValue()), 500);
   });
 
   // Update annotations after deleting an annotation
@@ -447,7 +459,7 @@ $(document).on('turbolinks:load', function() {
         annotationId: annotationId
       },
       success: function() {
-        Annotation.updateAnnotations();
+        annotationManager.updateAnnotations(annotationsToggle.getValue(), null);
         $('#annotation-close-button').click();
       }
     });
@@ -486,8 +498,9 @@ $(document).on('turbolinks:load', function() {
     $(iaButton).trigger('click');
   });
   
-  // if videomedtadata have been loaded, set up video length
+  // if videometadata have been loaded, set up video length
   video.addEventListener('loadedmetadata', function() {
+    const maxTime = document.getElementById('max-time');
     maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
     if (video.dataset.time != null) {
       const time = video.dataset.time;

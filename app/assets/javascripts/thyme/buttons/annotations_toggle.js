@@ -21,14 +21,21 @@ class AnnotationsToggle extends Button  {
         if (isPermitted) {
           toggle.show();
           toggle.element.addEventListener('click', function() {
-            Annotation.updateAnnotations(checkJQ.is(":checked"));
+            thymeAttributes.annotationManager.updateAnnotations(toggle.getValue());
           });
           // When loading the player, the toggle is set to "true" by default,
           // so we have to trigger updateAnnotations() manually once.
-          Annotation.updateAnnotations(checkJQ.is(":checked"));
+          thymeAttributes.annotationManager.updateAnnotations(toggle.getValue());
         }
       }
     });
+  }
+
+  /*
+    Returns true if the toggle's value is true and false otherwise.
+   */
+  getValue() {
+    return this.checkJQ.is(":checked");
   }
 
   /*

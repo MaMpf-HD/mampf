@@ -2,6 +2,7 @@
   This class helps to represent an annotation in JavaScript.
 */
 class Annotation {
+
   constructor(json) {
     // We only save attributes that are needed in the thyme related JavaScripts in the asset pipeline!
     this.category = json.category;
@@ -84,80 +85,71 @@ class Annotation {
     thymeUtility.renderLatex(document.getElementById('annotation-comment'));
   }
 
-  /*
-    Updates the markers on the timeline, i.e. the visual represention of the annotations.
-    This method is e.g. used for rearranging the markers when the window is being resized.
-    Don't mix up with updateAnnotatons() which sends an AJAX request and checks for changes
-    in the database.
-  */
-  static updateMarkers() {
-    $('#markers').empty();
-    thymeUtility.annotationSort();
-    for (const annotation of thymeAttributes.annotations) {
-      annotation.#createMarker();
-    }
-  }
-
-  /*
-    Sends a AJAX request which returns all the annotations for the given medium.
-    This method is e.g. used when a new annotation is being created.
-    Don't mix up with updateMarkers() which just updates the position of the markers!
-
-    "toggle" must be a boolean. If true, teachers see all annotations that have been
-    made visible for teachers; otherwise they see only their own.
-  */
-  static updateAnnotations(toggled) {
-    $.ajax(Routes.update_annotations_path(), {
-      type: 'GET',
-      dataType: 'json',
-      data: {
-        mediumId: thymeAttributes.mediumId,
-        toggled: toggled
-      },
-      success: function(annots) {
-        // update the annotation field in thymeAttributes
-        thymeAttributes.annotations = [];
-        if (annots === null) {
-          return;
-        }
-        for (const a of annots) {
-          thymeAttributes.annotations.push(new Annotation(a));
-        }
-        // update visual representation on the seek bar
-        Annotation.updateMarkers();
-        // TODO: update annotation area -> this is player specific
-        // and should be done in the player script!
-      }
-    });
-  }
-
 
 
   /*
    * AUXILIARY METHODS 
    */
 
+  /* Returns a fixed color depending only on the category of the annotation. */
+  categoryColor() {
+    switch (this.category) {
+      case "note":
+        return "#44ee11"; //green
+      case "content":
+        return "#eeee00"; //yellow
+      case "mistake":
+        return "#ff0000"; //red
+      case "presentation":
+        return "#ff9933"; //orange
+    }
+  }
+
   /*
-    Creates a single marker on the seek bar.
-  */
-  #createMarker() {
+    Create normal marker.
+
+          color = Color of the marker.
+    strokeColor = Color of the border of the marker.
+   */
+  createMarker(color, strokeColor) {
+    const polygonPoints = "1,5 9,5 5,14";
+    const strokeWidth = 1;
+    this.#create(polygonPoints, strokeWidth, strokeColor);
+  }
+
+  /*
+    Create big marker with customizable border color.
+    (Used e.g. for big mistake markers in the feedback player.)
+    
+          color = Color of the marker.
+    strokeColor = Color of the border of the marker.
+   */
+  createBigMarker(color, strokeColor) {
+    const polygonPoints = "1,1 9,1 5,14";
+    const strokeWidth = 1.5;
+    this.#create(polygonPoints, strokeWidth, strokeColor);
+  }
+
+  /*
+    An auxiliary method, only used for a better structure of createMarker() and createBigMarker()!
+   */
+  #create(polygonPoints, strokeWidth, strokeColor) {
     // HTML for the marker
     const markerStr = '<span id="marker-' + this.id + '">' +
-                        '<svg width="15" height="15">' +
-                        '<polygon points="1,1 9,1 5,10"' +
+                        '<svg width="15" height="20">' +
+                        '<polygon points="' + polygonPoints + '"' +
                           'style="fill:' + this.color + ';' +
-                          'stroke:black;' +
-                          'stroke-width:1;' +
+                          'stroke:' + strokeColor + ';' +
+                          'stroke-width:' + strokeWidth + ';' +
                           'fill-rule:evenodd;"/>' +
                         '</svg>' +
                       '</span>';
-    $('#markers').append(markerStr);
+    $('#' + thymeAttributes.markerBarID).append(markerStr);
 
     // positioning of the marker
     const marker = $('#marker-' + this.id);
     const size = thymeAttributes.seekBar.element.clientWidth - 15;
-    const video = document.getElementById('video');
-    const ratio = this.seconds / video.duration;
+    const ratio = this.seconds / thymeAttributes.video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
 

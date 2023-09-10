@@ -19,6 +19,8 @@ $(document).on('turbolinks:load', function() {
   const thyme = document.getElementById('thyme');
   // initialize medium id
   thymeAttributes.mediumId = thyme.dataset.medium;
+  // initialize marker bar
+  thymeAttributes.markerBarID = 'feedback-markers';
 
   // Buttons
   (new PlayButton('play-pause')).add();
@@ -30,9 +32,6 @@ $(document).on('turbolinks:load', function() {
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
 
-  // Time
-  const currentTime = document.getElementById('current-time');
-  const maxTime = document.getElementById('max-time');
   // below-area
   const toggleNoteAnnotations = document.getElementById('toggle-note-annotations-check');
   const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
@@ -44,15 +43,38 @@ $(document).on('turbolinks:load', function() {
   video.currentTime = 0;
   video.volume = 1;
 
+  // Annotation Manager
+  function colorFunc(annotation) {
+    return annotation.categoryColor();
+  }
+  function strokeColorFunc(annotation) {
+    return annotation.category == 'mistake' ? 'darkred' : 'black';
+  }
+  function sizeFunc(annotation) {
+    return annotation.category == 'mistake' ? true : false;
+  }
+  annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc);
+  thymeAttributes.annotationManager = annotationManager;
+
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
     resize.resizeContainer(thymeContainer, 1);
     if (thymeAttributes.annotations === null) {
-      updateMarkersF();
+      annotationManager.updateAnnotations(true);
     } else {
-      rearrangeMarkersF();
+      annotationManager.updateMarkers();
     }
   };
+
+  // if videometadata have been loaded, set up video length
+  video.addEventListener('loadedmetadata', function() {
+    const maxTime = document.getElementById('max-time');
+    maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
+    if (video.dataset.time != null) {
+      const time = video.dataset.time;
+      video.currentTime = time;
+    }
+  });
 
   setupHypervideoF();
   window.onresize = resizeContainer;
@@ -73,19 +95,19 @@ $(document).on('turbolinks:load', function() {
 
   // Toggles which annotations are shown
   toggleNoteAnnotations.addEventListener('click', function() {
-    updateMarkersF();
+    annotationManager.updateAnnotations(true);
   });
 
   toggleContentAnnotations.addEventListener('click', function() {
-    updateMarkersF();
+    annotationManager.updateAnnotations(true);
   });
 
   toggleMistakeAnnotations.addEventListener('click', function() {
-    updateMarkersF();
+    annotationManager.updateAnnotations(true);
   });
 
   togglePresentationAnnotations.addEventListener('click', function() {
-    updateMarkersF();
+    annotationManager.updateAnnotations(true);
   });
 
   // updates the annotation markers

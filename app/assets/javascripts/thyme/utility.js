@@ -3,21 +3,6 @@
 */
 const thymeUtility = {
 
-  /* returns a certain color for every annotation with respect to the annotations
-     category (in the feedback view this gives more information than the original color). */
-  annotationColor: function(cat) {
-    switch (cat) {
-      case "note":
-        return "#44ee11"; //green
-      case "content":
-        return "#eeee00"; //yellow
-      case "mistake":
-        return "#ff0000"; //red
-      case "presentation":
-        return "#ff9933"; //orange
-    }
-  },
-
   annotationIndex: function(annotation) {
     for (let i = 0; i < thymeAttributes.annotations.length; i++) {
       if (thymeAttributes.annotations[i].id == annotation.id) {
@@ -26,7 +11,7 @@ const thymeUtility = {
     }
   },
 
-  // sorts all annotations according to their timestamp
+  // DELETE ONCE ANNOTATION_MANAGERS ARE INSTALLED
   annotationSort: function() {
     if (thymeAttributes.annotations === null) {
       return;

@@ -1,37 +1,46 @@
 /**
   This file wraps up some attributes that are used in the different
   versions of the thyme player.
+
+  Most attributes are set to undefined or null and must be
+  defined when the player is loaded.
 */
 const thymeAttributes = {
 
-  /* helps to find the annotation that is currently shown in the
-     annotation area */
-  activeAnnotationId: 0,
+  /* Helps to find the annotation that is currently shown in the
+     annotation area. */
+  activeAnnotationId: undefined,
 
-  /* when callig the updateMarkers() method this will be used to save an
-     array containing all annotations */
+  /* When callig the updateMarkers() method this will be used to save an
+     array containing all annotations. */
   annotations: null,
 
-  /* if the window width (in px) gets below this threshold value, hide the control bar
-  (default value) */
+  /* Saves a reference on the annotation manager */
+  annotationManager: null,
+
+  /* If the window width (in px) gets below this threshold value, hide the control bar
+  (default value). */
   hideControlBarThreshold: {
     x: 850,
     y: 500
   },
 
-  /* a boolean that helps to deactivate all key listeners
+  /* A boolean that helps to deactivate all key listeners
      for the time the annotation modal opens and the user
-     has to write text into the command box */
+     has to write text into the command box. */
   lockKeyListeners: false,
+
+  /* Saves the ID of the HTML element to which annotations are appended. */
+  markerBarID: undefined,
 
   /* When loading a player, it should save the medium id in this field for later use
      in different files. */
   mediumId: undefined,
 
-  /* Safes a reference on the video's seek bar. */
+  /* Saves a reference on the video's seek bar. */
   seekBar: undefined,
 
-  /* Safes a reference on the video itself */
+  /* Saves a reference on the video itself */
   video: undefined,
 
 };
