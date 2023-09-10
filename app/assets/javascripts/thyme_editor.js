@@ -43,8 +43,6 @@ $(document).on('turbolinks:load', function() {
   // Times
   var currentTime = document.getElementById('current-time');
   var maxTime = document.getElementById('max-time');
-  // ControlBar
-  var videoControlBar = document.getElementById('video-controlBar-edit');
   // Screenshot Canvas
   var canvas = document.getElementById('snapshot');
 

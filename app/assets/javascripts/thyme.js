@@ -365,8 +365,6 @@ $(document).on('turbolinks:load', function() {
   // Time
   const currentTime = document.getElementById('current-time');
   const maxTime = document.getElementById('max-time');
-  // ControlBar
-  const videoControlBar = document.getElementById('video-controlBar');
 
   // Manage large and small display
   function largeDisplayFunc() {

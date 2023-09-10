@@ -33,8 +33,6 @@ $(document).on('turbolinks:load', function() {
   // Time
   const currentTime = document.getElementById('current-time');
   const maxTime = document.getElementById('max-time');
-  // ControlBar
-  const videoControlBar = document.getElementById('video-controlBar');
   // below-area
   const toggleNoteAnnotations = document.getElementById('toggle-note-annotations-check');
   const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
