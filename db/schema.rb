@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_12_172632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -201,6 +201,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
     t.index ["sluggable_type"], name: "index_friendly_id_slugs_on_sluggable_type"
   end
 
+  create_table "has_seen_news_popups", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "news_popup_id", null: false
+    t.index ["news_popup_id"], name: "index_has_seen_news_popups_on_news_popup_id"
+    t.index ["user_id"], name: "index_has_seen_news_popups_on_user_id"
+  end
+
   create_table "imports", force: :cascade do |t|
     t.bigint "medium_id", null: false
     t.string "teachable_type", null: false
@@ -362,6 +369,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
     t.datetime "updated_at", precision: nil, null: false
     t.index ["medium_id"], name: "index_medium_tag_joins_on_medium_id"
     t.index ["tag_id"], name: "index_medium_tag_joins_on_tag_id"
+  end
+
+  create_table "news_popups", force: :cascade do |t|
+    t.text "name"
+    t.boolean "active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "notifications", force: :cascade do |t|
@@ -906,6 +920,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_27_124337) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
+  add_foreign_key "has_seen_news_popups", "news_popups"
+  add_foreign_key "has_seen_news_popups", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"

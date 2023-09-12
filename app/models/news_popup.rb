@@ -1,0 +1,2 @@
+class NewsPopup < ApplicationRecord
+end
