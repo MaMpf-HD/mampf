@@ -3,14 +3,6 @@
 */
 const thymeUtility = {
 
-  annotationIndex: function(annotation) {
-    for (let i = 0; i < thymeAttributes.annotations.length; i++) {
-      if (thymeAttributes.annotations[i].id == annotation.id) {
-        return i;
-      }
-    }
-  },
-
   // mixes all colors in the array "colors" (write colors as hexadecimal, e.g. "#1fe67d").
   colorMixer: function(colors) {
     let n = colors.length;
