@@ -93,7 +93,7 @@ $(document).on('turbolinks:load', function() {
   function resizeContainer() {
     resize.resizeContainer(thymeContainer, 1);
     if (thymeAttributes.annotations === null) {
-      annotationManager.updateAnnotations(true);
+      annotationManager.updateAnnotations();
     } else {
       annotationManager.updateMarkers();
     }

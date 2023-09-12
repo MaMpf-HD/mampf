@@ -32,6 +32,7 @@ class AnnotationManager {
     this.sizeFunc = sizeFunc;
     this.onClick = onClick;
     this.onUpdate = onUpdate;
+    this.isValid = isValid;
   }
 
 
@@ -57,17 +58,19 @@ class AnnotationManager {
     $('#' + thymeAttributes.markerBarID).empty();
     this.sortAnnotations();
     for (const a of thymeAttributes.annotations) {
-      function onClick() {
-        annotationManager.onClick(a);
+      if (this.isValid(a)) {
+        function onClick() {
+          annotationManager.onClick(a);
+        }
+        if (this.sizeFunc !== null && this.sizeFunc(a) === true) {
+          a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
+        } else {
+          a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
+        }
       }
-      if (this.sizeFunc !== null && this.sizeFunc(a) === true) {
-        a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
-      } else {
-        a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
-      }
-      // call additional function that is individual for each player
-      this.onUpdate();
     }
+    // call additional function that is individual for each player
+    this.onUpdate();
   }
 
   /*
@@ -75,20 +78,16 @@ class AnnotationManager {
     This method is e.g. used when a new annotation is being created.
     Don't mix up with updateMarkers() which just updates the position of the markers!
 
-      toggle = If true, teachers see all annotations that have been
-               made visible for teachers; otherwise they see only their own.
-
     onSucess = A function that is triggered when the annotations have been
                successfully updated.
   */
-  updateAnnotations(toggled) {
+  updateAnnotations() {
     const annotationManager = this;
     $.ajax(Routes.update_annotations_path(), {
       type: 'GET',
       dataType: 'json',
       data: {
         mediumId: thymeAttributes.mediumId,
-        toggled: toggled
       },
       success: function(annots) {
         // update the annotation field in thymeAttributes
@@ -96,7 +95,7 @@ class AnnotationManager {
         if (annots === null) {
           return;
         }
-        for (const a of annots) {
+        for (let a of annots) {
           thymeAttributes.annotations.push(new Annotation(a));
         }
         // update visual representation on the seek bar

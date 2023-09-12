@@ -402,6 +402,12 @@ $(document).on('turbolinks:load', function() {
     annotationArea.update(a);
   }
   function isValid(annotation) {
+    if (annotationsToggle.getValue() === false) {
+      const currentUserID = thyme.dataset.currentUserId;
+      if (annotation.userID != currentUserID) {
+        return false;
+      }
+    }
     return true;
   }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
@@ -432,7 +438,7 @@ $(document).on('turbolinks:load', function() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
     resize.resizeContainer(thymeContainer, factor);
     if (thymeAttributes.annotations === null) {
-      annotationManager.updateAnnotations(annotationsToggle.getValue());
+      annotationManager.updateAnnotations();
     } else {
       annotationManager.updateMarkers();
     }
@@ -479,7 +485,7 @@ $(document).on('turbolinks:load', function() {
        I couldn't think of an easy way to let the script
        wait for the update to complete (as with the delete button),
        but it might be possible! */
-    setTimeout(annotationManager.updateAnnotations(annotationsToggle.getValue()), 500);
+    setTimeout(annotationManager.updateAnnotations(), 500);
   });
 
   // Update annotations after deleting an annotation
@@ -492,7 +498,7 @@ $(document).on('turbolinks:load', function() {
         annotationId: annotationId
       },
       success: function() {
-        annotationManager.updateAnnotations(annotationsToggle.getValue(), null);
+        annotationManager.updateAnnotations();
         $('#annotation-close-button').click();
       }
     });
