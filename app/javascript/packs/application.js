@@ -52,4 +52,22 @@ document.addEventListener("turbolinks:load", function () {
     $('.masonry-grid').masonry({
         percentPosition: true
     });
+
+    checkForNewsPopups();
 })
+
+function checkForNewsPopups() {
+    $.ajax({
+        url: Routes.news_popups_path(),
+        type: 'GET',
+        dataType: 'json',
+        success: (data) => {
+            console.log(data);
+        },
+        error: (xhr, status) => {
+            console.log('ERROR fetching news popups');
+            console.log(xhr);
+            console.log(status);
+        }
+    })
+}
