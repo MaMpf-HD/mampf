@@ -54,20 +54,42 @@ document.addEventListener("turbolinks:load", function () {
     });
 
     checkForNewsPopups();
-})
+});
+
+const NEWS_POPUPS_BASE_PATH = '/news_popups/';
 
 function checkForNewsPopups() {
-    $.ajax({
+    $.get({
         url: Routes.news_popups_path(),
         type: 'GET',
         dataType: 'json',
-        success: (data) => {
-            console.log(data);
+        success: (popupNames) => {
+            console.log(`Found unread news popups: ${popupNames}`);
+            openNewsPopups(popupNames);
         },
         error: (xhr, status) => {
             console.log('ERROR fetching news popups');
             console.log(xhr);
             console.log(status);
         }
-    })
+    });
+}
+
+function openNewsPopups(popupNames) {
+    for (const popupName of popupNames) {
+        console.log(`Opening news popup: ${popupName}`)
+        $.ajax({
+            url: NEWS_POPUPS_BASE_PATH + popupName + '.html',
+            type: 'GET',
+            dataType: 'html',
+            success: (html, textStatus, xhr) => {
+                console.log(`News popup (${popupName}): ${html}`);
+            },
+            error: (xhr, status) => {
+                console.log(`ERROR getting HTML for news popup: ${popupName}`);
+                console.log(xhr);
+                console.log(status);
+            }
+        })
+    }
 }
