@@ -14,14 +14,19 @@ class AnnotationManager {
                       a boolean that is true if and only if the marker
                       corresponding to the annotation should be big.
 
-            onClick = A function that takes an annotation as parameter and
+            onClick = A function that takes an annotation as argument and
                       which is triggered when the corresponding marker is
                       clicked.
 
            onUpdate = A function that is triggered when the annotations
                       have been updated.
+
+            isValid = A function that takes an annotation as argument and
+                      returns a boolean. If and only if it returns true,
+                      the given annotation is viualized by this annotation
+                      manager.
    */
-  constructor(colorFunc, strokeColorFunc, sizeFunc, onClick, onUpdate) {
+  constructor(colorFunc, strokeColorFunc, sizeFunc, onClick, onUpdate, isValid) {
     this.colorFunc = colorFunc;
     this.strokeColorFunc = strokeColorFunc;
     this.sizeFunc = sizeFunc;
@@ -60,6 +65,8 @@ class AnnotationManager {
       } else {
         a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
       }
+      // call additional function that is individual for each player
+      this.onUpdate();
     }
   }
 
@@ -94,8 +101,6 @@ class AnnotationManager {
         }
         // update visual representation on the seek bar
         annotationManager.updateMarkers();
-        // call additional function that is individual for each player
-        annotationManager.onUpdate();
       }
     });
   }

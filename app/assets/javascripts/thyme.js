@@ -336,8 +336,8 @@ $(document).on('turbolinks:load', function() {
     return;
   }
   // Video
-  thymeAttributes.video = document.getElementById('video');
-  const video = thymeAttributes.video;
+  const video = document.getElementById('video');
+  thymeAttributes.video = video;
   const thyme = document.getElementById('thyme');
   // initialize medium id
   thymeAttributes.mediumId = thyme.dataset.medium;
@@ -380,13 +380,12 @@ $(document).on('turbolinks:load', function() {
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
   const displayManager = new DisplayManager(elements, largeDisplayFunc);
 
-  // annotation area
-  const annotationArea = new AnnotationArea(true);
-  thymeAttributes.annotationArea = annotationArea;
-  // annotation manager
+  // annotation manager and area
   function colorFunc(annotation) {
     return annotation.color;
   }
+  const annotationArea = new AnnotationArea(true, colorFunc);
+  thymeAttributes.annotationArea = annotationArea;
   function strokeColorFunc(annotation) {
     return 'black';
   }
@@ -402,8 +401,11 @@ $(document).on('turbolinks:load', function() {
     const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
     annotationArea.update(a);
   }
+  function isValid(annotation) {
+    return true;
+  }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
-                                                  onClick, onUpdate);
+                                                  onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
   // onShow and onUpdate definition for the annotation area
   function onShow() {

@@ -7,12 +7,14 @@ class Heatmap {
   static RADIUS = 10; // this number adjusts the radius of the peaks of the heatmap
 
   /*
-    categories = an array which contains all the categories (i.e. the string representing
+    categories = An array which contains all the categories (i.e. the string representing
                  the categories) that should be displayed in the heatmap.
   */
   constructor(categories) {
     this.categories = categories;
   }
+
+
 
   draw() {
     if (thymeAttributes.annotations === null) {
@@ -46,9 +48,9 @@ class Heatmap {
       const valid = this.#validCategory(a.category) &&
                     a.category !== "mistake"; // <- don't include mistake annotations
       if (valid === true) {
-        colors.push(thymeUtility.annotationColor(a.category));
+        colors.push(a.categoryColor());
       }
-      const time = thymeUtility.timestampToSeconds(a.timestamp);
+      const time = a.seconds;
       const position = Math.round(width * (time / video.duration));
       for (let x = position - Heatmap.RADIUS; x <= position + Heatmap.RADIUS; x++) {
         let y = Heatmap.#sinX(x, position, Heatmap.RADIUS);
@@ -80,6 +82,22 @@ class Heatmap {
     const offset = $('#heatmap').parent().offset().left - Heatmap.RADIUS + 79;
     $('#heatmap').offset({ left: offset });
     $('#heatmap').css('top', -maxHeight - 4); // vertical offset
+  }
+
+  addCategory(category) {
+    if (this.categories.includes(category)) {
+      return;
+    } else {
+      this.categories.push(category);
+    }
+  }
+
+  removeCategory(category) {
+    for (let i = 0; i < this.categories.length; i++) {
+      if (this.categories[i] === category) {
+        this.categories.splice(i, 1);
+      }
+    }
   }
 
 

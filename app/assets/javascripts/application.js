@@ -50,6 +50,7 @@
 //= require terms
 //= require tex_preview
 //= require thyme/buttons/button
+//= require thyme/buttons/annotation_category_toggle
 //= require thyme/buttons/annotations_toggle
 //= require thyme/buttons/emergency_button
 //= require thyme/buttons/full_screen_button

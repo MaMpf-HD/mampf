@@ -6,10 +6,11 @@ class AnnotationArea {
   /*
     fancyStyle = If true, all buttons are shown, if false, only previous, goto and next are shown.
    */
-  constructor(fancyStyle) {
+  constructor(fancyStyle, colorFunc) {
     this.isActive       = false;
     this.onShow         = null; // a function triggered when the modal is shown
     this.onHide         = null; // a function triggered when the modal is hidden
+    this.colorFunc      = colorFunc;
     this.fancyStyle     = fancyStyle;
 
     this.caption        = $('#annotation-caption');
@@ -60,7 +61,7 @@ class AnnotationArea {
       return;
     }
     // update info and comment field
-    this.#updateInfoAndCommentField(annotation);
+    this.#updateInfoAndCommentField(annotation, this.colorFunc(annotation));
     // update buttons
     this.#updatePreviousButton(annotation);
     this.#updateNextButton(annotation);
@@ -79,12 +80,12 @@ class AnnotationArea {
   /*
     AUXILIARY METHODS
    */
-  #updateInfoAndCommentField(annotation) {
+  #updateInfoAndCommentField(annotation, color) {
     thymeAttributes.activeAnnotationId = annotation.id;
     const head = annotation.categoryLocale();
     const comment = annotation.comment.replaceAll('\n', '<br>');
-    const headColor = thymeUtility.lightenUp(annotation.color, 2);
-    const backgroundColor = thymeUtility.lightenUp(annotation.color, 3);
+    const headColor = thymeUtility.lightenUp(color, 2);
+    const backgroundColor = thymeUtility.lightenUp(color, 3);
     this.inforBar.empty().append(head);
     this.inforBar.css('background-color', headColor);
     this.inforBar.css('text-align', 'center');
