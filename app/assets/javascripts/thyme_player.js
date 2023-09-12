@@ -537,15 +537,8 @@ $(document).on('turbolinks:load', function() {
     $(iaButton).trigger('click');
   });
   
-  // if videometadata have been loaded, set up video length
-  video.addEventListener('loadedmetadata', function() {
-    const maxTime = document.getElementById('max-time');
-    maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
-    if (video.dataset.time != null) {
-      const time = video.dataset.time;
-      video.currentTime = time;
-    }
-  });
+  // set up max time label on the right side of the seek bar
+  thymeUtility.setUpMaxTime('max-time');
 
   thymeUtility.playOnClick();
   video.addEventListener('click', function() {

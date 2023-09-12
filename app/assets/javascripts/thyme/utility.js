@@ -3,7 +3,9 @@
 */
 const thymeUtility = {
 
-  // mixes all colors in the array "colors" (write colors as hexadecimal, e.g. "#1fe67d").
+  /*
+    Mixes all colors in the array "colors" (write colors as hexadecimal, e.g. "#1fe67d").
+   */
   colorMixer: function(colors) {
     let n = colors.length;
     let red = 0;
@@ -22,9 +24,11 @@ const thymeUtility = {
                  thymeUtility.toHexaDecimal(red);
   },
 
-  /* lightens up a given color (given in a string in hexadecimal
+  /*
+     Lightens up a given color (given in a string in hexadecimal
      representation "#xxyyzz") such that e.g. black becomes dark grey.
-     The higher the value of "factor" the brighter the colors become. */
+     The higher the value of "factor" the brighter the colors become.
+   */
   lightenUp: function(color, factor) {
     const red = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(5, 2))) / factor);
     const green = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(3, 2))) / factor);
@@ -34,7 +38,9 @@ const thymeUtility = {
                  thymeUtility.toHexaDecimal(red);
   },
 
-  /* installs a listener which lets the video play/pause when clicked */
+  /*
+    Installs a listener which lets the video play/pause when clicked.
+   */
   playOnClick() {
     const video = thymeAttributes.video;
     video.addEventListener('click', function() {
@@ -46,7 +52,9 @@ const thymeUtility = {
     });
   },
 
-  // renders latex in a given HTML element
+  /*
+    Renders latex in a given HTML element.
+   */
   renderLatex: function(element) {
     renderMathInElement(element, {
       delimiters: [
@@ -72,20 +80,44 @@ const thymeUtility = {
     });
   },
 
-  // convert time in seconds to string of the form H:MM:SS
+  /*
+    Convert time in seconds to string of the form H:MM:SS.
+   */
   secondsToTime: function(seconds) {
     let date = new Date(null);
     date.setSeconds(seconds);
     return date.toISOString().substr(12, 7);
   },
 
-  /* converts a json timestamp into a double value containing the absolute value of seconds */
+  /*
+    Sets up the label on the right side of the seek bar which displays
+    the maximum time of the video.
+    (In order to make this work, we have to wait for the video's metadata
+    to be loaded.)
+   */
+  setUpMaxTime(maxTimeID) {
+    const video = thymeAttributes.video;
+    video.addEventListener('loadedmetadata', function() {
+      const maxTime = document.getElementById(maxTimeID);
+      maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
+      if (video.dataset.time != null) {
+        const time = video.dataset.time;
+        video.currentTime = time;
+      }
+    });
+  },
+
+  /*
+    Converts a json timestamp into a double value containing the absolute value of seconds.
+   */
   timestampToSeconds: function(timestamp) {
     return 3600 * timestamp.hours + 60 * timestamp.minutes + timestamp.seconds + 0.001 * timestamp.milliseconds;
   },
 
-  /* converts a given integer between 0 and 255 into a hexadecimal, s.t. e.g. "15" becomes "0f"
-     (instead of just "f") -> needed for correct format */
+  /*
+    Converts a given integer between 0 and 255 into a hexadecimal, s.t. e.g. "15" becomes "0f"
+    (instead of just "f") -> needed for correct format.
+   */
   toHexaDecimal: function(int) {
     if (int > 15) {
       return int.toString(16);
