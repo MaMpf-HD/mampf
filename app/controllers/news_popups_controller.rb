@@ -1,7 +1,7 @@
 class NewsPopupsController < ApplicationController
   def index
     respond_to do |format|
-      format.json { render json: unseen_news_popups.to_json(except: :id) }
+      format.json { render json: unseen_news_popups.pluck(:name) }
     end
   end
 
