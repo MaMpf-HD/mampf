@@ -1,27 +1,25 @@
-// set up everything: read out track data and initialize html elements
-function setupHypervideoF() {
-  const video = $('#video').get(0);
-  if (video === null) {
+$(document).on('turbolinks:load', function() {
+
+  /*
+    VIDEO INITIALIZATION
+   */
+  // exit script if the current page is no thyme player
+  const thymeContainer = document.getElementById('thyme-feedback');
+  if (thymeContainer === null || $('#video').get(0) === null) {
     return;
   }
   document.body.style.backgroundColor = 'black';
-};
-
-$(document).on('turbolinks:load', function() {
-  const thymeContainer = document.getElementById('thyme-feedback');
-  // no need for thyme if no thyme container on the page
-  if (thymeContainer === null) {
-    return;
-  }
-  // Video
+  // initialize attributes
   const video = document.getElementById('video');
   thymeAttributes.video = video;
-  const thyme = document.getElementById('thyme');
-  // initialize medium id
-  thymeAttributes.mediumId = thyme.dataset.medium;
-  // initialize marker bar
+  thymeAttributes.mediumId = document.getElementById('thyme').dataset.medium;
   thymeAttributes.markerBarID = 'feedback-markers';
 
+
+
+  /*
+    PLAYER CONTENT
+   */
   // Buttons
   (new PlayButton('play-pause')).add();
   (new MuteButton('mute')).add();
@@ -32,31 +30,34 @@ $(document).on('turbolinks:load', function() {
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
 
+  // reset faders
+  video.currentTime = 0;
+  video.volume = 1;
+
   // heatmap
-  const heatmap = new Heatmap(['presentation', 'content', 'note']);
+  const heatmap = new Heatmap('heatmap', ['presentation', 'content', 'note']);
 
   // below-area
   const toggleMistakeAnnotations = new AnnotationCategoryToggle(
-    'toggle-mistake-annotations', 'mistake', heatmap);
+    'toggle-mistake-annotations', 'mistake', null); // <- don't draw mistake annotations in the heatmap
   const togglePresentationAnnotations = new AnnotationCategoryToggle(
     'toggle-presentation-annotations', 'presentation', heatmap);
   const toggleContentAnnotations = new AnnotationCategoryToggle(
     'toggle-content-annotations', 'content', heatmap);
   const toggleNoteAnnotations = new AnnotationCategoryToggle(
     'toggle-note-annotations', 'note', heatmap);
-
   toggleMistakeAnnotations.add();
   togglePresentationAnnotations.add();
   toggleContentAnnotations.add();
   toggleNoteAnnotations.add();
-
   const toggles = [toggleMistakeAnnotations, togglePresentationAnnotations,
                    toggleContentAnnotations, toggleNoteAnnotations];
 
-  // reset faders
-  video.currentTime = 0;
-  video.volume = 1;
+  
 
+  /*
+    ANNOTATION FUNCTIONALITY
+   */
   // annotation manager and area
   function colorFunc(annotation) {
     return annotation.categoryColor();
@@ -73,7 +74,7 @@ $(document).on('turbolinks:load', function() {
     annotationArea.update(annotation);
   }
   function onUpdate() {
-    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
+    const a = AnnotationManager.find(thymeAttributes.activeAnnotationID);
     annotationArea.update(a);
     heatmap.draw();
   }
@@ -89,6 +90,21 @@ $(document).on('turbolinks:load', function() {
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
 
+
+
+  /*
+    KEYBOARD SHORTCUTS
+   */
+  thymeKeyShortcuts.addGeneralShortcuts();
+  thymeKeyShortcuts.addFeedbackShortcuts();
+
+
+
+  /*
+    MISC
+   */
+  thymeUtility.playOnClick();
+  
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
     resize.resizeContainer(thymeContainer, 1);
@@ -98,6 +114,8 @@ $(document).on('turbolinks:load', function() {
       annotationManager.updateMarkers();
     }
   };
+  window.onresize = resizeContainer;
+  video.onloadedmetadata = resizeContainer;
 
   // if videometadata have been loaded, set up video length
   video.addEventListener('loadedmetadata', function() {
@@ -108,22 +126,5 @@ $(document).on('turbolinks:load', function() {
       video.currentTime = time;
     }
   });
-
-  setupHypervideoF();
-  window.onresize = resizeContainer;
-  video.onloadedmetadata = resizeContainer;
-
-  video.addEventListener('click', function() {
-    if (video.paused === true) {
-      video.play();
-    } else {
-      video.pause();
-    }
-    showControlBar();
-  });
-
-  // Add keyboard shortcuts from thyme/key.js
-  thymeKeyShortcuts.addGeneralShortcuts();
-  thymeKeyShortcuts.addFeedbackShortcuts();
 
 });

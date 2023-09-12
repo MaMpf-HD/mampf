@@ -52,6 +52,18 @@ const thymeUtility = {
                  thymeUtility.toHexaDecimal(red);
   },
 
+  /* installs a listener which lets the video play/pause when clicked */
+  playOnClick() {
+    const video = thymeAttributes.video;
+    video.addEventListener('click', function() {
+      if (video.paused === true) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    });
+  },
+
   // renders latex in a given HTML element
   renderLatex: function(element) {
     renderMathInElement(element, {

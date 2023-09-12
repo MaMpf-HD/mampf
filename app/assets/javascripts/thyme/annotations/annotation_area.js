@@ -81,7 +81,7 @@ class AnnotationArea {
     AUXILIARY METHODS
    */
   #updateInfoAndCommentField(annotation, color) {
-    thymeAttributes.activeAnnotationId = annotation.id;
+    thymeAttributes.activeAnnotationID = annotation.id;
     const head = annotation.categoryLocale();
     const comment = annotation.comment.replaceAll('\n', '<br>');
     const headColor = thymeUtility.lightenUp(color, 2);
@@ -154,7 +154,7 @@ class AnnotationArea {
     const area = this; // need a reference inside the listener scope!
     this.closeButton.off('click');
     this.closeButton.on('click', function() {
-      thymeAttributes.activeAnnotationId = undefined;
+      thymeAttributes.activeAnnotationID = undefined;
       area.hide();
     });
   }

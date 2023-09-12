@@ -7,10 +7,13 @@ class Heatmap {
   static RADIUS = 10; // this number adjusts the radius of the peaks of the heatmap
 
   /*
+            id = The ID of the HTML element to which the heatmap will be appended.
+
     categories = An array which contains all the categories (i.e. the string representing
                  the categories) that should be displayed in the heatmap.
   */
-  constructor(categories) {
+  constructor(id, categories) {
+    this.heatmap = $('#' + id);
     this.categories = categories;
   }
 
@@ -20,7 +23,7 @@ class Heatmap {
     if (thymeAttributes.annotations === null) {
       return;
     }
-    $('#heatmap').empty();
+    this.heatmap.empty();
 
     /*
        variable definitions
@@ -45,8 +48,7 @@ class Heatmap {
        data calculation
     */
     for (const a of thymeAttributes.annotations) {
-      const valid = this.#validCategory(a.category) &&
-                    a.category !== "mistake"; // <- don't include mistake annotations
+      const valid = this.#validCategory(a.category);
       if (valid === true) {
         colors.push(a.categoryColor());
       }
@@ -78,10 +80,10 @@ class Heatmap {
                            'stroke:black;' +
                            'stroke-width:1"/>' +
                        '</svg>';
-    $('#heatmap').append(heatmapStr);
-    const offset = $('#heatmap').parent().offset().left - Heatmap.RADIUS + 79;
-    $('#heatmap').offset({ left: offset });
-    $('#heatmap').css('top', -maxHeight - 4); // vertical offset
+    this.heatmap.append(heatmapStr);
+    const offset = this.heatmap.parent().offset().left - Heatmap.RADIUS + 79;
+    this.heatmap.offset({ left: offset });
+    this.heatmap.css('top', -maxHeight - 4); // vertical offset
   }
 
   addCategory(category) {

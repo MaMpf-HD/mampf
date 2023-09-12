@@ -18,13 +18,13 @@ class AnnotationCategoryToggle extends Button  {
     const heatmap = this.heatmap;
 
     check.addEventListener('click', function() {
-      if (toggle.getValue() === true) {
-        heatmap.addCategory(category);
-        thymeAttributes.annotationManager.updateAnnotations();
-        heatmap.draw();
-      } else {
-        heatmap.removeCategory(category);
-        thymeAttributes.annotationManager.updateAnnotations();
+      thymeAttributes.annotationManager.updateAnnotations();
+      if (heatmap != null) {
+        if (toggle.getValue() === true) {
+          heatmap.addCategory(category);
+        } else {
+          heatmap.removeCategory(category);
+        }
         heatmap.draw();
       }
     });

@@ -398,7 +398,7 @@ $(document).on('turbolinks:load', function() {
     annotationArea.show();
   }
   function onUpdate() {
-    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
+    const a = AnnotationManager.find(thymeAttributes.activeAnnotationID);
     annotationArea.update(a);
   }
   function isValid(annotation) {
@@ -547,12 +547,8 @@ $(document).on('turbolinks:load', function() {
     }
   });
 
+  thymeUtility.playOnClick();
   video.addEventListener('click', function() {
-    if (video.paused === true) {
-      video.play();
-    } else {
-      video.pause();
-    }
     showControlBar();
   });
 

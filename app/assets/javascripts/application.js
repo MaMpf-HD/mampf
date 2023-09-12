@@ -72,7 +72,7 @@
 //= require thyme/heatmap
 //= require thyme/key_shortcuts
 //= require thyme/utility
-//= require thyme/resize_container
+//= require thyme/resize
 //= require thyme_player
 //= require thyme_editor
 //= require thyme_feedback

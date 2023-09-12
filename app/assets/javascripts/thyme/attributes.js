@@ -9,7 +9,7 @@ const thymeAttributes = {
 
   /* Helps to find the annotation that is currently shown in the
      annotation area. */
-  activeAnnotationId: undefined,
+  activeAnnotationID: undefined,
 
   /* Saves a reference on the annotation area. */
   annotationArea: null,
