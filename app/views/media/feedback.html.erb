@@ -45,32 +45,7 @@
           </div>
         </div>
       </div>
-      <figcaption id="annotation-caption">
-        <div id="annotation-infobar">
-          <!--- ANNOTATION CATEGORY -->
-        </div>
-        <div id="annotation-comment">
-          <!--- ANNOTATION COMMENT -->
-        </div>
-        <!--- ANNOTATION AREA BUTTONS -->
-        <div id="annotation-buttons">
-          <i id="annotation-previous-button"
-             class="fa fa-arrow-left fa-lg clickable"
-             data-toggle="tooltip"
-             title="previous annotation">
-          </i>
-          <i id="annotation-goto-button"
-             class="fa fa-map-marker fa-lg clickable"
-             data-toggle="tooltip"
-             title="go to the annotation's position">
-          </i>
-          <i id="annotation-next-button"
-             class="fa fa-arrow-right fa-lg clickable"
-             data-toggle="tooltip"
-             title="next annotation">
-          </i>
-        </div>
-      </figcaption>
+      <%= render partial: "annotations/annotation_area" %>
     </figure>
     <div id="below-area">
       <div id="toggles">

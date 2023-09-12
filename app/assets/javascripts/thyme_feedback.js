@@ -43,17 +43,28 @@ $(document).on('turbolinks:load', function() {
   video.currentTime = 0;
   video.volume = 1;
 
-  // Annotation Manager
+  // annotation area
+  const annotationArea = new AnnotationArea(false);
+  thymeAttributes.annotationArea = annotationArea;
+  // annotation manager
   function colorFunc(annotation) {
     return annotation.categoryColor();
   }
   function strokeColorFunc(annotation) {
-    return annotation.category == 'mistake' ? 'darkred' : 'black';
+    return annotation.category === 'mistake' ? 'darkred' : 'black';
   }
   function sizeFunc(annotation) {
-    return annotation.category == 'mistake' ? true : false;
+    return annotation.category === 'mistake' ? true : false;
   }
-  annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc);
+  function onClick(annotation) {
+    annotationArea.update(annotation);
+  }
+  function onUpdate() {
+    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
+    annotationArea.update(a);
+  }
+  const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
+                                                  onClick, onUpdate);
   thymeAttributes.annotationManager = annotationManager;
 
   // resizes the thyme container to the window dimensions

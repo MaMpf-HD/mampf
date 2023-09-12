@@ -11,6 +11,9 @@ const thymeAttributes = {
      annotation area. */
   activeAnnotationId: undefined,
 
+  /* Saves a reference on the annotation area. */
+  annotationArea: null,
+
   /* When callig the updateMarkers() method this will be used to save an
      array containing all annotations. */
   annotations: null,

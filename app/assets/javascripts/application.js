@@ -62,8 +62,9 @@
 //= require thyme/buttons/seek_bar
 //= require thyme/buttons/speed_selector
 //= require thyme/buttons/volume_bar
-//= require thyme/annotation
-//= require thyme/annotation_manager
+//= require thyme/annotations/annotation
+//= require thyme/annotations/annotation_area
+//= require thyme/annotations/annotation_manager
 //= require thyme/attributes
 //= require thyme/chapters
 //= require thyme/display_manager

@@ -380,7 +380,10 @@ $(document).on('turbolinks:load', function() {
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
   const displayManager = new DisplayManager(elements, largeDisplayFunc);
 
-  // Annotation Manager
+  // annotation area
+  const annotationArea = new AnnotationArea(true);
+  thymeAttributes.annotationArea = annotationArea;
+  // annotation manager
   function colorFunc(annotation) {
     return annotation.color;
   }
@@ -390,8 +393,36 @@ $(document).on('turbolinks:load', function() {
   function sizeFunc(annotation) {
     return false;
   }
-  annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc);
+  function onClick(annotation) {
+    $('#caption').hide();
+    annotationArea.update(annotation);
+    annotationArea.show();
+  }
+  function onUpdate() {
+    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
+    annotationArea.update(a);
+  }
+  const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
+                                                  onClick, onUpdate);
   thymeAttributes.annotationManager = annotationManager;
+  // onShow and onUpdate definition for the annotation area
+  function onShow() {
+    video.style.width = '82%';
+    $('#video-controlBar').css('width', '82%');
+    iaButton.innerHTML = 'add_to_queue';
+    iaButton.dataset.status = 'true';
+    annotationManager.updateMarkers();
+  }
+  function onHide() {
+    video.style.width = '100%';
+    $('#video-controlBar').css('width', '100%');
+    iaButton.innerHTML = 'remove_from_queue';
+    iaButton.dataset.status = 'false';
+    annotationManager.updateMarkers();
+    resizeContainer();
+  }
+  annotationArea.onShow = onShow;
+  annotationArea.onHide = onHide;
 
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden

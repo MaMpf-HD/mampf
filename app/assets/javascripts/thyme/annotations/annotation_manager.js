@@ -13,11 +13,20 @@ class AnnotationManager {
            sizeFunc = A function which takes an annotation and returns
                       a boolean that is true if and only if the marker
                       corresponding to the annotation should be big.
+
+            onClick = A function that takes an annotation as parameter and
+                      which is triggered when the corresponding marker is
+                      clicked.
+
+           onUpdate = A function that is triggered when the annotations
+                      have been updated.
    */
-  constructor(colorFunc, strokeColorFunc, sizeFunc) {
+  constructor(colorFunc, strokeColorFunc, sizeFunc, onClick, onUpdate) {
     this.colorFunc = colorFunc;
     this.strokeColorFunc = strokeColorFunc;
     this.sizeFunc = sizeFunc;
+    this.onClick = onClick;
+    this.onUpdate = onUpdate;
   }
 
 
@@ -39,14 +48,17 @@ class AnnotationManager {
     in the database.
   */
   updateMarkers() {
-    const markerBar = $('#' + thymeAttributes.markerBarID);
-    markerBar.empty();
+    const annotationManager = this;
+    $('#' + thymeAttributes.markerBarID).empty();
     this.sortAnnotations();
     for (const a of thymeAttributes.annotations) {
+      function onClick() {
+        annotationManager.onClick(a);
+      }
       if (this.sizeFunc !== null && this.sizeFunc(a) === true) {
-        a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a));
+        a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
       } else {
-        a.createMarker(this.colorFunc(a), this.strokeColorFunc(a));
+        a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
       }
     }
   }
@@ -56,8 +68,11 @@ class AnnotationManager {
     This method is e.g. used when a new annotation is being created.
     Don't mix up with updateMarkers() which just updates the position of the markers!
 
-    toggle = If true, teachers see all annotations that have been
-             made visible for teachers; otherwise they see only their own.
+      toggle = If true, teachers see all annotations that have been
+               made visible for teachers; otherwise they see only their own.
+
+    onSucess = A function that is triggered when the annotations have been
+               successfully updated.
   */
   updateAnnotations(toggled) {
     const annotationManager = this;
@@ -79,13 +94,26 @@ class AnnotationManager {
         }
         // update visual representation on the seek bar
         annotationManager.updateMarkers();
-
-        // TODO: update annotation area -> this is player specific
-        // and should be done in the player script!
-
-        // TODO heatmap !!!
+        // call additional function that is individual for each player
+        annotationManager.onUpdate();
       }
     });
+  }
+
+  /*
+    Finds the annotation with the given ID in thymeAttributes.annotations.
+    Returns null if it doesn't exist.
+   */
+  static find(id) {
+    if (thymeAttributes.annotations == null) {
+      return null;
+    }
+    for (let a of thymeAttributes.annotations) {
+      if (a.id === id) {
+        return a;
+      }
+    }
+    return null;
   }
 
 }
