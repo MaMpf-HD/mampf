@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_12_172632) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_12_193144) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -204,7 +204,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_12_172632) do
   create_table "has_seen_news_popups", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "news_popup_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["news_popup_id"], name: "index_has_seen_news_popups_on_news_popup_id"
+    t.index ["user_id", "news_popup_id"], name: "index_has_seen_news_popups_on_user_id_and_news_popup_id", unique: true
     t.index ["user_id"], name: "index_has_seen_news_popups_on_user_id"
   end
 
