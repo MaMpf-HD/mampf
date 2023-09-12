@@ -844,6 +844,8 @@ Rails.application.routes.draw do
       to: 'erdbeere#fill_realizations_select',
       as: 'fill_realizations_select'
 
+  # News popups routes
+  resources :news_popups, only: [:index]
 
   # main routes
 
