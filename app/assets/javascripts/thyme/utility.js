@@ -11,16 +11,6 @@ const thymeUtility = {
     }
   },
 
-  // DELETE ONCE ANNOTATION_MANAGERS ARE INSTALLED
-  annotationSort: function() {
-    if (thymeAttributes.annotations === null) {
-      return;
-    }
-    thymeAttributes.annotations.sort(function(ann1, ann2) {
-      return ann1.seconds - ann2.seconds;
-    });
-  },
-
   // mixes all colors in the array "colors" (write colors as hexadecimal, e.g. "#1fe67d").
   colorMixer: function(colors) {
     let n = colors.length;
