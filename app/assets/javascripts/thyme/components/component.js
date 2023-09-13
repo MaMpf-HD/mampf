@@ -1,8 +1,8 @@
 /**
-  The basic button class from which every thyme related button (slider, selector, etc.)
+  The basic component class from which every thyme related components (slider, selector, etc.)
   should be a subclass.
 */
-class Button {
+class Component {
 
   /*
     element = The id of the HTML element associated to this button.

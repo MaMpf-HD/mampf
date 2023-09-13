@@ -1,4 +1,4 @@
-class SpeedSelector extends Button {
+class SpeedSelector extends Component {
 
   constructor(element) {
     super(element);

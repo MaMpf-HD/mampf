@@ -362,7 +362,7 @@ $(document).on('turbolinks:load', function() {
   (new MinusTenButton('minus-ten')).add();
   (new MuteButton('mute')).add();
   (new NextChapterButton('next-chapter')).add();
-  (new PlayButton('play-pause')).add();  
+  (new PlayButton('play-pause')).add();
   (new PlusTenButton('plus-ten')).add();
   (new PreviousChapterButton('previous-chapter')).add();
   (new SpeedSelector('speed')).add();
@@ -459,7 +459,16 @@ $(document).on('turbolinks:load', function() {
     });
   });
 
-  
+
+
+  /*
+    INTERACTIVE AREA
+   */
+  //TODO
+  //const interactiveArea = new InteractiveArea();
+  //thymeAttributes.interactiveArea = interactiveArea;
+
+
 
   /*
     RESIZE
@@ -501,6 +510,9 @@ $(document).on('turbolinks:load', function() {
 
 
 
+  /*
+    MISC
+   */
   // detect IE/edge and inform user that they are not suppported if necessary,
   // only use browser player
   if (document.documentMode || /Edge/.test(navigator.userAgent)) {
@@ -528,10 +540,17 @@ $(document).on('turbolinks:load', function() {
 
   idleHideControlBar();
 
-  // if mouse is moved or screen is toiched, show control bar
+  // if mouse is moved or screen is toched, show control bar
   video.addEventListener('mouseover', showControlBar, false);
   video.addEventListener('mousemove', showControlBar, false);
   video.addEventListener('touchstart', showControlBar, false);
+  // aditional click listeners
+  video.addEventListener('click', function() {
+    showControlBar();
+  });
+  thymeUtility.playOnClick();
+  // set up max time label on the right side of the seek bar
+  thymeUtility.setUpMaxTime('max-time');
 
   // Event handler for interactive area activation button
   iaButton.addEventListener('click', function() {
@@ -564,14 +583,6 @@ $(document).on('turbolinks:load', function() {
   // Event handler for close interactive area button
   iaClose.addEventListener('click', function() {
     $(iaButton).trigger('click');
-  });
-  
-  // set up max time label on the right side of the seek bar
-  thymeUtility.setUpMaxTime('max-time');
-
-  thymeUtility.playOnClick();
-  video.addEventListener('click', function() {
-    showControlBar();
   });
 
 });

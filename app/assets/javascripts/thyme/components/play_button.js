@@ -1,4 +1,4 @@
-class PlayButton extends Button  {
+class PlayButton extends Component {
 
   add() {
     const video = thymeAttributes.video;

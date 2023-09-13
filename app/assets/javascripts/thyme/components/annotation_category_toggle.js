@@ -1,7 +1,7 @@
-class AnnotationCategoryToggle extends Button  {
+class AnnotationCategoryToggle extends Component {
 
   /*
-     element = A reference on the element (via document.getElementByID()).
+     element = A reference on the HTML component (via document.getElementByID()).
     category = The name of the category this toggle triggers.
      heatmap = The heatmap that will be updated depending on the value of the toggle.
    */

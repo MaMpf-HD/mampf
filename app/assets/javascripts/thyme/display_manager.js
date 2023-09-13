@@ -7,10 +7,10 @@ class DisplayManager {
   constructor(elements, func) {
     /*
       elements = An array containing JQuery references on the HTML elements
-                 that should be hidden, when the display is too small.
+                   that should be hidden, when the display is too small.
 
           func = A reference on a function that is called when the display
-                 changes from small to large. Use this for player specific behaviour.
+                   changes from small to large. Use this for player specific behaviour.
      */
     this.elements = elements;
     this.func = func;

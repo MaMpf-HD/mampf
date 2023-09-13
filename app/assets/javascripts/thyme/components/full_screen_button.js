@@ -1,4 +1,5 @@
-class FullScreenButton extends Button  {
+class FullScreenButton extends Component {
+
   constructor(element, container) {
     super(element);
     this.container = container;
@@ -68,4 +69,5 @@ class FullScreenButton extends Button  {
       }
     };
   }
+  
 }

@@ -1,4 +1,4 @@
-class VolumeBar extends Button  {
+class VolumeBar extends Component {
 
   add() {
     const video = thymeAttributes.video;

@@ -1,4 +1,4 @@
-class PreviousChapterButton extends Button  {
+class PreviousChapterButton extends Component {
 
   add() {
     const video = thymeAttributes.video;

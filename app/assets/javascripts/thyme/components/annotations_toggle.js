@@ -1,4 +1,4 @@
-class AnnotationsToggle extends Button  {
+class AnnotationsToggle extends Component {
 
   constructor(element) {
     super(element);

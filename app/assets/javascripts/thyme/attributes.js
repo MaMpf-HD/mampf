@@ -24,6 +24,9 @@ const thymeAttributes = {
     y: 500
   },
 
+  /* Saves a reference on the interactive area. */
+  interactiveArea: null,
+
   /* A boolean that helps to deactivate all key listeners
      for the time the annotation modal opens and the user
      has to write text into the command box. */

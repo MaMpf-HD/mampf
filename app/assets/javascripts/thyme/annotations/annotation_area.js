@@ -49,7 +49,7 @@ class AnnotationArea {
     Show the annotation area.
   */
   show() {
-    $(this.caption).show();
+    this.caption.show();
     this.isActive = true;
     if (this.onShow != null) {
       this.onShow();
@@ -60,7 +60,7 @@ class AnnotationArea {
     Hide the annotation area.
    */
   hide() {
-    $(this.caption).hide();
+    this.caption.hide();
     this.isActive = false;
     if (this.onHide != null) {
       this.onHide();

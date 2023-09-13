@@ -1,4 +1,4 @@
-class MuteButton extends Button {
+class MuteButton extends Component {
 
   add() {
     const video = thymeAttributes.video;

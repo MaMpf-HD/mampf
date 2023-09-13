@@ -1,4 +1,4 @@
-class EmergencyButton extends Button  {
+class EmergencyButton extends Component {
   
   add() {
     const video = thymeAttributes.video;
