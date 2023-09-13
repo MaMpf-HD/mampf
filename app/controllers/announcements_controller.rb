@@ -14,6 +14,7 @@ class AnnouncementsController < ApplicationController
                                                          .order(:created_at)
                                                          .reverse)
                              .page(params[:page]).per(10)
+    @news_popups = NewsPopup.all
   end
 
   def new
