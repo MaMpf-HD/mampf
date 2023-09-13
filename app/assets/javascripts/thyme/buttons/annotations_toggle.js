@@ -11,7 +11,7 @@ class AnnotationsToggle extends Button  {
   add() {
     const toggle = this;
     const checkJQ = this.checkJQ;
-
+    
     /* User is teacher/editor for the given medium and visible_for_teacher ist activated?
        -> add toggle annotations button */
     $.ajax(Routes.check_annotation_visibility_path(thymeAttributes.mediumId), {

@@ -3,17 +3,20 @@ $(document).on('turbolinks:load', function() {
   /*
     VIDEO INITIALIZATION
    */
-  // exit script if the current page is no thyme player
+  // exit script if the current page has no thyme player
   const thymeContainer = document.getElementById('thyme-feedback');
   if (thymeContainer === null || $('#video').get(0) === null) {
     return;
   }
+
+  // background color
   document.body.style.backgroundColor = 'black';
+
   // initialize attributes
   const video = document.getElementById('video');
   thymeAttributes.video = video;
   thymeAttributes.mediumId = document.getElementById('thyme').dataset.medium;
-  thymeAttributes.markerBarID = 'feedback-markers';
+  thymeAttributes.markerBarId = 'feedback-markers';
 
 
 
@@ -74,7 +77,7 @@ $(document).on('turbolinks:load', function() {
     annotationArea.update(annotation);
   }
   function onUpdate() {
-    const a = AnnotationManager.find(thymeAttributes.activeAnnotationID);
+    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
     annotationArea.update(a);
     heatmap.draw();
   }
@@ -104,6 +107,7 @@ $(document).on('turbolinks:load', function() {
     MISC
    */
   thymeUtility.playOnClick();
+  thymeUtility.setUpMaxTime('max-time');
   
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
@@ -116,8 +120,5 @@ $(document).on('turbolinks:load', function() {
   };
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
-
-  // set up max time label on the right side of the seek bar
-  thymeUtility.setUpMaxTime('max-time');
 
 });

@@ -55,7 +55,7 @@ class AnnotationManager {
   */
   updateMarkers() {
     const annotationManager = this;
-    $('#' + thymeAttributes.markerBarID).empty();
+    $('#' + thymeAttributes.markerBarId).empty();
     this.sortAnnotations();
     for (const a of thymeAttributes.annotations) {
       if (this.isValid(a)) {

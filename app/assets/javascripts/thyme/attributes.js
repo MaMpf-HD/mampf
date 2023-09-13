@@ -9,7 +9,7 @@ const thymeAttributes = {
 
   /* Helps to find the annotation that is currently shown in the
      annotation area. */
-  activeAnnotationID: undefined,
+  activeAnnotationId: undefined,
 
   /* Saves a reference on the annotation area. */
   annotationArea: null,
@@ -34,7 +34,7 @@ const thymeAttributes = {
   lockKeyListeners: false,
 
   /* Saves the ID of the HTML element to which annotations are appended. */
-  markerBarID: undefined,
+  markerBarId: undefined,
 
   /* When loading a player, it should save the medium id in this field for later use
      in different files. */

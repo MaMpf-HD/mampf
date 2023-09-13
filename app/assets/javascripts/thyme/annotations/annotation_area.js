@@ -21,7 +21,8 @@ class AnnotationArea {
     this.editButton     = $('#annotation-edit-button');
     this.closeButton    = $('#annotation-close-button');
     this.nextButton     = $('#annotation-next-button');
-    this.localesID      = $('#annotation-locales');
+
+    this.localesId      = 'annotation-locales';
 
     if (fancyStyle === false) {
       this.editButton.hide();
@@ -71,8 +72,8 @@ class AnnotationArea {
       this.#updateCloseButton(annotation);
     }
     // render LaTex
-    const commentID = this.commentField.attr('id');
-    thymeUtility.renderLatex(document.getElementById(commentID));
+    const commentId = this.commentField.attr('id');
+    thymeUtility.renderLatex(document.getElementById(commentId));
   }
 
 
@@ -81,7 +82,7 @@ class AnnotationArea {
     AUXILIARY METHODS
    */
   #updateInfoAndCommentField(annotation, color) {
-    thymeAttributes.activeAnnotationID = annotation.id;
+    thymeAttributes.activeAnnotationId = annotation.id;
     const head = annotation.categoryLocale();
     const comment = annotation.comment.replaceAll('\n', '<br>');
     const headColor = thymeUtility.lightenUp(color, 2);
@@ -127,7 +128,7 @@ class AnnotationArea {
   }
 
   #updateEditButton(annotation) {
-    const localesID = this.localesID;
+    const localesId = this.localesId;
     this.editButton.off('click');
     this.editButton.on('click', function() {
       thymeAttributes.lockKeyListeners = true;
@@ -139,7 +140,7 @@ class AnnotationArea {
         },
         success: function(permitted) {
           if (permitted === "false") {
-            alert(document.getElementById(localesID).dataset.permission);
+            alert(document.getElementById(localesId).dataset.permission);
           }
         },
         error: function(e) {
@@ -154,7 +155,7 @@ class AnnotationArea {
     const area = this; // need a reference inside the listener scope!
     this.closeButton.off('click');
     this.closeButton.on('click', function() {
-      thymeAttributes.activeAnnotationID = undefined;
+      thymeAttributes.activeAnnotationId = undefined;
       area.hide();
     });
   }

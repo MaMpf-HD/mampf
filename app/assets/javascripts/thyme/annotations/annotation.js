@@ -11,7 +11,7 @@ class Annotation {
     this.id = json.id;
     this.seconds = thymeUtility.timestampToSeconds(json.timestamp);
     this.subtext = json.subtext;
-    this.userID = json.user_id;
+    this.userId = json.user_id;
   }
 
 
@@ -61,7 +61,7 @@ class Annotation {
                           'fill-rule:evenodd;"/>' +
                         '</svg>' +
                       '</span>';
-    $('#' + thymeAttributes.markerBarID).append(markerStr);
+    $('#' + thymeAttributes.markerBarId).append(markerStr);
 
     // positioning of the marker
     const marker = $('#marker-' + this.id);

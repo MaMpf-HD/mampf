@@ -95,10 +95,10 @@ const thymeUtility = {
     (In order to make this work, we have to wait for the video's metadata
     to be loaded.)
    */
-  setUpMaxTime(maxTimeID) {
+  setUpMaxTime(maxTimeId) {
     const video = thymeAttributes.video;
     video.addEventListener('loadedmetadata', function() {
-      const maxTime = document.getElementById(maxTimeID);
+      const maxTime = document.getElementById(maxTimeId);
       maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
       if (video.dataset.time != null) {
         const time = video.dataset.time;

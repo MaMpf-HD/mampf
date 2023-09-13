@@ -342,7 +342,7 @@ $(document).on('turbolinks:load', function() {
   // initialize medium id
   thymeAttributes.mediumId = thyme.dataset.medium;
   // initialize marker bar
-  thymeAttributes.markerBarID = 'markers';
+  thymeAttributes.markerBarId = 'markers';
   // Buttons
   annotationsToggle = new AnnotationsToggle('annotations-toggle');
   annotationsToggle.add();
@@ -398,13 +398,13 @@ $(document).on('turbolinks:load', function() {
     annotationArea.show();
   }
   function onUpdate() {
-    const a = AnnotationManager.find(thymeAttributes.activeAnnotationID);
+    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
     annotationArea.update(a);
   }
   function isValid(annotation) {
     if (annotationsToggle.getValue() === false) {
-      const currentUserID = thyme.dataset.currentUserId;
-      if (annotation.userID != currentUserID) {
+      const currentUserId = thyme.dataset.currentUserId;
+      if (annotation.userId != currentUserId) {
         return false;
       }
     }
