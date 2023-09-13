@@ -1,27 +1,3 @@
-function showControlBar() {
-  $('#video-controlBar').css('visibility', 'visible');
-  $('#video').css('cursor', '');
-};
-
-function hideControlBar() {
-  $('#video-controlBar').css('visibility', 'hidden');
-  $('#video').css('cursor', 'none');
-};
-
-// hide control bar after 3 seconds of inactivity
-function idleHideControlBar() {
-  let t = void 0;
-  function resetTimer() {
-    clearTimeout(t);
-    t = setTimeout(hideControlBar, 3000);
-  };
-  window.onload = resetTimer;
-  window.onmousemove = resetTimer;
-  window.onmousedown = resetTimer;
-  window.ontouchstart = resetTimer;
-  window.onclick = resetTimer;
-};
-
 // material icons that represent different media types
 function iconClass(type) {
   if (type === 'video') {
@@ -513,6 +489,13 @@ $(document).on('turbolinks:load', function() {
   /*
     MISC
    */
+  // auto show/hide control bar
+  const controlBar = new ControlBar('video-controlBar', true);
+  controlBar.add();
+  
+  thymeUtility.playOnClick();
+  thymeUtility.setUpMaxTime('max-time');
+
   // detect IE/edge and inform user that they are not suppported if necessary,
   // only use browser player
   if (document.documentMode || /Edge/.test(navigator.userAgent)) {
@@ -537,20 +520,6 @@ $(document).on('turbolinks:load', function() {
 
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
-
-  idleHideControlBar();
-
-  // if mouse is moved or screen is toched, show control bar
-  video.addEventListener('mouseover', showControlBar, false);
-  video.addEventListener('mousemove', showControlBar, false);
-  video.addEventListener('touchstart', showControlBar, false);
-  // aditional click listeners
-  video.addEventListener('click', function() {
-    showControlBar();
-  });
-  thymeUtility.playOnClick();
-  // set up max time label on the right side of the seek bar
-  thymeUtility.setUpMaxTime('max-time');
 
   // Event handler for interactive area activation button
   iaButton.addEventListener('click', function() {

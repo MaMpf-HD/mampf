@@ -52,6 +52,7 @@
 //= require thyme/components/component
 //= require thyme/components/annotation_category_toggle
 //= require thyme/components/annotations_toggle
+//= require thyme/components/control_bar
 //= require thyme/components/emergency_button
 //= require thyme/components/full_screen_button
 //= require thyme/components/minus_ten_button
