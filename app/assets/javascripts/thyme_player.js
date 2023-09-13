@@ -331,7 +331,7 @@ $(document).on('turbolinks:load', function() {
     COMPONENTS
    */
   // Buttons
-  annotationsToggle = new AnnotationsToggle('annotations-toggle');
+  const annotationsToggle = new AnnotationsToggle('annotations-toggle');
   annotationsToggle.add();
   (new EmergencyButton('emergency-button')).add();
   (new FullScreenButton('full-screen', thymeContainer)).add();
@@ -342,13 +342,15 @@ $(document).on('turbolinks:load', function() {
   (new PlusTenButton('plus-ten')).add();
   (new PreviousChapterButton('previous-chapter')).add();
   (new SpeedSelector('speed')).add();
+  // initialize iaButton here to have the reference but call add() later
+  // when we can define toHide (second argument which is set to null here)
+  const iaButton = new IaButton('ia-active', null, [$(video), $('#video-controlBar')], '82%');
   // Sliders
   (new VolumeBar('volume-bar')).add();
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
   seekBar.addChapterTooltips();
   // Buttons
-  const iaButton = document.getElementById('ia-active');
   const iaClose = document.getElementById('ia-close');
   const backButton = document.getElementById('back-button');
 
@@ -389,17 +391,11 @@ $(document).on('turbolinks:load', function() {
   thymeAttributes.annotationManager = annotationManager;
   // onShow and onUpdate definition for the annotation area
   function onShow() {
-    video.style.width = '82%';
-    $('#video-controlBar').css('width', '82%');
-    iaButton.innerHTML = 'add_to_queue';
-    iaButton.dataset.status = 'true';
+    iaButton.plus();
     annotationManager.updateMarkers();
   }
   function onHide() {
-    video.style.width = '100%';
-    $('#video-controlBar').css('width', '100%');
-    iaButton.innerHTML = 'remove_from_queue';
-    iaButton.dataset.status = 'false';
+    iaButton.minus();
     annotationManager.updateMarkers();
     resizeContainer();
   }
@@ -440,6 +436,8 @@ $(document).on('turbolinks:load', function() {
   /*
     INTERACTIVE AREA
    */
+  iaButton.toHide = [$('#caption'), annotationArea];
+  iaButton.add();
   //TODO
   //const interactiveArea = new InteractiveArea();
   //thymeAttributes.interactiveArea = interactiveArea;
@@ -452,8 +450,7 @@ $(document).on('turbolinks:load', function() {
   // Manage large and small display
   function largeDisplayFunc() {
     video.style.width = '82%';
-    if (iaButton.dataset.status === 'false') {
-      iaButton.innerHTML = 'remove_from_queue';
+    if (iaButton.status === 'false') {
       $('#caption').hide();
       $('#annotation-caption').hide();
       video.style.width = '100%';
@@ -521,27 +518,6 @@ $(document).on('turbolinks:load', function() {
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
 
-  // Event handler for interactive area activation button
-  iaButton.addEventListener('click', function() {
-    if (iaButton.dataset.status === 'true') {
-      iaButton.innerHTML = 'remove_from_queue';
-      iaButton.dataset.status = 'false';
-      $('#caption').hide();
-      $('#annotation-caption').hide();
-      video.style.width = '100%';
-      $('#video-controlBar').css('width', '100%');
-      $(window).trigger('resize');
-    } else {
-      iaButton.innerHTML = 'add_to_queue';
-      iaButton.dataset.status = 'true';
-      video.style.width = '82%';
-      $('#video-controlBar').css('width', '82%');
-      $('#caption').show();
-      $('#annotation-caption').show();
-      $(window).trigger('resize');
-    }
-  });
-
   // Event Handler for Back Button
   backButton.addEventListener('click', function() {
     video.currentTime = this.dataset.time;
@@ -551,7 +527,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event handler for close interactive area button
   iaClose.addEventListener('click', function() {
-    $(iaButton).trigger('click');
+    $(iaButton.element).trigger('click');
   });
 
 });
