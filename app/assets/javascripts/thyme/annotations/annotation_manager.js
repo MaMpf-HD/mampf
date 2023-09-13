@@ -37,16 +37,6 @@ class AnnotationManager {
 
 
 
-  /* sorts all annotations according to their timestamp */
-  sortAnnotations() {
-    if (thymeAttributes.annotations === null) {
-      return;
-    }
-    thymeAttributes.annotations.sort(function(ann1, ann2) {
-      return ann1.seconds - ann2.seconds;
-    });
-  }
-
   /*
     Updates the markers on the timeline, i.e. the visual represention of the annotations.
     This method is e.g. used for rearranging the markers when the window is being resized.
@@ -56,7 +46,7 @@ class AnnotationManager {
   updateMarkers() {
     const annotationManager = this;
     $('#' + thymeAttributes.markerBarId).empty();
-    this.sortAnnotations();
+    AnnotationManager.sortAnnotations();
     for (const a of thymeAttributes.annotations) {
       if (this.isValid(a)) {
         function onClick() {
@@ -101,6 +91,16 @@ class AnnotationManager {
         // update visual representation on the seek bar
         annotationManager.updateMarkers();
       }
+    });
+  }
+
+  /* sorts all annotations according to their timestamp */
+  static sortAnnotations() {
+    if (thymeAttributes.annotations === null) {
+      return;
+    }
+    thymeAttributes.annotations.sort(function(ann1, ann2) {
+      return ann1.seconds - ann2.seconds;
     });
   }
 

@@ -61,7 +61,6 @@ $(document).on('turbolinks:load', function() {
   /*
     ANNOTATION FUNCTIONALITY
    */
-  // annotation manager and area
   function colorFunc(annotation) {
     return annotation.categoryColor();
   }
