@@ -42,7 +42,7 @@ class AnnotationManager {
     This method is e.g. used for rearranging the markers when the window is being resized.
     Don't mix up with updateAnnotatons() which sends an AJAX request and checks for changes
     in the database.
-  */
+   */
   updateMarkers() {
     const annotationManager = this;
     $('#' + thymeAttributes.markerBarId).empty();
@@ -70,7 +70,7 @@ class AnnotationManager {
 
     onSucess = A function that is triggered when the annotations have been
                successfully updated.
-  */
+   */
   updateAnnotations() {
     const annotationManager = this;
     $.ajax(Routes.update_annotations_path(), {
@@ -109,15 +109,33 @@ class AnnotationManager {
     Returns null if it doesn't exist.
    */
   static find(id) {
-    if (thymeAttributes.annotations == null) {
+    const annotations = thymeAttributes.annotations;
+    if (annotations == null) {
       return null;
     }
-    for (let a of thymeAttributes.annotations) {
+    for (let a of annotations) {
       if (a.id === id) {
         return a;
       }
     }
     return null;
+  }
+
+  /*
+    Finds the index in the array thymeAttributes.annotations of an annotation
+    with the given id. Returns undefined if the array doesn't contain this annotation.
+   */
+  static findIndex(id) {
+    const annotations = thymeAttributes.annotations;
+    if (annotations == null) {
+      return undefined;
+    }
+    for (let i = 0; i < annotations.length; i++) {
+      if (annotations[i].id === id) {
+        return i;
+      }
+    }
+    return undefined;
   }
 
 }

@@ -4,13 +4,25 @@
 class AnnotationArea {
 
   /*
-    fancyStyle = If true, all buttons are shown, if false, only previous, goto and next are shown.
+    fancyStyle = If true, all buttons are shown, if false,
+                 only previous, goto and next are shown.
+
+     colorFunc = A function for colorizing the annotation area
+                 which takes an annotation as argument and gives
+                 back a color.
+
+       isValid = A function which takes an annotation as argument
+                 and returns true, if and only if the annotation is
+                 "valid", i.e. should be visualized in the annotation
+                 area. (This is needed to skip unwanted annotations in
+                 the previous/next button listeners.)
    */
-  constructor(fancyStyle, colorFunc) {
+  constructor(fancyStyle, colorFunc, isValid) {
     this.isActive       = false;
     this.onShow         = null; // a function triggered when the modal is shown
     this.onHide         = null; // a function triggered when the modal is hidden
     this.colorFunc      = colorFunc;
+    this.isValid        = isValid;
     this.fancyStyle     = fancyStyle;
 
     this.caption        = $('#annotation-caption');
@@ -99,11 +111,7 @@ class AnnotationArea {
     const area = this; // need a reference inside the listener scope!
     this.previousButton.off('click');
     this.previousButton.on('click', function() {
-      for (let i = 0; i < annotations.length; i++) {
-        if (i != 0 && annotations[i] === annotation) {
-          area.update(annotations[i - 1]);
-        }
-      }
+      area.update(area.previousValidAnnotation(annotation));
     });
   }
 
@@ -112,11 +120,7 @@ class AnnotationArea {
     const area = this; // need a reference inside the listener scope!
     this.nextButton.off('click');
     this.nextButton.on('click', function() {
-      for (let i = 0; i < annotations.length; i++) {
-        if (i != annotations.length - 1 && annotations[i] === annotation) {
-          area.update(annotations[i + 1]);
-        }
-      }
+      area.update(area.nextValidAnnotation(annotation));
     });
   }
 
@@ -158,6 +162,42 @@ class AnnotationArea {
       thymeAttributes.activeAnnotationId = undefined;
       area.hide();
     });
+  }
+
+  /*
+    Returns the first annotation which is valid and which comes
+    before the input annotation on the timeline.
+    Returns null if no valid annotation before the input annotation
+    exists.
+   */
+  previousValidAnnotation(annotation) {
+    const currentId = thymeAttributes.activeAnnotationId;
+    const currentIndex = AnnotationManager.findIndex(currentId);
+    const annotations = thymeAttributes.annotations;
+    for (let i = currentIndex - 1; i >= 0; i--) {
+      if (this.isValid(annotations[i])) {
+        return annotations[i];
+      }
+    }
+    return null;
+  }
+
+  /*
+    Returns the first annotation which is valid and which comes
+    after the input annotation on the timeline.
+    Returns null if no valid annotation after the input annotation
+    exists.
+   */
+  nextValidAnnotation(annotation) {
+    const currentId = thymeAttributes.activeAnnotationId;
+    const currentIndex = AnnotationManager.findIndex(currentId);
+    const annotations = thymeAttributes.annotations;
+    for (let i = currentIndex + 1; i < annotations.length; i++) {
+      if (this.isValid(annotations[i])) {
+        return annotations[i];
+      }
+    }
+    return null;
   }
 
 }

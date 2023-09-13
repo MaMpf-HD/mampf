@@ -384,7 +384,16 @@ $(document).on('turbolinks:load', function() {
   function colorFunc(annotation) {
     return annotation.color;
   }
-  const annotationArea = new AnnotationArea(true, colorFunc);
+  function isValid(annotation) {
+    if (annotationsToggle.getValue() === false) {
+      const currentUserId = thyme.dataset.currentUserId;
+      if (annotation.userId != currentUserId) {
+        return false;
+      }
+    }
+    return true;
+  }
+  const annotationArea = new AnnotationArea(true, colorFunc, isValid);
   thymeAttributes.annotationArea = annotationArea;
   function strokeColorFunc(annotation) {
     return 'black';
@@ -400,15 +409,6 @@ $(document).on('turbolinks:load', function() {
   function onUpdate() {
     const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
     annotationArea.update(a);
-  }
-  function isValid(annotation) {
-    if (annotationsToggle.getValue() === false) {
-      const currentUserId = thyme.dataset.currentUserId;
-      if (annotation.userId != currentUserId) {
-        return false;
-      }
-    }
-    return true;
   }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);

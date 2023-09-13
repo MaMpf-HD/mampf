@@ -64,7 +64,15 @@ $(document).on('turbolinks:load', function() {
   function colorFunc(annotation) {
     return annotation.categoryColor();
   }
-  const annotationArea = new AnnotationArea(false, colorFunc);
+  function isValid(annotation) {
+    for (let toggle of toggles) {
+      if (annotation.category === toggle.category && toggle.getValue() === true) {
+        return true;
+      }
+    }
+    return false;
+  }
+  const annotationArea = new AnnotationArea(false, colorFunc, isValid);
   thymeAttributes.annotationArea = annotationArea;
   function strokeColorFunc(annotation) {
     return annotation.category === 'mistake' ? 'darkred' : 'black';
@@ -79,14 +87,6 @@ $(document).on('turbolinks:load', function() {
     const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
     annotationArea.update(a);
     heatmap.draw();
-  }
-  function isValid(annotation) {
-    for (let toggle of toggles) {
-      if (annotation.category === toggle.category && toggle.getValue() === true) {
-        return true;
-      }
-    }
-    return false;
   }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
