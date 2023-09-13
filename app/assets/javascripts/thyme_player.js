@@ -490,9 +490,9 @@ $(document).on('turbolinks:load', function() {
     MISC
    */
   // auto show/hide control bar
-  const controlBar = new ControlBar('video-controlBar', true);
-  controlBar.add();
-  
+  const controlBarHider = new ControlBarHider('video-controlBar', 3000);
+  controlBarHider.install();
+
   thymeUtility.playOnClick();
   thymeUtility.setUpMaxTime('max-time');
 
