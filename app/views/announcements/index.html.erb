@@ -11,12 +11,14 @@
 
   <div class="row p-2">
     <div class="col-12">
-      <table class="table table-striped bg-white border border-primary-subtle shadow">
+      <table class="table table-striped bg-white
+          border border-primary-subtle shadow-sm">
         <thead>
           <tr>
             <th scope="col">Created at</th>
             <th scope="col">Updated at</th>
             <th scope="col">Name</th>
+            <th scope="col"></th>
             <th scope="col">Active</th>
           </tr>
         </thead>
@@ -25,14 +27,21 @@
             <tr>
               <td><%= popup.created_at %></td>
               <td><%= popup.updated_at %></td>
-              <td><%= link_to popup.name,
-                  '/news_popups/' + popup.name + '.html',
-                  target: :_blank %>
+              <td>
+                <input class="form-control" value="<%= popup.name %>">
               </td>
               <td>
+                <%= link_to 'Test',
+                  '/news_popups/' + popup.name + '.html',
+                  target: :_blank,
+                  role: 'button',
+                  class: 'btn btn-primary' %>
+              </td>
+              <td class="align-middle">
                 <div class="form-check form-switch">
                   <% is_checked = popup.active ? 'checked' : '' %>
-                  <input class="form-check-input" type="checkbox" role="switch" <%= is_checked %>>
+                  <input class="form-check-input" type="checkbox"
+                    role="switch" <%= is_checked %>>
                 </div>
               </td>
             </tr>
