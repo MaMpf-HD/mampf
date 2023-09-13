@@ -19,6 +19,7 @@ class AnnotationArea {
    */
   constructor(fancyStyle, colorFunc, isValid) {
     this.isActive       = false;
+    this.annotation     = null; // the current annotation
     this.onShow         = null; // a function triggered when the modal is shown
     this.onHide         = null; // a function triggered when the modal is hidden
     this.colorFunc      = colorFunc;
@@ -73,6 +74,7 @@ class AnnotationArea {
     if (annotation == null) {
       return;
     }
+    this.annotation = annotation;
     // update info and comment field
     this.#updateInfoAndCommentField(annotation, this.colorFunc(annotation));
     // update buttons
@@ -94,7 +96,6 @@ class AnnotationArea {
     AUXILIARY METHODS
    */
   #updateInfoAndCommentField(annotation, color) {
-    thymeAttributes.activeAnnotationId = annotation.id;
     const head = annotation.categoryLocale();
     const comment = annotation.comment.replaceAll('\n', '<br>');
     const headColor = thymeUtility.lightenUp(color, 2);
@@ -159,7 +160,7 @@ class AnnotationArea {
     const area = this; // need a reference inside the listener scope!
     this.closeButton.off('click');
     this.closeButton.on('click', function() {
-      thymeAttributes.activeAnnotationId = undefined;
+      area.annotation = undefined;
       area.hide();
     });
   }
@@ -171,7 +172,7 @@ class AnnotationArea {
     exists.
    */
   previousValidAnnotation(annotation) {
-    const currentId = thymeAttributes.activeAnnotationId;
+    const currentId = this.annotation.id;
     const currentIndex = AnnotationManager.findIndex(currentId);
     const annotations = thymeAttributes.annotations;
     for (let i = currentIndex - 1; i >= 0; i--) {
@@ -189,7 +190,7 @@ class AnnotationArea {
     exists.
    */
   nextValidAnnotation(annotation) {
-    const currentId = thymeAttributes.activeAnnotationId;
+    const currentId = this.annotation.id;
     const currentIndex = AnnotationManager.findIndex(currentId);
     const annotations = thymeAttributes.annotations;
     for (let i = currentIndex + 1; i < annotations.length; i++) {

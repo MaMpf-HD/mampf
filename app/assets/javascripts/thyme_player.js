@@ -406,10 +406,7 @@ $(document).on('turbolinks:load', function() {
     annotationArea.update(annotation);
     annotationArea.show();
   }
-  function onUpdate() {
-    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
-    annotationArea.update(a);
-  }
+  function onUpdate() { }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;

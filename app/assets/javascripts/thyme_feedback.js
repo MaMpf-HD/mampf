@@ -84,8 +84,6 @@ $(document).on('turbolinks:load', function() {
     annotationArea.update(annotation);
   }
   function onUpdate() {
-    const a = AnnotationManager.find(thymeAttributes.activeAnnotationId);
-    annotationArea.update(a);
     heatmap.draw();
   }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
