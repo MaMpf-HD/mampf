@@ -69,7 +69,7 @@ Die eigentliche Seite besteht aus dem Kopf, den Boxen „Veranstaltungsinhalt“
 |Medien|Akkordeon|
 
 ## Bedienelemente und mögliche Aktionen auf dieser Seite
-Im Folgenden werden sämtliche mögliche Bedienelemente der Seite „Veranstaltung bearbeiten“ aufgeführt. Dabei werden zunächst die Bedienelemente im Kopf, dann die der Boxen „Veranstaltungsinhalt“ und „Medien“ und abschließend die der einzelnen Akkordeonfächer beschrieben.
+Im Folgenden werden sämtliche mögliche Bedienelemente der Seite „Veranstaltung bearbeiten“ aufgeführt. Dabei werden zunächst die Bedienelemente im Kopf und dann die der Boxen „Veranstaltungsinhalt“ und „Medien“ und abschließend die der einzelnen Akkordeonfächer beschrieben.
 
 ### Kopf
 ![](/img/lec_head.png)
@@ -935,7 +935,19 @@ Tag -> Medium -> Sitzung -> Abschnitt
 Der Button <a href="/mampf/de/mampf-pages/ed-edit-module" target="_self"><button name="button">zum Modul</button></a> ist bei Veranstaltungseditor*innen nicht vorhanden.
 
 ## Von dieser Seite aus aufrufbare Seiten
-\*Tabelle?\*
+
+Seite|Seminar|Vorlesung|Einschränkung|
+|--- | :---: | :---:| ---|
+[Abschnitt bearbeiten](ed-edit-section) | &#10006; | &#10004; | Es muss einen Abschnitt geben.|
+[Begriff](tag) | &#10004; | &#10006; | ? |
+[Begriff bearbeiten](ed-edit-tag) | &#10006; | &#10004; | Ein Begriff muss mit einem Abschnitt verknüpft sein. |
+[Kapitel beabeiten](ed-edit-chapter) | &#10006; | &#10004; | Es muss ein Kapitel geben.|
+[Medium bearbeiten](ed-edit-medium) | &#10004; | &#10004; | Es muss ein Medium geben.|
+[Modul bearbeiten](ed-edit-module) | &#10004; | &#10004; | Nur bei Moduleditor\*innen |
+[Quizerläuterung bearbeiten](edit-medium-remark) | &#10004; | &#10004; | Es muss eine Quizerläuterung geben.|
+[Quizfrage bearbeiten](edit-medium-question) | &#10004; | &#10004; | Es muss eine Quizfrage geben.|
+[Sitzung bearbeiten](ed-edit-session) | &#10006; | &#10004; | Es muss eine Sitzung geben. |
+[Vortrag bearbeiten](ed-edit-talk) | &#10004; | &#10006; | Es muss einen Vortrag geben. |
 
 ### Von Seminaren und Vorlesungen aufrufbare Seiten
 * [Medium bearbeiten](ed-edit-medium), sofern es ein Medium gibt

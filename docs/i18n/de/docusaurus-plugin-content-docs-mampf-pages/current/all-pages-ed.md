@@ -32,7 +32,7 @@ Im Folgenden werden alle Seiten der MaMpf, die Editor\*innen zugänglich sind, a
 * [Medium bearbeiten](edit-medium)
 * [Medium inspizieren](ed-inspect-medium)
 * [Mein Profil](ed-profile)
-* [Modul bearbeiten](ed-edit-module) (nur bei Moduleditor*innen verfügbar)
+* [Modul bearbeiten](ed-edit-module) (nur bei Moduleditor\*innen und Adminstrator\*innen verfügbar)
 * [Modulsuche](ed-search-extended#tab-modulsuche)
 
 ## P

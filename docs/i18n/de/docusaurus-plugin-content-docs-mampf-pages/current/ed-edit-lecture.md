@@ -1,4 +1,4 @@
 ---
 title: Vorlesung bearbeiten
 ---
-This page will be written soon.
+Siehe [Veranstaltung bearbeiten](ed-edit-event-series).
