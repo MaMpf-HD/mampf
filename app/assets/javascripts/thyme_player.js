@@ -351,7 +351,6 @@ $(document).on('turbolinks:load', function() {
   seekBar.add();
   seekBar.addChapterTooltips();
   // Buttons
-  const iaClose = document.getElementById('ia-close');
   const backButton = document.getElementById('back-button');
 
 
@@ -438,6 +437,7 @@ $(document).on('turbolinks:load', function() {
    */
   iaButton.toHide = [$('#caption'), annotationArea];
   iaButton.add();
+  (new IaCloseButton('ia-close', iaButton)).add();
   //TODO
   //const interactiveArea = new InteractiveArea();
   //thymeAttributes.interactiveArea = interactiveArea;
@@ -523,11 +523,6 @@ $(document).on('turbolinks:load', function() {
     video.currentTime = this.dataset.time;
     $(backButton).hide();
     $('#back-reference').hide();
-  });
-
-  // Event handler for close interactive area button
-  iaClose.addEventListener('click', function() {
-    $(iaButton.element).trigger('click');
   });
 
 });
