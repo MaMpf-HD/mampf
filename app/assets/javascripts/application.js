@@ -69,7 +69,7 @@
 //= require thyme/annotations/annotation_area
 //= require thyme/annotations/annotation_manager
 //= require thyme/attributes
-//= require thyme/chapters
+//= require thyme/chapter_manager
 //= require thyme/control_bar_hider
 //= require thyme/display_manager
 //= require thyme/heatmap

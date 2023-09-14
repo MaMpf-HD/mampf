@@ -433,6 +433,14 @@ $(document).on('turbolinks:load', function() {
 
 
   /*
+    CHAPTER MANAGER
+   */
+  const chapterManager = new ChapterManager();
+  thymeAttributes.chapterManager = chapterManager;
+
+
+
+  /*
     INTERACTIVE AREA
    */
   iaButton.toHide = [$('#caption'), annotationArea];

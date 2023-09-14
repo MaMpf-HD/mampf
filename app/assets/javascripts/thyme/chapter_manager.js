@@ -1,9 +1,13 @@
 /**
   This file wraps up most functionality of the thyme player(s) concerning chapters.
 */
-const chapters = {
+class ChapterManager {
 
-  previousChapterStart: function(seconds) {
+  loadChapters() {
+    //TODO
+  }
+
+  previousChapterStart(seconds) {
     /* NOTE: We cannot use times as an attribute (yet) because it's initialized
        before the dataset times is loaded into the HTML. */
     const times = JSON.parse(document.getElementById('chapters').dataset.times);
@@ -19,9 +23,9 @@ const chapters = {
         }
       }
     }
-  },
+  }
 
-  nextChapterStart: function(seconds) {
+  nextChapterStart(seconds) {
     const times = JSON.parse(document.getElementById('chapters').dataset.times);
     if (times.length === 0) {
       return;
@@ -31,6 +35,6 @@ const chapters = {
         return times[i];
       }
     }
-  },
+  }
 
 };

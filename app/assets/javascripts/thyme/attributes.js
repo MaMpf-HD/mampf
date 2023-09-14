@@ -17,6 +17,12 @@ const thymeAttributes = {
   /* Saves a reference on the annotation manager */
   annotationManager: null,
 
+  /* A list with all the chapters of the current video. */
+  chapters: null,
+
+  /* Saves a reference on the chapter manager. */
+  chapterManager: null,
+
   /* If the window width (in px) gets below this threshold value, hide the control bar
   (default value). */
   hideControlBarThreshold: {
