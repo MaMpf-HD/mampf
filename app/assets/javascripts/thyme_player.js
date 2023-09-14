@@ -1,16 +1,3 @@
-// material icons that represent different media types
-function iconClass(type) {
-  if (type === 'video') {
-    return 'video_library';
-  } else if (type === 'text') {
-    return 'library_books';
-  } else if (type === 'quiz') {
-    return 'games';
-  } else if (type === 'info') {
-    return 'info';
-  }
-};
-
 /* returns the jQuery object of all metadata elements that start after the
    given time in seconds */
 function metadataAfter(seconds) {
