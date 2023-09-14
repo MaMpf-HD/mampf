@@ -5,6 +5,7 @@
 class Heatmap {
 
   static RADIUS = 10; // this number adjusts the radius of the peaks of the heatmap
+  static MAX_HEIGHT = 0.25 // this number adjusts the maximum heights of the heatmap peaks
 
   /*
             id = The ID of the HTML element to which the heatmap will be appended.
@@ -30,7 +31,8 @@ class Heatmap {
     */
     const width = thymeAttributes.seekBar.element.clientWidth +
                   2 * Heatmap.RADIUS - 35; // width of the video timeline
-    const maxHeight = video.clientHeight / 4; // the peaks of the graph should not extend maxHeight
+    // the peaks of the graph will not extend maxHeight
+    const maxHeight = video.clientHeight * Heatmap.MAX_HEIGHT;
     /* An array for each pixel on the timeline. The indices of this array should be thought
        of the x-axis of the heatmap's graph, while its entries should be thought of its
        values on the y-axis. */
