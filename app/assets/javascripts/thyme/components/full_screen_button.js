@@ -43,7 +43,7 @@ class FullScreenButton extends Component {
           window.onresize is triggered twice(!), the second time with incorrect
           window height data, which results in a video area not quite filling
           the whole window. The next line resizes the container again. */
-        setTimeout(resize.resizeContainer($('#' + container.id), 20));
+        setTimeout(resize.resizeContainer($(container), 20));
       }
     };
 

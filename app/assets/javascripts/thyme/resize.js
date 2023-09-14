@@ -4,7 +4,7 @@
 const resize = {
   resizeContainer: function(container, factor) {
     const video = document.getElementById('video');
-    const containerJQ = $('#' + container.id);
+    const containerJQ = $(container);
 
     let height = $(window).height();
     let width = Math.floor((video.videoWidth * $(window).height() / video.videoHeight) * factor);

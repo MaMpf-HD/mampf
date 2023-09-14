@@ -66,12 +66,12 @@ class ControlBarHider {
    */
   showControlBar() {
     $('#' + this.controlBarId).css('visibility', 'visible');
-    $('#' + thymeAttributes.video.id).css('cursor', '');
+    $(thymeAttributes.video).css('cursor', '');
   };
 
   hideControlBar() {
     $('#' + this.controlBarId).css('visibility', 'hidden');
-    $('#' + thymeAttributes.video.id).css('cursor', 'none');
+    $(thymeAttributes.video).css('cursor', 'none');
   };
 
 }
