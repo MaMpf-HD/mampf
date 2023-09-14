@@ -37,81 +37,12 @@ function metaIntoView(time) {
 
 // set up everything: read out track data and initialize html elements
 function setupHypervideo() {
-  const $chapterList = $('#chapters');
   const $metaList = $('#metadata');
   const video = $('#video').get(0);
-  const backButton = document.getElementById('back-button');
   if (video === null) {
     return;
   }
-  const chaptersElement = $('#video track[kind="chapters"]').get(0);
   const metadataElement = $('#video track[kind="metadata"]').get(0);
-
-  // set up back button (transports back to the current chapter)
-  function displayBackButton() {
-    backButton.dataset.time = video.currentTime;
-    const currentChapter = $('#chapters .current');
-    if (currentChapter.length > 0) {
-      let backInfo = currentChapter.data('text').split(':', 1)[0];
-      if ((backInfo != null) && backInfo.length > 20) {
-        backInfo = backButton.dataset.back;
-      } else {
-        backInfo = backButton.dataset.backto + backInfo;
-      }
-      $(backButton).empty().append(backInfo).show();
-      thymeUtility.renderLatex(backButton);
-    }
-  };
-
-  // set up the chapter elements
-  function displayChapters() {
-    let chaptersTrack;
-    if (chaptersElement.readyState === 2 && (chaptersTrack = chaptersElement.track)) {
-      chaptersTrack.mode = 'hidden';
-      let i = 0;
-      let times = [];
-      // read out the chapter track cues and generate html elements for chapters,
-      // run katex on them
-      while (i < chaptersTrack.cues.length) {
-        const cue = chaptersTrack.cues[i];
-        const chapterName = cue.text;
-        const start = cue.startTime;
-        times.push(start);
-        const $listItem = $("<li/>");
-        const $link = $("<a/>", {
-          id: 'c-' + start,
-          text: chapterName
-        });
-        $chapterList.append($listItem.append($link));
-        const chapterElement = $link.get(0);
-        thymeUtility.renderLatex(chapterElement);
-        $link.data('text', chapterName);
-        // if a chapter element is clicked, transport to chapter start time
-        $link.on('click', function() {
-          displayBackButton();
-          video.currentTime = this.id.replace('c-', '');
-        });
-        ++i;
-      }
-      // store start times as data attribute
-      $chapterList.get(0).dataset.times = JSON.stringify(times);
-      $chapterList.show();
-      // if the chapters cue changes (i.e. a switch between chapters), highlight
-      // current chapter elment and scroll it into view, remove highlighting from
-      // old chapter
-      $(chaptersTrack).on('cuechange', function() {
-        $('#chapters li a').removeClass('current');
-        if (this.activeCues.length > 0) {
-          const activeStart = this.activeCues[0].startTime;
-          let chapter;
-          if (chapter = document.getElementById('c-' + activeStart)) {
-            $(chapter).addClass('current');
-            chapter.scrollIntoView();
-          }
-        }
-      });
-    }
-  };
 
   // set up the metadata elements
   function displayMetadata() {
@@ -221,7 +152,7 @@ function setupHypervideo() {
           video.pause();
         });
         $link.on('click', function() {
-          displayBackButton();
+          //displayBackButton();
           video.currentTime = this.id.replace('l-', '');
         });
         metaElement = $listItem.get(0);
@@ -258,37 +189,6 @@ function setupHypervideo() {
       });
     }
   };
-
-  /* after video metadata have been loaded, display chapters and metadata in the
-     interactive area
-     Originally (and more appropriately, according to the standards),
-     only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
-     i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
-     for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-  let initialChapters = true;
-  let initialMetadata = true;
-
-  video.addEventListener('loadedmetadata', function() {
-    if (initialChapters && chaptersElement.readyState === 2) {
-      displayChapters();
-      initialChapters = false;
-    }
-    if (initialMetadata && metadataElement.readyState === 2) {
-      displayMetadata();
-      initialMetadata = false;
-    }
-  });
-
-  video.addEventListener('canplay', function() {
-    if (initialChapters && chaptersElement.readyState === 2) {
-      displayChapters();
-      initialChapters = false;
-    }
-    if (initialMetadata && metadataElement.readyState === 2) {
-      displayMetadata();
-      initialMetadata = false;
-    }
-  });
 };
 
 $(document).on('turbolinks:load', function() {
@@ -337,8 +237,6 @@ $(document).on('turbolinks:load', function() {
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
   seekBar.addChapterTooltips();
-  // Buttons
-  const backButton = document.getElementById('back-button');
 
 
 
@@ -512,12 +410,5 @@ $(document).on('turbolinks:load', function() {
 
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
-
-  // Event Handler for Back Button
-  backButton.addEventListener('click', function() {
-    video.currentTime = this.dataset.time;
-    $(backButton).hide();
-    $('#back-reference').hide();
-  });
 
 });
