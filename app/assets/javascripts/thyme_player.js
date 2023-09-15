@@ -1,196 +1,3 @@
-/* returns the jQuery object of all metadata elements that start after the
-   given time in seconds */
-function metadataAfter(seconds) {
-  const metaList = document.getElementById('metadata');
-  const times = JSON.parse(metaList.dataset.times);
-  if (times.length === 0) {
-    return $();
-  }
-  let i = 0;
-  while (i < times.length) {
-    if (times[i] > seconds) {
-      const $nextMeta = $('#m-' + $.escapeSelector(times[i]));
-      return $nextMeta.add($nextMeta.nextAll());
-    }
-    ++i;
-  }
-  return $();
-};
-
-/* returns the jQuery object of all metadata elements that start before the
-   given time in seconds */
-function metadataBefore(seconds) {
-  return $('[id^="m-"]').not(metadataAfter(seconds));
-};
-
-/* for a given time, show all metadata elements that start before this time
-   and hide all that start later */
-function metaIntoView(time) {
-  metadataAfter(time).hide();
-  const $before = metadataBefore(time);
-  $before.show();
-  const previousLength = $before.length;
-  if (previousLength > 0) {
-    $before.get(previousLength - 1).scrollIntoView();
-  }
-};
-
-// set up everything: read out track data and initialize html elements
-function setupHypervideo() {
-  const $metaList = $('#metadata');
-  const video = $('#video').get(0);
-  if (video === null) {
-    return;
-  }
-  const metadataElement = $('#video track[kind="metadata"]').get(0);
-
-  // set up the metadata elements
-  function displayMetadata() {
-    if (metadataElement.readyState === 2 && (metaTrack = metadataElement.track)) {
-      metaTrack.mode = 'hidden';
-      let i = 0;
-      let times = [];
-      // read out the metadata track cues and generate html elements for
-      // metadata, run katex on them
-      while (i < metaTrack.cues.length) {
-        const cue = metaTrack.cues[i];
-        const meta = JSON.parse(cue.text);
-        const start = cue.startTime;
-        times.push(start);
-        const $listItem = $('<li/>', {
-          id: 'm-' + start
-        });
-        $listItem.hide();
-        const $link = $('<a/>', {
-          text: meta.reference,
-          "class": 'item',
-          id: 'l-' + start
-        });
-        const $videoIcon = $('<i/>', {
-          text: 'video_library',
-          "class": 'material-icons'
-        });
-        const $videoRef = $('<a/>', {
-          href: meta.video,
-          target: '_blank'
-        });
-        $videoRef.append($videoIcon);
-        if (meta.video === null) {
-          $videoRef.hide();
-        }
-        const $manIcon = $('<i/>', {
-          text: 'library_books',
-          "class": 'material-icons'
-        });
-        const $manRef = $('<a/>', {
-          href: meta.manuscript,
-          target: '_blank'
-        });
-        $manRef.append($manIcon);
-        if (meta.manuscript === null) {
-          $manRef.hide();
-        }
-        const $scriptIcon = $('<i/>', {
-          text: 'menu_book',
-          "class": 'material-icons'
-        });
-        const $scriptRef = $('<a/>', {
-          href: meta.script,
-          target: '_blank'
-        });
-        $scriptRef.append($scriptIcon);
-        if (meta.script === null) {
-          $scriptRef.hide();
-        }
-        const $quizIcon = $('<i/>', {
-          text: 'videogame_asset',
-          "class": 'material-icons'
-        });
-        const $quizRef = $('<a/>', {
-          href: meta.quiz,
-          target: '_blank'
-        });
-        $quizRef.append($quizIcon);
-        if (meta.quiz === null) {
-          $quizRef.hide();
-        }
-        const $extIcon = $('<i/>', {
-          text: 'link',
-          "class": 'material-icons'
-        });
-        const $extRef = $('<a/>', {
-          href: meta.link,
-          target: '_blank'
-        });
-        $extRef.append($extIcon);
-        if (meta.link === null) {
-          $extRef.hide();
-        }
-        const $description = $('<div/>', {
-          text: meta.text,
-          "class": 'mx-3'
-        });
-        const $explanation = $('<div/>', {
-          text: meta.explanation,
-          "class": 'm-3'
-        });
-        const $details = $('<div/>');
-        $details.append($link).append($description).append($explanation);
-        $icons = $('<div/>', {
-          style: 'flex-shrink: 3; display: flex; flex-direction: column;'
-        });
-        $icons.append($videoRef).append($manRef).append($scriptRef).append($quizRef).append($extRef);
-        $listItem.append($details).append($icons);
-        $metaList.append($listItem);
-        $videoRef.on('click', function() {
-          video.pause();
-        });
-        $manRef.on('click', function() {
-          video.pause();
-        });
-        $extRef.on('click', function() {
-          video.pause();
-        });
-        $link.on('click', function() {
-          //displayBackButton();
-          video.currentTime = this.id.replace('l-', '');
-        });
-        metaElement = $listItem.get(0);
-        thymeUtility.renderLatex(metaElement);
-        ++i;
-      }
-      // store metadata start times as data attribute
-      $metaList.get(0).dataset.times = JSON.stringify(times);
-      // if user jumps to a new position in the video, display all metadata
-      // that start before this time and hide all that start later
-      $(video).on('seeked', function() {
-        const time = video.currentTime;
-        metaIntoView(time);
-      });
-      // if the metadata cue changes, highlight all current media and scroll
-      // them into view
-      $(metaTrack).on('cuechange', function() {
-        let j = 0;
-        const time = video.currentTime;
-        $('#metadata li').removeClass('current');
-        while (j < this.activeCues.length) {
-          const activeStart = this.activeCues[j].startTime;
-          let metalink;
-          if (metalink = document.getElementById('m-' + activeStart)) {
-            $(metalink).show();
-            $(metalink).addClass('current');
-          }
-          ++j;
-        }
-        const currentLength = $('#metadata .current').length;
-        if (currentLength > 0) {
-          $('#metadata .current').get(length - 1).scrollIntoView();
-        }
-      });
-    }
-  };
-};
-
 $(document).on('turbolinks:load', function() {
   /*
     VIDEO INITIALIZATION
@@ -318,11 +125,14 @@ $(document).on('turbolinks:load', function() {
 
 
   /*
-    CHAPTER MANAGER
+    CHAPTERS & METADATA MANAGER
    */
-  const chapterManager = new ChapterManager('chapters');
-  thymeAttributes.chapterManager = chapterManager;
+  const chapterManager  = new ChapterManager('chapters');
+  const metadataManager = new MetadataManager('metadata');
+  thymeAttributes.chapterManager  = chapterManager;
+  thymeAttributes.metadataManager = metadataManager;
   chapterManager.load();
+  metadataManager.load();
 
 
 
@@ -401,7 +211,7 @@ $(document).on('turbolinks:load', function() {
     return;
   }
 
-  setupHypervideo();
+  //setupHypervideo();
 
   function updateControlBarType() {
     displayManager.updateControlBarType();

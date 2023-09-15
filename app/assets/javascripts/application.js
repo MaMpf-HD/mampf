@@ -74,6 +74,7 @@
 //= require thyme/display_manager
 //= require thyme/heatmap
 //= require thyme/key_shortcuts
+//= require thyme/metadata_manager
 //= require thyme/resize
 //= require thyme/utility
 //= require thyme_player

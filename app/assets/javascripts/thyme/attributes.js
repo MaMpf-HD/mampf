@@ -45,6 +45,9 @@ const thymeAttributes = {
      in different files. */
   mediumId: undefined,
 
+  /* Saves a reference on the metadata manager. */
+  metadataManager: null,
+
   /* Saves a reference on the video's seek bar. */
   seekBar: undefined,
 
