@@ -6,9 +6,9 @@ class PreviousChapterButton extends Component {
 
     // Event handler for the previousChapter button
     element.addEventListener('click', function() {
-      const previous = thymeAttributes.chapterManager.previousChapterStart(video.currentTime);
+      const previous = thymeAttributes.chapterManager.previousChapterStart();
       if (previous != null) {
-        video.currentTime = thymeAttributes.chapterManager.previousChapterStart(video.currentTime);
+        video.currentTime = thymeAttributes.chapterManager.previousChapterStart();
       }
     });
   }

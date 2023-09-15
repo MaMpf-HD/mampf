@@ -86,16 +86,17 @@ class ChapterManager {
     }
   };
 
-  previousChapterStart(seconds) {
+  previousChapterStart() {
+    const currentTime = thymeAttributes.video.currentTime;
     /* NOTE: We cannot use times as an attribute (yet) because it's initialized
        before the dataset times is loaded into the HTML. */
-    const times = JSON.parse(document.getElementById('chapters').dataset.times);
+    const times = JSON.parse(document.getElementById(this.chaptersId).dataset.times);
     if (times.length === 0) {
       return;
     }
     for (let i = times.length - 1; i >= 0; i--) {
-      if (times[i] < seconds) {
-        if (seconds - times[i] > 3) {
+      if (times[i] < currentTime) {
+        if (currentTime - times[i] > 3) {
           return times[i];
         } else if (i > 0) {
           return times[i - 1];
@@ -104,13 +105,14 @@ class ChapterManager {
     }
   }
 
-  nextChapterStart(seconds) {
-    const times = JSON.parse(document.getElementById('chapters').dataset.times);
+  nextChapterStart() {
+    const currentTime = thymeAttributes.video.currentTime;
+    const times = JSON.parse(document.getElementById(this.chaptersId).dataset.times);
     if (times.length === 0) {
       return;
     }
     for (let i = 0; i < times.length; i++) {
-      if (times[i] > seconds) {
+      if (times[i] > currentTime) {
         return times[i];
       }
     }
