@@ -320,8 +320,9 @@ $(document).on('turbolinks:load', function() {
   /*
     CHAPTER MANAGER
    */
-  const chapterManager = new ChapterManager();
+  const chapterManager = new ChapterManager('chapters');
   thymeAttributes.chapterManager = chapterManager;
+  chapterManager.load();
 
 
 
