@@ -176,6 +176,8 @@ $(document).on('turbolinks:load', function() {
       annotationManager.updateMarkers();
     }
   };
+  window.onresize = resizeContainer;
+  video.onloadedmetadata = resizeContainer;
 
 
 
@@ -190,10 +192,9 @@ $(document).on('turbolinks:load', function() {
   /*
     MISC
    */
-  // auto show/hide control bar
   const controlBarHider = new ControlBarHider('video-controlBar', 3000);
   controlBarHider.install();
-
+  displayManager.updateControlBarType();
   thymeUtility.playOnClick();
   thymeUtility.setUpMaxTime('max-time');
 
@@ -210,16 +211,5 @@ $(document).on('turbolinks:load', function() {
     window.onresize = resizeContainer;
     return;
   }
-
-  //setupHypervideo();
-
-  function updateControlBarType() {
-    displayManager.updateControlBarType();
-  };
-
-  updateControlBarType();
-
-  window.onresize = resizeContainer;
-  video.onloadedmetadata = resizeContainer;
 
 });
