@@ -34,13 +34,13 @@ class MetadataManager {
 
   /* returns the jQuery object of all metadata elements that start before the
      given time in seconds */
-  metadataBefore(seconds) {
-    return $('[id^="m-"]').not(this.metadataAfter(seconds));
+  #metadataBefore(seconds) {
+    return $('[id^="m-"]').not(this.#metadataAfter(seconds));
   }
 
   /* returns the jQuery object of all metadata elements that start after the
    given time in seconds */
-  metadataAfter(seconds) {
+  #metadataAfter(seconds) {
     const metaList = document.getElementById(this.metadataListId);
     const times = JSON.parse(metaList.dataset.times);
     if (times.length === 0) {
@@ -60,8 +60,8 @@ class MetadataManager {
   /* for a given time, show all metadata elements that start before this time
    and hide all that start later */
   metaIntoView(time) {
-    this.metadataAfter(time).hide();
-    const $before = this.metadataBefore(time);
+    this.#metadataAfter(time).hide();
+    const $before = this.#metadataBefore(time);
     $before.show();
     const previousLength = $before.length;
     if (previousLength > 0) {
