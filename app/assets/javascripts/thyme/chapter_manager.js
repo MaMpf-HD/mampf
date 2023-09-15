@@ -3,8 +3,8 @@
 */
 class ChapterManager {
 
-  constructor(chaptersId) {
-    this.chaptersId = chaptersId;
+  constructor(chapterListId) {
+    this.chapterListId = chapterListId;
   }
 
   load() {
@@ -21,24 +21,56 @@ class ChapterManager {
      for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
     video.addEventListener('loadedmetadata', function() {
       if (initialChapters && chaptersElement.readyState === 2) {
-        chapterManager.displayChapters();
+        chapterManager.#displayChapters();
         initialChapters = false;
       }
     });
     video.addEventListener('canplay', function() {
       if (initialChapters && chaptersElement.readyState === 2) {
-        chapterManager.displayChapters();
+        chapterManager.#displayChapters();
         initialChapters = false;
       }
     });
   }
 
-  displayChapters() {
+  previousChapterStart() {
+    const currentTime = thymeAttributes.video.currentTime;
+    /* NOTE: We cannot use times as an attribute (yet) because it's initialized
+       before the dataset times is loaded into the HTML. */
+    const times = JSON.parse(document.getElementById(this.chapterListId).dataset.times);
+    if (times.length === 0) {
+      return;
+    }
+    for (let i = times.length - 1; i >= 0; i--) {
+      if (times[i] < currentTime) {
+        if (currentTime - times[i] > 3) {
+          return times[i];
+        } else if (i > 0) {
+          return times[i - 1];
+        }
+      }
+    }
+  }
+
+  nextChapterStart() {
+    const currentTime = thymeAttributes.video.currentTime;
+    const times = JSON.parse(document.getElementById(this.chapterListId).dataset.times);
+    if (times.length === 0) {
+      return;
+    }
+    for (let i = 0; i < times.length; i++) {
+      if (times[i] > currentTime) {
+        return times[i];
+      }
+    }
+  }
+
+  #displayChapters() {
     const videoId = thymeAttributes.video.id;
-    const chaptersId = this.chaptersId;
-    const chapterList = $('#' + chaptersId);
+    const chapterListId = this.chapterListId;
+    const chapterList = $('#' + chapterListId);
     const chaptersElement = $('#' + videoId + ' track[kind="chapters"]').get(0);
-    const currentChapter = $('#' + chaptersId + ' .current');
+    const currentChapter = $('#' + chapterListId + ' .current');
 
     let chaptersTrack;
     if (chaptersElement.readyState === 2 && (chaptersTrack = chaptersElement.track)) {
@@ -73,7 +105,7 @@ class ChapterManager {
       // current chapter elment and scroll it into view, remove highlighting from
       // old chapter
       $(chaptersTrack).on('cuechange', function() {
-        $('#' + chaptersId + ' li a').removeClass('current');
+        $('#' + chapterListId + ' li a').removeClass('current');
         if (this.activeCues.length > 0) {
           const activeStart = this.activeCues[0].startTime;
           let chapter;
@@ -85,37 +117,5 @@ class ChapterManager {
       });
     }
   };
-
-  previousChapterStart() {
-    const currentTime = thymeAttributes.video.currentTime;
-    /* NOTE: We cannot use times as an attribute (yet) because it's initialized
-       before the dataset times is loaded into the HTML. */
-    const times = JSON.parse(document.getElementById(this.chaptersId).dataset.times);
-    if (times.length === 0) {
-      return;
-    }
-    for (let i = times.length - 1; i >= 0; i--) {
-      if (times[i] < currentTime) {
-        if (currentTime - times[i] > 3) {
-          return times[i];
-        } else if (i > 0) {
-          return times[i - 1];
-        }
-      }
-    }
-  }
-
-  nextChapterStart() {
-    const currentTime = thymeAttributes.video.currentTime;
-    const times = JSON.parse(document.getElementById(this.chaptersId).dataset.times);
-    if (times.length === 0) {
-      return;
-    }
-    for (let i = 0; i < times.length; i++) {
-      if (times[i] > currentTime) {
-        return times[i];
-      }
-    }
-  }
 
 };
