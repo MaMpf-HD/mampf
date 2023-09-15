@@ -9,7 +9,6 @@ class ChapterManager {
 
   load() {
     let initialChapters = true;
-    let initialMetadata = true;
     const videoId = thymeAttributes.video.id;
     const chaptersElement = $('#' + videoId + ' track[kind="chapters"]').get(0);
     const chapterManager = this;
