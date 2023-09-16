@@ -127,7 +127,9 @@ $(document).on('turbolinks:load', function() {
   /*
     CHAPTERS & METADATA MANAGER
    */
-  const chapterManager  = new ChapterManager('chapters');
+  const iaBackButton = new IaBackButton('back-button', 'chapters');
+  iaBackButton.add();
+  const chapterManager  = new ChapterManager('chapters', iaBackButton);
   const metadataManager = new MetadataManager('metadata');
   thymeAttributes.chapterManager  = chapterManager;
   thymeAttributes.metadataManager = metadataManager;

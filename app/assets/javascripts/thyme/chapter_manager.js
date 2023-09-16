@@ -3,8 +3,9 @@
 */
 class ChapterManager {
 
-  constructor(chapterListId) {
+  constructor(chapterListId, iaBackButton) {
     this.chapterListId = chapterListId;
+    this.iaBackButton = iaBackButton;
   }
 
   load() {
@@ -67,6 +68,7 @@ class ChapterManager {
   #displayChapters() {
     const videoId = thymeAttributes.video.id;
     const chapterListId = this.chapterListId;
+    const iaBackButton = this.iaBackButton;
     const chapterList = $('#' + chapterListId);
     const chaptersElement = $('#' + videoId + ' track[kind="chapters"]').get(0);
     const currentChapter = $('#' + chapterListId + ' .current');
@@ -93,7 +95,7 @@ class ChapterManager {
         $link.data('text', chapterName);
         // if a chapter element is clicked, transport to chapter start time
         $link.on('click', function() {
-          //displayBackButton();
+          iaBackButton.update();
           video.currentTime = this.id.replace('c-', '');
         });
       }

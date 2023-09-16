@@ -55,6 +55,7 @@
 //= require thyme/components/emergency_button
 //= require thyme/components/full_screen_button
 //= require thyme/components/ia_button
+//= require thyme/components/ia_back_button
 //= require thyme/components/ia_close_button
 //= require thyme/components/minus_ten_button
 //= require thyme/components/mute_button
