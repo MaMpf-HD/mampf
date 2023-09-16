@@ -1,5 +1,3 @@
-var dataURLtoBlob, secondsToTime;
-
 // convert given dataURL to Blob, used for converting screenshot canvas to png
 function dataURLtoBlob(dataURL) {
   // Decode the dataURL
@@ -170,7 +168,7 @@ $(document).on('turbolinks:load', function() {
   /* after video metadata have been loaded, set up video length, volume bar and
      seek bar */
   video.addEventListener('loadedmetadata', function() {
-    maxTime.innerHTML = secondsToTime(video.duration);
+    maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
     volumeBar.value = video.volume;
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + video.volume * 100 + '%, #ffffff ' + video.volume * 100 + '%, #ffffff)';
     seekBar.value = 0;
@@ -183,7 +181,7 @@ $(document).on('turbolinks:load', function() {
     var value = 100 / video.duration * video.currentTime;
     seekBar.value = value;
     seekBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value + '%, #ffffff ' + value + '%, #ffffff)';
-    currentTime.innerHTML = secondsToTime(video.currentTime);
+    currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
   });
 
   // Pause the video when the seek handle is being dragged
