@@ -1,13 +1,11 @@
 // convert given dataURL to Blob, used for converting screenshot canvas to png
 function dataURLtoBlob(dataURL) {
   // Decode the dataURL
-  var binary = atob(dataURL.split(',')[1]);
+  const binary = atob(dataURL.split(',')[1]);
   // Create 8-bit unsigned array
-  var array = [];
-  var i = 0;
-  while (i < binary.length) {
+  let array = [];
+  for (let i = 0; i < binary.length, i++) {
     array.push(binary.charCodeAt(i));
-    i++;
   }
   // Return our Blob object
   return new Blob([new Uint8Array(array)], {
@@ -16,33 +14,33 @@ function dataURLtoBlob(dataURL) {
 };
 
 $(document).on('turbolinks:load', function() {
-  var thymeEdit = document.getElementById('thyme-edit');
+  const thymeEdit = document.getElementById('thyme-edit');
   if (thymeEdit == null) {
     return;
   }
-  var mediumId = thymeEdit.dataset.medium;
+  const mediumId = thymeEdit.dataset.medium;
   // Video
-  var video = document.getElementById('video-edit');
+  const video = document.getElementById('video-edit');
   // Buttons
-  var playButton = document.getElementById('play-pause');
-  var muteButton = document.getElementById('mute');
-  var plusTenButton = document.getElementById('plus-ten');
-  var plusFiveButton = document.getElementById('plus-five');
-  var plusOneButton = document.getElementById('plus-one');
-  var minusOneButton = document.getElementById('minus-one');
-  var minusFiveButton = document.getElementById('minus-five');
-  var minusTenButton = document.getElementById('minus-ten');
-  var addItemButton = document.getElementById('add-item');
-  var addReferenceButton = document.getElementById('add-reference');
-  var addScreenshotButton = document.getElementById('add-screenshot');
+  const playButton = document.getElementById('play-pause');
+  const muteButton = document.getElementById('mute');
+  const plusTenButton = document.getElementById('plus-ten');
+  const plusFiveButton = document.getElementById('plus-five');
+  const plusOneButton = document.getElementById('plus-one');
+  const minusOneButton = document.getElementById('minus-one');
+  const minusFiveButton = document.getElementById('minus-five');
+  const minusTenButton = document.getElementById('minus-ten');
+  const addItemButton = document.getElementById('add-item');
+  const addReferenceButton = document.getElementById('add-reference');
+  const addScreenshotButton = document.getElementById('add-screenshot');
   // Sliders
-  var seekBar = document.getElementById('seek-bar');
-  var volumeBar = document.getElementById('volume-bar');
+  const seekBar = document.getElementById('seek-bar');
+  const volumeBar = document.getElementById('volume-bar');
   // Times
-  var currentTime = document.getElementById('current-time');
-  var maxTime = document.getElementById('max-time');
+  const currentTime = document.getElementById('current-time');
+  const maxTime = document.getElementById('max-time');
   // Screenshot Canvas
-  var canvas = document.getElementById('snapshot');
+  const canvas = document.getElementById('snapshot');
 
   // Event listener for the play/pause button
   playButton.addEventListener('click', function() {
@@ -104,7 +102,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the seek bar
   seekBar.addEventListener('input', function() {
-    var time;
+    const time;
     time = video.duration * seekBar.value / 100;
     video.currentTime = time;
   });
@@ -113,9 +111,9 @@ $(document).on('turbolinks:load', function() {
   addItemButton.addEventListener('click', function() {
     video.pause();
     // round time down to three decimal digits
-    var time = video.currentTime;
-    var intTime = Math.floor(time);
-    var roundTime = intTime + Math.floor((time - intTime) * 1000) / 1000;
+    const time = video.currentTime;
+    const intTime = Math.floor(time);
+    const roundTime = intTime + Math.floor((time - intTime) * 1000) / 1000;
     video.currentTime = roundTime;
     $.ajax(Routes.add_item_path(mediumId), {
       type: 'GET',
@@ -130,9 +128,9 @@ $(document).on('turbolinks:load', function() {
   addReferenceButton.addEventListener('click', function() {
     video.pause();
     // round time down to three decimal digits
-    var time = video.currentTime;
-    var intTime = Math.floor(time);
-    var roundTime = intTime + Math.floor((time - intTime) * 1000) / 1000;
+    const time = video.currentTime;
+    const intTime = Math.floor(time);
+    const roundTime = intTime + Math.floor((time - intTime) * 1000) / 1000;
     video.currentTime = roundTime;
     $.ajax(Routes.add_reference_path(mediumId), {
       type: 'GET',
@@ -147,13 +145,13 @@ $(document).on('turbolinks:load', function() {
   addScreenshotButton.addEventListener('click', function() {
     video.pause();
     // extract video screenshot from canvas
-    var context = canvas.getContext('2d');
+    const context = canvas.getContext('2d');
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
-    var base64image = canvas.toDataURL('image/png');
+    const base64image = canvas.toDataURL('image/png');
     // Get our file
-    var file = dataURLtoBlob(base64image);
+    const file = dataURLtoBlob(base64image);
     // Create new form data
-    var fd = new FormData;
+    const fd = new FormData;
     // Append our Canvas image file to the form data
     fd.append('image', file);
     // And send it
@@ -178,7 +176,7 @@ $(document).on('turbolinks:load', function() {
 
   // Update the seek bar as the video plays
   video.addEventListener('timeupdate', function() {
-    var value = 100 / video.duration * video.currentTime;
+    const value = 100 / video.duration * video.currentTime;
     seekBar.value = value;
     seekBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value + '%, #ffffff ' + value + '%, #ffffff)';
     currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
@@ -199,12 +197,12 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the volume bar
   volumeBar.addEventListener('change', function() {
-    var value = volumeBar.value;
+    const value = volumeBar.value;
     video.volume = value;
   });
 
   video.addEventListener('volumechange', function() {
-    var value = video.volume;
+    const value = video.volume;
     volumeBar.value = value;
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value * 100 + '%, #ffffff ' + value * 100 + '%, #ffffff)';
   });
