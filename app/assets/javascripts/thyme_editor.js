@@ -34,7 +34,7 @@ $(document).on('turbolinks:load', function() {
    */
   (new PlayButton('play-pause')).add();
   (new MuteButton('mute')).add();
-  
+
   (new PlusButton('plus-ten', 10)).add();
   (new PlusButton('plus-five', 5)).add();
   (new PlusButton('plus-one', 1)).add();
@@ -42,13 +42,14 @@ $(document).on('turbolinks:load', function() {
   (new MinusButton('minus-five', 5)).add();
   (new MinusButton('minus-one', 1)).add();
 
+  (new SeekBar('seek-bar')).add();
+
 
 
   const addItemButton = document.getElementById('add-item');
   const addReferenceButton = document.getElementById('add-reference');
   const addScreenshotButton = document.getElementById('add-screenshot');
   // Sliders
-  const seekBar = document.getElementById('seek-bar');
   const volumeBar = document.getElementById('volume-bar');
   // Times
   const currentTime = document.getElementById('current-time');
@@ -58,13 +59,6 @@ $(document).on('turbolinks:load', function() {
 
 
 
-
-
-  // Event listener for the seek bar
-  seekBar.addEventListener('input', function() {
-    const time = video.duration * seekBar.value / 100;
-    video.currentTime = time;
-  });
 
   // Event listener for addItem button
   addItemButton.addEventListener('click', function() {
@@ -128,7 +122,6 @@ $(document).on('turbolinks:load', function() {
     maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
     volumeBar.value = video.volume;
     volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + video.volume * 100 + '%, #ffffff ' + video.volume * 100 + '%, #ffffff)';
-    seekBar.value = 0;
     canvas.width = Math.floor($(video).width());
     canvas.height = Math.floor($(video).height());
   });
@@ -136,22 +129,7 @@ $(document).on('turbolinks:load', function() {
   // Update the seek bar as the video plays
   video.addEventListener('timeupdate', function() {
     const value = 100 / video.duration * video.currentTime;
-    seekBar.value = value;
-    seekBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value + '%, #ffffff ' + value + '%, #ffffff)';
     currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
-  });
-
-  // Pause the video when the seek handle is being dragged
-  seekBar.addEventListener('mousedown', function() {
-    video.dataset.paused = video.paused;
-    video.pause();
-  });
-
-  // Play the video when the seek handle is dropped
-  seekBar.addEventListener('mouseup', function() {
-    if (video.dataset.paused !== 'true') {
-      video.play();
-    }
   });
 
   // Event listener for the volume bar

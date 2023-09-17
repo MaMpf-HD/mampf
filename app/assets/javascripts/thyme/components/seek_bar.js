@@ -19,9 +19,9 @@ class SeekBar extends Component {
     video.addEventListener('loadedmetadata', function() {
       if (video.dataset.time != null) {
         const time = video.dataset.time;
-        seekBar.value = video.currentTime / video.duration * 100;
+        element.value = video.currentTime / video.duration * 100;
       } else {
-        seekBar.value = 0;
+        element.value = 0;
       }
     });
 
