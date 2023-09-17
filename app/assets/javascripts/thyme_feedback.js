@@ -21,7 +21,7 @@ $(document).on('turbolinks:load', function() {
 
 
   /*
-    PLAYER CONTENT
+    COMPONENTS
    */
   // Buttons
   (new MinusButton('minus-ten', 10)).add();
