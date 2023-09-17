@@ -24,22 +24,20 @@ $(document).on('turbolinks:load', function() {
   /*
     COMPONENTS
    */
-  // Buttons
   const annotationsToggle = new AnnotationsToggle('annotations-toggle');
   annotationsToggle.add();
   (new EmergencyButton('emergency-button')).add();
   (new FullScreenButton('full-screen', thymeContainer)).add();
-  (new MinusTenButton('minus-ten')).add();
+  (new MinusButton('minus-ten', 10)).add();
   (new MuteButton('mute')).add();
   (new NextChapterButton('next-chapter')).add();
   (new PlayButton('play-pause')).add();
-  (new PlusTenButton('plus-ten')).add();
+  (new PlusButton('plus-ten', 10)).add();
   (new PreviousChapterButton('previous-chapter')).add();
   (new SpeedSelector('speed')).add();
   // initialize iaButton here to have the reference but call add() later
   // when we can define toHide (second argument which is set to null here)
   const iaButton = new IaButton('ia-active', null, [$(video), $('#video-controlBar')], '82%');
-  // Sliders
   (new VolumeBar('volume-bar')).add();
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
