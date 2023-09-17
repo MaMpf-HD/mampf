@@ -17,7 +17,7 @@ warningMessage = () ->
     message += "\n" + document.getElementById('warning').dataset.mistake
     medId = thyme.dataset.medium
     rad = 60 # annotations that are inside this radius (in seconds) are considered as "near". 
-    $.ajax Routes.near_mistake_annotations_path(),
+    $.ajax Routes.num_nearby_mistake_annotations_path(),
       type: 'GET'
       dataType: 'json'
       data: {
