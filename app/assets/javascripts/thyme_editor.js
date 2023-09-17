@@ -4,7 +4,7 @@ function dataURLtoBlob(dataURL) {
   const binary = atob(dataURL.split(',')[1]);
   // Create 8-bit unsigned array
   let array = [];
-  for (let i = 0; i < binary.length, i++) {
+  for (let i = 0; i < binary.length; i++) {
     array.push(binary.charCodeAt(i));
   }
   // Return our Blob object
@@ -102,8 +102,7 @@ $(document).on('turbolinks:load', function() {
 
   // Event listener for the seek bar
   seekBar.addEventListener('input', function() {
-    const time;
-    time = video.duration * seekBar.value / 100;
+    const time = video.duration * seekBar.value / 100;
     video.currentTime = time;
   });
 
