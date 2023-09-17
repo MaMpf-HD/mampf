@@ -54,14 +54,14 @@ categoryRadios.addEventListener 'click', (evt) ->
   return
 
 note = ->
-  $('#specific').empty()
+  $('#annotation-category-specific').empty()
   submitButton.disabled = false
   visibleForTeacher(false)
   postComment(false)
   return
 
 content = ->
-  $('#specific').empty().append('<%= j render partial: "annotations/form_content"%>')
+  $('#annotation-category-specific').empty().append('<%= j render partial: "annotations/form_content"%>')
   submitButton.disabled = true # disable submit button until the content category is selected
   visibleForTeacher(true)
   postComment(false)
@@ -86,7 +86,7 @@ content = ->
   return
 
 mistake = ->
-  $('#specific').empty()
+  $('#annotation-category-specific').empty()
   submitButton.disabled = false
   visibleForTeacher(true)
   postComment(true)
@@ -94,7 +94,7 @@ mistake = ->
   return
 
 presentation = ->
-  $('#specific').empty()
+  $('#annotation-category-specific').empty()
   submitButton.disabled = false
   visibleForTeacher(true)
   postComment(false)
