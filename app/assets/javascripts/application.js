@@ -50,6 +50,9 @@
 //= require terms
 //= require tex_preview
 //= require thyme/components/component
+//= require thyme/components/add_item_button
+//= require thyme/components/add_reference_button
+//= require thyme/components/add_screenshot_button
 //= require thyme/components/annotation_category_toggle
 //= require thyme/components/annotations_toggle
 //= require thyme/components/emergency_button
