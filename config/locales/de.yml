@@ -347,23 +347,23 @@ de:
       further_help: 'Du brauchst weitere Hilfe? Dann klicke auf:'
       warning_message:
         publishing: >
-          Jeder, der diese Vorlesung abonniert hat, wird deinen Kommentar
-          lesen können, sobald du auf "Speichern" klickst.
-          Falls du das nicht möchtest, entferne bitte wieder den Haken
+          Jeder, der diese Vorlesung abonniert hat, wird Deinen Kommentar
+          lesen können, sobald Du auf "Speichern" klickst.
+          Falls Du das nicht möchtest, entferne bitte wieder den Haken
           bei "Als Kommentar veröffentlichen?".
         mistake: >
-          Bevor du diesen Kommentar abschickst, überprüfe außerdem bitte,
-          ob bereits ein Kommentar zu dem von dir gefundenen Fehler existiert.
+          Bevor Du diesen Kommentar abschickst, überprüfe außerdem bitte,
+          ob bereits ein Kommentar zu dem von Dir gefundenen Fehler existiert.
         one_close_annotation: >
-          In der Nähe deiner Annotation gibt es bereits eine veröffentlichte
+          In der Nähe Deiner Annotation gibt es bereits eine veröffentlichte
           Fehler-Annotation.
-        multiple_close_annotations_1: "In der Nähe deiner Annotation gibt es bereits "
-        multiple_close_annotations_2: " veröffentliche Fehler-Annotationen."
+        multiple_close_annotations_1: "In der Nähe Deiner Annotation gibt es bereits "
+        multiple_close_annotations_2: " veröffentlichte Fehler-Annotationen."
         permission: "Dir fehlen die Rechte, um diese Annotation zu bearbeiten."
       visible_for_teacher: 'Für DozentIn sichtbar?'
       visible_for_teacher_tooltip: >
-        Falls diese Checkbox ausgewählt ist, kann dein(e) Dozent(in) diese Annotation
-        in ihrem/seinem Thyme-Player (ohne deinen Namen) sehen.
+        Falls diese Checkbox ausgewählt ist, kann Dein(e) Dozent(in) diese Annotation
+        in ihrem/seinem Thyme-Player (ohne Deinen Namen) sehen.
       post_as_comment: 'Als Kommentar veröffentlichen?'
       toggle:
         note: "Notiz-Annotationen ein-/ausblenden"
