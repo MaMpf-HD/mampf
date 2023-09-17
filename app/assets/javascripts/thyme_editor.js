@@ -45,14 +45,13 @@ $(document).on('turbolinks:load', function() {
   (new SeekBar('seek-bar')).add();
   (new VolumeBar('volume-bar')).add();
 
+  thymeUtility.setUpMaxTime('max-time');
+
 
 
   const addItemButton = document.getElementById('add-item');
   const addReferenceButton = document.getElementById('add-reference');
   const addScreenshotButton = document.getElementById('add-screenshot');
-  // Times
-  const currentTime = document.getElementById('current-time');
-  const maxTime = document.getElementById('max-time');
   // Screenshot Canvas
   const canvas = document.getElementById('snapshot');
 
@@ -113,20 +112,6 @@ $(document).on('turbolinks:load', function() {
       processData: false,
       contentType: false
     });
-  });
-
-  /* after video metadata have been loaded, set up video length, volume bar and
-     seek bar */
-  video.addEventListener('loadedmetadata', function() {
-    maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
-    canvas.width = Math.floor($(video).width());
-    canvas.height = Math.floor($(video).height());
-  });
-
-  // Update the seek bar as the video plays
-  video.addEventListener('timeupdate', function() {
-    const value = 100 / video.duration * video.currentTime;
-    currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
   });
 
 });
