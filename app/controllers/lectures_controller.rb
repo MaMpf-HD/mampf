@@ -333,7 +333,9 @@ class LecturesController < ApplicationController
                         :organizational_concept, :muesli,
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
-                        :submission_max_team_size, :submission_grace_period]
+                        :submission_max_team_size, :submission_grace_period,
+                        :annotations_status, :emergency_link,
+                        :emergency_link_status]
       if action_name == 'update' && current_user.can_update_personell?(@lecture)
         allowed_params.concat([:teacher_id, editor_ids: []])
       end

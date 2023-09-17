@@ -192,21 +192,21 @@
                 </div>
               </div>
             </div>
-          <% end %>
-          <div id="lecture-link-field">
-            <%= t('admin.lecture.select_helpdesk') %>
-            <%= f.select :lecture_link,
-                         options_for_select(Lecture.all.map { |l| [l.title, l.lecture_path] },
-                                            [@linked_lecture&.title, @linked_lecture&.lecture_path]) %>
-          </div>
-          <div class="form-row", id="direct-link-field">
-            <div class="col-auto form-group">
-              <%= t('admin.lecture.enter_emergency_link') %>
-              <%= f.text_field :direct_link,
-                               { size: 50,
-                                 value: @direct_link } %>
+            <div id="lecture-link-field">
+              <%= t('admin.lecture.select_helpdesk') %>
+              <%= f.select :lecture_link,
+                           options_for_select(Lecture.all.map { |l| [l.title, l.lecture_path] },
+                                              [@linked_lecture&.title, @linked_lecture&.lecture_path]) %>
             </div>
-          </div>
+            <div class="form-row", id="direct-link-field">
+              <div class="col-auto form-group">
+                <%= t('admin.lecture.enter_emergency_link') %>
+                <%= f.text_field :direct_link,
+                                 { size: 50,
+                                   value: @direct_link } %>
+              </div>
+            </div>
+          <% end %>
           <div class="row">
             <div class="col-12 text-center">
               <div id="lecture-preferences-warning">
