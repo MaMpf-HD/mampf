@@ -43,14 +43,13 @@ $(document).on('turbolinks:load', function() {
   (new MinusButton('minus-one', 1)).add();
 
   (new SeekBar('seek-bar')).add();
+  (new VolumeBar('volume-bar')).add();
 
 
 
   const addItemButton = document.getElementById('add-item');
   const addReferenceButton = document.getElementById('add-reference');
   const addScreenshotButton = document.getElementById('add-screenshot');
-  // Sliders
-  const volumeBar = document.getElementById('volume-bar');
   // Times
   const currentTime = document.getElementById('current-time');
   const maxTime = document.getElementById('max-time');
@@ -120,8 +119,6 @@ $(document).on('turbolinks:load', function() {
      seek bar */
   video.addEventListener('loadedmetadata', function() {
     maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
-    volumeBar.value = video.volume;
-    volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + video.volume * 100 + '%, #ffffff ' + video.volume * 100 + '%, #ffffff)';
     canvas.width = Math.floor($(video).width());
     canvas.height = Math.floor($(video).height());
   });
@@ -132,15 +129,4 @@ $(document).on('turbolinks:load', function() {
     currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
   });
 
-  // Event listener for the volume bar
-  volumeBar.addEventListener('change', function() {
-    const value = volumeBar.value;
-    video.volume = value;
-  });
-
-  video.addEventListener('volumechange', function() {
-    const value = video.volume;
-    volumeBar.value = value;
-    volumeBar.style.backgroundImage = 'linear-gradient(to right,' + ' #2497E3, #2497E3 ' + value * 100 + '%, #ffffff ' + value * 100 + '%, #ffffff)';
-  });
 });
