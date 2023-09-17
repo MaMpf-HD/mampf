@@ -516,7 +516,7 @@ class MediaController < ApplicationController
   end
 
   def check_annotation_visibility
-    medium = Medium.find_by_id(params[:id])
+    medium = Medium.find_by(id: params[:id])
     isPermitted = medium.annotations_visible?(current_user)
     render json: isPermitted
   end
