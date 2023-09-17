@@ -14,22 +14,36 @@ function dataURLtoBlob(dataURL) {
 };
 
 $(document).on('turbolinks:load', function() {
+  /*
+    VIDEO INITIALIZATION
+   */
+  // exit script if the current page has no thyme player
   const thymeEdit = document.getElementById('thyme-edit');
-  if (thymeEdit == null) {
+  if (thymeEdit === null || $('#video').get(0) === null) {
     return;
   }
-  const mediumId = thymeEdit.dataset.medium;
-  // Video
+  // initialize attributes
   const video = document.getElementById('video-edit');
-  // Buttons
-  const playButton = document.getElementById('play-pause');
-  const muteButton = document.getElementById('mute');
-  const plusTenButton = document.getElementById('plus-ten');
-  const plusFiveButton = document.getElementById('plus-five');
-  const plusOneButton = document.getElementById('plus-one');
-  const minusOneButton = document.getElementById('minus-one');
-  const minusFiveButton = document.getElementById('minus-five');
-  const minusTenButton = document.getElementById('minus-ten');
+  thymeAttributes.video = video;
+  thymeAttributes.mediumId = thymeEdit.dataset.medium;
+
+
+
+  /*
+    COMPONENTS
+   */
+  (new PlayButton('play-pause')).add();
+  (new MuteButton('mute')).add();
+  
+  (new PlusButton('plus-ten', 10)).add();
+  (new PlusButton('plus-five', 5)).add();
+  (new PlusButton('plus-one', 1)).add();
+  (new MinusButton('minus-ten', 10)).add();
+  (new MinusButton('minus-five', 5)).add();
+  (new MinusButton('minus-one', 1)).add();
+
+
+
   const addItemButton = document.getElementById('add-item');
   const addReferenceButton = document.getElementById('add-reference');
   const addScreenshotButton = document.getElementById('add-screenshot');
@@ -42,63 +56,9 @@ $(document).on('turbolinks:load', function() {
   // Screenshot Canvas
   const canvas = document.getElementById('snapshot');
 
-  // Event listener for the play/pause button
-  playButton.addEventListener('click', function() {
-    if (video.paused == true) {
-      video.play();
-    } else {
-      video.pause();
-    }
-  });
 
-  video.onplay = function() {
-    playButton.innerHTML = 'pause';
-  };
 
-  video.onpause = function() {
-    playButton.innerHTML = 'play_arrow';
-  };
 
-  // Event listener for the mute button
-  muteButton.addEventListener('click', function() {
-    if (video.muted == false) {
-      video.muted = true;
-      muteButton.innerHTML = 'volume_off';
-    } else {
-      video.muted = false;
-      muteButton.innerHTML = 'volume_up';
-    }
-  });
-
-  // Event handler for the plusTen button
-  plusTenButton.addEventListener('click', function() {
-    video.currentTime = Math.min(video.currentTime + 10, video.duration);
-  });
-
-  // Event handler for the plusFive button
-  plusFiveButton.addEventListener('click', function() {
-    video.currentTime = Math.min(video.currentTime + 5, video.duration);
-  });
-
-  // Event handler for the plusOne button
-  plusOneButton.addEventListener('click', function() {
-    video.currentTime = Math.min(video.currentTime + 1, video.duration);
-  });
-
-  // Event handler for the minusOne button
-  minusOneButton.addEventListener('click', function() {
-    video.currentTime = Math.max(video.currentTime - 1, 0);
-  });
-
-  // Event handler for the minusFive button
-  minusFiveButton.addEventListener('click', function() {
-    video.currentTime = Math.max(video.currentTime - 5, 0);
-  });
-
-  // Event handler for the minusTen button
-  minusTenButton.addEventListener('click', function() {
-    video.currentTime = Math.max(video.currentTime - 10, 0);
-  });
 
   // Event listener for the seek bar
   seekBar.addEventListener('input', function() {
