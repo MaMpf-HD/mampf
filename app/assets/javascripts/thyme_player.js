@@ -92,7 +92,7 @@ $(document).on('turbolinks:load', function() {
   annotationArea.onHide = onHide;
 
   // Update annotations after submitting the annotations form
-  $(document).on('click', '#submit-button', function() {
+  $(document).on('click', '#annotation-modal-submit-button', function() {
     /* NOTE:
        Updating might take some time on the backend,
        so I added a slight delay.

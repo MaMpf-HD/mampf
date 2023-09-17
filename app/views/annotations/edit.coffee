@@ -2,7 +2,7 @@ $('#annotation-modal-content').empty()
   .append('<%= j render partial: "annotations/form"%>')
 $('#annotation-modal').modal('show')
 
-submitButton = document.getElementById('submit-button')
+submitButton = document.getElementById('annotation-modal-submit-button')
 postAsComment = document.getElementById('annotation_post_as_comment')
 
 postAsComment.addEventListener 'change', (evt) ->
