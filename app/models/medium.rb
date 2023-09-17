@@ -1135,26 +1135,10 @@ class Medium < ApplicationRecord
   end
   
   def annotations_visible?(user)
-    # find lecture to which this medium is associated (might be nil)
-    if lesson != nil
-      lecture = lesson.lecture
-    end
-    
-    # If the medium is associated to a lecture/course
-    # and the user is a teacher/editor of this lecture
-    # AND if the emergency button feature is activated
-    # for the given medium.
-    # then return true
-    isTeacher = lecture&.teacher == user or
-                lecture&.editors&.include?(user) or
-                editors&.include?(user) or
-                course&.editors&.include?(user)
-    isActivated = (get_annotations_status == 1)
-    if isTeacher and isActivated
-      return true
-    else
-      return false
-    end
+    lecture = lesson.lecture unless lesson.nil?
+    is_teacher = edited_with_inheritance_by?(user)
+    is_activated = (get_annotations_status == 1)
+    return is_teacher && is_activated
   end
   
   private
