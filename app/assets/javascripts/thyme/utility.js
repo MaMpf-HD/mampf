@@ -25,6 +25,23 @@ const thymeUtility = {
   },
 
   /*
+    Convert given dataURL to Blob, used for converting screenshot canvas to png.
+   */
+  dataURLtoBlob: function(dataURL) {
+    // Decode the dataURL
+    const binary = atob(dataURL.split(',')[1]);
+    // Create 8-bit unsigned array
+    let array = [];
+    for (let i = 0; i < binary.length; i++) {
+      array.push(binary.charCodeAt(i));
+    }
+    // Return our Blob object
+    return new Blob([new Uint8Array(array)], {
+      type: 'image/png'
+    });
+  },
+
+  /*
      Lightens up a given color (given in a string in hexadecimal
      representation "#xxyyzz") such that e.g. black becomes dark grey.
      The higher the value of "factor" the brighter the colors become.

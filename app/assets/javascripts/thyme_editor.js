@@ -1,18 +1,3 @@
-// convert given dataURL to Blob, used for converting screenshot canvas to png
-function dataURLtoBlob(dataURL) {
-  // Decode the dataURL
-  const binary = atob(dataURL.split(',')[1]);
-  // Create 8-bit unsigned array
-  let array = [];
-  for (let i = 0; i < binary.length; i++) {
-    array.push(binary.charCodeAt(i));
-  }
-  // Return our Blob object
-  return new Blob([new Uint8Array(array)], {
-    type: 'image/png'
-  });
-};
-
 $(document).on('turbolinks:load', function() {
   /*
     VIDEO INITIALIZATION
@@ -24,6 +9,7 @@ $(document).on('turbolinks:load', function() {
   }
   // initialize attributes
   const video = document.getElementById('video-edit');
+  const mediumId = thymeEdit.dataset.medium;
   thymeAttributes.video = video;
   thymeAttributes.mediumId = thymeEdit.dataset.medium;
 
@@ -100,7 +86,7 @@ $(document).on('turbolinks:load', function() {
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
     const base64image = canvas.toDataURL('image/png');
     // Get our file
-    const file = dataURLtoBlob(base64image);
+    const file = thymeUtility.dataURLtoBlob(base64image);
     // Create new form data
     const fd = new FormData;
     // Append our Canvas image file to the form data
