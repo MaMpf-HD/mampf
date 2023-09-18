@@ -1,0 +1,75 @@
+#thyme-feedback {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  font-family: 'Roboto';
+}
+
+#feedback-timeline {
+  position: absolute;
+  display: flex;
+  width: 78%;
+}
+
+#feedback-special-buttons {
+  position: absolute;
+  display: flex;
+  right: 14%;
+}
+
+#feedback-volume-controls {
+  position: absolute;
+  display: flex;
+  width: 10%;
+  right: 2%;
+}
+
+#feedback-markers {
+  position: relative;
+  top: -6px;
+  width: 0;
+  height: 0;
+  display: flex;
+  cursor: pointer;
+}
+
+#heatmap {
+  position: relative;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+#below-area {
+  bottom: 0;
+  padding: 10px;
+  background: #eeefff;
+  border: solid;
+  border-width: 1px;
+  border-color: black;
+}
+
+#toggle-mistake-annotations {
+  input:checked + .slider {
+    background-color: #C23939;
+  }
+}
+
+#toggle-content-annotations {
+  input:checked + .slider {
+    background-color: #D5D841;
+  }
+}
+
+#toggle-presentation-annotations {
+  input:checked + .slider {
+    background-color: #D9892E;
+  }
+}
+
+#toggle-note-annotations {
+  input:checked + .slider {
+    background-color: #66B748;
+  }
+}
