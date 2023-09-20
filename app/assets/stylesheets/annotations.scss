@@ -97,37 +97,13 @@
   margin-top: auto;
 }
 
-
-/* A collection of all colors.
-Be aware that color changes must also be written in the
-AnnotationHelper! */
-$annotation_colors: (
-  annotation_color1: #DB2828,
-  annotation_color2: #F2711C,
-  annotation_color3: #FBBD08,
-  annotation_color4: #B5CC18,
-  annotation_color5: #21BA45,
-  annotation_color6: #00B5AD,
-  annotation_color7: #2185D0,
-  annotation_color8: #6435C9,
-  annotation_color9: #A333C8,
-  annotation_color10: #E03997,
-  annotation_color11: #d05d41,
-  annotation_color12: #924129,
-  annotation_color13: #444444,
-  annotation_color14: #999999,
-  annotation_color15: #eeeeee,
-);
-
 #annotation-color-picker {
   input[type="radio"] {
     display: none;
     &:checked + label {
-      span { transform: scale(1.25); }
-      @each $name, $value in $annotation_colors {
-        .#{$name} {
-          border: 2px solid black;
-        }
+      span {
+        transform: scale(1.25);
+        border: 2px solid black;
       }
     }
   }
@@ -148,11 +124,6 @@ $annotation_colors: (
       width: 100%;
       height: 100%;
       transition: transform .2s ease-in-out;
-      @each $name, $value in $annotation_colors {
-        &.#{$name} {
-          background: $value;
-        }
-      }
     }
   }
 }

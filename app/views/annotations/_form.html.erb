@@ -38,14 +38,16 @@
     <!--- COLOR SELECTION -->
     <b><%= t('admin.annotation.color') %></b>
     <div id="annotation-color-picker">
+      <% colors = Annotation.colors %>
       <% for i in 1..15 do %>
         <%= f.radio_button :color,
-                           annotation_color(i),
+                           colors[i],
                            id: "annotation_color#{i}" %>
         <%= f.label :color,
                     "annotation_color#{i}",
                     for: "annotation_color#{i}" do %>
-            <span class="annotation_color<%=i%>"></span>
+            <span class="annotation_color<%=i%>",
+                  style="background: <%= colors[i] %>;"></span>
           <% end %>
       <% end %>
     </div>
