@@ -1,3 +1,6 @@
+<%= javascript_include_tag :news_popups %>
+<%= stylesheet_link_tag :news_popups %>
+
 <div class="container" id="admin-news">
 
   <%# News popups %>
@@ -11,7 +14,8 @@
 
   <div class="row p-2">
     <div class="col-12">
-      <table class="table table-striped bg-white
+      <table id="news-popups-table" class="table table-striped bg-white
+          align-middle
           border border-primary-subtle shadow-sm">
         <thead>
           <tr>
@@ -22,13 +26,13 @@
             <th scope="col">Active</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody class="align-middle">
           <% @news_popups.each do |popup| %>
-            <tr>
+            <tr id="news-popups-<%= popup.id %>">
               <td><%= popup.created_at %></td>
               <td><%= popup.updated_at %></td>
-              <td>
-                <input class="form-control" value="<%= popup.name %>">
+              <td class="news-popups-name">
+                <%= popup.name %>
               </td>
               <td>
                 <%= link_to 'Test',
