@@ -74,7 +74,13 @@ $(document).on('turbolinks:load', function() {
     annotationArea.update(annotation);
     annotationArea.show();
   }
-  function onUpdate() { }
+  function onUpdate() {
+    /* maybe update changes the annotation which is currently shown in the
+       annotation area -> find the updated annotation in the annotation array
+       and update the area. */
+    const id = annotationArea.annotation.id;
+    annotationArea.update(AnnotationManager.find(id));
+  }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
