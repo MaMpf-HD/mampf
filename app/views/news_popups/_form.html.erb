@@ -1,0 +1,40 @@
+<div class="list-group-item news-popup-row" data-id="<%= popup.id.to_i %>">
+  <%= form_with model: popup  do |f| %>
+  <div class="row align-items-center">
+    <div class="col-2 fw-light">
+      <%= popup.created_at %>
+    </div>
+    <div class="col-2 fw-light">
+      <%= popup.updated_at %>
+    </div>
+    <div class="col-3">
+      <%= f.text_field :name, class: 'form-control' %>
+    </div>
+    <div class="col-2">
+      <%= link_to 'Test',
+                  '/news_popups/' + popup.name + '.html',
+                  target: :_blank,
+                  role: 'button',
+                  class: 'btn btn-primary' %>
+    </div>
+    <div class="col-2">
+        <%= f.check_box :active, checked: popup.active,
+          class: "form-check-input" %>
+    </div>
+
+    <%# Actions %>
+    <div class="col-1">
+      <%= f.button nil, class: "btn btn-success p-1" do %>
+        <i class="bi bi-check-lg"></i>
+      <% end %>
+      <%= link_to cancel_editing_news_popups_path(popup),
+                  class: 'btn btn-secondary p-1',
+                  role: 'button',
+                  title: t('buttons.edit'),
+                  remote: true do %>
+        <i class="bi bi-x"></i>
+      <% end %>
+    </div>
+  </div>
+  <% end %>
+</div>

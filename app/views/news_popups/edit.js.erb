@@ -1,0 +1,3 @@
+$('.news-popup-row[data-id="<%= @news_popup.id %>"')
+  .replaceWith(`<%= j render partial: "news_popups/form",
+                    locals: { popup: @news_popup } %>`);

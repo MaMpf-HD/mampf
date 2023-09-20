@@ -845,7 +845,7 @@ Rails.application.routes.draw do
       as: 'fill_realizations_select'
 
   # News popups routes
-  resources :news_popups, only: [:index]
+            only: [:index, :new, :edit, :create, :update, :destroy]
 
   # main routes
 
