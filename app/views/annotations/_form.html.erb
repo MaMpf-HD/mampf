@@ -57,7 +57,8 @@
     <!--- CATEGORY RADIO BUTTON -->
     <b><%= t('admin.annotation.category') %></b>
     <div class="form-row ml-2", id="category-radios">
-      <div class="form-check form-check-inline">
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.note_tooltip') %>">
         <%= f.radio_button :category,
                            :note,
                            class: 'form-check-input' %>
@@ -66,7 +67,8 @@
                     value: :note,
                     class: 'form-check-label' %>
       </div>
-      <div class="form-check form-check-inline">
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.content_tooltip') %>">
         <%= f.radio_button :category,
                            :content,
                            class: 'form-check-input' %>
@@ -75,7 +77,8 @@
                     value: :content,
                     class: 'form-check-label' %>
       </div>
-      <div class="form-check form-check-inline">
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.mistake_tooltip') %>">
         <%= f.radio_button :category,
                            :mistake,
                            class: 'form-check-input' %>
@@ -84,7 +87,8 @@
                     value: :mistake,
                     class: 'form-check-label' %>
       </div>
-      <div class="form-check form-check-inline">
+      <div class="form-check form-check-inline",
+           title="<%= t('admin.annotation.presentation_tooltip') %>">
         <%= f.radio_button :category,
                            :presentation,
                            class: 'form-check-input' %>
@@ -118,7 +122,9 @@
     <% end %>
 
     <%= f.label :visible_for_teacher, class: "checkbox inline" do %>
-      <span><b><%= t('admin.annotation.post_as_comment') %> &nbsp</b></span>
+      <span, title="<%= t('admin.annotation.post_as_comment_tooltip') %>"><b>
+        <%= t('admin.annotation.post_as_comment') %> &nbsp
+      </b></span>
       <%= f.check_box :post_as_comment %>
     <% end %>
 

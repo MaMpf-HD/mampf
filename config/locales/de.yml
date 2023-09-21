@@ -331,14 +331,35 @@ de:
       color: 'Farbe'
       category: 'Kategorie'
       note: 'Notiz'
+      note_tooltip: >
+        Wähle diese Kategorie aus, wenn Du Deine Annotation als
+        persönliche Notiz anlegen möchtest.
       content: 'Inhalt'
+      content_tooltip: >
+        Wähle diese Kategorie aus, wenn Du den Inhalt des Videos an dieser
+        Stelle nicht verstehst.
       mistake: 'Fehler'
+      mistake_tooltip: >
+        Wähle diese Kategorie aus, wenn Du der Meinung bist, an dieser
+        Stelle im Video wurde ein inhaltlicher Fehler gemacht.
       presentation: 'Darstellung'
+      presentation_tooltip: >
+        Wähle diese Kategorie aus, wenn Dir die Darstellung im Video
+        an dieser Stelle Probleme bereitet, z.B. falls Du die Schrift
+        nicht lesen kannst oder falls der Ton unverständlich ist.
       where_problem: >
         Wo liegt das Problem?
       definition: 'Definition'
+      definition_tooltip: >
+        Wähle diese Unterkategorie aus, wenn Du Probleme mit einer Definition hast.
       argument: 'Argument'
+      argument_tooltip: >
+        Wähle diese Unterkategorie aus, wenn Du Probleme mit einem Argument
+        (z.B. in einem Beweis) hast.
       strategy: 'Beweisstrategie'
+      strategy_tooltip: >
+        Wähle diese Unterkategorie aus, wenn Du Probleme mit der allgemeinen
+        (Beweis-)Strategie hast.
       previous_annotation: 'vorherige Annotation'
       annotation_position: 'zur Annotation springen'
       edit_annotation: 'Annotation editieren'
@@ -365,6 +386,9 @@ de:
         Falls diese Checkbox ausgewählt ist, kann Dein(e) Dozent(in) diese Annotation
         in ihrem/seinem Thyme-Player (ohne Deinen Namen) sehen.
       post_as_comment: 'Als Kommentar veröffentlichen?'
+      post_as_comment_tooltip: >
+        Falls diese Checkbox ausgewählt ist, wird diese Annotation automatisch
+        als Kommentar zu diesem Video veröffentlicht.
       toggle:
         note: "Notiz-Annotationen ein-/ausblenden"
         content: "Inhalt-Annotationen ein-/ausblenden"

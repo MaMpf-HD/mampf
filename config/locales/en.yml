@@ -332,14 +332,35 @@ en:
       color: 'Color'
       category: 'Category'
       note: 'note'
+      note_tooltip: >
+        Select this category if you want to create your annotation
+        as a personal note.
       content: 'content'
+      content_tooltip: >
+        Select this category if you don't understand the content
+        of the video at this position.
       mistake: 'mistake'
+      mistake_tooltip: >
+        Select this category if you think there has been made a mistake
+        in the content of the video at this position.
       presentation: 'presentation'
+      presentation_tooltip: >
+        Select this category if you have problems with the presentation
+        in the video at this position, e.g. if you cannot read the
+        handwriting or if you cannot understand the audio.
       where_problem: >
         Where's the problem?
       definition: 'definition'
+      definition_tooltip: >
+        Select this subcategory if you have problems with a definition.
       argument: 'argument'
+      argument_tooltip: >
+        Select this subcategory if you have problems with an argument
+        (e.g. in a proof).
       strategy: 'proof strategy'
+      strategy_tooltip: >
+        Select this subcategory if you have problems with the general
+        (proof) strategy.
       previous_annotation: 'previous annotation'
       annotation_position: 'go to annotation'
       edit_annotation: 'edit annotation'
@@ -365,6 +386,9 @@ en:
         If this checkbox is selected your teacher can see this annotation
         (without your name!) in his own thyme player.
       post_as_comment: 'Post as comment?'
+      post_as_comment_tooltip: >
+        If this checkbox is selected, this annotation will be published as
+        comment for this video.
       toggle:
         note: "toggle note annotations"
         content: "toggle note content"

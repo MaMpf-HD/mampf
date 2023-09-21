@@ -3,7 +3,8 @@
 <br>
 
 <div class="form-row ml-2", id="content-category-radios">
-  <div class="form-check form-check-inline">
+  <div class="form-check form-check-inline",
+       title="<%= t('admin.annotation.definition_tooltip') %>">
     <input id="content-category-definition"
            class="form-check-input"
            type="radio"
@@ -14,7 +15,8 @@
       <%= t('admin.annotation.definition') %>
     </label>
   </div>
-  <div class="form-check form-check-inline">
+  <div class="form-check form-check-inline",
+       title="<%= t('admin.annotation.argument_tooltip') %>">
     <input id="content-category-argument"
            class="form-check-input"
            type="radio"
@@ -25,7 +27,8 @@
       <%= t('admin.annotation.argument') %>
     </label>
   </div>
-  <div class="form-check form-check-inline">
+  <div class="form-check form-check-inline",
+       title="<%= t('admin.annotation.strategy_tooltip') %>">
     <input id="content-category-strategy"
            class="form-check-input"
            type="radio"
