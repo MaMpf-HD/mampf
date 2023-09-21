@@ -1,17 +1,17 @@
 class IaButton extends Component {
 
   /*
-      toHideIds = An array consisting of all the components that
+         toHide = An array consisting of all the components that
                   should be hidden/shown when this button is clicked.
                   These components must provide a show() and hide()
                   method, but they havn't to be a JQuery reference
                   on a HTML element.
 
-    toShrinkIds = An array consisting of JQuery references of all
+       toShrink = An array consisting of JQuery references of all
                   the components that should grow/shrink when this
                   button is clicked.
 
-         shrink = The percentage telling how much the video player
+         shrink = The percentage telling how much the elements of toShrink
                   should shrink when the components of toHide are shown.
    */
   constructor(element, toHide, toShrink, shrink) {
@@ -37,7 +37,6 @@ class IaButton extends Component {
         for (let e of button.toShrink) {
           e.css('width', '100%');
         }
-        thymeAttributes.video.style.width = '100%';
       } else {
         element.dataset.status = 'true';
         element.innerHTML = 'add_to_queue';
@@ -47,8 +46,8 @@ class IaButton extends Component {
         for (let e of button.toShrink) {
           e.css('width', shrink);
         }
-        thymeAttributes.video.style.width = button.shrink;
       }
+      $(window).trigger('resize');
       thymeAttributes.annotationManager.updateMarkers();
     });
   }

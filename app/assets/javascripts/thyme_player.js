@@ -70,16 +70,18 @@ $(document).on('turbolinks:load', function() {
     return false;
   }
   function onClick(annotation) {
-    $('#caption').hide();
     annotationArea.update(annotation);
     annotationArea.show();
+    $('#caption').hide();
   }
   function onUpdate() {
-    /* maybe update changes the annotation which is currently shown in the
+    /* update might change the annotation which is currently shown in the
        annotation area -> find the updated annotation in the annotation array
        and update the area. */
-    const id = annotationArea.annotation.id;
-    annotationArea.update(AnnotationManager.find(id));
+    if (annotationArea.annotation != null) {
+      const id = annotationArea.annotation.id;
+      annotationArea.update(AnnotationManager.find(id));
+    }
   }
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
@@ -121,7 +123,9 @@ $(document).on('turbolinks:load', function() {
       },
       success: function() {
         annotationManager.updateAnnotations();
-        $('#annotation-close-button').click();
+        // close and open again = show normal IA
+        iaButton.minus();
+        iaButton.plus();
       }
     });
   });
@@ -159,14 +163,7 @@ $(document).on('turbolinks:load', function() {
    */
   // Manage large and small display
   function largeDisplayFunc() {
-    video.style.width = '82%';
-    if (iaButton.status === 'false') {
-      $('#caption').hide();
-      $('#annotation-caption').hide();
-      video.style.width = '100%';
-      $('#video-controlBar').css('width', '100%');
-      $(window).trigger('resize');
-    }
+    iaButton.plus();
   }
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
   const displayManager = new DisplayManager(elements, largeDisplayFunc);
