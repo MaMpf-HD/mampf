@@ -1,1 +1,0 @@
-$('#annotation-modal').modal("hide")

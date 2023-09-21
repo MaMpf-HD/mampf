@@ -31,6 +31,7 @@ class AnnotationsController < ApplicationController
     end
 
     @annotation.save
+    render :update
   end
 
   def edit
