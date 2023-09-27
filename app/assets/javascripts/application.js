@@ -49,6 +49,17 @@
 //= require talks
 //= require terms
 //= require tex_preview
+//= require upload
+//= require users
+//= require vertices
+//= require watchlists
+//= require turbolinks
+
+/*
+ * THYME RELATED SCRIPTS
+ * (warning: the order of the scripts is important
+ * - do not switch to alphabetical order!)
+ */
 //= require thyme/components/component
 //= require thyme/components/add_item_button
 //= require thyme/components/add_reference_button
@@ -81,11 +92,6 @@
 //= require thyme/metadata_manager
 //= require thyme/resize
 //= require thyme/utility
-//= require thyme_player
-//= require thyme_editor
-//= require thyme_feedback
-//= require upload
-//= require users
-//= require vertices
-//= require watchlists
-//= require turbolinks
+//= require thyme/thyme_player
+//= require thyme/thyme_editor
+//= require thyme/thyme_feedback
