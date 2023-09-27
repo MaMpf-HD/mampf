@@ -521,6 +521,8 @@ class MediaController < ApplicationController
     render json: isPermitted
   end
   
+  # Renders the feedback player. Do not confuse with the feedback button
+  # which has nothing to do with the thyme player(s).
   def feedback
     I18n.locale = @medium.locale_with_inheritance
     render layout: 'feedback'
