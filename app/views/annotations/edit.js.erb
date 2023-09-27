@@ -137,30 +137,28 @@ function updatePreview() {
   var text = document.getElementById('annotation_comment').value;
   $('#annotation-modal-preview').empty();
   $('#annotation-modal-preview').append(text.replaceAll('\n', '<br>'));
-  /*renderMathInElement document.getElementById('annotation-modal-preview'),
+  renderMathInElement(document.getElementById('annotation-modal-preview'), {
     delimiters: [
       {
-        left: '$$'
-        right: '$$'
+        left: '$$',
+        right: '$$',
+        display: true
+      }, {
+        left: '$',
+        right: '$',
+        display: false
+      }, {
+        left: '\\(',
+        right: '\\)',
+        display: false
+      }, {
+        left: '\\[',
+        right: '\\]',
         display: true
       }
-      {
-        left: '$'
-        right: '$'
-        display: false
-      }
-      {
-        left: '\\('
-        right: '\\)'
-        display: false
-      }
-      {
-        left: '\\['
-        right: '\\]'
-        display: true
-      }
-    ]
-    throwOnError: false*/
+    ],
+    throwOnError: false
+  });
 }
 
 
@@ -168,7 +166,6 @@ function updatePreview() {
 /*
  * Auxiliary methods
  */
-
 function visibleForTeacher(boolean) {
   $('#annotation_visible_for_teacher').prop("checked", boolean);
 }
