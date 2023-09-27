@@ -1127,11 +1127,8 @@ class Medium < ApplicationRecord
   end
   
   def get_annotations_status
-    if annotations_status != 0
-      return annotations_status
-    else
-      return lecture.annotations_status
-    end
+  	return annotations_status if annotations_status != 0
+	lecture.annotations_status
   end
   
   def annotations_visible?(user)
