@@ -124,4 +124,20 @@ class Annotation {
     }
   }
 
+  /*
+   * Returns true if the given annotation is the last annotation
+   * in thymeAttributes.annotations
+   */
+  isFirst() {
+    return this == thymeAttributes.annotations[0];
+  }
+
+  /*
+   * Returns true if the given annotation is the last annotation
+   * in thymeAttributes.annotations
+   */
+  isLast() {
+    return this == thymeAttributes.annotations[thymeAttributes.annotations.length - 1];
+  }
+
 }

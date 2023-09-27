@@ -3,6 +3,8 @@
 */
 class AnnotationArea {
 
+  static DISABLED_BUTTON_OPACITY = 0.2;
+
   /*
     fancyStyle = If true, all buttons are shown, if false,
                  only previous, goto and next are shown.
@@ -114,6 +116,11 @@ class AnnotationArea {
     this.previousButton.on('click', function() {
       area.update(area.previousValidAnnotation(annotation));
     });
+    if (annotation.isFirst()) {
+      this.previousButton.css('opacity', AnnotationArea.DISABLED_BUTTON_OPACITY);
+    } else {
+      this.previousButton.css('opacity', 1);
+    }
   }
 
   #updateNextButton(annotation) {
@@ -123,6 +130,11 @@ class AnnotationArea {
     this.nextButton.on('click', function() {
       area.update(area.nextValidAnnotation(annotation));
     });
+    if (annotation.isLast()) {
+      this.nextButton.css('opacity', AnnotationArea.DISABLED_BUTTON_OPACITY);
+    } else {
+      this.nextButton.css('opacity', 1);
+    }
   }
 
   #updateGotoButton(annotation) {
