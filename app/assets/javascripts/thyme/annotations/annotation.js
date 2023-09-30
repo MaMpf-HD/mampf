@@ -11,7 +11,7 @@ class Annotation {
     this.id = json.id;
     this.seconds = thymeUtility.timestampToSeconds(json.timestamp);
     this.subtext = json.subtext;
-    this.userId = json.user_id;
+    this.belongsToCurrentUser = json.belongs_to_current_user;
   }
 
 

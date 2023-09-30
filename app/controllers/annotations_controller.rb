@@ -69,17 +69,28 @@ class AnnotationsController < ApplicationController
   def update_annotations
     medium = Medium.find_by_id(params[:mediumId])
 
+    # Get the right annotations
     if medium.annotations_visible?(current_user)
-      annots = Annotation.where(medium: medium,
-                                visible_for_teacher: true).or(
-               Annotation.where(medium: medium,
-                                user: current_user))
+      annotations = Annotation.where(medium: medium,
+                                     visible_for_teacher: true).or(
+                    Annotation.where(medium: medium,
+                                     user: current_user))
     else
-      annots = Annotation.where(medium: medium,
+      annotations = Annotation.where(medium: medium,
                                 user: current_user)
     end
     
-    render json: annots
+    # Convert to JSON (for easier hash operations)
+    annotations = annotations.as_json
+
+    # Filter attributes and add boolean "belongs_to_current_user".
+    annotations.each do |a|
+      a['belongs_to_current_user'] = (current_user.id == a['user_id'])
+      a.slice!('category', 'color', 'comment', 'id',
+               'belongs_to_current_user', 'timestamp', 'subtext')
+    end
+
+    render json: annotations
   end
 
   def num_nearby_mistake_annotations

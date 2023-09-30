@@ -53,13 +53,7 @@ $(document).on('turbolinks:load', function() {
     return annotation.color;
   }
   function isValid(annotation) {
-    if (annotationsToggle.getValue() === false) {
-      const currentUserId = thyme.dataset.currentUserId;
-      if (annotation.userId != currentUserId) {
-        return false;
-      }
-    }
-    return true;
+    return (!annotationsToggle.getValue() && !annotation.belongsToCurrentUser ? false : true);
   }
   const annotationArea = new AnnotationArea(true, colorFunc, isValid);
   thymeAttributes.annotationArea = annotationArea;

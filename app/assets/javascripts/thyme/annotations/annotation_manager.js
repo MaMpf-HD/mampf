@@ -79,13 +79,13 @@ class AnnotationManager {
       data: {
         mediumId: thymeAttributes.mediumId,
       },
-      success: function(annots) {
+      success: function(annotations) {
         // update the annotation field in thymeAttributes
         thymeAttributes.annotations = [];
-        if (annots === null) {
+        if (annotations === null) {
           return;
         }
-        for (let a of annots) {
+        for (let a of annotations) {
           thymeAttributes.annotations.push(new Annotation(a));
         }
         // update visual representation on the seek bar
