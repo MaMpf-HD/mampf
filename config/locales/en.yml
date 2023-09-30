@@ -348,8 +348,8 @@ en:
         Select this category if you have problems with the presentation
         in the video at this position, e.g. if you cannot read the
         handwriting or if you cannot understand the audio.
-      where_problem: >
-        Where's the problem?
+      whats_the_problem: >
+        What's the problem?
       definition: 'definition'
       definition_tooltip: >
         Select this subcategory if you have problems with a definition.

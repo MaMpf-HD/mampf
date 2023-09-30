@@ -347,7 +347,7 @@ de:
         Wähle diese Kategorie aus, wenn Dir die Darstellung im Video
         an dieser Stelle Probleme bereitet, z.B. falls Du die Schrift
         nicht lesen kannst oder falls der Ton unverständlich ist.
-      where_problem: >
+      whats_the_problem: >
         Wo liegt das Problem?
       definition: 'Definition'
       definition_tooltip: >
