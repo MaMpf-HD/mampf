@@ -101,11 +101,11 @@ class Annotation {
       case "definition":
         s = document.getElementById('annotation-locales').dataset.definition;
         break;
+      case "argument":
+        s = document.getElementById('annotation-locales').dataset.argument;
+        break;
       case "strategy":
         s = document.getElementById('annotation-locales').dataset.strategy;
-        break;
-      case "presentation":
-        s = document.getElementById('annotation-locales').dataset.presentation;
     }
     return c + " (" + s + ")";
   }
