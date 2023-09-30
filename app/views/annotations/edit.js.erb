@@ -12,10 +12,10 @@ postAsComment.addEventListener('change', function() {
 });
 
 function warningMessage() {
-  var message = document.getElementById('warning').dataset.publishing;
+  var message = document.getElementById('annotation-locales').dataset.warningPublishing;
   var mistakeRadio = document.getElementById('annotation_category_mistake');
   if (mistakeRadio.checked) {
-    message += "\n" + document.getElementById('warning').dataset.mistake;
+    message += "\n" + document.getElementById('annotation-locales').dataset.warningMistake;
     var medId = thyme.dataset.medium;
     var rad = 60; // annotations that are inside this radius (in seconds) are considered as "near". 
     $.ajax(Routes.num_nearby_mistake_annotations_path(), {
@@ -29,11 +29,14 @@ function warningMessage() {
       success: function(c) {
         if (c != undefined && c !== 0) {
           if (c === 1) {
-            message += document.getElementById('warning').dataset.oneCloseAnnotation;
+            message += document.getElementById('annotation-locales').
+                         dataset.warningOneCloseAnnotation;
           } else {
-            message += document.getElementById('warning').dataset.multipleCloseAnnotations1 +
+            message += document.getElementById('annotation-locales').
+                         dataset.warningMultipleCloseAnnotations1 +
                        "" + c +
-                       document.getElementById('warning').dataset.multipleCloseAnnotations2;
+                       document.getElementById('annotation-locales').
+                         dataset.warningMultipleCloseAnnotations2;
           }
           alert(message);
         }
