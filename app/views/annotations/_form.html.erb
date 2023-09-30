@@ -117,7 +117,7 @@
         <%= f.check_box :visible_for_teacher %>
       <% end %>
       <br>
-    <% elsif annotations_status == -1 %>
+    <% else %>
       <%= f.hidden_field :visible_for_teacher, value: false %>
     <% end %>
 
