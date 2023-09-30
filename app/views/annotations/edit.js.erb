@@ -229,3 +229,9 @@ previewToggle.addEventListener('change', function() {
     previewCSS(false, 100, 100, 0);
   }
 });
+
+// disable post comment checkbox if annotation was already posted
+if (<%= @posted %>) {
+  postComment(true);
+  postAsComment.disabled = true;
+}

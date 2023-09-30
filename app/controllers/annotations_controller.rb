@@ -2,36 +2,13 @@ class AnnotationsController < ApplicationController
   
   authorize_resource
   
-  def create
-    # Create new annotation and add additional attributes which are not covered by the form
-    @annotation = Annotation.new(annotation_params)
-    @total_seconds = params[:annotation][:total_seconds]
-    @annotation.timestamp = TimeStamp.new(total_seconds: @total_seconds)
-    @annotation.user_id = current_user.id
+  def new
+    @annotation = Annotation.new(category: :note, color: Annotation.colors[1])
+    @total_seconds = params[:total_seconds]
+    @medium_id = params[:mediumId]
+    @posted = (@annotation.public_comment_id != nil)
     
-    # Convert checkbox string "1" into the boolean true
-    if params[:annotation][:post_as_comment] == "1"
-      @post_as_comment = true
-    else
-      @post_as_comment = false
-    end
-
-    # Post comment
-    if @post_as_comment == true
-      @medium = Medium.find_by_id(params[:annotation][:medium_id])
-      @link = 'Thymestamp: <a href="' + play_medium_path(@medium) +
-        '?time=' + @total_seconds + '">' + @annotation.timestamp.hms_colon_string + '</a>'
-      @comment = annotation_params[:comment] + "\n" + @link
-      @commontator_thread = @medium.commontator_thread
-      @comment = Commontator::Comment.new(
-        thread: @commontator_thread, creator: @current_user, body: @comment
-      )
-      @comment.save
-      @annotation.public_comment_id = @comment.id
-    end
-
-    @annotation.save
-    render :update
+    render :edit
   end
 
   def edit
@@ -43,26 +20,45 @@ class AnnotationsController < ApplicationController
     end
     @total_seconds = @annotation.timestamp.total_seconds
     @medium_id = @annotation.medium_id
+    @posted = (@annotation.public_comment_id != nil)
   end
 
-  def new
-    @annotation = Annotation.new(category: :note, color: Annotation.colors[1])
-    @total_seconds = params[:total_seconds]
-    @medium_id = params[:mediumId]
-    render :edit
+  def update
+    @annotation = Annotation.find(params[:id])
+    comment_id = @annotation.public_comment_id
+    if (comment_id == nil)
+      @annotation.public_comment_id = post_comment
+    else
+      medium = Medium.find_by_id(params[:annotation][:medium_id])
+      total_seconds = params[:annotation][:total_seconds]
+      comment = params[:annotation][:comment]
+      commontator_comment = Commontator::Comment.find_by(id: comment_id)
+      commontator_comment.update(editor: current_user,
+                                 body: comment_html(medium, total_seconds, comment))
+    end
+    @annotation.update(annotation_params)
+  end
+
+  def create
+    @annotation = Annotation.new(annotation_params)
+    @annotation.user_id = current_user.id
+    @total_seconds = params[:annotation][:total_seconds]
+    @annotation.timestamp = TimeStamp.new(total_seconds: @total_seconds)
+    @annotation.public_comment_id = post_comment
+
+    @annotation.save
+    render :update
   end
 
   def show
     @annotation = Annotation.find(params[:id])
   end
 
-  def update
-    @annotation = Annotation.find(params[:id])
-    @annotation.update(annotation_params)
-  end
-
   def destroy
-    Annotation.find(params[:annotationId]).destroy
+    annotation = Annotation.find(params[:annotationId])
+    comment = Commontator::Comment.find_by(id: annotation.public_comment_id)
+    comment.update(deleted_at: DateTime.now)
+    annotation.destroy
     render json: []
   end
 
@@ -77,7 +73,7 @@ class AnnotationsController < ApplicationController
                                      user: current_user))
     else
       annotations = Annotation.where(medium: medium,
-                                user: current_user)
+                                     user: current_user)
     end
     
     # Convert to JSON (for easier hash operations)
@@ -119,6 +115,30 @@ class AnnotationsController < ApplicationController
     def annotation_params
       params.require(:annotation).permit(
         :category, :color, :comment, :medium_id, :subtext, :visible_for_teacher)
+    end
+
+    def post_comment
+      if params[:annotation][:post_as_comment] == "1"
+        medium = Medium.find_by_id(params[:annotation][:medium_id])
+        total_seconds = params[:annotation][:total_seconds]
+        commontator_thread = medium.commontator_thread
+        commontator_comment = Commontator::Comment.new(
+          thread: commontator_thread,
+          creator: current_user,
+          body: comment_html = comment_html(medium, 
+                                            total_seconds,
+                                            annotation_params[:comment])
+        )
+        commontator_comment.save
+        return commontator_comment.id
+      end
+    end
+
+    def comment_html(medium, total_seconds, comment)
+      timestamp = TimeStamp.new(total_seconds: total_seconds).hms_colon_string
+      return comment + "\n" +
+             'Thymestamp: <a href="' + play_medium_path(medium) +
+             '?time=' + total_seconds + '">' + timestamp + '</a>'
     end
 
 end
