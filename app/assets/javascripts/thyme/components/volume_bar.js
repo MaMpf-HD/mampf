@@ -12,22 +12,22 @@ class VolumeBar extends Component {
     video.addEventListener('loadedmetadata', function() {
       element.value = video.volume;
       element.style.backgroundImage = 'linear-gradient(to right,' +
-                                        ' #2497E3, #2497E3 ' +
-                                        video.volume * 100 +
-                                        '%, #ffffff ' +
-                                        video.volume * 100 +
-                                        '%, #ffffff)';
+                                      ' #2497E3, #2497E3 ' +
+                                      video.volume * 100 +
+                                      '%, #ffffff ' +
+                                      video.volume * 100 +
+                                      '%, #ffffff)';
     });
 
     video.addEventListener('volumechange', function() {
       const value = video.volume;
       element.value = value;
       element.style.backgroundImage = 'linear-gradient(to right,' +
-                                        ' #2497E3, #2497E3 ' +
-                                        value * 100 +
-                                        '%, #ffffff ' +
-                                        value * 100 +
-                                        '%, #ffffff)';
+                                      ' #2497E3, #2497E3 ' +
+                                      value * 100 +
+                                      '%, #ffffff ' +
+                                      value * 100 +
+                                      '%, #ffffff)';
     });
   }
   

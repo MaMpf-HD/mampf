@@ -33,10 +33,6 @@ $(document).on('turbolinks:load', function() {
   seekBar = new SeekBar('seek-bar');
   seekBar.add();
 
-  // reset faders
-  video.currentTime = 0;
-  video.volume = 1;
-
   // heatmap
   const heatmap = new Heatmap('heatmap', ['presentation', 'content', 'note']);
 
@@ -56,7 +52,7 @@ $(document).on('turbolinks:load', function() {
   const toggles = [toggleMistakeAnnotations, togglePresentationAnnotations,
                    toggleContentAnnotations, toggleNoteAnnotations];
 
-  
+
 
   /*
     ANNOTATION FUNCTIONALITY
@@ -105,11 +101,11 @@ $(document).on('turbolinks:load', function() {
    */
   thymeUtility.playOnClick();
   thymeUtility.setUpMaxTime('max-time');
-  
+
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
     resize.resizeContainer(thymeContainer, 1);
-    if (thymeAttributes.annotations === null) {
+    if (!thymeAttributes.annotations) {
       annotationManager.updateAnnotations();
     } else {
       annotationManager.updateMarkers();

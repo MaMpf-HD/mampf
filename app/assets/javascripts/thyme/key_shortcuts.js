@@ -1,7 +1,7 @@
 /**
   All key shortcuts should be bundled here.
 */
-var thymeKeyShortcuts = {
+const thymeKeyShortcuts = {
   /*
     SHORTCUT LIST:
       Arrow right - plus ten seconds
