@@ -34,23 +34,24 @@ $(document).on('turbolinks:load', function() {
   seekBar.add();
 
   // heatmap
-  const heatmap = new Heatmap('heatmap', ['presentation', 'content', 'note']);
+  const heatmap = new Heatmap('heatmap');
 
   // below-area
-  const toggleMistakeAnnotations = new AnnotationCategoryToggle(
-    'toggle-mistake-annotations', 'mistake', null); // <- don't draw mistake annotations in the heatmap
-  const togglePresentationAnnotations = new AnnotationCategoryToggle(
-    'toggle-presentation-annotations', 'presentation', heatmap);
-  const toggleContentAnnotations = new AnnotationCategoryToggle(
-    'toggle-content-annotations', 'content', heatmap);
-  const toggleNoteAnnotations = new AnnotationCategoryToggle(
-    'toggle-note-annotations', 'note', heatmap);
-  toggleMistakeAnnotations.add();
-  togglePresentationAnnotations.add();
-  toggleContentAnnotations.add();
-  toggleNoteAnnotations.add();
-  const toggles = [toggleMistakeAnnotations, togglePresentationAnnotations,
-                   toggleContentAnnotations, toggleNoteAnnotations];
+  const allCategories = Category.all();
+  const annotationCategoryToggles = new Array(allCategories.length);
+  let category;
+
+  for (let i = 0; i < allCategories.length; i++) {
+    category = allCategories[i];
+    annotationCategoryToggles[i] = new AnnotationCategoryToggle(
+      'toggle-' + category.name + '-annotations', category, heatmap
+    );
+    if (category === Category.MISTAKE) {
+      // exclude mistake annotations from heatmap
+      annotationCategoryToggles[i].heatmap = null;
+    }
+    annotationCategoryToggles[i].add();
+  }
 
 
 
@@ -58,10 +59,10 @@ $(document).on('turbolinks:load', function() {
     ANNOTATION FUNCTIONALITY
    */
   function colorFunc(annotation) {
-    return annotation.categoryColor();
+    return annotation.category.color;
   }
   function isValid(annotation) {
-    for (let toggle of toggles) {
+    for (let toggle of annotationCategoryToggles) {
       if (annotation.category === toggle.category && toggle.getValue() === true) {
         return true;
       }
@@ -71,10 +72,10 @@ $(document).on('turbolinks:load', function() {
   const annotationArea = new AnnotationArea(false, colorFunc, isValid);
   thymeAttributes.annotationArea = annotationArea;
   function strokeColorFunc(annotation) {
-    return annotation.category === 'mistake' ? 'darkred' : 'black';
+    return annotation.category === Category.MISTAKE ? 'darkred' : 'black';
   }
   function sizeFunc(annotation) {
-    return annotation.category === 'mistake' ? true : false;
+    return annotation.category === Category.MISTAKE ? true : false;
   }
   function onClick(annotation) {
     annotationArea.update(annotation);

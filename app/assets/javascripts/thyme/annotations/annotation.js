@@ -5,19 +5,19 @@ class Annotation {
 
   constructor(json) {
     // We only save attributes that are needed in the thyme related JavaScripts in the asset pipeline!
-    this.category = json.category;
+    this.category = Category.getByName(json.category);
     this.color = json.color;
     this.comment = json.comment;
     this.id = json.id;
     this.seconds = thymeUtility.timestampToSeconds(json.timestamp);
-    this.subcategory = json.subcategory;
+    this.subcategory = Subcategory.getByName(json.subcategory);
     this.belongsToCurrentUser = json.belongs_to_current_user;
   }
 
 
 
   /*
-   * AUXILIARY METHODS 
+   * AUXILIARY METHODS
    */
 
   /*
@@ -80,48 +80,9 @@ class Annotation {
     Returns a string with the correct translation of the category and subcategory of this annotation.
   */
   categoryLocale() {
-    let c, s;
-    switch (this.category) {
-      case "note":
-        c = document.getElementById('annotation-locales').dataset.note;
-        break;
-      case "content":
-        c = document.getElementById('annotation-locales').dataset.content;
-        break;
-      case "mistake":
-        c = document.getElementById('annotation-locales').dataset.mistake;
-        break;
-      case "presentation":
-        c = document.getElementById('annotation-locales').dataset.presentation;
-    }
-    if (this.subcategory === null) {
-      return c;
-    }
-    switch (this.subcategory) {
-      case "definition":
-        s = document.getElementById('annotation-locales').dataset.definition;
-        break;
-      case "argument":
-        s = document.getElementById('annotation-locales').dataset.argument;
-        break;
-      case "strategy":
-        s = document.getElementById('annotation-locales').dataset.strategy;
-    }
-    return c + " (" + s + ")";
-  }
-  
-  /* Returns a fixed color depending only on the category of the annotation. */
-  categoryColor() {
-    switch (this.category) {
-      case "note":
-        return "#44ee11"; //green
-      case "content":
-        return "#eeee00"; //yellow
-      case "mistake":
-        return "#ff0000"; //red
-      case "presentation":
-        return "#ff9933"; //orange
-    }
+    const c = this.category;
+    const s = this.subcategory;
+    return s == null ? c.locale() : c.locale() + " (" + s.locale() + ")";
   }
 
   /*

@@ -2,7 +2,7 @@ class AnnotationCategoryToggle extends Component {
 
   /*
      element = A reference on the HTML component (via document.getElementByID()).
-    category = The name of the category this toggle triggers.
+    category = The category which this toggle triggers.
      heatmap = The heatmap that will be updated depending on the value of the toggle.
    */
   constructor(element, category, heatmap) {
@@ -16,6 +16,9 @@ class AnnotationCategoryToggle extends Component {
     const category = this.category;
     const check = document.getElementById(this.element.id + '-check');
     const heatmap = this.heatmap;
+    if (heatmap != null) {
+      heatmap.addCategory(category); // add category when adding the button
+    }
 
     check.addEventListener('click', function() {
       thymeAttributes.annotationManager.updateAnnotations();

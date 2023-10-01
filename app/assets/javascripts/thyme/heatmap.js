@@ -8,14 +8,11 @@ class Heatmap {
   static MAX_HEIGHT = 0.25 // this number adjusts the maximum heights of the heatmap peaks
 
   /*
-            id = The ID of the HTML element to which the heatmap will be appended.
-
-    categories = An array which contains all the categories (i.e. the string representing
-                 the categories) that should be displayed in the heatmap.
-  */
-  constructor(id, categories) {
+   * id = The ID of the HTML element to which the heatmap will be appended.
+   */
+  constructor(id) {
     this.heatmap = $('#' + id);
-    this.categories = categories;
+    this.categories = [];
   }
 
 
@@ -52,7 +49,7 @@ class Heatmap {
     for (const a of thymeAttributes.annotations) {
       const valid = this.#validCategory(a.category);
       if (valid === true) {
-        colors.push(a.categoryColor());
+        colors.push(a.category.color);
       }
       const time = a.seconds;
       const position = Math.round(width * (time / video.duration));

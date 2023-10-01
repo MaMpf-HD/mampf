@@ -80,6 +80,9 @@
 //= require thyme/components/seek_bar
 //= require thyme/components/speed_selector
 //= require thyme/components/volume_bar
+//= require thyme/annotations/category_enum
+//= require thyme/annotations/category
+//= require thyme/annotations/subcategory
 //= require thyme/annotations/annotation
 //= require thyme/annotations/annotation_area
 //= require thyme/annotations/annotation_manager
