@@ -83,7 +83,7 @@ class AnnotationsController < ApplicationController
     annotations.each do |a|
       a['belongs_to_current_user'] = (current_user.id == a['user_id'])
       a.slice!('category', 'color', 'comment', 'id',
-               'belongs_to_current_user', 'timestamp', 'subtext')
+               'belongs_to_current_user', 'timestamp', 'subcategory')
     end
 
     render json: annotations
@@ -114,7 +114,7 @@ class AnnotationsController < ApplicationController
 
     def annotation_params
       params.require(:annotation).permit(
-        :category, :color, :comment, :medium_id, :subtext, :visible_for_teacher)
+        :category, :color, :comment, :medium_id, :subcategory, :visible_for_teacher)
     end
 
     def post_comment

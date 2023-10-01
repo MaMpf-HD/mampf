@@ -201,8 +201,8 @@ var contentRadio = document.getElementById('annotation_category_content');
 if (contentRadio.checked) {
   content();
   submitButton.disabled = false;
-  var subtext = document.getElementById('annotation_subtext').textContent.replace(/[^a-z]/g, '');
-  switch (subtext) {
+  var subcategory = document.getElementById('annotation_subcategory').textContent.replace(/[^a-z]/g, '');
+  switch (subcategory) {
     case "definition":
       document.getElementById('content-category-definition').checked = true;
       break;

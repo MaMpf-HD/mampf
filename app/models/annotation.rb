@@ -6,7 +6,7 @@ class Annotation < ApplicationRecord
   serialize :timestamp, TimeStamp
   
   enum category: { note: 0, content: 1, mistake: 2, presentation: 3 }
-  enum category: { definition: 0, argument: 1, strategy: 2 }
+  enum subcategory: { definition: 0, argument: 1, strategy: 2 }
   
   def self.colors
     color_map = {

@@ -10,7 +10,7 @@ class Annotation {
     this.comment = json.comment;
     this.id = json.id;
     this.seconds = thymeUtility.timestampToSeconds(json.timestamp);
-    this.subtext = json.subtext;
+    this.subcategory = json.subcategory;
     this.belongsToCurrentUser = json.belongs_to_current_user;
   }
 
@@ -77,7 +77,7 @@ class Annotation {
   }
 
   /*
-    Returns a string with the correct translation of the category and subtext of this annotation.
+    Returns a string with the correct translation of the category and subcategory of this annotation.
   */
   categoryLocale() {
     let c, s;
@@ -94,10 +94,10 @@ class Annotation {
       case "presentation":
         c = document.getElementById('annotation-locales').dataset.presentation;
     }
-    if (this.subtext === null) {
+    if (this.subcategory === null) {
       return c;
     }
-    switch (this.subtext) {
+    switch (this.subcategory) {
       case "definition":
         s = document.getElementById('annotation-locales').dataset.definition;
         break;
