@@ -177,6 +177,9 @@
     <% if medium.video.present? %>
       <div class="form-group">
         <%= t('admin.lecture.enable_emergency_button') %>
+        <%= helpdesk(t('admin.lecture.enable_emergency_button_helpdesk') +
+        		     t('admin.lecture.enable_emergency_button_inherit_helpdesk'),
+                     false) %>
         <div class="form-row ml-2">
           <div class="form-check form-check-inline">
             <%= f.radio_button :annotations_status,

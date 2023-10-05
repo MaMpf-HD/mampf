@@ -443,7 +443,16 @@ en:
       close_comments: 'Close all threads for related media'
       comments_disabled: >
         Comments for newly published media are disabled by default
-      enable_emergency_button: 'Enable emergency button?'
+      enable_emergency_button: 'Are students allowed to make annotations visible for you?'
+      enable_emergency_button_helpdesk: >
+        If you select "yes", students have the possibility to make
+        their annotations visible for the teacher resp. all editors
+        of the lecture. You can then see them either in the normal
+        thyme player or in the thyme feedback player to get feedback
+        for your lecture videos.
+      enable_emergency_button_inherit_helpdesk: >
+        If the option "inherit from lecture" is selected, the global
+        option of the lecture preferences (comments) is taken.
       new_notifications: 'new notifications'
       new_media: 'new media'
       new_posts: 'new forum posts'

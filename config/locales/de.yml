@@ -443,7 +443,16 @@ de:
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       comments_disabled: >
         Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
-      enable_emergency_button: 'Emergency-Button aktivieren?'
+      enable_emergency_button: 'Dürfen Studierende Annotationen für Sie sichtbar machen?'
+      enable_emergency_button_helpdesk: >
+        Wenn Sie "ja" anwählen, dann haben Studierende die Möglichkeit,
+        ihre Annotationen für den/die Dozent*in bzw. alle Editor*innen
+        der Vorlesung sichtbar machen. Sie können diese dann entweder
+        im normalen Thyme-Player oder im Thyme-Feedback-Player einsehen
+        und dadurch Rückmeldung zu Ihren Vorlesungsvideos erhalten.
+      enable_emergency_button_inherit_helpdesk: >
+        Ist die Option "von Vorlesung erben" ausgewählt, dann wird die
+        globale Option aus den Vorlesungseinstellungen (Kommentare) übernommen.
       new_notifications: 'neue Benachrichtigungen'
       new_media: 'neue Medien'
       new_posts: 'neue Forenbeiträge'
