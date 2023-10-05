@@ -1,5 +1,7 @@
 class AnnotationsController < ApplicationController
-  
+
+  before_action :update_comments, only: [:edit, :update_annotations]
+
   authorize_resource
   
   def new
@@ -139,6 +141,21 @@ class AnnotationsController < ApplicationController
       return comment + "\n" +
              'Thymestamp: <a href="' + play_medium_path(medium) +
              '?time=' + total_seconds + '">' + timestamp + '</a>'
+    end
+
+    def update_comments
+      for annotation in Annotation.where(medium: params[:mediumId])
+        # find comment
+        unless annotation.public_comment_id == nil
+          comment = Commontator::Comment.find_by(id: annotation.public_comment_id).body
+
+          # remove "Thymestamp: H:MM:SS" at the end of the string
+          index = comment.rindex("\nThymestamp")
+          comment = comment[0 .. index - 1]
+
+          annotation.update(comment: comment)
+        end
+      end
     end
 
 end
