@@ -22,7 +22,7 @@ class AnnotationCategoryToggle extends Component {
 
     check.addEventListener('click', function() {
       thymeAttributes.annotationManager.updateAnnotations();
-      if (heatmap != null) {
+      if (heatmap) {
         if (toggle.getValue() === true) {
           heatmap.addCategory(category);
         } else {

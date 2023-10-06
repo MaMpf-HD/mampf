@@ -75,7 +75,7 @@ $(document).on('turbolinks:load', function() {
     return annotation.category === Category.MISTAKE ? 'darkred' : 'black';
   }
   function sizeFunc(annotation) {
-    return annotation.category === Category.MISTAKE ? true : false;
+    return annotation.category === Category.MISTAKE;
   }
   function onClick(annotation) {
     annotationArea.update(annotation);
