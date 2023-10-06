@@ -151,9 +151,7 @@ class AnnotationsController < ApplicationController
 
           # remove "Thymestamp: H:MM:SS" at the end of the string
           index = comment.rindex("\nThymestamp")
-          comment = comment[0 .. index - 1]
-
-          annotation.update(comment: comment)
+          annotation.update(comment: comment[0 .. index - 1]) unless index == nil
         end
       end
     end
