@@ -23,7 +23,7 @@ class DisplayManager {
     for (let e of this.elements) {
       e.hide();
     }
-    thymeAttributes.video.style.width = '100';
+    thymeAttributes.video.style.width = '100%';
     thymeAttributes.video.controls = true;
   }
 

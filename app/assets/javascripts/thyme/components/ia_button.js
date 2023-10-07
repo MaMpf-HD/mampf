@@ -34,26 +34,10 @@ class IaButton extends Component {
 
     element.addEventListener('click', function() {
       if (element.dataset.status === 'true') {
-        element.dataset.status = 'false';
-        element.innerHTML = 'remove_from_queue';
-        for (let e of button.toHide) {
-          e.hide();
-        }
-        for (let e of button.toShrink) {
-          e.css('width', '100%');
-        }
+        button.plus();
       } else {
-        element.dataset.status = 'true';
-        element.innerHTML = 'add_to_queue';
-        for (let e of button.toHide) {
-          e.show();
-        }
-        for (let e of button.toShrink) {
-          e.css('width', shrink);
-        }
+        button.minus();
       }
-      $(window).trigger('resize');
-      thymeAttributes.annotationManager.updateMarkers();
     });
   }
 
@@ -62,9 +46,16 @@ class IaButton extends Component {
     toHide elements and shrinks all toShrink elements.
    */
   plus() {
-    if (this.element.dataset.status === 'false') {
-      this.element.click();
+    this.element.dataset.status = 'false';
+    this.element.innerHTML = 'remove_from_queue';
+    for (let e of this.toHide) {
+      e.hide();
     }
+    for (let e of this.toShrink) {
+      e.css('width', '100%');
+    }
+    $(window).trigger('resize');
+    thymeAttributes.annotationManager.updateMarkers();
   }
 
   /*
@@ -72,9 +63,20 @@ class IaButton extends Component {
     toHide elements and enlarges all toShrink elements.
    */
   minus() {
-    if (this.element.dataset.status === 'true') {
-      this.element.click();
+    this.element.dataset.status = 'true';
+    this.element.innerHTML = 'add_to_queue';
+    for (let e of this.toHide) {
+      e.show();
     }
+    for (let e of this.toShrink) {
+      e.css('width', this.shrink);
+    }
+    $(window).trigger('resize');
+    thymeAttributes.annotationManager.updateMarkers();
+  }
+
+  getStatus() {
+    return this.element.dataset.status === 'true';
   }
 
 }

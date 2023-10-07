@@ -80,18 +80,6 @@ $(document).on('turbolinks:load', function() {
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
-  // onShow and onUpdate definition for the annotation area
-  function onShow() {
-    iaButton.plus();
-    annotationManager.updateMarkers();
-  }
-  function onHide() {
-    iaButton.minus();
-    annotationManager.updateMarkers();
-    resizeContainer();
-  }
-  annotationArea.onShow = onShow;
-  annotationArea.onHide = onHide;
 
   // Update annotations after submitting the annotations form
   $(document).on('click', '#annotation-modal-submit-button', function() {

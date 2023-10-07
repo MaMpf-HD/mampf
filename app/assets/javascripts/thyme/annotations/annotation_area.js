@@ -22,8 +22,6 @@ class AnnotationArea {
   constructor(fancyStyle, colorFunc, isValid) {
     this.isActive       = false;
     this.annotation     = null; // the current annotation
-    this.onShow         = null; // a function triggered when the modal is shown
-    this.onHide         = null; // a function triggered when the modal is hidden
     this.colorFunc      = colorFunc;
     this.isValid        = isValid;
     this.fancyStyle     = fancyStyle;
@@ -53,9 +51,6 @@ class AnnotationArea {
   show() {
     this.caption.show();
     this.isActive = true;
-    if (this.onShow != null) {
-      this.onShow();
-    }
   }
 
   /*
@@ -64,9 +59,6 @@ class AnnotationArea {
   hide() {
     this.caption.hide();
     this.isActive = false;
-    if (this.onHide != null) {
-      this.onHide();
-    }
   }
 
   /*

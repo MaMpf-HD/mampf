@@ -9,6 +9,7 @@ class FullScreenButton extends Component {
     const video = thymeAttributes.video;
     const element = this.element;
     const container = this.container;
+    const button = this;
 
     // Event listener for the full-screen button
     // (unfortunately, lots of browser specific code).
@@ -33,41 +34,31 @@ class FullScreenButton extends Component {
     });
 
     document.onfullscreenchange = function() {
-      if (document.fullscreenElement !== null) {
-        element.innerHTML = 'fullscreen_exit';
-        element.dataset.status = 'true';
-      } else {
-        element.innerHTML = 'fullscreen';
-        element.dataset.status = 'false';
-        /* brute force patch: apparently, after exiting fullscreen mode,
-          window.onresize is triggered twice(!), the second time with incorrect
-          window height data, which results in a video area not quite filling
-          the whole window. The next line resizes the container again. */
-        setTimeout(resize.resizeContainer($(container), 20));
-      }
+      button.#fullscreenChange();
     };
 
     document.onwebkitfullscreenchange = function() {
-      if (document.webkitFullscreenElement !== null) {
-        element.innerHTML = 'fullscreen_exit';
-        element.dataset.status = 'true';
-      } else {
-        element.innerHTML = 'fullscreen';
-        element.dataset.status = 'false';
-        setTimeout(resize.resizeContainer($('#' + container.id), 20));
-      }
+      button.#fullscreenChange();
     };
 
     document.onmozfullscreenchange = function() {
-      if (document.mozFullScreenElement !== null) {
-        element.innerHTML = 'fullscreen_exit';
-        element.dataset.status = 'true';
-      } else {
-        element.innerHTML = 'fullscreen';
-        element.dataset.status = 'false';
-        setTimeout(resize.resizeContainer($('#' + container.id), 20));
-      }
+      button.#fullscreenChange();
     };
   }
   
+  #fullscreenChange() {
+    if (document.fullscreenElement !== null) {
+      this.element.innerHTML = 'fullscreen_exit';
+      this.element.dataset.status = 'true';
+    } else {
+      this.element.innerHTML = 'fullscreen';
+      this.element.dataset.status = 'false';
+      /* brute force patch: apparently, after exiting fullscreen mode,
+        window.onresize is triggered twice(!), the second time with incorrect
+        window height data, which results in a video area not quite filling
+        the whole window. The next line resizes the container again. */
+      setTimeout(resize.resizeContainer($(this.container), 1), 20);
+    }
+  }
+
 }
