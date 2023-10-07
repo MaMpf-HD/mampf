@@ -4,13 +4,13 @@ class AnnotationsToggle extends Component {
     super(element);
     this.id = element;
     this.check = document.getElementById(this.id + '-check');
-    this.checkJQ = $('#' + this.id + '-check');
+    this.$check = $('#' + this.id + '-check');
     this.div = $('#' + this.id);
   }
 
   add() {
     const toggle = this;
-    const checkJQ = this.checkJQ;
+    const $check = this.$check;
     
     /* User is teacher/editor for the given medium and visible_for_teacher ist activated?
        -> add toggle annotations button */
@@ -35,7 +35,7 @@ class AnnotationsToggle extends Component {
     Returns true if the toggle's value is true and false otherwise.
    */
   getValue() {
-    return this.checkJQ.is(":checked");
+    return this.$check.is(":checked");
   }
 
   /*
@@ -47,7 +47,6 @@ class AnnotationsToggle extends Component {
     $('#emergency-button').css('left', '86%');
     thymeAttributes.hideControlBarThreshold.x = 960;
     this.div.show();
-    //updateControlBarType(); TODO
   }
   
 }

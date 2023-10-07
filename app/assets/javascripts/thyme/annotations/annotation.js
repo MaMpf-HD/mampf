@@ -52,15 +52,15 @@ class Annotation {
    */
   #create(color, polygonPoints, strokeWidth, strokeColor, onClick) {
     // HTML for the marker
-    const markerStr = '<span id="marker-' + this.id + '">' +
-                        '<svg width="15" height="20">' +
-                        '<polygon points="' + polygonPoints + '"' +
-                          'style="fill:' + color + ';' +
-                          'stroke:' + strokeColor + ';' +
-                          'stroke-width:' + strokeWidth + ';' +
-                          'fill-rule:evenodd;"/>' +
-                        '</svg>' +
-                      '</span>';
+    const markerStr = `<span id="marker-${this.id}">
+                        <svg width="15" height="20">
+                        <polygon points="${polygonPoints}"
+                          style="fill:${color};
+                          stroke:${strokeColor};
+                          stroke-width:${strokeWidth};
+                          fill-rule:evenodd;"/>
+                        </svg>' +
+                      </span>`;
     $('#' + thymeAttributes.markerBarId).append(markerStr);
 
     // positioning of the marker

@@ -146,9 +146,6 @@ $(document).on('turbolinks:load', function() {
   iaButton.toHide = [$('#caption'), annotationArea];
   iaButton.add();
   (new IaCloseButton('ia-close', iaButton)).add();
-  //TODO
-  //const interactiveArea = new InteractiveArea();
-  //thymeAttributes.interactiveArea = interactiveArea;
 
 
 
@@ -156,11 +153,11 @@ $(document).on('turbolinks:load', function() {
     RESIZE
    */
   // Manage large and small display
-  function largeDisplayFunc() {
+  function onEnlarge() {
     iaButton.plus();
   }
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
-  const displayManager = new DisplayManager(elements, largeDisplayFunc);
+  const displayManager = new DisplayManager(elements, onEnlarge);
 
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden

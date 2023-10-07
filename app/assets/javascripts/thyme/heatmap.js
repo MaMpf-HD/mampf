@@ -47,7 +47,7 @@ class Heatmap {
        data calculation
     */
     for (const a of thymeAttributes.annotations) {
-      const valid = this.#validCategory(a.category);
+      const valid = this.#isValidCategory(a.category);
       if (valid === true) {
         colors.push(a.category.color);
       }
@@ -72,13 +72,13 @@ class Heatmap {
       pointsStr += x + "," + (maxHeight - amplitude * pixels[x]) + " ";
     }
     pointsStr += "" + width + "," + maxHeight;
-    const heatmapStr = '<svg width=' + (width + 35) + ' height="' + maxHeight + '">' +
-                         '<polyline points="' + pointsStr + '"' +
-                           'style="fill:' + thymeUtility.colorMixer(colors) + ';' +
-                           'fill-opacity:0.4;' +
-                           'stroke:black;' +
-                           'stroke-width:1"/>' +
-                       '</svg>';
+    const heatmapStr = `<svg width="${(width + 35)}" height="${maxHeight}">
+                         <polyline points="${pointsStr}"
+                           style="fill:${thymeUtility.mixColors(colors)};
+                           fill-opacity:0.4;
+                           stroke:black;
+                           stroke-width:1"/>
+                       </svg>`;
     this.heatmap.append(heatmapStr);
     const offset = this.heatmap.parent().offset().left - Heatmap.RADIUS + 79;
     this.heatmap.offset({ left: offset });
@@ -88,17 +88,12 @@ class Heatmap {
   addCategory(category) {
     if (this.categories.includes(category)) {
       return;
-    } else {
-      this.categories.push(category);
     }
+    this.categories.push(category);
   }
 
   removeCategory(category) {
-    for (let i = 0; i < this.categories.length; i++) {
-      if (this.categories[i] === category) {
-        this.categories.splice(i, 1);
-      }
-    }
+    this.categories = this.categories.filter(c => c !== category);
   }
 
 
@@ -107,7 +102,7 @@ class Heatmap {
     AUXILIARY METHODS
   */
 
-  #validCategory(category) {
+  #isValidCategory(category) {
     return this.categories.includes(category);
   }
 

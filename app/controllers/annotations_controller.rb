@@ -93,7 +93,8 @@ class AnnotationsController < ApplicationController
 
   def num_nearby_mistake_annotations
     annotations = Annotation.where(medium: params[:mediumId])
-    radius = params[:radius].to_i
+    # the time (!) radius in which annotation are considered as "nearby"
+    radius = params[:radius].to_i 
     timestamp = params[:timestamp].to_i
     counter = 0
     for annotation in annotations

@@ -4,22 +4,22 @@
  */
 class DisplayManager {
 
-  constructor(elements, func) {
+  constructor(elements, onEnlarge) {
     /*
       elements = An array containing JQuery references on the HTML elements
                  that should be hidden, when the display is too small.
 
-          func = A reference on a function that is called when the display
+     onEnlarge = A reference on a function that is called when the display
                  changes from small to large. Use this for player specific behaviour.
      */
     this.elements = elements;
-    this.func = func;
+    this.onEnlarge = onEnlarge;
   }
 
 
 
   // on small display, fall back to standard browser player
-  smallDisplay() {
+  adaptToSmallDisplay() {
     for (let e of this.elements) {
       e.hide();
     }
@@ -28,12 +28,12 @@ class DisplayManager {
   }
 
   // on large display, use anything thyme has to offer, disable native player
-  largeDisplay() {
+  adaptToLargeDisplay() {
     thymeAttributes.video.controls = false;
     for (let e of this.elements) {
       e.show();
     }
-    this.func();
+    this.onEnlarge();
   }
 
   // Check screen size and trigger the right method
@@ -44,85 +44,85 @@ class DisplayManager {
         thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
         window.matchMedia("screen and (max-height: " +
         thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      dm.smallDisplay();
+      dm.adaptToSmallDisplay();
     }
 
     if (window.matchMedia("screen and (max-device-width: " +
         thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
         window.matchMedia("screen and (max-device-height: " +
         thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      dm.smallDisplay();
+      dm.adaptToSmallDisplay();
     }
 
     // mediaQuery listener for very small screens
-    const match_verysmall_x = window.matchMedia("screen and (max-width: " +
+    const matchVerysmallX = window.matchMedia("screen and (max-width: " +
       thymeAttributes.hideControlBarThreshold.x + "px)");
-    match_verysmall_x.addListener(function(result) {
+    matchVerysmallX.addListener(function(result) {
       if (result.matches) {
-        dm.smallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
-    const match_verysmall_y = window.matchMedia("screen and (max-height: " +
+    const matchVerysmallY = window.matchMedia("screen and (max-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
-    match_verysmall_y.addListener(function(result) {
+    matchVerysmallY.addListener(function(result) {
       if (result.matches) {
-        dm.smallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
 
-    const match_verysmalldevice_x = window.matchMedia("screen and (max-device-width: " +
+    const matchVerysmalldeviceX = window.matchMedia("screen and (max-device-width: " +
       thymeAttributes.hideControlBarThreshold.x + "px)");
-    match_verysmalldevice_x.addListener(function(result) {
+    matchVerysmalldeviceX.addListener(function(result) {
       if (result.matches) {
-        dm.smallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
-    const match_verysmalldevice_y = window.matchMedia("screen and (max-device-height: " +
+    const matchVerysmalldeviceY = window.matchMedia("screen and (max-device-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
-    match_verysmalldevice_y.addListener(function(result) {
+    matchVerysmalldeviceY.addListener(function(result) {
       if (result.matches) {
-        dm.smallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
 
     // mediaQuery listener for normal screens
-    let match_normal_x = window.matchMedia("screen and (min-width: " +
+    let matchNormalX = window.matchMedia("screen and (min-width: " +
       (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-    match_normal_x.addListener(function(result) {
-      let match_normal_y;
-      match_normal_y = window.matchMedia("screen and (min-height: " +
+    matchNormalX.addListener(function(result) {
+      let matchNormalY;
+      matchNormalY = window.matchMedia("screen and (min-height: " +
         (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-      if (result.matches && match_normal_y.matches) {
-        dm.largeDisplay();
+      if (result.matches && matchNormalY.matches) {
+        dm.adaptToLargeDisplay();
       }
     });
-    const match_normal_y = window.matchMedia("screen and (min-height: " +
+    const matchNormalY = window.matchMedia("screen and (min-height: " +
       (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-    match_normal_y.addListener(function(result) {
-      match_normal_x = window.matchMedia("screen and (min-width: " +
+    matchNormalY.addListener(function(result) {
+      matchNormalX = window.matchMedia("screen and (min-width: " +
         (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-      if (result.matches && match_normal_x.matches) {
-        dm.largeDisplay();
+      if (result.matches && matchNormalX.matches) {
+        dm.adaptToLargeDisplay();
       }
     });
 
-    let match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
+    let matchNormaldeviceX = window.matchMedia("screen and (min-device-width: " +
       (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-    let match_normaldevice_y;
-    match_normaldevice_x.addListener(function(result) {
-      match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
+    let matchNormaldeviceY;
+    matchNormaldeviceX.addListener(function(result) {
+      matchNormaldeviceY = window.matchMedia("screen and (min-device-height: " +
         (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-      if (result.matches && match_normal_y.matches) {
-        dm.largeDisplay();
+      if (result.matches && matchNormalY.matches) {
+        dm.adaptToLargeDisplay();
       }
     });
-    match_normaldevice_y = window.matchMedia("screen and (min-device-height: " +
+    matchNormaldeviceY = window.matchMedia("screen and (min-device-height: " +
       (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-    match_normaldevice_y.addListener(function(result) {
-      match_normaldevice_x = window.matchMedia("screen and (min-device-width: " +
+    matchNormaldeviceY.addListener(function(result) {
+      matchNormaldeviceX = window.matchMedia("screen and (min-device-width: " +
         (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-      if (result.matches && match_normal_x.matches) {
-        dm.largeDisplay();
+      if (result.matches && matchNormalX.matches) {
+        dm.adaptToLargeDisplay();
       }
     });
   }

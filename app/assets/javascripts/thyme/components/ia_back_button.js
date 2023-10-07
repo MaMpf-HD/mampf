@@ -1,3 +1,10 @@
+/**
+ * The Interactive Area Back Button saves a reference on the
+ * current time. If one clicks on a chapter field in the
+ * interactive area (which sets the current time to the start
+ * of the chapter), one has the possibility to go back by
+ * clicking this button.
+ */
 class IaBackButton extends Component {
 
   constructor(element, chapterListId) {

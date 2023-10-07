@@ -34,8 +34,8 @@ class AnnotationCategoryToggle extends Component {
   }
 
   getValue() {
-    const checkJQ = $('#' + this.element.id + '-check');
-    return checkJQ.is(":checked");
+    const $check = $('#' + this.element.id + '-check');
+    return $check.is(":checked");
   }
 
 }

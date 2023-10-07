@@ -46,13 +46,11 @@ class MetadataManager {
     if (times.length === 0) {
       return $();
     }
-    let i = 0;
-    while (i < times.length) {
+    for (let i = 0; i < times.length; i++) {
       if (times[i] > seconds) {
         const $nextMeta = $('#m-' + $.escapeSelector(times[i]));
         return $nextMeta.add($nextMeta.nextAll());
       }
-      ++i;
     }
     return $();
   }
@@ -80,11 +78,10 @@ class MetadataManager {
     let metaTrack;
     if (metadataElement.readyState === 2 && (metaTrack = metadataElement.track)) {
       metaTrack.mode = 'hidden';
-      let i = 0;
       let times = [];
       // read out the metadata track cues and generate html elements for
       // metadata, run katex on them
-      while (i < metaTrack.cues.length) {
+      for (let i = 0; i < metaTrack.cues.length; i++) {
         const cue = metaTrack.cues[i];
         const meta = JSON.parse(cue.text);
         const start = cue.startTime;
@@ -189,7 +186,6 @@ class MetadataManager {
         });
         let metaElement = $listItem.get(0);
         thymeUtility.renderLatex(metaElement);
-        ++i;
       }
       // store metadata start times as data attribute
       $metaList.get(0).dataset.times = JSON.stringify(times);

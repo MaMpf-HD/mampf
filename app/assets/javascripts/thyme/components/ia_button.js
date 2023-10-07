@@ -1,3 +1,8 @@
+/**
+ * The Interactive Area Button can show/hide specific elements of the
+ * thyme player (normally interactive and annotation area) and
+ * adjust the video position/size accordingly.
+ */
 class IaButton extends Component {
 
   /*

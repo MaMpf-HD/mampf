@@ -6,16 +6,16 @@ const thymeUtility = {
   /*
     Mixes all colors in the array "colors" (write colors as hexadecimal, e.g. "#1fe67d").
    */
-  colorMixer: function(colors) {
-    let n = colors.length;
+  mixColors: function(colors) {
     let red = 0;
     let green = 0;
     let blue = 0;
-    for (let i = 0; i < n; i++) {
-      red += Number("0x" + colors[i].substr(5, 2));
-      green += Number("0x" + colors[i].substr(3, 2));
-      blue += Number("0x" + colors[i].substr(1, 2));
+    for (let color of colors) {
+      red += Number("0x" + color.substr(5, 2));
+      green += Number("0x" + color.substr(3, 2));
+      blue += Number("0x" + color.substr(1, 2));
     }
+    const n = colors.length;
     red = Math.max(0, Math.min(255, Math.round(red / n)));
     green = Math.max(0, Math.min(255, Math.round(green / n)));
     blue = Math.max(0, Math.min(255, Math.round(blue / n)));
@@ -136,11 +136,7 @@ const thymeUtility = {
     (instead of just "f") -> needed for correct format.
    */
   toHexaDecimal: function(int) {
-    if (int > 15) {
-      return int.toString(16);
-    } else {
-      return "0" + int.toString(16);
-    }
+  	return int.toString(16).padStart(2, '0');
   },
 
 };

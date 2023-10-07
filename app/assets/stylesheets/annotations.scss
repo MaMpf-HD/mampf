@@ -10,7 +10,6 @@
   display: flex;
   left: 89%;
   top: 40%;
-  -ms-transform: translateY(-50%);
   transform: translateY(-50%);
   input:checked + .slider {
     background-color: #2196F3;
