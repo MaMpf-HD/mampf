@@ -1,13 +1,15 @@
 class Annotation < ApplicationRecord
   belongs_to :medium
   belongs_to :user
-  
+  belongs_to :public_comment, class_name: 'Commontator::Comment',
+             optional: true
+
   # the timestamp for the annotation position is serialized as text in the db
   serialize :timestamp, TimeStamp
-  
+
   enum category: { note: 0, content: 1, mistake: 2, presentation: 3 }
   enum subcategory: { definition: 0, argument: 1, strategy: 2 }
-  
+
   def self.colors
     color_map = {
        1 => '#DB2828',
