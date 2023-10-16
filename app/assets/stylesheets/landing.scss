@@ -16,6 +16,8 @@
 
 #signin-box {
     padding: 70px 40px;
+    background: linear-gradient(7deg,
+            rgba(255, 255, 255, 0.85) 0%, white 70%);
 }
 
 #announcement-box {
@@ -52,6 +54,10 @@
 #landing-body {
     background-image: image-url('landing-background.jpg');
     background-size: cover;
+}
+
+#footer-bar {
+    background-color: rgba(255, 255, 255, 0.95);
 }
 
 .ul-no-indentation {
