@@ -3,7 +3,7 @@
 $('#new-clicker-area').empty()
   .append('<%= j render partial: "clickers/new",
                         locals: { clicker: @clicker } %>').show()
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 
 # hide all other buttons on admin index page
 $('.admin-index-button').hide()

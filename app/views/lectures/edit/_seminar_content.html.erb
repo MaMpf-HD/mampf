@@ -22,7 +22,7 @@
   </div>
   <div class="card-body">
     <% if lecture.talks.any? %>
-      <div class="row" data-masonry='{"percentPosition": true }'>
+      <div class="row masonry-grid">
         <% lecture.talks.each do |t| %>
             <%= render partial: 'lectures/edit/talk',
                        locals: { talk: t } %>

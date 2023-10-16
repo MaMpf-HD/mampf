@@ -15,27 +15,12 @@
 // const images = require.context('../images', true)
 // const imagePath = (name) => images(name, true)
 
-// JQuery Datetimepicker fix
-// import '...' does not work, random names for the import don't work either
-// we use "css" and "myLib" imports although these strings do not show up anywhere
-// in our codebase. This is just a hack to make the imports-loader work. Maybe it has
-// to do with how webpacker resolves the imports or how jquery-datetimepicker exports
-// its module.
-import css from 'jquery-datetimepicker/build/jquery.datetimepicker.min.css'
-import myLib from 'imports-loader?imports=default%20jquery%20$!./../../../node_modules/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js'
-
-import moment from "moment"; // require
-window.moment = moment;
 import {
     WidgetInstance
 } from "friendly-challenge";
 var friendlyChallengeWidgetInstance = WidgetInstance
-$.datetimepicker.setLocale('de');
-
 
 document.addEventListener("turbolinks:load", function () {
-    // ...
-
     var doneCallback, element, options, widget;
 
     doneCallback = function (solution) {
@@ -60,4 +45,11 @@ document.addEventListener("turbolinks:load", function () {
         //DO not uncomment, evil
         //    widget.reset();
     }
+
+    // Init Masonry grid system
+    // see https://getbootstrap.com/docs/5.0/examples/masonry/
+    // and official documentation: https://masonry.desandro.com/
+    $('.masonry-grid').masonry({
+        percentPosition: true
+    });
 })

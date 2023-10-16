@@ -48,5 +48,4 @@ $('#link_reappearance_link').show()
 $('#link_details').show()
 <% end %>
 
-# activate popovers
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()

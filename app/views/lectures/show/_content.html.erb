@@ -9,7 +9,7 @@
           <% if !lecture.talks.any? %>
             <%= t('admin.lecture.no_content_yet') %>
           <% else %>
-            <div class="row" data-masonry='{"percentPosition": true}' >
+            <div class="row masonry-grid">
               <%= render partial: 'lectures/show/talk',
                         collection: lecture.talks,
                         cached: false %> 
@@ -20,7 +20,7 @@
             <% if !lecture.chapters.any? %>
               <%= t('admin.lecture.no_content_yet') %>
             <% else %>
-              <div class="row" data-masonry='{"percentPosition": true}' >
+              <div class="row masonry-grid">
                 <%= render partial: 'lectures/show/chapter',
                           collection: lecture.chapters
                                               .select { |c| c.hidden.in?([false, nil])  },

@@ -3,7 +3,5 @@ $('#new-announcement-modal-content').empty()
   .append('<%= j render partial: "announcements/form",
                         locals: { announcement: @announcement,
                                   lecture: @lecture } %>')
-
-# activate popovers and show modal
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 $('#newAnnouncementModal').modal('show')

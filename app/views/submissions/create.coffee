@@ -22,7 +22,7 @@ $('.submissionFooter .btn').prop('disabled', false)
   .removeClass('btn-outline-secondary')
 $('.submissionFooter .btn').each ->
   $(this).addClass($(this).data('color'))
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 <% end %>
 <% else %>
 alert('<%= t("submission.too_late_no_saving") %>')
