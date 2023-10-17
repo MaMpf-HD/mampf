@@ -6,7 +6,7 @@ $('#new-lecture-area').empty()
                                   from: @from,
                                   modal: @from == "course" } %>').show()
 fillOptionsByAjax($('#new-lecture-area .selectize'))
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 
 # hide all other buttons on admin index page
 $('.admin-index-button').hide()

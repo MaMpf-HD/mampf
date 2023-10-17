@@ -3,5 +3,4 @@ $('#medium-modal-content').empty()
   .append('<%= j render partial: "media/new",
                         locals: { medium: @medium } %>').show()
 $('#mediumModal').modal('show')
- # activate popovers
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()

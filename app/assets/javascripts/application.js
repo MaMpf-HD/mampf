@@ -24,6 +24,7 @@
 //= require announcements
 //= require answers
 //= require bootstrap_modal_turbolinks_fix
+//= require bootstrap_popovers
 //= require chapters
 //= require clickers
 //= require courses

@@ -3311,10 +3311,10 @@ fresh@0.5.2:
   resolved "https://registry.yarnpkg.com/fresh/-/fresh-0.5.2.tgz#3d8cadd90d976569fa835ab1f8e4b23a105605a7"
   integrity sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==
 
-friendly-challenge@^0.9.12:
-  version "0.9.12"
-  resolved "https://registry.yarnpkg.com/friendly-challenge/-/friendly-challenge-0.9.12.tgz#297ef9295ad5e4cc52efc6d0db23700e0bbab978"
-  integrity sha512-U1MQ2zl7txKdDuD7Y8jZ8a4CtaXjZSFlWXNmGb22KV1sBnGIKDBIkelShBd5zfZUo4dWml0ikKVJMLQjwLLeSQ==
+friendly-challenge@^0.9.1:
+  version "0.9.13"
+  resolved "https://registry.yarnpkg.com/friendly-challenge/-/friendly-challenge-0.9.13.tgz#a6767e7e15febb3f774aa4696f4284746ede97f9"
+  integrity sha512-R9ZBA15SSrp6ctr6J5Z6dgEyKTtaMH6tOuQ2HPqpm9jUo8a6q2mI0+85yJoC5RY+tujRFygGwI0LsPFDUTc0RQ==
   dependencies:
     "@babel/runtime-corejs3" "^7.10.4"
     core-js "^3.6.5"
