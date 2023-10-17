@@ -3236,6 +3236,7 @@ en:
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'
+    send_variant: 'Send'
     download: 'Download'
     move: 'Move'
     accept: 'Accept'

@@ -3415,6 +3415,7 @@ de:
     refresh_token: 'Code erneuern'
     invite: 'Einladen'
     send: 'Versenden'
+    send_variant: 'Absenden'
     download: 'Herunterladen'
     move: 'Verschieben'
     accept: 'Akzeptieren'
