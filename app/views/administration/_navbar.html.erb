@@ -1,127 +1,119 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
-<nav class="navbar navbar-expand-md navbar-dark bg-dark"
-     id="first-admin-nav">
-  <div class="container-fluid">
-    <%= link_to image_tag('/MaMpf-Logo_32x32.png',
-                          class: 'img-fluid me-2'),
+<%= stylesheet_link_tag 'navbar' %>
+<div class="admin-navbars-container">
+  <nav class="navbar navbar-expand" id="first-admin-nav">
+    <%= link_to image_tag('MaMpf-Logo.svg',
+                          class: 'me-2',
+                          id: 'mampf-logo'),
                 exit_administration_path,
                 title: t('admin.navbar.exit'),
-                data: { toggle: 'tooltip' }%>
+                data: { 'bs-toggle': 'tooltip' } %>
     <%= link_to t('mampf'),
                 exit_administration_path,
                 class: 'navbar-brand',
+                style: "text-decoration: none;",
+                id: 'mampfbrand',
                 title: t('admin.navbar.exit'),
-                data: { toggle: 'tooltip' },
-                style: "text-decoration: none;" %>
-    <ul class="navbar-nav me-auto" id="adminMain">
-      <li class="nav-item"
-          id="adminHome">
+                data: { 'bs-toggle': 'tooltip' } %>
+
+    <ul class="navbar-nav" id="adminHome">
+      <li class="nav-item" id="adminHome">
         <%= link_to '', administration_path,
-                    class: 'fas fa-home fa-lg text-light nav-link',
-                    style: 'text-decoration: none;',
-                    data: { toggle: "tooltip" },
-                    title: t('admin.navbar.main') %>
+                class: 'nav-link bi bi-house-fill ' + get_class_for_path(administration_path()),
+                data: { 'bs-toggle': "tooltip" },
+                title: t('admin.navbar.main') %>
       </li>
+
       <% if current_user.current_lecture_id
                         .in?(current_user.teaching_related_lectures.map(&:id)) %>
-        <li class="nav-item"
-            id="adminCurrentLecture">
+        <li class="nav-item" id="adminCurrentLecture">
           <%= link_to '',
-                      edit_lecture_path(Lecture.find_by_id(current_user.current_lecture_id)),
-                      class: 'fas fa-chalkboard-teacher fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: "tooltip" },
-                      title: t('admin.navbar.current_lecture') %>
+                  edit_lecture_path(Lecture.find_by_id(current_user.current_lecture_id)),
+                  class: 'nav-link bi bi-bookmark-fill ' + get_class_for_path_startswith(lectures_path()),
+                  data: { 'bs-toggle': "tooltip" },
+                  title: t('admin.navbar.current_lecture') %>
         </li>
       <% end %>
-      <li class="nav-item"
-          id="adminSearch">
+
+      <li class="nav-item" id="adminSearch">
         <%= link_to '', administration_search_path,
-                    class: 'fas fa-search fa-lg text-light nav-link',
-                    style: 'text-decoration: none;',
-                    data: { toggle: 'tooltip' },
-                    title: t('navbar.search') %>
+                  class: 'nav-link bi bi-binoculars-fill ' + get_class_for_path(administration_search_path()),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('navbar.search') %>
       </li>
       <li class="nav-item">
         <%= link_to '', destroy_user_session_path,
-                    class: 'fas fa-sign-out-alt fa-lg text-light nav-link',
-                    style: 'text-decoration: none;',
-                    data: { toggle: 'tooltip', method: 'delete' },
-                    title: t('admin.navbar.logout') %>
+                  class: 'nav-link bi bi-box-arrow-right',
+                  data: { 'bs-toggle': 'tooltip', method: 'delete' },
+                  title: t('admin.navbar.logout') %>
       </li>
     </ul>
-    <ul class="navbar-nav me-auto" id="adminDetails">
+
+    <ul class="navbar-nav ms-auto me-auto" id="adminDetails">
       <% if current_user.admin? %>
         <li class="nav-item">
           <%= link_to '', terms_path,
-                      class: 'far fa-calendar-alt fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: 'tooltip' },
-                      title: t('admin.navbar.terms') %>
+                  class: 'nav-link bi bi-calendar-range-fill ' + get_class_for_path(terms_path()),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.terms') %>
         </li>
         <li class="nav-item">
           <%= link_to '',
-                      classification_path,
-                      class: 'fas fa-clipboard-list fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: 'tooltip' },
-                      title: t('admin.navbar.classification') %>
+                  classification_path,
+                  class: 'nav-link bi bi-node-plus-fill ' + + get_class_for_path(classification_path()),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.classification') %>
         </li>
         <li>
           <%= link_to '', announcements_path,
-                      class: 'far fa-newspaper fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: 'tooltip' },
-                      title: t('admin.navbar.news') %>
+                  class: 'nav-link bi bi-megaphone-fill ' + get_class_for_path(announcements_path()),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.news') %>
         </li>
         <li>
           <%= link_to '', thredded_path,
-                      class: 'fas fa-comment-alt fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: 'tooltip' },
-                      title: t('admin.navbar.boards'),
-                      target: :_blank %>
+                  class: 'nav-link bi bi-chat-fill',
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.boards'),
+                  target: :_blank %>
         </li>
         <li>
           <%= link_to '', sidekiq_web_path,
-                      class: 'fas fa-chart-line fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: 'tooltip' },
-                      title: t('admin.navbar.stats'),
-                      target: :_blank %>
+                  class: 'nav-link bi bi-bar-chart-fill',
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.stats'),
+                  target: :_blank %>
         </li>
         <li>
           <%= link_to '', interactions_path,
-                      class: 'fas fa-download fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: 'tooltip' },
-                      title: t('admin.navbar.export_stats') %>
+                  class: 'nav-link bi-cloud-arrow-down-fill ' + get_class_for_path(interactions_path()),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.export_stats') %>
         </li>
       <% end %>
     </ul>
+
     <% if current_user.admin? %>
-      <ul class="navbar-nav me-auto" id="adminUsers">
+      <ul class="navbar-nav" id="adminUsers">
         <li class="nav-item <%= active_controller?('users') %>">
           <%= link_to '', users_path,
-                      class: 'fas fa-users-cog fa-lg text-light nav-link',
-                      style: 'text-decoration: none;',
-                      data: { toggle: 'tooltip' },
-                      title: t('admin.navbar.users') %>
+                  class: 'nav-link bi bi-people-fill ' + get_class_for_path(users_path()),
+                  data: { 'bs-toggle': 'tooltip' },
+                  title: t('admin.navbar.users') %>
         </li>
       </ul>
     <% end %>
+
     <ul class="navbar-nav" id="adminProfile">
       <li class="nav-item">
         <%= link_to '', elevated_profile_path,
-                    class: 'fas fa-user fa-lg text-light nav-link',
-                    style: 'text-decoration: none;',
-                    data: { toggle: 'tooltip' },
-                    title: t('admin.navbar.profile') %>
+                class: 'nav-link bi bi-person-fill ' + get_class_for_path(elevated_profile_path()),
+                data: { 'bs-toggle': 'tooltip' },
+                title: t('admin.navbar.profile') %>
       </li>
     </ul>
-  </div>
-</nav>
-<nav class="navbar navbar-expand navbar-dark bg-dark" id="second-admin-nav"
-     style="display: none;">
-</nav>
+  </nav>
+  <nav class="navbar navbar-expand" id="second-admin-nav" style="display: none;">
+  </nav>
+</div>
 <% end %>

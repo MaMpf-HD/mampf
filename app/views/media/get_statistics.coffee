@@ -12,9 +12,7 @@ $('#calls-stats').empty()
                                   question_count: @question_count,
                                   local_success: @local_success } %>')
   .show().removeAttr('style')
-
-# activate popovers
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 
 <% if @medium.sort == 'Quiz' %>
 

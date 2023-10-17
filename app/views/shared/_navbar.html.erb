@@ -9,12 +9,12 @@
                           class: 'me-2',
                           id: 'mampf-logo'),
                 home_path %>
-    <%= link_to "MaMpf",
+    <%= link_to t('mampf'),
                 home_path,
                 class: 'navbar-brand',
                 style: "text-decoration: none;",
                 id: 'mampfbrand' %>
-      <ul class="navbar-nav mr-auto" id="navbar-buttons">
+      <ul class="navbar-nav">
         <li class="nav-item">
           <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
             || !get_class_for_path(root_path()).empty? %>
