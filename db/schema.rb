@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_01_065435) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_21_100348) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -205,6 +205,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_01_065435) do
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
   end
 
+  create_table "feedbacks", force: :cascade do |t|
+    t.text "title"
+    t.text "feedback"
+    t.boolean "can_contact", default: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_feedbacks_on_user_id"
+  end
+
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
@@ -288,7 +298,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_01_065435) do
     t.integer "submission_max_team_size"
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
-    t.integer "annotations_status"
+    t.integer "annotations_status", default: -1
     t.integer "emergency_link_status", default: 0
     t.text "emergency_link"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -370,7 +380,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_01_065435) do
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
     t.text "external_link_description"
-    t.integer "annotations_status"
+    t.integer "annotations_status", default: 0
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
@@ -928,6 +938,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_01_065435) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
+  add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
