@@ -86,16 +86,12 @@ $(document).on('turbolinks:load', function() {
   thymeAttributes.annotationManager = annotationManager;
 
   // Update annotations after submitting the annotations form
-  $(document).on('click', '#annotation-modal-submit-button', function() {
-    /* NOTE:
-       Updating might take some time on the backend,
-       so I added a slight delay.
-       I couldn't think of an easy way to let the script
-       wait for the update to complete (as with the delete button),
-       but it might be possible! */
-    setTimeout(function() {
+  $('#annotation-update').on('DOMSubtreeModified', function() {
+    const updateDataset = document.querySelector('#annotation-update').dataset;
+    if (updateDataset.update === "updated") {
+      updateDataset.update = "";
       annotationManager.updateAnnotations();
-    }, 500);
+    }
   });
 
   // Update annotations after deleting an annotation
