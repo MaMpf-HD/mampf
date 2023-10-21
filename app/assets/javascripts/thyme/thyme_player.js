@@ -184,17 +184,10 @@ $(document).on('turbolinks:load', function() {
   thymeUtility.playOnClick();
   thymeUtility.setUpMaxTime('max-time');
 
-  // detect IE/edge and inform user that they are not suppported if necessary,
-  // only use browser player
-  if (document.documentMode || /Edge/.test(navigator.userAgent)) {
+  if (document.documentMode) {
     alert($('body').data('badbrowser'));
-    $('#caption').hide();
-    $('#annotation-caption').hide();
-    $('#video-controlBar').hide();
-    video.style.width = '100%';
-    video.controls = true;
+    displayManager.adaptToSmallDisplay();
     resizeContainer();
-    window.onresize = resizeContainer;
     return;
   }
 
