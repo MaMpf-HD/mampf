@@ -5,7 +5,7 @@ $(document).on('turbolinks:load', function() {
    */
   // exit script if the current page has no thyme player
   const thymeContainer = document.getElementById('thyme-feedback');
-  if (thymeContainer === null || $('#video').get(0) === null) {
+  if (thymeContainer === null) {
     return;
   }
 

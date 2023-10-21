@@ -4,7 +4,7 @@ $(document).on('turbolinks:load', function() {
    */
   // exit script if the current page has no thyme player
   const thymeEdit = document.getElementById('thyme-edit');
-  if (thymeEdit === null || $('#video').get(0) === null) {
+  if (thymeEdit === null) {
     return;
   }
   // initialize attributes
