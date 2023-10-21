@@ -69,7 +69,7 @@ $(document).on('turbolinks:load', function() {
     }
     return false;
   }
-  const annotationArea = new AnnotationArea(false, colorFunc, isValid);
+  const annotationArea = new AnnotationArea(false, colorFunc, null, isValid);
   thymeAttributes.annotationArea = annotationArea;
   function strokeColorFunc(annotation) {
     return annotation.category === Category.MISTAKE ? 'darkred' : 'black';

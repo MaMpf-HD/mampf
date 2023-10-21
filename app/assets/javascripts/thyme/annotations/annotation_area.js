@@ -13,16 +13,20 @@ class AnnotationArea {
                  which takes an annotation as argument and gives
                  back a color.
 
+       onClose = A function that is executed when closing the
+                 annotation area.
+
        isValid = A function which takes an annotation as argument
                  and returns true, if and only if the annotation is
                  "valid", i.e. should be visualized in the annotation
                  area. (This is needed to skip unwanted annotations in
                  the previous/next button listeners.)
    */
-  constructor(fancyStyle, colorFunc, isValid) {
+  constructor(fancyStyle, colorFunc, onClose, isValid) {
     this.isActive       = false;
     this.annotation     = null; // the current annotation
     this.colorFunc      = colorFunc;
+    this.onClose        = onClose;
     this.isValid        = isValid;
     this.fancyStyle     = fancyStyle;
 
@@ -166,6 +170,9 @@ class AnnotationArea {
     this.closeButton.on('click', function() {
       area.annotation = undefined;
       area.hide();
+      if (area.onClose != null) {
+        area.onClose();
+      }
     });
   }
 

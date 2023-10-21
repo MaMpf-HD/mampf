@@ -12,7 +12,7 @@ class IaCloseButton extends Component {
   add() {
     const iaButton = this.iaButton;
     this.element.addEventListener('click', function() {
-      iaButton.minus();
+      iaButton.plus();
     });
   }
 

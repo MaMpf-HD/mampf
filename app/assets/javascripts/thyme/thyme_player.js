@@ -52,10 +52,13 @@ $(document).on('turbolinks:load', function() {
   function colorFunc(annotation) {
     return annotation.color;
   }
+  function onClose() {
+    iaButton.minus();
+  }
   function isValid(annotation) {
     return (!annotationsToggle.getValue() && !annotation.belongsToCurrentUser ? false : true);
   }
-  const annotationArea = new AnnotationArea(true, colorFunc, isValid);
+  const annotationArea = new AnnotationArea(true, colorFunc, onClose, isValid);
   thymeAttributes.annotationArea = annotationArea;
   function strokeColorFunc(annotation) {
     return 'black';
@@ -64,6 +67,7 @@ $(document).on('turbolinks:load', function() {
     return false;
   }
   function onClick(annotation) {
+    iaButton.minus();
     annotationArea.update(annotation);
     annotationArea.show();
     $('#caption').hide();
