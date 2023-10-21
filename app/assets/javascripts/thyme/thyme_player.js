@@ -28,13 +28,13 @@ $(document).on('turbolinks:load', function() {
   annotationsToggle.add();
   (new EmergencyButton('emergency-button')).add();
   (new FullScreenButton('full-screen', thymeContainer)).add();
-  (new MinusButton('minus-ten', 10)).add();
   (new MuteButton('mute')).add();
   (new NextChapterButton('next-chapter')).add();
   (new PlayButton('play-pause')).add();
-  (new PlusButton('plus-ten', 10)).add();
   (new PreviousChapterButton('previous-chapter')).add();
   (new SpeedSelector('speed')).add();
+  (new TimeButton('plus-ten', 10)).add();
+  (new TimeButton('minus-ten', -10)).add();
   // initialize iaButton here to have the reference but call add() later
   // when we can define toHide (second argument which is set to null here)
   const iaButton = new IaButton('ia-active', null, [$(video), $('#video-controlBar')], '82%');

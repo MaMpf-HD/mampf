@@ -21,12 +21,12 @@ $(document).on('turbolinks:load', function() {
   (new PlayButton('play-pause')).add();
   (new MuteButton('mute')).add();
 
-  (new PlusButton('plus-ten', 10)).add();
-  (new PlusButton('plus-five', 5)).add();
-  (new PlusButton('plus-one', 1)).add();
-  (new MinusButton('minus-ten', 10)).add();
-  (new MinusButton('minus-five', 5)).add();
-  (new MinusButton('minus-one', 1)).add();
+  (new TimeButton('plus-ten', 10)).add();
+  (new TimeButton('plus-five', 5)).add();
+  (new TimeButton('plus-one', 1)).add();
+  (new TimeButton('minus-ten', -10)).add();
+  (new TimeButton('minus-five', -5)).add();
+  (new TimeButton('minus-one', -1)).add();
 
   (new SeekBar('seek-bar')).add();
   (new VolumeBar('volume-bar')).add();

@@ -24,10 +24,10 @@ $(document).on('turbolinks:load', function() {
     COMPONENTS
    */
   // Buttons
-  (new MinusButton('minus-ten', 10)).add();
   (new MuteButton('mute')).add();
   (new PlayButton('play-pause')).add();
-  (new PlusButton('plus-ten', 10)).add();
+  (new TimeButton('plus-ten', 10)).add();
+  (new TimeButton('minus-ten', -10)).add();
   // Sliders
   (new VolumeBar('volume-bar')).add();
   seekBar = new SeekBar('seek-bar');

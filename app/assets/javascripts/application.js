@@ -72,14 +72,13 @@
 //= require thyme/components/ia_button
 //= require thyme/components/ia_back_button
 //= require thyme/components/ia_close_button
-//= require thyme/components/minus_button
 //= require thyme/components/mute_button
 //= require thyme/components/next_chapter_button
 //= require thyme/components/play_button
-//= require thyme/components/plus_button
 //= require thyme/components/previous_chapter_button
 //= require thyme/components/seek_bar
 //= require thyme/components/speed_selector
+//= require thyme/components/time_button
 //= require thyme/components/volume_bar
 //= require thyme/annotations/category_enum
 //= require thyme/annotations/category

@@ -1,4 +1,4 @@
-class PlusButton extends Component {
+class TimeButton extends Component {
 
   /*
     time = The time to add in seconds.
@@ -13,7 +13,11 @@ class PlusButton extends Component {
     const time = this.time;
     
     this.element.addEventListener('click', function() {
-      video.currentTime = Math.min(video.currentTime + time, video.duration);
+      if (time >= 0) {
+        video.currentTime = Math.min(video.currentTime + time, video.duration);
+      } else {
+        video.currentTime = Math.max(video.currentTime + time, 0);
+      }
     });
   }
   
