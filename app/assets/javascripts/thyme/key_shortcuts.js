@@ -12,10 +12,6 @@ const thymeKeyShortcuts = {
       m - mute
   */
   addGeneralShortcuts: function() {
-    const fullScreenButton = document.getElementById('full-screen');
-    const minusTenButton = document.getElementById('minus-ten');
-    const muteButton = document.getElementById('mute');
-    const plusTenButton = document.getElementById('plus-ten');
     const video = document.getElementById('video');
 
     window.addEventListener('keydown', function(evt) {
@@ -30,13 +26,13 @@ const thymeKeyShortcuts = {
           video.pause();
         }
       } else if (key === 'ArrowRight') {
-        $(plusTenButton).trigger('click');
+        $('#plus-ten').trigger('click');
       } else if (key === 'ArrowLeft') {
-        $(minusTenButton).trigger('click');
+        $('#minus-ten').trigger('click');
       } else if (key === 'f') {
-        $(fullScreenButton).trigger('click');
+        $('#full-screen').trigger('click');
       } else if (key === 'm') {
-        $(muteButton).trigger('click');
+        $('#mute').trigger('click');
       } else if (key === 'PageUp') {
         video.volume = Math.min(video.volume + 0.1, 1);
       } else if (key === 'PageDown') {
@@ -54,21 +50,21 @@ const thymeKeyShortcuts = {
       i - toggle interactive area
   */
   addPlayerShortcuts() {
-    const iaButton = document.getElementById('ia-active');
-    const nextChapterButton = document.getElementById('next-chapter');
-    const previousChapterButton = document.getElementById('previous-chapter');
-
     window.addEventListener('keydown', function(evt) {
       if (thymeAttributes.lockKeyListeners === true) {
         return;
       }
       const key = evt.key;
       if (key === 'i') {
-        $(iaButton).trigger('click');
+        $('#ia-active').trigger('click');
       } else if (key === 'ArrowUp') {
-        $(nextChapterButton).trigger('click');
+        $('#next-chapter').trigger('click');
       } else if (key === 'ArrowDown') {
-        $(previousChapterButton).trigger('click');
+        $('#previous-chapter').trigger('click');
+      } else if (key === 'a') {
+        $('#annotation-previous-button').trigger('click');
+      } else if (key === 's') {
+        $('#annotation-next-button').trigger('click');
       }
     });
   },
@@ -83,24 +79,23 @@ const thymeKeyShortcuts = {
       r - toggle note annotations
   */
   addFeedbackShortcuts() {
-    const toggleMistakeAnnotations = document.getElementById('toggle-mistake-annotations-check');
-    const togglePresentationAnnotations = document.getElementById('toggle-presentation-annotations-check');
-    const toggleContentAnnotations = document.getElementById('toggle-content-annotations-check');
-    const toggleNoteAnnotations = document.getElementById('toggle-note-annotations-check');
-
     window.addEventListener('keydown', function(evt) {
       if (thymeAttributes.lockKeyListeners === true) {
         return;
       }
       const key = evt.key;
       if (key === 'q') {
-        $(toggleMistakeAnnotations).trigger('click');
+        $('#toggle-mistake-annotations-check').trigger('click');
       } else if (key === 'w') {
-        $(togglePresentationAnnotations).trigger('click');
+        $('#toggle-presentation-annotations-check').trigger('click');
       } else if (key === 'e') {
-        $(toggleContentAnnotations).trigger('click');
+        $('#toggle-content-annotations-check').trigger('click');
       } else if (key === 'r') {
-        $(toggleNoteAnnotations).trigger('click');
+        $('#toggle-note-annotations-check').trigger('click');
+      } else if (key === 'a') {
+        $('#annotation-previous-button').trigger('click');
+      } else if (key === 's') {
+        $('#annotation-next-button').trigger('click');
       }
     });
   },
