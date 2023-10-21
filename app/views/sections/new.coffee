@@ -5,5 +5,4 @@ $('#section-modal-content').empty()
                                   chapter: @chapter } %>').show()
 
 $('#sectionModal').modal('show')
- # activate popovers
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()

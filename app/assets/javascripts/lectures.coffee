@@ -10,9 +10,7 @@ disableExceptOrganizational = ->
   return
 
 $(document).on 'turbolinks:load', ->
-  # activate all popovers
-  $('[data-bs-toggle="popover"]').popover()
-
+  initBootstrapPopovers()
   # if any input is given to the lecture form (for people in lecture),
   # disable other input
   $('#lecture-form :input').on 'change', ->

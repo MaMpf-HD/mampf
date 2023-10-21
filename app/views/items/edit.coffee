@@ -18,7 +18,7 @@ $('#item_number_field').hide()
 # activate selectize and popovers
 $('.selectize').each ->
   new TomSelect("#"+this.id,{ plugins: ['remove_button'] })
-$('[data-bs-toggle="popover"]').popover()
+initBootstrapPopovers()
 
 # workaround for a selectize bug whwere the width of
 # the text area for the input prompt is miscalculated
