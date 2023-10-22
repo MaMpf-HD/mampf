@@ -916,7 +916,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_29_080510) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
-  add_foreign_key "feedbacks", "users"
+  add_foreign_key "feedbacks", "users", on_delete: :cascade
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
