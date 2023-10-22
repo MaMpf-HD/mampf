@@ -3,13 +3,13 @@ class AnnotationsController < ApplicationController
   before_action :update_comments, only: [:edit, :update_annotations]
 
   authorize_resource
-  
+
   def new
     @annotation = Annotation.new(category: :note, color: Annotation.colors[1])
     @total_seconds = params[:total_seconds]
     @medium_id = params[:mediumId]
     @posted = (@annotation.public_comment_id != nil)
-    
+
     render :edit
   end
 
@@ -77,7 +77,7 @@ class AnnotationsController < ApplicationController
       annotations = Annotation.where(medium: medium,
                                      user: current_user)
     end
-    
+
     # Convert to JSON (for easier hash operations)
     annotations = annotations.as_json
 
@@ -94,7 +94,7 @@ class AnnotationsController < ApplicationController
   def num_nearby_mistake_annotations
     annotations = Annotation.where(medium: params[:mediumId])
     # the time (!) radius in which annotation are considered as "nearby"
-    radius = params[:radius].to_i 
+    radius = params[:radius].to_i
     timestamp = params[:timestamp].to_i
     counter = 0
     for annotation in annotations
@@ -106,7 +106,7 @@ class AnnotationsController < ApplicationController
     end
     render json: counter
   end
-  
+
   def current_ability
     @current_ability ||= AnnotationAbility.new(current_user)
   end
@@ -128,7 +128,7 @@ class AnnotationsController < ApplicationController
         commontator_comment = Commontator::Comment.new(
           thread: commontator_thread,
           creator: current_user,
-          body: comment_html = comment_html(medium, 
+          body: comment_html = comment_html(medium,
                                             total_seconds,
                                             annotation_params[:comment])
         )
@@ -145,10 +145,10 @@ class AnnotationsController < ApplicationController
     end
 
     def update_comments
-      for annotation in Annotation.where(medium: params[:mediumId])
+      Annotation.where(medium: params[:mediumId]).each do |annotation|
         # find comment
-        unless annotation.public_comment_id == nil
-          comment = Commontator::Comment.find_by(id: annotation.public_comment_id).body
+        unless annotation.public_comment.nil?
+          comment = annotation.public_comment.body
 
           # remove "Thymestamp: H:MM:SS" at the end of the string
           index = comment.rindex("\nThymestamp")
