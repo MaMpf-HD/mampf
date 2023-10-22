@@ -27,10 +27,10 @@ function registerToasts() {
 }
 
 function registerSubmitButtonHandler() {
-    const submitButton = $('#submit-form-btn');
+    const submitButton = $('#submit-feedback-form-btn');
 
     // Invoke the hidden submit button inside the actual Rails form
-    $('#submit-form-btn-outside').click(() => {
+    $('#submit-feedback-form-btn-outside').click(() => {
         submitButton.click();
     });
 
