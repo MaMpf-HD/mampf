@@ -1,14 +1,23 @@
 $(document).on('turbolinks:load', () => {
+    if (!shouldRegisterFeedback()) {
+        return;
+    }
     registerToasts();
     registerSubmitButtonHandler();
     registerFeedbackBodyValidator();
 });
+
+SUBMIT_FEEDBACK_ID = '#submit-feedback';
 
 TOAST_OPTIONS = {
     animation: true,
     autohide: true,
     delay: 6000 // autohide after ... milliseconds
 };
+
+function shouldRegisterFeedback() {
+    return $(SUBMIT_FEEDBACK_ID).length > 0;
+}
 
 function registerToasts() {
     const toastElements = document.querySelectorAll('.toast');
@@ -27,7 +36,7 @@ function registerSubmitButtonHandler() {
 
     // Submit form by pressing Ctrl + Enter
     document.addEventListener('keydown', (event) => {
-        const isModalOpen = $('#submit-feedback').is(':visible');
+        const isModalOpen = $(SUBMIT_FEEDBACK_ID).is(':visible');
         if (isModalOpen && event.ctrlKey && event.key == "Enter") {
             submitButton.click();
         }
