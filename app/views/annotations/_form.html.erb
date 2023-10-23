@@ -121,12 +121,14 @@
       <%= f.hidden_field :visible_for_teacher, value: false %>
     <% end %>
 
-    <%= f.label :post_as_comment, class: "checkbox inline" do %>
-      <span, title="<%= t('admin.annotation.post_as_comment_tooltip') %>"><b>
-        <%= t('admin.annotation.post_as_comment') %> &nbsp
-      </b></span>
-      <%= f.check_box :post_as_comment %>
-    <% end %>
+    <!--- Post as comment? -->
+    <div class="form-check">
+      <%= f.check_box :post_as_comment, class: "form-check-input" %>
+      <%= f.label :post_as_comment,
+          t('admin.annotation.post_as_comment'),
+          class: "form-check-label" %>
+      <%= helpdesk(t('admin.annotation.post_as_comment_tooltip'), false) %>
+    </div>
 
     <br>
 
