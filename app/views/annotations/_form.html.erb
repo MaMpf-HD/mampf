@@ -133,18 +133,27 @@
     <br>
 
     <div class="modal-footer">
-      <%= f.submit t('buttons.save'), class: "btn btn-primary", id: "annotation-modal-submit-button" %>
-      <% if @annotation.id != nil %>
+      <!-- Delete -->
+      <% if @annotation.id %>
         <button type="button"
                 id="delete-button"
                 class="btn btn-secondary"
                 data-bs-dismiss="modal">
-        <%= t('buttons.delete') %>
+          <%= t('buttons.delete') %>
+        </button>
       <% end %>
+
+      <!-- Cancel -->
       <button type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal">
-      <%= t('buttons.cancel') %>
+        <%= t('buttons.cancel') %>
+      </button>
+
+      <!-- Submit -->
+      <%= f.submit t('buttons.save'),
+        id: "annotation-modal-submit-button",
+        class: "btn btn-primary" %>
     </div>
   <% end %>
 </div>
