@@ -331,12 +331,23 @@ function setup() {
 	tiles = [initH(), initT(), initP(), initF()];
 	level = 1;
 
+	// Reset button
 	reset_btn = addButton("Reset", () => reset());
 	reset_btn.class('btn btn-secondary');
 	reset_btn.style('height', '35px');
+
+	// Monotile button
 	monotile_btn = addButton("Monotile", () => monotile());
 	monotile_btn.class('btn btn-secondary');
 	monotile_btn.style('height', '35px');
+
+	// Find out more button
+	more_btn = addButton("More", () => {
+		// open url
+		window.open('https://cs.uwaterloo.ca/~csk/hat/', '_blank');
+	});
+	more_btn.class('btn btn-secondary');
+	more_btn.style('height', '35px');
 
 	// Little animation at the beginning
 	setTimeout(monotile, 50);
