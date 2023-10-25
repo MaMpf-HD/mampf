@@ -379,13 +379,25 @@ function windowResized() {
 	resizeCanvas(windowWidth, windowHeight);
 }
 
-function mouseDragged() {
-	to_screen = mul(ttrans(mouseX - pmouseX, mouseY - pmouseY),
-		to_screen);
+
+/* Mouse movement */
+
+DELTA_THRESHOLD = 5;
+
+function mouseDragged(event) {
+	const diffX = mouseX - pmouseX;
+	const diffY = mouseY - pmouseY;
+	if (diffX <= DELTA_THRESHOLD && diffY == DELTA_THRESHOLD) {
+		return;
+	}
+
+	to_screen = mul(ttrans(diffX, diffY), to_screen);
 	loop();
-	return false;
 }
 
-function mouseReleased() {
-	loop();
-}
+$(document).ready(function () {
+	// Prevent mousemove on divs to propagate to canvas
+	$('#signin-box').on('mousemove', function (event) {
+		event.stopPropagation();
+	});
+});
