@@ -1,7 +1,8 @@
 // BSD-3-Clause licensed by Craig S. Kaplan
 // adapted from: https://github.com/isohedral/hatviz
 
-let to_screen = [20, 0, 0, 0, -20, 0];
+const INITIAL_TO_SCREEN = [20, 0, 0, 0, -20, 0];
+let to_screen = INITIAL_TO_SCREEN;
 let tiles;
 let level;
 let box_height = 10;
@@ -325,7 +326,6 @@ function addButton(name, f) {
 function setup() {
 	let canvas = createCanvas(windowWidth, windowHeight);
 	canvas.id('einstein-monotile-canvas');
-	canvas.style('display', 'content');
 	canvas.parent('einstein-monotile');
 
 	tiles = [initH(), initT(), initP(), initF()];
@@ -339,16 +339,16 @@ function setup() {
 	monotile_btn.style('height', '35px');
 
 	// Little animation at the beginning
+	setTimeout(monotile, 50);
+	setTimeout(monotile, 90);
+	setTimeout(monotile, 150);
 	setTimeout(monotile, 200);
-	setTimeout(monotile, 400);
-	setTimeout(monotile, 700);
-	setTimeout(monotile, 1100);
 }
 
 function reset() {
 	tiles = [initH(), initT(), initP(), initF()];
 	level = 1;
-	to_screen = [20, 0, 0, 0, -20, 0];
+	to_screen = INITIAL_TO_SCREEN;
 	monotile();
 	loop();
 }
@@ -381,23 +381,42 @@ function windowResized() {
 
 
 /* Mouse movement */
-
+let dragging = false;
 DELTA_THRESHOLD = 5;
 
+function mousePressed() {
+	dragging = true;
+	loop();
+}
+
 function mouseDragged(event) {
+	if (!dragging) {
+		return true;
+	}
+
+	// Only move if the mouse has moved a certain amount
 	const diffX = mouseX - pmouseX;
 	const diffY = mouseY - pmouseY;
 	if (diffX <= DELTA_THRESHOLD && diffY == DELTA_THRESHOLD) {
-		return;
+		return true;
 	}
 
+	// Recalculate the transformation matrix
 	to_screen = mul(ttrans(diffX, diffY), to_screen);
+
 	loop();
+	return false;
 }
 
 $(document).ready(function () {
 	// Prevent mousemove on divs to propagate to canvas
 	$('#signin-box').on('mousemove', function (event) {
+		event.stopPropagation();
+	});
+	$('#footer-bar').on('mousemove', function (event) {
+		event.stopPropagation();
+	});
+	$('#announcement-box').on('mousemove', function (event) {
 		event.stopPropagation();
 	});
 });
