@@ -1,11 +1,18 @@
 // BSD-3-Clause licensed by Craig S. Kaplan
 // adapted from: https://github.com/isohedral/hatviz
 
+// This may result in a warning that P5.JS was imported twice.
+// We still use this to assign variables before setup(), which is especially
+// useful in combination with turbolinks.
+// see more here:
+// https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup
+new p5();
+
 const INITIAL_TO_SCREEN = [20, 0, 0, 0, -20, 0];
 let to_screen = INITIAL_TO_SCREEN;
 let tiles;
 let level;
-let box_height = 10;
+let box_height;
 
 const colors = {
 	'H1': [0, 137, 212],
@@ -324,6 +331,8 @@ function addButton(name, f) {
 }
 
 function setup() {
+	box_height = 10;
+
 	let canvas = createCanvas(windowWidth, windowHeight);
 	canvas.id('einstein-monotile-canvas');
 	canvas.parent('einstein-monotile');
@@ -421,13 +430,15 @@ function mouseDragged(event) {
 
 $(document).ready(function () {
 	// Prevent mousemove on divs to propagate to canvas
-	$('#signin-box').on('mousemove', function (event) {
+	$('#signin-box').on('mousemove', (event) => {
 		event.stopPropagation();
 	});
-	$('#footer-bar').on('mousemove', function (event) {
+	$('#footer-bar').on('mousemove', (event) => {
 		event.stopPropagation();
 	});
-	$('#announcement-box').on('mousemove', function (event) {
+	$('#announcement-box').on('mousemove', (event) => {
 		event.stopPropagation();
 	});
 });
+
+$(document).on('turbolinks:load', setup);
