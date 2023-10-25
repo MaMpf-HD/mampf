@@ -51,11 +51,6 @@
     }
 }
 
-#landing-body {
-    background-image: image-url('landing-background.jpg');
-    background-size: cover;
-}
-
 #footer-bar {
     background-color: rgba(255, 255, 255, 0.95);
 }
@@ -98,4 +93,10 @@
 #remember-me-text {
     white-space: normal;
     display: contents;
+}
+
+#einstein-monotile-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
 }
