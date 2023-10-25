@@ -342,21 +342,18 @@ function setup() {
 
 	// Reset button
 	reset_btn = addButton("Reset", () => reset());
-	reset_btn.class('btn btn-secondary');
-	reset_btn.style('height', '35px');
+	reset_btn.class('btn btn-light monotile-btn');
 
 	// Monotile button
 	monotile_btn = addButton("Monotile", () => monotile());
-	monotile_btn.class('btn btn-secondary');
-	monotile_btn.style('height', '35px');
+	monotile_btn.class('btn btn-light monotile-btn');
 
 	// Find out more button
-	more_btn = addButton("More", () => {
+	more_btn = addButton("Info", () => {
 		// open url
 		window.open('https://cs.uwaterloo.ca/~csk/hat/', '_blank');
 	});
-	more_btn.class('btn btn-secondary');
-	more_btn.style('height', '35px');
+	more_btn.class('btn btn-light monotile-btn');
 
 	// Little animation at the beginning
 	setTimeout(monotile, 50);
@@ -387,7 +384,7 @@ function monotile() {
 }
 
 function draw() {
-	background(255);
+	background(255); // white background
 	push();
 	translate(width / 2, height / 2);
 	tiles[0].draw(to_screen, level);
@@ -440,5 +437,3 @@ $(document).ready(function () {
 		event.stopPropagation();
 	});
 });
-
-$(document).on('turbolinks:load', setup);
