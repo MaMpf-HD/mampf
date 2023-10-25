@@ -14,9 +14,9 @@
     <!-- Play around with it: https://cs.uwaterloo.ca/~csk/hat/app.html -->
     <!-- App source code licensed under BSD-3-Clause by Craig S. Kaplan -->
     <!-- adapted from: https://github.com/isohedral/hatviz -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
-    <script src="/monotile/geometry.js"></script>
-    <script src="/monotile/hat.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <%= javascript_include_tag 'monotile/geometry', defer: true %>
+    <%= javascript_include_tag 'monotile/hat', defer: true %>
   </head>
 
   <body data-locale="<%= I18n.locale %>"
