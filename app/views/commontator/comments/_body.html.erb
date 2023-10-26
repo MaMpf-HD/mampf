@@ -4,3 +4,14 @@
 %>
 
 <%= commontator_simple_format comment.body %>
+
+<!--- Show thymestamps in comments that have a linked annotation --->
+<% annotation = comment.annotation %>
+<% unless annotation.nil? %>
+  <% medium = annotation.medium %>
+  <% timestamp = annotation.timestamp %>
+  <br>
+  Thymestamp:
+  <a href= '<%= Rails.application.routes.url_helpers.play_medium_path(medium) %>?time=<%= timestamp.total_seconds %>'>
+  <%= timestamp.hms_colon_string %> </a>
+<% end %>

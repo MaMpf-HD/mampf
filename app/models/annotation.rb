@@ -10,6 +10,15 @@ class Annotation < ApplicationRecord
   enum category: { note: 0, content: 1, mistake: 2, presentation: 3 }
   enum subcategory: { definition: 0, argument: 1, strategy: 2 }
 
+  def get_comment
+    if self.public_comment_id.nil?
+      return self.comment
+    else
+      commontator_comment = Commontator::Comment.find_by(id: public_comment_id)
+      return commontator_comment.body
+    end
+  end
+
   def self.colors
     color_map = {
        1 => '#DB2828',

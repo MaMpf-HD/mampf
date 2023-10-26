@@ -101,7 +101,7 @@ $(document).on('turbolinks:load', function() {
       type: 'DELETE',
       dataType: 'json',
       data: {
-        annotationId: annotationId
+        annotation_id: annotationId
       },
       success: function() {
         annotationManager.updateAnnotations();

@@ -149,7 +149,7 @@ class AnnotationArea {
         type: 'GET',
         dataType: 'script',
         data: {
-          annotationId: annotation.id
+          annotation_id: annotation.id
         },
         success: function(permitted) {
           if (permitted === "false") {

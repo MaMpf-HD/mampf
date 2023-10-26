@@ -12,7 +12,7 @@ class EmergencyButton extends Component {
         dataType: 'script',
         data: {
           total_seconds: video.currentTime,
-          mediumId: thymeAttributes.mediumId
+          medium_id: thymeAttributes.mediumId
         }
       });
       // When the modal opens, all key listeners must be
