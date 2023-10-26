@@ -18,7 +18,7 @@ class Heatmap {
 
 
   draw() {
-    if (thymeAttributes.annotations === null) {
+    if (thymeAttributes.annotations == null) {
       return;
     }
     this.heatmap.empty();
@@ -48,7 +48,7 @@ class Heatmap {
     */
     for (const a of thymeAttributes.annotations) {
       const valid = this.#isValidCategory(a.category);
-      if (valid === true) {
+      if (valid) {
         colors.push(a.category.color);
       }
       const time = a.seconds;
@@ -56,7 +56,7 @@ class Heatmap {
       for (let x = position - Heatmap.RADIUS; x <= position + Heatmap.RADIUS; x++) {
         let y = Heatmap.#sinX(x, position, Heatmap.RADIUS);
         pixelsAll[x + Heatmap.RADIUS] += y;
-        if (valid === true) {
+        if (valid) {
           pixels[x + Heatmap.RADIUS] += y;
         }
       }

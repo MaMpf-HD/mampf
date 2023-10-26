@@ -104,7 +104,7 @@ class MetadataManager {
           target: '_blank'
         });
         $videoRef.append($videoIcon);
-        if (meta.video === null) {
+        if (!meta.video) {
           $videoRef.hide();
         }
         const $manIcon = $('<i/>', {
@@ -116,7 +116,7 @@ class MetadataManager {
           target: '_blank'
         });
         $manRef.append($manIcon);
-        if (meta.manuscript === null) {
+        if (!meta.manuscript) {
           $manRef.hide();
         }
         const $scriptIcon = $('<i/>', {
@@ -128,7 +128,7 @@ class MetadataManager {
           target: '_blank'
         });
         $scriptRef.append($scriptIcon);
-        if (meta.script === null) {
+        if (!meta.script) {
           $scriptRef.hide();
         }
         const $quizIcon = $('<i/>', {
@@ -140,7 +140,7 @@ class MetadataManager {
           target: '_blank'
         });
         $quizRef.append($quizIcon);
-        if (meta.quiz === null) {
+        if (!meta.quiz) {
           $quizRef.hide();
         }
         const $extIcon = $('<i/>', {
@@ -152,7 +152,7 @@ class MetadataManager {
           target: '_blank'
         });
         $extRef.append($extIcon);
-        if (meta.link === null) {
+        if (!meta.link) {
           $extRef.hide();
         }
         const $description = $('<div/>', {

@@ -6,29 +6,29 @@ class AnnotationArea {
   static DISABLED_BUTTON_OPACITY = 0.2;
 
   /*
-    fancyStyle = If true, all buttons are shown, if false,
-                 only previous, goto and next are shown.
+    hasFancyStyle = If true, all buttons are shown, if false,
+                    only previous, goto and next are shown.
 
-     colorFunc = A function for colorizing the annotation area
-                 which takes an annotation as argument and gives
-                 back a color.
+        colorFunc = A function for colorizing the annotation area
+                    which takes an annotation as argument and gives
+                    back a color.
 
-       onClose = A function that is executed when closing the
-                 annotation area.
+          onClose = A function that is executed when closing the
+                    annotation area.
 
-       isValid = A function which takes an annotation as argument
-                 and returns true, if and only if the annotation is
-                 "valid", i.e. should be visualized in the annotation
-                 area. (This is needed to skip unwanted annotations in
-                 the previous/next button listeners.)
+          isValid = A function which takes an annotation as argument
+                    and returns true, if and only if the annotation is
+                    "valid", i.e. should be visualized in the annotation
+                    area. (This is needed to skip unwanted annotations in
+                    the previous/next button listeners.)
    */
-  constructor(fancyStyle, colorFunc, onClose, isValid) {
+  constructor(hasFancyStyle, colorFunc, onClose, isValid) {
     this.isActive       = false;
     this.annotation     = null; // the current annotation
     this.colorFunc      = colorFunc;
     this.onClose        = onClose;
     this.isValid        = isValid;
-    this.fancyStyle     = fancyStyle;
+    this.hasFancyStyle  = hasFancyStyle;
 
     this.caption        = $('#annotation-caption');
     this.inforBar       = $('#annotation-infobar');
@@ -41,7 +41,7 @@ class AnnotationArea {
 
     this.localesId      = 'annotation-locales';
 
-    if (fancyStyle === false) {
+    if (!hasFancyStyle) {
       this.editButton.hide();
       this.closeButton.hide();
     }
@@ -79,7 +79,7 @@ class AnnotationArea {
     this.#updatePreviousButton(annotation);
     this.#updateNextButton(annotation);
     this.#updateGotoButton(annotation);
-    if (this.fancyStyle == true) {
+    if (this.hasFancyStyle) {
       this.#updateEditButton(annotation);
       this.#updateCloseButton(annotation);
     }

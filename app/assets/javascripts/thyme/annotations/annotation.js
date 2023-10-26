@@ -4,7 +4,7 @@
 class Annotation {
 
   constructor(json) {
-    // We only save attributes that are needed in the thyme related JavaScripts in the asset pipeline!
+    // We only save attributes that are needed in the thyme related JavaScripts!
     this.category = Category.getByName(json.category);
     this.color = json.color;
     this.comment = json.comment;

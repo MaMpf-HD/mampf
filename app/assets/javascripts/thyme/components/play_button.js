@@ -5,7 +5,7 @@ class PlayButton extends Component {
     const element = this.element;
 
     element.addEventListener('click', function() {
-      if (video.paused === true) {
+      if (video.paused) {
         video.play();
       } else {
         video.pause();

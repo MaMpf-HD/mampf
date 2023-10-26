@@ -5,7 +5,7 @@ $(document).on('turbolinks:load', function() {
    */
   // exit script if the current page has no thyme player
   const thymeContainer = document.getElementById('thyme-feedback');
-  if (thymeContainer === null) {
+  if (!thymeContainer) {
     return;
   }
 
@@ -63,7 +63,7 @@ $(document).on('turbolinks:load', function() {
   }
   function isValid(annotation) {
     for (let toggle of annotationCategoryToggles) {
-      if (annotation.category === toggle.category && toggle.getValue() === true) {
+      if (annotation.category === toggle.category && toggle.getValue()) {
         return true;
       }
     }

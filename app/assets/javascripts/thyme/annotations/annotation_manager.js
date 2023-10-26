@@ -52,7 +52,7 @@ class AnnotationManager {
         function onClick() {
           annotationManager.onClick(a);
         }
-        if (this.sizeFunc !== null && this.sizeFunc(a) === true) {
+        if (this.sizeFunc !== null && this.sizeFunc(a)) {
           a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
         } else {
           a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
@@ -82,7 +82,7 @@ class AnnotationManager {
       success: function(annotations) {
         // update the annotation field in thymeAttributes
         thymeAttributes.annotations = [];
-        if (annotations === null) {
+        if (!annotations) {
           return;
         }
         for (let a of annotations) {
@@ -96,7 +96,7 @@ class AnnotationManager {
 
   /* sorts all annotations according to their timestamp */
   static sortAnnotations() {
-    if (thymeAttributes.annotations === null) {
+    if (!thymeAttributes.annotations) {
       return;
     }
     thymeAttributes.annotations.sort(function(ann1, ann2) {

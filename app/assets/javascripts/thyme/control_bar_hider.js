@@ -46,7 +46,7 @@ class ControlBarHider {
     function resetTimer() {
       clearTimeout(t);
       t = setTimeout(function() {
-        if (controlBarHider.hideBlocker === true) {
+        if (controlBarHider.hideBlocker) {
           return;
         }
         controlBarHider.hideControlBar();

@@ -5,7 +5,7 @@ class MuteButton extends Component {
     const element = this.element;
     
     element.addEventListener('click', function() {
-      if (video.muted === false) {
+      if (video.muted) {
         video.muted = true;
         element.innerHTML = 'volume_off';
       } else {

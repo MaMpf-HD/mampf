@@ -16,14 +16,14 @@ class AnnotationCategoryToggle extends Component {
     const category = this.category;
     const check = document.getElementById(this.element.id + '-check');
     const heatmap = this.heatmap;
-    if (heatmap != null) {
+    if (heatmap) {
       heatmap.addCategory(category); // add category when adding the button
     }
 
     check.addEventListener('click', function() {
       thymeAttributes.annotationManager.updateAnnotations();
       if (heatmap) {
-        if (toggle.getValue() === true) {
+        if (toggle.getValue()) {
           heatmap.addCategory(category);
         } else {
           heatmap.removeCategory(category);

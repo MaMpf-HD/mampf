@@ -4,7 +4,7 @@ $(document).on('turbolinks:load', function() {
    */
   // exit script if the current page has no thyme player
   const thymeContainer = document.getElementById('thyme-container');
-  if (thymeContainer === null) {
+  if (!thymeContainer) {
     return;
   }
 
@@ -152,7 +152,7 @@ $(document).on('turbolinks:load', function() {
   function resizeContainer() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
     resize.resizeContainer(thymeContainer, factor);
-    if (thymeAttributes.annotations === null) {
+    if (!thymeAttributes.annotations) {
       annotationManager.updateAnnotations();
     } else {
       annotationManager.updateMarkers();

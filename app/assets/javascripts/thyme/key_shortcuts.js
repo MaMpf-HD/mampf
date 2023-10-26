@@ -15,12 +15,12 @@ const thymeKeyShortcuts = {
     const video = document.getElementById('video');
 
     window.addEventListener('keydown', function(evt) {
-      if (thymeAttributes.lockKeyListeners === true) {
+      if (thymeAttributes.lockKeyListeners) {
         return;
       }
       const key = evt.key;
       if (key === ' ') {
-        if (video.paused === true) {
+        if (video.paused) {
           video.play();
         } else {
           video.pause();
@@ -51,7 +51,7 @@ const thymeKeyShortcuts = {
   */
   addPlayerShortcuts() {
     window.addEventListener('keydown', function(evt) {
-      if (thymeAttributes.lockKeyListeners === true) {
+      if (thymeAttributes.lockKeyListeners) {
         return;
       }
       const key = evt.key;
@@ -80,7 +80,7 @@ const thymeKeyShortcuts = {
   */
   addFeedbackShortcuts() {
     window.addEventListener('keydown', function(evt) {
-      if (thymeAttributes.lockKeyListeners === true) {
+      if (thymeAttributes.lockKeyListeners) {
         return;
       }
       const key = evt.key;

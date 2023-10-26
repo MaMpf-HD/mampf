@@ -61,7 +61,7 @@ const thymeUtility = {
   playOnClick() {
     const video = thymeAttributes.video;
     video.addEventListener('click', function() {
-      if (video.paused === true) {
+      if (video.paused) {
         video.play();
       } else {
         video.pause();
