@@ -427,6 +427,13 @@ function mousePressed() {
 	loop();
 }
 
+function touchMoved() {
+	// Do nothing.
+	// This prevents the canvas from being draggable on mobile devices
+	// where this would lead to the page not being able to scroll at all.
+	// see more: https://p5js.org/reference/#/p5/touchMoved
+}
+
 function mouseDragged(event) {
 	if (!dragging) {
 		return true;
