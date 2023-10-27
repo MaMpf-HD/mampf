@@ -26,6 +26,9 @@ let tiles;
 let level;
 let box_height;
 
+let monotile_btn;
+let reset_btn;
+
 const colors = {
 	'H1': [0, 137, 212],
 	'H': [148, 205, 235],
@@ -358,13 +361,13 @@ function setup() {
 
 	// Monotile button
 	monotile_btn = addButton("Monotile", () => monotile());
-	monotile_btn.class('btn btn-light monotile-btn');
+	monotile_btn.class('btn btn-light monotile-btn disabled');
 
 	// Find out more button
-	more_btn = addButton("Info", () => {
+	info_btn = addButton("Info", () => {
 		window.open('https://cs.uwaterloo.ca/~csk/hat/', '_blank');
 	});
-	more_btn.class('btn btn-light monotile-btn');
+	info_btn.class('btn btn-light monotile-btn');
 
 	// Little animation at the beginning
 	monotile();
@@ -377,13 +380,15 @@ function reset() {
 	level = 1;
 	to_screen = INITIAL_TO_SCREEN;
 	monotile();
+	monotile_btn.removeClass('disabled');
 	loop();
 }
 
 function monotile() {
 	// Don't go past a certain level to avoid using too much memory
 	// and therefore crashing the browser.
-	if (level == 6) {
+	if (level == 5) {
+		monotile_btn.addClass('disabled');
 		return;
 	}
 
@@ -401,7 +406,7 @@ function draw() {
 	pop();
 
 	// Draw black overlay
-	fill(0, 0, 0, 90);
+	fill(0, 0, 0, 70);
 	noStroke();
 	rect(0, 0, windowWidth, windowHeight);
 

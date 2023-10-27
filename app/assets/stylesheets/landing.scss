@@ -110,10 +110,16 @@ footer {
 }
 
 .monotile-btn {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(255, 255, 255, 0.4);
     height: 35px !important;
+    font-weight: 400;
 
     &:hover {
         background-color: white;
+    }
+
+    &.disabled {
+        background-color: rgba(255, 255, 255, 0.6);
+        font-weight: 350;
     }
 }
