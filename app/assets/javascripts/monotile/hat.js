@@ -1,16 +1,13 @@
 // BSD-3-Clause licensed by Craig S. Kaplan
 // adapted from: https://github.com/isohedral/hatviz
 
-// This may result in a warning that P5.JS was imported twice.
-// We still use this to assign variables before setup(), which is especially
-// useful in combination with turbolinks.
-// see more here:
-// https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup
-
 // A bit of a "hacky" fix. This is the only way I found that works
 // so that the canvas is loaded even if the site is left
 // e.g. user clicks on "Register" or changes language from "De" to "En"
 // with the button on the landing page.
+// Also see the following link for a possible workaround, which does not work
+// for us in conjunction with turbolink: 
+// https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup
 $(document).on('turbolinks:load', () => {
 	try {
 		setup();
@@ -23,7 +20,6 @@ $(document).on('turbolinks:load', () => {
 	}
 });
 
-
 const INITIAL_TO_SCREEN = [20, 0, 0, 0, -20, 0];
 let to_screen = INITIAL_TO_SCREEN;
 let tiles;
@@ -31,11 +27,11 @@ let level;
 let box_height;
 
 const colors = {
-	'H1': [0, 137, 212],
-	'H': [148, 205, 235],
-	'T': [251, 251, 251],
-	'P': [250, 250, 250],
-	'F': [191, 191, 191]
+	'H1': [0, 110, 170],
+	'H': [118, 164, 188],
+	'T': [201, 201, 201],
+	'P': [200, 200, 200],
+	'F': [153, 153, 153]
 };
 let black = [0, 0, 0];
 
