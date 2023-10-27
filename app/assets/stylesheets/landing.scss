@@ -123,3 +123,10 @@ footer {
         font-weight: 350;
     }
 }
+
+// Disable monotile buttons on "small" devices
+@include media-breakpoint-down(xxl) {
+    .monotile-btn {
+        display: none;
+    }
+}
