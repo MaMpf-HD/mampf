@@ -67,7 +67,7 @@
 //= require thyme/components/add_screenshot_button
 //= require thyme/components/annotation_category_toggle
 //= require thyme/components/annotations_toggle
-//= require thyme/components/emergency_button
+//= require thyme/components/annotation_button
 //= require thyme/components/full_screen_button
 //= require thyme/components/ia_button
 //= require thyme/components/ia_back_button

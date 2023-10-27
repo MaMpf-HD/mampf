@@ -44,7 +44,7 @@ class AnnotationsToggle extends Component {
   show() {
     $('#volume-controls').css('left', '66%');
     $('#speed-control').css('left', '77%');
-    $('#emergency-button').css('left', '86%');
+    $('#annotation-button').css('left', '86%');
     thymeAttributes.hideControlBarThreshold.x = 960;
     this.div.show();
   }

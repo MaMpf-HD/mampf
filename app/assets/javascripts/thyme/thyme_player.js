@@ -26,7 +26,7 @@ $(document).on('turbolinks:load', function() {
    */
   const annotationsToggle = new AnnotationsToggle('annotations-toggle');
   annotationsToggle.add();
-  (new EmergencyButton('emergency-button')).add();
+  (new AnnotationButton('annotation-button')).add();
   (new FullScreenButton('full-screen', thymeContainer)).add();
   (new MuteButton('mute')).add();
   (new NextChapterButton('next-chapter')).add();

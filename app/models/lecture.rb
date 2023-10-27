@@ -59,7 +59,7 @@ class Lecture < ApplicationRecord
   # in the erdbeere database
   serialize :structure_ids, Array
   
-  # if the emergency button is enabled, one can add different types of links
+  # if the annotation button is enabled, one can add different types of links
   # that e.g. bring students to the helpdesk
   enum emergency_link_status: { no_link: 0, lecture_link: 1, direct_link: 2 }
 

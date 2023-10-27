@@ -248,7 +248,7 @@ class LecturesController < ApplicationController
 
   def close_comments
     @lecture.close_comments!(current_user)
-    # disable emergency button
+    # disable annotation button
     @lecture.update(annotations_status: -1)
     @lecture.media.update(annotations_status: 0)
     @lecture.lessons.each do |lesson|

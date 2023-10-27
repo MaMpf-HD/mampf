@@ -63,16 +63,16 @@ var categoryRadios = document.getElementById('category-radios');
 categoryRadios.addEventListener('click', function(evt) {
   if (evt.target && event.target.matches("input[type='radio']")) {
     switch(evt.target.value) {
-      case "note":
+      case Category.NOTE.name:
         note();
         break;
-      case "content":
+      case Category.CONTENT.name:
         content();
         break;
-      case "mistake":
+      case Category.MISTAKE.name:
         mistake();
         break;
-      case "presentation":
+      case Category.PRESENTATION.name:
         presentation();
         break;
     }
@@ -97,13 +97,13 @@ function content() {
     if (evt.target && event.target.matches("input[type='radio']")) {
       submitButton.disabled = false;
       switch (evt.target.value) {
-        case "definition":
+        case Subcategory.DEFINITION.name:
           definition();
           break;
-        case "argument":
+        case Subcategory.ARGUMENT.name:
           argument();
           break;
-        case "strategy":
+        case Subcategory.STRATEGY.name:
           strategy();
           break;
       }
@@ -208,13 +208,13 @@ if (contentRadio.checked) {
   submitButton.disabled = false;
   var subcategory = document.getElementById('annotation_subcategory').textContent.replace(/[^a-z]/g, '');
   switch (subcategory) {
-    case "definition":
+    case Subcategory.DEFINITION.name:
       document.getElementById('content-category-definition').checked = true;
       break;
-    case "argument":
+    case Subcategory.ARGUMENT.name:
       document.getElementById('content-category-argument').checked = true;
       break;
-    case "strategy":
+    case Subcategory.STRATEGY.name:
       document.getElementById('content-category-strategy').checked = true;
       break;
   }

@@ -173,12 +173,12 @@
                          class: 'form-control' %>
       </div>
     <% end %>
-    <!--- EMERGENCY BUTTON -->
+    <!--- ANNOTATION BUTTON -->
     <% if medium.video.present? %>
       <div class="form-group">
-        <%= t('admin.lecture.enable_emergency_button') %>
-        <%= helpdesk(t('admin.lecture.enable_emergency_button_helpdesk') +
-        		     t('admin.lecture.enable_emergency_button_inherit_helpdesk'),
+        <%= t('admin.lecture.enable_annotation_button') %>
+        <%= helpdesk(t('admin.lecture.enable_annotation_button_helpdesk') +
+        		     t('admin.lecture.enable_annotation_button_inherit_helpdesk'),
                      false) %>
         <div class="form-row ml-2">
           <div class="form-check form-check-inline">
@@ -211,7 +211,7 @@
         </div>
       </div>
     <% end %>
-    <!--- EMERGENCY BUTTON -->
+    <!--- ANNOTATION BUTTON -->
     <%= f.hidden_field :teachable_id, value: medium.teachable_id %>
     <%= f.hidden_field :teachable_type, value: medium.teachable_type %>
   </div>
