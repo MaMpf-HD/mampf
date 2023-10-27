@@ -20,18 +20,18 @@ $(document).on('turbolinks:load', () => {
 	}
 });
 
-const INITIAL_TO_SCREEN = [20, 0, 0, 0, -20, 0];
+const INITIAL_TO_SCREEN = [45, 0, 0, 0, -45, 0];
 let to_screen = INITIAL_TO_SCREEN;
 let tiles;
 let level;
 let box_height;
 
 const colors = {
-	'H1': [0, 110, 170],
-	'H': [118, 164, 188],
-	'T': [201, 201, 201],
-	'P': [200, 200, 200],
-	'F': [153, 153, 153]
+	'H1': [0, 137, 212],
+	'H': [148, 205, 235],
+	'T': [251, 251, 251],
+	'P': [250, 250, 250],
+	'F': [191, 191, 191]
 };
 let black = [0, 0, 0];
 
@@ -362,16 +362,14 @@ function setup() {
 
 	// Find out more button
 	more_btn = addButton("Info", () => {
-		// open url
 		window.open('https://cs.uwaterloo.ca/~csk/hat/', '_blank');
 	});
 	more_btn.class('btn btn-light monotile-btn');
 
 	// Little animation at the beginning
-	setTimeout(monotile, 50);
-	setTimeout(monotile, 90);
-	setTimeout(monotile, 150);
-	setTimeout(monotile, 200);
+	monotile();
+	monotile();
+	monotile();
 }
 
 function reset() {
@@ -401,6 +399,12 @@ function draw() {
 	translate(width / 2, height / 2);
 	tiles[0].draw(to_screen, level);
 	pop();
+
+	// Draw black overlay
+	fill(0, 0, 0, 90);
+	noStroke();
+	rect(0, 0, windowWidth, windowHeight);
+
 	noLoop();
 }
 
