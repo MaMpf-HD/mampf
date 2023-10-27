@@ -382,11 +382,11 @@ de:
         multiple_close_annotations_2: " veröffentlichte Fehler-Annotationen."
         permission: "Dir fehlen die Rechte, um diese Annotation zu bearbeiten."
       visible_for_teacher: 'Für DozentIn sichtbar?'
-      visible_for_teacher_tooltip: >
+      visible_for_teacher_helpdesk: >
         Falls diese Checkbox ausgewählt ist, kann Dein(e) Dozent(in) diese Annotation
         in ihrem/seinem Thyme-Player (ohne Deinen Namen) sehen.
       post_as_comment: 'Als Kommentar veröffentlichen?'
-      post_as_comment_tooltip: >
+      post_as_comment_helpdesk: >
         Falls diese Checkbox ausgewählt ist, wird diese Annotation automatisch
         als Kommentar zu diesem Video veröffentlicht.
       toggle:

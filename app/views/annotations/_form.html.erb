@@ -107,32 +107,34 @@
 
     <br>
 
-    <!--- VISIBLE FOR TEACHER? - CHECKBOX -->
+    <!--- VISIBLE FOR TEACHER CHECKBOX -->
     <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
     <% if annotations_status == 1 %>
-      <%= f.label :visible_for_teacher, class: "checkbox inline" do %>
-        <span, title="<%= t('admin.annotation.visible_for_teacher_tooltip') %>"><b>
-          <%= t('admin.annotation.visible_for_teacher') %> &nbsp
-        </b></span>
-        <%= f.check_box :visible_for_teacher %>
-      <% end %>
-      <br>
+      <div class="form-check">
+        <%= f.check_box :visible_for_teacher, class: "form-check-input" %>
+        <%= f.label :visible_for_teacher,
+            t('admin.annotation.visible_for_teacher'),
+            class: "form-check-label" %>
+        <%= helpdesk(t('admin.annotation.visible_for_teacher_helpdesk'), false) %>
+      </div>
     <% else %>
       <%= f.hidden_field :visible_for_teacher, value: false %>
     <% end %>
 
-    <%= f.label :post_as_comment, class: "checkbox inline" do %>
-      <span, title="<%= t('admin.annotation.post_as_comment_tooltip') %>"><b>
-        <%= t('admin.annotation.post_as_comment') %> &nbsp
-      </b></span>
-      <%= f.check_box :post_as_comment %>
-    <% end %>
+    <!--- POST AS COMMENT CHECKBOX -->
+    <div class="form-check">
+      <%= f.check_box :post_as_comment, class: "form-check-input" %>
+      <%= f.label :post_as_comment,
+          t('admin.annotation.post_as_comment'),
+          class: "form-check-label" %>
+      <%= helpdesk(t('admin.annotation.post_as_comment_helpdesk'), false) %>
+    </div>
 
     <br>
 
     <div class="modal-footer">
-      <%= f.submit t('buttons.save'), class: "btn btn-primary", id: "annotation-modal-submit-button" %>
-      <% if @annotation.id != nil %>
+      <!-- DELETE BUTTON -->
+      <% if @annotation.id %>
         <button type="button"
                 id="delete-button"
                 class="btn btn-secondary"
@@ -140,11 +142,18 @@
           <%= t('buttons.delete') %>
         </button>
       <% end %>
+
+      <!-- CANCEL BUTTON -->
       <button type="button"
               class="btn btn-secondary"
               data-bs-dismiss="modal">
         <%= t('buttons.cancel') %>
       </button>
+
+      <!-- SUBMIT BUTTON -->
+      <%= f.submit t('buttons.save'),
+        id: "annotation-modal-submit-button",
+        class: "btn btn-primary" %>
     </div>
   <% end %>
 </div>

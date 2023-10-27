@@ -8,6 +8,8 @@ class CreateAnnotations < ActiveRecord::Migration[7.0]
       t.integer :category
       t.boolean :visible_for_teacher
       t.string :color
+      t.integer :public_comment_id
+      t.integer :subcategory
 
       t.timestamps
     end
