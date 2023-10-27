@@ -13,7 +13,6 @@ $(document).on('turbolinks:load', () => {
 		setup();
 	} catch (err) {
 		if (err instanceof ReferenceError) {
-			console.log('Setup P5.js');
 			return;
 		}
 		console.error(err);
