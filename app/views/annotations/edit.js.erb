@@ -25,7 +25,7 @@ function alertMistakeWarningMessage(message) {
   message += "\n" + document.getElementById('annotation-locales').dataset.warningMistake;
   var mediumId = thyme.dataset.medium;
   var radius = 60; // annotations that are inside this radius (in seconds) are considered as "near". 
-  $.ajax(Routes.num_nearby_mistake_annotations_path(), {
+  $.ajax(Routes.num_nearby_posted_mistake_annotations_path(), {
     type: 'GET',
     dataType: 'json',
     data: {

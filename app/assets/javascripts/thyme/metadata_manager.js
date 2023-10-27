@@ -203,8 +203,8 @@ class MetadataManager {
         $('#' + metadataListId + ' li').removeClass('current');
         while (j < this.activeCues.length) {
           const activeStart = this.activeCues[j].startTime;
-          let metalink;
-          if (metalink = document.getElementById('m-' + activeStart)) {
+          let metalink = document.getElementById('m-' + activeStart);
+          if (metalink) {
             $(metalink).show();
             $(metalink).addClass('current');
           }

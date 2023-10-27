@@ -45,9 +45,9 @@ Rails.application.routes.draw do
       to: 'annotations#update_annotations',
       as: 'update_annotations'
 
-  get 'annotations/num_nearby_mistake_annotations',
-      to: 'annotations#num_nearby_mistake_annotations',
-      as: 'num_nearby_mistake_annotations'
+  get 'annotations/num_nearby_posted_mistake_annotations',
+      to: 'annotations#num_nearby_posted_mistake_annotations',
+      as: 'num_nearby_posted_mistake_annotations'
 
   resources :annotations, only: [:new, :create, :edit, :update, :destroy]
   

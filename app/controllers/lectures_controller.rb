@@ -25,11 +25,11 @@ class LecturesController < ApplicationController
     end
 
     # emergency link -> prefill form
-    status = @lecture.emergency_link_status
+    status = @lecture.emergency_link_status_for_database
     link = @lecture.emergency_link
-    if status == "lecture_link"
+    if status == Lecture.emergency_link_statuses[:lecture_link]
       @linked_lecture = Lecture.find_by_id(link.tr("^[0-9]", ""))
-    elsif status == "direct_link"
+    elsif status == Lecture.emergency_link_statuses[:direct_link]
       @direct_link = link
     end
   end
