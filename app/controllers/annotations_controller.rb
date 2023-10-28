@@ -33,12 +33,13 @@ class AnnotationsController < ApplicationController
 
   def create
     @annotation = Annotation.new(annotation_params)
+
     return unless is_valid_color(@annotation.color)
+    @annotation.public_comment_id = post_comment(@annotation)
 
     @annotation.user_id = current_user.id
     @total_seconds = annotation_auxiliary_params[:total_seconds]
     @annotation.timestamp = TimeStamp.new(total_seconds: @total_seconds)
-    @annotation.public_comment_id = post_comment(@annotation)
 
     @annotation.save
     render :update
@@ -47,9 +48,10 @@ class AnnotationsController < ApplicationController
   def update
     @annotation = Annotation.find(params[:id])
     @annotation.assign_attributes(annotation_params)
+    
     return unless is_valid_color(@annotation.color)
-
     @annotation.public_comment_id = post_comment(@annotation)
+
     @annotation.save
   end
 
@@ -133,13 +135,13 @@ class AnnotationsController < ApplicationController
 
     def annotation_params
       params.require(:annotation).permit(
-        :category, :color, :medium_id, :subcategory, :visible_for_teacher
+        :category, :color, :comment, :medium_id, :subcategory, :visible_for_teacher
       )
     end
 
     def annotation_auxiliary_params
       params.require(:annotation).permit(
-        :total_seconds, :post_as_comment, :comment
+        :total_seconds, :post_as_comment
       )
     end
     
@@ -149,12 +151,11 @@ class AnnotationsController < ApplicationController
 
     def post_comment(annotation)
       public_comment_id = annotation.public_comment_id
-      aux_params = annotation_auxiliary_params
 
       # return if checkbox "post_as_comment" is not checked and if there is no comment to update
-      return if aux_params[:post_as_comment] != "1" && public_comment_id.nil?
+      return if annotation_auxiliary_params[:post_as_comment] != "1" && public_comment_id.nil?
 
-      comment = aux_params[:comment]
+      comment = annotation_params[:comment]
 
       if public_comment_id.nil? # comment doesn't exist yet -> create one
         medium = annotation.medium
