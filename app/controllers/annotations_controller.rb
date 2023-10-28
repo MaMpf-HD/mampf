@@ -48,7 +48,7 @@ class AnnotationsController < ApplicationController
   def update
     @annotation = Annotation.find(params[:id])
     @annotation.assign_attributes(annotation_params)
-    
+
     return unless is_valid_color(@annotation.color)
     @annotation.public_comment_id = post_comment(@annotation)
 
@@ -77,7 +77,7 @@ class AnnotationsController < ApplicationController
   end
 
   def update_annotations
-    medium = Medium.find_by_id(params[:mediumId])
+    medium = Medium.find_by(id: params[:mediumId])
 
     # Get the right annotations
     if medium.annotations_visible?(current_user)
