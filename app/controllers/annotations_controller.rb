@@ -33,6 +33,8 @@ class AnnotationsController < ApplicationController
 
   def create
     @annotation = Annotation.new(annotation_params)
+    return unless is_valid_color(@annotation.color)
+
     @annotation.user_id = current_user.id
     @total_seconds = annotation_auxiliary_params[:total_seconds]
     @annotation.timestamp = TimeStamp.new(total_seconds: @total_seconds)
@@ -44,7 +46,8 @@ class AnnotationsController < ApplicationController
 
   def update
     @annotation = Annotation.find(params[:id])
-    @annotation.update(annotation_params)
+    @annotation.assign_attributes(annotation_params)
+    return unless is_valid_color(@annotation.color)
 
     @annotation.public_comment_id = post_comment(@annotation)
     @annotation.save
@@ -138,6 +141,10 @@ class AnnotationsController < ApplicationController
       params.require(:annotation).permit(
         :total_seconds, :post_as_comment, :comment
       )
+    end
+    
+    def is_valid_color(color)
+      return color&.match?(/\A#([0-9]|[A-F]){6}\z/)
     end
 
     def post_comment(annotation)
