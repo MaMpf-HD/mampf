@@ -42,6 +42,7 @@
 }
 
 #below-area {
+  display: flex;
   bottom: 0;
   padding: 10px;
   background: #eeefff;
@@ -51,24 +52,32 @@
 }
 
 #toggle-mistake-annotations {
+  position: relative;
+  left: 5%;
   input:checked + .slider {
     background-color: #C23939;
   }
 }
 
-#toggle-content-annotations {
-  input:checked + .slider {
-    background-color: #D5D841;
-  }
-}
-
 #toggle-presentation-annotations {
+  position: relative;
+  left: 11%;
   input:checked + .slider {
     background-color: #D9892E;
   }
 }
 
+#toggle-content-annotations {
+  position: relative;
+  left: 17%;
+  input:checked + .slider {
+    background-color: #D5D841;
+  }
+}
+
 #toggle-note-annotations {
+  position: relative;
+  left: 23%;
   input:checked + .slider {
     background-color: #66B748;
   }

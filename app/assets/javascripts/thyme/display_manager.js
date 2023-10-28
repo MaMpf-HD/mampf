@@ -38,18 +38,20 @@ class DisplayManager {
 
   // Check screen size and trigger the right method
   updateControlBarType() {
+    const dm = this;
+
     if (window.matchMedia("screen and (max-width: " +
       thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
       window.matchMedia("screen and (max-height: " +
         thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      this.adaptToSmallDisplay();
+      dm.adaptToSmallDisplay();
     }
 
     if (window.matchMedia("screen and (max-device-width: " +
       thymeAttributes.hideControlBarThreshold.x + "px)").matches ||
       window.matchMedia("screen and (max-device-height: " +
         thymeAttributes.hideControlBarThreshold.y + "px)").matches) {
-      this.adaptToSmallDisplay();
+      dm.adaptToSmallDisplay();
     }
 
     // mediaQuery listener for very small screens
@@ -57,14 +59,14 @@ class DisplayManager {
       thymeAttributes.hideControlBarThreshold.x + "px)");
     matchVerysmallX.addListener(function (result) {
       if (result.matches) {
-        this.adaptToSmallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
     const matchVerysmallY = window.matchMedia("screen and (max-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
     matchVerysmallY.addListener(function (result) {
       if (result.matches) {
-        this.adaptToSmallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
 
@@ -72,14 +74,14 @@ class DisplayManager {
       thymeAttributes.hideControlBarThreshold.x + "px)");
     matchVerysmalldeviceX.addListener(function (result) {
       if (result.matches) {
-        this.adaptToSmallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
     const matchVerysmalldeviceY = window.matchMedia("screen and (max-device-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
     matchVerysmalldeviceY.addListener(function (result) {
       if (result.matches) {
-        this.adaptToSmallDisplay();
+        dm.adaptToSmallDisplay();
       }
     });
 
@@ -91,7 +93,7 @@ class DisplayManager {
       matchNormalY = window.matchMedia("screen and (min-height: " +
         (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
       if (result.matches && matchNormalY.matches) {
-        this.adaptToLargeDisplay();
+        dm.adaptToLargeDisplay();
       }
     });
     const matchNormalY = window.matchMedia("screen and (min-height: " +
@@ -100,7 +102,7 @@ class DisplayManager {
       matchNormalX = window.matchMedia("screen and (min-width: " +
         (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
       if (result.matches && matchNormalX.matches) {
-        this.adaptToLargeDisplay();
+        dm.adaptToLargeDisplay();
       }
     });
 
@@ -111,7 +113,7 @@ class DisplayManager {
       matchNormaldeviceY = window.matchMedia("screen and (min-device-height: " +
         (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
       if (result.matches && matchNormalY.matches) {
-        this.adaptToLargeDisplay();
+        dm.adaptToLargeDisplay();
       }
     });
     matchNormaldeviceY = window.matchMedia("screen and (min-device-height: " +
@@ -120,7 +122,7 @@ class DisplayManager {
       matchNormaldeviceX = window.matchMedia("screen and (min-device-width: " +
         (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
       if (result.matches && matchNormalX.matches) {
-        this.adaptToLargeDisplay();
+        dm.adaptToLargeDisplay();
       }
     });
   }

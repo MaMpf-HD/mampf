@@ -1,5 +1,5 @@
 /**
-  Use the methods here to resize thyme players.
+  Use the method here to resize thyme players.
 */
 const resize = {
   resizeContainer: function(container, factor) {
@@ -7,7 +7,9 @@ const resize = {
     const $container = $(container);
 
     let height = $(window).height();
-    let width = Math.floor((video.videoWidth * $(window).height() / video.videoHeight) * factor);
+    const vWidth  = video.videoWidth;
+    const vHeight = video.videoHeight;
+    let width = Math.floor((vWidth * $(window).height() / vHeight) * factor);
     if (width > $(window).width()) {
       const shrink = $(window).width() / width;
       height = Math.floor(height * shrink);
