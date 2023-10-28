@@ -391,9 +391,9 @@ en:
         comment for this video.
       toggle:
         note: "toggle note annotations"
-        content: "toggle note content"
-        mistake: "toggle note mistake"
-        presentation: "toggle note presentation"
+        content: "toggle content annotations"
+        mistake: "toggle mistake annotations"
+        presentation: "toggle presentation annotations"
     announcement:
       help: >
         Here you can enter a text. You may use LaTeX (by putting the
