@@ -34,16 +34,16 @@
                   data: { turbolinks: false } %>
     <% end %>
   </div>
-  <% if current_user.in?(submission.tutorial.tutors) %>
-    <div class="col-3 correction-column"
-        data-id="<%= submission.id %>">
+  <div class="col-3 correction-column"
+       data-id="<%= submission.id %>">
+    <% if current_user.in?(submission.tutorial.tutors) %>
       <%= render partial: 'submissions/correction_column',
-                locals: { submission: submission } %>
-    </div>
-  <% else %>
-    <%= render partial: 'submissions/download',
+                 locals: { submission: submission } %>
+    <% else %>
+      <%= render partial: 'submissions/download',
               locals: { submission: submission } %>
-  <% end %>
+    <% end %>
+  </div>
   <% if current_user.in?(submission.tutorial.tutors) %>
     <div class="col-3 submission-actions"
         data-id="<%= submission.id %>">
