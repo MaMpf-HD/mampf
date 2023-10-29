@@ -41,7 +41,7 @@
                  locals: { submission: submission } %>
     <% else %>
       <%= render partial: 'submissions/download',
-              locals: { submission: submission } %>
+                 locals: { submission: submission } %>
     <% end %>
   </div>
   <% if current_user.in?(submission.tutorial.tutors) %>
