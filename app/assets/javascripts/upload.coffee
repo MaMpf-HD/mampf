@@ -267,6 +267,7 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
       # Temporary fix for ":type option required" error in the
       # app/controllers/submissions_controller.rb -> show_correction
       if data.metadata.size == 0
+        console.log('empty file encountered')
         $(actualButton).hide()
         $('#submit-correction-btn').addClass('disabled')
         alert($(actualButton).data('tr-failure'))
@@ -310,6 +311,7 @@ bulkCorrectionUpload = (fileInput) ->
         # Temporary fix for ":type option required" error in the
         # app/controllers/submissions_controller.rb -> show_correction
         if data.metadata.size == 0
+          console.log('empty file encountered during bulk upload')
           alert($('#bulk-uploadButton-button-actual').data('tr-failure'))
           $('#bulk-uploadButton-button-actual').hide()
           return
