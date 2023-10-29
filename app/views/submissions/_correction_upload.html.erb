@@ -41,7 +41,8 @@
   <div class="row mt-2">
     <div class="col-12">
       <%= f.submit t('buttons.save'),
-                   class: 'btn btn-sm btn-primary' %>
+                  id: 'submit-correction-btn',
+                  class: 'btn btn-sm btn-primary' %>
       <%= link_to t('buttons.cancel'),
                   cancel_edit_correction_path(submission),
                   class: 'btn btn-sm btn-secondary',

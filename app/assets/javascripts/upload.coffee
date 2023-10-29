@@ -262,6 +262,20 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
 
       metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
       metaData.style.display = 'inline'
+
+      # Disable upload if empty files were uploaded
+      # Temporary fix for ":type option required" error in the
+      # app/controllers/submissions_controller.rb -> show_correction
+      if data.metadata.size == 0
+        $(actualButton).hide()
+        $('#submit-correction-btn').addClass('disabled')
+        alert($(actualButton).data('tr-failure'))
+      else
+        $(uploadButton).hide()
+        $(actualButton).show()
+        $(actualButton).addClass('disabled')
+        $('#submit-correction-btn').removeClass('disabled')
+      
     null
     hiddenInput
     true
@@ -291,6 +305,15 @@ bulkCorrectionUpload = (fileInput) ->
         console.log(data)
         result = (successful: [data])
         console.log result
+
+        # Disable upload if uploaded (zip)-file is empty
+        # Temporary fix for ":type option required" error in the
+        # app/controllers/submissions_controller.rb -> show_correction
+        if data.metadata.size == 0
+          alert($('#bulk-uploadButton-button-actual').data('tr-failure'))
+          $('#bulk-uploadButton-button-actual').hide()
+          return
+
         if result.successful.length > 0
           uploaded_files = result.successful.map (file) -> file
           console.log uploaded_files
