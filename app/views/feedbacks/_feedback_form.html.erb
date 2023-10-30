@@ -13,13 +13,13 @@
     feedback_mail: mail_to(DefaultSetting::FEEDBACK_EMAIL, t('basics.mail_noun'))) %>
 
   <%= form_with model: Feedback.new, remote: true do |f| %>
-    <%# Title %>
+    <!-- Title -->
     <div class="form-floating mb-3">
       <%= f.text_field :title, class: 'form-control', placeholder: '_' %>
       <%= f.label :title, t('feedback.title') %>
     </div>
 
-    <%# Comment %>
+    <!-- Comment -->
     <div class="form-floating mb-3">
       <%= f.text_area :feedback,
             class: 'form-control',
@@ -33,7 +33,7 @@
       <%= f.label :feedback, t('feedback.comment') %>
     </div>
 
-    <%# Email contact %>
+    <!-- Email contact -->
     <div class="form-check">
       <%= f.check_box :can_contact,
         checked: 'checked',
@@ -43,20 +43,20 @@
         class: 'form-check-label' %>
     </div>
 
-    <%# Submit %>
-    <%# Dummy submit button, the actual submit button is in the modal footer %>
+    <!-- Submit -->
+    <!-- Dummy submit button; actual submit button is in the modal footer -->
     <%= f.submit 'Submit', id: 'submit-feedback-form-btn', style: 'display: none;' %>
   <% end %>
 </div>
 
 <div class="modal-footer">
-  <%# Cancel %>
-  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-    <%= t('buttons.cancel') %>
-  </button>
-
-  <%# Submit %>
+  <!-- Submit (Send) -->
   <button type="button" id="submit-feedback-form-btn-outside" class="btn btn-primary">
     <%= t('buttons.send_variant') %>
+  </button>
+
+  <!-- Cancel -->
+  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+    <%= t('buttons.cancel') %>
   </button>
 </div>
