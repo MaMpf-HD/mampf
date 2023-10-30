@@ -270,7 +270,7 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
         console.log('empty file encountered')
         $(actualButton).hide()
         $('#submit-correction-btn').addClass('disabled')
-        alert($(actualButton).data('tr-failure'))
+        alert($(actualButton).data('tr-failure-empty-file'))
       else
         $(uploadButton).hide()
         $(actualButton).show()
@@ -312,7 +312,7 @@ bulkCorrectionUpload = (fileInput) ->
         # app/controllers/submissions_controller.rb -> show_correction
         if data.metadata.size == 0
           console.log('empty file encountered during bulk upload')
-          alert($('#bulk-uploadButton-button-actual').data('tr-failure'))
+          alert($('#bulk-uploadButton-button-actual').data('tr-failure-empty-file'))
           $('#bulk-uploadButton-button-actual').hide()
           return
 
