@@ -2664,7 +2664,9 @@ de:
     optimization_failed: >
       Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
     upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
-    upload_failure_empty_file: "Die hochgeladene Datei ist leer. Bitte vergewissere dich, dass die Datei nicht beschädigt ist."
+    upload_failure_empty_file: >
+      Die hochgeladene Datei ist leer.
+      Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
     file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
     file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
     optimization_help_html: >

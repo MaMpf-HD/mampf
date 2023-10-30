@@ -2511,7 +2511,9 @@ en:
     optimization_failed: >
       Optimization failed: File is still to big.
     upload_failure: "Error while uploading! Please try again."
-    upload_failure_empty_file: "The uploaded file is empty. Please make sure that the file not corrupted."
+    upload_failure_empty_file: >
+      The uploaded file is empty.
+      Please make sure that the file is not corrupted.
     file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
     file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
     optimization_help_html: >
