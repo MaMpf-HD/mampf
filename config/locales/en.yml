@@ -2514,6 +2514,9 @@ en:
     upload_failure_empty_file: >
       The uploaded file is empty.
       Please make sure that the file is not corrupted.
+    upload_failure_empty_file_bulk: >
+      is empty.
+      Please make sure that the file is not corrupted.
     file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
     file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
     optimization_help_html: >

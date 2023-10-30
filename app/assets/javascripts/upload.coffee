@@ -310,10 +310,12 @@ bulkCorrectionUpload = (fileInput) ->
         # Disable upload if uploaded (zip)-file is empty
         # Temporary fix for ":type option required" error in the
         # app/controllers/submissions_controller.rb -> show_correction
-        fileSizes = dataAll.map((data) => data.metadata.size)
-        if fileSizes.includes(0)
-          console.log('empty file encountered during bulk upload')
-          alert($('#bulk-uploadButton-button-actual').data('tr-failure-empty-file'))
+        for data in dataAll
+          if data.metadata.size > 0
+            continue
+          console.log('empty file encountered during bulk upload: ' + data.metadata.filename)
+          alert(data.metadata.filename + ' ' +
+            $('#bulk-uploadButton-button-actual').data('tr-failure-empty-file-bulk'))
           $('#bulk-uploadButton-button-actual').hide()
           $(metaData).empty()
           return
