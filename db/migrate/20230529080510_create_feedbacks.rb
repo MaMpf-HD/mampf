@@ -4,7 +4,7 @@ class CreateFeedbacks < ActiveRecord::Migration[7.0]
       t.text :title
       t.text :feedback
       t.boolean :can_contact, default: false
-      t.references :user, null: false, foreign_key: { on_delete: :cascade }
+      t.references :user, null: false, foreign_key: true
 
       t.timestamps
     end

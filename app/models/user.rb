@@ -61,6 +61,9 @@ class User < ApplicationRecord
 
   # a user has a watchlist with watchlist_entries
   has_many :watchlists, dependent: :destroy
+
+  has_many :feedbacks, dependent: :destroy
+
   include ScreenshotUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
