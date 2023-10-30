@@ -5,7 +5,7 @@ class CreateAnnotations < ActiveRecord::Migration[7.0]
       t.references :user, null: false, foreign_key: true
       t.text :timestamp, null: false
       t.text :comment
-      t.integer :category
+      t.integer :category, null: false
       t.boolean :visible_for_teacher
       t.string :color
       t.integer :public_comment_id
