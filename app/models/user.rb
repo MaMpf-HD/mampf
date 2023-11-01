@@ -3,7 +3,7 @@ class User < ApplicationRecord
   include ApplicationHelper
 
   # use devise for authentification, include the following modules
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
   # a user has many subscribed lectures
