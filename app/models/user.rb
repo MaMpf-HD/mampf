@@ -751,6 +751,19 @@ class User < ApplicationRecord
     return false
   end
 
+  # make sure that no IP adress data are stored via the :trackable module
+  # of Devise
+  # see https://github.com/heartcombo/devise/issues/4849#issuecomment-534733131
+
+  def current_sign_in_ip
+  end
+
+  def last_sign_in_ip=(_ip)
+  end
+
+  def current_sign_in_ip=(_ip)
+  end
+
   private
 
     def set_defaults
