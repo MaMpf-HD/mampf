@@ -4,7 +4,7 @@ $(document).on('turbolinks:load', function() {
     VIDEO INITIALIZATION
    */
   // exit script if the current page has no thyme player
-  const thymeContainer = document.getElementById('thyme-feedback');
+  const thymeContainer = document.getElementById('thyme-feedback-container');
   if (!thymeContainer) {
     return;
   }
@@ -15,7 +15,7 @@ $(document).on('turbolinks:load', function() {
   // initialize attributes
   const video = document.getElementById('video');
   thymeAttributes.video = video;
-  thymeAttributes.mediumId = document.getElementById('thyme').dataset.medium;
+  thymeAttributes.mediumId = document.getElementById('thyme-feedback').dataset.medium;
   thymeAttributes.markerBarId = 'feedback-markers';
 
 
@@ -105,7 +105,7 @@ $(document).on('turbolinks:load', function() {
 
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
-    resize.resizeContainer(thymeContainer, 1);
+    resize.resizeContainer(thymeContainer, 1.22, 70);
     if (!thymeAttributes.annotations) {
       annotationManager.updateAnnotations();
     } else {

@@ -151,7 +151,7 @@ $(document).on('turbolinks:load', function() {
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
-    resize.resizeContainer(thymeContainer, factor);
+    resize.resizeContainer(thymeContainer, factor, 0);
     if (!thymeAttributes.annotations) {
       annotationManager.updateAnnotations();
     } else {
