@@ -35,6 +35,8 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.new(annotation_params)
 
     return unless is_valid_color(@annotation.color)
+    return if @annotation.category_for_database == Annotation.categories[:content] and
+              @annotation.subcategory.nil?
     @annotation.public_comment_id = post_comment(@annotation)
 
     @annotation.user_id = current_user.id
@@ -50,6 +52,8 @@ class AnnotationsController < ApplicationController
     @annotation.assign_attributes(annotation_params)
 
     return unless is_valid_color(@annotation.color)
+    return if @annotation.category_for_database == Annotation.categories[:content] and
+              @annotation.subcategory.nil?
     @annotation.public_comment_id = post_comment(@annotation)
 
     @annotation.save
