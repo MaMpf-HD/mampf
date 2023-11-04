@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_28_113531) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_08_093848) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -20,13 +20,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_28_113531) do
     t.bigint "user_id", null: false
     t.text "timestamp", null: false
     t.text "comment"
+    t.string "color", null: false
     t.integer "category", null: false
-    t.boolean "visible_for_teacher"
-    t.string "color"
+    t.integer "subcategory"
+    t.boolean "visible_for_teacher", null: false
+    t.integer "public_comment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "public_comment_id"
-    t.integer "subcategory"
     t.index ["medium_id"], name: "index_annotations_on_medium_id"
     t.index ["user_id"], name: "index_annotations_on_user_id"
   end
@@ -205,16 +205,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_28_113531) do
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
   end
 
-  create_table "feedbacks", force: :cascade do |t|
-    t.text "title"
-    t.text "feedback"
-    t.boolean "can_contact", default: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_feedbacks_on_user_id"
-  end
-
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
@@ -379,8 +369,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_28_113531) do
     t.datetime "released_at", precision: nil
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
-    t.text "external_link_description"
     t.integer "annotations_status", default: 0
+    t.text "external_link_description"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
@@ -938,7 +928,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_28_113531) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
-  add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
