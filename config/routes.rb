@@ -844,6 +844,12 @@ Rails.application.routes.draw do
       to: 'erdbeere#fill_realizations_select',
       as: 'fill_realizations_select'
 
+  # News popups routes
+  resources :news_popups, only: [:index, :edit, :update]
+
+  get 'news_popups/:id/cancel_edit',
+      to: 'news_popups#cancel_edit',
+      as: 'cancel_editing_news_popups'
 
   # main routes
 
