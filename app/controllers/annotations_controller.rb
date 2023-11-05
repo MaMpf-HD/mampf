@@ -23,7 +23,7 @@ class AnnotationsController < ApplicationController
 
     @total_seconds = @annotation.timestamp.total_seconds
     @medium_id = @annotation.medium_id
-    @posted = (@annotation.public_comment_id != nil)
+    @posted = !@annotation.public_comment_id.nil?
 
     # if this annotation has an associated commontator comment,
     # we have to call the "get_comment" method in order to get
@@ -34,7 +34,7 @@ class AnnotationsController < ApplicationController
   def create
     @annotation = Annotation.new(annotation_params)
 
-    return unless is_valid_color(@annotation.color)
+    return unless valid_color?(@annotation.color)
     return if @annotation.category_for_database == Annotation.categories[:content] and
               @annotation.subcategory.nil?
     @annotation.public_comment_id = post_comment(@annotation)
@@ -51,7 +51,7 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.find(params[:id])
     @annotation.assign_attributes(annotation_params)
 
-    return unless is_valid_color(@annotation.color)
+    return unless valid_color?(@annotation.color)
     return if @annotation.category_for_database == Annotation.categories[:content] and
               @annotation.subcategory.nil?
     @annotation.public_comment_id = post_comment(@annotation)
@@ -149,15 +149,15 @@ class AnnotationsController < ApplicationController
       )
     end
     
-    def is_valid_color(color)
-      return color&.match?(/\A#([0-9]|[A-F]){6}\z/)
+    def valid_color?(color)
+      color&.match?(/\A#([0-9]|[A-F]){6}\z/)
     end
 
     def post_comment(annotation)
       public_comment_id = annotation.public_comment_id
 
       # return if checkbox "post_as_comment" is not checked and if there is no comment to update
-      return if annotation_auxiliary_params[:post_as_comment] != "1" && public_comment_id.nil?
+      return if annotation_auxiliary_params[:post_as_comment] != '1' && public_comment_id.nil?
 
       comment = annotation_params[:comment]
 
@@ -178,7 +178,7 @@ class AnnotationsController < ApplicationController
       # delete comment as it is already saved in the commontator comment model
       annotation.comment = nil
 
-      return commontator_comment.id
+      commontator_comment.id
     end
 
 end
