@@ -37,15 +37,17 @@ services:
     ports:
       - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@mampf.de
-      PGADMIN_DEFAULT_PASSWORD: mampf
+      PGADMIN_DEFAULT_EMAIL: admin@mampf.edu
+      PGADMIN_DEFAULT_PASSWORD: pgmampf
     volumes:
       - pgadmin:/var/lib/pgadmin
       # Pre-load server definition into pgAdmin (so that no manual setup via
-      # the web interface is required). See "pgadmin4/servers.json" in:
-      # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html#mapped-files-and-directories
-      # and this answer: https://forums.docker.com/t/automatically-connect-pgadmin-to-a-postgresql-volume-on-which-there-is-a-database-and-automatically-load-a-schema-present-on-a-sql-file-with-docker-compose/124647/2
-      - config/db-pgadmin-config.json:/pgadmin4/servers.json
+      # the web interface is required). See "pgadmin4/servers.json" here:
+      # -> https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html#mapped-files-and-directories
+      # -> https://forums.docker.com/t/automatically-connect-pgadmin-to-a-postgresql-volume-on-which-there-is-a-database-and-automatically-load-a-schema-present-on-a-sql-file-with-docker-compose/124647/2
+      - type: bind
+        source: ../../config/db-pgadmin.json
+        target: /pgadmin4/servers.json
 
   mailcatcher:
     restart: on-failure:10
@@ -112,8 +114,8 @@ services:
       PROJECT_EMAIL_MAILBOX: INBOX
       BLOG: https://mampf.blog
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
-      # DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20220923120841_mampf.sql&dl=1"
-      # UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/1c4804dcd78446139fd9/?dl=1"
+      DB_SQL_PRESEED_URL: "https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/files/?p=%2F20220923120841_mampf.sql&dl=1"
+      UPLOADS_PRESEED_URL: "https://heibox.uni-heidelberg.de/f/1c4804dcd78446139fd9/?dl=1"
     volumes:
       - type: bind
         source: ../../
