@@ -32,6 +32,21 @@ services:
         source: db-data
         target: /var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mampf.de
+      PGADMIN_DEFAULT_PASSWORD: mampf
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+      # Pre-load server definition into pgAdmin (so that no manual setup via
+      # the web interface is required). See "pgadmin4/servers.json" in:
+      # https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html#mapped-files-and-directories
+      # and this answer: https://forums.docker.com/t/automatically-connect-pgadmin-to-a-postgresql-volume-on-which-there-is-a-database-and-automatically-load-a-schema-present-on-a-sql-file-with-docker-compose/124647/2
+      - config/db-pgadmin-config.json:/pgadmin4/servers.json
+
   mailcatcher:
     restart: on-failure:10
     image: dockage/mailcatcher:latest
@@ -56,6 +71,8 @@ services:
     image: mampf:development
     environment:
       RAILS_ENV: docker_development
+      # If you change these variables, make sure to adapt accordingly in
+      # config/db-pgadmin-config.json
       DEVELOPMENT_DATABASE_ADAPTER: postgresql
       DEVELOPMENT_DATABASE_DATABASE: mampf
       DEVELOPMENT_DATABASE_INTERACTIONS: interactions
@@ -164,5 +181,6 @@ volumes:
   submissions:
   public:
   db-data:
+  pgadmin:
   solr-data:
   sprockets-cache:
