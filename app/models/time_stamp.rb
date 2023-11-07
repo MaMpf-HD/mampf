@@ -5,7 +5,7 @@ class TimeStamp
 
   validates :milliseconds, presence: true
   attr_reader :hours, :minutes, :seconds, :milliseconds
-  
+
   # extract from YAML
   def self.load(text)
     YAML.safe_load(text, permitted_classes: [TimeStamp,
