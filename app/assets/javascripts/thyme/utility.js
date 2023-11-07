@@ -58,7 +58,7 @@ const thymeUtility = {
   /*
     Installs a listener which lets the video play/pause when clicked.
    */
-  playOnClick() {
+  playOnClick: function() {
     const video = thymeAttributes.video;
     video.addEventListener('click', function() {
       if (video.paused) {
@@ -112,7 +112,7 @@ const thymeUtility = {
     (In order to make this work, we have to wait for the video's metadata
     to be loaded.)
    */
-  setUpMaxTime(maxTimeId) {
+  setUpMaxTime: function(maxTimeId) {
     const video = thymeAttributes.video;
     video.addEventListener('loadedmetadata', function() {
       const maxTime = document.getElementById(maxTimeId);
@@ -135,8 +135,8 @@ const thymeUtility = {
     Converts a given integer between 0 and 255 into a hexadecimal, s.t. e.g. "15" becomes "0f"
     (instead of just "f") -> needed for correct format.
    */
-  toHexaDecimal: function(int) {
-  	return int.toString(16).padStart(2, '0');
+  toHexaDecimal: function(integer) {
+  	return integer.toString(16).padStart(2, '0');
   },
 
 };
