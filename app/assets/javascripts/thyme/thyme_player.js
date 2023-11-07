@@ -52,26 +52,33 @@ $(document).on('turbolinks:load', function() {
   function colorFunc(annotation) {
     return annotation.color;
   }
+  
   function onClose() {
     iaButton.minus();
   }
+  
   function isValid(annotation) {
     return (!annotationsToggle.getValue() && !annotation.belongsToCurrentUser ? false : true);
   }
+  
   const annotationArea = new AnnotationArea(true, colorFunc, onClose, isValid);
   thymeAttributes.annotationArea = annotationArea;
+  
   function strokeColorFunc(annotation) {
     return 'black';
   }
+  
   function sizeFunc(annotation) {
     return false;
   }
+  
   function onClick(annotation) {
     iaButton.minus();
     annotationArea.update(annotation);
     annotationArea.show();
     $('#caption').hide();
   }
+  
   function onUpdate() {
     /* update might change the annotation which is currently shown in the
        annotation area -> find the updated annotation in the annotation array
@@ -81,6 +88,7 @@ $(document).on('turbolinks:load', function() {
       annotationArea.update(AnnotationManager.find(id));
     }
   }
+  
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
@@ -144,6 +152,7 @@ $(document).on('turbolinks:load', function() {
   function onEnlarge() {
     iaButton.plus();
   }
+  
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
   const displayManager = new DisplayManager(elements, onEnlarge);
 
@@ -158,6 +167,7 @@ $(document).on('turbolinks:load', function() {
       annotationManager.updateMarkers();
     }
   };
+  
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
 
