@@ -52,7 +52,7 @@ class AnnotationManager {
         function onClick() {
           annotationManager.onClick(a);
         }
-        if (this.sizeFunc !== null && this.sizeFunc(a)) {
+        if (this.sizeFunc && this.sizeFunc(a)) {
           a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
         } else {
           a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
@@ -110,7 +110,7 @@ class AnnotationManager {
    */
   static find(id) {
     const annotations = thymeAttributes.annotations;
-    if (annotations == null) {
+    if (!annotations) {
       return null;
     }
     for (let a of annotations) {
@@ -127,7 +127,7 @@ class AnnotationManager {
    */
   static findIndex(id) {
     const annotations = thymeAttributes.annotations;
-    if (annotations == null) {
+    if (!annotations) {
       return undefined;
     }
     for (let i = 0; i < annotations.length; i++) {

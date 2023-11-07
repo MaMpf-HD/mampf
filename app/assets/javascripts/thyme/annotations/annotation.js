@@ -82,7 +82,7 @@ class Annotation {
   categoryLocale() {
     const c = this.category;
     const s = this.subcategory;
-    return s == null ? c.locale() : c.locale() + " (" + s.locale() + ")";
+    return s ? c.locale() + " (" + s.locale() + ")" : c.locale();
   }
 
   /*

@@ -76,7 +76,7 @@ $(document).on('turbolinks:load', function() {
     /* update might change the annotation which is currently shown in the
        annotation area -> find the updated annotation in the annotation array
        and update the area. */
-    if (annotationArea.annotation != null) {
+    if (annotationArea.annotation) {
       const id = annotationArea.annotation.id;
       annotationArea.update(AnnotationManager.find(id));
     }

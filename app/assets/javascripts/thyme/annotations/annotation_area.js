@@ -69,7 +69,7 @@ class AnnotationArea {
     Update the annotation area with the content of the given annotation.
    */
   update(annotation) {
-    if (annotation == null) {
+    if (!annotation) {
       return;
     }
     this.annotation = annotation;

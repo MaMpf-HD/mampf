@@ -26,7 +26,7 @@ class IaBackButton extends Component {
     const currentChapter = $('#' + this.chapterListId + ' .current');
     if (currentChapter.length > 0) {
       let backInfo = currentChapter.data('text').split(':', 1)[0];
-      if ((backInfo != null) && backInfo.length > 20) {
+      if (backInfo && backInfo.length > 20) {
         backInfo = this.element.dataset.back;
       } else {
         backInfo = this.element.dataset.backto + backInfo;

@@ -117,7 +117,7 @@ const thymeUtility = {
     video.addEventListener('loadedmetadata', function() {
       const maxTime = document.getElementById(maxTimeId);
       maxTime.innerHTML = thymeUtility.secondsToTime(video.duration);
-      if (video.dataset.time != null) {
+      if (video.dataset.time) {
         const time = video.dataset.time;
         video.currentTime = time;
       }
