@@ -55,31 +55,31 @@ class DisplayManager {
     }
 
     // mediaQuery listener for very small screens
-    const matchVerysmallX = window.matchMedia("screen and (max-width: " +
+    const matchVerySmallX = window.matchMedia("screen and (max-width: " +
       thymeAttributes.hideControlBarThreshold.x + "px)");
-    matchVerysmallX.addListener(function (result) {
+    matchVerySmallX.addListener(function (result) {
       if (result.matches) {
         dm.adaptToSmallDisplay();
       }
     });
-    const matchVerysmallY = window.matchMedia("screen and (max-height: " +
+    const matchVerySmallY = window.matchMedia("screen and (max-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
-    matchVerysmallY.addListener(function (result) {
+    matchVerySmallY.addListener(function (result) {
       if (result.matches) {
         dm.adaptToSmallDisplay();
       }
     });
 
-    const matchVerysmalldeviceX = window.matchMedia("screen and (max-device-width: " +
+    const matchVerySmallDeviceX = window.matchMedia("screen and (max-device-width: " +
       thymeAttributes.hideControlBarThreshold.x + "px)");
-    matchVerysmalldeviceX.addListener(function (result) {
+    matchVerySmallDeviceX.addListener(function (result) {
       if (result.matches) {
         dm.adaptToSmallDisplay();
       }
     });
-    const matchVerysmalldeviceY = window.matchMedia("screen and (max-device-height: " +
+    const matchVerySmallDeviceY = window.matchMedia("screen and (max-device-height: " +
       thymeAttributes.hideControlBarThreshold.y + "px)");
-    matchVerysmalldeviceY.addListener(function (result) {
+    matchVerySmallDeviceY.addListener(function (result) {
       if (result.matches) {
         dm.adaptToSmallDisplay();
       }
@@ -106,20 +106,20 @@ class DisplayManager {
       }
     });
 
-    let matchNormaldeviceX = window.matchMedia("screen and (min-device-width: " +
+    let matchNormalDeviceX = window.matchMedia("screen and (min-device-width: " +
       (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
-    let matchNormaldeviceY;
-    matchNormaldeviceX.addListener(function (result) {
-      matchNormaldeviceY = window.matchMedia("screen and (min-device-height: " +
+    let matchNormalDeviceY;
+    matchNormalDeviceX.addListener(function (result) {
+      matchNormalDeviceY = window.matchMedia("screen and (min-device-height: " +
         (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
       if (result.matches && matchNormalY.matches) {
         dm.adaptToLargeDisplay();
       }
     });
-    matchNormaldeviceY = window.matchMedia("screen and (min-device-height: " +
+    matchNormalDeviceY = window.matchMedia("screen and (min-device-height: " +
       (thymeAttributes.hideControlBarThreshold.y + 1) + "px)");
-    matchNormaldeviceY.addListener(function (result) {
-      matchNormaldeviceX = window.matchMedia("screen and (min-device-width: " +
+    matchNormalDeviceY.addListener(function (result) {
+      matchNormalDeviceX = window.matchMedia("screen and (min-device-width: " +
         (thymeAttributes.hideControlBarThreshold.x + 1) + "px)");
       if (result.matches && matchNormalX.matches) {
         dm.adaptToLargeDisplay();
