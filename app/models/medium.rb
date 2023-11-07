@@ -1126,6 +1126,10 @@ class Medium < ApplicationRecord
     Lecture.find_by(id: teachable.lecture_id).user_ids
   end
   
+  # Returns either the annotations status (1 = activated, -1 = deactivated)
+  # of this medium or the annotations status of the associated lecture
+  # if "inherit from lecture" was selected (i.e. if the annotations status of
+  # this medium is 0).
   def get_annotations_status
     return annotations_status if annotations_status != 0
     lecture.annotations_status
