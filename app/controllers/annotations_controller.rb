@@ -34,11 +34,11 @@ class AnnotationsController < ApplicationController
   def create
     @annotation = Annotation.new(annotation_params)
 
-    create_and_update_shared(@annotation)
-
     @annotation.user_id = current_user.id
     @total_seconds = annotation_auxiliary_params[:total_seconds]
     @annotation.timestamp = TimeStamp.new(total_seconds: @total_seconds)
+
+    return unless create_and_update_shared(@annotation)
 
     @annotation.save
     render :update
@@ -48,7 +48,7 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.find(params[:id])
     @annotation.assign_attributes(annotation_params)
 
-    create_and_update_shared(@annotation)
+    return unless create_and_update_shared(@annotation)
 
     @annotation.save
   end
@@ -141,20 +141,29 @@ class AnnotationsController < ApplicationController
       color&.match?(/\A#([0-9]|[A-F]){6}\z/)
     end
 
+    def valid_time?(annotation)
+      time = annotation.timestamp.total_seconds
+      time >= 0 and time <= annotation.medium.video["duration"]
+    end
+
+    # checks that the subcategory is non-nil if the category is "content" and
     # resets the subcategory to "nil" if the selected category isn't "content"
     def subcategory_nil(annotation)
+      return if annotation.category_for_database == Annotation.categories[:content] and
+                annotation.subcategory.nil?
       if annotation.category_for_database != Annotation.categories[:content]
         annotation.subcategory = nil
       end
+      return true
     end
 
     # common code for the create and update method
     def create_and_update_shared(annotation)
-      return unless valid_color?(annotation.color)
-      return if annotation.category_for_database == Annotation.categories[:content] and
-                annotation.subcategory.nil?
-      subcategory_nil(annotation)
+      return unless valid_color?(annotation.color) and
+                    valid_time?(annotation) and
+                    subcategory_nil(annotation)
       annotation.public_comment_id = post_comment(annotation)
+      return true
     end
 
     # Run all the Commontator::Comment related code here
