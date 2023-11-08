@@ -34,10 +34,7 @@ class AnnotationsController < ApplicationController
   def create
     @annotation = Annotation.new(annotation_params)
 
-    return unless valid_color?(@annotation.color)
-    return if @annotation.category_for_database == Annotation.categories[:content] and
-              @annotation.subcategory.nil?
-    @annotation.public_comment_id = post_comment(@annotation)
+    create_and_update_shared(@annotation)
 
     @annotation.user_id = current_user.id
     @total_seconds = annotation_auxiliary_params[:total_seconds]
@@ -51,10 +48,7 @@ class AnnotationsController < ApplicationController
     @annotation = Annotation.find(params[:id])
     @annotation.assign_attributes(annotation_params)
 
-    return unless valid_color?(@annotation.color)
-    return if @annotation.category_for_database == Annotation.categories[:content] and
-              @annotation.subcategory.nil?
-    @annotation.public_comment_id = post_comment(@annotation)
+    create_and_update_shared(@annotation)
 
     @annotation.save
   end
@@ -115,17 +109,11 @@ class AnnotationsController < ApplicationController
   end
 
   def num_nearby_posted_mistake_annotations
-    annotations = Annotation.where(medium: params[:mediumId])
+    annotations = Annotation.where(medium: params[:mediumId], category: 'mistake').commented
     # the time (!) radius in which annotation are considered as "nearby"
     radius = params[:radius].to_i
     timestamp = params[:timestamp].to_i
-    counter = 0
-    for annotation in annotations
-      next unless annotation.category == "mistake" &&
-        (annotation.timestamp.total_seconds - timestamp).abs() < radius &&
-        !annotation.public_comment_id.nil?
-      counter += 1
-    end
+    counter = annotations.to_a.count { |annotation| annotation.nearby?(timestamp, radius) }
     render json: counter
   end
 
@@ -153,11 +141,28 @@ class AnnotationsController < ApplicationController
       color&.match?(/\A#([0-9]|[A-F]){6}\z/)
     end
 
+    # resets the subcategory to "nil" if the selected category isn't "content"
+    def subcategory_nil(annotation)
+      if annotation.category_for_database != Annotation.categories[:content]
+        annotation.subcategory = nil
+      end
+    end
+
+    # common code for the create and update method
+    def create_and_update_shared(annotation)
+      return unless valid_color?(annotation.color)
+      return if annotation.category_for_database == Annotation.categories[:content] and
+                annotation.subcategory.nil?
+      subcategory_nil(annotation)
+      annotation.public_comment_id = post_comment(annotation)
+    end
+
+    # Run all the Commontator::Comment related code here
     def post_comment(annotation)
       public_comment_id = annotation.public_comment_id
 
       # return if checkbox "post_as_comment" is not checked and if there is no comment to update
-      return if annotation_auxiliary_params[:post_as_comment] != '1' && public_comment_id.nil?
+      return if annotation_auxiliary_params[:post_as_comment] != '1' and public_comment_id.nil?
 
       comment = annotation_params[:comment]
 
@@ -166,9 +171,9 @@ class AnnotationsController < ApplicationController
         commontator_comment = Commontator::Comment.create(
           thread: medium.commontator_thread,
           creator: current_user,
-          body: comment
+          body: comment,
+          annotation: annotation
         )
-        commontator_comment.annotation = annotation
       else # comment already exists -> update it
         commontator_comment = Commontator::Comment.find_by(id: public_comment_id)
         commontator_comment.update(editor: current_user,
