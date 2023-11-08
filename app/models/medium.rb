@@ -1315,4 +1315,8 @@ class Medium < ApplicationRecord
 
       becomes(Question).answers.count
     end
+    
+    def valid_annotations_status?
+      [-1, 0, 1].include?(self.annotations_status)
+    end
 end

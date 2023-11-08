@@ -35,6 +35,8 @@ class LecturesController < ApplicationController
   end
 
   def update
+    return unless @lecture.valid_annotations_status?
+
     editor_ids = lecture_params[:editor_ids]
     if editor_ids != nil
       # removes the empty String "" in the NEW array of editor ids

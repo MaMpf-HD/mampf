@@ -922,4 +922,8 @@ class Lecture < ApplicationRecord
 
       errors.add(:course, :already_present)
     end
+    
+    def valid_annotations_status?
+      [-1, 1].include?(self.annotations_status)
+    end
 end
