@@ -72,6 +72,10 @@ class AnnotationManager {
                successfully updated.
    */
   updateAnnotations() {
+    if (!thymeAttributes.annotationFeatureActive) {
+      return;
+    }
+
     const annotationManager = this;
     $.ajax(Routes.update_annotations_path(), {
       type: 'GET',

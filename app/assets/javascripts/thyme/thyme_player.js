@@ -20,13 +20,19 @@ $(document).on('turbolinks:load', function() {
 
 
 
-
   /*
     COMPONENTS
    */
+  // annotation components
+  const annotationFeatureActive = (document.getElementById('annotation-button') != null);
+  thymeAttributes.annotationFeatureActive = annotationFeatureActive;
+  if (annotationFeatureActive) {
+    (new AnnotationButton('annotation-button')).add();
+  }
   const annotationsToggle = new AnnotationsToggle('annotations-toggle');
   annotationsToggle.add();
-  (new AnnotationButton('annotation-button')).add();
+
+  // regular components
   (new FullScreenButton('full-screen', thymeContainer)).add();
   (new MuteButton('mute')).add();
   (new NextChapterButton('next-chapter')).add();

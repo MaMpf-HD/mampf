@@ -62,11 +62,13 @@
               </select>
             </div>
             <!--- ANNOTATION BUTTON -->
-            <div id="annotation-button">
-              <i id="annotation-button" class="material-icons clickable">
-                bookmark_add
-              </i>
-            </div>
+            <% if user_signed_in? %>
+              <div id="annotation-button">
+                <i id="annotation-button" class="material-icons clickable">
+                  bookmark_add
+                </i>
+              </div>
+            <% end %>
             <!--- TOGGLE FOR TURNING ON/OFF VISIBLE ANNOTATIONS -->
             <div id="annotations-toggle" style="display: none;">
               <label class="switch">
@@ -121,5 +123,7 @@
   </div>
 </div>
 
-<%= render partial: "annotations/annotation_modal" %>
-<%= render partial: "annotations/annotation_locales" %>
+<% if user_signed_in? %>
+  <%= render partial: "annotations/annotation_modal" %>
+  <%= render partial: "annotations/annotation_locales" %>
+<% end %>

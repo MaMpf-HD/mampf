@@ -10,6 +10,9 @@ const thymeAttributes = {
   /* Saves a reference on the annotation area. */
   annotationArea: null,
 
+  /* Use this to check if the annotation feature is activated. */
+  annotationFeatureActive: false,
+
   /* When callig the updateMarkers() method this will be used to save an
      array containing all annotations. */
   annotations: null,
