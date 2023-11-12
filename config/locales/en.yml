@@ -2718,9 +2718,9 @@ en:
       files_in_cache: file(s) successfully uploaded to temporary storage
       info:
         general_info: >
-          Here you can upload several corrections. In order that MaMpf can
-          associate them to the correct submissions it would be ideal if
-          the filenames would match the filenames of the submissions.
+          Here you can upload several corrections. To ensure they can be assigned
+          correctly, you must not rename the files obtained via the package
+          download.
         invalid_filenames: >
           This is the list of all uploaded files that do not
           fit into the naming scheme that is provided by MaMpf.
@@ -3023,6 +3023,7 @@ en:
     thyme_editor: 'Editor'
     screenshot: 'Screenshot'
     file: 'File'
+    files: 'Files'
     size: 'Size'
     please_wait: 'Please wait...'
     access_rights: 'Access rights'
@@ -3113,7 +3114,6 @@ en:
     deadline: 'Due date'
     tutorial: 'Tutorial'
     code: 'Code'
-    files: 'Files'
     partners: 'Partners'
     team: 'Team'
     expired: 'expired'
