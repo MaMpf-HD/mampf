@@ -33,9 +33,8 @@ class AnnotationManager {
     this.onClick = onClick;
     this.onUpdate = onUpdate;
     this.isValid = isValid;
+    this.isDbCalledForFreshAnnotations = false;
   }
-
-
 
   /*
     Updates the markers on the timeline, i.e. the visual represention of the annotations.
@@ -44,9 +43,19 @@ class AnnotationManager {
     in the database.
    */
   updateMarkers() {
+    // In case the annotations have not been loaded yet, do nothing.
+    // This situation might occur during the initial page load.
+    if (!thymeAttributes.annotations) {
+      if (!this.isDbCalledForFreshAnnotations) {
+        this.updateAnnotations();
+      }
+      return;
+    }
+
     const annotationManager = this;
     $('#' + thymeAttributes.markerBarId).empty();
     AnnotationManager.sortAnnotations();
+
     for (const a of thymeAttributes.annotations) {
       if (this.isValid(a)) {
         function onClick() {
@@ -72,14 +81,16 @@ class AnnotationManager {
                successfully updated.
    */
   updateAnnotations() {
-    const annotationManager = this;
+    this.isDbCalledForFreshAnnotations = true; // Lock resource
+
+    const manager = this;
     $.ajax(Routes.update_annotations_path(), {
       type: 'GET',
       dataType: 'json',
       data: {
         mediumId: thymeAttributes.mediumId,
       },
-      success: function(annotations) {
+      success: (annotations) => {
         // update the annotation field in thymeAttributes
         thymeAttributes.annotations = [];
         if (!annotations) {
@@ -89,7 +100,11 @@ class AnnotationManager {
           thymeAttributes.annotations.push(new Annotation(a));
         }
         // update visual representation on the seek bar
-        annotationManager.updateMarkers();
+        manager.updateMarkers();
+      },
+      always: () => {
+        // Free resource
+        manager.isDbCalledForFreshAnnotations = false;
       }
     });
   }

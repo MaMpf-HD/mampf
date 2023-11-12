@@ -106,11 +106,7 @@ $(document).on('turbolinks:load', function() {
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
     resize.resizeContainer(thymeContainer, 1.22, 70);
-    if (!thymeAttributes.annotations) {
-      annotationManager.updateAnnotations();
-    } else {
-      annotationManager.updateMarkers();
-    }
+    annotationManager.updateMarkers();
   };
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;

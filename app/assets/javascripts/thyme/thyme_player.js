@@ -152,11 +152,7 @@ $(document).on('turbolinks:load', function() {
   function resizeContainer() {
     const factor = $('#caption').is(':hidden') && $('#annotation-caption').is(':hidden') ? 1 : 1 / 0.82;
     resize.resizeContainer(thymeContainer, factor, 0);
-    if (!thymeAttributes.annotations) {
-      annotationManager.updateAnnotations();
-    } else {
-      annotationManager.updateMarkers();
-    }
+    annotationManager.updateMarkers();
   };
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
