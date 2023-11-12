@@ -2894,8 +2894,8 @@ de:
       info:
         general_info: >
           Hier kannst Du mehrere Korrekturen gleichzeitig hochladen.
-          Damit diese von MaMpf zugeordnet werden können, sollten die Dateinamen
-          idealerweise mit den Dateinamen der Abgaben übereinstimmen.
+          Damit diese von MaMpf zugeordnet werden können, darfst Du die mit dem
+          Paketdownload heruntergeladenen Dateien nicht umbenennen.
         invalid_filenames: >
           Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
           die nicht in das von MaMpf vorgegebene Namensschema passen.
@@ -3206,6 +3206,7 @@ de:
     thyme_editor: 'Editor'
     screenshot: 'Screenshot'
     file: 'Datei'
+    files: 'Dateien'
     size: 'Größe'
     please_wait: 'Bitte warten...'
     access_rights: 'Zugriffsrechte'
@@ -3297,7 +3298,6 @@ de:
     deadline: 'Abgabetermin'
     tutorial: 'Tutorium'
     code: 'Code'
-    files: 'Dateien'
     partners: 'PartnerInnen'
     team: 'Team'
     expired: 'abgelaufen'
