@@ -3,7 +3,7 @@ class User < ApplicationRecord
   include ApplicationHelper
 
   # use devise for authentification, include the following modules
-  devise :database_authenticatable, :registerable,
+  devise :database_authenticatable, :registerable, :trackable,
          :recoverable, :rememberable, :validatable, :confirmable, :lockable
 
   # a user has many subscribed lectures
@@ -749,6 +749,21 @@ class User < ApplicationRecord
     return true if !lecture.stale?
 
     return false
+  end
+
+  # see https://github.com/heartcombo/devise/issues/4849#issuecomment-534733131
+  # We use the Devise::Trackable module to track sign-in count and current/last
+  # sign-in timestamp. However, we don't want to track IP address, but Trackable
+  # tries to, so we have to manually override the accessor methods so they do
+  # nothing.
+
+  def current_sign_in_ip
+  end
+
+  def last_sign_in_ip=(_ip)
+  end
+
+  def current_sign_in_ip=(_ip)
   end
 
   private
