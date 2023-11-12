@@ -61,6 +61,7 @@ $(document).on('turbolinks:load', function() {
   function colorFunc(annotation) {
     return annotation.category.color;
   }
+  
   function isValid(annotation) {
     for (let toggle of annotationCategoryToggles) {
       if (annotation.category === toggle.category && toggle.getValue()) {
@@ -69,20 +70,26 @@ $(document).on('turbolinks:load', function() {
     }
     return false;
   }
+  
   const annotationArea = new AnnotationArea(false, colorFunc, null, isValid);
   thymeAttributes.annotationArea = annotationArea;
+  
   function strokeColorFunc(annotation) {
     return annotation.category === Category.MISTAKE ? 'darkred' : 'black';
   }
+  
   function sizeFunc(annotation) {
     return annotation.category === Category.MISTAKE;
   }
+  
   function onClick(annotation) {
     annotationArea.update(annotation);
   }
+  
   function onUpdate() {
     heatmap.draw();
   }
+  
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
@@ -108,6 +115,7 @@ $(document).on('turbolinks:load', function() {
     resize.resizeContainer(thymeContainer, 1.22, 70);
     annotationManager.updateMarkers();
   };
+  
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
 

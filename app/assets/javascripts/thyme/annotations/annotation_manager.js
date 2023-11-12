@@ -61,7 +61,7 @@ class AnnotationManager {
         function onClick() {
           annotationManager.onClick(a);
         }
-        if (this.sizeFunc !== null && this.sizeFunc(a)) {
+        if (this.sizeFunc && this.sizeFunc(a)) {
           a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
         } else {
           a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
@@ -81,6 +81,10 @@ class AnnotationManager {
                successfully updated.
    */
   updateAnnotations() {
+    if (!thymeAttributes.annotationFeatureActive) {
+      return;
+    }
+
     this.isDbCalledForFreshAnnotations = true; // Lock resource
 
     const manager = this;
@@ -114,7 +118,7 @@ class AnnotationManager {
     if (!thymeAttributes.annotations) {
       return;
     }
-    thymeAttributes.annotations.sort(function(ann1, ann2) {
+    thymeAttributes.annotations.sort(function (ann1, ann2) {
       return ann1.seconds - ann2.seconds;
     });
   }
@@ -125,7 +129,7 @@ class AnnotationManager {
    */
   static find(id) {
     const annotations = thymeAttributes.annotations;
-    if (annotations == null) {
+    if (!annotations) {
       return null;
     }
     for (let a of annotations) {
@@ -142,7 +146,7 @@ class AnnotationManager {
    */
   static findIndex(id) {
     const annotations = thymeAttributes.annotations;
-    if (annotations == null) {
+    if (!annotations) {
       return undefined;
     }
     for (let i = 0; i < annotations.length; i++) {

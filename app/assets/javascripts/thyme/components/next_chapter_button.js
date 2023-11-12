@@ -7,7 +7,7 @@ class NextChapterButton extends Component {
     // Event handler for the nextChapter button
     element.addEventListener('click', function() {
       const next = thymeAttributes.chapterManager.nextChapterStart();
-      if (next != null) {
+      if (next) {
         video.currentTime = thymeAttributes.chapterManager.nextChapterStart();
       }
     });

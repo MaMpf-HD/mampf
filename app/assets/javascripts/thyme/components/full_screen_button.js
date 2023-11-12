@@ -46,7 +46,7 @@ class FullScreenButton extends Component {
   }
   
   #fullscreenChange() {
-    if (document.fullscreenElement !== null) {
+    if (document.fullscreenElement) {
       this.element.innerHTML = 'fullscreen_exit';
       this.element.dataset.status = 'true';
       /* Set height to 100vh in fullscreen mode as it otherwise

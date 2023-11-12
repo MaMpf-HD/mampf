@@ -66,6 +66,8 @@ class MediaController < ApplicationController
     @errors = @medium.errors
     return unless @errors.empty?
 
+    return unless @medium.valid_annotations_status?
+
     # make sure the medium is touched
     # (it will not be touched automatically in some cases (e.g. if you only
     # update the associated tags), causing trouble for caching)
@@ -130,6 +132,9 @@ class MediaController < ApplicationController
 
   def create
     @medium = Medium.new(medium_params)
+
+    return unless @medium.valid_annotations_status?
+
     @medium.locale = @medium.teachable&.locale
     @medium.editors = [current_user]
     if @medium.teachable.class.to_s == 'Lesson'

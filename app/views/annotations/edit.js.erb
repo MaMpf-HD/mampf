@@ -4,6 +4,7 @@ $('#annotation-modal').modal('show');
 
 var submitButton = document.getElementById('annotation-modal-submit-button');
 var postAsComment = document.getElementById('annotation_post_as_comment');
+var posted = <%= @posted %>;
 
 postAsComment.addEventListener('change', function() {
   if (this.checked) {
@@ -179,6 +180,7 @@ function visibleForTeacher(boolean) {
 }
 
 function postComment(boolean) {
+  boolean = posted ? true : boolean;
   $('#annotation_post_as_comment').prop("checked", boolean);
 }
 
@@ -239,7 +241,7 @@ previewToggle.addEventListener('change', function() {
 });
 
 // disable post comment checkbox if annotation was already posted
-if (<%= @posted %>) {
+if (posted) {
   postComment(true);
   postAsComment.disabled = true;
 }

@@ -20,13 +20,19 @@ $(document).on('turbolinks:load', function() {
 
 
 
-
   /*
     COMPONENTS
    */
+  // annotation components
+  const annotationFeatureActive = (document.getElementById('annotation-button') != null);
+  thymeAttributes.annotationFeatureActive = annotationFeatureActive;
+  if (annotationFeatureActive) {
+    (new AnnotationButton('annotation-button')).add();
+  }
   const annotationsToggle = new AnnotationsToggle('annotations-toggle');
   annotationsToggle.add();
-  (new AnnotationButton('annotation-button')).add();
+
+  // regular components
   (new FullScreenButton('full-screen', thymeContainer)).add();
   (new MuteButton('mute')).add();
   (new NextChapterButton('next-chapter')).add();
@@ -52,35 +58,43 @@ $(document).on('turbolinks:load', function() {
   function colorFunc(annotation) {
     return annotation.color;
   }
+  
   function onClose() {
     iaButton.minus();
   }
+  
   function isValid(annotation) {
     return (!annotationsToggle.getValue() && !annotation.belongsToCurrentUser ? false : true);
   }
+  
   const annotationArea = new AnnotationArea(true, colorFunc, onClose, isValid);
   thymeAttributes.annotationArea = annotationArea;
+  
   function strokeColorFunc(annotation) {
     return 'black';
   }
+  
   function sizeFunc(annotation) {
     return false;
   }
+  
   function onClick(annotation) {
     iaButton.minus();
     annotationArea.update(annotation);
     annotationArea.show();
     $('#caption').hide();
   }
+  
   function onUpdate() {
     /* update might change the annotation which is currently shown in the
        annotation area -> find the updated annotation in the annotation array
        and update the area. */
-    if (annotationArea.annotation != null) {
+    if (annotationArea.annotation) {
       const id = annotationArea.annotation.id;
       annotationArea.update(AnnotationManager.find(id));
     }
   }
+  
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
@@ -144,6 +158,7 @@ $(document).on('turbolinks:load', function() {
   function onEnlarge() {
     iaButton.plus();
   }
+  
   const elements = [$('#caption'), $('#annotation-caption'), $('#video-controlBar')];
   const displayManager = new DisplayManager(elements, onEnlarge);
 
@@ -154,6 +169,7 @@ $(document).on('turbolinks:load', function() {
     resize.resizeContainer(thymeContainer, factor, 0);
     annotationManager.updateMarkers();
   };
+  
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
 

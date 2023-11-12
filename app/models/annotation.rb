@@ -4,6 +4,8 @@ class Annotation < ApplicationRecord
   belongs_to :public_comment, class_name: 'Commontator::Comment',
              optional: true
 
+  scope :commented, -> { where.not(public_comment_id: nil) }
+
   # the timestamp for the annotation position is serialized as text in the db
   serialize :timestamp, TimeStamp
 
@@ -11,12 +13,12 @@ class Annotation < ApplicationRecord
   enum subcategory: { definition: 0, argument: 1, strategy: 2 }
 
   def get_comment
-    if self.public_comment_id.nil?
-      return self.comment
-    else
-      commontator_comment = Commontator::Comment.find_by(id: public_comment_id)
-      return commontator_comment.body
-    end
+    return self.comment if self.public_comment_id.nil?
+    commontator_comment = Commontator::Comment.find_by(id: public_comment_id).body
+  end
+
+  def nearby?(other_timestamp, radius)
+    (timestamp.total_seconds - other_timestamp).abs() < radius
   end
 
   def self.colors

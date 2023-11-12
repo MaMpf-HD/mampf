@@ -11,11 +11,11 @@ class SpeedSelector extends Component {
     const element = this.element;
 
     element.addEventListener('click', function() {
-      if (video.preservesPitch != null) {
+      if (video.preservesPitch) {
         video.preservesPitch = true;
-      } else if (video.mozPreservesPitch != null) {
+      } else if (video.mozPreservesPitch) {
         video.mozPreservesPitch = true;
-      } else if (video.webkitPreservesPitch != null) {
+      } else if (video.webkitPreservesPitch) {
         video.webkitPreservesPitch = true;
       }
       video.playbackRate = this.options[this.selectedIndex].value;

@@ -18,7 +18,7 @@ class Heatmap {
 
 
   draw() {
-    if (thymeAttributes.annotations == null) {
+    if (!thymeAttributes.annotations) {
       return;
     }
     this.heatmap.empty();
