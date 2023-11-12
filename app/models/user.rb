@@ -751,8 +751,6 @@ class User < ApplicationRecord
     return false
   end
 
-  # make sure that no IP adress data are stored via the :trackable module
-  # of Devise
   # see https://github.com/heartcombo/devise/issues/4849#issuecomment-534733131
   # We use the Devise::Trackable module to track sign-in count and current/last
   # sign-in timestamp. However, we don't want to track IP address, but Trackable
