@@ -99,15 +99,6 @@ $(document).on('turbolinks:load', function() {
                                                   onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
 
-  // Update annotations after submitting the annotations form
-  $('#annotation-update').on('DOMSubtreeModified', function() {
-    const updateDataset = document.querySelector('#annotation-update').dataset;
-    if (updateDataset.update === "updated") {
-      updateDataset.update = "";
-      annotationManager.updateAnnotations();
-    }
-  });
-
   // Update annotations after deleting an annotation
   $(document).on('click', '#delete-button', function() {
     const annotationId = Number(document.getElementById('annotation_id').textContent);

@@ -1,3 +1,4 @@
 $('#annotation-modal').modal("hide");
 
-document.querySelector('#annotation-update').dataset.update = "updated";
+// Update annotations after submitting the annotations form
+thymeAttributes.annotationManager.updateAnnotations();
