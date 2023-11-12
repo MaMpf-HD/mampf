@@ -384,7 +384,7 @@ en:
       visible_for_teacher: 'Visible for teacher?'
       visible_for_teacher_helpdesk: >
         If this checkbox is selected your teacher can see this annotation
-        (without your name!) in his own thyme player.
+        (without your name!) in their own thyme player.
       post_as_comment: 'Post as comment?'
       post_as_comment_helpdesk: >
         If this checkbox is selected, this annotation will be published as
