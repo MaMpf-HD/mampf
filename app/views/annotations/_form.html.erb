@@ -24,13 +24,12 @@
     <%= f.text_area :comment, class: 'form-control' %>
 
     <!--- PREVIEW TOGGLE -->
-    <div id="preview-toggle">
-      <label class="switch">
-        <input id="preview-toggle-check" type="checkbox">
-        <span class="slider round"></span>
+    <div class="form-check form-switch pt-2" id="preview-toggle">
+      <input id="preview-toggle-check"
+            class="form-check-input" type="checkbox" role="switch">
+      <label class="form-check-label" for="preview-toggle-check">
+        <%= t('admin.remark.preview') %>
       </label>
-      &nbsp
-      <%= t('admin.remark.preview') %>
     </div>
 
     <!--- COLOR SELECTION -->

@@ -24,14 +24,6 @@
   #annotation-modal-content {
     width: 100%;
   }
-  #preview-toggle {
-    input:checked + .slider {
-      background-color: #0D6EFD;
-    }
-    .switch {
-      vertical-align: middle;
-    }
-  }
   #annotation-modal-preview {
     height: 543px;
     width: 35%;
