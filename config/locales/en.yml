@@ -331,6 +331,11 @@ en:
       comment: 'Comment'
       color: 'Color'
       category: 'Category'
+      category_tooltip: >
+        Use "note" for personal notes, "content" if you don't understand the
+        content of the video at this position, "mistake" if you've spot a mistake,
+        and "presentation" if you have problems with the presentation,
+        e.g. you cannot read the handwriting or cannot understand the audio.
       note: 'note'
       note_tooltip: >
         Select this category if you want to create your annotation

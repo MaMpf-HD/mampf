@@ -330,6 +330,12 @@ de:
       comment: 'Kommentar'
       color: 'Farbe'
       category: 'Kategorie'
+      category_tooltip: >
+        Verwende "Notiz" für persönliche Notizen, "Inhalt" wenn Du den Inhalt
+        des Videos an dieser Stelle nicht verstehst, "Fehler" wenn Du einen
+        Fehler entdeckt hast, und "Darstellung" wenn Dir die Darstellung im
+        Video Probleme bereitet, z.B. falls Du die Schrift nicht lesen kannst
+        oder der Ton unverständlich ist.
       note: 'Notiz'
       note_tooltip: >
         Wähle diese Kategorie aus, wenn Du Deine Annotation als
