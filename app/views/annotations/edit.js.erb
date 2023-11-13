@@ -3,54 +3,60 @@ $('#annotation-modal-content').empty()
 $('#annotation-modal').modal('show');
 
 var submitButton = document.getElementById('annotation-modal-submit-button');
-var postAsComment = document.getElementById('annotation_post_as_comment');
+var $postAsComment = $('#annotation_post_as_comment');
 var posted = <%= @posted %>;
 
-postAsComment.addEventListener('change', function() {
+$postAsComment.on("change", function () {
   if (this.checked) {
-    alertWarningMessage();
+    const $warningElement = $("#annotation-comment-warning");
+    const message = constructWarningMessage();
+    $warningElement.html(message);
+    $warningElement.show();
+  } else {
+    $("#annotation-comment-warning").hide();
   }
 });
 
-function alertWarningMessage() {
-  var message = document.getElementById('annotation-locales').dataset.warningPublishing;
-  var mistakeRadio = document.getElementById('annotation_category_mistake');
-  if (mistakeRadio.checked) {
-    alertMistakeWarningMessage(message);
-  } else {
-    alert(message);
-  }
-}
+function constructWarningMessage() {
+  let message = $("#annotation-locales").data("warningPublishing");
 
-function alertMistakeWarningMessage(message) {
-  message += "\n" + document.getElementById('annotation-locales').dataset.warningMistake;
-  var mediumId = thyme.dataset.medium;
-  var radius = 60; // annotations that are inside this radius (in seconds) are considered as "near". 
+  const mistakeRatio = $('#annotation_category_mistake');
+  if (!mistakeRatio.is(":checked")) {
+    return message;
+  }
+
+  // Mistake specific warnings
   $.ajax(Routes.num_nearby_posted_mistake_annotations_path(), {
     type: 'GET',
     dataType: 'json',
+    async: false,
     data: {
-      mediumId: mediumId,
+      mediumId: thyme.dataset.medium,
       timestamp: video.currentTime,
-      radius: radius,
+      // Annotations located inside this radius (in seconds) are considered as "near"
+      radius: 60,
     },
-    success: function(count) {
+    success: function (count) {
+      const locale = $('#annotation-locales');
+      message += "<br>";
       if (!count) {
-        alert(message);
-        return;
-      } else if (count === 1) {
-        message += document.getElementById('annotation-locales').
-                     dataset.warningOneCloseAnnotation;
+        message += $('#annotation-locales').data("warningMistake");
+      } else if (count == 1) {
+        message += locale.data("warningOneCloseAnnotation");
       } else {
-        message += document.getElementById('annotation-locales').
-                     dataset.warningMultipleCloseAnnotations1 +
-                   count +
-                   document.getElementById('annotation-locales').
-                     dataset.warningMultipleCloseAnnotations2;
+        message += locale.data("warningMultipleCloseAnnotations1")
+          + count + locale.data("warningMultipleCloseAnnotations2");
       }
-      alert(message);
+      return message;
+    },
+    error: function (err) {
+      console.error("Error while fetching nearby annotations");
+      console.error(err);
+      return message;
     }
   });
+
+  return message;
 }
 
 
@@ -132,7 +138,6 @@ function mistake() {
   submitButton.disabled = false;
   visibleForTeacher(true);
   postComment(true);
-  alertWarningMessage();
 }
 
 function presentation() {

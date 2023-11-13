@@ -376,9 +376,9 @@ de:
           Bevor Du diesen Kommentar abschickst, überprüfe außerdem bitte,
           ob bereits ein Kommentar zu dem von Dir gefundenen Fehler existiert.
         one_close_annotation: >
-          In der Nähe Deiner Annotation gibt es bereits eine veröffentlichte
+          Beachte: in der Nähe Deiner Annotation gibt es bereits eine veröffentlichte
           Fehler-Annotation.
-        multiple_close_annotations_1: "In der Nähe Deiner Annotation gibt es bereits "
+        multiple_close_annotations_1: "Beachte: in der Nähe Deiner Annotation gibt es bereits "
         multiple_close_annotations_2: " veröffentlichte Fehler-Annotationen."
         permission: "Dir fehlen die Rechte, um diese Annotation zu bearbeiten."
       visible_for_teacher: 'Für DozentIn sichtbar?'

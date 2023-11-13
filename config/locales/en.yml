@@ -377,9 +377,9 @@ en:
           Before submitting, please also check, if someone already posted
           a comment concerning this mistake.
         one_close_annotation: >
-          There already is a public mistake annotation that is close to yours.
-        multiple_close_annotations_1: "There are already "
-        multiple_close_annotations_2: " mistake annotations that are close to yours."
+          Note there is already a mistake annotation around this Thymestamp.
+        multiple_close_annotations_1: "Note there are already "
+        multiple_close_annotations_2: " mistake annotations close to yours."
         permission: "You don't have the permission to edit this annotation."
       visible_for_teacher: 'Visible for teacher?'
       visible_for_teacher_helpdesk: >
