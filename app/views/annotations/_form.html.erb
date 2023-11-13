@@ -1,8 +1,10 @@
 <div id="annotation-form">
   <%= form_with model: @annotation do |f| %>
-    <b><%= t('admin.annotation.time') %></b> &nbsp <%= TimeStamp.new(total_seconds: @total_seconds).hms_colon_string %>
-
-    <br><br>
+    <p>
+      <strong><%= t('admin.annotation.time') %></strong>
+      &nbsp
+      <%= TimeStamp.new(total_seconds: @total_seconds).hms_colon_string %>
+    </p>
 
     <!--- HIDDEN FIELDS -->
     <%= f.hidden_field :medium_id, value: @medium_id %>
@@ -21,8 +23,6 @@
     <b><%= t('admin.annotation.comment') %></b>
     <%= f.text_area :comment, class: 'form-control' %>
 
-    <br>
-
     <!--- PREVIEW TOGGLE -->
     <div id="preview-toggle">
       <label class="switch">
@@ -33,11 +33,9 @@
       <%= t('admin.remark.preview') %>
     </div>
 
-    <br>
-
     <!--- COLOR SELECTION -->
-    <b><%= t('admin.annotation.color') %></b>
-    <div id="annotation-color-picker">
+    <div class="pt-3 pb-3" id="annotation-color-picker"
+        role="radiogroup" aria-label="Color picker">
       <% colors = Annotation.colors %>
       <% for i in 1..15 do %>
         <%= f.radio_button :color,
@@ -51,8 +49,6 @@
           <% end %>
       <% end %>
     </div>
-
-    <br>
 
     <!--- CATEGORY RADIO BUTTON -->
     <b><%= t('admin.annotation.category') %></b>
@@ -100,13 +96,9 @@
       </div>
     </div>
 
-    <br>
-
-    <div id="annotation-category-specific">
+    <div class="pb-3" id="annotation-category-specific">
       <!--- SPECIFIC CONTENT, DEPENDING ON THE SELECTED CATEGORY, IS INSERTED HERE -->
     </div>
-
-    <br>
 
     <!--- VISIBLE FOR TEACHER CHECKBOX -->
     <% annotations_status = Medium.find_by(id: @medium_id).get_annotations_status %>
@@ -133,8 +125,6 @@
 
     <div class="alert alert-warning hidden" role="alert" id="annotation-comment-warning">
     </div>
-
-    <br>
 
     <div class="modal-footer">
       <!-- SAVE BUTTON -->
