@@ -59,7 +59,7 @@ class Annotation {
                           stroke:${strokeColor};
                           stroke-width:${strokeWidth};
                           fill-rule:evenodd;"/>
-                        </svg>' +
+                        </svg>
                       </span>`;
     $('#' + thymeAttributes.markerBarId).append(markerStr);
 
