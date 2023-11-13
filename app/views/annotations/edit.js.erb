@@ -101,38 +101,32 @@ function note() {
 function content() {
   $('#annotation-category-specific').empty()
     .append('<%= j render partial: "annotations/form_content"%>');
-  submitButton.disabled = true; // disable submit button until the content category is selected
+  // disable submit button until the content category is selected
+  submitButton.disabled = true;
   visibleForTeacher(true);
   postComment(false);
   var contentCategoryRadios = document.getElementById('content-category-radios');
   contentCategoryRadios.addEventListener('click', function (evt) {
     if (evt.target && event.target.matches("input[type='radio']")) {
       submitButton.disabled = false;
+
+      // Show further help
+      // (right now, the same help is display for all the different categories)
       switch (evt.target.value) {
         case Subcategory.DEFINITION.name:
-          definition();
+          showFurtherHelp();
           break;
         case Subcategory.ARGUMENT.name:
-          argument();
+          showFurtherHelp();
           break;
         case Subcategory.STRATEGY.name:
-          strategy();
+          showFurtherHelp();
           break;
       }
     }
   });
-  /* For the moment all three methods do the same, but as it's very likely that
-     we'll implement different behaviour in the future, I havn't removed the lines
-     in order to avoid code duplication. */
-  function definition() {
-    $('#content-specific').empty()
-      .append('<%= j render partial: "annotations/form_content_further_help"%>');
-  }
-  function argument() {
-    $('#content-specific').empty()
-      .append('<%= j render partial: "annotations/form_content_further_help"%>');
-  }
-  function strategy() {
+
+  function showFurtherHelp() {
     $('#content-specific').empty()
       .append('<%= j render partial: "annotations/form_content_further_help"%>');
   }
