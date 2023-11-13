@@ -7,6 +7,11 @@ var $postAsComment = $('#annotation_post_as_comment');
 var posted = <%= @posted %>;
 
 $postAsComment.on("change", function () {
+  // Don't show warnings if the annotation was already posted
+  if (posted) {
+    return;
+  }
+
   if (this.checked) {
     const $warningElement = $("#annotation-comment-warning");
     const message = constructWarningMessage();
@@ -248,7 +253,7 @@ previewToggle.addEventListener('change', function () {
 // disable post comment checkbox if annotation was already posted
 if (posted) {
   postComment(true);
-  postAsComment.disabled = true;
+  $postAsComment.get(0).disabled = true;
 }
 
 initBootstrapPopovers();
