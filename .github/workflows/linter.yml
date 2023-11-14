@@ -10,8 +10,6 @@ on:
 
 jobs:
 
-  # Workflow adapted from Rails
-  # https://github.com/rails/rails/blob/main/.github/workflows/rubocop.yml
   rubocop:
     name: RuboCop
     runs-on: ubuntu-latest
@@ -27,20 +25,22 @@ jobs:
           ruby-version: 3.1.4
           bundler-cache: true
 
-      # Deleted files are excluded
       # adapted from https://github.com/actions/checkout/issues/520#issuecomment-1167205721
+      # and: https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
+      # --diff-filter=d excludes deleted files
+      # "|| test $? = 1;" is used to ignore the exit code of grep when no files
+      # are found matching the pattern
       - name: Get changed ruby files (git diff)
         run: |
-          changedFiles=$(git diff-tree --name-only --diff-filter=d -r HEAD^1 HEAD | grep '\.rb$')
+          changedFiles=$(git diff-tree --name-only --diff-filter=d -r HEAD^1 HEAD | grep '\.rb$' || test $? = 1;)
           echo "Changed ruby files: $changedFiles"
           echo "CHANGED_FILES=$changedFiles" >> $GITHUB_ENV
 
-      # Scope Rubocop to changed files:
-      # https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
-      # Exclude deleted files
+      # See RuboCop command line flags here:
+      # https://docs.rubocop.org/rubocop/usage/basic_usage.html#command-line-flags
       - name: Run RuboCop
-        run: |
-          $CHANGED_FILES | xargs bundle exec rubocop --parallel
+        if: ${{ env.CHANGED_FILES != '' }}
+        run: $CHANGED_FILES | xargs bundle exec rubocop
 
 
   # eslint:
