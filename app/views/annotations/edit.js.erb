@@ -188,19 +188,27 @@ function postComment(isVisible) {
   $('#annotation_post_as_comment').prop("checked", isVisible).trigger("change");
 }
 
-function previewCSS(show, modalWidth, contentWidth, previewWidth) {
-  var offset = parseInt($('#annotation-modal').css('left'), 10);
-  if (show == true) {
-    $('#annotation-modal-preview').show();
-    $('#annotation-modal').css('left', '-250px');
+function previewCSS(shouldShowPreview) {
+  if (shouldShowPreview) {
     updatePreview();
+    $('#annotation-preview-section').show();
+
+    $('#annotation-modal-dialog').removeClass('annotation-dialog-normal');
+    $('#annotation-modal-dialog').addClass('annotation-dialog-expanded');
+
+    $('#annotation-content-section').addClass('annotation-content-spacing');
+    $('#annotation-content-section').removeClass('annotation-content-normal');
+    $('#annotation-content-section').addClass('annotation-content-expanded');
   } else {
-    $('#annotation-modal-preview').hide();
-    $('#annotation-modal').css('left', '0');
+    $('#annotation-preview-section').hide();
+
+    $('#annotation-modal-dialog').removeClass('annotation-dialog-expanded');
+    $('#annotation-modal-dialog').addClass('annotation-dialog-normal');
+
+    $('#annotation-content-section').removeClass('annotation-content-spacing');
+    $('#annotation-content-section').removeClass('annotation-content-expanded');
+    $('#annotation-content-section').addClass('annotation-content-normal');
   }
-  $('.modal-content').css('width', modalWidth + '%');
-  $('#annotation-modal-content').css('width', contentWidth + '%');
-  $('#annotation-modal-preview').css('width', previewWidth + '%');
 }
 
 
@@ -231,17 +239,13 @@ var annotationComment = document.getElementById('annotation_comment');
 annotationComment.addEventListener('input', function () {
   updatePreview();
 });
-
-previewCSS(false, 100, 100, 0);
+previewCSS(false); // Initialize modal without preview
 
 // preview toggle listener
 var previewToggle = document.getElementById('preview-toggle');
 previewToggle.addEventListener('change', function () {
-  if ($('#preview-toggle-check').is(":checked")) {
-    previewCSS(true, 150, 65, 35);
-  } else {
-    previewCSS(false, 100, 100, 0);
-  }
+  const shouldShowPreview = $('#preview-toggle-check').is(":checked");
+  previewCSS(shouldShowPreview);
 });
 
 // disable post comment checkbox if annotation was already posted

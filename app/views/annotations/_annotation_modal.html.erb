@@ -1,10 +1,11 @@
 <div class="modal fade" id="annotation-modal" tabindex="-1" role="dialog" aria-labelledby="annotation-modal-label" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog annotation-dialog-normal"
+      id="annotation-modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title">
           <% I18n.with_locale(current_user.locale) do %>
-            <%= t('admin.annotation.annotation_modal_head')%>
+            <%= t('admin.annotation.annotation_modal_head') %>
           <% end %>
         </h5>
         <button type="button"
@@ -14,14 +15,17 @@
         </button>
       </div>
       <div class="modal-body">
-        <div class="row">
-          <div class="col-md-6", id="annotation-modal-preview">
-            <!--- LATEX-PREVIEW -->
+        <section id="annotation-preview-section" style="display: none;">
+          <div class="column-adaptable annotation-preview" id="annotation-modal-preview">
+          <!--- LATEX-PREVIEW -->
           </div>
-          <div class="col-md-6 col-md-offset-3", id="annotation-modal-content">
-            <!--- CONTENT -->
+        </section>
+
+        <section id="annotation-content-section" class="annotation-content-normal">
+          <div id="annotation-modal-content">
+          <!--- CONTENT -->
           </div>
-        </div>
+        </section>
       </div>
     </div>
   </div>
