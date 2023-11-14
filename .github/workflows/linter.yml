@@ -1,55 +1,107 @@
 name: Linting
 
+# Trigger each time HEAD branch is updated in a pull request
+# see https://github.com/orgs/community/discussions/26366
 on:
-  push:
-    branches:
-      - '**'
   pull_request:
-    branches:
-      - 'main' # Continuous Releases
+    types: [synchronize]
 
 jobs:
+  anothertest:
+    name: Try out
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout PR branch (with test merge-commit)'
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
 
+      - name: 'Get a list of changed files to process'
+        run: git diff-tree --name-only --diff-filter 'AM' -r HEAD^1 HEAD
+
+  changedfiles:
+    name: Get changed files in PR
+    runs-on: ubuntu-latest
+    outputs:
+      changedFiles: ${{ steps.changes.outputs.files}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Get changed files
+        id: changes
+        run: |
+          echo "files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep '\.rb$' || test $? = 1;)" >> $GITHUB_OUTPUT
+
+  # (!!!) https://github.com/actions/checkout/issues/520#issuecomment-1167205721
   rubocop:
     name: RuboCop
     runs-on: ubuntu-latest
+    needs: changedfiles
+    if: ${{needs.changedfiles.outputs.changedFiles}}
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
+      - name: Echo changed files
+        run: echo ${{needs.changedfiles.outputs.changedFiles}}
 
-      - name: Set up Ruby 3
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.1.4
-          bundler-cache: true
+      # - name: Determine target branch
+      #   run: |
+      #     target_branch=${{ github.base_ref || 'mampf-next' }}
+      #     echo "Target branch is: $target_branch"
+      #     echo "TARGET_BRANCH=$target_branch" >> $GITHUB_ENV
+
+      # # for the " + 1", see:
+      # # https://github.com/actions/checkout/issues/552#issuecomment-1167086216 
+      # - name: Calculate fetch depth
+      #   run: |
+      #     depth=$(( ${{ github.pull_request.commits }} + 1 ))
+      #     echo "Fetch depth is: $depth"
+      #     echo "PR_FETCH_DEPTH=$depth" >> $GITHUB_ENV
+      
+      # - name: 'Checkout PR branch and all PR commits'
+      #   uses: actions/checkout@v3
+      #   with:
+      #     ref: ${{ github.pull_request.head.ref }}
+      #     fetch-depth: ${{ env.PR_FETCH_DEPTH }}
+      
+      # - name: Fetch target branch with enough history for a common merge-base commit
+      #   run: |
+      #     git fetch origin ${{ github.pull_request.base.ref }}
+
+      # - name: Set up Ruby 3
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: 3.1.4
+      #     bundler-cache: true
 
       # If this action is not triggered from a PR, we use 'mampf-next' as default
       # target branch to compare against. This might not cover all use cases.
       # But in the end, one has to open a PR anyways and then the correct target
       # branch is identified.
       # TODO: rename to 'dev' when 'mampf-next' branch is renamed.
-      - name: Fetch target branch
-        run: |
-          targetBranch=${{ github.base_ref || 'mampf-next' }}
-          echo "Target branch is: $targetBranch"
-          git fetch origin $targetBranch:$targetBranch --depth=1
+      # - name: Fetch target branch
+      #   run: |
+      #     targetBranch=${{ github.base_ref || 'mampf-next' }}
+      #     echo "Target branch is: $targetBranch"
+      #     git fetch origin $targetBranch:$targetBranch --depth=1
 
       # adapted from https://github.com/actions/checkout/issues/520#issuecomment-1167205721
       # and: https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
       # --diff-filter=d excludes deleted files
       # "|| test $? = 1;" is used to ignore the exit code of grep when no files
       # are found matching the pattern
-      - name: Get changed ruby files (git diff)
-        run: |
-          changedFiles=$(git diff --name-only --diff-filter=d -r $targetBranch | grep '\.rb$' || test $? = 1;)
-          printf "Changed ruby files: \n$changedFiles"
-          echo "CHANGED_FILES=\"$changedFiles\"" >> $GITHUB_ENV
+      # For the "three dots" ... syntax, see
+      # https://community.atlassian.com/t5/Bitbucket-questions/Git-diff-show-different-files-than-PR-Pull-Request/qaq-p/2331786
+      # - name: Get changed ruby files (git diff)
+      #   run: |
+      #     changedFiles=$(git diff --name-only --diff-filter=d -r $targetBranch...HEAD | grep '\.rb$' || test $? = 1;)
+      #     printf "Changed ruby files: \n$changedFiles"
+      #     echo "CHANGED_FILES=\"$changedFiles\"" >> $GITHUB_ENV
 
       # See RuboCop command line flags here:
       # https://docs.rubocop.org/rubocop/usage/basic_usage.html#command-line-flags
-      - name: Run RuboCop
-        if: env.CHANGED_FILES != ''
-        run: $CHANGED_FILES | xargs bundle exec rubocop
+      # - name: Run RuboCop
+      #   if: env.CHANGED_FILES != ''
+      #   run: $CHANGED_FILES | xargs bundle exec rubocop
 
 
   # eslint:
