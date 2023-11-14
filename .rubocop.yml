@@ -4,12 +4,6 @@ inherit_gem:
 Layout/LineLength:
   Max: 80
 
-Layout/IndentationConsistency:
-  EnforcedStyle: indented_internal_methods
-
-Style/StringLiterals:
-  EnforcedStyle: single_quotes
-
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
 
