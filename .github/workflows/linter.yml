@@ -33,8 +33,8 @@ jobs:
       - name: Get changed ruby files (git diff)
         run: |
           changedFiles=$(git diff-tree --name-only --diff-filter=d -r HEAD^1 HEAD | grep '\.rb$' || test $? = 1;)
-          echo "Changed ruby files: $changedFiles"
-          echo "CHANGED_FILES=$changedFiles" >> $GITHUB_ENV
+          printf "Changed ruby files: \n$changedFiles"
+          echo "CHANGED_FILES=\"$changedFiles\"" >> $GITHUB_ENV
 
       # See RuboCop command line flags here:
       # https://docs.rubocop.org/rubocop/usage/basic_usage.html#command-line-flags
