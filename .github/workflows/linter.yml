@@ -20,6 +20,12 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
+      - name: Fetch target branch
+        run: |
+          echo "TARGET_BRANCH=${{ github.base_ref || 'mampf-next' }}" >> $GITHUB_ENV &&
+          echo "Target branch is: $TARGET_BRANCH" &&
+          git fetch origin $TARGET_BRANCH -- depth 1
+
       - name: Set up Ruby 3
         uses: ruby/setup-ruby@v1
         with:
@@ -30,7 +36,7 @@ jobs:
       # https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
       - name: Run RuboCop
         run: |
-          git diff --diff-filter=d --name-only mampf-next... | xargs bundle exec rubocop --parallel
+          git diff --diff-filter=d --name-only $TARGET_BRANCH... | grep '\.rb$' | xargs bundle exec rubocop --parallel
 
 
   # eslint:
