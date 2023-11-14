@@ -1,6 +1,12 @@
 name: Linting
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - 'main' # Continuous Releases
 
 jobs:
 
