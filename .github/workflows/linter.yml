@@ -32,7 +32,8 @@ jobs:
       # are found matching the pattern
       - name: Get changed ruby files (git diff)
         run: |
-          changedFiles=$(git diff-tree --name-only --diff-filter=d -r HEAD^1 HEAD | grep '\.rb$' || test $? = 1;)
+          targetBranch=${{ github.base_ref || 'mampf-next' }}
+          changedFiles=$(git diff --name-only --diff-filter=d -r $targetBranch | grep '\.rb$' || test $? = 1;)
           printf "Changed ruby files: \n$changedFiles"
           echo "CHANGED_FILES=\"$changedFiles\"" >> $GITHUB_ENV
 
