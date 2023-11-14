@@ -16,6 +16,10 @@
 
 /* annotation modal */
 #annotation-modal {
+  .modal-header {
+    transition: background-color 200ms linear;
+  }
+
   .modal-body {
     display: flex;
   }
