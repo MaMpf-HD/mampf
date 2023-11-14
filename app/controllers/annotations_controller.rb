@@ -137,6 +137,8 @@ class AnnotationsController < ApplicationController
       )
     end
     
+    # TODO: Frontend should not pass color hex strings, instead pass the respective
+    # color keys, e.g. 14, see annotation.rb color_map for lookup.
     def valid_color?(color)
       color&.match?(/\A#([0-9]|[A-F]){6}\z/)
     end

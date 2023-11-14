@@ -37,7 +37,7 @@ class Annotation < ApplicationRecord
       12 => '#924129',
       13 => '#444444',
       14 => '#999999',
-      15 => '#eeeeee'
+      15 => '#EEEEEE'
     }
   end
 end
