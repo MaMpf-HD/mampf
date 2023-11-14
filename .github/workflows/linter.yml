@@ -16,14 +16,23 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2 # to also fetch parent commit for git diff
 
       - name: Set up Ruby 3
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.4
           bundler-cache: true
+
+      # If this action is not triggered from a PR, we use 'mampf-next' as default
+      # target branch to compare against. This might not cover all use cases.
+      # But in the end, one has to open a PR anyways and then the correct target
+      # branch is identified.
+      # TODO: rename to 'dev' when 'mampf-next' branch is renamed.
+      - name: Fetch target branch
+        run: |
+          targetBranch=${{ github.base_ref || 'mampf-next' }}
+          echo "Target branch is: $targetBranch"
+          git fetch origin $targetBranch:$targetBranch --depth=1
 
       # adapted from https://github.com/actions/checkout/issues/520#issuecomment-1167205721
       # and: https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
@@ -32,7 +41,6 @@ jobs:
       # are found matching the pattern
       - name: Get changed ruby files (git diff)
         run: |
-          targetBranch=${{ github.base_ref || 'mampf-next' }}
           changedFiles=$(git diff --name-only --diff-filter=d -r $targetBranch | grep '\.rb$' || test $? = 1;)
           printf "Changed ruby files: \n$changedFiles"
           echo "CHANGED_FILES=\"$changedFiles\"" >> $GITHUB_ENV
