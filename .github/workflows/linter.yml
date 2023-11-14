@@ -30,8 +30,7 @@ jobs:
       # https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
       - name: Run RuboCop
         run: |
-          git diff --diff-filter=d --name-only mampf-next... \
-          | xargs bundle exec rubocop --parallel
+          git diff --diff-filter=d --name-only mampf-next... | xargs bundle exec rubocop --parallel
 
 
   # eslint:
