@@ -40,7 +40,7 @@ jobs:
       # See RuboCop command line flags here:
       # https://docs.rubocop.org/rubocop/usage/basic_usage.html#command-line-flags
       - name: Run RuboCop
-        if: ${{ env.CHANGED_FILES != '' }}
+        if: env.CHANGED_FILES != ''
         run: $CHANGED_FILES | xargs bundle exec rubocop
 
 
