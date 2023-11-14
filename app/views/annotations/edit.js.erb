@@ -5,6 +5,7 @@ $('#annotation-modal').modal('show');
 var submitButton = document.getElementById('annotation-modal-submit-button');
 var $postAsComment = $('#annotation_post_as_comment');
 var posted = <%= @posted %>;
+var isNewAnnotation = <%= @is_new_annotation %>;
 
 $postAsComment.on("change", function () {
   // Don't show warnings if the annotation was already posted
@@ -147,7 +148,7 @@ function presentation() {
 }
 
 function updatePreview() {
-  var text = document.getElementById('annotation_comment').value;
+  const text = $('#annotation_comment').val();
   $('#annotation-modal-preview').empty();
   $('#annotation-modal-preview').append(text.replaceAll('\n', '<br>'));
   renderMathInElement(document.getElementById('annotation-modal-preview'), {
@@ -173,6 +174,39 @@ function updatePreview() {
     throwOnError: false
   });
 }
+
+
+
+/*
+ * Color
+ */
+function initModalBackgroundAnnotationColor() {
+  // Init event handler
+  $('#annotation-color-picker').on('click', "input[type='radio']", function (event) {
+    setModalColor(event.target.value);
+  });
+
+  // New annotation
+  if (isNewAnnotation) {
+    const randomNumber = Math.floor(Math.random() * 15) + 1;
+    const colorRadio = $(`#annotation_color${randomNumber}`);
+    colorRadio.click();
+    return;
+  }
+
+  // Edit annotation
+  const $selectedColor = $('#annotation-color-picker input[type=radio]:checked');
+  if ($selectedColor.length) {
+    $selectedColor.click();
+  }
+}
+
+function setModalColor(hexColorString) {
+  const color = thymeUtility.lightenUp(hexColorString, 2);
+  $('.modal-header').css('background-color', color);
+}
+
+initModalBackgroundAnnotationColor();
 
 
 
