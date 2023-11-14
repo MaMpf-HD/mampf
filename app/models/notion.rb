@@ -1,4 +1,3 @@
-# is it working?
 class Notion < ApplicationRecord
   belongs_to :tag, optional: true, touch: true
   belongs_to :aliased_tag, class_name: 'Tag', optional: true, touch: true
