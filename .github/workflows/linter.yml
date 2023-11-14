@@ -18,20 +18,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-
-      # If this action is not triggered from a PR, we use 'mampf-next' as default
-      # target branch to compare against. This might not cover all use cases.
-      # But in the end, one has to open a PR anyways and then the correct target
-      # branch is identified.
-      # TODO: rename to 'dev' when 'mampf-next' branch is renamed.
-      - name: Find target branch
-        run: |
-          echo "TARGET_BRANCH=${{ github.base_ref || 'mampf-next' }}" >> $GITHUB_ENV
-
-      - name: Fetch target branch (for later git diff)
-        run: |
-          echo "Fetching target branch: $TARGET_BRANCH" &&
-          git fetch origin $TARGET_BRANCH --depth 1
+        with:
+          fetch-depth: 2 # to also fetch parent commit for git diff
 
       - name: Set up Ruby 3
         uses: ruby/setup-ruby@v1
@@ -41,9 +29,11 @@ jobs:
       
       # Scope Rubocop to changed files:
       # https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
+      # https://github.com/actions/checkout/issues/520#issuecomment-1167205721
+      # Exclude deleted files
       - name: Run RuboCop
         run: |
-          git diff --diff-filter=d --name-only $TARGET_BRANCH... | grep '\.rb$' | xargs bundle exec rubocop --parallel
+          git diff-tree --name-only --diff-filter=d -r HEAD^1 HEAD | grep '\.rb$' | xargs bundle exec rubocop --parallel
 
 
   # eslint:
