@@ -10,7 +10,6 @@ on:
 
 jobs:
 
-  # RuboCop Linting
   # Workflow adapted from Rails
   # https://github.com/rails/rails/blob/main/.github/workflows/rubocop.yml
   rubocop:
@@ -20,11 +19,19 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v4
 
-      - name: Fetch target branch
+      # If this action is not triggered from a PR, we use 'mampf-next' as default
+      # target branch to compare against. This might not cover all use cases.
+      # But in the end, one has to open a PR anyways and then the correct target
+      # branch is identified.
+      # TODO: rename to 'dev' when 'mampf-next' branch is renamed.
+      - name: Find target branch
         run: |
-          echo "TARGET_BRANCH=${{ github.base_ref || 'mampf-next' }}" >> $GITHUB_ENV &&
-          echo "Target branch is: $TARGET_BRANCH" &&
-          git fetch origin $TARGET_BRANCH -- depth 1
+          echo "TARGET_BRANCH=${{ github.base_ref || 'mampf-next' }}" >> $GITHUB_ENV
+
+      - name: Fetch target branch (for later git diff)
+        run: |
+          echo "Fetching target branch: $TARGET_BRANCH" &&
+          git fetch origin $TARGET_BRANCH --depth 1
 
       - name: Set up Ruby 3
         uses: ruby/setup-ruby@v1
@@ -32,7 +39,7 @@ jobs:
           ruby-version: 3.1.4
           bundler-cache: true
       
-      # Scope Rubocop to files:
+      # Scope Rubocop to changed files:
       # https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
       - name: Run RuboCop
         run: |
