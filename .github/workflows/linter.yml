@@ -26,14 +26,21 @@ jobs:
         with:
           ruby-version: 3.1.4
           bundler-cache: true
-      
+
+      # Deleted files are excluded
+      # adapted from https://github.com/actions/checkout/issues/520#issuecomment-1167205721
+      - name: Get changed ruby files (git diff)
+        run: |
+          changedFiles=$(git diff-tree --name-only --diff-filter=d -r HEAD^1 HEAD | grep '\.rb$')
+          echo "Changed ruby files: $changedFiles"
+          echo "CHANGED_FILES=$changedFiles" >> $GITHUB_ENV
+
       # Scope Rubocop to changed files:
       # https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
-      # https://github.com/actions/checkout/issues/520#issuecomment-1167205721
       # Exclude deleted files
       - name: Run RuboCop
         run: |
-          git diff-tree --name-only --diff-filter=d -r HEAD^1 HEAD | grep '\.rb$' | xargs bundle exec rubocop --parallel
+          $CHANGED_FILES | xargs bundle exec rubocop --parallel
 
 
   # eslint:
