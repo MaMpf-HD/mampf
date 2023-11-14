@@ -1,66 +1,67 @@
-on: [push]
+name: Linting
+
+on: [push, pull_request]
 
 jobs:
+
+  # RuboCop Linting
+  # Workflow adapted from Rails
+  # https://github.com/rails/rails/blob/main/.github/workflows/rubocop.yml
   rubocop:
+    name: RuboCop
     runs-on: ubuntu-latest
-    name: A job to check rubocop linter errors
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
       - name: Set up Ruby 3
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.4
-      - name: Install gems # usual step to install the gems.
+          bundler-cache: true
+      
+      # Scope Rubocop to files:
+      # https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
+      - name: Run RuboCop
         run: |
-          bin/bundle config path vendor/bundle
-          bin/bundle config set without 'default doc job cable storage ujs test db'
-          bin/bundle install --jobs 4 --retry 3
-      - name: Linter count
-        id: hello
-        uses: henrixapp/linter-less-or-equal-action@v1.19
-        with:
-          name: Rubocop
-          command: bin/bundle exec rubocop app config lib spec
-          total_regexp: \d+ offenses detected
-          errors_regexp: \d+ offenses detected
-          warnings_regexp: \d+ offenses detected
-          compare_branch: mampf-next
-          mode: changed
-          include: .rb
-  eslint:
-    runs-on: ubuntu-latest
-    name: A job to check eslint linter errors
-    steps:
-      - uses: actions/checkout@v2
-      - name: Linter count
-        id: hello
-        uses: henrixapp/linter-less-or-equal-action@v1.19
-        with:
-          name: EsLint
-          command: npx eslint
-          total_regexp: \d+ problems
-          errors_regexp: \d+ errors
-          warnings_regexp: \d+ warnings
-          compare_branch: mampf-next
-          mode: changed
-          include: .js
-  coffee:
-    runs-on: ubuntu-latest
-    name: A job to check coffee linter errors
-    steps:
-      - uses: actions/checkout@v2
-      - name: Linter count
-        id: hello
-        uses: henrixapp/linter-less-or-equal-action@v1.19
-        with:
-          name: Coffee
-          command: npx coffeelint
-          total_regexp: \d+ errors
-          errors_regexp: \d+ errors
-          warnings_regexp: \d+ warnings
-          compare_branch: mampf-next
-          mode: changed
-          include: .coffee
+          git diff --diff-filter=d --name-only mampf-next... \
+          | xargs bundle exec rubocop --parallel
+
+
+  # eslint:
+  #   runs-on: ubuntu-latest
+  #   name: A job to check eslint linter errors
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Linter count
+  #       id: hello
+  #       uses: henrixapp/linter-less-or-equal-action@v1.19
+  #       with:
+  #         name: EsLint
+  #         command: npx eslint
+  #         total_regexp: \d+ problems
+  #         errors_regexp: \d+ errors
+  #         warnings_regexp: \d+ warnings
+  #         compare_branch: mampf-next
+  #         mode: changed
+  #         include: .js
+  # coffee:
+  #   runs-on: ubuntu-latest
+  #   name: A job to check coffee linter errors
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Linter count
+  #       id: hello
+  #       uses: henrixapp/linter-less-or-equal-action@v1.19
+  #       with:
+  #         name: Coffee
+  #         command: npx coffeelint
+  #         total_regexp: \d+ errors
+  #         errors_regexp: \d+ errors
+  #         warnings_regexp: \d+ warnings
+  #         compare_branch: mampf-next
+  #         mode: changed
+  #         include: .coffee
   # erblint:
   #   runs-on: ubuntu-latest
   #   name: A job to check erblint linter errors
