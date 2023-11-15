@@ -22,7 +22,10 @@ require:
   - rubocop-performance
   - rubocop-rails
 
-# Ruby version is determined from the Gemfile.lock
+# AllCops:
+# Ruby version is determined automatically from the Gemfile.lock
+# We don't use NewCops: enable|disable since we want new cops to show up
+# as pending, so that we can decide whether to use them or not.
 
 #############################################
 # Layout
