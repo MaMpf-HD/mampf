@@ -178,6 +178,7 @@ Style/MethodCallWithoutArgsParentheses:
 
 Style/FrozenStringLiteralComment:
   Enabled: true
+  Severity: refactor
   EnforcedStyle: always
   Exclude:
     - 'actionview/test/**/*.builder'

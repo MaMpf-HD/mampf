@@ -1,4 +1,5 @@
 # Xkcd model for getting Xkcd images
+# Random change
 class Xkcd
   def self.random
     max = JSON.parse(URI.open('https://xkcd.com/info.0.json').read)['num']
