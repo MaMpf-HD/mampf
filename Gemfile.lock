@@ -132,13 +132,6 @@ GEM
       execjs (~> 2.0)
     barby (0.6.8)
     bcrypt (3.1.18)
-    better_html (2.0.1)
-      actionview (>= 6.0)
-      activesupport (>= 6.0)
-      ast (~> 2.0)
-      erubi (~> 1.4)
-      parser (>= 2.4)
-      smart_properties
     bindex (0.8.1)
     bootsnap (1.16.0)
       msgpack (~> 1.2)
@@ -205,13 +198,6 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     down (5.4.0)
       addressable (~> 2.8)
-    erb_lint (0.4.0)
-      activesupport
-      better_html (>= 2.0.1)
-      parser (>= 2.7.1.4)
-      rainbow
-      rubocop
-      smart_properties
     erubi (1.12.0)
     erubis (2.7.0)
     et-orbi (1.2.7)
@@ -324,6 +310,7 @@ GEM
       kramdown (~> 2.0)
     kramdown-parser-gfm (1.1.0)
       kramdown (~> 2.0)
+    language_server-protocol (3.17.0.3)
     launchy (2.5.2)
       addressable (~> 2.8)
     listen (3.0.8)
@@ -373,8 +360,9 @@ GEM
     orm_adapter (0.5.0)
     pairing_heap (3.0.0)
     parallel (1.23.0)
-    parser (3.2.2.0)
+    parser (3.2.2.4)
       ast (~> 2.4.1)
+      racc
     pdf-reader (2.11.0)
       Ascii85 (~> 1.0)
       afm (~> 0.2.1)
@@ -455,7 +443,7 @@ GEM
       ffi (~> 1.0)
     redis-client (0.14.1)
       connection_pool
-    regexp_parser (2.8.0)
+    regexp_parser (2.8.2)
     request_store (1.5.1)
       rack (>= 1.4)
     responders (3.1.0)
@@ -496,20 +484,21 @@ GEM
       rspec-mocks (~> 3.11)
       rspec-support (~> 3.11)
     rspec-support (3.12.0)
-    rubocop (1.50.2)
+    rubocop (1.57.2)
       json (~> 2.3)
+      language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
-      parser (>= 3.2.0.0)
+      parser (>= 3.2.2.4)
       rainbow (>= 2.2.2, < 4.0)
       regexp_parser (>= 1.8, < 3.0)
       rexml (>= 3.2.5, < 4.0)
-      rubocop-ast (>= 1.28.0, < 2.0)
+      rubocop-ast (>= 1.28.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.28.0)
+    rubocop-ast (1.30.0)
       parser (>= 3.2.1.0)
-    rubocop-shopify (2.13.0)
-      rubocop (~> 1.50)
+    rubocop-shopify (2.14.0)
+      rubocop (~> 1.51)
     ruby-graphviz (1.2.5)
       rexml
     ruby-progressbar (1.13.0)
@@ -557,7 +546,6 @@ GEM
       simplecov (~> 0.19)
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.4)
-    smart_properties (1.17.0)
     spring (2.1.1)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -620,7 +608,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.8.2)
-    unicode-display_width (2.4.2)
+    unicode-display_width (2.5.0)
     warden (1.2.9)
       rack (>= 2.0.9)
     web-console (4.2.0)
@@ -670,7 +658,6 @@ DEPENDENCIES
   database_cleaner
   devise
   devise-bootstrap-views
-  erb_lint
   erubis
   exception_handler (~> 0.8.0.0)
   factory_bot_rails
@@ -709,8 +696,8 @@ DEPENDENCIES
   rgl
   rqrcode
   rspec-rails
-  rubocop (~> 1.50)
-  rubocop-shopify
+  rubocop (~> 1.57)
+  rubocop-shopify (~> 2.14)
   rubyzip (~> 2.3.0)
   sass-rails (>= 6)
   selenium-webdriver
