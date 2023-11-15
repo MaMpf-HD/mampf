@@ -40,4 +40,6 @@ jobs:
 
       - name: Run RuboCop
         if: env.CHANGED_FILES != ''
-        run: bundle exec rubocop --format github --fail-level 'convention' --force-exclusion -- $CHANGED_FILES
+        run: |
+          echo "🚨 Running RuboCop version: $(bundle info rubocop | head -1)"
+          bundle exec rubocop --format github --fail-level 'convention' --force-exclusion -- $CHANGED_FILES
