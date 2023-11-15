@@ -4,7 +4,7 @@ name: Linting
 # see https://github.com/orgs/community/discussions/26366
 on:
   pull_request:
-    types: [synchronize]
+    types: [opened, reopened, synchronize, ready_for_review]
 
 jobs:
 
