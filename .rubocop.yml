@@ -16,16 +16,20 @@
 # see the docs on severity
 # https://docs.rubocop.org/rubocop/configuration.html#severity
 
-# Rubocop defaults are by default required/included:
+# "Rubocop defaults" are by default required/included:
 # https://github.com/rubocop/rubocop/blob/master/config/default.yml
 require:
   - rubocop-performance
   - rubocop-rails
 
-# AllCops:
-# Ruby version is determined automatically from the Gemfile.lock
-# We don't use NewCops: enable|disable since we want new cops to show up
-# as pending, so that we can decide whether to use them or not.
+AllCops:
+  # While default cops are automatically included, they are not "configured"
+  # by default (only on each next major version of RuboCop). Therefore, we
+  # have to explicitly configure them here.
+  # see https://docs.rubocop.org/rubocop/configuration.html#defaults
+  # and https://docs.rubocop.org/rubocop/1.2/versioning.html#pending-cops
+  NewCops: enable
+  # Ruby version is determined automatically from the Gemfile.lock
 
 #############################################
 # Layout
