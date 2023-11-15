@@ -30,7 +30,6 @@ $(document).on('turbolinks:load', function() {
     (new AnnotationButton('annotation-button')).add();
   }
   const annotationsToggle = new AnnotationsToggle('annotations-toggle');
-  annotationsToggle.add();
 
   // regular components
   (new FullScreenButton('full-screen', thymeContainer)).add();
@@ -93,6 +92,7 @@ $(document).on('turbolinks:load', function() {
       const id = annotationArea.annotation.id;
       annotationArea.update(AnnotationManager.find(id));
     }
+    annotationsToggle.add();
   }
   
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,

@@ -6,15 +6,16 @@ class AnnotationsToggle extends Component {
     this.check = document.getElementById(this.id + '-check');
     this.$check = $('#' + this.id + '-check');
     this.div = $('#' + this.id);
+    this.flag = false;
   }
 
   add() {
-    const toggle = this;
-    const $check = this.$check;
-
-    if (!thymeAttributes.annotationFeatureActive) {
+    if (this.flag || !thymeAttributes.annotationFeatureActive) {
       return;
     }
+
+    this.flag = true; // <- only run the following part of the code once
+    const toggle = this;
 
     /* User is teacher/editor for the given medium and visible_for_teacher ist activated?
        -> add toggle annotations button */
@@ -22,16 +23,28 @@ class AnnotationsToggle extends Component {
       type: 'GET',
       dataType: 'json',
       success: function(isPermitted) {
-        if (isPermitted) {
-          toggle.show();
-          toggle.element.addEventListener('click', function() {
-            thymeAttributes.annotationManager.updateAnnotations(toggle.getValue());
-          });
-          // When loading the player, the toggle is set to "true" by default,
-          // so we have to trigger updateAnnotations() manually once.
-          thymeAttributes.annotationManager.updateAnnotations(toggle.getValue());
+        if (!isPermitted) {
+          return;
+        }
+        for (const annotation of thymeAttributes.annotations) {
+          // Only show toggle if there is at least one foreign annotation
+          if (!annotation.belongsToCurrentUser) {
+            toggle.show();
+            toggle.element.addEventListener('click', function() {
+              thymeAttributes.annotationManager.updateAnnotations();
+            });
+            // When loading the player, the toggle is set to "true" by default,
+            // so we have to trigger updateAnnotations() manually once.
+            thymeAttributes.annotationManager.updateAnnotations();
+          }
         }
       }
+    });
+  }
+
+  installListener() {
+    this.element.addEventListener('click', function() {
+      thymeAttributes.annotationManager.updateAnnotations();
     });
   }
 
