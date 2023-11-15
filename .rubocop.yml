@@ -7,3 +7,6 @@ Layout/LineLength:
 
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
+
+Style/ClassMethodsDefinitions:
+  EnforcedStyle: self_class
