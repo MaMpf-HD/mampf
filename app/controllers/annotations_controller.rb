@@ -138,7 +138,10 @@ class AnnotationsController < ApplicationController
     end
     
     def valid_color?(color)
-      color&.match?(/\A#([0-9]|[A-F]){6}\z/)
+      Annotation.colors.values.include?(color)
+      # if you want to allow any color (not just the given selection
+      # in Annotation.colors), use the following regex check:
+      # color&.match?(/\A#([0-9]|[A-F]){6}\z/)
     end
 
     def valid_time?(annotation)
