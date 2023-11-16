@@ -61,6 +61,7 @@
                 <option value="2">2x</option>
               </select>
             </div>
+            
             <!--- ANNOTATION BUTTON -->
             <% if user_signed_in? %>
               <div id="annotation-button">
@@ -69,13 +70,14 @@
                 </i>
               </div>
             <% end %>
+
             <!--- TOGGLE FOR TURNING ON/OFF VISIBLE ANNOTATIONS -->
-            <div id="annotations-toggle" style="display: none;">
-              <label class="switch">
-                <input id="annotations-toggle-check" type="checkbox" checked="true">
-                <span class="slider round"></span>
-              </label>
+            <div id="annotations-toggle" class="form-check form-switch"
+                style="display: none;">
+              <input id="annotations-toggle-check"
+                    class="form-check-input" type="checkbox" role="switch" checked>
             </div>
+
             <div id="size-buttons">
               <i id="ia-active" class="material-icons clickable"
                  data-status="true">

@@ -3,52 +3,64 @@ $('#annotation-modal-content').empty()
 $('#annotation-modal').modal('show');
 
 var submitButton = document.getElementById('annotation-modal-submit-button');
-var postAsComment = document.getElementById('annotation_post_as_comment');
+var $postAsComment = $('#annotation_post_as_comment');
 var posted = <%= @posted %>;
+var isNewAnnotation = <%= @is_new_annotation %>;
 
-postAsComment.addEventListener('change', function() {
+$postAsComment.on("change", function () {
+  // Don't show warnings if the annotation was already posted
+  if (posted) {
+    return;
+  }
+
   if (this.checked) {
-    alertWarningMessage();
+    const $warningElement = $("#annotation-comment-warning");
+    const message = constructWarningMessage();
+    $warningElement.html(message);
+    $warningElement.show();
+  } else {
+    $("#annotation-comment-warning").hide();
   }
 });
 
-function alertWarningMessage() {
-  var message = document.getElementById('annotation-locales').dataset.warningPublishing;
-  var mistakeRadio = document.getElementById('annotation_category_mistake');
-  if (mistakeRadio.checked) {
-    alertMistakeWarningMessage(message);
-  } else {
-    alert(message);
-  }
-}
+function constructWarningMessage() {
+  let message = $("#annotation-locales").data("warningPublishing");
 
-function alertMistakeWarningMessage(message) {
-  message += "\n" + document.getElementById('annotation-locales').dataset.warningMistake;
-  var mediumId = thyme.dataset.medium;
+  const mistakeRatio = $('#annotation_category_mistake');
+  if (!mistakeRatio.is(":checked")) {
+    return message;
+  }
+
+  // Mistake specific warnings
   $.ajax(Routes.num_nearby_posted_mistake_annotations_path(), {
     type: 'GET',
     dataType: 'json',
+    async: false,
     data: {
-      mediumId: mediumId,
+      mediumId: thyme.dataset.medium,
       timestamp: video.currentTime,
     },
-    success: function(count) {
+    success: function (count) {
+      const locale = $('#annotation-locales');
+      message += "<br>";
       if (!count) {
-        alert(message);
-        return;
-      } else if (count === 1) {
-        message += document.getElementById('annotation-locales').
-                     dataset.warningOneCloseAnnotation;
+        message += $('#annotation-locales').data("warningMistake");
+      } else if (count == 1) {
+        message += locale.data("warningOneCloseAnnotation");
       } else {
-        message += document.getElementById('annotation-locales').
-                     dataset.warningMultipleCloseAnnotations1 +
-                   count +
-                   document.getElementById('annotation-locales').
-                     dataset.warningMultipleCloseAnnotations2;
+        message += locale.data("warningMultipleCloseAnnotations1")
+          + count + locale.data("warningMultipleCloseAnnotations2");
       }
-      alert(message);
+      return message;
+    },
+    error: function (err) {
+      console.error("Error while fetching nearby annotations");
+      console.error(err);
+      return message;
     }
   });
+
+  return message;
 }
 
 
@@ -59,9 +71,9 @@ function alertMistakeWarningMessage(message) {
 
 var categoryRadios = document.getElementById('category-radios');
 
-categoryRadios.addEventListener('click', function(evt) {
+categoryRadios.addEventListener('click', function (evt) {
   if (evt.target && event.target.matches("input[type='radio']")) {
-    switch(evt.target.value) {
+    switch (evt.target.value) {
       case Category.NOTE.name:
         note();
         break;
@@ -88,38 +100,32 @@ function note() {
 function content() {
   $('#annotation-category-specific').empty()
     .append('<%= j render partial: "annotations/form_content"%>');
-  submitButton.disabled = true; // disable submit button until the content category is selected
+  // disable submit button until the content category is selected
+  submitButton.disabled = true;
   visibleForTeacher(true);
   postComment(false);
   var contentCategoryRadios = document.getElementById('content-category-radios');
-  contentCategoryRadios.addEventListener('click', function(evt) {
+  contentCategoryRadios.addEventListener('click', function (evt) {
     if (evt.target && event.target.matches("input[type='radio']")) {
       submitButton.disabled = false;
+
+      // Show further help
+      // (right now, the same help is display for all the different categories)
       switch (evt.target.value) {
         case Subcategory.DEFINITION.name:
-          definition();
+          showFurtherHelp();
           break;
         case Subcategory.ARGUMENT.name:
-          argument();
+          showFurtherHelp();
           break;
         case Subcategory.STRATEGY.name:
-          strategy();
+          showFurtherHelp();
           break;
       }
     }
   });
-  /* For the moment all three methods do the same, but as it's very likely that
-     we'll implement different behaviour in the future, I havn't removed the lines
-     in order to avoid code duplication. */
-  function definition() {
-    $('#content-specific').empty()
-      .append('<%= j render partial: "annotations/form_content_further_help"%>');
-  }
-  function argument() {
-    $('#content-specific').empty()
-      .append('<%= j render partial: "annotations/form_content_further_help"%>');
-  }
-  function strategy() {
+
+  function showFurtherHelp() {
     $('#content-specific').empty()
       .append('<%= j render partial: "annotations/form_content_further_help"%>');
   }
@@ -130,7 +136,6 @@ function mistake() {
   submitButton.disabled = false;
   visibleForTeacher(true);
   postComment(true);
-  alertWarningMessage();
 }
 
 function presentation() {
@@ -141,7 +146,7 @@ function presentation() {
 }
 
 function updatePreview() {
-  var text = document.getElementById('annotation_comment').value;
+  const text = $('#annotation_comment').val();
   $('#annotation-modal-preview').empty();
   $('#annotation-modal-preview').append(text.replaceAll('\n', '<br>'));
   renderMathInElement(document.getElementById('annotation-modal-preview'), {
@@ -171,30 +176,71 @@ function updatePreview() {
 
 
 /*
+ * Color
+ */
+function initModalBackgroundAnnotationColor() {
+  // Init event handler
+  $('#annotation-color-picker').on('click', "input[type='radio']", function (event) {
+    setModalColor(event.target.value);
+  });
+
+  // New annotation
+  if (isNewAnnotation) {
+    const randomNumber = Math.floor(Math.random() * 15) + 1;
+    const colorRadio = $(`#annotation_color${randomNumber}`);
+    colorRadio.click();
+    return;
+  }
+
+  // Edit annotation
+  const $selectedColor = $('#annotation-color-picker input[type=radio]:checked');
+  if ($selectedColor.length) {
+    $selectedColor.click();
+  }
+}
+
+function setModalColor(hexColorString) {
+  const color = thymeUtility.lightenUp(hexColorString, 2);
+  $('.modal-header').css('background-color', color);
+}
+
+initModalBackgroundAnnotationColor();
+
+
+
+/*
  * Auxiliary methods
  */
-function visibleForTeacher(boolean) {
-  $('#annotation_visible_for_teacher').prop("checked", boolean);
+function visibleForTeacher(isVisible) {
+  $('#annotation_visible_for_teacher').prop("checked", isVisible).trigger("change");
 }
 
-function postComment(boolean) {
-  boolean = posted ? true : boolean;
-  $('#annotation_post_as_comment').prop("checked", boolean);
+function postComment(isVisible) {
+  isVisible = posted ? true : isVisible;
+  $('#annotation_post_as_comment').prop("checked", isVisible).trigger("change");
 }
 
-function previewCSS(show, modalWidth, contentWidth, previewWidth) {
-  var offset = parseInt($('#annotation-modal').css('left'), 10);
-  if (show == true) {
-    $('#annotation-modal-preview').show();
-    $('#annotation-modal').css('left', '-250px');
+function previewCSS(shouldShowPreview) {
+  if (shouldShowPreview) {
     updatePreview();
+    $('#annotation-preview-section').show();
+
+    $('#annotation-modal-dialog').removeClass('annotation-dialog-normal');
+    $('#annotation-modal-dialog').addClass('annotation-dialog-expanded');
+
+    $('#annotation-content-section').addClass('annotation-content-spacing');
+    $('#annotation-content-section').removeClass('annotation-content-normal');
+    $('#annotation-content-section').addClass('annotation-content-expanded');
   } else {
-    $('#annotation-modal-preview').hide();
-    $('#annotation-modal').css('left', '0');
+    $('#annotation-preview-section').hide();
+
+    $('#annotation-modal-dialog').removeClass('annotation-dialog-expanded');
+    $('#annotation-modal-dialog').addClass('annotation-dialog-normal');
+
+    $('#annotation-content-section').removeClass('annotation-content-spacing');
+    $('#annotation-content-section').removeClass('annotation-content-expanded');
+    $('#annotation-content-section').addClass('annotation-content-normal');
   }
-  $('.modal-content').css('width', modalWidth + '%');
-  $('#annotation-modal-content').css('width', contentWidth + '%');
-  $('#annotation-modal-preview').css('width', previewWidth + '%');
 }
 
 
@@ -202,8 +248,8 @@ function previewCSS(show, modalWidth, contentWidth, previewWidth) {
 /* If this script is rendered by the edit method of the annotation controller:
    Select correct subcategory (this is not automatically done by the rails form
    as the content is dynamically rendered). */
-var contentRadio = document.getElementById('annotation_category_content');
-if (contentRadio.checked) {
+var contentRadio = $('#annotation_category_content');
+if (contentRadio.is(':checked')) {
   content();
   submitButton.disabled = false;
   var subcategory = document.getElementById('annotation_subcategory').textContent.replace(/[^a-z]/g, '');
@@ -222,26 +268,22 @@ if (contentRadio.checked) {
 
 // render preview
 var annotationComment = document.getElementById('annotation_comment');
-annotationComment.addEventListener('input', function() {
+annotationComment.addEventListener('input', function () {
   updatePreview();
 });
-
-previewCSS(false, 100, 100, 0);
+previewCSS(false); // Initialize modal without preview
 
 // preview toggle listener
 var previewToggle = document.getElementById('preview-toggle');
-previewToggle.addEventListener('change', function() {
-  if ($('#preview-toggle-check').is(":checked")) {
-    previewCSS(true, 150, 65, 35);
-  } else {
-    previewCSS(false, 100, 100, 0);
-  }
+previewToggle.addEventListener('change', function () {
+  const shouldShowPreview = $('#preview-toggle-check').is(":checked");
+  previewCSS(shouldShowPreview);
 });
 
 // disable post comment checkbox if annotation was already posted
 if (posted) {
   postComment(true);
-  postAsComment.disabled = true;
+  $postAsComment.get(0).disabled = true;
 }
 
 initBootstrapPopovers();

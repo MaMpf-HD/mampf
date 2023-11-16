@@ -330,6 +330,12 @@ de:
       comment: 'Kommentar'
       color: 'Farbe'
       category: 'Kategorie'
+      category_tooltip: >
+        Verwende "Notiz" für persönliche Notizen, "Inhalt" wenn Du den Inhalt
+        des Videos an dieser Stelle nicht verstehst, "Fehler" wenn Du einen
+        Fehler entdeckt hast, und "Darstellung" wenn Dir die Darstellung im
+        Video Probleme bereitet, z.B. falls Du die Schrift nicht lesen kannst
+        oder der Ton unverständlich ist.
       note: 'Notiz'
       note_tooltip: >
         Wähle diese Kategorie aus, wenn Du Deine Annotation als
@@ -376,9 +382,9 @@ de:
           Bevor Du diesen Kommentar abschickst, überprüfe außerdem bitte,
           ob bereits ein Kommentar zu dem von Dir gefundenen Fehler existiert.
         one_close_annotation: >
-          In der Nähe Deiner Annotation gibt es bereits eine veröffentlichte
+          Beachte: in der Nähe Deiner Annotation gibt es bereits eine veröffentlichte
           Fehler-Annotation.
-        multiple_close_annotations_1: "In der Nähe Deiner Annotation gibt es bereits "
+        multiple_close_annotations_1: "Beachte: in der Nähe Deiner Annotation gibt es bereits "
         multiple_close_annotations_2: " veröffentlichte Fehler-Annotationen."
         permission: "Dir fehlen die Rechte, um diese Annotation zu bearbeiten."
       visible_for_teacher: 'Für DozentIn sichtbar?'

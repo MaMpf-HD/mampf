@@ -22,6 +22,7 @@ class Annotation < ApplicationRecord
   end
 
   def self.colors
+    # Colors must have 6 digits and be capitalized (!)
     color_map = {
        1 => '#DB2828',
        2 => '#F2711C',
@@ -33,11 +34,11 @@ class Annotation < ApplicationRecord
        8 => '#6435C9',
        9 => '#A333C8',
       10 => '#E03997',
-      11 => '#d05d41',
+      11 => '#D05D41',
       12 => '#924129',
       13 => '#444444',
       14 => '#999999',
-      15 => '#eeeeee'
+      15 => '#EEEEEE'
     }
   end
 end

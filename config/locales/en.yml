@@ -331,6 +331,11 @@ en:
       comment: 'Comment'
       color: 'Color'
       category: 'Category'
+      category_tooltip: >
+        Use "note" for personal notes, "content" if you don't understand the
+        content of the video at this position, "mistake" if you've spot a mistake,
+        and "presentation" if you have problems with the presentation,
+        e.g. you cannot read the handwriting or cannot understand the audio.
       note: 'note'
       note_tooltip: >
         Select this category if you want to create your annotation
@@ -377,14 +382,14 @@ en:
           Before submitting, please also check, if someone already posted
           a comment concerning this mistake.
         one_close_annotation: >
-          There already is a public mistake annotation that is close to yours.
-        multiple_close_annotations_1: "There are already "
-        multiple_close_annotations_2: " mistake annotations that are close to yours."
+          Note there is already a mistake annotation around this Thymestamp.
+        multiple_close_annotations_1: "Note there are already "
+        multiple_close_annotations_2: " mistake annotations close to yours."
         permission: "You don't have the permission to edit this annotation."
       visible_for_teacher: 'Visible for teacher?'
       visible_for_teacher_helpdesk: >
         If this checkbox is selected your teacher can see this annotation
-        (without your name!) in his own thyme player.
+        (without your name!) in their own thyme player.
       post_as_comment: 'Post as comment?'
       post_as_comment_helpdesk: >
         If this checkbox is selected, this annotation will be published as

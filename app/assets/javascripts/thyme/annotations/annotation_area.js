@@ -144,6 +144,7 @@ class AnnotationArea {
     const localesId = this.localesId;
     this.editButton.off('click');
     this.editButton.on('click', function() {
+      thymeAttributes.video.pause();
       thymeAttributes.lockKeyListeners = true;
       $.ajax(Routes.edit_annotation_path(annotation.id), {
         type: 'GET',

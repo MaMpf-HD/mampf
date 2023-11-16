@@ -8,6 +8,7 @@ class AnnotationsController < ApplicationController
     @total_seconds = params[:total_seconds]
     @medium_id = params[:medium_id]
     @posted = false
+    @is_new_annotation = true
 
     render :edit
   end
@@ -29,6 +30,8 @@ class AnnotationsController < ApplicationController
     # we have to call the "get_comment" method in order to get
     # the text.
     @annotation.comment = @annotation.get_comment
+
+    @is_new_annotation = false
   end
 
   def create
@@ -137,6 +140,8 @@ class AnnotationsController < ApplicationController
       )
     end
     
+    # TODO: Frontend should not pass color hex strings, instead pass the respective
+    # color keys, e.g. 14, see annotation.rb color_map for lookup.
     def valid_color?(color)
       Annotation.colors.values.include?(color)
       # if you want to allow any color (not just the given selection

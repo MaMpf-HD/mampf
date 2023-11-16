@@ -9,6 +9,8 @@
   <% end %>
   <% unless link_name.blank? %>
     <%= t('admin.annotation.further_help') %> <br>
-	  <a href="<%= link %>"><%= link_name %></a>
+    <a href="<%= link %>" target="_blank" rel="noopener noreferrer">
+      <%= link_name %>
+    </a>
 	<% end %>
 </div>
