@@ -109,10 +109,10 @@ class AnnotationsController < ApplicationController
   end
 
   def num_nearby_posted_mistake_annotations
-    annotations = Annotation.where(medium: params[:mediumId], category: 'mistake').commented
     # the time (!) radius in which annotation are considered as "nearby"
-    radius = params[:radius].to_i
+    radius = 60
     timestamp = params[:timestamp].to_i
+    annotations = Annotation.where(medium: params[:mediumId], category: 'mistake').commented
     counter = annotations.to_a.count { |annotation| annotation.nearby?(timestamp, radius) }
     render json: counter
   end
