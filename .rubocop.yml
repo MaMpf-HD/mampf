@@ -9,11 +9,15 @@
 # i.e. severity: "convention" and up will be treated as an error on GitHub
 # and below as warning such that the check will still pass (with a warning).
 #
-# Short:
-# "convention" severity and up = Error on GitHub (CI/CD) -> check fails
-# "refactor" severity and below = Warning on GitHub (CI/CD) -> check passes
+# Overview:
+# |   RuboCop     |            GitHub               |
+#    error             error     -> check fails
+#    warning           error     -> check fails
+#    convention        error     -> check fails
+#    refactor          warning   -> check passes
+#    info              warning   -> check passes
 #
-# see the docs on severity
+# also see the RuboCop docs on severity
 # https://docs.rubocop.org/rubocop/configuration.html#severity
 
 # "Rubocop defaults" are by default required/included:
@@ -38,11 +42,11 @@ AllCops:
 Layout/EndAlignment:
   EnforcedStyleAlignWith: variable
 
-Layout/LineLength:
-  Max: 100
-
 Layout/IndentationConsistency:
   EnforcedStyle: indented_internal_methods
+
+Layout/LineLength:
+  Max: 100
 
 #############################################
 # Metrics
@@ -55,34 +59,6 @@ Metrics/ParameterLists:
   Enabled: true
 
 #############################################
-# Style
-#############################################
-
-Style/Documentation:
-  Enabled: false
-
-Style/FrozenStringLiteralComment:
-  EnforcedStyle: never
-
-Style/SymbolArray:
-  EnforcedStyle: brackets
-
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
-
-Style/StringLiteralsInInterpolation:
-  EnforcedStyle: double_quotes
-
-Style/RedundantReturn:
-  AllowMultipleReturnValues: true
-
-Style/WordArray:
-  EnforcedStyle: brackets
-
-Style/EmptyMethod:
-  EnforcedStyle: expanded
-
-#############################################
 # Performance
 #############################################
 
@@ -91,3 +67,31 @@ Performance:
 
 Performance/FlatMap:
   Severity: warning # an error in CI/CD
+
+#############################################
+# Style
+#############################################
+
+Style/Documentation:
+  Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets
