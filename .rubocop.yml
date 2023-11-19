@@ -76,6 +76,12 @@ Style/StringLiteralsInInterpolation:
 Style/RedundantReturn:
   AllowMultipleReturnValues: true
 
+Style/WordArray:
+  EnforcedStyle: brackets
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
 #############################################
 # Performance
 #############################################
