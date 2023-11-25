@@ -9,7 +9,7 @@ class MediumAbility
 
     can [:show, :show_comments], Medium do |medium|
       medium.visible_for_user?(user) &&
-        !(medium.sort.in?(['Question', 'Remark']) && !user.can_edit?(medium))
+        !(medium.sort.in?(["Question", "Remark"]) && !user.can_edit?(medium))
     end
 
     can :inspect, Medium do |medium|
@@ -46,7 +46,7 @@ class MediumAbility
       !user.generic? && user.can_edit?(medium)
     end
 
-    can [:register_download], Medium do |medium|
+    can [:register_download], Medium do |_medium|
       !user.new_record?
     end
   end

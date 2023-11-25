@@ -7,7 +7,7 @@ FactoryBot.define do
     trait :with_notifiable do
       transient do
         notifiable_sort do
-          ['Medium', 'Course', 'Lecture', 'Announcement'].sample
+          ["Medium", "Course", "Lecture", "Announcement"].sample
         end
       end
       after :build do |n, evaluator|

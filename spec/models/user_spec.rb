@@ -1,54 +1,54 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe User, type: :model do
-  it 'has a valid factory' do
+  it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
   end
 
   # test validations - SOME ARE MISSING
 
-  it 'is invalid if it is persisted and no name is given' do
+  it "is invalid if it is persisted and no name is given" do
     user = FactoryBot.create(:confirmed_user)
     user.name = nil
     expect(user).not_to be_valid
   end
 
-  it 'is invalid if homepage is given but with an invalid url' do
+  it "is invalid if homepage is given but with an invalid url" do
     user = FactoryBot.build(:confirmed_user)
-    user.homepage = 'usual_bs'
+    user.homepage = "usual_bs"
     expect(user).not_to be_valid
   end
 
   # test traits and subfactories
 
-  describe 'confirmed user' do
-    it 'has a valid factory for building' do
+  describe "confirmed user" do
+    it "has a valid factory for building" do
       expect(FactoryBot.build(:confirmed_user)).to be_valid
     end
-    it 'has a valid factory for creating' do
+    it "has a valid factory for creating" do
       expect(FactoryBot.create(:confirmed_user)).to be_valid
     end
-    it 'is confirmed when created' do
+    it "is confirmed when created" do
       expect(FactoryBot.create(:confirmed_user).confirmed_at).not_to be_nil
     end
   end
 
-  describe 'user with subscribed lectures' do
+  describe "user with subscribed lectures" do
     before :all do
       @user = FactoryBot.build(:user, :with_lectures)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@user).to be_valid
     end
-    it 'has subscribed lectures' do
+    it "has subscribed lectures" do
       expect(@user.lectures).not_to be_nil
     end
-    it 'has 2 subscribed lectures when called without lecture_count param' do
+    it "has 2 subscribed lectures when called without lecture_count param" do
       expect(@user.lectures.size).to eq 2
     end
-    it 'has correct number of lectures when called with lecture_count param' do
+    it "has correct number of lectures when called with lecture_count param" do
       user = FactoryBot.build(:user, :with_lectures, lecture_count: 3)
       expect(user.lectures.size).to eq 3
     end

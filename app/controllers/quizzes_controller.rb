@@ -10,7 +10,7 @@ class QuizzesController < ApplicationController
   before_action :init_values, only: [:take, :proceed]
   after_action :store_access, only: [:take]
   authorize_resource except: [:new, :update_branching]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= QuizAbility.new(current_user)
@@ -38,7 +38,7 @@ class QuizzesController < ApplicationController
 
   def take
     I18n.locale = @quiz.locale_with_inheritance
-    render layout: 'quiz'
+    render layout: "quiz"
   end
 
   def proceed
@@ -55,7 +55,7 @@ class QuizzesController < ApplicationController
   def set_root
     quiz_graph = @quiz.quiz_graph
     quiz_graph.root = params[:root].to_i
-    @quiz.update(quiz_graph: quiz_graph)
+    @quiz.update(quiz_graph:)
     redirect_to edit_quiz_path(@quiz)
   end
 
@@ -69,7 +69,7 @@ class QuizzesController < ApplicationController
     source = params[:source].to_i
     target = params[:target].to_i
     quiz_graph.update_default_target!(source, target)
-    @quiz.update(quiz_graph: quiz_graph)
+    @quiz.update(quiz_graph:)
   end
 
   def delete_edge
@@ -77,14 +77,14 @@ class QuizzesController < ApplicationController
     source = params[:source].to_i
     target = params[:target].to_i
     quiz_graph.delete_edge!(source, target)
-    @quiz.update(quiz_graph: quiz_graph)
+    @quiz.update(quiz_graph:)
   end
 
   def update_branching
     quiz = Quiz.find_by_id(params[:quiz_id])
     authorize! :update_branching, quiz
     @quizzable = quiz.quizzable(params[:vertex_id].to_i)
-    @id = params[:id].sub 'select', 'quizzable'
+    @id = params[:id].sub "select", "quizzable"
   end
 
   def edit_vertex_targets
@@ -102,7 +102,7 @@ class QuizzesController < ApplicationController
       @quiz = Quiz.find_by_id(params[:id])
       return if @quiz.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_quiz')
+      redirect_to :root, alert: I18n.t("controllers.no_quiz")
     end
 
     def init_values
@@ -120,10 +120,12 @@ class QuizzesController < ApplicationController
           true
         elsif current_user.admin?
           false
+        # rubocop:todo Lint/DuplicateBranch
         elsif current_user.in?(Quiz.find(params[:id]).editors_with_inheritance)
           false
-        else
+        else # rubocop:todo Lint/DuplicateBranch
           true
+          # rubocop:enable Lint/DuplicateBranch
         end
       @quiz_round = QuizRound.new(quiz_round_params)
     end
@@ -133,15 +135,15 @@ class QuizzesController < ApplicationController
     end
 
     def check_accessibility
-      return if @quiz.sort == 'RandomQuiz'
+      return if @quiz.sort == "RandomQuiz"
       return if user_signed_in? && @quiz.visible_for_user?(current_user)
       return if !user_signed_in? && @quiz.free?
 
-      redirect_to :root, alert: I18n.t('controllers.no_quiz_access')
+      redirect_to :root, alert: I18n.t("controllers.no_quiz_access")
     end
 
     def check_vertex_accessibility
-      return if @quiz.sort == 'RandomQuiz'
+      return if @quiz.sort == "RandomQuiz"
 
       if user_signed_in?
         return if current_user.in?(@quiz.editors_with_inheritance)
@@ -150,17 +152,17 @@ class QuizzesController < ApplicationController
       end
       return if !user_signed_in? && @quiz.quizzables_free?
 
-      redirect_to :root, alert: I18n.t('controllers.no_quiz_vertex_access')
+      redirect_to :root, alert: I18n.t("controllers.no_quiz_vertex_access")
     end
 
     def check_errors
-      return if @quiz.sort == 'RandomQuiz'
+      return if @quiz.sort == "RandomQuiz"
       return unless @quiz.find_errors&.any?
 
-      redirect_to :root, alert: I18n.t('controllers.quiz_has_error')
+      redirect_to :root, alert: I18n.t("controllers.quiz_has_error")
     end
 
     def store_access
-      ConsumptionSaver.perform_async(@quiz.id, 'browser', 'quiz')
+      ConsumptionSaver.perform_async(@quiz.id, "browser", "quiz")
     end
 end

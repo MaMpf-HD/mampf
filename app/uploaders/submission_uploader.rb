@@ -1,4 +1,4 @@
-require 'image_processing/mini_magick'
+require "image_processing/mini_magick"
 
 # SubmissionUploader Class
 class SubmissionUploader < Shrine
@@ -12,6 +12,6 @@ class SubmissionUploader < Shrine
   Attacher.validate do
     # Reject empty file uploads
     # at least 1 byte
-    validate_min_size 1, message: I18n.t('submission.upload_failure_empty_file')
+    validate_min_size 1, message: I18n.t("submission.upload_failure_empty_file")
   end
 end

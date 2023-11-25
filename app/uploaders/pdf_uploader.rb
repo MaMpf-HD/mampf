@@ -1,4 +1,4 @@
-require 'image_processing/mini_magick'
+require "image_processing/mini_magick"
 
 # PdfUploader Class
 class PdfUploader < Shrine
@@ -20,7 +20,7 @@ class PdfUploader < Shrine
         temp_file = Tempfile.new
         temp_folder = Dir.mktmpdir
         structure_path = "#{temp_folder}/structure.mampf"
-        cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path} && "\
+        cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path} && " \
               "pdftk #{file.path} unpack_files output #{temp_folder}"
         exit_status = system(cmd)
         if exit_status
@@ -34,7 +34,7 @@ class PdfUploader < Shrine
               io.read.encode("UTF-8", invalid: :replace)
             end
           end
-          structure ||= ''
+          structure ||= ""
           bookmarks = structure.scan(/MaMpf-Label\|(.*?)\n/).flatten
           result = []
           bookmarks.each_with_index do |b, i|
@@ -42,41 +42,41 @@ class PdfUploader < Shrine
             # line may look like this:
             # defn:erster-Tag|Definition|1.1|Erster Tag|1
             data = /(.*?)\|(.*?)\|(.*?)\|(.*?)\|(.*)\|(.*)\|(.*)\|(.*)/.match(b)
-            details = { 'destination' => data[1], 'sort' => data[2],
-                        'label' => data[3], 'description' => data[4],
-                        'chapter' => data[5], 'section' => data[6],
-                        'subsection' => data[7], 'page' => data[8],
-                        'counter' => i }
-            details['sort'] = 'Markierung' if details['sort'].blank?
+            details = { "destination" => data[1], "sort" => data[2],
+                        "label" => data[3], "description" => data[4],
+                        "chapter" => data[5], "section" => data[6],
+                        "subsection" => data[7], "page" => data[8],
+                        "counter" => i }
+            details["sort"] = "Markierung" if details["sort"].blank?
             result.push(details)
           end
           linked_media = structure.scan(/MaMpf-Link\|(.*?)\n/)
                                   .flatten.map(&:to_i) - [0]
           mampf_sty_version = structure.scan(/MaMpf-Version\|(.*?)\n/).flatten
                                        .first
-          { 'pages' => pages,
-            'destinations' => result.map { |b| b['destination'] },
-            'bookmarks' => result,
-            'linked_media' => linked_media,
-            'version' => mampf_sty_version }
+          { "pages" => pages,
+            "destinations" => result.map { |b| b["destination"] },
+            "bookmarks" => result,
+            "linked_media" => linked_media,
+            "version" => mampf_sty_version }
         else
-          { 'pages' => nil, 'destinations' => nil, 'bookmarks' => nil,
-            'version' => nil }
+          { "pages" => nil, "destinations" => nil, "bookmarks" => nil,
+            "version" => nil }
         end
       end
     end
   end
 
   Attacher.validate do
-    validate_mime_type_inclusion %w[application/pdf],
-                                 message: 'falscher MIME-Typ'
+    validate_mime_type_inclusion ["application/pdf"],
+                                 message: "falscher MIME-Typ"
   end
 
   # extract a screenshot from pdf and store it beside the pdf
   Attacher.derivatives_processor do |original|
     screenshot = ImageProcessing::MiniMagick.source(original).loader(page: 0)
-                                            .convert('png')
+                                            .convert("png")
                                             .resize_to_limit!(400, 565)
-    { screenshot: screenshot }
+    { screenshot: }
   end
 end

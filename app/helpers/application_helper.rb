@@ -14,7 +14,12 @@ module ApplicationHelper
 
   # Returns the complete url for the media upload folder if in production
   def host
-    Rails.env.production? ? ENV['MEDIA_SERVER'] + '/' + ENV['INSTANCE_NAME'] : ''
+    if Rails.env.production?
+      ENV.fetch("MEDIA_SERVER",
+                nil) + "/" + ENV.fetch("INSTANCE_NAME", nil)
+    else
+      ""
+    end
   end
 
   # The HTML download attribute only works for files within the domain of
@@ -23,15 +28,15 @@ module ApplicationHelper
   # the actual media server.
   # This is used for the download buttons for videos and manuscripts.
   def download_host
-    Rails.env.production? ? ENV['DOWNLOAD_LOCATION'] : ''
+    Rails.env.production? ? ENV.fetch("DOWNLOAD_LOCATION", nil) : ""
   end
 
   # Returns the full title on a per-page basis.
-  def full_title(page_title = '')
-    return page_title if action_name == 'play' && controller_name == 'media'
-    return 'Quiz' if action_name == 'take' && controller_name == 'quizzes'
+  def full_title(page_title = "")
+    return page_title if action_name == "play" && controller_name == "media"
+    return "Quiz" if action_name == "take" && controller_name == "quizzes"
 
-    base_title = 'MaMpf'
+    base_title = "MaMpf"
     if user_signed_in? && current_user.notifications.any?
       base_title += " (#{current_user.notifications.size})"
     end
@@ -40,92 +45,92 @@ module ApplicationHelper
 
   # next methods are service methods for the display status of HTML elmements
   def hide(value)
-    value ? 'none;' : 'block;'
+    value ? "none;" : "block;"
   end
 
   def show(value)
-    value ? 'block;' : 'none;'
+    value ? "block;" : "none;"
   end
 
   def show_inline(value)
-    value ? 'inline;' : 'none;'
+    value ? "inline;" : "none;"
   end
 
   def show_no_block(value)
-    value ? '' : 'none;'
+    value ? "" : "none;"
   end
 
   # active attribute for navs
   def active(value)
-    value ? 'active' : ''
+    value ? "active" : ""
   end
 
   # show/collapse attributes for collapses and accordions
   def show_collapse(value)
-    value ? 'show collapse' : 'collapse'
+    value ? "show collapse" : "collapse"
   end
 
   def show_tab(value)
-    value ? 'show active' : ''
+    value ? "show active" : ""
   end
 
   def text_dark(value)
-    value ? '' : 'text-dark'
+    value ? "" : "text-dark"
   end
 
   def text_dark_link(value)
-    value ? 'text-primary' : 'text-dark'
+    value ? "text-primary" : "text-dark"
   end
 
   # media_sort -> database fields
   def media_types
-    { 'kaviar' => ['Kaviar'], 'sesam' => ['Sesam'],
-      'keks' => ['Quiz'],
-      'kiwi' => ['Kiwi'],
-      'erdbeere' => ['Erdbeere'], 'nuesse' => ['Nuesse'],
-      'script' => ['Script'], 'questions' => ['Question'],
-      'remarks' => ['Remark'], 'reste' => ['Reste'] }
+    { "kaviar" => ["Kaviar"], "sesam" => ["Sesam"],
+      "keks" => ["Quiz"],
+      "kiwi" => ["Kiwi"],
+      "erdbeere" => ["Erdbeere"], "nuesse" => ["Nuesse"],
+      "script" => ["Script"], "questions" => ["Question"],
+      "remarks" => ["Remark"], "reste" => ["Reste"] }
   end
 
   # media_sorts
   def media_sorts
-    %w[kaviar sesam keks kiwi erdbeere nuesse script
-       questions remarks reste]
+    ["kaviar", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
+     "reste"]
   end
 
   # media_sort -> acronym
   def media_names
-    { 'kaviar' => t('categories.kaviar.plural'),
-      'sesam' => t('categories.sesam.plural'),
-      'keks' => t('categories.quiz.plural'),
-      'kiwi' => t('categories.kiwi.singular'),
-      'erdbeere' => t('categories.erdbeere.singular'),
-      'nuesse' => t('categories.exercises.plural'),
-      'script' => t('categories.script.singular'),
-      'questions' => t('categories.question.plural'),
-      'remarks' => t('categories.remark.plural'),
-      'reste' => t('categories.reste.singular') }
+    { "kaviar" => t("categories.kaviar.plural"),
+      "sesam" => t("categories.sesam.plural"),
+      "keks" => t("categories.quiz.plural"),
+      "kiwi" => t("categories.kiwi.singular"),
+      "erdbeere" => t("categories.erdbeere.singular"),
+      "nuesse" => t("categories.exercises.plural"),
+      "script" => t("categories.script.singular"),
+      "questions" => t("categories.question.plural"),
+      "remarks" => t("categories.remark.plural"),
+      "reste" => t("categories.reste.singular") }
   end
 
   # Selects all media associated to lectures and lessons from a given list
   # of media
   def lecture_media(media)
-    media.where(teachable_type: %w[Lecture Lesson])
+    media.where(teachable_type: ["Lecture", "Lesson"])
   end
 
   # Selects all media associated to courses from a given list of media
   def course_media(media)
-    media.where(teachable_type: 'Course')
+    media.where(teachable_type: "Course")
   end
 
   # For a given list of media, returns the array of courses and lectures
   # the given media are associated to.
   def lecture_course_teachables(media)
     teachables = media.pluck(:teachable_type, :teachable_id).uniq
-    course_ids = teachables.select { |t| t.first == 'Course' }.map(&:second)
-    lecture_ids = teachables.select { |t| t.first == 'Lecture' }.map(&:second)
-    lesson_ids = teachables.select { |t| t.first == 'Lesson' }.map(&:second)
-    talk_ids = teachables.select { |t| t.first == 'Talk' }.map(&:second)
+    course_ids = teachables.select { |t| t.first == "Course" }.map(&:second)
+    lecture_ids = teachables.select { |t| t.first == "Lecture" }.map(&:second)
+    lesson_ids = teachables.select { |t| t.first == "Lesson" }.map(&:second)
+    talk_ids = teachables.select { |t| t.first == "Talk" }.map(&:second)
     lecture_ids += Lesson.where(id: lesson_ids).pluck(:lecture_id).uniq
     lecture_ids += Talk.where(id: talk_ids).pluck(:lecture_id).uniq
     Course.where(id: course_ids) + Lecture.where(id: lecture_ids.uniq)
@@ -139,7 +144,7 @@ module ApplicationHelper
   def relevant_media(teachable, media, limit)
     result = []
     if teachable.instance_of?(Course)
-      return media.where(teachable: teachable).order(:created_at)
+      return media.where(teachable:).order(:created_at)
                   .reverse_order
                   .first(limit)
     end
@@ -149,7 +154,7 @@ module ApplicationHelper
 
   # splits an array into smaller parts
   def split_list(list, pieces = 4)
-    group_size = (list.count / pieces) != 0 ? list.count / pieces : 1
+    group_size = (list.count / pieces) == 0 ? 1 : list.count / pieces
     groups = list.in_groups_of(group_size)
     diff = groups.count - pieces
     return groups if diff <= 0
@@ -161,7 +166,7 @@ module ApplicationHelper
 
   # returns true for 'media#enrich' action
   def enrich?(controller, action)
-    return true if controller == 'media' && action == 'enrich'
+    return true if controller == "media" && action == "enrich"
 
     false
   end
@@ -169,10 +174,10 @@ module ApplicationHelper
   # cuts off a given string so that a given number of letters is not exceeded
   # string is given ... as ending if it is too long
   def shorten(title, max_letters)
-    return '' if title.blank?
+    return "" if title.blank?
     return title unless title.length > max_letters
 
-    title[0, max_letters - 3] + '...'
+    title[0, max_letters - 3] + "..."
   end
 
   # Returns the grouped list of all courses/lectures/references together
@@ -180,15 +185,15 @@ module ApplicationHelper
   def grouped_teachable_list
     list = []
     Course.all.each do |c|
-      lectures = [[c.short_title + ' (' + t('basics.all') + ')',
-                   'Course-' + c.id.to_s]]
+      lectures = [[c.short_title + " (" + t("basics.all") + ")",
+                   "Course-" + c.id.to_s]]
       c.lectures.includes(:term).each do |l|
-        lectures.push [l.short_title_release, 'Lecture-' + l.id.to_s]
+        lectures.push [l.short_title_release, "Lecture-" + l.id.to_s]
       end
       list.push [c.title, lectures]
     end
-    list.push [t('admin.referral.external_references'),
-               [[t('admin.referral.external_all'), 'external-0']]]
+    list.push [t("admin.referral.external_references"),
+               [[t("admin.referral.external_all"), "external-0"]]]
   end
 
   # Returns the grouped list of all courses/lectures together with their ids.
@@ -196,9 +201,9 @@ module ApplicationHelper
   def grouped_teachable_list_alternative
     list = []
     Course.all.each do |c|
-      lectures = [[c.short_title + ' Modul', 'Course-' + c.id.to_s]]
+      lectures = [[c.short_title + " Modul", "Course-" + c.id.to_s]]
       c.lectures.includes(:term).each do |l|
-        lectures.push [l.short_title, 'Lecture-' + l.id.to_s]
+        lectures.push [l.short_title, "Lecture-" + l.id.to_s]
       end
       list.push [c.title, lectures]
     end
@@ -231,57 +236,53 @@ module ApplicationHelper
   # anything older than today or yesterday gets reduced to the day.month.year
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
-    if date.to_date == Date.today
-      return t('today') + ', ' + date.strftime('%H:%M')
-    end
-    if date.to_date == Date.yesterday
-      return t('yesterday') + ', ' + date.strftime('%H:%M')
-    end
+    return t("today") + ", " + date.strftime("%H:%M") if date.to_date == Date.today
+    return t("yesterday") + ", " + date.strftime("%H:%M") if date.to_date == Date.yesterday
 
-    I18n.localize date, format: :concise
+    I18n.l date, format: :concise
   end
 
   # prepend a select prompt to selection for options_for_select
   def add_prompt(selection)
-    [[t('basics.select'), '']] + selection
+    [[t("basics.select"), ""]] + selection
   end
 
   def quizzable_color(type)
-    'bg-' + type.downcase
+    "bg-" + type.downcase
   end
 
   def questioncolor(value)
-    value ? 'bg-question' : ''
+    value ? "bg-question" : ""
   end
 
   def vertex_label(quiz, vertex_id)
-    vertex_id.to_s + ' ' + quiz.quizzable(vertex_id)&.label.to_s
+    vertex_id.to_s + " " + quiz.quizzable(vertex_id)&.label.to_s
   end
 
   def ballot_box(correctness)
-    raw(correctness ? '&#x2612;' : '&#x2610;')
+    raw(correctness ? "&#x2612;" : "&#x2610;") # rubocop:todo Rails/OutputSafety
   end
 
   def boxcolor(correctness)
-    correctness ? 'correct' : 'incorrect'
+    correctness ? "correct" : "incorrect"
   end
 
   def bgcolor(correctness)
-    correctness ? 'bg-correct' : 'bg-incorrect'
+    correctness ? "bg-correct" : "bg-incorrect"
   end
 
   def hide_as_class(value)
-    value ? 'no_display' : ''
+    value ? "no_display" : ""
   end
 
-  def helpdesk(text, html, title = t('info'))
-    tag.i class: 'far fa-question-circle helpdesk ms-2',
+  def helpdesk(text, html, title = t("info"))
+    tag.i class: "far fa-question-circle helpdesk ms-2",
           tabindex: -1,
-          'data-bs-toggle': 'popover',
-          'data-bs-trigger': 'focus',
-          'data-bs-content': text,
-          'data-bs-html': html,
-          title: title
+          "data-bs-toggle": "popover",
+          "data-bs-trigger": "focus",
+          "data-bs-content": text,
+          "data-bs-html": html,
+          title:
   end
 
   def realization_path(realization)
@@ -291,10 +292,10 @@ module ApplicationHelper
   def first_course_independent?
     current_user.administrated_courses
                 .natural_sort_by(&:title)
-               &.first&.term_independent
+                &.first&.term_independent
   end
 
-  def get_announcements
+  def get_announcements # rubocop:todo Naming/AccessorMethodName
     megaphone_icon_str = '<i class="bi bi-megaphone p-2"></i>'
     separator_str = "<hr class=\"my-3 w-100\">#{megaphone_icon_str}"
     Announcement.active_on_main
@@ -305,29 +306,29 @@ module ApplicationHelper
 
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
-  $active_css_class = 'active-item'
+  $active_css_class = "active-item" # rubocop:todo Style/GlobalVars
 
   def get_class_for_project(project)
-    request.params['project'] == project ? $active_css_class : ''
+    request.params["project"] == project ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_path(path)
-    request.path == path ? $active_css_class : ''
+    request.path == path ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_path_startswith(path)
-    request.path.starts_with?(path) ? $active_css_class : ''
+    request.path.starts_with?(path) ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_any_path(paths)
-    paths.include?(request.path) ? $active_css_class : ''
+    paths.include?(request.path) ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_any_path_startswith(paths)
     if paths.any? { |path| request.path.starts_with?(path) }
-      return $active_css_class
+      return $active_css_class # rubocop:todo Style/GlobalVars
     end
 
-    ''
+    ""
   end
 end

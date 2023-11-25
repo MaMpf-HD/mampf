@@ -2,7 +2,7 @@
 class SectionsController < ApplicationController
   before_action :set_section, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= SectionAbility.new(current_user)
@@ -10,11 +10,7 @@ class SectionsController < ApplicationController
 
   def show
     I18n.locale = @section.lecture.locale_with_inheritance
-    render layout: 'application_no_sidebar'
-  end
-
-  def edit
-    I18n.locale = @section.lecture.locale_with_inheritance
+    render layout: "application_no_sidebar"
   end
 
   def new
@@ -24,17 +20,15 @@ class SectionsController < ApplicationController
     I18n.locale = @section.lecture.locale_with_inheritance
   end
 
+  def edit
+    I18n.locale = @section.lecture.locale_with_inheritance
+  end
+
   def create
     @section = Section.new(section_params)
     authorize! :create, @section
     insert_or_save
     @errors = @section.errors
-  end
-
-  def destroy
-    @lecture = @section.lecture
-    @section.destroy
-    redirect_to edit_lecture_path(@lecture)
   end
 
   def update
@@ -50,6 +44,12 @@ class SectionsController < ApplicationController
     @errors = @section.errors
   end
 
+  def destroy
+    @lecture = @section.lecture
+    @section.destroy
+    redirect_to edit_lecture_path(@lecture)
+  end
+
   def display
     I18n.locale = @section.lecture.locale_with_inheritance
   end
@@ -60,7 +60,7 @@ class SectionsController < ApplicationController
       @section = Section.find_by_id(params[:id])
       return if @section.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_section')
+      redirect_to :root, alert: I18n.t("controllers.no_section")
     end
 
     def section_params
@@ -86,9 +86,7 @@ class SectionsController < ApplicationController
       return unless predecessor.present?
 
       position = predecessor.to_i
-      if position > @section.position && @old_chapter == @section.chapter
-        position -= 1
-      end
+      position -= 1 if position > @section.position && @old_chapter == @section.chapter
       @section.insert_at(position + 1)
     end
 

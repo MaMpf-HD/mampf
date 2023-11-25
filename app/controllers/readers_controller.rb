@@ -8,7 +8,7 @@ class ReadersController < ApplicationController
 
     @reader = Reader.find_or_create_by(user: current_user,
                                        thread: @thread)
-    @reader.touch
+    @reader.touch # rubocop:todo Rails/SkipsModelValidations
     @anything_left = current_user.media_latest_comments.any? do |m|
       (Reader.find_by(user: current_user, thread: m[:thread])
             &.updated_at || (Time.now - 1000.years)) < m[:latest_comment].created_at
@@ -27,7 +27,7 @@ class ReadersController < ApplicationController
     end
     Reader.import new_readers
     Reader.where(user: current_user, thread: threads)
-          .update_all(updated_at: Time.now)
+          .update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
     current_user.update(unread_comments: false)
   end
 

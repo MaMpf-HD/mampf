@@ -7,7 +7,7 @@ FactoryBot.define do
     end
 
     initialize_with do
-      new(date: date)
+      new(date:)
     end
   end
 end

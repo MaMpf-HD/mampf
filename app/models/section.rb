@@ -23,6 +23,9 @@ class Section < ApplicationRecord
   # a section has many items, do not execute callbacks when section is destroyed
   has_many :items, dependent: :nullify
 
+  before_destroy :touch_toc
+  before_destroy :touch_lecture
+  before_destroy :touch_media
   # after saving or updating, touch lecture/media/self to keep cache up to date
   after_save :touch_lecture
   after_save :touch_media
@@ -31,10 +34,6 @@ class Section < ApplicationRecord
   # if absolute numbering is enabled for the lecture, all chapters
   # and sections need to be touched because of possibly changed references
   after_save :touch_toc
-  before_destroy :touch_toc
-
-  before_destroy :touch_lecture
-  before_destroy :touch_media
 
   def lecture
     chapter&.lecture
@@ -47,7 +46,7 @@ class Section < ApplicationRecord
   end
 
   def displayed_number
-    '§' + reference_number
+    "§" + reference_number
   end
 
   def reference
@@ -67,9 +66,9 @@ class Section < ApplicationRecord
   end
 
   def to_label
-    return displayed_number + '. ' + title unless hidden_with_inheritance?
+    return displayed_number + ". " + title unless hidden_with_inheritance?
 
-    '*' + displayed_number + '. ' + title
+    "*" + displayed_number + ". " + title
   end
 
   # section's media are media that are contained in one of the
@@ -157,7 +156,7 @@ class Section < ApplicationRecord
   end
 
   def visible_items
-    return visible_items_by_time if lecture.content_mode == 'video'
+    return visible_items_by_time if lecture.content_mode == "video"
 
     script_items_by_position
   end
@@ -167,7 +166,7 @@ class Section < ApplicationRecord
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    super + "-" + I18n.locale.to_s
   end
 
   def duplicate_in_chapter(new_chapter, import_tags)
@@ -176,7 +175,7 @@ class Section < ApplicationRecord
     new_section.save
     return unless import_tags
 
-    new_section.update(tags_order: tags_order)
+    new_section.update(tags_order:)
     new_section.tags << tags
   end
 
@@ -185,27 +184,29 @@ class Section < ApplicationRecord
     def touch_lecture
       return unless lecture.present? && lecture.persisted?
 
-      lecture.touch
+      lecture.touch # rubocop:todo Rails/SkipsModelValidations
     end
 
     def touch_media
+      # rubocop:todo Rails/SkipsModelValidations
       lecture.media_with_inheritance.update_all(updated_at: Time.current)
-      touch
+      # rubocop:enable Rails/SkipsModelValidations
+      touch # rubocop:todo Rails/SkipsModelValidations
     end
 
     def touch_self
-      touch
+      touch # rubocop:todo Rails/SkipsModelValidations
     end
 
     def touch_toc
       return unless lecture.absolute_numbering
 
-      lecture.chapters.update_all(updated_at: Time.now)
-      lecture.sections.update_all(updated_at: Time.now)
+      lecture.chapters.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      lecture.sections.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
     end
 
     def relative_position
-      chapter.displayed_number + '.' + position.to_s
+      chapter.displayed_number + "." + position.to_s
     end
 
     def absolute_position

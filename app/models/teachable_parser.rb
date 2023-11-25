@@ -8,8 +8,8 @@ class TeachableParser
   # or 'Course-' followed by the id
   def initialize(params)
     @teachable_ids = params[:teachable_ids] || []
-    @all_teachables = params[:all_teachables] == '1'
-    @inheritance = params[:teachable_inheritance] == '1'
+    @all_teachables = params[:all_teachables] == "1"
+    @inheritance = params[:teachable_inheritance] == "1"
   end
 
   # returns all courses, lectures and lessons that are associated
@@ -30,8 +30,8 @@ class TeachableParser
   private
 
     def lecture_ids
-      @teachable_ids.select { |t| t.start_with?('Lecture') }
-                    .map { |t| t.remove('Lecture-') }.map(&:to_i)
+      @teachable_ids.select { |t| t.start_with?("Lecture") }
+                    .map { |t| t.remove("Lecture-") }.map(&:to_i)
     end
 
     def lectures
@@ -39,8 +39,8 @@ class TeachableParser
     end
 
     def course_ids
-      @teachable_ids.select { |t| t.start_with?('Course') }
-                    .map { |t| t.remove('Course-') }.map(&:to_i)
+      @teachable_ids.select { |t| t.start_with?("Course") }
+                    .map { |t| t.remove("Course-") }.map(&:to_i)
     end
 
     def courses

@@ -8,11 +8,11 @@ FactoryBot.define do
     end
 
     trait :with_assignment do
-      assignment { association :assignment, lecture: lecture }
+      assignment { association :assignment, lecture: }
     end
 
     trait :with_tutorial do
-      tutorial { association :tutorial, lecture: lecture }
+      tutorial { association :tutorial, lecture: }
     end
 
     trait :with_users do
@@ -23,13 +23,13 @@ FactoryBot.define do
 
     trait :with_manuscript do
       after(:build) do |s|
-        s.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
+        s.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
       end
     end
 
     trait :with_correction do
       after(:build) do |s|
-        s.correction = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
+        s.correction = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
       end
     end
 

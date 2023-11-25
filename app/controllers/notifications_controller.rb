@@ -10,7 +10,7 @@ class NotificationsController < ApplicationController
   def index
     @notifications = current_user.notifications.order(:created_at)
                                  .reverse_order
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def destroy
@@ -22,7 +22,7 @@ class NotificationsController < ApplicationController
   # destroy all notifications of the current user
   def destroy_all
     current_user.notifications.delete_all
-    current_user.touch
+    current_user.touch # rubocop:todo Rails/SkipsModelValidations
   end
 
   # destroy all lecture notifications of current user
@@ -31,7 +31,7 @@ class NotificationsController < ApplicationController
     return unless lecture.present?
 
     Notification.delete(current_user.active_notifications(lecture).pluck(:id))
-    current_user.touch
+    current_user.touch # rubocop:todo Rails/SkipsModelValidations
     render :destroy_all
   end
 
@@ -39,7 +39,7 @@ class NotificationsController < ApplicationController
   # to any lecture
   def destroy_news_notifications
     Notification.delete(current_user.active_news.pluck(:id))
-    current_user.touch
+    current_user.touch # rubocop:todo Rails/SkipsModelValidations
     render :destroy_all
   end
 
@@ -49,6 +49,6 @@ class NotificationsController < ApplicationController
       @notification = Notification.find_by_id(params[:id])
       return if @notification.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_notification')
+      redirect_to :root, alert: I18n.t("controllers.no_notification")
     end
 end

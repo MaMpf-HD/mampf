@@ -26,14 +26,14 @@ class QuizCertificatesController < ApplicationController
       @certificate = QuizCertificate.find_by_id(params[:id])
       return if @certificate.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_certificate')
+      redirect_to :root, alert: I18n.t("controllers.no_certificate")
     end
 
     def check_if_claimed
       return unless @certificate.user
 
       redirect_to :root,
-                  alert: I18n.t('controllers.certificate_already_claimed')
+                  alert: I18n.t("controllers.certificate_already_claimed")
     end
 
     def certificate_params

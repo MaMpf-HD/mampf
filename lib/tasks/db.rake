@@ -31,70 +31,76 @@
 # Original source: https://gist.github.com/hopsoft/56ba6f55fe48ad7f8b90
 # Merged with: https://gist.github.com/kofronpi/37130f5ed670465b1fe2d170f754f8c6
 namespace :db do
-  desc 'Dumps the database to backups'
+  desc "Dumps the database to backups"
   task dump: :environment do
-    dump_fmt   = ensure_format(ENV['format'])
+    dump_fmt   = ensure_format(ENV.fetch("format", nil))
     dump_sfx   = suffix_for_format(dump_fmt)
     backup_dir = backup_directory(Rails.env, create: true)
     full_path  = nil
     cmd        = nil
 
-    with_config do |app, host, db, user|
-      full_path = "#{backup_dir}/#{Time.now.strftime('%Y%m%d%H%M%S')}_#{db}.#{dump_sfx}"
+    with_config do |_app, host, db, user|
+      full_path = "#{backup_dir}/#{Time.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{dump_sfx}"
+      # rubocop:todo Layout/LineLength
       cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -f '#{full_path}'"
+      # rubocop:enable Layout/LineLength
     end
 
     puts cmd
     system cmd
-    puts ''
+    puts ""
     puts "Dumped to file: #{full_path}"
-    puts ''
+    puts ""
   end
 
   namespace :dump do
-    desc 'Dumps a specific table to backups'
+    desc "Dumps a specific table to backups"
     task table: :environment do
-      table_name = ENV['table']
+      table_name = ENV.fetch("table", nil)
 
       if table_name.present?
-        dump_fmt   = ensure_format(ENV['format'])
+        dump_fmt   = ensure_format(ENV.fetch("format", nil))
         dump_sfx   = suffix_for_format(dump_fmt)
         backup_dir = backup_directory(Rails.env, create: true)
         full_path  = nil
         cmd        = nil
 
-        with_config do |app, host, db, user|
-          full_path = "#{backup_dir}/#{Time.now.strftime('%Y%m%d%H%M%S')}_#{db}.#{table_name.parameterize.underscore}.#{dump_sfx}"
+        with_config do |_app, host, db, user|
+          # rubocop:todo Layout/LineLength
+          full_path = "#{backup_dir}/#{Time.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{table_name.parameterize.underscore}.#{dump_sfx}"
+          # rubocop:enable Layout/LineLength
+          # rubocop:todo Layout/LineLength
           cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -t '#{table_name}' -f '#{full_path}'"
+          # rubocop:enable Layout/LineLength
         end
 
         puts cmd
         system cmd
-        puts ''
+        puts ""
         puts "Dumped to file: #{full_path}"
-        puts ''
+        puts ""
       else
-        puts 'Please specify a table name'
+        puts "Please specify a table name"
       end
     end
   end
 
-  desc 'Show the existing database backups'
+  desc "Show the existing database backups"
   task dumps: :environment do
     backup_dir = backup_directory
     puts "#{backup_dir}"
     system "/bin/ls -ltR #{backup_dir}"
   end
 
-  desc 'Restores the database from a backup using PATTERN'
+  desc "Restores the database from a backup using PATTERN"
   task restore: :environment do
-    pattern = ENV['pattern']
+    pattern = ENV.fetch("pattern", nil)
 
     if pattern.present?
       file = nil
       cmd  = nil
 
-      with_config do |app, host, db, user|
+      with_config do |_app, host, db, user|
         backup_dir = backup_directory
         files      = Dir.glob("#{backup_dir}/**/*#{pattern}*")
 
@@ -108,17 +114,17 @@ namespace :db do
           case fmt
           when nil
             puts "No recognized dump file suffix: #{file}"
-          when 'p'
+          when "p"
             cmd = "psql -U '#{user}' -h '#{host}' -d '#{db}' -f '#{file}'"
           else
             cmd = "pg_restore -F #{fmt} -v -c -C -U '#{user}' -h '#{host}' -d '#{db}' -f '#{file}'"
           end
         else
           puts "Too many files match the pattern '#{pattern}':"
-          puts ' ' + files.join("\n ")
-          puts ''
+          puts " " + files.join("\n ")
+          puts ""
           puts "Try a more specific pattern"
-          puts ''
+          puts ""
         end
       end
       unless cmd.nil?
@@ -127,64 +133,62 @@ namespace :db do
         puts cmd
         system cmd
         Rake::Task["sunspot:reindex"].invoke
-        puts ''
+        puts ""
         puts "Restored from file: #{file}"
-        puts ''
+        puts ""
       end
     else
-      puts 'Please specify a file pattern for the backup to restore (e.g. timestamp)'
+      puts "Please specify a file pattern for the backup to restore (e.g. timestamp)"
     end
   end
 
   private
 
-  def ensure_format(format)
-    return format if %w[c p t d].include?(format)
+    def ensure_format(format)
+      return format if ["c", "p", "t", "d"].include?(format)
 
-    case format
-    when 'dump' then 'c'
-    when 'sql' then 'p'
-    when 'tar' then 't'
-    when 'dir' then 'd'
-    else 'p'
-    end
-  end
-
-  def suffix_for_format(suffix)
-    case suffix
-    when 'c' then 'dump'
-    when 'p' then 'sql'
-    when 't' then 'tar'
-    when 'd' then 'dir'
-    else nil
-    end
-  end
-
-  def format_for_file(file)
-    case file
-    when /\.dump$/ then 'c'
-    when /\.sql$/  then 'p'
-    when /\.dir$/  then 'd'
-    when /\.tar$/  then 't'
-    else nil
-    end
-  end
-
-  def backup_directory(suffix = nil, create: false)
-    backup_dir = File.join(*[Rails.root, 'db/backups', suffix].compact)
-
-    if create and not Dir.exists?(backup_dir)
-      puts "Creating #{backup_dir} .."
-      FileUtils.mkdir_p(backup_dir)
+      case format
+      when "dump" then "c"
+      when "sql" then "p"
+      when "tar" then "t"
+      when "dir" then "d"
+      else "p" # rubocop:todo Lint/DuplicateBranch
+      end
     end
 
-    backup_dir
-  end
+    def suffix_for_format(suffix)
+      case suffix # rubocop:todo Style/HashLikeCase
+      when "c" then "dump"
+      when "p" then "sql"
+      when "t" then "tar"
+      when "d" then "dir"
+      end
+    end
 
-  def with_config
-    yield Rails.application.class.module_parent_name.underscore,
-          ActiveRecord::Base.connection_db_config.host,
-          ActiveRecord::Base.connection_db_config.database,
-          ActiveRecord::Base.connection_db_config.configuration_hash[:username]
-  end
+    def format_for_file(file)
+      case file
+      when /\.dump$/ then "c"
+      when /\.sql$/  then "p"
+      when /\.dir$/  then "d"
+      when /\.tar$/  then "t"
+      end
+    end
+
+    def backup_directory(_suffix = nil, create: false)
+      backup_dir = Rails.root.join.to_s
+
+      if create and !Dir.exist?(backup_dir)
+        puts "Creating #{backup_dir} .."
+        FileUtils.mkdir_p(backup_dir)
+      end
+
+      backup_dir
+    end
+
+    def with_config
+      yield Rails.application.class.module_parent_name.underscore,
+            ActiveRecord::Base.connection_db_config.host,
+            ActiveRecord::Base.connection_db_config.database,
+            ActiveRecord::Base.connection_db_config.configuration_hash[:username]
+    end
 end

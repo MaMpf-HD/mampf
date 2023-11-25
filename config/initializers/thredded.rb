@@ -6,7 +6,7 @@
 # The name of the class your app uses for your users.
 # By default the engine will use 'User' but if you have another name
 # for your user class - change it here.
-Thredded.user_class = 'User'
+Thredded.user_class = "User"
 
 # User name column, used in @mention syntax and *must* be unique.
 # This is the column used to search for users' names if/when someone is @ mentioned.
@@ -21,18 +21,19 @@ Thredded.user_name_column = :name
 # the path or url to your user. This lambda is evaluated in the view context.
 # If the lambda returns nil, a span element is returned instead of a link; so
 # setting this to always return nil effectively disables all user links.
-Thredded.user_path = ->(user) {
-  nil
+Thredded.user_path = lambda { |_user|
 }
 
 # This method is used by Thredded controllers and views to fetch the currently signed-in user
 Thredded.current_user_method = :"current_#{Thredded.user_class_name.demodulize.underscore}"
 
 # User avatar URL. rb-gravatar gem is used by default:
-Thredded.avatar_url = ->(user) { RailsGravatar.src(user.email, 156, 'mm') }
+Thredded.avatar_url = ->(user) { RailsGravatar.src(user.email, 156, "mm") }
 
 # ==> Permissions Configuration
+# rubocop:todo Layout/LineLength
 # By default, thredded uses a simple permission model, where all the users can post to all message boards,
+# rubocop:enable Layout/LineLength
 # and admins and moderators are determined by a flag on the users table.
 
 # The name of the moderator flag column on the users table.
@@ -49,7 +50,9 @@ Thredded.content_visible_while_pending_moderation = true
 # ==> UI configuration
 
 # How to calculate the position of messageboards in a list:
+# rubocop:todo Layout/LineLength
 # :position            (default) set the position manually (new messageboards go to the bottom, by creation timestamp)
+# rubocop:enable Layout/LineLength
 # :last_post_at_desc   most recent post first
 # :topics_count_desc   most topics first
 Thredded.messageboards_order = :position
@@ -70,11 +73,13 @@ Thredded.private_messaging_enabled = false
 # Thredded.posts_per_page = 25
 
 # The layout for rendering Thredded views.
-Thredded.layout = 'thredded/application'
+Thredded.layout = "thredded/application"
 
 # ==> Email Configuration
 # Email "From:" field will use the following
+# rubocop:todo Layout/LineLength
 # (this is also used as the "To" address for both email notifcations, as all the recipients are on bcc)
+# rubocop:enable Layout/LineLength
 # Thredded.email_from = 'no-reply@example.com'
 
 # Emails going out will prefix the "Subject:" with the following string
@@ -97,7 +102,9 @@ Thredded.messageboard_name_length_range = (1..120)
 # Thredded.slugifier = ->(input) { input.parameterize }
 
 # If your forum is in a language other than English, you might want to use the babosa gem instead
+# rubocop:todo Layout/LineLength
 # Thredded.slugifier = ->(input) { Babosa::Identifier.new(input).normalize.transliterate(:russian).to_s }
+# rubocop:enable Layout/LineLength
 
 # By default, thredded uses integers for record ID route constraints.
 # For integer based IDs (default):
@@ -123,7 +130,9 @@ Thredded.messageboard_name_length_range = (1..120)
 # Thredded.autocomplete_min_length = 2 lower to 1 if have 1-letter names -- increase if you want
 
 # ==> Error Handling
+# rubocop:todo Layout/LineLength
 # By default Thredded just renders a flash alert on errors such as Topic not found, or Login required.
+# rubocop:enable Layout/LineLength
 # Below is an example of overriding the default behavior on LoginRequired:
 #
 # Rails.application.config.to_prepare do
@@ -149,30 +158,40 @@ Thredded.messageboard_name_length_range = (1..120)
 #     $ grep view_hooks -R --include '*.html.erb' "$(bundle show thredded)"
 #
 Rails.application.config.to_prepare do
-  Thredded.view_hooks.post_form.content_text_area.config.before do |form:, **args|
+  Thredded.view_hooks.post_form.content_text_area.config.before do |form:, **_args|
+    # rubocop:todo Layout/LineLength
     # This is called in the Thredded view context, so all Thredded helpers and URLs are accessible here directly.
-    render 'thredded/modifications/explain_tex', form: form
+    # rubocop:enable Layout/LineLength
+    render "thredded/modifications/explain_tex", form:
   end
 end
 
 # ==> Topic following
 #
+# rubocop:todo Layout/LineLength
 # By default, a user will be subscribed to a topic they've created. Uncomment this to not subscribe them:
+# rubocop:enable Layout/LineLength
 #
 # Thredded.auto_follow_when_creating_topic = false
 #
+# rubocop:todo Layout/LineLength
 # By default, a user will be subscribed to (follow) a topic they post in. Uncomment this to not subscribe them:
+# rubocop:enable Layout/LineLength
 #
 # Thredded.auto_follow_when_posting_in_topic = false
 #
 # By default, a user will be subscribed to the topic they get @-mentioned in.
 # Individual users can disable this in the Notification Settings.
+# rubocop:todo Layout/LineLength
 # To change the default for all users, simply change the default value of the `follow_topics_on_mention` column
+# rubocop:enable Layout/LineLength
 # of the `thredded_user_preferences` and `thredded_user_messageboard_preferences` tables.
 
 # ==> Notifiers
 #
+# rubocop:todo Layout/LineLength
 # Change how users can choose to be notified, by adding notifiers here, or removing the initializer altogether
+# rubocop:enable Layout/LineLength
 #
 # default:
 # Thredded.notifiers = [Thredded::EmailNotifier.new]
@@ -181,4 +200,6 @@ end
 Thredded.notifiers = []
 #
 # add in (must install separate gem (under development) as well):
+# rubocop:todo Layout/LineLength
 # Thredded.notifiers = [Thredded::EmailNotifier.new, Thredded::PushoverNotifier.new(ENV['PUSHOVER_APP_ID'])]
+# rubocop:enable Layout/LineLength

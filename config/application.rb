@@ -1,6 +1,6 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -14,7 +14,7 @@ module Mampf
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
-    config.time_zone = 'Berlin'
+    config.time_zone = "Berlin"
     # config.eager_load_paths << Rails.root.join("extras")
     # Make `form_with` generate remote forms by default.
     config.action_view.form_with_generates_remote_forms = true
@@ -23,20 +23,24 @@ module Mampf
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
     config.exception_handler = {
-      email:      ENV['ERROR_EMAIL'], # sends exception emails to a listed email (string // "you@email.com")
+      # rubocop:todo Layout/LineLength
+      email: ENV.fetch("ERROR_EMAIL", nil), # sends exception emails to a listed email (string // "you@email.com")
+      # rubocop:enable Layout/LineLength
 
+      # rubocop:todo Layout/LineLength
       # All keys interpolated as strings, so you can use symbols, strings or integers where necessary
+      # rubocop:enable Layout/LineLength
       exceptions: {
 
-        all:  {
+        all: {
           layout: "application_no_sidebar", # define layout
           notification: true # (false by default)
         }
       }
     }
     config.to_prepare do
-    # some monkey patches for sidekiq-cron
-    # see https://github.com/ondrejbartas/sidekiq-cron/issues/310
+      # some monkey patches for sidekiq-cron
+      # see https://github.com/ondrejbartas/sidekiq-cron/issues/310
       Sidekiq::Cron::Job.class_eval do
         def self.all
           job_hashes = nil
@@ -62,4 +66,3 @@ module Mampf
     Commontator::Engine.config.autoload_once_paths = []
   end
 end
-

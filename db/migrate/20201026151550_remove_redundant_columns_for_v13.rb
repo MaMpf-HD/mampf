@@ -5,7 +5,7 @@ class RemoveRedundantColumnsForV13 < ActiveRecord::Migration[6.0]
   end
 
   def down
-    add_column :users, :edited_profile, :boolean
+    add_column :users, :edited_profile, :boolean # rubocop:todo Rails/ThreeStateBooleanColumn
     add_column :tutorial, :tutor_id, :integer
   end
 end

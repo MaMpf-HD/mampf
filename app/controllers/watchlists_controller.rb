@@ -5,56 +5,10 @@ class WatchlistsController < ApplicationController
   before_action :sanitize_params, only: [:show, :update_order,
                                          :change_visibility]
 
-  layout 'application_no_sidebar'
+  layout "application_no_sidebar"
 
   def current_ability
     @current_ability ||= WatchlistAbility.new(current_user)
-  end
-
-  def new
-    authorize! :new, Watchlist
-  end
-
-  def create
-    @watchlist = Watchlist.new(name: create_params[:name],
-                               user: current_user,
-                               description: create_params[:description])
-    authorize! :create, @watchlist
-    @medium = Medium.find_by_id(create_params[:medium_id])
-    @success = @watchlist.save
-    if @medium.blank? && @success
-      flash[:notice] = I18n.t('watchlist.creation_success')
-    end
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def update
-    authorize! :update, @watchlist
-    @success = @watchlist.update(update_params)
-    if @success
-      flash[:notice] = I18n.t('watchlist.change_success')
-    end
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def edit
-    authorize! :edit, @watchlist
-  end
-
-  def destroy
-    authorize! :destroy, @watchlist
-
-    @success = @watchlist.destroy
-    if @success
-      flash[:notice] = I18n.t('watchlist.delete_success')
-    else
-      flash[:alert] = I18n.t('watchlist.delete_failed')
-    end
-    redirect_to watchlists_path
   end
 
   def index
@@ -64,7 +18,7 @@ class WatchlistsController < ApplicationController
       redirect_to watchlist_path(@watchlists.first)
       return
     end
-    render 'show'
+    render "show"
   end
 
   def show
@@ -74,6 +28,48 @@ class WatchlistsController < ApplicationController
 
     @watchlist_entries = paginated_results
     @media = @watchlist_entries.pluck(:medium_id)
+  end
+
+  def new
+    authorize! :new, Watchlist
+  end
+
+  def edit
+    authorize! :edit, @watchlist
+  end
+
+  def create
+    @watchlist = Watchlist.new(name: create_params[:name],
+                               user: current_user,
+                               description: create_params[:description])
+    authorize! :create, @watchlist
+    @medium = Medium.find_by_id(create_params[:medium_id])
+    @success = @watchlist.save
+    flash[:notice] = I18n.t("watchlist.creation_success") if @medium.blank? && @success
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def update
+    authorize! :update, @watchlist
+    @success = @watchlist.update(update_params)
+    flash[:notice] = I18n.t("watchlist.change_success") if @success
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def destroy
+    authorize! :destroy, @watchlist
+
+    @success = @watchlist.destroy
+    if @success
+      flash[:notice] = I18n.t("watchlist.delete_success")
+    else
+      flash[:alert] = I18n.t("watchlist.delete_failed")
+    end
+    redirect_to watchlists_path
   end
 
   def add_medium
@@ -89,7 +85,7 @@ class WatchlistsController < ApplicationController
     per = params[:per].to_i
     if params[:reverse]
       entries.reverse!
-      shift = @watchlist.watchlist_entries.size - page * per unless page == 0
+      shift = @watchlist.watchlist_entries.size - (page * per) unless page == 0
     else
       shift = page * per
     end
@@ -109,12 +105,12 @@ class WatchlistsController < ApplicationController
       @watchlist = Watchlist.find_by_id(params[:id])
       return if @watchlist.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_watchlist')
+      redirect_to :root, alert: I18n.t("controllers.no_watchlist")
     end
 
     def sanitize_params
-      params[:reverse] = params[:reverse] == 'true'
-      params[:public] = params[:public] == 'true'
+      params[:reverse] = params[:reverse] == "true"
+      params[:public] = params[:public] == "true"
     end
 
     def paginated_results

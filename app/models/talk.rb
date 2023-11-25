@@ -7,7 +7,7 @@ class Talk < ApplicationRecord
   validates :title, presence: true
 
   # being a teachable (course/lecture/lesson), a talk has associated media
-  has_many :media, -> { order(position: :asc) }, as: :teachable,
+  has_many :media, -> { order(position: :asc) }, as: :teachable, # rubocop:todo Rails/InverseOf
                                                  dependent: :destroy
 
   # a talk has many tags
@@ -31,7 +31,7 @@ class Talk < ApplicationRecord
   end
 
   def to_label
-    I18n.t('talk', number: position, title: title)
+    I18n.t("talk", number: position, title:)
   end
 
   def long_title
@@ -52,7 +52,7 @@ class Talk < ApplicationRecord
 
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
-      lecture.title_for_viewers + ', ' + to_label
+      lecture.title_for_viewers + ", " + to_label
     end
   end
 
@@ -76,7 +76,7 @@ class Talk < ApplicationRecord
   end
 
   def compact_title
-    lecture.compact_title + '.V' + position.to_s
+    lecture.compact_title + ".V" + position.to_s
   end
 
   def number
@@ -92,7 +92,7 @@ class Talk < ApplicationRecord
   end
 
   def proper_media
-    media.where.not(sort: ['Question', 'Remark'])
+    media.where.not(sort: ["Question", "Remark"])
   end
 
   def editors_with_inheritance
@@ -102,7 +102,7 @@ class Talk < ApplicationRecord
   private
 
     def touch_lecture
-      lecture.touch
+      lecture.touch # rubocop:todo Rails/SkipsModelValidations
     end
 
     # path for show talk action
@@ -111,6 +111,6 @@ class Talk < ApplicationRecord
     end
 
     def remove_duplicate_dates
-      update_columns(dates: dates.uniq)
+      update_columns(dates: dates.uniq) # rubocop:todo Rails/SkipsModelValidations
     end
 end

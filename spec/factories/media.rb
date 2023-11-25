@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'faker'
+require "faker"
 
 FactoryBot.define do
   factory :medium do
@@ -48,16 +48,16 @@ FactoryBot.define do
 
     trait :with_manuscript do
       after(:build) do |m|
-        m.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
+        m.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
       end
     end
     trait :released do
       after(:build) do |m|
         # first release the lecture
-        l= m.teachable.lecture
-        l.released = 'all'
+        l = m.teachable.lecture
+        l.released = "all"
         l.save
-        m.released = 'all'
+        m.released = "all"
         m.released_at = Time.now
         m.save!
       end
@@ -65,13 +65,13 @@ FactoryBot.define do
 
     trait :with_video do
       after(:build) do |m|
-        m.video = File.open("#{SPEC_FILES}/talk.mp4", 'rb')
+        m.video = File.open("#{SPEC_FILES}/talk.mp4", "rb")
       end
     end
 
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
-      sort { 'Kaviar' }
+      sort { "Kaviar" }
       teachable_sort { :valid_lesson }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
     end
@@ -79,19 +79,19 @@ FactoryBot.define do
     factory :lecture_medium,
             traits: [:with_description, :with_teachable],
             aliases: [:valid_medium] do
-      sort { 'Sesam' }
+      sort { "Sesam" }
       after(:build) { |m| m.editors << m.teachable.teacher }
     end
 
     factory :course_medium,
             traits: [:with_description, :with_teachable, :with_editors] do
-      sort { 'Sesam' }
+      sort { "Sesam" }
       teachable_sort { :course }
     end
 
     factory :talk_medium,
             traits: [:with_description, :with_teachable] do
-      sort { 'Kaviar' }
+      sort { "Kaviar" }
       teachable_sort { :valid_talk_with_speaker }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
     end

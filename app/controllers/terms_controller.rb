@@ -1,9 +1,9 @@
 # TermsController
 class TermsController < ApplicationController
   before_action :set_term, except: [:index, :new, :create, :cancel, :set_active]
-  layout 'administration'
+  layout "administration"
   authorize_resource except: [:index, :new, :create, :cancel, :set_active]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= TermAbility.new(current_user)
@@ -14,14 +14,12 @@ class TermsController < ApplicationController
     @terms = Term.order(:year, :season).reverse_order.page params[:page]
   end
 
-  def destroy
-    @term.destroy
-    redirect_to terms_path
-  end
-
   def new
     @term = Term.new
     authorize! :new, @term
+  end
+
+  def edit
   end
 
   def create
@@ -32,23 +30,25 @@ class TermsController < ApplicationController
       redirect_to terms_path
       return
     end
-    @errors = @term.errors[:season].join(', ')
+    @errors = @term.errors[:season].join(", ")
     render :update
-  end
-
-  def edit
   end
 
   def update
     @term.update(term_params)
-    @errors = @term.errors[:season].join(', ') unless @term.valid?
+    @errors = @term.errors[:season].join(", ") unless @term.valid?
+  end
+
+  def destroy
+    @term.destroy
+    redirect_to terms_path
   end
 
   def cancel
     @id = params[:id]
     @term = Term.find_by_id(@id)
     authorize! :cancel, @term
-    @new_action = params[:new] == 'true'
+    @new_action = params[:new] == "true"
   end
 
   def set_active
@@ -71,7 +71,7 @@ class TermsController < ApplicationController
       @term = Term.find_by_id(@id)
       return if @term
 
-      redirect_to terms_path, alert: I18n.t('controllers.no_term')
+      redirect_to terms_path, alert: I18n.t("controllers.no_term")
     end
 
     def term_params

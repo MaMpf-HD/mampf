@@ -8,14 +8,14 @@ FactoryBot.define do
     end
     deadline { Faker::Time.forward(days: 30) }
     deletion_date { Faker::Date.forward(days: 60) }
-    accepted_file_type { '.pdf' }
+    accepted_file_type { ".pdf" }
 
     trait :with_lecture do
       association :lecture, :released_for_all
     end
 
     trait :inactive do
-      deadline { Faker::Time.backward(days: 30)}
+      deadline { Faker::Time.backward(days: 30) }
     end
 
     factory :valid_assignment, traits: [:with_lecture]
