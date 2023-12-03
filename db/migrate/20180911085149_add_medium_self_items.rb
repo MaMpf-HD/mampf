@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddMediumSelfItems < ActiveRecord::Migration[5.2]
   def change
     Medium.all.each do |m|
@@ -5,3 +6,4 @@ class AddMediumSelfItems < ActiveRecord::Migration[5.2]
     end
   end
 end
+# rubocop:enable Rails/

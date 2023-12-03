@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class RemoveTagsFromScripts < ActiveRecord::Migration[5.2]
   def change
     Medium.where(sort: "Script").each do |m|
@@ -5,3 +6,4 @@ class RemoveTagsFromScripts < ActiveRecord::Migration[5.2]
     end
   end
 end
+# rubocop:enable Rails/

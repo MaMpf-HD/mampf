@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class RenameMediaSortResteToNuesse < ActiveRecord::Migration[5.2]
   def change
     Medium.where(sort: "Reste").each do |m|
@@ -5,3 +6,4 @@ class RenameMediaSortResteToNuesse < ActiveRecord::Migration[5.2]
     end
   end
 end
+# rubocop:enable Rails/
