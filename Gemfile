@@ -103,13 +103,6 @@ gem "thredded-markdown_katex",
 gem "trix-rails", require: "trix"
 gem "webpacker", "~> 5.x"
 
-group :development, :docker_development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
-  gem "factory_bot_rails"
-  gem "rspec-rails"
-end
-
 group :development, :docker_development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
   gem "listen", ">= 3.0.5", "< 3.2"
@@ -137,8 +130,14 @@ group :test do
   gem "webdrivers"
 end
 
-group :test, :development, :docker_development do # rubocop:todo Bundler/DuplicatedGroup
+group :test, :development, :docker_development do
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem "factory_bot_rails"
+  gem "rspec-rails"
+
   gem "cypress-on-rails", "~> 1.0"
   gem "simplecov-cobertura"
 end
+
 gem "prometheus_exporter"
