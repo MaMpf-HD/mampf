@@ -1,6 +1,6 @@
 class AddAcceptedToSubmission < ActiveRecord::Migration[6.0]
   def up
-    add_column :submissions, :accepted, :boolean # rubocop:todo Rails/ThreeStateBooleanColumn
+    add_column :submissions, :accepted, :boolean
   end
 
   def down

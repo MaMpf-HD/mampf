@@ -6,15 +6,15 @@ FactoryBot.define do
       total_seconds { Faker::Number.decimal(l_digits: 4, r_digits: 3) }
     end
 
-    initialize_with { new(total_seconds:) }
+    initialize_with { new(total_seconds: total_seconds) }
 
     # call it like this:
     # FactoryBot.build(:time_stamp_by_string, time_string: '1:17:29.745')
     factory :time_stamp_by_string do
       transient do
-        time_string { "0:00:00.000" }
+        time_string { '0:00:00.000' }
       end
-      initialize_with { new(time_string:) }
+      initialize_with { new(time_string: time_string) }
     end
 
     # call it like this:
@@ -26,7 +26,7 @@ FactoryBot.define do
         s { 0 }
         ms { 0 }
       end
-      initialize_with { new(h:, m:, s:, ms:) }
+      initialize_with { new(h: h, m: m, s: s, ms: ms) }
     end
   end
 end

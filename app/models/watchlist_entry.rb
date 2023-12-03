@@ -6,7 +6,5 @@ class WatchlistEntry < ApplicationRecord
 
   validates :medium, presence: true
   validates :watchlist, presence: true
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :medium_id, uniqueness: { scope: :watchlist_id }
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 end

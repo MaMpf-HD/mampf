@@ -1,7 +1,7 @@
 class SearchAbility
   include CanCan::Ability
 
-  def initialize(_user)
+  def initialize(user)
     clear_aliased_actions
 
     can :index, :search

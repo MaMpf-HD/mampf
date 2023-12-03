@@ -5,9 +5,7 @@ class Assignment < ApplicationRecord
 
   before_destroy :check_destructibility, prepend: true
 
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
   validates :deadline, presence: true
   validates :deletion_date, presence: true
   validate :deletion_date_cannot_be_in_the_past
@@ -15,17 +13,17 @@ class Assignment < ApplicationRecord
   def deletion_date_cannot_be_in_the_past
     return unless deletion_date.present? && deletion_date < Time.zone.now.to_date
 
-    errors.add(:deletion_date, I18n.t("activerecord.errors.models." \
-                                      "assignment.attributes.deletion_date." \
-                                      "in_past"))
+    errors.add(:deletion_date, I18n.t('activerecord.errors.models.' \
+                                      'assignment.attributes.deletion_date.' \
+                                      'in_past'))
   end
 
-  scope :active, -> { where("deadline >= ?", Time.now) }
+  scope :active, -> { where('deadline >= ?', Time.now) }
 
-  scope :expired, -> { where("deadline < ?", Time.now) }
+  scope :expired, -> { where('deadline < ?', Time.now) }
 
   def self.accepted_file_types
-    [".pdf", ".tar.gz", ".cc", ".hh", ".m", ".mlx", ".zip"]
+    ['.pdf', '.tar.gz', '.cc', '.hh', '.m', '.mlx', '.zip']
   end
 
   validates :accepted_file_type,
@@ -33,8 +31,8 @@ class Assignment < ApplicationRecord
 
   def submission(user)
     UserSubmissionJoin.where(submission: Submission.where(assignment: self),
-                             user:)
-                      &.first&.submission
+                             user: user)
+                     &.first&.submission
   end
 
   def submitter_ids
@@ -72,11 +70,11 @@ class Assignment < ApplicationRecord
   end
 
   def current?
-    in?(lecture.current_assignments)
+    self.in?(lecture.current_assignments)
   end
 
   def previous?
-    in?(lecture.previous_assignments)
+    self.in?(lecture.previous_assignments)
   end
 
   def previous
@@ -107,36 +105,36 @@ class Assignment < ApplicationRecord
     true
   end
 
-  def has_documents? # rubocop:todo Naming/PredicateName
+  def has_documents?
     return false unless medium
 
     medium.video || medium.manuscript || medium.geogebra ||
       medium.external_reference_link.present? ||
-      (medium.sort == "Quiz" && medium.quiz_graph)
+      (medium.sort == 'Quiz' && medium.quiz_graph)
   end
 
   def self.accepted_mime_types
-    { ".pdf" => ["application/pdf"],
-      ".tar.gz" => ["application/gzip", "application/x-gzip",
-                    "application/x-gunzip", "application/gzipped",
-                    "application/gzip-compressed", "application/x-compressed",
-                    "application/x-compress", "gzip/document",
-                    "application/octet-stream"],
-      ".cc" => ["text/*"],
-      ".hh" => ["text/*"],
-      ".m" => ["text/*"],
-      ".mlx" => ["application/zip", "application/x-zip",
-                 "application/x-zip-compressed", "application/octet-stream",
-                 "application/x-compress", "application/x-compressed",
-                 "multipart/x-zip"],
-      ".zip" => ["application/zip", "application/x-zip",
-                 "application/x-zip-compressed", "application/octet-stream",
-                 "application/x-compress", "application/x-compressed",
-                 "multipart/x-zip"] }
+    { '.pdf' => ['application/pdf'],
+      '.tar.gz' => ['application/gzip', 'application/x-gzip',
+                    'application/x-gunzip', 'application/gzipped',
+                    'application/gzip-compressed', 'application/x-compressed',
+                    'application/x-compress', 'gzip/document',
+                    'application/octet-stream'],
+      '.cc' => ['text/*'],
+      '.hh' => ['text/*'],
+      '.m' => ['text/*'],
+      '.mlx' => ['application/zip', 'application/x-zip',
+                 'application/x-zip-compressed', 'application/octet-stream',
+                 'application/x-compress', 'application/x-compressed',
+                 'multipart/x-zip'],
+      '.zip' => ['application/zip', 'application/x-zip',
+                 'application/x-zip-compressed', 'application/octet-stream',
+                 'application/x-compress', 'application/x-compressed',
+                 'multipart/x-zip'] }
   end
 
   def self.non_inline_file_types
-    [".tar.gz", ".zip", ".mlx"]
+    ['.tar.gz', '.zip', '.mlx']
   end
 
   def accepted_mime_types
@@ -147,12 +145,12 @@ class Assignment < ApplicationRecord
   # is set to .tar.gz
   # see e.g. https://bugs.chromium.org/p/chromium/issues/detail?id=521781
   def accepted_for_file_input
-    return accepted_file_type unless accepted_file_type == ".tar.gz"
+    return accepted_file_type unless accepted_file_type == '.tar.gz'
 
-    ".gz"
+    '.gz'
   end
 
   def localized_deletion_date
-    deletion_date.strftime(I18n.t("date.formats.concise"))
+    deletion_date.strftime(I18n.t('date.formats.concise'))
   end
 end

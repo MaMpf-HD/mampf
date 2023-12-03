@@ -9,6 +9,6 @@ class CreateUserFavoriteLectureJoins < ActiveRecord::Migration[6.0]
   end
 
   def down
-    drop_table :user_favorite_lecture_joins
+  	drop_table :user_favorite_lecture_joins
   end
 end

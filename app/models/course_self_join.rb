@@ -4,7 +4,7 @@
 # is built upon
 class CourseSelfJoin < ApplicationRecord
   belongs_to :course
-  belongs_to :preceding_course, class_name: "Course"
+  belongs_to :preceding_course, class_name: 'Course'
   validates :preceding_course, uniqueness: { scope: :course }
 
   # we do not allow a course to be preceding itself

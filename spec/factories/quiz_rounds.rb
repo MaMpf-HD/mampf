@@ -14,11 +14,11 @@ FactoryBot.define do
 
     initialize_with do
       new({ id: quiz.id,
-            quiz: { crosses:,
-                    progress:,
-                    counter:,
+            quiz: { crosses: crosses,
+                    progress: progress,
+                    counter: counter,
                     answer_shuffle: answer_shuffle.to_s,
-                    session_id: } })
+                    session_id: session_id } })
     end
   end
 

@@ -8,12 +8,12 @@ module SectionsHelper
   end
 
   def section_positions_for_select(section)
-    [[t("basics.at_the_beginning"), 0]] + section.chapter.select_sections -
+    [[t('basics.at_the_beginning'), 0]] + section.chapter.select_sections -
       [[section.to_label, section.position]]
   end
 
   def new_section_position_for_select(chapter)
-    [[t("basics.at_beginning_of_chapter"), 0]] + chapter.select_sections
+    [[t('basics.at_beginning_of_chapter'), 0]] + chapter.select_sections
   end
 
   def section_lessons_for_select(section)

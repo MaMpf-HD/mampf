@@ -1,4 +1,5 @@
 class SmartSortAtom
+
   attr_reader :value
 
   def initialize(value)
@@ -21,23 +22,31 @@ class SmartSortAtom
   def self.parse(string)
     # Loosely based on http://stackoverflow.com/a/4079031
     string.scan(/[^\d\.]+|[\d\.]+/).collect do |atom|
-      atom = if /\d+(\.\d+)?/.match?(atom)
-        atom.to_f
+      if atom.match(/\d+(\.\d+)?/)
+        atom = atom.to_f
       else
-        normalize_string(atom)
+        atom = normalize_string(atom)
       end
       new(atom)
     end
+
   end
+
+  private
 
   def self.normalize_string(string)
     string = ActiveSupport::Inflector.transliterate(string)
-    string.downcase
+    string = string.downcase
+    string
   end
+
 end
 
 String.class_eval do
+
   def to_sort_atoms
     SmartSortAtom.parse(self)
   end
+
 end
+

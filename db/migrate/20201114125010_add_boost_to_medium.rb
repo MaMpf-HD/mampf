@@ -4,6 +4,6 @@ class AddBoostToMedium < ActiveRecord::Migration[6.0]
   end
 
   def down
-    remove_column :media, :boost, :float
+		remove_column :media, :boost, :float
   end
 end

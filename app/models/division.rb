@@ -1,6 +1,6 @@
 class Division < ApplicationRecord
   belongs_to :program
-  has_many :division_course_joins # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :division_course_joins
   has_many :courses, through: :division_course_joins
 
   translates :name

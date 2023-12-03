@@ -2,7 +2,7 @@
 class MainController < ApplicationController
   before_action :check_for_consent
   authorize_resource class: false, only: :start
-  layout "application_no_sidebar"
+  layout 'application_no_sidebar'
 
   def current_ability
     @current_ability ||= MainAbility.new(current_user)
@@ -14,7 +14,7 @@ class MainController < ApplicationController
   end
 
   def error
-    redirect_to :root, alert: I18n.t("controllers.no_page")
+    redirect_to :root, alert: I18n.t('controllers.no_page')
   end
 
   def news
@@ -60,7 +60,7 @@ class MainController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    def get_announcements # rubocop:todo Naming/AccessorMethodName
+    def get_announcements
       @announcements = Announcement.where(on_main_page: true, lecture: nil)
                                    .pluck(:details)
                                    .join('<hr class="my-3" w-100>')

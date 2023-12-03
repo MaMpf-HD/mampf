@@ -7,22 +7,20 @@ class MathiMailer < ApplicationMailer
 
     @name = user.name
     @hash = user.ghost_hash
-    mail(to: user.email, subject: t("mailer.hash_mail_subject"))
+    mail(to: user.email, subject: t('mailer.hash_mail_subject'))
   end
 
   def data_request_email(user)
     @mail = user.email
     @id = user.id
-    # rubocop:todo Rails/I18nLocaleTexts
-    mail(to: DefaultSetting::PROJECT_EMAIL, subject: "Data request")
-    # rubocop:enable Rails/I18nLocaleTexts
+    mail(to: DefaultSetting::PROJECT_EMAIL, subject: 'Data request')
   end
 
   def data_provide_email(user)
     @user = user
     mail(to: user.email,
-         subject: t("mailer.data_provide_mail_subject")) do |format|
-      format.html { render layout: "mailer" }
+         subject: t('mailer.data_provide_mail_subject')) do |format|
+      format.html { render layout: 'mailer' }
     end
   end
 end

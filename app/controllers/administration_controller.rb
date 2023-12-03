@@ -5,7 +5,7 @@ class AdministrationController < ApplicationController
   # tell cancancan there is no model for this controller, but authorize
   # nevertheless
   authorize_resource class: false
-  layout "administration"
+  layout 'administration'
 
   def current_ability
     @current_ability ||= AdministrationAbility.new(current_user)
@@ -26,6 +26,6 @@ class AdministrationController < ApplicationController
   end
 
   def search
-    @tags = params[:sort] == "tag"
+    @tags = params[:sort] == 'tag'
   end
 end

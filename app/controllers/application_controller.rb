@@ -12,7 +12,9 @@ class ApplicationController < ActionController::Base
   etag { current_user.try :id }
 
   def current_user
-    return super unless controller_name == "administration" && action_name == "index"
+    unless controller_name == 'administration' && action_name == 'index'
+      return super
+    end
 
     @current_user ||= super.tap do |user|
       ::ActiveRecord::Associations::Preloader.new(records: [user],
@@ -20,20 +22,20 @@ class ApplicationController < ActionController::Base
                                                     [:lectures,
                                                      :edited_media,
                                                      :clickers,
-                                                     { edited_courses:
+                                                     edited_courses:
                                                        [:editors,
-                                                        { lectures: [:term,
-                                                                     :teacher] }],
-                                                       edited_lectures:
+                                                        lectures: [:term,
+                                                                   :teacher]],
+                                                     edited_lectures:
                                                        [:course,
                                                         :term,
                                                         :teacher],
-                                                       given_lectures:
+                                                     given_lectures:
                                                       [:course,
                                                        :term,
                                                        :teacher],
-                                                       notifications:
-                                                       [:notifiable] }]).call
+                                                     notifications:
+                                                       [:notifiable]]).call
     end
   end
 
@@ -44,7 +46,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do
     redirect_to main_app.root_url,
-                alert: I18n.t("controllers.session_expired")
+                alert: I18n.t('controllers.session_expired')
   end
 
   # determine where to send the user after login
@@ -94,18 +96,18 @@ class ApplicationController < ActionController::Base
     def set_locale
       I18n.locale = current_user.try(:locale) || locale_param ||
                     cookie_locale_param || I18n.default_locale
-      return if user_signed_in?
-
-      cookies[:locale] = I18n.locale
+      unless user_signed_in?
+        cookies[:locale] = I18n.locale
+      end
     end
 
     def store_interaction
-      return if controller_name.in?(["sessions", "administration", "users",
-                                     "events", "interactions", "profile",
-                                     "clickers", "clicker_votes", "registrations"])
-      return if controller_name == "main" && action_name == "home"
-      return if controller_name == "tags" && action_name.in?(["fill_tag_select",
-                                                              "fill_course_tags"])
+      return if controller_name.in?(['sessions', 'administration', 'users',
+                                     'events', 'interactions', 'profile',
+                                     'clickers', 'clicker_votes', 'registrations'])
+      return if controller_name == 'main' && action_name == 'home'
+      return if controller_name == 'tags' && action_name.in?(['fill_tag_select',
+                                                              'fill_course_tags'])
 
       study_participant = current_user.anonymized_id if current_user.study_participant
       # as of Rack 2.0.8, the session_id is wrapped in a class of its own
@@ -113,7 +115,7 @@ class ApplicationController < ActionController::Base
       # see https://github.com/rack/rack/issues/1433
       InteractionSaver.perform_async(request.session_options[:id].public_id,
                                      request.original_fullpath,
-                                     request.referer,
+                                     request.referrer,
                                      study_participant)
     end
 

@@ -3,23 +3,21 @@ class Chapter < ApplicationRecord
   belongs_to :lecture, touch: true
   # the chapters of a lecture form an ordered list
   acts_as_list scope: :lecture
-  # rubocop:todo Rails/InverseOf
   has_many :sections, -> { order(position: :asc) }, dependent: :destroy
-  # rubocop:enable Rails/InverseOf
   validates :title, presence: true
-  before_destroy :touch_sections
-  before_destroy :touch_chapters
   after_save :touch_sections
   after_save :touch_chapters
+  before_destroy :touch_sections
+  before_destroy :touch_chapters
 
   def to_label
     unless hidden
       return I18n.t(lecture.chapter_name,
                     number: displayed_number,
-                    title:)
+                    title: title)
     end
     I18n.t("hidden_#{lecture.chapter_name}", number: displayed_number,
-                                             title:)
+                                             title: title)
   end
 
   # Returns the number of the chapter. Unless the user explicitly specified
@@ -67,20 +65,18 @@ class Chapter < ApplicationRecord
   end
 
   def cache_key
-    super + "-" + I18n.locale.to_s
+    super + '-' + I18n.locale.to_s
   end
 
   def touch_chapters
-    lecture.chapters.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+    lecture.chapters.update_all(updated_at: Time.now)
   end
 
   def touch_sections
     unless lecture.absolute_numbering
-      sections.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      sections.update_all(updated_at: Time.now)
       return
     end
-    # rubocop:todo Rails/SkipsModelValidations
     Section.where(chapter: lecture.chapters).update_all(updated_at: Time.now)
-    # rubocop:enable Rails/SkipsModelValidations
   end
 end

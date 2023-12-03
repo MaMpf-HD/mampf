@@ -1,19 +1,23 @@
 class Answer < ApplicationRecord
   belongs_to :question, touch: true
-  after_create :update_quizzes
   before_destroy :question_not_orphaned?
   after_destroy :update_quizzes
+  after_create :update_quizzes
   after_save :touch_medium
 
   def conditional_explanation(correct)
-    return explanation unless /\(korrekt:.*\):\(inkorrekt:.*\)/.match?(explanation)
-    return explanation.string_between_markers(":(inkorrekt:", ")") unless correct
+    unless /\(korrekt:.*\):\(inkorrekt:.*\)/.match?(explanation)
+      return explanation
+    end
+    unless correct
+      return explanation.string_between_markers(':(inkorrekt:', ')')
+    end
 
-    explanation.string_between_markers("(korrekt:", "):")
+    explanation.string_between_markers('(korrekt:', '):')
   end
 
   def duplicate(new_question)
-    Answer.create(text:, value:, explanation:,
+    Answer.create(text: text, value: value, explanation: explanation,
                   question: new_question)
   end
 
@@ -36,7 +40,7 @@ class Answer < ApplicationRecord
         vertices.each do |v|
           quiz_graph.reset_vertex_answers_change(v)
         end
-        quiz.update(quiz_graph:)
+        quiz.update(quiz_graph: quiz_graph)
       end
     end
 

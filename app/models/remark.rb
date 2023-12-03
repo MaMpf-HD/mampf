@@ -14,17 +14,17 @@ class Remark < Medium
   end
 
   def self.create_prefilled(label, teachable, editors)
-    remark = Remark.new(sort: "Remark",
+    remark = Remark.new(sort: 'Remark',
                         description: label,
-                        teachable:,
-                        editors:,
-                        text: I18n.t("admin.remark.initial_text"))
+                        teachable: teachable,
+                        editors: editors,
+                        text: I18n.t('admin.remark.initial_text'))
     remark.save
     remark
   end
 
   def duplicate
-    copy = dup
+    copy = self.dup
     copy.video_data = nil
     copy.manuscript_data = nil
     copy.screenshot_data = nil
@@ -32,7 +32,7 @@ class Remark < Medium
     copy.parent_id = id
     copy.save
     copy.update(description: copy.description +
-                               I18n.t("admin.remark.copy_marker") + copy.id.to_s)
+                               I18n.t('admin.remark.copy_marker') + copy.id.to_s)
     copy
   end
 
@@ -44,10 +44,10 @@ class Remark < Medium
     quiz_ids.each do |q|
       quiz = Quiz.find(q)
       vertices = quiz.vertices
-                     .select { |_k, v| v == { type: "Remark", id: } }.keys
+                     .select { |_k, v| v == { type: 'Remark', id: id } }.keys
       vertices.each do |v|
         quiz.update(quiz_graph: quiz.quiz_graph.destroy_vertex(v),
-                    released: "locked")
+                    released: 'locked')
       end
     end
   end

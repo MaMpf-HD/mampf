@@ -3,7 +3,7 @@ class AddPositionToChapter < ActiveRecord::Migration[5.2]
     add_column :chapters, :position, :integer
     Lecture.all.each do |lecture|
       lecture.chapters.order(:number).each.with_index(1) do |chapter, index|
-        chapter.update_column :position, index # rubocop:todo Rails/SkipsModelValidations
+        chapter.update_column :position, index
       end
     end
   end

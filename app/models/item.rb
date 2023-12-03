@@ -34,13 +34,13 @@ class Item < ApplicationRecord
   #                   (these can be generated using the \hypertarget command of
   #                     the hyperref package of LaTex)
   # self - corresponds to items that are just wrappers around a medium
-  validates :sort, inclusion: { in: ["remark", "theorem", "lemma", "definition",
-                                     "annotation", "example", "section",
-                                     "algorithm", "label", "corollary",
-                                     "link", "pdf_destination", "self",
-                                     "proposition", "Lemma", "Theorem",
-                                     "subsection", "Corollary", "figure",
-                                     "chapter", "exercise", "equation"] }
+  validates :sort, inclusion: { in: ['remark', 'theorem', 'lemma', 'definition',
+                                     'annotation', 'example', 'section',
+                                     'algorithm', 'label', 'corollary',
+                                     'link', 'pdf_destination', 'self',
+                                     'proposition', 'Lemma', 'Theorem',
+                                     'subsection', 'Corollary', 'figure',
+                                     'chapter', 'exercise', 'equation'] }
   validates :link, http_url: true, if: :proper_link?
   validates :description, presence: true, if: :link?
   validate :valid_start_time
@@ -48,10 +48,10 @@ class Item < ApplicationRecord
   validate :no_duplicate_start_time
   validate :nonempty_link_or_explanation
 
-  before_destroy :touch_medium
   # media are cached in several places
   # items are touched in order to find out whether cache is out of date
   after_save :touch_medium
+  before_destroy :touch_medium
 
   scope :unquarantined, -> { where(quarantine: [nil, false]) }
   scope :content, -> { where(sort: Item.content_sorts) }
@@ -70,7 +70,7 @@ class Item < ApplicationRecord
   # result might look like this:
   # "01:14:40.500 --> 01:19:42.249\n"
   def vtt_time_span
-    start_time.vtt_string + " --> " + end_time.vtt_string + "\n"
+    start_time.vtt_string + ' --> ' + end_time.vtt_string + "\n"
   end
 
   # returns the description of the toc entry corresponding to this item
@@ -78,8 +78,8 @@ class Item < ApplicationRecord
   # result might look like this:
   # "zu freien Moduln"
   def vtt_text
-    return "" if sort == "pdf_destination"
-    return description if sort == "link"
+    return '' if sort == 'pdf_destination'
+    return description if sort == 'link'
 
     short_description
   end
@@ -91,7 +91,7 @@ class Item < ApplicationRecord
   def vtt_reference
     return short_description + "\n\n" unless short_reference.present?
 
-    short_reference + ": " + short_description + "\n\n"
+    short_reference + ': ' + short_description + "\n\n"
   end
 
   # returns a reference to the item as it is used in .vtt files,
@@ -99,10 +99,10 @@ class Item < ApplicationRecord
   # result might look like this:
   # "Verweis auf LA 2 SS 17, Bem. 29.13:"
   def vtt_meta_reference(referring_medium)
-    return I18n.t("item.external_reference") if sort == "link"
+    return I18n.t('item.external_reference') if sort == 'link'
 
     ref = local?(referring_medium) ? short_reference : long_reference
-    I18n.t("item.internal_reference", ref:)
+    I18n.t('item.internal_reference', ref: ref)
   end
 
   # creates a reference as it would look like form *within* the given context
@@ -118,18 +118,18 @@ class Item < ApplicationRecord
   # result might look like this:
   #  "LA 2 SS 17, Bem. 29.13"
   def long_reference
-    return short_reference if sort.in?(["self", "link"])
+    return short_reference if sort.in?(['self', 'link'])
     return short_ref_with_teachable if section.present?
     return medium.title_for_viewers unless short_reference.present?
 
-    medium.title_for_viewers + ", " + short_reference
+    medium.title_for_viewers + ', ' + short_reference
   end
 
   # returns just the description, unless sort is section or self
   # result might look like this:   "zu freien Moduln"
   def short_description
-    return section.title if sort == "section" && section.present?
-    return medium.title_for_viewers if sort == "self"
+    return section.title if sort == 'section' && section.present?
+    return medium.title_for_viewers if sort == 'self'
 
     description.to_s
   end
@@ -141,10 +141,10 @@ class Item < ApplicationRecord
   # "KaViaR, Sitzung 27 vom 17.8.2017"  (self)
   # "extern Spiegel" (link)
   def local_reference
-    unless sort.in?(["self", "link", "pdf_destination"])
-      return short_ref_with_description unless medium&.sort == "Script"
+    unless sort.in?(['self', 'link', 'pdf_destination'])
+      return short_ref_with_description unless medium&.sort == 'Script'
 
-      return "Skript, " + short_ref_with_description
+      return 'Skript, ' + short_ref_with_description
     end
     local_non_math_reference
   end
@@ -153,11 +153,11 @@ class Item < ApplicationRecord
   # Result might look like this:
   # "SS 17, Bem. 29.13 zu freien Moduln"
   def title_within_course
-    return "" unless medium.present? && medium.proper?
-    return local_reference if medium.teachable_type == "Course"
+    return '' unless medium.present? && medium.proper?
+    return local_reference if medium.teachable_type == 'Course'
     return local_reference unless medium.teachable.media_scope.term
 
-    medium.teachable.media_scope.term.to_label_short + ", " + local_reference
+    medium.teachable.media_scope.term.to_label_short + ', ' + local_reference
   end
 
   # returns the title of the item *within* a given lecture
@@ -180,21 +180,21 @@ class Item < ApplicationRecord
 
   # background color of different item sorts within thyme editor
   def background
-    return "#70db70;" if ["remark", "theorem", "lemma", "corollary",
-                          "algorithm", "Theorem", "Corollary", "Lemma",
-                          "proposition"].include?(sort)
-    return "#75d7f0;" if ["definition", "annotation", "example",
-                          "figure", "exercise", "equation"].include?(sort)
-    return "lightgray;" if sort == "link" || sort == "self"
+    return '#70db70;' if ['remark', 'theorem', 'lemma', 'corollary',
+                          'algorithm', 'Theorem', 'Corollary', 'Lemma',
+                          'proposition'].include?(sort)
+    return '#75d7f0;' if ['definition', 'annotation', 'example',
+                          'figure', 'exercise', 'equation'].include?(sort)
+    return 'lightgray;' if sort == 'link' || sort == 'self'
 
-    ""
+    ''
   end
 
   # special background for sections
   def section_background
-    return "beige;" if sort == "section"
+    return 'beige;' if sort == 'section'
 
-    "aliceblue;"
+    'aliceblue;'
   end
 
   # if the associated medium contains a video, returns a link to the play
@@ -202,9 +202,9 @@ class Item < ApplicationRecord
   # result might look like this:
   # "/media/22/play?time=4480.5"
   def video_link
-    return if sort == "pdf_destination"
+    return if sort == 'pdf_destination'
     return unless video?
-    return video_link_untimed if sort == "self"
+    return video_link_untimed if sort == 'self'
 
     video_link_timed
   end
@@ -226,7 +226,7 @@ class Item < ApplicationRecord
   def quiz_link
     return unless quiz?
 
-    quiz_link_generic
+    return quiz_link_generic
   end
 
   # if the associated medium contains an external link, it is returned
@@ -237,10 +237,10 @@ class Item < ApplicationRecord
   end
 
   def self.available_sorts
-    ["definition", "remark", "lemma", "theorem", "example", "annotation",
-     "algorithm", "corollary", "section", "label", "subsection", "Theorem",
-     "proposition", "Lemma", "Corollary", "figure", "chapter", "exercise",
-     "equation"]
+    ['definition', 'remark', 'lemma', 'theorem', 'example', 'annotation',
+     'algorithm', 'corollary', 'section', 'label', 'subsection', 'Theorem',
+     'proposition', 'Lemma', 'Corollary', 'figure', 'chapter', 'exercise',
+     'equation']
   end
 
   def self.localized_sorts
@@ -252,17 +252,17 @@ class Item < ApplicationRecord
   end
 
   def self.content_sorts
-    ["remark", "theorem", "lemma", "definition", "annotation", "example",
-     "algorithm", "label", "corollary", "proposition", "Lemma", "Theorem",
-     "subsection", "Corollary", "equation", "exercise", "figure", "self"]
+    ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
+     'algorithm', 'label', 'corollary', 'proposition', 'Lemma', 'Theorem',
+     'subsection', 'Corollary', 'equation', 'exercise', 'figure', 'self']
   end
 
   def self.toc_sorts
-    ["chapter", "section"]
+    ['chapter', 'section']
   end
 
   def self.external_sorts
-    ["link", "pdf_destination"]
+    ['link', 'pdf_destination']
   end
 
   def self.internal_sort(sort)
@@ -278,7 +278,7 @@ class Item < ApplicationRecord
   end
 
   def quiz?
-    medium.present? && medium.type == "Quiz" && medium.quiz_graph.present?
+    medium.present? && medium.type == 'Quiz' && medium.quiz_graph.present?
   end
 
   def medium_link?
@@ -286,7 +286,7 @@ class Item < ApplicationRecord
   end
 
   def link?
-    sort == "link"
+    sort == 'link'
   end
 
   def referencing_media
@@ -301,17 +301,17 @@ class Item < ApplicationRecord
   private
 
     def math_items
-      ["remark", "theorem", "lemma", "definition", "annotation", "example",
-       "corollary", "algorithm", "Theorem", "proposition", "Lemma", "Corollary",
-       "figure", "subsection", "exercise", "equation"]
+      ['remark', 'theorem', 'lemma', 'definition', 'annotation', 'example',
+       'corollary', 'algorithm', 'Theorem', 'proposition', 'Lemma', 'Corollary',
+       'figure', 'subsection', 'exercise', 'equation']
     end
 
     def other_items
-      ["section", "self", "link", "label", "pdf_destination", "chapter"]
+      ['section', 'self', 'link', 'label', 'pdf_destination', 'chapter']
     end
 
     def proper_link?
-      sort == "link" && link.present?
+      sort == 'link' && link.present?
     end
 
     def next_item
@@ -331,72 +331,78 @@ class Item < ApplicationRecord
     end
 
     def math_reference
-      sort_long + " " + math_item_number
+      sort_long + ' ' + math_item_number
     end
 
     def special_reference
-      return "Medium" if sort == "self"
-      return "" if sort == "pdf_destination"
+      return 'Medium' if sort == 'self'
+      return '' if sort == 'pdf_destination'
 
-      "extern"
+      'extern'
     end
 
     def section_reference
       return section.displayed_number.to_s if section.present?
-      return "§" + ref_number if ref_number.present?
+      return '§' + ref_number if ref_number.present?
 
-      ""
+      ''
     end
 
     def chapter_reference
-      chapter_short = I18n.t("admin.item.chapter_short",
-                             locale:)
+      chapter_short = I18n.t('admin.item.chapter_short',
+                             locale: locale)
       return "#{chapter_short} #{ref_number}" if ref_number.present?
 
       chapter_short
     end
 
     def toc_reference
-      return section_reference if sort == "section"
-      return chapter_reference if sort == "chapter"
+      return section_reference if sort == 'section'
+      return chapter_reference if sort == 'chapter'
 
-      if sort == "label"
-        return "" if description.present?
+      if sort == 'label'
+        return '' if description.present?
 
-        return "destination: " + pdf_destination.to_s
+        return 'destination: ' + pdf_destination.to_s
       end
       special_reference
     end
 
     def non_math_reference
-      return medium.title_for_viewers if sort == "self"
-      return medium.title_for_viewers + " (pdf) # " + description if sort == "pdf_destination"
+      return medium.title_for_viewers if sort == 'self'
+      if sort == 'pdf_destination'
+        return medium.title_for_viewers + ' (pdf) # ' + description
+      end
 
-      "extern " + description.to_s if sort == "link"
+      'extern ' + description.to_s if sort == 'link'
     end
 
     def local_non_math_reference
-      return medium.local_title_for_viewers if sort == "self"
-      return medium.local_title_for_viewers + " (pdf) # " + description if sort == "pdf_destination"
+      return medium.local_title_for_viewers if sort == 'self'
+      if sort == 'pdf_destination'
+        return medium.local_title_for_viewers + ' (pdf) # ' + description
+      end
 
-      "extern " + description.to_s if sort == "link"
+      'extern ' + description.to_s if sort == 'link'
     end
 
     def short_ref_with_teachable
-      return medium.teachable.lecture.title_for_viewers unless short_reference.present?
+      unless short_reference.present?
+        return medium.teachable.lecture.title_for_viewers
+      end
 
-      medium.teachable.lecture.title_for_viewers + ", " + short_reference
+      medium.teachable.lecture.title_for_viewers + ', ' + short_reference
     end
 
     def short_ref_with_description
-      return short_reference + " " + description.to_s unless sort == "section"
+      return short_reference + ' ' + description.to_s unless sort == 'section'
 
       short_ref_for_sections
     end
 
     def short_ref_for_sections
-      return short_reference + " " + description if description.present?
-      return short_reference + " " + section.title if section.present?
+      return short_reference + ' ' + description if description.present?
+      return short_reference + ' ' + section.title if section.present?
 
       short_reference
     end
@@ -423,7 +429,7 @@ class Item < ApplicationRecord
 
     def manuscript_link_page
       Rails.application.routes.url_helpers
-           .display_medium_path(medium.id, page:)
+           .display_medium_path(medium.id, page: page)
     end
 
     def quiz_link_generic
@@ -441,13 +447,13 @@ class Item < ApplicationRecord
     end
 
     def start_time_not_required
-      medium.nil? || medium.sort == "Script" || sort == "self" ||
-        sort == "pdf_destination" || !start_time&.valid? || !medium.video
+      medium.nil? || medium.sort == 'Script' || sort == 'self' ||
+        sort == 'pdf_destination' || !start_time&.valid? || !medium.video
     end
 
     def start_time_not_too_late
       return true if start_time_not_required
-      return true if start_time.total_seconds <= medium.video.metadata["duration"]
+      return true if start_time.total_seconds <= medium.video.metadata['duration']
 
       errors.add(:start_time, :too_late)
       false
@@ -471,7 +477,7 @@ class Item < ApplicationRecord
     end
 
     def nonempty_link_or_explanation
-      return true if sort != "link"
+      return true if sort != 'link'
       return true if link.present?
       return true if explanation.present?
 
@@ -483,7 +489,7 @@ class Item < ApplicationRecord
     def touch_medium
       return unless medium.present? && medium.persisted?
 
-      medium.touch # rubocop:todo Rails/SkipsModelValidations
+      medium.touch
     end
 
     # simulates the after_destroy callback for item_self_joins

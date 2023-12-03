@@ -19,30 +19,17 @@ class Commontator::CommentsController < Commontator::ApplicationController
     @comment = Commontator::Comment.new(thread: @commontator_thread,
                                         creator: @commontator_user)
     parent_id = params.dig(:comment, :parent_id)
-    if parent_id.present?
+    unless parent_id.blank?
       parent = Commontator::Comment.find parent_id
       @comment.parent = parent
-      if [:q,
-          :b].include? @commontator_thread.config.comment_reply_style
-        @comment.body = "<blockquote><span class=\"author\">#{
-            Commontator.commontator_name(parent.creator)
-          }</span>\n#{
-            parent.body
-          }\n</blockquote>\n"
-      end
+      @comment.body = "<blockquote><span class=\"author\">#{
+          Commontator.commontator_name(parent.creator)
+        }</span>\n#{
+          parent.body
+        }\n</blockquote>\n" if [:q,
+                                :b].include? @commontator_thread.config.comment_reply_style
     end
     security_transgression_unless @comment.can_be_created_by?(@commontator_user)
-
-    respond_to do |format|
-      format.html { redirect_to commontable_url }
-      format.js
-    end
-  end
-
-  # GET /comments/1/edit
-  def edit
-    @comment.editor = @commontator_user
-    security_transgression_unless @comment.can_be_edited_by?(@commontator_user)
 
     respond_to do |format|
       format.html { redirect_to commontable_url }
@@ -58,14 +45,14 @@ class Commontator::CommentsController < Commontator::ApplicationController
       )
     )
     parent_id = params.dig(:comment, :parent_id)
-    @comment.parent = Commontator::Comment.find(parent_id) if parent_id.present?
+    @comment.parent = Commontator::Comment.find(parent_id) unless parent_id.blank?
     security_transgression_unless @comment.can_be_created_by?(@commontator_user)
 
     respond_to do |format|
       if params[:cancel].blank?
         if @comment.save
           sub = @commontator_thread.config.thread_subscription.to_sym
-          @commontator_thread.subscribe(@commontator_user) if [:a, :b].include?(sub)
+          @commontator_thread.subscribe(@commontator_user) if sub == :a || sub == :b
           subscribe_mentioned if @commontator_thread.config.mentions_enabled
           Commontator::Subscription.comment_created(@comment)
           # The next line constitutes a customization of the original controller
@@ -84,6 +71,17 @@ class Commontator::CommentsController < Commontator::ApplicationController
       end
 
       format.html { redirect_to commontable_url }
+    end
+  end
+
+  # GET /comments/1/edit
+  def edit
+    @comment.editor = @commontator_user
+    security_transgression_unless @comment.can_be_edited_by?(@commontator_user)
+
+    respond_to do |format|
+      format.html { redirect_to commontable_url }
+      format.js
     end
   end
 
@@ -116,10 +114,9 @@ class Commontator::CommentsController < Commontator::ApplicationController
   def delete
     security_transgression_unless @comment.can_be_deleted_by?(@commontator_user)
 
-    unless @comment.delete_by(@commontator_user)
-      @comment.errors.add(:base,
-                          t("commontator.comment.errors.already_deleted"))
-    end
+    @comment.errors.add(:base,
+                        t('commontator.comment.errors.already_deleted')) \
+      unless @comment.delete_by(@commontator_user)
 
     respond_to do |format|
       format.html { redirect_to commontable_url }
@@ -131,7 +128,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
   def undelete
     security_transgression_unless @comment.can_be_deleted_by?(@commontator_user)
 
-    @comment.errors.add(:base, t("commontator.comment.errors.not_deleted")) \
+    @comment.errors.add(:base, t('commontator.comment.errors.not_deleted')) \
       unless @comment.undelete_by(@commontator_user)
 
     respond_to do |format|
@@ -186,7 +183,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
 
     def subscribe_mentioned
       Commontator.commontator_mentions(@commontator_user, @commontator_thread,
-                                       "")
+                                       '')
                  .where(id: params[:mentioned_ids])
                  .each do |user|
         @commontator_thread.subscribe(user)
@@ -198,12 +195,12 @@ class Commontator::CommentsController < Commontator::ApplicationController
     # It constitues a customization
     def update_unread_status
       medium = @commontator_thread.commontable
-      return unless medium.released.in?(["all", "users", "subscribers"])
+      return unless medium.released.in?(['all', 'users', 'subscribers'])
 
       relevant_users = medium.teachable.media_scope.users
       relevant_users.where.not(id: current_user.id)
                     .where(unread_comments: false)
-                    .update_all(unread_comments: true) # rubocop:todo Rails/SkipsModelValidations
+                    .update_all(unread_comments: true)
 
       # make sure that the thread associated to this comment is marked as read
       # by the comment creator (unless some other user posted a comment in it

@@ -7,11 +7,11 @@ class ZipUploader < Shrine
   plugin :default_storage, cache: :submission_cache, store: :submission_store
 
   Attacher.validate do
-    validate_mime_type_inclusion ["application/zip"],
+    validate_mime_type_inclusion %w[application/zip],
                                  message:
-                                    I18n.t("package.no_zip")
+                                    I18n.t('package.no_zip')
     # maximum size of 1 GB
     validate_max_size 1024 * 1024 * 1024,
-                      message: I18n.t("package.too_big")
+                      message: I18n.t('package.too_big')
   end
 end

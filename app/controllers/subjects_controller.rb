@@ -15,15 +15,15 @@ class SubjectsController < ApplicationController
   def edit
   end
 
+  def update
+    @subject.update(subject_params)
+    redirect_to classification_path
+  end
+
   def create
     @subject = Subject.new(subject_params)
     authorize! :create, @subject
     @subject.save
-    redirect_to classification_path
-  end
-
-  def update
-    @subject.update(subject_params)
     redirect_to classification_path
   end
 
@@ -38,7 +38,7 @@ class SubjectsController < ApplicationController
       @subject = Subject.find_by_id(params[:id])
       return if @subject.present?
 
-      redirect_to root_path, alert: I18n.t("controllers.no_answer")
+      redirect_to root_path, alert: I18n.t('controllers.no_answer')
     end
 
     def subject_params

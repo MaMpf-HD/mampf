@@ -5,7 +5,7 @@ class Quiz < Medium
                                        default_table: {}, hide_solution: []))
   end
 
-  def self.create_prefilled(_label)
+  def self.create_prefilled(label)
     Quiz.create(level: 1,
                 quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
                                           default_table: {}, hide_solution: []))
@@ -21,7 +21,7 @@ class Quiz < Medium
     vertices.keys.each do |v|
       quizzable = quizzable(v)
       next if quizzable.published?
-      next unless quizzable.teachable.published?
+      next if !quizzable.teachable.published?
       next unless user.in?(quizzable.editors_with_inheritance) || user.admin
 
       quizzable.update(released: release_state, released_at: Time.now)
@@ -33,7 +33,7 @@ class Quiz < Medium
   end
 
   def quizzables_free?
-    quizzables.where(released: "all").count == quizzables.count
+    quizzables.where(released: 'all').count == quizzables.count
   end
 
   def quizzables_visible_for_user?(user)
@@ -41,7 +41,7 @@ class Quiz < Medium
   end
 
   def next_vertex(progress, input = {})
-    return default_table[progress] if vertices[progress][:type] == "Remark"
+    return default_table[progress] if vertices[progress][:type] == 'Remark'
 
     target_vertex(progress, input)
   end
@@ -78,21 +78,21 @@ class Quiz < Medium
   def question_ids
     return [] unless quiz_graph && quiz_graph.vertices.present?
 
-    quiz_graph.vertices.select { |_k, v| v[:type] == "Question" }
+    quiz_graph.vertices.select { |_k, v| v[:type] == 'Question' }
               .values.map { |v| v[:id] }.uniq
   end
 
   def remark_ids
     return [] unless quiz_graph && quiz_graph.vertices.present?
 
-    quiz_graph.vertices.select { |_k, v| v[:type] == "Remark" }.values
+    quiz_graph.vertices.select { |_k, v| v[:type] == 'Remark' }.values
               .map { |v| v[:id] }.uniq
   end
 
   def crosses_to_input(vertex_id, crosses)
     vertex = vertices[vertex_id]
     input = {}
-    if vertex[:type] == "Question"
+    if vertex[:type] == 'Question'
       question = Question.find(vertex[:id])
       crosses = crosses.map(&:to_i)
       input = question.answers.map { |a| [a.id, crosses.include?(a.id)] }.to_h
@@ -100,7 +100,9 @@ class Quiz < Medium
     input
   end
 
-  delegate :quizzable, to: :quiz_graph
+  def quizzable(vertex_id)
+    quiz_graph.quizzable(vertex_id)
+  end
 
   def preselected_branch(vertex_id, crosses, fallback)
     successor = next_vertex(vertex_id, crosses)
@@ -114,7 +116,7 @@ class Quiz < Medium
   end
 
   def questions
-    ids = quiz_graph&.vertices&.values&.select { |v| v[:type] == "Question" }
+    ids = quiz_graph&.vertices&.values&.select { |v| v[:type] == 'Question' }
                     &.map { |v| v[:id] }
     Question.where(id: ids)
   end
@@ -135,6 +137,6 @@ class Quiz < Medium
 
     def target_vertex(progress, input)
       edges.select { |e, t| e[0] == progress && t.include?(input) }&.keys
-           &.first&.second || default_table[progress]
+          &.first&.second || default_table[progress]
     end
 end

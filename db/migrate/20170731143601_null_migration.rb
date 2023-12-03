@@ -28,8 +28,7 @@ class NullMigration < ActiveRecord::Migration[5.1]
       t.string "heading"
       t.text "link"
       t.string "question_list"
-      t.index ["teachable_type", "teachable_id"],
-              name: "index_assets_on_teachable_type_and_teachable_id"
+      t.index ["teachable_type", "teachable_id"], name: "index_assets_on_teachable_type_and_teachable_id"
     end
 
     create_table "chapters", force: :cascade do |t|
@@ -46,8 +45,7 @@ class NullMigration < ActiveRecord::Migration[5.1]
       t.integer "linked_asset_id"
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
-      t.index ["asset_id", "linked_asset_id"],
-              name: "index_connections_on_asset_id_and_linked_asset_id", unique: true
+      t.index ["asset_id", "linked_asset_id"], name: "index_connections_on_asset_id_and_linked_asset_id", unique: true
       t.index ["asset_id"], name: "index_connections_on_asset_id"
       t.index ["linked_asset_id"], name: "index_connections_on_linked_asset_id"
     end
@@ -151,8 +149,7 @@ class NullMigration < ActiveRecord::Migration[5.1]
       t.datetime "created_at", null: false
       t.datetime "updated_at", null: false
       t.index ["related_tag_id"], name: "index_relations_on_related_tag_id"
-      t.index ["tag_id", "related_tag_id"], name: "index_relations_on_tag_id_and_related_tag_id",
-                                            unique: true
+      t.index ["tag_id", "related_tag_id"], name: "index_relations_on_tag_id_and_related_tag_id", unique: true
       t.index ["tag_id"], name: "index_relations_on_tag_id"
     end
 
@@ -197,6 +194,6 @@ class NullMigration < ActiveRecord::Migration[5.1]
   end
 
   def down
-    raise ActiveRecord::IrreversibleMigration
+   raise ActiveRecord::IrreversibleMigration
   end
 end

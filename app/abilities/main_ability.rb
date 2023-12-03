@@ -1,7 +1,7 @@
 class MainAbility
   include CanCan::Ability
 
-  def initialize(_user)
+  def initialize(user)
     can :start, :main
   end
 end

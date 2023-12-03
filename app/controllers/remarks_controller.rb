@@ -3,7 +3,7 @@ class RemarksController < MediaController
   before_action :set_remark, except: :reassign
   before_action :set_quizzes, only: [:reassign]
   authorize_resource except: :reassign
-  layout "administration"
+  layout 'administration'
 
   def current_ability
     @current_ability ||= RemarkAbility.new(current_user)
@@ -27,13 +27,13 @@ class RemarksController < MediaController
       Quiz.find_by_id(q).replace_reference!(remark_old, @remark)
     end
     I18n.locale = @remark.locale_with_inheritance
-    if remark_params[:type] == "edit"
+    if remark_params[:type] == 'edit'
       redirect_to edit_remark_path(@remark)
       return
     end
     @quizzable = @remark
-    @mode = "reassigned"
-    render "media/fill_quizzable_area"
+    @mode = 'reassigned'
+    render 'media/fill_quizzable_area'
   end
 
   def cancel_remark_basics
@@ -45,12 +45,12 @@ class RemarksController < MediaController
       @remark = Remark.find_by_id(params[:id])
       return if @remark.present?
 
-      redirect_to remarks_path, alert: I18n.t("controllers.no_remark")
+      redirect_to remarks_path, alert: I18n.t('controllers.no_remark')
     end
 
     def set_quizzes
-      @quizzes = params[:remark].select { |_k, v| v == "1" }.keys
-                                .map { |k| k.remove("quiz-").to_i }
+      @quizzes = params[:remark].select { |_k, v| v == '1' }.keys
+                                .map { |k| k.remove('quiz-').to_i }
     end
 
     def remark_params

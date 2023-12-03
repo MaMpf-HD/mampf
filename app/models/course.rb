@@ -14,9 +14,7 @@ class Course < ApplicationRecord
            after_remove: :touch_tag,
            after_add: :touch_tag
 
-  # rubocop:todo Rails/HasManyOrHasOneDependent
-  has_many :media, -> { order(position: :asc) }, as: :teachable # rubocop:todo Rails/InverseOf
-  # rubocop:enable Rails/HasManyOrHasOneDependent
+  has_many :media, -> { order(position: :asc) }, as: :teachable
 
   # in a course, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
@@ -37,12 +35,8 @@ class Course < ApplicationRecord
   has_many :division_course_joins, dependent: :destroy
   has_many :divisions, through: :division_course_joins
 
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, presence: true, uniqueness: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :short_title, presence: true, uniqueness: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   # some information about media and lectures are cached
   # to find out whether the cache is out of date, always touch'em after saving
@@ -85,7 +79,7 @@ class Course < ApplicationRecord
   end
 
   def selector_value
-    "Course-" + id.to_s
+    'Course-' + id.to_s
   end
 
   def to_label
@@ -129,8 +123,8 @@ class Course < ApplicationRecord
     return lectures.published unless user.edited_lectures.any? || user.teacher?
 
     lectures.left_outer_joins(:editable_user_joins)
-            .where("released IS NOT NULL OR editable_user_joins.user_id = ? " \
-                   "OR teacher_id = ?", user.id, user.id).distinct
+            .where('released IS NOT NULL OR editable_user_joins.user_id = ?'\
+                   ' OR teacher_id = ?', user.id, user.id).distinct
   end
 
   def restricted?
@@ -273,31 +267,31 @@ class Course < ApplicationRecord
   def image_url_with_host
     return unless image
 
-    image_url(host:)
+    image_url(host: host)
   end
 
   def normalized_image_url_with_host
     return unless image && image(:normalized)
 
-    image_url(:normalized, host:)
+    image_url(:normalized, host: host)
   end
 
   def image_filename
     return unless image
 
-    image.metadata["filename"]
+    image.metadata['filename']
   end
 
   def image_size
     return unless image
 
-    image.metadata["size"]
+    image.metadata['size']
   end
 
   def image_resolution
     return unless image
 
-    "#{image.metadata["width"]}x#{image.metadata["height"]}"
+    "#{image.metadata['width']}x#{image.metadata['height']}"
   end
 
   # returns all titles of courses whose title is close to the given search
@@ -312,17 +306,17 @@ class Course < ApplicationRecord
 
   def self.search_by(search_params, page)
     editor_ids = search_params[:editor_ids]
-    editor_ids = [] if search_params[:all_editors] == "1"
+    editor_ids = [] if search_params[:all_editors] == '1'
     program_ids = search_params[:program_ids] || []
-    program_ids = [] if search_params[:all_programs] == "1"
+    program_ids = [] if search_params[:all_programs] == '1'
     search = Sunspot.new_search(Course)
     search.build do
       with(:editor_ids, editor_ids)
       with(:program_ids, program_ids) unless program_ids.empty?
-      with(:term_independent, true) if search_params[:term_independent] == "1"
+      with(:term_independent, true) if search_params[:term_independent] == '1'
       fulltext search_params[:fulltext] if search_params[:fulltext].present?
       order_by(:sort_title, :asc)
-      paginate page:, per_page: search_params[:per]
+      paginate page: page, per_page: search_params[:per]
     end
     search
   end
@@ -330,31 +324,27 @@ class Course < ApplicationRecord
   private
 
     def touch_media
-      # rubocop:todo Rails/SkipsModelValidations
       media_with_inheritance.update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def touch_tag(tag)
-      tag.touch # rubocop:todo Rails/SkipsModelValidations
+      tag.touch
       Sunspot.index! tag
     end
 
     def touch_lectures_and_lessons
-      lectures.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
-      # rubocop:todo Rails/SkipsModelValidations
+      lectures.update_all(updated_at: Time.now)
       Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def create_quiz_by_questions!(question_ids)
       quiz_graph = QuizGraph.build_from_questions(question_ids)
-      Quiz.create(description: "#{I18n.t("categories.randomquiz.singular")} " \
+      Quiz.create(description: "#{I18n.t('categories.randomquiz.singular')} "\
                                "#{course.title} #{Time.now}",
                   level: 1,
-                  quiz_graph:,
-                  sort: "RandomQuiz",
-                  locale:)
+                  quiz_graph: quiz_graph,
+                  sort: 'RandomQuiz',
+                  locale: locale)
     end
 
     def question_ids_for_quiz(tags, count)

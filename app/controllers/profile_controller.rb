@@ -16,9 +16,9 @@ class ProfileController < ApplicationController
       return
     end
     # destroy the notifications related to new lectures and courses
-    current_user.notifications.where(notifiable_type: ["Lecture", "Course"])
+    current_user.notifications.where(notifiable_type: ['Lecture', 'Course'])
                 .destroy_all
-    render layout: "application_no_sidebar"
+    render layout: 'application_no_sidebar'
   end
 
   def update
@@ -37,8 +37,8 @@ class ProfileController < ApplicationController
       update_lecture_cookie
       I18n.locale = @locale
       cookies[:locale] = @locale
-      @user.touch # rubocop:todo Rails/SkipsModelValidations
-      redirect_to :start, notice: t("profile.success")
+      @user.touch
+      redirect_to :start, notice: t('profile.success')
     else
       @errors = @user.errors
     end
@@ -54,25 +54,25 @@ class ProfileController < ApplicationController
     return unless @user.consents
 
     redirect_to edit_profile_path,
-                notice: t("profile.please_update")
+                notice: t('profile.please_update')
   end
 
   # DSGVO consent action
   def add_consent
     @user.update(consents: true, consented_at: Time.now)
-    redirect_to :root, notice: t("profile.consent")
+    redirect_to :root, notice: t('profile.consent')
   end
 
   def toggle_thread_subscription
     @thread = Commontator::Thread.find(params[:id])
-    return unless @thread && @thread.can_subscribe?(@user)
-
-    if params[:subscribe] == "true"
-      @thread.subscribe(@user)
-    else
-      @thread.unsubscribe(@user)
+    if @thread && @thread.can_subscribe?(@user)
+      if params[:subscribe] == 'true'
+        @thread.subscribe(@user)
+      else
+        @thread.unsubscribe(@user)
+      end
+      @result = !!@thread.subscription_for(@user)
     end
-    @result = !!@thread.subscription_for(@user)
   end
 
   def subscribe_lecture
@@ -94,20 +94,22 @@ class ProfileController < ApplicationController
   def unsubscribe_lecture
     @success = current_user.unsubscribe_lecture!(@lecture)
     @none_left = case @parent
-                 when "current_subscribed" then current_user.current_subscribed_lectures
+                 when 'current_subscribed' then current_user.current_subscribed_lectures
                                                             .empty?
-                 when "inactive" then current_user.inactive_lectures.empty?
+                 when 'inactive' then current_user.inactive_lectures.empty?
     end
   end
 
   def star_lecture
     return unless @lecture&.in?(current_user.lectures)
 
-    current_user.favorite_lectures << @lecture unless @lecture.in?(current_user.favorite_lectures)
+    if !@lecture.in?(current_user.favorite_lectures)
+      current_user.favorite_lectures << @lecture
+    end
     # as favorite lectures appear in the navbar which is cached e.g. in
     # the lecture show action, make sure the cache is invalidated by
     # touching the user
-    current_user.touch # rubocop:todo Rails/SkipsModelValidations
+    current_user.touch
     @success = true
   end
 
@@ -115,7 +117,7 @@ class ProfileController < ApplicationController
     return unless @lecture
 
     current_user.favorite_lectures.delete(@lecture)
-    current_user.touch # rubocop:todo Rails/SkipsModelValidations
+    current_user.touch
   end
 
   def show_accordion
@@ -123,19 +125,19 @@ class ProfileController < ApplicationController
     redirect_to :root and return unless @collapse_id.present?
 
     @lectures = case @collapse_id
-                when "collapseCurrentStuff" then current_user.current_subscribed_lectures
-                when "collapseInactiveLectures" then current_user.inactive_lectures
+                when 'collapseCurrentStuff' then current_user.current_subscribed_lectures
+                when 'collapseInactiveLectures' then current_user.inactive_lectures
                                                                  .includes(:course, :term)
                                                                  .sort
-                when "collapseAllCurrent" then current_user.current_subscribable_lectures
+                when 'collapseAllCurrent' then current_user.current_subscribable_lectures
     end
-    @link = @collapse_id.remove("collapse").camelize(:lower) + "Link"
+    @link = @collapse_id.remove('collapse').camelize(:lower) + 'Link'
   end
 
   def request_data
     MathiMailer.data_request_email(current_user).deliver_later
     MathiMailer.data_provide_email(current_user).deliver_later
-    redirect_to edit_profile_path, notice: t("profile.data_request_sent")
+    redirect_to edit_profile_path, notice: t('profile.data_request_sent')
   end
 
   private
@@ -168,7 +170,7 @@ class ProfileController < ApplicationController
       @lecture = Lecture.find_by_id(lecture_params[:id])
       @passphrase = lecture_params[:passphrase]
       @parent = lecture_params[:parent]
-      @current = !@parent.in?(["lectureSearch", "inactive"])
+      @current = !@parent.in?(['lectureSearch', 'inactive'])
       redirect_to start_path unless @lecture
     end
 
@@ -178,7 +180,7 @@ class ProfileController < ApplicationController
 
     # extracts all lecture ids from user params
     def lecture_ids
-      params[:user][:lecture].select { |_k, v| v == "1" }.keys.map(&:to_i)
+      params[:user][:lecture].select { |k, v| v == '1' }.keys.map(&:to_i)
     end
 
     def clean_up_notifications
@@ -195,9 +197,9 @@ class ProfileController < ApplicationController
     # if user unsubscribed the lecture the current lecture cookie refers to,
     # set the lectures cookie to nil
     def update_lecture_cookie
-      return if @current_lecture.in?(@user.lectures)
-
-      cookies[:current_lecture_id] = nil
+      unless @current_lecture.in?(@user.lectures)
+        cookies[:current_lecture_id] = nil
+      end
     end
 
     # stop the update if any of passphrases for newly subscribed

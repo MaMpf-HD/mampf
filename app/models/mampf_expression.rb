@@ -10,10 +10,10 @@ class MampfExpression
   end
 
   def self.trivial_instance
-    MampfExpression.new("0", "0", "0")
+    MampfExpression.new('0', '0', '0')
   end
 
   def self.from_hash(content)
-    MampfExpression.new(content["0"], content["tex"], content["nerd"])
+    MampfExpression.new(content['0'], content['tex'], content['nerd'])
   end
 end

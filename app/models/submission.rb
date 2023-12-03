@@ -23,43 +23,43 @@ class Submission < ApplicationRecord
   end
 
   def team
-    users.map(&:tutorial_name).natural_sort.join(", ")
+    users.map(&:tutorial_name).natural_sort.join(', ')
   end
 
   def manuscript_filename
     return unless manuscript.present?
 
-    manuscript.metadata["filename"]
+    manuscript.metadata['filename']
   end
 
   def manuscript_size
     return unless manuscript.present?
 
-    manuscript.metadata["size"]
+    manuscript.metadata['size']
   end
 
   def manuscript_mime_type
     return unless manuscript.present?
 
-    manuscript.metadata["mime_type"]
+    manuscript.metadata['mime_type']
   end
 
   def correction_filename
     return unless correction.present?
 
-    correction.metadata["filename"]
+    correction.metadata['filename']
   end
 
   def correction_mime_type
     return unless correction.present?
 
-    correction.metadata["mime_type"]
+    correction.metadata['mime_type']
   end
 
   def correction_size
     return unless correction.present?
 
-    correction.metadata["size"]
+    correction.metadata['size']
   end
 
   def preceding_tutorial(user)
@@ -105,19 +105,19 @@ class Submission < ApplicationRecord
   #  correction.to_io.path
   # end
 
-  def filename_for_bulk_download(end_of_file = "")
-    (team.first(180) + "-" +
+  def filename_for_bulk_download(end_of_file = '')
+    (team.first(180) + '-' +
       last_modification_by_users_at.strftime("%F-%H%M") +
-      (too_late? ? "-LATE" : "") +
-      + "-ID-" + id + end_of_file +
+      (too_late? ? '-LATE' : '') +
+      + '-ID-' + id + end_of_file +
       assignment.accepted_file_type)
-      .gsub(%r{[\x00/\\:\*\?\"<>\|]}, "_")
-      .gsub(%r{^.*(\\|/)}, "")
+      .gsub(/[\x00\/\\:\*\?\"<>\|]/, '_')
+      .gsub(/^.*(\\|\/)/, '')
       # Strip out the non-ascii characters
-      .gsub(/[^0-9A-Za-z.\-]/, "_")
+      .gsub(/[^0-9A-Za-z.\-]/, '_')
   end
 
-  def self.zip(submissions, downloadables, end_of_file = "")
+  def self.zip(submissions, downloadables, end_of_file = '')
     begin
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
         submissions.zip(downloadables).each do |s, d|
@@ -126,29 +126,29 @@ class Submission < ApplicationRecord
         end
       end
       archived_filestream.rewind
-    rescue StandardError => e
+    rescue => e
       archived_filestream = e.message
     end
     archived_filestream
   end
 
   def self.zip_submissions!(tutorial, assignment)
-    submissions = Submission.where(tutorial:,
-                                   assignment:).proper
-    manuscripts = submissions.collect do |s|
-      s.manuscript.presence
-    end
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
+    manuscripts = submissions.collect { |s|
+      s.manuscript if s.manuscript.present?
+    }
     zip(submissions, manuscripts)
   end
 
   def self.zip_corrections!(tutorial, assignment)
-    submissions = Submission.where(tutorial:,
-                                   assignment:).proper
-    corrections = submissions.collect do |s|
-      s.correction.presence
-    end
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
+    corrections = submissions.collect { |s|
+      s.correction if s.correction.present?
+    }
 
-    zip(submissions, corrections, "-correction")
+    zip(submissions, corrections, '-correction')
   end
 
   ###
@@ -156,19 +156,19 @@ class Submission < ApplicationRecord
   ###
   def check_file_properties_any(metadata, sort)
     errors = []
-    if sort == :submission && metadata["size"] > 10 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "10 MB")
+    if sort == :submission && metadata['size'] > 10 * 1024 * 1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '10 MB')
     end
-    if sort == :correction && metadata["size"] > 15 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB")
+    if sort == :correction && metadata['size'] > 15 * 1024 * 1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '15 MB')
     end
-    file_name = metadata["filename"]
+    file_name = metadata['filename']
     file_type = File.extname(file_name)
-    unless file_type.in?([".cc", ".hh", ".m", ".mlx", ".pdf", ".zip", ".txt"])
-      errors.push I18n.t("submission.wrong_file_type",
-                         file_type:,
+    if !file_type.in?(['.cc', '.hh', '.m', ".mlx", '.pdf', '.zip', ".txt"])
+      errors.push I18n.t('submission.wrong_file_type',
+                         file_type: file_type,
                          accepted_file_type: assignment.accepted_file_type)
     end
     return {} unless errors.present?
@@ -178,45 +178,45 @@ class Submission < ApplicationRecord
 
   def check_file_properties(metadata, sort)
     errors = []
-    if sort == :submission && metadata["size"] > 10 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "10 MB")
+    if sort == :submission && metadata['size'] > 10 * 1024 * 1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '10 MB')
     end
-    if sort == :correction && metadata["size"] > 15 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB")
+    if sort == :correction && metadata['size'] > 15 * 1024 * 1024
+      errors.push I18n.t('submission.manuscript_size_too_big',
+                         max_size: '15 MB')
     end
-    file_name = metadata["filename"]
+    file_name = metadata['filename']
     file_type = File.extname(file_name)
     if file_type != assignment.accepted_file_type &&
-       assignment.accepted_file_type != ".tar.gz"
-      errors.push I18n.t("submission.wrong_file_type",
-                         file_type:,
+       assignment.accepted_file_type != '.tar.gz'
+      errors.push I18n.t('submission.wrong_file_type',
+                         file_type: file_type,
                          accepted_file_type: assignment.accepted_file_type)
     end
-    if assignment.accepted_file_type == ".tar.gz"
-      if file_type == ".gz"
-        reduced_type = File.extname(File.basename(file_name, ".gz"))
-        if reduced_type != ".tar"
-          errors.push I18n.t("submission.wrong_file_type",
-                             file_type: ".gz",
-                             accepted_file_type: ".tar.gz")
+    if assignment.accepted_file_type == '.tar.gz'
+      if file_type == '.gz'
+        reduced_type = File.extname(File.basename(file_name, '.gz'))
+        if reduced_type != '.tar'
+          errors.push I18n.t('submission.wrong_file_type',
+                             file_type: '.gz',
+                             accepted_file_type: '.tar.gz')
         end
       else
-        errors.push I18n.t("submission.wrong_file_type",
-                           file_type:,
-                           accepted_file_type: ".tar.gz")
+        errors.push I18n.t('submission.wrong_file_type',
+                           file_type: file_type,
+                           accepted_file_type: '.tar.gz')
       end
     end
-    if (!assignment.accepted_file_type.in?([".cc", ".hh", ".m"]) &&
-      !metadata["mime_type"].in?(assignment.accepted_mime_types)) ||
-       (assignment.accepted_file_type.in?([".cc", ".hh", ".m"]) &&
-         (!metadata["mime_type"].starts_with?("text/") &&
-          metadata["mime_type"] != "application/octet-stream"))
-      errors.push I18n.t("submission.wrong_mime_type",
-                         mime_type: metadata["mime_type"],
+    if (!assignment.accepted_file_type.in?(['.cc', '.hh', '.m']) &&
+      !metadata['mime_type'].in?(assignment.accepted_mime_types)) ||
+       (assignment.accepted_file_type.in?(['.cc', '.hh', '.m']) &&
+         (!metadata['mime_type'].starts_with?('text/') &&
+          metadata['mime_type'] != 'application/octet-stream'))
+      errors.push I18n.t('submission.wrong_mime_type',
+                         mime_type: metadata['mime_type'],
                          accepted_mime_types: assignment.accepted_mime_types
-                                                        .join(", "))
+                                                        .join(', '))
     end
     return {} unless errors.present?
 
@@ -224,8 +224,8 @@ class Submission < ApplicationRecord
   end
 
   def self.bulk_corrections!(tutorial, assignment, files)
-    submissions = Submission.where(tutorial:,
-                                   assignment:).proper
+    submissions = Submission.where(tutorial: tutorial,
+                                   assignment: assignment).proper
     report = { successful_saves: [], submissions: submissions.size,
                invalid_filenames: [], invalid_id: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
@@ -233,14 +233,14 @@ class Submission < ApplicationRecord
     begin
       files.each do |file_shrine|
         filename = file_shrine["metadata"]["filename"]
-        unless "-ID-".in?(filename)
+        if !'-ID-'.in?(filename)
           report[:invalid_filenames].push(filename)
           next
         end
-        submission_id = File.basename(filename.split("-ID-").last,
-                                      File.extname(filename.split("-ID-").last))
+        submission_id = File.basename(filename.split('-ID-').last,
+                                      File.extname(filename.split('-ID-').last))
         submission = Submission.find_by_id(submission_id)
-        unless submission
+        if !submission
           report[:invalid_id].push(filename)
           next
         end
@@ -253,13 +253,13 @@ class Submission < ApplicationRecord
           next
         end
         submission.update(correction: file_shrine.to_json)
-        unless submission.valid?
+        if !submission.valid?
           report[:invalid_file].push(filename)
           next
         end
         report[:successful_saves].push(submission)
       end
-    rescue StandardError => e
+    rescue => e
       report[:errors] = "#{e.message}"
     end
     report
@@ -277,40 +277,34 @@ class Submission < ApplicationRecord
       self.token = Submission.generate_token
     end
 
-    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_submissions(tutorial, assignment)
-      # rubocop:enable Lint/IneffectiveAccessModifier
-      Submission.where(tutorial:, assignment:)
+      Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(manuscript_data: nil).size
     end
 
-    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_corrections(tutorial, assignment)
-      # rubocop:enable Lint/IneffectiveAccessModifier
-      Submission.where(tutorial:, assignment:)
+      Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(correction_data: nil).size
     end
 
-    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_late_submissions(tutorial, assignment)
-      # rubocop:enable Lint/IneffectiveAccessModifier
-      Submission.where(tutorial:, assignment:)
+      Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(manuscript_data: nil)
                 .select { |s| s.too_late? }.size
     end
 
-    def self.submissions_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
-      Submission.where(assignment:)
+    def self.submissions_total(assignment)
+      Submission.where(assignment: assignment)
                 .where.not(manuscript_data: nil).size
     end
 
-    def self.corrections_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
-      Submission.where(assignment:)
+    def self.corrections_total(assignment)
+      Submission.where(assignment: assignment)
                 .where.not(correction_data: nil).size
     end
 
-    def self.late_submissions_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
-      Submission.where(assignment:)
+    def self.late_submissions_total(assignment)
+      Submission.where(assignment: assignment)
                 .where.not(manuscript_data: nil)
                 .select { |s| s.too_late? }.size
     end

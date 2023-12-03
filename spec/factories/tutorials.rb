@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :tutorial do
     association :lecture
-    title { Faker::Movie.title + " " + Faker::Number.number.to_s }
+    title { Faker::Movie.title + ' ' + Faker::Number.number.to_s }
   end
 
   trait :with_tutors do

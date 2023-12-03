@@ -5,12 +5,14 @@ class UserSubmissionJoin < ApplicationRecord
   validate :only_one_per_assignment, on: :create
   validate :max_team_size, on: :create
 
-  delegate :assignment, to: :submission
+  def assignment
+    submission.assignment
+  end
 
   private
 
     def only_one_per_assignment
-      if UserSubmissionJoin.where(user:,
+      if UserSubmissionJoin.where(user: user,
                                   submission: assignment.submissions)
                            .none?
         return true

@@ -20,11 +20,9 @@ class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
     add_column table_name, new_foreign_key, :uuid
 
     klass.where.not(foreign_key => nil).each do |record|
-      next unless associated_record = relation_klass.find_by(id: record.send(foreign_key))
-
-      # rubocop:todo Rails/SkipsModelValidations
-      record.update_column(new_foreign_key, associated_record.uuid)
-      # rubocop:enable Rails/SkipsModelValidations
+      if associated_record = relation_klass.find_by(id: record.send(foreign_key))
+        record.update_column(new_foreign_key, associated_record.uuid)
+      end
     end
 
     remove_column table_name, foreign_key

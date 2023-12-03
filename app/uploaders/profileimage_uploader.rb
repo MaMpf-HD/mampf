@@ -1,4 +1,4 @@
-require "image_processing/mini_magick"
+require 'image_processing/mini_magick'
 # ProfileimageUploader class
 # used for storing profile images
 class ProfileimageUploader < Shrine
@@ -11,8 +11,8 @@ class ProfileimageUploader < Shrine
   plugin :derivatives
 
   Attacher.validate do
-    validate_mime_type_inclusion ["image/jpeg", "image/png", "image/gif"],
-                                 message: "falscher MIME-Typ"
+    validate_mime_type_inclusion %w[image/jpeg image/png image/gif],
+                                 message: 'falscher MIME-Typ'
   end
 
   # store a resized version of the screenshot

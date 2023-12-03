@@ -17,53 +17,39 @@ class User < ApplicationRecord
            source: :lecture
 
   # a user has many courses as an editor
-  # rubocop:todo Rails/InverseOf
-  has_many :editable_user_joins, dependent: :destroy
-  # rubocop:enable Rails/InverseOf
+  has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy
   has_many :edited_courses, through: :editable_user_joins,
-                            source: :editable, source_type: "Course"
+                            source: :editable, source_type: 'Course'
 
   # a user has many lectures as an editor
   has_many :edited_lectures, through: :editable_user_joins,
-                             source: :editable, source_type: "Lecture"
+                             source: :editable, source_type: 'Lecture'
 
   # a user has many media as an editor
   has_many :edited_media, through: :editable_user_joins,
-                          source: :editable, source_type: "Medium"
+                          source: :editable, source_type: 'Medium'
 
   # a user has many lectures as a teacher
-  # rubocop:todo Rails/InverseOf
-  # rubocop:todo Rails/HasManyOrHasOneDependent
-  has_many :given_lectures, class_name: "Lecture", foreign_key: "teacher_id"
-  # rubocop:enable Rails/HasManyOrHasOneDependent
-  # rubocop:enable Rails/InverseOf
+  has_many :given_lectures, class_name: 'Lecture', foreign_key: 'teacher_id'
 
   # a user has many tutorials as a tutor
 
-  # rubocop:todo Rails/InverseOf
-  has_many :tutor_tutorial_joins, foreign_key: "tutor_id", dependent: :destroy
-  # rubocop:enable Rails/InverseOf
+  has_many :tutor_tutorial_joins, foreign_key: 'tutor_id', dependent: :destroy
   has_many :given_tutorials, -> { order(:title) },
            through: :tutor_tutorial_joins, source: :tutorial
 
   # a user has many given talks
-  # rubocop:todo Rails/InverseOf
-  has_many :speaker_talk_joins, foreign_key: "speaker_id", dependent: :destroy
-  # rubocop:enable Rails/InverseOf
+  has_many :speaker_talk_joins, foreign_key: 'speaker_id', dependent: :destroy
   has_many :talks, through: :speaker_talk_joins
 
   # a user has many notifications as recipient
-  # rubocop:todo Rails/InverseOf
-  has_many :notifications, foreign_key: "recipient_id" # rubocop:todo Rails/HasManyOrHasOneDependent, Rails/InverseOf
-  # rubocop:enable Rails/InverseOf
+  has_many :notifications, foreign_key: 'recipient_id'
 
   # a user has many announcements as announcer
-  # rubocop:todo Rails/InverseOf
-  has_many :announcements, foreign_key: "announcer_id", dependent: :destroy
-  # rubocop:enable Rails/InverseOf
+  has_many :announcements, foreign_key: 'announcer_id', dependent: :destroy
 
   # a user has many clickers as editor
-  has_many :clickers, foreign_key: "editor_id", dependent: :destroy # rubocop:todo Rails/InverseOf
+  has_many :clickers, foreign_key: 'editor_id', dependent: :destroy
 
   # a user has many submissions (of assignments)
   has_many :user_submission_joins, dependent: :destroy
@@ -89,9 +75,10 @@ class User < ApplicationRecord
   # set some default values before saving if they are not set
   before_save :set_defaults
 
+  before_destroy :destroy_single_submissions, prepend: true
+
   # add timestamp for DSGVO consent
   after_create :set_consented_at
-  before_destroy :destroy_single_submissions, prepend: true
 
   # users can comment stuff
   acts_as_commontator
@@ -131,8 +118,8 @@ class User < ApplicationRecord
 
   # returns the array of all editors minus those that are only editors of talks
   def self.proper_editors
-    talk_media_ids = Medium.where(teachable_type: "Talk").pluck(:id)
-    talk_media_joins = EditableUserJoin.where(editable_type: "Medium",
+    talk_media_ids = Medium.where(teachable_type: 'Talk').pluck(:id)
+    talk_media_joins = EditableUserJoin.where(editable_type: 'Medium',
                                               editable_id: talk_media_ids)
     User.where(id: EditableUserJoin.where.not(id: talk_media_joins.pluck(:id))
                                    .pluck(:user_id).uniq)
@@ -149,7 +136,7 @@ class User < ApplicationRecord
   # given array of ids
   # search params is a hash having keys :all_editors, :editor_ids
   def self.search_editors(search_params)
-    return User.editors unless search_params[:all_editors] == "0"
+    return User.editors unless search_params[:all_editors] == '0'
 
     editor_ids = search_params[:editor_ids] || []
     User.where(id: editor_ids)
@@ -178,18 +165,18 @@ class User < ApplicationRecord
     return User.none unless search_string
     return User.none unless search_string.length >= 2
 
-    where(name_in_tutorials: [nil, ""]).name_or_email_like(search_string)
+    where(name_in_tutorials: [nil, '']).name_or_email_like(search_string)
                                        .or(where.not(name_in_tutorials: [nil,
-                                                                         ""])
+                                                                         ''])
                .name_in_tutorials_or_email_like(search_string))
   end
 
   def self.values_for_select
     pluck(:id, :name, :name_in_tutorials, :email)
-      .map do |u|
+      .map { |u|
       { value: u.first,
         text: "#{u.third.presence || u.second} (#{u.fourth})" }
-    end
+    }
   end
 
   def courses
@@ -205,7 +192,9 @@ class User < ApplicationRecord
     return if subscription_type.nil?
 
     selection_type = overrule_subscription_type || subscription_type
-    return Course.where(id: preceding_course_ids).includes(:lectures) if selection_type == 1
+    if selection_type == 1
+      return Course.where(id: preceding_course_ids).includes(:lectures)
+    end
     return Course.all.includes(:lectures) if selection_type == 2
 
     courses
@@ -231,10 +220,10 @@ class User < ApplicationRecord
   # returns ARel of all those tags from the given tags that belong to
   # the user's related lectures
   def filter_tags(tags)
-    Tag.where(id: tags.select do |t|
+    Tag.where(id: tags.select { |t|
                     t.in_lectures?(related_lectures) ||
                                       t.in_courses?(related_courses)
-                  end
+                  }
                       .map(&:id))
   end
 
@@ -275,7 +264,7 @@ class User < ApplicationRecord
   end
 
   def visible_tags(overrule_subscription_type: false)
-    related_courses(overrule_subscription_type:)
+    related_courses(overrule_subscription_type: overrule_subscription_type)
       .map(&:lectures).flatten.map(&:tags).flatten.uniq
   end
 
@@ -289,7 +278,7 @@ class User < ApplicationRecord
   end
 
   def active_media_notifications(lecture)
-    notifications.where(notifiable_type: "Medium")
+    notifications.where(notifiable_type: 'Medium')
                  .where(notifiable_id: lecture.media_with_inheritance
                                               .pluck(:id))
   end
@@ -297,7 +286,7 @@ class User < ApplicationRecord
   # returns the array of those notifications that are related to MaMpf news
   # (i.e. announcements without a lecture)
   def active_news
-    notifications.where(notifiable_type: "Announcement")
+    notifications.where(notifiable_type: 'Announcement')
                  .select { |n| n.notifiable.lecture.nil? }
   end
 
@@ -342,7 +331,7 @@ class User < ApplicationRecord
   # editor of media that are not associated to talks
   def editor?
     teachable_editor? ||
-      edited_media.where.not(teachable_type: "Talk").any?
+      edited_media.where.not(teachable_type: 'Talk').any?
   end
 
   # the next methods return information about the user extracted from
@@ -351,7 +340,7 @@ class User < ApplicationRecord
   def info_uncached
     return email unless name.present?
 
-    (name_in_tutorials.presence || name) + " (" + email + ")"
+    (name_in_tutorials.presence || name) + ' (' + email + ')'
   end
 
   def info
@@ -363,7 +352,7 @@ class User < ApplicationRecord
   def tutorial_info_uncached
     return email unless tutorial_name.present?
 
-    tutorial_name + " (" + email + ")"
+    tutorial_name + ' (' + email + ')'
   end
 
   def tutorial_info
@@ -373,7 +362,7 @@ class User < ApplicationRecord
   end
 
   def name_or_email
-    return name if name.present?
+    return name unless name.blank?
 
     email
   end
@@ -508,7 +497,7 @@ class User < ApplicationRecord
       Course.where(id: Course.pluck(:id) - courses.pluck(:id))
     nonsubscribed_lectures =
       Lecture.where(id: Lecture.pluck(:id) - lectures.pluck(:id),
-                    released: ["all"])
+                    released: ['all'])
     lessons = Lesson.where(lecture: lectures)
     nonsubscribed_lessons = Lesson.where(lecture: nonsubscribed_lectures)
     edited_lessons = Lesson.where(lecture: teaching_related_lectures)
@@ -517,21 +506,21 @@ class User < ApplicationRecord
     edited_talks = Talk.where(lecture: teaching_related_lectures)
     return media if admin
 
-    media.where(teachable: courses, released: ["all", "subscribers", "users"])
+    media.where(teachable: courses, released: ['all', 'subscribers', 'users'])
          .or(media.where(teachable: nonsubscribed_courses,
-                         released: ["all", "users"]))
+                         released: ['all', 'users']))
          .or(media.where(teachable: lectures,
-                         released: ["all", "subscribers", "users"]))
+                         released: ['all', 'subscribers', 'users']))
          .or(media.where(teachable: nonsubscribed_lectures,
-                         released: ["all", "users"]))
+                         released: ['all', 'users']))
          .or(media.where(teachable: lessons,
-                         released: ["all", "subscribers", "users"]))
+                         released: ['all', 'subscribers', 'users']))
          .or(media.where(teachable: nonsubscribed_lessons,
-                         released: ["all", "users"]))
+                         released: ['all', 'users']))
          .or(media.where(teachable: talks,
-                         released: ["all", "subscribers", "users"]))
+                         released: ['all', 'subscribers', 'users']))
          .or(media.where(teachable: nonsubscribed_talks,
-                         released: ["all", "users"]))
+                         released: ['all', 'users']))
          .or(media.where(teachable: edited_courses))
          .or(media.where(teachable: teaching_related_lectures))
          .or(media.where(teachable: edited_lessons))
@@ -540,8 +529,8 @@ class User < ApplicationRecord
 
   def subscribed_commentable_media_with_comments
     lessons = Lesson.where(lecture: lectures)
-    filter_media(Medium.where.not(sort: ["RandomQuiz", "Question", "Erdbeere",
-                                         "Remark"])
+    filter_media(Medium.where.not(sort: ['RandomQuiz', 'Question', 'Erdbeere',
+                                         'Remark'])
                        .where(teachable: courses + lectures + lessons))
       .includes(commontator_thread: :comments)
       .select { |m| m.commontator_thread.comments.any? }
@@ -549,13 +538,13 @@ class User < ApplicationRecord
 
   def media_latest_comments
     subscribed_commentable_media_with_comments
-      .map do |m|
+      .map { |m|
       { medium: m,
         thread: m.commontator_thread,
         latest_comment: m.commontator_thread
                          .comments.sort_by(&:created_at)
                          .last }
-    end # rubocop:todo Style/MultilineBlockChain
+    }
       .sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
@@ -648,11 +637,11 @@ class User < ApplicationRecord
   end
 
   def tutorials(lecture)
-    given_tutorials.where(lecture:)
+    given_tutorials.where(lecture: lecture)
   end
 
-  def has_tutorials?(lecture) # rubocop:todo Naming/PredicateName
-    !given_tutorials.where(lecture:).empty?
+  def has_tutorials?(lecture)
+    !given_tutorials.where(lecture: lecture).empty?
   end
 
   def proper_submissions_count
@@ -691,38 +680,38 @@ class User < ApplicationRecord
   def image_url_with_host
     return unless image
 
-    image_url(host:)
+    image_url(host: host)
   end
 
   def normalized_image_url_with_host
     return unless image && image(:normalized)
 
-    image_url(:normalized, host:)
+    image_url(:normalized, host: host)
   end
 
   def image_filename
     return unless image
 
-    image.metadata["filename"]
+    image.metadata['filename']
   end
 
   def image_size
     return unless image
 
-    image.metadata["size"]
+    image.metadata['size']
   end
 
   def image_resolution
     return unless image
 
-    "#{image.metadata["width"]}x#{image.metadata["height"]}"
+    "#{image.metadata['width']}x#{image.metadata['height']}"
   end
 
   def can_edit?(something)
     unless something.is_a?(Lecture) || something.is_a?(Course) ||
            something.is_a?(Medium) || something.is_a?(Lesson) ||
            something.is_a?(Talk)
-      raise "can_edit? was called with incompatible class"
+      raise 'can_edit? was called with incompatible class'
     end
     return true if admin
 
@@ -734,9 +723,9 @@ class User < ApplicationRecord
   end
 
   def layout
-    return "administration" if admin_or_editor?
+    return 'administration' if admin_or_editor?
 
-    "application_no_sidebar"
+    'application_no_sidebar'
   end
 
   def course_editor?
@@ -757,9 +746,9 @@ class User < ApplicationRecord
     return false unless can_edit?(lecture)
     return true if can_edit?(lecture.course) || lecture.teacher == self
     return true if lecture.course.term_independent
-    return true unless lecture.stale?
+    return true if !lecture.stale?
 
-    false
+    return false
   end
 
   # see https://github.com/heartcombo/devise/issues/4849#issuecomment-534733131
@@ -782,7 +771,7 @@ class User < ApplicationRecord
     def set_defaults
       self.subscription_type ||= 1
       self.admin ||= false
-      self.name ||= email.split("@").first
+      self.name ||= email.split('@').first
       self.locale ||= I18n.default_locale.to_s
     end
 
@@ -803,16 +792,16 @@ class User < ApplicationRecord
     end
 
     def archive_email
-      splitting = DefaultSetting::PROJECT_EMAIL.split("@")
+      splitting = DefaultSetting::PROJECT_EMAIL.split('@')
       "#{splitting.first}-archive-#{id}@#{splitting.second}"
     end
 
     def transfer_contributions_to(user)
       return false unless user && user.valid? && user != self
 
-      given_lectures.update_all(teacher_id: user.id) # rubocop:todo Rails/SkipsModelValidations
-      EditableUserJoin.where(user: self, editable_type: "Medium")
-                      .update_all(user_id: user.id) # rubocop:todo Rails/SkipsModelValidations
+      given_lectures.update_all(teacher_id: user.id)
+      EditableUserJoin.where(user: self, editable_type: 'Medium')
+                      .update_all(user_id: user.id)
     end
 
     def archive_user(archive_name)

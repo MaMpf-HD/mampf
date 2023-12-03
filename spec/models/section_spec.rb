@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe Section, type: :model do
-  it "has a valid factory" do
+  it 'has a valid factory' do
     expect(FactoryBot.build(:section)).to be_valid
   end
 
   # test validations
 
-  it "is invalid without a title" do
+  it 'is invalid without a title' do
     section = FactoryBot.build(:section, title: nil)
     expect(section).to be_invalid
   end

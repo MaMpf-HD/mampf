@@ -1,6 +1,6 @@
 # AnnouncementsController
 class AnnouncementsController < ApplicationController
-  layout "administration"
+  layout 'administration'
   before_action :set_announcement, except: [:new, :create, :index]
   authorize_resource except: [:new, :create, :index]
 
@@ -40,7 +40,7 @@ class AnnouncementsController < ApplicationController
       redirect_to edit_lecture_path(@announcement.lecture)
       return
     end
-    @errors = @announcement.errors[:details].join(", ")
+    @errors = @announcement.errors[:details].join(', ')
   end
 
   def propagate
@@ -66,12 +66,12 @@ class AnnouncementsController < ApplicationController
         User
       end
       notifications = []
-      users_to_notify.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      users_to_notify.update_all(updated_at: Time.now)
       users_to_notify.find_each do |u|
         notifications << Notification.new(recipient: u,
                                           notifiable_id: @announcement.id,
-                                          notifiable_type: "Announcement",
-                                          action: "create")
+                                          notifiable_type: 'Announcement',
+                                          action: 'create')
       end
       # use activerecord-import gem to use only one SQL instruction
       Notification.import notifications
@@ -86,12 +86,12 @@ class AnnouncementsController < ApplicationController
       end
       I18n.available_locales.each do |l|
         local_recipients = recipients.where(locale: l)
-        next unless local_recipients.any?
-
-        NotificationMailer.with(recipients: local_recipients.pluck(:id),
-                                locale: l,
-                                announcement: @announcement)
-                          .announcement_email.deliver_later
+        if local_recipients.any?
+          NotificationMailer.with(recipients: local_recipients.pluck(:id),
+                                  locale: l,
+                                  announcement: @announcement)
+                            .announcement_email.deliver_later
+        end
       end
     end
 
@@ -99,6 +99,6 @@ class AnnouncementsController < ApplicationController
       @announcement = Announcement.find_by_id(params[:id])
       return if @announcement.present?
 
-      redirect_to :root, alert: I18n.t("controllers.no_announcement")
+      redirect_to :root, alert: I18n.t('controllers.no_announcement')
     end
 end

@@ -10,17 +10,17 @@ module LecturesHelper
 
   # create text for notification about new lecture in notification dropdown menu
   def lecture_notification_item_header(lecture)
-    t("notifications.new_lecture", title: lecture.title_for_viewers)
+    t('notifications.new_lecture', title: lecture.title_for_viewers)
   end
 
   # create text for notification card
-  def lecture_notification_item_details(_lecture)
-    t("notifications.subscribe_lecture")
+  def lecture_notification_item_details(lecture)
+    t('notifications.subscribe_lecture')
   end
 
   # create text for notification about new course in notification card
   def lecture_notification_card_text(lecture)
-    t("notifications.new_lecture_created_html",
+    t('notifications.new_lecture_created_html',
       title: lecture.course.title,
       term: lecture.term_to_label,
       teacher: lecture.teacher.name)
@@ -28,78 +28,80 @@ module LecturesHelper
 
   # create link for notification about new course in notification card
   def lecture_notification_card_link
-    t("notifications.subscribe_lecture_html",
-      profile: link_to(t("notifications.profile"),
+    t('notifications.subscribe_lecture_html',
+      profile: link_to(t('notifications.profile'),
                        edit_profile_path,
-                       class: "darkblue"))
+                       class: 'darkblue'))
   end
 
   def days_short
-    ["Mo", "Di", "Mi", "Do", "Fr"]
+    ['Mo', 'Di', 'Mi', 'Do', 'Fr']
   end
 
   # unpublished lecture get a different link color
   def lectures_color(lecture)
-    return "" if lecture.published?
+    return '' if lecture.published?
 
-    "unpublished"
+    'unpublished'
   end
 
   # hidden chapters get a different color
   def chapter_card_color(chapter)
-    return "bg-mdb-color-lighten-5" unless chapter.hidden
+    return 'bg-mdb-color-lighten-5' unless chapter.hidden
 
-    "greyed_out bg-grey"
+    'greyed_out bg-grey'
   end
 
   # hidden chapters get a different header color
   def chapter_header_color(chapter)
-    return "bg-mdb-color-lighten-2" unless chapter.hidden
+    return 'bg-mdb-color-lighten-2' unless chapter.hidden
 
-    ""
+    ''
   end
 
   # hidden sections get a different color
   def section_color(section)
-    return "" unless section.hidden
+    return '' unless section.hidden
 
-    "greyed_out"
+    'greyed_out'
   end
 
   # hidden sections get a different background color
   def section_background_color(section)
-    return "bg-mdb-color-lighten-6" unless !section.chapter.hidden && section.hidden
+    unless !section.chapter.hidden && section.hidden
+      return 'bg-mdb-color-lighten-6'
+    end
 
-    "bg-grey"
+    'bg-grey'
   end
 
   def news_color(news_count)
-    return "" unless news_count.positive?
+    return '' unless news_count.positive?
 
-    "text-primary"
+    'text-primary'
   end
 
   def lecture_header_color(subscribed, lecture)
-    return "" unless subscribed
+    return '' unless subscribed
 
-    result = "text-light "
+    result = 'text-light '
     result += if lecture.term
-      "bg-mdb-color-lighten-1"
+      'bg-mdb-color-lighten-1'
     else
-      "bg-info"
+      'bg-info'
     end
   end
 
   def circle_icon(subscribed)
-    return "fas fa-check-circle" if subscribed
+    return 'fas fa-check-circle' if subscribed
 
-    "far fa-circle"
+    'far fa-circle'
   end
 
   def lecture_border(lecture)
-    return "" if lecture.published?
+    return '' if lecture.published?
 
-    "border-danger"
+    'border-danger'
   end
 
   def lecture_access_icon(lecture)
@@ -110,23 +112,23 @@ module LecturesHelper
 
   def lecture_edit_icon(lecture)
     link_to edit_lecture_path(lecture),
-            class: "text-dark me-2",
-            style: "text-decoration: none;",
-            data: { toggle: "tooltip",
-                    placement: "bottom" },
-            title: t("buttons.edit") do
-      tag.i class: "far fa-edit"
+            class: 'text-dark me-2',
+            style: 'text-decoration: none;',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.edit') do
+      tag.i class: 'far fa-edit'
     end
   end
 
   def lecture_view_icon(lecture)
     link_to lecture_path(lecture),
-            class: "text-dark me-2",
-            style: "text-decoration: none;",
-            data: { toggle: "tooltip",
-                    placement: "bottom" },
-            title: t("buttons.view") do
-      tag.i class: "fas fa-eye"
+            class: 'text-dark me-2',
+            style: 'text-decoration: none;',
+            data: { toggle: 'tooltip',
+                    placement: 'bottom' },
+            title: t('buttons.view') do
+      tag.i class: 'fas fa-eye'
     end
   end
 end

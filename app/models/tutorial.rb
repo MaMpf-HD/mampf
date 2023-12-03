@@ -1,6 +1,6 @@
 # Tutorial model
 class Tutorial < ApplicationRecord
-  require "csv"
+  require 'csv'
 
   belongs_to :lecture, touch: true
 
@@ -11,12 +11,10 @@ class Tutorial < ApplicationRecord
 
   before_destroy :check_destructibility, prepend: true
 
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   def title_with_tutors
-    return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
+    return "#{title}, #{I18n.t('basics.tba')}" unless tutors.any?
 
     "#{title}, #{tutor_names}"
   end
@@ -24,7 +22,7 @@ class Tutorial < ApplicationRecord
   def tutor_names
     return unless tutors.any?
 
-    tutors.map(&:tutorial_name).join(", ")
+    tutors.map(&:tutorial_name).join(', ')
   end
 
   def destructible?
@@ -32,7 +30,7 @@ class Tutorial < ApplicationRecord
   end
 
   def teams_to_csv(assignment)
-    submissions = Submission.where(tutorial: self, assignment:)
+    submissions = Submission.where(tutorial: self, assignment: assignment)
                             .proper.order(:last_modification_by_users_at)
     CSV.generate(headers: false) do |csv|
       submissions.each do |s|

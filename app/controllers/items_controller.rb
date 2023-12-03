@@ -7,6 +7,12 @@ class ItemsController < ApplicationController
     @current_ability ||= ItemAbility.new(current_user)
   end
 
+  def update
+    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
+    @item.update(item_params)
+    @errors = @item.errors unless @item.valid?
+  end
+
   def edit
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
   end
@@ -28,16 +34,10 @@ class ItemsController < ApplicationController
     render :update
   end
 
-  def update
-    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
-    @item.update(item_params)
-    @errors = @item.errors unless @item.valid?
-  end
-
   def destroy
     @medium = @item.medium
     @item.destroy
-    redirect_to edit_medium_path(@medium) if params[:from] == "quarantine"
+    redirect_to edit_medium_path(@medium) if params[:from] == 'quarantine'
   end
 
   # if an item is selected from within the reference editor in thyme,
@@ -55,7 +55,9 @@ class ItemsController < ApplicationController
     end
 
     def set_explanation
-      return @item.explanation if @referral_id.zero? || @item != Referral.find(@referral_id).item
+      if @referral_id.zero? || @item != Referral.find(@referral_id).item
+        return @item.explanation
+      end
 
       Referral.find(@referral_id).explanation
     end
@@ -69,7 +71,7 @@ class ItemsController < ApplicationController
       if filter[:medium_id].present?
         filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
       end
-      filter[:section_id] = nil if filter[:section_id] == ""
+      filter[:section_id] = nil if filter[:section_id] == ''
       filter
     end
 end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe Quiz, type: :model do
-  it "has a valid factory" do
+  it 'has a valid factory' do
     expect(FactoryBot.build(:valid_quiz)).to be_valid
   end
 
@@ -11,17 +11,17 @@ RSpec.describe Quiz, type: :model do
 
   # test traits and subfactories
 
-  describe "with quiz graph" do
+  describe 'with quiz graph' do
     before :all do
       @quiz = FactoryBot.build(:valid_quiz, :with_quiz_graph)
     end
-    it "has no errors" do
+    it 'has no errors' do
       expect(@quiz.find_errors).to eq []
     end
   end
 
-  describe "random quiz" do
-    it "has a valid factory" do
+  describe 'random quiz' do
+    it 'has a valid factory' do
       expect(FactoryBot.build(:valid_random_quiz)).to be_valid
     end
   end

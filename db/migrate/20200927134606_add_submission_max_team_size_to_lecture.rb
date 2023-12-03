@@ -4,6 +4,6 @@ class AddSubmissionMaxTeamSizeToLecture < ActiveRecord::Migration[6.0]
   end
 
   def down
-    remove_column :lectures, :submission_max_team_size, :integer
+		remove_column :lectures, :submission_max_team_size, :integer
   end
 end

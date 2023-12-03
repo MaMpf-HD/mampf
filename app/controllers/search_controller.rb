@@ -40,13 +40,13 @@ class SearchController < ApplicationController
     def sanitize_search_string
       if @search_string.nil?
         redirect_back fallback_location: root_path,
-                      alert: I18n.t("controllers.no_search_term")
+                      alert: I18n.t('controllers.no_search_term')
         return
       end
       return if @search_string.length > 1
 
       redirect_back fallback_location: root_path,
-                    alert: I18n.t("controllers.search_term_short")
+                    alert: I18n.t('controllers.search_term_short')
     end
 
     def find_similar_tags

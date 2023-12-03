@@ -20,7 +20,7 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
 
   # Compress CSS using a preprocessor.
   config.assets.css_compressor = :sass
@@ -34,7 +34,7 @@ Rails.application.configure do
 
   # Specifies the header that your server uses for sending files.
   # config.action_dispatch.x_sendfile_header = 'X-Sendfile' # for Apache
-  config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
+  config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
@@ -52,26 +52,26 @@ Rails.application.configure do
   config.log_level = :warn
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [:request_id]
+  config.log_tags = [ :request_id ]
 
   # Use a different cache store in production.
-  config.cache_store = :mem_cache_store, ENV.fetch("MEMCACHED_SERVER", nil)
+  config.cache_store = :mem_cache_store, ENV["MEMCACHED_SERVER"]
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "mampf_#{Rails.env}"
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { protocol: "https", host: ENV.fetch("URL_HOST", nil) }
+  config.action_mailer.default_url_options = { protocol: 'https', host: ENV["URL_HOST"] }
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default charset: "utf-8"
+  config.action_mailer.default :charset => "utf-8"
 
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("MAILSERVER", nil),
+    address: ENV["MAILSERVER"],
     port: 25,
-    domain: ENV.fetch("MAILSERVER", nil)
+    domain: ENV["MAILSERVER"],
   }
 
   # Ignore bad email addresses and do not raise email delivery errors.
@@ -87,7 +87,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = Logger::Formatter.new
+  config.log_formatter = ::Logger::Formatter.new
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
@@ -120,7 +120,5 @@ Rails.application.configure do
   # these configuration options.
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
-  # rubocop:todo Layout/LineLength
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
-  # rubocop:enable Layout/LineLength
 end
