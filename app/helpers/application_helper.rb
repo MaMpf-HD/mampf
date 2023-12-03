@@ -260,7 +260,7 @@ module ApplicationHelper
   end
 
   def ballot_box(correctness)
-    raw(correctness ? "&#x2612;" : "&#x2610;") # rubocop:todo Rails/OutputSafety
+    raw(correctness ? "&#x2612;" : "&#x2610;") # rubocop:disable Rails/OutputSafety
   end
 
   def boxcolor(correctness)
