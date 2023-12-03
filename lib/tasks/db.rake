@@ -155,12 +155,14 @@ namespace :db do
     end
 
     def suffix_for_format(suffix)
-      case suffix # rubocop:todo Style/HashLikeCase
-      when "c" then "dump"
-      when "p" then "sql"
-      when "t" then "tar"
-      when "d" then "dir"
-      end
+      suffix_lookup = {
+        "c" => "dump",
+        "p" => "sql",
+        "t" => "tar",
+        "d" => "dir"
+      }
+
+      suffix_lookup[suffix]
     end
 
     def format_for_file(file)

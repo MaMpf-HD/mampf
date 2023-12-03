@@ -16,7 +16,7 @@
           <% is_home_active = !get_class_for_any_path_startswith([start_path(), lectures_path()]).empty?\
             || !get_class_for_path(root_path()).empty? %>
           <a href="<%= start_path %>"
-            class="nav-link bi bi-house-fill <%= is_home_active ? $active_css_class : '' %>"
+            class="nav-link bi bi-house-fill <%= is_home_active ? ACTIVE_CSS_CLASS : '' %>"
             data-bs-toggle="tooltip"
             title="<%= t('navbar.home') %>">
           </a>

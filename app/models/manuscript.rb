@@ -420,8 +420,8 @@ class Manuscript
     sections.each_with_index
             .map do |s, i|
               [s["mampf_section"], i + 1, s["description"], s["counter"]]
-            end # rubocop:todo Style/MultilineBlockChain
-            .select { |s| s.first.nil? }
+            end
+    sections.select { |s| s.first.nil? }
             .map { |s| [s.second, s.third, s.fourth] }
   end
 

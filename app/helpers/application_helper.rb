@@ -306,29 +306,25 @@ module ApplicationHelper
 
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
-  $active_css_class = "active-item" # rubocop:todo Style/GlobalVars
+  ACTIVE_CSS_CLASS = "active-item"
 
   def get_class_for_project(project)
-    request.params["project"] == project ? $active_css_class : "" # rubocop:todo Style/GlobalVars
+    request.params["project"] == project ? ACTIVE_CSS_CLASS : ""
   end
 
   def get_class_for_path(path)
-    request.path == path ? $active_css_class : "" # rubocop:todo Style/GlobalVars
+    request.path == path ? ACTIVE_CSS_CLASS : ""
   end
 
   def get_class_for_path_startswith(path)
-    request.path.starts_with?(path) ? $active_css_class : "" # rubocop:todo Style/GlobalVars
+    request.path.starts_with?(path) ? ACTIVE_CSS_CLASS : ""
   end
 
   def get_class_for_any_path(paths)
-    paths.include?(request.path) ? $active_css_class : "" # rubocop:todo Style/GlobalVars
+    paths.include?(request.path) ? ACTIVE_CSS_CLASS : ""
   end
 
   def get_class_for_any_path_startswith(paths)
-    if paths.any? { |path| request.path.starts_with?(path) }
-      return $active_css_class # rubocop:todo Style/GlobalVars
-    end
-
-    ""
+    paths.any? { |path| request.path.starts_with?(path) } ? ACTIVE_CSS_CLASS : ""
   end
 end
