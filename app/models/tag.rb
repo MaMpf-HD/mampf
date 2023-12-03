@@ -29,15 +29,15 @@ class Tag < ApplicationRecord
   has_many :related_tags, through: :relations, after_remove: :destroy_relations
 
   # a tag has different notions in different languages
-  has_many :notions, # rubocop:todo Rails/InverseOf
+  has_many :notions,
            after_remove: :touch_relations,
            after_add: :touch_relations,
-           dependent: :destroy
-  # rubocop:todo Rails/InverseOf
-  # rubocop:todo Rails/HasManyOrHasOneDependent
-  has_many :aliases, foreign_key: "aliased_tag_id", class_name: "Notion"
-  # rubocop:enable Rails/HasManyOrHasOneDependent
-  # rubocop:enable Rails/InverseOf
+           dependent: :destroy,
+           inverse_of: :tag
+  has_many :aliases, # rubocop:todo Rails/HasManyOrHasOneDependent
+           foreign_key: "aliased_tag_id",
+           class_name: "Notion",
+           inverse_of: :tag
 
   serialize :realizations, Array
 

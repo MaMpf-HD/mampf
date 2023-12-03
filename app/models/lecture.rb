@@ -5,29 +5,34 @@ class Lecture < ApplicationRecord
   belongs_to :course
 
   # teacher is the user that gives the lecture
-  belongs_to :teacher, class_name: "User" # rubocop:todo Rails/InverseOf
+  belongs_to :teacher, class_name: "User"
 
   # a lecture takes place in a certain term, except those where the course
   # is marked as term_independent
   belongs_to :term, optional: true
 
   # a lecture has many chapters, who have positions
-  # rubocop:todo Rails/InverseOf
-  has_many :chapters, -> { order(position: :asc) }, dependent: :destroy
-  # rubocop:enable Rails/InverseOf
+  has_many :chapters, -> { order(position: :asc) },
+           dependent: :destroy,
+           inverse_of: :lecture
 
   # during the term, a lot of lessons take place for this lecture
-  has_many :lessons, -> { order(date: :asc, id: :asc) }, # rubocop:todo Rails/InverseOf
+  has_many :lessons, -> { order(date: :asc, id: :asc) },
            dependent: :destroy,
            after_add: :touch_siblings,
-           after_remove: :touch_siblings
+           after_remove: :touch_siblings,
+           inverse_of: :lecture
 
   # a lecture has many talks, which have positions
-  has_many :talks, -> { order(position: :asc) }, dependent: :destroy # rubocop:todo Rails/InverseOf
+  has_many :talks, -> { order(position: :asc) },
+           dependent: :destroy,
+           inverse_of: :lecture
 
   # being a teachable (course/lecture/lesson), a lecture has associated media
   # rubocop:todo Rails/HasManyOrHasOneDependent
-  has_many :media, -> { order(position: :asc) }, as: :teachable # rubocop:todo Rails/InverseOf
+  has_many :media, -> { order(position: :asc) },
+           as: :teachable,
+           inverse_of: :lecture
   # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # in a lecture, you can import other media
@@ -54,9 +59,8 @@ class Lecture < ApplicationRecord
   has_many :announcements, dependent: :destroy
 
   # a lecture has many tutorials
-  # rubocop:todo Rails/InverseOf
-  has_many :tutorials, -> { order(:title) } # rubocop:todo Rails/HasManyOrHasOneDependent, Rails/InverseOf
-  # rubocop:enable Rails/InverseOf
+  has_many :tutorials, -> { order(:title) }, # rubocop:todo Rails/HasManyOrHasOneDependent
+           inverse_of: :lecture
 
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments # rubocop:todo Rails/HasManyOrHasOneDependent

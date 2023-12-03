@@ -3,9 +3,9 @@ class Chapter < ApplicationRecord
   belongs_to :lecture, touch: true
   # the chapters of a lecture form an ordered list
   acts_as_list scope: :lecture
-  # rubocop:todo Rails/InverseOf
-  has_many :sections, -> { order(position: :asc) }, dependent: :destroy
-  # rubocop:enable Rails/InverseOf
+  has_many :sections, -> { order(position: :asc) },
+           dependent: :destroy,
+           inverse_of: :chapter
   validates :title, presence: true
   before_destroy :touch_sections
   before_destroy :touch_chapters

@@ -15,10 +15,9 @@ class Lesson < ApplicationRecord
                       after_add: :touch_section
 
   # being a teachable (course/lecture/lesson), a lesson has associated media
-  # rubocop:todo Rails/InverseOf
-  has_many :media, -> { order(position: :asc) }, # rubocop:todo Rails/HasManyOrHasOneDependent, Rails/InverseOf
-           # rubocop:enable Rails/InverseOf
-           as: :teachable
+  has_many :media, -> { order(position: :asc) }, # rubocop:todo Rails/HasManyOrHasOneDependent
+           as: :teachable,
+           inverse_of: :lesson
 
   validates :date, presence: true
   validates :sections, presence: true

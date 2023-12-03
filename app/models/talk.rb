@@ -7,8 +7,9 @@ class Talk < ApplicationRecord
   validates :title, presence: true
 
   # being a teachable (course/lecture/lesson), a talk has associated media
-  has_many :media, -> { order(position: :asc) }, as: :teachable, # rubocop:todo Rails/InverseOf
-                                                 dependent: :destroy
+  has_many :media, -> { order(position: :asc) }, as: :teachable,
+                                                 dependent: :destroy,
+                                                 inverse_of: :talk
 
   # a talk has many tags
   has_many :talk_tag_joins, dependent: :destroy

@@ -46,9 +46,9 @@ class Medium < ApplicationRecord
   has_many :importing_courses, through: :imports,
                                source: :teachable, source_type: "Course"
 
-  # rubocop:todo Rails/InverseOf
-  has_many :quiz_certificates, foreign_key: "quiz_id", dependent: :destroy
-  # rubocop:enable Rails/InverseOf
+  has_many :quiz_certificates, foreign_key: "quiz_id",
+                               dependent: :destroy,
+                               inverse_of: :medium
 
   # a medium can be in watchlists of multiple users
   has_many :watchlist_entries, dependent: :destroy
