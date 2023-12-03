@@ -5,12 +5,10 @@ class TutorialsController < ApplicationController
                                       :bulk_download_corrections,
                                       :bulk_upload,
                                       :export_teams]
-  # rubocop:todo Rails/LexicallyScopedActionFilter
   before_action :set_assignment, only: [:bulk_download_submissions,
-                                        :bulk_download_corrections´,
+                                        :bulk_download_corrections,
                                         :bulk_upload,
                                         :export_teams]
-  # rubocop:enable Rails/LexicallyScopedActionFilter
   before_action :set_lecture, only: [:index, :overview]
   before_action :set_lecture_from_form, only: [:create]
   before_action :can_view_index, only: :index
