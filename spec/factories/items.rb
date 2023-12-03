@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :item do
-    # rubocop:todo Performance/CollectionLiteralInLoop
+    # rubocop:disable Performance/CollectionLiteralInLoop
     sort { ["remark", "example", "theorem", "definition"].sample }
     # rubocop:enable Performance/CollectionLiteralInLoop
 
