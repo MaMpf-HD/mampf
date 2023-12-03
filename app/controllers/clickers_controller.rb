@@ -2,7 +2,7 @@
 class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
                                                  :reset,
-                                                 :get_votes_count,
+                                                 :votes_count,
                                                  :set_alternatives,
                                                  :render_clickerizable_actions]
   before_action :set_clicker, except: [:new, :create]
@@ -84,7 +84,7 @@ class ClickersController < ApplicationController
     head :ok, content_type: "text/html"
   end
 
-  def get_votes_count # rubocop:todo Naming/AccessorMethodName
+  def votes_count
     result = @clicker.votes.count
     render json: result
   end

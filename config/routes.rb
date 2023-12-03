@@ -99,9 +99,9 @@ Rails.application.routes.draw do
        to: "clickers#associate_question",
        as: "associate_question"
 
-  get "clickers/:id/get_votes_count",
-      to: "clickers#get_votes_count",
-      as: "get_votes_count"
+  get "clickers/:id/votes_count",
+      to: "clickers#votes_count",
+      as: "votes_count"
 
   delete "clickers/:id/remove_question",
          to: "clickers#remove_question",
