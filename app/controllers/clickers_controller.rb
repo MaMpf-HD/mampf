@@ -1,10 +1,12 @@
 # ClickersController
 class ClickersController < ApplicationController
+  # rubocop:todo Rails/LexicallyScopedActionFilter
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
                                                  :reset,
                                                  :votes_count,
                                                  :set_alternatives,
                                                  :render_clickerizable_actions]
+  # rubocop:enable Rails/LexicallyScopedActionFilter
   before_action :set_clicker, except: [:new, :create]
   authorize_resource except: [:new, :create, :edit, :open, :close,
                               :set_alternatives]
