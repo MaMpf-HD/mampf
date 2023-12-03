@@ -20,9 +20,9 @@ class Assignment < ApplicationRecord
                                       "in_past"))
   end
 
-  scope :active, -> { where("deadline >= ?", Time.now) }
+  scope :active, -> { where("deadline >= ?", Time.zone.now) }
 
-  scope :expired, -> { where("deadline < ?", Time.now) }
+  scope :expired, -> { where("deadline < ?", Time.zone.now) }
 
   def self.accepted_file_types
     [".pdf", ".tar.gz", ".cc", ".hh", ".m", ".mlx", ".zip"]
@@ -46,11 +46,11 @@ class Assignment < ApplicationRecord
   end
 
   def active?
-    Time.now <= deadline
+    Time.zone.now <= deadline
   end
 
   def semiactive?
-    Time.now <= friendly_deadline
+    Time.zone.now <= friendly_deadline
   end
 
   def expired?

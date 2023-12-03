@@ -8,7 +8,7 @@ class TimeStamp
 
   # extract from YAML
   def self.load(text)
-    return unless text.present?
+    return if text.blank?
 
     YAML.safe_load(text, permitted_classes: [TimeStamp,
                                              ActiveModel::Errors],

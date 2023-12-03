@@ -90,8 +90,8 @@ class Tag < ApplicationRecord
     end
 
     local_title_uncached +
-      " (#{aliases.pluck(:title).join(", ")}," +
-      " #{other_titles_uncached.join(", ")})"
+      " (#{aliases.pluck(:title).join(", ")}, " \
+      "#{other_titles_uncached.join(", ")})"
   end
 
   def extended_title
@@ -133,7 +133,7 @@ class Tag < ApplicationRecord
   end
 
   def locale_title_hash
-    notions.map { |n| [n.locale, n.title] }.to_h
+    notions.to_h { |n| [n.locale, n.title] }
   end
 
   def self.select_with_substring(search_string)
@@ -145,8 +145,8 @@ class Tag < ApplicationRecord
       fulltext search_string
     end
     search.execute
-    result = search.results
-                   .map { |t| { value: t.id, text: t.title } }
+    search.results
+          .map { |t| { value: t.id, text: t.title } }
   end
 
   # returns all tags whose title is close to the given search string
@@ -169,7 +169,7 @@ class Tag < ApplicationRecord
   # returns the array of all tags (sorted by title) together with
   # their ids
   def self.select_by_title
-    Tag.all.map { |t| t.extended_title_id_hash }
+    Tag.all.map(&:extended_title_id_hash)
        .natural_sort_by { |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
@@ -177,7 +177,7 @@ class Tag < ApplicationRecord
   # arel of tags together with
   def self.select_by_title_except(excluded_tags)
     Tag.where.not(id: excluded_tags.pluck(:id))
-       .map { |t| t.extended_title_id_hash }
+       .map(&:extended_title_id_hash)
        .natural_sort_by { |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
@@ -244,7 +244,7 @@ class Tag < ApplicationRecord
   def short_title(max_letters = 30)
     return title unless title.length > max_letters
 
-    title[0, max_letters - 3] + "..."
+    "#{title[0, max_letters - 3]}..."
   end
 
   def in_lecture?(lecture)
@@ -274,7 +274,9 @@ class Tag < ApplicationRecord
 
     question_ids = questions.pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
-    quiz = Quiz.new(description: "#{I18n.t("categories.randomquiz.singular")} #{title} #{Time.now}",
+    # rubocop:todo Layout/LineLength
+    quiz = Quiz.new(description: "#{I18n.t("categories.randomquiz.singular")} #{title} #{Time.zone.now}",
+                    # rubocop:enable Layout/LineLength
                     level: 1,
                     quiz_graph: quiz_graph,
                     sort: "RandomQuiz")
@@ -329,11 +331,11 @@ class Tag < ApplicationRecord
   end
 
   def cache_key
-    super + "-" + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def touch_lectures
-    Lecture.where(id: sections.map(&:lecture)
+    Lecture.where(id: sections.map(&:lecture) # rubocop:todo Performance/MapMethodChain
                               .map(&:id)).update updated_at: Time.current
   end
 
@@ -342,7 +344,7 @@ class Tag < ApplicationRecord
   end
 
   def touch_chapters
-    Chapter.where(id: sections.map(&:chapter)
+    Chapter.where(id: sections.map(&:chapter) # rubocop:todo Performance/MapMethodChain
                               .map(&:id)).update updated_at: Time.current
   end
 
@@ -371,7 +373,7 @@ class Tag < ApplicationRecord
       result[l] = [locale_title_hash[l.to_s]] + [tag.locale_title_hash[l.to_s]]
       result[l].delete(nil)
       result[:contradictions].push(l) if result[l].count > 1
-      result.delete(l) unless result[l].present?
+      result.delete(l) if result[l].blank?
     end
     result
   end
@@ -401,6 +403,6 @@ class Tag < ApplicationRecord
       result = notions.pluck(:title).join(" ")
       return result unless aliases.any?
 
-      result + " " + aliases.pluck(:title).join(" ")
+      "#{result} #{aliases.pluck(:title).join(" ")}"
     end
 end

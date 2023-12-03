@@ -6,9 +6,9 @@ class WatchlistEntriesController < ApplicationController
 
   def create
     @watchlist_entry = WatchlistEntry.new
-    @watchlist = Watchlist.find_by_id(params[:watchlist_entry][:watchlist_id])
+    @watchlist = Watchlist.find_by(id: params[:watchlist_entry][:watchlist_id])
     @watchlist_entry.watchlist = @watchlist
-    @medium = Medium.find_by_id(params[:watchlist_entry][:medium_id])
+    @medium = Medium.find_by(id: params[:watchlist_entry][:medium_id])
     @watchlist_entry.medium = @medium
     authorize! :create, @watchlist_entry
     @success = @watchlist_entry.save

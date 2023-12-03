@@ -70,7 +70,7 @@ class Item < ApplicationRecord
   # result might look like this:
   # "01:14:40.500 --> 01:19:42.249\n"
   def vtt_time_span
-    start_time.vtt_string + " --> " + end_time.vtt_string + "\n"
+    "#{start_time.vtt_string} --> #{end_time.vtt_string}\n"
   end
 
   # returns the description of the toc entry corresponding to this item
@@ -89,9 +89,9 @@ class Item < ApplicationRecord
   # result might look like this:
   # "Bem. 29.13: zu freien Moduln\n\n"
   def vtt_reference
-    return short_description + "\n\n" unless short_reference.present?
+    return "#{short_description}\n\n" if short_reference.blank?
 
-    short_reference + ": " + short_description + "\n\n"
+    "#{short_reference}: #{short_description}\n\n"
   end
 
   # returns a reference to the item as it is used in .vtt files,
@@ -120,9 +120,9 @@ class Item < ApplicationRecord
   def long_reference
     return short_reference if sort.in?(["self", "link"])
     return short_ref_with_teachable if section.present?
-    return medium.title_for_viewers unless short_reference.present?
+    return medium.title_for_viewers if short_reference.blank?
 
-    medium.title_for_viewers + ", " + short_reference
+    "#{medium.title_for_viewers}, #{short_reference}"
   end
 
   # returns just the description, unless sort is section or self
@@ -144,7 +144,7 @@ class Item < ApplicationRecord
     unless sort.in?(["self", "link", "pdf_destination"])
       return short_ref_with_description unless medium&.sort == "Script"
 
-      return "Skript, " + short_ref_with_description
+      return "Skript, #{short_ref_with_description}"
     end
     local_non_math_reference
   end
@@ -157,7 +157,7 @@ class Item < ApplicationRecord
     return local_reference if medium.teachable_type == "Course"
     return local_reference unless medium.teachable.media_scope.term
 
-    medium.teachable.media_scope.term.to_label_short + ", " + local_reference
+    "#{medium.teachable.media_scope.term.to_label_short}, #{local_reference}"
   end
 
   # returns the title of the item *within* a given lecture
@@ -173,7 +173,7 @@ class Item < ApplicationRecord
   # this is true if the item belongs to a section of the lecture or the
   # lesson's lecture
   def local?(referring_medium)
-    return false unless section.present?
+    return false if section.blank?
 
     in?(referring_medium.teachable.lecture&.items.to_a)
   end
@@ -294,7 +294,7 @@ class Item < ApplicationRecord
   end
 
   def related_items_visible?
-    !!related_items&.first&.medium&.published? &&
+    !related_items&.first&.medium&.published?.nil? &&
       !related_items&.first&.medium&.locked?
   end
 
@@ -331,7 +331,7 @@ class Item < ApplicationRecord
     end
 
     def math_reference
-      sort_long + " " + math_item_number
+      "#{sort_long} #{math_item_number}"
     end
 
     def special_reference
@@ -343,7 +343,7 @@ class Item < ApplicationRecord
 
     def section_reference
       return section.displayed_number.to_s if section.present?
-      return "§" + ref_number if ref_number.present?
+      return "§#{ref_number}" if ref_number.present?
 
       ""
     end
@@ -363,40 +363,40 @@ class Item < ApplicationRecord
       if sort == "label"
         return "" if description.present?
 
-        return "destination: " + pdf_destination.to_s
+        return "destination: #{pdf_destination}"
       end
       special_reference
     end
 
     def non_math_reference
       return medium.title_for_viewers if sort == "self"
-      return medium.title_for_viewers + " (pdf) # " + description if sort == "pdf_destination"
+      return "#{medium.title_for_viewers} (pdf) # #{description}" if sort == "pdf_destination"
 
-      "extern " + description.to_s if sort == "link"
+      "extern #{description}" if sort == "link"
     end
 
     def local_non_math_reference
       return medium.local_title_for_viewers if sort == "self"
-      return medium.local_title_for_viewers + " (pdf) # " + description if sort == "pdf_destination"
+      return "#{medium.local_title_for_viewers} (pdf) # #{description}" if sort == "pdf_destination"
 
-      "extern " + description.to_s if sort == "link"
+      "extern #{description}" if sort == "link"
     end
 
     def short_ref_with_teachable
-      return medium.teachable.lecture.title_for_viewers unless short_reference.present?
+      return medium.teachable.lecture.title_for_viewers if short_reference.blank?
 
-      medium.teachable.lecture.title_for_viewers + ", " + short_reference
+      "#{medium.teachable.lecture.title_for_viewers}, #{short_reference}"
     end
 
     def short_ref_with_description
-      return short_reference + " " + description.to_s unless sort == "section"
+      return "#{short_reference} #{description}" unless sort == "section"
 
       short_ref_for_sections
     end
 
     def short_ref_for_sections
-      return short_reference + " " + description if description.present?
-      return short_reference + " " + section.title if section.present?
+      return "#{short_reference} #{description}" if description.present?
+      return "#{short_reference} #{section.title}" if section.present?
 
       short_reference
     end

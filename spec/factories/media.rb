@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "faker"
 
 FactoryBot.define do
@@ -58,7 +56,7 @@ FactoryBot.define do
         l.released = "all"
         l.save
         m.released = "all"
-        m.released_at = Time.now
+        m.released_at = Time.zone.now
         m.save!
       end
     end

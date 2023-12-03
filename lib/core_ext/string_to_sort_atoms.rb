@@ -9,7 +9,7 @@ class SmartSortAtom
     other.is_a?(self.class) or raise "Can only smart compare with other SmartSortAtom"
     left_value = value
     right_value = other.value
-    if left_value.class == right_value.class
+    if left_value.instance_of?(right_value.class)
       left_value <=> right_value
     elsif left_value.is_a?(Float)
       -1

@@ -58,7 +58,7 @@ class SubmissionsController < ApplicationController
     return unless @submission.valid?
 
     send_invitation_emails
-    @submission.update(last_modification_by_users_at: Time.now)
+    @submission.update(last_modification_by_users_at: Time.zone.now)
     return unless @submission.manuscript
 
     send_upload_email(User.where(id: current_user.id))
@@ -85,10 +85,10 @@ class SubmissionsController < ApplicationController
       @submission.update(accepted: nil)
       if params[:submission][:detach_user_manuscript] == "true"
         @submission.update(manuscript: nil,
-                           last_modification_by_users_at: Time.now)
+                           last_modification_by_users_at: Time.zone.now)
         send_upload_removal_email(@submission.users)
       elsif @submission.manuscript_data != old_manuscript_data
-        @submission.update(last_modification_by_users_at: Time.now)
+        @submission.update(last_modification_by_users_at: Time.zone.now)
         send_upload_email(@submission.users)
       end
     end
@@ -120,7 +120,7 @@ class SubmissionsController < ApplicationController
   end
 
   def join
-    @assignment = Assignment.find_by_id(join_params[:assignment_id])
+    @assignment = Assignment.find_by(id: join_params[:assignment_id])
     @lecture = @assignment.lecture
     set_submission_locale
     code = join_params[:code]
@@ -146,7 +146,7 @@ class SubmissionsController < ApplicationController
   end
 
   def show_manuscript
-    if @submission && @submission.manuscript
+    if @submission&.manuscript
       send_file @submission.manuscript.to_io,
                 type: @submission.manuscript_mime_type,
                 disposition: @disposition,
@@ -159,7 +159,7 @@ class SubmissionsController < ApplicationController
   end
 
   def show_correction
-    if @submission && @submission.correction
+    if @submission&.correction
       send_file @submission.correction.to_io,
                 type: @submission.correction_mime_type,
                 disposition: @disposition,
@@ -245,13 +245,13 @@ class SubmissionsController < ApplicationController
   private
 
     def set_submission
-      @submission = Submission.find_by_id(params[:id])
+      @submission = Submission.find_by(id: params[:id])
       @assignment = @submission&.assignment
       @lecture = @assignment&.lecture
       set_submission_locale
       return if @submission
 
-      flash[:alert] = I18n.t("controllers.no_submission")
+      flash.now[:alert] = I18n.t("controllers.no_submission")
       render js: "window.location='#{root_path}'"
     end
 
@@ -270,18 +270,18 @@ class SubmissionsController < ApplicationController
     end
 
     def set_assignment
-      @assignment = Assignment.find_by_id(params[:assignment_id])
+      @assignment = Assignment.find_by(id: params[:assignment_id])
       @lecture = @assignment&.lecture
       set_submission_locale
       return if @assignment
 
-      flash[:alert] = I18n.t("controllers.no_assignment")
+      flash.now[:alert] = I18n.t("controllers.no_assignment")
       render js: "window.location='#{root_path}'"
       nil
     end
 
     def set_lecture
-      @lecture = Lecture.find_by_id(params[:id])
+      @lecture = Lecture.find_by(id: params[:id])
       set_submission_locale and return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
@@ -401,7 +401,7 @@ class SubmissionsController < ApplicationController
                                      submission: @submission)
       @join.save
       if @join.valid?
-        @submission.update(last_modification_by_users_at: Time.now)
+        @submission.update(last_modification_by_users_at: Time.zone.now)
         send_join_email
         remove_invitee_status
       else

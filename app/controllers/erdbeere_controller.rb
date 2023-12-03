@@ -27,7 +27,7 @@ class ErdbeereController < ApplicationController
   end
 
   def show_structure
-    id = params[:id]
+    params[:id]
     response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/structures/#{params[:id]}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
@@ -87,15 +87,13 @@ class ErdbeereController < ApplicationController
   end
 
   def fill_realizations_select
-    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/structures/")
-    @tag = Tag.find_by_id(params[:id])
+    response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/structures/")
+    @tag = Tag.find_by(id: params[:id])
     hash = JSON.parse(response.body)
     @structures = hash["data"].map do |d|
       { id: d["id"],
         name: d["attributes"]["name"],
-        properties: d["relationships"]["original_properties"]["data"].map do |x|
-                      x["id"]
-                    end }
+        properties: d["relationships"]["original_properties"]["data"].pluck("id") }
     end
     @properties = hash["included"].map do |d|
       { id: d["id"],
@@ -104,7 +102,7 @@ class ErdbeereController < ApplicationController
   end
 
   def find_example
-    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/find?" + find_params.to_query)
+    response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/find?#{find_params.to_query}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else

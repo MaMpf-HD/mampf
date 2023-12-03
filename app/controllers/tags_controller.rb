@@ -58,7 +58,7 @@ class TagsController < ApplicationController
 
   def create
     # first, check if errors from creation_permission callback are present
-    @section = Section.find_by_id(params[:tag][:section_id])
+    @section = Section.find_by(id: params[:tag][:section_id])
     if @errors.present?
       render :update
       return
@@ -108,7 +108,7 @@ class TagsController < ApplicationController
   end
 
   def identify
-    @identified_tag = Tag.find_by_id(params[:tag][:identified_tag_id])
+    @identified_tag = Tag.find_by(id: params[:tag][:identified_tag_id])
     @tag.identify_with!(@identified_tag)
     @identified_tag.destroy
     @tag.update(tag_params)
@@ -127,7 +127,7 @@ class TagsController < ApplicationController
   end
 
   def fill_course_tags
-    course = Course.find_by_id(params[:course_id])
+    course = Course.find_by(id: params[:course_id])
     result = course&.select_question_tags_by_title
     render json: result
   end
@@ -164,11 +164,11 @@ class TagsController < ApplicationController
     authorize! :postprocess, Tag.new
     @tags_hash = params[:tags]
     @tags_hash.each do |t, section_data|
-      tag = Tag.find_by_id(t)
+      tag = Tag.find_by(id: t)
       next unless tag
 
       section_data.each do |s, v|
-        next if v.to_i == 0
+        next if v.to_i.zero?
 
         section = Section.find(s)
         next unless section
@@ -177,23 +177,23 @@ class TagsController < ApplicationController
       end
     end
     if params["from"] == "Lesson"
-      redirect_to edit_lesson_path(Lesson.find_by_id(params[:id]))
+      redirect_to edit_lesson_path(Lesson.find_by(id: params[:id]))
       return
     end
-    redirect_to edit_medium_path(Medium.find_by_id(params[:id]))
+    redirect_to edit_medium_path(Medium.find_by(id: params[:id]))
   end
 
   def render_tag_title
     authorize! :render_tag_title, Tag.new
-    tag = Tag.find_by_id(params[:tag_id])
-    @identified_tag = Tag.find_by_id(params[:identified_tag_id])
+    tag = Tag.find_by(id: params[:tag_id])
+    @identified_tag = Tag.find_by(id: params[:identified_tag_id])
     @common_titles = tag.common_titles(@identified_tag)
   end
 
   private
 
     def set_tag
-      @tag = Tag.find_by_id(params[:id])
+      @tag = Tag.find_by(id: params[:id])
       return if @tag.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_tag")
@@ -238,17 +238,17 @@ class TagsController < ApplicationController
     def set_up_tag
       @tag = Tag.new
       set_notions
-      related_tag = Tag.find_by_id(params[:related_tag])
+      related_tag = Tag.find_by(id: params[:related_tag])
       @tag.related_tags << related_tag if related_tag.present?
     end
 
     def add_course
-      course = Course.find_by_id(params[:course])
+      course = Course.find_by(id: params[:course])
       @tag.courses << course if course.present?
     end
 
     def add_section
-      section = Section.find_by_id(params[:section])
+      section = Section.find_by(id: params[:section])
       return unless section
 
       @tag.sections << section
@@ -256,7 +256,7 @@ class TagsController < ApplicationController
     end
 
     def add_medium
-      medium = Medium.find_by_id(params[:medium])
+      medium = Medium.find_by(id: params[:medium])
       return unless medium
 
       I18n.locale = medium.locale_with_inheritance || current_user.locale
@@ -264,7 +264,7 @@ class TagsController < ApplicationController
     end
 
     def add_lesson
-      lesson = Lesson.find_by_id(params[:lesson])
+      lesson = Lesson.find_by(id: params[:lesson])
       return unless lesson
 
       @tag.lessons << lesson
@@ -272,7 +272,7 @@ class TagsController < ApplicationController
     end
 
     def add_talk
-      talk = Talk.find_by_id(params[:talk])
+      talk = Talk.find_by(id: params[:talk])
       return unless talk
 
       @tag.talks << talk
@@ -344,12 +344,13 @@ class TagsController < ApplicationController
     end
 
     def locale
-      locale = if params[:from] == "course"
-        @tag.courses&.first&.locale
-      elsif params[:from] == "medium"
-        @tag.media&.first&.locale_with_inheritance
-      elsif params[:from] == "section"
-        @tag.sections&.first&.lecture&.locale_with_inheritance
+      locale = case params[:from]
+               when "course"
+                 @tag.courses&.first&.locale
+               when "medium"
+                 @tag.media&.first&.locale_with_inheritance
+               when "section"
+                 @tag.sections&.first&.lecture&.locale_with_inheritance
       end
       locale || current_user.locale
     end

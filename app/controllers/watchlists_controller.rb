@@ -43,7 +43,7 @@ class WatchlistsController < ApplicationController
                                user: current_user,
                                description: create_params[:description])
     authorize! :create, @watchlist
-    @medium = Medium.find_by_id(create_params[:medium_id])
+    @medium = Medium.find_by(id: create_params[:medium_id])
     @success = @watchlist.save
     flash[:notice] = I18n.t("watchlist.creation_success") if @medium.blank? && @success
     respond_to do |format|
@@ -75,17 +75,17 @@ class WatchlistsController < ApplicationController
   def add_medium
     authorize! :add_medium, Watchlist
     @watchlists = current_user.watchlists
-    @medium = Medium.find_by_id(params[:medium_id])
+    @medium = Medium.find_by(id: params[:medium_id])
   end
 
   def update_order
-    entries = params[:order].map { |id| WatchlistEntry.find_by_id(id) }
+    entries = params[:order].map { |id| WatchlistEntry.find_by(id: id) }
     authorize! :update_order, @watchlist, entries
     page = params[:page].to_i
     per = params[:per].to_i
     if params[:reverse]
       entries.reverse!
-      shift = @watchlist.watchlist_entries.size - (page * per) unless page == 0
+      shift = @watchlist.watchlist_entries.size - (page * per) unless page.zero?
     else
       shift = page * per
     end
@@ -102,7 +102,7 @@ class WatchlistsController < ApplicationController
   private
 
     def set_watchlist
-      @watchlist = Watchlist.find_by_id(params[:id])
+      @watchlist = Watchlist.find_by(id: params[:id])
       return if @watchlist.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_watchlist")

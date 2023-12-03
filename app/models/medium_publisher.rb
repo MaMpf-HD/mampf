@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # PORO class that handles the publication of media
 class MediumPublisher
   attr_reader :medium_id, :user_id, :release_now, :release_for, :release_date,
@@ -47,17 +45,17 @@ class MediumPublisher
     begin
       release_date = Time.zone.parse(params[:release_date] || "")
     rescue ArgumentError
-      puts "Argument error for medium release date"
+      Rails.logger.debug "Argument error for medium release date"
     end
     begin
       assignment_deadline = Time.zone.parse(params[:assignment_deadline] || "")
     rescue ArgumentError
-      puts "Argument error for medium assignment deadline"
+      Rails.logger.debug "Argument error for medium assignment deadline"
     end
     begin
       assignment_deletion_date = Time.zone.parse(params[:assignment_deletion_date] || "")
     rescue ArgumentError
-      puts "Argument error for medium assignment deletion date"
+      Rails.logger.debug "Argument error for medium assignment deletion date"
     end
     MediumPublisher.new(medium_id: medium.id, user_id: user.id,
                         release_now: params[:release_now] == "1",
@@ -73,8 +71,8 @@ class MediumPublisher
   end
 
   def publish!
-    @medium = Medium.find_by_id(@medium_id)
-    @user = User.find_by_id(@user_id)
+    @medium = Medium.find_by(id: @medium_id)
+    @user = User.find_by(id: @user_id)
     return unless @medium && @user && @medium.released_at.nil?
     return unless @user.can_edit?(@medium)
 
@@ -156,7 +154,7 @@ class MediumPublisher
     end
 
     def medium
-      Medium.find_by_id(@medium_id)
+      Medium.find_by(id: @medium_id)
     end
 
     def publish_vertices!

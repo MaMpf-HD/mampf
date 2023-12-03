@@ -1,14 +1,10 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :course do
     title do
-      Faker::Book.title + " " +
-        Faker::Number.between(from: 1, to: 9999).to_s
+      "#{Faker::Book.title} #{Faker::Number.between(from: 1, to: 9999)}"
     end
     short_title do
-      Faker::Book.title + " " +
-        Faker::Number.between(from: 1, to: 9999).to_s
+      "#{Faker::Book.title} #{Faker::Number.between(from: 1, to: 9999)}"
     end
 
     transient do

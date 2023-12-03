@@ -46,14 +46,14 @@ class TermsController < ApplicationController
 
   def cancel
     @id = params[:id]
-    @term = Term.find_by_id(@id)
+    @term = Term.find_by(id: @id)
     authorize! :cancel, @term
     @new_action = params[:new] == "true"
   end
 
   def set_active
     authorize! :set_active, Term.new
-    new_active_term = Term.find_by_id(active_term_params[:active_term])
+    new_active_term = Term.find_by(id: active_term_params[:active_term])
     old_active_term = Term.active
     if old_active_term && new_active_term && new_active_term != old_active_term
       old_active_term.update(active: false)
@@ -68,7 +68,7 @@ class TermsController < ApplicationController
 
     def set_term
       @id = params[:id]
-      @term = Term.find_by_id(@id)
+      @term = Term.find_by(id: @id)
       return if @term
 
       redirect_to terms_path, alert: I18n.t("controllers.no_term")

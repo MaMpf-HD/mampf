@@ -14,15 +14,15 @@ module MediaHelper
   end
 
   def video_download_file(medium)
-    medium.title + ".mp4"
+    "#{medium.title}.mp4"
   end
 
   def manuscript_download_file(medium)
-    medium.title + ".pdf"
+    "#{medium.title}.pdf"
   end
 
   def geogebra_download_file(medium)
-    medium.title + ".ggb"
+    "#{medium.title}.ggb"
   end
 
   def inspect_or_edit_medium_path(medium, inspection)
@@ -43,7 +43,7 @@ module MediaHelper
   # create text for notification about new medium in notification card
   def medium_notification_card_header(medium)
     teachable = medium.teachable
-    return teachable.media_scope.title_for_viewers if teachable.media_scope.class.to_s == "Course"
+    return teachable.media_scope.title_for_viewers if teachable.media_scope.instance_of?(::Course)
 
     link_to(teachable.media_scope.title_for_viewers,
             medium.teachable.media_scope.path(current_user),
@@ -62,7 +62,7 @@ module MediaHelper
   end
 
   def preselected_sections(medium)
-    return [] unless medium.teachable.class.to_s == "Lesson"
+    return [] unless medium.teachable.instance_of?(::Lesson)
 
     medium.teachable.sections.map(&:id)
   end
@@ -84,8 +84,8 @@ module MediaHelper
   end
 
   def level_to_word(medium)
-    return t("basics.not_set") unless medium.level.present?
-    return t("basics.level_easy") if medium.level == 0
+    return t("basics.not_set") if medium.level.blank?
+    return t("basics.level_easy") if medium.level.zero?
     return t("basics.level_medium") if medium.level == 1
 
     t("basics.level_hard")
@@ -130,7 +130,7 @@ module MediaHelper
   end
 
   def release_date_info(medium)
-    return unless medium.publisher.present?
+    return if medium.publisher.blank?
 
     t("admin.medium.scheduled_for_release_short",
       release_date: I18n.l(medium.publisher&.release_date,

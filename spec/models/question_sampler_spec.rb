@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 RSpec.describe QuestionSampler, type: :model do
   it "has a valid factory" do
     expect(FactoryBot.build(:question_sampler)).to be_kind_of(QuestionSampler)

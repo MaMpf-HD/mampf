@@ -30,7 +30,7 @@ class PdfUploader < Shrine
           # extract lines that correspond to MaMpf-Label entries from LaTEX
           # package mampf.sty
           structure = if File.file?(structure_path)
-            open(structure_path, "r") do |io|
+            open(structure_path, "r") do |io| # rubocop:todo Security/Open
               io.read.encode("UTF-8", invalid: :replace)
             end
           end
@@ -55,7 +55,7 @@ class PdfUploader < Shrine
           mampf_sty_version = structure.scan(/MaMpf-Version\|(.*?)\n/).flatten
                                        .first
           { "pages" => pages,
-            "destinations" => result.map { |b| b["destination"] },
+            "destinations" => result.pluck("destination"),
             "bookmarks" => result,
             "linked_media" => linked_media,
             "version" => mampf_sty_version }

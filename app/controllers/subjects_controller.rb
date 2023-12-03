@@ -35,7 +35,7 @@ class SubjectsController < ApplicationController
   private
 
     def set_subject
-      @subject = Subject.find_by_id(params[:id])
+      @subject = Subject.find_by(id: params[:id])
       return if @subject.present?
 
       redirect_to root_path, alert: I18n.t("controllers.no_answer")

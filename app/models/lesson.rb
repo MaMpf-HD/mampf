@@ -40,7 +40,7 @@ class Lesson < ApplicationRecord
   # Therefore, they can be called on any *teachable*
 
   def course
-    return unless lecture.present?
+    return if lecture.blank?
 
     lecture.course
   end
@@ -58,34 +58,35 @@ class Lesson < ApplicationRecord
   end
 
   def selector_value
-    "Lesson-" + id.to_s
+    "Lesson-#{id}"
   end
 
   def title
-    I18n.t("lesson") + " " + number.to_s + ", " + date_localized.to_s
+    "#{I18n.t("lesson")} #{number}, #{date_localized}"
   end
 
   def to_label
-    "Nr. " + number.to_s + ", " + date_localized.to_s
+    "Nr. #{number}, #{date_localized}"
   end
 
   def compact_title
-    lecture.compact_title + ".E" + number.to_s
+    "#{lecture.compact_title}.E#{number}"
   end
 
   def cache_key
-    super + "-" + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
-      lecture.title_for_viewers + ", " + I18n.t("lesson") + " " + number.to_s +
-        " " + I18n.t("from") + " " + date_localized
+      # rubocop:todo Layout/LineLength
+      "#{lecture.title_for_viewers}, #{I18n.t("lesson")} #{number} #{I18n.t("from")} #{date_localized}"
+      # rubocop:enable Layout/LineLength
     end
   end
 
   def long_title
-    lecture.title + ", " + title
+    "#{lecture.title}, #{title}"
   end
 
   delegate :locale_with_inheritance, to: :lecture
@@ -95,7 +96,7 @@ class Lesson < ApplicationRecord
   end
 
   def card_header
-    lecture.short_title_brackets + ", " + date_localized
+    "#{lecture.short_title_brackets}, #{date_localized}"
   end
 
   def card_header_path(user)
@@ -109,15 +110,15 @@ class Lesson < ApplicationRecord
   # some more methods dealing with the title
 
   def short_title_with_lecture
-    lecture.short_title + ", S." + number.to_s
+    "#{lecture.short_title}, S.#{number}"
   end
 
   def short_title_with_lecture_date
-    lecture.short_title + ", " + date_localized
+    "#{lecture.short_title}, #{date_localized}"
   end
 
   def short_title
-    lecture.short_title + "_E" + number.to_s
+    "#{lecture.short_title}_E#{number}"
   end
 
   def local_title_for_viewers
@@ -129,7 +130,7 @@ class Lesson < ApplicationRecord
   # more infos that can be extracted
 
   def term
-    return unless lecture.present?
+    return if lecture.blank?
 
     lecture.term
   end
@@ -219,7 +220,7 @@ class Lesson < ApplicationRecord
     return [] unless start_item && end_item
 
     range = (start_item.position..end_item.position).to_a
-    return [] unless range.present?
+    return [] if range.blank?
 
     hidden_chapters = Chapter.where(hidden: true)
     hidden_sections = Section.where(hidden: true)
@@ -249,12 +250,12 @@ class Lesson < ApplicationRecord
     if user.admin?
       return Lesson.order_reverse
                    .map do |l|
-                     [l.title_for_viewers, "Lesson-" + l.id.to_s]
+                     [l.title_for_viewers, "Lesson-#{l.id}"]
                    end
     end
     Lesson.includes(:lecture).order_reverse
           .select { |l| l.edited_by?(user) }
-          .map { |l| [l.title_for_viewers, "Lesson-" + l.id.to_s] }
+          .map { |l| [l.title_for_viewers, "Lesson-#{l.id}"] }
   end
 
   def guess_start_destination
@@ -308,7 +309,7 @@ class Lesson < ApplicationRecord
 
     def touch_sections
       sections.update(updated_at: Time.current)
-      chapters = sections.map(&:chapter)
+      sections.map(&:chapter)
       sections.map(&:chapter).each(&:touch)
       lecture.touch
     end

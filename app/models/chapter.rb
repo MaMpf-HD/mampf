@@ -25,7 +25,7 @@ class Chapter < ApplicationRecord
   # Returns the number of the chapter. Unless the user explicitly specified
   # a display number, this number is calculated
   def displayed_number
-    return calculated_number unless display_number.present?
+    return calculated_number if display_number.blank?
 
     display_number
   end
@@ -38,7 +38,7 @@ class Chapter < ApplicationRecord
 
   # Returns the chapter number based on the position in the chapters list.
   def calculated_number
-    return position.to_s unless lecture.start_chapter.present?
+    return position.to_s if lecture.start_chapter.blank?
 
     (lecture.start_chapter + position - 1).to_s
   end
@@ -67,7 +67,7 @@ class Chapter < ApplicationRecord
   end
 
   def cache_key
-    super + "-" + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def touch_chapters

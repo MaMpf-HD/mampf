@@ -5,5 +5,5 @@ autoloader = Rails.autoloaders.main
 sti_leaves = ["question", "quiz", "remark"]
 
 sti_leaves.each do |leaf|
-  autoloader.on_setup { "#{leaf}" }
+  autoloader.on_setup { leaf.to_s }
 end

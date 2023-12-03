@@ -83,7 +83,7 @@ module LecturesHelper
     return "" unless subscribed
 
     result = "text-light "
-    result += if lecture.term
+    result + if lecture.term
       "bg-mdb-color-lighten-1"
     else
       "bg-info"

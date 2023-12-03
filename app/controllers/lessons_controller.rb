@@ -14,10 +14,10 @@ class LessonsController < ApplicationController
   end
 
   def new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by(id: params[:lecture_id])
     I18n.locale = @lecture.locale_with_inheritance if @lecture
     @lesson = Lesson.new(lecture: @lecture)
-    section = Section.find_by_id(params[:section_id])
+    section = Section.find_by(id: params[:section_id])
     @lesson.sections << section if section
     authorize! :new, @lesson
   end
@@ -63,7 +63,7 @@ class LessonsController < ApplicationController
     media.each do |m|
       m.update(teachable: lecture,
                description: m.description.presence ||
-                              (m.title + " (" + I18n.t("admin.lesson.destroyed") + ")"))
+                              "#{m.title} (#{I18n.t("admin.lesson.destroyed")})")
     end
     @lesson.destroy
     redirect_to edit_lecture_path(lecture)
@@ -72,7 +72,7 @@ class LessonsController < ApplicationController
   private
 
     def set_lesson
-      @lesson = Lesson.find_by_id(params[:id])
+      @lesson = Lesson.find_by(id: params[:id])
       return if @lesson.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_lesson")

@@ -6,12 +6,14 @@ require "openssl"
 
 class CamtasiaScraper
   def initialize(link)
-    html = Nokogiri::HTML(open(link))
+    html = Nokogiri::HTML(open(link)) # rubocop:todo Security/Open
 
     # find xml and init the tree if to be found
     if html.search("iframe").empty?
       xml_file = /setXMPSrc\("(.*?)"\)/.match(html)[1]
+      # rubocop:todo Security/Open
       @xml = Nokogiri::XML(open(URI.join(link, xml_file))).remove_namespaces!
+    # rubocop:enable Security/Open
     # follow the iframe if we have one
     else
       src = html.search("iframe").first["src"]

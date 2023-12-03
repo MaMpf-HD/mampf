@@ -1,10 +1,12 @@
 # ClickersController
 class ClickersController < ApplicationController
+  # rubocop:todo Rails/LexicallyScopedActionFilter
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
                                                  :reset,
                                                  :votes_count,
                                                  :set_alternatives,
                                                  :render_clickerizable_actions]
+  # rubocop:enable Rails/LexicallyScopedActionFilter
   before_action :set_clicker, except: [:new, :create]
   authorize_resource except: [:new, :create, :edit, :open, :close,
                               :set_alternatives]
@@ -22,7 +24,7 @@ class ClickersController < ApplicationController
     end
     if stale?(etag: @clicker,
               last_modified: [@clicker.updated_at,
-                              Time.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       render :show
       nil
     end
@@ -90,7 +92,7 @@ class ClickersController < ApplicationController
   end
 
   def associate_question
-    question = Question.find_by_id(clicker_params[:question_id])
+    question = Question.find_by(id: clicker_params[:question_id])
     @clicker.update(question: question,
                     alternatives: question&.answers&.count || 3)
     redirect_to edit_clicker_path(@clicker)
@@ -106,8 +108,8 @@ class ClickersController < ApplicationController
 
   def render_clickerizable_actions
     I18n.locale = current_user.locale
-    @medium = Medium.find_by_id(params[:medium_id])
-    @question = Question.find_by_id(params[:medium_id])
+    @medium = Medium.find_by(id: params[:medium_id])
+    @question = Question.find_by(id: params[:medium_id])
   end
 
   private
@@ -122,7 +124,7 @@ class ClickersController < ApplicationController
     end
 
     def set_clicker
-      @clicker = Clicker.find_by_id(params[:id])
+      @clicker = Clicker.find_by(id: params[:id])
       @code = user_signed_in? ? nil : @clicker&.code
       @entered_code = code_params[:code]
       return if @clicker

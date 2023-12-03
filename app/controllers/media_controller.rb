@@ -36,7 +36,7 @@ class MediaController < ApplicationController
   def show
     # destroy the notifications related to the medium
     current_user.notifications.where(notifiable_type: "Medium",
-                                     notifiable_id: @medium.id).each(&:destroy)
+                                     notifiable_id: @medium.id).find_each(&:destroy)
     I18n.locale = @medium.locale_with_inheritance
     commontator_thread_show(@medium)
     render layout: "application_no_sidebar"
@@ -61,7 +61,7 @@ class MediaController < ApplicationController
     @medium = Medium.new(medium_params)
     @medium.locale = @medium.teachable&.locale
     @medium.editors = [current_user]
-    @medium.tags = @medium.teachable.tags if @medium.teachable.class.to_s == "Lesson"
+    @medium.tags = @medium.teachable.tags if @medium.teachable.instance_of?(::Lesson)
     authorize! :create, @medium
     @medium.save
     if @medium.valid?
@@ -163,7 +163,7 @@ class MediaController < ApplicationController
       end
     end
     @tags_without_section = []
-    return unless @medium.teachable.class.to_s == "Lesson"
+    return unless @medium.teachable.instance_of?(::Lesson)
 
     add_tags_in_lesson_and_sections
   end
@@ -282,12 +282,12 @@ class MediaController < ApplicationController
       return
     end
     if params[:destination].present?
-      redirect_to @medium.manuscript_url_with_host + "#" +
-                  params[:destination].to_s, allow_other_host: true
+      redirect_to "#{@medium.manuscript_url_with_host}##{params[:destination]}",
+                  allow_other_host: true
       return
     elsif params[:page].present?
-      redirect_to @medium.manuscript_url_with_host + "#page=" +
-                  params[:page].to_s, allow_other_host: true
+      redirect_to "#{@medium.manuscript_url_with_host}#page=#{params[:page]}",
+                  allow_other_host: true
       return
     end
     redirect_to @medium.manuscript_url_with_host,
@@ -396,7 +396,7 @@ class MediaController < ApplicationController
     return unless current_user.admin || @medium.edited_with_inheritance_by?(current_user)
 
     @medium.tags = Tag.where(id: params[:tag_ids])
-    @medium.update(updated_at: Time.now)
+    @medium.update(updated_at: Time.zone.now)
   end
 
   def register_download
@@ -440,7 +440,7 @@ class MediaController < ApplicationController
     return unless @medium.sort == "Quiz"
 
     @quiz_plays = medium_consumption
-                  .where(sort: "quiz",mode: "browser")
+                  .where(sort: "quiz", mode: "browser")
                   .pluck(:created_at)
                   .map(&:to_date).tally.map do |k, t|
       { x: k, y: t }
@@ -466,13 +466,13 @@ class MediaController < ApplicationController
 
   def fill_medium_preview
     I18n.locale = current_user.locale
-    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    @medium = Medium.find_by(id: params[:id])&.becomes(Medium) || Medium.new
     authorize! :fill_medium_preview, @medium
   end
 
   def render_medium_actions
     I18n.locale = current_user.locale
-    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    @medium = Medium.find_by(id: params[:id])&.becomes(Medium) || Medium.new
     authorize! :render_medium_actions, @medium
   end
 
@@ -485,7 +485,7 @@ class MediaController < ApplicationController
   def render_import_vertex
     @id = params[:id]
     quiz_id = params[:quiz_id]
-    I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance
+    I18n.locale = Quiz.find_by(id: quiz_id)&.locale_with_inheritance
     @purpose = "quiz"
     authorize! :render_import_vertex, Medium.new
     render :render_import_media
@@ -501,7 +501,7 @@ class MediaController < ApplicationController
 
   def cancel_import_vertex
     authorize! :cancel_import_vertex, Medium.new
-    I18n.locale = Quiz.find_by_id(params[:quiz_id])&.locale_with_inheritance
+    I18n.locale = Quiz.find_by(id: params[:quiz_id])&.locale_with_inheritance
     render :cancel_import_media
   end
 
@@ -548,14 +548,14 @@ class MediaController < ApplicationController
     end
 
     def set_medium
-      @medium = Medium.find_by_id(params[:id])&.becomes(Medium)
+      @medium = Medium.find_by(id: params[:id])&.becomes(Medium)
       return if @medium.present? && @medium.sort != "RandomQuiz"
 
       redirect_to :root, alert: I18n.t("controllers.no_medium")
     end
 
     def set_lecture
-      @lecture = Lecture.find_by_id(params[:id])
+      @lecture = Lecture.find_by(id: params[:id])
       # store current lecture in cookie
       if @lecture
         cookies[:current_lecture_id] = @lecture.id
@@ -568,7 +568,7 @@ class MediaController < ApplicationController
       if params[:teachable_type].in?(["Course", "Lecture", "Lesson", "Talk"]) &&
          params[:teachable_id].present?
         @teachable = params[:teachable_type].constantize
-                                            .find_by_id(params[:teachable_id])
+                                            .find_by(id: params[:teachable_id])
       end
     end
 
@@ -622,7 +622,7 @@ class MediaController < ApplicationController
       visible_search_results = current_user.filter_visible_media(search_arel)
       search_results &= visible_search_results
       total = search_results.size
-      @lecture = Lecture.find_by_id(params[:id])
+      @lecture = Lecture.find_by(id: params[:id])
       # filter out stuff from course level for generic users
       if params[:visibility] == "lecture"
         search_results.reject! { |m| m.teachable_type == "Course" }
@@ -636,7 +636,7 @@ class MediaController < ApplicationController
         unless current_user.admin || @lecture.edited_by?(current_user)
           lecture_tags = @lecture.tags_including_media_tags
           search_results.reject! do |m|
-            m.teachable_type == "Course" && (m.tags & lecture_tags).blank?
+            m.teachable_type == "Course" && !m.tags.intersect?(lecture_tags)
           end
         end
       end
@@ -652,7 +652,7 @@ class MediaController < ApplicationController
     end
 
     def reveal_contradictions
-      return unless params[:lecture_id].present?
+      return if params[:lecture_id].blank?
       return if params[:lecture_id].to_i.in?(@course.lecture_ids)
 
       redirect_to :root, alert: I18n.t("controllers.contradiction")

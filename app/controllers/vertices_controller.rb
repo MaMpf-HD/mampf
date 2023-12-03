@@ -52,7 +52,7 @@ class VerticesController < ApplicationController
 
     def set_values
       @quiz_id = params[:quiz_id]
-      @quiz = Quiz.find_by_id(@quiz_id)
+      @quiz = Quiz.find_by(id: @quiz_id)
       @params_v = params[:vertex]
     end
 
@@ -81,7 +81,7 @@ class VerticesController < ApplicationController
     def set_branching_hash
       @branching = {}
       @params_v.keys.select { |k| k.start_with?("branching-") }.each do |k|
-        next if @params_v[k].to_i == 0
+        next if @params_v[k].to_i.zero?
 
         @branching[k.remove("branching-").to_h] =
           [@vertex_id, @params_v[k].to_i]

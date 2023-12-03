@@ -40,7 +40,7 @@ namespace :db do
     cmd        = nil
 
     with_config do |_app, host, db, user|
-      full_path = "#{backup_dir}/#{Time.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{dump_sfx}"
+      full_path = "#{backup_dir}/#{Time.zone.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{dump_sfx}"
       # rubocop:disable Layout/LineLength
       cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -f '#{full_path}'"
       # rubocop:enable Layout/LineLength
@@ -67,7 +67,7 @@ namespace :db do
 
         with_config do |_app, host, db, user|
           # rubocop:disable Layout/LineLength
-          full_path = "#{backup_dir}/#{Time.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{table_name.parameterize.underscore}.#{dump_sfx}"
+          full_path = "#{backup_dir}/#{Time.zone.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{table_name.parameterize.underscore}.#{dump_sfx}"
           cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -t '#{table_name}' -f '#{full_path}'"
           # rubocop:enable Layout/LineLength
         end
@@ -86,7 +86,7 @@ namespace :db do
   desc "Show the existing database backups"
   task dumps: :environment do
     backup_dir = backup_directory
-    puts "#{backup_dir}"
+    puts backup_dir
     system "/bin/ls -ltR #{backup_dir}"
   end
 
@@ -119,7 +119,7 @@ namespace :db do
           end
         else
           puts "Too many files match the pattern '#{pattern}':"
-          puts " " + files.join("\n ")
+          puts " #{files.join("\n ")}"
           puts ""
           puts "Try a more specific pattern"
           puts ""
@@ -178,7 +178,7 @@ namespace :db do
     def backup_directory(_suffix = nil, create: false)
       backup_dir = Rails.root.join.to_s
 
-      if create and !Dir.exist?(backup_dir)
+      if create && !Dir.exist?(backup_dir)
         puts "Creating #{backup_dir} .."
         FileUtils.mkdir_p(backup_dir)
       end

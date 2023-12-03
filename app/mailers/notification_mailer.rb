@@ -26,22 +26,21 @@ class NotificationMailer < ApplicationMailer
     @medium = params[:medium]
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t("mailer.medium_subject") + " " + t("in") + " " +
-                  @medium.teachable.media_scope.title_for_viewers)
+         # rubocop:todo Layout/LineLength
+         subject: "#{t("mailer.medium_subject")} #{t("in")} #{@medium.teachable.media_scope.title_for_viewers}")
+    # rubocop:enable Layout/LineLength
   end
 
   def announcement_email
     @announcement = params[:announcement]
     @announcement_details = if @announcement.lecture.present?
-      t("in") + " " +
-        @announcement.lecture.title_for_viewers
+      "#{t("in")} #{@announcement.lecture.title_for_viewers}"
     else
       t("mailer.mampf_news")
     end
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t("mailer.announcement_subject") + " " +
-                  @announcement_details)
+         subject: "#{t("mailer.announcement_subject")} #{@announcement_details}")
   end
 
   def new_lecture_email
@@ -139,7 +138,7 @@ class NotificationMailer < ApplicationMailer
   def submission_deletion_email
     @deletion_date = params[:deletion_date]
     @lectures = params[:lectures]
-    subject = params[:reminder] ? t("basics.reminder") + ": " : ""
+    subject = params[:reminder] ? "#{t("basics.reminder")}: " : ""
     subject += t("mailer.submission_deletion_subject")
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
@@ -149,7 +148,7 @@ class NotificationMailer < ApplicationMailer
   def submission_deletion_lecture_email
     @lecture = params[:lecture]
     @deletion_date = params[:deletion_date]
-    subject = params[:reminder] ? t("basics.reminder") + ": " : ""
+    subject = params[:reminder] ? "#{t("basics.reminder")}: " : ""
     subject += t("mailer.submission_deletion_lecture_subject",
                  lecture: @lecture.title)
     mail(from: @sender,

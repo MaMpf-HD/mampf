@@ -59,13 +59,13 @@ class ProfileController < ApplicationController
 
   # DSGVO consent action
   def add_consent
-    @user.update(consents: true, consented_at: Time.now)
+    @user.update(consents: true, consented_at: Time.zone.now)
     redirect_to :root, notice: t("profile.consent")
   end
 
   def toggle_thread_subscription
     @thread = Commontator::Thread.find(params[:id])
-    return unless @thread && @thread.can_subscribe?(@user)
+    return unless @thread&.can_subscribe?(@user)
 
     if params[:subscribe] == "true"
       @thread.subscribe(@user)
@@ -120,7 +120,7 @@ class ProfileController < ApplicationController
 
   def show_accordion
     @collapse_id = params[:id]
-    redirect_to :root and return unless @collapse_id.present?
+    redirect_to :root and return if @collapse_id.blank?
 
     @lectures = case @collapse_id
                 when "collapseCurrentStuff" then current_user.current_subscribed_lectures
@@ -129,7 +129,7 @@ class ProfileController < ApplicationController
                                                                  .sort
                 when "collapseAllCurrent" then current_user.current_subscribable_lectures
     end
-    @link = @collapse_id.remove("collapse").camelize(:lower) + "Link"
+    @link = "#{@collapse_id.remove("collapse").camelize(:lower)}Link"
   end
 
   def request_data
@@ -165,7 +165,7 @@ class ProfileController < ApplicationController
     end
 
     def set_lecture
-      @lecture = Lecture.find_by_id(lecture_params[:id])
+      @lecture = Lecture.find_by(id: lecture_params[:id])
       @passphrase = lecture_params[:passphrase]
       @parent = lecture_params[:parent]
       @current = !@parent.in?(["lectureSearch", "inactive"])

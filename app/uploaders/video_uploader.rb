@@ -12,7 +12,7 @@ class VideoUploader < Shrine
 
   # add metadata to uploaded video: duration, bitrate, resolution, framerate
   add_metadata do |io, **options|
-    pp options[:action]
+    Rails.logger.debug options[:action]
     if options[:action] != :upload
       movie = Shrine.with_file(io) { |file| FFMPEG::Movie.new(file.path) }
 

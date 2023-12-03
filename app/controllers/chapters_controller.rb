@@ -10,7 +10,7 @@ class ChaptersController < ApplicationController
   end
 
   def new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by(id: params[:lecture_id])
     @chapter = Chapter.new(lecture: @lecture)
     authorize! :new, @chapter
     I18n.locale = @chapter.lecture.locale_with_inheritance ||
@@ -18,7 +18,7 @@ class ChaptersController < ApplicationController
   end
 
   def edit
-    @section = Section.find_by_id(params[:section_id])
+    @section = Section.find_by(id: params[:section_id])
   end
 
   def create
@@ -69,7 +69,7 @@ class ChaptersController < ApplicationController
   private
 
     def set_chapter
-      @chapter = Chapter.find_by_id(params[:id])
+      @chapter = Chapter.find_by(id: params[:id])
       return if @chapter.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_chapter")

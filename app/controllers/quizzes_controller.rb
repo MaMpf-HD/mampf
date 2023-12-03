@@ -81,7 +81,7 @@ class QuizzesController < ApplicationController
   end
 
   def update_branching
-    quiz = Quiz.find_by_id(params[:quiz_id])
+    quiz = Quiz.find_by(id: params[:quiz_id])
     authorize! :update_branching, quiz
     @quizzable = quiz.quizzable(params[:vertex_id].to_i)
     @id = params[:id].sub "select", "quizzable"
@@ -99,7 +99,7 @@ class QuizzesController < ApplicationController
   private
 
     def set_quiz
-      @quiz = Quiz.find_by_id(params[:id])
+      @quiz = Quiz.find_by(id: params[:id])
       return if @quiz.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_quiz")

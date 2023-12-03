@@ -80,14 +80,14 @@ class CoursesController < ApplicationController
   private
 
     def set_course
-      @course = Course.find_by_id(params[:id])
+      @course = Course.find_by(id: params[:id])
       return if @course.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_course")
     end
 
     def set_course_admin
-      @course = Course.find_by_id(params[:id])
+      @course = Course.find_by(id: params[:id])
       return if @course.present?
 
       redirect_to administration_path

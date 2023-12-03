@@ -28,7 +28,7 @@ class Referral < ApplicationRecord
 
   # provide time span for vtt file
   def vtt_time_span
-    start_time.vtt_string + " --> " + end_time.vtt_string + "\n"
+    "#{start_time.vtt_string} --> #{end_time.vtt_string}\n"
   end
 
   # provide metadata for vtt file

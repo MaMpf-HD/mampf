@@ -68,11 +68,11 @@ class QuizGraph
   # by COPIES.
 
   def replace_reference!(old_quizzable, new_quizzable, answer_map = {})
-    return self unless old_quizzable.class == new_quizzable.class
+    return self unless old_quizzable.instance_of?(new_quizzable.class)
 
     affected_vertices = referencing_vertices(old_quizzable)
     affected_vertices.each { |v| @vertices[v][:id] = new_quizzable.id }
-    return self unless new_quizzable.class.to_s == "Question"
+    return self unless new_quizzable.instance_of?(::Question)
 
     affected_vertices.each do |v|
       bend_edges_rereferencing!(edges_from(v), answer_map)
@@ -88,9 +88,9 @@ class QuizGraph
   end
 
   def find_errors
-    return [I18n.t("admin.quiz.no_vertices")] unless @vertices.present?
+    return [I18n.t("admin.quiz.no_vertices")] if @vertices.blank?
 
-    branch_undef = @default_table.values.include?(0)
+    branch_undef = @default_table.value?(0)
     no_end = default_table.values.exclude?(-1) && @edges.select do |e|
       e[1] == -1
     end.blank?
@@ -109,7 +109,7 @@ class QuizGraph
   def quizzable(id)
     return unless id.in?(@vertices.keys)
 
-    @vertices[id][:type].constantize.find_by_id(@vertices[id][:id])
+    @vertices[id][:type].constantize.find_by(id: @vertices[id][:id])
   end
 
   def visible?(id)
@@ -158,7 +158,7 @@ class QuizGraph
 
   def update_edges_for_question!(vertex_id, branching)
     new_hash = Hash.new { |h, k| h[k] = [] }
-    new_edges = branching.each_with_object(new_hash) { |(k, v), h| h[v] << k }
+    branching.each_with_object(new_hash) { |(k, v), h| h[v] << k }
     default_edge = [vertex_id, @default_table[vertex_id]]
     @edges.merge!(new_hash.except(default_edge))
   end
@@ -194,11 +194,11 @@ class QuizGraph
   end
 
   def incoming(id)
-    edges_to(id).map { |e| e[0] }
+    edges_to(id).pluck(0)
   end
 
   def neighbours(id)
-    edges_from_plus_default(id).map { |e| e[1] }
+    edges_from_plus_default(id).pluck(1)
   end
 
   def referencing_vertices(quizzable)
@@ -209,7 +209,7 @@ class QuizGraph
   end
 
   def new_vertex_id
-    return 1 unless @vertices.present?
+    return 1 if @vertices.blank?
 
     @vertices.keys.max + 1
   end
@@ -246,7 +246,7 @@ class QuizGraph
     question_ids.each_with_index do |q, i|
       j = i + 1
       k =   j < size ? j + 1 : -1
-      question = Question.find_by_id(q)
+      Question.find_by(id: q)
       vertices[j] = { type: "Question", id: q }
       default_table[j] = k
     end
@@ -264,7 +264,7 @@ class QuizGraph
                         bordercolor: "grey",
                         shape: "diamond" })
     # add vertices
-    @vertices.keys.each do |v|
+    @vertices.each_key do |v|
       result.push(data: cytoscape_vertex(v))
     end
     result.push(data: { id: "-1",
@@ -281,7 +281,7 @@ class QuizGraph
                           target: @root,
                           color: "#aaa" })
     end
-    @vertices.keys.each do |v|
+    @vertices.each_key do |v|
       edges_from_plus_default(v).each do |e|
         result.push(data: cytoscape_edge(e))
       end
@@ -315,7 +315,7 @@ class QuizGraph
   end
 
   def questions_count
-    @vertices.values.select { |v| v[:type] == "Question" }.count
+    @vertices.values.count { |v| v[:type] == "Question" }
   end
 
   def default?(edge)

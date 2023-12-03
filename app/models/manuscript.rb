@@ -27,7 +27,7 @@ class Manuscript
     match_mampf_sections
     @content = get_content(bookmarks)
     check_content
-    @content_descriptions = @content.map { |c| c["description"] } - [""]
+    @content_descriptions = @content.pluck("description") - [""]
     add_info_on_tag_ids
     add_info_on_item_ids_and_hidden_status
     @contradictions = determine_contradictions
@@ -105,12 +105,12 @@ class Manuscript
 
   # chapters in mampf that are not represented in the manuscript
   def unmatched_mampf_chapters
-    chapters_in_mampf = @chapters.map { |c| c["mampf_chapter"] }.compact
+    chapters_in_mampf = @chapters.filter_map { |c| c["mampf_chapter"] }
     @lecture.chapters - chapters_in_mampf
   end
 
   def unmatched_mampf_sections
-    sections_in_mampf = @sections.map { |s| s["mampf_section"] }.compact
+    sections_in_mampf = @sections.filter_map { |s| s["mampf_section"] }
     @lecture.sections - sections_in_mampf
   end
 
@@ -139,7 +139,7 @@ class Manuscript
   end
 
   def create_or_update_chapter_items!
-    destinations = @chapters.map { |c| c["destination"] } - [""]
+    destinations = @chapters.pluck("destination") - [""]
     items = Item.where(medium: @medium,
                        pdf_destination: destinations,
                        sort: "chapter")
@@ -167,7 +167,7 @@ class Manuscript
   end
 
   def create_or_update_section_items!
-    destinations = @sections.map { |s| s["destination"] } - [""]
+    destinations = @sections.pluck("destination") - [""]
     items = Item.where(medium: @medium,
                        pdf_destination: destinations,
                        sort: "section")
@@ -200,7 +200,7 @@ class Manuscript
   # in filter_boxes (which basically contains the information on whichk
   # content checkboxes have been checked)
   def create_or_update_content_items!(filter_boxes)
-    destinations = @content.map { |c| c["destination"] } - [""]
+    destinations = @content.pluck("destination") - [""]
     items = Item.where(medium: @medium,
                        pdf_destination: destinations)
     item_id_map = items.pluck(:pdf_destination, :id).to_h
@@ -243,7 +243,7 @@ class Manuscript
     @medium.item_ids << new_item_ids
     changed_contents = different_contents - new_contents
     changed_contents.each do |c|
-      Item.find_by_id(item_id_map[c[:pdf_destination]])
+      Item.find_by(id: item_id_map[c[:pdf_destination]])
           .update(c)
     end
   end
@@ -259,7 +259,7 @@ class Manuscript
       content_in_section(s).each do |c|
         # if tag for content already exists, add tag to the section and course
         if c["tag_id"]
-          tag = Tag.find_by_id(c["tag_id"])
+          tag = Tag.find_by(id: c["tag_id"])
           next unless tag
           next unless section
           next if section.in?(tag.sections)
@@ -284,7 +284,7 @@ class Manuscript
   # pdf destinations as extracted from pdf metadata
   def destinations
     bookmarks = @medium.manuscript.metadata["bookmarks"] || []
-    bookmarks.map { |b| b["destination"] }
+    bookmarks.pluck("destination")
   end
 
   # pdf destinations together with their multiplicity
@@ -313,11 +313,11 @@ class Manuscript
 
   # add information on the item ids for manuscript content and hidden status
   def add_info_on_item_ids_and_hidden_status
-    destinations = @content.map { |c| c["destination"] } - [""]
+    destinations = @content.pluck("destination") - [""]
     items_hash = Item.where(medium: @medium,
                             pdf_destination: destinations)
                      .pluck(:pdf_destination, :id, :hidden)
-                     .map { |c| [c[0], [c[1], c[2]]] }.to_h
+                     .to_h { |c| [c[0], [c[1], c[2]]] }
     @content.each do |c|
       c["item_id"] = items_hash[c["destination"]]&.first
       c["hidden"] = items_hash[c["destination"]]&.second
@@ -357,7 +357,7 @@ class Manuscript
 
   def match_mampf_sections
     @sections.each do |s|
-      bookmarked_chapter_counters = @chapters.map { |c| c["chapter"] }
+      bookmarked_chapter_counters = @chapters.pluck("chapter")
       unless s["chapter"].in?(bookmarked_chapter_counters)
         s["mampf_section"] = nil
         s["contradiction"] = :missing_chapter
@@ -375,8 +375,8 @@ class Manuscript
   end
 
   def check_content
-    bookmarked_section_counters = @sections.map { |s| s["section"] }
-    bookmarked_chapter_counters = @chapters.map { |c| c["chapter"] }
+    bookmarked_section_counters = @sections.pluck("section")
+    bookmarked_chapter_counters = @chapters.pluck("chapter")
     @content.each do |c|
       c["contradiction"] = if !c["chapter"].in?(bookmarked_chapter_counters)
         :missing_chapter

@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "faker"
 
 FactoryBot.define do
@@ -9,8 +7,7 @@ FactoryBot.define do
     # the adding of a tag is done in the valid_notion factory
     locale { "de" }
     title do
-      Faker::Book.title + " " +
-        Faker::Number.between(from: 1, to: 9999).to_s
+      "#{Faker::Book.title} #{Faker::Number.between(from: 1, to: 9999)}"
     end
 
     trait :with_tag do

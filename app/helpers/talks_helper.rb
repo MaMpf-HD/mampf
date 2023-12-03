@@ -12,7 +12,7 @@ module TalksHelper
   end
 
   def speaker_list(talk)
-    return t("basics.tba") unless talk.speakers.present?
+    return t("basics.tba") if talk.speakers.blank?
 
     talk.speakers.map(&:tutorial_name).join(", ")
   end

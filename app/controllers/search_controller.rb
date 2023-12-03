@@ -12,7 +12,7 @@ class SearchController < ApplicationController
   def index
     search_down = @search_string.downcase
     # determine tags whose title contains the search string
-    matches = Notion.all.pluck(:tag_id, :title, :aliased_tag_id)
+    matches = Notion.pluck(:tag_id, :title, :aliased_tag_id)
                     .select { |x| x.second.downcase.include?(search_down) }
                     .map { |a| a.first || a.third }.uniq
     @tags = Tag.where(id: matches)

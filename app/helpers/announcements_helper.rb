@@ -3,7 +3,7 @@ module AnnouncementsHelper
   # create text for notification about new announcement in notification dropdown
   # menu
   def announcement_notification_item_header(announcement)
-    return t("notifications.mampf_announcement") unless announcement.lecture.present?
+    return t("notifications.mampf_announcement") if announcement.lecture.blank?
 
     t("notifications.lecture_announcement",
       title: announcement.lecture.title_for_viewers)

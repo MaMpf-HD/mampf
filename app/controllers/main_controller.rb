@@ -29,7 +29,7 @@ class MainController < ApplicationController
     @media_comments = current_user.media_latest_comments
     @media_comments.select! do |m|
       (Reader.find_by(user: current_user, thread: m[:thread])
-            &.updated_at || (Time.now - 1000.years)) < m[:latest_comment].created_at &&
+            &.updated_at || 1000.years.ago) < m[:latest_comment].created_at &&
         m[:medium].visible_for_user?(current_user)
     end
     @media_array = Kaminari.paginate_array(@media_comments)

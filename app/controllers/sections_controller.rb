@@ -14,7 +14,7 @@ class SectionsController < ApplicationController
   end
 
   def new
-    @chapter = Chapter.find_by_id(params[:chapter_id])
+    @chapter = Chapter.find_by(id: params[:chapter_id])
     @section = Section.new(chapter: @chapter)
     authorize! :new, @section
     I18n.locale = @section.lecture.locale_with_inheritance
@@ -57,7 +57,7 @@ class SectionsController < ApplicationController
   private
 
     def set_section
-      @section = Section.find_by_id(params[:id])
+      @section = Section.find_by(id: params[:id])
       return if @section.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_section")
@@ -83,7 +83,7 @@ class SectionsController < ApplicationController
     # updates the position of the section if predecessor is given
     def update_position
       predecessor = params[:section][:predecessor]
-      return unless predecessor.present?
+      return if predecessor.blank?
 
       position = predecessor.to_i
       position -= 1 if position > @section.position && @old_chapter == @section.chapter

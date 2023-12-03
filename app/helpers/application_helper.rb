@@ -15,7 +15,7 @@ module ApplicationHelper
   # Returns the complete url for the media upload folder if in production
   def host
     if Rails.env.production?
-      ENV.fetch("MEDIA_SERVER",
+      ENV.fetch("MEDIA_SERVER", # rubocop:todo Style/StringConcatenation
                 nil) + "/" + ENV.fetch("INSTANCE_NAME", nil)
     else
       ""
@@ -142,7 +142,6 @@ module ApplicationHelper
   # (b) associated to the given lecture or a lesson associated to the given
   # lecture
   def relevant_media(teachable, media, limit)
-    result = []
     if teachable.instance_of?(Course)
       return media.where(teachable: teachable).order(:created_at)
                   .reverse_order
@@ -154,7 +153,7 @@ module ApplicationHelper
 
   # splits an array into smaller parts
   def split_list(list, pieces = 4)
-    group_size = (list.count / pieces) == 0 ? 1 : list.count / pieces
+    group_size = (list.count / pieces).zero? ? 1 : list.count / pieces
     groups = list.in_groups_of(group_size)
     diff = groups.count - pieces
     return groups if diff <= 0
@@ -177,18 +176,18 @@ module ApplicationHelper
     return "" if title.blank?
     return title unless title.length > max_letters
 
-    title[0, max_letters - 3] + "..."
+    "#{title[0, max_letters - 3]}..."
   end
 
   # Returns the grouped list of all courses/lectures/references together
   # with their ids. Is used in grouped_options_for_select in form helpers.
   def grouped_teachable_list
     list = []
-    Course.all.each do |c|
-      lectures = [[c.short_title + " (" + t("basics.all") + ")",
-                   "Course-" + c.id.to_s]]
-      c.lectures.includes(:term).each do |l|
-        lectures.push [l.short_title_release, "Lecture-" + l.id.to_s]
+    Course.find_each do |c|
+      lectures = [["#{c.short_title} (#{t("basics.all")})",
+                   "Course-#{c.id}"]]
+      c.lectures.includes(:term).find_each do |l|
+        lectures.push [l.short_title_release, "Lecture-#{l.id}"]
       end
       list.push [c.title, lectures]
     end
@@ -200,10 +199,10 @@ module ApplicationHelper
   # Is used in grouped_options_for_select in form helpers
   def grouped_teachable_list_alternative
     list = []
-    Course.all.each do |c|
-      lectures = [[c.short_title + " Modul", "Course-" + c.id.to_s]]
-      c.lectures.includes(:term).each do |l|
-        lectures.push [l.short_title, "Lecture-" + l.id.to_s]
+    Course.find_each do |c|
+      lectures = [["#{c.short_title} Modul", "Course-#{c.id}"]]
+      c.lectures.includes(:term).find_each do |l|
+        lectures.push [l.short_title, "Lecture-#{l.id}"]
       end
       list.push [c.title, lectures]
     end
@@ -236,8 +235,8 @@ module ApplicationHelper
   # anything older than today or yesterday gets reduced to the day.month.year
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
-    return t("today") + ", " + date.strftime("%H:%M") if date.to_date == Date.today
-    return t("yesterday") + ", " + date.strftime("%H:%M") if date.to_date == Date.yesterday
+    return "#{t("today")}, #{date.strftime("%H:%M")}" if date.to_date == Time.zone.today
+    return "#{t("yesterday")}, #{date.strftime("%H:%M")}" if date.to_date == Date.yesterday
 
     I18n.l date, format: :concise
   end
@@ -248,7 +247,7 @@ module ApplicationHelper
   end
 
   def quizzable_color(type)
-    "bg-" + type.downcase
+    "bg-#{type.downcase}"
   end
 
   def questioncolor(value)
@@ -256,7 +255,7 @@ module ApplicationHelper
   end
 
   def vertex_label(quiz, vertex_id)
-    vertex_id.to_s + " " + quiz.quizzable(vertex_id)&.label.to_s
+    "#{vertex_id} #{quiz.quizzable(vertex_id)&.label}"
   end
 
   def ballot_box(correctness)
@@ -306,7 +305,7 @@ module ApplicationHelper
 
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
-  ACTIVE_CSS_CLASS = "active-item"
+  ACTIVE_CSS_CLASS = "active-item".freeze
 
   def get_class_for_project(project)
     request.params["project"] == project ? ACTIVE_CSS_CLASS : ""

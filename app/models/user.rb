@@ -122,7 +122,7 @@ class User < ApplicationRecord
 
   # returns the array of all teachers
   def self.teachers
-    User.where(id: Lecture.pluck(:teacher_id).uniq)
+    User.where(id: Lecture.distinct.select(:teacher_id))
   end
 
   def self.select_teachers
@@ -131,7 +131,7 @@ class User < ApplicationRecord
 
   # returns the array of all editors
   def self.editors
-    User.where(id: EditableUserJoin.pluck(:user_id).uniq)
+    User.where(id: EditableUserJoin.distinct.select(:user_id))
   end
 
   # returns the array of all editors minus those that are only editors of talks
@@ -211,7 +211,7 @@ class User < ApplicationRecord
 
     selection_type = overrule_subscription_type || subscription_type
     return Course.where(id: preceding_course_ids).includes(:lectures) if selection_type == 1
-    return Course.all.includes(:lectures) if selection_type == 2
+    return Course.includes(:lectures) if selection_type == 2
 
     courses
   end
@@ -339,8 +339,7 @@ class User < ApplicationRecord
     return false unless can_edit_teachables?
     return true if admin || course_editor? || teacher?
 
-    edited_lectures.select { |l| l.term.nil? || !l.stale? }
-                   .any?
+    edited_lectures.any? { |l| l.term.nil? || !l.stale? }
   end
 
   # a user is an editor iff he/she is a teachable editor or an
@@ -354,9 +353,9 @@ class User < ApplicationRecord
   # email and name
 
   def info_uncached
-    return email unless name.present?
+    return email if name.blank?
 
-    (name_in_tutorials.presence || name) + " (" + email + ")"
+    "#{name_in_tutorials.presence || name} (#{email})"
   end
 
   def info
@@ -366,9 +365,9 @@ class User < ApplicationRecord
   end
 
   def tutorial_info_uncached
-    return email unless tutorial_name.present?
+    return email if tutorial_name.blank?
 
-    tutorial_name + " (" + email + ")"
+    "#{tutorial_name} (#{email})"
   end
 
   def tutorial_info
@@ -388,7 +387,7 @@ class User < ApplicationRecord
   end
 
   def short_info
-    return email unless name.present?
+    return email if name.blank?
 
     name
   end
@@ -660,7 +659,7 @@ class User < ApplicationRecord
   end
 
   def proper_single_submissions_count
-    submissions.proper.select { |s| s.users.size == 1 }.size
+    submissions.proper.count { |s| s.users.size == 1 }
   end
 
   def proper_team_submissions_count
@@ -788,13 +787,13 @@ class User < ApplicationRecord
 
     # sets time for DSGVO consent to current time
     def set_consented_at
-      update(consented_at: Time.now)
+      update(consented_at: Time.zone.now)
     end
 
     # returns array of ids of all courses that preced the subscribed courses
     def preceding_course_ids
       courses.all.map { |l| l.preceding_courses.pluck(:id) }.flatten +
-        courses.all.pluck(:id)
+        courses.pluck(:id)
     end
 
     def destroy_single_submissions
@@ -808,7 +807,7 @@ class User < ApplicationRecord
     end
 
     def transfer_contributions_to(user)
-      return false unless user && user.valid? && user != self
+      return false unless user&.valid? && user != self
 
       given_lectures.update(teacher_id: user.id)
       EditableUserJoin.where(user: self, editable_type: "Medium")
@@ -820,8 +819,8 @@ class User < ApplicationRecord
                   email: archive_email,
                   password: SecureRandom.base58(12),
                   consents: true,
-                  consented_at: Time.now,
-                  confirmed_at: Time.now,
+                  consented_at: Time.zone.now,
+                  confirmed_at: Time.zone.now,
                   archived: true)
     end
 end

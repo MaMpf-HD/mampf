@@ -16,7 +16,7 @@ module ItemsHelper
   end
 
   def check_unless_hidden(item_id)
-    return "checked" unless Item.find_by_id(item_id)&.hidden
+    return "checked" unless Item.find_by(id: item_id)&.hidden
 
     ""
   end

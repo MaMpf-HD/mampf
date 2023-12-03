@@ -40,13 +40,13 @@ class Section < ApplicationRecord
   end
 
   def reference_number
-    return calculated_number unless display_number.present?
+    return calculated_number if display_number.blank?
 
     display_number
   end
 
   def displayed_number
-    "§" + reference_number
+    "§#{reference_number}"
   end
 
   def reference
@@ -60,15 +60,15 @@ class Section < ApplicationRecord
   # chapters
   def calculated_number
     return relative_position unless lecture.absolute_numbering
-    return absolute_position.to_s unless lecture.start_section.present?
+    return absolute_position.to_s if lecture.start_section.blank?
 
     (absolute_position + lecture.start_section - 1).to_s
   end
 
   def to_label
-    return displayed_number + ". " + title unless hidden_with_inheritance?
+    return "#{displayed_number}. #{title}" unless hidden_with_inheritance?
 
-    "*" + displayed_number + ". " + title
+    "*#{displayed_number}. #{title}"
   end
 
   # section's media are media that are contained in one of the
@@ -151,7 +151,7 @@ class Section < ApplicationRecord
   end
 
   def visible_items_by_time
-    lessons.order(:date).map { |l| l.visible_items }.flatten
+    lessons.order(:date).map(&:visible_items).flatten
            .select { |i| i.section == self }
   end
 
@@ -166,7 +166,7 @@ class Section < ApplicationRecord
   end
 
   def cache_key
-    super + "-" + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def duplicate_in_chapter(new_chapter, import_tags)
@@ -204,7 +204,7 @@ class Section < ApplicationRecord
     end
 
     def relative_position
-      chapter.displayed_number + "." + position.to_s
+      "#{chapter.displayed_number}.#{position}"
     end
 
     def absolute_position

@@ -34,13 +34,13 @@ class QuestionsController < ApplicationController
   end
 
   def reassign
-    question_old = Question.find_by_id(params[:id])
+    question_old = Question.find_by(id: params[:id])
     authorize! :reassign, question_old
     I18n.locale = question_old.locale_with_inheritance
     @question, answer_map = question_old.duplicate
     @question.editors = [current_user]
     @quizzes.each do |q|
-      Quiz.find_by_id(q).replace_reference!(question_old, @question, answer_map)
+      Quiz.find_by(id: q).replace_reference!(question_old, @question, answer_map)
     end
     I18n.locale = @question.locale_with_inheritance
     if question_params[:type] == "edit"
@@ -53,14 +53,15 @@ class QuestionsController < ApplicationController
   end
 
   def set_solution_type
-    content = if params[:type] == "MampfExpression"
-      MampfExpression.trivial_instance
-    elsif params[:type] == "MampfMatrix"
-      MampfMatrix.trivial_instance
-    elsif params[:type] == "MampfTuple"
-      MampfTuple.trivial_instance
-    elsif params[:type] == "MampfSet"
-      MampfSet.trivial_instance
+    content = case params[:type]
+              when "MampfExpression"
+                MampfExpression.trivial_instance
+              when "MampfMatrix"
+                MampfMatrix.trivial_instance
+              when "MampfTuple"
+                MampfTuple.trivial_instance
+              when "MampfSet"
+                MampfSet.trivial_instance
     end
     @solution = Solution.new(content)
   end
@@ -78,7 +79,7 @@ class QuestionsController < ApplicationController
   private
 
     def set_question
-      @question = Question.find_by_id(params[:id])
+      @question = Question.find_by(id: params[:id])
       return if @question.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_question")
@@ -92,7 +93,7 @@ class QuestionsController < ApplicationController
     end
 
     def check_solution_errors
-      return unless params[:question][:solution_error].present?
+      return if params[:question][:solution_error].blank?
 
       @errors = ActiveModel::Errors.new(@question)
       @errors.add(:base, params[:question][:solution_error])

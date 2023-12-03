@@ -98,10 +98,10 @@ class Question < Medium
   end
 
   def text_with_sample_params(parameters)
-    return text unless parameters.present?
+    return text if parameters.blank?
 
     result = text
-    parameters.keys.each do |p|
+    parameters.each_key do |p|
       result.gsub!(/\\para{#{Regexp.escape(p)},(.*?)}/, parameters[p].to_s)
     end
     result
@@ -112,15 +112,14 @@ class Question < Medium
   end
 
   def sample_parameters
-    parameters.each_with_object({}) do |(k, v), h|
-      h[k] = v.to_a.sample
+    parameters.transform_values do |v|
+      v.to_a.sample
     end
   end
 
   def self.parameters_from_text(text)
     text.scan(/\\para{(\w+),(.*?)}/)
-        .map { |v| [v[0], v[1].to_a_or_range] }
-        .to_h
+        .to_h { |v| [v[0], v[1].to_a_or_range] }
   end
 
   private

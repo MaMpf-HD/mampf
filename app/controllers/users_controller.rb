@@ -64,7 +64,7 @@ class UsersController < ApplicationController
   end
 
   def teacher
-    @teacher = User.find_by_id(params[:teacher_id])
+    @teacher = User.find_by(id: params[:teacher_id])
     authorize! :teacher, @teacher
     if @teacher.present? && @teacher.teacher?
       render layout: "application"
@@ -103,7 +103,7 @@ class UsersController < ApplicationController
     end
 
     def set_user
-      @user = User.find_by_id(params[:id])
+      @user = User.find_by(id: params[:id])
       return unless @user.nil?
 
       redirect_to :root, alert: I18n.t("controllers.no_medium")

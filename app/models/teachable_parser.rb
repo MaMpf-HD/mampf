@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Teachable parser class
 # This is a service PORO model that is used in the media search
 class TeachableParser

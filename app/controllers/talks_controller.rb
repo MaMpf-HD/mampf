@@ -14,7 +14,7 @@ class TalksController < ApplicationController
   end
 
   def new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by(id: params[:lecture_id])
     @talk = Talk.new(lecture: @lecture)
     authorize! :new, @talk
     I18n.locale = @talk.lecture.locale_with_inheritance ||
@@ -82,7 +82,7 @@ class TalksController < ApplicationController
   private
 
     def set_talk
-      @talk = Talk.find_by_id(params[:id])
+      @talk = Talk.find_by(id: params[:id])
       return if @talk.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_talk")

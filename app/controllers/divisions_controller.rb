@@ -36,7 +36,7 @@ class DivisionsController < ApplicationController
   private
 
     def set_division
-      @division = Division.find_by_id(params[:id])
+      @division = Division.find_by(id: params[:id])
       return if @division.present?
 
       redirect_to root_path, alert: I18n.t("controllers.no_division")

@@ -22,7 +22,7 @@ class UserCleaner
       body = @imap.fetch(message_id,
                          "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
       # rubocop:disable Layout/LineLength
-      next unless match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/)
+      next unless (match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/))
       # rubocop:enable Layout/LineLength
 
       match = match.flatten.uniq
@@ -46,7 +46,7 @@ class UserCleaner
       body = @imap.fetch(message_id,
                          "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
       patterns.each do |pattern|
-        next unless match = body.scan(/#{pattern}/)
+        next unless (match = body.scan(/#{pattern}/))
 
         match = match.flatten.uniq
         match.each do |email|
@@ -91,7 +91,7 @@ class UserCleaner
   def delete_ghosts
     @hash_dict.each do |mail, hash|
       u = User.find_by(email: mail, ghost_hash: hash)
-      move_mail(@email_dict[mail]) if u.present? and @email_dict.present?
+      move_mail(@email_dict[mail]) if u.present? && @email_dict.present?
       u.destroy! if u&.generic?
     end
   end
@@ -106,7 +106,7 @@ class UserCleaner
       @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX", nil))
       @imap.move(message_ids, "Other Users/mampf/handled_bounces")
     rescue Net::IMAP::BadResponseError
-      move_mail(message_ids, attempt += 1)
+      move_mail(message_ids, attempt + 1)
     end
   end
 

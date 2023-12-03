@@ -13,6 +13,6 @@ class Announcement < ApplicationRecord
   # does there (still) exist a notification for the announcement for
   # the given user
   def active?(user)
-    user.notifications.where(notifiable: self).exists?
+    user.notifications.exists?(notifiable: self)
   end
 end

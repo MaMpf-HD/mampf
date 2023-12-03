@@ -166,7 +166,7 @@ class Lecture < ApplicationRecord
   end
 
   def selector_value
-    "Lecture-" + id.to_s
+    "Lecture-#{id}"
   end
 
   def title
@@ -220,7 +220,7 @@ class Lecture < ApplicationRecord
   end
 
   def cache_key
-    super + "-" + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def restricted?
@@ -412,8 +412,8 @@ class Lecture < ApplicationRecord
   end
 
   def term_teacher_info
-    return term_to_label unless teacher.present?
-    return term_to_label unless teacher.name.present?
+    return term_to_label if teacher.blank?
+    return term_to_label if teacher.name.blank?
     return "#{course.title}, #{teacher.name}" unless term
 
     "(#{sort_localized_short}) #{term_to_label}, #{teacher.name}"
@@ -507,11 +507,11 @@ class Lecture < ApplicationRecord
   def self.editable_selection(user)
     if user.admin?
       return Lecture.sort_by_date(Lecture.includes(:term).all)
-                    .map { |l| [l.title_for_viewers, "Lecture-" + l.id.to_s] }
+                    .map { |l| [l.title_for_viewers, "Lecture-#{l.id}"] }
     end
     Lecture.sort_by_date(Lecture.includes(:course, :editors).all)
            .select { |l| l.edited_by?(user) }
-           .map { |l| [l.title_for_viewers, "Lecture-" + l.id.to_s] }
+           .map { |l| [l.title_for_viewers, "Lecture-#{l.id}"] }
   end
 
   # the next methods provide infos on editors and teacher
@@ -572,7 +572,7 @@ class Lecture < ApplicationRecord
   end
 
   def order_factor
-    return -1 unless lecture.term.present?
+    return -1 if lecture.term.blank?
     return -1 if lecture.term.active
 
     1
@@ -580,7 +580,7 @@ class Lecture < ApplicationRecord
 
   def begin_date
     Rails.cache.fetch("#{cache_key_with_version}/begin_date") do
-      term&.begin_date || Term.active.begin_date || Date.today
+      term&.begin_date || Term.active.begin_date || Time.zone.today
     end
   end
 
@@ -599,7 +599,7 @@ class Lecture < ApplicationRecord
   end
 
   def forum
-    Thredded::Messageboard.find_by_id(forum_id)
+    Thredded::Messageboard.find_by(id: forum_id)
   end
 
   # extract how many posts in the lecture's forum have not been read
@@ -647,7 +647,9 @@ class Lecture < ApplicationRecord
   end
 
   def comments_closed?
+    # rubocop:todo Performance/MapMethodChain
     media_with_inheritance.map(&:commontator_thread).map(&:is_closed?).all?
+    # rubocop:enable Performance/MapMethodChain
   end
 
   def close_comments!(user)
@@ -718,7 +720,7 @@ class Lecture < ApplicationRecord
              search_params[:term_ids])
       end
     end
-    admin = User.find_by_id(search_params[:user_id])&.admin
+    admin = User.find_by(id: search_params[:user_id])&.admin
     unless admin
       search.build do
         any_of do
@@ -760,7 +762,7 @@ class Lecture < ApplicationRecord
 
   def submission_deletion_date
     Rails.cache.fetch("#{cache_key_with_version}/submission_deletion_date") do
-      (term&.end_date || Term.active&.end_date || (Date.today + 180.days)) +
+      (term&.end_date || Term.active&.end_date || (Time.zone.today + 180.days)) +
         15.days
     end
   end
@@ -770,12 +772,12 @@ class Lecture < ApplicationRecord
   end
 
   def current_assignments
-    assignments_by_deadline.select { |x| x.first >= Time.now }.first&.second
+    assignments_by_deadline.find { |x| x.first >= Time.zone.now }&.second
                            .to_a
   end
 
   def previous_assignments
-    assignments_by_deadline.select { |x| x.first < Time.now }.last&.second.to_a
+    assignments_by_deadline.reverse.find { |x| x.first < Time.zone.now }&.second.to_a
   end
 
   def scheduled_assignments?
@@ -829,7 +831,7 @@ class Lecture < ApplicationRecord
   def speakers
     return User.none unless seminar?
 
-    User.where(id: SpeakerTalkJoin.where(talk: talks).pluck(:speaker_id))
+    User.where(id: SpeakerTalkJoin.where(talk: talks).select(:speaker_id))
   end
 
   def older_than?(timespan)
@@ -853,18 +855,18 @@ class Lecture < ApplicationRecord
     # to this lecture and a given project (kaviar, sesam etc.)
     def project_as_user?(project)
       Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
-        Medium.where(sort: medium_sort[project],
-                     released: ["all", "users", "subscribers"],
-                     teachable: self).exists? ||
-          Medium.where(sort: medium_sort[project],
+        Medium.exists?(sort: medium_sort[project],
                        released: ["all", "users", "subscribers"],
-                       teachable: lessons).exists? ||
-          Medium.where(sort: medium_sort[project],
-                       released: ["all", "users", "subscribers"],
-                       teachable: talks).exists? ||
-          Medium.where(sort: medium_sort[project],
-                       released: ["all", "users", "subscribers"],
-                       teachable: course).exists?
+                       teachable: self) ||
+          Medium.exists?(sort: medium_sort[project],
+                         released: ["all", "users", "subscribers"],
+                         teachable: lessons) ||
+          Medium.exists?(sort: medium_sort[project],
+                         released: ["all", "users", "subscribers"],
+                         teachable: talks) ||
+          Medium.exists?(sort: medium_sort[project],
+                         released: ["all", "users", "subscribers"],
+                         teachable: course)
       end
     end
 
@@ -879,19 +881,19 @@ class Lecture < ApplicationRecord
       return project_as_user?(project) unless edited_by?(user) || user.admin
 
       course_media = if user.in?(course.editors) || user.admin
-        Medium.where(sort: medium_sort[project],
-                     teachable: course).exists?
+        Medium.exists?(sort: medium_sort[project],
+                       teachable: course)
       else
-        Medium.where(sort: medium_sort[project],
-                     released: ["all", "users", "subscribers"],
-                     teachable: course).exists?
+        Medium.exists?(sort: medium_sort[project],
+                       released: ["all", "users", "subscribers"],
+                       teachable: course)
       end
-      lecture_media = Medium.where(sort: medium_sort[project],
-                                   teachable: self).exists?
-      lesson_media = Medium.where(sort: medium_sort[project],
-                                  teachable: lessons).exists?
-      talk_media = Medium.where(sort: medium_sort[project],
-                                teachable: talks).exists?
+      lecture_media = Medium.exists?(sort: medium_sort[project],
+                                     teachable: self)
+      lesson_media = Medium.exists?(sort: medium_sort[project],
+                                    teachable: lessons)
+      talk_media = Medium.exists?(sort: medium_sort[project],
+                                  teachable: talks)
       course_media || lecture_media || lesson_media || talk_media
     end
 

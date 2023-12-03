@@ -18,13 +18,13 @@ class Quiz < Medium
   def publish_vertices!(user, release_state)
     return unless vertices
 
-    vertices.keys.each do |v|
+    vertices.each_key do |v|
       quizzable = quizzable(v)
       next if quizzable.published?
       next unless quizzable.teachable.published?
       next unless user.in?(quizzable.editors_with_inheritance) || user.admin
 
-      quizzable.update(released: release_state, released_at: Time.now)
+      quizzable.update(released: release_state, released_at: Time.zone.now)
     end
   end
 
@@ -79,14 +79,14 @@ class Quiz < Medium
     return [] unless quiz_graph && quiz_graph.vertices.present?
 
     quiz_graph.vertices.select { |_k, v| v[:type] == "Question" }
-              .values.map { |v| v[:id] }.uniq
+              .values.pluck(:id).uniq
   end
 
   def remark_ids
     return [] unless quiz_graph && quiz_graph.vertices.present?
 
     quiz_graph.vertices.select { |_k, v| v[:type] == "Remark" }.values
-              .map { |v| v[:id] }.uniq
+              .pluck(:id).uniq
   end
 
   def crosses_to_input(vertex_id, crosses)
@@ -95,7 +95,7 @@ class Quiz < Medium
     if vertex[:type] == "Question"
       question = Question.find(vertex[:id])
       crosses = crosses.map(&:to_i)
-      input = question.answers.map { |a| [a.id, crosses.include?(a.id)] }.to_h
+      input = question.answers.to_h { |a| [a.id, crosses.include?(a.id)] }
     end
     input
   end

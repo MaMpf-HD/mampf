@@ -27,37 +27,37 @@ class Submission < ApplicationRecord
   end
 
   def manuscript_filename
-    return unless manuscript.present?
+    return if manuscript.blank?
 
     manuscript.metadata["filename"]
   end
 
   def manuscript_size
-    return unless manuscript.present?
+    return if manuscript.blank?
 
     manuscript.metadata["size"]
   end
 
   def manuscript_mime_type
-    return unless manuscript.present?
+    return if manuscript.blank?
 
     manuscript.metadata["mime_type"]
   end
 
   def correction_filename
-    return unless correction.present?
+    return if correction.blank?
 
     correction.metadata["filename"]
   end
 
   def correction_mime_type
-    return unless correction.present?
+    return if correction.blank?
 
     correction.metadata["mime_type"]
   end
 
   def correction_size
-    return unless correction.present?
+    return if correction.blank?
 
     correction.metadata["size"]
   end
@@ -106,11 +106,9 @@ class Submission < ApplicationRecord
   # end
 
   def filename_for_bulk_download(end_of_file = "")
-    (team.first(180) + "-" +
-      last_modification_by_users_at.strftime("%F-%H%M") +
-      (too_late? ? "-LATE" : "") +
-      + "-ID-" + id + end_of_file +
-      assignment.accepted_file_type)
+    # rubocop:todo Layout/LineLength
+    "#{team.first(180)}-#{last_modification_by_users_at.strftime("%F-%H%M")}#{too_late? ? "-LATE" : ""}#{+ "-ID-"}#{id}#{end_of_file}#{assignment.accepted_file_type}"
+      # rubocop:enable Layout/LineLength
       .gsub(%r{[\x00/\\:\*\?\"<>\|]}, "_")
       .gsub(%r{^.*(\\|/)}, "")
       # Strip out the non-ascii characters
@@ -122,7 +120,7 @@ class Submission < ApplicationRecord
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
         submissions.zip(downloadables).each do |s, d|
           stream.put_next_entry(s.filename_for_bulk_download(end_of_file))
-          stream.write IO.read(d.to_io.path)
+          stream.write File.read(d.to_io.path)
         end
       end
       archived_filestream.rewind
@@ -171,7 +169,7 @@ class Submission < ApplicationRecord
                          file_type: file_type,
                          accepted_file_type: assignment.accepted_file_type)
     end
-    return {} unless errors.present?
+    return {} if errors.blank?
 
     { sort => errors }
   end
@@ -218,7 +216,7 @@ class Submission < ApplicationRecord
                          accepted_mime_types: assignment.accepted_mime_types
                                                         .join(", "))
     end
-    return {} unless errors.present?
+    return {} if errors.blank?
 
     { sort => errors }
   end
@@ -229,7 +227,7 @@ class Submission < ApplicationRecord
     report = { successful_saves: [], submissions: submissions.size,
                invalid_filenames: [], invalid_id: [], in_subfolder: [],
                no_decision: [], rejected: [], invalid_file: [] }
-    tmp_folder = Dir.mktmpdir
+    Dir.mktmpdir
     begin
       files.each do |file_shrine|
         filename = file_shrine["metadata"]["filename"]
@@ -239,7 +237,7 @@ class Submission < ApplicationRecord
         end
         submission_id = File.basename(filename.split("-ID-").last,
                                       File.extname(filename.split("-ID-").last))
-        submission = Submission.find_by_id(submission_id)
+        submission = Submission.find_by(id: submission_id)
         unless submission
           report[:invalid_id].push(filename)
           next
@@ -260,7 +258,7 @@ class Submission < ApplicationRecord
         report[:successful_saves].push(submission)
       end
     rescue StandardError => e
-      report[:errors] = "#{e.message}"
+      report[:errors] = e.message.to_s
     end
     report
   end
@@ -290,7 +288,7 @@ class Submission < ApplicationRecord
     def self.number_of_late_submissions(tutorial, assignment)
       Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(manuscript_data: nil)
-                .select { |s| s.too_late? }.size
+                .count(&:too_late?)
     end
 
     def self.submissions_total(assignment)
@@ -306,7 +304,7 @@ class Submission < ApplicationRecord
     def self.late_submissions_total(assignment)
       Submission.where(assignment: assignment)
                 .where.not(manuscript_data: nil)
-                .select { |s| s.too_late? }.size
+                .count(&:too_late?)
     end
 
     private_class_method :number_of_submissions, :number_of_corrections,

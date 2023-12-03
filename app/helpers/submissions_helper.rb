@@ -36,7 +36,6 @@ module SubmissionsHelper
       return "bg-submission-green" if submission&.manuscript
       return "bg-submission-yellow" if submission
 
-      "bg-submission-red"
     else
       return "bg-submission-darker-green" if submission&.correction
 
@@ -48,15 +47,14 @@ module SubmissionsHelper
       end
       return "bg-submission-green" if submission&.manuscript
 
-      "bg-submission-red"
     end
+    "bg-submission-red"
   end
 
   def submission_status_icon(submission, assignment)
     if assignment.active?
       return "far fa-smile" if submission&.manuscript
 
-      "fas fa-exclamation-triangle"
     else
       return "far fa-smile" if submission&.correction
 
@@ -67,16 +65,14 @@ module SubmissionsHelper
       end
       return "fas fa-hourglass-start" if submission&.manuscript
 
-      "fas fa-exclamation-triangle"
     end
+    "fas fa-exclamation-triangle"
   end
 
   def submission_status_text(submission, assignment)
     if assignment.active?
       return t("submission.okay") if submission&.manuscript
-      return t("submission.no_file") if submission
 
-      t("submission.nothing")
     else
       return t("submission.with_correction") if submission&.correction
 
@@ -87,10 +83,11 @@ module SubmissionsHelper
         return t("submission.too_late_rejected")
       end
       return t("submission.under_review") if submission&.manuscript
-      return t("submission.no_file") if submission
 
-      t("submission.nothing")
     end
+    return t("submission.no_file") if submission
+
+    t("submission.nothing")
   end
 
   def submission_status(submission, assignment)

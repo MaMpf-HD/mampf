@@ -10,7 +10,7 @@ class AssignmentsController < ApplicationController
 
   def new
     @assignment = Assignment.new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by(id: params[:lecture_id])
     @assignment.lecture = @lecture
     authorize! :new, @assignment
     set_assignment_locale
@@ -44,7 +44,7 @@ class AssignmentsController < ApplicationController
   end
 
   def cancel_new
-    @lecture = Lecture.find_by_id(params[:lecture])
+    @lecture = Lecture.find_by(id: params[:lecture])
     assignment = Assignment.new(lecture: @lecture)
     authorize! :cancel_new, assignment
     set_assignment_locale
@@ -54,7 +54,7 @@ class AssignmentsController < ApplicationController
   private
 
     def set_assignment
-      @assignment = Assignment.find_by_id(params[:id])
+      @assignment = Assignment.find_by(id: params[:id])
       @lecture = @assignment&.lecture
       set_assignment_locale and return if @assignment
 
@@ -62,7 +62,7 @@ class AssignmentsController < ApplicationController
     end
 
     def set_lecture
-      @lecture = Lecture.find_by_id(assignment_params[:lecture_id])
+      @lecture = Lecture.find_by(id: assignment_params[:lecture_id])
       return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")

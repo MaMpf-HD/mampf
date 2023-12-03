@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Relation, type: :model do
@@ -33,7 +31,7 @@ RSpec.describe Relation, type: :model do
   it "destroys itself if it relates tag to itself" do
     tag = FactoryBot.create(:tag)
     relation = FactoryBot.create(:relation, tag: tag, related_tag: tag)
-    expect(Relation.find_by_id(relation.id)).to be_nil
+    expect(Relation.find_by(id: relation.id)).to be_nil
   end
 
   it "creates an inverse if relation is not self-inverse" do

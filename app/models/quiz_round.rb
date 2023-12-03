@@ -46,7 +46,7 @@ class QuizRound
   end
 
   def round_id
-    "round" + @progress.to_s + "-" + @counter.to_s
+    "round#{@progress}-#{@counter}"
   end
 
   def background
@@ -57,7 +57,7 @@ class QuizRound
   end
 
   def badge
-    "badge bg-" + (@correct ? "success" : "danger")
+    "badge bg-#{@correct ? "success" : "danger"}"
   end
 
   def statement
@@ -69,13 +69,13 @@ class QuizRound
   def answers
     return [] unless @answer_shuffle
 
-    @answer_shuffle.map { |a| Answer.find_by_id(a) }
+    @answer_shuffle.map { |a| Answer.find_by(id: a) }
   end
 
   def answers_old
     return [] unless @answer_shuffle_old
 
-    @answer_shuffle_old.map { |a| Answer.find_by_id(a) }
+    @answer_shuffle_old.map { |a| Answer.find_by(id: a) }
   end
 
   private
@@ -111,7 +111,7 @@ class QuizRound
     end
 
     def update_answer_shuffle
-      @answer_shuffle = Question.find_by_id(@vertex[:id])&.answers&.map(&:id)
+      @answer_shuffle = Question.find_by(id: @vertex[:id])&.answers&.map(&:id)
                                 &.shuffle
     end
 

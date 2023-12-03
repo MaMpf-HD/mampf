@@ -18,13 +18,13 @@ class RemarksController < MediaController
   end
 
   def reassign
-    remark_old = Remark.find_by_id(params[:id])
+    remark_old = Remark.find_by(id: params[:id])
     authorize! :reassign, remark_old
     I18n.locale = remark_old.locale_with_inheritance
     @remark = remark_old.duplicate
     @remark.editors = [current_user]
     @quizzes.each do |q|
-      Quiz.find_by_id(q).replace_reference!(remark_old, @remark)
+      Quiz.find_by(id: q).replace_reference!(remark_old, @remark)
     end
     I18n.locale = @remark.locale_with_inheritance
     if remark_params[:type] == "edit"
@@ -42,7 +42,7 @@ class RemarksController < MediaController
   private
 
     def set_remark
-      @remark = Remark.find_by_id(params[:id])
+      @remark = Remark.find_by(id: params[:id])
       return if @remark.present?
 
       redirect_to remarks_path, alert: I18n.t("controllers.no_remark")

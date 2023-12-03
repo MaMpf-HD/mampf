@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Course class
 class Course < ApplicationRecord
   include ApplicationHelper
@@ -87,7 +85,7 @@ class Course < ApplicationRecord
   end
 
   def selector_value
-    "Course-" + id.to_s
+    "Course-#{id}"
   end
 
   def to_label
@@ -359,7 +357,7 @@ class Course < ApplicationRecord
       return questions_w_inheritance.pluck(:id).sample(count) unless tags.any?
 
       tagged_questions = questions(tags)
-      question_ids = if tagged_questions.count > count
+      if tagged_questions.count > count
         QuestionSampler.new(tagged_questions, tags, count).sample!
       else
         tagged_questions.map(&:id).shuffle

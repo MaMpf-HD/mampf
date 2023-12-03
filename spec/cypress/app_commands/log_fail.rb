@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # This file is called when a cypress spec fails and allows for extra logging
 # to be captured
 filename = command_options.fetch("runnable_full_title", "no title")
@@ -7,7 +5,7 @@ filename = command_options.fetch("runnable_full_title", "no title")
 
 # grab last lines until "APPCLEANED"
 # (Make sure in clean.rb to log the text "APPCLEANED")
-system "tail -n 10000 -r log/#{Rails.env}.log | " +
+system "tail -n 10000 -r log/#{Rails.env}.log | " \
        "sed \"/APPCLEANED/ q\" | sed 'x;1!H;$!d;x' > 'log/#{filename}.log'"
 
 # create a json debug file for server debugging
@@ -26,6 +24,6 @@ end
 
 filename = command_options.fetch("runnable_full_title", "no title")
                           .gsub(/[^[:print:]]/, "")
-File.open("#{Rails.root.join("log/#{filename}.json")}", "w+") do |file|
+File.open(Rails.root.join("log/#{filename}.json").to_s, "w+") do |file|
   file << JSON.pretty_generate(json_result)
 end

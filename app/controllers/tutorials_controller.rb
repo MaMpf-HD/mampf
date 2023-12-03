@@ -5,10 +5,12 @@ class TutorialsController < ApplicationController
                                       :bulk_download_corrections,
                                       :bulk_upload,
                                       :export_teams]
+  # rubocop:todo Rails/LexicallyScopedActionFilter
   before_action :set_assignment, only: [:bulk_download_submissions,
                                         :bulk_download_corrections´,
                                         :bulk_upload,
                                         :export_teams]
+  # rubocop:enable Rails/LexicallyScopedActionFilter
   before_action :set_lecture, only: [:index, :overview]
   before_action :set_lecture_from_form, only: [:create]
   before_action :can_view_index, only: :index
@@ -25,14 +27,14 @@ class TutorialsController < ApplicationController
   def index
     authorize! :index, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order("deadline DESC")
-    @assignment = Assignment.find_by_id(params[:assignment]) ||
+    @assignment = Assignment.find_by(id: params[:assignment]) ||
                   @assignments&.first
     @tutorials = if current_user.editor_or_teacher_in?(@lecture)
       @lecture.tutorials
     else
       current_user.given_tutorials.where(lecture: @lecture)
     end
-    @tutorial = Tutorial.find_by_id(params[:tutorial]) || current_user.tutorials(@lecture).first
+    @tutorial = Tutorial.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
   end
@@ -40,14 +42,14 @@ class TutorialsController < ApplicationController
   def overview
     authorize! :overview, Tutorial.new, @lecture
     @assignments = @lecture.assignments.order("deadline DESC")
-    @assignment = Assignment.find_by_id(params[:assignment]) ||
+    @assignment = Assignment.find_by(id: params[:assignment]) ||
                   @assignments&.first
     @tutorials = @lecture.tutorials
   end
 
   def new
     @tutorial = Tutorial.new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by(id: params[:lecture_id])
     set_tutorial_locale
     @tutorial.lecture = @lecture
     authorize! :new, @tutorial
@@ -79,7 +81,7 @@ class TutorialsController < ApplicationController
   end
 
   def cancel_new
-    @lecture = Lecture.find_by_id(params[:lecture])
+    @lecture = Lecture.find_by(id: params[:lecture])
     authorize! :cancel_new, Tutorial.new(lecture: @lecture)
     set_tutorial_locale
     @none_left = @lecture&.tutorials&.none?
@@ -108,7 +110,7 @@ class TutorialsController < ApplicationController
 
   def validate_certificate
     authorize! :validate_certificate, Tutorial.new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by(id: params[:lecture_id])
     set_tutorial_locale
   end
 
@@ -125,7 +127,7 @@ class TutorialsController < ApplicationController
   private
 
     def set_tutorial
-      @tutorial = Tutorial.find_by_id(params[:id])
+      @tutorial = Tutorial.find_by(id: params[:id])
       @lecture = @tutorial&.lecture
       set_tutorial_locale and return if @tutorial
 
@@ -133,21 +135,21 @@ class TutorialsController < ApplicationController
     end
 
     def set_assignment
-      @assignment = Assignment.find_by_id(params[:ass_id])
+      @assignment = Assignment.find_by(id: params[:ass_id])
       return if @assignment
 
       redirect_to :root, alert: I18n.t("controllers.no_assignment")
     end
 
     def set_lecture
-      @lecture = Lecture.find_by_id(params[:id])
+      @lecture = Lecture.find_by(id: params[:id])
       set_tutorial_locale and return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_lecture_from_form
-      @lecture = Lecture.find_by_id(tutorial_params[:lecture_id])
+      @lecture = Lecture.find_by(id: tutorial_params[:lecture_id])
       return if @lecture
 
       redirect_to :root, alert: I18n.t("controllers.no_lecture")
@@ -175,7 +177,7 @@ class TutorialsController < ApplicationController
     def bulk_download(zipped, end_of_file = "")
       if zipped.is_a?(StringIO)
         send_data zipped.read,
-                  filename: @assignment.title + "@" + @tutorial.title + end_of_file + ".zip",
+                  filename: "#{@assignment.title}@#{@tutorial.title}#{end_of_file}.zip",
                   type: "application/zip",
                   disposition: "attachment"
       else

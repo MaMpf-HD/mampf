@@ -40,14 +40,14 @@ class Term < ApplicationRecord
 
   # label contains season and year(s) with all digits
   def to_label
-    return unless season.present?
+    return if season.blank?
 
-    season + " " + year_corrected
+    "#{season} #{year_corrected}"
   end
 
   # short label contains season and year(s) with two digits
   def to_label_short
-    season + " " + year_corrected_short
+    "#{season} #{year_corrected_short}"
   end
 
   def compact_title
@@ -108,7 +108,7 @@ class Term < ApplicationRecord
   end
 
   # array of all terms together with their ids for use in options_for_select
-  def self.select_terms(independent = false)
+  def self.select_terms(independent = false) # rubocop:todo Style/OptionalBooleanParameter
     return ["bla", nil] if independent
 
     Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
@@ -127,13 +127,13 @@ class Term < ApplicationRecord
     def year_corrected
       return year.to_s unless season == "WS"
 
-      year.to_s + "/" + ((year % 100) + 1).to_s
+      "#{year}/#{(year % 100) + 1}"
     end
 
     def year_corrected_short
       return (year % 100).to_s unless season == "WS"
 
-      (year % 100).to_s + "/" + ((year % 100) + 1).to_s
+      "#{year % 100}/#{(year % 100) + 1}"
     end
 
     def touch_lectures_and_lessons

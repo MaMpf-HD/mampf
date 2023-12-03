@@ -19,7 +19,7 @@ class Notification < ApplicationRecord
   # returns the lecture associated to a notification of type announcement,
   # and teachable for a notification of type medium, nil otherwise
   def teachable
-    return unless notifiable.present?
+    return if notifiable.blank?
     return if notifiable_type.in?(["Lecture", "Course"])
     return notifiable.lecture if notifiable_type == "Announcement"
 
@@ -33,7 +33,7 @@ class Notification < ApplicationRecord
   # news path for general announcements
   # all other cases: notifiable path
   def path(user)
-    return unless notifiable.present?
+    return if notifiable.blank?
     return edit_profile_path if notifiable_type.in?(["Course", "Lecture"])
 
     if notifiable_type == "Announcement"
@@ -53,27 +53,27 @@ class Notification < ApplicationRecord
   # the next methods are for the determination which kind of notification it is
 
   def medium?
-    return unless notifiable.present?
+    return false if notifiable.blank?
 
     notifiable_type == "Medium"
   end
 
   def course?
-    return unless notifiable.present?
+    return false if notifiable.blank?
 
-    notifiable.class.to_s == "Course"
+    notifiable.instance_of?(::Course)
   end
 
   def lecture?
-    return unless notifiable.present?
+    return false if notifiable.blank?
 
-    notifiable.class.to_s == "Lecture"
+    notifiable.instance_of?(::Lecture)
   end
 
   def announcement?
-    return unless notifiable.present?
+    return false if notifiable.blank?
 
-    notifiable.class.to_s == "Announcement"
+    notifiable.instance_of?(::Announcement)
   end
 
   def generic_announcement?

@@ -36,7 +36,7 @@ class ProgramsController < ApplicationController
   private
 
     def set_program
-      @program = Program.find_by_id(params[:id])
+      @program = Program.find_by(id: params[:id])
       return if @program.present?
 
       redirect_to root_path, alert: I18n.t("controllers.no_program")

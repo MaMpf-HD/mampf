@@ -229,7 +229,7 @@ class Medium < ApplicationRecord
   # provided by the params hash (keys: :id, :project)
   # :id represents the lecture id
   def self.search_all(params)
-    lecture = Lecture.find_by_id(params[:id])
+    lecture = Lecture.find_by(id: params[:id])
     return Medium.none if lecture.nil?
 
     media_in_project = Medium.media_in_project(params[:project])
@@ -245,7 +245,7 @@ class Medium < ApplicationRecord
 
   # returns the ARel of all media for the given project
   def self.media_in_project(project)
-    return Medium.none unless project.present?
+    return Medium.none if project.blank?
 
     sort = project == "keks" ? "Quiz" : project.capitalize
     Medium.where(sort: sort)
@@ -369,7 +369,7 @@ class Medium < ApplicationRecord
     end
     # this is needed for kaminari to function correctly
     search.build do
-      paginate page: 1, per_page: Medium.all.count
+      paginate page: 1, per_page: Medium.count
     end
     search
   end
@@ -467,7 +467,7 @@ class Medium < ApplicationRecord
     return true if teachable&.lecture&.editors&.include?(user)
     return true if teachable&.lecture&.teacher == user
     return true if teachable&.course&.editors&.include?(user)
-    return true if teachable&.is_a?(Talk) && user.in?(teachable.speakers)
+    return true if teachable.is_a?(Talk) && user.in?(teachable.speakers)
 
     false
   end
@@ -514,7 +514,7 @@ class Medium < ApplicationRecord
     referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
                      .each do |r|
       file.write r.vtt_time_span
-      file.write JSON.pretty_generate(r.vtt_properties) + "\n\n"
+      file.write "#{JSON.pretty_generate(r.vtt_properties)}\n\n"
     end
     file
   end
@@ -550,7 +550,7 @@ class Medium < ApplicationRecord
   end
 
   def video_url
-    return unless video.present?
+    return if video.blank?
 
     video.url(host: host)
   end
@@ -560,43 +560,43 @@ class Medium < ApplicationRecord
   end
 
   def video_filename
-    return unless video.present?
+    return if video.blank?
 
     video.metadata["filename"]
   end
 
   def video_size
-    return unless video.present?
+    return if video.blank?
 
     video.metadata["size"]
   end
 
   def video_resolution
-    return unless video.present?
+    return if video.blank?
 
     video.metadata["resolution"]
   end
 
   def video_duration
-    return unless video.present?
+    return if video.blank?
 
     video.metadata["duration"]
   end
 
   def video_duration_hms_string
-    return unless video.present?
+    return if video.blank?
 
     TimeStamp.new(total_seconds: video_duration).hms_string
   end
 
   def geogebra_filename
-    return unless geogebra.present?
+    return if geogebra.blank?
 
     geogebra.metadata["filename"]
   end
 
   def geogebra_size
-    return unless geogebra.present?
+    return if geogebra.blank?
 
     geogebra.metadata["size"]
   end
@@ -610,13 +610,13 @@ class Medium < ApplicationRecord
   end
 
   def geogebra_screenshot_url
-    return "" unless geogebra.present?
+    return "" if geogebra.blank?
 
     geogebra_url(:screenshot, host: host)
   end
 
   def manuscript_url_with_host
-    return manuscript_url(host: host) + "/" + manuscript_filename if ENV["REWRITE_ENABLED"] == "1"
+    return "#{manuscript_url(host: host)}/#{manuscript_filename}" if ENV["REWRITE_ENABLED"] == "1"
 
     manuscript_url(host: host)
   end
@@ -626,25 +626,25 @@ class Medium < ApplicationRecord
   end
 
   def manuscript_filename
-    return unless manuscript.present?
+    return if manuscript.blank?
 
     manuscript.metadata["filename"]
   end
 
   def manuscript_size
-    return unless manuscript.present?
+    return if manuscript.blank?
 
     manuscript.metadata["size"]
   end
 
   def manuscript_pages
-    return unless manuscript.present?
+    return if manuscript.blank?
 
     manuscript.metadata["pages"]
   end
 
   def manuscript_screenshot_url
-    return "" unless manuscript.present?
+    return "" if manuscript.blank?
 
     manuscript_url(:screenshot, host: host)
   end
@@ -656,13 +656,13 @@ class Medium < ApplicationRecord
   end
 
   def video_width
-    return unless video.present?
+    return if video.blank?
 
     video_resolution.split("x")[0].to_i
   end
 
   def video_height
-    return unless video.present?
+    return if video.blank?
 
     video_resolution.split("x")[1].to_i
   end
@@ -715,7 +715,7 @@ class Medium < ApplicationRecord
   end
 
   def cache_key
-    super + "-" + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def published?
@@ -781,9 +781,9 @@ class Medium < ApplicationRecord
   end
 
   def teachable_select
-    return nil unless teachable.present?
+    return nil if teachable.blank?
 
-    teachable_type + "-" + teachable_id.to_s
+    "#{teachable_type}-#{teachable_id}"
   end
 
   # media associated to the same teachable and of the same sort
@@ -867,8 +867,8 @@ class Medium < ApplicationRecord
   # returns info made from sort, teachable title and description
 
   def title_for_viewers_uncached
-    sort_localized + ", " + teachable&.title_for_viewers.to_s +
-      (description.present? ? ", " + description : "")
+    description_str = description.present? ? ", #{description}" : ""
+    "#{sort_localized}, #{teachable&.title_for_viewers}#{description_str}"
   end
 
   def title_for_viewers
@@ -956,7 +956,7 @@ class Medium < ApplicationRecord
     video_links = Medium.where(id: referenced_items.where(sort: "self")
                                                    .where.not(medium: nil)
                                                    .pluck(:medium_id))
-    return video_links unless manuscript.present?
+    return video_links if manuscript.blank?
 
     manuscript_media_ids = manuscript.metadata["linked_media"] || []
     manuscript_links = Medium.where(id: manuscript_media_ids)
@@ -996,9 +996,9 @@ class Medium < ApplicationRecord
   end
 
   def script_items_importable?
-    return unless teachable_type == "Lesson"
-    return unless teachable.lecture.content_mode == "manuscript"
-    return unless teachable.script_items.any?
+    return false unless teachable_type == "Lesson"
+    return false unless teachable.lecture.content_mode == "manuscript"
+    return false unless teachable.script_items.any?
 
     true
   end
@@ -1060,7 +1060,7 @@ class Medium < ApplicationRecord
   end
 
   def containing_watchlists(user)
-    Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
+    Watchlist.where(id: WatchlistEntry.where(medium: self).select(:watchlist_id),
                     user: user)
   end
 
@@ -1078,15 +1078,15 @@ class Medium < ApplicationRecord
   end
 
   def term_id
-    teachable.term_id if teachable.class.to_s == "Lecture"
-    return unless teachable.class.to_s == "Lesson"
+    teachable.term_id if teachable.instance_of?(::Lecture)
+    return unless teachable.instance_of?(::Lesson)
 
     Lecture.find_by(id: teachable.lecture_id).term_id
   end
 
   def supervising_teacher_id
-    return teachable.teacher_id if teachable.class.to_s == "Lecture"
-    return unless teachable.class.to_s == "Lesson"
+    return teachable.teacher_id if teachable.instance_of?(::Lecture)
+    return unless teachable.instance_of?(::Lesson)
 
     Lecture.find_by(id: teachable.lecture_id).teacher_id
   end
@@ -1094,7 +1094,7 @@ class Medium < ApplicationRecord
   def subscribed_users
     return teachable.user_ids if ["Lecture",
                                   "Course"].include? teachable.class.to_s
-    return unless teachable.class.to_s == "Lesson"
+    return unless teachable.instance_of?(::Lesson)
 
     Lecture.find_by(id: teachable.lecture_id).user_ids
   end
@@ -1104,7 +1104,7 @@ class Medium < ApplicationRecord
     # media of type kaviar associated to a lesson and script do not require
     # a description
     def undescribable?
-      (sort == "Kaviar" && teachable.class.to_s == "Lesson") ||
+      (sort == "Kaviar" && teachable.instance_of?(::Lesson)) ||
         sort == "Script"
     end
 
@@ -1115,13 +1115,13 @@ class Medium < ApplicationRecord
     def title_uncached
       return compact_info if details.blank?
 
-      compact_info + "." + details
+      "#{compact_info}.#{details}"
     end
 
     # returns info made from sort and description
     def local_title_for_viewers_uncached
       return "#{sort_localized}, #{description}" if description.present?
-      if sort == "Kaviar" && teachable.class.to_s == "Lesson"
+      if sort == "Kaviar" && teachable.instance_of?(::Lesson)
         return "#{I18n.t("categories.kaviar.singular")}, #{teachable.local_title_for_viewers}"
       end
 
@@ -1199,7 +1199,7 @@ class Medium < ApplicationRecord
 
     def no_video_for_script
       return true unless sort == "Script"
-      return true unless video.present?
+      return true if video.blank?
 
       errors.add(:sort, :no_video)
       false

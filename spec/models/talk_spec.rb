@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 require "rails_helper"
 
 RSpec.describe Talk, type: :model do
@@ -202,10 +200,10 @@ RSpec.describe Talk, type: :model do
                                                   sort: "Kaviar")
         medium2 = FactoryBot.create(:talk_medium, teachable: talk,
                                                   sort: "Sesam")
-        medium3 = FactoryBot.create(:talk_medium, teachable: talk,
-                                                  sort: "Question")
-        medium4 = FactoryBot.create(:talk_medium, teachable: talk,
-                                                  sort: "Remark")
+        FactoryBot.create(:talk_medium, teachable: talk,
+                                        sort: "Question")
+        FactoryBot.create(:talk_medium, teachable: talk,
+                                        sort: "Remark")
         expect(talk.proper_media).to match_array([medium1, medium2])
       end
     end

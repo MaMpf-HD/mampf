@@ -17,7 +17,7 @@ class AnnouncementsController < ApplicationController
   end
 
   def new
-    @lecture = Lecture.find_by_id(params[:lecture])
+    @lecture = Lecture.find_by(id: params[:lecture])
     @announcement = Announcement.new(announcer: current_user, lecture: @lecture)
     authorize! :new, @announcement
   end
@@ -33,7 +33,7 @@ class AnnouncementsController < ApplicationController
       # send notification email
       send_notification_email
       # redirection depending from where the announcement was created
-      unless @announcement.lecture.present?
+      if @announcement.lecture.blank?
         redirect_to announcements_path
         return
       end
@@ -96,7 +96,7 @@ class AnnouncementsController < ApplicationController
     end
 
     def set_announcement
-      @announcement = Announcement.find_by_id(params[:id])
+      @announcement = Announcement.find_by(id: params[:id])
       return if @announcement.present?
 
       redirect_to :root, alert: I18n.t("controllers.no_announcement")
