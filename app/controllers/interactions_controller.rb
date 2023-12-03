@@ -14,7 +14,7 @@ class InteractionsController < ApplicationController
       format.html { head :ok }
       format.csv do
         send_data @interactions.to_csv,
-                  filename: "interactions-from-#{start_date}-to-#{end_date}-at-#{Time.now}.csv"
+                  filename: "interactions-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv"
       end
     end
   end
