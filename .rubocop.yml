@@ -81,6 +81,9 @@ Style/EmptyMethod:
 Style/FrozenStringLiteralComment:
   EnforcedStyle: never
 
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
+
 Style/RedundantReturn:
   AllowMultipleReturnValues: true
 
