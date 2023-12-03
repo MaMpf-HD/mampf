@@ -24,6 +24,6 @@ class VideoUploader < Shrine
   end
 
   Attacher.validate do
-    validate_mime_type_inclusion %w[video/mp4], message: "wrong type"
+    validate_mime_type_inclusion ["video/mp4"], message: "wrong type"
   end
 end

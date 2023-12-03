@@ -65,14 +65,14 @@ class ProfileController < ApplicationController
 
   def toggle_thread_subscription
     @thread = Commontator::Thread.find(params[:id])
-    if @thread && @thread.can_subscribe?(@user)
-      if params[:subscribe] == "true"
-        @thread.subscribe(@user)
-      else
-        @thread.unsubscribe(@user)
-      end
-      @result = !!@thread.subscription_for(@user)
+    return unless @thread && @thread.can_subscribe?(@user)
+
+    if params[:subscribe] == "true"
+      @thread.subscribe(@user)
+    else
+      @thread.unsubscribe(@user)
     end
+    @result = !!@thread.subscription_for(@user)
   end
 
   def subscribe_lecture
@@ -103,9 +103,7 @@ class ProfileController < ApplicationController
   def star_lecture
     return unless @lecture&.in?(current_user.lectures)
 
-    if !@lecture.in?(current_user.favorite_lectures)
-      current_user.favorite_lectures << @lecture
-    end
+    current_user.favorite_lectures << @lecture unless @lecture.in?(current_user.favorite_lectures)
     # as favorite lectures appear in the navbar which is cached e.g. in
     # the lecture show action, make sure the cache is invalidated by
     # touching the user
@@ -180,7 +178,7 @@ class ProfileController < ApplicationController
 
     # extracts all lecture ids from user params
     def lecture_ids
-      params[:user][:lecture].select { |k, v| v == "1" }.keys.map(&:to_i)
+      params[:user][:lecture].select { |_k, v| v == "1" }.keys.map(&:to_i)
     end
 
     def clean_up_notifications
@@ -197,9 +195,9 @@ class ProfileController < ApplicationController
     # if user unsubscribed the lecture the current lecture cookie refers to,
     # set the lectures cookie to nil
     def update_lecture_cookie
-      unless @current_lecture.in?(@user.lectures)
-        cookies[:current_lecture_id] = nil
-      end
+      return if @current_lecture.in?(@user.lectures)
+
+      cookies[:current_lecture_id] = nil
     end
 
     # stop the update if any of passphrases for newly subscribed

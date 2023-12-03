@@ -56,7 +56,7 @@ FactoryBot.define do
       end
     end
 
-    # note that you can give the chapter_count here as parameter as well
+    # NOTE: that you can give the chapter_count here as parameter as well
     factory :lecture_with_toc, traits: [:with_toc]
 
     factory :lecture_with_sparse_toc, traits: [:with_sparse_toc]

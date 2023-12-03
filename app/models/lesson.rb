@@ -15,12 +15,17 @@ class Lesson < ApplicationRecord
                       after_add: :touch_section
 
   # being a teachable (course/lecture/lesson), a lesson has associated media
-  has_many :media, -> { order(position: :asc) },
+  # rubocop:todo Rails/InverseOf
+  has_many :media, -> { order(position: :asc) }, # rubocop:todo Rails/HasManyOrHasOneDependent, Rails/InverseOf
+           # rubocop:enable Rails/InverseOf
            as: :teachable
 
   validates :date, presence: true
   validates :sections, presence: true
 
+  before_destroy :touch_media
+  before_destroy :touch_siblings
+  before_destroy :touch_sections, prepend: true
   # media are cached in several places
   # media are touched in order to find out whether cache is out of date
   after_save :touch_media
@@ -29,9 +34,6 @@ class Lesson < ApplicationRecord
   after_save :touch_siblings
   after_save :touch_self
   after_save :touch_tags
-  before_destroy :touch_media
-  before_destroy :touch_siblings
-  before_destroy :touch_sections, prepend: true
 
   delegate :editors_with_inheritance, to: :lecture, allow_nil: true
 
@@ -87,9 +89,7 @@ class Lesson < ApplicationRecord
     lecture.title + ", " + title
   end
 
-  def locale_with_inheritance
-    lecture.locale_with_inheritance
-  end
+  delegate :locale_with_inheritance, to: :lecture
 
   def locale
     locale_with_inheritance
@@ -105,9 +105,7 @@ class Lesson < ApplicationRecord
     lesson_path
   end
 
-  def published?
-    lecture.published?
-  end
+  delegate :published?, to: :lecture
 
   # some more methods dealing with the title
 
@@ -124,12 +122,10 @@ class Lesson < ApplicationRecord
   end
 
   def local_title_for_viewers
-    "#{I18n.t('lesson')} #{number} #{I18n.t('from')} #{date_localized}"
+    "#{I18n.t("lesson")} #{number} #{I18n.t("from")} #{date_localized}"
   end
 
-  def restricted?
-    lecture.restricted?
-  end
+  delegate :restricted?, to: :lecture
 
   # more infos that can be extracted
 
@@ -158,9 +154,7 @@ class Lesson < ApplicationRecord
     media.select { |m| m.visible_for_user?(user) }
   end
 
-  def visible_for_user?(user)
-    lecture.visible_for_user?(user)
-  end
+  delegate :visible_for_user?, to: :lecture
 
   # the number of a lesson is calculated by its date relative to the other
   # lessons
@@ -169,7 +163,7 @@ class Lesson < ApplicationRecord
   end
 
   def date_localized
-    I18n.localize date, format: :concise
+    I18n.l date, format: :concise
   end
 
   def section_titles
@@ -177,9 +171,7 @@ class Lesson < ApplicationRecord
   end
 
   # a lesson can be edited by any user who can edit its lecture
-  def edited_by?(user)
-    lecture.edited_by?(user)
-  end
+  delegate :edited_by?, to: :lecture
 
   def section_tags
     sections.collect(&:tags).flatten
@@ -308,15 +300,17 @@ class Lesson < ApplicationRecord
 
     # used for after save callback
     def touch_media
+      # rubocop:todo Rails/SkipsModelValidations
       lecture.media_with_inheritance.update_all(updated_at: Time.now)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def touch_siblings
-      lecture.lessons.update_all(updated_at: Time.now)
+      lecture.lessons.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
     end
 
     def touch_sections
-      sections.update_all(updated_at: Time.now)
+      sections.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
       chapters = sections.map(&:chapter)
       sections.map(&:chapter).each(&:touch)
       lecture.touch
@@ -327,7 +321,7 @@ class Lesson < ApplicationRecord
     end
 
     def touch_tags
-      tags.update_all(updated_at: Time.now)
+      tags.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
     end
 
     def touch_section(section)

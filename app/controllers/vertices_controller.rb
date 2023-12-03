@@ -1,7 +1,7 @@
 # VerticesController
 class VerticesController < ApplicationController
   before_action :set_values
-  # note that we do not use cancancan's authorization methods in the actions
+  # NOTE: that we do not use cancancan's authorization methods in the actions
   # as we could not get it to work here
   # it seems not to accept the quiz parameter:
   # authorize! :new, :vertex, @quiz

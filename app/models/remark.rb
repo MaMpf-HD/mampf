@@ -24,7 +24,7 @@ class Remark < Medium
   end
 
   def duplicate
-    copy = self.dup
+    copy = dup
     copy.video_data = nil
     copy.manuscript_data = nil
     copy.screenshot_data = nil

@@ -11,7 +11,7 @@ class ScreenshotUploader < Shrine
   plugin :derivatives
 
   Attacher.validate do
-    validate_mime_type_inclusion %w[image/jpeg image/png image/gif],
+    validate_mime_type_inclusion ["image/jpeg", "image/png", "image/gif"],
                                  message: "falscher MIME-Typ"
   end
 

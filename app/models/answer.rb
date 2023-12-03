@@ -1,17 +1,13 @@
 class Answer < ApplicationRecord
   belongs_to :question, touch: true
+  after_create :update_quizzes
   before_destroy :question_not_orphaned?
   after_destroy :update_quizzes
-  after_create :update_quizzes
   after_save :touch_medium
 
   def conditional_explanation(correct)
-    unless /\(korrekt:.*\):\(inkorrekt:.*\)/.match?(explanation)
-      return explanation
-    end
-    unless correct
-      return explanation.string_between_markers(":(inkorrekt:", ")")
-    end
+    return explanation unless /\(korrekt:.*\):\(inkorrekt:.*\)/.match?(explanation)
+    return explanation.string_between_markers(":(inkorrekt:", ")") unless correct
 
     explanation.string_between_markers("(korrekt:", "):")
   end

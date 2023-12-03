@@ -13,14 +13,14 @@ class SectionsController < ApplicationController
     render layout: "application_no_sidebar"
   end
 
-  def edit
-    I18n.locale = @section.lecture.locale_with_inheritance
-  end
-
   def new
     @chapter = Chapter.find_by_id(params[:chapter_id])
     @section = Section.new(chapter: @chapter)
     authorize! :new, @section
+    I18n.locale = @section.lecture.locale_with_inheritance
+  end
+
+  def edit
     I18n.locale = @section.lecture.locale_with_inheritance
   end
 
@@ -29,12 +29,6 @@ class SectionsController < ApplicationController
     authorize! :create, @section
     insert_or_save
     @errors = @section.errors
-  end
-
-  def destroy
-    @lecture = @section.lecture
-    @section.destroy
-    redirect_to edit_lecture_path(@lecture)
   end
 
   def update
@@ -48,6 +42,12 @@ class SectionsController < ApplicationController
       return
     end
     @errors = @section.errors
+  end
+
+  def destroy
+    @lecture = @section.lecture
+    @section.destroy
+    redirect_to edit_lecture_path(@lecture)
   end
 
   def display
@@ -86,9 +86,7 @@ class SectionsController < ApplicationController
       return unless predecessor.present?
 
       position = predecessor.to_i
-      if position > @section.position && @old_chapter == @section.chapter
-        position -= 1
-      end
+      position -= 1 if position > @section.position && @old_chapter == @section.chapter
       @section.insert_at(position + 1)
     end
 

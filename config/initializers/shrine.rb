@@ -2,24 +2,28 @@ require "shrine"
 require "shrine/storage/file_system"
 require "shrine/storage/memory" if Rails.env.test?
 
-if Rails.env.development? || Rails.env == "docker_development"
+if Rails.env.development? || Rails.env.docker_development? # rubocop:todo Rails/UnknownEnv
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::FileSystem.new("public", prefix: "uploads/store"),
     submission_cache: Shrine::Storage::FileSystem.new("public",
-                                                prefix: "uploads/submissions/cache"),
+                                                      prefix: "uploads/submissions/cache"),
     submission_store: Shrine::Storage::FileSystem.new("public",
-                                                prefix: "uploads/submissions/store"),
+                                                      prefix: "uploads/submissions/store")
   }
 elsif Rails.env.production?
   Shrine.storages = {
-    cache: Shrine::Storage::FileSystem.new("/caches", prefix: "medien_uploads" ,clean:false),
+    cache: Shrine::Storage::FileSystem.new("/caches", prefix: "medien_uploads", clean: false),
     store: Shrine::Storage::FileSystem.new((ENV["MEDIA_PATH"] || "/private/media"),
                                            prefix: "/"),
+    # rubocop:todo Layout/LineLength
     submission_cache: Shrine::Storage::FileSystem.new((ENV["SUBMISSION_PATH"] || "/private/submissions"),
+                                                      # rubocop:enable Layout/LineLength
                                                       prefix: "cache"),
+    # rubocop:todo Layout/LineLength
     submission_store: Shrine::Storage::FileSystem.new((ENV["SUBMISSION_PATH"] || "/private/submissions"),
-                                                      prefix: "store"),
+                                                      # rubocop:enable Layout/LineLength
+                                                      prefix: "store")
   }
 elsif Rails.env.test?
   Shrine.storages = {

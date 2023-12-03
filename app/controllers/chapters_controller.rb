@@ -9,26 +9,16 @@ class ChaptersController < ApplicationController
     @current_ability ||= ChapterAbility.new(current_user)
   end
 
-  def edit
-    @section = Section.find_by_id(params[:section_id])
-  end
-
-  def update
+  def new
+    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @chapter = Chapter.new(lecture: @lecture)
+    authorize! :new, @chapter
     I18n.locale = @chapter.lecture.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
-    @chapter.update(chapter_params)
-    if @chapter.valid?
-      predecessor = params[:chapter][:predecessor]
-      # place the chapter in the correct position
-      if predecessor.present?
-        position = predecessor.to_i
-        position -= 1 if position > @chapter.position
-        @chapter.insert_at(position + 1)
-      end
-      redirect_to edit_chapter_path(@chapter)
-      return
-    end
-    @errors = @chapter.errors
+  end
+
+  def edit
+    @section = Section.find_by_id(params[:section_id])
   end
 
   def create
@@ -47,12 +37,22 @@ class ChaptersController < ApplicationController
     @errors = @chapter.errors
   end
 
-  def new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
-    @chapter = Chapter.new(lecture: @lecture)
-    authorize! :new, @chapter
+  def update
     I18n.locale = @chapter.lecture.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
+    @chapter.update(chapter_params)
+    if @chapter.valid?
+      predecessor = params[:chapter][:predecessor]
+      # place the chapter in the correct position
+      if predecessor.present?
+        position = predecessor.to_i
+        position -= 1 if position > @chapter.position
+        @chapter.insert_at(position + 1)
+      end
+      redirect_to edit_chapter_path(@chapter)
+      return
+    end
+    @errors = @chapter.errors
   end
 
   def destroy

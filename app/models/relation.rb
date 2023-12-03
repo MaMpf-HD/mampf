@@ -5,11 +5,11 @@ class Relation < ApplicationRecord
   belongs_to :related_tag, class_name: "Tag"
 
   validates :related_tag, uniqueness: { scope: :tag }
+  before_destroy :touch_tag
+  after_destroy :destroy_inverses, if: :inverse?
   after_save :create_inverse, unless: :inverse?
   after_save :destroy, if: :self_inverse?
   after_save :touch_tag
-  before_destroy :touch_tag
-  after_destroy :destroy_inverses, if: :inverse?
 
   private
 

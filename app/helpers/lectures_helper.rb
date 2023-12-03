@@ -14,7 +14,7 @@ module LecturesHelper
   end
 
   # create text for notification card
-  def lecture_notification_item_details(lecture)
+  def lecture_notification_item_details(_lecture)
     t("notifications.subscribe_lecture")
   end
 
@@ -68,9 +68,7 @@ module LecturesHelper
 
   # hidden sections get a different background color
   def section_background_color(section)
-    unless !section.chapter.hidden && section.hidden
-      return "bg-mdb-color-lighten-6"
-    end
+    return "bg-mdb-color-lighten-6" unless !section.chapter.hidden && section.hidden
 
     "bg-grey"
   end

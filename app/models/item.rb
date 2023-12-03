@@ -48,10 +48,10 @@ class Item < ApplicationRecord
   validate :no_duplicate_start_time
   validate :nonempty_link_or_explanation
 
+  before_destroy :touch_medium
   # media are cached in several places
   # items are touched in order to find out whether cache is out of date
   after_save :touch_medium
-  before_destroy :touch_medium
 
   scope :unquarantined, -> { where(quarantine: [nil, false]) }
   scope :content, -> { where(sort: Item.content_sorts) }
@@ -226,7 +226,7 @@ class Item < ApplicationRecord
   def quiz_link
     return unless quiz?
 
-    return quiz_link_generic
+    quiz_link_generic
   end
 
   # if the associated medium contains an external link, it is returned
@@ -370,26 +370,20 @@ class Item < ApplicationRecord
 
     def non_math_reference
       return medium.title_for_viewers if sort == "self"
-      if sort == "pdf_destination"
-        return medium.title_for_viewers + " (pdf) # " + description
-      end
+      return medium.title_for_viewers + " (pdf) # " + description if sort == "pdf_destination"
 
       "extern " + description.to_s if sort == "link"
     end
 
     def local_non_math_reference
       return medium.local_title_for_viewers if sort == "self"
-      if sort == "pdf_destination"
-        return medium.local_title_for_viewers + " (pdf) # " + description
-      end
+      return medium.local_title_for_viewers + " (pdf) # " + description if sort == "pdf_destination"
 
       "extern " + description.to_s if sort == "link"
     end
 
     def short_ref_with_teachable
-      unless short_reference.present?
-        return medium.teachable.lecture.title_for_viewers
-      end
+      return medium.teachable.lecture.title_for_viewers unless short_reference.present?
 
       medium.teachable.lecture.title_for_viewers + ", " + short_reference
     end

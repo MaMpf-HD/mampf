@@ -46,13 +46,15 @@ class Medium < ApplicationRecord
   has_many :importing_courses, through: :imports,
                                source: :teachable, source_type: "Course"
 
+  # rubocop:todo Rails/InverseOf
   has_many :quiz_certificates, foreign_key: "quiz_id", dependent: :destroy
+  # rubocop:enable Rails/InverseOf
 
   # a medium can be in watchlists of multiple users
   has_many :watchlist_entries, dependent: :destroy
   has_many :watchlist_users, through: :watchlist_entries, source: :user
 
-  has_many :assignments
+  has_many :assignments # rubocop:todo Rails/HasManyOrHasOneDependent
 
   serialize :quiz_graph, QuizGraph
 
@@ -93,20 +95,17 @@ class Medium < ApplicationRecord
   # if medium is associated to a nonpublished teachable, reset its published
   # property to nil
   before_save :reset_released_status
-  # some information about media are cached
-  # to find out whether the cache is out of date, always touch'em after saving
-  after_save :touch_teachable
-
   # after creation, this creates an item of type 'self' that is just a wrapper
   # around this medium, so the medium itself can be referenced from other media
   # as an item as well
   after_create :create_self_item
-
   # if medium is a question or remark, delete all quiz vertices that refer to it
   before_destroy :delete_vertices
-
   # if medium is a question, delete all answers that belong to it
   after_destroy :delete_answers
+  # some information about media are cached
+  # to find out whether the cache is out of date, always touch'em after saving
+  after_save :touch_teachable
 
   # keep track of copies (in particular for Questions, Remarks)
   acts_as_tree
@@ -119,11 +118,11 @@ class Medium < ApplicationRecord
   # (they may not be globally visible as their lecture may be unpublished)
   scope :published, -> { where.not(released: nil) }
   scope :locally_visible, -> { where(released: ["all", "users"]) }
-  scope :potentially_visible, -> {
+  scope :potentially_visible, lambda {
                                 where(released: ["all", "users", "subscribers"])
                               }
   scope :proper, -> { where.not(sort: "RandomQuiz") }
-  scope :expired, -> {
+  scope :expired, lambda {
                     where(sort: "RandomQuiz").where("created_at < ?", 1.day.ago)
                   }
 
@@ -163,8 +162,8 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    %w[Kaviar Erdbeere Sesam Kiwi Nuesse Script Question Quiz
-       Reste Remark RandomQuiz]
+    ["Kaviar", "Erdbeere", "Sesam", "Kiwi", "Nuesse", "Script", "Question", "Quiz", "Reste",
+     "Remark", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
@@ -264,9 +263,7 @@ class Medium < ApplicationRecord
   # value for :types is an array of integers which correspond to indices
   # in the sort_enum array
   def self.search_sorts(search_params)
-    unless search_params[:all_types] == "0"
-      return (Medium.sort_enum - ["RandomQuiz"])
-    end
+    return (Medium.sort_enum - ["RandomQuiz"]) unless search_params[:all_types] == "0"
 
     search_params[:types] || []
   end
@@ -281,7 +278,7 @@ class Medium < ApplicationRecord
 
   # returns search results for the media search with search_params provided
   # by the controller
-  def self.search_by(search_params, page)
+  def self.search_by(search_params, _page)
     # If the search is initiated from the start page, you can only get
     # generic media sorts as results even if the 'all' radio button
     # is seleted
@@ -295,8 +292,10 @@ class Medium < ApplicationRecord
     end
     search_params[:teachable_ids] = TeachableParser.new(search_params)
                                                    .teachables_as_strings
-    search_params[:editor_ids] =
-      [] if search_params[:all_editors] == "1" || search_params[:all_editors].nil?
+    if search_params[:all_editors] == "1" || search_params[:all_editors].nil?
+      search_params[:editor_ids] =
+        []
+    end
     # add media without term to current term
 
     search_params[:all_terms] = "1" if search_params[:all_terms].blank?
@@ -313,10 +312,14 @@ class Medium < ApplicationRecord
       without(:sort, Medium.advanced_sorts) unless user&.admin_or_editor?
       with(:editor_ids, search_params[:editor_ids])
       with(:teachable_compact, search_params[:teachable_ids])
-      with(:term_id,
-           search_params[:term_ids]) unless search_params[:all_terms] == "1"
-      with(:teacher_id,
-           search_params[:teacher_ids]) unless search_params[:all_teachers] == "1"
+      unless search_params[:all_terms] == "1"
+        with(:term_id,
+             search_params[:term_ids])
+      end
+      unless search_params[:all_teachers] == "1"
+        with(:teacher_id,
+             search_params[:teacher_ids])
+      end
     end
     if search_params[:purpose] == "clicker"
       search.build do
@@ -333,24 +336,22 @@ class Medium < ApplicationRecord
         with(:release_state, search_params[:access])
       end
     end
-    unless search_params[:all_tags] == "1" &&
-           search_params[:tag_operator] == "or"
-      if search_params[:tag_ids]
-        if search_params[:tag_operator] == "or" || search_params[:all_tags] == "1"
-          search.build do
-            with(:tag_ids).any_of(search_params[:tag_ids])
-          end
-        else
-          search.build do
-            with(:tag_ids).all_of(search_params[:tag_ids])
-          end
+    if !search_params[:all_tags] == "1" &&
+       !search_params[:tag_operator] == "or" && (search_params[:tag_ids])
+      if search_params[:tag_operator] == "or" || search_params[:all_tags] == "1"
+        search.build do
+          with(:tag_ids).any_of(search_params[:tag_ids])
+        end
+      else
+        search.build do
+          with(:tag_ids).all_of(search_params[:tag_ids])
         end
       end
     end
     if search_params[:fulltext].present?
       search.build do
         fulltext search_params[:fulltext] do
-          boost_fields :description => 2.0
+          boost_fields description: 2.0
         end
       end
     end
@@ -447,7 +448,9 @@ class Medium < ApplicationRecord
 
     irrelevant_items.delete_all
     result = missing_items_outside_quarantine.pluck(:pdf_destination)
+    # rubocop:todo Rails/SkipsModelValidations
     missing_items_outside_quarantine.update_all(quarantine: true)
+    # rubocop:enable Rails/SkipsModelValidations
     result
   end
 
@@ -474,7 +477,7 @@ class Medium < ApplicationRecord
   def editors_with_inheritance
     return [] if sort == "RandomQuiz"
 
-    result = (editors&.to_a + teachable.lecture&.editors.to_a +
+    result = (editors&.to_a&.+ teachable.lecture&.editors.to_a +
       [teachable.lecture&.teacher] + teachable.course.editors.to_a).uniq.compact
     return result unless teachable.is_a?(Talk)
 
@@ -486,9 +489,7 @@ class Medium < ApplicationRecord
   def eligible_editors(user)
     result = editors_with_inheritance
 
-    if teachable.is_a?(Talk) && user.can_edit?(lecture)
-      result.concat(lecture.speakers)
-    end
+    result.concat(lecture.speakers) if teachable.is_a?(Talk) && user.can_edit?(lecture)
 
     result << user if user.admin?
     result.uniq
@@ -547,7 +548,7 @@ class Medium < ApplicationRecord
   def screenshot_url_with_host
     return screenshot_url(host: host) unless screenshot(:normalized)
 
-    return screenshot_url(:normalized, host: host)
+    screenshot_url(:normalized, host: host)
   end
 
   def video_url
@@ -629,19 +630,19 @@ class Medium < ApplicationRecord
   def manuscript_filename
     return unless manuscript.present?
 
-    return manuscript.metadata["filename"]
+    manuscript.metadata["filename"]
   end
 
   def manuscript_size
     return unless manuscript.present?
 
-    return manuscript.metadata["size"]
+    manuscript.metadata["size"]
   end
 
   def manuscript_pages
     return unless manuscript.present?
 
-    return manuscript.metadata["pages"]
+    manuscript.metadata["pages"]
   end
 
   def manuscript_screenshot_url
@@ -689,9 +690,7 @@ class Medium < ApplicationRecord
 
   # methods that create card header and subheader for a medium card
 
-  def card_header
-    teachable.card_header
-  end
+  delegate :card_header, to: :teachable
 
   def card_header_teachable_path(user)
     teachable.card_header_path(user)
@@ -713,6 +712,7 @@ class Medium < ApplicationRecord
 
   def subheader_style
     return "badge bg-secondary" unless sort == "Nuesse" && file_last_edited
+
     "badge bg-danger"
   end
 
@@ -728,7 +728,7 @@ class Medium < ApplicationRecord
     released == "locked"
   end
 
-  def restricted?
+  def restricted? # rubocop:todo Lint/DuplicateMethods
     released == "subscribers"
   end
 
@@ -750,12 +750,12 @@ class Medium < ApplicationRecord
     return false unless published?
     return false if locked?
 
-    if teachable_type == "Course"
-      return false if restricted? && !teachable.in?(user.courses)
+    return false if teachable_type == "Course" && (restricted? && !teachable.in?(user.courses))
+    if teachable_type.in?(["Lecture", "Lesson",
+                           "Talk"]) && (restricted? && !teachable.lecture.in?(user.lectures))
+      return false
     end
-    if teachable_type.in?(["Lecture", "Lesson", "Talk"])
-      return false if restricted? && !teachable.lecture.in?(user.lectures)
-    end
+
     true
   end
 
@@ -799,7 +799,7 @@ class Medium < ApplicationRecord
   def compact_info_uncached
     return "#{sort_localized}.#{teachable.compact_title}" unless quizzy?
 
-    "#{sort_localized}.#{teachable.compact_title}.\##{id}"
+    "#{sort_localized}.#{teachable.compact_title}.##{id}"
   end
 
   def compact_info
@@ -824,7 +824,7 @@ class Medium < ApplicationRecord
     elsif sort == "Script"
       return I18n.t("categories.script.singular")
     end
-    "#{sort_localized} \##{id}"
+    "#{sort_localized} ##{id}"
   end
 
   def local_info
@@ -836,7 +836,7 @@ class Medium < ApplicationRecord
   def local_info_for_admins_uncached
     return local_info unless quizzy?
 
-    "\##{id}.#{local_info}"
+    "##{id}.#{local_info}"
   end
 
   def local_info_for_admins
@@ -848,10 +848,8 @@ class Medium < ApplicationRecord
   # returns description if present, otherwise ''
 
   def details_uncached
-    return description unless description.blank?
-    unless undescribable?
-      return "#{I18n.t('admin.medium.local_info.no_title')}.ID#{id}"
-    end
+    return description if description.present?
+    return "#{I18n.t("admin.medium.local_info.no_title")}.ID#{id}" unless undescribable?
 
     ""
   end
@@ -897,10 +895,10 @@ class Medium < ApplicationRecord
   def local_title_for_viewers_uncached
     return "#{sort_localized}, #{description}" if description.present?
     if sort == "Kaviar" && teachable.class.to_s == "Lesson"
-      return "#{I18n.t('categories.kaviar.singular')}, #{teachable.local_title_for_viewers}"
+      return "#{I18n.t("categories.kaviar.singular")}, #{teachable.local_title_for_viewers}"
     end
 
-    "#{sort_localized}, #{I18n.t('admin.medium.local_info.no_title')}"
+    "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"
   end
 
   # returns info made from sort and description
@@ -913,7 +911,7 @@ class Medium < ApplicationRecord
   # this is used in dropdowns for compact info
   def extended_label
     Rails.cache.fetch("#{cache_key_with_version}/extended_label") do
-      "#{teachable.compact_title}.\##{id}.#{description}"
+      "#{teachable.compact_title}.##{id}.#{description}"
     end
   end
 
@@ -949,7 +947,7 @@ class Medium < ApplicationRecord
   def sanitize_type!
     update(type: "Quiz") if sort.in?(["Quiz", "RandomQuiz"])
     update(type: sort) if sort.in?(["Question", "Remark"])
-    update(type: nil) if !sort.in?(["Quiz", "Question", "Remark", "RandomQuiz"])
+    update(type: nil) unless sort.in?(["Quiz", "Question", "Remark", "RandomQuiz"])
   end
 
   def select_sorts
@@ -1011,7 +1009,7 @@ class Medium < ApplicationRecord
     if teachable_type == "Lesson" && teachable.details.present?
       result.push I18n.t("admin.medium.lesson_details_html") + teachable.details
     end
-    result.push content unless content.blank?
+    result.push content if content.present?
     result
   end
 
@@ -1079,17 +1077,17 @@ class Medium < ApplicationRecord
     becomes(Remark)
   end
 
-  def containingWatchlists(user)
+  def containingWatchlists(user) # rubocop:todo Naming/MethodName
     Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
                     user: user)
   end
 
-  def containingWatchlistsNames(user)
+  def containingWatchlistsNames(user) # rubocop:todo Naming/MethodName
     watchlists = containingWatchlists(user)
-    if !watchlists.empty?
-      containingWatchlists(user).pluck(:name)
-    else
+    if watchlists.empty?
       ""
+    else
+      containingWatchlists(user).pluck(:name)
     end
   end
 
@@ -1111,7 +1109,7 @@ class Medium < ApplicationRecord
     Lecture.find_by(id: teachable.lecture_id).teacher_id
   end
 
-  def supervising_teacher_id
+  def supervising_teacher_id # rubocop:todo Lint/DuplicateMethods
     return teachable.teacher_id if teachable.class.to_s == "Lecture"
     return unless teachable.class.to_s == "Lesson"
 
@@ -1139,27 +1137,25 @@ class Medium < ApplicationRecord
       sort.in?(["Quiz", "Question", "Remark"])
     end
 
-    def title_uncached
+    def title_uncached # rubocop:todo Lint/DuplicateMethods
       return compact_info if details.blank?
 
       compact_info + "." + details
     end
 
-    def local_title_for_viewers_uncached
+    def local_title_for_viewers_uncached # rubocop:todo Lint/DuplicateMethods
       return "#{sort_localized}, #{description}" if description.present?
       if sort == "Kaviar" && teachable.class.to_s == "Lesson"
-        return "#{I18n.t('categories.kaviar.singular')}, #{teachable.local_title_for_viewers}"
+        return "#{I18n.t("categories.kaviar.singular")}, #{teachable.local_title_for_viewers}"
       end
 
-      "#{sort_localized}, #{I18n.t('admin.medium.local_info.no_title')}"
+      "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"
     end
 
     def touch_teachable
       return if teachable.nil?
 
-      if teachable.course.present? && teachable.course.persisted?
-        teachable.course.touch
-      end
+      teachable.course.touch if teachable.course.present? && teachable.course.persisted?
       optional_touches
     end
 
@@ -1170,12 +1166,8 @@ class Medium < ApplicationRecord
     end
 
     def optional_touches
-      if teachable.lecture.present? && teachable.lecture.persisted?
-        teachable.lecture.touch
-      end
-      if teachable.lesson.present? && teachable.lesson.persisted?
-        teachable.lesson.touch
-      end
+      teachable.lecture.touch if teachable.lecture.present? && teachable.lecture.persisted?
+      teachable.lesson.touch if teachable.lesson.present? && teachable.lesson.persisted?
       return unless teachable.talk.present? && teachable.talk.persisted?
 
       teachable.talk.touch
@@ -1276,7 +1268,7 @@ class Medium < ApplicationRecord
       return unless type.in?(["Question", "Remark"])
       return text if type == "Remark"
 
-      "#{text} #{becomes(Question).answers&.map(&:text_join)&.join(' ')}"
+      "#{text} #{becomes(Question).answers&.map(&:text_join)&.join(" ")}"
     end
 
     def release_state

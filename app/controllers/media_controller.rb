@@ -48,13 +48,53 @@ class MediaController < ApplicationController
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
     I18n.locale = @teachable.locale_with_inheritance
-    @medium.sort = params[:sort] ? params[:sort] : "Kaviar"
+    @medium.sort = params[:sort] || "Kaviar"
   end
 
   def edit
     I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
     render layout: current_user.layout
+  end
+
+  def create
+    @medium = Medium.new(medium_params)
+    @medium.locale = @medium.teachable&.locale
+    @medium.editors = [current_user]
+    @medium.tags = @medium.teachable.tags if @medium.teachable.class.to_s == "Lesson"
+    authorize! :create, @medium
+    @medium.save
+    if @medium.valid?
+      if @medium.sort == "Remark"
+        @medium.update(type: "Remark",
+                       text: I18n.t("admin.remark.initial_text"))
+      end
+      if @medium.sort == "Question"
+        solution = Solution.new(MampfExpression.trivial_instance)
+        @medium.update(type: "Question",
+                       text: I18n.t("admin.question.initial_text"),
+                       level: 1,
+                       independent: false,
+                       solution: solution,
+                       question_sort: "mc")
+        Answer.create(question: @medium.becomes(Question),
+                      text: "0",
+                      value: true)
+      end
+      if @medium.sort == "Quiz"
+        @medium.update(type: "Quiz")
+        @medium.update(quiz_graph: QuizGraph.new(vertices: {},
+                                                 edges: {},
+                                                 root: 0,
+                                                 default_table: {},
+                                                 hide_solution: []),
+                       level: 1)
+      end
+      redirect_to edit_medium_path(@medium)
+      return
+    end
+    @errors = @medium.errors
+    render :update
   end
 
   def update
@@ -71,7 +111,9 @@ class MediaController < ApplicationController
     # update the associated tags), causing trouble for caching)
     @medium.touch
     # touch lectures that import this medium
+    # rubocop:todo Rails/SkipsModelValidations
     @medium.importing_lectures.update_all(updated_at: Time.now)
+    # rubocop:enable Rails/SkipsModelValidations
     @medium.sanitize_type!
     # detach components if this was chosen by the user
     detach_components
@@ -128,48 +170,6 @@ class MediaController < ApplicationController
     add_tags_in_lesson_and_sections
   end
 
-  def create
-    @medium = Medium.new(medium_params)
-    @medium.locale = @medium.teachable&.locale
-    @medium.editors = [current_user]
-    if @medium.teachable.class.to_s == "Lesson"
-      @medium.tags = @medium.teachable.tags
-    end
-    authorize! :create, @medium
-    @medium.save
-    if @medium.valid?
-      if @medium.sort == "Remark"
-        @medium.update(type: "Remark",
-                       text: I18n.t("admin.remark.initial_text"))
-      end
-      if @medium.sort == "Question"
-        solution = Solution.new(MampfExpression.trivial_instance)
-        @medium.update(type: "Question",
-                       text: I18n.t("admin.question.initial_text"),
-                       level: 1,
-                       independent: false,
-                       solution: solution,
-                       question_sort: "mc")
-        Answer.create(question: @medium.becomes(Question),
-                      text: "0",
-                      value: true)
-      end
-      if @medium.sort == "Quiz"
-        @medium.update(type: "Quiz")
-        @medium.update(quiz_graph: QuizGraph.new(vertices: {},
-                                                 edges: {},
-                                                 root: 0,
-                                                 default_table: {},
-                                                 hide_solution: []),
-                       level: 1)
-      end
-      redirect_to edit_medium_path(@medium)
-      return
-    end
-    @errors = @medium.errors
-    render :update
-  end
-
   def publish
     publisher = MediumPublisher.parse(@medium, current_user, publish_params)
     @errors = publisher.errors
@@ -220,8 +220,10 @@ class MediaController < ApplicationController
       filter_media = true
       params["search"]["access"] = "irrelevant"
     end
-    params["search"]["answers_count"] =
-      "irrelevant" if search_params[:answers_count].blank?
+    if search_params[:answers_count].blank?
+      params["search"]["answers_count"] =
+        "irrelevant"
+    end
 
     search = Medium.search_by(search_params, params[:page])
     search.execute
@@ -231,7 +233,9 @@ class MediaController < ApplicationController
     # in the case of a search with tag_operator 'or', we
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
+    # rubocop:todo Layout/LineLength
     if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2
+      # rubocop:enable Layout/LineLength
       params["search"]["all_tags"] = "1"
       search_no_tags = Medium.search_by(search_params, params[:page])
       search_no_tags.execute
@@ -257,7 +261,8 @@ class MediaController < ApplicationController
       return
     end
     return unless @total.zero?
-    return unless search_params[:fulltext]&.length.to_i > 1
+
+    nil unless search_params[:fulltext]&.length.to_i > 1
   end
 
   # play the video using thyme player
@@ -328,9 +333,7 @@ class MediaController < ApplicationController
   # add a screenshot for the video
   def add_screenshot
     tempfile = Tempfile.new(["screenshot", ".png"])
-    File.open(tempfile, "wb") do |f|
-      f.write params[:image].read
-    end
+    File.binwrite(tempfile, params[:image].read)
     @medium.screenshot = File.open(tempfile)
     @medium.save
     if @medium.valid?
@@ -392,57 +395,64 @@ class MediaController < ApplicationController
   end
 
   def update_tags
-    if current_user.admin || @medium.edited_with_inheritance_by?(current_user)
-      @medium.tags = Tag.where(id: params[:tag_ids])
-      @medium.update(updated_at: Time.now)
-    end
+    return unless current_user.admin || @medium.edited_with_inheritance_by?(current_user)
+
+    @medium.tags = Tag.where(id: params[:tag_ids])
+    @medium.update(updated_at: Time.now)
   end
 
   def register_download
     head :ok
   end
 
-  def get_statistics
+  def get_statistics # rubocop:todo Naming/AccessorMethodName
     I18n.locale = @medium.locale || I18n.default_locale
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
       @video_downloads = medium_consumption.where(sort: "video",
-                                                  mode: "download").pluck(:created_at).map(&:to_date).tally.map { |k, t|
+                                                  # rubocop:todo Layout/LineLength
+                                                  mode: "download").pluck(:created_at).map(&:to_date).tally.map do |k, t|
+        # rubocop:enable Layout/LineLength
         {
           x: k, y: t
         }
-      }.to_json
+      end.to_json
       @video_downloads_count = medium_consumption.where(sort: "video",
                                                         mode: "download").count
       @video_thyme = medium_consumption.where(sort: "video",
-                                              mode: "thyme").pluck(:created_at).map(&:to_date).tally.map { |k, t|
+                                              # rubocop:todo Layout/LineLength
+                                              mode: "thyme").pluck(:created_at).map(&:to_date).tally.map do |k, t|
+        # rubocop:enable Layout/LineLength
         {
           x: k, y: t
         }
-      }.to_json
+      end.to_json
       @video_thyme_count = medium_consumption.where(sort: "video",
                                                     mode: "thyme").count
     end
     if @medium.manuscript.present?
-      @manuscript_access = medium_consumption.where(sort: "manuscript").pluck(:created_at).map(&:to_date).tally.map { |k, t|
+      # rubocop:todo Layout/LineLength
+      @manuscript_access = medium_consumption.where(sort: "manuscript").pluck(:created_at).map(&:to_date).tally.map do |k, t|
+        # rubocop:enable Layout/LineLength
         { x: k, y: t }
-      }.to_json
+      end.to_json
       @manuscript_access_count = medium_consumption.where(sort: "manuscript").count
     end
-    if @medium.sort == "Quiz"
+    return unless @medium.sort == "Quiz"
 
-      @quiz_plays = medium_consumption.where(sort: "quiz",
-                                             mode: "browser").pluck(:created_at).map(&:to_date).tally.map { |k, t|
-        { x: k, y: t }
-      }.to_json
-      @quiz_plays_count = medium_consumption.where(sort: "quiz",
-                                                   mode: "browser").count
-      @quiz_finished_count = Probe.finished_quizzes(@medium)
-      @global_success = Probe.global_success_in_quiz(@medium.becomes(Quiz))
-      @global_success_details = Probe.global_success_details(@medium.becomes(Quiz))
-      @question_count = @medium.becomes(Quiz).questions_count
-      @local_success = Probe.local_success_in_quiz(@medium.becomes(Quiz))
-    end
+    @quiz_plays = medium_consumption.where(sort: "quiz",
+                                           # rubocop:todo Layout/LineLength
+                                           mode: "browser").pluck(:created_at).map(&:to_date).tally.map do |k, t|
+      # rubocop:enable Layout/LineLength
+      { x: k, y: t }
+    end.to_json
+    @quiz_plays_count = medium_consumption.where(sort: "quiz",
+                                                 mode: "browser").count
+    @quiz_finished_count = Probe.finished_quizzes(@medium)
+    @global_success = Probe.global_success_in_quiz(@medium.becomes(Quiz))
+    @global_success_details = Probe.global_success_details(@medium.becomes(Quiz))
+    @question_count = @medium.becomes(Quiz).questions_count
+    @local_success = Probe.local_success_in_quiz(@medium.becomes(Quiz))
   end
 
   def show_comments
@@ -654,9 +664,7 @@ class MediaController < ApplicationController
     end
 
     def sanitize_per!
-      if params[:per] || cookies[:per].to_i.positive?
-        cookies[:all] = "false"
-      end
+      cookies[:all] = "false" if params[:per] || cookies[:per].to_i.positive?
       params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
         params[:per].to_i
       elsif cookies[:per].to_i.positive?
@@ -669,7 +677,7 @@ class MediaController < ApplicationController
 
     def search_params
       types = params[:search][:types] || []
-      types = [types] if types && !types.kind_of?(Array)
+      types = [types] if types && !types.is_a?(Array)
       types -= [""] if types
       types = nil if types == []
       params[:search][:types] = types
@@ -699,14 +707,14 @@ class MediaController < ApplicationController
 
     def add_tags_in_lesson_and_sections
       @tags_outside_lesson = @medium.tags_outside_lesson
-      if @tags_outside_lesson
-        @medium.teachable.tags << @tags_outside_lesson
-        @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
-        if @medium.teachable.sections.count == 1
-          section = @medium.teachable.sections.first
-          section.tags << @tags_without_section
-        end
-      end
+      return unless @tags_outside_lesson
+
+      @medium.teachable.tags << @tags_outside_lesson
+      @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
+      return unless @medium.teachable.sections.count == 1
+
+      section = @medium.teachable.sections.first
+      section.tags << @tags_without_section
     end
 
     def store_access

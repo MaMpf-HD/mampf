@@ -20,12 +20,12 @@ if defined?(ActiveRecord::Base)
     ActiveRecord::Base.descendants
                       .each_with_object({}) do |record_class, records|
       records[record_class.to_s] = record_class.limit(100).map(&:attributes)
-    rescue
+    rescue StandardError # rubocop:todo Lint/SuppressedException
     end
 end
 
 filename = command_options.fetch("runnable_full_title", "no title")
                           .gsub(/[^[:print:]]/, "")
-File.open("#{Rails.root}/log/#{filename}.json", "w+") do |file|
+File.open("#{Rails.root.join("log/#{filename}.json")}", "w+") do |file|
   file << JSON.pretty_generate(json_result)
 end

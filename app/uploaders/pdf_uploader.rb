@@ -20,7 +20,7 @@ class PdfUploader < Shrine
         temp_file = Tempfile.new
         temp_folder = Dir.mktmpdir
         structure_path = "#{temp_folder}/structure.mampf"
-        cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path} && "\
+        cmd = "pdftk #{file.path} dump_data_utf8 output #{temp_file.path} && " \
               "pdftk #{file.path} unpack_files output #{temp_folder}"
         exit_status = system(cmd)
         if exit_status
@@ -68,7 +68,7 @@ class PdfUploader < Shrine
   end
 
   Attacher.validate do
-    validate_mime_type_inclusion %w[application/pdf],
+    validate_mime_type_inclusion ["application/pdf"],
                                  message: "falscher MIME-Typ"
   end
 

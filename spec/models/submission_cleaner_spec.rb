@@ -9,7 +9,6 @@ RSpec.describe SubmissionCleaner, type: :model do
   end
 
   describe "with sample submissions" do
-
     before :all do
       Term.destroy_all
       ActionMailer::Base.deliveries = []
@@ -44,8 +43,8 @@ RSpec.describe SubmissionCleaner, type: :model do
                                        assignment: assignment2)
       @submission2.users << @user2
       @submission3 = FactoryBot.create(:submission,
-                                        tutorial: tutorial3,
-                                        assignment: assignment3)
+                                       tutorial: tutorial3,
+                                       assignment: assignment3)
       @submission3.users << @user3
     end
 
@@ -54,7 +53,7 @@ RSpec.describe SubmissionCleaner, type: :model do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today)
 
-        # note: mail to two submitters is counted as one mail
+        # NOTE: mail to two submitters is counted as one mail
         expect do
           cleaner.clean!
         end.to change { ActionMailer::Base.deliveries.count }.by(3)

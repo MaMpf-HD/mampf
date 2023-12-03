@@ -49,9 +49,7 @@ class QuizGraph
   end
 
   def delete_edge!(source, target)
-    if @default_table[source] == target
-      @default_table[source] = 0
-    end
+    @default_table[source] = 0 if @default_table[source] == target
     answers = @edges[[source, target]]
     return unless answers
 
@@ -93,9 +91,9 @@ class QuizGraph
     return [I18n.t("admin.quiz.no_vertices")] unless @vertices.present?
 
     branch_undef = @default_table.values.include?(0)
-    no_end = default_table.values.exclude?(-1) && @edges.select { |e|
+    no_end = default_table.values.exclude?(-1) && @edges.select do |e|
       e[1] == -1
-    }.blank?
+    end.blank?
     no_root = @root.blank? || @root.zero?
     messages = []
     messages.push(I18n.t("admin.quiz.undefined_targets")) if branch_undef
@@ -105,7 +103,7 @@ class QuizGraph
   end
 
   def warnings
-    return I18n.t("admin.quiz.unreleased_vertices") if unreleased_vertices?
+    I18n.t("admin.quiz.unreleased_vertices") if unreleased_vertices?
   end
 
   def quizzable(id)

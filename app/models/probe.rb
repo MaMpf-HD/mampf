@@ -46,8 +46,8 @@ class Probe < InteractionsRecord
   end
 
   def self.to_csv
-    attributes = %w{id session_id created_at quiz_id question_id remark_id
-                    correct progress success study_participant input}
+    attributes = ["id", "session_id", "created_at", "quiz_id", "question_id", "remark_id",
+                  "correct", "progress", "success", "study_participant", "input"]
 
     CSV.generate(headers: true) do |csv|
       csv << attributes

@@ -14,7 +14,7 @@ module SubmissionsHelper
     user.recent_submission_partners(lecture).map(&:id)
   end
 
-  def admissible_invitee_selection(user, submission, lecture)
+  def admissible_invitee_selection(user, submission, _lecture)
     submission.admissible_invitees(user).map { |u| [u.tutorial_name, u.id] }
   end
 
@@ -36,11 +36,11 @@ module SubmissionsHelper
       return "bg-submission-green" if submission&.manuscript
       return "bg-submission-yellow" if submission
 
-      return "bg-submission-red"
+      "bg-submission-red"
     else
       return "bg-submission-darker-green" if submission&.correction
 
-      if submission&.manuscript && submission.too_late?
+      if submission&.manuscript && submission&.too_late?
         return "bg-submission-orange" if submission.accepted.nil?
         return "bg-submission-green" if submission.accepted
 
@@ -48,7 +48,7 @@ module SubmissionsHelper
       end
       return "bg-submission-green" if submission&.manuscript
 
-      return "bg-submission-red"
+      "bg-submission-red"
     end
   end
 
@@ -56,18 +56,18 @@ module SubmissionsHelper
     if assignment.active?
       return "far fa-smile" if submission&.manuscript
 
-      return "fas fa-exclamation-triangle"
+      "fas fa-exclamation-triangle"
     else
       return "far fa-smile" if submission&.correction
 
-      if submission&.manuscript && submission.too_late?
+      if submission&.manuscript && submission&.too_late?
         return "fas fa-hourglass-start" if submission.accepted
 
         return "fas fa-exclamation-triangle"
       end
       return "fas fa-hourglass-start" if submission&.manuscript
 
-      return "fas fa-exclamation-triangle"
+      "fas fa-exclamation-triangle"
     end
   end
 
@@ -76,11 +76,11 @@ module SubmissionsHelper
       return t("submission.okay") if submission&.manuscript
       return t("submission.no_file") if submission
 
-      return t("submission.nothing")
+      t("submission.nothing")
     else
       return t("submission.with_correction") if submission&.correction
 
-      if submission&.manuscript && submission.too_late?
+      if submission&.manuscript && submission&.too_late?
         return t("submission.too_late") if submission.accepted.nil?
         return t("submission.too_late_accepted") if submission.accepted
 
@@ -89,7 +89,7 @@ module SubmissionsHelper
       return t("submission.under_review") if submission&.manuscript
       return t("submission.no_file") if submission
 
-      return t("submission.nothing")
+      t("submission.nothing")
     end
   end
 
@@ -118,7 +118,7 @@ module SubmissionsHelper
     text = t("submission.late")
     return text unless submission.accepted.nil? && current_user.in?(tutorial.tutors)
 
-    "#{text} (#{t('tutorial.late_submission_decision')})"
+    "#{text} (#{t("tutorial.late_submission_decision")})"
   end
 
   def correction_display_mode(submission)

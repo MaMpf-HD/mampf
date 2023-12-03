@@ -13,10 +13,6 @@ class LessonsController < ApplicationController
     render layout: "application_no_sidebar"
   end
 
-  def edit
-    I18n.locale = @lesson.locale_with_inheritance
-  end
-
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     I18n.locale = @lecture.locale_with_inheritance if @lecture
@@ -24,6 +20,10 @@ class LessonsController < ApplicationController
     section = Section.find_by_id(params[:section_id])
     @lesson.sections << section if section
     authorize! :new, @lesson
+  end
+
+  def edit
+    I18n.locale = @lesson.locale_with_inheritance
   end
 
   def create
@@ -45,7 +45,7 @@ class LessonsController < ApplicationController
     I18n.locale = @lesson.lecture.locale_with_inheritance
     @lesson.update(lesson_params)
     @errors = @lesson.errors
-    return unless @errors.blank?
+    return if @errors.present?
 
     update_media_order if params[:lesson][:media_order]
     @tags_without_section = @lesson.tags_without_section

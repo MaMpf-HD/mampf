@@ -5,7 +5,9 @@ class Clicker < ApplicationRecord
 
   before_create :set_basics
 
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, uniqueness: { scope: [:editor_id] }
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
   validates :title, presence: true
 
   has_many :votes, dependent: :destroy, class_name: "ClickerVote"

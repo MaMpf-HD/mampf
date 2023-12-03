@@ -11,52 +11,6 @@ class WatchlistsController < ApplicationController
     @current_ability ||= WatchlistAbility.new(current_user)
   end
 
-  def new
-    authorize! :new, Watchlist
-  end
-
-  def create
-    @watchlist = Watchlist.new(name: create_params[:name],
-                               user: current_user,
-                               description: create_params[:description])
-    authorize! :create, @watchlist
-    @medium = Medium.find_by_id(create_params[:medium_id])
-    @success = @watchlist.save
-    if @medium.blank? && @success
-      flash[:notice] = I18n.t("watchlist.creation_success")
-    end
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def update
-    authorize! :update, @watchlist
-    @success = @watchlist.update(update_params)
-    if @success
-      flash[:notice] = I18n.t("watchlist.change_success")
-    end
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def edit
-    authorize! :edit, @watchlist
-  end
-
-  def destroy
-    authorize! :destroy, @watchlist
-
-    @success = @watchlist.destroy
-    if @success
-      flash[:notice] = I18n.t("watchlist.delete_success")
-    else
-      flash[:alert] = I18n.t("watchlist.delete_failed")
-    end
-    redirect_to watchlists_path
-  end
-
   def index
     authorize! :index, Watchlist
     @watchlists = current_user.watchlists
@@ -76,6 +30,48 @@ class WatchlistsController < ApplicationController
     @media = @watchlist_entries.pluck(:medium_id)
   end
 
+  def new
+    authorize! :new, Watchlist
+  end
+
+  def edit
+    authorize! :edit, @watchlist
+  end
+
+  def create
+    @watchlist = Watchlist.new(name: create_params[:name],
+                               user: current_user,
+                               description: create_params[:description])
+    authorize! :create, @watchlist
+    @medium = Medium.find_by_id(create_params[:medium_id])
+    @success = @watchlist.save
+    flash[:notice] = I18n.t("watchlist.creation_success") if @medium.blank? && @success
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def update
+    authorize! :update, @watchlist
+    @success = @watchlist.update(update_params)
+    flash[:notice] = I18n.t("watchlist.change_success") if @success
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def destroy
+    authorize! :destroy, @watchlist
+
+    @success = @watchlist.destroy
+    if @success
+      flash[:notice] = I18n.t("watchlist.delete_success")
+    else
+      flash[:alert] = I18n.t("watchlist.delete_failed")
+    end
+    redirect_to watchlists_path
+  end
+
   def add_medium
     authorize! :add_medium, Watchlist
     @watchlists = current_user.watchlists
@@ -89,7 +85,7 @@ class WatchlistsController < ApplicationController
     per = params[:per].to_i
     if params[:reverse]
       entries.reverse!
-      shift = @watchlist.watchlist_entries.size - page * per unless page == 0
+      shift = @watchlist.watchlist_entries.size - (page * per) unless page == 0
     else
       shift = page * per
     end

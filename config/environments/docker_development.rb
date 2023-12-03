@@ -15,7 +15,7 @@ Rails.application.configure do
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.
-  if Rails.root.join("tmp", "caching-dev.txt").exist?
+  if Rails.root.join("tmp/caching-dev.txt").exist?
     config.action_controller.perform_caching = true
     config.action_controller.enable_fragment_cache_logging = true
 
@@ -38,7 +38,8 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
   config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = { :address => ENV.fetch("MAILSERVER", "127.0.0.1"), :port => 1025 }
+  config.action_mailer.smtp_settings = { address: ENV.fetch("MAILSERVER", "127.0.0.1"),
+                                         port: 1025 }
   config.action_mailer.raise_delivery_errors = true
 
   config.action_mailer.perform_caching = false
@@ -89,5 +90,4 @@ Rails.application.configure do
   config.web_console.allowed_ips = Socket.ip_address_list.reduce([]) do |res, addrinfo|
     addrinfo.ipv4? ? res << IPAddr.new(addrinfo.ip_address).mask(24) : res
   end
-
 end

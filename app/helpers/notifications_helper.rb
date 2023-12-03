@@ -16,9 +16,7 @@ module NotificationsHelper
     notifiable = notification.notifiable
     return medium_notification_item_details(notifiable) if notification.medium?
     return course_notification_item_details(notifiable) if notification.course?
-    if notification.lecture?
-      return lecture_notification_item_details(notifiable)
-    end
+    return lecture_notification_item_details(notifiable) if notification.lecture?
 
     ""
   end
@@ -44,7 +42,7 @@ module NotificationsHelper
     else
       link_to t("mampf_news.title"), news_path, class: "text-dark"
     end
-    text.html_safe
+    text.html_safe # rubocop:todo Rails/OutputSafety
   end
 
   # provide text for body of notification card
@@ -59,7 +57,7 @@ module NotificationsHelper
     else
       t("notifications.new_announcement")
     end
-    text.html_safe
+    text.html_safe # rubocop:todo Rails/OutputSafety
   end
 
   # provide link for body of notification card
@@ -76,7 +74,7 @@ module NotificationsHelper
     else
       notifiable.details
     end
-    text.html_safe
+    text.html_safe # rubocop:todo Rails/OutputSafety
   end
 
   def items_card_size(small, comments_below)

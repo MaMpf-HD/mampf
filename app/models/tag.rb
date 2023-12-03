@@ -29,11 +29,15 @@ class Tag < ApplicationRecord
   has_many :related_tags, through: :relations, after_remove: :destroy_relations
 
   # a tag has different notions in different languages
-  has_many :notions, foreign_key: "tag_id",
-                     after_remove: :touch_relations,
-                     after_add: :touch_relations,
-                     dependent: :destroy
+  has_many :notions, # rubocop:todo Rails/InverseOf
+           after_remove: :touch_relations,
+           after_add: :touch_relations,
+           dependent: :destroy
+  # rubocop:todo Rails/InverseOf
+  # rubocop:todo Rails/HasManyOrHasOneDependent
   has_many :aliases, foreign_key: "aliased_tag_id", class_name: "Notion"
+  # rubocop:enable Rails/HasManyOrHasOneDependent
+  # rubocop:enable Rails/InverseOf
 
   serialize :realizations, Array
 
@@ -43,7 +47,7 @@ class Tag < ApplicationRecord
                                            },
                                 allow_destroy: true
 
-  validates_presence_of :notions
+  validates :notions, presence: true
   validates_associated :notions
 
   accepts_nested_attributes_for :aliases,
@@ -79,19 +83,15 @@ class Tag < ApplicationRecord
   end
 
   def extended_title_uncached
-    unless other_titles_uncached.any? || aliases.any?
-      return local_title_uncached
-    end
-    unless aliases.any?
-      return local_title_uncached + " (#{other_titles_uncached.join(', ')})"
-    end
+    return local_title_uncached unless other_titles_uncached.any? || aliases.any?
+    return local_title_uncached + " (#{other_titles_uncached.join(", ")})" unless aliases.any?
     unless other_titles_uncached.any?
-      return local_title_uncached + " (#{aliases.pluck(:title).join(', ')})"
+      return local_title_uncached + " (#{aliases.pluck(:title).join(", ")})"
     end
 
     local_title_uncached +
-      " (#{aliases.pluck(:title).join(', ')}," +
-      " #{other_titles_uncached.join(', ')})"
+      " (#{aliases.pluck(:title).join(", ")}," +
+      " #{other_titles_uncached.join(", ")})"
   end
 
   def extended_title
@@ -274,7 +274,7 @@ class Tag < ApplicationRecord
 
     question_ids = questions.pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
-    quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{title} #{Time.now}",
+    quiz = Quiz.new(description: "#{I18n.t("categories.randomquiz.singular")} #{title} #{Time.now}",
                     level: 1,
                     quiz_graph: quiz_graph,
                     sort: "RandomQuiz")
@@ -323,9 +323,9 @@ class Tag < ApplicationRecord
 
   # published sections are sections that belong to a published lecture
   def visible_sections(user)
-    user.filter_sections(sections).select { |s|
+    user.filter_sections(sections).select do |s|
       s.lecture.visible_for_user?(user)
-    }
+    end
   end
 
   def cache_key
@@ -334,16 +334,20 @@ class Tag < ApplicationRecord
 
   def touch_lectures
     Lecture.where(id: sections.map(&:lecture)
+                              # rubocop:todo Rails/SkipsModelValidations
                               .map(&:id)).update_all updated_at: Time.now
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def touch_sections
-    sections.update_all updated_at: Time.now
+    sections.update_all updated_at: Time.now # rubocop:todo Rails/SkipsModelValidations
   end
 
   def touch_chapters
     Chapter.where(id: sections.map(&:chapter)
+                              # rubocop:todo Rails/SkipsModelValidations
                               .map(&:id)).update_all updated_at: Time.now
+    # rubocop:enable Rails/SkipsModelValidations
   end
 
   def identify_with!(tag)
@@ -354,7 +358,7 @@ class Tag < ApplicationRecord
     related_tags << (tag.related_tags - related_tags)
     related_tags.delete(tag)
     tag.sections.each do |s|
-      next unless self.in?(s.tags)
+      next unless in?(s.tags)
 
       old_section_tag = SectionTagJoin.find_by(section: s, tag: tag)
       position = old_section_tag.tag_position
@@ -362,7 +366,7 @@ class Tag < ApplicationRecord
       new_section_tag.insert_at(position)
       old_section_tag.move_to_bottom
     end
-    tag.aliases.update_all(aliased_tag_id: id)
+    tag.aliases.update_all(aliased_tag_id: id) # rubocop:todo Rails/SkipsModelValidations
   end
 
   def common_titles(tag)
@@ -382,13 +386,13 @@ class Tag < ApplicationRecord
 
   private
 
-    def touch_relations(notion)
-      if persisted?
-        touch
-        touch_lectures
-        touch_sections
-        touch_chapters
-      end
+    def touch_relations(_notion)
+      return unless persisted?
+
+      touch
+      touch_lectures
+      touch_sections
+      touch_chapters
     end
 
     # simulates the after_destroy callback for relations

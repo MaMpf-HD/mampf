@@ -17,7 +17,9 @@ class User < ApplicationRecord
            source: :lecture
 
   # a user has many courses as an editor
-  has_many :editable_user_joins, foreign_key: :user_id, dependent: :destroy
+  # rubocop:todo Rails/InverseOf
+  has_many :editable_user_joins, dependent: :destroy
+  # rubocop:enable Rails/InverseOf
   has_many :edited_courses, through: :editable_user_joins,
                             source: :editable, source_type: "Course"
 
@@ -30,26 +32,38 @@ class User < ApplicationRecord
                           source: :editable, source_type: "Medium"
 
   # a user has many lectures as a teacher
+  # rubocop:todo Rails/InverseOf
+  # rubocop:todo Rails/HasManyOrHasOneDependent
   has_many :given_lectures, class_name: "Lecture", foreign_key: "teacher_id"
+  # rubocop:enable Rails/HasManyOrHasOneDependent
+  # rubocop:enable Rails/InverseOf
 
   # a user has many tutorials as a tutor
 
+  # rubocop:todo Rails/InverseOf
   has_many :tutor_tutorial_joins, foreign_key: "tutor_id", dependent: :destroy
+  # rubocop:enable Rails/InverseOf
   has_many :given_tutorials, -> { order(:title) },
            through: :tutor_tutorial_joins, source: :tutorial
 
   # a user has many given talks
+  # rubocop:todo Rails/InverseOf
   has_many :speaker_talk_joins, foreign_key: "speaker_id", dependent: :destroy
+  # rubocop:enable Rails/InverseOf
   has_many :talks, through: :speaker_talk_joins
 
   # a user has many notifications as recipient
-  has_many :notifications, foreign_key: "recipient_id"
+  # rubocop:todo Rails/InverseOf
+  has_many :notifications, foreign_key: "recipient_id" # rubocop:todo Rails/HasManyOrHasOneDependent, Rails/InverseOf
+  # rubocop:enable Rails/InverseOf
 
   # a user has many announcements as announcer
+  # rubocop:todo Rails/InverseOf
   has_many :announcements, foreign_key: "announcer_id", dependent: :destroy
+  # rubocop:enable Rails/InverseOf
 
   # a user has many clickers as editor
-  has_many :clickers, foreign_key: "editor_id", dependent: :destroy
+  has_many :clickers, foreign_key: "editor_id", dependent: :destroy # rubocop:todo Rails/InverseOf
 
   # a user has many submissions (of assignments)
   has_many :user_submission_joins, dependent: :destroy
@@ -75,10 +89,9 @@ class User < ApplicationRecord
   # set some default values before saving if they are not set
   before_save :set_defaults
 
-  before_destroy :destroy_single_submissions, prepend: true
-
   # add timestamp for DSGVO consent
   after_create :set_consented_at
+  before_destroy :destroy_single_submissions, prepend: true
 
   # users can comment stuff
   acts_as_commontator
@@ -173,10 +186,10 @@ class User < ApplicationRecord
 
   def self.values_for_select
     pluck(:id, :name, :name_in_tutorials, :email)
-      .map { |u|
+      .map do |u|
       { value: u.first,
         text: "#{u.third.presence || u.second} (#{u.fourth})" }
-    }
+    end
   end
 
   def courses
@@ -192,9 +205,7 @@ class User < ApplicationRecord
     return if subscription_type.nil?
 
     selection_type = overrule_subscription_type || subscription_type
-    if selection_type == 1
-      return Course.where(id: preceding_course_ids).includes(:lectures)
-    end
+    return Course.where(id: preceding_course_ids).includes(:lectures) if selection_type == 1
     return Course.all.includes(:lectures) if selection_type == 2
 
     courses
@@ -220,10 +231,10 @@ class User < ApplicationRecord
   # returns ARel of all those tags from the given tags that belong to
   # the user's related lectures
   def filter_tags(tags)
-    Tag.where(id: tags.select { |t|
+    Tag.where(id: tags.select do |t|
                     t.in_lectures?(related_lectures) ||
                                       t.in_courses?(related_courses)
-                  }
+                  end
                       .map(&:id))
   end
 
@@ -362,7 +373,7 @@ class User < ApplicationRecord
   end
 
   def name_or_email
-    return name unless name.blank?
+    return name if name.present?
 
     email
   end
@@ -538,13 +549,13 @@ class User < ApplicationRecord
 
   def media_latest_comments
     subscribed_commentable_media_with_comments
-      .map { |m|
+      .map do |m|
       { medium: m,
         thread: m.commontator_thread,
         latest_comment: m.commontator_thread
                          .comments.sort_by(&:created_at)
                          .last }
-    }
+    end # rubocop:todo Style/MultilineBlockChain
       .sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
@@ -640,7 +651,7 @@ class User < ApplicationRecord
     given_tutorials.where(lecture: lecture)
   end
 
-  def has_tutorials?(lecture)
+  def has_tutorials?(lecture) # rubocop:todo Naming/PredicateName
     !given_tutorials.where(lecture: lecture).empty?
   end
 
@@ -704,7 +715,7 @@ class User < ApplicationRecord
   def image_resolution
     return unless image
 
-    "#{image.metadata['width']}x#{image.metadata['height']}"
+    "#{image.metadata["width"]}x#{image.metadata["height"]}"
   end
 
   def can_edit?(something)
@@ -746,9 +757,9 @@ class User < ApplicationRecord
     return false unless can_edit?(lecture)
     return true if can_edit?(lecture.course) || lecture.teacher == self
     return true if lecture.course.term_independent
-    return true if !lecture.stale?
+    return true unless lecture.stale?
 
-    return false
+    false
   end
 
   # see https://github.com/heartcombo/devise/issues/4849#issuecomment-534733131
@@ -799,9 +810,9 @@ class User < ApplicationRecord
     def transfer_contributions_to(user)
       return false unless user && user.valid? && user != self
 
-      given_lectures.update_all(teacher_id: user.id)
+      given_lectures.update_all(teacher_id: user.id) # rubocop:todo Rails/SkipsModelValidations
       EditableUserJoin.where(user: self, editable_type: "Medium")
-                      .update_all(user_id: user.id)
+                      .update_all(user_id: user.id) # rubocop:todo Rails/SkipsModelValidations
     end
 
     def archive_user(archive_name)

@@ -7,17 +7,12 @@ class DivisionsController < ApplicationController
     @current_ability ||= DivisionAbility.new(current_user)
   end
 
-  def edit
-  end
-
   def new
     @division = Division.new(program_id: params[:program_id].to_i)
     authorize! :new, @division
   end
 
-  def update
-    @division.update(division_params)
-    redirect_to classification_path
+  def edit
   end
 
   def create
@@ -25,6 +20,11 @@ class DivisionsController < ApplicationController
     @division.program_id = params[:division][:program_id]
     authorize! :create, @division
     @division.save
+    redirect_to classification_path
+  end
+
+  def update
+    @division.update(division_params)
     redirect_to classification_path
   end
 

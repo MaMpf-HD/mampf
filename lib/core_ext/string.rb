@@ -17,12 +17,13 @@ class String
   end
 
   def range?
-    self.match(/\[-?\d+..-?\d+\]/).present?
+    match(/\[-?\d+..-?\d+\]/).present?
   end
 
   def to_a_or_range
     stripped = gsub(/[\[\]]/, "")
     return stripped.split(",") - [""] unless range?
+
     bounds = stripped.split("..").map(&:to_i)
     (bounds[0]..bounds[1])
   end

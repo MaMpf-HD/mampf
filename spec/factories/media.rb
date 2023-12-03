@@ -54,7 +54,7 @@ FactoryBot.define do
     trait :released do
       after(:build) do |m|
         # first release the lecture
-        l= m.teachable.lecture
+        l = m.teachable.lecture
         l.released = "all"
         l.save
         m.released = "all"

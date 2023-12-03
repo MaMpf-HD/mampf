@@ -33,7 +33,7 @@ class Referral < ApplicationRecord
 
   # provide metadata for vtt file
   def vtt_properties
-    link = item.link.present? ? item.link : item.medium_link
+    link = (item.link.presence || item.medium_link)
     # at the moment, relations between items can be only of the form
     # script <-> video, which means that between them there will be at most
     # one script, one manuscript and one video
@@ -44,9 +44,7 @@ class Referral < ApplicationRecord
         manuscript = item.related_items&.first&.manuscript_link
       end
     else
-      if item.related_items_visible?
-        script = item.related_items&.first&.manuscript_link
-      end
+      script = item.related_items&.first&.manuscript_link if item.related_items_visible?
       manuscript = item.manuscript_link
       video = item.video_link
     end
@@ -110,7 +108,8 @@ class Referral < ApplicationRecord
     # if the item is a link, otherwise nil
     def vtt_explanation
       return explanation if explanation.present?
-      return item.explanation if item.sort == "link" && item.explanation.present?
+
+      item.explanation if item.sort == "link" && item.explanation.present?
     end
 
     # some method that check for valid start and end time

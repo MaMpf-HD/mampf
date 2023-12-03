@@ -66,7 +66,7 @@ class AnnouncementsController < ApplicationController
         User
       end
       notifications = []
-      users_to_notify.update_all(updated_at: Time.now)
+      users_to_notify.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
       users_to_notify.find_each do |u|
         notifications << Notification.new(recipient: u,
                                           notifiable_id: @announcement.id,
@@ -86,12 +86,12 @@ class AnnouncementsController < ApplicationController
       end
       I18n.available_locales.each do |l|
         local_recipients = recipients.where(locale: l)
-        if local_recipients.any?
-          NotificationMailer.with(recipients: local_recipients.pluck(:id),
-                                  locale: l,
-                                  announcement: @announcement)
-                            .announcement_email.deliver_later
-        end
+        next unless local_recipients.any?
+
+        NotificationMailer.with(recipients: local_recipients.pluck(:id),
+                                locale: l,
+                                announcement: @announcement)
+                          .announcement_email.deliver_later
       end
     end
 

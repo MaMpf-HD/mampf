@@ -85,9 +85,9 @@ class QuestionsController < ApplicationController
     end
 
     def set_quizzes
-      @quizzes = params[:question].select { |k, v|
+      @quizzes = params[:question].select do |k, v|
                    v == "1" && k.start_with?("quiz-")
-                 }
+                 end # rubocop:todo Style/MultilineBlockChain
                                   .keys.map { |k| k.remove("quiz-").to_i }
     end
 

@@ -111,8 +111,8 @@ class Submission < ApplicationRecord
       (too_late? ? "-LATE" : "") +
       + "-ID-" + id + end_of_file +
       assignment.accepted_file_type)
-      .gsub(/[\x00\/\\:\*\?\"<>\|]/, "_")
-      .gsub(/^.*(\\|\/)/, "")
+      .gsub(%r{[\x00/\\:\*\?\"<>\|]}, "_")
+      .gsub(%r{^.*(\\|/)}, "")
       # Strip out the non-ascii characters
       .gsub(/[^0-9A-Za-z.\-]/, "_")
   end
@@ -126,7 +126,7 @@ class Submission < ApplicationRecord
         end
       end
       archived_filestream.rewind
-    rescue => e
+    rescue StandardError => e
       archived_filestream = e.message
     end
     archived_filestream
@@ -135,18 +135,18 @@ class Submission < ApplicationRecord
   def self.zip_submissions!(tutorial, assignment)
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
-    manuscripts = submissions.collect { |s|
-      s.manuscript if s.manuscript.present?
-    }
+    manuscripts = submissions.collect do |s|
+      s.manuscript.presence
+    end
     zip(submissions, manuscripts)
   end
 
   def self.zip_corrections!(tutorial, assignment)
     submissions = Submission.where(tutorial: tutorial,
                                    assignment: assignment).proper
-    corrections = submissions.collect { |s|
-      s.correction if s.correction.present?
-    }
+    corrections = submissions.collect do |s|
+      s.correction.presence
+    end
 
     zip(submissions, corrections, "-correction")
   end
@@ -166,7 +166,7 @@ class Submission < ApplicationRecord
     end
     file_name = metadata["filename"]
     file_type = File.extname(file_name)
-    if !file_type.in?([".cc", ".hh", ".m", ".mlx", ".pdf", ".zip", ".txt"])
+    unless file_type.in?([".cc", ".hh", ".m", ".mlx", ".pdf", ".zip", ".txt"])
       errors.push I18n.t("submission.wrong_file_type",
                          file_type: file_type,
                          accepted_file_type: assignment.accepted_file_type)
@@ -233,14 +233,14 @@ class Submission < ApplicationRecord
     begin
       files.each do |file_shrine|
         filename = file_shrine["metadata"]["filename"]
-        if !"-ID-".in?(filename)
+        unless "-ID-".in?(filename)
           report[:invalid_filenames].push(filename)
           next
         end
         submission_id = File.basename(filename.split("-ID-").last,
                                       File.extname(filename.split("-ID-").last))
         submission = Submission.find_by_id(submission_id)
-        if !submission
+        unless submission
           report[:invalid_id].push(filename)
           next
         end
@@ -253,13 +253,13 @@ class Submission < ApplicationRecord
           next
         end
         submission.update(correction: file_shrine.to_json)
-        if !submission.valid?
+        unless submission.valid?
           report[:invalid_file].push(filename)
           next
         end
         report[:successful_saves].push(submission)
       end
-    rescue => e
+    rescue StandardError => e
       report[:errors] = "#{e.message}"
     end
     report
@@ -277,33 +277,39 @@ class Submission < ApplicationRecord
       self.token = Submission.generate_token
     end
 
+    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_submissions(tutorial, assignment)
+      # rubocop:enable Lint/IneffectiveAccessModifier
       Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(manuscript_data: nil).size
     end
 
+    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_corrections(tutorial, assignment)
+      # rubocop:enable Lint/IneffectiveAccessModifier
       Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(correction_data: nil).size
     end
 
+    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_late_submissions(tutorial, assignment)
+      # rubocop:enable Lint/IneffectiveAccessModifier
       Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(manuscript_data: nil)
                 .select { |s| s.too_late? }.size
     end
 
-    def self.submissions_total(assignment)
+    def self.submissions_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
       Submission.where(assignment: assignment)
                 .where.not(manuscript_data: nil).size
     end
 
-    def self.corrections_total(assignment)
+    def self.corrections_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
       Submission.where(assignment: assignment)
                 .where.not(correction_data: nil).size
     end
 
-    def self.late_submissions_total(assignment)
+    def self.late_submissions_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
       Submission.where(assignment: assignment)
                 .where.not(manuscript_data: nil)
                 .select { |s| s.too_late? }.size

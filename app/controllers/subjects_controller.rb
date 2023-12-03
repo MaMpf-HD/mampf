@@ -15,15 +15,15 @@ class SubjectsController < ApplicationController
   def edit
   end
 
-  def update
-    @subject.update(subject_params)
-    redirect_to classification_path
-  end
-
   def create
     @subject = Subject.new(subject_params)
     authorize! :create, @subject
     @subject.save
+    redirect_to classification_path
+  end
+
+  def update
+    @subject.update(subject_params)
     redirect_to classification_path
   end
 

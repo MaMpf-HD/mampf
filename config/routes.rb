@@ -1,11 +1,10 @@
 Rails.application.routes.draw do
-
   # mount sidekiq engine
 
   require "sidekiq/web"
   require "sidekiq/cron/web"
 
-  authenticate :user, lambda { |u| u.admin? } do
+  authenticate :user, ->(u) { u.admin? } do
     mount Sidekiq::Web => "/sidekiq"
   end
 
@@ -262,8 +261,8 @@ Rails.application.routes.draw do
       as: "subscribe_lecture_page"
 
   post "lectures/:id/import_toc",
-      to: "lectures#import_toc",
-      as: "import_lecture_toc"
+       to: "lectures#import_toc",
+       as: "import_lecture_toc"
 
   resources :lectures, except: [:index]
 
@@ -844,7 +843,6 @@ Rails.application.routes.draw do
       to: "erdbeere#fill_realizations_select",
       as: "fill_realizations_select"
 
-
   # main routes
 
   # Ruby set root based on whether user is authenticated or not
@@ -899,7 +897,7 @@ Rails.application.routes.draw do
   # redirect bs requests to error page
 
   match "*path", to: "main#error", via: :all
-  match "/", to: "main#error", via: %i[post put patch delete]
+  match "/", to: "main#error", via: [:post, :put, :patch, :delete]
 
   # For details on the DSL available within this file,
   # see http://guides.rubyonrails.org/routing.html

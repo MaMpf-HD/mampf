@@ -23,6 +23,9 @@ class Section < ApplicationRecord
   # a section has many items, do not execute callbacks when section is destroyed
   has_many :items, dependent: :nullify
 
+  before_destroy :touch_toc
+  before_destroy :touch_lecture
+  before_destroy :touch_media
   # after saving or updating, touch lecture/media/self to keep cache up to date
   after_save :touch_lecture
   after_save :touch_media
@@ -31,10 +34,6 @@ class Section < ApplicationRecord
   # if absolute numbering is enabled for the lecture, all chapters
   # and sections need to be touched because of possibly changed references
   after_save :touch_toc
-  before_destroy :touch_toc
-
-  before_destroy :touch_lecture
-  before_destroy :touch_media
 
   def lecture
     chapter&.lecture
@@ -189,7 +188,9 @@ class Section < ApplicationRecord
     end
 
     def touch_media
+      # rubocop:todo Rails/SkipsModelValidations
       lecture.media_with_inheritance.update_all(updated_at: Time.current)
+      # rubocop:enable Rails/SkipsModelValidations
       touch
     end
 
@@ -200,8 +201,8 @@ class Section < ApplicationRecord
     def touch_toc
       return unless lecture.absolute_numbering
 
-      lecture.chapters.update_all(updated_at: Time.now)
-      lecture.sections.update_all(updated_at: Time.now)
+      lecture.chapters.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      lecture.sections.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
     end
 
     def relative_position

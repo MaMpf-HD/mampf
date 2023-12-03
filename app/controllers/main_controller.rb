@@ -60,7 +60,7 @@ class MainController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    def get_announcements
+    def get_announcements # rubocop:todo Naming/AccessorMethodName
       @announcements = Announcement.where(on_main_page: true, lecture: nil)
                                    .pluck(:details)
                                    .join('<hr class="my-3" w-100>')

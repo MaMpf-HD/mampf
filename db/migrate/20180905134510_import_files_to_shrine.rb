@@ -7,7 +7,6 @@ class ImportFilesToShrine < ActiveRecord::Migration[5.2]
         file.binmode
         file.write open(screenshot).read
         file.rewind
-        file
         m.update(screenshot: file)
       end
       if m.manuscript_link.present?
@@ -16,18 +15,16 @@ class ImportFilesToShrine < ActiveRecord::Migration[5.2]
         file.binmode
         file.write open(manuscript).read
         file.rewind
-        file
         m.update(manuscript: file)
       end
-      if m.video_file_link.present?
-        video = open(m.video_file_link)
-        file = Tempfile.new([m.title + "-", ".mp4"])
-        file.binmode
-        file.write open(video).read
-        file.rewind
-        file
-        m.update(video: file)
-      end
+      next unless m.video_file_link.present?
+
+      video = open(m.video_file_link)
+      file = Tempfile.new([m.title + "-", ".mp4"])
+      file.binmode
+      file.write open(video).read
+      file.rewind
+      m.update(video: file)
     end
   end
 end

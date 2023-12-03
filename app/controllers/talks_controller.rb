@@ -9,6 +9,10 @@ class TalksController < ApplicationController
     @current_ability ||= TalkAbility.new(current_user)
   end
 
+  def show
+    render layout: "application_no_sidebar"
+  end
+
   def new
     @lecture = Lecture.find_by_id(params[:lecture_id])
     @talk = Talk.new(lecture: @lecture)
@@ -18,10 +22,6 @@ class TalksController < ApplicationController
   end
 
   def edit
-  end
-
-  def show
-    render layout: "application_no_sidebar"
   end
 
   def create
@@ -90,7 +90,7 @@ class TalksController < ApplicationController
 
     def talk_params
       attributes = [:title, :lecture_id, :details, :description,
-                    :display_description, speaker_ids: [], tag_ids: []]
+                    :display_description, { speaker_ids: [], tag_ids: [] }]
       if @talk && !current_user.in?(@talk.speakers) &&
          !@talk.display_description
         attributes.delete(:display_description)

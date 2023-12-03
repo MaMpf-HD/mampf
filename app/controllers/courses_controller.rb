@@ -15,22 +15,6 @@ class CoursesController < ApplicationController
     I18n.locale = @course.locale || I18n.default_locale
   end
 
-  def update
-    I18n.locale = @course.locale || I18n.default_locale
-    old_image_data = @course.image_data
-    @course.update(course_params)
-    @errors = @course.errors
-    return unless @errors.empty?
-
-    @course.update(image: nil) if params[:course][:detach_image] == "true"
-    changed_image = @course.image_data != old_image_data
-    if @course.image.present? && changed_image
-      @course.image_derivatives!
-      @course.save
-    end
-    @errors = @course.errors
-  end
-
   def create
     @course = Course.new(course_params)
     authorize! :create, @course
@@ -44,6 +28,22 @@ class CoursesController < ApplicationController
                                  editors: @course.editors.map(&:name)
                                                          .join(", "))
       return
+    end
+    @errors = @course.errors
+  end
+
+  def update
+    I18n.locale = @course.locale || I18n.default_locale
+    old_image_data = @course.image_data
+    @course.update(course_params)
+    @errors = @course.errors
+    return unless @errors.empty?
+
+    @course.update(image: nil) if params[:course][:detach_image] == "true"
+    changed_image = @course.image_data != old_image_data
+    if @course.image.present? && changed_image
+      @course.image_derivatives!
+      @course.save
     end
     @errors = @course.errors
   end

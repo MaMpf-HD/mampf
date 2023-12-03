@@ -7,7 +7,7 @@ class Talk < ApplicationRecord
   validates :title, presence: true
 
   # being a teachable (course/lecture/lesson), a talk has associated media
-  has_many :media, -> { order(position: :asc) }, as: :teachable,
+  has_many :media, -> { order(position: :asc) }, as: :teachable, # rubocop:todo Rails/InverseOf
                                                  dependent: :destroy
 
   # a talk has many tags
@@ -111,6 +111,6 @@ class Talk < ApplicationRecord
     end
 
     def remove_duplicate_dates
-      update_columns(dates: dates.uniq)
+      update_columns(dates: dates.uniq) # rubocop:todo Rails/SkipsModelValidations
     end
 end

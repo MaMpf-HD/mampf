@@ -7,7 +7,7 @@ FactoryBot.define do
       user_id { Faker::Number.between(from: 1, to: 20) }
       release_now { true }
       release_date do
-        DateTime.now + 10 * Faker::Number.between(from: 0.0, to: 1.0)
+        DateTime.now + (10 * Faker::Number.between(from: 0.0, to: 1.0))
       end
       release_for { "all" }
       lock_comments { false }

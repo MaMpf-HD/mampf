@@ -98,21 +98,21 @@ class QuizRound
       @is_question = true
       @question_id = @vertex[:id]
       @answer_scheme = Question.find(@question_id).answer_scheme
-      if params[:quiz].present? && params[:quiz][:answer_shuffle].present?
-        @answer_shuffle = JSON.parse(params[:quiz][:answer_shuffle]).map(&:to_i)
+      @answer_shuffle = if params[:quiz].present? && params[:quiz][:answer_shuffle].present?
+        JSON.parse(params[:quiz][:answer_shuffle]).map(&:to_i)
       else
-        @answer_shuffle = Question.find(@question_id).answers.map(&:id).shuffle
+        Question.find(@question_id).answers.map(&:id).shuffle
       end
     end
 
-    def remark_details(params)
+    def remark_details(_params)
       @is_remark = true
       @remark_id = @vertex[:id]
     end
 
     def update_answer_shuffle
       @answer_shuffle = Question.find_by_id(@vertex[:id])&.answers&.map(&:id)
-                               &.shuffle
+                                &.shuffle
     end
 
     def create_question_probe

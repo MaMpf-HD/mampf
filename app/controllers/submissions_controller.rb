@@ -16,7 +16,7 @@ class SubmissionsController < ApplicationController
     @current_ability ||= SubmissionAbility.new(current_user)
   end
 
-  # note: authorization for #index is done manually via before_actions
+  # NOTE: authorization for #index is done manually via before_actions
   # SubmissionAbility lets anyone pass
   def index
     @assignments = @lecture.assignments
@@ -35,6 +35,33 @@ class SubmissionsController < ApplicationController
   end
 
   def edit
+  end
+
+  def create
+    @submission = Submission.new(submission_create_params)
+    @lecture = @submission&.assignment&.lecture
+    set_submission_locale
+    @too_late = @submission.not_updatable?
+    return if @too_late
+
+    if submission_manuscript_params[:manuscript].present?
+      @submission.manuscript = submission_manuscript_params[:manuscript]
+      @errors = @submission.check_file_properties(@submission.manuscript
+                                                             .metadata,
+                                                  :manuscript)
+      return if @errors.present?
+    end
+    @submission.user_submission_joins.build(user: current_user)
+    @submission.save
+    @assignment = @submission.assignment
+    @errors = @submission.errors
+    return unless @submission.valid?
+
+    send_invitation_emails
+    @submission.update(last_modification_by_users_at: Time.now)
+    return unless @submission.manuscript
+
+    send_upload_email(User.where(id: current_user.id))
   end
 
   def update
@@ -66,33 +93,6 @@ class SubmissionsController < ApplicationController
       end
     end
     @errors = @submission.errors
-  end
-
-  def create
-    @submission = Submission.new(submission_create_params)
-    @lecture = @submission&.assignment&.lecture
-    set_submission_locale
-    @too_late = @submission.not_updatable?
-    return if @too_late
-
-    if submission_manuscript_params[:manuscript].present?
-      @submission.manuscript = submission_manuscript_params[:manuscript]
-      @errors = @submission.check_file_properties(@submission.manuscript
-                                                             .metadata,
-                                                  :manuscript)
-      return if @errors.present?
-    end
-    @submission.user_submission_joins.build(user: current_user)
-    @submission.save
-    @assignment = @submission.assignment
-    @errors = @submission.errors
-    return unless @submission.valid?
-
-    send_invitation_emails
-    @submission.update(last_modification_by_users_at: Time.now)
-    return unless @submission.manuscript
-
-    send_upload_email(User.where(id: current_user.id))
   end
 
   def destroy
@@ -277,7 +277,7 @@ class SubmissionsController < ApplicationController
 
       flash[:alert] = I18n.t("controllers.no_assignment")
       render js: "window.location='#{root_path}'"
-      return
+      nil
     end
 
     def set_lecture
@@ -395,17 +395,17 @@ class SubmissionsController < ApplicationController
 
     def check_code_and_join
       check_code_validity
-      unless @error
-        @join = UserSubmissionJoin.new(user: current_user,
-                                       submission: @submission)
-        @join.save
-        if @join.valid?
-          @submission.update(last_modification_by_users_at: Time.now)
-          send_join_email
-          remove_invitee_status
-        else
-          @error = @join.errors[:base].join(", ")
-        end
+      return if @error
+
+      @join = UserSubmissionJoin.new(user: current_user,
+                                     submission: @submission)
+      @join.save
+      if @join.valid?
+        @submission.update(last_modification_by_users_at: Time.now)
+        send_join_email
+        remove_invitee_status
+      else
+        @error = @join.errors[:base].join(", ")
       end
     end
 

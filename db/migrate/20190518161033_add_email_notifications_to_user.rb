@@ -1,5 +1,5 @@
 class AddEmailNotificationsToUser < ActiveRecord::Migration[6.0]
   def change
-    add_column :users, :email_notifications, :boolean
+    add_column :users, :email_notifications, :boolean # rubocop:todo Rails/ThreeStateBooleanColumn
   end
 end

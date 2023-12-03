@@ -41,9 +41,7 @@ class Notification < ApplicationRecord
 
       return news_path
     end
-    if notifiable_type == "Medium" && notifiable.sort == "Quiz"
-      return medium_path(notifiable)
-    end
+    return medium_path(notifiable) if notifiable_type == "Medium" && notifiable.sort == "Quiz"
 
     polymorphic_url(notifiable, only_path: true)
   end

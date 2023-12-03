@@ -5,9 +5,7 @@ module ReferralsHelper
   # e.g. as 'Lecture-42', 'Course-5' etc.
   def teachable_selector(referral)
     return "" unless referral.medium.present?
-    unless referral.item.present?
-      return referral.medium.teachable&.media_scope&.selector_value
-    end
+    return referral.medium.teachable&.media_scope&.selector_value unless referral.item.present?
     return "external-0" if referral.item.sort == "link"
 
     referral.item.medium.teachable&.media_scope&.selector_value

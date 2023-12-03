@@ -14,6 +14,20 @@ class ClickersController < ApplicationController
     @current_ability ||= ClickerAbility.new(current_user)
   end
 
+  def show
+    if params[:code] == @clicker.code
+      redirect_to edit_clicker_path(@clicker,
+                                    params: { code: @clicker.code })
+      return
+    end
+    if stale?(etag: @clicker,
+              last_modified: [@clicker.updated_at,
+                              Time.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
+      render :show
+      nil
+    end
+  end
+
   def new
     @clicker = Clicker.new
     authorize! :new, @clicker
@@ -33,20 +47,6 @@ class ClickersController < ApplicationController
       return
     end
     render layout: "edit_clicker"
-  end
-
-  def show
-    if params[:code] == @clicker.code
-      redirect_to edit_clicker_path(@clicker,
-                                    params: { code: @clicker.code })
-      return
-    end
-    if stale?(etag: @clicker,
-              last_modified: [@clicker.updated_at,
-                              Time.parse(ENV["RAILS_CACHE_ID"])].max)
-      render :show
-      return
-    end
   end
 
   def create
@@ -84,7 +84,7 @@ class ClickersController < ApplicationController
     head :ok, content_type: "text/html"
   end
 
-  def get_votes_count
+  def get_votes_count # rubocop:todo Naming/AccessorMethodName
     result = @clicker.votes.count
     render json: result
   end

@@ -5,7 +5,6 @@ require "openssl"
 # OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 class CamtasiaScraper
-
   def initialize(link)
     html = Nokogiri::HTML(open(link))
 

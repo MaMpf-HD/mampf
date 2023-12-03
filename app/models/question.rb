@@ -30,7 +30,7 @@ class Question < Medium
   end
 
   def duplicate
-    copy = self.dup
+    copy = dup
     copy.video_data = nil
     copy.manuscript_data = nil
     copy.screenshot_data = nil
@@ -112,7 +112,9 @@ class Question < Medium
   end
 
   def sample_parameters
-    parameters.inject({}) { |h, (k, v)| h[k] = v.to_a.sample; h }
+    parameters.each_with_object({}) do |(k, v), h|
+      h[k] = v.to_a.sample
+    end
   end
 
   def self.parameters_from_text(text)
@@ -126,7 +128,7 @@ class Question < Medium
     def prelim_answer_table
       table = []
       size = answer_ids.count
-      (0..2**size - 1).each do |i|
+      (0..(2**size) - 1).each do |i|
         hash = {}
         i.to_bool_a(size).each_with_index.map { |x, j| hash[answer_ids[j]] = x }
         table.push(hash)

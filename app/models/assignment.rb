@@ -5,7 +5,9 @@ class Assignment < ApplicationRecord
 
   before_destroy :check_destructibility, prepend: true
 
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
   validates :deadline, presence: true
   validates :deletion_date, presence: true
   validate :deletion_date_cannot_be_in_the_past
@@ -32,7 +34,7 @@ class Assignment < ApplicationRecord
   def submission(user)
     UserSubmissionJoin.where(submission: Submission.where(assignment: self),
                              user: user)
-                     &.first&.submission
+                      &.first&.submission
   end
 
   def submitter_ids
@@ -70,11 +72,11 @@ class Assignment < ApplicationRecord
   end
 
   def current?
-    self.in?(lecture.current_assignments)
+    in?(lecture.current_assignments)
   end
 
   def previous?
-    self.in?(lecture.previous_assignments)
+    in?(lecture.previous_assignments)
   end
 
   def previous
@@ -105,7 +107,7 @@ class Assignment < ApplicationRecord
     true
   end
 
-  def has_documents?
+  def has_documents? # rubocop:todo Naming/PredicateName
     return false unless medium
 
     medium.video || medium.manuscript || medium.geogebra ||

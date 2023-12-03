@@ -46,7 +46,7 @@ class MediumAbility
       !user.generic? && user.can_edit?(medium)
     end
 
-    can [:register_download], Medium do |medium|
+    can [:register_download], Medium do |_medium|
       !user.new_record?
     end
   end

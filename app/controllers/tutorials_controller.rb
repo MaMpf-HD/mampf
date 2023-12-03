@@ -27,10 +27,10 @@ class TutorialsController < ApplicationController
     @assignments = @lecture.assignments.order("deadline DESC")
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                   @assignments&.first
-    if current_user.editor_or_teacher_in?(@lecture)
-      @tutorials = @lecture.tutorials
+    @tutorials = if current_user.editor_or_teacher_in?(@lecture)
+      @lecture.tutorials
     else
-      @tutorials = current_user.given_tutorials.where(lecture: @lecture)
+      current_user.given_tutorials.where(lecture: @lecture)
     end
     @tutorial = Tutorial.find_by_id(params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
@@ -53,6 +53,9 @@ class TutorialsController < ApplicationController
     authorize! :new, @tutorial
   end
 
+  def edit
+  end
+
   def create
     @tutorial = Tutorial.new(tutorial_params)
     authorize! :create, @tutorial
@@ -62,13 +65,10 @@ class TutorialsController < ApplicationController
     @errors = @tutorial.errors
   end
 
-  def edit
-  end
-
   def update
     @tutorial.update(tutorial_params)
     @errors = @tutorial.errors
-    return if @errors.present?
+    nil if @errors.present?
   end
 
   def destroy
@@ -96,16 +96,14 @@ class TutorialsController < ApplicationController
   end
 
   def bulk_upload
-    begin
-      files = JSON.parse(params[:files])
-      @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
-      @stack = @assignment.submissions.where(tutorial: @tutorial).proper
-                          .order(:last_modification_by_users_at)
-      send_correction_upload_emails
-    # in case an empty string for files is sent
-    rescue JSON::ParserError
-      flash[:alert] = I18n.t("tutorial.bulk_upload.error")
-    end
+    files = JSON.parse(params[:files])
+    @report = Submission.bulk_corrections!(@tutorial, @assignment, files)
+    @stack = @assignment.submissions.where(tutorial: @tutorial).proper
+                        .order(:last_modification_by_users_at)
+    send_correction_upload_emails
+  # in case an empty string for files is sent
+  rescue JSON::ParserError
+    flash[:alert] = I18n.t("tutorial.bulk_upload.error")
   end
 
   def validate_certificate
@@ -117,10 +115,10 @@ class TutorialsController < ApplicationController
   def export_teams
     respond_to do |format|
       format.html { head :ok }
-      format.csv {
+      format.csv do
         send_data @tutorial.teams_to_csv(@assignment),
                   filename: "#{@tutorial.title}-#{@assignment.title}.csv"
-      }
+      end
     end
   end
 

@@ -14,7 +14,12 @@ module ApplicationHelper
 
   # Returns the complete url for the media upload folder if in production
   def host
-    Rails.env.production? ? ENV["MEDIA_SERVER"] + "/" + ENV["INSTANCE_NAME"] : ""
+    if Rails.env.production?
+      ENV.fetch("MEDIA_SERVER",
+                nil) + "/" + ENV.fetch("INSTANCE_NAME", nil)
+    else
+      ""
+    end
   end
 
   # The HTML download attribute only works for files within the domain of
@@ -23,7 +28,7 @@ module ApplicationHelper
   # the actual media server.
   # This is used for the download buttons for videos and manuscripts.
   def download_host
-    Rails.env.production? ? ENV["DOWNLOAD_LOCATION"] : ""
+    Rails.env.production? ? ENV.fetch("DOWNLOAD_LOCATION", nil) : ""
   end
 
   # Returns the full title on a per-page basis.
@@ -89,8 +94,8 @@ module ApplicationHelper
 
   # media_sorts
   def media_sorts
-    %w[kaviar sesam keks kiwi erdbeere nuesse script
-       questions remarks reste]
+    ["kaviar", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
+     "reste"]
   end
 
   # media_sort -> acronym
@@ -110,7 +115,7 @@ module ApplicationHelper
   # Selects all media associated to lectures and lessons from a given list
   # of media
   def lecture_media(media)
-    media.where(teachable_type: %w[Lecture Lesson])
+    media.where(teachable_type: ["Lecture", "Lesson"])
   end
 
   # Selects all media associated to courses from a given list of media
@@ -149,7 +154,7 @@ module ApplicationHelper
 
   # splits an array into smaller parts
   def split_list(list, pieces = 4)
-    group_size = (list.count / pieces) != 0 ? list.count / pieces : 1
+    group_size = (list.count / pieces) == 0 ? 1 : list.count / pieces
     groups = list.in_groups_of(group_size)
     diff = groups.count - pieces
     return groups if diff <= 0
@@ -231,14 +236,10 @@ module ApplicationHelper
   # anything older than today or yesterday gets reduced to the day.month.year
   # yesterday's/today's dates are return as 'gestern/heute' plus hour:mins
   def human_readable_date(date)
-    if date.to_date == Date.today
-      return t("today") + ", " + date.strftime("%H:%M")
-    end
-    if date.to_date == Date.yesterday
-      return t("yesterday") + ", " + date.strftime("%H:%M")
-    end
+    return t("today") + ", " + date.strftime("%H:%M") if date.to_date == Date.today
+    return t("yesterday") + ", " + date.strftime("%H:%M") if date.to_date == Date.yesterday
 
-    I18n.localize date, format: :concise
+    I18n.l date, format: :concise
   end
 
   # prepend a select prompt to selection for options_for_select
@@ -259,7 +260,7 @@ module ApplicationHelper
   end
 
   def ballot_box(correctness)
-    raw(correctness ? "&#x2612;" : "&#x2610;")
+    raw(correctness ? "&#x2612;" : "&#x2610;") # rubocop:todo Rails/OutputSafety
   end
 
   def boxcolor(correctness)
@@ -277,10 +278,10 @@ module ApplicationHelper
   def helpdesk(text, html, title = t("info"))
     tag.i class: "far fa-question-circle helpdesk ms-2",
           tabindex: -1,
-          'data-bs-toggle': "popover",
-          'data-bs-trigger': "focus",
-          'data-bs-content': text,
-          'data-bs-html': html,
+          "data-bs-toggle": "popover",
+          "data-bs-trigger": "focus",
+          "data-bs-content": text,
+          "data-bs-html": html,
           title: title
   end
 
@@ -291,10 +292,10 @@ module ApplicationHelper
   def first_course_independent?
     current_user.administrated_courses
                 .natural_sort_by(&:title)
-               &.first&.term_independent
+                &.first&.term_independent
   end
 
-  def get_announcements
+  def get_announcements # rubocop:todo Naming/AccessorMethodName
     megaphone_icon_str = '<i class="bi bi-megaphone p-2"></i>'
     separator_str = "<hr class=\"my-3 w-100\">#{megaphone_icon_str}"
     Announcement.active_on_main
@@ -305,27 +306,27 @@ module ApplicationHelper
 
   # Navbar items styling based on which page we are on
   # https://gist.github.com/mynameispj/5692162
-  $active_css_class = "active-item"
+  $active_css_class = "active-item" # rubocop:todo Style/GlobalVars
 
   def get_class_for_project(project)
-    request.params["project"] == project ? $active_css_class : ""
+    request.params["project"] == project ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_path(path)
-    request.path == path ? $active_css_class : ""
+    request.path == path ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_path_startswith(path)
-    request.path.starts_with?(path) ? $active_css_class : ""
+    request.path.starts_with?(path) ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_any_path(paths)
-    paths.include?(request.path) ? $active_css_class : ""
+    paths.include?(request.path) ? $active_css_class : "" # rubocop:todo Style/GlobalVars
   end
 
   def get_class_for_any_path_startswith(paths)
     if paths.any? { |path| request.path.starts_with?(path) }
-      return $active_css_class
+      return $active_css_class # rubocop:todo Style/GlobalVars
     end
 
     ""

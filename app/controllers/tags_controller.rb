@@ -16,9 +16,7 @@ class TagsController < ApplicationController
   end
 
   def show
-    if params[:locale].in?(I18n.available_locales.map(&:to_s))
-      I18n.locale = params[:locale]
-    end
+    I18n.locale = params[:locale] if params[:locale].in?(I18n.available_locales.map(&:to_s))
     set_related_tags_for_user
     @lectures = current_user.filter_lectures(@tag.lectures)
     # first, filter the media according to the users subscription type
@@ -43,14 +41,6 @@ class TagsController < ApplicationController
     render layout: "cytoscape"
   end
 
-  def edit
-    # build notions for missing locales
-    (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
-      @tag.notions.new(locale: l)
-    end
-    @tag.aliases.new(locale: I18n.locale)
-  end
-
   def new
     @tag = Tag.new
     authorize! :new, @tag
@@ -58,20 +48,12 @@ class TagsController < ApplicationController
     @tag.aliases.new(locale: I18n.locale)
   end
 
-  def update
-    # first, check if errors from check_permission callback are present
-    return if @errors.present?
-
-    @tag.update(tag_params)
-    if @tag.valid?
-      @tag.update(realizations: realization_params)
-      # make sure the tag is touched even if only some relations have been
-      # modified (important for caching)
-      @tag.touch
-      redirect_to edit_tag_path(@tag)
-      return
+  def edit
+    # build notions for missing locales
+    (I18n.available_locales.map(&:to_s) - @tag.locales).each do |l|
+      @tag.notions.new(locale: l)
     end
-    @errors = @tag.errors
+    @tag.aliases.new(locale: I18n.locale)
   end
 
   def create
@@ -88,6 +70,22 @@ class TagsController < ApplicationController
     end
     @errors = @tag.errors
     render :update
+  end
+
+  def update
+    # first, check if errors from check_permission callback are present
+    return if @errors.present?
+
+    @tag.update(tag_params)
+    if @tag.valid?
+      @tag.update(realizations: realization_params)
+      # make sure the tag is touched even if only some relations have been
+      # modified (important for caching)
+      @tag.touch
+      redirect_to edit_tag_path(@tag)
+      return
+    end
+    @errors = @tag.errors
   end
 
   def destroy
@@ -118,9 +116,7 @@ class TagsController < ApplicationController
   end
 
   def fill_tag_select
-    if params[:locale].in?(I18n.available_locales.map(&:to_s))
-      I18n.locale = params[:locale]
-    end
+    I18n.locale = params[:locale] if params[:locale].in?(I18n.available_locales.map(&:to_s))
     if params[:q]
       result = Tag.select_with_substring(params[:q])
       render json: result
@@ -177,9 +173,7 @@ class TagsController < ApplicationController
         section = Section.find(s)
         next unless section
 
-        if !tag.in?(section.tags)
-          section.tags << tag
-        end
+        section.tags << tag unless tag.in?(section.tags)
       end
     end
     if params["from"] == "Lesson"
@@ -215,9 +209,7 @@ class TagsController < ApplicationController
       @depth = depth_param if depth_param.in?([1, 2])
       overrule_subscription_type = false
       selection = params[:selection].to_i
-      if selection.in?([1, 2, 3])
-        overrule_subscription_type = selection
-      end
+      overrule_subscription_type = selection if selection.in?([1, 2, 3])
       @selection_type = if overrule_subscription_type
         selection
       else
@@ -257,34 +249,34 @@ class TagsController < ApplicationController
 
     def add_section
       section = Section.find_by_id(params[:section])
-      if section
-        @tag.sections << section
-        I18n.locale = section.lecture.locale || current_user.locale
-      end
+      return unless section
+
+      @tag.sections << section
+      I18n.locale = section.lecture.locale || current_user.locale
     end
 
     def add_medium
       medium = Medium.find_by_id(params[:medium])
-      if medium
-        I18n.locale = medium.locale_with_inheritance || current_user.locale
-        @tag.media << medium
-      end
+      return unless medium
+
+      I18n.locale = medium.locale_with_inheritance || current_user.locale
+      @tag.media << medium
     end
 
     def add_lesson
       lesson = Lesson.find_by_id(params[:lesson])
-      if lesson
-        @tag.lessons << lesson
-        I18n.locale = lesson.lecture.locale || current_user.locale
-      end
+      return unless lesson
+
+      @tag.lessons << lesson
+      I18n.locale = lesson.lecture.locale || current_user.locale
     end
 
     def add_talk
       talk = Talk.find_by_id(params[:talk])
-      if talk
-        @tag.talks << talk
-        I18n.locale = talk.lecture.locale || current_user.locale
-      end
+      return unless talk
+
+      @tag.talks << talk
+      I18n.locale = talk.lecture.locale || current_user.locale
     end
 
     def check_for_consent

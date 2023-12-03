@@ -8,18 +8,6 @@ class ReferralsController < ApplicationController
     @current_ability ||= ReferralAbility.new(current_user)
   end
 
-  def update
-    I18n.locale = @referral.medium.locale_with_inheritance
-    # if referral's item is a link, it is updated
-    # this means in particular that *all referrals* that refer to it will
-    # be affected; links are changed *globally*
-    update_item if Item.find_by_id(@item_id)&.sort == "link"
-    return if @errors.present?
-
-    @referral.update(updated_params)
-    @errors = @referral.errors unless @referral.valid?
-  end
-
   def edit
     I18n.locale = @referral.medium.locale_with_inheritance
     # if referral's item is a link, load all other links,
@@ -46,6 +34,18 @@ class ReferralsController < ApplicationController
     @referral.save
     @errors = @referral.errors unless @referral.valid?
     render :update
+  end
+
+  def update
+    I18n.locale = @referral.medium.locale_with_inheritance
+    # if referral's item is a link, it is updated
+    # this means in particular that *all referrals* that refer to it will
+    # be affected; links are changed *globally*
+    update_item if Item.find_by_id(@item_id)&.sort == "link"
+    return if @errors.present?
+
+    @referral.update(updated_params)
+    @errors = @referral.errors unless @referral.valid?
   end
 
   def destroy

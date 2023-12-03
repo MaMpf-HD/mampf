@@ -5,8 +5,8 @@ class Interaction < InteractionsRecord
   require "csv"
 
   def self.to_csv
-    attributes = %w{id session_id created_at full_path referrer_url
-                    study_participant}
+    attributes = ["id", "session_id", "created_at", "full_path", "referrer_url",
+                  "study_participant"]
 
     CSV.generate(headers: true) do |csv|
       csv << attributes

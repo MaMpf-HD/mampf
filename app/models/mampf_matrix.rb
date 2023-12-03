@@ -12,18 +12,16 @@ class MampfMatrix
   end
 
   def self.trivial_instance
-    self.new(2, 2,
-             ["0", "0", "0", "0"],
-             '\begin{pmatrix} 0 & 0 \cr 0 & 0 \end{pmatrix}',
-             "matrix([0,0],[0,0]")
+    new(2, 2,
+        ["0", "0", "0", "0"],
+        '\begin{pmatrix} 0 & 0 \cr 0 & 0 \end{pmatrix}',
+        "matrix([0,0],[0,0]")
   end
 
-  def entry(i, j)
-    if i > @row_count || j > @column_count
-      return "0"
-    end
+  def entry(i, j) # rubocop:todo Naming/MethodParameterName
+    return "0" if i > @row_count || j > @column_count
 
-    @coefficients[(i - 1) * @column_count + (j - 1)]
+    @coefficients[((i - 1) * @column_count) + (j - 1)]
   end
 
   def self.from_hash(content)

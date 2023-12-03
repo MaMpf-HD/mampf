@@ -145,8 +145,8 @@ class Manuscript
                        sort: "chapter")
     item_id_map = items.pluck(:pdf_destination, :id).to_h
     item_destinations = item_id_map.keys
-    attrs = %i(medium_id pdf_destination section_id sort page
-               description ref_number position quarantine)
+    attrs = [:medium_id, :pdf_destination, :section_id, :sort, :page, :description, :ref_number,
+             :position, :quarantine]
     item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
     contents = []
     @chapters.each do |c|
@@ -173,11 +173,11 @@ class Manuscript
                        sort: "section")
     item_id_map = items.pluck(:pdf_destination, :id).to_h
     item_destinations = item_id_map.keys
-    attrs = %i(medium_id pdf_destination section_id sort page
-               description ref_number position quarantine)
+    attrs = [:medium_id, :pdf_destination, :section_id, :sort, :page, :description, :ref_number,
+             :position, :quarantine]
     item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
     contents = []
-    # note that sections get a position -1 in order to place them ahead
+    # NOTE: that sections get a position -1 in order to place them ahead
     # of all content items within themseleves in #script_items_by_position
     @sections.each do |s|
       contents.push(
@@ -205,8 +205,8 @@ class Manuscript
                        pdf_destination: destinations)
     item_id_map = items.pluck(:pdf_destination, :id).to_h
     item_destinations = item_id_map.keys
-    attrs = %i(medium_id pdf_destination section_id sort page
-               description ref_number position hidden quarantine)
+    attrs = [:medium_id, :pdf_destination, :section_id, :sort, :page, :description, :ref_number,
+             :position, :hidden, :quarantine]
     item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
     contents = []
     @content.each do |c|
@@ -420,7 +420,7 @@ class Manuscript
     sections.each_with_index
             .map do |s, i|
               [s["mampf_section"], i + 1, s["description"], s["counter"]]
-            end
+            end # rubocop:todo Style/MultilineBlockChain
             .select { |s| s.first.nil? }
             .map { |s| [s.second, s.third, s.fourth] }
   end

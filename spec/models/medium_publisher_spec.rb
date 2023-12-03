@@ -117,7 +117,9 @@ RSpec.describe MediumPublisher, type: :model do
       medium.editors << user
       user.lectures << lecture
       lecture.editors << user
+      # rubocop:todo Rails/SkipsModelValidations
       medium.questions.update_all(teachable_type: "Lecture",
+                                  # rubocop:enable Rails/SkipsModelValidations
                                   teachable_id: lecture.id)
       publisher = FactoryBot.build(:medium_publisher,
                                    medium_id: medium.id,
@@ -168,22 +170,22 @@ RSpec.describe MediumPublisher, type: :model do
       user = FactoryBot.create(:confirmed_user)
       @medium.editors << user
       @publisher = FactoryBot.build(:medium_publisher,
-                                     medium_id: @medium.id,
-                                     user_id: user.id,
-                                     create_assignment: true,
-                                     assignment_title: "Blatt 1",
-                                     assignment_deadline:
-                                      Time.zone.parse("2025-05-02 12:00"),
-                                     assignment_deletion_date:
-                                      Time.zone.parse("2025-05-02"),
-                                     assignment_file_type: ".pdf")
+                                    medium_id: @medium.id,
+                                    user_id: user.id,
+                                    create_assignment: true,
+                                    assignment_title: "Blatt 1",
+                                    assignment_deadline:
+                                     Time.zone.parse("2025-05-02 12:00"),
+                                    assignment_deletion_date:
+                                     Time.zone.parse("2025-05-02"),
+                                    assignment_file_type: ".pdf")
     end
 
     it "returns an assignment" do
       expect(@publisher.assignment).to be_kind_of(Assignment)
     end
 
-    it "builds the correspnding assignment if the create_assignment flag is "\
+    it "builds the correspnding assignment if the create_assignment flag is " \
        "set" do
       assignment = @publisher.assignment
       expect([assignment.medium, assignment.lecture, assignment.title,
@@ -213,11 +215,11 @@ RSpec.describe MediumPublisher, type: :model do
                                    medium_id: @medium.id,
                                    user_id: @user.id,
                                    release_now: false,
-                                   release_date: Time.zone.now + 1.day,
+                                   release_date: 1.day.from_now,
                                    create_assignment: true,
                                    assignment_title: "Blatt 1",
                                    assignment_file_type: ".pdf",
-                                   assignment_deadline: Time.zone.now + 2.days,
+                                   assignment_deadline: 2.days.from_now,
                                    assignment_deletion_date: Time.zone.today + 2.days)
       expect(publisher.errors).to eq({})
     end
@@ -238,7 +240,7 @@ RSpec.describe MediumPublisher, type: :model do
                                    medium_id: @medium.id,
                                    user_id: @user.id,
                                    release_now: false,
-                                   release_date: Time.zone.now - 1.day)
+                                   release_date: 1.day.ago)
       expect(publisher.errors[:release_date]).not_to be_nil
     end
 
@@ -249,12 +251,12 @@ RSpec.describe MediumPublisher, type: :model do
                                    user_id: @user.id,
                                    release_now: true,
                                    create_assignment: true,
-                                   assignment_deadline: Time.zone.now - 1.day)
+                                   assignment_deadline: 1.day.ago)
       expect(publisher.errors[:assignment_deadline]).not_to be_nil
     end
 
-    it "returns an assignment deletion date error if release is scheduled now" \
-       " and deletion date is in the past" do
+    it "returns an assignment deletion date error if release is scheduled now " \
+       "and deletion date is in the past" do
       publisher = FactoryBot.build(:medium_publisher,
                                    medium_id: @medium.id,
                                    user_id: @user.id,
@@ -271,9 +273,9 @@ RSpec.describe MediumPublisher, type: :model do
                                    medium_id: @medium.id,
                                    user_id: @user.id,
                                    release_now: false,
-                                   release_date: Time.zone.now + 2.days,
+                                   release_date: 2.days.from_now,
                                    create_assignment: true,
-                                   assignment_deadline: Time.zone.now + 1.days)
+                                   assignment_deadline: 1.day.from_now)
       expect(publisher.errors[:assignment_deadline]).not_to be_nil
     end
 
@@ -291,7 +293,7 @@ RSpec.describe MediumPublisher, type: :model do
     it "returns an assignment title error if assignment is to be created but " \
        "title of an already existing assignment in the lecture is given" do
       Assignment.create(lecture: @medium.teachable, medium: @medium,
-                        title: "Blatt 1", deadline: Time.zone.now + 1.day,
+                        title: "Blatt 1", deadline: 1.day.from_now,
                         accepted_file_type: ".pdf")
       publisher = FactoryBot.build(:medium_publisher,
                                    medium_id: @medium.id,
@@ -299,7 +301,7 @@ RSpec.describe MediumPublisher, type: :model do
                                    release_now: true,
                                    create_assignment: true,
                                    assignment_title: "Blatt 1",
-                                   assignment_deadline: Time.zone.now + 2.days,
+                                   assignment_deadline: 2.days.from_now,
                                    assignment_deletion_date: Time.zone.today + 2.days,
                                    assignment_file_type: ".pdf")
       expect(publisher.errors[:assignment_title]).not_to be_nil

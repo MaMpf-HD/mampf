@@ -120,10 +120,12 @@ class QuizzesController < ApplicationController
           true
         elsif current_user.admin?
           false
+        # rubocop:todo Lint/DuplicateBranch
         elsif current_user.in?(Quiz.find(params[:id]).editors_with_inheritance)
           false
-        else
+        else # rubocop:todo Lint/DuplicateBranch
           true
+          # rubocop:enable Lint/DuplicateBranch
         end
       @quiz_round = QuizRound.new(quiz_round_params)
     end

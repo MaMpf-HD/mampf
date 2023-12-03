@@ -6,7 +6,7 @@ module CoursesHelper
   end
 
   # create text for notification card
-  def course_notification_item_details(course)
+  def course_notification_item_details(_course)
     t("notifications.subscribe_course")
   end
 
@@ -24,9 +24,7 @@ module CoursesHelper
   end
 
   def course_link_or_text(course, user)
-    unless user.admin || user.in?(course.editors)
-      return course.title
-    end
+    return course.title unless user.admin || user.in?(course.editors)
 
     link_to(course.title, edit_course_path(course))
   end

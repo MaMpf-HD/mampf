@@ -7,12 +7,6 @@ class ItemsController < ApplicationController
     @current_ability ||= ItemAbility.new(current_user)
   end
 
-  def update
-    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
-    @item.update(item_params)
-    @errors = @item.errors unless @item.valid?
-  end
-
   def edit
     I18n.locale = @item.medium.locale_with_inheritance if @item.medium
   end
@@ -32,6 +26,12 @@ class ItemsController < ApplicationController
     # for a reference
     @from = params[:item][:from]
     render :update
+  end
+
+  def update
+    I18n.locale = @item.medium.locale_with_inheritance if @item.medium
+    @item.update(item_params)
+    @errors = @item.errors unless @item.valid?
   end
 
   def destroy
@@ -55,9 +55,7 @@ class ItemsController < ApplicationController
     end
 
     def set_explanation
-      if @referral_id.zero? || @item != Referral.find(@referral_id).item
-        return @item.explanation
-      end
+      return @item.explanation if @referral_id.zero? || @item != Referral.find(@referral_id).item
 
       Referral.find(@referral_id).explanation
     end

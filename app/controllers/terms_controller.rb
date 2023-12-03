@@ -14,14 +14,12 @@ class TermsController < ApplicationController
     @terms = Term.order(:year, :season).reverse_order.page params[:page]
   end
 
-  def destroy
-    @term.destroy
-    redirect_to terms_path
-  end
-
   def new
     @term = Term.new
     authorize! :new, @term
+  end
+
+  def edit
   end
 
   def create
@@ -36,12 +34,14 @@ class TermsController < ApplicationController
     render :update
   end
 
-  def edit
-  end
-
   def update
     @term.update(term_params)
     @errors = @term.errors[:season].join(", ") unless @term.valid?
+  end
+
+  def destroy
+    @term.destroy
+    redirect_to terms_path
   end
 
   def cancel

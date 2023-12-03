@@ -1,11 +1,11 @@
 # Term class
 class Term < ApplicationRecord
   # in a term, many lectures take place
-  has_many :lectures
+  has_many :lectures # rubocop:todo Rails/HasManyOrHasOneDependent
 
   # season can only be SS/WS, and there can be only one of this type each year
-  validates :season, presence: true,
-                     inclusion: { in: %w[SS WS] },
+  validates :season, presence: true, # rubocop:todo Rails/UniqueValidationWithoutIndex
+                     inclusion: { in: ["SS", "WS"] },
                      uniqueness: { scope: :year }
   # a year >=2000 needs to be present
   validates :year, presence: true,
@@ -13,7 +13,7 @@ class Term < ApplicationRecord
                                    greater_than_or_equal_to: 2000 }
 
   # only one term can be active
-  validates_uniqueness_of :active, if: :active
+  validates :active, uniqueness: { if: :active }
 
   # some information about lectures, lessons and media are cached
   # to find out whether the cache is out of date, always touch'em after saving
@@ -102,9 +102,9 @@ class Term < ApplicationRecord
   end
 
   def self.possible_deletion_dates_localized
-    possible_deletion_dates.map { |d|
+    possible_deletion_dates.map do |d|
       d.strftime(I18n.t("date.formats.concise"))
-    }
+    end
   end
 
   # array of all terms together with their ids for use in options_for_select
@@ -137,13 +137,17 @@ class Term < ApplicationRecord
     end
 
     def touch_lectures_and_lessons
-      lectures.update_all(updated_at: Time.now)
+      lectures.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      # rubocop:todo Rails/SkipsModelValidations
       Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def touch_media
+      # rubocop:todo Rails/SkipsModelValidations
       Medium.where(teachable: lectures).update_all(updated_at: Time.now)
+      # rubocop:enable Rails/SkipsModelValidations
       Medium.where(teachable: Lesson.where(lecture: lectures))
-            .update_all(updated_at: Time.now)
+            .update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
     end
 end

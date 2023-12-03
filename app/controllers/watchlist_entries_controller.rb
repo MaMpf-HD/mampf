@@ -12,9 +12,7 @@ class WatchlistEntriesController < ApplicationController
     @watchlist_entry.medium = @medium
     authorize! :create, @watchlist_entry
     @success = @watchlist_entry.save
-    if @success
-      flash[:notice] = I18n.t("watchlist_entry.add_success")
-    end
+    flash[:notice] = I18n.t("watchlist_entry.add_success") if @success
     respond_to do |format|
       format.js
     end

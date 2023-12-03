@@ -6,7 +6,7 @@ module AssignmentsHelper
     cancel_new_assignment_path(params: { lecture: assignment.lecture })
   end
 
-  def has_documents?(assignment)
+  def has_documents?(assignment) # rubocop:todo Naming/PredicateName
     return false unless assignment.medium
 
     assignment.medium.video || assignment.medium.manuscript ||

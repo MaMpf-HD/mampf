@@ -5,7 +5,7 @@ FactoryBot.define do
     transient do
       questions { Question.none }
       tags { Tag.none }
-      count { [3, 4, 5].sample }
+      count { [3, 4, 5].sample } # rubocop:todo Performance/CollectionLiteralInLoop
     end
 
     initialize_with { new(questions, tags, count) }

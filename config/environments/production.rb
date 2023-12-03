@@ -52,26 +52,26 @@ Rails.application.configure do
   config.log_level = :warn
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
 
   # Use a different cache store in production.
-  config.cache_store = :mem_cache_store, ENV["MEMCACHED_SERVER"]
+  config.cache_store = :mem_cache_store, ENV.fetch("MEMCACHED_SERVER", nil)
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "mampf_#{Rails.env}"
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { protocol: "https", host: ENV["URL_HOST"] }
+  config.action_mailer.default_url_options = { protocol: "https", host: ENV.fetch("URL_HOST", nil) }
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = false
-  config.action_mailer.default :charset => "utf-8"
+  config.action_mailer.default charset: "utf-8"
 
   config.action_mailer.smtp_settings = {
-    address: ENV["MAILSERVER"],
+    address: ENV.fetch("MAILSERVER", nil),
     port: 25,
-    domain: ENV["MAILSERVER"],
+    domain: ENV.fetch("MAILSERVER", nil)
   }
 
   # Ignore bad email addresses and do not raise email delivery errors.
@@ -87,7 +87,7 @@ Rails.application.configure do
   config.active_support.deprecation = :notify
 
   # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
+  config.log_formatter = Logger::Formatter.new
 
   # Use a different logger for distributed setups.
   # require 'syslog/logger'
@@ -120,5 +120,7 @@ Rails.application.configure do
   # these configuration options.
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
+  # rubocop:todo Layout/LineLength
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
+  # rubocop:enable Layout/LineLength
 end

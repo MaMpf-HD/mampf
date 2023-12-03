@@ -15,7 +15,7 @@ FactoryBot.define do
     end
 
     trait :inactive do
-      deadline { Faker::Time.backward(days: 30)}
+      deadline { Faker::Time.backward(days: 30) }
     end
 
     factory :valid_assignment, traits: [:with_lecture]

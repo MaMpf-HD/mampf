@@ -11,10 +11,12 @@ class Tutorial < ApplicationRecord
 
   before_destroy :check_destructibility, prepend: true
 
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   def title_with_tutors
-    return "#{title}, #{I18n.t('basics.tba')}" unless tutors.any?
+    return "#{title}, #{I18n.t("basics.tba")}" unless tutors.any?
 
     "#{title}, #{tutor_names}"
   end

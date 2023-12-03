@@ -14,7 +14,9 @@ class Course < ApplicationRecord
            after_remove: :touch_tag,
            after_add: :touch_tag
 
-  has_many :media, -> { order(position: :asc) }, as: :teachable
+  # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :media, -> { order(position: :asc) }, as: :teachable # rubocop:todo Rails/InverseOf
+  # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # in a course, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
@@ -35,8 +37,12 @@ class Course < ApplicationRecord
   has_many :division_course_joins, dependent: :destroy
   has_many :divisions, through: :division_course_joins
 
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, presence: true, uniqueness: true
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :short_title, presence: true, uniqueness: true
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   # some information about media and lectures are cached
   # to find out whether the cache is out of date, always touch'em after saving
@@ -123,8 +129,8 @@ class Course < ApplicationRecord
     return lectures.published unless user.edited_lectures.any? || user.teacher?
 
     lectures.left_outer_joins(:editable_user_joins)
-            .where("released IS NOT NULL OR editable_user_joins.user_id = ?"\
-                   " OR teacher_id = ?", user.id, user.id).distinct
+            .where("released IS NOT NULL OR editable_user_joins.user_id = ? " \
+                   "OR teacher_id = ?", user.id, user.id).distinct
   end
 
   def restricted?
@@ -291,7 +297,7 @@ class Course < ApplicationRecord
   def image_resolution
     return unless image
 
-    "#{image.metadata['width']}x#{image.metadata['height']}"
+    "#{image.metadata["width"]}x#{image.metadata["height"]}"
   end
 
   # returns all titles of courses whose title is close to the given search
@@ -324,7 +330,9 @@ class Course < ApplicationRecord
   private
 
     def touch_media
+      # rubocop:todo Rails/SkipsModelValidations
       media_with_inheritance.update_all(updated_at: Time.now)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def touch_tag(tag)
@@ -333,13 +341,15 @@ class Course < ApplicationRecord
     end
 
     def touch_lectures_and_lessons
-      lectures.update_all(updated_at: Time.now)
+      lectures.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      # rubocop:todo Rails/SkipsModelValidations
       Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     def create_quiz_by_questions!(question_ids)
       quiz_graph = QuizGraph.build_from_questions(question_ids)
-      Quiz.create(description: "#{I18n.t('categories.randomquiz.singular')} "\
+      Quiz.create(description: "#{I18n.t("categories.randomquiz.singular")} " \
                                "#{course.title} #{Time.now}",
                   level: 1,
                   quiz_graph: quiz_graph,

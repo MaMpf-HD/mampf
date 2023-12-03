@@ -1,5 +1,5 @@
 class QuizCertificate < ApplicationRecord
-  belongs_to :quiz, class_name: "Medium", foreign_key: "quiz_id"
+  belongs_to :quiz, class_name: "Medium" # rubocop:todo Rails/InverseOf
   belongs_to :user, optional: true
 
   before_create :set_code

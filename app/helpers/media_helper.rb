@@ -43,9 +43,7 @@ module MediaHelper
   # create text for notification about new medium in notification card
   def medium_notification_card_header(medium)
     teachable = medium.teachable
-    if teachable.media_scope.class.to_s == "Course"
-      return teachable.media_scope.title_for_viewers
-    end
+    return teachable.media_scope.title_for_viewers if teachable.media_scope.class.to_s == "Course"
 
     link_to(teachable.media_scope.title_for_viewers,
             medium.teachable.media_scope.path(current_user),
@@ -109,9 +107,7 @@ module MediaHelper
     return add_prompt(Medium.select_quizzables) if purpose == "quiz"
     return Medium.select_question if purpose == "clicker"
     return add_prompt(Medium.select_importables) if purpose == "import"
-    unless current_user.admin_or_editor?
-      return add_prompt(Medium.select_generic)
-    end
+    return add_prompt(Medium.select_generic) unless current_user.admin_or_editor?
 
     add_prompt(Medium.select_sorts)
   end
@@ -128,7 +124,7 @@ module MediaHelper
     hash = {}
     Medium.sort_enum.each do |s|
       media_in_s = media_list.select { |m| m.first.sort == s }
-      hash[s] = media_in_s unless media_in_s.blank?
+      hash[s] = media_in_s if media_in_s.present?
     end
     hash
   end
@@ -151,7 +147,6 @@ module MediaHelper
   def external_link_description_not_empty(medium)
     # Uses link display name if not empty, otherwise falls back to the
     # link url itself.
-    return medium.external_link_description.blank?\
-      ? medium.external_reference_link : medium.external_link_description
+    (medium.external_link_description.presence || medium.external_reference_link)
   end
 end

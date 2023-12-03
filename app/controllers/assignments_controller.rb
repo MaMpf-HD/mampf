@@ -16,6 +16,9 @@ class AssignmentsController < ApplicationController
     set_assignment_locale
   end
 
+  def edit
+  end
+
   def create
     @assignment = Assignment.new(assignment_params)
     authorize! :create, @assignment
@@ -23,9 +26,6 @@ class AssignmentsController < ApplicationController
     @errors = @assignment.errors
     @lecture = @assignment.lecture
     set_assignment_locale
-  end
-
-  def edit
   end
 
   def update

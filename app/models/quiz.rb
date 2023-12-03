@@ -5,7 +5,7 @@ class Quiz < Medium
                                        default_table: {}, hide_solution: []))
   end
 
-  def self.create_prefilled(label)
+  def self.create_prefilled(_label)
     Quiz.create(level: 1,
                 quiz_graph: QuizGraph.new(vertices: {}, edges: {}, root: 0,
                                           default_table: {}, hide_solution: []))
@@ -21,7 +21,7 @@ class Quiz < Medium
     vertices.keys.each do |v|
       quizzable = quizzable(v)
       next if quizzable.published?
-      next if !quizzable.teachable.published?
+      next unless quizzable.teachable.published?
       next unless user.in?(quizzable.editors_with_inheritance) || user.admin
 
       quizzable.update(released: release_state, released_at: Time.now)
@@ -100,9 +100,7 @@ class Quiz < Medium
     input
   end
 
-  def quizzable(vertex_id)
-    quiz_graph.quizzable(vertex_id)
-  end
+  delegate :quizzable, to: :quiz_graph
 
   def preselected_branch(vertex_id, crosses, fallback)
     successor = next_vertex(vertex_id, crosses)
@@ -137,6 +135,6 @@ class Quiz < Medium
 
     def target_vertex(progress, input)
       edges.select { |e, t| e[0] == progress && t.include?(input) }&.keys
-          &.first&.second || default_table[progress]
+           &.first&.second || default_table[progress]
     end
 end

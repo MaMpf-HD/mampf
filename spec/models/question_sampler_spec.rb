@@ -17,8 +17,8 @@ RSpec.describe QuestionSampler, type: :model do
       expect(question_sampler.sample!).to eq []
     end
 
-    it "returns an array with the correct length if not enough questions match"\
-       " the tags" do
+    it "returns an array with the correct length if not enough questions match " \
+       "the tags" do
       tags = Tag.where(id: FactoryBot.create_list(:tag, 3).map(&:id))
       @questions[0].tags << tags[0]
       @questions[1].tags << tags[1]

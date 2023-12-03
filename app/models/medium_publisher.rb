@@ -7,7 +7,7 @@ class MediumPublisher
               :assignment_file_type, :assignment_deadline,
               :assignment_deletion_date
 
-  def initialize(medium_id:, user_id:, release_now:,
+  def initialize(medium_id:, user_id:, release_now:, # rubocop:todo Metrics/ParameterLists
                  release_for: "all", release_date: nil,
                  lock_comments: false, vertices: false,
                  create_assignment: false, assignment_title: "",
@@ -131,7 +131,9 @@ class MediumPublisher
     def create_notifications!
       @medium.teachable&.media_scope&.touch
       notifications = []
+      # rubocop:todo Rails/SkipsModelValidations
       @medium.teachable.media_scope.users.update_all(updated_at: Time.zone.now)
+      # rubocop:enable Rails/SkipsModelValidations
       @medium.teachable.media_scope.users.each do |u|
         notifications << Notification.new(recipient: u,
                                           notifiable_id: @medium.id,

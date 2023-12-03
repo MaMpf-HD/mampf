@@ -20,8 +20,8 @@ FactoryBot.define do
     end
 
     trait :with_date
-      dates do
-        [ Faker::Date.in_date_period ]
+    dates do
+      [Faker::Date.in_date_period]
     end
 
     trait :with_speaker do

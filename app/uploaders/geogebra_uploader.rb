@@ -9,7 +9,7 @@ class GeogebraUploader < Shrine
   plugin :derivatives
 
   Attacher.validate do
-    validate_mime_type_inclusion %w[application/zip],
+    validate_mime_type_inclusion ["application/zip"],
                                  message: "falscher MIME-Typ"
   end
 

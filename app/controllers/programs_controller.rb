@@ -7,17 +7,12 @@ class ProgramsController < ApplicationController
     @current_ability ||= ProgramAbility.new(current_user)
   end
 
-  def edit
-  end
-
   def new
     @program = Program.new(subject_id: params[:subject_id].to_i)
     authorize! :new, @program
   end
 
-  def update
-    @program.update(program_params)
-    redirect_to classification_path
+  def edit
   end
 
   def create
@@ -25,6 +20,11 @@ class ProgramsController < ApplicationController
     @program.subject_id = params[:program][:subject_id].to_i
     authorize! :create, @program
     @program.save
+    redirect_to classification_path
+  end
+
+  def update
+    @program.update(program_params)
     redirect_to classification_path
   end
 

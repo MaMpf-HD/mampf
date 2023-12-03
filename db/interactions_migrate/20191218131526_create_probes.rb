@@ -3,7 +3,7 @@ class CreateProbes < ActiveRecord::Migration[6.0]
     create_table :probes do |t|
       t.integer :question_id
       t.integer :quiz_id
-      t.boolean :correct
+      t.boolean :correct # rubocop:todo Rails/ThreeStateBooleanColumn
       t.text :session_id
 
       t.timestamps

@@ -30,7 +30,7 @@ RSpec.describe TeachableParser, type: :model do
       expect(teachable_parser.teachables_as_strings).to eq([])
     end
 
-    it "returns the given teachable strings if teachable_inheritance flag"\
+    it "returns the given teachable strings if teachable_inheritance flag" \
        "is not set" do
       teachable_parser = FactoryBot.build(:teachable_parser,
                                           teachable_ids: [@course1_str],
@@ -39,7 +39,7 @@ RSpec.describe TeachableParser, type: :model do
         .to eq([@course1_str])
     end
 
-    it "returns inherited teachables as strings if teachable_inheritance"\
+    it "returns inherited teachables as strings if teachable_inheritance" \
        "flag is set (#1)" do
       teachable_parser = FactoryBot.build(:teachable_parser,
                                           teachable_ids: [@course1_str],

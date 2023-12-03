@@ -4,8 +4,8 @@
 
 begin
   require "database_cleaner"
- rescue LoadError => e
-   puts e.message
+rescue LoadError => e
+  puts e.message
 end
 
 begin
@@ -29,6 +29,6 @@ CypressOnRails::SmartFactoryWrapper.configure(
   always_reload: !Rails.configuration.cache_classes,
   factory: factory,
   files: [
-    Rails.root.join("spec", "factories", "**", "*.rb")
+    Rails.root.join("spec/factories/**/*.rb")
   ]
 )

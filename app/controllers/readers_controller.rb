@@ -27,7 +27,7 @@ class ReadersController < ApplicationController
     end
     Reader.import new_readers
     Reader.where(user: current_user, thread: threads)
-          .update_all(updated_at: Time.now)
+          .update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
     current_user.update(unread_comments: false)
   end
 

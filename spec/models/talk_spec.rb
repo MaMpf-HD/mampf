@@ -63,19 +63,19 @@ RSpec.describe Talk, type: :model do
 
   context "title methods" do
     before :all do
-      I18n.locale = "de"
+      I18n.locale = "de" # rubocop:todo Rails/I18nLocaleAssignment
       course = FactoryBot.build(:course, title: "Algebra 1",
-                                short_title: "Alg1")
+                                         short_title: "Alg1")
       term = FactoryBot.build(:term, season: "SS", year: 2020)
       lecture = FactoryBot.build(:lecture, course: course, term: term)
       FactoryBot.create(:talk, lecture: lecture, title: "total bs")
       @talk = FactoryBot.create(:talk, lecture: lecture,
-                                      title: "even more bs")
+                                       title: "even more bs")
     end
 
     describe "#to_label" do
       it "returns the correct label" do
-        I18n.locale = "de"
+        I18n.locale = "de" # rubocop:todo Rails/I18nLocaleAssignment
         expect(@talk.to_label).to eq "Vortrag 2. even more bs"
       end
     end
@@ -133,12 +133,12 @@ RSpec.describe Talk, type: :model do
 
   context "locale methods" do
     before :all do
-      I18n.locale = "de"
+      I18n.locale = "de" # rubocop:todo Rails/I18nLocaleAssignment
       course = FactoryBot.build(:course, title: "Algebra 1",
-                                short_title: "Alg1")
+                                         short_title: "Alg1")
       term = FactoryBot.build(:term, season: "SS", year: 2020)
       lecture = FactoryBot.build(:lecture, course: course, term: term,
-                                 locale: "br")
+                                           locale: "br")
       @talk = FactoryBot.create(:talk, lecture: lecture)
     end
 
@@ -192,23 +192,23 @@ RSpec.describe Talk, type: :model do
     end
 
     describe "#proper_media" do
-      it "returns the array of media associated to the talk that are neither "\
+      it "returns the array of media associated to the talk that are neither " \
          "Questions nor Remarks" do
         talk = FactoryBot.create(:valid_talk)
         medium1 = FactoryBot.create(:talk_medium, teachable: talk,
-                                    sort: "Kaviar")
+                                                  sort: "Kaviar")
         medium2 = FactoryBot.create(:talk_medium, teachable: talk,
-                                    sort: "Sesam")
+                                                  sort: "Sesam")
         medium3 = FactoryBot.create(:talk_medium, teachable: talk,
-                                    sort: "Question")
+                                                  sort: "Question")
         medium4 = FactoryBot.create(:talk_medium, teachable: talk,
-                                    sort: "Remark")
+                                                  sort: "Remark")
         expect(talk.proper_media).to match_array([medium1, medium2])
       end
     end
 
     describe "#card_header_path" do
-      it "returns the path for the talk if the user is subscribed to the "\
+      it "returns the path for the talk if the user is subscribed to the " \
          "seminar" do
         lecture = FactoryBot.build(:lecture)
         user = FactoryBot.create(:confirmed_user)

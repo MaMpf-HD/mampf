@@ -603,7 +603,7 @@ RSpec.describe Course, type: :model do
 
     describe "self.editable_selection" do
       context "if user is admin" do
-        it "returns all Courses encoded as strings together with their title "\
+        it "returns all Courses encoded as strings together with their title " \
            "for viewers, ordered by title" do
           expect(Course.editable_selection(@admin))
             .to eq([["Ana1", "Course-#{@course4.id}"],
@@ -613,7 +613,7 @@ RSpec.describe Course, type: :model do
         end
       end
       context "if user is non-admin" do
-        it "returns edited Courses encoded as strings together with their "\
+        it "returns edited Courses encoded as strings together with their " \
            "title for viewers, ordered by title" do
           expect(Course.editable_selection(@user))
             .to eq([["LA1", "Course-#{@course3.id}"],
@@ -694,7 +694,7 @@ RSpec.describe Course, type: :model do
     end
 
     describe "#questions_count" do
-      it "returns the correct number of questions (released, in course or "\
+      it "returns the correct number of questions (released, in course or " \
          "published lectures, independent)" do
         expect(@course.questions_count).to eq 13
       end
@@ -775,7 +775,7 @@ RSpec.describe Course, type: :model do
         expect(@course.create_random_quiz!([], 5).find_errors).to eq([])
       end
 
-      it "returns a valid quiz if question_count is higher than amount of "\
+      it "returns a valid quiz if question_count is higher than amount of " \
          "tagged questions" do
         expect(@course.create_random_quiz!(@course_tags, 10)).to be_valid
       end
@@ -909,7 +909,7 @@ RSpec.describe Course, type: :model do
     it "returns courses whose title is similar to a given string (#2)" do
       expect(Course.similar_courses("Algbera"))
         .to match_array(["Algebra 1", "Algebra 2"])
-      end
+    end
 
     it "returns courses whose title is similar to a given string (#3)" do
       expect(Course.similar_courses("Ara")).to eq([])
@@ -925,9 +925,9 @@ RSpec.describe Course, type: :model do
       @program1 = FactoryBot.create(:program, name: "BSc100", subject: subject)
       @program2 = FactoryBot.create(:program, name: "BSc50", subject: subject)
       division1 = FactoryBot.create(:division, name: "Pflichtmodule",
-                                    program: @program1 )
+                                               program: @program1)
       division2 = FactoryBot.create(:division, name: "Pflichtmodule",
-                                    program: @program2 )
+                                               program: @program2)
       @course1 = FactoryBot.create(:course, title: "Analysis 1",
                                             editors: [@editor1])
       @course2 = FactoryBot.create(:course, title: "Analysis 2",

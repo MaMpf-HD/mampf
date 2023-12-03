@@ -13,7 +13,7 @@ RSpec.describe Watchlist, type: :model do
 
   it "must have a unique name" do
     first_watchlist = FactoryBot.create(:watchlist, :with_user)
-    second_watchlist = Watchlist.new(user_id: first_watchlist.user_id, name:first_watchlist.name)
+    second_watchlist = Watchlist.new(user_id: first_watchlist.user_id, name: first_watchlist.name)
     expect(second_watchlist).to be_invalid
   end
 
