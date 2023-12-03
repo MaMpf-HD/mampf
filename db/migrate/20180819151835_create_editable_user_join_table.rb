@@ -1,6 +1,7 @@
+# rubocop:disable Rails/
 class CreateEditableUserJoinTable < ActiveRecord::Migration[5.2]
   def change
-    create_table :editable_user_joins do |t| # rubocop:todo Rails/CreateTableWithTimestamps
+    create_table :editable_user_joins do |t|
       t.integer :editable_id
       t.string  :editable_type
       t.integer :user_id
@@ -11,3 +12,4 @@ class CreateEditableUserJoinTable < ActiveRecord::Migration[5.2]
               name: "polymorphic_editable_idx"
   end
 end
+# rubocop:enable Rails/

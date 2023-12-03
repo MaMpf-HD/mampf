@@ -1,6 +1,7 @@
+# rubocop:disable Rails/
 class RemoveALotOfColumnsFromMedium < ActiveRecord::Migration[5.2]
   def change
-    remove_column :media, :width, :integer # rubocop:todo Rails/BulkChangeTable
+    remove_column :media, :width, :integer
     remove_column :media, :height, :integer
     remove_column :media, :embedded_width, :integer
     remove_column :media, :embedded_height, :integer
@@ -12,3 +13,4 @@ class RemoveALotOfColumnsFromMedium < ActiveRecord::Migration[5.2]
     remove_column :media, :video_player, :string
   end
 end
+# rubocop:enable Rails/

@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
   def up
     remove_index :user_submission_joins,
@@ -22,12 +23,11 @@ class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
     klass.where.not(foreign_key => nil).each do |record|
       next unless associated_record = relation_klass.find_by(id: record.send(foreign_key))
 
-      # rubocop:todo Rails/SkipsModelValidations
       record.update_column(new_foreign_key, associated_record.uuid)
-      # rubocop:enable Rails/SkipsModelValidations
     end
 
     remove_column table_name, foreign_key
     rename_column table_name, new_foreign_key, foreign_key
   end
 end
+# rubocop:enable Rails/
