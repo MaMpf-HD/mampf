@@ -68,6 +68,15 @@ Performance:
 Performance/FlatMap:
   Severity: warning # an error in CI/CD
 
+
+#############################################
+# Rails
+#############################################
+
+Rails/SkipsModelValidations:
+  AllowedMethods: ["touch"]
+
+
 #############################################
 # Style
 #############################################
