@@ -274,9 +274,9 @@ class Tag < ApplicationRecord
 
     question_ids = questions.pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
-    # rubocop:todo Layout/LineLength
-    quiz = Quiz.new(description: "#{I18n.t("categories.randomquiz.singular")} #{title} #{Time.zone.now}",
-                    # rubocop:enable Layout/LineLength
+
+    quiz_i18n = I18n.t("categories.randomquiz.singular")
+    quiz = Quiz.new(description: "#{quiz_i18n} #{title} #{Time.zone.now}",
                     level: 1,
                     quiz_graph: quiz_graph,
                     sort: "RandomQuiz")

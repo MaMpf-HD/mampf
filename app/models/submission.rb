@@ -106,9 +106,12 @@ class Submission < ApplicationRecord
   # end
 
   def filename_for_bulk_download(end_of_file = "")
-    # rubocop:todo Layout/LineLength
-    "#{team.first(180)}-#{last_modification_by_users_at.strftime("%F-%H%M")}#{too_late? ? "-LATE" : ""}#{+ "-ID-"}#{id}#{end_of_file}#{assignment.accepted_file_type}"
-      # rubocop:enable Layout/LineLength
+    start_str = "#{team.first(180)}-#{last_modification_by_users_at.strftime("%F-%H%M")}"
+    too_late_str = too_late? ? "-LATE" : ""
+    id_str = "-ID-#{id}"
+    end_of_file_str = "#{end_of_file}#{assignment.accepted_file_type}"
+
+    "#{start_str}#{too_late_str}#{id_str}#{end_of_file_str}"
       .gsub(%r{[\x00/\\:\*\?\"<>\|]}, "_")
       .gsub(%r{^.*(\\|/)}, "")
       # Strip out the non-ascii characters

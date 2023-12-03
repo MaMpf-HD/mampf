@@ -79,9 +79,9 @@ class Lesson < ApplicationRecord
 
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
-      # rubocop:todo Layout/LineLength
-      "#{lecture.title_for_viewers}, #{I18n.t("lesson")} #{number} #{I18n.t("from")} #{date_localized}"
-      # rubocop:enable Layout/LineLength
+      lesson_str = "#{I18n.t("lesson")} #{number}"
+      date_str = "#{I18n.t("from")} #{date_localized}"
+      "#{lecture.title_for_viewers}, #{lesson_str} #{date_str}"
     end
   end
 

@@ -24,11 +24,11 @@ class NotificationMailer < ApplicationMailer
 
   def medium_email
     @medium = params[:medium]
+    subject = t("mailer.medium_subject")
+    viewer_title = @medium.teachable.media_scope.title_for_viewers
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         # rubocop:todo Layout/LineLength
-         subject: "#{t("mailer.medium_subject")} #{t("in")} #{@medium.teachable.media_scope.title_for_viewers}")
-    # rubocop:enable Layout/LineLength
+         subject: "#{subject} #{t("in")} #{viewer_title}")
   end
 
   def announcement_email
