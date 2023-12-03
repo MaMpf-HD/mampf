@@ -219,11 +219,11 @@ class LecturesController < ApplicationController
     if @lecture.structure_ids.any?
       response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/search")
       @form = JSON.parse(response.body)["embedded_html"]
+      # rubocop:disable Style/StringConcatenation
       @form.gsub!("token_placeholder",
-                  # rubocop:todo Style/StringConcatenation
                   '<input type="hidden" name="authenticity_token" ' \
                   'value="' + form_authenticity_token + '">')
-    # rubocop:enable Style/StringConcatenation
+      # rubocop:enable Style/StringConcatenation
     else
       @form = I18n.t("erdbeere.no_structures")
     end

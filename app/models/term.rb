@@ -108,7 +108,7 @@ class Term < ApplicationRecord
   end
 
   # array of all terms together with their ids for use in options_for_select
-  def self.select_terms(independent = false) # rubocop:todo Style/OptionalBooleanParameter
+  def self.select_terms(independent: false)
     return ["bla", nil] if independent
 
     Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
