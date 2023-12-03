@@ -18,7 +18,7 @@ class MampfMatrix
         "matrix([0,0],[0,0]")
   end
 
-  def entry(i, j) # rubocop:todo Naming/MethodParameterName
+  def entry(i, j) # rubocop:disable Naming/MethodParameterName
     return "0" if i > @row_count || j > @column_count
 
     @coefficients[((i - 1) * @column_count) + (j - 1)]

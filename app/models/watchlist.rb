@@ -7,9 +7,7 @@ class Watchlist < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :user_id }
   # rubocop:enable Rails/UniqueValidationWithoutIndex
 
-  # rubocop:todo Naming/VariableName
-  def owned_by?(otherUser) # rubocop:todo Naming/MethodParameterName, Naming/VariableName
-    # rubocop:enable Naming/VariableName
-    user == otherUser # rubocop:todo Naming/VariableName
+  def owned_by?(other_user)
+    user == other_user
   end
 end

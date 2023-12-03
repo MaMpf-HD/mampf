@@ -650,10 +650,6 @@ class User < ApplicationRecord
     given_tutorials.where(lecture: lecture)
   end
 
-  def has_tutorials?(lecture) # rubocop:todo Naming/PredicateName
-    !given_tutorials.where(lecture: lecture).empty?
-  end
-
   def proper_submissions_count
     submissions.proper.size
   end

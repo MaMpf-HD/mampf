@@ -107,7 +107,7 @@ class Assignment < ApplicationRecord
     true
   end
 
-  def has_documents? # rubocop:todo Naming/PredicateName
+  def documents?
     return false unless medium
 
     medium.video || medium.manuscript || medium.geogebra ||

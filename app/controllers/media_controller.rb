@@ -405,7 +405,7 @@ class MediaController < ApplicationController
     head :ok
   end
 
-  def get_statistics # rubocop:todo Naming/AccessorMethodName
+  def statistics
     I18n.locale = @medium.locale || I18n.default_locale
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?

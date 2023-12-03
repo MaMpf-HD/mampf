@@ -340,9 +340,9 @@ Rails.application.routes.draw do
        to: "media#register_download",
        as: "register_download"
 
-  get "media/:id/get_statistics",
-      to: "media#get_statistics",
-      as: "get_statistics"
+  get "media/:id/statistics",
+      to: "media#statistics",
+      as: "statistics"
 
   get "media/:id/show_comments",
       to: "media#show_comments",

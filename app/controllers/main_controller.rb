@@ -10,7 +10,7 @@ class MainController < ApplicationController
 
   def home
     cookies[:locale] = current_user.locale if user_signed_in?
-    get_announcements
+    announcements
   end
 
   def error
@@ -43,7 +43,7 @@ class MainController < ApplicationController
                                                                    :term)
                                        .sort
     end
-    get_announcements
+    announcements
     @talks = current_user.talks.includes(lecture: :term)
                          .select { |t| t.visible_for_user?(current_user) }
                          .sort_by do |t|
@@ -60,7 +60,7 @@ class MainController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    def get_announcements # rubocop:todo Naming/AccessorMethodName
+    def announcements
       @announcements = Announcement.where(on_main_page: true, lecture: nil)
                                    .pluck(:details)
                                    .join('<hr class="my-3" w-100>')

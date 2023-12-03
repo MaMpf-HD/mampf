@@ -1061,17 +1061,17 @@ class Medium < ApplicationRecord
     becomes(Remark)
   end
 
-  def containingWatchlists(user) # rubocop:todo Naming/MethodName
+  def containing_watchlists(user)
     Watchlist.where(id: WatchlistEntry.where(medium: self).pluck(:watchlist_id),
                     user: user)
   end
 
-  def containingWatchlistsNames(user) # rubocop:todo Naming/MethodName
-    watchlists = containingWatchlists(user)
+  def containing_watchlists_names(user)
+    watchlists = containing_watchlists(user)
     if watchlists.empty?
       ""
     else
-      containingWatchlists(user).pluck(:name)
+      watchlists.pluck(:name)
     end
   end
 
