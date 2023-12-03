@@ -13,9 +13,7 @@ class MathiMailer < ApplicationMailer
   def data_request_email(user)
     @mail = user.email
     @id = user.id
-    # rubocop:todo Rails/I18nLocaleTexts
-    mail(to: DefaultSetting::PROJECT_EMAIL, subject: "Data request")
-    # rubocop:enable Rails/I18nLocaleTexts
+    mail(to: DefaultSetting::PROJECT_EMAIL, subject: t("mailer.data_provide_mail_subject"))
   end
 
   def data_provide_email(user)

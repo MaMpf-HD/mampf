@@ -63,20 +63,22 @@ RSpec.describe Talk, type: :model do
 
   context "title methods" do
     before :all do
-      I18n.locale = "de" # rubocop:todo Rails/I18nLocaleAssignment
-      course = FactoryBot.build(:course, title: "Algebra 1",
-                                         short_title: "Alg1")
-      term = FactoryBot.build(:term, season: "SS", year: 2020)
-      lecture = FactoryBot.build(:lecture, course: course, term: term)
-      FactoryBot.create(:talk, lecture: lecture, title: "total bs")
-      @talk = FactoryBot.create(:talk, lecture: lecture,
-                                       title: "even more bs")
+      I18n.with_locale(:de) do
+        course = FactoryBot.build(:course, title: "Algebra 1",
+                                           short_title: "Alg1")
+        term = FactoryBot.build(:term, season: "SS", year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term)
+        FactoryBot.create(:talk, lecture: lecture, title: "total bs")
+        @talk = FactoryBot.create(:talk, lecture: lecture,
+                                         title: "even more bs")
+      end
     end
 
     describe "#to_label" do
       it "returns the correct label" do
-        I18n.locale = "de" # rubocop:todo Rails/I18nLocaleAssignment
-        expect(@talk.to_label).to eq "Vortrag 2. even more bs"
+        I18n.with_locale(:de) do
+          expect(@talk.to_label).to eq "Vortrag 2. even more bs"
+        end
       end
     end
 
@@ -133,13 +135,14 @@ RSpec.describe Talk, type: :model do
 
   context "locale methods" do
     before :all do
-      I18n.locale = "de" # rubocop:todo Rails/I18nLocaleAssignment
-      course = FactoryBot.build(:course, title: "Algebra 1",
-                                         short_title: "Alg1")
-      term = FactoryBot.build(:term, season: "SS", year: 2020)
-      lecture = FactoryBot.build(:lecture, course: course, term: term,
-                                           locale: "br")
-      @talk = FactoryBot.create(:talk, lecture: lecture)
+      I18n.with_locale(:de) do
+        course = FactoryBot.build(:course, title: "Algebra 1",
+                                           short_title: "Alg1")
+        term = FactoryBot.build(:term, season: "SS", year: 2020)
+        lecture = FactoryBot.build(:lecture, course: course, term: term,
+                                             locale: "br")
+        @talk = FactoryBot.create(:talk, lecture: lecture)
+      end
     end
 
     describe "#locale" do
