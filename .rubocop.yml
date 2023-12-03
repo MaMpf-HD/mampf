@@ -76,6 +76,8 @@ Performance/FlatMap:
 Rails/SkipsModelValidations:
   AllowedMethods: ["touch"]
 
+Rails/UnknownEnv:
+  Environments: [development, test, production, docker_development]
 
 #############################################
 # Style
