@@ -30,7 +30,7 @@ class PdfUploader < Shrine
           # extract lines that correspond to MaMpf-Label entries from LaTEX
           # package mampf.sty
           structure = if File.file?(structure_path)
-            open(structure_path, "r") do |io| # rubocop:todo Security/Open
+            File.open(structure_path, "r") do |io|
               io.read.encode("UTF-8", invalid: :replace)
             end
           end
