@@ -117,10 +117,8 @@ RSpec.describe MediumPublisher, type: :model do
       medium.editors << user
       user.lectures << lecture
       lecture.editors << user
-      # rubocop:todo Rails/SkipsModelValidations
-      medium.questions.update_all(teachable_type: "Lecture",
-                                  # rubocop:enable Rails/SkipsModelValidations
-                                  teachable_id: lecture.id)
+      medium.questions.update(teachable_type: "Lecture",
+                              teachable_id: lecture.id)
       publisher = FactoryBot.build(:medium_publisher,
                                    medium_id: medium.id,
                                    user_id: user.id,

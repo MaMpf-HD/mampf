@@ -810,9 +810,9 @@ class User < ApplicationRecord
     def transfer_contributions_to(user)
       return false unless user && user.valid? && user != self
 
-      given_lectures.update_all(teacher_id: user.id) # rubocop:todo Rails/SkipsModelValidations
+      given_lectures.update(teacher_id: user.id)
       EditableUserJoin.where(user: self, editable_type: "Medium")
-                      .update_all(user_id: user.id) # rubocop:todo Rails/SkipsModelValidations
+                      .update(user_id: user.id)
     end
 
     def archive_user(archive_name)

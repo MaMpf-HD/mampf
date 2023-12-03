@@ -334,20 +334,16 @@ class Tag < ApplicationRecord
 
   def touch_lectures
     Lecture.where(id: sections.map(&:lecture)
-                              # rubocop:todo Rails/SkipsModelValidations
-                              .map(&:id)).update_all updated_at: Time.now
-    # rubocop:enable Rails/SkipsModelValidations
+                              .map(&:id)).update updated_at: Time.current
   end
 
   def touch_sections
-    sections.update_all updated_at: Time.now # rubocop:todo Rails/SkipsModelValidations
+    sections.update updated_at: Time.current
   end
 
   def touch_chapters
     Chapter.where(id: sections.map(&:chapter)
-                              # rubocop:todo Rails/SkipsModelValidations
-                              .map(&:id)).update_all updated_at: Time.now
-    # rubocop:enable Rails/SkipsModelValidations
+                              .map(&:id)).update updated_at: Time.current
   end
 
   def identify_with!(tag)
@@ -366,7 +362,7 @@ class Tag < ApplicationRecord
       new_section_tag.insert_at(position)
       old_section_tag.move_to_bottom
     end
-    tag.aliases.update_all(aliased_tag_id: id) # rubocop:todo Rails/SkipsModelValidations
+    tag.aliases.update(aliased_tag_id: id)
   end
 
   def common_titles(tag)

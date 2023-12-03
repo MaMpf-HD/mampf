@@ -332,9 +332,7 @@ class Course < ApplicationRecord
   private
 
     def touch_media
-      # rubocop:todo Rails/SkipsModelValidations
-      media_with_inheritance.update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      media_with_inheritance.update(updated_at: Time.current)
     end
 
     def touch_tag(tag)
@@ -343,16 +341,14 @@ class Course < ApplicationRecord
     end
 
     def touch_lectures_and_lessons
-      lectures.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
-      # rubocop:todo Rails/SkipsModelValidations
-      Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      lectures.update(updated_at: Time.current)
+      Lesson.where(lecture: lectures).update(updated_at: Time.current)
     end
 
     def create_quiz_by_questions!(question_ids)
       quiz_graph = QuizGraph.build_from_questions(question_ids)
       Quiz.create(description: "#{I18n.t("categories.randomquiz.singular")} " \
-                               "#{course.title} #{Time.now}",
+                               "#{course.title} #{Time.current}",
                   level: 1,
                   quiz_graph: quiz_graph,
                   sort: "RandomQuiz",

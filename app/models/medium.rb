@@ -448,9 +448,7 @@ class Medium < ApplicationRecord
 
     irrelevant_items.delete_all
     result = missing_items_outside_quarantine.pluck(:pdf_destination)
-    # rubocop:todo Rails/SkipsModelValidations
-    missing_items_outside_quarantine.update_all(quarantine: true)
-    # rubocop:enable Rails/SkipsModelValidations
+    missing_items_outside_quarantine.update(quarantine: true)
     result
   end
 

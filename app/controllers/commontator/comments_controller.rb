@@ -203,7 +203,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
       relevant_users = medium.teachable.media_scope.users
       relevant_users.where.not(id: current_user.id)
                     .where(unread_comments: false)
-                    .update_all(unread_comments: true) # rubocop:todo Rails/SkipsModelValidations
+                    .update(unread_comments: true)
 
       # make sure that the thread associated to this comment is marked as read
       # by the comment creator (unless some other user posted a comment in it

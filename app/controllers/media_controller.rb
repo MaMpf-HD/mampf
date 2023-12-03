@@ -111,9 +111,7 @@ class MediaController < ApplicationController
     # update the associated tags), causing trouble for caching)
     @medium.touch
     # touch lectures that import this medium
-    # rubocop:todo Rails/SkipsModelValidations
-    @medium.importing_lectures.update_all(updated_at: Time.now)
-    # rubocop:enable Rails/SkipsModelValidations
+    @medium.importing_lectures.update(updated_at: Time.current)
     @medium.sanitize_type!
     # detach components if this was chosen by the user
     detach_components

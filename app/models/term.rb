@@ -137,17 +137,13 @@ class Term < ApplicationRecord
     end
 
     def touch_lectures_and_lessons
-      lectures.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
-      # rubocop:todo Rails/SkipsModelValidations
-      Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      lectures.update(updated_at: Time.current)
+      Lesson.where(lecture: lectures).update(updated_at: Time.current)
     end
 
     def touch_media
-      # rubocop:todo Rails/SkipsModelValidations
-      Medium.where(teachable: lectures).update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      Medium.where(teachable: lectures).update(updated_at: Time.current)
       Medium.where(teachable: Lesson.where(lecture: lectures))
-            .update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+            .update(updated_at: Time.current)
     end
 end

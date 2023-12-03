@@ -125,9 +125,7 @@ class LecturesController < ApplicationController
     @lecture.update(released: "all")
     if params[:medium][:publish_media] == "1"
       @lecture.media_with_inheritance
-              # rubocop:todo Rails/SkipsModelValidations
-              .update_all(released: params[:medium][:released])
-      # rubocop:enable Rails/SkipsModelValidations
+              .update(released: params[:medium][:released])
     end
     # create notifications about creation od this lecture and send email
     create_notifications

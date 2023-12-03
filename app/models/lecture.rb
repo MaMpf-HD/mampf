@@ -902,30 +902,24 @@ class Lecture < ApplicationRecord
     end
 
     def touch_media
-      # rubocop:todo Rails/SkipsModelValidations
-      media_with_inheritance.update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      media_with_inheritance.update(updated_at: Time.current)
     end
 
     def touch_lessons
-      lessons.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      lessons.update(updated_at: Time.current)
     end
 
     def touch_siblings(_lesson)
-      lessons.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
-      # rubocop:todo Rails/SkipsModelValidations
-      Medium.where(teachable: lessons).update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      lessons.update(updated_at: Time.current)
+      Medium.where(teachable: lessons).update(updated_at: Time.current)
     end
 
     def touch_chapters
-      chapters.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      chapters.update(updated_at: Time.current)
     end
 
     def touch_sections
-      # rubocop:todo Rails/SkipsModelValidations
-      Section.where(chapter: chapters).update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      Section.where(chapter: chapters).update(updated_at: Time.current)
     end
 
     def destroy_forum

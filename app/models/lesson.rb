@@ -299,17 +299,15 @@ class Lesson < ApplicationRecord
 
     # used for after save callback
     def touch_media
-      # rubocop:todo Rails/SkipsModelValidations
-      lecture.media_with_inheritance.update_all(updated_at: Time.now)
-      # rubocop:enable Rails/SkipsModelValidations
+      lecture.media_with_inheritance.update(updated_at: Time.current)
     end
 
     def touch_siblings
-      lecture.lessons.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      lecture.lessons.update(updated_at: Time.current)
     end
 
     def touch_sections
-      sections.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      sections.update(updated_at: Time.current)
       chapters = sections.map(&:chapter)
       sections.map(&:chapter).each(&:touch)
       lecture.touch
@@ -320,7 +318,7 @@ class Lesson < ApplicationRecord
     end
 
     def touch_tags
-      tags.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      tags.update(updated_at: Time.current)
     end
 
     def touch_section(section)

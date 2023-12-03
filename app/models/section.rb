@@ -188,9 +188,7 @@ class Section < ApplicationRecord
     end
 
     def touch_media
-      # rubocop:todo Rails/SkipsModelValidations
-      lecture.media_with_inheritance.update_all(updated_at: Time.current)
-      # rubocop:enable Rails/SkipsModelValidations
+      lecture.media_with_inheritance.update(updated_at: Time.current)
       touch
     end
 
@@ -201,8 +199,8 @@ class Section < ApplicationRecord
     def touch_toc
       return unless lecture.absolute_numbering
 
-      lecture.chapters.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
-      lecture.sections.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      lecture.chapters.update(updated_at: Time.current)
+      lecture.sections.update(updated_at: Time.current)
     end
 
     def relative_position

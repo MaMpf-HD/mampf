@@ -71,16 +71,14 @@ class Chapter < ApplicationRecord
   end
 
   def touch_chapters
-    lecture.chapters.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+    lecture.chapters.update(updated_at: Time.current)
   end
 
   def touch_sections
     unless lecture.absolute_numbering
-      sections.update_all(updated_at: Time.now) # rubocop:todo Rails/SkipsModelValidations
+      sections.update(updated_at: Time.current)
       return
     end
-    # rubocop:todo Rails/SkipsModelValidations
-    Section.where(chapter: lecture.chapters).update_all(updated_at: Time.now)
-    # rubocop:enable Rails/SkipsModelValidations
+    Section.where(chapter: lecture.chapters).update(updated_at: Time.current)
   end
 end
