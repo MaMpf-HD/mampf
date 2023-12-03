@@ -10,10 +10,10 @@ class Answer < ApplicationRecord
       return explanation
     end
     unless correct
-      return explanation.string_between_markers(':(inkorrekt:', ')')
+      return explanation.string_between_markers(":(inkorrekt:", ")")
     end
 
-    explanation.string_between_markers('(korrekt:', '):')
+    explanation.string_between_markers("(korrekt:", "):")
   end
 
   def duplicate(new_question)

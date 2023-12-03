@@ -39,7 +39,7 @@ class ProgramsController < ApplicationController
       @program = Program.find_by_id(params[:id])
       return if @program.present?
 
-      redirect_to root_path, alert: I18n.t('controllers.no_program')
+      redirect_to root_path, alert: I18n.t("controllers.no_program")
     end
 
     def program_params

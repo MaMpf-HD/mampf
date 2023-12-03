@@ -3,7 +3,7 @@ class AddReleaseInfosToMedium < ActiveRecord::Migration[6.0]
     add_column :media, :released_at, :datetime
     add_column :media, :release_date, :datetime
 
-    Medium.where(released: ['all', 'users', 'subscribers']).each do |m|
+    Medium.where(released: ["all", "users", "subscribers"]).each do |m|
       m.update_columns(released_at: m.created_at)
     end
   end

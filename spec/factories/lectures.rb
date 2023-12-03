@@ -6,8 +6,8 @@ FactoryBot.define do
     association :teacher, factory: :confirmed_user
     association :term
 
-    content_mode { 'video' }
-    sort { 'lecture' }
+    content_mode { "video" }
+    sort { "lecture" }
 
     transient do
       chapter_count { 3 }
@@ -19,7 +19,7 @@ FactoryBot.define do
     end
 
     trait :released_for_all do
-      released { 'all' }
+      released { "all" }
     end
 
     trait :term_independent do
@@ -45,7 +45,7 @@ FactoryBot.define do
     end
 
     trait :is_seminar do
-      sort { 'seminar' }
+      sort { "seminar" }
     end
 
     trait :with_forum do

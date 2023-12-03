@@ -31,23 +31,23 @@ class Term < ApplicationRecord
   end
 
   def begin_date
-    season == 'SS' ? Date.new(year, 4, 1) : Date.new(year, 10, 1)
+    season == "SS" ? Date.new(year, 4, 1) : Date.new(year, 10, 1)
   end
 
   def end_date
-    season == 'SS' ? Date.new(year, 9, 30) : Date.new(year + 1, 3, 31)
+    season == "SS" ? Date.new(year, 9, 30) : Date.new(year + 1, 3, 31)
   end
 
   # label contains season and year(s) with all digits
   def to_label
     return unless season.present?
 
-    season + ' ' + year_corrected
+    season + " " + year_corrected
   end
 
   # short label contains season and year(s) with two digits
   def to_label_short
-    season + ' ' + year_corrected_short
+    season + " " + year_corrected_short
   end
 
   def compact_title
@@ -55,8 +55,8 @@ class Term < ApplicationRecord
   end
 
   def previous
-    previous_year = season == 'WS' ? year : year - 1
-    previous_season = season == 'WS' ? 'SS' : 'WS'
+    previous_year = season == "WS" ? year : year - 1
+    previous_season = season == "WS" ? "SS" : "WS"
     Term.find_by(year: previous_year, season: previous_season)
   end
 
@@ -103,37 +103,37 @@ class Term < ApplicationRecord
 
   def self.possible_deletion_dates_localized
     possible_deletion_dates.map { |d|
-      d.strftime(I18n.t('date.formats.concise'))
+      d.strftime(I18n.t("date.formats.concise"))
     }
   end
 
   # array of all terms together with their ids for use in options_for_select
   def self.select_terms(independent = false)
-    return ['bla', nil] if independent
+    return ["bla", nil] if independent
 
     Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
   end
 
   def self.previous_by_date(date)
-    season = date.month.in?((4..9)) ? 'SS' : 'WS'
+    season = date.month.in?((4..9)) ? "SS" : "WS"
     year = date.year
-    previous_year = season == 'WS' ? year : year - 1
-    previous_season = season == 'WS' ? 'SS' : 'WS'
+    previous_year = season == "WS" ? year : year - 1
+    previous_season = season == "WS" ? "SS" : "WS"
     Term.find_by(year: previous_year, season: previous_season)
   end
 
   private
 
     def year_corrected
-      return year.to_s unless season == 'WS'
+      return year.to_s unless season == "WS"
 
-      year.to_s + '/' + ((year % 100) + 1).to_s
+      year.to_s + "/" + ((year % 100) + 1).to_s
     end
 
     def year_corrected_short
-      return (year % 100).to_s unless season == 'WS'
+      return (year % 100).to_s unless season == "WS"
 
-      (year % 100).to_s + '/' + ((year % 100) + 1).to_s
+      (year % 100).to_s + "/" + ((year % 100) + 1).to_s
     end
 
     def touch_lectures_and_lessons

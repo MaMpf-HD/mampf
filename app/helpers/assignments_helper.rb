@@ -12,12 +12,12 @@ module AssignmentsHelper
     assignment.medium.video || assignment.medium.manuscript ||
       assignment.medium.geogebra ||
       assignment.medium.external_reference_link.present? ||
-      (assignment.medium.sort == 'Quiz' && assignment.medium.quiz_graph)
+      (assignment.medium.sort == "Quiz" && assignment.medium.quiz_graph)
   end
 
   def file_button_text(assignment)
-    return I18n.t('basics.file') unless assignment.accepted_file_type == '.pdf'
+    return I18n.t("basics.file") unless assignment.accepted_file_type == ".pdf"
 
-    I18n.t('basics.files')
+    I18n.t("basics.files")
   end
 end

@@ -58,14 +58,14 @@ class AssignmentsController < ApplicationController
       @lecture = @assignment&.lecture
       set_assignment_locale and return if @assignment
 
-      redirect_to :root, alert: I18n.t('controllers.no_assignment')
+      redirect_to :root, alert: I18n.t("controllers.no_assignment")
     end
 
     def set_lecture
       @lecture = Lecture.find_by_id(assignment_params[:lecture_id])
       return if @lecture
 
-      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_assignment_locale

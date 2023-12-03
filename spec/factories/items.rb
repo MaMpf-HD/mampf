@@ -2,7 +2,7 @@
 
 FactoryBot.define do
   factory :item do
-    sort { ['remark', 'example', 'theorem', 'definition'].sample }
+    sort { ["remark", "example", "theorem", "definition"].sample }
 
     transient do
       starting_time { Faker::Number.decimal(l_digits: 4, r_digits: 3) }

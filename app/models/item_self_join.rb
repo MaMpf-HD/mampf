@@ -5,7 +5,7 @@
 # in a lesson medium)
 class ItemSelfJoin < ApplicationRecord
   belongs_to :item
-  belongs_to :related_item, class_name: 'Item'
+  belongs_to :related_item, class_name: "Item"
 
   validates :related_item, uniqueness: { scope: :item }
   after_save :create_inverse, unless: :inverse?

@@ -10,7 +10,7 @@ class NotificationsController < ApplicationController
   def index
     @notifications = current_user.notifications.order(:created_at)
                                  .reverse_order
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def destroy
@@ -49,6 +49,6 @@ class NotificationsController < ApplicationController
       @notification = Notification.find_by_id(params[:id])
       return if @notification.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_notification')
+      redirect_to :root, alert: I18n.t("controllers.no_notification")
     end
 end

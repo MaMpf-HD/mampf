@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 # This migration comes from thredded (originally 20160329231848)
 
-require 'thredded/base_migration'
+require "thredded/base_migration"
 
 # rubocop:disable Metrics/ClassLength
 # rubocop:disable Metrics/MethodLength
@@ -61,7 +61,7 @@ class CreateThredded < Thredded::BaseMigration
     create_table :thredded_posts do |t|
       t.references :user, type: user_id_type, index: false
       t.text :content, limit: 65_535
-      t.string :source, limit: 191, default: 'web'
+      t.string :source, limit: 191, default: "web"
       t.references :postable, null: false, index: false
       t.references :messageboard, null: false, index: false
       t.integer :moderation_state, null: false
@@ -242,14 +242,14 @@ class CreateThredded < Thredded::BaseMigration
       t.string :notifier_key, null: false, limit: 90
       t.boolean :enabled, default: true, null: false
       t.index %i[user_id notifier_key],
-              name: 'thredded_notifications_for_private_topics_unique', unique: true
+              name: "thredded_notifications_for_private_topics_unique", unique: true
     end
     create_table :thredded_notifications_for_followed_topics do |t|
       t.references :user, null: false, index: false, type: user_id_type
       t.string :notifier_key, null: false, limit: 90
       t.boolean :enabled, default: true, null: false
       t.index %i[user_id notifier_key],
-              name: 'thredded_notifications_for_followed_topics_unique', unique: true
+              name: "thredded_notifications_for_followed_topics_unique", unique: true
     end
     create_table :thredded_messageboard_notifications_for_followed_topics do |t|
       t.references :user, null: false, index: false, type: user_id_type
@@ -257,7 +257,7 @@ class CreateThredded < Thredded::BaseMigration
       t.string :notifier_key, null: false, limit: 90
       t.boolean :enabled, default: true, null: false
       t.index %i[user_id messageboard_id notifier_key],
-              name: 'thredded_messageboard_notifications_for_followed_topics_unique', unique: true
+              name: "thredded_messageboard_notifications_for_followed_topics_unique", unique: true
     end
 
     create_table :thredded_user_post_notifications do |t|

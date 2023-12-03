@@ -65,9 +65,9 @@ class VerticesController < ApplicationController
 
     def set_create_vertex_params
       @sort = @params_v[:sort]
-      if @sort == 'import'
+      if @sort == "import"
         @quizzables = Medium.where(id: @params_v[:quizzable_ids],
-                                   type: ['Question', 'Remark'])
+                                   type: ["Question", "Remark"])
         @success = @quizzables.any?
       else
         quizzable = @sort.constantize.create_prefilled(@params_v[:label],
@@ -80,24 +80,24 @@ class VerticesController < ApplicationController
 
     def set_branching_hash
       @branching = {}
-      @params_v.keys.select { |k| k.start_with?('branching-') }.each do |k|
+      @params_v.keys.select { |k| k.start_with?("branching-") }.each do |k|
         next if @params_v[k].to_i == 0
 
-        @branching[k.remove('branching-').to_h] =
+        @branching[k.remove("branching-").to_h] =
           [@vertex_id, @params_v[k].to_i]
       end
     end
 
     def set_hide_array
-      @hide = @params_v.keys.select { |k| k.start_with?('hide-') }
-                       .select { |h| @params_v[h] == '1' }
-                       .map { |h| h.remove('hide-').to_h }
+      @hide = @params_v.keys.select { |k| k.start_with?("hide-") }
+                       .select { |h| @params_v[h] == "1" }
+                       .map { |h| h.remove("hide-").to_h }
     end
 
     def check_permission
       return if current_user.admin
       return if current_user.can_edit?(@quiz)
 
-      redirect_to :root, alert: I18n.t('controllers.unauthorized')
+      redirect_to :root, alert: I18n.t("controllers.unauthorized")
     end
 end

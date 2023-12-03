@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe SubmissionCleaner, type: :model do
-  it 'has a factory' do
+  it "has a factory" do
     expect(FactoryBot.build(:submission_cleaner))
       .to be_kind_of(SubmissionCleaner)
   end
 
-  describe 'with sample submissions' do
+  describe "with sample submissions" do
 
     before :all do
       Term.destroy_all
       ActionMailer::Base.deliveries = []
-      @term1 = FactoryBot.create(:term, year: Time.zone.today.year, season: 'SS')
-      @term2 = FactoryBot.create(:term, year: Time.zone.today.year - 1, season: 'WS')
+      @term1 = FactoryBot.create(:term, year: Time.zone.today.year, season: "SS")
+      @term2 = FactoryBot.create(:term, year: Time.zone.today.year - 1, season: "WS")
       @lecture1 = FactoryBot.create(:lecture)
       @lecture2 = FactoryBot.create(:lecture)
       tutorial1 = FactoryBot.create(:tutorial, :with_tutors, lecture: @lecture1)
@@ -49,8 +49,8 @@ RSpec.describe SubmissionCleaner, type: :model do
       @submission3.users << @user3
     end
 
-    describe '#set_attributes' do
-      it 'sends info emails correctly' do
+    describe "#set_attributes" do
+      it "sends info emails correctly" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today)
 
@@ -60,7 +60,7 @@ RSpec.describe SubmissionCleaner, type: :model do
         end.to change { ActionMailer::Base.deliveries.count }.by(3)
       end
 
-      it 'sends info and reminder emails correctly' do
+      it "sends info and reminder emails correctly" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today + 7.days)
 
@@ -69,7 +69,7 @@ RSpec.describe SubmissionCleaner, type: :model do
         end.to change { ActionMailer::Base.deliveries.count }.by(5)
       end
 
-      it 'sends deletion emails correctly (example 1)' do
+      it "sends deletion emails correctly (example 1)" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today + 14.days)
 
@@ -78,7 +78,7 @@ RSpec.describe SubmissionCleaner, type: :model do
         end.to change { ActionMailer::Base.deliveries.count }.by(5)
       end
 
-      it 'sends deletion emails correctly (example 2)' do
+      it "sends deletion emails correctly (example 2)" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today + 21.days)
 
@@ -88,8 +88,8 @@ RSpec.describe SubmissionCleaner, type: :model do
       end
     end
 
-    describe '#clean!' do
-      it 'destroys submissions correctly (example 1)' do
+    describe "#clean!" do
+      it "destroys submissions correctly (example 1)" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today + 14.days)
         cleaner.clean!
@@ -97,7 +97,7 @@ RSpec.describe SubmissionCleaner, type: :model do
         expect(Submission.all.size).to be(1)
       end
 
-      it 'destroys submissions correctly (example 2)' do
+      it "destroys submissions correctly (example 2)" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today + 21.days)
         cleaner.clean!
@@ -105,7 +105,7 @@ RSpec.describe SubmissionCleaner, type: :model do
         expect(Submission.all.size).to be(2)
       end
 
-      it 'does not destroy submissions if no assignments to be deleted' do
+      it "does not destroy submissions if no assignments to be deleted" do
         cleaner = FactoryBot.build(:submission_cleaner,
                                    date: Time.zone.today + 20.days)
         cleaner.clean!

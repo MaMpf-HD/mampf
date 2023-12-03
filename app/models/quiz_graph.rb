@@ -17,7 +17,7 @@ class QuizGraph
   end
 
   def update_vertex(vertex_id, branching, hide)
-    return if @vertices[vertex_id][:type] == 'Remark'
+    return if @vertices[vertex_id][:type] == "Remark"
 
     remove_edges_from!(vertex_id)
     update_edges_for_question!(vertex_id, branching)
@@ -74,7 +74,7 @@ class QuizGraph
 
     affected_vertices = referencing_vertices(old_quizzable)
     affected_vertices.each { |v| @vertices[v][:id] = new_quizzable.id }
-    return self unless new_quizzable.class.to_s == 'Question'
+    return self unless new_quizzable.class.to_s == "Question"
 
     affected_vertices.each do |v|
       bend_edges_rereferencing!(edges_from(v), answer_map)
@@ -90,7 +90,7 @@ class QuizGraph
   end
 
   def find_errors
-    return [I18n.t('admin.quiz.no_vertices')] unless @vertices.present?
+    return [I18n.t("admin.quiz.no_vertices")] unless @vertices.present?
 
     branch_undef = @default_table.values.include?(0)
     no_end = default_table.values.exclude?(-1) && @edges.select { |e|
@@ -98,14 +98,14 @@ class QuizGraph
     }.blank?
     no_root = @root.blank? || @root.zero?
     messages = []
-    messages.push(I18n.t('admin.quiz.undefined_targets')) if branch_undef
-    messages.push(I18n.t('admin.quiz.no_end')) if no_end
-    messages.push(I18n.t('admin.quiz.no_start')) if no_root
+    messages.push(I18n.t("admin.quiz.undefined_targets")) if branch_undef
+    messages.push(I18n.t("admin.quiz.no_end")) if no_end
+    messages.push(I18n.t("admin.quiz.no_start")) if no_root
     messages
   end
 
   def warnings
-    return I18n.t('admin.quiz.unreleased_vertices') if unreleased_vertices?
+    return I18n.t("admin.quiz.unreleased_vertices") if unreleased_vertices?
   end
 
   def quizzable(id)
@@ -217,15 +217,15 @@ class QuizGraph
   end
 
   def edge_color_for_cytoscape(edge)
-    @default_table[edge[0]] == edge[1] ? '#32cd32' : '#f00'
+    @default_table[edge[0]] == edge[1] ? "#32cd32" : "#f00"
   end
 
   def border_color_for_cytoscape(id)
     quizzable = quizzable(id)
-    return 'orange' unless quizzable.visible?
-    return 'chocolate' if quizzable.restricted?
+    return "orange" unless quizzable.visible?
+    return "chocolate" if quizzable.restricted?
 
-    '#222'
+    "#222"
   end
 
   def linearize!
@@ -249,7 +249,7 @@ class QuizGraph
       j = i + 1
       k =   j < size ? j + 1 : -1
       question = Question.find_by_id(q)
-      vertices[j] = { type: 'Question', id: q }
+      vertices[j] = { type: "Question", id: q }
       default_table[j] = k
     end
     QuizGraph.new(vertices: vertices, edges: edges, root: 1,
@@ -258,30 +258,30 @@ class QuizGraph
 
   def to_cytoscape
     result = []
-    result.push(data: { id: '-2',
-                        label: I18n.t('admin.quiz.start'),
-                        color: '#000',
-                        background: 'yellowgreen',
-                        borderwidth: '0',
-                        bordercolor: 'grey',
-                        shape: 'diamond' })
+    result.push(data: { id: "-2",
+                        label: I18n.t("admin.quiz.start"),
+                        color: "#000",
+                        background: "yellowgreen",
+                        borderwidth: "0",
+                        bordercolor: "grey",
+                        shape: "diamond" })
     # add vertices
     @vertices.keys.each do |v|
       result.push(data: cytoscape_vertex(v))
     end
-    result.push(data: { id: '-1',
-                        label: I18n.t('admin.quiz.end'),
-                        color: '#000',
-                        background: 'yellowgreen',
-                        borderwidth: '0',
-                        bordercolor: '#f4a460',
-                        shape: 'diamond' })
+    result.push(data: { id: "-1",
+                        label: I18n.t("admin.quiz.end"),
+                        color: "#000",
+                        background: "yellowgreen",
+                        borderwidth: "0",
+                        bordercolor: "#f4a460",
+                        shape: "diamond" })
     # add edges
     if @root.in?(@vertices.keys)
       result.push(data: { id: "-2-#{@root}",
                           source: -2,
                           target: @root,
-                          color: '#aaa' })
+                          color: "#aaa" })
     end
     @vertices.keys.each do |v|
       edges_from_plus_default(v).each do |e|
@@ -299,11 +299,11 @@ class QuizGraph
   def cytoscape_vertex(id)
     { id: id.to_s,
       label: quizzable(id).description,
-      color: '#000',
-      background: @vertices[id][:type] == 'Question' ? '#e1f5fe' : '#f9fbe7',
-      borderwidth: '2',
+      color: "#000",
+      background: @vertices[id][:type] == "Question" ? "#e1f5fe" : "#f9fbe7",
+      borderwidth: "2",
       bordercolor: border_color_for_cytoscape(id),
-      shape: @vertices[id][:type] == 'Question' ? 'ellipse' : 'rectangle',
+      shape: @vertices[id][:type] == "Question" ? "ellipse" : "rectangle",
       defaulttarget: @default_table[id] }
   end
 
@@ -317,7 +317,7 @@ class QuizGraph
   end
 
   def questions_count
-    @vertices.values.select { |v| v[:type] == 'Question' }.count
+    @vertices.values.select { |v| v[:type] == "Question" }.count
   end
 
   def default?(edge)

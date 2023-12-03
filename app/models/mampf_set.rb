@@ -10,10 +10,10 @@ class MampfSet
   end
 
   def self.trivial_instance
-    self.new('0,1', '\{0,1\}', 'vector(0,1)')
+    self.new("0,1", '\{0,1\}', "vector(0,1)")
   end
 
   def self.from_hash(content)
-    MampfSet.new(content['0'], content['tex'], content['nerd'])
+    MampfSet.new(content["0"], content["tex"], content["nerd"])
   end
 end

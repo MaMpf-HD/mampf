@@ -1,7 +1,7 @@
 # InteractionsController
 class InteractionsController < ApplicationController
   authorize_resource
-  layout 'administration'
+  layout "administration"
 
   def index
   end

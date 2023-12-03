@@ -1,6 +1,6 @@
-require_relative 'boot'
+require_relative "boot"
 
-require 'rails/all'
+require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -14,7 +14,7 @@ module Mampf
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
-    config.time_zone = 'Berlin'
+    config.time_zone = "Berlin"
     # config.eager_load_paths << Rails.root.join("extras")
     # Make `form_with` generate remote forms by default.
     config.action_view.form_with_generates_remote_forms = true
@@ -23,7 +23,7 @@ module Mampf
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
     config.exception_handler = {
-      email:      ENV['ERROR_EMAIL'], # sends exception emails to a listed email (string // "you@email.com")
+      email:      ENV["ERROR_EMAIL"], # sends exception emails to a listed email (string // "you@email.com")
 
       # All keys interpolated as strings, so you can use symbols, strings or integers where necessary
       exceptions: {

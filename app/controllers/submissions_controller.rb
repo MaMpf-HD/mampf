@@ -22,7 +22,7 @@ class SubmissionsController < ApplicationController
     @assignments = @lecture.assignments
     @current_assignments = @lecture.current_assignments
     @previous_assignments = @lecture.previous_assignments
-    @old_assignments = @assignments.expired.order('deadline DESC') -
+    @old_assignments = @assignments.expired.order("deadline DESC") -
                        @previous_assignments
     @future_assignments = @assignments.active.order(:deadline) -
                           @current_assignments
@@ -56,7 +56,7 @@ class SubmissionsController < ApplicationController
     @submission.update(submission_update_params)
     if @submission.valid?
       @submission.update(accepted: nil)
-      if params[:submission][:detach_user_manuscript] == 'true'
+      if params[:submission][:detach_user_manuscript] == "true"
         @submission.update(manuscript: nil,
                            last_modification_by_users_at: Time.now)
         send_upload_removal_email(@submission.users)
@@ -111,11 +111,11 @@ class SubmissionsController < ApplicationController
     check_code_and_join
     unless @error
       redirect_to lecture_submissions_path(@submission.tutorial.lecture),
-                  notice: t('submission.joined_successfully',
+                  notice: t("submission.joined_successfully",
                             assignment: @submission.assignment.title)
       return
     end
-    redirect_to :start, alert: t('submission.failed_redemption',
+    redirect_to :start, alert: t("submission.failed_redemption",
                                  message: @error)
   end
 
@@ -132,7 +132,7 @@ class SubmissionsController < ApplicationController
     return if @too_late
 
     if @submission.users.count == 1
-      @error = I18n.t('submission.no_partners_no_leave')
+      @error = I18n.t("submission.no_partners_no_leave")
       return
     end
     @submission.users.delete(current_user)
@@ -152,9 +152,9 @@ class SubmissionsController < ApplicationController
                 disposition: @disposition,
                 filename: @submission.manuscript_filename
     elsif @submission
-      redirect_to :start, alert: t('submission.no_manuscript_yet')
+      redirect_to :start, alert: t("submission.no_manuscript_yet")
     else
-      redirect_to :start, alert: t('submission.exists_no_longer')
+      redirect_to :start, alert: t("submission.exists_no_longer")
     end
   end
 
@@ -165,9 +165,9 @@ class SubmissionsController < ApplicationController
                 disposition: @disposition,
                 filename: @submission.correction_filename
     elsif @submission
-      redirect_to :start, alert: t('submission.no_correction_yet')
+      redirect_to :start, alert: t("submission.no_correction_yet")
     else
-      redirect_to :start, alert: t('submission.exists_no_longer')
+      redirect_to :start, alert: t("submission.exists_no_longer")
     end
   end
 
@@ -251,7 +251,7 @@ class SubmissionsController < ApplicationController
       set_submission_locale
       return if @submission
 
-      flash[:alert] = I18n.t('controllers.no_submission')
+      flash[:alert] = I18n.t("controllers.no_submission")
       render js: "window.location='#{root_path}'"
     end
 
@@ -275,7 +275,7 @@ class SubmissionsController < ApplicationController
       set_submission_locale
       return if @assignment
 
-      flash[:alert] = I18n.t('controllers.no_assignment')
+      flash[:alert] = I18n.t("controllers.no_assignment")
       render js: "window.location='#{root_path}'"
       return
     end
@@ -284,7 +284,7 @@ class SubmissionsController < ApplicationController
       @lecture = Lecture.find_by_id(params[:id])
       set_submission_locale and return if @lecture
 
-      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_too_late
@@ -378,18 +378,18 @@ class SubmissionsController < ApplicationController
 
     def check_code_validity
       if !@submission && @assignment
-        @error = I18n.t('submission.invalid_code_for_assignment',
+        @error = I18n.t("submission.invalid_code_for_assignment",
                         assignment: @assignment.title)
       elsif !@submission
-        @error = I18n.t('submission.invalid_code')
+        @error = I18n.t("submission.invalid_code")
       elsif @assignment&.totally_expired?
-        @error = I18n.t('submission.assignment_expired')
+        @error = I18n.t("submission.assignment_expired")
       elsif @submission.correction
-        @error = I18n.t('submission.already_corrected')
+        @error = I18n.t("submission.already_corrected")
       elsif current_user.in?(@submission.users)
-        @error = I18n.t('submission.already_in')
+        @error = I18n.t("submission.already_in")
       elsif !@submission.tutorial.lecture.in?(current_user.lectures)
-        @error = I18n.t('submission.lecture_not_subscribed')
+        @error = I18n.t("submission.lecture_not_subscribed")
       end
     end
 
@@ -404,7 +404,7 @@ class SubmissionsController < ApplicationController
           send_join_email
           remove_invitee_status
         else
-          @error = @join.errors[:base].join(', ')
+          @error = @join.errors[:base].join(", ")
         end
       end
     end
@@ -438,26 +438,26 @@ class SubmissionsController < ApplicationController
       return if current_user.proper_student_in?(@lecture)
 
       redirect_to :root,
-                  alert: I18n.t('controllers.no_student_status_in_lecture')
+                  alert: I18n.t("controllers.no_student_status_in_lecture")
     end
 
     def check_if_tutorials
       return if @lecture.tutorials.any?
 
-      redirect_to :root, alert: I18n.t('controllers.no_tutorials_in_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_tutorials_in_lecture")
     end
 
     def check_if_assignments
       return if @lecture.assignments.any?
 
-      redirect_to :root, alert: I18n.t('controllers.no_assignments_in_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_assignments_in_lecture")
     end
 
     def set_disposition
-      @disposition = params[:download] == 'true' ? 'attachment' : 'inline'
+      @disposition = params[:download] == "true" ? "attachment" : "inline"
       accepted = @submission.assignment.accepted_file_type
       return unless accepted.in?(Assignment.non_inline_file_types)
 
-      @disposition = 'attachment'
+      @disposition = "attachment"
     end
 end

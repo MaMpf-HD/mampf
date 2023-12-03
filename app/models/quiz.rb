@@ -33,7 +33,7 @@ class Quiz < Medium
   end
 
   def quizzables_free?
-    quizzables.where(released: 'all').count == quizzables.count
+    quizzables.where(released: "all").count == quizzables.count
   end
 
   def quizzables_visible_for_user?(user)
@@ -41,7 +41,7 @@ class Quiz < Medium
   end
 
   def next_vertex(progress, input = {})
-    return default_table[progress] if vertices[progress][:type] == 'Remark'
+    return default_table[progress] if vertices[progress][:type] == "Remark"
 
     target_vertex(progress, input)
   end
@@ -78,21 +78,21 @@ class Quiz < Medium
   def question_ids
     return [] unless quiz_graph && quiz_graph.vertices.present?
 
-    quiz_graph.vertices.select { |_k, v| v[:type] == 'Question' }
+    quiz_graph.vertices.select { |_k, v| v[:type] == "Question" }
               .values.map { |v| v[:id] }.uniq
   end
 
   def remark_ids
     return [] unless quiz_graph && quiz_graph.vertices.present?
 
-    quiz_graph.vertices.select { |_k, v| v[:type] == 'Remark' }.values
+    quiz_graph.vertices.select { |_k, v| v[:type] == "Remark" }.values
               .map { |v| v[:id] }.uniq
   end
 
   def crosses_to_input(vertex_id, crosses)
     vertex = vertices[vertex_id]
     input = {}
-    if vertex[:type] == 'Question'
+    if vertex[:type] == "Question"
       question = Question.find(vertex[:id])
       crosses = crosses.map(&:to_i)
       input = question.answers.map { |a| [a.id, crosses.include?(a.id)] }.to_h
@@ -116,7 +116,7 @@ class Quiz < Medium
   end
 
   def questions
-    ids = quiz_graph&.vertices&.values&.select { |v| v[:type] == 'Question' }
+    ids = quiz_graph&.vertices&.values&.select { |v| v[:type] == "Question" }
                     &.map { |v| v[:id] }
     Question.where(id: ids)
   end

@@ -26,7 +26,7 @@ class Question < Medium
   end
 
   def proper_quiz_ids
-    Quiz.where(id: quiz_ids, sort: 'Quiz').pluck(:id)
+    Quiz.where(id: quiz_ids, sort: "Quiz").pluck(:id)
   end
 
   def duplicate
@@ -38,7 +38,7 @@ class Question < Medium
     copy.parent_id = id
     copy.save
     copy.update(description: copy.description +
-                               I18n.t('admin.question.copy_marker') +
+                               I18n.t("admin.question.copy_marker") +
                                copy.id.to_s)
     answer_map = {}
     answers.each { |a| answer_map[a.id] = a.duplicate(copy).id }
@@ -47,19 +47,19 @@ class Question < Medium
 
   def self.create_prefilled(label, teachable, editors)
     solution = Solution.new(MampfExpression.trivial_instance)
-    question = Question.new(sort: 'Question',
+    question = Question.new(sort: "Question",
                             description: label,
                             teachable: teachable,
                             editors: editors,
-                            text: I18n.t('admin.question.initial_text'),
+                            text: I18n.t("admin.question.initial_text"),
                             level: 1,
                             independent: false,
-                            question_sort: 'mc',
+                            question_sort: "mc",
                             solution: solution)
     return question if question.invalid?
 
     Answer.create(question: question,
-                  text: '0',
+                  text: "0",
                   value: true)
     question
   end
@@ -74,18 +74,18 @@ class Question < Medium
       vertices = quiz.quiz_graph.find_vertices(self)
       vertices.each do |v|
         quiz.update(quiz_graph: quiz.quiz_graph.destroy_vertex(v),
-                    released: 'locked')
+                    released: "locked")
       end
     end
     true
   end
 
   def multiple_choice?
-    question_sort == 'mc'
+    question_sort == "mc"
   end
 
   def free_answer?
-    question_sort == 'free'
+    question_sort == "free"
   end
 
   def parametrized?

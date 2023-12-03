@@ -37,7 +37,7 @@ class ItemsController < ApplicationController
   def destroy
     @medium = @item.medium
     @item.destroy
-    redirect_to edit_medium_path(@medium) if params[:from] == 'quarantine'
+    redirect_to edit_medium_path(@medium) if params[:from] == "quarantine"
   end
 
   # if an item is selected from within the reference editor in thyme,
@@ -71,7 +71,7 @@ class ItemsController < ApplicationController
       if filter[:medium_id].present?
         filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
       end
-      filter[:section_id] = nil if filter[:section_id] == ''
+      filter[:section_id] = nil if filter[:section_id] == ""
       filter
     end
 end

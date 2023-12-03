@@ -58,7 +58,7 @@ Commontator.configure do |config|
   # comments will become a hyperlink pointing to this path
   # The main application's routes can be accessed through the app_routes object
   # Default: ->(user, app_routes) { '' } (no link)
-  config.user_link_proc = ->(user, app_routes) { '' }
+  config.user_link_proc = ->(user, app_routes) { "" }
 
   # user_avatar_proc
   # Type: Proc
@@ -90,7 +90,7 @@ Commontator.configure do |config|
   # If the mailer argument is not nil, then Commontator intends to send an email to
   # the address returned; you can prevent it from being sent by returning a blank String
   # Default: ->(user, mailer) { user.try(:email) || '' }
-  config.user_email_proc = ->(user, mailer) { user.try(:email) || '' }
+  config.user_email_proc = ->(user, mailer) { user.try(:email) || "" }
 
   # user_mentions_proc
   # Type: Proc
@@ -113,7 +113,7 @@ Commontator.configure do |config|
   #
   # Default: ->(current_user, query) { current_user.class.where('username LIKE ?', "#{query}%") }
   config.user_mentions_proc = ->(current_user, thread, query) do
-    current_user.class.where('username LIKE ?', "#{query}%")
+    current_user.class.where("username LIKE ?", "#{query}%")
   end
 
 
@@ -199,7 +199,7 @@ Commontator.configure do |config|
   #   ((thread.config.comment_voting == :ld ? '%+d' : '%d') % (pos - neg)).sub('+0', '0')
   # end
   config.vote_count_proc = ->(thread, pos, neg) do
-    ((thread.config.comment_voting == :ld ? '%+d' : '%d') % (pos - neg)).sub('+0', '0')
+    ((thread.config.comment_voting == :ld ? "%+d" : "%d") % (pos - neg)).sub("+0", "0")
   end
 
   # comment_order

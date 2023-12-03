@@ -9,12 +9,12 @@ FactoryBot.define do
       release_date do
         DateTime.now + 10 * Faker::Number.between(from: 0.0, to: 1.0)
       end
-      release_for { 'all' }
+      release_for { "all" }
       lock_comments { false }
       vertices { false }
       create_assignment { false }
-      assignment_title { '' }
-      assignment_file_type { '' }
+      assignment_title { "" }
+      assignment_file_type { "" }
       assignment_deadline { nil }
       assignment_deletion_date { nil }
     end

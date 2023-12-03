@@ -47,7 +47,7 @@ class Section < ApplicationRecord
   end
 
   def displayed_number
-    '§' + reference_number
+    "§" + reference_number
   end
 
   def reference
@@ -67,9 +67,9 @@ class Section < ApplicationRecord
   end
 
   def to_label
-    return displayed_number + '. ' + title unless hidden_with_inheritance?
+    return displayed_number + ". " + title unless hidden_with_inheritance?
 
-    '*' + displayed_number + '. ' + title
+    "*" + displayed_number + ". " + title
   end
 
   # section's media are media that are contained in one of the
@@ -157,7 +157,7 @@ class Section < ApplicationRecord
   end
 
   def visible_items
-    return visible_items_by_time if lecture.content_mode == 'video'
+    return visible_items_by_time if lecture.content_mode == "video"
 
     script_items_by_position
   end
@@ -167,7 +167,7 @@ class Section < ApplicationRecord
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    super + "-" + I18n.locale.to_s
   end
 
   def duplicate_in_chapter(new_chapter, import_tags)
@@ -205,7 +205,7 @@ class Section < ApplicationRecord
     end
 
     def relative_position
-      chapter.displayed_number + '.' + position.to_s
+      chapter.displayed_number + "." + position.to_s
     end
 
     def absolute_position

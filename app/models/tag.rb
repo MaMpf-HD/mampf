@@ -29,17 +29,17 @@ class Tag < ApplicationRecord
   has_many :related_tags, through: :relations, after_remove: :destroy_relations
 
   # a tag has different notions in different languages
-  has_many :notions, foreign_key: 'tag_id',
+  has_many :notions, foreign_key: "tag_id",
                      after_remove: :touch_relations,
                      after_add: :touch_relations,
                      dependent: :destroy
-  has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
+  has_many :aliases, foreign_key: "aliased_tag_id", class_name: "Notion"
 
   serialize :realizations, Array
 
   accepts_nested_attributes_for :notions,
                                 reject_if: lambda { |attributes|
-                                             attributes['title'].blank?
+                                             attributes["title"].blank?
                                            },
                                 allow_destroy: true
 
@@ -48,7 +48,7 @@ class Tag < ApplicationRecord
 
   accepts_nested_attributes_for :aliases,
                                 reject_if: lambda { |attributes|
-                                             attributes['title'].blank?
+                                             attributes["title"].blank?
                                            },
                                 allow_destroy: true
 
@@ -211,7 +211,7 @@ class Tag < ApplicationRecord
   # returns the ARel of all tags or whose id is among a given array of ids
   # search params is a hash having keys :all_tags, :tag_ids
   def self.search_tags(search_params)
-    return Tag.all unless search_params[:all_tags] == '0'
+    return Tag.all unless search_params[:all_tags] == "0"
 
     tag_ids = search_params[:tag_ids] || []
     Tag.where(id: tag_ids)
@@ -244,7 +244,7 @@ class Tag < ApplicationRecord
   def short_title(max_letters = 30)
     return title unless title.length > max_letters
 
-    title[0, max_letters - 3] + '...'
+    title[0, max_letters - 3] + "..."
   end
 
   def in_lecture?(lecture)
@@ -277,7 +277,7 @@ class Tag < ApplicationRecord
     quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{title} #{Time.now}",
                     level: 1,
                     quiz_graph: quiz_graph,
-                    sort: 'RandomQuiz')
+                    sort: "RandomQuiz")
     quiz.save
     return quiz.errors unless quiz.valid?
 
@@ -287,19 +287,19 @@ class Tag < ApplicationRecord
   # returns the vertex title color of the tag in the neighbourhood graph of
   # the given marked tag
   def color(marked_tag, highlight_related_tags: true)
-    return '#f00' if self == marked_tag
-    return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
+    return "#f00" if self == marked_tag
+    return "#ff8c00" if highlight_related_tags && in?(marked_tag.related_tags)
 
-    '#000'
+    "#000"
   end
 
   # returns the vertex color of the tag in the neighbourhood graph of
   # the given marked tag
   def background(marked_tag, highlight_related_tags: true)
-    return '#f00' if self == marked_tag
-    return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
+    return "#f00" if self == marked_tag
+    return "#ff8c00" if highlight_related_tags && in?(marked_tag.related_tags)
 
-    '#666'
+    "#666"
   end
 
   # returns the cytoscape hash describing the tag's vertex in the neighbourhood
@@ -329,7 +329,7 @@ class Tag < ApplicationRecord
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    super + "-" + I18n.locale.to_s
   end
 
   def touch_lectures
@@ -377,7 +377,7 @@ class Tag < ApplicationRecord
   end
 
   def visible_questions(user)
-    user.filter_visible_media(user.filter_media(media.where(type: 'Question')))
+    user.filter_visible_media(user.filter_media(media.where(type: "Question")))
   end
 
   private
@@ -398,9 +398,9 @@ class Tag < ApplicationRecord
     end
 
     def title_join
-      result = notions.pluck(:title).join(' ')
+      result = notions.pluck(:title).join(" ")
       return result unless aliases.any?
 
-      result + ' ' + aliases.pluck(:title).join(' ')
+      result + " " + aliases.pluck(:title).join(" ")
     end
 end

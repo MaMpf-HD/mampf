@@ -6,7 +6,7 @@
 # The name of the class your app uses for your users.
 # By default the engine will use 'User' but if you have another name
 # for your user class - change it here.
-Thredded.user_class = 'User'
+Thredded.user_class = "User"
 
 # User name column, used in @mention syntax and *must* be unique.
 # This is the column used to search for users' names if/when someone is @ mentioned.
@@ -29,7 +29,7 @@ Thredded.user_path = ->(user) {
 Thredded.current_user_method = :"current_#{Thredded.user_class_name.demodulize.underscore}"
 
 # User avatar URL. rb-gravatar gem is used by default:
-Thredded.avatar_url = ->(user) { RailsGravatar.src(user.email, 156, 'mm') }
+Thredded.avatar_url = ->(user) { RailsGravatar.src(user.email, 156, "mm") }
 
 # ==> Permissions Configuration
 # By default, thredded uses a simple permission model, where all the users can post to all message boards,
@@ -70,7 +70,7 @@ Thredded.private_messaging_enabled = false
 # Thredded.posts_per_page = 25
 
 # The layout for rendering Thredded views.
-Thredded.layout = 'thredded/application'
+Thredded.layout = "thredded/application"
 
 # ==> Email Configuration
 # Email "From:" field will use the following
@@ -151,7 +151,7 @@ Thredded.messageboard_name_length_range = (1..120)
 Rails.application.config.to_prepare do
   Thredded.view_hooks.post_form.content_text_area.config.before do |form:, **args|
     # This is called in the Thredded view context, so all Thredded helpers and URLs are accessible here directly.
-    render 'thredded/modifications/explain_tex', form: form
+    render "thredded/modifications/explain_tex", form: form
   end
 end
 

@@ -36,7 +36,7 @@ class AnswersController < ApplicationController
 
   def update_answer_box
     @answer_id = params[:answer_id].to_i
-    @value = params[:value] == 'true'
+    @value = params[:value] == "true"
   end
 
   private
@@ -45,7 +45,7 @@ class AnswersController < ApplicationController
       @answer = Answer.find_by_id(params[:id])
       return if @answer.present?
 
-      redirect_to root_path, alert: I18n.t('controllers.no_answer')
+      redirect_to root_path, alert: I18n.t("controllers.no_answer")
     end
 
     def answer_params

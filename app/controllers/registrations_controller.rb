@@ -1,20 +1,20 @@
-require 'net/http'
-require 'uri'
-require 'json'
+require "net/http"
+require "uri"
+require "json"
 # RegistrationsController
 class RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_registration_limit, only: [:create]
 
   def verify_captcha
-    return true unless ENV['USE_CAPTCHA_SERVICE']
+    return true unless ENV["USE_CAPTCHA_SERVICE"]
 
     begin
-      uri = URI.parse(ENV['CAPTCHA_VERIFY_URL'])
+      uri = URI.parse(ENV["CAPTCHA_VERIFY_URL"])
       data = { message: params["frc-captcha-solution"],
-               application_token: ENV['CAPTCHA_APPLICATION_TOKEN'] }
-      header = { 'Content-Type': 'text/json' }
+               application_token: ENV["CAPTCHA_APPLICATION_TOKEN"] }
+      header = { 'Content-Type': "text/json" }
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true if ENV['CAPTCHA_VERIFY_URL'].include?('https')
+      http.use_ssl = true if ENV["CAPTCHA_VERIFY_URL"].include?("https")
       request = Net::HTTP::Post.new(uri.request_uri, header)
       request.body = data.to_json
 
@@ -70,7 +70,7 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
     def check_registration_limit
-      if User.where("users.confirmed_at is NULL and users.created_at > '#{(DateTime.now() - (ENV['MAMPF_REGISTRATION_TIMEFRAME'] || 15).to_i.minutes)}'").count > (ENV['MAMPF_MAX_REGISTRATION_PER_TIMEFRAME'] || 40).to_i
+      if User.where("users.confirmed_at is NULL and users.created_at > '#{(DateTime.now() - (ENV['MAMPF_REGISTRATION_TIMEFRAME'] || 15).to_i.minutes)}'").count > (ENV["MAMPF_MAX_REGISTRATION_PER_TIMEFRAME"] || 40).to_i
         self.resource = resource_class.new devise_parameter_sanitizer.sanitize(:sign_up)
         resource.validate # Look for any other validation errors besides reCAPTCHA
         set_flash_message :alert, :too_many_registrations

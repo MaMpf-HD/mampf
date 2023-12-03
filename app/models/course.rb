@@ -79,7 +79,7 @@ class Course < ApplicationRecord
   end
 
   def selector_value
-    'Course-' + id.to_s
+    "Course-" + id.to_s
   end
 
   def to_label
@@ -123,8 +123,8 @@ class Course < ApplicationRecord
     return lectures.published unless user.edited_lectures.any? || user.teacher?
 
     lectures.left_outer_joins(:editable_user_joins)
-            .where('released IS NOT NULL OR editable_user_joins.user_id = ?'\
-                   ' OR teacher_id = ?', user.id, user.id).distinct
+            .where("released IS NOT NULL OR editable_user_joins.user_id = ?"\
+                   " OR teacher_id = ?", user.id, user.id).distinct
   end
 
   def restricted?
@@ -279,13 +279,13 @@ class Course < ApplicationRecord
   def image_filename
     return unless image
 
-    image.metadata['filename']
+    image.metadata["filename"]
   end
 
   def image_size
     return unless image
 
-    image.metadata['size']
+    image.metadata["size"]
   end
 
   def image_resolution
@@ -306,14 +306,14 @@ class Course < ApplicationRecord
 
   def self.search_by(search_params, page)
     editor_ids = search_params[:editor_ids]
-    editor_ids = [] if search_params[:all_editors] == '1'
+    editor_ids = [] if search_params[:all_editors] == "1"
     program_ids = search_params[:program_ids] || []
-    program_ids = [] if search_params[:all_programs] == '1'
+    program_ids = [] if search_params[:all_programs] == "1"
     search = Sunspot.new_search(Course)
     search.build do
       with(:editor_ids, editor_ids)
       with(:program_ids, program_ids) unless program_ids.empty?
-      with(:term_independent, true) if search_params[:term_independent] == '1'
+      with(:term_independent, true) if search_params[:term_independent] == "1"
       fulltext search_params[:fulltext] if search_params[:fulltext].present?
       order_by(:sort_title, :asc)
       paginate page: page, per_page: search_params[:per]
@@ -343,7 +343,7 @@ class Course < ApplicationRecord
                                "#{course.title} #{Time.now}",
                   level: 1,
                   quiz_graph: quiz_graph,
-                  sort: 'RandomQuiz',
+                  sort: "RandomQuiz",
                   locale: locale)
     end
 

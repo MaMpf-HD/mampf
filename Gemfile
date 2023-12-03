@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.1.4'
+ruby "3.1.4"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 7.0.4.3"
@@ -59,7 +59,7 @@ gem "erubis"
 gem "cancancan"
 gem "jquery-rails"
 gem "jquery-ui-rails"
-gem "js-routes", '1.4.9'
+gem "js-routes", "1.4.9"
 gem "bootstrap", "~>5"
 gem "bootstrap_form"
 gem "devise-bootstrap-views"
@@ -80,8 +80,8 @@ gem "rails-i18n"
 gem "kaminari-i18n"
 gem "trix-rails", require: "trix"
 gem "sunspot_rails",
-  github: 'sunspot/sunspot',
-  glob: 'sunspot_rails/*.gemspec'
+  github: "sunspot/sunspot",
+  glob: "sunspot_rails/*.gemspec"
 gem "sunspot_solr"
 gem "progress_bar"
 gem "barby"
@@ -100,8 +100,8 @@ gem "premailer-rails"
 gem "clipboard-rails"
 gem "rubyzip", "~> 2.3.0"
 gem "exception_handler", "~> 0.8.0.0"
-gem 'webpacker', '~> 5.x'
-gem 'net-smtp'
+gem "webpacker", "~> 5.x"
+gem "net-smtp"
 
 group :development, :docker_development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -119,8 +119,8 @@ group :development, :docker_development do
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"
   gem "rubocop", "~> 1.57", require: false
-  gem 'rubocop-performance', '~> 1.16', require: false
-  gem 'rubocop-rails', '~> 2.22', '>= 2.22.1', require: false
+  gem "rubocop-performance", "~> 1.16", require: false
+  gem "rubocop-rails", "~> 2.22", ">= 2.22.1", require: false
   gem "pgreset"
   gem "marcel"
   #  gem 'bullet'
@@ -130,15 +130,15 @@ group :test do
   # Adds support for Capybara system testing and selenium driver
   gem "selenium-webdriver"
   # Easy installation and use of web drivers to run system tests with browsers
-  gem 'webdrivers'
-  gem 'faker'
-  gem 'database_cleaner'
-  gem 'launchy'
-  gem 'simplecov', require: false
+  gem "webdrivers"
+  gem "faker"
+  gem "database_cleaner"
+  gem "launchy"
+  gem "simplecov", require: false
 end
 
 group :test, :development, :docker_development do
-  gem 'cypress-on-rails', '~> 1.0'
-  gem 'simplecov-cobertura'
+  gem "cypress-on-rails", "~> 1.0"
+  gem "simplecov-cobertura"
 end
-gem 'prometheus_exporter'
+gem "prometheus_exporter"

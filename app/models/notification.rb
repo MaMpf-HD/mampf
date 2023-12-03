@@ -4,7 +4,7 @@ class Notification < ApplicationRecord
   include ActionDispatch::Routing::PolymorphicRoutes
   include Rails.application.routes.url_helpers
 
-  belongs_to :recipient, class_name: 'User', touch: true
+  belongs_to :recipient, class_name: "User", touch: true
   belongs_to :notifiable, polymorphic: true, optional: true
 
   paginates_per 12
@@ -20,8 +20,8 @@ class Notification < ApplicationRecord
   # and teachable for a notification of type medium, nil otherwise
   def teachable
     return unless notifiable.present?
-    return if notifiable_type.in?(['Lecture', 'Course'])
-    return notifiable.lecture if notifiable_type == 'Announcement'
+    return if notifiable_type.in?(["Lecture", "Course"])
+    return notifiable.lecture if notifiable_type == "Announcement"
 
     # notifiable will be a medium, so return its teachable
     notifiable.teachable
@@ -34,14 +34,14 @@ class Notification < ApplicationRecord
   # all other cases: notifiable path
   def path(user)
     return unless notifiable.present?
-    return edit_profile_path if notifiable_type.in?(['Course', 'Lecture'])
+    return edit_profile_path if notifiable_type.in?(["Course", "Lecture"])
 
-    if notifiable_type == 'Announcement'
+    if notifiable_type == "Announcement"
       return notifiable.lecture.path(user) if notifiable.lecture.present?
 
       return news_path
     end
-    if notifiable_type == 'Medium' && notifiable.sort == 'Quiz'
+    if notifiable_type == "Medium" && notifiable.sort == "Quiz"
       return medium_path(notifiable)
     end
 
@@ -49,7 +49,7 @@ class Notification < ApplicationRecord
   end
 
   def self.allowed_notifiable_types
-    ['Medium', 'Course', 'Lecture', 'Announcement']
+    ["Medium", "Course", "Lecture", "Announcement"]
   end
 
   # the next methods are for the determination which kind of notification it is
@@ -57,25 +57,25 @@ class Notification < ApplicationRecord
   def medium?
     return unless notifiable.present?
 
-    notifiable_type == 'Medium'
+    notifiable_type == "Medium"
   end
 
   def course?
     return unless notifiable.present?
 
-    notifiable.class.to_s == 'Course'
+    notifiable.class.to_s == "Course"
   end
 
   def lecture?
     return unless notifiable.present?
 
-    notifiable.class.to_s == 'Lecture'
+    notifiable.class.to_s == "Lecture"
   end
 
   def announcement?
     return unless notifiable.present?
 
-    notifiable.class.to_s == 'Announcement'
+    notifiable.class.to_s == "Announcement"
   end
 
   def generic_announcement?

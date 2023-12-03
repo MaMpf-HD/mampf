@@ -4,7 +4,7 @@ class QuestionsController < ApplicationController
   before_action :set_quizzes, only: [:reassign]
   before_action :check_solution_errors, only: [:update]
   authorize_resource except: :reassign
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= QuestionAbility.new(current_user)
@@ -18,7 +18,7 @@ class QuestionsController < ApplicationController
     return if @errors
 
     @success = true if @question.update(question_params)
-    if question_params[:question_sort] == 'free'
+    if question_params[:question_sort] == "free"
       answer = @question.answers.first
       @question.answers.where.not(id: answer.id).destroy_all
     end
@@ -43,23 +43,23 @@ class QuestionsController < ApplicationController
       Quiz.find_by_id(q).replace_reference!(question_old, @question, answer_map)
     end
     I18n.locale = @question.locale_with_inheritance
-    if question_params[:type] == 'edit'
+    if question_params[:type] == "edit"
       redirect_to edit_question_path(@question)
       return
     end
     @quizzable = @question
-    @mode = 'reassigned'
-    render 'media/fill_quizzable_area'
+    @mode = "reassigned"
+    render "media/fill_quizzable_area"
   end
 
   def set_solution_type
-    content = if params[:type] == 'MampfExpression'
+    content = if params[:type] == "MampfExpression"
       MampfExpression.trivial_instance
-    elsif params[:type] == 'MampfMatrix'
+    elsif params[:type] == "MampfMatrix"
       MampfMatrix.trivial_instance
-    elsif params[:type] == 'MampfTuple'
+    elsif params[:type] == "MampfTuple"
       MampfTuple.trivial_instance
-    elsif params[:type] == 'MampfSet'
+    elsif params[:type] == "MampfSet"
       MampfSet.trivial_instance
     end
     @solution = Solution.new(content)
@@ -81,14 +81,14 @@ class QuestionsController < ApplicationController
       @question = Question.find_by_id(params[:id])
       return if @question.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_question')
+      redirect_to :root, alert: I18n.t("controllers.no_question")
     end
 
     def set_quizzes
       @quizzes = params[:question].select { |k, v|
-                   v == '1' && k.start_with?('quiz-')
+                   v == "1" && k.start_with?("quiz-")
                  }
-                                  .keys.map { |k| k.remove('quiz-').to_i }
+                                  .keys.map { |k| k.remove("quiz-").to_i }
     end
 
     def check_solution_errors

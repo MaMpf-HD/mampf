@@ -115,7 +115,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
     security_transgression_unless @comment.can_be_deleted_by?(@commontator_user)
 
     @comment.errors.add(:base,
-                        t('commontator.comment.errors.already_deleted')) \
+                        t("commontator.comment.errors.already_deleted")) \
       unless @comment.delete_by(@commontator_user)
 
     respond_to do |format|
@@ -128,7 +128,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
   def undelete
     security_transgression_unless @comment.can_be_deleted_by?(@commontator_user)
 
-    @comment.errors.add(:base, t('commontator.comment.errors.not_deleted')) \
+    @comment.errors.add(:base, t("commontator.comment.errors.not_deleted")) \
       unless @comment.undelete_by(@commontator_user)
 
     respond_to do |format|
@@ -183,7 +183,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
 
     def subscribe_mentioned
       Commontator.commontator_mentions(@commontator_user, @commontator_thread,
-                                       '')
+                                       "")
                  .where(id: params[:mentioned_ids])
                  .each do |user|
         @commontator_thread.subscribe(user)
@@ -195,7 +195,7 @@ class Commontator::CommentsController < Commontator::ApplicationController
     # It constitues a customization
     def update_unread_status
       medium = @commontator_thread.commontable
-      return unless medium.released.in?(['all', 'users', 'subscribers'])
+      return unless medium.released.in?(["all", "users", "subscribers"])
 
       relevant_users = medium.teachable.media_scope.users
       relevant_users.where.not(id: current_user.id)

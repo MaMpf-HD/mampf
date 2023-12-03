@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
   etag { current_user.try :id }
 
   def current_user
-    unless controller_name == 'administration' && action_name == 'index'
+    unless controller_name == "administration" && action_name == "index"
       return super
     end
 
@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do
     redirect_to main_app.root_url,
-                alert: I18n.t('controllers.session_expired')
+                alert: I18n.t("controllers.session_expired")
   end
 
   # determine where to send the user after login
@@ -102,12 +102,12 @@ class ApplicationController < ActionController::Base
     end
 
     def store_interaction
-      return if controller_name.in?(['sessions', 'administration', 'users',
-                                     'events', 'interactions', 'profile',
-                                     'clickers', 'clicker_votes', 'registrations'])
-      return if controller_name == 'main' && action_name == 'home'
-      return if controller_name == 'tags' && action_name.in?(['fill_tag_select',
-                                                              'fill_course_tags'])
+      return if controller_name.in?(["sessions", "administration", "users",
+                                     "events", "interactions", "profile",
+                                     "clickers", "clicker_votes", "registrations"])
+      return if controller_name == "main" && action_name == "home"
+      return if controller_name == "tags" && action_name.in?(["fill_tag_select",
+                                                              "fill_course_tags"])
 
       study_participant = current_user.anonymized_id if current_user.study_participant
       # as of Rack 2.0.8, the session_id is wrapped in a class of its own

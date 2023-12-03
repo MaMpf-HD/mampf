@@ -2,7 +2,7 @@
 class LessonsController < ApplicationController
   before_action :set_lesson, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= LessonAbility.new(current_user)
@@ -10,7 +10,7 @@ class LessonsController < ApplicationController
 
   def show
     I18n.locale = @lesson.locale_with_inheritance
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def edit
@@ -34,7 +34,7 @@ class LessonsController < ApplicationController
     @lesson.tags = @lesson.sections.map(&:tags).flatten
     @lesson.save
     @errors = @lesson.errors
-    if @lesson.valid? && params[:commit] == t('buttons.save_and_edit')
+    if @lesson.valid? && params[:commit] == t("buttons.save_and_edit")
       redirect_to edit_lesson_path(@lesson)
       return
     end
@@ -63,7 +63,7 @@ class LessonsController < ApplicationController
     media.each do |m|
       m.update(teachable: lecture,
                description: m.description.presence ||
-                              (m.title + ' (' + I18n.t('admin.lesson.destroyed') + ')'))
+                              (m.title + " (" + I18n.t("admin.lesson.destroyed") + ")"))
     end
     @lesson.destroy
     redirect_to edit_lecture_path(lecture)
@@ -75,7 +75,7 @@ class LessonsController < ApplicationController
       @lesson = Lesson.find_by_id(params[:id])
       return if @lesson.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_lesson')
+      redirect_to :root, alert: I18n.t("controllers.no_lesson")
     end
 
     def lesson_params

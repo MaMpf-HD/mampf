@@ -31,7 +31,7 @@ class Talk < ApplicationRecord
   end
 
   def to_label
-    I18n.t('talk', number: position, title: title)
+    I18n.t("talk", number: position, title: title)
   end
 
   def long_title
@@ -52,7 +52,7 @@ class Talk < ApplicationRecord
 
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
-      lecture.title_for_viewers + ', ' + to_label
+      lecture.title_for_viewers + ", " + to_label
     end
   end
 
@@ -76,7 +76,7 @@ class Talk < ApplicationRecord
   end
 
   def compact_title
-    lecture.compact_title + '.V' + position.to_s
+    lecture.compact_title + ".V" + position.to_s
   end
 
   def number
@@ -92,7 +92,7 @@ class Talk < ApplicationRecord
   end
 
   def proper_media
-    media.where.not(sort: ['Question', 'Remark'])
+    media.where.not(sort: ["Question", "Remark"])
   end
 
   def editors_with_inheritance

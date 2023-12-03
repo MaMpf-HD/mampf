@@ -1,4 +1,4 @@
-require 'image_processing/mini_magick'
+require "image_processing/mini_magick"
 # ScreenshotUploader class
 # used for storing video thumbnails
 class ScreenshotUploader < Shrine
@@ -12,7 +12,7 @@ class ScreenshotUploader < Shrine
 
   Attacher.validate do
     validate_mime_type_inclusion %w[image/jpeg image/png image/gif],
-                                 message: 'falscher MIME-Typ'
+                                 message: "falscher MIME-Typ"
   end
 
   # store a resized version of the screenshot

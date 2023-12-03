@@ -3,7 +3,7 @@ class ChaptersController < ApplicationController
   before_action :set_chapter, except: [:new, :create]
   authorize_resource except: [:new, :create]
   before_action :set_view_locale, only: [:edit]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= ChapterAbility.new(current_user)
@@ -72,7 +72,7 @@ class ChaptersController < ApplicationController
       @chapter = Chapter.find_by_id(params[:id])
       return if @chapter.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_chapter')
+      redirect_to :root, alert: I18n.t("controllers.no_chapter")
     end
 
     def chapter_params

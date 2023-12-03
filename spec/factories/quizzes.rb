@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 FactoryBot.define do
-  factory :quiz, parent: :medium, class: 'Quiz' do
-    sort { 'Quiz' }
+  factory :quiz, parent: :medium, class: "Quiz" do
+    sort { "Quiz" }
 
     transient do
       teachable_sort { :course }
@@ -20,7 +20,7 @@ FactoryBot.define do
                                   :with_teachable]
 
     factory :valid_random_quiz, traits: [:with_description] do
-      sort { 'RandomQuiz' }
+      sort { "RandomQuiz" }
     end
   end
 end

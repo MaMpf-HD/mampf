@@ -15,8 +15,8 @@ class TutorialsController < ApplicationController
   authorize_resource except: [:index, :overview, :create, :validate_certificate,
                               :new, :cancel_new]
 
-  require 'rubygems'
-  require 'zip'
+  require "rubygems"
+  require "zip"
 
   def current_ability
     @current_ability ||= TutorialAbility.new(current_user)
@@ -24,7 +24,7 @@ class TutorialsController < ApplicationController
 
   def index
     authorize! :index, Tutorial.new, @lecture
-    @assignments = @lecture.assignments.order('deadline DESC')
+    @assignments = @lecture.assignments.order("deadline DESC")
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                   @assignments&.first
     if current_user.editor_or_teacher_in?(@lecture)
@@ -39,7 +39,7 @@ class TutorialsController < ApplicationController
 
   def overview
     authorize! :overview, Tutorial.new, @lecture
-    @assignments = @lecture.assignments.order('deadline DESC')
+    @assignments = @lecture.assignments.order("deadline DESC")
     @assignment = Assignment.find_by_id(params[:assignment]) ||
                   @assignments&.first
     @tutorials = @lecture.tutorials
@@ -92,7 +92,7 @@ class TutorialsController < ApplicationController
 
   def bulk_download_corrections
     @zipped_corrections = Submission.zip_corrections!(@tutorial, @assignment)
-    bulk_download(@zipped_corrections, '-Corrections')
+    bulk_download(@zipped_corrections, "-Corrections")
   end
 
   def bulk_upload
@@ -104,7 +104,7 @@ class TutorialsController < ApplicationController
       send_correction_upload_emails
     # in case an empty string for files is sent
     rescue JSON::ParserError
-      flash[:alert] = I18n.t('tutorial.bulk_upload.error')
+      flash[:alert] = I18n.t("tutorial.bulk_upload.error")
     end
   end
 
@@ -131,28 +131,28 @@ class TutorialsController < ApplicationController
       @lecture = @tutorial&.lecture
       set_tutorial_locale and return if @tutorial
 
-      redirect_to :root, alert: I18n.t('controllers.no_tutorial')
+      redirect_to :root, alert: I18n.t("controllers.no_tutorial")
     end
 
     def set_assignment
       @assignment = Assignment.find_by_id(params[:ass_id])
       return if @assignment
 
-      redirect_to :root, alert: I18n.t('controllers.no_assignment')
+      redirect_to :root, alert: I18n.t("controllers.no_assignment")
     end
 
     def set_lecture
       @lecture = Lecture.find_by_id(params[:id])
       set_tutorial_locale and return if @lecture
 
-      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_lecture_from_form
       @lecture = Lecture.find_by_id(tutorial_params[:lecture_id])
       return if @lecture
 
-      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_tutorial_locale
@@ -163,7 +163,7 @@ class TutorialsController < ApplicationController
     def can_view_index
       return if current_user.in?(@lecture.tutors) || current_user.editor_or_teacher_in?(@lecture)
 
-      redirect_to :root, alert: I18n.t('controllers.no_tutor_in_this_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_tutor_in_this_lecture")
     end
 
     def tutorial_params
@@ -174,14 +174,14 @@ class TutorialsController < ApplicationController
       params.permit(:package)
     end
 
-    def bulk_download(zipped, end_of_file = '')
+    def bulk_download(zipped, end_of_file = "")
       if zipped.is_a?(StringIO)
         send_data zipped.read,
-                  filename: @assignment.title + '@' + @tutorial.title + end_of_file + '.zip',
-                  type: 'application/zip',
-                  disposition: 'attachment'
+                  filename: @assignment.title + "@" + @tutorial.title + end_of_file + ".zip",
+                  type: "application/zip",
+                  disposition: "attachment"
       else
-        flash[:alert] = I18n.t('controllers.tutorials.bulk_download_failed',
+        flash[:alert] = I18n.t("controllers.tutorials.bulk_download_failed",
                                message: zipped)
         redirect_to lecture_tutorials_path(@tutorial.lecture,
                                            params:

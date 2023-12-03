@@ -2,7 +2,7 @@
 class MainController < ApplicationController
   before_action :check_for_consent
   authorize_resource class: false, only: :start
-  layout 'application_no_sidebar'
+  layout "application_no_sidebar"
 
   def current_ability
     @current_ability ||= MainAbility.new(current_user)
@@ -14,7 +14,7 @@ class MainController < ApplicationController
   end
 
   def error
-    redirect_to :root, alert: I18n.t('controllers.no_page')
+    redirect_to :root, alert: I18n.t("controllers.no_page")
   end
 
   def news

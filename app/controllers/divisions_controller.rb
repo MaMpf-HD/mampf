@@ -39,7 +39,7 @@ class DivisionsController < ApplicationController
       @division = Division.find_by_id(params[:id])
       return if @division.present?
 
-      redirect_to root_path, alert: I18n.t('controllers.no_division')
+      redirect_to root_path, alert: I18n.t("controllers.no_division")
     end
 
     def division_params

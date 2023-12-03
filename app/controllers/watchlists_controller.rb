@@ -5,7 +5,7 @@ class WatchlistsController < ApplicationController
   before_action :sanitize_params, only: [:show, :update_order,
                                          :change_visibility]
 
-  layout 'application_no_sidebar'
+  layout "application_no_sidebar"
 
   def current_ability
     @current_ability ||= WatchlistAbility.new(current_user)
@@ -23,7 +23,7 @@ class WatchlistsController < ApplicationController
     @medium = Medium.find_by_id(create_params[:medium_id])
     @success = @watchlist.save
     if @medium.blank? && @success
-      flash[:notice] = I18n.t('watchlist.creation_success')
+      flash[:notice] = I18n.t("watchlist.creation_success")
     end
     respond_to do |format|
       format.js
@@ -34,7 +34,7 @@ class WatchlistsController < ApplicationController
     authorize! :update, @watchlist
     @success = @watchlist.update(update_params)
     if @success
-      flash[:notice] = I18n.t('watchlist.change_success')
+      flash[:notice] = I18n.t("watchlist.change_success")
     end
     respond_to do |format|
       format.js
@@ -50,9 +50,9 @@ class WatchlistsController < ApplicationController
 
     @success = @watchlist.destroy
     if @success
-      flash[:notice] = I18n.t('watchlist.delete_success')
+      flash[:notice] = I18n.t("watchlist.delete_success")
     else
-      flash[:alert] = I18n.t('watchlist.delete_failed')
+      flash[:alert] = I18n.t("watchlist.delete_failed")
     end
     redirect_to watchlists_path
   end
@@ -64,7 +64,7 @@ class WatchlistsController < ApplicationController
       redirect_to watchlist_path(@watchlists.first)
       return
     end
-    render 'show'
+    render "show"
   end
 
   def show
@@ -109,12 +109,12 @@ class WatchlistsController < ApplicationController
       @watchlist = Watchlist.find_by_id(params[:id])
       return if @watchlist.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_watchlist')
+      redirect_to :root, alert: I18n.t("controllers.no_watchlist")
     end
 
     def sanitize_params
-      params[:reverse] = params[:reverse] == 'true'
-      params[:public] = params[:public] == 'true'
+      params[:reverse] = params[:reverse] == "true"
+      params[:public] = params[:public] == "true"
     end
 
     def paginated_results

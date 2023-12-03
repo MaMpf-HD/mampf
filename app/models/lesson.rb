@@ -57,34 +57,34 @@ class Lesson < ApplicationRecord
   end
 
   def selector_value
-    'Lesson-' + id.to_s
+    "Lesson-" + id.to_s
   end
 
   def title
-    I18n.t('lesson') + ' ' + number.to_s + ', ' + date_localized.to_s
+    I18n.t("lesson") + " " + number.to_s + ", " + date_localized.to_s
   end
 
   def to_label
-    'Nr. ' + number.to_s + ', ' + date_localized.to_s
+    "Nr. " + number.to_s + ", " + date_localized.to_s
   end
 
   def compact_title
-    lecture.compact_title + '.E' + number.to_s
+    lecture.compact_title + ".E" + number.to_s
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    super + "-" + I18n.locale.to_s
   end
 
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
-      lecture.title_for_viewers + ', ' + I18n.t('lesson') + ' ' + number.to_s +
-        ' ' + I18n.t('from') + ' ' + date_localized
+      lecture.title_for_viewers + ", " + I18n.t("lesson") + " " + number.to_s +
+        " " + I18n.t("from") + " " + date_localized
     end
   end
 
   def long_title
-    lecture.title + ', ' + title
+    lecture.title + ", " + title
   end
 
   def locale_with_inheritance
@@ -96,7 +96,7 @@ class Lesson < ApplicationRecord
   end
 
   def card_header
-    lecture.short_title_brackets + ', ' + date_localized
+    lecture.short_title_brackets + ", " + date_localized
   end
 
   def card_header_path(user)
@@ -112,15 +112,15 @@ class Lesson < ApplicationRecord
   # some more methods dealing with the title
 
   def short_title_with_lecture
-    lecture.short_title + ', S.' + number.to_s
+    lecture.short_title + ", S." + number.to_s
   end
 
   def short_title_with_lecture_date
-    lecture.short_title + ', ' + date_localized
+    lecture.short_title + ", " + date_localized
   end
 
   def short_title
-    lecture.short_title + '_E' + number.to_s
+    lecture.short_title + "_E" + number.to_s
   end
 
   def local_title_for_viewers
@@ -173,7 +173,7 @@ class Lesson < ApplicationRecord
   end
 
   def section_titles
-    sections.map(&:title).join(', ')
+    sections.map(&:title).join(", ")
   end
 
   # a lesson can be edited by any user who can edit its lecture
@@ -201,13 +201,13 @@ class Lesson < ApplicationRecord
   end
 
   def content_items
-    return visible_items if lecture.content_mode == 'video'
+    return visible_items if lecture.content_mode == "video"
 
     script_items
   end
 
   def content
-    ([details] + media.potentially_visible.map(&:content)).compact - ['']
+    ([details] + media.potentially_visible.map(&:content)).compact - [""]
   end
 
   def singular_medium
@@ -258,12 +258,12 @@ class Lesson < ApplicationRecord
     if user.admin?
       return Lesson.order_reverse
                    .map do |l|
-                     [l.title_for_viewers, 'Lesson-' + l.id.to_s]
+                     [l.title_for_viewers, "Lesson-" + l.id.to_s]
                    end
     end
     Lesson.includes(:lecture).order_reverse
           .select { |l| l.edited_by?(user) }
-          .map { |l| [l.title_for_viewers, 'Lesson-' + l.id.to_s] }
+          .map { |l| [l.title_for_viewers, "Lesson-" + l.id.to_s] }
   end
 
   def guess_start_destination
@@ -288,7 +288,7 @@ class Lesson < ApplicationRecord
     position = end_item.position
     return unless position
 
-    successor = lecture.script_items_by_position.where('position > ?', position)
+    successor = lecture.script_items_by_position.where("position > ?", position)
                        .order(:position)&.first&.pdf_destination
     return successor if successor
 

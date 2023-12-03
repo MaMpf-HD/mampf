@@ -2,7 +2,7 @@
 # Join table for tag<->tag many-to-many-relation
 class Relation < ApplicationRecord
   belongs_to :tag
-  belongs_to :related_tag, class_name: 'Tag'
+  belongs_to :related_tag, class_name: "Tag"
 
   validates :related_tag, uniqueness: { scope: :tag }
   after_save :create_inverse, unless: :inverse?

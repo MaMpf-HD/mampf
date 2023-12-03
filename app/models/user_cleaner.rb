@@ -3,9 +3,9 @@ class UserCleaner
   attr_accessor :imap, :email_dict, :hash_dict
 
   def login
-    @imap = Net::IMAP.new(ENV['IMAPSERVER'], port: 993, ssl: true)
-    @imap.authenticate('LOGIN', ENV['PROJECT_EMAIL_USERNAME'],
-                       ENV['PROJECT_EMAIL_PASSWORD'])
+    @imap = Net::IMAP.new(ENV["IMAPSERVER"], port: 993, ssl: true)
+    @imap.authenticate("LOGIN", ENV["PROJECT_EMAIL_USERNAME"],
+                       ENV["PROJECT_EMAIL_PASSWORD"])
   end
 
   def logout
@@ -15,10 +15,10 @@ class UserCleaner
   def search_emails_and_hashes
     @email_dict = {}
     @hash_dict = {}
-    @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
+    @imap.examine(ENV["PROJECT_EMAIL_MAILBOX"])
     # Mails containing multiple email addresses (Subject: "Undelivered Mail Returned to Sender")
-    @imap.search(['SUBJECT',
-                  'Undelivered Mail Returned to Sender']).each do |message_id|
+    @imap.search(["SUBJECT",
+                  "Undelivered Mail Returned to Sender"]).each do |message_id|
       body = @imap.fetch(message_id,
                          "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
       if match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/)
@@ -37,8 +37,8 @@ class UserCleaner
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User unknown in virtual mailbox table'
     ]
 
-    @imap.search(['SUBJECT',
-                  'Delivery Status Notification (Failure)']).each do |message_id|
+    @imap.search(["SUBJECT",
+                  "Delivery Status Notification (Failure)"]).each do |message_id|
       body = @imap.fetch(message_id,
                          "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
       patterns.each do |pattern|
@@ -101,7 +101,7 @@ class UserCleaner
     end
 
     begin
-      @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
+      @imap.examine(ENV["PROJECT_EMAIL_MAILBOX"])
       @imap.move(message_ids, "Other Users/mampf/handled_bounces")
     rescue Net::IMAP::BadResponseError
       move_mail(message_ids, attempt = attempt + 1)

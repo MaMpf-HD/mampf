@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'faker'
+require "faker"
 
 FactoryBot.define do
   factory :talk do
@@ -12,7 +12,7 @@ FactoryBot.define do
     # factory
 
     title do
-      Faker::Book.title + ' ' + Faker::Number.between(from: 1, to: 9999).to_s
+      Faker::Book.title + " " + Faker::Number.between(from: 1, to: 9999).to_s
     end
 
     trait :with_seminar do

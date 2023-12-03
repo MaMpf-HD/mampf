@@ -13,7 +13,7 @@ class WatchlistEntriesController < ApplicationController
     authorize! :create, @watchlist_entry
     @success = @watchlist_entry.save
     if @success
-      flash[:notice] = I18n.t('watchlist_entry.add_success')
+      flash[:notice] = I18n.t("watchlist_entry.add_success")
     end
     respond_to do |format|
       format.js
@@ -24,9 +24,9 @@ class WatchlistEntriesController < ApplicationController
     @watchlist_entry = WatchlistEntry.find(params[:id])
     authorize! :destroy, @watchlist_entry
     @watchlist_entry.destroy
-    flash[:notice] = I18n.t('watchlist_entry.deletion')
-    redirect_to controller: 'watchlists',
-                action: 'show',
+    flash[:notice] = I18n.t("watchlist_entry.deletion")
+    redirect_to controller: "watchlists",
+                action: "show",
                 id: params[:watchlist],
                 all: params[:all],
                 reverse: params[:reverse],

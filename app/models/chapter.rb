@@ -65,7 +65,7 @@ class Chapter < ApplicationRecord
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    super + "-" + I18n.locale.to_s
   end
 
   def touch_chapters

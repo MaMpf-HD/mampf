@@ -1,6 +1,6 @@
 # Tutorial model
 class Tutorial < ApplicationRecord
-  require 'csv'
+  require "csv"
 
   belongs_to :lecture, touch: true
 
@@ -22,7 +22,7 @@ class Tutorial < ApplicationRecord
   def tutor_names
     return unless tutors.any?
 
-    tutors.map(&:tutorial_name).join(', ')
+    tutors.map(&:tutorial_name).join(", ")
   end
 
   def destructible?

@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-require 'faker'
+require "faker"
 
 FactoryBot.define do
   factory :chapter do
     association :lecture, factory: [:lecture]
     title do
-      Faker::Book.title + ' ' +
+      Faker::Book.title + " " +
         Faker::Number.between(from: 1, to: 9999).to_s
     end
 

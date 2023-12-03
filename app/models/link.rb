@@ -3,7 +3,7 @@
 # describes which media are related to a given medium
 class Link < ApplicationRecord
   belongs_to :medium
-  belongs_to :linked_medium, class_name: 'Medium'
+  belongs_to :linked_medium, class_name: "Medium"
 
   # we do not want duplicate entries
   validates :linked_medium, uniqueness: { scope: :medium }
