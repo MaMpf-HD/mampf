@@ -143,15 +143,16 @@ namespace :db do
   private
 
     def ensure_format(format)
-      return format if ["c", "p", "t", "d"].include?(format)
+      format_lookup = {
+        "dump" => "c",
+        "sql" => "p",
+        "tar" => "t",
+        "dir" => "d"
+      }
 
-      case format
-      when "dump" then "c"
-      when "sql" then "p"
-      when "tar" then "t"
-      when "dir" then "d"
-      else "p" # rubocop:todo Lint/DuplicateBranch
-      end
+      return format if format_lookup.value?(format)
+
+      format_lookup.key?(format) ? format_lookup[format] : "p"
     end
 
     def suffix_for_format(suffix)

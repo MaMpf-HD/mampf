@@ -860,12 +860,6 @@ class Medium < ApplicationRecord
     end
   end
 
-  def title_uncached
-    return compact_info if details.blank?
-
-    compact_info + "." + details
-  end
-
   def title
     Rails.cache.fetch("#{cache_key_with_version}/title") do
       title_uncached
@@ -889,16 +883,6 @@ class Medium < ApplicationRecord
     Rails.cache.fetch("#{cache_key_with_version}/scoped_teachable_title") do
       teachable.media_scope.title_for_viewers
     end
-  end
-
-  # returns info made from sort and description
-  def local_title_for_viewers_uncached
-    return "#{sort_localized}, #{description}" if description.present?
-    if sort == "Kaviar" && teachable.class.to_s == "Lesson"
-      return "#{I18n.t("categories.kaviar.singular")}, #{teachable.local_title_for_viewers}"
-    end
-
-    "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"
   end
 
   # returns info made from sort and description
@@ -1109,13 +1093,6 @@ class Medium < ApplicationRecord
     Lecture.find_by(id: teachable.lecture_id).teacher_id
   end
 
-  def supervising_teacher_id # rubocop:todo Lint/DuplicateMethods
-    return teachable.teacher_id if teachable.class.to_s == "Lecture"
-    return unless teachable.class.to_s == "Lesson"
-
-    Lecture.find_by(id: teachable.lecture_id).teacher_id
-  end
-
   def subscribed_users
     return teachable.user_ids if ["Lecture",
                                   "Course"].include? teachable.class.to_s
@@ -1137,13 +1114,14 @@ class Medium < ApplicationRecord
       sort.in?(["Quiz", "Question", "Remark"])
     end
 
-    def title_uncached # rubocop:todo Lint/DuplicateMethods
+    def title_uncached
       return compact_info if details.blank?
 
       compact_info + "." + details
     end
 
-    def local_title_for_viewers_uncached # rubocop:todo Lint/DuplicateMethods
+    # returns info made from sort and description
+    def local_title_for_viewers_uncached
       return "#{sort_localized}, #{description}" if description.present?
       if sort == "Kaviar" && teachable.class.to_s == "Lesson"
         return "#{I18n.t("categories.kaviar.singular")}, #{teachable.local_title_for_viewers}"

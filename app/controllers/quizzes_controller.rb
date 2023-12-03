@@ -115,17 +115,14 @@ class QuizzesController < ApplicationController
       if user_signed_in? && current_user.study_participant
         quiz_round_params[:study_participant] = current_user.anonymized_id
       end
+
       quiz_round_params[:save_probe] =
-        if !user_signed_in?
-          true
-        elsif current_user.admin?
-          false
-        # rubocop:todo Lint/DuplicateBranch
-        elsif current_user.in?(Quiz.find(params[:id]).editors_with_inheritance)
-          false
-        else # rubocop:todo Lint/DuplicateBranch
-          true
-          # rubocop:enable Lint/DuplicateBranch
+        if user_signed_in?
+          should_omit_probe = current_user.admin? \
+            || current_user.in?(Quiz.find(params[:id]).editors_with_inheritance)
+          !should_omit_probe
+        else
+          true # always save probe for not signed in users
         end
       @quiz_round = QuizRound.new(quiz_round_params)
     end

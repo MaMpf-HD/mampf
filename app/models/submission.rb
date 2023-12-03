@@ -277,41 +277,39 @@ class Submission < ApplicationRecord
       self.token = Submission.generate_token
     end
 
-    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_submissions(tutorial, assignment)
-      # rubocop:enable Lint/IneffectiveAccessModifier
       Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(manuscript_data: nil).size
     end
 
-    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_corrections(tutorial, assignment)
-      # rubocop:enable Lint/IneffectiveAccessModifier
       Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(correction_data: nil).size
     end
 
-    # rubocop:todo Lint/IneffectiveAccessModifier
     def self.number_of_late_submissions(tutorial, assignment)
-      # rubocop:enable Lint/IneffectiveAccessModifier
       Submission.where(tutorial: tutorial, assignment: assignment)
                 .where.not(manuscript_data: nil)
                 .select { |s| s.too_late? }.size
     end
 
-    def self.submissions_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
+    def self.submissions_total(assignment)
       Submission.where(assignment: assignment)
                 .where.not(manuscript_data: nil).size
     end
 
-    def self.corrections_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
+    def self.corrections_total(assignment)
       Submission.where(assignment: assignment)
                 .where.not(correction_data: nil).size
     end
 
-    def self.late_submissions_total(assignment) # rubocop:todo Lint/IneffectiveAccessModifier
+    def self.late_submissions_total(assignment)
       Submission.where(assignment: assignment)
                 .where.not(manuscript_data: nil)
                 .select { |s| s.too_late? }.size
     end
+
+    private_class_method :number_of_submissions, :number_of_corrections,
+                         :number_of_late_submissions, :submissions_total,
+                         :corrections_total, :late_submissions_total
 end

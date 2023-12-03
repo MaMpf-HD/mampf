@@ -1,8 +1,5 @@
 require File.expand_path("../../config/environment", __dir__) unless defined? Rails
 class MampfCollector < PrometheusExporter::Server::TypeCollector
-  def initialize # rubocop:todo Lint/MissingSuper
-  end
-
   def collect(obj)
   end
 
