@@ -1,10 +1,9 @@
 class AddDeletionDateToAssignments < ActiveRecord::Migration[6.1]
   def up
+    default_deletion_date = (Term.active&.end_date || (Date.today + 180.days)) + 15.days
     add_column :assignments, # rubocop:todo Rails/BulkChangeTable
                :deletion_date,
-               # rubocop:todo Layout/LineLength
-               :date, null: false, default: (Term.active&.end_date || (Date.today + 180.days)) + 15.days
-    # rubocop:enable Layout/LineLength
+               :date, null: false, default: default_deletion_date
     remove_column :assignments, :protected, :boolean
   end
 

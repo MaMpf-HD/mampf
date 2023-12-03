@@ -11,25 +11,21 @@ RSpec.describe "Media", type: :request do
                                    sort: "Nuesse", description: "Zweites Medium")
       @medium3 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
                                    sort: "Quiz", description: "Drittes Medium")
-      @medium4 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released, :with_tags,
-                                   sort: "Nuesse", description: "Getagtes Medium")
-      @medium5 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released, :with_tags,
-                                   sort: "Nuesse", description: "Anderes Medium")
+      @medium4 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
+                                   :with_tags, sort: "Nuesse", description: "Getagtes Medium")
+      @medium5 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
+                                   :with_tags, sort: "Nuesse", description: "Anderes Medium")
 
       @lecture1 = FactoryBot.create(:lecture)
       @medium6 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   # rubocop:todo Layout/LineLength
-                                   teachable: @lecture1, sort: "Nuesse", description: "Erstes Medium mit Lehrer")
-      # rubocop:enable Layout/LineLength
+                                   teachable: @lecture1, sort: "Nuesse",
+                                   description: "Erstes Medium mit Lehrer")
       @lecture2 = FactoryBot.create(:lecture, teacher: @lecture1.teacher)
       @medium7 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   # rubocop:todo Layout/LineLength
-                                   teachable: @lecture2, sort: "Nuesse", description: "Zweites Medium mit Lehrer")
-      # rubocop:enable Layout/LineLength
-      @medium8 = FactoryBot.create(:medium, :with_teachable, :with_editors, sort: "Nuesse",
-                                                                            # rubocop:todo Layout/LineLength
-                                                                            description: "Unveröffentlichtes Medium")
-      # rubocop:enable Layout/LineLength
+                                   teachable: @lecture2, sort: "Nuesse",
+                                   description: "Zweites Medium mit Lehrer")
+      @medium8 = FactoryBot.create(:medium, :with_teachable, :with_editors,
+                                   sort: "Nuesse", description: "Unveröffentlichtes Medium")
 
       sign_in FactoryBot.create(:confirmed_user)
       User.last.subscribe_lecture!(@lecture1)

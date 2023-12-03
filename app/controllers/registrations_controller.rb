@@ -70,11 +70,14 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
     def check_registration_limit
-      # rubocop:todo Layout/LineLength
-      unless User.where("users.confirmed_at is NULL and users.created_at > '#{DateTime.now - (ENV["MAMPF_REGISTRATION_TIMEFRAME"] || 15).to_i.minutes}'").count > (ENV["MAMPF_MAX_REGISTRATION_PER_TIMEFRAME"] || 40).to_i
-        return
-      end
-      # rubocop:enable Layout/LineLength
+      timeframe = (ENV["MAMPF_REGISTRATION_TIMEFRAME"] || 15).to_i.minutes
+      threshold_date = DateTime.now - timeframe
+      new_users = User.where(
+        "users.confirmed_at is NULL and users.created_at > '#{threshold_date}'"
+      ).count
+
+      max_users = (ENV["MAMPF_MAX_REGISTRATION_PER_TIMEFRAME"] || 40).to_i
+      return if new_users > max_users
 
       self.resource = resource_class.new devise_parameter_sanitizer.sanitize(:sign_up)
       resource.validate # Look for any other validation errors besides reCAPTCHA

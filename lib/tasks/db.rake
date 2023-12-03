@@ -41,7 +41,7 @@ namespace :db do
 
     with_config do |_app, host, db, user|
       full_path = "#{backup_dir}/#{Time.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{dump_sfx}"
-      # rubocop:todo Layout/LineLength
+      # rubocop:disable Layout/LineLength
       cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -f '#{full_path}'"
       # rubocop:enable Layout/LineLength
     end
@@ -66,10 +66,8 @@ namespace :db do
         cmd        = nil
 
         with_config do |_app, host, db, user|
-          # rubocop:todo Layout/LineLength
+          # rubocop:disable Layout/LineLength
           full_path = "#{backup_dir}/#{Time.now.strftime("%Y%m%d%H%M%S")}_#{db}.#{table_name.parameterize.underscore}.#{dump_sfx}"
-          # rubocop:enable Layout/LineLength
-          # rubocop:todo Layout/LineLength
           cmd       = "pg_dump -F #{dump_fmt} -v -O -w -U '#{user}' -h '#{host}' -d '#{db}' -t '#{table_name}' -f '#{full_path}'"
           # rubocop:enable Layout/LineLength
         end

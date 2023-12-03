@@ -23,15 +23,12 @@ module Mampf
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
     config.exception_handler = {
-      # rubocop:todo Layout/LineLength
-      email: ENV.fetch("ERROR_EMAIL", nil), # sends exception emails to a listed email (string // "you@email.com")
-      # rubocop:enable Layout/LineLength
+      # sends exception emails to a listed email (string // "you@email.com")
+      email: ENV.fetch("ERROR_EMAIL", nil),
 
-      # rubocop:todo Layout/LineLength
-      # All keys interpolated as strings, so you can use symbols, strings or integers where necessary
-      # rubocop:enable Layout/LineLength
+      # All keys interpolated as strings, so you can use
+      # symbols, strings or integers where necessary
       exceptions: {
-
         all: {
           layout: "application_no_sidebar", # define layout
           notification: true # (false by default)

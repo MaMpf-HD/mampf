@@ -302,9 +302,9 @@ class LecturesController < ApplicationController
     end
 
     def check_for_subscribe
-      # rubocop:todo Layout/LineLength
-      redirect_to subscribe_lecture_page_path(@lecture.id) unless @lecture.in?(current_user.lectures)
-      # rubocop:enable Layout/LineLength
+      return if @lecture.in?(current_user.lectures)
+
+      redirect_to subscribe_lecture_page_path(@lecture.id)
     end
 
     def lecture_params

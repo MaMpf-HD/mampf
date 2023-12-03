@@ -21,7 +21,7 @@ class UserCleaner
                   "Undelivered Mail Returned to Sender"]).each do |message_id|
       body = @imap.fetch(message_id,
                          "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
-      # rubocop:todo Layout/LineLength
+      # rubocop:disable Layout/LineLength
       next unless match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/)
       # rubocop:enable Layout/LineLength
 
@@ -36,7 +36,7 @@ class UserCleaner
     # define array containing all used regex patterns
     patterns = [
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?Unknown recipient',
-      # rubocop:todo Layout/LineLength
+      # rubocop:disable Layout/LineLength
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User unknown in virtual mailbox table'
       # rubocop:enable Layout/LineLength
     ]

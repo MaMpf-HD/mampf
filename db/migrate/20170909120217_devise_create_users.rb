@@ -26,9 +26,8 @@ class DeviseCreateUsers < ActiveRecord::Migration[5.1]
       # t.string   :unconfirmed_email # Only if using reconfirmable
 
       ## Lockable
-      # rubocop:todo Layout/LineLength
-      # t.integer  :failed_attempts, default: 0, null: false # Only if lock strategy is :failed_attempts
-      # rubocop:enable Layout/LineLength
+      # Only if lock strategy is :failed_attempts
+      # t.integer  :failed_attempts, default: 0, null: false
       # t.string   :unlock_token # Only if unlock strategy is :email or :both
       # t.datetime :locked_at
 

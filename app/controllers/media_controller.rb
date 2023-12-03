@@ -233,9 +233,9 @@ class MediaController < ApplicationController
     # in the case of a search with tag_operator 'or', we
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
-    # rubocop:todo Layout/LineLength
-    if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2
-      # rubocop:enable Layout/LineLength
+    if (search_params[:tag_operator] == "or") \
+      && (search_params[:all_tags] == "0") \
+      && (search_params[:fulltext].size >= 2)
       params["search"]["all_tags"] = "1"
       search_no_tags = Medium.search_by(search_params, params[:page])
       search_no_tags.execute
@@ -409,20 +409,20 @@ class MediaController < ApplicationController
     I18n.locale = @medium.locale || I18n.default_locale
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
-      @video_downloads = medium_consumption.where(sort: "video",
-                                                  # rubocop:todo Layout/LineLength
-                                                  mode: "download").pluck(:created_at).map(&:to_date).tally.map do |k, t|
-        # rubocop:enable Layout/LineLength
+      @video_downloads = medium_consumption
+                         .where(sort: "video", mode: "download")
+                         .pluck(:created_at)
+                         .map(&:to_date).tally.map do |k, t|
         {
           x: k, y: t
         }
       end.to_json
       @video_downloads_count = medium_consumption.where(sort: "video",
                                                         mode: "download").count
-      @video_thyme = medium_consumption.where(sort: "video",
-                                              # rubocop:todo Layout/LineLength
-                                              mode: "thyme").pluck(:created_at).map(&:to_date).tally.map do |k, t|
-        # rubocop:enable Layout/LineLength
+      @video_thyme = medium_consumption
+                     .where(sort: "video", mode: "thyme")
+                     .pluck(:created_at)
+                     .map(&:to_date).tally.map do |k, t|
         {
           x: k, y: t
         }
@@ -431,19 +431,20 @@ class MediaController < ApplicationController
                                                     mode: "thyme").count
     end
     if @medium.manuscript.present?
-      # rubocop:todo Layout/LineLength
-      @manuscript_access = medium_consumption.where(sort: "manuscript").pluck(:created_at).map(&:to_date).tally.map do |k, t|
-        # rubocop:enable Layout/LineLength
+      @manuscript_access = medium_consumption
+                           .where(sort: "manuscript")
+                           .pluck(:created_at)
+                           .map(&:to_date).tally.map do |k, t|
         { x: k, y: t }
       end.to_json
       @manuscript_access_count = medium_consumption.where(sort: "manuscript").count
     end
     return unless @medium.sort == "Quiz"
 
-    @quiz_plays = medium_consumption.where(sort: "quiz",
-                                           # rubocop:todo Layout/LineLength
-                                           mode: "browser").pluck(:created_at).map(&:to_date).tally.map do |k, t|
-      # rubocop:enable Layout/LineLength
+    @quiz_plays = medium_consumption
+                  .where(sort: "quiz",mode: "browser")
+                  .pluck(:created_at)
+                  .map(&:to_date).tally.map do |k, t|
       { x: k, y: t }
     end.to_json
     @quiz_plays_count = medium_consumption.where(sort: "quiz",

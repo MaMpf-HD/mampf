@@ -12,18 +12,13 @@ if Rails.env.development? || Rails.env.docker_development? # rubocop:todo Rails/
                                                       prefix: "uploads/submissions/store")
   }
 elsif Rails.env.production?
+  submission_path = ENV["SUBMISSION_PATH"] || "/private/submissions"
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("/caches", prefix: "medien_uploads", clean: false),
     store: Shrine::Storage::FileSystem.new((ENV["MEDIA_PATH"] || "/private/media"),
                                            prefix: "/"),
-    # rubocop:todo Layout/LineLength
-    submission_cache: Shrine::Storage::FileSystem.new((ENV["SUBMISSION_PATH"] || "/private/submissions"),
-                                                      # rubocop:enable Layout/LineLength
-                                                      prefix: "cache"),
-    # rubocop:todo Layout/LineLength
-    submission_store: Shrine::Storage::FileSystem.new((ENV["SUBMISSION_PATH"] || "/private/submissions"),
-                                                      # rubocop:enable Layout/LineLength
-                                                      prefix: "store")
+    submission_cache: Shrine::Storage::FileSystem.new(submission_path, prefix: "cache"),
+    submission_store: Shrine::Storage::FileSystem.new(submission_path, prefix: "store")
   }
 elsif Rails.env.test?
   Shrine.storages = {
