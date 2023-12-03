@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe User, type: :model do
+RSpec.describe(User, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:user)).to be_valid
   end
@@ -44,11 +44,11 @@ RSpec.describe User, type: :model do
       expect(@user.lectures).not_to be_nil
     end
     it "has 2 subscribed lectures when called without lecture_count param" do
-      expect(@user.lectures.size).to eq 2
+      expect(@user.lectures.size).to eq(2)
     end
     it "has correct number of lectures when called with lecture_count param" do
       user = FactoryBot.build(:user, :with_lectures, lecture_count: 3)
-      expect(user.lectures.size).to eq 3
+      expect(user.lectures.size).to eq(3)
     end
   end
 

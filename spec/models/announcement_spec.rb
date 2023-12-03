@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Announcement, type: :model do
+RSpec.describe(Announcement, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:announcement)).to be_valid
   end
@@ -26,7 +26,7 @@ RSpec.describe Announcement, type: :model do
       expect(@announcement.lecture).to be_kind_of(Lecture)
     end
     it "has the lectures teacher as announcer" do
-      expect(@announcement.announcer).to eq @announcement.lecture.teacher
+      expect(@announcement.announcer).to eq(@announcement.lecture.teacher)
     end
   end
 

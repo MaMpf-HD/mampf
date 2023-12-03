@@ -350,8 +350,8 @@ class Medium < ApplicationRecord
     end
     if search_params[:fulltext].present?
       search.build do
-        fulltext search_params[:fulltext] do
-          boost_fields description: 2.0
+        fulltext(search_params[:fulltext]) do
+          boost_fields(description: 2.0)
         end
       end
     end
@@ -369,7 +369,7 @@ class Medium < ApplicationRecord
     end
     # this is needed for kaminari to function correctly
     search.build do
-      paginate page: 1, per_page: Medium.count
+      paginate(page: 1, per_page: Medium.count)
     end
     search
   end
@@ -380,7 +380,7 @@ class Medium < ApplicationRecord
       with(:sort, "Question")
       with(:teachable_compact, search_params[:teachable_ids])
       with(:tag_ids).all_of(search_params[:tag_ids])
-      paginate per_page: Question.count
+      paginate(per_page: Question.count)
     end
     search
   end
@@ -497,10 +497,10 @@ class Medium < ApplicationRecord
   # all data needed by the thyme player to realize the toc
   def toc_to_vtt
     file = Tempfile.new(["toc-", ".vtt"], encoding: "UTF-8")
-    file.write vtt_start
+    file.write(vtt_start)
     proper_items_by_time.reject(&:hidden).each do |i|
-      file.write i.vtt_time_span
-      file.write i.vtt_reference
+      file.write(i.vtt_time_span)
+      file.write(i.vtt_reference)
     end
     file
   end
@@ -510,11 +510,11 @@ class Medium < ApplicationRecord
   # Note: Only references to unlocked media will be incorporated.
   def references_to_vtt
     file = Tempfile.new(["ref-", ".vtt"], encoding: "UTF-8")
-    file.write vtt_start
+    file.write(vtt_start)
     referrals_by_time.select { |r| r.item_published? && !r.item_locked? }
                      .each do |r|
-      file.write r.vtt_time_span
-      file.write "#{JSON.pretty_generate(r.vtt_properties)}\n\n"
+      file.write(r.vtt_time_span)
+      file.write("#{JSON.pretty_generate(r.vtt_properties)}\n\n")
     end
     file
   end
@@ -989,9 +989,9 @@ class Medium < ApplicationRecord
   def extended_content
     result = []
     if teachable_type == "Lesson" && teachable.details.present?
-      result.push I18n.t("admin.medium.lesson_details_html") + teachable.details
+      result.push(I18n.t("admin.medium.lesson_details_html") + teachable.details)
     end
-    result.push content if content.present?
+    result.push(content) if content.present?
     result
   end
 
@@ -1093,7 +1093,7 @@ class Medium < ApplicationRecord
 
   def subscribed_users
     return teachable.user_ids if ["Lecture",
-                                  "Course"].include? teachable.class.to_s
+                                  "Course"].include?(teachable.class.to_s)
     return unless teachable.instance_of?(::Lesson)
 
     Lecture.find_by(id: teachable.lecture_id).user_ids

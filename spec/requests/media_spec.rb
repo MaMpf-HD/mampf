@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Media", type: :request do
+RSpec.describe("Media", type: :request) do
   describe "#search_by" do
     before do
       Medium.destroy_all

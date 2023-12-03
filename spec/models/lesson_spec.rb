@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Lesson, type: :model do
+RSpec.describe(Lesson, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_lesson)).to be_valid
   end
@@ -46,7 +46,7 @@ RSpec.describe Lesson, type: :model do
       expect(@lesson.lecture).to be_kind_of(Lecture)
     end
     it "has one section" do
-      expect(@lesson.sections.size).to eq 1
+      expect(@lesson.sections.size).to eq(1)
     end
   end
 

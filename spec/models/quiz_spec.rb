@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Quiz, type: :model do
+RSpec.describe(Quiz, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_quiz)).to be_valid
   end
@@ -14,7 +14,7 @@ RSpec.describe Quiz, type: :model do
       @quiz = FactoryBot.build(:valid_quiz, :with_quiz_graph)
     end
     it "has no errors" do
-      expect(@quiz.find_errors).to eq []
+      expect(@quiz.find_errors).to eq([])
     end
   end
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Item, type: :model do
+RSpec.describe(Item, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:item)).to be_valid
   end
@@ -20,7 +20,7 @@ RSpec.describe Item, type: :model do
     end
     it "has the correct start time when the starting_time param is used" do
       item = FactoryBot.build(:item, :with_start_time, starting_time: 1000)
-      expect(item.start_time.total_seconds).to eq 1000
+      expect(item.start_time.total_seconds).to eq(1000)
     end
   end
 

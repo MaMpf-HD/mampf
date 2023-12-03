@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe TimeStamp, type: :model do
+RSpec.describe(TimeStamp, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:time_stamp)).to be_valid
   end

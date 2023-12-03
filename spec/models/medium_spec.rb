@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Medium, type: :model do
+RSpec.describe(Medium, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_medium)).to be_valid
   end
@@ -32,22 +32,22 @@ RSpec.describe Medium, type: :model do
   describe "with editors" do
     it "has the correct number of editors" do
       medium = FactoryBot.build(:medium, :with_editors, editors_count: 2)
-      expect(medium.editors.size).to eq 2
+      expect(medium.editors.size).to eq(2)
     end
     it "has one editor when called without editors_count parameter" do
       medium = FactoryBot.build(:medium, :with_editors)
-      expect(medium.editors.size).to eq 1
+      expect(medium.editors.size).to eq(1)
     end
   end
 
   describe "with tags" do
     it "has the correct number of tags" do
       medium = FactoryBot.build(:medium, :with_tags, tags_count: 4)
-      expect(medium.tags.size).to eq 4
+      expect(medium.tags.size).to eq(4)
     end
     it "has two tags when called without tags_count parameter" do
       medium = FactoryBot.build(:medium, :with_tags)
-      expect(medium.tags.size).to eq 2
+      expect(medium.tags.size).to eq(2)
     end
   end
 
@@ -55,11 +55,11 @@ RSpec.describe Medium, type: :model do
     it "has the correct number of linked media" do
       medium = FactoryBot.build(:medium, :with_linked_media,
                                 linked_media_count: 3)
-      expect(medium.linked_media.size).to eq 3
+      expect(medium.linked_media.size).to eq(3)
     end
     it "has two linked media when called without linked_media_count param" do
       medium = FactoryBot.build(:medium, :with_linked_media)
-      expect(medium.linked_media.size).to eq 2
+      expect(medium.linked_media.size).to eq(2)
     end
   end
 

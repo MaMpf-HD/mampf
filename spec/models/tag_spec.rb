@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Tag, type: :model do
+RSpec.describe(Tag, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:tag)).to be_valid
   end
@@ -17,33 +17,33 @@ RSpec.describe Tag, type: :model do
   describe "with several notions" do
     it "has the correct number of notions" do
       tag = FactoryBot.build(:tag, :with_several_notions, notions_count: 3)
-      expect(tag.notions.size).to eq 3
+      expect(tag.notions.size).to eq(3)
     end
     it "has one notion if no notions_count parameter is given" do
       tag = FactoryBot.build(:tag, :with_several_notions)
-      expect(tag.notions.size).to eq 1
+      expect(tag.notions.size).to eq(1)
     end
   end
 
   describe "with related tags" do
     it "has the correct number of related tags" do
       tag = FactoryBot.build(:tag, :with_related_tags, related_tags_count: 3)
-      expect(tag.related_tags.size).to eq 3
+      expect(tag.related_tags.size).to eq(3)
     end
     it "has two related tags if no related_tags_count parameter is given" do
       tag = FactoryBot.build(:tag, :with_related_tags)
-      expect(tag.related_tags.size).to eq 2
+      expect(tag.related_tags.size).to eq(2)
     end
   end
 
   describe "with courses" do
     it "has the correct number of courses" do
       tag = FactoryBot.build(:tag, :with_courses, courses_count: 3)
-      expect(tag.courses.size).to eq 3
+      expect(tag.courses.size).to eq(3)
     end
     it "has two courses if no courses_count parameter is given" do
       tag = FactoryBot.build(:tag, :with_courses)
-      expect(tag.courses.size).to eq 2
+      expect(tag.courses.size).to eq(2)
     end
   end
 

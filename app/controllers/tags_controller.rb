@@ -137,7 +137,7 @@ class TagsController < ApplicationController
     per_page = search_params[:per] || 10
     search = Sunspot.new_search(Tag)
     search.build do
-      fulltext search_params[:title]
+      fulltext(search_params[:title])
     end
     course_ids = if search_params[:all_courses] == "1"
       []
@@ -146,7 +146,7 @@ class TagsController < ApplicationController
     end
     search.build do
       with(:course_ids, course_ids)
-      paginate page: params[:page], per_page: per_page
+      paginate(page: params[:page], per_page: per_page)
     end
     search.execute
     results = search.results

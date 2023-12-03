@@ -24,6 +24,6 @@ module QuizzesHelper
   def vertices_labels_no_end(quiz)
     special = [[I18n.t("admin.quiz.undefined"), 0]]
     list = quiz.vertices.keys.collect { |k| [vertex_label(quiz, k), k] }
-    special.concat list
+    special.concat(list)
   end
 end

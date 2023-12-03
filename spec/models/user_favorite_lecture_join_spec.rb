@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe UserFavoriteLectureJoin, type: :model do
+RSpec.describe(UserFavoriteLectureJoin, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:user_favorite_lecture_join)).to be_valid
   end

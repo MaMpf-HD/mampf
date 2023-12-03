@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ChaptersController, type: :controller do
+RSpec.describe(ChaptersController, type: :controller) do
   # NEEDS TO BE REFACTORED
 
   # describe '#show' do

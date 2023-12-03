@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe WatchlistEntry, type: :model do
+RSpec.describe(WatchlistEntry, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:watchlist_entry, :with_watchlist, :with_medium)).to be_valid
   end

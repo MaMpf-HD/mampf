@@ -45,17 +45,17 @@ class MediumPublisher
     begin
       release_date = Time.zone.parse(params[:release_date] || "")
     rescue ArgumentError
-      Rails.logger.debug "Argument error for medium release date"
+      Rails.logger.debug("Argument error for medium release date")
     end
     begin
       assignment_deadline = Time.zone.parse(params[:assignment_deadline] || "")
     rescue ArgumentError
-      Rails.logger.debug "Argument error for medium assignment deadline"
+      Rails.logger.debug("Argument error for medium assignment deadline")
     end
     begin
       assignment_deletion_date = Time.zone.parse(params[:assignment_deletion_date] || "")
     rescue ArgumentError
-      Rails.logger.debug "Argument error for medium assignment deletion date"
+      Rails.logger.debug("Argument error for medium assignment deletion date")
     end
     MediumPublisher.new(medium_id: medium.id, user_id: user.id,
                         release_now: params[:release_now] == "1",

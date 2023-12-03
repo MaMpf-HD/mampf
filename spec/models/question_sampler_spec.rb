@@ -1,4 +1,4 @@
-RSpec.describe QuestionSampler, type: :model do
+RSpec.describe(QuestionSampler, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:question_sampler)).to be_kind_of(QuestionSampler)
   end
@@ -12,7 +12,7 @@ RSpec.describe QuestionSampler, type: :model do
     it "returns [] if no tags are given" do
       question_sampler = FactoryBot.build(:question_sampler,
                                           questions: @questions)
-      expect(question_sampler.sample!).to eq []
+      expect(question_sampler.sample!).to eq([])
     end
 
     it "returns an array with the correct length if not enough questions match " \
@@ -24,7 +24,7 @@ RSpec.describe QuestionSampler, type: :model do
                                           questions: @questions,
                                           tags: tags,
                                           count: 3)
-      expect(question_sampler.sample!.size).to eq 2
+      expect(question_sampler.sample!.size).to eq(2)
     end
 
     context "in a simple example" do
@@ -42,15 +42,15 @@ RSpec.describe QuestionSampler, type: :model do
       end
 
       it "returns an array with the correct length" do
-        expect(@sample.size).to eq 3
+        expect(@sample.size).to eq(3)
       end
 
       it "does not return duplicates" do
-        expect(@sample.uniq.size).to eq @sample.size
+        expect(@sample.uniq.size).to eq(@sample.size)
       end
 
       it "returns a list of questions that is a subset of the given list" do
-        expect(@sample - @questions.pluck(:id)).to eq []
+        expect(@sample - @questions.pluck(:id)).to eq([])
       end
     end
   end

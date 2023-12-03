@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Course, type: :model do
+RSpec.describe(Course, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:course)).to be_valid
   end
@@ -39,11 +39,11 @@ RSpec.describe Course, type: :model do
       expect(@course.tags).not_to be_nil
     end
     it "has 3 tags when called without tag_count parameter" do
-      expect(@course.tags.size).to eq 3
+      expect(@course.tags.size).to eq(3)
     end
     it "has the correct number of tags when called with tag_count parameter" do
       course = FactoryBot.build(:course, :with_tags, tag_count: 5)
-      expect(course.tags.size).to eq 5
+      expect(course.tags.size).to eq(5)
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.describe Course, type: :model do
       expect(course).to be_valid
     end
     it "is term independent" do
-      expect(course.term_independent).to be true
+      expect(course.term_independent).to be(true)
     end
   end
 
@@ -63,7 +63,7 @@ RSpec.describe Course, type: :model do
       expect(course).to be_valid
     end
     it "has organzational flag set to true" do
-      expect(course.organizational).to be true
+      expect(course.organizational).to be(true)
     end
     it "has an organizational concept" do
       expect(course.organizational_concept).to be_truthy
@@ -76,7 +76,7 @@ RSpec.describe Course, type: :model do
       expect(course).to be_valid
     end
     it "has locale de" do
-      expect(course.locale).to eq "de"
+      expect(course.locale).to eq("de")
     end
   end
 
@@ -117,7 +117,7 @@ RSpec.describe Course, type: :model do
       new_updated_ats = [course_medium.updated_at, lecture_medium.updated_at,
                          lesson_medium.updated_at]
       comparison = [0, 1, 2].map { |i| updated_ats[i] == new_updated_ats[i] }
-      expect(comparison).to eq [false, false, false]
+      expect(comparison).to eq([false, false, false])
     end
 
     it "touches all lectures and lessons related to the course" do
@@ -127,7 +127,7 @@ RSpec.describe Course, type: :model do
       @lesson.reload
       new_updated_ats = [@lecture.updated_at, @lesson.updated_at]
       comparison = [0, 1].map { |i| updated_ats[i] == new_updated_ats[i] }
-      expect(comparison).to eq [false, false]
+      expect(comparison).to eq([false, false])
     end
   end
 
@@ -161,7 +161,7 @@ RSpec.describe Course, type: :model do
   describe "#course" do
     it "returns self" do
       course = FactoryBot.build(:course)
-      expect(course.course).to eq course
+      expect(course.course).to eq(course)
     end
   end
 
@@ -182,14 +182,14 @@ RSpec.describe Course, type: :model do
   describe "#media_scope" do
     it "returns self" do
       course = FactoryBot.build(:course)
-      expect(course.media_scope).to eq course
+      expect(course.media_scope).to eq(course)
     end
   end
 
   describe "#selector_value" do
     it "returns the correct selector value" do
       course = FactoryBot.create(:course)
-      expect(course.selector_value).to eq "Course-#{course.id}"
+      expect(course.selector_value).to eq("Course-#{course.id}")
     end
   end
 
@@ -245,7 +245,7 @@ RSpec.describe Course, type: :model do
   describe "#published?" do
     it "returns true" do
       course = FactoryBot.build(:course, title: "usual BS")
-      expect(course.published?).to be true
+      expect(course.published?).to be(true)
     end
   end
 
@@ -264,21 +264,21 @@ RSpec.describe Course, type: :model do
 
     it "returns false if the course has lectures" do
       FactoryBot.build(:lecture, course: @course)
-      expect(@course.irrelevant?).to be false
+      expect(@course.irrelevant?).to be(false)
     end
 
     it "returns false if the course has media" do
       FactoryBot.build(:course_medium, teachable: @course)
-      expect(@course.irrelevant?).to be false
+      expect(@course.irrelevant?).to be(false)
     end
 
     it "returns false if the course is not persisted" do
-      expect(@course.irrelevant?).to be false
+      expect(@course.irrelevant?).to be(false)
     end
 
     it "returns true if the course is persisted and has no lectures or media" do
       @course.save
-      expect(@course.irrelevant?).to be true
+      expect(@course.irrelevant?).to be(true)
     end
   end
 
@@ -336,7 +336,7 @@ RSpec.describe Course, type: :model do
   describe "#restricted?" do
     it "returns false" do
       course = FactoryBot.build(:course)
-      expect(course.restricted?).to be false
+      expect(course.restricted?).to be(false)
     end
   end
 
@@ -371,8 +371,8 @@ RSpec.describe Course, type: :model do
       id1 = tag1.id
       tag2 = FactoryBot.create(:tag, title: "Adventure", courses: [course])
       id2 = tag2.id
-      expect(course.select_tags_by_title).to eq [["Adventure", id2],
-                                                 ["Xperience", id1]]
+      expect(course.select_tags_by_title).to eq([["Adventure", id2],
+                                                 ["Xperience", id1]])
     end
   end
 
@@ -434,11 +434,11 @@ RSpec.describe Course, type: :model do
     it "returns true if a lecture of the course was subscribed by user" do
       lecture = FactoryBot.create(:lecture, course: @course)
       @user.lectures << lecture
-      expect(@course.subscribed_by?(@user)).to be true
+      expect(@course.subscribed_by?(@user)).to be(true)
     end
 
     it "returns false if no lecture of the course was subscribed by user" do
-      expect(@course.subscribed_by?(@user)).to be false
+      expect(@course.subscribed_by?(@user)).to be(false)
     end
   end
 
@@ -449,12 +449,12 @@ RSpec.describe Course, type: :model do
 
     it "returns true if the course is edited by user" do
       course = FactoryBot.create(:course, editors: [@user])
-      expect(course.edited_by?(@user)).to be true
+      expect(course.edited_by?(@user)).to be(true)
     end
 
     it "returns false if course is not edited by user" do
       course = FactoryBot.create(:course)
-      expect(course.edited_by?(@user)).to be false
+      expect(course.edited_by?(@user)).to be(false)
     end
   end
 
@@ -479,25 +479,25 @@ RSpec.describe Course, type: :model do
 
     it "returns true if the course is edited by user" do
       course = FactoryBot.create(:course, editors: [@user])
-      expect(course.addable_by?(@user)).to be true
+      expect(course.addable_by?(@user)).to be(true)
     end
 
     it "returns true if a lecture of the course is edited by user" do
       course = FactoryBot.create(:course)
       FactoryBot.create(:lecture, course: course, editors: [@user])
-      expect(course.addable_by?(@user)).to be true
+      expect(course.addable_by?(@user)).to be(true)
     end
 
     it "returns true if a lecture of the course has the user as teacher" do
       course = FactoryBot.create(:course)
       FactoryBot.create(:lecture, course: course, teacher: @user)
-      expect(course.addable_by?(@user)).to be true
+      expect(course.addable_by?(@user)).to be(true)
     end
 
     it "returns false if none of the above is true" do
       course = FactoryBot.create(:course)
       FactoryBot.create(:lecture, course: course)
-      expect(course.addable_by?(@user)).to be false
+      expect(course.addable_by?(@user)).to be(false)
     end
   end
 
@@ -508,12 +508,12 @@ RSpec.describe Course, type: :model do
 
     it "returns true if the course is edited by user" do
       course = FactoryBot.create(:course, editors: [@user])
-      expect(course.removable_by?(@user)).to be true
+      expect(course.removable_by?(@user)).to be(true)
     end
 
     it "returns false if no lecture of the course is not edited by user" do
       course = FactoryBot.create(:course)
-      expect(course.removable_by?(@user)).to be false
+      expect(course.removable_by?(@user)).to be(false)
     end
   end
 
@@ -638,7 +638,7 @@ RSpec.describe Course, type: :model do
                              teachable: course,
                              independent: true,
                              released: "all")
-      expect(course.enough_questions?).to be true
+      expect(course.enough_questions?).to be(true)
     end
     it "returns false if there are <10 questions in the course" do
       course = FactoryBot.create(:course)
@@ -646,7 +646,7 @@ RSpec.describe Course, type: :model do
                              teachable: course,
                              independent: true,
                              released: "all")
-      expect(course.enough_questions?).to be false
+      expect(course.enough_questions?).to be(false)
     end
   end
 
@@ -694,7 +694,7 @@ RSpec.describe Course, type: :model do
     describe "#questions_count" do
       it "returns the correct number of questions (released, in course or " \
          "published lectures, independent)" do
-        expect(@course.questions_count).to eq 13
+        expect(@course.questions_count).to eq(13)
       end
     end
 
@@ -722,12 +722,12 @@ RSpec.describe Course, type: :model do
     describe "#question_count" do
       it "returns the correct count if no tags are given" do
         expect(@course.question_count(Tag.none))
-          .to eq 13
+          .to eq(13)
       end
       it "returns the correct count " do
         expect(@course.question_count([@course_tags[4], @lecture1_tags[5],
                                        @special_tag1]))
-          .to eq 3
+          .to eq(3)
       end
     end
 
@@ -785,23 +785,23 @@ RSpec.describe Course, type: :model do
 
       it "has the correct number of questions (#1)" do
         expect(@course.create_random_quiz!(@course.tags, 5).questions_count)
-          .to eq 5
+          .to eq(5)
       end
 
       it "has the correct number of questions (#2)" do
         expect(@course.create_random_quiz!(@course.tags + @lecture1_tags, 10)
                  .questions_count)
-          .to eq 10
+          .to eq(10)
       end
 
       it "has the correct number of questions (#3)" do
         expect(@course.create_random_quiz!(@course.tags, 3).questions_count)
-          .to eq 5
+          .to eq(5)
       end
 
       it "has the correct number of questions (#4)" do
         expect(@course.create_random_quiz!(@course.tags, 10).questions_count)
-          .to eq 7
+          .to eq(7)
       end
 
       it "has questions that relate to the given tags" do
@@ -831,7 +831,7 @@ RSpec.describe Course, type: :model do
 
       it "returns a string with the correct ending" do
         course = FactoryBot.create(:course, :with_image)
-        expect(course.image_url_with_host.end_with?(course.image.id)).to be true
+        expect(course.image_url_with_host.end_with?(course.image.id)).to be(true)
       end
     end
 
@@ -849,7 +849,7 @@ RSpec.describe Course, type: :model do
       it "returns a string with the correct ending" do
         course = FactoryBot.create(:course, :with_image_and_normalization)
         expect(course.normalized_image_url_with_host
-                     .end_with?(course.image(:normalized).id)).to be true
+                     .end_with?(course.image(:normalized).id)).to be(true)
       end
     end
 
@@ -861,7 +861,7 @@ RSpec.describe Course, type: :model do
 
       it "returns the correct file name" do
         course = FactoryBot.create(:course, :with_image)
-        expect(course.image_filename).to eq "image.png"
+        expect(course.image_filename).to eq("image.png")
       end
     end
 
@@ -873,7 +873,7 @@ RSpec.describe Course, type: :model do
 
       it "returns the correct image file size" do
         course = FactoryBot.create(:course, :with_image)
-        expect(course.image_size).to eq 71_933
+        expect(course.image_size).to eq(71_933)
       end
     end
 
@@ -885,7 +885,7 @@ RSpec.describe Course, type: :model do
 
       it "returns the correct image resolution" do
         course = FactoryBot.create(:course, :with_image)
-        expect(course.image_resolution).to eq "900x600"
+        expect(course.image_resolution).to eq("900x600")
       end
     end
   end

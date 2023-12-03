@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MediaController, type: :controller do
+RSpec.describe(MediaController, type: :controller) do
   # NEEDS TO BE REFACTORED
 
   # describe '#index' do

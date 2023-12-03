@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe CourseSelfJoin, type: :model do
+RSpec.describe(CourseSelfJoin, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:course_self_join)).to be_valid
   end

@@ -187,12 +187,12 @@ module ApplicationHelper
       lectures = [["#{c.short_title} (#{t("basics.all")})",
                    "Course-#{c.id}"]]
       c.lectures.includes(:term).find_each do |l|
-        lectures.push [l.short_title_release, "Lecture-#{l.id}"]
+        lectures.push([l.short_title_release, "Lecture-#{l.id}"])
       end
-      list.push [c.title, lectures]
+      list.push([c.title, lectures])
     end
-    list.push [t("admin.referral.external_references"),
-               [[t("admin.referral.external_all"), "external-0"]]]
+    list.push([t("admin.referral.external_references"),
+               [[t("admin.referral.external_all"), "external-0"]]])
   end
 
   # Returns the grouped list of all courses/lectures together with their ids.
@@ -202,9 +202,9 @@ module ApplicationHelper
     Course.find_each do |c|
       lectures = [["#{c.short_title} Modul", "Course-#{c.id}"]]
       c.lectures.includes(:term).find_each do |l|
-        lectures.push [l.short_title, "Lecture-#{l.id}"]
+        lectures.push([l.short_title, "Lecture-#{l.id}"])
       end
-      list.push [c.title, lectures]
+      list.push([c.title, lectures])
     end
     list
   end
@@ -238,7 +238,7 @@ module ApplicationHelper
     return "#{t("today")}, #{date.strftime("%H:%M")}" if date.to_date == Time.zone.today
     return "#{t("yesterday")}, #{date.strftime("%H:%M")}" if date.to_date == Date.yesterday
 
-    I18n.l date, format: :concise
+    I18n.l(date, format: :concise)
   end
 
   # prepend a select prompt to selection for options_for_select
@@ -275,13 +275,13 @@ module ApplicationHelper
   end
 
   def helpdesk(text, html, title = t("info"))
-    tag.i class: "far fa-question-circle helpdesk ms-2",
+    tag.i(class: "far fa-question-circle helpdesk ms-2",
           tabindex: -1,
           "data-bs-toggle": "popover",
           "data-bs-trigger": "focus",
           "data-bs-content": text,
           "data-bs-html": html,
-          title: title
+          title: title)
   end
 
   def realization_path(realization)

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Watchlist, type: :model do
+RSpec.describe(Watchlist, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:watchlist, :with_user)).to be_valid
   end
@@ -20,14 +20,14 @@ RSpec.describe Watchlist, type: :model do
   it "can be public" do
     watchlist = FactoryBot.build(:watchlist, :with_user)
     watchlist.public = true
-    expect(watchlist.public).to eq true
+    expect(watchlist.public).to eq(true)
   end
 
   it "ownership can be tested" do
     watchlist = FactoryBot.build(:watchlist, :with_user)
     user = FactoryBot.build(:user)
 
-    expect(watchlist.owned_by?(user)).to eq false
-    expect(watchlist.owned_by?(watchlist.user)).to eq true
+    expect(watchlist.owned_by?(user)).to eq(false)
+    expect(watchlist.owned_by?(watchlist.user)).to eq(true)
   end
 end

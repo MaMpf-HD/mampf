@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Interaction, type: :model do
+RSpec.describe(Interaction, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:interaction)).to be_valid
   end

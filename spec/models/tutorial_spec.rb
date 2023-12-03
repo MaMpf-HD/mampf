@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Tutorial, type: :model do
+RSpec.describe(Tutorial, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:tutorial)).to be_valid
   end
@@ -28,11 +28,11 @@ RSpec.describe Tutorial, type: :model do
   describe "with tutors" do
     it "has a tutor" do
       tutorial = FactoryBot.build(:tutorial, :with_tutors)
-      expect(tutorial.tutors.size).to eq 1
+      expect(tutorial.tutors.size).to eq(1)
     end
     it "has the correct number of tutors if tutors_count is supplied" do
       tutorial = FactoryBot.build(:tutorial, :with_tutors, tutors_count: 3)
-      expect(tutorial.tutors.size).to eq 3
+      expect(tutorial.tutors.size).to eq(3)
     end
   end
 end

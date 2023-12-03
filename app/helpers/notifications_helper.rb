@@ -40,7 +40,7 @@ module NotificationsHelper
     elsif notification.lecture_announcement?
       announcement_notification_card_header(notifiable)
     else
-      link_to t("mampf_news.title"), news_path, class: "text-dark"
+      link_to(t("mampf_news.title"), news_path, class: "text-dark")
     end
     text.html_safe # rubocop:todo Rails/OutputSafety
   end

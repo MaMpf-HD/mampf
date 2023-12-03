@@ -213,7 +213,7 @@ class ProfileController < ApplicationController
         given_passphrase = params[:user][:pass_lecture][l.id.to_s]
         unless given_passphrase == l.passphrase
           @errors[:passphrase] ||= []
-          @errors[:passphrase].push l.id
+          @errors[:passphrase].push(l.id)
         end
       end
     end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Reader, type: :model do
+RSpec.describe(Reader, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:reader)).to be_valid
   end

@@ -732,13 +732,13 @@ class Lecture < ApplicationRecord
     end
     if search_params[:fulltext].present?
       search.build do
-        fulltext search_params[:fulltext]
+        fulltext(search_params[:fulltext])
       end
     end
     search.build do
       order_by(:sort_date, :desc)
       order_by(:sort_title, :asc)
-      paginate page: page, per_page: search_params[:per]
+      paginate(page: page, per_page: search_params[:per])
     end
     search
   end

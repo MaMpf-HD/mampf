@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Notion, type: :model do
+RSpec.describe(Notion, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.create(:valid_notion)).to be_valid
   end

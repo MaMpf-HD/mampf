@@ -91,9 +91,9 @@ module SubmissionsHelper
   end
 
   def submission_status(submission, assignment)
-    tag.i class: [submission_status_icon(submission, assignment), "fa-lg"],
+    tag.i(class: [submission_status_icon(submission, assignment), "fa-lg"],
           data: { toggle: "tooltip" },
-          title: submission_status_text(submission, assignment)
+          title: submission_status_text(submission, assignment))
   end
 
   def show_submission_footer?(submission, assignment)

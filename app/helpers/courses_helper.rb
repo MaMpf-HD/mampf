@@ -30,13 +30,13 @@ module CoursesHelper
   end
 
   def course_edit_icon(course)
-    link_to edit_course_path(course),
+    link_to(edit_course_path(course),
             class: "text-dark me-2",
             style: "text-decoration: none;",
             data: { toggle: "tooltip",
                     placement: "bottom" },
-            title: t("buttons.edit") do
-      tag.i class: "far fa-edit"
+            title: t("buttons.edit")) do
+      tag.i(class: "far fa-edit")
     end
   end
 end

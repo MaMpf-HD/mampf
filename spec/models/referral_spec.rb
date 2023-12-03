@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Referral, type: :model do
+RSpec.describe(Referral, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:referral)).to be_valid
   end

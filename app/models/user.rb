@@ -586,7 +586,7 @@ class User < ApplicationRecord
     lectures << lecture
 
     # make sure subscribed_users is updated in media
-    Sunspot.index! lecture.media
+    Sunspot.index!(lecture.media)
 
     true
   end
@@ -599,7 +599,7 @@ class User < ApplicationRecord
     favorite_lectures.delete(lecture)
 
     # make sure subscribed_users is updated in media
-    Sunspot.index! lecture.media
+    Sunspot.index!(lecture.media)
     true
   end
 
@@ -721,7 +721,7 @@ class User < ApplicationRecord
     unless something.is_a?(Lecture) || something.is_a?(Course) ||
            something.is_a?(Medium) || something.is_a?(Lesson) ||
            something.is_a?(Talk)
-      raise "can_edit? was called with incompatible class"
+      raise("can_edit? was called with incompatible class")
     end
     return true if admin
 

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "main/about.html.erb", type: :view do
+RSpec.describe("main/about.html.erb", type: :view) do
   # NEEDS TO BE REFACTORED
 
   # it 'renders correctly' do

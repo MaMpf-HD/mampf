@@ -11,7 +11,7 @@ class TermsController < ApplicationController
 
   def index
     authorize! :index, Term.new
-    @terms = Term.order(:year, :season).reverse_order.page params[:page]
+    @terms = Term.order(:year, :season).reverse_order.page(params[:page])
   end
 
   def new

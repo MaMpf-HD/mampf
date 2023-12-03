@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Import, type: :model do
+RSpec.describe(Import, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_import)).to be_valid
   end

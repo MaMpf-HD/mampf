@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ProfileController, type: :controller do
+RSpec.describe(ProfileController, type: :controller) do
   # NEEDS TO BE REFACTORED
 
   # describe '#edit' do

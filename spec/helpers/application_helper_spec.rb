@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ApplicationHelper, type: :helper do
+RSpec.describe(ApplicationHelper, type: :helper) do
   # NEEDS TO BE REFACTORED
 
   # describe '#full_title' do

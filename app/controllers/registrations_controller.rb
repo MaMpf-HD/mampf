@@ -33,7 +33,7 @@ class RegistrationsController < Devise::RegistrationsController
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
       clean_up_passwords(resource)
-      set_flash_message :alert, :captcha_error
+      set_flash_message(:alert, :captcha_error)
       render :new
     end
   end
@@ -41,7 +41,7 @@ class RegistrationsController < Devise::RegistrationsController
   def destroy
     password_correct = resource.valid_password?(deletion_params[:password])
     unless password_correct
-      set_flash_message :alert, :password_incorrect
+      set_flash_message(:alert, :password_incorrect)
       respond_with_navigational(resource) do
         redirect_to after_sign_up_path_for(resource_name)
       end
@@ -49,15 +49,15 @@ class RegistrationsController < Devise::RegistrationsController
     end
     success = resource.archive_and_destroy(deletion_params[:archive_name])
     unless success
-      set_flash_message :alert, :not_destroyed
+      set_flash_message(:alert, :not_destroyed)
       respond_with_navigational(resource) do
         redirect_to after_sign_up_path_for(resource_name)
       end
       return
     end
     Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name)
-    set_flash_message :notice, :destroyed
-    yield resource if block_given?
+    set_flash_message(:notice, :destroyed)
+    yield(resource) if block_given?
     respond_with_navigational(resource) do
       redirect_to after_sign_out_path_for(resource_name)
     end
@@ -79,9 +79,9 @@ class RegistrationsController < Devise::RegistrationsController
       max_users = (ENV["MAMPF_MAX_REGISTRATION_PER_TIMEFRAME"] || 40).to_i
       return if new_users > max_users
 
-      self.resource = resource_class.new devise_parameter_sanitizer.sanitize(:sign_up)
+      self.resource = resource_class.new(devise_parameter_sanitizer.sanitize(:sign_up))
       resource.validate # Look for any other validation errors besides reCAPTCHA
-      set_flash_message :alert, :too_many_registrations
+      set_flash_message(:alert, :too_many_registrations)
       set_minimum_password_length
       respond_with_navigational(resource) { render :new }
     end

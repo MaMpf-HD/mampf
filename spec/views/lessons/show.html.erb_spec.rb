@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "lessons/show.html.erb", type: :view do
+RSpec.describe("lessons/show.html.erb", type: :view) do
   # NEEDS TO BE REFACTORED
 
   # it 'shows the correct title' do

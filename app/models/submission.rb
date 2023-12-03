@@ -120,7 +120,7 @@ class Submission < ApplicationRecord
       archived_filestream = Zip::OutputStream.write_buffer do |stream|
         submissions.zip(downloadables).each do |s, d|
           stream.put_next_entry(s.filename_for_bulk_download(end_of_file))
-          stream.write File.read(d.to_io.path)
+          stream.write(File.read(d.to_io.path))
         end
       end
       archived_filestream.rewind
@@ -155,19 +155,19 @@ class Submission < ApplicationRecord
   def check_file_properties_any(metadata, sort)
     errors = []
     if sort == :submission && metadata["size"] > 10 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "10 MB")
+      errors.push(I18n.t("submission.manuscript_size_too_big",
+                         max_size: "10 MB"))
     end
     if sort == :correction && metadata["size"] > 15 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB")
+      errors.push(I18n.t("submission.manuscript_size_too_big",
+                         max_size: "15 MB"))
     end
     file_name = metadata["filename"]
     file_type = File.extname(file_name)
     unless file_type.in?([".cc", ".hh", ".m", ".mlx", ".pdf", ".zip", ".txt"])
-      errors.push I18n.t("submission.wrong_file_type",
+      errors.push(I18n.t("submission.wrong_file_type",
                          file_type: file_type,
-                         accepted_file_type: assignment.accepted_file_type)
+                         accepted_file_type: assignment.accepted_file_type))
     end
     return {} if errors.blank?
 
@@ -177,33 +177,33 @@ class Submission < ApplicationRecord
   def check_file_properties(metadata, sort)
     errors = []
     if sort == :submission && metadata["size"] > 10 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "10 MB")
+      errors.push(I18n.t("submission.manuscript_size_too_big",
+                         max_size: "10 MB"))
     end
     if sort == :correction && metadata["size"] > 15 * 1024 * 1024
-      errors.push I18n.t("submission.manuscript_size_too_big",
-                         max_size: "15 MB")
+      errors.push(I18n.t("submission.manuscript_size_too_big",
+                         max_size: "15 MB"))
     end
     file_name = metadata["filename"]
     file_type = File.extname(file_name)
     if file_type != assignment.accepted_file_type &&
        assignment.accepted_file_type != ".tar.gz"
-      errors.push I18n.t("submission.wrong_file_type",
+      errors.push(I18n.t("submission.wrong_file_type",
                          file_type: file_type,
-                         accepted_file_type: assignment.accepted_file_type)
+                         accepted_file_type: assignment.accepted_file_type))
     end
     if assignment.accepted_file_type == ".tar.gz"
       if file_type == ".gz"
         reduced_type = File.extname(File.basename(file_name, ".gz"))
         if reduced_type != ".tar"
-          errors.push I18n.t("submission.wrong_file_type",
+          errors.push(I18n.t("submission.wrong_file_type",
                              file_type: ".gz",
-                             accepted_file_type: ".tar.gz")
+                             accepted_file_type: ".tar.gz"))
         end
       else
-        errors.push I18n.t("submission.wrong_file_type",
+        errors.push(I18n.t("submission.wrong_file_type",
                            file_type: file_type,
-                           accepted_file_type: ".tar.gz")
+                           accepted_file_type: ".tar.gz"))
       end
     end
     if (!assignment.accepted_file_type.in?([".cc", ".hh", ".m"]) &&
@@ -211,10 +211,10 @@ class Submission < ApplicationRecord
        (assignment.accepted_file_type.in?([".cc", ".hh", ".m"]) &&
          (!metadata["mime_type"].starts_with?("text/") &&
           metadata["mime_type"] != "application/octet-stream"))
-      errors.push I18n.t("submission.wrong_mime_type",
+      errors.push(I18n.t("submission.wrong_mime_type",
                          mime_type: metadata["mime_type"],
                          accepted_mime_types: assignment.accepted_mime_types
-                                                        .join(", "))
+                                                        .join(", ")))
     end
     return {} if errors.blank?
 

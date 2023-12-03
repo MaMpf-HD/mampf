@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "media/show.html.erb", type: :view do
+RSpec.describe("media/show.html.erb", type: :view) do
   # NEEDS TO BE REFACTORED
 
   # it 'displays correct information' do

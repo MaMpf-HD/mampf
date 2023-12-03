@@ -84,7 +84,7 @@ class QuizzesController < ApplicationController
     quiz = Quiz.find_by(id: params[:quiz_id])
     authorize! :update_branching, quiz
     @quizzable = quiz.quizzable(params[:vertex_id].to_i)
-    @id = params[:id].sub "select", "quizzable"
+    @id = params[:id].sub("select", "quizzable")
   end
 
   def edit_vertex_targets

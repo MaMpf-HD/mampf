@@ -12,8 +12,8 @@ module ExceptionHandler
 
     def new_exception(err)
       @exception = err
-      mail to: ExceptionHandler.config.email
-      Rails.logger.info "Exception Sent To → #{ExceptionHandler.config.email}"
+      mail(to: ExceptionHandler.config.email)
+      Rails.logger.info("Exception Sent To → #{ExceptionHandler.config.email}")
     end
   end
 end

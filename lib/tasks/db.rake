@@ -107,7 +107,7 @@ namespace :db do
           puts "No backups found for the pattern '#{pattern}'"
         when 1
           file = files.first
-          fmt  = format_for_file file
+          fmt  = format_for_file(file)
 
           case fmt
           when nil
@@ -187,9 +187,9 @@ namespace :db do
     end
 
     def with_config
-      yield Rails.application.class.module_parent_name.underscore,
+      yield(Rails.application.class.module_parent_name.underscore,
             ActiveRecord::Base.connection_db_config.host,
             ActiveRecord::Base.connection_db_config.database,
-            ActiveRecord::Base.connection_db_config.configuration_hash[:username]
+            ActiveRecord::Base.connection_db_config.configuration_hash[:username])
     end
 end

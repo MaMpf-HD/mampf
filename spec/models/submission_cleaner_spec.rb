@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SubmissionCleaner, type: :model do
+RSpec.describe(SubmissionCleaner, type: :model) do
   it "has a factory" do
     expect(FactoryBot.build(:submission_cleaner))
       .to be_kind_of(SubmissionCleaner)

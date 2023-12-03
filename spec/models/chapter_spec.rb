@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Chapter, type: :model do
+RSpec.describe(Chapter, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:chapter)).to be_valid
   end
@@ -22,11 +22,11 @@ RSpec.describe Chapter, type: :model do
       expect(@chapter).to be_valid
     end
     it "has 3 sections when called without section_count parameter" do
-      expect(@chapter.sections.size).to eq 3
+      expect(@chapter.sections.size).to eq(3)
     end
     it "has the correct number of sections" do
       chapter = FactoryBot.build(:chapter, :with_sections, section_count: 5)
-      expect(chapter.sections.size).to eq 5
+      expect(chapter.sections.size).to eq(5)
     end
   end
 

@@ -77,7 +77,7 @@ Rails/SkipsModelValidations:
   AllowedMethods: ["touch"]
 
 Rails/UnknownEnv:
-  Environments: [development, test, production, docker_development]
+  Environments: ["development", "test", "production", "docker_development"]
 
 #############################################
 # Style
@@ -94,6 +94,15 @@ Style/FrozenStringLiteralComment:
 
 Style/HashSyntax:
   EnforcedShorthandSyntax: never
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  AllowedMethods: ["authorize!", "authorize", "can", "can?", "head", "import",
+    "include", "not_to", "puts", "render", "require", "to"]
+  AllowedPatterns: [^redirect_]
+  # Don't enforce in migrations, as we have methods like `add_column`,
+  # `change_column` etc. and parentheses would be very annoying there.
+  Exclude: ["db/**/*"]
 
 Style/RedundantReturn:
   AllowMultipleReturnValues: true

@@ -21,10 +21,10 @@ module Commontator
                                           creator: @commontator_user)
       parent_id = params.dig(:comment, :parent_id)
       if parent_id.present?
-        parent = Commontator::Comment.find parent_id
+        parent = Commontator::Comment.find(parent_id)
         @comment.parent = parent
         if [:q,
-            :b].include? @commontator_thread.config.comment_reply_style
+            :b].include?(@commontator_thread.config.comment_reply_style)
           @comment.body = "<blockquote><span class=\"author\">#{
             Commontator.commontator_name(parent.creator)
           }</span>\n#{
@@ -32,7 +32,7 @@ module Commontator
           }\n</blockquote>\n"
         end
       end
-      security_transgression_unless @comment.can_be_created_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_created_by?(@commontator_user))
 
       respond_to do |format|
         format.html { redirect_to commontable_url }
@@ -43,7 +43,7 @@ module Commontator
     # GET /comments/1/edit
     def edit
       @comment.editor = @commontator_user
-      security_transgression_unless @comment.can_be_edited_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_edited_by?(@commontator_user))
 
       respond_to do |format|
         format.html { redirect_to commontable_url }
@@ -60,7 +60,7 @@ module Commontator
       )
       parent_id = params.dig(:comment, :parent_id)
       @comment.parent = Commontator::Comment.find(parent_id) if parent_id.present?
-      security_transgression_unless @comment.can_be_created_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_created_by?(@commontator_user))
 
       respond_to do |format|
         if params[:cancel].blank?
@@ -92,7 +92,7 @@ module Commontator
     def update
       @comment.editor = @commontator_user
       @comment.body = params.dig(:comment, :body)
-      security_transgression_unless @comment.can_be_edited_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_edited_by?(@commontator_user))
 
       respond_to do |format|
         if params[:cancel].blank?
@@ -115,7 +115,7 @@ module Commontator
 
     # PUT /comments/1/delete
     def delete
-      security_transgression_unless @comment.can_be_deleted_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_deleted_by?(@commontator_user))
 
       unless @comment.delete_by(@commontator_user)
         @comment.errors.add(:base,
@@ -130,7 +130,7 @@ module Commontator
 
     # PUT /comments/1/undelete
     def undelete
-      security_transgression_unless @comment.can_be_deleted_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_deleted_by?(@commontator_user))
 
       @comment.errors.add(:base, t("commontator.comment.errors.not_deleted")) \
         unless @comment.undelete_by(@commontator_user)
@@ -143,9 +143,9 @@ module Commontator
 
     # PUT /comments/1/upvote
     def upvote
-      security_transgression_unless @comment.can_be_voted_on_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_voted_on_by?(@commontator_user))
 
-      @comment.upvote_from @commontator_user
+      @comment.upvote_from(@commontator_user)
 
       respond_to do |format|
         format.html { redirect_to commontable_url }
@@ -155,10 +155,10 @@ module Commontator
 
     # PUT /comments/1/downvote
     def downvote
-      security_transgression_unless @comment.can_be_voted_on_by?(@commontator_user) && \
-                                    @comment.thread.config.comment_voting.to_sym == :ld
+      security_transgression_unless(@comment.can_be_voted_on_by?(@commontator_user) && \
+                                    @comment.thread.config.comment_voting.to_sym == :ld)
 
-      @comment.downvote_from @commontator_user
+      @comment.downvote_from(@commontator_user)
 
       respond_to do |format|
         format.html { redirect_to commontable_url }
@@ -168,9 +168,9 @@ module Commontator
 
     # PUT /comments/1/unvote
     def unvote
-      security_transgression_unless @comment.can_be_voted_on_by?(@commontator_user)
+      security_transgression_unless(@comment.can_be_voted_on_by?(@commontator_user))
 
-      @comment.unvote voter: @commontator_user
+      @comment.unvote(voter: @commontator_user)
 
       respond_to do |format|
         format.html { redirect_to commontable_url }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MediumPublisher, type: :model do
+RSpec.describe(MediumPublisher, type: :model) do
   it "has a factory" do
     expect(FactoryBot.build(:medium_publisher)).to be_kind_of(MediumPublisher)
   end
@@ -94,15 +94,15 @@ RSpec.describe MediumPublisher, type: :model do
       end
 
       it "publishes the medium" do
-        expect(@medium.released).to eq "all"
+        expect(@medium.released).to eq("all")
       end
 
       it "sets a released_at date" do
-        expect(@medium.released_at).not_to be nil
+        expect(@medium.released_at).not_to be(nil)
       end
 
       it "creates notifications" do
-        expect(@user.notifications.size).to eq 1
+        expect(@user.notifications.size).to eq(1)
       end
     end
 
@@ -141,7 +141,7 @@ RSpec.describe MediumPublisher, type: :model do
                                    assignment_file_type: ".pdf")
       publisher.publish!
       lecture.reload
-      expect(lecture.assignments.size).to eq 1
+      expect(lecture.assignments.size).to eq(1)
     end
 
     it "locks the medium thread if the lock_assignment flag is set" do

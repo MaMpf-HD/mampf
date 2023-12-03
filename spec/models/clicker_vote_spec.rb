@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe ClickerVote, type: :model do
+RSpec.describe(ClickerVote, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_clicker_vote)).to be_valid
   end

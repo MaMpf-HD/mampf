@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Clicker, type: :model do
+RSpec.describe(Clicker, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_clicker)).to be_valid
   end
@@ -38,7 +38,7 @@ RSpec.describe Clicker, type: :model do
   describe "open" do
     it "is open" do
       clicker = FactoryBot.build(:clicker, :open)
-      expect(clicker.open).to be true
+      expect(clicker.open).to be(true)
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe Clicker, type: :model do
     it "has the correct amount of alternatives" do
       clicker = FactoryBot.create(:valid_clicker, :with_modified_alternatives,
                                   alternative_count: 5)
-      expect(clicker.alternatives).to eq 5
+      expect(clicker.alternatives).to eq(5)
     end
   end
 

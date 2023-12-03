@@ -6,7 +6,7 @@ class SmartSortAtom
   end
 
   def <=>(other)
-    other.is_a?(self.class) or raise "Can only smart compare with other SmartSortAtom"
+    other.is_a?(self.class) or raise("Can only smart compare with other SmartSortAtom")
     left_value = value
     right_value = other.value
     if left_value.instance_of?(right_value.class)

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Remark, type: :model do
+RSpec.describe(Remark, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_remark)).to be_valid
   end

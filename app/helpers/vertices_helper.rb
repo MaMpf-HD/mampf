@@ -6,7 +6,7 @@ module VerticesHelper
     list = (quiz.vertices.keys - [vertex_id]).collect do |k|
       [quiz.quizzable(k).label, k]
     end
-    special.concat list
+    special.concat(list)
   end
 
   def crosses_id(crosses)

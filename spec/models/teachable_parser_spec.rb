@@ -1,4 +1,4 @@
-RSpec.describe TeachableParser, type: :model do
+RSpec.describe(TeachableParser, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:teachable_parser)).to be_kind_of(TeachableParser)
   end

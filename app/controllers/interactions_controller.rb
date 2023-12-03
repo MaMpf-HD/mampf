@@ -13,8 +13,10 @@ class InteractionsController < ApplicationController
     respond_to do |format|
       format.html { head :ok }
       format.csv do
-        send_data @interactions.to_csv,
-                  filename: "interactions-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv"
+        send_data(@interactions.to_csv,
+                  # rubocop:todo Layout/LineLength
+                  filename: "interactions-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv")
+        # rubocop:enable Layout/LineLength
       end
     end
   end
@@ -26,8 +28,8 @@ class InteractionsController < ApplicationController
     respond_to do |format|
       format.html { head :ok }
       format.csv do
-        send_data @probes.to_csv,
-                  filename: "probes-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv"
+        send_data(@probes.to_csv,
+                  filename: "probes-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv")
       end
     end
   end

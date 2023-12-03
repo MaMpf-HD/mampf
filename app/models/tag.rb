@@ -142,7 +142,7 @@ class Tag < ApplicationRecord
 
     search = Sunspot.new_search(Tag)
     search.build do
-      fulltext search_string
+      fulltext(search_string)
     end
     search.execute
     search.results
@@ -336,16 +336,16 @@ class Tag < ApplicationRecord
 
   def touch_lectures
     Lecture.where(id: sections.map(&:lecture) # rubocop:todo Performance/MapMethodChain
-                              .map(&:id)).update updated_at: Time.current
+                              .map(&:id)).update(updated_at: Time.current)
   end
 
   def touch_sections
-    sections.update updated_at: Time.current
+    sections.update(updated_at: Time.current)
   end
 
   def touch_chapters
     Chapter.where(id: sections.map(&:chapter) # rubocop:todo Performance/MapMethodChain
-                              .map(&:id)).update updated_at: Time.current
+                              .map(&:id)).update(updated_at: Time.current)
   end
 
   def identify_with!(tag)

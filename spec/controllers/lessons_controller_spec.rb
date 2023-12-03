@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe LessonsController, type: :controller do
+RSpec.describe(LessonsController, type: :controller) do
   # NEEDS TO BE REFACTORED
 
   # describe '#show' do

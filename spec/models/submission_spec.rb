@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Submission, type: :model do
+RSpec.describe(Submission, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_submission)).to be_valid
   end
@@ -40,12 +40,12 @@ RSpec.describe Submission, type: :model do
   describe "with users" do
     it "has two users" do
       submission = FactoryBot.build(:valid_submission, :with_users)
-      expect(submission.users.size).to eq 2
+      expect(submission.users.size).to eq(2)
     end
     it "has the correct number of users when users_count parameter is used" do
       submission = FactoryBot.build(:valid_submission, :with_users,
                                     users_count: 4)
-      expect(submission.users.size).to eq 4
+      expect(submission.users.size).to eq(4)
     end
   end
 

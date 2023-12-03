@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MediumTagJoin, type: :model do
+RSpec.describe(MediumTagJoin, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:medium_tag_join)).to be_valid
   end

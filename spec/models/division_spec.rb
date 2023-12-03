@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Division, type: :model do
+RSpec.describe(Division, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:division)).to be_valid
   end

@@ -10,14 +10,14 @@ if defined?(ActiveRecord)
   fixture_files ||= Dir["#{fixtures_dir}/**/*.yml"]
                     .pluck((fixtures_dir.size + 1)..-5)
 
-  logger.debug "loading fixtures: { dir: #{fixtures_dir}, " \
-               "files: #{fixture_files} }"
+  logger.debug("loading fixtures: { dir: #{fixtures_dir}, " \
+               "files: #{fixture_files} }")
   ActiveRecord::FixtureSet.reset_cache
   ActiveRecord::FixtureSet.create_fixtures(fixtures_dir, fixture_files)
   "Fixtures Done" # this gets returned
 else # this else part can be removed
-  logger.error "Looks like activerecord_fixtures has to be modified to suite " \
-               "your need"
+  logger.error("Looks like activerecord_fixtures has to be modified to suite " \
+               "your need")
   Post.create(title: "MyCypressFixtures")
   Post.create(title: "MyCypressFixtures2")
   Post.create(title: "MyRailsFixtures")

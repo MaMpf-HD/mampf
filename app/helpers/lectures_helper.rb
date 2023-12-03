@@ -109,24 +109,24 @@ module LecturesHelper
   end
 
   def lecture_edit_icon(lecture)
-    link_to edit_lecture_path(lecture),
+    link_to(edit_lecture_path(lecture),
             class: "text-dark me-2",
             style: "text-decoration: none;",
             data: { toggle: "tooltip",
                     placement: "bottom" },
-            title: t("buttons.edit") do
-      tag.i class: "far fa-edit"
+            title: t("buttons.edit")) do
+      tag.i(class: "far fa-edit")
     end
   end
 
   def lecture_view_icon(lecture)
-    link_to lecture_path(lecture),
+    link_to(lecture_path(lecture),
             class: "text-dark me-2",
             style: "text-decoration: none;",
             data: { toggle: "tooltip",
                     placement: "bottom" },
-            title: t("buttons.view") do
-      tag.i class: "fas fa-eye"
+            title: t("buttons.view")) do
+      tag.i(class: "fas fa-eye")
     end
   end
 end

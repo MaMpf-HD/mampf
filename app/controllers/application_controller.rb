@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   before_action :set_locale
   after_action :store_interaction, if: :user_signed_in?
 
-  etag { current_user.try :id }
+  etag { current_user.try(:id) }
 
   def current_user
     return super unless controller_name == "administration" && action_name == "index"

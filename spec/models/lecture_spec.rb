@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Lecture, type: :model do
+RSpec.describe(Lecture, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:lecture)).to be_valid
   end
@@ -35,7 +35,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture).to be_valid
     end
     it "has organizational flag set to true" do
-      expect(@lecture.organizational).to be true
+      expect(@lecture.organizational).to be(true)
     end
     it "has an organizational concept" do
       expect(@lecture.organizational_concept).to be_truthy
@@ -49,7 +49,7 @@ RSpec.describe Lecture, type: :model do
       expect(@lecture).to be_valid
     end
     it "is released for all" do
-      expect(@lecture.released).to eq "all"
+      expect(@lecture.released).to eq("all")
     end
   end
   describe "term independent lecture" do
@@ -68,10 +68,10 @@ RSpec.describe Lecture, type: :model do
       @lecture = FactoryBot.build(:lecture, :with_toc)
     end
     it "has 3 chapters" do
-      expect(@lecture.chapters.size).to eq 3
+      expect(@lecture.chapters.size).to eq(3)
     end
     it "has 3 sections in each chapter" do
-      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [3, 3, 3]
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq([3, 3, 3])
     end
   end
   describe "with sparse table of contents" do
@@ -79,10 +79,10 @@ RSpec.describe Lecture, type: :model do
       @lecture = FactoryBot.build(:lecture, :with_sparse_toc)
     end
     it "has one chapter" do
-      expect(@lecture.chapters.size).to eq 1
+      expect(@lecture.chapters.size).to eq(1)
     end
     it "has one sections in each chapter" do
-      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [1]
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq([1])
     end
   end
 

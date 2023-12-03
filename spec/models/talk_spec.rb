@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Talk, type: :model do
+RSpec.describe(Talk, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:valid_talk)).to be_valid
   end
@@ -48,7 +48,7 @@ RSpec.describe Talk, type: :model do
   describe "#talk" do
     it "returns itself" do
       talk = FactoryBot.build(:talk)
-      expect(talk.talk).to eq talk
+      expect(talk.talk).to eq(talk)
     end
   end
 
@@ -75,7 +75,7 @@ RSpec.describe Talk, type: :model do
     describe "#to_label" do
       it "returns the correct label" do
         I18n.with_locale(:de) do
-          expect(@talk.to_label).to eq "Vortrag 2. even more bs"
+          expect(@talk.to_label).to eq("Vortrag 2. even more bs")
         end
       end
     end
@@ -83,41 +83,41 @@ RSpec.describe Talk, type: :model do
     describe "#title_for_viewers" do
       it "returns the correct title" do
         expect(@talk.title_for_viewers)
-          .to eq "(V) Alg1 SS 20, Vortrag 2. even more bs"
+          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
     describe "#long_title" do
       it "returns the correct title" do
         expect(@talk.long_title)
-          .to eq "(V) Alg1 SS 20, Vortrag 2. even more bs"
+          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
     describe "#local_title_for_viewers" do
       it "returns the correct title" do
         expect(@talk.local_title_for_viewers)
-          .to eq "Vortrag 2. even more bs"
+          .to eq("Vortrag 2. even more bs")
       end
     end
 
     describe "#short_title_with_lecture_date" do
       it "returns the correct title" do
         expect(@talk.short_title_with_lecture_date)
-          .to eq "(V) Alg1 SS 20, Vortrag 2. even more bs"
+          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
     describe "#card_header" do
       it "returns the correct title" do
         expect(@talk.card_header)
-          .to eq "(V) Alg1 SS 20, Vortrag 2. even more bs"
+          .to eq("(V) Alg1 SS 20, Vortrag 2. even more bs")
       end
     end
 
     describe "#compact_title" do
       it "returns the correct compact title" do
-        expect(@talk.compact_title).to eq "V.Alg1.SS20.V2"
+        expect(@talk.compact_title).to eq("V.Alg1.SS20.V2")
       end
     end
   end
@@ -127,7 +127,7 @@ RSpec.describe Talk, type: :model do
       talk = FactoryBot.build(:valid_talk)
       user = FactoryBot.build(:confirmed_user)
       talk.speakers << user
-      expect(talk.given_by?(user)).to be true
+      expect(talk.given_by?(user)).to be(true)
     end
   end
 
@@ -145,7 +145,7 @@ RSpec.describe Talk, type: :model do
 
     describe "#locale" do
       it "returns the locale of the lecture" do
-        expect(@talk.locale).to eq "br"
+        expect(@talk.locale).to eq("br")
       end
     end
   end
@@ -154,7 +154,7 @@ RSpec.describe Talk, type: :model do
     it "returns the lecture associated to the talk" do
       lecture = FactoryBot.build(:lecture, released: "all")
       talk = FactoryBot.build(:talk, lecture: lecture)
-      expect(talk.media_scope).to eq lecture
+      expect(talk.media_scope).to eq(lecture)
     end
   end
 
@@ -168,27 +168,27 @@ RSpec.describe Talk, type: :model do
 
     describe "#number" do
       it "returns the number of the talk" do
-        expect(@talk3.number).to eq 3
+        expect(@talk3.number).to eq(3)
       end
     end
 
     describe "#previous" do
       it "returns the previous talk if the talk is not the first one" do
-        expect(@talk3.previous).to eq @talk2
+        expect(@talk3.previous).to eq(@talk2)
       end
 
       it "returns nil if the talk is the first one" do
-        expect(@talk1.previous).to be nil
+        expect(@talk1.previous).to be(nil)
       end
     end
 
     describe "#next" do
       it "returns the next talk if the talk is not the last one" do
-        expect(@talk2.next).to eq @talk3
+        expect(@talk2.next).to eq(@talk3)
       end
 
       it "returns nil if the talk is the last one" do
-        expect(@talk3.next).to be nil
+        expect(@talk3.next).to be(nil)
       end
     end
 

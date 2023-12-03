@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe DivisionCourseJoin, type: :model do
+RSpec.describe(DivisionCourseJoin, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:division_course_join)).to be_valid
   end

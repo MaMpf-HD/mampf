@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SectionTagJoin, type: :model do
+RSpec.describe(SectionTagJoin, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:section_tag_join)).to be_valid
   end

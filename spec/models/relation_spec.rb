@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Relation, type: :model do
+RSpec.describe(Relation, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:relation)).to be_valid
   end
@@ -38,7 +38,7 @@ RSpec.describe Relation, type: :model do
     first_tag = FactoryBot.create(:tag)
     second_tag = FactoryBot.create(:tag)
     FactoryBot.create(:relation, tag: first_tag, related_tag: second_tag)
-    expect(Relation.exists?(tag: second_tag, related_tag: first_tag)).to be true
+    expect(Relation.exists?(tag: second_tag, related_tag: first_tag)).to be(true)
   end
 
   it "destroys the inverse after deletion if relation is not self-inverse" do
@@ -48,6 +48,6 @@ RSpec.describe Relation, type: :model do
                                             related_tag: second_tag)
     relation.destroy
     expect(Relation.exists?(tag: second_tag, related_tag: first_tag))
-      .to be false
+      .to be(false)
   end
 end

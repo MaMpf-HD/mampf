@@ -118,8 +118,8 @@ class TutorialsController < ApplicationController
     respond_to do |format|
       format.html { head :ok }
       format.csv do
-        send_data @tutorial.teams_to_csv(@assignment),
-                  filename: "#{@tutorial.title}-#{@assignment.title}.csv"
+        send_data(@tutorial.teams_to_csv(@assignment),
+                  filename: "#{@tutorial.title}-#{@assignment.title}.csv")
       end
     end
   end
@@ -176,10 +176,10 @@ class TutorialsController < ApplicationController
 
     def bulk_download(zipped, end_of_file = "")
       if zipped.is_a?(StringIO)
-        send_data zipped.read,
+        send_data(zipped.read,
                   filename: "#{@assignment.title}@#{@tutorial.title}#{end_of_file}.zip",
                   type: "application/zip",
-                  disposition: "attachment"
+                  disposition: "attachment")
       else
         flash[:alert] = I18n.t("controllers.tutorials.bulk_download_failed",
                                message: zipped)

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe MainController, type: :controller do
+RSpec.describe(MainController, type: :controller) do
   # NEEDS TO BE REFACTORED
 
   # describe '#home' do

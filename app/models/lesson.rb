@@ -163,7 +163,7 @@ class Lesson < ApplicationRecord
   end
 
   def date_localized
-    I18n.l date, format: :concise
+    I18n.l(date, format: :concise)
   end
 
   def section_titles

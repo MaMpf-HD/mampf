@@ -320,9 +320,9 @@ class Course < ApplicationRecord
       with(:editor_ids, editor_ids)
       with(:program_ids, program_ids) unless program_ids.empty?
       with(:term_independent, true) if search_params[:term_independent] == "1"
-      fulltext search_params[:fulltext] if search_params[:fulltext].present?
+      fulltext(search_params[:fulltext]) if search_params[:fulltext].present?
       order_by(:sort_title, :asc)
-      paginate page: page, per_page: search_params[:per]
+      paginate(page: page, per_page: search_params[:per])
     end
     search
   end
@@ -335,7 +335,7 @@ class Course < ApplicationRecord
 
     def touch_tag(tag)
       tag.touch
-      Sunspot.index! tag
+      Sunspot.index!(tag)
     end
 
     def touch_lectures_and_lessons

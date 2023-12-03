@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe LessonSectionJoin, type: :model do
+RSpec.describe(LessonSectionJoin, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:lesson_section_join)).to be_valid
   end

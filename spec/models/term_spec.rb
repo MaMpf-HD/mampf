@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe Term, type: :model do
+RSpec.describe(Term, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:term)).to be_valid
   end
@@ -47,7 +47,7 @@ RSpec.describe Term, type: :model do
       expect(@term).to be_valid
     end
     it "is a summer term" do
-      expect(@term.season).to eq "SS"
+      expect(@term.season).to eq("SS")
     end
   end
 
