@@ -647,9 +647,7 @@ class Lecture < ApplicationRecord
   end
 
   def comments_closed?
-    # rubocop:todo Performance/MapMethodChain
-    media_with_inheritance.map(&:commontator_thread).map(&:is_closed?).all?
-    # rubocop:enable Performance/MapMethodChain
+    media_with_inheritance.map { |media| media.commontator_thread.is_closed? }.all?
   end
 
   def close_comments!(user)

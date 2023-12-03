@@ -335,8 +335,8 @@ class Tag < ApplicationRecord
   end
 
   def touch_lectures
-    Lecture.where(id: sections.map(&:lecture) # rubocop:todo Performance/MapMethodChain
-                              .map(&:id)).update(updated_at: Time.current)
+    Lecture.where(id: sections.map { |section| section.lecture.id })
+           .update(updated_at: Time.current)
   end
 
   def touch_sections
@@ -344,8 +344,8 @@ class Tag < ApplicationRecord
   end
 
   def touch_chapters
-    Chapter.where(id: sections.map(&:chapter) # rubocop:todo Performance/MapMethodChain
-                              .map(&:id)).update(updated_at: Time.current)
+    Chapter.where(id: sections.map { |section| section.chapter.id })
+           .update(updated_at: Time.current)
   end
 
   def identify_with!(tag)
