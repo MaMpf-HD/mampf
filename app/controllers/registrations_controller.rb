@@ -72,13 +72,14 @@ class RegistrationsController < Devise::RegistrationsController
     def check_registration_limit
       timeframe = (ENV["MAMPF_REGISTRATION_TIMEFRAME"] || 15).to_i.minutes
       threshold_date = DateTime.now - timeframe
-      new_users = User.where(
+      num_new_registrations = User.where(
         "users.confirmed_at is NULL and users.created_at > '#{threshold_date}'"
       ).count
 
-      max_users = (ENV["MAMPF_MAX_REGISTRATION_PER_TIMEFRAME"] || 40).to_i
-      return if new_users > max_users
+      max_registrations = (ENV["MAMPF_MAX_REGISTRATION_PER_TIMEFRAME"] || 40).to_i
+      return if num_new_registrations <= max_registrations
 
+      # Current number of new registrations is too high
       self.resource = resource_class.new(devise_parameter_sanitizer.sanitize(:sign_up))
       resource.validate # Look for any other validation errors besides reCAPTCHA
       set_flash_message(:alert, :too_many_registrations)
