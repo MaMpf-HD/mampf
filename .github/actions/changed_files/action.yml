@@ -15,13 +15,11 @@ outputs:
     value: ${{ steps.get-changed-files.outputs.files }}
 
 runs:
-  # For a small tutorial on GitHub composite actions, see
-  # https://docs.github.com/en/actions/creating-actions/creating-a-composite-action
   using: "composite"
   steps:
     # This has to be done in the main workflow, not in the action, because
     # otherwise this reusable action is not available in the workflow.
-    # - name: "Checkout PR branch (with test merge-commit)"
+    # - name: "Checkout code (on a PR branch)"
     #   uses: actions/checkout@v4
     #   with:
     #     fetch-depth: 2 # to also fetch parent of PR

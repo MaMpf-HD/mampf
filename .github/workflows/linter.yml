@@ -8,19 +8,14 @@ on:
 
 jobs:
 
-  # Resources:
-  # number [1] being most important
-  # [1] https://github.com/actions/checkout/issues/520#issuecomment-1167205721
-  # [2] https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
-  # [3] https://community.atlassian.com/t5/Bitbucket-questions/Git-diff-show-different-files-than-PR-Pull-Request/qaq-p/2331786
   rubocop:
     name: RuboCop (Ruby)
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout PR branch (with test merge-commit)
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 2 # to also fetch parent of PR
+          fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
       - name: Get changed files
         id: rb-changed
@@ -45,29 +40,29 @@ jobs:
       name: ESLint (JS)
       runs-on: ubuntu-latest
       steps:
-        - name: Checkout custom reusable actions
-          uses: actions/checkout@v4 # used to checkout custom reusable actions
+        - name: Checkout code
+          uses: actions/checkout@v4
           with:
-            fetch-depth: 2 # to also fetch parent of PR
+            fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
         - name: Get changed files
-          id: eslint-changed
+          id: js-changed
           uses: ./.github/actions/changed_files/
           with:
             file-extensions: \.js$|\.js.erb$
 
         - name: Setup Node.js
-          if: ${{ steps.eslint-changed.outputs.changed-files != ''}}
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
           uses: actions/setup-node@v4
           with:
             node-version: '20' # End of Life (EOL): April 2026
-        
+
         - name: Install dependencies
-          if: ${{ steps.eslint-changed.outputs.changed-files != ''}}
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
           run: yarn install
 
         - name: Run ESLint
-          if: ${{ steps.eslint-changed.outputs.changed-files != ''}}
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
           run: |
-            echo "🚨 Running ESLint version: $(yarn run eslint --version)"
-            yarn run eslint --ignore-path .gitignore --max-warnings 0 ${{ steps.eslint-changed.outputs.changed-files }}
+            echo "🚨 Running ESLint version: $(yarn run --silent eslint --version)"
+            yarn run eslint --ignore-path .gitignore --max-warnings 0 ${{ steps.js-changed.outputs.changed-files }}
