@@ -4,7 +4,6 @@
     //////////////////////////////////////
     // https://eslint.style/guide/faq#how-to-auto-format-on-save
     // https://github.com/microsoft/vscode-eslint#settings-options
-    "editor.formatOnSave": true,
     "eslint.format.enable": true,
     "[javascript]": {
         "editor.formatOnSave": false, // to avoid formatting twice (ESLint + VSCode)
@@ -51,12 +50,14 @@
     // Files
     //////////////////////////////////////
     "files.exclude": {
-        "node_modules/": false,
+        "node_modules/": true,
         "pdfcomprezzor/": true,
         "coverage/": true,
+        "solr/": true,
     },
     "files.associations": {
-        "*.js.erb": "javascript"
+        "*.js.erb": "javascript",
+        "*.html.erb": "html"
     },
     //////////////////////////////////////
     // Editor
