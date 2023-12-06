@@ -17,7 +17,7 @@ jobs:
     name: RuboCop (Ruby)
     runs-on: ubuntu-latest
     steps:
-      - name: 'Checkout PR branch (with test merge-commit)'
+      - name: Checkout PR branch (with test merge-commit)
         uses: actions/checkout@v4
         with:
           fetch-depth: 2 # to also fetch parent of PR
@@ -48,28 +48,22 @@ jobs:
       name: ESLint (JS)
       runs-on: ubuntu-latest
       steps:
-        - name: 'Checkout PR branch'
-          uses: actions/checkout@v4
+        - name: Checkout code & get changed files
+          id: eslint-changed
+          uses: ./.github/actions/changed_files
           with:
-            fetch-depth: 2 # to also fetch parent of PR
+            file-extensions: \.js$|\.js.erb$
 
-        # see notes above (in rubocop job)
-        - name: Get changed files
-          run: |
-            files=$(git diff --name-only --diff-filter=ACMR -r HEAD^1...HEAD | grep -e '\.js$' -e '\.js.erb$'|| test $? = 1;)
-            printf "🎴 Changed js files: \n$files"
-            echo "CHANGED_FILES=$(echo ${files} | xargs)" >> $GITHUB_ENV
-        
-        - name: 'Setup Node.js'
-          if: env.CHANGED_FILES != ''
+        - name: Setup Node.js
+          if: ${{ steps.eslint-changed.outputs.changed-files }} != ''
           uses: actions/setup-node@v4
           with:
             node-version: '20' # End of Life (EOL): April 2026
         
-        - name: 'Install dependencies'
-          if: env.CHANGED_FILES != ''
+        - name: Install dependencies
+          if: ${{ steps.eslint-changed.outputs.changed-files }} != ''
           run: yarn install
 
-        - name: 'Run ESLint'
-          if: env.CHANGED_FILES != ''
-          run: yarn run eslint --ignore-path .gitignore --max-warnings 0 $CHANGED_FILES
+        - name: Run ESLint
+          if: ${{ steps.eslint-changed.outputs.changed-files }} != ''
+          run: yarn run eslint --ignore-path .gitignore --max-warnings 0 ${{ steps.eslint-changed.outputs.changed-files }}
