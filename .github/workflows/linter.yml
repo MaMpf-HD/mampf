@@ -72,4 +72,4 @@ jobs:
 
         - name: 'Run ESLint'
           if: env.CHANGED_FILES != ''
-          run: yarn run eslint --ignore-path .gitignore --max-warnings 0 -- $CHANGED_FILES
+          run: yarn run eslint --ignore-path .gitignore --max-warnings 0 $CHANGED_FILES
