@@ -50,6 +50,8 @@ jobs:
       steps:
         - name: 'Checkout PR branch'
           uses: actions/checkout@v4
+          with:
+            fetch-depth: 2 # to also fetch parent of PR
 
         # see notes above (in rubocop job)
         - name: Get changed files
