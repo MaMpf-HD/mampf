@@ -1,3 +1,5 @@
+# Why is this file in a subdirectory? Because GitHub Actions requires it to be :(
+# see: https://github.com/orgs/community/discussions/26245#discussioncomment-5962450
 name: "Get changed files"
 description: "Checks out the code and returns the filenames of files that have changed in the pull request"
 
@@ -32,6 +34,7 @@ runs:
     # [2] https://robertfaldo.medium.com/commands-to-run-rubocop-and-specs-you-changed-in-your-branch-e6d2f2e4110b
     # [3] https://community.atlassian.com/t5/Bitbucket-questions/Git-diff-show-different-files-than-PR-Pull-Request/qaq-p/2331786
     - name: Get changed files
+      shell: bash
       id: get-changed-files
       run: |
         files_pretty=$(git diff --name-only --diff-filter=ACMR -r HEAD^1...HEAD | grep '${{inputs.file-extensions}}' || test $? = 1;)

@@ -48,9 +48,14 @@ jobs:
       name: ESLint (JS)
       runs-on: ubuntu-latest
       steps:
+        - name: Checkout custom reusable actions
+          uses: actions/checkout@v4 # used to checkout custom reusable actions
+          with:
+            fetch-depth: 2 # to also fetch parent of PR
+
         - name: Checkout code & get changed files
           id: eslint-changed
-          uses: ./.github/actions/changed_files
+          uses: ./.github/actions/changed_files/
           with:
             file-extensions: \.js$|\.js.erb$
 
