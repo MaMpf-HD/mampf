@@ -393,12 +393,6 @@ class Medium < ApplicationRecord
     end
   end
 
-  def restricted?
-    return false unless teachable
-
-    teachable.restricted?
-  end
-
   # protected items are items of type 'pdf_destination' inside associated to
   # this medium that are referred to from other media or from an entry
   # within the table of contents of the video associated to this medium.
@@ -726,7 +720,7 @@ class Medium < ApplicationRecord
     released == "locked"
   end
 
-  def restricted? # rubocop:todo Lint/DuplicateMethods
+  def restricted?
     released == "subscribers"
   end
 
