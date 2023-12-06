@@ -56,6 +56,7 @@ jobs:
           uses: actions/setup-node@v4
           with:
             node-version: '20' # End of Life (EOL): April 2026
+            cache: 'yarn'
 
         - name: Install dependencies
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
