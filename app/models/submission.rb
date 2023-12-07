@@ -266,6 +266,38 @@ class Submission < ApplicationRecord
     report
   end
 
+  def self.number_of_submissions(tutorial, assignment)
+    Submission.where(tutorial: tutorial, assignment: assignment)
+              .where.not(manuscript_data: nil).size
+  end
+
+  def self.number_of_corrections(tutorial, assignment)
+    Submission.where(tutorial: tutorial, assignment: assignment)
+              .where.not(correction_data: nil).size
+  end
+
+  def self.number_of_late_submissions(tutorial, assignment)
+    Submission.where(tutorial: tutorial, assignment: assignment)
+              .where.not(manuscript_data: nil)
+              .count(&:too_late?)
+  end
+
+  def self.submissions_total(assignment)
+    Submission.where(assignment: assignment)
+              .where.not(manuscript_data: nil).size
+  end
+
+  def self.corrections_total(assignment)
+    Submission.where(assignment: assignment)
+              .where.not(correction_data: nil).size
+  end
+
+  def self.late_submissions_total(assignment)
+    Submission.where(assignment: assignment)
+              .where.not(manuscript_data: nil)
+              .count(&:too_late?)
+  end
+
   private
 
     def matching_lecture
@@ -277,40 +309,4 @@ class Submission < ApplicationRecord
     def set_token
       self.token = Submission.generate_token
     end
-
-    def self.number_of_submissions(tutorial, assignment)
-      Submission.where(tutorial: tutorial, assignment: assignment)
-                .where.not(manuscript_data: nil).size
-    end
-
-    def self.number_of_corrections(tutorial, assignment)
-      Submission.where(tutorial: tutorial, assignment: assignment)
-                .where.not(correction_data: nil).size
-    end
-
-    def self.number_of_late_submissions(tutorial, assignment)
-      Submission.where(tutorial: tutorial, assignment: assignment)
-                .where.not(manuscript_data: nil)
-                .count(&:too_late?)
-    end
-
-    def self.submissions_total(assignment)
-      Submission.where(assignment: assignment)
-                .where.not(manuscript_data: nil).size
-    end
-
-    def self.corrections_total(assignment)
-      Submission.where(assignment: assignment)
-                .where.not(correction_data: nil).size
-    end
-
-    def self.late_submissions_total(assignment)
-      Submission.where(assignment: assignment)
-                .where.not(manuscript_data: nil)
-                .count(&:too_late?)
-    end
-
-    private_class_method :number_of_submissions, :number_of_corrections,
-                         :number_of_late_submissions, :submissions_total,
-                         :corrections_total, :late_submissions_total
 end
