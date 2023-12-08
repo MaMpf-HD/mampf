@@ -16,7 +16,7 @@
       <%# Announcements %>
         <% if Announcement.active_on_main.exists? %>
           <div id="announcement-box" class="landing-box">
-            <%= announcements().html_safe %>
+            <%= main_page_announcements().html_safe %>
           </div>
         <% end %>
 
