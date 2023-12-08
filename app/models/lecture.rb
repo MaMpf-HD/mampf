@@ -32,7 +32,7 @@ class Lecture < ApplicationRecord
   # rubocop:todo Rails/HasManyOrHasOneDependent
   has_many :media, -> { order(position: :asc) },
            as: :teachable,
-           inverse_of: :lecture
+           inverse_of: :teachable
   # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # in a lecture, you can import other media

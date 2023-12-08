@@ -17,7 +17,7 @@ class Lesson < ApplicationRecord
   # being a teachable (course/lecture/lesson), a lesson has associated media
   has_many :media, -> { order(position: :asc) }, # rubocop:todo Rails/HasManyOrHasOneDependent
            as: :teachable,
-           inverse_of: :lesson
+           inverse_of: :teachable
 
   validates :date, presence: true
   validates :sections, presence: true

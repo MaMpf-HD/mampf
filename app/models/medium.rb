@@ -48,7 +48,7 @@ class Medium < ApplicationRecord
 
   has_many :quiz_certificates, foreign_key: "quiz_id",
                                dependent: :destroy,
-                               inverse_of: :medium
+                               inverse_of: :quiz
 
   # a medium can be in watchlists of multiple users
   has_many :watchlist_entries, dependent: :destroy

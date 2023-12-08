@@ -37,7 +37,7 @@ class Tag < ApplicationRecord
   has_many :aliases, # rubocop:todo Rails/HasManyOrHasOneDependent
            foreign_key: "aliased_tag_id",
            class_name: "Notion",
-           inverse_of: :tag
+           inverse_of: :aliased_tag
 
   serialize :realizations, Array
 

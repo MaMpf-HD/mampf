@@ -34,7 +34,7 @@ class User < ApplicationRecord
   has_many :given_lectures,
            class_name: "Lecture",
            foreign_key: "teacher_id",
-           inverse_of: :user
+           inverse_of: :teacher
   # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # a user has many tutorials as a tutor
@@ -42,7 +42,7 @@ class User < ApplicationRecord
   has_many :tutor_tutorial_joins,
            foreign_key: "tutor_id",
            dependent: :destroy,
-           inverse_of: :user
+           inverse_of: :tutor
   has_many :given_tutorials, -> { order(:title) },
            through: :tutor_tutorial_joins, source: :tutorial
 
@@ -50,25 +50,25 @@ class User < ApplicationRecord
   has_many :speaker_talk_joins,
            foreign_key: "speaker_id",
            dependent: :destroy,
-           inverse_of: :user
+           inverse_of: :speaker
   has_many :talks, through: :speaker_talk_joins
 
   # a user has many notifications as recipient
   has_many :notifications, # rubocop:todo Rails/HasManyOrHasOneDependent
            foreign_key: "recipient_id",
-           inverse_of: :user
+           inverse_of: :recipient
 
   # a user has many announcements as announcer
   has_many :announcements,
            foreign_key: "announcer_id",
            dependent: :destroy,
-           inverse_of: :user
+           inverse_of: :announcer
 
   # a user has many clickers as editor
   has_many :clickers,
            foreign_key: "editor_id",
            dependent: :destroy,
-           inverse_of: :user
+           inverse_of: :editor
 
   # a user has many submissions (of assignments)
   has_many :user_submission_joins, dependent: :destroy
