@@ -15,7 +15,7 @@ class Course < ApplicationRecord
   # rubocop:todo Rails/HasManyOrHasOneDependent
   has_many :media, -> { order(position: :asc) },
            as: :teachable,
-           inverse_of: course
+           inverse_of: :course
   # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # in a course, you can import other media
