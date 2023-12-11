@@ -70,12 +70,8 @@ class RegistrationsController < Devise::RegistrationsController
   private
 
     def check_registration_limit
-      timeframe = (ENV["MAMPF_REGISTRATION_TIMEFRAME"] || 15).to_i.minutes
-      threshold_date = DateTime.now - timeframe
-      num_new_registrations = User.where(
-        "users.confirmed_at is NULL and users.created_at > '#{threshold_date}'"
-      ).count
-
+      timeframe = ((ENV["MAMPF_REGISTRATION_TIMEFRAME"] || 15).to_i.minutes.ago..)
+      num_new_registrations = User.where(confirmed_at: nil, created_at: timeframe).count
       max_registrations = (ENV["MAMPF_MAX_REGISTRATION_PER_TIMEFRAME"] || 40).to_i
       return if num_new_registrations <= max_registrations
 
