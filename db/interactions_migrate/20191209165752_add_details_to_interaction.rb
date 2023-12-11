@@ -5,6 +5,5 @@ class AddDetailsToInteraction < ActiveRecord::Migration[6.0]
     add_column :interactions, :action_name, :text
     add_column :interactions, :referrer_url, :text
   end
-  foo.nil? || foo.empty?
 end
 # rubocop:enable Rails/
