@@ -54,7 +54,7 @@ class Medium < ApplicationRecord
   has_many :watchlist_entries, dependent: :destroy
   has_many :watchlist_users, through: :watchlist_entries, source: :user
 
-  has_many :assignments,
+  has_many :assignments
 
   serialize :quiz_graph, QuizGraph
 
