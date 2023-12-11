@@ -12,11 +12,9 @@ class Course < ApplicationRecord
            after_remove: :touch_tag,
            after_add: :touch_tag
 
-  # rubocop:todo Rails/HasManyOrHasOneDependent
   has_many :media, -> { order(position: :asc) },
            as: :teachable,
            inverse_of: :teachable
-  # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # in a course, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy

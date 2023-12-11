@@ -73,6 +73,9 @@ Performance/FlatMap:
 # Rails
 #############################################
 
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
 Rails/SkipsModelValidations:
   AllowedMethods: ["touch", "touch_all"]
 

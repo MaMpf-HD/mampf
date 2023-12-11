@@ -29,11 +29,9 @@ class Lecture < ApplicationRecord
            inverse_of: :lecture
 
   # being a teachable (course/lecture/lesson), a lecture has associated media
-  # rubocop:todo Rails/HasManyOrHasOneDependent
   has_many :media, -> { order(position: :asc) },
            as: :teachable,
            inverse_of: :teachable
-  # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
@@ -59,11 +57,11 @@ class Lecture < ApplicationRecord
   has_many :announcements, dependent: :destroy
 
   # a lecture has many tutorials
-  has_many :tutorials, -> { order(:title) }, # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :tutorials, -> { order(:title) },
            inverse_of: :lecture
 
   # a lecture has many assignments (e.g. exercises with deadlines)
-  has_many :assignments # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :assignments
 
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database

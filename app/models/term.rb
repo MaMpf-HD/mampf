@@ -1,7 +1,7 @@
 # Term class
 class Term < ApplicationRecord
   # in a term, many lectures take place
-  has_many :lectures # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :lectures
 
   # season can only be SS/WS, and there can be only one of this type each year
   validates :season, presence: true, # rubocop:todo Rails/UniqueValidationWithoutIndex

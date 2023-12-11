@@ -1,5 +1,5 @@
 class Subject < ApplicationRecord
-  has_many :programs # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :programs
 
   translates :name
   globalize_accessors locales: I18n.available_locales,

@@ -30,12 +30,10 @@ class User < ApplicationRecord
                           source: :editable, source_type: "Medium"
 
   # a user has many lectures as a teacher
-  # rubocop:todo Rails/HasManyOrHasOneDependent
   has_many :given_lectures,
            class_name: "Lecture",
            foreign_key: "teacher_id",
            inverse_of: :teacher
-  # rubocop:enable Rails/HasManyOrHasOneDependent
 
   # a user has many tutorials as a tutor
 
@@ -54,7 +52,7 @@ class User < ApplicationRecord
   has_many :talks, through: :speaker_talk_joins
 
   # a user has many notifications as recipient
-  has_many :notifications, # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :notifications,
            foreign_key: "recipient_id",
            inverse_of: :recipient
 

@@ -34,7 +34,7 @@ class Tag < ApplicationRecord
            after_add: :touch_relations,
            dependent: :destroy,
            inverse_of: :tag
-  has_many :aliases, # rubocop:todo Rails/HasManyOrHasOneDependent
+  has_many :aliases,
            foreign_key: "aliased_tag_id",
            class_name: "Notion",
            inverse_of: :aliased_tag
