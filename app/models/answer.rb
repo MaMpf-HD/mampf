@@ -41,6 +41,6 @@ class Answer < ApplicationRecord
     end
 
     def touch_medium
-      question.becomes(Medium).update(updated_at: Time.zone.now)
+      question.becomes(Medium).touch_all
     end
 end

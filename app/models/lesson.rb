@@ -300,15 +300,15 @@ class Lesson < ApplicationRecord
 
     # used for after save callback
     def touch_media
-      lecture.media_with_inheritance.update(updated_at: Time.current)
+      lecture.media_with_inheritance.touch_all
     end
 
     def touch_siblings
-      lecture.lessons.update(updated_at: Time.current)
+      lecture.lessons.touch_all
     end
 
     def touch_sections
-      sections.update(updated_at: Time.current)
+      sections.touch_all
       sections.map(&:chapter)
       sections.map(&:chapter).each(&:touch)
       lecture.touch
@@ -319,7 +319,7 @@ class Lesson < ApplicationRecord
     end
 
     def touch_tags
-      tags.update(updated_at: Time.current)
+      tags.touch_all
     end
 
     def touch_section(section)

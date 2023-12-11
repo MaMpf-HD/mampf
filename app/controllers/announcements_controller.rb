@@ -66,7 +66,7 @@ class AnnouncementsController < ApplicationController
         User
       end
       notifications = []
-      users_to_notify.update(updated_at: Time.current)
+      users_to_notify.touch_all
       users_to_notify.find_each do |u|
         notifications << Notification.new(recipient: u,
                                           notifiable_id: @announcement.id,

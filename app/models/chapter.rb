@@ -71,14 +71,14 @@ class Chapter < ApplicationRecord
   end
 
   def touch_chapters
-    lecture.chapters.update(updated_at: Time.current)
+    lecture.chapters.touch_all
   end
 
   def touch_sections
     unless lecture.absolute_numbering
-      sections.update(updated_at: Time.current)
+      sections.touch_all
       return
     end
-    Section.where(chapter: lecture.chapters).update(updated_at: Time.current)
+    Section.where(chapter: lecture.chapters).touch_all
   end
 end

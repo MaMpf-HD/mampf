@@ -215,7 +215,7 @@ module Commontator
           @update_icon = true
           return
         end
-        @reader.update(updated_at: Time.current)
+        @reader.touch_all
       end
 
       def unseen_comments?

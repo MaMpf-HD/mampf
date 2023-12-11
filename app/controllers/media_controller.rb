@@ -111,7 +111,7 @@ class MediaController < ApplicationController
     # update the associated tags), causing trouble for caching)
     @medium.touch
     # touch lectures that import this medium
-    @medium.importing_lectures.update(updated_at: Time.current)
+    @medium.importing_lectures.touch_all
     @medium.sanitize_type!
     # detach components if this was chosen by the user
     detach_components
@@ -396,7 +396,7 @@ class MediaController < ApplicationController
     return unless current_user.admin || @medium.edited_with_inheritance_by?(current_user)
 
     @medium.tags = Tag.where(id: params[:tag_ids])
-    @medium.update(updated_at: Time.zone.now)
+    @medium.touch_all
   end
 
   def register_download

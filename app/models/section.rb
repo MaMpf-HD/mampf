@@ -188,7 +188,7 @@ class Section < ApplicationRecord
     end
 
     def touch_media
-      lecture.media_with_inheritance.update(updated_at: Time.current)
+      lecture.media_with_inheritance.touch_all
       touch
     end
 
@@ -199,8 +199,8 @@ class Section < ApplicationRecord
     def touch_toc
       return unless lecture.absolute_numbering
 
-      lecture.chapters.update(updated_at: Time.current)
-      lecture.sections.update(updated_at: Time.current)
+      lecture.chapters.touch_all
+      lecture.sections.touch_all
     end
 
     def relative_position

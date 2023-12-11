@@ -902,24 +902,24 @@ class Lecture < ApplicationRecord
     end
 
     def touch_media
-      media_with_inheritance.update(updated_at: Time.current)
+      media_with_inheritance.touch_all
     end
 
     def touch_lessons
-      lessons.update(updated_at: Time.current)
+      lessons.touch_all
     end
 
     def touch_siblings(_lesson)
-      lessons.update(updated_at: Time.current)
-      Medium.where(teachable: lessons).update(updated_at: Time.current)
+      lessons.touch_all
+      Medium.where(teachable: lessons).touch_all
     end
 
     def touch_chapters
-      chapters.update(updated_at: Time.current)
+      chapters.touch_all
     end
 
     def touch_sections
-      Section.where(chapter: chapters).update(updated_at: Time.current)
+      Section.where(chapter: chapters).touch_all
     end
 
     def destroy_forum

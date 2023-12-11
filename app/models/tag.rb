@@ -335,17 +335,15 @@ class Tag < ApplicationRecord
   end
 
   def touch_lectures
-    Lecture.where(id: sections.map { |section| section.lecture.id })
-           .update(updated_at: Time.current)
+    Lecture.where(id: sections.map { |section| section.lecture.id }).touch_all
   end
 
   def touch_sections
-    sections.update(updated_at: Time.current)
+    sections.touch_all
   end
 
   def touch_chapters
-    Chapter.where(id: sections.map { |section| section.chapter.id })
-           .update(updated_at: Time.current)
+    Chapter.where(id: sections.map { |section| section.chapter.id }).touch_all
   end
 
   def identify_with!(tag)

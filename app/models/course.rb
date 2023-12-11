@@ -330,7 +330,7 @@ class Course < ApplicationRecord
   private
 
     def touch_media
-      media_with_inheritance.update(updated_at: Time.current)
+      media_with_inheritance.touch_all
     end
 
     def touch_tag(tag)
@@ -339,8 +339,8 @@ class Course < ApplicationRecord
     end
 
     def touch_lectures_and_lessons
-      lectures.update(updated_at: Time.current)
-      Lesson.where(lecture: lectures).update(updated_at: Time.current)
+      lectures.touch_all
+      Lesson.where(lecture: lectures).touch_all
     end
 
     def create_quiz_by_questions!(question_ids)

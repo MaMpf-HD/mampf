@@ -26,8 +26,7 @@ class ReadersController < ApplicationController
       new_readers << Reader.new(thread_id: t, user: current_user)
     end
     Reader.import new_readers
-    Reader.where(user: current_user, thread: threads)
-          .update(updated_at: Time.current)
+    Reader.where(user: current_user, thread: threads).touch_all
     current_user.update(unread_comments: false)
   end
 

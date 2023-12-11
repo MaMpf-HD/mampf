@@ -137,13 +137,12 @@ class Term < ApplicationRecord
     end
 
     def touch_lectures_and_lessons
-      lectures.update(updated_at: Time.current)
-      Lesson.where(lecture: lectures).update(updated_at: Time.current)
+      lectures.touch_all
+      Lesson.where(lecture: lectures).touch_all
     end
 
     def touch_media
-      Medium.where(teachable: lectures).update(updated_at: Time.current)
-      Medium.where(teachable: Lesson.where(lecture: lectures))
-            .update(updated_at: Time.current)
+      Medium.where(teachable: lectures).touch_all
+      Medium.where(teachable: Lesson.where(lecture: lectures)).touch_all
     end
 end
