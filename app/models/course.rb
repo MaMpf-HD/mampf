@@ -131,10 +131,6 @@ class Course < ApplicationRecord
                    "OR teacher_id = ?", user.id, user.id).distinct
   end
 
-  def restricted?
-    false
-  end
-
   def lectures_by_date
     lectures.sort
   end

@@ -125,8 +125,6 @@ class Lesson < ApplicationRecord
     "#{I18n.t("lesson")} #{number} #{I18n.t("from")} #{date_localized}"
   end
 
-  delegate :restricted?, to: :lecture
-
   # more infos that can be extracted
 
   def term

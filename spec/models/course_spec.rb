@@ -333,13 +333,6 @@ RSpec.describe(Course, type: :model) do
     end
   end
 
-  describe "#restricted?" do
-    it "returns false" do
-      course = FactoryBot.build(:course)
-      expect(course.restricted?).to be(false)
-    end
-  end
-
   context "lecture sorting" do
     before :all do
       @course = FactoryBot.create(:course)
