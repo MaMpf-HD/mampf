@@ -417,10 +417,9 @@ class Manuscript
   # sections in a manuscript chapter not represented in mampf
   def new_sections_in_chapter(chapter)
     sections = sections_in_chapter(chapter)
-    sections.each_with_index
-            .map do |s, i|
-              [s["mampf_section"], i + 1, s["description"], s["counter"]]
-            end
+    sections = sections.each_with_index.map do |s, i|
+      [s["mampf_section"], i + 1, s["description"], s["counter"]]
+    end
     sections.select { |s| s.first.nil? }
             .map { |s| [s.second, s.third, s.fourth] }
   end
