@@ -32,7 +32,7 @@ module TalksHelper
   end
 
   def speaker_list_with_icon(talk)
-    (speaker_icon(talk) + speaker_list(talk)).html_safe # rubocop:todo Rails/OutputSafety
+    speaker_icon(talk) + speaker_list(talk)
   end
 
   def date_list(talk)
