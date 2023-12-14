@@ -396,7 +396,7 @@ class MediaController < ApplicationController
     return unless current_user.admin || @medium.edited_with_inheritance_by?(current_user)
 
     @medium.tags = Tag.where(id: params[:tag_ids])
-    @medium.touch_all
+    @medium.touch
   end
 
   def register_download
