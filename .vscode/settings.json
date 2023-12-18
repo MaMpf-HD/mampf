@@ -53,7 +53,7 @@
         "node_modules/": true,
         "pdfcomprezzor/": true,
         "coverage/": true,
-        "solr/": true,
+        "solr/": true
     },
     "files.associations": {
         "*.js.erb": "javascript",
