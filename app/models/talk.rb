@@ -15,7 +15,7 @@ class Talk < ApplicationRecord
   has_many :talk_tag_joins, dependent: :destroy
   has_many :tags, through: :talk_tag_joins
 
-  after_save :remove_duplicate_dates
+  before_save :remove_duplicate_dates
   after_save :touch_lecture
 
   # the talks of a lecture form an ordered list
@@ -112,6 +112,6 @@ class Talk < ApplicationRecord
     end
 
     def remove_duplicate_dates
-      update_columns(dates: dates.uniq) # rubocop:todo Rails/SkipsModelValidations
+      dates.uniq! # TODO: replace dates array by a set to avoid this
     end
 end
