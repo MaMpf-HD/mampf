@@ -4,15 +4,14 @@
     //////////////////////////////////////
     // https://eslint.style/guide/faq#how-to-auto-format-on-save
     // https://github.com/microsoft/vscode-eslint#settings-options
-    "eslint.format.enable": true,
     "[javascript]": {
         "editor.formatOnSave": false, // to avoid formatting twice (ESLint + VSCode)
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+        "source.fixAll.eslint": "explicit"
     },
-    // this disables VSCode built-int formatter (instead we want to use ESLint)
+    // this disables VSCode built-in formatter (instead we want to use ESLint)
     "javascript.validate.enable": false,
     //////////////////////////////////////
     // HTML
@@ -24,7 +23,8 @@
     // Ruby (Rubocop)
     //////////////////////////////////////
     "[ruby]": {
-        "editor.defaultFormatter": "Shopify.ruby-lsp"
+        "editor.defaultFormatter": "Shopify.ruby-lsp",
+        "editor.formatOnSave": true
     },
     "rubyLsp.formatter": "rubocop",
     "rubyLsp.rubyVersionManager": "rbenv",
