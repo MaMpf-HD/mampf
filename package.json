@@ -19,5 +19,10 @@
   },
   "scripts": {
     "lint": "eslint ."
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^1.5.0",
+    "eslint": "^8.55.0",
+    "eslint-plugin-erb": "^1.1.0"
   }
 }
