@@ -216,6 +216,10 @@ module Commontator
           return
         end
         @reader.touch
+        return if current_user.unread_media_comments.any?
+
+        current_user.update(unread_comments: false)
+        @no_unread_comments = true
       end
 
       def unseen_comments?

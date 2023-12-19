@@ -33,6 +33,10 @@
 $('#commentsIcon').addClass('new-comment');
 <% end %>
 
+<% if @no_unread_comments %>
+$('#commentsIcon').removeClass('new-comment');
+<% end %>
+
 var commontatorComment = $("#commontator-comment-<%= @comment.id %>").hide().fadeIn();
 $('html, body').animate(
   { scrollTop: commontatorComment.offset().top - window.innerHeight/2 }, 'fast'
