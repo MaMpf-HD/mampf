@@ -1,14 +1,10 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :course do
     title do
-      Faker::Book.title + ' ' +
-        Faker::Number.between(from: 1, to: 9999).to_s
+      "#{Faker::Book.title} #{Faker::Number.between(from: 1, to: 9999)}"
     end
     short_title do
-      Faker::Book.title + ' ' +
-        Faker::Number.between(from: 1, to: 9999).to_s
+      "#{Faker::Book.title} #{Faker::Number.between(from: 1, to: 9999)}"
     end
 
     transient do
@@ -25,12 +21,12 @@ FactoryBot.define do
     end
 
     trait :locale_de do
-      locale { 'de' }
+      locale { "de" }
     end
 
     trait :with_image do
       after(:build) do |c|
-        c.image = File.open("#{SPEC_FILES}/image.png", 'rb')
+        c.image = File.open("#{SPEC_FILES}/image.png", "rb")
       end
     end
 

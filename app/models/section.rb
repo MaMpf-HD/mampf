@@ -23,6 +23,9 @@ class Section < ApplicationRecord
   # a section has many items, do not execute callbacks when section is destroyed
   has_many :items, dependent: :nullify
 
+  before_destroy :touch_toc
+  before_destroy :touch_lecture
+  before_destroy :touch_media
   # after saving or updating, touch lecture/media/self to keep cache up to date
   after_save :touch_lecture
   after_save :touch_media
@@ -31,23 +34,19 @@ class Section < ApplicationRecord
   # if absolute numbering is enabled for the lecture, all chapters
   # and sections need to be touched because of possibly changed references
   after_save :touch_toc
-  before_destroy :touch_toc
-
-  before_destroy :touch_lecture
-  before_destroy :touch_media
 
   def lecture
     chapter&.lecture
   end
 
   def reference_number
-    return calculated_number unless display_number.present?
+    return calculated_number if display_number.blank?
 
     display_number
   end
 
   def displayed_number
-    '§' + reference_number
+    "§#{reference_number}"
   end
 
   def reference
@@ -61,15 +60,15 @@ class Section < ApplicationRecord
   # chapters
   def calculated_number
     return relative_position unless lecture.absolute_numbering
-    return absolute_position.to_s unless lecture.start_section.present?
+    return absolute_position.to_s if lecture.start_section.blank?
 
     (absolute_position + lecture.start_section - 1).to_s
   end
 
   def to_label
-    return displayed_number + '. ' + title unless hidden_with_inheritance?
+    return "#{displayed_number}. #{title}" unless hidden_with_inheritance?
 
-    '*' + displayed_number + '. ' + title
+    "*#{displayed_number}. #{title}"
   end
 
   # section's media are media that are contained in one of the
@@ -152,12 +151,12 @@ class Section < ApplicationRecord
   end
 
   def visible_items_by_time
-    lessons.order(:date).map { |l| l.visible_items }.flatten
+    lessons.order(:date).map(&:visible_items).flatten
            .select { |i| i.section == self }
   end
 
   def visible_items
-    return visible_items_by_time if lecture.content_mode == 'video'
+    return visible_items_by_time if lecture.content_mode == "video"
 
     script_items_by_position
   end
@@ -167,7 +166,7 @@ class Section < ApplicationRecord
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def duplicate_in_chapter(new_chapter, import_tags)
@@ -189,7 +188,7 @@ class Section < ApplicationRecord
     end
 
     def touch_media
-      lecture.media_with_inheritance.update_all(updated_at: Time.current)
+      lecture.media_with_inheritance.touch_all
       touch
     end
 
@@ -200,12 +199,12 @@ class Section < ApplicationRecord
     def touch_toc
       return unless lecture.absolute_numbering
 
-      lecture.chapters.update_all(updated_at: Time.now)
-      lecture.sections.update_all(updated_at: Time.now)
+      lecture.chapters.touch_all
+      lecture.sections.touch_all
     end
 
     def relative_position
-      chapter.displayed_number + '.' + position.to_s
+      "#{chapter.displayed_number}.#{position}"
     end
 
     def absolute_position

@@ -62,16 +62,16 @@
                title="<%= t('medium.waiting_for_tag') %>">
             </i>
           <% end %>
-          <% if !medium.containingWatchlists(current_user).empty? %>
+          <% if !medium.containing_watchlists(current_user).empty? %>
             <%= link_to '',
-                        watchlist_path(medium.containingWatchlists(current_user).first),
+                        watchlist_path(medium.containing_watchlists(current_user).first),
                         class: 'fas fa-bookmark text-light me-2',
                         style: 'text-decoration: none;',
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
                         title: t('watchlist_entry.list',
-                                count: medium.containingWatchlists(current_user).size,
-                                watchlists: medium.containingWatchlistsNames(current_user).join(", ")) %>
+                                count: medium.containing_watchlists(current_user).size,
+                                watchlists: medium.containing_watchlists_names(current_user).join(", ")) %>
           <% end %>
           <%= link_to '',
                       add_medium_to_watchlist_path(medium),

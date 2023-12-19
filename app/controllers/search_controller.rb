@@ -12,7 +12,7 @@ class SearchController < ApplicationController
   def index
     search_down = @search_string.downcase
     # determine tags whose title contains the search string
-    matches = Notion.all.pluck(:tag_id, :title, :aliased_tag_id)
+    matches = Notion.pluck(:tag_id, :title, :aliased_tag_id)
                     .select { |x| x.second.downcase.include?(search_down) }
                     .map { |a| a.first || a.third }.uniq
     @tags = Tag.where(id: matches)
@@ -40,13 +40,13 @@ class SearchController < ApplicationController
     def sanitize_search_string
       if @search_string.nil?
         redirect_back fallback_location: root_path,
-                      alert: I18n.t('controllers.no_search_term')
+                      alert: I18n.t("controllers.no_search_term")
         return
       end
       return if @search_string.length > 1
 
       redirect_back fallback_location: root_path,
-                    alert: I18n.t('controllers.search_term_short')
+                    alert: I18n.t("controllers.search_term_short")
     end
 
     def find_similar_tags

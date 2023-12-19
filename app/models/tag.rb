@@ -29,26 +29,30 @@ class Tag < ApplicationRecord
   has_many :related_tags, through: :relations, after_remove: :destroy_relations
 
   # a tag has different notions in different languages
-  has_many :notions, foreign_key: 'tag_id',
-                     after_remove: :touch_relations,
-                     after_add: :touch_relations,
-                     dependent: :destroy
-  has_many :aliases, foreign_key: 'aliased_tag_id', class_name: 'Notion'
+  has_many :notions,
+           after_remove: :touch_relations,
+           after_add: :touch_relations,
+           dependent: :destroy,
+           inverse_of: :tag
+  has_many :aliases,
+           foreign_key: "aliased_tag_id",
+           class_name: "Notion",
+           inverse_of: :aliased_tag
 
   serialize :realizations, Array
 
   accepts_nested_attributes_for :notions,
                                 reject_if: lambda { |attributes|
-                                             attributes['title'].blank?
+                                             attributes["title"].blank?
                                            },
                                 allow_destroy: true
 
-  validates_presence_of :notions
+  validates :notions, presence: true
   validates_associated :notions
 
   accepts_nested_attributes_for :aliases,
                                 reject_if: lambda { |attributes|
-                                             attributes['title'].blank?
+                                             attributes["title"].blank?
                                            },
                                 allow_destroy: true
 
@@ -79,19 +83,15 @@ class Tag < ApplicationRecord
   end
 
   def extended_title_uncached
-    unless other_titles_uncached.any? || aliases.any?
-      return local_title_uncached
-    end
-    unless aliases.any?
-      return local_title_uncached + " (#{other_titles_uncached.join(', ')})"
-    end
+    return local_title_uncached unless other_titles_uncached.any? || aliases.any?
+    return local_title_uncached + " (#{other_titles_uncached.join(", ")})" unless aliases.any?
     unless other_titles_uncached.any?
-      return local_title_uncached + " (#{aliases.pluck(:title).join(', ')})"
+      return local_title_uncached + " (#{aliases.pluck(:title).join(", ")})"
     end
 
     local_title_uncached +
-      " (#{aliases.pluck(:title).join(', ')}," +
-      " #{other_titles_uncached.join(', ')})"
+      " (#{aliases.pluck(:title).join(", ")}, " \
+      "#{other_titles_uncached.join(", ")})"
   end
 
   def extended_title
@@ -133,7 +133,7 @@ class Tag < ApplicationRecord
   end
 
   def locale_title_hash
-    notions.map { |n| [n.locale, n.title] }.to_h
+    notions.to_h { |n| [n.locale, n.title] }
   end
 
   def self.select_with_substring(search_string)
@@ -142,11 +142,11 @@ class Tag < ApplicationRecord
 
     search = Sunspot.new_search(Tag)
     search.build do
-      fulltext search_string
+      fulltext(search_string)
     end
     search.execute
-    result = search.results
-                   .map { |t| { value: t.id, text: t.title } }
+    search.results
+          .map { |t| { value: t.id, text: t.title } }
   end
 
   # returns all tags whose title is close to the given search string
@@ -169,7 +169,7 @@ class Tag < ApplicationRecord
   # returns the array of all tags (sorted by title) together with
   # their ids
   def self.select_by_title
-    Tag.all.map { |t| t.extended_title_id_hash }
+    Tag.all.map(&:extended_title_id_hash)
        .natural_sort_by { |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
@@ -177,7 +177,7 @@ class Tag < ApplicationRecord
   # arel of tags together with
   def self.select_by_title_except(excluded_tags)
     Tag.where.not(id: excluded_tags.pluck(:id))
-       .map { |t| t.extended_title_id_hash }
+       .map(&:extended_title_id_hash)
        .natural_sort_by { |t| t[:title] }.map { |t| [t[:title], t[:id]] }
   end
 
@@ -211,7 +211,7 @@ class Tag < ApplicationRecord
   # returns the ARel of all tags or whose id is among a given array of ids
   # search params is a hash having keys :all_tags, :tag_ids
   def self.search_tags(search_params)
-    return Tag.all unless search_params[:all_tags] == '0'
+    return Tag.all unless search_params[:all_tags] == "0"
 
     tag_ids = search_params[:tag_ids] || []
     Tag.where(id: tag_ids)
@@ -244,7 +244,7 @@ class Tag < ApplicationRecord
   def short_title(max_letters = 30)
     return title unless title.length > max_letters
 
-    title[0, max_letters - 3] + '...'
+    "#{title[0, max_letters - 3]}..."
   end
 
   def in_lecture?(lecture)
@@ -274,10 +274,12 @@ class Tag < ApplicationRecord
 
     question_ids = questions.pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
-    quiz = Quiz.new(description: "#{I18n.t('categories.randomquiz.singular')} #{title} #{Time.now}",
+
+    quiz_i18n = I18n.t("categories.randomquiz.singular")
+    quiz = Quiz.new(description: "#{quiz_i18n} #{title} #{Time.zone.now}",
                     level: 1,
                     quiz_graph: quiz_graph,
-                    sort: 'RandomQuiz')
+                    sort: "RandomQuiz")
     quiz.save
     return quiz.errors unless quiz.valid?
 
@@ -287,19 +289,19 @@ class Tag < ApplicationRecord
   # returns the vertex title color of the tag in the neighbourhood graph of
   # the given marked tag
   def color(marked_tag, highlight_related_tags: true)
-    return '#f00' if self == marked_tag
-    return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
+    return "#f00" if self == marked_tag
+    return "#ff8c00" if highlight_related_tags && in?(marked_tag.related_tags)
 
-    '#000'
+    "#000"
   end
 
   # returns the vertex color of the tag in the neighbourhood graph of
   # the given marked tag
   def background(marked_tag, highlight_related_tags: true)
-    return '#f00' if self == marked_tag
-    return '#ff8c00' if highlight_related_tags && in?(marked_tag.related_tags)
+    return "#f00" if self == marked_tag
+    return "#ff8c00" if highlight_related_tags && in?(marked_tag.related_tags)
 
-    '#666'
+    "#666"
   end
 
   # returns the cytoscape hash describing the tag's vertex in the neighbourhood
@@ -323,27 +325,25 @@ class Tag < ApplicationRecord
 
   # published sections are sections that belong to a published lecture
   def visible_sections(user)
-    user.filter_sections(sections).select { |s|
+    user.filter_sections(sections).select do |s|
       s.lecture.visible_for_user?(user)
-    }
+    end
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def touch_lectures
-    Lecture.where(id: sections.map(&:lecture)
-                              .map(&:id)).update_all updated_at: Time.now
+    Lecture.where(id: sections.map { |section| section.lecture.id }).touch_all
   end
 
   def touch_sections
-    sections.update_all updated_at: Time.now
+    sections.touch_all
   end
 
   def touch_chapters
-    Chapter.where(id: sections.map(&:chapter)
-                              .map(&:id)).update_all updated_at: Time.now
+    Chapter.where(id: sections.map { |section| section.chapter.id }).touch_all
   end
 
   def identify_with!(tag)
@@ -354,7 +354,7 @@ class Tag < ApplicationRecord
     related_tags << (tag.related_tags - related_tags)
     related_tags.delete(tag)
     tag.sections.each do |s|
-      next unless self.in?(s.tags)
+      next unless in?(s.tags)
 
       old_section_tag = SectionTagJoin.find_by(section: s, tag: tag)
       position = old_section_tag.tag_position
@@ -362,7 +362,7 @@ class Tag < ApplicationRecord
       new_section_tag.insert_at(position)
       old_section_tag.move_to_bottom
     end
-    tag.aliases.update_all(aliased_tag_id: id)
+    tag.aliases.update(aliased_tag_id: id)
   end
 
   def common_titles(tag)
@@ -371,24 +371,24 @@ class Tag < ApplicationRecord
       result[l] = [locale_title_hash[l.to_s]] + [tag.locale_title_hash[l.to_s]]
       result[l].delete(nil)
       result[:contradictions].push(l) if result[l].count > 1
-      result.delete(l) unless result[l].present?
+      result.delete(l) if result[l].blank?
     end
     result
   end
 
   def visible_questions(user)
-    user.filter_visible_media(user.filter_media(media.where(type: 'Question')))
+    user.filter_visible_media(user.filter_media(media.where(type: "Question")))
   end
 
   private
 
-    def touch_relations(notion)
-      if persisted?
-        touch
-        touch_lectures
-        touch_sections
-        touch_chapters
-      end
+    def touch_relations(_notion)
+      return unless persisted?
+
+      touch
+      touch_lectures
+      touch_sections
+      touch_chapters
     end
 
     # simulates the after_destroy callback for relations
@@ -398,9 +398,9 @@ class Tag < ApplicationRecord
     end
 
     def title_join
-      result = notions.pluck(:title).join(' ')
+      result = notions.pluck(:title).join(" ")
       return result unless aliases.any?
 
-      result + ' ' + aliases.pluck(:title).join(' ')
+      "#{result} #{aliases.pluck(:title).join(" ")}"
     end
 end
