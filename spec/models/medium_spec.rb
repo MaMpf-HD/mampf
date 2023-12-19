@@ -1,139 +1,137 @@
-# frozen_string_literal: true
+require "rails_helper"
 
-require 'rails_helper'
-
-RSpec.describe Medium, type: :model do
-  it 'has a valid factory' do
+RSpec.describe(Medium, type: :model) do
+  it "has a valid factory" do
     expect(FactoryBot.build(:valid_medium)).to be_valid
   end
 
   # test validations - INCOMPLETE
 
-  it 'is invalid without a sort' do
+  it "is invalid without a sort" do
     medium = FactoryBot.build(:medium, sort: nil)
     expect(medium).to be_invalid
   end
-  it 'is invalid with improper sort' do
-    medium = FactoryBot.build(:medium, sort: 'Test')
+  it "is invalid with improper sort" do
+    medium = FactoryBot.build(:medium, sort: "Test")
     expect(medium).to be_invalid
   end
-  it 'is invalid if external_reference_link is not a valid http link' do
-    medium = FactoryBot.build(:medium, external_reference_link: 'aaa')
+  it "is invalid if external_reference_link is not a valid http link" do
+    medium = FactoryBot.build(:medium, external_reference_link: "aaa")
     expect(medium).to be_invalid
   end
 
   # test traits and factories
 
-  describe 'with description' do
-    it 'has a description' do
+  describe "with description" do
+    it "has a description" do
       medium = FactoryBot.build(:medium, :with_description)
       expect(medium.description).to be_truthy
     end
   end
 
-  describe 'with editors' do
-    it 'has the correct number of editors' do
+  describe "with editors" do
+    it "has the correct number of editors" do
       medium = FactoryBot.build(:medium, :with_editors, editors_count: 2)
-      expect(medium.editors.size).to eq 2
+      expect(medium.editors.size).to eq(2)
     end
-    it 'has one editor when called without editors_count parameter' do
+    it "has one editor when called without editors_count parameter" do
       medium = FactoryBot.build(:medium, :with_editors)
-      expect(medium.editors.size).to eq 1
+      expect(medium.editors.size).to eq(1)
     end
   end
 
-  describe 'with tags' do
-    it 'has the correct number of tags' do
+  describe "with tags" do
+    it "has the correct number of tags" do
       medium = FactoryBot.build(:medium, :with_tags, tags_count: 4)
-      expect(medium.tags.size).to eq 4
+      expect(medium.tags.size).to eq(4)
     end
-    it 'has two tags when called without tags_count parameter' do
+    it "has two tags when called without tags_count parameter" do
       medium = FactoryBot.build(:medium, :with_tags)
-      expect(medium.tags.size).to eq 2
+      expect(medium.tags.size).to eq(2)
     end
   end
 
-  describe 'with linked media' do
-    it 'has the correct number of linked media' do
+  describe "with linked media" do
+    it "has the correct number of linked media" do
       medium = FactoryBot.build(:medium, :with_linked_media,
                                 linked_media_count: 3)
-      expect(medium.linked_media.size).to eq 3
+      expect(medium.linked_media.size).to eq(3)
     end
-    it 'has two linked media when called without linked_media_count param' do
+    it "has two linked media when called without linked_media_count param" do
       medium = FactoryBot.build(:medium, :with_linked_media)
-      expect(medium.linked_media.size).to eq 2
+      expect(medium.linked_media.size).to eq(2)
     end
   end
 
-  describe 'with teachable' do
-    it 'has an associated lecture if no parameter is given' do
+  describe "with teachable" do
+    it "has an associated lecture if no parameter is given" do
       medium = FactoryBot.build(:medium, :with_teachable)
       expect(medium.teachable).to be_kind_of(Lecture)
     end
-    it 'has an associated lesson if teachable_sort param is set to :lesson' do
+    it "has an associated lesson if teachable_sort param is set to :lesson" do
       medium = FactoryBot.build(:medium, :with_teachable,
                                 teachable_sort: :lesson)
       expect(medium.teachable).to be_kind_of(Lesson)
     end
-    it 'has an associated course if teachable_sort param is set to :course' do
+    it "has an associated course if teachable_sort param is set to :course" do
       medium = FactoryBot.build(:medium, :with_teachable,
                                 teachable_sort: :course)
       expect(medium.teachable).to be_kind_of(Course)
     end
   end
 
-  describe 'with manuscript' do
-    it 'has a manuscript' do
+  describe "with manuscript" do
+    it "has a manuscript" do
       medium = FactoryBot.build(:medium, :with_manuscript)
       expect(medium.manuscript).to be_kind_of(PdfUploader::UploadedFile)
     end
   end
 
-  describe 'with video' do
-    it 'has a video' do
+  describe "with video" do
+    it "has a video" do
       medium = FactoryBot.build(:medium, :with_video)
       expect(medium.video).to be_kind_of(VideoUploader::UploadedFile)
     end
   end
 
-  describe 'lesson medium' do
+  describe "lesson medium" do
     before :all do
       @medium = FactoryBot.build(:lesson_medium)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@medium).to be_valid
     end
-    it 'is associated to a lesson' do
+    it "is associated to a lesson" do
       expect(@medium.teachable).to be_kind_of(Lesson)
     end
-    it 'has an editor that matches the teacher of the lecture to the lesson' do
+    it "has an editor that matches the teacher of the lecture to the lesson" do
       expect(@medium.editors).to include @medium.teachable.lecture.teacher
     end
   end
 
-  describe 'lecture medium' do
+  describe "lecture medium" do
     before :all do
       @medium = FactoryBot.build(:lecture_medium)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@medium).to be_valid
     end
-    it 'is associated to a lecture' do
+    it "is associated to a lecture" do
       expect(@medium.teachable).to be_kind_of(Lecture)
     end
-    it 'has an editor that matches the teacher of the lecture' do
+    it "has an editor that matches the teacher of the lecture" do
       expect(@medium.editors).to include @medium.teachable.teacher
     end
   end
 
-  describe 'course medium' do
+  describe "course medium" do
     before :all do
       @medium = FactoryBot.build(:course_medium)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@medium).to be_valid
     end
-    it 'is associated to a course' do
+    it "is associated to a course" do
       expect(@medium.teachable).to be_kind_of(Course)
     end
   end

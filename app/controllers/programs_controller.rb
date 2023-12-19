@@ -7,17 +7,12 @@ class ProgramsController < ApplicationController
     @current_ability ||= ProgramAbility.new(current_user)
   end
 
-  def edit
-  end
-
   def new
     @program = Program.new(subject_id: params[:subject_id].to_i)
     authorize! :new, @program
   end
 
-  def update
-    @program.update(program_params)
-    redirect_to classification_path
+  def edit
   end
 
   def create
@@ -25,6 +20,11 @@ class ProgramsController < ApplicationController
     @program.subject_id = params[:program][:subject_id].to_i
     authorize! :create, @program
     @program.save
+    redirect_to classification_path
+  end
+
+  def update
+    @program.update(program_params)
     redirect_to classification_path
   end
 
@@ -36,10 +36,10 @@ class ProgramsController < ApplicationController
   private
 
     def set_program
-      @program = Program.find_by_id(params[:id])
+      @program = Program.find_by(id: params[:id])
       return if @program.present?
 
-      redirect_to root_path, alert: I18n.t('controllers.no_program')
+      redirect_to root_path, alert: I18n.t("controllers.no_program")
     end
 
     def program_params

@@ -32,20 +32,20 @@ class Solution
   end
 
   def tex
-    return '' unless @content.tex
+    return "" unless @content.tex
 
-    '$$' + @content.tex + '$$'
+    "$$#{@content.tex}$$"
   end
 
   def tex_mc_answer
-    return '' unless @content.tex
+    return "" unless @content.tex
 
-    '$' + @content.tex + '$'
+    "$#{@content.tex}$"
   end
 
   def self.from_hash(solution_type, content)
-    return unless solution_type.in?(['MampfExpression', 'MampfMatrix',
-                                     'MampfTuple', 'MampfSet'])
+    return unless solution_type.in?(["MampfExpression", "MampfMatrix",
+                                     "MampfTuple", "MampfSet"])
 
     solution = Solution.new(solution_type.constantize.from_hash(content))
     solution.explanation = content[:explanation]

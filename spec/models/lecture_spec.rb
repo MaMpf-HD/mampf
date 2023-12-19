@@ -1,23 +1,21 @@
-# frozen_string_literal: true
+require "rails_helper"
 
-require 'rails_helper'
-
-RSpec.describe Lecture, type: :model do
-  it 'has a valid factory' do
+RSpec.describe(Lecture, type: :model) do
+  it "has a valid factory" do
     expect(FactoryBot.build(:lecture)).to be_valid
   end
 
   # Test validations  -- SOME ARE MISSING
 
-  it 'is invalid without a course' do
+  it "is invalid without a course" do
     lecture = FactoryBot.build(:lecture, course: nil)
     expect(lecture).to be_invalid
   end
-  it 'is invalid without a teacher' do
+  it "is invalid without a teacher" do
     lecture = FactoryBot.build(:lecture, teacher: nil)
     expect(lecture).to be_invalid
   end
-  it 'is invalid if duplicate combination of course, teacher and term' do
+  it "is invalid if duplicate combination of course, teacher and term" do
     course = FactoryBot.create(:course)
     teacher = FactoryBot.create(:confirmed_user)
     term = FactoryBot.create(:term)
@@ -29,62 +27,62 @@ RSpec.describe Lecture, type: :model do
 
   # Test traits
 
-  describe 'lecture with organizational stuff' do
+  describe "lecture with organizational stuff" do
     before :all do
       @lecture = FactoryBot.build(:lecture, :with_organizational_stuff)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@lecture).to be_valid
     end
-    it 'has organizational flag set to true' do
-      expect(@lecture.organizational).to be true
+    it "has organizational flag set to true" do
+      expect(@lecture.organizational).to be(true)
     end
-    it 'has an organizational concept' do
+    it "has an organizational concept" do
       expect(@lecture.organizational_concept).to be_truthy
     end
   end
-  describe 'lecture which is released for all' do
+  describe "lecture which is released for all" do
     before :all do
       @lecture = FactoryBot.build(:lecture, :released_for_all)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@lecture).to be_valid
     end
-    it 'is released for all' do
-      expect(@lecture.released).to eq 'all'
+    it "is released for all" do
+      expect(@lecture.released).to eq("all")
     end
   end
-  describe 'term independent lecture' do
+  describe "term independent lecture" do
     before :all do
       @lecture = FactoryBot.build(:lecture, :term_independent)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@lecture).to be_valid
     end
-    it 'has no associated term' do
+    it "has no associated term" do
       expect(@lecture.term).to be_nil
     end
   end
-  describe 'with table of contents' do
+  describe "with table of contents" do
     before :all do
       @lecture = FactoryBot.build(:lecture, :with_toc)
     end
-    it 'has 3 chapters' do
-      expect(@lecture.chapters.size).to eq 3
+    it "has 3 chapters" do
+      expect(@lecture.chapters.size).to eq(3)
     end
-    it 'has 3 sections in each chapter' do
-      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [3, 3, 3]
+    it "has 3 sections in each chapter" do
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq([3, 3, 3])
     end
   end
-  describe 'with sparse table of contents' do
+  describe "with sparse table of contents" do
     before :all do
       @lecture = FactoryBot.build(:lecture, :with_sparse_toc)
     end
-    it 'has one chapter' do
-      expect(@lecture.chapters.size).to eq 1
+    it "has one chapter" do
+      expect(@lecture.chapters.size).to eq(1)
     end
-    it 'has one sections in each chapter' do
-      expect(@lecture.chapters.map { |c| c.sections.size }).to eq [1]
+    it "has one sections in each chapter" do
+      expect(@lecture.chapters.map { |c| c.sections.size }).to eq([1])
     end
   end
 

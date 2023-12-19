@@ -378,7 +378,7 @@ $(document).on 'turbolinks:load', ->
 
   $(document).on 'click', '#showMediaStatistics', ->
     mediumId = $(this).data('medium')
-    $.ajax Routes.get_statistics_path(mediumId),
+    $.ajax Routes.statistics_path(mediumId),
       type: 'GET'
       dataType: 'script'
     return

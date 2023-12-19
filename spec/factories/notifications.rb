@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :notification do
     association :recipient, factory: :confirmed_user
@@ -7,7 +5,7 @@ FactoryBot.define do
     trait :with_notifiable do
       transient do
         notifiable_sort do
-          ['Medium', 'Course', 'Lecture', 'Announcement'].sample
+          ["Medium", "Course", "Lecture", "Announcement"].sample
         end
       end
       after :build do |n, evaluator|
