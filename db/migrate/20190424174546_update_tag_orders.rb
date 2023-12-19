@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class UpdateTagOrders < ActiveRecord::Migration[5.2]
   def change
     Section.all.each do |s|
@@ -5,3 +6,4 @@ class UpdateTagOrders < ActiveRecord::Migration[5.2]
     end
   end
 end
+# rubocop:enable Rails/

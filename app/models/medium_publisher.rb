@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # PORO class that handles the publication of media
 class MediumPublisher
   attr_reader :medium_id, :user_id, :release_now, :release_for, :release_date,
@@ -7,11 +5,11 @@ class MediumPublisher
               :assignment_file_type, :assignment_deadline,
               :assignment_deletion_date
 
-  def initialize(medium_id:, user_id:, release_now:,
-                 release_for: 'all', release_date: nil,
+  def initialize(medium_id:, user_id:, release_now:, # rubocop:todo Metrics/ParameterLists
+                 release_for: "all", release_date: nil,
                  lock_comments: false, vertices: false,
-                 create_assignment: false, assignment_title: '',
-                 assignment_file_type: '', assignment_deadline: nil,
+                 create_assignment: false, assignment_title: "",
+                 assignment_file_type: "", assignment_deadline: nil,
                  assignment_deletion_date: nil)
     @medium_id = medium_id
     @user_id = user_id
@@ -45,27 +43,27 @@ class MediumPublisher
 
   def self.parse(medium, user, params)
     begin
-      release_date = Time.zone.parse(params[:release_date] || '')
+      release_date = Time.zone.parse(params[:release_date] || "")
     rescue ArgumentError
-      puts 'Argument error for medium release date'
+      Rails.logger.debug("Argument error for medium release date")
     end
     begin
-      assignment_deadline = Time.zone.parse(params[:assignment_deadline] || '')
+      assignment_deadline = Time.zone.parse(params[:assignment_deadline] || "")
     rescue ArgumentError
-      puts 'Argument error for medium assignment deadline'
+      Rails.logger.debug("Argument error for medium assignment deadline")
     end
     begin
-      assignment_deletion_date = Time.zone.parse(params[:assignment_deletion_date] || '')
+      assignment_deletion_date = Time.zone.parse(params[:assignment_deletion_date] || "")
     rescue ArgumentError
-      puts 'Argument error for medium assignment deletion date'
+      Rails.logger.debug("Argument error for medium assignment deletion date")
     end
     MediumPublisher.new(medium_id: medium.id, user_id: user.id,
-                        release_now: params[:release_now] == '1',
+                        release_now: params[:release_now] == "1",
                         release_for: params[:released],
                         release_date: release_date,
-                        lock_comments: params[:lock_comments] == '1',
-                        vertices: params[:publish_vertices] == '1',
-                        create_assignment: params[:create_assignment] == '1',
+                        lock_comments: params[:lock_comments] == "1",
+                        vertices: params[:publish_vertices] == "1",
+                        create_assignment: params[:create_assignment] == "1",
                         assignment_title: params[:assignment_title],
                         assignment_file_type: params[:assignment_file_type],
                         assignment_deadline: assignment_deadline,
@@ -73,8 +71,8 @@ class MediumPublisher
   end
 
   def publish!
-    @medium = Medium.find_by_id(@medium_id)
-    @user = User.find_by_id(@user_id)
+    @medium = Medium.find_by(id: @medium_id)
+    @user = User.find_by(id: @user_id)
     return unless @medium && @user && @medium.released_at.nil?
     return unless @user.can_edit?(@medium)
 
@@ -122,7 +120,7 @@ class MediumPublisher
 
     def realize_optional_stuff!
       close_thread! if @lock_comments
-      publish_vertices! if @medium.sort == 'Quiz' && @vertices
+      publish_vertices! if @medium.sort == "Quiz" && @vertices
       create_assignment! if @create_assignment
     end
 
@@ -131,12 +129,12 @@ class MediumPublisher
     def create_notifications!
       @medium.teachable&.media_scope&.touch
       notifications = []
-      @medium.teachable.media_scope.users.update_all(updated_at: Time.zone.now)
+      @medium.teachable.media_scope.users.touch_all
       @medium.teachable.media_scope.users.each do |u|
         notifications << Notification.new(recipient: u,
                                           notifiable_id: @medium.id,
-                                          notifiable_type: 'Medium',
-                                          action: 'create')
+                                          notifiable_type: "Medium",
+                                          action: "create")
       end
       Notification.import notifications
     end
@@ -156,7 +154,7 @@ class MediumPublisher
     end
 
     def medium
-      Medium.find_by_id(@medium_id)
+      Medium.find_by(id: @medium_id)
     end
 
     def publish_vertices!
@@ -191,27 +189,27 @@ class MediumPublisher
     end
 
     def add_release_date_error
-      @errors[:release_date] = I18n.t('admin.medium.invalid_publish_date')
+      @errors[:release_date] = I18n.t("admin.medium.invalid_publish_date")
     end
 
     def add_assignment_deadline_error
-      @errors[:assignment_deadline] = I18n.t('admin.medium' \
-                                             '.invalid_assignment_deadline')
+      @errors[:assignment_deadline] = I18n.t("admin.medium" \
+                                             ".invalid_assignment_deadline")
     end
 
     def add_assignment_deletion_date_error
-      @errors[:assignment_deletion_date] = I18n.t('activerecord.errors.' \
-                                                  'models.assignment.' \
-                                                  'attributes.deletion_date.' \
-                                                  'in_past')
+      @errors[:assignment_deletion_date] = I18n.t("activerecord.errors." \
+                                                  "models.assignment." \
+                                                  "attributes.deletion_date." \
+                                                  "in_past")
     end
 
     def add_assignment_title_error
-      @errors[:assignment_title] = I18n.t('admin.medium' \
-                                          '.invalid_assignment_title')
+      @errors[:assignment_title] = I18n.t("admin.medium" \
+                                          ".invalid_assignment_title")
     end
 
     def medium_without_notifications?
-      @medium.sort.in?(['Question', 'Remark', 'RandomQuiz'])
+      @medium.sort.in?(["Question", "Remark", "RandomQuiz"])
     end
 end

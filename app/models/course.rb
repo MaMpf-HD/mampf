@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # Course class
 class Course < ApplicationRecord
   include ApplicationHelper
@@ -14,7 +12,9 @@ class Course < ApplicationRecord
            after_remove: :touch_tag,
            after_add: :touch_tag
 
-  has_many :media, -> { order(position: :asc) }, as: :teachable
+  has_many :media, -> { order(position: :asc) },
+           as: :teachable,
+           inverse_of: :teachable
 
   # in a course, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
@@ -35,8 +35,12 @@ class Course < ApplicationRecord
   has_many :division_course_joins, dependent: :destroy
   has_many :divisions, through: :division_course_joins
 
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, presence: true, uniqueness: true
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :short_title, presence: true, uniqueness: true
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   # some information about media and lectures are cached
   # to find out whether the cache is out of date, always touch'em after saving
@@ -79,7 +83,7 @@ class Course < ApplicationRecord
   end
 
   def selector_value
-    'Course-' + id.to_s
+    "Course-#{id}"
   end
 
   def to_label
@@ -123,12 +127,8 @@ class Course < ApplicationRecord
     return lectures.published unless user.edited_lectures.any? || user.teacher?
 
     lectures.left_outer_joins(:editable_user_joins)
-            .where('released IS NOT NULL OR editable_user_joins.user_id = ?'\
-                   ' OR teacher_id = ?', user.id, user.id).distinct
-  end
-
-  def restricted?
-    false
+            .where("released IS NOT NULL OR editable_user_joins.user_id = ? " \
+                   "OR teacher_id = ?", user.id, user.id).distinct
   end
 
   def lectures_by_date
@@ -279,19 +279,19 @@ class Course < ApplicationRecord
   def image_filename
     return unless image
 
-    image.metadata['filename']
+    image.metadata["filename"]
   end
 
   def image_size
     return unless image
 
-    image.metadata['size']
+    image.metadata["size"]
   end
 
   def image_resolution
     return unless image
 
-    "#{image.metadata['width']}x#{image.metadata['height']}"
+    "#{image.metadata["width"]}x#{image.metadata["height"]}"
   end
 
   # returns all titles of courses whose title is close to the given search
@@ -306,17 +306,17 @@ class Course < ApplicationRecord
 
   def self.search_by(search_params, page)
     editor_ids = search_params[:editor_ids]
-    editor_ids = [] if search_params[:all_editors] == '1'
+    editor_ids = [] if search_params[:all_editors] == "1"
     program_ids = search_params[:program_ids] || []
-    program_ids = [] if search_params[:all_programs] == '1'
+    program_ids = [] if search_params[:all_programs] == "1"
     search = Sunspot.new_search(Course)
     search.build do
       with(:editor_ids, editor_ids)
       with(:program_ids, program_ids) unless program_ids.empty?
-      with(:term_independent, true) if search_params[:term_independent] == '1'
-      fulltext search_params[:fulltext] if search_params[:fulltext].present?
+      with(:term_independent, true) if search_params[:term_independent] == "1"
+      fulltext(search_params[:fulltext]) if search_params[:fulltext].present?
       order_by(:sort_title, :asc)
-      paginate page: page, per_page: search_params[:per]
+      paginate(page: page, per_page: search_params[:per])
     end
     search
   end
@@ -324,26 +324,26 @@ class Course < ApplicationRecord
   private
 
     def touch_media
-      media_with_inheritance.update_all(updated_at: Time.now)
+      media_with_inheritance.touch_all
     end
 
     def touch_tag(tag)
       tag.touch
-      Sunspot.index! tag
+      Sunspot.index!(tag)
     end
 
     def touch_lectures_and_lessons
-      lectures.update_all(updated_at: Time.now)
-      Lesson.where(lecture: lectures).update_all(updated_at: Time.now)
+      lectures.touch_all
+      Lesson.where(lecture: lectures).touch_all
     end
 
     def create_quiz_by_questions!(question_ids)
       quiz_graph = QuizGraph.build_from_questions(question_ids)
-      Quiz.create(description: "#{I18n.t('categories.randomquiz.singular')} "\
-                               "#{course.title} #{Time.now}",
+      Quiz.create(description: "#{I18n.t("categories.randomquiz.singular")} " \
+                               "#{course.title} #{Time.current}",
                   level: 1,
                   quiz_graph: quiz_graph,
-                  sort: 'RandomQuiz',
+                  sort: "RandomQuiz",
                   locale: locale)
     end
 
@@ -351,7 +351,7 @@ class Course < ApplicationRecord
       return questions_w_inheritance.pluck(:id).sample(count) unless tags.any?
 
       tagged_questions = questions(tags)
-      question_ids = if tagged_questions.count > count
+      if tagged_questions.count > count
         QuestionSampler.new(tagged_questions, tags, count).sample!
       else
         tagged_questions.map(&:id).shuffle

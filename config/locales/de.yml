@@ -3051,7 +3051,7 @@ de:
       Hash:%{hash}
     data_request_mail_body: >
       %{mail} mit User-Id: %{id} hat ihre Daten angefordert.
-    data_provide_mail_subject: Anfrage nach Daten
+    data_provide_mail_subject: Datenanfrage
     data_provide_mail_body: >
       Hallo, %{name}!<br>
 

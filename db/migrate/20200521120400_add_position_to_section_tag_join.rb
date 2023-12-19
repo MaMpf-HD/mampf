@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddPositionToSectionTagJoin < ActiveRecord::Migration[6.0]
   def change
     add_column :section_tag_joins, :tag_position, :integer
@@ -6,3 +7,4 @@ class AddPositionToSectionTagJoin < ActiveRecord::Migration[6.0]
     end
   end
 end
+# rubocop:enable Rails/
