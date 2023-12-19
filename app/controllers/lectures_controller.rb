@@ -11,23 +11,87 @@ class LecturesController < ApplicationController
   before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
                                          :show_random_quizzes]
   before_action :check_if_enough_questions, only: [:show_random_quizzes]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= LectureAbility.new(current_user)
   end
 
+  def show
+    # deactivate http caching for the moment
+    if stale?(etag: @lecture,
+              last_modified: [current_user.updated_at,
+                              @lecture.updated_at,
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
+                              Thredded::UserDetail.find_by(user_id: current_user.id)
+                                                  &.last_seen_at || @lecture.updated_at,
+                              @lecture.forum&.updated_at || @lecture.updated_at].max)
+      @lecture = Lecture.includes(:teacher, :term, :editors, :users,
+                                  :announcements, :imported_media,
+                                  course: [:editors],
+                                  media: [:teachable, :tags],
+                                  lessons: [media: [:tags]],
+                                  chapters: [:lecture,
+                                             { sections: [lessons: [:tags],
+                                                          chapter: [:lecture],
+                                                          tags: [:notions,
+                                                                 :lessons]] }])
+                        .find_by(id: params[:id])
+      @notifications = current_user.active_notifications(@lecture)
+      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
+      render layout: "application"
+    end
+  end
+
+  def new
+    @lecture = Lecture.new
+    authorize! :new, @lecture
+    @from = params[:from]
+    return unless @from == "course"
+
+    # if new action was triggered from inside a course view, add the course
+    # info to the lecture
+    @lecture.course = Course.find_by(id: params[:course])
+    I18n.locale = @lecture.course.locale
+  end
+
   def edit
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.parse(ENV['RAILS_CACHE_ID'])].max)
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       eager_load_stuff
     end
   end
 
+  def create
+    @lecture = Lecture.new(lecture_params)
+    authorize! :create, @lecture
+    @lecture.save
+    if @lecture.valid?
+      @lecture.update(sort: "special") if @lecture.course.term_independent
+      # set organizational_concept to default
+      set_organizational_defaults
+      # set lenguage to default language
+      set_language
+      # depending on where the create action was trriggered from, return
+      # to admin index view or edit course view
+      unless params[:lecture][:from] == "course"
+        redirect_to administration_path,
+                    notice: I18n.t("controllers.created_lecture_success",
+                                   lecture: @lecture.title_with_teacher)
+        return
+      end
+      redirect_to edit_course_path(@lecture.course),
+                  notice: I18n.t("controllers.created_lecture_success",
+                                 lecture: @lecture.title_with_teacher)
+      return
+    end
+    @errors = @lecture.errors
+  end
+
   def update
     editor_ids = lecture_params[:editor_ids]
-    if editor_ids != nil
+    unless editor_ids.nil?
       # removes the empty String "" in the NEW array of editor ids
       # and converts it into an array of integers
       all_ids = editor_ids.map(&:to_i) - [0]
@@ -57,75 +121,11 @@ class LecturesController < ApplicationController
     @errors = @lecture.errors
   end
 
-  def show
-    # deactivate http caching for the moment
-    if stale?(etag: @lecture,
-              last_modified: [current_user.updated_at,
-                              @lecture.updated_at,
-                              Time.parse(ENV['RAILS_CACHE_ID']),
-                              Thredded::UserDetail.find_by(user_id: current_user.id)
-                                                  &.last_seen_at || @lecture.updated_at,
-                              @lecture.forum&.updated_at || @lecture.updated_at].max)
-      @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                  :announcements, :imported_media,
-                                  course: [:editors],
-                                  media: [:teachable, :tags],
-                                  lessons: [media: [:tags]],
-                                  chapters: [:lecture,
-                                             sections: [lessons: [:tags],
-                                                        chapter: [:lecture],
-                                                        tags: [:notions,
-                                                               :lessons]]])
-                        .find_by_id(params[:id])
-      @notifications = current_user.active_notifications(@lecture)
-      @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-      render layout: 'application'
-    end
-  end
-
-  def new
-    @lecture = Lecture.new
-    authorize! :new, @lecture
-    @from = params[:from]
-    return unless @from == 'course'
-
-    # if new action was triggered from inside a course view, add the course
-    # info to the lecture
-    @lecture.course = Course.find_by_id(params[:course])
-    I18n.locale = @lecture.course.locale
-  end
-
-  def create
-    @lecture = Lecture.new(lecture_params)
-    authorize! :create, @lecture
-    @lecture.save
-    if @lecture.valid?
-      @lecture.update(sort: 'special') if @lecture.course.term_independent
-      # set organizational_concept to default
-      set_organizational_defaults
-      # set lenguage to default language
-      set_language
-      # depending on where the create action was trriggered from, return
-      # to admin index view or edit course view
-      unless params[:lecture][:from] == 'course'
-        redirect_to administration_path,
-                    notice: I18n.t('controllers.created_lecture_success',
-                                   lecture: @lecture.title_with_teacher)
-        return
-      end
-      redirect_to edit_course_path(@lecture.course),
-                  notice: I18n.t('controllers.created_lecture_success',
-                                 lecture: @lecture.title_with_teacher)
-      return
-    end
-    @errors = @lecture.errors
-  end
-
   def publish
-    @lecture.update(released: 'all')
-    if params[:medium][:publish_media] == '1'
+    @lecture.update(released: "all")
+    if params[:medium][:publish_media] == "1"
       @lecture.media_with_inheritance
-              .update_all(released: params[:medium][:released])
+              .update(released: params[:medium][:released])
     end
     # create notifications about creation od this lecture and send email
     create_notifications
@@ -177,12 +177,12 @@ class LecturesController < ApplicationController
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
     I18n.locale = @lecture.locale_with_inheritance
-    render layout: 'application'
+    render layout: "application"
   end
 
   def organizational
     I18n.locale = @lecture.locale_with_inheritance
-    render layout: 'application'
+    render layout: "application"
   end
 
   def import_media
@@ -195,9 +195,9 @@ class LecturesController < ApplicationController
   end
 
   def remove_imported_medium
-    @medium = Medium.find_by_id(params[:medium])
+    @medium = Medium.find_by(id: params[:medium])
     import = Import.find_by(teachable: @lecture, medium: @medium)
-    import.destroy if import
+    import&.destroy
     @lecture.reload
     @lecture.touch
   end
@@ -208,24 +208,26 @@ class LecturesController < ApplicationController
   end
 
   def show_structures
-    render layout: 'application'
+    render layout: "application"
   end
 
   def edit_structures
-    render layout: 'application'
+    render layout: "application"
   end
 
   def search_examples
     if @lecture.structure_ids.any?
-      response = Faraday.get(ENV['ERDBEERE_API'] + '/search')
-      @form = JSON.parse(response.body)['embedded_html']
-      @form.gsub!('token_placeholder',
-                  '<input type="hidden" name="authenticity_token" ' +
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/search")
+      @form = JSON.parse(response.body)["embedded_html"]
+      # rubocop:disable Style/StringConcatenation
+      @form.gsub!("token_placeholder",
+                  '<input type="hidden" name="authenticity_token" ' \
                   'value="' + form_authenticity_token + '">')
+      # rubocop:enable Style/StringConcatenation
     else
-      @form = I18n.t('erdbeere.no_structures')
+      @form = I18n.t("erdbeere.no_structures")
     end
-    render layout: 'application'
+    render layout: "application"
   end
 
   def close_comments
@@ -246,7 +248,7 @@ class LecturesController < ApplicationController
     @total = search.total
     @lectures = Kaminari.paginate_array(results, total_count: @total)
                         .page(params[:page]).per(search_params[:per])
-    @results_as_list = search_params[:results_as_list] == 'true'
+    @results_as_list = search_params[:results_as_list] == "true"
     return unless @total.zero?
     return unless search_params[:fulltext]&.length.to_i > 1
 
@@ -255,24 +257,24 @@ class LecturesController < ApplicationController
 
   def show_random_quizzes
     @course = @lecture.course
-    render layout: 'application'
+    render layout: "application"
   end
 
   def display_course
     @course = @lecture.course
     I18n.locale = @course.locale || @lecture.locale
-    render layout: 'application'
+    render layout: "application"
   end
 
   def subscribe_page
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def import_toc
     imported_lecture = Lecture
-                       .find_by_id(import_toc_params[:imported_lecture_id])
-    import_sections = import_toc_params[:import_sections] == '1'
-    import_tags = import_toc_params[:import_tags] == '1'
+                       .find_by(id: import_toc_params[:imported_lecture_id])
+    import_sections = import_toc_params[:import_sections] == "1"
+    import_tags = import_toc_params[:import_tags] == "1"
     @lecture.import_toc!(imported_lecture, import_sections, import_tags)
     redirect_to edit_lecture_path(@lecture)
   end
@@ -280,10 +282,10 @@ class LecturesController < ApplicationController
   private
 
     def set_lecture
-      @lecture = Lecture.find_by_id(params[:id])
+      @lecture = Lecture.find_by(id: params[:id])
       return if @lecture
 
-      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_lecture_cookie
@@ -300,7 +302,9 @@ class LecturesController < ApplicationController
     end
 
     def check_for_subscribe
-      redirect_to subscribe_lecture_page_path(@lecture.id) unless @lecture.in?(current_user.lectures)
+      return if @lecture.in?(current_user.lectures)
+
+      redirect_to subscribe_lecture_page_path(@lecture.id)
     end
 
     def lecture_params
@@ -310,12 +314,10 @@ class LecturesController < ApplicationController
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period]
-      if action_name == 'update' && current_user.can_update_personell?(@lecture)
-        allowed_params.concat([:teacher_id, editor_ids: []])
+      if action_name == "update" && current_user.can_update_personell?(@lecture)
+        allowed_params.push(:teacher_id, { editor_ids: [] })
       end
-      if action_name == 'create'
-        allowed_params.concat([:course_id, :teacher_id, editor_ids: []])
-      end
+      allowed_params.push(:course_id, :teacher_id, { editor_ids: [] }) if action_name == "create"
       params.require(:lecture).permit(allowed_params)
     end
 
@@ -337,8 +339,8 @@ class LecturesController < ApplicationController
       User.find_each do |u|
         notifications << Notification.new(recipient: u,
                                           notifiable_id: @lecture.id,
-                                          notifiable_type: 'Lecture',
-                                          action: 'create')
+                                          notifiable_type: "Lecture",
+                                          action: "create")
       end
       Notification.import notifications
     end
@@ -347,25 +349,25 @@ class LecturesController < ApplicationController
       recipients = User.where(email_for_teachable: true)
       I18n.available_locales.each do |l|
         local_recipients = recipients.where(locale: l)
-        if local_recipients.any?
-          NotificationMailer.with(recipients: local_recipients.pluck(:id),
-                                  locale: l,
-                                  lecture: @lecture)
-                            .new_lecture_email.deliver_later
-        end
+        next unless local_recipients.any?
+
+        NotificationMailer.with(recipients: local_recipients.pluck(:id),
+                                locale: l,
+                                lecture: @lecture)
+                          .new_lecture_email.deliver_later
       end
     end
 
     # destroy all notifications related to this lecture
     def destroy_notifications
-      Notification.where(notifiable_id: @lecture.id, notifiable_type: 'Lecture')
+      Notification.where(notifiable_id: @lecture.id, notifiable_type: "Lecture")
                   .delete_all
     end
 
     # fill organizational_concept with default view
     def set_organizational_defaults
-      partial_path = 'lectures/organizational/'
-      partial_path += @lecture.seminar? ? 'seminar' : 'lecture'
+      partial_path = "lectures/organizational/"
+      partial_path += @lecture.seminar? ? "seminar" : "lecture"
       @lecture.update(organizational_concept:
                         render_to_string(partial: partial_path,
                                          formats: :html,
@@ -384,11 +386,11 @@ class LecturesController < ApplicationController
                                   media: [:teachable, :tags],
                                   lessons: [media: [:tags]],
                                   chapters: [:lecture,
-                                             sections: [lessons: [:tags],
-                                                        chapter: [:lecture],
-                                                        tags: [:notions,
-                                                               :lessons]]])
-                        .find_by_id(params[:id])
+                                             { sections: [lessons: [:tags],
+                                                          chapter: [:lecture],
+                                                          tags: [:notions,
+                                                                 :lessons]] }])
+                        .find_by(id: params[:id])
       @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
       lecture_tags = @lecture.tags
       @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
@@ -400,23 +402,23 @@ class LecturesController < ApplicationController
 
     def set_erdbeere_data
       @structure_ids = @lecture.structure_ids
-      response = Faraday.get(ENV['ERDBEERE_API'] + '/structures')
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/structures")
       response_hash = if response.status == 200
         JSON.parse(response.body)
       else
-        { 'data' => {}, 'included' => {} }
+        { "data" => {}, "included" => {} }
       end
-      @all_structures = response_hash['data']
+      @all_structures = response_hash["data"]
       @structures = @all_structures.select do |s|
-        s['id'].to_i.in?(@structure_ids)
+        s["id"].to_i.in?(@structure_ids)
       end
-      @properties = response_hash['included']
+      @properties = response_hash["included"]
     end
 
     def search_params
       types = params[:search][:types]
-      types = [types] if types && !types.kind_of?(Array)
-      types -= [''] if types
+      types = [types] if types && !types.is_a?(Array)
+      types -= [""] if types
       types = nil if types == []
       params[:search][:types] = types
       params[:search][:user_id] = current_user.id
@@ -432,6 +434,6 @@ class LecturesController < ApplicationController
     def check_if_enough_questions
       return if @lecture.course.enough_questions?
 
-      redirect_to :root, alert: I18n.t('controllers.no_test')
+      redirect_to :root, alert: I18n.t("controllers.no_test")
     end
 end

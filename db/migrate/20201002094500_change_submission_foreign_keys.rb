@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
   def up
     remove_index :user_submission_joins,
@@ -20,12 +21,15 @@ class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
     add_column table_name, new_foreign_key, :uuid
 
     klass.where.not(foreign_key => nil).each do |record|
-      if associated_record = relation_klass.find_by(id: record.send(foreign_key))
-        record.update_column(new_foreign_key, associated_record.uuid)
-      end
+      # rubocop:disable Lint/AssignmentInCondition
+      next unless associated_record = relation_klass.find_by(id: record.send(foreign_key))
+      # rubocop:enable Lint/AssignmentInCondition
+
+      record.update_column(new_foreign_key, associated_record.uuid)
     end
 
     remove_column table_name, foreign_key
     rename_column table_name, new_foreign_key, foreign_key
   end
 end
+# rubocop:enable Rails/

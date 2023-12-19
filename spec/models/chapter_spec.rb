@@ -1,34 +1,32 @@
-# frozen_string_literal: true
+require "rails_helper"
 
-require 'rails_helper'
-
-RSpec.describe Chapter, type: :model do
-  it 'has a valid factory' do
+RSpec.describe(Chapter, type: :model) do
+  it "has a valid factory" do
     expect(FactoryBot.build(:chapter)).to be_valid
   end
 
   # test validations
 
-  it 'is invalid without a title' do
+  it "is invalid without a title" do
     chapter = FactoryBot.build(:chapter, title: nil)
     expect(chapter).to be_invalid
   end
 
   # test traits
 
-  describe 'chapter with sections' do
+  describe "chapter with sections" do
     before :all do
       @chapter = FactoryBot.build(:chapter, :with_sections)
     end
-    it 'has a valid factory' do
+    it "has a valid factory" do
       expect(@chapter).to be_valid
     end
-    it 'has 3 sections when called without section_count parameter' do
-      expect(@chapter.sections.size).to eq 3
+    it "has 3 sections when called without section_count parameter" do
+      expect(@chapter.sections.size).to eq(3)
     end
-    it 'has the correct number of sections' do
+    it "has the correct number of sections" do
       chapter = FactoryBot.build(:chapter, :with_sections, section_count: 5)
-      expect(chapter.sections.size).to eq 5
+      expect(chapter.sections.size).to eq(5)
     end
   end
 

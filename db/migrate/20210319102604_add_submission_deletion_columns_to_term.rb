@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddSubmissionDeletionColumnsToTerm < ActiveRecord::Migration[6.0]
   def up
     add_column :terms, :submission_deletion_mail, :datetime
@@ -11,3 +12,4 @@ class AddSubmissionDeletionColumnsToTerm < ActiveRecord::Migration[6.0]
     remove_column :terms, :submissions_deleted_at, :datetime
   end
 end
+# rubocop:enable Rails/
