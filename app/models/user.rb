@@ -775,7 +775,7 @@ class User < ApplicationRecord
   end
 
   def unread_media_comments
-    media_latest_comments.select! do |mc|
+    media_latest_comments.select do |mc|
       (Reader.find_by(user: self, thread: mc[:thread])
            &.updated_at || 1000.years.ago) < mc[:latest_comment].created_at &&
         mc[:medium].visible_for_user?(self)
