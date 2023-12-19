@@ -11,6 +11,7 @@
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
     },
+    "eslint.format.enable": true, // use ESLint as formatter
     // this disables VSCode built-in formatter (instead we want to use ESLint)
     "javascript.validate.enable": false,
     //////////////////////////////////////
