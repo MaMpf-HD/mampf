@@ -1,3 +1,5 @@
+/* global tempusDominus */
+
 // Initialize on page load (when js file is dynamically loaded)
 $(document).ready(startInitialization);
 
