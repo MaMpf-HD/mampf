@@ -21,12 +21,21 @@ const customizedStylistic = stylistic.configs.customize({
 
 const cypressRules = {
   "cypress/no-assigning-return-values": "error",
-  "cypress/no-unnecessary-waiting": "error",
+  "cypress/no-unnecessary-waiting": "warn",
   "cypress/assertion-before-screenshot": "warn",
   "cypress/no-force": "warn",
   "cypress/no-async-tests": "error",
   "cypress/no-pause": "error",
 };
+
+const ignoreFilesWithSprocketRequireSyntax = [
+  "app/assets/javascripts/application.js",
+  "app/assets/config/manifest.js",
+  "app/assets/javascripts/thredded_timeago.js",
+  "app/assets/javascripts/edit_clicker_assets.js",
+  "app/assets/javascripts/show_clicker_assets.js",
+  "app/assets/javascripts/geogebra_assets.js",
+];
 
 module.exports = {
   root: true,
@@ -53,9 +62,11 @@ module.exports = {
   },
   ignorePatterns: [
     "node_modules/",
+    "pdfcomprezzor/",
     "tmp/",
     "public/packs/",
     "public/packs-test/",
     "public/uploads/",
+    ...ignoreFilesWithSprocketRequireSyntax,
   ],
 };
