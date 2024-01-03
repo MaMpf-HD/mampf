@@ -60,6 +60,7 @@ const customGlobals = {
   thymeAttributes: "readable",
   thymeKeyShortcuts: "readable",
   thymeUtility: "readable",
+  Resizer: "readable",
 
   ControlBarHider: "readable",
 

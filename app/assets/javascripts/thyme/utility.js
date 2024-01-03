@@ -137,7 +137,7 @@ const thymeUtility = {
     (instead of just "f") -> needed for correct format.
    */
   toHexaDecimal: function (integer) {
-  	return integer.toString(16).padStart(2, "0");
+    return integer.toString(16).padStart(2, "0");
   },
 
 };

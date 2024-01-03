@@ -103,7 +103,7 @@ $(document).on("turbolinks:load", function () {
 
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
-    resize.resizeContainer(thymeContainer, 1.22, 70);
+    Resizer.resizeContainer(thymeContainer, 1.22, 70);
     annotationManager.updateMarkers();
   }
 

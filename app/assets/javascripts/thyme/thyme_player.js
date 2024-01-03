@@ -147,7 +147,7 @@ $(document).on("turbolinks:load", function () {
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
     const factor = $("#caption").is(":hidden") && $("#annotation-caption").is(":hidden") ? 1 : 1 / 0.82;
-    resize.resizeContainer(thymeContainer, factor, 0);
+    Resizer.resizeContainer(thymeContainer, factor, 0);
     annotationManager.updateMarkers();
   }
 

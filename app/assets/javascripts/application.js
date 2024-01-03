@@ -93,7 +93,7 @@
 //= require thyme/heatmap
 //= require thyme/key_shortcuts
 //= require thyme/metadata_manager
-//= require thyme/resize
+//= require thyme/resizer
 //= require thyme/utility
 //= require thyme/thyme_player
 //= require thyme/thyme_editor

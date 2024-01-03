@@ -1,7 +1,8 @@
 /**
   Use the method here to resize thyme players.
 */
-const resize = {
+// eslint-disable-next-line no-unused-vars
+const Resizer = {
   resizeContainer: function (container, factor, offset) {
     const video = document.getElementById("video");
     const $container = $(container);
