@@ -11,35 +11,35 @@ describe("Watchlists", () => {
       cy.get('input[type="password"]').type("test123456");
       cy.get('input[type="submit"]').click();
     });
-    // it("can create and add to watchlist in lecture", () => {
-    // 	cy.appFactories([
-    //         ["create", "lecture_medium", "with_manuscript", "released"],
-    //         ["create",
-    //             "lecture_user_join", {
-    //                 user_id: 1,
-    //                 lecture_id: 1
-    //             }
-    //         ]
-    // 	]).then((data) => {
-    // 		cy.visit(`lectures/${data[0].id}`);
-    // 		cy.get('.nav > :nth-child(6) > .nav-link').click();
-    // 		cy.get('div.text-light > .fa-list').click();
-    // 		cy.get('#openNewWatchlistForm').click();
-    // 		cy.get('#watchlistNameField').type('Lernliste');
-    //         cy.get(100);
-    // 		cy.get('#createWatchlistBtn').click();
-    // 		cy.get('#watchlistEntrySubmitButton').click();
-    //         cy.wait(100);
-    //         cy.get('div.text-light > .fa-list').click();
-    //         cy.get('#watchlistEntrySubmitButton').click();
-    //         cy.get('.invalid-feedback').should('exist');
-    //         cy.wait(200);
-    //         cy.get('.close > span').click();
-    //         cy.wait(100);
-    //         cy.get('#watchlistsIcon').click();
-    //         cy.get('#card-title').should('exist');
-    // 	});
-    // });
+    /* it("can create and add to watchlist in lecture", () => {
+      cy.appFactories([
+        ["create", "lecture_medium", "with_manuscript", "released"],
+        ["create",
+          "lecture_user_join", {
+            user_id: 1,
+            lecture_id: 1,
+          },
+        ],
+      ]).then((data) => {
+        cy.visit(`lectures/${data[0].id}`);
+        cy.get(".nav > :nth-child(6) > .nav-link").click();
+        cy.get("div.text-light > .fa-list").click();
+        cy.get("#openNewWatchlistForm").click();
+        cy.get("#watchlistNameField").type("Lernliste");
+        cy.get(100);
+        cy.get("#createWatchlistBtn").click();
+        cy.get("#watchlistEntrySubmitButton").click();
+        cy.wait(100);
+        cy.get("div.text-light > .fa-list").click();
+        cy.get("#watchlistEntrySubmitButton").click();
+        cy.get(".invalid-feedback").should("exist");
+        cy.wait(200);
+        cy.get(".close > span").click();
+        cy.wait(100);
+        cy.get("#watchlistsIcon").click();
+        cy.get("#card-title").should("exist");
+      });
+    }); */
     it("can change watchlist", () => {
       cy.appFactories([
         ["create", "watchlist", {

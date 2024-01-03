@@ -12,20 +12,20 @@ describe("Media", () => {
         cy.get('input[type="password"]').type("test123456");
         cy.get('input[type="submit"]').click();
       });
-      /* it("can search released media",()=>{
-				cy.appFactories([
-					["create","lesson_medium", "with_manuscript","released"],
-                	["create","lesson_medium", "with_manuscript"]
-				]).then((records)=>{
-					cy.get('#mediaSearchLink').click();
-					cy.get('#collapseMediaSearch > .card-body > form > .row > .col-12 > .btn').click();
-					cy.get('#media-search-results').get('.col-12 > .card').should('have.length',1);
-				});
-			}); */
+      /* it("can search released media", () => {
+        cy.appFactories([
+          ["create", "lesson_medium", "with_manuscript", "released"],
+          ["create", "lesson_medium", "with_manuscript"],
+        ]).then((_records) => {
+          cy.get("#mediaSearchLink").click();
+          cy.get("#collapseMediaSearch > .card-body > form > .row > .col-12 > .btn").click();
+          cy.get("#media-search-results").get(".col-12 > .card").should("have.length", 1);
+        });
+      }); */
       it("can filter for tags", () => {
         cy.appFactories([
           ["create", "lesson_medium", "with_manuscript", "released", "with_tags"],
-                	["create", "lesson_medium", "with_manuscript", "released"],
+          ["create", "lesson_medium", "with_manuscript", "released"],
         ]).then((records) => {
           cy.get("#mediaSearchLink").click();
           cy.get("#media_fulltext").type(records[0].description);
