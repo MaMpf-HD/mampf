@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class RemoveALotOfColumnsFromMedium < ActiveRecord::Migration[5.2]
   def change
     remove_column :media, :width, :integer
@@ -12,3 +13,4 @@ class RemoveALotOfColumnsFromMedium < ActiveRecord::Migration[5.2]
     remove_column :media, :video_player, :string
   end
 end
+# rubocop:enable Rails/

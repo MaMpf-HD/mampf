@@ -2511,7 +2511,12 @@ en:
     optimization_failed: >
       Optimization failed: File is still to big.
     upload_failure: "Error while uploading! Please try again."
-    correct_file_size: The filesize does not exceed the limit.
+    upload_failure_empty_file: >
+      The uploaded file is empty.
+      Please make sure that the file is not corrupted.
+    upload_failure_empty_file_bulk: >
+      is empty.
+      Please make sure that the file is not corrupted.
     file_size_too_big: The filesize exceeds the limit, nevertheless it is uploadable.
     file_size_way_too_big: The filesize exceeds the limit. Please optimize it.
     optimization_help_html: >
@@ -2713,9 +2718,9 @@ en:
       files_in_cache: file(s) successfully uploaded to temporary storage
       info:
         general_info: >
-          Here you can upload several corrections. In order that MaMpf can
-          associate them to the correct submissions it would be ideal if
-          the filenames would match the filenames of the submissions.
+          Here you can upload several corrections. To ensure they can be assigned
+          correctly, you must not rename the files obtained via the package
+          download.
         invalid_filenames: >
           This is the list of all uploaded files that do not
           fit into the naming scheme that is provided by MaMpf.
@@ -3019,6 +3024,7 @@ en:
     thyme_editor: 'Editor'
     screenshot: 'Screenshot'
     file: 'File'
+    files: 'Files'
     size: 'Size'
     please_wait: 'Please wait...'
     access_rights: 'Access rights'
@@ -3109,7 +3115,6 @@ en:
     deadline: 'Due date'
     tutorial: 'Tutorial'
     code: 'Code'
-    files: 'Files'
     partners: 'Partners'
     team: 'Team'
     expired: 'expired'

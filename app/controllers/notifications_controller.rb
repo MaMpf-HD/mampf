@@ -10,7 +10,7 @@ class NotificationsController < ApplicationController
   def index
     @notifications = current_user.notifications.order(:created_at)
                                  .reverse_order
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def destroy
@@ -27,8 +27,8 @@ class NotificationsController < ApplicationController
 
   # destroy all lecture notifications of current user
   def destroy_lecture_notifications
-    lecture = Lecture.find_by_id(params[:lecture_id])
-    return unless lecture.present?
+    lecture = Lecture.find_by(id: params[:lecture_id])
+    return if lecture.blank?
 
     Notification.delete(current_user.active_notifications(lecture).pluck(:id))
     current_user.touch
@@ -46,9 +46,9 @@ class NotificationsController < ApplicationController
   private
 
     def set_notification
-      @notification = Notification.find_by_id(params[:id])
+      @notification = Notification.find_by(id: params[:id])
       return if @notification.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_notification')
+      redirect_to :root, alert: I18n.t("controllers.no_notification")
     end
 end

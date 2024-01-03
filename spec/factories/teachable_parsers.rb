@@ -1,10 +1,8 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :teachable_parser do
     transient do
       all_teachables { nil }
-      teachable_ids { ['Course-1', 'Lecture-2', 'Lecture-3'] }
+      teachable_ids { ["Course-1", "Lecture-2", "Lecture-3"] }
       teachable_inheritance { [true, false].sample }
     end
 
