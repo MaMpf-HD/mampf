@@ -25,9 +25,16 @@ resetSelectized = function (index, select) {
   }
 };
 
-this.fillOptionsByAjax = function ($selectizedSelection) {
+function fillOptionsByAjax($selectizedSelection) {
+  // TODO: this function definitely needs some refactoring
   $selectizedSelection.each(function () {
-    var courseId, existing_values, fill_path, loaded, locale, model_select, plugins, send_data, parent;
+    let plugins = [];
+    let send_data = false;
+    let fill_path = "";
+    let courseId = 0;
+    let loaded = false;
+    let locale = null;
+
     if (this.dataset.drag === "true") {
       plugins = ["remove_button", "drag_drop"];
     }
@@ -35,16 +42,12 @@ this.fillOptionsByAjax = function ($selectizedSelection) {
       plugins = ["remove_button"];
     }
     if (this.dataset.ajax === "true" && this.dataset.filled === "false") {
-      model_select = this;
+      const model_select = this;
       courseId = 0;
-      placeholder = this.dataset.placeholder;
-      no_result_msg = this.dataset.noResults;
-      existing_values = Array.apply(null, model_select.options).map(function (o) {
-        return o.value;
-      });
+      const placeholder = this.dataset.placeholder;
+      const no_result_msg = this.dataset.noResults;
       send_data = false;
       loaded = false;
-      parent = this.dataset.modal === undefined ? document.body : null;
       if (this.dataset.model === "tag") {
         locale = this.dataset.locale;
         fill_path = Routes.fill_tag_select_path({
@@ -130,7 +133,7 @@ this.fillOptionsByAjax = function ($selectizedSelection) {
       });
     }
   });
-};
+}
 
 $(document).on("turbolinks:before-cache", function () {
   $(".tomselected").each(resetSelectized);
