@@ -1,6 +1,14 @@
 // BSD-3-Clause licensed by Craig S. Kaplan
 // adapted from: https://github.com/isohedral/hatviz
 
+// This file is mostly code that will get replaced anyways since
+// the monotiles will probably not stay on the front screen forever.
+// Having to properly use modules here and import/export the respective variables
+// would be overkill. This is mostly external code from the monotile project.
+// It works as intended and is pretty much unrelated to the rest of our code base.
+// For these reasons, we disable some ESLint rules for this file.
+/* eslint-disable no-undef, no-unused-vars */
+
 // A bit of a "hacky" fix. This is the only way I found that works
 // so that the canvas is loaded even if the site is left
 // e.g. user clicks on "Register" or changes language from "De" to "En"
