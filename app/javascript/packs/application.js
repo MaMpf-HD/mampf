@@ -17,10 +17,9 @@
 import {
   WidgetInstance,
 } from "friendly-challenge";
-var friendlyChallengeWidgetInstance = WidgetInstance;
 
 document.addEventListener("turbolinks:load", function () {
-  var doneCallback, element, options, widget;
+  var doneCallback, element, options;
 
   doneCallback = function (solution) {
     console.log(solution);
@@ -40,7 +39,7 @@ document.addEventListener("turbolinks:load", function () {
       language: $("#captcha-widget").data("lang"),
     };
     console.log(options);
-    widget = new WidgetInstance(element, options);
+    new WidgetInstance(element, options);
     // DO not uncomment, evil
     //    widget.reset();
   }
