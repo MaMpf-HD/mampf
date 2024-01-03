@@ -7,7 +7,6 @@
 // To reference this file, add <%= javascript_pack_tag 'application' %> to the appropriate
 // layout file, like app/views/layouts/application.html.erb
 
-
 // Uncomment to copy all static images under ../images to the output folder and reference
 // them with the image_pack_tag helper in views (e.g <%= image_pack_tag 'rails.png' %>)
 // or the `imagePath` JavaScript helper below.
@@ -16,40 +15,40 @@
 // const imagePath = (name) => images(name, true)
 
 import {
-    WidgetInstance
+  WidgetInstance,
 } from "friendly-challenge";
-var friendlyChallengeWidgetInstance = WidgetInstance
+var friendlyChallengeWidgetInstance = WidgetInstance;
 
 document.addEventListener("turbolinks:load", function () {
-    var doneCallback, element, options, widget;
+  var doneCallback, element, options, widget;
 
-    doneCallback = function (solution) {
-        console.log(solution);
-        document.querySelector("#register-user").disabled = false;
+  doneCallback = function (solution) {
+    console.log(solution);
+    document.querySelector("#register-user").disabled = false;
+  };
+  const errorCallback = (err) => {
+    console.log("There was an error when trying to solve the Captcha.");
+    console.log(err);
+  };
+  element = document.querySelector("#captcha-widget");
+  if (element != null) {
+    options = {
+      doneCallback: doneCallback,
+      errorCallback,
+      puzzleEndpoint: $("#captcha-widget").data("captcha-url"),
+      startMode: "auto",
+      language: $("#captcha-widget").data("lang"),
     };
-    const errorCallback = (err) => {
-        console.log('There was an error when trying to solve the Captcha.');
-        console.log(err);
-    }
-    element = document.querySelector('#captcha-widget');
-    if (element != null) {
-        options = {
-            doneCallback: doneCallback,
-            errorCallback,
-            puzzleEndpoint: $('#captcha-widget').data("captcha-url"),
-            startMode: "auto",
-            language: $('#captcha-widget').data("lang")
-        };
-        console.log(options)
-        widget = new WidgetInstance(element, options);
-        //DO not uncomment, evil
-        //    widget.reset();
-    }
+    console.log(options);
+    widget = new WidgetInstance(element, options);
+    // DO not uncomment, evil
+    //    widget.reset();
+  }
 
-    // Init Masonry grid system
-    // see https://getbootstrap.com/docs/5.0/examples/masonry/
-    // and official documentation: https://masonry.desandro.com/
-    $('.masonry-grid').masonry({
-        percentPosition: true
-    });
-})
+  // Init Masonry grid system
+  // see https://getbootstrap.com/docs/5.0/examples/masonry/
+  // and official documentation: https://masonry.desandro.com/
+  $(".masonry-grid").masonry({
+    percentPosition: true,
+  });
+});

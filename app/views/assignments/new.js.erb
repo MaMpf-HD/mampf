@@ -1,18 +1,18 @@
-$('#newAssignmentButton').hide();
+$("#newAssignmentButton").hide();
 
-$('#assignmentListHeader').show()
-  .after('<%= j render partial: "assignments/form", locals: { assignment: @assignment } %>');
+$("#assignmentListHeader").show()
+  .after("<%= j render partial: "assignments/form", locals: { assignment: @assignment } %>");
 
-new TomSelect('#assignment_medium_id_', {
+new TomSelect("#assignment_medium_id_", {
   sortField: {
-    field: 'text',
-    direction: 'asc'
+    field: "text",
+    direction: "asc",
   },
   render: {
-    no_results: function(data, escape) {
+    no_results: function (data, escape) {
       return '<div class="no-results"><%= t("basics.no_results") %></div>';
-    }
-  }
+    },
+  },
 });
 
-$('#assignment_medium_id_').val(null).trigger('change');
+$("#assignment_medium_id_").val(null).trigger("change");

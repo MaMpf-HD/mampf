@@ -8,9 +8,8 @@
 //= require_tree ./channels
 /* eslint-enable */
 
-(function() {
+(function () {
   this.App || (this.App = {});
 
   App.cable = ActionCable.createConsumer();
-
 }).call(this);
