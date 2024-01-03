@@ -70,7 +70,7 @@ module.exports = {
   plugins: ["@stylistic", "erb", "cypress"],
   rules: {
     ...customizedStylistic.rules,
-    "no-unused-vars": "warn",
+    "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     ...cypressRules,
     // see https://github.com/eslint-stylistic/eslint-stylistic/issues/254
     "@stylistic/quotes": ["error", "double", { avoidEscape: true }],

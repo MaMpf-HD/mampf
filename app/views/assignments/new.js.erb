@@ -9,7 +9,7 @@ new TomSelect("#assignment_medium_id_", {
     direction: "asc",
   },
   render: {
-    no_results: function (data, escape) {
+    no_results: function (_data, _escape) {
       return '<div class="no-results"><%= t("basics.no_results") %></div>';
     },
   },

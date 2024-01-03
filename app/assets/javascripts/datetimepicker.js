@@ -103,7 +103,7 @@ function registerFocusHandlers(datetimePicker, element) {
   // or when input field receives focus
   var isButtonInvokingFocus = false;
 
-  element.find(".td-input").on("click focusin", (e) => {
+  element.find(".td-input").on("click focusin", (_e) => {
     try {
       if (!isButtonInvokingFocus) {
         datetimePicker.show();

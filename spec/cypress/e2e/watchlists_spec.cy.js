@@ -62,7 +62,7 @@ describe("Watchlists", () => {
     });
     it("can create new watchlist in watchlist view", () => {
       cy.appFactories([
-      ]).then((data) => {
+      ]).then((_data) => {
         cy.get("#watchlistsIcon").click();
         cy.get("#openNewWatchlistForm").click();
         cy.get("#watchlistNameField").type("Lernliste");
@@ -96,7 +96,7 @@ describe("Watchlists", () => {
         ["create", "watchlist", {
           user_id: 1,
         }],
-      ]).then((data) => {
+      ]).then((_data) => {
         cy.visit("watchlists/1");
         cy.get("#watchlistVisiblityCheck").should("not.be.checked");
         cy.get("#watchlistVisiblityCheck").click();
@@ -109,7 +109,7 @@ describe("Watchlists", () => {
         ["create", "watchlist", "with_user", {
           public: true,
         }],
-      ]).then((data) => {
+      ]).then((_data) => {
         cy.visit("watchlists/1");
         cy.get("#watchlistButton").should("exist");
       });
@@ -119,7 +119,7 @@ describe("Watchlists", () => {
         ["create", "watchlist", "with_user", {
           public: false,
         }],
-      ]).then((data) => {
+      ]).then((_data) => {
         cy.visit("watchlists/1");
         cy.get(":nth-child(3) > .row > .col-12 > :nth-child(2)").contains("Du bist nicht berechtigt").should("exist");
       });
@@ -132,7 +132,7 @@ describe("Watchlists", () => {
         ["create_list", "watchlist_entry", 5, "with_medium", {
           watchlist_id: 1,
         }],
-      ]).then((data) => {
+      ]).then((_data) => {
         cy.get("#watchlistsIcon").click();
         cy.get("#reverseButton").click();
         cy.wait(100);

@@ -70,7 +70,7 @@ describe("Submissions", () => {
           user_id: 1,
           lecture_id: 1,
         }],
-      ]).then((lectures) => {});
+      ]).then((_lectures) => {});
     });
     it("can create submission", () => {
       cy.appFactories([

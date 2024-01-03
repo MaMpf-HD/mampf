@@ -14,7 +14,7 @@ describe("Courses", function () {
     it("can add tag to course", () => {
       cy.appFactories([
         ["create", "course"],
-      ]).then((records) => {
+      ]).then((_records) => {
         cy.visit("/courses/1/edit");
         cy.get("#new-tag-button").click();
         cy.get("#tag_notions_attributes_0_title").type("Geometrie");
@@ -28,7 +28,7 @@ describe("Courses", function () {
     it("can set editor in course", () => {
       cy.appFactories([
         ["create", "course"],
-      ]).then((records) => {
+      ]).then((_records) => {
         cy.visit("/courses/1/edit");
         cy.get("#course_editor_ids-ts-control").click();
         cy.get("#course_editor_ids-ts-control").type("ad");
@@ -118,7 +118,7 @@ describe("Courses", function () {
 
       cy.appFactories([
         ["create_list", "lecture", 6, "released_for_all"],
-      ]).then((records) => {
+      ]).then((_records) => {
         cy.visit("/main/start");
         // cy.get('input[name="search[fulltext]"]').type(records[0][0].title)
         cy.contains("Veranstaltungssuche").click();
