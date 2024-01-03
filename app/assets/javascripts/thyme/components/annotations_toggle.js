@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class AnnotationsToggle extends Component {
   constructor(element) {
     super(element);

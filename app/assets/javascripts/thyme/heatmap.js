@@ -2,6 +2,7 @@
  * Objects of this class represent heatmaps. It provides the function draw() which
  * draws the heatmap to the thyme player.
  */
+// eslint-disable-next-line no-unused-vars
 class Heatmap {
   static RADIUS = 10; // this number adjusts the radius of the peaks of the heatmap
   static MAX_HEIGHT = 0.25; // this number adjusts the maximum heights of the heatmap peaks

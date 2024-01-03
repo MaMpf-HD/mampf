@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class Subcategory extends CategoryEnum {
   static _subcategories = []; // do not manipulate this array outside of this class!
 

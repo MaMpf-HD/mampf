@@ -1,6 +1,7 @@
 /**
   All key shortcuts should be bundled here.
 */
+// eslint-disable-next-line no-unused-vars
 const thymeKeyShortcuts = {
   /*
     SHORTCUT LIST:

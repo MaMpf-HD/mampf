@@ -1,6 +1,7 @@
 /**
   This class helps to represent the annotation area in java script.
 */
+// eslint-disable-next-line no-unused-vars
 class AnnotationArea {
   static DISABLED_BUTTON_OPACITY = 0.2;
 

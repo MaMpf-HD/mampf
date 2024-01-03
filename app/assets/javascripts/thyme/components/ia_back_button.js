@@ -5,6 +5,7 @@
  * of the chapter), one has the possibility to go back by
  * clicking this button.
  */
+// eslint-disable-next-line no-unused-vars
 class IaBackButton extends Component {
   constructor(element, chapterListId) {
     super(element);

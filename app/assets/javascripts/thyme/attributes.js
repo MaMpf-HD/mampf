@@ -5,6 +5,7 @@
   Most attributes are set to undefined or null and must be
   defined when the player is loaded.
 */
+// eslint-disable-next-line no-unused-vars
 const thymeAttributes = {
 
   /* Saves a reference on the annotation area. */

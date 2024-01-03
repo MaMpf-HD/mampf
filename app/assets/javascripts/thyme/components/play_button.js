@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class PlayButton extends Component {
   add() {
     const video = thymeAttributes.video;

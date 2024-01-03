@@ -2,6 +2,7 @@
  * A DisplayManager helps to switch between the full thyme player and
  * the native HTML player shown on small devices.
  */
+// eslint-disable-next-line no-unused-vars
 class DisplayManager {
   constructor(elements, onEnlarge) {
     /*

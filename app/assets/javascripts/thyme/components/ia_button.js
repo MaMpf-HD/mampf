@@ -3,6 +3,7 @@
  * thyme player (normally interactive and annotation area) and
  * adjust the video position/size accordingly.
  */
+// eslint-disable-next-line no-unused-vars
 class IaButton extends Component {
   /*
         toHide = An array consisting of all the components that

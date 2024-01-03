@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class AddScreenshotButton extends Component {
   constructor(element, canvasId) {
     super(element);

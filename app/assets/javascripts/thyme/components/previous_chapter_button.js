@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class PreviousChapterButton extends Component {
   add() {
     const video = thymeAttributes.video;

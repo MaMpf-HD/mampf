@@ -1,6 +1,7 @@
 /**
   This class helps to represent an annotation in JavaScript.
 */
+// eslint-disable-next-line no-unused-vars
 class Annotation {
   constructor(json) {
     // We only save attributes that are needed in the thyme related JavaScripts!

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class FullScreenButton extends Component {
   constructor(element, container) {
     super(element);

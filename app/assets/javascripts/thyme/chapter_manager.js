@@ -1,6 +1,7 @@
 /**
   This file wraps up most functionality of the thyme player(s) concerning chapters.
 */
+// eslint-disable-next-line no-unused-vars
 class ChapterManager {
   constructor(chapterListId, iaBackButton) {
     this.chapterListId = chapterListId;

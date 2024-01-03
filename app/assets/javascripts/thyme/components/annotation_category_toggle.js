@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class AnnotationCategoryToggle extends Component {
   /*
      element = A reference on the HTML component (via document.getElementByID()).

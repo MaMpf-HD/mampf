@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 class TimeButton extends Component {
   /*
     time = The time to add in seconds.
