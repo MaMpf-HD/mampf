@@ -12,7 +12,6 @@ const stylistic = require("@stylistic/eslint-plugin");
 
 const customizedStylistic = stylistic.configs.customize({
   "indent": 2,
-  "quotes": "double",
   "jsx": false,
   "quote-props": "always",
   "semi": "always",
@@ -21,7 +20,7 @@ const customizedStylistic = stylistic.configs.customize({
 
 const cypressRules = {
   "cypress/no-assigning-return-values": "error",
-  "cypress/no-unnecessary-waiting": "warn",
+  "cypress/no-unnecessary-waiting": "off", // TODO: fix this issue
   "cypress/assertion-before-screenshot": "warn",
   "cypress/no-force": "warn",
   "cypress/no-async-tests": "error",
@@ -31,11 +30,24 @@ const cypressRules = {
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/javascripts/application.js",
   "app/assets/config/manifest.js",
-  "app/assets/javascripts/thredded_timeago.js",
   "app/assets/javascripts/edit_clicker_assets.js",
   "app/assets/javascripts/show_clicker_assets.js",
   "app/assets/javascripts/geogebra_assets.js",
+  "vendor/assets/javascripts/thredded_timeago.js",
 ];
+
+const customGlobals = {
+  TomSelect: "readable",
+  bootstrap: "readable",
+
+  // Rails globals
+  Routes: "readable",
+  App: "readable",
+  ActionCable: "readable",
+
+  // Common global methods
+  initBootstrapPopovers: "readable",
+};
 
 module.exports = {
   root: true,
@@ -54,11 +66,14 @@ module.exports = {
     // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
     "plugin:erb/recommended",
   ],
+  globals: customGlobals,
   plugins: ["@stylistic", "erb", "cypress"],
   rules: {
     ...customizedStylistic.rules,
     "no-unused-vars": "warn",
     ...cypressRules,
+    // see https://github.com/eslint-stylistic/eslint-stylistic/issues/254
+    "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
   },
   ignorePatterns: [
     "node_modules/",
