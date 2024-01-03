@@ -1,10 +1,9 @@
 class Subcategory extends CategoryEnum {
-
   static _subcategories = []; // do not manipulate this array outside of this class!
 
-  static DEFINITION = new Subcategory('definition');
-  static ARGUMENT = new Subcategory('argument');
-  static STRATEGY = new Subcategory('strategy');
+  static DEFINITION = new Subcategory("definition");
+  static ARGUMENT = new Subcategory("argument");
+  static STRATEGY = new Subcategory("strategy");
 
   constructor(name) {
     super(name);
@@ -18,5 +17,4 @@ class Subcategory extends CategoryEnum {
   static all() {
     return super.all(Subcategory._subcategories);
   }
-
 }

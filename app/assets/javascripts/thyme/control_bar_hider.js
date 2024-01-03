@@ -2,7 +2,6 @@
  * This class contains the functionality for (auto-)hiding the control bar.
  */
 class ControlBarHider {
-
   /*
     controlBarId = The ID of the control bar.
            delay = The delay after which the control bar is automatically hidden.
@@ -28,16 +27,16 @@ class ControlBarHider {
     }
     /* NOTE: Why do we need the mouseover listener? To trigger it, the mouse
        has to be moved, i.e. the second event listener is triggered. */
-    video.addEventListener('mouseover', show);
-    video.addEventListener('mousemove', show);
-    video.addEventListener('touchstart', show);
-    video.addEventListener('click', show);
+    video.addEventListener("mouseover", show);
+    video.addEventListener("mousemove", show);
+    video.addEventListener("touchstart", show);
+    video.addEventListener("click", show);
 
     // block hiding if curser is over the control bar
-    controlBar.addEventListener('mouseover', function() {
+    controlBar.addEventListener("mouseover", function () {
       controlBarHider.hideBlocker = true;
     });
-    controlBar.addEventListener('mouseleave', function() {
+    controlBar.addEventListener("mouseleave", function () {
       controlBarHider.hideBlocker = false;
     });
 
@@ -45,13 +44,13 @@ class ControlBarHider {
     let t = void 0;
     function resetTimer() {
       clearTimeout(t);
-      t = setTimeout(function() {
+      t = setTimeout(function () {
         if (controlBarHider.hideBlocker) {
           return;
         }
         controlBarHider.hideControlBar();
       }, controlBarHider.delay);
-    };
+    }
     window.onload = resetTimer;
     window.onmousemove = resetTimer;
     window.onmousedown = resetTimer;
@@ -59,19 +58,16 @@ class ControlBarHider {
     window.onclick = resetTimer;
   }
 
-
-
   /*
     AUXILIARY METHODS
    */
   showControlBar() {
-    $('#' + this.controlBarId).css('visibility', 'visible');
-    $(thymeAttributes.video).css('cursor', '');
-  };
+    $("#" + this.controlBarId).css("visibility", "visible");
+    $(thymeAttributes.video).css("cursor", "");
+  }
 
   hideControlBar() {
-    $('#' + this.controlBarId).css('visibility', 'hidden');
-    $(thymeAttributes.video).css('cursor', 'none');
-  };
-
+    $("#" + this.controlBarId).css("visibility", "hidden");
+    $(thymeAttributes.video).css("cursor", "none");
+  }
 }

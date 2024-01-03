@@ -3,19 +3,16 @@
  * draws the heatmap to the thyme player.
  */
 class Heatmap {
-
   static RADIUS = 10; // this number adjusts the radius of the peaks of the heatmap
-  static MAX_HEIGHT = 0.25 // this number adjusts the maximum heights of the heatmap peaks
+  static MAX_HEIGHT = 0.25; // this number adjusts the maximum heights of the heatmap peaks
 
   /*
    * id = The ID of the HTML element to which the heatmap will be appended.
    */
   constructor(id) {
-    this.heatmap = $('#' + id);
+    this.heatmap = $("#" + id);
     this.categories = [];
   }
-
-
 
   draw() {
     if (!thymeAttributes.annotations) {
@@ -26,8 +23,8 @@ class Heatmap {
     /*
        variable definitions
     */
-    const width = thymeAttributes.seekBar.element.clientWidth +
-                  2 * Heatmap.RADIUS - 35; // width of the video timeline
+    const width = thymeAttributes.seekBar.element.clientWidth
+      + 2 * Heatmap.RADIUS - 35; // width of the video timeline
     // the peaks of the graph will not extend maxHeight
     const maxHeight = video.clientHeight * Heatmap.MAX_HEIGHT;
     /* An array for each pixel on the timeline. The indices of this array should be thought
@@ -82,7 +79,7 @@ class Heatmap {
     this.heatmap.append(heatmapStr);
     const offset = this.heatmap.parent().offset().left - Heatmap.RADIUS + 79;
     this.heatmap.offset({ left: offset });
-    this.heatmap.css('top', -maxHeight - 4); // vertical offset
+    this.heatmap.css("top", -maxHeight - 4); // vertical offset
   }
 
   addCategory(category) {
@@ -96,8 +93,6 @@ class Heatmap {
     this.categories = this.categories.filter(c => c !== category);
   }
 
-
-
   /*
     AUXILIARY METHODS
   */
@@ -107,12 +102,11 @@ class Heatmap {
   }
 
   /* A modified sine function for building nice peaks around the marker positions.
-  
+
        x = insert value
        position = the position of the maximum value
   */
   static #sinX(x, position) {
     return (1 + Math.sin(Math.PI / Heatmap.RADIUS * (x - position) + Math.PI / 2)) / 2;
   }
-
-};
+}

@@ -1,5 +1,4 @@
 class CategoryEnum {
-
   constructor(name) {
     this.name = name;
   }
@@ -12,7 +11,7 @@ class CategoryEnum {
    * data-note="<%= t(...) %>".
    */
   locale() {
-    return document.getElementById('annotation-locales').dataset[this.name];
+    return document.getElementById("annotation-locales").dataset[this.name];
   }
 
   /*
@@ -36,5 +35,4 @@ class CategoryEnum {
   static all(array) {
     return array.slice();
   }
-
 }

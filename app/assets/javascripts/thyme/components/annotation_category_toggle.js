@@ -1,5 +1,4 @@
 class AnnotationCategoryToggle extends Component {
-
   /*
      element = A reference on the HTML component (via document.getElementByID()).
     category = The category which this toggle triggers.
@@ -14,18 +13,19 @@ class AnnotationCategoryToggle extends Component {
   add() {
     const toggle = this;
     const category = this.category;
-    const check = document.getElementById(this.element.id + '-check');
+    const check = document.getElementById(this.element.id + "-check");
     const heatmap = this.heatmap;
     if (heatmap) {
       heatmap.addCategory(category); // add category when adding the button
     }
 
-    check.addEventListener('click', function() {
+    check.addEventListener("click", function () {
       thymeAttributes.annotationManager.updateAnnotations();
       if (heatmap) {
         if (toggle.getValue()) {
           heatmap.addCategory(category);
-        } else {
+        }
+        else {
           heatmap.removeCategory(category);
         }
         heatmap.draw();
@@ -34,8 +34,7 @@ class AnnotationCategoryToggle extends Component {
   }
 
   getValue() {
-    const $check = $('#' + this.element.id + '-check');
+    const $check = $("#" + this.element.id + "-check");
     return $check.is(":checked");
   }
-
 }

@@ -31,7 +31,7 @@ const thymeAttributes = {
   (default value). */
   hideControlBarThreshold: {
     x: 850,
-    y: 500
+    y: 500,
   },
 
   /* Saves a reference on the interactive area. */

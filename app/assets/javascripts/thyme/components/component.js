@@ -3,7 +3,6 @@
   should be a subclass.
 */
 class Component {
-
   /*
     element = The id of the HTML element associated to this button.
    */
@@ -14,5 +13,4 @@ class Component {
   /* This method should add the button functionality to the given player.
      Override it in the given subclass! */
   add() { }
-
 }

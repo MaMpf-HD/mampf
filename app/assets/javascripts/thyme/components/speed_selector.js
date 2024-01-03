@@ -1,5 +1,4 @@
 class SpeedSelector extends Component {
-
   constructor(element) {
     super(element);
   }
@@ -10,16 +9,17 @@ class SpeedSelector extends Component {
     const video = thymeAttributes.video;
     const element = this.element;
 
-    element.addEventListener('click', function() {
+    element.addEventListener("click", function () {
       if (video.preservesPitch) {
         video.preservesPitch = true;
-      } else if (video.mozPreservesPitch) {
+      }
+      else if (video.mozPreservesPitch) {
         video.mozPreservesPitch = true;
-      } else if (video.webkitPreservesPitch) {
+      }
+      else if (video.webkitPreservesPitch) {
         video.webkitPreservesPitch = true;
       }
       video.playbackRate = this.options[this.selectedIndex].value;
     });
   }
-
 }

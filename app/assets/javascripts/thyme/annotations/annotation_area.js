@@ -2,7 +2,6 @@
   This class helps to represent the annotation area in java script.
 */
 class AnnotationArea {
-
   static DISABLED_BUTTON_OPACITY = 0.2;
 
   /*
@@ -23,31 +22,29 @@ class AnnotationArea {
                     the previous/next button listeners.)
    */
   constructor(hasFancyStyle, colorFunc, onClose, isValid) {
-    this.isActive       = false;
-    this.annotation     = null; // the current annotation
-    this.colorFunc      = colorFunc;
-    this.onClose        = onClose;
-    this.isValid        = isValid;
-    this.hasFancyStyle  = hasFancyStyle;
+    this.isActive = false;
+    this.annotation = null; // the current annotation
+    this.colorFunc = colorFunc;
+    this.onClose = onClose;
+    this.isValid = isValid;
+    this.hasFancyStyle = hasFancyStyle;
 
-    this.caption        = $('#annotation-caption');
-    this.inforBar       = $('#annotation-infobar');
-    this.commentField   = $('#annotation-comment');
-    this.previousButton = $('#annotation-previous-button');
-    this.gotoButton     = $('#annotation-goto-button');
-    this.editButton     = $('#annotation-edit-button');
-    this.closeButton    = $('#annotation-close-button');
-    this.nextButton     = $('#annotation-next-button');
+    this.caption = $("#annotation-caption");
+    this.inforBar = $("#annotation-infobar");
+    this.commentField = $("#annotation-comment");
+    this.previousButton = $("#annotation-previous-button");
+    this.gotoButton = $("#annotation-goto-button");
+    this.editButton = $("#annotation-edit-button");
+    this.closeButton = $("#annotation-close-button");
+    this.nextButton = $("#annotation-next-button");
 
-    this.localesId      = 'annotation-locales';
+    this.localesId = "annotation-locales";
 
     if (!hasFancyStyle) {
       this.editButton.hide();
       this.closeButton.hide();
     }
   }
-
-
 
   /*
     Show the annotation area.
@@ -84,82 +81,82 @@ class AnnotationArea {
       this.#updateCloseButton(annotation);
     }
     // render LaTex
-    const commentId = this.commentField.attr('id');
+    const commentId = this.commentField.attr("id");
     thymeUtility.renderLatex(document.getElementById(commentId));
   }
-
-
 
   /*
     AUXILIARY METHODS
    */
   #updateInfoAndCommentField(annotation, color) {
     const head = annotation.categoryLocale();
-    const comment = annotation.comment.replaceAll('\n', '<br>');
+    const comment = annotation.comment.replaceAll("\n", "<br>");
     const headColor = thymeUtility.lightenUp(color, 2);
     const backgroundColor = thymeUtility.lightenUp(color, 3);
     this.inforBar.empty().append(head);
-    this.inforBar.css('background-color', headColor);
-    this.inforBar.css('text-align', 'center');
+    this.inforBar.css("background-color", headColor);
+    this.inforBar.css("text-align", "center");
     this.commentField.empty().append(comment);
-    this.caption.css('background-color', backgroundColor);
+    this.caption.css("background-color", backgroundColor);
   }
 
   #updatePreviousButton(annotation) {
     const annotations = thymeAttributes.annotations;
     const area = this; // need a reference inside the listener scope!
-    this.previousButton.off('click');
-    this.previousButton.on('click', function() {
+    this.previousButton.off("click");
+    this.previousButton.on("click", function () {
       area.update(area.previousValidAnnotation(annotation));
     });
     if (annotation.isFirst()) {
-      this.previousButton.css('opacity', AnnotationArea.DISABLED_BUTTON_OPACITY);
-    } else {
-      this.previousButton.css('opacity', 1);
+      this.previousButton.css("opacity", AnnotationArea.DISABLED_BUTTON_OPACITY);
+    }
+    else {
+      this.previousButton.css("opacity", 1);
     }
   }
 
   #updateNextButton(annotation) {
     const annotations = thymeAttributes.annotations;
     const area = this; // need a reference inside the listener scope!
-    this.nextButton.off('click');
-    this.nextButton.on('click', function() {
+    this.nextButton.off("click");
+    this.nextButton.on("click", function () {
       area.update(area.nextValidAnnotation(annotation));
     });
     if (annotation.isLast()) {
-      this.nextButton.css('opacity', AnnotationArea.DISABLED_BUTTON_OPACITY);
-    } else {
-      this.nextButton.css('opacity', 1);
+      this.nextButton.css("opacity", AnnotationArea.DISABLED_BUTTON_OPACITY);
+    }
+    else {
+      this.nextButton.css("opacity", 1);
     }
   }
 
   #updateGotoButton(annotation) {
-    this.gotoButton.off('click');
-    this.gotoButton.on('click', function() {
+    this.gotoButton.off("click");
+    this.gotoButton.on("click", function () {
       video.currentTime = annotation.seconds;
     });
   }
 
   #updateEditButton(annotation) {
     const localesId = this.localesId;
-    this.editButton.off('click');
-    this.editButton.on('click', function() {
+    this.editButton.off("click");
+    this.editButton.on("click", function () {
       thymeAttributes.video.pause();
       thymeAttributes.lockKeyListeners = true;
       $.ajax(Routes.edit_annotation_path(annotation.id), {
-        type: 'GET',
-        dataType: 'script',
+        type: "GET",
+        dataType: "script",
         data: {
-          annotation_id: annotation.id
+          annotation_id: annotation.id,
         },
-        success: function(permitted) {
+        success: function (permitted) {
           if (permitted === "false") {
             alert(document.getElementById(localesId).dataset.permission);
           }
         },
-        error: function(e) {
+        error: function (e) {
           console.log(e);
-        }
+        },
       });
     });
   }
@@ -167,8 +164,8 @@ class AnnotationArea {
   #updateCloseButton(annotation) {
     const close = this.close;
     const area = this; // need a reference inside the listener scope!
-    this.closeButton.off('click');
-    this.closeButton.on('click', function() {
+    this.closeButton.off("click");
+    this.closeButton.on("click", function () {
       area.annotation = undefined;
       area.hide();
       if (area.onClose != null) {
@@ -212,5 +209,4 @@ class AnnotationArea {
     }
     return null;
   }
-
 }

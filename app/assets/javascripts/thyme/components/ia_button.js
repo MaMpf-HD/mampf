@@ -4,7 +4,6 @@
  * adjust the video position/size accordingly.
  */
 class IaButton extends Component {
-
   /*
         toHide = An array consisting of all the components that
                  should be hidden/shown when this button is clicked.
@@ -30,10 +29,11 @@ class IaButton extends Component {
     const element = this.element;
     const button = this;
 
-    element.addEventListener('click', function() {
-      if (element.dataset.status === 'true') {
+    element.addEventListener("click", function () {
+      if (element.dataset.status === "true") {
         button.plus();
-      } else {
+      }
+      else {
         button.minus();
       }
     });
@@ -44,7 +44,7 @@ class IaButton extends Component {
     toHide elements and shrinks all toShrink elements.
    */
   plus() {
-    this.#aux('false', 'remove_from_queue', false, '100%');
+    this.#aux("false", "remove_from_queue", false, "100%");
   }
 
   /*
@@ -52,14 +52,12 @@ class IaButton extends Component {
     toHide elements and enlarges all toShrink elements.
    */
   minus() {
-    this.#aux('true', 'add_to_queue', true, this.shrink);
+    this.#aux("true", "add_to_queue", true, this.shrink);
   }
 
   getStatus() {
-    return this.element.dataset.status === 'true';
+    return this.element.dataset.status === "true";
   }
-
-
 
   #aux(status, innerHTML, sh, size) {
     this.element.dataset.status = status;
@@ -68,10 +66,9 @@ class IaButton extends Component {
       sh ? e.show() : e.hide();
     }
     for (let e of this.toShrink) {
-      e.css('width', size);
+      e.css("width", size);
     }
-    $(window).trigger('resize');
+    $(window).trigger("resize");
     thymeAttributes.annotationManager.updateMarkers();
   }
-
 }

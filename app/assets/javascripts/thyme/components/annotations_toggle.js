@@ -1,11 +1,10 @@
 class AnnotationsToggle extends Component {
-
   constructor(element) {
     super(element);
     this.id = element;
-    this.check = document.getElementById(this.id + '-check');
-    this.$check = $('#' + this.id + '-check');
-    this.div = $('#' + this.id);
+    this.check = document.getElementById(this.id + "-check");
+    this.$check = $("#" + this.id + "-check");
+    this.div = $("#" + this.id);
     this.flag = false;
   }
 
@@ -20,9 +19,9 @@ class AnnotationsToggle extends Component {
     /* User is teacher/editor for the given medium and visible_for_teacher ist activated?
        -> add toggle annotations button */
     $.ajax(Routes.check_annotation_visibility_path(thymeAttributes.mediumId), {
-      type: 'GET',
-      dataType: 'json',
-      success: function(isPermitted) {
+      type: "GET",
+      dataType: "json",
+      success: function (isPermitted) {
         if (!isPermitted) {
           return;
         }
@@ -30,7 +29,7 @@ class AnnotationsToggle extends Component {
           // Only show toggle if there is at least one foreign annotation
           if (!annotation.belongsToCurrentUser) {
             toggle.show();
-            toggle.element.addEventListener('click', function() {
+            toggle.element.addEventListener("click", function () {
               thymeAttributes.annotationManager.updateAnnotations();
             });
             // When loading the player, the toggle is set to "true" by default,
@@ -38,12 +37,12 @@ class AnnotationsToggle extends Component {
             thymeAttributes.annotationManager.updateAnnotations();
           }
         }
-      }
+      },
     });
   }
 
   installListener() {
-    this.element.addEventListener('click', function() {
+    this.element.addEventListener("click", function () {
       thymeAttributes.annotationManager.updateAnnotations();
     });
   }
@@ -59,11 +58,10 @@ class AnnotationsToggle extends Component {
     Auxiliary method
   */
   show() {
-    $('#volume-controls').css('left', '66%');
-    $('#speed-control').css('left', '77%');
-    $('#annotation-button').css('left', '86%');
+    $("#volume-controls").css("left", "66%");
+    $("#speed-control").css("left", "77%");
+    $("#annotation-button").css("left", "86%");
     thymeAttributes.hideControlBarThreshold.x = 960;
     this.div.show();
   }
-  
 }

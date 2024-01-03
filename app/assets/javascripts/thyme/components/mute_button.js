@@ -1,18 +1,17 @@
 class MuteButton extends Component {
-
   add() {
     const video = thymeAttributes.video;
     const element = this.element;
-    
-    element.addEventListener('click', function() {
+
+    element.addEventListener("click", function () {
       if (video.muted) {
         video.muted = true;
-        element.innerHTML = 'volume_off';
-      } else {
+        element.innerHTML = "volume_off";
+      }
+      else {
         video.muted = false;
-        element.innerHTML = 'volume_up';
+        element.innerHTML = "volume_up";
       }
     });
   }
-  
 }

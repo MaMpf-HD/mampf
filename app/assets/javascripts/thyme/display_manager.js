@@ -3,7 +3,6 @@
  * the native HTML player shown on small devices.
  */
 class DisplayManager {
-
   constructor(elements, onEnlarge) {
     /*
       elements = An array containing JQuery references on the HTML elements
@@ -21,7 +20,7 @@ class DisplayManager {
     for (let e of this.elements) {
       e.hide();
     }
-    thymeAttributes.video.style.width = '100%';
+    thymeAttributes.video.style.width = "100%";
     thymeAttributes.video.controls = true;
   }
 
@@ -48,7 +47,8 @@ class DisplayManager {
     function handleSizeChange(event) {
       if (event.matches) {
         manager.adaptToSmallDisplay();
-      } else {
+      }
+      else {
         manager.adaptToLargeDisplay();
       }
     }
@@ -56,5 +56,4 @@ class DisplayManager {
     matchSmallMediaQuery.addListener(handleSizeChange);
     handleSizeChange(matchSmallMediaQuery); // initial call
   }
-
-};
+}

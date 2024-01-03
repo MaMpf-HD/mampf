@@ -2,7 +2,6 @@
   This class helps to represent an annotation in JavaScript.
 */
 class Annotation {
-
   constructor(json) {
     // We only save attributes that are needed in the thyme related JavaScripts!
     this.category = Category.getByName(json.category);
@@ -13,8 +12,6 @@ class Annotation {
     this.subcategory = Subcategory.getByName(json.subcategory);
     this.belongsToCurrentUser = json.belongs_to_current_user;
   }
-
-
 
   /*
    * AUXILIARY METHODS
@@ -36,7 +33,7 @@ class Annotation {
   /*
     Create big marker with customizable border color.
     (Used e.g. for big mistake markers in the feedback player.)
-    
+
           color = Color of the marker.
     strokeColor = Color of the border of the marker.
         onClick = A function triggered when one clicks on the marker.
@@ -61,17 +58,17 @@ class Annotation {
                           fill-rule:evenodd;"/>
                         </svg>
                       </span>`;
-    $('#' + thymeAttributes.markerBarId).append(markerStr);
+    $("#" + thymeAttributes.markerBarId).append(markerStr);
 
     // positioning of the marker
-    const marker = $('#marker-' + this.id);
+    const marker = $("#marker-" + this.id);
     const size = thymeAttributes.seekBar.element.clientWidth - 15;
     const ratio = this.seconds / thymeAttributes.video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
 
     // click listener for the marker
-    marker.on('click', function() {
+    marker.on("click", function () {
       onClick();
     });
   }
@@ -100,5 +97,4 @@ class Annotation {
   isLast() {
     return this == thymeAttributes.annotations[thymeAttributes.annotations.length - 1];
   }
-
 }

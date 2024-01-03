@@ -1,9 +1,9 @@
-$('#annotation-modal-content').empty()
-  .append('<%= j render partial: "annotations/form"%>');
-$('#annotation-modal').modal('show');
+$("#annotation-modal-content").empty()
+  .append("<%= j render partial: "annotations/form"%>");
+$("#annotation-modal").modal("show");
 
-var submitButton = document.getElementById('annotation-modal-submit-button');
-var $postAsComment = $('#annotation_post_as_comment');
+var submitButton = document.getElementById("annotation-modal-submit-button");
+var $postAsComment = $("#annotation_post_as_comment");
 var posted = <%= @posted %>;
 var isNewAnnotation = <%= @is_new_annotation %>;
 
@@ -18,7 +18,8 @@ $postAsComment.on("change", function () {
     const message = constructWarningMessage();
     $warningElement.html(message);
     $warningElement.show();
-  } else {
+  }
+  else {
     $("#annotation-comment-warning").hide();
   }
 });
@@ -26,30 +27,32 @@ $postAsComment.on("change", function () {
 function constructWarningMessage() {
   let message = $("#annotation-locales").data("warningPublishing");
 
-  const mistakeRatio = $('#annotation_category_mistake');
+  const mistakeRatio = $("#annotation_category_mistake");
   if (!mistakeRatio.is(":checked")) {
     return message;
   }
 
   // Mistake specific warnings
   $.ajax(Routes.num_nearby_posted_mistake_annotations_path(), {
-    type: 'GET',
-    dataType: 'json',
+    type: "GET",
+    dataType: "json",
     async: false,
     data: {
       mediumId: thyme.dataset.medium,
       timestamp: video.currentTime,
     },
     success: function (count) {
-      const locale = $('#annotation-locales');
+      const locale = $("#annotation-locales");
       message += "<br>";
       if (!count) {
-        message += $('#annotation-locales').data("warningMistake");
-      } else if (count == 1) {
+        message += $("#annotation-locales").data("warningMistake");
+      }
+      else if (count == 1) {
         message += locale.data("warningOneCloseAnnotation");
-      } else {
+      }
+      else {
         message += locale.data("warningMultipleCloseAnnotations1")
-          + count + locale.data("warningMultipleCloseAnnotations2");
+        + count + locale.data("warningMultipleCloseAnnotations2");
       }
       return message;
     },
@@ -57,21 +60,19 @@ function constructWarningMessage() {
       console.error("Error while fetching nearby annotations");
       console.error(err);
       return message;
-    }
+    },
   });
 
   return message;
 }
 
-
-
 /*
  * CATEGORY
  */
 
-var categoryRadios = document.getElementById('category-radios');
+var categoryRadios = document.getElementById("category-radios");
 
-categoryRadios.addEventListener('click', function (evt) {
+categoryRadios.addEventListener("click", function (evt) {
   if (evt.target && event.target.matches("input[type='radio']")) {
     switch (evt.target.value) {
       case Category.NOTE.name:
@@ -91,21 +92,21 @@ categoryRadios.addEventListener('click', function (evt) {
 });
 
 function note() {
-  $('#annotation-category-specific').empty();
+  $("#annotation-category-specific").empty();
   submitButton.disabled = false;
   visibleForTeacher(false);
   postComment(false);
 }
 
 function content() {
-  $('#annotation-category-specific').empty()
-    .append('<%= j render partial: "annotations/form_content"%>');
+  $("#annotation-category-specific").empty()
+    .append("<%= j render partial: "annotations/form_content"%>");
   // disable submit button until the content category is selected
   submitButton.disabled = true;
   visibleForTeacher(true);
   postComment(false);
-  var contentCategoryRadios = document.getElementById('content-category-radios');
-  contentCategoryRadios.addEventListener('click', function (evt) {
+  var contentCategoryRadios = document.getElementById("content-category-radios");
+  contentCategoryRadios.addEventListener("click", function (evt) {
     if (evt.target && event.target.matches("input[type='radio']")) {
       submitButton.disabled = false;
 
@@ -126,61 +127,59 @@ function content() {
   });
 
   function showFurtherHelp() {
-    $('#content-specific').empty()
-      .append('<%= j render partial: "annotations/form_content_further_help"%>');
+    $("#content-specific").empty()
+      .append("<%= j render partial: "annotations/form_content_further_help"%>");
   }
 }
 
 function mistake() {
-  $('#annotation-category-specific').empty();
+  $("#annotation-category-specific").empty();
   submitButton.disabled = false;
   visibleForTeacher(true);
   postComment(true);
 }
 
 function presentation() {
-  $('#annotation-category-specific').empty();
+  $("#annotation-category-specific").empty();
   submitButton.disabled = false;
   visibleForTeacher(true);
   postComment(false);
 }
 
 function updatePreview() {
-  const text = $('#annotation_comment').val();
-  $('#annotation-modal-preview').empty();
-  $('#annotation-modal-preview').append(text.replaceAll('\n', '<br>'));
-  renderMathInElement(document.getElementById('annotation-modal-preview'), {
+  const text = $("#annotation_comment").val();
+  $("#annotation-modal-preview").empty();
+  $("#annotation-modal-preview").append(text.replaceAll("\n", "<br>"));
+  renderMathInElement(document.getElementById("annotation-modal-preview"), {
     delimiters: [
       {
-        left: '$$',
-        right: '$$',
-        display: true
+        left: "$$",
+        right: "$$",
+        display: true,
       }, {
-        left: '$',
-        right: '$',
-        display: false
+        left: "$",
+        right: "$",
+        display: false,
       }, {
-        left: '\\(',
-        right: '\\)',
-        display: false
+        left: "\\(",
+        right: "\\)",
+        display: false,
       }, {
-        left: '\\[',
-        right: '\\]',
-        display: true
-      }
+        left: "\\[",
+        right: "\\]",
+        display: true,
+      },
     ],
-    throwOnError: false
+    throwOnError: false,
   });
 }
-
-
 
 /*
  * Color
  */
 function initModalBackgroundAnnotationColor() {
   // Init event handler
-  $('#annotation-color-picker').on('click', "input[type='radio']", function (event) {
+  $("#annotation-color-picker").on("click", "input[type='radio']", function (event) {
     setModalColor(event.target.value);
   });
 
@@ -193,7 +192,7 @@ function initModalBackgroundAnnotationColor() {
   }
 
   // Edit annotation
-  const $selectedColor = $('#annotation-color-picker input[type=radio]:checked');
+  const $selectedColor = $("#annotation-color-picker input[type=radio]:checked");
   if ($selectedColor.length) {
     $selectedColor.click();
   }
@@ -201,82 +200,79 @@ function initModalBackgroundAnnotationColor() {
 
 function setModalColor(hexColorString) {
   const color = thymeUtility.lightenUp(hexColorString, 2);
-  $('.modal-header').css('background-color', color);
+  $(".modal-header").css("background-color", color);
 }
 
 initModalBackgroundAnnotationColor();
-
-
 
 /*
  * Auxiliary methods
  */
 function visibleForTeacher(isVisible) {
-  $('#annotation_visible_for_teacher').prop("checked", isVisible).trigger("change");
+  $("#annotation_visible_for_teacher").prop("checked", isVisible).trigger("change");
 }
 
 function postComment(isVisible) {
   isVisible = posted ? true : isVisible;
-  $('#annotation_post_as_comment').prop("checked", isVisible).trigger("change");
+  $("#annotation_post_as_comment").prop("checked", isVisible).trigger("change");
 }
 
 function previewCSS(shouldShowPreview) {
   if (shouldShowPreview) {
     updatePreview();
-    $('#annotation-preview-section').show();
+    $("#annotation-preview-section").show();
 
-    $('#annotation-modal-dialog').removeClass('annotation-dialog-normal');
-    $('#annotation-modal-dialog').addClass('annotation-dialog-expanded');
+    $("#annotation-modal-dialog").removeClass("annotation-dialog-normal");
+    $("#annotation-modal-dialog").addClass("annotation-dialog-expanded");
 
-    $('#annotation-content-section').addClass('annotation-content-spacing');
-    $('#annotation-content-section').removeClass('annotation-content-normal');
-    $('#annotation-content-section').addClass('annotation-content-expanded');
-  } else {
-    $('#annotation-preview-section').hide();
+    $("#annotation-content-section").addClass("annotation-content-spacing");
+    $("#annotation-content-section").removeClass("annotation-content-normal");
+    $("#annotation-content-section").addClass("annotation-content-expanded");
+  }
+  else {
+    $("#annotation-preview-section").hide();
 
-    $('#annotation-modal-dialog').removeClass('annotation-dialog-expanded');
-    $('#annotation-modal-dialog').addClass('annotation-dialog-normal');
+    $("#annotation-modal-dialog").removeClass("annotation-dialog-expanded");
+    $("#annotation-modal-dialog").addClass("annotation-dialog-normal");
 
-    $('#annotation-content-section').removeClass('annotation-content-spacing');
-    $('#annotation-content-section').removeClass('annotation-content-expanded');
-    $('#annotation-content-section').addClass('annotation-content-normal');
+    $("#annotation-content-section").removeClass("annotation-content-spacing");
+    $("#annotation-content-section").removeClass("annotation-content-expanded");
+    $("#annotation-content-section").addClass("annotation-content-normal");
   }
 }
-
-
 
 /* If this script is rendered by the edit method of the annotation controller:
    Select correct subcategory (this is not automatically done by the rails form
    as the content is dynamically rendered). */
-var contentRadio = $('#annotation_category_content');
-if (contentRadio.is(':checked')) {
+var contentRadio = $("#annotation_category_content");
+if (contentRadio.is(":checked")) {
   content();
   submitButton.disabled = false;
-  var subcategory = document.getElementById('annotation_subcategory').textContent.replace(/[^a-z]/g, '');
+  var subcategory = document.getElementById("annotation_subcategory").textContent.replace(/[^a-z]/g, "");
   switch (subcategory) {
     case Subcategory.DEFINITION.name:
-      document.getElementById('content-category-definition').checked = true;
+      document.getElementById("content-category-definition").checked = true;
       break;
     case Subcategory.ARGUMENT.name:
-      document.getElementById('content-category-argument').checked = true;
+      document.getElementById("content-category-argument").checked = true;
       break;
     case Subcategory.STRATEGY.name:
-      document.getElementById('content-category-strategy').checked = true;
+      document.getElementById("content-category-strategy").checked = true;
       break;
   }
 }
 
 // render preview
-var annotationComment = document.getElementById('annotation_comment');
-annotationComment.addEventListener('input', function () {
+var annotationComment = document.getElementById("annotation_comment");
+annotationComment.addEventListener("input", function () {
   updatePreview();
 });
 previewCSS(false); // Initialize modal without preview
 
 // preview toggle listener
-var previewToggle = document.getElementById('preview-toggle');
-previewToggle.addEventListener('change', function () {
-  const shouldShowPreview = $('#preview-toggle-check').is(":checked");
+var previewToggle = document.getElementById("preview-toggle");
+previewToggle.addEventListener("change", function () {
+  const shouldShowPreview = $("#preview-toggle-check").is(":checked");
   previewCSS(shouldShowPreview);
 });
 

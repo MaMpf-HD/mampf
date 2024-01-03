@@ -1,5 +1,4 @@
 class TimeButton extends Component {
-
   /*
     time = The time to add in seconds.
    */
@@ -11,14 +10,14 @@ class TimeButton extends Component {
   add() {
     const video = thymeAttributes.video;
     const time = this.time;
-    
-    this.element.addEventListener('click', function() {
+
+    this.element.addEventListener("click", function () {
       if (time >= 0) {
         video.currentTime = Math.min(video.currentTime + time, video.duration);
-      } else {
+      }
+      else {
         video.currentTime = Math.max(video.currentTime + time, 0);
       }
     });
   }
-  
 }

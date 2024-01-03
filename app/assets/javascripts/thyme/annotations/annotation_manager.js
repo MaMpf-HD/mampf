@@ -2,7 +2,6 @@
  * This class provides methods that help to manage all annotations in a thyme player.
  */
 class AnnotationManager {
-
   /*
           colorFunc = A function which takes an annotation and gives
                       back a color for the corresponding marker.
@@ -53,7 +52,7 @@ class AnnotationManager {
     }
 
     const annotationManager = this;
-    $('#' + thymeAttributes.markerBarId).empty();
+    $("#" + thymeAttributes.markerBarId).empty();
     AnnotationManager.sortAnnotations();
 
     for (const a of thymeAttributes.annotations) {
@@ -63,7 +62,8 @@ class AnnotationManager {
         }
         if (this.sizeFunc && this.sizeFunc(a)) {
           a.createBigMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
-        } else {
+        }
+        else {
           a.createMarker(this.colorFunc(a), this.strokeColorFunc(a), onClick);
         }
       }
@@ -89,8 +89,8 @@ class AnnotationManager {
 
     const manager = this;
     $.ajax(Routes.update_annotations_path(), {
-      type: 'GET',
-      dataType: 'json',
+      type: "GET",
+      dataType: "json",
       data: {
         mediumId: thymeAttributes.mediumId,
       },
@@ -109,7 +109,7 @@ class AnnotationManager {
       always: () => {
         // Free resource
         manager.isDbCalledForFreshAnnotations = false;
-      }
+      },
     });
   }
 
@@ -156,5 +156,4 @@ class AnnotationManager {
     }
     return undefined;
   }
-
 }
