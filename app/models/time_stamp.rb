@@ -8,9 +8,11 @@ class TimeStamp
 
   # extract from YAML
   def self.load(text)
+    return if text.blank?
+
     YAML.safe_load(text, permitted_classes: [TimeStamp,
                                              ActiveModel::Errors],
-                         aliases: true) if text.present?
+                         aliases: true)
   end
 
   # store as YAML (for serialization)
@@ -46,37 +48,45 @@ class TimeStamp
   # t.vtt_string
   # => "03:15:20.729"
   def vtt_string
-    format('%02d:%02d:%02d.%03d', @hours, @minutes, @seconds, @milliseconds)
+    # rubocop:disable Style/FormatStringToken
+    format("%02d:%02d:%02d.%03d", @hours, @minutes, @seconds, @milliseconds)
+    # rubocop:enable Style/FormatStringToken
   end
 
   # t.simple_vtt_string
   # => "3:15:20.729"
   def simple_vtt_string
-    format('%01d:%02d:%02d.%03d', @hours, @minutes, @seconds, @milliseconds)
+    # rubocop:disable Style/FormatStringToken
+    format("%01d:%02d:%02d.%03d", @hours, @minutes, @seconds, @milliseconds)
+    # rubocop:enable Style/FormatStringToken
   end
 
   # t.hms_string
   # => "3h15m20s"
   def hms_string
-    format('%01dh%02dm%02ds', @hours, @minutes, @seconds)
+    # rubocop:disable Style/FormatStringToken
+    format("%01dh%02dm%02ds", @hours, @minutes, @seconds)
+    # rubocop:enable Style/FormatStringToken
   end
 
   # t.hms_colon_string
   # => "3:15:20"
   def hms_colon_string
-    format('%01d:%02d:%02d', @hours, @minutes, @seconds)
+    # rubocop:disable Style/FormatStringToken
+    format("%01d:%02d:%02d", @hours, @minutes, @seconds)
+    # rubocop:enable Style/FormatStringToken
   end
 
   # t.floor_seconds
   # => 11720
   def floor_seconds
-    @hours * 3600 + @minutes * 60 + @seconds
+    (@hours * 3600) + (@minutes * 60) + @seconds
   end
 
   # t.total_seconds
   # => 11720.729
   def total_seconds
-    floor_seconds + @milliseconds / 1000.0
+    floor_seconds + (@milliseconds / 1000.0)
   end
 
   private

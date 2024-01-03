@@ -3,7 +3,7 @@ module ItemsHelper
   # returns the list of sections for the given item,
   # as is used in options_for_select
   def select_sections(item)
-    [[I18n.t('admin.item.no_section'), '']] +
+    [[I18n.t("admin.item.no_section"), ""]] +
       item.medium.teachable&.section_selection
   end
 
@@ -16,12 +16,12 @@ module ItemsHelper
   end
 
   def check_unless_hidden(item_id)
-    return 'checked' unless Item.find_by_id(item_id)&.hidden
+    return "checked" unless Item.find_by(id: item_id)&.hidden
 
-    ''
+    ""
   end
 
   def check_status(content)
-    content['hidden'] ? '' : 'checked '
+    content["hidden"] ? "" : "checked "
   end
 end

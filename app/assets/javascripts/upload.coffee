@@ -262,6 +262,21 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
 
       metaData.innerHTML = data.metadata.filename + ' (' + formatBytes(data.metadata.size) + ')'
       metaData.style.display = 'inline'
+
+      # Disable upload if empty files were uploaded
+      # Temporary fix for ":type option required" error in the
+      # app/controllers/submissions_controller.rb -> show_correction
+      if data.metadata.size == 0
+        console.log('empty file encountered')
+        $(actualButton).hide()
+        $('#submit-correction-btn').addClass('disabled')
+        alert($(actualButton).data('tr-failure-empty-file'))
+      else
+        $(uploadButton).hide()
+        $(actualButton).show()
+        $(actualButton).addClass('disabled')
+        $('#submit-correction-btn').removeClass('disabled')
+      
     null
     hiddenInput
     true
@@ -285,23 +300,35 @@ bulkCorrectionUpload = (fileInput) ->
       null
       '/corrections/upload'
       '#bulk-uploadButton-button-actual'
-      (data) =>
+      (_, dataAll) =>
+        console.log(dataAll)
 
-        data = JSON.parse data.response
-        console.log(data)
-        result = (successful: [data])
-        console.log result
-        if result.successful.length > 0
-          uploaded_files = result.successful.map (file) -> file
-          console.log uploaded_files
-          $('#upload-bulk-correction-save').prop('disabled', false)
+        if dataAll.length == 0
+          console.error('No files uploaded, fatal error')
+          return
+
+        # Disable upload if uploaded (zip)-file is empty
+        # Temporary fix for ":type option required" error in the
+        # app/controllers/submissions_controller.rb -> show_correction
+        for data in dataAll
+          if data.metadata.size > 0
+            continue
+          console.log('empty file encountered during bulk upload: ' + data.metadata.filename)
+          alert(data.metadata.filename + ' ' +
+            $('#bulk-uploadButton-button-actual').data('tr-failure-empty-file-bulk'))
+          $('#bulk-uploadButton-button-actual').hide()
           $(metaData).empty()
-            .append(fileInput.files.length+ ' ' +$(metaData).data('tr-uploads'))
-          $(uploadButton).hide()
-        return
-        $("#bulk-upload-area").toggle()
+          return
+
+        # Successfully uploaded
+        console.log('bulk upload successful')
+        $('#upload-bulk-correction-save').prop('disabled', false)
+        $(metaData).empty()
+          .append(fileInput.files.length+ ' ' +$(metaData).data('tr-uploads'))
+        $(uploadButton).hide()
       null
       'upload-bulk-correction-hidden'
+      false
       )
   $('#show-bulk-upload-area').on 'click', ->
     $(this).hide()
@@ -345,17 +372,19 @@ directUpload provides an interface to upload (multiple) files to an endpoint
     fileInput =document.getElementById(fileInputElement)
     fI = $("#"+fileInputElement)
     fileInput.style.display = 'none'
-    result = undefined
-    merged = undefined
-    files = []
-    filez= []
     
-
-    uploadedFiles = []
-    progressOptimize = 0
     $(uploadStatusElement).hide()
     uploadButton = $(uploadButtonElement)
     $(actualUploadButtonElement).on 'click', (e) ->
+      # Reset variables
+      result = undefined
+      merged = undefined
+      files = []
+      filez= []
+      uploadedFiles = []
+      progressOptimize = 0
+      hiddenInput.value = ''
+
       e.preventDefault()
       if permissionElement == null || $(permissionElement).is(":checked")
         #Upload blob
@@ -383,8 +412,11 @@ directUpload provides an interface to upload (multiple) files to an endpoint
               $(progressBarElement).text(
                 $(progressBarElement).data 'tr-success'
               )
-              if successCallback != undefined 
-                successCallback(xhr)
+              if successCallback != undefined
+                # The second argument is currently only used by the
+                # bulk upload to get all uploaded files and not just
+                # the last one.
+                successCallback(xhr, uploadedFiles2)
               hiddenInput.value = JSON.stringify uploadedFiles2
               fileInput.value = null
               $(progressBarElement)

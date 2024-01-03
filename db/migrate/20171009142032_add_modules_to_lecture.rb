@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddModulesToLecture < ActiveRecord::Migration[5.1]
   def change
     add_column :lectures, :kaviar, :boolean
@@ -7,3 +8,4 @@ class AddModulesToLecture < ActiveRecord::Migration[5.1]
     add_column :lectures, :erdbeere, :boolean
   end
 end
+# rubocop:enable Rails/

@@ -21,7 +21,7 @@ class MediaController < ApplicationController
                               :fill_medium_preview, :render_medium_actions,
                               :render_import_media, :render_import_vertex,
                               :cancel_import_media, :cancel_import_vertex]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= MediumAbility.new(current_user)
@@ -30,16 +30,16 @@ class MediaController < ApplicationController
   def index
     authorize! :index, Medium.new
     @media = paginated_results
-    render layout: 'application'
+    render layout: "application"
   end
 
   def show
     # destroy the notifications related to the medium
-    current_user.notifications.where(notifiable_type: 'Medium',
-                                     notifiable_id: @medium.id).each(&:destroy)
+    current_user.notifications.where(notifiable_type: "Medium",
+                                     notifiable_id: @medium.id).find_each(&:destroy)
     I18n.locale = @medium.locale_with_inheritance
     commontator_thread_show(@medium)
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def new
@@ -48,13 +48,96 @@ class MediaController < ApplicationController
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
     I18n.locale = @teachable.locale_with_inheritance
-    @medium.sort = params[:sort] ? params[:sort] : 'Kaviar'
+    @medium.sort = params[:sort] || "Kaviar"
   end
 
   def edit
     I18n.locale = @medium.locale_with_inheritance
     @manuscript = Manuscript.new(@medium)
     render layout: current_user.layout
+  end
+
+  def create
+    @medium = Medium.new(medium_params)
+    @medium.locale = @medium.teachable&.locale
+    @medium.editors = [current_user]
+    @medium.tags = @medium.teachable.tags if @medium.teachable.instance_of?(::Lesson)
+    authorize! :create, @medium
+    @medium.save
+    if @medium.valid?
+      if @medium.sort == "Remark"
+        @medium.update(type: "Remark",
+                       text: I18n.t("admin.remark.initial_text"))
+      end
+      if @medium.sort == "Question"
+        solution = Solution.new(MampfExpression.trivial_instance)
+        @medium.update(type: "Question",
+                       text: I18n.t("admin.question.initial_text"),
+                       level: 1,
+                       independent: false,
+                       solution: solution,
+                       question_sort: "mc")
+        Answer.create(question: @medium.becomes(Question),
+                      text: "0",
+                      value: true)
+      end
+      if @medium.sort == "Quiz"
+        @medium.update(type: "Quiz")
+        @medium.update(quiz_graph: QuizGraph.new(vertices: {},
+                                                 edges: {},
+                                                 root: 0,
+                                                 default_table: {},
+                                                 hide_solution: []),
+                       level: 1)
+      end
+      redirect_to edit_medium_path(@medium)
+      return
+    end
+    @errors = @medium.errors
+    render :update
+  end
+
+  def create
+    @medium = Medium.new(medium_params)
+
+    return unless @medium.valid_annotations_status?
+
+    @medium.locale = @medium.teachable&.locale
+    @medium.editors = [current_user]
+    @medium.tags = @medium.teachable.tags if @medium.teachable.class.to_s == "Lesson"
+    authorize! :create, @medium
+    @medium.save
+    if @medium.valid?
+      if @medium.sort == "Remark"
+        @medium.update(type: "Remark",
+                       text: I18n.t("admin.remark.initial_text"))
+      end
+      if @medium.sort == "Question"
+        solution = Solution.new(MampfExpression.trivial_instance)
+        @medium.update(type: "Question",
+                       text: I18n.t("admin.question.initial_text"),
+                       level: 1,
+                       independent: false,
+                       solution: solution,
+                       question_sort: "mc")
+        Answer.create(question: @medium.becomes(Question),
+                      text: "0",
+                      value: true)
+      end
+      if @medium.sort == "Quiz"
+        @medium.update(type: "Quiz")
+        @medium.update(quiz_graph: QuizGraph.new(vertices: {},
+                                                 edges: {},
+                                                 root: 0,
+                                                 default_table: {},
+                                                 hide_solution: []),
+                       level: 1)
+      end
+      redirect_to edit_medium_path(@medium)
+      return
+    end
+    @errors = @medium.errors
+    render :update
   end
 
   def update
@@ -73,7 +156,7 @@ class MediaController < ApplicationController
     # update the associated tags), causing trouble for caching)
     @medium.touch
     # touch lectures that import this medium
-    @medium.importing_lectures.update_all(updated_at: Time.now)
+    @medium.importing_lectures.touch_all
     @medium.sanitize_type!
     # detach components if this was chosen by the user
     detach_components
@@ -96,7 +179,7 @@ class MediaController < ApplicationController
       # refreshed_video = @medium.video
       # @medium.update(video_data: refreshed_video.to_json)
     end
-    if @medium.sort == 'Quiz' && params[:medium][:create_quiz_graph] == '1'
+    if @medium.sort == "Quiz" && params[:medium][:create_quiz_graph] == "1"
       @medium.becomes(Quiz).update(level: 1,
                                    quiz_graph: QuizGraph.new(vertices: {},
                                                              edges: {},
@@ -108,7 +191,7 @@ class MediaController < ApplicationController
     # remove items that correspond to named destinations that no longer
     # exist in the manuscript, but keep those that are referenced
     # from other places
-    if @medium.sort == 'Script' && changed_manuscript
+    if @medium.sort == "Script" && changed_manuscript
       @medium.update(imported_manuscript: false)
       @quarantine_added = @medium.update_pdf_destinations!
       if @quarantine_added.any?
@@ -125,54 +208,9 @@ class MediaController < ApplicationController
       end
     end
     @tags_without_section = []
-    return unless @medium.teachable.class.to_s == 'Lesson'
+    return unless @medium.teachable.instance_of?(::Lesson)
 
     add_tags_in_lesson_and_sections
-  end
-
-  def create
-    @medium = Medium.new(medium_params)
-
-    return unless @medium.valid_annotations_status?
-
-    @medium.locale = @medium.teachable&.locale
-    @medium.editors = [current_user]
-    if @medium.teachable.class.to_s == 'Lesson'
-      @medium.tags = @medium.teachable.tags
-    end
-    authorize! :create, @medium
-    @medium.save
-    if @medium.valid?
-      if @medium.sort == 'Remark'
-        @medium.update(type: 'Remark',
-                       text: I18n.t('admin.remark.initial_text'))
-      end
-      if @medium.sort == 'Question'
-        solution = Solution.new(MampfExpression.trivial_instance)
-        @medium.update(type: 'Question',
-                       text: I18n.t('admin.question.initial_text'),
-                       level: 1,
-                       independent: false,
-                       solution: solution,
-                       question_sort: 'mc')
-        Answer.create(question: @medium.becomes(Question),
-                      text: '0',
-                      value: true)
-      end
-      if @medium.sort == 'Quiz'
-        @medium.update(type: 'Quiz')
-        @medium.update(quiz_graph: QuizGraph.new(vertices: {},
-                                                 edges: {},
-                                                 root: 0,
-                                                 default_table: {},
-                                                 hide_solution: []),
-                       level: 1)
-      end
-      redirect_to edit_medium_path(@medium)
-      return
-    end
-    @errors = @medium.errors
-    render :update
   end
 
   def publish
@@ -194,15 +232,15 @@ class MediaController < ApplicationController
     # destroy all notifications related to this medium
     destroy_notifications
     @medium.teachable.touch
-    if @medium.teachable_type == 'Lecture'
+    if @medium.teachable_type == "Lecture"
       redirect_to edit_lecture_path(@medium.teachable)
       return
     end
-    if @medium.teachable_type == 'Lesson'
+    if @medium.teachable_type == "Lesson"
       redirect_to edit_lesson_path(@medium.teachable)
       return
     end
-    if @medium.teachable_type == 'Talk'
+    if @medium.teachable_type == "Talk"
       if current_user.in?(@medium.teachable.speakers)
         redirect_to assemble_talk_path(@medium.teachable)
         return
@@ -223,10 +261,12 @@ class MediaController < ApplicationController
     # get all media, then set them to only those that are visible to the current user
     if !current_user.active_teachable_editor? || search_params[:access].blank?
       filter_media = true
-      params["search"]["access"] = 'irrelevant'
+      params["search"]["access"] = "irrelevant"
     end
-    params["search"]["answers_count"] =
-      'irrelevant' if search_params[:answers_count].blank?
+    if search_params[:answers_count].blank?
+      params["search"]["answers_count"] =
+        "irrelevant"
+    end
 
     search = Medium.search_by(search_params, params[:page])
     search.execute
@@ -236,14 +276,16 @@ class MediaController < ApplicationController
     # in the case of a search with tag_operator 'or', we
     # execute two searches and merge the results, where media
     # with the selected tags are now shown at the front of the list
-    if search_params[:tag_operator] == "or" and search_params[:all_tags] == "0" and search_params[:fulltext].size >= 2
-      params["search"]["all_tags"] = '1'
+    if (search_params[:tag_operator] == "or") \
+      && (search_params[:all_tags] == "0") \
+      && (search_params[:fulltext].size >= 2)
+      params["search"]["all_tags"] = "1"
       search_no_tags = Medium.search_by(search_params, params[:page])
       search_no_tags.execute
       results_no_tags = search_no_tags.results
       results = (results + results_no_tags).uniq
       @total = results.size
-      params["search"]["all_tags"] = '0'
+      params["search"]["all_tags"] = "0"
     end
 
     if filter_media
@@ -256,40 +298,41 @@ class MediaController < ApplicationController
     @media = Kaminari.paginate_array(results, total_count: @total)
                      .page(params[:page]).per(search_params[:per])
     @purpose = search_params[:purpose]
-    @results_as_list = search_params[:results_as_list] == 'true'
-    if @purpose.in?(['quiz', 'import'])
+    @results_as_list = search_params[:results_as_list] == "true"
+    if @purpose.in?(["quiz", "import"])
       render template: "media/catalog/import_preview"
       return
     end
     return unless @total.zero?
-    return unless search_params[:fulltext]&.length.to_i > 1
+
+    nil unless search_params[:fulltext]&.length.to_i > 1
   end
 
   # play the video using thyme player
   def play
     if @medium.video.nil?
-      redirect_to :root, alert: I18n.t('controllers.no_video')
+      redirect_to :root, alert: I18n.t("controllers.no_video")
       return
     end
     I18n.locale = @medium.locale_with_inheritance
     @vtt_container = @medium.create_vtt_container!
     @time = params[:time]
-    render layout: 'thyme'
+    render layout: "thyme"
   end
 
   # show the pdf, optionally at specified page or named destination
   def display
     if @medium.manuscript.nil?
-      redirect_to :root, alert: I18n.t('controllers.no_manuscript')
+      redirect_to :root, alert: I18n.t("controllers.no_manuscript")
       return
     end
     if params[:destination].present?
-      redirect_to @medium.manuscript_url_with_host + '#' +
-                  params[:destination].to_s, allow_other_host: true
+      redirect_to "#{@medium.manuscript_url_with_host}##{params[:destination]}",
+                  allow_other_host: true
       return
     elsif params[:page].present?
-      redirect_to @medium.manuscript_url_with_host + '#page=' +
-                  params[:page].to_s, allow_other_host: true
+      redirect_to "#{@medium.manuscript_url_with_host}#page=#{params[:page]}",
+                  allow_other_host: true
       return
     end
     redirect_to @medium.manuscript_url_with_host,
@@ -299,11 +342,11 @@ class MediaController < ApplicationController
   # run the geogebra applet using Geogebra's Javascript API
   def geogebra
     if @medium.geogebra.nil?
-      redirect_to :root, alert: I18n.t('controllers.no_geogebra')
+      redirect_to :root, alert: I18n.t("controllers.no_geogebra")
       return
     end
     I18n.locale = @medium.locale_with_inheritance
-    render layout: 'geogebra'
+    render layout: "geogebra"
   end
 
   # add a toc item for the video
@@ -312,8 +355,8 @@ class MediaController < ApplicationController
     @time = params[:time].to_f
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
-    if @medium.sort == 'Kaviar' &&
-       @medium.teachable_type.in?(['Lesson', 'Lecture'])
+    if @medium.sort == "Kaviar" &&
+       @medium.teachable_type.in?(["Lesson", "Lecture"])
       @item.section = @medium.teachable&.sections&.first
     end
   end
@@ -327,15 +370,13 @@ class MediaController < ApplicationController
                              start_time: TimeStamp.new(total_seconds: @time),
                              end_time: TimeStamp.new(total_seconds: @end_time))
     @item_selection = @medium.teachable.media_scope.media_items_with_inheritance
-    @item = Item.new(sort: 'link')
+    @item = Item.new(sort: "link")
   end
 
   # add a screenshot for the video
   def add_screenshot
-    tempfile = Tempfile.new(['screenshot', '.png'])
-    File.open(tempfile, 'wb') do |f|
-      f.write params[:image].read
-    end
+    tempfile = Tempfile.new(["screenshot", ".png"])
+    File.binwrite(tempfile, params[:image].read)
     @medium.screenshot = File.open(tempfile)
     @medium.save
     if @medium.valid?
@@ -357,7 +398,7 @@ class MediaController < ApplicationController
   # start the thyme editor
   def enrich
     I18n.locale = @medium.locale_with_inheritance
-    render layout: 'enrich'
+    render layout: "enrich"
   end
 
   # if the medium is associated to a lesson of a lecture which is in script mode
@@ -397,62 +438,70 @@ class MediaController < ApplicationController
   end
 
   def update_tags
-    if current_user.admin || @medium.edited_with_inheritance_by?(current_user)
-      @medium.tags = Tag.where(id: params[:tag_ids])
-      @medium.update(updated_at: Time.now)
-    end
+    return unless current_user.admin || @medium.edited_with_inheritance_by?(current_user)
+
+    @medium.tags = Tag.where(id: params[:tag_ids])
+    @medium.touch
   end
 
   def register_download
     head :ok
   end
 
-  def get_statistics
+  def statistics
     I18n.locale = @medium.locale || I18n.default_locale
     medium_consumption = Consumption.where(medium_id: @medium.id)
     if @medium.video.present?
-      @video_downloads = medium_consumption.where(sort: 'video',
-                                                  mode: 'download').pluck(:created_at).map(&:to_date).tally.map { |k, t|
+      @video_downloads = medium_consumption
+                         .where(sort: "video", mode: "download")
+                         .pluck(:created_at)
+                         .map(&:to_date).tally.map do |k, t|
         {
           x: k, y: t
         }
-      }.to_json
-      @video_downloads_count = medium_consumption.where(sort: 'video',
-                                                        mode: 'download').count
-      @video_thyme = medium_consumption.where(sort: 'video',
-                                              mode: 'thyme').pluck(:created_at).map(&:to_date).tally.map { |k, t|
+      end.to_json
+      @video_downloads_count = medium_consumption.where(sort: "video",
+                                                        mode: "download").count
+      @video_thyme = medium_consumption
+                     .where(sort: "video", mode: "thyme")
+                     .pluck(:created_at)
+                     .map(&:to_date).tally.map do |k, t|
         {
           x: k, y: t
         }
-      }.to_json
-      @video_thyme_count = medium_consumption.where(sort: 'video',
-                                                    mode: 'thyme').count
+      end.to_json
+      @video_thyme_count = medium_consumption.where(sort: "video",
+                                                    mode: "thyme").count
     end
     if @medium.manuscript.present?
-      @manuscript_access = medium_consumption.where(sort: 'manuscript').pluck(:created_at).map(&:to_date).tally.map { |k, t|
+      @manuscript_access = medium_consumption
+                           .where(sort: "manuscript")
+                           .pluck(:created_at)
+                           .map(&:to_date).tally.map do |k, t|
         { x: k, y: t }
-      }.to_json
-      @manuscript_access_count = medium_consumption.where(sort: 'manuscript').count
+      end.to_json
+      @manuscript_access_count = medium_consumption.where(sort: "manuscript").count
     end
-    if @medium.sort == 'Quiz'
+    return unless @medium.sort == "Quiz"
 
-      @quiz_plays = medium_consumption.where(sort: 'quiz',
-                                             mode: 'browser').pluck(:created_at).map(&:to_date).tally.map { |k, t|
-        { x: k, y: t }
-      }.to_json
-      @quiz_plays_count = medium_consumption.where(sort: 'quiz',
-                                                   mode: 'browser').count
-      @quiz_finished_count = Probe.finished_quizzes(@medium)
-      @global_success = Probe.global_success_in_quiz(@medium.becomes(Quiz))
-      @global_success_details = Probe.global_success_details(@medium.becomes(Quiz))
-      @question_count = @medium.becomes(Quiz).questions_count
-      @local_success = Probe.local_success_in_quiz(@medium.becomes(Quiz))
-    end
+    @quiz_plays = medium_consumption
+                  .where(sort: "quiz", mode: "browser")
+                  .pluck(:created_at)
+                  .map(&:to_date).tally.map do |k, t|
+      { x: k, y: t }
+    end.to_json
+    @quiz_plays_count = medium_consumption.where(sort: "quiz",
+                                                 mode: "browser").count
+    @quiz_finished_count = Probe.finished_quizzes(@medium)
+    @global_success = Probe.global_success_in_quiz(@medium.becomes(Quiz))
+    @global_success_details = Probe.global_success_details(@medium.becomes(Quiz))
+    @question_count = @medium.becomes(Quiz).questions_count
+    @local_success = Probe.local_success_in_quiz(@medium.becomes(Quiz))
   end
 
   def show_comments
     commontator_thread_show(@medium)
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def cancel_publication
@@ -462,27 +511,27 @@ class MediaController < ApplicationController
 
   def fill_medium_preview
     I18n.locale = current_user.locale
-    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    @medium = Medium.find_by(id: params[:id])&.becomes(Medium) || Medium.new
     authorize! :fill_medium_preview, @medium
   end
 
   def render_medium_actions
     I18n.locale = current_user.locale
-    @medium = Medium.find_by_id(params[:id])&.becomes(Medium) || Medium.new
+    @medium = Medium.find_by(id: params[:id])&.becomes(Medium) || Medium.new
     authorize! :render_medium_actions, @medium
   end
 
   def render_import_media
     @id = params[:id]
-    @purpose = 'import'
+    @purpose = "import"
     authorize! :render_import_media, Medium.new
   end
 
   def render_import_vertex
     @id = params[:id]
     quiz_id = params[:quiz_id]
-    I18n.locale = Quiz.find_by_id(quiz_id)&.locale_with_inheritance
-    @purpose = 'quiz'
+    I18n.locale = Quiz.find_by(id: quiz_id)&.locale_with_inheritance
+    @purpose = "quiz"
     authorize! :render_import_vertex, Medium.new
     render :render_import_media
   end
@@ -497,7 +546,7 @@ class MediaController < ApplicationController
 
   def cancel_import_vertex
     authorize! :cancel_import_vertex, Medium.new
-    I18n.locale = Quiz.find_by_id(params[:quiz_id])&.locale_with_inheritance
+    I18n.locale = Quiz.find_by(id: params[:quiz_id])&.locale_with_inheritance
     render :cancel_import_media
   end
 
@@ -515,9 +564,9 @@ class MediaController < ApplicationController
   def fill_reassign_modal
     @quizzable = @medium.becomes_quizzable
     I18n.locale = @quizzable.locale_with_inheritance
-    @in_quiz = params[:in_quiz] == 'true'
+    @in_quiz = params[:in_quiz] == "true"
     @quiz_id = params[:quiz_id].to_i
-    @no_rights = params[:rights] == 'none'
+    @no_rights = params[:rights] == "none"
   end
 
   def check_annotation_visibility
@@ -525,12 +574,12 @@ class MediaController < ApplicationController
     isPermitted = medium.annotations_visible?(current_user)
     render json: isPermitted
   end
-  
+
   # Renders the feedback player. Do not confuse with the feedback button
   # which has nothing to do with the thyme player(s).
   def feedback
     I18n.locale = @medium.locale_with_inheritance
-    render layout: 'feedback'
+    render layout: "feedback"
   end
 
   private
@@ -558,39 +607,39 @@ class MediaController < ApplicationController
     end
 
     def set_medium
-      @medium = Medium.find_by_id(params[:id])&.becomes(Medium)
-      return if @medium.present? && @medium.sort != 'RandomQuiz'
+      @medium = Medium.find_by(id: params[:id])&.becomes(Medium)
+      return if @medium.present? && @medium.sort != "RandomQuiz"
 
-      redirect_to :root, alert: I18n.t('controllers.no_medium')
+      redirect_to :root, alert: I18n.t("controllers.no_medium")
     end
 
     def set_lecture
-      @lecture = Lecture.find_by_id(params[:id])
+      @lecture = Lecture.find_by(id: params[:id])
       # store current lecture in cookie
       if @lecture
         cookies[:current_lecture_id] = @lecture.id
         return
       end
-      redirect_to :root, alert: I18n.t('controllers.no_lecture')
+      redirect_to :root, alert: I18n.t("controllers.no_lecture")
     end
 
     def set_teachable
-      if params[:teachable_type].in?(['Course', 'Lecture', 'Lesson', 'Talk']) &&
+      if params[:teachable_type].in?(["Course", "Lecture", "Lesson", "Talk"]) &&
          params[:teachable_id].present?
         @teachable = params[:teachable_type].constantize
-                                            .find_by_id(params[:teachable_id])
+                                            .find_by(id: params[:teachable_id])
       end
     end
 
     def detach_components
-      if params[:medium][:detach_video] == 'true'
+      if params[:medium][:detach_video] == "true"
         @medium.update(video: nil)
         @medium.update(screenshot: nil)
       end
-      if params[:medium][:detach_geogebra] == 'true' || @medium.sort != 'Sesam'
+      if params[:medium][:detach_geogebra] == "true" || @medium.sort != "Sesam"
         @medium.update(geogebra: nil)
       end
-      return unless params[:medium][:detach_manuscript] == 'true'
+      return unless params[:medium][:detach_manuscript] == "true"
 
       @medium.update(manuscript: nil)
     end
@@ -599,10 +648,10 @@ class MediaController < ApplicationController
       reveal_contradictions
       sanitize_page!
       sanitize_per!
-      params[:all] = (params[:all] == 'true') || (cookies[:all] == 'true')
+      params[:all] = (params[:all] == "true") || (cookies[:all] == "true")
       cookies[:all] = params[:all]
       cookies[:per] = false if cookies[:all]
-      params[:reverse] = params[:reverse] == 'true'
+      params[:reverse] = params[:reverse] == "true"
     end
 
     def check_for_consent
@@ -632,12 +681,12 @@ class MediaController < ApplicationController
       visible_search_results = current_user.filter_visible_media(search_arel)
       search_results &= visible_search_results
       total = search_results.size
-      @lecture = Lecture.find_by_id(params[:id])
+      @lecture = Lecture.find_by(id: params[:id])
       # filter out stuff from course level for generic users
-      if params[:visibility] == 'lecture'
-        search_results.reject! { |m| m.teachable_type == 'Course' }
+      if params[:visibility] == "lecture"
+        search_results.reject! { |m| m.teachable_type == "Course" }
         # yields only lecture media and course media
-      elsif params[:visibility] == 'all'
+      elsif params[:visibility] == "all"
         # yields all lecture media and course media
       else
         # this is the default setting: 'thematic' selection of media
@@ -646,11 +695,11 @@ class MediaController < ApplicationController
         unless current_user.admin || @lecture.edited_by?(current_user)
           lecture_tags = @lecture.tags_including_media_tags
           search_results.reject! do |m|
-            m.teachable_type == 'Course' && (m.tags & lecture_tags).blank?
+            m.teachable_type == "Course" && !m.tags.intersect?(lecture_tags)
           end
         end
       end
-      sort = params[:project] == 'keks' ? 'Quiz' : params[:project]&.capitalize
+      sort = params[:project] == "keks" ? "Quiz" : params[:project]&.capitalize
       search_results += @lecture.imported_media
                                 .where(sort: sort)
                                 .locally_visible
@@ -662,10 +711,10 @@ class MediaController < ApplicationController
     end
 
     def reveal_contradictions
-      return unless params[:lecture_id].present?
+      return if params[:lecture_id].blank?
       return if params[:lecture_id].to_i.in?(@course.lecture_ids)
 
-      redirect_to :root, alert: I18n.t('controllers.contradiction')
+      redirect_to :root, alert: I18n.t("controllers.contradiction")
     end
 
     def sanitize_page!
@@ -673,9 +722,7 @@ class MediaController < ApplicationController
     end
 
     def sanitize_per!
-      if params[:per] || cookies[:per].to_i.positive?
-        cookies[:all] = 'false'
-      end
+      cookies[:all] = "false" if params[:per] || cookies[:per].to_i.positive?
       params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
         params[:per].to_i
       elsif cookies[:per].to_i.positive?
@@ -688,8 +735,8 @@ class MediaController < ApplicationController
 
     def search_params
       types = params[:search][:types] || []
-      types = [types] if types && !types.kind_of?(Array)
-      types -= [''] if types
+      types = [types] if types && !types.is_a?(Array)
+      types -= [""] if types
       types = nil if types == []
       params[:search][:types] = types
       params[:search][:user_id] = current_user.id
@@ -712,29 +759,29 @@ class MediaController < ApplicationController
 
     # destroy all notifications related to this medium
     def destroy_notifications
-      Notification.where(notifiable_id: @medium.id, notifiable_type: 'Medium')
+      Notification.where(notifiable_id: @medium.id, notifiable_type: "Medium")
                   .delete_all
     end
 
     def add_tags_in_lesson_and_sections
       @tags_outside_lesson = @medium.tags_outside_lesson
-      if @tags_outside_lesson
-        @medium.teachable.tags << @tags_outside_lesson
-        @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
-        if @medium.teachable.sections.count == 1
-          section = @medium.teachable.sections.first
-          section.tags << @tags_without_section
-        end
-      end
+      return unless @tags_outside_lesson
+
+      @medium.teachable.tags << @tags_outside_lesson
+      @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
+      return unless @medium.teachable.sections.count == 1
+
+      section = @medium.teachable.sections.first
+      section.tags << @tags_without_section
     end
 
     def store_access
-      mode = action_name == 'play' ? 'thyme' : 'pdf_view'
-      sort = action_name == 'play' ? 'video' : 'manuscript'
+      mode = action_name == "play" ? "thyme" : "pdf_view"
+      sort = action_name == "play" ? "video" : "manuscript"
       ConsumptionSaver.perform_async(@medium.id, mode, sort)
     end
 
     def store_download
-      ConsumptionSaver.perform_async(@medium.id, 'download', params[:sort])
+      ConsumptionSaver.perform_async(@medium.id, "download", params[:sort])
     end
 end

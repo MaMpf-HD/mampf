@@ -1,7 +1,7 @@
 # InteractionsController
 class InteractionsController < ApplicationController
   authorize_resource
-  layout 'administration'
+  layout "administration"
 
   def index
   end
@@ -12,10 +12,10 @@ class InteractionsController < ApplicationController
     @interactions = Interaction.created_between(start_date, end_date)
     respond_to do |format|
       format.html { head :ok }
-      format.csv {
-        send_data @interactions.to_csv,
-                  filename: "interactions-from-#{start_date}-to-#{end_date}-at-#{Time.now}.csv"
-      }
+      format.csv do
+        csv_filename = "interactions-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv"
+        send_data(@interactions.to_csv, filename: csv_filename)
+      end
     end
   end
 
@@ -25,10 +25,10 @@ class InteractionsController < ApplicationController
     @probes = Probe.created_between(start_date, end_date)
     respond_to do |format|
       format.html { head :ok }
-      format.csv {
-        send_data @probes.to_csv,
-                  filename: "probes-from-#{start_date}-to-#{end_date}-at-#{Time.now}.csv"
-      }
+      format.csv do
+        send_data(@probes.to_csv,
+                  filename: "probes-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv")
+      end
     end
   end
 

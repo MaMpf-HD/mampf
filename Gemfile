@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '3.1.4'
+ruby "3.1.4"
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 7.0.4.3"
@@ -32,99 +32,90 @@ gem "jbuilder"
 # gem 'image_processing', '~> 1.2'
 
 # Reduces boot times through caching; required in config/boot.rb
+gem "active_model_serializers"
 gem "bootsnap", ">= 1.4.2", require: false
 gem "rack"
-gem "active_model_serializers"
 # Use CoffeeScript for .coffee assets and views
 gem "coffee-rails", "~> 5.0.0"
 
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
-gem "shrine"
 gem "fastimage"
-gem "streamio-ffmpeg"
-gem "pdf-reader"
-gem "mini_magick"
 gem "image_processing"
+gem "mini_magick"
+gem "pdf-reader"
+gem "shrine"
+gem "streamio-ffmpeg"
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 gem "filesize"
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem "rgl"
-gem "responders"
-gem "pg"
-gem "devise"
-gem "erubis"
-gem "cancancan"
-gem "jquery-rails"
-gem "jquery-ui-rails"
-gem "js-routes", '1.4.9'
-gem "bootstrap", "~>5"
-gem "bootstrap_form"
-gem "devise-bootstrap-views"
-gem "fuzzy-string-match"
-gem "coveralls", require: false
-gem "kaminari"
+gem "activerecord-import",
+    git: "https://github.com/zdennis/activerecord-import.git",
+    branch: "master"
 gem "acts_as_list"
 gem "acts_as_tree"
-gem "activerecord-import",
-  git: "https://github.com/zdennis/activerecord-import.git",
-  branch: "master"
-gem "thredded"
-gem "kramdown-parser-gfm"
-gem "thredded-markdown_katex",
-  git: "https://github.com/thredded/thredded-markdown_katex.git",
-  branch: "main"
-gem "rails-i18n"
-gem "kaminari-i18n"
-gem "trix-rails", require: "trix"
-gem "sunspot_rails",
-  github: 'sunspot/sunspot',
-  glob: 'sunspot_rails/*.gemspec'
-gem "sunspot_solr"
-gem "progress_bar"
+gem "acts_as_votable"
 gem "barby"
-gem "rqrcode"
-gem "sidekiq"
-gem "sidekiq-cron", "~> 1.1"
+gem "bootstrap", "~>5"
+gem "bootstrap_form"
+gem "cancancan"
+gem "clipboard-rails"
+gem "commontator"
+gem "coveralls", require: false
+gem "devise"
+gem "devise-bootstrap-views"
+gem "erubis"
+gem "exception_handler", "~> 0.8.0.0"
 gem "faraday", "~> 1.8"
+gem "fuzzy-string-match"
 gem "globalize"
 gem "globalize-accessors"
-gem "commontator"
-gem "acts_as_votable"
-gem "sprockets-rails",
-  git: "https://github.com/rails/sprockets-rails",
-  branch: "master"
+gem "jquery-rails"
+gem "jquery-ui-rails"
+gem "js-routes", "1.4.9"
+gem "kaminari"
+gem "kaminari-i18n"
+gem "kramdown-parser-gfm"
+gem "net-smtp"
+gem "pg"
 gem "premailer-rails"
-gem "clipboard-rails"
+gem "progress_bar"
+gem "rails-i18n"
+gem "responders"
+gem "rgl"
+gem "rqrcode"
 gem "rubyzip", "~> 2.3.0"
-gem "exception_handler", "~> 0.8.0.0"
-gem 'webpacker', '~> 5.x'
-gem 'net-smtp'
-
-group :development, :docker_development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
-  gem "rspec-rails"
-  gem "factory_bot_rails"
-end
+gem "sidekiq"
+gem "sidekiq-cron", "~> 1.1"
+gem "sprockets-rails",
+    git: "https://github.com/rails/sprockets-rails",
+    branch: "master"
+gem "sunspot_rails",
+    github: "sunspot/sunspot",
+    glob: "sunspot_rails/*.gemspec"
+gem "sunspot_solr"
+gem "thredded"
+gem "thredded-markdown_katex",
+    git: "https://github.com/thredded/thredded-markdown_katex.git",
+    branch: "main"
+gem "trix-rails", require: "trix"
+gem "webpacker", "~> 5.x"
 
 group :development, :docker_development do
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem "web-console", ">= 3.3.0"
   gem "listen", ">= 3.0.5", "< 3.2"
   gem "rails-erd"
+  gem "web-console", ">= 3.3.0"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
+  gem "marcel"
+  gem "pgreset"
+  gem "rubocop", "~> 1.57", require: false
+  gem "rubocop-performance", "~> 1.16", require: false
+  gem "rubocop-rails", "~> 2.22", ">= 2.22.1", require: false
   gem "spring"
   gem "spring-watcher-listen", "~> 2.0.0"
-  gem "rubocop", "~> 1.50", require: false
-  gem "rubocop-packaging", require: false
-  gem "rubocop-performance", require: false
-  gem "rubocop-rails", require: false
-  gem "erb_lint", require: false
-  gem "pgreset"
-  gem "marcel"
   #  gem 'bullet'
 end
 
@@ -132,15 +123,21 @@ group :test do
   # Adds support for Capybara system testing and selenium driver
   gem "selenium-webdriver"
   # Easy installation and use of web drivers to run system tests with browsers
-  gem 'webdrivers'
-  gem 'faker'
-  gem 'database_cleaner'
-  gem 'launchy'
-  gem 'simplecov', require: false
+  gem "database_cleaner"
+  gem "faker"
+  gem "launchy"
+  gem "simplecov", require: false
+  gem "webdrivers"
 end
 
 group :test, :development, :docker_development do
-  gem 'cypress-on-rails', '~> 1.0'
-  gem 'simplecov-cobertura'
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
+  gem "factory_bot_rails"
+  gem "rspec-rails"
+
+  gem "cypress-on-rails", "~> 1.0"
+  gem "simplecov-cobertura"
 end
-gem 'prometheus_exporter'
+
+gem "prometheus_exporter"

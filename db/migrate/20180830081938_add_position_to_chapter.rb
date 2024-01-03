@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddPositionToChapter < ActiveRecord::Migration[5.2]
   def change
     add_column :chapters, :position, :integer
@@ -8,3 +9,4 @@ class AddPositionToChapter < ActiveRecord::Migration[5.2]
     end
   end
 end
+# rubocop:enable Rails/

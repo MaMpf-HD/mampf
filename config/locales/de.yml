@@ -2758,6 +2758,12 @@ de:
     optimization_failed: >
       Optimierung fehlgeschlagen: Die Datei ist immer noch zu groß.
     upload_failure: "Fehler beim Upload! Bitte versuche es erneut!"
+    upload_failure_empty_file: >
+      Die hochgeladene Datei ist leer.
+      Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
+    upload_failure_empty_file_bulk: >
+      ist leer.
+      Bitte vergewissere dich, dass die Datei nicht beschädigt ist.
     file_size_too_big: Die Datei ist eigentlich zu groß, kann aber hochgeladen werden.
     file_size_way_too_big:  Die Dateigröße überschreitet das Limit. Bitte optimiere sie.
     optimization_help_html: >
@@ -2982,8 +2988,8 @@ de:
       info:
         general_info: >
           Hier kannst Du mehrere Korrekturen gleichzeitig hochladen.
-          Damit diese von MaMpf zugeordnet werden können, sollten die Dateinamen
-          idealerweise mit den Dateinamen der Abgaben übereinstimmen.
+          Damit diese von MaMpf zugeordnet werden können, darfst Du die mit dem
+          Paketdownload heruntergeladenen Dateien nicht umbenennen.
         invalid_filenames: >
           Hier sind die Namen derjenigen hochgeladenen Dateien aufgelistet,
           die nicht in das von MaMpf vorgegebene Namensschema passen.
@@ -3139,7 +3145,7 @@ de:
       Hash:%{hash}
     data_request_mail_body: >
       %{mail} mit User-Id: %{id} hat ihre Daten angefordert.
-    data_provide_mail_subject: Anfrage nach Daten
+    data_provide_mail_subject: Datenanfrage
     data_provide_mail_body: >
       Hallo, %{name}!<br>
 
@@ -3294,6 +3300,7 @@ de:
     thyme_editor: 'Editor'
     screenshot: 'Screenshot'
     file: 'Datei'
+    files: 'Dateien'
     size: 'Größe'
     please_wait: 'Bitte warten...'
     access_rights: 'Zugriffsrechte'
@@ -3385,7 +3392,6 @@ de:
     deadline: 'Abgabetermin'
     tutorial: 'Tutorium'
     code: 'Code'
-    files: 'Dateien'
     partners: 'PartnerInnen'
     team: 'Team'
     expired: 'abgelaufen'

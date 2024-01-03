@@ -9,7 +9,7 @@ class MediumAbility
 
     can [:show, :show_comments], Medium do |medium|
       medium.visible_for_user?(user) &&
-        !(medium.sort.in?(['Question', 'Remark']) && !user.can_edit?(medium))
+        !(medium.sort.in?(["Question", "Remark"]) && !user.can_edit?(medium))
     end
 
     can :inspect, Medium do |medium|
@@ -18,7 +18,7 @@ class MediumAbility
 
     can [:edit, :update, :enrich, :feedback, :publish, :destroy, :cancel_publication,
          :add_item, :add_reference, :add_screenshot, :remove_screenshot,
-         :import_script_items, :import_manuscript, :get_statistics,
+         :import_script_items, :import_manuscript, :statistics,
          :render_medium_tags, :fill_quizzable_area,
          :fill_reassign_modal], Medium do |medium|
       user.can_edit?(medium)
@@ -46,7 +46,7 @@ class MediumAbility
       !user.generic? && user.can_edit?(medium)
     end
 
-    can [:register_download], Medium do |medium|
+    can [:register_download], Medium do |_medium|
       !user.new_record?
     end
   end

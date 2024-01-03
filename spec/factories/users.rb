@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :user, aliases: [:teacher] do
     email { Faker::Internet.email }
@@ -21,7 +19,7 @@ FactoryBot.define do
 
     trait :consented do
       after(:create) do |user|
-        user.update(consents: true, consented_at: Time.now)
+        user.update(consents: true, consented_at: Time.zone.now)
       end
     end
 
