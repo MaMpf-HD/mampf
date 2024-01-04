@@ -63,8 +63,13 @@ jobs:
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
           run: yarn install
 
+        # with ESLint v9 --ignore-path does not exist anymore
+        # see [1] for the PR. However, my feeling for this is totally reflected
+        # by [2]. Hopefully, it will come back in future versions.
+        # [1] https://github.com/eslint/eslint/pull/16355
+        # [2] https://github.com/eslint/eslint/issues/16264#issuecomment-1292858747
         - name: Run ESLint
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
           run: |
             echo "🚨 Running ESLint version: $(yarn run --silent eslint --version)"
-            yarn run eslint --ignore-path .gitignore --max-warnings 0 --no-warn-ignored ${{ steps.js-changed.outputs.changed-files }}
+            yarn run eslint --max-warnings 0 --no-warn-ignored ${{ steps.js-changed.outputs.changed-files }}
