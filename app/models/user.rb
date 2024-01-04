@@ -550,14 +550,20 @@ class User < ApplicationRecord
   end
 
   def media_latest_comments
-    media = subscribed_commentable_media_with_comments
-            .map do |m|
-      { medium: m,
-        thread: m.commontator_thread,
-        latest_comment: m.commontator_thread
-                         .comments.max_by(&:created_at) }
+    relevant_media = []
+
+    subscribed_commentable_media_with_comments.each do |m|
+      latest_comment = m.commontator_thread.comments
+                        .reject { |c| c.creator == self }
+                        .max_by(&:created_at)
+      next unless latest_comment
+
+      relevant_media << { medium: m,
+                          thread: m.commontator_thread,
+                          latest_comment: latest_comment }
     end
-    media.sort_by { |x| x[:latest_comment].created_at }.reverse
+
+    relevant_media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 
   # lecture that are in the active term
