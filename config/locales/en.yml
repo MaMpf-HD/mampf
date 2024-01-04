@@ -106,7 +106,7 @@ en:
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
-      Background image by %{background_photo_credit}.
+      Aperiodic monotiles licensed under BSD-3-Clause by %{background_photo_credit}.
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
