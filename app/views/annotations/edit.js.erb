@@ -241,6 +241,18 @@ function previewCSS(shouldShowPreview) {
   }
 }
 
+// Change modal title depending on the method that opens the modal
+var editSpan = $('#modal-title-edit-annotation');
+var createSpan = $('#modal-title-create-annotation');
+
+<% if action_name == 'new' %>
+  createSpan.show();
+  editSpan.hide();
+<% elsif action_name == 'edit' %>
+  createSpan.hide();
+  editSpan.show();
+<% end %>
+
 /* If this script is rendered by the edit method of the annotation controller:
    Select correct subcategory (this is not automatically done by the rails form
    as the content is dynamically rendered). */

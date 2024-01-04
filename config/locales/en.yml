@@ -325,7 +325,8 @@ en:
       editors: 'Editors'
     annotation:
       annotations: 'Annotations'
-      annotation_modal_head: 'Create annotation'
+      annotation_modal_head_create_annotation: 'Create annotation'
+      annotation_modal_head_edit_annotation: 'Edit annotation'
       inherit_from_lecture: 'inherit from lecture'
       time: 'Time:'
       comment: 'Comment'
