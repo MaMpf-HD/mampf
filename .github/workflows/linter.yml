@@ -49,7 +49,8 @@ jobs:
           id: js-changed
           uses: ./.github/actions/changed_files/
           with:
-            file-extensions: \.js$|\.js.erb$
+            # .(mjs is only used for eslint.config.mjs as of January 2024)
+            file-extensions: \.js$|\.mjs$|\.js.erb$
 
         - name: Setup Node.js
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
