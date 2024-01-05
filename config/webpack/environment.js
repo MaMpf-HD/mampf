@@ -24,7 +24,7 @@ const css = require("./loaders/css");
 // it will actually call crypto.createHash("sha256") instead. This might not work
 // in multiprocess environments, but it works for us as we only compile the assets
 // in one container.
-// This solution was proposed in [5].
+// This solution was proposed in [5]. The code below is an adaption of it.
 //
 // Note that while sha256 is a good choice, sha512 is more secure.
 // However, we don't specify hashing for passwords here, just for files we serve
@@ -39,7 +39,8 @@ const css = require("./loaders/css");
 const crypto = require("crypto");
 const originalHashFunction = crypto.createHash;
 crypto.createHash = (algorithm, options) => {
-  return originalHashFunction(algorithm === "md4" ? "sha256" : algorithm, options);
+  const updatedAlgorithm = (algorithm === "md4") ? "sha256" : algorithm;
+  return originalHashFunction(updatedAlgorithm, options);
 };
 
 environment.loaders.prepend("coffee", coffee);
