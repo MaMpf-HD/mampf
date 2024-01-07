@@ -388,6 +388,9 @@ de:
         multiple_close_annotations_1: "Beachte: in der Nähe Deiner Annotation gibt es bereits "
         multiple_close_annotations_2: " veröffentlichte Fehler-Annotationen."
         permission: "Dir fehlen die Rechte, um diese Annotation zu bearbeiten."
+        double_posted: >
+          Es wurde bereits eine Annotation mit dem gleichen Inhalt zu diesem Medium
+          veröffentlicht.
       visible_for_teacher: 'Für DozentIn sichtbar?'
       visible_for_teacher_helpdesk: >
         Falls diese Checkbox ausgewählt ist, kann Dein(e) Dozent(in) diese Annotation

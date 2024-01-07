@@ -162,45 +162,53 @@ class AnnotationsController < ApplicationController
       if annotation.category_for_database != Annotation.categories[:content]
         annotation.subcategory = nil
       end
-      return true
+      true
     end
 
     # common code for the create and update method
     def create_and_update_shared(annotation)
-      return unless valid_color?(annotation.color) and
-                    valid_time?(annotation) and
-                    subcategory_nil(annotation)
-      annotation.public_comment_id = post_comment(annotation)
-      return true
+      valid_color?(annotation.color) &&
+        valid_time?(annotation) &&
+        subcategory_nil(annotation) &&
+        commontator_comment(annotation)
     end
 
-    # Run all the Commontator::Comment related code here
-    def post_comment(annotation)
+    # Run all the Commontator::Comment related code here.
+    def commontator_comment(annotation)
       public_comment_id = annotation.public_comment_id
 
-      # return if checkbox "post_as_comment" is not checked and if there is no comment to update
-      return if annotation_auxiliary_params[:post_as_comment] != '1' and public_comment_id.nil?
+      # return true (success) if checkbox "post_as_comment" is not checked
+      # and if there is no comment to update
+      return true if annotation_auxiliary_params[:post_as_comment] != "1" &&
+                     public_comment_id.nil?
 
-      comment = annotation_params[:comment]
+      body = annotation_params[:comment]
 
       if public_comment_id.nil? # comment doesn't exist yet -> create one
         medium = annotation.medium
-        commontator_comment = Commontator::Comment.create(
+        comment = Commontator::Comment.new(
           thread: medium.commontator_thread,
           creator: current_user,
-          body: comment,
+          body: body,
           annotation: annotation
         )
       else # comment already exists -> update it
-        commontator_comment = Commontator::Comment.find_by(id: public_comment_id)
-        commontator_comment.update(editor: current_user,
-                                     body: comment)
+        comment = Commontator::Comment.find_by(id: public_comment_id)
+        comment.assign_attributes(editor: current_user,
+                                  body: body)
+      end
+
+      # if the same comment already exists, the db will trigger a rollback
+      # -> print error message in that case
+      if !comment.save && comment.errors.of_kind?(:body, :taken)
+        render :duplicate_comment
+        return
       end
 
       # delete comment as it is already saved in the commontator comment model
       annotation.comment = nil
 
-      commontator_comment.id
+      annotation.public_comment_id = comment.id
     end
 
 end

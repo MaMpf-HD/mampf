@@ -387,6 +387,8 @@ en:
         multiple_close_annotations_1: "Note there are already "
         multiple_close_annotations_2: " mistake annotations close to yours."
         permission: "You don't have the permission to edit this annotation."
+        double_posted: >
+          An annotation with the same content has already been published.
       visible_for_teacher: 'Visible for teacher?'
       visible_for_teacher_helpdesk: >
         If this checkbox is selected your teacher can see this annotation
