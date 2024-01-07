@@ -27,7 +27,7 @@
 		</div>
 	</div>
 	<% if assignment&.medium&.visible_for_user?(current_user) &&
-  	      (assignment.medium.tags.present? || assignment.has_documents?) %>
+  	      (assignment.medium.tags.present? || assignment.documents?) %>
   	<ul class="list-group list-group-flush">
     	<li class="list-group-item submissionSubHeader">
     		<div class="row">
@@ -44,7 +44,7 @@
       			<% end %>
       		</div>
       		<div class="col-12">
-      			<% if assignment.has_documents? %>
+      			<% if assignment.documents? %>
         			<div class="flexdiv mt-2">
           			<%= render partial: 'media/medium/buttons',
             	  		       locals: { medium: assignment.medium,

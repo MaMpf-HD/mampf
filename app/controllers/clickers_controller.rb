@@ -1,17 +1,30 @@
 # ClickersController
 class ClickersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:show, :edit, :open, :close,
-                                                 :reset,
-                                                 :get_votes_count,
+                                                 :votes_count,
                                                  :set_alternatives,
                                                  :render_clickerizable_actions]
   before_action :set_clicker, except: [:new, :create]
   authorize_resource except: [:new, :create, :edit, :open, :close,
                               :set_alternatives]
-  layout 'clicker', except: [:edit]
+  layout "clicker", except: [:edit]
 
   def current_ability
     @current_ability ||= ClickerAbility.new(current_user)
+  end
+
+  def show
+    if params[:code] == @clicker.code
+      redirect_to edit_clicker_path(@clicker,
+                                    params: { code: @clicker.code })
+      return
+    end
+    if stale?(etag: @clicker,
+              last_modified: [@clicker.updated_at,
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
+      render :show
+      nil
+    end
   end
 
   def new
@@ -23,30 +36,16 @@ class ClickersController < ApplicationController
     authorize! :edit, @clicker, @entered_code
     @user_path = clicker_url(@clicker,
                              host: DefaultSetting::URL_HOST_SHORT)
-                 .gsub('clickers', 'c')
+                 .gsub("clickers", "c")
     @editor_path = clicker_url(@clicker,
                                host: DefaultSetting::URL_HOST_SHORT,
                                params: { code: @clicker.code })
-                   .gsub('clickers', 'c')
+                   .gsub("clickers", "c")
     if user_signed_in?
-      render layout: 'administration'
+      render layout: "administration"
       return
     end
-    render layout: 'edit_clicker'
-  end
-
-  def show
-    if params[:code] == @clicker.code
-      redirect_to edit_clicker_path(@clicker,
-                                    params: { code: @clicker.code })
-      return
-    end
-    if stale?(etag: @clicker,
-              last_modified: [@clicker.updated_at,
-                              Time.parse(ENV['RAILS_CACHE_ID'])].max)
-      render :show
-      return
-    end
+    render layout: "edit_clicker"
   end
 
   def create
@@ -58,7 +57,7 @@ class ClickersController < ApplicationController
       return
     end
     @errors = @clicker.errors
-    render layout: 'administration'
+    render layout: "administration"
   end
 
   def destroy
@@ -69,28 +68,28 @@ class ClickersController < ApplicationController
   def open
     authorize! :open, @clicker, @entered_code
     @clicker.open!
-    render layout: 'administration' if user_signed_in?
+    render layout: "administration" if user_signed_in?
   end
 
   def close
     authorize! :close, @clicker, @entered_code
     @clicker.close!
-    render layout: 'administration' if user_signed_in?
+    render layout: "administration" if user_signed_in?
   end
 
   def set_alternatives
     authorize! :set_alternatives, @clicker, @entered_code
     @clicker.update(alternatives: params[:alternatives].to_i)
-    head :ok, content_type: 'text/html'
+    head :ok, content_type: "text/html"
   end
 
-  def get_votes_count
+  def votes_count
     result = @clicker.votes.count
     render json: result
   end
 
   def associate_question
-    question = Question.find_by_id(clicker_params[:question_id])
+    question = Question.find_by(id: clicker_params[:question_id])
     @clicker.update(question: question,
                     alternatives: question&.answers&.count || 3)
     redirect_to edit_clicker_path(@clicker)
@@ -106,8 +105,8 @@ class ClickersController < ApplicationController
 
   def render_clickerizable_actions
     I18n.locale = current_user.locale
-    @medium = Medium.find_by_id(params[:medium_id])
-    @question = Question.find_by_id(params[:medium_id])
+    @medium = Medium.find_by(id: params[:medium_id])
+    @question = Question.find_by(id: params[:medium_id])
   end
 
   private
@@ -122,11 +121,11 @@ class ClickersController < ApplicationController
     end
 
     def set_clicker
-      @clicker = Clicker.find_by_id(params[:id])
+      @clicker = Clicker.find_by(id: params[:id])
       @code = user_signed_in? ? nil : @clicker&.code
       @entered_code = code_params[:code]
       return if @clicker
 
-      redirect_to :root, alert: I18n.t('controllers.no_clicker')
+      redirect_to :root, alert: I18n.t("controllers.no_clicker")
     end
 end

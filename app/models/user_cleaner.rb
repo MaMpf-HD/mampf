@@ -3,9 +3,9 @@ class UserCleaner
   attr_accessor :imap, :email_dict, :hash_dict
 
   def login
-    @imap = Net::IMAP.new(ENV['IMAPSERVER'], port: 993, ssl: true)
-    @imap.authenticate('LOGIN', ENV['PROJECT_EMAIL_USERNAME'],
-                       ENV['PROJECT_EMAIL_PASSWORD'])
+    @imap = Net::IMAP.new(ENV.fetch("IMAPSERVER", nil), port: 993, ssl: true)
+    @imap.authenticate("LOGIN", ENV.fetch("PROJECT_EMAIL_USERNAME", nil),
+                       ENV.fetch("PROJECT_EMAIL_PASSWORD", nil))
   end
 
   def logout
@@ -15,40 +15,44 @@ class UserCleaner
   def search_emails_and_hashes
     @email_dict = {}
     @hash_dict = {}
-    @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
+    @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX", nil))
     # Mails containing multiple email addresses (Subject: "Undelivered Mail Returned to Sender")
-    @imap.search(['SUBJECT',
-                  'Undelivered Mail Returned to Sender']).each do |message_id|
+    @imap.search(["SUBJECT",
+                  "Undelivered Mail Returned to Sender"]).each do |message_id|
       body = @imap.fetch(message_id,
                          "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
-      if match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/)
-        match = match.flatten.uniq
-        match.each do |email|
-          add_mail(email, message_id)
+      # rubocop:disable Layout/LineLength
+      next unless (match = body.scan(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})[\s\S]*?User has moved to ERROR: Account expired/))
+      # rubocop:enable Layout/LineLength
 
-          try_get_hash(body, email)
-        end
+      match = match.flatten.uniq
+      match.each do |email|
+        add_mail(email, message_id)
+
+        try_get_hash(body, email)
       end
     end
     # Mails containing single email addresses (Subject: "Delivery Status Notification (Failure)")
     # define array containing all used regex patterns
     patterns = [
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?Unknown recipient',
+      # rubocop:disable Layout/LineLength
       '([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4})>[\s\S]*?User unknown in virtual mailbox table'
+      # rubocop:enable Layout/LineLength
     ]
 
-    @imap.search(['SUBJECT',
-                  'Delivery Status Notification (Failure)']).each do |message_id|
+    @imap.search(["SUBJECT",
+                  "Delivery Status Notification (Failure)"]).each do |message_id|
       body = @imap.fetch(message_id,
                          "BODY[TEXT]")[0].attr["BODY[TEXT]"].squeeze(" ")
       patterns.each do |pattern|
-        if match = body.scan(/#{pattern}/)
-          match = match.flatten.uniq
-          match.each do |email|
-            add_mail(email, message_id)
+        next unless (match = body.scan(/#{pattern}/))
 
-            try_get_hash(body, email)
-          end
+        match = match.flatten.uniq
+        match.each do |email|
+          add_mail(email, message_id)
+
+          try_get_hash(body, email)
         end
       end
     end
@@ -68,8 +72,8 @@ class UserCleaner
     begin
       hash = body.match(/Hash:([a-zA-Z0-9]*)/).captures
       @hash_dict[email] = hash
-    rescue
-      return
+    rescue StandardError
+      nil
     end
   end
 
@@ -87,7 +91,7 @@ class UserCleaner
   def delete_ghosts
     @hash_dict.each do |mail, hash|
       u = User.find_by(email: mail, ghost_hash: hash)
-      move_mail(@email_dict[mail]) if u.present? and @email_dict.present?
+      move_mail(@email_dict[mail]) if u.present? && @email_dict.present?
       u.destroy! if u&.generic?
     end
   end
@@ -96,15 +100,13 @@ class UserCleaner
     return if message_ids.blank?
 
     message_ids = Array(message_ids)
-    if attempt > 3
-      return
-    end
+    return if attempt > 3
 
     begin
-      @imap.examine(ENV['PROJECT_EMAIL_MAILBOX'])
+      @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX", nil))
       @imap.move(message_ids, "Other Users/mampf/handled_bounces")
     rescue Net::IMAP::BadResponseError
-      move_mail(message_ids, attempt = attempt + 1)
+      move_mail(message_ids, attempt + 1)
     end
   end
 

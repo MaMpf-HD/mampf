@@ -24,31 +24,30 @@ class NotificationMailer < ApplicationMailer
 
   def medium_email
     @medium = params[:medium]
+    subject = t("mailer.medium_subject")
+    viewer_title = @medium.teachable.media_scope.title_for_viewers
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t('mailer.medium_subject') + ' ' + t('in') + ' ' +
-                  @medium.teachable.media_scope.title_for_viewers)
+         subject: "#{subject} #{t("in")} #{viewer_title}")
   end
 
   def announcement_email
     @announcement = params[:announcement]
     @announcement_details = if @announcement.lecture.present?
-      t('in') + ' ' +
-        @announcement.lecture.title_for_viewers
+      "#{t("in")} #{@announcement.lecture.title_for_viewers}"
     else
-      t('mailer.mampf_news')
+      t("mailer.mampf_news")
     end
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t('mailer.announcement_subject') + ' ' +
-                  @announcement_details)
+         subject: "#{t("mailer.announcement_subject")} #{@announcement_details}")
   end
 
   def new_lecture_email
     @lecture = params[:lecture]
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t('mailer.new_lecture_subject',
+         subject: t("mailer.new_lecture_subject",
                     title: @lecture.title_for_viewers))
   end
 
@@ -59,7 +58,7 @@ class NotificationMailer < ApplicationMailer
 
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.new_editor_subject',
+         subject: t("mailer.new_editor_subject",
                     title: @lecture.title_for_viewers))
   end
 
@@ -70,7 +69,7 @@ class NotificationMailer < ApplicationMailer
     @issuer = params[:issuer]
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.submission_invitation_subject',
+         subject: t("mailer.submission_invitation_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end
@@ -79,7 +78,7 @@ class NotificationMailer < ApplicationMailer
     @uploader = params[:uploader]
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.submission_upload_subject',
+         subject: t("mailer.submission_upload_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end
@@ -88,7 +87,7 @@ class NotificationMailer < ApplicationMailer
     @remover = params[:remover]
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.submission_upload_removal_subject',
+         subject: t("mailer.submission_upload_removal_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end
@@ -96,7 +95,7 @@ class NotificationMailer < ApplicationMailer
   def submission_join_email
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.submission_join_subject',
+         subject: t("mailer.submission_join_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title,
                     user: @user.tutorial_name))
@@ -105,7 +104,7 @@ class NotificationMailer < ApplicationMailer
   def submission_leave_email
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.submission_leave_subject',
+         subject: t("mailer.submission_leave_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title,
                     user: @user.tutorial_name))
@@ -115,7 +114,7 @@ class NotificationMailer < ApplicationMailer
     @tutor = params[:tutor]
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.correction_upload_subject',
+         subject: t("mailer.correction_upload_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end
@@ -123,7 +122,7 @@ class NotificationMailer < ApplicationMailer
   def submission_acceptance_email
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.submission_acceptance_subject',
+         subject: t("mailer.submission_acceptance_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end
@@ -131,7 +130,7 @@ class NotificationMailer < ApplicationMailer
   def submission_rejection_email
     mail(from: @sender,
          to: @recipient.email,
-         subject: t('mailer.submission_rejection_subject',
+         subject: t("mailer.submission_rejection_subject",
                     assignment: @assignment.title,
                     lecture: @assignment.lecture.short_title))
   end
@@ -139,8 +138,8 @@ class NotificationMailer < ApplicationMailer
   def submission_deletion_email
     @deletion_date = params[:deletion_date]
     @lectures = params[:lectures]
-    subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
-    subject += t('mailer.submission_deletion_subject')
+    subject = params[:reminder] ? "#{t("basics.reminder")}: " : ""
+    subject += t("mailer.submission_deletion_subject")
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: subject)
@@ -149,8 +148,8 @@ class NotificationMailer < ApplicationMailer
   def submission_deletion_lecture_email
     @lecture = params[:lecture]
     @deletion_date = params[:deletion_date]
-    subject = params[:reminder] ? t('basics.reminder') + ': ' : ''
-    subject += t('mailer.submission_deletion_lecture_subject',
+    subject = params[:reminder] ? "#{t("basics.reminder")}: " : ""
+    subject += t("mailer.submission_deletion_lecture_subject",
                  lecture: @lecture.title)
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
@@ -161,8 +160,8 @@ class NotificationMailer < ApplicationMailer
     @deletion_date = params[:deletion_date]
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t('mailer.submission_destruction_subject',
-                    deletion_date: @deletion_date.strftime(I18n.t('date.formats.concise'))))
+         subject: t("mailer.submission_destruction_subject",
+                    deletion_date: @deletion_date.strftime(I18n.t("date.formats.concise"))))
   end
 
   def submission_destruction_lecture_email
@@ -170,14 +169,14 @@ class NotificationMailer < ApplicationMailer
     @deletion_date = params[:deletion_date]
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
-         subject: t('mailer.submission_destruction_lecture_subject',
+         subject: t("mailer.submission_destruction_lecture_subject",
                     lecture: @lecture.title))
   end
 
   private
 
     def set_sender_and_locale
-      @sender = "#{t('mailer.notification')} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
+      @sender = "#{t("mailer.notification")} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
       I18n.locale = params[:locale]
     end
 

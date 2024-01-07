@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :medium_publisher do
     transient do
@@ -7,14 +5,14 @@ FactoryBot.define do
       user_id { Faker::Number.between(from: 1, to: 20) }
       release_now { true }
       release_date do
-        DateTime.now + 10 * Faker::Number.between(from: 0.0, to: 1.0)
+        DateTime.now + (10 * Faker::Number.between(from: 0.0, to: 1.0))
       end
-      release_for { 'all' }
+      release_for { "all" }
       lock_comments { false }
       vertices { false }
       create_assignment { false }
-      assignment_title { '' }
-      assignment_file_type { '' }
+      assignment_title { "" }
+      assignment_file_type { "" }
       assignment_deadline { nil }
       assignment_deletion_date { nil }
     end

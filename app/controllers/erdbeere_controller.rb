@@ -1,38 +1,38 @@
 # ExamplesController
 class ErdbeereController < ApplicationController
   authorize_resource class: false
-  layout 'application'
+  layout "application"
 
   def current_ability
     @current_ability ||= ErdbeereAbility.new(current_user)
   end
 
   def show_example
-    response = Faraday.get(ENV['ERDBEERE_API'] + "/examples/#{params[:id]}")
+    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/examples/#{params[:id]}")
     @content = if response.status == 200
-      JSON.parse(response.body)['embedded_html']
+      JSON.parse(response.body)["embedded_html"]
     else
-      'Something went wrong.'
+      "Something went wrong."
     end
   end
 
   def show_property
-    response = Faraday.get(ENV['ERDBEERE_API'] + "/properties/#{params[:id]}")
+    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/properties/#{params[:id]}")
 
     @content = if response.status == 200
-      JSON.parse(response.body)['embedded_html']
+      JSON.parse(response.body)["embedded_html"]
     else
-      'Something went wrong.'
+      "Something went wrong."
     end
   end
 
   def show_structure
-    id = params[:id]
-    response = Faraday.get(ENV['ERDBEERE_API'] + "/structures/#{params[:id]}")
+    params[:id]
+    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/structures/#{params[:id]}")
     @content = if response.status == 200
-      JSON.parse(response.body)['embedded_html']
+      JSON.parse(response.body)["embedded_html"]
     else
-      'Something went wrong.'
+      "Something went wrong."
     end
   end
 
@@ -51,18 +51,18 @@ class ErdbeereController < ApplicationController
   def display_info
     @id = params[:id]
     @sort = params[:sort]
-    response = Faraday.get(ENV['ERDBEERE_API'] +
+    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) +
                            "/#{@sort.downcase.pluralize}/#{@id}/view_info")
     @content = JSON.parse(response.body)
     if response.status != 200
-      @info = 'Something went wrong'
+      @info = "Something went wrong"
       return
     end
-    @info = if @sort == 'Structure'
-      @content['data']['attributes']['name']
+    @info = if @sort == "Structure"
+      @content["data"]["attributes"]["name"]
     else
-      "#{@content['included'][0]['attributes']['name']}:"\
-      "#{@content['data']['attributes']['name']}"
+      "#{@content["included"][0]["attributes"]["name"]}:" \
+        "#{@content["data"]["attributes"]["name"]}"
     end
   end
 
@@ -79,7 +79,7 @@ class ErdbeereController < ApplicationController
     removed_tags.each do |t|
       t.update(realizations: t.realizations - [[sort, id]])
     end
-    if sort == 'Structure'
+    if sort == "Structure"
       redirect_to erdbeere_structure_path(id)
       return
     end
@@ -87,28 +87,26 @@ class ErdbeereController < ApplicationController
   end
 
   def fill_realizations_select
-    response = Faraday.get(ENV['ERDBEERE_API'] + '/structures/')
-    @tag = Tag.find_by_id(params[:id])
+    response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/structures/")
+    @tag = Tag.find_by(id: params[:id])
     hash = JSON.parse(response.body)
-    @structures = hash['data'].map do |d|
-      { id: d['id'],
-        name: d['attributes']['name'],
-        properties: d['relationships']['original_properties']['data'].map { |x|
-                      x['id']
-                    } }
+    @structures = hash["data"].map do |d|
+      { id: d["id"],
+        name: d["attributes"]["name"],
+        properties: d["relationships"]["original_properties"]["data"].pluck("id") }
     end
-    @properties = hash['included'].map do |d|
-      { id: d['id'],
-        name: d['attributes']['name'] }
+    @properties = hash["included"].map do |d|
+      { id: d["id"],
+        name: d["attributes"]["name"] }
     end
   end
 
   def find_example
-    response = Faraday.get(ENV['ERDBEERE_API'] + '/find?' + find_params.to_query)
+    response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/find?#{find_params.to_query}")
     @content = if response.status == 200
-      JSON.parse(response.body)['embedded_html']
+      JSON.parse(response.body)["embedded_html"]
     else
-      'Something went wrong.'
+      "Something went wrong."
     end
   end
 
