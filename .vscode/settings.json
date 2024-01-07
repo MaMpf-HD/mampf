@@ -1,0 +1,87 @@
+{
+    "editor.formatOnSave": false, // it still autosaves with the options below
+    //////////////////////////////////////
+    // JS (ESLint)
+    //////////////////////////////////////
+    // https://eslint.style/guide/faq#how-to-auto-format-on-save
+    // https://github.com/microsoft/vscode-eslint#settings-options
+    "[javascript]": {
+        "editor.formatOnSave": false, // to avoid formatting twice (ESLint + VSCode)
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+    },
+    "eslint.format.enable": true, // use ESLint as formatter
+    "eslint.experimental.useFlatConfig": true,
+    // this disables VSCode built-in formatter (instead we want to use ESLint)
+    "javascript.validate.enable": false,
+    //////////////////////////////////////
+    // HTML
+    //////////////////////////////////////
+    "[html]": {
+        "editor.formatOnSave": false // TODO: activate once HTML formatter installed
+    },
+    //////////////////////////////////////
+    // Ruby (Rubocop)
+    //////////////////////////////////////
+    "[ruby]": {
+        "editor.defaultFormatter": "Shopify.ruby-lsp",
+        "editor.formatOnSave": true
+    },
+    "rubyLsp.formatter": "rubocop",
+    "rubyLsp.rubyVersionManager": "rbenv",
+    "rubyLsp.enabledFeatures": {
+        "codeActions": true,
+        "diagnostics": true,
+        "documentHighlights": true,
+        "documentLink": true,
+        "documentSymbols": true,
+        "foldingRanges": true,
+        "formatting": true,
+        "hover": true,
+        "inlayHint": true,
+        "onTypeFormatting": true,
+        "selectionRanges": true,
+        "semanticHighlighting": true,
+        "completion": true,
+        "codeLens": true,
+        "definition": true
+    },
+    "rubyLsp.enableExperimentalFeatures": true,
+    //////////////////////////////////////
+    // Files
+    //////////////////////////////////////
+    "files.exclude": {
+        "node_modules/": true,
+        "pdfcomprezzor/": true,
+        "coverage/": true,
+        "solr/": true
+    },
+    "files.associations": {
+        "*.js.erb": "javascript",
+        "*.html.erb": "html"
+    },
+    //////////////////////////////////////
+    // Editor
+    //////////////////////////////////////
+    "editor.wordWrap": "wordWrapColumn",
+    "editor.wordWrapColumn": 100, // toggle via Alt + Z shortcut
+    "editor.mouseWheelZoom": true,
+    "editor.rulers": [
+        {
+            "column": 80, // soft limit
+            "color": "#e5e5e5"
+        },
+        {
+            "column": 100, // hard limit
+            "color": "#c9c9c9"
+        }
+    ],
+    //////////////////////////////////////
+    // Spell Checker
+    //////////////////////////////////////
+    "cSpell.words": [
+        "turbolinks"
+    ]
+}

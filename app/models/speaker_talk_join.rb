@@ -1,4 +1,4 @@
 class SpeakerTalkJoin < ApplicationRecord
   belongs_to :talk
-  belongs_to :speaker, class_name: 'User', foreign_key: 'speaker_id'
+  belongs_to :speaker, class_name: "User", inverse_of: :speaker_talk_joins
 end

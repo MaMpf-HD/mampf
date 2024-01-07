@@ -1,87 +1,75 @@
-on: [push]
+name: Linting
+
+# Trigger each time HEAD branch is updated in a pull request
+# see https://github.com/orgs/community/discussions/26366
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
 
 jobs:
+
   rubocop:
+    name: RuboCop (Ruby)
     runs-on: ubuntu-latest
-    name: A job to check rubocop linter errors
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
+
+      - name: Get changed files
+        id: rb-changed
+        uses: ./.github/actions/changed_files/
+        with:
+          file-extensions: \.rb$
+
       - name: Set up Ruby 3
+        if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 3.1.4
-      - name: Install gems # usual step to install the gems.
+          bundler-cache: true
+
+      - name: Run RuboCop
+        if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         run: |
-          bin/bundle config path vendor/bundle
-          bin/bundle config set without 'default doc job cable storage ujs test db'
-          bin/bundle install --jobs 4 --retry 3
-      - name: Linter count
-        id: hello
-        uses: henrixapp/linter-less-or-equal-action@v1.19
-        with:
-          name: Rubocop
-          command: bin/bundle exec rubocop app config lib spec
-          total_regexp: \d+ offenses detected
-          errors_regexp: \d+ offenses detected
-          warnings_regexp: \d+ offenses detected
-          compare_branch: mampf-next
-          mode: changed
-          include: .rb
+          echo "🚨 Running RuboCop version: $(bundle info rubocop | head -1)"
+          bundle exec rubocop --format github --fail-level 'convention' --force-exclusion -- $CHANGED_FILES
+
   eslint:
-    runs-on: ubuntu-latest
-    name: A job to check eslint linter errors
-    steps:
-      - uses: actions/checkout@v2
-      - name: Linter count
-        id: hello
-        uses: henrixapp/linter-less-or-equal-action@v1.19
-        with:
-          name: EsLint
-          command: npx eslint
-          total_regexp: \d+ problems
-          errors_regexp: \d+ errors
-          warnings_regexp: \d+ warnings
-          compare_branch: mampf-next
-          mode: changed
-          include: .js
-  coffee:
-    runs-on: ubuntu-latest
-    name: A job to check coffee linter errors
-    steps:
-      - uses: actions/checkout@v2
-      - name: Linter count
-        id: hello
-        uses: henrixapp/linter-less-or-equal-action@v1.19
-        with:
-          name: Coffee
-          command: npx coffeelint
-          total_regexp: \d+ errors
-          errors_regexp: \d+ errors
-          warnings_regexp: \d+ warnings
-          compare_branch: mampf-next
-          mode: changed
-          include: .coffee
-  # erblint:
-  #   runs-on: ubuntu-latest
-  #   name: A job to check erblint linter errors
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: Set up Ruby 2.7
-  #     uses: ruby/setup-ruby@v1
-  #     with:
-  #       ruby-version: 2.7
-  #   - name: Install gems # usual step to install the gems.
-  #     run: |
-  #       bin/bundle config path vendor/bundle
-  #       bin/bundle config set without 'default doc job cable storage ujs test db'
-  #       bin/bundle install --jobs 4 --retry 3
-  #   - name: Linter count
-  #     id: hello
-  #     uses: henrixapp/linter-less-or-equal-action@v1.1
-  #     with:
-  #       name: Erblint
-  #       command:  bin/bundle exec erblint  . 
-  #       total_regexp: \d+ error(s)
-  #       errors_regexp: \d+ error(s)
-  #       warnings_regexp: \d+ error(s)
-  #       compare_branch: mampf-next
+      name: ESLint (JS)
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+          with:
+            fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
+
+        - name: Get changed files
+          id: js-changed
+          uses: ./.github/actions/changed_files/
+          with:
+            # .(mjs is only used for eslint.config.mjs as of January 2024)
+            file-extensions: \.js$|\.mjs$|\.js.erb$
+
+        - name: Setup Node.js
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
+          uses: actions/setup-node@v4
+          with:
+            node-version: '20' # End of Life (EOL): April 2026
+            cache: 'yarn'
+
+        - name: Install dependencies
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
+          run: yarn install
+
+        # with ESLint v9 --ignore-path does not exist anymore
+        # see [1] for the PR. However, my feeling for this is totally reflected
+        # by [2]. Hopefully, it will come back in future versions.
+        # [1] https://github.com/eslint/eslint/pull/16355
+        # [2] https://github.com/eslint/eslint/issues/16264#issuecomment-1292858747
+        - name: Run ESLint
+          if: ${{ steps.js-changed.outputs.changed-files != ''}}
+          run: |
+            echo "🚨 Running ESLint version: $(yarn run --silent eslint --version)"
+            yarn run eslint --max-warnings 0 --no-warn-ignored ${{ steps.js-changed.outputs.changed-files }}

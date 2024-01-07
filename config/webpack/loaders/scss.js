@@ -1,6 +1,6 @@
 module.exports = {
-    test: /\.sass(\.erb)?$/,
-    use: [{
-      loader: 'sass-loader'
-    }]
-  }
+  test: /\.sass(\.erb)?$/,
+  use: [{
+    loader: "sass-loader",
+  }],
+};

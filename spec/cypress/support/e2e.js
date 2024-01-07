@@ -1,2 +1,2 @@
-import './commands'
-import './on-rails'
+import "./commands";
+import "./on-rails";

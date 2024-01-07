@@ -3,11 +3,30 @@
   <head>
     <%= render partial: 'layouts/head' %>
     <%= stylesheet_link_tag 'landing' %>
+
+    <!-- --- ein Stein -- Aperiodic Monotile --- -->
+    <!-- Official website: https://cs.uwaterloo.ca/~csk/hat/ -->
+    <!-- Paper preprint (May 2023): https://arxiv.org/abs/2303.10798 -->
+    <!-- -->
+    <!-- Download some assets, e.g. tiles as SVG:-->
+    <!-- https://github.com/christianp/aperiodic-monotile> -->
+    <!-- -->
+    <!-- Play around with it: https://cs.uwaterloo.ca/~csk/hat/app.html -->
+    <!-- App source code licensed under BSD-3-Clause by Craig S. Kaplan -->
+    <!-- adapted from: https://github.com/isohedral/hatviz -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
+    <%= javascript_include_tag 'monotile/geometry' %>
+    <%= javascript_include_tag 'monotile/hat' %>
   </head>
+
   <body data-locale="<%= I18n.locale %>"
       class="d-flex flex-column min-vh-100"
       id="landing-body">
     <div class="container-sm p-0 d-flex flex-column align-items-center justify-content-center h-100 flex-grow-1">
+
+      <div id="einstein-monotile">
+        <!-- To be filled by public/assets/monotile JS code -->
+      </div>
 
       <%# Github corner %>
       <%# from: https://github.com/tholman/github-corners %>
@@ -16,7 +35,7 @@
       <%# Announcements %>
         <% if Announcement.active_on_main.exists? %>
           <div id="announcement-box" class="landing-box">
-            <%= get_announcements().html_safe %>
+            <%= main_page_announcements().html_safe %>
           </div>
         <% end %>
 
@@ -29,7 +48,7 @@
               <% end %>
             <% end %>
         </div>
-        
+
         <div class="row">
           <div class="col-lg-7">
             <a href="<%= url_for(DefaultSetting::BLOG_LINK) %>" target="_blank"
@@ -39,7 +58,7 @@
                   <%= t('mampf') %>
               </h1>
             </a>
-            
+
             <h5>
               <%= t('main.welcome') %>
             </h5>
@@ -85,10 +104,10 @@
       </div>
 
     </div>
-    
+
     <footer class="container-fluid mt-4 p-0">
       <%= render partial: 'shared/footer' %>
     </footer>
   </body>
-  
+
 </html>
