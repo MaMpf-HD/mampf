@@ -227,7 +227,6 @@ module Commontator
       # their own comment.
       def activate_unread_comments_icon_if_necessary
         reader = Reader.find_by(user: current_user, thread: @commontator_thread)
-        return unless reader
 
         # We only overwrite to true, not to false as the check here
         # is not sufficient to determine whether a user has seen all comments
@@ -235,9 +234,10 @@ module Commontator
         @update_icon = true if unseen_comments_in_current_thread?(reader)
       end
 
-      def unseen_comments_in_current_thread?(reader)
+      def unseen_comments_in_current_thread?(reader = nil)
         @commontator_thread.comments.any? do |c|
-          c.creator != current_user && c.created_at > reader.updated_at
+          not_marked_as_read_in_reader = reader.nil? || c.created_at > reader.updated_at
+          c.creator != current_user && not_marked_as_read_in_reader
         end
       end
   end

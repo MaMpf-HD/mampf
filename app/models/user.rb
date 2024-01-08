@@ -552,22 +552,24 @@ class User < ApplicationRecord
   # Returns the media that the user has subscribed to and that have been
   # commented on by somebody else (not by the user (!)). For each medium,
   # the latest comment alongside the thread and the medium itself is returned.
-  def subscribed_media_latest_comments_not_by_user
+  # Additionally, the latest comment that might as well be by the user is
+  # returned.
+  def subscribed_media_with_latest_comments_not_by_user
     media_not_own_last_comment = []
 
-    subscribed_media_latest_comments.map do |m|
+    subscribed_media_with_latest_comments.map do |m|
       if m[:latest_comment].creator == self
         # latest commit is by the user -> find one before (if any)
-        # that is not by the user
+        # that is not by the user and overwrite the latest comment
         latest_comment = m[:thread].comments
                                    .reject { |c| c.creator == self }
                                    .max_by(&:created_at)
         next unless latest_comment
 
-        media_not_own_last_comment << m.attributes
-                                       .merge(latest_comment: latest_comment)
+        media_not_own_last_comment << m.merge(latest_comment: latest_comment,
+                                              latest_comment_no_matter_user: m[:latest_comment])
       else
-        media_not_own_last_comment << m
+        media_not_own_last_comment << m.merge(latest_comment_no_matter_user: m[:latest_comment])
       end
     end
 
@@ -577,7 +579,7 @@ class User < ApplicationRecord
   # Returns the media that the user has subscribed to and that have been
   # commented on by someone (by the user or by somebody else). For each medium,
   # the latest comment alongside the thread and the medium itself is returned.
-  def subscribed_media_latest_comments
+  def subscribed_media_with_latest_comments
     media = subscribed_commentable_media_with_comments.map do |m|
       thread = m.commontator_thread
       latest_comment = thread.comments.max_by(&:created_at)
