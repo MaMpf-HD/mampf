@@ -636,7 +636,7 @@ class MediaController < ApplicationController
         unless current_user.admin || @lecture.edited_by?(current_user)
           lecture_tags = @lecture.tags_including_media_tags
           search_results.reject! do |m|
-            m.teachable_type == "Course" && !m.tags.intersect?(lecture_tags)
+            m.teachable_type == "Course" && !m.tags.to_a.intersect?(lecture_tags)
           end
         end
       end
