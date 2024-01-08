@@ -550,12 +550,14 @@ class User < ApplicationRecord
   end
 
   # Returns the media that the user has subscribed to and that have been
-  # commented on by somebody else (not by the current user).
-  # Note that media that have not been commented on by somebody else
-  # than the current user, are not returned (!).
+  # commented on by somebody else (not by the current user). The order is
+  # given by the time of the latest comment by somebody else.
   #
-  # For each medium, the latest comment by any user except the current one,
-  # the latest comment by any user (including the current one),
+  # Media that have not been commented on by somebody else than the current user,
+  # are not returned (!).
+  #
+  # For each medium, the latest comment by any user except the current user,
+  # the latest comment by any user (that might include the current user),
   # the thread and the medium itself are returned.
   def subscribed_media_with_latest_comments_not_by_creator
     media = subscribed_commentable_media_with_comments.map do |m|

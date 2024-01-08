@@ -213,7 +213,8 @@ module Commontator
                       .update(unread_comments: true)
       end
 
-      # Sets the flag for the comment icon in the navbar.
+      # Sets the flag for the comment icon in the navbar after a new comment
+      # was created.
       #
       # The flag is set if there are comments in the thread that the user
       # has not seen yet.
@@ -221,16 +222,15 @@ module Commontator
       # This is only necessary for one specific edge case:
       # when the current user A has just created a new comment in a thread,
       # but in the meantime, another user B has created a comment in the same
-      # thread. User A will not see the comment icon in the navbar marked immediately
-      # (to be informed about the new comment by B), as we don't have websockets
-      # implemented. Instead, A will see the comment icon as soon as A has posted
-      # their own comment.
+      # thread. User A will not be informed immediately about the new comment
+      # by B since we don't have websockets implemented. Instead, A will be
+      # informed by an visual indicator as soon as A has posted their own comment.
       def activate_unread_comments_icon_if_necessary
         reader = Reader.find_by(user: current_user, thread: @commontator_thread)
 
-        # We only overwrite to true, not to false as the check here
-        # is not sufficient to determine whether a user has seen all comments
-        # also in other threads.
+        # We only overwrite to true, not to false as the check is not sufficient
+        # to determine whether a user has seen all comments (including those
+        # in possibly other threads).
         @update_icon = true if unseen_comments_in_current_thread?(reader)
       end
 
