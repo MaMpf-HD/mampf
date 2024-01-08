@@ -220,7 +220,7 @@ module Commontator
       #
       # The flag might only be activated, not deactivated since the checks
       # performed here are not sufficient to determine whether a user has
-      # seen all comments (including those in possibly other threads).
+      # any unread comments (including those in possibly other threads).
       #
       # This method was introduced for one specific edge case:
       # When the current user A has just created a new comment in a thread,
