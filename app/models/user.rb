@@ -556,9 +556,11 @@ class User < ApplicationRecord
   # Media that have not been commented on by somebody else than the current user,
   # are not returned (!).
   #
-  # For each medium, the latest comment by any user except the current user,
-  # the latest comment by any user (that might include the current user),
-  # the thread and the medium itself are returned.
+  # For each medium, the following information is stored:
+  # - the medium itself
+  # - the thread of the medium
+  # - the latest comment by somebody else than the current user
+  # - the latest comment by any user (which might include the current user)
   def subscribed_media_with_latest_comments_not_by_creator
     media = subscribed_commentable_media_with_comments.map do |m|
       thread = m.commontator_thread

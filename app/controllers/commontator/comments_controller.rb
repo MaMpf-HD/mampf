@@ -195,11 +195,11 @@ module Commontator
         end
       end
 
-      # Updates the unread_comments flag for users subscribed to the current thread
-      # in which a new comment was created.
+      # Updates the unread_comments flag for users subscribed to the current thread.
+      # This method should only be called when a new comment was created.
       #
-      # The originator of the comment does not get the flag set as that user
-      # already knows about the comment (that user has just created it).
+      # The originator of the comment does not get the flag set since that user
+      # already knows about the comment; that user has just created it after all.
       #
       # (This is a customization of the original controller provided
       # by the commontator gem.)
@@ -213,24 +213,26 @@ module Commontator
                       .update(unread_comments: true)
       end
 
-      # Sets the flag for the comment icon in the navbar after a new comment
-      # was created.
+      # Might activate the flag used in the view to indicate unread comments.
+      # This method should only be called when a new comment was created.
+      # The flag is activated if the current user has not seen all comments
+      # in the thread in which the new comment was created.
       #
-      # The flag is set if there are comments in the thread that the user
-      # has not seen yet.
+      # The flag might only be activated, not deactivated since the checks
+      # performed here are not sufficient to determine whether a user has
+      # seen all comments (including those in possibly other threads).
       #
-      # This is only necessary for one specific edge case:
-      # when the current user A has just created a new comment in a thread,
+      # This method was introduced for one specific edge case:
+      # When the current user A has just created a new comment in a thread,
       # but in the meantime, another user B has created a comment in the same
       # thread. User A will not be informed immediately about the new comment
       # by B since we don't have websockets implemented. Instead, A will be
-      # informed by an visual indicator as soon as A has posted their own comment.
+      # informed by a visual indicator as soon as A has posted their own comment.
+      #
+      # (This is a customization of the original controller provided
+      # by the commontator gem.)
       def activate_unread_comments_icon_if_necessary
         reader = Reader.find_by(user: current_user, thread: @commontator_thread)
-
-        # We only overwrite to true, not to false as the check is not sufficient
-        # to determine whether a user has seen all comments (including those
-        # in possibly other threads).
         @update_icon = true if unseen_comments_in_current_thread?(reader)
       end
 
