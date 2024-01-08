@@ -9,7 +9,7 @@ class ReadersController < ApplicationController
     @reader = Reader.find_or_create_by(user: current_user,
                                        thread: @thread)
     @reader.touch
-    @anything_left = current_user.media_latest_comments.any? do |m|
+    @anything_left = current_user.subscribed_media_latest_comments_not_by_user.any? do |m|
       (Reader.find_by(user: current_user, thread: m[:thread])
             &.updated_at || 1000.years.ago) < m[:latest_comment].created_at
     end
