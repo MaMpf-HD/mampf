@@ -209,8 +209,9 @@ module Commontator
         # make sure that the thread associated to this comment is marked as read
         # by the comment creator (unless some other user posted a comment in it
         # that has not yet been read)
-        @reader = Reader.find_or_create_by(user: current_user,
-                                           thread: @commontator_thread)
+        @reader = Reader.find_by(user: current_user, thread: @commontator_thread)
+        return unless @reader
+
         if unseen_comments?
           @update_icon = true
           return
