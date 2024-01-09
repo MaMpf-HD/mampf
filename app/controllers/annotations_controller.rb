@@ -1,6 +1,9 @@
 class AnnotationsController < ApplicationController
-
   authorize_resource
+
+  def show
+    @annotation = Annotation.find(params[:id])
+  end
 
   def new
     @annotation = Annotation.new(category: :note, color: Annotation.colors[1])
@@ -56,10 +59,6 @@ class AnnotationsController < ApplicationController
     @annotation.save
   end
 
-  def show
-    @annotation = Annotation.find(params[:id])
-  end
-
   def destroy
     annotation = Annotation.find(params[:annotation_id])
 
@@ -81,14 +80,15 @@ class AnnotationsController < ApplicationController
     medium = Medium.find_by(id: params[:mediumId])
 
     # Get the right annotations
-    if medium.annotations_visible?(current_user)
-      annotations = Annotation.where(medium: medium,
-                                     visible_for_teacher: true).or(
-                    Annotation.where(medium: medium,
-                                     user: current_user))
+    annotations = if medium.annotations_visible?(current_user)
+      Annotation.where(medium: medium,
+                       visible_for_teacher: true).or(
+                         Annotation.where(medium: medium,
+                                          user: current_user)
+                       )
     else
-      annotations = Annotation.where(medium: medium,
-                                     user: current_user)
+      Annotation.where(medium: medium,
+                       user: current_user)
     end
 
     # If annotation is associated to a comment,
@@ -102,10 +102,10 @@ class AnnotationsController < ApplicationController
 
     # Filter attributes and add boolean "belongs_to_current_user".
     annotations.each do |a|
-      public_comment_id = a['public_comment_id']
-      a['belongs_to_current_user'] = (current_user.id == a['user_id'])
-      a.slice!('belongs_to_current_user', 'category', 'color', 'comment',
-               'id', 'subcategory', 'timestamp')
+      public_comment_id = a["public_comment_id"]
+      a["belongs_to_current_user"] = (current_user.id == a["user_id"])
+      a.slice!("belongs_to_current_user", "category", "color", "comment",
+               "id", "subcategory", "timestamp")
     end
 
     render json: annotations
@@ -115,7 +115,7 @@ class AnnotationsController < ApplicationController
     # the time (!) radius in which annotation are considered as "nearby"
     radius = 60
     timestamp = params[:timestamp].to_i
-    annotations = Annotation.where(medium: params[:mediumId], category: 'mistake').commented
+    annotations = Annotation.where(medium: params[:mediumId], category: "mistake").commented
     counter = annotations.to_a.count { |annotation| annotation.nearby?(timestamp, radius) }
     render json: counter
   end
@@ -123,8 +123,6 @@ class AnnotationsController < ApplicationController
   def current_ability
     @current_ability ||= AnnotationAbility.new(current_user)
   end
-
-
 
   private
 
@@ -139,7 +137,7 @@ class AnnotationsController < ApplicationController
         :total_seconds, :post_as_comment
       )
     end
-    
+
     # TODO: Frontend should not pass color hex strings, instead pass the respective
     # color keys, e.g. 14, see annotation.rb color_map for lookup.
     def valid_color?(color)
@@ -159,6 +157,7 @@ class AnnotationsController < ApplicationController
     def subcategory_nil(annotation)
       return if annotation.category_for_database == Annotation.categories[:content] and
                 annotation.subcategory.nil?
+
       if annotation.category_for_database != Annotation.categories[:content]
         annotation.subcategory = nil
       end
@@ -210,5 +209,4 @@ class AnnotationsController < ApplicationController
 
       annotation.public_comment_id = comment.id
     end
-
 end

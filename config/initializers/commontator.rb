@@ -316,10 +316,8 @@ Commontator.configure do |config|
 end
 
 Rails.application.config.to_prepare do
-  begin
-    if ActiveRecord::Base.connection.table_exists?(:thredded_topics)
-      Commontator::Comment.include(Extensions::Commontator::Comment)
-    end
-  rescue ActiveRecord::NoDatabaseError
+  if ActiveRecord::Base.connection.table_exists?(:thredded_topics)
+    Commontator::Comment.include(Extensions::Commontator::Comment)
   end
+rescue ActiveRecord::NoDatabaseError # rubocop:todo Lint/SuppressedException
 end

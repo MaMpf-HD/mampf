@@ -1097,8 +1097,9 @@ class Medium < ApplicationRecord
   # of this medium or the annotations status of the associated lecture
   # if "inherit from lecture" was selected (i.e. if the annotations status of
   # this medium is 0).
-  def get_annotations_status
+  def get_annotations_status # rubocop:todo Naming/AccessorMethodName
     return annotations_status if annotations_status != 0
+
     lecture.annotations_status
   end
 
@@ -1106,14 +1107,12 @@ class Medium < ApplicationRecord
     lecture = lesson.lecture unless lesson.nil?
     is_teacher = edited_with_inheritance_by?(user)
     is_activated = (get_annotations_status == 1)
-    return is_teacher && is_activated
+    is_teacher && is_activated
   end
 
   def valid_annotations_status?
-    [-1, 0, 1].include?(self.annotations_status)
+    [-1, 0, 1].include?(annotations_status)
   end
-
-
 
   private
 
@@ -1283,5 +1282,4 @@ class Medium < ApplicationRecord
 
       becomes(Question).answers.count
     end
-
 end

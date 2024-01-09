@@ -97,7 +97,7 @@ class MediaController < ApplicationController
     render :update
   end
 
-  def create
+  def create # rubocop:todo Lint/DuplicateMethods
     @medium = Medium.new(medium_params)
 
     return unless @medium.valid_annotations_status?
@@ -571,8 +571,8 @@ class MediaController < ApplicationController
 
   def check_annotation_visibility
     medium = Medium.find_by(id: params[:id])
-    isPermitted = medium.annotations_visible?(current_user)
-    render json: isPermitted
+    isPermitted = medium.annotations_visible?(current_user) # rubocop:todo Naming/VariableName
+    render json: isPermitted # rubocop:todo Naming/VariableName
   end
 
   # Renders the feedback player. Do not confuse with the feedback button

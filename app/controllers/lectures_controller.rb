@@ -343,10 +343,10 @@ class LecturesController < ApplicationController
                         :annotations_status, :emergency_link,
                         :emergency_link_status]
       if action_name == "update" && current_user.can_update_personell?(@lecture)
-        allowed_params.concat([:teacher_id, editor_ids: []])
+        allowed_params.concat([:teacher_id, { editor_ids: [] }])
       end
       if action_name == "create"
-        allowed_params.concat([:course_id, :teacher_id, editor_ids: []])
+        allowed_params.concat([:course_id, :teacher_id, { editor_ids: [] }])
       end
       allowed_params.push(:course_id, :teacher_id, { editor_ids: [] }) if action_name == "create"
       params.require(:lecture).permit(allowed_params)

@@ -66,7 +66,7 @@ class Lecture < ApplicationRecord
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
   serialize :structure_ids, Array
-  
+
   # if the annotation button is enabled, one can add different types of links
   # that e.g. bring students to the helpdesk
   enum emergency_link_status: { no_link: 0, lecture_link: 1, direct_link: 2 }
@@ -845,10 +845,8 @@ class Lecture < ApplicationRecord
   end
 
   def valid_annotations_status?
-    [-1, 1].include?(self.annotations_status)
+    [-1, 1].include?(annotations_status)
   end
-
-
 
   private
 
@@ -953,5 +951,4 @@ class Lecture < ApplicationRecord
 
       errors.add(:course, :already_present)
     end
-
 end
