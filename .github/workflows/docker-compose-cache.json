@@ -2,10 +2,10 @@
   "target": {
     "redis": {
       "cache-from": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/redis:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/redis:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/redis:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/redis:cache"
       ],
       "output": [
         "type=docker"
@@ -13,10 +13,10 @@
     },
     "solr": {
       "cache-from": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/solr:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/solr:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/solr:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/solr:cache"
       ],
       "output": [
         "type=docker"
@@ -24,10 +24,10 @@
     },
     "db": {
       "cache-from": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/db:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/db:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/db:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/db:cache"
       ],
       "output": [
         "type=docker"
@@ -35,10 +35,10 @@
     },
     "mailcatcher": {
       "cache-from": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/mailcatcher:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/mailcatcher:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/mailcatcher:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/mailcatcher:cache"
       ],
       "output": [
         "type=docker"
@@ -46,10 +46,10 @@
     },
     "mampf": {
       "cache-from": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/mampf:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/mampf:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache"
       ],
       "output": [
         "type=docker"
@@ -57,10 +57,10 @@
     },
     "cypress_runner": {
       "cache-from": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/cypress_runner:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/cypress_runner:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/MaMpf-HD/cypress_runner:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/cypress_runner:cache"
       ],
       "output": [
         "type=docker"
