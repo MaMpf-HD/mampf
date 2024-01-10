@@ -33,6 +33,7 @@ services:
     image: dockage/mailcatcher:latest
     networks:
       - backend
+
   mampf:
     build:
       context: ./../..
@@ -77,24 +78,4 @@ services:
       - mailcatcher
     networks:
       - backend
-      - frontend
-
-  cypress_runner:
-    image: mampf-cypress
-    build:
-      context: ./../..
-      dockerfile: docker/test/Dockerfile_cypress
-    environment:
-      CYPRESS_baseUrl: http://mampf:3000
-    volumes:
-      - ../../spec/cypress/e2e:/cypress/e2e:ro
-      - ../../spec/cypress/fixtures:/cypress/fixtures:ro
-      - ../../spec/cypress.config.js:/cypress.config.js:ro
-      - ../../.git:/.git:ro
-      # cypress outputs are saved here (needed only locally)
-      #- ../../cypress/videos:/cypress/videos
-      #- ../../cypress/screenshots:/cypress/screenshots
-    depends_on:
-      - mampf
-    networks:
       - frontend
