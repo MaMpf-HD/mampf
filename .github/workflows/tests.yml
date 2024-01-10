@@ -1,4 +1,4 @@
-name: Tests
+name: Testing
 
 on:
   push:
@@ -10,10 +10,16 @@ on:
     types: [opened, reopened, synchronize, ready_for_review]
 
 jobs:
-  unit-test-job:
+  unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
+    permissions: write-all
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+            submodules: recursive
+
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -24,13 +30,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-            submodules: recursive
-
       - name: Build docker images
-        run: docker buildx bake --file docker/test/docker-compose.yml --file .github/workflows/docker-compose-cache.json
+        working-directory: docker/test
+        run: |
+          docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
 
       # For docker layer caching also see this article [1]
       # - name: Build docker images
