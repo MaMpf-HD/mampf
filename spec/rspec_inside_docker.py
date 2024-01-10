@@ -1,13 +1,3 @@
-# call this file: rspec_inside_docker.py
-# and put it in your ./spec/ folder
-
-# Specify the following (or alike) in your settings.json
-# "rubyTestExplorer.testFramework": "rspec",
-# "rubyTestExplorer.rspecCommand": "python3 ./spec/rspec_inside_docker.py",
-# "rubyTestExplorer.rspecDirectory": "./spec/",
-# "rubyTestExplorer.logpanel": true,
-# "rubyTestExplorer.filePattern": ["*_spec.rb"],
-
 import sys
 import subprocess
 
@@ -66,6 +56,6 @@ if __name__ == '__main__':
     rspec_args = ' '.join(sys.argv[1:])
     test_command = f'RAILS_ENV=test bundle exec rspec {rspec_args}'
 
-    docker_cmd = f'cd ./docker/run_cypress_tests && docker compose run --rm -T --entrypoint="" -v {formatter_path_on_host}:{FORMATTER_PATH_IN_DOCKER} {DOCKER_SERVICE_NAME} sh -c "{test_command}"'
+    docker_cmd = f'cd ./docker/test && docker compose run --rm -T --entrypoint="" -v {formatter_path_on_host}:{FORMATTER_PATH_IN_DOCKER} {DOCKER_SERVICE_NAME} sh -c "{test_command}"'
 
     subprocess.call(docker_cmd, shell=True)
