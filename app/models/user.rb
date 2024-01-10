@@ -562,21 +562,23 @@ class User < ApplicationRecord
   # - the latest comment by somebody else than the current user
   # - the latest comment by any user (which might include the current user)
   def subscribed_media_with_latest_comments_not_by_creator
-    media = subscribed_commentable_media_with_comments.map do |m|
+    media = []
+
+    subscribed_commentable_media_with_comments.each do |m|
       thread = m.commontator_thread
       comments = thread.comments
-      next unless comments
+      next if comments.blank?
 
       comments_not_by_creator = comments.reject { |c| c.creator == self }
-      next unless comments_not_by_creator
+      next if comments_not_by_creator.blank?
 
       latest_comment = comments_not_by_creator.max_by(&:created_at)
       latest_comment_by_any_user = comments.max_by(&:created_at)
 
-      { medium: m,
-        thread: thread,
-        latest_comment: latest_comment,
-        latest_comment_by_any_user: latest_comment_by_any_user }
+      media << { medium: m,
+                 thread: thread,
+                 latest_comment: latest_comment,
+                 latest_comment_by_any_user: latest_comment_by_any_user }
     end
 
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
