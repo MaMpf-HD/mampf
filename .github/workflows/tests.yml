@@ -35,18 +35,9 @@ jobs:
         run: |
           docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
 
-      # For docker layer caching also see this article [1]
-      # - name: Build docker images
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     push: false # only build
-      #     context: .
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
-
       - name: Create and migrate DB
-        run: docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
         working-directory: docker/test
+        run: docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
 
       - name: Reindex sunspot
         working-directory: docker/test
@@ -55,9 +46,9 @@ jobs:
 
       - name: Run unit tests
         working-directory: docker/test
-        run: docker compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test rails spec"
+        run: docker compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
-      - name: Send test coverage report to Codecov
+      - name: Report test coverage to codecov
         uses: codecov/codecov-action@v3
         with:
             files: ./coverage/coverage.xml

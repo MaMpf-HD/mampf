@@ -138,6 +138,8 @@ group :test, :development, :docker_development do
 
   gem "cypress-on-rails", "~> 1.0"
   gem "simplecov-cobertura"
+
+  gem "rspec-github"
 end
 
 gem "prometheus_exporter"
