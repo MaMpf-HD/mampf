@@ -10,6 +10,14 @@ on:
     types: [opened, reopened, synchronize, ready_for_review]
 
 jobs:
+  # For the setup idea using Docker Buildx, see StackOverflow answer [1].
+  # [2] and [3] might also be very useful. [4] is generally about Docker
+  # cache management within GitHub Actions.
+  #
+  # [1] https://stackoverflow.com/a/75544124/
+  # [2] https://depot.dev/blog/docker-layer-caching-in-github-actions#docker-layer-caching-in-github-actions
+  # [3] https://www.deploysentinel.com/blog/docker-buildx-cache-with-github-actions
+  # [4] https://docs.docker.com/build/ci/github-actions/cache/
   unit-tests:
     name: Unit tests
     runs-on: ubuntu-latest
@@ -37,16 +45,18 @@ jobs:
 
       - name: Create and migrate DB
         working-directory: docker/test
-        run: docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
+        run: |
+          docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
 
       - name: Reindex sunspot
         working-directory: docker/test
         run: |
-            docker compose run --entrypoint=""  mampf  sh -c "RAILS_ENV=test rake sunspot:reindex"
+          docker compose run --entrypoint=""  mampf sh -c "RAILS_ENV=test rake sunspot:reindex"
 
       - name: Run unit tests
         working-directory: docker/test
-        run: docker compose run --entrypoint="" mampf  sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
+        run: |
+          docker compose run --entrypoint="" mampf sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v3
@@ -54,10 +64,3 @@ jobs:
             files: ./coverage/coverage.xml
             fail_ci_if_error: true
             verbose: true
-
-# [1] https://depot.dev/blog/docker-layer-caching-in-github-actions#docker-layer-caching-in-github-actions
-# https://stackoverflow.com/questions/61491484/how-to-cache-docker-compose-build-inside-github-action
-# https://docs.docker.com/build/ci/github-actions/cache/
-# https://github.com/docker/build-push-action/issues/493#issuecomment-961559685
-# https://github.com/orgs/community/discussions/25728
-# https://www.deploysentinel.com/blog/docker-buildx-cache-with-github-actions
