@@ -49,7 +49,6 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
       user.update(unread_comments: has_user_unread_comments)
     end
 
-    # Return whether flag has changed or not
     had_user_unread_comments != has_user_unread_comments
   end
 end
