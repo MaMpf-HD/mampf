@@ -2,8 +2,9 @@
 # introduced in pull request #515. Migration introduced in #587.
 # Behavior fixed in #585.
 #
-# This migration is idempotent, so it can be run multiple times without
-# causing any issues.
+# This migration is generally *not* idempotent since users might have interacted
+# with the website since the migration was run and thus they will probably have
+# different unread comments flags as the ones at the time of the migration.
 #
 # This migration is not reversible as we don't store the previous state of
 # the unread_comments flag.
