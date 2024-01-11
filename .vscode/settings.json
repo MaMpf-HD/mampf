@@ -79,6 +79,12 @@
         }
     ],
     //////////////////////////////////////
+    // Git
+    //////////////////////////////////////
+    "git.inputValidation": "warn",
+    "git.inputValidationSubjectLength": 50,
+    "git.inputValidationLength": 72,
+    //////////////////////////////////////
     // Spell Checker
     //////////////////////////////////////
     "cSpell.words": [
