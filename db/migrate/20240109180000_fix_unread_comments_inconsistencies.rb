@@ -10,16 +10,15 @@
 # the unread_comments flag.
 class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
   def change
-    num_total_users = 0
+    users = User.all
     num_fixed_users = 0
 
-    User.find_each do |user|
+    users.find_each do |user|
       was_user_fixed = fix_unread_comments_flag(user)
       num_fixed_users += 1 if was_user_fixed
-      num_total_users += 1
     end
 
-    Rails.logger.debug { "Ran through #{num_total_users} users (unread comments flag)" }
+    Rails.logger.debug { "Ran through #{users.length} users (unread comments flag)" }
     Rails.logger.debug { "Fixed #{num_fixed_users} users (unread comments flag)" }
   end
 
