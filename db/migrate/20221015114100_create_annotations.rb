@@ -8,7 +8,7 @@ class CreateAnnotations < ActiveRecord::Migration[7.0]
       t.string :color, null: false
       t.integer :category, null: false
       t.integer :subcategory
-      t.boolean :visible_for_teacher, null: false # rubocop:todo Rails/ThreeStateBooleanColumn
+      t.boolean :visible_for_teacher, default: false, null: false
       t.integer :public_comment_id
 
       t.timestamps

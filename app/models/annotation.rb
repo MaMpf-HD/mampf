@@ -12,7 +12,11 @@ class Annotation < ApplicationRecord
   enum category: { note: 0, content: 1, mistake: 2, presentation: 3 }
   enum subcategory: { definition: 0, argument: 1, strategy: 2 }
 
-  def get_comment # rubocop:todo Naming/AccessorMethodName
+  # If the annotation has an associated commontator comment, its comment will
+  # be saved in the commontator comment. While calling annotation.comment returns
+  # nil in this case, this method pulls out the actual comment from the commontator
+  # comment.
+  def comment_optional
     return comment if public_comment_id.nil?
 
     commontator_comment = Commontator::Comment.find_by(id: public_comment_id).body

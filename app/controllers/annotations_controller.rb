@@ -30,9 +30,9 @@ class AnnotationsController < ApplicationController
     @posted = !@annotation.public_comment_id.nil?
 
     # if this annotation has an associated commontator comment,
-    # we have to call the "get_comment" method in order to get
+    # we have to call the "comment_optional" method in order to get
     # the text.
-    @annotation.comment = @annotation.get_comment
+    @annotation.comment = @annotation.comment_optional
 
     @is_new_annotation = false
   end
@@ -94,7 +94,7 @@ class AnnotationsController < ApplicationController
     # If annotation is associated to a comment,
     # the field "comment" is empty -> get it from the commontator comment
     annotations.each do |a|
-      a.comment = a.get_comment
+      a.comment = a.comment_optional
     end
 
     # Convert to JSON (for easier hash operations)

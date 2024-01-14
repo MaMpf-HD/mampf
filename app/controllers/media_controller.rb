@@ -59,46 +59,6 @@ class MediaController < ApplicationController
 
   def create
     @medium = Medium.new(medium_params)
-    @medium.locale = @medium.teachable&.locale
-    @medium.editors = [current_user]
-    @medium.tags = @medium.teachable.tags if @medium.teachable.instance_of?(::Lesson)
-    authorize! :create, @medium
-    @medium.save
-    if @medium.valid?
-      if @medium.sort == "Remark"
-        @medium.update(type: "Remark",
-                       text: I18n.t("admin.remark.initial_text"))
-      end
-      if @medium.sort == "Question"
-        solution = Solution.new(MampfExpression.trivial_instance)
-        @medium.update(type: "Question",
-                       text: I18n.t("admin.question.initial_text"),
-                       level: 1,
-                       independent: false,
-                       solution: solution,
-                       question_sort: "mc")
-        Answer.create(question: @medium.becomes(Question),
-                      text: "0",
-                      value: true)
-      end
-      if @medium.sort == "Quiz"
-        @medium.update(type: "Quiz")
-        @medium.update(quiz_graph: QuizGraph.new(vertices: {},
-                                                 edges: {},
-                                                 root: 0,
-                                                 default_table: {},
-                                                 hide_solution: []),
-                       level: 1)
-      end
-      redirect_to edit_medium_path(@medium)
-      return
-    end
-    @errors = @medium.errors
-    render :update
-  end
-
-  def create # rubocop:todo Lint/DuplicateMethods
-    @medium = Medium.new(medium_params)
 
     return unless @medium.valid_annotations_status?
 
