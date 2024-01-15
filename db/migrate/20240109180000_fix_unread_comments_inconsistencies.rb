@@ -9,7 +9,7 @@
 # This migration is not reversible as we don't store the previous state of
 # the unread_comments flag.
 class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
-  def change
+  def up
     users = User.all
     num_fixed_users = 0
 
@@ -50,5 +50,9 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
     end
 
     had_user_unread_comments != has_user_unread_comments
+  end
+
+  def down
+    raise ActiveRecord::IrreversibleMigration
   end
 end
