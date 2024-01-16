@@ -14,9 +14,9 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
 
     User.find_each do |user|
       had_user_unread_comments = user.unread_comments # boolean
-      has_user_unread_comments = fix_unread_comments_flag(user)
+      has_user_unread_comments = user_unread_comments?(user)
 
-      has_flag_changed = had_user_unread_comments != has_user_unread_comments
+      has_flag_changed = (had_user_unread_comments != has_user_unread_comments)
       user.update(unread_comments: has_user_unread_comments) if has_flag_changed
       num_fixed_users += 1 if has_flag_changed
     end
@@ -25,9 +25,8 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
     Rails.logger.debug { "Fixed #{num_fixed_users} users (unread comments flag)" }
   end
 
-  # Fixes the unread_comments flag for a given user.
-  # Returns whether the user has unread comments (after a possible change).
-  def fix_unread_comments_flag(user)
+  # Checks and returns whether the user has unread comments.
+  def user_unread_comments?(user)
     # Check for unread comments -- directly via Reader
     readers = Reader.where(user: user)
     readers.each do |reader|
