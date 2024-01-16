@@ -32,7 +32,7 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
     readers = Reader.where(user: user)
     readers.each do |reader|
       thread = Commontator::Thread.find_by(id: reader.thread_id)
-      next if thread.blank? # thread_id should never be nil, just to be sure
+      next if thread.nil?
 
       latest_thread_comment_by_any_user = thread.comments.max_by(&:created_at)
       next if latest_thread_comment_by_any_user.blank?
