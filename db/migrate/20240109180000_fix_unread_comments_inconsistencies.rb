@@ -29,7 +29,7 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
   # Returns whether the user has unread comments (after a possible change).
   def fix_unread_comments_flag(user)
     # Check for unread comments -- directly via Reader
-    readers = Reader.where(user_id: user.id)
+    readers = Reader.where(user: user)
     readers.each do |reader|
       thread = Commontator::Thread.find_by(id: reader.thread_id)
       next if thread.blank? # thread_id should never be nil, just to be sure
