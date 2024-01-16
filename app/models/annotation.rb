@@ -19,7 +19,7 @@ class Annotation < ApplicationRecord
   def comment_optional
     return comment if public_comment_id.nil?
 
-    commontator_comment = Commontator::Comment.find_by(id: public_comment_id).body
+    Commontator::Comment.find_by(id: public_comment_id).body
   end
 
   def nearby?(other_timestamp, radius)
@@ -28,7 +28,7 @@ class Annotation < ApplicationRecord
 
   def self.colors
     # Colors must have 6 digits and be capitalized (!)
-    color_map = {
+    {
       1 => "#DB2828",
       2 => "#F2711C",
       3 => "#FBBD08",

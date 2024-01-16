@@ -102,7 +102,6 @@ class AnnotationsController < ApplicationController
 
     # Filter attributes and add boolean "belongs_to_current_user".
     annotations.each do |a|
-      public_comment_id = a["public_comment_id"]
       a["belongs_to_current_user"] = (current_user.id == a["user_id"])
       a.slice!("belongs_to_current_user", "category", "color", "comment",
                "id", "subcategory", "timestamp")
@@ -141,7 +140,7 @@ class AnnotationsController < ApplicationController
     # TODO: Frontend should not pass color hex strings, instead pass the respective
     # color keys, e.g. 14, see annotation.rb color_map for lookup.
     def valid_color?(color)
-      Annotation.colors.values.include?(color)
+      Annotation.colors.value?(color)
       # if you want to allow any color (not just the given selection
       # in Annotation.colors), use the following regex check:
       # color&.match?(/\A#([0-9]|[A-F]){6}\z/)
@@ -155,7 +154,7 @@ class AnnotationsController < ApplicationController
     # checks that the subcategory is non-nil if the category is "content" and
     # resets the subcategory to "nil" if the selected category isn't "content"
     def subcategory_nil(annotation)
-      return if annotation.category_for_database == Annotation.categories[:content] and
+      return if (annotation.category_for_database == Annotation.categories[:content]) &&
                 annotation.subcategory.nil?
 
       if annotation.category_for_database != Annotation.categories[:content]

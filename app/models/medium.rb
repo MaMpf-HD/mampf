@@ -1104,7 +1104,6 @@ class Medium < ApplicationRecord
   end
 
   def annotations_visible?(user)
-    lecture = lesson.lecture unless lesson.nil?
     is_teacher = edited_with_inheritance_by?(user)
     is_activated = (get_annotations_status == 1)
     is_teacher && is_activated
