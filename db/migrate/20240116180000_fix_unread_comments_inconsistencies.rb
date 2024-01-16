@@ -47,7 +47,7 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
     # -> Check for unread comments -- via Media
     # TODO: rename media_latest_comments to subscribed_media_with_latest_comments_not_by_creator
     # see change in PR #585
-    unseen_media = user.media_latest_comments.select! do |m|
+    unseen_media = user.media_latest_comments.select do |m|
       m[:medium].visible_for_user?(user)
     end
     unseen_media.present?
