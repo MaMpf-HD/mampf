@@ -10,27 +10,26 @@
 # the unread_comments flag.
 class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
   def up
-    users = User.all
     num_fixed_users = 0
 
-    users.find_each do |user|
-      was_user_fixed = fix_unread_comments_flag(user)
-      num_fixed_users += 1 if was_user_fixed
+    User.find_each do |user|
+      had_user_unread_comments = user.unread_comments # boolean
+      has_user_unread_comments = fix_unread_comments_flag(user)
+
+      has_flag_changed = had_user_unread_comments != has_user_unread_comments
+      user.update(unread_comments: has_user_unread_comments) if has_flag_changed
+      num_fixed_users += 1 if has_flag_changed
     end
 
-    Rails.logger.debug { "Ran through #{users.length} users (unread comments flag)" }
+    Rails.logger.debug { "Ran through #{User.count} users (unread comments flag)" }
     Rails.logger.debug { "Fixed #{num_fixed_users} users (unread comments flag)" }
   end
 
   # Fixes the unread_comments flag for a given user.
-  # Returns true if the flag needed a change (and was changed), false otherwise.
+  # Returns whether the user has unread comments (after a possible change).
   def fix_unread_comments_flag(user)
+    # Check for unread comments -- directly via Reader
     readers = Reader.where(user_id: user.id)
-    return false if readers.blank?
-
-    had_user_unread_comments = user.unread_comments
-    has_user_unread_comments = false
-
     readers.each do |reader|
       thread = Commontator::Thread.find_by(id: reader.thread_id)
       next if thread.blank? # thread_id should never be nil, just to be sure
@@ -41,15 +40,17 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
       latest_thread_comment_time = latest_thread_comment_by_any_user.created_at
       has_user_unread_comments = reader.updated_at < latest_thread_comment_time
 
-      if has_user_unread_comments
-        # user has unread comments, so no need to check other threads
-        break
-      end
-
-      user.update(unread_comments: has_user_unread_comments)
+      return true if has_user_unread_comments
     end
 
-    had_user_unread_comments != has_user_unread_comments
+    # User might still have unread comments but no related Reader objects
+    # -> Check for unread comments -- via Media
+    # TODO: rename media_latest_comments to subscribed_media_with_latest_comments_not_by_creator
+    # see change in PR #585
+    unseen_media = user.media_latest_comments.select! do |m|
+      m[:medium].visible_for_user?(user)
+    end
+    unseen_media.present?
   end
 
   def down
