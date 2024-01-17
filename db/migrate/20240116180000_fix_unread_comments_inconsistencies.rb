@@ -21,8 +21,8 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
       num_fixed_users += 1 if has_flag_changed
     end
 
-    Rails.logger.debug { "Ran through #{User.count} users (unread comments flag)" }
-    Rails.logger.debug { "Fixed #{num_fixed_users} users (unread comments flag)" }
+    Rails.logger.warn { "Ran through #{User.count} users (unread comments flag)" }
+    Rails.logger.warn { "Fixed #{num_fixed_users} users (unread comments flag)" }
   end
 
   # Checks and returns whether the user has unread comments.
