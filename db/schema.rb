@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_23_180500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -23,7 +23,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
     t.string "color", null: false
     t.integer "category", null: false
     t.integer "subcategory"
-    t.boolean "visible_for_teacher", null: false
+    t.boolean "visible_for_teacher", default: false, null: false
     t.integer "public_comment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -205,16 +205,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
     t.index ["editable_id", "editable_type"], name: "polymorphic_editable_idx"
   end
 
-  create_table "feedbacks", force: :cascade do |t|
-    t.text "title"
-    t.text "feedback"
-    t.boolean "can_contact", default: false
-    t.bigint "user_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_feedbacks_on_user_id"
-  end
-
   create_table "friendly_id_slugs", force: :cascade do |t|
     t.string "slug", null: false
     t.integer "sluggable_id", null: false
@@ -299,7 +289,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: -1, null: false
-    t.integer "emergency_link_status", default: 0
+    t.integer "emergency_link_status", default: 0, null: false
     t.text "emergency_link"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
@@ -943,7 +933,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
-  add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
