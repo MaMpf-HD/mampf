@@ -64,11 +64,9 @@
             
             <!--- ANNOTATION BUTTON -->
             <% if user_signed_in? %>
-              <div id="annotation-button">
-                <i id="annotation-button" class="material-icons clickable">
-                  bookmark_add
-                </i>
-              </div>
+              <a id="annotation-button" class="btn" title="<%= t('admin.annotation.edit_annotation') %>">
+                <i class="fas fa-sticky-note" aria-hidden="true"></i>
+              </a>
             <% end %>
 
             <!--- TOGGLE FOR TURNING ON/OFF VISIBLE ANNOTATIONS -->
