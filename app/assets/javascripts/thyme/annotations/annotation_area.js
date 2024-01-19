@@ -31,13 +31,14 @@ class AnnotationArea {
     this.hasFancyStyle = hasFancyStyle;
 
     this.caption = $("#annotation-caption");
-    this.inforBar = $("#annotation-infobar");
+    this.infoBar = $("#annotation-infobar");
     this.commentField = $("#annotation-comment");
     this.previousButton = $("#annotation-previous-button");
     this.gotoButton = $("#annotation-goto-button");
     this.editButton = $("#annotation-edit-button");
     this.closeButton = $("#annotation-close-button");
     this.nextButton = $("#annotation-next-button");
+    this.areaButtonsRegion = $("#annotation-area-buttons");
 
     this.localesId = "annotation-locales";
 
@@ -94,11 +95,17 @@ class AnnotationArea {
     const comment = annotation.comment.replaceAll("\n", "<br>");
     const headColor = thymeUtility.lightenUp(color, 2);
     const backgroundColor = thymeUtility.lightenUp(color, 3);
-    this.inforBar.empty().append(head);
-    this.inforBar.css("background-color", headColor);
-    this.inforBar.css("text-align", "center");
+    this.infoBar.empty().append(head);
+    this.infoBar.css("background-color", headColor);
     this.commentField.empty().append(comment);
-    this.caption.css("background-color", backgroundColor);
+
+    // Comment field background gradient
+    const colorGradientEnd = thymeUtility.lightenUp(color, 2.5);
+    const gradient = `linear-gradient(to bottom, ${backgroundColor} 50%, ${colorGradientEnd} 100%)`;
+    this.caption.css("background-image", gradient);
+
+    // Area buttons
+    this.areaButtonsRegion.css("background-color", headColor);
   }
 
   #updatePreviousButton(annotation) {
