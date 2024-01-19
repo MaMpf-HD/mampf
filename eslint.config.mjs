@@ -8,24 +8,10 @@
 // see the rules in [3] and [4].
 // [3] https://eslint.style/packages/js#rules
 // [4] https://eslint.org/docs/rules/
-const stylistic = require("@stylistic/eslint-plugin");
-
-const customizedStylistic = stylistic.configs.customize({
-  "indent": 2,
-  "jsx": false,
-  "quote-props": "always",
-  "semi": "always",
-  "brace-style": "1tbs",
-});
-
-const cypressRules = {
-  "cypress/no-assigning-return-values": "error",
-  "cypress/no-unnecessary-waiting": "off", // TODO: fix this issue
-  "cypress/assertion-before-screenshot": "warn",
-  "cypress/no-force": "warn",
-  "cypress/no-async-tests": "error",
-  "cypress/no-pause": "error",
-};
+import js from "@eslint/js";
+import stylistic from "@stylistic/eslint-plugin";
+import erb from "eslint-plugin-erb";
+import globals from "globals";
 
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/javascripts/application.js",
@@ -102,40 +88,52 @@ const customGlobals = {
   renderMathInElement: "readable",
 };
 
-module.exports = {
-  root: true,
-  parserOptions: {
-    ecmaVersion: 2022,
-    sourceType: "module",
+// We don't have cypress linting yet, as the Cypress ESLint plugin
+// doesn't support the new flat config yet
+// https://github.com/cypress-io/eslint-plugin-cypress/issues/146
+
+export default [
+  js.configs.recommended,
+  // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
+  erb.configs.recommended,
+  // Globally ignore the following files
+  {
+    ignores: [
+      "node_modules/",
+      "pdfcomprezzor/",
+      "tmp/",
+      "public/packs/",
+      "public/packs-test/",
+      "public/uploads/",
+      "public/pdfcomprezzor/",
+      "spec/cypress/",
+      ...ignoreFilesWithSprocketRequireSyntax,
+    ],
   },
-  env: {
-    "node": true,
-    "browser": true,
-    "jquery": true,
-    "cypress/globals": true,
-    "es6": true,
+  {
+    plugins: {
+      "@stylistic": stylistic,
+    },
+    rules: {
+      ...stylistic.configs.customize({
+        "indent": 2,
+        "jsx": false,
+        "quote-props": "always",
+        "semi": "always",
+        "brace-style": "1tbs",
+      }).rules,
+      "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+    },
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: "module",
+      globals: {
+        ...customGlobals,
+        ...globals.browser,
+        ...globals.jquery,
+        ...globals.node,
+      },
+    },
   },
-  extends: [
-    "eslint:recommended",
-    // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
-    "plugin:erb/recommended",
-  ],
-  globals: customGlobals,
-  plugins: ["@stylistic", "erb", "cypress"],
-  rules: {
-    ...customizedStylistic.rules,
-    "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
-    ...cypressRules,
-    // see https://github.com/eslint-stylistic/eslint-stylistic/issues/254
-    "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
-  },
-  ignorePatterns: [
-    "node_modules/",
-    "pdfcomprezzor/",
-    "tmp/",
-    "public/packs/",
-    "public/packs-test/",
-    "public/uploads/",
-    ...ignoreFilesWithSprocketRequireSyntax,
-  ],
-};
+];
