@@ -1,36 +1,40 @@
 <figcaption id="annotation-caption">
-  <div id="annotation-infobar">
-    <!--- ANNOTATION CATEGORY -->
-  </div>
-  <div id="annotation-comment">
-    <!--- ANNOTATION COMMENT -->
-  </div>
-  <!--- ANNOTATION AREA BUTTONS -->
-  <div id="annotation-area-buttons">
-    <i id="annotation-previous-button"
-       class="fa fa-arrow-left fa-lg clickable"
-       data-toggle="tooltip"
-       title="<%= t('admin.annotation.previous_annotation') %> (A)">
-    </i>
-    <i id="annotation-next-button"
-       class="fa fa-arrow-right fa-lg clickable"
-       data-toggle="tooltip"
-       title="<%= t('admin.annotation.next_annotation') %> (S)">
-    </i>
-    <i id="annotation-goto-button"
-       class="fa fa-map-marker fa-lg clickable"
-       data-toggle="tooltip"
-       title="<%= t('admin.annotation.annotation_position') %>">
-    </i>
-    <i id="annotation-edit-button"
-       class="fa fa-edit fa-lg clickable"
-       data-toggle="tooltip"
-       title="<%= t('admin.annotation.edit_annotation') %>">
-    </i>
-    <i id="annotation-close-button"
-       class="fa fa-window-close fa-lg clickable"
-       data-toggle="tooltip"
-       title="<%= t('admin.annotation.close_annotation_area') %>">
-    </i>
-  </div>
+   <div id="annotation-infobar">
+      <!--- ANNOTATION CATEGORY -->
+   </div>
+   <div id="annotation-comment">
+      <!--- ANNOTATION COMMENT -->
+   </div>
+   <!--- ANNOTATION AREA BUTTONS -->
+   <div id="annotation-area-buttons">
+      <a class="btn">
+         <i id="annotation-previous-button" class="fa fa-arrow-left" aria-hidden="true" data-toggle="tooltip"
+            title="<%= t('admin.annotation.previous_annotation') %> (A)">
+         </i>
+      </a>
+
+      <a class="btn">
+         <i id="annotation-next-button" class="fa fa-arrow-right" aria-hidden="true" data-toggle="tooltip"
+            title="<%= t('admin.annotation.next_annotation') %> (S)">
+         </i>
+      </a>
+
+      <a class="btn">
+         <i id="annotation-goto-button" class="fa fa-map-pin" aria-hidden="true" data-toggle="tooltip"
+            title="<%= t('admin.annotation.annotation_position') %>">
+         </i>
+      </a>
+
+      <a class="btn">
+         <i id="annotation-edit-button" class="fa fa-pen" aria-hidden="true" data-toggle="tooltip"
+            title="<%= t('admin.annotation.edit_annotation') %>">
+         </i>
+      </a>
+
+      <a class="btn">
+         <i id="annotation-close-button" class="fa fa-window-close" aria-hidden="true" data-toggle="tooltip"
+            title="<%= t('admin.annotation.close_annotation_area') %>">
+         </i>
+      </a>
+   </div>
 </figcaption>
