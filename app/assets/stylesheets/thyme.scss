@@ -27,10 +27,8 @@
 }
 
 #video {
-  width: 82%;
+  display: block;
   background: black;
-  height: auto;
-  display: inline-block;
 }
 
 #hypervideo-container figcaption {
@@ -49,10 +47,6 @@
   list-style-type: none;
   margin: 0;
   padding: 0;
-}
-
-#video-container {
-	position: relative;
 }
 
 #video-controlBar {
