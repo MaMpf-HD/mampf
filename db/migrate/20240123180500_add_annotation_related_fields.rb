@@ -1,0 +1,13 @@
+class AddAnnotationRelatedFields < ActiveRecord::Migration[7.0]
+  def change
+    # Annotations status
+    add_column :media, :annotations_status, :integer, default: 0, null: false
+    add_column :lectures, :annotations_status, :integer, default: -1, null: false
+
+    # Emergency Link
+    change_table :users, bulk: true do |t|
+      t.integer :emergency_link_status, default: 0, null: false
+      t.text :emergency_link
+    end
+  end
+end
