@@ -64,7 +64,7 @@ class MediaController < ApplicationController
 
     @medium.locale = @medium.teachable&.locale
     @medium.editors = [current_user]
-    @medium.tags = @medium.teachable.tags if @medium.teachable.class.to_s == "Lesson"
+    @medium.tags = @medium.teachable.tags if @medium.teachable.instance_of?(::Lesson)
     authorize! :create, @medium
     @medium.save
     if @medium.valid?
