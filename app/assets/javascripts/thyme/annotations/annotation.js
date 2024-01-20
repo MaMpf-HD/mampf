@@ -49,26 +49,17 @@ class Annotation {
     An auxiliary method, only used for a better structure of createMarker() and createBigMarker()!
    */
   #create(color, polygonPoints, strokeWidth, strokeColor, onClick) {
-    // HTML for the marker
     const markerStr = `<span id="marker-${this.id}">
-                        <svg width="15" height="20">
-                        <polygon points="${polygonPoints}"
-                          style="fill:${color};
-                          stroke:${strokeColor};
-                          stroke-width:${strokeWidth};
-                          fill-rule:evenodd;"/>
-                        </svg>
+                        <i class="fas fa-map-pin" style="color: ${color};"></i>
                       </span>`;
     $("#" + thymeAttributes.markerBarId).append(markerStr);
 
-    // positioning of the marker
     const marker = $("#marker-" + this.id);
     const size = thymeAttributes.seekBar.element.clientWidth - 15;
     const ratio = this.seconds / thymeAttributes.video.duration;
     const offset = marker.parent().offset().left + ratio * size + 3;
     marker.offset({ left: offset });
 
-    // click listener for the marker
     marker.on("click", function () {
       onClick();
     });
