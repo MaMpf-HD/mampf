@@ -71,7 +71,10 @@ class AnnotationArea {
     if (!annotation) {
       return;
     }
+    const oldId = this.annotation ? this.annotation.id : null;
+
     this.annotation = annotation;
+
     // update info and comment field
     this.#updateInfoAndCommentField(annotation, this.colorFunc(annotation));
     // update buttons
@@ -82,6 +85,8 @@ class AnnotationArea {
       this.#updateEditButton(annotation);
       this.#updateCloseButton(annotation);
     }
+    annotation.updateOpenAnnotationMarker(oldId, annotation.id);
+
     // render LaTex
     const commentId = this.commentField.attr("id");
     thymeUtility.renderLatex(document.getElementById(commentId));
@@ -169,11 +174,19 @@ class AnnotationArea {
     });
   }
 
+  unmarkCurrentAnnotationAsShown() {
+    if (!this.annotation) {
+      return;
+    }
+    this.annotation.markCurrentAnnotationAsNotShown();
+  }
+
   #updateCloseButton(annotation) {
     const close = this.close;
     const area = this; // need a reference inside the listener scope!
     this.closeButton.off("click");
     this.closeButton.on("click", function () {
+      area.unmarkCurrentAnnotationAsShown();
       area.annotation = undefined;
       area.hide();
       if (area.onClose != null) {

@@ -89,4 +89,19 @@ class Annotation {
   isLast() {
     return this == thymeAttributes.annotations[thymeAttributes.annotations.length - 1];
   }
+
+  updateOpenAnnotationMarker(oldId, newId) {
+    if (oldId) {
+      const oldMarker = $("#marker-" + oldId).children("i");
+      oldMarker.removeClass("annotation-marker-shown");
+    }
+
+    const newMarker = $("#marker-" + newId).children("i");
+    newMarker.addClass("annotation-marker-shown");
+  }
+
+  markCurrentAnnotationAsNotShown() {
+    const marker = $("#marker-" + this.id).children("i");
+    marker.removeClass("annotation-marker-shown");
+  }
 }

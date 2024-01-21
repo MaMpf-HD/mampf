@@ -46,6 +46,7 @@ class IaButton extends Component {
    */
   plus() {
     this.#aux("false", "remove_from_queue", false, "100%");
+    thymeAttributes.annotationArea.unmarkCurrentAnnotationAsShown();
   }
 
   /*
