@@ -2,7 +2,14 @@
 #annotation-button {
   position: absolute;
   left: 89%;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
+
+  color: rgb(57, 68, 96);
+  transition: filter 100ms ease-in-out;
+
+  &:hover {
+    filter: drop-shadow(1px 3px 2px rgba(128, 142, 179, 0.5));
+  }
 }
 
 #annotations-toggle {
