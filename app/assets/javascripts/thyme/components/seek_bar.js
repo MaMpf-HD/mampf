@@ -18,7 +18,6 @@ class SeekBar extends Component {
     // if videomedtadata have been loaded, set up seek bar
     video.addEventListener("loadedmetadata", function () {
       if (video.dataset.time) {
-        const time = video.dataset.time;
         element.value = video.currentTime / video.duration * 100;
       }
       else {
@@ -60,16 +59,9 @@ class SeekBar extends Component {
     (only use this if the given thyme player provides chapters!).
   */
   addChapterTooltips() {
-    const video = thymeAttributes.video;
     const element = this.element;
 
     element.addEventListener("mousemove", function (evt) {
-      const positionInfo = element.getBoundingClientRect();
-      const width = positionInfo.width;
-      const left = positionInfo.left;
-      const measuredSeconds = ((evt.pageX - left) / width) * video.duration;
-      let seconds = Math.min(measuredSeconds, video.duration);
-      seconds = Math.max(seconds, 0);
       const previous = thymeAttributes.chapterManager.previousChapterStart();
       const info = $("#c-" + $.escapeSelector(previous)).text().split(":")[0];
       element.setAttribute("title", info);

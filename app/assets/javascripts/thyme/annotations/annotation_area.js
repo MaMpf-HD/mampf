@@ -83,7 +83,7 @@ class AnnotationArea {
     this.#updateGotoButton(annotation);
     if (this.hasFancyStyle) {
       this.#updateEditButton(annotation);
-      this.#updateCloseButton(annotation);
+      this.#updateCloseButton();
     }
     annotation.updateOpenAnnotationMarker(oldId, annotation.id);
 
@@ -114,11 +114,10 @@ class AnnotationArea {
   }
 
   #updatePreviousButton(annotation) {
-    const annotations = thymeAttributes.annotations;
     const area = this; // need a reference inside the listener scope!
     this.previousButton.off("click");
     this.previousButton.on("click", function () {
-      area.update(area.previousValidAnnotation(annotation));
+      area.update(area.previousValidAnnotation());
     });
     if (annotation.isFirst()) {
       this.previousButton.css("opacity", AnnotationArea.DISABLED_BUTTON_OPACITY);
@@ -129,11 +128,10 @@ class AnnotationArea {
   }
 
   #updateNextButton(annotation) {
-    const annotations = thymeAttributes.annotations;
     const area = this; // need a reference inside the listener scope!
     this.nextButton.off("click");
     this.nextButton.on("click", function () {
-      area.update(area.nextValidAnnotation(annotation));
+      area.update(area.nextValidAnnotation());
     });
     if (annotation.isLast()) {
       this.nextButton.css("opacity", AnnotationArea.DISABLED_BUTTON_OPACITY);
@@ -181,8 +179,7 @@ class AnnotationArea {
     this.annotation.markCurrentAnnotationAsNotShown();
   }
 
-  #updateCloseButton(annotation) {
-    const close = this.close;
+  #updateCloseButton() {
     const area = this; // need a reference inside the listener scope!
     this.closeButton.off("click");
     this.closeButton.on("click", function () {
@@ -201,7 +198,7 @@ class AnnotationArea {
     Returns null if no valid annotation before the input annotation
     exists.
    */
-  previousValidAnnotation(annotation) {
+  previousValidAnnotation() {
     const currentId = this.annotation.id;
     const currentIndex = AnnotationManager.findIndex(currentId);
     const annotations = thymeAttributes.annotations;
@@ -219,7 +216,7 @@ class AnnotationArea {
     Returns null if no valid annotation after the input annotation
     exists.
    */
-  nextValidAnnotation(annotation) {
+  nextValidAnnotation() {
     const currentId = this.annotation.id;
     const currentIndex = AnnotationManager.findIndex(currentId);
     const annotations = thymeAttributes.annotations;

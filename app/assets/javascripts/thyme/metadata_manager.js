@@ -199,7 +199,6 @@ class MetadataManager {
       // them into view
       $(metaTrack).on("cuechange", function () {
         let j = 0;
-        const time = video.currentTime;
         $("#" + metadataListId + " li").removeClass("current");
         while (j < this.activeCues.length) {
           const activeStart = this.activeCues[j].startTime;

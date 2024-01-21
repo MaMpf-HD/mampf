@@ -72,7 +72,6 @@ class ChapterManager {
     const iaBackButton = this.iaBackButton;
     const chapterList = $("#" + chapterListId);
     const chaptersElement = $("#" + videoId + ' track[kind="chapters"]').get(0);
-    const currentChapter = $("#" + chapterListId + " .current");
 
     let chaptersTrack;
     if (chaptersElement.readyState === 2 && (chaptersTrack = chaptersElement.track)) {
@@ -110,8 +109,8 @@ class ChapterManager {
         $("#" + chapterListId + " li a").removeClass("current");
         if (this.activeCues.length > 0) {
           const activeStart = this.activeCues[0].startTime;
-          let chapter;
-          if (chapter = document.getElementById("c-" + activeStart)) {
+          const chapter = document.getElementById("c-" + activeStart);
+          if (chapter) {
             $(chapter).addClass("current");
             chapter.scrollIntoView();
           }
