@@ -15,12 +15,6 @@ class AnnotationButton extends Component {
           medium_id: thymeAttributes.mediumId,
         },
       });
-      // When the modal opens, all key listeners must be
-      // deactivated until the modal gets closed again
-      thymeAttributes.lockKeyListeners = true;
-      $("#annotation-modal").on("hidden.bs.modal", function () {
-        thymeAttributes.lockKeyListeners = false;
-      });
     });
   }
 }
