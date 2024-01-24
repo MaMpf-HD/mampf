@@ -61,7 +61,7 @@ class SeekBar extends Component {
   addChapterTooltips() {
     const element = this.element;
 
-    element.addEventListener("mousemove", function (evt) {
+    element.addEventListener("mousemove", function (_evt) {
       const previous = thymeAttributes.chapterManager.previousChapterStart();
       const info = $("#c-" + $.escapeSelector(previous)).text().split(":")[0];
       element.setAttribute("title", info);

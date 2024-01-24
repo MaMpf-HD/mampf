@@ -9,7 +9,6 @@ $(document).on("turbolinks:load", function () {
   }
   // initialize attributes
   const video = document.getElementById("video-edit");
-  const mediumId = thymeEdit.dataset.medium;
   thymeAttributes.video = video;
   thymeAttributes.mediumId = thymeEdit.dataset.medium;
 

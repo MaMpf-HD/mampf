@@ -65,11 +65,11 @@ $(document).on("turbolinks:load", function () {
   const annotationArea = new AnnotationArea(true, colorFunc, onClose, isValid);
   thymeAttributes.annotationArea = annotationArea;
 
-  function strokeColorFunc(annotation) {
+  function strokeColorFunc(_annotation) {
     return "black";
   }
 
-  function sizeFunc(annotation) {
+  function sizeFunc(_annotation) {
     return false;
   }
 
