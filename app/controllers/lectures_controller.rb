@@ -346,7 +346,6 @@ class LecturesController < ApplicationController
         allowed_params.push(:teacher_id, { editor_ids: [] })
       end
       allowed_params.push(:course_id, :teacher_id, { editor_ids: [] }) if action_name == "create"
-      allowed_params.push(:course_id, :teacher_id, { editor_ids: [] }) if action_name == "create"
       params.require(:lecture).permit(allowed_params)
     end
 
