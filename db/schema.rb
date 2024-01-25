@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_25_180000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -192,7 +192,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
   create_table "feedbacks", force: :cascade do |t|
     t.text "title"
     t.text "feedback"
-    t.boolean "can_contact", default: false
+    t.boolean "can_contact", default: false, null: false
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -921,7 +921,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_16_180000) do
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
-  add_foreign_key "feedbacks", "users", on_delete: :cascade
+  add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
   add_foreign_key "items", "media"
   add_foreign_key "items", "sections"
