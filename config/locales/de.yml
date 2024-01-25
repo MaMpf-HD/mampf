@@ -83,7 +83,7 @@ de:
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
-      Hintergrundbild von %{background_photo_credit}.
+      Aperiodic monotiles lizenziert unter BSD-3-Clause von %{background_photo_credit}.
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'

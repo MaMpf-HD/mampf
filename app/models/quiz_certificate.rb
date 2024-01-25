@@ -1,5 +1,5 @@
 class QuizCertificate < ApplicationRecord
-  belongs_to :quiz, class_name: "Medium", inverse_of: :quiz_certificate
+  belongs_to :quiz, class_name: "Medium", inverse_of: :quiz_certificates
   belongs_to :user, optional: true
 
   before_create :set_code

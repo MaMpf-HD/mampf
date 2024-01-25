@@ -71,6 +71,7 @@ module Commontator
             Commontator::Subscription.comment_created(@comment)
             # The next line constitutes a customization of the original controller
             update_unread_status
+            activate_unread_comments_icon_if_necessary
 
             @commontator_page = @commontator_thread.new_comment_page(
               @comment.parent_id, @commontator_show_all
@@ -194,9 +195,14 @@ module Commontator
         end
       end
 
-      # This method ensures that the unread_comments flag is updated
-      # for users affected by the creation of a newly created comment
-      # It constitues a customization
+      # Updates the unread_comments flag for users subscribed to the current thread.
+      # This method should only be called when a new comment was created.
+      #
+      # The originator of the comment does not get the flag set since that user
+      # already knows about the comment; that user has just created it after all.
+      #
+      # (This is a customization of the original controller provided
+      # by the commontator gem.)
       def update_unread_status
         medium = @commontator_thread.commontable
         return unless medium.released.in?(["all", "users", "subscribers"])
@@ -205,22 +211,35 @@ module Commontator
         relevant_users.where.not(id: current_user.id)
                       .where(unread_comments: false)
                       .update(unread_comments: true)
-
-        # make sure that the thread associated to this comment is marked as read
-        # by the comment creator (unless some other user posted a comment in it
-        # that has not yet been read)
-        @reader = Reader.find_or_create_by(user: current_user,
-                                           thread: @commontator_thread)
-        if unseen_comments?
-          @update_icon = true
-          return
-        end
-        @reader.touch
       end
 
-      def unseen_comments?
+      # Might activate the flag used in the view to indicate unread comments.
+      # This method should only be called when a new comment was created.
+      # The flag is activated if the current user has not seen all comments
+      # in the thread in which the new comment was created.
+      #
+      # The flag might only be activated, not deactivated since the checks
+      # performed here are not sufficient to determine whether a user has
+      # any unread comments (including those in possibly other threads).
+      #
+      # This method was introduced for one specific edge case:
+      # When the current user A has just created a new comment in a thread,
+      # but in the meantime, another user B has created a comment in the same
+      # thread. User A will not be informed immediately about the new comment
+      # by B since we don't have websockets implemented. Instead, A will be
+      # informed by a visual indicator as soon as A has posted their own comment.
+      #
+      # (This is a customization of the original controller provided
+      # by the commontator gem.)
+      def activate_unread_comments_icon_if_necessary
+        reader = Reader.find_by(user: current_user, thread: @commontator_thread)
+        @update_icon = true if unseen_comments_in_current_thread?(reader)
+      end
+
+      def unseen_comments_in_current_thread?(reader = nil)
         @commontator_thread.comments.any? do |c|
-          c.creator != current_user && c.created_at > @reader.updated_at
+          not_marked_as_read_in_reader = reader.nil? || c.created_at > reader.updated_at
+          c.creator != current_user && not_marked_as_read_in_reader
         end
       end
   end

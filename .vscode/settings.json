@@ -1,4 +1,5 @@
 {
+    "editor.formatOnSave": false, // it still autosaves with the options below
     //////////////////////////////////////
     // JS (ESLint)
     //////////////////////////////////////
@@ -12,6 +13,7 @@
         "source.fixAll.eslint": "explicit"
     },
     "eslint.format.enable": true, // use ESLint as formatter
+    "eslint.experimental.useFlatConfig": true,
     // this disables VSCode built-in formatter (instead we want to use ESLint)
     "javascript.validate.enable": false,
     //////////////////////////////////////
@@ -76,6 +78,12 @@
             "color": "#c9c9c9"
         }
     ],
+    //////////////////////////////////////
+    // Git
+    //////////////////////////////////////
+    "git.inputValidation": "warn",
+    "git.inputValidationSubjectLength": 50,
+    "git.inputValidationLength": 72,
     //////////////////////////////////////
     // Spell Checker
     //////////////////////////////////////
