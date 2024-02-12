@@ -92,6 +92,13 @@ class AnnotationArea {
     thymeUtility.renderLatex(document.getElementById(commentId));
   }
 
+  showAnnotationWithId(id) {
+    const annotation = AnnotationManager.find(id);
+    if (annotation) {
+      thymeAttributes.annotationManager.forceTriggerOnClick(annotation);
+    }
+  }
+
   /*
     AUXILIARY METHODS
    */

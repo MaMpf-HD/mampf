@@ -36,6 +36,10 @@ class AnnotationManager {
     this.isDbCalledForFreshAnnotations = false;
   }
 
+  forceTriggerOnClick(annotation) {
+    this.onClick(annotation);
+  }
+
   /*
     Updates the markers on the timeline, i.e. the visual represention of the annotations.
     This method is e.g. used for rearranging the markers when the window is being resized.
@@ -80,8 +84,10 @@ class AnnotationManager {
 
     onSucess = A function that is triggered when the annotations have been
                successfully updated.
+    onSuccess = A function that is triggered when the annotations have been
+                successfully updated.
    */
-  updateAnnotations() {
+  updateAnnotations(onSuccess) {
     if (!thymeAttributes.annotationFeatureActive) {
       return;
     }
@@ -106,6 +112,10 @@ class AnnotationManager {
         }
         // update visual representation on the seek bar
         manager.updateMarkers();
+
+        if (onSuccess) {
+          onSuccess();
+        }
       },
       always: () => {
         // Free resource
