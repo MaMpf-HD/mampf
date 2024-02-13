@@ -76,6 +76,9 @@ const thymeKeyShortcuts = {
         $("#annotation-previous-button").trigger("click");
       }
       else if (key === "s") {
+        $("#annotation-goto-button").trigger("click");
+      }
+      else if (key === "d") {
         $("#annotation-next-button").trigger("click");
       }
     });
