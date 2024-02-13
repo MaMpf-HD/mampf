@@ -1,14 +1,22 @@
 /* buttons */
 #annotation-button {
   position: absolute;
-  left: 89%;
-  font-size: 1.2rem;
+  left: 51%;
+  font-size: 1.3rem;
+  padding: 2px 8px;
 
-  color: rgb(57, 68, 96);
-  transition: filter 100ms ease-in-out;
+  i {
+    &::before {
+      color: transparent;
+      background-clip: text;
+      background-image: radial-gradient(at bottom right, rgb(30, 82, 141) 0%, rgb(237, 152, 189) 100%);
+    }
+  }
+
+  transition: filter 60ms ease-in-out;
 
   &:hover {
-    filter: drop-shadow(1px 3px 2px rgba(128, 142, 179, 0.5));
+    filter: drop-shadow(2px 3px 2px rgba(97, 114, 138, 0.3));
   }
 }
 
