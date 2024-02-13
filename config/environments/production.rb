@@ -69,11 +69,11 @@ Rails.application.configure do
   config.action_mailer.default(charset: "utf-8")
 
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("MAILSERVER"),
-    domain: ENV.fetch("MAILSERVER"),
+    address: ENV.fetch("MAILSERVER", nil),
+    domain: ENV.fetch("MAILSERVER", nil),
     port: 25,
-    user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
-    password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
+    user_name: ENV.fetch("MAMPF_EMAIL_USERNAME", nil),
+    password: ENV.fetch("MAMPF_EMAIL_PASSWORD", nil)
   }
 
   # Ignore bad email addresses and do not raise email delivery errors.
