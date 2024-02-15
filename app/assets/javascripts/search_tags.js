@@ -1,5 +1,5 @@
 $(document).on("turbolinks:load", function () {
-  $("#search-all-media-tags").change(evt => toggleSearchAllTags(evt));
+  $("#search_all_tags").change(evt => toggleSearchAllTags(evt));
 });
 
 /**
@@ -12,8 +12,8 @@ $(document).on("turbolinks:load", function () {
 function toggleSearchAllTags(evt) {
   const searchAllTags = evt.target.checked;
   if (searchAllTags) {
-    $("#search-media-or-tag-operator").prop("checked", true);
+    $("#search_tag_operator_or").prop("checked", true);
   }
-  $("#search-media-or-tag-operator").prop("disabled", searchAllTags);
-  $("#search-media-and-tag-operator").prop("disabled", searchAllTags);
+  $("#search_tag_operator_or").prop("disabled", searchAllTags);
+  $("#search_tag_operator_and").prop("disabled", searchAllTags);
 }
