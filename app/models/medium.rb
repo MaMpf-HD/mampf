@@ -336,15 +336,12 @@ class Medium < ApplicationRecord
         with(:release_state, search_params[:access])
       end
     end
-    if !search_params[:all_tags] == "1" &&
-       !search_params[:tag_operator] == "or" && (search_params[:tag_ids])
-      if search_params[:tag_operator] == "or" || search_params[:all_tags] == "1"
-        search.build do
-          with(:tag_ids).any_of(search_params[:tag_ids])
-        end
-      else
-        search.build do
+    if search_params[:all_tags] == "0" && search_params[:tag_ids].any?
+      search.build do
+        if search_params[:tag_operator] == "and"
           with(:tag_ids).all_of(search_params[:tag_ids])
+        else
+          with(:tag_ids).any_of(search_params[:tag_ids])
         end
       end
     end
