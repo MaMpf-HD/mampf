@@ -301,9 +301,6 @@ class Medium < ApplicationRecord
     search_params[:all_terms] = "1" if search_params[:all_terms].blank?
     search_params[:all_teachers] = "1" if search_params[:all_teachers].blank?
     search_params[:term_ids].push("0") if search_params[:term_ids].present?
-    if search_params[:all_tags] == "1" && search_params[:tag_operator] == "and"
-      search_params[:tag_ids] = Tag.pluck(:id)
-    end
     user = User.find_by(id: search_params[:user_id])
     search = Sunspot.new_search(Medium)
     search.build do
