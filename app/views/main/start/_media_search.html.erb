@@ -53,6 +53,7 @@
         <%= f.check_box :all_tags,
                         class: 'form-check-input',
                         checked: true,
+                        id: 'search-all-media-tags',
                         data: { id: 'search_tag_ids' } %>
         <%= f.label :all_tags,
                     t('basics.all'),
@@ -62,6 +63,7 @@
         <%= f.radio_button :tag_operator,
                           'or',
                           checked: true,
+                          id: 'search-media-or-tag-operator',
                           class: 'form-check-input' %>
         <%= f.label :tag_operator,
                     t('basics.OR'),
@@ -71,6 +73,7 @@
       <div class="form-check form-check-inline">
         <%= f.radio_button :tag_operator,
                           'and',
+                          id: 'search-media-and-tag-operator',
                           class: 'form-check-input' %>
         <%= f.label :tag_operator,
                     t('basics.AND'),
