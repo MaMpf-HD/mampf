@@ -14,7 +14,7 @@ class RegistrationsController < Devise::RegistrationsController
                application_token: ENV.fetch("CAPTCHA_APPLICATION_TOKEN") }
       header = { "Content-Type": "text/json" }
       http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true if ENV["CAPTCHA_VERIFY_URL"].include?("https")
+      http.use_ssl = true if ENV.fetch("CAPTCHA_VERIFY_URL").include?("https")
       request = Net::HTTP::Post.new(uri.request_uri, header)
       request.body = data.to_json
 
