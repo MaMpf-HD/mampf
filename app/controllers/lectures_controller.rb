@@ -22,7 +22,7 @@ class LecturesController < ApplicationController
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at,
                               @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID")),
                               Thredded::UserDetail.find_by(user_id: current_user.id)
                                                   &.last_seen_at || @lecture.updated_at,
                               @lecture.forum&.updated_at || @lecture.updated_at].max)
@@ -58,7 +58,7 @@ class LecturesController < ApplicationController
   def edit
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID"))].max)
       eager_load_stuff
     end
   end
@@ -217,7 +217,7 @@ class LecturesController < ApplicationController
 
   def search_examples
     if @lecture.structure_ids.any?
-      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/search")
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/search")
       @form = JSON.parse(response.body)["embedded_html"]
       # rubocop:disable Style/StringConcatenation
       @form.gsub!("token_placeholder",
@@ -402,7 +402,7 @@ class LecturesController < ApplicationController
 
     def set_erdbeere_data
       @structure_ids = @lecture.structure_ids
-      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/structures")
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/structures")
       response_hash = if response.status == 200
         JSON.parse(response.body)
       else

@@ -9,9 +9,9 @@ class RegistrationsController < Devise::RegistrationsController
     return true unless ENV["USE_CAPTCHA_SERVICE"]
 
     begin
-      uri = URI.parse(ENV.fetch("CAPTCHA_VERIFY_URL", nil))
+      uri = URI.parse(ENV.fetch("CAPTCHA_VERIFY_URL"))
       data = { message: params["frc-captcha-solution"],
-               application_token: ENV.fetch("CAPTCHA_APPLICATION_TOKEN", nil) }
+               application_token: ENV.fetch("CAPTCHA_APPLICATION_TOKEN") }
       header = { "Content-Type": "text/json" }
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true if ENV["CAPTCHA_VERIFY_URL"].include?("https")

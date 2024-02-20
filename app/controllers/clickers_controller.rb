@@ -21,7 +21,7 @@ class ClickersController < ApplicationController
     end
     if stale?(etag: @clicker,
               last_modified: [@clicker.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID"))].max)
       render :show
       nil
     end
