@@ -52,6 +52,7 @@ class FullScreenButton extends Component {
 
   #fullscreenChange() {
     if (document.fullscreenElement) {
+      // User enters fullscreen mode
       this.element.innerHTML = "fullscreen_exit";
       this.element.dataset.status = "true";
       /* Set height to 100vh in fullscreen mode as it otherwise
@@ -59,14 +60,10 @@ class FullScreenButton extends Component {
       $(thymeAttributes.video).css("height", "100vh");
     }
     else {
+      // User exists fullscreen mode
       this.element.innerHTML = "fullscreen";
       this.element.dataset.status = "false";
       $(thymeAttributes.video).css("height", "100%");
-      /* brute force patch: apparently, after exiting fullscreen mode,
-         window.onresize is triggered twice(!), the second time with incorrect
-         window height data, which results in a video area not quite filling
-         the whole window. The next line resizes the container again. */
-      setTimeout(Resizer.resizeContainer($(this.container), 1, 0), 20);
     }
   }
 }
