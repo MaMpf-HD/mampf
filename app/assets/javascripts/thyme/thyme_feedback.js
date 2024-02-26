@@ -98,10 +98,12 @@ $(document).on("turbolinks:load", function () {
 
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
-    Resizer.resizeContainer(thymeContainer, 1, 0);
+    Resizer.resizeContainer(thymeContainer, 1 / 0.82, 0);
     annotationManager.updateMarkers();
   }
 
   window.onresize = resizeContainer;
   video.onloadedmetadata = resizeContainer;
+
+  $("#video").width("82%");
 });
