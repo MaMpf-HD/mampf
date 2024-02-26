@@ -5,10 +5,15 @@ class AnnotationCategoryToggle extends Component {
     category = The category which this toggle triggers.
      heatmap = The heatmap that will be updated depending on the value of the toggle.
    */
-  constructor(element, category, heatmap) {
-    super(element);
+  constructor(category, heatmap) {
+    const id = AnnotationCategoryToggle.categoryToElementId(category);
+    super(id);
     this.category = category;
     this.heatmap = heatmap;
+  }
+
+  static categoryToElementId(category) {
+    return `annotation-category-${category.name}-switch`;
   }
 
   add() {
@@ -37,5 +42,10 @@ class AnnotationCategoryToggle extends Component {
 
   isChecked() {
     return this.element.checked;
+  }
+
+  static isChecked(category) {
+    const id = AnnotationCategoryToggle.categoryToElementId(category);
+    return document.getElementById(id).checked;
   }
 }

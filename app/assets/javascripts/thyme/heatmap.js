@@ -24,19 +24,26 @@ class Heatmap {
     /*
        variable definitions
     */
-    const width = thymeAttributes.seekBar.element.clientWidth
-      + 2 * Heatmap.RADIUS - 35; // width of the video timeline
-    // the peaks of the graph will not extend maxHeight
+    // We assume a slightly bigger width to be able to display sine waves
+    // also at the beginning and the end of the timeline.
+    const stickOutWidthOneSided = Heatmap.RADIUS;
+    const seekBarWidth = thymeAttributes.seekBar.element.clientWidth;
+    const width = seekBarWidth + 2 * stickOutWidthOneSided;
+    const stretch = seekBarWidth / (seekBarWidth + 4 * stickOutWidthOneSided);
+
     const maxHeight = video.clientHeight * Heatmap.MAX_HEIGHT;
+    this.heatmap.css("top", -maxHeight - 5); // vertical offset
+
+    const numDivisons = width + 4 * Heatmap.RADIUS + 1;
     /* An array for each pixel on the timeline. The indices of this array should be thought
        of the x-axis of the heatmap's graph, while its entries should be thought of its
        values on the y-axis. */
-    let pixels = new Array(width + 2 * Heatmap.RADIUS + 1).fill(0);
+    let pixels = new Array(numDivisons).fill(0);
     /* amplitude should be calculated with respect to all annotations
        (even those which are not shown). Otherwise the peaks increase
        when turning off certain annotations because the graph has to be
        normed. Therefore we need this additional "pixelsAll" array. */
-    let pixelsAll = new Array(width + 2 * Heatmap.RADIUS + 1).fill(0);
+    let pixelsAll = new Array(numDivisons).fill(0);
     /* for any visible annotation, this array contains its color (needed for the calculation
        of the heatmap color) */
     let colors = [];
@@ -45,12 +52,14 @@ class Heatmap {
        data calculation
     */
     for (const a of thymeAttributes.annotations) {
-      const valid = this.#isValidCategory(a.category);
+      const valid = this.#isValidCategory(a.category)
+        && AnnotationCategoryToggle.isChecked(a.category);
+
       if (valid) {
         colors.push(a.category.color);
       }
       const time = a.seconds;
-      const position = Math.round(width * (time / video.duration));
+      const position = Math.round(stretch * width * (time / video.duration));
       for (let x = position - Heatmap.RADIUS; x <= position + Heatmap.RADIUS; x++) {
         let y = Heatmap.#sinX(x, position, Heatmap.RADIUS);
         pixelsAll[x + Heatmap.RADIUS] += y;
@@ -63,14 +72,16 @@ class Heatmap {
     const amplitude = maxHeight * (1 / maxValue);
 
     /*
-       draw heatmap
+       Construct heatmap SVG
     */
     let pointsStr = "0," + maxHeight + " ";
     for (let x = 0; x < pixels.length; x++) {
       pointsStr += x + "," + (maxHeight - amplitude * pixels[x]) + " ";
     }
     pointsStr += "" + width + "," + maxHeight;
-    const heatmapStr = `<svg width="${(width + 35)}" height="${maxHeight}">
+
+    const heatmapStr = `<svg width="${(width - 2 * stickOutWidthOneSided)}"
+                             height="${maxHeight}">
                          <polyline points="${pointsStr}"
                            style="fill:${thymeUtility.mixColors(colors)};
                            fill-opacity:0.4;
@@ -78,9 +89,6 @@ class Heatmap {
                            stroke-width:1"/>
                        </svg>`;
     this.heatmap.append(heatmapStr);
-    const offset = this.heatmap.parent().offset().left - Heatmap.RADIUS + 79;
-    this.heatmap.offset({ left: offset });
-    this.heatmap.css("top", -maxHeight - 4); // vertical offset
   }
 
   addCategory(category) {
