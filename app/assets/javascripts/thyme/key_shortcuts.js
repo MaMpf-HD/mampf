@@ -100,16 +100,16 @@ const thymeKeyShortcuts = {
       }
       const key = evt.key;
       if (key === "q") {
-        $("#toggle-mistake-annotations-check").trigger("click");
+        $("#annotation-category-mistake-switch").trigger("click");
       }
       else if (key === "w") {
-        $("#toggle-presentation-annotations-check").trigger("click");
+        $("#annotation-category-content-switch").trigger("click");
       }
       else if (key === "e") {
-        $("#toggle-content-annotations-check").trigger("click");
+        $("#annotation-category-presentation-switch").trigger("click");
       }
       else if (key === "r") {
-        $("#toggle-note-annotations-check").trigger("click");
+        $("#annotation-category-note-switch").trigger("click");
       }
       else if (key === "a") {
         $("#annotation-previous-button").trigger("click");
