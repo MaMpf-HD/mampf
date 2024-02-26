@@ -27,12 +27,13 @@ class Heatmap {
     // We assume a slightly bigger width to be able to display sine waves
     // also at the beginning and the end of the timeline.
     const stickOutWidthOneSided = Heatmap.RADIUS;
+    const thresh = 20; // a small additional width to avoid the heatmap to be cut off
     const seekBarWidth = thymeAttributes.seekBar.element.clientWidth;
-    const width = seekBarWidth + 2 * stickOutWidthOneSided;
-    const stretch = seekBarWidth / (seekBarWidth + 4 * stickOutWidthOneSided);
+    const width = seekBarWidth + 2 * stickOutWidthOneSided + thresh;
+    const stretch = seekBarWidth / (seekBarWidth + 4 * stickOutWidthOneSided + thresh);
 
     const maxHeight = video.clientHeight * Heatmap.MAX_HEIGHT;
-    this.heatmap.css("top", -maxHeight - 5); // vertical offset
+    this.heatmap.css("top", -maxHeight - 11); // vertical offset
 
     const numDivisons = width + 4 * Heatmap.RADIUS + 1;
     /* An array for each pixel on the timeline. The indices of this array should be thought
@@ -80,7 +81,7 @@ class Heatmap {
     }
     pointsStr += "" + width + "," + maxHeight;
 
-    const heatmapStr = `<svg width="${(width - 2 * stickOutWidthOneSided)}"
+    const heatmapStr = `<svg width="${(width - stickOutWidthOneSided - thresh)}"
                              height="${maxHeight}">
                          <polyline points="${pointsStr}"
                            style="fill:${thymeUtility.mixColors(colors)};
