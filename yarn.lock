@@ -3237,9 +3237,9 @@ escape-string-regexp@^4.0.0:
   integrity sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==
 
 eslint-plugin-erb@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-erb/-/eslint-plugin-erb-2.0.0.tgz#34ef70ff7f04987f3f385a5d498ce4992b504bb7"
-  integrity sha512-yLfDeaVjY5PzoBR9mk1hRIlOZ/LuzIi8CSZi2DYsRWVY0WIQLRL/D6372OFwhyJomqsnT17V6XRhi6rbeumUhw==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-erb/-/eslint-plugin-erb-2.0.1.tgz#ed4b98e2c06221510ff46e43743236a11c0d2a71"
+  integrity sha512-d0vvv0QNH2MGl69ey89hAKtrfllgB7gSVU85q+eb+/u5OmbUuOtE1QttBZbIoGFnBoDIiTYl+bXaPbqWKB/r5w==
 
 eslint-scope@^4.0.3:
   version "4.0.3"

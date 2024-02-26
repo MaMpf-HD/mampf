@@ -135,5 +135,9 @@ export default [
         ...globals.node,
       },
     },
+    linterOptions: {
+      // see https://github.com/Splines/eslint-plugin-erb/releases/tag/v2.0.1
+      reportUnusedDisableDirectives: "off",
+    },
   },
 ];

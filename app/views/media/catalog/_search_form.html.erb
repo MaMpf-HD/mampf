@@ -105,7 +105,8 @@
         <%= f.radio_button :tag_operator,
                            'or',
                            checked: true,
-                           class: 'form-check-input' %>
+                           class: 'form-check-input',
+                           disabled: true %>
         <%= f.label :tag_operator,
                     t('basics.OR'),
                     value: 'or',
@@ -114,7 +115,8 @@
       <div class="form-check form-check-inline">
         <%= f.radio_button :tag_operator,
                            'and',
-                           class: 'form-check-input' %>
+                           class: 'form-check-input',
+                           disabled: true %>
         <%= f.label :tag_operator,
                     t('basics.AND'),
                     value: 'and',

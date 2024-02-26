@@ -56,6 +56,8 @@
 //= require watchlists
 //= require turbolinks
 
+//= require search_tags
+
 /*
  * THYME RELATED SCRIPTS
  * (warning: the order of the scripts is important
