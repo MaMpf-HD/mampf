@@ -3,14 +3,17 @@
   <div id="thyme-feedback" data-medium="<%= @medium.id %>">
     <figure id="hypervideo-container">
 
-      <!--- VIDEO + CONTROL BAR -->
+      <!-- VIDEO + CONTROL BAR -->
       <div id="video-container">
+
         <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
           <source src="<%= @medium.video.url(host: host) %>">
         </video>
+
         <div id="video-controlBar">
           <div id="video-controls">
-            <div id="feedback-timeline">
+
+            <div id="timeline">
               <i id="play-pause" class="material-icons clickable">
                 play_arrow
               </i>
@@ -18,10 +21,10 @@
                 0:00:00
               </span>
               <span id="heatmap">
-                <!--- JavaScript inserts heatmap here -->
+                <!-- JavaScript inserts heatmap here -->
               </span>
               <span id="feedback-markers">
-                <!--- JavaScript inserts markers here -->
+                <!-- JavaScript inserts markers here -->
               </span>
               <input type="range" id="seek-bar"
                      min="0" max="100" step="0.1" value="0">
@@ -29,6 +32,33 @@
                 0:00:00
               </span>
             </div>
+
+            <!-- Category switches (see annotation_category_toggle.js) -->
+            <div id="annotation-switches">
+              <div class="form-check form-switch" id="abc">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-mistake-switch"
+                value="mistake"
+                title="<%= t('admin.annotation.toggle.mistake')%> (Q)" checked>
+              </div>
+             
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-content-switch"
+                value="content"
+                title="<%= t('admin.annotation.toggle.content')%> (E)" checked>
+              </div>
+
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-presentation-switch"
+                  value="presentation" title="<%= t('admin.annotation.toggle.presentation')%> (W)" checked>
+              </div>
+
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-note-switch"
+                value="note"
+                title="<%= t('admin.annotation.toggle.note')%> (R)" checked>
+              </div>
+            </div>
+
             <div id="feedback-special-buttons">
               <i id="minus-ten" class="material-icons clickable">
                 replay_10
@@ -37,50 +67,20 @@
                 forward_10
               </i>
             </div>
+            
             <div id="feedback-volume-controls">
               <i id="mute" class="material-icons clickable">
                 volume_up
               </i>
-              <input type="range" id="volume-bar"
-                     min="0" max="1" step="0.1" value="1">
+              <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
             </div>
+
           </div>
         </div>
       </div>
 
-      <!--- RIGHT-HAND SIDE AREA -->
+      <!-- RIGHT-HAND SIDE AREA -->
       <%= render partial: "annotations/annotation_area" %>
-
-      <!--- AREA BELOW THE VIDEO -->
-      <div id="below-area">
-        <div id="toggles">
-          <span id="toggle-mistake-annotations">
-            <label class="switch">
-              <input id="toggle-mistake-annotations-check" type="checkbox" checked="true">
-              <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.mistake')%> (Q)"></span>
-            </label>
-          </span>
-          <span id="toggle-presentation-annotations">
-            <label class="switch">
-              <input id="toggle-presentation-annotations-check" type="checkbox" checked="true">
-              <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.presentation')%> (W)"></span>
-            </label>
-          </span>
-          <span id="toggle-content-annotations">
-            <label class="switch">
-              <input id="toggle-content-annotations-check" type="checkbox" checked="true">
-              <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.content')%> (E)"></span>
-            </label>
-          </span>
-          <span id="toggle-note-annotations">
-            <label class="switch">
-              <input id="toggle-note-annotations-check" type="checkbox" checked="true">
-              <span class="slider round" data-toggle="tooltip" title="<%= t('admin.annotation.toggle.note')%> (R)"></span>
-            </label>
-          </span>
-        </div>
-      </div>
-
     </figure>
   </div>
 </div>

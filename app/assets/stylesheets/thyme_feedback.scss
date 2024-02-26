@@ -1,46 +1,59 @@
 #thyme-feedback-container {
-  position: absolute;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  font-family: 'Roboto';
+  @extend #thyme-container;
 }
 
 #thyme-feedback {
-  position: absolute;
-  min-width: 100%;
-  min-height: 100%;
-  width: auto;
-  height: auto;
-  background: black;
+  @extend #thyme;
 }
 
-#feedback-timeline {
-  position: absolute;
+#annotation-switches {
   display: flex;
-  width: 78%;
+  position: absolute;
+  left: 52%;
+
+  .form-switch .form-check-input {
+    border: none;
+
+    &:focus {
+      box-shadow: 0 0 0 0.25rem #ffffff4f;
+      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0,0,0,0.25)'/></svg>");
+    }
+
+    &:checked {
+      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(255,255,255,1.0)'/></svg>");
+    }
+  }
+
+  // reflected from category.js
+  #annotation-category-note-switch:checked {
+    background-color: #f78f19;
+  }
+
+  #annotation-category-content-switch:checked {
+    background-color: #A333C8;
+  }
+
+  #annotation-category-presentation-switch:checked {
+    background-color: #2185D0;
+  }
+
+  #annotation-category-mistake-switch:checked {
+    background-color: #fc1461;
+  }
 }
 
 #feedback-special-buttons {
-  position: absolute;
-  display: flex;
-  right: 14%;
+  @extend #special-buttons;
+  left: 65%;
 }
 
 #feedback-volume-controls {
-  position: absolute;
-  display: flex;
-  width: 10%;
-  right: 2%;
+  @extend #volume-controls;
+  left: 70%;
 }
 
 #feedback-markers {
-  position: relative;
-  top: -6px;
-  width: 0;
-  height: 0;
-  display: flex;
-  cursor: pointer;
+  @extend #markers;
 }
 
 #heatmap {
@@ -48,46 +61,4 @@
   width: 0;
   height: 0;
   pointer-events: none;
-}
-
-#below-area {
-  display: flex;
-  bottom: 0;
-  padding: 10px;
-  background: #eeefff;
-  border: solid;
-  border-width: 1px;
-  border-color: black;
-}
-
-#toggle-mistake-annotations {
-  position: relative;
-  left: 5%;
-  input:checked + .slider {
-    background-color: #C23939;
-  }
-}
-
-#toggle-presentation-annotations {
-  position: relative;
-  left: 11%;
-  input:checked + .slider {
-    background-color: #D9892E;
-  }
-}
-
-#toggle-content-annotations {
-  position: relative;
-  left: 17%;
-  input:checked + .slider {
-    background-color: #D5D841;
-  }
-}
-
-#toggle-note-annotations {
-  position: relative;
-  left: 23%;
-  input:checked + .slider {
-    background-color: #66B748;
-  }
 }

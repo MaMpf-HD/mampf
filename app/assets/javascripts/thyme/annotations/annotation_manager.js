@@ -49,7 +49,7 @@ class AnnotationManager {
   updateMarkers() {
     // In case the annotations have not been loaded yet, do nothing.
     // This situation might occur during the initial page load.
-    if (!thymeAttributes.annotations) {
+    if (thymeAttributes.annotations === null) {
       if (!this.isDbCalledForFreshAnnotations) {
         this.updateAnnotations();
       }
@@ -91,6 +91,8 @@ class AnnotationManager {
     if (!thymeAttributes.annotationFeatureActive) {
       return;
     }
+
+    console.log("updateAnnotations() called");
 
     this.isDbCalledForFreshAnnotations = true; // Lock resource
 

@@ -12,30 +12,30 @@ class AnnotationCategoryToggle extends Component {
   }
 
   add() {
-    const toggle = this;
-    const category = this.category;
-    const check = document.getElementById(this.element.id + "-check");
     const heatmap = this.heatmap;
     if (heatmap) {
-      heatmap.addCategory(category); // add category when adding the button
+      heatmap.addCategory(this.category); // add category when adding the button
     }
 
-    check.addEventListener("click", function () {
+    const categoryToggle = this;
+
+    this.element.addEventListener("click", function () {
       thymeAttributes.annotationManager.updateAnnotations();
-      if (heatmap) {
-        if (toggle.getValue()) {
-          heatmap.addCategory(category);
-        }
-        else {
-          heatmap.removeCategory(category);
-        }
-        heatmap.draw();
+      if (!heatmap) {
+        return;
       }
+
+      if (categoryToggle.isChecked()) {
+        heatmap.addCategory(this.category);
+      }
+      else {
+        heatmap.removeCategory(this.category);
+      }
+      heatmap.draw();
     });
   }
 
-  getValue() {
-    const $check = $("#" + this.element.id + "-check");
-    return $check.is(":checked");
+  isChecked() {
+    return this.element.checked;
   }
 }

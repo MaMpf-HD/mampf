@@ -2,10 +2,10 @@
 class Category extends CategoryEnum {
   static _categories = [];
 
-  static NOTE = new Category("note", "#44ee11"); // green
-  static CONTENT = new Category("content", "#eeee00"); // yellow
-  static PRESENTATION = new Category("presentation", "#ff9933"); // orange
-  static MISTAKE = new Category("mistake", "#ff0000"); // red
+  static NOTE = new Category("note", "#f78f19");
+  static CONTENT = new Category("content", "#A333C8");
+  static PRESENTATION = new Category("presentation", "#2185D0");
+  static MISTAKE = new Category("mistake", "#fc1461");
 
   constructor(name, color) {
     super(name);

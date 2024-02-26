@@ -33,7 +33,7 @@ $(document).on("turbolinks:load", function () {
   // heatmap
   const heatmap = new Heatmap("heatmap");
 
-  // below-area
+  // category toggles
   const allCategories = Category.all();
   const annotationCategoryToggles = new Array(allCategories.length);
   let category;
@@ -41,7 +41,7 @@ $(document).on("turbolinks:load", function () {
   for (let i = 0; i < allCategories.length; i++) {
     category = allCategories[i];
     annotationCategoryToggles[i] = new AnnotationCategoryToggle(
-      "toggle-" + category.name + "-annotations", category, heatmap,
+      `annotation-category-${category.name}-switch`, category, heatmap,
     );
     if (category === Category.MISTAKE) {
       // exclude mistake annotations from heatmap
@@ -59,7 +59,7 @@ $(document).on("turbolinks:load", function () {
 
   function isValid(annotation) {
     for (let toggle of annotationCategoryToggles) {
-      if (annotation.category === toggle.category && toggle.getValue()) {
+      if (annotation.category === toggle.category && toggle.isChecked()) {
         return true;
       }
     }
@@ -88,6 +88,7 @@ $(document).on("turbolinks:load", function () {
   const annotationManager = new AnnotationManager(colorFunc, strokeColorFunc, sizeFunc,
     onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
+  thymeAttributes.annotationFeatureActive = true;
 
   /*
     KEYBOARD SHORTCUTS
@@ -103,7 +104,7 @@ $(document).on("turbolinks:load", function () {
 
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
-    Resizer.resizeContainer(thymeContainer, 1.22, 70);
+    Resizer.resizeContainer(thymeContainer, 1, 0);
     annotationManager.updateMarkers();
   }
 

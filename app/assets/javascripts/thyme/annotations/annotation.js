@@ -26,9 +26,7 @@ class Annotation {
         onClick = A function triggered when one clicks on the marker.
    */
   createMarker(color, strokeColor, onClick) {
-    const polygonPoints = "1,5 9,5 5,14";
-    const strokeWidth = 1;
-    this.#create(color, polygonPoints, strokeWidth, strokeColor, onClick);
+    this.#create(color, false, onClick);
   }
 
   /*
@@ -40,14 +38,13 @@ class Annotation {
         onClick = A function triggered when one clicks on the marker.
    */
   createBigMarker(color, strokeColor, onClick) {
-    const polygonPoints = "1,1 9,1 5,14";
-    const strokeWidth = 1.5;
-    this.#create(color, polygonPoints, strokeWidth, strokeColor, onClick);
+    this.#create(color, true, onClick);
   }
 
   /*
     An auxiliary method, only used for a better structure of createMarker() and createBigMarker()!
    */
+  #create(color, isBigMarker, onClick) {
   #create(color, polygonPoints, strokeWidth, strokeColor, onClick) {
     const markerStr = `<span id="marker-${this.id}">
                         <i class="fas fa-map-pin" style="color: ${color};"></i>
