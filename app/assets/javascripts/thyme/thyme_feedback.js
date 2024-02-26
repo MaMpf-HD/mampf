@@ -41,10 +41,6 @@ $(document).on("turbolinks:load", function () {
   for (let i = 0; i < allCategories.length; i++) {
     category = allCategories[i];
     annotationCategoryToggles[i] = new AnnotationCategoryToggle(category, heatmap);
-    if (category === Category.MISTAKE) {
-      // exclude mistake annotations from heatmap
-      annotationCategoryToggles[i].heatmap = null;
-    }
     annotationCategoryToggles[i].add();
   }
 
