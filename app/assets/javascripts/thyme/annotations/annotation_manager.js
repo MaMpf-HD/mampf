@@ -92,8 +92,6 @@ class AnnotationManager {
       return;
     }
 
-    console.log("updateAnnotations() called");
-
     this.isDbCalledForFreshAnnotations = true; // Lock resource
 
     const manager = this;
