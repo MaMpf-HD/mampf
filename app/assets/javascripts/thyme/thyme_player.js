@@ -96,7 +96,7 @@ $(document).on("turbolinks:load", function () {
   thymeAttributes.annotationManager = annotationManager;
 
   // Update annotations after deleting an annotation
-  $(document).on("click", "#delete-button", function () {
+  $(document).on("click", "#annotation-delete-button", function () {
     const annotationId = Number(document.getElementById("annotation_id").textContent);
     $.ajax(Routes.annotation_path(annotationId), {
       type: "DELETE",
