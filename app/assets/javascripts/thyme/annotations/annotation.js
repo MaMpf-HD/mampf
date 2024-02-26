@@ -45,7 +45,6 @@ class Annotation {
     An auxiliary method, only used for a better structure of createMarker() and createBigMarker()!
    */
   #create(color, isBigMarker, onClick) {
-  #create(color, polygonPoints, strokeWidth, strokeColor, onClick) {
     const markerStr = `<span id="marker-${this.id}">
                         <i class="fas fa-map-pin" style="color: ${color};"></i>
                       </span>`;
