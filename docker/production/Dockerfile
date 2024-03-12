@@ -81,5 +81,34 @@ RUN bundle install
 RUN yarn install --production=true
 
 COPY --chown=app:app . /usr/src/app
+
+# The command ". /docker/production/docker.env" will source our dummy env file.
+# So why do we need this?
+#
+# Well, (deeply inhales), Rails needs to boot entirely to run the
+# `assets:precompile` task. Therefore, it also needs to access the env variables
+# to correctly start the initializers.
+#
+# However (after a long ime researching), docker compose does not seem to offer
+# an easy solution to have an env file from the host machine available during
+# the build step (Dockerfile) and not just during the run time of the container.
+# Note that the env file is indeed available on our host, just not in the build
+# context, the latter being the MaMpf github repo that docker compose pulls from.
+#
+# Even with volumes and bind mounts it's not working properly ("file not found").
+# In the end, we found a solution that suggests to use the new docker buildkit
+# to allow for multiple build contexts. Yet, we explicitly set DOCKER_BUILDKIT=0
+# to use the old buildkit since the new one always gives a moby-related ssh error.
+# And even if this worked, it is not entirely clear if this is even working
+# with docker compose or just with docker (sigh).
+#
+# That's why, in the end, we decided to leverage our already-existing dummy env
+# file and source it here in the Dockerfile just to have the precompile task run
+# successfully (this task doesn't even rely on the actual values, so despite
+# being a hack, it should be fine).
+# 
+# I've written down more details in this question on StackOverflow:
+# https://stackoverflow.com/q/78098380/
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \
-    SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb   bundle exec rails assets:precompile
+    . ./docker/production/docker.env && \
+    SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb bundle exec rails assets:precompile
