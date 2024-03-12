@@ -82,7 +82,7 @@ RUN yarn install --production=true
 
 COPY --chown=app:app . /usr/src/app
 
-# The command ". /docker/production/docker.env" will source our dummy env file.
+# The command ". ./docker-dummy.env" will source our dummy docker env file.
 # So why do we need this?
 #
 # Well, (deeply inhales), Rails needs to boot entirely to run the
@@ -109,6 +109,8 @@ COPY --chown=app:app . /usr/src/app
 # 
 # I've written down more details in this question on StackOverflow:
 # https://stackoverflow.com/q/78098380/
+COPY ./docker/production/docker.env ./docker-dummy.env
+
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \
-    . ./docker/production/docker.env && \
+    . ./docker-dummy.env && \
     SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb bundle exec rails assets:precompile
