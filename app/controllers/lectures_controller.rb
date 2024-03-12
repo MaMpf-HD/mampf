@@ -22,7 +22,7 @@ class LecturesController < ApplicationController
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at,
                               @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID")),
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil)),
                               Thredded::UserDetail.find_by(user_id: current_user.id)
                                                   &.last_seen_at || @lecture.updated_at,
                               @lecture.forum&.updated_at || @lecture.updated_at].max)
@@ -58,7 +58,7 @@ class LecturesController < ApplicationController
   def edit
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at, @lecture.updated_at,
-                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID"))].max)
+                              Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       eager_load_stuff
     end
   end
