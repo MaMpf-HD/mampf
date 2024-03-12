@@ -89,11 +89,11 @@ class UserCleaner
   end
 
   def delete_ghosts
-    @hash_dict.each do |mail, hash|
-      u = User.find_by(email: mail, ghost_hash: hash)
-      move_mail(@email_dict[mail]) if u.present? && @email_dict.present?
-      u.destroy! if u&.generic?
-    end
+    # @hash_dict.each do |mail, hash|
+    #   u = User.find_by(email: mail, ghost_hash: hash)
+    #   move_mail(@email_dict[mail]) if u.present? && @email_dict.present?
+    #   u.destroy! if u&.generic?
+    # end
   end
 
   def move_mail(message_ids, attempt = 0)
@@ -111,14 +111,15 @@ class UserCleaner
   end
 
   def clean!
-    login
-    search_emails_and_hashes
-    return if @email_dict.blank?
+    # TODO: Implement new old user cleaner logic
+    # login
+    # search_emails_and_hashes
+    # return if @email_dict.blank?
 
-    send_hashes
-    sleep(10)
-    search_emails_and_hashes
-    delete_ghosts
-    logout
+    # send_hashes
+    # sleep(10)
+    # search_emails_and_hashes
+    # delete_ghosts
+    # logout
   end
 end
