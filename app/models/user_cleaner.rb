@@ -111,7 +111,7 @@ class UserCleaner
   end
 
   def clean!
-    # TODO: Implement new old user cleaner logic
+    # TODO: Implement new user cleaner logic
     # login
     # search_emails_and_hashes
     # return if @email_dict.blank?
