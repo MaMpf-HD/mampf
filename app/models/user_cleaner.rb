@@ -3,9 +3,9 @@ class UserCleaner
   attr_accessor :imap, :email_dict, :hash_dict
 
   def login
-    @imap = Net::IMAP.new(ENV.fetch("IMAPSERVER", nil), port: 993, ssl: true)
-    @imap.authenticate("LOGIN", ENV.fetch("PROJECT_EMAIL_USERNAME", nil),
-                       ENV.fetch("PROJECT_EMAIL_PASSWORD", nil))
+    @imap = Net::IMAP.new(ENV.fetch("IMAPSERVER"), port: 993, ssl: true)
+    @imap.authenticate("LOGIN", ENV.fetch("PROJECT_EMAIL_USERNAME"),
+                       ENV.fetch("PROJECT_EMAIL_PASSWORD"))
   end
 
   def logout
@@ -15,7 +15,7 @@ class UserCleaner
   def search_emails_and_hashes
     @email_dict = {}
     @hash_dict = {}
-    @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX", nil))
+    @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX"))
     # Mails containing multiple email addresses (Subject: "Undelivered Mail Returned to Sender")
     @imap.search(["SUBJECT",
                   "Undelivered Mail Returned to Sender"]).each do |message_id|
@@ -103,7 +103,7 @@ class UserCleaner
     return if attempt > 3
 
     begin
-      @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX", nil))
+      @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX"))
       @imap.move(message_ids, "Other Users/mampf/handled_bounces")
     rescue Net::IMAP::BadResponseError
       move_mail(message_ids, attempt + 1)

@@ -24,7 +24,7 @@ module Mampf
     # the framework and any gems in your application.
     config.exception_handler = {
       # sends exception emails to a listed email (string // "you@email.com")
-      email: ENV.fetch("ERROR_EMAIL", nil),
+      email: ENV.fetch("ERROR_EMAIL"),
 
       # All keys interpolated as strings, so you can use
       # symbols, strings or integers where necessary
