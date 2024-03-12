@@ -112,5 +112,5 @@ COPY --chown=app:app . /usr/src/app
 COPY ./docker/production/docker.env ./docker-dummy.env
 
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \
-    . ./docker-dummy.env && \
+    set -o allexport && . ./docker-dummy.env && set +o allexport && \
     SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb bundle exec rails assets:precompile
