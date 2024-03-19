@@ -71,7 +71,8 @@ Rails.application.configure do
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("MAILSERVER"),
     port: 25,
-    domain: ENV.fetch("MAILSERVER")
+    user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
+    password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
   }
 
   # Ignore bad email addresses and do not raise email delivery errors.
