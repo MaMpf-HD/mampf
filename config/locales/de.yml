@@ -3813,6 +3813,8 @@ de:
       gerne auch über dieses Formular oder direkt per %{feedback_mail}.</p>
     body_too_short_error: >
       Dein Feedback ist zu kurz. Bitte gib mindestens %{min_length} Zeichen ein.
+    body_missing_error: >
+      Bitte gib hier Dein Feedback ein.
     mail_checkbox: >
       Erlaube es uns, Dich per E-Mail (%{user_mail}) zu kontaktieren, falls es
       Rückfragen zu Deinem Feedback gibt.
