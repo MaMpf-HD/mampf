@@ -4,12 +4,16 @@
 
 #thyme-feedback {
   @extend #thyme;
+
+  #timeline {
+    width: 55%;
+  }
 }
 
 #annotation-switches {
   display: flex;
   position: absolute;
-  left: 52%;
+  left: 57%;
 
   .form-switch .form-check-input {
     border: none;
@@ -44,12 +48,12 @@
 
 #feedback-special-buttons {
   @extend #special-buttons;
-  left: 65%;
+  left: 73%;
 }
 
 #feedback-volume-controls {
   @extend #volume-controls;
-  left: 70%;
+  left: 79%;
 }
 
 #feedback-markers {
