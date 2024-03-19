@@ -190,4 +190,4 @@ Thredded.notifiers = []
 #
 # add in (must install separate gem (under development) as well):
 # Thredded.notifiers = [Thredded::EmailNotifier.new,
-#                       Thredded::PushoverNotifier.new(ENV.fetch("PUSHOVER_APP_ID", nil))]
+#                       Thredded::PushoverNotifier.new(ENV.fetch("PUSHOVER_APP_ID"))]

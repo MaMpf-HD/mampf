@@ -217,7 +217,7 @@ class LecturesController < ApplicationController
 
   def search_examples
     if @lecture.structure_ids.any?
-      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/search")
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/search")
       @form = JSON.parse(response.body)["embedded_html"]
       # rubocop:disable Style/StringConcatenation
       @form.gsub!("token_placeholder",
@@ -402,7 +402,7 @@ class LecturesController < ApplicationController
 
     def set_erdbeere_data
       @structure_ids = @lecture.structure_ids
-      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/structures")
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/structures")
       response_hash = if response.status == 200
         JSON.parse(response.body)
       else

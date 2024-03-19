@@ -3,9 +3,9 @@ class UserCleaner
   attr_accessor :imap, :email_dict, :hash_dict
 
   def login
-    @imap = Net::IMAP.new(ENV.fetch("IMAPSERVER", nil), port: 993, ssl: true)
-    @imap.authenticate("LOGIN", ENV.fetch("PROJECT_EMAIL_USERNAME", nil),
-                       ENV.fetch("PROJECT_EMAIL_PASSWORD", nil))
+    @imap = Net::IMAP.new(ENV.fetch("IMAPSERVER"), port: 993, ssl: true)
+    @imap.authenticate("LOGIN", ENV.fetch("PROJECT_EMAIL_USERNAME"),
+                       ENV.fetch("PROJECT_EMAIL_PASSWORD"))
   end
 
   def logout
@@ -15,7 +15,7 @@ class UserCleaner
   def search_emails_and_hashes
     @email_dict = {}
     @hash_dict = {}
-    @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX", nil))
+    @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX"))
     # Mails containing multiple email addresses (Subject: "Undelivered Mail Returned to Sender")
     @imap.search(["SUBJECT",
                   "Undelivered Mail Returned to Sender"]).each do |message_id|
@@ -89,11 +89,11 @@ class UserCleaner
   end
 
   def delete_ghosts
-    @hash_dict.each do |mail, hash|
-      u = User.find_by(email: mail, ghost_hash: hash)
-      move_mail(@email_dict[mail]) if u.present? && @email_dict.present?
-      u.destroy! if u&.generic?
-    end
+    # @hash_dict.each do |mail, hash|
+    #   u = User.find_by(email: mail, ghost_hash: hash)
+    #   move_mail(@email_dict[mail]) if u.present? && @email_dict.present?
+    #   u.destroy! if u&.generic?
+    # end
   end
 
   def move_mail(message_ids, attempt = 0)
@@ -103,7 +103,7 @@ class UserCleaner
     return if attempt > 3
 
     begin
-      @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX", nil))
+      @imap.examine(ENV.fetch("PROJECT_EMAIL_MAILBOX"))
       @imap.move(message_ids, "Other Users/mampf/handled_bounces")
     rescue Net::IMAP::BadResponseError
       move_mail(message_ids, attempt + 1)
@@ -111,14 +111,15 @@ class UserCleaner
   end
 
   def clean!
-    login
-    search_emails_and_hashes
-    return if @email_dict.blank?
+    # TODO: Implement new user cleaner logic
+    # login
+    # search_emails_and_hashes
+    # return if @email_dict.blank?
 
-    send_hashes
-    sleep(10)
-    search_emails_and_hashes
-    delete_ghosts
-    logout
+    # send_hashes
+    # sleep(10)
+    # search_emails_and_hashes
+    # delete_ghosts
+    # logout
   end
 end
