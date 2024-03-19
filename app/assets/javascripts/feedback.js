@@ -7,9 +7,9 @@ $(document).on("turbolinks:load", () => {
   registerFeedbackBodyValidator();
 });
 
-const SUBMIT_FEEDBACK_ID = "#submit-feedback";
+var SUBMIT_FEEDBACK_ID = "#submit-feedback";
 
-const TOAST_OPTIONS = {
+var TOAST_OPTIONS = {
   animation: true,
   autohide: true,
   delay: 6000, // autohide after ... milliseconds
