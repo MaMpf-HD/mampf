@@ -55,13 +55,13 @@ Rails.application.configure do
   config.log_tags = [:request_id]
 
   # Use a different cache store in production.
-  config.cache_store = :mem_cache_store, ENV.fetch("MEMCACHED_SERVER", nil)
+  config.cache_store = :mem_cache_store, ENV.fetch("MEMCACHED_SERVER")
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "mampf_#{Rails.env}"
   config.action_mailer.perform_caching = false
-  config.action_mailer.default_url_options = { protocol: "https", host: ENV.fetch("URL_HOST", nil) }
+  config.action_mailer.default_url_options = { protocol: "https", host: ENV.fetch("URL_HOST") }
 
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
@@ -69,11 +69,10 @@ Rails.application.configure do
   config.action_mailer.default(charset: "utf-8")
 
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("MAILSERVER", nil),
-    domain: ENV.fetch("MAILSERVER", nil),
+    address: ENV.fetch("MAILSERVER"),
     port: 25,
-    user_name: ENV.fetch("MAMPF_EMAIL_USERNAME", nil),
-    password: ENV.fetch("MAMPF_EMAIL_PASSWORD", nil)
+    user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
+    password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
   }
 
   # Ignore bad email addresses and do not raise email delivery errors.
