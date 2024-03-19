@@ -43,6 +43,8 @@ const thymeAttributes = {
      has to write text into the command box. */
   lockKeyListeners: false,
 
+  disableAnnotationKeyListeners: false,
+
   /* Saves the ID of the HTML element to which annotations are appended. */
   markerBarId: undefined,
 

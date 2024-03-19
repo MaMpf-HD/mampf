@@ -72,6 +72,11 @@ const thymeKeyShortcuts = {
       else if (key === "ArrowDown") {
         $("#previous-chapter").trigger("click");
       }
+
+      // annotation-related shortcuts
+      if (thymeAttributes.disableAnnotationKeyListeners) {
+        return;
+      }
       else if (key === "a") {
         $("#annotation-previous-button").trigger("click");
       }
@@ -95,7 +100,7 @@ const thymeKeyShortcuts = {
   */
   addFeedbackShortcuts() {
     window.addEventListener("keydown", function (evt) {
-      if (thymeAttributes.lockKeyListeners) {
+      if (thymeAttributes.lockKeyListeners || thymeAttributes.disableAnnotationKeyListeners) {
         return;
       }
       const key = evt.key;

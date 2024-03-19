@@ -57,6 +57,7 @@ class Annotation {
     marker.offset({ left: offset });
 
     marker.on("click", function () {
+      thymeAttributes.disableAnnotationKeyListeners = false;
       onClick();
     });
   }

@@ -193,6 +193,7 @@ class AnnotationArea {
       area.unmarkCurrentAnnotationAsShown();
       area.annotation = undefined;
       area.hide();
+      thymeAttributes.disableAnnotationKeyListeners = true;
       if (area.onClose != null) {
         area.onClose();
       }
