@@ -50,6 +50,16 @@
     },
     "rubyLsp.enableExperimentalFeatures": true,
     //////////////////////////////////////
+    // Ruby Test Explorer
+    //////////////////////////////////////
+    "rubyTestExplorer.testFramework": "rspec",
+    "rubyTestExplorer.rspecCommand": "python3 ./spec/rspec_inside_docker.py",
+    "rubyTestExplorer.rspecDirectory": "./spec/",
+    "rubyTestExplorer.logpanel": true,
+    "rubyTestExplorer.filePattern": [
+        "*_spec.rb"
+    ],
+    //////////////////////////////////////
     // Files
     //////////////////////////////////////
     "files.exclude": {
