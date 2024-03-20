@@ -1,0 +1,39 @@
+var answerId = <%= @answer.id %>;
+var answerCard = $(`#answers-accordion > #answer-card-${answerId}`);
+window.registeredDiscardListeners.delete(answerId);
+
+// eslint-disable-next-line @stylistic/quotes
+var newAnswerCardElements = $(`<%= j render partial: 'answers/card', locals: { answer: @answer } %>`).children();
+
+// re-render possible MathJax content
+// eslint-disable-next-line no-undef
+renderMathInElement(newAnswerCardElements.get(0), {
+  delimiters: [
+    {
+      left: "$$",
+      right: "$$",
+      display: true,
+    },
+    {
+      left: "$",
+      right: "$",
+      display: false,
+    },
+    {
+      left: "\\(",
+      right: "\\)",
+      display: false,
+    },
+    {
+      left: "\\[",
+      right: "\\]",
+      display: true,
+    },
+  ],
+  throwOnError: false,
+},
+);
+
+setTimeout(() => {
+  answerCard.empty().append(newAnswerCardElements);
+}, 100);
