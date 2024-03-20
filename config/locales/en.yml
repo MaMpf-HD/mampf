@@ -2985,6 +2985,7 @@ en:
     course_editors: 'Course Editors'
     lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
+    mail_noun: 'email'
     email: 'Email address'
     preferences: 'Preferences'
     language: 'Language'
@@ -3240,6 +3241,7 @@ en:
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'
+    send_variant: 'Send'
     download: 'Download'
     move: 'Move'
     accept: 'Accept'
@@ -3591,3 +3593,30 @@ en:
             name:
               taken:
                 'A watchlist with that name already exists.'
+  feedback:
+    tooltip: Submit feedback
+    modal_title: Submit feedback
+    title: Title (optional)
+    comment: Your comment
+    description_html: >
+      <p>We are looking forward to your feedback on MaMpf, be it praise, criticism
+      or suggestions on how we as a team of developers can advance the platform.
+      If you have found a bug and have a GitHub account, then create an issue
+      directly on %{github_mampf}. Otherwise, you are welcome to use this
+      form or send an %{feedback_mail} directly.</p>
+    body_too_short_error: >
+      Your feedback is too short. Please enter at least %{min_length} characters.
+    body_missing_error: >
+      Please enter your feedback here.
+    mail_checkbox: >
+      Allow us to contact you via email (%{user_mail}) if there are questions
+      about your feedback.
+    success_short: >
+      Feedback successfully sent
+    success: >
+      Thanks a lot for your feedback! We will review it soon.
+    error_short: >
+      Error while sending feedback
+    error: >
+      We're sorry, something went wrong while submitting your feedback.
+      Please save your feedback by copying it manually and try again later.
