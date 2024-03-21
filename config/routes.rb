@@ -152,6 +152,9 @@ Rails.application.routes.draw do
 
   resources :divisions, except: [:show]
 
+  # feedback routes
+  resources :feedbacks, only: [:create]
+
   # interactions routes
 
   get "interactions/export_interactions",

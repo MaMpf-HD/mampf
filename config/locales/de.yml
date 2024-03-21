@@ -3266,6 +3266,7 @@ de:
     course_editors: 'ModuleditorInnen'
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
+    mail_noun: 'E-Mail'
     email: 'E-Mail-Adresse'
     preferences: 'Einstellungen'
     language: 'Sprache'
@@ -3518,6 +3519,7 @@ de:
     refresh_token: 'Code erneuern'
     invite: 'Einladen'
     send: 'Versenden'
+    send_variant: 'Absenden'
     download: 'Herunterladen'
     move: 'Verschieben'
     accept: 'Akzeptieren'
@@ -3896,3 +3898,31 @@ de:
             name:
               taken:
                 'Eine Watchlist mit diesem Namen existiert bereits.'
+  feedback:
+    tooltip: Feedback geben
+    modal_title: Feedback geben
+    title: Titel (optional)
+    comment: Dein Kommentar
+    description_html: >
+      <p>Wir freuen uns über Dein Feedack zu MaMpf, sei es Lob, Kritik oder
+      Anregungen, wie wir als Entwickler:innen-Team die Plattform voranbringen
+      können. Falls Du einen Bug gefunden hast und einen GitHub-Account hast,
+      dann erstelle am besten direkt auf %{github_mampf} ein Issue. Ansonsten
+      gerne auch über dieses Formular oder direkt per %{feedback_mail}.</p>
+    body_too_short_error: >
+      Dein Feedback ist zu kurz. Bitte gib mindestens %{min_length} Zeichen ein.
+    body_missing_error: >
+      Bitte gib hier Dein Feedback ein.
+    mail_checkbox: >
+      Erlaube es uns, Dich per E-Mail (%{user_mail}) zu kontaktieren, falls es
+      Rückfragen zu Deinem Feedback gibt.
+    success_short: >
+      Feedback erfolgreich gesendet
+    success: >
+      Vielen Dank für Dein Feedback! Wir werden es in Kürze bearbeiten.
+    error_short: >
+      Fehler beim Senden des Feedbacks
+    error: >
+      Entschuldigung, leider ist beim Speichern ein Fehler aufgetreten.
+      Bitte speichere Dein Feedback händisch, indem Du es kopierst,
+      und versuche es später noch einmal.
