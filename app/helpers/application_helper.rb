@@ -16,7 +16,7 @@ module ApplicationHelper
   def host
     if Rails.env.production?
       # rubocop:disable Style/StringConcatenation
-      ENV.fetch("MEDIA_SERVER", nil) + "/" + ENV.fetch("INSTANCE_NAME", nil)
+      ENV.fetch("MEDIA_SERVER") + "/" + ENV.fetch("INSTANCE_NAME")
       # rubocop:enable Style/StringConcatenation
     else
       ""
@@ -29,7 +29,7 @@ module ApplicationHelper
   # the actual media server.
   # This is used for the download buttons for videos and manuscripts.
   def download_host
-    Rails.env.production? ? ENV.fetch("DOWNLOAD_LOCATION", nil) : ""
+    Rails.env.production? ? ENV.fetch("DOWNLOAD_LOCATION") : ""
   end
 
   # Returns the full title on a per-page basis.
