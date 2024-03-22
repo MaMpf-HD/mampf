@@ -383,7 +383,7 @@ en:
           Before submitting, please also check, if someone already posted
           a comment concerning this mistake.
         one_close_annotation: >
-          Note there is already a mistake annotation around this Thymestamp.
+          Note there is already a mistake annotation around this timestamp.
         multiple_close_annotations_1: "Note there are already "
         multiple_close_annotations_2: " mistake annotations close to yours."
         permission: "You don't have the permission to edit this annotation."
