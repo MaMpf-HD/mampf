@@ -69,8 +69,8 @@ class Heatmap {
         }
       }
     }
-    const maxValue = Math.max.apply(Math, pixelsAll);
-    const amplitude = maxHeight * (1 / maxValue);
+    const maxValue = Math.max(...pixelsAll);
+    const amplitude = maxValue != 0 ? maxHeight * (1 / maxValue) : 0;
 
     /*
        Construct heatmap SVG
