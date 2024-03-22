@@ -1,10 +1,4 @@
-#thyme-feedback-container {
-  @extend #thyme-container;
-}
-
 #thyme-feedback {
-  @extend #thyme;
-
   #timeline {
     width: 55%;
   }
@@ -47,17 +41,11 @@
 }
 
 #feedback-special-buttons {
-  @extend #special-buttons;
   left: 73%;
 }
 
 #feedback-volume-controls {
-  @extend #volume-controls;
   left: 79%;
-}
-
-#feedback-markers {
-  @extend #markers;
 }
 
 #heatmap {

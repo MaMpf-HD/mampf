@@ -1,6 +1,6 @@
 <% content_for :title, "THymE - \"#{@medium.caption}\"" %>
-<div id="thyme-feedback-container">
-  <div id="thyme-feedback" data-medium="<%= @medium.id %>">
+<div id="thyme-feedback-container" class="thyme-container-layout">
+  <div id="thyme-feedback" class="thyme-generic" data-medium="<%= @medium.id %>">
     <figure id="hypervideo-container">
 
       <!-- VIDEO + CONTROL BAR -->
@@ -23,7 +23,7 @@
               <span id="heatmap">
                 <!-- JavaScript inserts heatmap here -->
               </span>
-              <span id="feedback-markers">
+              <span id="feedback-markers" class="annotation-marker">
                 <!-- JavaScript inserts markers here -->
               </span>
               <input type="range" id="seek-bar"
@@ -59,7 +59,7 @@
               </div>
             </div>
 
-            <div id="feedback-special-buttons">
+            <div id="feedback-special-buttons" class="special-buttons-layout">
               <i id="minus-ten" class="material-icons clickable">
                 replay_10
               </i>
@@ -68,7 +68,7 @@
               </i>
             </div>
             
-            <div id="feedback-volume-controls">
+            <div id="feedback-volume-controls" class="volume-controls-layout">
               <i id="mute" class="material-icons clickable">
                 volume_up
               </i>

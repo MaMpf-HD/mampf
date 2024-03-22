@@ -1,4 +1,4 @@
-#thyme-container {
+.thyme-container-layout {
   position: absolute;
   top: 0;
   width: 100%;
@@ -11,7 +11,7 @@
   width: 100vw;
 }
 
-#thyme {
+.thyme-generic {
   min-width: 100%;
   min-height: 100%;
   width: auto;
@@ -93,7 +93,7 @@
   padding: 4px;
 }
 
-#special-buttons {
+.special-buttons-layout {
   position: absolute;
   display: flex;
   left: 54%;
@@ -107,7 +107,7 @@
   margin-left: 10px;
 }
 
-#volume-controls {
+.volume-controls-layout {
   position: absolute;
   display: flex;
   width: 10%;
