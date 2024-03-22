@@ -253,10 +253,10 @@ class LecturesController < ApplicationController
   def close_comments
     @lecture.close_comments!(current_user)
     # disable annotation button
-    @lecture.update(annotations_status: -1)
-    @lecture.media.update(annotations_status: 0)
+    @lecture.update(annotations_status: 0)
+    @lecture.media.update(annotations_status: -1)
     @lecture.lessons.each do |lesson|
-      lesson.media.update(annotations_status: 0)
+      lesson.media.update(annotations_status: -1)
     end
     redirect_to edit_lecture_path(@lecture)
   end

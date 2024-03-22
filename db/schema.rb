@@ -298,7 +298,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_21_223010) do
     t.integer "submission_max_team_size"
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
-    t.integer "annotations_status", default: -1, null: false
+    t.integer "annotations_status", default: 1, null: false
     t.integer "emergency_link_status", default: 0, null: false
     t.text "emergency_link"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -380,7 +380,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_21_223010) do
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
     t.text "external_link_description"
-    t.integer "annotations_status", default: 0, null: false
+    t.integer "annotations_status", default: -1, null: false
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end

@@ -1,8 +1,10 @@
 class AddAnnotationRelatedFields < ActiveRecord::Migration[7.0]
   def change
     # Annotations status
-    add_column :media, :annotations_status, :integer, default: 0, null: false
-    add_column :lectures, :annotations_status, :integer, default: -1, null: false
+    # Media inherits annotation status from lecture by default
+    add_column :media, :annotations_status, :integer, default: -1, null: false
+    # Lecture: activate "share annotation with lecturer" feature by default
+    add_column :lectures, :annotations_status, :integer, default: 1, null: false
 
     # Emergency Link
     change_table :lectures, bulk: true do |t|
