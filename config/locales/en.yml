@@ -389,6 +389,8 @@ en:
         permission: "You don't have the permission to edit this annotation."
         double_posted: >
           An annotation with the same content has already been published.
+        sure_to_delete: >
+          Really delete this annotation?
       visible_for_teacher: 'Visible for teacher?'
       visible_for_teacher_helpdesk: >
         If this checkbox is selected your teacher can see this annotation

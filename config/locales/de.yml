@@ -391,6 +391,8 @@ de:
         double_posted: >
           Es wurde bereits eine Annotation mit dem gleichen Inhalt zu diesem Medium
           veröffentlicht.
+        sure_to_delete: >
+          Diese Annotation wirklich löschen?
       visible_for_teacher: 'Für DozentIn sichtbar?'
       visible_for_teacher_helpdesk: >
         Falls diese Checkbox ausgewählt ist, kann Dein(e) Dozent(in) diese Annotation
