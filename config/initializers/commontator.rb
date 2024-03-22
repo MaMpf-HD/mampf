@@ -316,6 +316,14 @@ Commontator.configure do |config|
 end
 
 Rails.application.config.to_prepare do
+  # Load the Commontator extensions only if we are not in the assets:precompile
+  # step where no db connection is available. See the production Dockerfile.
+  db_adapter = ENV.fetch("DB_ADAPTER", nil)
+  if [nil, "nulldb"].include?(db_adapter)
+    Rails.logger.info("DB_ADAPTER env var is #{db_adapter}. Skipping Commontator extensions.")
+    next
+  end
+
   if ActiveRecord::Base.connection.table_exists?(:thredded_topics)
     Commontator::Comment.include(Extensions::Commontator::Comment)
   end
