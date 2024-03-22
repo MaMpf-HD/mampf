@@ -1,17 +1,13 @@
-# https://stackoverflow.com/a/8133832/
 <% environment.context_class.instance_eval { include ApplicationHelper } %>
 
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
-# change button 'Bearbeiten' to 'verwerfen' after answer body is revealed
-
- # the "target button" is either the "discard" button or the "edit" button
-# what its purpose is is stored in this object with a mapping
-# id -> boolean
+# The "target button" is either the "discard" button or the "edit" button
+# what its purpose is is stored in this object with a mapping:
+# answerId -> boolean
 targetButtonIsDiscardButton = {}
-window.registeredDiscardListeners = new Set(); # set of answer ids
+
+# Set of answer ids that have a discard listener registered
+# This is to avoid registering the same listener multiple times.
+window.registeredDiscardListeners = new Set(); 
 
 $(document).on 'turbolinks:load', ->
 
@@ -32,8 +28,7 @@ $(document).on 'turbolinks:load', ->
     $target.empty().append($target.data('edit'))
       .removeClass('btn-secondary').addClass('btn-primary')
 
-  # change color of box depending on whether answer is marked
-  # as correct or incorrect
+  # Appearance of box
   $(document).on 'change', '[id^="answer-value-"]', ->
     id = $(this).data('id')
     isCorrectAnswer = $('#answer-true-' + id).is(':checked')
