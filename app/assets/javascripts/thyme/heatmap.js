@@ -75,11 +75,11 @@ class Heatmap {
     /*
        Construct heatmap SVG
     */
-    let pointsStr = "0," + maxHeight + " ";
+    let pointsStr = `0,${maxHeight} `;
     for (let x = 0; x < pixels.length; x++) {
-      pointsStr += x + "," + (maxHeight - amplitude * pixels[x]) + " ";
+      pointsStr += `${x},${maxHeight - amplitude * pixels[x]} `;
     }
-    pointsStr += "" + width + "," + maxHeight;
+    pointsStr += `${width},${maxHeight}`;
 
     const heatmapStr = `<svg width="${(width - stickOutWidthOneSided - thresh)}"
                              height="${maxHeight}">
