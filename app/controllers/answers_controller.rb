@@ -1,6 +1,6 @@
 # AnswersController
 class AnswersController < ApplicationController
-  before_action :set_answer, except: [:new, :create, :update_answer_box]
+  before_action :set_answer, except: [:new, :create]
   authorize_resource except: [:new, :create]
 
   def current_ability
@@ -34,9 +34,8 @@ class AnswersController < ApplicationController
     @success = true
   end
 
-  def update_answer_box
-    @answer_id = params[:answer_id].to_i
-    @value = params[:value] == "true"
+  def cancel_edit
+    I18n.locale = @answer.question&.locale_with_inheritance
   end
 
   private
