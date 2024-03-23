@@ -441,7 +441,7 @@ class MediaController < ApplicationController
 
   def show_comments
     commontator_thread_show(@medium)
-    render layout: "application_no_sidebar"
+    render layout: "application_no_sidebar_with_background"
   end
 
   def cancel_publication

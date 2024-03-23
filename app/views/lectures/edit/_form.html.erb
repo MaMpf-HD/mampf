@@ -4,17 +4,17 @@
                locals: { lecture: lecture } %>
     <div class="row px-4 py-2">
       <% if !lecture.seminar? || lecture.legacy_seminar %>
-        <div id="lecture-content-card" class="col-12 col-xxxl-9 mb-1">
+        <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
           <%= render partial: 'lectures/edit/content',
                      locals: { lecture: lecture } %>
         </div>
       <% else %>
-        <div id="lecture-content-card" class="col-12 col-xxxl-9 mb-1">
+        <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
           <%= render partial: 'lectures/edit/seminar_content',
                      locals: { lecture: lecture } %>
         </div>
       <% end %>
-      <div id="lecture-media-card" class="col-12 col-xxxl-3 mb-1">
+      <div id="lecture-media-card" class="col-12 col-xxl-3 mb-1">
         <%= render partial: 'lectures/edit/media',
                    locals: { media: media,
                              lecture: lecture } %>

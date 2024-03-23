@@ -51,9 +51,9 @@ Rails.application.routes.draw do
   resources :announcements, only: [:index, :new, :create]
 
   # answers routes
-
-  get "answers/update_answer_box",
-      as: "update_answer_box"
+  get "answers/:id/cancel_edit",
+      to: "answers#cancel_edit",
+      as: "cancel_edit_answer"
 
   resources :answers, except: [:index, :show, :edit]
 
