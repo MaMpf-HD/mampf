@@ -1,0 +1,11 @@
+// Update annotations after submitting the annotations form
+thymeAttributes.annotationManager.updateAnnotations(() => {
+  // After creation/update of an annotation,
+  // show the annotation in the annotation area.
+  <% if @annotation %>
+  var newAnnotationId = <%= @annotation.id %>;
+  thymeAttributes.annotationArea.showAnnotationWithId(newAnnotationId);
+  <% end %>
+});
+
+$("#annotation-modal").modal("hide");

@@ -1087,6 +1087,26 @@ class Medium < ApplicationRecord
     Lecture.find_by(id: teachable.lecture_id).user_ids
   end
 
+  # Returns either the annotations status (1 = activated, 0 = deactivated)
+  # of this medium or the annotations status of the associated lecture
+  # if "inherit from lecture" was selected (i.e. if the annotations status of
+  # this medium is -1).
+  def get_annotations_status # rubocop:todo Naming/AccessorMethodName
+    return lecture.annotations_status if annotations_status == -1
+
+    annotations_status
+  end
+
+  def annotations_visible?(user)
+    is_teacher = edited_with_inheritance_by?(user)
+    is_activated = (get_annotations_status == 1)
+    is_teacher && is_activated
+  end
+
+  def valid_annotations_status?
+    [-1, 0, 1].include?(annotations_status)
+  end
+
   private
 
     # media of type kaviar associated to a lesson and script do not require

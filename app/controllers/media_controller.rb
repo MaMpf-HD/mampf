@@ -59,6 +59,9 @@ class MediaController < ApplicationController
 
   def create
     @medium = Medium.new(medium_params)
+
+    return unless @medium.valid_annotations_status?
+
     @medium.locale = @medium.teachable&.locale
     @medium.editors = [current_user]
     @medium.tags = @medium.teachable.tags if @medium.teachable.instance_of?(::Lesson)
@@ -105,6 +108,8 @@ class MediaController < ApplicationController
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
+
+    return unless @medium.valid_annotations_status?
 
     # make sure the medium is touched
     # (it will not be touched automatically in some cases (e.g. if you only
@@ -509,6 +514,19 @@ class MediaController < ApplicationController
     @no_rights = params[:rights] == "none"
   end
 
+  def check_annotation_visibility
+    medium = Medium.find_by(id: params[:id])
+    isPermitted = medium.annotations_visible?(current_user) # rubocop:todo Naming/VariableName
+    render json: isPermitted # rubocop:todo Naming/VariableName
+  end
+
+  # Renders the feedback player. Do not confuse with the feedback button
+  # which has nothing to do with the thyme player(s).
+  def feedback
+    I18n.locale = @medium.locale_with_inheritance
+    render layout: "feedback"
+  end
+
   private
 
     def medium_params
@@ -519,6 +537,7 @@ class MediaController < ApplicationController
                                      :teachable_type, :teachable_id,
                                      :released, :text, :locale,
                                      :content, :boost,
+                                     :annotations_status,
                                      editor_ids: [],
                                      tag_ids: [],
                                      linked_medium_ids: [])

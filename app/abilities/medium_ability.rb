@@ -5,7 +5,7 @@ class MediumAbility
     user ||= User.new
     clear_aliased_actions
 
-    can [:index, :new, :search], Medium
+    can [:index, :new, :search, :check_annotation_visibility], Medium
 
     can [:show, :show_comments], Medium do |medium|
       medium.visible_for_user?(user) &&
@@ -16,7 +16,7 @@ class MediumAbility
       !user.generic? && medium.visible_for_user?(user)
     end
 
-    can [:edit, :update, :enrich, :publish, :destroy, :cancel_publication,
+    can [:edit, :update, :enrich, :feedback, :publish, :destroy, :cancel_publication,
          :add_item, :add_reference, :add_screenshot, :remove_screenshot,
          :import_script_items, :import_manuscript, :statistics,
          :render_medium_tags, :fill_quizzable_area,

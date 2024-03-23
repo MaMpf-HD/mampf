@@ -11,6 +11,19 @@ module Mampf
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults(7.0)
     config.autoloader = :zeitwerk
+
+    # Autoload lib extensions path (ignore all other subdirectories of lib/)
+    lib_path = Rails.root.join("lib")
+    config.autoload_paths << lib_path
+    config.eager_load_paths << lib_path
+    Rails.autoloaders.main.ignore(
+      lib_path.join("assets"),
+      lib_path.join("collectors"),
+      lib_path.join("core_ext"),
+      lib_path.join("scrapers"),
+      lib_path.join("tasks")
+    )
+
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
