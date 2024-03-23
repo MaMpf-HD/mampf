@@ -4,3 +4,20 @@
 #toggleCommentPreviewWrapper {
     padding-left: $form-check-padding-start + $form-check-input-width;
 }
+
+.form-control.commentForm {
+    border-color: #4173b4;
+    border-width: 1.5px;
+}
+
+.comment-field {
+    backdrop-filter: blur(8px);
+    background-color: rgba(255, 255, 255, 0.44);
+    padding: 6px !important;
+}
+
+.comment {
+    border: solid 1.5px #d2d2d2 !important;
+    border-radius: 4px;
+    box-shadow: rgba(0,0,0,0.025) 0px 2px 5px;
+}
