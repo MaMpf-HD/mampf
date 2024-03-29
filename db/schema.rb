@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_21_223010) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_29_230010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -433,7 +433,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_21_223010) do
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
-  create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "user_id"
     t.text "code"
@@ -519,7 +519,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_21_223010) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"
