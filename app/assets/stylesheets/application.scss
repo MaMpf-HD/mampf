@@ -27,9 +27,6 @@ $grid-breakpoints: (
   lg: 992px,
   xl: 1200px,
   xxl: 1440px,
-  xxxl: 1600px,
-  xxxxl: 1920px,
-  xxxxxl: 2160px
 );
 
 $container-max-widths: (
@@ -41,9 +38,6 @@ $container-max-widths: (
   lg: 992px,
   xl: 1200px,
   xxl: 1440px,
-  xxxl: 1600px,
-  xxxxl: 1920px,
-  xxxxxl: 2160px
 );
 
 
@@ -308,4 +302,15 @@ a {
 
 .toast {
   background-color: white;
+}
+
+.small-width {
+  max-width: 900px;
+}
+
+.subtle-background {
+  flex: 1;
+  background: radial-gradient(circle at top right, transparent 10%, #fafdff 10%, #fafdff 20%, transparent 21%), radial-gradient(circle at left bottom, transparent 10%, #fafdff 10%, #fafdff 20%, transparent 21%), radial-gradient(circle at top left, transparent 10%, #fafdff 10%, #fafdff 20%, transparent 21%), radial-gradient(circle at right bottom, transparent 10%, #fafdff 10%, #fafdff 20%, transparent 21%), radial-gradient(circle at center, #fafdff 30%, transparent 31%);
+  background-size: 6em 6em;
+  background-color: #ffffff;
 }
