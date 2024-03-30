@@ -127,7 +127,11 @@ class LecturesController < ApplicationController
     if status == Lecture.emergency_link_statuses[:lecture_link]
       params[:lecture][:emergency_link] = params[:lecture][:lecture_link]
     elsif status == Lecture.emergency_link_statuses[:direct_link]
-      params[:lecture][:emergency_link] = params[:lecture][:direct_link]
+      link = params[:lecture][:direct_link]
+      # Prepend "https://" to link if not present to make it an absolute URL
+      # instead of a relative one. E.g. "example.com" -> "https://example.com".
+      link = "https://#{link}" unless link.start_with?("http")
+      params[:lecture][:emergency_link] = link
     end
 
     @lecture.update(lecture_params)
