@@ -122,10 +122,11 @@ class LecturesController < ApplicationController
     end
 
     # emergency link update
-    status = params[:lecture][:emergency_link_status]
-    if status == "lecture_link"
+    status = params[:lecture][:emergency_link_status] # string
+    status = Lecture.emergency_link_statuses[status]
+    if status == Lecture.emergency_link_statuses[:lecture_link]
       params[:lecture][:emergency_link] = params[:lecture][:lecture_link]
-    elsif status == "direct_link"
+    elsif status == Lecture.emergency_link_statuses[:direct_link]
       params[:lecture][:emergency_link] = params[:lecture][:direct_link]
     end
 
