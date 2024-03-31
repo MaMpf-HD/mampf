@@ -33,6 +33,59 @@ const customGlobals = {
 
   // Common global methods
   initBootstrapPopovers: "readable",
+
+  // Thyme & Annotation tool globals
+  // TODO: This is a "hack" right now to get rid of "xy is not defined" error
+  // messages in ESLint.
+  // In an ideal world, we would use the new ES6 module syntax, but that is a
+  // bigger undertaking as we have to get rid of rails webpacker and use
+  // webpack itself or even better try to use the new import maps.
+  // See the links in this issue: https://github.com/MaMpf-HD/mampf/issues/454
+  thyme: "readable",
+  video: "readable",
+  thymeAttributes: "readable",
+  thymeKeyShortcuts: "readable",
+  thymeUtility: "readable",
+  Resizer: "readable",
+
+  ControlBarHider: "readable",
+
+  ChapterManager: "readable",
+  DisplayManager: "readable",
+  MetadataManager: "readable",
+
+  Component: "readable",
+  Category: "readable",
+  CategoryEnum: "readable",
+  Subcategory: "readable",
+  VolumeBar: "readable",
+  TimeButton: "readable",
+  MuteButton: "readable",
+  PlayButton: "readable",
+  SeekBar: "readable",
+  FullScreenButton: "readable",
+  NextChapterButton: "readable",
+  PreviousChapterButton: "readable",
+  SpeedSelector: "readable",
+  AddItemButton: "readable",
+  AddReferenceButton: "readable",
+  AddScreenshotButton: "readable",
+  IaBackButton: "readable",
+  IaButton: "readable",
+  IaCloseButton: "readable",
+
+  seekBar: "writable",
+
+  Annotation: "readable",
+  AnnotationManager: "readable",
+  AnnotationArea: "readable",
+  AnnotationsToggle: "readable",
+  AnnotationCategoryToggle: "readable",
+  AnnotationButton: "readable",
+  Heatmap: "readable",
+
+  // KaTeX
+  renderMathInElement: "readable",
 };
 
 // We don't have cypress linting yet, as the Cypress ESLint plugin
