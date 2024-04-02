@@ -67,6 +67,10 @@ class Lecture < ApplicationRecord
   # in the erdbeere database
   serialize :structure_ids, Array
 
+  # if the annotation button is enabled, one can add different types of links
+  # that e.g. bring students to the helpdesk
+  enum emergency_link_status: { no_link: 0, lecture_link: 1, direct_link: 2 }
+
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
   # rubocop:todo Rails/UniqueValidationWithoutIndex
@@ -838,6 +842,10 @@ class Lecture < ApplicationRecord
 
   def stale?
     older_than?(1.year)
+  end
+
+  def valid_annotations_status?
+    [-1, 1].include?(annotations_status)
   end
 
   private

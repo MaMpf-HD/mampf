@@ -50,11 +50,53 @@
 //= require talks
 //= require terms
 //= require tex_preview
-//= require thyme
-//= require thyme_editor
 //= require upload
 //= require users
 //= require vertices
 //= require watchlists
 //= require turbolinks
+
 //= require search_tags
+
+/*
+ * THYME RELATED SCRIPTS
+ * (warning: the order of the scripts is important
+ * - do not switch to alphabetical order!)
+ */
+//= require thyme/components/component
+//= require thyme/components/add_item_button
+//= require thyme/components/add_reference_button
+//= require thyme/components/add_screenshot_button
+//= require thyme/components/annotation_category_toggle
+//= require thyme/components/annotations_toggle
+//= require thyme/components/annotation_button
+//= require thyme/components/full_screen_button
+//= require thyme/components/ia_button
+//= require thyme/components/ia_back_button
+//= require thyme/components/ia_close_button
+//= require thyme/components/mute_button
+//= require thyme/components/next_chapter_button
+//= require thyme/components/play_button
+//= require thyme/components/previous_chapter_button
+//= require thyme/components/seek_bar
+//= require thyme/components/speed_selector
+//= require thyme/components/time_button
+//= require thyme/components/volume_bar
+//= require thyme/annotations/category_enum
+//= require thyme/annotations/category
+//= require thyme/annotations/subcategory
+//= require thyme/annotations/annotation
+//= require thyme/annotations/annotation_area
+//= require thyme/annotations/annotation_manager
+//= require thyme/attributes
+//= require thyme/chapter_manager
+//= require thyme/control_bar_hider
+//= require thyme/display_manager
+//= require thyme/heatmap
+//= require thyme/key_shortcuts
+//= require thyme/metadata_manager
+//= require thyme/resizer
+//= require thyme/utility
+//= require thyme/thyme_player
+//= require thyme/thyme_editor
+//= require thyme/thyme_feedback

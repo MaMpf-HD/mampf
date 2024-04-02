@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_19_130000) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_29_230010) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "annotations", force: :cascade do |t|
+    t.bigint "medium_id", null: false
+    t.bigint "user_id", null: false
+    t.text "timestamp", null: false
+    t.text "comment"
+    t.string "color", null: false
+    t.integer "category", null: false
+    t.integer "subcategory"
+    t.boolean "visible_for_teacher", default: false, null: false
+    t.integer "public_comment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medium_id"], name: "index_annotations_on_medium_id"
+    t.index ["user_id"], name: "index_annotations_on_user_id"
+  end
 
   create_table "announcements", force: :cascade do |t|
     t.bigint "lecture_id"
@@ -282,6 +298,9 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_19_130000) do
     t.integer "submission_max_team_size"
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
+    t.integer "annotations_status", default: 1, null: false
+    t.integer "emergency_link_status", default: 0, null: false
+    t.text "emergency_link"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -361,6 +380,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_19_130000) do
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
     t.text "external_link_description"
+    t.integer "annotations_status", default: -1, null: false
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end
@@ -413,7 +433,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_19_130000) do
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
-  create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "user_id"
     t.text "code"
@@ -499,7 +519,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_19_130000) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"
@@ -913,6 +933,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_19_130000) do
     t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
   end
 
+  add_foreign_key "annotations", "media"
+  add_foreign_key "annotations", "users"
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"

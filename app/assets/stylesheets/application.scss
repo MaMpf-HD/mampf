@@ -42,6 +42,7 @@ $container-max-widths: (
 
 
 /* override the !default vars with the values we set above */
+@import "annotations";
 @import "bootstrap";
 @import "rails_bootstrap_forms";
 @import "chapters";
@@ -57,6 +58,7 @@ $container-max-widths: (
 @import "tags";
 @import "talks";
 @import "thyme";
+@import "thyme_feedback";
 @import "users";
 @import "submissions";
 @import "vertices";
