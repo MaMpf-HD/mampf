@@ -1092,7 +1092,7 @@ class Medium < ApplicationRecord
   # if "inherit from lecture" was selected (i.e. if the annotations status of
   # this medium is -1).
   def get_annotations_status # rubocop:todo Naming/AccessorMethodName
-    return lecture.annotations_status if annotations_status == -1
+    return lecture.annotations_status if annotations_status == -1 && lecture.present?
 
     annotations_status
   end
