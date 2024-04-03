@@ -64,7 +64,8 @@
             
             <!--- ANNOTATION BUTTON -->
             <% if user_signed_in? %>
-              <a id="annotation-button" class="btn" title="<%= t('admin.annotation.edit_annotation') %>">
+              <a id="annotation-button" class="btn"
+                  title="<%= t('admin.annotation.annotation_modal_head_create_annotation') %>">
                 <i class="fas fa-sticky-note" aria-hidden="true"></i>
               </a>
             <% end %>

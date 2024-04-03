@@ -1,16 +1,19 @@
 <div id="emergency-link">
 	<% lecture = Medium.find_by_id(@medium_id).lecture %>
-	<% status = lecture.emergency_link_status_for_database %>
-	<% link = lecture.emergency_link %>
-	<% if status == Lecture.emergency_link_statuses[:lecture_link] %>
-	  <% link_name = Lecture.find_by_id(link.tr("^[0-9]", "")).title %>
-	<% elsif status == Lecture.emergency_link_statuses[:direct_link] %>
-    <% link_name = link %>
+  <% if lecture %>
+	  <% status = lecture.emergency_link_status_for_database %>
+    <% link = lecture.emergency_link %>
+    <% if status == Lecture.emergency_link_statuses[:lecture_link] %>
+      <% link_name = Lecture.find_by_id(link.tr("^[0-9]", "")).title %>
+    <% elsif status == Lecture.emergency_link_statuses[:direct_link] %>
+      <% link_name = link %>
+    <% end %>
+    
+    <% unless link_name.blank? %>
+      <%= t('admin.annotation.further_help') %> <br>
+      <a href="<%= link %>" target="_blank" rel="noopener noreferrer">
+        <%= link_name %>
+      </a>
+    <% end %>
   <% end %>
-  <% unless link_name.blank? %>
-    <%= t('admin.annotation.further_help') %> <br>
-    <a href="<%= link %>" target="_blank" rel="noopener noreferrer">
-      <%= link_name %>
-    </a>
-	<% end %>
 </div>
