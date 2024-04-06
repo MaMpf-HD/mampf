@@ -182,7 +182,7 @@ GEM
       term-ansicolor
       thor
     crass (1.0.6)
-    css_parser (1.16.0)
+    css_parser (1.17.0)
       addressable
     cypress-on-rails (1.17.0)
       rack
@@ -268,9 +268,9 @@ GEM
       globalize (>= 5.0.0)
     hashery (2.1.2)
     highline (2.1.0)
-    html-pipeline (3.1.0)
-      selma (~> 0.1)
-      zeitwerk (~> 2.5)
+    html-pipeline (2.14.3)
+      activesupport (>= 2)
+      nokogiri (>= 1.4)
     htmlentities (4.3.4)
     http-accept (1.7.0)
     http-cookie (1.0.5)
@@ -559,7 +559,6 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    selma (0.2.2-x86_64-linux)
     semantic_range (3.0.0)
     shrine (3.5.0)
       content_disposition (~> 1.0)
@@ -703,6 +702,7 @@ DEPENDENCIES
   fuzzy-string-match
   globalize
   globalize-accessors
+  html-pipeline (~> 2.14)
   image_processing
   jbuilder
   jquery-rails
