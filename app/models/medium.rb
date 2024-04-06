@@ -56,6 +56,11 @@ class Medium < ApplicationRecord
 
   has_many :assignments
 
+  # TODO Rails 7.2: specify coder: keyword to serialize objects in Rails 7.2
+  # However, as found out here [1], we need to wait for a PR [2] to be merged in
+  # the globalize gem.
+  # [1] https://github.com/rails/rails/issues/50483#issuecomment-1886053412
+  # [2] https://github.com/globalize/globalize/pull/811
   serialize :quiz_graph, QuizGraph
 
   serialize :solution, Solution
