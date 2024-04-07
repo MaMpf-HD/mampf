@@ -772,6 +772,10 @@ en:
           in particular they can create event series within the course. Every course
           editor inherits editing access for all event series belonging to the
           course.
+        no_right_to_change_editors: >
+          Course editors can only be changed by administrators.
+          Please contact %{project_email} by email if want a change to be made
+          here.
         preceding_courses: >
           Here you can enter which courses this course builds upon.
           E.g., Linear Algebra 1 and Linear Algebra 2 might be preceding

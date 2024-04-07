@@ -807,6 +807,10 @@ de:
           das Modul bearbeiten, insbesondere können sie Veranstaltungen innerhalb
           des Moduls anlegen. ModuleditorInnen erben die Bearbeitungsrechte für
           alle Veranstaltungen innerhalb des Moduls.
+        no_right_to_change_editors: >
+          ModuleditoInnen können nur von AdministratorInnen geändert werden.
+          Bitte wende Dich per Email an %{project_email}, wenn hier
+          eine Änderung vorgenommen werden soll.
         preceding_courses: >
           Hier kannst Du angeben, auf welchen Modulen das
           vorliegende Modul aufbaut.
