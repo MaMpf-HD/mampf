@@ -22,29 +22,6 @@
 #++
 # Rails.application.config.action_controller.allow_deprecated_parameters_hash_equality = false
 
-# ❓❗ SHA-256 as new hash algorithm -- TODO: check what we should do with this
-###
-# Active Record Encryption now uses SHA-256 as its hash digest algorithm.
-#
-# There are 3 scenarios to consider.
-#
-# 1. If you have data encrypted with previous Rails versions, and you have
-# +config.active_support.key_generator_hash_digest_class+ configured as SHA1 (the default
-# before Rails 7.0), you need to configure SHA-1 for Active Record Encryption too:
-#++
-# Rails.application.config.active_record.encryption.hash_digest_class = OpenSSL::Digest::SHA1
-#
-# 2. If you have +config.active_support.key_generator_hash_digest_class+ configured as SHA256
-# (the new default in 7.0), then you need to configure SHA-256 for Active Record Encryption:
-#++
-# Rails.application.config.active_record.encryption.hash_digest_class = OpenSSL::Digest::SHA256
-#
-# 3. If you don't currently have data encrypted with Active Record encryption, you can disable this
-# setting to configure the default behavior starting 7.1+:
-#++
-# Rails.application.config.active_record.encryption.support_sha1_for_non_deterministic_encryption
-# = false
-
 # ❓ Invalid cache expiration time, what behavior do we want?
 ###
 # Specify if an `ArgumentError` should be raised if `Rails.cache` `fetch` or
