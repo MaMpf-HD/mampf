@@ -774,7 +774,7 @@ en:
           course.
         no_right_to_change_editors: >
           Course editors can only be changed by administrators.
-          Please contact %{project_email} by email if want a change to be made
+          Please contact %{project_email} by email if you want a change to be made
           here.
         preceding_courses: >
           Here you can enter which courses this course builds upon.
