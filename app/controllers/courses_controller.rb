@@ -100,7 +100,7 @@ class CoursesController < ApplicationController
                         { tag_ids: [],
                           preceding_course_ids: [],
                           division_ids: [] }]
-      allowed_params.push({ editor_ids: [] }) if current_user.admin?
+      allowed_params.push(editor_ids: []) if current_user.admin?
       params.require(:course).permit(allowed_params)
     end
 
