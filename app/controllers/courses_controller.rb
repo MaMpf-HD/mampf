@@ -97,9 +97,7 @@ class CoursesController < ApplicationController
       allowed_params = [:title, :short_title, :organizational,
                         :organizational_concept, :locale,
                         :term_independent, :image,
-                        { tag_ids: [],
-                          preceding_course_ids: [],
-                          division_ids: [] }]
+                        { tag_ids: [], preceding_course_ids: [], division_ids: [] }]
       allowed_params.push(editor_ids: []) if current_user.admin?
       params.require(:course).permit(allowed_params)
     end
