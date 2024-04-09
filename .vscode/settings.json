@@ -16,6 +16,9 @@
     "eslint.experimental.useFlatConfig": true,
     // this disables VSCode built-in formatter (instead we want to use ESLint)
     "javascript.validate.enable": false,
+    "eslint.options": {
+        "overrideConfigFile": ".config/eslint.mjs"
+    },
     //////////////////////////////////////
     // HTML
     //////////////////////////////////////
@@ -90,5 +93,6 @@
     "cSpell.words": [
         "commontator",
         "turbolinks"
-    ]
+    ],
+    "rubyLsp.customRubyCommand": "set -o allexport && . ./docker-dummy.env && set +o allexport"
 }

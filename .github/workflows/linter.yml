@@ -72,4 +72,4 @@ jobs:
           if: ${{ steps.js-changed.outputs.changed-files != ''}}
           run: |
             echo "🚨 Running ESLint version: $(yarn run --silent eslint --version)"
-            yarn run eslint --max-warnings 0 --no-warn-ignored ${{ steps.js-changed.outputs.changed-files }}
+            yarn run eslint --config ./config/eslint.mjs --max-warnings 0 --no-warn-ignored ${{ steps.js-changed.outputs.changed-files }}
