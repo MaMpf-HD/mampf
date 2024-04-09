@@ -27,7 +27,7 @@ MaMpf is an innovative open source e-learning platform for the mathematical scie
     <img width="1178" alt="MaMpf landing page used to log in" src="https://github.com/MaMpf-HD/mampf/assets/37160523/4a671aa4-134c-4d4a-9f00-aeeacd3ccebd">
 </a>
 
-MaMpf centers around the idea of a hypermedia system for mathematical content. Like _moodle_, it provides a platform for lecturers to upload and organize their teaching material including videos and scripts. But MaMpf goes beyond that:
+MaMpf aims to be a hypermedia system for mathematical content. Like _moodle_, it provides a platform for lecturers to upload & organize their teaching material including videos and scripts. But MaMpf goes beyond that:
 - **Lecture videos** can be enriched with a navigation that allows students to jump to specific parts of the video, e.g. mathematical definitions, theorems, examples etc.
 - Lectures can be **tagged** with keywords. This allows students to easily find all lectures that are related to a specific topic. They can also see how different topics are connected in a **graph view**.
 - Interactive **quizzes** allow students to test their understanding of the material. The system can automatically evaluate the answers and provide direct feedback, e.g. explain why an answer is wrong or provide a link to the relevant part of the video or an additional "worked example" video.
@@ -101,7 +101,7 @@ To give you a closer look, here are some **screenshots** taken from our live sys
 
 ## 💻 Installation
 
-MaMpf is a **Ruby on Rails** application with a **PostgreSQL** database. For our frontend, we rely on **Bootstrap** for the styling. Our [website](https://mampf.mathi.uni-heidelberg.de/) is hosted on a server at Heidelberg University. We use `docker` and `docker compose` for development and deployment.
+MaMpf is a **Ruby on Rails** application with a **PostgreSQL** database. For our frontend styling, we rely on **Bootstrap**. Our [website](https://mampf.mathi.uni-heidelberg.de/) is hosted on a server at Heidelberg University. We use docker (compose) for development and deployment.
 
 MaMpf is actively developed & maintained. If you are interested in using MaMpf at your university, please get [in touch](mailto:mampf@mathi.uni-heidelberg.de). But please note that we're a very small team and can't provide support for setting up your own instance of MaMpf at the moment. Our [installation guide](./INSTALL.md) should be a good starting point. We have to admit, though, that getting your own instance up and running might involve quite some effort including setting up a mail server, the database, SSL certificates, an nginx web server / proxy, deploying the Ruby on Rails application, and more.
 
@@ -113,4 +113,4 @@ cd mampf/docker/development/
 docker compose up -d
 ```
 
-See the full installation guide [here](./INSTALL.md).
+See the full installation guide [here](./INSTALL.md). There you will also find out how to init your local database with some sample data.
