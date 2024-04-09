@@ -92,6 +92,7 @@
     //////////////////////////////////////
     "cSpell.words": [
         "commontator",
+        "helpdesk",
         "turbolinks"
     ],
     "rubyLsp.customRubyCommand": "set -o allexport && . ./docker-dummy.env && set +o allexport"
