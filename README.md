@@ -42,7 +42,7 @@ This is just a brief overview of the feature set. You may think of MaMpf as a mi
 To give you a closer look, here are some **screenshots** taken from our live system:
 
 <details>
-  <summary>Interactive video player</summary>
+  <summary>Video player</summary>
   
   Try out the video player [here](https://mampf.mathi.uni-heidelberg.de/media/384/play) (even without any account). Press `i` to open the outline on the right. It can hold references to other parts of the video or other items in the whole MaMpf database. The player makes use of WebVTT and HTML5 video capabilities of modern browsers.
 
@@ -52,7 +52,7 @@ To give you a closer look, here are some **screenshots** taken from our live sys
 </details>
 
 <details>
-  <summary>Courses view</summary>
+  <summary>Courses overview</summary>
   
   Here, users can select courses from the current semester or from previous ones.
 
@@ -60,7 +60,7 @@ To give you a closer look, here are some **screenshots** taken from our live sys
 </details>
 
 <details>
-  <summary>Lectures view</summary>
+  <summary>Lectures overview</summary>
   
   In the lectures view, users can click on a lecture to see the video.
 
@@ -68,7 +68,7 @@ To give you a closer look, here are some **screenshots** taken from our live sys
 </details>
 
 <details>
-  <summary>Graph search view</summary>
+  <summary>Graph tag search</summary>
   
   MaMpf is equipped with a tagging system and rich visualizations for content relations, making use of [cytoscape.js](http://js.cytoscape.org/).
 
