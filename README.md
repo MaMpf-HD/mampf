@@ -5,8 +5,8 @@
   </a>
   <div align="center">
     <h3 align="center">MaMpf</h3>
-    <p><strong>Mathematical media platform for universities</strong><br>
-    <strong>(Mathematische Medienplattform für Universitäten)</strong>
+    <p>
+      <strong>Mathematical Media Platform for universities</strong>
     </p>
   </div>
   <div align="center">
