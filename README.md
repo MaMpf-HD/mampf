@@ -114,3 +114,8 @@ docker compose up -d
 ```
 
 See the full installation guide [here](./INSTALL.md). There you will also find out how to init your local database with some sample data.
+
+<a href="https://mampf.mathi.uni-heidelberg.de/">
+  <img src="https://github.com/MaMpf-HD/mampf/assets/37160523/c3454b01-a3cb-4fab-90f7-cb097075c56f"
+    alt="MaMpf footer"/>
+</a>
