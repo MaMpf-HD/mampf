@@ -27,12 +27,12 @@ MaMpf is an innovative open source e-learning platform for the mathematical scie
     <img width="1178" alt="MaMpf landing page used to log in" src="https://github.com/MaMpf-HD/mampf/assets/37160523/4a671aa4-134c-4d4a-9f00-aeeacd3ccebd">
 </a>
 
-MaMpf aims to be a hypermedia system for mathematical content. Like _moodle_, it provides a platform for lecturers to upload & organize their teaching material including videos and scripts. But MaMpf goes beyond that:
-- 🎞 **Lecture videos** can be enriched with a navigation that allows students to jump to specific parts of the video, e.g. mathematical definitions, theorems, examples etc.
-- 🏷 Lectures can be **tagged** with keywords. This allows students to easily find all lectures that are related to a specific topic. They can also see how different topics are connected in a **graph view**.
+MaMpf aims to be a hypermedia system for mathematical content. Like _moodle_, it provides a platform for lecturers to upload & organize their teaching material including videos and scripts. But MaMpf goes beyond that and eases learning through interconnected contents:
+- 🎞 **Lecture videos** can be enriched with a navigation that allows students to jump to specific parts of the video, e.g. mathematical definitions, theorems, examples etc. References to other media are also possible, e.g. to different lecture videos / quizzes / worked examples etc.
+- 🏷 Any media can be **tagged** with keywords. This allows students to easily find content related to a specific topic and discover how items are connected in a **graph view**.
 - 🕹 Interactive **quizzes** allow students to test their understanding of the material. The system can automatically evaluate the answers and provide direct feedback, e.g. explain why an answer is wrong or provide a link to the relevant part of the video or an additional "worked example" video.
-- 👩‍🏫 With MaMpf, a university can also manage their **tutorials**. Students can sign up for tutorials and tutors can manage the groups and upload corrected homework assignments for their students.
-- 🗨 A **comment system** allows students to ask questions about the material in the context of the specific video or script or in a general forum. Lecturers will get a notification when a new comment is posted (of course adjustable).
+- 👩‍🏫 Students can sign up for tutorials and form teams (of two) themselves. Tutors are then able to manage the groups and upload corrected homework assignments for their students.
+- 🗨 A **comment system** allows students to ask questions about the material in the context of the specific video/script or in a general forum. Lecturers will get a notification when a new comment is posted (of course adjustable). Students may choose their own alias name when posting comments in order to stay anonymous.
 
 This is just a brief overview of the feature set. You may think of MaMpf as a mix of _Moodle_, _Khan Academy_ and _YouTube_ tailored to the needs of the mathematical sciences and a university context.
 
