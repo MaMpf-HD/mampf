@@ -147,6 +147,6 @@ module MediaHelper
   def external_link_description_not_empty(medium)
     # Uses link display name if not empty, otherwise falls back to the
     # link url itself.
-    (medium.external_link_description.presence || medium.external_reference_link)
+    medium.external_link_description.presence || medium.external_reference_link
   end
 end

@@ -1,4 +1,5 @@
 # rubocop:disable Rails/
+# rubocop:disable Lint/SymbolConversion
 class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
   def up
     remove_index :user_submission_joins,
@@ -33,3 +34,4 @@ class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
   end
 end
 # rubocop:enable Rails/
+# rubocop:enable Lint/SymbolConversion
