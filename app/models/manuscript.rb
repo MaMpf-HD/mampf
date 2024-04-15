@@ -148,19 +148,16 @@ class Manuscript
     attrs = [:medium_id, :pdf_destination, :section_id, :sort, :page, :description, :ref_number,
              :position, :quarantine]
     item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
-    contents = []
-    @chapters.each do |c|
-      contents.push(
-        { medium_id: @medium.id,
-          pdf_destination: c["destination"],
-          section_id: nil,
-          sort: "chapter",
-          page: c["page"].to_i,
-          description: c["description"],
-          ref_number: c["label"],
-          position: nil,
-          quarantine: nil }
-      )
+    contents = @chapters.map do |c|
+      { medium_id: @medium.id,
+        pdf_destination: c["destination"],
+        section_id: nil,
+        sort: "chapter",
+        page: c["page"].to_i,
+        description: c["description"],
+        ref_number: c["label"],
+        position: nil,
+        quarantine: nil }
     end
     create_or_update_items!(contents, item_details, item_destinations,
                             item_id_map)
@@ -176,21 +173,18 @@ class Manuscript
     attrs = [:medium_id, :pdf_destination, :section_id, :sort, :page, :description, :ref_number,
              :position, :quarantine]
     item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
-    contents = []
     # NOTE: that sections get a position -1 in order to place them ahead
     # of all content items within themseleves in #script_items_by_position
-    @sections.each do |s|
-      contents.push(
-        { medium_id: @medium.id,
-          pdf_destination: s["destination"],
-          section_id: s["mampf_section"].id,
-          sort: "section",
-          page: s["page"].to_i,
-          description: s["description"],
-          ref_number: s["label"],
-          position: -1,
-          quarantine: nil }
-      )
+    contents = @sections.map do |s|
+      { medium_id: @medium.id,
+        pdf_destination: s["destination"],
+        section_id: s["mampf_section"].id,
+        sort: "section",
+        page: s["page"].to_i,
+        description: s["description"],
+        ref_number: s["label"],
+        position: -1,
+        quarantine: nil }
     end
     create_or_update_items!(contents, item_details, item_destinations,
                             item_id_map)
@@ -208,22 +202,19 @@ class Manuscript
     attrs = [:medium_id, :pdf_destination, :section_id, :sort, :page, :description, :ref_number,
              :position, :hidden, :quarantine]
     item_details = items.pluck(*attrs).map { |i| attrs.zip(i).to_h }
-    contents = []
-    @content.each do |c|
-      contents.push(
-        { medium_id: @medium.id,
-          pdf_destination: c["destination"],
-          section_id: @sections.find do |s|
-                        c["section"] == s["section"]
-                      end ["mampf_section"]&.id,
-          sort: Item.internal_sort(c["sort"]),
-          page: c["page"].to_i,
-          description: c["description"],
-          ref_number: c["label"],
-          position: c["counter"],
-          hidden: filter_boxes[c["counter"]].third == false,
-          quarantine: nil }
-      )
+    contents = @content.map do |c|
+      { medium_id: @medium.id,
+        pdf_destination: c["destination"],
+        section_id: @sections.find do |s|
+                      c["section"] == s["section"]
+                    end ["mampf_section"]&.id,
+        sort: Item.internal_sort(c["sort"]),
+        page: c["page"].to_i,
+        description: c["description"],
+        ref_number: c["label"],
+        position: c["counter"],
+        hidden: filter_boxes[c["counter"]].third == false,
+        quarantine: nil }
     end
     create_or_update_items!(contents, item_details, item_destinations,
                             item_id_map)
