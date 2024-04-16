@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^1.5.0",
-    "eslint": "^9.0.0-alpha.0",
+    "eslint": "^9.0.0",
     "eslint-plugin-erb": "^2.0.0",
     "globals": "^13.24.0"
   }
