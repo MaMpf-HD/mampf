@@ -115,8 +115,8 @@ services:
       PROJECT_EMAIL_MAILBOX: INBOX
       BLOG: https://mampf.blog
       # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
-      DB_SQL_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
-      UPLOADS_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
+      # DB_SQL_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
+      # UPLOADS_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     volumes:
       - type: bind
         source: ../../

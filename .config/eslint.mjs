@@ -96,7 +96,7 @@ export default [
   js.configs.recommended,
   // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
   erb.configs.recommended,
-  // Globally ignore the following files
+  // Globally ignore the following paths
   {
     ignores: [
       "node_modules/",
