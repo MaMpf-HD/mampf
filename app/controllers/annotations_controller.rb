@@ -11,7 +11,7 @@ class AnnotationsController < ApplicationController
     @total_seconds = params[:total_seconds]
     @medium_id = params[:medium_id]
     @posted = false
-    @is_new_annotation = true
+    @is_new_annotation = true 
 
     render :edit
   end
