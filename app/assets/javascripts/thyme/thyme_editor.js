@@ -12,6 +12,16 @@ $(document).on("turbolinks:load", function () {
   thymeAttributes.video = video;
   thymeAttributes.mediumId = thymeEdit.dataset.medium;
 
+  const canvasId = "snapshot";
+
+  // Adjust the width of the canvas according to the video
+  // such that screenshot generation is performed with the same ratio.
+  video.addEventListener("loadedmetadata", () => {
+    this.canvas = document.getElementById(canvasId);
+    this.canvas.width = Math.floor($(video).width());
+    this.canvas.height = Math.floor($(video).height());
+  });
+
   /*
     COMPONENTS
    */
@@ -30,7 +40,7 @@ $(document).on("turbolinks:load", function () {
 
   (new AddItemButton("add-item")).add();
   (new AddReferenceButton("add-reference")).add();
-  (new AddScreenshotButton("add-screenshot", "snapshot")).add();
+  (new AddScreenshotButton("add-screenshot", canvasId)).add();
 
   thymeUtility.setUpMaxTime("max-time");
 });
