@@ -41,7 +41,14 @@ class FixUnreadCommentsInconsistencies < ActiveRecord::Migration[7.0]
     # issue after having run this migration.
     #
     # This migration took ~40 minutes to run for ~7000 users at 2024-02-15, 0:40.
-    raise ActiveRecord::IrreversibleMigration
+
+    # We don't want to run this migration again, so we raise an error here.
+    # However, this meant that one had to delete this migration in order to setup
+    # a new database locally. Since we have a new migration that fixes the underlying
+    # issue, we don't really need this broken migration anymore.
+    # Therefore, we just don't do anything here and even comment out
+    # the raise statement.
+    # raise ActiveRecord::IrreversibleMigration
 
     # For archive reasons, here is the original code:
 

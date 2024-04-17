@@ -105,7 +105,7 @@ Style/MethodCallWithArgsParentheses:
   AllowedPatterns: [^redirect_]
   # Don't enforce in migrations, as we have methods like `add_column`,
   # `change_column` etc. and parentheses would be very annoying there.
-  Exclude: ["db/**/*"]
+  Exclude: ["../db/**/*"]
 
 Style/RedundantReturn:
   AllowMultipleReturnValues: true

@@ -136,7 +136,6 @@ $(document).on 'turbolinks:load', ->
     tags = $(this).data('tags')
     for t in tags
       $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
-        .addClass('bg-light')
     return
 
   # mouseenter over lesson -> colorize tags
