@@ -184,13 +184,11 @@ class Tag < ApplicationRecord
   # converts the subgraph of all tags of distance <= 2 to the given marked tag
   # into a cytoscape array representing this subgraph
   def self.to_cytoscape(tags, marked_tag, highlight_related_tags: true)
-    result = []
     # add vertices
-    tags.each do |t|
-      result.push(data: t.cytoscape_vertex(marked_tag,
-                                           highlight_related_tags:
-                                             highlight_related_tags))
+    result = tags.map do |t|
+      { data: t.cytoscape_vertex(marked_tag, highlight_related_tags: highlight_related_tags) }
     end
+
     # add edges
     edges = []
     tags.each do |t|

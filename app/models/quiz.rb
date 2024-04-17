@@ -115,7 +115,7 @@ class Quiz < Medium
 
   def questions
     ids = quiz_graph&.vertices&.values&.select { |v| v[:type] == "Question" }
-                    &.map { |v| v[:id] }
+                    &.pluck(:id)
     Question.where(id: ids)
   end
 

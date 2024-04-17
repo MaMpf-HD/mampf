@@ -128,13 +128,12 @@ class MediumPublisher
     # to the medium's teachable's media_scope
     def create_notifications!
       @medium.teachable&.media_scope&.touch
-      notifications = []
       @medium.teachable.media_scope.users.touch_all
-      @medium.teachable.media_scope.users.each do |u|
-        notifications << Notification.new(recipient: u,
-                                          notifiable_id: @medium.id,
-                                          notifiable_type: "Medium",
-                                          action: "create")
+      notifications = @medium.teachable.media_scope.users.map do |u|
+        Notification.new(recipient: u,
+                         notifiable_id: @medium.id,
+                         notifiable_type: "Medium",
+                         action: "create")
       end
       Notification.import notifications
     end

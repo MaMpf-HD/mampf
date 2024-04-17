@@ -4,7 +4,7 @@ class Term < ApplicationRecord
   has_many :lectures
 
   # season can only be SS/WS, and there can be only one of this type each year
-  validates :season, presence: true, # rubocop:todo Rails/UniqueValidationWithoutIndex
+  validates :season, presence: true,
                      inclusion: { in: ["SS", "WS"] },
                      uniqueness: { scope: :year }
   # a year >=2000 needs to be present
