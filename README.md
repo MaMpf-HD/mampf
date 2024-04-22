@@ -31,7 +31,7 @@ MaMpf aims to be a hypermedia system for mathematical content. Like _moodle_, it
 - 🎞 **Lecture videos** can be enriched with a navigation that allows students to jump to specific parts of the video, e.g. mathematical definitions, theorems, examples etc. References to other media are also possible, e.g. to different lecture videos / quizzes / worked examples etc.
 - 🏷 Any media can be **tagged** with keywords. This allows students to easily find content related to a specific topic and discover how items are connected in a **graph view**.
 - 🕹 Interactive **quizzes** allow students to test their understanding of the material. The system can automatically evaluate the answers and provide direct feedback, e.g. explain why an answer is wrong or provide a link to the relevant part of the video or an additional "worked example" video.
-- 👩‍🏫 Students can sign up for tutorials and form teams (of two) themselves. Tutors are then able to manage the groups and upload corrected homework assignments for their students.
+- 👩‍🏫 Students can sign up for tutorials and form teams themselves. Tutors are then able to manage the groups and upload corrected homework assignments for their students.
 - 🗨 A **comment system** allows students to ask questions about the material in the context of the specific video/script or in a general forum. Lecturers will get a notification when a new comment is posted (of course adjustable). Students may choose their own alias name when posting comments in order to stay anonymous.
 
 This is just a brief overview of the feature set. You may think of MaMpf as a mix of _Moodle_, _Khan Academy_ and _YouTube_ tailored to the needs of the mathematical sciences and a university context.
@@ -78,7 +78,7 @@ To give you a closer look, here are some **screenshots** taken from our live sys
 <details>
   <summary>Quizzes</summary>
 
-  Users can play quizzes in MaMpf and get immediate feedback. In order to parse student's input in quizzes (e.g. when they enter a concrete number), MaMpf makes use of the JS based symbolic math expression evaluator [nerdamer](https://github.com/jiggzson/nerdamer).
+  Users can play quizzes in MaMpf and get immediate feedback. In order to parse student's input in quizzes (e.g. when they enter a symbolic expression), MaMpf makes use of the JS based symbolic math expression evaluator [nerdamer](https://github.com/jiggzson/nerdamer).
 
   ![playing a quiz](https://github.com/MaMpf-HD/mampf/assets/37160523/baa3ae6d-e7bf-4ecc-9db0-22cab367d4ee)
 
