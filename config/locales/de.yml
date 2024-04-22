@@ -714,12 +714,6 @@ de:
       script_based: >
           unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
-      emergency_link: 'Link für den Emergency-Button'
-      emergency_link_no_link: 'kein Link'
-      emergency_link_lecture_link: 'Vorlesungslink'
-      emergency_link_direct_link: 'direkter Link'
-      enter_emergency_link: 'Emergency-Link eingeben:'
-      select_helpdesk: 'Helpdesk auswählen:'
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
