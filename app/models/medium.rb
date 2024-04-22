@@ -61,11 +61,11 @@ class Medium < ApplicationRecord
   # the globalize gem.
   # [1] https://github.com/rails/rails/issues/50483#issuecomment-1886053412
   # [2] https://github.com/globalize/globalize/pull/811
-  serialize :quiz_graph, QuizGraph
+  serialize :quiz_graph, coder: QuizGraph
 
-  serialize :solution, Solution
+  serialize :solution, coder: Solution
 
-  serialize :publisher, MediumPublisher
+  serialize :publisher, coder: MediumPublisher
 
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem

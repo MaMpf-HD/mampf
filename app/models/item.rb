@@ -25,7 +25,7 @@ class Item < ApplicationRecord
 
   # an item that corresponds to a toc entry of a video has a start time
   # start_time is a TimeStamp object (which is serialized for the db)
-  serialize :start_time, TimeStamp
+  serialize :start_time, coder: TimeStamp
 
   # sort should be one of the following:
   # remark, ... , corollary - correspond to to toc entries of videos
