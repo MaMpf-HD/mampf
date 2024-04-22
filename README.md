@@ -34,7 +34,7 @@ MaMpf aims to be a hypermedia system for mathematical content. Like _moodle_, it
 - 👩‍🏫 Students can sign up for tutorials and form teams themselves. Tutors are then able to manage the groups and upload corrected homework assignments for their students.
 - 🗨 A **comment system** allows students to ask questions about the material in the context of the specific video/script or in a general forum. Lecturers will get a notification when a new comment is posted (of course adjustable). Students may choose their own alias name when posting comments in order to stay anonymous.
 
-This is just a brief overview of the feature set. You may think of MaMpf as a mix of _Moodle_, _Khan Academy_ and _YouTube_ tailored to the needs of the mathematical sciences and a university context.
+This is just a brief overview of the feature set. You may think of MaMpf as a mix of _Moodle_, _Khan Academy_ and _YouTube_. But it's more than that as features are tailored to the needs of the mathematical sciences and a university context. Start exploring MaMpf [here](https://mampf.mathi.uni-heidelberg.de/).
 
 
 ## 📷 Screenshots
