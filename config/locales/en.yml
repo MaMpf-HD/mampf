@@ -2514,6 +2514,7 @@ en:
     resources: resources
     blog: Blog
     guided_tour: guided tour
+    researchgate: Researchgate
   math:
     number: 'number'
     complex_number: 'complex number'
