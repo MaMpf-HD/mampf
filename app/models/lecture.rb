@@ -65,7 +65,7 @@ class Lecture < ApplicationRecord
 
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
-  serialize :structure_ids, type: Array
+  serialize :structure_ids, type: Array, coder: YAML
 
   # if the annotation button is enabled, one can add different types of links
   # that e.g. bring students to the helpdesk

@@ -39,7 +39,7 @@ class Tag < ApplicationRecord
            class_name: "Notion",
            inverse_of: :aliased_tag
 
-  serialize :realizations, type: Array
+  serialize :realizations, type: Array, coder: YAML
 
   accepts_nested_attributes_for :notions,
                                 reject_if: lambda { |attributes|
