@@ -62,15 +62,6 @@ class LecturesController < ApplicationController
                               Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       eager_load_stuff
     end
-
-    # emergency link -> prefill form
-    status = @lecture.emergency_link_status_for_database
-    link = @lecture.emergency_link
-    if status == Lecture.emergency_link_statuses[:lecture_link]
-      @linked_lecture = Lecture.find_by(id: link.tr("^[0-9]", ""))
-    elsif status == Lecture.emergency_link_statuses[:direct_link]
-      @direct_link = link
-    end
   end
 
   def create
@@ -119,19 +110,6 @@ class LecturesController < ApplicationController
                                 lecture: @lecture)
                           .new_editor_email.deliver_later
       end
-    end
-
-    # emergency link update
-    status = params[:lecture][:emergency_link_status] # string
-    status = Lecture.emergency_link_statuses[status]
-    if status == Lecture.emergency_link_statuses[:lecture_link]
-      params[:lecture][:emergency_link] = params[:lecture][:lecture_link]
-    elsif status == Lecture.emergency_link_statuses[:direct_link]
-      link = params[:lecture][:direct_link]
-      # Prepend "https://" to link if not present to make it an absolute URL
-      # instead of a relative one. E.g. "example.com" -> "https://example.com".
-      link = "https://#{link}" unless link.start_with?("http")
-      params[:lecture][:emergency_link] = link
     end
 
     @lecture.update(lecture_params)
@@ -345,8 +323,7 @@ class LecturesController < ApplicationController
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
                         :submission_max_team_size, :submission_grace_period,
-                        :annotations_status, :emergency_link,
-                        :emergency_link_status]
+                        :annotations_status]
       if action_name == "update" && current_user.can_update_personell?(@lecture)
         allowed_params.push(:teacher_id, { editor_ids: [] })
       end

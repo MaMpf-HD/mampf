@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_29_230010) do
+ActiveRecord::Schema[7.0].define(version: 2024_04_22_200000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -299,8 +299,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_29_230010) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
-    t.integer "emergency_link_status", default: 0, null: false
-    t.text "emergency_link"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
