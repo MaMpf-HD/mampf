@@ -260,12 +260,6 @@ GEM
       RubyInline (>= 3.8.6)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    globalize (6.3.0)
-      activemodel (>= 4.2, < 7.2)
-      activerecord (>= 4.2, < 7.2)
-      request_store (~> 1.0)
-    globalize-accessors (0.3.0)
-      globalize (>= 5.0.0)
     hashery (2.1.2)
     highline (2.1.0)
     html-pipeline (2.14.3)
@@ -347,6 +341,9 @@ GEM
     mini_magick (4.12.0)
     mini_mime (1.1.5)
     minitest (5.22.3)
+    mobility (1.2.9)
+      i18n (>= 0.6.10, < 2)
+      request_store (~> 1.0)
     msgpack (1.7.2)
     multi_json (1.15.0)
     multipart-post (2.4.0)
@@ -699,8 +696,6 @@ DEPENDENCIES
   fastimage
   filesize
   fuzzy-string-match
-  globalize
-  globalize-accessors
   html-pipeline (~> 2.14)
   image_processing
   jbuilder
@@ -714,6 +709,7 @@ DEPENDENCIES
   listen (~> 3.9)
   marcel
   mini_magick
+  mobility
   net-smtp
   pdf-reader
   pg
