@@ -116,27 +116,8 @@ function content() {
   contentCategoryRadios.addEventListener("click", function (evt) {
     if (evt.target && event.target.matches("input[type='radio']")) {
       submitButton.disabled = false;
-
-      // Show further help
-      // (right now, the same help is display for all the different categories)
-      switch (evt.target.value) {
-        case Subcategory.DEFINITION.name:
-          showFurtherHelp();
-          break;
-        case Subcategory.ARGUMENT.name:
-          showFurtherHelp();
-          break;
-        case Subcategory.STRATEGY.name:
-          showFurtherHelp();
-          break;
-      }
     }
   });
-
-  function showFurtherHelp() {
-    $("#content-specific").empty()
-      .append("<%= j render partial: "annotations/form_content_further_help"%>");
-  }
 }
 
 function mistake() {
