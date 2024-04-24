@@ -840,6 +840,10 @@ class Lecture < ApplicationRecord
     older_than?(1.year)
   end
 
+  def valid_annotations_status?
+    [-1, 1].include?(annotations_status)
+  end
+
   private
 
     # used for after save callback

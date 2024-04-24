@@ -78,6 +78,9 @@ class User < ApplicationRecord
 
   # a user has a watchlist with watchlist_entries
   has_many :watchlists, dependent: :destroy
+
+  has_many :feedbacks, dependent: :destroy
+
   include ScreenshotUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
@@ -549,14 +552,38 @@ class User < ApplicationRecord
       .select { |m| m.commontator_thread.comments.any? }
   end
 
-  def media_latest_comments
-    media = subscribed_commentable_media_with_comments
-            .map do |m|
-      { medium: m,
-        thread: m.commontator_thread,
-        latest_comment: m.commontator_thread
-                         .comments.max_by(&:created_at) }
+  # Returns the media that the user has subscribed to and that have been
+  # commented on by somebody else (not by the current user). The order is
+  # given by the time of the latest comment by somebody else.
+  #
+  # Media that have not been commented on by somebody else than the current user,
+  # are not returned (!).
+  #
+  # For each medium, the following information is stored:
+  # - the medium itself
+  # - the thread of the medium
+  # - the latest comment by somebody else than the current user
+  # - the latest comment by any user (which might include the current user)
+  def subscribed_media_with_latest_comments_not_by_creator
+    media = []
+
+    subscribed_commentable_media_with_comments.each do |m|
+      thread = m.commontator_thread
+      comments = thread.comments
+      next if comments.blank?
+
+      comments_not_by_creator = comments.reject { |c| c.creator == self }
+      next if comments_not_by_creator.blank?
+
+      latest_comment = comments_not_by_creator.max_by(&:created_at)
+      latest_comment_by_any_user = comments.max_by(&:created_at)
+
+      media << { medium: m,
+                 thread: thread,
+                 latest_comment: latest_comment,
+                 latest_comment_by_any_user: latest_comment_by_any_user }
     end
+
     media.sort_by { |x| x[:latest_comment].created_at }.reverse
   end
 

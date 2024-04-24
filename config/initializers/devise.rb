@@ -12,7 +12,7 @@ Devise.setup do |config|
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
   config.mailer_sender = if Rails.env.production?
-    ENV.fetch("FROM_ADDRESS", nil)
+    ENV.fetch("FROM_ADDRESS")
   else
     "please-change-me-at-config-initializers-devise@example.com"
   end

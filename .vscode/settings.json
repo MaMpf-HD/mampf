@@ -16,6 +16,9 @@
     "eslint.experimental.useFlatConfig": true,
     // this disables VSCode built-in formatter (instead we want to use ESLint)
     "javascript.validate.enable": false,
+    "eslint.options": {
+        "overrideConfigFile": ".config/eslint.mjs"
+    },
     //////////////////////////////////////
     // HTML
     //////////////////////////////////////
@@ -30,7 +33,9 @@
         "editor.formatOnSave": true
     },
     "rubyLsp.formatter": "rubocop",
-    "rubyLsp.rubyVersionManager": "rbenv",
+    "rubyLsp.rubyVersionManager": {
+        "identifier": "rbenv"
+    },
     "rubyLsp.enabledFeatures": {
         "codeActions": true,
         "diagnostics": true,
@@ -89,9 +94,18 @@
         }
     ],
     //////////////////////////////////////
+    // Git
+    //////////////////////////////////////
+    "git.inputValidation": true,
+    "git.inputValidationSubjectLength": 50,
+    "git.inputValidationLength": 72,
+    //////////////////////////////////////
     // Spell Checker
     //////////////////////////////////////
     "cSpell.words": [
+        "commontator",
+        "helpdesk",
         "turbolinks"
-    ]
+    ],
+    "rubyLsp.customRubyCommand": "set -o allexport && . ./docker-dummy.env && set +o allexport"
 }

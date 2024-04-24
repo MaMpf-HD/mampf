@@ -53,6 +53,7 @@ class LecturesController < ApplicationController
     # info to the lecture
     @lecture.course = Course.find_by(id: params[:course])
     I18n.locale = @lecture.course.locale
+    @lecture.annotations_status = 0
   end
 
   def edit
@@ -90,6 +91,8 @@ class LecturesController < ApplicationController
   end
 
   def update
+    return unless @lecture.valid_annotations_status?
+
     editor_ids = lecture_params[:editor_ids]
     unless editor_ids.nil?
       # removes the empty String "" in the NEW array of editor ids
@@ -217,7 +220,7 @@ class LecturesController < ApplicationController
 
   def search_examples
     if @lecture.structure_ids.any?
-      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/search")
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/search")
       @form = JSON.parse(response.body)["embedded_html"]
       # rubocop:disable Style/StringConcatenation
       @form.gsub!("token_placeholder",
@@ -232,6 +235,12 @@ class LecturesController < ApplicationController
 
   def close_comments
     @lecture.close_comments!(current_user)
+    # disable annotation button
+    @lecture.update(annotations_status: 0)
+    @lecture.media.update(annotations_status: -1)
+    @lecture.lessons.each do |lesson|
+      lesson.media.update(annotations_status: -1)
+    end
     redirect_to edit_lecture_path(@lecture)
   end
 
@@ -313,7 +322,8 @@ class LecturesController < ApplicationController
                         :organizational_concept, :muesli,
                         :organizational_on_top, :disable_teacher_display,
                         :content_mode, :passphrase, :sort, :comments_disabled,
-                        :submission_max_team_size, :submission_grace_period]
+                        :submission_max_team_size, :submission_grace_period,
+                        :annotations_status]
       if action_name == "update" && current_user.can_update_personell?(@lecture)
         allowed_params.push(:teacher_id, { editor_ids: [] })
       end
@@ -402,7 +412,7 @@ class LecturesController < ApplicationController
 
     def set_erdbeere_data
       @structure_ids = @lecture.structure_ids
-      response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/structures")
+      response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/structures")
       response_hash = if response.status == 200
         JSON.parse(response.body)
       else

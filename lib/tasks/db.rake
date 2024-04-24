@@ -33,7 +33,7 @@
 namespace :db do
   desc "Dumps the database to backups"
   task dump: :environment do
-    dump_fmt   = ensure_format(ENV.fetch("format", nil))
+    dump_fmt   = ensure_format(ENV.fetch("format"))
     dump_sfx   = suffix_for_format(dump_fmt)
     backup_dir = backup_directory(Rails.env, create: true)
     full_path  = nil
@@ -56,10 +56,10 @@ namespace :db do
   namespace :dump do
     desc "Dumps a specific table to backups"
     task table: :environment do
-      table_name = ENV.fetch("table", nil)
+      table_name = ENV.fetch("table")
 
       if table_name.present?
-        dump_fmt   = ensure_format(ENV.fetch("format", nil))
+        dump_fmt   = ensure_format(ENV.fetch("format"))
         dump_sfx   = suffix_for_format(dump_fmt)
         backup_dir = backup_directory(Rails.env, create: true)
         full_path  = nil
@@ -92,7 +92,7 @@ namespace :db do
 
   desc "Restores the database from a backup using PATTERN"
   task restore: :environment do
-    pattern = ENV.fetch("pattern", nil)
+    pattern = ENV.fetch("pattern")
 
     if pattern.present?
       file = nil

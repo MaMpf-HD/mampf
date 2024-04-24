@@ -1,3 +1,4 @@
+<%= stylesheet_link_tag 'comments' %>
 <%
   # Views that use this partial must supply the following variables:
   # user
@@ -69,7 +70,7 @@
 
   <%= render partial: 'commontator/threads/reply', locals: { thread: thread, user: user } %>
 
-  <div id="commontator-thread-<%= thread.id %>-comment-list" class="comment-list">
+  <div id="commontator-thread-<%= thread.id %>-comment-field">
     <%=
       render partial: 'commontator/comments/list', locals: {
         user: user, nested_comments: nested_comments

@@ -103,13 +103,13 @@ $(document).on 'turbolinks:load', ->
   # hide the media tab if hide media button is clicked
   $('#hide-media-button').on 'click', ->
     $('#lecture-media-card').hide()
-    $('#lecture-content-card').removeClass('col-xxxl-9')
+    $('#lecture-content-card').removeClass('col-xxl-9')
     $('#show-media-button').show()
     return
 
   # display the media tab if show media button is clicked
   $('#show-media-button').on 'click', ->
-    $('#lecture-content-card').addClass('col-xxxl-9')
+    $('#lecture-content-card').addClass('col-xxl-9')
     $('#lecture-media-card').show()
     $('#show-media-button').hide()
     return
@@ -136,7 +136,6 @@ $(document).on 'turbolinks:load', ->
     tags = $(this).data('tags')
     for t in tags
       $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
-        .addClass('bg-light')
     return
 
   # mouseenter over lesson -> colorize tags
@@ -203,7 +202,6 @@ $(document).on 'turbolinks:load', ->
           userModalContent.dataset.filled = 'true'
         return
 
-
   # on small mobile display, use shortened tag badges and
   # shortened course titles
   mobileDisplay = ->
@@ -214,6 +212,7 @@ $(document).on 'turbolinks:load', ->
     $('#secondnav').show()
     $('#lecturesDropdown').appendTo($('#secondnav'))
     $('#notificationDropdown').appendTo($('#secondnav'))
+    $('#feedback-btn').appendTo($('#secondnav'))
     $('#searchField').appendTo($('#secondnav'))
     $('#second-admin-nav').show()
     $('#adminDetails').appendTo($('#second-admin-nav'))
@@ -236,6 +235,7 @@ $(document).on 'turbolinks:load', ->
     $('#secondnav').hide()
     $('#lecturesDropdown').appendTo($('#firstnav'))
     $('#notificationDropdown').appendTo($('#firstnav'))
+    $('#feedback-btn').appendTo($('#firstnav'))
     $('#searchField').appendTo($('#firstnav'))
     $('#second-admin-nav').hide()
     $('#teachableDrop').appendTo($('#first-admin-nav'))

@@ -8,7 +8,7 @@ class ErdbeereController < ApplicationController
   end
 
   def show_example
-    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/examples/#{params[:id]}")
+    response = Faraday.get(ENV.fetch("ERDBEERE_API") + "/examples/#{params[:id]}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
@@ -17,7 +17,7 @@ class ErdbeereController < ApplicationController
   end
 
   def show_property
-    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/properties/#{params[:id]}")
+    response = Faraday.get(ENV.fetch("ERDBEERE_API") + "/properties/#{params[:id]}")
 
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
@@ -28,7 +28,7 @@ class ErdbeereController < ApplicationController
 
   def show_structure
     params[:id]
-    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) + "/structures/#{params[:id]}")
+    response = Faraday.get(ENV.fetch("ERDBEERE_API") + "/structures/#{params[:id]}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
@@ -51,7 +51,7 @@ class ErdbeereController < ApplicationController
   def display_info
     @id = params[:id]
     @sort = params[:sort]
-    response = Faraday.get(ENV.fetch("ERDBEERE_API", nil) +
+    response = Faraday.get(ENV.fetch("ERDBEERE_API") +
                            "/#{@sort.downcase.pluralize}/#{@id}/view_info")
     @content = JSON.parse(response.body)
     if response.status != 200
@@ -87,7 +87,7 @@ class ErdbeereController < ApplicationController
   end
 
   def fill_realizations_select
-    response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/structures/")
+    response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/structures/")
     @tag = Tag.find_by(id: params[:id])
     hash = JSON.parse(response.body)
     @structures = hash["data"].map do |d|
@@ -102,7 +102,7 @@ class ErdbeereController < ApplicationController
   end
 
   def find_example
-    response = Faraday.get("#{ENV.fetch("ERDBEERE_API", nil)}/find?#{find_params.to_query}")
+    response = Faraday.get("#{ENV.fetch("ERDBEERE_API")}/find?#{find_params.to_query}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else

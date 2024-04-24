@@ -323,6 +323,87 @@ en:
       title: 'Title'
       teacher: 'Teacher'
       editors: 'Editors'
+    annotation:
+      annotations: 'Annotations'
+      annotation_modal_head_create_annotation: 'Create annotation'
+      annotation_modal_head_edit_annotation: 'Edit annotation'
+      inherit_from_lecture: 'inherit from lecture'
+      time: 'Time:'
+      comment: 'Comment'
+      color: 'Color'
+      category: 'Category'
+      category_tooltip: >
+        Use "note" for personal notes, "content" if you don't understand the
+        content of the video at this position, "mistake" if you've spot a mistake,
+        and "presentation" if you have problems with the presentation,
+        e.g. you cannot read the handwriting or cannot understand the audio.
+      note: 'note'
+      note_tooltip: >
+        Select this category if you want to create your annotation
+        as a personal note.
+      content: 'content'
+      content_tooltip: >
+        Select this category if you don't understand the content
+        of the video at this position.
+      mistake: 'mistake'
+      mistake_tooltip: >
+        Select this category if you think there has been made a mistake
+        in the content of the video at this position.
+      presentation: 'presentation'
+      presentation_tooltip: >
+        Select this category if you have problems with the presentation
+        in the video at this position, e.g. if you cannot read the
+        handwriting or if you cannot understand the audio.
+      whats_the_problem: >
+        What's the problem?
+      definition: 'definition'
+      definition_tooltip: >
+        Select this subcategory if you have problems with a definition.
+      argument: 'argument'
+      argument_tooltip: >
+        Select this subcategory if you have problems with an argument
+        (e.g. in a proof).
+      strategy: 'proof strategy'
+      strategy_tooltip: >
+        Select this subcategory if you have problems with the general
+        (proof) strategy.
+      previous_annotation: 'previous annotation'
+      annotation_position: 'go to annotation'
+      edit_annotation: 'edit annotation'
+      close_annotation_area: 'close area'
+      next_annotation: 'next annotation'
+      further_help: 'You need further help? Then click on:'
+      warning_message:
+        publishing: >
+          Everyone who subscribed this lecture will be able to read
+          your comment once you click "Save".
+          If this is not what you intended to do,
+          please unselect "Post as comment?".
+        mistake: >
+          Before submitting, please also check, if someone already posted
+          a comment concerning this mistake.
+        one_close_annotation: >
+          Note there is already a mistake annotation around this timestamp.
+        multiple_close_annotations_1: "Note there are already "
+        multiple_close_annotations_2: " mistake annotations close to yours."
+        permission: "You don't have the permission to edit this annotation."
+        double_posted: >
+          An annotation with the same content has already been published.
+        sure_to_delete: >
+          Really delete this annotation?
+      visible_for_teacher: 'Visible for teacher?'
+      visible_for_teacher_helpdesk: >
+        If this checkbox is selected your teacher can see this annotation
+        (without your name!) in their own thyme player.
+      post_as_comment: 'Post as comment?'
+      post_as_comment_helpdesk: >
+        If this checkbox is selected, this annotation will be published as
+        comment for this video.
+      toggle:
+        note: "toggle note annotations"
+        content: "toggle content annotations"
+        mistake: "toggle mistake annotations"
+        presentation: "toggle presentation annotations"
     announcement:
       help: >
         Here you can enter a text. You may use LaTeX (by putting the
@@ -372,6 +453,16 @@ en:
       close_comments: 'Close all threads for related media'
       comments_disabled: >
         Comments for newly published media are disabled by default
+      enable_annotation_button: 'Are students allowed to make annotations visible for you?'
+      enable_annotation_button_helpdesk: >
+        If you select "yes", students have the possibility to make
+        their annotations visible for the teacher resp. all editors
+        of the lecture. You can then see them either in the normal
+        thyme player or in the thyme feedback player to get feedback
+        for your lecture videos.
+      enable_annotation_button_inherit_helpdesk: >
+        If the option "inherit from lecture" is selected, the global
+        option of the lecture preferences (comments) is taken.
       new_notifications: 'new notifications'
       new_media: 'new media'
       new_posts: 'new forum posts'
@@ -675,6 +766,10 @@ en:
           in particular they can create event series within the course. Every course
           editor inherits editing access for all event series belonging to the
           course.
+        no_right_to_change_editors: >
+          Course editors can only be changed by administrators.
+          Please contact %{project_email} by email if you want a change to be made
+          here.
         preceding_courses: >
           Here you can enter which courses this course builds upon.
           E.g., Linear Algebra 1 and Linear Algebra 2 might be preceding
@@ -2985,6 +3080,7 @@ en:
     course_editors: 'Course Editors'
     lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
+    mail_noun: 'email'
     email: 'Email address'
     preferences: 'Preferences'
     language: 'Language'
@@ -3240,6 +3336,7 @@ en:
     refresh_token: 'Refresh Code'
     invite: 'Invite'
     send: 'Send'
+    send_variant: 'Send'
     download: 'Download'
     move: 'Move'
     accept: 'Accept'
@@ -3591,3 +3688,30 @@ en:
             name:
               taken:
                 'A watchlist with that name already exists.'
+  feedback:
+    tooltip: Submit feedback
+    modal_title: Submit feedback
+    title: Title (optional)
+    comment: Your comment
+    description_html: >
+      <p>We are looking forward to your feedback on MaMpf, be it praise, criticism
+      or suggestions on how we as a team of developers can advance the platform.
+      If you have found a bug and have a GitHub account, then create an issue
+      directly on %{github_mampf}. Otherwise, you are welcome to use this
+      form or send an %{feedback_mail} directly.</p>
+    body_too_short_error: >
+      Your feedback is too short. Please enter at least %{min_length} characters.
+    body_missing_error: >
+      Please enter your feedback here.
+    mail_checkbox: >
+      Allow us to contact you via email (%{user_mail}) if there are questions
+      about your feedback.
+    success_short: >
+      Feedback successfully sent
+    success: >
+      Thanks a lot for your feedback! We will review it soon.
+    error_short: >
+      Error while sending feedback
+    error: >
+      We're sorry, something went wrong while submitting your feedback.
+      Please save your feedback by copying it manually and try again later.

@@ -38,6 +38,18 @@ Rails.application.routes.draw do
       to: "administration#classification",
       as: "classification"
 
+  # annotation routes
+
+  get "annotations/update_annotations",
+      to: "annotations#update_annotations",
+      as: "update_annotations"
+
+  get "annotations/num_nearby_posted_mistake_annotations",
+      to: "annotations#num_nearby_posted_mistake_annotations",
+      as: "num_nearby_posted_mistake_annotations"
+
+  resources :annotations, only: [:new, :create, :edit, :update, :destroy]
+
   # announcements routes
 
   post "announcements/:id/propagate",
@@ -51,9 +63,9 @@ Rails.application.routes.draw do
   resources :announcements, only: [:index, :new, :create]
 
   # answers routes
-
-  get "answers/update_answer_box",
-      as: "update_answer_box"
+  get "answers/:id/cancel_edit",
+      to: "answers#cancel_edit",
+      as: "cancel_edit_answer"
 
   resources :answers, except: [:index, :show, :edit]
 
@@ -139,6 +151,9 @@ Rails.application.routes.draw do
   # divisions routes
 
   resources :divisions, except: [:show]
+
+  # feedback routes
+  resources :feedbacks, only: [:create]
 
   # interactions routes
 
@@ -280,6 +295,10 @@ Rails.application.routes.draw do
       to: "media#inspect",
       as: "inspect_medium"
 
+  get "media/:id/feedback",
+      to: "media#feedback",
+      as: "feedback_medium"
+
   get "media/:id/enrich",
       to: "media#enrich",
       as: "enrich_medium"
@@ -389,6 +408,10 @@ Rails.application.routes.draw do
   get "media/:id/fill_reassign_modal",
       to: "media#fill_reassign_modal",
       as: "fill_reassign_modal"
+
+  get "media/:id/check_annotation_visibility",
+      to: "media#check_annotation_visibility",
+      as: "check_annotation_visibility"
 
   resources :media
 

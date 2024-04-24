@@ -59,6 +59,9 @@ class MediaController < ApplicationController
 
   def create
     @medium = Medium.new(medium_params)
+
+    return unless @medium.valid_annotations_status?
+
     @medium.locale = @medium.teachable&.locale
     @medium.editors = [current_user]
     @medium.tags = @medium.teachable.tags if @medium.teachable.instance_of?(::Lesson)
@@ -105,6 +108,8 @@ class MediaController < ApplicationController
     @medium.update(medium_params)
     @errors = @medium.errors
     return unless @errors.empty?
+
+    return unless @medium.valid_annotations_status?
 
     # make sure the medium is touched
     # (it will not be touched automatically in some cases (e.g. if you only
@@ -227,21 +232,6 @@ class MediaController < ApplicationController
     search.execute
     results = search.results
     @total = search.total
-
-    # in the case of a search with tag_operator 'or', we
-    # execute two searches and merge the results, where media
-    # with the selected tags are now shown at the front of the list
-    if (search_params[:tag_operator] == "or") \
-      && (search_params[:all_tags] == "0") \
-      && (search_params[:fulltext].size >= 2)
-      params["search"]["all_tags"] = "1"
-      search_no_tags = Medium.search_by(search_params, params[:page])
-      search_no_tags.execute
-      results_no_tags = search_no_tags.results
-      results = (results + results_no_tags).uniq
-      @total = results.size
-      params["search"]["all_tags"] = "0"
-    end
 
     if filter_media
       search_arel = Medium.where(id: results.pluck(:id))
@@ -456,7 +446,7 @@ class MediaController < ApplicationController
 
   def show_comments
     commontator_thread_show(@medium)
-    render layout: "application_no_sidebar"
+    render layout: "application_no_sidebar_with_background"
   end
 
   def cancel_publication
@@ -524,6 +514,19 @@ class MediaController < ApplicationController
     @no_rights = params[:rights] == "none"
   end
 
+  def check_annotation_visibility
+    medium = Medium.find_by(id: params[:id])
+    isPermitted = medium.annotations_visible?(current_user) # rubocop:todo Naming/VariableName
+    render json: isPermitted # rubocop:todo Naming/VariableName
+  end
+
+  # Renders the feedback player. Do not confuse with the feedback button
+  # which has nothing to do with the thyme player(s).
+  def feedback
+    I18n.locale = @medium.locale_with_inheritance
+    render layout: "feedback"
+  end
+
   private
 
     def medium_params
@@ -534,6 +537,7 @@ class MediaController < ApplicationController
                                      :teachable_type, :teachable_id,
                                      :released, :text, :locale,
                                      :content, :boost,
+                                     :annotations_status,
                                      editor_ids: [],
                                      tag_ids: [],
                                      linked_medium_ids: [])
@@ -636,7 +640,7 @@ class MediaController < ApplicationController
         unless current_user.admin || @lecture.edited_by?(current_user)
           lecture_tags = @lecture.tags_including_media_tags
           search_results.reject! do |m|
-            m.teachable_type == "Course" && !m.tags.intersect?(lecture_tags)
+            m.teachable_type == "Course" && !m.tags.to_a.intersect?(lecture_tags)
           end
         end
       end

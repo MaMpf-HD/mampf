@@ -301,9 +301,6 @@ class Medium < ApplicationRecord
     search_params[:all_terms] = "1" if search_params[:all_terms].blank?
     search_params[:all_teachers] = "1" if search_params[:all_teachers].blank?
     search_params[:term_ids].push("0") if search_params[:term_ids].present?
-    if search_params[:all_tags] == "1" && search_params[:tag_operator] == "and"
-      search_params[:tag_ids] = Tag.pluck(:id)
-    end
     user = User.find_by(id: search_params[:user_id])
     search = Sunspot.new_search(Medium)
     search.build do
@@ -336,15 +333,12 @@ class Medium < ApplicationRecord
         with(:release_state, search_params[:access])
       end
     end
-    if !search_params[:all_tags] == "1" &&
-       !search_params[:tag_operator] == "or" && (search_params[:tag_ids])
-      if search_params[:tag_operator] == "or" || search_params[:all_tags] == "1"
-        search.build do
-          with(:tag_ids).any_of(search_params[:tag_ids])
-        end
-      else
-        search.build do
+    if search_params[:all_tags] == "0" && search_params[:tag_ids].any?
+      search.build do
+        if search_params[:tag_operator] == "and"
           with(:tag_ids).all_of(search_params[:tag_ids])
+        else
+          with(:tag_ids).any_of(search_params[:tag_ids])
         end
       end
     end
@@ -1091,6 +1085,26 @@ class Medium < ApplicationRecord
     return unless teachable.instance_of?(::Lesson)
 
     Lecture.find_by(id: teachable.lecture_id).user_ids
+  end
+
+  # Returns either the annotations status (1 = activated, 0 = deactivated)
+  # of this medium or the annotations status of the associated lecture
+  # if "inherit from lecture" was selected (i.e. if the annotations status of
+  # this medium is -1).
+  def get_annotations_status # rubocop:todo Naming/AccessorMethodName
+    return lecture.annotations_status if annotations_status == -1 && lecture.present?
+
+    annotations_status
+  end
+
+  def annotations_visible?(user)
+    is_teacher = edited_with_inheritance_by?(user)
+    is_activated = (get_annotations_status == 1)
+    is_teacher && is_activated
+  end
+
+  def valid_annotations_status?
+    [-1, 0, 1].include?(annotations_status)
   end
 
   private
