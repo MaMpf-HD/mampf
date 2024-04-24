@@ -114,3 +114,13 @@ Mobility.configure do
     # attribute_methods
   end
 end
+
+module I18nLocaleAccessors
+  def locale_accessor_names
+    mobility_attributes.flat_map do |name|
+      Mobility.available_locales.map do |locale|
+        "#{name}_#{Mobility.normalize_locale(locale)}"
+      end
+    end
+  end
+end

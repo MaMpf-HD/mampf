@@ -43,6 +43,6 @@ class ProgramsController < ApplicationController
     end
 
     def program_params
-      params.require(:program).permit(*Program.globalize_attribute_names)
+      params.require(:program).permit(*Program.locale_accessor_names)
     end
 end
