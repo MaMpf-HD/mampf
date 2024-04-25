@@ -4,49 +4,59 @@
                locals: { lecture: lecture } %>
     
     <!-- Menu to switch between "tabs" ("pillars") -->
-    <nav class="nav nav-pills flex-column flex-sm-row justify-content-center">
-      <button class="nav-link active" id="lecture-nav-content" role="link"
-          data-bs-toggle="pill" data-bs-target="#lecture-pane-content"
-          aria-controls="lecture-pane-content" aria-selected="true">
-        <!-- TODO (Lectures): Localize -->
-        Content
-      </button>
-      <button class="nav-link" id="lecture-nav-settings" role="link"
-          data-bs-toggle="pill" data-bs-target="#lecture-pane-settings"
-          aria-controls="lecture-pane-settings" aria-selected="false">
-        Settings
-      </button>
-      <button class="nav-link" id="lecture-nav-people" role="link"
-          data-bs-toggle="pill" data-bs-target="#lecture-pane-people"
-          aria-controls="lecture-pane-people" aria-selected="false">
-        People
-      </button>
-      <button class="nav-link" id="lecture-nav-orga" role="link"
-          data-bs-toggle="pill" data-bs-target="#lecture-pane-orga"
-          aria-controls="lecture-pane-orga" aria-selected="false">
-        Orga
-      </button>
-      <button class="nav-link" id="lecture-nav-communication" role="link"
-          data-bs-toggle="pill" data-bs-target="#lecture-pane-communication"
-          aria-controls="lecture-pane-communication" aria-selected="false">
-        Communication
-      </button>
-      <button class="nav-link" id="lecture-nav-homework" role="link"
-          data-bs-toggle="pill" data-bs-target="#lecture-pane-homework"
-          aria-controls="lecture-pane-homework" aria-selected="false">
-        Homework
-      </button>
-      <button class="nav-link" id="lecture-nav-info" role="link"
-        data-bs-toggle="pill" data-bs-target="#lecture-pane-info"
-        aria-controls="lecture-pane-info" aria-selected="false">
-        Info
-      </button>
+    <nav>
+      <div class="nav nav-pills container small-width flex-column flex-sm-row"
+          id="lecture-nav-pills" role="tablist">
+        <button class="nav-link active lecture-nav-pill-button"
+            id="lecture-nav-content" type="button" role="tab"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-content"
+            aria-controls="lecture-pane-content" aria-selected="true">
+          <!-- TODO (Lectures): Localize -->
+          Content
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-settings" type="button" role="tab"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-settings"
+            aria-controls="lecture-pane-settings" aria-selected="false">
+          Settings
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-people" type="button" role="tab"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-people"
+            aria-controls="lecture-pane-people" aria-selected="false">
+          People
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-orga" type="button" role="tab"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-orga"
+            aria-controls="lecture-pane-orga" aria-selected="false">
+          Orga
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-communication" type="button" role="tab"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-communication"
+            aria-controls="lecture-pane-communication" aria-selected="false">
+          Communication
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-homework" type="button" role="tab"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-homework"
+            aria-controls="lecture-pane-homework" aria-selected="false">
+          Homework
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+          id="lecture-nav-info" role="link" type="button" role="tab"
+          data-bs-toggle="pill" data-bs-target="#lecture-pane-info"
+          aria-controls="lecture-pane-info" aria-selected="false">
+          Info
+        </button>
+      </div>
     </nav>
 
     <div class="tab-content">
       <!-- Content (structure & media) -->
       <div class="tab-pane fade show active" id="lecture-pane-content"
-          aria-labelledby="lecture-nav-content" tabindex="0">
+          role="tabpanel" aria-labelledby="lecture-nav-content" tabindex="0">
         <div class="row px-4 py-2">
           <% if !lecture.seminar? || lecture.legacy_seminar %>
             <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
@@ -68,7 +78,7 @@
       
       <!-- Settings -->
       <div class="tab-pane fade" id="lecture-pane-settings"
-          aria-labelledby="lecture-nav-settings" tabindex="0">
+          role="tabpanel" aria-labelledby="lecture-nav-settings" tabindex="0">
         <div class="container small-width">
           <%= render partial: 'lectures/edit/preferences',
               locals: { lecture: lecture } %>
@@ -77,7 +87,7 @@
 
       <!-- People -->
       <div class="tab-pane fade" id="lecture-pane-people"
-          aria-labelledby="lecture-nav-people" tabindex="0">
+          role="tabpanel" aria-labelledby="lecture-nav-people" tabindex="0">
         <div class="container small-width">
           <%= render partial: 'lectures/edit/people',
               locals: { lecture: lecture } %>
@@ -88,7 +98,7 @@
 
       <!-- Organisation -->
       <div class="tab-pane fade" id="lecture-pane-orga"
-          aria-labelledby="lecture-nav-orga" tabindex="0">
+          role="tabpanel" aria-labelledby="lecture-nav-orga" tabindex="0">
         <div class="container small-width">
           <%= render partial: 'lectures/edit/organizational_concept',
               locals: { lecture: lecture } %>
@@ -97,7 +107,7 @@
 
       <!-- Communication -->
       <div class="tab-pane fade" id="lecture-pane-communication"
-          aria-labelledby="lecture-nav-communication" tabindex="0">
+          role="tabpanel" aria-labelledby="lecture-nav-communication" tabindex="0">
         <div class="container small-width">
           <%= render partial: 'lectures/edit/announcements',
               locals: { lecture: lecture, announcements: announcements } %>
@@ -110,7 +120,7 @@
 
       <!-- Homework -->
       <div class="tab-pane fade" id="lecture-pane-homework"
-          aria-labelledby="lecture-nav-homework" tabindex="0">
+          role="tabpanel" aria-labelledby="lecture-nav-homework" tabindex="0">
         <div class="container small-width">
           <%= render partial: 'lectures/edit/assignments',
               locals: { lecture: lecture } %>
@@ -119,7 +129,7 @@
 
       <!-- Info -->
       <div class="tab-pane fade" id="lecture-pane-info"
-          aria-labelledby="lecture-nav-info" tabindex="0">
+          role="tabpanel" aria-labelledby="lecture-nav-info" tabindex="0">
         <div class="container small-width">
           <%= render partial: 'lectures/edit/tags',
               locals: { lecture: lecture } %>
