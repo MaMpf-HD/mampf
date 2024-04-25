@@ -1,53 +1,24 @@
-<div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="imported_media_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#imported_media_collapse"
-              aria-expanded="false"
-              aria-controls="imported_media_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5 id="importMedia"
-                data-lecture="<%= lecture.id %>">
-              <%= t('admin.lecture.imported_media') %>
-              <span id="importedMediaCount">
-                (<%= lecture.imported_media.size %>)
-              </span>
-            </h5>
-          </div>
-        </div>
-      </button>
-    </div>
-    <div id="imported_media_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <div id="importedMediaTable"
-             data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
-          <%= render partial: 'lectures/import/imported_media',
-                     locals: { media: lecture.imported_media,
-                               lecture: lecture } %>
-        </div>
-        <div class="row mb-2">
-          <div class="col-12 text-center">
-            <button role="button"
-                    class="btn btn-sm btn-secondary"
-                    id="import-media-button">
-              <%= t('buttons.import_media') %>
-            </button>
-          </div>
-        </div>
-        <div id="importedMediaArea">
-          <hr>
-          <%= render partial: 'media/catalog/search_form',
-                     locals: { purpose: 'import' } %>
-          <div id="media-search-results">
-          </div>
-        </div>
-      </div>
-    </div>
+<div id="importedMediaTable"
+      data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
+  <%= render partial: 'lectures/import/imported_media',
+              locals: { media: lecture.imported_media,
+                        lecture: lecture } %>
+</div>
+
+<div class="row mb-2">
+  <div class="col-12 text-center">
+    <button role="button"
+            class="btn btn-sm btn-secondary"
+            id="import-media-button">
+      <%= t('buttons.import_media') %>
+    </button>
+  </div>
+</div>
+
+<div id="importedMediaArea">
+  <hr>
+  <%= render partial: 'media/catalog/search_form',
+              locals: { purpose: 'import' } %>
+  <div id="media-search-results">
+  </div>
 </div>

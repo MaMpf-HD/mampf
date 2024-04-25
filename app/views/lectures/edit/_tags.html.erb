@@ -1,65 +1,37 @@
-  <div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="tags_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#tags_collapse"
-              aria-expanded="false"
-              aria-controls="tags_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5 class="text-dark">
-              <%= t('admin.lecture.related_tags') %>
-              <%= ' (' + lecture.tags.size.to_s + ') '%>
-            </h5>
-          </div>
-        </div>
-      </button>
-    </div>
-    <div id="tags_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <ul>
-          <li class="mb-2">
-            <h6>
-              <%= t('admin.lecture.course_tags_html',
-                    course: course_link_or_text(lecture.course, current_user),
-                    count: @course_tags.size) %>
-              <%= helpdesk(t('admin.lecture.info.course_tags'), false) %>
-            </h6>
-            <% if @course_tags %>
-              <%= render partial: "tags/tag",
-                         collection: @course_tags.natural_sort_by(&:title),
-                         cached: true %>
-            <% else %>
-              <%= t('admin.lecture.no_course_tags') %>
-            <% end %>
-          </li>
-          <li class="mb-2">
-            <h6>
-              <%= t('admin.lecture.additional_tags',
-                    count: @extra_tags.size) %>
-              <%= helpdesk(t('admin.lecture.info.additional_tags'), false) %>
-            </h6>
-            <%= render partial: "tags/tag",
-                       collection: @extra_tags.natural_sort_by(&:title),
-                       cached: true %>
-          </li>
-          <li>
-            <h6>
-              <%= t('admin.lecture.untreated_tags',
-                    count: @deferred_tags.size) %>
-              <%= helpdesk(t('admin.lecture.info.untreated_tags'), false) %>
-            </h6>
-            <%= render partial: "tags/tag",
-                       collection: @deferred_tags.natural_sort_by(&:title),
-                       cached: true %>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
+<ul>
+  <li class="mb-2">
+    <h6>
+      <%= t('admin.lecture.course_tags_html',
+            course: course_link_or_text(lecture.course, current_user),
+            count: @course_tags.size) %>
+      <%= helpdesk(t('admin.lecture.info.course_tags'), false) %>
+    </h6>
+    <% if @course_tags %>
+      <%= render partial: "tags/tag",
+                  collection: @course_tags.natural_sort_by(&:title),
+                  cached: true %>
+    <% else %>
+      <%= t('admin.lecture.no_course_tags') %>
+    <% end %>
+  </li>
+  <li class="mb-2">
+    <h6>
+      <%= t('admin.lecture.additional_tags',
+            count: @extra_tags.size) %>
+      <%= helpdesk(t('admin.lecture.info.additional_tags'), false) %>
+    </h6>
+    <%= render partial: "tags/tag",
+                collection: @extra_tags.natural_sort_by(&:title),
+                cached: true %>
+  </li>
+  <li>
+    <h6>
+      <%= t('admin.lecture.untreated_tags',
+            count: @deferred_tags.size) %>
+      <%= helpdesk(t('admin.lecture.info.untreated_tags'), false) %>
+    </h6>
+    <%= render partial: "tags/tag",
+                collection: @deferred_tags.natural_sort_by(&:title),
+                cached: true %>
+  </li>
+</ul>

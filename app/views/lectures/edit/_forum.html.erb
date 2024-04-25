@@ -1,49 +1,20 @@
-  <div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="forum_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#forum_collapse"
-              aria-expanded="false"
-              aria-controls="forum_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              <%= t('categories.board') %>
-            </h5>
-          </div>
-        </div>
-      </button>
-    </div>
-    <div id="forum_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <div class="row">
-          <div class="col-12 text-center" id="forum-buttons">
-            <% if lecture.forum? && lecture.forum %>
-              <% if lecture.forum&.locked %>
-                <%= link_to t('buttons.unlock_board'),
-                            unlock_forum_path(lecture),
-                            class: 'btn btn-sm btn-primary' %>
-              <% else %>
-                <%= link_to t('buttons.lock_board'),
-                            lock_forum_path(lecture),
-                            class: 'btn btn-sm btn-primary' %>
-              <% end %>
-              <%= link_to t('buttons.delete_board'),
-                          destroy_forum_path(lecture),
-                          class: 'btn btn-sm btn-danger' %>
-            <% else %>
-              <%= link_to t('buttons.add_board'),
-                          add_forum_path(lecture),
-                          class: 'btn btn-sm btn-primary' %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<div class="col-12 text-center" id="forum-buttons">
+  <% if lecture.forum? && lecture.forum %>
+    <% if lecture.forum&.locked %>
+      <%= link_to t('buttons.unlock_board'),
+                  unlock_forum_path(lecture),
+                  class: 'btn btn-sm btn-primary' %>
+    <% else %>
+      <%= link_to t('buttons.lock_board'),
+                  lock_forum_path(lecture),
+                  class: 'btn btn-sm btn-primary' %>
+    <% end %>
+    <%= link_to t('buttons.delete_board'),
+                destroy_forum_path(lecture),
+                class: 'btn btn-sm btn-danger' %>
+  <% else %>
+    <%= link_to t('buttons.add_board'),
+                add_forum_path(lecture),
+                class: 'btn btn-sm btn-primary' %>
+  <% end %>
+</div>

@@ -9,6 +9,17 @@ disableExceptOrganizational = ->
   $('[data-bs-toggle="collapse"]').prop('disabled', true).removeClass('clickable')
   return
 
+# Load example data (erdbeere) for structures
+loadExampleStructures = ->
+  structuresBody = $('#erdbeereStructuresBody')
+  lectureId = structuresBody.data('lecture')
+  loading = structuresBody.data('loading')
+  structuresBody.empty().append(loading)
+  $.ajax Routes.edit_structures_path(lectureId),
+    type: 'GET'
+    dataType: 'script'
+  return
+
 $(document).on 'turbolinks:load', ->
   initBootstrapPopovers()
   # if any input is given to the lecture form (for people in lecture),
@@ -282,14 +293,7 @@ $(document).on 'turbolinks:load', ->
       largeDisplay()
     return
 
-  $('#erdbeere_structures_heading').on 'click', ->
-    lectureId = $(this).data('lecture')
-    loading = $(this).data('loading')
-    $('#erdbeereStructuresBody').empty().append(loading)
-    $.ajax Routes.edit_structures_path(lectureId),
-      type: 'GET'
-      dataType: 'script'
-    return
+  loadExampleStructures()
 
   $lectureStructures = $('#lectureStructuresInfo')
   if $lectureStructures.length > 0

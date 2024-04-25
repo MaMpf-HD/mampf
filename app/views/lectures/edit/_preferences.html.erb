@@ -1,177 +1,150 @@
-  <div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="preferences_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#preferences_collapse"
-              aria-expanded="false"
-              aria-controls="preferences_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              <%= t('basics.preferences') %>
-            </h5>
-          </div>
+<%= form_with model: lecture,
+              html: { id: 'lecture-preferences-form' } do |f| %>
+  <div class="row">
+    <% unless lecture.course.term_independent %>
+      <div class="col-6 mb-3">
+        <%= f.label :term_id,
+                    t('basics.term'),
+                    class: "form-label" %>
+        <%= helpdesk(t('admin.lecture.info.term'), false) %>
+        <%= f.select :term_id,
+                      options_for_select(@terms,
+                                        lecture.term&.id),
+                      {},
+                      { class: 'form-select' } %>
+        <div class="invalid-feedback"
+              id="lecture-term-error">
         </div>
-      </button>
+      </div>
+    <% end %>
+    <% unless lecture.course.term_independent %>
+      <div class="col-6 mb-3">
+        <%= f.label :sort,
+                    t('basics.type'),
+                    class: "form-label" %>
+        <%= f.select :sort,
+                      options_for_select(Lecture.sort_localized.invert.to_a,
+                                        lecture.sort),
+                      {},
+                      { class: 'form-select' } %>
+        <div class="invalid-feedback"
+              id="lecture-term-error">
+        </div>
+      </div>
+    <% end %>
+    <% unless lecture.seminar? %>
+      <div class="col-6 mb-3">
+        <%= f.label :start_chapter, t('admin.lecture.first_chapter'),
+                    class: "form-label" %>
+        <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>
+        <%= f.number_field :start_chapter,
+                            value: lecture.start_chapter || 1,
+                            class: 'form-control' %>
+      </div>
+      <div class="col-6 mt-6">
+        <div id="start-section-input">
+          <%= f.label :start_section,
+                      t('admin.lecture.first_section'),
+                      class: "form-label" %>
+          <%= helpdesk(t('admin.lecture.info.first_section'), false) %>
+          <%= f.number_field :start_section,
+                              value: lecture.start_section || 1,
+                              class: 'form-control',
+                              disabled: !lecture.absolute_numbering %>
+        </div>
+      </div>
+      <div class="col-6 mt-6 mb-3">
+        <div class="form-check">
+          <%= f.check_box :absolute_numbering,
+                          class: 'form-check-input' %>
+          <%= f.label :absolute_numbering,
+                      t('admin.lecture.absolute_numbering'),
+                      { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.lecture.info.absolute_numbering'),
+                        false) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="row">
+    <div class="col-auto mb-3">
+      <%= f.label :passphrase,
+                  t('admin.lecture.passphrase'),
+                  class: "form-label" %>
+      <%= helpdesk(t('admin.lecture.info.passphrase'), false) %>
+      <%= f.text_field :passphrase,
+                        { class: 'form-control',
+                          size: 50 } %>
     </div>
-    <div id="preferences_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <%= form_with model: lecture,
-                      html: { id: 'lecture-preferences-form' } do |f| %>
-          <div class="row">
-            <% unless lecture.course.term_independent %>
-              <div class="col-6 mb-3">
-                <%= f.label :term_id,
-                            t('basics.term'),
-                            class: "form-label" %>
-                <%= helpdesk(t('admin.lecture.info.term'), false) %>
-                <%= f.select :term_id,
-                             options_for_select(@terms,
-                                                lecture.term&.id),
-                             {},
-                             { class: 'form-select' } %>
-                <div class="invalid-feedback"
-                     id="lecture-term-error">
-                </div>
-              </div>
-            <% end %>
-            <% unless lecture.course.term_independent %>
-              <div class="col-6 mb-3">
-                <%= f.label :sort,
-                            t('basics.type'),
-                            class: "form-label" %>
-                <%= f.select :sort,
-                             options_for_select(Lecture.sort_localized.invert.to_a,
-                                                lecture.sort),
-                             {},
-                             { class: 'form-select' } %>
-                <div class="invalid-feedback"
-                     id="lecture-term-error">
-                </div>
-              </div>
-            <% end %>
-            <% unless lecture.seminar? %>
-              <div class="col-6 mb-3">
-                <%= f.label :start_chapter, t('admin.lecture.first_chapter'),
-                            class: "form-label" %>
-                <%= helpdesk(t('admin.lecture.info.first_chapter'), false) %>
-                <%= f.number_field :start_chapter,
-                                   value: lecture.start_chapter || 1,
-                                   class: 'form-control' %>
-              </div>
-              <div class="col-6 mt-6">
-                <div id="start-section-input">
-                  <%= f.label :start_section,
-                              t('admin.lecture.first_section'),
-                              class: "form-label" %>
-                  <%= helpdesk(t('admin.lecture.info.first_section'), false) %>
-                  <%= f.number_field :start_section,
-                                     value: lecture.start_section || 1,
-                                     class: 'form-control',
-                                     disabled: !lecture.absolute_numbering %>
-                </div>
-              </div>
-              <div class="col-6 mt-6 mb-3">
-                <div class="form-check">
-                  <%= f.check_box :absolute_numbering,
-                                  class: 'form-check-input' %>
-                  <%= f.label :absolute_numbering,
-                              t('admin.lecture.absolute_numbering'),
-                              { class: 'form-check-label' } %>
-                  <%= helpdesk(t('admin.lecture.info.absolute_numbering'),
-                               false) %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-          <div class="row">
-            <div class="col-auto mb-3">
-              <%= f.label :passphrase,
-                          t('admin.lecture.passphrase'),
-                          class: "form-label" %>
-              <%= helpdesk(t('admin.lecture.info.passphrase'), false) %>
-              <%= f.text_field :passphrase,
-                               { class: 'form-control',
-                                 size: 50 } %>
-            </div>
-          </div>
-          <div class="mb-3">
-            <%= t('basics.language') %>
-            <div class="row ms-2">
-            <% I18n.available_locales.each do |locale| %>
-              <div class="form-check form-check-inline">
-                <%= f.radio_button :locale,
-                                   locale.to_s,
-                                   class: 'form-check-input' %>
-                <%= f.label :locale,
-                            t('locales.' + locale.to_s),
-                            value: locale.to_s,
-                            class: 'form-check-label' %>
-              </div>
-            <% end %>
-            </div>
-          </div>
-          <% unless lecture.seminar? %>
-            <div class="mb-3">
-              <%= t('admin.lecture.content_mode') %>
-              <%= helpdesk(t('admin.lecture.info.variants'), true) %>
-              <div class="row ms-2">
-                <div class="form-check form-check-inline">
-                  <%= f.radio_button :content_mode,
-                                     'video',
-                                     class: 'form-check-input' %>
-                  <%= f.label :content_mode,
-                              t('admin.lecture.video_based'),
-                              value: 'video',
-                              class: 'form-check-label' %>
-                </div>
-                <div class="form-check form-check-inline">
-                  <%= f.radio_button :content_mode,
-                                     'manuscript',
-                                     class: 'form-check-input' %>
-                  <%= f.label :content_mode,
-                              t('admin.lecture.script_based'),
-                              value: 'manuscript',
-                              class: 'form-check-label' %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-          <% if !lecture.term %>
-            <div class="row">
-              <div class="col-12">
-                <div class="form-check">
-                  <%= f.check_box :disable_teacher_display,
-                                  class: 'form-check-input' %>
-                  <%= f.label :disable_teacher_display,
-                              t('admin.lecture.disable_teacher_display'),
-                              { class: 'form-check-label' } %>
-                  <%= helpdesk(t('admin.lecture.info.disable_teacher_display'),
-                             false) %>
-                </div>
-              </div>
-            </div>
-          <% end %>
-          <div class="row">
-            <div class="col-12 text-center">
-              <div id="lecture-preferences-warning">
-                <%= t('warnings.unsaved_changes') %>
-                <%= f.submit t('buttons.save_and_exit'),
-                             class: "btn btn-primary" %>
-                <button type="button" id="cancel-lecture-preferences"
-                        class="btn btn-secondary">
-                  <%= t('buttons.cancel') %>
-                </button>
-              </div>
-            </div>
-          </div>
-        <% end %>
+  </div>
+  <div class="mb-3">
+    <%= t('basics.language') %>
+    <div class="row ms-2">
+    <% I18n.available_locales.each do |locale| %>
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :locale,
+                            locale.to_s,
+                            class: 'form-check-input' %>
+        <%= f.label :locale,
+                    t('locales.' + locale.to_s),
+                    value: locale.to_s,
+                    class: 'form-check-label' %>
+      </div>
+    <% end %>
+    </div>
+  </div>
+  <% unless lecture.seminar? %>
+    <div class="mb-3">
+      <%= t('admin.lecture.content_mode') %>
+      <%= helpdesk(t('admin.lecture.info.variants'), true) %>
+      <div class="row ms-2">
+        <div class="form-check form-check-inline">
+          <%= f.radio_button :content_mode,
+                              'video',
+                              class: 'form-check-input' %>
+          <%= f.label :content_mode,
+                      t('admin.lecture.video_based'),
+                      value: 'video',
+                      class: 'form-check-label' %>
+        </div>
+        <div class="form-check form-check-inline">
+          <%= f.radio_button :content_mode,
+                              'manuscript',
+                              class: 'form-check-input' %>
+          <%= f.label :content_mode,
+                      t('admin.lecture.script_based'),
+                      value: 'manuscript',
+                      class: 'form-check-label' %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <% if !lecture.term %>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-check">
+          <%= f.check_box :disable_teacher_display,
+                          class: 'form-check-input' %>
+          <%= f.label :disable_teacher_display,
+                      t('admin.lecture.disable_teacher_display'),
+                      { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.lecture.info.disable_teacher_display'),
+                      false) %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <div id="lecture-preferences-warning">
+        <%= t('warnings.unsaved_changes') %>
+        <%= f.submit t('buttons.save_and_exit'),
+                      class: "btn btn-primary" %>
+        <button type="button" id="cancel-lecture-preferences"
+                class="btn btn-secondary">
+          <%= t('buttons.cancel') %>
+        </button>
       </div>
     </div>
   </div>
+<% end %>

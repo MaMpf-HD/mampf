@@ -1,128 +1,101 @@
-  <div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="people_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#people_collapse"
-              aria-expanded="false"
-              aria-controls="people_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              <%= t('basics.people') %>
-            </h5>
+<% if current_user.can_update_personell?(lecture) %>
+  <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
+    <div class="row">
+      <div class="col-4 mb-3">
+        <%= f.label :teacher_id,
+                    t('basics.teacher'),
+                  class: "form-label" %>
+        <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
+        <div id="lecture_teacher_select" %>
+          <%= f.select :teacher_id,
+                        options_for_select([[lecture.teacher.info,
+                                            lecture.teacher.id]],
+                                            lecture.teacher.id),
+                        {},
+                        { class: 'selectize',
+                          data: { ajax: true,
+                             model: 'user',
+                                  filled: false,
+                                  placeholder:
+                                    t('basics.enter_two_letters'),
+                                  no_results:
+                                    t('basics.no_results') } } %>
+          <div class="invalid-feedback" id="lecture-teacher-error">
           </div>
         </div>
-      </button>
-    </div>
-    <div id="people_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <% if current_user.can_update_personell?(lecture) %>
-          <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
-            <div class="row">
-              <div class="col-4 mb-3">
-                <%= f.label :teacher_id,
-                            t('basics.teacher'),
-                          class: "form-label" %>
-                <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
-                <div id="lecture_teacher_select" %>
-                  <%= f.select :teacher_id,
-                               options_for_select([[lecture.teacher.info,
-                                                    lecture.teacher.id]],
-                                                    lecture.teacher.id),
-                               {},
-                               { class: 'selectize',
-                                 data: { ajax: true,
-                                         model: 'user',
-                                         filled: false,
-                                         placeholder:
-                                           t('basics.enter_two_letters'),
-                                         no_results:
-                                           t('basics.no_results') } } %>
-                  <div class="invalid-feedback" id="lecture-teacher-error">
-                  </div>
-                </div>
-              </div>
-              <div class="col-4">
-                <%= t('basics.course_editors') %>
-                <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
-                <% if lecture.course.editors.present? %>
-                  <ul>
-                    <% lecture.course.editors.each do |e| %>
-                      <li>
-                        <%= e.name %>
-                      </li>
-                    <% end %>
-                  </ul>
-                <% else %>
-                  <br>
-                  <%= t('admin.lecture.no_course_editors') %>
-                <% end %>
-              </div>
-              <div class="col-4 mb-3">
-                <%= f.label :editor_ids,
-                            t('basics.lecture_editors'),
-                          class: "form-label" %>
-                <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
-                <div id="lecture_editors_select" %>
-                  <%= f.select :editor_ids,
-                               options_for_select([[t('none'), '']] +
-                                                  lecture.select_editors,
-                                                  lecture.editors.map(&:id)),
-                               {},
-                               { multiple: true,
-                                 class: 'selectize',
-                                 data: { ajax: true,
-                                         model: 'user',
-                                         filled: false,
-                                         placeholder: t('basics.enter_two_letters'),
-                                         no_results: t('basics.no_results') } } %>
-                </div>
-              </div>
-            </div>
-            <div class="row mb-3">
-              <div class="col-12">
-                <%= t('basics.subscribers_count_nc') %>
-                <span id="lectureUserCounter">
-                  <%= lecture.users.count %>
-                </span>
-                <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
-                <% if lecture.users.any? && !lecture.stale? %>
-                  <button type="button"
-                          id="lectureUserModalButton"
-                          class="ms-3 btn btn-outline-primary btn-sm"
-                          data-bs-toggle="modal"
-                          data-bs-target="#lectureUserModal">
-                    <%= t('basics.details') %>
-                  </button>
-                <% end %>
-              </div>
-            </div>
-            <div class="row mt-3">
-              <div class="col-12 text-center">
-                <div id="lecture-basics-warning">
-                  <%= t('warnings.unsaved_changes') %>
-                  <%= f.submit t('buttons.save'),
-                      class: "btn btn-sm btn-primary" %>
-                  <button type="button"
-                          class="btn btn-sm btn-secondary ms-2"
-                          id="lecture-basics-cancel"
-                          data-id="<%= lecture.id %>">
-                    <%= t('buttons.discard') %>
-                  </button>
-                </div>
-              </div>
-            </div>
-          <% end %>
+      </div>
+      <div class="col-4">
+        <%= t('basics.course_editors') %>
+        <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
+        <% if lecture.course.editors.present? %>
+          <ul>
+            <% lecture.course.editors.each do |e| %>
+              <li>
+                <%= e.name %>
+              </li>
+            <% end %>
+          </ul>
         <% else %>
-          <%= t('admin.lecture.no_access_to_users_html',
-                project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+          <br>
+          <%= t('admin.lecture.no_course_editors') %>
+        <% end %>
+      </div>
+      <div class="col-4 mb-3">
+        <%= f.label :editor_ids,
+                    t('basics.lecture_editors'),
+                  class: "form-label" %>
+        <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
+        <div id="lecture_editors_select" %>
+          <%= f.select :editor_ids,
+                        options_for_select([[t('none'), '']] +
+                                          lecture.select_editors,
+                                          lecture.editors.map(&:id)),
+                        {},
+                        { multiple: true,
+                          class: 'selectize',
+                          data: { ajax: true,
+                                  model: 'user',
+                                  filled: false,
+                                  placeholder: t('basics.enter_two_letters'),
+                                  no_results: t('basics.no_results') } } %>
+        </div>
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-12">
+        <%= t('basics.subscribers_count_nc') %>
+        <span id="lectureUserCounter">
+          <%= lecture.users.count %>
+        </span>
+        <%= helpdesk(t('admin.lecture.info.subscribers_count'), false) %>
+        <% if lecture.users.any? && !lecture.stale? %>
+          <button type="button"
+                  id="lectureUserModalButton"
+                  class="ms-3 btn btn-outline-primary btn-sm"
+                  data-bs-toggle="modal"
+                  data-bs-target="#lectureUserModal">
+            <%= t('basics.details') %>
+          </button>
         <% end %>
       </div>
     </div>
-  </div>
+    <div class="row mt-3">
+      <div class="col-12 text-center">
+        <div id="lecture-basics-warning">
+          <%= t('warnings.unsaved_changes') %>
+          <%= f.submit t('buttons.save'),
+              class: "btn btn-sm btn-primary" %>
+          <button type="button"
+                  class="btn btn-sm btn-secondary ms-2"
+                  id="lecture-basics-cancel"
+                  data-id="<%= lecture.id %>">
+            <%= t('buttons.discard') %>
+          </button>
+        </div>
+      </div>
+    </div>
+  <% end %>
+<% else %>
+  <%= t('admin.lecture.no_access_to_users_html',
+        project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+<% end %>

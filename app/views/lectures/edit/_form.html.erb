@@ -24,7 +24,7 @@
             id="lecture-nav-people" type="button" role="tab"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-people"
             aria-controls="lecture-pane-people" aria-selected="false">
-          People
+          People/Tuts
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-orga" type="button" role="tab"
@@ -79,7 +79,7 @@
       <!-- Settings -->
       <div class="tab-pane fade" id="lecture-pane-settings"
           role="tabpanel" aria-labelledby="lecture-nav-settings" tabindex="0">
-        <div class="container small-width">
+        <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/preferences',
               locals: { lecture: lecture } %>
         </div>
@@ -88,7 +88,7 @@
       <!-- People -->
       <div class="tab-pane fade" id="lecture-pane-people"
           role="tabpanel" aria-labelledby="lecture-nav-people" tabindex="0">
-        <div class="container small-width">
+        <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/people',
               locals: { lecture: lecture } %>
           <%= render partial: 'lectures/edit/tutorials',
@@ -99,7 +99,7 @@
       <!-- Organisation -->
       <div class="tab-pane fade" id="lecture-pane-orga"
           role="tabpanel" aria-labelledby="lecture-nav-orga" tabindex="0">
-        <div class="container small-width">
+        <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/organizational_concept',
               locals: { lecture: lecture } %>
         </div>
@@ -108,7 +108,7 @@
       <!-- Communication -->
       <div class="tab-pane fade" id="lecture-pane-communication"
           role="tabpanel" aria-labelledby="lecture-nav-communication" tabindex="0">
-        <div class="container small-width">
+        <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/announcements',
               locals: { lecture: lecture, announcements: announcements } %>
           <%= render partial: 'lectures/edit/forum',
@@ -121,7 +121,7 @@
       <!-- Homework -->
       <div class="tab-pane fade" id="lecture-pane-homework"
           role="tabpanel" aria-labelledby="lecture-nav-homework" tabindex="0">
-        <div class="container small-width">
+        <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/assignments',
               locals: { lecture: lecture } %>
         </div>
@@ -130,7 +130,7 @@
       <!-- Info -->
       <div class="tab-pane fade" id="lecture-pane-info"
           role="tabpanel" aria-labelledby="lecture-nav-info" tabindex="0">
-        <div class="container small-width">
+        <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/tags',
               locals: { lecture: lecture } %>
           <%= render partial: 'lectures/edit/imported_media',

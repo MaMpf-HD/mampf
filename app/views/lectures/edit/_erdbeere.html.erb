@@ -1,29 +1,4 @@
-<div class="accordion-item bg-light">
-  <div class="accordion-header">
-    <button class="accordion-button collapsed"
-            type="button"
-            id="erdbeere_structures_heading"
-            data-bs-toggle="collapse"
-            data-bs-target="#erdbeere_structures_collapse"
-            aria-expanded="false"
-            data-loading="<%= t('basics.loading_data') %>"
-            data-lecture="<%= lecture.id %>"
-            aria-controls="erdbeere_structures_collapse">
-      <div class="row">
-        <div class="col-12">
-          <h5 id="erdbeereStructures" >
-            <%= t('categories.erdbeere.singular') %>
-          </h5>
-        </div>
-      </div>
-    </button>
-  </div>
-    <div id="erdbeere_structures_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body" id="erdbeereStructuresBody">
-      </div>
-    </div>
+<div class="accordion-body" id="erdbeereStructuresBody"
+    data-lecture="<%= lecture.id %>"
+    data-loading="<%= t('basics.loading_data') %>">
 </div>
