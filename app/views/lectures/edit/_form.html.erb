@@ -1,7 +1,10 @@
 <% cache lecture do %>
   <div id="lecture-area">
-    <%= render partial: 'lectures/edit/header',
-               locals: { lecture: lecture } %>
+    <!-- Header -->
+    <div class="container small-width">
+      <%= render partial: 'lectures/edit/header',
+          locals: { lecture: lecture } %>
+    </div>
     
     <!-- Menu to switch between "tabs" ("pillars") -->
     <nav>
