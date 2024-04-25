@@ -2,6 +2,31 @@
   <div id="lecture-area">
     <%= render partial: 'lectures/edit/header',
                locals: { lecture: lecture } %>
+    
+    <nav class="nav nav-pills flex-column flex-sm-row justify-content-center">
+      <button class="nav-link active" id="lecture-nav-content" role="link"
+        data-bs-toggle="pill" data-bs-target="#lecture-pane-content"
+        aria-controls="lecture-pane-content" aria-selected="true">
+        Content
+      </button>
+      <button class="nav-link" id="lecture-nav-orga" role="link"
+        data-bs-toggle="pill" data-bs-target="#lecture-pane-orga"
+        aria-controls="lecture-pane-orga" aria-selected="false">
+        Orga
+      </button>
+    </nav>
+
+    <div class="tab-content">
+      <div class="tab-pane fade show active" id="lecture-pane-content"
+        aria-labelledby="lecture-nav-content" tabindex="0">
+        Content yeah
+      </div>
+      <div class="tab-pane fade" id="lecture-pane-orga"
+        aria-labelledby="lecture-nav-orga" tabindex="0">
+        Orga yeah
+      </div>
+    </div>
+
     <div class="row px-4 py-2">
       <% if !lecture.seminar? || lecture.legacy_seminar %>
         <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
