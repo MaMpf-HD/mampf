@@ -10,7 +10,7 @@ class Section < ApplicationRecord
   has_many :section_tag_joins, dependent: :destroy
   has_many :tags, through: :section_tag_joins
   # the tags have an ordering (an array with their ids)
-  serialize :tags_order, Array
+  serialize :tags_order, type: Array, coder: YAML
 
   # a section has many lessons
   has_many :lesson_section_joins, dependent: :destroy

@@ -7,7 +7,7 @@ class Annotation < ApplicationRecord
   scope :commented, -> { where.not(public_comment_id: nil) }
 
   # the timestamp for the annotation position is serialized as text in the db
-  serialize :timestamp, TimeStamp
+  serialize :timestamp, coder: TimeStamp
 
   enum category: { note: 0, content: 1, mistake: 2, presentation: 3 }
   enum subcategory: { definition: 0, argument: 1, strategy: 2 }

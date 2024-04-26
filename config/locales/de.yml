@@ -2668,6 +2668,7 @@ de:
     resources: Ressourcen
     blog: Blog
     guided_tour: geführter Tour
+    researchgate: Researchgate
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'

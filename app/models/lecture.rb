@@ -65,7 +65,7 @@ class Lecture < ApplicationRecord
 
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
-  serialize :structure_ids, Array
+  serialize :structure_ids, type: Array, coder: YAML
 
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
