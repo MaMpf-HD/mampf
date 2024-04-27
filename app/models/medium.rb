@@ -56,11 +56,11 @@ class Medium < ApplicationRecord
 
   has_many :assignments
 
-  serialize :quiz_graph, QuizGraph
+  serialize :quiz_graph, coder: QuizGraph
 
-  serialize :solution, Solution
+  serialize :solution, coder: Solution
 
-  serialize :publisher, MediumPublisher
+  serialize :publisher, coder: MediumPublisher
 
   # include uploaders to realize video/manuscript/screenshot upload
   # this makes use of the shrine gem

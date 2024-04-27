@@ -9,25 +9,22 @@ Bundler.require(*Rails.groups)
 module Mampf
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults(7.0)
+    config.load_defaults(7.1)
     config.autoloader = :zeitwerk
 
-    # Autoload lib extensions path (ignore all other subdirectories of lib/)
-    lib_path = Rails.root.join("lib")
-    config.autoload_paths << lib_path
-    config.eager_load_paths << lib_path
-    Rails.autoloaders.main.ignore(
-      lib_path.join("assets"),
-      lib_path.join("collectors"),
-      lib_path.join("core_ext"),
-      lib_path.join("scrapers"),
-      lib_path.join("tasks")
-    )
+    # Autoload lib extensions path
+    config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])
 
     config.i18n.default_locale = :de
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
+    config.i18n.raise_on_missing_translations = true
     config.time_zone = "Berlin"
+
+    # Message serializing. Starting with Rails 7.2, the default is :json.
+    # See: https://guides.rubyonrails.org/v7.1/configuring.html#config-active-support-message-serializer
+    Rails.application.config.active_support.message_serializer = :json
+
     # config.eager_load_paths << Rails.root.join("extras")
     # Make `form_with` generate remote forms by default.
     config.action_view.form_with_generates_remote_forms = true

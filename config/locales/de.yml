@@ -714,12 +714,6 @@ de:
       script_based: >
           unter Verwendung eines Veranstaltungsskriptes, das mit dem MaMpf
           LaTeX-Paket erstellt wurde
-      emergency_link: 'Link für den Emergency-Button'
-      emergency_link_no_link: 'kein Link'
-      emergency_link_lecture_link: 'Vorlesungslink'
-      emergency_link_direct_link: 'direkter Link'
-      enter_emergency_link: 'Emergency-Link eingeben:'
-      select_helpdesk: 'Helpdesk auswählen:'
       no_chapters: 'Es sind noch keine Kapitel vorhanden.'
       no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
@@ -807,6 +801,10 @@ de:
           das Modul bearbeiten, insbesondere können sie Veranstaltungen innerhalb
           des Moduls anlegen. ModuleditorInnen erben die Bearbeitungsrechte für
           alle Veranstaltungen innerhalb des Moduls.
+        no_right_to_change_editors: >
+          ModuleditorInnen können nur von AdministratorInnen geändert werden.
+          Bitte wende Dich per Email an %{project_email}, wenn hier
+          eine Änderung vorgenommen werden soll.
         preceding_courses: >
           Hier kannst Du angeben, auf welchen Modulen das
           vorliegende Modul aufbaut.
@@ -2670,6 +2668,7 @@ de:
     resources: Ressourcen
     blog: Blog
     guided_tour: geführter Tour
+    researchgate: Researchgate
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'

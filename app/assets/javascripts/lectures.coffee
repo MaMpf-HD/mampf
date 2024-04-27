@@ -136,7 +136,6 @@ $(document).on 'turbolinks:load', ->
     tags = $(this).data('tags')
     for t in tags
       $('.lecture-tag[data-id="'+t+'"]').removeClass('bg-warning')
-        .addClass('bg-light')
     return
 
   # mouseenter over lesson -> colorize tags
@@ -202,30 +201,6 @@ $(document).on 'turbolinks:load', ->
           userModalContent.appendChild(row)
           userModalContent.dataset.filled = 'true'
         return
-
-  # Dynamically render content for entering emergency links.
-  updateEmergencyLink = (value) ->
-    if value == "no_link"
-      $('#direct-link-field').hide()
-      $('#lecture-link-field').hide()
-    if value == "lecture_link"
-      $('#direct-link-field').hide()
-      $('#lecture-link-field').show()
-    if value == "direct_link"
-      $('#lecture-link-field').hide()
-      $('#direct-link-field').show()
-    return
-
-  emergencyLinkRadios = document.getElementById('emergency-link-status-radios')
-
-  if (emergencyLinkRadios != null)
-    $('#emergency-link-status-radios input:radio:checked').each ->
-      updateEmergencyLink(this.value)
-      return
-    emergencyLinkRadios.addEventListener 'click', (evt) ->
-      if evt.target && event.target.matches("input[type='radio']")
-        updateEmergencyLink(evt.target.value)
-      return
 
   # on small mobile display, use shortened tag badges and
   # shortened course titles

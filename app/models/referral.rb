@@ -7,8 +7,8 @@ class Referral < ApplicationRecord
   belongs_to :medium
 
   # start_time and end_time are serialized columns
-  serialize :start_time, TimeStamp
-  serialize :end_time, TimeStamp
+  serialize :start_time, coder: TimeStamp
+  serialize :end_time, coder: TimeStamp
 
   # validations for start time and end time
   validate :valid_start_time
@@ -33,7 +33,7 @@ class Referral < ApplicationRecord
 
   # provide metadata for vtt file
   def vtt_properties
-    link = (item.link.presence || item.medium_link)
+    link = item.link.presence || item.medium_link
     # at the moment, relations between items can be only of the form
     # script <-> video, which means that between them there will be at most
     # one script, one manuscript and one video

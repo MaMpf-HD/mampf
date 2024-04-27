@@ -156,7 +156,7 @@ module Commontator
 
     # PUT /comments/1/downvote
     def downvote
-      security_transgression_unless(@comment.can_be_voted_on_by?(@commontator_user) && \
+      security_transgression_unless(@comment.can_be_voted_on_by?(@commontator_user) &&
                                     @comment.thread.config.comment_voting.to_sym == :ld)
 
       @comment.downvote_from(@commontator_user)
