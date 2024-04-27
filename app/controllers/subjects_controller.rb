@@ -42,6 +42,6 @@ class SubjectsController < ApplicationController
     end
 
     def subject_params
-      params.require(:subject).permit(*Subject.globalize_attribute_names)
+      params.require(:subject).permit(*Subject.locale_accessor_names)
     end
 end

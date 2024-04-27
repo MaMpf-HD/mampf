@@ -43,7 +43,6 @@ coverage
 /public/uploads
 
 # Ignore environment variables
-/config/app_environment_variables.rb
 completed_initial_run
 /public/uploads.zip
 /public/pdfcomprezzor/pdfcomprezzor.wasm

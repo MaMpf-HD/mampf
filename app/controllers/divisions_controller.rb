@@ -43,6 +43,6 @@ class DivisionsController < ApplicationController
     end
 
     def division_params
-      params.require(:division).permit(*Division.globalize_attribute_names)
+      params.require(:division).permit(*Division.locale_accessor_names)
     end
 end

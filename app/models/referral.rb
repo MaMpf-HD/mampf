@@ -7,8 +7,8 @@ class Referral < ApplicationRecord
   belongs_to :medium
 
   # start_time and end_time are serialized columns
-  serialize :start_time, TimeStamp
-  serialize :end_time, TimeStamp
+  serialize :start_time, coder: TimeStamp
+  serialize :end_time, coder: TimeStamp
 
   # validations for start time and end time
   validate :valid_start_time
