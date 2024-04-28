@@ -66,5 +66,8 @@ RUN yarn install --production=false
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
-COPY  ./ /usr/src/app/
-RUN RAILS_ENV=test TEST_DATABASE_ADAPTER=postgresql rake assets:precompile
+COPY  . /usr/src/app/
+COPY ./docker/production/docker.env ./docker-dummy.env
+
+RUN set -o allexport && . ./docker-dummy.env && set +o allexport && \
+    SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb bundle exec rails assets:precompile
