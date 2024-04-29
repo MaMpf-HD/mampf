@@ -34,7 +34,7 @@ gem "jbuilder"
 # Reduces boot times through caching; required in config/boot.rb
 gem "active_model_serializers"
 gem "bootsnap", ">= 1.4.2", require: false
-gem "rack"
+gem "rack", "<3"
 # Use CoffeeScript for .coffee assets and views
 gem "coffee-rails", "~> 5.0.0"
 
