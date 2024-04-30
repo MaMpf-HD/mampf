@@ -46,16 +46,6 @@ jobs:
         run: |
           docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
 
-      - name: Create and migrate DB
-        working-directory: docker/test
-        run: |
-          docker compose run --entrypoint="" mampf sh -c "rake db:create db:migrate db:test:prepare"
-
-      - name: Reindex sunspot
-        working-directory: docker/test
-        run: |
-          docker compose run --entrypoint=""  mampf sh -c "RAILS_ENV=test rake sunspot:reindex"
-
       - name: Run unit tests
         working-directory: docker/test
         run: |
