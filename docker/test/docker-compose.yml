@@ -59,14 +59,16 @@ services:
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
       MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
       PROJECT_EMAIL: project@localhost
-      FEEBACK_EMAIL: feedback@localhost
+      FEEDBACK_EMAIL: feedback@localhost
       PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
+      ERROR_EMAIL: mampf-error@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
       SOLR_HOST: solr
       SOLR_PORT: 8983
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
+      BLOG: https://mampf.blog
     volumes:
         - type: bind
           source: ../../spec/
