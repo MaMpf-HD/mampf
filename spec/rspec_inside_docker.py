@@ -54,7 +54,8 @@ if __name__ == '__main__':
     process_paths()
 
     rspec_args = ' '.join(sys.argv[1:])
-    test_command = f'RAILS_ENV=test bundle exec rspec {rspec_args}'
+    test_command = f'set -o allexport && . ./docker-dummy.env && set +o allexport && \
+        RAILS_ENV=test bundle exec rspec {rspec_args}'
 
     docker_cmd = f'cd ./docker/test && docker compose run --rm -T --entrypoint="" -v {formatter_path_on_host}:{FORMATTER_PATH_IN_DOCKER} {DOCKER_SERVICE_NAME} sh -c "{test_command}"'
 
