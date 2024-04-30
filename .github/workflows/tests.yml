@@ -49,7 +49,7 @@ jobs:
       - name: Create and migrate DB
         working-directory: docker/test
         run: |
-          docker compose run --entrypoint "" mampf sh -c "rake db:create db:migrate db:test:prepare"
+          docker compose run --entrypoint="" mampf sh -c "rake db:create db:migrate db:test:prepare"
 
       - name: Reindex sunspot
         working-directory: docker/test
