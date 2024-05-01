@@ -1,6 +1,6 @@
 require "rails_helper"
 
-NO_HITS_MSG = "The search has not returned any hits"
+NO_HITS_MSG = "The search has not returned any hits".freeze
 
 def expect_no_results(response)
   expect(response.body).to include(NO_HITS_MSG)
