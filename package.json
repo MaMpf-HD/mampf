@@ -18,9 +18,9 @@
     "webpack-dev-server": "^4.15.1"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin": "^1.5.0",
-    "eslint": "^9.0.0",
+    "@stylistic/eslint-plugin": "^1.8.0",
+    "eslint": "^9.1.1",
     "eslint-plugin-erb": "^2.0.0",
-    "globals": "^13.24.0"
+    "globals": "^15.1.0"
   }
 }
