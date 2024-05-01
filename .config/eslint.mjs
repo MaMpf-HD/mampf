@@ -119,7 +119,7 @@ export default [
         "indent": 2,
         "jsx": false,
         "quote-props": "always",
-        "semi": "always",
+        "semi": true,
         "brace-style": "1tbs",
       }).rules,
       "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
