@@ -1,8 +1,22 @@
 require "rails_helper"
 
+NO_HITS_MSG = "The search has not returned any hits"
+
+def expect_no_results(response)
+  expect(response.body).to include(NO_HITS_MSG)
+end
+
+def expect_all_results(response)
+  expect(response.body).not_to include(NO_HITS_MSG)
+  num_hits = parse_media_search(response)
+  expect(num_hits).to eq(Medium.where(released: "all").size)
+end
+
 RSpec.describe("Media", type: :request) do
   describe "#search_by" do
     before do
+      Medium.destroy_all
+
       @medium1 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
                                    sort: "Nuesse", description: "Erstes Medium")
       @medium2 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
@@ -13,6 +27,11 @@ RSpec.describe("Media", type: :request) do
                                    :with_tags, sort: "Nuesse", description: "Getagtes Medium")
       @medium5 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
                                    :with_tags, sort: "Nuesse", description: "Anderes Medium")
+
+      @tag1 = FactoryBot.create(:tag, title: "mampf adventures")
+      @tag2 = FactoryBot.create(:tag, title: "topology")
+      @medium4.tags << @tag1
+      @medium5.tags << @tag2
 
       @lecture1 = FactoryBot.create(:lecture)
       @medium6 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
@@ -25,7 +44,7 @@ RSpec.describe("Media", type: :request) do
       @medium8 = FactoryBot.create(:medium, :with_teachable, :with_editors,
                                    sort: "Nuesse", description: "Unveröffentlichtes Medium")
 
-      sign_in FactoryBot.create(:confirmed_user)
+      sign_in FactoryBot.create(:confirmed_user_en)
       User.last.subscribe_lecture!(@lecture1)
 
       Medium.reindex
@@ -48,17 +67,15 @@ RSpec.describe("Media", type: :request) do
     it "can search for all (released) media" do
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
       expect(response.body).not_to include("Unveröffentlichtes Medium")
-      hits = parse_media_search(response)
-      expect(hits).to eq(Medium.where(released: "all").size)
+      expect_all_results(response)
     end
 
     it "can search for media by title" do
       @params[:search][:fulltext] = "Erstes"
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
+      expect(response.body).not_to include(NO_HITS_MSG)
       expect(response.body).to include("Erstes Medium")
       hits = parse_media_search(response)
       expect(hits).to eq(2)
@@ -69,7 +86,7 @@ RSpec.describe("Media", type: :request) do
       @params[:search][:types] = ["Quiz"]
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
+      expect(response.body).not_to include(NO_HITS_MSG)
       expect(response.body).to include("Drittes Medium")
       hits = parse_media_search(response)
       expect(hits).to eq(1)
@@ -80,7 +97,7 @@ RSpec.describe("Media", type: :request) do
       @params[:search][:tag_ids] = @medium4.tags.pluck(:id)
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
+      expect(response.body).not_to include(NO_HITS_MSG)
       expect(response.body).to include("Getagtes Medium")
       hits = parse_media_search(response)
       expect(hits).to eq(1)
@@ -88,35 +105,40 @@ RSpec.describe("Media", type: :request) do
 
     it 'can do combined search with tagoperator "or" and description' do
       @params[:search][:all_tags] = 0
-      @params[:search][:tag_ids] = @medium4.tags.pluck(:id)
+      @params[:search][:tag_ids] = [@medium4.tags.pluck(:id), @medium5.tags.pluck(:id)].flatten
       @params[:search][:fulltext] = "Medium"
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
+      expect(response.body).not_to include(NO_HITS_MSG)
+      expect(response.body).to include("Getagtes Medium")
       hits = parse_media_search(response)
-      expect(hits).to eq(Medium.where(released: "all").size)
+      expect(hits).to eq(2)
     end
 
     it 'can do search with tagoperator "and" and description' do
       @params[:search][:tag_operator] = "and"
       @params[:search][:all_tags] = 0
-      @params[:search][:tag_ids] = @medium4.tags.pluck(:id)
+      @params[:search][:tag_ids] = [@tag1, @tag2].map(&:id)
       @params[:search][:fulltext] = "Medium"
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
-      expect(response.body).to include("Getagtes Medium")
-      hits = parse_media_search(response)
-      expect(hits).to eq(1)
+      expect_no_results(response)
     end
 
-    it 'can search for all media with tags by using tagoperator "and"' do
+    it '"all tags" has higher precedence than any tagoperator (here "and")' do
+      @params[:search][:all_tags] = 1
       @params[:search][:tag_operator] = "and"
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
-      hits = parse_media_search(response)
-      expect(hits).to eq(2)
+      expect_all_results(response)
+    end
+
+    it '"all tags" has higher precedence than any tagoperator (here "or")' do
+      @params[:search][:all_tags] = 1
+      @params[:search][:tag_operator] = "or"
+      get media_search_path, params: @params
+
+      expect_all_results(response)
     end
 
     it "can search by teacher" do
@@ -124,7 +146,7 @@ RSpec.describe("Media", type: :request) do
       @params[:search][:teacher_ids] = [@lecture1.teacher.id]
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
+      expect(response.body).not_to include(NO_HITS_MSG)
       hits = parse_media_search(response)
       expect(hits).to eq(2)
     end
@@ -133,7 +155,7 @@ RSpec.describe("Media", type: :request) do
       @params[:search][:lecture_option] = 1
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
+      expect(response.body).not_to include(NO_HITS_MSG)
       expect(response.body).to include("Erstes Medium mit Lehrer")
       hits = parse_media_search(response)
       expect(hits).to eq(1)
@@ -144,7 +166,7 @@ RSpec.describe("Media", type: :request) do
       @params[:search][:media_lectures] = [@lecture2.id]
       get media_search_path, params: @params
 
-      expect(response.body).not_to include("The search has not returned any hits")
+      expect(response.body).not_to include(NO_HITS_MSG)
       expect(response.body).to include("Zweites Medium mit Lehrer")
       hits = parse_media_search(response)
       expect(hits).to eq(1)
