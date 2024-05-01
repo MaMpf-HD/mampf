@@ -15,8 +15,6 @@ end
 RSpec.describe("Media", type: :request) do
   describe "#search_by" do
     before do
-      Medium.delete_all
-
       @medium1 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
                                    sort: "Nuesse", description: "Erstes Medium")
       @medium2 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
