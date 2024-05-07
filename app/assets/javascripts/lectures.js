@@ -214,17 +214,19 @@ $(document).on("turbolinks:load", function () {
         lecture: lectureId,
       },
       success(result) {
-        if (result.length === 0) { $("#lectureUserModalButton").hide(); }
-        for (const u of result) {
+        if (result.length === 0) {
+          $("#lectureUserModalButton").hide();
+        }
+        for (const res of result) {
           var row = document.createElement("div");
           row.className = "row mx-2 border-left border-right border-bottom";
           var colName = document.createElement("div");
           colName.className = "col-6";
-          colName.innerHTML = u[0];
+          colName.innerHTML = res[0];
           row.appendChild(colName);
           var colMail = document.createElement("div");
           colMail.className = "col-6";
-          colMail.innerHTML = u[1];
+          colMail.innerHTML = res[1];
           row.appendChild(colMail);
           userModalContent.appendChild(row);
           userModalContent.dataset.filled = "true";
