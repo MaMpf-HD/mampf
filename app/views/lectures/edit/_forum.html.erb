@@ -21,7 +21,8 @@
     <% end %>
 
     <%= link_to destroy_forum_path(lecture),
-      class: "btn btn-sm btn-outline-danger", role: :button do %>
+      id: "delete-forum", class: "btn btn-sm btn-outline-danger", role: :button,
+      "data-sure-to-delete": t('buttons.delete_board_sure_to_delete') do %>
       <i class="fas fa-trash"></i>
       <%= t('buttons.delete_board') %>
     <% end %>

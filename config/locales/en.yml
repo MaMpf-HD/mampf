@@ -3285,6 +3285,7 @@ en:
     unlock_board: 'Unlock Board'
     lock_board: 'Lock Board'
     delete_board: 'Delete Board'
+    delete_board_sure_to_delete: 'Really delete this board?'
     add_board: 'Create Board'
     all_courses: 'All Courses'
     edited_courses: 'Courses edited by myself'

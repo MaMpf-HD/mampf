@@ -48,8 +48,14 @@ $(document).on("ready turbolinks:load", function () {
   configureUrlHashesForBootstrapTabs();
 
   // Reinitialize the masonry grid system when the lecture content is shown
-  $("#lecture-nav-content").on("focus click", function () {
+  $("#lecture-nav-content").on("focus click", () => {
     initMasonryGridSystem();
+  });
+
+  $("#delete-forum").on("click", () => {
+    const sureToDeleteMsg = $("#delete-forum").data("sureToDelete");
+    const reallyDelete = confirm(sureToDeleteMsg);
+    return reallyDelete;
   });
 
   // if any input is given to the lecture form (for people in lecture),

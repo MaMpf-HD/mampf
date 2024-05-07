@@ -3467,6 +3467,7 @@ de:
     unlock_board: 'Forum entsperren'
     lock_board: 'Forum sperren'
     delete_board: 'Forum löschen'
+    delete_board_sure_to_delete: 'Forum wirklich löschen?'
     add_board: 'Forum anlegen'
     all_courses: 'alle Module'
     edited_courses: 'von mir editierte Module'
