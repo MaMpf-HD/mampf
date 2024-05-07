@@ -1,6 +1,5 @@
 /*
  * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
@@ -150,7 +149,7 @@ $(document).on("turbolinks:load", function () {
         .addClass("bg-info");
     }
     const tags = $(this).data("tags");
-    for (var t of Array.from(tags)) {
+    for (const t of tags) {
       $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-light")
         .addClass("bg-warning");
     }
@@ -164,7 +163,7 @@ $(document).on("turbolinks:load", function () {
         .addClass("bg-secondary");
     }
     const tags = $(this).data("tags");
-    for (var t of Array.from(tags)) {
+    for (const t of tags) {
       $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-warning");
     }
   });
@@ -172,7 +171,7 @@ $(document).on("turbolinks:load", function () {
   // mouseenter over lesson -> colorize tags
   $('[id^="lecture-lesson_"]').on("mouseenter", function () {
     const tags = $(this).data("tags");
-    for (var t of Array.from(tags)) {
+    for (const t of tags) {
       $('.lecture-tag[data-id="' + t + '"]').addClass("bg-warning");
     }
   });
@@ -180,7 +179,7 @@ $(document).on("turbolinks:load", function () {
   // mouseleave over lesson -> restore original color of tags
   $('[id^="lecture-lesson_"]').on("mouseleave", function () {
     const tags = $(this).data("tags");
-    for (var t of Array.from(tags)) {
+    for (const t of tags) {
       $('.lecture-tag[data-id="' + t + '"]').removeClass("bg-warning");
     }
   });
@@ -188,7 +187,7 @@ $(document).on("turbolinks:load", function () {
   // mouseenter over tag -> colorize lessons
   $('[id^="lecture-tag_"]').on("mouseenter", function () {
     const lessons = $(this).data("lessons");
-    for (var l of Array.from(lessons)) {
+    for (const l of lessons) {
       $('.lecture-lesson[data-id="' + l + '"]').removeClass("bg-secondary")
         .addClass("bg-info");
     }
@@ -197,7 +196,7 @@ $(document).on("turbolinks:load", function () {
   // mouseleave over tag -> restore original color of lessons
   $('[id^="lecture-tag_"]').on("mouseleave", function () {
     const lessons = $(this).data("lessons");
-    for (var l of Array.from(lessons)) {
+    for (const l of lessons) {
       $('.lecture-lesson[data-id="' + l + '"]').removeClass("bg-info")
         .addClass("bg-secondary");
     }
@@ -225,7 +224,7 @@ $(document).on("turbolinks:load", function () {
       },
       success(result) {
         if (result.length === 0) { $("#lectureUserModalButton").hide(); }
-        for (var u of Array.from(result)) {
+        for (const u of result) {
           var row = document.createElement("div");
           row.className = "row mx-2 border-left border-right border-bottom";
           var colName = document.createElement("div");
@@ -335,7 +334,7 @@ $(document).on("turbolinks:load", function () {
   const $lectureStructures = $("#lectureStructuresInfo");
   if ($lectureStructures.length > 0) {
     structures = $lectureStructures.data("structures");
-    for (s of Array.from(structures)) {
+    for (const s of structures) {
       $("#structure-item-" + s).show();
     }
   }
@@ -347,7 +346,7 @@ $(document).on("turbolinks:load", function () {
     else {
       $('[id^="structure-item-"]').hide();
       structures = $lectureStructures.data("structures");
-      for (s of Array.from(structures)) {
+      for (const s of structures) {
         $("#structure-item-" + s).show();
       }
     }
