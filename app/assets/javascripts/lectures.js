@@ -47,6 +47,11 @@ $(document).on("ready turbolinks:load", function () {
   initBootstrapPopovers();
   configureUrlHashesForBootstrapTabs();
 
+  // Reinitialize the masonry grid system when the lecture content is shown
+  $("#lecture-nav-content").on("focus click", function () {
+    initMasonryGridSystem();
+  });
+
   // if any input is given to the lecture form (for people in lecture),
   // disable other input
   $("#lecture-form :input").on("change", function () {
@@ -86,12 +91,8 @@ $(document).on("ready turbolinks:load", function () {
 
   const trixElement = document.querySelector("#lecture-concept-trix");
   if (trixElement) {
-    const {
-      content,
-    } = trixElement.dataset;
-    const {
-      editor,
-    } = trixElement;
+    const { content } = trixElement.dataset;
+    const { editor } = trixElement;
     editor.setSelectedRange([0, 65535]);
     editor.deleteInDirection("forward");
     editor.insertHTML(content);
