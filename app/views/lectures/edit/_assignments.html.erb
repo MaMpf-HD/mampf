@@ -1,3 +1,7 @@
+<h3 class="lecture-pane-header">
+  <%= t('basics.assignments') %>
+</h3>
+
 <div class="row mb-3">
   <div class="col-12 text-center">
     <%= link_to t('admin.assignment.new'),
@@ -56,7 +60,7 @@
               html: { id: 'lecture-assignments-form',
                       class: 'mt-4 px-2' } do |f| %>
   <div class="row">
-    <div class="mb-3 col-md-6">
+    <div class="col-md-6">
       <%= f.label :submission_max_team_size,
                   t('admin.lecture.submission_max_team_size'),
                   class: "form-label" %>
@@ -65,11 +69,11 @@
       <%= f.number_field :submission_max_team_size,
                           min: 1,
                           max: 10000,
-                          class: 'form-control mx-2',
+                          class: 'form-control',
                           data:
                           { value: lecture.submission_max_team_size } %>
     </div>
-    <div class="mb-3 col-md-6">
+    <div class="col-md-6">
       <%= f.label :submission_grace_period,
                   t('admin.lecture.submission_grace_period'),
                   class: "form-label" %>
@@ -78,7 +82,7 @@
       <%= f.number_field :submission_grace_period,
                           min: 0,
                           max: 262800,
-                          class: 'form-control mx-2',
+                          class: 'form-control',
                           data: { value: lecture.submission_grace_period } %>
     </div>
   </div>

@@ -100,9 +100,20 @@
 
 .lecture-pane {
   background-color: white;
-  padding: 1.5em 1em;
+  padding: 1.5em;
   margin-bottom: 1em;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
   border: gray 1px solid;
   border-radius: 0.4em;
+}
+
+.lecture-pane-separator {
+  border-top: 3px dotted #555555;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+h3.lecture-pane-header {
+  color: #838383;
+  font-size: 1.3em;
 }

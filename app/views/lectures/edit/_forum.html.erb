@@ -1,20 +1,36 @@
-<div class="col-12 text-center" id="forum-buttons">
+<hr class="lecture-pane-separator">
+<h3 class="lecture-pane-header">
+  <%= t('categories.board') %>
+</h3>
+
+<div id="forum-buttons">
   <% if lecture.forum? && lecture.forum %>
+
     <% if lecture.forum&.locked %>
-      <%= link_to t('buttons.unlock_board'),
-                  unlock_forum_path(lecture),
-                  class: 'btn btn-sm btn-primary' %>
+      <%= link_to unlock_forum_path(lecture),
+        class: "btn btn-sm btn-outline-primary", role: :button do %>
+        <i class="fas fa-unlock"></i>
+        <%= t('buttons.unlock_board') %>
+      <% end %>
     <% else %>
-      <%= link_to t('buttons.lock_board'),
-                  lock_forum_path(lecture),
-                  class: 'btn btn-sm btn-primary' %>
+      <%= link_to lock_forum_path(lecture),
+        class: "btn btn-sm btn-outline-primary", role: :button do %>
+        <i class="fas fa-lock"></i>
+        <%= t('buttons.lock_board') %>
+      <% end %>
     <% end %>
-    <%= link_to t('buttons.delete_board'),
-                destroy_forum_path(lecture),
-                class: 'btn btn-sm btn-danger' %>
+
+    <%= link_to destroy_forum_path(lecture),
+      class: "btn btn-sm btn-outline-danger", role: :button do %>
+      <i class="fas fa-trash"></i>
+      <%= t('buttons.delete_board') %>
+    <% end %>
+
   <% else %>
-    <%= link_to t('buttons.add_board'),
-                add_forum_path(lecture),
-                class: 'btn btn-sm btn-primary' %>
+    <%= link_to add_forum_path(lecture),
+      class: "btn btn-sm btn-outline-primary", role: :button do %>
+      <i class="fas fa-plus"></i>
+      <%= t('buttons.add_board') %>
+    <% end %>
   <% end %>
 </div>

@@ -1,6 +1,8 @@
 <%= form_with model: lecture,
               html: { id: 'lecture-preferences-form' } do |f| %>
   <div class="row">
+    <h3 class="lecture-pane-header"><%= t('basics.preferences') %></h3>
+
     <% unless lecture.course.term_independent %>
       <div class="col-6 mb-3">
         <%= f.label :term_id,

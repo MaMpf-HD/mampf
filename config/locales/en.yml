@@ -437,6 +437,7 @@ en:
       special_short: ''
       special_content: 'Content'
       orga: 'Orga'
+      organization: 'Organization'
       communication: 'Communication'
       new_lecture: 'Create a new event series'
       no_courses_yet: 'You have to create a course first.'

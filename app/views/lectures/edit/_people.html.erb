@@ -1,7 +1,9 @@
 <% if current_user.can_update_personell?(lecture) %>
   <%= form_with model: lecture, html: { id: 'lecture-form' } do |f| %>
     <div class="row">
-      <div class="col-4 mb-3">
+      <h3 class="lecture-pane-header"><%= t('basics.people') %></h3>
+
+      <div class="col-6 mb-3">
         <%= f.label :teacher_id,
                     t('basics.teacher'),
                   class: "form-label" %>
@@ -24,23 +26,8 @@
           </div>
         </div>
       </div>
-      <div class="col-4">
-        <%= t('basics.course_editors') %>
-        <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
-        <% if lecture.course.editors.present? %>
-          <ul>
-            <% lecture.course.editors.each do |e| %>
-              <li>
-                <%= e.name %>
-              </li>
-            <% end %>
-          </ul>
-        <% else %>
-          <br>
-          <%= t('admin.lecture.no_course_editors') %>
-        <% end %>
-      </div>
-      <div class="col-4 mb-3">
+
+      <div class="col-6 mb-3">
         <%= f.label :editor_ids,
                     t('basics.lecture_editors'),
                   class: "form-label" %>
@@ -79,20 +66,18 @@
         <% end %>
       </div>
     </div>
-    <div class="row mt-3">
-      <div class="col-12 text-center">
-        <div id="lecture-basics-warning">
-          <%= t('warnings.unsaved_changes') %>
-          <%= f.submit t('buttons.save'),
-              class: "btn btn-sm btn-primary" %>
-          <button type="button"
-                  class="btn btn-sm btn-secondary ms-2"
-                  id="lecture-basics-cancel"
-                  data-id="<%= lecture.id %>">
-            <%= t('buttons.discard') %>
-          </button>
-        </div>
-      </div>
+
+    <!-- Unsaved changes -->
+    <div class="col-12 text-center" id="lecture-basics-warning">
+      <%= t('warnings.unsaved_changes') %>
+      <%= f.submit t('buttons.save'),
+          class: "btn btn-sm btn-primary" %>
+      <button type="button"
+              class="btn btn-sm btn-secondary ms-2"
+              id="lecture-basics-cancel"
+              data-id="<%= lecture.id %>">
+        <%= t('buttons.discard') %>
+      </button>
     </div>
   <% end %>
 <% else %>

@@ -1,27 +1,61 @@
-<div class="row">
-  <div class="col-12 text-center" id="comments-buttons">
+<hr class="lecture-pane-separator">
+<h3 class="lecture-pane-header">
+  <%= t('categories.comments') %>
+</h3>
+
+<div>
+  <div id="comments-buttons">
     <%= link_to t('buttons.close_comments'),
                 lecture_close_comments_path(lecture),
-                class: 'btn btn-sm btn-primary' %>
+                class: 'btn btn-sm btn-outline-secondary' %>
     <%= link_to t('buttons.open_comments'),
                 lecture_open_comments_path(lecture),
-                class: 'btn btn-sm btn-primary' %>
+                class: 'btn btn-sm btn-outline-secondary' %>
   </div>
 </div>
 
+
 <%= form_with model: lecture,
             html: { id: 'lecture-comments-form' } do |f| %>
-  <div class="row my-3 ms-2">
-    <div class="form-check">
-      <%= f.check_box :comments_disabled,
-                      class: 'form-check-input' %>
-      <%= f.label :comments_disabled,
-                  t('admin.lecture.comments_disabled'),
-                  { class: 'form-check-label' } %>
-      <%= helpdesk(t('admin.lecture.info.comments_disabled'),
-                false) %>
+
+  <div class="form-check pt-3">
+    <%= f.check_box :comments_disabled,
+                    class: 'form-check-input' %>
+    <%= f.label :comments_disabled,
+                t('admin.lecture.comments_disabled'),
+                { class: 'form-check-label' } %>
+    <%= helpdesk(t('admin.lecture.info.comments_disabled'),
+              false) %>
+  </div>
+
+  <!--- Annotation button related setting -->
+  <div class="pt-3 form-group">
+    <%= t('admin.lecture.enable_annotation_button') %>
+    <%= helpdesk(t('admin.lecture.enable_annotation_button_helpdesk'), false) %>
+
+    <div class="form-row">
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :annotations_status,
+                            1,
+                            class: 'form-check-input' %>
+        <%= f.label :annotations_status,
+                    t('basics.yes_lc'),
+                    value: 1,
+                    class: 'form-check-label' %>
+      </div>
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :annotations_status,
+                            0,
+                            class: 'form-check-input' %>
+        <%= f.label :annotations_status,
+                    t('basics.no_lc'),
+                    value: 0,
+                    class: 'form-check-label' %>
+      </div>
     </div>
   </div>
+
+  <!-- Unsaved changes warnings -->
   <div class="row">
     <div class="col-12 text-center">
       <div id="lecture-comments-warning">
@@ -34,44 +68,6 @@
         </button>
       </div>
     </div>
-    <!--- ANNOTATION BUTTON -->
-    <div class="form-group">
-      <%= t('admin.lecture.enable_annotation_button') %>
-      <%= helpdesk(t('admin.lecture.enable_annotation_button_helpdesk'),
-                    false) %>
-      <div class="form-row ml-2">
-        <div class="form-check form-check-inline">
-          <%= f.radio_button :annotations_status,
-                              1,
-                              class: 'form-check-input' %>
-          <%= f.label :annotations_status,
-                      t('basics.yes_lc'),
-                      value: 1,
-                      class: 'form-check-label' %>
-        </div>
-        <div class="form-check form-check-inline">
-          <%= f.radio_button :annotations_status,
-                              -1,
-                              class: 'form-check-input' %>
-          <%= f.label :annotations_status,
-                      t('basics.no_lc'),
-                      value: -1,
-                      class: 'form-check-label' %>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-12 text-center">
-        <div id="lecture-comments-warning">
-          <%= t('warnings.unsaved_changes') %>
-          <%= f.submit t('buttons.save_and_exit'),
-                        class: "btn btn-sm btn-primary" %>
-          <button type="button" id="cancel-lecture-comments"
-                  class="btn btn-sm btn-secondary">
-            <%= t('buttons.cancel') %>
-          </button>
-        </div>
-      </div>
-    </div>
+
   </div>
 <% end %>

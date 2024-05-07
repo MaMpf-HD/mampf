@@ -33,28 +33,28 @@
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-orga" type="button" role="tab"
-             href="#orga"
+            href="#orga"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-orga"
             aria-controls="lecture-pane-orga" aria-selected="false">
           <%= t('admin.lecture.orga') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-communication" type="button" role="tab"
-             href="#communication"
+            href="#communication"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-communication"
             aria-controls="lecture-pane-communication" aria-selected="false">
           <%= t('admin.lecture.communication') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-homework" type="button" role="tab"
-             href="#assignments"
+            href="#assignments"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-homework"
             aria-controls="lecture-pane-homework" aria-selected="false">
           <%= t('basics.assignments') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
-          id="lecture-nav-info" role="link" type="button" role="tab"
-           href="#info"
+          id="lecture-nav-info" type="button" role="tab"
+          href="#info"
           data-bs-toggle="pill" data-bs-target="#lecture-pane-info"
           aria-controls="lecture-pane-info" aria-selected="false">
           <%= t('info') %>
@@ -140,6 +140,26 @@
       <div class="tab-pane fade" id="lecture-pane-info"
           role="tabpanel" aria-labelledby="lecture-nav-info" tabindex="0">
         <div class="container small-width lecture-pane">
+          <h3 class="lecture-pane-header">
+            <%= t('basics.course_editors') %>
+              <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
+          </h3>
+          
+          <div class="col-4">
+            <% if lecture.course.editors.present? %>
+              <ul>
+                <% lecture.course.editors.each do |e| %>
+                  <li>
+                    <%= e.name %>
+                  </li>
+                  <% end %>
+              </ul>
+              <% else %>
+                <br>
+                <%= t('admin.lecture.no_course_editors') %>
+                  <% end %>
+          </div>
+
           <%= render partial: 'lectures/edit/tags',
               locals: { lecture: lecture } %>
           <%= render partial: 'lectures/edit/imported_media',

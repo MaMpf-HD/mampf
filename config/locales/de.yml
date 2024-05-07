@@ -438,6 +438,7 @@ de:
       special_short: ''
       special_content: 'Inhalt'
       orga: 'Orga'
+      organization: 'Organisation'
       communication: 'Kommunikation'
       new_lecture: 'Neue Veranstaltung anlegen'
       no_courses_yet: 'Es muss zunächst ein Modul angelegt werden.'

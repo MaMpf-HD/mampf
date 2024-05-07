@@ -1,3 +1,7 @@
+<h3 class="lecture-pane-header">
+  <%= t('categories.announcements') %>
+</h3>
+
 <div class="col-12 text-center">
   <%= link_to t('buttons.create_announcement'),
               new_announcement_path(params: { lecture: lecture.id }),
@@ -6,8 +10,8 @@
               remote: true %>
 </div>
 
-<% announcements.each do |a| %>
-  <div class="row border-bottom mx-2 px-4 py-2"
+<% announcements.each_with_index do |a, index| %>
+  <div class="row px-4 py-2 <%= 'border-bottom' unless index == announcements.size - 1 %>"
         id="row-announcement-<%= a.id %>">
     <%= render partial: 'announcements/row_for_lecture_edit',
                 locals: { announcement: a }%>
