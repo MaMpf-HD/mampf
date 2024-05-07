@@ -20,6 +20,7 @@ jobs:
   # [4] https://docs.docker.com/build/ci/github-actions/cache/
   unit-tests:
     name: Unit tests
+    environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
