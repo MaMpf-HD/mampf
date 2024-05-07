@@ -29,30 +29,20 @@ function loadExampleStructures() {
  * https://webdesign.tutsplus.com/how-to-add-deep-linking-to-the-bootstrap-4-tabs-component--cms-31180t
  */
 function configureUrlHashesForBootstrapTabs() {
-  // Remove trailing slash, e.g. "example/" -> "example"
-  let url = location.href.replace(/\/$/, "");
-
   if (location.hash) {
-    // Find tab (with the hash in the href attribute) & show it
     const hrefXPathIdentifier = `button[href="${location.hash}"]`;
     $(`#lecture-nav-pills ${hrefXPathIdentifier}`).tab("show");
-
-    // Update URL (without page reload) & scroll to top
-    url = location.href.replace(/\/#/, "#");
-    history.replaceState(null, null, url);
-    setTimeout(() => {
-      $(window).scrollTop(0);
-    }, 300);
   }
 
   $('#lecture-nav-pills button[role="tab"]').on("click", function () {
     const hash = $(this).attr("href");
-    const newUrl = `${url.split("#")[0]}${hash}`;
+    const urlWithoutHash = location.href.split("#")[0];
+    const newUrl = `${urlWithoutHash}${hash}`;
     history.replaceState(null, null, newUrl);
   });
 }
 
-$(document).on("turbolinks:load", function () {
+$(document).on("ready turbolinks:load", function () {
   let s, structures;
   initBootstrapPopovers();
   configureUrlHashesForBootstrapTabs();
