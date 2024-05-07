@@ -52,8 +52,9 @@ jobs:
           docker compose run --entrypoint="" mampf sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
-            files: ./coverage/coverage.xml
-            fail_ci_if_error: true
-            verbose: true
+          fail_ci_if_error: true
+          files: ./coverage/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
