@@ -29,7 +29,7 @@ RSpec.describe(Course, type: :model) do
   # Test traits
 
   describe "course with tags" do
-    before :all do
+    before :each do
       @course = FactoryBot.build(:course, :with_tags)
     end
     it "has a valid factory" do
@@ -98,7 +98,7 @@ RSpec.describe(Course, type: :model) do
   # test callbacks
 
   describe "after save" do
-    before :all do
+    before :each do
       @course = FactoryBot.create(:course)
       @lecture = FactoryBot.create(:lecture_with_sparse_toc, course: @course)
       @lesson = FactoryBot.create(:valid_lesson, lecture: @lecture)
@@ -283,7 +283,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   context "subscribable lectures" do
-    before :all do
+    before :each do
       @admin = FactoryBot.create(:confirmed_user, admin: true)
       @course_editor = FactoryBot.create(:confirmed_user)
       @editor = FactoryBot.create(:confirmed_user)
@@ -334,7 +334,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   context "lecture sorting" do
-    before :all do
+    before :each do
       @course = FactoryBot.create(:course)
       year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
       term1 = FactoryBot.create(:term, year: year, season: "SS")
@@ -383,7 +383,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   context "lecture subscriptions" do
-    before :all do
+    before :each do
       @course = FactoryBot.create(:course)
       year = Faker::Number.between(from: 1_000_001, to: 100_000_000)
       term1 = FactoryBot.create(:term, year: year, season: "SS")
@@ -436,7 +436,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   describe "#edited_by?" do
-    before :all do
+    before :each do
       @user = FactoryBot.create(:confirmed_user)
     end
 
@@ -495,7 +495,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   describe "#removable_by?" do
-    before :all do
+    before :each do
       @user = FactoryBot.create(:confirmed_user)
     end
 
@@ -511,7 +511,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   context "media and their items with inheritance" do
-    before :all do
+    before :each do
       @course = FactoryBot.create(:course, short_title: "LA2")
       term = FactoryBot.create(:term, year: 2020, season: "SS")
       lecture = FactoryBot.create(:lecture_with_sparse_toc, course: @course,
@@ -576,7 +576,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   context "class methods for select forms" do
-    before :all do
+    before :each do
       Course.destroy_all
       @user = FactoryBot.create(:confirmed_user)
       @admin = FactoryBot.create(:confirmed_user, admin: true)
@@ -644,7 +644,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   context "complex question methods" do
-    before :all do
+    before :each do
       @course = FactoryBot.create(:course)
       @lecture1 = FactoryBot.create(:lecture, :released_for_all,
                                     course: @course)
@@ -812,7 +812,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   context "image methods" do
-    before :all do
+    before :each do
       @course = FactoryBot.create(:course, :with_image)
     end
 
@@ -884,7 +884,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   describe "self.similar_courses" do
-    before :all do
+    before :each do
       Course.destroy_all
       @course1 = FactoryBot.create(:course, title: "Algebra 1")
       @course2 = FactoryBot.create(:course, title: "Algebra 2")
@@ -908,7 +908,7 @@ RSpec.describe(Course, type: :model) do
   end
 
   describe "#search_by" do
-    before :all do
+    before :each do
       Course.destroy_all
       @editor1 = FactoryBot.create(:confirmed_user)
       @editor2 = FactoryBot.create(:confirmed_user)

@@ -4,7 +4,7 @@ RSpec.describe(TeachableParser, type: :model) do
   end
 
   describe "#teachables_as_strings" do
-    before :all do
+    before :each do
       DatabaseCleaner.clean
       course1 = FactoryBot.create(:course)
       lecture1 = FactoryBot.create(:lecture, course: course1)

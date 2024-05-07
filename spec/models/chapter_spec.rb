@@ -15,7 +15,7 @@ RSpec.describe(Chapter, type: :model) do
   # test traits
 
   describe "chapter with sections" do
-    before :all do
+    before :each do
       @chapter = FactoryBot.build(:chapter, :with_sections)
     end
     it "has a valid factory" do

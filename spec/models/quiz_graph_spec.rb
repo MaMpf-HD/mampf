@@ -8,7 +8,7 @@ RSpec.describe(QuizGraph, type: :model) do
   # test traits and subfactories
 
   describe "linear graph" do
-    before :all do
+    before :each do
       @graph = FactoryBot.build(:quiz_graph, :linear)
     end
     it "does not contain errors" do

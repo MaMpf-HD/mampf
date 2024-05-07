@@ -28,7 +28,7 @@ RSpec.describe(Lecture, type: :model) do
   # Test traits
 
   describe "lecture with organizational stuff" do
-    before :all do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :with_organizational_stuff)
     end
     it "has a valid factory" do
@@ -42,7 +42,7 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
   describe "lecture which is released for all" do
-    before :all do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :released_for_all)
     end
     it "has a valid factory" do
@@ -53,7 +53,7 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
   describe "term independent lecture" do
-    before :all do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :term_independent)
     end
     it "has a valid factory" do
@@ -64,7 +64,7 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
   describe "with table of contents" do
-    before :all do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :with_toc)
     end
     it "has 3 chapters" do
@@ -75,7 +75,7 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
   describe "with sparse table of contents" do
-    before :all do
+    before :each do
       @lecture = FactoryBot.build(:lecture, :with_sparse_toc)
     end
     it "has one chapter" do

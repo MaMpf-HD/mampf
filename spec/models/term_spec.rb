@@ -40,7 +40,7 @@ RSpec.describe(Term, type: :model) do
   # test traits
 
   describe "summer term" do
-    before :all do
+    before :each do
       @term = FactoryBot.build(:term, :summer)
     end
     it "has a valid factory" do

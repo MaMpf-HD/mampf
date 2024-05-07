@@ -13,7 +13,7 @@ RSpec.describe(MediumPublisher, type: :model) do
   end
 
   describe "::parse" do
-    before :all do
+    before :each do
       @medium = FactoryBot.create(:lecture_medium)
       @user = FactoryBot.create(:confirmed_user)
     end
@@ -79,7 +79,7 @@ RSpec.describe(MediumPublisher, type: :model) do
 
   describe "#publish!" do
     context "without extra stuff" do
-      before :all do
+      before :each do
         @medium = FactoryBot.create(:lecture_medium)
         lecture = @medium.teachable
         lecture.update(released: "all")
@@ -160,7 +160,7 @@ RSpec.describe(MediumPublisher, type: :model) do
   end
 
   describe "#assignment" do
-    before :all do
+    before :each do
       @medium = FactoryBot.create(:lecture_medium)
       @lecture = @medium.teachable
       user = FactoryBot.create(:confirmed_user)
@@ -192,7 +192,7 @@ RSpec.describe(MediumPublisher, type: :model) do
   end
 
   describe "#errors" do
-    before :all do
+    before :each do
       @medium = FactoryBot.create(:lecture_medium)
       @user = FactoryBot.create(:confirmed_user)
     end

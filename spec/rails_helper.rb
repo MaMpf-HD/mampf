@@ -40,7 +40,7 @@ RSpec.configure do |config|
   # instead of true.
   # We set it to false here since we are using the DatabaseCleaner gem instead.
   # Also see https://avdi.codes/configuring-database_cleaner-with-rails-rspec-capybara-and-selenium/
-  config.use_transactional_fixtures = true
+  config.use_transactional_fixtures = false
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and

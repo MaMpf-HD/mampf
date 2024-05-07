@@ -15,7 +15,7 @@ RSpec.describe(Answer, type: :model) do
   # test traits
 
   describe "with stuff" do
-    before :all do
+    before :each do
       @answer = FactoryBot.build(:answer, :with_stuff)
     end
     it "has a text" do
