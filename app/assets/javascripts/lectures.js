@@ -34,7 +34,7 @@ function configureUrlHashesForBootstrapTabs() {
     $(`#lecture-nav-pills ${hrefXPathIdentifier}`).tab("show");
   }
 
-  $('#lecture-nav-pills button[role="tab"]').on("click", function () {
+  $('#lecture-nav-pills button[role="tab"]').on("focus", function () {
     const hash = $(this).attr("href");
     const urlWithoutHash = location.href.split("#")[0];
     const newUrl = `${urlWithoutHash}${hash}`;
