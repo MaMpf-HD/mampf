@@ -43,7 +43,7 @@ function configureUrlHashesForBootstrapTabs() {
 }
 
 $(document).on("ready turbolinks:load", function () {
-  let s, structures;
+  let structures;
   initBootstrapPopovers();
   configureUrlHashesForBootstrapTabs();
 
