@@ -1,8 +1,3 @@
-/*
- * decaffeinate suggestions:
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 // Place all the behaviors and hooks related to the matching controller here.
 // All this logic will automatically be available in application.js.
 // You can use CoffeeScript in this file: http://coffeescript.org/
@@ -68,7 +63,7 @@ $(document).on("turbolinks:load", function () {
   });
 
   const trixElement = document.querySelector("#lecture-concept-trix");
-  if (trixElement != null) {
+  if (trixElement) {
     const {
       content,
     } = trixElement.dataset;
@@ -214,7 +209,7 @@ $(document).on("turbolinks:load", function () {
   });
 
   const userModalContent = document.getElementById("lectureUserModalContent");
-  if ((userModalContent != null) && (userModalContent.dataset.filled === "false")) {
+  if (userModalContent && (userModalContent.dataset.filled === "false")) {
     const lectureId = userModalContent.dataset.lecture;
     $.ajax(Routes.show_subscribers_path(lectureId), {
       type: "GET",
@@ -358,7 +353,7 @@ $(document).on("turbolinks:load", function () {
     const courseId = parseInt($(this).val());
     const termInfo = $(this).data("terminfo").filter(x => x[0] === courseId);
     console.log(termInfo[0]);
-    if (termInfo[0] != null) {
+    if (termInfo[0]) {
       if (termInfo[0][1]) {
         $("#newLectureTerm").hide();
         $("#lecture_term_id").prop("disabled", true);
