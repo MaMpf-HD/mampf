@@ -2600,6 +2600,7 @@ en:
       There are no assignments beyond the current one.
     no_manuscript_yet: Currently, no file is stored.
     exists_no_longer: This submission does not exist.
+    correct_file_size: This file has the correct size.
     no_manuscript_yet: No file has yet been uploaded.
     missing_consent: You must consent to upload file.
     optimize: Optimize

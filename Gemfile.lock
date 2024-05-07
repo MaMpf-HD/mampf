@@ -28,7 +28,7 @@ GIT
 
 GIT
   remote: https://github.com/zdennis/activerecord-import.git
-  revision: f4d42e1090dca17e2eaad9f4df0ece8a8b7fe1a2
+  revision: f41a5782b0a3f19cf42e88063aa4adbefafe4092
   branch: master
   specs:
     activerecord-import (1.6.0)
@@ -146,7 +146,7 @@ GEM
     bindex (0.8.1)
     bootsnap (1.18.3)
       msgpack (~> 1.2)
-    bootstrap (5.3.2)
+    bootstrap (5.3.3)
       autoprefixer-rails (>= 9.1.0)
       popper_js (>= 2.11.8, < 3)
     bootstrap_form (5.4.0)
@@ -206,7 +206,7 @@ GEM
     diff-lcs (1.5.1)
     docile (1.4.0)
     domain_name (0.6.20240107)
-    down (5.4.1)
+    down (5.4.2)
       addressable (~> 2.8)
     drb (2.2.1)
     erubi (1.12.0)
@@ -253,8 +253,8 @@ GEM
     filesize (0.2.0)
     friendly_id (5.5.1)
       activerecord (>= 4.0.0)
-    fugit (1.10.1)
-      et-orbi (~> 1, >= 1.2.7)
+    fugit (1.11.0)
+      et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
     fuzzy-string-match (1.0.1)
       RubyInline (>= 3.8.6)
@@ -281,7 +281,7 @@ GEM
     irb (1.12.0)
       rdoc
       reline (>= 0.4.2)
-    jbuilder (2.11.5)
+    jbuilder (2.12.0)
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     jquery-rails (4.6.0)
@@ -373,7 +373,7 @@ GEM
     orm_adapter (0.5.0)
     pairing_heap (3.1.0)
     parallel (1.24.0)
-    parser (3.3.0.5)
+    parser (3.3.1.0)
       ast (~> 2.4.1)
       racc
     pdf-reader (2.12.0)
@@ -408,16 +408,16 @@ GEM
       activesupport (>= 3.0.0)
     raabro (1.4.0)
     racc (1.7.3)
-    rack (3.0.10)
+    rack (2.2.9)
     rack-proxy (0.7.7)
       rack
-    rack-session (2.0.0)
-      rack (>= 3.0.0)
+    rack-session (1.0.2)
+      rack (< 3)
     rack-test (2.1.0)
       rack (>= 1.3)
-    rackup (2.1.0)
-      rack (>= 3)
-      webrick (~> 1.8)
+    rackup (1.0.0)
+      rack (< 3)
+      webrick
     rails (7.1.3.2)
       actioncable (= 7.1.3.2)
       actionmailbox (= 7.1.3.2)
@@ -467,7 +467,7 @@ GEM
     redis-client (0.22.1)
       connection_pool
     regexp_parser (2.9.0)
-    reline (0.5.2)
+    reline (0.5.4)
       io-console (~> 0.5)
     request_store (1.6.0)
       rack (>= 1.4)
@@ -509,7 +509,7 @@ GEM
       rspec-mocks (~> 3.13)
       rspec-support (~> 3.13)
     rspec-support (3.13.1)
-    rubocop (1.63.2)
+    rubocop (1.63.4)
       json (~> 2.3)
       language_server-protocol (>= 3.17.0)
       parallel (~> 1.10)
@@ -520,8 +520,8 @@ GEM
       rubocop-ast (>= 1.31.1, < 2.0)
       ruby-progressbar (~> 1.7)
       unicode-display_width (>= 2.4.0, < 3.0)
-    rubocop-ast (1.31.2)
-      parser (>= 3.3.0.4)
+    rubocop-ast (1.31.3)
+      parser (>= 3.3.1.0)
     rubocop-performance (1.21.0)
       rubocop (>= 1.48.1, < 2.0)
       rubocop-ast (>= 1.31.1, < 2.0)
@@ -556,10 +556,10 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
-    shrine (3.5.0)
+    shrine (3.6.0)
       content_disposition (~> 1.0)
       down (~> 5.1)
-    sidekiq (7.2.2)
+    sidekiq (7.2.4)
       concurrent-ruby (< 2)
       connection_pool (>= 2.3.0)
       rack (>= 2.2.4)
@@ -627,7 +627,8 @@ GEM
     tilt (2.3.0)
     timeago_js (3.0.2.2)
     timeout (0.4.1)
-    tins (1.32.1)
+    tins (1.33.0)
+      bigdecimal
       sync
     trix-rails (2.4.0)
       rails (> 4.1)
@@ -718,7 +719,7 @@ DEPENDENCIES
   progress_bar
   prometheus_exporter
   puma (< 7)
-  rack
+  rack (< 3)
   rails (~> 7.1.3)
   rails-erd
   rails-i18n
