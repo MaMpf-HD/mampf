@@ -187,8 +187,6 @@ GEM
     cypress-on-rails (1.17.0)
       rack
     dalli (3.2.8)
-    database_cleaner (2.0.2)
-      database_cleaner-active_record (>= 2, < 3)
     database_cleaner-active_record (2.1.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
@@ -688,7 +686,7 @@ DEPENDENCIES
   coveralls
   cypress-on-rails (~> 1.0)
   dalli (>= 2.7)
-  database_cleaner
+  database_cleaner-active_record
   devise
   devise-bootstrap-views
   erubis
