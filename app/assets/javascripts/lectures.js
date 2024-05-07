@@ -1,4 +1,4 @@
-const disableExceptOrganizational = function () {
+function disableExceptOrganizational() {
   $("#lecture-organizational-warning").show();
   $(".fa-edit").hide();
   $(".new-in-lecture").hide();
@@ -6,7 +6,7 @@ const disableExceptOrganizational = function () {
 };
 
 // Load example data (erdbeere) for structures
-const loadExampleStructures = function () {
+function loadExampleStructures() {
   const structuresBody = $("#erdbeereStructuresBody");
   const lectureId = structuresBody.data("lecture");
   const loading = structuresBody.data("loading");
@@ -14,8 +14,7 @@ const loadExampleStructures = function () {
   $.ajax(Routes.edit_structures_path(lectureId), {
     type: "GET",
     dataType: "script",
-  },
-  );
+  });
 };
 
 $(document).on("turbolinks:load", function () {
