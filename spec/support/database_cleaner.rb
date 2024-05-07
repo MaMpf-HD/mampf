@@ -1,3 +1,5 @@
+require "database_cleaner/active_record"
+
 # See the docs here: https://www.rubydoc.info/github/DatabaseCleaner/database_cleaner
 RSpec.configure do |config|
   config.before(:suite) do
