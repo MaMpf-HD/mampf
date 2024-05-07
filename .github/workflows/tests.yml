@@ -49,7 +49,7 @@ jobs:
       - name: Run unit tests
         working-directory: docker/test
         run: |
-          cd ./docker/test && docker compose run --entrypoint="" mampf sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
+          docker compose run --entrypoint="" mampf sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v3
