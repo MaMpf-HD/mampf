@@ -241,12 +241,12 @@ class LecturesController < ApplicationController
     @lecture.lessons.each do |lesson|
       lesson.media.update(annotations_status: -1)
     end
-    redirect_to edit_lecture_path(@lecture)
+    redirect_to "#{edit_lecture_path(@lecture)}#communication"
   end
 
   def open_comments
     @lecture.open_comments!(current_user)
-    redirect_to edit_lecture_path(@lecture)
+    redirect_to "#{edit_lecture_path(@lecture)}#communication"
   end
 
   def search
