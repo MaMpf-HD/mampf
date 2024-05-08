@@ -150,28 +150,28 @@ class LecturesController < ApplicationController
       forum.save
       @lecture.update(forum_id: forum.id) if forum.valid?
     end
-    redirect_to edit_lecture_path(@lecture)
+    redirect_to "#{edit_lecture_path(@lecture)}#communication"
   end
 
   # lock forum for this lecture
   def lock_forum
     @lecture.forum.update(locked: true) if @lecture.forum?
     @lecture.touch
-    redirect_to edit_lecture_path(@lecture)
+    redirect_to "#{edit_lecture_path(@lecture)}#communication"
   end
 
   # unlock forum for this lecture
   def unlock_forum
     @lecture.forum.update(locked: false) if @lecture.forum?
     @lecture.touch
-    redirect_to edit_lecture_path(@lecture)
+    redirect_to "#{edit_lecture_path(@lecture)}#communication"
   end
 
   # destroy forum for this lecture
   def destroy_forum
     @lecture.forum.destroy if @lecture.forum?
     @lecture.update(forum_id: nil)
-    redirect_to edit_lecture_path(@lecture)
+    redirect_to "#{edit_lecture_path(@lecture)}#communication"
   end
 
   # show all announcements for this lecture
