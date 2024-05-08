@@ -117,3 +117,9 @@ h3.lecture-pane-header {
   color: #838383;
   font-size: 1.3em;
 }
+
+#announcements-list {
+  max-height: 17em;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

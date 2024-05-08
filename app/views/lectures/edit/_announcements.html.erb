@@ -10,6 +10,7 @@
               remote: true %>
 </div>
 
+<div id="announcements-list">
 <% announcements.each_with_index do |a, index| %>
   <div class="row px-4 py-2 <%= 'border-bottom' unless index == announcements.size - 1 %>"
         id="row-announcement-<%= a.id %>">
@@ -17,3 +18,4 @@
                 locals: { announcement: a }%>
   </div>
 <% end %>
+</div>
