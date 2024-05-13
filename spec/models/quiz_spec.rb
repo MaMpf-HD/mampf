@@ -10,7 +10,7 @@ RSpec.describe(Quiz, type: :model) do
   # test traits and subfactories
 
   describe "with quiz graph" do
-    before :all do
+    before :each do
       @quiz = FactoryBot.build(:valid_quiz, :with_quiz_graph)
     end
     it "has no errors" do

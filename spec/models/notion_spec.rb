@@ -24,7 +24,7 @@ RSpec.describe(Notion, type: :model) do
   # test traits
 
   describe "notion with tag" do
-    before :all do
+    before :each do
       @notion = FactoryBot.build(:notion, :with_tag)
     end
     it "has a valid factory" do

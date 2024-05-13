@@ -8,7 +8,7 @@ RSpec.describe(Interaction, type: :model) do
   # describe traits
 
   describe "with stuff" do
-    before :all do
+    before :each do
       @interaction = FactoryBot.build(:interaction, :with_stuff)
     end
     it "has a session id" do

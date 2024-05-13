@@ -30,12 +30,12 @@ services:
   mampf:
     build:
       context: ./../..
-      dockerfile: docker/run_cypress_tests/Dockerfile
+      dockerfile: docker/test/Dockerfile
     image: mampf:tests
     ports:
       - "127.0.0.1:3000:3000"
     # TODO: Use this
-    # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
+    # entrypoint: /usr/src/app/docker/test/run_tests.sh
     entrypoint: ./entrypoint.sh
     environment:
       RAILS_ENV: test
@@ -76,7 +76,7 @@ services:
     image: mampf-cypress
     build:
       context: ./../..
-      dockerfile: docker/run_cypress_tests/Dockerfile_cypress
+      dockerfile: docker/test/Dockerfile_cypress
     environment:
       CYPRESS_baseUrl: http://mampf:3000
     entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done; npx cypress run $$@"

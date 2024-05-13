@@ -8,7 +8,7 @@ RSpec.describe(Probe, type: :model) do
   # describe traits
 
   describe "with stuff" do
-    before :all do
+    before :each do
       @probe = FactoryBot.build(:probe, :with_stuff)
     end
     it "has a question id" do

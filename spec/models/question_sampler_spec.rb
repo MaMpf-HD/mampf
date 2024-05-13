@@ -1,10 +1,12 @@
+require "rails_helper"
+
 RSpec.describe(QuestionSampler, type: :model) do
   it "has a valid factory" do
     expect(FactoryBot.build(:question_sampler)).to be_kind_of(QuestionSampler)
   end
 
   describe "#sample!" do
-    before :all do
+    before :each do
       @questions = Question.where(id: FactoryBot.create_list(:valid_question, 4)
                                                 .map(&:id))
     end
@@ -28,7 +30,7 @@ RSpec.describe(QuestionSampler, type: :model) do
     end
 
     context "in a simple example" do
-      before :all do
+      before :each do
         tags = Tag.where(id: FactoryBot.create_list(:tag, 3).map(&:id))
         @questions[0].tags << tags[0]
         @questions[1].tags << tags[1]
