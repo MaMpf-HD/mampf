@@ -8,7 +8,7 @@ RSpec.describe(Consumption, type: :model) do
   # describe traits
 
   describe "with stuff" do
-    before :all do
+    before :each do
       @consumption = FactoryBot.build(:consumption, :with_stuff)
     end
     it "has a medium id" do

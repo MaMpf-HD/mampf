@@ -18,7 +18,7 @@ RSpec.describe(Referral, type: :model) do
   # test traits and subfactories
 
   describe "with times" do
-    before :all do
+    before :each do
       @referral = FactoryBot.build(:referral, :with_times)
     end
     it "has a valid factory" do

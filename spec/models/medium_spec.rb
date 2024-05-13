@@ -95,7 +95,7 @@ RSpec.describe(Medium, type: :model) do
   end
 
   describe "lesson medium" do
-    before :all do
+    before :each do
       @medium = FactoryBot.build(:lesson_medium)
     end
     it "has a valid factory" do
@@ -110,7 +110,7 @@ RSpec.describe(Medium, type: :model) do
   end
 
   describe "lecture medium" do
-    before :all do
+    before :each do
       @medium = FactoryBot.build(:lecture_medium)
     end
     it "has a valid factory" do
@@ -125,7 +125,7 @@ RSpec.describe(Medium, type: :model) do
   end
 
   describe "course medium" do
-    before :all do
+    before :each do
       @medium = FactoryBot.build(:course_medium)
     end
     it "has a valid factory" do

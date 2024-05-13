@@ -123,7 +123,7 @@ group :test do
   # Adds support for Capybara system testing and selenium driver
   gem "selenium-webdriver"
   # Easy installation and use of web drivers to run system tests with browsers
-  gem "database_cleaner"
+  gem "database_cleaner-active_record"
   gem "faker"
   gem "launchy"
   gem "simplecov", require: false
@@ -138,6 +138,8 @@ group :test, :development, :docker_development do
 
   gem "cypress-on-rails", "~> 1.0"
   gem "simplecov-cobertura"
+
+  gem "rspec-github"
 end
 
 gem "prometheus_exporter"

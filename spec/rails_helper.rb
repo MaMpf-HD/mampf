@@ -34,10 +34,14 @@ RSpec.configure do |config|
 
   # For Devise >= 4.1.0
   config.include Devise::Test::ControllerHelpers, type: :controller
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
+  # We set it to false here since we are using the DatabaseCleaner gem instead.
+  # Also see https://avdi.codes/configuring-database_cleaner-with-rails-rspec-capybara-and-selenium/
   config.use_transactional_fixtures = false
+
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.

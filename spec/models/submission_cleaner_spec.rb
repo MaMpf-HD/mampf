@@ -7,7 +7,7 @@ RSpec.describe(SubmissionCleaner, type: :model) do
   end
 
   describe "with sample submissions" do
-    before :all do
+    before :each do
       Term.destroy_all
       ActionMailer::Base.deliveries = []
       @term1 = FactoryBot.create(:term, year: Time.zone.today.year, season: "SS")

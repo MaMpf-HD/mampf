@@ -1,0 +1,15 @@
+{
+  "target": {
+    "mampf": {
+      "cache-from": [
+        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache"
+      ],
+      "cache-to": [
+        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache"
+      ],
+      "output": [
+        "type=docker"
+      ]
+    }
+  }
+}

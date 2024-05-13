@@ -35,5 +35,11 @@ FactoryBot.define do
     factory :confirmed_user, traits: [:skip_confirmation_notification,
                                       :auto_confirmed,
                                       :consented]
+
+    factory :confirmed_user_en, traits: [:skip_confirmation_notification,
+                                         :auto_confirmed,
+                                         :consented] do
+      locale { "en" }
+    end
   end
 end
