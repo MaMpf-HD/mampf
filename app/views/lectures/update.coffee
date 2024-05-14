@@ -6,10 +6,16 @@ $('#lecture-term-error').empty()
 
 # display error messages
 
+<% if @errors.present? %>
+
 <% if @errors[:teacher].present? %>
 $('#lecture-teacher-error').append('<%= @errors[:teacher].join(" ") %>').show()
 <% end %>
 
 <% if @errors[:course].present? %>
 $('#lecture-term-error').append('<%= @errors[:course].join(" ") %>').show()
+<% end %>
+
+<% else %>
+$('#lecture-comments-form').append('hellooooo').show()
 <% end %>
