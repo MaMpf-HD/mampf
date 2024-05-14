@@ -841,7 +841,7 @@ class Lecture < ApplicationRecord
   end
 
   def valid_annotations_status?
-    [-1, 1].include?(annotations_status)
+    [0, 1].include?(annotations_status)
   end
 
   private
