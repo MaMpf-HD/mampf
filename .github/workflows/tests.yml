@@ -23,7 +23,7 @@ jobs:
     environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
-    if: ${{ github.event.issue.pull_request }} && ${{ github.event.issue_comment.comment.body }} == "run tests" && ${{ github.event.issue_comment.comment.author_association }} == "COLLABORATOR"
+    if: ${{ github.event.issue_comment.comment.body }} == "run tests"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
