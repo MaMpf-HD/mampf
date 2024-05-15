@@ -16,6 +16,4 @@ $('#lecture-teacher-error').append('<%= @errors[:teacher].join(" ") %>').show()
 $('#lecture-term-error').append('<%= @errors[:course].join(" ") %>').show()
 <% end %>
 
-<% else %>
-$('#lecture-comments-form').append('hellooooo').show()
 <% end %>
