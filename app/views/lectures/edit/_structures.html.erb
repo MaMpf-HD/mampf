@@ -1,11 +1,7 @@
-<div class="row p-2">
-  <div class="col-12">
-    <h5>
-      <%= t('erdbeere.select_structures') %>
-      <%= helpdesk(t('erdbeere.info.structures'), false) %>
-    </h5>
-  </div>
-</div>
+<p>
+  <%= t('erdbeere.select_structures') %>
+  <%= helpdesk(t('erdbeere.info.structures'), false) %>
+</p>
 <%= form_with model: lecture,
               html: { id: 'lecture-structures-form' } do |f| %>
   <% all_structures.each do |s| %>
