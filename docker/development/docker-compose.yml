@@ -1,5 +1,3 @@
----
-version: '3.4'
 services:
   redis:
     image: "redis:6.2.6-alpine"
