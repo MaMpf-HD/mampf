@@ -10,6 +10,11 @@ function loadExampleStructures() {
   $.ajax(Routes.edit_structures_path(lectureId), {
     type: "GET",
     dataType: "script",
+    complete: () => {
+      $("#erdbeere-structures-cancel").on("click", () => {
+        loadExampleStructures();
+      });
+    },
   });
 };
 
