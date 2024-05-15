@@ -6,8 +6,8 @@ on:
       - main
       - dev
       - experimental
-  pull_request:
-    types: [opened, reopened, synchronize, ready_for_review]
+  issue_comment:
+    types: [created]
 
 jobs:
   # For the setup idea using Docker Buildx, see StackOverflow answer [1].
@@ -23,6 +23,7 @@ jobs:
     environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
+    if: ${{ github.event.issue.pull_request }} && ${{ github.event.issue.body }} == "run tests" && ${{ github.event.issue.author_association }} == "COLLABORATOR"
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
