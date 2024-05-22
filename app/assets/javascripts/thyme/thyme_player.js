@@ -129,8 +129,29 @@ $(document).on("turbolinks:load", function () {
   const metadataManager = new MetadataManager("metadata");
   thymeAttributes.chapterManager = chapterManager;
   thymeAttributes.metadataManager = metadataManager;
-  chapterManager.load();
-  metadataManager.load();
+
+  let hasChapters = undefined;
+  chapterManager.load((_hasChapters) => {
+    hasChapters = _hasChapters;
+    onVideoDataReady();
+  });
+
+  let hasMetadata = undefined;
+  metadataManager.load((_hasMetadata) => {
+    hasMetadata = _hasMetadata;
+    onVideoDataReady();
+  });
+
+  function onVideoDataReady() {
+    if (hasChapters === undefined || hasMetadata === undefined) {
+      return;
+    }
+
+    if (hasChapters || hasMetadata) {
+      // Open the interactive area
+      $("#ia-active").trigger("click");
+    }
+  }
 
   /*
     INTERACTIVE AREA
