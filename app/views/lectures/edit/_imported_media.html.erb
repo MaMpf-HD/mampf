@@ -1,6 +1,11 @@
 <hr class="lecture-pane-separator">
 <h3 class="lecture-pane-header">
   <%= t('admin.lecture.imported_media') %>
+  <span id="importMedia" data-lecture="<%= lecture.id %>">
+    <span id="importedMediaCount">
+      (<%= lecture.imported_media.size %>)
+    </span>
+  </span>
 </h3>
 
 <div id="importedMediaTable"
