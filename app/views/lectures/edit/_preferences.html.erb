@@ -140,7 +140,8 @@
     <div class="col-12 text-center">
       <div id="lecture-preferences-warning">
         <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save_and_exit'),
+        <%= hidden_field_tag :subpage, "settings" %>
+        <%= f.submit t('buttons.save'),
                       class: "btn btn-primary" %>
         <button type="button" id="cancel-lecture-preferences"
                 class="btn btn-secondary">

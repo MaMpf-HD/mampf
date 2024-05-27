@@ -15,7 +15,8 @@
     </div>
   <% end %>
   <div class="row mt-2">
-    <div class="col-12 text-center">
+    <div id="lecture-erdbeere-examples-warning" class="col-12 text-center" style="display:none">
+      <%= hidden_field_tag :subpage, "info" %>
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary' %>
       <a class="btn btn-sm btn-secondary" role="button"

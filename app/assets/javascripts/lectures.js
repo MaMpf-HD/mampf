@@ -18,6 +18,18 @@ function loadExampleStructures() {
   });
 };
 
+// eslint-disable-next-line no-unused-vars
+function registerErdbeereExampleChanges() {
+  // Erdbeere Examples unsaved changes warning
+  $("#lecture-structures-form").on("input", function () {
+    $("#lecture-erdbeere-examples-warning").show();
+  });
+
+  $("#erdbeere-structures-cancel").on("click", function () {
+    $("#lecture-erdbeere-examples-warning").hide();
+  });
+}
+
 function disableExceptOrganizational() {
   $("#lecture-organizational-warning").show();
   $(".fa-edit").hide();

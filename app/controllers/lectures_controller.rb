@@ -120,7 +120,16 @@ class LecturesController < ApplicationController
     end
     @lecture.touch
     @lecture.forum&.update(name: @lecture.forum_title)
-    redirect_to edit_lecture_path(@lecture) if @lecture.valid?
+
+    # Redirect to the correct subpage
+    if @lecture.valid?
+      if params[:subpage].present?
+        redirect_to "#{edit_lecture_path(@lecture)}##{params[:subpage]}"
+      else
+        redirect_to edit_lecture_path(@lecture)
+      end
+    end
+
     @errors = @lecture.errors
   end
 

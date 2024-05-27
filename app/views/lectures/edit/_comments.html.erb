@@ -60,7 +60,8 @@
     <div class="col-12 text-center">
       <div id="lecture-comments-warning">
         <%= t('warnings.unsaved_changes') %>
-        <%= f.submit t('buttons.save_and_exit'),
+        <%= hidden_field_tag :subpage, "communication" %>
+        <%= f.submit t('buttons.save'),
                       class: "btn btn-sm btn-primary" %>
         <button type="button" id="cancel-lecture-comments"
                 class="btn btn-sm btn-secondary">

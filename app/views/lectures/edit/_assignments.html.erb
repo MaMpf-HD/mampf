@@ -88,7 +88,8 @@
   </div>
   <div id="lecture-assignments-warning" class="mt-3">
     <%= t('warnings.unsaved_changes') %>
-    <%= f.submit t('buttons.save_and_exit'),
+    <%= hidden_field_tag :subpage, "assignments" %>
+    <%= f.submit t('buttons.save'),
                   class: "btn btn-sm btn-primary" %>
     <button type="button" id="cancel-lecture-assignments"
             class="btn btn-sm btn-secondary">

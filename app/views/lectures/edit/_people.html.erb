@@ -70,6 +70,7 @@
     <!-- Unsaved changes -->
     <div class="col-12 text-center" id="lecture-basics-warning">
       <%= t('warnings.unsaved_changes') %>
+      <%= hidden_field_tag :subpage, "people" %>
       <%= f.submit t('buttons.save'),
           class: "btn btn-sm btn-primary" %>
       <button type="button"
