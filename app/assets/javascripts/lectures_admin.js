@@ -35,7 +35,7 @@ $(document).on("ready turbolinks:load", function () {
   navigateToActiveNavTab();
 
   // Reinitialize the masonry grid system when the lecture content is shown
-  $("#lecture-nav-content").on("click", () => {
+  $("#lecture-nav-content").on("shown.bs.tab", () => {
     initMasonryGridSystem();
   });
 });
