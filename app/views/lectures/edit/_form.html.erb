@@ -1,63 +1,190 @@
+<%= javascript_include_tag :lectures_admin %>
 <% cache lecture do %>
   <div id="lecture-area">
-    <%= render partial: 'lectures/edit/header',
-               locals: { lecture: lecture } %>
-    <div class="row px-4 py-2">
-      <% if !lecture.seminar? || lecture.legacy_seminar %>
-        <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
-          <%= render partial: 'lectures/edit/content',
-                     locals: { lecture: lecture } %>
-        </div>
-      <% else %>
-        <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
-          <%= render partial: 'lectures/edit/seminar_content',
-                     locals: { lecture: lecture } %>
-        </div>
-      <% end %>
-      <div id="lecture-media-card" class="col-12 col-xxl-3 mb-1">
-        <%= render partial: 'lectures/edit/media',
-                   locals: { media: media,
-                             lecture: lecture } %>
-      </div>
+    <!-- Header -->
+    <div class="container small-width">
+      <%= render partial: 'lectures/edit/header',
+          locals: { lecture: lecture } %>
     </div>
-    <div class="row px-4 py-2 mt-3">
-      <div class="accordion col-12" id="lectureAccordion">
-        <%= render partial: 'lectures/edit/tags',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/imported_media',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/erdbeere',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/people',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/organizational_concept',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/tutorials',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/assignments',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/announcements',
-                   locals: { lecture: lecture,
-                             announcements: announcements } %>
-        <%= render partial: 'lectures/edit/forum',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/comments',
-                   locals: { lecture: lecture } %>
-        <%= render partial: 'lectures/edit/preferences',
-                   locals: { lecture: lecture } %>
+    
+    <!-- Menu to switch between "tabs" ("pillars") -->
+    <nav>
+      <div class="nav nav-pills container small-width flex-column flex-sm-row"
+          id="lecture-nav-pills" role="tablist">
+        <button class="nav-link active lecture-nav-pill-button"
+            id="lecture-nav-content" type="button" role="tab"
+             href="#content"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-content"
+            aria-controls="lecture-pane-content" aria-selected="true">
+          <%= t('content') %>
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-settings" type="button" role="tab"
+            href="#settings"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-settings"
+            aria-controls="lecture-pane-settings" aria-selected="false">
+          <%= t('basics.preferences') %>
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-people" type="button" role="tab"
+            href="#people"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-people"
+            aria-controls="lecture-pane-people" aria-selected="false">
+          <%= t('basics.people') %>/<%= t('basics.tutorials') %>
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-orga" type="button" role="tab"
+            href="#orga"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-orga"
+            aria-controls="lecture-pane-orga" aria-selected="false">
+          <%= t('admin.lecture.orga') %>
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-communication" type="button" role="tab"
+            href="#communication"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-communication"
+            aria-controls="lecture-pane-communication" aria-selected="false">
+          <%= t('admin.lecture.communication') %>
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-homework" type="button" role="tab"
+            href="#assignments"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-homework"
+            aria-controls="lecture-pane-homework" aria-selected="false">
+          <%= t('basics.assignments') %>
+        </button>
+        <button class="nav-link lecture-nav-pill-button"
+          id="lecture-nav-info" type="button" role="tab"
+          href="#info"
+          data-bs-toggle="pill" data-bs-target="#lecture-pane-info"
+          aria-controls="lecture-pane-info" aria-selected="false">
+          <%= t('info') %>
+        </button>
+      </div>
+    </nav>
+
+    <div class="tab-content">
+      <!-- Content (structure & media) -->
+      <div class="tab-pane fade show active" id="lecture-pane-content"
+          role="tabpanel" aria-labelledby="lecture-nav-content" tabindex="0">
+        <div class="row px-4 py-2">
+          <% if !lecture.seminar? || lecture.legacy_seminar %>
+            <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
+              <%= render partial: 'lectures/edit/content',
+                  locals: { lecture: lecture } %>
+            </div>
+          <% else %>
+            <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
+              <%= render partial: 'lectures/edit/seminar_content',
+                  locals: { lecture: lecture } %>
+            </div>
+          <% end %>
+          <div id="lecture-media-card" class="col-12 col-xxl-3 mb-1">
+            <%= render partial: 'lectures/edit/media',
+                locals: { media: media, lecture: lecture } %>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Settings -->
+      <div class="tab-pane fade" id="lecture-pane-settings"
+          role="tabpanel" aria-labelledby="lecture-nav-settings" tabindex="0">
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'lectures/edit/preferences',
+              locals: { lecture: lecture } %>
+        </div>
+      </div>
+
+      <!-- People -->
+      <div class="tab-pane fade" id="lecture-pane-people"
+          role="tabpanel" aria-labelledby="lecture-nav-people" tabindex="0">
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'lectures/edit/people',
+              locals: { lecture: lecture } %>
+          <%= render partial: 'lectures/edit/tutorials',
+              locals: { lecture: lecture } %>
+        </div>
+      </div>
+
+      <!-- Organisation -->
+      <div class="tab-pane fade" id="lecture-pane-orga"
+          role="tabpanel" aria-labelledby="lecture-nav-orga" tabindex="0">
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'lectures/edit/organizational_concept',
+              locals: { lecture: lecture } %>
+        </div>
+      </div>
+
+      <!-- Communication -->
+      <div class="tab-pane fade" id="lecture-pane-communication"
+          role="tabpanel" aria-labelledby="lecture-nav-communication" tabindex="0">
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'lectures/edit/announcements',
+              locals: { lecture: lecture, announcements: announcements } %>
+          <%= render partial: 'lectures/edit/forum',
+              locals: { lecture: lecture } %>
+          <%= render partial: 'lectures/edit/comments',
+              locals: { lecture: lecture } %>
+        </div>
+      </div>
+
+      <!-- Homework -->
+      <div class="tab-pane fade" id="lecture-pane-homework"
+          role="tabpanel" aria-labelledby="lecture-nav-homework" tabindex="0">
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'lectures/edit/assignments',
+              locals: { lecture: lecture } %>
+        </div>
+      </div>
+
+      <!-- Info -->
+      <div class="tab-pane fade" id="lecture-pane-info"
+          role="tabpanel" aria-labelledby="lecture-nav-info" tabindex="0">
+        <div class="container small-width lecture-pane">
+          <h3 class="lecture-pane-header">
+            <%= t('basics.course_editors') %>
+              <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
+          </h3>
+          
+          <div class="col-4">
+            <% if lecture.course.editors.present? %>
+              <ul>
+                <% lecture.course.editors.each do |e| %>
+                  <li>
+                    <%= e.name %>
+                  </li>
+                  <% end %>
+              </ul>
+              <% else %>
+                <br>
+                <%= t('admin.lecture.no_course_editors') %>
+                  <% end %>
+          </div>
+
+          <%= render partial: 'lectures/edit/tags',
+              locals: { lecture: lecture } %>
+          <%= render partial: 'lectures/edit/imported_media',
+              locals: { lecture: lecture } %>
+          <%= render partial: 'lectures/edit/erdbeere',
+              locals: { lecture: lecture } %>
+        </div>
       </div>
     </div>
   </div>
+
+
+  <!-- Modals -->
   <%= render partial: 'media/modal' %>
   <%= render partial: 'sections/content_modal' %>
-  <%= render partial: 'tags/modal' %>
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/publish/publish',
              locals: { lecture: lecture } %>
+   
   <% unless lecture.stale? %>
     <%= render partial: 'lectures/edit/user_modal',
                locals: { lecture: lecture } %>
   <% end %>
+
   <% if !lecture.seminar? || lecture.legacy_seminar %>
     <%= render partial: 'chapters/modal',
                locals: { lecture: lecture } %>
@@ -67,8 +194,10 @@
     <%= render partial: 'talks/modal',
                locals: { lecture: lecture } %>
   <% end %>
+
   <% if lecture.importable_toc? %>
     <%= render partial: 'lectures/edit/import_toc_modal',
               locals: { lecture: lecture } %>
   <% end %>
+
 <% end %>

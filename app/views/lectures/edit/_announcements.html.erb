@@ -1,44 +1,21 @@
-  <div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="announcements_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#announcements_collapse"
-              aria-expanded="false"
-              aria-controls="announcements_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              <%= t('categories.announcements') %>
-              (<%= lecture.announcements.size %>)
-            </h5>
-          </div>
-        </div>
-      </button>
-    </div>
-    <div id="announcements_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <div class="row mb-2">
-          <div class="col-12 text-center">
-            <%= link_to t('buttons.create_announcement'),
-                        new_announcement_path(params: { lecture: lecture.id }),
-                        class: 'btn btn-sm btn-secondary',
-                        id: 'new-announcement-button',
-                        remote: true %>
-          </div>
-        </div>
-        <% announcements.each do |a| %>
-          <div class="row border-bottom mx-2 px-4 py-2"
-               id="row-announcement-<%= a.id %>">
-            <%= render partial: 'announcements/row_for_lecture_edit',
-                       locals: { announcement: a }%>
-          </div>
-        <% end %>
-      </div>
-    </div>
+<h3 class="lecture-pane-header">
+  <%= t('categories.announcements') %>
+</h3>
+
+<div class="col-12 text-center">
+  <%= link_to t('buttons.create_announcement'),
+              new_announcement_path(params: { lecture: lecture.id }),
+              class: 'btn btn-sm btn-secondary',
+              id: 'new-announcement-button',
+              remote: true %>
+</div>
+
+<div id="announcements-list">
+<% announcements.each_with_index do |a, index| %>
+  <div class="row px-4 py-2 <%= 'border-bottom' unless index == announcements.size - 1 %>"
+        id="row-announcement-<%= a.id %>">
+    <%= render partial: 'announcements/row_for_lecture_edit',
+                locals: { announcement: a }%>
   </div>
+<% end %>
+</div>
