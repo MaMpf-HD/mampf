@@ -33,6 +33,7 @@ const customGlobals = {
 
   // Common global methods
   initBootstrapPopovers: "readable",
+  initMasonryGridSystem: "readable",
 
   // Thyme & Annotation tool globals
   // TODO: This is a "hack" right now to get rid of "xy is not defined" error
@@ -119,7 +120,7 @@ export default [
         "indent": 2,
         "jsx": false,
         "quote-props": "always",
-        "semi": "always",
+        "semi": true,
         "brace-style": "1tbs",
       }).rules,
       "@stylistic/quotes": ["error", "double", { avoidEscape: true }],

@@ -1,120 +1,99 @@
-<div class="accordion-item bg-light">
-  <div class="accordion-header">
-    <button class="accordion-button collapsed"
-            type="button"
-            id="assignments_heading"
-            data-bs-toggle="collapse"
-            data-bs-target="#assignments_collapse"
-            aria-expanded="false"
-            aria-controls="assignments_collapse">
-      <div class="row">
-        <div class="col-12">
-          <h5>
-            <%= t('basics.assignments') %>
-          </h5>
-        </div>
-      </div>
-    </button>
-  </div>
-  <div id="assignments_collapse"
-       class="collapse"
-       role="tabpanel"
-       aria-labelledby="heading"
-       data-bs-parent="#lectureAccordion">
-    <div class="accordion-body">
-      <div class="row mb-3">
-        <div class="col-12 text-center">
-          <%= link_to t('admin.assignment.new'),
-                      new_assignment_path(params: { lecture_id: lecture.id }),
-                      class: 'btn btn-sm btn-primary',
-                      id: 'newAssignmentButton',
-                      remote: true %>
-        </div>
-      </div>
-      <div class="list-group">
-        <div class="list-group-item bg-light"
-             id="assignmentListHeader"
-             style="display: <%= show(lecture.assignments?) %>">
-          <div class="row">
-            <div class="col-2">
-              <h6>
-                <%= t('basics.title') %>
-              </h6>
-            </div>
-            <div class="col-3">
-              <h6>
-                <%= t('basics.deadline') %>
-              </h6>
-            </div>
-            <div class="col-2">
-              <h6>
-                <%= t('basics.medium') %>
-              </h6>
-            </div>
-            <div class="col-2">
-              <h6>
-                <%= t('submission.file_format') %>
-              </h6>
-            </div>
-            <div class="col-2">
-              <h6>
-                <%= t('assignment.deletion_date') %>
-              </h6>
-            </div>
-            <div class="col-1">
-              <h6>
-                <%= t('basics.action') %>
-                <%= helpdesk(t('assignment.destruction_info'), true) %>
-              </h6>
-            </div>
-          </div>
-        </div>
-        <% (lecture.scheduled_assignments.sort_by(&:deadline).reverse +
-            lecture.assignments.order('deadline DESC')).each do |a| %>
-          <%= render partial: 'assignments/row',
-                     locals: { assignment: a } %>
-        <% end %>
-      </div>
-      <%= form_with model: lecture,
-                    html: { id: 'lecture-assignments-form',
-                            class: 'mt-4 px-2' } do |f| %>
-        <div class="row">
-          <div class="mb-3 col-md-6">
-            <%= f.label :submission_max_team_size,
-                        t('admin.lecture.submission_max_team_size'),
-                        class: "form-label" %>
-            <%= helpdesk t('admin.lecture.info.submission_max_team_size'),
-                         false %>
-            <%= f.number_field :submission_max_team_size,
-                               min: 1,
-                               max: 10000,
-                               class: 'form-control mx-2',
-                               data:
-                                { value: lecture.submission_max_team_size } %>
-          </div>
-          <div class="mb-3 col-md-6">
-            <%= f.label :submission_grace_period,
-                        t('admin.lecture.submission_grace_period'),
-                        class: "form-label" %>
-            <%= helpdesk t('admin.lecture.info.submission_grace_period'),
-                         false %>
-            <%= f.number_field :submission_grace_period,
-                               min: 0,
-                               max: 262800,
-                               class: 'form-control mx-2',
-                               data: { value: lecture.submission_grace_period } %>
-          </div>
-        </div>
-        <div id="lecture-assignments-warning" class="mt-3">
-          <%= t('warnings.unsaved_changes') %>
-          <%= f.submit t('buttons.save_and_exit'),
-                       class: "btn btn-sm btn-primary" %>
-          <button type="button" id="cancel-lecture-assignments"
-                  class="btn btn-sm btn-secondary">
-            <%= t('buttons.cancel') %>
-          </button>
-        </div>
-      <% end %>
-    </div>
+<h3 class="lecture-pane-header">
+  <%= t('basics.assignments') %>
+</h3>
+
+<div class="row mb-3">
+  <div class="col-12 text-center">
+    <%= link_to t('admin.assignment.new'),
+                new_assignment_path(params: { lecture_id: lecture.id }),
+                class: 'btn btn-sm btn-primary',
+                id: 'newAssignmentButton',
+                remote: true %>
   </div>
 </div>
+<div class="list-group">
+  <div class="list-group-item bg-light"
+        id="assignmentListHeader"
+        style="display: <%= show(lecture.assignments?) %>">
+    <div class="row">
+      <div class="col-2">
+        <h6>
+          <%= t('basics.title') %>
+        </h6>
+      </div>
+      <div class="col-3">
+        <h6>
+          <%= t('basics.deadline') %>
+        </h6>
+      </div>
+      <div class="col-2">
+        <h6>
+          <%= t('basics.medium') %>
+        </h6>
+      </div>
+      <div class="col-2">
+        <h6>
+          <%= t('submission.file_format') %>
+        </h6>
+      </div>
+      <div class="col-2">
+        <h6>
+          <%= t('assignment.deletion_date') %>
+        </h6>
+      </div>
+      <div class="col-1">
+        <h6>
+          <%= t('basics.action') %>
+          <%= helpdesk(t('assignment.destruction_info'), true) %>
+        </h6>
+      </div>
+    </div>
+  </div>
+  <% (lecture.scheduled_assignments.sort_by(&:deadline).reverse +
+      lecture.assignments.order('deadline DESC')).each do |a| %>
+    <%= render partial: 'assignments/row',
+                locals: { assignment: a } %>
+  <% end %>
+</div>
+
+<%= form_with model: lecture,
+              html: { id: 'lecture-assignments-form',
+                      class: 'mt-4 px-2' } do |f| %>
+  <div class="row">
+    <div class="col-md-6">
+      <%= f.label :submission_max_team_size,
+                  t('admin.lecture.submission_max_team_size'),
+                  class: "form-label" %>
+      <%= helpdesk t('admin.lecture.info.submission_max_team_size'),
+                    false %>
+      <%= f.number_field :submission_max_team_size,
+                          min: 1,
+                          max: 10000,
+                          class: 'form-control',
+                          data:
+                          { value: lecture.submission_max_team_size } %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :submission_grace_period,
+                  t('admin.lecture.submission_grace_period'),
+                  class: "form-label" %>
+      <%= helpdesk t('admin.lecture.info.submission_grace_period'),
+                    false %>
+      <%= f.number_field :submission_grace_period,
+                          min: 0,
+                          max: 262800,
+                          class: 'form-control',
+                          data: { value: lecture.submission_grace_period } %>
+    </div>
+  </div>
+  <div id="lecture-assignments-warning" class="mt-3">
+    <%= t('warnings.unsaved_changes') %>
+    <%= hidden_field_tag :subpage, "assignments" %>
+    <%= f.submit t('buttons.save'),
+                  class: "btn btn-sm btn-primary" %>
+    <button type="button" id="cancel-lecture-assignments"
+            class="btn btn-sm btn-secondary">
+      <%= t('buttons.cancel') %>
+    </button>
+  </div>
+<% end %>

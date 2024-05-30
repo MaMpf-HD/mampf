@@ -16,7 +16,7 @@ RSpec.describe(Announcement, type: :model) do
   # test traits
 
   describe "with lecture" do
-    before :all do
+    before :each do
       @announcement = FactoryBot.build(:announcement, :with_lecture)
     end
     it "has a valid factory" do

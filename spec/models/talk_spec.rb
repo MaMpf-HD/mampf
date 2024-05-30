@@ -60,7 +60,7 @@ RSpec.describe(Talk, type: :model) do
   end
 
   context "title methods" do
-    before :all do
+    before :each do
       I18n.with_locale(:de) do
         course = FactoryBot.build(:course, title: "Algebra 1",
                                            short_title: "Alg1")
@@ -132,7 +132,7 @@ RSpec.describe(Talk, type: :model) do
   end
 
   context "locale methods" do
-    before :all do
+    before :each do
       I18n.with_locale(:de) do
         course = FactoryBot.build(:course, title: "Algebra 1",
                                            short_title: "Alg1")
@@ -159,7 +159,7 @@ RSpec.describe(Talk, type: :model) do
   end
 
   context "position methods" do
-    before :all do
+    before :each do
       lecture = FactoryBot.build(:lecture)
       @talk1 = FactoryBot.create(:talk, lecture: lecture)
       @talk2 = FactoryBot.create(:talk, lecture: lecture)

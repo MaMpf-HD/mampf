@@ -74,3 +74,52 @@
     color: white !important;
   }
 }
+
+#lecture-nav-pills {
+  background-color: white;
+  justify-content: center;
+  padding-top: 1em;
+  padding-bottom: 1em;
+
+  box-shadow: 0px 2px 7px 0rem rgba(130,26,59,0.2);
+  border: #821A3B solid 1px;
+  border-radius: 0.4em;
+  margin-bottom: 1.5em;
+}
+
+.lecture-nav-pill-button {
+  --bs-nav-link-color: #821A3B;
+  --bs-nav-link-hover-color: #8d1c40;
+  --bs-nav-pills-link-active-bg: #821A3B;
+
+  &:focus-visible {
+    box-shadow: 0 0 0 0.25rem rgba(130, 26, 59, 0.25);
+  }
+}
+
+
+.lecture-pane {
+  background-color: white;
+  padding: 1.5em;
+  margin-bottom: 6em;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  border: gray 1px solid;
+  border-radius: 0.4em;
+}
+
+.lecture-pane-separator {
+  border-top: 3px dotted #555555;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+
+h3.lecture-pane-header {
+  color: #838383;
+  font-size: 1.3em;
+}
+
+#announcements-list {
+  max-height: 17em;
+  overflow-x: hidden;
+  overflow-y: auto;
+}

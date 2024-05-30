@@ -1,11 +1,11 @@
 require "rails_helper"
 
 RSpec.describe(QuizCertificate, type: :model) do
+  # test validations - this is done on the level of the parent Medium model
+
   it "has a valid factory" do
     expect(FactoryBot.build(:quiz_certificate)).to be_valid
   end
-
-  # test validations - this is done one the level of the parent Medium model
 
   it "is invalid without a quiz" do
     expect(FactoryBot.build(:quiz_certificate, quiz: nil)).to be_invalid

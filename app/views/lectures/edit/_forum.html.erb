@@ -1,49 +1,37 @@
-  <div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="forum_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#forum_collapse"
-              aria-expanded="false"
-              aria-controls="forum_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              <%= t('categories.board') %>
-            </h5>
-          </div>
-        </div>
-      </button>
-    </div>
-    <div id="forum_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <div class="row">
-          <div class="col-12 text-center" id="forum-buttons">
-            <% if lecture.forum? && lecture.forum %>
-              <% if lecture.forum&.locked %>
-                <%= link_to t('buttons.unlock_board'),
-                            unlock_forum_path(lecture),
-                            class: 'btn btn-sm btn-primary' %>
-              <% else %>
-                <%= link_to t('buttons.lock_board'),
-                            lock_forum_path(lecture),
-                            class: 'btn btn-sm btn-primary' %>
-              <% end %>
-              <%= link_to t('buttons.delete_board'),
-                          destroy_forum_path(lecture),
-                          class: 'btn btn-sm btn-danger' %>
-            <% else %>
-              <%= link_to t('buttons.add_board'),
-                          add_forum_path(lecture),
-                          class: 'btn btn-sm btn-primary' %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+<hr class="lecture-pane-separator">
+<h3 class="lecture-pane-header">
+  <%= t('categories.board') %>
+</h3>
+
+<div id="forum-buttons">
+  <% if lecture.forum? && lecture.forum %>
+
+    <% if lecture.forum&.locked %>
+      <%= link_to unlock_forum_path(lecture),
+        class: "btn btn-sm btn-outline-primary", role: :button do %>
+        <i class="fas fa-unlock"></i>
+        <%= t('buttons.unlock_board') %>
+      <% end %>
+    <% else %>
+      <%= link_to lock_forum_path(lecture),
+        class: "btn btn-sm btn-outline-primary", role: :button do %>
+        <i class="fas fa-lock"></i>
+        <%= t('buttons.lock_board') %>
+      <% end %>
+    <% end %>
+
+    <%= link_to destroy_forum_path(lecture),
+      id: "delete-forum", class: "btn btn-sm btn-outline-danger", role: :button,
+      "data-sure-to-delete": t('buttons.delete_board_sure_to_delete') do %>
+      <i class="fas fa-trash"></i>
+      <%= t('buttons.delete_board') %>
+    <% end %>
+
+  <% else %>
+    <%= link_to add_forum_path(lecture),
+      class: "btn btn-sm btn-outline-primary", role: :button do %>
+      <i class="fas fa-plus"></i>
+      <%= t('buttons.add_board') %>
+    <% end %>
+  <% end %>
+</div>

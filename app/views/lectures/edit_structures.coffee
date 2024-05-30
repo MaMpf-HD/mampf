@@ -31,3 +31,4 @@ renderMathInElement structuresBody,
   throwOnError: false
 
 initBootstrapPopovers()
+registerErdbeereExampleChanges()

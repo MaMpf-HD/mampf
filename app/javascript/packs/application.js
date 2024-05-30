@@ -43,11 +43,4 @@ document.addEventListener("turbolinks:load", function () {
     // DO not uncomment, evil
     //    widget.reset();
   }
-
-  // Init Masonry grid system
-  // see https://getbootstrap.com/docs/5.0/examples/masonry/
-  // and official documentation: https://masonry.desandro.com/
-  $(".masonry-grid").masonry({
-    percentPosition: true,
-  });
 });

@@ -35,6 +35,7 @@
 //= require lectures
 //= require lessons
 //= require main
+//= require masonry_grid
 //= require media
 //= require notifications
 //= require profile

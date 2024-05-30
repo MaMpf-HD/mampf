@@ -34,7 +34,7 @@ RSpec.describe(User, type: :model) do
   end
 
   describe "user with subscribed lectures" do
-    before :all do
+    before :each do
       @user = FactoryBot.build(:user, :with_lectures)
     end
     it "has a valid factory" do
@@ -70,7 +70,7 @@ RSpec.describe(User, type: :model) do
   # test methods - NEEDS TO BE REFACTORED
 
   # describe '#related_lectures' do
-  #   before :all do
+  #   before :each do
   #     @preceding_course = FactoryBot.create(:course)
   #     @course = FactoryBot.create(:course)
   #     @lecture = FactoryBot.create(:lecture, course: @course)

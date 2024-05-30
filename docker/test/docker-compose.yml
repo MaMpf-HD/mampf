@@ -1,5 +1,3 @@
----
-version: "3.4"
 networks:
   frontend:
   backend:
@@ -33,13 +31,14 @@ services:
     image: dockage/mailcatcher:latest
     networks:
       - backend
+
   mampf:
     build:
       context: ./../..
-      dockerfile: docker/run_cypress_tests/Dockerfile
+      dockerfile: docker/test/Dockerfile
     image: mampf:tests
     # TODO: Use this
-    # entrypoint: /usr/src/app/docker/run_cypress_tests/run_tests.sh
+    # entrypoint: /usr/src/app/docker/test/run_tests.sh
     entrypoint: /usr/src/app/entrypoint.sh
     environment:
       RAILS_ENV: test
@@ -58,14 +57,16 @@ services:
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
       MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
       PROJECT_EMAIL: project@localhost
-      FEEBACK_EMAIL: feedback@localhost
+      FEEDBACK_EMAIL: feedback@localhost
       PROJECT_NOTIFICATION_EMAIL: project+notification@localhost
+      ERROR_EMAIL: mampf-error@localhost
       MEDIA_FOLDER: mampf
       REDIS_URL: redis://redis:6379/1
       SOLR_HOST: solr
       SOLR_PORT: 8983
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
+      BLOG: https://mampf.blog
     volumes:
         - type: bind
           source: ../../spec/
@@ -78,24 +79,4 @@ services:
       - mailcatcher
     networks:
       - backend
-      - frontend
-
-  cypress_runner:
-    image: mampf-cypress
-    build:
-      context: ./../..
-      dockerfile: docker/run_cypress_tests/Dockerfile_cypress
-    environment:
-      CYPRESS_baseUrl: http://mampf:3000
-    volumes:
-      - ../../spec/cypress/e2e:/cypress/e2e:ro
-      - ../../spec/cypress/fixtures:/cypress/fixtures:ro
-      - ../../spec/cypress.config.js:/cypress.config.js:ro
-      - ../../.git:/.git:ro
-      # cypress outputs are saved here (needed only locally)
-      #- ../../cypress/videos:/cypress/videos
-      #- ../../cypress/screenshots:/cypress/screenshots
-    depends_on:
-      - mampf
-    networks:
       - frontend

@@ -70,7 +70,6 @@ gem "erubis"
 gem "exception_handler", "~> 0.8.0.0"
 gem "faraday", "~> 1.8"
 gem "fuzzy-string-match"
-gem "html-pipeline", "~> 2.14"
 gem "jquery-rails"
 gem "jquery-ui-rails"
 gem "js-routes", "1.4.9"
@@ -96,7 +95,8 @@ gem "sunspot_rails",
     github: "sunspot/sunspot",
     glob: "sunspot_rails/*.gemspec"
 gem "sunspot_solr"
-gem "thredded"
+gem "thredded", git: "https://github.com/thredded/thredded.git",
+                ref: "1340e913affd1af5fcc060fbccd271184ece9a6a"
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     branch: "main"
@@ -123,7 +123,7 @@ group :test do
   # Adds support for Capybara system testing and selenium driver
   gem "selenium-webdriver"
   # Easy installation and use of web drivers to run system tests with browsers
-  gem "database_cleaner"
+  gem "database_cleaner-active_record"
   gem "faker"
   gem "launchy"
   gem "simplecov", require: false
@@ -138,6 +138,8 @@ group :test, :development, :docker_development do
 
   gem "cypress-on-rails", "~> 1.0"
   gem "simplecov-cobertura"
+
+  gem "rspec-github"
 end
 
 gem "prometheus_exporter"

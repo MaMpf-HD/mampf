@@ -1,11 +1,7 @@
-<div class="row p-2">
-  <div class="col-12">
-    <h5>
-      <%= t('erdbeere.select_structures') %>
-      <%= helpdesk(t('erdbeere.info.structures'), false) %>
-    </h5>
-  </div>
-</div>
+<p>
+  <%= t('erdbeere.select_structures') %>
+  <%= helpdesk(t('erdbeere.info.structures'), false) %>
+</p>
 <%= form_with model: lecture,
               html: { id: 'lecture-structures-form' } do |f| %>
   <% all_structures.each do |s| %>
@@ -19,13 +15,12 @@
     </div>
   <% end %>
   <div class="row mt-2">
-    <div class="col-12 text-center">
+    <div id="lecture-erdbeere-examples-warning" class="col-12 text-center" style="display:none">
+      <%= hidden_field_tag :subpage, "info" %>
       <%= f.submit t('buttons.save'),
                    class: 'btn btn-sm btn-primary' %>
-      <a class="btn btn-sm btn-secondary"
-         data-bs-toggle="collapse"
-         href="#erdbeere_structures_collapse"
-         id="erdbeere_structures_collapse_button">
+      <a class="btn btn-sm btn-secondary" role="button"
+         id="erdbeere-structures-cancel">
         <%= t('buttons.cancel') %>
       </a>
     </div>
