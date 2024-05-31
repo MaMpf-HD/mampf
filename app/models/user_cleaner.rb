@@ -1,6 +1,36 @@
-# PORO class that removes users with inactive emails
+# Deletes inactive users from the database.
+# See [1] for a description of how the flow works.
+# [1] https://github.com/MaMpf-HD/mampf/issues/410#issuecomment-2136875776
 class UserCleaner
   attr_accessor :imap, :email_dict, :hash_dict
+
+  def inactive_users
+    User.where("last_sign_in_at < ?", 6.months.ago)
+  end
+
+  def update_deletion_date_for_inactive_users
+    inactive_users.where(deletion_date: nil).find_each do |user|
+      user.update(deletion_date: Date.current + 40.days)
+    end
+  end
+
+  def delete_users_according_to_deletion_date
+    deleted_count = 0
+    User.where("deletion_date <= ?", Date.current).find_each do |user|
+      continue unless user.generic?
+
+      user.destroy
+      deleted_count += 1
+    end
+    puts "#{deleted_count} stale users deleted."
+  end
+
+  def handle_inactive_users
+    update_deletion_date_for_inactive_users
+    delete_users_according_to_deletion_date
+  end
+
+  ### TODO
 
   def login
     @imap = Net::IMAP.new(ENV.fetch("IMAPSERVER"), port: 993, ssl: true)
