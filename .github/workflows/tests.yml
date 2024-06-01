@@ -59,4 +59,4 @@ jobs:
           files: ./coverage/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
-          codecov_yml_path: ./config/codecov.yml
+          codecov_yml_path: ./.config/codecov.yml
