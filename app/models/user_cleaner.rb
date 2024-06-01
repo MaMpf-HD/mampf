@@ -54,9 +54,27 @@ class UserCleaner
     puts "#{deleted_count} stale users deleted."
   end
 
+  # Sends additional warning mails to users whose deletion date is near.
+  #
+  # In addition to the initial warning mail 40 days before deletion, this method
+  # sends warning mails 14, 7 and 2 days before the account is deleted.
+  def send_additional_warning_mails
+    User.where.not(deletion_date: nil).find_each do |user|
+      num_days_until_deletion = (user.deletion_date - Date.current).to_i
+
+      if [14, 7, 2].include?(num_days_until_deletion)
+        UserCleanerMailer.with(user: user)
+                         .pending_deletion_email(num_days_until_deletion)
+                         .deliver_now
+      end
+    end
+  end
+
   def handle_inactive_users!
     set_deletion_date_for_inactive_users
     unset_deletion_date_for_recently_active_users
     delete_users_according_to_deletion_date
+
+    send_additional_warning_mails
   end
 end
