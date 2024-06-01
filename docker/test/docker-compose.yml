@@ -65,9 +65,8 @@ services:
       SPROCKETS_CACHE: /cache
       BLOG: https://mampf.blog
     volumes:
-      - type: bind
-        source: ../../
-        target: /usr/src/app/
+      - "public:/usr/src/app/public"
+      - ../../:/usr/src/app/
       - ../../coverage:/usr/src/app/coverage
     depends_on:
       - db
@@ -77,3 +76,6 @@ services:
     networks:
       - backend
       - frontend
+
+volumes:
+  public:
