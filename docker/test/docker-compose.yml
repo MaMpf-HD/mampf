@@ -65,9 +65,9 @@ services:
       SPROCKETS_CACHE: /cache
       BLOG: https://mampf.blog
     volumes:
-      - "public:/usr/src/app/public"
       - ../../:/usr/src/app/
-      - ../../coverage:/usr/src/app/coverage
+      - ../../coverage:/usr/src/app/coverage/
+      - "/usr/src/app/public/"
     depends_on:
       - db
       - solr
@@ -76,6 +76,3 @@ services:
     networks:
       - backend
       - frontend
-
-volumes:
-  public:
