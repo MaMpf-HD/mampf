@@ -29,11 +29,12 @@ class UserCleaner
   # does not work, this method will prevent active users from being deleted
   # as a last resort.
   def unset_deletion_date_for_recently_active_users
+    inactive_users_cached = inactive_users
+
     User.where.not(deletion_date: nil).find_each do |user|
-      # Note that technically, 40 days is the maximum possible value here,
-      # if our intended flow works as expected. We use 6 months to be on the
-      # safe side as we do not want to delete active users.
-      user.update(deletion_date: nil) if user.last_sign_in_at >= 6.months.ago.to_date
+      next if inactive_users_cached.include?(user)
+
+      user.update(deletion_date: nil)
     end
   end
 
