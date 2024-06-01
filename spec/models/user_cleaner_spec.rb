@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(UserCleaner, type: :model) do
-  it "inactive users get assigned a deletion date" do
+  it "assigns a deletion date to inactive users" do
     inactive_user = FactoryBot.create(:user, last_sign_in_at: 7.months.ago)
     active_user = FactoryBot.create(:user, last_sign_in_at: 5.months.ago)
 
@@ -36,12 +36,22 @@ RSpec.describe(UserCleaner, type: :model) do
   end
 
   it "deletes only generic users" do
-    generic_user = FactoryBot.create(:user, deletion_date: Date.current - 1.day)
-    admin_user = FactoryBot.create(:user, deletion_date: Date.current - 1.day, admin: true)
+    deletion_date = Date.current - 1.day
+
+    user_generic = FactoryBot.create(:user, deletion_date: deletion_date)
+
+    # Non-generic users are either admins, teachers or editors
+    user_admin = FactoryBot.create(:user, deletion_date: deletion_date, admin: true)
+    user_teacher = FactoryBot.create(:user, deletion_date: deletion_date)
+    FactoryBot.create(:lecture, teacher: user_teacher)
+    user_editor = FactoryBot.create(:user, deletion_date: deletion_date)
+    FactoryBot.create(:lecture, editors: [user_editor])
 
     UserCleaner.new.delete_users_according_to_deletion_date
 
-    expect(User.where(id: generic_user.id)).not_to exist
-    expect(User.where(id: admin_user.id)).to exist
+    expect(User.where(id: user_generic.id)).not_to exist
+    expect(User.where(id: user_admin.id)).to exist
+    expect(User.where(id: user_teacher.id)).to exist
+    expect(User.where(id: user_editor.id)).to exist
   end
 end
