@@ -17,14 +17,20 @@ RSpec.describe(UserCleaner, type: :model) do
     user_past1 = FactoryBot.create(:user, deletion_date: Date.current - 1.day)
     user_past2 = FactoryBot.create(:user, deletion_date: Date.current - 1.year)
     user_present = FactoryBot.create(:user, deletion_date: Date.current)
-    user_future1 = FactoryBot.create(:user, deletion_date: Date.current + 1.day)
-    user_future2 = FactoryBot.create(:user, deletion_date: Date.current + 1.year)
 
     UserCleaner.new.delete_users_according_to_deletion_date
 
     expect(User.where(id: user_past1.id)).not_to exist
     expect(User.where(id: user_past2.id)).not_to exist
     expect(User.where(id: user_present.id)).not_to exist
+  end
+
+  it "does not delete users with a deletion date in the future" do
+    user_future1 = FactoryBot.create(:user, deletion_date: Date.current + 1.day)
+    user_future2 = FactoryBot.create(:user, deletion_date: Date.current + 1.year)
+
+    UserCleaner.new.delete_users_according_to_deletion_date
+
     expect(User.where(id: user_future1.id)).to exist
     expect(User.where(id: user_future2.id)).to exist
   end
@@ -37,7 +43,6 @@ RSpec.describe(UserCleaner, type: :model) do
 
   it "deletes only generic users" do
     deletion_date = Date.current - 1.day
-
     user_generic = FactoryBot.create(:user, deletion_date: deletion_date)
 
     # Non-generic users are either admins, teachers or editors
