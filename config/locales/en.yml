@@ -2853,6 +2853,15 @@ en:
     no_zip: This file is not a .zip archive.
     to_big: This file is too big.
   mailer:
+    warning: "MaMpf Warning"
+    pending_deletion_subject: "%{num_days_until_deletion} days before your
+      account will be deleted"
+    pending_deletion_body_html: >
+      We've noticed that you haven't logged in to your MaMpf account in the last
+      6 months. Your account will be deleted in %{num_days_until_deletion} days
+      <strong>unless you log in to your MaMpf account before then</strong>.
+      Please note that once your account is deleted, all of your data stored
+      at MaMpf will be permanently lost.
     notification: 'MaMpf notification'
     notification_header: 'MaMpf notification'
     medium_subject: 'New Medium'

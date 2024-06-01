@@ -8,13 +8,14 @@ class UserCleaner
     User.where("last_sign_in_at < ?", 6.months.ago.to_date)
   end
 
-  # Sets the deletion date for inactive users.
+  # Sets the deletion date for inactive users and sends an initial warning mail.
   #
   # This method finds all inactive users whose deletion date is nil (not set yet)
   # and updates their deletion date to be 40 days from the current date.
   def set_deletion_date_for_inactive_users
     inactive_users.where(deletion_date: nil).find_each do |user|
       user.update(deletion_date: Date.current + 40.days)
+      UserCleanerMailer.with(user: user).pending_deletion_email(40).deliver_now
     end
   end
 

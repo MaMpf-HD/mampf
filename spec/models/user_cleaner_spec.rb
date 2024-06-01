@@ -82,4 +82,6 @@ RSpec.describe(UserCleaner, type: :model) do
     expect(User.where(id: user_teacher.id)).to exist
     expect(User.where(id: user_editor.id)).to exist
   end
+
+  # TODO: https://stackoverflow.com/questions/27647749/how-to-test-actionmailer-deliver-later-with-rspec
 end

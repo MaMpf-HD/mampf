@@ -3035,6 +3035,15 @@ de:
     en: 'Englisch'
     de: 'Deutsch'
   mailer:
+    warning: "MaMpf Warning"
+    pending_deletion_subject: "%{num_days_until_deletion} Tage bis zur
+      Löschung Deines MaMpf-Accounts"
+    pending_deletion_body_html: >
+      Wir haben festgestellt, dass Du Dich in den letzten 6 Monaten nicht in
+      MaMpf eingeloggt hast. Dein Account wird in %{num_days_until_deletion}
+      Tagen <strong>gelöscht, sofern Du Dich nicht vorher einloggst</strong>.
+      Bitte beachte, dass nach der Löschung Deines Accounts alle bei MaMpf
+      gespeicherten Daten von Dir unwiderruflich verloren gehen.
     notification: 'MaMpf-Benachrichtigung'
     notification_header: 'Benachrichtigung von MaMpf'
     medium_subject: 'Neues Medium'
