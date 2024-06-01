@@ -58,6 +58,7 @@ RUN apt update && \
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 WORKDIR /usr/src/app
+ENTRYPOINT ["./entrypoint.sh"]
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
@@ -66,7 +67,7 @@ RUN yarn install --production=false
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
-COPY . /usr/src/app/
+COPY . /usr/src/app
 COPY ./docker/production/docker.env ./docker-dummy.env
 
 RUN set -o allexport && . ./docker-dummy.env && set +o allexport && \

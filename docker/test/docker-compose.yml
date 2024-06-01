@@ -37,9 +37,6 @@ services:
       context: ./../..
       dockerfile: docker/test/Dockerfile
     image: mampf:tests
-    # TODO: Use this
-    # entrypoint: /usr/src/app/docker/test/run_tests.sh
-    entrypoint: /usr/src/app/entrypoint.sh
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
@@ -68,10 +65,9 @@ services:
       SPROCKETS_CACHE: /cache
       BLOG: https://mampf.blog
     volumes:
-        - type: bind
-          source: ../../spec/
-          target: /usr/src/app/spec/
-        - ../../coverage:/usr/src/app/coverage
+      - ../../:/usr/src/app/
+      - ../../coverage:/usr/src/app/coverage/
+      - "/usr/src/app/public/"
     depends_on:
       - db
       - solr
