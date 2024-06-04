@@ -58,7 +58,7 @@ class UserCleaner
       user.destroy
       deleted_count += 1
     end
-    puts "#{deleted_count} stale users deleted."
+    Rails.logger.info("UserCleaner deleted #{deleted_count} stale users")
   end
 
   # Sends additional warning mails to users whose deletion date is near.
