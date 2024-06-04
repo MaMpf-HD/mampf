@@ -2,7 +2,6 @@ class UserCleanerJob
   include Sidekiq::Worker
 
   def perform
-    user_cleaner = UserCleaner.new
-    user_cleaner.clean!
+    UserCleaner.new.handle_inactive_users!
   end
 end
