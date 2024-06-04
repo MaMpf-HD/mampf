@@ -15,8 +15,8 @@ cache_cleaner_job:
 
 user_cleaner_job:
   # at 4:00 AM, every day
-  # Note that is has to run every day such that users will receive
-  # respective warning emails about their accounts being deleted.
+  # This job has to run every day such that users will receive
+  # respective warning emails (about their accounts being deleted) on time.
   cron: "0 4 * * *" 
   class: "UserCleanerJob"
   queue: critical
