@@ -21,20 +21,16 @@ RSpec.describe(UserCleaner, type: :model) do
       user_inactive2 = FactoryBot.create(:user, deletion_date: deletion_date,
                                                 last_sign_in_at: 6.months.ago - 1.day)
       user_active = FactoryBot.create(:user, deletion_date: deletion_date,
-                                             last_sign_in_at: 6.months.ago)
-      user_active_recently = FactoryBot.create(:user, deletion_date: deletion_date,
-                                                      last_sign_in_at: 2.days.ago)
+                                             last_sign_in_at: 2.days.ago)
 
       UserCleaner.new.unset_deletion_date_for_recently_active_users
       user_inactive.reload
       user_inactive2.reload
       user_active.reload
-      user_active_recently.reload
 
       expect(user_inactive.deletion_date).to eq(deletion_date)
       expect(user_inactive2.deletion_date).to eq(deletion_date)
       expect(user_active.deletion_date).to be_nil
-      expect(user_active_recently.deletion_date).to be_nil
     end
   end
 

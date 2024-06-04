@@ -13,7 +13,7 @@ class UserCleaner
   # Returns all users who have been inactive for 6 months,
   # i.e. their last sign-in date is more than 6 months ago.
   def inactive_users
-    User.where("last_sign_in_at < ?", 6.months.ago.to_date)
+    User.where("last_sign_in_at < ?", 6.months.ago)
   end
 
   # Sets the deletion date for inactive users and sends an initial warning mail.
