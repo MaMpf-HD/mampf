@@ -1,11 +1,12 @@
 # Deletes inactive users from the database.
-# See [1] for a description of how the flow works.
+# See [1] for a description of how the flow works on a high level.
 #
 # Users have a deletion_date field that is nil by default. It is set to a future
 # date if the user has been inactive for too long (i.e. hasn't logged in).
 # Before the deletion date is reached, we send warning mails. If users log in
-# before the deletion date, it is reset to nil. Otherwise, the user is deleted
-# on the day of the deletion date.
+# before the deletion date, that date is reset to nil such that the user is not
+# deleted. If the user is still inactive on the deletion date, the user is
+# ultimately deleted.
 #
 # [1] https://github.com/MaMpf-HD/mampf/issues/410#issuecomment-2136875776
 class UserCleaner
@@ -33,7 +34,7 @@ class UserCleaner
   #
   # Note that this method just serves as a safety measure. The deletion date
   # should be unset after every successful user sign-in, see the Warden callback
-  # in `config/initializers/after_sign_in.rb`. If for some reason the callback
+  # in `config/initializers/after_sign_in.rb`. If for some reason, the callback
   # does not work, this method will prevent active users from being deleted
   # as a last resort.
   def unset_deletion_date_for_recently_active_users
@@ -46,19 +47,26 @@ class UserCleaner
     end
   end
 
-  # Deletes all users whose deletion date is in the past.
+  # Deletes all users whose deletion date is in the past or present.
   #
-  # The deletion date must have been set beforehand by calling
+  # Technically, there should never be users with a deletion date in the past
+  # since the cron job is run daily and should delete users on the day of their
+  # deletion date. Should the cron job not run for some reason, we also delete
+  # users with a deletion date in the past via this method.
+  #
+  # The deletion date for the users must have been set beforehand by calling
   # `set_deletion_date_for_inactive_users`.
   def delete_users_according_to_deletion_date!
-    deleted_count = 0
+    num_deleted_users = 0
+
     User.where("deletion_date <= ?", Date.current).find_each do |user|
       next unless user.generic?
 
       user.destroy
-      deleted_count += 1
+      num_deleted_users += 1
     end
-    Rails.logger.info("UserCleaner deleted #{deleted_count} stale users")
+
+    Rails.logger.info("UserCleaner deleted #{num_deleted_users} stale users")
   end
 
   # Sends additional warning mails to users whose deletion date is near.
