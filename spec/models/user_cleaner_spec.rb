@@ -44,7 +44,7 @@ RSpec.describe(UserCleaner, type: :model) do
       user_past2 = FactoryBot.create(:user, deletion_date: Date.current - 1.year)
       user_present = FactoryBot.create(:user, deletion_date: Date.current)
 
-      UserCleaner.new.delete_users_according_to_deletion_date
+      UserCleaner.new.delete_users_according_to_deletion_date!
 
       expect(User.where(id: user_past1.id)).not_to exist
       expect(User.where(id: user_past2.id)).not_to exist
@@ -55,7 +55,7 @@ RSpec.describe(UserCleaner, type: :model) do
       user_future1 = FactoryBot.create(:user, deletion_date: Date.current + 1.day)
       user_future2 = FactoryBot.create(:user, deletion_date: Date.current + 1.year)
 
-      UserCleaner.new.delete_users_according_to_deletion_date
+      UserCleaner.new.delete_users_according_to_deletion_date!
 
       expect(User.where(id: user_future1.id)).to exist
       expect(User.where(id: user_future2.id)).to exist
@@ -63,7 +63,7 @@ RSpec.describe(UserCleaner, type: :model) do
 
     it "does not delete users without a deletion date" do
       user = FactoryBot.create(:user, deletion_date: nil)
-      UserCleaner.new.delete_users_according_to_deletion_date
+      UserCleaner.new.delete_users_according_to_deletion_date!
       expect(User.where(id: user.id)).to exist
     end
 
@@ -78,7 +78,7 @@ RSpec.describe(UserCleaner, type: :model) do
       user_editor = FactoryBot.create(:user, deletion_date: deletion_date)
       FactoryBot.create(:lecture, editors: [user_editor])
 
-      UserCleaner.new.delete_users_according_to_deletion_date
+      UserCleaner.new.delete_users_according_to_deletion_date!
 
       expect(User.where(id: user_generic.id)).not_to exist
       expect(User.where(id: user_admin.id)).to exist

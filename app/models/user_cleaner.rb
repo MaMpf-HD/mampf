@@ -50,7 +50,7 @@ class UserCleaner
   #
   # The deletion date must have been set beforehand by calling
   # `set_deletion_date_for_inactive_users`.
-  def delete_users_according_to_deletion_date
+  def delete_users_according_to_deletion_date!
     deleted_count = 0
     User.where("deletion_date <= ?", Date.current).find_each do |user|
       next unless user.generic?
@@ -80,7 +80,7 @@ class UserCleaner
   def handle_inactive_users!
     set_deletion_date_for_inactive_users
     unset_deletion_date_for_recently_active_users
-    delete_users_according_to_deletion_date
+    delete_users_according_to_deletion_date!
 
     send_additional_warning_mails
   end
