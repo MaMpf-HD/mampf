@@ -1,5 +1,12 @@
 # Deletes inactive users from the database.
 # See [1] for a description of how the flow works.
+#
+# Users have a deletion_date field that is nil by default. It is set to a future
+# date if the user has been inactive for too long (i.e. hasn't logged in).
+# Before the deletion date is reached, we send warning mails. If users log in
+# before the deletion date, it is reset to nil. Otherwise, the user is deleted
+# on the day of the deletion date.
+#
 # [1] https://github.com/MaMpf-HD/mampf/issues/410#issuecomment-2136875776
 class UserCleaner
   # Returns all users who have been inactive for 6 months,
@@ -15,7 +22,7 @@ class UserCleaner
   def set_deletion_date_for_inactive_users
     inactive_users.where(deletion_date: nil).find_each do |user|
       user.update(deletion_date: Date.current + 40.days)
-      UserCleanerMailer.with(user: user).pending_deletion_email(40).deliver_now
+      UserCleanerMailer.with(user: user).pending_deletion_email(40).deliver_later
     end
   end
 
@@ -65,7 +72,7 @@ class UserCleaner
       if [14, 7, 2].include?(num_days_until_deletion)
         UserCleanerMailer.with(user: user)
                          .pending_deletion_email(num_days_until_deletion)
-                         .deliver_now
+                         .deliver_later
       end
     end
   end
