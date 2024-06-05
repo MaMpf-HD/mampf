@@ -2,16 +2,42 @@ require "rails_helper"
 
 RSpec.describe(UserCleaner, type: :model) do
   describe("#set/unset_deletion_date") do
-    it "assigns a deletion date to inactive users" do
-      inactive_user = FactoryBot.create(:user, last_sign_in_at: 7.months.ago)
-      active_user = FactoryBot.create(:user, last_sign_in_at: 5.months.ago)
+    context "when deletion date is nil" do
+      it "assigns a deletion date to inactive users" do
+        inactive_user = FactoryBot.create(:user, last_sign_in_at: 7.months.ago)
+        active_user = FactoryBot.create(:user, last_sign_in_at: 5.months.ago)
 
-      UserCleaner.new.set_deletion_date_for_inactive_users
-      inactive_user.reload
-      active_user.reload
+        UserCleaner.new.set_deletion_date_for_inactive_users
+        inactive_user.reload
+        active_user.reload
 
-      expect(inactive_user.deletion_date).to eq(Date.current + 40.days)
-      expect(active_user.deletion_date).to be_nil
+        expect(inactive_user.deletion_date).to eq(Date.current + 40.days)
+        expect(active_user.deletion_date).to be_nil
+      end
+
+      it "only assigns a deletion date to a limited number of users" do
+        max_deletions = 3
+        UserCleaner::MAX_DELETIONS_PER_RUN = max_deletions
+
+        FactoryBot.create_list(:user, max_deletions + 2, last_sign_in_at: 7.months.ago)
+
+        UserCleaner.new.set_deletion_date_for_inactive_users
+
+        users_flagged = User.where(deletion_date: Date.current + 40.days)
+        expect(users_flagged.count).to eq(max_deletions)
+      end
+    end
+
+    context "when a deletion date is assigned" do
+      it "does not overwrite the deletion date" do
+        user = FactoryBot.create(:user, last_sign_in_at: 7.months.ago,
+                                        deletion_date: Date.current + 42.days)
+
+        UserCleaner.new.set_deletion_date_for_inactive_users
+        user.reload
+
+        expect(user.deletion_date).to eq(Date.current + 42.days)
+      end
     end
 
     it "unassigns a deletion date from recently active users" do

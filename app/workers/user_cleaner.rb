@@ -10,6 +10,26 @@
 #
 # [1] https://github.com/MaMpf-HD/mampf/issues/410#issuecomment-2136875776
 class UserCleaner
+  # The maximum number of users that can be deleted in one run.
+  # This is equivalent to the maximum of number of deletion dates set in one run.
+  #
+  # This flag can be used to prevent too many mails from being sent at once.
+  # Keep in mind that the mail server also handles other mails, e.g. notification
+  # mails etc., so we might want to set the limit very low here such that our
+  # mail server is not marked as "spam server".
+  #
+  # Note that this is just a soft limit, i.e. the actual number of deletion
+  # warning mails sent on a given day might be higher than this number:
+  # - If on a given day the cronjob is not run (for whatever reason),
+  #   we have more users with a deletion date lying in the past than
+  #   MAX_DELETIONS_PER_RUN. However, we don't send an additional mail once
+  #   the user is deleted, so this shouldn't be a problem.
+  # - Despite that there cannot be more than MAX_DELETIONS_PER_RUN users with the
+  #   same deletion date, warning mails might be sent on the same date to users
+  #   with varying deletion dates, since the 40-, 14-, 7- and 2-day warning mails
+  #   can overlap temporally.
+  MAX_DELETIONS_PER_RUN = 50
+
   # Returns all users who have been inactive for 6 months,
   # i.e. their last sign-in date is more than 6 months ago.
   def inactive_users
@@ -20,8 +40,13 @@ class UserCleaner
   #
   # This method finds all inactive users whose deletion date is nil (not set yet)
   # and updates their deletion date to be 40 days from the current date.
+  #
+  # The maximum number of deletion dates set in one run is limited by
+  # MAX_DELETIONS_PER_RUN.
   def set_deletion_date_for_inactive_users
-    inactive_users.where(deletion_date: nil).find_each do |user|
+    inactive_users.where(deletion_date: nil)
+                  .limit(MAX_DELETIONS_PER_RUN)
+                  .find_each do |user|
       user.update(deletion_date: Date.current + 40.days)
       UserCleanerMailer.with(user: user).pending_deletion_email(40).deliver_later
     end
@@ -85,6 +110,9 @@ class UserCleaner
     end
   end
 
+  # Handles inactive users according to the deletion policy documented
+  # in the UserCleaner class description. Brief: users that haven't logged in
+  # to MaMpf for too long will be deleted.
   def handle_inactive_users!
     set_deletion_date_for_inactive_users
     unset_deletion_date_for_recently_active_users
