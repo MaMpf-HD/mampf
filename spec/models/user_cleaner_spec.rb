@@ -122,9 +122,11 @@ RSpec.describe(UserCleaner, type: :model) do
   end
 
   describe("#pending_deletion_mail") do
-    let(:user) { FactoryBot.create(:user) }
+    let(:user_de) { FactoryBot.create(:user, locale: "de") }
+    let(:user_en) { FactoryBot.create(:user, locale: "en") }
 
     def test_subject_line(num_days)
+      user = FactoryBot.create(:user)
       mailer = UserCleanerMailer.with(user: user).pending_deletion_email(num_days)
       expect(mailer.subject).to include(num_days.to_s)
     end
@@ -137,25 +139,21 @@ RSpec.describe(UserCleaner, type: :model) do
     end
 
     it "has mail subject localized to the user's locale" do
-      user.update(locale: "de")
-      mailer = UserCleanerMailer.with(user: user).pending_deletion_email(40)
+      mailer = UserCleanerMailer.with(user: user_de).pending_deletion_email(40)
       expect(mailer.subject).to include("Tage")
       expect(mailer.subject).not_to include("days")
 
-      user.update(locale: "en")
-      mailer = UserCleanerMailer.with(user: user).pending_deletion_email(40)
+      mailer = UserCleanerMailer.with(user: user_en).pending_deletion_email(40)
       expect(mailer.subject).to include("days")
       expect(mailer.subject).not_to include("Tage")
     end
 
     it "has mail body localized to the user's locale" do
-      user.update(locale: "de")
-      mailer = UserCleanerMailer.with(user: user).pending_deletion_email(40)
+      mailer = UserCleanerMailer.with(user: user_de).pending_deletion_email(40)
       expect(mailer.body.encoded).to include("verloren")
       expect(mailer.body.encoded).not_to include("lost")
 
-      user.update(locale: "en")
-      mailer = UserCleanerMailer.with(user: user).pending_deletion_email(40)
+      mailer = UserCleanerMailer.with(user: user_en).pending_deletion_email(40)
       expect(mailer.body.encoded).to include("lost")
       expect(mailer.body.encoded).not_to include("verloren")
     end
