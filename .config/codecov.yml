@@ -1,5 +1,5 @@
 # Ignore test files themselves in the Codecov report
 # see: https://about.codecov.io/blog/should-i-include-test-files-in-code-coverage-calculations/
 ignore:
-  - "spec/"
-  - "*_spec.rb"
+  - "../spec/**/*"
+  - "**/*_spec.rb"
