@@ -1,6 +1,10 @@
 require "rails_helper"
 
 RSpec.describe(UserCleaner, type: :model) do
+  before(:each) do
+    UserCleaner::INACTIVE_USER_THRESHOLD = 6.months
+  end
+
   describe("#set/unset_deletion_date") do
     context "when deletion date is nil" do
       it "assigns a deletion date to inactive users" do
