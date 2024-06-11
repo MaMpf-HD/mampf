@@ -97,6 +97,7 @@ class UserCleaner
     User.where("deletion_date <= ?", Date.current).find_each do |user|
       next unless user.generic?
 
+      UserCleanerMailer.with(user: user).deletion_email.deliver_later
       user.destroy
       num_deleted_users += 1
     end

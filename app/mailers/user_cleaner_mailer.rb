@@ -15,4 +15,14 @@ class UserCleanerMailer < ApplicationMailer
                 num_days_until_deletion: @num_days_until_deletion)
     mail(from: sender, to: user.email, subject: subject, priority: "high")
   end
+
+  # Creates an email to inform a user that their account has been deleted.
+  def deletion_email
+    user = params[:user]
+    sender = "#{t("mailer.warning")} <#{DefaultSetting::PROJECT_EMAIL}>"
+    I18n.locale = user.locale
+
+    subject = t("mailer.deletion_subject")
+    mail(from: sender, to: user.email, subject: subject, priority: "high")
+  end
 end
