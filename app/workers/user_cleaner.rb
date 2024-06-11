@@ -30,10 +30,20 @@ class UserCleaner
   #   can overlap temporally.
   MAX_DELETIONS_PER_RUN = 50
 
-  # Returns all users who have been inactive for 6 months,
-  # i.e. their last sign-in date is more than 6 months ago.
+  # The threshold for inactive users. Users who have not logged in for this time
+  # are considered inactive.
+  INACTIVE_USER_THRESHOLD = 6.months
+
+  # Returns all users who have been inactive for INACTIVE_USER_THRESHOLD months,
+  # i.e. their last sign-in date is more than INACTIVE_USER_THRESHOLD months ago.
   def inactive_users
-    User.where("last_sign_in_at < ?", 6.months.ago)
+    User.where("last_sign_in_at < ?", INACTIVE_USER_THRESHOLD.ago)
+  end
+
+  # Returns all users who have been active in the last INACTIVE_USER_THRESHOLD months,
+  # i.e. their last sign-in date is less than INACTIVE_USER_THRESHOLD months ago.
+  def active_users
+    User.where("last_sign_in_at >= ?", INACTIVE_USER_THRESHOLD.ago)
   end
 
   # Sets the deletion date for inactive users and sends an initial warning mail.
@@ -55,7 +65,7 @@ class UserCleaner
   # Unsets the deletion date for users who have been active recently.
   #
   # This method finds all users whose deletion date is set and unsets it if the
-  # user has been active in the last 6 months.
+  # user has been active recently.
   #
   # Note that this method just serves as a safety measure. The deletion date
   # should be unset after every successful user sign-in, see the Warden callback
@@ -63,11 +73,7 @@ class UserCleaner
   # does not work, this method will prevent active users from being deleted
   # as a last resort.
   def unset_deletion_date_for_recently_active_users
-    inactive_users_cached = inactive_users
-
-    User.where.not(deletion_date: nil).find_each do |user|
-      user.update(deletion_date: nil) unless inactive_users_cached.include?(user)
-    end
+    active_users.where.not(deletion_date: nil).update(deletion_date: nil)
   end
 
   # Deletes all users whose deletion date is in the past or present.
