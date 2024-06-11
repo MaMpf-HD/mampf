@@ -58,7 +58,10 @@ class UserCleaner
                   .limit(MAX_DELETIONS_PER_RUN)
                   .find_each do |user|
       user.update(deletion_date: Date.current + 40.days)
-      UserCleanerMailer.with(user: user).pending_deletion_email(40).deliver_later
+
+      if user.generic? # rubocop:disable Style/IfUnlessModifier
+        UserCleanerMailer.with(user: user).pending_deletion_email(40).deliver_later
+      end
     end
   end
 
@@ -85,6 +88,9 @@ class UserCleaner
   #
   # The deletion date for the users must have been set beforehand by calling
   # `set_deletion_date_for_inactive_users`.
+  #
+  # Even after having called this method, there might still exist users with a
+  # deletion date in the future, as we only delete generic users.
   def delete_users_according_to_deletion_date!
     num_deleted_users = 0
 
@@ -104,6 +110,8 @@ class UserCleaner
   # sends warning mails 14, 7 and 2 days before the account is deleted.
   def send_additional_warning_mails
     User.where.not(deletion_date: nil).find_each do |user|
+      next unless user.generic?
+
       num_days_until_deletion = (user.deletion_date - Date.current).to_i
 
       if [14, 7, 2].include?(num_days_until_deletion)

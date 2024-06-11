@@ -1,6 +1,23 @@
 require "rails_helper"
 
 RSpec.describe(UserCleaner, type: :model) do
+  # Non-generic users are either admins, teachers or editors
+  let(:user_admin) do
+    return FactoryBot.create(:user, deletion_date: Date.current - 1.day, admin: true)
+  end
+
+  let(:user_teacher) do
+    user_teacher = FactoryBot.create(:user, deletion_date: Date.current - 1.day)
+    FactoryBot.create(:lecture, teacher: user_teacher)
+    return user_teacher
+  end
+
+  let(:user_editor) do
+    user_editor = FactoryBot.create(:user, deletion_date: Date.current - 1.day)
+    FactoryBot.create(:lecture, editors: [user_editor])
+    return user_editor
+  end
+
   before(:each) do
     UserCleaner::INACTIVE_USER_THRESHOLD = 6.months
   end
@@ -94,15 +111,10 @@ RSpec.describe(UserCleaner, type: :model) do
     end
 
     it "deletes only generic users" do
-      deletion_date = Date.current - 1.day
-      user_generic = FactoryBot.create(:user, deletion_date: deletion_date)
-
-      # Non-generic users are either admins, teachers or editors
-      user_admin = FactoryBot.create(:user, deletion_date: deletion_date, admin: true)
-      user_teacher = FactoryBot.create(:user, deletion_date: deletion_date)
-      FactoryBot.create(:lecture, teacher: user_teacher)
-      user_editor = FactoryBot.create(:user, deletion_date: deletion_date)
-      FactoryBot.create(:lecture, editors: [user_editor])
+      user_generic = FactoryBot.create(:user, deletion_date: Date.current - 1.day)
+      user_admin
+      user_teacher
+      user_editor
 
       UserCleaner.new.delete_users_according_to_deletion_date!
 
@@ -122,6 +134,16 @@ RSpec.describe(UserCleaner, type: :model) do
           UserCleaner.new.set_deletion_date_for_inactive_users
         end.to have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
           .with(a_hash_including(args: [40]))
+      end
+
+      it "does not enqueue a deletion warning mail (40 days) for non-generic users" do
+        user_admin
+        user_teacher
+        user_editor
+
+        expect do
+          UserCleaner.new.set_deletion_date_for_inactive_users
+        end.not_to have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
       end
     end
 
@@ -143,6 +165,16 @@ RSpec.describe(UserCleaner, type: :model) do
 
       it "does not enqueue an additional deletion warning mail for 40 days" do
         FactoryBot.create(:user, deletion_date: Date.current + 40.days)
+
+        expect do
+          UserCleaner.new.send_additional_warning_mails
+        end.not_to have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
+      end
+
+      it "does not enqueue additional deletion warning mails for non-generic users" do
+        user_admin.update(deletion_date: Date.current + 14.days)
+        user_teacher.update(deletion_date: Date.current + 7.days)
+        user_editor.update(deletion_date: Date.current + 2.days)
 
         expect do
           UserCleaner.new.send_additional_warning_mails
