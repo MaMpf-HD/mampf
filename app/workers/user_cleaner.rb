@@ -28,7 +28,7 @@ class UserCleaner
   #   same deletion date, warning mails might be sent on the same date to users
   #   with varying deletion dates, since the 40-, 14-, 7- and 2-day warning mails
   #   can overlap temporally.
-  MAX_DELETIONS_PER_RUN = 50
+  MAX_DELETIONS_PER_RUN = ENV.fetch("MAX_DELETIONS_PER_RUN").to_i
 
   # The threshold for inactive users. Users who have not logged in for this time
   # are considered inactive.
