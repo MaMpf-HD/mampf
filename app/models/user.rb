@@ -99,6 +99,11 @@ class User < ApplicationRecord
   after_create :set_consented_at
   before_destroy :destroy_single_submissions, prepend: true
 
+  attr_accessor :skip_destroy_talk_media
+
+  before_destroy :destroy_talk_media_upon_user_deletion, prepend: true,
+                                                         unless: :skip_destroy_talk_media
+
   # users can comment stuff
   acts_as_commontator
 
@@ -704,6 +709,7 @@ class User < ApplicationRecord
       success = transfer_contributions_to(archive_user(archive_name))
       return false unless success
     end
+    self.skip_destroy_talk_media = true
     destroy
   end
 
@@ -824,6 +830,17 @@ class User < ApplicationRecord
     def destroy_single_submissions
       Submission.where(id: submissions.select { |s| s.users.count == 1 }
                                       .map(&:id)).destroy_all
+    end
+
+    # Destroys all talk media of the user.
+    # If the user is an editor of media other than talk-related media,
+    # nothing will happen.
+    def destroy_talk_media_upon_user_deletion
+      return if edited_media.where.not(teachable_type: "Talk").any?
+
+      # Only delete media where the user is the sole editor.
+      sole_editor_media = edited_media.select { |m| m.editors.count == 1 }
+      Medium.where(id: sole_editor_media.pluck(:id)).destroy_all
     end
 
     def archive_email
