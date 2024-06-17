@@ -99,4 +99,69 @@ RSpec.describe(User, type: :model) do
   #     end
   #   end
   # end
+
+  describe("#destroy_talk_media") do
+    let(:medium) do
+      medium = FactoryBot.build(:medium)
+      medium.teachable_type = "Lecture"
+      medium.save(validate: false)
+      medium
+    end
+
+    let(:medium_talk) do
+      medium = FactoryBot.build(:medium)
+      medium.teachable_type = "Talk"
+      medium.save(validate: false)
+      medium
+    end
+
+    context("when user is destroyed") do
+      it("method is called") do
+        user = FactoryBot.create(:confirmed_user)
+        expect(user).to receive(:destroy_talk_media_upon_user_deletion)
+        user.destroy
+      end
+
+      context("when user self-deletes (archive & destroy)") do
+        it("method is not called") do
+          user = FactoryBot.create(:confirmed_user)
+          expect(user).not_to receive(:destroy_talk_media_upon_user_deletion)
+          user.archive_and_destroy("dummy archive user name")
+        end
+      end
+    end
+
+    context("when user has media other than talk media") do
+      it("does not destroy any media") do
+        user = FactoryBot.create(:confirmed_user)
+        medium
+        medium_talk
+
+        # use .send(:...) to access private method
+        expect { user.send(:destroy_talk_media_upon_user_deletion) }
+          .not_to(change { Medium.count })
+      end
+    end
+
+    context("when user has only talk media") do
+      it("does not destroy talk media that has multiple editors") do
+        user = FactoryBot.create(:confirmed_user)
+        user2 = FactoryBot.create(:confirmed_user)
+        medium_talk.editors << user
+        medium_talk.editors << user2
+
+        expect { user.send(:destroy_talk_media_upon_user_deletion) }
+          .not_to(change { Medium.count })
+      end
+
+      it("destroys talk media that has only one editor") do
+        user = FactoryBot.create(:confirmed_user)
+        medium_talk.editors << user
+
+        expect { user.send(:destroy_talk_media_upon_user_deletion) }
+          .to(change { Medium.count }.by(-1)
+          .and(change { Medium.exists?(medium_talk.id) }.from(true).to(false)))
+      end
+    end
+  end
 end
