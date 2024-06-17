@@ -36,6 +36,9 @@ class UserCleaner
 
   # Returns all users who have been inactive for INACTIVE_USER_THRESHOLD months,
   # i.e. their last sign-in date is more than INACTIVE_USER_THRESHOLD months ago.
+  #
+  # Users without a last_sign_in_at date are also considered inactive. This is
+  # the case for users who have never logged in since PR #553 was merged.
   def inactive_users
     User.where("last_sign_in_at < ?", INACTIVE_USER_THRESHOLD.ago)
         .or(User.where(last_sign_in_at: nil))
