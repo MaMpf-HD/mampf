@@ -22,6 +22,23 @@ RSpec.describe(UserCleaner, type: :model) do
     UserCleaner::INACTIVE_USER_THRESHOLD = 6.months
   end
 
+  describe("#inactive_users") do
+    it "counts users without last_sign_in_at date as inactive" do
+      FactoryBot.create(:user, last_sign_in_at: nil)
+      expect(UserCleaner.new.inactive_users.count).to eq(1)
+    end
+
+    it("counts users with last_sign_in_at date older than threshold as inactive") do
+      FactoryBot.create(:user, last_sign_in_at: 7.months.ago)
+      expect(UserCleaner.new.inactive_users.count).to eq(1)
+    end
+
+    it "does not count users with last_sign_in_at date younger than threshold as inactive" do
+      FactoryBot.create(:user, last_sign_in_at: 5.months.ago)
+      expect(UserCleaner.new.inactive_users.count).to eq(0)
+    end
+  end
+
   describe("#set/unset_deletion_date") do
     context "when deletion date is nil" do
       it "assigns a deletion date to inactive users" do
