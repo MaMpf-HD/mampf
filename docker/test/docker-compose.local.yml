@@ -43,6 +43,7 @@ services:
       TEST_DATABASE_USERNAME: mampf
       TEST_DATABASE_HOST: db
       TEST_DATABASE_PORT: 5432
+      MAX_DELETIONS_PER_RUN: 50
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: mampf

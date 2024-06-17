@@ -35,6 +35,10 @@ RSpec.configure do |config|
   # For Devise >= 4.1.0
   config.include Devise::Test::ControllerHelpers, type: :controller
 
+  # e.g. make have_enqueued_mail matchers available
+  # see https://stackoverflow.com/a/57077395/
+  config.include ActiveJob::TestHelper
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
