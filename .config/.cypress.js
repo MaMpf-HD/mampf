@@ -1,13 +1,11 @@
-const { defineConfig } = require("cypress");
-
-module.exports = defineConfig({
+module.exports = {
   e2e: {
     baseUrl: "http://localhost:3000",
     defaultCommandTimeout: 10000,
-    projectId: "v45wg9",
+    projectId: "mampf-cypress",
     retries: {
       runMode: 2,
       openMode: 0,
     },
   },
-});
+};

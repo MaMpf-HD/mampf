@@ -80,7 +80,6 @@ services:
   # Some tips for the Cypress docker setup can be found here:
   # https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command
   cypress:
-    image: cypress/included:13.11.0
     depends_on:
       - mampf
     build:
@@ -90,10 +89,10 @@ services:
       CYPRESS_baseUrl: http://mampf:3000
     entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done;"
     volumes:
-      - ../../spec/cypress/e2e:/cypress/e2e:ro
-      - ../../spec/cypress/fixtures:/cypress/fixtures:ro
-      - ../../spec/cypress.config.js:/cypress.config.js:ro
-      - ../../.git:/.git:ro
-      # cypress outputs are saved here (needed only locally)
-      - ../../cypress/videos:/cypress/videos
-      - ../../cypress/screenshots:/cypress/screenshots
+      - ../../.config/.cypress.js:/mampf-tests/cypress.config.js:ro
+      - ../../spec/cypress/e2e/:/mampf-tests/cypress/e2e/:ro
+      - ../../spec/cypress/support/:/mampf-tests/cypress/support/:ro
+      - ../../spec/cypress/fixtures/:/mampf-tests/cypress/fixtures/:ro
+      # Cypress video/screenshot output (only necessary locally)
+      - ../../cypress/videos/:/mampf-tests/cypress/videos/
+      - ../../cypress/screenshots/:/mampf-tests/cypress/screenshots/
