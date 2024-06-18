@@ -86,7 +86,7 @@ services:
       context: ./../..
       dockerfile: docker/test/Dockerfile_cypress
     environment:
-      CYPRESS_baseUrl: http://mampf:3000
+      CYPRESS_baseUrl: http://host.docker.internal:3000
     entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done;"
     volumes:
       - ../../.config/.cypress.js:/mampf-tests/cypress.config.js:ro
