@@ -69,3 +69,14 @@ Cypress.Commands.add("login", (user) => {
     },
   });
 });
+
+Cypress.Commands.add("createUserAndLogin", (role) => {
+  if (!["admin", "editor", "teacher", "generic"].includes(role)) {
+    throw new Error(`Invalid role: ${role}`);
+  }
+
+  // See the scenarios/ folder where these Users are created in Ruby
+  cy.appScenario(role);
+
+  cy.login({ email: `${role}@mampf.cypress`, password: "cypress123" });
+});

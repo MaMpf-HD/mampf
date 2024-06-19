@@ -1,2 +1,2 @@
-User.create(name: "Admin", email: "administrator@mampf.edu",
-            password: "test123456", admin: true, consents: true).confirm
+User.create(name: "Admin", email: "admin@mampf.cypress",
+            password: "cypress123", admin: true, consents: true).confirm
