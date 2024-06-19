@@ -1,13 +1,22 @@
-// CypressOnRails: dont remove these command
+// CypressOnRails: Don't remove these commands (!)
 Cypress.Commands.add("appCommands", function (body) {
-  cy.log("APP: " + JSON.stringify(body));
+  Object.keys(body).forEach(key => body[key] === undefined ? delete body[key] : {});
+  const log = Cypress.log({ name: "APP", message: body, autoEnd: false });
   return cy.request({
     method: "POST",
-    url: "/__cypress__/command",
+    url: "/__e2e__/command",
     body: JSON.stringify(body),
-    log: true,
-    failOnStatusCode: true,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    log: false,
+    failOnStatusCode: false,
   }).then((response) => {
+    log.end();
+    if (response.status !== 201) {
+      expect(response.body.message).to.equal("");
+      expect(response.status).to.be.equal(201);
+    }
     return response.body;
   });
 });
@@ -34,26 +43,29 @@ Cypress.Commands.add("appFixtures", function (options) {
   cy.app("activerecord_fixtures", options);
 });
 
+////////////////////////////////////////////////////////////////////////////////
+// Customizations
+////////////////////////////////////////////////////////////////////////////////
+
+beforeEach(() => {
+  cy.app("clean"); // also see cypress/app_commands/clean.rb
+});
+
 Cypress.Commands.add("dragTo", { prevSubject: "element" }, (subject, targetEl) => {
   cy.wrap(subject).trigger("dragstart");
   cy.get(targetEl).trigger("drop");
 });
-// CypressOnRails: end
 
-// The next is optional
-// beforeEach(() => {
-//  cy.app('clean') // have a look at cypress/app_commands/clean.rb
-// });
-
-// comment this out if you do not want to attempt to log additional info on test fail
-Cypress.on("fail", (err, runnable) => {
-  // allow app to generate additional logging data
-  Cypress.$.ajax({
-    url: "/__cypress__/command",
-    data: JSON.stringify({ name: "log_fail", options: { error_message: err.message, runnable_full_title: runnable.fullTitle() } }),
-    async: false,
+// https://github.com/shakacode/cypress-on-rails/issues/16#issuecomment-669819936
+Cypress.Commands.add("login", (user) => {
+  return cy.request({
     method: "POST",
+    url: "/users/sign_in",
+    form: true,
+    failOnStatusCode: true,
+    body: {
+      "user[email]": user.email,
+      "user[password]": user.password,
+    },
   });
-
-  throw err;
 });
