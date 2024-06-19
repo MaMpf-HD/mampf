@@ -78,26 +78,4 @@ services:
     networks:
       - backend
       - frontend
-
-  # Some tips for the Cypress docker setup can be found here:
-  # https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command
-  cypress:
-    depends_on:
-      - mampf
-    build:
-      context: ./../..
-      dockerfile: docker/test/Dockerfile_cypress
-    environment:
-      CYPRESS_baseUrl: http://mampf:3000
-    entrypoint: bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null; do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl; sleep 1; done;"
-    volumes:
-      - ../../.config/.cypress.js:/mampf-tests/cypress.config.js:ro
-      - ../../spec/cypress/e2e/:/mampf-tests/cypress/e2e/:ro
-      - ../../spec/cypress/support/:/mampf-tests/cypress/support/:ro
-      - ../../spec/cypress/fixtures/:/mampf-tests/cypress/fixtures/:ro
-      # Cypress video/screenshot output (only necessary locally)
-      - ../../cypress/videos/:/mampf-tests/cypress/videos/
-      - ../../cypress/screenshots/:/mampf-tests/cypress/screenshots/
-    networks:
-      - frontend
-      - backend
+  
