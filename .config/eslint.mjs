@@ -11,6 +11,7 @@
 import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
 import erb from "eslint-plugin-erb";
+import pluginCypress from "eslint-plugin-cypress/flat";
 import globals from "globals";
 
 const ignoreFilesWithSprocketRequireSyntax = [
@@ -89,14 +90,11 @@ const customGlobals = {
   renderMathInElement: "readable",
 };
 
-// We don't have cypress linting yet, as the Cypress ESLint plugin
-// doesn't support the new flat config yet
-// https://github.com/cypress-io/eslint-plugin-cypress/issues/146
-
 export default [
   js.configs.recommended,
   // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
   erb.configs.recommended,
+  pluginCypress.configs.recommended,
   // Globally ignore the following paths
   {
     ignores: [
@@ -107,7 +105,6 @@ export default [
       "public/packs-test/",
       "public/uploads/",
       "public/pdfcomprezzor/",
-      "spec/cypress/",
       ...ignoreFilesWithSprocketRequireSyntax,
     ],
   },
