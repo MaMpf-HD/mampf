@@ -16,7 +16,6 @@ Rails.application.routes.draw do
     end
   end
 
-
   # mount commontator engine
 
   mount Commontator::Engine => "/commontator"
