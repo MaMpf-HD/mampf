@@ -1,3 +1,5 @@
+import BackendCaller from "./backend_caller";
+
 /**
  * Helper to access FactoryBot factories from Cypress tests.
  *
@@ -7,20 +9,7 @@
  */
 class FactoryBot {
   create(...args) {
-    return cy.request({
-      url: "cypress/factories",
-      method: "post",
-      form: true,
-      failOnStatusCode: false,
-      body: args,
-    }).then((res) => {
-      if (res.status === 201)
-        return res.body;
-
-      let errorMsg = `FactoryBot.create() failed: ${res.body.error}.`;
-      errorMsg += `\n\nStacktrace:\n${res.body.stacktrace}`;
-      throw new Error(errorMsg);
-    });
+    return BackendCaller.callCypressRoute("factories", "FactoryBot.create()", args);
   }
 }
 
