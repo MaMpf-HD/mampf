@@ -9,8 +9,10 @@ Rails.application.routes.draw do
   end
 
   if Rails.env.test?
-  namespace :cypress do
+    namespace :cypress do
       resources :factories, only: :create
+      resources :database_cleaner, only: :create
+      resources :user_creator, only: :create
     end
   end
 

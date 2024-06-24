@@ -21,7 +21,7 @@ class BackendCaller {
       if (res.status === 201)
         return res.body;
 
-      let errorMsg = `${errorSubject} failed: ${res.body.error}.`;
+      let errorMsg = `${errorSubject} failed: ${res.body.error}`;
       errorMsg += `\n\nStacktrace:\n${res.body.stacktrace}`;
       throw new Error(errorMsg);
     });
