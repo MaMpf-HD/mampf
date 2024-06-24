@@ -6,12 +6,9 @@
  * FactoryBot methods.
  */
 class FactoryBot {
-  constructor() {
-  }
-
   create(...args) {
     return cy.request({
-      url: "/factories",
+      url: "cypress/factories",
       method: "post",
       form: true,
       failOnStatusCode: false,

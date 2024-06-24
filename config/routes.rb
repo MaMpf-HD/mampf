@@ -8,8 +8,12 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => "/sidekiq"
   end
 
-  # FactoryBot Cypress Routes for testing
-  resources :factories, only: :create if Rails.env.test?
+  if Rails.env.test?
+  namespace :cypress do
+      resources :factories, only: :create
+    end
+  end
+
 
   # mount commontator engine
 
