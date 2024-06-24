@@ -1,25 +1,35 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This is will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+// // https://on.cypress.io/custom-commands
+
+// beforeEach(() => {
+//   cy.app("clean"); // also see cypress/app_commands/clean.rb
+// });
+
+// Cypress.Commands.add("dragTo", { prevSubject: "element" }, (subject, targetEl) => {
+//   cy.wrap(subject).trigger("dragstart");
+//   cy.get(targetEl).trigger("drop");
+// });
+
+// // https://github.com/shakacode/cypress-on-rails/issues/16#issuecomment-669819936
+// Cypress.Commands.add("login", (user) => {
+//   return cy.request({
+//     method: "POST",
+//     url: "/users/sign_in",
+//     form: true,
+//     failOnStatusCode: true,
+//     body: {
+//       "user[email]": user.email,
+//       "user[password]": user.password,
+//     },
+//   });
+// });
+
+// Cypress.Commands.add("createUserAndLogin", (role) => {
+//   if (!["admin", "editor", "teacher", "generic"].includes(role)) {
+//     throw new Error(`Invalid role: ${role}`);
+//   }
+
+//   // See the scenarios/ folder where these Users are created in Ruby
+//   cy.appScenario(role);
+
+//   cy.login({ email: `${role}@mampf.cypress`, password: "cypress123" });
+// });

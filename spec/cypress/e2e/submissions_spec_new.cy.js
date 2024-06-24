@@ -3,7 +3,7 @@ import FactoryBot from "../support/factorybot";
 describe("Submissions", () => {
   describe("User", () => {
     beforeEach(() => {
-      cy.createUserAndLogin("generic");
+      // cy.createUserAndLogin("generic");
       FactoryBot.create("lecture", "released_for_all");
     });
 
