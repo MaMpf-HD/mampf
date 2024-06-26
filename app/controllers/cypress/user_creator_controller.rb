@@ -1,6 +1,6 @@
 module Cypress
   # Creates a user for use in Cypress tests.
-  class UserCreatorController < Cypress::CypressController
+  class UserCreatorController < CypressController
     def create
       unless params[:role].is_a?(String)
         msg = "First argument must be a string indicating the user role."
