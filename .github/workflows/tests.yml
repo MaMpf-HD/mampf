@@ -95,6 +95,5 @@ jobs:
       - name: Run Cypress tests
         working-directory: docker/test
         run: >
-          docker compose -f ./docker-compose.yml -f ./cypress.yml
-          run --entrypoint="" cypress sh -c
+          docker compose -f ./docker-compose.yml -f ./cypress.yml run cypress sh -c
           "RAILS_ENV=test cypress run --project /mampf-tests/ --e2e --browser chrome"
