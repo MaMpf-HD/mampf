@@ -2,7 +2,7 @@
 import BackendCaller from "./backend_caller";
 
 Cypress.Commands.add("cleanDatabase", () => {
-  return BackendCaller.callCypressRoute("database_cleaner", "Database cleaner", {});
+  return BackendCaller.callCypressRoute("database_cleaner", "cy.cleanDatabase()", {});
 });
 
 beforeEach(() => {
@@ -13,7 +13,7 @@ Cypress.Commands.add("createUser", (role) => {
   if (!["admin", "editor", "teacher", "generic"].includes(role)) {
     throw new Error(`Invalid role: ${role}`);
   }
-  return BackendCaller.callCypressRoute("user_creator", "FactoryBot.createUser()", { role: role });
+  return BackendCaller.callCypressRoute("user_creator", "cy.createUser()", { role: role });
 });
 
 Cypress.Commands.add("login", (user) => {
