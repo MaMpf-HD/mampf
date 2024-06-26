@@ -5,9 +5,9 @@ class BackendCaller {
   /**
    * Calls the given route as POST request to the backend.
    *
-   * @param routeName: name of the route to call
-   * @param errorSubject: subject in the error message
-   * @param args: arguments to pass as body to the POST route
+   * @param routeName name of the route to call
+   * @param errorSubject subject in the error message
+   * @param args arguments to pass as body to the POST route
    * @returns the response body of the route as Cypress promise (not native promise!)
    */
   static callCypressRoute(routeName, errorSubject, args) {
