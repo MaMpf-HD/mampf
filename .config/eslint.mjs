@@ -23,6 +23,17 @@ const ignoreFilesWithSprocketRequireSyntax = [
   "vendor/assets/javascripts/thredded_timeago.js",
 ];
 
+const ignoreCypressArchivedTests = [
+  "spec/cypress/e2e/admin_spec.cy.archive.js",
+  "spec/cypress/e2e/courses_spec.cy.archive.js",
+  "spec/cypress/e2e/media_spec.cy.archive.js",
+  "spec/cypress/e2e/search_spec.cy.archive.js",
+  "spec/cypress/e2e/submissions_spec.cy.archive.js",
+  "spec/cypress/e2e/thredded_spec.cy.archive.js",
+  "spec/cypress/e2e/tutorials_spec.cy.archive.js",
+  "spec/cypress/e2e/watchlists_spec.cy.archive.js",
+];
+
 const customGlobals = {
   TomSelect: "readable",
   bootstrap: "readable",
@@ -106,6 +117,7 @@ export default [
       "public/uploads/",
       "public/pdfcomprezzor/",
       ...ignoreFilesWithSprocketRequireSyntax,
+      ...ignoreCypressArchivedTests,
     ],
   },
   {
