@@ -88,10 +88,13 @@ jobs:
         # As the docker-compose.yml file uses contexts like "./../..", we have
         # to change the working directory here.
         working-directory: docker/test
-        run: |
-          docker buildx bake -f ./docker-compose.yml -f ./cypress.yml -f ./../../.github/workflows/docker-compose-cache.json
+        run: >
+          docker buildx bake -f ./docker-compose.yml -f ./cypress.yml
+          -f ./../../.github/workflows/docker-compose-cache.json
       
       - name: Run Cypress tests
         working-directory: docker/test
-        run: |
-          docker compose run --entrypoint="" cypress sh -c "RAILS_ENV=test cypress run --project /mampf-tests/ --e2e --browser chrome"
+        run: >
+          docker compose -f ./docker-compose.yml -f ./cypress.yml
+          run --entrypoint="" cypress sh -c
+          "RAILS_ENV=test cypress run --project /mampf-tests/ --e2e --browser chrome"
