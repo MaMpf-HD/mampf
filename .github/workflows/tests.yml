@@ -60,3 +60,38 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
           codecov_yml_path: ./config/codecov.yml
+
+  # Cypress end-to-end tests
+  e2e-tests:
+    name: e2e (Cypress)
+    environment: testing
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+            submodules: recursive
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build docker images
+        # As the docker-compose.yml file uses contexts like "./../..", we have
+        # to change the working directory here.
+        working-directory: docker/test
+        run: |
+          docker buildx bake -f ./docker-compose.yml -f ./cypress.yml -f ./../../.github/workflows/docker-compose-cache.json
+      
+      - name: Run Cypress tests
+        working-directory: docker/test
+        run: |
+          docker compose run --entrypoint="" cypress sh -c "RAILS_ENV=test cypress run --project /mampf-tests/ --e2e --browser chrome"
