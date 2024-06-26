@@ -90,6 +90,7 @@ jobs:
         working-directory: docker/test
         run: >
           docker buildx bake -f ./docker-compose.yml -f ./cypress.yml
+          -f ./../../.github/workflows/docker-compose-cache.json
       
       - name: Run Cypress tests
         working-directory: docker/test
