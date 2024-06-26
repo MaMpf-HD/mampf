@@ -3,7 +3,7 @@
 services:
   cypress:
     # https://on.cypress.io/command-line#cypress-open
-    entrypoint: cypress open --project /mampf-tests/
+    entrypoint: cypress open --project /mampf-tests/ --e2e --browser chrome 
     environment:
       # for X11/Wayland in WSLg
       - DISPLAY
