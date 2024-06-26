@@ -180,17 +180,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
     t.index ["division_id"], name: "index_division_course_joins_on_division_id"
   end
 
-  create_table "division_translations", force: :cascade do |t|
-    t.bigint "division_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "name"
-    t.index ["division_id"], name: "index_division_translations_on_division_id"
-    t.index ["locale"], name: "index_division_translations_on_locale"
-  end
-
   create_table "divisions", force: :cascade do |t|
+    t.text "name"
     t.bigint "program_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -414,24 +405,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
     t.index ["tag_id"], name: "index_notions_on_tag_id"
   end
 
-  create_table "program_translations", force: :cascade do |t|
-    t.bigint "program_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "name"
-    t.index ["locale"], name: "index_program_translations_on_locale"
-    t.index ["program_id"], name: "index_program_translations_on_program_id"
-  end
-
   create_table "programs", force: :cascade do |t|
+    t.text "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "subject_id"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
-  create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "user_id"
     t.text "code"
@@ -502,22 +484,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
     t.index ["talk_id"], name: "index_speaker_talk_joins_on_talk_id"
   end
 
-  create_table "subject_translations", force: :cascade do |t|
-    t.bigint "subject_id", null: false
-    t.string "locale", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "name"
-    t.index ["locale"], name: "index_subject_translations_on_locale"
-    t.index ["subject_id"], name: "index_subject_translations_on_subject_id"
-  end
-
   create_table "subjects", force: :cascade do |t|
+    t.text "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"
