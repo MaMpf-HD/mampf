@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_27_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -940,6 +940,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "division_translations", "divisions"
   add_foreign_key "divisions", "programs"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
@@ -951,6 +952,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   add_foreign_key "links", "media", column: "linked_medium_id"
   add_foreign_key "medium_tag_joins", "media"
   add_foreign_key "medium_tag_joins", "tags"
+  add_foreign_key "program_translations", "programs"
   add_foreign_key "programs", "subjects"
   add_foreign_key "quiz_certificates", "media", column: "quiz_id"
   add_foreign_key "quiz_certificates", "users"
@@ -958,6 +960,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   add_foreign_key "referrals", "media"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "subject_translations", "subjects"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"
