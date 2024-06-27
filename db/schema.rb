@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_27_140328) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -181,16 +181,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   end
 
   create_table "division_translations", force: :cascade do |t|
-    t.bigint "division_id", null: false
+    t.text "name"
     t.string "locale", null: false
+    t.bigint "division_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "name"
-    t.index ["division_id"], name: "index_division_translations_on_division_id"
+    t.index ["division_id", "locale"], name: "index_division_translations_on_division_id_and_locale", unique: true
     t.index ["locale"], name: "index_division_translations_on_locale"
   end
 
   create_table "divisions", force: :cascade do |t|
+    t.text "name"
     t.bigint "program_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -415,23 +416,24 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   end
 
   create_table "program_translations", force: :cascade do |t|
-    t.bigint "program_id", null: false
+    t.text "name"
     t.string "locale", null: false
+    t.bigint "program_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "name"
     t.index ["locale"], name: "index_program_translations_on_locale"
-    t.index ["program_id"], name: "index_program_translations_on_program_id"
+    t.index ["program_id", "locale"], name: "index_program_translations_on_program_id_and_locale", unique: true
   end
 
   create_table "programs", force: :cascade do |t|
+    t.text "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "subject_id"
     t.index ["subject_id"], name: "index_programs_on_subject_id"
   end
 
-  create_table "quiz_certificates", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "quiz_certificates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "quiz_id", null: false
     t.bigint "user_id"
     t.text "code"
@@ -503,21 +505,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   end
 
   create_table "subject_translations", force: :cascade do |t|
-    t.bigint "subject_id", null: false
+    t.text "name"
     t.string "locale", null: false
+    t.bigint "subject_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "name"
     t.index ["locale"], name: "index_subject_translations_on_locale"
-    t.index ["subject_id"], name: "index_subject_translations_on_subject_id"
+    t.index ["subject_id", "locale"], name: "index_subject_translations_on_subject_id_and_locale", unique: true
   end
 
   create_table "subjects", force: :cascade do |t|
+    t.text "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "submissions", id: :uuid, default: -> { "public.gen_random_uuid()" }, force: :cascade do |t|
+  create_table "submissions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.bigint "tutorial_id", null: false
     t.bigint "assignment_id", null: false
     t.text "token"
@@ -940,6 +943,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "course_self_joins", "courses"
+  add_foreign_key "division_translations", "divisions"
   add_foreign_key "divisions", "programs"
   add_foreign_key "feedbacks", "users"
   add_foreign_key "imports", "media"
@@ -951,6 +955,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   add_foreign_key "links", "media", column: "linked_medium_id"
   add_foreign_key "medium_tag_joins", "media"
   add_foreign_key "medium_tag_joins", "tags"
+  add_foreign_key "program_translations", "programs"
   add_foreign_key "programs", "subjects"
   add_foreign_key "quiz_certificates", "media", column: "quiz_id"
   add_foreign_key "quiz_certificates", "users"
@@ -958,6 +963,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_04_22_200000) do
   add_foreign_key "referrals", "media"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"
+  add_foreign_key "subject_translations", "subjects"
   add_foreign_key "submissions", "assignments"
   add_foreign_key "submissions", "tutorials"
   add_foreign_key "talk_tag_joins", "tags"
