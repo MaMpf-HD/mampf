@@ -1,6 +1,8 @@
+<%= javascript_include_tag 'cards' %>
+
 <% I18n.with_locale(medium.locale_with_inheritance) do %>
-  <div class="card bg-mdb-color-lighten-7 <%= medium_border(medium) %>">
-    <div class="card-header bg-mdb-color-lighten-1">
+  <div class="mampf-card card <%= medium_border(medium) %>">
+    <div class="card-header">
       <div style="display: flex; justify-content: space-between;">
         <div>
           <% if lecture&.imported_media&.include?(medium) %>
@@ -93,19 +95,21 @@
     </div>
     <% cache [medium, from == 'tag', ref_link] do %>
       <% unless from == 'tag' %>
+        <div class="mampf-card-image-wrapper">
         <% if medium.screenshot.present? %>
           <%= image_tag(medium.screenshot_url_with_host,
                         alt: "Card image cap",
-                        class: "card-img-top") %>
+                        class: "mampf-card-image") %>
         <% elsif medium.manuscript.present? %>
           <%= image_tag(medium.manuscript_screenshot_url || '',
                         alt: "Card image cap",
-                        class: "card-img-top manuscript-thumbnail") %>
+                        class: "mampf-card-image manuscript-thumbnail") %>
         <% elsif medium.geogebra_screenshot_url.present? %>
           <%= image_tag(medium.geogebra_screenshot_url,
                         alt: 'Card image cap',
-                        class: 'card-img-top') %>
+                        class: 'mampf-card-image') %>
         <% end %>
+        </div>
       <% end %>
       <div class="card-body">
         <% unless medium.caption.nil? %>
@@ -135,7 +139,7 @@
           <% end %>
         </div>
       </div>
-      <div class="card-footer bg-mdb-color-lighten-7 text-center">
+      <div class="card-footer text-center">
         <div id="media-box-footer">
           <%= render partial: 'media/medium/buttons',
                      locals: { medium: medium,
