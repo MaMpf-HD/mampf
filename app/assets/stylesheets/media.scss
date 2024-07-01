@@ -35,7 +35,7 @@
   justify-content: flex-end;
 }
 
-.card-header {
+.mampf-card-header {
   padding: 0.75rem 1.25rem;
   background-color: #223e62;
 }
@@ -45,7 +45,7 @@
 }
 
 .mampf-card {
-  border: 2px solid #717171;
+  border: 2px solid #223e62;
   position: relative;
   overflow: hidden;
   background: linear-gradient(0deg, #ecf1f8 0%, #fcfdfd 60%);

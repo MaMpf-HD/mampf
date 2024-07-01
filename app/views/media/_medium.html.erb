@@ -2,7 +2,7 @@
 
 <% I18n.with_locale(medium.locale_with_inheritance) do %>
   <div class="mampf-card card <%= medium_border(medium) %>">
-    <div class="card-header">
+    <div class="mampf-card-header">
       <div style="display: flex; justify-content: space-between;">
         <div>
           <% if lecture&.imported_media&.include?(medium) %>
