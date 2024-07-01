@@ -151,16 +151,20 @@
         </div>
     <% end %>
     <% if medium.commontator_thread.comments.present? %>
-      <hr>
+      <hr class="media-hr">
+      <div class="card-text-end">
       <%= link_to "#{medium.commontator_thread.comments.size} " \
                   "#{medium.commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
                   show_media_comments_path(medium),
                   class: 'text-dark' %>
+      </div>
     <% elsif !medium.commontator_thread.is_closed? %>
-      <hr>
+      <hr class="media-hr">
+      <div class="card-text-end">
       <%= link_to t('comments.comment_verb'),
                   show_media_comments_path(medium),
                   class: 'text-dark' %>
+      </div>
     <% end %>
       </div>
   </div>
