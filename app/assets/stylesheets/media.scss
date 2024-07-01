@@ -59,16 +59,16 @@
 }
 
 .mampf-card:hover::after {
-  opacity: 0.15;
+  opacity: 0.12;
 }
 
 .mampf-card::after {
   content: '';
   position: absolute;
-  width: 200px;
-  height: 200px;
-  top: calc(var(--y, 0) * 1px - 100px);
-  left: calc(var(--x, 0) * 1px - 100px);
+  width: 160px;
+  height: 160px;
+  top: calc(var(--y, 0) * 1px - 80px);
+  left: calc(var(--x, 0) * 1px - 80px);
   opacity: 0;
   background: radial-gradient(white, #00000000 80%);
   transition: opacity 200ms;
@@ -79,11 +79,35 @@
   overflow: hidden;
   display: flex;
   justify-content: center;
+  position: relative;
+
+  &:hover .interactive-play-hover {
+    visibility: visible;
+    opacity: 1;
+  }
 }
 
 .mampf-card-image {
   margin: -5px; // crop image to not display scroll bars present in some images
   width: 100%;
+}
+
+.interactive-play-hover {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.75);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 150ms ease-in-out, opacity 150ms ease-in-out;
+}
+
+.interactive-play-hover-icon {
+  font-size: 2.3em;
+  color: white;
 }
 
 #media-card-subheader {

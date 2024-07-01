@@ -97,6 +97,10 @@
       <% unless from == 'tag' %>
         <div class="mampf-card-image-wrapper">
         <% if medium.screenshot.present? %>
+          <a href="<%= play_medium_path(medium) %>"
+            class="interactive-play-hover" target="_blank">
+            <i class="interactive-play-hover-icon bi bi-play-fill"></i>
+          </a>
           <%= image_tag(medium.screenshot_url_with_host,
                         alt: "Card image cap",
                         class: "mampf-card-image") %>
