@@ -10,7 +10,7 @@ check_for_preseeds() {
     done
     rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
     rails db:create:interactions
-    rails db:migrate
+    rails db:schema:load
   fi
   if [[ "${UPLOADS_PRESEED_URL}" ]]; then
     echo "Found Upload Preseed with URL: $UPLOAD_PRESEED_URL"
@@ -19,6 +19,12 @@ check_for_preseeds() {
     bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
   fi
 }
+
+if [ "$RAILS_ENV" = "production" ]
+then
+    echo "This script is not intended for usage with RAILs_ENV=production. Aborting."
+    exit 1
+fi
 
 echo Waiting for redis to come online
 wait-for-it redis:6379 -t 30 || exit 1
@@ -41,13 +47,8 @@ then
         bundle exec rails db:create:interactions
         bundle exec rails db:create
     fi
-    echo running: bundle exec rails db:migrate
-    bundle exec rails db:migrate
-    if [ "$RAILS_ENV" = "production" ]
-    then
-        echo running: bundle exec rails assets:precompile
-        bundle exec rails assets:precompile
-    fi
+    echo running: bundle exec rails db:schema:load
+    bundle exec rails db:schema:load
     echo Waiting for SOLR to come online
     wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
     bundle exec rake sunspot:solr:reindex &
