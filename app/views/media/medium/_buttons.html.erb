@@ -1,92 +1,68 @@
 <% if medium.video.present? %>
-  <div class="me-2">
+  <div class="m-1">
     <a href="<%= play_medium_path(medium) %>"
        class="no-deco"
        target="_blank">
-      <i class="material-icons text-secondary"
-         data-bs-toggle="tooltip"
-         data-placement="bottom"
-         title="<%= t('video.play') %>">
-        play_arrow
-      </i>
+      <i class="bi bi-play-fill text-secondary fs-5"
+        title="<%= t('video.play') %>"></i>
     </a>
   </div>
 <% end %>
 
 <% if medium.manuscript.present? %>
-  <div class="me-2">
+  <div class="m-1">
     <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"
        class="no-deco"
        target="_blank">
-      <i class="material-icons text-secondary"
-         data-bs-toggle="tooltip"
-         data-placement="bottom"
-         title="<%= t('manuscript.view') %>">
-        library_books
-      </i>
+      <i class="bi bi-file-earmark-text-fill text-secondary fs-5"
+        title="<%= t('manuscript.view') %>"></i>
     </a>
   </div>
 <% end %>
 
 <% if medium.geogebra.present? %>
-  <div class="me-2">
+  <div class="m-1">
     <a href="<%= geogebra_medium_path(medium) %>"
        class="no-deco"
        target="_blank">
-      <i class="material-icons text-secondary"
-         data-bs-toggle="tooltip"
-         data-placement="bottom"
-         title="<%= t('geogebra.view') %>">
-        leak_add
-      </i>
+      <i class="bi bi-bullseye text-secondary fs-5"
+        title="<%= t('geogebra.view') %>"></i>
     </a>
   </div>
 <% end %>
 
 <% if medium.external_reference_link.present? %>
-  <div class="me-2">
+  <div class="m-1">
     <a href="<%= medium.external_reference_link %>"
        class="no-deco"
        target="_blank">
-      <i class="material-icons text-secondary"
-         data-bs-toggle="tooltip"
-         data-placement="bottom"
-         title="<%= external_link_description_not_empty(medium) %>">
-        link
-      </i>
+      <i class="bi bi-link-45deg text-secondary fs-5"
+        title="<%= external_link_description_not_empty(medium) %>"></i>
     </a>
   </div>
 <% end %>
 
 <% if medium.sort == 'Quiz' && medium.quiz_graph %>
-  <div class="me-2">
+  <div class="m-1">
     <a href="<%= take_quiz_path(medium) %>"
        class="no-deco"
        target="_blank">
-      <i class="material-icons text-secondary"
-         data-bs-toggle="tooltip"
-         data-placement="bottom"
-         title="<%= t('quiz.start') %>">
-        videogame_asset
-      </i>
+      <i class="bi bi-joystick text-secondary fs-5"
+        title="<%= t('quiz.start') %>"></i>
     </a>
   </div>
 <% end %>
 
-<div class="me-2">
+<div class="m-1">
   <a href="<%= medium_path(medium) %>"
      class="no-deco">
-    <i class="material-icons text-secondary"
-       data-bs-toggle="tooltip"
-       data-placement="bottom"
-       title="<%= t('medium.details') %>">
-      info
-    </i>
+    <i class="bi bi-info-circle-fill text-secondary fs-5"
+      title="<%= t('medium.details') %>"></i>
   </a>
 </div>
 
 <% if medium.video.present? %>
-  <div class="download-button me-2">
+  <div class="download-button m-1 d-flex align-items-center">
     <a href="<%= medium.video_download_url %>"
        download="<%= video_download_file(medium) %>"
        class="triggerDownload"
@@ -105,7 +81,7 @@
 <% end %>
 
 <% if medium.manuscript.present? %>
-  <div class="download-button">
+  <div class="download-button d-flex align-items-center">
     <a href="<%= medium.manuscript_download_url %>"
        download="<%= manuscript_download_file(medium) %>"
        class="triggerDownload"
