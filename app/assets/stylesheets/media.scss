@@ -1,6 +1,26 @@
-// Place all the styles related to the media controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
+.media-grid {
+  @include make-col-ready();
+
+  @include media-breakpoint-up(sm) {
+    @include make-col(12);
+  }
+
+  @include media-breakpoint-up(md) {
+    @include make-col(6);
+  }
+
+  @media (min-width: 1100px) {
+    @include make-col(4);
+  }
+
+  @media (min-width: 1300px) {
+    @include make-col(3);
+  }
+
+  @media (min-width: 1700px) {
+    @include make-col(2.4);
+  }
+}
 
 .hidden {
   display: none;
