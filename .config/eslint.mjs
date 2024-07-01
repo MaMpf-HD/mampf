@@ -11,6 +11,7 @@
 import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
 import erb from "eslint-plugin-erb";
+import pluginCypress from "eslint-plugin-cypress/flat";
 import globals from "globals";
 
 const ignoreFilesWithSprocketRequireSyntax = [
@@ -20,6 +21,17 @@ const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/javascripts/show_clicker_assets.js",
   "app/assets/javascripts/geogebra_assets.js",
   "vendor/assets/javascripts/thredded_timeago.js",
+];
+
+const ignoreCypressArchivedTests = [
+  "spec/cypress/e2e/admin_spec.cy.archive.js",
+  "spec/cypress/e2e/courses_spec.cy.archive.js",
+  "spec/cypress/e2e/media_spec.cy.archive.js",
+  "spec/cypress/e2e/search_spec.cy.archive.js",
+  "spec/cypress/e2e/submissions_spec.cy.archive.js",
+  "spec/cypress/e2e/thredded_spec.cy.archive.js",
+  "spec/cypress/e2e/tutorials_spec.cy.archive.js",
+  "spec/cypress/e2e/watchlists_spec.cy.archive.js",
 ];
 
 const customGlobals = {
@@ -89,14 +101,11 @@ const customGlobals = {
   renderMathInElement: "readable",
 };
 
-// We don't have cypress linting yet, as the Cypress ESLint plugin
-// doesn't support the new flat config yet
-// https://github.com/cypress-io/eslint-plugin-cypress/issues/146
-
 export default [
   js.configs.recommended,
   // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
   erb.configs.recommended,
+  pluginCypress.configs.recommended,
   // Globally ignore the following paths
   {
     ignores: [
@@ -107,8 +116,8 @@ export default [
       "public/packs-test/",
       "public/uploads/",
       "public/pdfcomprezzor/",
-      "spec/cypress/",
       ...ignoreFilesWithSprocketRequireSyntax,
+      ...ignoreCypressArchivedTests,
     ],
   },
   {
