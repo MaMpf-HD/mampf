@@ -162,6 +162,11 @@
   background: linear-gradient(135deg, #223e6255 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(225deg, #223e62 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(315deg, #223e6255 25%, transparent 25%) 0px 0/ 20px 20px, linear-gradient(45deg, #223e62 25%, #ffffff 25%) 0px 0/ 20px 20px;
 }
 
+.card-body {
+  // same as card-footer border
+  border-top: var(--bs-card-border-width) solid var(--bs-card-border-color);
+}
+
 #media-card-subheader {
   display: flex;
   justify-content: space-between;
