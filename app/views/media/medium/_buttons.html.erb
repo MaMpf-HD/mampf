@@ -1,10 +1,9 @@
 <% if medium.video.present? %>
   <div class="m-1">
     <a href="<%= play_medium_path(medium) %>"
-       class="no-deco"
-       target="_blank">
-      <i class="bi bi-play-fill text-secondary fs-5"
-        title="<%= t('video.play') %>"></i>
+       class="btn btn-secondary" role="button"
+       target="_blank" title="<%= t('video.play') %>">
+      <i class="bi bi-play-fill fs-6"></i>
     </a>
   </div>
 <% end %>
@@ -12,10 +11,9 @@
 <% if medium.manuscript.present? %>
   <div class="m-1">
     <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"
-       class="no-deco"
-       target="_blank">
-      <i class="bi bi-file-earmark-text-fill text-secondary fs-5"
-        title="<%= t('manuscript.view') %>"></i>
+       class="btn btn-secondary" role="button"
+       target="_blank" title="<%= t('manuscript.view') %>">
+      <i class="bi bi-file-earmark-text-fill fs-6"></i>
     </a>
   </div>
 <% end %>
@@ -23,10 +21,9 @@
 <% if medium.geogebra.present? %>
   <div class="m-1">
     <a href="<%= geogebra_medium_path(medium) %>"
-       class="no-deco"
-       target="_blank">
-      <i class="bi bi-bullseye text-secondary fs-5"
-        title="<%= t('geogebra.view') %>"></i>
+       class="btn btn-secondary" role="button"
+       target="_blank" title="<%= t('geogebra.view') %>">
+      <i class="bi bi-bullseye fs-6"></i>
     </a>
   </div>
 <% end %>
@@ -34,10 +31,9 @@
 <% if medium.external_reference_link.present? %>
   <div class="m-1">
     <a href="<%= medium.external_reference_link %>"
-       class="no-deco"
-       target="_blank">
-      <i class="bi bi-link-45deg text-secondary fs-5"
-        title="<%= external_link_description_not_empty(medium) %>"></i>
+       class="btn btn-secondary" role="button"
+       target="_blank" title="<%= external_link_description_not_empty(medium) %>">
+      <i class="bi bi-link-45deg fs-6"></i>
     </a>
   </div>
 <% end %>
@@ -45,56 +41,41 @@
 <% if medium.sort == 'Quiz' && medium.quiz_graph %>
   <div class="m-1">
     <a href="<%= take_quiz_path(medium) %>"
-       class="no-deco"
-       target="_blank">
-      <i class="bi bi-joystick text-secondary fs-5"
-        title="<%= t('quiz.start') %>"></i>
+       class="btn btn-secondary" role="button"
+       target="_blank" title="<%= t('quiz.start') %>">
+      <i class="bi bi-joystick fs-6"></i>
     </a>
   </div>
 <% end %>
 
 <div class="m-1">
   <a href="<%= medium_path(medium) %>"
-     class="no-deco">
-    <i class="bi bi-info-circle-fill text-secondary fs-5"
-      title="<%= t('medium.details') %>"></i>
+     class="btn btn-secondary" role="button"
+     title="<%= t('medium.details') %>">
+    <i class="bi bi-info-circle-fill fs-6"></i>
   </a>
 </div>
 
-<% if medium.video.present? %>
-  <div class="download-button m-1 d-flex align-items-center">
+<div class="media-download-buttons">
+  <% if medium.video.present? %>
     <a href="<%= medium.video_download_url %>"
-       download="<%= video_download_file(medium) %>"
-       class="triggerDownload"
-       data-medium="<%= medium.id %>"
-       data-sort="video">
-      <span>
-        <span class="badge bg-secondary"
-              data-bs-toggle="tooltip"
-              data-placement="bottom"
-              title="<%= t('video.download') %>">
-          &darr;mp4
-        </span>
-      </span>
+      download="<%= video_download_file(medium) %>"
+      class="triggerDownload download-button btn btn-secondary" role="button"
+      data-medium="<%= medium.id %>"
+      data-sort="video"
+      title="<%= t('video.download') %>">
+      &darr;mp4
     </a>
-  </div>
-<% end %>
+  <% end %>
 
-<% if medium.manuscript.present? %>
-  <div class="download-button d-flex align-items-center">
+  <% if medium.manuscript.present? %>
     <a href="<%= medium.manuscript_download_url %>"
-       download="<%= manuscript_download_file(medium) %>"
-       class="triggerDownload"
-       data-medium="<%= medium.id %>"
-       data-sort="manuscript">
-      <span>
-        <span class="badge bg-secondary"
-              data-bs-toggle="tooltip"
-              data-placement="bottom"
-              title="<%= t('manuscript.download') %>">
-          &darr;pdf
-        </span>
-      </span>
+      download="<%= manuscript_download_file(medium) %>"
+      class="triggerDownload download-button btn btn-secondary" role="button"
+      data-medium="<%= medium.id %>"
+      data-sort="manuscript"
+      title="<%= t('manuscript.download') %>">
+      &darr;pdf
     </a>
-  </div>
-<% end %>
+  <% end %>
+</div>
