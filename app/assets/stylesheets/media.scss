@@ -107,7 +107,7 @@
   justify-content: center;
   position: relative;
 
-  &:hover .interactive-play-hover {
+  &:hover .interactive-hover {
     visibility: visible;
     opacity: 1;
   }
@@ -118,7 +118,7 @@
   width: 100%;
 }
 
-.interactive-play-hover {
+.interactive-hover {
   width: 100%;
   height: 100%;
   position: absolute;
@@ -131,9 +131,15 @@
   transition: visibility 150ms ease-in-out, opacity 150ms ease-in-out;
 }
 
-.interactive-play-hover-icon {
+.interactive-hover-icon {
   font-size: 2.3em;
   color: white;
+}
+
+.empty-default-screenshot {
+  width: 100%;
+  height: 8em;
+  background: linear-gradient(135deg, #223e6255 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(225deg, #223e62 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(315deg, #223e6255 25%, transparent 25%) 0px 0/ 20px 20px, linear-gradient(45deg, #223e62 25%, #ffffff 25%) 0px 0/ 20px 20px;
 }
 
 #media-card-subheader {

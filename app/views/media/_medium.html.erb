@@ -96,23 +96,42 @@
     <% cache [medium, from == 'tag', ref_link] do %>
       <% unless from == 'tag' %>
         <div class="mampf-card-image-wrapper">
-        <% if medium.screenshot.present? %>
-          <a href="<%= play_medium_path(medium) %>"
-            class="interactive-play-hover" target="_blank">
-            <i class="interactive-play-hover-icon bi bi-play-fill"></i>
-          </a>
-          <%= image_tag(medium.screenshot_url_with_host,
-                        alt: "Card image cap",
-                        class: "mampf-card-image") %>
-        <% elsif medium.manuscript.present? %>
-          <%= image_tag(medium.manuscript_screenshot_url || '',
-                        alt: "Card image cap",
-                        class: "mampf-card-image manuscript-thumbnail") %>
-        <% elsif medium.geogebra_screenshot_url.present? %>
-          <%= image_tag(medium.geogebra_screenshot_url,
-                        alt: 'Card image cap',
-                        class: 'mampf-card-image') %>
-        <% end %>
+          <!-- Interactive hover -->
+          <% if medium.video.present? %>
+            <a href="<%= play_medium_path(medium) %>"
+              class="interactive-hover" target="_blank"
+              title="<%= t('video.play') %>">
+              <i class="interactive-hover-icon bi bi-play-fill"></i>
+            </a>
+          <% elsif medium.manuscript.present? %>
+            <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"   
+              class="interactive-hover" target="_blank"
+              title="<%= t('manuscript.view') %>">
+              <i class="interactive-hover-icon bi bi-file-earmark-text-fill"></i>
+            </a>
+          <% elsif medium.sort == 'Quiz' && medium.quiz_graph %>
+            <a href="<%= take_quiz_path(medium) %>"
+              class="interactive-hover" target="_blank" title="<%= t('quiz.start') %>">
+              <i class="interactive-hover-icon bi bi-joystick"></i>
+            </a>
+          <% end %>
+
+          <!-- Screenshots -->
+          <% if medium.screenshot.present? %>
+            <%= image_tag(medium.screenshot_url_with_host,
+                          alt: "Card image cap",
+                          class: "mampf-card-image") %>
+          <% elsif medium.manuscript.present? %>
+            <%= image_tag(medium.manuscript_screenshot_url || '',
+                          alt: "Card image cap",
+                          class: "mampf-card-image manuscript-thumbnail") %>
+          <% elsif medium.geogebra_screenshot_url.present? %>
+            <%= image_tag(medium.geogebra_screenshot_url,
+                          alt: 'Card image cap',
+                          class: 'mampf-card-image') %>
+          <% else %>
+            <div class="empty-default-screenshot"></div>
+          <% end %>
         </div>
       <% end %>
       <div class="card-body">
