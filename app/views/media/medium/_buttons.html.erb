@@ -1,7 +1,7 @@
 <% if medium.video.present? %>
   <div class="m-1">
     <a href="<%= play_medium_path(medium) %>"
-       class="btn btn-secondary" role="button"
+       class="btn btn-outline-secondary" role="button"
        target="_blank" title="<%= t('video.play') %>">
       <i class="bi bi-play-fill fs-6"></i>
     </a>
@@ -11,7 +11,7 @@
 <% if medium.manuscript.present? %>
   <div class="m-1">
     <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"
-       class="btn btn-secondary" role="button"
+       class="btn btn-outline-secondary" role="button"
        target="_blank" title="<%= t('manuscript.view') %>">
       <i class="bi bi-file-earmark-text-fill fs-6"></i>
     </a>
@@ -21,7 +21,7 @@
 <% if medium.geogebra.present? %>
   <div class="m-1">
     <a href="<%= geogebra_medium_path(medium) %>"
-       class="btn btn-secondary" role="button"
+       class="btn btn-outline-secondary" role="button"
        target="_blank" title="<%= t('geogebra.view') %>">
       <i class="bi bi-bullseye fs-6"></i>
     </a>
@@ -31,7 +31,7 @@
 <% if medium.external_reference_link.present? %>
   <div class="m-1">
     <a href="<%= medium.external_reference_link %>"
-       class="btn btn-secondary" role="button"
+       class="btn btn-outline-secondary" role="button"
        target="_blank" title="<%= external_link_description_not_empty(medium) %>">
       <i class="bi bi-link-45deg fs-6"></i>
     </a>
@@ -41,7 +41,7 @@
 <% if medium.sort == 'Quiz' && medium.quiz_graph %>
   <div class="m-1">
     <a href="<%= take_quiz_path(medium) %>"
-       class="btn btn-secondary" role="button"
+       class="btn btn-outline-secondary" role="button"
        target="_blank" title="<%= t('quiz.start') %>">
       <i class="bi bi-joystick fs-6"></i>
     </a>
@@ -50,7 +50,7 @@
 
 <div class="m-1">
   <a href="<%= medium_path(medium) %>"
-     class="btn btn-secondary" role="button"
+     class="btn btn-outline-secondary" role="button"
      title="<%= t('medium.details') %>">
     <i class="bi bi-info-circle-fill fs-6"></i>
   </a>
@@ -60,7 +60,7 @@
   <% if medium.video.present? %>
     <a href="<%= medium.video_download_url %>"
       download="<%= video_download_file(medium) %>"
-      class="triggerDownload download-button btn btn-secondary" role="button"
+      class="triggerDownload download-button btn btn-outline-secondary" role="button"
       data-medium="<%= medium.id %>"
       data-sort="video"
       title="<%= t('video.download') %>">
@@ -71,7 +71,7 @@
   <% if medium.manuscript.present? %>
     <a href="<%= medium.manuscript_download_url %>"
       download="<%= manuscript_download_file(medium) %>"
-      class="triggerDownload download-button btn btn-secondary" role="button"
+      class="triggerDownload download-button btn btn-outline-secondary" role="button"
       data-medium="<%= medium.id %>"
       data-sort="manuscript"
       title="<%= t('manuscript.download') %>">
