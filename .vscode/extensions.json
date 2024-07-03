@@ -3,6 +3,7 @@
         "shopify.ruby-lsp",
         "dbaeumer.vscode-eslint",
         "streetsidesoftware.code-spell-checker",
-        "streetsidesoftware.code-spell-checker-german"
+        "streetsidesoftware.code-spell-checker-german",
+        "nefrob.vscode-just-syntax"
     ]
 }
