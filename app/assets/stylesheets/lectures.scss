@@ -69,9 +69,14 @@
 
 .lecture-tag {
   background-color: #dae0e5;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 
-  &:hover {
+  &:hover,
+  &:focus {
+    text-decoration: none;
+    background-color: #545b62 !important;
     color: white !important;
+    cursor: pointer !important;
   }
 }
 
