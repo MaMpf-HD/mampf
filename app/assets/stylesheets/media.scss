@@ -174,7 +174,7 @@
 #media-card-subheader {
   display: flex;
   justify-content: space-between;
-  word-break: break-all;
+  word-break: auto-phrase;
 }
 
 #video-wait {
