@@ -34,13 +34,12 @@
   <div class="row pt-2 ps-4 pe-4" id="sortableWatchlistMedia">
     <% @watchlist_entries.each do |entry| %>
       <div class="media-grid pb-2">
-        <%= render partial: 'watchlist_entries/entry',
+        <%= render partial: 'media/medium',
                    locals: { medium: entry.medium,
                              entry: entry,
                              tags: entry.medium.tags,
-                             from: 'media',
+                             from: 'watchlist',
                              ref_link: nil,
-                             data: { id: entry.id },
                              lecture: entry.medium.lecture } %>
       </div>
     <% end %>

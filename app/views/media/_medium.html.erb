@@ -3,7 +3,8 @@
 <% I18n.with_locale(medium.locale_with_inheritance) do %>
   <div class="mampf-card card <%= medium_border(medium) %>">
     <div class="mampf-card-header">
-      <div class="d-flex justify-content-between align-items-center"style="gap: 0.4em">
+      <div class="d-flex justify-content-between align-items-center"
+           style="gap: 0.4em">
         <div>
           <% if lecture&.imported_media&.include?(medium) %>
             <i class="fas fa-file-import text-light"
@@ -24,16 +25,21 @@
           <% end %>
         </div>
 
-        <div class="mampf-header-end d-flex justify-content-between align-items-center">
+        <div class="mampf-header-end d-flex justify-content-between align-items-center"
+             style="gap: 0.2em">
+          <!-- Locale text -->
           <% if current_user.locale.to_s != medium.locale_with_inheritance %>
             <small title="<%= t('medium.different_language',
-                               language: t('locales.' + (medium.locale_with_inheritance ||
+                               language: t('locales.' + 
+                                          (medium.locale_with_inheritance ||
                                               I18n.default_locale.to_s),
                                            locale: current_user.locale),
                                locale: current_user.locale) %>">
               <%= medium.locale_with_inheritance.to_s %>
             </small>
           <% end %>
+
+          <!-- Special icons for editors -->
           <% if !medium.published? && !medium.publisher %>
             <i class="fas fa-eye-slash redtext"
                tabindex="-1"
@@ -63,23 +69,43 @@
             </i>
           <% end %>
 
-          <% if !medium.containing_watchlists(current_user).empty? %>
+          <!-- Watchlist -->
+          <% if from == "watchlist" %>
+            <% if @watchlist.owned_by?(current_user) %>
+              <%= link_to '',
+                          watchlist_entry_path(entry,
+                                              watchlist: @watchlist.id,
+                                              reverse: params[:reverse],
+                                              all: params[:all],
+                                              page: params[:page],
+                                              per: params[:per]),
+                          class: 'btn bi bi-x-circle-fill',
+                          style: 'text-decoration: none;',
+                          data: { toggle: 'tooltip',
+                                  placement: 'bottom',
+                                  confirm: t('watchlist_entry.remove_confirm') },
+                          title: t('watchlist_entry.remove'),
+                          method: :delete %>
+            <% end %>
+          <% else %>
+            <% if !medium.containing_watchlists(current_user).empty? %>
+              <%= link_to '',
+                          watchlist_path(medium.containing_watchlists(current_user).first),
+                          class: 'btn p-2 bi bi-bookmark-fill',
+                          data: { toggle: 'tooltip',
+                                  placement: 'bottom' },
+                          title: t('watchlist_entry.list',
+                                  count: medium.containing_watchlists(current_user).size,
+                                  watchlists: medium.containing_watchlists_names(current_user).join(", ")) %>
+            <% end %>
             <%= link_to '',
-                        watchlist_path(medium.containing_watchlists(current_user).first),
-                        class: 'btn p-2 bi bi-bookmark-fill',
+                        add_medium_to_watchlist_path(medium),
+                        class: 'btn p-2 bi bi-tv-fill',
                         data: { toggle: 'tooltip',
                                 placement: 'bottom' },
-                        title: t('watchlist_entry.list',
-                                count: medium.containing_watchlists(current_user).size,
-                                watchlists: medium.containing_watchlists_names(current_user).join(", ")) %>
+                        title: t('watchlist.add'),
+                        remote: true %>
           <% end %>
-          <%= link_to '',
-                      add_medium_to_watchlist_path(medium),
-                      class: 'btn p-2 bi bi-tv-fill',
-                      data: { toggle: 'tooltip',
-                              placement: 'bottom' },
-                      title: t('watchlist.add'),
-                      remote: true %>
         </div>
       </div>
       <% if medium.teachable.is_a?(Talk) %>
@@ -89,47 +115,45 @@
       <% end %>
     </div>
 
-    <% cache [medium, from == 'tag', ref_link] do %>
-      <% unless from == 'tag' %>
-        <div class="mampf-card-image-wrapper">
-          <!-- Interactive hover -->
-          <% if medium.video.present? %>
-            <a href="<%= play_medium_path(medium) %>"
-              class="interactive-hover" target="_blank"
-              title="<%= t('video.play') %>">
-              <i class="interactive-hover-icon bi bi-play-fill"></i>
-            </a>
-          <% elsif medium.manuscript.present? %>
-            <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"   
-              class="interactive-hover" target="_blank"
-              title="<%= t('manuscript.view') %>">
-              <i class="interactive-hover-icon bi bi-file-earmark-text-fill"></i>
-            </a>
-          <% elsif medium.sort == 'Quiz' && medium.quiz_graph %>
-            <a href="<%= take_quiz_path(medium) %>"
-              class="interactive-hover" target="_blank" title="<%= t('quiz.start') %>">
-              <i class="interactive-hover-icon bi bi-joystick"></i>
-            </a>
-          <% end %>
+    <% cache [medium, ref_link] do %>
+      <div class="mampf-card-image-wrapper">
+        <!-- Interactive hover -->
+        <% if medium.video.present? %>
+          <a href="<%= play_medium_path(medium) %>"
+            class="interactive-hover" target="_blank"
+            title="<%= t('video.play') %>">
+            <i class="interactive-hover-icon bi bi-play-fill"></i>
+          </a>
+        <% elsif medium.manuscript.present? %>
+          <a href="<%= ref_link.blank? ? display_medium_path(medium) : ref_link %>"   
+            class="interactive-hover" target="_blank"
+            title="<%= t('manuscript.view') %>">
+            <i class="interactive-hover-icon bi bi-file-earmark-text-fill"></i>
+          </a>
+        <% elsif medium.sort == 'Quiz' && medium.quiz_graph %>
+          <a href="<%= take_quiz_path(medium) %>"
+            class="interactive-hover" target="_blank" title="<%= t('quiz.start') %>">
+            <i class="interactive-hover-icon bi bi-joystick"></i>
+          </a>
+        <% end %>
 
-          <!-- Screenshots -->
-          <% if medium.screenshot.present? %>
-            <%= image_tag(medium.screenshot_url_with_host,
-                          alt: "Card image cap",
-                          class: "mampf-card-image") %>
-          <% elsif medium.manuscript.present? %>
-            <%= image_tag(medium.manuscript_screenshot_url || '',
-                          alt: "Card image cap",
-                          class: "mampf-card-image manuscript-thumbnail") %>
-          <% elsif medium.geogebra_screenshot_url.present? %>
-            <%= image_tag(medium.geogebra_screenshot_url,
-                          alt: 'Card image cap',
-                          class: 'mampf-card-image') %>
-          <% else %>
-            <div class="empty-default-screenshot"></div>
-          <% end %>
-        </div>
-      <% end %>
+        <!-- Screenshots -->
+        <% if medium.screenshot.present? %>
+          <%= image_tag(medium.screenshot_url_with_host,
+                        alt: "Card image cap",
+                        class: "mampf-card-image") %>
+        <% elsif medium.manuscript.present? %>
+          <%= image_tag(medium.manuscript_screenshot_url || '',
+                        alt: "Card image cap",
+                        class: "mampf-card-image manuscript-thumbnail") %>
+        <% elsif medium.geogebra_screenshot_url.present? %>
+          <%= image_tag(medium.geogebra_screenshot_url,
+                        alt: 'Card image cap',
+                        class: 'mampf-card-image') %>
+        <% else %>
+          <div class="empty-default-screenshot"></div>
+        <% end %>
+      </div>
 
       <div class="card-body">
         <% unless medium.caption.nil? %>
@@ -166,8 +190,8 @@
                      locals: { medium: medium,
                                ref_link: ref_link } %>
         </div>
-    <!-- end of caching -->
-    <% end %>
+    <% end %> <!-- end of caching -->
+
         <% if medium.commontator_thread.comments.present? %>
           <hr class="media-hr">
           <div class="card-text-end">
