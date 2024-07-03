@@ -172,7 +172,10 @@
 .empty-default-screenshot {
   width: 100%;
   height: 8em;
-  background: linear-gradient(135deg, #223e6255 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(225deg, #223e62 25%, transparent 25%) -10px 0/ 20px 20px, linear-gradient(315deg, #223e6255 25%, transparent 25%) 0px 0/ 20px 20px, linear-gradient(45deg, #223e62 25%, #ffffff 25%) 0px 0/ 20px 20px;
+  background-color: #ffffff;
+  background-image: linear-gradient(#BCC5CF 2px, transparent 2px), linear-gradient(90deg, #BCC5CF 2px, transparent 2px), linear-gradient(#BCC5CF 1px, transparent 1px), linear-gradient(90deg, #BCC5CF 1px, #ffffff 1px);
+  background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+  background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
 }
 
 .card-body {
