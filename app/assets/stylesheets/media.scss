@@ -65,6 +65,14 @@
   background-color: #223e62;
 }
 
+.mampf-header-end {
+  color: $gray-300;
+
+  & a {
+    color: $gray-300;
+  }
+}
+
 .card-footer {
   padding: 0;
   background-color: #21252908;
