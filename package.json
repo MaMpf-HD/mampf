@@ -23,5 +23,9 @@
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-erb": "^2.0.0",
     "globals": "^15.1.0"
+  },
+  "scripts": {
+    "install-just-to-bin": "curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/bin && echo 'export PATH=\"$PATH:$HOME/bin\" # for \"just\" binary' >> ~/.bashrc",
+    "remove-just-from-bin": "rm -rf ~/bin/just --interactive"
   }
 }
