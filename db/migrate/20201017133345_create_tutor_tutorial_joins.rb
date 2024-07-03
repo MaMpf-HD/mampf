@@ -9,6 +9,6 @@ class CreateTutorTutorialJoins < ActiveRecord::Migration[6.0]
   end
 
   def down
-  	drop_table :tutor_tutorial_joins
+    drop_table :tutor_tutorial_joins
   end
 end

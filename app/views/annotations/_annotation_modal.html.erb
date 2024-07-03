@@ -1,0 +1,39 @@
+<div class="modal fade" id="annotation-modal" tabindex="-1" role="dialog" aria-labelledby="annotation-modal-label" aria-hidden="true">
+  <div class="modal-dialog annotation-dialog-normal"
+      id="annotation-modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <span id="modal-title-create-annotation">
+            <% I18n.with_locale(current_user.locale) do %>
+              <%= t('admin.annotation.annotation_modal_head_create_annotation') %>
+            <% end %>
+          </span>
+          <span id="modal-title-edit-annotation">
+            <% I18n.with_locale(current_user.locale) do %>
+              <%= t('admin.annotation.annotation_modal_head_edit_annotation') %>
+            <% end %>
+          </span>
+        </h5>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body">
+        <section id="annotation-preview-section" style="display: none;">
+          <div class="column-adaptable annotation-preview" id="annotation-modal-preview">
+          <!--- LATEX-PREVIEW -->
+          </div>
+        </section>
+
+        <section id="annotation-content-section" class="annotation-content-normal">
+          <div id="annotation-modal-content">
+          <!--- CONTENT -->
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

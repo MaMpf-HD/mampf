@@ -8,13 +8,14 @@ class Talk < ApplicationRecord
 
   # being a teachable (course/lecture/lesson), a talk has associated media
   has_many :media, -> { order(position: :asc) }, as: :teachable,
-                                                 dependent: :destroy
+                                                 dependent: :destroy,
+                                                 inverse_of: :teachable
 
   # a talk has many tags
   has_many :talk_tag_joins, dependent: :destroy
   has_many :tags, through: :talk_tag_joins
 
-  after_save :remove_duplicate_dates
+  before_save :remove_duplicate_dates
   after_save :touch_lecture
 
   # the talks of a lecture form an ordered list
@@ -31,7 +32,7 @@ class Talk < ApplicationRecord
   end
 
   def to_label
-    I18n.t('talk', number: position, title: title)
+    I18n.t("talk", number: position, title: title)
   end
 
   def long_title
@@ -52,7 +53,7 @@ class Talk < ApplicationRecord
 
   def title_for_viewers
     Rails.cache.fetch("#{cache_key_with_version}/title_for_viewers") do
-      lecture.title_for_viewers + ', ' + to_label
+      "#{lecture.title_for_viewers}, #{to_label}"
     end
   end
 
@@ -76,7 +77,7 @@ class Talk < ApplicationRecord
   end
 
   def compact_title
-    lecture.compact_title + '.V' + position.to_s
+    "#{lecture.compact_title}.V#{position}"
   end
 
   def number
@@ -92,7 +93,7 @@ class Talk < ApplicationRecord
   end
 
   def proper_media
-    media.where.not(sort: ['Question', 'Remark'])
+    media.where.not(sort: ["Question", "Remark"])
   end
 
   def editors_with_inheritance
@@ -111,6 +112,6 @@ class Talk < ApplicationRecord
     end
 
     def remove_duplicate_dates
-      update_columns(dates: dates.uniq)
+      dates.uniq! # TODO: replace dates array by a set to avoid this
     end
 end

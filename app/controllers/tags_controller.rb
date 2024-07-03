@@ -9,38 +9,43 @@ class TagsController < ApplicationController
   before_action :check_creation_permission, only: [:create]
   authorize_resource except: [:new, :modal, :search, :postprocess,
                               :render_tag_title]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= TagAbility.new(current_user)
   end
 
   def show
-    if params[:locale].in?(I18n.available_locales.map(&:to_s))
-      I18n.locale = params[:locale]
-    end
+    I18n.locale = params[:locale] if params[:locale].in?(I18n.available_locales.map(&:to_s))
     set_related_tags_for_user
     @lectures = current_user.filter_lectures(@tag.lectures)
     # first, filter the media according to the users subscription type
     media = current_user.filter_media(@tag.media
-                                          .where.not(sort: ['Question',
-                                                            'Remark']))
+                                          .where.not(sort: ["Question",
+                                                            "Remark"]))
     # then, filter these according to their visibility for the user
     @media = current_user.filter_visible_media(media)
     @questions = @tag.visible_questions(current_user)
     # consider items in manuscripts that are corresponding to tags
-    manuscripts = current_user.filter_media(Medium.where(sort: 'Script'))
+    manuscripts = current_user.filter_media(Medium.where(sort: "Script"))
     @references = Item.where(medium: manuscripts,
                              description: @tag.notions.pluck(:title) +
                                             @tag.aliases.pluck(:title))
-                      .where.not(pdf_destination: [nil, ''])
+                      .where.not(pdf_destination: [nil, ""])
     @realizations = @tag.realizations
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   def display_cyto
     set_related_tags_for_user
-    render layout: 'cytoscape'
+    render layout: "cytoscape"
+  end
+
+  def new
+    @tag = Tag.new
+    authorize! :new, @tag
+    set_notions
+    @tag.aliases.new(locale: I18n.locale)
   end
 
   def edit
@@ -51,11 +56,20 @@ class TagsController < ApplicationController
     @tag.aliases.new(locale: I18n.locale)
   end
 
-  def new
-    @tag = Tag.new
-    authorize! :new, @tag
-    set_notions
-    @tag.aliases.new(locale: I18n.locale)
+  def create
+    # first, check if errors from creation_permission callback are present
+    @section = Section.find_by(id: params[:tag][:section_id])
+    if @errors.present?
+      render :update
+      return
+    end
+    @tag.update(tag_params)
+    if @tag.valid? && !@modal
+      redirect_to edit_tag_path(@tag)
+      return
+    end
+    @errors = @tag.errors
+    render :update
   end
 
   def update
@@ -72,22 +86,6 @@ class TagsController < ApplicationController
       return
     end
     @errors = @tag.errors
-  end
-
-  def create
-    # first, check if errors from creation_permission callback are present
-    @section = Section.find_by_id(params[:tag][:section_id])
-    if @errors.present?
-      render :update
-      return
-    end
-    @tag.update(tag_params)
-    if @tag.valid? && !@modal
-      redirect_to edit_tag_path(@tag)
-      return
-    end
-    @errors = @tag.errors
-    render :update
   end
 
   def destroy
@@ -110,7 +108,7 @@ class TagsController < ApplicationController
   end
 
   def identify
-    @identified_tag = Tag.find_by_id(params[:tag][:identified_tag_id])
+    @identified_tag = Tag.find_by(id: params[:tag][:identified_tag_id])
     @tag.identify_with!(@identified_tag)
     @identified_tag.destroy
     @tag.update(tag_params)
@@ -118,9 +116,7 @@ class TagsController < ApplicationController
   end
 
   def fill_tag_select
-    if params[:locale].in?(I18n.available_locales.map(&:to_s))
-      I18n.locale = params[:locale]
-    end
+    I18n.locale = params[:locale] if params[:locale].in?(I18n.available_locales.map(&:to_s))
     if params[:q]
       result = Tag.select_with_substring(params[:q])
       render json: result
@@ -131,7 +127,7 @@ class TagsController < ApplicationController
   end
 
   def fill_course_tags
-    course = Course.find_by_id(params[:course_id])
+    course = Course.find_by(id: params[:course_id])
     result = course&.select_question_tags_by_title
     render json: result
   end
@@ -141,16 +137,16 @@ class TagsController < ApplicationController
     per_page = search_params[:per] || 10
     search = Sunspot.new_search(Tag)
     search.build do
-      fulltext search_params[:title]
+      fulltext(search_params[:title])
     end
-    course_ids = if search_params[:all_courses] == '1'
+    course_ids = if search_params[:all_courses] == "1"
       []
-    elsif search_params[:course_ids] != ['']
+    elsif search_params[:course_ids] != [""]
       search_params[:course_ids]
     end
     search.build do
       with(:course_ids, course_ids)
-      paginate page: params[:page], per_page: per_page
+      paginate(page: params[:page], per_page: per_page)
     end
     search.execute
     results = search.results
@@ -168,41 +164,39 @@ class TagsController < ApplicationController
     authorize! :postprocess, Tag.new
     @tags_hash = params[:tags]
     @tags_hash.each do |t, section_data|
-      tag = Tag.find_by_id(t)
+      tag = Tag.find_by(id: t)
       next unless tag
 
       section_data.each do |s, v|
-        next if v.to_i == 0
+        next if v.to_i.zero?
 
         section = Section.find(s)
         next unless section
 
-        if !tag.in?(section.tags)
-          section.tags << tag
-        end
+        section.tags << tag unless tag.in?(section.tags)
       end
     end
-    if params['from'] == 'Lesson'
-      redirect_to edit_lesson_path(Lesson.find_by_id(params[:id]))
+    if params["from"] == "Lesson"
+      redirect_to edit_lesson_path(Lesson.find_by(id: params[:id]))
       return
     end
-    redirect_to edit_medium_path(Medium.find_by_id(params[:id]))
+    redirect_to edit_medium_path(Medium.find_by(id: params[:id]))
   end
 
   def render_tag_title
     authorize! :render_tag_title, Tag.new
-    tag = Tag.find_by_id(params[:tag_id])
-    @identified_tag = Tag.find_by_id(params[:identified_tag_id])
+    tag = Tag.find_by(id: params[:tag_id])
+    @identified_tag = Tag.find_by(id: params[:identified_tag_id])
     @common_titles = tag.common_titles(@identified_tag)
   end
 
   private
 
     def set_tag
-      @tag = Tag.find_by_id(params[:id])
+      @tag = Tag.find_by(id: params[:id])
       return if @tag.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_tag')
+      redirect_to :root, alert: I18n.t("controllers.no_tag")
     end
 
     # set up cytoscape graph data for neighbourhood subgraph of @tag,
@@ -215,9 +209,7 @@ class TagsController < ApplicationController
       @depth = depth_param if depth_param.in?([1, 2])
       overrule_subscription_type = false
       selection = params[:selection].to_i
-      if selection.in?([1, 2, 3])
-        overrule_subscription_type = selection
-      end
+      overrule_subscription_type = selection if selection.in?([1, 2, 3])
       @selection_type = if overrule_subscription_type
         selection
       else
@@ -246,45 +238,45 @@ class TagsController < ApplicationController
     def set_up_tag
       @tag = Tag.new
       set_notions
-      related_tag = Tag.find_by_id(params[:related_tag])
+      related_tag = Tag.find_by(id: params[:related_tag])
       @tag.related_tags << related_tag if related_tag.present?
     end
 
     def add_course
-      course = Course.find_by_id(params[:course])
+      course = Course.find_by(id: params[:course])
       @tag.courses << course if course.present?
     end
 
     def add_section
-      section = Section.find_by_id(params[:section])
-      if section
-        @tag.sections << section
-        I18n.locale = section.lecture.locale || current_user.locale
-      end
+      section = Section.find_by(id: params[:section])
+      return unless section
+
+      @tag.sections << section
+      I18n.locale = section.lecture.locale || current_user.locale
     end
 
     def add_medium
-      medium = Medium.find_by_id(params[:medium])
-      if medium
-        I18n.locale = medium.locale_with_inheritance || current_user.locale
-        @tag.media << medium
-      end
+      medium = Medium.find_by(id: params[:medium])
+      return unless medium
+
+      I18n.locale = medium.locale_with_inheritance || current_user.locale
+      @tag.media << medium
     end
 
     def add_lesson
-      lesson = Lesson.find_by_id(params[:lesson])
-      if lesson
-        @tag.lessons << lesson
-        I18n.locale = lesson.lecture.locale || current_user.locale
-      end
+      lesson = Lesson.find_by(id: params[:lesson])
+      return unless lesson
+
+      @tag.lessons << lesson
+      I18n.locale = lesson.lecture.locale || current_user.locale
     end
 
     def add_talk
-      talk = Talk.find_by_id(params[:talk])
-      if talk
-        @tag.talks << talk
-        I18n.locale = talk.lecture.locale || current_user.locale
-      end
+      talk = Talk.find_by(id: params[:talk])
+      return unless talk
+
+      @tag.talks << talk
+      I18n.locale = talk.lecture.locale || current_user.locale
     end
 
     def check_for_consent
@@ -305,8 +297,8 @@ class TagsController < ApplicationController
     end
 
     def realization_params
-      (params.require(:tag).permit(realizations: [])[:realizations] - [''])
-        .map { |r| r.split('-') }
+      (params.require(:tag).permit(realizations: [])[:realizations] - [""])
+        .map { |r| r.split("-") }
         .map { |x| [x.first, x.second.to_i] }
     end
 
@@ -322,16 +314,16 @@ class TagsController < ApplicationController
     def permission_errors
       errors = []
       unless removed_courses.all? { |c| c.removable_by?(current_user) }
-        errors.push(error_hash['remove_course'])
+        errors.push(error_hash["remove_course"])
       end
       unless added_courses.all? { |c| c.addable_by?(current_user) }
-        errors.push(error_hash['add_course'])
+        errors.push(error_hash["add_course"])
       end
       @errors[:courses] = errors if errors.present?
     end
 
     def check_creation_permission
-      @modal = (params[:tag][:modal] == 'true')
+      @modal = (params[:tag][:modal] == "true")
       @tag = Tag.new
       check_permissions
     end
@@ -352,19 +344,20 @@ class TagsController < ApplicationController
     end
 
     def locale
-      locale = if params[:from] == 'course'
-        @tag.courses&.first&.locale
-      elsif params[:from] == 'medium'
-        @tag.media&.first&.locale_with_inheritance
-      elsif params[:from] == 'section'
-        @tag.sections&.first&.lecture&.locale_with_inheritance
+      locale = case params[:from]
+               when "course"
+                 @tag.courses&.first&.locale
+               when "medium"
+                 @tag.media&.first&.locale_with_inheritance
+               when "section"
+                 @tag.sections&.first&.lecture&.locale_with_inheritance
       end
       locale || current_user.locale
     end
 
     def error_hash
-      { 'remove_course' => I18n.t('controllers.no_removal_rights'),
-        'add_course' => I18n.t('controllers.no_adding_rights') }
+      { "remove_course" => I18n.t("controllers.no_removal_rights"),
+        "add_course" => I18n.t("controllers.no_adding_rights") }
     end
 
     def search_params

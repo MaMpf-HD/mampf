@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class RemoveExtrasFromCourseUserJoin < ActiveRecord::Migration[5.2]
   def change
     remove_column :course_user_joins, :sesam?, :boolean
@@ -7,3 +8,4 @@ class RemoveExtrasFromCourseUserJoin < ActiveRecord::Migration[5.2]
     remove_column :course_user_joins, :nuesse?, :boolean
   end
 end
+# rubocop:enable Rails/

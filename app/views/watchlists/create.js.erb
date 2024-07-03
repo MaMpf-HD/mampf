@@ -1,27 +1,28 @@
-if(<%= @success %>) {
-  if(<%= @medium.present? %>) {
+if (<%= @success %>) {
+  if (<%= @medium.present? %>) {
+    $("#collapseNewWatchlist").collapse("hide");
 
-    $('#collapseNewWatchlist').collapse('hide');
-
-    $('#watchlist-select-form').html("<%= j render partial: 'watchlists/select_form',
+    $("#watchlist-select-form").html("<%= j render partial: 'watchlists/select_form',
                                                    locals: { watchlist_entry: @watchlist_entry,
                                                              watchlist: @watchlist,
                                                              medium: @medium } %>");
-    $('#collapseNewWatchlist').html("<%= j render partial: 'watchlists/new_form',
+    $("#collapseNewWatchlist").html("<%= j render partial: 'watchlists/new_form',
                                                    locals: { watchlist_entry: @watchlist_entry,
                                                              watchlist: @watchlist,
                                                              medium: @medium } %>");
-                                                             
-    $('#watchlistEntrySubmitButton').attr("disabled", false);
-    $('#watchlistEntrySubmitButton').removeAttr("data-confirm");
 
-    $('#watchlistSelectForm').append("<span class='badge bg-success'><%= t('watchlist.creation_success')%></span>");
-    setTimeout(function() {
-      $('#watchlistModalBody').find('.bg-success').remove();
+    $("#watchlistEntrySubmitButton").attr("disabled", false);
+    $("#watchlistEntrySubmitButton").removeAttr("data-confirm");
+
+    $("#watchlistSelectForm").append("<span class='badge bg-success'><%= t('watchlist.creation_success')%></span>");
+    setTimeout(function () {
+      $("#watchlistModalBody").find(".bg-success").remove();
     }, 2000);
-  } else {
+  }
+  else {
     location.reload(true);
   }
-} else {
-  $('#newWatchlistForm').html("<%= j render partial: 'watchlists/new_form', locals: { watchlist_entry: @watchlist_entry, watchlist: @watchlist, medium: @medium } %>")
+}
+else {
+  $("#newWatchlistForm").html("<%= j render partial: 'watchlists/new_form', locals: { watchlist_entry: @watchlist_entry, watchlist: @watchlist, medium: @medium } %>");
 }

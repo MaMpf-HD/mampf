@@ -4,7 +4,7 @@ module LessonsHelper
   # tags, all given by label, together with their ids.
   # Is used in options_for_select in form helpers.
   def lesson_tag_selection(lesson)
-    lesson.section_tags.map { |t| t.extended_title_id_hash }
+    lesson.section_tags.map(&:extended_title_id_hash)
           .map { |t| [t[:title], t[:id]] }
   end
 

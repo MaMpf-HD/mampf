@@ -28,7 +28,7 @@
          data-nonotifications="<%= t('notifications.no_notifications') %>">
       <% if @notifications.present? %>
         <% @notifications.each do |n| %>
-          <div class="col-12 col-md-6 col-xl-4 col-xxl-4 col-xxxl-3 mb-2"
+          <div class="col-12 col-md-6 col-xl-4 col-xxl-4 col-xxl-3 mb-2"
                data-notificationCard="<%= n.id %>">
             <%= render partial: 'notifications/notification',
                        locals: { notification: n } %>

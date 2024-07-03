@@ -5,7 +5,7 @@ class CoursesController < ApplicationController
   before_action :check_if_enough_questions, only: [:take_random_quiz]
   before_action :check_for_consent
   authorize_resource except: [:create, :search]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= CourseAbility.new(current_user)
@@ -13,22 +13,6 @@ class CoursesController < ApplicationController
 
   def edit
     I18n.locale = @course.locale || I18n.default_locale
-  end
-
-  def update
-    I18n.locale = @course.locale || I18n.default_locale
-    old_image_data = @course.image_data
-    @course.update(course_params)
-    @errors = @course.errors
-    return unless @errors.empty?
-
-    @course.update(image: nil) if params[:course][:detach_image] == 'true'
-    changed_image = @course.image_data != old_image_data
-    if @course.image.present? && changed_image
-      @course.image_derivatives!
-      @course.save
-    end
-    @errors = @course.errors
   end
 
   def create
@@ -39,11 +23,27 @@ class CoursesController < ApplicationController
       # set organizational_concept to default
       set_organizational_defaults
       redirect_to administration_path,
-                  notice: I18n.t('controllers.created_course_success',
+                  notice: I18n.t("controllers.created_course_success",
                                  course: @course.title,
                                  editors: @course.editors.map(&:name)
-                                                         .join(', '))
+                                                         .join(", "))
       return
+    end
+    @errors = @course.errors
+  end
+
+  def update
+    I18n.locale = @course.locale || I18n.default_locale
+    old_image_data = @course.image_data
+    @course.update(course_params)
+    @errors = @course.errors
+    return unless @errors.empty?
+
+    @course.update(image: nil) if params[:course][:detach_image] == "true"
+    changed_image = @course.image_data != old_image_data
+    if @course.image.present? && changed_image
+      @course.image_derivatives!
+      @course.save
     end
     @errors = @course.errors
   end
@@ -80,27 +80,26 @@ class CoursesController < ApplicationController
   private
 
     def set_course
-      @course = Course.find_by_id(params[:id])
+      @course = Course.find_by(id: params[:id])
       return if @course.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_course')
+      redirect_to :root, alert: I18n.t("controllers.no_course")
     end
 
     def set_course_admin
-      @course = Course.find_by_id(params[:id])
+      @course = Course.find_by(id: params[:id])
       return if @course.present?
 
       redirect_to administration_path
     end
 
     def course_params
-      params.require(:course).permit(:title, :short_title, :organizational,
-                                     :organizational_concept, :locale,
-                                     :term_independent, :image,
-                                     tag_ids: [],
-                                     preceding_course_ids: [],
-                                     editor_ids: [],
-                                     division_ids: [])
+      allowed_params = [:title, :short_title, :organizational,
+                        :organizational_concept, :locale,
+                        :term_independent, :image,
+                        { tag_ids: [], preceding_course_ids: [], division_ids: [] }]
+      allowed_params.push(editor_ids: []) if current_user.admin?
+      params.require(:course).permit(allowed_params)
     end
 
     def tag_params
@@ -121,15 +120,15 @@ class CoursesController < ApplicationController
 
     # destroy all notifications related to this course
     def destroy_notifications
-      Notification.where(notifiable_id: @course.id, notifiable_type: 'Course')
+      Notification.where(notifiable_id: @course.id, notifiable_type: "Course")
                   .delete_all
     end
 
     # fill organizational_concept with default view
     def set_organizational_defaults
       @course.update(organizational_concept:
-                       render_to_string(partial: 'courses/' \
-                                                 'organizational_default',
+                       render_to_string(partial: "courses/" \
+                                                 "organizational_default",
                                         formats: :html,
                                         layout: false))
     end
@@ -137,7 +136,7 @@ class CoursesController < ApplicationController
     def check_if_enough_questions
       return if @course.enough_questions?
 
-      redirect_to :root, alert: I18n.t('controllers.no_test')
+      redirect_to :root, alert: I18n.t("controllers.no_test")
     end
 
     def check_for_consent

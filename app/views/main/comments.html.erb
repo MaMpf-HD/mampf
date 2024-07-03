@@ -68,8 +68,8 @@
             </div>
             <div class="col-4">
               <%= t('comments.who_and_when',
-                    when: time_ago_in_words(m[:latest_comment].created_at),
-                    who: m[:latest_comment].creator.name) %>
+                    when: time_ago_in_words(m[:latest_comment_by_any_user].created_at),
+                    who: m[:latest_comment_by_any_user].creator.name) %>
             </div>
             <div class="col-2 d-flex justify-content-center">
               <div clas="row">

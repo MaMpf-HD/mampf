@@ -2,7 +2,7 @@
 class LessonsController < ApplicationController
   before_action :set_lesson, except: [:new, :create]
   authorize_resource except: [:new, :create]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= LessonAbility.new(current_user)
@@ -10,20 +10,20 @@ class LessonsController < ApplicationController
 
   def show
     I18n.locale = @lesson.locale_with_inheritance
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
+  end
+
+  def new
+    @lecture = Lecture.find_by(id: params[:lecture_id])
+    I18n.locale = @lecture.locale_with_inheritance if @lecture
+    @lesson = Lesson.new(lecture: @lecture)
+    section = Section.find_by(id: params[:section_id])
+    @lesson.sections << section if section
+    authorize! :new, @lesson
   end
 
   def edit
     I18n.locale = @lesson.locale_with_inheritance
-  end
-
-  def new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
-    I18n.locale = @lecture.locale_with_inheritance if @lecture
-    @lesson = Lesson.new(lecture: @lecture)
-    section = Section.find_by_id(params[:section_id])
-    @lesson.sections << section if section
-    authorize! :new, @lesson
   end
 
   def create
@@ -34,7 +34,7 @@ class LessonsController < ApplicationController
     @lesson.tags = @lesson.sections.map(&:tags).flatten
     @lesson.save
     @errors = @lesson.errors
-    if @lesson.valid? && params[:commit] == t('buttons.save_and_edit')
+    if @lesson.valid? && params[:commit] == t("buttons.save_and_edit")
       redirect_to edit_lesson_path(@lesson)
       return
     end
@@ -45,7 +45,7 @@ class LessonsController < ApplicationController
     I18n.locale = @lesson.lecture.locale_with_inheritance
     @lesson.update(lesson_params)
     @errors = @lesson.errors
-    return unless @errors.blank?
+    return if @errors.present?
 
     update_media_order if params[:lesson][:media_order]
     @tags_without_section = @lesson.tags_without_section
@@ -63,7 +63,7 @@ class LessonsController < ApplicationController
     media.each do |m|
       m.update(teachable: lecture,
                description: m.description.presence ||
-                              (m.title + ' (' + I18n.t('admin.lesson.destroyed') + ')'))
+                              "#{m.title} (#{I18n.t("admin.lesson.destroyed")})")
     end
     @lesson.destroy
     redirect_to edit_lecture_path(lecture)
@@ -72,10 +72,10 @@ class LessonsController < ApplicationController
   private
 
     def set_lesson
-      @lesson = Lesson.find_by_id(params[:id])
+      @lesson = Lesson.find_by(id: params[:id])
       return if @lesson.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_lesson')
+      redirect_to :root, alert: I18n.t("controllers.no_lesson")
     end
 
     def lesson_params

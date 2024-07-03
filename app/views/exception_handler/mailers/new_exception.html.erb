@@ -1,5 +1,5 @@
 <%= t('exception.exception_report',
-			host: ENV['URL_HOST']) %>
+			host: ENV.fetch("URL_HOST")) %>
 <strong>
 	<%= @exception.response %> (<%= @exception.status %>)
 </strong>

@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddShrineColumnsToMedia < ActiveRecord::Migration[5.2]
   def change
     add_column :media, :video_data, :text
@@ -5,3 +6,4 @@ class AddShrineColumnsToMedia < ActiveRecord::Migration[5.2]
     add_column :media, :manuscript_data, :text
   end
 end
+# rubocop:enable Rails/

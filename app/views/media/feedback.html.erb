@@ -1,0 +1,88 @@
+<% content_for :title, "THymE - \"#{@medium.caption}\"" %>
+<div id="thyme-feedback-container" class="thyme-container-layout">
+  <div id="thyme-feedback" class="thyme-generic" data-medium="<%= @medium.id %>">
+    <figure id="hypervideo-container">
+
+      <!-- VIDEO + CONTROL BAR -->
+      <div id="video-container">
+
+        <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
+          <source src="<%= @medium.video.url(host: host) %>">
+        </video>
+
+        <div id="video-controlBar">
+          <div id="video-controls">
+
+            <div id="timeline">
+              <i id="play-pause" class="material-icons clickable">
+                play_arrow
+              </i>
+              <span id="current-time">
+                0:00:00
+              </span>
+              <span id="heatmap">
+                <!-- JavaScript inserts heatmap here -->
+              </span>
+              <span id="feedback-markers" class="annotation-marker">
+                <!-- JavaScript inserts markers here -->
+              </span>
+              <input type="range" id="seek-bar"
+                     min="0" max="100" step="0.1" value="0">
+              <span id="max-time">
+                0:00:00
+              </span>
+            </div>
+
+            <!-- Category switches (see annotation_category_toggle.js) -->
+            <div id="annotation-switches">
+              <div class="form-check form-switch" id="abc">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-mistake-switch"
+                value="mistake"
+                title="<%= t('admin.annotation.toggle.mistake')%> (Q)" checked>
+              </div>
+             
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-content-switch"
+                value="content"
+                title="<%= t('admin.annotation.toggle.content')%> (W)" checked>
+              </div>
+
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-presentation-switch"
+                  value="presentation" title="<%= t('admin.annotation.toggle.presentation')%> (E)" checked>
+              </div>
+
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="annotation-category-note-switch"
+                value="note"
+                title="<%= t('admin.annotation.toggle.note')%> (R)" checked>
+              </div>
+            </div>
+
+            <div id="feedback-special-buttons" class="special-buttons-layout">
+              <i id="minus-ten" class="material-icons clickable">
+                replay_10
+              </i>
+              <i id="plus-ten" class="material-icons clickable">
+                forward_10
+              </i>
+            </div>
+            
+            <div id="feedback-volume-controls" class="volume-controls-layout">
+              <i id="mute" class="material-icons clickable">
+                volume_up
+              </i>
+              <input type="range" id="volume-bar" min="0" max="1" step="0.1" value="1">
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT-HAND SIDE AREA -->
+      <%= render partial: "annotations/annotation_area" %>
+    </figure>
+  </div>
+</div>
+
+<%= render partial: "annotations/annotation_locales" %>

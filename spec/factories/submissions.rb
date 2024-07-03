@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :submission do
     transient do
@@ -23,13 +21,13 @@ FactoryBot.define do
 
     trait :with_manuscript do
       after(:build) do |s|
-        s.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
+        s.manuscript = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
       end
     end
 
     trait :with_correction do
       after(:build) do |s|
-        s.correction = File.open("#{SPEC_FILES}/manuscript.pdf", 'rb')
+        s.correction = File.open("#{SPEC_FILES}/manuscript.pdf", "rb")
       end
     end
 

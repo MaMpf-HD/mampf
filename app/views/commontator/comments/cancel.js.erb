@@ -1,15 +1,15 @@
 <% if @comment.nil? || @comment.new_record? %>
-  <%
+<%
     id = @comment.nil? || @comment.parent.nil? ?
       "commontator-thread-#{@commontator_thread.id}-new-comment" :
       "commontator-comment-#{@comment.parent.id}-reply"
   %>
 
-  $("#<%= id %>").hide();
+$("#<%= id %>").hide();
 
-  $("#<%= id %>-link").fadeIn();
+$("#<%= id %>-link").fadeIn();
 <% else %>
-  $("#commontator-comment-<%= @comment.id %>-body").html("<%= escape_javascript(
+$("#commontator-comment-<%= @comment.id %>-body").html("<%= escape_javascript(
     render partial: 'body', locals: { comment: @comment }
   ) %>");
 <% end %>

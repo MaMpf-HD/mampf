@@ -1,5 +1,5 @@
 getClickerVotes = ->
-  $.ajax Routes.get_votes_count_path(<%= @clicker.id %>),
+  $.ajax Routes.votes_count_path(<%= @clicker.id %>),
     type: 'GET'
     dataType: 'json'
     success: (result) ->

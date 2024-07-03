@@ -1,14 +1,12 @@
-# frozen_string_literal: true
-
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-require 'spec_helper'
-require File.expand_path('../../config/environment', __FILE__)
+require "spec_helper"
+require File.expand_path("../config/environment", __dir__)
 # Prevent database truncation if the environment is production
-abort('The Rails env is running in production mode!') if Rails.env.production?
-require 'rspec/rails'
-require 'devise'
+abort("The Rails env is running in production mode!") if Rails.env.production?
+require "rspec/rails"
+require "devise"
 # Add additional requires below this line. Rails is not loaded until this point!
-require 'support/database_cleaner'
+require "support/database_cleaner"
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -36,10 +34,14 @@ RSpec.configure do |config|
 
   # For Devise >= 4.1.0
   config.include Devise::Test::ControllerHelpers, type: :controller
+
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
+  # We set it to false here since we are using the DatabaseCleaner gem instead.
+  # Also see https://avdi.codes/configuring-database_cleaner-with-rails-rspec-capybara-and-selenium/
   config.use_transactional_fixtures = false
+
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.

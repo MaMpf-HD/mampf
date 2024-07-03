@@ -1,6 +1,6 @@
 # AnswersController
 class AnswersController < ApplicationController
-  before_action :set_answer, except: [:new, :create, :update_answer_box]
+  before_action :set_answer, except: [:new, :create]
   authorize_resource except: [:new, :create]
 
   def current_ability
@@ -8,7 +8,7 @@ class AnswersController < ApplicationController
   end
 
   def new
-    question = Question.find_by_id(params[:question_id])
+    question = Question.find_by(id: params[:question_id])
     @answer = Answer.new(value: true, question: question)
     authorize! :new, @answer
     I18n.locale = question&.locale_with_inheritance
@@ -34,18 +34,17 @@ class AnswersController < ApplicationController
     @success = true
   end
 
-  def update_answer_box
-    @answer_id = params[:answer_id].to_i
-    @value = params[:value] == 'true'
+  def cancel_edit
+    I18n.locale = @answer.question&.locale_with_inheritance
   end
 
   private
 
     def set_answer
-      @answer = Answer.find_by_id(params[:id])
+      @answer = Answer.find_by(id: params[:id])
       return if @answer.present?
 
-      redirect_to root_path, alert: I18n.t('controllers.no_answer')
+      redirect_to root_path, alert: I18n.t("controllers.no_answer")
     end
 
     def answer_params

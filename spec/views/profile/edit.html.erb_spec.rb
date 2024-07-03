@@ -1,8 +1,6 @@
-# frozen_string_literal: true
+require "rails_helper"
 
-require 'rails_helper'
-
-RSpec.describe 'profile/edit.html.erb', type: :view do
+RSpec.describe("profile/edit.html.erb", type: :view) do
   # NEEDS TO BE REFACTORED
 
   # it 'shows the correct profile' do

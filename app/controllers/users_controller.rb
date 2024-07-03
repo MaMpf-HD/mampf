@@ -3,7 +3,7 @@ class UsersController < ApplicationController
   before_action :set_elevated_users, only: [:index, :list_generic_users]
   before_action :set_user, only: [:edit, :update, :destroy]
 
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= UserAbility.new(current_user)
@@ -24,7 +24,7 @@ class UsersController < ApplicationController
     old_image_data = @user.image_data
     @user.update(user_params)
     @errors = @user.errors
-    @user.update(image: nil) if params[:user][:detach_image] == 'true'
+    @user.update(image: nil) if params[:user][:detach_image] == "true"
     changed_image = @user.image_data != old_image_data
     if @user.image.present? && changed_image
       @user.image_derivatives!
@@ -38,12 +38,12 @@ class UsersController < ApplicationController
     authorize! :elevate, User.new
     @errors = {}
     @user = User.find(elevate_params[:id])
-    admin = elevate_params[:admin] == '1'
+    admin = elevate_params[:admin] == "1"
     return unless admin
 
     # enforce a name
     if @user.name.blank?
-      name = @user.email.split('@')[0]
+      name = @user.email.split("@")[0]
       @user.update(admin: true, name: name)
     else
       @user.update(admin: true)
@@ -64,14 +64,14 @@ class UsersController < ApplicationController
   end
 
   def teacher
-    @teacher = User.find_by_id(params[:teacher_id])
+    @teacher = User.find_by(id: params[:teacher_id])
     authorize! :teacher, @teacher
     if @teacher.present? && @teacher.teacher?
-      render layout: 'application'
+      render layout: "application"
       return
     end
     redirect_to :root,
-                alert: I18n.t('controllers.no_teacher')
+                alert: I18n.t("controllers.no_teacher")
   end
 
   def fill_user_select
@@ -103,10 +103,10 @@ class UsersController < ApplicationController
     end
 
     def set_user
-      @user = User.find_by_id(params[:id])
+      @user = User.find_by(id: params[:id])
       return unless @user.nil?
 
-      redirect_to :root, alert: I18n.t('controllers.no_medium')
+      redirect_to :root, alert: I18n.t("controllers.no_medium")
     end
 
     def set_elevated_users

@@ -1,0 +1,209 @@
+/* buttons */
+#annotation-button {
+  position: absolute;
+  left: 51%;
+  font-size: 1.3rem;
+  padding: 2px 8px;
+
+  i {
+    &::before {
+      color: transparent;
+      background-clip: text;
+      background-image: radial-gradient(at bottom right, rgb(30, 82, 141) 0%, rgb(237, 152, 189) 100%);
+    }
+  }
+
+  transition: filter 60ms ease-in-out;
+
+  &:hover {
+    filter: drop-shadow(2px 3px 2px rgba(97, 114, 138, 0.3));
+  }
+}
+
+#annotations-toggle {
+  position: absolute;
+  display: flex;
+  left: 89%;
+
+  input:checked {
+    background-color: #2196F3; // TODO: outsource common video control colors
+  }
+}
+
+/* annotation modal */
+#annotation-modal {
+  .modal-header {
+    transition: background-color 200ms linear;
+  }
+
+  .modal-body {
+    display: flex;
+  }
+
+  .modal-footer {
+    margin-top: 40px;
+    padding-bottom: 0;
+    padding-right: 0;
+  }
+
+  .annotation-dialog-normal {
+    max-width: 560px;
+  }
+
+  .annotation-dialog-expanded {
+    max-width: 730px;
+  }
+
+  .annotation-content-normal {
+    width: 100%;
+  }
+
+  .annotation-content-expanded {
+    width: 70%;
+  }
+
+  #annotation-preview-section {
+    width: 30%;
+  }
+
+  #annotation-modal-preview {
+    word-wrap: break-word;
+    overflow-y: auto;
+  }
+
+  #annotation_comment {
+    height: 200px;
+    max-height: 300px;
+  }
+
+  #annotation_category_text {
+    width: 200px;
+  }
+
+  // adapted from https://stackoverflow.com/a/49065029/
+  section {
+    display: flex;
+    flex-direction: column;
+    // border: thin solid rgb(176, 176, 176);
+  }
+
+  // this column adapts to the other column with respect to its height
+  .column-adaptable {
+    flex-basis: 0;
+    flex-grow: 1;
+  }
+
+  .annotation-preview {
+    border-right: thin solid rgb(176, 176, 176);
+    margin-right: 8px;
+    padding-right: 8px;
+  }
+
+  .annotation-content-spacing {
+    padding-left: 8px;
+  }
+}
+
+.annotation-marker {
+  position: relative;
+  top: -12px;
+  width: 0;
+  height: 0;
+  display: flex;
+  cursor: pointer;
+
+  & i {
+    position: relative;
+    transition: filter 80ms ease-in-out;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.1));
+    font-size: 1.0rem;
+
+    &.annotation-marker-shown {
+      filter: drop-shadow(0px 0px 2px #fffd00) !important;
+      z-index: 100; // for markers on the same point in time
+    }
+
+    &:hover {
+      filter: drop-shadow(0px 0px 2px #fffd00);
+    }
+  }
+}
+
+#annotation-caption {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+#annotation-infobar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+
+  padding: 0.6em;
+  box-shadow: 0px 2px 10px -2px rgba(0, 0, 0, 0.05);
+
+  color: #4b4b4b;
+  font-size: 0.85rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+#annotation-comment {
+  height: 100%;
+  overflow: overlay;
+  padding: 0.5em;
+
+  color: #4b4b4b;
+  font-size: 1rem;
+}
+
+#annotation-area-buttons {
+  display: flex;
+  justify-content: center;
+  padding: 0.4em 4.2em;
+
+  box-shadow: 0px -2px 10px -2px rgba(0, 0, 0, 0.05);
+
+  & i {
+    font-size: 1.1rem;
+  }
+}
+
+#annotation-color-picker {
+  input[type="radio"] {
+    display: none;
+
+    &:checked+label {
+      span {
+        transform: scale(1.25);
+        border: 2px solid #0000008a;
+      }
+    }
+  }
+
+  text-align: center;
+
+  label {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    margin-right: 2px;
+    cursor: pointer;
+
+    &:hover {
+      span {
+        transform: scale(1.25);
+      }
+    }
+
+    span {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      transition: transform .1s ease-in-out;
+    }
+  }
+}

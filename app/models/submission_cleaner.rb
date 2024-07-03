@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # PORO class that handles the cleaning of submissions
 # in order to fulfill GDPR regulations
 class SubmissionCleaner

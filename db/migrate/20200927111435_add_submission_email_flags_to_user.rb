@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddSubmissionEmailFlagsToUser < ActiveRecord::Migration[6.0]
   def up
     add_column :users, :email_for_submission_upload, :boolean
@@ -13,3 +14,4 @@ class AddSubmissionEmailFlagsToUser < ActiveRecord::Migration[6.0]
     remove_column :users, :email_for_submission_leave, :boolean
   end
 end
+# rubocop:enable Rails/

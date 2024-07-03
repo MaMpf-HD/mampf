@@ -8,35 +8,23 @@ class ReferralsController < ApplicationController
     @current_ability ||= ReferralAbility.new(current_user)
   end
 
-  def update
-    I18n.locale = @referral.medium.locale_with_inheritance
-    # if referral's item is a link, it is updated
-    # this means in particular that *all referrals* that refer to it will
-    # be affected; links are changed *globally*
-    update_item if Item.find_by_id(@item_id)&.sort == 'link'
-    return if @errors.present?
-
-    @referral.update(updated_params)
-    @errors = @referral.errors unless @referral.valid?
-  end
-
   def edit
     I18n.locale = @referral.medium.locale_with_inheritance
     # if referral's item is a link, load all other links,
     # otherwise load all items in the referral's item's medium scope
     # that the user can choose from in the item dropdown menu
-    @item_selection = if @referral.item.sort == 'link'
+    @item_selection = if @referral.item.sort == "link"
       Item.where(medium: nil)
           .map { |i| [i.description, i.id] }
     else
       @referral.item.medium.teachable.media_scope
                .media_items_with_inheritance
     end
-    @item = Item.new(sort: 'link')
+    @item = Item.new(sort: "link")
   end
 
   def create
-    update_item if Item.find_by_id(@item_id)&.sort == 'link'
+    update_item if Item.find_by(id: @item_id)&.sort == "link"
     if @errors.present?
       render :update
       return
@@ -46,6 +34,18 @@ class ReferralsController < ApplicationController
     @referral.save
     @errors = @referral.errors unless @referral.valid?
     render :update
+  end
+
+  def update
+    I18n.locale = @referral.medium.locale_with_inheritance
+    # if referral's item is a link, it is updated
+    # this means in particular that *all referrals* that refer to it will
+    # be affected; links are changed *globally*
+    update_item if Item.find_by(id: @item_id)&.sort == "link"
+    return if @errors.present?
+
+    @referral.update(updated_params)
+    @errors = @referral.errors unless @referral.valid?
   end
 
   def destroy
@@ -58,11 +58,11 @@ class ReferralsController < ApplicationController
   # renders it in json as it will be called by ajax
   def list_items
     authorize! :list_items, Referral.new
-    teachable_id = params[:teachable_id].to_s.split('-')
-    if teachable_id[0] == 'external'
+    teachable_id = params[:teachable_id].to_s.split("-")
+    if teachable_id[0] == "external"
       result = Item.where(medium: nil).pluck(:description, :id)
     else
-      @teachable = teachable_id[0].constantize.find_by_id(teachable_id[1])
+      @teachable = teachable_id[0].constantize.find_by(id: teachable_id[1])
       result = @teachable.media_items_with_inheritance
     end
     result ||= Item.none

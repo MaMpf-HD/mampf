@@ -70,6 +70,9 @@
     </div>
   <% else %>
     <%= t('basics.editors') %>
+    <%= helpdesk(t('admin.course.info.no_right_to_change_editors',
+                   project_email: mail_to(DefaultSetting::PROJECT_EMAIL)),
+                 true) %>
     <ul>
       <% course.editors.each do |e| %>
         <li>

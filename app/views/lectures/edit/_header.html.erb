@@ -1,6 +1,6 @@
-<div class="row px-4 py-2 mt-2">
-  <div class="col-7">
-    <h4 class="ps-2">
+<div class="row py-3 mt-4 bg-white">
+  <div class="col-9 d-flex align-content-center">
+    <h4 class="mb-0 fw-bold">
       <span class="badge bg-secondary">
         <%= lecture.sort_localized %>
       </span>
@@ -12,14 +12,14 @@
       <%= lecture.title_with_teacher_no_type %>
       <%= link_to '',
                   lecture_path(lecture),
-                  class: 'fas fa-eye text-dark mt-3',
+                  class: 'fas fa-eye text-dark d-contents',
                   data: { toggle: 'tooltip',
                           placement: 'bottom' },
                   title: t('buttons.show'),
                   style: 'text-decoration: none;' %>
     </h4>
   </div>
-  <div class="col-5 text-end">
+  <div class="col-3 text-end align-content-center">
     <% if current_user.admin || lecture.course.edited_by?(current_user) %>
       <%= link_to t('buttons.parent_course'),
                   edit_course_path(lecture.course),

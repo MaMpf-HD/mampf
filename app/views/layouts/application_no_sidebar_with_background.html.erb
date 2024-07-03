@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <%= render partial: 'layouts/head' %>
+  </head>
+  <body class="d-flex flex-column min-vh-100" data-locale="<%= I18n.locale %>" style="overflow-y: scroll;">
+    <%= render partial: 'shared/navbar' %>
+    <div class="container-fluid fluidvert subtle-background">
+      <div class="row">
+        <main class="col-12 pt-3" role="main">
+          <div class="alert alert-danger" id="js-messages" role="alert"
+               style="display: none;">
+          </div>
+          <% if alert.present? %>
+            <div class="alert alert-danger" role="alert">
+              <%= sanitize alert, :tags => %w(br) %>
+            </div>
+          <% end %>
+          <% if notice.present? %>
+            <div class="alert alert-secondary" role="alert">
+              <%= sanitize notice, :tags => %w(br) %>
+            </div>
+          <% end %>
+          <%= yield %>
+        </main>
+      </div>
+    </div>
+    <div id="modal-container"></div>
+    <footer class="mt-auto">
+      <%= render partial: 'shared/footer' %>
+    </footer>
+  </body>
+</html>

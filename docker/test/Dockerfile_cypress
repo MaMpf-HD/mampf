@@ -1,0 +1,4 @@
+FROM cypress/included:13.11.0
+
+# Install curl
+RUN apt-get update && apt-get install curl -y

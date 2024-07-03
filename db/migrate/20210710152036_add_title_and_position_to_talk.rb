@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class AddTitleAndPositionToTalk < ActiveRecord::Migration[6.1]
   def up
     add_column :talks, :title, :text
@@ -9,3 +10,4 @@ class AddTitleAndPositionToTalk < ActiveRecord::Migration[6.1]
     remove_column :talks, :position, :integer
   end
 end
+# rubocop:enable Rails/

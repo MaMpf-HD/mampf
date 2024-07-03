@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :clicker do
     title { Faker::Book.title + Faker::Number.between(from: 1, to: 9999).to_s }

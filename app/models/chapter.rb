@@ -3,12 +3,14 @@ class Chapter < ApplicationRecord
   belongs_to :lecture, touch: true
   # the chapters of a lecture form an ordered list
   acts_as_list scope: :lecture
-  has_many :sections, -> { order(position: :asc) }, dependent: :destroy
+  has_many :sections, -> { order(position: :asc) },
+           dependent: :destroy,
+           inverse_of: :chapter
   validates :title, presence: true
-  after_save :touch_sections
-  after_save :touch_chapters
   before_destroy :touch_sections
   before_destroy :touch_chapters
+  after_save :touch_sections
+  after_save :touch_chapters
 
   def to_label
     unless hidden
@@ -23,7 +25,7 @@ class Chapter < ApplicationRecord
   # Returns the number of the chapter. Unless the user explicitly specified
   # a display number, this number is calculated
   def displayed_number
-    return calculated_number unless display_number.present?
+    return calculated_number if display_number.blank?
 
     display_number
   end
@@ -36,7 +38,7 @@ class Chapter < ApplicationRecord
 
   # Returns the chapter number based on the position in the chapters list.
   def calculated_number
-    return position.to_s unless lecture.start_chapter.present?
+    return position.to_s if lecture.start_chapter.blank?
 
     (lecture.start_chapter + position - 1).to_s
   end
@@ -65,18 +67,18 @@ class Chapter < ApplicationRecord
   end
 
   def cache_key
-    super + '-' + I18n.locale.to_s
+    "#{super}-#{I18n.locale}"
   end
 
   def touch_chapters
-    lecture.chapters.update_all(updated_at: Time.now)
+    lecture.chapters.touch_all
   end
 
   def touch_sections
     unless lecture.absolute_numbering
-      sections.update_all(updated_at: Time.now)
+      sections.touch_all
       return
     end
-    Section.where(chapter: lecture.chapters).update_all(updated_at: Time.now)
+    Section.where(chapter: lecture.chapters).touch_all
   end
 end

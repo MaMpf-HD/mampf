@@ -1,69 +1,47 @@
-<div class="accordion-item bg-light">
-  <div class="accordion-header">
-    <button class="accordion-button collapsed"
-            type="button"
-            id="exercises_heading"
-            data-bs-toggle="collapse"
-            data-bs-target="#exercises_collapse"
-            aria-expanded="false"
-            aria-controls="exercises_collapse">
-      <div class="row">
-        <div class="col-12">
-          <h5>
-            <%= t('basics.tutorials') %>
-          </h5>
-        </div>
-      </div>
-    </button>
-  </div>
-  <div id="exercises_collapse"
-       class="collapse"
-       role="tabpanel"
-       aria-labelledby="heading"
-       data-bs-parent="#lectureAccordion">
-    <div class="accordion-body">
-      <% if current_user.can_update_personell?(lecture) %>
-        <div class="row mb-3">
-          <div class="col-12 text-center">
-            <%= link_to t('admin.tutorial.new'),
-                        new_tutorial_path(params: { lecture_id: lecture.id }),
-                        class: 'btn btn-sm btn-primary',
-                        id: 'newTutorialButton',
-                        remote: true %>
-          </div>
-        </div>
-        <div class="list-group">
-          <div class="list-group-item bg-light"
-               id="tutorialListHeader"
-               style="display: <%= show(lecture.tutorials.any?) %>">
-            <div class="row">
-              <div class="col-4">
-                <h6>
-                  <%= t('basics.title') %>
-                </h6>
-              </div>
-              <div class="col-4">
-                <h6>
-                  <%= t('basics.tutors') %>
-                </h6>
-              </div>
-              <div class="col-4">
-                <h6>
-                  <%= t('basics.action') %>
-                  <%= helpdesk(t('tutorial.destruction_info'), true) %>
-                </h6>
-              </div>
-            </div>
-          </div>
-          <% lecture.tutorials.each do |t| %>
-            <%= render partial: 'tutorials/row',
-                       locals: { tutorial: t } %>
-          <% end %>
-        </div>
-      <% else %>
-          <%= t('admin.lecture.no_access_to_users_html',
-                project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
-      <% end %>
+<hr class="lecture-pane-separator">
+<h3 class="lecture-pane-header">
+  <%= t('basics.tutorials') %>
+</h3>
+
+<% if current_user.can_update_personell?(lecture) %>
+  <div class="mb-3">
+    <div class="col-12 text-center">
+      <%= link_to t('admin.tutorial.new'),
+                  new_tutorial_path(params: { lecture_id: lecture.id }),
+                  class: 'btn btn-sm btn-primary',
+                  id: 'newTutorialButton',
+                  remote: true %>
     </div>
   </div>
-</div>
+  <div class="list-group">
+    <div class="list-group-item bg-light"
+          id="tutorialListHeader"
+          style="display: <%= show(lecture.tutorials.any?) %>">
+      <div class="row">
+        <div class="col-4">
+          <h6>
+            <%= t('basics.title') %>
+          </h6>
+        </div>
+        <div class="col-4">
+          <h6>
+            <%= t('basics.tutors') %>
+          </h6>
+        </div>
+        <div class="col-4">
+          <h6>
+            <%= t('basics.action') %>
+            <%= helpdesk(t('tutorial.destruction_info'), true) %>
+          </h6>
+        </div>
+      </div>
+    </div>
+    <% lecture.tutorials.each do |t| %>
+      <%= render partial: 'tutorials/row',
+                  locals: { tutorial: t } %>
+    <% end %>
+  </div>
+<% else %>
+    <%= t('admin.lecture.no_access_to_users_html',
+          project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+<% end %>

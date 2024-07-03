@@ -9,7 +9,7 @@ class ClickerAbility
       !user.generic?
     end
 
-    can [:show, :get_votes_count], Clicker
+    can [:show, :votes_count], Clicker
 
     can [:edit, :open, :close, :set_alternatives], Clicker do |clicker, code|
       (user&.admin? || user == clicker.editor) || code == clicker.code

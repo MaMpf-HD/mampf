@@ -1,0 +1,11 @@
+#feedback-btn {
+    color: white;
+
+    &:focus {
+        box-shadow: none;
+    }
+
+    &:hover {
+        color: #ffc107;
+    }
+}

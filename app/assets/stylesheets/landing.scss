@@ -15,10 +15,14 @@
 }
 
 #signin-box {
+    z-index: 2;
     padding: 70px 40px;
+    background: linear-gradient(7deg,
+            rgba(255, 255, 255, 0.85) 0%, white 70%);
 }
 
 #announcement-box {
+    z-index: 1;
     display: flex;
     align-items: baseline;
     flex-wrap: wrap;
@@ -49,9 +53,12 @@
     }
 }
 
-#landing-body {
-    background-image: image-url('landing-background.jpg');
-    background-size: cover;
+footer {
+    z-index: 1;
+}
+
+#footer-bar {
+    background-color: rgba(255, 255, 255, 0.95);
 }
 
 .ul-no-indentation {
@@ -92,4 +99,34 @@
 #remember-me-text {
     white-space: normal;
     display: contents;
+}
+
+#einstein-monotile-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    cursor: grab;
+}
+
+.monotile-btn {
+    background-color: rgba(255, 255, 255, 0.4);
+    height: 35px !important;
+    font-weight: 400;
+
+    &:hover {
+        background-color: white;
+    }
+
+    &.disabled {
+        background-color: rgba(255, 255, 255, 0.6);
+        font-weight: 350;
+    }
+}
+
+// Disable monotile buttons on "small" devices
+@include media-breakpoint-down(xxl) {
+    .monotile-btn {
+        display: none;
+    }
 }

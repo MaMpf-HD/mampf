@@ -1,0 +1,123 @@
+# SEVERITY LEVELS
+# In the GitHub CI/CD, we can only distinguish between "error" and "warning".
+# In Rubocop this is much more granular: "info", "refactor", "convention",
+# "warning", "error" and "fatal".
+# From the docs: "The level is normally 'warning' for Lint and 'convention' for
+# all the others, but this can be changed in user configuration."
+# However, we don't want to set the severity for each cop individually, so instead
+# we set the fatal level as "convention" in the CI/CD,
+# i.e. severity: "convention" and up will be treated as an error on GitHub
+# and below as warning such that the check will still pass (with a warning).
+#
+# Overview:
+# |   RuboCop     |            GitHub               |
+#    error             error     -> check fails
+#    warning           error     -> check fails
+#    convention        error     -> check fails
+#    refactor          warning   -> check passes
+#    info              warning   -> check passes
+#
+# also see the RuboCop docs on severity
+# https://docs.rubocop.org/rubocop/configuration.html#severity
+
+# "Rubocop defaults" are by default required/included:
+# https://github.com/rubocop/rubocop/blob/master/config/default.yml
+require:
+  - rubocop-performance
+  - rubocop-rails
+
+AllCops:
+  # While default cops are automatically included, they are not "configured"
+  # by default (only on each next major version of RuboCop). Therefore, we
+  # have to explicitly configure them here.
+  # see https://docs.rubocop.org/rubocop/configuration.html#defaults
+  # and https://docs.rubocop.org/rubocop/1.2/versioning.html#pending-cops
+  NewCops: enable
+  # Ruby version is determined automatically from the Gemfile.lock
+
+#############################################
+# Layout
+#############################################
+
+Layout/EndAlignment:
+  EnforcedStyleAlignWith: variable
+
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
+
+Layout/LineLength:
+  Max: 100
+
+#############################################
+# Metrics
+#############################################
+
+Metrics:
+  Enabled: false
+
+Metrics/ParameterLists:
+  Enabled: true
+
+#############################################
+# Performance
+#############################################
+
+Performance:
+  Severity: refactor # a warning in CI/CD
+
+Performance/FlatMap:
+  Severity: warning # an error in CI/CD
+
+
+#############################################
+# Rails
+#############################################
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+Rails/SkipsModelValidations:
+  AllowedMethods: ["touch", "touch_all"]
+
+Rails/UnknownEnv:
+  Environments: ["development", "test", "production", "docker_development"]
+
+#############################################
+# Style
+#############################################
+
+Style/Documentation:
+  Enabled: false
+
+Style/EmptyMethod:
+  EnforcedStyle: expanded
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Style/HashSyntax:
+  EnforcedShorthandSyntax: never
+
+Style/MethodCallWithArgsParentheses:
+  Enabled: true
+  AllowedMethods: ["authorize!", "authorize", "can", "can?", "head", "import",
+    "include", "not_to", "puts", "render", "require", "to"]
+  AllowedPatterns: [^redirect_]
+  # Don't enforce in migrations, as we have methods like `add_column`,
+  # `change_column` etc. and parentheses would be very annoying there.
+  Exclude: ["../db/**/*"]
+
+Style/RedundantReturn:
+  AllowMultipleReturnValues: true
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes
+
+Style/SymbolArray:
+  EnforcedStyle: brackets
+
+Style/WordArray:
+  EnforcedStyle: brackets

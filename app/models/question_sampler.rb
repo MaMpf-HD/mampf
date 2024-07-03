@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 # QuestionSampler class
 # This is a service PORO model that is used in the generation of quizzes
 class QuestionSampler

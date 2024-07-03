@@ -17,7 +17,11 @@
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.15.1"
   },
-  "scripts": {
-    "lint": "eslint ."
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^1.8.0",
+    "eslint": "^9.1.1",
+    "eslint-plugin-cypress": "^3.3.0",
+    "eslint-plugin-erb": "^2.0.0",
+    "globals": "^15.1.0"
   }
 }

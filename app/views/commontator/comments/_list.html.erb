@@ -1,3 +1,4 @@
+<%= stylesheet_link_tag 'comments' %>
 <%#
   Controllers that use this partial must supply the following variables:
   user
@@ -5,7 +6,7 @@
 %>
 
 <% nested_comments.each do |comment, nested_children| %>
-  <div id="commontator-comment-<%= comment.id %>" class="comment">
+  <div id="commontator-comment-<%= comment.id %>" class="comment comment-field">
     <%=
       render partial: 'commontator/comments/show', formats: [ :html ], locals: {
         user: user, comment: comment, nested_children: nested_children

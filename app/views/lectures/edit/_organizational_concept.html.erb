@@ -1,85 +1,63 @@
-  <div class="accordion-item bg-light">
-    <div class="accordion-header">
-      <button class="accordion-button collapsed"
-              type="button"
-              id="organizational_heading"
-              data-bs-toggle="collapse"
-              data-bs-target="#organizational_collapse"
-              aria-expanded="false"
-              aria-controls="organizational_collapse">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              <%= t('categories.organizational_html') %>
-            </h5>
-          </div>
-        </div>
-      </button>
+<h3 class="lecture-pane-header">
+  <%= t('admin.lecture.organization') %>
+</h3>
+
+<%= form_with model: lecture,
+              html: { id: 'lecture-organizational-form' } do |f| %>
+  <div class="row mb-3">
+    <div class="col-6">
+      <div class="form-check">
+        <%= f.check_box :organizational,
+                        class: 'form-check-input' %>
+        <%= f.label :organizational,
+                    t('admin.lecture.organizational_visible'),
+                    { class: 'form-check-label' } %>
+        <%= helpdesk(t('admin.lecture.info.organizational'), false) %>
+      </div>
     </div>
-    <div id="organizational_collapse"
-         class="collapse"
-         role="tabpanel"
-         aria-labelledby="heading"
-         data-bs-parent="#lectureAccordion">
-      <div class="accordion-body">
-        <%= form_with model: lecture,
-                      html: { id: 'lecture-organizational-form' } do |f| %>
-          <div class="row mb-3">
-            <div class="col-6">
-              <div class="form-check">
-                <%= f.check_box :organizational,
-                                class: 'form-check-input' %>
-                <%= f.label :organizational,
-                            t('admin.lecture.organizational_visible'),
-                            { class: 'form-check-label' } %>
-                <%= helpdesk(t('admin.lecture.info.organizational'), false) %>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="form-check">
-                <%= f.check_box :muesli,
-                                class: 'form-check-input' %>
-                <%= f.label :muesli,
-                            t('admin.lecture.uses_muesli'),
-                            { class: 'form-label' } %>
-                <%= helpdesk(t('admin.lecture.info.muesli'), false) %>
-              </div>
-            </div>
-            <% if !lecture.term && lecture.organizational %>
-              <div class="col-6">
-                <div class="form-check">
-                  <%= f.check_box :organizational_on_top,
-                                  class: 'form-check-input' %>
-                  <%= f.label :organizational_on_top,
-                              t('admin.lecture.organizational_on_top'),
-                                { class: 'form-check-label' } %>
-                  <%= helpdesk(t('admin.lecture.info.organizational_on_top'),
-                               false) %>
-                </div>
-              </div>
-            <% end %>
-          </div>
-          <div class="row">
-            <div class="col-12">
-              <%= f.trix_editor :organizational_concept,
-                                id: 'lecture-concept-trix',
-                                data: { content: lecture.organizational_concept } %>
-            </div>
-          </div>
-          <div class="row mt-3">
-            <div class="col-12 text-center">
-              <div id="lecture-organizational-warning">
-                <%= t('warnings.unsaved_changes') %>
-                <%= f.submit t('buttons.save_and_exit'),
-                             class: "btn btn-primary" %>
-                <button type="button" id="cancel-lecture-organizational"
-                        class="btn btn-secondary">
-                  <%= t('buttons.cancel') %>
-                </button>
-              </div>
-            </div>
-          </div>
-        <% end %>
+    <div class="col-6">
+      <div class="form-check">
+        <%= f.check_box :muesli,
+                        class: 'form-check-input' %>
+        <%= f.label :muesli,
+                    t('admin.lecture.uses_muesli'),
+                    { class: 'form-label' } %>
+        <%= helpdesk(t('admin.lecture.info.muesli'), false) %>
+      </div>
+    </div>
+    <% if !lecture.term && lecture.organizational %>
+      <div class="col-6">
+        <div class="form-check">
+          <%= f.check_box :organizational_on_top,
+                          class: 'form-check-input' %>
+          <%= f.label :organizational_on_top,
+                      t('admin.lecture.organizational_on_top'),
+                        { class: 'form-check-label' } %>
+          <%= helpdesk(t('admin.lecture.info.organizational_on_top'),
+                        false) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <%= f.trix_editor :organizational_concept,
+                        id: 'lecture-concept-trix',
+                        data: { content: lecture.organizational_concept } %>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <div class="col-12 text-center">
+      <div id="lecture-organizational-warning">
+        <%= t('warnings.unsaved_changes') %>
+        <%= hidden_field_tag :subpage, "orga" %>
+        <%= f.submit t('buttons.save'),
+                      class: "btn btn-primary" %>
+        <button type="button" id="cancel-lecture-organizational"
+                class="btn btn-secondary">
+          <%= t('buttons.cancel') %>
+        </button>
       </div>
     </div>
   </div>
+<% end %>

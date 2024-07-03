@@ -1,23 +1,25 @@
 # Clicker class
 class Clicker < ApplicationRecord
-  belongs_to :editor, class_name: 'User'
+  belongs_to :editor, class_name: "User"
   belongs_to :question, optional: true
 
   before_create :set_basics
 
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, uniqueness: { scope: [:editor_id] }
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
   validates :title, presence: true
 
-  has_many :votes, dependent: :destroy, class_name: 'ClickerVote'
+  has_many :votes, dependent: :destroy, class_name: "ClickerVote"
 
   def user_link
-    clicker_url(self, host: 'localhost').gsub('clickers', 'c')
+    clicker_url(self, host: "localhost").gsub("clickers", "c")
   end
 
   def editor_link
     clicker_url(self,
-                host: 'localhost',
-                params: { code: code }).gsub('clickers', 'c')
+                host: "localhost",
+                params: { code: code }).gsub("clickers", "c")
   end
 
   def closed?

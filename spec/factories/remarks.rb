@@ -1,8 +1,6 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
-  factory :remark, parent: :medium, class: 'Remark' do
-    sort { 'Remark' }
+  factory :remark, parent: :medium, class: "Remark" do
+    sort { "Remark" }
 
     transient do
       teachable_sort { :course }

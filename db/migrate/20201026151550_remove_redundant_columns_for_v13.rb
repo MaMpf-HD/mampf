@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class RemoveRedundantColumnsForV13 < ActiveRecord::Migration[6.0]
   def up
     remove_column :users, :edited_profile, :boolean
@@ -9,3 +10,4 @@ class RemoveRedundantColumnsForV13 < ActiveRecord::Migration[6.0]
     add_column :tutorial, :tutor_id, :integer
   end
 end
+# rubocop:enable Rails/

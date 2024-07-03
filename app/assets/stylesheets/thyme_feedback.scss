@@ -1,0 +1,56 @@
+#thyme-feedback {
+  #timeline {
+    width: 55%;
+  }
+}
+
+#annotation-switches {
+  display: flex;
+  position: absolute;
+  left: 57%;
+
+  .form-switch .form-check-input {
+    border: none;
+
+    &:focus {
+      box-shadow: 0 0 0 0.25rem #ffffff4f;
+      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(0,0,0,0.25)'/></svg>");
+    }
+
+    &:checked {
+      background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(255,255,255,1.0)'/></svg>");
+    }
+  }
+
+  // reflected from category.js
+  #annotation-category-note-switch:checked {
+    background-color: #f78f19;
+  }
+
+  #annotation-category-content-switch:checked {
+    background-color: #A333C8;
+  }
+
+  #annotation-category-presentation-switch:checked {
+    background-color: #2185D0;
+  }
+
+  #annotation-category-mistake-switch:checked {
+    background-color: #fc1461;
+  }
+}
+
+#feedback-special-buttons {
+  left: 73%;
+}
+
+#feedback-volume-controls {
+  left: 79%;
+}
+
+#heatmap {
+  position: relative;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}

@@ -43,6 +43,9 @@
       <%= link_to t('basics.thyme_editor'),
                   enrich_medium_path(medium),
                   class: 'btn btn-sm btn-outline-secondary' %>
+      <%= link_to 'Feedback',
+                  feedback_medium_path(medium),
+                  class: 'btn btn-sm btn-outline-secondary' %>
       <%= link_to t('basics.thyme'),
                   play_medium_path(medium),
                   class: 'btn btn-outline-secondary btn-sm',

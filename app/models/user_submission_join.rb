@@ -5,9 +5,7 @@ class UserSubmissionJoin < ApplicationRecord
   validate :only_one_per_assignment, on: :create
   validate :max_team_size, on: :create
 
-  def assignment
-    submission.assignment
-  end
+  delegate :assignment, to: :submission
 
   private
 

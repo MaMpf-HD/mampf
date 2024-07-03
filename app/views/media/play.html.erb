@@ -1,6 +1,6 @@
 <% content_for :title, "THymE - \"#{@medium.caption}\"" %>
-<div id="thyme-container">
-  <div id="thyme">
+<div id="thyme-container" class="thyme-container-layout">
+  <div id="thyme" class="thyme-generic" data-medium="<%= @medium.id %>">
     <figure id="hypervideo-container">
       <div id="video-container">
         <video id="video" data-paused="true" crossorigin="anonymous" data-time="<%= @time %>">
@@ -21,13 +21,16 @@
               <span id="current-time">
                 0:00:00
               </span>
+              <span id="markers" class="annotation-marker">
+                <!--- JavaScript inserts markers here -->
+              </span>
               <input type="range" id="seek-bar"
                      min="0" max="100" step="0.1" value="0">
               <span id="max-time">
                 0:00:00
               </span>
             </div>
-            <div id="special-buttons">
+            <div id="special-buttons" class="special-buttons-layout">
               <i id="minus-ten" class="material-icons clickable">
                 replay_10
               </i>
@@ -41,7 +44,7 @@
                 skip_next
               </i>
             </div>
-            <div id="volume-controls">
+            <div id="volume-controls" class="volume-controls-layout">
               <i id="mute" class="material-icons clickable">
                 volume_up
               </i>
@@ -58,6 +61,22 @@
                 <option value="2">2x</option>
               </select>
             </div>
+            
+            <!--- ANNOTATION BUTTON -->
+            <% if user_signed_in? %>
+              <a id="annotation-button" class="btn"
+                  title="<%= t('admin.annotation.annotation_modal_head_create_annotation') %>">
+                <i class="fas fa-sticky-note" aria-hidden="true"></i>
+              </a>
+            <% end %>
+
+            <!--- TOGGLE FOR TURNING ON/OFF VISIBLE ANNOTATIONS -->
+            <div id="annotations-toggle" class="form-check form-switch"
+                style="display: none;">
+              <input id="annotations-toggle-check"
+                    class="form-check-input" type="checkbox" role="switch" checked>
+            </div>
+
             <div id="size-buttons">
               <i id="ia-active" class="material-icons clickable"
                  data-status="true">
@@ -71,6 +90,7 @@
           </div>
         </div>
       </div>
+      <%= render partial: "annotations/annotation_area" %>
       <figcaption id="caption" tabindex="0" role="menu"
                   aria-label="Captions">
         <div id="infobar">
@@ -103,3 +123,8 @@
     </figure>
   </div>
 </div>
+
+<% if user_signed_in? %>
+  <%= render partial: "annotations/annotation_modal" %>
+  <%= render partial: "annotations/annotation_locales" %>
+<% end %>

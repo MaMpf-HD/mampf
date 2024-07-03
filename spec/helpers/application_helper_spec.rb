@@ -1,8 +1,6 @@
-# frozen_string_literal: true
+require "rails_helper"
 
-require 'rails_helper'
-
-RSpec.describe ApplicationHelper, type: :helper do
+RSpec.describe(ApplicationHelper, type: :helper) do
   # NEEDS TO BE REFACTORED
 
   # describe '#full_title' do

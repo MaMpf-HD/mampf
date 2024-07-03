@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 FactoryBot.define do
   factory :mampf_matrix do
     transient do
@@ -11,7 +9,7 @@ FactoryBot.define do
       a_22 { Faker::Number.between(from: -3, to: 3).to_s }
       coefficients { [a_11, a_12, a_21, a_22] }
       tex do
-        "\\begin{pmatrix} #{a_11} & #{a_12} \\cr " +
+        "\\begin{pmatrix} #{a_11} & #{a_12} \\cr " \
           "#{a_21} & #{a_22} \\end{pmatrix}"
       end
       nerd { "matrix([#{a_11},#{a_12}],[#{a_21},#{a_22}]" }

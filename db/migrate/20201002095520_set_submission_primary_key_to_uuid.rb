@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class SetSubmissionPrimaryKeyToUuid < ActiveRecord::Migration[6.0]
   def up
     rename_column :submissions, :id, :integer_id
@@ -10,3 +11,4 @@ class SetSubmissionPrimaryKeyToUuid < ActiveRecord::Migration[6.0]
     raise ActiveRecord::IrreversibleMigration
   end
 end
+# rubocop:enable Rails/

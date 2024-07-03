@@ -9,7 +9,7 @@ class TalkAbility
     end
 
     can [:new, :edit, :create, :update, :destroy], Talk do |talk|
-      (talk.lecture && talk.lecture.edited_by?(user)) || user.admin?
+      talk.lecture&.edited_by?(user) || user.admin?
     end
 
     can [:assemble, :modify], Talk do |talk|

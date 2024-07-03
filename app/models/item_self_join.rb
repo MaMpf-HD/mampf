@@ -5,14 +5,16 @@
 # in a lesson medium)
 class ItemSelfJoin < ApplicationRecord
   belongs_to :item
-  belongs_to :related_item, class_name: 'Item'
+  belongs_to :related_item, class_name: "Item"
 
+  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :related_item, uniqueness: { scope: :item }
+  before_destroy :touch_item
+  after_destroy :destroy_inverses, if: :inverse?
+  # rubocop:enable Rails/UniqueValidationWithoutIndex
   after_save :create_inverse, unless: :inverse?
   after_save :destroy, if: :self_inverse?
   after_save :touch_item
-  before_destroy :touch_item
-  after_destroy :destroy_inverses, if: :inverse?
 
   private
 

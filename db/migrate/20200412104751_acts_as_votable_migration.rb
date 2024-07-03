@@ -1,9 +1,9 @@
+# rubocop:disable Rails/
 class ActsAsVotableMigration < ActiveRecord::Migration[6.0]
   def self.up
     create_table :votes do |t|
-
-      t.references :votable, :polymorphic => true
-      t.references :voter, :polymorphic => true
+      t.references :votable, polymorphic: true
+      t.references :voter, polymorphic: true
 
       t.boolean :vote_flag
       t.string :vote_scope
@@ -20,3 +20,4 @@ class ActsAsVotableMigration < ActiveRecord::Migration[6.0]
     drop_table :votes
   end
 end
+# rubocop:enable Rails/

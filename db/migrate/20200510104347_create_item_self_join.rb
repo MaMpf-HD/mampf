@@ -1,3 +1,4 @@
+# rubocop:disable Rails/
 class CreateItemSelfJoin < ActiveRecord::Migration[6.0]
   def change
     create_table :item_self_joins do |t|
@@ -6,3 +7,4 @@ class CreateItemSelfJoin < ActiveRecord::Migration[6.0]
     end
   end
 end
+# rubocop:enable Rails/

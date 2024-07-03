@@ -3,14 +3,38 @@ class ChaptersController < ApplicationController
   before_action :set_chapter, except: [:new, :create]
   authorize_resource except: [:new, :create]
   before_action :set_view_locale, only: [:edit]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= ChapterAbility.new(current_user)
   end
 
+  def new
+    @lecture = Lecture.find_by(id: params[:lecture_id])
+    @chapter = Chapter.new(lecture: @lecture)
+    authorize! :new, @chapter
+    I18n.locale = @chapter.lecture.locale_with_inheritance ||
+                  current_user.locale || I18n.default_locale
+  end
+
   def edit
-    @section = Section.find_by_id(params[:section_id])
+    @section = Section.find_by(id: params[:section_id])
+  end
+
+  def create
+    @chapter = Chapter.new(chapter_params)
+    authorize! :create, @chapter
+    I18n.locale = @chapter&.lecture&.locale_with_inheritance ||
+                  current_user.locale || I18n.default_locale
+    position = params[:chapter][:predecessor]
+    # place the chapter in the correct position
+    if position.present?
+      @chapter.insert_at(position.to_i + 1)
+    else
+      @chapter.save
+    end
+    redirect_to edit_lecture_path(@chapter.lecture) if @chapter.valid?
+    @errors = @chapter.errors
   end
 
   def update
@@ -31,30 +55,6 @@ class ChaptersController < ApplicationController
     @errors = @chapter.errors
   end
 
-  def create
-    @chapter = Chapter.new(chapter_params)
-    authorize! :create, @chapter
-    I18n.locale = @chapter&.lecture&.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
-    position = params[:chapter][:predecessor]
-    # place the chapter in the correct position
-    if position.present?
-      @chapter.insert_at(position.to_i + 1)
-    else
-      @chapter.save
-    end
-    redirect_to edit_lecture_path(@chapter.lecture) if @chapter.valid?
-    @errors = @chapter.errors
-  end
-
-  def new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
-    @chapter = Chapter.new(lecture: @lecture)
-    authorize! :new, @chapter
-    I18n.locale = @chapter.lecture.locale_with_inheritance ||
-                  current_user.locale || I18n.default_locale
-  end
-
   def destroy
     lecture = @chapter.lecture
     @chapter.destroy
@@ -69,10 +69,10 @@ class ChaptersController < ApplicationController
   private
 
     def set_chapter
-      @chapter = Chapter.find_by_id(params[:id])
+      @chapter = Chapter.find_by(id: params[:id])
       return if @chapter.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_chapter')
+      redirect_to :root, alert: I18n.t("controllers.no_chapter")
     end
 
     def chapter_params

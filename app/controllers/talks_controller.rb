@@ -3,14 +3,18 @@ class TalksController < ApplicationController
   before_action :set_talk, except: [:new, :create]
   authorize_resource except: [:new, :create]
   before_action :set_view_locale, only: [:edit]
-  layout 'administration'
+  layout "administration"
 
   def current_ability
     @current_ability ||= TalkAbility.new(current_user)
   end
 
+  def show
+    render layout: "application_no_sidebar"
+  end
+
   def new
-    @lecture = Lecture.find_by_id(params[:lecture_id])
+    @lecture = Lecture.find_by(id: params[:lecture_id])
     @talk = Talk.new(lecture: @lecture)
     authorize! :new, @talk
     I18n.locale = @talk.lecture.locale_with_inheritance ||
@@ -20,14 +24,10 @@ class TalksController < ApplicationController
   def edit
   end
 
-  def show
-    render layout: 'application_no_sidebar'
-  end
-
   def create
     @talk = Talk.new(talk_params)
     authorize! :create, @talk
-    dates = params[:talk][:dates].values.compact - ['']
+    dates = params[:talk][:dates].values.compact - [""]
     @talk.dates = dates if dates
     I18n.locale = @talk&.lecture&.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
@@ -45,7 +45,7 @@ class TalksController < ApplicationController
   def update
     I18n.locale = @talk.lecture.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
-    dates = params[:talk][:dates]&.values&.compact.to_a - ['']
+    dates = params[:talk][:dates]&.values&.compact.to_a - [""]
     @talk.update(talk_params)
     @talk.update(dates: dates) if dates && @talk.valid?
     if @talk.valid?
@@ -69,7 +69,7 @@ class TalksController < ApplicationController
   end
 
   def assemble
-    render layout: 'application_no_sidebar'
+    render layout: "application_no_sidebar"
   end
 
   # modify is the update action for speakers of the talk
@@ -82,15 +82,15 @@ class TalksController < ApplicationController
   private
 
     def set_talk
-      @talk = Talk.find_by_id(params[:id])
+      @talk = Talk.find_by(id: params[:id])
       return if @talk.present?
 
-      redirect_to :root, alert: I18n.t('controllers.no_talk')
+      redirect_to :root, alert: I18n.t("controllers.no_talk")
     end
 
     def talk_params
       attributes = [:title, :lecture_id, :details, :description,
-                    :display_description, speaker_ids: [], tag_ids: []]
+                    :display_description, { speaker_ids: [], tag_ids: [] }]
       if @talk && !current_user.in?(@talk.speakers) &&
          !@talk.display_description
         attributes.delete(:display_description)
