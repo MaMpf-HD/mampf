@@ -1,21 +1,22 @@
-# Prints this help message.
+# Documentation: https://just.systems/man/en/
+
+# Prints this help message
+[private]
 help:
     @just --list
 
-alias d := docker
-# Groups docker commands
-docker recipe='' *ARGS='':
-    just -f ./commands/docker.justfile {{recipe}} {{ARGS}}
+# Test-related commands
+mod test ".config/commands/test.justfile"
+# see https://github.com/casey/just/issues/2216
+# alias t := test 
 
-alias t := test
-# Groups test commands
-test recipe='' *ARGS='':
-    just -f ./commands/test.justfile {{recipe}} {{ARGS}}
+# Docker-related commands
+mod docker ".config/commands/docker.justfile"
 
-# Opens the MaMpf wiki in the browser.
+# Opens the MaMpf wiki in the default browser
 wiki:
     xdg-open https://github.com/MaMpf-HD/mampf/wiki
 
-# Opens the MaMpf pull requests (PRs) in the browser.
+# Opens the MaMpf pull requests (PRs) in the default browser
 prs:
     xdg-open https://github.com/MaMpf-HD/mampf/pulls
