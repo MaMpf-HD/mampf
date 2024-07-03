@@ -3,8 +3,7 @@
 <% I18n.with_locale(medium.locale_with_inheritance) do %>
   <div class="mampf-card card <%= medium_border(medium) %>">
     <div class="mampf-card-header">
-      <div class="d-flex justify-content-between align-items-center"
-          style="gap: 0.4em">
+      <div class="d-flex justify-content-between align-items-center"style="gap: 0.4em">
         <div>
           <% if lecture&.imported_media&.include?(medium) %>
             <i class="fas fa-file-import text-light"
@@ -88,7 +87,6 @@
           <%= speaker_list_with_icon(medium.teachable) %>
         </div></div>
       <% end %>
-      
     </div>
 
     <% cache [medium, from == 'tag', ref_link] do %>
@@ -132,6 +130,7 @@
           <% end %>
         </div>
       <% end %>
+
       <div class="card-body">
         <% unless medium.caption.nil? %>
           <div class="card-title"
@@ -160,29 +159,32 @@
           <% end %>
         </div>
       </div>
+
       <div class="card-footer text-center">
         <div id="media-box-footer">
           <%= render partial: 'media/medium/buttons',
                      locals: { medium: medium,
                                ref_link: ref_link } %>
         </div>
+    <!-- end of caching -->
     <% end %>
-    <% if medium.commontator_thread.comments.present? %>
-      <hr class="media-hr">
-      <div class="card-text-end">
-      <%= link_to "#{medium.commontator_thread.comments.size} " \
-                  "#{medium.commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
-                  show_media_comments_path(medium),
-                  class: 'text-dark' %>
+        <% if medium.commontator_thread.comments.present? %>
+          <hr class="media-hr">
+          <div class="card-text-end">
+          <%= link_to "#{medium.commontator_thread.comments.size} " \
+                      "#{medium.commontator_thread.comments.size == 1 ? t('basics.comment') : t('basics.comments')}",
+                      show_media_comments_path(medium),
+                      class: 'text-dark' %>
+          </div>
+        <% elsif !medium.commontator_thread.is_closed? %>
+          <hr class="media-hr">
+          <div class="card-text-end">
+            <%= link_to t('comments.comment_verb'),
+                        show_media_comments_path(medium),
+                        class: 'text-dark' %>
+          </div>
+        <% end %>
       </div>
-    <% elsif !medium.commontator_thread.is_closed? %>
-      <hr class="media-hr">
-      <div class="card-text-end">
-      <%= link_to t('comments.comment_verb'),
-                  show_media_comments_path(medium),
-                  class: 'text-dark' %>
-      </div>
-    <% end %>
-      </div>
+
   </div>
 <% end %>
