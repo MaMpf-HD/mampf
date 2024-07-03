@@ -1,3 +1,7 @@
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
 .media-grid {
   @include make-col-ready();
 
@@ -18,7 +22,7 @@
   }
 
   @media (min-width: 1700px) {
-    @include make-col(2.4);
+    @include make-col(2.4); // 5 columns
   }
 }
 
