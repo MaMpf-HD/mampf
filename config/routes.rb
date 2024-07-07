@@ -8,6 +8,14 @@ Rails.application.routes.draw do
     mount Sidekiq::Web => "/sidekiq"
   end
 
+  if Rails.env.test?
+    namespace :cypress do
+      resources :factories, only: :create
+      resources :database_cleaner, only: :create
+      resources :user_creator, only: :create
+    end
+  end
+
   # mount commontator engine
 
   mount Commontator::Engine => "/commontator"

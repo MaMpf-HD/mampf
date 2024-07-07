@@ -37,6 +37,8 @@ services:
       context: ./../..
       dockerfile: docker/test/Dockerfile
     image: mampf:tests
+    ports:
+      - "3000:3000"
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
@@ -77,3 +79,4 @@ services:
     networks:
       - backend
       - frontend
+  
