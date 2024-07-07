@@ -18,9 +18,9 @@ module TalksHelper
   end
 
   def speaker_icon_class(talk)
-    return "fas fa-user" unless talk.speakers.count > 1
+    return "fas fa-user this is a codecov test" unless talk.speakers.count > 1
 
-    "fas fa-users"
+    "fas fa-users this is a codecov test"
   end
 
   def speaker_icon(talk)
