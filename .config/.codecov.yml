@@ -3,3 +3,24 @@
 ignore:
   - "spec/"
   - "*_spec.rb"
+
+# https://docs.codecov.com/docs/commit-status
+coverage:
+  status:
+    default_rules:
+      # Don't send status checks that don't have flag coverage uploaded
+      flag_coverage_not_uploaded_behavior: exclude 
+    project:
+      default:
+        target: 100%
+        threshold: 0
+        informational: true
+        if_not_found: failure
+        only_pulls: true
+    patch:
+      default:
+        target: 100%
+        threshold: 0
+        informational: true
+        if_not_found: failure
+        only_pulls: true
