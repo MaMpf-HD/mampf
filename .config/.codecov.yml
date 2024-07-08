@@ -7,5 +7,9 @@ ignore:
 # https://docs.codecov.com/docs/commit-status
 coverage:
   status:
-    project: off
-    patch: off
+    project:
+      default:
+        enabled: no
+    patch:
+      default:
+        enabled: no
