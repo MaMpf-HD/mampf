@@ -13,7 +13,6 @@
         "source.fixAll.eslint": "explicit"
     },
     "eslint.format.enable": true, // use ESLint as formatter
-    "eslint.experimental.useFlatConfig": true,
     // this disables VSCode built-in formatter (instead we want to use ESLint)
     "javascript.validate.enable": false,
     "eslint.options": {
@@ -71,7 +70,8 @@
         "node_modules/": true,
         "pdfcomprezzor/": true,
         "coverage/": true,
-        "solr/": true
+        "solr/": true,
+        ".docker/": true
     },
     "files.associations": {
         "*.js.erb": "javascript",
@@ -106,6 +106,5 @@
         "commontator",
         "helpdesk",
         "turbolinks"
-    ],
-    "rubyLsp.customRubyCommand": "set -o allexport && . ./docker-dummy.env && set +o allexport"
+    ]
 }
