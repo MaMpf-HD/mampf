@@ -4,8 +4,8 @@ class Voucher < ApplicationRecord
   belongs_to :lecture
   before_create :generate_secure_hash
   before_create :add_expiration_datetime
+  before_create :ensure_no_other_active_voucher
   validates :sort, presence: true
-  validate :ensure_no_other_active_voucher
 
   scope :active, -> { where("expires_at > ?", Time.zone.now) }
 
