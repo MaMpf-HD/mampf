@@ -3893,6 +3893,11 @@ de:
               out_of_range: >
                 Das abgegebene Votum ist leider außerhalb des zulässingen
                 Bereiches.
+        voucher:
+          attributes:
+            sort:
+              only_one_active: >
+                Für diese Vorlesung kann es nur einen aktiven Voucher dieses Typs geben.
         watchlist_entry:
           attributes:
             medium_id:

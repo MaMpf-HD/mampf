@@ -3684,6 +3684,11 @@ en:
             value:
               out_of_range: >
                 Your vote is outside of the allowed range.
+        voucher:
+          attributes:
+            sort:
+              only_one_active: >
+                There can be only one active voucher of this sort for the lecture.
         watchlist_entry:
           attributes:
             medium_id:
