@@ -11,9 +11,9 @@ check_for_preseeds() {
     for file in db/backups/docker_development/*.sql; do
       [[ $file -nt $latest ]] && latest=$file
     done
-    rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
-    rails db:create:interactions
-    rails db:schema:load
+    bundle exec rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
+    bundle exec rails db:create:interactions
+    bundle exec rails db:schema:load
   fi
 
   # Files (uploads) preseed
