@@ -11,8 +11,8 @@ check_for_preseeds() {
     for file in db/backups/docker_development/*.sql; do
       [[ $file -nt $latest ]] && latest=$file
     done
+
     bundle exec rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
-    bundle exec rails db:create:interactions
     bundle exec rails db:migrate
   fi
 
@@ -32,6 +32,7 @@ fi
 
 echo Waiting for redis to come online
 wait-for-it redis:6379 -t 30 || exit 1
+
 if ! [ -f /completed_initial_run ]; then
   echo Initialising MaMpf
   echo Waiting for the DB to come online
@@ -49,10 +50,6 @@ if ! [ -f /completed_initial_run ]; then
   bundle exec rails db:create:interactions
   bundle exec rails db:create
 
-  echo Waiting for SOLR to come online
-  wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
-  bundle exec rake sunspot:solr:reindex &
-
   if [ "$RAILS_ENV" = "docker_development" ]; then
       check_for_preseeds
   fi
@@ -60,6 +57,10 @@ if ! [ -f /completed_initial_run ]; then
       echo Loading DB schema
       bundle exec rails db:schema:load
   fi
+
+  echo Waiting for SOLR to come online
+  wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
+  bundle exec rake sunspot:solr:reindex
 
   echo 'finished initialisation'
   touch /completed_initial_run
