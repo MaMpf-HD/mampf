@@ -5,7 +5,7 @@ check_for_preseeds() {
 
   # Database preseed
   if [[ "${DB_SQL_PRESEED_URL}" ]]; then
-    echo "Found DB Preseed with URL: $DB_SQL_PRESEED_URL"
+    echo "Found DB preseed at URL: $DB_SQL_PRESEED_URL"
     mkdir -pv db/backups/docker_development
     wget --content-disposition --directory-prefix=db/backups/docker_development/ --timestamping $DB_SQL_PRESEED_URL
     for file in db/backups/docker_development/*.sql; do
@@ -18,7 +18,7 @@ check_for_preseeds() {
 
   # Files (uploads) preseed
   if [[ "${UPLOADS_PRESEED_URL}" ]]; then
-    echo "Found Upload Preseed with URL: $UPLOAD_PRESEED_URL"
+    echo "Found upload preseed at URL: $UPLOAD_PRESEED_URL"
     wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
     mkdir -p public/uploads
     bsdtar -xvf public/uploads.zip -s'|[^/]*/||' -C public/uploads
@@ -49,15 +49,16 @@ if ! [ -f /completed_initial_run ]; then
   bundle exec rails db:create:interactions
   bundle exec rails db:create
 
-  echo running: bundle exec rails db:migrate
-  bundle exec rails db:migrate
-
   echo Waiting for SOLR to come online
   wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
   bundle exec rake sunspot:solr:reindex &
 
   if [ "$RAILS_ENV" = "docker_development" ]; then
       check_for_preseeds
+  fi
+  if [ "$RAILS_ENV" = "test" ]; then
+      echo Loading DB schema
+      bundle exec rails db:schema:load
   fi
 
   echo 'finished initialisation'
