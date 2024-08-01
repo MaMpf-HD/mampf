@@ -31,7 +31,7 @@ if [ "$RAILS_ENV" = "production" ]; then
 fi
 
 if ! [ -f /completed_initial_run ]; then
-  echo "▶  Initialising MaMpf in environment: $RAILS_ENV"
+  echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 
   echo "🕖  Waiting for Redis to come online"
   wait-for-it redis:6379 -t 30 || exit 1
