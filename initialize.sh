@@ -13,7 +13,7 @@ check_for_preseeds() {
     done
     bundle exec rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
     bundle exec rails db:create:interactions
-    bundle exec rails db:schema:load
+    bundle exec rails db:migrate
   fi
 
   # Files (uploads) preseed
@@ -49,8 +49,8 @@ if ! [ -f /completed_initial_run ]; then
   bundle exec rails db:create:interactions
   bundle exec rails db:create
 
-  echo running: bundle exec rails db:schema:load
-  bundle exec rails db:schema:load
+  echo running: bundle exec rails db:migrate
+  bundle exec rails db:migrate
 
   echo Waiting for SOLR to come online
   wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
