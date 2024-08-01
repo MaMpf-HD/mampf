@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 check_for_preseeds() {
+  echo Checking for preseeds
+
+  # Database preseed
   if [[ "${DB_SQL_PRESEED_URL}" ]]; then
     echo "Found DB Preseed with URL: $DB_SQL_PRESEED_URL"
     mkdir -pv db/backups/docker_development
@@ -12,6 +15,8 @@ check_for_preseeds() {
     rails db:create:interactions
     rails db:schema:load
   fi
+
+  # Files (uploads) preseed
   if [[ "${UPLOADS_PRESEED_URL}" ]]; then
     echo "Found Upload Preseed with URL: $UPLOAD_PRESEED_URL"
     wget --content-disposition --directory-prefix=public/ --timestamping --progress=dot:mega $UPLOADS_PRESEED_URL
@@ -20,43 +25,41 @@ check_for_preseeds() {
   fi
 }
 
-if [ "$RAILS_ENV" = "production" ]
-then
-    echo "This script is not intended for usage with RAILs_ENV=production. Aborting."
+if [ "$RAILS_ENV" = "production" ]; then
+    echo "This script is not intended for usage with RAILS_ENV=production. Aborting."
     exit 1
 fi
 
 echo Waiting for redis to come online
 wait-for-it redis:6379 -t 30 || exit 1
-if ! [ -f /completed_initial_run ]
-then
-    echo 'Initialising mampf'
-    echo Waiting for the DB to come online
-    echo RAILS ENV $RAILS_ENV
-    if [ "$RAILS_ENV" = "docker_development" ]
-    then
-        wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
-        echo running: bundle exec rails db:create
-        bundle exec rails db:create:interactions
-        bundle exec rails db:create
-    fi
-    if [ "$RAILS_ENV" = "test" ]
-    then
-        wait-for-it ${TEST_DATABASE_HOST}:${TEST_DATABASE_PORT} -t 30 || exit 1
-        echo running: bundle exec rails db:create
-        bundle exec rails db:create:interactions
-        bundle exec rails db:create
-    fi
-    echo running: bundle exec rails db:schema:load
-    bundle exec rails db:schema:load
-    echo Waiting for SOLR to come online
-    wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
-    bundle exec rake sunspot:solr:reindex &
-    if [ "$RAILS_ENV" = "docker_development" ]
-    then
-        echo 'checking for preseeds'
-        check_for_preseeds
-    fi
-    echo 'finished initialisation'
-    touch /completed_initial_run
+if ! [ -f /completed_initial_run ]; then
+  echo Initialising MaMpf
+  echo Waiting for the DB to come online
+  echo RAILS ENV: $RAILS_ENV
+
+  # Wait for database to come online
+  if [ "$RAILS_ENV" = "docker_development" ]; then
+      wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
+  fi
+  if [ "$RAILS_ENV" = "test" ]; then
+      wait-for-it ${TEST_DATABASE_HOST}:${TEST_DATABASE_PORT} -t 30 || exit 1
+  fi
+
+  echo running: bundle exec rails db:create
+  bundle exec rails db:create:interactions
+  bundle exec rails db:create
+
+  echo running: bundle exec rails db:schema:load
+  bundle exec rails db:schema:load
+
+  echo Waiting for SOLR to come online
+  wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
+  bundle exec rake sunspot:solr:reindex &
+
+  if [ "$RAILS_ENV" = "docker_development" ]; then
+      check_for_preseeds
+  fi
+
+  echo 'finished initialisation'
+  touch /completed_initial_run
 fi
