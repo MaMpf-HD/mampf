@@ -16,7 +16,7 @@ up-reseed *args:
     cd {{justfile_directory()}}/docker/development/
     export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
-    docker compose up {{args}}
+    docker compose rm --stop --force mampf && docker compose up {{args}}
 
 # Removes the development docker containers
 @down:
