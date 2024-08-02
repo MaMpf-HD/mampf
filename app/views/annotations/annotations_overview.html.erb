@@ -1,7 +1,32 @@
 <%= stylesheet_link_tag 'annotations_overview' %>
 
 <div class="container-md small-width">
-    <h2>Your annotations</h2>
+  <h2>Your annotations</h2>
+  <p>
+    This list comprises all annotations you have created across various lectures.
+  </p>
 
-    Here is a list of your available annotations.
+  <% @annotations.each do |annotation| %>
+    <div class="annotation-overview-item card mb-3"
+        style="border-color: <%= annotation.color %>"">
+
+      <div class="card-header">
+        <%= annotation.category.capitalize %>
+      </div>
+
+      <div class="card-body">
+        <p class="card-text">
+          <%= truncate(annotation.comment, length: 100) %>
+        </p>
+
+        <p class="card-text">
+          <small class="text-body-secondary">
+          Last updated <%= time_ago_in_words(annotation.updated_at) %> ago
+          </small>
+        </p>
+      </div>
+
+    </div>
+    <% end %>
+
 </div>
