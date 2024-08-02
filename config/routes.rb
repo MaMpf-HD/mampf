@@ -47,7 +47,6 @@ Rails.application.routes.draw do
       as: "classification"
 
   # annotation routes
-
   get "annotations/update_annotations",
       to: "annotations#update_annotations",
       as: "update_annotations"
@@ -57,6 +56,10 @@ Rails.application.routes.draw do
       as: "num_nearby_posted_mistake_annotations"
 
   resources :annotations, only: [:new, :create, :edit, :update, :destroy]
+
+  get "annotations/overview",
+      to: "annotations_overview#show",
+      as: "annotations_overview"
 
   # announcements routes
 
