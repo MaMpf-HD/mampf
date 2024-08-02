@@ -149,4 +149,9 @@ module MediaHelper
     # link url itself.
     medium.external_link_description.presence || medium.external_reference_link
   end
+
+  def video_link_timed(medium_id, timestamp)
+    play_path = Rails.application.routes.url_helpers.play_medium_path(medium_id)
+    "#{play_path}?time=#{timestamp.total_seconds}"
+  end
 end

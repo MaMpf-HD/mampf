@@ -6,4 +6,10 @@
 
 .annotation-overview-item {
   border-width: 1.5px;
+  cursor: pointer;
+  transition: box-shadow 120ms cubic-bezier(0.33, 1, 0.68, 1);
+
+  &:hover {
+    box-shadow: rgba(0, 0, 0, 0.23) 1px 2px 8px -2px;
+  }
 }
