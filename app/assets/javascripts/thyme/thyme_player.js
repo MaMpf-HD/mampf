@@ -1,3 +1,12 @@
+function openAnnotationIfSpecifiedInUrl() {
+  const annotationValue = new URLSearchParams(window.location.search).get("ann");
+  if (!annotationValue) {
+    return;
+  }
+  const annotationId = Number(annotationValue);
+  thymeAttributes.annotationArea.showAnnotationWithId(annotationId);
+}
+
 $(document).on("turbolinks:load", function () {
   /*
     VIDEO INITIALIZATION
@@ -96,7 +105,9 @@ $(document).on("turbolinks:load", function () {
   thymeAttributes.annotationManager = annotationManager;
 
   // update annotations manually once as initialization
-  annotationManager.updateAnnotations();
+  annotationManager.updateAnnotations(() => {
+    openAnnotationIfSpecifiedInUrl();
+  });
 
   // Update annotations after deleting an annotation
   const ANNOTATION_DELETE_SELECTOR = "#annotation-delete-button";
