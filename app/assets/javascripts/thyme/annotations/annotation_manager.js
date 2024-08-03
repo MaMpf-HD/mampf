@@ -82,7 +82,7 @@ class AnnotationManager {
     This method is e.g. used when a new annotation is being created.
     Don't mix up with updateMarkers() which just updates the position of the markers!
 
-    onSucess = A function that is triggered when the annotations have been
+    onSuccess = A function that is triggered when the annotations have been
                successfully updated.
     onSuccess = A function that is triggered when the annotations have been
                 successfully updated.
