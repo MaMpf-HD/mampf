@@ -35,5 +35,6 @@ class Voucher < ApplicationRecord
 
       errors.add(:sort,
                  I18n.t("activerecord.errors.models.voucher.attributes.sort.only_one_active"))
+      throw(:abort)
     end
 end

@@ -19,13 +19,12 @@ RSpec.describe(Voucher, type: :model) do
     end
 
     it "rolls back if there is another active voucher with the same sort for the lecture" do
-      FactoryBot.create(:voucher, lecture: lecture, sort: :tutor)
-      voucher = FactoryBot.build(:voucher, lecture: lecture, sort: :tutor)
-      voucher.save
+      FactoryBot.create(:voucher, :tutor, lecture: lecture)
+      new_voucher = build(:voucher, :tutor, lecture: lecture)
 
-      expect(voucher).not_to be_valid
-      expect(voucher.errors[:sort]).to include(I18n.t("activerecord.errors.models.voucher." \
-                                                      "attributes.sort.only_one_active"))
+      expect(new_voucher.save).to be_falsey
+      expect(new_voucher.errors[:sort]).to include(I18n.t("activerecord.errors.models.voucher." \
+                                                          "attributes.sort.only_one_active"))
     end
   end
 
