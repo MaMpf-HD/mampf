@@ -41,15 +41,8 @@ class AnnotationsOverviewController < ApplicationController
   end
 
   def medium_ids_for_teacher_or_editor
-    # Grab all mediums that the current user is an editor of
-    editor_medium_ids = EditableUserJoin.where(user: current_user,
-                                               editable_type: "Medium").pluck(:editable_id)
-
-    # Grab all mediums that are associated with lectures
-    # where the current user is a teacher of
-    teacher_medium_ids = Medium.where(teachable: Lecture.where(teacher: current_user)).pluck(:id)
-
-    editor_medium_ids + teacher_medium_ids
+    lectures = current_user.given_lectures + current_user.edited_lectures
+    lectures.map(&:media_with_inheritance).flatten.pluck(:id)
   end
 
   def annotation_open_in_thyme_player_link(annotation)
