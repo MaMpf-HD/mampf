@@ -41,7 +41,7 @@ class AnnotationManager {
   }
 
   /*
-    Updates the markers on the timeline, i.e. the visual represention of the annotations.
+    Updates the markers on the timeline, i.e. the visual representation of the annotations.
     This method is e.g. used for rearranging the markers when the window is being resized.
     Don't mix up with updateAnnotatons() which sends an AJAX request and checks for changes
     in the database.

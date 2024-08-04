@@ -98,6 +98,7 @@
 //= require thyme/metadata_manager
 //= require thyme/resizer
 //= require thyme/utility
+//= require thyme/thyme_annotations
 //= require thyme/thyme_player
 //= require thyme/thyme_editor
 //= require thyme/thyme_feedback

@@ -2,25 +2,18 @@ class AnnotationsOverviewController < ApplicationController
   layout "application_no_sidebar_with_background"
 
   def show
-    # Own annotations
     user_annotations = Annotation.where(user_id: current_user.id).map do |annotation|
-      link = {
-        link: annotation_open_in_thyme_player_link(annotation)
-      }
+      link = { link: annotation_open_link(annotation) }
       extract_relevant_information(annotation).merge(link)
     end
     @annotations_by_lecture = user_annotations.group_by { |annotation| annotation[:lecture] }
     # TODO: don't include lecture key in the hash anymore after grouping
     # Maybe we can even group in the SQL query directly?
 
-    # Students annotations
     student_annotations = Annotation.where(medium_id: medium_ids_for_teacher_or_editor,
                                            visible_for_teacher: true)
                                     .map do |annotation|
-      # TODO: replace by link to Feedback player
-      link = {
-        link: annotation_open_in_thyme_player_link(annotation)
-      }
+      link = { link: annotation_open_link(annotation, in_feedback_player: true) }
       extract_relevant_information(annotation).merge(link)
     end
     @student_annotations_by_lecture = student_annotations.group_by do |annotation|
@@ -45,8 +38,13 @@ class AnnotationsOverviewController < ApplicationController
     lectures.map(&:media_with_inheritance).flatten.pluck(:id)
   end
 
-  def annotation_open_in_thyme_player_link(annotation)
-    link = helpers.video_link_timed(annotation.medium_id, annotation.timestamp)
+  def annotation_open_link(annotation, in_feedback_player: false)
+    link = if in_feedback_player
+      helpers.feedback_video_link_timed(annotation.medium_id, annotation.timestamp)
+    else
+      helpers.video_link_timed(annotation.medium_id, annotation.timestamp)
+    end
+
     link += "&ann=#{annotation.id}"
     link
   end
