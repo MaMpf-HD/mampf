@@ -86,6 +86,31 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#active_voucher_of_sort?" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:sort) { :tutor }
+
+    context "when there is an active voucher of the specified sort" do
+      before do
+        FactoryBot.create(:voucher, lecture: lecture, sort: sort)
+      end
+
+      it "returns true" do
+        expect(lecture.active_voucher_of_sort?(sort)).to be(true)
+      end
+    end
+
+    context "when there is no active voucher of the specified sort" do
+      before do
+        FactoryBot.create(:voucher, lecture: lecture, sort: :editor)
+      end
+
+      it "returns false" do
+        expect(lecture.active_voucher_of_sort?(sort)).to be(false)
+      end
+    end
+  end
+
   # Test methods -- NEEDS TO BE REFACTORED
 
   # describe '#tags' do

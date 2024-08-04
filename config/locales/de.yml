@@ -480,6 +480,8 @@ de:
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
       import_tags: Tags importieren
+      no_active_tutor_voucher: >
+        Es gibt keinen aktiven Tutoren-Gutschein für diese Veranstaltung.
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -2034,6 +2036,9 @@ de:
       new: 'Neues Tutorium anlegen'
     assignment:
       new: 'Neue Hausaufgabe anlegen'
+    voucher:
+      secure_hash: 'Sicherheits-Hash'
+      expires_at: 'Läuft ab'
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -3428,6 +3433,8 @@ de:
     together_with: zusammen mit
     enter_two_letters: mind. 2 Zeichen eingeben
     no_results: Keine Resultate gefunden
+    vouchers: Gutscheine
+    voucher_for_tutors: Gutschein für TutorInnen
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

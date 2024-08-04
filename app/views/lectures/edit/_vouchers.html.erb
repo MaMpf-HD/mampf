@@ -1,0 +1,12 @@
+<hr class="lecture-pane-separator">
+<h3 class="lecture-pane-header">
+  <%= t('basics.vouchers') %>
+</h3>
+
+<% if current_user.can_update_personell?(lecture) %>
+  <h4 class="lecture-pane-subheader">
+    <%= t('basics.voucher_for_tutors') %>
+  </h4>
+  <%= render partial: 'lectures/edit/tutorial_voucher',
+             locals: { lecture: lecture } %>
+<% end %>

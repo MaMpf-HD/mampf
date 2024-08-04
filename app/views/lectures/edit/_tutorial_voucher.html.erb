@@ -1,0 +1,27 @@
+<% if lecture.active_voucher_of_sort(:tutor) %>
+  <% voucher = lecture.active_voucher_of_sort(:tutor) %>
+  <div>
+    <span>
+        <%= t('admin.voucher.secure_hash') %>:
+        <%= voucher.secure_hash %>
+    </span>
+    <i class="clipboardpopup far fa-copy clickable text-secondary clipboard-btn
+              ms-3 clipboard-button"
+       data-clipboard-text="<%= voucher.secure_hash %>"
+       data-bs-toggle="tooltip"
+       data-id="<%= voucher.secure_hash %>"
+       title="<%= t('buttons.copy_to_clipboard') %>">
+      <span class="clipboardpopuptext token-clipboard-popup"
+            data-id="<%= voucher.secure_hash %>">
+        <%= t('basics.code_copied_to_clipboard') %>
+      </span>
+    </i>
+    <p>
+      <%= t('admin.voucher.expires_at') %>:
+      <%= l(voucher.expires_at, format: :long) %>
+    </p>
+  </div>
+<% else %>
+    <%= t('admin.lecture.no_active_tutor_voucher') %>
+    <button type="button" class="btn btn-primary">Create Voucher</button>
+<% end %>

@@ -848,6 +848,16 @@ class Lecture < ApplicationRecord
     [0, 1].include?(annotations_status)
   end
 
+  def active_voucher_of_sort?(sort)
+    vouchers.where(sort: sort).any?(&:active?)
+  end
+
+  def active_voucher_of_sort(sort)
+    return unless active_voucher_of_sort?(sort)
+
+    vouchers.find_by(sort: sort)
+  end
+
   private
 
     # used for after save callback

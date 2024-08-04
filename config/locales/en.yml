@@ -479,6 +479,8 @@ en:
       import_chapters: import chapters
       import_sections: import sections
       import_tags: import tags
+      no_active_tutor_vouchers: >
+        There are no active tutor vouchers.
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -1912,6 +1914,9 @@ en:
       new: 'Add tutorial'
     assignment:
       new: 'Add assignment'
+    voucher:
+      secure_hash: 'Secure Hash'
+      expires_at: 'Expires at'
   profile:
     account: 'Account'
     name: 'Display name'
@@ -3242,6 +3247,8 @@ en:
     together_with: together with
     enter_two_letters: enter at least 2 letters
     no_results: No results found
+    vouchers: Vouchers
+    voucher_for_tutors: Voucher for tutors
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

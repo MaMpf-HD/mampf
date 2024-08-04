@@ -129,4 +129,31 @@ module LecturesHelper
       tag.i(class: "fas fa-eye")
     end
   end
+
+  # def active_voucher_details(lecture, sort)
+  #   voucher = lecture.active_voucher_of_sort(sort)
+  #   if voucher
+  #     "Expires at: #{voucher.expires_at}, Secure Hash: #{voucher.secure_hash}"
+  #   else
+  #     "No active #{sort} voucher"
+  #   end
+  # end
+
+  def active_voucher_details(lecture, sort)
+    voucher = lecture.active_voucher_of_sort(sort)
+    if voucher
+      content_tag(:div) do
+        concat(content_tag(:span, "Secure Hash: #{voucher.secure_hash}"))
+        concat(content_tag(:i, "", class: "clipboardpopup far fa-copy clickable text-secondary clipboard-btn ms-3 clipboard-button",
+                                   data: { clipboard_text: voucher.secure_hash, bs_toggle: "tooltip", id: "42" },
+                                   title: t("buttons.copy_to_clipboard"))) do
+          content_tag(:span, t("basics.code_copied_to_clipboard"),
+                      class: "clipboardpopuptext token-clipboard-popup", data: { id: "42" })
+        end
+        concat(content_tag(:span, "Expires at: #{voucher.expires_at}"))
+      end
+    else
+      content_tag(:p, "No active #{sort} voucher")
+    end
+  end
 end
