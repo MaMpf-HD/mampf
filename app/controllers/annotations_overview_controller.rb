@@ -33,8 +33,12 @@ class AnnotationsOverviewController < ApplicationController
       text: annotation.comment_optional,
       color: annotation.color,
       updated_at: annotation.updated_at,
+      # TODO: teachable is marked optional in medium, so we should handle the case
+      # where it is nil
       lecture: annotation.medium.teachable.lecture.title,
-      link: annotation_open_link(annotation, is_shared)
+      link: annotation_open_link(annotation, is_shared),
+      medium_title: annotation.medium.caption,
+      medium_date: annotation.medium.lesson&.date_localized
     }
   end
 
