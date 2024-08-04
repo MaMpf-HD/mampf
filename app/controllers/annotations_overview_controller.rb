@@ -8,16 +8,19 @@ class AnnotationsOverviewController < ApplicationController
     end
     @annotations_by_lecture = user_annotations.group_by { |annotation| annotation[:lecture] }
     # TODO: don't include lecture key in the hash anymore after grouping
-    # Maybe we can even group in the SQL query directly?
+    # Maybe we can even gruop in the SQL query directly?
 
-    student_annotations = Annotation.where(medium_id: medium_ids_for_teacher_or_editor,
-                                           visible_for_teacher: true)
-                                    .map do |annotation|
-      link = { link: annotation_open_link(annotation, in_feedback_player: true) }
-      extract_relevant_information(annotation).merge(link)
-    end
-    @student_annotations_by_lecture = student_annotations.group_by do |annotation|
-      annotation[:lecture]
+    @show_students_annotations = current_user.teachable_editor_or_teacher?
+    if @show_students_annotations
+      student_annotations = Annotation.where(medium_id: medium_ids_for_teacher_or_editor,
+                                             visible_for_teacher: true)
+                                      .map do |annotation|
+        link = { link: annotation_open_link(annotation, in_feedback_player: true) }
+        extract_relevant_information(annotation).merge(link)
+      end
+      @student_annotations_by_lecture = student_annotations.group_by do |annotation|
+        annotation[:lecture]
+      end
     end
 
     render "annotations/annotations_overview"
