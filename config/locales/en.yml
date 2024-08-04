@@ -337,8 +337,9 @@ en:
         This list comprises all annotations you have created across various
         lectures. Click on an annotation to view it.
       overview_description_students_annotations: >
-        This list comprises all annotations created by students across lectures
-        you are teaching. Click on an annotation to view it in the feedback player.
+        Here you find all annotations from students that they have shared with you
+        in lectures that you manage (as an editor/teacher).
+        Click on an annotation to jump to it in the feedback player.
       annotation_modal_head_create_annotation: 'Create annotation'
       annotation_modal_head_edit_annotation: 'Edit annotation'
       inherit_from_lecture: 'inherit from lecture'
