@@ -2,6 +2,21 @@
 
 <div class="container-md small-width">
   <h2>Your annotations</h2>
+
+  <!-- @annotations_by_lecture.empty? -->
+  <% if true %>
+
+
+  <div class="d-flex">
+    <i class="bi bi-emoji-frown me-2"></i>
+    <p>
+      You have not created any annotations yet. Learn how to do so in our
+      <a href="https://mampf.blog/2024/04/02/annotation-tool/">blog post</a>.
+    </p>
+  </div>
+    
+  <% else %>
+
   <p>
     This list comprises all annotations you have created across various lectures.
     Click on an annotation to view it.
@@ -24,34 +39,36 @@
         <!-- Body -->
         <div class="accordion-collapse collapse" id="<%= collapseLabel %>"
             data-bs-parent="#annotations-overview-accordion">
-          <div class="accordion-body">
+        <div class="accordion-body">
 
-            <% annotations.each do |annotation| %>
-                <a href="<%= annotation[:link] %>" style="text-decoration: none;">
-                  <!-- Card -->
-                  <div class="annotation-overview-item card mb-3" style='border-color: <%= annotation[:color] %>'>
-                    <div class="card-header">
-                      <%= annotation[:category].capitalize %>
-                    </div>
-                
-                    <div class="card-body">
-                      <p class="card-text">
-                        <%= truncate(annotation[:text], length: 100) %>
-                          <br>
-                          <small class="text-body-secondary">
-                            Last updated <%= time_ago_in_words(annotation[:updated_at]) %> ago
-                          </small>
-                      </p>
-                    </div>
+          <% annotations.each do |annotation| %>
+              <a href="<%= annotation[:link] %>" style="text-decoration: none;">
+                <!-- Card -->
+                <div class="annotation-overview-item card mb-3"
+                    style='border-color: <%= annotation[:color] %>'>
+                  <div class="card-header">
+                    <%= annotation[:category].capitalize %>
                   </div>
-                </a>
-            <% end %>
+              
+                  <div class="card-body">
+                    <p class="card-text">
+                      <%= truncate(annotation[:text], length: 100) %>
+                      <br>
+                      <small class="text-body-secondary">
+                        Last updated <%= time_ago_in_words(annotation[:updated_at]) %> ago
+                      </small>
+                    </p>
+                  </div>
+                </div>
+              </a>
+          <% end %>
 
-          </div>
+        </div>
         </div>
 
       </div>
     <% end %>
   </div>
+  <% end %>
 
 </div>
