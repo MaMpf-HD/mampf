@@ -335,10 +335,12 @@ de:
       overview_description: >
         Hier findest Du eine Liste aller Annotationen, die Du zu verschiedenen
         Vorlesungen erstellt hast. Klicke auf eine Annotation, um zu ihr zu springen.
+        Annotationen werden entsprechend der von Dir gewählten Farbe eingefärbt.
       overview_description_students_annotations: >
         Hier sind alle Annotationen von Studierenden aufgeführt, die sie mit Dir
         in Vorlesungen geteilt haben, welche Du verwaltest (als Editor/Lehrkraft).
         Klicke auf eine Annotation, um zu ihr im Feedback-Player zu springen.
+        Annotationen werden entsprechend ihrer Kategorie eingefärbt.
       annotation_modal_head_create_annotation: 'Annotation anlegen'
       annotation_modal_head_edit_annotation: 'Annotation bearbeiten'
       inherit_from_lecture: 'von Vorlesung erben'

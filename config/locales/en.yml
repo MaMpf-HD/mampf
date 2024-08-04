@@ -336,10 +336,12 @@ en:
       overview_description: >
         This list comprises all annotations you have created across various
         lectures. Click on an annotation to view it.
+        Annotations are colored according to the color you have chosen.
       overview_description_students_annotations: >
         Here you find all annotations from students that they have shared with you
         in lectures that you manage (as an editor/teacher).
         Click on an annotation to jump to it in the feedback player.
+        Annotations are colored according to their category.
       annotation_modal_head_create_annotation: 'Create annotation'
       annotation_modal_head_edit_annotation: 'Edit annotation'
       inherit_from_lecture: 'inherit from lecture'
