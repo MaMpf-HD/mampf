@@ -1,6 +1,41 @@
 <%= stylesheet_link_tag 'annotations_overview' %>
 
 <div class="container-md small-width">
+  
+
+  <!-- --------------------------------------------------------------------- -->
+  <!-- Students annotations -->
+  <!-- --------------------------------------------------------------------- -->
+  <h2><%= t('admin.annotation.students_annotations') %></h2>
+
+  <% if @student_annotations_by_lecture.empty? %>
+
+  <div class="d-flex">
+    <i class="bi bi-emoji-frown me-2"></i>
+    <p>
+      <%= t('admin.annotation.none_yet_students') %>
+    </p>
+  </div>
+
+  <% else %>
+
+  <p>
+    <%= t('admin.annotation.overview_description_students_annotations') %>
+  </p>
+
+  <%= render 'annotations/annotations_overview_accordion',
+    annotations_by_lecture: @student_annotations_by_lecture,
+    is_students_annotations: true %>
+
+  <% end %>
+
+
+  <hr>
+
+
+  <!-- --------------------------------------------------------------------- -->
+  <!-- Own annotations -->
+  <!-- --------------------------------------------------------------------- -->
   <h2><%= t('admin.annotation.your_annotations') %></h2>
 
   <% if @annotations_by_lecture.empty? %>
@@ -18,55 +53,11 @@
     <%= t('admin.annotation.overview_description') %>
   </p>
 
-  <div class="accordion" id="annotations-overview-accordion">
-    <% @annotations_by_lecture.each_with_index do |(lecture, annotations), index| %>
-      <div class="accordion-item">
-        <% collapseLabel = "annotation-overview-collapse-#{index}" %>
-        
-        <!-- Header -->
-        <h2 class="accordion-header">
-          <button class="accordion-button" type="button"
-              data-bs-toggle="collapse" data-bs-target="#<%= collapseLabel %>"
-              aria-expanded="true" aria-controls="#<%= collapseLabel %>">
-            <%= lecture %>
-          </button>
-        </h2>
-
-        <!-- Body -->
-        <div class="accordion-collapse collapse" id="<%= collapseLabel %>"
-            data-bs-parent="#annotations-overview-accordion">
-        <div class="accordion-body">
-
-          <% annotations.each do |annotation| %>
-              <a href="<%= annotation[:link] %>" style="text-decoration: none;">
-                <!-- Card -->
-                <div class="annotation-overview-item card mb-3"
-                    style='border-color: <%= annotation[:color] %>'>
-                  <div class="card-header">
-                    <%= annotation[:category].capitalize %>
-                  </div>
-              
-                  <div class="card-body">
-                    <p class="card-text">
-                      <%= truncate(annotation[:text], length: 100) %>
-                      <br>
-                      <small class="text-body-secondary">
-                        <%= t('time.last_updated',
-                          time_ago: time_ago_in_words(annotation[:updated_at])) %>
-                      </small>
-                    </p>
-                  </div>
-                </div>
-              </a>
-          <% end %>
-
-        </div>
-        </div>
-
-      </div>
-    <% end %>
-  </div>
+  <%= render 'annotations/annotations_overview_accordion',
+    annotations_by_lecture: @annotations_by_lecture,
+    is_students_annotations: false %>
 
   <% end %>
+
 
 </div>

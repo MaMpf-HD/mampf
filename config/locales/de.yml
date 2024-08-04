@@ -324,13 +324,21 @@ de:
       editors: 'EditorInnen'
     annotation:
       your_annotations: 'Deine Annotationen'
+      students_annotations: 'Annotationen der Studierenden'
       none_yet_html: >
         Du hast noch keine Annotationen erstellt. Erfahre mehr in unserem
         <a href="https://mampf.blog/2024/04/02/annotation-tool/">Blog post</a>.
+      none_yet_students: >
+        Noch keiner Deiner Studierenden hat eine Annotation erstellt und sie
+        mit Dir geteilt.
       annotations: 'Annotationen'
       overview_description: >
         Hier findest Du eine Liste aller Annotationen, die Du zu verschiedenen
         Vorlesungen erstellt hast. Klicke auf eine Annotation, um zu ihr zu springen.
+      overview_description_students_annotations: >
+        Hier findest Du eine Liste aller Annotationen, die Studierende zu
+        Vorlesungen erstellt haben, die Du unterrichtest. Klicke auf eine
+        Annotation, um zu ihr im Feedback-Player zu springen.
       annotation_modal_head_create_annotation: 'Annotation anlegen'
       annotation_modal_head_edit_annotation: 'Annotation bearbeiten'
       inherit_from_lecture: 'von Vorlesung erben'

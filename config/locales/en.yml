@@ -325,13 +325,20 @@ en:
       editors: 'Editors'
     annotation:
       your_annotations: 'Your annotations'
+      students_annotations: 'Students annotations'
       none_yet_html: >
         You have not created any annotations yet. Learn how to do so in our
         <a href="https://mampf.blog/2024/04/02/annotation-tool/">blog post</a>.
+      none_yet_students: >
+        None of your students have created an annotation yet and shared it
+        with you.
       annotations: 'Annotations'
       overview_description: >
         This list comprises all annotations you have created across various
         lectures. Click on an annotation to view it.
+      overview_description_students_annotations: >
+        This list comprises all annotations created by students across lectures
+        you are teaching. Click on an annotation to view it in the feedback player.
       annotation_modal_head_create_annotation: 'Create annotation'
       annotation_modal_head_edit_annotation: 'Edit annotation'
       inherit_from_lecture: 'inherit from lecture'

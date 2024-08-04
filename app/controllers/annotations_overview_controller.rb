@@ -2,18 +2,54 @@ class AnnotationsOverviewController < ApplicationController
   layout "application_no_sidebar_with_background"
 
   def show
+    # Own annotations
     user_annotations = Annotation.where(user_id: current_user.id).map do |annotation|
-      {
-        category: annotation.category,
-        text: annotation.comment_optional,
-        link: annotation_open_in_thyme_player_link(annotation),
-        color: annotation.color,
-        updated_at: annotation.updated_at,
-        lecture: annotation.medium.teachable.lecture.title
+      link = {
+        link: annotation_open_in_thyme_player_link(annotation)
       }
+      extract_relevant_information(annotation).merge(link)
     end
     @annotations_by_lecture = user_annotations.group_by { |annotation| annotation[:lecture] }
+    # TODO: don't include lecture key in the hash anymore after grouping
+    # Maybe we can even group in the SQL query directly?
+
+    # Students annotations
+    student_annotations = Annotation.where(medium_id: medium_ids_for_teacher_or_editor,
+                                           visible_for_teacher: true)
+                                    .map do |annotation|
+      # TODO: replace by link to Feedback player
+      link = {
+        link: annotation_open_in_thyme_player_link(annotation)
+      }
+      extract_relevant_information(annotation).merge(link)
+    end
+    @student_annotations_by_lecture = student_annotations.group_by do |annotation|
+      annotation[:lecture]
+    end
+
     render "annotations/annotations_overview"
+  end
+
+  def extract_relevant_information(annotation)
+    {
+      category: annotation.category,
+      text: annotation.comment_optional,
+      color: annotation.color,
+      updated_at: annotation.updated_at,
+      lecture: annotation.medium.teachable.lecture.title
+    }
+  end
+
+  def medium_ids_for_teacher_or_editor
+    # Grab all mediums that the current user is an editor of
+    editor_medium_ids = EditableUserJoin.where(user: current_user,
+                                               editable_type: "Medium").pluck(:editable_id)
+
+    # Grab all mediums that are associated with lectures
+    # where the current user is a teacher of
+    teacher_medium_ids = Medium.where(teachable: Lecture.where(teacher: current_user)).pluck(:id)
+
+    editor_medium_ids + teacher_medium_ids
   end
 
   def annotation_open_in_thyme_player_link(annotation)
