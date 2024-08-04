@@ -1,4 +1,5 @@
-<% accordionLabel = is_students_annotations ? 'student-annotations-overview-accordion' : 'annotations-overview-accordion' %>
+<% accordionLabel = "annotations-overview-accordion" %>
+<% accordionLabel = "student-#{accordionLabel}" if is_students_annotations %>
 <div class="accordion" id="<%= accordionLabel %>">
 
   <% annotations_by_lecture.each_with_index do |(lecture, annotations), index| %>
