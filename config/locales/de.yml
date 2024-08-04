@@ -323,7 +323,14 @@ de:
       teacher: 'DozentIn'
       editors: 'EditorInnen'
     annotation:
+      your_annotations: 'Deine Annotationen'
+      none_yet_html: >
+        Du hast noch keine Annotationen erstellt. Erfahre mehr in unserem
+        <a href="https://mampf.blog/2024/04/02/annotation-tool/">Blog post</a>.
       annotations: 'Annotationen'
+      overview_description: >
+        Hier findest Du eine Liste aller Annotationen, die Du zu verschiedenen
+        Vorlesungen erstellt hast. Klicke auf eine Annotation, um zu ihr zu springen.
       annotation_modal_head_create_annotation: 'Annotation anlegen'
       annotation_modal_head_edit_annotation: 'Annotation bearbeiten'
       inherit_from_lecture: 'von Vorlesung erben'
@@ -2548,6 +2555,7 @@ de:
     formats:
       concise: '%d.%m.%Y'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
+    last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '

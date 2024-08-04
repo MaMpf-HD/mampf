@@ -1,25 +1,21 @@
 <%= stylesheet_link_tag 'annotations_overview' %>
 
 <div class="container-md small-width">
-  <h2>Your annotations</h2>
+  <h2><%= t('admin.annotation.your_annotations') %></h2>
 
-  <!-- @annotations_by_lecture.empty? -->
-  <% if true %>
-
+  <% if @annotations_by_lecture.empty? %>
 
   <div class="d-flex">
     <i class="bi bi-emoji-frown me-2"></i>
     <p>
-      You have not created any annotations yet. Learn how to do so in our
-      <a href="https://mampf.blog/2024/04/02/annotation-tool/">blog post</a>.
+      <%= t('admin.annotation.none_yet_html') %>
     </p>
   </div>
     
   <% else %>
 
   <p>
-    This list comprises all annotations you have created across various lectures.
-    Click on an annotation to view it.
+    <%= t('admin.annotation.overview_description') %>
   </p>
 
   <div class="accordion" id="annotations-overview-accordion">
@@ -55,7 +51,8 @@
                       <%= truncate(annotation[:text], length: 100) %>
                       <br>
                       <small class="text-body-secondary">
-                        Last updated <%= time_ago_in_words(annotation[:updated_at]) %> ago
+                        <%= t('time.last_updated',
+                          time_ago: time_ago_in_words(annotation[:updated_at])) %>
                       </small>
                     </p>
                   </div>
@@ -69,6 +66,7 @@
       </div>
     <% end %>
   </div>
+
   <% end %>
 
 </div>

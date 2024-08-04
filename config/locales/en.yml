@@ -324,7 +324,14 @@ en:
       teacher: 'Teacher'
       editors: 'Editors'
     annotation:
+      your_annotations: 'Your annotations'
+      none_yet_html: >
+        You have not created any annotations yet. Learn how to do so in our
+        <a href="https://mampf.blog/2024/04/02/annotation-tool/">blog post</a>.
       annotations: 'Annotations'
+      overview_description: >
+        This list comprises all annotations you have created across various
+        lectures. Click on an annotation to view it.
       annotation_modal_head_create_annotation: 'Create annotation'
       annotation_modal_head_edit_annotation: 'Edit annotation'
       inherit_from_lecture: 'inherit from lecture'
@@ -2404,6 +2411,7 @@ en:
     formats:
       concise: '%Y-%m-%d'
       publication_time: '%A, %B %d, %Y at %I:%M %p'
+    last_updated: 'Last updated %{time_ago} ago'
   thyme:
     back: 'back'
     back_to: 'back to '
