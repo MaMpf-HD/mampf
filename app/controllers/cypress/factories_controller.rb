@@ -13,8 +13,14 @@ module Cypress
         raise(ArgumentError, msg)
       end
 
-      attributes = params_to_attributes(params.except(:controller, :action, :number))
-      res = FactoryBot.create(*attributes)
+      attributes, should_validate = params_to_attributes(params.except(:controller, :action,
+                                                                       :number))
+
+      res = if should_validate
+        FactoryBot.create(*attributes) # default case
+      else
+        FactoryBot.build(*attributes).tap { |instance| instance.save(validate: false) }
+      end
 
       render json: res.to_json, status: :created
     end
@@ -22,15 +28,23 @@ module Cypress
     private
 
       def params_to_attributes(params)
-        params.to_unsafe_hash.map do |_key, value|
+        should_validate = true
+
+        attributes = params.to_unsafe_hash.filter_map do |_key, value|
           if value.is_a?(Hash)
-            value.transform_keys(&:to_sym)
+            if value.key?("validate")
+              should_validate = (value["validate"] != "false")
+            else
+              value.transform_keys(&:to_sym)
+            end
           elsif value.is_a?(String)
             value.to_sym
           else
             throw("Value is neither a hash nor a string: #{value}")
           end
         end
+
+        return attributes, should_validate
       end
   end
 end
