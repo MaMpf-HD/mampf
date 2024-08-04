@@ -7,28 +7,51 @@
     Click on an annotation to view it.
   </p>
 
-  <% @user_annotations.each do |annotation| %>
-    <a href="<%= annotation[:link] %>"
-        style="text-decoration: none;">
+  <div class="accordion" id="annotations-overview-accordion">
+    <% @annotations_by_lecture.each_with_index do |(lecture, annotations), index| %>
+      <div class="accordion-item">
+        <% collapseLabel = "annotation-overview-collapse-#{index}" %>
+        
+        <!-- Header -->
+        <h2 class="accordon-header">
+          <button class="accordion-button" type="button"
+              data-bs-toggle="collapse" data-bs-target="#<%= collapseLabel %>"
+              aria-expanded="true" aria-controls="#<%= collapseLabel %>">
+            <%= lecture %>
+          </button>
+        </h2>
 
-      <div class="annotation-overview-item card mb-3"
-          style='border-color: <%= annotation[:color] %>'>
-        <div class="card-header">
-          <%= annotation[:category].capitalize %>
+        <!-- Body -->
+        <div class="accordion-collapse collapse" id="<%= collapseLabel %>"
+            data-bs-parent="#annotations-overview-accordion">
+          <div class="accordion-body">
+
+            <% annotations.each do |annotation| %>
+                <a href="<%= annotation[:link] %>" style="text-decoration: none;">
+                  <!-- Card -->
+                  <div class="annotation-overview-item card mb-3" style='border-color: <%= annotation[:color] %>'>
+                    <div class="card-header">
+                      <%= annotation[:category].capitalize %>
+                    </div>
+                
+                    <div class="card-body">
+                      <p class="card-text">
+                        <%= truncate(annotation[:text], length: 100) %>
+                          <br>
+                          <small class="text-body-secondary">
+                            Last updated <%= time_ago_in_words(annotation[:updated_at]) %> ago
+                          </small>
+                      </p>
+                    </div>
+                  </div>
+                </a>
+            <% end %>
+
+          </div>
         </div>
 
-        <div class="card-body">
-          <p class="card-text">
-            <%= truncate(annotation[:text], length: 100) %>
-            <br>
-            <small class="text-body-secondary">
-            Last updated <%= time_ago_in_words(annotation[:updated_at]) %> ago
-            </small>
-          </p>
-        </div>
       </div>
-      
-    </a>
-  <% end %>
+    <% end %>
+  </div>
 
 </div>
