@@ -23,8 +23,15 @@
             <% annotations.each do |annotation| %>
               <a href="<%= annotation[:link] %>" style="text-decoration: none;">
                 <!-- Card -->
+                <!-- Card shared by students will obtain their border color -->
+                <!-- according to their category via JS. -->
+                <% border_color_style = is_students_annotations ? \
+                  "" : "border-color: #{annotation[:color]}" %>
+                <% category_str = annotation[:category] if is_students_annotations %>
+
                 <div class="annotation-overview-item card mb-3"
-                    style='border-color: <%= annotation[:color] %>'>
+                    data-annotation-card-category="<%= category_str %>"
+                    style="<%= border_color_style %>">
                   <div class="card-header">
                     <%= annotation[:category].capitalize %>
                   </div>
