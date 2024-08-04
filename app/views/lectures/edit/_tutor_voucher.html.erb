@@ -16,6 +16,18 @@
         <%= t('basics.code_copied_to_clipboard') %>
       </span>
     </i>
+    <%= link_to voucher_path(voucher),
+                class: 'text-dark ms-2',
+                data: { toggle: 'tooltip',
+                        placement: 'botttom',
+                        confirm: t('confirmation.generic') },
+                style: 'text-decoration: none;',
+                title: t('buttons.delete'),
+                method: :delete,
+                remote: true do %>
+        <i class="fas fa-lg fa-trash-alt"></i>
+        </i>
+    <% end %>
     <p>
       <%= t('admin.voucher.expires_at') %>:
       <%= l(voucher.expires_at, format: :long) %>

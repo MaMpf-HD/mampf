@@ -7,6 +7,8 @@
   <h4 class="lecture-pane-subheader">
     <%= t('basics.voucher_for_tutors') %>
   </h4>
-  <%= render partial: 'lectures/edit/tutorial_voucher',
-             locals: { lecture: lecture } %>
+  <div id="tutor-voucher">
+    <%= render partial: 'lectures/edit/tutor_voucher',
+                locals: { lecture: lecture } %>
+  </div>
 <% end %>
