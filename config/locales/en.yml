@@ -479,7 +479,7 @@ en:
       import_chapters: import chapters
       import_sections: import sections
       import_tags: import tags
-      no_active_tutor_vouchers: >
+      no_active_tutor_voucher: >
         There are no active tutor vouchers.
       info:
         course: >
@@ -3283,6 +3283,7 @@ en:
     create_program: 'Create Study Path'
     create_subject: 'Create Subject'
     create_division: 'Create Division'
+    create_voucher: 'Create Voucher'
     create: 'Create'
     edit: 'Edit'
     content: 'Content'
@@ -3467,6 +3468,7 @@ en:
       made.
     no_assignments_in_lecture: >
       In this event series there are no assigments yet.
+    no_voucher: 'There is no voucher with this id.'
     tutorials:
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already

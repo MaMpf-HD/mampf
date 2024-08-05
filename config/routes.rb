@@ -811,7 +811,7 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index, :edit, :update, :destroy]
 
-  resources :vouchers, only: [:destroy]
+  resources :vouchers, only: [:create, :destroy]
 
   # watchlists routes
 

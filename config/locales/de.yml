@@ -3465,6 +3465,7 @@ de:
     create_program: 'Studiengang anlegen'
     create_subject: 'Fach anlegen'
     create_division: 'Teilbereich anlegen'
+    create_voucher: 'Gutschein anlegen'
     create: 'Anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
@@ -3658,6 +3659,7 @@ de:
       abgegeben werden.
     no_assignments_in_lecture: >
       In dieser Veranstaltung gibt es bisher keine Hausaufgaben.
+    no_voucher: 'Ein Gutschein mit der angeforderten id existiert nicht.'
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,

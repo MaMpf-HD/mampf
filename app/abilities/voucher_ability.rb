@@ -4,7 +4,7 @@ class VoucherAbility
   def initialize(user)
     clear_aliased_actions
 
-    can :destroy, Voucher do |voucher|
+    can [:create, :destroy], Voucher do |voucher|
       user.can_update_personell?(voucher.lecture)
     end
   end

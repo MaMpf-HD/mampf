@@ -1,7 +1,7 @@
 class Voucher < ApplicationRecord
   enum sort: { tutor: 0, editor: 1, teacher: 2 }
 
-  belongs_to :lecture
+  belongs_to :lecture, touch: true
   before_create :generate_secure_hash
   before_create :add_expiration_datetime
   before_create :ensure_no_other_active_voucher

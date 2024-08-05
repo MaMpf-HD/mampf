@@ -65,7 +65,7 @@ class Lecture < ApplicationRecord
 
   # a lecture has many vouchers that can be redeemed to promote
   # users to tutors, editors or teachers
-  has_many :vouchers
+  has_many :vouchers, dependent: :destroy
 
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
