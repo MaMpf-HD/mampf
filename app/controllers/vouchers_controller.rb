@@ -1,7 +1,7 @@
 # app/controllers/vouchers_controller.rb
 class VouchersController < ApplicationController
   before_action :set_voucher, only: [:destroy]
-  authorize_resource except: :create
+  authorize_resource except: [:create, :redeem]
 
   def current_ability
     @current_ability ||= VoucherAbility.new(current_user)
@@ -27,6 +27,10 @@ class VouchersController < ApplicationController
       format.html { redirect_to edit_lecture_path(@lecture, anchor: "people") }
       format.js
     end
+  end
+
+  def redeem
+    render js: "alert('Voucher redeemed!')"
   end
 
   private

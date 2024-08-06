@@ -811,6 +811,10 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index, :edit, :update, :destroy]
 
+  post "vouchers/redeem",
+       to: "vouchers#redeem",
+       as: "redeem_voucher"
+
   resources :vouchers, only: [:create, :destroy]
 
   # watchlists routes

@@ -2169,6 +2169,7 @@ de:
       Daten anfordern
     data_request_sent: >
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
+    redeem_voucher: Gutschein einlösen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
