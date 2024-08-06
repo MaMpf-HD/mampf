@@ -1,17 +1,16 @@
 # app/controllers/vouchers_controller.rb
 class VouchersController < ApplicationController
   before_action :set_voucher, only: [:destroy]
-  authorize_resource
+  authorize_resource except: :create
 
   def current_ability
     @current_ability ||= VoucherAbility.new(current_user)
   end
 
   def create
-    @lecture = Lecture.find_by(id: voucher_params[:lecture_id])
-    @sort = voucher_params[:sort]
-    I18n.locale = @lecture.locale
-    @voucher = Voucher.new(lecture: @lecture, sort: @sort)
+    @voucher = Voucher.new(voucher_params)
+    set_related_data
+    authorize! :create, @voucher
     respond_to do |format|
       if @voucher.save
         handle_successful_save(format)
@@ -22,9 +21,7 @@ class VouchersController < ApplicationController
   end
 
   def destroy
-    @lecture = @voucher.lecture
-    @sort = @voucher.sort
-    I18n.locale = @lecture.locale
+    set_related_data
     @voucher.destroy
     respond_to do |format|
       format.html { redirect_to edit_lecture_path(@lecture, anchor: "people") }
@@ -43,6 +40,12 @@ class VouchersController < ApplicationController
       return if @voucher
 
       handle_voucher_not_found
+    end
+
+    def set_related_data
+      @lecture = @voucher.lecture
+      @sort = @voucher.sort
+      I18n.locale = @lecture.locale
     end
 
     def handle_successful_save(format)
