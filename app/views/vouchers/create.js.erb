@@ -1,1 +1,2 @@
-$("#tutor-voucher").empty().append("<%= j render partial: 'lectures/edit/tutor_voucher', locals: { lecture: @lecture } %>");
+$("#<%= @sort %>-voucher").empty()
+  .append("<%= j render partial: 'vouchers/voucher', locals: { lecture: @lecture, sort: @sort } %>");

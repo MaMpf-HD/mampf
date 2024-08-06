@@ -4,11 +4,15 @@
 </h3>
 
 <% if current_user.can_update_personell?(lecture) %>
-  <h4 class="lecture-pane-subheader">
-    <%= t('basics.voucher_for_tutors') %>
-  </h4>
-  <div id="tutor-voucher">
-    <%= render partial: 'lectures/edit/tutor_voucher',
-                locals: { lecture: lecture } %>
+  <% Voucher::SORT_HASH.keys.each do |sort| %>
+    <h4 class="lecture-pane-subheader">
+      <%= t("basics.voucher_for",
+             sort: t("basics.#{sort}s")) %>
+    </h4>  
+  <div id='<%= "#{sort}"%>-voucher'>
+    <%= render partial: 'vouchers/voucher',
+                locals: { lecture: lecture,
+                          sort: sort } %>
   </div>
+  <% end %>
 <% end %>

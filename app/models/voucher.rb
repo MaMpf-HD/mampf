@@ -1,5 +1,7 @@
 class Voucher < ApplicationRecord
-  enum sort: { tutor: 0, editor: 1, teacher: 2 }
+  SORT_HASH = { tutor: 0, editor: 1, teacher: 2 }.freeze
+
+  enum sort: SORT_HASH
 
   belongs_to :lecture, touch: true
   before_create :generate_secure_hash

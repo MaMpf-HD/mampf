@@ -9,8 +9,9 @@ class VouchersController < ApplicationController
 
   def create
     @lecture = Lecture.find_by(id: voucher_params[:lecture_id])
+    @sort = voucher_params[:sort]
     I18n.locale = @lecture.locale
-    @voucher = Voucher.new(lecture: @lecture, sort: voucher_params[:sort])
+    @voucher = Voucher.new(lecture: @lecture, sort: @sort)
     respond_to do |format|
       if @voucher.save
         handle_successful_save(format)
@@ -22,6 +23,7 @@ class VouchersController < ApplicationController
 
   def destroy
     @lecture = @voucher.lecture
+    @sort = @voucher.sort
     I18n.locale = @lecture.locale
     @voucher.destroy
     respond_to do |format|

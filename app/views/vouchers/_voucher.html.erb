@@ -1,5 +1,5 @@
-<% if lecture.active_voucher_of_sort(:tutor) %>
-  <% voucher = lecture.active_voucher_of_sort(:tutor) %>
+<% voucher = lecture.active_voucher_of_sort(sort) %>
+<% if voucher %>
   <div>
     <span>
         <%= t('admin.voucher.secure_hash') %>:
@@ -34,11 +34,18 @@
     </p>
   </div>
 <% else %>
-  <%= t('admin.lecture.no_active_tutor_voucher') %>
-  <%= link_to t('buttons.create_voucher'),
-              vouchers_path(params: { lecture_id: lecture.id,
-                                            sort: :tutor }),
-              class: 'btn btn-sm btn-primary',
-              method: :post,
-              remote: true %>
+  <p>
+    <%= t('admin.lecture.no_active_voucher',
+          sort: t("basics.voucher_for", sort: t("basics.#{sort}s"))) %>
+    <%= link_to vouchers_path(params: { lecture_id: lecture.id,
+                                        sort: sort }),
+                class: 'text-dark ms-2',
+                data: { toggle: 'tooltip',
+                        placement: 'botttom' },
+                title: t('buttons.create_voucher'),
+                method: :post,
+                remote: true do %>
+        <i class="fas fa-plus"></i>
+    <% end %>
+  </p>
 <% end %>

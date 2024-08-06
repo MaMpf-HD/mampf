@@ -480,8 +480,8 @@ de:
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
       import_tags: Tags importieren
-      no_active_tutor_voucher: >
-        Es gibt keinen aktiven Tutoren-Gutschein für diese Veranstaltung.
+      no_active_voucher: >
+        Es gibt keinen aktiven %{sort} für diese Veranstaltung.
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -3433,8 +3433,9 @@ de:
     together_with: zusammen mit
     enter_two_letters: mind. 2 Zeichen eingeben
     no_results: Keine Resultate gefunden
+    editors: EditorInnen
     vouchers: Gutscheine
-    voucher_for_tutors: Gutschein für TutorInnen
+    voucher_for: Gutschein für %{sort}
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
