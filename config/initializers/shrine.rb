@@ -2,7 +2,7 @@ require "shrine"
 require "shrine/storage/file_system"
 require "shrine/storage/memory" if Rails.env.test?
 
-if Rails.env.development? || Rails.env.docker_development?
+if Rails.env.development? || Rails.env.docker_development? || Rails.env.test?
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("public", prefix: "uploads/cache"),
     store: Shrine::Storage::FileSystem.new("public", prefix: "uploads/store"),
@@ -19,13 +19,6 @@ elsif Rails.env.production?
                                            prefix: "/"),
     submission_cache: Shrine::Storage::FileSystem.new(submission_path, prefix: "cache"),
     submission_store: Shrine::Storage::FileSystem.new(submission_path, prefix: "store")
-  }
-elsif Rails.env.test?
-  Shrine.storages = {
-    cache: Shrine::Storage::Memory.new,
-    store: Shrine::Storage::Memory.new,
-    submission_cache: Shrine::Storage::Memory.new,
-    submission_store: Shrine::Storage::Memory.new
   }
 end
 
