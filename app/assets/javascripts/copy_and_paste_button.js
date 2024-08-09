@@ -1,5 +1,5 @@
 $(document).on("turbolinks:load", function () {
-  var clipboard = new Clipboard(".clipboard-btn");
+  new Clipboard(".clipboard-btn");
 
   $(document).on("click", ".clipboard-button", function () {
     $(".token-clipboard-popup").removeClass("show");
