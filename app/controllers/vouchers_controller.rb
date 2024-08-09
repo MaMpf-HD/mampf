@@ -64,7 +64,7 @@ class VouchersController < ApplicationController
                     alert: error_message
       end
       format.js do
-        render "create_error", locals: { error_message: error_message }
+        render "error", locals: { error_message: error_message }
       end
     end
 
@@ -77,7 +77,7 @@ class VouchersController < ApplicationController
                         fallback_location: root_path)
         end
         format.js do
-          render "no_voucher_error",
+          render "error",
                  locals: { error_message: error_message }
         end
       end
