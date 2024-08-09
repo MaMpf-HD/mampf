@@ -13,10 +13,6 @@ class Voucher < ApplicationRecord
 
   self.implicit_order_column = "created_at"
 
-  def expired?
-    expires_at <= Time.zone.now
-  end
-
   def active?
     expires_at > Time.zone.now
   end

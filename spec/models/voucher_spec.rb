@@ -41,18 +41,6 @@ RSpec.describe(Voucher, type: :model) do
   end
 
   describe "instance methods" do
-    describe "#expired?" do
-      it "returns true if the voucher has expired" do
-        voucher = FactoryBot.build(:voucher, expires_at: 1.day.ago)
-        expect(voucher.expired?).to be(true)
-      end
-
-      it "returns false if the voucher has not expired" do
-        voucher = FactoryBot.build(:voucher, expires_at: 1.day.from_now)
-        expect(voucher.expired?).to be(false)
-      end
-    end
-
     describe "#active?" do
       it "returns true if the voucher is active" do
         voucher = FactoryBot.build(:voucher, expires_at: 1.day.from_now)
