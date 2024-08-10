@@ -63,7 +63,7 @@ describe("Annotations Overview", () => {
         { title: MEDIUM_TITLE_2, comment: this.annotation2.comment },
         { title: MEDIUM_TITLE_3, comment: this.annotation3.comment },
         { title: MEDIUM_TITLE_3, comment: this.annotation4.comment },
-      ].forEach((test) => {
+      ].forEach((test, i) => {
         cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
         cy.get("@card").children().first().should("contain", test.title);
         cy.get("@card").children().eq(1).should("contain", test.comment);
