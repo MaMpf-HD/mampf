@@ -62,6 +62,13 @@ FactoryBot.define do
       course { association :course, title: title }
     end
 
+    trait :with_teacher_by_id do
+      transient do
+        teacher_id { nil }
+      end
+      teacher { User.find(teacher_id) }
+    end
+
     # NOTE: that you can give the chapter_count here as parameter as well
     factory :lecture_with_toc, traits: [:with_toc]
 

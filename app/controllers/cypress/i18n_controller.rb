@@ -8,16 +8,19 @@ module Cypress
         raise(ArgumentError, msg)
       end
 
-      if params[:substitutions].blank? && !params[:substitutions].is_a?(Hash)
-        msg = "Argument `substitution` must be a hash indicating the substitutions."
-        msg += " But we got: '#{params[:substitutions]}'"
-        raise(ArgumentError, msg)
+      substitutions = {}
+      if params[:substitutions].present?
+        unless params[:substitutions].is_a?(Hash)
+          msg = "Argument `substitution` must be a hash indicating the substitutions."
+          msg += " But we got: '#{params[:substitutions]}'"
+          raise(ArgumentError, msg)
+        end
+        substitutions = params[:substitutions].to_unsafe_hash.symbolize_keys
       end
 
       i18n_key = params[:i18n_key]
-      substitutions = params[:substitutions].to_unsafe_hash.symbolize_keys
 
-      render json: { "value" => I18n.t(i18n_key, **substitutions) }, status: :created
+      render json: I18n.t(i18n_key, **substitutions), status: :created
     end
   end
 end
