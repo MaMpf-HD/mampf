@@ -1,6 +1,10 @@
 // https://on.cypress.io/custom-commands
 import BackendCaller from "./backend_caller";
 
+Cypress.Commands.add("getBySelector", (selector, ...args) => {
+  return cy.get(`[data-cy=${selector}]`, ...args);
+});
+
 Cypress.Commands.add("cleanDatabase", () => {
   return BackendCaller.callCypressRoute("database_cleaner", "cy.cleanDatabase()", {});
 });
