@@ -1,9 +1,10 @@
 import FactoryBot from "../support/factorybot";
+import { hexToRgb } from "../support/utility";
+
+const CARD_SELECTOR = "annotation-overview-card";
 
 describe("Annotations Overview", () => {
-  describe("Annotation cards", () => {
-    const CARD_SELECTOR = "annotation-overview-card";
-
+  describe("User annotation card", () => {
     const LECTURE_TITLE_1 = "SageMath";
     const MEDIUM_TITLE_1 = "Math Intro";
     const LECTURE_TITLE_2 = "Lean4";
@@ -56,7 +57,7 @@ describe("Annotations Overview", () => {
       });
     });
 
-    it("contain the medium title and the comment", function () {
+    it("contains the medium title and the comment", function () {
       cy.visit("/annotations/overview");
       [
         { title: MEDIUM_TITLE_1, comment: this.annotation1.comment },
@@ -70,7 +71,17 @@ describe("Annotations Overview", () => {
       });
     });
 
-    it("are grouped by lecture", function () {
+    it("has border according to annotation color", function () {
+      cy.visit("/annotations/overview");
+      [this.annotation1, this.annotation2, this.annotation3, this.annotation4]
+        .forEach((annotation, i) => {
+          cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
+          const colorExpected = hexToRgb(annotation.color);
+          cy.get("@card").should("have.css", "border-color", colorExpected);
+        });
+    });
+
+    it("is grouped by lecture", function () {
       cy.visit("/annotations/overview");
       [LECTURE_TITLE_1, LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_2]
         .forEach((title, i) => {
@@ -80,7 +91,7 @@ describe("Annotations Overview", () => {
         });
     });
 
-    it.only("redirect to the video when clicked", function () {
+    it("redirects to medium video when clicked", function () {
       [
         { medium: this.medium1, annotation: this.annotation1 },
         { medium: this.medium2, annotation: this.annotation2 },
@@ -95,6 +106,7 @@ describe("Annotations Overview", () => {
         cy.url().should("contain", `/media/${test.medium.id}`);
         let timestamp = `0:00:${test.annotation.timestamp.seconds}`;
         cy.getBySelector("current-time").should("contain", timestamp);
+        cy.getBySelector("annotation-comment").should("contain", test.annotation.comment);
       });
     });
   });
