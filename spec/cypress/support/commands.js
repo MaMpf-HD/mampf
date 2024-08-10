@@ -30,6 +30,9 @@ Cypress.Commands.add("login", (user) => {
 });
 
 Cypress.Commands.add("createUserAndLogin", (role) => {
-  cy.createUser(role);
-  cy.login({ email: `${role}@mampf.cypress`, password: "cypress123" });
+  cy.createUser(role).then((user) => {
+    cy.login({ email: `${role}@mampf.cypress`, password: "cypress123" }).then((_) => {
+      cy.wrap(user);
+    });
+  });
 });
