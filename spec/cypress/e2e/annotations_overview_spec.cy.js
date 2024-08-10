@@ -62,6 +62,38 @@ function createAnnotationScenario(context, userRole = "student") {
   });
 }
 
+describe("Annotation section", () => {
+  it("shows only *own* annotations for generic user", function () {
+    cy.createUserAndLogin("generic");
+
+    cy.i18n("admin.annotation.your_annotations").as("yourAnnotations");
+    cy.i18n("admin.annotation.students_annotations").as("studentsAnnotations");
+
+    cy.then(() => {
+      cy.visit("/annotations/overview");
+      cy.getBySelector("annotations-container").should("contain", this.yourAnnotations);
+      cy.getBySelector("annotations-container").should("not.contain", this.studentsAnnotations);
+    });
+  });
+
+  it("shows both *own* and *students'* annotations for teacher", function () {
+    cy.createUserAndLogin("teacher").as("teacher");
+    cy.then(() => {
+      // a user is considered a teacher only iff they have given any lecture
+      FactoryBot.create("lecture", "with_teacher_by_id", { teacher_id: this.teacher.id });
+    });
+
+    cy.i18n("admin.annotation.your_annotations").as("yourAnnotations");
+    cy.i18n("admin.annotation.students_annotations").as("studentsAnnotations");
+
+    cy.then(() => {
+      cy.visit("/annotations/overview");
+      cy.getBySelector("annotations-container").should("contain", this.yourAnnotations);
+      cy.getBySelector("annotations-container").should("contain", this.studentsAnnotations);
+    });
+  });
+});
+
 describe("User annotation card", () => {
   beforeEach(function () {
     createAnnotationScenario(this);
@@ -183,38 +215,6 @@ describe("Student annotation card (shared with teacher)", () => {
       let timestamp = `0:00:${test.annotation.timestamp.seconds}`;
       cy.getBySelector("current-time").should("contain", timestamp);
       cy.getBySelector("annotation-comment").should("contain", test.annotation.comment);
-    });
-  });
-});
-
-describe("Annotation section", () => {
-  it("shows only *own* annotations for generic user", function () {
-    cy.createUserAndLogin("generic");
-
-    cy.i18n("admin.annotation.your_annotations").as("yourAnnotations");
-    cy.i18n("admin.annotation.students_annotations").as("studentsAnnotations");
-
-    cy.then(() => {
-      cy.visit("/annotations/overview");
-      cy.getBySelector("annotations-container").should("contain", this.yourAnnotations);
-      cy.getBySelector("annotations-container").should("not.contain", this.studentsAnnotations);
-    });
-  });
-
-  it("shows both *own* and *students'* annotations for teacher", function () {
-    cy.createUserAndLogin("teacher").as("teacher");
-    cy.then(() => {
-      // a user is considered a teacher only iff they have given any lecture
-      FactoryBot.create("lecture", "with_teacher_by_id", { teacher_id: this.teacher.id });
-    });
-
-    cy.i18n("admin.annotation.your_annotations").as("yourAnnotations");
-    cy.i18n("admin.annotation.students_annotations").as("studentsAnnotations");
-
-    cy.then(() => {
-      cy.visit("/annotations/overview");
-      cy.getBySelector("annotations-container").should("contain", this.yourAnnotations);
-      cy.getBySelector("annotations-container").should("contain", this.studentsAnnotations);
     });
   });
 });
