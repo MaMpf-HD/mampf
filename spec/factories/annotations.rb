@@ -25,5 +25,9 @@ FactoryBot.define do
     trait :with_text do
       comment { Faker::Lorem.sentence }
     end
+
+    trait :shared_with_teacher do
+      visible_for_teacher { true }
+    end
   end
 end
