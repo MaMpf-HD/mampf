@@ -99,6 +99,16 @@ describe("User annotation card", () => {
     createAnnotationScenario(this);
   });
 
+  it("is grouped by lecture", function () {
+    cy.visit("/annotations/overview");
+    [LECTURE_TITLE_1, LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_2]
+      .forEach((title, i) => {
+        cy.getBySelector(CARD_SELECTOR).eq(i)
+          .parents(".accordion-collapse").siblings(".accordion-header")
+          .should("contain", title);
+      });
+  });
+
   it("contains medium and annotation information", function () {
     cy.visit("/annotations/overview");
     [
@@ -137,16 +147,6 @@ describe("User annotation card", () => {
         cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
         const colorExpected = hexToRgb(annotation.color);
         cy.get("@card").should("have.css", "border-color", colorExpected);
-      });
-  });
-
-  it("is grouped by lecture", function () {
-    cy.visit("/annotations/overview");
-    [LECTURE_TITLE_1, LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_2]
-      .forEach((title, i) => {
-        cy.getBySelector(CARD_SELECTOR).eq(i)
-          .parents(".accordion-collapse").siblings(".accordion-header")
-          .should("contain", title);
       });
   });
 
