@@ -110,4 +110,12 @@ describe("Annotations Overview", () => {
       });
     });
   });
+
+  describe.only("User annotation card", () => {
+    it("just a quick test", function () {
+      cy.i18n("feedback.body_too_short_error", { min_length: 42 }).then((comment) => {
+        console.log(comment);
+      });
+    });
+  });
 });

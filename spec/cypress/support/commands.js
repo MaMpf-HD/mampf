@@ -40,3 +40,8 @@ Cypress.Commands.add("createUserAndLogin", (role) => {
     });
   });
 });
+
+Cypress.Commands.add("i18n", (key, substitutions) => {
+  return BackendCaller.callCypressRoute("i18n", "cy.i18n()",
+    { i18n_key: key, substitutions: substitutions });
+});

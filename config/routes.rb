@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resources :factories, only: :create
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
+      resources :i18n, only: :create
     end
   end
 
