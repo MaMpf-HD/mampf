@@ -46,42 +46,55 @@ describe("Annotations Overview", () => {
       // Annotations
       cy.then(() => {
         FactoryBot.create("annotation", "with_text",
-          { medium_id: this.medium1.id, user_id: this.genericUser.id });
+          { medium_id: this.medium1.id, user_id: this.genericUser.id }).as("annotation1");
         FactoryBot.create("annotation", "with_text",
-          { medium_id: this.medium2.id, user_id: this.genericUser.id });
+          { medium_id: this.medium2.id, user_id: this.genericUser.id }).as("annotation2");
         FactoryBot.create("annotation", "with_text",
-          { medium_id: this.medium3.id, user_id: this.genericUser.id });
+          { medium_id: this.medium3.id, user_id: this.genericUser.id }).as("annotation3");
         FactoryBot.create("annotation", "with_text",
-          { medium_id: this.medium3.id, user_id: this.genericUser.id });
+          { medium_id: this.medium3.id, user_id: this.genericUser.id }).as("annotation4");
       });
     });
 
-    it("contain the medium title in their header", function () {
+    it("contain the medium title and the comment", function () {
       cy.visit("/annotations/overview");
-      cy.getBySelector(CARD_SELECTOR).then(($cards) => {
-        cy.wrap($cards).should("have.length", 4);
-        cy.wrap($cards).eq(0).children().first().should("contain", MEDIUM_TITLE_1);
-        cy.wrap($cards).eq(1).children().first().should("contain", MEDIUM_TITLE_2);
-        cy.wrap($cards).eq(2).children().first().should("contain", MEDIUM_TITLE_3);
-        cy.wrap($cards).eq(3).children().first().should("contain", MEDIUM_TITLE_3);
+      [
+        { title: MEDIUM_TITLE_1, comment: this.annotation1.comment },
+        { title: MEDIUM_TITLE_2, comment: this.annotation2.comment },
+        { title: MEDIUM_TITLE_3, comment: this.annotation3.comment },
+        { title: MEDIUM_TITLE_3, comment: this.annotation4.comment },
+      ].forEach((test) => {
+        cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
+        cy.get("@card").children().first().should("contain", test.title);
+        cy.get("@card").children().eq(1).should("contain", test.comment);
       });
     });
 
     it("are grouped by lecture", function () {
       cy.visit("/annotations/overview");
-      cy.getBySelector(CARD_SELECTOR).then(($cards) => {
-        cy.wrap($cards).eq(0)
-          .parents(".accordion-collapse").siblings(".accordion-header")
-          .should("contain", LECTURE_TITLE_1);
-        cy.wrap($cards).eq(1)
-          .parents(".accordion-collapse").siblings(".accordion-header")
-          .should("contain", LECTURE_TITLE_2);
-        cy.wrap($cards).eq(2)
-          .parents(".accordion-collapse").siblings(".accordion-header")
-          .should("contain", LECTURE_TITLE_2);
-        cy.wrap($cards).eq(3)
-          .parents(".accordion-collapse").siblings(".accordion-header")
-          .should("contain", LECTURE_TITLE_2);
+      [LECTURE_TITLE_1, LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_2]
+        .forEach((title, i) => {
+          cy.getBySelector(CARD_SELECTOR).eq(i)
+            .parents(".accordion-collapse").siblings(".accordion-header")
+            .should("contain", title);
+        });
+    });
+
+    it.only("redirect to the video when clicked", function () {
+      [
+        { medium: this.medium1, annotation: this.annotation1 },
+        { medium: this.medium2, annotation: this.annotation2 },
+        { medium: this.medium3, annotation: this.annotation3 },
+        { medium: this.medium3, annotation: this.annotation4 },
+      ].forEach((test, i) => {
+        cy.visit("/annotations/overview");
+        cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
+        cy.get("@card").parents(".accordion-collapse").siblings(".accordion-header").click();
+        cy.get("@card").click();
+
+        cy.url().should("contain", `/media/${test.medium.id}`);
+        let timestamp = `0:00:${test.annotation.timestamp.seconds}`;
+        cy.getBySelector("current-time").should("contain", timestamp);
       });
     });
   });
