@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   before_action :set_locale
-  after_action :store_interaction, if: :user_signed_in? # , unless: -> { Rails.env.test? }
+  after_action :store_interaction, if: :user_signed_in?
 
   etag { current_user.try(:id) }
 
