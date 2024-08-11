@@ -7,8 +7,8 @@ FactoryBot.define do
       sort { :tutor }
     end
 
-    trait :student do
-      sort { :student }
+    trait :editor do
+      sort { :editor }
     end
 
     trait :teacher do
