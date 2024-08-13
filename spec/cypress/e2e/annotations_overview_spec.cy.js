@@ -70,7 +70,7 @@ describe("Annotation section", () => {
     cy.i18n("admin.annotation.students_annotations").as("studentsAnnotations");
 
     cy.then(() => {
-      cy.visit("/annotations/overview");
+      cy.visit("/annotations");
       cy.getBySelector("annotations-container").should("contain", this.yourAnnotations);
       cy.getBySelector("annotations-container").should("not.contain", this.studentsAnnotations);
     });
@@ -87,7 +87,7 @@ describe("Annotation section", () => {
     cy.i18n("admin.annotation.students_annotations").as("studentsAnnotations");
 
     cy.then(() => {
-      cy.visit("/annotations/overview");
+      cy.visit("/annotations");
       cy.getBySelector("annotations-container").should("contain", this.yourAnnotations);
       cy.getBySelector("annotations-container").should("contain", this.studentsAnnotations);
     });
@@ -100,7 +100,7 @@ describe("User annotation card", () => {
   });
 
   it("is grouped by lecture", function () {
-    cy.visit("/annotations/overview");
+    cy.visit("/annotations");
     [LECTURE_TITLE_1, LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_2]
       .forEach((title, i) => {
         cy.getBySelector(CARD_SELECTOR).eq(i)
@@ -110,7 +110,7 @@ describe("User annotation card", () => {
   });
 
   it("renders math content", function () {
-    cy.visit("/annotations/overview");
+    cy.visit("/annotations");
     cy.getBySelector(CARD_SELECTOR).last().then(($card) => {
       cy.wrap($card).find(".katex").should("not.exist");
     });
@@ -122,7 +122,7 @@ describe("User annotation card", () => {
       }).as("annotationWithMath");
 
     cy.then(() => {
-      cy.visit("/annotations/overview");
+      cy.visit("/annotations");
       cy.getBySelector(CARD_SELECTOR).last().then(($card) => {
         cy.wrap($card).find(".katex").should("exist");
       });
@@ -130,7 +130,7 @@ describe("User annotation card", () => {
   });
 
   it("contains medium and annotation information", function () {
-    cy.visit("/annotations/overview");
+    cy.visit("/annotations");
     [
       { title: MEDIUM_TITLE_1, annotation: this.annotation1, lesson: this.lesson1 },
       { title: MEDIUM_TITLE_2, annotation: this.annotation2, lesson: this.lesson2 },
@@ -161,7 +161,7 @@ describe("User annotation card", () => {
   });
 
   it("has border according to annotation color", function () {
-    cy.visit("/annotations/overview");
+    cy.visit("/annotations");
     [this.annotation1, this.annotation2, this.annotation3, this.annotation4]
       .forEach((annotation, i) => {
         cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
@@ -177,7 +177,7 @@ describe("User annotation card", () => {
       { medium: this.medium3, annotation: this.annotation3 },
       { medium: this.medium3, annotation: this.annotation4 },
     ].forEach((test, i) => {
-      cy.visit("/annotations/overview");
+      cy.visit("/annotations");
       cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
       cy.get("@card").parents(".accordion-collapse").siblings(".accordion-header").click();
       cy.get("@card").click();
@@ -211,7 +211,7 @@ describe("Student annotation card (shared with teacher)", () => {
       presentation: "#2185D0",
       mistake: "#fc1461",
     };
-    cy.visit("/annotations/overview");
+    cy.visit("/annotations");
     [this.annotation1FromStudent, this.annotation2FromStudent, this.annotation3FromStudent]
       .forEach((annotation, i) => {
         cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
@@ -226,7 +226,7 @@ describe("Student annotation card (shared with teacher)", () => {
       { medium: this.medium1, annotation: this.annotation2FromStudent },
       { medium: this.medium3, annotation: this.annotation3FromStudent },
     ].forEach((test, i) => {
-      cy.visit("/annotations/overview");
+      cy.visit("/annotations");
       cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
       cy.get("@card").parents(".accordion-collapse").siblings(".accordion-header").click();
       cy.get("@card").click();

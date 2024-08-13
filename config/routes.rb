@@ -56,11 +56,7 @@ Rails.application.routes.draw do
       to: "annotations#num_nearby_posted_mistake_annotations",
       as: "num_nearby_posted_mistake_annotations"
 
-  resources :annotations, only: [:new, :create, :edit, :update, :destroy]
-
-  get "annotations/overview",
-      to: "annotations#index",
-      as: "annotations_overview"
+  resources :annotations
 
   # announcements routes
 
