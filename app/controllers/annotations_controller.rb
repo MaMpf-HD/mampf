@@ -3,7 +3,7 @@ class AnnotationsController < ApplicationController
 
   def index
     user_annotations = current_user.own_annotations
-                                   .map { |a| extract_relevant_information(a) }
+                                   .map { |a| extract_annotation_overview_information(a) }
     @annotations_by_lecture = user_annotations.group_by { |annotation| annotation[:lecture] }
     # TODO: don't include lecture key in the hash anymore after grouping
     # Maybe we can even gruop in the SQL query directly?
@@ -12,28 +12,13 @@ class AnnotationsController < ApplicationController
     if @show_students_annotations
       student_annotations = current_user
                             .students_annotations
-                            .map { |a| extract_relevant_information(a, is_shared: true) }
+                            .map { |a| extract_annotation_overview_information(a, is_shared: true) }
       @student_annotations_by_lecture = student_annotations.group_by do |annotation|
         annotation[:lecture]
       end
     end
 
     render layout: "application_no_sidebar_with_background"
-  end
-
-  def extract_relevant_information(annotation, is_shared: false)
-    {
-      category: annotation.category,
-      text: annotation.comment_optional,
-      color: annotation.color,
-      updated_at: annotation.updated_at,
-      # TODO: teachable is marked optional in medium, so we should handle the case
-      # where it is nil
-      lecture: annotation.medium.teachable.lecture.title,
-      link: helpers.annotation_open_link(annotation, is_shared),
-      medium_title: annotation.medium.caption,
-      medium_date: annotation.medium.lesson&.date_localized
-    }
   end
 
   def show
@@ -242,5 +227,18 @@ class AnnotationsController < ApplicationController
       annotation.comment = nil
 
       annotation.public_comment_id = comment.id
+    end
+
+    def extract_annotation_overview_information(annotation, is_shared: false)
+      {
+        category: annotation.category,
+        text: annotation.comment_optional,
+        color: annotation.color,
+        updated_at: annotation.updated_at,
+        lecture: annotation.medium.teachable.lecture.title,
+        link: helpers.annotation_open_link(annotation, is_shared),
+        medium_title: annotation.medium.caption,
+        medium_date: annotation.medium.lesson&.date_localized
+      }
     end
 end
