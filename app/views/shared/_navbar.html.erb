@@ -44,6 +44,14 @@
         <% end %>
 
         <li class="nav-item">
+          <a href="<%= annotations_path %>"
+            class="nav-link bi bi-stickies-fill <%= get_class_for_path(annotations_path()) %>"
+            data-bs-toggle="tooltip"
+            title="<%= t('admin.annotation.annotations') %>">
+          </a>
+        </li>
+
+        <li class="nav-item">
           <a href="<%= watchlists_path %>"
             id="watchlistsIcon"
             class="nav-link bi bi-tv-fill <%= get_class_for_path_startswith(watchlists_path()) %>"

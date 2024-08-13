@@ -1,0 +1,67 @@
+<%= stylesheet_link_tag 'annotations_overview' %>
+
+<div class="container-md small-width" data-cy="annotations-container">
+  
+
+  <!-- --------------------------------------------------------------------- -->
+  <!-- Students annotations -->
+  <!-- --------------------------------------------------------------------- -->
+  <% if @show_students_annotations %>
+
+  <h2><%= t('admin.annotation.students_annotations') %></h2>
+
+  <% if @student_annotations_by_lecture.empty? %>
+
+  <div class="d-flex">
+    <i class="bi bi-emoji-frown me-2"></i>
+    <p>
+      <%= t('admin.annotation.none_yet_students') %>
+    </p>
+  </div>
+
+  <% else %>
+
+  <p>
+    <%= t('admin.annotation.overview_description_students_annotations') %>
+  </p>
+
+  <%= render 'annotations/index_accordion',
+    annotations_by_lecture: @student_annotations_by_lecture,
+    is_students_annotations: true %>
+
+  <% end %>
+
+  <hr>
+  <% end %>
+
+
+  <!-- --------------------------------------------------------------------- -->
+  <!-- Own annotations -->
+  <!-- --------------------------------------------------------------------- -->
+  <h2><%= t('admin.annotation.your_annotations') %></h2>
+
+  <% if @annotations_by_lecture.empty? %>
+
+  <div class="d-flex">
+    <i class="bi bi-emoji-frown me-2"></i>
+    <p>
+      <%= t('admin.annotation.none_yet_html') %>
+    </p>
+  </div>
+    
+  <% else %>
+
+  <p>
+    <%= t('admin.annotation.overview_description') %>
+  </p>
+
+  <%= render 'annotations/index_accordion',
+    annotations_by_lecture: @annotations_by_lecture,
+    is_students_annotations: false %>
+
+  <% end %>
+
+
+</div>
+
+<%= javascript_include_tag :annotations_overview %>

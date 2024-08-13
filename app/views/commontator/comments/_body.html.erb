@@ -12,6 +12,5 @@
   <% timestamp = annotation.timestamp %>
   <br>
   Timestamp:
-  <a href= '<%= Rails.application.routes.url_helpers.play_medium_path(medium) %>?time=<%= timestamp.total_seconds %>'>
-  <%= timestamp.hms_colon_string %> </a>
+  <%= link_to timestamp.hms_colon_string, video_link_timed(medium, timestamp) %>
 <% end %>

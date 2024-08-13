@@ -1,0 +1,73 @@
+<% accordionLabel = "annotations-overview-accordion" %>
+<% accordionLabel = "student-#{accordionLabel}" if is_students_annotations %>
+<div class="accordion" id="<%= accordionLabel %>">
+
+  <% annotations_by_lecture.each_with_index do |(lecture, annotations), index| %>
+    <div class="accordion-item">
+      <% collapseLabel="annotation-overview-collapse-#{index}-#{is_students_annotations}" %>
+
+        <!-- Accordion header -->
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              data-bs-target="#<%= collapseLabel %>"
+              aria-expanded="true" aria-controls="#<%= collapseLabel %>">
+            <%= lecture %> &nbsp;&nbsp;&nbsp; (<%= annotations.length %>)
+          </button>
+        </h2>
+
+        <!-- Accordion body -->
+        <div class="accordion-collapse collapse" id="<%= collapseLabel %>"
+            data-bs-parent="#<%= accordionLabel %>">
+          <div class="accordion-body">
+
+            <% annotations.each do |annotation| %>
+              <!-- Card (as clickable link) -->
+              <a href="<%= annotation[:link] %>"
+                  style="text-decoration: none;" target="_blank"
+                  data-cy="annotation-overview-card-link">
+                <!-- for usage in JS -->
+                <% category_str = annotation[:category] if is_students_annotations %>
+                <% border_style = annotation_index_border_color(annotation, is_students_annotations) %>
+
+                <div class="annotation-overview-item card mb-3"
+                    data-annotation-card-category="<%= category_str %>"
+                    style="<%= border_style %>"
+                    data-cy="annotation-overview-card">
+                  
+                  <!-- Card header -->
+                  <div class="card-header d-flex justify-content-between">
+                    <div>
+                      <strong>
+                        <%= annotation[:category].capitalize %>
+                        <% if not annotation[:medium_title].empty? %>
+                          | <%= annotation[:medium_title] %>
+                        <% end %>
+                      </strong>
+                    </div>
+                    <div class="text-body-secondary font-monospace">
+                      <em><%= annotation[:medium_date] %></em>
+                    </div>
+                  </div>
+
+                  <!-- Card body -->
+                  <div class="card-body">
+                    <p class="card-text">
+                      <%= truncate(annotation[:text], length: 100) %>
+                        <br>
+                        <small class="text-body-secondary">
+                          <%= t('time.last_updated',
+                            time_ago: time_ago_in_words(annotation[:updated_at])) %>
+                        </small>
+                    </p>
+                  </div>
+                </div>
+              </a>
+              <% end %>
+
+          </div>
+        </div>
+
+    </div>
+  <% end %>
+
+</div>

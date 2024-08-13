@@ -4,6 +4,9 @@ module Cypress
   # The main purpose of this class is to send back errors as JSON object
   # to parse them in the Cypress test UI. This way, we can display the error
   # message and the stacktrace in the Cypress test.
+  #
+  # The convention with the frontend is to return the status `created`
+  # for successful requests and `bad_request` (or anything else) for failed requests.
   class CypressController < ApplicationController
     respond_to :json
     rescue_from Exception, with: :show_errors

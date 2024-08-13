@@ -72,6 +72,13 @@ FactoryBot.define do
       sort { "Kaviar" }
       teachable_sort { :valid_lesson }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
+
+      trait :with_lesson_by_id do
+        transient do
+          lesson_id { nil }
+        end
+        teachable { Lesson.find(lesson_id) }
+      end
     end
 
     factory :lecture_medium,
