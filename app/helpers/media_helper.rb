@@ -155,8 +155,8 @@ module MediaHelper
     "#{play_path}?time=#{timestamp.total_seconds}"
   end
 
-  def feedback_video_link_timed(medium, timestampe)
+  def feedback_video_link_timed(medium, timestamp)
     feedback_play_path = feedback_medium_path(medium)
-    "#{feedback_play_path}?time=#{timestampe.total_seconds}"
+    "#{feedback_play_path}?time=#{timestamp.total_seconds}"
   end
 end
