@@ -7,14 +7,16 @@ RSpec.describe(WatchlistEntry, type: :model) do
 
   it "must have a medium" do
     entry = FactoryBot.build(:watchlist_entry, :with_watchlist)
-    entry.valid?
-    expect(entry.errors[:medium]).to include("muss ausgefüllt werden")
+    expect(entry).not_to be_valid
+    expect(entry.errors).to have_key(:medium)
+    expect(entry.errors).not_to have_key(:watchlist)
   end
 
   it "must have a watchlist" do
     entry = FactoryBot.build(:watchlist_entry, :with_medium)
-    entry.valid?
-    expect(entry.errors[:watchlist]).to include("muss ausgefüllt werden")
+    expect(entry).not_to be_valid
+    expect(entry.errors).to have_key(:watchlist)
+    expect(entry.errors).not_to have_key(:medium)
   end
 
   it "can only be once inside a watchlist" do

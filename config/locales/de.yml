@@ -323,7 +323,24 @@ de:
       teacher: 'DozentIn'
       editors: 'EditorInnen'
     annotation:
+      your_annotations: 'Deine Annotationen'
+      students_annotations: 'Annotationen der Studierenden'
+      none_yet_html: >
+        Du hast noch keine Annotationen erstellt. Erfahre mehr in unserem
+        <a href="https://mampf.blog/2024/04/02/annotation-tool/">Blog post</a>.
+      none_yet_students: >
+        Noch keiner Deiner Studierenden hat eine Annotation erstellt und sie
+        mit Dir geteilt.
       annotations: 'Annotationen'
+      overview_description: >
+        Hier findest Du eine Liste aller Annotationen, die Du zu verschiedenen
+        Vorlesungen erstellt hast. Klicke auf eine Annotation, um zu ihr zu springen.
+        Annotationen werden entsprechend der von Dir gewählten Farbe eingefärbt.
+      overview_description_students_annotations: >
+        Hier sind alle Annotationen von Studierenden aufgeführt, die sie mit Dir
+        in Vorlesungen geteilt haben, welche Du verwaltest (als Editor/Lehrkraft).
+        Klicke auf eine Annotation, um zu ihr im Feedback-Player zu springen.
+        Annotationen werden entsprechend ihrer Kategorie eingefärbt.
       annotation_modal_head_create_annotation: 'Annotation anlegen'
       annotation_modal_head_edit_annotation: 'Annotation bearbeiten'
       inherit_from_lecture: 'von Vorlesung erben'
@@ -2548,6 +2565,7 @@ de:
     formats:
       concise: '%d.%m.%Y'
       publication_time: '%A, den %d.%m.%Y um %H.%M Uhr'
+    last_updated: 'Zuletzt aktualisiert vor %{time_ago}'
   thyme:
     back: 'zurück'
     back_to: 'zurück zu '
@@ -3035,6 +3053,22 @@ de:
     en: 'Englisch'
     de: 'Deutsch'
   mailer:
+    warning: "MaMpf Warning"
+    pending_deletion_subject: "%{num_days_until_deletion} Tage bis zur
+      Löschung Deines MaMpf-Accounts"
+    deletion_subject: "Account gelöscht"
+    pending_deletion_body_html: >
+      Wir haben festgestellt, dass Du Dich in den letzten 6 Monaten nicht in
+      MaMpf eingeloggt hast. Dein Account wird in %{num_days_until_deletion}
+      Tagen <strong>gelöscht, sofern Du Dich nicht vorher einloggst</strong>.
+      Bitte beachte, dass nach der Löschung Deines Accounts alle bei MaMpf
+      gespeicherten Daten von Dir unwiderruflich verloren gehen.
+    deletion_body_html: >
+      <strong>Dein MaMpf-Account wurde vollständig gelöscht, da Du Dich seit
+      mehr als 6 Monaten nicht eingeloggt hast.</strong> Beachte, dass wir zuvor
+      mehrere Erinnerungen gesendet haben. Alle Deine bei MaMpf gespeicherten
+      Daten sind unwiderruflich verloren gegangen. Vielen Dank, dass Du MaMpf
+      genutzt hast.
     notification: 'MaMpf-Benachrichtigung'
     notification_header: 'Benachrichtigung von MaMpf'
     medium_subject: 'Neues Medium'

@@ -7,8 +7,8 @@ RSpec.describe(Watchlist, type: :model) do
 
   it "must have a name" do
     watchlist = Watchlist.new(name: nil)
-    watchlist.valid?
-    expect(watchlist.errors[:name]).to include("muss ausgefüllt werden")
+    expect(watchlist).not_to be_valid
+    expect(watchlist.errors).to have_key(:name)
   end
 
   it "must have a unique name" do

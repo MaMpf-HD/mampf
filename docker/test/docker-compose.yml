@@ -37,9 +37,8 @@ services:
       context: ./../..
       dockerfile: docker/test/Dockerfile
     image: mampf:tests
-    # TODO: Use this
-    # entrypoint: /usr/src/app/docker/test/run_tests.sh
-    entrypoint: /usr/src/app/entrypoint.sh
+    ports:
+      - "3100:3000"
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
@@ -48,6 +47,7 @@ services:
       TEST_DATABASE_USERNAME: mampf
       TEST_DATABASE_HOST: db
       TEST_DATABASE_PORT: 5432
+      MAX_DELETIONS_PER_RUN: 50
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
       URL_HOST: mampf
@@ -68,10 +68,9 @@ services:
       SPROCKETS_CACHE: /cache
       BLOG: https://mampf.blog
     volumes:
-        - type: bind
-          source: ../../spec/
-          target: /usr/src/app/spec/
-        - ../../coverage:/usr/src/app/coverage
+      - ../../:/usr/src/app/
+      - ../../coverage:/usr/src/app/coverage/
+      - "/usr/src/app/public/"
     depends_on:
       - db
       - solr
@@ -80,3 +79,4 @@ services:
     networks:
       - backend
       - frontend
+  

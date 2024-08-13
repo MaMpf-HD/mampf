@@ -18,7 +18,7 @@ Furthermore, you can setup special scenarios by providing a file in `spec/cypres
 that can be called by `cy.appScenario("setup")` for example. Always try to 
 create as much as you can in the scenario and then test the interaction!
 
-For more information visit [cypress-documentation](https://docs.cypress.io) and the used gem [cypress-on-rails](https://github.com/shakacode/cypress-on-rails) 
+For more information visit [cypress-documentation](https://docs.cypress.io).
 
 # Testing rspec
 

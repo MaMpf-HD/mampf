@@ -1,0 +1,15 @@
+# We'd like to place this file to the .config/ folder as well,
+# however Codecov doesn't support it yet (or is buggy, see
+# https://github.com/codecov/codecov-action/issues/1465)
+
+# Ignore test files themselves in the Codecov report
+# see: https://about.codecov.io/blog/should-i-include-test-files-in-code-coverage-calculations/
+ignore:
+  - "spec/**/*"
+  - "**/*_spec.rb"
+
+# https://docs.codecov.com/docs/commit-status
+coverage:
+  status:
+    project: off
+    patch: off

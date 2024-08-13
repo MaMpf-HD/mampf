@@ -41,7 +41,7 @@ class AnnotationManager {
   }
 
   /*
-    Updates the markers on the timeline, i.e. the visual represention of the annotations.
+    Updates the markers on the timeline, i.e. the visual representation of the annotations.
     This method is e.g. used for rearranging the markers when the window is being resized.
     Don't mix up with updateAnnotatons() which sends an AJAX request and checks for changes
     in the database.
@@ -82,7 +82,7 @@ class AnnotationManager {
     This method is e.g. used when a new annotation is being created.
     Don't mix up with updateMarkers() which just updates the position of the markers!
 
-    onSucess = A function that is triggered when the annotations have been
+    onSuccess = A function that is triggered when the annotations have been
                successfully updated.
     onSuccess = A function that is triggered when the annotations have been
                 successfully updated.
