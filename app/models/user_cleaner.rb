@@ -40,14 +40,14 @@ class UserCleaner
   # Users without a last_sign_in_at date are also considered inactive. This is
   # the case for users who have never logged in since PR #553 was merged.
   def inactive_users
-    User.where("last_sign_in_at < ?", INACTIVE_USER_THRESHOLD.ago)
+    User.where(last_sign_in_at: ...INACTIVE_USER_THRESHOLD.ago)
         .or(User.where(last_sign_in_at: nil))
   end
 
   # Returns all users who have been active in the last INACTIVE_USER_THRESHOLD months,
   # i.e. their last sign-in date is less than INACTIVE_USER_THRESHOLD months ago.
   def active_users
-    User.where("last_sign_in_at >= ?", INACTIVE_USER_THRESHOLD.ago)
+    User.where(last_sign_in_at: INACTIVE_USER_THRESHOLD.ago..)
   end
 
   # Sets the deletion date for inactive users and sends an initial warning mail.
@@ -98,7 +98,7 @@ class UserCleaner
   def delete_users_according_to_deletion_date!
     num_deleted_users = 0
 
-    User.where("deletion_date <= ?", Date.current).find_each do |user|
+    User.where(deletion_date: ..Date.current).find_each do |user|
       next unless user.generic?
 
       UserCleanerMailer.with(user: user).deletion_email.deliver_later
