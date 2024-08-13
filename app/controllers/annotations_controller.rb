@@ -30,20 +30,10 @@ class AnnotationsController < ApplicationController
       # TODO: teachable is marked optional in medium, so we should handle the case
       # where it is nil
       lecture: annotation.medium.teachable.lecture.title,
-      link: annotation_open_link(annotation, is_shared),
+      link: helpers.annotation_open_link(annotation, is_shared),
       medium_title: annotation.medium.caption,
       medium_date: annotation.medium.lesson&.date_localized
     }
-  end
-
-  def annotation_open_link(annotation, is_shared)
-    link = if is_shared
-      helpers.feedback_video_link_timed(annotation.medium_id, annotation.timestamp)
-    else
-      helpers.video_link_timed(annotation.medium_id, annotation.timestamp)
-    end
-    link += "&ann=#{annotation.id}"
-    link
   end
 
   def show
