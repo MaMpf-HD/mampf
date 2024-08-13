@@ -1,7 +1,6 @@
 # See the docs here: https://www.rubydoc.info/github/DatabaseCleaner/database_cleaner
 RSpec.configure do |config|
   config.before(:suite) do
-    DatabaseCleaner.strategy = :deletion
     DatabaseCleaner.clean_with(:deletion)
   end
 
