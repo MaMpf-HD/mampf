@@ -864,6 +864,6 @@ class User < ApplicationRecord
 
     def medium_ids_of_lectures_or_edited_lectures
       lectures = given_lectures + edited_lectures
-      lectures.map(&:media_with_inheritance).flatten.pluck(:id)
+      lectures.flat_map(&:media_with_inheritance).pluck(:id)
     end
 end
