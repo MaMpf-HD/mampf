@@ -59,7 +59,7 @@ Rails.application.routes.draw do
   resources :annotations, only: [:new, :create, :edit, :update, :destroy]
 
   get "annotations/overview",
-      to: "annotations_overview#show",
+      to: "annotations#index",
       as: "annotations_overview"
 
   # announcements routes
