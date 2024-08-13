@@ -1,3 +1,5 @@
+require "uri"
+
 module AnnotationsHelper
   def annotation_open_link(annotation, is_shared)
     link = if is_shared
@@ -5,8 +7,9 @@ module AnnotationsHelper
     else
       video_link_timed(annotation.medium_id, annotation.timestamp)
     end
-    link += "&ann=#{annotation.id}"
-    link
+    link = URI.parse(link)
+    link.query = link.query.present? ? "#{link.query}&ann=#{annotation.id}" : "ann=#{annotation.id}"
+    link.to_s
   end
 
   def annotation_index_border_color(annotation, is_student_annotation)
