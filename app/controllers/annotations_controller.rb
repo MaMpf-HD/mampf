@@ -2,25 +2,12 @@ class AnnotationsController < ApplicationController
   authorize_resource
 
   def index
-    @annotations_by_lecture =
-      current_user
-      .own_annotations
-      .map { |a| extract_annotation_overview_information(a) }
-      .group_by { |annotation| annotation[:lecture] }
-      .sort_by { |lecture, _annotations| -lecture.updated_at.to_i }.to_h
-      .transform_keys(&:title)
-      .transform_values { |annotations| annotations.map { |a| a.except(:lecture) } }
+    @annotations_by_lecture = annotations_by_lecture(current_user.own_annotations)
 
     @show_students_annotations = current_user.teachable_editor_or_teacher?
     if @show_students_annotations
       @student_annotations_by_lecture =
-        current_user
-        .students_annotations
-        .map { |a| extract_annotation_overview_information(a, is_shared: true) }
-        .group_by { |annotation| annotation[:lecture] }
-        .sort_by { |lecture, _annotations| -lecture.updated_at.to_i }.to_h
-        .transform_keys(&:title)
-        .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
+        annotations_by_lecture(current_user.students_annotations, is_shared: true)
     end
 
     render layout: "application_no_sidebar_with_background"
@@ -234,7 +221,16 @@ class AnnotationsController < ApplicationController
       annotation.public_comment_id = comment.id
     end
 
-    def extract_annotation_overview_information(annotation, is_shared: false)
+    def annotations_by_lecture(annotations, is_shared: false)
+      annotations
+        .map { |a| extract_annotation_overview_information(a, is_shared) }
+        .group_by { |annotation| annotation[:lecture] }
+        .sort_by { |lecture, _annotations| -lecture.updated_at.to_i }.to_h
+        .transform_keys(&:title)
+        .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
+    end
+
+    def extract_annotation_overview_information(annotation, is_shared)
       {
         category: annotation.category,
         text: annotation.comment_optional,
