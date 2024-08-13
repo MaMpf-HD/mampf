@@ -113,19 +113,19 @@ describe("User annotation card", () => {
 
   it("renders math content", function () {
     cy.visit("/annotations");
-    cy.getBySelector(CARD_SELECTOR).last().then(($card) => {
+    cy.getBySelector(CARD_SELECTOR).first().then(($card) => {
       cy.wrap($card).find(".katex").should("not.exist");
     });
 
     // Create annotation with math content
     FactoryBot.create("annotation", "with_text",
-      { medium_id: this.medium1.id, user_id: this.user.id,
+      { medium_id: this.medium3.id, user_id: this.user.id,
         comment: "This is a math annotation: $\\frac{1}{2}$",
-      }).as("annotationWithMath");
+      });
 
     cy.then(() => {
       cy.visit("/annotations");
-      cy.getBySelector(CARD_SELECTOR).last().then(($card) => {
+      cy.getBySelector(CARD_SELECTOR).first().then(($card) => {
         cy.wrap($card).find(".katex").should("exist");
       });
     });

@@ -106,6 +106,7 @@
         "commontator",
         "factorybot",
         "helpdesk",
+        "katex",
         "turbolinks"
     ]
 }
