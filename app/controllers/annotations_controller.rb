@@ -2,18 +2,25 @@ class AnnotationsController < ApplicationController
   authorize_resource
 
   def index
-    user_annotations = current_user.own_annotations
-                                   .map { |a| extract_annotation_overview_information(a) }
-    @annotations_by_lecture = user_annotations.group_by { |annotation| annotation[:lecture] }
+    @annotations_by_lecture =
+      current_user
+      .own_annotations
+      .map { |a| extract_annotation_overview_information(a) }
+      .group_by { |annotation| annotation[:lecture] }
+      .sort_by { |lecture, _annotations| -lecture.updated_at.to_i }.to_h
+      .transform_keys(&:title)
+      .transform_values { |annotations| annotations.map { |a| a.except(:lecture) } }
 
     @show_students_annotations = current_user.teachable_editor_or_teacher?
     if @show_students_annotations
-      student_annotations = current_user
-                            .students_annotations
-                            .map { |a| extract_annotation_overview_information(a, is_shared: true) }
-      @student_annotations_by_lecture = student_annotations.group_by do |annotation|
-        annotation[:lecture]
-      end
+      @student_annotations_by_lecture =
+        current_user
+        .students_annotations
+        .map { |a| extract_annotation_overview_information(a, is_shared: true) }
+        .group_by { |annotation| annotation[:lecture] }
+        .sort_by { |lecture, _annotations| -lecture.updated_at.to_i }.to_h
+        .transform_keys(&:title)
+        .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
     end
 
     render layout: "application_no_sidebar_with_background"
@@ -233,7 +240,7 @@ class AnnotationsController < ApplicationController
         text: annotation.comment_optional,
         color: annotation.color,
         updated_at: annotation.updated_at,
-        lecture: annotation.medium.teachable.lecture.title,
+        lecture: annotation.medium.teachable.lecture,
         link: helpers.annotation_open_link(annotation, is_shared),
         medium_title: annotation.medium.caption,
         medium_date: annotation.medium.lesson&.date_localized
