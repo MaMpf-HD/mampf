@@ -214,7 +214,7 @@ GEM
     css_parser (1.17.1)
       addressable
     dalli (3.2.8)
-    database_cleaner-active_record (2.1.0)
+    database_cleaner-active_record (2.2.0)
       activerecord (>= 5.a)
       database_cleaner-core (~> 2.0.0)
     database_cleaner-core (2.0.1)
@@ -698,7 +698,7 @@ DEPENDENCIES
   commontator
   coveralls
   dalli (>= 2.7)
-  database_cleaner-active_record (= 2.1.0)
+  database_cleaner-active_record
   devise
   devise-bootstrap-views
   erubis
