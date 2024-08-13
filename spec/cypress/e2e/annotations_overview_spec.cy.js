@@ -131,9 +131,8 @@ describe("User annotation card", () => {
     });
   });
 
-  it.only("contains medium and annotation information", function () {
+  it("contains medium and annotation information", function () {
     cy.visit("/annotations");
-    console.log(MEDIUM_TITLE_3);
     [
       { title: MEDIUM_TITLE_3, annotation: this.annotation4, lesson: this.lesson3 },
       { title: MEDIUM_TITLE_3, annotation: this.annotation3, lesson: this.lesson3 },
@@ -165,7 +164,7 @@ describe("User annotation card", () => {
 
   it("has border according to annotation color", function () {
     cy.visit("/annotations");
-    [this.annotation1, this.annotation2, this.annotation3, this.annotation4]
+    [this.annotation4, this.annotation3, this.annotation2, this.annotation1]
       .forEach((annotation, i) => {
         cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
         const colorExpected = hexToRgb(annotation.color);
@@ -175,15 +174,15 @@ describe("User annotation card", () => {
 
   it("redirects to medium video when clicked", function () {
     [
-      { medium: this.medium1, annotation: this.annotation1 },
-      { medium: this.medium2, annotation: this.annotation2 },
-      { medium: this.medium3, annotation: this.annotation3 },
       { medium: this.medium3, annotation: this.annotation4 },
+      { medium: this.medium3, annotation: this.annotation3 },
+      { medium: this.medium2, annotation: this.annotation2 },
+      { medium: this.medium1, annotation: this.annotation1 },
     ].forEach((test, i) => {
       cy.visit("/annotations");
-      cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
+      cy.getBySelector("annotation-overview-card-link").eq(i).as("card");
       cy.get("@card").parents(".accordion-collapse").siblings(".accordion-header").click();
-      cy.get("@card").click();
+      cy.get("@card").clickExpectNewTab();
 
       cy.url().should("contain", `/media/${test.medium.id}`);
       let timestamp = `0:00:${test.annotation.timestamp.seconds}`;

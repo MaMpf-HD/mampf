@@ -22,7 +22,9 @@
 
             <% annotations.each do |annotation| %>
               <!-- Card (as clickable link) -->
-              <a href="<%= annotation[:link] %>" style="text-decoration: none;" target="_blank">
+              <a href="<%= annotation[:link] %>"
+                  style="text-decoration: none;" target="_blank"
+                  data-cy="annotation-overview-card-link">
                 <!-- for usage in JS -->
                 <% category_str = annotation[:category] if is_students_annotations %>
                 <% border_style = annotation_index_border_color(annotation, is_students_annotations) %>
