@@ -224,14 +224,14 @@ describe("Student annotation card (shared with teacher)", () => {
 
   it("redirects to medium *feedback* video when clicked", function () {
     [
-      { medium: this.medium1, annotation: this.annotation1FromStudent },
-      { medium: this.medium1, annotation: this.annotation2FromStudent },
       { medium: this.medium3, annotation: this.annotation3FromStudent },
+      { medium: this.medium1, annotation: this.annotation2FromStudent },
+      { medium: this.medium1, annotation: this.annotation1FromStudent },
     ].forEach((test, i) => {
       cy.visit("/annotations");
-      cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
+      cy.getBySelector("annotation-overview-card-link").eq(i).as("card");
       cy.get("@card").parents(".accordion-collapse").siblings(".accordion-header").click();
-      cy.get("@card").click();
+      cy.get("@card").clickExpectNewTab();
 
       cy.url().should("contain", `/media/${test.medium.id}/feedback`);
       let timestamp = `0:00:${test.annotation.timestamp.seconds}`;
