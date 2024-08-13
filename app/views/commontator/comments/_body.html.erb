@@ -12,7 +12,5 @@
   <% timestamp = annotation.timestamp %>
   <br>
   Timestamp:
-  <a href="<%= video_link_timed(medium, timestamp) %>">
-    <%= timestamp.hms_colon_string %>
-  </a>
+  <%= link_to timestamp.hms_colon_string, video_link_timed(medium, timestamp) %>
 <% end %>
