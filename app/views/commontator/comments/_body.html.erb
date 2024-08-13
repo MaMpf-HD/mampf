@@ -8,11 +8,11 @@
 <!--- Show timestamps in comments that have a linked annotation --->
 <% annotation = comment.annotation %>
 <% unless annotation.nil? %>
-  <% medium_id = annotation.medium.id %>
+  <% medium = annotation.medium %>
   <% timestamp = annotation.timestamp %>
   <br>
   Timestamp:
-  <a href="<%= video_link_timed(medium_id, timestamp) %>">
+  <a href="<%= video_link_timed(medium, timestamp) %>">
     <%= timestamp.hms_colon_string %>
   </a>
 <% end %>

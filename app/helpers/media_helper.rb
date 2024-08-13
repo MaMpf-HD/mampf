@@ -150,13 +150,13 @@ module MediaHelper
     medium.external_link_description.presence || medium.external_reference_link
   end
 
-  def video_link_timed(medium_id, timestamp)
-    play_path = play_medium_path(medium_id)
+  def video_link_timed(medium, timestamp)
+    play_path = play_medium_path(medium)
     "#{play_path}?time=#{timestamp.total_seconds}"
   end
 
-  def feedback_video_link_timed(medium_id, timestampe)
-    feedback_play_path = feedback_medium_path(medium_id)
+  def feedback_video_link_timed(medium, timestampe)
+    feedback_play_path = feedback_medium_path(medium)
     "#{feedback_play_path}?time=#{timestampe.total_seconds}"
   end
 end
