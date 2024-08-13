@@ -214,7 +214,7 @@ describe("Student annotation card (shared with teacher)", () => {
       mistake: "#fc1461",
     };
     cy.visit("/annotations");
-    [this.annotation1FromStudent, this.annotation2FromStudent, this.annotation3FromStudent]
+    [this.annotation3FromStudent, this.annotation2FromStudent, this.annotation1FromStudent]
       .forEach((annotation, i) => {
         cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
         const colorExpected = hexToRgb(colorMap[annotation.category]);
