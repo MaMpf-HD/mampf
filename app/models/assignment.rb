@@ -20,9 +20,9 @@ class Assignment < ApplicationRecord
                                       "in_past"))
   end
 
-  scope :active, -> { where("deadline >= ?", Time.zone.now) }
+  scope :active, -> { where(deadline: Time.zone.now..) }
 
-  scope :expired, -> { where("deadline < ?", Time.zone.now) }
+  scope :expired, -> { where(deadline: ...Time.zone.now) }
 
   def self.accepted_file_types
     [".pdf", ".tar.gz", ".cc", ".hh", ".m", ".mlx", ".zip"]

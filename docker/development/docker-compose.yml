@@ -113,9 +113,11 @@ services:
       PROJECT_EMAIL_PASSWORD: mampf
       PROJECT_EMAIL_MAILBOX: INBOX
       BLOG: https://mampf.blog
-      # uncomment DB_SQL_PRESEED_URL and UPLOADS_PRESEED_URL to enable db preseeding
-      # DB_SQL_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
-      # UPLOADS_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
+      # DB Preseeding with initial data.
+      # We don't specify a value here to let docker compose look up the values
+      # in the current environment/shell. This is used in the docker.justfile.
+      DB_SQL_PRESEED_URL:
+      UPLOADS_PRESEED_URL:
     volumes:
       - type: bind
         source: ../../

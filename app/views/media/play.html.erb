@@ -18,7 +18,7 @@
               <i id="play-pause" class="material-icons clickable">
                 play_arrow
               </i>
-              <span id="current-time">
+              <span id="current-time" data-cy="current-time">
                 0:00:00
               </span>
               <span id="markers" class="annotation-marker">
@@ -66,7 +66,7 @@
             <% if user_signed_in? %>
               <a id="annotation-button" class="btn"
                   title="<%= t('admin.annotation.annotation_modal_head_create_annotation') %>">
-                <i class="fas fa-sticky-note" aria-hidden="true"></i>
+                <i class="bi bi-sticky-fill" aria-hidden="true"></i>
               </a>
             <% end %>
 

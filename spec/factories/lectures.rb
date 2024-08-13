@@ -54,6 +54,21 @@ FactoryBot.define do
       end
     end
 
+    trait :with_title do
+      transient do
+        title { Faker::Book.title }
+      end
+      # also see https://github.com/thoughtbot/factory_bot/issues/1391
+      course { association :course, title: title }
+    end
+
+    trait :with_teacher_by_id do
+      transient do
+        teacher_id { nil }
+      end
+      teacher { User.find(teacher_id) }
+    end
+
     # NOTE: that you can give the chapter_count here as parameter as well
     factory :lecture_with_toc, traits: [:with_toc]
 
