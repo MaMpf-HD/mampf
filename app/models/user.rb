@@ -807,6 +807,19 @@ class User < ApplicationRecord
   def current_sign_in_ip=(_ip)
   end
 
+  ##############################################################################
+  # Annotations
+  ##############################################################################
+
+  def own_annotations
+    Annotation.where(user: self)
+  end
+
+  def students_annotations
+    Annotation.where(medium_id: medium_ids_of_lectures_or_edited_lectures,
+                     visible_for_teacher: true)
+  end
+
   private
 
     def set_defaults
@@ -864,5 +877,10 @@ class User < ApplicationRecord
                   consented_at: Time.zone.now,
                   confirmed_at: Time.zone.now,
                   archived: true)
+    end
+
+    def medium_ids_of_lectures_or_edited_lectures
+      lectures = given_lectures + edited_lectures
+      lectures.flat_map(&:media_with_inheritance).pluck(:id)
     end
 end

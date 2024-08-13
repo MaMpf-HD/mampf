@@ -27,8 +27,7 @@ $(document).on("turbolinks:load", function () {
   (new TimeButton("minus-ten", -10)).add();
   // Sliders
   (new VolumeBar("volume-bar")).add();
-  seekBar = new SeekBar("seek-bar");
-  seekBar.add();
+  (new SeekBar("seek-bar")).add();
 
   // heatmap
   const heatmap = new Heatmap("heatmap");
@@ -83,6 +82,11 @@ $(document).on("turbolinks:load", function () {
     onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
   thymeAttributes.annotationFeatureActive = true;
+
+  // update annotations manually once as initialization
+  annotationManager.updateAnnotations(() => {
+    openAnnotationIfSpecifiedInUrl();
+  });
 
   /*
     KEYBOARD SHORTCUTS

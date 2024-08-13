@@ -5,14 +5,6 @@
   font-size: 1.3rem;
   padding: 2px 8px;
 
-  i {
-    &::before {
-      color: transparent;
-      background-clip: text;
-      background-image: radial-gradient(at bottom right, rgb(30, 82, 141) 0%, rgb(237, 152, 189) 100%);
-    }
-  }
-
   transition: filter 60ms ease-in-out;
 
   &:hover {

@@ -18,9 +18,9 @@ module TalksHelper
   end
 
   def speaker_icon_class(talk)
-    return "fas fa-user" unless talk.speakers.count > 1
+    return "bi bi-person-fill" unless talk.speakers.count > 1
 
-    "fas fa-users"
+    "bi bi-people-fill"
   end
 
   def speaker_icon(talk)

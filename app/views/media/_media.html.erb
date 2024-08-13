@@ -1,7 +1,7 @@
 <% if media.present? %>
   <div class="row">
     <% media.each do |medium| %>
-      <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-2">
+      <div class="media-grid pb-2">
         <%= render partial: 'media/medium',
                    locals: { medium: medium,
                              tags: tags,

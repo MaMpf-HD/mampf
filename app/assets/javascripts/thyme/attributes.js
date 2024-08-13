@@ -15,7 +15,7 @@ const thymeAttributes = {
      (which it is not for users who aren't signed in). */
   annotationFeatureActive: false,
 
-  /* When callig the updateMarkers() method this will be used to save an
+  /* When calling the updateMarkers() method this will be used to save an
      array containing all annotations. */
   annotations: null,
 

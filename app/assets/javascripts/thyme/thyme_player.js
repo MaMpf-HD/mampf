@@ -95,6 +95,11 @@ $(document).on("turbolinks:load", function () {
     onClick, onUpdate, isValid);
   thymeAttributes.annotationManager = annotationManager;
 
+  // update annotations manually once as initialization
+  annotationManager.updateAnnotations(() => {
+    openAnnotationIfSpecifiedInUrl();
+  });
+
   // Update annotations after deleting an annotation
   const ANNOTATION_DELETE_SELECTOR = "#annotation-delete-button";
   $(document).on("click", ANNOTATION_DELETE_SELECTOR, function () {
