@@ -5,8 +5,6 @@ class AnnotationsController < ApplicationController
     user_annotations = current_user.own_annotations
                                    .map { |a| extract_annotation_overview_information(a) }
     @annotations_by_lecture = user_annotations.group_by { |annotation| annotation[:lecture] }
-    # TODO: don't include lecture key in the hash anymore after grouping
-    # Maybe we can even gruop in the SQL query directly?
 
     @show_students_annotations = current_user.teachable_editor_or_teacher?
     if @show_students_annotations
