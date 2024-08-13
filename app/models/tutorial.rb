@@ -41,6 +41,10 @@ class Tutorial < ApplicationRecord
     end
   end
 
+  def eligible_as_tutors
+    (lecture.tutors + lecture.editors + [lecture.teacher]).uniq
+  end
+
   private
 
     def check_destructibility
