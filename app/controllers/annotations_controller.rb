@@ -225,11 +225,12 @@ class AnnotationsController < ApplicationController
       annotations
         .map { |a| extract_annotation_overview_information(a, is_shared) }
         .group_by { |annotation| annotation[:lecture] }
-        .sort_by { |lecture, _annotations| -lecture.updated_at.to_i }.to_h
+        .sort_by { |lecture, _annotations| lecture.updated_at }.reverse.to_h
         # Instead of the full lecture object, we only need its title,
         # and also not as value anymore for individual annotations.
         .transform_keys(&:title)
         .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
+        .transform_values { |annos| annos.sort_by { |a| a[:created_at] }.reverse }
     end
 
     def extract_annotation_overview_information(annotation, is_shared)

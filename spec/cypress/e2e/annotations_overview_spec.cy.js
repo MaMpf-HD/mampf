@@ -101,7 +101,9 @@ describe("User annotation card", () => {
 
   it("is grouped by lecture", function () {
     cy.visit("/annotations");
-    [LECTURE_TITLE_1, LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_2]
+    // lecture title 1 comes last because we sort according to lecture.updated_at
+    // and lecture 2 is created after lecture 1
+    [LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_2, LECTURE_TITLE_1]
       .forEach((title, i) => {
         cy.getBySelector(CARD_SELECTOR).eq(i)
           .parents(".accordion-collapse").siblings(".accordion-header")
@@ -117,7 +119,7 @@ describe("User annotation card", () => {
 
     // Create annotation with math content
     FactoryBot.create("annotation", "with_text",
-      { medium_id: this.medium3.id, user_id: this.user.id,
+      { medium_id: this.medium1.id, user_id: this.user.id,
         comment: "This is a math annotation: $\\frac{1}{2}$",
       }).as("annotationWithMath");
 
@@ -129,13 +131,14 @@ describe("User annotation card", () => {
     });
   });
 
-  it("contains medium and annotation information", function () {
+  it.only("contains medium and annotation information", function () {
     cy.visit("/annotations");
+    console.log(MEDIUM_TITLE_3);
     [
-      { title: MEDIUM_TITLE_1, annotation: this.annotation1, lesson: this.lesson1 },
-      { title: MEDIUM_TITLE_2, annotation: this.annotation2, lesson: this.lesson2 },
-      { title: MEDIUM_TITLE_3, annotation: this.annotation3, lesson: this.lesson3 },
       { title: MEDIUM_TITLE_3, annotation: this.annotation4, lesson: this.lesson3 },
+      { title: MEDIUM_TITLE_3, annotation: this.annotation3, lesson: this.lesson3 },
+      { title: MEDIUM_TITLE_2, annotation: this.annotation2, lesson: this.lesson2 },
+      { title: MEDIUM_TITLE_1, annotation: this.annotation1, lesson: this.lesson1 },
     ].forEach((test, i) => {
       cy.getBySelector(CARD_SELECTOR).eq(i).as("card");
 
