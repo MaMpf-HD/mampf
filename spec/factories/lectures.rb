@@ -56,7 +56,7 @@ FactoryBot.define do
 
     trait :with_title do
       transient do
-        title { nil }
+        title { Faker::Book.title }
       end
       # also see https://github.com/thoughtbot/factory_bot/issues/1391
       course { association :course, title: title }
