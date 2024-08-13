@@ -45,7 +45,7 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: |
-          docker buildx bake --file ./docker-compose.yml
+          docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
 
       - name: Run unit tests
         working-directory: docker/test
