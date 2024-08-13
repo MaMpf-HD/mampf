@@ -1,13 +1,16 @@
 # See the docs here: https://www.rubydoc.info/github/DatabaseCleaner/database_cleaner
 RSpec.configure do |config|
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :deletion
+    DatabaseCleaner.clean_with(:deletion)
   end
 
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
+  config.before(:each) do
+    DatabaseCleaner.strategy = :deletion
+    DatabaseCleaner.start
+  end
+
+  config.append_after(:each) do
+    DatabaseCleaner.clean
   end
 end
