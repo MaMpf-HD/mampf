@@ -25,7 +25,7 @@
     <%= t('admin.annotation.overview_description_students_annotations') %>
   </p>
 
-  <%= render 'annotations/annotations_overview_accordion',
+  <%= render 'annotations/index_accordion',
     annotations_by_lecture: @student_annotations_by_lecture,
     is_students_annotations: true %>
 
@@ -55,7 +55,7 @@
     <%= t('admin.annotation.overview_description') %>
   </p>
 
-  <%= render 'annotations/annotations_overview_accordion',
+  <%= render 'annotations/index_accordion',
     annotations_by_lecture: @annotations_by_lecture,
     is_students_annotations: false %>
 
