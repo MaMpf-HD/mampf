@@ -2040,6 +2040,10 @@ en:
     data_request_sent: >
       We have received your request and will send you your data as soon as possible.
     redeem_voucher: Redeeem Voucher
+    become_tutor: >
+      With this voucher, you can become a tutor in the lecture %{lecture}.
+    select_tutorials: Select Tutorials
+    take_over_tutorials: Take Over Tutorials
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -3470,6 +3474,9 @@ en:
     no_assignments_in_lecture: >
       In this event series there are no assigments yet.
     no_voucher: 'There is no voucher with this id.'
+    voucher_invalid: 'This voucher is invalid.'
+    become_tutor_success: >
+      Your tutor status has been updated.
     tutorials:
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already

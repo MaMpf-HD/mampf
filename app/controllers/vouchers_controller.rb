@@ -1,7 +1,7 @@
 # app/controllers/vouchers_controller.rb
 class VouchersController < ApplicationController
   before_action :set_voucher, only: [:destroy]
-  authorize_resource except: [:create, :redeem]
+  authorize_resource except: :create
 
   def current_ability
     @current_ability ||= VoucherAbility.new(current_user)
@@ -30,7 +30,17 @@ class VouchersController < ApplicationController
   end
 
   def redeem
-    render js: "alert('Voucher redeemed!')"
+    @voucher = Voucher.check_voucher(params[:voucher_hash])
+    respond_to do |format|
+      if @voucher
+        format.js
+        format.html { head :no_content }
+      else
+        error_message = I18n.t("controllers.voucher_invalid")
+        format.js { render "error", locals: { error_message: error_message } }
+        format.html { redirect_to edit_profile_path, alert: error_message }
+      end
+    end
   end
 
   private

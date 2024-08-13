@@ -287,6 +287,10 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
+  post "lectures/:id/become_tutor",
+       to: "lectures#become_tutor",
+       as: "become_tutor"
+
   resources :lectures, except: [:index]
 
   # lessons routes

@@ -297,6 +297,16 @@ class LecturesController < ApplicationController
     redirect_to edit_lecture_path(@lecture)
   end
 
+  def become_tutor
+    if Voucher.check_voucher(become_tutor_params[:voucher_hash])
+      selected_tutorials = @lecture.tutorials.where(id: become_tutor_params[:tutorial_ids])
+      @lecture.update_tutor_status!(current_user, selected_tutorials)
+      redirect_to edit_profile_path, notice: I18n.t("controllers.become_tutor_success")
+    else
+      handle_invalid_voucher
+    end
+  end
+
   private
 
     def set_lecture
@@ -454,5 +464,17 @@ class LecturesController < ApplicationController
       return if @lecture.course.enough_questions?
 
       redirect_to :root, alert: I18n.t("controllers.no_test")
+    end
+
+    def become_tutor_params
+      params.permit(:voucher_hash, tutorial_ids: [])
+    end
+
+    def handle_invalid_voucher
+      error_message = I18n.t("controllers.voucher_invalid")
+      respond_to do |format|
+        format.js { render "error", locals: { error_message: error_message } }
+        format.html { redirect_to edit_profile_path, alert: error_message }
+      end
     end
 end

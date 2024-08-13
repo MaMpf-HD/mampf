@@ -17,6 +17,10 @@ class Voucher < ApplicationRecord
     expires_at > Time.zone.now
   end
 
+  def self.check_voucher(secure_hash)
+    Voucher.active.find_by(secure_hash: secure_hash)
+  end
+
   private
 
     def generate_secure_hash

@@ -7,5 +7,7 @@ class VoucherAbility
     can [:create, :destroy], Voucher do |voucher|
       user.can_update_personell?(voucher.lecture)
     end
+
+    can :redeem, Voucher
   end
 end

@@ -852,6 +852,18 @@ class Lecture < ApplicationRecord
     vouchers.where(sort: sort).active&.first
   end
 
+  def update_tutor_status!(user, selected_tutorials)
+    tutorials.find_each do |t|
+      if selected_tutorials.include?(t)
+        add_tutor(t, user)
+      else
+        remove_tutor(t, user)
+      end
+    end
+    # touch to update the cache
+    touch
+  end
+
   private
 
     # used for after save callback
@@ -954,5 +966,13 @@ class Lecture < ApplicationRecord
       return unless Lecture.where(course: course).any?
 
       errors.add(:course, :already_present)
+    end
+
+    def add_tutor(tutorial, user)
+      tutorial.tutors << user unless tutorial.tutors.include?(user)
+    end
+
+    def remove_tutor(tutorial, user)
+      tutorial.tutors.delete(user) if tutorial.tutors.include?(user)
     end
 end

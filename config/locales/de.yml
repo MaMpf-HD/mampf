@@ -2170,6 +2170,11 @@ de:
     data_request_sent: >
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
     redeem_voucher: Gutschein einlösen
+    become_tutor: >
+      Mit diesem Gutschein kannst Du ein oder mehrere Tutorien in der
+      Vorlesung %{lecture} übernehmen.
+    select_tutorials: Tutorien auswählen
+    take_over_tutorials: Tutorien übernehmen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -3662,6 +3667,8 @@ de:
     no_assignments_in_lecture: >
       In dieser Veranstaltung gibt es bisher keine Hausaufgaben.
     no_voucher: 'Ein Gutschein mit der angeforderten id existiert nicht.'
+    voucher_invalid: 'Der Gutschein ist ungültig.'
+    become_tutor_success: 'Dein Tutorenstatus wurde geupdatet.'
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,

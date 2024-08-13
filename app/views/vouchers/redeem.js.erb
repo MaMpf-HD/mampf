@@ -1,0 +1,10 @@
+$("#redeem-voucher").empty()
+  .append("<%= j render partial: 'vouchers/redeem_tutor_voucher', locals: { voucher: @voucher } %>");
+;
+// activate selectize
+// @reviewer: This is used several times in our code base (in the coffeescript
+// variant). Should we extract this into a function in order to avoid code
+// duplication?)
+$(".selectize").each(function () {
+  new TomSelect("#" + this.id, { plugins: ["remove_button"] });
+});
