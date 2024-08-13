@@ -291,6 +291,10 @@ Rails.application.routes.draw do
        to: "lectures#become_tutor",
        as: "become_tutor"
 
+  post "lectures/:id/become_editor",
+       to: "lectures#become_editor",
+       as: "become_editor"
+
   resources :lectures, except: [:index]
 
   # lessons routes

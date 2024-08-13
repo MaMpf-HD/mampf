@@ -129,4 +129,10 @@ module LecturesHelper
       tag.i(class: "fas fa-eye")
     end
   end
+
+  def editors_preselection(lecture)
+    options_for_select(lecture.eligible_as_editors.map do |editor|
+                         [editor.name, editor.id]
+                       end, lecture.editor_ids)
+  end
 end

@@ -10,9 +10,7 @@
         <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
         <div id="lecture_teacher_select" %>
           <%= f.select :teacher_id,
-                        options_for_select([[lecture.teacher.info,
-                                            lecture.teacher.id]],
-                                            lecture.teacher.id),
+                        editors_preselection(lecture),
                         {},
                         { class: 'selectize',
                           data: { ajax: true,
@@ -34,17 +32,11 @@
         <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
         <div id="lecture_editors_select" %>
           <%= f.select :editor_ids,
-                        options_for_select([[t('none'), '']] +
-                                          lecture.select_editors,
+                        options_for_select(lecture.select_editors,
                                           lecture.editors.map(&:id)),
                         {},
                         { multiple: true,
-                          class: 'selectize',
-                          data: { ajax: true,
-                                  model: 'user',
-                                  filled: false,
-                                  placeholder: t('basics.enter_two_letters'),
-                                  no_results: t('basics.no_results') } } %>
+                          class: 'selectize' } %>
         </div>
       </div>
     </div>

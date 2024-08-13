@@ -1,0 +1,8 @@
+<%= t('profile.become_editor', lecture: voucher.lecture.title) %>
+<%= link_to become_editor_path(voucher.lecture,
+                               params: { voucher_hash: voucher.secure_hash }),
+            class: 'btn btn-primary',
+            method: :post,
+            remote: true do %>
+  <%= t('buttons.become_editor') %>
+<% end %>

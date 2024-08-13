@@ -860,8 +860,20 @@ class Lecture < ApplicationRecord
         remove_tutor(t, user)
       end
     end
-    # touch to update the cache
+    # touch to invalidate the cache
     touch
+  end
+
+  def update_editor_status!(user)
+    return if editors.include?(user)
+
+    editors << user
+    # touch to invalidate the cache
+    touch
+  end
+
+  def eligible_as_editors
+    (editors + course.editors).uniq
   end
 
   private

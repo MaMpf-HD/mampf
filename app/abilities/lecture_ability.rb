@@ -22,7 +22,7 @@ class LectureAbility
 
     # there is a redirect to the subscription page inside the controller
     # if the lecture is not a subscribed lecture of the user
-    can [:show, :search, :become_tutor], Lecture
+    can [:show, :search, :become_tutor, :become_editor], Lecture
 
     can [:show_announcements, :organizational, :show_structures,
          :search_examples, :show_random_quizzes,

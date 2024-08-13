@@ -2044,6 +2044,8 @@ en:
       With this voucher, you can become a tutor in the lecture %{lecture}.
     select_tutorials: Select Tutorials
     take_over_tutorials: Take Over Tutorials
+    become_editor: >
+      With this voucher, you can become an editor in the event series %{lecture}.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -3365,6 +3367,7 @@ en:
     cancel_publication: 'Cancel'
     import_lecture_toc: 'Import TOC'
     import_toc: 'Import'
+    become_editor: 'Become Editor'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -3477,6 +3480,8 @@ en:
     voucher_invalid: 'This voucher is invalid.'
     become_tutor_success: >
       Your tutor status has been updated.
+    become_editor_success: >
+      Your editor status has been updated.
     tutorials:
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already

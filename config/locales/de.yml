@@ -2175,6 +2175,9 @@ de:
       Vorlesung %{lecture} übernehmen.
     select_tutorials: Tutorien auswählen
     take_over_tutorials: Tutorien übernehmen
+    become_editor: >
+      Mit diesem Gutschein kannst Du Editorenrechte für die Veranstaltung
+      %{lecture} übernehmen.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -3549,6 +3552,7 @@ de:
     cancel_publication: 'Stornieren'
     import_lecture_toc: 'Gliederung importieren'
     import_toc: 'Importieren'
+    become_editor: 'EditorIn werden'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -3669,6 +3673,7 @@ de:
     no_voucher: 'Ein Gutschein mit der angeforderten id existiert nicht.'
     voucher_invalid: 'Der Gutschein ist ungültig.'
     become_tutor_success: 'Dein Tutorenstatus wurde geupdatet.'
+    become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,

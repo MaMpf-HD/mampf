@@ -307,6 +307,15 @@ class LecturesController < ApplicationController
     end
   end
 
+  def become_editor
+    if Voucher.check_voucher(become_editor_params[:voucher_hash])
+      @lecture.update_editor_status!(current_user)
+      redirect_to edit_profile_path, notice: I18n.t("controllers.become_editor_success")
+    else
+      handle_invalid_voucher
+    end
+  end
+
   private
 
     def set_lecture
@@ -468,6 +477,10 @@ class LecturesController < ApplicationController
 
     def become_tutor_params
       params.permit(:voucher_hash, tutorial_ids: [])
+    end
+
+    def become_editor_params
+      params.permit(:voucher_hash)
     end
 
     def handle_invalid_voucher
