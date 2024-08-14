@@ -17,6 +17,11 @@ class FactoryBot {
   create(...args) {
     return BackendCaller.callCypressRoute("factories", "FactoryBot.create()", args);
   }
+
+  createNoValidate(...args) {
+    args.push({ validate: false });
+    return this.create(...args);
+  }
 }
 
 export default new FactoryBot();

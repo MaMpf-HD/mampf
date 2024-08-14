@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resources :factories, only: :create
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
+      resources :i18n, only: :create
     end
   end
 
@@ -47,7 +48,6 @@ Rails.application.routes.draw do
       as: "classification"
 
   # annotation routes
-
   get "annotations/update_annotations",
       to: "annotations#update_annotations",
       as: "update_annotations"
@@ -56,7 +56,7 @@ Rails.application.routes.draw do
       to: "annotations#num_nearby_posted_mistake_annotations",
       as: "num_nearby_posted_mistake_annotations"
 
-  resources :annotations, only: [:new, :create, :edit, :update, :destroy]
+  resources :annotations
 
   # announcements routes
 

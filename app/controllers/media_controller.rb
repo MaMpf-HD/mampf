@@ -524,6 +524,7 @@ class MediaController < ApplicationController
   # which has nothing to do with the thyme player(s).
   def feedback
     I18n.locale = @medium.locale_with_inheritance
+    @time = params[:time]
     render layout: "feedback"
   end
 

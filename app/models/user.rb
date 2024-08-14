@@ -99,6 +99,11 @@ class User < ApplicationRecord
   after_create :set_consented_at
   before_destroy :destroy_single_submissions, prepend: true
 
+  attr_accessor :skip_destroy_talk_media
+
+  before_destroy :destroy_talk_media_upon_user_deletion, prepend: true,
+                                                         unless: :skip_destroy_talk_media
+
   # users can comment stuff
   acts_as_commontator
 
@@ -704,6 +709,7 @@ class User < ApplicationRecord
       success = transfer_contributions_to(archive_user(archive_name))
       return false unless success
     end
+    self.skip_destroy_talk_media = true
     destroy
   end
 
@@ -801,6 +807,19 @@ class User < ApplicationRecord
   def current_sign_in_ip=(_ip)
   end
 
+  ##############################################################################
+  # Annotations
+  ##############################################################################
+
+  def own_annotations
+    Annotation.where(user: self)
+  end
+
+  def students_annotations
+    Annotation.where(medium_id: medium_ids_of_lectures_or_edited_lectures,
+                     visible_for_teacher: true)
+  end
+
   private
 
     def set_defaults
@@ -826,6 +845,17 @@ class User < ApplicationRecord
                                       .map(&:id)).destroy_all
     end
 
+    # Destroys all talk media of the user.
+    # If the user is an editor of media other than talk-related media,
+    # nothing will happen.
+    def destroy_talk_media_upon_user_deletion
+      return if edited_media.where.not(teachable_type: "Talk").any?
+
+      # Only delete media where the user is the sole editor.
+      sole_editor_media = edited_media.select { |m| m.editors.count == 1 }
+      Medium.where(id: sole_editor_media.pluck(:id)).destroy_all
+    end
+
     def archive_email
       splitting = DefaultSetting::PROJECT_EMAIL.split("@")
       "#{splitting.first}-archive-#{id}@#{splitting.second}"
@@ -847,5 +877,10 @@ class User < ApplicationRecord
                   consented_at: Time.zone.now,
                   confirmed_at: Time.zone.now,
                   archived: true)
+    end
+
+    def medium_ids_of_lectures_or_edited_lectures
+      lectures = given_lectures + edited_lectures
+      lectures.flat_map(&:media_with_inheritance).pluck(:id)
     end
 end
