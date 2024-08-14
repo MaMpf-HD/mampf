@@ -149,4 +149,12 @@ module MediaHelper
     # link url itself.
     medium.external_link_description.presence || medium.external_reference_link
   end
+
+  def video_link_timed(medium, timestamp)
+    play_medium_path(medium, params: { time: timestamp.total_seconds })
+  end
+
+  def feedback_video_link_timed(medium, timestamp)
+    feedback_medium_path(medium, params: { time: timestamp.total_seconds })
+  end
 end

@@ -121,7 +121,7 @@ class Medium < ApplicationRecord
                               }
   scope :proper, -> { where.not(sort: "RandomQuiz") }
   scope :expired, lambda {
-                    where(sort: "RandomQuiz").where("created_at < ?", 1.day.ago)
+                    where(sort: "RandomQuiz").where(created_at: ...1.day.ago)
                   }
 
   searchable do

@@ -1,6 +1,18 @@
 class AnnotationsController < ApplicationController
   authorize_resource
 
+  def index
+    @annotations_by_lecture = annotations_by_lecture(current_user.own_annotations)
+
+    @show_students_annotations = current_user.teachable_editor_or_teacher?
+    if @show_students_annotations
+      @student_annotations_by_lecture =
+        annotations_by_lecture(current_user.students_annotations, is_shared: true)
+    end
+
+    render layout: "application_no_sidebar_with_background"
+  end
+
   def show
     @annotation = Annotation.find(params[:id])
   end
@@ -207,5 +219,30 @@ class AnnotationsController < ApplicationController
       annotation.comment = nil
 
       annotation.public_comment_id = comment.id
+    end
+
+    def annotations_by_lecture(annotations, is_shared: false)
+      annotations
+        .map { |a| extract_annotation_overview_information(a, is_shared) }
+        .group_by { |annotation| annotation[:lecture] }
+        .sort_by { |lecture, _annotations| lecture.updated_at }.reverse.to_h
+        # Instead of the full lecture object, we only need its title,
+        # and also not as value anymore for individual annotations.
+        .transform_keys(&:title)
+        .transform_values { |annos| annos.map { |a| a.except(:lecture) } }
+        .transform_values { |annos| annos.sort_by { |a| a[:created_at] }.reverse }
+    end
+
+    def extract_annotation_overview_information(annotation, is_shared)
+      {
+        category: annotation.category,
+        text: annotation.comment_optional,
+        color: annotation.color,
+        updated_at: annotation.updated_at,
+        lecture: annotation.medium.teachable.lecture,
+        link: helpers.annotation_open_link(annotation, is_shared),
+        medium_title: annotation.medium.caption,
+        medium_date: annotation.medium.lesson&.date_localized
+      }
     end
 end

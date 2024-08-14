@@ -5,12 +5,19 @@
 
 <div>
   <div id="comments-buttons">
-    <%= link_to t('buttons.close_comments'),
-                lecture_close_comments_path(lecture),
-                class: 'btn btn-sm btn-outline-secondary' %>
-    <%= link_to t('buttons.open_comments'),
-                lecture_open_comments_path(lecture),
-                class: 'btn btn-sm btn-outline-secondary' %>
+    <% if lecture.comments_closed? %>
+      <%= link_to lecture_open_comments_path(lecture),
+        class: "btn btn-sm btn-outline-secondary", role: :button do %>
+        <i class="fas fa-unlock"></i>
+        <%= t('buttons.open_comments') %>
+      <% end %>
+    <% else %>
+      <%= link_to lecture_close_comments_path(lecture),
+        class: "btn btn-sm btn-outline-secondary", role: :button do %>
+        <i class="fas fa-lock"></i>
+        <%= t('buttons.close_comments') %>
+      <% end %>
+    <% end %>
   </div>
 </div>
 

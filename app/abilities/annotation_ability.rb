@@ -6,6 +6,7 @@ class AnnotationAbility
       annotation.user == user
     end
 
-    can [:new, :create, :update_annotations, :num_nearby_posted_mistake_annotations], Annotation
+    can [:index, :new, :create, :update_annotations, :num_nearby_posted_mistake_annotations],
+        Annotation
   end
 end

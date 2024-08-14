@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <%= stylesheet_link_tag :email %>
+</head>
+
+<body>
+<div class="container text-center">
+  <%= email_image_tag('/MaMpf-Logo_96x96.png', class: 'img-fluid mb-2 pt-4 pb-3' ) %>
+  <div class="jumbotron">
+    <%= yield %>
+  </div>
+</div>
+</body>
+
+</html>
