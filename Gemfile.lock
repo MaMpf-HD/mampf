@@ -599,7 +599,6 @@ GEM
       actionpack (>= 6.1)
       activesupport (>= 6.1)
       sprockets (>= 3.0.0)
-    sqlite3 (1.7.3-x86_64-linux)
     stream (0.5.5)
     streamio-ffmpeg (3.0.2)
       multi_json (~> 1.8)
@@ -735,7 +734,6 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   sprockets-rails (~> 3.5)
-  sqlite3 (~> 1.4)
   streamio-ffmpeg
   sunspot_rails (~> 2.7)
   sunspot_solr

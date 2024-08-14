@@ -55,7 +55,6 @@ gem "shrine"
 gem "sidekiq"
 gem "sidekiq-cron", "~> 1.1"
 gem "sprockets-rails", "~>3.5"
-gem "sqlite3", "~> 1.4" # database for ActiveRecord
 gem "streamio-ffmpeg"
 gem "sunspot_rails", "~> 2.7"
 gem "sunspot_solr"
