@@ -51,9 +51,7 @@ gem "streamio-ffmpeg"
 gem "filesize"
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem "activerecord-import",
-    git: "https://github.com/zdennis/activerecord-import.git",
-    branch: "master"
+gem "activerecord-import", "~>1.7"
 gem "acts_as_list"
 gem "acts_as_tree"
 gem "acts_as_votable"
@@ -88,18 +86,14 @@ gem "rqrcode"
 gem "rubyzip", "~> 2.3.0"
 gem "sidekiq"
 gem "sidekiq-cron", "~> 1.1"
-gem "sprockets-rails",
-    git: "https://github.com/rails/sprockets-rails",
-    branch: "master"
-gem "sunspot_rails",
-    github: "sunspot/sunspot",
-    glob: "sunspot_rails/*.gemspec"
+gem "sprockets-rails", "~>3.5"
+gem "sunspot_rails", "~> 2.7"
 gem "sunspot_solr"
 gem "thredded", git: "https://github.com/thredded/thredded.git",
                 ref: "1340e913affd1af5fcc060fbccd271184ece9a6a"
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
-    branch: "main"
+    ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
 gem "trix-rails", require: "trix"
 gem "webpacker", "~> 5.x"
 
