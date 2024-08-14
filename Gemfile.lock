@@ -670,7 +670,7 @@ DEPENDENCIES
   acts_as_tree
   acts_as_votable
   barby
-  bootsnap (>= 1.4.2)
+  bootsnap (~> 1.18)
   bootstrap (~> 5)
   bootstrap_form
   byebug
@@ -679,7 +679,7 @@ DEPENDENCIES
   coffee-rails (~> 5.0.0)
   commontator
   coveralls
-  dalli (>= 2.7)
+  dalli (~> 3.2)
   database_cleaner-active_record
   devise
   devise-bootstrap-views
@@ -725,7 +725,7 @@ DEPENDENCIES
   rubocop-performance (~> 1.21)
   rubocop-rails (~> 2.24)
   rubyzip (~> 2.3.0)
-  sass-rails (>= 6)
+  sass-rails (~> 6.0)
   selenium-webdriver
   shrine
   sidekiq
@@ -744,7 +744,7 @@ DEPENDENCIES
   thredded-markdown_katex!
   trix-rails
   turbolinks (~> 5)
-  web-console (>= 3.3.0)
+  web-console (~> 4.2)
   webdrivers
   webpacker (~> 5.x)
 

@@ -6,7 +6,7 @@ ruby "3.1.4"
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem "rails", "~> 7.1.3"
 # Use dalli for caching to memcached in production
-gem "dalli", ">= 2.7"
+gem "dalli", "~> 3.2"
 # Ruby wrapper for UglifyJS JavaScript compressor
 gem "terser"
 # Use nulldb adapter for assets precompilation in production
@@ -16,7 +16,7 @@ gem "sqlite3", "~> 1.4"
 # Use Puma as the app server
 gem "puma", "< 7"
 # Use SCSS for stylesheets
-gem "sass-rails", ">= 6"
+gem "sass-rails", "~> 6.0"
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 # gem 'webpacker', '~> 4.0'
 # Turbolinks makes navigating your web application faster. Read more: https://github.com/turbolinks/turbolinks
@@ -33,7 +33,7 @@ gem "jbuilder"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "active_model_serializers"
-gem "bootsnap", ">= 1.4.2", require: false
+gem "bootsnap", "~> 1.18", require: false
 gem "rack", "<3"
 # Use CoffeeScript for .coffee assets and views
 gem "coffee-rails", "~> 5.0.0"
@@ -101,7 +101,7 @@ group :development, :docker_development do
   gem "listen", "~> 3.9"
   gem "rails-erd"
   # Access an interactive console on exception pages or by calling 'console' anywhere in the code.
-  gem "web-console", ">= 3.3.0"
+  gem "web-console", "~> 4.2"
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem "marcel"
   gem "pgreset"
