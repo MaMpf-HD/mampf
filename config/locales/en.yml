@@ -2059,6 +2059,8 @@ en:
     redeem_voucher: Redeeem Voucher
     become_tutor: >
       With this voucher, you can become a tutor in the lecture %{lecture}.
+      If you already know which tutorials you will be responsible for, 
+      you can select them here.
     select_tutorials: Select Tutorials
     take_over_tutorials: Take Over Tutorials
     become_editor: >

@@ -2188,8 +2188,8 @@ de:
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
     redeem_voucher: Gutschein einlösen
     become_tutor: >
-      Mit diesem Gutschein kannst Du ein oder mehrere Tutorien in der
-      Vorlesung %{lecture} übernehmen.
+      Mit diesem Gutschein kannst Du TutorIn in der Vorlesung %{lecture} werden.
+      Wenn Du schon weißt, welche Tutorien du übernimmst, kannst du diese hier auswählen.
     select_tutorials: Tutorien auswählen
     take_over_tutorials: Tutorien übernehmen
     become_editor: >

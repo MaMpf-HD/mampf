@@ -7,7 +7,7 @@ module TutorialsHelper
   end
 
   def tutors_preselection(tutorial)
-    options_for_select(tutorial.eligible_as_tutors.map do |t|
+    options_for_select(tutorial.lecture.eligible_as_tutors.map do |t|
                          [t.tutorial_info, t.id]
                        end, tutorial.tutor_ids)
   end

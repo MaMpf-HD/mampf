@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_07_28_123817) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_15_143156) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -138,6 +138,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_28_123817) do
     t.datetime "updated_at", null: false
     t.index ["closer_type", "closer_id"], name: "index_commontator_threads_on_closer_type_and_closer_id"
     t.index ["commontable_type", "commontable_id"], name: "index_commontator_threads_on_c_id_and_c_type", unique: true
+  end
+
+  create_table "contracts", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "lecture_id", null: false
+    t.integer "role", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_contracts_on_lecture_id"
+    t.index ["user_id"], name: "index_contracts_on_user_id"
   end
 
   create_table "course_self_joins", force: :cascade do |t|
@@ -950,6 +960,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_28_123817) do
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "contracts", "lectures"
+  add_foreign_key "contracts", "users"
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
   add_foreign_key "feedbacks", "users"

@@ -105,10 +105,7 @@ class LecturesController < ApplicationController
       recipients = User.where(id: new_ids)
 
       recipients.each do |r|
-        NotificationMailer.with(recipient: r,
-                                locale: r.locale,
-                                lecture: @lecture)
-                          .new_editor_email.deliver_later
+        notify_new_editor_by_mail(r)
       end
     end
 
@@ -312,6 +309,7 @@ class LecturesController < ApplicationController
   def become_editor
     if Voucher.check_voucher(become_editor_params[:voucher_hash])
       @lecture.update_editor_status!(current_user)
+      notify_new_editor_by_mail(current_user)
       redirect_to edit_profile_path, notice: I18n.t("controllers.become_editor_success")
     else
       handle_invalid_voucher
@@ -491,5 +489,12 @@ class LecturesController < ApplicationController
         format.js { render "error", locals: { error_message: error_message } }
         format.html { redirect_to edit_profile_path, alert: error_message }
       end
+    end
+
+    def notify_new_editor_by_mail(editor)
+      NotificationMailer.with(recipient: editor,
+                              locale: editor.locale,
+                              lecture: @lecture)
+                        .new_editor_email.deliver_later
     end
 end

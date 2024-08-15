@@ -81,6 +81,9 @@ class User < ApplicationRecord
 
   has_many :feedbacks, dependent: :destroy
 
+  # a user has contracts as asssistant in lectures
+  has_many :contracts, dependent: :destroy
+
   include ScreenshotUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
