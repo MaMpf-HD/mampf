@@ -729,6 +729,12 @@ de:
           Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
           aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
         section_needed: Bitte erstelle zuerst einen Abschnitt
+        voucher_for_tutor: >
+          Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um
+          TutorIn für diese Veranstaltung zu werden.
+        voucher_for_editor: >
+          Gutscheine für EditorInnen können von NutzerInnen eingelöst werden, um
+          EditorIn für diese Veranstaltung zu werden.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -2230,6 +2236,13 @@ de:
       new_post_html: 'Im %{board} gibt es ein ungelesenes Thema.'
       new_posts_html: 'Im %{board} gibt es %{count} ungelesene Themen.'
     no_notifications: 'Es liegen keine neuen Benachrichtigungen für Dich vor.'
+    became_tutor: >
+      %{user} hat einen TutorInnen-Gutschein eingelöst und ist jetzt TutorIn in der
+      Veranstaltung.
+    tutorial_details: >
+      Neu übernommene Tutorien: %{tutorials}.
+    redemption: 'Gutschein eingelöst:'
+    redemption_in_lecture: 'Gutschein eingelöst in %{lecture}'
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'

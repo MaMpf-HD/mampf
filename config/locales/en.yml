@@ -698,6 +698,12 @@ en:
           grace period is expired will be accepted by the system, but will be
           timestamped and marked as "too late".
         section_needed: Please create a section first
+        voucher_for_tutor: >
+          Vouchers for tutors can be redeemed by users to become tutor for this
+          event series.
+        voucher_for_editor: >
+          Vouchers for editors can be redeemed by users to become additional
+          editor for this event series.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -2100,6 +2106,13 @@ en:
       new_post_html: 'There is an unread topic in the %{board}.'
       new_posts_html: 'There are %{count} unread topics in the %{board}.'
     no_notifications: 'There are no new notifications for you.'
+    became_tutor: >
+      %{user} has redeemed a tutor voucher and has therefore become tutor
+      in the event series.
+    tutorial_details: >
+      Tutorials taken over: %{tutorials}.
+    redemption: 'Voucher redeemed:'
+    redemption_in_lecture: 'Voucher redeemed in %{lecture}'    
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'

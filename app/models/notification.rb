@@ -20,6 +20,7 @@ class Notification < ApplicationRecord
   # and teachable for a notification of type medium, nil otherwise
   def teachable
     return if notifiable.blank?
+    return notifiable.lecture if notifiable_type == "redemption"
     return if notifiable_type.in?(["Lecture", "Course"])
     return notifiable.lecture if notifiable_type == "Announcement"
 
@@ -34,6 +35,7 @@ class Notification < ApplicationRecord
   # all other cases: notifiable path
   def path(user)
     return if notifiable.blank?
+    return edit_lecture_path(notifiable, anchor: "people") if action == "redemption"
     return edit_profile_path if notifiable_type.in?(["Course", "Lecture"])
 
     if notifiable_type == "Announcement"
@@ -67,7 +69,13 @@ class Notification < ApplicationRecord
   def lecture?
     return false if notifiable.blank?
 
-    notifiable.instance_of?(::Lecture)
+    notifiable.instance_of?(::Lecture) && action != "redemption"
+  end
+
+  def redemption?
+    return false if notifiable.blank?
+
+    action == "redemption"
   end
 
   def announcement?

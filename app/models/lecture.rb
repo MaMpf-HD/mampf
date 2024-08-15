@@ -900,6 +900,10 @@ class Lecture < ApplicationRecord
     User.where(id: Contract.where(lecture: self, role: :editor).select(:user_id))
   end
 
+  def editors_and_teacher
+    [teacher] + editors
+  end
+
   private
 
     # used for after save callback

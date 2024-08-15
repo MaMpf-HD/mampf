@@ -8,6 +8,7 @@
     <h4 class="lecture-pane-subheader">
       <%= t("basics.voucher_for",
              sort: t("basics.#{sort}s")) %>
+      <%= helpdesk(t("admin.lecture.info.voucher_for_#{sort}"), false) %>
     </h4>  
   <div id='<%= "#{sort}"%>-voucher'>
     <%= render partial: 'vouchers/voucher',

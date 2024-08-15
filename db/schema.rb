@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_15_143156) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -409,6 +409,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_143156) do
     t.text "action"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
+    t.text "details"
     t.index ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type"
     t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
   end
