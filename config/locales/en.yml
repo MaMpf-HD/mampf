@@ -3416,6 +3416,7 @@ en:
     import_lecture_toc: 'Import TOC'
     import_toc: 'Import'
     become_editor: 'Become Editor'
+    invalidate: 'Invalidate'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

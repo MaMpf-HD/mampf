@@ -18,12 +18,12 @@ RSpec.describe(VouchersController, type: :controller) do
       end
     end
 
-    describe "DELETE #destroy" do
-      it "deletes the voucher" do
+    describe "POST #invalidate" do
+      it "invalidates the voucher" do
         voucher = FactoryBot.create(:voucher, lecture: lecture)
-        expect do
-          delete(:destroy, params: { id: voucher.id })
-        end.to change(lecture.vouchers, :count).by(-1)
+        post(:invalidate, params: { id: voucher.id })
+        voucher.reload
+        expect(Voucher.find(voucher.id).invalidated_at).not_to be_nil
       end
     end
   end
@@ -46,12 +46,12 @@ RSpec.describe(VouchersController, type: :controller) do
       end
     end
 
-    describe "DELETE #destroy" do
-      it "does not delete the voucher" do
+    describe "POST #invalidate" do
+      it "does not invalidate the voucher" do
         voucher = FactoryBot.create(:voucher, lecture: lecture)
-        expect do
-          delete(:destroy, params: { id: voucher.id })
-        end.not_to change(lecture.vouchers, :count)
+        post(:invalidate, params: { id: voucher.id })
+        voucher.reload
+        expect(voucher.invalidated_at).to be_nil
       end
     end
   end
