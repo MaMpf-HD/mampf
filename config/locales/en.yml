@@ -3394,6 +3394,7 @@ en:
     cancel_publication: 'Cancel'
     import_lecture_toc: 'Import TOC'
     import_toc: 'Import'
+    invalidate: 'Invalidate'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

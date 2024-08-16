@@ -3578,6 +3578,7 @@ de:
     cancel_publication: 'Stornieren'
     import_lecture_toc: 'Gliederung importieren'
     import_toc: 'Importieren'
+    invalidate: 'Für ungültig erklären'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

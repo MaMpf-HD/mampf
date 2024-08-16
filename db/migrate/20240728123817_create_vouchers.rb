@@ -4,6 +4,7 @@ class CreateVouchers < ActiveRecord::Migration[7.1]
       t.integer :sort, null: false
       t.references :lecture, null: false, foreign_key: true
       t.string :secure_hash, null: false
+      t.datetime :invalidated_at
       t.datetime :expires_at
       t.timestamps
     end

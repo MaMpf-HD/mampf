@@ -20,5 +20,9 @@ FactoryBot.define do
         voucher.update(expires_at: 1.day.ago)
       end
     end
+
+    trait :invalidated do
+      invalidated_at { 1.day.ago }
+    end
   end
 end

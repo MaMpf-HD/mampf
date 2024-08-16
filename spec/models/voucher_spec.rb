@@ -30,26 +30,20 @@ RSpec.describe(Voucher, type: :model) do
 
   describe "scopes" do
     describe ".active" do
-      it "returns active vouchers" do
-        active_voucher = FactoryBot.create(:voucher)
-        expired_voucher = FactoryBot.create(:voucher, :expired)
+      let!(:active_voucher) { FactoryBot.create(:voucher) }
+      let!(:expired_voucher) { FactoryBot.create(:voucher, :expired) }
+      let!(:invalidated_voucher) { FactoryBot.create(:voucher, :invalidated) }
 
+      it "includes vouchers that are not expired and not invalidated" do
         expect(Voucher.active).to include(active_voucher)
+      end
+
+      it "excludes vouchers that are expired" do
         expect(Voucher.active).not_to include(expired_voucher)
       end
-    end
-  end
 
-  describe "instance methods" do
-    describe "#active?" do
-      it "returns true if the voucher is active" do
-        voucher = FactoryBot.build(:voucher, expires_at: 1.day.from_now)
-        expect(voucher.active?).to be(true)
-      end
-
-      it "returns false if the voucher is not active" do
-        voucher = FactoryBot.build(:voucher, expires_at: 1.day.ago)
-        expect(voucher.active?).to be(false)
+      it "excludes vouchers that are invalidated" do
+        expect(Voucher.active).not_to include(invalidated_voucher)
       end
     end
   end

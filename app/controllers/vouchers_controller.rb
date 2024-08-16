@@ -1,6 +1,6 @@
 # app/controllers/vouchers_controller.rb
 class VouchersController < ApplicationController
-  before_action :set_voucher, only: [:destroy]
+  before_action :set_voucher, only: [:invalidate]
   authorize_resource except: [:create, :redeem]
 
   def current_ability
@@ -20,9 +20,9 @@ class VouchersController < ApplicationController
     end
   end
 
-  def destroy
+  def invalidate
     set_related_data
-    @voucher.destroy
+    @voucher.update(invalidated_at: Time.zone.now)
     respond_to do |format|
       format.html { redirect_to edit_lecture_path(@lecture, anchor: "people") }
       format.js

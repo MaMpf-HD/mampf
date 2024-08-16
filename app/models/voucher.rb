@@ -9,13 +9,12 @@ class Voucher < ApplicationRecord
   before_create :ensure_no_other_active_voucher
   validates :sort, presence: true
 
-  scope :active, -> { where("expires_at > ?", Time.zone.now) }
+  scope :active, lambda {
+                   where("expires_at > ? AND invalidated_at IS NULL",
+                         Time.zone.now)
+                 }
 
   self.implicit_order_column = "created_at"
-
-  def active?
-    expires_at > Time.zone.now
-  end
 
   private
 
@@ -29,7 +28,7 @@ class Voucher < ApplicationRecord
 
     def ensure_no_other_active_voucher
       return unless lecture
-      return unless lecture.vouchers.where(sort: sort).any?(&:active?)
+      return unless lecture.vouchers.where(sort: sort).active.any?
 
       errors.add(:sort,
                  I18n.t("activerecord.errors.models.voucher.attributes.sort.only_one_active"))

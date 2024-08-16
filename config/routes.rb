@@ -815,7 +815,11 @@ Rails.application.routes.draw do
        to: "vouchers#redeem",
        as: "redeem_voucher"
 
-  resources :vouchers, only: [:create, :destroy]
+  post "vouchers/:id/invalidate",
+       to: "vouchers#invalidate",
+       as: "invalidate_voucher"
+
+  resources :vouchers, only: [:create]
 
   # watchlists routes
 
