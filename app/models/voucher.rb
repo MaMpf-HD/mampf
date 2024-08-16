@@ -5,6 +5,8 @@ class Voucher < ApplicationRecord
 
   belongs_to :lecture, touch: true
   before_create :generate_secure_hash
+  has_many :redemptions, dependent: :destroy
+
   before_create :add_expiration_datetime
   before_create :ensure_no_other_active_voucher
   validates :sort, presence: true
@@ -13,6 +15,8 @@ class Voucher < ApplicationRecord
                    where("expires_at > ? AND invalidated_at IS NULL",
                          Time.zone.now)
                  }
+  scope :for_tutors, -> { where(sort: :tutor) }
+  scope :for_editors, -> { where(sort: :editor) }
 
   self.implicit_order_column = "created_at"
 

@@ -81,8 +81,8 @@ class User < ApplicationRecord
 
   has_many :feedbacks, dependent: :destroy
 
-  # a user has contracts as asssistant in lectures
-  has_many :contracts, dependent: :destroy
+  # a user has redemptions of vouchers
+  has_many :redemptions, dependent: :destroy
 
   include ScreenshotUploader[:image]
 

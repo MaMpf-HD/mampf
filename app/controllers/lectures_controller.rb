@@ -1,5 +1,6 @@
 # LecturesController
 class LecturesController < ApplicationController
+  include Notifier
   include ActionController::RequestForgeryProtection
   before_action :set_lecture, except: [:new, :create, :search]
   before_action :set_lecture_cookie, only: [:show, :organizational,
@@ -105,7 +106,7 @@ class LecturesController < ApplicationController
       recipients = User.where(id: new_ids)
 
       recipients.each do |r|
-        notify_new_editor_by_mail(r)
+        notify_new_editor_by_mail(r, @lecture)
       end
     end
 
@@ -296,27 +297,6 @@ class LecturesController < ApplicationController
     redirect_to edit_lecture_path(@lecture)
   end
 
-  def become_tutor
-    if Voucher.check_voucher(become_tutor_params[:voucher_hash])
-      selected_tutorials = @lecture.tutorials.where(id: become_tutor_params[:tutorial_ids])
-      @lecture.update_tutor_status!(current_user, selected_tutorials)
-      create_became_tutor_notification(selected_tutorials)
-      redirect_to edit_profile_path, notice: I18n.t("controllers.become_tutor_success")
-    else
-      handle_invalid_voucher
-    end
-  end
-
-  def become_editor
-    if Voucher.check_voucher(become_editor_params[:voucher_hash])
-      @lecture.update_editor_status!(current_user)
-      notify_new_editor_by_mail(current_user)
-      redirect_to edit_profile_path, notice: I18n.t("controllers.become_editor_success")
-    else
-      handle_invalid_voucher
-    end
-  end
-
   private
 
     def set_lecture
@@ -474,72 +454,5 @@ class LecturesController < ApplicationController
       return if @lecture.course.enough_questions?
 
       redirect_to :root, alert: I18n.t("controllers.no_test")
-    end
-
-    def become_tutor_params
-      params.permit(:voucher_hash, tutorial_ids: [])
-    end
-
-    def become_editor_params
-      params.permit(:voucher_hash)
-    end
-
-    def handle_invalid_voucher
-      error_message = I18n.t("controllers.voucher_invalid")
-      respond_to do |format|
-        format.js { render "error", locals: { error_message: error_message } }
-        format.html { redirect_to edit_profile_path, alert: error_message }
-      end
-    end
-
-    def notify_new_editor_by_mail(editor)
-      NotificationMailer.with(recipient: editor,
-                              locale: editor.locale,
-                              lecture: @lecture)
-                        .new_editor_email.deliver_later
-    end
-
-    # def create_became_tutor_notification(selected_tutorials)
-    #   @lecture.editors_and_teacher.each do |editor|
-    #     details = I18n.t("notifications.became_tutor", user: current_user.info,
-    #                                                    locale: editor.locale)
-    #     if selected_tutorials
-    #       details << I18n.t("notifications.tutorial_details",
-    #                         tutorials: selected_tutorials.map(&:title).join(", "),
-    #                         locale: editor.locale)
-    #     end
-    #     Notification.create(recipient: editor,
-    #                         notifiable: @lecture,
-    #                         action: "redemption",
-    #                         details: details)
-    #   end
-    # end
-
-    def create_became_tutor_notification(selected_tutorials)
-      @lecture.editors_and_teacher.each do |editor|
-        details = build_notification_details(editor, selected_tutorials)
-        create_notification(editor, details)
-      end
-    end
-
-    def build_notification_details(editor, selected_tutorials)
-      details = I18n.t("notifications.became_tutor", user: current_user.info,
-                                                     locale: editor.locale)
-      if selected_tutorials
-        tutorial_titles = selected_tutorials.map(&:title).join(", ")
-        details << I18n.t("notifications.tutorial_details",
-                          tutorials: tutorial_titles,
-                          locale: editor.locale)
-      end
-      details
-    end
-
-    def create_notification(editor, details)
-      Notification.create(
-        recipient: editor,
-        notifiable: @lecture,
-        action: "redemption",
-        details: details
-      )
     end
 end

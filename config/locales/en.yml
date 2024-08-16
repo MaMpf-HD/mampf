@@ -2109,6 +2109,9 @@ en:
     became_tutor: >
       %{user} has redeemed a tutor voucher and has therefore become tutor
       in the event series.
+    became_editor: >
+      %{user} has redeemed an editor voucher and has therefore become editor
+      in the event series.
     tutorial_details: >
       Tutorials taken over: %{tutorials}.
     redemption: 'Voucher redeemed:'
@@ -3417,6 +3420,7 @@ en:
     import_toc: 'Import'
     become_editor: 'Become Editor'
     invalidate: 'Invalidate'
+    verify_voucher: 'Verify Voucher'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

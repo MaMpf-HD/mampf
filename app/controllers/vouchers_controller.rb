@@ -1,5 +1,6 @@
 # app/controllers/vouchers_controller.rb
 class VouchersController < ApplicationController
+  include Notifier
   before_action :set_voucher, only: [:invalidate]
   authorize_resource except: :create
 
@@ -29,7 +30,7 @@ class VouchersController < ApplicationController
     end
   end
 
-  def redeem
+  def verify
     @voucher = Voucher.check_voucher(params[:voucher_hash])
     respond_to do |format|
       if @voucher
@@ -43,10 +44,26 @@ class VouchersController < ApplicationController
     end
   end
 
+  def redeem
+    voucher = Voucher.check_voucher(redeem_voucher_params[:voucher_hash])
+    if voucher
+      lecture = voucher.lecture
+      redemption = process_voucher(voucher, lecture)
+      redemption.create_notifications!
+      redirect_to edit_profile_path, notice: success_message(voucher)
+    else
+      handle_invalid_voucher
+    end
+  end
+
   private
 
     def voucher_params
       params.permit(:lecture_id, :sort)
+    end
+
+    def redeem_voucher_params
+      params.permit(:voucher_hash, tutorial_ids: [])
     end
 
     def set_voucher
@@ -60,6 +77,36 @@ class VouchersController < ApplicationController
       @lecture = @voucher.lecture
       @sort = @voucher.sort
       I18n.locale = @lecture.locale
+    end
+
+    def process_voucher(voucher, lecture)
+      if voucher.tutor?
+        process_tutor_voucher(voucher, lecture)
+      elsif voucher.editor?
+        process_editor_voucher(voucher, lecture)
+      end
+    end
+
+    def process_tutor_voucher(voucher, lecture)
+      selected_tutorials = lecture.tutorials
+                                  .where(id: redeem_voucher_params[:tutorial_ids])
+      lecture.update_tutor_status!(current_user, selected_tutorials)
+      Redemption.create(user: current_user, voucher: voucher,
+                        claimed_tutorials: selected_tutorials)
+    end
+
+    def process_editor_voucher(voucher, lecture)
+      lecture.update_editor_status!(current_user)
+      notify_new_editor_by_mail(current_user, lecture)
+      Redemption.create(user: current_user, voucher: voucher)
+    end
+
+    def success_message(voucher)
+      if voucher.tutor?
+        I18n.t("controllers.become_tutor_success")
+      elsif voucher.editor?
+        I18n.t("controllers.become_editor_success")
+      end
     end
 
     def handle_successful_save(format)
@@ -90,6 +137,14 @@ class VouchersController < ApplicationController
           render "error",
                  locals: { error_message: error_message }
         end
+      end
+    end
+
+    def handle_invalid_voucher
+      error_message = I18n.t("controllers.voucher_invalid")
+      respond_to do |format|
+        format.js { render "error", locals: { error_message: error_message } }
+        format.html { redirect_to edit_profile_path, alert: error_message }
       end
     end
 end

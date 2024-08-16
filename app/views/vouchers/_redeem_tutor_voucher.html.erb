@@ -1,10 +1,10 @@
 <p>
   <%= t('profile.become_tutor', lecture: voucher.lecture.title) %>
 </p>
-<%= form_with url: become_tutor_path(voucher.lecture),
-                remote: true,
-                method: :post,
-                html: { class: "form-inline" } do |f| %>
+<%= form_with url: redeem_voucher_path,
+              remote: true,
+              method: :post,
+              html: { class: "form-inline" } do |f| %>
   <%= f.hidden_field :voucher_hash, value: voucher.secure_hash %>                 
   <div class="form-group d-flex">                               
     <%= f.select :tutorial_ids,
@@ -12,6 +12,6 @@
                   given_tutorial_ids(current_user,voucher)),
                   { prompt: t('profile.select_tutorials') },
                   { multiple: true, class: 'selectize me-2 w-50' } %>
-    <%= f.submit t('profile.take_over_tutorials'), class: "btn btn-primary" %>
+    <%= f.submit t('profile.redeem_voucher'), class: "btn btn-primary" %>
   </div>
 <% end %>

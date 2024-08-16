@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
+ActiveRecord::Schema[7.1].define(version: 2024_08_16_150011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -77,6 +77,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
     t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
   end
 
+  create_table "claims", force: :cascade do |t|
+    t.bigint "redemption_id", null: false
+    t.string "claimable_type", null: false
+    t.bigint "claimable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
+    t.index ["redemption_id"], name: "index_claims_on_redemption_id"
+  end
+
   create_table "clicker_votes", force: :cascade do |t|
     t.integer "value"
     t.integer "clicker_id"
@@ -138,16 +148,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
     t.datetime "updated_at", null: false
     t.index ["closer_type", "closer_id"], name: "index_commontator_threads_on_closer_type_and_closer_id"
     t.index ["commontable_type", "commontable_id"], name: "index_commontator_threads_on_c_id_and_c_type", unique: true
-  end
-
-  create_table "contracts", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "lecture_id", null: false
-    t.integer "role", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["lecture_id"], name: "index_contracts_on_lecture_id"
-    t.index ["user_id"], name: "index_contracts_on_user_id"
   end
 
   create_table "course_self_joins", force: :cascade do |t|
@@ -409,7 +409,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
     t.text "action"
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.text "details"
     t.index ["notifiable_id", "notifiable_type"], name: "index_notifications_on_notifiable_id_and_notifiable_type"
     t.index ["recipient_id"], name: "index_notifications_on_recipient_id"
   end
@@ -457,6 +456,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
     t.integer "thread_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "redemptions", force: :cascade do |t|
+    t.uuid "voucher_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_redemptions_on_user_id"
+    t.index ["voucher_id"], name: "index_redemptions_on_voucher_id"
   end
 
   create_table "referrals", force: :cascade do |t|
@@ -959,11 +967,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"
+  add_foreign_key "claims", "redemptions"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "contracts", "lectures"
-  add_foreign_key "contracts", "users"
   add_foreign_key "course_self_joins", "courses"
   add_foreign_key "divisions", "programs"
   add_foreign_key "feedbacks", "users"
@@ -979,6 +986,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_08_15_174623) do
   add_foreign_key "programs", "subjects"
   add_foreign_key "quiz_certificates", "media", column: "quiz_id"
   add_foreign_key "quiz_certificates", "users"
+  add_foreign_key "redemptions", "users"
+  add_foreign_key "redemptions", "vouchers"
   add_foreign_key "referrals", "items"
   add_foreign_key "referrals", "media"
   add_foreign_key "speaker_talk_joins", "talks"

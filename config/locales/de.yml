@@ -2239,6 +2239,9 @@ de:
     became_tutor: >
       %{user} hat einen TutorInnen-Gutschein eingelöst und ist jetzt TutorIn in der
       Veranstaltung.
+    became_editor: >
+      %{user} hat einen EditorInnen-Gutschein eingelöst und ist jetzt EditorIn in der
+      Veranstaltung.
     tutorial_details: >
       Neu übernommene Tutorien: %{tutorials}.
     redemption: 'Gutschein eingelöst:'
@@ -3601,6 +3604,7 @@ de:
     import_toc: 'Importieren'
     become_editor: 'EditorIn werden'
     invalidate: 'Für ungültig erklären'
+    verify_voucher: 'Gutschein prüfen'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

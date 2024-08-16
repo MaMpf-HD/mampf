@@ -864,7 +864,7 @@ class Lecture < ApplicationRecord
         remove_tutor(t, user)
       end
     end
-    Contract.create(user: user, lecture: self, role: :tutor)
+    # Contract.create(user: user, lecture: self, role: :tutor)
     # touch to invalidate the cache
     touch
   end
@@ -873,31 +873,35 @@ class Lecture < ApplicationRecord
     return if editors.include?(user)
 
     editors << user
-    Contract.create(user: user, lecture: self, role: :editor)
+    # Contract.create(user: user, lecture: self, role: :editor)
     # touch to invalidate the cache
     touch
   end
 
+  def voucher_redeemers(voucher_scope)
+    User.where(id: Redemption.where(voucher: voucher_scope).select(:user_id))
+  end
+
+  def tutors_by_redemption
+    voucher_redeemers(vouchers.for_tutors)
+  end
+
+  def editors_by_redemption
+    voucher_redeemers(vouchers.for_editors)
+  end
+
   def eligible_as_tutors
-    (tutors + tutors_with_contract + editors + [teacher]).uniq
+    (tutors + tutors_by_redemption + editors + [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some tutor statuses were
     # still given by the old system, this will not be true
   end
 
   def eligible_as_editors
-    (editors + editors_with_contract + course.editors - [teacher]).uniq
+    (editors + editors_by_redemption + course.editors - [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some editor statuses were
     # still given by the old system, this will not be true
-  end
-
-  def tutors_with_contract
-    User.where(id: Contract.where(lecture: self, role: :tutor).select(:user_id))
-  end
-
-  def editors_with_contract
-    User.where(id: Contract.where(lecture: self, role: :editor).select(:user_id))
   end
 
   def editors_and_teacher
