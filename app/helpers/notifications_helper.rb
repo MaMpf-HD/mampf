@@ -104,12 +104,9 @@ module NotificationsHelper
 
   def redemption_notification_details(redemption)
     if redemption.tutor?
-      details = I18n.t("notifications.became_tutor", user: redemption.user.info)
-      tutorial_titles = redemption.claimed_tutorials.map(&:title).join(", ")
-      details << I18n.t("notifications.tutorial_details",
-                        tutorials: tutorial_titles)
+      tutor_notification_details(redemption)
     else
-      I18n.t("notifications.became_editor", user: redemption.user.info)
+      editor_notification_details(redemption)
     end
   end
 
@@ -148,7 +145,7 @@ module NotificationsHelper
 
     def truncate_result(result)
       result.first(40).tap do |truncated|
-        return truncated.length < 40 ? truncated : truncated + "..."
+        return truncated.length < 40 ? truncated : "#{truncated}..."
       end
     end
 end
