@@ -831,6 +831,10 @@ Rails.application.routes.draw do
        to: "vouchers#invalidate",
        as: "invalidate_voucher"
 
+  get "vouchers/cancel",
+      to: "vouchers#cancel",
+      as: "cancel_voucher"
+
   resources :vouchers, only: [:create]
 
   # watchlists routes

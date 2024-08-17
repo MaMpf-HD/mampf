@@ -5,3 +5,5 @@
             remote: true do %>
   <%= t('profile.redeem_voucher') %>
 <% end %>
+<%= link_to t('buttons.cancel'), cancel_voucher_path,
+            class: "btn btn-secondary ms-2", remote: true %>

@@ -56,6 +56,13 @@ class VouchersController < ApplicationController
     end
   end
 
+  def cancel
+    respond_to do |format|
+      format.html { redirect_to edit_profile_path }
+      format.js
+    end
+  end
+
   private
 
     def voucher_params

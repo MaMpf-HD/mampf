@@ -13,5 +13,7 @@
                   { prompt: t('profile.select_tutorials') },
                   { multiple: true, class: 'selectize me-2 w-50' } %>
     <%= f.submit t('profile.redeem_voucher'), class: "btn btn-primary" %>
+    <%= link_to t('buttons.cancel'), cancel_voucher_path,
+                class: "btn btn-secondary ms-2", remote: true %>
   </div>
 <% end %>

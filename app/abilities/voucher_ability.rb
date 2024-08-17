@@ -8,6 +8,6 @@ class VoucherAbility
       user.can_update_personell?(voucher.lecture)
     end
 
-    can [:verify, :redeem], Voucher
+    can [:verify, :redeem, :cancel], Voucher
   end
 end
