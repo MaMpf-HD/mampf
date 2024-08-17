@@ -699,11 +699,17 @@ en:
           timestamped and marked as "too late".
         section_needed: Please create a section first
         voucher_for_tutor: >
-          Vouchers for tutors can be redeemed by users to become tutor for this
-          event series.
+          Vouchers for tutors can be redeemed by users to obtain tutor status
+          for this event series and if possible, to directly take over
+          tutorials.
         voucher_for_editor: >
-          Vouchers for editors can be redeemed by users to become additional
-          editor for this event series.
+          Vouchers for editors can be redeemed by users to obtain
+          editor status for this event series.
+        voucher_for_teacher: >
+          Vouchers for teachers can be redeemed by users to obtain teacher
+          status for this event series. The previous teacher will be demoted
+          and becomes an editor. For security reasons such a voucher will
+          be invalidated directly after its redemption.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'

@@ -24,6 +24,10 @@ class Voucher < ApplicationRecord
     Voucher.active.find_by(secure_hash: secure_hash)
   end
 
+  def invalidate!
+    update(invalidated_at: Time.zone.now)
+  end
+
   private
 
     def generate_secure_hash

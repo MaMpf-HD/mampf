@@ -23,7 +23,7 @@ class VouchersController < ApplicationController
 
   def invalidate
     set_related_data
-    @voucher.update(invalidated_at: Time.zone.now)
+    @voucher.invalidate!
     respond_to do |format|
       format.html { redirect_to edit_lecture_path(@lecture, anchor: "people") }
       format.js
@@ -117,6 +117,7 @@ class VouchersController < ApplicationController
         notify_new_teacher_by_mail(current_user, lecture)
         notify_previous_teacher_by_mail(previous_teacher, lecture)
       end
+      voucher.invalidate!
       Redemption.create(user: current_user, voucher: voucher)
     end
 
