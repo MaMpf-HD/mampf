@@ -2195,9 +2195,10 @@ de:
     redeem_voucher: Gutschein einlösen
     become_tutor: >
       Mit diesem Gutschein erhältst Du TutorInnenstatus in der Veranstaltung
-      %{lecture}. Dadurch können Dir VeranstaltungseditorInnen Tutorien zuweisen.
-      Ggf. kannst Du an dieser Stelle bereits Tutorien auswählen,
-      die Du übernehmen möchtest.
+      %{lecture}. Dadurch können Dir VeranstaltungseditorInnen und die DozentIn
+      Tutorien zuweisen. Ggf. kannst Du an dieser Stelle bereits Tutorien
+      auswählen, die Du übernehmen möchtest. Die VeranstaltungseditorInnen
+      und die DozentIn werden benachrichtigt, wenn Du den Gutschein einlöst.
     already_tutor: >
       Du bist bereits als TutorIn eingetragen für: %{tutorials}.
     new_tutor_select: >
@@ -2217,10 +2218,18 @@ de:
       %{lecture}.
     already_editor_by_redemption: >
       Du hast bereits einen Gutschein eingelöst, um EditorInnenstatus zu
-      erhalten.
+      erhalten. Die anderen VeranstaltungseditorInnen und die DozentIn werden
+      benachrichtigt, wenn Du den Gutschein einlöst.
     teacher_cant_become_editor: >
       Du kannst nicht zusätzlich EditorInnenstatus in einer Veranstaltung
       erhalten, in der Du bereits DozentIn bist.
+    become_teacher: >
+      Mit diesem Gutschein erhältst Du DozentInnenstatus für die Veranstaltung
+      %{lecture}. Die bisherige DozentIn erhält EditorInnenstatus.
+      Die VeranstaltungseditorInnen werden benachrichtigt,
+      wenn Du den Gutschein einlöst.
+    already_teacher: >
+      Du bist bereits DozentIn in dieser Veranstaltung.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

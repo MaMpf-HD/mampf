@@ -2067,7 +2067,8 @@ en:
       With this voucher, you can obtain tutor status for %{lecture}.
       With that, editors for the event series can assign you tutorials.
       If applicable, you can select the tutorials you will be responsible for
-      right here.
+      right here. The editors and the teacher will be notified when you have
+      redeemed the voucher.
     already_tutor: >
       You are already registered as a tutor for: %{tutorials}.
     new_tutor_select: >
@@ -2086,11 +2087,19 @@ en:
       You have already redeemed a tutor voucher for this event series.
     become_editor: >
       With this voucher, you can obtain editor status for %{lecture}.
+      The other editors and the teacher will be notified when you have
+      redeemed the voucher.
     already_editor_by_redemption: >
       You have already redeemed an editor voucher for this event series.
     teacher_cant_become_editor: >
       You are already a teacher for this event series. Therefore, you cannot
       redeem an editor voucher.
+    become_teacher: >
+      With this voucher, you can obtain teacher status for %{lecture}.
+      The previous teacher will be demoted to editor. The editors will be
+      notified when you have redeemed the voucher.
+    already_teacher: >
+      You are already the teacher for this event series.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'

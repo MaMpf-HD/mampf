@@ -1,0 +1,9 @@
+<%= t('profile.become_teacher', lecture: voucher.lecture.title) %>
+
+<% if current_user == voucher.lecture.teacher %>
+  <%= t('profile.already_teacher') %>
+<% else %>
+  <%= redeem_voucher_button(voucher) %>
+<% end %>
+
+<%= cancel_voucher_button %>

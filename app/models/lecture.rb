@@ -872,6 +872,16 @@ class Lecture < ApplicationRecord
     touch
   end
 
+  def update_teacher_status!(user)
+    return if teacher == user
+
+    previous_teacher = teacher
+    self.teacher = user
+    editors << previous_teacher
+    # touch to invalidate the cache
+    touch
+  end
+
   def voucher_redeemers(voucher_scope)
     User.where(id: Redemption.where(voucher: voucher_scope).select(:user_id))
   end

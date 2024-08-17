@@ -91,6 +91,8 @@ class VouchersController < ApplicationController
         process_tutor_voucher(voucher, lecture)
       elsif voucher.editor?
         process_editor_voucher(voucher, lecture)
+      elsif voucher.teacher?
+        process_teacher_voucher(voucher, lecture)
       end
     end
 
@@ -105,6 +107,13 @@ class VouchersController < ApplicationController
     def process_editor_voucher(voucher, lecture)
       lecture.update_editor_status!(current_user)
       notify_new_editor_by_mail(current_user, lecture)
+      Redemption.create(user: current_user, voucher: voucher)
+    end
+
+    def process_teacher_voucher(voucher, lecture)
+      lecture.update_teacher_status!(current_user)
+      # notify_new_teacher_by_mail(current_user, lecture)
+      # notify_previous_teacher_by_mail(lecture)
       Redemption.create(user: current_user, voucher: voucher)
     end
 
