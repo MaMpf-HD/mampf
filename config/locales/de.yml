@@ -2194,12 +2194,26 @@ de:
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
     redeem_voucher: Gutschein einlösen
     become_tutor: >
-      Mit diesem Gutschein kannst Du TutorIn in der Vorlesung %{lecture} werden.
-      Wenn Du schon weißt, welche Tutorien du übernimmst, kannst du diese hier auswählen.
+      Mit diesem Gutschein erhältst Du TutorInnenstatus in der Veranstaltung
+      %{lecture}. Dadurch können Dir VeranstaltungseditorInnen Tutorien zuweisen.
+      Ggf. kannst Du an dieser Stelle bereits Tutorien auswählen,
+      die Du übernehmen möchtest.
+    already_tutor: >
+      Du bist bereits als TutorIn eingetragen für: %{tutorials}.
+    new_tutor_select: >
+      Wenn Du schon weißt, welche Tutorien du übernimmst, kannst du diese hier
+      auswählen.
+    already_tutor_select: >
+      Du kannst hier weitere Tutorien auswählen, die Du übernimmst.
     select_tutorials: Tutorien auswählen
     take_over_tutorials: Tutorien übernehmen
+    no_tutorials_available: >
+      Es sind keine weiteren Tutorien verfügbar, die Du noch übernehmen kannst.
+    no_tutorials_yet: Für diese Vorlesung wurden noch keine Tutorien angelegt.
+    already_tutor_by_redemption: >
+      Du hast bereits einen Gutschein eingelöst, um TutorInnenstatus zu erhalten.
     become_editor: >
-      Mit diesem Gutschein kannst Du Editorenrechte für die Veranstaltung
+      Mit diesem Gutschein kannst Du EditorInnenrechte für die Veranstaltung
       %{lecture} übernehmen.
   mampf_news:
     title: 'MaMpf-News'

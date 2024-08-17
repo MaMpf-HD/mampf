@@ -2064,11 +2064,26 @@ en:
       We have received your request and will send you your data as soon as possible.
     redeem_voucher: Redeeem Voucher
     become_tutor: >
-      With this voucher, you can become a tutor in the lecture %{lecture}.
-      If you already know which tutorials you will be responsible for, 
+      With this voucher, you can obatin tutor status for the %{lecture}.
+      With that, editors for the event series can assign you tutorials.
+      If applicable, you can select the tutorials you will be responsible for
+      right here.
+    already_tutor: >
+      You are already registered as a tutor for: %{tutorials}.
+    new_tutor_select: >
+      If you already know which tutorials you will be responsible for,
       you can select them here.
+    already_tutor_select: >
+      You can select further tutorials to take over here.
     select_tutorials: Select Tutorials
     take_over_tutorials: Take Over Tutorials
+    no_tutorials_available: >
+      There are no more tutorials available for this lecture that you can take
+      over.
+    no_tutorials_yet: >
+      There are no tutorials available for this lecture yet.
+    already_tutor_by_redemption: >
+      You have already redeemed a tutor voucher for this event series.
     become_editor: >
       With this voucher, you can become an editor in the event series %{lecture}.
   mampf_news:
@@ -2115,7 +2130,7 @@ en:
     tutorial_details: >
       Tutorials taken over: %{tutorials}.
     redemption: 'Voucher redeemed:'
-    redemption_in_lecture: 'Voucher redeemed in %{lecture}'    
+    redemption_in_lecture: 'Voucher redeemed in %{lecture}'
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'

@@ -858,13 +858,8 @@ class Lecture < ApplicationRecord
 
   def update_tutor_status!(user, selected_tutorials)
     tutorials.find_each do |t|
-      if selected_tutorials.include?(t)
-        add_tutor(t, user)
-      else
-        remove_tutor(t, user)
-      end
+      add_tutor(t, user) if selected_tutorials.include?(t)
     end
-    # Contract.create(user: user, lecture: self, role: :tutor)
     # touch to invalidate the cache
     touch
   end
@@ -873,7 +868,6 @@ class Lecture < ApplicationRecord
     return if editors.include?(user)
 
     editors << user
-    # Contract.create(user: user, lecture: self, role: :editor)
     # touch to invalidate the cache
     touch
   end
@@ -906,6 +900,14 @@ class Lecture < ApplicationRecord
 
   def editors_and_teacher
     [teacher] + editors
+  end
+
+  def tutorials_with_tutor(tutor)
+    tutorials.where(id: tutorial_ids_for_tutor(tutor))
+  end
+
+  def tutorials_without_tutor(tutor)
+    tutorials.where.not(id: tutorial_ids_for_tutor(tutor))
   end
 
   private
@@ -1016,7 +1018,7 @@ class Lecture < ApplicationRecord
       tutorial.tutors << user unless tutorial.tutors.include?(user)
     end
 
-    def remove_tutor(tutorial, user)
-      tutorial.tutors.delete(user) if tutorial.tutors.include?(user)
+    def tutorial_ids_for_tutor(tutor)
+      TutorTutorialJoin.where(tutor: tutor).select(:tutorial_id)
     end
 end

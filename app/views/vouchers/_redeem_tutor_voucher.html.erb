@@ -1,19 +1,36 @@
 <p>
   <%= t('profile.become_tutor', lecture: voucher.lecture.title) %>
+
+  <% if current_user.in?(voucher.lecture.tutors) %>
+    <%= t('profile.already_tutor',
+          tutorials: tutorials_with_tutor_titles(current_user, voucher)) %>
+  <% end %>
 </p>
-<%= form_with url: redeem_voucher_path,
-              remote: true,
-              method: :post,
-              html: { class: "form-inline" } do |f| %>
-  <%= f.hidden_field :secure_hash, value: voucher.secure_hash %>
-  <div class="form-group d-flex">
-    <%= f.select :tutorial_ids,
-                  options_for_select(tutorial_options(voucher),
-                  given_tutorial_ids(current_user,voucher)),
-                  { prompt: t('profile.select_tutorials') },
-                  { multiple: true, class: 'selectize me-2 w-50' } %>
-    <%= f.submit t('profile.redeem_voucher'), class: "btn btn-primary" %>
-    <%= link_to t('buttons.cancel'), cancel_voucher_path,
-                class: "btn btn-secondary ms-2", remote: true %>
-  </div>
+
+<% if voucher.lecture.tutorials_without_tutor(current_user).any? %>
+
+  <%= render partial: "vouchers/tutorials_form", locals: { voucher: voucher } %>
+
+<% elsif voucher.lecture.tutorials.any? %>
+
+    <%= t('profile.no_tutorials_available') %>
+    <%= cancel_voucher_button %>
+
+<% else %>
+
+  <%= t('profile.no_tutorials_yet') %>
+
+  <% if current_user.in?(voucher.lecture.tutors_by_redemption) %>
+
+      <%= t('profile.already_tutor_by_redemption') %>
+      <%= cancel_voucher_button %>
+
+  <% else %>
+
+    <p class="mt-4">
+      <%= redeem_voucher_button(voucher) %>
+      <%= cancel_voucher_button %>
+    </p>
+
+  <% end %>
 <% end %>
