@@ -5,8 +5,8 @@
               remote: true,
               method: :post,
               html: { class: "form-inline" } do |f| %>
-  <%= f.hidden_field :voucher_hash, value: voucher.secure_hash %>                 
-  <div class="form-group d-flex">                               
+  <%= f.hidden_field :secure_hash, value: voucher.secure_hash %>
+  <div class="form-group d-flex">
     <%= f.select :tutorial_ids,
                   options_for_select(tutorial_options(voucher),
                   given_tutorial_ids(current_user,voucher)),

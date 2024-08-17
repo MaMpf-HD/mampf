@@ -1,9 +1,9 @@
 <%= form_with url: verify_voucher_path,
               remote: true,
-              method: :post, 
+              method: :post,
               html: { class: "form-inline" } do |f| %>
     <div class="form-group d-flex">
-        <%= f.text_field :voucher_hash, class: "form-control me-2 w-50" %>
+        <%= f.text_field :secure_hash, class: "form-control me-2 w-50" %>
         <%= f.submit t('buttons.verify_voucher'), class: "btn btn-primary" %>
     </div>
 <% end %>

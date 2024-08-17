@@ -31,7 +31,7 @@ class VouchersController < ApplicationController
   end
 
   def verify
-    @voucher = Voucher.check_voucher(params[:voucher_hash])
+    @voucher = Voucher.check_voucher(check_voucher_params[:secure_hash])
     respond_to do |format|
       if @voucher
         format.js
@@ -45,7 +45,7 @@ class VouchersController < ApplicationController
   end
 
   def redeem
-    voucher = Voucher.check_voucher(redeem_voucher_params[:voucher_hash])
+    voucher = Voucher.check_voucher(check_voucher_params[:secure_hash])
     if voucher
       lecture = voucher.lecture
       redemption = process_voucher(voucher, lecture)
@@ -62,8 +62,8 @@ class VouchersController < ApplicationController
       params.permit(:lecture_id, :sort)
     end
 
-    def redeem_voucher_params
-      params.permit(:voucher_hash, tutorial_ids: [])
+    def check_voucher_params
+      params.permit(:secure_hash, tutorial_ids: [])
     end
 
     def set_voucher

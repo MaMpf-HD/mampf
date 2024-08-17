@@ -1,5 +1,5 @@
 <%= t('profile.become_editor', lecture: voucher.lecture.title) %>
-<%= link_to redeem_voucher_path(params: { voucher_hash: voucher.secure_hash }),
+<%= link_to redeem_voucher_path(params: { secure_hash: voucher.secure_hash }),
             class: 'btn btn-primary',
             method: :post,
             remote: true do %>
