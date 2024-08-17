@@ -49,7 +49,7 @@ class VouchersController < ApplicationController
     if voucher
       lecture = voucher.lecture
       redemption = process_voucher(voucher, lecture)
-      redemption.create_notifications!
+      redemption&.create_notifications!
       redirect_to edit_profile_path, notice: success_message(voucher)
     else
       handle_invalid_voucher
@@ -111,9 +111,12 @@ class VouchersController < ApplicationController
     end
 
     def process_teacher_voucher(voucher, lecture)
+      previous_teacher = lecture.teacher
       lecture.update_teacher_status!(current_user)
-      # notify_new_teacher_by_mail(current_user, lecture)
-      # notify_previous_teacher_by_mail(lecture)
+      if previous_teacher != current_user
+        notify_new_teacher_by_mail(current_user, lecture)
+        notify_previous_teacher_by_mail(previous_teacher, lecture)
+      end
       Redemption.create(user: current_user, voucher: voucher)
     end
 

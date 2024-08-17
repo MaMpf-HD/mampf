@@ -2969,6 +2969,14 @@ en:
     text: 'Text'
     new_editor_subject: 'Editing Rights for %{title}'
     new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
+    new_teacher_subject: 'Teacher Status for %{title}'
+    new_teacher: 'Dear %{username}, you have been given teacher status for %{title}.'
+    previous_teacher_subject: 'Teacher Change for %{title}'
+    previous_teacher: >
+      Dear %{username}, ther has been a teacher change for %{title}.
+      %{new_teacher} has redeemed a teacher voucher and is now the teacher for
+      this event series. You are no longer teacher for %{title}, but
+      editor instead.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can subscribe to it in your profile settings.'

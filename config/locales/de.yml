@@ -3158,6 +3158,14 @@ de:
     text: 'Text'
     new_editor_subject: 'EditorInnenrechte für %{title}'
     new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
+    new_teacher_subject: 'DozentInnenstatus für %{title}'
+    new_teacher: 'Hallo %{username}, Du hast soeben DozentInnenstatus für %{title} erhalten.'
+    previous_teacher_subject: 'DozentInnenwechsel in %{title}'
+    previous_teacher: >
+      Hallo %{username}, in der Veranstaltung %{title} gab es einen
+      DozentInnenwechsel. %{new_teacher} hat einen DozentInnengutschein eingelöst
+      und ist jetzt DozentIn. Du bist nicht mehr DozentIn in %{title}, sondern
+      stattdessen VeranstaltungseditorIn.
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
