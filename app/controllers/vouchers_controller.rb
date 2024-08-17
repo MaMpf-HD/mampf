@@ -89,7 +89,7 @@ class VouchersController < ApplicationController
 
     def process_tutor_voucher(voucher, lecture)
       selected_tutorials = lecture.tutorials
-                                  .where(id: redeem_voucher_params[:tutorial_ids])
+                                  .where(id: check_voucher_params[:tutorial_ids])
       lecture.update_tutor_status!(current_user, selected_tutorials)
       Redemption.create(user: current_user, voucher: voucher,
                         claimed_tutorials: selected_tutorials)
