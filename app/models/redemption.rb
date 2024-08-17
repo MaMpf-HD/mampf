@@ -12,6 +12,7 @@ class Redemption < ApplicationRecord
   delegate :sort, to: :voucher
   delegate :tutor?, to: :voucher
   delegate :editor?, to: :voucher
+  delegate :teacher?, to: :voucher
 
   def create_notifications!
     lecture.editors_and_teacher.each do |editor|

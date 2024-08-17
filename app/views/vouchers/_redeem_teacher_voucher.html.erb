@@ -1,4 +1,6 @@
-<%= t('profile.become_teacher', lecture: voucher.lecture.title) %>
+<p>
+  <%= t('profile.become_teacher', lecture: voucher.lecture.title) %>
+</p>
 
 <% if current_user == voucher.lecture.teacher %>
   <%= t('profile.already_teacher') %>

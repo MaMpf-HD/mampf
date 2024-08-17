@@ -876,7 +876,7 @@ class Lecture < ApplicationRecord
     return if teacher == user
 
     previous_teacher = teacher
-    self.teacher = user
+    update(teacher: user)
     editors << previous_teacher
     # touch to invalidate the cache
     touch

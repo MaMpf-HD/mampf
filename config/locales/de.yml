@@ -731,10 +731,15 @@ de:
         section_needed: Bitte erstelle zuerst einen Abschnitt
         voucher_for_tutor: >
           Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um
-          TutorIn für diese Veranstaltung zu werden.
+          TutorInnenstatus für diese Veranstaltung zu erhalten und ggf. direkt
+          Tutorien zu übernehmen.
         voucher_for_editor: >
           Gutscheine für EditorInnen können von NutzerInnen eingelöst werden, um
-          EditorIn für diese Veranstaltung zu werden.
+          EditorInnenstatus für diese Veranstaltung zu ehalten.
+        voucher_for_teacher: >
+          Gutscheine für DozentInnen können von NutzerInnen eingelöst werden, um
+          DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
+          DozentIn wird dann EditorIn.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -2271,6 +2276,9 @@ de:
     became_editor: >
       %{user} hat einen EditorInnen-Gutschein eingelöst und ist jetzt EditorIn in der
       Veranstaltung.
+    became_teacher: >
+      %{user} hat einen DozentInnen-Gutschein eingelöst und ist jetzt DozentIn
+      der Veranstaltung.
     tutorial_details: >
       Neu übernommene Tutorien: %{tutorials}.
     redemption: 'Gutschein eingelöst:'
@@ -3755,6 +3763,7 @@ de:
     voucher_invalid: 'Der Gutschein ist ungültig.'
     become_tutor_success: 'Dein Tutorenstatus wurde geupdatet.'
     become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
+    become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,

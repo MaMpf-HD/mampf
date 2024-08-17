@@ -122,6 +122,8 @@ class VouchersController < ApplicationController
         I18n.t("controllers.become_tutor_success")
       elsif voucher.editor?
         I18n.t("controllers.become_editor_success")
+      elsif voucher.teacher?
+        I18n.t("controllers.become_teacher_success")
       end
     end
 
