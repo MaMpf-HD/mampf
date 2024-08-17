@@ -2213,8 +2213,14 @@ de:
     already_tutor_by_redemption: >
       Du hast bereits einen Gutschein eingelöst, um TutorInnenstatus zu erhalten.
     become_editor: >
-      Mit diesem Gutschein kannst Du EditorInnenrechte für die Veranstaltung
-      %{lecture} übernehmen.
+      Mit diesem Gutschein erhältst Du EditorInnenstatus für die Veranstaltung
+      %{lecture}.
+    already_editor_by_redemption: >
+      Du hast bereits einen Gutschein eingelöst, um EditorInnenstatus zu
+      erhalten.
+    teacher_cant_become_editor: >
+      Du kannst nicht zusätzlich EditorInnenstatus in einer Veranstaltung
+      erhalten, in der Du bereits DozentIn bist.
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'

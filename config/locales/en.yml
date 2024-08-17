@@ -2064,7 +2064,7 @@ en:
       We have received your request and will send you your data as soon as possible.
     redeem_voucher: Redeeem Voucher
     become_tutor: >
-      With this voucher, you can obatin tutor status for the %{lecture}.
+      With this voucher, you can obtain tutor status for %{lecture}.
       With that, editors for the event series can assign you tutorials.
       If applicable, you can select the tutorials you will be responsible for
       right here.
@@ -2085,7 +2085,12 @@ en:
     already_tutor_by_redemption: >
       You have already redeemed a tutor voucher for this event series.
     become_editor: >
-      With this voucher, you can become an editor in the event series %{lecture}.
+      With this voucher, you can obtain editor status for %{lecture}.
+    already_editor_by_redemption: >
+      You have already redeemed an editor voucher for this event series.
+    teacher_cant_become_editor: >
+      You are already a teacher for this event series. Therefore, you cannot
+      redeem an editor voucher.
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'

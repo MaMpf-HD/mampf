@@ -1,9 +1,11 @@
 <%= t('profile.become_editor', lecture: voucher.lecture.title) %>
-<%= link_to redeem_voucher_path(params: { secure_hash: voucher.secure_hash }),
-            class: 'btn btn-primary',
-            method: :post,
-            remote: true do %>
-  <%= t('profile.redeem_voucher') %>
+
+<% if current_user == voucher.lecture.teacher %>
+  <%= t('profile.teacher_cant_become_editor') %>
+<% elsif current_user.in?(voucher.lecture.editors_by_redemption) %>
+  <%= t('profile.already_editor_by_redemption') %>
+<% else %>
+  <%= redeem_voucher_button(voucher) %>
 <% end %>
-<%= link_to t('buttons.cancel'), cancel_voucher_path,
-            class: "btn btn-secondary ms-2", remote: true %>
+
+<%= cancel_voucher_button %>
