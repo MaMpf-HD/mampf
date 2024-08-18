@@ -142,7 +142,7 @@ module LecturesHelper
                        end, lecture.teacher_id)
   end
 
-  def teachers_preselection_for_new_lecture(lecture)
+  def teachers_preselection_for_new_lecture
     options_for_select((User.teachers + [current_user]).map do |teacher|
                          [teacher.info, teacher.id]
                        end)
