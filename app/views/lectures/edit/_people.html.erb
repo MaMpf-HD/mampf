@@ -9,19 +9,26 @@
                   class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
         <div id="lecture_teacher_select" %>
-          <%= f.select :teacher_id, 
-                       options_for_select([[lecture.teacher.info,
-                       lecture.teacher.id]],
-                       lecture.teacher.id),
-                       {},
-                       { class: 'selectize',
-                         data: { ajax: true,
-                                 model: 'user',
-                                 filled: false,
-                                 placeholder:
-                                   t('basics.enter_two_letters'),
-                                 no_results:
+          <% if current_user.admin? %>
+            <%= f.select :teacher_id,
+                         options_for_select([[lecture.teacher.info,
+                         lecture.teacher.id]],
+                         lecture.teacher.id),
+                         {},
+                         { class: 'selectize',
+                           data: { ajax: true,
+                                   model: 'user',
+                                   filled: false,
+                                   placeholder:
+                                     t('basics.enter_two_letters'),
+                                   no_results:
                                    t('basics.no_results') } } %>
+          <% else %>
+            <%= f.select :teacher_id,
+                         teachers_preselection(lecture),
+                         {},
+                         { class: 'selectize' } %>
+          <% end %>
           <div class="invalid-feedback" id="lecture-teacher-error">
           </div>
         </div>

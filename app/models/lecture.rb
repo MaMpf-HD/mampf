@@ -920,6 +920,10 @@ class Lecture < ApplicationRecord
     # still given by the old system, this will not be true
   end
 
+  def eligible_as_teachers
+    (User.teachers + editors + course.editors + [teacher]).uniq
+  end
+
   def eligible_as_speakers
     (speakers + speakers_by_redemption + editors + [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
