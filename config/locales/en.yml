@@ -708,8 +708,12 @@ en:
         voucher_for_teacher: >
           Vouchers for teachers can be redeemed by users to obtain teacher
           status for this event series. The previous teacher will be demoted
-          and becomes an editor. For security reasons such a voucher will
-          be invalidated directly after its redemption.
+          and becomes an editor. Such a voucher will be invalidated directly
+          after its redemption.
+        vouchers_for_speaker: >
+          Vouchers for speakers can be redeemed by users to obtain speaker
+          status for this seminar and if possible, to directly take over
+          talks.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'

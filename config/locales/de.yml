@@ -739,8 +739,12 @@ de:
         voucher_for_teacher: >
           Gutscheine für DozentInnen können von NutzerInnen eingelöst werden, um
           DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
-          DozentIn wird dann EditorIn. Aus Sicherheitsgründen wird ein solcher
-          Gutschein direkt nach dem Einlösen für ungültig erklärt.
+          DozentIn wird dann EditorIn. Ein solcher
+          Gutschein wird direkt nach dem Einlösen für ungültig erklärt.
+        voucher_for_speaker: >
+          Gutscheine für Vortragende können von NutzerInnen eingelöst werden, um
+          Vortragendenstatus für das Seminar zu erhalten und ggf. direkt
+          Vorträge zu übernehmen.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
