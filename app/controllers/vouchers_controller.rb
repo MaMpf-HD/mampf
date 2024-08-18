@@ -50,6 +50,7 @@ class VouchersController < ApplicationController
       lecture = voucher.lecture
       redemption = process_voucher(voucher, lecture)
       redemption&.create_notifications!
+      current_user.subscribe_lecture!(lecture)
       redirect_to edit_profile_path, notice: success_message(voucher)
     else
       handle_invalid_voucher
@@ -118,7 +119,10 @@ class VouchersController < ApplicationController
       # no need to send out notifications if the teacher stays the same
       # because then there is no demotion to editor
       # (this case is actually not possible to trigger via the GUI)
-      notify_about_teacher_change(lecture, previous_teacher) if previous_teacher != current_user
+      if previous_teacher != current_user
+        notify_about_teacher_change_by_mail(lecture,
+                                            previous_teacher)
+      end
       voucher.invalidate!
       Redemption.create(user: current_user, voucher: voucher)
     end
@@ -126,6 +130,7 @@ class VouchersController < ApplicationController
     def process_speaker_voucher(voucher, seminar)
       selected_talks = seminar.talks.where(id: check_voucher_params[:talk_ids])
       seminar.update_speaker_status!(current_user, selected_talks)
+      notify_cospeakers_by_mail(current_user, selected_talks)
       Redemption.create(user: current_user, voucher: voucher,
                         claimed_talks: selected_talks)
     end

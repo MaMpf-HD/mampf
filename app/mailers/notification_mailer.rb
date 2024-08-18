@@ -85,6 +85,19 @@ class NotificationMailer < ApplicationMailer
                     new_teacher: @lecture.teacher.tutorial_name))
   end
 
+  def new_speaker_email
+    @talk = params[:talk]
+    @recipient = params[:recipient]
+    @speaker = params[:speaker].info
+    @username = @recipient.tutorial_name
+
+    mail(from: @sender,
+         to: @recipient.email,
+         subject: t("mailer.new_speaker_subject",
+                    seminar: @talk.lecture.title,
+                    title: @talk.to_label))
+  end
+
   def submission_invitation_email
     @recipient = params[:recipient]
     @assignment = params[:assignment]

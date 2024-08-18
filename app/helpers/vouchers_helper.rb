@@ -12,7 +12,7 @@ module VouchersHelper
   end
 
   def talks_with_titles(user, voucher)
-    voucher.lecture.talks_with_speaker(user).map(&:to_label).join("; ")
+    voucher.lecture.talks_with_speaker(user).map(&:to_label).join(", ")
   end
 
   def talk_options(user, voucher)

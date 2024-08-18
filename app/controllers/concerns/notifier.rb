@@ -22,8 +22,22 @@ module Notifier
                       .previous_teacher_email.deliver_later
   end
 
-  def notify_about_teacher_change(lecture, previous_teacher)
+  def notify_about_teacher_change_by_mail(lecture, previous_teacher)
     notify_new_teacher_by_mail(current_user, lecture)
     notify_previous_teacher_by_mail(previous_teacher, lecture)
+  end
+
+  def notify_cospeakers_by_mail(speaker, talks)
+    talks.each do |talk|
+      talk.speakers.each do |cospeaker|
+        next if cospeaker == speaker
+
+        NotificationMailer.with(recipient: cospeaker,
+                                locale: cospeaker.locale,
+                                talk: talk,
+                                speaker: speaker)
+                          .new_speaker_email.deliver_later
+      end
+    end
   end
 end

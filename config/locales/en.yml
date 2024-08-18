@@ -595,9 +595,9 @@ en:
           neither teacher nor course editor, e.g. teaching assistants uploading
           materials for an event series. You can select only users who are
           eligible. In order to grant editing status to users who
-          are not yet eligible you have to
-          create a voucher and communicate the voucher to the user outside of
-          MaMpf. The user can then redeem the voucher in their profile settings.
+          are not yet eligible you have to create a voucher and communicate the
+          voucher to the user outside of MaMpf. The user can then redeem the
+          voucher in their profile settings and will become a lecture editor.
         subscribers_count: >
           This is the number of all users subscribed to this event series in
           their profile settings.
@@ -2178,10 +2178,17 @@ en:
     became_teacher: >
       %{user} has redeemed a teacher voucher and has therefore become teacher
       in the event series.
+    became_speaker: >
+      %{user} has redeemed a speaker voucher and has therefore become speaker
+      in the seminar.
     tutorial_details: >
       Tutorials taken over: %{tutorials}.
+    talk_details: >
+      Talks taken over: %{talks}.
     redemption: 'Voucher redeemed:'
     redemption_in_lecture: 'Voucher redeemed in %{lecture}'
+    no_tutorials_taken: 'No tutorials have been taken over by the redemption.'
+    no_talks_taken: 'No talks have been taken over by the redemption.'
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
@@ -3020,6 +3027,12 @@ en:
       %{new_teacher} has redeemed a teacher voucher and is now the teacher for
       this event series. You are no longer teacher for %{title}, but
       editor instead.
+    new_speaker_subject: 'Additional speaker for %{seminar}, %{title}'
+    new_speaker: >
+      Dear %{username}, in the seminar %{seminar}, %{speaker} has
+      registered as an additional speaker for %{title}.
+      You are no longer the only speaker for this talk.
+      Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can subscribe to it in your profile settings.'
@@ -3390,6 +3403,7 @@ en:
     no_results: No results found
     vouchers: Vouchers
     voucher_for: Voucher for %{sort}
+    speaker: Speaker
     speakers: Speakers
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
@@ -3505,6 +3519,7 @@ en:
     become_editor: 'Become Editor'
     invalidate: 'Invalidate'
     verify_voucher: 'Verify Voucher'
+    edit_talk: 'Edit Talk'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >

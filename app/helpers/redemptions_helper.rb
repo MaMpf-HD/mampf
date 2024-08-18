@@ -2,7 +2,8 @@
 module RedemptionsHelper
   def redemption_notification_card_header(redemption)
     link_to(redemption.lecture.title_for_viewers,
-            edit_lecture_path(redemption.lecture, anchor: "people"),
+            edit_lecture_path(redemption.lecture,
+                              anchor: ("people" unless redemption.speaker?)),
             class: "text-dark")
   end
 
@@ -18,6 +19,8 @@ module RedemptionsHelper
       editor_notification_details(redemption)
     elsif redemption.teacher?
       teacher_notification_details(redemption)
+    else
+      speaker_notification_details(redemption)
     end
   end
 
@@ -28,6 +31,8 @@ module RedemptionsHelper
       editor_notification_item_details(redemption)
     elsif redemption.teacher?
       teacher_notification_item_details(redemption)
+    else
+      speaker_notification_item_details(redemption)
     end
 
     truncate_result(result)
@@ -36,8 +41,11 @@ module RedemptionsHelper
   private
 
     def tutor_notification_item_details(redemption)
-      tutorials = redemption.claimed_tutorials.map(&:title).join(", ")
-      "#{t("basics.tutor")} #{redemption.user.tutorial_name}: #{tutorials}"
+      tutorials = redemption.claimed_tutorials
+      tutorial_details = tutorials.map(&:title).join(", ")
+
+      base_message = "#{t("basics.tutor")} #{redemption.user.tutorial_name}"
+      tutorials.any? ? "#{base_message}: #{tutorial_details}" : base_message
     end
 
     def editor_notification_item_details(redemption)
@@ -48,12 +56,26 @@ module RedemptionsHelper
       "#{t("basics.teacher")} #{redemption.user.tutorial_name}"
     end
 
+    def speaker_notification_item_details(redemption)
+      talks = redemption.claimed_talks
+      talk_details = talks.map(&:to_label).join(", ")
+
+      base_message = "#{t("basics.speaker")} #{redemption.user.tutorial_name}"
+      talks.any? ? "#{base_message}: #{talk_details}" : base_message
+    end
+
     def tutor_notification_details(redemption)
-      details = I18n.t("notifications.became_tutor",
-                       user: redemption.user.info)
-      tutorial_titles = redemption.claimed_tutorials.map(&:title).join(", ")
-      details << I18n.t("notifications.tutorial_details",
-                        tutorials: tutorial_titles)
+      user_info = I18n.t("notifications.became_tutor", user: redemption.user.info)
+      tutorials = redemption.claimed_tutorials
+
+      tutorial_details = if tutorials.present?
+        I18n.t("notifications.tutorial_details",
+               tutorials: tutorials.map(&:title).join(", "))
+      else
+        I18n.t("notifications.no_tutorials_taken")
+      end
+
+      user_info + tutorial_details
     end
 
     def editor_notification_details(redemption)
@@ -62,5 +84,19 @@ module RedemptionsHelper
 
     def teacher_notification_details(redemption)
       I18n.t("notifications.became_teacher", user: redemption.user.info)
+    end
+
+    def speaker_notification_details(redemption)
+      user_info = I18n.t("notifications.became_speaker", user: redemption.user.info)
+      talks = redemption.claimed_talks
+
+      talk_details = if talks.present?
+        I18n.t("notifications.talk_details",
+               talks: talks.map(&:to_label).join(", "))
+      else
+        I18n.t("notifications.no_talks_taken")
+      end
+
+      user_info + talk_details
     end
 end

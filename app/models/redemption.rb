@@ -15,10 +15,9 @@ class Redemption < ApplicationRecord
   delegate :tutor?, to: :voucher
   delegate :editor?, to: :voucher
   delegate :teacher?, to: :voucher
+  delegate :speaker?, to: :voucher
 
   def create_notifications!
-    return if voucher.speaker?
-
     lecture.editors_and_teacher.each do |editor|
       Notification.create(notifiable: self, recipient: editor)
     end

@@ -738,19 +738,25 @@ de:
         voucher_for_tutor: >
           Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um
           TutorInnenstatus für diese Veranstaltung zu erhalten und ggf. direkt
-          Tutorien zu übernehmen.
+          Tutorien zu übernehmen. Außerdem werden sie damit automatisch
+          zu AbonenntInnen dieser Veranstaltung.
         voucher_for_editor: >
           Gutscheine für EditorInnen können von NutzerInnen eingelöst werden, um
           EditorInnenstatus für diese Veranstaltung zu ehalten.
+          Außerdem werden sie damit automatisch zu AbonenntInnen dieser
+          Veranstaltung.
         voucher_for_teacher: >
           Gutscheine für DozentInnen können von NutzerInnen eingelöst werden, um
           DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
           DozentIn wird dann EditorIn. Ein solcher
           Gutschein wird direkt nach dem Einlösen für ungültig erklärt.
+          Außerdem werden die NutzerIn damit automatisch
+          zu einer AbonenntIn dieser Veranstaltung.
         voucher_for_speaker: >
           Gutscheine für Vortragende können von NutzerInnen eingelöst werden, um
           Vortragendenstatus für das Seminar zu erhalten und ggf. direkt
-          Vorträge zu übernehmen.
+          Vorträge zu übernehmen. Außerdem werden sie damit automatisch zu
+          AbonenntInnen des Seminars.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -2224,6 +2230,8 @@ de:
       Tutorien zuweisen. Ggf. kannst Du an dieser Stelle bereits Tutorien
       auswählen, die Du übernehmen möchtest. Die VeranstaltungseditorInnen
       und die DozentIn werden benachrichtigt, wenn Du den Gutschein einlöst.
+      Zudem wird die Veranstaltung automatisch zu Deinen abonnierten
+      Veranstaltungen hinzugefügt.
     already_tutor: >
       Du bist bereits als TutorIn eingetragen für: %{tutorials}.
     new_tutor_select: >
@@ -2238,7 +2246,8 @@ de:
       Du hast bereits einen Gutschein eingelöst, um TutorInnenstatus zu erhalten.
     become_editor: >
       Mit diesem Gutschein erhältst Du EditorInnenstatus für die Veranstaltung
-      %{lecture}.
+      %{lecture}. Zudem wird die Veranstaltung automatisch zu Deinen abonnierten
+      Veranstaltungen hinzugefügt.
     already_editor_by_redemption: >
       Du hast bereits einen Gutschein eingelöst, um EditorInnenstatus zu
       erhalten. Die anderen VeranstaltungseditorInnen und die DozentIn werden
@@ -2250,7 +2259,8 @@ de:
       Mit diesem Gutschein erhältst Du DozentInnenstatus für die Veranstaltung
       %{lecture}. Die bisherige DozentIn erhält EditorInnenstatus.
       Die VeranstaltungseditorInnen werden benachrichtigt,
-      wenn Du den Gutschein einlöst.
+      wenn Du den Gutschein einlöst. Zudem wird die Veranstaltung automatisch
+      zu Deinen abonnierten Veranstaltungen hinzugefügt.
     already_teacher: >
       Du bist bereits DozentIn in dieser Veranstaltung.
     become_speaker: >
@@ -2258,7 +2268,8 @@ de:
       Dadurch können Dir SeminareditorInnen und die DozentIn Vorträge zuweisen.
       Ggf. kannst Du an dieser Stelle bereits Vorträge auswählen, die Du
       übernehmen möchtest. Die SeminareditorInnen und die DozentIn werden
-      benachrichtigt, wenn Du den Gutschein einlöst.
+      benachrichtigt, wenn Du den Gutschein einlöst. Zudem wird das Seminar
+      automatisch zu Deinen abonnierten Veranstaltungen hinzugefügt.
     already_speaker: >
       Du bist bereits VortragendeR in diesem Seminar für: %{talks}.
     all_talks_taken: >
@@ -2312,10 +2323,17 @@ de:
     became_teacher: >
       %{user} hat einen DozentInnen-Gutschein eingelöst und ist jetzt DozentIn
       der Veranstaltung.
+    became_speaker: >
+      %{user} hat einen Vortragenden-Gutschein eingelöst und ist jetzt VortragendeR
+      im Seminar.
     tutorial_details: >
       Neu übernommene Tutorien: %{tutorials}.
+    talk_details: >
+      Neu übernommene Vorträge: %{talks}.
     redemption: 'Gutschein eingelöst:'
     redemption_in_lecture: 'Gutschein eingelöst in %{lecture}'
+    no_tutorials_taken: 'Dabei wurden keine Tutorien übernommen.'
+    no_talks_taken: 'Dabei wurden keine Vorträge übernommen.'
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
@@ -3209,6 +3227,13 @@ de:
       DozentInnenwechsel. %{new_teacher} hat einen DozentInnengutschein eingelöst
       und ist jetzt DozentIn. Du bist nicht mehr DozentIn in %{title}, sondern
       stattdessen VeranstaltungseditorIn.
+    new_speaker_subject: 'WeitereR VortragendeR für %{seminar}, %{title}'
+    new_speaker: >
+      Hallo %{username}, im Seminar %{seminar} hat sich %{speaker}
+      als weitereR VortragendeR für %{title} eingetragen.
+      Du bist jetzt nicht mehr alleinigeR VortragendeR für diesen Vortrag.
+      Wende Dich bitte an Deine DozentIn, wenn Du denkst, dass hier ein Fehler
+      passiert ist.
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
@@ -3583,6 +3608,7 @@ de:
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{sort}
+    speaker: VortragendeR
     speakers: Vortragende
   access:
     unpublished: 'unveröffentlicht'
@@ -3694,6 +3720,7 @@ de:
     become_editor: 'EditorIn werden'
     invalidate: 'Für ungültig erklären'
     verify_voucher: 'Gutschein prüfen'
+    edit_talk: 'Vortrag bearbeiten'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
