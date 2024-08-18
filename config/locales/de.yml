@@ -3541,6 +3541,7 @@ de:
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{sort}
+    speakers: Vortragende
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -4020,6 +4021,8 @@ de:
             sort:
               only_one_active: >
                 Für diese Vorlesung kann es nur einen aktiven Voucher dieses Typs geben.
+              speaker_vouchers_only_for_seminars: >
+                Vortragenden-Gutscheine können nur für Seminare erstellt werden.
         watchlist_entry:
           attributes:
             medium_id:

@@ -496,8 +496,8 @@ en:
       import_chapters: import chapters
       import_sections: import sections
       import_tags: import tags
-      no_active_tutor_voucher: >
-        There are no active tutor vouchers.
+      no_active_voucher: >
+        There is no active %{sort} for this event series.
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -3352,7 +3352,8 @@ en:
     enter_two_letters: enter at least 2 letters
     no_results: No results found
     vouchers: Vouchers
-    voucher_for_tutors: Voucher for tutors
+    voucher_for: Voucher for %{sort}
+    speakers: Speakers
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -3812,6 +3813,8 @@ en:
             sort:
               only_one_active: >
                 There can be only one active voucher of this sort for the lecture.
+              speaker_vouchers_only_for_seminars: >
+                Speaker vouchers are only allowed for seminars.
         watchlist_entry:
           attributes:
             medium_id:
