@@ -11,6 +11,15 @@ module VouchersHelper
     voucher.lecture.tutorials_with_tutor(user).map(&:title).join(", ")
   end
 
+  def talks_with_titles(user, voucher)
+    voucher.lecture.talks_with_speaker(user).map(&:to_label).join("; ")
+  end
+
+  def talk_options(user, voucher)
+    voucher.lecture.talks_without_speaker(user)
+           .map { |t| [t.to_label_with_speakers, t.id] }
+  end
+
   def redeem_voucher_button(voucher)
     link_to(t("profile.redeem_voucher"),
             redeem_voucher_path(params: { secure_hash: voucher.secure_hash }),

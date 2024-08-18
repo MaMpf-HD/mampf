@@ -858,7 +858,7 @@ class Lecture < ApplicationRecord
 
   def update_tutor_status!(user, selected_tutorials)
     tutorials.find_each do |t|
-      add_tutor(t, user) if selected_tutorials.include?(t)
+      t.add_tutor(user) if selected_tutorials.include?(t)
     end
     # touch to invalidate the cache
     touch
@@ -882,6 +882,14 @@ class Lecture < ApplicationRecord
     touch
   end
 
+  def update_speaker_status!(user, selected_talks)
+    talks.find_each do |t|
+      t.add_speaker(user) if selected_talks.include?(t)
+    end
+    # touch to invalidate the cache
+    touch
+  end
+
   def voucher_redeemers(voucher_scope)
     User.where(id: Redemption.where(voucher: voucher_scope).select(:user_id))
   end
@@ -892,6 +900,10 @@ class Lecture < ApplicationRecord
 
   def editors_by_redemption
     voucher_redeemers(vouchers.for_editors)
+  end
+
+  def speakers_by_redemption
+    voucher_redeemers(vouchers.for_speakers)
   end
 
   def eligible_as_tutors
@@ -908,6 +920,13 @@ class Lecture < ApplicationRecord
     # still given by the old system, this will not be true
   end
 
+  def eligible_as_speakers
+    (speakers + speakers_by_redemption + editors + [teacher]).uniq
+    # the first one should (in the future) actually be contained in the sum of
+    # the other ones, but in the transition phase where some editor statuses were
+    # still given by the old system, this will not be true
+  end
+
   def editors_and_teacher
     [teacher] + editors
   end
@@ -918,6 +937,14 @@ class Lecture < ApplicationRecord
 
   def tutorials_without_tutor(tutor)
     tutorials.where.not(id: tutorial_ids_for_tutor(tutor))
+  end
+
+  def talks_with_speaker(speaker)
+    talks.where(id: talk_ids_for_speaker(speaker))
+  end
+
+  def talks_without_speaker(speaker)
+    talks.where.not(id: talk_ids_for_speaker(speaker))
   end
 
   private
@@ -1024,11 +1051,11 @@ class Lecture < ApplicationRecord
       errors.add(:course, :already_present)
     end
 
-    def add_tutor(tutorial, user)
-      tutorial.tutors << user unless tutorial.tutors.include?(user)
-    end
-
     def tutorial_ids_for_tutor(tutor)
       TutorTutorialJoin.where(tutor: tutor).select(:tutorial_id)
+    end
+
+    def talk_ids_for_speaker(speaker)
+      SpeakerTalkJoin.where(speaker: speaker).select(:talk_id)
     end
 end

@@ -30,21 +30,7 @@
       </div>
     </div>
     <div class="col-12 mb-3">
-      <%= f.label :speaker_ids,
-                  t('admin.talk.speakers'),
-                  class: "form-label" %>
-      <%= f.select :speaker_ids,
-                   [[]],
-                   {},
-                   { class: 'selectize',
-                     style: 'display: none;',
-                     multiple: true,
-                     data: { ajax: true,
-                             filled: false,
-                             model: 'user',
-                             placeholder: t('basics.enter_two_letters'),
-                             no_results: t('basics.no_results'),
-                             modal: true } } %>
+      <%= speaker_select(f, talk) %>
     </div>
     <% if lecture.talks.exists? %>
       <div class="col-12 mb-3">

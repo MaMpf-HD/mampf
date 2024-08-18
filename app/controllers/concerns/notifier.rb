@@ -21,4 +21,9 @@ module Notifier
                             lecture: lecture)
                       .previous_teacher_email.deliver_later
   end
+
+  def notify_about_teacher_change(lecture, previous_teacher)
+    notify_new_teacher_by_mail(current_user, lecture)
+    notify_previous_teacher_by_mail(previous_teacher, lecture)
+  end
 end

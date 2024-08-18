@@ -42,4 +42,22 @@ module TalksHelper
   def cospeaker_list(talk, user)
     (talk.speakers.to_a - [user]).map(&:tutorial_name).join(", ")
   end
+
+  def speakers_preselection(talk)
+    options_for_select(talk.lecture.eligible_as_speakers.map do |s|
+                         [s.tutorial_info, s.id]
+                       end, talk.speaker_ids)
+  end
+
+  def speaker_select(form, talk)
+    content_tag(:div, class: "mb-3") do
+      label = form.label(:speaker_ids, t("admin.talk.speakers"),
+                         class: "form-label")
+      help_desk = helpdesk(t("admin.talk.info.speakers"), false)
+      select = form.select(:speaker_ids, speakers_preselection(talk), {},
+                           class: "selectize", multiple: true)
+
+      label + help_desk + select
+    end
+  end
 end

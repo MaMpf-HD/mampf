@@ -612,7 +612,13 @@ de:
           bearbeitungsberechtigte Personen, die verschieden von der
           DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
-          Veranstaltung einpflegen.
+          Veranstaltung einpflegen. Du kannst nur Personen auswählen,
+          die von Ihrem Rechtestatus her dafür in Frage kommen.
+          Um den entsprechenden Rechtestatus an Personen zu vergeben,
+          die ihn bisher noch nicht haben, musst Du einen Voucher
+          erstellen und diesen an die entsprechende Person weitergeben.
+          Die Person kann dann den Voucher auf ihrer Profilseite einlösen
+          und wird dadurch zusätzliche VeranstaltungseditorIn.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese
           Veranstaltung in ihrem Profil abonniert haben.
@@ -1025,6 +1031,15 @@ de:
           nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
           handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
           entfernen.
+        speakers: >
+          Hier kannst Du die Vortragenden eintragen. Diese können
+          den Vortrag bearbeiten und Medien hinzufügen. Du kannst nur Personen
+          auswählen, die den Status "Vortragender" in dem Seminar haben,
+          dazu EditorInnen und Dich selbst. Um Studierenden des Status
+          eines Vortragenden zu geben, musst Du unter "Personen/Tutorien" einen
+          Gutschein erstellen, den die Studierenden einlösen können.
+          Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
+          werden
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -2214,11 +2229,9 @@ de:
     new_tutor_select: >
       Wenn Du schon weißt, welche Tutorien du übernimmst, kannst du diese hier
       auswählen.
-    already_tutor_select: >
-      Du kannst hier weitere Tutorien auswählen, die Du übernimmst.
     select_tutorials: Tutorien auswählen
     take_over_tutorials: Tutorien übernehmen
-    no_tutorials_available: >
+    all_tutorials_taken: >
       Es sind keine weiteren Tutorien verfügbar, die Du noch übernehmen kannst.
     no_tutorials_yet: Für diese Vorlesung wurden noch keine Tutorien angelegt.
     already_tutor_by_redemption: >
@@ -2240,6 +2253,21 @@ de:
       wenn Du den Gutschein einlöst.
     already_teacher: >
       Du bist bereits DozentIn in dieser Veranstaltung.
+    become_speaker: >
+      Mit diesem Gutschein erhältst Du Vortragendenstatus im Seminar %{seminar}.
+      Dadurch können Dir SeminareditorInnen und die DozentIn Vorträge zuweisen.
+      Ggf. kannst Du an dieser Stelle bereits Vorträge auswählen, die Du
+      übernehmen möchtest. Die SeminareditorInnen und die DozentIn werden
+      benachrichtigt, wenn Du den Gutschein einlöst.
+    already_speaker: >
+      Du bist bereits VortragendeR in diesem Seminar für: %{talks}.
+    all_talks_taken: >
+      Es sind keine weiteren Vorträge verfügbar, die Du noch übernehmen kannst.
+    no_talks_yet: Für dieses Seminar wurden noch keine Vorträge angelegt.
+    already_speaker_by_redemption: >
+      Du hast bereits einen Gutschein eingelöst, um Vortragendenstatus zu
+      erhalten.
+    select_talks: Vorträge auswählen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -3073,6 +3101,16 @@ de:
       Der Code ist gültig. Er gehört zu NutzerIn %{user} und zum Quiz %{quiz}.
     certificate_invalid: Der Code ist ungültig.
     teams_as_csv: Teams als .csv
+    info:
+      tutors: >
+        Hier kannst Du TutorInnen für dieses Tutorium eintragen.
+        Diese können Abgaben einsehen und Korrekturen hochladen.
+        Du kannst nur Personen auswählen, die den Status "TutorIn" in der
+        Veranstaltung haben, dazu EditorInnen und Dich selbst.
+        Um Studierenden den Status einer TutorIn zu geben, musst Du
+        einen Gutschein erstellen, den die Studierenden einlösen können.
+        Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
+        werden.
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben

@@ -7,6 +7,8 @@ class Redemption < ApplicationRecord
   has_many :claims, dependent: :destroy
   has_many :claimed_tutorials, through: :claims, source: :claimable,
                                source_type: "Tutorial"
+  has_many :claimed_talks, through: :claims, source: :claimable,
+                           source_type: "Talk"
 
   delegate :lecture, to: :voucher
   delegate :sort, to: :voucher
@@ -15,6 +17,8 @@ class Redemption < ApplicationRecord
   delegate :teacher?, to: :voucher
 
   def create_notifications!
+    return if voucher.speaker?
+
     lecture.editors_and_teacher.each do |editor|
       Notification.create(notifiable: self, recipient: editor)
     end

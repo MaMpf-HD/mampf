@@ -43,6 +43,10 @@ class Tutorial < ApplicationRecord
     end
   end
 
+  def add_tutor(tutor)
+    tutors << tutor unless tutors.include?(tutor)
+  end
+
   private
 
     def check_destructibility

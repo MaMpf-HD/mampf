@@ -593,7 +593,11 @@ en:
         lecture_editors: >
           Additional event series editors can edit event series, but are
           neither teacher nor course editor, e.g. teaching assistants uploading
-          materials for an event series.
+          materials for an event series. You can select only users who are
+          eligible. In order to grant editing status to users who
+          are not yet eligible you have to
+          create a voucher and communicate the voucher to the user outside of
+          MaMpf. The user can then redeem the voucher in their profile settings.
         subscribers_count: >
           This is the number of all users subscribed to this event series in
           their profile settings.
@@ -973,6 +977,14 @@ en:
           talk's page (this box will typically be unchecked if the text is
           still preliminary). You can remove the text from the talk's page
           as teacher.
+        speakers: >
+          Here you can select the speakers of the talk. They can edit the talk
+          and add media to it. You can only select users who have the status of
+          speaker in the seminar, or editors or yourself. In order to grant
+          students the status of speaker, you have to create a voucher in
+          the "People/Tutorials" tab. You have to communicate the voucher to
+          the students outside of MaMpf. The voucher can then be redeemed by the
+          students.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -2075,20 +2087,17 @@ en:
     redeem_voucher: Redeeem Voucher
     become_tutor: >
       With this voucher, you can obtain tutor status for %{lecture}.
-      With that, editors for the event series can assign you tutorials.
-      If applicable, you can select the tutorials you will be responsible for
-      right here. The editors and the teacher will be notified when you have
-      redeemed the voucher.
+      With that, editors for the event series and the teacher can assign you
+      tutorials. If applicable, you can select the tutorials you will be
+      responsible for right here. The editors and the teacher will be notified
+      when you have redeemed the voucher.
     already_tutor: >
       You are already registered as a tutor for: %{tutorials}.
     new_tutor_select: >
       If you already know which tutorials you will be responsible for,
       you can select them here.
-    already_tutor_select: >
-      You can select further tutorials to take over here.
     select_tutorials: Select Tutorials
-    take_over_tutorials: Take Over Tutorials
-    no_tutorials_available: >
+    all_tutorials_taken: >
       There are no more tutorials available for this lecture that you can take
       over.
     no_tutorials_yet: >
@@ -2110,6 +2119,21 @@ en:
       notified when you have redeemed the voucher.
     already_teacher: >
       You are already the teacher for this event series.
+    become_speaker: >
+      With this voucher, you can obtain speaker status for %{seminar}.
+      With that, editors for the seminar and the teacher can assign you talks.
+      If applicable, you can select the talks you will be responsible for
+      right here. The editors and the teacher will be notified when you have
+      redeemed the voucher.
+    already_speaker: >
+      You are already registered as a speaker for: %{talks}.
+    all_talks_taken: >
+      There are no more talks available for this seminar that you can take over.
+    no_talks_yet: >
+      There are no talks available for this seminar yet.
+    already_speaker_by_redemption: >
+      You have already redeemed a speaker voucher for this seminar.
+    select_talks: Select Talks
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2896,6 +2920,15 @@ en:
       The code is valid. It belongs to user %{user} and quiz %{quiz}.
     teams_as_csv: Teams as .csv
     certificate_invalid: This code is invalid.
+    info:
+      tutors:
+        Here you can select the tutors of the tutorial. They can view
+        the submissions and upload corrections.
+        You can only select users who have the status of tutor in the
+        event series, or editors or yourself. In order to grant students the
+        status of tutor, you have to create a voucher.
+        You have to communicate the voucher to the students outside
+        of MaMpf. The students can then redeem the voucher.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions

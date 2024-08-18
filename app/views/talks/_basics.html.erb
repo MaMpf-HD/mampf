@@ -52,18 +52,12 @@
         <%= f.label :speaker_ids,
                     t('admin.talk.speakers'),
                     class: "form-label" %>
+        <%= helpdesk(t('admin.talk.info.speakers'), false) %>
         <%= f.select :speaker_ids,
-                     options_for_select(talk.speakers.map { |s| [s.tutorial_info, s.id] },
-                       talk.speaker_ids),
+                     speakers_preselection(talk),
                      {},
                      { class: 'selectize',
-                       style: 'display: none;',
-                       multiple: true,
-                       data: { ajax: true,
-                               filled: false,
-                               model: 'user',
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results') } } %>
+                       multiple: true } %>
       </div>
     </div>
     <div class="row">

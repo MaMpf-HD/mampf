@@ -21,6 +21,7 @@ class Voucher < ApplicationRecord
                  }
   scope :for_tutors, -> { where(sort: :tutor) }
   scope :for_editors, -> { where(sort: :editor) }
+  scope :for_speakers, -> { where(sort: :speaker) }
 
   self.implicit_order_column = "created_at"
 

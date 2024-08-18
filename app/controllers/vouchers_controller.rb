@@ -70,7 +70,7 @@ class VouchersController < ApplicationController
     end
 
     def check_voucher_params
-      params.permit(:secure_hash, tutorial_ids: [])
+      params.permit(:secure_hash, tutorial_ids: [], talk_ids: [])
     end
 
     def set_voucher
@@ -93,6 +93,8 @@ class VouchersController < ApplicationController
         process_editor_voucher(voucher, lecture)
       elsif voucher.teacher?
         process_teacher_voucher(voucher, lecture)
+      else
+        process_speaker_voucher(voucher, lecture)
       end
     end
 
@@ -113,12 +115,19 @@ class VouchersController < ApplicationController
     def process_teacher_voucher(voucher, lecture)
       previous_teacher = lecture.teacher
       lecture.update_teacher_status!(current_user)
-      if previous_teacher != current_user
-        notify_new_teacher_by_mail(current_user, lecture)
-        notify_previous_teacher_by_mail(previous_teacher, lecture)
-      end
+      # no need to send out notifications if the teacher stays the same
+      # because then there is no demotion to editor
+      # (this case is actually not possible to trigger via the GUI)
+      notify_about_teacher_change(lecture, previous_teacher) if previous_teacher != current_user
       voucher.invalidate!
       Redemption.create(user: current_user, voucher: voucher)
+    end
+
+    def process_speaker_voucher(voucher, seminar)
+      selected_talks = seminar.talks.where(id: check_voucher_params[:talk_ids])
+      seminar.update_speaker_status!(current_user, selected_talks)
+      Redemption.create(user: current_user, voucher: voucher,
+                        claimed_talks: selected_talks)
     end
 
     def success_message(voucher)
