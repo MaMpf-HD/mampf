@@ -1,5 +1,8 @@
 class Voucher < ApplicationRecord
-  SORT_HASH = { tutor: 0, editor: 1, teacher: 2 }.freeze
+  SORT_HASH = { tutor: 0, editor: 1, teacher: 2, speaker: 3 }.freeze
+  SPEAKER_EXPIRATION_DAYS = 30
+  TUTOR_EXPIRATION_DAYS = 14
+  DEFAULT_EXPIRATION_DAYS = 3
 
   enum sort: SORT_HASH
 
@@ -7,6 +10,7 @@ class Voucher < ApplicationRecord
   before_create :generate_secure_hash
   before_create :add_expiration_datetime
   before_create :ensure_no_other_active_voucher
+  before_create :ensure_speaker_vouchers_only_for_seminars
   validates :sort, presence: true
 
   scope :active, lambda {
@@ -16,6 +20,12 @@ class Voucher < ApplicationRecord
 
   self.implicit_order_column = "created_at"
 
+  def self.sorts_for_lecture(lecture)
+    return SORT_HASH.keys if lecture.seminar?
+
+    SORT_HASH.keys - [:speaker]
+  end
+
   private
 
     def generate_secure_hash
@@ -23,7 +33,7 @@ class Voucher < ApplicationRecord
     end
 
     def add_expiration_datetime
-      self.expires_at = created_at + 90.days
+      self.expires_at = created_at + expiration_days.days
     end
 
     def ensure_no_other_active_voucher
@@ -31,7 +41,25 @@ class Voucher < ApplicationRecord
       return unless lecture.vouchers.where(sort: sort).active.any?
 
       errors.add(:sort,
-                 I18n.t("activerecord.errors.models.voucher.attributes.sort.only_one_active"))
+                 I18n.t("activerecord.errors.models.voucher.attributes.sort." \
+                        "only_one_active"))
       throw(:abort)
+    end
+
+    def ensure_speaker_vouchers_only_for_seminars
+      return unless speaker?
+      return if lecture.seminar?
+
+      errors.add(:sort,
+                 I18n.t("activerecord.errors.models.voucher.attributes.sort." \
+                        "speaker_vouchers_only_for_seminars"))
+      throw(:abort)
+    end
+
+    def expiration_days
+      return SPEAKER_EXPIRATION_DAYS if speaker?
+      return TUTOR_EXPIRATION_DAYS if tutor?
+
+      DEFAULT_EXPIRATION_DAYS
     end
 end
