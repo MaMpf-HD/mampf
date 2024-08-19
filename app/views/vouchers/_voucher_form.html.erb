@@ -2,13 +2,15 @@
               remote: true,
               method: :post,
               html: { class: "form-inline" } do |f| %>
+
   <%= f.hidden_field :secure_hash, value: voucher.secure_hash %>
+
   <div class="form-group d-flex">
-    <%= f.select :tutorial_ids,
-                 options_for_select(tutorial_options(current_user, voucher)),
-                 { prompt: t('profile.select_tutorials') },
-                 { multiple: true, class: 'selectize me-2 w-50' } %>
+
+    <%= claim_select_field(f, current_user, voucher) %>
+    
     <%= f.submit t('profile.redeem_voucher'), class: "btn btn-primary" %>
     <%= cancel_voucher_button %>
   </div>
+
 <% end %>

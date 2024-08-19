@@ -31,4 +31,17 @@ module VouchersHelper
     link_to(t("buttons.cancel"), cancel_voucher_path,
             class: "btn btn-secondary ms-2", remote: true)
   end
+
+  def claim_select_field(form, user, voucher)
+    field_name, options, prompt = if voucher.tutor?
+      [:tutorial_ids, tutorial_options(user, voucher), t("profile.select_tutorials")]
+    elsif voucher.speaker?
+      [:talk_ids, talk_options(user, voucher), t("profile.select_talks")]
+    end
+
+    form.select(field_name,
+                options_for_select(options),
+                { prompt: prompt },
+                { multiple: true, class: "selectize me-2 w-50" })
+  end
 end
