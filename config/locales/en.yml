@@ -497,7 +497,7 @@ en:
       import_sections: import sections
       import_tags: import tags
       no_active_voucher: >
-        There is no active %{sort} for this event series.
+        There is no active %{role} for this event series.
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -3401,7 +3401,7 @@ en:
     enter_two_letters: enter at least 2 letters
     no_results: No results found
     vouchers: Vouchers
-    voucher_for: Voucher for %{sort}
+    voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
   warnings:
@@ -3861,9 +3861,9 @@ en:
                 Your vote is outside of the allowed range.
         voucher:
           attributes:
-            sort:
+            role:
               only_one_active: >
-                There can be only one active voucher of this sort for the lecture.
+                There can be only one active voucher of this type for the lecture.
               speaker_vouchers_only_for_seminars: >
                 Speaker vouchers are only allowed for seminars.
         watchlist_entry:

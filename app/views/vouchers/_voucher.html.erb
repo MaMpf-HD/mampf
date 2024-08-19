@@ -1,4 +1,4 @@
-<% voucher = lecture.active_voucher_of_sort(sort) %>
+<% voucher = lecture.active_voucher_of_role(role) %>
 <% if voucher %>
   <div>
     <span>
@@ -38,9 +38,9 @@
 <% else %>
   <p>
     <%= t('admin.lecture.no_active_voucher',
-          sort: t("basics.voucher_for", sort: t("basics.#{sort}s"))) %>
+          role: t("basics.voucher_for", role: t("basics.#{role}s"))) %>
     <%= link_to vouchers_path(params: { lecture_id: lecture.id,
-                                        sort: sort }),
+                                        role: role }),
                 class: 'text-dark ms-2',
                 data: { toggle: 'tooltip',
                         placement: 'bottom' },
