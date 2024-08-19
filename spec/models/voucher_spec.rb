@@ -124,4 +124,15 @@ RSpec.describe(Voucher, type: :model) do
       end
     end
   end
+
+  describe "instance methods" do
+    describe "#invalidate!" do
+      it "sets the invalidated_at attribute to the current time" do
+        voucher = FactoryBot.create(:voucher)
+        expect(voucher.invalidated_at).to be_nil
+        voucher.invalidate!
+        expect(voucher.invalidated_at).not_to be_nil
+      end
+    end
+  end
 end
