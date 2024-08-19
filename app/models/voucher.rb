@@ -19,9 +19,9 @@ class Voucher < ApplicationRecord
                    where("expires_at > ? AND invalidated_at IS NULL",
                          Time.zone.now)
                  }
-  scope :for_tutors, -> { where(sort: :tutor) }
-  scope :for_editors, -> { where(sort: :editor) }
-  scope :for_speakers, -> { where(sort: :speaker) }
+  scope :for_tutors, -> { where(role: :tutor) }
+  scope :for_editors, -> { where(role: :editor) }
+  scope :for_speakers, -> { where(role: :speaker) }
 
   self.implicit_order_column = "created_at"
 

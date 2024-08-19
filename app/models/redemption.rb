@@ -11,7 +11,7 @@ class Redemption < ApplicationRecord
                            source_type: "Talk"
 
   delegate :lecture, to: :voucher
-  delegate :sort, to: :voucher
+  delegate :role, to: :voucher
   delegate :tutor?, to: :voucher
   delegate :editor?, to: :voucher
   delegate :teacher?, to: :voucher

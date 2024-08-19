@@ -18,7 +18,7 @@ class VoucherProcessor < ApplicationService
   private
 
     def process_voucher
-      case @voucher.sort
+      case @voucher.role
       when "tutor"
         process_tutor_voucher
       when "editor"
