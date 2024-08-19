@@ -3,7 +3,7 @@ RSpec.describe(VouchersController, type: :controller) do
   let(:teacher) { FactoryBot.create(:confirmed_user) }
   let(:generic_user) { FactoryBot.create(:confirmed_user) }
   let(:lecture) { FactoryBot.create(:lecture, teacher: teacher) }
-  let(:sort) { :tutor }
+  let(:role) { :tutor }
 
   context "As an authorized user" do
     before do
@@ -13,7 +13,7 @@ RSpec.describe(VouchersController, type: :controller) do
     describe "POST #create" do
       it "creates a new voucher" do
         expect do
-          post(:create, params: { lecture_id: lecture.id, sort: sort })
+          post(:create, params: { lecture_id: lecture.id, role: role })
         end.to change(lecture.vouchers, :count).by(1)
       end
     end
@@ -36,12 +36,12 @@ RSpec.describe(VouchersController, type: :controller) do
     describe "POST #create" do
       it "does not create a new voucher" do
         expect do
-          post(:create, params: { lecture_id: lecture.id, sort: sort })
+          post(:create, params: { lecture_id: lecture.id, role: role })
         end.not_to change(lecture.vouchers, :count)
       end
 
       it "redirects to root path" do
-        post(:create, params: { lecture_id: lecture.id, sort: sort })
+        post(:create, params: { lecture_id: lecture.id, role: role })
         expect(response).to redirect_to(root_path)
       end
     end

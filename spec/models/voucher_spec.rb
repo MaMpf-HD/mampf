@@ -20,10 +20,10 @@ RSpec.describe(Voucher, type: :model) do
     end
 
     describe "#add_expiration_datetime" do
-      let(:voucher) { build(:voucher, sort: sort, created_at: Time.zone.now) }
+      let(:voucher) { build(:voucher, role: role, created_at: Time.zone.now) }
 
       context "when the voucher is for a speaker" do
-        let(:sort) { :speaker }
+        let(:role) { :speaker }
 
         it "sets the expiration date to SPEAKER_EXPIRATION_DAYS from created_at" do
           voucher.save
@@ -34,7 +34,7 @@ RSpec.describe(Voucher, type: :model) do
       end
 
       context "when the voucher is for a tutor" do
-        let(:sort) { :tutor }
+        let(:role) { :tutor }
 
         it "sets the expiration date to TUTOR_EXPIRATION_DAYS from created_at" do
           voucher.save
@@ -44,8 +44,8 @@ RSpec.describe(Voucher, type: :model) do
         end
       end
 
-      context "when the voucher is for another sort" do
-        let(:sort) { :teacher }
+      context "when the voucher is for another role" do
+        let(:role) { :teacher }
 
         it "sets the expiration date to DEFAULT_EXPIRATION_DAYS from created_at" do
           voucher.save
@@ -57,14 +57,14 @@ RSpec.describe(Voucher, type: :model) do
     end
 
     describe "#ensure_no_other_active_voucher" do
-      it "rolls back if there is another active voucher with the same sort for the lecture" do
+      it "rolls back if there is another active voucher with the same role for the lecture" do
         FactoryBot.create(:voucher, :tutor, lecture: lecture)
         new_voucher = build(:voucher, :tutor, lecture: lecture)
 
         expect(new_voucher.save).to be_falsey
-        expect(new_voucher.errors[:sort]).to(
+        expect(new_voucher.errors[:role]).to(
           include(I18n.t("activerecord.errors.models.voucher." \
-                         "attributes.sort.only_one_active"))
+                         "attributes.role.only_one_active"))
         )
       end
     end
@@ -75,7 +75,7 @@ RSpec.describe(Voucher, type: :model) do
 
         it "does not add an error" do
           expect(voucher.save).to be_truthy
-          expect(voucher.errors[:sort]).to be_empty
+          expect(voucher.errors[:role]).to be_empty
         end
       end
 
@@ -84,9 +84,9 @@ RSpec.describe(Voucher, type: :model) do
 
         it "rolls back and adds an error" do
           expect(voucher.save).to be_falsey
-          expect(voucher.errors[:sort]).to(
+          expect(voucher.errors[:role]).to(
             include(I18n.t("activerecord.errors.models.voucher.attributes." \
-                           "sort.speaker_vouchers_only_for_seminars"))
+                           "role.speaker_vouchers_only_for_seminars"))
           )
         end
       end
@@ -114,13 +114,13 @@ RSpec.describe(Voucher, type: :model) do
   end
 
   describe "class methods" do
-    describe ".sorts_for_lecture" do
-      it "returns all sorts if the lecture is a seminar" do
-        expect(Voucher.sorts_for_lecture(seminar)).to eq(Voucher::SORT_HASH.keys)
+    describe ".roles_for_lecture" do
+      it "returns all roles if the lecture is a seminar" do
+        expect(Voucher.roles_for_lecture(seminar)).to eq(Voucher::ROLE_HASH.keys)
       end
 
       it "returns all sorts except :speaker if the lecture is not a seminar" do
-        expect(Voucher.sorts_for_lecture(lecture)).to eq(Voucher::SORT_HASH.keys - [:speaker])
+        expect(Voucher.roles_for_lecture(lecture)).to eq(Voucher::ROLE_HASH.keys - [:speaker])
       end
     end
   end

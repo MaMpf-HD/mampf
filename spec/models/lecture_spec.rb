@@ -86,27 +86,27 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
-  describe "#active_voucher_of_sort" do
+  describe "#active_voucher_of_role" do
     let(:lecture) { FactoryBot.create(:lecture) }
-    let(:sort) { :tutor }
+    let(:role) { :tutor }
 
-    context "when there is an active voucher of the specified sort" do
+    context "when there is an active voucher of the specified role" do
       let!(:active_voucher) do
-        FactoryBot.create(:voucher, sort: sort, lecture: lecture)
+        FactoryBot.create(:voucher, role: role, lecture: lecture)
       end
 
       it "returns the voucher" do
-        expect(lecture.active_voucher_of_sort(sort)).to eq(active_voucher)
+        expect(lecture.active_voucher_of_role(role)).to eq(active_voucher)
       end
     end
 
-    context "when there is no active voucher of the specified sort" do
+    context "when there is no active voucher of the specified role" do
       let!(:inactive_voucher) do
-        FactoryBot.create(:voucher, :expired, sort: sort, lecture: lecture)
+        FactoryBot.create(:voucher, :expired, role: role, lecture: lecture)
       end
 
       it "returns nil" do
-        expect(lecture.active_voucher_of_sort(sort)).to be(nil)
+        expect(lecture.active_voucher_of_role(role)).to be(nil)
       end
     end
   end

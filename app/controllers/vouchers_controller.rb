@@ -36,7 +36,7 @@ class VouchersController < ApplicationController
   private
 
     def voucher_params
-      params.permit(:lecture_id, :sort)
+      params.permit(:lecture_id, :role)
     end
 
     def set_voucher
@@ -48,7 +48,7 @@ class VouchersController < ApplicationController
 
     def set_related_data
       @lecture = @voucher.lecture
-      @sort = @voucher.sort
+      @role = @voucher.role
       I18n.locale = @lecture.locale
     end
 

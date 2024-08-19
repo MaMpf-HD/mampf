@@ -4,15 +4,15 @@
 </h3>
 
 <% if current_user.can_update_personell?(lecture) %>
-  <% Voucher.sorts_for_lecture(lecture).each do |sort| %>
+  <% Voucher.roles_for_lecture(lecture).each do |role| %>
     <h4 class="lecture-pane-subheader">
       <%= t("basics.voucher_for",
-             sort: t("basics.#{sort}s")) %>
+             role: t("basics.#{role}s")) %>
     </h4>
-  <div id='<%= "#{sort}"%>-voucher'>
+  <div id='<%= "#{role}"%>-voucher'>
     <%= render partial: 'vouchers/voucher',
                 locals: { lecture: lecture,
-                          sort: sort } %>
+                          role: role } %>
   </div>
   <% end %>
 <% end %>

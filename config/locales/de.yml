@@ -498,7 +498,7 @@ de:
       import_sections: Abschnitte importieren
       import_tags: Tags importieren
       no_active_voucher: >
-        Es gibt keinen aktiven %{sort} für diese Veranstaltung.
+        Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -3470,7 +3470,7 @@ de:
     no_results: Keine Resultate gefunden
     editors: EditorInnen
     vouchers: Gutscheine
-    voucher_for: Gutschein für %{sort}
+    voucher_for: Gutschein für %{role}
     speakers: Vortragende
   access:
     unpublished: 'unveröffentlicht'
@@ -3942,7 +3942,7 @@ de:
                 Bereiches.
         voucher:
           attributes:
-            sort:
+            role:
               only_one_active: >
                 Für diese Vorlesung kann es nur einen aktiven Voucher dieses Typs geben.
               speaker_vouchers_only_for_seminars: >

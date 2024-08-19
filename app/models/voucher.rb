@@ -1,17 +1,17 @@
 class Voucher < ApplicationRecord
-  SORT_HASH = { tutor: 0, editor: 1, teacher: 2, speaker: 3 }.freeze
+  ROLE_HASH = { tutor: 0, editor: 1, teacher: 2, speaker: 3 }.freeze
   SPEAKER_EXPIRATION_DAYS = 30
   TUTOR_EXPIRATION_DAYS = 14
   DEFAULT_EXPIRATION_DAYS = 3
 
-  enum sort: SORT_HASH
+  enum role: ROLE_HASH
 
   belongs_to :lecture, touch: true
   before_create :generate_secure_hash
   before_create :add_expiration_datetime
   before_create :ensure_no_other_active_voucher
   before_create :ensure_speaker_vouchers_only_for_seminars
-  validates :sort, presence: true
+  validates :role, presence: true
 
   scope :active, lambda {
                    where("expires_at > ? AND invalidated_at IS NULL",
@@ -20,10 +20,10 @@ class Voucher < ApplicationRecord
 
   self.implicit_order_column = "created_at"
 
-  def self.sorts_for_lecture(lecture)
-    return SORT_HASH.keys if lecture.seminar?
+  def self.roles_for_lecture(lecture)
+    return ROLE_HASH.keys if lecture.seminar?
 
-    SORT_HASH.keys - [:speaker]
+    ROLE_HASH.keys - [:speaker]
   end
 
   private
@@ -38,10 +38,10 @@ class Voucher < ApplicationRecord
 
     def ensure_no_other_active_voucher
       return unless lecture
-      return unless lecture.vouchers.where(sort: sort).active.any?
+      return unless lecture.vouchers.where(role: role).active.any?
 
-      errors.add(:sort,
-                 I18n.t("activerecord.errors.models.voucher.attributes.sort." \
+      errors.add(:role,
+                 I18n.t("activerecord.errors.models.voucher.attributes.role." \
                         "only_one_active"))
       throw(:abort)
     end
@@ -50,8 +50,8 @@ class Voucher < ApplicationRecord
       return unless speaker?
       return if lecture.seminar?
 
-      errors.add(:sort,
-                 I18n.t("activerecord.errors.models.voucher.attributes.sort." \
+      errors.add(:role,
+                 I18n.t("activerecord.errors.models.voucher.attributes.role." \
                         "speaker_vouchers_only_for_seminars"))
       throw(:abort)
     end

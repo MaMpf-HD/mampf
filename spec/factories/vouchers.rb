@@ -1,18 +1,18 @@
 FactoryBot.define do
   factory :voucher do
-    sort { :tutor }
+    role { :tutor }
     association :lecture
 
     trait :tutor do
-      sort { :tutor }
+      role { :tutor }
     end
 
     trait :editor do
-      sort { :editor }
+      role { :editor }
     end
 
     trait :teacher do
-      sort { :teacher }
+      role { :teacher }
     end
 
     trait :expired do

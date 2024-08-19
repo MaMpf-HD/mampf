@@ -903,7 +903,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_07_28_123817) do
   end
 
   create_table "vouchers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.integer "sort", null: false
+    t.integer "role", null: false
     t.bigint "lecture_id", null: false
     t.string "secure_hash", null: false
     t.datetime "invalidated_at"
