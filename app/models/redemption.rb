@@ -1,4 +1,4 @@
-# Redempetion class
+# Redemption class
 # redemptions store the event of a user redeeming a voucher
 
 class Redemption < ApplicationRecord
@@ -16,10 +16,4 @@ class Redemption < ApplicationRecord
   delegate :editor?, to: :voucher
   delegate :teacher?, to: :voucher
   delegate :speaker?, to: :voucher
-
-  def create_notifications!
-    lecture.editors_and_teacher.each do |editor|
-      Notification.create(notifiable: self, recipient: editor)
-    end
-  end
 end

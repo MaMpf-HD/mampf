@@ -8,9 +8,9 @@ module Notifier
                       .new_editor_email.deliver_later
   end
 
-  def notify_new_teacher_by_mail(teacher, lecture)
-    NotificationMailer.with(recipient: teacher,
-                            locale: teacher.locale,
+  def notify_new_teacher_by_mail(lecture)
+    NotificationMailer.with(recipient: lecture.teacher,
+                            locale: lecture.teacher.locale,
                             lecture: lecture)
                       .new_teacher_email.deliver_later
   end
@@ -23,7 +23,7 @@ module Notifier
   end
 
   def notify_about_teacher_change_by_mail(lecture, previous_teacher)
-    notify_new_teacher_by_mail(current_user, lecture)
+    notify_new_teacher_by_mail(lecture)
     notify_previous_teacher_by_mail(previous_teacher, lecture)
   end
 

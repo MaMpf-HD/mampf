@@ -47,10 +47,7 @@ class VouchersController < ApplicationController
   def redeem
     voucher = Voucher.check_voucher(check_voucher_params[:secure_hash])
     if voucher
-      lecture = voucher.lecture
-      redemption = process_voucher(voucher, lecture)
-      redemption&.create_notifications!
-      current_user.subscribe_lecture!(lecture)
+      VoucherProcessor.call(voucher, current_user, check_voucher_params)
       redirect_to edit_profile_path, notice: success_message(voucher)
     else
       handle_invalid_voucher
@@ -85,54 +82,6 @@ class VouchersController < ApplicationController
       @lecture = @voucher.lecture
       @sort = @voucher.sort
       I18n.locale = @lecture.locale
-    end
-
-    def process_voucher(voucher, lecture)
-      if voucher.tutor?
-        process_tutor_voucher(voucher, lecture)
-      elsif voucher.editor?
-        process_editor_voucher(voucher, lecture)
-      elsif voucher.teacher?
-        process_teacher_voucher(voucher, lecture)
-      else
-        process_speaker_voucher(voucher, lecture)
-      end
-    end
-
-    def process_tutor_voucher(voucher, lecture)
-      selected_tutorials = lecture.tutorials
-                                  .where(id: check_voucher_params[:tutorial_ids])
-      lecture.update_tutor_status!(current_user, selected_tutorials)
-      Redemption.create(user: current_user, voucher: voucher,
-                        claimed_tutorials: selected_tutorials)
-    end
-
-    def process_editor_voucher(voucher, lecture)
-      lecture.update_editor_status!(current_user)
-      notify_new_editor_by_mail(current_user, lecture)
-      Redemption.create(user: current_user, voucher: voucher)
-    end
-
-    def process_teacher_voucher(voucher, lecture)
-      previous_teacher = lecture.teacher
-      lecture.update_teacher_status!(current_user)
-      # no need to send out notifications if the teacher stays the same
-      # because then there is no demotion to editor
-      # (this case is actually not possible to trigger via the GUI)
-      if previous_teacher != current_user
-        notify_about_teacher_change_by_mail(lecture,
-                                            previous_teacher)
-      end
-      voucher.invalidate!
-      Redemption.create(user: current_user, voucher: voucher)
-    end
-
-    def process_speaker_voucher(voucher, seminar)
-      selected_talks = seminar.talks.where(id: check_voucher_params[:talk_ids])
-      seminar.update_speaker_status!(current_user, selected_talks)
-      notify_cospeakers_by_mail(current_user, selected_talks)
-      Redemption.create(user: current_user, voucher: voucher,
-                        claimed_talks: selected_talks)
     end
 
     def success_message(voucher)

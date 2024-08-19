@@ -3231,7 +3231,6 @@ de:
     new_speaker: >
       Hallo %{username}, im Seminar %{seminar} hat sich %{speaker}
       als weitereR VortragendeR für %{title} eingetragen.
-      Du bist jetzt nicht mehr alleinigeR VortragendeR für diesen Vortrag.
       Wende Dich bitte an Deine DozentIn, wenn Du denkst, dass hier ein Fehler
       passiert ist.
     new_lecture_subject: 'Neue Veranstaltung %{title}'

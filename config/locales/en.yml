@@ -3031,7 +3031,6 @@ en:
     new_speaker: >
       Dear %{username}, in the seminar %{seminar}, %{speaker} has
       registered as an additional speaker for %{title}.
-      You are no longer the only speaker for this talk.
       Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
