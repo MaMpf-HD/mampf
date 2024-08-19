@@ -932,7 +932,7 @@ class Lecture < ApplicationRecord
   end
 
   def editors_and_teacher
-    [teacher] + editors
+    ([teacher] + editors).uniq
   end
 
   def tutorials_with_tutor(tutor)
