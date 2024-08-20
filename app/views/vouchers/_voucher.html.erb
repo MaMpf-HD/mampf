@@ -43,7 +43,8 @@
                                         role: role }),
                 class: 'text-dark ms-2',
                 data: { toggle: 'tooltip',
-                        placement: 'bottom' },
+                        placement: 'bottom',
+                        cy: "create-#{role}-voucher-btn" },
                 title: t('buttons.create_voucher'),
                 method: :post,
                 remote: true do %>
