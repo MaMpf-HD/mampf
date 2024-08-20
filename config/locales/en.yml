@@ -509,6 +509,25 @@ en:
           Normally this should be the person that actually gives the event series.
           If this person does not want to upload materials himself or
           herself, additional event series editors can do this instead.
+        teacher_fixed: >
+          Normally the teacher should be the person that actually gives the
+          event series. If this person does not want to upload materials
+          himself or herself, additional event series editors can do this
+          instead. If the teacher needs to be changed, proceed as follows:
+          Create a voucher for teachers and communicate the voucher to the new
+          teacher outside of MaMpf. This person can then redeem the voucher
+          in their profile settings and will become the new teacher.
+          The previous teacher will be demoted to editor.
+        teacher_fixed_new_lecture: >
+          Normally the teacher should be the person that actually gives the
+          event series. If you are not the actual teacher, you can create
+          the lecture nonetheless with you as teacher and then transfer it
+          to the new teacher. For that, proceed as follows:
+          Create a voucher for teachers in the "People/Tutorials" tab on the
+          lecture's edit page and communicate the voucher to the new teacher
+          outside of MaMpf. This person can then redeem the voucher
+          in their profile settings and will become the new teacher.
+          You will then automatically be demoted to editor.
         workflow: >
           These are possible workflows.
           The workflow depends on whether the event series is

@@ -52,12 +52,12 @@
              id="new-lecture-term-error">
         </div>
       </div>
-      <div class="col-12">
-        <%= f.label :teacher_id,
-                    t('basics.teacher'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
-        <% if current_user.admin? %>
+      <div class="col-12 mt-4">
+        <% if current_user.admin? %>        
+          <%= f.label :teacher_id,
+                      t('basics.teacher'),
+                      class: "form-label" %>
+          <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
           <%= f.select :teacher_id,
                        options_for_select([[current_user.info, current_user.id]],
                                           current_user.id),
@@ -71,10 +71,14 @@
                                  current: current_user.id,
                                  modal: modal } } %>
         <% else %>
-          <%= f.select :teacher_id,
-                       teachers_preselection_for_new_lecture(lecture),
-                       {},
-                       { class: 'selectize' } %>
+          <p>
+            <%= t('basics.teacher') %>
+            <%= helpdesk(t('admin.lecture.info.teacher_fixed_new_lecture'),
+                          false) %>
+          </p>        
+          <p>
+            <%= current_user.info %>
+          </p>
         <% end %>
       </div>
       <div class="col-12" id="newLectureSort"

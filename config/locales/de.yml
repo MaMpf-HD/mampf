@@ -513,6 +513,26 @@ de:
           sich nicht selbst um das Einstellen von Materialien
           kümmern, so kann dies durch zusätzliche
           VeranstaltungseditorInnen geschehen.
+        teacher_fixed: >
+          Die DozentIn sollte im Normalfall diejenige Person sein,
+          die die Veranstaltung hält. Möchte die entsprechende Person
+          sich nicht selbst um das Einstellen von Materialien
+          kümmern, so kann dies durch zusätzliche
+          VeranstaltungseditorInnen geschehen. Soll die DozentIn geändert
+          werden, so kann dies dadurch geschehen, dass ein Gutschein erstellt
+          wird, der an die neue DozentIn weitergegeben wird und von dieser
+          in ihrem Nutzerprofil eingelöst wird. Die bisherige DozentIn wird
+          dann automatisch VeranstaltungeditorIn.
+        teacher_fixed_new_lecture: >
+          Die DozentIn sollte im Normalfall diejenige Person sein,
+          die die Veranstaltung hält. Solltest Du nicht DozentIn der
+          Veranstaltung sein, so kannst Du sie erstmal mit Dir als DozentIn
+          anlegen und danach an die entsprechende Person übertragen.
+          Dies geschieht dadurch, dass auf der Veranstaltungsbearbeitungsseite
+          im Tab "Personen/Tutorien" ein Gutschein erstellt wird,
+          der an die neue DozentIn weitergegeben
+          wird und von dieser in ihrem Nutzerprofil eingelöst wird.
+          Du wirst dann automatisch VeranstaltungeditorIn.
         workflow: >
           Wir beschreiben im Folgenden sinnvolle
           Workflows. Hierbei sollte man unterscheiden, ob die Veranstaltung
