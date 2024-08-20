@@ -9,6 +9,19 @@ help:
     cd {{justfile_directory()}}/docker/development/
     docker compose up {{args}}
 
+# Starts the dev docker containers (detached) & shows MaMpf logs
+up-logs *args:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+    docker compose up -d {{args}}
+    docker compose logs -f mampf
+
+# Shows the log of the specified container
+@logs name="mampf":
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+    docker compose logs -f {{name}}
+
 # Starts the dev docker containers and preseeds the database
 [confirm("This will reset all your data in the database locally. Continue? (y/n)")]
 up-reseed *args:
