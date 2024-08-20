@@ -830,13 +830,6 @@ class Lecture < ApplicationRecord
     User.where(id: SpeakerTalkJoin.where(talk: talks).select(:speaker_id))
   end
 
-  def older_than?(timespan)
-    return false unless Term.active
-    return true unless term
-
-    term.begin_date <= Term.active.begin_date - timespan
-  end
-
   def stale?
     older_than?(1.year)
   end
@@ -947,5 +940,12 @@ class Lecture < ApplicationRecord
       return unless Lecture.where(course: course).any?
 
       errors.add(:course, :already_present)
+    end
+
+    def older_than?(timespan)
+      return false unless Term.active
+      return true unless term
+
+      term.begin_date <= Term.active.begin_date - timespan
     end
 end
