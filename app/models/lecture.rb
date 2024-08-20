@@ -831,6 +831,7 @@ class Lecture < ApplicationRecord
   end
 
   def older_than?(timespan)
+    return false unless Term.active
     return true unless term
 
     term.begin_date <= Term.active.begin_date - timespan
