@@ -67,10 +67,6 @@ class Lecture < ApplicationRecord
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
 
-  # a lecture has many student assistants
-  has_many :contracts, dependent: :destroy
-  # has_many :assistants, -> { distinct }, through: :contracts, source: :assistant
-
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
   serialize :structure_ids, type: Array, coder: YAML
