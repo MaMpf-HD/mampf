@@ -16,7 +16,7 @@ up-logs *args:
     docker compose up -d {{args}}
     docker compose logs -f mampf
 
-# Shows the log of the MaMpf container
+# Shows the log of the specified container
 @logs name="mampf":
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
