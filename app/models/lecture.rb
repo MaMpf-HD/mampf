@@ -830,6 +830,9 @@ class Lecture < ApplicationRecord
     User.where(id: SpeakerTalkJoin.where(talk: talks).select(:speaker_id))
   end
 
+  # Determines if the lecture is stale (i.e. older than one year)
+  # The age of the lecture is determined by the begin date of the term
+  # in which it was given and the begin date of the current term
   def stale?
     older_than?(1.year)
   end
