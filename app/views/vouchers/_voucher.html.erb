@@ -1,15 +1,18 @@
 <% voucher = lecture.active_voucher_of_role(role) %>
 <% if voucher %>
   <div>
-    <span>
+    <span data-cy='<%= "#{role}-voucher-data" %>'>
         <%= t('admin.voucher.secure_hash') %>:
-        <%= voucher.secure_hash %>
+        <span data-cy='<%= "#{role}-voucher-secure-hash" %>'>
+          <%= voucher.secure_hash %>
+        </span>
     </span>
     <i class="clipboardpopup far fa-copy clickable text-secondary clipboard-btn
               ms-3 clipboard-button"
        data-clipboard-text="<%= voucher.secure_hash %>"
        data-bs-toggle="tooltip"
        data-id="<%= voucher.secure_hash %>"
+       data-cy="copy-<%= role %>-voucher-btn"
        title="<%= t('buttons.copy_to_clipboard') %>">
       <span class="clipboardpopuptext token-clipboard-popup"
             data-id="<%= voucher.secure_hash %>">
@@ -20,7 +23,8 @@
                 class: 'text-dark ms-2',
                 data: { toggle: 'tooltip',
                         placement: 'bottom',
-                        confirm: t('confirmation.generic') },
+                        confirm: t('confirmation.generic'),
+                        cy: "invalidate-#{role}-voucher-btn" },
                 style: 'text-decoration: none;',
                 title: t('buttons.invalidate'),
                 method: :post,
