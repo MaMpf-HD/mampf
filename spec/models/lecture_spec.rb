@@ -87,8 +87,6 @@ RSpec.describe(Lecture, type: :model) do
   end
 
   describe "#stale?" do
-    let(:year) { 2024 }
-
     context "when there is no active term" do
       it "returns false" do
         lecture = FactoryBot.build(:lecture)
