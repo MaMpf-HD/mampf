@@ -1,4 +1,4 @@
-<p>
+<p data-cy="redeem-voucher-text">
   <%= t('profile.become_tutor', lecture: voucher.lecture.title) %>
 
   <% if current_user.in?(voucher.lecture.tutors) %>

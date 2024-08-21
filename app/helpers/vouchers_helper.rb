@@ -24,6 +24,7 @@ module VouchersHelper
     link_to(t("profile.redeem_voucher"),
             redeem_voucher_path(params: { secure_hash: voucher.secure_hash }),
             class: "btn btn-primary",
+            data: { cy: "redeem-voucher-btn" },
             method: :post, remote: true)
   end
 
