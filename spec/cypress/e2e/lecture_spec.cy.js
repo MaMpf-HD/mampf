@@ -2,11 +2,9 @@ import FactoryBot from "../support/factorybot";
 
 describe("Lecture edit page", () => {
   it("shows content tab button", function () {
-    cy.createUserAndLogin("teacher").as("teacher");
-
-    cy.then(() => {
+    cy.createUserAndLogin("teacher").then((teacher) => {
       FactoryBot.create("lecture", "with_teacher_by_id",
-        { teacher_id: this.teacher.id }).as("lecture");
+        { teacher_id: teacher.id }).as("lecture");
     });
 
     cy.then(() => {
