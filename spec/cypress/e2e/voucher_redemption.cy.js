@@ -64,18 +64,36 @@ describe("Profile page", () => {
         submitVoucher(this.voucher);
         verifyVoucherRedemption();
       });
+    });
+  });
 
-      describe("if the lecture has no tutorials yet", () => {
-        it("shows a message after submission that there are no tutorials and a redeem voucher button", function () {
-          submitVoucher(this.voucher);
-          verifyNoTutorialsYetMessage(this);
-        });
-
-        it("allows redemption of voucher to become tutor", function () {
-          submitVoucher(this.voucher);
-          redeemVoucherToBecomeTutor(this);
-        });
+  describe("Tutor voucher redemption", () => {
+    describe("if the lecture has no tutorials yet", () => {
+      it("shows a message that there are no tutorials and a redeem voucher button", function () {
+        submitVoucher(this.voucher);
+        verifyNoTutorialsYetMessage(this);
       });
+
+      it("allows redemption of voucher to become tutor", function () {
+        submitVoucher(this.voucher);
+        redeemVoucherToBecomeTutor(this);
+      });
+    });
+
+    describe("if the lecture has tutorials", () => {
+      it("shows a message after submission that there are tutorials and a select form",
+        function () {
+          FactoryBot.create("tutorial", { lecture_id: this.lecture.id })
+            .as("tutorial1");
+          FactoryBot.create("tutorial", { lecture_id: this.lecture.id })
+            .as("tutorial2");
+
+          cy.then(() => {
+            submitVoucher(this.voucher);
+            cy.getBySelector("claim-select").should("be.visible");
+            cy.getBySelector("claim-select").select([this.tutorial1.id, this.tutorial2.id]);
+          });
+        });
     });
   });
 });
