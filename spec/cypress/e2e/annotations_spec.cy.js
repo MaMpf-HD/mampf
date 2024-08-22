@@ -2,7 +2,7 @@ import FactoryBot from "../support/factorybot";
 
 function createLectureLessonMedium(context, teacher) {
   // Lecture
-  FactoryBot.create("lecture_with_sparse_toc", "with_title", "with_teacher_by_id",
+  FactoryBot.create("lecture_with_sparse_toc", "with_title",
     { title: "Groundbreaking lecture", teacher_id: teacher.id }).as("lecture");
 
   // Lesson
