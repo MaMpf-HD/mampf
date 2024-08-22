@@ -68,6 +68,17 @@ describe("If the lecture is not a seminar", () => {
         testInvalidateVoucher(role);
       });
     });
+
+    it.skip("copies the voucher hash to the clipboard", function () {
+      ROLES.filter(role => role !== "speaker").forEach((role) => {
+        cy.getBySelector(`create-${role}-voucher-btn`).click();
+        cy.getBySelector(`${role}-voucher-secure-hash`).then(($hash) => {
+          const hashText = $hash.text();
+          cy.getBySelector(`copy-${role}-voucher-btn`).click();
+          cy.assertCopiedToClipboard(hashText);
+        });
+      });
+    });
   });
 });
 
