@@ -9,7 +9,8 @@
 
     <%= claim_select_field(f, current_user, voucher) %>
     
-    <%= f.submit t('profile.redeem_voucher'), class: "btn btn-primary" %>
+    <%= f.submit t('profile.redeem_voucher'), class: "btn btn-primary",
+                 data: { cy: "claim-submit"} %>
     <%= cancel_voucher_button %>
   </div>
 

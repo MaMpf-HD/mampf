@@ -4,7 +4,7 @@ function createRedemptionScenario(context) {
   cy.createUserAndLogin("generic").as("user");
 
   cy.then(() => {
-    FactoryBot.create("lecture").as("lecture");
+    FactoryBot.create("lecture", "released_for_all", { teacher_id: context.user.id }).as("lecture");
   });
 
   cy.then(() => {
@@ -91,7 +91,11 @@ describe("Profile page", () => {
           cy.then(() => {
             submitVoucher(this.voucher);
             cy.getBySelector("claim-select").should("be.visible");
-            cy.getBySelector("claim-select").select([this.tutorial1.id, this.tutorial2.id]);
+            cy.getBySelector("claim-select").tomselect([this.tutorial1.id, this.tutorial2.id]);
+            cy.getBySelector("claim-submit").click();
+            cy.then(() => {
+              cy.getBySelector("flash-notice").should("be.visible");
+            });
           });
         });
     });
