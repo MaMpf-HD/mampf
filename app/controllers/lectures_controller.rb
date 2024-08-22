@@ -67,6 +67,7 @@ class LecturesController < ApplicationController
 
   def create
     @lecture = Lecture.new(lecture_params)
+    @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
     @lecture.save
     if @lecture.valid?
