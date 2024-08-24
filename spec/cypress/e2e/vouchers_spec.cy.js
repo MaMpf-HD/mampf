@@ -1,12 +1,13 @@
 import FactoryBot from "../support/factorybot";
 
 const ROLES = ["tutor", "editor", "teacher", "speaker"];
+const NO_SEMINAR_ROLES = ROLES.filter(role => role !== "speaker");
 
 function createLectureScenario(context, type = "lecture") {
   cy.createUserAndLogin("teacher").as("teacher");
 
   cy.then(() => {
-    FactoryBot.create(type, "with_teacher_by_id", { teacher_id: context.teacher.id }).as("lecture");
+    FactoryBot.create(type, { teacher_id: context.teacher.id }).as("lecture");
   });
 
   cy.then(() => {
@@ -49,7 +50,7 @@ describe("If the lecture is not a seminar", () => {
     it("shows buttons for creating tutor, editor and teacher vouchers", function () {
       cy.contains(this.vouchers).should("be.visible");
 
-      ROLES.filter(role => role !== "speaker").forEach((role) => {
+      NO_SEMINAR_ROLES.forEach((role) => {
         cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
       });
 
@@ -57,20 +58,20 @@ describe("If the lecture is not a seminar", () => {
     });
 
     it("displays the voucher and invalidate button after the create button is clicked", function () {
-      ROLES.filter(role => role !== "speaker").forEach((role) => {
+      NO_SEMINAR_ROLES.forEach((role) => {
         testCreateVoucher(role);
       });
     });
 
     it("displays that there is no active voucher after the invalidate button is clicked", function () {
-      ROLES.filter(role => role !== "speaker").forEach((role) => {
+      NO_SEMINAR_ROLES.forEach((role) => {
         testCreateVoucher(role);
         testInvalidateVoucher(role);
       });
     });
 
     it.skip("copies the voucher hash to the clipboard", function () {
-      ROLES.filter(role => role !== "speaker").forEach((role) => {
+      NO_SEMINAR_ROLES.forEach((role) => {
         cy.getBySelector(`create-${role}-voucher-btn`).click();
         cy.getBySelector(`${role}-voucher-secure-hash`).then(($hash) => {
           const hashText = $hash.text();
