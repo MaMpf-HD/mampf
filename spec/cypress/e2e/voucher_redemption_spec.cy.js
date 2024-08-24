@@ -1,10 +1,11 @@
 import FactoryBot from "../support/factorybot";
 
 function createRedemptionScenario(context) {
+  cy.createUser("teacher").as("teacher");
   cy.createUserAndLogin("generic").as("user");
 
   cy.then(() => {
-    FactoryBot.create("lecture").as("lecture");
+    FactoryBot.create("lecture", { teacher_id: context.teacher.id }).as("lecture");
   });
 
   cy.then(() => {
@@ -23,7 +24,7 @@ function submitVoucher(voucher) {
   cy.getBySelector("verify-voucher-submit").click();
 }
 
-function verifyVoucherRedemption() {
+function verifyVoucherRedemptionText() {
   cy.getBySelector("redeem-voucher-text").should("be.visible");
 }
 
@@ -44,6 +45,77 @@ function redeemVoucherToBecomeTutor(context) {
   });
 }
 
+function createTutorials(context) {
+  FactoryBot.create("tutorial", { lecture_id: context.lecture.id }).as("tutorial1");
+  FactoryBot.create("tutorial", { lecture_id: context.lecture.id }).as("tutorial2");
+  FactoryBot.create("tutorial", { lecture_id: context.lecture.id }).as("tutorial3");
+}
+
+function selectTutorialsAndSubmit(tutorialIds) {
+  const tutorialIdsAsStrings = tutorialIds.map(id => id.toString());
+
+  cy.getBySelector("claim-select").should("be.visible");
+  cy.getBySelector("claim-select").select(tutorialIdsAsStrings, { force: true });
+  cy.getBySelector("claim-submit").click();
+  console.log(tutorialIds);
+  cy.getBySelector("flash-notice").should("be.visible");
+}
+
+function verifyTutorialRowsContainTutorName(context, tutorialIds) {
+  cy.getBySelector("tutorial-row").should("have.length", 3).each(($el) => {
+    const dataId = parseInt($el.attr("data-id"), 10);
+    console.log(tutorialIds);
+    console.log(dataId);
+    if (tutorialIds.includes(dataId)) {
+      cy.wrap($el).should("contain", context.user.name_in_tutorials);
+    }
+    else {
+      cy.wrap($el).should("not.contain", context.user.name_in_tutorials);
+    }
+  });
+}
+
+function loginAsTeacherAndVisitLectureEdit(context) {
+  cy.logout();
+  cy.login(context.teacher);
+  cy.visit(`/lectures/${context.lecture.id}/edit`);
+  cy.getBySelector("people-tab-btn").click();
+}
+
+function runTutorialTest(tutorialCount) {
+  it(`allows the user to successfully submit ${tutorialCount} tutorial(s) and become their tutor`, function () {
+    createTutorials(this);
+
+    let tutorialIds;
+
+    cy.then(() => {
+      switch (tutorialCount) {
+        case 1:
+          tutorialIds = [this.tutorial1.id];
+          break;
+        case 2:
+          tutorialIds = [this.tutorial1.id, this.tutorial2.id];
+          break;
+        case 3:
+          tutorialIds = [this.tutorial1.id, this.tutorial2.id, this.tutorial3.id];
+          break;
+        default:
+          throw new Error("Invalid tutorial count");
+      }
+      submitVoucher(this.voucher);
+      selectTutorialsAndSubmit(tutorialIds);
+    });
+
+    cy.then(() => {
+      loginAsTeacherAndVisitLectureEdit(this);
+    });
+
+    cy.then(() => {
+      verifyTutorialRowsContainTutorName(this, tutorialIds);
+    });
+  });
+}
+
 describe("Profile page", () => {
   beforeEach(function () {
     createRedemptionScenario(this);
@@ -54,49 +126,41 @@ describe("Profile page", () => {
     cy.getBySelector("verify-voucher-form").should("be.visible");
   });
 
-  describe("Verify voucher form", () => {
-    describe("for tutor vouchers", () => {
-      it("can submit a valid voucher", function () {
-        submitVoucher(this.voucher);
-        verifyVoucherRedemption();
-      });
-    });
-  });
-
   describe("Tutor voucher redemption", () => {
     describe("if the lecture has no tutorials yet", () => {
-      it("shows a message that there are no tutorials and a redeem voucher button", function () {
+      it("allows redemption of voucher to successfully become tutor", function () {
         submitVoucher(this.voucher);
+        verifyVoucherRedemptionText();
         verifyNoTutorialsYetMessage(this);
-      });
 
-      it("allows redemption of voucher to become tutor", function () {
-        submitVoucher(this.voucher);
         cy.then(() => {
           redeemVoucherToBecomeTutor(this);
+        });
+
+        cy.then(() => {
+          loginAsTeacherAndVisitLectureEdit(this);
+        });
+
+        cy.then(() => {
+          cy.getBySelector("tutorial-row").should("not.exist");
+          cy.getBySelector("new-tutorial-btn").should("be.visible").click();
+        });
+
+        cy.then(() => {
+          cy.getBySelector("tutorial-form").should("be.visible");
+          cy.getBySelector("tutor-select").should("be.visible").within(() => {
+            cy.get("option").should("contain", this.user.name_in_tutorials)
+              .and("contain", this.user.email)
+              .and("not.contain", this.user.name);
+          });
         });
       });
     });
 
     describe("if the lecture has tutorials", () => {
-      it("shows a message after submission that there are tutorials and a select form",
-        function () {
-          FactoryBot.create("tutorial", { lecture_id: this.lecture.id })
-            .as("tutorial1");
-          FactoryBot.create("tutorial", { lecture_id: this.lecture.id })
-            .as("tutorial2");
-
-          cy.then(() => {
-            submitVoucher(this.voucher);
-            cy.getBySelector("claim-select").should("be.visible");
-            cy.getBySelector("claim-select")
-              .select([this.tutorial1.id, this.tutorial2.id], { force: true });
-            cy.getBySelector("claim-submit").click();
-            cy.then(() => {
-              cy.getBySelector("flash-notice").should("be.visible");
-            });
-          });
-        });
+      runTutorialTest(1);
+      runTutorialTest(2);
+      runTutorialTest(3);
     });
   });
 });

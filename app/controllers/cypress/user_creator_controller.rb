@@ -14,6 +14,7 @@ module Cypress
       is_admin = (role == "admin")
 
       user = User.create(name: "#{role} Cypress", email: "#{role}@mampf.cypress",
+                         name_in_tutorials: "#{role} Real Cypress Name",
                          password: CYPRESS_PASSWORD, consents: true,
                          admin: is_admin, locale: I18n.default_locale)
       user.confirm
