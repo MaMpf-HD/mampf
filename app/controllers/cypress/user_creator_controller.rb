@@ -1,6 +1,8 @@
 module Cypress
   # Creates a user for use in Cypress tests.
   class UserCreatorController < CypressController
+    CYPRESS_PASSWORD = "cypress123".freeze
+
     def create
       unless params[:role].is_a?(String)
         msg = "First argument must be a string indicating the user role."
@@ -12,11 +14,12 @@ module Cypress
       is_admin = (role == "admin")
 
       user = User.create(name: "#{role} Cypress", email: "#{role}@mampf.cypress",
-                         password: "cypress123", consents: true, admin: is_admin,
-                         locale: I18n.default_locale)
+                         password: CYPRESS_PASSWORD, consents: true,
+                         admin: is_admin, locale: I18n.default_locale)
       user.confirm
 
-      render json: user.to_json, status: :created
+      additional_data = { password: CYPRESS_PASSWORD }
+      render json: user.as_json.merge(additional_data), status: :created
     end
   end
 end
