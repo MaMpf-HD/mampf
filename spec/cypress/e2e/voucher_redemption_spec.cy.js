@@ -4,15 +4,11 @@ function createRedemptionScenario(context) {
   cy.createUserAndLogin("generic").as("user");
 
   cy.then(() => {
-    FactoryBot.create("lecture", "released_for_all", { teacher_id: context.user.id }).as("lecture");
+    FactoryBot.create("lecture").as("lecture");
   });
 
   cy.then(() => {
-    console.log("lecture: ", context.lecture);
-  });
-
-  cy.then(() => {
-    FactoryBot.create("voucher", "with_lecture_by_id", { lecture_id: context.lecture.id }).as("voucher");
+    FactoryBot.create("voucher", { lecture_id: context.lecture.id }).as("voucher");
   });
 
   cy.then(() => {
@@ -76,7 +72,9 @@ describe("Profile page", () => {
 
       it("allows redemption of voucher to become tutor", function () {
         submitVoucher(this.voucher);
-        redeemVoucherToBecomeTutor(this);
+        cy.then(() => {
+          redeemVoucherToBecomeTutor(this);
+        });
       });
     });
 

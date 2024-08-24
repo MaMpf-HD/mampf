@@ -24,12 +24,5 @@ FactoryBot.define do
     trait :invalidated do
       invalidated_at { 1.day.ago }
     end
-
-    trait :with_lecture_by_id do
-      transient do
-        lecture_id { nil }
-      end
-      lecture { Lecture.find(lecture_id) }
-    end
   end
 end
