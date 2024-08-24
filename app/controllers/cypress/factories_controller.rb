@@ -35,7 +35,14 @@ module Cypress
             if value.key?("validate")
               should_validate = (value["validate"] != "false")
             else
-              value.transform_keys(&:to_sym)
+              value.transform_keys(&:to_sym).transform_values do |v|
+                if v.is_a?(Hash) && v.keys.all? { |k| k.match?(/^\d+$/) }
+                  # Convert nested arrays to arrays of strings
+                  v.values.map(&:to_s)
+                else
+                  v
+                end
+              end
             end
           elsif value.is_a?(String)
             value.to_sym
