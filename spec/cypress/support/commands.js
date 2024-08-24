@@ -5,14 +5,6 @@ Cypress.Commands.add("getBySelector", (selector, ...args) => {
   return cy.get(`[data-cy=${selector}]`, ...args);
 });
 
-// Extend the .select() command to automatically set the force: true flag
-Cypress.Commands.add("tomselect", { prevSubject: "element" }, (subject, values, options = {}) => {
-  // Merge the provided options with the force: true option
-  const mergedOptions = { ...options, force: true };
-
-  // Call the original .select() command with the merged options
-  return cy.wrap(subject).select(values, mergedOptions);
-});
 /**
  * Expects the subject to be an anchor element `<a>` with a target attribute set
  * to "_blank", such that the link opens in a new tab.

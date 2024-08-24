@@ -89,7 +89,8 @@ describe("Profile page", () => {
           cy.then(() => {
             submitVoucher(this.voucher);
             cy.getBySelector("claim-select").should("be.visible");
-            cy.getBySelector("claim-select").tomselect([this.tutorial1.id, this.tutorial2.id]);
+            cy.getBySelector("claim-select")
+              .select([this.tutorial1.id, this.tutorial2.id], { force: true });
             cy.getBySelector("claim-submit").click();
             cy.then(() => {
               cy.getBySelector("flash-notice").should("be.visible");
