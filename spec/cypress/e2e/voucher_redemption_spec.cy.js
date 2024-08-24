@@ -51,21 +51,25 @@ function createTutorials(context) {
   FactoryBot.create("tutorial", { lecture_id: context.lecture.id }).as("tutorial3");
 }
 
+function createTutorialsWithTutor(context, tutor) {
+  console.log(tutor.id);
+  FactoryBot.create("tutorial", { lecture_id: context.lecture.id, tutor_ids: [tutor.id] }).as("tutorial1");
+  FactoryBot.create("tutorial", { lecture_id: context.lecture.id, tutor_ids: [tutor.id] }).as("tutorial2");
+  FactoryBot.create("tutorial", { lecture_id: context.lecture.id, tutor_ids: [tutor.id] }).as("tutorial3");
+}
+
 function selectTutorialsAndSubmit(tutorialIds) {
   const tutorialIdsAsStrings = tutorialIds.map(id => id.toString());
 
   cy.getBySelector("claim-select").should("be.visible");
   cy.getBySelector("claim-select").select(tutorialIdsAsStrings, { force: true });
   cy.getBySelector("claim-submit").click();
-  console.log(tutorialIds);
   cy.getBySelector("flash-notice").should("be.visible");
 }
 
 function verifyTutorialRowsContainTutorName(context, tutorialIds) {
   cy.getBySelector("tutorial-row").should("have.length", 3).each(($el) => {
     const dataId = parseInt($el.attr("data-id"), 10);
-    console.log(tutorialIds);
-    console.log(dataId);
     if (tutorialIds.includes(dataId)) {
       cy.wrap($el).should("contain", context.user.name_in_tutorials);
     }
@@ -161,6 +165,16 @@ describe("Profile page", () => {
       runTutorialTest(1);
       runTutorialTest(2);
       runTutorialTest(3);
+    });
+
+    describe("if the lecture has tutorials and the user is already a tutor for all of them", () => {
+      it("displays a message that the user is already a tutor for all tutorials", function () {
+        createTutorialsWithTutor(this, this.user);
+
+        cy.then(() => {
+          submitVoucher(this.voucher);
+        });
+      });
     });
   });
 });
