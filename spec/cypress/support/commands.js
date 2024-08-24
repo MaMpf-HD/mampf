@@ -96,6 +96,19 @@ Cypress.Commands.add("login", (user) => {
       "user[email]": user.email,
       "user[password]": user.password,
     },
+  }).then((response) => {
+    expect(response.status).to.eq(200);
+  });
+});
+
+Cypress.Commands.add("logout", () => {
+  return cy.request({
+    method: "DELETE",
+    url: "/users/sign_out",
+    form: true,
+    failOnStatusCode: true,
+  }).then((response) => {
+    expect(response.status).to.eq(204);
   });
 });
 
