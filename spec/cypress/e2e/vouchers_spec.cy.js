@@ -6,7 +6,7 @@ function createLectureScenario(context, type = "lecture") {
   cy.createUserAndLogin("teacher").as("teacher");
 
   cy.then(() => {
-    FactoryBot.create(type, "with_teacher_by_id", { teacher_id: context.teacher.id }).as("lecture");
+    FactoryBot.create(type, { teacher_id: context.teacher.id }).as("lecture");
   });
 
   cy.then(() => {
