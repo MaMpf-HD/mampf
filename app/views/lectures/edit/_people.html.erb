@@ -9,7 +9,7 @@
             <%= f.label :teacher_id,
                         t('basics.teacher'),
                         class: "form-label" %>
-            <%= helpdesk(t('admin.lecture.info.teacher'), false) %>          
+            <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
             <%= f.select :teacher_id,
                          options_for_select([[lecture.teacher.info,
                          lecture.teacher.id]],
@@ -25,15 +25,15 @@
                                    t('basics.no_results') } } %>
             <div class="invalid-feedback" id="lecture-teacher-error">
             </div>
-          </div>                                   
+          </div>
         <% else %>
           <p>
           <%= t('basics.teacher') %>
           <%= helpdesk(t('admin.lecture.info.teacher_fixed'), false) %>
           </p>
-          <p>
+          <p data-cy="teacher-info">
             <%= lecture.teacher.info %>
-          </p>  
+          </p>
         <% end %>
       </div>
       <div class="col-6 mb-3">
@@ -46,7 +46,8 @@
                        editors_preselection(lecture),
                        {},
                        { multiple: true,
-                         class: 'selectize' } %>
+                         class: 'selectize',
+                         data: { cy: 'lecture-editors-select'} } %>
         </div>
       </div>
     </div>

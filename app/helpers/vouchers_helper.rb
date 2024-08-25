@@ -30,7 +30,8 @@ module VouchersHelper
 
   def cancel_voucher_button
     link_to(t("buttons.cancel"), cancel_voucher_path,
-            class: "btn btn-secondary ms-2", remote: true)
+            class: "btn btn-secondary ms-2", data: { cy: "cancel-voucher-btn" },
+            remote: true)
   end
 
   def claim_select_field(form, user, voucher)

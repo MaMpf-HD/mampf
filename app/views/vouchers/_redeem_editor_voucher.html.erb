@@ -1,4 +1,6 @@
-<%= t('profile.become_editor', lecture: voucher.lecture.title) %>
+<span data-cy="redeem-voucher-text">
+  <%= t('profile.become_editor', lecture: voucher.lecture.title) %>
+</span>
 
 <% if current_user == voucher.lecture.teacher %>
   <%= t('profile.teacher_cant_become_editor') %>

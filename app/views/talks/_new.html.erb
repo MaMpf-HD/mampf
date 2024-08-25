@@ -1,4 +1,4 @@
-<%= form_with model: talk do |f| %>
+<%= form_with model: talk, html: { data: { cy: 'talk-form' } } do |f| %>
   <div class="row">
     <div class="col-12 mb-3">
       <%= f.label :title, t('basics.title'),
