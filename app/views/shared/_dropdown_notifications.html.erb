@@ -10,7 +10,8 @@
           <i class="far fa-bell text-light">
           </i>
           <span class="badge text-dark lecture-tag notificationCounter"
-                data-count="<%= relevant_notifications.count %>">
+                data-count="<%= relevant_notifications.count %>"
+                data-cy="notification-dropdown-counter"">
             <%= relevant_notifications.count %>
           </span>
         </a>
@@ -22,7 +23,7 @@
             <%= t('buttons.toggle') %>
           </span>
         </button>
-        <div class="dropdown-menu">
+        <div class="dropdown-menu" data-cy="notification-dropdown-menu">
           <% relevant_notifications.first(5).each do |n| %>
             <a href="<%= n.path(current_user) %>"
                class="dropdown-item border-top"

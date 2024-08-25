@@ -5,7 +5,9 @@ function createRedemptionScenario(context) {
   cy.createUserAndLogin("generic").as("user");
 
   cy.then(() => {
-    FactoryBot.create("lecture", { teacher_id: context.teacher.id }).as("lecture");
+    FactoryBot.create("lecture",
+      { teacher_id: context.teacher.id },
+      { instance_methods: ["title_for_viewers"] }).as("lecture");
   });
 
   cy.then(() => {
@@ -86,36 +88,15 @@ function loginAsTeacherAndVisitLectureEdit(context) {
   cy.getBySelector("people-tab-btn").click();
 }
 
-function runTutorialTest(tutorialCount) {
-  it(`allows the user to successfully submit ${tutorialCount} tutorial(s) and become their tutor`, function () {
-    createTutorials(this);
-
-    let tutorialIds;
-
-    cy.then(() => {
-      switch (tutorialCount) {
-        case 1:
-          tutorialIds = [this.tutorial1.id];
-          break;
-        case 2:
-          tutorialIds = [this.tutorial1.id, this.tutorial2.id];
-          break;
-        case 3:
-          tutorialIds = [this.tutorial1.id, this.tutorial2.id, this.tutorial3.id];
-          break;
-        default:
-          throw new Error("Invalid tutorial count");
-      }
-      submitVoucher(this.voucher);
-      selectTutorialsAndSubmit(tutorialIds);
-    });
-
-    cy.then(() => {
-      loginAsTeacherAndVisitLectureEdit(this);
-    });
-
-    cy.then(() => {
-      verifyTutorialRowsContainTutorName(this, tutorialIds);
+function verifyNoTutorialsButUserEligibleAsTutor(context) {
+  cy.getBySelector("tutorial-row").should("not.exist");
+  cy.getBySelector("new-tutorial-btn").should("be.visible").click();
+  cy.then(() => {
+    cy.getBySelector("tutorial-form").should("be.visible");
+    cy.getBySelector("tutor-select").should("be.visible").within(() => {
+      cy.get("option").should("contain", context.user.name_in_tutorials)
+        .and("contain", context.user.email)
+        .and("not.contain", context.user.name);
     });
   });
 }
@@ -146,25 +127,51 @@ describe("Profile page", () => {
         });
 
         cy.then(() => {
-          cy.getBySelector("tutorial-row").should("not.exist");
-          cy.getBySelector("new-tutorial-btn").should("be.visible").click();
+          verifyNoTutorialsButUserEligibleAsTutor(this);
         });
 
+        cy.i18n("basics.tutor").as("tutorMessage");
+        cy.i18n("notifications.redemption").as("redemptionMessage");
+        cy.i18n("notifications.no_tutorials_taken").as("noTutorialsTaken");
         cy.then(() => {
-          cy.getBySelector("tutorial-form").should("be.visible");
-          cy.getBySelector("tutor-select").should("be.visible").within(() => {
-            cy.get("option").should("contain", this.user.name_in_tutorials)
-              .and("contain", this.user.email)
-              .and("not.contain", this.user.name);
-          });
+          cy.visit("/main/start");
+          cy.getBySelector("notification-dropdown-counter").should("contain", "1");
+          cy.getBySelector("notification-dropdown-menu").should("contain", this.tutorMessage)
+            .and("contain", this.user.name_in_tutorials);
+          cy.visit("/notifications");
+          cy.getBySelector("notification-card").should("have.length", 1);
+          console.log("hi");
+          console.log(this.lecture);
+          cy.getBySelector("notification-header").should("contain", this.lecture.title_for_viewers);
+          cy.getBySelector("notification-body").should("contain", this.redemptionMessage)
+            .and("contain", this.user.name_in_tutorials).and("contain", this.noTutorialsTaken);
         });
       });
     });
 
     describe("if the lecture has tutorials", () => {
-      runTutorialTest(1);
-      runTutorialTest(2);
-      runTutorialTest(3);
+      it("allows the user to successfully submit tutorials and become their tutor", function () {
+        let tutorialIds;
+
+        createTutorials(this);
+
+        cy.then(() => {
+          tutorialIds = [this.tutorial1.id, this.tutorial2.id];
+        });
+
+        cy.then(() => {
+          submitVoucher(this.voucher);
+          selectTutorialsAndSubmit(tutorialIds);
+        });
+
+        cy.then(() => {
+          loginAsTeacherAndVisitLectureEdit(this);
+        });
+
+        cy.then(() => {
+          verifyTutorialRowsContainTutorName(this, tutorialIds);
+        });
+      });
     });
 
     describe("if the lecture has tutorials and the user is already a tutor for all of them", () => {
