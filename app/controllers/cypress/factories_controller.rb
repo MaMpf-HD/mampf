@@ -7,25 +7,33 @@ module Cypress
   class FactoriesController < CypressController
     # Wrapper around FactoryBot.create to create a factory via a POST request.
     def create
-      unless params["0"].is_a?(String)
-        msg = "First argument must be a string indicating the factory name."
-        msg += " But we got: '#{params["0"]}'"
-        raise(ArgumentError, msg)
-      end
+      validate_factory_name(params["0"])
 
       attributes, should_validate = params_to_attributes(params.except(:controller, :action,
                                                                        :number))
 
-      res = if should_validate
-        FactoryBot.create(*attributes) # default case
-      else
-        FactoryBot.build(*attributes).tap { |instance| instance.save(validate: false) }
-      end
+      # Partition the attributes into valid attributes and instance methods
+      attributes, instance_methods = partition_attributes(attributes)
 
-      render json: res.to_json, status: :created
+      # Extract the values from the instance_methods hashes
+      instance_methods = extract_instance_methods(instance_methods)
+
+      res = create_or_build_factory(attributes, should_validate)
+
+      instance_methods_results = evaluate_instance_methods(res, instance_methods)
+
+      render json: res.as_json.merge(instance_methods_results), status: :created
     end
 
     private
+
+      def validate_factory_name(factory_name)
+        return if factory_name.is_a?(String)
+
+        msg = "First argument must be a string indicating the factory name."
+        msg += " But we got: '#{factory_name}'"
+        raise(ArgumentError, msg)
+      end
 
       def params_to_attributes(params)
         should_validate = true
@@ -35,14 +43,7 @@ module Cypress
             if value.key?("validate")
               should_validate = (value["validate"] != "false")
             else
-              value.transform_keys(&:to_sym).transform_values do |v|
-                if v.is_a?(Hash) && v.keys.all? { |k| k.match?(/^\d+$/) }
-                  # Convert nested arrays to arrays of strings
-                  v.values.map(&:to_s)
-                else
-                  v
-                end
-              end
+              transform_hash(value)
             end
           elsif value.is_a?(String)
             value.to_sym
@@ -52,6 +53,45 @@ module Cypress
         end
 
         return attributes, should_validate
+      end
+
+      def transform_hash(value)
+        value.transform_keys(&:to_sym).transform_values do |v|
+          if v.is_a?(Hash) && v.keys.all? { |k| k.match?(/^\d+$/) }
+            # Convert nested arrays to arrays of strings
+            v.values.map(&:to_s)
+          else
+            v
+          end
+        end
+      end
+
+      def partition_attributes(attributes)
+        attributes.partition do |attr|
+          !(attr.is_a?(Hash) && attr.keys == ["instance_methods"])
+        end
+      end
+
+      def extract_instance_methods(instance_methods)
+        instance_methods.flat_map { |hash| hash["instance_methods"] }
+      end
+
+      def create_or_build_factory(attributes, should_validate)
+        if should_validate
+          FactoryBot.create(*attributes) # default case
+        else
+          FactoryBot.build(*attributes).tap { |instance| instance.save(validate: false) }
+        end
+      end
+
+      def evaluate_instance_methods(instance, methods)
+        methods.index_with do |method_name|
+          if instance.respond_to?(method_name)
+            instance.send(method_name)
+          else
+            throw("Method not found: #{method_name}")
+          end
+        end
       end
   end
 end
