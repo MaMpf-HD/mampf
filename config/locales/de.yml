@@ -3862,6 +3862,7 @@ de:
     become_tutor_success: 'Dein Tutorenstatus wurde geupdatet.'
     become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
     become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
+    become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,

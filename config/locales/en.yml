@@ -3654,6 +3654,8 @@ en:
       Your editor status has been updated.
     become_teacher_success: >
       Your teacher status has been updated.
+    become_speaker_success: >
+      Your speaker status has been updated.
     tutorials:
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
