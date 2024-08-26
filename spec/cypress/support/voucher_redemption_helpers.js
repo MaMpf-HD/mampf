@@ -100,7 +100,7 @@ export function verifyClaimsContainUserName(context, claimType, claimIds, totalC
   });
 }
 
-export function loginAsTeacher(context) {
+export function logoutAndLoginAsTeacher(context) {
   cy.logout();
   cy.login(context.teacher);
 }
@@ -218,6 +218,7 @@ export function visitLectureContentEdit(context) {
 
 export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
   cy.i18n("admin.lecture.no_talks").as("noTalksYet");
+
   cy.then(() => {
     cy.getBySelector("no-talks-yet").should("contain", context.noTalksYet);
     cy.getBySelector("new-talk-btn").should("be.visible");
