@@ -40,11 +40,7 @@ describe("Tutor voucher redemption", () => {
       helpers.visitLectureEdit(this);
       helpers.verifyNoTutorialsButUserEligibleAsTutor(this);
       helpers.verifyRoleNotification(this, "tutor");
-
-      cy.i18n("notifications.no_tutorials_taken").then((noTutorialsTaken) => {
-        cy.getBySelector("notification-body")
-          .should("contain", noTutorialsTaken);
-      });
+      helpers.verifyNothingClaimedInNotification(this, "tutorial");
     });
 
     describe("and the user has already redeemed the voucher", () => {
@@ -115,13 +111,7 @@ describe("Editor voucher redemption", () => {
     helpers.redeemVoucherToBecomeRole(this, "editor");
     helpers.verifyLectureIsSubscribed(this);
     helpers.visitLectureEdit(this);
-
-    cy.getBySelector("lecture-editors-select").within(() => {
-      cy.get("option").should("contain", this.user.name_in_tutorials)
-        .and("contain", this.user.email)
-        .and("not.contain", this.user.name);
-    });
-
+    helpers.verifyUserIsEditor(this);
     helpers.verifyRoleNotification(this, "editor");
   });
 
@@ -189,10 +179,7 @@ describe("Speaker voucher redemption", () => {
       helpers.visitLectureContentEdit(this);
       helpers.verifyNoTalksYetButUserEligibleAsSpeaker(this);
       helpers.verifyRoleNotification(this, "speaker");
-
-      cy.i18n("notifications.no_talks_taken").then((noTalksTaken) => {
-        cy.getBySelector("notification-body").should("contain", noTalksTaken);
-      });
+      helpers.verifyNothingClaimedInNotification(this, "talk");
     });
 
     describe("and the user has already redeemed the voucher", () => {

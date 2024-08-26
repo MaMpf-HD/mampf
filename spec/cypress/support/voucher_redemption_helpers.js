@@ -234,3 +234,20 @@ export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
     });
   });
 }
+
+export function verifyUserIsEditor(context) {
+  cy.getBySelector("lecture-editors-select").within(() => {
+    cy.get("option").should("contain", context.user.name_in_tutorials)
+      .and("contain", context.user.email)
+      .and("not.contain", context.user.name);
+  });
+}
+
+export function verifyNothingClaimedInNotification(context, claimType) {
+  cy.i18n(`notifications.no_${claimType}s_taken`).as("nothingClaimed");
+
+  cy.then(() => {
+    cy.getBySelector("notification-body")
+      .should("contain", context.nothingClaimed);
+  });
+}
