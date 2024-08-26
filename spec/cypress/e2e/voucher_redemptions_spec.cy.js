@@ -1,4 +1,4 @@
-import * as helpers from "../support/voucher_redemption_helpers";
+import * as helpers from "../support/voucher_redemptions_helpers";
 
 describe("Verify Voucher Form", () => {
   beforeEach(function () {
