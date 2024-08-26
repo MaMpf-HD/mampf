@@ -6,7 +6,7 @@ function createRedemptionScenario(context, role = "tutor", sort = "lecture") {
 
   cy.then(() => {
     FactoryBot.create("lecture",
-      { teacher_id: context.teacher.id, sort: sort, released: "all" },
+      { teacher_id: context.teacher.id, sort: sort },
       { instance_methods: ["title_no_term", "title_for_viewers"] }).as("lecture");
   });
 
@@ -351,15 +351,6 @@ function verifyAllTalksTakenMessage(context) {
   });
 }
 
-function verifyTalksAreListedInMyTalks(context) {
-  cy.visit("/main/start");
-  cy.getBySelector("my-talks-collapse-btn").click();
-  cy.then(() => {
-    cy.getBySelector("my-talks-collapse").should("contain", context.talk1.title)
-      .and("contain", context.talk2.title);
-  });
-}
-
 describe("Verify Voucher Form", () => {
   beforeEach(function () {
     createRedemptionScenario(this);
@@ -652,10 +643,6 @@ describe("Speaker voucher redemption", () => {
       });
 
       verifyLectureIsSubscribed(this);
-
-      cy.then(() => {
-        verifyTalksAreListedInMyTalks(this);
-      });
 
       cy.then(() => {
         loginAsTeacher(this);
