@@ -1,5 +1,68 @@
 import * as helpers from "../support/voucher_redemptions_helpers";
 
+function testVoucherRedemptionWithNothingToClaim(context, role, itemType) {
+  helpers.submitVoucher(context.voucher);
+  helpers.verifyVoucherRedemptionText();
+  helpers.verifyNoItemsYetMessage(context, itemType);
+  helpers.redeemVoucherToBecomeRole(context, role);
+  helpers.verifyLectureIsSubscribed(context);
+  helpers.logoutAndLoginAsTeacher(context);
+  helpers.visitEditPage(context, itemType);
+  helpers.verifyNoClaimsYetButUserEligibleForRole(context, role);
+  helpers.verifyRoleNotification(context, role);
+  helpers.verifyNothingClaimedInNotification(context, itemType);
+}
+
+function testVoucherRedemptionWithSomethingClaimed(context, itemType, role) {
+  helpers.createTutorialsOrTalks(context, itemType);
+
+  const itemIds = [];
+  const itemTitles = [];
+
+  cy.then(() => {
+    itemIds.push(context[`${itemType}1`].id, context[`${itemType}2`].id);
+    itemTitles.push(context[`${itemType}1`].title, context[`${itemType}2`].title);
+  });
+
+  cy.then(() => {
+    helpers.submitVoucher(context.voucher);
+    helpers.selectClaimsAndSubmit(itemIds);
+  });
+
+  helpers.verifyLectureIsSubscribed(context);
+  helpers.logoutAndLoginAsTeacher(context);
+  helpers.visitEditPage(context, itemType);
+
+  cy.then(() => {
+    helpers.verifyClaimsContainUserName(context, itemType, itemIds);
+  });
+
+  cy.then(() => {
+    helpers.verifyRoleNotification(context, role);
+    cy.getBySelector("notification-body").should("contain", itemTitles[0])
+      .and("contain", itemTitles[1]);
+  });
+}
+
+function testAlreadyRedeemedVoucher(context, role) {
+  helpers.submitVoucher(context.voucher);
+  helpers.redeemVoucherToBecomeRole(context, role);
+  helpers.submitVoucher(context.voucher);
+  helpers.verifyAlreadyRedeemedVoucherMessage(context, role);
+  helpers.verifyCancelVoucherButton();
+  helpers.logoutAndLoginAsTeacher(context);
+  helpers.verifyNoNewNotification();
+}
+
+function testAlreadyRoleForAllItems(context, itemType) {
+  helpers.createTutorialsOrTalks(context, itemType, context.user);
+  helpers.submitVoucher(context.voucher);
+  helpers.verifyAllItemsTakenMessage(context, itemType);
+  helpers.verifyCancelVoucherButton();
+  helpers.logoutAndLoginAsTeacher(context);
+  helpers.verifyNoNotification();
+}
+
 describe("Verify Voucher Form", () => {
   beforeEach(function () {
     helpers.createRedemptionScenario(this);
@@ -31,70 +94,24 @@ describe("Tutor voucher redemption", () => {
 
   describe("if the lecture has no tutorials yet", () => {
     it("allows redemption of voucher to successfully become tutor", function () {
-      helpers.submitVoucher(this.voucher);
-      helpers.verifyVoucherRedemptionText();
-      helpers.verifyNoItemsYetMessage(this, "tutorial");
-      helpers.redeemVoucherToBecomeRole(this, "tutor");
-      helpers.verifyLectureIsSubscribed(this);
-      helpers.logoutAndLoginAsTeacher(this);
-      helpers.visitLectureEdit(this);
-      helpers.verifyNoTutorialsButUserEligibleAsTutor(this);
-      helpers.verifyRoleNotification(this, "tutor");
-      helpers.verifyNothingClaimedInNotification(this, "tutorial");
+      testVoucherRedemptionWithNothingToClaim(this, "tutor", "tutorial");
     });
 
     describe("and the user has already redeemed the voucher", () => {
       it("displays a message that the user has already redeemed the voucher", function () {
-        helpers.submitVoucher(this.voucher);
-        helpers.redeemVoucherToBecomeRole(this, "tutor");
-        // redeem the voucher again
-        helpers.submitVoucher(this.voucher);
-        helpers.verifyAlreadyRedeemedVoucherMessage(this, "tutor");
-        helpers.verifyCancelVoucherButton();
-        helpers.logoutAndLoginAsTeacher(this);
-        helpers.verifyNoNewNotification();
+        testAlreadyRedeemedVoucher(this, "tutor");
       });
     });
   });
 
   describe("if the lecture has tutorials", () => {
     it("allows the user to successfully submit tutorials and become their tutor", function () {
-      const tutorialIds = [];
-
-      helpers.createTutorialsOrTalks(this, "tutorial");
-
-      cy.then(() => {
-        tutorialIds.push(this.tutorial1.id, this.tutorial2.id);
-      });
-
-      cy.then(() => {
-        helpers.submitVoucher(this.voucher);
-        helpers.selectClaimsAndSubmit(tutorialIds);
-      });
-
-      helpers.verifyLectureIsSubscribed(this);
-      helpers.logoutAndLoginAsTeacher(this);
-      helpers.visitLectureEdit(this);
-
-      cy.then(() => {
-        helpers.verifyClaimsContainUserName(this, "tutorial", tutorialIds);
-      });
-
-      cy.then(() => {
-        helpers.verifyRoleNotification(this, "tutor");
-        cy.getBySelector("notification-body").should("contain", this.tutorial1.title)
-          .and("contain", this.tutorial2.title);
-      });
+      testVoucherRedemptionWithSomethingClaimed(this, "tutorial", "tutor");
     });
 
     describe("and the user is already a tutor for all of them", () => {
       it("displays a message that the user is already a tutor for all tutorials", function () {
-        helpers.createTutorialsOrTalks(this, "tutorial", this.user);
-        helpers.submitVoucher(this.voucher);
-        helpers.verifyAllItemsTakenMessage(this, "tutorial");
-        helpers.verifyCancelVoucherButton();
-        helpers.logoutAndLoginAsTeacher(this);
-        helpers.verifyNoNotification();
+        testAlreadyRoleForAllItems(this, "tutorial");
       });
     });
   });
@@ -110,7 +127,7 @@ describe("Editor voucher redemption", () => {
     helpers.verifyVoucherRedemptionText();
     helpers.redeemVoucherToBecomeRole(this, "editor");
     helpers.verifyLectureIsSubscribed(this);
-    helpers.visitLectureEdit(this);
+    helpers.visitEditPage(this, "editor");
     helpers.verifyUserIsEditor(this);
     helpers.verifyRoleNotification(this, "editor");
   });
@@ -147,7 +164,7 @@ describe("Teacher voucher redemption", () => {
     helpers.verifyVoucherRedemptionText();
     helpers.redeemVoucherToBecomeRole(this, "teacher");
     helpers.verifyLectureIsSubscribed(this);
-    helpers.visitLectureEdit(this);
+    helpers.visitEditPage(this, "teacher");
     helpers.verifyUserIsTeacher(this);
     helpers.verifyPreviousTeacherIsEditor(this);
     helpers.verifyRoleNotification(this, "teacher");
@@ -170,70 +187,24 @@ describe("Speaker voucher redemption", () => {
 
   describe("If the seminar has no talks yet", () => {
     it("allows the user to successfully become a speaker", function () {
-      helpers.submitVoucher(this.voucher);
-      helpers.verifyVoucherRedemptionText();
-      helpers.verifyNoItemsYetMessage(this, "talk");
-      helpers.redeemVoucherToBecomeRole(this, "speaker");
-      helpers.verifyLectureIsSubscribed(this);
-      helpers.logoutAndLoginAsTeacher(this);
-      helpers.visitLectureContentEdit(this);
-      helpers.verifyNoTalksYetButUserEligibleAsSpeaker(this);
-      helpers.verifyRoleNotification(this, "speaker");
-      helpers.verifyNothingClaimedInNotification(this, "talk");
+      testVoucherRedemptionWithNothingToClaim(this, "speaker", "talk");
     });
 
     describe("and the user has already redeemed the voucher", () => {
       it("displays a message that the user has already redeemed the voucher", function () {
-        helpers.submitVoucher(this.voucher);
-        helpers.redeemVoucherToBecomeRole(this, "speaker");
-        // redeem the voucher again
-        helpers.submitVoucher(this.voucher);
-        helpers.verifyAlreadyRedeemedVoucherMessage(this, "speaker");
-        helpers.verifyCancelVoucherButton();
-        helpers.logoutAndLoginAsTeacher(this);
-        helpers.verifyNoNewNotification();
+        testAlreadyRedeemedVoucher(this, "speaker");
       });
     });
   });
 
   describe("if the seminar has talks", () => {
     it("allows the user to successfully submit talks and become their speaker", function () {
-      const talkIds = [];
-
-      helpers.createTutorialsOrTalks(this, "talk");
-
-      cy.then(() => {
-        talkIds.push(this.talk1.id, this.talk2.id);
-      });
-
-      cy.then(() => {
-        helpers.submitVoucher(this.voucher);
-        helpers.selectClaimsAndSubmit(talkIds);
-      });
-
-      helpers.verifyLectureIsSubscribed(this);
-      helpers.logoutAndLoginAsTeacher(this);
-      helpers.visitLectureContentEdit(this);
-
-      cy.then(() => {
-        helpers.verifyClaimsContainUserName(this, "talk", talkIds);
-      });
-
-      cy.then(() => {
-        helpers.verifyRoleNotification(this, "speaker");
-        cy.getBySelector("notification-body").should("contain", this.talk1.title)
-          .and("contain", this.talk2.title);
-      });
+      testVoucherRedemptionWithSomethingClaimed(this, "talk", "speaker");
     });
 
     describe("and the user is already a speaker for all of them", () => {
-      it("displays a message that the user is already a speaker for all talks", function () {
-        helpers.createTutorialsOrTalks(this, "talk", this.user);
-        helpers.submitVoucher(this.voucher);
-        helpers.verifyAllItemsTakenMessage(this, "talk");
-        helpers.verifyCancelVoucherButton();
-        helpers.logoutAndLoginAsTeacher(this);
-        helpers.verifyNoNotification();
+      it("displays a message that the user is already a speaker for all talks ", function () {
+        testAlreadyRoleForAllItems(this, "talk");
       });
     });
   });

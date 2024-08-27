@@ -105,11 +105,6 @@ export function logoutAndLoginAsTeacher(context) {
   cy.login(context.teacher);
 }
 
-export function visitLectureEdit(context) {
-  cy.visit(`/lectures/${context.lecture.id}/edit`);
-  cy.getBySelector("people-tab-btn").click();
-}
-
 export function verifyNoTutorialsButUserEligibleAsTutor(context) {
   cy.getBySelector("tutorial-row").should("not.exist");
   cy.getBySelector("new-tutorial-btn").should("be.visible").click();
@@ -212,8 +207,14 @@ export function verifyAlreadyTeacherMessage(context) {
   });
 }
 
-export function visitLectureContentEdit(context) {
-  cy.visit(`/lectures/${context.lecture.id}/edit`);
+export function visitEditPage(context, type) {
+  if (type === "talk") {
+    cy.visit(`/lectures/${context.lecture.id}/edit`);
+  }
+  else {
+    cy.visit(`/lectures/${context.lecture.id}/edit`);
+    cy.getBySelector("people-tab-btn").click();
+  }
 }
 
 export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
@@ -233,6 +234,10 @@ export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
         .and("not.contain", context.user.name);
     });
   });
+}
+
+export function verifyNoClaimsYetButUserEligibleForRole(context, role) {
+  role === "tutor" ? verifyNoTutorialsButUserEligibleAsTutor(context) : verifyNoTalksYetButUserEligibleAsSpeaker(context);
 }
 
 export function verifyUserIsEditor(context) {
