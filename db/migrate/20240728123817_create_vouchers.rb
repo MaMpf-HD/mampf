@@ -1,6 +1,6 @@
 class CreateVouchers < ActiveRecord::Migration[7.1]
   def change
-    create_table :vouchers, id: :uuid, default: "gen_random_uuid()" do |t|
+    create_table :vouchers, id: :uuid do |t|
       t.integer :role, null: false
       t.references :lecture, null: false, foreign_key: true
       t.string :secure_hash, null: false
