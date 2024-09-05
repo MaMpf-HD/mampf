@@ -32,6 +32,7 @@ describe("Annotations visibility", () => {
         // Disable annotation sharing in lecture settings
         cy.visit(`/lectures/${this.lecture.id}/edit#communication`);
         cy.getBySelector("annotation-lecture-settings")
+          .should("be.visible")
           .find("input[value=0]").should("have.length", 1).click();
 
         // Click on submit button to save changes
@@ -42,16 +43,17 @@ describe("Annotations visibility", () => {
 
         // Make sure that changes were really saved
         cy.reload();
-        cy.getBySelector("annotation-lecture-settings").then(($form) => {
-          cy.wrap($form).find("input[value=0]").should("be.checked");
-          cy.wrap($form).find("input[value=1]").should("not.be.checked");
-        });
+        cy.getBySelector("annotation-lecture-settings")
+          .should("be.visible").then(($form) => {
+            cy.wrap($form).find("input[value=0]").should("be.checked");
+            cy.wrap($form).find("input[value=1]").should("not.be.checked");
+          });
       });
 
       cy.then(() => {
         cy.visit(`/media/${this.medium.id}/feedback`);
 
-        // Annotation visible
+        // Annotation is visible
         cy.getBySelector("feedback-markers")
           .children().should("have.length", 1)
           .click({ force: true });
