@@ -32,7 +32,7 @@
     <!-- No active voucher text -->
     <p>
       <%= t('admin.lecture.no_active_voucher',
-        role: t("basics.voucher_for", role: t("basics.#{role}s"))) %>
+        role: t("basics.voucher_for", role: t("basics.#{role}s")).downcase) %>
     </p>
   <% end %>
 
