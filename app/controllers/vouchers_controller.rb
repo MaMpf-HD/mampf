@@ -1,4 +1,3 @@
-# app/controllers/vouchers_controller.rb
 class VouchersController < ApplicationController
   before_action :set_voucher, only: [:invalidate]
   authorize_resource except: [:create, :redeem]
