@@ -62,8 +62,8 @@
 
 <!-- Expires at text -->
 <% if voucher %>
-<div class="card-footer p-3">
-  <%= t('admin.voucher.expires_at') %>:
-  <%= l(voucher.expires_at, format: :long) %>
-</div>
+  <div class="card-footer p-3">
+    <%= t('admin.voucher.expires_at') %>:
+    <%= l(voucher.expires_at, format: :long) %>
+  </div>
 <% end %>
