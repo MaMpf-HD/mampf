@@ -2056,6 +2056,13 @@ de:
     voucher:
       secure_hash: 'Sicherheits-Hash'
       expires_at: 'Läuft ab'
+      sure_to_delete: 'Bist Du sicher, dass Du diesen Gutschein löschen möchtest?'
+      general_explanation: >
+        Wenn Du jemandem eine Rolle zuweisen möchtest (z.B. jemanden zum Tutor machen),
+        kannst Du hier einen Gutschein erstellen. Dies ist ein spezieller Code,
+        den die Person in ihrem Profil einlösen kann, um die Rolle zu erhalten.
+        Du solltest den Code über ein anderes Medium an die Person senden,
+        z.B. per E-Mail.
   profile:
     account: 'Account'
     name: 'Anzeigename'

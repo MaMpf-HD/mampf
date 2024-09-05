@@ -1934,6 +1934,12 @@ en:
     voucher:
       secure_hash: 'Secure Hash'
       expires_at: 'Expires at'
+      sure_to_delete: 'Are you sure you want to delete this voucher?'
+      general_explanation: >
+        If you want to assign somebody a role (e.g. make them a tutor), you can
+        create a voucher. This is a special code that the person can redeem in
+        their profile to get the role, e.g. to become a tutor for your lecture.
+        You should send the code to the person via a different medium, e.g. email.
   profile:
     account: 'Account'
     name: 'Display name'

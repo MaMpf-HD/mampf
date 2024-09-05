@@ -41,7 +41,7 @@
     <%= link_to invalidate_voucher_path(voucher),
         class: 'btn btn-outline-danger',
         data: { toggle: 'tooltip', placement: 'bottom',
-                confirm: t('confirmation.generic'),
+                confirm: t('admin.voucher.sure_to_delete'),
                 cy: "invalidate-#{role}-voucher-btn" },
         style: 'text-decoration: none;',
         method: :post, remote: true do %>
