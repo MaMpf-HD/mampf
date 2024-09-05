@@ -19,7 +19,7 @@ class Voucher < ApplicationRecord
                          Time.zone.now)
                  }
 
-  self.implicit_order_column = "created_at"
+  self.implicit_order_column = :created_at
 
   def self.roles_for_lecture(lecture)
     return ROLE_HASH.keys if lecture.seminar?
