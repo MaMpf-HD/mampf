@@ -3,16 +3,18 @@
   <%= t('basics.vouchers') %>
 </h3>
 
+<p>
+  Explanation of vouchers generally TODO
+</p>
+
 <% if current_user.can_update_personell?(lecture) %>
+<div class="row row-cols-1 row-cols-md-2 g-4">
   <% Voucher.roles_for_lecture(lecture).each do |role| %>
-    <h4 class="lecture-pane-subheader">
-      <%= t("basics.voucher_for",
-             role: t("basics.#{role}s")) %>
-    </h4>
-  <div id='<%= "#{role}"%>-voucher'>
-    <%= render partial: 'vouchers/voucher',
-                locals: { lecture: lecture,
-                          role: role } %>
-  </div>
+    <div class="col">
+      <div class="card voucher-card" id='<%= "#{role}"%>-voucher'>
+        <%= render partial: 'vouchers/voucher' , locals: { lecture: lecture, role: role } %>
+      </div>
+    </div>
   <% end %>
+</div>
 <% end %>
