@@ -1,16 +1,17 @@
 $(document).on("turbolinks:load", function () {
+  // TODO: this is using clipboard.js, which makes use of deprecated browser APIs
+  // see issue #684
   new Clipboard(".clipboard-btn");
 
   $(document).on("click", ".clipboard-button", function () {
     $(".token-clipboard-popup").removeClass("show");
-    var id = $(this).data("id");
-    $('.token-clipboard-popup[data-id="' + id + '"]').addClass("show");
 
-    var restoreClipboardButton = function () {
-      $('.token-clipboard-popup[data-id="' + id + '"]').removeClass("show");
-    };
+    const popupId = `.token-clipboard-popup[data-id="${$(this).data("id")}"]`;
+    $(popupId).addClass("show");
 
-    setTimeout(restoreClipboardButton, 1500);
+    setTimeout(() => {
+      $(popupId).removeClass("show");
+    }, 1700);
   });
 });
 
