@@ -30,6 +30,7 @@ class VouchersController < ApplicationController
   end
 
   def redeem
+    # TODO: this will be dealt with in the corresponding 2nd PR
     render js: "alert('Voucher redeemed!')"
   end
 
