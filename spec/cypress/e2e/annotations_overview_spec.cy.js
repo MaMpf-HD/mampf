@@ -23,9 +23,9 @@ function createAnnotationScenario(context, userRole = "student") {
   cy.then(() => {
     // a user is considered a teacher only iff they have given any lecture
     const teacherUser = userRole === "teacher" ? context.user : context.teacherUser;
-    FactoryBot.create("lecture_with_sparse_toc", "with_title", "with_teacher_by_id",
+    FactoryBot.create("lecture_with_sparse_toc", "with_title",
       { title: LECTURE_TITLE_1, teacher_id: teacherUser.id }).as("lectureSage");
-    FactoryBot.create("lecture_with_sparse_toc", "with_title", "with_teacher_by_id",
+    FactoryBot.create("lecture_with_sparse_toc", "with_title",
       { title: LECTURE_TITLE_2, teacher_id: teacherUser.id }).as("lectureLean");
   });
 
@@ -80,7 +80,7 @@ describe("Annotation section", () => {
     cy.createUserAndLogin("teacher").as("teacher");
     cy.then(() => {
       // a user is considered a teacher only iff they have given any lecture
-      FactoryBot.create("lecture", "with_teacher_by_id", { teacher_id: this.teacher.id });
+      FactoryBot.create("lecture", { teacher_id: this.teacher.id });
     });
 
     cy.i18n("admin.annotation.your_annotations").as("yourAnnotations");
