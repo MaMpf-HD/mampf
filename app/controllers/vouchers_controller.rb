@@ -1,15 +1,13 @@
 class VouchersController < ApplicationController
-  before_action :set_voucher, only: [:invalidate]
-  authorize_resource except: [:create, :redeem]
+  load_and_authorize_resource
+  before_action :find_voucher, only: :invalidate
 
   def current_ability
     @current_ability ||= VoucherAbility.new(current_user)
   end
 
   def create
-    @voucher = Voucher.new(voucher_params)
     set_related_data
-    authorize! :create, @voucher
     respond_to do |format|
       if @voucher.save
         handle_successful_save(format)
@@ -39,7 +37,7 @@ class VouchersController < ApplicationController
       params.permit(:lecture_id, :role)
     end
 
-    def set_voucher
+    def find_voucher
       @voucher = Voucher.find_by(id: params[:id])
       return if @voucher
 
