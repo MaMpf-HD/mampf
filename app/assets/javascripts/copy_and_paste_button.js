@@ -6,11 +6,22 @@ $(document).on("turbolinks:load", function () {
   $(document).on("click", ".clipboard-button", function () {
     $(".token-clipboard-popup").removeClass("show");
 
-    const popupId = `.token-clipboard-popup[data-id="${$(this).data("id")}"]`;
-    $(popupId).addClass("show");
+    let dataId = $(this).data("id");
+    let popup;
+    if (dataId) {
+      popup = `.token-clipboard-popup[data-id="${$(this).data("id")}"]`;
+    }
+    else {
+      // This is a workaround for the transition to the new ClipboardAPI
+      // as intermediate solution that respects that the whole button should
+      // be clickable, not just the icon itself.
+      // See app/views/vouchers/_voucher.html.erb as an example.
+      popup = $(this).find(".token-clipboard-popup");
+    }
 
+    $(popup).addClass("show");
     setTimeout(() => {
-      $(popupId).removeClass("show");
+      $(popup).removeClass("show");
     }, 1700);
   });
 });

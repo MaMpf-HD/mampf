@@ -9,19 +9,17 @@
   <% if voucher %>
     <!-- Secure hash with copy button -->
     <div class="input-group mb-3">
-      <button class="btn btn-outline-secondary">
-        <i class="clipboardpopup bi bi-clipboard clickable
-                  clipboard-btn clipboard-button"
-            data-clipboard-text="<%= voucher.secure_hash %>"
-            data-bs-toggle="tooltip"
-            data-id="<%= voucher.secure_hash %>"
-            data-cy="copy-<%= role %>-voucher-btn"
-            title="<%= t('buttons.copy_to_clipboard') %>">
-          <span class="clipboardpopuptext token-clipboard-popup"
-                data-id="<%= voucher.secure_hash %>">
+      <button class="btn btn-outline-secondary clipboard-btn clipboard-button"
+              title="<%= t('buttons.copy_to_clipboard')%>"
+              data-clipboard-text="<%= voucher.secure_hash %>"
+              data-cy="copy-<%= role %>-voucher-btn">
+        <i class="bi bi-clipboard"></i>
+        <!-- Currently just a workaround for the clipboard -->
+        <div class="clipboardpopup" style="display: block;">
+          <span class="clipboardpopuptext token-clipboard-popup">
             <%= t('basics.code_copied_to_clipboard') %>
           </span>
-        </i>
+        </div>
       </button>
       <input type="text" class="form-control" disabled
             value="<%= voucher.secure_hash %>"
