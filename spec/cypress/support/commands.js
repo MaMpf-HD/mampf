@@ -67,6 +67,11 @@ Cypress.Commands.add("assertCopiedToClipboard", (_expectedText) => {
   //   .should("equal", expectedText);
 });
 
+Cypress.Commands.add("isValidDate", (date) => {
+  // https://stackoverflow.com/a/1353711/
+  return date instanceof Date && !isNaN(date);
+});
+
 ////////////////////////////////////////////////////////////////////////////////
 // Custom commands for backend interaction
 ////////////////////////////////////////////////////////////////////////////////

@@ -1,4 +1,5 @@
 import FactoryBot from "../support/factorybot";
+import Timecop from "../support/timecop";
 
 const ROLES = ["tutor", "editor", "teacher", "speaker"];
 const ROLES_WITHOUT_SEMINAR = ROLES.filter(role => role !== "speaker");
@@ -42,7 +43,7 @@ function testInvalidateVoucher(role) {
   });
 }
 
-describe("When the lecture is not a seminar", () => {
+context("When the lecture is not a seminar", () => {
   beforeEach(function () {
     createLectureScenario(this);
   });
@@ -84,7 +85,7 @@ describe("When the lecture is not a seminar", () => {
   });
 });
 
-describe("When the lecture is a seminar", () => {
+context("When the lecture is a seminar", () => {
   beforeEach(function () {
     createLectureScenario(this, "seminar");
   });
@@ -108,6 +109,63 @@ describe("When the lecture is a seminar", () => {
         testCreateVoucher(role);
         testInvalidateVoucher(role);
       });
+    });
+  });
+});
+
+context("When traveling into the future", () => {
+  beforeEach(function () {
+    createLectureScenario(this, "seminar");
+  });
+
+  afterEach(() => {
+    Timecop.reset();
+  });
+
+  it("does not show expired vouchers (far in the future)", function () {
+    ROLES.forEach((role) => {
+      testCreateVoucher(role);
+    });
+
+    // This behavior is more extensively tested via unit tests in the backend.
+    // This is just a sanity check where we travel *far* into the future.
+    Timecop.moveAheadDays(1000).then(() => {
+      cy.reload();
+      ROLES.forEach((role) => {
+        cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
+        cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
+        cy.getBySelector(`${role}-voucher-secure-hash`).should("not.exist");
+      });
+    });
+  });
+
+  function testExpiresAtTravel(role) {
+    // find date string, read it, then travel to that date (+1 minute)
+    cy.getBySelector(`${role}-voucher-expires-at`).then(($expiresAt) => {
+      const date = new Date($expiresAt.text());
+      date.setMinutes(date.getMinutes() + 1);
+      cy.isValidDate(date).then((isValid) => {
+        expect(isValid).to.be.true;
+      });
+
+      cy.log(`Traveling to ${date.toISOString()} (UTC)`);
+      Timecop.travelToDate(date, true);
+    });
+
+    cy.then(() => {
+      cy.reload();
+      cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
+      cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
+      cy.getBySelector(`${role}-voucher-secure-hash`).should("not.exist");
+    });
+
+    Timecop.reset();
+  }
+
+  it.only("shows only non-expired vouchers (near future)", function () {
+    ROLES.forEach((role) => {
+      testCreateVoucher(role);
+      testExpiresAtTravel(role);
     });
   });
 });

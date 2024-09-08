@@ -63,5 +63,8 @@
   <div class="card-footer p-3">
     <%= t('admin.voucher.expires_at') %>:
     <%= l(voucher.expires_at, format: :long) %>
+    <span data-cy='<%= "#{role}-voucher-expires-at" %>' style="display: none;">
+      <%= voucher.expires_at %>
+    </span>
   </div>
 <% end %>

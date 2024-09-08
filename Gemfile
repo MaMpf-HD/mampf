@@ -127,6 +127,7 @@ group :test do
   gem "faker"
   gem "launchy"
   gem "simplecov", require: false
+  gem "timecop", "~> 0.9.10"
   gem "webdrivers"
 end
 
@@ -134,11 +135,9 @@ group :test, :development, :docker_development do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem "byebug", platforms: [:mri, :mingw, :x64_mingw]
   gem "factory_bot_rails"
-  gem "rspec-rails"
-
-  gem "simplecov-cobertura"
-
   gem "rspec-github"
+  gem "rspec-rails"
+  gem "simplecov-cobertura"
 end
 
 gem "prometheus_exporter"
