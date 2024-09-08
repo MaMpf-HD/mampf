@@ -726,7 +726,7 @@ DEPENDENCIES
   rubocop-rails (~> 2.24)
   rubyzip (~> 2.3)
   sass-rails (~> 6.0)
-  selenium-webdriver
+  selenium-webdriver (~> 4.10.0)
   shrine (~> 3.6)
   sidekiq (~> 7.3)
   sidekiq-cron (~> 1.12)
