@@ -162,7 +162,7 @@ context("When traveling into the future", () => {
     Timecop.reset();
   }
 
-  it.only("shows only non-expired vouchers (near future)", function () {
+  it("shows only non-expired vouchers (near future)", function () {
     ROLES.forEach((role) => {
       testCreateVoucher(role);
       testExpiresAtTravel(role);
