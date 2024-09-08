@@ -19,28 +19,28 @@ function createLectureScenario(context, type = "lecture") {
   cy.i18n("basics.vouchers").as("vouchers");
 }
 
+function assertVoucherShown(role) {
+  cy.getBySelector(`create-${role}-voucher-btn`).should("not.exist");
+  cy.getBySelector(`invalidate-${role}-voucher-btn`).should("be.visible");
+  cy.getBySelector(`${role}-voucher-secure-hash`)
+    .invoke("val").should("match", /^([a-z0-9]){32}$/);
+}
+
+function assertVoucherNotShown(role) {
+  cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
+  cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
+  cy.getBySelector(`${role}-voucher-secure-hash`).should("not.exist");
+}
+
 function testCreateVoucher(role) {
   cy.getBySelector(`create-${role}-voucher-btn`).click();
-
-  cy.then(() => {
-    cy.getBySelector(`create-${role}-voucher-btn`).should("not.exist");
-    cy.getBySelector(`invalidate-${role}-voucher-btn`).should("be.visible");
-    cy.getBySelector(`${role}-voucher-secure-hash`)
-      .invoke("val").should("match", /^([a-z0-9]){32}$/);
-  });
+  assertVoucherShown(role);
 }
 
 function testInvalidateVoucher(role) {
   cy.getBySelector(`invalidate-${role}-voucher-btn`).click();
-
-  // Confirm popup
-  cy.on("window:confirm", () => true);
-
-  cy.then(() => {
-    cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
-    cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
-    cy.getBySelector(`${role}-voucher-secure-hash`).should("not.exist");
-  });
+  cy.on("window:confirm", () => true); // Confirm popup
+  assertVoucherNotShown(role);
 }
 
 context("When the lecture is not a seminar", () => {
@@ -132,40 +132,36 @@ context("When traveling into the future", () => {
     Timecop.moveAheadDays(1000).then(() => {
       cy.reload();
       ROLES.forEach((role) => {
-        cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
-        cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
-        cy.getBySelector(`${role}-voucher-secure-hash`).should("not.exist");
+        assertVoucherNotShown(role);
       });
     });
   });
-
-  function testExpiresAtTravel(role) {
-    // find date string, read it, then travel to that date (+1 minute)
-    cy.getBySelector(`${role}-voucher-expires-at`).then(($expiresAt) => {
-      const date = new Date($expiresAt.text());
-      date.setMinutes(date.getMinutes() + 1);
-      cy.isValidDate(date).then((isValid) => {
-        expect(isValid).to.be.true;
-      });
-
-      cy.log(`Traveling to ${date.toISOString()} (UTC)`);
-      Timecop.travelToDate(date, true);
-    });
-
-    cy.then(() => {
-      cy.reload();
-      cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
-      cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
-      cy.getBySelector(`${role}-voucher-secure-hash`).should("not.exist");
-    });
-
-    Timecop.reset();
-  }
 
   it("shows only non-expired vouchers (near future)", function () {
     ROLES.forEach((role) => {
       testCreateVoucher(role);
       testExpiresAtTravel(role);
     });
+
+    function testExpiresAtTravel(role) {
+    // find date string, read it, then travel to that date (+1 minute)
+      cy.getBySelector(`${role}-voucher-expires-at`).then(($expiresAt) => {
+        const date = new Date($expiresAt.text());
+        date.setMinutes(date.getMinutes() + 1);
+        cy.isValidDate(date).then((isValid) => {
+          expect(isValid).to.be.true;
+        });
+
+        cy.log(`Traveling to ${date.toISOString()} (UTC)`);
+        Timecop.travelToDate(date, true);
+      });
+
+      cy.then(() => {
+        cy.reload();
+        assertVoucherNotShown(role);
+      });
+
+      Timecop.reset();
+    }
   });
 });
