@@ -3,7 +3,7 @@ import FactoryBot from "../support/factorybot";
 describe("Lecture edit page", () => {
   it("shows content tab button", function () {
     cy.createUserAndLogin("teacher").then((teacher) => {
-      FactoryBot.create("lecture", "with_teacher_by_id",
+      FactoryBot.create("lecture",
         { teacher_id: teacher.id }).as("lecture");
     });
 
