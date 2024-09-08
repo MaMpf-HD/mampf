@@ -137,7 +137,7 @@ context("When traveling into the future", () => {
     });
   });
 
-  it("shows only non-expired vouchers (near future)", function () {
+  it("does not show expired vouchers (near future)", function () {
     ROLES.forEach((role) => {
       testCreateVoucher(role);
       textExpiresAtWithTimeTravel(role);
