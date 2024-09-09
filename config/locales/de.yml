@@ -497,6 +497,8 @@ de:
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
       import_tags: Tags importieren
+      no_active_voucher: >
+        Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
@@ -2051,6 +2053,16 @@ de:
       new: 'Neues Tutorium anlegen'
     assignment:
       new: 'Neue Hausaufgabe anlegen'
+    voucher:
+      secure_hash: 'Sicherheits-Hash'
+      expires_at: 'Läuft ab'
+      sure_to_delete: 'Bist Du sicher, dass Du diesen Gutschein löschen möchtest?'
+      general_explanation: >
+        Wenn Du jemandem eine Rolle zuweisen möchtest (z.B. jemanden zum Tutor machen),
+        kannst Du hier einen Gutschein erstellen. Dies ist ein spezieller Code,
+        den die Person in ihrem Profil einlösen kann, um die Rolle zu erhalten.
+        Du solltest den Code über ein anderes Medium an die Person senden,
+        z.B. per E-Mail.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -2181,6 +2193,7 @@ de:
       Daten anfordern
     data_request_sent: >
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
+    redeem_voucher: Gutschein einlösen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -3462,6 +3475,10 @@ de:
     together_with: zusammen mit
     enter_two_letters: mind. 2 Zeichen eingeben
     no_results: Keine Resultate gefunden
+    editors: EditorInnen
+    vouchers: Gutscheine
+    voucher_for: Gutschein für %{role}
+    speakers: Vortragende
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
@@ -3492,6 +3509,7 @@ de:
     create_program: 'Studiengang anlegen'
     create_subject: 'Fach anlegen'
     create_division: 'Teilbereich anlegen'
+    create_voucher: 'Gutschein anlegen'
     create: 'Anlegen'
     edit: 'Bearbeiten'
     content: 'Inhalt'
@@ -3568,6 +3586,7 @@ de:
     cancel_publication: 'Stornieren'
     import_lecture_toc: 'Gliederung importieren'
     import_toc: 'Importieren'
+    invalidate: 'Für ungültig erklären'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.
@@ -3685,6 +3704,7 @@ de:
       abgegeben werden.
     no_assignments_in_lecture: >
       In dieser Veranstaltung gibt es bisher keine Hausaufgaben.
+    no_voucher: 'Ein Gutschein mit der angeforderten id existiert nicht.'
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
@@ -3927,6 +3947,13 @@ de:
               out_of_range: >
                 Das abgegebene Votum ist leider außerhalb des zulässingen
                 Bereiches.
+        voucher:
+          attributes:
+            role:
+              only_one_active: >
+                Für diese Vorlesung kann es nur einen aktiven Voucher dieses Typs geben.
+              speaker_vouchers_only_for_seminars: >
+                Vortragenden-Gutscheine können nur für Seminare erstellt werden.
         watchlist_entry:
           attributes:
             medium_id:

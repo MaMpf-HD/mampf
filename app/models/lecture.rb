@@ -63,6 +63,10 @@ class Lecture < ApplicationRecord
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
 
+  # a lecture has many vouchers that can be redeemed to promote
+  # users to tutors, editors or teachers
+  has_many :vouchers, dependent: :destroy
+
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
   serialize :structure_ids, type: Array, coder: YAML
@@ -839,6 +843,10 @@ class Lecture < ApplicationRecord
 
   def valid_annotations_status?
     [0, 1].include?(annotations_status)
+  end
+
+  def active_voucher_of_role(role)
+    vouchers.where(role: role).active&.first
   end
 
   private

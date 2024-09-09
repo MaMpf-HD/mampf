@@ -27,6 +27,7 @@
 //= require bootstrap_popovers
 //= require chapters
 //= require clickers
+//= require copy_and_paste_button
 //= require courses
 //= require erdbeere
 //= require file_upload

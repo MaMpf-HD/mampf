@@ -6,7 +6,7 @@
       <%= render partial: 'lectures/edit/header',
           locals: { lecture: lecture } %>
     </div>
-    
+
     <!-- Menu to switch between "tabs" ("pillars") -->
     <nav>
       <div class="nav nav-pills container small-width flex-column flex-sm-row"
@@ -86,7 +86,7 @@
           </div>
         </div>
       </div>
-      
+
       <!-- Settings -->
       <div class="tab-pane fade" id="lecture-pane-settings"
           role="tabpanel" aria-labelledby="lecture-nav-settings" tabindex="0">
@@ -101,6 +101,8 @@
           role="tabpanel" aria-labelledby="lecture-nav-people" tabindex="0">
         <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/people',
+              locals: { lecture: lecture } %>
+          <%= render partial: 'lectures/edit/vouchers',
               locals: { lecture: lecture } %>
           <%= render partial: 'lectures/edit/tutorials',
               locals: { lecture: lecture } %>
@@ -146,7 +148,7 @@
             <%= t('basics.course_editors') %>
               <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
           </h3>
-          
+
           <div class="col-4">
             <% if lecture.course.editors.present? %>
               <ul>
@@ -180,7 +182,7 @@
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/publish/publish',
              locals: { lecture: lecture } %>
-   
+
   <% unless lecture.stale? %>
     <%= render partial: 'lectures/edit/user_modal',
                locals: { lecture: lecture } %>

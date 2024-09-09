@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :i18n, only: :create
+      post "timecop/travel", to: "timecop#travel"
+      post "timecop/reset", to: "timecop#reset"
     end
   end
 
@@ -810,6 +812,16 @@ Rails.application.routes.draw do
       as: "delete_account"
 
   resources :users, only: [:index, :edit, :update, :destroy]
+
+  post "vouchers/redeem",
+       to: "vouchers#redeem",
+       as: "redeem_voucher"
+
+  post "vouchers/:id/invalidate",
+       to: "vouchers#invalidate",
+       as: "invalidate_voucher"
+
+  resources :vouchers, only: [:create]
 
   # watchlists routes
 

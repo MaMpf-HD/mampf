@@ -1,0 +1,2 @@
+$("#<%= @role %>-voucher").empty()
+  .append("<%= j render partial: 'vouchers/voucher', locals: { lecture: @lecture, role: @role } %>");

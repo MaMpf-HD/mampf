@@ -109,6 +109,25 @@
   </div>
 <% end %>
 <div class="row mb-3">
+  <div class="col-12">
+    <div class="card bg-light">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-12">
+            <h5>
+              <%= t('profile.redeem_voucher') %>
+            </h5>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <%= render partial: 'profile/redeem_voucher' %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-3">
     <div class="col-12">
       <div class="card bg-light">
         <div class="card-header">
@@ -126,6 +145,8 @@
       </div>
     </div>
   </div>
+
+
 <%= render partial: 'shared/generic_modal',
            locals: { sort: 'deleteAccount',
                      title: t('profile.delete_account') } %>

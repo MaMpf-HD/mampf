@@ -87,8 +87,9 @@ group :test do
   gem "database_cleaner-active_record", "~> 2.2" # clean up database between tests
   gem "faker", "~> 3.4"
   gem "launchy", "~> 3.0"
-  gem "selenium-webdriver" # support for Capybara system testing and selenium driver, '~> 4.10.0'
+  gem "selenium-webdriver", "~> 4.10.0" # support for Capybara system testing and selenium driver
   gem "simplecov", "~> 0.22", require: false
+  gem "timecop", "~> 0.9.10"
   gem "webdrivers", "~> 5.3"
 end
 
