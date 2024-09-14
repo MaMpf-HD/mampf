@@ -39,9 +39,27 @@ class UserCleaner
   #
   # Users without a last_sign_in_at date are also considered inactive. This is
   # the case for users who have never logged in since PR #553 was merged.
+  #
+  # Edge cases for registration (that refine the above statements):
+  # - A user might have registered but never actually logged in (confirmed their
+  #   email address). In this case, we don't look at the last_sign_in_at date
+  #   (as this one is still nil), but at the confirmation_sent_at date to
+  #   determine if the user is considered inactive.
+  # - Another edge case is when users have registered and confirmed their mail,
+  #   but never logged in after that. In this case, last_sign_in_at is indeed nil,
+  #   but the user should only be considered inactive if the confirmation_sent_at
+  #   date is older than the threshold.
   def inactive_users
-    User.where(last_sign_in_at: ...INACTIVE_USER_THRESHOLD.ago)
-        .or(User.where(last_sign_in_at: nil))
+    User.where.not(confirmed_at: nil).and(
+      User.where(last_sign_in_at: ...INACTIVE_USER_THRESHOLD.ago)
+      .or(User.where(last_sign_in_at: nil,
+                     confirmation_sent_at: ...INACTIVE_USER_THRESHOLD.ago))
+    ).or(
+      User.where(
+        confirmed_at: nil,
+        confirmation_sent_at: ...INACTIVE_USER_THRESHOLD.ago
+      )
+    )
   end
 
   # Returns all users who have been active in the last INACTIVE_USER_THRESHOLD months,

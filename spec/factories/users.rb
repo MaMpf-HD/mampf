@@ -17,6 +17,16 @@ FactoryBot.define do
       after(:create, &:confirm)
     end
 
+    trait :with_confirmation_sent_date do
+      transient do
+        confirmation_sent_date { Time.zone.now }
+      end
+
+      after(:create) do |user, context|
+        user.update(confirmation_sent_at: context.confirmation_sent_date)
+      end
+    end
+
     trait :consented do
       after(:create) do |user|
         user.update(consents: true, consented_at: Time.zone.now)
