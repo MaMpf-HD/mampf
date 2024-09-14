@@ -24,22 +24,22 @@ RSpec.describe(UserCleaner, type: :model) do
 
   describe("#inactive_users") do
     context "when user is confirmed" do
-      it "counts users without last_sign_in_at date as inactive" do
+      it "counts users without current_sign_in_at date as inactive" do
         # but only if also the confirmation date is older than the threshold
         FactoryBot.create(:confirmed_user, :with_confirmation_sent_date,
-                          confirmation_sent_date: 5.months.ago, last_sign_in_at: nil)
+                          confirmation_sent_date: 5.months.ago, current_sign_in_at: nil)
         FactoryBot.create(:confirmed_user, :with_confirmation_sent_date,
-                          confirmation_sent_date: 7.months.ago, last_sign_in_at: nil)
+                          confirmation_sent_date: 7.months.ago, current_sign_in_at: nil)
         expect(UserCleaner.new.inactive_users.count).to eq(1)
       end
 
-      it("counts users with last_sign_in_at date older than threshold as inactive") do
-        FactoryBot.create(:confirmed_user, last_sign_in_at: 7.months.ago)
+      it("counts users with current_sign_in_at date older than threshold as inactive") do
+        FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago)
         expect(UserCleaner.new.inactive_users.count).to eq(1)
       end
 
-      it "does not count users with last_sign_in_at date younger than threshold as inactive" do
-        FactoryBot.create(:confirmed_user, last_sign_in_at: 5.months.ago)
+      it "does not count users with current_sign_in_at date younger than threshold as inactive" do
+        FactoryBot.create(:confirmed_user, current_sign_in_at: 5.months.ago)
         expect(UserCleaner.new.inactive_users.count).to eq(0)
       end
     end
@@ -48,13 +48,13 @@ RSpec.describe(UserCleaner, type: :model) do
       def test_non_confirmed_user(confirmation_sent_date, expected_inactive_users_count)
         user = FactoryBot.create(:user, :with_confirmation_sent_date,
                                  confirmation_sent_date: confirmation_sent_date,
-                                 last_sign_in_at: nil)
+                                 current_sign_in_at: nil)
         FactoryBot.create(:user, :with_confirmation_sent_date,
                           confirmation_sent_date: confirmation_sent_date,
-                          last_sign_in_at: 5.months.ago)
+                          current_sign_in_at: 5.months.ago)
         FactoryBot.create(:user, :with_confirmation_sent_date,
                           confirmation_sent_date: confirmation_sent_date,
-                          last_sign_in_at: 7.months.ago)
+                          current_sign_in_at: 7.months.ago)
 
         expect(user.confirmed_at).to be_nil
         expect(user.confirmation_sent_at).to eq(confirmation_sent_date)
@@ -79,10 +79,10 @@ RSpec.describe(UserCleaner, type: :model) do
   describe("#set/unset_deletion_date") do
     context "when deletion date is nil" do
       it "assigns a deletion date to inactive users" do
-        inactive_user = FactoryBot.create(:confirmed_user, last_sign_in_at: 7.months.ago)
+        inactive_user = FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago)
         inactive_user2 = FactoryBot.create(:user, :with_confirmation_sent_date,
                                            confirmation_sent_date: 7.months.ago)
-        active_user = FactoryBot.create(:confirmed_user, last_sign_in_at: 5.months.ago)
+        active_user = FactoryBot.create(:confirmed_user, current_sign_in_at: 5.months.ago)
 
         UserCleaner.new.set_deletion_date_for_inactive_users
         inactive_user.reload
@@ -99,7 +99,7 @@ RSpec.describe(UserCleaner, type: :model) do
         UserCleaner::MAX_DELETIONS_PER_RUN = max_deletions
 
         FactoryBot.create_list(:confirmed_user, max_deletions + 2,
-                               last_sign_in_at: 7.months.ago)
+                               current_sign_in_at: 7.months.ago)
 
         UserCleaner.new.set_deletion_date_for_inactive_users
 
@@ -110,7 +110,7 @@ RSpec.describe(UserCleaner, type: :model) do
 
     context "when a deletion date is assigned" do
       it "does not overwrite the deletion date" do
-        user = FactoryBot.create(:confirmed_user, last_sign_in_at: 7.months.ago,
+        user = FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago,
                                                   deletion_date: Date.current + 42.days)
         user2 = FactoryBot.create(:user, :with_confirmation_sent_date,
                                   confirmation_sent_date: 7.months.ago,
@@ -128,11 +128,11 @@ RSpec.describe(UserCleaner, type: :model) do
     it "unassigns a deletion date from recently active users" do
       deletion_date = Date.current + 5.days
       user_inactive = FactoryBot.create(:confirmed_user, deletion_date: deletion_date,
-                                                         last_sign_in_at: 7.months.ago)
+                                                         current_sign_in_at: 7.months.ago)
       user_inactive2 = FactoryBot.create(:confirmed_user, deletion_date: deletion_date,
-                                                          last_sign_in_at: 6.months.ago - 1.day)
+                                                          current_sign_in_at: 6.months.ago - 1.day)
       user_active = FactoryBot.create(:confirmed_user, deletion_date: deletion_date,
-                                                       last_sign_in_at: 2.days.ago)
+                                                       current_sign_in_at: 2.days.ago)
 
       UserCleaner.new.unset_deletion_date_for_recently_active_users
       user_inactive.reload
@@ -192,7 +192,7 @@ RSpec.describe(UserCleaner, type: :model) do
   describe("mails") do
     context "when setting a deletion date" do
       it "enqueues a deletion warning mail (40 days)" do
-        FactoryBot.create(:confirmed_user, last_sign_in_at: 7.months.ago)
+        FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago)
 
         expect do
           UserCleaner.new.set_deletion_date_for_inactive_users
