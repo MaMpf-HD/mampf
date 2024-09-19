@@ -50,16 +50,11 @@ class UserCleaner
   #   but the user should only be considered inactive if the confirmation_sent_at
   #   date is older than the threshold.
   def inactive_users
-    User.where.not(confirmed_at: nil).and(
-      User.where(current_sign_in_at: ...INACTIVE_USER_THRESHOLD.ago)
-      .or(User.where(current_sign_in_at: nil,
-                     confirmation_sent_at: ...INACTIVE_USER_THRESHOLD.ago))
-    ).or(
-      User.where(
-        confirmed_at: nil,
-        confirmation_sent_at: ...INACTIVE_USER_THRESHOLD.ago
-      )
-    )
+    threshold = INACTIVE_USER_THRESHOLD
+    User.confirmed.and(
+      User.inactive_for(threshold)
+      .or(User.no_sign_in_data.confirmation_sent_before(threshold))
+    ).or(User.unconfirmed.confirmation_sent_before(threshold))
   end
 
   # Returns all users who have been active in the last INACTIVE_USER_THRESHOLD months,
