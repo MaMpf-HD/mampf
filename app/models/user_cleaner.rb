@@ -60,7 +60,7 @@ class UserCleaner
   # Returns all users who have been active in the last INACTIVE_USER_THRESHOLD months,
   # i.e. their last sign-in date is less than INACTIVE_USER_THRESHOLD months ago.
   def active_users
-    User.where(current_sign_in_at: INACTIVE_USER_THRESHOLD.ago..)
+    User.active_recently(INACTIVE_USER_THRESHOLD)
   end
 
   # Sets the deletion date for inactive users and sends an initial warning mail.

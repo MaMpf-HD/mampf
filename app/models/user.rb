@@ -122,9 +122,11 @@ class User < ApplicationRecord
   scope :no_tutorial_name,
         -> { where(name_in_tutorials: nil) }
 
+  # Scopes for usage in the UserCleaner
   scope :confirmed, -> { where.not(confirmed_at: nil) }
   scope :unconfirmed, -> { where(confirmed_at: nil) }
   scope :no_sign_in_data, -> { where(current_sign_in_at: nil) }
+  scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
 
