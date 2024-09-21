@@ -51,11 +51,6 @@ class VouchersController < ApplicationController
     end
   end
 
-  def redeem
-    # TODO: this will be dealt with in the corresponding 2nd PR
-    render js: "alert('Voucher redeemed!')"
-  end
-
   def cancel
     respond_to do |format|
       format.html { redirect_to edit_profile_path }
