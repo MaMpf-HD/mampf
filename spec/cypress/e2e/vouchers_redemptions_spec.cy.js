@@ -1,4 +1,4 @@
-import * as helpers from "../support/voucher_redemptions_helpers";
+import * as helpers from "./vouchers_redemptions_spec_helpers";
 
 function testVoucherRedemptionWithNothingToClaim(context, role, itemType) {
   helpers.submitVoucher(context.voucher);

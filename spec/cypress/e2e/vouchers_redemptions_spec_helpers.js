@@ -1,4 +1,4 @@
-import FactoryBot from "./factorybot";
+import FactoryBot from "../support/factorybot";
 
 export function createRedemptionScenario(context, role = "tutor", sort = "lecture") {
   cy.createUser("teacher").as("teacher");
