@@ -28,7 +28,7 @@ RSpec.describe(VouchersController, type: :controller) do
     end
   end
 
-  context "As a generic user" do
+  context "As an unauthorized user" do
     before do
       sign_in generic_user
     end

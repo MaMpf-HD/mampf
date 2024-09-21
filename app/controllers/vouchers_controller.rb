@@ -1,17 +1,14 @@
-# app/controllers/vouchers_controller.rb
 class VouchersController < ApplicationController
   include Notifier
-  before_action :set_voucher, only: [:invalidate]
-  authorize_resource except: :create
+  load_and_authorize_resource
+  before_action :find_voucher, only: :invalidate
 
   def current_ability
     @current_ability ||= VoucherAbility.new(current_user)
   end
 
   def create
-    @voucher = Voucher.new(voucher_params)
     set_related_data
-    authorize! :create, @voucher
     respond_to do |format|
       if @voucher.save
         handle_successful_save(format)
@@ -23,7 +20,7 @@ class VouchersController < ApplicationController
 
   def invalidate
     set_related_data
-    @voucher.invalidate!
+    @voucher.update(invalidated_at: Time.zone.now)
     respond_to do |format|
       format.html { redirect_to edit_lecture_path(@lecture, anchor: "people") }
       format.js
@@ -54,6 +51,11 @@ class VouchersController < ApplicationController
     end
   end
 
+  def redeem
+    # TODO: this will be dealt with in the corresponding 2nd PR
+    render js: "alert('Voucher redeemed!')"
+  end
+
   def cancel
     respond_to do |format|
       format.html { redirect_to edit_profile_path }
@@ -67,15 +69,15 @@ class VouchersController < ApplicationController
       params.permit(:lecture_id, :role)
     end
 
-    def check_voucher_params
-      params.permit(:secure_hash, tutorial_ids: [], talk_ids: [])
-    end
-
-    def set_voucher
+    def find_voucher
       @voucher = Voucher.find_by(id: params[:id])
       return if @voucher
 
       handle_voucher_not_found
+    end
+
+    def check_voucher_params
+      params.permit(:secure_hash, tutorial_ids: [], talk_ids: [])
     end
 
     def set_related_data

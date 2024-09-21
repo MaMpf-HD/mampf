@@ -1,19 +1,18 @@
 class Voucher < ApplicationRecord
-  ROLE_HASH = { tutor: 0, editor: 1, teacher: 2, speaker: 3 }.freeze
   SPEAKER_EXPIRATION_DAYS = 30
   TUTOR_EXPIRATION_DAYS = 14
   DEFAULT_EXPIRATION_DAYS = 3
 
+  ROLE_HASH = { tutor: 0, editor: 1, teacher: 2, speaker: 3 }.freeze
   enum role: ROLE_HASH
+  validates :role, presence: true
 
   belongs_to :lecture, touch: true
-  before_create :generate_secure_hash
-  has_many :redemptions, dependent: :destroy
 
+  before_create :generate_secure_hash
   before_create :add_expiration_datetime
   before_create :ensure_no_other_active_voucher
   before_create :ensure_speaker_vouchers_only_for_seminars
-  validates :role, presence: true
 
   scope :active, lambda {
                    where("expires_at > ? AND invalidated_at IS NULL",
@@ -23,7 +22,7 @@ class Voucher < ApplicationRecord
   scope :for_editors, -> { where(role: :editor) }
   scope :for_speakers, -> { where(role: :speaker) }
 
-  self.implicit_order_column = "created_at"
+  self.implicit_order_column = :created_at
 
   def self.roles_for_lecture(lecture)
     return ROLE_HASH.keys if lecture.seminar?

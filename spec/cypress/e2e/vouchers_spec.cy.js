@@ -1,7 +1,8 @@
 import FactoryBot from "../support/factorybot";
+import Timecop from "../support/timecop";
 
 const ROLES = ["tutor", "editor", "teacher", "speaker"];
-const NO_SEMINAR_ROLES = ROLES.filter(role => role !== "speaker");
+const ROLES_WITHOUT_SEMINAR = ROLES.filter(role => role !== "speaker");
 
 function createLectureScenario(context, type = "lecture") {
   cy.createUserAndLogin("teacher").as("teacher");
@@ -11,37 +12,38 @@ function createLectureScenario(context, type = "lecture") {
   });
 
   cy.then(() => {
-    cy.visit(`/lectures/${context.lecture.id}/edit`);
-    cy.getBySelector("people-tab-btn").click();
+    cy.visit(`/lectures/${context.lecture.id}/edit#people`);
+    cy.getBySelector("vouchers-header").should("be.visible");
   });
 
   cy.i18n("basics.vouchers").as("vouchers");
 }
 
+function assertVoucherShown(role) {
+  cy.getBySelector(`create-${role}-voucher-btn`).should("not.exist");
+  cy.getBySelector(`invalidate-${role}-voucher-btn`).should("be.visible");
+  cy.getBySelector(`${role}-voucher-secure-hash`)
+    .invoke("val").should("match", /^([a-z0-9]){32}$/);
+}
+
+function assertVoucherNotShown(role) {
+  cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
+  cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
+  cy.getBySelector(`${role}-voucher-secure-hash`).should("not.exist");
+}
+
 function testCreateVoucher(role) {
   cy.getBySelector(`create-${role}-voucher-btn`).click();
-
-  cy.then(() => {
-    cy.getBySelector(`${role}-voucher-data`).should("be.visible");
-    cy.getBySelector(`${role}-voucher-secure-hash`).should("not.be.empty");
-    cy.getBySelector(`invalidate-${role}-voucher-btn`).should("be.visible");
-  });
+  assertVoucherShown(role);
 }
 
 function testInvalidateVoucher(role) {
   cy.getBySelector(`invalidate-${role}-voucher-btn`).click();
-
-  // Confirm popup
-  cy.on("window:confirm", () => true);
-
-  cy.then(() => {
-    cy.getBySelector(`${role}-voucher-data`).should("not.exist");
-    cy.getBySelector(`invalidate-${role}-voucher-btn`).should("not.exist");
-    cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
-  });
+  cy.on("window:confirm", () => true); // Confirm popup
+  assertVoucherNotShown(role);
 }
 
-describe("If the lecture is not a seminar", () => {
+context("When the lecture is not a seminar", () => {
   beforeEach(function () {
     createLectureScenario(this);
   });
@@ -50,7 +52,7 @@ describe("If the lecture is not a seminar", () => {
     it("shows buttons for creating tutor, editor and teacher vouchers", function () {
       cy.contains(this.vouchers).should("be.visible");
 
-      NO_SEMINAR_ROLES.forEach((role) => {
+      ROLES_WITHOUT_SEMINAR.forEach((role) => {
         cy.getBySelector(`create-${role}-voucher-btn`).should("be.visible");
       });
 
@@ -58,20 +60,20 @@ describe("If the lecture is not a seminar", () => {
     });
 
     it("displays the voucher and invalidate button after the create button is clicked", function () {
-      NO_SEMINAR_ROLES.forEach((role) => {
+      ROLES_WITHOUT_SEMINAR.forEach((role) => {
         testCreateVoucher(role);
       });
     });
 
     it("displays that there is no active voucher after the invalidate button is clicked", function () {
-      NO_SEMINAR_ROLES.forEach((role) => {
+      ROLES_WITHOUT_SEMINAR.forEach((role) => {
         testCreateVoucher(role);
         testInvalidateVoucher(role);
       });
     });
 
     it.skip("copies the voucher hash to the clipboard", function () {
-      NO_SEMINAR_ROLES.forEach((role) => {
+      ROLES_WITHOUT_SEMINAR.forEach((role) => {
         cy.getBySelector(`create-${role}-voucher-btn`).click();
         cy.getBySelector(`${role}-voucher-secure-hash`).then(($hash) => {
           const hashText = $hash.text();
@@ -83,7 +85,7 @@ describe("If the lecture is not a seminar", () => {
   });
 });
 
-describe("If the lecture is a seminar", () => {
+context("When the lecture is a seminar", () => {
   beforeEach(function () {
     createLectureScenario(this, "seminar");
   });
@@ -108,5 +110,58 @@ describe("If the lecture is a seminar", () => {
         testInvalidateVoucher(role);
       });
     });
+  });
+});
+
+context("When traveling into the future", () => {
+  beforeEach(function () {
+    createLectureScenario(this, "seminar");
+  });
+
+  afterEach(() => {
+    Timecop.reset();
+  });
+
+  it("does not show expired vouchers (far in the future)", function () {
+    ROLES.forEach((role) => {
+      testCreateVoucher(role);
+    });
+
+    // This behavior is more extensively tested via unit tests in the backend.
+    // This is just a sanity check where we travel *far* into the future.
+    Timecop.moveAheadDays(1000).then(() => {
+      cy.reload();
+      ROLES.forEach((role) => {
+        assertVoucherNotShown(role);
+      });
+    });
+  });
+
+  it("does not show expired vouchers (near future)", function () {
+    ROLES.forEach((role) => {
+      testCreateVoucher(role);
+      textExpiresAtWithTimeTravel(role);
+    });
+
+    function textExpiresAtWithTimeTravel(role) {
+    // find date string, read it, then travel to that date (+1 minute)
+      cy.getBySelector(`${role}-voucher-expires-at`).then(($expiresAt) => {
+        const date = new Date($expiresAt.text());
+        date.setMinutes(date.getMinutes() + 1);
+        cy.isValidDate(date).then((isValid) => {
+          expect(isValid).to.be.true;
+        });
+
+        cy.log(`Traveling to ${date.toISOString()} (UTC)`);
+        Timecop.travelToDate(date, true);
+      });
+
+      cy.then(() => {
+        cy.reload();
+        assertVoucherNotShown(role);
+      });
+
+      Timecop.reset();
+    }
   });
 });

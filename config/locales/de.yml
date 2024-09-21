@@ -78,7 +78,7 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2023. MaMpf ist auf %{github}.
+      &copy; MaMpf Team 2024. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
@@ -497,6 +497,8 @@ de:
       import_chapters: Kapitel importieren
       import_sections: Abschnitte importieren
       import_tags: Tags importieren
+      no_active_voucher: >
+        Es gibt keinen aktiven %{role} für diese Veranstaltung.
       no_active_voucher: >
         Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
@@ -2113,6 +2115,13 @@ de:
     voucher:
       secure_hash: 'Sicherheits-Hash'
       expires_at: 'Läuft ab'
+      sure_to_delete: 'Bist Du sicher, dass Du diesen Gutschein löschen möchtest?'
+      general_explanation: >
+        Wenn Du jemandem eine Rolle zuweisen möchtest (z.B. jemanden zum Tutor machen),
+        kannst Du hier einen Gutschein erstellen. Dies ist ein spezieller Code,
+        den die Person in ihrem Profil einlösen kann, um die Rolle zu erhalten.
+        Du solltest den Code über ein anderes Medium an die Person senden,
+        z.B. per E-Mail.
   profile:
     account: 'Account'
     name: 'Anzeigename'
@@ -3627,7 +3636,7 @@ de:
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{role}
-    speaker: VortragendeR
+    speaker: Vortragender
     speakers: Vortragende
   access:
     unpublished: 'unveröffentlicht'
@@ -3737,9 +3746,9 @@ de:
     import_lecture_toc: 'Gliederung importieren'
     import_toc: 'Importieren'
     become_editor: 'EditorIn werden'
-    invalidate: 'Für ungültig erklären'
     verify_voucher: 'Gutschein prüfen'
     edit_talk: 'Vortrag bearbeiten'
+    invalidate: 'Für ungültig erklären'
   warnings:
     save_before: >
       Du musst zunächst die anderen Änderungen speichern oder verwerfen.

@@ -546,6 +546,7 @@ RSpec.describe(Course, type: :model) do
         self_item1 = Item.find_by(sort: "self", medium: @course_medium)
         self_item2 = Item.find_by(sort: "self", medium: @lecture_medium)
         self_item3 = Item.find_by(sort: "self", medium: @lesson_medium)
+        I18n.locale = :de
         expect(@course.media_items_with_inheritance)
           .to match_array([["Bem. 1.2 ", item1.id],
                            ["SS 20, Satz 3.4 ", item2.id],

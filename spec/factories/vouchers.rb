@@ -15,6 +15,10 @@ FactoryBot.define do
       role { :teacher }
     end
 
+    trait :speaker do
+      role { :speaker }
+    end
+
     trait :expired do
       after(:create) do |voucher|
         voucher.update(expires_at: 1.day.ago)
