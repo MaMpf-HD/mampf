@@ -30,7 +30,7 @@ class Voucher < ApplicationRecord
     ROLE_HASH.keys - [:speaker]
   end
 
-  def self.check_voucher(secure_hash)
+  def self.find_voucher_by_hash(secure_hash)
     Voucher.active.find_by(secure_hash: secure_hash)
   end
 

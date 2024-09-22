@@ -28,7 +28,7 @@ class VouchersController < ApplicationController
   end
 
   def verify
-    @voucher = Voucher.check_voucher(check_voucher_params[:secure_hash])
+    @voucher = Voucher.find_voucher_by_hash(check_voucher_params[:secure_hash])
     respond_to do |format|
       if @voucher
         format.js
@@ -42,7 +42,7 @@ class VouchersController < ApplicationController
   end
 
   def redeem
-    voucher = Voucher.check_voucher(check_voucher_params[:secure_hash])
+    voucher = Voucher.find_voucher_by_hash(check_voucher_params[:secure_hash])
     if voucher
       VoucherProcessor.call(voucher, current_user, check_voucher_params)
       redirect_to edit_profile_path, notice: success_message(voucher)
@@ -64,15 +64,15 @@ class VouchersController < ApplicationController
       params.permit(:lecture_id, :role)
     end
 
+    def check_voucher_params
+      params.permit(:secure_hash, tutorial_ids: [], talk_ids: [])
+    end
+
     def find_voucher
       @voucher = Voucher.find_by(id: params[:id])
       return if @voucher
 
       handle_voucher_not_found
-    end
-
-    def check_voucher_params
-      params.permit(:secure_hash, tutorial_ids: [], talk_ids: [])
     end
 
     def set_related_data
