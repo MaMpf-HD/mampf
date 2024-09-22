@@ -18,14 +18,14 @@ class VoucherProcessor < ApplicationService
   private
 
     def process_voucher
-      case @voucher.role
-      when "tutor"
+      case @voucher.role.to_sym
+      when :tutor
         process_tutor_voucher
-      when "editor"
+      when :editor
         process_editor_voucher
-      when "teacher"
+      when :teacher
         process_teacher_voucher
-      when "speaker"
+      when :speaker
         process_speaker_voucher
       end
     end
