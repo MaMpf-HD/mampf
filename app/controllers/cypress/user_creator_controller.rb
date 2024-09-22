@@ -19,8 +19,8 @@ module Cypress
                          admin: is_admin, locale: I18n.default_locale)
       user.confirm
 
-      additional_data = { password: CYPRESS_PASSWORD }
-      render json: user.as_json.merge(additional_data), status: :created
+      render json: user.as_json.merge({ password: CYPRESS_PASSWORD }),
+             status: :created
     end
   end
 end
