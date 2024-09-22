@@ -2111,7 +2111,7 @@ en:
       Request data
     data_request_sent: >
       We have received your request and will send you your data as soon as possible.
-    redeem_voucher: Redeeem Voucher
+    redeem_voucher: Redeem Voucher
     become_tutor: >
       With this voucher, you can obtain tutor status for %{lecture}.
       With that, editors for the event series and the teacher can assign you
