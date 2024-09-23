@@ -107,6 +107,7 @@
         "factorybot",
         "helpdesk",
         "katex",
+        "selectize",
         "Timecop",
         "turbolinks"
     ]
