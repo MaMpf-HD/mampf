@@ -30,18 +30,32 @@ class FactoryBot {
   #createProxy(object) {
     return new Proxy(object, {
       get: function (target, property, receiver) {
-        // Trap the Cypress "as" method to add dynamic methods to the object.
-        if (property === "as") {
-          return function (...args) {
-            // args[0] will be "xyz" if you do <cypress object>.as("xyz")
-            target.as(...args).then((response) => {
-              response.qed = () => {
-                console.log("qed");
-              };
-            });
-          };
+        if (property !== "as") {
+          return Reflect.get(target, property, receiver);
         }
-        return Reflect.get(target, property, receiver);
+
+        // Trap the Cypress "as" method
+        return function (...asArgs) {
+          return target.as(...asArgs).then((response) => {
+            const responseProxy = new Proxy(response, {
+              get: function (resTarget, resProperty, resReceiver) {
+                console.log(resProperty);
+                if (!(resProperty in resTarget) && resProperty !== "then") {
+                  // If the property does not exist, define it as a new function
+                  resTarget[resProperty] = function () {
+                    console.log(`Method "${resProperty}" has been dynamically created!`);
+                  };
+                }
+                // Return the property (method)
+                return Reflect.get(resTarget, resProperty, resReceiver);
+              },
+            });
+            // Overwrite the original response with the proxy
+            cy.wrap(responseProxy).as(...asArgs);
+
+            return target;
+          });
+        };
       },
     });
   }
