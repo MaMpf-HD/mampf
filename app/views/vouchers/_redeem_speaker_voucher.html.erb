@@ -9,7 +9,7 @@
 
 <% if voucher.lecture.talks_without_speaker(current_user).any? %>
 
-  <%= render partial: "vouchers/voucher_form", locals: { voucher: voucher } %>
+  <%= render partial: "vouchers/voucher_redemption_form", locals: { voucher: voucher } %>
 
 <% elsif voucher.lecture.talks.any? %>
 
