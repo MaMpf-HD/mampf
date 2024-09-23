@@ -12,6 +12,8 @@ describe("FactoryBot dynamic", () => {
   it("Instance methods", function () {
     cy.log(this.lecture);
     cy.log(`Type of lecture: ${typeof this.lecture}`);
-    cy.log(this.lecture.finalllllly());
+    console.log(this.lecture);
+    this.lecture.qed();
+    // cy.log(this.lecture.finalllllly());
   });
 });
