@@ -27,8 +27,10 @@ class FactoryBot {
     return this.create(...args);
   }
 
-  #createProxy(object) {
-    return new Proxy(object, {
+  #createProxy(obj) {
+    const outerContext = this;
+
+    return new Proxy(obj, {
       get: function (target, property, receiver) {
         if (property !== "as") {
           return Reflect.get(target, property, receiver);
@@ -37,25 +39,27 @@ class FactoryBot {
         // Trap the Cypress "as" method
         return function (...asArgs) {
           return target.as(...asArgs).then((response) => {
-            const responseProxy = new Proxy(response, {
-              get: function (resTarget, resProperty, resReceiver) {
-                console.log(resProperty);
-                if (!(resProperty in resTarget) && resProperty !== "then") {
-                  // If the property does not exist, define it as a new function
-                  resTarget[resProperty] = function () {
-                    console.log(`Method "${resProperty}" has been dynamically created!`);
-                  };
-                }
-                // Return the property (method)
-                return Reflect.get(resTarget, resProperty, resReceiver);
-              },
-            });
-            // Overwrite the original response with the proxy
+            // Allow dynamic methods on the response object and reassign
+            const responseProxy = outerContext.#allowDynamicMethods(response);
             cy.wrap(responseProxy).as(...asArgs);
 
             return target;
           });
         };
+      },
+    });
+  }
+
+  #allowDynamicMethods(obj) {
+    return new Proxy(obj, {
+      get: function (target, property, receiver) {
+        // If the property does not exist, define it as a new function
+        if (!(property in target) && property !== "then") {
+          target[property] = function () {
+            console.log(`Method "${property}" has been dynamically created!`);
+          };
+        }
+        return Reflect.get(target, property, receiver);
       },
     });
   }
