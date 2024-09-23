@@ -25,29 +25,31 @@ class FactoryBot {
   }
 
   #createProxy(object) {
-    const outerContext = this;
     return new Proxy(object, {
       get: function (target, property, receiver) {
-        // Proxy the Cypress "as" method to add dynamic methods to the object.
+        // Trap the Cypress "as" method to add dynamic methods to the object.
         if (property === "as") {
           return function (...args) {
-            return target.as(...args).then(function (result) {
-              return outerContext.#addDynamicMethods(result);
-            });
-          };
-        }
-        return Reflect.get(target, property, receiver);
-      },
-    });
-  }
+            // args[0] will be "xyz" if you do <cypress object>.as("xyz")
+            target.as(...args).then((result) => {
+              // Add dynamic methods to the result object
+              const resultProxy = new Proxy(result, {
+                get(target, property, receiver) {
+                  // If the property does not exist, define it as a new function
+                  if (!(property in target) && property !== "then") {
+                    target[property] = function () {
+                      console.log(`Method ${property} has been dynamically created and invoked!`);
+                    };
+                  }
+                  return Reflect.get(target, property, receiver);
+                },
+              });
 
-  #addDynamicMethods(object) {
-    return new Proxy(object, {
-      get(target, property, receiver) {
-        // If the property does not exist, define it as a new function
-        if (!(property in target) && property !== "then") {
-          target[property] = function () {
-            console.log(`Method ${property} has been dynamically created and invoked!`);
+              // In-place wrap result with a Proxy (normal assignment won't work)
+              Object.assign(result, resultProxy);
+
+              return result;
+            });
           };
         }
         return Reflect.get(target, property, receiver);
