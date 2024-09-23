@@ -22,8 +22,8 @@
 
   <% if current_user.in?(voucher.lecture.tutors_by_redemption) %>
 
-      <%= t('profile.already_tutor_by_redemption') %>
-      <%= cancel_voucher_button %>
+    <%= t('profile.already_tutor_by_redemption') %>
+    <%= cancel_voucher_button %>
 
   <% else %>
 
