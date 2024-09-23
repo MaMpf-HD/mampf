@@ -92,24 +92,24 @@ describe("Tutor voucher redemption", () => {
     helpers.createRedemptionScenario(this, "tutor");
   });
 
-  describe("if the lecture has no tutorials yet", () => {
+  context("when the lecture has no tutorials yet", () => {
     it("allows redemption of voucher to successfully become tutor", function () {
       testVoucherRedemptionWithNothingToClaim(this, "tutor", "tutorial");
     });
 
-    describe("and the user has already redeemed the voucher", () => {
+    context("and the user has already redeemed the voucher", () => {
       it("displays a message that the user has already redeemed the voucher", function () {
         testAlreadyRedeemedVoucher(this, "tutor");
       });
     });
   });
 
-  describe("if the lecture has tutorials", () => {
+  context("when the lecture has tutorials", () => {
     it("allows the user to successfully submit tutorials and become their tutor", function () {
       testVoucherRedemptionWithSomethingClaimed(this, "tutorial", "tutor");
     });
 
-    describe("and the user is already a tutor for all of them", () => {
+    context("and the user is already a tutor for all of them", () => {
       it("displays a message that the user is already a tutor for all tutorials", function () {
         testAlreadyRoleForAllItems(this, "tutorial");
       });
@@ -132,7 +132,7 @@ describe("Editor voucher redemption", () => {
     helpers.verifyRoleNotification(this, "editor");
   });
 
-  describe("if the user has already redeemed the voucher", () => {
+  context("when the user has already redeemed the voucher", () => {
     it("displays a message that the user has already redeemed the voucher", function () {
       helpers.submitVoucher(this.voucher);
       helpers.redeemVoucherToBecomeRole(this, "editor");
@@ -144,7 +144,7 @@ describe("Editor voucher redemption", () => {
     });
   });
 
-  describe("if the user is the teacher of the lecture", () => {
+  context("when the user is the teacher of the lecture", () => {
     it("displays the message that a teacher cannot become an editor", function () {
       helpers.logoutAndLoginAsTeacher(this);
       helpers.submitVoucher(this.voucher);
@@ -170,7 +170,7 @@ describe("Teacher voucher redemption", () => {
     helpers.verifyRoleNotification(this, "teacher");
   });
 
-  describe("if the user is already the teacher", () => {
+  context("when the user is already the teacher", () => {
     it("displays a message that the user is already the teacher", function () {
       helpers.logoutAndLoginAsTeacher(this);
       helpers.submitVoucher(this.voucher);
@@ -185,24 +185,24 @@ describe("Speaker voucher redemption", () => {
     helpers.createRedemptionScenario(this, "speaker", "seminar");
   });
 
-  describe("If the seminar has no talks yet", () => {
+  context("when the seminar has no talks yet", () => {
     it("allows the user to successfully become a speaker", function () {
       testVoucherRedemptionWithNothingToClaim(this, "speaker", "talk");
     });
 
-    describe("and the user has already redeemed the voucher", () => {
+    context("and the user has already redeemed the voucher", () => {
       it("displays a message that the user has already redeemed the voucher", function () {
         testAlreadyRedeemedVoucher(this, "speaker");
       });
     });
   });
 
-  describe("if the seminar has talks", () => {
+  context("when the seminar has talks", () => {
     it("allows the user to successfully submit talks and become their speaker", function () {
       testVoucherRedemptionWithSomethingClaimed(this, "talk", "speaker");
     });
 
-    describe("and the user is already a speaker for all of them", () => {
+    context("and the user is already a speaker for all of them", () => {
       it("displays a message that the user is already a speaker for all talks ", function () {
         testAlreadyRoleForAllItems(this, "talk");
       });
