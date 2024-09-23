@@ -44,7 +44,7 @@ module VouchersHelper
     form.select(field_name,
                 options_for_select(options),
                 { prompt: prompt },
-                { multiple: true, class: "selectize me-2 w-50",
+                { multiple: true, class: "selectize me-2", style: "width: 20rem",
                   data: { cy: "claim-select" } })
   end
 end
