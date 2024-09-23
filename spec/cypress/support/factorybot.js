@@ -18,12 +18,44 @@ class FactoryBot {
    * FactoryBot.create("factory_name", { instance_methods: ["method_name"] })
    */
   create(...args) {
-    return BackendCaller.callCypressRoute("factories", "FactoryBot.create()", args);
+    const response = BackendCaller.callCypressRoute("factories", "FactoryBot.create()", args);
+    return this.#createProxy(response);
   }
 
   createNoValidate(...args) {
     args.push({ validate: false });
     return this.create(...args);
+  }
+
+  #createProxy(object) {
+    const outerContext = this;
+    return new Proxy(object, {
+      get: function (target, property, receiver) {
+        // Proxy the Cypress "as" method to add dynamic methods to the object.
+        if (property === "as") {
+          return function (...args) {
+            return target.as(...args).then(function (result) {
+              return outerContext.#addDynamicMethods(result);
+            });
+          };
+        }
+        return Reflect.get(target, property, receiver);
+      },
+    });
+  }
+
+  #addDynamicMethods(object) {
+    return new Proxy(object, {
+      get(target, property, receiver) {
+        // If the property does not exist, define it as a new function
+        if (!(property in target) && property !== "then") {
+          target[property] = function () {
+            console.log(`Method ${property} has been dynamically created and invoked!`);
+          };
+        }
+        return Reflect.get(target, property, receiver);
+      },
+    });
   }
 }
 
