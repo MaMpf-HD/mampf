@@ -13,7 +13,7 @@ class FactoryBot {
    * @returns The FactoryBot.create() response.
    * @examples
    * FactoryBot.create("factory_name", "with_trait", { another_attribute: ".pdf"})
-   * FactoryBot.create("factory_name").as("alias"); this.alias.call.instance_method();
+   * FactoryBot.create("factory_name").then(res => {res.call.any_rails_method(42)})
    */
   create(...args) {
     const response = BackendCaller.callCypressRoute("factories", "FactoryBot.create()", args);
@@ -25,36 +25,58 @@ class FactoryBot {
     return this.create(...args);
   }
 
+  /**
+   * Wraps the given Cypress response such that arbitrary methods (dynamic methods)
+   * can be called on the resulting object.
+   */
   #createProxy(obj) {
     const outerContext = this;
 
     return new Proxy(obj, {
       get: function (target, property, receiver) {
-        if (property !== "as") {
+        if (property !== "as" && property !== "then") {
           return Reflect.get(target, property, receiver);
         }
 
-        // Trap the Cypress "as" method
-        return function (...asArgs) {
-          return target.as(...asArgs).then((response) => {
-            const factoryName = response["factory_name"];
-            if (!factoryName) {
-              let msg = "FactoryBot call response does not contain factory_name key.";
-              msg += " Did you really use FactoryBot.create() (or similar) to create the record?";
-              throw new Error(msg);
-            }
-            if (typeof response.id !== "number") {
-              let msg = "FactoryBot call response does not contain a valid id key.";
-              msg += " Did you really use FactoryBot.create() (or similar) to create the record?";
-              throw new Error(msg);
-            }
-            const call = outerContext.#allowDynamicMethods({}, factoryName, response.id);
-            response.call = call;
-            return target;
-          });
+        // Trap the Cypress "as" and "then" methods to allow dynamic method calls
+        return function (...asOrThenArgs) {
+          if (property === "then") {
+            const callback = asOrThenArgs[0];
+            asOrThenArgs[0] = function (callbackObj) {
+              outerContext.#defineCallProperty(callbackObj);
+              return callback(callbackObj);
+            };
+            return target[property](...asOrThenArgs);
+          }
+
+          if (property === "as") {
+            return target.as(...asOrThenArgs).then((asResponse) => {
+              outerContext.#defineCallProperty(asResponse);
+            });
+          }
+
+          throw new Error(`Unknown property that should not be wrapped: ${property}`);
         };
       },
     });
+  }
+
+  #defineCallProperty(response) {
+    const factoryName = response["factory_name"];
+    if (!factoryName) {
+      let msg = "FactoryBot call response does not contain factory_name key.";
+      msg += " Did you really use FactoryBot.create() (or similar) to create the record?";
+      throw new Error(msg);
+    }
+
+    if (typeof response.id !== "number") {
+      let msg = "FactoryBot call response does not contain a valid id key (number).";
+      msg += " Did you really use FactoryBot.create() (or similar) to create the record?";
+      throw new Error(msg);
+    }
+
+    const call = this.#allowDynamicMethods({}, factoryName, response.id);
+    response.call = call;
   }
 
   #allowDynamicMethods(obj, factoryName, instanceId) {
