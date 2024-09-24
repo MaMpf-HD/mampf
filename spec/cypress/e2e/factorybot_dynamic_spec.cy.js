@@ -11,6 +11,6 @@ describe("FactoryBot dynamic", () => {
 
   it("Instance methods", function () {
     console.log(this.lecture);
-    this.lecture.qed();
+    this.lecture.call.qed();
   });
 });
