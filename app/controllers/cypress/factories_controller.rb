@@ -7,28 +7,47 @@ module Cypress
   class FactoriesController < CypressController
     # Wrapper around FactoryBot.create to create a factory via a POST request.
     def create
-      validate_factory_name(params["0"])
-
-      attributes, should_validate = params_to_attributes(params.except(:controller, :action,
-                                                                       :number))
-
-      # Partition the attributes into valid attributes and instance methods
-      attributes, instance_methods = partition_attributes(attributes)
-
-      # Extract the values from the instance_methods hashes
-      instance_methods = extract_instance_methods(instance_methods)
-
+      factory_name = validate_factory_name(params["0"])
+      attributes, should_validate = params_to_attributes(
+        params.except(:controller, :action, :number)
+      )
       res = create_or_build_factory(attributes, should_validate)
 
-      instance_methods_results = evaluate_instance_methods(res, instance_methods)
+      render json: res.as_json.merge({ factory_name: factory_name }), status: :created
+    end
 
-      render json: res.as_json.merge(instance_methods_results), status: :created
+    # Calls the instance method on the instance created by FactoryBot.create().
+    # Expects as arguments the factory name, the id of the instance,
+    # the method name and the method arguments to be passed to the instance method.
+    def call_instance_method
+      factory_name = validate_factory_name(params["factory_name"]).capitalize
+      id = params["instance_id"].to_i
+      method_name = params["method_name"]
+      method_args = params["method_args"]
+      method_args, _validate = params_to_attributes(method_args) if method_args.present?
+
+      # Find the instance
+      begin
+        instance = factory_name.constantize.find(id)
+      rescue ActiveRecord::RecordNotFound
+        result = { error: "Instance where you'd like to call '#{method_name}' on was not found" }
+        return render json: result.to_json, status: :bad_request
+      end
+
+      # Call the instance method & return the result
+      begin
+        result = instance.send(method_name, *method_args)
+        render json: result.to_json, status: :created
+      rescue NoMethodError => _e
+        result = { error: "Method '#{method_name}' not found on instance" }
+        render json: result.to_json, status: :bad_request
+      end
     end
 
     private
 
       def validate_factory_name(factory_name)
-        return if factory_name.is_a?(String)
+        return factory_name if factory_name.is_a?(String)
 
         msg = "First argument must be a string indicating the factory name."
         msg += " But we got: '#{factory_name}'"
@@ -66,31 +85,11 @@ module Cypress
         end
       end
 
-      def partition_attributes(attributes)
-        attributes.partition do |attr|
-          !(attr.is_a?(Hash) && attr.keys == ["instance_methods"])
-        end
-      end
-
-      def extract_instance_methods(instance_methods)
-        instance_methods.flat_map { |hash| hash["instance_methods"] }
-      end
-
       def create_or_build_factory(attributes, should_validate)
         if should_validate
           FactoryBot.create(*attributes) # default case
         else
           FactoryBot.build(*attributes).tap { |instance| instance.save(validate: false) }
-        end
-      end
-
-      def evaluate_instance_methods(instance, methods)
-        methods.index_with do |method_name|
-          if instance.respond_to?(method_name)
-            instance.send(method_name)
-          else
-            throw("Method not found: #{method_name}")
-          end
         end
       end
   end

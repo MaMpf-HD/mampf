@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   if Rails.env.test?
     namespace :cypress do
       resources :factories, only: :create
+      post "factories/call_instance_method", to: "factories#call_instance_method"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :i18n, only: :create

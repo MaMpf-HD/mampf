@@ -211,6 +211,10 @@ class Lecture < ApplicationRecord
     title
   end
 
+  def rails_number_test(number1 = nil, number2 = nil)
+    "number1: #{number1}, number2: #{number2}"
+  end
+
   def card_header
     title
   end
