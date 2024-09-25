@@ -70,13 +70,6 @@ class FactoryBot {
       msg += " Did you really use FactoryBot.create() (or similar) to create the record?";
       throw new Error(msg);
     }
-
-    if (typeof response.id !== "number") {
-      let msg = "FactoryBot call response does not contain a valid id key (number).";
-      msg += " Did you really use FactoryBot.create() (or similar) to create the record?";
-      throw new Error(msg);
-    }
-
     const call = this.#allowDynamicMethods({}, factoryName, response.id);
     response.call = call;
   }
