@@ -6,8 +6,7 @@ export function createRedemptionScenario(context, role = "tutor", sort = "lectur
 
   cy.then(() => {
     FactoryBot.create("lecture",
-      { teacher_id: context.teacher.id, sort: sort },
-      { instance_methods: ["title_no_term", "title_for_viewers"] }).as("lecture");
+      { teacher_id: context.teacher.id, sort: sort }).as("lecture");
   });
 
   cy.then(() => {
@@ -120,8 +119,9 @@ export function verifyNoTutorialsButUserEligibleAsTutor(context) {
 
 export function verifyLectureIsSubscribed(context) {
   cy.visit("/main/start");
-  cy.getBySelector("subscribed-inactive-lectures-collapse")
-    .should("contain", context.lecture.title_no_term);
+  context.lecture.call.title_no_term().then((title) => {
+    cy.getBySelector("subscribed-inactive-lectures-collapse").should("contain", title);
+  });
 }
 
 export function verifyRoleNotification(context, role) {
@@ -137,8 +137,9 @@ export function verifyRoleNotification(context, role) {
       .and("contain", context.user.name_in_tutorials);
     cy.visit("/notifications");
     cy.getBySelector("notification-card").should("have.length", 1);
-    cy.getBySelector("notification-header")
-      .should("contain", context.lecture.title_for_viewers);
+    context.lecture.call.title_for_viewers().then((title) => {
+      cy.getBySelector("notification-header").should("contain", title);
+    });
     cy.getBySelector("notification-body")
       .should("contain", context.redemptionMessage)
       .and("contain", context.user.name_in_tutorials)
