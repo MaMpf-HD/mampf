@@ -11,7 +11,7 @@ module Cypress
       attributes, should_validate = params_to_attributes(
         params.except(:controller, :action, :number)
       )
-      res = create_or_build_factory(attributes, should_validate)
+      res = create_class_instance_via_factorybot(attributes, should_validate)
 
       render json: res.as_json.merge({ factory_name: factory_name }), status: :created
     end
@@ -85,7 +85,7 @@ module Cypress
         end
       end
 
-      def create_or_build_factory(attributes, should_validate)
+      def create_class_instance_via_factorybot(attributes, should_validate)
         if should_validate
           FactoryBot.create(*attributes) # default case
         else
