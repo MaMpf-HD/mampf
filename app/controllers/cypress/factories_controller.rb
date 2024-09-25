@@ -5,7 +5,7 @@ module Cypress
   # It is inspired by this blog post by Tom Conroy:
   # https://tbconroy.com/2018/04/07/creating-data-with-factorybot-for-rails-cypress-tests/
   class FactoriesController < CypressController
-    # Wrapper around FactoryBot.create to create a factory via a POST request.
+    # Creates an instance of the factory (via FactoryBot) and returns it as JSON.
     def create
       factory_name = validate_factory_name(params["0"])
       attributes, should_validate = params_to_attributes(
