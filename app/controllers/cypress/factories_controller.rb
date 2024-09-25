@@ -13,6 +13,8 @@ module Cypress
       )
       res = create_class_instance_via_factorybot(attributes, should_validate)
 
+      # The factory name is included in the response such that it can be passed
+      # to call_instance_method later on in order to determine the class of the instance.
       render json: res.as_json.merge({ factory_name: factory_name }), status: :created
     end
 
@@ -62,7 +64,7 @@ module Cypress
             if value.key?("validate")
               should_validate = (value["validate"] != "false")
             else
-              value.transform_keys(&:to_sym)
+              transform_hash(value)
             end
           elsif value.is_a?(String)
             value.to_sym
@@ -74,10 +76,20 @@ module Cypress
         return attributes, should_validate
       end
 
+      # Converts the keys of the hash to symbols. Furthermore, if the hash
+      # contains nested hashes with keys that are all integers, it converts
+      # the nested hashes to arrays of strings.
+      #
+      # The latter is important for calls like the following in Cypress:
+      # FactoryBot.create("tutorial",
+      #   { lecture_id: this.lecture.id, tutor_ids: [this.tutor1.id, this.tutor2.id] }
+      # )
+      # Without this transformation, the create() method in this controller
+      # would receive [:tutorial, {"lecture_id"=>"1", "tutor_ids"=>{"0"=>"42", "1"=>"43"}}],
+      # whereas what we need is: [:tutorial, {"lecture_id"=>"1", "tutor_ids"=>["42", "43"]}].
       def transform_hash(value)
         value.transform_keys(&:to_sym).transform_values do |v|
-          if v.is_a?(Hash) && v.keys.all? { |k| k.match?(/^\d+$/) }
-            # Convert nested arrays to arrays of strings
+          if v.is_a?(Hash) && v.keys.all? { |key| key.to_i.to_s }
             v.values.map(&:to_s)
           else
             v

@@ -14,6 +14,8 @@ class FactoryBot {
    * @examples
    * FactoryBot.create("factory_name", "with_trait", { another_attribute: ".pdf"})
    * FactoryBot.create("factory_name").then(res => {res.call.any_rails_method(42)})
+   * FactoryBot.create("tutorial",
+   *  { lecture_id: this.lecture.id, tutor_ids: [this.tutor1.id, this.tutor2.id] })
    */
   create(...args) {
     const response = BackendCaller.callCypressRoute("factories", "FactoryBot.create()", args);
