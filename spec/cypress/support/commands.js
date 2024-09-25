@@ -118,8 +118,8 @@ Cypress.Commands.add("logout", () => {
 });
 
 Cypress.Commands.add("createUserAndLogin", (role) => {
-  cy.createUser(role).then((user) => {
-    cy.login({ email: `${role}@mampf.cypress`, password: "cypress123" }).then((_) => {
+  return cy.createUser(role).then((user) => {
+    cy.login({ email: user.email, password: user.password }).then((_) => {
       cy.wrap(user);
     });
   });
