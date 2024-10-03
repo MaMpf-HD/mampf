@@ -13,6 +13,9 @@ mod test ".config/commands/test.justfile"
 # Docker-related commands
 mod docker ".config/commands/docker.justfile"
 
+# Some utils, e.g. ERD-generation etc.
+mod utils ".config/commands/utils.justfile"
+
 # Opens the MaMpf wiki in the default browser
 wiki:
     #!/usr/bin/env bash
