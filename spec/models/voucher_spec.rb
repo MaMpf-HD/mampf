@@ -119,8 +119,11 @@ RSpec.describe(Voucher, type: :model) do
       it "sets the invalidated_at attribute to the current time" do
         voucher = FactoryBot.create(:voucher)
         expect(voucher.invalidated_at).to be_nil
-        voucher.invalidate!
-        expect(voucher.invalidated_at).not_to be_nil
+        frozen_time = Time.zone.now.change(nsec: 0)
+        Timecop.freeze(frozen_time) do
+          voucher.invalidate!
+          expect(voucher.invalidated_at).to eq(frozen_time)
+        end
       end
     end
   end
