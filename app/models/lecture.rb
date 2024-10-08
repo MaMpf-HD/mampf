@@ -886,7 +886,8 @@ class Lecture < ApplicationRecord
   end
 
   def voucher_redeemers(voucher_scope)
-    User.where(id: Redemption.where(voucher: voucher_scope).select(:user_id))
+    user_ids = Redemption.where(voucher: voucher_scope).pluck(:user_id)
+    User.where(id: user_ids.uniq)
   end
 
   def tutors_by_redemption
