@@ -1,3 +1,17 @@
+# A voucher is a unique (secure) hash that can be used by users to redeem a role,
+# such as tutor, teacher etc. That is, the voucher grants the user elevated
+# permissions.
+#
+# Vouchers are created by lecture editors, e.g. teachers. They will then send
+# the voucher to the user by means of a different communication channel,
+# e.g. email. Users can redeem the voucher by entering the code on their
+# profile page.
+#
+# Before the introduction of vouchers, teachers could select from the whole pool
+# of MaMpf users to assign them a role, e.g. to select tutors for their lecture.
+# To better align this process with GDPR requirements, the concept of voucher
+# was introduced. This way, teachers can only assign roles to users who have
+# actively redeemed a voucher.
 class Voucher < ApplicationRecord
   include Redeemable
 

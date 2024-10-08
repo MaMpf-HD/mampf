@@ -1,6 +1,7 @@
-# Redemption class
-# redemptions store the event of a user redeeming a voucher
-
+# Redemptions store the event of a user redeeming a voucher.
+#
+# During one redemption of a voucher, a user might claim multiple objects, e.g.
+# two tutorial slots. The respective claims are stored in the Claims model.
 class Redemption < ApplicationRecord
   belongs_to :voucher
   belongs_to :user
