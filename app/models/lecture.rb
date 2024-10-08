@@ -4,6 +4,8 @@ class Lecture < ApplicationRecord
 
   belongs_to :course
 
+  has_many :notifications, as: :notifiable, dependent: :destroy
+
   # teacher is the user that gives the lecture
   belongs_to :teacher, class_name: "User"
 

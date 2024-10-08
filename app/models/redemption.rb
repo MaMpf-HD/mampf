@@ -10,6 +10,8 @@ class Redemption < ApplicationRecord
   has_many :claimed_talks, through: :claims, source: :claimable,
                            source_type: "Talk"
 
+  has_many :notifications, as: :notifiable, dependent: :destroy
+
   delegate :lecture, to: :voucher
   delegate :role, to: :voucher
   delegate :tutor?, to: :voucher
