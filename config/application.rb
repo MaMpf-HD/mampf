@@ -12,6 +12,10 @@ module Mampf
     config.load_defaults(7.1)
     config.autoloader = :zeitwerk
 
+    # Autoload subfolders of modules (recursively)
+    # https://stackoverflow.com/a/4794775/
+    config.autoload_paths += Rails.root.glob("app/models/**/")
+
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])
 

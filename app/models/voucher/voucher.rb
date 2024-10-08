@@ -1,4 +1,6 @@
 class Voucher < ApplicationRecord
+  include Redeemable
+
   SPEAKER_EXPIRATION_DAYS = 30
   TUTOR_EXPIRATION_DAYS = 14
   DEFAULT_EXPIRATION_DAYS = 3

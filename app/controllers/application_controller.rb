@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_locale
   after_action :store_interaction, if: :user_signed_in?
+  before_action :set_current_user
 
   etag { current_user.try(:id) }
 
@@ -134,5 +135,10 @@ class ApplicationController < ActionController::Base
 
     def available_locales
       I18n.available_locales.map(&:to_s)
+    end
+
+    # https://stackoverflow.com/a/69313330/
+    def set_current_user
+      Current.user = current_user
     end
 end
