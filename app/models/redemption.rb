@@ -6,9 +6,9 @@ class Redemption < ApplicationRecord
   belongs_to :user
   has_many :claims, dependent: :destroy
   has_many :claimed_tutorials, through: :claims, source: :claimable,
-                               source_type: "Tutorial"
+                               source_type: Tutorial.name
   has_many :claimed_talks, through: :claims, source: :claimable,
-                           source_type: "Talk"
+                           source_type: Talk.name
 
   has_many :notifications, as: :notifiable, dependent: :destroy
 end
