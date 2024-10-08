@@ -33,7 +33,8 @@ class Voucher < ApplicationRecord
   end
 
   def self.find_voucher_by_hash(secure_hash)
-    Voucher.active.find_by(secure_hash: secure_hash)
+    # strip() to avoid issues with leading/trailing whitespaces when copy-pasting
+    Voucher.active.find_by(secure_hash: secure_hash.strip)
   end
 
   def invalidate!
