@@ -13,7 +13,7 @@
 # was introduced. This way, teachers can only assign roles to users who have
 # actively redeemed a voucher.
 class Voucher < ApplicationRecord
-  include Redeemable
+  include Redeemer
 
   SPEAKER_EXPIRATION_DAYS = 30
   TUTOR_EXPIRATION_DAYS = 14

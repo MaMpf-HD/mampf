@@ -1,27 +1,30 @@
 require "rails_helper"
 
-RSpec.describe(VoucherProcessor, type: :model) do
-  describe "#call" do
+RSpec.describe(Redeemer, type: :model) do
+  describe "#redeem" do
     let(:lecture) { FactoryBot.create(:lecture) }
     let(:voucher) { FactoryBot.create(:voucher, lecture: lecture, role: role) }
     let(:user) { FactoryBot.create(:confirmed_user) }
     let(:params) { {} }
     let(:role) { :tutor }
-    let(:processor) { VoucherProcessor.new(voucher, user, params) }
+
+    before :each do
+      ApplicationController.current_user = user
+    end
 
     shared_examples "common voucher processing" do
       it "creates a redemption" do
-        expect { processor.call }.to change { Redemption.count }.by(1)
+        expect { voucher.redeem(params) }.to change { Redemption.count }.by(1)
       end
 
       it "subscribes the user to the lecture" do
-        processor.call
+        voucher.redeem(params)
         expect(user.lectures).to include(lecture)
       end
 
       it "creates notifications about the voucher's redemption" do
         count_before = Notification.count
-        processor.call
+        voucher.redeem(params)
         lecture.reload
         expect(Notification.count).to eq(count_before + lecture.editors_and_teacher.count)
       end
@@ -35,18 +38,18 @@ RSpec.describe(VoucherProcessor, type: :model) do
       include_examples "common voucher processing"
 
       it "adds the tutorials to the user's given tutorials" do
-        processor.call
+        voucher.redeem(params)
         expect(user.given_tutorials).to include(tutorial1, tutorial2)
       end
 
       it "does not add a tutorial if its id is not in the params" do
         tutorial3 = FactoryBot.create(:tutorial, lecture: lecture)
-        processor.call
+        voucher.redeem(params)
         expect(user.given_tutorials).not_to include(tutorial3)
       end
 
       it "creates a redemption with the claimed tutorials" do
-        processor.call
+        voucher.redeem(params)
         redemption = Redemption.last
         expect(redemption.claimed_tutorials).to include(tutorial1, tutorial2)
       end
@@ -58,7 +61,7 @@ RSpec.describe(VoucherProcessor, type: :model) do
       include_examples "common voucher processing"
 
       it "adds the user to the lecture's editors" do
-        processor.call
+        voucher.redeem(params)
         expect(lecture.editors).to include(user)
       end
     end
@@ -69,18 +72,18 @@ RSpec.describe(VoucherProcessor, type: :model) do
       include_examples "common voucher processing"
 
       it "sets the user as the lecture's teacher" do
-        processor.call
+        voucher.redeem(params)
         expect(lecture.teacher).to eq(user)
       end
 
       it "demotes the previous teacher to an editor" do
         previous_teacher = lecture.teacher
-        processor.call
+        voucher.redeem(params)
         expect(lecture.editors).to include(previous_teacher)
       end
 
       it "invalidates the voucher" do
-        processor.call
+        voucher.redeem(params)
         expect(voucher.invalidated_at).not_to be_nil
       end
     end
@@ -95,18 +98,18 @@ RSpec.describe(VoucherProcessor, type: :model) do
       include_examples "common voucher processing"
 
       it "adds the talks to the user's given talks" do
-        processor.call
+        voucher.redeem(params)
         expect(user.talks).to include(talk1, talk2)
       end
 
       it "does not add a talk if its id is not in the params" do
         talk3 = FactoryBot.create(:talk, lecture: lecture)
-        processor.call
+        voucher.redeem(params)
         expect(user.talks).not_to include(talk3)
       end
 
       it "creates a redemption with the claimed talks" do
-        processor.call
+        voucher.redeem(params)
         redemption = Redemption.last
         expect(redemption.claimed_talks).to include(talk1, talk2)
       end

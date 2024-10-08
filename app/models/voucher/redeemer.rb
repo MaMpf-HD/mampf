@@ -1,9 +1,9 @@
-# The Redeemable module is included in the Voucher model to encapsulate the
+# The Redeemer module is included in the Voucher model to encapsulate the
 # redemption logic of a voucher.
 #
 # Note that this is not the same as "Claimable", which is used for roles
 # that can be claimed via a voucher, e.g. becoming a tutor for a lecture etc.
-module Redeemable
+module Redeemer
   extend ActiveSupport::Concern
   include Notifier
 
