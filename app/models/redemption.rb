@@ -11,11 +11,4 @@ class Redemption < ApplicationRecord
                            source_type: "Talk"
 
   has_many :notifications, as: :notifiable, dependent: :destroy
-
-  delegate :lecture, to: :voucher
-  delegate :role, to: :voucher
-  delegate :tutor?, to: :voucher
-  delegate :editor?, to: :voucher
-  delegate :teacher?, to: :voucher
-  delegate :speaker?, to: :voucher
 end

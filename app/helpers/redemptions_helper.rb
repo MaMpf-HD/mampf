@@ -1,23 +1,23 @@
 # Redemptions Helper
 module RedemptionsHelper
   def redemption_notification_card_header(redemption)
-    link_to(redemption.lecture.title_for_viewers,
-            edit_lecture_path(redemption.lecture,
-                              anchor: ("people" unless redemption.speaker?)),
+    link_to(redemption.voucher.lecture.title_for_viewers,
+            edit_lecture_path(redemption.voucher.lecture,
+                              anchor: ("people" unless redemption.voucher.speaker?)),
             class: "text-dark")
   end
 
   def redemption_notification_item_header(redemption)
     t("notifications.redemption_in_lecture",
-      lecture: redemption.lecture.title_for_viewers)
+      lecture: redemption.voucher.lecture.title_for_viewers)
   end
 
   def redemption_notification_details(redemption)
-    if redemption.tutor?
+    if redemption.voucher.tutor?
       tutor_notification_details(redemption)
-    elsif redemption.editor?
+    elsif redemption.voucher.editor?
       editor_notification_details(redemption)
-    elsif redemption.teacher?
+    elsif redemption.voucher.teacher?
       teacher_notification_details(redemption)
     else
       speaker_notification_details(redemption)
@@ -25,11 +25,11 @@ module RedemptionsHelper
   end
 
   def redemption_notification_item_details(redemption)
-    result = if redemption.tutor?
+    result = if redemption.voucher.tutor?
       tutor_notification_item_details(redemption)
-    elsif redemption.editor?
+    elsif redemption.voucher.editor?
       editor_notification_item_details(redemption)
-    elsif redemption.teacher?
+    elsif redemption.voucher.teacher?
       teacher_notification_item_details(redemption)
     else
       speaker_notification_item_details(redemption)

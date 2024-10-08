@@ -29,7 +29,7 @@ class Notification < ApplicationRecord
     return if notifiable.blank?
 
     if redemption?
-      edit_lecture_path(notifiable.lecture, anchor: "people")
+      edit_lecture_path(notifiable.voucher.lecture, anchor: "people")
     elsif lecture_or_course?
       edit_profile_path
     elsif lecture_announcement?
