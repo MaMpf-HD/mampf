@@ -102,6 +102,12 @@
     //////////////////////////////////////
     // Spell Checker
     //////////////////////////////////////
+    "cSpell.enabled": true,
+    "cSpell.ignorePaths": [
+        "node_modules",
+        ".git"
+    ],
+    "cSpell.language": "en,de",
     "cSpell.words": [
         "commontator",
         "factorybot",
@@ -109,5 +115,10 @@
         "katex",
         "Timecop",
         "turbolinks"
-    ]
+    ],
+    "cSpell.enableFiletypes": [
+        "ruby"
+        // Other filetypes are handled by the default spell checker
+    ],
+    "cSpell.maxNumberOfProblems": 10000
 }
