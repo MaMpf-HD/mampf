@@ -1,0 +1,14 @@
+<%= form_with url: verify_voucher_path,
+              remote: true,
+              method: :post,
+              html: { class: "form-inline",
+                      data: { cy: "verify-voucher-form"} } do |f| %>
+    <div class="form-group d-flex">
+        <%= f.text_field :secure_hash, class: "form-control me-2",
+                 style: "width: 20rem;",
+                 autocomplete: "off",
+                 data: { cy: "secure-hash-input" } %>
+        <%= f.submit t('buttons.verify_voucher'), class: "btn btn-primary",
+                     data: { cy: "verify-voucher-submit" } %>
+    </div>
+<% end %>

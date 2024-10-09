@@ -1,5 +1,6 @@
 # LecturesController
 class LecturesController < ApplicationController
+  include Notifier
   include ActionController::RequestForgeryProtection
   before_action :set_lecture, except: [:new, :create, :search]
   before_action :set_lecture_cookie, only: [:show, :organizational,
@@ -66,6 +67,7 @@ class LecturesController < ApplicationController
 
   def create
     @lecture = Lecture.new(lecture_params)
+    @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
     @lecture.save
     if @lecture.valid?
@@ -105,10 +107,7 @@ class LecturesController < ApplicationController
       recipients = User.where(id: new_ids)
 
       recipients.each do |r|
-        NotificationMailer.with(recipient: r,
-                                locale: r.locale,
-                                lecture: @lecture)
-                          .new_editor_email.deliver_later
+        notify_new_editor_by_mail(r, @lecture)
       end
     end
 
@@ -336,9 +335,10 @@ class LecturesController < ApplicationController
                         :submission_max_team_size, :submission_grace_period,
                         :annotations_status]
       if action_name == "update" && current_user.can_update_personell?(@lecture)
-        allowed_params.push(:teacher_id, { editor_ids: [] })
+        allowed_params.push({ editor_ids: [] })
       end
-      allowed_params.push(:course_id, :teacher_id, { editor_ids: [] }) if action_name == "create"
+      allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
+      allowed_params.push(:teacher_id) if current_user.admin?
       params.require(:lecture).permit(allowed_params)
     end
 

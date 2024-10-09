@@ -110,7 +110,7 @@
 <% end %>
 <div class="row mb-3">
   <div class="col-12">
-    <div class="card bg-light">
+    <div class="card bg-light" data-cy="redeem-voucher-card">
       <div class="card-header">
         <div class="row">
           <div class="col-12">
@@ -120,8 +120,8 @@
           </div>
         </div>
       </div>
-      <div class="card-body">
-        <%= render partial: 'profile/redeem_voucher' %>
+      <div class="card-body" id="redeem-voucher">
+        <%= render partial: 'profile/verify_voucher' %>
       </div>
     </div>
   </div>

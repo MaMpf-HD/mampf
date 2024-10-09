@@ -1,0 +1,13 @@
+<span data-cy="redeem-voucher-text">
+  <%= t('profile.become_editor', lecture: voucher.lecture.title) %>
+</span>
+
+<% if current_user == voucher.lecture.teacher %>
+  <%= t('profile.teacher_cant_become_editor') %>
+<% elsif current_user.in?(voucher.lecture.editors_by_redemption) %>
+  <%= t('profile.already_editor_by_redemption') %>
+<% else %>
+  <%= redeem_voucher_button(voucher) %>
+<% end %>
+
+<%= cancel_voucher_button %>

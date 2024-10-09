@@ -1,4 +1,20 @@
+# A voucher is a unique (secure) hash that can be used by users to redeem a role,
+# such as tutor, teacher etc. That is, the voucher grants the user elevated
+# permissions.
+#
+# Vouchers are created by lecture editors, e.g. teachers. They will then send
+# the voucher to the user by means of a different communication channel,
+# e.g. email. Users can redeem the voucher by entering the code on their
+# profile page.
+#
+# Before the introduction of vouchers, teachers could select from the whole pool
+# of MaMpf users to assign them a role, e.g. to select tutors for their lecture.
+# To better align this process with GDPR requirements, the concept of voucher
+# was introduced. This way, teachers can only assign roles to users who have
+# actively redeemed a voucher.
 class Voucher < ApplicationRecord
+  include Redeemer
+
   SPEAKER_EXPIRATION_DAYS = 30
   TUTOR_EXPIRATION_DAYS = 14
   DEFAULT_EXPIRATION_DAYS = 3
@@ -18,6 +34,9 @@ class Voucher < ApplicationRecord
                    where("expires_at > ? AND invalidated_at IS NULL",
                          Time.zone.now)
                  }
+  scope :for_tutors, -> { where(role: :tutor) }
+  scope :for_editors, -> { where(role: :editor) }
+  scope :for_speakers, -> { where(role: :speaker) }
 
   self.implicit_order_column = :created_at
 
@@ -25,6 +44,15 @@ class Voucher < ApplicationRecord
     return ROLE_HASH.keys if lecture.seminar?
 
     ROLE_HASH.keys - [:speaker]
+  end
+
+  def self.find_voucher_by_hash(secure_hash)
+    # strip() to avoid issues with leading/trailing whitespaces when copy-pasting
+    Voucher.active.find_by(secure_hash: secure_hash.strip)
+  end
+
+  def invalidate!
+    update(invalidated_at: Time.zone.now)
   end
 
   private

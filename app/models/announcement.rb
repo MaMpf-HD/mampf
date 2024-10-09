@@ -4,6 +4,8 @@ class Announcement < ApplicationRecord
   belongs_to :lecture, optional: true, touch: true
   belongs_to :announcer, class_name: "User"
 
+  has_many :notifications, as: :notifiable, dependent: :destroy
+
   validates :details, presence: true
 
   paginates_per 10
