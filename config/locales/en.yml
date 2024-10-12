@@ -498,8 +498,6 @@ en:
       import_tags: import tags
       no_active_voucher: >
         There is no active %{role} for this event series.
-      no_active_voucher: >
-        There is no active %{role} for this event series.
       info:
         course: >
           Here you can select the course to which this event series belongs.

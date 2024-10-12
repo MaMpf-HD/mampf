@@ -499,8 +499,6 @@ de:
       import_tags: Tags importieren
       no_active_voucher: >
         Es gibt keinen aktiven %{role} für diese Veranstaltung.
-      no_active_voucher: >
-        Es gibt keinen aktiven %{role} für diese Veranstaltung.
       info:
         course: >
           Hier kannst Du das Modul auswählen, zu dem diese
