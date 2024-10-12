@@ -1,36 +1,43 @@
 <p data-cy="redeem-voucher-text">
-  <%= t('profile.become_tutor', lecture: voucher.lecture.title) %>
-
-  <% if current_user.in?(voucher.lecture.tutors) %>
-    <%= t('profile.already_tutor',
-          tutorials: tutorials_with_tutor_titles(current_user, voucher)) %>
-  <% end %>
+  <%= t('profile.become_tutor_html', lecture: voucher.lecture.title) %>
 </p>
+
+<% if current_user.in?(voucher.lecture.tutors) %>
+  <p>
+    <%= t('profile.already_tutor_html', tutorials: tutorials_with_tutor_titles(current_user, voucher)) %>
+  </p>
+<% end %>
 
 <% if voucher.lecture.tutorials_without_tutor(current_user).any? %>
 
+  <p>
+    <%= t('profile.tutorials_available') %>
+  </p>
   <%= render partial: "vouchers/voucher_redemption_form", locals: { voucher: voucher } %>
 
 <% elsif voucher.lecture.tutorials.any? %>
 
+  <p>
     <%= t('profile.all_tutorials_taken') %>
     <%= cancel_voucher_button %>
+  </p>
 
 <% else %>
 
-  <%= t('profile.no_tutorials_yet') %>
-
   <% if current_user.in?(voucher.lecture.tutors_by_redemption) %>
 
-    <%= t('profile.already_tutor_by_redemption') %>
-    <%= cancel_voucher_button %>
-
-  <% else %>
-
+    <p>
+      <%= t('profile.already_tutor_by_redemption') %>
+      <%= cancel_voucher_button %>
+    </p>
+    
+    <% else %>
+    
     <p class="mt-4">
+      <%= t('profile.no_tutorials_redemption') %>
       <%= redeem_voucher_button(voucher) %>
       <%= cancel_voucher_button %>
     </p>
-
   <% end %>
+
 <% end %>

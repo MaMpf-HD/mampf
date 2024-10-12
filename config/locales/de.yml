@@ -2253,26 +2253,23 @@ de:
     data_request_sent: >
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
     redeem_voucher: Gutschein einlösen
-    become_tutor: >
-      Mit diesem Gutschein erhältst Du TutorInnenstatus in der Veranstaltung
-      %{lecture}. Dadurch können Dir VeranstaltungseditorInnen und die DozentIn
-      Tutorien zuweisen. Ggf. kannst Du an dieser Stelle bereits Tutorien
-      auswählen, die Du übernehmen möchtest. Die VeranstaltungseditorInnen
-      und die DozentIn werden benachrichtigt, wenn Du den Gutschein einlöst.
-      Zudem wird die Veranstaltung automatisch zu Deinen abonnierten
-      Veranstaltungen hinzugefügt.
-    already_tutor: >
-      Du bist bereits als TutorIn eingetragen für: %{tutorials}.
-    new_tutor_select: >
-      Wenn Du schon weißt, welche Tutorien du übernimmst, kannst du diese hier
-      auswählen.
+    become_tutor_html: >
+      Mit diesem Gutschein erhältst Du TutorInnenstatus für
+      <strong>%{lecture}</strong>.
+    tutorials_available: >
+      Wenn Du schon weißt, welche Tutorien du übernimmst, kannst Du diese hier
+      auswählen. Ansonsten lasse das Feld frei, dann kannst Du dennoch den
+      Gutschein einlösen, damit Dich die DozentIn später den Tutorien zuweisen kann.
+    already_tutor_html: >
+      Du bist bereits als TutorIn eingetragen für: <strong>%{tutorials}</strong>.
+    no_tutorials_redemption: >
+      Nachdem Du den Gutschein eingelöst hast, kann Dich die DozentIn den
+      Tutorien zuweisen.
     select_tutorials: Tutorien auswählen
-    take_over_tutorials: Tutorien übernehmen
     all_tutorials_taken: >
       Es sind keine weiteren Tutorien verfügbar, die Du noch übernehmen kannst.
-    no_tutorials_yet: Für diese Vorlesung wurden noch keine Tutorien angelegt.
     already_tutor_by_redemption: >
-      Du hast bereits einen Gutschein eingelöst, um TutorInnenstatus zu erhalten.
+      Du hast diesen Gutschein bereits eingelöst, um TutorInnenstatus zu erhalten.
     become_editor: >
       Mit diesem Gutschein erhältst Du EditorInnenstatus für die Veranstaltung
       %{lecture}. Zudem wird die Veranstaltung automatisch zu Deinen abonnierten

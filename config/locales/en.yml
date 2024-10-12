@@ -2112,25 +2112,24 @@ en:
     data_request_sent: >
       We have received your request and will send you your data as soon as possible.
     redeem_voucher: Redeem Voucher
-    become_tutor: >
-      With this voucher, you can obtain tutor status for %{lecture}.
-      With that, editors for the event series and the teacher can assign you
-      tutorials. If applicable, you can select the tutorials you will be
-      responsible for right here. The editors and the teacher will be notified
-      when you have redeemed the voucher.
-    already_tutor: >
-      You are already registered as a tutor for: %{tutorials}.
-    new_tutor_select: >
-      If you already know which tutorials you will be responsible for,
-      you can select them here.
+    become_tutor_html: >
+      By redeeming this voucher, you will obtain tutor status for
+      <strong>%{lecture}</strong>.
+    tutorials_available: >
+      If you already know which tutorials you will be responsible for, you can
+      select them here. Otherwise, leave the field empty; then you can still
+      redeem the voucher so that the teacher can assign you tutorials later.
+    already_tutor_html: >
+      You are already registered as a tutor for: <strong>%{tutorials}</strong>.
+    no_tutorials_redemption: >
+      After having redeemed the voucher, the teacher can assign you
+      to the tutorials.
     select_tutorials: Select Tutorials
     all_tutorials_taken: >
       There are no more tutorials available for this lecture that you can take
       over.
-    no_tutorials_yet: >
-      There are no tutorials available for this lecture yet.
     already_tutor_by_redemption: >
-      You have already redeemed a tutor voucher for this event series.
+      You have already redeemed this voucher to become a tutor.
     become_editor: >
       With this voucher, you can obtain editor status for %{lecture}.
       The other editors and the teacher will be notified when you have
