@@ -1,11 +1,16 @@
-<p data-cy="redeem-voucher-text">
-  <%= t('profile.become_teacher', lecture: voucher.lecture.title) %>
-</p>
-
 <% if current_user == voucher.lecture.teacher %>
-  <%= t('profile.already_teacher') %>
-<% else %>
-  <%= redeem_voucher_button(voucher) %>
-<% end %>
 
-<%= cancel_voucher_button %>
+  <p>
+    <%= t('profile.already_teacher_html', lecture: voucher.lecture.title) %>
+    <%= cancel_voucher_button %>
+  </p>
+
+<% else %>
+
+  <p data-cy="redeem-voucher-text">
+    <%= t('profile.become_teacher_html', lecture: voucher.lecture.title) %>
+    <%= redeem_voucher_button(voucher) %>
+    <%= cancel_voucher_button %>
+  </p>
+
+<% end %>

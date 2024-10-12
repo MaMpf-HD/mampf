@@ -2281,14 +2281,12 @@ de:
     teacher_cant_become_editor: >
       Du kannst nicht zusätzlich EditorInnenstatus in einer Veranstaltung
       erhalten, in der Du bereits DozentIn bist.
-    become_teacher: >
-      Mit diesem Gutschein erhältst Du DozentInnenstatus für die Veranstaltung
-      %{lecture}. Die bisherige DozentIn erhält EditorInnenstatus.
-      Die VeranstaltungseditorInnen werden benachrichtigt,
-      wenn Du den Gutschein einlöst. Zudem wird die Veranstaltung automatisch
-      zu Deinen abonnierten Veranstaltungen hinzugefügt.
-    already_teacher: >
-      Du bist bereits DozentIn in dieser Veranstaltung.
+    become_teacher_html: >
+      Mit diesem Gutschein erhältst Du DozentInnenstatus für
+      <strong>%{lecture}</strong>.
+      Die bisherige DozentIn wird zur EditorIn herabgestuft.
+    already_teacher_html: >
+      Du bist bereits DozentIn für <strong>%{lecture}</strong>.
     become_speaker_html: >
       Mit diesem Gutschein erhältst Du Vortragendenstatus im Seminar
       <strong>%{seminar}</strong>.

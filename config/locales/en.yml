@@ -2139,12 +2139,12 @@ en:
     teacher_cant_become_editor: >
       You are already a teacher for this event series. Therefore, you cannot
       redeem an editor voucher.
-    become_teacher: >
-      With this voucher, you can obtain teacher status for %{lecture}.
-      The previous teacher will be demoted to editor. The editors will be
-      notified when you have redeemed the voucher.
-    already_teacher: >
-      You are already the teacher for this event series.
+    become_teacher_html: >
+      With this voucher, you obtain teacher status for
+      <strong>%{lecture}</strong>.
+      The former teacher will be demoted to editor.
+    already_teacher_html: >
+      You are already the teacher for <strong>%{lecture}</strong>.
     become_speaker_html: >
       By redeeming this voucher, you will obtain speaker status for the seminar
       <strong>%{seminar}</strong>.
