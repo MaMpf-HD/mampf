@@ -723,8 +723,7 @@ en:
         section_needed: Please create a section first
         voucher_for_tutor: >
           Vouchers for tutors can be redeemed by users to obtain tutor status
-          for this event series and if possible, to directly take over
-          tutorials.
+          for this event series and to directly take over tutorials.
         voucher_for_editor: >
           Vouchers for editors can be redeemed by users to obtain
           editor status for this event series.
@@ -733,10 +732,9 @@ en:
           status for this event series. The previous teacher will be demoted
           and becomes an editor. Such a voucher will be invalidated directly
           after its redemption.
-        vouchers_for_speaker: >
+        voucher_for_speaker: >
           Vouchers for speakers can be redeemed by users to obtain speaker
-          status for this seminar and if possible, to directly take over
-          talks.
+          status for this seminar and to directly take over talks.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'

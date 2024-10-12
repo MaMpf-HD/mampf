@@ -757,26 +757,20 @@ de:
         section_needed: Bitte erstelle zuerst einen Abschnitt
         voucher_for_tutor: >
           Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um
-          TutorInnenstatus für diese Veranstaltung zu erhalten und ggf. direkt
-          Tutorien zu übernehmen. Außerdem werden sie damit automatisch
-          zu AbonenntInnen dieser Veranstaltung.
+          TutorInnenstatus für diese Veranstaltung zu erhalten und direkt
+          Tutorien zu übernehmen.
         voucher_for_editor: >
           Gutscheine für EditorInnen können von NutzerInnen eingelöst werden, um
-          EditorInnenstatus für diese Veranstaltung zu ehalten.
-          Außerdem werden sie damit automatisch zu AbonenntInnen dieser
-          Veranstaltung.
+          EditorInnenstatus für diese Veranstaltung zu erhalten.
         voucher_for_teacher: >
           Gutscheine für DozentInnen können von NutzerInnen eingelöst werden, um
           DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
-          DozentIn wird dann EditorIn. Ein solcher
-          Gutschein wird direkt nach dem Einlösen für ungültig erklärt.
-          Außerdem werden die NutzerIn damit automatisch
-          zu einer AbonenntIn dieser Veranstaltung.
+          DozentIn wird dann EditorIn. Ein solcher Gutschein wird direkt nach
+          dem Einlösen für ungültig erklärt.
         voucher_for_speaker: >
           Gutscheine für Vortragende können von NutzerInnen eingelöst werden, um
-          Vortragendenstatus für das Seminar zu erhalten und ggf. direkt
-          Vorträge zu übernehmen. Außerdem werden sie damit automatisch zu
-          AbonenntInnen des Seminars.
+          Vortragendenstatus für das Seminar zu erhalten und direkt Vorträge
+          zu übernehmen.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
