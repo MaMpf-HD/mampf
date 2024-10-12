@@ -1,33 +1,41 @@
 <p data-cy="redeem-voucher-text">
-  <%= t('profile.become_speaker', seminar: voucher.lecture.title) %>
-
-  <% if current_user.in?(voucher.lecture.speakers) %>
-    <%= t('profile.already_speaker',
-          talks: talks_with_titles(current_user, voucher)) %>
-  <% end %>
+  <%= t('profile.become_speaker_html', seminar: voucher.lecture.title) %>
 </p>
+
+<% if current_user.in?(voucher.lecture.speakers) %>
+  <p>
+    <%= t('profile.already_speaker_html',
+      talks: talks_with_titles(current_user, voucher)) %>
+  </p>
+<% end %>
 
 <% if voucher.lecture.talks_without_speaker(current_user).any? %>
 
+  <p>
+    <%= t('profile.talks_available') %>
+  </p>
   <%= render partial: "vouchers/voucher_redemption_form", locals: { voucher: voucher } %>
 
 <% elsif voucher.lecture.talks.any? %>
 
+  <p>
     <%= t('profile.all_talks_taken') %>
     <%= cancel_voucher_button %>
+  </p>
 
 <% else %>
 
-  <%= t('profile.no_talks_yet') %>
-
   <% if current_user.in?(voucher.lecture.speakers_by_redemption) %>
 
-    <%= t('profile.already_speaker_by_redemption') %>
-    <%= cancel_voucher_button %>
+    <p>
+      <%= t('profile.already_speaker_by_redemption') %>
+      <%= cancel_voucher_button %>
+    </p>
 
   <% else %>
 
-    <p class="mt-4">
+    <p>
+      <%= t('profile.no_talks_redemption') %>
       <%= redeem_voucher_button(voucher) %>
       <%= cancel_voucher_button %>
     </p>

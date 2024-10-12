@@ -2289,21 +2289,24 @@ de:
       zu Deinen abonnierten Veranstaltungen hinzugefügt.
     already_teacher: >
       Du bist bereits DozentIn in dieser Veranstaltung.
-    become_speaker: >
-      Mit diesem Gutschein erhältst Du Vortragendenstatus im Seminar %{seminar}.
-      Dadurch können Dir SeminareditorInnen und die DozentIn Vorträge zuweisen.
-      Ggf. kannst Du an dieser Stelle bereits Vorträge auswählen, die Du
-      übernehmen möchtest. Die SeminareditorInnen und die DozentIn werden
-      benachrichtigt, wenn Du den Gutschein einlöst. Zudem wird das Seminar
-      automatisch zu Deinen abonnierten Veranstaltungen hinzugefügt.
-    already_speaker: >
-      Du bist bereits VortragendeR in diesem Seminar für: %{talks}.
+    become_speaker_html: >
+      Mit diesem Gutschein erhältst Du Vortragendenstatus im Seminar
+      <strong>%{seminar}</strong>.
+    already_speaker_html: >
+      Du bist bereits VortragendeR für: <strong>%{talks}</strong>.
+    talks_available: >
+      Wenn Du schon weißt, welche Vorträge du übernimmst, kannst Du diese hier
+      auswählen. Ansonsten lasse das Feld frei, dann kannst Du dennoch den
+      Gutschein einlösen, damit Dich die DozentIn später den Vorträgen zuweisen
+      kann.
+    no_talks_redemption: >
+      Nachdem Du den Gutschein eingelöst hast, kann Dich die DozentIn den
+      Vorträgen zuweisen.
     all_talks_taken: >
       Es sind keine weiteren Vorträge verfügbar, die Du noch übernehmen kannst.
-    no_talks_yet: Für dieses Seminar wurden noch keine Vorträge angelegt.
     already_speaker_by_redemption: >
-      Du hast bereits einen Gutschein eingelöst, um Vortragendenstatus zu
-      erhalten.
+      Du hast diesen Gutschein bereits eingelöst, um Vortragendenstatus
+      zu erhalten.
     select_talks: Vorträge auswählen
   mampf_news:
     title: 'MaMpf-News'

@@ -4,7 +4,8 @@
 
 <% if current_user.in?(voucher.lecture.tutors) %>
   <p>
-    <%= t('profile.already_tutor_html', tutorials: tutorials_with_tutor_titles(current_user, voucher)) %>
+    <%= t('profile.already_tutor_html',
+      tutorials: tutorials_with_tutor_titles(current_user, voucher)) %>
   </p>
 <% end %>
 
@@ -31,13 +32,13 @@
       <%= cancel_voucher_button %>
     </p>
     
-    <% else %>
+  <% else %>
     
-    <p class="mt-4">
+    <p>
       <%= t('profile.no_tutorials_redemption') %>
       <%= redeem_voucher_button(voucher) %>
       <%= cancel_voucher_button %>
     </p>
-  <% end %>
 
+  <% end %>
 <% end %>

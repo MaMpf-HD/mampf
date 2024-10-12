@@ -2145,20 +2145,21 @@ en:
       notified when you have redeemed the voucher.
     already_teacher: >
       You are already the teacher for this event series.
-    become_speaker: >
-      With this voucher, you can obtain speaker status for %{seminar}.
-      With that, editors for the seminar and the teacher can assign you talks.
-      If applicable, you can select the talks you will be responsible for
-      right here. The editors and the teacher will be notified when you have
-      redeemed the voucher.
-    already_speaker: >
-      You are already registered as a speaker for: %{talks}.
+    become_speaker_html: >
+      By redeeming this voucher, you will obtain speaker status for the seminar
+      <strong>%{seminar}</strong>.
+    already_speaker_html: >
+      You are already registered as speaker for: <strong>%{talks}</strong>.
+    talks_available: >
+      If you already know which talks you will be responsible for, you can
+      select them here. Otherwise, leave the field empty; then you can still
+      redeem the voucher so that the teacher can assign you talks later.
+    no_talks_redemption: >
+      After having redeemed the voucher, the teacher can assign you to the talks.
     all_talks_taken: >
       There are no more talks available for this seminar that you can take over.
-    no_talks_yet: >
-      There are no talks available for this seminar yet.
     already_speaker_by_redemption: >
-      You have already redeemed a speaker voucher for this seminar.
+      You have already redeemed this voucher to become a speaker.
     select_talks: Select Talks
   mampf_news:
     title: 'MaMpf News'
