@@ -637,9 +637,9 @@ de:
           Veranstaltung einpflegen. Du kannst nur Personen auswählen,
           die von Ihrem Rechtestatus her dafür in Frage kommen.
           Um den entsprechenden Rechtestatus an Personen zu vergeben,
-          die ihn bisher noch nicht haben, musst Du einen Voucher
+          die ihn bisher noch nicht haben, musst Du einen Gutschein
           erstellen und diesen an die entsprechende Person weitergeben.
-          Die Person kann dann den Voucher auf ihrer Profilseite einlösen
+          Die Person kann dann den Gutschein auf ihrer Profilseite einlösen
           und wird dadurch zusätzliche VeranstaltungseditorIn.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese
@@ -4118,7 +4118,7 @@ de:
           attributes:
             role:
               only_one_active: >
-                Für diese Vorlesung kann es nur einen aktiven Voucher dieses Typs geben.
+                Für diese Vorlesung kann es nur einen aktiven Gutschein dieses Typs geben.
               speaker_vouchers_only_for_seminars: >
                 Vortragenden-Gutscheine können nur für Seminare erstellt werden.
         watchlist_entry:
