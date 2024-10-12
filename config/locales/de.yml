@@ -2270,17 +2270,15 @@ de:
       Es sind keine weiteren Tutorien verfügbar, die Du noch übernehmen kannst.
     already_tutor_by_redemption: >
       Du hast diesen Gutschein bereits eingelöst, um TutorInnenstatus zu erhalten.
-    become_editor: >
-      Mit diesem Gutschein erhältst Du EditorInnenstatus für die Veranstaltung
-      %{lecture}. Zudem wird die Veranstaltung automatisch zu Deinen abonnierten
-      Veranstaltungen hinzugefügt.
+    become_editor_html: >
+      Mit diesem Gutschein erhältst Du EditorInnenstatus für
+      <strong>%{lecture}</strong>.
     already_editor_by_redemption: >
       Du hast bereits einen Gutschein eingelöst, um EditorInnenstatus zu
       erhalten. Die anderen VeranstaltungseditorInnen und die DozentIn werden
       benachrichtigt, wenn Du den Gutschein einlöst.
     teacher_cant_become_editor: >
-      Du kannst nicht zusätzlich EditorInnenstatus in einer Veranstaltung
-      erhalten, in der Du bereits DozentIn bist.
+      Du bist bereits DozentIn und kannst daher nicht zusätzlich EditorIn werden.
     become_teacher_html: >
       Mit diesem Gutschein erhältst Du DozentInnenstatus für
       <strong>%{lecture}</strong>.

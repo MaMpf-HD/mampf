@@ -2113,7 +2113,7 @@ en:
       We have received your request and will send you your data as soon as possible.
     redeem_voucher: Redeem Voucher
     become_tutor_html: >
-      By redeeming this voucher, you will obtain tutor status for
+      With this voucher, you obtain tutor status for
       <strong>%{lecture}</strong>.
     tutorials_available: >
       If you already know which tutorials you will be responsible for, you can
@@ -2130,15 +2130,14 @@ en:
       over.
     already_tutor_by_redemption: >
       You have already redeemed this voucher to become a tutor.
-    become_editor: >
-      With this voucher, you can obtain editor status for %{lecture}.
-      The other editors and the teacher will be notified when you have
-      redeemed the voucher.
+    become_editor_html: >
+      With this voucher, you obtain editor status for
+      <strong>%{lecture}</strong>.
     already_editor_by_redemption: >
       You have already redeemed an editor voucher for this event series.
     teacher_cant_become_editor: >
-      You are already a teacher for this event series. Therefore, you cannot
-      redeem an editor voucher.
+      You are already a teacher and therefore cannot additionally become
+      an editor.
     become_teacher_html: >
       With this voucher, you obtain teacher status for
       <strong>%{lecture}</strong>.
@@ -2146,7 +2145,7 @@ en:
     already_teacher_html: >
       You are already the teacher for <strong>%{lecture}</strong>.
     become_speaker_html: >
-      By redeeming this voucher, you will obtain speaker status for the seminar
+      With this voucher, you will obtain speaker status for the seminar
       <strong>%{seminar}</strong>.
     already_speaker_html: >
       You are already registered as speaker for: <strong>%{talks}</strong>.
