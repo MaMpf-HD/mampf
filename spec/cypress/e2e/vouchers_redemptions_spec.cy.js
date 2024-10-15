@@ -85,6 +85,12 @@ describe("Verify Voucher Form", () => {
       expect(message).to.equal(this.voucherInvalid);
     });
   });
+
+  it.only("is valid even if voucher string contains whitespaces at the beginning/end", function () {
+    cy.getBySelector("secure-hash-input").type(`\t  ${this.voucher.secure_hash} `);
+    cy.getBySelector("verify-voucher-submit").click();
+    helpers.verifyVoucherRedemptionText();
+  });
 });
 
 describe("Tutor voucher redemption", () => {

@@ -114,7 +114,8 @@
         "helpdesk",
         "katex",
         "Timecop",
-        "turbolinks"
+        "turbolinks",
+        "whitespaces"
     ],
     "cSpell.enableFiletypes": [
         "ruby"
