@@ -74,9 +74,9 @@ class LecturesController < ApplicationController
       @lecture.update(sort: "special") if @lecture.course.term_independent
       # set organizational_concept to default
       set_organizational_defaults
-      # set lenguage to default language
+      # set language to default language
       set_language
-      # depending on where the create action was trriggered from, return
+      # depending on where the create action was triggered from, return
       # to admin index view or edit course view
       unless params[:lecture][:from] == "course"
         redirect_to administration_path,
