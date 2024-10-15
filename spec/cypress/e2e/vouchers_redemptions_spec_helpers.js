@@ -31,7 +31,7 @@ export function verifyVoucherRedemptionText() {
 }
 
 export function verifyNoItemsYetMessage(context, itemType) {
-  cy.i18n(`profile.no_${itemType}s_yet`).as("noItemsYet");
+  cy.i18n(`profile.no_${itemType}s_redemption`).as("noItemsYet");
 
   cy.then(() => {
     cy.getBySelector("redeem-voucher-card").should("contain", context.noItemsYet);
@@ -200,11 +200,13 @@ export function verifyPreviousTeacherIsEditor(context) {
 }
 
 export function verifyAlreadyTeacherMessage(context) {
-  cy.i18n("profile.already_teacher").as("alreadyTeacher");
+  context.lecture.call.title().then((lectureTitle) => {
+    cy.i18n("profile.already_teacher_html", { lecture: lectureTitle }).as("alreadyTeacher");
+  });
 
   cy.then(() => {
     cy.getBySelector("redeem-voucher-card")
-      .should("contain", context.alreadyTeacher);
+      .should("contain.html", context.alreadyTeacher);
   });
 }
 
