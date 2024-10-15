@@ -885,32 +885,15 @@ class Lecture < ApplicationRecord
     touch
   end
 
-  def voucher_redeemers(voucher_scope)
-    user_ids = Redemption.where(voucher: voucher_scope).pluck(:user_id)
-    User.where(id: user_ids.uniq)
-  end
-
-  def tutors_by_redemption
-    voucher_redeemers(vouchers.for_tutors)
-  end
-
-  def editors_by_redemption
-    voucher_redeemers(vouchers.for_editors)
-  end
-
-  def speakers_by_redemption
-    voucher_redeemers(vouchers.for_speakers)
-  end
-
   def eligible_as_tutors
-    (tutors + tutors_by_redemption + editors + [teacher]).uniq
+    (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some tutor statuses were
     # still given by the old system, this will not be true
   end
 
   def eligible_as_editors
-    (editors + editors_by_redemption + course.editors - [teacher]).uniq
+    (editors + Redemption.editors_by_redemption_in(self) + course.editors - [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some editor statuses were
     # still given by the old system, this will not be true
@@ -921,7 +904,7 @@ class Lecture < ApplicationRecord
   end
 
   def eligible_as_speakers
-    (speakers + speakers_by_redemption + editors + [teacher]).uniq
+    (speakers + Redemption.speakers_by_redemption_in(self) + editors + [teacher]).uniq
     # the first one should (in the future) actually be contained in the sum of
     # the other ones, but in the transition phase where some editor statuses were
     # still given by the old system, this will not be true

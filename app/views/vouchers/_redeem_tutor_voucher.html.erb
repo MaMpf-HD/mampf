@@ -25,7 +25,7 @@
 
 <% else %>
 
-  <% if current_user.in?(voucher.lecture.tutors_by_redemption) %>
+  <% if current_user.in?(Redemption.tutors_by_redemption_in(voucher.lecture)) %>
 
     <p>
       <%= t('profile.already_tutor_by_redemption') %>

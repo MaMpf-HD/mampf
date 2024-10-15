@@ -9,7 +9,7 @@
     <%= cancel_voucher_button %>
   </p>
 
-<% elsif current_user.in?(voucher.lecture.editors_by_redemption) %>
+<% elsif current_user.in?(Redemption.editors_by_redemption_in(voucher.lecture)) %>
 
   <p>
     <%= t('profile.already_editor_by_redemption') %>
