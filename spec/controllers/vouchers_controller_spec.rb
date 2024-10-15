@@ -1,4 +1,5 @@
 require "rails_helper"
+
 RSpec.describe(VouchersController, type: :controller) do
   let(:teacher) { FactoryBot.create(:confirmed_user) }
   let(:generic_user) { FactoryBot.create(:confirmed_user) }
@@ -56,7 +57,7 @@ RSpec.describe(VouchersController, type: :controller) do
     end
 
     describe "POST #verify" do
-      it "displays an error message if the secure hash is incorrect" do
+      it "shows an error message if the secure hash is incorrect" do
         post(:verify, params: { secure_hash: "incorrect_hash" })
         expect(flash[:alert]).to eq(I18n.t("controllers.voucher_invalid"))
       end
@@ -74,7 +75,7 @@ RSpec.describe(VouchersController, type: :controller) do
         end.not_to change(Redemption, :count)
       end
 
-      it "displays an error message if the secure hash is incorrect" do
+      it "shows an error message if the secure hash is incorrect" do
         post(:redeem, params: { secure_hash: "incorrect_hash" })
         expect(flash[:alert]).to eq(I18n.t("controllers.voucher_invalid"))
       end
