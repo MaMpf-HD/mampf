@@ -208,3 +208,25 @@ describe("Speaker voucher redemption", () => {
     });
   });
 });
+
+describe("User & Redemption deletion", () => {
+  beforeEach(function () {
+    helpers.createRedemptionScenario(this, "tutor");
+  });
+
+  it("after deletion of tutor user, it is no longer selectable", function () {
+    helpers.submitVoucher(this.voucher);
+    helpers.redeemVoucherToBecomeRole(this, "tutor");
+
+    cy.visit("/profile/edit");
+    cy.getBySelector("delete-account-btn").click();
+    cy.getBySelector("delete-account-pwd-field").type(this.user.password);
+    cy.getBySelector("delete-account-confirm-btn").click();
+
+    cy.then(() => {
+      helpers.logoutAndLoginAsTeacher(this);
+      helpers.visitEditPage(this, "tutorial");
+      helpers.verifyNoTutorialsButUserEligibleAsTutor(this, false);
+    });
+  });
+});

@@ -115,14 +115,15 @@ export function logoutAndLoginAsTeacher(context) {
   cy.login(context.teacher);
 }
 
-export function verifyNoTutorialsButUserEligibleAsTutor(context) {
+export function verifyNoTutorialsButUserEligibleAsTutor(context, shouldBeEligible = true) {
   cy.getBySelector("tutorial-row").should("not.exist");
   cy.getBySelector("new-tutorial-btn").should("be.visible").click();
   cy.then(() => {
     cy.getBySelector("tutorial-form").should("be.visible");
     cy.getBySelector("tutor-select").within(() => {
-      cy.get("option").should("contain", context.user.name_in_tutorials)
-        .and("contain", context.user.email)
+      const containStr = shouldBeEligible ? "contain" : "not.contain";
+      cy.get("option").should(containStr, context.user.name_in_tutorials)
+        .and(containStr, context.user.email)
         .and("not.contain", context.user.name);
     });
   });
