@@ -74,19 +74,10 @@ describe("Verify Voucher Form", () => {
   });
 
   it("displays an alert if the voucher is invalid", function () {
-    cy.getBySelector("secure-hash-input").type("incorrect hash");
-    cy.i18n("controllers.voucher_invalid").as("voucherInvalid");
-
-    cy.then(() => {
-      cy.getBySelector("verify-voucher-submit").click();
-    });
-
-    cy.on("window:alert", (message) => {
-      expect(message).to.equal(this.voucherInvalid);
-    });
+    helpers.verifyVoucherInvalidAlert(this, "incorrect hash");
   });
 
-  it.only("is valid even if voucher string contains whitespaces at the beginning/end", function () {
+  it("is valid even if voucher string contains whitespaces at the beginning/end", function () {
     cy.getBySelector("secure-hash-input").type(`\t  ${this.voucher.secure_hash} `);
     cy.getBySelector("verify-voucher-submit").click();
     helpers.verifyVoucherRedemptionText();
@@ -174,6 +165,8 @@ describe("Teacher voucher redemption", () => {
     helpers.verifyUserIsTeacher(this);
     helpers.verifyPreviousTeacherIsEditor(this);
     helpers.verifyRoleNotification(this, "teacher");
+    cy.visit("/profile/edit");
+    helpers.verifyVoucherInvalidAlert(this, this.voucher.secure_hash);
   });
 
   context("when the user is already the teacher", () => {

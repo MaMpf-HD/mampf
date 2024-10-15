@@ -26,6 +26,17 @@ export function submitVoucher(voucher) {
   cy.getBySelector("verify-voucher-submit").click();
 }
 
+export function verifyVoucherInvalidAlert(context, hash) {
+  expect(hash).to.not.be.empty;
+  cy.getBySelector("secure-hash-input").type(hash);
+  cy.i18n("controllers.voucher_invalid").then((voucherInvalidMsg) => {
+    cy.on("window:alert", (message) => {
+      expect(message).to.equal(voucherInvalidMsg);
+    });
+    cy.getBySelector("verify-voucher-submit").click();
+  });
+}
+
 export function verifyVoucherRedemptionText() {
   cy.getBySelector("redeem-voucher-text").should("be.visible");
 }
