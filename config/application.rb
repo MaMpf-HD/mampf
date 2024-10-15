@@ -14,7 +14,9 @@ module Mampf
 
     # Autoload subfolders of modules (recursively)
     # https://stackoverflow.com/a/4794775/
-    config.autoload_paths += Rails.root.glob("app/models/**/")
+    additional_paths = Rails.root.glob("app/models/**/")
+    config.autoload_paths += additional_paths
+    config.eager_load_paths += additional_paths
 
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])
@@ -29,7 +31,6 @@ module Mampf
     # See: https://guides.rubyonrails.org/v7.1/configuring.html#config-active-support-message-serializer
     Rails.application.config.active_support.message_serializer = :json
 
-    # config.eager_load_paths << Rails.root.join("extras")
     # Make `form_with` generate remote forms by default.
     config.action_view.form_with_generates_remote_forms = true
     # Settings in config/environments/* take precedence over those specified here.
