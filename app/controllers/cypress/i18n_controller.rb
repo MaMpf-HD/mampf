@@ -10,16 +10,16 @@ module Cypress
 
       substitutions = {}
       if params[:substitutions].present?
-        unless params[:substitutions].is_a?(Hash)
-          msg = "Argument `substitution` must be a hash indicating the substitutions."
-          msg += " But we got: '#{params[:substitutions]}'"
+        begin
+          substitutions = params[:substitutions].to_unsafe_hash.symbolize_keys
+        rescue NoMethodError
+          msg = "Argument `substitution` is '#{params[:substitutions]}'."
+          msg += " We cannot convert that to  a hash."
           raise(ArgumentError, msg)
         end
-        substitutions = params[:substitutions].to_unsafe_hash.symbolize_keys
       end
 
       i18n_key = params[:i18n_key]
-
       render json: I18n.t(i18n_key, **substitutions), status: :created
     end
   end
