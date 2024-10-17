@@ -51,53 +51,6 @@ class NotificationMailer < ApplicationMailer
                     title: @lecture.title_for_viewers))
   end
 
-  def new_editor_email
-    @lecture = params[:lecture]
-    @recipient = params[:recipient]
-    @username = @recipient.tutorial_name
-
-    mail(from: @sender,
-         to: @recipient.email,
-         subject: t("mailer.new_editor_subject",
-                    title: @lecture.title_for_viewers))
-  end
-
-  def new_teacher_email
-    @lecture = params[:lecture]
-    @recipient = params[:recipient]
-    @username = @recipient.tutorial_name
-
-    mail(from: @sender,
-         to: @recipient.email,
-         subject: t("mailer.new_teacher_subject",
-                    title: @lecture.title_for_viewers))
-  end
-
-  def previous_teacher_email
-    @lecture = params[:lecture]
-    @recipient = params[:recipient]
-    @username = @recipient.tutorial_name
-
-    mail(from: @sender,
-         to: @recipient.email,
-         subject: t("mailer.previous_teacher_subject",
-                    title: @lecture.title_for_viewers,
-                    new_teacher: @lecture.teacher.tutorial_name))
-  end
-
-  def new_speaker_email
-    @talk = params[:talk]
-    @recipient = params[:recipient]
-    @speaker = params[:speaker].info
-    @username = @recipient.tutorial_name
-
-    mail(from: @sender,
-         to: @recipient.email,
-         subject: t("mailer.new_speaker_subject",
-                    seminar: @talk.lecture.title,
-                    title: @talk.to_label))
-  end
-
   def submission_invitation_email
     @recipient = params[:recipient]
     @assignment = params[:assignment]
@@ -209,8 +162,16 @@ class NotificationMailer < ApplicationMailer
                     lecture: @lecture.title))
   end
 
+  def self.set_sender_and_locale
+    @sender = "#{t("mailer.notification")} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
+    I18n.locale = params[:locale]
+  end
+
   private
 
+    # This method should be replaced by the one above (self.set_sender_and_locale).
+    # It only stays here during the transition phase where this file is split
+    # into multiple files regarding concerns like vouchers, submissions, etc.
     def set_sender_and_locale
       @sender = "#{t("mailer.notification")} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
       I18n.locale = params[:locale]
