@@ -1,5 +1,4 @@
 class VouchersController < ApplicationController
-  include Notifier
   load_and_authorize_resource
   before_action :find_voucher, only: :invalidate
 

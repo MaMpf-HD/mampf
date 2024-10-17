@@ -1,6 +1,5 @@
 # LecturesController
 class LecturesController < ApplicationController
-  include Notifier
   include ActionController::RequestForgeryProtection
   before_action :set_lecture, except: [:new, :create, :search]
   before_action :set_lecture_cookie, only: [:show, :organizational,
@@ -107,7 +106,7 @@ class LecturesController < ApplicationController
       recipients = User.where(id: new_ids)
 
       recipients.each do |r|
-        notify_new_editor_by_mail(r, @lecture)
+        LectureNotifier.notify_new_editor_by_mail(r, @lecture)
       end
     end
 

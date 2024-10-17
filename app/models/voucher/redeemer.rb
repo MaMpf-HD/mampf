@@ -5,7 +5,6 @@
 # that can be claimed via a voucher, e.g. becoming a tutor for a lecture etc.
 module Redeemer
   extend ActiveSupport::Concern
-  include Notifier
 
   included do
     has_many :redemptions, dependent: :destroy
@@ -42,7 +41,7 @@ module Redeemer
 
     def redeem_editor_voucher
       lecture.update_editor_status!(Current.user)
-      notify_new_editor_by_mail(Current.user, lecture)
+      LectureNotifier.notify_new_editor_by_mail(Current.user, lecture)
 
       Redemption.create(user: Current.user, voucher: self)
     end
@@ -54,8 +53,8 @@ module Redeemer
       # because then there is no demotion to editor
       # (it is actually not possible to trigger this case via the GUI)
       if previous_teacher != Current.user
-        notify_about_teacher_change_by_mail(lecture,
-                                            previous_teacher)
+        LectureNotifier.notify_about_teacher_change_by_mail(lecture,
+                                                            previous_teacher)
       end
       invalidate!
 
@@ -65,7 +64,7 @@ module Redeemer
     def redeem_speaker_voucher(talk_ids)
       selected_talks = lecture.talks.where(id: talk_ids)
       lecture.update_speaker_status!(Current.user, selected_talks)
-      notify_cospeakers_by_mail(Current.user, selected_talks)
+      LectureNotifier.notify_cospeakers_by_mail(Current.user, selected_talks)
 
       Redemption.create(user: Current.user, voucher: self,
                         claimed_talks: selected_talks)
