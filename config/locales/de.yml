@@ -513,6 +513,26 @@ de:
           sich nicht selbst um das Einstellen von Materialien
           kümmern, so kann dies durch zusätzliche
           VeranstaltungseditorInnen geschehen.
+        teacher_fixed: >
+          Die DozentIn sollte im Normalfall diejenige Person sein,
+          die die Veranstaltung hält. Möchte die entsprechende Person
+          sich nicht selbst um das Einstellen von Materialien
+          kümmern, so kann dies durch zusätzliche
+          VeranstaltungseditorInnen geschehen. Soll die DozentIn geändert
+          werden, so kann dies dadurch geschehen, dass ein Gutschein erstellt
+          wird, der an die neue DozentIn weitergegeben wird und von dieser
+          in ihrem Nutzerprofil eingelöst wird. Die bisherige DozentIn wird
+          dann automatisch VeranstaltungeditorIn.
+        teacher_fixed_new_lecture: >
+          Die DozentIn sollte im Normalfall diejenige Person sein,
+          die die Veranstaltung hält. Solltest Du nicht DozentIn der
+          Veranstaltung sein, so kannst Du sie erstmal mit Dir als DozentIn
+          anlegen und danach an die entsprechende Person übertragen.
+          Dies geschieht dadurch, dass auf der Veranstaltungsbearbeitungsseite
+          im Tab "Personen/Tutorien" ein Gutschein erstellt wird,
+          der an die neue DozentIn weitergegeben
+          wird und von dieser in ihrem Nutzerprofil eingelöst wird.
+          Du wirst dann automatisch VeranstaltungeditorIn.
         workflow: >
           Wir beschreiben im Folgenden sinnvolle
           Workflows. Hierbei sollte man unterscheiden, ob die Veranstaltung
@@ -612,7 +632,13 @@ de:
           bearbeitungsberechtigte Personen, die verschieden von der
           DozentIn und von den ModuleditorInnen sind. Das können z.B.
           VeranstaltungsassistentInnen sein, die Materialien zur
-          Veranstaltung einpflegen.
+          Veranstaltung einpflegen. Du kannst nur Personen auswählen,
+          die von Ihrem Rechtestatus her dafür in Frage kommen.
+          Um den entsprechenden Rechtestatus an Personen zu vergeben,
+          die ihn bisher noch nicht haben, musst Du einen Gutschein
+          erstellen und diesen an die entsprechende Person weitergeben.
+          Die Person kann dann den Gutschein auf ihrer Profilseite einlösen
+          und wird dadurch zusätzliche VeranstaltungseditorIn.
         subscribers_count: >
           Das ist die Zahl aller NutzerInnen, die diese
           Veranstaltung in ihrem Profil abonniert haben.
@@ -729,6 +755,22 @@ de:
           Hausaufgaben noch Dateiuploads möglich sind (diese werden aber dann
           aber als verspätet gekennzeichnet und mit einem Zeitstempel versehen.)
         section_needed: Bitte erstelle zuerst einen Abschnitt
+        voucher_for_tutor: >
+          Gutscheine für TutorInnen können von NutzerInnen eingelöst werden, um
+          TutorInnenstatus für diese Veranstaltung zu erhalten und direkt
+          Tutorien zu übernehmen.
+        voucher_for_editor: >
+          Gutscheine für EditorInnen können von NutzerInnen eingelöst werden, um
+          EditorInnenstatus für diese Veranstaltung zu erhalten.
+        voucher_for_teacher: >
+          Gutscheine für DozentInnen können von NutzerInnen eingelöst werden, um
+          DozentInnenstatus für diese Veranstaltung zu erhalten. Die bisherige
+          DozentIn wird dann EditorIn. Ein solcher Gutschein wird direkt nach
+          dem Einlösen für ungültig erklärt.
+        voucher_for_speaker: >
+          Gutscheine für Vortragende können von NutzerInnen eingelöst werden, um
+          Vortragendenstatus für das Seminar zu erhalten und direkt Vorträge
+          zu übernehmen.
       show_media: 'Medien einblenden'
       workflow: 'Workflow'
       content_mode: 'Inhaltsermittlung'
@@ -1009,6 +1051,15 @@ de:
           nicht gesetzt sein, wenn es sich bei dem Text noch um einen Entwurf
           handelt). Du kannst als DozentIn diesen Text von der Vortragsseite
           entfernen.
+        speakers: >
+          Hier kannst Du die Vortragenden eintragen. Diese können
+          den Vortrag bearbeiten und Medien hinzufügen. Du kannst nur Personen
+          auswählen, die den Status "Vortragender" in dem Seminar haben,
+          dazu EditorInnen und Dich selbst. Um Studierenden des Status
+          eines Vortragenden zu geben, musst Du unter "Personen/Tutorien" einen
+          Gutschein erstellen, den die Studierenden einlösen können.
+          Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
+          werden
     lesson:
       edit: 'Sitzung bearbeiten'
       inspect: 'Sitzung ansehen'
@@ -2194,6 +2245,57 @@ de:
     data_request_sent: >
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
     redeem_voucher: Gutschein einlösen
+    become_tutor_html: >
+      Mit diesem Gutschein erhältst Du TutorInnenstatus für
+      <strong>%{lecture}</strong>.
+    tutorials_available: >
+      Wenn Du schon weißt, welche Tutorien du übernimmst, kannst Du diese hier
+      auswählen. Ansonsten lasse das Feld frei, dann kannst Du dennoch den
+      Gutschein einlösen, damit Dich die DozentIn später den Tutorien zuweisen kann.
+    already_tutor_html: >
+      Du bist bereits als TutorIn eingetragen für: <strong>%{tutorials}</strong>.
+    no_tutorials_redemption: >
+      Nachdem Du den Gutschein eingelöst hast, kann Dich die DozentIn den
+      Tutorien zuweisen.
+    select_tutorials: Tutorien auswählen
+    all_tutorials_taken: >
+      Es sind keine weiteren Tutorien verfügbar, die Du noch übernehmen kannst.
+    already_tutor_by_redemption: >
+      Du hast diesen Gutschein bereits eingelöst, um TutorInnenstatus zu erhalten.
+    become_editor_html: >
+      Mit diesem Gutschein erhältst Du EditorInnenstatus für
+      <strong>%{lecture}</strong>.
+    already_editor_by_redemption: >
+      Du hast bereits einen Gutschein eingelöst, um EditorInnenstatus zu
+      erhalten. Die anderen VeranstaltungseditorInnen und die DozentIn werden
+      benachrichtigt, wenn Du den Gutschein einlöst.
+    teacher_cant_become_editor: >
+      Du bist bereits DozentIn und kannst daher nicht zusätzlich EditorIn werden.
+    become_teacher_html: >
+      Mit diesem Gutschein erhältst Du DozentInnenstatus für
+      <strong>%{lecture}</strong>.
+      Die bisherige DozentIn wird zur EditorIn herabgestuft.
+    already_teacher_html: >
+      Du bist bereits DozentIn für <strong>%{lecture}</strong>.
+    become_speaker_html: >
+      Mit diesem Gutschein erhältst Du Vortragendenstatus im Seminar
+      <strong>%{seminar}</strong>.
+    already_speaker_html: >
+      Du bist bereits VortragendeR für: <strong>%{talks}</strong>.
+    talks_available: >
+      Wenn Du schon weißt, welche Vorträge du übernimmst, kannst Du diese hier
+      auswählen. Ansonsten lasse das Feld frei, dann kannst Du dennoch den
+      Gutschein einlösen, damit Dich die DozentIn später den Vorträgen zuweisen
+      kann.
+    no_talks_redemption: >
+      Nachdem Du den Gutschein eingelöst hast, kann Dich die DozentIn den
+      Vorträgen zuweisen.
+    all_talks_taken: >
+      Es sind keine weiteren Vorträge verfügbar, die Du noch übernehmen kannst.
+    already_speaker_by_redemption: >
+      Du hast diesen Gutschein bereits eingelöst, um Vortragendenstatus
+      zu erhalten.
+    select_talks: Vorträge auswählen
   mampf_news:
     title: 'MaMpf-News'
     check_notifications: 'Alle erledigen'
@@ -2229,6 +2331,26 @@ de:
       new_post_html: 'Im %{board} gibt es ein ungelesenes Thema.'
       new_posts_html: 'Im %{board} gibt es %{count} ungelesene Themen.'
     no_notifications: 'Es liegen keine neuen Benachrichtigungen für Dich vor.'
+    became_tutor: >
+      %{user} hat einen TutorInnen-Gutschein eingelöst und ist jetzt TutorIn in der
+      Veranstaltung.
+    became_editor: >
+      %{user} hat einen EditorInnen-Gutschein eingelöst und ist jetzt EditorIn in der
+      Veranstaltung.
+    became_teacher: >
+      %{user} hat einen DozentInnen-Gutschein eingelöst und ist jetzt DozentIn
+      der Veranstaltung.
+    became_speaker: >
+      %{user} hat einen Vortragenden-Gutschein eingelöst und ist jetzt VortragendeR
+      im Seminar.
+    tutorial_details: >
+      Neu übernommene Tutorien: %{tutorials}.
+    talk_details: >
+      Neu übernommene Vorträge: %{talks}.
+    redemption: 'Gutschein eingelöst:'
+    redemption_in_lecture: 'Gutschein eingelöst in %{lecture}'
+    no_tutorials_taken: 'Dabei wurden keine Tutorien übernommen.'
+    no_talks_taken: 'Dabei wurden keine Vorträge übernommen.'
   lecture:
     content: 'Veranstaltungsinhalt'
     unpublished: 'Diese Veranstaltung ist unveröffentlicht.'
@@ -3014,6 +3136,16 @@ de:
       Der Code ist gültig. Er gehört zu NutzerIn %{user} und zum Quiz %{quiz}.
     certificate_invalid: Der Code ist ungültig.
     teams_as_csv: Teams als .csv
+    info:
+      tutors: >
+        Hier kannst Du TutorInnen für dieses Tutorium eintragen.
+        Diese können Abgaben einsehen und Korrekturen hochladen.
+        Du kannst nur Personen auswählen, die den Status "TutorIn" in der
+        Veranstaltung haben, dazu EditorInnen und Dich selbst.
+        Um Studierenden den Status einer TutorIn zu geben, musst Du
+        einen Gutschein erstellen, den die Studierenden einlösen können.
+        Der Gutschein muss außerhalb von MaMpf an die Studierenden verteilt
+        werden.
     bulk_upload:
       report: Bericht zum Paketupload der Korrekturen
       number_of_submissions: Anzahl der Abgaben
@@ -3104,6 +3236,20 @@ de:
     text: 'Text'
     new_editor_subject: 'EditorInnenrechte für %{title}'
     new_editor: 'Hallo %{username}, Du hast soeben Bearbeitungsrechte für %{title} erhalten.'
+    new_teacher_subject: 'DozentInnenstatus für %{title}'
+    new_teacher: 'Hallo %{username}, Du hast soeben DozentInnenstatus für %{title} erhalten.'
+    previous_teacher_subject: 'DozentInnenwechsel in %{title}'
+    previous_teacher: >
+      Hallo %{username}, in der Veranstaltung %{title} gab es einen
+      DozentInnenwechsel. %{new_teacher} hat einen DozentInnengutschein eingelöst
+      und ist jetzt DozentIn. Du bist nicht mehr DozentIn in %{title}, sondern
+      stattdessen VeranstaltungseditorIn.
+    new_speaker_subject: 'WeitereR VortragendeR für %{seminar}, %{title}'
+    new_speaker: >
+      Hallo %{username}, im Seminar %{seminar} hat sich %{speaker}
+      als weitereR VortragendeR für %{title} eingetragen.
+      Wende Dich bitte an Deine DozentIn, wenn Du denkst, dass hier ein Fehler
+      passiert ist.
     new_lecture_subject: 'Neue Veranstaltung %{title}'
     new_lecture: 'Es wurde eine neue Veranstaltung angelegt: %{title}.'
     subscribe_lecture: >
@@ -3478,6 +3624,7 @@ de:
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{role}
+    speaker: Vortragender
     speakers: Vortragende
   access:
     unpublished: 'unveröffentlicht'
@@ -3586,6 +3733,9 @@ de:
     cancel_publication: 'Stornieren'
     import_lecture_toc: 'Gliederung importieren'
     import_toc: 'Importieren'
+    become_editor: 'EditorIn werden'
+    verify_voucher: 'Gutschein prüfen'
+    edit_talk: 'Vortrag bearbeiten'
     invalidate: 'Für ungültig erklären'
   warnings:
     save_before: >
@@ -3705,6 +3855,11 @@ de:
     no_assignments_in_lecture: >
       In dieser Veranstaltung gibt es bisher keine Hausaufgaben.
     no_voucher: 'Ein Gutschein mit der angeforderten id existiert nicht.'
+    voucher_invalid: 'Der Gutschein ist ungültig.'
+    become_tutor_success: 'Dein Tutorenstatus wurde geupdatet.'
+    become_editor_success: 'Dein Editorenstatus wurde geupdatet.'
+    become_teacher_success: 'Dein DozentInnenstatus wurde geupdatet.'
+    become_speaker_success: 'Dein Vortragendenstatus wurde geupdatet.'
     tutorials:
       destruction_failed: >
         Das Tutorium konnte nicht gelöscht werden. Das kann z.B. daran liegen,
@@ -3951,7 +4106,7 @@ de:
           attributes:
             role:
               only_one_active: >
-                Für diese Vorlesung kann es nur einen aktiven Voucher dieses Typs geben.
+                Für diese Vorlesung kann es nur einen aktiven Gutschein dieses Typs geben.
               speaker_vouchers_only_for_seminars: >
                 Vortragenden-Gutscheine können nur für Seminare erstellt werden.
         watchlist_entry:

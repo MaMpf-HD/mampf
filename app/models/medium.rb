@@ -3,6 +3,8 @@ class Medium < ApplicationRecord
   include ApplicationHelper
   include ActiveModel::Dirty
 
+  has_many :notifications, as: :notifiable, dependent: :destroy
+
   # a teachable is a course/lecture/lesson
   belongs_to :teachable, polymorphic: true, optional: true
   acts_as_list scope: [:teachable_id, :teachable_type], top_of_list: 0

@@ -9,6 +9,8 @@ class Tutorial < ApplicationRecord
 
   has_many :submissions, dependent: :destroy
 
+  has_many :claims, as: :claimable, dependent: :destroy
+
   before_destroy :check_destructibility, prepend: true
 
   # rubocop:todo Rails/UniqueValidationWithoutIndex
@@ -39,6 +41,10 @@ class Tutorial < ApplicationRecord
         csv << [s.team]
       end
     end
+  end
+
+  def add_tutor(tutor)
+    tutors << tutor unless tutors.include?(tutor)
   end
 
   private

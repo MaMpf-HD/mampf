@@ -7,6 +7,7 @@ module NotificationsHelper
     return medium_notification_item_header(notifiable) if notification.medium?
     return course_notification_item_header(notifiable) if notification.course?
     return lecture_notification_item_header(notifiable) if notification.lecture?
+    return redemption_notification_item_header(notifiable) if notification.redemption?
 
     announcement_notification_item_header(notifiable)
   end
@@ -17,6 +18,7 @@ module NotificationsHelper
     return medium_notification_item_details(notifiable) if notification.medium?
     return course_notification_item_details(notifiable) if notification.course?
     return lecture_notification_item_details(notifiable) if notification.lecture?
+    return redemption_notification_item_details(notifiable) if notification.redemption?
 
     ""
   end
@@ -26,6 +28,7 @@ module NotificationsHelper
     return "bg-post-it-blue" if notification.generic_announcement?
     return "bg-post-it-red" if notification.announcement?
     return "bg-post-it-orange" if notification.course? || notification.lecture?
+    return "bg-post-it-green" if notification.redemption?
 
     "bg-post-it-yellow"
   end
@@ -39,6 +42,8 @@ module NotificationsHelper
       t("notifications.course_selection")
     elsif notification.lecture_announcement?
       announcement_notification_card_header(notifiable)
+    elsif notification.redemption?
+      redemption_notification_card_header(notifiable)
     else
       link_to(t("mampf_news.title"), news_path, class: "text-dark")
     end
@@ -53,6 +58,8 @@ module NotificationsHelper
       course_notification_card_text(notifiable)
     elsif notification.lecture?
       lecture_notification_card_text(notifiable)
+    elsif notification.redemption?
+      t("notifications.redemption")
     else
       t("notifications.new_announcement")
     end
@@ -69,6 +76,8 @@ module NotificationsHelper
       course_notification_card_link
     elsif notification.lecture?
       lecture_notification_card_link
+    elsif notification.redemption?
+      redemption_notification_details(notifiable)
     else
       notifiable.details
     end

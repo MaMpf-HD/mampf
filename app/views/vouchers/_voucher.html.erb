@@ -4,6 +4,7 @@
 
   <h4 class="card-title lecture-pane-subheader">
     <%= t("basics.voucher_for", role: t("basics.#{role}s")) %>
+    <%= helpdesk(t("admin.lecture.info.voucher_for_#{role}"), html=false) %>
   </h4>
 
   <% if voucher %>

@@ -4,29 +4,38 @@
       <h3 class="lecture-pane-header"><%= t('basics.people') %></h3>
 
       <div class="col-6 mb-3">
-        <%= f.label :teacher_id,
-                    t('basics.teacher'),
-                  class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
-        <div id="lecture_teacher_select" %>
-          <%= f.select :teacher_id,
-                        options_for_select([[lecture.teacher.info,
-                                            lecture.teacher.id]],
-                                            lecture.teacher.id),
-                        {},
-                        { class: 'selectize',
-                          data: { ajax: true,
-                             model: 'user',
-                                  filled: false,
-                                  placeholder:
-                                    t('basics.enter_two_letters'),
-                                  no_results:
-                                    t('basics.no_results') } } %>
-          <div class="invalid-feedback" id="lecture-teacher-error">
+        <% if current_user.admin? %>
+          <div id="lecture_teacher_select" %>
+            <%= f.label :teacher_id,
+                        t('basics.teacher'),
+                        class: "form-label" %>
+            <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
+            <%= f.select :teacher_id,
+                         options_for_select([[lecture.teacher.info,
+                         lecture.teacher.id]],
+                         lecture.teacher.id),
+                         {},
+                         { class: 'selectize',
+                           data: { ajax: true,
+                                   model: 'user',
+                                   filled: false,
+                                   placeholder:
+                                     t('basics.enter_two_letters'),
+                                   no_results:
+                                   t('basics.no_results') } } %>
+            <div class="invalid-feedback" id="lecture-teacher-error">
+            </div>
           </div>
-        </div>
+        <% else %>
+          <p>
+          <%= t('basics.teacher') %>
+          <%= helpdesk(t('admin.lecture.info.teacher_fixed'), false) %>
+          </p>
+          <p data-cy="teacher-info">
+            <%= lecture.teacher.info %>
+          </p>
+        <% end %>
       </div>
-
       <div class="col-6 mb-3">
         <%= f.label :editor_ids,
                     t('basics.lecture_editors'),
@@ -34,17 +43,11 @@
         <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
         <div id="lecture_editors_select" %>
           <%= f.select :editor_ids,
-                        options_for_select([[t('none'), '']] +
-                                          lecture.select_editors,
-                                          lecture.editors.map(&:id)),
-                        {},
-                        { multiple: true,
-                          class: 'selectize',
-                          data: { ajax: true,
-                                  model: 'user',
-                                  filled: false,
-                                  placeholder: t('basics.enter_two_letters'),
-                                  no_results: t('basics.no_results') } } %>
+                       editors_preselection(lecture),
+                       {},
+                       { multiple: true,
+                         class: 'selectize',
+                         data: { cy: 'lecture-editors-select'} } %>
         </div>
       </div>
     </div>

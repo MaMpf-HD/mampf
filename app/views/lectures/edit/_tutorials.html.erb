@@ -10,6 +10,7 @@
                   new_tutorial_path(params: { lecture_id: lecture.id }),
                   class: 'btn btn-sm btn-primary',
                   id: 'newTutorialButton',
+                  data: { cy: 'new-tutorial-btn' },
                   remote: true %>
     </div>
   </div>
@@ -26,6 +27,7 @@
         <div class="col-4">
           <h6>
             <%= t('basics.tutors') %>
+            <%= helpdesk(t('tutorial.info.tutors'), true) %>
           </h6>
         </div>
         <div class="col-4">

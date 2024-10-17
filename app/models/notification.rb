@@ -9,19 +9,12 @@ class Notification < ApplicationRecord
 
   paginates_per 12
 
-  # retrieve notifiable defined by notifiable_type and notifiable_id
-  #  def notifiable
-  #    return unless notifiable_type.in?(Notification.allowed_notifiable_types) &&
-  #                  notifiable_id.present?
-  #    notifiable_type.constantize.find_by_id(notifiable_id)
-  #  end
-
   # returns the lecture associated to a notification of type announcement,
   # and teachable for a notification of type medium, nil otherwise
   def teachable
     return if notifiable.blank?
-    return if notifiable_type.in?(["Lecture", "Course"])
-    return notifiable.lecture if notifiable_type == "Announcement"
+    return if lecture_or_course?
+    return notifiable.lecture if announcement_or_redemption?
 
     # notifiable will be a medium, so return its teachable
     notifiable.teachable
@@ -34,46 +27,42 @@ class Notification < ApplicationRecord
   # all other cases: notifiable path
   def path(user)
     return if notifiable.blank?
-    return edit_profile_path if notifiable_type.in?(["Course", "Lecture"])
 
-    if notifiable_type == "Announcement"
-      return notifiable.lecture.path(user) if notifiable.lecture.present?
-
-      return news_path
+    if redemption?
+      edit_lecture_path(notifiable.voucher.lecture, anchor: "people")
+    elsif lecture_or_course?
+      edit_profile_path
+    elsif lecture_announcement?
+      notifiable.lecture.path(user)
+    elsif generic_announcement?
+      news_path
+    elsif quiz?
+      medium_path(notifiable)
+    else
+      polymorphic_url(notifiable, only_path: true)
     end
-    return medium_path(notifiable) if notifiable_type == "Medium" && notifiable.sort == "Quiz"
-
-    polymorphic_url(notifiable, only_path: true)
-  end
-
-  def self.allowed_notifiable_types
-    ["Medium", "Course", "Lecture", "Announcement"]
   end
 
   # the next methods are for the determination which kind of notification it is
 
   def medium?
-    return false if notifiable.blank?
-
-    notifiable_type == "Medium"
+    notifiable.is_a?(Medium)
   end
 
   def course?
-    return false if notifiable.blank?
-
-    notifiable.instance_of?(::Course)
+    notifiable.is_a?(Course)
   end
 
   def lecture?
-    return false if notifiable.blank?
+    notifiable.is_a?(Lecture)
+  end
 
-    notifiable.instance_of?(::Lecture)
+  def redemption?
+    notifiable.is_a?(Redemption)
   end
 
   def announcement?
-    return false if notifiable.blank?
-
-    notifiable.instance_of?(::Announcement)
+    notifiable.is_a?(Announcement)
   end
 
   def generic_announcement?
@@ -83,4 +72,18 @@ class Notification < ApplicationRecord
   def lecture_announcement?
     announcement? && notifiable.lecture.present?
   end
+
+  def quiz?
+    medium? && notifiable.sort == "Quiz"
+  end
+
+  private
+
+    def lecture_or_course?
+      notifiable_type.in?(["Lecture", "Course"])
+    end
+
+    def announcement_or_redemption?
+      notifiable_type.in?(["Announcement", "Redemption"])
+    end
 end
