@@ -2,7 +2,6 @@ class NotificationMailer < ApplicationMailer
   before_action :set_sender_and_locale
   before_action :set_recipients, only: [:medium_email, :announcement_email,
                                         :new_lecture_email,
-                                        :new_editor_email,
                                         :submission_deletion_email,
                                         :submission_deletion_lecture_email,
                                         :submission_destruction_email,
