@@ -12,14 +12,14 @@ We have the following branches:
 - *experimental*
 
 ### *production*
-contains the actual version deployed on [mampf](mampf.mathi.uni-heidelberg.de).
+contains the actual version deployed on [mampf](https://mampf.mathi.uni-heidelberg.de).
 
 ### *main*
 is usually equal to *production*. Hotfixes are tested here before being merged to *production*.
 
 ### *mampf-next*
 is the next intended version for mampf. This version is automatically deployed on
-[mampf-dev](mampf-dev.mathi.uni-heidelberg.de). Features should be developed in feature branches and merged here.
+[mampf-dev](https://mampf-dev.mathi.uni-heidelberg.de). Features should be developed in feature branches and merged here.
 
 ### feature branches
 Collaborators may create a branch for each improvement they would like to integrate in *mampf-next*. If you do not have
