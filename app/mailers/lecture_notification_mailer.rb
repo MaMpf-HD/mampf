@@ -1,5 +1,5 @@
 class LectureNotificationMailer < ApplicationMailer
-  before_action NotificationMailer.set_sender_and_locale
+  before_action { NotificationMailer.sender_and_locale(params[:locale]) }
 
   def new_editor_email
     @lecture = params[:lecture]

@@ -1,4 +1,6 @@
 module LectureNotifier
+  extend self
+
   def notify_new_editor_by_mail(editor, lecture)
     LectureNotificationMailer.with(recipient: editor,
                                    locale: editor.locale,
