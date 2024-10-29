@@ -64,6 +64,13 @@ RSpec.describe(Redeemer, type: :model) do
         voucher.redeem(params)
         expect(lecture.editors).to include(user)
       end
+
+      it "sends an email to the new editor" do
+        expect do
+          voucher.redeem(params)
+        end.to enqueue_mail_with_params(LectureNotificationMailer, :new_editor_email,
+                                        recipient: user, lecture: lecture, locale: user.locale)
+      end
     end
 
     context "when the voucher is for a teacher" do
