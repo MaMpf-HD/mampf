@@ -1,7 +1,9 @@
 class LectureNotificationMailer < ApplicationMailer
-  before_action { NotificationMailer.sender_and_locale(params[:locale]) }
+  # TODO: find alternative
+  # before_action { NotificationMailer.sender_and_locale(params[:locale]) }
 
   def new_editor_email
+    @sender = NotificationMailer.sender_and_locale(params[:locale])
     @lecture = params[:lecture]
     @recipient = params[:recipient]
     @username = @recipient.tutorial_name
