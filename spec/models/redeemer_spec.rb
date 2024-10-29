@@ -66,10 +66,21 @@ RSpec.describe(Redeemer, type: :model) do
       end
 
       it "sends an email to the new editor" do
+        expect(Current.user).to eq(user)
+
         expect do
           voucher.redeem(params)
         end.to enqueue_mail_with_params(LectureNotificationMailer, :new_editor_email,
                                         recipient: user, lecture: lecture, locale: user.locale)
+
+        perform_enqueued_jobs do
+          voucher.redeem(params)
+        end
+        mail = ActionMailer::Base.deliveries.last
+        expect(mail.from).to include(DefaultSetting::PROJECT_NOTIFICATION_EMAIL)
+        expect(mail.to).to include(user.email)
+        expect(mail.subject).to include(I18n.t("mailer.new_editor_subject",
+                                               title: lecture.title_for_viewers))
       end
     end
 
