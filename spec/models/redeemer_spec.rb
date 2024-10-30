@@ -110,6 +110,56 @@ RSpec.describe(Redeemer, type: :model) do
         voucher.redeem(params)
         expect(voucher.invalidated_at).not_to be_nil
       end
+
+      it "enqueues an email to previous and new teacher" do
+        previous_teacher = lecture.teacher
+        expect do
+          voucher.redeem(params)
+        end.to enqueue_mail_with_params(LectureNotificationMailer, :new_teacher_email,
+                                        recipient: user, lecture: lecture, locale: user.locale)
+          .and(enqueue_mail_with_params(LectureNotificationMailer, :previous_teacher_email,
+                                        recipient: previous_teacher, lecture: lecture,
+                                        locale: previous_teacher.locale))
+      end
+
+      it "sends an email to previous and new teacher" do
+        previous_teacher = lecture.teacher
+
+        perform_enqueued_jobs do
+          voucher.redeem(params)
+        end
+
+        # Mail to previous teacher
+        mail = ActionMailer::Base.deliveries.last
+        I18n.locale = previous_teacher.locale
+        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        expect(mail.to).to include(previous_teacher.email)
+        expect(mail.subject).to include(
+          I18n.t("mailer.previous_teacher_subject", title: lecture.title_for_viewers,
+                                                    new_teacher: user.tutorial_name)
+        )
+        expect(mail.html_part.body.decoded.gsub(/[\r\n]/, "")).to include(
+          I18n.t("mailer.previous_teacher",
+                 title: lecture.title_with_teacher,
+                 new_teacher: lecture.teacher.info, username: previous_teacher.tutorial_name)
+              .gsub(/[\r\n]/, "")
+        )
+
+        # Mail to new teacher
+        mail = ActionMailer::Base.deliveries[-2]
+        I18n.locale = user.locale
+        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        expect(mail.to).to include(user.email)
+        expect(mail.subject).to include(
+          I18n.t("mailer.new_teacher_subject", title: lecture.title_for_viewers)
+        )
+        expect(mail.html_part.body).to include(
+          I18n.t("mailer.new_teacher",
+                 title: lecture.title_with_teacher, username: user.tutorial_name)
+        )
+      end
     end
 
     context "when the voucher is for a speaker" do
