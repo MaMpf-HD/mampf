@@ -168,7 +168,7 @@ class NotificationMailer < ApplicationMailer
 
   private
 
-    # This method should be replaced by the one above (self.set_sender_and_locale).
+    # This method should be replaced by the one above (self.sender).
     # It only stays here during the transition phase where this file is split
     # into multiple files regarding concerns like vouchers, submissions, etc.
     def set_sender_and_locale
