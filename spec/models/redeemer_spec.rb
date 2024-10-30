@@ -74,18 +74,18 @@ RSpec.describe(Redeemer, type: :model) do
         perform_enqueued_jobs do
           voucher.redeem(params)
         end
+
         mail = ActionMailer::Base.deliveries.last
+        I18n.locale = user.locale
         expect(mail.from).to include(DefaultSetting::PROJECT_NOTIFICATION_EMAIL)
-        expect(mail[:from].display_names).to include(I18n.t("mailer.notification",
-                                                            locale: user.locale))
+        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
         expect(mail.to).to include(user.email)
         expect(mail.subject).to include(
-          I18n.t("mailer.new_editor_subject", title: lecture.title_for_viewers,
-                                              locale: user.locale)
+          I18n.t("mailer.new_editor_subject", title: lecture.title_for_viewers)
         )
         expect(mail.html_part.body).to include(
-          I18n.t("mailer.new_editor", title: lecture.title_with_teacher,
-                                      username: user.tutorial_name, locale: user.locale)
+          I18n.t("mailer.new_editor",
+                 title: lecture.title_with_teacher, username: user.tutorial_name)
         )
       end
     end
