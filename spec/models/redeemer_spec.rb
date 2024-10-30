@@ -78,10 +78,11 @@ RSpec.describe(Redeemer, type: :model) do
         end
         mail = ActionMailer::Base.deliveries.last
         expect(mail.from).to include(DefaultSetting::PROJECT_NOTIFICATION_EMAIL)
+        expect(mail[:from].display_names).to include(I18n.t("mailer.notification",
+                                                            locale: user.locale))
         expect(mail.to).to include(user.email)
         expect(mail.subject).to include(I18n.t("mailer.new_editor_subject",
-                                               title: lecture.title_for_viewers,
-                                               locale: user.locale))
+                                               title: lecture.title_for_viewers))
       end
     end
 
