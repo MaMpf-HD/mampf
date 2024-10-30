@@ -161,9 +161,9 @@ class NotificationMailer < ApplicationMailer
                     lecture: @lecture.title))
   end
 
-  def self.sender_and_locale(locale)
-    I18n.locale = locale
-    "#{I18n.t("mailer.notification")} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
+  def self.sender(locale)
+    I18n.t("mailer.notification", locale: locale) \
+      +" <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
   end
 
   private
