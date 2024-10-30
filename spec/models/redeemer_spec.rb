@@ -139,11 +139,10 @@ RSpec.describe(Redeemer, type: :model) do
           I18n.t("mailer.previous_teacher_subject", title: lecture.title_for_viewers,
                                                     new_teacher: user.tutorial_name)
         )
-        expect(mail.html_part.body.decoded.gsub(/[\r\n]/, "")).to include(
+        expect(mail).to include_in_html_body(
           I18n.t("mailer.previous_teacher",
                  title: lecture.title_with_teacher,
                  new_teacher: lecture.teacher.info, username: previous_teacher.tutorial_name)
-              .gsub(/[\r\n]/, "")
         )
 
         # Mail to new teacher
@@ -155,7 +154,7 @@ RSpec.describe(Redeemer, type: :model) do
         expect(mail.subject).to include(
           I18n.t("mailer.new_teacher_subject", title: lecture.title_for_viewers)
         )
-        expect(mail.html_part.body).to include(
+        expect(mail).to include_in_html_body(
           I18n.t("mailer.new_teacher",
                  title: lecture.title_with_teacher, username: user.tutorial_name)
         )
