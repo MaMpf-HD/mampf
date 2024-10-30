@@ -66,14 +66,6 @@ class ApplicationController < ActionController::Base
     response.headers["Expires"] = "Mon, 01 Jan 1990 00:00:00 GMT"
   end
 
-  # Sets the current user of the Current model.
-  #
-  # This should be only used for (model) tests where the set_current_user
-  # method of the ApplicationController is not available.
-  def self.current_user=(user)
-    Current.user = user
-  end
-
   protected
 
     def configure_permitted_parameters

@@ -9,7 +9,7 @@ RSpec.describe(Redeemer, type: :model) do
     let(:role) { :tutor }
 
     before :each do
-      ApplicationController.current_user = user
+      allow(Current).to receive(:user).and_return(user)
     end
 
     shared_examples "common voucher processing" do
@@ -80,7 +80,8 @@ RSpec.describe(Redeemer, type: :model) do
         expect(mail.from).to include(DefaultSetting::PROJECT_NOTIFICATION_EMAIL)
         expect(mail.to).to include(user.email)
         expect(mail.subject).to include(I18n.t("mailer.new_editor_subject",
-                                               title: lecture.title_for_viewers))
+                                               title: lecture.title_for_viewers,
+                                               locale: user.locale))
       end
     end
 
