@@ -215,6 +215,13 @@ RSpec.describe(Redeemer, type: :model) do
                                         locale: cospeaker_talk2_other.locale, talk: talk2))
       end
 
+      it "does not enqueue an email to the user that redeemed the voucher" do
+        expect do
+          voucher.redeem(params)
+        end.not_to have_enqueued_mail(LectureNotificationMailer, :new_speaker_email)
+          .with(hash_including(params: hash_including(recipient: user)))
+      end
+
       it "sends emails to every co-speaker" do
         perform_enqueued_jobs do
           voucher.redeem(params)
