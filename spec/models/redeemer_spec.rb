@@ -225,50 +225,22 @@ RSpec.describe(Redeemer, type: :model) do
           voucher.redeem(params)
         end
 
-        # Mail to cospeaker in talk1
-        I18n.locale = cospeaker_talk1.locale
-        mail = ActionMailer::Base.deliveries.detect do |m|
-          m.to.include?(cospeaker_talk1.email) &&
-            m.subject.include?(I18n.t("mailer.new_speaker_subject",
-                                      seminar: talk1.lecture.title, title: talk1.to_label))
+        [cospeaker_talk1, cospeaker_talk2, cospeaker_talk2_other].each do |cospeaker|
+          talk = cospeaker == cospeaker_talk1 ? talk1 : talk2
+          I18n.locale = cospeaker.locale
+          mail = ActionMailer::Base.deliveries.detect do |m|
+            m.to.include?(cospeaker.email) &&
+              m.subject.include?(I18n.t("mailer.new_speaker_subject",
+                                        seminar: talk.lecture.title, title: talk.to_label))
+          end
+          expect(mail).not_to be_nil
+          assert_from_notification_mailer(mail)
+          expect(mail).to include_in_html_body(
+            I18n.t("mailer.new_speaker",
+                   seminar: talk.lecture.title, title: talk.to_label,
+                   username: cospeaker.tutorial_name, speaker: user.info)
+          )
         end
-        expect(mail).not_to be_nil
-        assert_from_notification_mailer(mail)
-        expect(mail).to include_in_html_body(
-          I18n.t("mailer.new_speaker",
-                 seminar: talk1.lecture.title, title: talk1.to_label,
-                 username: cospeaker_talk1.tutorial_name, speaker: user.info)
-        )
-
-        # Mail to cospeaker in talk2
-        I18n.locale = cospeaker_talk2.locale
-        mail = ActionMailer::Base.deliveries.detect do |m|
-          m.to.include?(cospeaker_talk2.email) &&
-            m.subject.include?(I18n.t("mailer.new_speaker_subject",
-                                      seminar: talk2.lecture.title, title: talk2.to_label))
-        end
-        expect(mail).not_to be_nil
-        assert_from_notification_mailer(mail)
-        expect(mail).to include_in_html_body(
-          I18n.t("mailer.new_speaker",
-                 seminar: talk2.lecture.title, title: talk2.to_label,
-                 username: cospeaker_talk2.tutorial_name, speaker: user.info)
-        )
-
-        # Mail to other cospeaker in talk2
-        I18n.locale = cospeaker_talk2_other.locale
-        mail = ActionMailer::Base.deliveries.detect do |m|
-          m.to.include?(cospeaker_talk2_other.email) &&
-            m.subject.include?(I18n.t("mailer.new_speaker_subject",
-                                      seminar: talk2.lecture.title, title: talk2.to_label))
-        end
-        expect(mail).not_to be_nil
-        assert_from_notification_mailer(mail)
-        expect(mail).to include_in_html_body(
-          I18n.t("mailer.new_speaker",
-                 seminar: talk2.lecture.title, title: talk2.to_label,
-                 username: cospeaker_talk2_other.tutorial_name, speaker: user.info)
-        )
       end
     end
   end
