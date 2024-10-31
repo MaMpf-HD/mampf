@@ -82,8 +82,7 @@ RSpec.describe(Redeemer, type: :model) do
 
         mail = ActionMailer::Base.deliveries.last
         I18n.locale = user.locale
-        expect(mail.from).to include(DefaultSetting::PROJECT_NOTIFICATION_EMAIL)
-        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        assert_from_notification_mailer(mail)
         expect(mail.to).to include(user.email)
         expect(mail.subject).to include(
           I18n.t("mailer.new_editor_subject", title: lecture.title_for_viewers)
@@ -137,7 +136,7 @@ RSpec.describe(Redeemer, type: :model) do
         # Mail to previous teacher
         mail = ActionMailer::Base.deliveries.last
         I18n.locale = previous_teacher.locale
-        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+        assert_from_notification_mailer(mail)
         expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
         expect(mail.to).to include(previous_teacher.email)
         expect(mail.subject).to include(
@@ -153,8 +152,7 @@ RSpec.describe(Redeemer, type: :model) do
         # Mail to new teacher
         mail = ActionMailer::Base.deliveries[-2]
         I18n.locale = user.locale
-        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
-        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        assert_from_notification_mailer(mail)
         expect(mail.to).to include(user.email)
         expect(mail.subject).to include(
           I18n.t("mailer.new_teacher_subject", title: lecture.title_for_viewers)
@@ -235,8 +233,7 @@ RSpec.describe(Redeemer, type: :model) do
                                       seminar: talk1.lecture.title, title: talk1.to_label))
         end
         expect(mail).not_to be_nil
-        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
-        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        assert_from_notification_mailer(mail)
         expect(mail).to include_in_html_body(
           I18n.t("mailer.new_speaker",
                  seminar: talk1.lecture.title, title: talk1.to_label,
@@ -251,8 +248,7 @@ RSpec.describe(Redeemer, type: :model) do
                                       seminar: talk2.lecture.title, title: talk2.to_label))
         end
         expect(mail).not_to be_nil
-        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
-        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        assert_from_notification_mailer(mail)
         expect(mail).to include_in_html_body(
           I18n.t("mailer.new_speaker",
                  seminar: talk2.lecture.title, title: talk2.to_label,
@@ -267,8 +263,7 @@ RSpec.describe(Redeemer, type: :model) do
                                       seminar: talk2.lecture.title, title: talk2.to_label))
         end
         expect(mail).not_to be_nil
-        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
-        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        assert_from_notification_mailer(mail)
         expect(mail).to include_in_html_body(
           I18n.t("mailer.new_speaker",
                  seminar: talk2.lecture.title, title: talk2.to_label,
