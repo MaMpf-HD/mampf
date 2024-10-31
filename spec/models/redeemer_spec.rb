@@ -73,8 +73,8 @@ RSpec.describe(Redeemer, type: :model) do
       it "sends an email to the new editor" do
         expect do
           voucher.redeem(params)
-        end.to enqueue_mail_with_params(LectureNotificationMailer, :new_editor_email,
-                                        recipient: user, lecture: lecture, locale: user.locale)
+        end.to enqueue_mail_including_params(LectureNotificationMailer, :new_editor_email,
+                                             recipient: user, lecture: lecture, locale: user.locale)
 
         perform_enqueued_jobs do
           voucher.redeem(params)
@@ -120,11 +120,11 @@ RSpec.describe(Redeemer, type: :model) do
         previous_teacher = lecture.teacher
         expect do
           voucher.redeem(params)
-        end.to enqueue_mail_with_params(LectureNotificationMailer, :new_teacher_email,
-                                        recipient: user, lecture: lecture, locale: user.locale)
-          .and(enqueue_mail_with_params(LectureNotificationMailer, :previous_teacher_email,
-                                        recipient: previous_teacher, lecture: lecture,
-                                        locale: previous_teacher.locale))
+        end.to enqueue_mail_including_params(LectureNotificationMailer, :new_teacher_email,
+                                             recipient: user, lecture: lecture, locale: user.locale)
+          .and(enqueue_mail_including_params(LectureNotificationMailer, :previous_teacher_email,
+                                             recipient: previous_teacher, lecture: lecture,
+                                             locale: previous_teacher.locale))
       end
 
       it "sends an email to previous and new teacher" do
@@ -204,15 +204,15 @@ RSpec.describe(Redeemer, type: :model) do
       it "enqueues emails to every co-speaker" do
         expect do
           voucher.redeem(params)
-        end.to enqueue_mail_with_params(LectureNotificationMailer, :new_speaker_email,
-                                        recipient: cospeaker_talk1, speaker: user,
-                                        locale: cospeaker_talk1.locale, talk: talk1)
-          .and(enqueue_mail_with_params(LectureNotificationMailer, :new_speaker_email,
-                                        recipient: cospeaker_talk2, speaker: user,
-                                        locale: cospeaker_talk2.locale, talk: talk2))
-          .and(enqueue_mail_with_params(LectureNotificationMailer, :new_speaker_email,
-                                        recipient: cospeaker_talk2_other, speaker: user,
-                                        locale: cospeaker_talk2_other.locale, talk: talk2))
+        end.to enqueue_mail_including_params(LectureNotificationMailer, :new_speaker_email,
+                                             recipient: cospeaker_talk1, speaker: user,
+                                             locale: cospeaker_talk1.locale, talk: talk1)
+          .and(enqueue_mail_including_params(LectureNotificationMailer, :new_speaker_email,
+                                             recipient: cospeaker_talk2, speaker: user,
+                                             locale: cospeaker_talk2.locale, talk: talk2))
+          .and(enqueue_mail_including_params(LectureNotificationMailer, :new_speaker_email,
+                                             recipient: cospeaker_talk2_other, speaker: user,
+                                             locale: cospeaker_talk2_other.locale, talk: talk2))
       end
 
       it "does not enqueue an email to the user that redeemed the voucher" do

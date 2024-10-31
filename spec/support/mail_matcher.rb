@@ -1,4 +1,4 @@
-RSpec::Matchers.define(:enqueue_mail_with_params) do |mailer, method, params|
+RSpec::Matchers.define(:enqueue_mail_including_params) do |mailer, method, params|
   supports_block_expectations
 
   match do |block|
