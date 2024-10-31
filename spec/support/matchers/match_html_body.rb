@@ -8,7 +8,7 @@ RSpec::Matchers.define(:include_in_html_body) do |expected|
   end
 
   failure_message do |mail|
-    "Expected that the HTML body would match:\n#{expected_stripped}\n" \
+    "Expected that the HTML body would include:\n#{expected_stripped}\n" \
       + "But got:\n#{mail_body_stripped.call(mail)}"
   end
 end
