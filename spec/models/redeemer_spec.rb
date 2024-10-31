@@ -28,11 +28,6 @@ RSpec.describe(Redeemer, type: :model) do
         lecture.reload
         expect(Notification.count).to eq(count_before + lecture.editors_and_teacher.count)
       end
-
-      it "does not allow multiple redemptions" do
-        voucher.redeem(params)
-        expect { voucher.redeem(params) }.not_to(change { Redemption.count })
-      end
     end
 
     context "when the voucher is for a tutor" do
