@@ -28,6 +28,11 @@ RSpec.describe(Redeemer, type: :model) do
         lecture.reload
         expect(Notification.count).to eq(count_before + lecture.editors_and_teacher.count)
       end
+
+      it "does not allow multiple redemptions" do
+        voucher.redeem(params)
+        expect { voucher.redeem(params) }.not_to(change { Redemption.count })
+      end
     end
 
     context "when the voucher is for a tutor" do
@@ -167,6 +172,15 @@ RSpec.describe(Redeemer, type: :model) do
       let(:talk1) { FactoryBot.create(:talk, lecture: lecture) }
       let(:talk2) { FactoryBot.create(:talk, lecture: lecture) }
       let(:params) { { talk_ids: [talk1.id, talk2.id] } }
+      let(:cospeaker_talk1) { FactoryBot.create(:confirmed_user) }
+      let(:cospeaker_talk2) { FactoryBot.create(:confirmed_user) }
+      let(:cospeaker_talk2_other) { FactoryBot.create(:confirmed_user) }
+
+      before do
+        talk1.speakers << cospeaker_talk1
+        talk2.speakers << cospeaker_talk2
+        talk2.speakers << cospeaker_talk2_other
+      end
 
       include_examples "common voucher processing"
 
@@ -185,6 +199,74 @@ RSpec.describe(Redeemer, type: :model) do
         voucher.redeem(params)
         redemption = Redemption.last
         expect(redemption.claimed_talks).to include(talk1, talk2)
+      end
+
+      it "enqueues emails to every co-speaker" do
+        expect do
+          voucher.redeem(params)
+        end.to enqueue_mail_with_params(LectureNotificationMailer, :new_speaker_email,
+                                        recipient: cospeaker_talk1, speaker: user,
+                                        locale: cospeaker_talk1.locale, talk: talk1)
+          .and(enqueue_mail_with_params(LectureNotificationMailer, :new_speaker_email,
+                                        recipient: cospeaker_talk2, speaker: user,
+                                        locale: cospeaker_talk2.locale, talk: talk2))
+          .and(enqueue_mail_with_params(LectureNotificationMailer, :new_speaker_email,
+                                        recipient: cospeaker_talk2_other, speaker: user,
+                                        locale: cospeaker_talk2_other.locale, talk: talk2))
+      end
+
+      it "sends emails to every co-speaker" do
+        perform_enqueued_jobs do
+          voucher.redeem(params)
+        end
+
+        # Mail to cospeaker in talk1
+        I18n.locale = cospeaker_talk1.locale
+        mail = ActionMailer::Base.deliveries.detect do |m|
+          m.to.include?(cospeaker_talk1.email) &&
+            m.subject.include?(I18n.t("mailer.new_speaker_subject",
+                                      seminar: talk1.lecture.title, title: talk1.to_label))
+        end
+        expect(mail).not_to be_nil
+        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        expect(mail).to include_in_html_body(
+          I18n.t("mailer.new_speaker",
+                 seminar: talk1.lecture.title, title: talk1.to_label,
+                 username: cospeaker_talk1.tutorial_name, speaker: user.info)
+        )
+
+        # Mail to cospeaker in talk2
+        I18n.locale = cospeaker_talk2.locale
+        mail = ActionMailer::Base.deliveries.detect do |m|
+          m.to.include?(cospeaker_talk2.email) &&
+            m.subject.include?(I18n.t("mailer.new_speaker_subject",
+                                      seminar: talk2.lecture.title, title: talk2.to_label))
+        end
+        expect(mail).not_to be_nil
+        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        expect(mail).to include_in_html_body(
+          I18n.t("mailer.new_speaker",
+                 seminar: talk2.lecture.title, title: talk2.to_label,
+                 username: cospeaker_talk2.tutorial_name, speaker: user.info)
+        )
+
+        # Mail to other cospeaker in talk2
+        I18n.locale = cospeaker_talk2_other.locale
+        mail = ActionMailer::Base.deliveries.detect do |m|
+          m.to.include?(cospeaker_talk2_other.email) &&
+            m.subject.include?(I18n.t("mailer.new_speaker_subject",
+                                      seminar: talk2.lecture.title, title: talk2.to_label))
+        end
+        expect(mail).not_to be_nil
+        expect(mail.from).to eq([DefaultSetting::PROJECT_NOTIFICATION_EMAIL])
+        expect(mail[:from].display_names).to include(I18n.t("mailer.notification"))
+        expect(mail).to include_in_html_body(
+          I18n.t("mailer.new_speaker",
+                 seminar: talk2.lecture.title, title: talk2.to_label,
+                 username: cospeaker_talk2_other.tutorial_name, speaker: user.info)
+        )
       end
     end
   end
