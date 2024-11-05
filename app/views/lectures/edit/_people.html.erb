@@ -36,12 +36,13 @@
           </p>
         <% end %>
       </div>
+
       <div class="col-6 mb-3">
         <%= f.label :editor_ids,
                     t('basics.lecture_editors'),
                   class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
-        <div id="lecture_editors_select" %>
+        <div id="lecture_editors_select" data-cy="editor-select" %>
           <%= f.select :editor_ids,
                        editors_preselection(lecture),
                        {},
@@ -50,6 +51,7 @@
                          data: { cy: 'lecture-editors-select'} } %>
         </div>
       </div>
+
     </div>
     <div class="row mb-3">
       <div class="col-12">
