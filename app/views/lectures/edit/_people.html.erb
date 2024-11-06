@@ -43,12 +43,26 @@
                   class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.lecture_editors'), false) %>
         <div id="lecture_editors_select" data-cy="editor-select" %>
-          <%= f.select :editor_ids,
-                       editors_preselection(lecture),
-                       {},
-                       { multiple: true,
-                         class: 'selectize',
-                         data: { cy: 'lecture-editors-select'} } %>
+          <% if current_user.admin? %>
+              <%= f.select :editor_ids,
+                        options_for_select(lecture.select_editors,
+                                          lecture.editors.map(&:id)),
+                        {},
+                        { multiple: true,
+                          class: 'selectize',
+                          data: { ajax: true,
+                                  model: 'user',
+                                  filled: false,
+                                  placeholder: t('basics.enter_two_letters'),
+                                  no_results: t('basics.no_results') } } %>
+          <% else %>
+            <%= f.select :editor_ids,
+                        editors_preselection(lecture),
+                        {},
+                        { multiple: true,
+                          class: 'selectize',
+                          data: { cy: 'lecture-editors-select'} } %>
+          <% end %>
         </div>
       </div>
 
