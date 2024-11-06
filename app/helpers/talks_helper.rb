@@ -54,10 +54,27 @@ module TalksHelper
       label = form.label(:speaker_ids, t("admin.talk.speakers"),
                          class: "form-label")
       help_desk = helpdesk(t("admin.talk.info.speakers"), false)
-      select = form.select(:speaker_ids, speakers_preselection(talk), {},
-                           class: "selectize",
-                           data: { cy: "speaker-select" },
-                           multiple: true)
+
+      select = if current_user.admin?
+        form.select(:speaker_ids, [[]], {}, {
+                      class: "selectize",
+                      multiple: true,
+                      data: {
+                        ajax: true,
+                        filled: false,
+                        model: "user",
+                        placeholder: t("basics.enter_two_letters"),
+                        no_results: t("basics.no_results"),
+                        modal: true,
+                        cy: "speaker-select"
+                      }
+                    })
+      else
+        form.select(:speaker_ids, speakers_preselection(talk), {},
+                    class: "selectize",
+                    data: { cy: "speaker-select" },
+                    multiple: true)
+      end
 
       label + help_desk + select
     end

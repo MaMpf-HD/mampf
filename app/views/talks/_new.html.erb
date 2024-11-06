@@ -29,7 +29,7 @@
       <div class="invalid-feedback" id="talk-date-error">
       </div>
     </div>
-    <div class="col-12 mb-3">
+    <div class="col-12 mb-3" data-cy="speaker-select-div">
       <%= speaker_select(f, talk) %>
     </div>
     <% if lecture.talks.exists? %>

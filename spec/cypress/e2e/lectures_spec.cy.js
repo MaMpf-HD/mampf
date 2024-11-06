@@ -83,12 +83,77 @@ describe("Lecture people edit page: teacher & editor", () => {
       shouldContainAllUsers("editor-select", this);
     });
 
-    it.only("allows to search for arbitrary users to assign them as tutors", function () {
+    it("allows to search for arbitrary users to assign them as tutors", function () {
       cy.visit(this.lecturePeopleUrl);
       cy.getBySelector("new-tutorial-btn").click();
       cy.getBySelector("tutor-select-div").click();
       cy.getBySelector("tutor-select-div").type("cy");
       shouldContainAllUsers("tutor-select-div", this);
+    });
+  });
+});
+
+describe("Seminar speakers", () => {
+  beforeEach(function () {
+    cy.createUser("generic").as("user");
+    cy.createUserAndLogin("teacher").as("teacher");
+    cy.then(() => {
+      FactoryBot.create("seminar", { teacher_id: this.teacher.id }).as("seminar");
+    });
+    cy.then(() => {
+      cy.wrap(`/lectures/${this.seminar.id}/edit`).as("seminarUrl");
+    });
+  });
+
+  context("when logged in as teacher", () => {
+    it("prohibits searching for arbitrary users in the speakers dropdown", function () {
+      cy.visit(this.seminarUrl);
+      cy.getBySelector("new-talk-btn").click();
+      cy.getBySelector("talk-form").should("be.visible");
+      cy.getBySelector("speaker-select").within(() => {
+        cy.get("option")
+          .should("not.contain", this.user.name_in_tutorials)
+          .and("not.contain", this.user.email)
+          .and("not.contain", this.user.name);
+      });
+
+      // type "cy" to trigger search
+      cy.getBySelector("speaker-select-div").click();
+      cy.getBySelector("speaker-select-div").type("cy");
+
+      cy.getBySelector("speaker-select-div")
+        .should("not.contain", this.user.name_in_tutorials)
+        .and("not.contain", this.user.email)
+        .and("not.contain", this.user.name);
+      cy.getBySelector("speaker-select-div")
+        .should("contain", this.teacher.name_in_tutorials)
+        .and("contain", this.teacher.email)
+        .and("not.contain", this.teacher.name);
+    });
+  });
+
+  context("when logged in as admin", () => {
+    beforeEach(function () {
+      cy.logout();
+      cy.createUserAndLogin("admin").as("admin");
+    });
+
+    it("allows searching for arbitrary users to assign them as speakers", function () {
+      cy.visit(this.seminarUrl);
+      cy.getBySelector("new-talk-btn").click();
+      cy.getBySelector("talk-form").should("be.visible");
+
+      cy.getBySelector("speaker-select-div").click();
+      cy.getBySelector("speaker-select-div").type("cy");
+
+      cy.getBySelector("speaker-select-div")
+        .should("contain", this.user.name_in_tutorials)
+        .and("contain", this.user.email)
+        .and("not.contain", this.user.name);
+      cy.getBySelector("speaker-select-div")
+        .should("contain", this.teacher.name_in_tutorials)
+        .and("contain", this.teacher.email)
+        .and("not.contain", this.teacher.name);
     });
   });
 });
