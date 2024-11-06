@@ -109,14 +109,18 @@
     ],
     "cSpell.language": "en,de",
     "cSpell.words": [
+        "activerecord",
         "commontator",
         "cospeaker",
         "cospeakers",
+        "datetime",
         "factorybot",
         "helpdesk",
         "katex",
+        "preselection",
         "Timecop",
         "turbolinks",
+        "uncached",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [
