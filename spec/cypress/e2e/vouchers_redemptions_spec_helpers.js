@@ -223,11 +223,8 @@ export function verifyAlreadyTeacherMessage(context) {
 }
 
 export function visitEditPage(context, type) {
-  if (type === "talk") {
-    cy.visit(`/lectures/${context.lecture.id}/edit`);
-  }
-  else {
-    cy.visit(`/lectures/${context.lecture.id}/edit`);
+  cy.visit(`/lectures/${context.lecture.id}/edit`);
+  if (type !== "talk") {
     cy.getBySelector("people-tab-btn").click();
   }
 }
@@ -237,7 +234,6 @@ export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
 
   cy.then(() => {
     cy.getBySelector("no-talks-yet").should("contain", context.noTalksYet);
-    cy.getBySelector("new-talk-btn").should("be.visible");
     cy.getBySelector("new-talk-btn").click();
   });
 
