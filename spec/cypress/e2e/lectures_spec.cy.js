@@ -68,7 +68,7 @@ describe("Lecture people edit page", () => {
       shouldContainAllUsers("teacher-admin-select", this);
     });
 
-    it.only("allows searching for arbitrary users to assign them as editors", function () {
+    it("allows searching for arbitrary users to assign them as editors", function () {
       cy.visit(this.lecturePeopleUrl);
 
       cy.getBySelector("editor-select").click();
