@@ -14,6 +14,21 @@ describe("Lecture edit page", () => {
   });
 });
 
+function shouldContainUsers(selector, context, shouldContainUser, shouldContainTeacher) {
+  const containUser = shouldContainUser ? "contain" : "not.contain";
+  const containTeacher = shouldContainTeacher ? "contain" : "not.contain";
+
+  cy.getBySelector(selector)
+    .should(containUser, context.user.name_in_tutorials)
+    .and(containUser, context.user.email)
+    .and("not.contain", context.user.name);
+
+  cy.getBySelector(selector)
+    .should(containTeacher, context.teacher.name_in_tutorials)
+    .and(containTeacher, context.teacher.email)
+    .and("not.contain", context.teacher.name);
+}
+
 describe("Lecture people edit page: teacher & editor", () => {
   beforeEach(function () {
     cy.createUser("generic").as("user");
@@ -37,8 +52,7 @@ describe("Lecture people edit page: teacher & editor", () => {
       cy.visit(this.lecturePeopleUrl);
       cy.getBySelector("editor-select").click();
       cy.getBySelector("editor-select").type("cy");
-      cy.getBySelector("editor-select").should("not.contain", this.user.name_in_tutorials);
-      cy.getBySelector("editor-select").should("not.contain", this.user.email);
+      shouldContainUsers("editor-select", this, false, false);
     });
 
     it("prohibits searching for arbitrary users in the tutor dropdown", function () {
@@ -46,11 +60,7 @@ describe("Lecture people edit page: teacher & editor", () => {
       cy.getBySelector("new-tutorial-btn").click();
       cy.getBySelector("tutor-select-div").click();
       cy.getBySelector("tutor-select-div").type("cy");
-
-      cy.getBySelector("tutor-select-div").should("not.contain", this.user.name_in_tutorials);
-      cy.getBySelector("tutor-select-div").should("not.contain", this.user.email);
-      cy.getBySelector("tutor-select-div").should("contain", this.teacher.name_in_tutorials);
-      cy.getBySelector("tutor-select-div").should("contain", this.teacher.email);
+      shouldContainUsers("tutor-select-div", this, false, true);
     });
   });
 
@@ -60,27 +70,17 @@ describe("Lecture people edit page: teacher & editor", () => {
       cy.createUserAndLogin("admin").as("admin");
     });
 
-    function shouldContainAllUsers(selector, context) {
-      cy.getBySelector(selector).should("contain", context.user.name_in_tutorials);
-      cy.getBySelector(selector).should("contain", context.user.email);
-      cy.getBySelector(selector).should("contain", context.teacher.name_in_tutorials);
-      cy.getBySelector(selector).should("contain", context.teacher.email);
-      cy.getBySelector(selector).should("contain", context.admin.name_in_tutorials);
-      cy.getBySelector(selector).should("contain", context.admin.email);
-    }
-
     it("allows searching for arbitrary users to assign them as teachers", function () {
       cy.visit(this.lecturePeopleUrl);
-      cy.getBySelector("teacher-admin-select").should("be.visible");
       cy.getBySelector("teacher-admin-select").type("cy");
-      shouldContainAllUsers("teacher-admin-select", this);
+      shouldContainUsers("teacher-admin-select", this, true, true);
     });
 
     it("allows searching for arbitrary users to assign them as editors", function () {
       cy.visit(this.lecturePeopleUrl);
       cy.getBySelector("editor-select").click();
       cy.getBySelector("editor-select").type("cy");
-      shouldContainAllUsers("editor-select", this);
+      shouldContainUsers("editor-select", this, true, true);
     });
 
     it("allows to search for arbitrary users to assign them as tutors", function () {
@@ -88,10 +88,19 @@ describe("Lecture people edit page: teacher & editor", () => {
       cy.getBySelector("new-tutorial-btn").click();
       cy.getBySelector("tutor-select-div").click();
       cy.getBySelector("tutor-select-div").type("cy");
-      shouldContainAllUsers("tutor-select-div", this);
+      shouldContainUsers("tutor-select-div", this, true, true);
     });
   });
 });
+
+function shouldNotContainUserInOptions(selector, user) {
+  cy.getBySelector(selector).within(() => {
+    cy.get("option")
+      .should("not.contain", user.name_in_tutorials)
+      .and("not.contain", user.email)
+      .and("not.contain", user.name);
+  });
+}
 
 describe("Seminar speakers (new talk)", () => {
   beforeEach(function () {
@@ -109,25 +118,11 @@ describe("Seminar speakers (new talk)", () => {
     it("prohibits searching for arbitrary users in the speakers dropdown", function () {
       cy.visit(this.seminarUrl);
       cy.getBySelector("new-talk-btn").click();
-      cy.getBySelector("speaker-select").within(() => {
-        cy.get("option")
-          .should("not.contain", this.user.name_in_tutorials)
-          .and("not.contain", this.user.email)
-          .and("not.contain", this.user.name);
-      });
-
-      // type "cy" to trigger search
+      cy.getBySelector("talk-form").should("be.visible");
+      shouldNotContainUserInOptions("speaker-select", this.user);
       cy.getBySelector("speaker-select-div").click();
       cy.getBySelector("speaker-select-div").type("cy");
-
-      cy.getBySelector("speaker-select-div")
-        .should("not.contain", this.user.name_in_tutorials)
-        .and("not.contain", this.user.email)
-        .and("not.contain", this.user.name);
-      cy.getBySelector("speaker-select-div")
-        .should("contain", this.teacher.name_in_tutorials)
-        .and("contain", this.teacher.email)
-        .and("not.contain", this.teacher.name);
+      shouldContainUsers("speaker-select-div", this, false, true);
     });
   });
 
@@ -140,18 +135,10 @@ describe("Seminar speakers (new talk)", () => {
     it("allows searching for arbitrary users to assign them as speakers", function () {
       cy.visit(this.seminarUrl);
       cy.getBySelector("new-talk-btn").click();
-
+      cy.getBySelector("talk-form").should("be.visible");
       cy.getBySelector("speaker-select-div").click();
       cy.getBySelector("speaker-select-div").type("cy");
-
-      cy.getBySelector("speaker-select-div")
-        .should("contain", this.user.name_in_tutorials)
-        .and("contain", this.user.email)
-        .and("not.contain", this.user.name);
-      cy.getBySelector("speaker-select-div")
-        .should("contain", this.teacher.name_in_tutorials)
-        .and("contain", this.teacher.email)
-        .and("not.contain", this.teacher.name);
+      shouldContainUsers("speaker-select-div", this, true, true);
     });
   });
 });
@@ -176,23 +163,9 @@ describe("Seminar speakers (existing talk)", () => {
   context("when logged in as teacher", () => {
     it("prohibits searching for arbitrary users in the speakers dropdown", function () {
       cy.visit(this.talkUrl);
-      cy.getBySelector("speaker-select").within(() => {
-        cy.get("option")
-          .should("not.contain", this.user.name_in_tutorials)
-          .and("not.contain", this.user.email)
-          .and("not.contain", this.user.name);
-      });
-
+      shouldNotContainUserInOptions("speaker-select", this.user);
       cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
-
-      cy.getBySelector("speaker-select-div")
-        .should("not.contain", this.user.name_in_tutorials)
-        .and("not.contain", this.user.email)
-        .and("not.contain", this.user.name);
-      cy.getBySelector("speaker-select-div")
-        .should("contain", this.teacher.name_in_tutorials)
-        .and("contain", this.teacher.email)
-        .and("not.contain", this.teacher.name);
+      shouldContainUsers("speaker-select-div", this, false, true);
     });
   });
 
@@ -202,19 +175,10 @@ describe("Seminar speakers (existing talk)", () => {
       cy.createUserAndLogin("admin").as("admin");
     });
 
-    it.only("allows searching for arbitrary users to assign them as speakers", function () {
+    it("allows searching for arbitrary users to assign them as speakers", function () {
       cy.visit(this.talkUrl);
-
       cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
-
-      cy.getBySelector("speaker-select-div")
-        .should("contain", this.user.name_in_tutorials)
-        .and("contain", this.user.email)
-        .and("not.contain", this.user.name);
-      cy.getBySelector("speaker-select-div")
-        .should("contain", this.teacher.name_in_tutorials)
-        .and("contain", this.teacher.email)
-        .and("not.contain", this.teacher.name);
+      shouldContainUsers("speaker-select-div", this, true, true);
     });
   });
 });
