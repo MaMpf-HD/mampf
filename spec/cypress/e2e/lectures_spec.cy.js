@@ -14,7 +14,7 @@ describe("Lecture edit page", () => {
   });
 });
 
-describe("Lecture people edit page", () => {
+describe("Lecture people edit page: teacher & editor", () => {
   beforeEach(function () {
     cy.createUser("generic").as("user");
     cy.createUserAndLogin("teacher").as("teacher");
@@ -29,19 +29,28 @@ describe("Lecture people edit page", () => {
   context("when logged in as teacher", () => {
     it("does not show element to select teacher", function () {
       cy.visit(this.lecturePeopleUrl);
-
       cy.getBySelector("teacher-admin-select").should("not.exist");
       cy.getBySelector("teacher-info").should("exist");
     });
 
     it("prohibits searching for arbitrary users in the editor dropdown", function () {
       cy.visit(this.lecturePeopleUrl);
-
       cy.getBySelector("editor-select").click();
       cy.getBySelector("editor-select").type("cy");
-
       cy.getBySelector("editor-select").should("not.contain", this.user.name_in_tutorials);
       cy.getBySelector("editor-select").should("not.contain", this.user.email);
+    });
+
+    it("prohibits searching for arbitrary users in the tutor dropdown", function () {
+      cy.visit(this.lecturePeopleUrl);
+      cy.getBySelector("new-tutorial-btn").click();
+      cy.getBySelector("tutor-select-div").click();
+      cy.getBySelector("tutor-select-div").type("cy");
+
+      cy.getBySelector("tutor-select-div").should("not.contain", this.user.name_in_tutorials);
+      cy.getBySelector("tutor-select-div").should("not.contain", this.user.email);
+      cy.getBySelector("tutor-select-div").should("contain", this.teacher.name_in_tutorials);
+      cy.getBySelector("tutor-select-div").should("contain", this.teacher.email);
     });
   });
 
@@ -62,7 +71,6 @@ describe("Lecture people edit page", () => {
 
     it("allows searching for arbitrary users to assign them as teachers", function () {
       cy.visit(this.lecturePeopleUrl);
-
       cy.getBySelector("teacher-admin-select").should("be.visible");
       cy.getBySelector("teacher-admin-select").type("cy");
       shouldContainAllUsers("teacher-admin-select", this);
@@ -70,10 +78,17 @@ describe("Lecture people edit page", () => {
 
     it("allows searching for arbitrary users to assign them as editors", function () {
       cy.visit(this.lecturePeopleUrl);
-
       cy.getBySelector("editor-select").click();
       cy.getBySelector("editor-select").type("cy");
       shouldContainAllUsers("editor-select", this);
+    });
+
+    it.only("allows to search for arbitrary users to assign them as tutors", function () {
+      cy.visit(this.lecturePeopleUrl);
+      cy.getBySelector("new-tutorial-btn").click();
+      cy.getBySelector("tutor-select-div").click();
+      cy.getBySelector("tutor-select-div").type("cy");
+      shouldContainAllUsers("tutor-select-div", this);
     });
   });
 });
