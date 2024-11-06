@@ -93,7 +93,7 @@ describe("Lecture people edit page: teacher & editor", () => {
   });
 });
 
-describe("Seminar speakers", () => {
+describe("Seminar speakers (new talk)", () => {
   beforeEach(function () {
     cy.createUser("generic").as("user");
     cy.createUserAndLogin("teacher").as("teacher");
@@ -109,7 +109,6 @@ describe("Seminar speakers", () => {
     it("prohibits searching for arbitrary users in the speakers dropdown", function () {
       cy.visit(this.seminarUrl);
       cy.getBySelector("new-talk-btn").click();
-      cy.getBySelector("talk-form").should("be.visible");
       cy.getBySelector("speaker-select").within(() => {
         cy.get("option")
           .should("not.contain", this.user.name_in_tutorials)
@@ -141,10 +140,72 @@ describe("Seminar speakers", () => {
     it("allows searching for arbitrary users to assign them as speakers", function () {
       cy.visit(this.seminarUrl);
       cy.getBySelector("new-talk-btn").click();
-      cy.getBySelector("talk-form").should("be.visible");
 
       cy.getBySelector("speaker-select-div").click();
       cy.getBySelector("speaker-select-div").type("cy");
+
+      cy.getBySelector("speaker-select-div")
+        .should("contain", this.user.name_in_tutorials)
+        .and("contain", this.user.email)
+        .and("not.contain", this.user.name);
+      cy.getBySelector("speaker-select-div")
+        .should("contain", this.teacher.name_in_tutorials)
+        .and("contain", this.teacher.email)
+        .and("not.contain", this.teacher.name);
+    });
+  });
+});
+
+describe("Seminar speakers (existing talk)", () => {
+  beforeEach(function () {
+    cy.createUser("generic").as("speaker");
+    cy.createUser("generic").as("user");
+    cy.createUserAndLogin("teacher").as("teacher");
+    cy.then(() => {
+      FactoryBot.create("seminar", { teacher_id: this.teacher.id }).as("seminar");
+    });
+    cy.then(() => {
+      FactoryBot.create("talk",
+        { lecture_id: this.seminar.id, speaker_ids: [this.speaker.id] }).as("talk");
+    });
+    cy.then(() => {
+      cy.wrap(`/talks/${this.talk.id}/edit`).as("talkUrl");
+    });
+  });
+
+  context("when logged in as teacher", () => {
+    it("prohibits searching for arbitrary users in the speakers dropdown", function () {
+      cy.visit(this.talkUrl);
+      cy.getBySelector("speaker-select").within(() => {
+        cy.get("option")
+          .should("not.contain", this.user.name_in_tutorials)
+          .and("not.contain", this.user.email)
+          .and("not.contain", this.user.name);
+      });
+
+      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
+
+      cy.getBySelector("speaker-select-div")
+        .should("not.contain", this.user.name_in_tutorials)
+        .and("not.contain", this.user.email)
+        .and("not.contain", this.user.name);
+      cy.getBySelector("speaker-select-div")
+        .should("contain", this.teacher.name_in_tutorials)
+        .and("contain", this.teacher.email)
+        .and("not.contain", this.teacher.name);
+    });
+  });
+
+  context("when logged in as admin", () => {
+    beforeEach(function () {
+      cy.logout();
+      cy.createUserAndLogin("admin").as("admin");
+    });
+
+    it.only("allows searching for arbitrary users to assign them as speakers", function () {
+      cy.visit(this.talkUrl);
+
+      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
 
       cy.getBySelector("speaker-select-div")
         .should("contain", this.user.name_in_tutorials)
