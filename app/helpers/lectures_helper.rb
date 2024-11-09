@@ -183,4 +183,27 @@ module LecturesHelper
 
     p1 + p2
   end
+
+  def editors_select(form, lecture)
+    if current_user.admin?
+      preselection = options_for_select(lecture.select_editors, lecture.editors.map(&:id))
+      form.select(:editor_ids, preselection, {}, {
+                    class: "selectize",
+                    multiple: true,
+                    data: {
+                      ajax: true,
+                      filled: false,
+                      model: "user",
+                      placeholder: t("basics.enter_two_letters"),
+                      no_results: t("basics.no_results"),
+                      modal: true
+                    }
+                  })
+    else
+      form.select(:editor_ids, editors_preselection(lecture), {},
+                  class: "selectize",
+                  multiple: true,
+                  "data-cy": "lecture-editors-select")
+    end
+  end
 end
