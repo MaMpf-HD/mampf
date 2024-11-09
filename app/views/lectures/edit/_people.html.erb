@@ -3,38 +3,8 @@
     <div class="row">
       <h3 class="lecture-pane-header"><%= t('basics.people') %></h3>
 
-      <div class="col-6 mb-3">
-        <% if current_user.admin? %>
-          <div id="lecture_teacher_select" data-cy="teacher-admin-select" %>
-            <%= f.label :teacher_id,
-                        t('basics.teacher'),
-                        class: "form-label" %>
-            <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
-            <%= f.select :teacher_id,
-                         options_for_select([[lecture.teacher.info,
-                         lecture.teacher.id]],
-                         lecture.teacher.id),
-                         {},
-                         { class: 'selectize',
-                           data: { ajax: true,
-                                   model: 'user',
-                                   filled: false,
-                                   placeholder:
-                                     t('basics.enter_two_letters'),
-                                   no_results:
-                                   t('basics.no_results') } } %>
-            <div class="invalid-feedback" id="lecture-teacher-error">
-            </div>
-          </div>
-        <% else %>
-          <p>
-          <%= t('basics.teacher') %>
-          <%= helpdesk(t('admin.lecture.info.teacher_fixed'), false) %>
-          </p>
-          <p data-cy="teacher-info">
-            <%= lecture.teacher.info %>
-          </p>
-        <% end %>
+      <div id="lecture_teacher_select" class="col-6 mb-3" data-cy="teacher-select">
+        <%= teacher_select(f, is_new_lecture=false, lecture) %>
       </div>
 
       <div class="col-6 mb-3">

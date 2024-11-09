@@ -72,8 +72,8 @@ describe("Lecture people edit page: teacher & editor", () => {
 
     it("allows searching for arbitrary users to assign them as teachers", function () {
       cy.visit(this.lecturePeopleUrl);
-      cy.getBySelector("teacher-admin-select").type("cy");
-      shouldContainUsers("teacher-admin-select", this, true, true);
+      cy.getBySelector("teacher-select").find("input:not([type='hidden'])").type("cy");
+      shouldContainUsers("teacher-select", this, true, true);
     });
 
     it("allows searching for arbitrary users to assign them as editors", function () {
