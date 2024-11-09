@@ -117,6 +117,13 @@ function shouldNotContainUserInOptions(selector, user) {
 }
 
 describe("Seminar speakers (new talk)", () => {
+  function openTalkForm() {
+    cy.intercept("GET", "/talks/new*").as("newTalk");
+    cy.getBySelector("new-talk-btn").click();
+    cy.getBySelector("talk-form").should("be.visible");
+    cy.wait("@newTalk");
+  }
+
   beforeEach(function () {
     cy.createUser("generic").as("user");
     cy.createUserAndLogin("teacher").as("teacher");
@@ -131,8 +138,7 @@ describe("Seminar speakers (new talk)", () => {
   context("when logged in as teacher", () => {
     it("prohibits searching for arbitrary users in the speakers dropdown", function () {
       cy.visit(this.seminarUrl);
-      cy.getBySelector("new-talk-btn").click();
-      cy.getBySelector("talk-form").should("be.visible");
+      openTalkForm();
       shouldNotContainUserInOptions("speaker-select", this.user);
       typeCyInInput("speaker-select-div", false);
       shouldContainUsers("speaker-select-div", this, false, true);
@@ -147,8 +153,7 @@ describe("Seminar speakers (new talk)", () => {
 
     it("allows searching for arbitrary users to assign them as speakers", function () {
       cy.visit(this.seminarUrl);
-      cy.getBySelector("new-talk-btn").click();
-      cy.getBySelector("talk-form").should("be.visible");
+      openTalkForm();
       typeCyInInput("speaker-select-div");
       shouldContainUsers("speaker-select-div", this, true, true);
     });
