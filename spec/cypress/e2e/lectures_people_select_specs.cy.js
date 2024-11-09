@@ -116,12 +116,22 @@ function shouldNotContainUserInOptions(selector, user) {
   });
 }
 
-describe("Seminar speakers (new talk)", () => {
+describe.only("Seminar speakers (new talk)", () => {
   function openTalkForm() {
     cy.intercept("GET", "/talks/new*").as("newTalk");
     cy.getBySelector("new-talk-btn").click();
     cy.getBySelector("talk-form").should("be.visible");
     cy.wait("@newTalk");
+    // I've tried many things to get it to work, but still had a failing test
+    // here in the CI/CD pipeline. Cypress seems to not be able to type in
+    // "cy" into the input field, see `typeCyInInput()`. It's probably because
+    // the /talks/new request sends back JS with `fillOptionsByAjax` after
+    // populating the modal. This might result in the input being reset after
+    // cypress has already typed in "cy" (very quickly). So this is a workaround
+    // to wait a bit before typing in the input field. In general, such waits
+    // should only be used as a last resort.
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
   }
 
   beforeEach(function () {
