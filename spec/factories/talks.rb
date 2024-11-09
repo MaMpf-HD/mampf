@@ -37,8 +37,8 @@ FactoryBot.define do
       end
     end
 
-    factory :valid_talk, traits: [:with_seminar]
+    factory :valid_talk
 
-    factory :valid_talk_with_speaker, traits: [:with_seminar, :with_speaker]
+    factory :valid_talk_with_speaker, traits: [:with_speaker]
   end
 end
