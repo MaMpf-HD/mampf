@@ -50,8 +50,7 @@ describe("Lecture people edit page: teacher & editor", () => {
 
     it("prohibits searching for arbitrary users in the editor dropdown", function () {
       cy.visit(this.lecturePeopleUrl);
-      cy.getBySelector("editor-select").click();
-      cy.getBySelector("editor-select").type("cy");
+      cy.getBySelector("editor-select").find("input:not([type='hidden'])").type("cy");
       shouldContainUsers("editor-select", this, false, false);
     });
 
@@ -78,16 +77,14 @@ describe("Lecture people edit page: teacher & editor", () => {
 
     it("allows searching for arbitrary users to assign them as editors", function () {
       cy.visit(this.lecturePeopleUrl);
-      cy.getBySelector("editor-select").click();
-      cy.getBySelector("editor-select").type("cy");
+      cy.getBySelector("editor-select").find("input:not([type='hidden'])").type("cy");
       shouldContainUsers("editor-select", this, true, true);
     });
 
     it("allows to search for arbitrary users to assign them as tutors", function () {
       cy.visit(this.lecturePeopleUrl);
       cy.getBySelector("new-tutorial-btn").click();
-      cy.getBySelector("tutor-select-div").click();
-      cy.getBySelector("tutor-select-div").type("cy");
+      cy.getBySelector("tutor-select-div").find("input:not([type='hidden'])").type("cy");
       shouldContainUsers("tutor-select-div", this, true, true);
     });
   });
@@ -120,8 +117,7 @@ describe("Seminar speakers (new talk)", () => {
       cy.getBySelector("new-talk-btn").click();
       cy.getBySelector("talk-form").should("be.visible");
       shouldNotContainUserInOptions("speaker-select", this.user);
-      cy.getBySelector("speaker-select-div").click();
-      cy.getBySelector("speaker-select-div").type("cy");
+      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
       shouldContainUsers("speaker-select-div", this, false, true);
     });
   });
@@ -136,8 +132,7 @@ describe("Seminar speakers (new talk)", () => {
       cy.visit(this.seminarUrl);
       cy.getBySelector("new-talk-btn").click();
       cy.getBySelector("talk-form").should("be.visible");
-      cy.getBySelector("speaker-select-div").click();
-      cy.getBySelector("speaker-select-div").type("cy");
+      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
       shouldContainUsers("speaker-select-div", this, true, true);
     });
   });
