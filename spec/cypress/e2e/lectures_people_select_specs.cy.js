@@ -19,9 +19,13 @@ function typeCyInInput(selector, waitForUserFill = true) {
     cy.intercept("GET", "/users/fill_user_select*").as("userFill");
   }
 
-  cy.getBySelector(selector).find("input:not([type='hidden'])").as("input");
+  cy.getBySelector(selector).find("input:not([type='hidden'])")
+    .should("have.length", 1).first().as("input");
+  cy.get("@input").clear(); // without clearing first, tests are flaky (!)
   cy.get("@input").click();
-  cy.get("@input").type("cy");
+
+  // eslint-disable-next-line cypress/unsafe-to-chain-command
+  cy.get("@input").type("cy", { timeout: 5000 }).should("have.value", "cy");
 
   if (waitForUserFill) {
     cy.wait("@userFill");
