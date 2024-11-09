@@ -14,6 +14,20 @@ describe("Lecture edit page", () => {
   });
 });
 
+function typeCyInInput(selector, waitForUserFill = true) {
+  if (waitForUserFill) {
+    cy.intercept("GET", "/users/fill_user_select*").as("userFill");
+  }
+
+  cy.getBySelector(selector).find("input:not([type='hidden'])").as("input");
+  cy.get("@input").click();
+  cy.get("@input").type("cy");
+
+  if (waitForUserFill) {
+    cy.wait("@userFill");
+  }
+}
+
 function shouldContainUsers(selector, context, shouldContainUser, shouldContainTeacher) {
   const containUser = shouldContainUser ? "contain" : "not.contain";
   const containTeacher = shouldContainTeacher ? "contain" : "not.contain";
@@ -50,15 +64,14 @@ describe("Lecture people edit page: teacher & editor", () => {
 
     it("prohibits searching for arbitrary users in the editor dropdown", function () {
       cy.visit(this.lecturePeopleUrl);
-      cy.getBySelector("editor-select").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("editor-select", false);
       shouldContainUsers("editor-select", this, false, false);
     });
 
     it("prohibits searching for arbitrary users in the tutor dropdown", function () {
       cy.visit(this.lecturePeopleUrl);
       cy.getBySelector("new-tutorial-btn").click();
-      cy.getBySelector("tutor-select-div").click();
-      cy.getBySelector("tutor-select-div").type("cy");
+      typeCyInInput("tutor-select-div", false);
       shouldContainUsers("tutor-select-div", this, false, true);
     });
   });
@@ -71,20 +84,20 @@ describe("Lecture people edit page: teacher & editor", () => {
 
     it("allows searching for arbitrary users to assign them as teachers", function () {
       cy.visit(this.lecturePeopleUrl);
-      cy.getBySelector("teacher-select").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("teacher-select");
       shouldContainUsers("teacher-select", this, true, true);
     });
 
     it("allows searching for arbitrary users to assign them as editors", function () {
       cy.visit(this.lecturePeopleUrl);
-      cy.getBySelector("editor-select").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("editor-select");
       shouldContainUsers("editor-select", this, true, true);
     });
 
     it("allows to search for arbitrary users to assign them as tutors", function () {
       cy.visit(this.lecturePeopleUrl);
       cy.getBySelector("new-tutorial-btn").click();
-      cy.getBySelector("tutor-select-div").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("tutor-select-div");
       shouldContainUsers("tutor-select-div", this, true, true);
     });
   });
@@ -117,7 +130,7 @@ describe("Seminar speakers (new talk)", () => {
       cy.getBySelector("new-talk-btn").click();
       cy.getBySelector("talk-form").should("be.visible");
       shouldNotContainUserInOptions("speaker-select", this.user);
-      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("speaker-select-div", false);
       shouldContainUsers("speaker-select-div", this, false, true);
     });
   });
@@ -132,7 +145,7 @@ describe("Seminar speakers (new talk)", () => {
       cy.visit(this.seminarUrl);
       cy.getBySelector("new-talk-btn").click();
       cy.getBySelector("talk-form").should("be.visible");
-      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("speaker-select-div");
       shouldContainUsers("speaker-select-div", this, true, true);
     });
   });
@@ -159,7 +172,7 @@ describe("Seminar speakers (existing talk)", () => {
     it("prohibits searching for arbitrary users in the speakers dropdown", function () {
       cy.visit(this.talkUrl);
       shouldNotContainUserInOptions("speaker-select", this.user);
-      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("speaker-select-div", false);
       shouldContainUsers("speaker-select-div", this, false, true);
     });
   });
@@ -172,7 +185,7 @@ describe("Seminar speakers (existing talk)", () => {
 
     it("allows searching for arbitrary users to assign them as speakers", function () {
       cy.visit(this.talkUrl);
-      cy.getBySelector("speaker-select-div").find("input:not([type='hidden'])").type("cy");
+      typeCyInInput("speaker-select-div");
       shouldContainUsers("speaker-select-div", this, true, true);
     });
   });
