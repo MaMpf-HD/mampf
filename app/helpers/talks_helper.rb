@@ -49,14 +49,15 @@ module TalksHelper
                        end, talk.speaker_ids)
   end
 
-  def speaker_select(form, talk)
+  def speaker_select(form, talk, with_preselection)
     content_tag(:div, class: "mb-3") do
       label = form.label(:speaker_ids, t("admin.talk.speakers"),
                          class: "form-label")
       help_desk = helpdesk(t("admin.talk.info.speakers"), false)
 
       select = if current_user.admin?
-        form.select(:speaker_ids, [[]], {}, {
+        preselection = with_preselection ? speakers_preselection(talk) : [[]]
+        form.select(:speaker_ids, preselection, {}, {
                       class: "selectize",
                       multiple: true,
                       data: {

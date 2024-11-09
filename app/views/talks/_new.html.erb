@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="col-12 mb-3" data-cy="speaker-select-div">
-      <%= speaker_select(f, talk) %>
+      <%= speaker_select(f, talk, with_preselection=false) %>
     </div>
     <% if lecture.talks.exists? %>
       <div class="col-12 mb-3">

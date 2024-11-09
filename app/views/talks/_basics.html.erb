@@ -49,33 +49,7 @@
     </div>
     <div class="row">
       <div class="col-12 mb-3" data-cy="speaker-select-div">
-        <%= f.label :speaker_ids,
-                    t('admin.talk.speakers'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.talk.info.speakers'), false) %>
-
-        <% if current_user.admin? %>
-          <%= f.select :speaker_ids,
-                     speakers_preselection(talk),
-                     {},
-                     { class: 'selectize',
-                       style: 'display: none;',
-                       multiple: true,
-                       data: { ajax: true,
-                               filled: false,
-                               model: 'user',
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results'),
-                               cy: 'speaker-select' }
-                      } %>
-        <% else %>
-          <%= f.select :speaker_ids,
-                      speakers_preselection(talk),
-                      {},
-                      { class: 'selectize',
-                        multiple: true,
-                        'data-cy': 'speaker-select' } %>
-        <% end %>
+        <%= speaker_select(f, talk, with_preselection=true) %>
       </div>
     </div>
     <div class="row">
