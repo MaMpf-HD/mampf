@@ -223,10 +223,11 @@ export function verifyAlreadyTeacherMessage(context) {
 }
 
 export function visitEditPage(context, type) {
-  cy.visit(`/lectures/${context.lecture.id}/edit`);
+  let url = `/lectures/${context.lecture.id}/edit`;
   if (type !== "talk") {
-    cy.getBySelector("people-tab-btn").click();
+    url += "#people";
   }
+  cy.visit(url);
 }
 
 export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
