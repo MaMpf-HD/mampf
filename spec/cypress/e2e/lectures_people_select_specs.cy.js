@@ -116,7 +116,7 @@ function shouldNotContainUserInOptions(selector, user) {
   });
 }
 
-describe.only("Seminar speakers (new talk)", () => {
+describe("Seminar speakers (new talk)", () => {
   function openTalkForm() {
     cy.intercept("GET", "/talks/new*").as("newTalk");
     cy.getBySelector("new-talk-btn").click();
