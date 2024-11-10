@@ -26,9 +26,35 @@ class VouchersController < ApplicationController
     end
   end
 
+  def verify
+    @voucher = Voucher.find_voucher_by_hash(params[:secure_hash])
+    respond_to do |format|
+      if @voucher
+        format.js
+        format.html { head :no_content }
+      else
+        error_message = I18n.t("controllers.voucher_invalid")
+        format.js { render "error", locals: { error_message: error_message } }
+        format.html { redirect_to edit_profile_path, alert: error_message }
+      end
+    end
+  end
+
   def redeem
-    # TODO: this will be dealt with in the corresponding 2nd PR
-    render js: "alert('Voucher redeemed!')"
+    voucher = Voucher.find_voucher_by_hash(params[:secure_hash])
+    if voucher
+      voucher.redeem(params.permit(tutorial_ids: [], talk_ids: []))
+      redirect_to edit_profile_path, notice: success_message(voucher)
+    else
+      handle_invalid_voucher
+    end
+  end
+
+  def cancel
+    respond_to do |format|
+      format.html { redirect_to edit_profile_path }
+      format.js
+    end
   end
 
   private
@@ -48,6 +74,18 @@ class VouchersController < ApplicationController
       @lecture = @voucher.lecture
       @role = @voucher.role
       I18n.locale = @lecture.locale
+    end
+
+    def success_message(voucher)
+      if voucher.tutor?
+        I18n.t("controllers.become_tutor_success")
+      elsif voucher.editor?
+        I18n.t("controllers.become_editor_success")
+      elsif voucher.teacher?
+        I18n.t("controllers.become_teacher_success")
+      elsif voucher.speaker?
+        I18n.t("controllers.become_speaker_success")
+      end
     end
 
     def handle_successful_save(format)
@@ -78,6 +116,14 @@ class VouchersController < ApplicationController
           render "error",
                  locals: { error_message: error_message }
         end
+      end
+    end
+
+    def handle_invalid_voucher
+      error_message = I18n.t("controllers.voucher_invalid")
+      respond_to do |format|
+        format.js { render "error", locals: { error_message: error_message } }
+        format.html { redirect_to edit_profile_path, alert: error_message }
       end
     end
 end

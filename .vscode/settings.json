@@ -102,12 +102,32 @@
     //////////////////////////////////////
     // Spell Checker
     //////////////////////////////////////
+    "cSpell.enabled": true,
+    "cSpell.ignorePaths": [
+        "node_modules",
+        ".git"
+    ],
+    "cSpell.language": "en,de",
     "cSpell.words": [
+        "activerecord",
+        "ajax",
         "commontator",
+        "cospeaker",
+        "cospeakers",
+        "datetime",
         "factorybot",
         "helpdesk",
         "katex",
+        "preselection",
+        "selectize",
         "Timecop",
-        "turbolinks"
-    ]
+        "turbolinks",
+        "uncached",
+        "whitespaces"
+    ],
+    "cSpell.enableFiletypes": [
+        "ruby"
+        // Other filetypes are handled by the default spell checker
+    ],
+    "cSpell.maxNumberOfProblems": 10000
 }

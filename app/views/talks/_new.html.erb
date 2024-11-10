@@ -1,4 +1,4 @@
-<%= form_with model: talk do |f| %>
+<%= form_with model: talk, html: { data: { cy: 'talk-form' } } do |f| %>
   <div class="row">
     <div class="col-12 mb-3">
       <%= f.label :title, t('basics.title'),
@@ -29,22 +29,8 @@
       <div class="invalid-feedback" id="talk-date-error">
       </div>
     </div>
-    <div class="col-12 mb-3">
-      <%= f.label :speaker_ids,
-                  t('admin.talk.speakers'),
-                  class: "form-label" %>
-      <%= f.select :speaker_ids,
-                   [[]],
-                   {},
-                   { class: 'selectize',
-                     style: 'display: none;',
-                     multiple: true,
-                     data: { ajax: true,
-                             filled: false,
-                             model: 'user',
-                             placeholder: t('basics.enter_two_letters'),
-                             no_results: t('basics.no_results'),
-                             modal: true } } %>
+    <div class="col-12 mb-3" data-cy="speaker-select-div">
+      <%= speaker_select(f, talk, with_preselection=false) %>
     </div>
     <% if lecture.talks.exists? %>
       <div class="col-12 mb-3">

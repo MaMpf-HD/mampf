@@ -814,6 +814,10 @@ Rails.application.routes.draw do
 
   resources :users, only: [:index, :edit, :update, :destroy]
 
+  post "vouchers/verify",
+       to: "vouchers#verify",
+       as: "verify_voucher"
+
   post "vouchers/redeem",
        to: "vouchers#redeem",
        as: "redeem_voucher"
@@ -821,6 +825,10 @@ Rails.application.routes.draw do
   post "vouchers/:id/invalidate",
        to: "vouchers#invalidate",
        as: "invalidate_voucher"
+
+  get "vouchers/cancel",
+      to: "vouchers#cancel",
+      as: "cancel_voucher"
 
   resources :vouchers, only: [:create]
 
