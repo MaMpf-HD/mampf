@@ -1,24 +1,20 @@
 <%= stylesheet_link_tag 'profile' %>
 
 <div class="container-md">
-  <div class="row">
+  <div class="row mb-3">
     <!-- 🌟 Voucher -->
-    <div class="col mb-3 mb-md-0">
-      <div class="card" data-cy="redeem-voucher-card">
-        <div class="card-header">
-          <h5 class="mb-0">
+    <div class="d-flex justify-content-center">
+      <div class="card profile-card" data-cy="redeem-voucher-card">
+        <div class="voucher-redemption-pattern"></div>
+        <div class="card-body" id="redeem-voucher">
+          <h5 class="card-title">
             <%= t('profile.redeem_voucher') %>
           </h5>
-        </div>
-    
-        <div class="card-body" id="redeem-voucher">
           <%= render partial: 'profile/verify_voucher' %>
         </div>
       </div>
     </div>
   </div>
-
-  <hr>
 
   <%= bootstrap_form_with url: profile_update_path, scope: 'user',
                         html: { id: 'profileForm'} do |f| %>
@@ -38,7 +34,7 @@
 
     <!-- 🌟 Account -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="card">
+      <div class="card profile-card">
         <div class="card-header">
           <h5 class="mb-0">
             <%= t('profile.account') %>
@@ -75,7 +71,7 @@
 
     <!-- 🌟 Notifications -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="card">
+      <div class="card profile-card">
         <div class="card-header">
           <h5 class="mb-0">
             <%= t('profile.email_notifications_header') %>
@@ -90,7 +86,7 @@
 
     <!-- 🌟 Courses -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="card">
+      <div class="card profile-card">
         <div class="card-header">
           <h5 class="mb-0">
             <%= t('profile.courses') %>
@@ -105,7 +101,7 @@
 
     <!-- 🌟 User data (GDPR) -->
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="card">
+      <div class="card profile-card">
         <div class="card-header">
           <h5 class="mb-0">
             <%= t('profile.my_data') %>

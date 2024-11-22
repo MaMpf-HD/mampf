@@ -1,0 +1,24 @@
+.voucher-redemption-pattern {
+  background:
+    radial-gradient(50% 50% at 100% 0, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
+      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
+      #0000 96%),
+    radial-gradient(50% 50% at 0 100%, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
+      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
+      #0000 96%),
+    radial-gradient(50% 50%, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
+      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
+      #0000 96%),
+    radial-gradient(50% 50%, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
+      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
+      #0000 96%) 39px 39px;
+  background-size: 78px 78px;
+  background-color: #FFFFFF;
+  height: 3em;
+}
+
+.profile-card {
+  border: 2px solid #223e62;
+  background: linear-gradient(0deg, #ecf1f8 0%, #fcfdfd 60%);
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px;
+}
