@@ -19,6 +19,11 @@
 
 .profile-card {
   border: 2px solid #223e62;
-  background: linear-gradient(0deg, #ecf1f8 0%, #fcfdfd 60%);
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px;
+  background: linear-gradient(348deg, #f7faff 0%, #fcfdfd 60%);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 3px;
+
+  .card-header {
+    background-color: #223e62;
+    color: white;
+  }
 }

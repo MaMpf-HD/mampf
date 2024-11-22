@@ -19,7 +19,7 @@
   <%= bootstrap_form_with url: profile_update_path, scope: 'user',
                         html: { id: 'profileForm'} do |f| %>
 
-  <div class="row">
+  <div class="row mb-3">
 
     <div class="alert alert-secondary" id="profileChange">
       <div class="profileChangeWarning" style="display: flex; justify-content: space-between;">
@@ -64,7 +64,10 @@
           </div>
 
           <%= render partial: 'profile/subscription_type' , locals: { f: f } %>
+          <hr>
           <%= render partial: 'profile/account' %>
+          <hr>
+          <%= render partial: 'profile/data' %>
         </div>
       </div>
     </div>
@@ -84,8 +87,12 @@
       </div>
     </div>
 
+  </div>
+
+  <div class="row">
+
     <!-- 🌟 Courses -->
-    <div class="col-12 col-md-6 mb-3 mb-md-0">
+    <div class="col">
       <div class="card profile-card">
         <div class="card-header">
           <h5 class="mb-0">
@@ -100,7 +107,7 @@
     </div>
 
     <!-- 🌟 User data (GDPR) -->
-    <div class="col-12 col-md-6 mb-3 mb-md-0">
+    <!-- <div class="col-12 col-md-6 mb-3 mb-md-0">
       <div class="card profile-card">
         <div class="card-header">
           <h5 class="mb-0">
@@ -112,7 +119,7 @@
           <%= render partial: 'profile/data' %>
         </div>
       </div>
-    </div>
+    </div> -->
 
   </div>
 
