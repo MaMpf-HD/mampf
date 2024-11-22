@@ -1,0 +1,29 @@
+<div class="modal fade" id="requestDataModal" tabindex="-1"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          <%= t('profile.my_data') %>
+        </h1>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <%= t('profile.data_explanation') %>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <%= link_to t('profile.data_request'),
+                      request_data_path,
+                      class: "btn btn-primary",
+                      type: "button",
+                      remote: true %>
+      </div>
+  
+    </div>
+  </div>
+</div>

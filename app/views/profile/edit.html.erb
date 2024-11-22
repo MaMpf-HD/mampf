@@ -1,7 +1,9 @@
 <%= stylesheet_link_tag 'profile' %>
 
 <div class="container-md">
+
   <div class="row mb-3">
+
     <!-- 🌟 Voucher -->
     <div class="d-flex justify-content-center">
       <div class="card profile-card" data-cy="redeem-voucher-card">
@@ -14,6 +16,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <%= bootstrap_form_with url: profile_update_path, scope: 'user',
@@ -21,8 +24,10 @@
 
   <div class="row mb-3">
 
+    <!-- ⭕ Profile changed warning -->
     <div class="alert alert-secondary" id="profileChange">
-      <div class="profileChangeWarning" style="display: flex; justify-content: space-between;">
+      <div class="profileChangeWarning"
+           style="display: flex; justify-content: space-between;">
         <div>
           <%= t('profile.changes_made') %>
         </div>
@@ -48,7 +53,7 @@
                         class: "form-label" %>
             <%= helpdesk(t('profile.name_information'), true) %>
             <%= f.text_field_without_bootstrap :name,
-                                              class: 'form-control' %>
+                                               class: 'form-control' %>
             <div class="invalid-feedback"
                 id="username-error">
             </div>
@@ -63,11 +68,8 @@
                                               class: 'form-control' %>
           </div>
 
-          <%= render partial: 'profile/subscription_type' , locals: { f: f } %>
-          <hr>
+          <%= render partial: 'profile/subscription_type', locals: { f: f } %>
           <%= render partial: 'profile/account' %>
-          <hr>
-          <%= render partial: 'profile/data' %>
         </div>
       </div>
     </div>
@@ -106,28 +108,16 @@
       </div>
     </div>
 
-    <!-- 🌟 User data (GDPR) -->
-    <!-- <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="card profile-card">
-        <div class="card-header">
-          <h5 class="mb-0">
-            <%= t('profile.my_data') %>
-          </h5>
-        </div>
-    
-        <div class="card-body">
-          <%= render partial: 'profile/data' %>
-        </div>
-      </div>
-    </div> -->
-
   </div>
 
   <% end %>
 
 </div>
 
-<!-- Modals -->
+<!-- 🔘 Delete Account Modal -->
 <%= render partial: 'shared/generic_modal',
            locals: { sort: 'deleteAccount',
                      title: t('profile.delete_account') } %>
+
+<!-- 🔘 User Request Data Modal -->
+<%= render partial: 'profile/request_data_modal' %>
