@@ -17,7 +17,6 @@
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
         <%= link_to t('profile.data_request'),
                       request_data_path,
                       class: "btn btn-primary",
@@ -25,6 +24,7 @@
                       type: "button",
                       data: { 'bs-dismiss': 'modal' },
                       remote: true %>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
       </div>
   
     </div>
@@ -33,19 +33,17 @@
 
 <!-- Notification upon successful data retrieval -->
 <div aria-live="polite" aria-atomic="true"
-      class="d-flex justify-content-center align-items-center w-100">
-  <div role="alert" aria-live="assertive" aria-atomic="true"
-       id="request-data-toast"
-       class="toast" data-bs-autohide="false">
+    class="position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
+  <div class="toast profile-card" id="request-data-toast" role="alert"
+      aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
 
     <div class="toast-header">
-      <strong class="me-auto">Bootstrap</strong>
-      <small>11 mins ago</small>
+      <strong class="me-auto"><%= t('profile.data_request') %></strong>
       <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
 
     <div class="toast-body">
-      Hello, world! This is a toast message.
+      <%= t('profile.data_request_sent') %>
     </div>
 
   </div>
