@@ -2001,7 +2001,6 @@ en:
     secondary_lectures: 'Secondary event series'
     no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
-    preferences: 'Preferences'
     content_info: >
       MaMpf can show you related content.
       I want to see related content (if it is released for me)

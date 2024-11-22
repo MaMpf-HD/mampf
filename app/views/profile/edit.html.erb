@@ -15,6 +15,21 @@
 
     <div class="row">
 
+      <!-- 🌟 Voucher -->
+      <div class="col-12">
+        <div class="card" data-cy="redeem-voucher-card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <%= t('profile.redeem_voucher') %>
+            </h5>
+          </div>
+      
+          <div class="card-body" id="redeem-voucher">
+            <%= render partial: 'profile/verify_voucher' %>
+          </div>
+        </div>
+      </div>
+
       <!-- 🌟 Account -->
       <div class="col-12 col-md-6">
         <div class="card">
@@ -81,8 +96,23 @@
           </div>
         </div>
       </div>
-    </div>
 
+      <!-- 🌟 User data (GDPR) -->
+      <div class="col-12 col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <%= t('profile.my_data') %>
+            </h5>
+          </div>
+      
+          <div class="card-body">
+            <%= render partial: 'profile/data' %>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
 <% end %>
