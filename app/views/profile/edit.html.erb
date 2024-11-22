@@ -1,40 +1,92 @@
 <%= bootstrap_form_with url: profile_update_path, scope: 'user',
                         html: { id: 'profileForm'} do |f| %>
-  <div class="alert alert-secondary" id="profileChange">
-    <div class="profileChangeWarning" style="display: flex; justify-content: space-between;">
-      <div>
-        <%= t('profile.changes_made') %>
-      </div>
-      <div>
-        <%= f.submit t('profile.update'),
-                     class: 'btn btn-info' %>
-      </div>
-    </div>
-  </div>
 
-  <div class="container-md small-width">
+  <div class="container-md">
+    <div class="alert alert-secondary" id="profileChange">
+      <div class="profileChangeWarning" style="display: flex; justify-content: space-between;">
+        <div>
+          <%= t('profile.changes_made') %>
+        </div>
+        <div>
+          <%= f.submit t('profile.update'), class: 'btn btn-info' %>
+        </div>
+      </div>
+    </div>
+
     <div class="row">
+
+      <!-- 🌟 Account -->
       <div class="col-12 col-md-6">
         <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <%= t('profile.account') %>
+            </h5>
+          </div>
+
           <div class="card-body">
-            <h5 class="card-title">Account</h5>
-            <p class="card-text">
-              Some quick example text to build on the card title and make up the bulk of the card's content.
-            </p>
+            <div class="mb-3">
+              <%= f.label :name,
+                          t('profile.name'),
+                          class: "form-label" %>
+              <%= helpdesk(t('profile.name_information'), true) %>
+              <%= f.text_field_without_bootstrap :name,
+                                                class: 'form-control' %>
+              <div class="invalid-feedback"
+                  id="username-error">
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :name_in_tutorials,
+                          t('profile.name_in_tutorials'),
+                          class: "form-label" %>
+              <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
+              <%= f.text_field_without_bootstrap :name_in_tutorials,
+                                                class: 'form-control' %>
+            </div>
+
+            <%= render partial: 'profile/subscription_type' , locals: { f: f } %>
+            <%= render partial: 'profile/account' %>
           </div>
         </div>
       </div>
+
+      <!-- 🌟 Notifications -->
       <div class="col-12 col-md-6">
         <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <%= t('profile.email_notifications_header') %>
+            </h5>
+          </div>
+
           <div class="card-body">
-            <h5 class="card-title">Account</h5>
-            <p class="card-text">
-              Some quick example text to build on the card title and make up the bulk of the card's content.
-            </p>
+            <%= render partial: 'profile/email_notifications' , locals: { f: f } %>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🌟 Courses -->
+      <div class="col-12 col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">
+              <%= t('profile.courses') %>
+            </h5>
+          </div>
+      
+          <div class="card-body">
+            <%= render partial: 'profile/subscriptions' , locals: { f: f } %>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
 <% end %>
+
+<%= render partial: 'shared/generic_modal',
+           locals: { sort: 'deleteAccount',
+                     title: t('profile.delete_account') } %>
