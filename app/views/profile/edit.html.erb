@@ -11,149 +11,30 @@
       </div>
     </div>
   </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-4 col-lg-2">
-              <h5>
-                <%= t('profile.account') %>
-              </h5>
-            </div>
-            <div class="col-8 col-lg-10 text-end">
-              <%= render partial: 'profile/account' %>
-            </div>
+
+  <div class="container-md small-width">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Account</h5>
+            <p class="card-text">
+              Some quick example text to build on the card title and make up the bulk of the card's content.
+            </p>
           </div>
         </div>
-        <div class="card-body">
-          <div class="mb-3">
-            <%= f.label :name,
-                        t('profile.name'),
-                        class: "form-label" %>
-            <%= helpdesk(t('profile.name_information'), true) %>
-            <%= f.text_field_without_bootstrap :name,
-                                               class: 'form-control' %>
-            <div class="invalid-feedback"
-                 id="username-error">
-            </div>
-          </div>
-          <div class="mb-3">
-            <%= f.label :name_in_tutorials,
-                        t('profile.name_in_tutorials'),
-                        class: "form-label" %>
-            <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
-            <%= f.text_field_without_bootstrap :name_in_tutorials,
-                                               class: 'form-control' %>
+      </div>
+      <div class="col-12 col-md-6">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Account</h5>
+            <p class="card-text">
+              Some quick example text to build on the card title and make up the bulk of the card's content.
+            </p>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light" id="accordion">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.courses') %>
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <%= render partial: 'profile/subscriptions',
-                     locals: { f: f } %>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.preferences') %>
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <%= render partial: 'profile/subscription_type',
-                     locals: { f: f } %>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.email_notifications_header') %>
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <%= render partial: 'profile/email_notifications',
-                     locals: { f: f } %>
-        </div>
-      </div>
-    </div>
-  </div>
+
 <% end %>
-<div class="row mb-3">
-  <div class="col-12">
-    <div class="card bg-light" data-cy="redeem-voucher-card">
-      <div class="card-header">
-        <div class="row">
-          <div class="col-12">
-            <h5>
-              <%= t('profile.redeem_voucher') %>
-            </h5>
-          </div>
-        </div>
-      </div>
-      <div class="card-body" id="redeem-voucher">
-        <%= render partial: 'profile/verify_voucher' %>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.my_data') %>
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <%= render partial: 'profile/data' %>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-<%= render partial: 'shared/generic_modal',
-           locals: { sort: 'deleteAccount',
-                     title: t('profile.delete_account') } %>
-
-<div>
-  <%= link_to :root, class: "btn btn-sm btn-primary" do %>
-    <span class="bi bi-arrow-left">
-    <%= t('back_to_home') %>
-  <% end %>
-</div>
