@@ -24,6 +24,7 @@
 }
 
 .profile-card {
+  height: 100%;
   border: 2px solid #223e62;
 
   background: linear-gradient(348deg, #f7faff 0%, #fcfdfd 60%);
@@ -43,4 +44,14 @@
 // and https://github.com/bootstrap-ruby/bootstrap_form/pull/618
 .checkbox-list {
   margin-bottom: 0.2em !important;
+}
+
+// Ensure equal height columns
+.row.display-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row.display-flex>[class*='col-'] {
+  flex-grow: 1;
 }
