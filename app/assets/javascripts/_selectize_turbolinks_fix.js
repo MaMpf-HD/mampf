@@ -128,7 +128,7 @@ function fillOptionsByAjax($selectizedSelection) {
     }
     else {
       let renderOptions = {};
-      console.log(this.dataset);
+
       let noResultsMessage = this.dataset.noResults;
       if (noResultsMessage) {
         renderOptions = {
