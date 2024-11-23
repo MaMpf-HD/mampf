@@ -1,6 +1,7 @@
 $(document).ready(function () {
   $("#profileForm").on("change input", function () {
     $("#profileChange").removeClass("d-none");
+    $("#profileChangeBottom").removeClass("d-none");
   });
 
   $('input:checkbox[name^="user[lecture"]').on("change", function () {

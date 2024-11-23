@@ -105,6 +105,14 @@
       </div>
     </div>
 
+    <!-- ⭕ Unsaved changes warning/button -->
+    <!-- Here at the bottom only for small displays -->
+    <div class="w-100 mt-3 mb-3 d-md-none">
+      <%= f.submit t('profile.changes_made_btn'),
+        class: 'btn btn-warning w-100 d-none',
+        id: "profileChangeBottom" %>
+    </div>
+
   </div>
 
   <% end %>
