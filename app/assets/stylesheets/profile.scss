@@ -38,3 +38,9 @@
     border-top-right-radius: calc(#{$card-inner-border-radius} - 2px);
   }
 }
+
+// needed because of https://github.com/bootstrap-ruby/bootstrap_form/issues/738
+// and https://github.com/bootstrap-ruby/bootstrap_form/pull/618
+.checkbox-list {
+  margin-bottom: 0.2em !important;
+}
