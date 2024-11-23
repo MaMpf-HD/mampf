@@ -2131,11 +2131,15 @@ de:
     no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Veranstaltungen.'
     passphrase: 'Zugangsschlüssel'
     content_info: >
-      MaMpf liefert eine Vielzahl von verknüpften Inhalten.
-      Ich möchte verknüpfte Inhalte (wenn diese freigegeben sind)
+      Mit dem Tag-Graphen kannst du nach Stichwörtern suchen und verknüpfte
+      Inhalte sehen. Ich möchte verknüpfte Inhalte (wenn diese freigegeben sind)
     subscription_mixed: >
-      auch aus allen Modulen sehen, die sich inhaltlich vor den von mir
-      abonnierten Modulen einsortieren.
+      aus den von mir abonnierten Modulen sehen sowie aus allen Modulen, die
+      als Grundlage für das gesuchte Modul dienen.
+    subscription_mixed_example: >
+      Z.B. suchst du nach einem Stichwort aus Algebra 1 und siehst auch
+      verwandte Stichwörter aus Lineare Algebra 1 und 2, wenn du diese
+      Option auswählst. Denn Algebra 1 baut auf Lineare Algebra auf.
     subscription_all: 'aus allen Modulen sehen.'
     subscription_strict: >
       ausschließlich aus den von mir abonnierten Modulen sehen.

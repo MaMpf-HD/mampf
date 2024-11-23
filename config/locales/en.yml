@@ -2002,10 +2002,15 @@ en:
     no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
     content_info: >
-      MaMpf can show you related content.
-      I want to see related content (if it is released for me)
+      With the tag graph, you can search for keywords and see related content.
+      I want to see related content (if it is released)
     subscription_mixed: >
-      from courses I have subscribed to and from courses that these build upon.
+      from the courses I have subscribed to as well as from all courses that
+      serve as a basis for the searched course.
+    subscription_mixed_example: >
+      For example, if you search for a keyword from Algebra 1, you will also see
+      related keywords from Linear Algebra 1 and 2 if you select this option.
+      This is because Algebra 1 builds on Linear Algebra 1 and 2.
     subscription_all: 'from all courses.'
     subscription_strict: 'only from the courses I have subscribed to.'
     no_notifications: >

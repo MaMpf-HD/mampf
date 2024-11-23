@@ -14,11 +14,6 @@
   <div class="col-12">
     <%= f.form_group :subscription_type,
                       label: { text: t('profile.content_info') } do %>
-      <%= f.radio_button :subscription_type, 1,
-                         label: t('profile.subscription_mixed'),
-                         checked: @user.subscription_type == 1 ||
-                                  @user.subscription_type.nil?,
-                         custom: true %>
       <%= f.radio_button :subscription_type, 2,
                          label: t('profile.subscription_all'),
                          checked: @user.subscription_type == 2,
@@ -27,6 +22,11 @@
                          label: t('profile.subscription_strict'),
                          checked: @user.subscription_type == 3,
                          custom: true %>
+      <%= f.radio_button :subscription_type, 1,
+            label: (t('profile.subscription_mixed') + helpdesk(t('profile.subscription_mixed_example'), false)).html_safe,
+            checked: @user.subscription_type == 1 ||
+                    @user.subscription_type.nil?,
+            custom: true %>
     <% end %>
   </div>
 </div>
