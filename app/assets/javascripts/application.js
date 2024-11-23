@@ -39,7 +39,6 @@
 //= require masonry_grid
 //= require media
 //= require notifications
-//= require profile
 //= require questions
 //= require quizzes
 //= require referrals
