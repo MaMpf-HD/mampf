@@ -2183,6 +2183,8 @@ de:
     changes_made: >
       Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
       damit die Änderungen wirksam werden.
+    changes_made_btn: >
+      Klicke hier, um Deine Änderungen zu übernehmen.
     email_for_submissions: >
       Bezüglich der Abgabe von Übungsblättern möchte ich per E-Mail von MaMpf
       benachrichtigt werden, wenn:

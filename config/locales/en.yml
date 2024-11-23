@@ -2050,6 +2050,8 @@ en:
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    changes_made_btn: >
+      Click here to save your changes.
     email_for_submissions: >
       Regarding the submission of homework assignments I wand to be notified by
       MaMpf via email if

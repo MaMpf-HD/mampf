@@ -1,6 +1,6 @@
 $(document).on("turbolinks:load", function () {
-  $("#profileForm").on("change", function () {
-    $("#profileChange").show();
+  $("#profileForm").on("change input", function () {
+    $("#profileChange").removeClass("d-none");
   });
 
   $('input:checkbox[name^="user[lecture"]').on("change", function () {

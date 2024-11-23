@@ -25,17 +25,11 @@
 
   <div class="row display-flex mb-3">
 
-    <!-- ⭕ Profile changed warning -->
-    <div class="alert alert-secondary" id="profileChange">
-      <div class="profileChangeWarning"
-           style="display: flex; justify-content: space-between;">
-        <div>
-          <%= t('profile.changes_made') %>
-        </div>
-        <div>
-          <%= f.submit t('profile.update'), class: 'btn btn-info' %>
-        </div>
-      </div>
+    <!-- ⭕ Unsaved changes warning/button -->
+    <div class="w-100 mb-3">
+      <%= f.submit t('profile.changes_made_btn'),
+            class: 'btn btn-danger w-100 d-none',
+            id: "profileChange" %>
     </div>
 
     <!-- 🌟 Account -->
