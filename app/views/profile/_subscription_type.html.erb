@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-12">
     <%= f.form_group :locale,
-                    label: { text: t('profile.locale') } do %>
+                    label: { text: t('profile.locale'), class: 'fw-bold' } do %>
       <% I18n.available_locales.each do |locale| %>
         <%= f.radio_button :locale,
                            locale.to_s,
