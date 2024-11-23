@@ -2234,11 +2234,9 @@ de:
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
-      Im Rahmen der Services, die Mampf anbietet, werden einige Daten über User
-      gespeichert. Neben den oben aufgeführten Daten werden essentielle Informationen
-      wie Deine abonnierten Vorlesungen oder eingereichte Abgaben gespeichert. Mit dem
-      folgenden Knopf kannst Du alle Daten, die wir über Dich speichern, anfordern. Wir
-      werden sie an Deine bei MaMpf hinterlegte E-Mail schicken.
+      Wir speichern bei MaMpf einige Daten über Dich, um Dir die Nutzung
+      der Plattform zu ermöglichen. Hier kannst Du eine Übersicht dieser Daten
+      anfordern, die wir Dir dann per E-Mail zusenden.
     data_request: >
       Daten anfordern
     data_request_sent: >
