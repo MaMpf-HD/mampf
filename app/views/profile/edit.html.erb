@@ -12,6 +12,7 @@
         <div class="card-body" id="redeem-voucher">
           <h5 class="card-title">
             <%= t('profile.redeem_voucher') %>
+            <%= helpdesk(t('profile.redeem_voucher_explainer'), true) %>
           </h5>
           <%= render partial: 'profile/verify_voucher' %>
         </div>

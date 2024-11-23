@@ -2244,6 +2244,10 @@ de:
     data_request_sent: >
       Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
     redeem_voucher: Gutschein einlösen
+    redeem_voucher_explainer: >
+      Hier kannst Du einen Gutscheincode eingeben, um eine Rolle zu übernehmen,
+      z.B. wenn Du einen Gutschein per Mail erhalten hast (der von Deiner
+      DozentIn generiert wurde).
     become_tutor_html: >
       Mit diesem Gutschein erhältst Du TutorInnenstatus für
       <strong>%{lecture}</strong>.
