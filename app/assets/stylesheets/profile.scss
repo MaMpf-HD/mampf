@@ -3,20 +3,9 @@
 @import "bootstrap/mixins";
 
 .voucher-redemption-pattern {
-  background:
-    radial-gradient(50% 50% at 100% 0, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
-      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
-      #0000 96%),
-    radial-gradient(50% 50% at 0 100%, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
-      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
-      #0000 96%),
-    radial-gradient(50% 50%, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
-      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
-      #0000 96%),
-    radial-gradient(50% 50%, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
-      #223E62 46% 55%, #FFFFFF 56% 65%, #223E62 66% 75%, #FFFFFF 76% 85%, #223E62 86% 95%,
-      #0000 96%) 39px 39px;
-  background-size: 78px 78px;
+  background-image: linear-gradient(30deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(150deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(30deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(150deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(60deg, #223E6277 25%, transparent 25.5%, transparent 75%, #223E6277 75%, #223E6277), linear-gradient(60deg, #223E6277 25%, transparent 25.5%, transparent 75%, #223E6277 75%, #223E6277);
+  background-size: 18px 32px;
+  background-position: 0 0, 0 0, 9px 16px, 9px 16px, 0 0, 9px 16px;
   background-color: #FFFFFF;
   height: 3em;
 
