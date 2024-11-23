@@ -1,4 +1,4 @@
-$(document).on("turbolinks:load", function () {
+$(document).ready(function () {
   $("#profileForm").on("change input", function () {
     $("#profileChange").removeClass("d-none");
   });
