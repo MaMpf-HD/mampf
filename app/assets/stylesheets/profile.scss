@@ -1,3 +1,6 @@
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+
 .voucher-redemption-pattern {
   background:
     radial-gradient(50% 50% at 100% 0, #FFFFFF 0% 5%, #223E62 6% 15%, #FFFFFF 16% 25%, #223E62 26% 35%, #FFFFFF 36% 45%,
@@ -19,11 +22,16 @@
 
 .profile-card {
   border: 2px solid #223e62;
+
   background: linear-gradient(348deg, #f7faff 0%, #fcfdfd 60%);
   box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 3px;
 
   .card-header {
     background-color: #223e62;
     color: white;
+
+    // account for our custom border
+    border-top-left-radius: calc(#{$card-inner-border-radius} - 2px);
+    border-top-right-radius: calc(#{$card-inner-border-radius} - 2px);
   }
 }
