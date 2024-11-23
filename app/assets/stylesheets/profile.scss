@@ -18,6 +18,9 @@
   background-size: 78px 78px;
   background-color: #FFFFFF;
   height: 3em;
+
+  border-top-left-radius: calc(#{$card-inner-border-radius} - 2px);
+  border-top-right-radius: calc(#{$card-inner-border-radius} - 2px);
 }
 
 .profile-card {
