@@ -127,9 +127,21 @@ function fillOptionsByAjax($selectizedSelection) {
       })();
     }
     else {
+      let renderOptions = {};
+      console.log(this.dataset);
+      let noResultsMessage = this.dataset.noResults;
+      if (noResultsMessage) {
+        renderOptions = {
+          no_results: function (_data, _escape) {
+            return '<div class="no-results">' + noResultsMessage + "</div>";
+          },
+        };
+      }
+
       return new TomSelect("#" + this.id, {
         plugins: plugins,
         maxOptions: null,
+        render: renderOptions,
       });
     }
   });

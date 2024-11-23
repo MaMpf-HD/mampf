@@ -69,10 +69,15 @@ module TalksHelper
                     }
                   })
     else
+      seminar_edit_people_link = "#{edit_lecture_path(talk.lecture)}#people"
+
       form.select(:speaker_ids, speakers_preselection(talk), {},
                   class: "selectize",
-                  data: { cy: "speaker-select" },
-                  multiple: true)
+                  multiple: true,
+                  data: {
+                    cy: "speaker-select",
+                    no_results: t("basics.no_results_speaker", link: seminar_edit_people_link)
+                  })
     end
 
     label + help_desk + select
