@@ -6,8 +6,7 @@
         <%= f.radio_button :locale,
                            locale.to_s,
                            label: t('locales.' + locale.to_s,
-                                    locale: current_user.locale),
-                           custom: true %>
+                                    locale: current_user.locale) %>
       <% end %>
     <% end %>
   </div>
@@ -16,17 +15,14 @@
                       label: { text: t('profile.content_info') } do %>
       <%= f.radio_button :subscription_type, 2,
                          label: t('profile.subscription_all'),
-                         checked: @user.subscription_type == 2,
-                         custom: true %>
+                         checked: @user.subscription_type == 2 %>
       <%= f.radio_button :subscription_type, 3,
                          label: t('profile.subscription_strict'),
-                         checked: @user.subscription_type == 3,
-                         custom: true %>
+                         checked: @user.subscription_type == 3 %>
       <%= f.radio_button :subscription_type, 1,
             label: (t('profile.subscription_mixed') + helpdesk(t('profile.subscription_mixed_example'), false)).html_safe,
             checked: @user.subscription_type == 1 ||
-                    @user.subscription_type.nil?,
-            custom: true %>
+                    @user.subscription_type.nil? %>
     <% end %>
   </div>
 </div>
