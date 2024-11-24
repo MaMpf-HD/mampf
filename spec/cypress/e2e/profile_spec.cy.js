@@ -115,3 +115,29 @@ describe("Account settings", () => {
       ["Display name", "receive", "want to"]);
   });
 });
+
+describe.only("Module settings", () => {
+  beforeEach(function () {
+    cy.createUserAndLogin("generic").as("user");
+
+    FactoryBot.create("course").as("course1");
+    FactoryBot.create("course").as("course2");
+
+    cy.then(() => {
+      FactoryBot.create("lecture", "released_for_all",
+        { course_id: this.course1.id }).as("lecture1");
+      FactoryBot.create("lecture", "released_for_all",
+        { course_id: this.course2.id }).as("lecture2");
+    });
+    // cy.createUser("teacher").as("teacher");
+    // FactoryBot.create("lecture_with_sparse_toc", "released_for_all").as("lecture");
+  });
+
+  it("todo", function () {
+    cy.visit(PROFILE_PAGE);
+
+    cy.logout();
+    cy.createUserAndLogin("admin").as("admin");
+    cy.visit(PROFILE_PAGE);
+  });
+});
