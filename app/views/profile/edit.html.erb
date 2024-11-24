@@ -52,7 +52,7 @@
             <%= helpdesk(t('profile.name_information'), true) %>
             <%= f.text_field_without_bootstrap :name,
                                                class: 'form-control',
-                                               'data-cy': "display-name" %>
+                                               "data-cy": "display-name" %>
             <div class="invalid-feedback"
                 id="username-error">
             </div>
@@ -64,7 +64,8 @@
                         class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
             <%= f.text_field_without_bootstrap :name_in_tutorials,
-                                              class: 'form-control' %>
+                                              class: 'form-control',
+                                              "data-cy": "display-name-tutorials" %>
           </div>
 
           <%= render partial: 'profile/subscription_type', locals: { f: f } %>

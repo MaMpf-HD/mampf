@@ -12,4 +12,13 @@ FactoryBot.define do
       t.tutors = build_list(:confirmed_user, evaluator.tutors_count)
     end
   end
+
+  trait :with_tutor_by_id do
+    transient do
+      tutor_id { nil }
+    end
+    after :build do |t, eval|
+      t.tutors = [User.find(eval.tutor_id)]
+    end
+  end
 end
