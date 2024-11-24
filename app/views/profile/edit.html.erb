@@ -31,7 +31,8 @@
     <div class="w-100 mb-3">
       <%= f.submit t('profile.changes_made_btn'),
             class: 'btn btn-warning mt-3 w-100 d-none text-wrap',
-            id: "profileChange" %>
+            id: "profileChange",
+            "data-cy": "profile-change-submit" %>
     </div>
 
     <!-- 🌟 Account -->
@@ -50,7 +51,8 @@
                   class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_information'), true) %>
             <%= f.text_field_without_bootstrap :name,
-                                               class: 'form-control' %>
+                                               class: 'form-control',
+                                               'data-cy': "display-name" %>
             <div class="invalid-feedback"
                 id="username-error">
             </div>
