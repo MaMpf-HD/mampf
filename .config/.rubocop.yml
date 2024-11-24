@@ -110,6 +110,9 @@ Style/MethodCallWithArgsParentheses:
 Style/RedundantReturn:
   AllowMultipleReturnValues: true
 
+Style/SafeNavigationChainLength:
+  Max: 3
+
 Style/StringLiterals:
   EnforcedStyle: double_quotes
 
