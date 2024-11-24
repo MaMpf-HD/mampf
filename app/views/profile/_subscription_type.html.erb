@@ -3,10 +3,12 @@
     <%= f.form_group :locale,
                     label: { text: t('profile.locale'), class: 'fw-bold' } do %>
       <% I18n.available_locales.each do |locale| %>
+        <% cy_label = "locale-#{locale}-checkbox" %>
         <%= f.radio_button :locale,
                            locale.to_s,
                            label: t('locales.' + locale.to_s,
-                                    locale: current_user.locale) %>
+                                    locale: current_user.locale),
+                           "data-cy": cy_label %>
       <% end %>
     <% end %>
   </div>

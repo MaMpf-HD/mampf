@@ -40,7 +40,7 @@ describe("Account settings", () => {
     });
   });
 
-  it.only("allows changing the user name in tutorials & reflects it in submissions", function () {
+  it("allows changing the user name in tutorials & reflects it in submissions", function () {
     cy.createUser("tutor").as("tutor");
 
     const newName = "Voltaire";
@@ -91,5 +91,27 @@ describe("Account settings", () => {
       cy.getBySelector("tutorial-submissions-table")
         .should("not.contain", this.user.name);
     });
+  });
+
+  it("allows switching the language", function () {
+    function checkLanguage(locale, shouldContain, shouldNotContain) {
+      cy.getBySelector(`locale-${locale}-checkbox`).click();
+      cy.getBySelector("profile-change-submit").click();
+      cy.visit(PROFILE_PAGE);
+      cy.getBySelector(`locale-${locale}-checkbox`).should("be.checked");
+      shouldContain.forEach(text => cy.contains(text));
+      shouldNotContain.forEach(text => cy.contains(text).should("not.exist"));
+    };
+
+    cy.visit(PROFILE_PAGE);
+
+    // just some very basic checks if language is switched correctly
+    checkLanguage("en",
+      ["Display name", "receive", "want to"],
+      ["Anzeigename", "benachrichtigt", "möchte"]);
+
+    checkLanguage("de",
+      ["Anzeigename", "benachrichtigt", "möchte"],
+      ["Display name", "receive", "want to"]);
   });
 });
