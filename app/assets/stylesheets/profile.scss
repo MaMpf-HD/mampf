@@ -3,9 +3,9 @@
 @import "bootstrap/mixins";
 
 .voucher-redemption-pattern {
-  background-image: linear-gradient(30deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(150deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(30deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(150deg, #223E62 12%, transparent 12.5%, transparent 87%, #223E62 87.5%, #223E62), linear-gradient(60deg, #223E6277 25%, transparent 25.5%, transparent 75%, #223E6277 75%, #223E6277), linear-gradient(60deg, #223E6277 25%, transparent 25.5%, transparent 75%, #223E6277 75%, #223E6277);
-  background-size: 18px 32px;
-  background-position: 0 0, 0 0, 9px 16px, 9px 16px, 0 0, 9px 16px;
+  background-image: image-url('voronoi_pattern.svg');
+  background-position: center;
+  background-size: 110%;
   background-color: #FFFFFF;
   height: 3em;
 
