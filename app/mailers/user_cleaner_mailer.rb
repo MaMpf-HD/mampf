@@ -5,24 +5,22 @@ class UserCleanerMailer < ApplicationMailer
   #
   # @param [Integer] num_days_until_deletion:
   #  The number of days until the account will be deleted.
-  def pending_deletion_email(num_days_until_deletion)
-    user = params[:user]
+  def pending_deletion_email(user_email, user_locale, num_days_until_deletion)
     sender = "#{t("mailer.warning")} <#{DefaultSetting::PROJECT_EMAIL}>"
-    I18n.locale = user.locale
+    I18n.locale = user_locale
 
     @num_days_until_deletion = num_days_until_deletion
     subject = t("mailer.pending_deletion_subject",
                 num_days_until_deletion: @num_days_until_deletion)
-    mail(from: sender, to: user.email, subject: subject, priority: "high")
+    mail(from: sender, to: user_email, subject: subject, priority: "high")
   end
 
   # Creates an email to inform a user that their account has been deleted.
-  def deletion_email
-    user = params[:user]
+  def deletion_email(user_email, user_locale)
     sender = "#{t("mailer.warning")} <#{DefaultSetting::PROJECT_EMAIL}>"
-    I18n.locale = user.locale
+    I18n.locale = user_locale
 
     subject = t("mailer.deletion_subject")
-    mail(from: sender, to: user.email, subject: subject, priority: "high")
+    mail(from: sender, to: user_email, subject: subject, priority: "high")
   end
 end
