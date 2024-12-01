@@ -117,7 +117,7 @@ export function logoutAndLoginAsTeacher(context) {
 
 export function verifyNoTutorialsButUserEligibleAsTutor(context, shouldBeEligible = true) {
   cy.getBySelector("tutorial-row").should("not.exist");
-  cy.getBySelector("new-tutorial-btn").click();
+  cy.getBySelector("new-tutorial-btn").should("be.visible").click();
   cy.then(() => {
     cy.getBySelector("tutorial-form").should("be.visible");
     cy.getBySelector("tutor-select").within(() => {
