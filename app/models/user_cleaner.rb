@@ -134,9 +134,9 @@ class UserCleaner
       num_days_until_deletion = (user.deletion_date - Date.current).to_i
 
       if [14, 7, 2].include?(num_days_until_deletion)
-        UserCleanerMailer.with(user: user)
-                         .pending_deletion_email(num_days_until_deletion)
-                         .deliver_later
+        UserCleanerMailer
+          .pending_deletion_email(user.email, user.locale, num_days_until_deletion)
+          .deliver_later
       end
     end
   end
