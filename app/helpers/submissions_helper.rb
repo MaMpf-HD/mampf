@@ -39,7 +39,7 @@ module SubmissionsHelper
     else
       return "bg-submission-darker-green" if submission&.correction
 
-      if submission&.manuscript && submission&.too_late?
+      if submission&.manuscript && submission.too_late?
         return "bg-submission-orange" if submission.accepted.nil?
         return "bg-submission-green" if submission.accepted
 
@@ -58,7 +58,7 @@ module SubmissionsHelper
     else
       return "far fa-smile" if submission&.correction
 
-      if submission&.manuscript && submission&.too_late?
+      if submission&.manuscript && submission.too_late?
         return "fas fa-hourglass-start" if submission.accepted
 
         return "fas fa-exclamation-triangle"
@@ -76,7 +76,7 @@ module SubmissionsHelper
     else
       return t("submission.with_correction") if submission&.correction
 
-      if submission&.manuscript && submission&.too_late?
+      if submission&.manuscript && submission.too_late?
         return t("submission.too_late") if submission.accepted.nil?
         return t("submission.too_late_accepted") if submission.accepted
 
