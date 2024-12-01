@@ -252,7 +252,8 @@ RSpec.describe(UserCleaner, type: :model) do
 
         expect do
           UserCleaner.new.delete_users_according_to_deletion_date!
-        end.to have_enqueued_mail(UserCleanerMailer, :deletion_email)
+        end.to(have_enqueued_mail(UserCleanerMailer, :deletion_email)
+          .with { |args| expect(args).to include(user.email) })
       end
     end
   end
