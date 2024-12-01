@@ -196,8 +196,8 @@ RSpec.describe(UserCleaner, type: :model) do
 
         expect do
           UserCleaner.new.set_deletion_date_for_inactive_users
-        end.to have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
-          .with(a_hash_including(args: [40]))
+        end.to(have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
+          .with { |args| expect(args).to include(40) })
       end
 
       it "does not enqueue a deletion warning mail (40 days) for non-generic users" do
@@ -217,8 +217,8 @@ RSpec.describe(UserCleaner, type: :model) do
 
         expect do
           UserCleaner.new.send_additional_warning_mails
-        end.to have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
-          .with(a_hash_including(args: [num_days]))
+        end.to(have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
+          .with { |args| expect(args).to include(num_days) })
       end
 
       it "enqueues additional deletion warning mails" do
@@ -263,7 +263,8 @@ RSpec.describe(UserCleaner, type: :model) do
 
     def test_subject_line(num_days)
       user = FactoryBot.create(:confirmed_user)
-      mailer = UserCleanerMailer.with(user: user).pending_deletion_email(num_days)
+      mailer = UserCleanerMailer
+               .pending_deletion_email(user.email, user.locale, 40, num_days)
       expect(mailer.subject).to include(num_days.to_s)
     end
 
@@ -275,11 +276,13 @@ RSpec.describe(UserCleaner, type: :model) do
     end
 
     it "has mail subject localized to the user's locale" do
-      mailer = UserCleanerMailer.with(user: user_de).pending_deletion_email(40)
+      mailer = UserCleanerMailer
+               .pending_deletion_email(user_de.email, user_de.locale, 40)
       expect(mailer.subject).to include("Tage")
       expect(mailer.subject).not_to include("days")
 
-      mailer = UserCleanerMailer.with(user: user_en).pending_deletion_email(40)
+      mailer = UserCleanerMailer
+               .pending_deletion_email(user_en.email, user_en.locale, 40)
       expect(mailer.subject).to include("days")
       expect(mailer.subject).not_to include("Tage")
     end
@@ -288,11 +291,13 @@ RSpec.describe(UserCleaner, type: :model) do
       expected_de = "verloren"
       expected_en = "lost"
 
-      mailer = UserCleanerMailer.with(user: user_de).pending_deletion_email(40)
+      mailer = UserCleanerMailer
+               .pending_deletion_email(user_de.email, user_de.locale, 40)
       expect(mailer.html_part.body).to include(expected_de)
       expect(mailer.html_part.body).not_to include(expected_en)
 
-      mailer = UserCleanerMailer.with(user: user_en).pending_deletion_email(40)
+      mailer = UserCleanerMailer
+               .pending_deletion_email(user_en.email, user_en.locale, 40)
       expect(mailer.html_part.body).to include(expected_en)
       expect(mailer.html_part.body).not_to include(expected_de)
     end
@@ -303,11 +308,11 @@ RSpec.describe(UserCleaner, type: :model) do
     let(:user_en) { FactoryBot.create(:confirmed_user, locale: "en") }
 
     it "has mail subject localized to the user's locale" do
-      mailer = UserCleanerMailer.with(user: user_de).deletion_email
+      mailer = UserCleanerMailer.deletion_email(user_de.email, user_de.locale)
       expect(mailer.subject).to include("gelöscht")
       expect(mailer.subject).not_to include("deleted")
 
-      mailer = UserCleanerMailer.with(user: user_en).deletion_email
+      mailer = UserCleanerMailer.deletion_email(user_en.email, user_en.locale)
       expect(mailer.subject).to include("deleted")
       expect(mailer.subject).not_to include("gelöscht")
     end
@@ -316,12 +321,13 @@ RSpec.describe(UserCleaner, type: :model) do
       expected_de = "vollständig gelöscht"
       expected_en = "deleted entirely"
 
-      mailer = UserCleanerMailer.with(user: user_de).deletion_email
+      mailer = UserCleanerMailer.deletion_email(user_de.email, user_de.locale)
 
       expect(mailer.html_part.body).to include(expected_de)
       expect(mailer.html_part.body).not_to include(expected_en)
 
-      mailer = UserCleanerMailer.with(user: user_en).deletion_email
+      mailer = UserCleanerMailer.deletion_email(user_en.email, user_en.locale)
+
       expect(mailer.html_part.body).to include(expected_en)
       expect(mailer.html_part.body).not_to include(expected_de)
     end
