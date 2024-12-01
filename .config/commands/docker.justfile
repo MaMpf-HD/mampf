@@ -60,3 +60,24 @@ up-reseed *args:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
     docker compose exec mampf bundle exec rails c
+
+# Rebuilds the MaMpf (and Webpacker) containers and starts the setup in detached mode
+rebuild env="dev":
+    #!/usr/bin/env bash
+    environment={{ if env == "test" {"test"} else {"development"} }}
+    echo "Rebuilding in env: ${environment}"
+    cd {{justfile_directory()}}/docker/${environment}
+
+    # Remove
+    docker compose rm -s mampf
+    if [ "$environment" = "development" ]; then
+        docker compose rm -s webpacker
+    fi
+
+    # Rebuild
+    docker compose build mampf
+    if [ "$environment" = "development" ]; then
+        docker compose build webpacker
+    fi
+
+    docker compose up -d
