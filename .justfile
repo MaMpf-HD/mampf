@@ -5,13 +5,16 @@
 help:
     @just --list
 
-# Test-related commands
+# Commands to test the MaMpf codebase
 mod test ".config/commands/test.justfile"
 # see https://github.com/casey/just/issues/2216
 # alias t := test 
 
-# Docker-related commands
+# Commands to manage the docker containers
 mod docker ".config/commands/docker.justfile"
+
+# Commands to manage dependencies
+mod deps ".config/commands/deps.justfile"
 
 # Some utils, e.g. ERD-generation etc.
 mod utils ".config/commands/utils.justfile"
