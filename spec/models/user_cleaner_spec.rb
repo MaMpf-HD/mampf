@@ -192,12 +192,12 @@ RSpec.describe(UserCleaner, type: :model) do
   describe("mails") do
     context "when setting a deletion date" do
       it "enqueues a deletion warning mail (40 days)" do
-        FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago)
+        user = FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago)
 
         expect do
           UserCleaner.new.set_deletion_date_for_inactive_users
         end.to(have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
-          .with { |args| expect(args).to include(40) })
+          .with(user.email, user.locale, 40))
       end
 
       it "does not enqueue a deletion warning mail (40 days) for non-generic users" do
@@ -213,12 +213,12 @@ RSpec.describe(UserCleaner, type: :model) do
 
     context "when a deletion date is assigned" do
       def test_enqueues_additional_deletion_warning_mails(num_days)
-        FactoryBot.create(:confirmed_user, deletion_date: Date.current + num_days.days)
+        user = FactoryBot.create(:confirmed_user, deletion_date: Date.current + num_days.days)
 
         expect do
           UserCleaner.new.send_additional_warning_mails
         end.to(have_enqueued_mail(UserCleanerMailer, :pending_deletion_email)
-          .with { |args| expect(args).to include(num_days) })
+        .with(user.email, user.locale, num_days))
       end
 
       it "enqueues additional deletion warning mails" do
@@ -248,12 +248,12 @@ RSpec.describe(UserCleaner, type: :model) do
 
     context "when a user is finally deleted" do
       it "enqueues a deletion mail" do
-        FactoryBot.create(:confirmed_user, deletion_date: Date.current - 1.day)
+        user = FactoryBot.create(:confirmed_user, deletion_date: Date.current - 1.day)
 
         expect do
           UserCleaner.new.delete_users_according_to_deletion_date!
         end.to(have_enqueued_mail(UserCleanerMailer, :deletion_email)
-          .with { |args| expect(args).to include(user.email) })
+          .with(user.email, user.locale))
       end
     end
   end
@@ -265,7 +265,7 @@ RSpec.describe(UserCleaner, type: :model) do
     def test_subject_line(num_days)
       user = FactoryBot.create(:confirmed_user)
       mailer = UserCleanerMailer
-               .pending_deletion_email(user.email, user.locale, 40, num_days)
+               .pending_deletion_email(user.email, user.locale, num_days)
       expect(mailer.subject).to include(num_days.to_s)
     end
 
