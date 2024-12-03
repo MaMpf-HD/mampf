@@ -95,6 +95,8 @@ describe("Account settings", () => {
 
   it("allows switching the language", function () {
     function checkLanguage(locale, shouldContain, shouldNotContain) {
+      // click on other locale checkbox first to trigger a change
+      cy.getBySelector(`locale-${locale === "de" ? "en" : "de"}-checkbox`).click();
       cy.getBySelector(`locale-${locale}-checkbox`).click();
       cy.getBySelector("profile-change-submit").click();
       cy.visit(PROFILE_PAGE);
@@ -106,17 +108,14 @@ describe("Account settings", () => {
     cy.visit(PROFILE_PAGE);
 
     // just some very basic checks if language is switched correctly
-    checkLanguage("en",
-      ["Display name", "receive", "want to"],
-      ["Anzeigename", "benachrichtigt", "möchte"]);
-
-    checkLanguage("de",
-      ["Anzeigename", "benachrichtigt", "möchte"],
-      ["Display name", "receive", "want to"]);
+    const wordsGerman = ["Anzeigename", "benachrichtigt", "möchte"];
+    const wordsEnglish = ["Display name", "receive", "want to"];
+    checkLanguage("de", wordsGerman, wordsEnglish);
+    checkLanguage("en", wordsEnglish, wordsGerman);
   });
 });
 
-describe.only("Module settings", () => {
+describe("Module settings", () => {
   beforeEach(function () {
     cy.createUserAndLogin("generic").as("user");
 
