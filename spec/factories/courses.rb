@@ -44,5 +44,21 @@ FactoryBot.define do
         course.tags = FactoryBot.create_list(:tag, evaluator.tag_count)
       end
     end
+
+    trait :with_division do
+      transient do
+        division_id { nil }
+      end
+
+      after(:build) do |course, evaluator|
+        if evaluator.division_id
+          FactoryBot.create(:division_course_join,
+                            course: course, division_id: evaluator.division_id)
+        else
+          division = FactoryBot.create(:division)
+          FactoryBot.create(:division_course_join, course: course, division: division)
+        end
+      end
+    end
   end
 end
