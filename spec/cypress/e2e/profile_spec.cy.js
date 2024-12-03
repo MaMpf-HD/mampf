@@ -115,7 +115,7 @@ describe("Account settings", () => {
   });
 });
 
-describe.only("Module settings", () => {
+describe("Module settings", () => {
   beforeEach(function () {
     cy.wrap("Happy course").as("courseName");
     cy.wrap("Happy division").as("divisionName");
