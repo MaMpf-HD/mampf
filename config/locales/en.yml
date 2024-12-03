@@ -3433,6 +3433,21 @@ en:
     together_with: together with
     enter_two_letters: enter at least 2 letters
     no_results: No results found
+    no_results_tutor: >
+      No results found.<br><br>Note that from now on you can only search for
+      people who are already registered as tutors or who have obtained tutor
+      status using a voucher. You can generate such a voucher in the
+      <i>Vouchers</i> section.
+    no_results_editor: >
+      No results found.<br><br>Note that from now on you can only search for
+      people who are already registered as editors or who have obtained editor
+      status using a voucher. You can generate such a voucher in the
+      <i>Vouchers</i> section.
+    no_results_speaker: >
+      No results found.<br><br>Note that from now on you can only search for
+      people who are already registered as speakers or who have obtained speaker
+      status using a voucher. You can generate such a voucher in the
+      <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
     vouchers: Vouchers
     voucher_for: Voucher for %{role}
     speaker: Speaker

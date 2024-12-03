@@ -3629,6 +3629,22 @@ de:
     together_with: zusammen mit
     enter_two_letters: mind. 2 Zeichen eingeben
     no_results: Keine Resultate gefunden
+    no_results_tutor: >
+      Keine Resultate gefunden.<br><br>Beachte, dass Du ab sofort nur noch nach
+      Personen suchen kannst, die bereits als TutorInnen eingetragen sind oder
+      die den Tutor-Status mithilfe eines Gutscheins erhalten haben. Einen
+      solchen Gutschein kannst Du im Bereich <i>Gutscheine</i> generieren.
+    no_results_editor: >
+      Keine Resultate gefunden.<br><br>Beachte, dass Du ab sofort nur noch nach
+      Personen suchen kannst, die bereits als EditorInnen eingetragen sind oder
+      die den Editor-Status mithilfe eines Gutscheins erhalten haben. Einen
+      solchen Gutschein kannst Du im Bereich <i>Gutscheine</i> generieren.
+    no_results_speaker: >
+      Keine Resultate gefunden.<br><br>Beachte, dass Du ab sofort nur noch nach
+      Personen suchen kannst, die bereits als Vortragende eingetragen sind oder
+      die den Vortrags-Status mithilfe eines Gutscheins erhalten haben. Einen
+      solchen Gutschein kannst Du im Bereich <i>Gutscheine</i> generieren, der
+      sich <a href="%{link}">hier</a> im <i>Personen</i>-Tab befindet.
     editors: EditorInnen
     vouchers: Gutscheine
     voucher_for: Gutschein für %{role}
