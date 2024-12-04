@@ -561,6 +561,27 @@ Rails.application.routes.draw do
     resources :vertices, except: [:index, :show, :edit]
   end
 
+  # vignettes routes
+  namespace :vignettes do
+    get 'slides/index'
+    get 'slides/show'
+    get 'slides/new'
+    get 'slides/create'
+    get 'slides/edit'
+    get 'slides/update'
+    get 'slides/destroy'
+    get 'questionnaires/index'
+    get 'questionnaires/show'
+    get 'questionnaires/new'
+    get 'questionnaires/create'
+    get 'questionnaires/edit'
+    get 'questionnaires/update'
+    get 'questionnaires/destroy'
+    resources :questionnaires do
+      resources :slides
+    end
+  end
+
   # readers routes
 
   patch "readers/update",
