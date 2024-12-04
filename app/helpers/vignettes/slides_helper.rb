@@ -1,0 +1,2 @@
+module Vignettes::SlidesHelper
+end
