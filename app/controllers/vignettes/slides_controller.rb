@@ -1,22 +1,34 @@
-class Vignettes::SlidesController < ApplicationController
-  def index
-  end
+module Vignettes
+  class SlidesController < ApplicationController
+    before_action :set_questionnaire
+    def index
+    end
 
-  def show
-  end
+    def show
+      @slide = @questionnaire.slides.find(params[:id])
+    end
 
-  def new
-  end
+    def new
+      @slide = @questionnaire.slides.new
+    end
 
-  def create
-  end
+    def create
+      @slide = @questionnaire.slides.new(slide_params)
+      if @slide.save
+        redirect_to @questionnaire, notice: "Slide was successfully created"
+      else
+        render :new, status: :unprocessable_entity
+      end
+    end
 
-  def edit
-  end
+    private
 
-  def update
-  end
+      def set_questionnaire
+        @questionnaire = Questionnaire.find(params[:questionnaire_id])
+      end
 
-  def destroy
+      def slide_params
+        params.require(:slide).permit(:content)
+      end
   end
 end

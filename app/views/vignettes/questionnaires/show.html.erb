@@ -1,2 +1,9 @@
-<h1>Vignettes::Questionnaires#show</h1>
-<p>Find me in app/views/vignettes/questionnaires/show.html.erb</p>
+<h1> Slides for vignette <%= @questionnaire.title %> </h1>
+<ul>
+    <% @questionnaire.slides.each do |slide| %>
+    <li>
+        <%= slide.title %>
+    </li>
+    <% end %>
+</ul>
+<%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
