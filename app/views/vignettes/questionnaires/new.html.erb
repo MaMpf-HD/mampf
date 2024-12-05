@@ -1,2 +1,10 @@
-<h1>Vignettes::Questionnaires#new</h1>
-<p>Find me in app/views/vignettes/questionnaires/new.html.erb</p>
+<%= form_with local: true, scope: :questionnaire, model: @questionnaire do |form| %>
+    <div>
+        <%= form.label :title %> <br>
+        <%= form.text_field :title %>
+    </div>
+    <br>
+    <div>
+        <%= form.submit 'Create Questionnaire', class: 'btn btn-primary'%>
+    </div>
+<%end%>

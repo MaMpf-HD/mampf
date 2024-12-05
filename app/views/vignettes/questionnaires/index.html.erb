@@ -1,2 +1,10 @@
-<h1>Vignettes::Questionnaires#index</h1>
-<p>Find me in app/views/vignettes/questionnaires/index.html.erb</p>
+<h1>Vignetten</h1>
+
+<ul>
+    <% @questionnaires.each do |questionnaire| %>
+        <li>
+            <%= questionnaire.title %>
+        </li>
+    <%end%>
+</ul>
+<%= button_to 'Create new Vignette', new_vignettes_questionnaire_path(), method: :get, class: 'btn btn-primary' %>

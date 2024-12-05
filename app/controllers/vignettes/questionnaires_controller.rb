@@ -1,22 +1,34 @@
-class Vignettes::QuestionnairesController < ApplicationController
-  def index
-  end
+module Vignettes
+  class QuestionnairesController < ApplicationController
+    def index
+      @questionnaires = Questionnaire.all
+    end
 
-  def show
-  end
+    def show
+      @questionnaire = Questionnaire.find(params[:id])
+    end
 
-  def new
-  end
+    def new
+      @questionnaire = Questionnaire.new
+    end
 
-  def create
-  end
+    def create
+      @questionnaire = Questionnaire.new(questionnaire_params)
+      if @questionnaire.save
+        redirect_to @questionnaire
+      else
+        render :new, status: :unprocessable_entity
+      end
+    end
 
-  def edit
-  end
+    def edit
+      @questionnaire = Questionnaire.find(params[:id])
+    end
 
-  def update
-  end
+    private
 
-  def destroy
+      def questionnaire_params
+        params.require(:questionnaire).permit(:title)
+      end
   end
 end
