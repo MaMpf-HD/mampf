@@ -76,8 +76,9 @@ class UserCleaner
                   .find_each do |user|
       user.update(deletion_date: Date.current + 40.days)
 
-      if user.generic? # rubocop:disable Style/IfUnlessModifier
-        UserCleanerMailer.with(user: user).pending_deletion_email(40).deliver_later
+      if user.generic?
+        UserCleanerMailer.pending_deletion_email(user.email, user.locale, 40)
+                         .deliver_later
       end
     end
   end
@@ -114,7 +115,7 @@ class UserCleaner
     User.where(deletion_date: ..Date.current).find_each do |user|
       next unless user.generic?
 
-      UserCleanerMailer.with(user: user).deletion_email.deliver_later
+      UserCleanerMailer.deletion_email(user.email, user.locale).deliver_later
       user.destroy
       num_deleted_users += 1
     end
@@ -133,9 +134,9 @@ class UserCleaner
       num_days_until_deletion = (user.deletion_date - Date.current).to_i
 
       if [14, 7, 2].include?(num_days_until_deletion)
-        UserCleanerMailer.with(user: user)
-                         .pending_deletion_email(num_days_until_deletion)
-                         .deliver_later
+        UserCleanerMailer
+          .pending_deletion_email(user.email, user.locale, num_days_until_deletion)
+          .deliver_later
       end
     end
   end

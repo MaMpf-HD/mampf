@@ -1,5 +1,6 @@
 class UserCleanerJob
   include Sidekiq::Worker
+  sidekiq_options retry: false # job will be discarded if it fails
 
   def perform
     # Only run this job in production, not for mampf-experimental or mampf-dev.
