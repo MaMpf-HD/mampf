@@ -4,6 +4,8 @@ class Lecture < ApplicationRecord
 
   belongs_to :course
 
+  has_many :notifications, as: :notifiable, dependent: :destroy
+
   # teacher is the user that gives the lecture
   belongs_to :teacher, class_name: "User"
 
@@ -62,6 +64,10 @@ class Lecture < ApplicationRecord
 
   # a lecture has many assignments (e.g. exercises with deadlines)
   has_many :assignments
+
+  # a lecture has many vouchers that can be redeemed to promote
+  # users to tutors, editors or teachers
+  has_many :vouchers, dependent: :destroy
 
   # a lecture has many structure_ids, referring to the ids of structures
   # in the erdbeere database
@@ -830,18 +836,98 @@ class Lecture < ApplicationRecord
     User.where(id: SpeakerTalkJoin.where(talk: talks).select(:speaker_id))
   end
 
-  def older_than?(timespan)
-    return true unless term
-
-    term.begin_date <= Term.active.begin_date - timespan
-  end
-
+  # Determines if the lecture is stale (i.e. older than one year).
+  # The age of the lecture is determined by the begin date of the term
+  # in which it was given and the begin date of the current term.
   def stale?
     older_than?(1.year)
   end
 
   def valid_annotations_status?
     [0, 1].include?(annotations_status)
+  end
+
+  def active_voucher_of_role(role)
+    vouchers.where(role: role).active&.first
+  end
+
+  def update_tutor_status!(user, selected_tutorials)
+    tutorials.find_each do |t|
+      t.add_tutor(user) if selected_tutorials.include?(t)
+    end
+    # touch to invalidate the cache
+    touch
+  end
+
+  def update_editor_status!(user)
+    return if editors.include?(user)
+
+    editors << user
+    # touch to invalidate the cache
+    touch
+  end
+
+  def update_teacher_status!(user)
+    return if teacher == user
+
+    previous_teacher = teacher
+    update(teacher: user)
+    editors << previous_teacher
+    # touch to invalidate the cache
+    touch
+  end
+
+  def update_speaker_status!(user, selected_talks)
+    talks.find_each do |t|
+      t.add_speaker(user) if selected_talks.include?(t)
+    end
+    # touch to invalidate the cache
+    touch
+  end
+
+  def eligible_as_tutors
+    (tutors + Redemption.tutors_by_redemption_in(self) + editors + [teacher]).uniq
+    # the first one should (in the future) actually be contained in the sum of
+    # the other ones, but in the transition phase where some tutor statuses were
+    # still given by the old system, this will not be true
+  end
+
+  def eligible_as_editors
+    (editors + Redemption.editors_by_redemption_in(self) + course.editors - [teacher]).uniq
+    # the first one should (in the future) actually be contained in the sum of
+    # the other ones, but in the transition phase where some editor statuses were
+    # still given by the old system, this will not be true
+  end
+
+  def eligible_as_teachers
+    (User.teachers + editors + course.editors + [teacher]).uniq
+  end
+
+  def eligible_as_speakers
+    (speakers + Redemption.speakers_by_redemption_in(self) + editors + [teacher]).uniq
+    # the first one should (in the future) actually be contained in the sum of
+    # the other ones, but in the transition phase where some editor statuses were
+    # still given by the old system, this will not be true
+  end
+
+  def editors_and_teacher
+    ([teacher] + editors).uniq
+  end
+
+  def tutorials_with_tutor(tutor)
+    tutorials.where(id: tutorial_ids_for_tutor(tutor))
+  end
+
+  def tutorials_without_tutor(tutor)
+    tutorials.where.not(id: tutorial_ids_for_tutor(tutor))
+  end
+
+  def talks_with_speaker(speaker)
+    talks.where(id: talk_ids_for_speaker(speaker))
+  end
+
+  def talks_without_speaker(speaker)
+    talks.where.not(id: talk_ids_for_speaker(speaker))
   end
 
   private
@@ -946,5 +1032,20 @@ class Lecture < ApplicationRecord
       return unless Lecture.where(course: course).any?
 
       errors.add(:course, :already_present)
+    end
+
+    def older_than?(timespan)
+      return false unless Term.active
+      return true unless term
+
+      term.begin_date <= Term.active.begin_date - timespan
+    end
+
+    def tutorial_ids_for_tutor(tutor)
+      TutorTutorialJoin.where(tutor: tutor).select(:tutorial_id)
+    end
+
+    def talk_ids_for_speaker(speaker)
+      SpeakerTalkJoin.where(speaker: speaker).select(:talk_id)
     end
 end

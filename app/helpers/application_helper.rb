@@ -327,4 +327,10 @@ module ApplicationHelper
   def get_class_for_any_path_startswith(paths)
     paths.any? { |path| request.path.starts_with?(path) } ? ACTIVE_CSS_CLASS : ""
   end
+
+  def truncate_result(result, length = 40)
+    result.first(length).tap do |truncated|
+      return truncated.length < length ? truncated : "#{truncated}..."
+    end
+  end
 end

@@ -2,7 +2,6 @@ class NotificationMailer < ApplicationMailer
   before_action :set_sender_and_locale
   before_action :set_recipients, only: [:medium_email, :announcement_email,
                                         :new_lecture_email,
-                                        :new_editor_email,
                                         :submission_deletion_email,
                                         :submission_deletion_lecture_email,
                                         :submission_destruction_email,
@@ -48,17 +47,6 @@ class NotificationMailer < ApplicationMailer
     mail(from: @sender,
          bcc: @recipients.pluck(:email),
          subject: t("mailer.new_lecture_subject",
-                    title: @lecture.title_for_viewers))
-  end
-
-  def new_editor_email
-    @lecture = params[:lecture]
-    @recipient = params[:recipient]
-    @username = @recipient.tutorial_name
-
-    mail(from: @sender,
-         to: @recipient.email,
-         subject: t("mailer.new_editor_subject",
                     title: @lecture.title_for_viewers))
   end
 
@@ -173,8 +161,16 @@ class NotificationMailer < ApplicationMailer
                     lecture: @lecture.title))
   end
 
+  def self.sender(locale)
+    I18n.t("mailer.notification", locale: locale) \
+      +" <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
+  end
+
   private
 
+    # This method should be replaced by the one above (self.sender).
+    # It only stays here during the transition phase where this file is split
+    # into multiple files regarding concerns like vouchers, submissions, etc.
     def set_sender_and_locale
       @sender = "#{t("mailer.notification")} <#{DefaultSetting::PROJECT_NOTIFICATION_EMAIL}>"
       I18n.locale = params[:locale]

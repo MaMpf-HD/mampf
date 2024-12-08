@@ -4,6 +4,8 @@ class Talk < ApplicationRecord
 
   has_many :speaker_talk_joins, dependent: :destroy
   has_many :speakers, through: :speaker_talk_joins
+  has_many :claims, as: :claimable, dependent: :destroy
+
   validates :title, presence: true
 
   # being a teachable (course/lecture/lesson), a talk has associated media
@@ -33,6 +35,12 @@ class Talk < ApplicationRecord
 
   def to_label
     I18n.t("talk", number: position, title: title)
+  end
+
+  def to_label_with_speakers
+    return to_label unless speakers.any?
+
+    "#{to_label} (#{speakers.map(&:tutorial_name).join(", ")})"
   end
 
   def long_title
@@ -98,6 +106,10 @@ class Talk < ApplicationRecord
 
   def editors_with_inheritance
     (speakers + lecture.editors_with_inheritance).uniq
+  end
+
+  def add_speaker(speaker)
+    speakers << speaker unless speaker.in?(speakers)
   end
 
   private

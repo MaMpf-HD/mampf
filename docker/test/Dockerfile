@@ -52,7 +52,7 @@ RUN yarn set version "${YARN_VERSION}"
 RUN apt update && \
     apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools postgresql-client-13 sqlite3 wget wait-for-it
+        libarchive-tools postgresql-client-13 wget wait-for-it
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml

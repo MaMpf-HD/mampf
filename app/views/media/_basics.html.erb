@@ -183,11 +183,11 @@
         <div class="form-row ml-2">
           <div class="form-check form-check-inline">
             <%= f.radio_button :annotations_status,
-                               '0',
+                               '-1',
                                class: 'form-check-input' %>
             <%= f.label :annotations_status,
                         t('admin.annotation.inherit_from_lecture'),
-                        value: '0',
+                        value: '-1',
                         class: 'form-check-label' %>
           </div>
           <div class="form-check form-check-inline">
@@ -201,11 +201,11 @@
           </div>
           <div class="form-check form-check-inline">
             <%= f.radio_button :annotations_status,
-                               '-1',
+                               '0',
                                class: 'form-check-input' %>
             <%= f.label :annotations_status,
                         t('basics.no_lc'),
-                        value: '-1',
+                        value: '0',
                         class: 'form-check-label' %>
           </div>
         </div>

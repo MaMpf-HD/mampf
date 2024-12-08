@@ -91,17 +91,8 @@ class AnnotationsController < ApplicationController
   def update_annotations
     medium = Medium.find_by(id: params[:mediumId])
 
-    # Get the right annotations
-    annotations = if medium.annotations_visible?(current_user)
-      Annotation.where(medium: medium,
-                       visible_for_teacher: true).or(
-                         Annotation.where(medium: medium,
-                                          user: current_user)
-                       )
-    else
-      Annotation.where(medium: medium,
-                       user: current_user)
-    end
+    annotations = Annotation.where(medium: medium, visible_for_teacher: true)
+                            .or(Annotation.where(medium: medium, user: current_user))
 
     # If annotation is associated to a comment,
     # the field "comment" is empty -> get it from the commontator comment

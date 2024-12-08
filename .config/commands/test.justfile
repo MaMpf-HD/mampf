@@ -1,4 +1,3 @@
-# Prints this help message
 [private]
 help:
     @just --list --justfile {{source_file()}}

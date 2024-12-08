@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   before_action :authenticate_user!
   before_action :set_locale
   after_action :store_interaction, if: :user_signed_in?
+  before_action :set_current_user
 
   etag { current_user.try(:id) }
 
@@ -111,6 +112,9 @@ class ApplicationController < ActionController::Base
       # as of Rack 2.0.8, the session_id is wrapped in a class of its own
       # it is not a string anymore
       # see https://github.com/rack/rack/issues/1433
+
+      return if request.session_options[:id].nil?
+
       InteractionSaver.perform_async(request.session_options[:id].public_id,
                                      request.original_fullpath,
                                      request.referer,
@@ -131,5 +135,10 @@ class ApplicationController < ActionController::Base
 
     def available_locales
       I18n.available_locales.map(&:to_s)
+    end
+
+    # https://stackoverflow.com/a/69313330/
+    def set_current_user
+      Current.user = current_user
     end
 end
