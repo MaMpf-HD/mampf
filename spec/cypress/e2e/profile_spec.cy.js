@@ -77,9 +77,9 @@ describe("Account settings", () => {
       cy.getBySelector("file-permission-accept").click();
       cy.getBySelector("upload-user-submission").click();
 
-      cy.intercept("POST", "/submissions*").as("saveSubmissionsRequest");
+      cy.intercept("POST", "/submissions*").as("saveSubmissionRequest");
       cy.getBySelector("save-submission").click();
-      cy.wait("@saveSubmissionsRequest");
+      cy.wait("@saveSubmissionRequest");
     });
 
     cy.then(() => {
