@@ -48,7 +48,8 @@
                                  value: "redirect" %>
             </p>
             <%= f.submit t("profile.subscribe_lecture"),
-                         class: "btn btn-primary"%>
+                         class: "btn btn-primary",
+                         "data-cy": "subscribe-to-lecture" %>
           <% end %>
         <% else %>
           <%= link_to t("profile.subscribe_lecture"),
@@ -58,7 +59,8 @@
                                                      parent: "redirect" } }),
                       method: :patch,
                       remote: true,
-                      class: "btn btn-primary" %>
+                      class: "btn btn-primary",
+                      "data-cy": "subscribe-to-lecture" %>
         <% end %>
       </p>
     </div>

@@ -2130,13 +2130,16 @@ de:
     secondary_lectures: 'Weitere Veranstaltungen'
     no_lectures: 'Zu diesem Modul gibt es im Moment noch keine Veranstaltungen.'
     passphrase: 'Zugangsschlüssel'
-    preferences: 'Einstellungen'
     content_info: >
-      MaMpf liefert eine Vielzahl von verknüpften Inhalten.
-      Ich möchte verknüpfte Inhalte (wenn diese freigegeben sind)
+      Mit dem Tag-Graphen kannst du nach Stichwörtern suchen und verknüpfte
+      Inhalte sehen. Ich möchte verknüpfte Inhalte (wenn diese freigegeben sind)
     subscription_mixed: >
-      auch aus allen Modulen sehen, die sich inhaltlich vor den von mir
-      abonnierten Modulen einsortieren.
+      aus den von mir abonnierten Modulen sehen sowie aus allen Modulen, die
+      als Grundlage für das gesuchte Modul dienen.
+    subscription_mixed_example: >
+      Z.B. suchst du nach einem Stichwort aus Algebra 1 und siehst auch
+      verwandte Stichwörter aus Lineare Algebra 1 und 2, wenn du diese
+      Option auswählst. Denn Algebra 1 baut auf Lineare Algebra auf.
     subscription_all: 'aus allen Modulen sehen.'
     subscription_strict: >
       ausschließlich aus den von mir abonnierten Modulen sehen.
@@ -2184,6 +2187,8 @@ de:
     changes_made: >
       Es gibt ungespeicherte Änderungen. Bitte denke daran, diese zu speichern,
       damit die Änderungen wirksam werden.
+    changes_made_btn: >
+      Klicke hier, um Deine Änderungen zu übernehmen.
     email_for_submissions: >
       Bezüglich der Abgabe von Übungsblättern möchte ich per E-Mail von MaMpf
       benachrichtigt werden, wenn:
@@ -2235,16 +2240,19 @@ de:
     media_search: Mediensuche
     my_data: Welchen Daten werden über mich gespeichert?
     data_explanation: >
-      Im Rahmen der Services, die Mampf anbietet, werden einige Daten über User
-      gespeichert. Neben den oben aufgeführten Daten werden essentielle Informationen
-      wie Deine abonnierten Vorlesungen oder eingereichte Abgaben gespeichert. Mit dem
-      folgenden Knopf kannst Du alle Daten, die wir über Dich speichern, anfordern. Wir
-      werden sie an Deine bei MaMpf hinterlegte E-Mail schicken.
+      Wir speichern bei MaMpf bestimmte Daten über Dich, um Dir die Nutzung
+      der Plattform zu ermöglichen. Hier kannst Du eine Übersicht dieser Daten
+      anfordern, die wir Dir dann per E-Mail zusenden.
     data_request: >
       Daten anfordern
     data_request_sent: >
-      Wir haben Deine Anfrage erhalten und werden Dir Deine Daten zeitnah schicken.
+      Wir haben Deine Anfrage erhalten und werden Dir Deine Daten in wenigen
+      Minuten per Mail senden.
     redeem_voucher: Gutschein einlösen
+    redeem_voucher_explainer: >
+      Hier kannst Du einen Gutscheincode eingeben, um eine Rolle zu übernehmen,
+      z.B. wenn Du einen Gutschein per Mail erhalten hast (der von Deiner
+      DozentIn generiert wurde).
     become_tutor_html: >
       Mit diesem Gutschein erhältst Du TutorInnenstatus für
       <strong>%{lecture}</strong>.

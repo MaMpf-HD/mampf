@@ -1,0 +1,50 @@
+<!-- Modal -->
+<div class="modal fade" id="requestDataModal" tabindex="-1"
+      aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">
+          <%= t('profile.my_data') %>
+        </h1>
+        <button type="button" class="btn-close"
+                data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <%= t('profile.data_explanation') %>
+      </div>
+
+      <div class="modal-footer">
+        <%= link_to t('profile.data_request'),
+                      request_data_path,
+                      class: "btn btn-primary",
+                      id: "request-data-btn",
+                      type: "button",
+                      data: { 'bs-dismiss': 'modal' },
+                      remote: true %>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+  
+    </div>
+  </div>
+</div>
+
+<!-- Notification upon successful data retrieval -->
+<div aria-live="polite" aria-atomic="true"
+    class="position-fixed top-50 start-50 translate-middle" style="z-index: 1050;">
+  <div class="toast profile-card" id="request-data-toast" role="alert"
+      aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+
+    <div class="toast-header">
+      <strong class="me-auto"><%= t('profile.data_request') %></strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+
+    <div class="toast-body">
+      <%= t('profile.data_request_sent') %>
+    </div>
+
+  </div>
+</div>
