@@ -2,6 +2,8 @@ module Vignettes
   class QuestionnairesController < ApplicationController
     def index
       @questionnaires = Questionnaire.all
+      # Because the create model form works on the index page.
+      @questionnaire = Questionnaire.new
     end
 
     def show
@@ -28,7 +30,7 @@ module Vignettes
     private
 
       def questionnaire_params
-        params.require(:questionnaire).permit(:title)
+        params.require(:vignettes_questionnaire).permit(:title)
       end
   end
 end

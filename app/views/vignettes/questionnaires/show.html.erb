@@ -2,8 +2,8 @@
 <ul>
     <% @questionnaire.slides.each do |slide| %>
     <li>
-        <%= slide.title %>
+        <%= slide.id %>
     </li>
     <% end %>
 </ul>
-<%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+<%= button_to 'Edit vignette', edit_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>

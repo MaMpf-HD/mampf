@@ -1,0 +1,9 @@
+<%= form_with(model: @questionnaire, local: true) do |form| %>
+  <div class="mb-3">
+    <%= form.label :title %>
+    <%= form.text_field :title, class: 'form-control', placeholder: 'Enter title' %>
+  </div>
+  <div class="mb-3">
+    <%= form.submit 'Create Vignette', class: 'btn btn-primary' %>
+  </div>
+<% end %>
