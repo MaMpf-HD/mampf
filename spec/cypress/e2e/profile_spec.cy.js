@@ -76,7 +76,10 @@ describe("Account settings", () => {
         .selectFile("cypress/fixtures/files/manuscript.pdf", { force: true });
       cy.getBySelector("file-permission-accept").click();
       cy.getBySelector("upload-user-submission").click();
+
+      cy.intercept("POST", "/submissions*").as("saveSubmissionsRequest");
       cy.getBySelector("save-submission").click();
+      cy.wait("@saveSubmissionsRequest");
     });
 
     cy.then(() => {
