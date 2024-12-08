@@ -1,6 +1,5 @@
 # Documentation: https://just.systems/man/en/
 
-# Prints this help message
 [private]
 help:
     @just --list
