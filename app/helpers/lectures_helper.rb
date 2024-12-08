@@ -203,7 +203,10 @@ module LecturesHelper
       form.select(:editor_ids, editors_preselection(lecture), {},
                   class: "selectize",
                   multiple: true,
-                  "data-cy": "lecture-editors-select")
+                  data: {
+                    cy: "lecture-editors-select",
+                    no_results: t("basics.no_results_editor")
+                  })
     end
   end
 end

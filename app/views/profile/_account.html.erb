@@ -1,8 +1,14 @@
 <%= link_to t('profile.change_data'),
               edit_user_registration_path,
-              class: "btn btn-outline-secondary mb-2" %>
+              class: "btn btn-outline-secondary" %>
+
+<button type="button" class="btn btn-outline-secondary" id="open-request-data"
+        data-bs-toggle="modal" data-bs-target="#requestDataModal">
+    <%= t('profile.data_request') %>
+</button>
+
 <%= link_to t('profile.delete_account'),
             delete_account_path,
-            class: "btn btn-outline-danger mb-2",
+            class: "btn btn-outline-danger",
             "data-cy": "delete-account-btn",
             remote: true %>

@@ -1,0 +1,53 @@
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
+.voucher-redemption-pattern {
+  background-image: image-url('voronoi_pattern.svg');
+  background-position: center;
+  background-size: 110%;
+  background-color: #FFFFFF;
+  height: 3em;
+
+  border-top-left-radius: calc(#{$card-inner-border-radius} - 2px);
+  border-top-right-radius: calc(#{$card-inner-border-radius} - 2px);
+}
+
+.profile-card {
+  height: 100%;
+  border: 2px solid #223e62;
+
+  background: linear-gradient(348deg, #f7faff 0%, #fcfdfd 60%);
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 1px 3px;
+
+  .card-header {
+    background-color: #223e62;
+    color: white;
+
+    // account for our custom border
+    border-top-left-radius: calc(#{$card-inner-border-radius} - 2px);
+    border-top-right-radius: calc(#{$card-inner-border-radius} - 2px);
+  }
+}
+
+@include media-breakpoint-up(sm) {
+  .voucher-card {
+    min-width: 30em;
+  }
+}
+
+// needed because of https://github.com/bootstrap-ruby/bootstrap_form/issues/738
+// and https://github.com/bootstrap-ruby/bootstrap_form/pull/618
+.checkbox-list {
+  margin-bottom: 0.2em !important;
+}
+
+// Ensure equal height columns
+.row.display-flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.row.display-flex>[class*='col-'] {
+  flex-grow: 1;
+}
