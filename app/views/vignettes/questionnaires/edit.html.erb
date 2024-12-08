@@ -1,1 +1,10 @@
+<h1> Slides </h1>
+
+<ul>
+    <% @questionnaire.slides.each() do |slide| %>
+        <li>
+            <%= link_to slide.id, edit_vignettes_questionnaire_slide_path(slide) %>
+        </li>
+    <%end%>
+</ul>
 <%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>

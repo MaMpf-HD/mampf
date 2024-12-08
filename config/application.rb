@@ -14,9 +14,12 @@ module Mampf
 
     # Autoload subfolders of modules (recursively)
     # https://stackoverflow.com/a/4794775/
-    additional_paths = Rails.root.glob("app/models/voucher/")
+    additional_paths = Rails.root.glob("app/models/**/")
+    namespace_paths = Rails.root.glob("app/models/vignettes/**/")
     config.autoload_paths += additional_paths
     config.eager_load_paths += additional_paths
+    config.autoload_paths -= namespace_paths
+    config.eager_load_paths -= namespace_paths
 
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])

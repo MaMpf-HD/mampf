@@ -28,7 +28,7 @@ module Vignettes
       end
 
       def slide_params
-        params.require(:slide).permit(:content)
+        params.require(:vignettes_slide).permit(:content)
       end
   end
 end
