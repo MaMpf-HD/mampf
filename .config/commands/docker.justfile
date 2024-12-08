@@ -61,7 +61,7 @@ up-reseed *args:
     docker compose exec mampf bundle exec rails c
 
 # Rebuilds the most essential containers in the dev or test environment
-rebuild env="dev"
+rebuild env="dev":
     #!/usr/bin/env bash
     environment={{ if env == "test" {"test"} else {"development"} }}
     echo "Rebuilding in env: ${environment}"
