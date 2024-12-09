@@ -236,7 +236,10 @@ describe("User & Redemption deletion", () => {
     cy.visit("/profile/edit");
     cy.getBySelector("delete-account-btn").click();
     cy.getBySelector("delete-account-pwd-field").type(this.user.password);
+
+    cy.intercept("POST", "/users*").as("deleteUserRequest");
     cy.getBySelector("delete-account-confirm-btn").click();
+    cy.wait("@deleteUserRequest");
 
     cy.then(() => {
       helpers.logoutAndLoginAsTeacher(this);
