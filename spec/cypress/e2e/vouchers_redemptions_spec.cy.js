@@ -7,10 +7,13 @@ function testVoucherRedemptionWithNothingToClaim(context, role, itemType) {
   helpers.redeemVoucherToBecomeRole(context, role);
   helpers.verifyLectureIsSubscribed(context);
   helpers.logoutAndLoginAsTeacher(context);
-  helpers.visitEditPage(context, itemType);
-  helpers.verifyNoClaimsYetButUserEligibleForRole(context, role);
-  helpers.verifyRoleNotification(context, role);
-  helpers.verifyNothingClaimedInNotification(context, itemType);
+
+  cy.then(() => {
+    helpers.visitEditPage(context, itemType);
+    helpers.verifyNoClaimsYetButUserEligibleForRole(context, role);
+    helpers.verifyRoleNotification(context, role);
+    helpers.verifyNothingClaimedInNotification(context, itemType);
+  });
 }
 
 function testVoucherRedemptionWithSomethingClaimed(context, itemType, role) {
@@ -31,9 +34,9 @@ function testVoucherRedemptionWithSomethingClaimed(context, itemType, role) {
 
   helpers.verifyLectureIsSubscribed(context);
   helpers.logoutAndLoginAsTeacher(context);
-  helpers.visitEditPage(context, itemType);
 
   cy.then(() => {
+    helpers.visitEditPage(context, itemType);
     helpers.verifyClaimsContainUserName(context, itemType, itemIds);
   });
 
@@ -51,7 +54,9 @@ function testAlreadyRedeemedVoucher(context, role) {
   helpers.verifyAlreadyRedeemedVoucherMessage(context, role);
   helpers.verifyCancelVoucherButton();
   helpers.logoutAndLoginAsTeacher(context);
-  helpers.verifyNoNewNotification();
+  cy.then(() => {
+    helpers.verifyNoNewNotification();
+  });
 }
 
 function testAlreadyRoleForAllItems(context, itemType) {
@@ -60,7 +65,9 @@ function testAlreadyRoleForAllItems(context, itemType) {
   helpers.verifyAllItemsTakenMessage(context, itemType);
   helpers.verifyCancelVoucherButton();
   helpers.logoutAndLoginAsTeacher(context);
-  helpers.verifyNoNotification();
+  cy.then(() => {
+    helpers.verifyNoNotification();
+  });
 }
 
 describe("Verify Voucher Form", () => {
@@ -137,16 +144,21 @@ describe("Editor voucher redemption", () => {
       helpers.verifyAlreadyRedeemedVoucherMessage(this, "editor");
       helpers.verifyCancelVoucherButton();
       helpers.logoutAndLoginAsTeacher(this);
-      helpers.verifyNoNewNotification();
+      cy.then(() => {
+        helpers.verifyNoNewNotification();
+      });
     });
   });
 
   context("when the user is the teacher of the lecture", () => {
     it("displays the message that a teacher cannot become an editor", function () {
       helpers.logoutAndLoginAsTeacher(this);
-      helpers.submitVoucher(this.voucher);
-      helpers.verifyTeachersCantBecomeEditorsMessage(this);
-      helpers.verifyCancelVoucherButton();
+
+      cy.then(() => {
+        helpers.submitVoucher(this.voucher);
+        helpers.verifyTeachersCantBecomeEditorsMessage(this);
+        helpers.verifyCancelVoucherButton();
+      });
     });
   });
 });
@@ -172,9 +184,12 @@ describe("Teacher voucher redemption", () => {
   context("when the user is already the teacher", () => {
     it("displays a message that the user is already the teacher", function () {
       helpers.logoutAndLoginAsTeacher(this);
-      helpers.submitVoucher(this.voucher);
-      helpers.verifyAlreadyTeacherMessage(this);
-      helpers.verifyCancelVoucherButton();
+
+      cy.then(() => {
+        helpers.submitVoucher(this.voucher);
+        helpers.verifyAlreadyTeacherMessage(this);
+        helpers.verifyCancelVoucherButton();
+      });
     });
   });
 });
@@ -225,6 +240,9 @@ describe("User & Redemption deletion", () => {
 
     cy.then(() => {
       helpers.logoutAndLoginAsTeacher(this);
+    });
+
+    cy.then(() => {
       helpers.visitEditPage(this, "tutorial");
       helpers.verifyNoTutorialsButUserEligibleAsTutor(this, false);
     });
