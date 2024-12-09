@@ -1,5 +1,5 @@
-<div class="card <%= notification_color(notification) %>">
-  <div class="card-header">
+<div class="card <%= notification_color(notification) %>" data-cy="notification-card">
+  <div class="card-header" data-cy="notification-header">
     <div class="row">
       <div class="col-6">
         <h5>
@@ -26,7 +26,7 @@
       </div>
     </div>
   </div>
-  <div class="card-body">
+  <div class="card-body" data-cy="notification-body">
     <%= simple_format(notification_text(notification)) %>
     <%= simple_format(notification_link(notification)) %>
   </div>

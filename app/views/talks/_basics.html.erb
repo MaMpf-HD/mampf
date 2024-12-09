@@ -48,22 +48,8 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-12 mb-3">
-        <%= f.label :speaker_ids,
-                    t('admin.talk.speakers'),
-                    class: "form-label" %>
-        <%= f.select :speaker_ids,
-                     options_for_select(talk.speakers.map { |s| [s.tutorial_info, s.id] },
-                       talk.speaker_ids),
-                     {},
-                     { class: 'selectize',
-                       style: 'display: none;',
-                       multiple: true,
-                       data: { ajax: true,
-                               filled: false,
-                               model: 'user',
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results') } } %>
+      <div class="col-12 mb-3" data-cy="speaker-select-div">
+        <%= speaker_select(f, talk, with_preselection=true) %>
       </div>
     </div>
     <div class="row">

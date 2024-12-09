@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_05_200000) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -75,6 +75,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_200000) do
     t.boolean "hidden"
     t.text "details"
     t.index ["lecture_id"], name: "index_chapters_on_lecture_id"
+  end
+
+  create_table "claims", force: :cascade do |t|
+    t.bigint "redemption_id", null: false
+    t.string "claimable_type", null: false
+    t.bigint "claimable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
+    t.index ["redemption_id"], name: "index_claims_on_redemption_id"
   end
 
   create_table "clicker_votes", force: :cascade do |t|
@@ -446,6 +456,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_200000) do
     t.integer "thread_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "redemptions", force: :cascade do |t|
+    t.uuid "voucher_id", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_redemptions_on_user_id"
+    t.index ["voucher_id"], name: "index_redemptions_on_voucher_id"
   end
 
   create_table "referrals", force: :cascade do |t|
@@ -902,6 +921,18 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_200000) do
     t.index ["voter_type", "voter_id"], name: "index_votes_on_voter_type_and_voter_id"
   end
 
+  create_table "vouchers", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "role", null: false
+    t.bigint "lecture_id", null: false
+    t.string "secure_hash", null: false
+    t.datetime "invalidated_at"
+    t.datetime "expires_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vouchers_on_lecture_id"
+    t.index ["secure_hash"], name: "index_vouchers_on_secure_hash", unique: true
+  end
+
   create_table "vtt_containers", force: :cascade do |t|
     t.text "table_of_contents_data"
     t.text "references_data"
@@ -936,6 +967,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_200000) do
   add_foreign_key "announcements", "lectures"
   add_foreign_key "announcements", "users", column: "announcer_id"
   add_foreign_key "assignments", "lectures"
+  add_foreign_key "claims", "redemptions"
   add_foreign_key "commontator_comments", "commontator_comments", column: "parent_id", on_update: :restrict, on_delete: :cascade
   add_foreign_key "commontator_comments", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
   add_foreign_key "commontator_subscriptions", "commontator_threads", column: "thread_id", on_update: :cascade, on_delete: :cascade
@@ -954,6 +986,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_200000) do
   add_foreign_key "programs", "subjects"
   add_foreign_key "quiz_certificates", "media", column: "quiz_id"
   add_foreign_key "quiz_certificates", "users"
+  add_foreign_key "redemptions", "users"
+  add_foreign_key "redemptions", "vouchers"
   add_foreign_key "referrals", "items"
   add_foreign_key "referrals", "media"
   add_foreign_key "speaker_talk_joins", "talks"
@@ -973,6 +1007,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_200000) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "vouchers", "lectures"
   add_foreign_key "watchlist_entries", "media"
   add_foreign_key "watchlist_entries", "watchlists"
   add_foreign_key "watchlists", "users"

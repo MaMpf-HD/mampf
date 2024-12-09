@@ -1,4 +1,3 @@
-# Prints this help message
 [private]
 help:
     @just --list --justfile {{source_file()}}
@@ -8,6 +7,19 @@ help:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
     docker compose up {{args}}
+
+# Starts the dev docker containers (detached) & shows MaMpf logs
+up-logs *args:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+    docker compose up -d {{args}}
+    docker compose logs -f mampf
+
+# Shows the log of the specified container
+@logs name="mampf":
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+    docker compose logs -f {{name}}
 
 # Starts the dev docker containers and preseeds the database
 [confirm("This will reset all your data in the database locally. Continue? (y/n)")]
@@ -47,3 +59,22 @@ up-reseed *args:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
     docker compose exec mampf bundle exec rails c
+
+# Rebuilds the most essential containers in the dev or test environment
+rebuild env="dev":
+    #!/usr/bin/env bash
+    environment={{ if env == "test" {"test"} else {"development"} }}
+    echo "Rebuilding in env: ${environment}"
+    cd {{justfile_directory()}}/docker/${environment}
+
+    # Remove
+    docker compose rm -s mampf
+    if [ "$environment" = "development" ]; then
+        docker compose rm -s webpacker
+    fi
+
+    # Rebuild
+    docker compose build mampf
+    if [ "$environment" = "development" ]; then
+        docker compose build webpacker
+    fi

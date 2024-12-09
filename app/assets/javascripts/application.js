@@ -27,6 +27,7 @@
 //= require bootstrap_popovers
 //= require chapters
 //= require clickers
+//= require copy_and_paste_button
 //= require courses
 //= require erdbeere
 //= require file_upload
@@ -38,7 +39,6 @@
 //= require masonry_grid
 //= require media
 //= require notifications
-//= require profile
 //= require questions
 //= require quizzes
 //= require referrals

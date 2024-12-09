@@ -16,6 +16,7 @@
                     new_talk_path(lecture_id: lecture.id),
                     remote: true,
                     class: 'btn btn-sm btn-secondary new-in-lecture',
+                    data: { cy: 'new-talk-btn' },
                     id: 'new_talk_button' %>
       </div>
     </div>
@@ -29,7 +30,9 @@
         <% end %>
       </div>
     <% else %>
-      <%= t('admin.lecture.no_talks') %>
+      <span data-cy="no-talks-yet">
+        <%= t('admin.lecture.no_talks') %>
+      </span>
     <% end %>
   </div>
 </div>

@@ -1,0 +1,7 @@
+$("#redeem-voucher").empty()
+  .append("<%= j render partial: 'vouchers/redeem_' + @voucher.role + '_voucher',
+          locals: { voucher: @voucher } %>");
+
+$(".selectize").each(function () {
+  new TomSelect("#" + this.id, { plugins: ["remove_button"] });
+});

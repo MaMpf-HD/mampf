@@ -123,6 +123,16 @@ h3.lecture-pane-header {
   font-size: 1.3em;
 }
 
+h4.lecture-pane-subheader {
+  color: #838383;
+  font-size: 1.1em;
+}
+
+.voucher-card {
+  border: gray 1px solid;
+  border-radius: 0.4em;
+}
+
 #announcements-list {
   max-height: 17em;
   overflow-x: hidden;

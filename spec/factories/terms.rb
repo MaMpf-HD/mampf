@@ -8,5 +8,13 @@ FactoryBot.define do
     trait :summer do
       season { "SS" }
     end
+
+    trait :winter do
+      season { "WS" }
+    end
+
+    trait :active do
+      active { true }
+    end
   end
 end

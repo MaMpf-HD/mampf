@@ -1,0 +1,10 @@
+<%= t('mailer.new_speaker', speaker: @speaker,
+                            title: @talk.to_label,
+                            seminar: @talk.lecture.title,
+                            username: @username) %>
+<br>
+<p class="pt-2">
+  <%= link_to(t('buttons.edit_talk'),
+              assemble_talk_url(@talk),
+              class: 'btn btn-primary') %>
+</p>

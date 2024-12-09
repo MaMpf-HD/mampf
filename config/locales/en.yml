@@ -101,7 +101,7 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2023. MaMpf is on %{github}.
+      &copy; MaMpf Team 2024. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
@@ -496,6 +496,8 @@ en:
       import_chapters: import chapters
       import_sections: import sections
       import_tags: import tags
+      no_active_voucher: >
+        There is no active %{role} for this event series.
       info:
         course: >
           Here you can select the course to which this event series belongs.
@@ -507,6 +509,25 @@ en:
           Normally this should be the person that actually gives the event series.
           If this person does not want to upload materials himself or
           herself, additional event series editors can do this instead.
+        teacher_fixed: >
+          Normally the teacher should be the person that actually gives the
+          event series. If this person does not want to upload materials
+          himself or herself, additional event series editors can do this
+          instead. If the teacher needs to be changed, proceed as follows:
+          Create a voucher for teachers and communicate the voucher to the new
+          teacher outside of MaMpf. This person can then redeem the voucher
+          in their profile settings and will become the new teacher.
+          The previous teacher will be demoted to editor.
+        teacher_fixed_new_lecture: >
+          Normally the teacher should be the person that actually gives the
+          event series. If you are not the actual teacher, you can create
+          the lecture nonetheless with you as teacher and then transfer it
+          to the new teacher. For that, proceed as follows:
+          Create a voucher for teachers in the "People/Tutorials" tab on the
+          lecture's edit page and communicate the voucher to the new teacher
+          outside of MaMpf. This person can then redeem the voucher
+          in their profile settings and will become the new teacher.
+          You will then automatically be demoted to editor.
         workflow: >
           These are possible workflows.
           The workflow depends on whether the event series is
@@ -591,7 +612,11 @@ en:
         lecture_editors: >
           Additional event series editors can edit event series, but are
           neither teacher nor course editor, e.g. teaching assistants uploading
-          materials for an event series.
+          materials for an event series. You can select only users who are
+          eligible. In order to grant editing status to users who
+          are not yet eligible you have to create a voucher and communicate the
+          voucher to the user outside of MaMpf. The user can then redeem the
+          voucher in their profile settings and will become a lecture editor.
         subscribers_count: >
           This is the number of all users subscribed to this event series in
           their profile settings.
@@ -696,6 +721,20 @@ en:
           grace period is expired will be accepted by the system, but will be
           timestamped and marked as "too late".
         section_needed: Please create a section first
+        voucher_for_tutor: >
+          Vouchers for tutors can be redeemed by users to obtain tutor status
+          for this event series and to directly take over tutorials.
+        voucher_for_editor: >
+          Vouchers for editors can be redeemed by users to obtain
+          editor status for this event series.
+        voucher_for_teacher: >
+          Vouchers for teachers can be redeemed by users to obtain teacher
+          status for this event series. The previous teacher will be demoted
+          and becomes an editor. Such a voucher will be invalidated directly
+          after its redemption.
+        voucher_for_speaker: >
+          Vouchers for speakers can be redeemed by users to obtain speaker
+          status for this seminar and to directly take over talks.
       show_media: 'Show media'
       workflow: 'Workflow'
       content_mode: 'Content determination'
@@ -955,6 +994,14 @@ en:
           talk's page (this box will typically be unchecked if the text is
           still preliminary). You can remove the text from the talk's page
           as teacher.
+        speakers: >
+          Here you can select the speakers of the talk. They can edit the talk
+          and add media to it. You can only select users who have the status of
+          speaker in the seminar, or editors or yourself. In order to grant
+          students the status of speaker, you have to create a voucher in
+          the "People/Tutorials" tab. You have to communicate the voucher to
+          the students outside of MaMpf. The voucher can then be redeemed by the
+          students.
     lesson:
       edit: 'Edit Session'
       inspect: 'Inspect Session'
@@ -1929,6 +1976,15 @@ en:
       new: 'Add tutorial'
     assignment:
       new: 'Add assignment'
+    voucher:
+      secure_hash: 'Secure Hash'
+      expires_at: 'Expires at'
+      sure_to_delete: 'Are you sure you want to delete this voucher?'
+      general_explanation: >
+        If you want to assign somebody a role (e.g. make them a tutor), you can
+        create a voucher. This is a special code that the person can redeem in
+        their profile to get the role, e.g. to become a tutor for your lecture.
+        You should send the code to the person via a different medium, e.g. email.
   profile:
     account: 'Account'
     name: 'Display name'
@@ -1945,12 +2001,16 @@ en:
     secondary_lectures: 'Secondary event series'
     no_lectures: 'There are no event series available for this course yet.'
     passphrase: 'Passphrase'
-    preferences: 'Preferences'
     content_info: >
-      MaMpf can show you related content.
-      I want to see related content (if it is released for me)
+      With the tag graph, you can search for keywords and see related content.
+      I want to see related content (if it is released)
     subscription_mixed: >
-      from courses I have subscribed to and from courses that these build upon.
+      from the courses I have subscribed to as well as from all courses that
+      serve as a basis for the searched course.
+    subscription_mixed_example: >
+      For example, if you search for a keyword from Algebra 1, you will also see
+      related keywords from Linear Algebra 1 and 2 if you select this option.
+      This is because Algebra 1 builds on Linear Algebra 1 and 2.
     subscription_all: 'from all courses.'
     subscription_strict: 'only from the courses I have subscribed to.'
     no_notifications: >
@@ -1995,6 +2055,8 @@ en:
     changes_made: >
       There are unsaved changes. In order to make them apply you have to save
       them.
+    changes_made_btn: >
+      Click here to save your changes.
     email_for_submissions: >
       Regarding the submission of homework assignments I wand to be notified by
       MaMpf via email if
@@ -2043,14 +2105,68 @@ en:
     unstar_lecture: Remove Lecture from Fast Access
     my_talks: My talks
     media_search: Search media
-    my_data: What data is saved about me?
+    my_data: What data is stored about me?
     data_explanation: >
-      Within the framework of the services offered by Mampf, some data about users will be
-      stored. All of your data that is not listed above are listed here.
+      We store some data about you at MaMpf to enable you to use the platform.
+      Here you can request an overview of this data, which we will then send
+      to you by email.
     data_request: >
       Request data
     data_request_sent: >
-      We have received your request and will send you your data as soon as possible.
+      We have received your request and will send you your data by mail
+      in a few minutes.
+    redeem_voucher: Redeem Voucher
+    redeem_voucher_explainer: >
+      Here you can enter a voucher code to take on a role, e.g. when you
+      received a voucher generated by your teacher via email.
+    become_tutor_html: >
+      With this voucher, you obtain tutor status for
+      <strong>%{lecture}</strong>.
+    tutorials_available: >
+      If you already know which tutorials you will be responsible for, you can
+      select them here. Otherwise, leave the field empty; then you can still
+      redeem the voucher so that the teacher can assign you tutorials later.
+    already_tutor_html: >
+      You are already registered as a tutor for: <strong>%{tutorials}</strong>.
+    no_tutorials_redemption: >
+      After having redeemed the voucher, the teacher can assign you
+      to the tutorials.
+    select_tutorials: Select Tutorials
+    all_tutorials_taken: >
+      There are no more tutorials available for this lecture that you can take
+      over.
+    already_tutor_by_redemption: >
+      You have already redeemed this voucher to become a tutor.
+    become_editor_html: >
+      With this voucher, you obtain editor status for
+      <strong>%{lecture}</strong>.
+    already_editor_by_redemption: >
+      You have already redeemed an editor voucher for this event series.
+    teacher_cant_become_editor: >
+      You are already a teacher and therefore cannot additionally become
+      an editor.
+    become_teacher_html: >
+      With this voucher, you obtain teacher status for
+      <strong>%{lecture}</strong>.
+      The former teacher will be demoted to editor.
+    already_teacher_html: >
+      You are already the teacher for <strong>%{lecture}</strong>.
+    become_speaker_html: >
+      With this voucher, you will obtain speaker status for the seminar
+      <strong>%{seminar}</strong>.
+    already_speaker_html: >
+      You are already registered as speaker for: <strong>%{talks}</strong>.
+    talks_available: >
+      If you already know which talks you will be responsible for, you can
+      select them here. Otherwise, leave the field empty; then you can still
+      redeem the voucher so that the teacher can assign you talks later.
+    no_talks_redemption: >
+      After having redeemed the voucher, the teacher can assign you to the talks.
+    all_talks_taken: >
+      There are no more talks available for this seminar that you can take over.
+    already_speaker_by_redemption: >
+      You have already redeemed this voucher to become a speaker.
+    select_talks: Select Talks
   mampf_news:
     title: 'MaMpf News'
     check_notifications: 'Clear all'
@@ -2086,6 +2202,26 @@ en:
       new_post_html: 'There is an unread topic in the %{board}.'
       new_posts_html: 'There are %{count} unread topics in the %{board}.'
     no_notifications: 'There are no new notifications for you.'
+    became_tutor: >
+      %{user} has redeemed a tutor voucher and has therefore become tutor
+      in the event series.
+    became_editor: >
+      %{user} has redeemed an editor voucher and has therefore become editor
+      in the event series.
+    became_teacher: >
+      %{user} has redeemed a teacher voucher and has therefore become teacher
+      in the event series.
+    became_speaker: >
+      %{user} has redeemed a speaker voucher and has therefore become speaker
+      in the seminar.
+    tutorial_details: >
+      Tutorials taken over: %{tutorials}.
+    talk_details: >
+      Talks taken over: %{talks}.
+    redemption: 'Voucher redeemed:'
+    redemption_in_lecture: 'Voucher redeemed in %{lecture}'
+    no_tutorials_taken: 'No tutorials have been taken over by the redemption.'
+    no_talks_taken: 'No talks have been taken over by the redemption.'
   lecture:
     content: 'Event series contents'
     unpublished: 'This event series is unpublished.'
@@ -2824,6 +2960,15 @@ en:
       The code is valid. It belongs to user %{user} and quiz %{quiz}.
     teams_as_csv: Teams as .csv
     certificate_invalid: This code is invalid.
+    info:
+      tutors:
+        Here you can select the tutors of the tutorial. They can view
+        the submissions and upload corrections.
+        You can only select users who have the status of tutor in the
+        event series, or editors or yourself. In order to grant students the
+        status of tutor, you have to create a voucher.
+        You have to communicate the voucher to the students outside
+        of MaMpf. The students can then redeem the voucher.
     bulk_upload:
       report: Report on the bulk upload of the corrections
       number_of_submissions: Number of submissions
@@ -2907,6 +3052,19 @@ en:
     text: 'Text'
     new_editor_subject: 'Editing Rights for %{title}'
     new_editor: 'Dear %{username}, you have been given editing rights for %{title}.'
+    new_teacher_subject: 'Teacher Status for %{title}'
+    new_teacher: 'Dear %{username}, you have been given teacher status for %{title}.'
+    previous_teacher_subject: 'Teacher Change for %{title}'
+    previous_teacher: >
+      Dear %{username}, ther has been a teacher change for %{title}.
+      %{new_teacher} has redeemed a teacher voucher and is now the teacher for
+      this event series. You are no longer teacher for %{title}, but
+      editor instead.
+    new_speaker_subject: 'Additional speaker for %{seminar}, %{title}'
+    new_speaker: >
+      Dear %{username}, in the seminar %{seminar}, %{speaker} has
+      registered as an additional speaker for %{title}.
+      Please contact your teacher if you think this happened by mistake.
     new_lecture_subject: 'New event series %{title}'
     new_lecture: 'A new event series has been made available: %{title}.'
     subscribe_lecture: 'You can subscribe to it in your profile settings.'
@@ -3275,6 +3433,25 @@ en:
     together_with: together with
     enter_two_letters: enter at least 2 letters
     no_results: No results found
+    no_results_tutor: >
+      No results found.<br><br>Note that from now on you can only search for
+      people who are already registered as tutors or who have obtained tutor
+      status using a voucher. You can generate such a voucher in the
+      <i>Vouchers</i> section.
+    no_results_editor: >
+      No results found.<br><br>Note that from now on you can only search for
+      people who are already registered as editors or who have obtained editor
+      status using a voucher. You can generate such a voucher in the
+      <i>Vouchers</i> section.
+    no_results_speaker: >
+      No results found.<br><br>Note that from now on you can only search for
+      people who are already registered as speakers or who have obtained speaker
+      status using a voucher. You can generate such a voucher in the
+      <i>Vouchers</i> section <a href="%{link}">here</a> in the <i>People</i> tab.
+    vouchers: Vouchers
+    voucher_for: Voucher for %{role}
+    speaker: Speaker
+    speakers: Speakers
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >
@@ -3309,6 +3486,7 @@ en:
     create_program: 'Create Study Path'
     create_subject: 'Create Subject'
     create_division: 'Create Division'
+    create_voucher: 'Create Voucher'
     create: 'Create'
     edit: 'Edit'
     content: 'Content'
@@ -3385,6 +3563,10 @@ en:
     cancel_publication: 'Cancel'
     import_lecture_toc: 'Import TOC'
     import_toc: 'Import'
+    become_editor: 'Become Editor'
+    verify_voucher: 'Verify Voucher'
+    edit_talk: 'Edit Talk'
+    invalidate: 'Invalidate'
   confirmation:
     generic: 'Are you sure?'
     delete_graph: >
@@ -3493,6 +3675,16 @@ en:
       made.
     no_assignments_in_lecture: >
       In this event series there are no assigments yet.
+    no_voucher: 'There is no voucher with this id.'
+    voucher_invalid: 'This voucher is invalid.'
+    become_tutor_success: >
+      Your tutor status has been updated.
+    become_editor_success: >
+      Your editor status has been updated.
+    become_teacher_success: >
+      Your teacher status has been updated.
+    become_speaker_success: >
+      Your speaker status has been updated.
     tutorials:
       destruction_failed: >
         The tutorial could not be deleted. That may be because there are already
@@ -3717,6 +3909,13 @@ en:
             value:
               out_of_range: >
                 Your vote is outside of the allowed range.
+        voucher:
+          attributes:
+            role:
+              only_one_active: >
+                There can be only one active voucher of this type for the lecture.
+              speaker_vouchers_only_for_seminars: >
+                Speaker vouchers are only allowed for seminars.
         watchlist_entry:
           attributes:
             medium_id:

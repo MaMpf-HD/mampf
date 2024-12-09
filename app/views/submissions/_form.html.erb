@@ -49,11 +49,13 @@
         <%= f.file_field :manuscript,
                          class: 'form-control-file',
                          id: 'upload-userManuscript',
+                         "data-cy": "choose-user-submission-file",
                          multiple: assignment.accepted_file_type == '.pdf',
                          accept: assignment.accepted_for_file_input %>
         <%= f.hidden_field :detach_user_manuscript,
                            value: false %>
         <button id="userManuscript-uploadButton-btn"
+         data-cy="choose-user-submission"
          class="btn btn-sm btn-outline-secondary">
           <%= file_button_text(assignment) %>
          </button>
@@ -150,12 +152,14 @@
         </div>
         <div class="col-12 my-1" id="file-permission-field">
           <input type="checkbox"
-                 id="file-permission-checkbox"/>
+                 id="file-permission-checkbox"
+                 data-cy="file-permission-accept"/>
           <%= t('submission.assure_third_party') %>
         </div>
         <div class="col-12" id="submission-final-upload-dialogue">
           <div class="col-12">
             <button id="userManuscript-uploadButton-call"
+                    data-cy="upload-user-submission"
                     data-tr-success="<%= t('buttons.upload_success') %>"
                     data-tr-failure="<%= t('submission.upload_failure')%>"
                     data-tr-upload="<%=t('buttons.upload')%>"
@@ -194,7 +198,8 @@
     <div class="row">
       <div class="col-12 text-center">
         <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary' %>
+                     class: 'btn btn-sm btn-primary',
+                     "data-cy": "save-submission" %>
         <%= link_to t('buttons.cancel'),
                     cancel_editing_submission_path(submission),
                     class: 'btn btn-sm btn-secondary',
