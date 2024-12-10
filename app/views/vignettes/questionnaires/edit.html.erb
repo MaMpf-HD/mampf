@@ -3,7 +3,7 @@
 <ul>
     <% @questionnaire.slides.each() do |slide| %>
         <li>
-            <%= link_to slide.id, edit_vignettes_questionnaire_slide_path(slide) %>
+            <%= link_to slide.id, edit_vignettes_questionnaire_slide_path(@questionnaire, slide) %>
         </li>
     <%end%>
 </ul>

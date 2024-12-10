@@ -12,12 +12,25 @@ module Vignettes
       @slide = @questionnaire.slides.new
     end
 
+    def edit
+      @slide = @questionnaire.slides.find(params[:id])
+    end
+
     def create
       @slide = @questionnaire.slides.new(slide_params)
       if @slide.save
         redirect_to @questionnaire, notice: "Slide was successfully created"
       else
         render :new, status: :unprocessable_entity
+      end
+    end
+
+    def update
+      @slide = @questionnaire.slides.find(params[:id])
+      if @slide.update(slide_params)
+        redirect_to @questionnaire, notice: "Slide was successfully updated"
+      else
+        render :edit, status: :unprocessable_entity
       end
     end
 

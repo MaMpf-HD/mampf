@@ -1,14 +1,3 @@
-<%= form_with(model: @slide, url: vignettes_questionnaire_slides_path(@questionnaire), local: true) do |form| %>
-<!-- Other form fields for Slide -->
+<h1>New Slide</h1>
 
-<%= form.label :title%>
-<br>
-<%= form.text_field :title%> 
-
-<br>
-
-<%= form.label :content %>
-<%= form.rich_text_area :content %>
-
-<%= form.submit 'Create Slide' %>
-<% end %>
+<%= render 'form' %>
