@@ -71,6 +71,7 @@ gem "turbolinks", "~> 5.2" # make navigating the app faster
 gem "webpacker", "~> 5.4"
 
 group :development, :docker_development do
+  gem "erb_lint", "~> 0.7.0"
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"

@@ -149,6 +149,13 @@ GEM
     base64 (0.2.0)
     bcrypt (3.1.20)
     benchmark (0.4.0)
+    better_html (2.1.1)
+      actionview (>= 6.0)
+      activesupport (>= 6.0)
+      ast (~> 2.0)
+      erubi (~> 1.4)
+      parser (>= 2.4)
+      smart_properties
     bigdecimal (3.1.8)
     bindex (0.8.1)
     bootsnap (1.18.4)
@@ -213,6 +220,13 @@ GEM
     down (5.4.2)
       addressable (~> 2.8)
     drb (2.2.1)
+    erb_lint (0.7.0)
+      activesupport
+      better_html (>= 2.0.1)
+      parser (>= 2.7.1.4)
+      rainbow
+      rubocop (>= 1)
+      smart_properties
     erubi (1.13.0)
     erubis (2.7.0)
     et-orbi (1.2.11)
@@ -587,6 +601,7 @@ GEM
       simplecov (~> 0.19)
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
+    smart_properties (1.17.0)
     spring (2.1.1)
     spring-watcher-listen (2.0.1)
       listen (>= 2.7, < 4.0)
@@ -687,6 +702,7 @@ DEPENDENCIES
   database_cleaner-active_record (~> 2.2)
   devise (~> 4.9)
   devise-bootstrap-views (~> 1.1)
+  erb_lint (~> 0.7.0)
   erubis (~> 2.7)
   exception_handler (~> 0.8.0.0, ~> 0.8.0)
   factory_bot_rails (~> 6.4)
