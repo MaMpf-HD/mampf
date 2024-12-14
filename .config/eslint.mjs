@@ -13,6 +13,7 @@ import stylistic from "@stylistic/eslint-plugin";
 import erb from "eslint-plugin-erb";
 import pluginCypress from "eslint-plugin-cypress/flat";
 import globals from "globals";
+import html from "@html-eslint/eslint-plugin";
 
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/javascripts/application.js",
@@ -103,6 +104,8 @@ const customGlobals = {
   openAnnotationIfSpecifiedInUrl: "readable",
 };
 
+const erbProcessor = erb.processors.erbProcessor;
+
 export default [
   js.configs.recommended,
   // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
@@ -150,6 +153,24 @@ export default [
     linterOptions: {
       // see https://github.com/Splines/eslint-plugin-erb/releases/tag/v2.0.1
       reportUnusedDisableDirectives: "off",
+    },
+    files: ["**/*.js"],
+  },
+  // HTML linting (aside from erb_lint)
+  {
+    processor: erbProcessor,
+    ...html.configs["flat/recommended"],
+    files: ["**/*.html", "**/*.html.erb"],
+    rules: {
+      ...html.configs["flat/recommended"].rules,
+      "@html-eslint/attrs-newline": ["error", {
+        closeStyle: "newline",
+        ifAttrsMoreThan: 5,
+      }],
+      // something for the long run
+      // "@html-eslint/id-naming-convention": ["error", "kebab-case"],
+      "@html-eslint/indent": ["error", 2],
+      "@html-eslint/sort-attrs": "error",
     },
   },
 ];

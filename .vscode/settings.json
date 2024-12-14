@@ -18,12 +18,16 @@
     "eslint.options": {
         "overrideConfigFile": ".config/eslint.mjs"
     },
+    "eslint.validate": [
+        "javascript",
+        "html"
+    ],
     //////////////////////////////////////
     // HTML
     //////////////////////////////////////
     "[html]": {
-        // https://github.com/Shopify/erb_lint/issues/225
-        "editor.formatOnSave": false // TODO: activate once HTML formatter installed
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
     //////////////////////////////////////
     // Ruby (Rubocop)
@@ -67,7 +71,7 @@
     // Files
     //////////////////////////////////////
     "files.exclude": {
-        "node_modules/": true,
+        "node_modules/": false,
         "pdfcomprezzor/": true,
         "coverage/": true,
         "solr/": true,
