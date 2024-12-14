@@ -7,6 +7,22 @@ EnableDefaultLinters: true
 linters:
   # Default linters are enabled by default, so we only need to specify the
   # ones we want to disable, as well as any additional ones we want to enable.
+  # Note that we disable some purely HTML-related linters here since we use
+  # HTML-ESLint for those (which is much more powerful).
+  # erb_lint is mainly used for Ruby-related linting in any files that contain
+  # ERB tags.
+  SpaceIndentation:
+    enabled: false
+  SpaceInHtmlTag:
+    enabled: false
+  TrailingWhitespace:
+    enabled: false
+  ExtraNewLine:
+    enabled: false
+  FinalNewLine:
+    enabled: false
+  SelfClosingTag:
+    enabled: false
   PartialInstanceVariable:
     enabled: true
   DeprecatedClasses:
@@ -37,5 +53,3 @@ linters:
         Enabled: false
       Rails/OutputSafety:
         Enabled: false
-  HardCodedString:
-    enabled: true

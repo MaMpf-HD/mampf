@@ -163,6 +163,19 @@ export default [
     files: ["**/*.html", "**/*.html.erb"],
     rules: {
       ...html.configs["flat/recommended"].rules,
+      // 🎈 Best Practices
+      "@html-eslint/no-extra-spacing-text": "error",
+      "@html-eslint/no-script-style-type": "error",
+      // we should add this rule later
+      // "@html-eslint/no-target-blank": "error",
+      // 🎈 Accessibility
+      "@html-eslint/no-abstract-roles": "error",
+      "@html-eslint/no-accesskey-attrs": "error",
+      "@html-eslint/no-aria-hidden-body": "error",
+      "@html-eslint/no-non-scalable-viewport": "error",
+      "@html-eslint/no-positive-tabindex": "error",
+      "@html-eslint/no-skip-heading-levels": "error",
+      // 🎈 Styles
       "@html-eslint/attrs-newline": ["error", {
         closeStyle: "newline",
         ifAttrsMoreThan: 5,
@@ -171,6 +184,12 @@ export default [
       // "@html-eslint/id-naming-convention": ["error", "kebab-case"],
       "@html-eslint/indent": ["error", 2],
       "@html-eslint/sort-attrs": "error",
+      "@html-eslint/no-extra-spacing-attrs": ["error", {
+        "enforceBeforeSelfClose": true,
+        "disallowMissing": true,
+        "disallowTabs": true,
+        "disallowInAssignment": true
+      }]
     },
   },
 ];
