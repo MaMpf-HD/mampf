@@ -29,6 +29,16 @@
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "dbaeumer.vscode-eslint"
     },
+    "emeraldwalk.runonsave": {
+        "autoClearConsole": true,
+        "commands": [
+            {
+                "match": "\\.(html|text|js).erb$",
+                "cmd": "just lint erb ${file}",
+                "isAsync": true
+            }
+        ]
+    },
     //////////////////////////////////////
     // Ruby (Rubocop)
     //////////////////////////////////////
