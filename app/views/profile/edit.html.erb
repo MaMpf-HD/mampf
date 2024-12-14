@@ -1,138 +1,133 @@
-<%= bootstrap_form_with url: profile_update_path, scope: 'user',
-                        html: { id: 'profileForm'} do |f| %>
-  <div class="alert alert-secondary" id="profileChange">
-    <div class="profileChangeWarning" style="display: flex; justify-content: space-between;">
-      <div>
-        <%= t('profile.changes_made') %>
-      </div>
-      <div>
-        <%= f.submit t('profile.update'),
-                     class: 'btn btn-info' %>
-      </div>
-    </div>
-  </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-4 col-lg-2">
-              <h5>
-                <%= t('profile.account') %>
-              </h5>
-            </div>
-            <div class="col-8 col-lg-10 text-end">
-              <%= render partial: 'profile/account' %>
-            </div>
+<%= stylesheet_link_tag 'profile' %>
+
+<div class="container-md">
+
+  <div class="row">
+
+    <!-- 🌟 Voucher -->
+    <div class="d-flex justify-content-center">
+      <div class="card profile-card voucher-card" data-cy="redeem-voucher-card">
+        <div class="voucher-redemption-pattern"></div>
+        <div class="card-body">
+          <h5 class="card-title">
+            <%= t('profile.redeem_voucher') %>
+            <%= helpdesk(t('profile.redeem_voucher_explainer'), true) %>
+          </h5>
+          <div id="redeem-voucher">
+            <%= render partial: 'profile/verify_voucher' %>
           </div>
         </div>
+      </div>
+    </div>
+
+  </div>
+
+  <%= bootstrap_form_with url: profile_update_path, scope: 'user',
+                        html: { id: 'profileForm'} do |f| %>
+
+  <div class="row display-flex mb-md-3">
+
+    <!-- ⭕ Unsaved changes warning/button -->
+    <div class="w-100 mb-3">
+      <%= f.submit t('profile.changes_made_btn'),
+            class: 'btn btn-warning mt-3 w-100 d-none text-wrap',
+            id: "profileChange",
+            "data-cy": "profile-change-submit" %>
+    </div>
+
+    <!-- 🌟 Account -->
+    <div class="col-12 col-md-6 mb-3 mb-md-0">
+      <div class="card profile-card">
+        <div class="card-header">
+          <h5 class="mb-0">
+            <%= t('profile.account') %>
+          </h5>
+        </div>
+
         <div class="card-body">
           <div class="mb-3">
             <%= f.label :name,
-                        t('profile.name'),
-                        class: "form-label" %>
+                  t('profile.name'),
+                  class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_information'), true) %>
             <%= f.text_field_without_bootstrap :name,
-                                               class: 'form-control' %>
+                                               class: 'form-control',
+                                               "data-cy": "display-name" %>
             <div class="invalid-feedback"
-                 id="username-error">
+                id="username-error">
             </div>
           </div>
+
           <div class="mb-3">
             <%= f.label :name_in_tutorials,
                         t('profile.name_in_tutorials'),
-                        class: "form-label" %>
+                        class: "form-label fw-bold" %>
             <%= helpdesk(t('profile.name_in_tutorials_information'), true) %>
             <%= f.text_field_without_bootstrap :name_in_tutorials,
-                                               class: 'form-control' %>
+                                              class: 'form-control',
+                                              "data-cy": "display-name-tutorials" %>
           </div>
+
+          <%= render partial: 'profile/subscription_type', locals: { f: f } %>
+          <%= render partial: 'profile/account' %>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light" id="accordion">
+
+    <!-- 🌟 Notifications -->
+    <div class="col-12 col-md-6 mb-3 mb-md-0">
+      <div class="card profile-card">
         <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.courses') %>
-              </h5>
-            </div>
-          </div>
+          <h5 class="mb-0">
+            <%= t('profile.email_notifications_header') %>
+          </h5>
         </div>
+
         <div class="card-body">
-          <%= render partial: 'profile/subscriptions',
-                     locals: { f: f } %>
+          <%= render partial: 'profile/email_notifications' , locals: { f: f } %>
         </div>
       </div>
     </div>
+
   </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light">
+
+  <div class="row">
+
+    <!-- 🌟 Courses -->
+    <div class="col">
+      <div class="card profile-card" id="courses-accordion" data-cy="courses-accordion">
         <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.preferences') %>
-              </h5>
-            </div>
-          </div>
+          <h5 class="mb-0">
+            <%= t('profile.courses') %>
+          </h5>
         </div>
+    
         <div class="card-body">
-          <%= render partial: 'profile/subscription_type',
-                     locals: { f: f } %>
+          <%= render partial: 'profile/subscriptions' , locals: { f: f } %>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.email_notifications_header') %>
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <%= render partial: 'profile/email_notifications',
-                     locals: { f: f } %>
-        </div>
-      </div>
+
+    <!-- ⭕ Unsaved changes warning/button -->
+    <!-- Here at the bottom only for small displays -->
+    <div class="w-100 mt-3 mb-3 d-md-none">
+      <%= f.submit t('profile.changes_made_btn'),
+        class: 'btn btn-warning w-100 d-none text-wrap',
+        id: "profileChangeBottom" %>
     </div>
+
   </div>
-<% end %>
-<div class="row mb-3">
-    <div class="col-12">
-      <div class="card bg-light">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-12">
-              <h5>
-                <%= t('profile.my_data') %>
-              </h5>
-            </div>
-          </div>
-        </div>
-        <div class="card-body">
-          <%= render partial: 'profile/data' %>
-        </div>
-      </div>
-    </div>
-  </div>
+
+  <% end %>
+
+</div>
+
+<!-- 🔘 Delete Account Modal -->
 <%= render partial: 'shared/generic_modal',
            locals: { sort: 'deleteAccount',
                      title: t('profile.delete_account') } %>
 
-<div>
-  <%= link_to :root, class: "btn btn-sm btn-primary" do %>
-    <span class="bi bi-arrow-left">
-    <%= t('back_to_home') %>
-  <% end %>
-</div>
+<!-- 🔘 User Request Data Modal -->
+<%= render partial: 'profile/request_data_modal' %>
+
+<%= javascript_include_tag 'profile' %>

@@ -129,4 +129,84 @@ module LecturesHelper
       tag.i(class: "fas fa-eye")
     end
   end
+
+  def editors_preselection(lecture)
+    options_for_select(lecture.eligible_as_editors.map do |editor|
+                         [editor.info, editor.id]
+                       end, lecture.editor_ids)
+  end
+
+  def teacher_select(form, is_new_lecture, lecture = nil)
+    if current_user.admin?
+      label = form.label(:teacher_id, t("basics.teacher"), class: "form-label")
+      help_desk = helpdesk(t("admin.lecture.info.teacher"), false)
+
+      preselection = if is_new_lecture
+        options_for_select([[current_user.info, current_user.id]], current_user.id)
+      else
+        options_for_select([[lecture.teacher.info, lecture.teacher.id]], lecture.teacher.id)
+      end
+
+      # TODO: Rubocop bug when trying to break the last object on a new line
+      select = form.select(:teacher_id, preselection, {}, { class: "selectize",
+                                                            multiple: true,
+                                                            data: {
+                                                              ajax: true,
+                                                              filled: false,
+                                                              model: "user",
+                                                              placeholder: t("basics.enter_two_letters"), # rubocop:disable Layout/LineLength
+                                                              no_results: t("basics.no_results"),
+                                                              modal: true,
+                                                              cy: "teacher-admin-select"
+                                                            } })
+
+      error_div = content_tag(:div, "", class: "invalid-feedback", id: "lecture-teacher-error")
+
+      return label + help_desk + select + error_div
+    end
+
+    # Non-admin cases
+    if is_new_lecture
+      p1 = content_tag(:p) do
+        concat(t("basics.teacher"))
+        concat(helpdesk(t("admin.lecture.info.teacher_fixed_new_lecture"), false))
+      end
+      p2 = content_tag(:p, current_user.info)
+
+    else
+      p1 = content_tag(:p) do
+        concat(t("basics.teacher"))
+        concat(helpdesk(t("admin.lecture.info.teacher_fixed"), false))
+      end
+      p2 = content_tag(:p, lecture.teacher.info, "data-cy": "teacher-info")
+    end
+
+    p1 + p2
+  end
+
+  def editors_select(form, lecture)
+    if current_user.admin?
+      preselection = options_for_select(lecture.select_editors, lecture.editors.map(&:id))
+      form.select(:editor_ids, preselection, {}, {
+                    class: "selectize",
+                    multiple: true,
+                    data: {
+                      ajax: true,
+                      filled: false,
+                      model: "user",
+                      placeholder: t("basics.enter_two_letters"),
+                      no_results: t("basics.no_results"),
+                      modal: true
+                    }
+                  })
+    else
+      form.select(:editor_ids, editors_preselection(lecture), {},
+                  class: "selectize",
+                  multiple: true,
+                  data: {
+                    cy: "lecture-editors-select",
+                    no_results: t("basics.no_results_editor")
+                  })
+    end
+  end
 end

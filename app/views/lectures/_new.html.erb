@@ -52,23 +52,8 @@
              id="new-lecture-term-error">
         </div>
       </div>
-      <div class="col-12">
-        <%= f.label :teacher_id,
-                    t('basics.teacher'),
-                    class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.info.teacher'), false) %>
-        <%= f.select :teacher_id,
-                     options_for_select([[current_user.info, current_user.id]],
-                                        current_user.id),
-                     {},
-                     { class: 'selectize',
-                       data: { ajax: true,
-                               model: 'user',
-                               filled: false,
-                               placeholder: t('basics.enter_two_letters'),
-                               no_results: t('basics.no_results'),
-                               current: current_user.id,
-                               modal: modal } } %>
+      <div class="col-12 mt-4">
+        <%= teacher_select(f, is_new_lecture=true) %>
       </div>
       <div class="col-12" id="newLectureSort"
            style="<%= term_independent ? 'display: none;' : '' %>">

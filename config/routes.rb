@@ -11,9 +11,12 @@ Rails.application.routes.draw do
   if Rails.env.test?
     namespace :cypress do
       resources :factories, only: :create
+      post "factories/call_instance_method", to: "factories#call_instance_method"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
       resources :i18n, only: :create
+      post "timecop/travel", to: "timecop#travel"
+      post "timecop/reset", to: "timecop#reset"
     end
   end
 
@@ -810,6 +813,24 @@ Rails.application.routes.draw do
       as: "delete_account"
 
   resources :users, only: [:index, :edit, :update, :destroy]
+
+  post "vouchers/verify",
+       to: "vouchers#verify",
+       as: "verify_voucher"
+
+  post "vouchers/redeem",
+       to: "vouchers#redeem",
+       as: "redeem_voucher"
+
+  post "vouchers/:id/invalidate",
+       to: "vouchers#invalidate",
+       as: "invalidate_voucher"
+
+  get "vouchers/cancel",
+      to: "vouchers#cancel",
+      as: "cancel_voucher"
+
+  resources :vouchers, only: [:create]
 
   # watchlists routes
 

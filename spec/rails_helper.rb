@@ -26,7 +26,7 @@ require "support/database_cleaner"
 # If you are not using ActiveRecord, you can remove this line.
 ActiveRecord::Migration.maintain_test_schema!
 
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
+Rails.root.glob("spec/support/**/*.rb").each { |f| require f }
 
 RSpec.configure do |config|
   # Include Factory Girl syntax to simplify calls to factories

@@ -86,6 +86,75 @@ RSpec.describe(Lecture, type: :model) do
     end
   end
 
+  describe "#stale?" do
+    context "when there is no active term" do
+      it "returns false" do
+        lecture = FactoryBot.build(:lecture)
+        expect(lecture.stale?).to be(false)
+      end
+    end
+
+    context "when there is an active term" do
+      let(:year) { 2024 }
+
+      before(:each) do
+        FactoryBot.create(:term, :summer, :active, year: year)
+      end
+
+      context "and there is no term associated with the lecture" do
+        it "returns true" do
+          lecture = FactoryBot.build(:lecture, :term_independent)
+          expect(lecture.stale?).to be(true)
+        end
+      end
+
+      context "and the lecture term begin date is before the active term" \
+              "begin date minus 1 year" do
+        let(:lecture_term) { FactoryBot.build(:term, :summer, year: year - 1) }
+
+        it "returns true" do
+          lecture = FactoryBot.build(:lecture, term: lecture_term)
+          expect(lecture.stale?).to be(true)
+        end
+      end
+
+      context "when the lecture term begin date is not older than the" \
+              "active term begin date minus 1 year" do
+        let(:lecture_term) { FactoryBot.build(:term, :winter, year: year - 1) }
+
+        it "returns false" do
+          lecture = FactoryBot.build(:lecture, term: lecture_term)
+          expect(lecture.stale?).to be(false)
+        end
+      end
+    end
+  end
+
+  describe "#active_voucher_of_role" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:role) { :tutor }
+
+    context "when there is an active voucher of the specified role" do
+      let!(:active_voucher) do
+        FactoryBot.create(:voucher, role: role, lecture: lecture)
+      end
+
+      it "returns the voucher" do
+        expect(lecture.active_voucher_of_role(role)).to eq(active_voucher)
+      end
+    end
+
+    context "when there is no active voucher of the specified role" do
+      let!(:inactive_voucher) do
+        FactoryBot.create(:voucher, :expired, role: role, lecture: lecture)
+      end
+
+      it "returns nil" do
+        expect(lecture.active_voucher_of_role(role)).to be(nil)
+      end
+    end
+  end
+
   # Test methods -- NEEDS TO BE REFACTORED
 
   # describe '#tags' do

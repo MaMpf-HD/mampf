@@ -81,6 +81,9 @@ class User < ApplicationRecord
 
   has_many :feedbacks, dependent: :destroy
 
+  # a user has redemptions of vouchers
+  has_many :redemptions, dependent: :destroy
+
   include ScreenshotUploader[:image]
 
   # if a homepage is given it should at leat be a valid address
@@ -129,10 +132,6 @@ class User < ApplicationRecord
   scope :active_recently, ->(threshold) { where(current_sign_in_at: threshold.ago..) }
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
-
-  searchable do
-    text :tutorial_name
-  end
 
   # returns the array of all teachers
   def self.teachers

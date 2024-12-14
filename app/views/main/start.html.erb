@@ -63,7 +63,8 @@
          data-bs-parent="#subscriptionsAccordion" data-link="#inactiveLecturesLink">
       <div class="accordion-body">
         <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
-             id="collapseInactiveLecturesContent">
+             id="collapseInactiveLecturesContent"
+             data-cy="subscribed-inactive-lectures-collapse">
           <% if @current_stuff.empty? %>
             <%= render partial: 'main/start/lecture',
                        collection: @inactive_lectures,
@@ -117,7 +118,8 @@
               data-bs-toggle="collapse"
               data-bs-target="#collapseTalks"
               aria-expanded="false"
-              aria-controls="collapseTalks">
+              aria-controls="collapseTalks"
+              data-cy="my-talks-collapse-btn">
         <h4 class="text-dark"
             id="talkLink">
           <%= t('profile.my_talks') %>
@@ -126,7 +128,8 @@
     </div>
     <div class="collapse subscriptionsCollapse" id="collapseTalks"
          data-bs-parent="#subscriptionsAccordion"
-         data-link="#talkLink">
+         data-link="#talkLink"
+         data-cy="my-talks-collapse">
       <div class="accordion-body">
         <%= render partial: 'main/start/talks',
                    locals: { talks: @talks } %>

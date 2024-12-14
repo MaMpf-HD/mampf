@@ -286,7 +286,7 @@ class Lesson < ApplicationRecord
   end
 
   def tags_without_section
-    tags.includes(:sections).select { |t| (t.sections & sections).empty? }
+    tags.includes(:sections).select { |t| (t.sections & sections).empty? } # rubocop:disable Style/ArrayIntersect
   end
 
   private
