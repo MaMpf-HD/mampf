@@ -22,6 +22,7 @@
     // HTML
     //////////////////////////////////////
     "[html]": {
+        // https://github.com/Shopify/erb_lint/issues/225
         "editor.formatOnSave": false // TODO: activate once HTML formatter installed
     },
     //////////////////////////////////////
@@ -52,7 +53,6 @@
         "codeLens": true,
         "definition": true
     },
-    "rubyLsp.enableExperimentalFeatures": true,
     //////////////////////////////////////
     // Ruby Test Explorer
     //////////////////////////////////////
@@ -111,6 +111,7 @@
     "cSpell.words": [
         "activerecord",
         "ajax",
+        "autocorrect",
         "commontator",
         "cospeaker",
         "cospeakers",
@@ -119,11 +120,12 @@
         "helpdesk",
         "katex",
         "preselection",
+        "Rubocop",
         "selectize",
         "Timecop",
         "turbolinks",
-        "Unsets",
         "uncached",
+        "Unsets",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [
