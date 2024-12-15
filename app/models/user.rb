@@ -133,10 +133,6 @@ class User < ApplicationRecord
   scope :inactive_for, ->(threshold) { where(current_sign_in_at: ...threshold.ago) }
   scope :confirmation_sent_before, ->(threshold) { where(confirmation_sent_at: ...threshold.ago) }
 
-  searchable do
-    text :tutorial_name
-  end
-
   # returns the array of all teachers
   def self.teachers
     User.where(id: Lecture.distinct.select(:teacher_id))
