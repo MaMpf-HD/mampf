@@ -185,6 +185,8 @@ export default [
         closeStyle: "newline",
         ifAttrsMoreThan: 5,
       }],
+      // activate once all other rules are in place (otherwise ESLint throws errors)
+      "@html-eslint/element-newline": "off",
       // something for the long run
       // "@html-eslint/id-naming-convention": ["error", "kebab-case"],
       "@html-eslint/indent": ["error", 2],
