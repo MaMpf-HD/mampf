@@ -3365,10 +3365,10 @@ eslint-plugin-cypress@^3.3.0:
   dependencies:
     globals "^13.20.0"
 
-eslint-plugin-erb@^2.0.0:
-  version "2.0.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-erb/-/eslint-plugin-erb-2.0.1.tgz#ed4b98e2c06221510ff46e43743236a11c0d2a71"
-  integrity sha512-d0vvv0QNH2MGl69ey89hAKtrfllgB7gSVU85q+eb+/u5OmbUuOtE1QttBZbIoGFnBoDIiTYl+bXaPbqWKB/r5w==
+eslint-plugin-erb@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-erb/-/eslint-plugin-erb-2.1.0.tgz#66ee88e644f01aa85adc885137df0f4ddf67eab7"
+  integrity sha512-iI0nKB8UN4/LIGbEAtXghzQv09FB+AOiXqinshKRbUIIN+VQnbQ3O7XEICa7FCE2u9ybyNQ9L23SDmEPrCjtQQ==
 
 eslint-scope@^4.0.3:
   version "4.0.3"
