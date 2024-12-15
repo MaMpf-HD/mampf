@@ -18,11 +18,26 @@
     "eslint.options": {
         "overrideConfigFile": ".config/eslint.mjs"
     },
+    "eslint.validate": [
+        "javascript",
+        "html"
+    ],
     //////////////////////////////////////
     // HTML
     //////////////////////////////////////
     "[html]": {
-        "editor.formatOnSave": false // TODO: activate once HTML formatter installed
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    },
+    "emeraldwalk.runonsave": {
+        "autoClearConsole": true,
+        "commands": [
+            {
+                "match": "\\.(html|text|js).erb$",
+                "cmd": "just lint erb ${file}",
+                "isAsync": true
+            }
+        ]
     },
     //////////////////////////////////////
     // Ruby (Rubocop)
@@ -52,7 +67,6 @@
         "codeLens": true,
         "definition": true
     },
-    "rubyLsp.enableExperimentalFeatures": true,
     //////////////////////////////////////
     // Ruby Test Explorer
     //////////////////////////////////////
@@ -67,7 +81,7 @@
     // Files
     //////////////////////////////////////
     "files.exclude": {
-        "node_modules/": true,
+        "node_modules/": false,
         "pdfcomprezzor/": true,
         "coverage/": true,
         "solr/": true,
@@ -77,6 +91,7 @@
         "*.js.erb": "javascript",
         "*.html.erb": "html"
     },
+    "files.saveConflictResolution": "overwriteFileOnDisk",
     //////////////////////////////////////
     // Editor
     //////////////////////////////////////
@@ -111,6 +126,7 @@
     "cSpell.words": [
         "activerecord",
         "ajax",
+        "autocorrect",
         "commontator",
         "cospeaker",
         "cospeakers",
@@ -119,11 +135,12 @@
         "helpdesk",
         "katex",
         "preselection",
+        "Rubocop",
         "selectize",
         "Timecop",
         "turbolinks",
-        "Unsets",
         "uncached",
+        "Unsets",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [

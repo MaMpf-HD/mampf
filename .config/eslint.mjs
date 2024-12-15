@@ -13,6 +13,7 @@ import stylistic from "@stylistic/eslint-plugin";
 import erb from "eslint-plugin-erb";
 import pluginCypress from "eslint-plugin-cypress/flat";
 import globals from "globals";
+import html from "@html-eslint/eslint-plugin";
 
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/javascripts/application.js",
@@ -108,8 +109,8 @@ export default [
   // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
   erb.configs.recommended,
   pluginCypress.configs.recommended,
-  // Globally ignore the following paths
   {
+    // Globally ignore the following paths
     ignores: [
       "node_modules/",
       "pdfcomprezzor/",
@@ -150,6 +151,52 @@ export default [
     linterOptions: {
       // see https://github.com/Splines/eslint-plugin-erb/releases/tag/v2.0.1
       reportUnusedDisableDirectives: "off",
+    },
+    ignores: ["**/*.html**"],
+  },
+  {
+    // HTML linting (aside from erb_lint)
+    files: ["**/*.html", "**/*.html.erb"],
+    processor: erb.processors["processorHtml"],
+    ...html.configs["flat/recommended"],
+    plugins: {
+      "@html-eslint": html,
+      "@stylistic": stylistic,
+    },
+    rules: {
+      "@stylistic/eol-last": ["error", "always"],
+      "@stylistic/no-trailing-spaces": "error",
+      "@stylistic/no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
+      ...html.configs["flat/recommended"].rules,
+      // 🎈 Best Practices
+      "@html-eslint/no-extra-spacing-text": "error",
+      "@html-eslint/no-script-style-type": "error",
+      // we should add this rule later
+      // "@html-eslint/no-target-blank": "error",
+      // 🎈 Accessibility
+      "@html-eslint/no-abstract-roles": "error",
+      "@html-eslint/no-accesskey-attrs": "error",
+      "@html-eslint/no-aria-hidden-body": "error",
+      "@html-eslint/no-non-scalable-viewport": "error",
+      "@html-eslint/no-positive-tabindex": "error",
+      "@html-eslint/no-skip-heading-levels": "error",
+      // 🎈 Styles
+      "@html-eslint/attrs-newline": ["error", {
+        closeStyle: "newline",
+        ifAttrsMoreThan: 5,
+      }],
+      // activate once all other rules are in place (otherwise ESLint throws errors)
+      "@html-eslint/element-newline": "off",
+      // something for the long run
+      // "@html-eslint/id-naming-convention": ["error", "kebab-case"],
+      "@html-eslint/indent": ["error", 2],
+      "@html-eslint/sort-attrs": "error",
+      "@html-eslint/no-extra-spacing-attrs": ["error", {
+        enforceBeforeSelfClose: true,
+        disallowMissing: true,
+        disallowTabs: true,
+        disallowInAssignment: true,
+      }],
     },
   },
 ];
