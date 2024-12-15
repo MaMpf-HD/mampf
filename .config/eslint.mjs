@@ -104,15 +104,13 @@ const customGlobals = {
   openAnnotationIfSpecifiedInUrl: "readable",
 };
 
-const erbProcessor = erb.processors.erbProcessor;
-
 export default [
   js.configs.recommended,
   // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
   erb.configs.recommended,
   pluginCypress.configs.recommended,
-  // Globally ignore the following paths
   {
+    // Globally ignore the following paths
     ignores: [
       "node_modules/",
       "pdfcomprezzor/",
@@ -154,14 +152,21 @@ export default [
       // see https://github.com/Splines/eslint-plugin-erb/releases/tag/v2.0.1
       reportUnusedDisableDirectives: "off",
     },
-    files: ["**/*.js"],
+    ignores: ["**/*.html**"],
   },
-  // HTML linting (aside from erb_lint)
   {
-    processor: erbProcessor,
-    ...html.configs["flat/recommended"],
+    // HTML linting (aside from erb_lint)
     files: ["**/*.html", "**/*.html.erb"],
+    processor: erb.processors["processorHtml"],
+    ...html.configs["flat/recommended"],
+    plugins: {
+      "@html-eslint": html,
+      "@stylistic": stylistic,
+    },
     rules: {
+      "@stylistic/eol-last": ["error", "always"],
+      "@stylistic/no-trailing-spaces": "error",
+      "@stylistic/no-multiple-empty-lines": ["error", { max: 1, maxEOF: 0 }],
       ...html.configs["flat/recommended"].rules,
       // 🎈 Best Practices
       "@html-eslint/no-extra-spacing-text": "error",
@@ -185,11 +190,11 @@ export default [
       "@html-eslint/indent": ["error", 2],
       "@html-eslint/sort-attrs": "error",
       "@html-eslint/no-extra-spacing-attrs": ["error", {
-        "enforceBeforeSelfClose": true,
-        "disallowMissing": true,
-        "disallowTabs": true,
-        "disallowInAssignment": true
-      }]
+        enforceBeforeSelfClose: true,
+        disallowMissing: true,
+        disallowTabs: true,
+        disallowInAssignment: true,
+      }],
     },
   },
 ];
