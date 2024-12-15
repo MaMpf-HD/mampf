@@ -91,6 +91,7 @@
         "*.js.erb": "javascript",
         "*.html.erb": "html"
     },
+    "files.saveConflictResolution": "overwriteFileOnDisk",
     //////////////////////////////////////
     // Editor
     //////////////////////////////////////
