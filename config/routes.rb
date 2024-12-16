@@ -955,7 +955,13 @@ Rails.application.routes.draw do
 
   # redirect bs requests to error page
 
-  match "*path", to: "main#error", via: :all
+  # match "*path", to: "main#error", via: :all
+
+  # Wildcard route at the very bottom, with a constraint to exclude Active Storage paths
+  match "*path", to: "main#error", via: :all, constraints: lambda { |req|
+    !req.path.start_with?("/rails/active_storage")
+  }
+
   match "/", to: "main#error", via: [:post, :put, :patch, :delete]
 
   # For details on the DSL available within this file,
