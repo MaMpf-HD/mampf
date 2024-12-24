@@ -953,11 +953,7 @@ Rails.application.routes.draw do
 
   mount Thredded::Engine => "/forum"
 
-  # redirect bs requests to error page
-
-  # match "*path", to: "main#error", via: :all
-
-  # Wildcard route at the very bottom, with a constraint to exclude Active Storage paths
+  # redirect bs requests to error page (except active storage routes)
   match "*path", to: "main#error", via: :all, constraints: lambda { |req|
     !req.path.start_with?("/rails/active_storage")
   }

@@ -51,6 +51,7 @@ gem "rails-i18n", "~> 7.0"
 gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
 gem "rqrcode", "~> 2.2"
+# gem "ruby-vips", "~> 2.2", ">= 2.2.2"
 gem "rubyzip", "~> 2.3"
 gem "sass-rails", "~> 6.0" # SCSS for stylesheets
 gem "shrine", "~> 3.6"
