@@ -12,16 +12,20 @@
     <%= form.rich_text_area :content %>
   </div>
   <div>
-    <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide' %>
-  </div>
-  <div>
     <%= form.label :type, "Question Type" %>
     <%= form.select :type, options_for_select([
         ['No Question', ''],
         ['Text Field', 'TextQuestion']
-    ]), {}, { id: "question_type" } %>
+    ]), {}, data: { action: "change->toggle-fields#switch" } %>
   </div>
-  <!-- This div will dynamically be replaced in the question_type.js file -->
-  <div id="question_field">
+  <fieldset data-type="TextQuestion">
+    <%= form.label :question_text, "Question Text" %>
+    <br>
+    <%= form.text_area :question_text %>
+  </fieldset>
+  <div>
+    <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide' %>
   </div>
+
+
 <% end %>
