@@ -1,3 +1,4 @@
+<%= javascript_include_tag 'vignettes/question_type' %>
 <%= form_with(
       model: [@questionnaire, @slide],
       url: @slide.new_record? ? vignettes_questionnaire_slides_path(@questionnaire) : vignettes_questionnaire_slide_path(@questionnaire, @slide),
@@ -12,5 +13,15 @@
   </div>
   <div>
     <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide' %>
+  </div>
+  <div>
+    <%= form.label :type, "Question Type" %>
+    <%= form.select :type, options_for_select([
+        ['No Question', ''],
+        ['Text Field', 'TextQuestion']
+    ]), {}, { id: "question_type" } %>
+  </div>
+  <!-- This div will dynamically be replaced in the question_type.js file -->
+  <div id="question_field">
   </div>
 <% end %>

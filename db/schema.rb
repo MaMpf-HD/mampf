@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_15_132228) do
+ActiveRecord::Schema[7.1].define(version: 2024_12_24_094245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -955,10 +955,22 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_15_132228) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "vignettes_questions", force: :cascade do |t|
+    t.string "type"
+    t.text "question_text"
+    t.bigint "vignettes_slide_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_slide_id"], name: "index_vignettes_questions_on_vignettes_slide_id"
+  end
+
   create_table "vignettes_slides", force: :cascade do |t|
     t.bigint "vignettes_questionnaire_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "questionable_type"
+    t.bigint "questionable_id"
+    t.index ["questionable_type", "questionable_id"], name: "index_vignettes_slides_on_questionable"
     t.index ["vignettes_questionnaire_id"], name: "index_vignettes_slides_on_vignettes_questionnaire_id"
   end
 
@@ -1066,6 +1078,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_15_132228) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "vignettes_questions", "vignettes_slides"
   add_foreign_key "vignettes_slides", "vignettes_questionnaires"
   add_foreign_key "vouchers", "lectures"
   add_foreign_key "watchlist_entries", "media"
