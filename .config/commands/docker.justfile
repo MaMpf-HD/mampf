@@ -30,6 +30,40 @@ up-reseed *args:
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     docker compose rm --stop --force mampf && docker compose up {{args}}
 
+# Downloads the latest database dump from the production server and reseeds the local database with it
+[confirm("This will reset all your data in the database locally. Continue? (y/n)")]
+up-reseed-prod *args:
+    #!/usr/bin/env bash
+    # Get to the folder with the database dump
+    echo "Please enter the SSH command to log in to the MaMpf server and cd into the folder with the database dump (e.g. ssh ... && cd ...):"
+    read get_to_dump_folder_command
+    echo "This is the command you entered:"
+    echo $get_to_dump_folder_command
+    echo -n "Are you sure you want to execute that command (y/n)"
+    read confirmation
+    if [ "$confirmation" != "y" ]; then
+        echo "Operation cancelled."
+        exit 1
+    fi
+    $get_to_dump_folder_command
+
+    # Find the latest file in the folder
+    latest_file=$(ls -t | head -n 1)
+    echo "Latest file found: $latest_file"
+
+    # Download the file to the local machine
+    echo "We will now execute the following command to download the file:"
+    download_command = "scp ./path/to/dump/folder/$latest_file ./local/path/"
+    echo $download_command
+    echo -n "Are you sure you want to continue (y/n)"
+    read confirmation
+    if [ "$confirmation" != "y" ]; then
+        echo "Operation cancelled."
+        exit 1
+    fi
+    $download_command
+
+
 # Removes the development docker containers
 @down:
     #!/usr/bin/env bash
