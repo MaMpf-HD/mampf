@@ -54,9 +54,10 @@ D2 ./app/views/quizzes/new.coffee
 
 2 ./app/views/media/cancel_import_media.coffee
 
+2 ./app/views/vertices/new.coffee
+
 ### 😐 TODO
 
-2 ./app/views/vertices/new.coffee
 
 3 ./app/views/lectures/render_sidebar.coffee
 3 ./app/views/submissions/accept.coffee
@@ -96,12 +97,14 @@ D2 ./app/views/quizzes/new.coffee
 6 ./app/views/remarks/update.coffee
 6 ./app/views/submissions/move.coffee
 6 ./app/views/terms/edit.coffee
+
 7 ./app/views/assignments/destroy.coffee
 7 ./app/views/chapters/new.coffee
 7 ./app/views/courses/render_question_counter.coffee
 7 ./app/views/lectures/remove_imported_medium.coffee
 7 ./app/views/media/add_screenshot.coffee
 7 ./app/views/tutorials/destroy.coffee
+
 8 ./app/views/lessons/new.coffee
 8 ./app/views/sections/new.coffee
 8 ./app/views/submissions/add_correction.coffee
@@ -109,12 +112,14 @@ D2 ./app/views/quizzes/new.coffee
 8 ./app/views/submissions/destroy.coffee
 8 ./app/views/submissions/leave.coffee
 8 ./app/views/terms/new.coffee
+
 9 ./app/views/clickers/create.coffee
 9 ./app/views/erdbeere/find_tags.coffee
 9 ./app/views/lectures/import_media.coffee
 9 ./app/views/profile/unstar_lecture.coffee
 9 ./app/views/quizzes/update.coffee
 9 ./app/views/submissions/cancel_edit.coffee
+
 10 ./app/views/chapters/create.coffee
 10 ./app/views/courses/new.coffee
 10 ./app/views/media/render_medium_tags.coffee
