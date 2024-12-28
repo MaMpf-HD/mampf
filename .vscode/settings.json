@@ -118,12 +118,13 @@
         "factorybot",
         "helpdesk",
         "katex",
+        "preseeds",
         "preselection",
         "selectize",
         "Timecop",
         "turbolinks",
-        "Unsets",
         "uncached",
+        "Unsets",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [

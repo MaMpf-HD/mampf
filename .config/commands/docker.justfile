@@ -30,6 +30,15 @@ up-reseed *args:
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     docker compose rm --stop --force mampf && docker compose up {{args}}
 
+# Starts the dev docker containers and preseeds the database from a local file
+[confirm("This will reset all your data in the database locally. Continue? (y/n)")]
+up-reseed-from-file preseed_file *args:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+    export DB_SQL_PRESEED_URL="$preseed_file"
+    export UPLOADS_PRESEED_URL=""
+    docker compose rm --stop --force mampf && docker compose up {{args}}
+
 # Downloads the latest database dump from the production server
 download-db-dump:
     #!/usr/bin/env bash
