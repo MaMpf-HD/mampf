@@ -31,38 +31,41 @@ up-reseed *args:
     docker compose rm --stop --force mampf && docker compose up {{args}}
 
 # Downloads the latest database dump from the production server and reseeds the local database with it
-[confirm("This will reset all your data in the database locally. Continue? (y/n)")]
 up-reseed-prod *args:
     #!/usr/bin/env bash
-    # Get to the folder with the database dump
-    echo "Please enter the SSH command to log in to the MaMpf server and cd into the folder with the database dump (e.g. ssh ... && cd ...):"
-    read get_to_dump_folder_command
-    echo "This is the command you entered:"
-    echo $get_to_dump_folder_command
-    echo -n "Are you sure you want to execute that command (y/n)"
-    read confirmation
-    if [ "$confirmation" != "y" ]; then
-        echo "Operation cancelled."
+    set -e
+
+    # User input: proxy jump
+    echo "To connect to the remote server you might need a proxy jump. Enter the host name (or leave empty):"
+    read proxy_jump_destination
+    proxy_jump_cmd="-J $proxy_jump_destination"
+
+    # User input for remote server & dump folder
+    echo "Enter the remote user and host in the format user@host "
+    read remote_user_host
+    echo "Enter the path to the folder that contains the database dumps on the remote server, e.g. /a/b/db"
+    read remote_dump_folder
+
+    # Latest file
+    latest_file=$(ssh $proxy_jump_cmd "$remote_user_host" "ls -t $remote_dump_folder | head -n 1")
+    if [ -z "$latest_file" ]; then
+        echo "No files found in the remote folder."
         exit 1
     fi
-    $get_to_dump_folder_command
-
-    # Find the latest file in the folder
-    latest_file=$(ls -t | head -n 1)
+    echo ""
     echo "Latest file found: $latest_file"
 
-    # Download the file to the local machine
-    echo "We will now execute the following command to download the file:"
-    download_command = "scp ./path/to/dump/folder/$latest_file ./local/path/"
-    echo $download_command
-    echo -n "Are you sure you want to continue (y/n)"
+    # Download file
+    echo "We will now download this file to the local machine into the folder tmp/db/."
+    echo -n "Are you sure you want to continue (y/n) "
     read confirmation
     if [ "$confirmation" != "y" ]; then
         echo "Operation cancelled."
         exit 1
     fi
-    $download_command
-
+    local_dir={{justfile_directory()}}/tmp/db/
+    mkdir -p "$local_dir"
+    scp -C $proxy_jump_cmd "$remote_user_host:$remote_dump_folder/$latest_file" "$local_dir"
 
 # Removes the development docker containers
 @down:
