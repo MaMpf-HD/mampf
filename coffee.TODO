@@ -11,6 +11,8 @@
 # https://decaffeinate-project.org/repl/
 
 ### Watch out for
+- Don't forget to change .js to .js.erb if needed. But use the pure 
+  .js whenever possible, i.e. when no ERB syntax is used.
 - Strings inside Strings, e.g. this:
     .append('<%= j render partial: "quiz_certificates/form" %>')
  should be converted to
@@ -46,8 +48,9 @@ D2 ./app/views/quizzes/new.coffee
 3 ./app/views/tutorials/validate_certificate.coffee
 2 ./app/views/assignments/cancel_edit.coffee
 
-### 😐 TODO
 2 ./app/views/media/cancel_import_media.coffee
+
+### 😐 TODO
 
 2 ./app/views/submissions/cancel_action.coffee
 2 ./app/views/submissions/cancel_edit_correction.coffee
