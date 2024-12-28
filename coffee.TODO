@@ -65,10 +65,11 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 3 ./app/views/submissions/accept.coffee (⚠️ too annoying to reproduce this late
     submission case. The decaffeination was straightforward. Just double-check
     it)
+3 ./app/views/submissions/reject.coffee (exactly the same as accept.coffee)
+
 
 ### 😐 TODO
 3 ./app/views/submissions/refresh_token.coffee
-3 ./app/views/submissions/reject.coffee
 
 4 ./app/assets/javascripts/file_upload.coffee
 4 ./app/views/assignments/cancel_new.coffee
