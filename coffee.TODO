@@ -240,6 +240,7 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 93 ./app/views/referrals/update.coffee
 97 ./app/assets/javascripts/items.coffee
 
+😭
 112 ./app/assets/javascripts/lessons.coffee
 130 ./app/assets/javascripts/show_clicker.coffee
 192 ./app/views/media/statistics.coffee
