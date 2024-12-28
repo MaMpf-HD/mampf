@@ -30,8 +30,8 @@ up-reseed *args:
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     docker compose rm --stop --force mampf && docker compose up {{args}}
 
-# Downloads the latest database dump from the production server and reseeds the local database with it
-up-reseed-prod *args:
+# Downloads the latest database dump from the production server
+download-db-dump:
     #!/usr/bin/env bash
     set -e
 
