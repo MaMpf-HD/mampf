@@ -13,6 +13,7 @@
 ### 🌟 DONE
 # D as first character means that the file has been deleted entirely 
 # because it was not needed anymore.
+
 D0 ./app/views/media/import_manuscript.coffee
 0 ./app/views/notifications/destroy_all.coffee
 D0 ./app/views/submissions/error.coffee
@@ -21,6 +22,7 @@ D0 ./app/views/submissions/error.coffee
 1 ./app/views/answers/update.coffee
 2 ./app/views/quizzes/delete_edge.coffee
 D2 ./app/views/quizzes/new.coffee
+2 ./app/views/quizzes/update_default_target.coffee (same as delete_edge.coffee)
 
 ### 😐 TODO
 1 ./app/views/erdbeere/cancel_edit_tags.coffee
@@ -30,8 +32,6 @@ D2 ./app/views/quizzes/new.coffee
 2 ./app/views/assignments/cancel_edit.coffee
 2 ./app/views/media/cancel_import_media.coffee
 
-
-2 ./app/views/quizzes/update_default_target.coffee
 2 ./app/views/submissions/cancel_action.coffee
 2 ./app/views/submissions/cancel_edit_correction.coffee
 2 ./app/views/tutorials/cancel_edit.coffee
