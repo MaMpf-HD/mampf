@@ -46,13 +46,14 @@ D2 ./app/views/quizzes/new.coffee
 
 2 ./app/views/tutorials/cancel_edit.coffee
 3 ./app/views/tutorials/validate_certificate.coffee
+2 ./app/views/submissions/cancel_action.coffee
+
 2 ./app/views/assignments/cancel_edit.coffee
 
 2 ./app/views/media/cancel_import_media.coffee
 
 ### 😐 TODO
 
-2 ./app/views/submissions/cancel_action.coffee
 2 ./app/views/submissions/cancel_edit_correction.coffee
 2 ./app/views/vertices/new.coffee
 
