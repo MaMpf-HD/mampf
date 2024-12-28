@@ -1,20 +1,19 @@
-# Generated via
-# find . -type f -name '*.coffee'
+# This file was originally generated via the following command:
 # find . -type f -name '*.coffee' ! -path './node_modules/*' | xargs wc -l | sort -n
 
+### Usage
 # See https://github.com/decaffeinate/decaffeinate
 # Use npm install -g decaffeinate
-# Use decaffeinate --prefer-let app/views/whatever.coffee
+# Use decaffeinate app/views/whatever.coffee
 
 ### 🌟 DONE
 0 ./app/views/media/import_manuscript.coffee
 0 ./app/views/notifications/destroy_all.coffee
 0 ./app/views/submissions/error.coffee
+0 ./app/views/profile/toggle_thread_subscription.coffee
 
 ### 😐 TODO
-0 ./app/views/profile/toggle_thread_subscription.coffee
 0 ./app/views/tags/identify.coffee
-1 ./app/javascript/hello_coffee.coffee
 1 ./app/views/answers/update.coffee
 1 ./app/views/erdbeere/cancel_edit_tags.coffee
 1 ./app/views/erdbeere/display_info.coffee
@@ -201,3 +200,6 @@
 421 ./app/assets/javascripts/media.coffee
 745 ./app/assets/javascripts/upload.coffee
 6689 in total
+
+# Won't do (only when migrating to new build system)
+1 ./app/javascript/hello_coffee.coffee
