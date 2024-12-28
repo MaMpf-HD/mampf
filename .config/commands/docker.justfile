@@ -56,14 +56,14 @@ download-db-dump:
     echo "Latest file found: $latest_file"
 
     # Download file
-    echo "We will now download this file to the local machine into the folder tmp/db/."
+    echo "We will now download this file to the local machine into the folder db/backups/prod/."
     echo -n "Are you sure you want to continue (y/n) "
     read confirmation
     if [ "$confirmation" != "y" ]; then
         echo "Operation cancelled."
         exit 1
     fi
-    local_dir={{justfile_directory()}}/tmp/db/
+    local_dir={{justfile_directory()}}/db/backups/prod/
     mkdir -p "$local_dir"
     scp -C $proxy_jump_cmd "$remote_user_host:$remote_dump_folder/$latest_file" "$local_dir"
 
