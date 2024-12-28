@@ -115,15 +115,17 @@
         "cospeaker",
         "cospeakers",
         "datetime",
+        "erdbeere",
         "factorybot",
         "helpdesk",
+        "javascripts",
         "katex",
         "preselection",
         "selectize",
         "Timecop",
         "turbolinks",
-        "Unsets",
         "uncached",
+        "Unsets",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [
