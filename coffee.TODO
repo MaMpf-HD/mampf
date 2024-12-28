@@ -25,9 +25,9 @@
 # entirely because it was not needed anymore.
 
 D0 ./app/views/media/import_manuscript.coffee (⚠️ haven't checked manually)
-0 ./app/views/notifications/destroy_all.coffee
 D0 ./app/views/submissions/error.coffee (⚠️ haven't checked manually)
 
+0 ./app/views/notifications/destroy_all.coffee
 0 ./app/views/profile/toggle_thread_subscription.coffee
 2 ./app/views/users/delete_account.coffee
 
@@ -44,10 +44,9 @@ D2 ./app/views/quizzes/new.coffee
 
 2 ./app/views/tutorials/cancel_edit.coffee
 3 ./app/views/tutorials/validate_certificate.coffee
+2 ./app/views/assignments/cancel_edit.coffee
 
 ### 😐 TODO
-
-2 ./app/views/assignments/cancel_edit.coffee
 2 ./app/views/media/cancel_import_media.coffee
 
 2 ./app/views/submissions/cancel_action.coffee
