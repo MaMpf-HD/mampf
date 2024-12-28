@@ -23,8 +23,12 @@
  in the editor though.
 
 ### 🌟 DONE
-# "D" as first character in the line means that the file has been deleted
-# entirely because it was not needed anymore.
+- "D" as first character in the line means that the file has been deleted
+  entirely because it was not needed anymore.
+- The number indicates the number of lines in that file minus 1.
+- Everywhere where I don't specify something in parentheses, I've manually checked
+  that the new new .js or .js.erb file is called (via console.log) and that it works.
+- Double-check files marked with ⚠️
 
 D0 ./app/views/media/import_manuscript.coffee (⚠️ haven't checked manually)
 D0 ./app/views/submissions/error.coffee (⚠️ haven't checked manually)
@@ -44,11 +48,19 @@ D2 ./app/views/quizzes/new.coffee
 1 ./app/views/erdbeere/edit_tags.coffee
 1 ./app/views/erdbeere/display_info.coffee (⚠️ could not find where it is used)
 
+# Tutorials as tutor
 2 ./app/views/tutorials/cancel_edit.coffee
 3 ./app/views/tutorials/validate_certificate.coffee
 2 ./app/views/submissions/cancel_action.coffee
 2 ./app/views/submissions/cancel_edit_correction.coffee
 3 ./app/views/quiz_certificates/validate.coffee
+3 ./app/views/submissions/accept.coffee (⚠️ too annoying to reproduce this late
+    submission case. The decaffeination was straightforward. Just double-check
+    it)
+3 ./app/views/submissions/reject.coffee (exactly the same as accept.coffee)
+3 ./app/views/submissions/refresh_token.coffee
+    (⚠️ haven't checked manually as only used when assignment is semiactive.
+    But decaffeination is almost 1:1).
 
 2 ./app/views/assignments/cancel_edit.coffee
 
@@ -62,15 +74,8 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
     was added 6 years ago, that's why I think it's safe to delete it. The sidebar
     renders correctly without it.)
 
-3 ./app/views/submissions/accept.coffee (⚠️ too annoying to reproduce this late
-    submission case. The decaffeination was straightforward. Just double-check
-    it)
-3 ./app/views/submissions/reject.coffee (exactly the same as accept.coffee)
-
 
 ### 😐 TODO
-3 ./app/views/submissions/refresh_token.coffee
-
 4 ./app/assets/javascripts/file_upload.coffee
 4 ./app/views/assignments/cancel_new.coffee
 4 ./app/views/divisions/edit.coffee
@@ -164,6 +169,7 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 19 ./app/views/lectures/create.coffee
 19 ./app/views/lectures/update.coffee
 19 ./app/views/profile/unsubscribe_lecture.coffee
+
 20 ./app/assets/javascripts/terms.coffee
 20 ./app/views/courses/update.coffee
 21 ./app/views/media/render_import_media.coffee
@@ -183,6 +189,7 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 28 ./app/views/submissions/create.coffee
 29 ./app/views/answers/create.coffee
 29 ./app/views/quizzes/edit_vertex_targets.coffee
+
 30 ./app/views/assignments/create.coffee
 30 ./app/views/quizzes/update_branching.coffee
 30 ./app/views/remarks/reassign.coffee
@@ -204,6 +211,7 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 36 ./app/assets/javascripts/announcements.coffee
 36 ./app/views/media/import_script_items.coffee
 37 ./app/views/quizzes/render_vertex_quizzable.coffee
+
 40 ./app/views/referrals/destroy.coffee
 42 ./app/assets/javascripts/geogebra.coffee
 42 ./app/views/clickers/render_clickerizable_actions.coffee
@@ -231,6 +239,7 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 91 ./app/views/items/update.coffee
 93 ./app/views/referrals/update.coffee
 97 ./app/assets/javascripts/items.coffee
+
 112 ./app/assets/javascripts/lessons.coffee
 130 ./app/assets/javascripts/show_clicker.coffee
 192 ./app/views/media/statistics.coffee
