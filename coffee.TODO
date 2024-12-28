@@ -6,10 +6,13 @@
 # Use npm install -g decaffeinate
 # Use decaffeinate --prefer-let app/views/whatever.coffee
 
+### 🌟 DONE
 0 ./app/views/media/import_manuscript.coffee
 0 ./app/views/notifications/destroy_all.coffee
-0 ./app/views/profile/toggle_thread_subscription.coffee
 0 ./app/views/submissions/error.coffee
+
+### 😐 TODO
+0 ./app/views/profile/toggle_thread_subscription.coffee
 0 ./app/views/tags/identify.coffee
 1 ./app/javascript/hello_coffee.coffee
 1 ./app/views/answers/update.coffee
