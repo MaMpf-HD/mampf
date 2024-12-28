@@ -10,6 +10,16 @@
 # (and with the REPL, you can paste in parts of the file as well).
 # https://decaffeinate-project.org/repl/
 
+### Watch out for
+- Strings inside Strings, e.g. this:
+    .append('<%= j render partial: "quiz_certificates/form" %>')
+ should be converted to
+    .append("<%= j render partial: 'quiz_certificates/form' %>");
+ Watch out for this since ESLint won't see ERB syntax and thus replace the outer
+ ' quotes with ", but this leads to errors, so you have to replace the inner
+ " quotes with ' manually. You should be warned by the weird syntax highlights
+ in the editor though.
+
 ### 🌟 DONE
 # "D" as first character in the line means that the file has been deleted
 # entirely because it was not needed anymore.
