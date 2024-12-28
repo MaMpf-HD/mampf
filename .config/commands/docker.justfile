@@ -35,7 +35,7 @@ up-reseed *args:
 up-reseed-from-file preseed_file *args:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
-    export DB_SQL_PRESEED_URL="$preseed_file"
+    export DB_SQL_PRESEED_URL="{{preseed_file}}"
     export UPLOADS_PRESEED_URL=""
     docker compose rm --stop --force mampf && docker compose up {{args}}
 
