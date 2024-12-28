@@ -17,7 +17,10 @@
 D0 ./app/views/media/import_manuscript.coffee (haven't checked manually)
 0 ./app/views/notifications/destroy_all.coffee
 D0 ./app/views/submissions/error.coffee (haven't checked manually)
+
 0 ./app/views/profile/toggle_thread_subscription.coffee
+2 ./app/views/users/delete_account.coffee
+
 0 ./app/views/tags/identify.coffee
 1 ./app/views/answers/update.coffee
 
@@ -36,11 +39,8 @@ D2 ./app/views/quizzes/new.coffee
 2 ./app/views/submissions/cancel_action.coffee
 2 ./app/views/submissions/cancel_edit_correction.coffee
 2 ./app/views/tutorials/cancel_edit.coffee
-2 ./app/views/users/delete_account.coffee
 2 ./app/views/vertices/new.coffee
 
-3 ./app/assets/javascripts/api/v1/medium.coffee
-3 ./app/assets/javascripts/api/v1/tag.coffee
 3 ./app/views/lectures/render_sidebar.coffee
 3 ./app/views/quiz_certificates/validate.coffee
 3 ./app/views/submissions/accept.coffee
@@ -214,6 +214,10 @@ D2 ./app/views/quizzes/new.coffee
 421 ./app/assets/javascripts/media.coffee
 745 ./app/assets/javascripts/upload.coffee
 6689 in total
+
+# What API? Might need more holistic approach (get rid of API entirely)
+3 ./app/assets/javascripts/api/v1/medium.coffee
+3 ./app/assets/javascripts/api/v1/tag.coffee
 
 # Won't do (only when migrating to new build system)
 1 ./app/javascript/hello_coffee.coffee
