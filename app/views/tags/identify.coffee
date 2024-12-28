@@ -1,1 +1,1 @@
-location.reload(true)
+reloadUrl();

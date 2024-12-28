@@ -11,9 +11,9 @@
 0 ./app/views/notifications/destroy_all.coffee
 0 ./app/views/submissions/error.coffee
 0 ./app/views/profile/toggle_thread_subscription.coffee
+0 ./app/views/tags/identify.coffee
 
 ### 😐 TODO
-0 ./app/views/tags/identify.coffee
 1 ./app/views/answers/update.coffee
 1 ./app/views/erdbeere/cancel_edit_tags.coffee
 1 ./app/views/erdbeere/display_info.coffee
