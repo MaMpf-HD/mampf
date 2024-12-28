@@ -28,8 +28,8 @@ download-db-dump:
     echo "Latest file found: $latest_file"
 
     # Download file
-    echo "We will now download this file to the local machine into the folder db/backups/prod/."
-    echo -n "Are you sure you want to continue (y/n) "
+    echo "We will now download this file to the local machine into the folder db/backups/prod/"
+    echo -n "Are you sure you want to continue? (y/n) "
     read confirmation
     if [ "$confirmation" != "y" ]; then
         echo "Operation cancelled."
