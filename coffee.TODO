@@ -14,9 +14,9 @@
 # "D" as first character in the line means that the file has been deleted
 # entirely because it was not needed anymore.
 
-D0 ./app/views/media/import_manuscript.coffee
+D0 ./app/views/media/import_manuscript.coffee (haven't checked manually)
 0 ./app/views/notifications/destroy_all.coffee
-D0 ./app/views/submissions/error.coffee
+D0 ./app/views/submissions/error.coffee (haven't checked manually)
 0 ./app/views/profile/toggle_thread_subscription.coffee
 0 ./app/views/tags/identify.coffee
 1 ./app/views/answers/update.coffee
@@ -26,9 +26,9 @@ D2 ./app/views/quizzes/new.coffee
 2 ./app/views/quizzes/update_default_target.coffee (same as delete_edge.coffee)
 
 1 ./app/views/erdbeere/cancel_edit_tags.coffee
+1 ./app/views/erdbeere/display_info.coffee (could not find where it is used)
 
 ### 😐 TODO
-1 ./app/views/erdbeere/display_info.coffee
 1 ./app/views/erdbeere/edit_tags.coffee
 
 2 ./app/views/assignments/cancel_edit.coffee
