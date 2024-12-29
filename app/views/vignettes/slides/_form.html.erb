@@ -11,21 +11,44 @@
     <%= form.label :content %><br>
     <%= form.rich_text_area :content %>
   </div>
-  <div>
-    <%= form.label :type, "Question Type" %>
-    <%= form.select :type, options_for_select([
-        ['No Question', ''],
-        ['Text Field', 'TextQuestion']
-    ]), {}, data: { action: "change->toggle-fields#switch" } %>
-  </div>
-  <fieldset data-type="TextQuestion">
-    <%= form.label :question_text, "Question Text" %>
-    <br>
-    <%= form.text_area :question_text %>
-  </fieldset>
+  <%= form.fields_for :question do |question_form| %>
+
+    <div>
+      <%= question_form.label :type, "Question Type" %>
+      <%= question_form.select :type, options_for_select([
+          ['No Question', ''],
+          ['Text Field', 'TextQuestion'],
+          ['Multiple Choice', 'MultipleChoiceQuestion']
+      ]), {}, { id: "question_type" } %>
+    </div>
+
+    <div id="TextQuestion" class="question-field" style="display: none;">
+      <%= question_form.label :question_text, "Question Text" %><br>
+      <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
+    </div>
+
+    <div id="MultipleChoiceQuestion" class="question-field" style="display: none;">
+      <%= question_form.label :question_text, "Question Text" %><br>
+      <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
+
+      <div>so to save some time, I don't expect reviewers to test everything manually (it really takes quite some time to do this). Maybe just read carefully through the replacements, compare them and then go on. Double-check entries marked with ⚠️
+        <%= question_form.label :options, "Options" %>
+        <div id="options-container">
+          <% question_form.object.options.each do |option| %>
+            <div class="option-block">
+              <%= question_form.fields_for :options, option do |option_form| %>
+                <%= option_form.text_field :text, placeholder: "Option Text"%>
+                <%= option_form.check_box :_destroy %>
+                <%= option_form.label :_destroy, "Remove option" %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+        <button type="button" id="add-option">Add Option</button>
+      </div>
+    </div>
+  <% end %>
   <div>
     <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide' %>
   </div>
-
-
 <% end %>

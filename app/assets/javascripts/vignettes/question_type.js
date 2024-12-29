@@ -1,23 +1,20 @@
-var questionTypeHTML = {
-  TextQuestion: `
-    <div>
-        <%= form.label :question_text, "Question Text" %><br>
-        <%= form.text_area :question_text %>
-    </div> 
-    `,
-};
 document.addEventListener("turbolinks:load", () => {
   const questionTypeDropdown = document.getElementById("question_type");
-  const questionField = document.getElementById("question_field");
-  if (questionTypeDropdown && questionField) {
+  if (questionTypeDropdown) {
     questionTypeDropdown.addEventListener("change", function (event) {
-      const selectedType = event.target.value;
-      if (selectedType == "") {
-        questionField.innerHTML = "";
-        return;
+      // Disable all fields by default
+      const allQuestionFields = document.getElementsByClassName("question-field");
+      for (let field of allQuestionFields) {
+        field.style.display = "none";
       }
-      else {
-        questionField.innerHTML = questionTypeHTML[selectedType];
+      // make selected field visible
+      const selectedType = event.target.value;
+      if (selectedType) {
+        const selectedField = document.getElementById(selectedType);
+        console.log(selectedField);
+        if (selectedField) {
+          selectedField.style.display = "block";
+        }
       }
     });
   };
