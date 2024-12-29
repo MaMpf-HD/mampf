@@ -10,10 +10,14 @@ module Vignettes
 
     def new
       @slide = @questionnaire.slides.new
+      @slide.build_question
+      @slide.question.options.build
     end
 
     def edit
       @slide = @questionnaire.slides.find(params[:id])
+      @slide.build_question unless @slide.question
+      @slide.question.options.build unless @slide.question.options.any?
     end
 
     def create
@@ -41,7 +45,16 @@ module Vignettes
       end
 
       def slide_params
-        params.require(:vignettes_slide).permit(:content)
+        params.require(:vignettes_slide).permit(
+          :content,
+          question_attributes: [
+            :id,
+            :type,
+            :question_text,
+            :_destroy,
+            { options_attributes: [:id, :text, :_destroy] }
+          ]
+        )
       end
   end
 end
