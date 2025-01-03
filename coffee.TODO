@@ -86,12 +86,12 @@ https://github.com/MaMpf-HD/mampf/commit/f752f6297b9d290cbd5f33eeaf5e1d716eb8038
 4 ./app/views/divisions/edit.coffee
 4 ./app/views/divisions/new.coffee
 4 ./app/views/programs/edit.coffee
+4 ./app/views/programs/new.coffee
 
 ### 😐 TODO
 
 4 ./app/views/media/remove_screenshot.coffee
 4 ./app/views/media/update_tags.coffee
-4 ./app/views/programs/new.coffee
 4 ./app/views/quiz_certificates/claim.coffee
 4 ./app/views/readers/update_all.coffee
 4 ./app/views/subjects/edit.coffee
