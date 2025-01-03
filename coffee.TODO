@@ -88,9 +88,9 @@ https://github.com/MaMpf-HD/mampf/commit/f752f6297b9d290cbd5f33eeaf5e1d716eb8038
 4 ./app/views/programs/new.coffee
 4 ./app/views/programs/edit.coffee
 4 ./app/views/subjects/new.coffee
+4 ./app/views/subjects/edit.coffee
 
 ### 😐 TODO
-4 ./app/views/subjects/edit.coffee
 
 4 ./app/views/media/remove_screenshot.coffee
 4 ./app/views/media/update_tags.coffee
