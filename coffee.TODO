@@ -83,8 +83,10 @@ https://github.com/MaMpf-HD/mampf/commit/37ce5f7988fa40c2de59e6bdfb0972cea81673d
 Note that the respective "//= require file_upload" was added 5 years ago via
 https://github.com/MaMpf-HD/mampf/commit/f752f6297b9d290cbd5f33eeaf5e1d716eb80384).
 
-### 😐 TODO
 4 ./app/views/divisions/edit.coffee
+
+### 😐 TODO
+
 4 ./app/views/divisions/new.coffee
 4 ./app/views/media/remove_screenshot.coffee
 4 ./app/views/media/update_tags.coffee
