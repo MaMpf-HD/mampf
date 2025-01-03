@@ -5,6 +5,6 @@ $("#genericModalLabel")
 $("#generic-modal-content")
   .empty()
   .append("<%= j render partial: 'divisions/edit/edit',
-						locals: { division: @division } %>");
+						            locals: { division: @division } %>");
 
 $("#genericModal").modal("show");
