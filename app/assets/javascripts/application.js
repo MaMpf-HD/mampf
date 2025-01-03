@@ -30,7 +30,6 @@
 //= require copy_and_paste_button
 //= require courses
 //= require erdbeere
-//= require file_upload
 //= require items
 //= require katex
 //= require lectures

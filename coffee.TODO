@@ -6,7 +6,7 @@
 # Use npm install -g decaffeinate
 # Use decaffeinate app/views/whatever.coffee
 #
-# You might also want to use the REPL since ERB syntax is not supported
+# You might also want to use the REPL since -ERB syntax is not supported
 # (and with the REPL, you can paste in parts of the file as well).
 # https://decaffeinate-project.org/repl/
 
@@ -74,9 +74,15 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
     was added 6 years ago, that's why I think it's safe to delete it. The sidebar
     renders correctly without it.)
 
+D4 ./app/assets/javascripts/file_upload.coffee (❗⚠️ I think this one can be deleted.
+At least I've searched for "custom-file-input" and "custom-file-label" and only
+found the coffee file itself. There is also no route called file_upload, fileUpload,
+or anything related and the code was added 6 years ago and then not modified, see
+https://github.com/MaMpf-HD/mampf/commit/37ce5f7988fa40c2de59e6bdfb0972cea81673df.
+Note that the respective "//= require file_upload" was added 5 years ago via
+https://github.com/MaMpf-HD/mampf/commit/f752f6297b9d290cbd5f33eeaf5e1d716eb80384).
 
 ### 😐 TODO
-4 ./app/assets/javascripts/file_upload.coffee
 4 ./app/views/assignments/cancel_new.coffee
 4 ./app/views/divisions/edit.coffee
 4 ./app/views/divisions/new.coffee
