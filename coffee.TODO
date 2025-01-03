@@ -83,19 +83,19 @@ https://github.com/MaMpf-HD/mampf/commit/37ce5f7988fa40c2de59e6bdfb0972cea81673d
 Note that the respective "//= require file_upload" was added 5 years ago via
 https://github.com/MaMpf-HD/mampf/commit/f752f6297b9d290cbd5f33eeaf5e1d716eb80384).
 
-4 ./app/views/divisions/edit.coffee
 4 ./app/views/divisions/new.coffee
-4 ./app/views/programs/edit.coffee
+4 ./app/views/divisions/edit.coffee
 4 ./app/views/programs/new.coffee
+4 ./app/views/programs/edit.coffee
+4 ./app/views/subjects/new.coffee
 
 ### 😐 TODO
+4 ./app/views/subjects/edit.coffee
 
 4 ./app/views/media/remove_screenshot.coffee
 4 ./app/views/media/update_tags.coffee
 4 ./app/views/quiz_certificates/claim.coffee
 4 ./app/views/readers/update_all.coffee
-4 ./app/views/subjects/edit.coffee
-4 ./app/views/subjects/new.coffee
 4 ./app/views/tutorials/cancel_new.coffee
 4 ./app/views/users/elevate.coffee
 
@@ -147,6 +147,7 @@ https://github.com/MaMpf-HD/mampf/commit/f752f6297b9d290cbd5f33eeaf5e1d716eb8038
 10 ./app/views/submissions/edit_correction.coffee
 10 ./app/views/talks/create.coffee
 10 ./app/views/terms/cancel.coffee
+
 11 ./app/views/chapters/_edit.coffee
 11 ./app/views/media/add_item.coffee
 11 ./app/views/profile/star_lecture.coffee
