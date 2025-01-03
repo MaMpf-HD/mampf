@@ -56,6 +56,7 @@
 //= require vertices
 //= require watchlists
 //= require turbolinks
+//= require reload
 
 //= require search_tags
 

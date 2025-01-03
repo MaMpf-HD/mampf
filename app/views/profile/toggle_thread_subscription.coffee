@@ -1,1 +1,0 @@
-$('subscriptionSwitch-<%= @thread.id %>').attr('checked', <%= @result %>)
