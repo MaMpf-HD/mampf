@@ -90,14 +90,16 @@ https://github.com/MaMpf-HD/mampf/commit/f752f6297b9d290cbd5f33eeaf5e1d716eb8038
 4 ./app/views/subjects/new.coffee
 4 ./app/views/subjects/edit.coffee
 
-### 😐 TODO
+D4 ./app/views/users/elevate.coffee (⚠️ Search for "generic_user_id" didn't
+reveal anything, so I deleted this file).
 
+### 😐 TODO
 4 ./app/views/media/remove_screenshot.coffee
 4 ./app/views/media/update_tags.coffee
 4 ./app/views/quiz_certificates/claim.coffee
 4 ./app/views/readers/update_all.coffee
 4 ./app/views/tutorials/cancel_new.coffee
-4 ./app/views/users/elevate.coffee
+
 
 5 ./app/views/answers/destroy.coffee
 5 ./app/views/answers/new.coffee
