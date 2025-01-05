@@ -1,1 +1,13 @@
 <%= @slide.content %>
+<%= @slide.question.question_text %>
+
+<br>
+
+<% case @slide.question.type %> 
+  <% when "Vignettes::TextQuestion" %>
+    <%= @slide.content %>
+  <% when "Vignettes::MultipleChoiceQuestion" %>
+    <% @slide.question.options.each do |option| %>
+        <%= option.text %> <br>
+    <% end %>
+<% end %>
