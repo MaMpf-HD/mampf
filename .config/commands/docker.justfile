@@ -39,6 +39,24 @@ up-reseed-from-file preseed_file *args:
     export UPLOADS_PRESEED_URL=""
     docker compose rm --stop --force mampf && docker compose up {{args}}
 
+# Restores a postgres backup file that was made using pg_dump or pg_dumpall
+up-reseed-from-dump preseed_file:
+    #!/usr/bin/env bash
+
+    # If file is gzipped, unzip it
+    if [[ $preseed_file == *.gz ]]; then
+        gunzip $preseed_file
+        preseed_file=${preseed_file%.gz}
+    fi
+
+    # Copy file to docker container
+    preseed_file_path=$(realpath {{preseed_file}}) #  store absolute path
+    cd {{justfile_directory()}}/docker/development/
+    docker compose cp ${preseed_file_path} db:/tmp/backup.sql
+
+    # Restore the backup
+    docker compose exec -it db bash -c "psql -h localhost -p 5432 -U mampf < /tmp/backup.sql"
+
 # Removes the development docker containers
 @down:
     #!/usr/bin/env bash
