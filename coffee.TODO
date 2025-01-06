@@ -54,6 +54,7 @@ D2 ./app/views/quizzes/new.coffee
 2 ./app/views/submissions/cancel_action.coffee
 2 ./app/views/submissions/cancel_edit_correction.coffee
 3 ./app/views/quiz_certificates/validate.coffee
+4 ./app/views/quiz_certificates/claim.coffee (here as user, not as tutor)
 3 ./app/views/submissions/accept.coffee (⚠️ too annoying to reproduce this late
     submission case. The decaffeination was straightforward. Just double-check
     it)
@@ -96,10 +97,8 @@ reveal anything, so I deleted this file).
 ### 😐 TODO
 4 ./app/views/media/remove_screenshot.coffee
 4 ./app/views/media/update_tags.coffee
-4 ./app/views/quiz_certificates/claim.coffee
 4 ./app/views/readers/update_all.coffee
 4 ./app/views/tutorials/cancel_new.coffee
-
 
 5 ./app/views/answers/destroy.coffee
 5 ./app/views/answers/new.coffee

@@ -127,6 +127,8 @@
         "turbolinks",
         "uncached",
         "Unsets",
+        "unstar",
+        "watchlists",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [
