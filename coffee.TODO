@@ -95,9 +95,9 @@ D4 ./app/views/users/elevate.coffee (⚠️ Search for "generic_user_id" didn't
 reveal anything, so I deleted this file).
 
 4 ./app/views/media/remove_screenshot.coffee
+4 ./app/views/media/update_tags.coffee
 
 ### 😐 TODO
-4 ./app/views/media/update_tags.coffee
 4 ./app/views/readers/update_all.coffee
 4 ./app/views/tutorials/cancel_new.coffee
 
