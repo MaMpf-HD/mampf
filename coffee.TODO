@@ -21,6 +21,8 @@
  ' quotes with ", but this leads to errors, so you have to replace the inner
  " quotes with ' manually. You should be warned by the weird syntax highlights
  in the editor though.
+- When testing changes, note that jquery .data() does not modify the HTML attribute
+  and instead stores it inside some internal $.cache. Just to avoid confusion...
 
 ### 🌟 DONE
 - "D" as first character in the line means that the file has been deleted
@@ -99,6 +101,7 @@ reveal anything, so I deleted this file).
 
 # Tags
 10 ./app/views/media/render_medium_tags.coffee
+17 ./app/views/tags/modal.coffee
 4 ./app/views/media/update_tags.coffee
 
 ### 😐 TODO
@@ -175,7 +178,6 @@ reveal anything, so I deleted this file).
 17 ./app/assets/javascripts/tutorials.coffee
 17 ./app/views/clickers/open.coffee
 17 ./app/views/courses/create.coffee
-17 ./app/views/tags/modal.coffee
 17 ./app/views/tags/render_tag_title.coffee
 17 ./app/views/tutorials/create.coffee
 18 ./app/assets/javascripts/registration.coffee

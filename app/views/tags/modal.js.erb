@@ -1,0 +1,16 @@
+$("#new-tag-modal-content")
+  .empty()
+  .append("<%= j render partial: 'tags/modal_form',
+                        locals: { tag: @tag,
+                                  new_tag: true,
+                                  graph_elements: nil,
+                                  from: @from }%>");
+
+initBootstrapPopovers();
+fillOptionsByAjax($("#new-tag-modal-content .selectize"));
+
+$("#newTagModal").modal("show").data("from", "<%= @from %>");
+
+$("#newTagModal").on("shown.bs.modal", function () {
+  $('#titlesInput input[data-locale="<%= @locale %>"]').first().focus();
+});

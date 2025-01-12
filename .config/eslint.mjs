@@ -101,8 +101,8 @@ const customGlobals = {
   renderMathInElement: "readable",
 
   openAnnotationIfSpecifiedInUrl: "readable",
-
   reloadUrl: "readable",
+  fillOptionsByAjax: "readable",
 };
 
 export default [
