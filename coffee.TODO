@@ -23,6 +23,7 @@
  in the editor though.
 - When testing changes, note that jquery .data() does not modify the HTML attribute
   and instead stores it inside some internal $.cache. Just to avoid confusion...
+- Replace location.reload() with custom reloadUrl() function (!)
 
 ### 🌟 DONE
 - "D" as first character in the line means that the file has been deleted
