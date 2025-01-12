@@ -99,6 +99,7 @@ const customGlobals = {
 
   // KaTeX
   renderMathInElement: "readable",
+  renderMath: "readable",
 
   openAnnotationIfSpecifiedInUrl: "readable",
   reloadUrl: "readable",

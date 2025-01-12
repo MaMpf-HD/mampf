@@ -104,6 +104,7 @@ reveal anything, so I deleted this file).
 17 ./app/views/tags/modal.coffee
 17 ./app/views/tags/render_tag_title.coffee
 4 ./app/views/media/update_tags.coffee
+31 ./app/views/tags/search.coffee
 
 ### 😐 TODO
 
@@ -212,7 +213,6 @@ reveal anything, so I deleted this file).
 30 ./app/views/remarks/reassign.coffee
 30 ./app/views/users/update.coffee
 31 ./app/views/submissions/new.coffee
-31 ./app/views/tags/search.coffee
 32 ./app/views/media/fill_medium_preview.coffee
 32 ./app/views/profile/update.coffee
 32 ./app/views/questions/reassign.coffee

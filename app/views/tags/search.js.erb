@@ -1,0 +1,6 @@
+var searchResults = document.getElementById("tag-search-results");
+searchResults.innerHTML = "<%= j render partial: 'tags/results',
+                                        locals: { tags: @tags } %>";
+
+var tagResults = document.getElementById("tag-search-results");
+renderMath(tagResults);
