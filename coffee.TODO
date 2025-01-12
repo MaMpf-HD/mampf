@@ -102,6 +102,7 @@ reveal anything, so I deleted this file).
 # Tags
 10 ./app/views/media/render_medium_tags.coffee
 17 ./app/views/tags/modal.coffee
+17 ./app/views/tags/render_tag_title.coffee
 4 ./app/views/media/update_tags.coffee
 
 ### 😐 TODO
@@ -178,7 +179,6 @@ reveal anything, so I deleted this file).
 17 ./app/assets/javascripts/tutorials.coffee
 17 ./app/views/clickers/open.coffee
 17 ./app/views/courses/create.coffee
-17 ./app/views/tags/render_tag_title.coffee
 17 ./app/views/tutorials/create.coffee
 18 ./app/assets/javascripts/registration.coffee
 18 ./app/views/assignments/edit.coffee

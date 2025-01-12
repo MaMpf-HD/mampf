@@ -1416,7 +1416,7 @@ en:
       all_courses: 'from all courses'
       depth: 'Depth'
       identify: 'Identify Tag'
-      identified_tag: 'Tdentified Tag'
+      identified_tag: 'Identified Tag'
       identified_titles: 'Title of the identified tag'
       contradiction: >
         Attention! Thes two tags have different titles for this language.
