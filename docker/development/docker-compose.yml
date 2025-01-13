@@ -23,7 +23,7 @@ services:
   db:
     image: postgres:13
     environment:
-      - POSTGRES_USER=mampf
+      - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - type: volume

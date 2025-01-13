@@ -125,6 +125,7 @@
         "preseeds",
         "preselection",
         "psql",
+        "realpath",
         "selectize",
         "Timecop",
         "turbolinks",
