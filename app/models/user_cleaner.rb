@@ -130,6 +130,7 @@ class UserCleaner
         num_deleted_users += 1
       else
         Rails.logger.info("UserCleaner failed to destroy user #{user.id}")
+        UserCleanerMailer.destroy_failed_email(user).deliver_later
       end
     end
 
