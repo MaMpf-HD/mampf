@@ -25,7 +25,26 @@ up-logs *args:
 [confirm("This will reset all your data in the database locally. Continue? (y/n)")]
 up-reseed *args:
     #!/usr/bin/env bash
+    set -e
+    just --yes docker db-tear-down
+
     cd {{justfile_directory()}}/docker/development/
+
+    # https://github.com/pgadmin-org/pgadmin4/issues/8071
+
+    # https://stackoverflow.com/a/77582897/
+    # Wait for the db container to be up
+    until docker compose exec -T db bash -c "pg_isready -h localhost -U localroot"; do
+        >&2 echo "Postgres is unavailable - sleeping"
+        sleep 1
+    done
+    >&2 echo "Postgres is up - continuing"
+
+    # Recreate empty mampf db (since user is called localroot and not mampf,
+    # postgresql will not create the mampf db automatically)
+    # see also https://stackoverflow.com/a/68091072/
+    docker compose exec -T db bash -c "psql -v ON_ERROR_STOP=1 -h localhost -p 5432 -U localroot -c 'CREATE DATABASE mampf;'"
+
     export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     docker compose rm --stop --force mampf && docker compose up {{args}}
@@ -49,7 +68,6 @@ up-reseed-from-file preseed_file *args:
 up-reseed-from-dump preseed_file:
     #!/usr/bin/env bash
     set -e
-
     just docker db-tear-down
 
     # If file is gzipped, unzip it
