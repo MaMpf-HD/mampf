@@ -50,6 +50,8 @@ up-reseed-from-dump preseed_file:
     #!/usr/bin/env bash
     set -e
 
+    just docker db-tear-down
+
     # If file is gzipped, unzip it
     if [[ {{preseed_file}} == *.gz ]]; then
         unzipped=$(echo {{preseed_file}} | sed 's/\.gz$//')
@@ -86,14 +88,18 @@ up-reseed-from-dump preseed_file:
     echo "Copy file over to docker container"
     docker compose cp ${file} db:/tmp/backup.pg_dump
 
-    # echo "Creating root user"
-    # docker compose exec -T db bash -c "su - postgres -c \"createuser --superuser --createdb --createrole --no-password localroot\""
+    # This is necessary because somehow the last line is not properly read,
+    # probably due to some missing newline character
+    # As the last line is really not that important, we just get rid of it
+    echo "Removing last line from dump"
+    docker compose exec -T db bash -c "head -n -1 /tmp/backup.pg_dump > /tmp/backup.pg_dump.tmp && mv /tmp/backup.pg_dump.tmp /tmp/backup.pg_dump"
 
-    # Restore database from dump
-    # If you get "\N" errors, see: https://stackoverflow.com/questions/20427689/psql-invalid-command-n-while-restore-sql#comment38644877_20428547
-    docker compose exec -T db bash -c "psql -v ON_ERROR_STOP=1 -h localhost -p 5432 -U localroot -d mampf < /tmp/backup.pg_dump"
+    echo "Restoring database from dump"
+    # ON_ERROR_STOP=1 because of "\N" errors, see https://stackoverflow.com/questions/20427689/psql-invalid-command-n-while-restore-sql#comment38644877_20428547
+    docker compose exec -T db bash -c "psql -v ON_ERROR_STOP=1 -h localhost -p 5432 -U localroot -f /tmp/backup.pg_dump"
 
 # Removes all database data in the db docker container
+[confirm("This will completely destroy your local database, including all tables and users. Continue? (y/n)")]
 db-tear-down:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
