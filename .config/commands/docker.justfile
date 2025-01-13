@@ -116,6 +116,10 @@ up-reseed-from-dump preseed_file:
     # ON_ERROR_STOP=1 because of "\N" errors, see https://stackoverflow.com/questions/20427689/psql-invalid-command-n-while-restore-sql#comment38644877_20428547
     docker compose exec -T db bash -c "psql -v ON_ERROR_STOP=1 -h localhost -p 5432 -U localroot -f /tmp/backup.pg_dump"
 
+    echo "Restarting containers"
+    just docker stop
+    just docker up -d
+
 # Removes all database data in the db docker container
 [confirm("This will completely destroy your local database, including all tables and users. Continue? (y/n)")]
 db-tear-down:
@@ -156,10 +160,10 @@ db-tear-down:
     docker compose exec -it {{name}} {{shell}}
 
 # Puts you into the rails console of the dev docker mampf container
-@rails-c:
+@rails-c *args:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
-    docker compose exec mampf bundle exec rails c
+    docker compose exec mampf bundle exec rails c {{args}}
 
 # Rebuilds the most essential containers in the dev or test environment
 rebuild env="dev":
