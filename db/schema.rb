@@ -949,6 +949,31 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vignettes_answers", force: :cascade do |t|
+    t.string "type"
+    t.bigint "vignettes_question_id", null: false
+    t.bigint "vignettes_slide_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "vignettes_user_answer_id", null: false
+    t.text "text"
+    t.integer "likert_scale_value"
+    t.index ["vignettes_question_id"], name: "index_vignettes_answers_on_vignettes_question_id"
+    t.index ["vignettes_slide_id"], name: "index_vignettes_answers_on_vignettes_slide_id"
+    t.index ["vignettes_user_answer_id"], name: "index_vignettes_answers_on_vignettes_user_answer_id"
+  end
+
+  create_table "vignettes_answers_options", id: false, force: :cascade do |t|
+    t.bigint "vignettes_answer_id", null: false
+    t.bigint "vignettes_option_id", null: false
+    t.index ["vignettes_answer_id", "vignettes_option_id"], name: "idx_on_vignettes_answer_id_vignettes_option_id_95dc8573a3"
+    t.index ["vignettes_option_id", "vignettes_answer_id"], name: "idx_on_vignettes_option_id_vignettes_answer_id_239ee34098"
+  end
+  create_table "vignettes_multiple_choice_answers_options", id: false, force: :cascade do |t|
+    t.bigint "vignettes_multiple_choice_answer_id", null: false
+    t.bigint "vignettes_option_id", null: false
+  end
+
   create_table "vignettes_options", force: :cascade do |t|
     t.string "text"
     t.bigint "vignettes_question_id", null: false
@@ -979,6 +1004,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
     t.integer "position"
     t.index ["position"], name: "index_vignettes_slides_on_position"
     t.index ["vignettes_questionnaire_id"], name: "index_vignettes_slides_on_vignettes_questionnaire_id"
+  end
+
+  create_table "vignettes_user_answers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_vignettes_user_answers_on_user_id"
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_user_answers_on_vignettes_questionnaire_id"
   end
 
   create_table "votes", force: :cascade do |t|
@@ -1085,9 +1119,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "vignettes_answers", "vignettes_questions"
+  add_foreign_key "vignettes_answers", "vignettes_slides"
+  add_foreign_key "vignettes_answers", "vignettes_user_answers"
   add_foreign_key "vignettes_options", "vignettes_questions"
   add_foreign_key "vignettes_questions", "vignettes_slides"
   add_foreign_key "vignettes_slides", "vignettes_questionnaires"
+  add_foreign_key "vignettes_user_answers", "users"
+  add_foreign_key "vignettes_user_answers", "vignettes_questionnaires"
   add_foreign_key "vouchers", "lectures"
   add_foreign_key "watchlist_entries", "media"
   add_foreign_key "watchlist_entries", "watchlists"

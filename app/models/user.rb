@@ -76,6 +76,9 @@ class User < ApplicationRecord
   # and claiming the certificate
   has_many :quiz_certificates, dependent: :destroy
 
+  # a user may have many user answers for questionnaires that they filled out.
+  has_many :vignettes_user_answers, dependent: :destroy, class_name: "Vignettes::UserAnswer"
+
   # a user has a watchlist with watchlist_entries
   has_many :watchlists, dependent: :destroy
 
