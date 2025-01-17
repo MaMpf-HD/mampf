@@ -22,6 +22,7 @@ module Vignettes
 
     def create
       @slide = @questionnaire.slides.new(slide_params)
+      @slide.position = @questionnaire.slides.maximum(:position).to_i + 1
       if @slide.save
         redirect_to @questionnaire, notice: "Slide was successfully created"
       else
@@ -47,6 +48,7 @@ module Vignettes
       def slide_params
         params.require(:vignettes_slide).permit(
           :content,
+          :position,
           question_attributes: [
             :id,
             :type,

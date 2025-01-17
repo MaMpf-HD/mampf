@@ -976,6 +976,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
     t.bigint "vignettes_questionnaire_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "position"
+    t.index ["position"], name: "index_vignettes_slides_on_position"
     t.index ["vignettes_questionnaire_id"], name: "index_vignettes_slides_on_vignettes_questionnaire_id"
   end
 
