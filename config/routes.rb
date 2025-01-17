@@ -568,7 +568,12 @@ Rails.application.routes.draw do
         as: "take_questionnaire"
 
     resources :questionnaires do
-      resources :slides
+      member do
+        post :submit_answer
+      end
+      resources :slides do
+        resources :answers, only: [:new, :create]
+      end
     end
   end
 

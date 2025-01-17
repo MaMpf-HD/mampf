@@ -997,6 +997,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
     t.index ["vignettes_slide_id"], name: "index_vignettes_questions_on_vignettes_slide_id"
   end
 
+  create_table "vignettes_slide_statistics", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.integer "time_on_slide"
+    t.integer "time_on_info_slide"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "vignettes_answer_id"
+    t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
+    t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
+  end
+
   create_table "vignettes_slides", force: :cascade do |t|
     t.bigint "vignettes_questionnaire_id", null: false
     t.datetime "created_at", null: false
@@ -1124,6 +1135,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
   add_foreign_key "vignettes_answers", "vignettes_user_answers"
   add_foreign_key "vignettes_options", "vignettes_questions"
   add_foreign_key "vignettes_questions", "vignettes_slides"
+  add_foreign_key "vignettes_slide_statistics", "users"
+  add_foreign_key "vignettes_slide_statistics", "vignettes_answers"
   add_foreign_key "vignettes_slides", "vignettes_questionnaires"
   add_foreign_key "vignettes_user_answers", "users"
   add_foreign_key "vignettes_user_answers", "vignettes_questionnaires"

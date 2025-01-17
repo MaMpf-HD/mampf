@@ -10,6 +10,13 @@
 
 
         <%= form.hidden_field :slide_id, value: @slide.id %>
+
+        <%= form.fields_for :slide_statistic do |stat_form| %>
+            <%= stat_form.hidden_field :user_id, value: current_user.id %>
+            <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
+            <%= stat_form.hidden_field :time_on_info_slide, id: "time-on-info-slide-field" %>
+        <% end %>
+
         <% case @slide.question.type %> 
             <% when "Vignettes::TextQuestion" %>
                 <%= form.label :text, "Your Answer" %>
