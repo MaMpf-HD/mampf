@@ -26,6 +26,13 @@
                     <%= option.text %>
                     <%= check_box_tag "vignettes_answer[option_ids][]", option.id, @answer.option_ids.include?(option.id) %>
                 <% end %>
+            <% when "Vignettes::LikertScaleQuestion" %>
+                <% Vignettes::LikertScaleQuestion::LIKERT_LABELS.each do |value, label| %>
+                <div>
+                    <%= form.radio_button :likert_scale_value, value %>
+                    <%= form.label :likert_scale_value, label %>
+                </div>
+                <% end %>
         <% end %>
         <br>
         <%= form.submit "Submit Answer!", class: "btn btn-primary" %>
