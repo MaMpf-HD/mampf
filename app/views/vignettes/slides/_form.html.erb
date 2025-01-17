@@ -2,63 +2,24 @@
 <%= form_with(
       model: [@questionnaire, @slide],
       url: @slide.new_record? ? vignettes_questionnaire_slides_path(@questionnaire) : vignettes_questionnaire_slide_path(@questionnaire, @slide),
+      id: "slide-form"
     ) do |form| %>
-  <div>
-    <%= form.label :title %><br>
-    <%= form.text_field :title %>
-  </div>
-  <div>
-    <%= form.label :content %><br>
-    <%= form.rich_text_area :content %>
-  </div>
-  <%= form.fields_for :question do |question_form| %>
 
-    <div>
-      <%= question_form.label :type, "Question Type" %>
-      <%= question_form.select :type, options_for_select([
-          ['No Question', ''],
-          ['Text Field', 'Vignettes::TextQuestion'],
-          ['Multiple Choice', 'Vignettes::MultipleChoiceQuestion']
-      ], question_form.object.type), {}, { id: "question-type" } %>
-    </div>
-    
-    <!-- The id must be the name of the corresponding class -->
-    <div id="Vignettes::TextQuestion" class="question-field" style="display: none;">
-      <%= question_form.label :question_text, "Question Text" %><br>
-      <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
-    </div>
+  <%= hidden_field_tag :redirect_info_slide, 'false', id: 'redirect-info-slide-field' %>
 
-    <div id="Vignettes::MultipleChoiceQuestion" class="question-field" style="display: none;">
-      <%= question_form.label :question_text, "Question Text" %><br>
-      <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
-
-      <div>
-        <%= question_form.label :options, "Options" %>
-        <div id="options-container">
-          <% question_form.object.options.each do |option| %>
-            <div class="option-block">
-              <%= question_form.fields_for :options, option do |option_form| %>
-                <div class="option-field">
-                  <%= option_form.text_field :text, placeholder: "Option Text" %>
-                  <%= option_form.hidden_field :_destroy %>
-                  <button type="button" class="remove-option">Remove</button>
-                </div>
-            <% end %>
-            </div>
-          <% end %>
-          <div id="new-option-template" style="display: none;">
-            <%= question_form.fields_for :options, question_form.object.options.build, child_index: "NEW_RECORD" do |option_form|%>
-              <div class="option-block">
-                <%= option_form.text_field :text %>
-                <button type="button" class="remove-option">Remove</button>
-              </div>
-            <% end %>
-          </div>
-        </div>
-        <button type="button" id="add-option">Add Option</button>
-      </div>
-    </div>
+  <% if @slide.info_slide %>
+    <%= link_to "Edit Info Slide", edit_vignettes_questionnaire_slide_info_slide_path(@questionnaire, @slide), class: "btn btn-secondary" %>
+  <% elsif !@slide.new_record? %>
+    <%= link_to "Create Info Slide", new_vignettes_questionnaire_slide_info_slide_path(@questionnaire, @slide), class: "btn btn-primary" if @slide.info_slide.nil? %>
+  <% else %>
+    <button type="button" id="create-info-slide-button" class="btn btn-primary">
+      Create Info Slide and save Slide
+    </button>
   <% end %>
+
+  <%= render partial: 'form_content', locals: { form: form } %>
+  <%= render partial: 'form_question', locals: { form: form } %>
+
   <div>
     <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide' %>
   </div>

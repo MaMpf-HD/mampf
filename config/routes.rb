@@ -563,6 +563,10 @@ Rails.application.routes.draw do
 
   # vignettes routes
   namespace :vignettes do
+    get "questionnaires/:id/take",
+        to: "questionnaires#take",
+        as: "take_questionnaire"
+
     resources :questionnaires do
       resources :slides
     end
