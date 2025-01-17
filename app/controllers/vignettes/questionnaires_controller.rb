@@ -1,5 +1,8 @@
+require "csv"
+
 module Vignettes
   class QuestionnairesController < ApplicationController
+    before_action :set_questionnaire, only: [:show, :take, :submit_answer]
     def index
       @questionnaires = Questionnaire.all
       # Because the create model form works on the index page.
@@ -22,6 +25,7 @@ module Vignettes
       end
       # Create answer so the form renders correct and nested attributes work.
       @answer = @slide.answers.build
+      @answer.build_slide_statistic
     end
 
     def submit_answer
@@ -42,6 +46,31 @@ module Vignettes
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
         render :take, status: :unprocessable_entity
       end
+    end
+
+    def export_answers
+      questionnaire = Questionnaire.find(params[:id])
+      answers = questionnaire.slides.includes(:answers).flat_map(&:answers)
+
+      csv_data = CSV.generate(headers: true) do |csv|
+        csv << ["Answer ID", "User", "Question Slide", "Time on slide", "Time on info slide",
+                "Question Text", "Answer", "Selected Options"]
+        answers.each do |answer|
+          row = [answer.id, answer.user_answer.user.name_or_email, answer.slide.position,
+                 answer.slide_statistic.time_on_slide, answer.slide_statistic.time_on_info_slide, answer.slide.question.question_text]
+          case answer.type
+          when "Vignettes::TextAnswer"
+            row << answer.text
+          when "Vignettes::MultipleChoiceAnswer"
+            selected_options = answer.options.map(&:text).join(", ")
+            row << ""
+            row << selected_options
+          end
+          csv << row
+        end
+      end
+
+      send_data(csv_data, filename: "questionnaire-#{questionnaire.id}-answers.csv")
     end
 
     def new

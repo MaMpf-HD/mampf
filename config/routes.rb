@@ -569,6 +569,7 @@ Rails.application.routes.draw do
 
     resources :questionnaires do
       member do
+        get :export_answers
         post :submit_answer
       end
       resources :slides do
