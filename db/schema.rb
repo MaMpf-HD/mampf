@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -969,6 +969,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
     t.index ["vignettes_answer_id", "vignettes_option_id"], name: "idx_on_vignettes_answer_id_vignettes_option_id_95dc8573a3"
     t.index ["vignettes_option_id", "vignettes_answer_id"], name: "idx_on_vignettes_option_id_vignettes_answer_id_239ee34098"
   end
+
+  create_table "vignettes_info_slides", force: :cascade do |t|
+    t.bigint "vignettes_slide_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_slide_id"], name: "index_vignettes_info_slides_on_vignettes_slide_id"
+  end
+
+  create_table "vignettes_info_slides_slides", id: false, force: :cascade do |t|
+    t.bigint "vignettes_info_slide_id", null: false
+    t.bigint "vignettes_slide_id", null: false
+  end
+
   create_table "vignettes_multiple_choice_answers_options", id: false, force: :cascade do |t|
     t.bigint "vignettes_multiple_choice_answer_id", null: false
     t.bigint "vignettes_option_id", null: false
@@ -1133,6 +1146,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_12_28_200302) do
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"
+  add_foreign_key "vignettes_info_slides", "vignettes_slides"
   add_foreign_key "vignettes_options", "vignettes_questions"
   add_foreign_key "vignettes_questions", "vignettes_slides"
   add_foreign_key "vignettes_slide_statistics", "users"

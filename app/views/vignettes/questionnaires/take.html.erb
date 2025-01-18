@@ -1,6 +1,20 @@
+<%= javascript_include_tag 'vignettes/take_questionnaire' %>
+
+
+<% if @slide.info_slide %>
+<div id="info-slide-container" style="display: none;">
+    <h2> Info Slide </h2>
+    <button id="close-info-slide-button" class="btn btn-primary">Close Info Slide</button>
+    <%= @slide.info_slide.content %>
+</div>
+<% end %>
+
 <div id="current-slide-container" data-slide-id="<%= @slide.id %>" data-questionnaire-id="<%= @questionnaire.id %>" >
 
     <h2> Slide <%= @slide.position %> </h2>
+    <% if @slide.info_slide %>
+        <button id="info-slide-button" class="btn btn-primary">Show Info Slide</button>
+    <% end %>
     <%= @slide.content %>
     <%= @slide.question.question_text %>
 

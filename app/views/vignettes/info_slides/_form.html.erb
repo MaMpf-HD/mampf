@@ -1,0 +1,11 @@
+<%= form_with(
+      model: @info_slide,
+      url: @info_slide.new_record? ? vignettes_questionnaire_slide_info_slide_path(@slide.questionnaire, @slide) : vignettes_questionnaire_slide_info_slide_path(@slide.questionnaire, @slide),
+      local: true
+    ) do |form| %>
+  <%= render partial: 'vignettes/slides/form_content', locals: { form: form } %>
+
+  <div>
+    <%= form.submit @info_slide.new_record? ? 'Create Info Slide' : 'Update Info Slide' %>
+  </div>
+<% end %>

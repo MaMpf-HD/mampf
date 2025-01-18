@@ -573,6 +573,7 @@ Rails.application.routes.draw do
         post :submit_answer
       end
       resources :slides do
+        resource :info_slide, only: [:new, :create, :edit, :update]
         resources :answers, only: [:new, :create]
       end
     end

@@ -1,6 +1,7 @@
 module Vignettes
   class SlidesController < ApplicationController
     before_action :set_questionnaire
+
     def index
     end
 
@@ -25,8 +26,13 @@ module Vignettes
       @slide = @questionnaire.slides.new(slide_params)
       @slide.position = @questionnaire.slides.maximum(:position).to_i + 1
       if @slide.save
+        if redirect_params[:redirect_info_slide] == "true"
+          redirect_to new_vignettes_questionnaire_slide_info_slide_path(@questionnaire, @slide)
+          return
+        end
         redirect_to @questionnaire, notice: "Slide was successfully created"
       else
+        flash[:alert] = "Failed to create slide: #{@slide.errors.full_messages.join(", ")}"
         render :new, status: :unprocessable_entity
       end
     end
@@ -44,6 +50,10 @@ module Vignettes
 
       def set_questionnaire
         @questionnaire = Questionnaire.find(params[:questionnaire_id])
+      end
+
+      def redirect_params
+        params.permit(:redirect_info_slide)
       end
 
       def slide_params
