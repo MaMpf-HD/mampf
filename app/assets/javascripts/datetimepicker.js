@@ -70,7 +70,7 @@ function registerErrorHandlers(datetimePicker, element) {
     try {
       return datetimePicker.dates.oldParseInput(input);
     }
-    catch (err) {
+    catch {
       const errorMsg = element.find(".td-error").data("td-invalid-date");
       element.find(".td-error").text(errorMsg).show();
       datetimePicker.dates.clear();
