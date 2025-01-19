@@ -122,8 +122,9 @@
         "selectize",
         "Timecop",
         "turbolinks",
-        "Unsets",
+        "unassigns",
         "uncached",
+        "Unsets",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [
