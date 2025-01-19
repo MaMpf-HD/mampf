@@ -33,7 +33,6 @@ up-reseed *args:
 
     set -e
     just --yes docker db-tear-down
-    just docker wait-for-postgres
 
     cd {{justfile_directory()}}/docker/development/
     export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
@@ -116,6 +115,8 @@ db-tear-down:
     cd {{justfile_directory()}}/docker/development/
     docker compose exec -T db bash -c "rm -rf /var/lib/postgresql/data/*"
     docker-compose up -d --force-recreate --build db
+
+    just docker wait-for-postgres
 
 # Removes the development docker containers
 @down:
