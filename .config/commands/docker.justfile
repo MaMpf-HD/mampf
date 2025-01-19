@@ -2,7 +2,7 @@
 help:
     @just --list --justfile {{source_file()}}
 
-# Starts the dev docker containers
+# Starts the dev containers (assumes a valid database)
 up *args:
     #!/usr/bin/env bash
     just docker ensure-db-container-running-and-postgres-ready
