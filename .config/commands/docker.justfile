@@ -3,16 +3,20 @@ help:
     @just --list --justfile {{source_file()}}
 
 # Starts the dev docker containers
-@up *args:
+up *args:
     #!/usr/bin/env bash
+    just docker ensure-db-container-running-and-postgres-ready
+    just docker create-empty-mampf-db-if-not-exists
+
     cd {{justfile_directory()}}/docker/development/
     docker compose up {{args}}
 
 # Starts the dev docker containers (detached) & shows MaMpf logs
 up-logs *args:
     #!/usr/bin/env bash
+    just docker up -d {{args}}
+
     cd {{justfile_directory()}}/docker/development/
-    docker compose up -d {{args}}
     docker compose logs -f mampf
 
 # Shows the log of the specified container
@@ -25,29 +29,16 @@ up-logs *args:
 [confirm("This will reset all your data in the database locally. Continue? (y/n)")]
 up-reseed *args:
     #!/usr/bin/env bash
+    # (pgadmin issue: https://github.com/pgadmin-org/pgadmin4/issues/8071)
+
     set -e
     just --yes docker db-tear-down
+    just docker wait-for-postgres
 
     cd {{justfile_directory()}}/docker/development/
-
-    # https://github.com/pgadmin-org/pgadmin4/issues/8071
-
-    # https://stackoverflow.com/a/77582897/
-    # Wait for the db container to be up
-    until docker compose exec -T db bash -c "pg_isready -h localhost -U localroot"; do
-        >&2 echo "Postgres is unavailable - sleeping"
-        sleep 1
-    done
-    >&2 echo "Postgres is up - continuing"
-
-    # Recreate empty mampf db (since user is called localroot and not mampf,
-    # postgresql will not create the mampf db automatically)
-    # see also https://stackoverflow.com/a/68091072/
-    docker compose exec -T db bash -c "psql -v ON_ERROR_STOP=1 -h localhost -p 5432 -U localroot -c 'CREATE DATABASE mampf;'"
-
     export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
-    docker compose rm --stop --force mampf && docker compose up {{args}}
+    docker compose rm --stop --force mampf && just docker up {{args}}
 
 # Starts the dev docker containers and preseeds the database from an .sql file
 [confirm("This will reset all your data in the database locally. Continue? (y/n)")]
@@ -61,7 +52,7 @@ up-reseed-from-file preseed_file *args:
     cd {{justfile_directory()}}/docker/development/
     export DB_SQL_PRESEED_URL="{{preseed_file}}"
     export UPLOADS_PRESEED_URL=""
-    docker compose rm --stop --force mampf && docker compose up {{args}}
+    docker compose rm --stop --force mampf && just docker up {{args}}
 
 # Restores a postgres backup file that was made using pg_dump or pg_dumpall
 [no-cd]
@@ -97,11 +88,7 @@ up-reseed-from-dump preseed_file:
     fi
 
     # Make sure the db dev container is running
-    cd {{justfile_directory()}}/docker/development/
-    if [ -z "$(docker compose ps --services --filter 'status=running' | grep db)" ]; then
-        echo "The db dev container is not running. Please start it first (use 'just docker')."
-        exit 1
-    fi
+    just docker ensure-db-container-running-and-postgres-ready
 
     echo "Copy file over to docker container"
     docker compose cp ${file} db:/tmp/backup.pg_dump
@@ -124,14 +111,9 @@ up-reseed-from-dump preseed_file:
 [confirm("This will completely destroy your local database, including all tables and users. Continue? (y/n)")]
 db-tear-down:
     #!/usr/bin/env bash
+    just docker ensure-db-container-running-and-postgres-ready
+
     cd {{justfile_directory()}}/docker/development/
-
-    # Make sure that the db container is running
-    if [ -z "$(docker compose ps --services --filter 'status=running' | grep db)" ]; then
-        echo "The db dev container is not running. Please start it first (use 'just docker')."
-        exit 1
-    fi
-
     docker compose exec -T db bash -c "rm -rf /var/lib/postgresql/data/*"
     docker-compose up -d --force-recreate --build db
 
@@ -183,3 +165,55 @@ rebuild env="dev":
     if [ "$environment" = "development" ]; then
         docker compose build webpacker
     fi
+
+# Creates an empty mampf db (assumes that the db container is running)
+[private]
+create-empty-mampf-db-if-not-exists:
+    #!/usr/bin/env bash
+    set -e
+    cd {{justfile_directory()}}/docker/development/
+
+    # Early return if mampf db already exists
+    if [ "$(docker compose exec -T db bash -c "psql -h localhost -U localroot -XtA -c \"SELECT 1 FROM pg_database WHERE datname='mampf'\"")" == "1" ]; then
+        exit 0
+    fi
+
+    # Create an empty mampf database. This is necessary since the default user
+    # is called localroot and not mampf. (It it were called mampf, postgresql
+    # would created the mampf db automatically.)
+    # see also https://stackoverflow.com/a/68091072/
+    docker compose exec -T db bash -c "psql -v ON_ERROR_STOP=1 -h localhost -p 5432 -U localroot -c 'CREATE DATABASE mampf;'"
+
+    # Make sure mampf db exists now
+    if [ "$(docker compose exec -T db bash -c "psql -h localhost -U localroot -XtA -c \"SELECT 1 FROM pg_database WHERE datname='mampf'\"")" != "1" ]; then
+        echo "Could not create the empty mampf database. Exiting."
+        exit 1
+    fi
+
+# Waits for postgres to be available (assumes that the db container is running)
+[private]
+wait-for-postgres:
+    #!/usr/bin/env bash
+    set -e
+    cd {{justfile_directory()}}/docker/development/
+
+    # https://stackoverflow.com/a/77582897/
+    # Wait for the db container to be up
+    until docker compose exec -T db bash -c "pg_isready -h localhost -U localroot"; do
+        >&2 echo "Postgres is unavailable (waiting...)"
+        sleep 1
+    done
+    >&2 echo "Postgres is up, will continue"
+
+# Ensures that the db container is running and postgres is ready (if not, starts the db container and waits for postgres)
+[private]
+ensure-db-container-running-and-postgres-ready:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+
+    # If the db container is not running, start it first
+    if [ -z "$(docker compose ps --services --filter 'status=running' | grep db)" ]; then
+        docker compose up -d db
+    fi
+
+    just docker wait-for-postgres
