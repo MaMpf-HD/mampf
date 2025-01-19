@@ -86,7 +86,6 @@ up-reseed-from-dump preseed_file:
         exit 1
     fi
 
-    # Make sure the db dev container is running
     just docker ensure-db-container-running-and-postgres-ready
 
     echo "Copy file over to docker container"
@@ -110,7 +109,7 @@ up-reseed-from-dump preseed_file:
 [confirm("This will completely destroy your local database, including all tables and users. Continue? (y/n)")]
 db-tear-down:
     #!/usr/bin/env bash
-    just docker ensure-db-container-running-and-postgres-ready
+    just docker ensure-db-container-running
 
     cd {{justfile_directory()}}/docker/development/
     docker compose exec -T db bash -c "rm -rf /var/lib/postgresql/data/*"
@@ -206,9 +205,9 @@ wait-for-postgres:
     done
     >&2 echo "Postgres is up, will continue"
 
-# Ensures that the db container is running and postgres is ready (if not, starts the db container and waits for postgres)
+# Ensures that the db container is running (does not wait for postgres; starts the db container if not running)
 [private]
-ensure-db-container-running-and-postgres-ready:
+ensure-db-container-running:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/development/
 
@@ -217,4 +216,10 @@ ensure-db-container-running-and-postgres-ready:
         docker compose up -d db
     fi
 
+
+# Ensures that the db container is running and postgres is ready (if not, starts the db container and waits for postgres)
+[private]
+ensure-db-container-running-and-postgres-ready:
+    #!/usr/bin/env bash
+    just docker ensure-db-container-running
     just docker wait-for-postgres
