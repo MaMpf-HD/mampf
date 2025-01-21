@@ -126,7 +126,7 @@ services:
         source: sprockets-cache
         target: /cache
       # https://stackoverflow.com/a/62611202/
-      - bundle_cache:/usr/local/bundle
+      - bundle_cache:/usr/local/bundle/
     depends_on:
       - db
       - solr
@@ -151,7 +151,7 @@ services:
       - type: volume
         source: sprockets-cache
         target: /cache
-      - bundle_cache:/usr/local/bundle
+      - bundle_cache:/usr/local/bundle/
     ports:
       - '127.0.0.1:3035:3035'
     depends_on:

@@ -71,6 +71,8 @@ services:
       - ../../:/usr/src/app/
       - ../../coverage:/usr/src/app/coverage/
       - "/usr/src/app/public/"
+      # https://stackoverflow.com/a/62611202/
+      - bundle_cache:/usr/local/bundle/
     depends_on:
       - db
       - solr
@@ -80,3 +82,5 @@ services:
       - backend
       - frontend
   
+volumes:
+  bundle_cache:
