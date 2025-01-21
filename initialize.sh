@@ -34,26 +34,7 @@ fi
 if ! [ -f /completed_initial_run ]; then
   echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 
-  # export BUNDLE_SILENCE_ROOT_WARNING=""
-  # unset BUNDLE_APP_CONFIG
-  # export BUNDLE_APP_CONFIG="/usr/local/bundle"
-  # export GEM_HOME="/usr/local/bundle"
-  # export PATH="$GEM_HOME/bin:$GEM_HOME/gems/bin:$PATH"
-  export PATH="/usr/local/bundle/bin:$PATH"
-
-  # echo "🎈 Running bundle config set path"
-  # bundle config set path '/usr/local/bundle'
-
-  echo "🎈 Running bundle config"
-  bundle config
-
-  echo "🎈 Running bundle check"
-  bundle check
-
-  # echo "Setting path to rbenv_shims"
-  # export PATH="/usr/local/bin/rbenv_shims:$PATH"
-
-  which -a rake
+  bundle install
 
   echo "🕖  Waiting for Redis to come online"
   wait-for-it redis:6379 -t 30 || exit 1
