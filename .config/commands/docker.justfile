@@ -67,14 +67,6 @@ rebuild env="dev":
     echo "Rebuilding in env: ${environment}"
     cd {{justfile_directory()}}/docker/${environment}
 
-    # Remove
-    docker compose rm -s mampf
-    if [ "$environment" = "development" ]; then
-        docker compose rm -s webpacker
-    fi
-
     # Rebuild
+    docker compose rm -s mampf
     docker compose build mampf
-    if [ "$environment" = "development" ]; then
-        docker compose build webpacker
-    fi
