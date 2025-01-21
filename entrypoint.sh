@@ -4,6 +4,9 @@ set -e
 cd /usr/src/app
 ./initialize.sh &> >(tee -a /usr/src/app/log/initialisation.log)
 
+echo "💫  Starting webpack server (in background)"
+./bin/webpack-dev-server &
+
 rm -f tmp/pids/server.pid
 cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
 echo "running mampf"

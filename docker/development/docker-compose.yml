@@ -68,7 +68,8 @@ services:
     build:
       context: ./../..
       dockerfile: docker/development/Dockerfile
-    image: mampf:development
+    image: mampf:dev-and-test
+    pull_policy: never
     environment:
       RAILS_ENV: docker_development
       # If you change these variables, make sure to adapt accordingly in
@@ -104,7 +105,7 @@ services:
       SOLR_PORT: 8983
       SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
-      WEBPACKER_DEV_SERVER_HOST: webpacker
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
       MAMPF_REGISTRATION_TIMEFRAME: 25
       MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
       IMAPSERVER: imap:10993
@@ -118,6 +119,8 @@ services:
       # in the current environment/shell. This is used in the docker.justfile.
       DB_SQL_PRESEED_URL:
       UPLOADS_PRESEED_URL:
+    ports:
+      - '127.0.0.1:3035:3035'  # webpacker dev server
     volumes:
       - type: bind
         source: ../../
@@ -134,31 +137,6 @@ services:
       - mailcatcher
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: worker
-
-  webpacker:
-    build:
-      context: ./../..
-      dockerfile: docker/development/Dockerfile
-    environment:
-      NODE_ENV: development
-      RAILS_ENV: development
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
-    entrypoint: ["sh", "-c", "yarn && ./bin/webpack-dev-server"]
-    volumes:
-      - type: bind
-        source: ../../
-        target: /usr/src/app/
-      - type: volume
-        source: sprockets-cache
-        target: /cache
-      - bundle_cache:/usr/local/bundle/
-    ports:
-      - '127.0.0.1:3035:3035'
-    depends_on:
-      - db
-      - solr
-      - redis
-      - mailcatcher
 
   nginx:
     image: openresty/openresty:alpine

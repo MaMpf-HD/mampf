@@ -1,11 +1,6 @@
-networks:
-  frontend:
-  backend:
 services:
   redis:
     image: "redis:6.2.6-alpine"
-    networks:
-      - backend
 
   solr:
     image: "solr:8.11.1"
@@ -15,30 +10,20 @@ services:
         target: /solrconfig/
         read_only: true
     command: ["solr-precreate", "test", "/solrconfig"]
-    networks:
-      - backend
 
   db:
-    image: postgres
+    image: postgres:13
     environment:
       - POSTGRES_USER=mampf
       - POSTGRES_HOST_AUTH_METHOD=trust
-    networks:
-      - backend
 
   mailcatcher:
     restart: on-failure:10
     image: dockage/mailcatcher:latest
-    networks:
-      - backend
 
   mampf:
-    build:
-      context: ./../..
-      dockerfile: docker/test/Dockerfile
-    image: mampf:tests
-    ports:
-      - "3100:3000"
+    image: mampf:dev-and-test
+    pull_policy: never
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
@@ -66,11 +51,17 @@ services:
       SOLR_PORT: 8983
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
       BLOG: https://mampf.blog
+    ports:
+      - '127.0.0.1:3036:3036'  # webpacker dev server
     volumes:
-      - ../../:/usr/src/app/
-      - ../../coverage:/usr/src/app/coverage/
-      - "/usr/src/app/public/"
+      - type: bind
+        source: ../../
+        target: /usr/src/app/
+      - type: volume
+        source: sprockets-cache-test
+        target: /cache
       # https://stackoverflow.com/a/62611202/
       - bundle_cache:/usr/local/bundle/
     depends_on:
@@ -78,9 +69,7 @@ services:
       - solr
       - redis
       - mailcatcher
-    networks:
-      - backend
-      - frontend
-  
+
 volumes:
   bundle_cache:
+  sprockets-cache-test:

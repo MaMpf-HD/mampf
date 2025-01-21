@@ -119,6 +119,7 @@
         "helpdesk",
         "katex",
         "lightgray",
+        "mailcatcher",
         "preselection",
         "selectize",
         "Timecop",
@@ -126,6 +127,7 @@
         "unassigns",
         "uncached",
         "Unsets",
+        "webpacker",
         "whitespaces"
     ],
     "cSpell.enableFiletypes": [
