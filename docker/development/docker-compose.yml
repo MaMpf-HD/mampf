@@ -125,6 +125,8 @@ services:
       - type: volume
         source: sprockets-cache
         target: /cache
+      # - ~/.rbenv/versions/3.1.4/lib/ruby/gems/3.1.0/:/usr/local/bundle/ruby/3.1.0/:ro
+      - ~/dev/mampf/tmp/bundle/ruby/3.1.0/:/usr/local/bundle/ruby/3.1.0/:ro
     depends_on:
       - db
       - solr
@@ -149,6 +151,8 @@ services:
       - type: volume
         source: sprockets-cache
         target: /cache
+      # - ~/.rbenv/versions/3.1.4/lib/ruby/gems/3.1.0/gems:/usr/local/bundle/ruby/3.1.0/gems:ro
+      # - ~/.rbenv/versions/3.1.4/lib/ruby/gems/3.1.0/bundler/gems:/usr/local/bundle/ruby/3.1.0/bundler/gems:ro
     ports:
       - '127.0.0.1:3035:3035'
     depends_on:

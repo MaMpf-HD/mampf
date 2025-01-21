@@ -62,7 +62,8 @@ WORKDIR /usr/src/app
 ENTRYPOINT ["./entrypoint.sh"]
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-RUN bundle install
+# volume mount to your local machine
+RUN bundle config set path '/usr/local/bundle'
 RUN yarn install --production=false
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
