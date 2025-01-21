@@ -31,6 +31,8 @@ if [ "$RAILS_ENV" = "production" ]; then
     exit 1
 fi
 
+cd /usr/src/app/
+
 if ! [ -f /completed_initial_run ]; then
   echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 

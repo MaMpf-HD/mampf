@@ -9,7 +9,6 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 # Now build the actual mampf application
 # https://hub.docker.com/_/ruby/
 FROM ruby:3.1.4-bullseye
-ENV RAILS_ENV=production
 
 EXPOSE 3000
 EXPOSE 9394
@@ -59,10 +58,9 @@ RUN apt update && \
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 WORKDIR /usr/src/app
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["./docker/entrypoint-dev-test.sh"]
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-COPY ./docker/production/docker.env ./docker-dummy.env
 RUN yarn install --production=false
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
