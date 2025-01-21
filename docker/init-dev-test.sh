@@ -36,7 +36,11 @@ cd /usr/src/app/
 if ! [ -f /completed_initial_run ]; then
   echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 
+  echo "📦  Installing Ruby gems (via bundle)"
   bundle install
+
+  echo "📦  Installing Node.js modules (via yarn)"
+  yarn install --production=false
 
   echo "🕖  Waiting for Redis to come online"
   wait-for-it redis:6379 -t 30 || exit 1

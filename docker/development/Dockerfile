@@ -6,7 +6,7 @@ COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
-# Now build the actual mampf application
+# Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
 FROM ruby:3.1.4-bullseye
 
@@ -43,7 +43,7 @@ RUN corepack prepare "yarn@${YARN_VERSION}" --activate
 RUN which yarn; yarn --version
 # even though this is not specified in the corepack documentation, we need to
 # run "set version", otherwise the app user will have an old version of
-# yarn avaialble instead of our specified version
+# yarn available instead of our specified version
 RUN yarn set version "${YARN_VERSION}"
 
 # Install other dependencies
@@ -61,7 +61,6 @@ WORKDIR /usr/src/app
 ENTRYPOINT ["./docker/entrypoint-dev-test.sh"]
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-RUN yarn install --production=false
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
