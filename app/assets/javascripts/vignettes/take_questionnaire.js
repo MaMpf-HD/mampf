@@ -1,39 +1,61 @@
 document.addEventListener("turbolinks:load", () => {
-  const showInfoSlideBtn = document.getElementById("info-slide-button");
-  const closeInfoSlideBtn = document.getElementById("close-info-slide-button");
-  const infoSlideContainer = document.getElementById("info-slide-container");
+  const infoSlideButtons = document.querySelectorAll(".info-slide-button");
+  const closeInfoSlideButtons = document.querySelectorAll(".close-info-slide-button");
+  const infoSlideContainers = document.querySelectorAll(".info-slide-container");
   const slideContainer = document.getElementById("current-slide-container");
 
   const timeOnSlideField = document.getElementById("time-on-slide-field");
-  const timeOnInfoSlideField = document.getElementById("time-on-info-slide-field");
+  const timeOnInfoSlidesField = document.getElementById("time-on-info-slides-field");
+  const infoSlidesAccessCountField = document.getElementById("info-slides-access-count-field");
 
   const form = document.querySelector("form");
 
   let SlideStartTime = new Date();
   let InfoSlideStartTime = null;
 
+  var activeInfoSlideIndex = null;
+
   // Time in seconds
   let totalSlideTime = 0;
-  let totalInfoSlideTime = 0;
+  let infoSlideTimes = {};
 
-  showInfoSlideBtn?.addEventListener("click", (e) => {
-    infoSlideContainer.style.display = "block";
-    slideContainer.style.display = "none";
+  let infoSlidesAccessCount = {};
 
-    totalSlideTime += (Date.now() - SlideStartTime);
-    SlideStartTime = null;
+  infoSlideButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      const index = button.getAttribute("data-index");
+      activeInfoSlideIndex = index;
 
-    InfoSlideStartTime = Date.now();
+      // Hide all info slides and the slide
+      infoSlideContainers.forEach(container => container.style.display = "none");
+      slideContainer.style.display = "none";
+      // Make selected info slide visible
+      document.getElementById(`info-slide-container-${index}`).style.display = "block";
+
+      // Increase access count on selected info slide
+      infoSlidesAccessCount[index] = (infoSlidesAccessCount[index] || 0) + 1;
+      console.log("infoSlidesAccessCount", infoSlidesAccessCount);
+
+      totalSlideTime += (Date.now() - SlideStartTime);
+      SlideStartTime = null;
+
+      InfoSlideStartTime = Date.now();
+    });
   });
 
-  closeInfoSlideBtn?.addEventListener("click", (e) => {
-    infoSlideContainer.style.display = "none";
-    slideContainer.style.display = "block";
+  closeInfoSlideButtons.forEach((button) => {
+    button.addEventListener("click", (e) => {
+      activeInfoSlideIndex = null;
+      const index = button.getAttribute("data-index");
+      document.getElementById(`info-slide-container-${index}`).style.display = "none";
+      slideContainer.style.display = "block";
 
-    totalInfoSlideTime += (Date.now() - InfoSlideStartTime);
-    InfoSlideStartTime = null;
+      const timeSpentOnInfoSlide = (Date.now() - InfoSlideStartTime);
+      infoSlideTimes[index] = (timeSpentOnInfoSlide[index] || 0) + timeSpentOnInfoSlide;
+      InfoSlideStartTime = null;
 
-    SlideStartTime = Date.now();
+      SlideStartTime = Date.now();
+    });
   });
 
   form.addEventListener("submit", (e) => {
@@ -44,10 +66,14 @@ document.addEventListener("turbolinks:load", () => {
     if (SlideStartTime) {
       totalSlideTime += (Date.now() - SlideStartTime);
     }
-    else if (InfoSlideStartTime) {
-      totalInfoSlideTime += (Date.now() - InfoSlideStartTime);
+    else if (activeInfoSlideIndex) {
+      infoSlideTimes[activeInfoSlideIndex] += (Date.now() - InfoSlideStartTime);
+    }
+    for (let key in infoSlideTimes) {
+      infoSlideTimes[key] = Math.floor(infoSlideTimes[key] / 1000);
     }
     timeOnSlideField.value = Math.floor(totalSlideTime / 1000);
-    timeOnInfoSlideField.value = Math.floor(totalInfoSlideTime / 1000);
+    timeOnInfoSlidesField.value = JSON.stringify(infoSlideTimes);
+    infoSlidesAccessCountField.value = JSON.stringify(infoSlidesAccessCount);
   });
 });

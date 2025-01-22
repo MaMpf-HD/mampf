@@ -4,13 +4,20 @@ document.addEventListener("turbolinks:load", () => {
     questionTypeDropdown.addEventListener("change", function (event) {
       // Disable all fields by default
       const allQuestionFields = document.getElementsByClassName("question-field");
+      const questionTextField = document.getElementById("question-text");
       for (let field of allQuestionFields) {
         field.style.display = "none";
+        if (questionTextField) {
+          questionTextField.style.display = "none";
+        }
       }
       // make selected field visible
       const selectedType = event.target.value;
       if (selectedType) {
         const selectedField = document.getElementById(selectedType);
+        if (questionTextField && selectedType != "") {
+          questionTextField.style.display = "block";
+        }
         if (selectedField) {
           selectedField.style.display = "block";
         }
@@ -54,15 +61,15 @@ document.addEventListener("turbolinks:load", () => {
   }
 
   // Handle creation of info slide when slide has not yet been saved.
-  const createInfoSlideButton = document.getElementById("create-info-slide-button");
-  const redirectInfoSlideField = document.getElementById("redirect-info-slide-field");
-  const form = document.getElementById("slide-form");
+  // const createInfoSlideButton = document.getElementById("create-info-slide-button");
+  // const redirectInfoSlideField = document.getElementById("redirect-info-slide-field");
+  // const form = document.getElementById("slide-form");
 
-  if (createInfoSlideButton && redirectInfoSlideField) {
-    createInfoSlideButton.addEventListener("click", (e) => {
-      event.preventDefault();
-      redirectInfoSlideField.value = true;
-      form.submit();
-    });
-  }
+  // if (createInfoSlideButton && redirectInfoSlideField) {
+  //   createInfoSlideButton.addEventListener("click", (e) => {
+  //     event.preventDefault();
+  //     redirectInfoSlideField.value = true;
+  //     form.submit();
+  //   });
+  // }
 });

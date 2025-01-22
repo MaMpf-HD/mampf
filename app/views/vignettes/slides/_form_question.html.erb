@@ -9,8 +9,10 @@
     ], question_form.object.type), {}, { id:  "question-type" } %>
   </div>
 
-  <%= question_form.label :question_text, "Question Text" %><br>
-  <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
+  <div id="question-text">
+    <%= question_form.label :question_text, "Question Text" %><br>
+    <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
+  </div>
 
   <!-- The id must be the name of the corresponding class -->
   <div id="Vignettes::TextQuestion" class="question-field" style="display: none;">

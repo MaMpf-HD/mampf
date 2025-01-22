@@ -5,17 +5,18 @@
       id: "slide-form"
     ) do |form| %>
 
-  <%= hidden_field_tag :redirect_info_slide, 'false', id: 'redirect-info-slide-field' %>
-
-  <% if @slide.info_slide %>
-    <%= link_to "Edit Info Slide", edit_vignettes_questionnaire_slide_info_slide_path(@questionnaire, @slide), class: "btn btn-secondary" %>
-  <% elsif !@slide.new_record? %>
-    <%= link_to "Create Info Slide", new_vignettes_questionnaire_slide_info_slide_path(@questionnaire, @slide), class: "btn btn-primary" if @slide.info_slide.nil? %>
-  <% else %>
-    <button type="button" id="create-info-slide-button" class="btn btn-primary">
-      Create Info Slide and save Slide
-    </button>
-  <% end %>
+  <div>
+    <%= form.label :vignettes_info_slide_ids, "Select Info Slides" %><br>
+    <%= form.collection_select(
+          :info_slide_ids,
+          @questionnaire.info_slides,
+          :id,
+          :title,
+          {},
+          multiple: true, size: 5
+        ) 
+    %>
+  </div>
 
   <%= render partial: 'form_content', locals: { form: form } %>
   <%= render partial: 'form_question', locals: { form: form } %>

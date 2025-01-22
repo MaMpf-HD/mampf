@@ -1,8 +1,9 @@
 <%= form_with(
       model: @info_slide,
-      url: @info_slide.new_record? ? vignettes_questionnaire_slide_info_slide_path(@slide.questionnaire, @slide) : vignettes_questionnaire_slide_info_slide_path(@slide.questionnaire, @slide),
+            url: @info_slide.new_record? ? vignettes_questionnaire_info_slides_path(@questionnaire) : vignettes_questionnaire_info_slide_path(@questionnaire, @info_slide),
       local: true
     ) do |form| %>
+  <%= form.text_field :title %>
   <%= render partial: 'vignettes/slides/form_content', locals: { form: form } %>
 
   <div>

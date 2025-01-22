@@ -1,10 +1,18 @@
 <h1> Slides </h1>
 
 <ul>
-    <% @questionnaire.slides.each() do |slide| %>
+    <% @slides.each() do |slide| %>
         <li>
             <%= link_to slide.position, edit_vignettes_questionnaire_slide_path(@questionnaire, slide) %>
         </li>
     <%end%>
 </ul>
 <%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+<ul>
+    <% @questionnaire.info_slides.each() do |info_slide| %>
+        <li>
+            <%= link_to info_slide.title, edit_vignettes_questionnaire_info_slide_path(@questionnaire, info_slide) %>
+        </li>
+    <%end%>
+</ul>
+<%= button_to 'Create new info slide', new_vignettes_questionnaire_info_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>

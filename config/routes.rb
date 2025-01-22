@@ -572,8 +572,8 @@ Rails.application.routes.draw do
         get :export_answers
         post :submit_answer
       end
+      resources :info_slides, only: [:new, :create, :edit, :update]
       resources :slides do
-        resource :info_slide, only: [:new, :create, :edit, :update]
         resources :answers, only: [:new, :create]
       end
     end

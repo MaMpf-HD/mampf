@@ -60,6 +60,7 @@ module Vignettes
         params.require(:vignettes_slide).permit(
           :content,
           :position,
+          { info_slide_ids: [] },
           question_attributes: [
             :id,
             :type,

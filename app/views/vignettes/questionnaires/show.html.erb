@@ -1,9 +1,11 @@
 <h1> Slides for vignette <%= @questionnaire.title %> </h1>
 <ul>
-    <% @questionnaire.slides.each do |slide| %>
+    <% @slides.each do |slide| %>
     <li>
         <%= link_to slide.position, vignettes_questionnaire_slide_path(@questionnaire, slide) %>
     </li>
     <% end %>
 </ul>
 <%= button_to 'Edit vignette', edit_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+<br>
+<%= button_to "Export answers", export_answers_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>

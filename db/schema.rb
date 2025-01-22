@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_22_142057) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -971,10 +971,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   end
 
   create_table "vignettes_info_slides", force: :cascade do |t|
-    t.bigint "vignettes_slide_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["vignettes_slide_id"], name: "index_vignettes_info_slides_on_vignettes_slide_id"
+    t.string "title"
+    t.bigint "vignettes_questionnaire_id"
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_info_slides_on_vignettes_questionnaire_id"
   end
 
   create_table "vignettes_info_slides_slides", id: false, force: :cascade do |t|
@@ -1013,10 +1014,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   create_table "vignettes_slide_statistics", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.integer "time_on_slide"
-    t.integer "time_on_info_slide"
+    t.text "time_on_info_slides"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "vignettes_answer_id"
+    t.text "info_slides_access_count"
     t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
     t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
   end
@@ -1146,7 +1148,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"
-  add_foreign_key "vignettes_info_slides", "vignettes_slides"
   add_foreign_key "vignettes_options", "vignettes_questions"
   add_foreign_key "vignettes_questions", "vignettes_slides"
   add_foreign_key "vignettes_slide_statistics", "users"
