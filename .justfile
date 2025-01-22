@@ -18,6 +18,9 @@ mod deps ".config/commands/deps.justfile"
 # Some utils, e.g. ERD-generation etc.
 mod utils ".config/commands/utils.justfile"
 
+# Commands to interact with the production server
+mod prod ".config/commands/prod.justfile"
+
 # Opens the MaMpf wiki in the default browser
 wiki:
     #!/usr/bin/env bash

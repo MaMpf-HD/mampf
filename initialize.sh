@@ -5,12 +5,17 @@ check_for_preseeds() {
 
   # Database preseed
   if [[ "${DB_SQL_PRESEED_URL}" ]]; then
-    echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
-    mkdir -pv db/backups/docker_development
-    wget --content-disposition --directory-prefix=db/backups/docker_development/ --timestamping $DB_SQL_PRESEED_URL
-    for file in db/backups/docker_development/*.sql; do
-      [[ $file -nt $latest ]] && latest=$file
-    done
+    if [[ -f "${DB_SQL_PRESEED_URL}" ]]; then
+      echo "💾  Found DB preseed file: $DB_SQL_PRESEED_URL"
+      latest=$DB_SQL_PRESEED_URL
+    else
+      echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
+      mkdir -pv db/backups/docker_development
+      wget --content-disposition --directory-prefix=db/backups/docker_development/ --timestamping $DB_SQL_PRESEED_URL
+      for file in db/backups/docker_development/*.sql; do
+        [[ $file -nt $latest ]] && latest=$file
+      done
+    fi
 
     bundle exec rails db:restore pattern=$(echo $latest | rev | cut -d "/" -f1 | rev | cut -d "_" -f1)
     bundle exec rails db:migrate
