@@ -147,14 +147,12 @@ db-tear-down:
     cd {{justfile_directory()}}/docker/development/
     docker compose exec mampf bundle exec rails c {{args}}
 
-# Rebuilds the most essential containers in the dev or test environment
+# Rebuilds the MaMpf container (in the dev or test environment)
 rebuild env="dev":
     #!/usr/bin/env bash
     environment={{ if env == "test" {"test"} else {"development"} }}
     echo "Rebuilding in env: ${environment}"
     cd {{justfile_directory()}}/docker/${environment}
-
-    # Rebuild
     docker compose rm -s mampf
     docker compose build mampf
 
