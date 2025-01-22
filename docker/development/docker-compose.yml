@@ -23,7 +23,7 @@ services:
   db:
     image: postgres:13
     environment:
-      - POSTGRES_USER=mampf
+      - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - type: volume
@@ -43,6 +43,8 @@ services:
       # the web interface is required). See "pgadmin4/servers.json" here:
       # -> https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html#mapped-files-and-directories
       # -> https://forums.docker.com/t/automatically-connect-pgadmin-to-a-postgresql-volume-on-which-there-is-a-database-and-automatically-load-a-schema-present-on-a-sql-file-with-docker-compose/124647/2
+      #
+      # This only loads once, see: https://github.com/pgadmin-org/pgadmin4/issues/8071
       - type: bind
         source: ../../config/db-pgadmin.json
         target: /pgadmin4/servers.json
@@ -76,8 +78,8 @@ services:
       # config/db-pgadmin-config.json
       DEVELOPMENT_DATABASE_ADAPTER: postgresql
       DEVELOPMENT_DATABASE_DATABASE: mampf
-      DEVELOPMENT_DATABASE_INTERACTIONS: interactions
-      DEVELOPMENT_DATABASE_USERNAME: mampf
+      DEVELOPMENT_DATABASE_INTERACTIONS: mampf_interactions
+      DEVELOPMENT_DATABASE_USERNAME: localroot
       DEVELOPMENT_DATABASE_HOST: db
       DEVELOPMENT_DATABASE_PORT: 5432
       TEST_DATABASE_ADAPTER: postgresql
