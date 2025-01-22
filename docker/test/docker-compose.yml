@@ -23,7 +23,6 @@ services:
 
   mampf:
     image: mampf:dev-and-test
-    pull_policy: never
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql

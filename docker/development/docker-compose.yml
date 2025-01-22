@@ -71,7 +71,6 @@ services:
       context: ./../..
       dockerfile: docker/development/Dockerfile
     image: mampf:dev-and-test
-    pull_policy: never
     environment:
       RAILS_ENV: docker_development
       # If you change these variables, make sure to adapt accordingly in
