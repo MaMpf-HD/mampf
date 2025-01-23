@@ -1,0 +1,5 @@
+services:
+  mampf:
+    build:
+      context: ../..
+      dockerfile: docker/development/Dockerfile

@@ -48,15 +48,14 @@ jobs:
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
         run: >
             IN_CI_CD=true docker buildx bake
-            --set mampf.build.context=../..
-            --set mampf.build.dockerfile=docker/development/Dockerfile
-            -f ./docker-compose.yml
+            -f ./docker-compose.yml -f ./docker-compose.mampf-build-override.yml
             -f ./../../.github/workflows/docker-compose-cache.json
 
       - name: Run unit tests
         working-directory: docker/test
         run: >
-          docker compose run --entrypoint="" mampf sh -c 
+          docker compose -f docker-compose.yml -f docker-compose.mampf-build-override.yml
+          run --entrypoint="" mampf sh -c 
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
@@ -96,13 +95,15 @@ jobs:
         working-directory: docker/test
         run: >
           IN_CI_CD=true docker buildx bake
-          --set mampf.build.context=../..
-          --set mampf.build.dockerfile=docker/development/Dockerfile
-          -f ./docker-compose.yml
+          -f ./docker-compose.yml -f ./docker-compose.mampf-build-override.yml
           -f ./cypress.yml
           -f ./../../.github/workflows/docker-compose-cache.json
       
       - name: Run Cypress tests
         working-directory: docker/test
         # "cypress run" is defined in the cypress.yml entrypoint
-        run: docker compose -f ./docker-compose.yml -f ./cypress.yml run cypress
+        run: > 
+          docker compose
+          -f ./docker-compose.yml -f docker-compose.mampf-build-override.yml
+          -f ./cypress.yml
+          run cypress
