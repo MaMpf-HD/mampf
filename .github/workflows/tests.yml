@@ -46,17 +46,18 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
-        run: |
-            IN_CI_CD=true docker buildx bake \
-            --set mampf.context=../.. \
-            --set mampf.dockerfile=docker/development/Dockerfile \
-            -f ./docker-compose.yml \
+        run: >
+            IN_CI_CD=true docker buildx bake
+            --set mampf.context=../..
+            --set mampf.dockerfile=docker/development/Dockerfile
+            -f ./docker-compose.yml
             -f ./../../.github/workflows/docker-compose-cache.json
 
       - name: Run unit tests
         working-directory: docker/test
-        run: |
-          docker compose run --entrypoint="" mampf sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
+        run: >
+          docker compose run --entrypoint="" mampf sh -c 
+          "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v4
@@ -94,11 +95,11 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: >
-          IN_CI_CD=true docker buildx bake \
-          --set mampf.context=../.. \
-          --set mampf.dockerfile=docker/development/Dockerfile \
-          -f ./docker-compose.yml \
-          -f ./cypress.yml \
+          IN_CI_CD=true docker buildx bake
+          --set mampf.context=../..
+          --set mampf.dockerfile=docker/development/Dockerfile
+          -f ./docker-compose.yml
+          -f ./cypress.yml
           -f ./../../.github/workflows/docker-compose-cache.json
       
       - name: Run Cypress tests
