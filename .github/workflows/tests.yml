@@ -48,8 +48,8 @@ jobs:
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
         run: >
             IN_CI_CD=true docker buildx bake
-            --set mampf.context=../..
-            --set mampf.dockerfile=docker/development/Dockerfile
+            --set mampf.build.context=../..
+            --set mampf.build.dockerfile=docker/development/Dockerfile
             -f ./docker-compose.yml
             -f ./../../.github/workflows/docker-compose-cache.json
 
@@ -96,8 +96,8 @@ jobs:
         working-directory: docker/test
         run: >
           IN_CI_CD=true docker buildx bake
-          --set mampf.context=../..
-          --set mampf.dockerfile=docker/development/Dockerfile
+          --set mampf.build.context=../..
+          --set mampf.build.dockerfile=docker/development/Dockerfile
           -f ./docker-compose.yml
           -f ./cypress.yml
           -f ./../../.github/workflows/docker-compose-cache.json
