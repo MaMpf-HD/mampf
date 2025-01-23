@@ -7,11 +7,11 @@ services:
       dockerfile: docker/test/Dockerfile_cypress
     environment:
       CYPRESS_baseUrl: http://mampf:3000
-    entrypoint: >
+    entrypoint: > 
       /usr/src/app/entrypoint-ci.sh
-      bash -c "while ! curl -s $$CYPRESS_baseUrl > /dev/null;
-      do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl;
-      sleep 1; done;
+      bash -c "timeout 1m bash -c 'while ! curl -s $$CYPRESS_baseUrl > /dev/null;
+        do echo waiting for MaMpf to come online at $$CYPRESS_baseUrl;
+        sleep 1; done';
       RAILS_ENV=test cypress run --project /mampf-tests/ --e2e --browser chrome"
     volumes:
       - ../../.config/.cypress.js:/mampf-tests/cypress.config.js:ro
