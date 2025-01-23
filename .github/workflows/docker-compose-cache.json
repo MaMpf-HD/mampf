@@ -5,10 +5,10 @@
         "type=registry,ref=ghcr.io/mampf-hd/mampf:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache,mode=max"
       ],
       "output": [
-        "type=docker"
+        "type=registry"
       ]
     }
   }

@@ -29,9 +29,6 @@ jobs:
         with:
             submodules: recursive
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -40,12 +37,19 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build docker images
         # As the docker-compose.yml file uses contexts like "./../..", we have
         # to change the working directory here.
         working-directory: docker/test
+        # https://docs.docker.com/build/cache/backends/
+        # https://docs.docker.com/reference/cli/docker/buildx/bake/
         run: |
-            IN_CI_CD=true docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
+            IN_CI_CD=true docker buildx bake \
+            -f ./docker-compose.yml \
+            -f ./../../.github/workflows/docker-compose-cache.json
 
       - name: Run unit tests
         working-directory: docker/test
@@ -88,7 +92,9 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: >
-          IN_CI_CD=true docker buildx bake -f ./docker-compose.yml -f ./cypress.yml
+          IN_CI_CD=true docker buildx bake \
+          -f ./docker-compose.yml \
+          -f ./cypress.yml \
           -f ./../../.github/workflows/docker-compose-cache.json
       
       - name: Run Cypress tests
