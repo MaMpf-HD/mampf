@@ -3,3 +3,4 @@ services:
     build:
       context: ../..
       dockerfile: docker/development/Dockerfile
+    image: mampf-test:cache

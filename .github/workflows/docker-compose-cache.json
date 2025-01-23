@@ -2,13 +2,13 @@
   "target": {
     "mampf": {
       "cache-from": [
-        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache"
+        "type=registry,ref=ghcr.io/mampf-hd/mampf-test:cache"
       ],
       "cache-to": [
-        "type=registry,ref=ghcr.io/mampf-hd/mampf:cache,mode=max"
+        "type=registry,ref=ghcr.io/mampf-hd/mampf-test:cache,mode=max"
       ],
       "output": [
-        "type=registry"
+        "type=docker"
       ]
     }
   }
