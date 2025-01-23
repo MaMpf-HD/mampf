@@ -3,4 +3,6 @@ services:
     build:
       context: ../..
       dockerfile: docker/development/Dockerfile
+      args:
+        IN_CI_CD: "true"      
     image: mampf-test:cache

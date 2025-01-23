@@ -47,7 +47,7 @@ jobs:
         working-directory: docker/test
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
         run: >
-            IN_CI_CD=true docker buildx bake
+            docker buildx bake
             --allow=fs.read=/home/runner/work/mampf/mampf
             -f ./docker-compose.yml -f ./docker-compose.mampf-build-override.yml
             -f ./../../.github/workflows/docker-compose-cache.json
@@ -95,7 +95,7 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: >
-          IN_CI_CD=true docker buildx bake
+          docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.mampf-build-override.yml
           -f ./cypress.yml
