@@ -1,3 +1,6 @@
+# https://docs.docker.com/build/checks/#fail-build-on-check-violations
+# check=error=true
+
 # First build the PDF compressor Web assembly binary
 # this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
 FROM golang:1.20 AS build-pdfcomprezzor
