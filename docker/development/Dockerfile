@@ -61,6 +61,13 @@ WORKDIR /usr/src/app
 ENTRYPOINT ["./docker/entrypoint-dev-test.sh"]
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+ARG IN_CI_CD
+RUN if [ "$IN_CI_CD" = "true" ]; then \
+    echo "Running bundle install"; \
+    bundle install; \
+    echo "Running yarn install"; \
+    yarn install; \
+    fi
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /

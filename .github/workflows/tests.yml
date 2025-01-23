@@ -45,7 +45,7 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: |
-          docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
+            IN_CI_CD=true docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
 
       - name: Run unit tests
         working-directory: docker/test
@@ -88,7 +88,7 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: >
-          docker buildx bake -f ./docker-compose.yml -f ./cypress.yml
+          IN_CI_CD=true docker buildx bake -f ./docker-compose.yml -f ./cypress.yml
           -f ./../../.github/workflows/docker-compose-cache.json
       
       - name: Run Cypress tests
