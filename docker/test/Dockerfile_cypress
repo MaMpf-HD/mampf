@@ -1,4 +1,6 @@
 FROM cypress/included:13.11.0
 
+COPY ./docker/test/entrypoint-ci.sh /usr/src/app/entrypoint-ci.sh
+
 # Install curl
 RUN apt-get update && apt-get install curl -y
