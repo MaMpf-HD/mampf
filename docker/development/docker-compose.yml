@@ -74,7 +74,7 @@ services:
     environment:
       RAILS_ENV: docker_development
       # If you change these variables, make sure to adapt accordingly in
-      # config/db-pgadmin-config.json
+      # config/db-pgadmin.json
       DEVELOPMENT_DATABASE_ADAPTER: postgresql
       DEVELOPMENT_DATABASE_DATABASE: mampf
       DEVELOPMENT_DATABASE_INTERACTIONS: mampf_interactions

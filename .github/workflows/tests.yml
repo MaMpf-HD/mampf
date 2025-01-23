@@ -11,13 +11,14 @@ on:
 
 jobs:
   # For the setup idea using Docker Buildx, see StackOverflow answer [1].
-  # [2] and [3] might also be very useful. [4] is generally about Docker
-  # cache management within GitHub Actions.
+  # [2] might also be very useful. [3] and [4] are generally about Docker
+  # cache management (within GitHub Actions). Note that the GitHub Actions cache
+  # is different from the GitHub Container Registry (ghcr).
   #
   # [1] https://stackoverflow.com/a/75544124/
-  # [2] https://depot.dev/blog/docker-layer-caching-in-github-actions#docker-layer-caching-in-github-actions
-  # [3] https://www.deploysentinel.com/blog/docker-buildx-cache-with-github-actions
-  # [4] https://docs.docker.com/build/ci/github-actions/cache/
+  # [2] https://www.deploysentinel.com/blog/docker-buildx-cache-with-github-actions
+  # [3] https://docs.docker.com/build/ci/github-actions/cache/
+  # [4] https://docs.docker.com/build/cache/backends/
   unit-tests:
     name: Unit tests
     environment: testing
@@ -44,10 +45,9 @@ jobs:
         # As the docker-compose.yml file uses contexts like "./../..", we have
         # to change the working directory here.
         working-directory: docker/test
-        # https://docs.docker.com/build/cache/backends/
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
         run: |
-            IN_CI_CD=true docker buildx bake --push \
+            IN_CI_CD=true docker buildx bake \
             -f ./docker-compose.yml \
             -f ./../../.github/workflows/docker-compose-cache.json
 
@@ -92,7 +92,7 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: >
-          IN_CI_CD=true docker buildx bake --push \
+          IN_CI_CD=true docker buildx bake \
           -f ./docker-compose.yml \
           -f ./cypress.yml \
           -f ./../../.github/workflows/docker-compose-cache.json
