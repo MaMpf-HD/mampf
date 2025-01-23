@@ -47,7 +47,7 @@ jobs:
         # https://docs.docker.com/build/cache/backends/
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
         run: |
-            IN_CI_CD=true docker buildx bake \
+            IN_CI_CD=true docker buildx bake --push \
             -f ./docker-compose.yml \
             -f ./../../.github/workflows/docker-compose-cache.json
 
@@ -92,7 +92,7 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: >
-          IN_CI_CD=true docker buildx bake \
+          IN_CI_CD=true docker buildx bake --push \
           -f ./docker-compose.yml \
           -f ./cypress.yml \
           -f ./../../.github/workflows/docker-compose-cache.json

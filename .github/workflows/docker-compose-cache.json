@@ -6,9 +6,6 @@
       ],
       "cache-to": [
         "type=registry,ref=ghcr.io/mampf-hd/mampf:cache,mode=max"
-      ],
-      "output": [
-        "type=registry"
       ]
     }
   }
