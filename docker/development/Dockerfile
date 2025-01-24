@@ -61,9 +61,7 @@ RUN apt update && \
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 WORKDIR /usr/src/app
-ENTRYPOINT ["./docker/entrypoint-dev-test.sh"]
-COPY ./docker/test/entrypoint-ci.sh /usr/src/app/entrypoint-ci.sh
-RUN chmod +x /usr/src/app/entrypoint-ci.sh
+ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 ARG IN_CI_CD
