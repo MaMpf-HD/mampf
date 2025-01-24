@@ -16,6 +16,9 @@ services:
     environment:
       - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+    # https://docs.docker.com/guides/pre-seeding/#pre-seed-the-database-by-bind-mounting-a-sql-script
+      - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
 
   mailcatcher:
     restart: on-failure:10

@@ -3,11 +3,8 @@ help:
     @just --list --justfile {{source_file()}}
 
 # Starts the dev containers (assumes a valid database)
-up *args:
+@up *args:
     #!/usr/bin/env bash
-    just docker ensure-db-container-running-and-postgres-ready
-    just docker create-empty-mampf-db-if-not-exists
-
     cd {{justfile_directory()}}/docker/development/
     docker compose up {{args}}
 
@@ -87,6 +84,7 @@ up-reseed-from-dump preseed_file:
     fi
 
     just docker ensure-db-container-running-and-postgres-ready
+    cd {{justfile_directory()}}/docker/development/
 
     echo "Copy file over to docker container"
     docker compose cp ${file} db:/tmp/backup.pg_dump
@@ -98,8 +96,16 @@ up-reseed-from-dump preseed_file:
     docker compose exec -T db bash -c "head -n -1 /tmp/backup.pg_dump > /tmp/backup.pg_dump.tmp && mv /tmp/backup.pg_dump.tmp /tmp/backup.pg_dump"
 
     echo "Restoring database from dump"
-    # ON_ERROR_STOP=1 because of "\N" errors, see https://stackoverflow.com/questions/20427689/psql-invalid-command-n-while-restore-sql#comment38644877_20428547
-    docker compose exec -T db bash -c "psql -v ON_ERROR_STOP=1 -h localhost -p 5432 -U localroot -f /tmp/backup.pg_dump"
+    # Should you experience "\N" errors, see https://stackoverflow.com/questions/20427689/psql-invalid-command-n-while-restore-sql#comment38644877_20428547
+    # i.e. add `-v ON_ERROR_STOP=1` to the psql command below.
+    # However, this will error immediately with "mampf db already exists".
+    # This is because we mount an init .sql script into the db container
+    # (see directory /docker-entrypoint-initdb.d/) and this script is called
+    # immediately upon startup. So in case you really get the "\N" errors,
+    # add the `-v ON_ERROR_STOP=1` flag to the psql command below and additionally
+    # remove the init script from the db container, e.g. by exec'ing into it
+    # and removing the file manually.
+    docker compose exec -T db bash -c "psql -h localhost -p 5432 -U localroot -f /tmp/backup.pg_dump"
 
     echo "Restarting containers"
     just docker stop
@@ -156,11 +162,20 @@ rebuild env="dev":
     docker compose rm -s mampf
     docker compose build mampf
 
+
 # Creates an empty mampf db (assumes that the db container is running)
 [private]
 create-empty-mampf-db-if-not-exists:
     #!/usr/bin/env bash
+    # This is just left as reference for now. We don't actually use this recipe
+    # anywhere. Instead, to create an empty mampf db, we put an .sql file into
+    # the special initialization directory in the db container
+    # (`/docker-entrypoint-initdb.d/`).
+    # See https://docs.docker.com/guides/pre-seeding/#pre-seed-the-database-by-bind-mounting-a-sql-script
     set -e
+
+    just docker ensure-db-container-running-and-postgres-ready
+
     cd {{justfile_directory()}}/docker/development/
 
     # Early return if mampf db already exists

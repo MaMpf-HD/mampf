@@ -29,6 +29,8 @@ services:
       - type: volume
         source: db-data
         target: /var/lib/postgresql/data
+      # https://docs.docker.com/guides/pre-seeding/#pre-seed-the-database-by-bind-mounting-a-sql-script
+      - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
 
   pgadmin:
     image: dpage/pgadmin4
