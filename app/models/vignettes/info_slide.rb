@@ -1,5 +1,7 @@
 module Vignettes
   class InfoSlide < ApplicationRecord
+    validates :title, presence: true
+
     has_and_belongs_to_many :slides,
                             class_name: "Vignettes::Slide",
                             join_table: "vignettes_info_slides_slides",

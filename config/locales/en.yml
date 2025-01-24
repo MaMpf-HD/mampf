@@ -3902,6 +3902,10 @@ en:
           team_size: >
             You are not allowed to join as otherwise the submission team would
             have more members than allowed.
+        vignettes/question:
+          attributes:
+            question_text:
+              blank: 'cannot be empty'
         vote:
           attributes:
             clicker:

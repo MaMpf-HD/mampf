@@ -1,6 +1,7 @@
 <%= javascript_include_tag 'vignettes/question_type' %>
 <%= form_with(
       model: [@questionnaire, @slide],
+      local: true,
       url: @slide.new_record? ? vignettes_questionnaire_slides_path(@questionnaire) : vignettes_questionnaire_slide_path(@questionnaire, @slide),
       id: "slide-form"
     ) do |form| %>

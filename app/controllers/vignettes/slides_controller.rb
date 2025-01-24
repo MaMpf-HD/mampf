@@ -26,11 +26,8 @@ module Vignettes
       @slide = @questionnaire.slides.new(slide_params)
       @slide.position = @questionnaire.slides.maximum(:position).to_i + 1
       if @slide.save
-        if redirect_params[:redirect_info_slide] == "true"
-          redirect_to new_vignettes_questionnaire_slide_info_slide_path(@questionnaire, @slide)
-          return
-        end
-        redirect_to @questionnaire, notice: "Slide was successfully created"
+        redirect_to edit_vignettes_questionnaire_path(@questionnaire),
+                    notice: "Slide was successfully created"
       else
         flash[:alert] = "Failed to create slide: #{@slide.errors.full_messages.join(", ")}"
         render :new, status: :unprocessable_entity
@@ -40,7 +37,8 @@ module Vignettes
     def update
       @slide = @questionnaire.slides.find(params[:id])
       if @slide.update(slide_params)
-        redirect_to @questionnaire, notice: "Slide was successfully updated"
+        redirect_to edit_vignettes_questionnaire_path(@questionnaire),
+                    notice: "Slide was successfully updated"
       else
         render :edit, status: :unprocessable_entity
       end

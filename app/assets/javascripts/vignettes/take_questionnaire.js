@@ -34,7 +34,6 @@ document.addEventListener("turbolinks:load", () => {
 
       // Increase access count on selected info slide
       infoSlidesAccessCount[index] = (infoSlidesAccessCount[index] || 0) + 1;
-      console.log("infoSlidesAccessCount", infoSlidesAccessCount);
 
       totalSlideTime += (Date.now() - SlideStartTime);
       SlideStartTime = null;
