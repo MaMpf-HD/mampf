@@ -5,7 +5,8 @@ cd /usr/src/app/
 ./docker/init-dev-test.sh &> >(tee -a /usr/src/app/log/initialization.log)
 
 echo "💫  Starting webpack server (in background)"
-./bin/webpack-dev-server &
+# https://github.com/appleboy/ssh-action/issues/40#issuecomment-602325598
+nohup ./bin/webpack-dev-server &> /usr/src/app/log/webpack-dev-server.log 2> /usr/src/app/log/webpack-dev-server.err.log < /dev/null &
 
 rm -f tmp/pids/server.pid
 cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
