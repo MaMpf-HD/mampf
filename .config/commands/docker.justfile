@@ -115,12 +115,10 @@ up-reseed-from-dump preseed_file:
 [confirm("This will completely destroy your local database, including all tables and users. Continue? (y/n)")]
 db-tear-down:
     #!/usr/bin/env bash
-    just docker ensure-db-container-running
-
+    echo -e "\033[33mIgnore the error 'Resource is still in use' for the development_default network\033[0m"
     cd {{justfile_directory()}}/docker/development/
-    docker compose exec -T db bash -c "rm -rf /var/lib/postgresql/data/*"
-    docker-compose up -d --force-recreate --build db
-
+    docker compose down db --volumes
+    docker-compose up -d --force-recreate db
     just docker wait-for-postgres
 
 # Removes the development docker containers
