@@ -32,7 +32,7 @@ document.addEventListener("turbolinks:load", () => {
   const addOptionButton = document.getElementById("add-option");
   const optionTemplate = document.getElementById("new-option-template");
   if (addOptionButton) {
-    addOptionButton.addEventListener("click", (e) => {
+    addOptionButton.addEventListener("click", () => {
       const optionTemplateHTML = optionTemplate.innerHTML;
       const uniqueId = new Date().getTime().toString();
       const newBlockHTML = optionTemplateHTML.replace(/NEW_RECORD/g, uniqueId);

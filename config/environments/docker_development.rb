@@ -33,7 +33,6 @@ Rails.application.configure do
   config.active_storage.service = :local
 
   config.i18n.default_locale = :de
-  config.i18n.raise_on_missing_translations = false
 
   # Don't care if the mailer can't send.
   config.action_mailer.perform_deliveries = true

@@ -2,7 +2,6 @@
   "name": "mampf",
   "private": true,
   "dependencies": {
-    "@hotwired/stimulus": "^3.2.2",
     "@rails/actiontext": "^8.0.0",
     "@rails/webpacker": "5.4.4",
     "@webpack-cli/serve": "^1.7.0",

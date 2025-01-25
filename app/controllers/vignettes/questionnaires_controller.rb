@@ -9,6 +9,10 @@ module Vignettes
       @questionnaire = Questionnaire.new
     end
 
+    def show
+      redirect_to edit_vignettes_questionnaire_path
+    end
+
     def take
       user_answer = current_user.vignettes_user_answers.find_or_create_by(user: current_user,
                                                                           questionnaire: @questionnaire)
@@ -22,7 +26,7 @@ module Vignettes
 
       # Vignettes was already fully answered by user
       if user_answer.last_slide_answered?
-        redirect_to vignettes_questionnaire_path, notice: "Vignette was already answered"
+        redirect_to vignettes_questionnaire_path, notice: "Vignette was successfully answered"
         return
       end
 
@@ -37,7 +41,6 @@ module Vignettes
 
       # If there is no position given or the requested position is invalid
       if requested_position.zero? || requested_position != first_unanswered_slide.position
-        Rails.logger.debug { "Invalid position: #{requested_position}" }
         redirect_to vignettes_take_questionnaire_path(@questionnaire,
                                                       position: first_unanswered_slide.position)
         return

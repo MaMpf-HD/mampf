@@ -563,10 +563,13 @@ Rails.application.routes.draw do
 
   # vignettes routes
   namespace :vignettes do
-    resources :questionnaires, only: [:index, :new, :create, :edit, :update] do
+    get "questionnaires/:id/take",
+        to: "questionnaires#take",
+        as: "take_questionnaire"
+
+    resources :questionnaires, only: [:index, :show, :new, :create, :edit, :update] do
       member do
         get :export_answers
-        get :take, to: "questionnaires#take", as: "take_questionnaire"
         post :submit_answer
       end
       resources :info_slides, only: [:new, :create, :edit, :update]
