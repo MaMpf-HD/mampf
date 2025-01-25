@@ -2,6 +2,7 @@ module Vignettes
   class InfoSlidesController < ApplicationController
     before_action :set_questionnaire
     before_action :set_info_slide, only: [:edit, :update]
+    before_action :set_accepted_content_types, only: [:new, :edit]
 
     def new
       @info_slide = InfoSlide.new
@@ -37,8 +38,12 @@ module Vignettes
         @info_slide = @questionnaire.info_slides.find(params[:id])
       end
 
+      def set_accepted_content_types
+        @accepted_content_types = InfoSlide::ACCEPTED_CONTENT_TYPES
+      end
+
       def info_slide_params
-        params.require(:vignettes_info_slide).permit(:title, :content)
+        params.require(:vignettes_info_slide).permit(:title, :content, :icon)
       end
   end
 end

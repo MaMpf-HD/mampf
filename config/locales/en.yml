@@ -3905,7 +3905,8 @@ en:
         vignettes/question:
           attributes:
             question_text:
-              blank: 'cannot be empty'
+              format: '%{message}'
+              blank: 'Question Text cannot be empty'
         vote:
           attributes:
             clicker:

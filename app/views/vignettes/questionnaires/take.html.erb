@@ -13,7 +13,15 @@
     <h2> Slide <%= @slide.position %> </h2>
 
     <% @slide.info_slides.each_with_index do |info_slide, index| %>
-        <button class="info-slide-button btn btn-primary" data-index="<%= index %>">Show Info Slide <%= info_slide.title%></button>
+        <% if info_slide.icon.attached? %>
+        <button class="info-slide-button info-slide-icon-button" data-index="<%= index %>">
+                <%= image_tag info_slide.icon.variant(:thumb), alt: info_slide.title, class: 'info-slide-icon' %>
+            </button>
+        <% else %>
+            <button class="info-slide-button btn btn-primary" data-index="<%= index %>">
+            <%= info_slide.title %>
+            </button>
+        <% end %>
     <% end %>
 
     <%= @slide.content %>

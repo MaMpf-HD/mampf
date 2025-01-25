@@ -4121,8 +4121,9 @@ de:
                 vignettes/question:
         vignettes/question:
           attributes:
-            question:
-              blank: 'Frage kann nicht leer sein'
+            question_text:
+              blank: 'Question Text cannot be empty'
+              format: '%{message}'
         vote:
           attributes:
             clicker:
