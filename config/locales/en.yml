@@ -3903,10 +3903,10 @@ en:
             You are not allowed to join as otherwise the submission team would
             have more members than allowed.
         vignettes/question:
+          format: '%{message}'
           attributes:
             question_text:
-              format: '%{message}'
-              blank: 'Question Text cannot be empty'
+              blank: 'cannot be empty'
         vote:
           attributes:
             clicker:

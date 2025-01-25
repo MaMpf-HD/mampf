@@ -9,11 +9,6 @@ module Vignettes
       @questionnaire = Questionnaire.new
     end
 
-    def show
-      @questionnaire = Questionnaire.find(params[:id])
-      @slides = @questionnaire.slides.order(:position)
-    end
-
     def take
       user_answer = current_user.vignettes_user_answers.find_or_create_by(user: current_user,
                                                                           questionnaire: @questionnaire)

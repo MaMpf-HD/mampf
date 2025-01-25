@@ -28,7 +28,6 @@ module Mampf
     config.i18n.fallbacks = [:en]
     config.i18n.available_locales = [:de, :en]
     config.i18n.raise_on_missing_translations = false
-    config.active_model.i18n_customize_full_message = true
     config.time_zone = "Berlin"
 
     # Message serializing. Starting with Rails 7.2, the default is :json.

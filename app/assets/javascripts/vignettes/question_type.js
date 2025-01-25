@@ -59,17 +59,4 @@ document.addEventListener("turbolinks:load", () => {
       }
     });
   }
-
-  // Handle creation of info slide when slide has not yet been saved.
-  // const createInfoSlideButton = document.getElementById("create-info-slide-button");
-  // const redirectInfoSlideField = document.getElementById("redirect-info-slide-field");
-  // const form = document.getElementById("slide-form");
-
-  // if (createInfoSlideButton && redirectInfoSlideField) {
-  //   createInfoSlideButton.addEventListener("click", (e) => {
-  //     event.preventDefault();
-  //     redirectInfoSlideField.value = true;
-  //     form.submit();
-  //   });
-  // }
 });

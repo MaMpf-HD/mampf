@@ -8,6 +8,7 @@
     <%end%>
 </ul>
 <%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+<h1> Info slides </h1>
 <ul>
     <% @questionnaire.info_slides.each() do |info_slide| %>
         <li>
@@ -16,3 +17,7 @@
     <%end%>
 </ul>
 <%= button_to 'Create new info slide', new_vignettes_questionnaire_info_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+
+<br>
+
+<%= button_to "Export answers", export_answers_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
