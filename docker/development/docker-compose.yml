@@ -125,7 +125,9 @@ services:
     ports:
       - '127.0.0.1:3035:3035'  # webpacker dev server
     volumes:
-      - ../../:/usr/src/app/
+      - type: bind
+        source: ../../
+        target: /usr/src/app/
       - sprockets-cache-test:/cache
       # https://stackoverflow.com/a/62611202/
       - bundle_cache:/usr/local/bundle/
