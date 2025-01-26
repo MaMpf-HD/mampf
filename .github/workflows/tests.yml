@@ -56,7 +56,7 @@ jobs:
         working-directory: docker/test
         run: >
           docker compose -f docker-compose.yml -f docker-compose.mampf-build-override.yml
-          run mampf sh -c 
+          run --entrypoint="" mampf sh -c 
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
