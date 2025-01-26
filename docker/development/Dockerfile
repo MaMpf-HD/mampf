@@ -74,5 +74,14 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         yarn install; \
     fi
 
+# Precompile assets in CI/CD
+# (See the production Dockerfile for an explanation of the dummy env file)
+COPY ./docker/production/docker.env ./docker-dummy.env
+RUN if [ "$IN_CI_CD" = "true" ]; then \
+        echo "Compiling assets"; \
+        set -o allexport && . ./docker-dummy.env && set +o allexport && \
+        SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb bundle exec rails assets:precompile; \
+    fi
+
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
