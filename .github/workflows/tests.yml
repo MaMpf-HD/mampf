@@ -49,13 +49,16 @@ jobs:
         run: >
             docker buildx bake
             --allow=fs.read=/home/runner/work/mampf/mampf
-            -f ./docker-compose.yml -f ./docker-compose.mampf-build-override.yml
+            -f ./docker-compose.yml -f ./docker-compose.cicd.yml
             -f ./../../.github/workflows/docker-compose-cache.json
 
       - name: Run unit tests
         working-directory: docker/test
+        # For volume mounts to work correctly
+        env:
+          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: >
-          docker compose -f docker-compose.yml -f docker-compose.mampf-build-override.yml
+          docker compose -f docker-compose.yml -f docker-compose.cicd.yml
           run --entrypoint="" mampf sh -c 
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
@@ -97,7 +100,7 @@ jobs:
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
-          -f ./docker-compose.yml -f ./docker-compose.mampf-build-override.yml
+          -f ./docker-compose.yml -f ./docker-compose.cicd.yml
           -f ./cypress.yml
           -f ./../../.github/workflows/docker-compose-cache.json
       
@@ -106,6 +109,6 @@ jobs:
         # "cypress run" is defined in the cypress.yml entrypoint
         run: > 
           docker compose
-          -f ./docker-compose.yml -f docker-compose.mampf-build-override.yml
+          -f ./docker-compose.yml -f docker-compose.cicd.yml
           -f ./cypress.yml
           run cypress

@@ -6,3 +6,5 @@ services:
       args:
         IN_CI_CD: "true"      
     image: mampf-test:cache
+    volumes:
+      - ${GITHUB_WORKSPACE}:/usr/src/app/
