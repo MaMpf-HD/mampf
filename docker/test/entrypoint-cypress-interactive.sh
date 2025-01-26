@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# For usage in the CI/CD pipeline (GitHub Actions)
-
 set -e
 
 timeout 1m bash -c '
@@ -10,4 +8,5 @@ timeout 1m bash -c '
     done
 ';
 
-RAILS_ENV=test cypress run --project /mampf-tests/ --e2e --browser chrome
+# https://on.cypress.io/command-line#cypress-open
+RAILS_ENV=test cypress open --project /mampf-tests/ --e2e --browser chrome

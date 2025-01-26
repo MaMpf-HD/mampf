@@ -2,6 +2,7 @@
 # https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command#Interactive-mode
 services:
   cypress:
+    entrypoint: ["/usr/src/app/entrypoint-cypress-interactive.sh"]
     environment:
       # for X11/Wayland in WSLg
       - DISPLAY

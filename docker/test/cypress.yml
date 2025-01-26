@@ -5,6 +5,7 @@ services:
     build:
       context: ./../..
       dockerfile: docker/test/Dockerfile_cypress
+    entrypoint: ["/usr/src/app/entrypoint-cypress.sh"]
     environment:
       CYPRESS_baseUrl: http://mampf:3000
     volumes:
