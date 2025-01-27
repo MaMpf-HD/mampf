@@ -58,7 +58,7 @@ services:
     ports:
       - '127.0.0.1:3036:3036'  # webpacker dev server
     volumes:
-      # - ../../:/usr/src/app/ #  comment out temporarily
+      - ../../:/usr/src/app/
       - ../../coverage:/usr/src/app/coverage/
       - sprockets-cache-test:/cache
       # https://stackoverflow.com/a/62611202/

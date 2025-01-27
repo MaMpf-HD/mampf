@@ -45,9 +45,6 @@ jobs:
         # As the docker-compose.yml file uses contexts like "./../..", we have
         # to change the working directory here.
         working-directory: docker/test
-        env:
-          # For volume mounts to work correctly
-          GITHUB_WORKSPACE: ${{ github.workspace }}
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
         run: >
             docker buildx bake
@@ -97,9 +94,6 @@ jobs:
         # As the docker-compose.yml file uses contexts like "./../..", we have
         # to change the working directory here.
         working-directory: docker/test
-        env:
-          # For volume mounts to work correctly
-          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
