@@ -80,7 +80,7 @@ COPY ./docker/production/docker.env ./docker-dummy.env
 RUN if [ "$IN_CI_CD" = "true" ]; then \
     echo "Current directory"; \
     pwd; \
-    echo "Listing files (again)"; \
+    echo "Listing files (and again)"; \
     ls -la; \
     echo "Compiling assets"; \
     set -o allexport; . ./docker-dummy.env; set +o allexport; \
