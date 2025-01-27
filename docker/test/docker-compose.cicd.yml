@@ -7,4 +7,6 @@ services:
         IN_CI_CD: "true"      
     image: mampf-test:cache
     volumes:
-      - ${GITHUB_WORKSPACE}:/usr/src/app/
+      - type: bind
+        source: ${GITHUB_WORKSPACE}
+        target: /usr/src/app/
