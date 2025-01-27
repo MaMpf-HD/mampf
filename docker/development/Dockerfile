@@ -74,16 +74,13 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         yarn install; \
     fi
 
+    
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
+COPY . /usr/src/app/
 RUN if [ "$IN_CI_CD" = "true" ]; then \
-        echo "Copying app files"; \
-        cp ./docker/production/docker.env ./docker-dummy.env; \
-        cp -r . /usr/src/app/; \
-    fi
-RUN if [ "$IN_CI_CD" = "true" ]; then \
-        echo "Compiling assets"; \
-        set -o allexport; . ./docker-dummy.env; set +o allexport; \
+        echo "Compiling assets (test again)"; \
+        set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         DB_ADAPTER=nulldb bundle exec rails assets:precompile; \
     fi
