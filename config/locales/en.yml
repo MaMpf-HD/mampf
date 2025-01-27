@@ -2507,6 +2507,17 @@ en:
       reduced_questions: >
         The number of questions will be reduced accordingly if there are
         fewer questions availabale for your specified content than you selected.
+  
+  vignettes:
+    destroy_answer: 'Answer was destroyed'  
+    answered: 'Vignette was successfully answered'
+    no_slides: 'No slides to answer'
+    info_slide_created: 'Info slide created.'
+    info_slide_updated: 'Info slide updated.'
+    slide_updated: 'Slide was successfully updated.'
+    slide_created: 'Slide was successfully created.'
+
+
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
   click_here: 'Click here'

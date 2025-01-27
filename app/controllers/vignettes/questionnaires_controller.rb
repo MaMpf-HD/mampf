@@ -14,26 +14,27 @@ module Vignettes
     end
 
     def take
-      user_answer = current_user.vignettes_user_answers.find_or_create_by(user: current_user,
-                                                                          questionnaire: @questionnaire)
+      user_answer = current_user.vignettes_user_answers
+                                .find_or_create_by(user: current_user,
+                                                   questionnaire: @questionnaire)
 
       if params[:position].to_i == -1
         # ONLY FOR DEBUG
         user_answer.destroy
-        redirect_to vignettes_questionnaire_path, notice: "user answer was destroyed"
+        redirect_to vignettes_questionnaire_path, notice: t("vignettes.destroy_answer")
         return
       end
 
       # Vignettes was already fully answered by user
       if user_answer.last_slide_answered?
-        redirect_to vignettes_questionnaire_path, notice: "Vignette was successfully answered"
+        redirect_to vignettes_questionnaire_path, notice: t("vignettes.answered")
         return
       end
 
       first_unanswered_slide = user_answer.first_unanswered_slide
       # This case should never happen
       if first_unanswered_slide.nil?
-        redirect_to vignettes_questionnaire_path, notice: "No slides to answer"
+        redirect_to vignettes_questionnaire_path, notice: t("vignettes.no_slides")
         return
       end
 
@@ -124,9 +125,12 @@ module Vignettes
       end
 
       def answer_params
-        params.require(:vignettes_answer).permit(:slide_id, :text, :likert_scale_value,
-                                                 option_ids: [],
-                                                 slide_statistic_attributes: [:user_id, :time_on_slide, :time_on_info_slides, :info_slides_access_count])
+        params.require(:vignettes_answer)
+              .permit(:slide_id, :text, :likert_scale_value,
+                      option_ids: [],
+                      slide_statistic_attributes:
+                      [:user_id, :time_on_slide,
+                       :time_on_info_slides, :info_slides_access_count])
       end
   end
 end

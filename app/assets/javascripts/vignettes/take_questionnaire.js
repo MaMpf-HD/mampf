@@ -22,7 +22,7 @@ document.addEventListener("turbolinks:load", () => {
   let infoSlidesAccessCount = {};
 
   infoSlideButtons.forEach((button) => {
-    button.addEventListener("click", (e) => {
+    button.addEventListener("click", () => {
       const index = button.getAttribute("data-index");
       activeInfoSlideIndex = index;
 
@@ -43,7 +43,7 @@ document.addEventListener("turbolinks:load", () => {
   });
 
   closeInfoSlideButtons.forEach((button) => {
-    button.addEventListener("click", (e) => {
+    button.addEventListener("click", () => {
       activeInfoSlideIndex = null;
       const index = button.getAttribute("data-index");
       document.getElementById(`info-slide-container-${index}`).style.display = "none";
@@ -57,11 +57,11 @@ document.addEventListener("turbolinks:load", () => {
     });
   });
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", () => {
     event.preventDefault();
   });
 
-  $(document).on("submit", "#answer_form", (e) => {
+  $(document).on("submit", "#answer_form", () => {
     if (SlideStartTime) {
       totalSlideTime += (Date.now() - SlideStartTime);
     }

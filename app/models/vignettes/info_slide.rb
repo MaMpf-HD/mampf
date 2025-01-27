@@ -17,6 +17,7 @@ module Vignettes
       attachable.variant(:thumb, resize_to_limit: [200, 200])
     end
 
-    belongs_to :questionnaire, foreign_key: "vignettes_questionnaire_id", inverse_of: :info_slides
+    belongs_to :questionnaire, foreign_key: "vignettes_questionnaire_id",
+                               inverse_of: :info_slides
   end
 end

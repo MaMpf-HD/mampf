@@ -1,9 +1,10 @@
 module Vignettes
   class SlideStatistic < ApplicationRecord
-    validates :user_id, presence: true
+    validates :user_id
 
     belongs_to :user
-    belongs_to :answer, class_name: "Vignettes::Answer", foreign_key: "vignettes_answer_id",
+    belongs_to :answer, class_name: "Vignettes::Answer",
+                        foreign_key: "vignettes_answer_id",
                         inverse_of: :slide_statistic
   end
 end

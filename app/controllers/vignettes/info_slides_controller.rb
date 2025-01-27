@@ -11,7 +11,8 @@ module Vignettes
     def create
       @info_slide = @questionnaire.info_slides.new(info_slide_params)
       if @info_slide.save
-        redirect_to edit_vignettes_questionnaire_path(@questionnaire), notice: "Info slide created."
+        redirect_to edit_vignettes_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.info_slide_created")
       else
         render :new
       end
@@ -22,7 +23,8 @@ module Vignettes
 
     def update
       if @info_slide.update(info_slide_params)
-        redirect_to edit_vignettes_questionnaire_path(@questionnaire), notice: "Info slide updated."
+        redirect_to edit_vignettes_questionnaire_path(@questionnaire),
+                    t("vignettes.info_slide_updated")
       else
         render :edit
       end
