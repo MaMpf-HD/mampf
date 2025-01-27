@@ -1,6 +1,6 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe "Vignettes::Slides", type: :request do
+RSpec.describe("Vignettes::Slides", type: :request) do
   describe "GET /index" do
     it "returns http success" do
       get "/vignettes/slides/index"
@@ -49,5 +49,4 @@ RSpec.describe "Vignettes::Slides", type: :request do
       expect(response).to have_http_status(:success)
     end
   end
-
 end
