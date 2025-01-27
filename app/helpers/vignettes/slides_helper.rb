@@ -1,2 +1,4 @@
-module Vignettes::SlidesHelper
+module Vignettes
+  module SlidesHelper
+  end
 end

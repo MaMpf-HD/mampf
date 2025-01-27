@@ -1,2 +1,4 @@
-module Vignettes::QuestionnairesHelper
+module Vignettes
+  module QuestionnairesHelper
+  end
 end
