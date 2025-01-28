@@ -80,7 +80,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 # (NODE_ENVtest-ci to trigger respective webpacker.yml section)
 COPY . /usr/src/app/
 RUN if [ "$IN_CI_CD" = "true" ]; then \
-        echo "Compiling all assets yeah"; \
+        echo "Compiling all assets yeah again"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         DB_ADAPTER=nulldb NODE_ENV=test-ci bundle exec rails assets:precompile; \
