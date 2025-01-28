@@ -46,8 +46,6 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         # https://docs.docker.com/reference/cli/docker/buildx/bake/
-        env:
-          CI: true
         run: >
             docker buildx bake
             --allow=fs.read=/home/runner/work/mampf/mampf
@@ -56,8 +54,6 @@ jobs:
 
       - name: Run unit tests
         working-directory: docker/test
-        env:
-          CI: true
         run: >
           docker compose -f docker-compose.yml -f docker-compose.cicd.yml
           run --entrypoint="" mampf sh -c 
@@ -98,8 +94,6 @@ jobs:
         # As the docker-compose.yml file uses contexts like "./../..", we have
         # to change the working directory here.
         working-directory: docker/test
-        env:
-          CI: true
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
@@ -110,8 +104,6 @@ jobs:
       - name: Run Cypress tests
         working-directory: docker/test
         # "cypress run" is defined in the cypress.yml entrypoint
-        env:
-          CI: true
         run: > 
           docker compose
           -f ./docker-compose.yml -f docker-compose.cicd.yml
