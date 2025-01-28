@@ -79,7 +79,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 # (See the production Dockerfile for an explanation of the dummy env file)
 COPY . /usr/src/app/
 RUN if [ "$IN_CI_CD" = "true" ]; then \
-        echo "Compiling assets (test again)"; \
+        echo "Compiling all assets"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         DB_ADAPTER=nulldb bundle exec rails assets:precompile; \

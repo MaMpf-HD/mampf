@@ -99,7 +99,8 @@ docker_development:
 
 test:
   <<: *default
-  compile: true
+  # temporarily for CI/CD
+  compile: false
 
   # Reference: https://webpack.js.org/configuration/dev-server/
   dev_server:
