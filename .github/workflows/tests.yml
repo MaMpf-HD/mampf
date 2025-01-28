@@ -57,7 +57,7 @@ jobs:
         run: >
           docker compose -f docker-compose.yml -f docker-compose.cicd.yml
           run --entrypoint="" mampf sh -c 
-          "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
+          "RAILS_ENV=test NODE_ENV=test-ci bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v4
@@ -108,4 +108,4 @@ jobs:
           docker compose
           -f ./docker-compose.yml -f docker-compose.cicd.yml
           -f ./cypress.yml
-          run cypress
+          NODE_ENV=test-ci run cypress
