@@ -99,7 +99,9 @@ docker_development:
 
 test-ci:
   <<<: *default
-  compile: false  # precompile assets instead
+  # we use precompiled assets, however we still need to tell webpacker to
+  # compile the manifest file, see https://github.com/rails/webpacker/issues/2989
+  compile: true
 
   # Extract and emit a css file
   extract_css: true
