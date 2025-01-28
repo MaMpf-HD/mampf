@@ -4,7 +4,8 @@ class CreateVignettesAnswers < ActiveRecord::Migration[7.1]
       t.string :type
       t.references :vignettes_question, null: false, foreign_key: true
       t.references :vignettes_slide, null: false, foreign_key: true
-
+      t.text :text
+      t.integer :likert_scale_value
       t.timestamps
     end
   end

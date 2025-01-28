@@ -1,7 +1,9 @@
 class CreateVignettesInfoSlides < ActiveRecord::Migration[7.1]
   def change
     create_table :vignettes_info_slides do |t|
-      t.references :vignettes_slide, null: false, foreign_key: true
+      t.string :title
+      t.references :vignettes_questionnaire, index: true
+      t.string :icon
 
       t.timestamps
     end

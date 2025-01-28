@@ -1,6 +1,6 @@
 module Vignettes
   class SlideStatistic < ApplicationRecord
-    validates :user_id
+    validate :user_id
 
     belongs_to :user
     belongs_to :answer, class_name: "Vignettes::Answer",

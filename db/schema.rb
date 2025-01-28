@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_25_095933) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -101,12 +101,6 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_25_095933) do
     t.date "deletion_date", default: "2200-01-01", null: false
     t.index ["lecture_id"], name: "index_assignments_on_lecture_id"
     t.index ["medium_id"], name: "index_assignments_on_medium_id"
-  end
-
-  create_table "blogs", force: :cascade do |t|
-    t.string "title"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
   end
 
   create_table "chapters", force: :cascade do |t|
@@ -953,11 +947,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_25_095933) do
     t.string "type"
     t.bigint "vignettes_question_id", null: false
     t.bigint "vignettes_slide_id", null: false
+    t.text "text"
+    t.integer "likert_scale_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "vignettes_user_answer_id", null: false
-    t.text "text"
-    t.integer "likert_scale_value"
     t.index ["vignettes_question_id"], name: "index_vignettes_answers_on_vignettes_question_id"
     t.index ["vignettes_slide_id"], name: "index_vignettes_answers_on_vignettes_slide_id"
     t.index ["vignettes_user_answer_id"], name: "index_vignettes_answers_on_vignettes_user_answer_id"
@@ -966,27 +960,24 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_25_095933) do
   create_table "vignettes_answers_options", id: false, force: :cascade do |t|
     t.bigint "vignettes_answer_id", null: false
     t.bigint "vignettes_option_id", null: false
-    t.index ["vignettes_answer_id", "vignettes_option_id"], name: "idx_on_vignettes_answer_id_vignettes_option_id_95dc8573a3"
-    t.index ["vignettes_option_id", "vignettes_answer_id"], name: "idx_on_vignettes_option_id_vignettes_answer_id_239ee34098"
+    t.index ["vignettes_answer_id", "vignettes_option_id"], name: "index_answers_options_on_answer_id_and_option_id"
+    t.index ["vignettes_option_id", "vignettes_answer_id"], name: "index_answers_options_on_option_id_and_answer_id"
   end
 
   create_table "vignettes_info_slides", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "title"
     t.bigint "vignettes_questionnaire_id"
     t.string "icon"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["vignettes_questionnaire_id"], name: "index_vignettes_info_slides_on_vignettes_questionnaire_id"
   end
 
   create_table "vignettes_info_slides_slides", id: false, force: :cascade do |t|
     t.bigint "vignettes_info_slide_id", null: false
     t.bigint "vignettes_slide_id", null: false
-  end
-
-  create_table "vignettes_multiple_choice_answers_options", id: false, force: :cascade do |t|
-    t.bigint "vignettes_multiple_choice_answer_id", null: false
-    t.bigint "vignettes_option_id", null: false
+    t.index ["vignettes_info_slide_id", "vignettes_slide_id"], name: "idx_on_vignettes_info_slide_id_vignettes_slide_id_2bdc65ab76"
+    t.index ["vignettes_slide_id", "vignettes_info_slide_id"], name: "idx_on_vignettes_slide_id_vignettes_info_slide_id_c74f04e951"
   end
 
   create_table "vignettes_options", force: :cascade do |t|
@@ -1014,21 +1005,21 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_25_095933) do
 
   create_table "vignettes_slide_statistics", force: :cascade do |t|
     t.bigint "user_id", null: false
+    t.bigint "vignettes_answer_id"
     t.integer "time_on_slide"
     t.text "time_on_info_slides"
+    t.text "info_slides_access_count"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "vignettes_answer_id"
-    t.text "info_slides_access_count"
     t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
     t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
   end
 
   create_table "vignettes_slides", force: :cascade do |t|
     t.bigint "vignettes_questionnaire_id", null: false
+    t.integer "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "position"
     t.index ["position"], name: "index_vignettes_slides_on_position"
     t.index ["vignettes_questionnaire_id"], name: "index_vignettes_slides_on_vignettes_questionnaire_id"
   end
