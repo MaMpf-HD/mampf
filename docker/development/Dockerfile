@@ -77,13 +77,13 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
     
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
-# (for "test-ci", see the webpacker.yml)
+# (NODE_ENVtest-ci to trigger respective webpacker.yml section)
 COPY . /usr/src/app/
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Compiling all assets yeah"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
-        DB_ADAPTER=nulldb RAILS_ENV=test-ci bundle exec rails assets:precompile; \
+        DB_ADAPTER=nulldb NODE_ENV=test-ci bundle exec rails assets:precompile; \
     fi
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
