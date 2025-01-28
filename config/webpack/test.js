@@ -1,4 +1,5 @@
-process.env.NODE_ENV = process.env.NODE_ENV || "docker_development";
+// use the dev server setup for local testing
+process.env.NODE_ENV = "docker_development";
 
 const environment = require("./environment");
 const config = environment.toWebpackConfig();
