@@ -56,8 +56,8 @@ jobs:
         working-directory: docker/test
         run: >
           docker compose -f docker-compose.yml -f docker-compose.cicd.yml
-          run --entrypoint="" -e RAILS_ENV=test -e NODE_ENV=test-ci mampf sh -c 
-          "bundle exec rspec --format RSpec::Github::Formatter"
+          run --entrypoint="" mampf sh -c
+          "RAILS_ENV=test NODE_ENV=test-ci bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v4
@@ -105,7 +105,7 @@ jobs:
         working-directory: docker/test
         # "cypress run" is defined in the cypress.yml entrypoint
         run: > 
-          docker compose
+          NODE_ENV=test-ci docker compose
           -f ./docker-compose.yml -f docker-compose.cicd.yml
           -f ./cypress.yml
-          run cypress -e NODE_ENV=test-ci
+          run cypress
