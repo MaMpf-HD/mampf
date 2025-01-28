@@ -4,6 +4,10 @@ const environment = require("./environment");
 
 if (process.env.CI) {
   environment.config.set("compile", false);
+  console.log("In CI/CD environment, we precompile assets in the build step");
+}
+else {
+  console.log("In test environment, we don't precompile assets");
 }
 
 const config = environment.toWebpackConfig();
