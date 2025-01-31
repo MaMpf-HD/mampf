@@ -5,7 +5,7 @@ class LectureAbility
     clear_aliased_actions
 
     can :new, Lecture do
-      user.course_editor?
+      user.course_editor? || user.admin?
     end
 
     can :create, Lecture do |lecture|
