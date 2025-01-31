@@ -1,4 +1,4 @@
-import FactoryBot from "../support/factorybot";
+import FactoryBot from "../../support/factorybot";
 
 describe("Lecture edit page", () => {
   it("shows content tab button", function () {
