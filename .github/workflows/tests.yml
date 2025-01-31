@@ -46,11 +46,14 @@ jobs:
         working-directory: docker/test
         # We don't use the docker/build-push-action here since it doesn't
         # support passing custom docker compose files (just dockerfiles).
+        #
+        # See this link for a reference of target options:
+        # https://docs.docker.com/build/bake/reference/#target
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.cicd.yml
-          --push
+          --set mampf.output=type=registry
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
           --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
