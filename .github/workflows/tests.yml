@@ -45,7 +45,9 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: |
-          docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
+          docker buildx bake
+          --allow=fs.read=/home/runner/work/mampf/mampf
+          --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
 
       - name: Run unit tests
         working-directory: docker/test
@@ -88,7 +90,9 @@ jobs:
         # to change the working directory here.
         working-directory: docker/test
         run: >
-          docker buildx bake -f ./docker-compose.yml -f ./cypress.yml
+          docker buildx bake
+          --allow=fs.read=/home/runner/work/mampf/mampf
+          -f ./docker-compose.yml -f ./cypress.yml
           -f ./../../.github/workflows/docker-compose-cache.json
       
       - name: Run Cypress tests
