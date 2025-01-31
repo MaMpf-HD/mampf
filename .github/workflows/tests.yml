@@ -29,6 +29,7 @@ jobs:
         with:
             submodules: recursive
 
+      # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -59,7 +60,6 @@ jobs:
         with:
             submodules: recursive
 
-      # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -67,10 +67,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Docker Info
+        run: docker info
+
       - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
         run: >
-          docker image pull ghcr.io/mampf-hd/mampf-test:cache
+          docker pull --debug ghcr.io/mampf-hd/mampf-test:cache
 
       - name: Run unit tests
         working-directory: docker/test
@@ -100,7 +103,6 @@ jobs:
         with:
             submodules: recursive
 
-      # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -111,7 +113,7 @@ jobs:
       - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
         run: >
-          docker image pull ghcr.io/mampf-hd/mampf-test:cache
+          docker pull --debug ghcr.io/mampf-hd/mampf-test:cache
 
       - name: Run Cypress tests
         working-directory: docker/test
