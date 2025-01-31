@@ -54,7 +54,7 @@ jobs:
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.cicd.yml
           --set mampf.output=type=registry
-          --set mampf.tag=ghcr.io/mampf-hd/mampftest:buildcache
+          --set mampf.tags=ghcr.io/mampf-hd/mampftest:buildcache
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
           --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
