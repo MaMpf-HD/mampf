@@ -21,7 +21,7 @@ function typeCyInInput(selector, waitForUserFill = true) {
 
   cy.getBySelector(selector).find("input:not([type='hidden'])")
     .should("have.length", 1).first().as("input");
-  cy.get("@input").clear(); // without clearing first, tests are flaky (!)
+  cy.getBySelector(selector).find("a.remove").click();
   cy.get("@input").click();
 
   // eslint-disable-next-line cypress/unsafe-to-chain-command
