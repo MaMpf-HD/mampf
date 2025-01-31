@@ -44,7 +44,7 @@ jobs:
         # As the docker-compose.yml file uses contexts like "./../..", we have
         # to change the working directory here.
         working-directory: docker/test
-        run: |
+        run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
