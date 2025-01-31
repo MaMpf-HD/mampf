@@ -4,6 +4,9 @@ module.exports = {
     viewportHeight: 1000,
     viewportWidth: 1400,
 
+    // https://docs.cypress.io/app/references/experiments#End-to-End-Testing
+    experimentalRunAllSpecs: true,
+
     // https://docs.cypress.io/api/plugins/browser-launch-api#Changing-browser-preferences
     setupNodeEvents(on, _config) {
       on("before:browser:launch", (browser, launchOptions) => {

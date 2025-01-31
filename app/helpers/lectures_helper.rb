@@ -149,7 +149,6 @@ module LecturesHelper
 
       # TODO: Rubocop bug when trying to break the last object on a new line
       select = form.select(:teacher_id, preselection, {}, { class: "selectize",
-                                                            multiple: true,
                                                             data: {
                                                               ajax: true,
                                                               filled: false,
