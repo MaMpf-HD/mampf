@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class AddOnMainPageToAnnouncement < ActiveRecord::Migration[6.0]
   def up
     add_column :announcements, :on_main_page, :boolean, default: false
@@ -8,4 +7,3 @@ class AddOnMainPageToAnnouncement < ActiveRecord::Migration[6.0]
     remove_column :announcements, :on_main_page, :boolean
   end
 end
-# rubocop:enable Rails/

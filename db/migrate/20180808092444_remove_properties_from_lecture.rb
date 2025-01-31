@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class RemovePropertiesFromLecture < ActiveRecord::Migration[5.2]
   def change
     remove_column :lectures, :kaviar, :boolean
@@ -9,4 +8,3 @@ class RemovePropertiesFromLecture < ActiveRecord::Migration[5.2]
     remove_column :lectures, :kiwi, :boolean
   end
 end
-# rubocop:enable Rails/

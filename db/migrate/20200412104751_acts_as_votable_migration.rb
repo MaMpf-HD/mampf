@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class ActsAsVotableMigration < ActiveRecord::Migration[6.0]
   def self.up
     create_table :votes do |t|
@@ -20,4 +19,3 @@ class ActsAsVotableMigration < ActiveRecord::Migration[6.0]
     drop_table :votes
   end
 end
-# rubocop:enable Rails/

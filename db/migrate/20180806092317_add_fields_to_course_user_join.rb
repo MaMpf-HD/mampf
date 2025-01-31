@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class AddFieldsToCourseUserJoin < ActiveRecord::Migration[5.2]
   def change
     add_column :course_user_joins, :sesam, :boolean
@@ -8,4 +7,3 @@ class AddFieldsToCourseUserJoin < ActiveRecord::Migration[5.2]
     add_column :course_user_joins, :reste, :boolean
   end
 end
-# rubocop:enable Rails/

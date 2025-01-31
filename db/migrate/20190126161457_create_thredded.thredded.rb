@@ -1,5 +1,3 @@
-# rubocop:disable Rails/
-
 # This migration comes from thredded (originally 20160329231848)
 
 require "thredded/base_migration"
@@ -282,5 +280,3 @@ class CreateThredded < Thredded::BaseMigration
                     :thredded_posts, column: :post_id, on_delete: :cascade
   end
 end
-
-# rubocop:enable Rails/

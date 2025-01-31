@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class AddPublicToWatchlists < ActiveRecord::Migration[6.1]
   def up
     add_column :watchlists, :public, :boolean, default: false
@@ -8,4 +7,3 @@ class AddPublicToWatchlists < ActiveRecord::Migration[6.1]
     remove_column :watchlists, :public, :boolean
   end
 end
-# rubocop:enable Rails/
