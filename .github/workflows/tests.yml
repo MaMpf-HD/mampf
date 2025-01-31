@@ -19,51 +19,51 @@ jobs:
   # [2] https://www.deploysentinel.com/blog/docker-buildx-cache-with-github-actions
   # [3] https://docs.docker.com/build/ci/github-actions/cache/
   # [4] https://docs.docker.com/build/cache/backends/
-  build-mampf:
-    name: Build MaMpf
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-            submodules: recursive
+  # build-mampf:
+  #   name: Build MaMpf
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #       with:
+  #           submodules: recursive
 
-      # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+  #     # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
+  #     - name: Login to GitHub Container Registry
+  #       uses: docker/login-action@v3
+  #       with:
+  #         registry: ghcr.io
+  #         username: ${{ github.actor }}
+  #         password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
+  #     - name: Setup Docker Buildx
+  #       uses: docker/setup-buildx-action@v3
 
-      - name: Build and push docker image to GHCR
-        working-directory: docker/test
-        # We don't use the docker/build-push-action here since it doesn't
-        # support passing custom docker compose files (just dockerfiles).
-        #
-        # See this link for a reference of target options:
-        # https://docs.docker.com/build/bake/reference/#target
-        run: >
-          docker buildx bake
-          --allow=fs.read=/home/runner/work/mampf/mampf
-          -f ./docker-compose.yml -f ./docker-compose.cicd.yml
-          --set mampf.output=type=registry
-          --set mampf.tags=ghcr.io/mampf-hd/mampftest:buildcache
-          --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
-          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
+  #     - name: Build and push docker image to GHCR
+  #       working-directory: docker/test
+  #       # We don't use the docker/build-push-action here since it doesn't
+  #       # support passing custom docker compose files (just dockerfiles).
+  #       #
+  #       # See this link for a reference of target options:
+  #       # https://docs.docker.com/build/bake/reference/#target
+  #       run: >
+  #         docker buildx bake
+  #         --allow=fs.read=/home/runner/work/mampf/mampf
+  #         -f ./docker-compose.yml -f ./docker-compose.cicd.yml
+  #         --set mampf.output=type=registry
+  #         --set mampf.tags=ghcr.io/mampf-hd/mampftest:buildcache
+  #         --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
+  #         --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
   unit-tests:
     name: Unit tests
     environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
-    needs: build-mampf
+    # needs: build-mampf
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -84,7 +84,6 @@ jobs:
         working-directory: docker/test
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:buildcache
-          -f ./docker-compose.yml -f ./docker-compose.cicd.yml
 
       - name: Run unit tests
         working-directory: docker/test
@@ -107,7 +106,7 @@ jobs:
     environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
-    needs: build-mampf
+    # needs: build-mampf
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -125,7 +124,6 @@ jobs:
         working-directory: docker/test
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:buildcache
-          -f ./docker-compose.yml -f ./docker-compose.cicd.yml
 
       - name: Run Cypress tests
         working-directory: docker/test
