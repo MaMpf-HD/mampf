@@ -10,7 +10,7 @@ describe("New lecture (via admin index page)", () => {
     });
   });
 
-  it.only("Creates new lecture", function () {
+  it("Creates new lecture", function () {
     cy.visit("/administration");
     cy.getBySelector("new-lecture-button-admin-index").click();
 
