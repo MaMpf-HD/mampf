@@ -51,8 +51,8 @@ jobs:
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.cicd.yml
           --push
-          --cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
-          --cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
+          --set cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
+          --set cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
   unit-tests:
     name: Unit tests
