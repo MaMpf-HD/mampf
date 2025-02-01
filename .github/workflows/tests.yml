@@ -62,7 +62,7 @@ jobs:
           --set mampf.output=type=registry
           --set mampf.tags=ghcr.io/mampf-hd/mampftest:cache
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:cache
-          --set mampf.cache-to=type=inline,ref=ghcr.io/mampf-hd/mampftest:cache,mode=max
+          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:cache,mode=max
 
   unit-tests:
     name: Unit tests
