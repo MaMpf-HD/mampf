@@ -1,5 +1,4 @@
 # Note: You must restart bin/webpack-dev-server for changes to take effect
-# The section here is determined by the RAILS_ENV variable, NOT NODE_ENV.
 
 default: &default
   source_path: app/javascript
