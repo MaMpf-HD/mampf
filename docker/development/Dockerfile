@@ -69,11 +69,11 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running bundle install"; \
         bundle install; \
     fi
+# https://stackoverflow.com/a/66158709/9655481
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
-        yarn install; \
+        yarn install --production --frozen-lockfile; \
     fi
-
     
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
