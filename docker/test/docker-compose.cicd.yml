@@ -1,6 +1,6 @@
 services:
   mampf:
-    image: ghcr.io/mampf-hd/mampftest:buildcache
+    image: ghcr.io/mampf-hd/mampftest:cache
     environment:
       RAILS_ENV: test
       IN_CI_CD_WEBPACKER: "true"

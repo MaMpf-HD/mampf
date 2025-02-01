@@ -5,4 +5,4 @@ services:
       dockerfile: docker/development/Dockerfile
       args:
         IN_CI_CD: "true"      
-    image: mampftest:buildcache
+    image: mampftest:cache
