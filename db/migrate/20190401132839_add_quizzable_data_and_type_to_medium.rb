@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class AddQuizzableDataAndTypeToMedium < ActiveRecord::Migration[5.2]
   def change
     add_column :media, :hint, :text
@@ -8,4 +7,3 @@ class AddQuizzableDataAndTypeToMedium < ActiveRecord::Migration[5.2]
     add_column :media, :type, :text
   end
 end
-# rubocop:enable Rails/

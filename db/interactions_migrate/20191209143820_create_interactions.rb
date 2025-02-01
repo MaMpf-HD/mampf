@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class CreateInteractions < ActiveRecord::Migration[6.0]
   def change
     create_table :interactions do |t|
@@ -6,4 +5,3 @@ class CreateInteractions < ActiveRecord::Migration[6.0]
     end
   end
 end
-# rubocop:enable Rails/
