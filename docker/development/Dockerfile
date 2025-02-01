@@ -77,13 +77,12 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
     
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
-# (NODE_ENVtest-ci to trigger respective webpacker.yml section)
 COPY . /usr/src/app/
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
-        DB_ADAPTER=nulldb NODE_ENV=test IN_CI_CD_WEBPACKER=true \
+        DB_ADAPTER=nulldb RAILS_ENV=test IN_CI_CD_WEBPACKER=true \
         bundle exec rails assets:precompile; \
     fi
 
