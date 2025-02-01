@@ -2,6 +2,12 @@
 help:
     @just --list --justfile {{source_file()}}
 
+# Runs the RSpec tests (you should rather use the VSCode test runner)
+rspec:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/test
+    docker compose run --entrypoint="" mampf sh -c "bundle install && RAILS_ENV=test bundle exec rspec --format documentation"
+
 # Starts the interactive Cypress test runner UI
 cypress:
     #!/usr/bin/env bash
