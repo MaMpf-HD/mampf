@@ -21,7 +21,7 @@ jobs:
   # [4] https://docs.docker.com/build/cache/backends/
   build-mampf:
     name: Build MaMpf
-    environment: testing
+    environment: testing-review
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -70,6 +70,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
+    environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
     needs: build-mampf
@@ -109,6 +110,7 @@ jobs:
   # Cypress end-to-end (e2e) tests
   e2e-tests:
     name: e2e (Cypress)
+    environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
     needs: build-mampf
