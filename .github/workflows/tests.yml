@@ -133,4 +133,4 @@ jobs:
           docker compose
           -f ./docker-compose.yml -f docker-compose.cicd.yml
           -f ./cypress.yml
-          run cypress -e RAILS_ENV=test
+          run cypress
