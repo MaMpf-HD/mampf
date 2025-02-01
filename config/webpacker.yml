@@ -102,6 +102,9 @@ test:
   compile: |-
     <%= ENV['IN_CI_CD_WEBPACKER'] == 'true' ? 'false' : 'true' %>
 
+  extract_css: |-
+    <%= ENV['IN_CI_CD_WEBPACKER'] == 'true' ? 'true' : 'false' %>
+
   # Compile tests to a separate directory
   public_output_path: packs-test
 
