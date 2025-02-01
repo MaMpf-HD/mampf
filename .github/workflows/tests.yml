@@ -83,7 +83,7 @@ jobs:
       - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
         run: >
-          docker pull ghcr.io/mampf-hd/mampftest:buildcache
+          docker pull ghcr.io/mampf-hd/mampftest:buildcache mampf
 
       - name: Run unit tests
         working-directory: docker/test
@@ -123,7 +123,7 @@ jobs:
       - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
         run: >
-          docker pull ghcr.io/mampf-hd/mampftest:buildcache
+          docker pull ghcr.io/mampf-hd/mampftest:buildcache mampf
 
       - name: Run Cypress tests
         working-directory: docker/test
