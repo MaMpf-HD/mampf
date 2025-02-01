@@ -63,10 +63,9 @@ jobs:
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
-          --set mampf.output=type=registry
-          --set mampf.tags=ghcr.io/mampf-hd/mampftest:cache
-          --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:cache
-          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:cache,mode=max,image-manifest=true
+          --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
+          --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
+          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
   unit-tests:
     name: Unit tests
@@ -89,7 +88,7 @@ jobs:
       - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
         run: >
-          docker pull ghcr.io/mampf-hd/mampftest:cache
+          docker pull ghcr.io/mampf-hd/mampftest:image
 
       - name: Run unit tests
         working-directory: docker/test
@@ -128,7 +127,7 @@ jobs:
       - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
         run: >
-          docker pull ghcr.io/mampf-hd/mampftest:cache
+          docker pull ghcr.io/mampf-hd/mampftest:image
 
       - name: Run Cypress tests
         working-directory: docker/test
