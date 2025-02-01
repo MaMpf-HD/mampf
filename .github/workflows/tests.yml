@@ -63,6 +63,7 @@ jobs:
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
+          --set mampf.tags=ghcr.io/mampf-hd/mampftest:image
           --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
           --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
