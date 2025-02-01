@@ -55,6 +55,10 @@ jobs:
         # is embedded in the image. See the Cache storage backends:
         # https://docs.docker.com/build/cache/backends/
         # https://docs.docker.com/reference/cli/docker/buildx/build/#cache-to
+        #
+        # Push image and cache separately to GHCR, since otherwise inline mode
+        # does not support mode=max caching.
+        # https://github.com/moby/buildkit?tab=readme-ov-file#registry-push-image-and-cache-separately
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
@@ -62,7 +66,7 @@ jobs:
           --set mampf.output=type=registry
           --set mampf.tags=ghcr.io/mampf-hd/mampftest:cache
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:cache
-          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:cache,mode=max
+          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:cache,mode=max,image-manifest=true
 
   unit-tests:
     name: Unit tests
