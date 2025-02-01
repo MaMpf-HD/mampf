@@ -4,3 +4,4 @@ services:
     environment:
       RAILS_ENV: test
       NODE_ENV: test-ci  # for webpacker
+      IN_CI_CD_WEBPACKER: "true"

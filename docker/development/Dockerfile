@@ -83,7 +83,8 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
-        DB_ADAPTER=nulldb NODE_ENV=test-ci bundle exec rails assets:precompile; \
+        DB_ADAPTER=nulldb NODE_ENV=test IN_CI_CD_WEBPACKER=true \
+        bundle exec rails assets:precompile; \
     fi
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
