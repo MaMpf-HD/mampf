@@ -21,6 +21,7 @@ jobs:
   # [4] https://docs.docker.com/build/cache/backends/
   build-mampf:
     name: Build MaMpf
+    environment: testing
     runs-on: ubuntu-latest
     permissions:
       contents: read
