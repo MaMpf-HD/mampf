@@ -57,7 +57,7 @@ jobs:
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
-          -f ./docker-compose.yml -f ./docker-compose.cicd.yml
+          -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
           --set mampf.output=type=registry
           --set mampf.tags=ghcr.io/mampf-hd/mampftest:buildcache
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
@@ -81,9 +81,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Docker Info
-        run: docker info
 
       - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
