@@ -14,15 +14,15 @@
     "sass": "^1.63.4",
     "sass-loader": "^10.1.1",
     "webpack": "^4.46.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.15.1"
+    "webpack-cli": "^4.10.0"
   },
   "devDependencies": {
     "@stylistic/eslint-plugin": "^1.8.0",
     "eslint": "^9.1.1",
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-erb": "^2.0.0",
-    "globals": "^15.1.0"
+    "globals": "^15.1.0",
+    "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
     "just-install": "curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --to ~/bin && echo 'export PATH=\"$PATH:$HOME/bin\" # for \"just\" binary' >> ~/.bashrc && echo '(!) Make sure to restart your current shell'",
