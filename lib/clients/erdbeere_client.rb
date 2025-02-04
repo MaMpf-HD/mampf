@@ -1,5 +1,5 @@
 module Clients
-  class Clients::ErdbeereClient
+  class ErdbeereClient
     def self.get(path, params: nil, headers: {}, &block)
       headers = headers.dup
       headers["Host"] = "localhost" if Rails.env.docker_development?
