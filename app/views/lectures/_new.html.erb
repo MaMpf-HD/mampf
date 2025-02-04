@@ -16,7 +16,7 @@
     <% term_independent = (from != 'course' && first_course_independent?) ||
                             (from == 'course' && lecture.course.term_independent) %>
     <div class="row">
-      <div class="col-8">
+      <div class="col-8" data-cy="new-lecture-course-select-div">
         <%= f.label :course_id, t('basics.course'),
                     class: "form-label" %>
         <%= helpdesk(t('admin.lecture.info.course'), false) %>
@@ -70,7 +70,8 @@
     <div class="row">
       <div class="col-12 text-center">
         <%= f.submit t('buttons.save'),
-            class: 'btn btn-primary' %>
+              class: 'btn btn-primary',
+              "data-cy": 'new-lecture-submit' %>
         <button type="button"
                 id="cancel-new-lecture"
                 class="btn btn-secondary">

@@ -1,11 +1,6 @@
-networks:
-  frontend:
-  backend:
 services:
   redis:
     image: "redis:6.2.6-alpine"
-    networks:
-      - backend
 
   solr:
     image: "solr:8.11.1"
@@ -15,36 +10,28 @@ services:
         target: /solrconfig/
         read_only: true
     command: ["solr-precreate", "test", "/solrconfig"]
-    networks:
-      - backend
 
   db:
-    image: postgres
+    image: postgres:13
     environment:
-      - POSTGRES_USER=mampf
+      - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
-    networks:
-      - backend
+    volumes:
+    # https://docs.docker.com/guides/pre-seeding/#pre-seed-the-database-by-bind-mounting-a-sql-script
+      - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
 
   mailcatcher:
     restart: on-failure:10
     image: dockage/mailcatcher:latest
-    networks:
-      - backend
 
   mampf:
-    build:
-      context: ./../..
-      dockerfile: docker/test/Dockerfile
-    image: mampf:tests
-    ports:
-      - "3100:3000"
+    image: mampf:dev-and-test
     environment:
       RAILS_ENV: test
       TEST_DATABASE_ADAPTER: postgresql
       TEST_DATABASE_DATABASE: mampf
       TEST_DATABASE_INTERACTIONS: interactions
-      TEST_DATABASE_USERNAME: mampf
+      TEST_DATABASE_USERNAME: localroot
       TEST_DATABASE_HOST: db
       TEST_DATABASE_PORT: 5432
       MAX_DELETIONS_PER_RUN: 50
@@ -66,17 +53,24 @@ services:
       SOLR_PORT: 8983
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
       BLOG: https://mampf.blog
+    ports:
+      - '127.0.0.1:3036:3036'  # webpacker dev server
     volumes:
       - ../../:/usr/src/app/
       - ../../coverage:/usr/src/app/coverage/
+      # Anonymous volume for the public folder where the assets are compiled to
       - "/usr/src/app/public/"
+      - sprockets-cache-test:/cache
+      # https://stackoverflow.com/a/62611202/
+      - bundle_cache:/usr/local/bundle/
     depends_on:
       - db
       - solr
       - redis
       - mailcatcher
-    networks:
-      - backend
-      - frontend
-  
+
+volumes:
+  bundle_cache:
+  sprockets-cache-test:

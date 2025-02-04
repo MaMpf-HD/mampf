@@ -74,7 +74,11 @@ class UserCleaner
     inactive_users.where(deletion_date: nil)
                   .limit(MAX_DELETIONS_PER_RUN)
                   .find_each do |user|
-      user.update(deletion_date: Date.current + 40.days)
+      user.deletion_date = Date.current + 40.days
+
+      # Even if the user record is invalid, we still want to set the
+      # deletion date, that's why we skip validation here.
+      user.save(validate: false)
 
       if user.generic?
         UserCleanerMailer.pending_deletion_email(user.email, user.locale, 40)
@@ -94,7 +98,10 @@ class UserCleaner
   # does not work, this method will prevent active users from being deleted
   # as a last resort.
   def unset_deletion_date_for_recently_active_users
-    active_users.where.not(deletion_date: nil).update(deletion_date: nil)
+    active_users.where.not(deletion_date: nil).find_each do |user|
+      user.deletion_date = nil
+      user.save(validate: false)
+    end
   end
 
   # Deletes all users whose deletion date is in the past or present.
@@ -111,16 +118,24 @@ class UserCleaner
   # deletion date in the future, as we only delete generic users.
   def delete_users_according_to_deletion_date!
     num_deleted_users = 0
+    num_intended_to_delete = 0
 
     User.where(deletion_date: ..Date.current).find_each do |user|
       next unless user.generic?
 
       UserCleanerMailer.deletion_email(user.email, user.locale).deliver_later
-      user.destroy
-      num_deleted_users += 1
+      num_intended_to_delete += 1
+
+      if user.destroy
+        num_deleted_users += 1
+      else
+        Rails.logger.info("UserCleaner failed to destroy user #{user.id}")
+        UserCleanerMailer.destroy_failed_email(user).deliver_later
+      end
     end
 
-    Rails.logger.info("UserCleaner deleted #{num_deleted_users} stale users")
+    Rails.logger.info("UserCleaner deleted #{num_deleted_users} stale users" \
+      + " (intended to delete: #{num_intended_to_delete})")
   end
 
   # Sends additional warning mails to users whose deletion date is near.
