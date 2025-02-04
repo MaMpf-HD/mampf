@@ -8,7 +8,7 @@ class ErdbeereController < ApplicationController
   end
 
   def show_example
-    response = ErdbeereClient.get("examples/#{params[:id]}")
+    response = Clients::ErdbeereClient.get("examples/#{params[:id]}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
@@ -17,7 +17,7 @@ class ErdbeereController < ApplicationController
   end
 
   def show_property
-    response = ErdbeereClient.get("properties/#{params[:id]}")
+    response = Clients::ErdbeereClient.get("properties/#{params[:id]}")
 
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
@@ -28,7 +28,7 @@ class ErdbeereController < ApplicationController
 
   def show_structure
     params[:id]
-    response = ErdbeereClient.get("structures/#{params[:id]}")
+    response = Clients::ErdbeereClient.get("structures/#{params[:id]}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
@@ -51,7 +51,7 @@ class ErdbeereController < ApplicationController
   def display_info
     @id = params[:id]
     @sort = params[:sort]
-    response = ErdbeereClient.get("#{@sort.downcase.pluralize}/#{@id}/view_info")
+    response = Clients::ErdbeereClient.get("#{@sort.downcase.pluralize}/#{@id}/view_info")
     @content = JSON.parse(response.body)
     if response.status != 200
       @info = "Something went wrong"
@@ -86,7 +86,7 @@ class ErdbeereController < ApplicationController
   end
 
   def fill_realizations_select
-    response = ErdbeereClient.get("structures")
+    response = Clients::ErdbeereClient.get("structures")
     @tag = Tag.find_by(id: params[:id])
     hash = JSON.parse(response.body)
     @structures = hash["data"].map do |d|
@@ -101,7 +101,7 @@ class ErdbeereController < ApplicationController
   end
 
   def find_example
-    response = ErdbeereClient.get("find?#{find_params.to_query}")
+    response = Clients::ErdbeereClient.get("find?#{find_params.to_query}")
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
