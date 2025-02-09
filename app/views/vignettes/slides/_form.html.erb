@@ -1,0 +1,28 @@
+<%= javascript_include_tag 'vignettes/question_type' %>
+<%= form_with(
+      model: [@questionnaire, @slide],
+      local: true,
+      url: @slide.new_record? ? vignettes_questionnaire_slides_path(@questionnaire) : vignettes_questionnaire_slide_path(@questionnaire, @slide),
+      id: "slide-form"
+    ) do |form| %>
+
+  <div>
+    <%= form.label :vignettes_info_slide_ids, "Select Info Slides" %><br>
+    <%= form.collection_select(
+          :info_slide_ids,
+          @questionnaire.info_slides,
+          :id,
+          :title,
+          {},
+          multiple: true
+        ) 
+    %>
+  </div>
+
+  <%= render partial: 'form_content', locals: { form: form } %>
+  <%= render partial: 'form_question', locals: { form: form } %>
+
+  <div>
+    <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide' %>
+  </div>
+<% end %>

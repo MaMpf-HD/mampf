@@ -561,6 +561,24 @@ Rails.application.routes.draw do
     resources :vertices, except: [:index, :show, :edit]
   end
 
+  # vignettes routes
+  namespace :vignettes do
+    get "questionnaires/:id/take",
+        to: "questionnaires#take",
+        as: "take_questionnaire"
+
+    resources :questionnaires, only: [:index, :show, :new, :create, :edit, :update] do
+      member do
+        get :export_answers
+        post :submit_answer
+      end
+      resources :info_slides, only: [:new, :create, :edit, :update]
+      resources :slides, only: [:new, :create, :edit, :update] do
+        resources :answers, only: [:new, :create]
+      end
+    end
+  end
+
   # readers routes
 
   patch "readers/update",
@@ -946,9 +964,11 @@ Rails.application.routes.draw do
 
   mount Thredded::Engine => "/forum"
 
-  # redirect bs requests to error page
+  # redirect bs requests to error page (except active storage routes)
+  match "*path", to: "main#error", via: :all, constraints: lambda { |req|
+    !req.path.start_with?("/rails/active_storage")
+  }
 
-  match "*path", to: "main#error", via: :all
   match "/", to: "main#error", via: [:post, :put, :patch, :delete]
 
   # For details on the DSL available within this file,

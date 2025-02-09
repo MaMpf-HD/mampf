@@ -4118,6 +4118,12 @@ de:
           team_size: >
             Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
             hätte als erlaubt.
+                vignettes/question:
+        vignettes/question:
+          attributes:
+            question_text:
+              blank: 'Question Text cannot be empty'
+              format: '%{message}'
         vote:
           attributes:
             clicker:
