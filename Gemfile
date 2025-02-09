@@ -52,7 +52,6 @@ gem "rails-i18n", "~> 7.0"
 gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
 gem "rqrcode", "~> 2.2"
-# gem "ruby-vips", "~> 2.2", ">= 2.2.2"
 gem "rubyzip", "~> 2.3"
 gem "sass-rails", "~> 6.0" # SCSS for stylesheets
 gem "shrine", "~> 3.6"
@@ -88,11 +87,8 @@ end
 group :test do
   gem "database_cleaner-active_record", "~> 2.2" # clean up database between tests
   gem "faker", "~> 3.4"
-  gem "launchy", "~> 3.0"
-  gem "selenium-webdriver", "~> 4.10.0" # support for Capybara system testing and selenium driver
   gem "simplecov", "~> 0.22", require: false
   gem "timecop", "~> 0.9.10"
-  gem "webdrivers", "~> 5.3"
 end
 
 group :test, :development, :docker_development do
