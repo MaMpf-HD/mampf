@@ -12,7 +12,7 @@ class ErdbeereController < ApplicationController
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
-      "Something went wrong."
+      I18n.t("erdbeere.error")
     end
   end
 
@@ -22,7 +22,7 @@ class ErdbeereController < ApplicationController
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
-      "Something went wrong."
+      I18n.t("erdbeere.error")
     end
   end
 
@@ -32,7 +32,7 @@ class ErdbeereController < ApplicationController
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
-      "Something went wrong."
+      I18n.t("erdbeere.error")
     end
   end
 
@@ -54,7 +54,7 @@ class ErdbeereController < ApplicationController
     response = Clients::ErdbeereClient.get("#{@sort.downcase.pluralize}/#{@id}/view_info")
     @content = JSON.parse(response.body)
     if response.status != 200
-      @info = "Something went wrong"
+      @info = I18n.t("erdbeere.error")
       return
     end
     @info = if @sort == "Structure"
@@ -105,7 +105,7 @@ class ErdbeereController < ApplicationController
     @content = if response.status == 200
       JSON.parse(response.body)["embedded_html"]
     else
-      "Something went wrong."
+      I18n.t("erdbeere.error")
     end
   end
 

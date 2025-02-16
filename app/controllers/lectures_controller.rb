@@ -228,6 +228,11 @@ class LecturesController < ApplicationController
   def search_examples
     if @lecture.structure_ids.any?
       response = Clients::ErdbeereClient.get("search")
+      if response.status != 200
+        @erdbeere_error = true
+        render layout: "application"
+        return
+      end
       @form = JSON.parse(response.body)["embedded_html"]
       # rubocop:disable Style/StringConcatenation
       @form.gsub!("token_placeholder",
@@ -423,11 +428,11 @@ class LecturesController < ApplicationController
     def set_erdbeere_data
       @structure_ids = @lecture.structure_ids
       response = Clients::ErdbeereClient.get("structures")
-      response_hash = if response.status == 200
-        JSON.parse(response.body)
-      else
-        { "data" => {}, "included" => {} }
+      if response.status != 200
+        @erdbeere_error = true
+        return
       end
+      response_hash = JSON.parse(response.body)
       @all_structures = response_hash["data"]
       @structures = @all_structures.select do |s|
         s["id"].to_i.in?(@structure_ids)
