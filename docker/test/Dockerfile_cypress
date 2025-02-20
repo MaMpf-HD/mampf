@@ -1,4 +1,7 @@
 FROM cypress/included:13.11.0
 
+COPY --chmod=0755 "./docker/test/entrypoint-cypress.sh" "/usr/src/app/entrypoint-cypress.sh"
+COPY --chmod=0755 "./docker/test/entrypoint-cypress-interactive.sh" "/usr/src/app/entrypoint-cypress-interactive.sh"
+
 # Install curl
 RUN apt-get update && apt-get install curl -y

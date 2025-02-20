@@ -23,4 +23,15 @@ class UserCleanerMailer < ApplicationMailer
     subject = t("mailer.deletion_subject")
     mail(from: sender, to: user_email, subject: subject, priority: "high")
   end
+
+  # Creates an email to inform the MaMpf team that a user could not be destroyed.
+  def destroy_failed_email(user)
+    sender = "UserCleaner <#{DefaultSetting::PROJECT_EMAIL}>"
+    subject = "User #{user.id} could not be destroyed"
+
+    @user = user
+    mail(from: sender, to: DefaultSetting::PROJECT_EMAIL,
+         content_type: "text/plain",
+         subject: subject, priority: "high")
+  end
 end

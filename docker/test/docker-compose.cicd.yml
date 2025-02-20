@@ -1,0 +1,6 @@
+services:
+  mampf:
+    image: ghcr.io/mampf-hd/mampftest:image
+    environment:
+      RAILS_ENV: test
+      IN_CI_CD_WEBPACKER: "true"

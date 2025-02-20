@@ -23,12 +23,14 @@ services:
   db:
     image: postgres:13
     environment:
-      - POSTGRES_USER=mampf
+      - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust
     volumes:
       - type: volume
         source: db-data
         target: /var/lib/postgresql/data
+      # https://docs.docker.com/guides/pre-seeding/#pre-seed-the-database-by-bind-mounting-a-sql-script
+      - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
 
   pgadmin:
     image: dpage/pgadmin4
@@ -43,6 +45,8 @@ services:
       # the web interface is required). See "pgadmin4/servers.json" here:
       # -> https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html#mapped-files-and-directories
       # -> https://forums.docker.com/t/automatically-connect-pgadmin-to-a-postgresql-volume-on-which-there-is-a-database-and-automatically-load-a-schema-present-on-a-sql-file-with-docker-compose/124647/2
+      #
+      # This only loads once, see: https://github.com/pgadmin-org/pgadmin4/issues/8071
       - type: bind
         source: ../../config/db-pgadmin.json
         target: /pgadmin4/servers.json
@@ -68,15 +72,20 @@ services:
     build:
       context: ./../..
       dockerfile: docker/development/Dockerfile
-    image: mampf:development
+    image: mampf:dev-and-test
+    # Only pull from local images, do not contact online registry
+    # https://stackoverflow.com/questions/46032392/docker-compose-does-not-allow-to-use-local-images#comment135243253_57644157
+    # -> did not work
+    # https://github.com/docker/compose/issues/3660
+    pull_policy: never
     environment:
       RAILS_ENV: docker_development
       # If you change these variables, make sure to adapt accordingly in
-      # config/db-pgadmin-config.json
+      # config/db-pgadmin.json
       DEVELOPMENT_DATABASE_ADAPTER: postgresql
       DEVELOPMENT_DATABASE_DATABASE: mampf
-      DEVELOPMENT_DATABASE_INTERACTIONS: interactions
-      DEVELOPMENT_DATABASE_USERNAME: mampf
+      DEVELOPMENT_DATABASE_INTERACTIONS: mampf_interactions
+      DEVELOPMENT_DATABASE_USERNAME: localroot
       DEVELOPMENT_DATABASE_HOST: db
       DEVELOPMENT_DATABASE_PORT: 5432
       TEST_DATABASE_ADAPTER: postgresql
@@ -104,7 +113,7 @@ services:
       SOLR_PORT: 8983
       SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
-      WEBPACKER_DEV_SERVER_HOST: webpacker
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
       MAMPF_REGISTRATION_TIMEFRAME: 25
       MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
       IMAPSERVER: imap:10993
@@ -118,13 +127,13 @@ services:
       # in the current environment/shell. This is used in the docker.justfile.
       DB_SQL_PRESEED_URL:
       UPLOADS_PRESEED_URL:
+    ports:
+      - '127.0.0.1:3035:3035'  # webpacker dev server
     volumes:
-      - type: bind
-        source: ../../
-        target: /usr/src/app/
-      - type: volume
-        source: sprockets-cache
-        target: /cache
+      - ../../:/usr/src/app/
+      - sprockets-cache:/cache
+      # https://stackoverflow.com/a/62611202/
+      - bundle_cache:/usr/local/bundle/
     depends_on:
       - db
       - solr
@@ -132,30 +141,6 @@ services:
       - mailcatcher
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: worker
-
-  webpacker:
-    build:
-      context: ./../..
-      dockerfile: docker/development/Dockerfile
-    environment:
-      NODE_ENV: development
-      RAILS_ENV: development
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
-    entrypoint: ["sh", "-c", "yarn && ./bin/webpack-dev-server"]
-    volumes:
-      - type: bind
-        source: ../../
-        target: /usr/src/app/
-      - type: volume
-        source: sprockets-cache
-        target: /cache
-    ports:
-      - '127.0.0.1:3035:3035'
-    depends_on:
-      - db
-      - solr
-      - redis
-      - mailcatcher
 
   nginx:
     image: openresty/openresty:alpine
@@ -188,3 +173,4 @@ volumes:
   pgadmin:
   solr-data:
   sprockets-cache:
+  bundle_cache:

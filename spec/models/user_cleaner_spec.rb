@@ -106,6 +106,21 @@ RSpec.describe(UserCleaner, type: :model) do
         users_flagged = User.where(deletion_date: Date.current + 40.days)
         expect(users_flagged.count).to eq(max_deletions)
       end
+
+      it "assigns a deletion date even if validations fail" do
+        user = FactoryBot.create(:confirmed_user, current_sign_in_at: 7.months.ago)
+        user.name = ""
+        user.save(validate: false)
+        user.reload
+
+        user_invalid = User.find(user.id)
+        expect(user_invalid).not_to be_valid
+
+        UserCleaner.new.set_deletion_date_for_inactive_users
+        user_invalid.reload
+
+        expect(user_invalid.deletion_date).to eq(Date.current + 40.days)
+      end
     end
 
     context "when a deletion date is assigned" do
@@ -142,6 +157,22 @@ RSpec.describe(UserCleaner, type: :model) do
       expect(user_inactive.deletion_date).to eq(deletion_date)
       expect(user_inactive2.deletion_date).to eq(deletion_date)
       expect(user_active.deletion_date).to be_nil
+    end
+
+    it "unassigns a deletion from a recently active user even if validations fail" do
+      user = FactoryBot.create(:confirmed_user, current_sign_in_at: 2.days.ago,
+                                                deletion_date: Date.current + 5.days)
+      user.name = ""
+      user.save(validate: false)
+      user.reload
+
+      user_invalid = User.find(user.id)
+      expect(user_invalid).not_to be_valid
+
+      UserCleaner.new.unset_deletion_date_for_recently_active_users
+      user_invalid.reload
+
+      expect(user_invalid.deletion_date).to be_nil
     end
   end
 
