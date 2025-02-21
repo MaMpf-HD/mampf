@@ -3256,6 +3256,8 @@ en:
     search_examples: 'Search for Examples'
     no_structures: >
       There are no structures associated to this lecture.
+    error: >
+      An error has occurred. Please try again later.
   basics:
     error: Error
     course: 'Course'

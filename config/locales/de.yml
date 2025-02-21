@@ -3451,6 +3451,8 @@ de:
     no_structures: >
       Zu dieser Vorlesung sind keine Strukturen aus der Beispieldatenbank
       assoziiert.
+    error: >
+      Es ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.
   basics:
     error: Fehler
     course: 'Modul'
