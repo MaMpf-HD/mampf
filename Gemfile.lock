@@ -183,6 +183,7 @@ GEM
     crass (1.0.6)
     css_parser (1.21.0)
       addressable
+    csv (3.3.2)
     dalli (3.2.8)
     database_cleaner-active_record (2.2.0)
       activerecord (>= 5.a)
@@ -670,6 +671,7 @@ DEPENDENCIES
   coffee-rails (~> 5.0)
   commontator (~> 7.0.1)
   coveralls (~> 0.7)
+  csv (~> 3.3)
   dalli (~> 3.2)
   database_cleaner-active_record (~> 2.2)
   devise (~> 4.9)
