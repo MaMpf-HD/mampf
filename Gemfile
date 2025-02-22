@@ -62,7 +62,7 @@ gem "sunspot_rails", "~> 2.7"
 gem "sunspot_solr", "~> 2.7"
 gem "terser", "~> 1.2" # Ruby wrapper for UglifyJS JavaScript compressor
 gem "thredded", git: "https://github.com/thredded/thredded.git",
-                ref: "1340e913affd1af5fcc060fbccd271184ece9a6a"
+                ref: "94fbf890a984527bab399c8c7f1eec7af7006843"
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
