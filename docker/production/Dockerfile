@@ -7,7 +7,7 @@ RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
-FROM ruby:3.1.4
+FROM ruby:3.3.7-bullseye
 
 ENV RAILS_ENV=production
 
@@ -17,7 +17,7 @@ EXPOSE 9394
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 
 # use "--login" option, so that .bashrc is sourced in new shells
-SHELL ["/bin/bash", "--login", "-c"] 
+SHELL ["/bin/bash", "--login", "-c"]
 
 # Install Node.js
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
@@ -106,7 +106,7 @@ COPY --chown=app:app . /usr/src/app
 # file and source it here in the Dockerfile just to have the precompile task run
 # successfully (this task doesn't even rely on the actual values, so despite
 # being a hack, it should be fine).
-# 
+#
 # I've written down more details in this question on StackOverflow:
 # https://stackoverflow.com/q/78098380/
 COPY ./docker/production/docker.env ./docker-dummy.env
