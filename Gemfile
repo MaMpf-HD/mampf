@@ -73,6 +73,7 @@ gem "webpacker", "~> 5.4"
 group :development, :docker_development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
+  gem "mutex_m", "~> 0.3" # silence warning: no longer part of default gems for Ruby >=3.4.0
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
   gem "rubocop", "~> 1.65", require: false
