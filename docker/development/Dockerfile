@@ -11,13 +11,13 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.1.4-bullseye
+FROM ruby:3.2.7-bullseye
 
 EXPOSE 3000
 EXPOSE 9394
 
 # use "--login" option, so that .bashrc is sourced in new shells
-SHELL ["/bin/bash", "--login", "-c"] 
+SHELL ["/bin/bash", "--login", "-c"]
 
 # Install Node.js
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
@@ -74,7 +74,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
         yarn install --production --frozen-lockfile; \
     fi
-    
+
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
 COPY . /usr/src/app/
