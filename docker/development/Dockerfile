@@ -11,7 +11,7 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.2.7-bullseye
+FROM ruby:3.3.7-bullseye
 
 EXPOSE 3000
 EXPOSE 9394
