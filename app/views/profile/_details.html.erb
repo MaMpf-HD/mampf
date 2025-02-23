@@ -11,9 +11,10 @@
          data-authorize="<%= c.to_be_authorized_lectures(current_user).map(&:id)
                               .to_json %>">
       <% c.subscribable_lectures(current_user).sort.each do |l| %>
-        <% lecture = "lecture[#{l.id}]" %>
+        <% lecture = "[lecture][#{l.id}]" %>
         <div id="<%= 'course-' + c.id.to_s + '-' + l.id.to_s %>">
           <%= f.check_box lecture,
+                          name: "user[lecture][#{l.id}]",
                           label: l.term_teacher_info,
                           checked: l.in?(current_user.lectures),
                           data: { course: c.id,
@@ -26,6 +27,7 @@
                   <%= f.label 'pass_' + lecture,
                               t('profile.passphrase') %>
                   <%= f.text_field_without_bootstrap 'pass_' + lecture,
+                                                     name: "user[pass_lecture][#{l.id}]",
                                                      class: 'form-control' %>
                   <div class="invalid-feedback"
                        id="passphrase-error-<%= l.id %>" >
