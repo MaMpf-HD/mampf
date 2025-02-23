@@ -1,0 +1,11 @@
+@import "branding";
+
+.vignette-edit-header {
+    font-size: 1.5em;
+}
+
+.vignette-sortable-ghost {
+    background-color: $mampf-blue;
+    color: white;
+    border: 1px solid $mampf-blue;
+}

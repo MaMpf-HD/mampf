@@ -114,6 +114,8 @@ module Vignettes
     def edit
       @questionnaire = Questionnaire.find(params[:id])
       @slides = @questionnaire.slides.order(:position)
+
+      render layout: "application_no_sidebar"
     end
 
     private
