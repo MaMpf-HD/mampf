@@ -34,7 +34,10 @@ var TEXT_ANSWER_ID = "vignettes_answer_text";
 
 function registerTextAnswerValidator() {
   const textBody = document.getElementById(TEXT_ANSWER_ID);
-  textBody.addEventListener("input", () => {
+  if (!textBody) {
+    return;
+  }
+  $(textBody).on("input", () => {
     validateTextAnswer();
   });
 }
