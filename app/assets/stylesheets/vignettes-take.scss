@@ -5,8 +5,13 @@
     margin-top: 1em;
     margin-bottom: 1em;
     border: $mampf-blue 2px solid;
-    // border-radius: 0.4em;
-    box-shadow: 0px 2px 7px 0rem rgba(34, 62, 98, 0.2);
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
+
+    transition: box-shadow 120ms ease-in-out;
+    &:hover {
+        box-shadow: rgba(50, 50, 93, 0.1) -1px 8px 50px -20px,
+            rgba(0, 0, 0, 0.15) 0px 10px 50px -25px;
+    }
 }
 
 .slide-header {
@@ -23,8 +28,8 @@
     cursor: pointer;
     border-radius: 0.4em;
 
-    transition: 200ms;
+    transition: box-shadow 200ms ease-in-out;
     &:hover {
-        box-shadow: 0px 2px 7px 0rem rgba(34, 62, 98, 0.2);
+        box-shadow: 0px 2px 7px 0rem mampf-blue(0.2);
     }
 }

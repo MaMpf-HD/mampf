@@ -1,1 +1,5 @@
 $mampf-blue: #223e62;
+
+@function mampf-blue($alpha) {
+    @return rgba($mampf-blue, $alpha);
+}
