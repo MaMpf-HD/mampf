@@ -2,6 +2,7 @@ $(document).on("turbolinks:load", () => {
   if (!shouldRegisterVignette()) {
     return;
   }
+  registerSubmitHandler();
   registerTextAnswerValidator();
 });
 
@@ -9,6 +10,18 @@ var VIGNETTE_FORM_ID = "#vignettes-answer-form";
 
 function shouldRegisterVignette() {
   return $(VIGNETTE_FORM_ID).length > 0;
+}
+
+function registerSubmitHandler() {
+  $(VIGNETTE_FORM_ID).submit((event) => {
+    let isValid = false;
+    isValid = validateTextAnswer();
+
+    if (!isValid) {
+      event.preventDefault();
+      return false;
+    }
+  });
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,6 +38,11 @@ function registerTextAnswerValidator() {
 
 function validateTextAnswer() {
   const textBody = document.getElementById(TEXT_ANSWER_ID);
+  if (!textBody) {
+    return true;
+  }
+
+  let isValid = false;
 
   const validityState = textBody.validity;
   if (validityState.tooShort) {
@@ -38,9 +56,11 @@ function validateTextAnswer() {
   else {
     // render input valid, so that form will submit
     textBody.setCustomValidity("");
+    isValid = true;
   }
 
   textBody.reportValidity();
+  return isValid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
