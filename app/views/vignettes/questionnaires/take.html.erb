@@ -18,25 +18,28 @@
     <div class="slide-header text-light">
         <!-- TODO: add a proper user-defined slide title -->
         <!-- TODO: add a marker where the user currently is, e.g. (1/5) -->
-        <h4 class="mb-0"> Slide <%= @slide.position %></h4>
+        <p class="mb-0 fs-5 fw-bold"> Slide <%= @slide.position %></p>
     </div>
 
-    <!-- Additional information (Info Slides) -->
+    <!-- Additional information Buttons -->
     <% if @slide.info_slides.any? %>
     <div class="card-body">
         <p class="mb-0">
             <i>Additional information</i>
-
-            <% @slide.info_slides.each_with_index do |info_slide, index| %>
-            <!-- TODO: if really needed, add back the possibility for an "image" button -->
-            <!-- via the class info-slide-icon-button -->
-            <button type="button" class="btn" title="Find information about: <%= info_slide.title %>"
-                    data-bs-toggle="modal" data-bs-target="#vignette-info-slide-modal-<%= index %>">
-                <i class="bi bi-info-circle-fill"></i>
-                <%= info_slide.title %>
-            </button>
-            <% end %>
         </p>
+
+        <!-- TODO: ensure that sorting here is consistent from the backend -->
+        <% @slide.info_slides.each_with_index do |info_slide, index| %>
+        <!-- TODO: if really needed, add back the possibility for an "image" button -->
+        <!-- via the class info-slide-icon-button -->
+        <button type="button" class="btn open-info-slide-btn"
+                title="Find information about: <%= info_slide.title %>"
+                data-bs-toggle="modal" data-bs-target="#vignette-info-slide-modal-<%= index %>"
+                data-info-slide-index="<%= index %>">
+            <i class="bi bi-info-circle-fill me-1"></i>
+            <%= info_slide.title %>
+        </button>
+        <% end %>
     </div>
     <% end %>
 
