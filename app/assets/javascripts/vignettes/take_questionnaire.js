@@ -142,7 +142,6 @@ function registerStatisticsHandler(stats) {
   infoSlideModals.each(function () {
     $(this).on("hidden.bs.modal", function () {
       const index = $(this).attr("data-info-slide-index");
-      console.log(`Modal with index ${index} closed`);
       stats.stopInfoSlideTimer(index);
       stats.unfreezeSlideTime();
     });
@@ -156,11 +155,6 @@ function registerStatisticsHandler(stats) {
     }
 
     stats.postProcessTimes();
-
-    console.log("Vignette statistics:");
-    console.log("Total slide time: " + stats.totalSlideTime);
-    console.log("Info slide times: " + JSON.stringify(stats.infoSlideTimes));
-    console.log("Info slide access counts: " + JSON.stringify(stats.infoSlideAccessCounts));
 
     // Transfer results to hidden form-fields
     const timeOnSlideField = $("#time-on-slide-field");
