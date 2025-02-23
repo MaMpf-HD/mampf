@@ -29,22 +29,26 @@
     <!-- Additional information Buttons -->
     <% if @slide.info_slides.any? %>
     <div class="card-body">
-        <p class="mb-0 d-flex align-items-center">
-            <i class="me-1">Additional information</i>
+        <div class="d-flex flex-wrap align-items-center w-100">
+            <p class="mb-0"><i class="me-1">Additional information</i></p>
 
             <!-- TODO: ensure that sorting here is consistent from the backend -->
             <% @slide.info_slides.each_with_index do |info_slide, index| %>
             <!-- TODO: if really needed, add back the possibility for an "image" button -->
             <!-- via the class info-slide-icon-button -->
-            <button type="button" class="btn open-info-slide-btn"
+            <button type="button"
+                    class="btn open-info-slide-btn d-flex justify-content-start"
                     title="Find information about: <%= info_slide.title %>"
-                    data-bs-toggle="modal" data-bs-target="#vignette-info-slide-modal-<%= index %>"
+                    data-bs-toggle="modal"
+                    data-bs-target="#vignette-info-slide-modal-<%= index %>"
                     data-info-slide-index="<%= index %>">
                 <i class="bi bi-info-circle-fill me-1"></i>
-                <%= info_slide.title %>
+                <p class="mb-0 text-start">
+                    <%= info_slide.title %>
+                </p>
             </button>
             <% end %>
-        </p>
+        </div>
     </div>
     <% end %>
 
