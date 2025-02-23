@@ -21,8 +21,11 @@
     </div>
 
     <!-- Info Slides -->
+    <% if @slide.info_slides.any? %>
     <div class="card-body">
-        Additional information:
+        <p class="mb-0">
+            <i>Additional information</i>
+        </p>
 
         <% @slide.info_slides.each_with_index do |info_slide, index| %>
             <!-- TODO: if really needed, add back the possibility for an "image" button -->
@@ -33,8 +36,8 @@
                 <%= info_slide.title %>
             </button>
         <% end %>
-
     </div>
+    <% end %>
 
     <div class="card-body">
 
