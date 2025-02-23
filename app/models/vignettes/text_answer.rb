@@ -1,5 +1,10 @@
 module Vignettes
   class TextAnswer < Answer
-    validates :text, presence: true
+    TEXT_MIN_LENGTH = 10
+    TEXT_MAX_LENGTH = 5_000
+
+    validates :text, length: { minimum: TEXT_MIN_LENGTH,
+                               maximum: TEXT_MAX_LENGTH },
+                     allow_blank: false
   end
 end

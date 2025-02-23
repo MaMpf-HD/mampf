@@ -1,3 +1,52 @@
+$(document).on("turbolinks:load", () => {
+  if (!shouldRegisterVignette()) {
+    return;
+  }
+  registerTextAnswerValidator();
+});
+
+var VIGNETTE_FORM_ID = "#vignettes-answer-form";
+
+function shouldRegisterVignette() {
+  return $(VIGNETTE_FORM_ID).length > 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Text Answer Fields
+////////////////////////////////////////////////////////////////////////////////
+var TEXT_ANSWER_ID = "vignettes_answer_text";
+
+function registerTextAnswerValidator() {
+  const textBody = document.getElementById(TEXT_ANSWER_ID);
+  textBody.addEventListener("input", () => {
+    validateTextAnswer();
+  });
+}
+
+function validateTextAnswer() {
+  const textBody = document.getElementById(TEXT_ANSWER_ID);
+
+  const validityState = textBody.validity;
+  if (validityState.tooShort) {
+    const tooShortMessage = textBody.dataset.tooShortMessage;
+    textBody.setCustomValidity(tooShortMessage);
+  }
+  else if (validityState.valueMissing) {
+    const valueMissingMessage = textBody.dataset.valueMissingMessage;
+    textBody.setCustomValidity(valueMissingMessage);
+  }
+  else {
+    // render input valid, so that form will submit
+    textBody.setCustomValidity("");
+  }
+
+  textBody.reportValidity();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// TODO
+////////////////////////////////////////////////////////////////////////////////
+
 document.addEventListener("turbolinks:load", () => {
   const infoSlideButtons = document.querySelectorAll(".info-slide-button");
   const closeInfoSlideButtons = document.querySelectorAll(".close-info-slide-button");
@@ -61,7 +110,7 @@ document.addEventListener("turbolinks:load", () => {
     event.preventDefault();
   });
 
-  $(document).on("submit", "#answer_form", () => {
+  $(document).on("submit", VIGNETTE_FORM_ID, () => {
     if (SlideStartTime) {
       totalSlideTime += (Date.now() - SlideStartTime);
     }

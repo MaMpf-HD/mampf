@@ -1,0 +1,15 @@
+<div class="form-floating mt-3">
+    <%= f.text_area :text,
+        placeholder: '_',
+        class: 'form-control',
+        style: 'height: 150px',
+        minlength: Vignettes::TextAnswer::TEXT_MIN_LENGTH,
+        maxlength: Vignettes::TextAnswer::TEXT_MAX_LENGTH,
+        'data-too-short-message':
+            t('feedback.body_too_short_error',
+              min_length: Vignettes::TextAnswer::TEXT_MIN_LENGTH),
+        'data-value-missing-message':
+            t('feedback.body_missing_error')
+    %>
+    <%= f.label :text, 'Your answer' %>
+</div>

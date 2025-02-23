@@ -8,26 +8,26 @@
 <% end %>
 
 <!-- Slide -->
-<%= form_with(model: @answer, id: "answer_form",
+<%= form_with(model: @answer, id: "vignettes-answer-form",
               url: submit_answer_vignettes_questionnaire_url(@questionnaire),
               local: true) do |form| %>
 
 <div id="vignette-take-card" class="container-md small-width card">
 
+    <!-- Header -->
     <div class="slide-header text-light">
         <!-- TODO: add a proper user-defined slide title -->
         <!-- TODO: add a marker where the user currently is, e.g. (1/5) -->
         <h4 class="mb-0"> Slide <%= @slide.position %></h4>
     </div>
 
-    <!-- Info Slides -->
+    <!-- Additional information (Info Slides) -->
     <% if @slide.info_slides.any? %>
     <div class="card-body">
         <p class="mb-0">
             <i>Additional information</i>
-        </p>
 
-        <% @slide.info_slides.each_with_index do |info_slide, index| %>
+            <% @slide.info_slides.each_with_index do |info_slide, index| %>
             <!-- TODO: if really needed, add back the possibility for an "image" button -->
             <!-- via the class info-slide-icon-button -->
             <button type="button" class="btn" title="Find information about: <%= info_slide.title %>"
@@ -35,52 +35,49 @@
                 <i class="bi bi-info-circle-fill"></i>
                 <%= info_slide.title %>
             </button>
-        <% end %>
+            <% end %>
+        </p>
     </div>
     <% end %>
 
+    <!-- Main Content -->
     <div class="card-body">
-
-        <!-- Main Slide Content -->
-        <div id="current-slide-container" data-slide-id="<%= @slide.id %>" data-questionnaire-id="<%= @questionnaire.id %>" >
-            <%= @slide.content %>
-            <%= @slide.question.question_text %>
-
-            <br>
-
-            <%= form.hidden_field :slide_id, value: @slide.id %>
-
-                <%= form.fields_for :slide_statistic do |stat_form| %>
-                    <%= stat_form.hidden_field :user_id, value: current_user.id %>
-                    <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
-                    <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
-                    <%= stat_form.hidden_field :info_slides_access_count, id:"info-slides-access-count-field" %>
-                <% end %>
-
-                <% case @slide.question.type %> 
-                    <% when "Vignettes::TextQuestion" %>
-                        <%= form.label :text, "Your Answer" %>
-                        <%= form.text_area :text %>
-                    <% when "Vignettes::MultipleChoiceQuestion" %>
-                        <% @slide.question.options.each do |option| %>
-                            <%= option.text %>
-                            <%= check_box_tag "vignettes_answer[option_ids][]", option.id, @answer.option_ids.include?(option.id) %>
-                        <% end %>
-                    <% when "Vignettes::LikertScaleQuestion" %>
-                        <% Vignettes::LikertScaleQuestion::LIKERT_LABELS.each do |value, label| %>
-                        <div>
-                            <%= form.radio_button :likert_scale_value, value %>
-                            <%= form.label :likert_scale_value, label %>
-                        </div>
-                        <% end %>
-                <br>
-                        
-            <% end %>
-        </div>
-
+        <%= @slide.content %>
     </div>
 
-    <!-- Navigation Controls for Slide -->
+    <!-- Answer Section -->
+    <div class="card-body">
+        <%= @slide.question.question_text %>
+
+        <%= form.hidden_field :slide_id, value: @slide.id %>
+            <%= form.fields_for :slide_statistic do |stat_form| %>
+                <%= stat_form.hidden_field :user_id, value: current_user.id %>
+                <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
+                <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
+                <%= stat_form.hidden_field :info_slides_access_count, id:"info-slides-access-count-field" %>
+            <% end %>
+
+            <% case @slide.question.type %>
+                <% when "Vignettes::TextQuestion" %>
+                    <%= render partial: 'vignettes/answer_types/text', locals: { f: form } %>
+                <% when "Vignettes::MultipleChoiceQuestion" %>
+                    <% @slide.question.options.each do |option| %>
+                        <%= option.text %>
+                        <%= check_box_tag "vignettes_answer[option_ids][]", option.id, @answer.option_ids.include?(option.id) %>
+                    <% end %>
+                <% when "Vignettes::LikertScaleQuestion" %>
+                    <% Vignettes::LikertScaleQuestion::LIKERT_LABELS.each do |value, label| %>
+                    <div>
+                        <%= form.radio_button :likert_scale_value, value %>
+                        <%= form.label :likert_scale_value, label %>
+                    </div>
+                    <% end %>
+            <br>
+                    
+        <% end %>
+    </div>
+
+    <!-- Navigation Controls -->
     <div class="card-footer d-flex justify-content-end">
         <% if @slide.question.type == "" %>
             <%= form.submit "Next Slide", class: "slide-footer-btn" %>
