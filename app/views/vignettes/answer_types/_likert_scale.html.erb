@@ -1,0 +1,15 @@
+<%= stylesheet_link_tag 'likert' %>
+
+<!-- Adapted from this great blog post -->
+<!-- https://jamesalvarez.co.uk/blog/how-to-make-responsive-likert-scales-in-css-(like-qualtrics)/ -->
+<div class="likert w-100">
+    <% Vignettes::LikertScaleQuestion::LIKERT_LABELS.each do |value, label| %>
+        <label>
+            <input name="l" type="radio" value="<%= value %>">
+            <span>
+                <%= label %>
+            </span>
+            </input>
+        </label>
+        <% end %>
+</div>

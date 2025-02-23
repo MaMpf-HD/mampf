@@ -50,7 +50,9 @@
 
     <!-- Answer Section -->
     <div class="card-footer vignette-answer">
-        <%= @slide.question.question_text %>
+        <p>
+            <%= @slide.question.question_text %>
+        </p>
 
         <%= form.hidden_field :slide_id, value: @slide.id %>
             <%= form.fields_for :slide_statistic do |stat_form| %>
@@ -69,13 +71,7 @@
                         <%= check_box_tag "vignettes_answer[option_ids][]", option.id, @answer.option_ids.include?(option.id) %>
                     <% end %>
                 <% when "Vignettes::LikertScaleQuestion" %>
-                    <% Vignettes::LikertScaleQuestion::LIKERT_LABELS.each do |value, label| %>
-                    <div>
-                        <%= form.radio_button :likert_scale_value, value %>
-                        <%= form.label :likert_scale_value, label %>
-                    </div>
-            <% end %>
-    
+                    <%= render partial: 'vignettes/answer_types/likert_scale', locals: { f: form } %>
         <% end %>
 
         <!-- Navigation -->
