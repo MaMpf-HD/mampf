@@ -46,7 +46,7 @@
     </div>
 
     <!-- Answer Section -->
-    <div class="card-body">
+    <div class="card-footer vignette-answer">
         <%= @slide.question.question_text %>
 
         <%= form.hidden_field :slide_id, value: @slide.id %>
@@ -71,19 +71,18 @@
                         <%= form.radio_button :likert_scale_value, value %>
                         <%= form.label :likert_scale_value, label %>
                     </div>
-                    <% end %>
-            <br>
-                    
+            <% end %>
+    
         <% end %>
-    </div>
 
-    <!-- Navigation Controls -->
-    <div class="card-footer d-flex justify-content-end">
-        <% if @slide.question.type == "" %>
-            <%= form.submit "Next Slide", class: "slide-footer-btn" %>
-        <% else %>
-            <%= form.submit "Submit answer", class: "slide-footer-btn" %>
-        <% end %>
+        <!-- Navigation -->
+        <div class="d-flex justify-content-end mt-3">
+            <% if @slide.question.type == "" %>
+                <%= form.submit "Next Slide", class: "btn slide-footer-btn" %>
+            <% else %>
+                <%= form.submit "Submit answer", class: "btn slide-footer-btn" %>
+            <% end %>
+        </div>
     </div>
 
 </div>
