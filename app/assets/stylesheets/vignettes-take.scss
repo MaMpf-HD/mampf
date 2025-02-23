@@ -18,13 +18,25 @@
     color: white;
     transition: 150ms ease-in-out;
 
-    &:hover {
-        background-color: $mampf-blue-focus;
-        color: white;
+    &:hover,
+    &:focus,
+    &:active {
+        background-color: $mampf-blue-focus !important;
+        color: white !important;
         box-shadow: 0px 2px 7px 0rem mampf-blue(0.2);
+    }
+
+    &:focus {
+        outline: $mampf-blue auto 0.7px;
     }
 }
 
 .vignette-answer {
     padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
+}
+
+.open-info-slide-btn {
+    &:focus {
+        outline: lightgrey auto 0.5px;
+    }
 }
