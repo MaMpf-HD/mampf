@@ -50,6 +50,8 @@ module Vignettes
       @slide = @questionnaire.slides.find_by(position: requested_position)
       @answer = @slide.answers.build
       @answer.build_slide_statistic
+
+      render layout: "application_no_sidebar"
     end
 
     def submit_answer

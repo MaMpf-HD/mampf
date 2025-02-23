@@ -1,0 +1,30 @@
+@import "branding";
+
+#vignette-take-card {
+    padding: 0em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border: $mampf-blue 2px solid;
+    // border-radius: 0.4em;
+    box-shadow: 0px 2px 7px 0rem rgba(34, 62, 98, 0.2);
+}
+
+.slide-header {
+    padding: 0.75rem 1.25rem;
+    background-color: $mampf-blue;
+}
+
+.slide-footer-btn {
+    background-color: $mampf-blue;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    cursor: pointer;
+    border-radius: 0.4em;
+
+    transition: 200ms;
+    &:hover {
+        box-shadow: 0px 2px 7px 0rem rgba(34, 62, 98, 0.2);
+    }
+}
