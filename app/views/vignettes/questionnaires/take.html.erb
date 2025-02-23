@@ -70,16 +70,15 @@
                 <% when "Vignettes::TextQuestion" %>
                     <%= render partial: 'vignettes/answer_types/text', locals: { f: form } %>
                 <% when "Vignettes::MultipleChoiceQuestion" %>
-                    <% @slide.question.options.each do |option| %>
-                        <%= option.text %>
-                        <%= check_box_tag "vignettes_answer[option_ids][]", option.id, @answer.option_ids.include?(option.id) %>
-                    <% end %>
+                    <%= render partial: 'vignettes/answer_types/multiple_choice',
+                                        locals: { f: form } %>
                 <% when "Vignettes::LikertScaleQuestion" %>
                     <%= render partial: 'vignettes/answer_types/likert_scale', locals: { f: form } %>
         <% end %>
 
         <!-- Navigation -->
         <div class="d-flex justify-content-end mt-3">
+            <!-- TODO: Do a better differentiation here -->
             <% if @slide.question.type == "" %>
                 <%= form.submit "Next Slide", class: "btn slide-footer-btn" %>
             <% else %>

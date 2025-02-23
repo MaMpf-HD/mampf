@@ -5,7 +5,8 @@
 <div class="likert w-100">
     <% Vignettes::LikertScaleQuestion::LIKERT_LABELS.each do |value, label| %>
         <label>
-            <input name="l" type="radio" value="<%= value %>" required>
+            <input name="vignette-likert-scale"
+                   type="radio" value="<%= value %>" required>
             <span>
                 <%= label %>
             </span>

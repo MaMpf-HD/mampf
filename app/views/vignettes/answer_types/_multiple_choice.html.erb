@@ -1,0 +1,14 @@
+<% @slide.question.options.each do |option| %>
+<div class="form-check">
+    <input name="vignette-multiple-choice"
+            id="vignette-multiple-choice-<%= option.id %>"
+            class="form-check-input"
+            type="radio"
+            value="<%= option.id %>"
+            required>
+    <label class="form-check-label"
+            for="vignette-multiple-choice-<%= option.id %>">
+        <%= option.text %>
+    </label>
+</div>
+<% end %>
