@@ -59,21 +59,21 @@
         </p>
 
         <%= form.hidden_field :slide_id, value: @slide.id %>
-            <%= form.fields_for :slide_statistic do |stat_form| %>
-                <%= stat_form.hidden_field :user_id, value: current_user.id %>
-                <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
-                <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
-                <%= stat_form.hidden_field :info_slides_access_count, id:"info-slides-access-count-field" %>
-            <% end %>
+        <%= form.fields_for :slide_statistic do |stat_form| %>
+            <%= stat_form.hidden_field :user_id, value: current_user.id %>
+            <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
+            <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
+            <%= stat_form.hidden_field :info_slides_access_count, id:"info-slides-access-count-field" %>
+        <% end %>
 
-            <% case @slide.question.type %>
-                <% when "Vignettes::TextQuestion" %>
-                    <%= render partial: 'vignettes/answer_types/text', locals: { f: form } %>
-                <% when "Vignettes::MultipleChoiceQuestion" %>
-                    <%= render partial: 'vignettes/answer_types/multiple_choice',
-                                        locals: { f: form } %>
-                <% when "Vignettes::LikertScaleQuestion" %>
-                    <%= render partial: 'vignettes/answer_types/likert_scale', locals: { f: form } %>
+        <% case @slide.question.type %>
+            <% when "Vignettes::TextQuestion" %>
+                <%= render partial: 'vignettes/answer_types/text', locals: { f: form } %>
+            <% when "Vignettes::MultipleChoiceQuestion" %>
+                <%= render partial: 'vignettes/answer_types/multiple_choice',
+                                    locals: { f: form } %>
+            <% when "Vignettes::LikertScaleQuestion" %>
+                <%= render partial: 'vignettes/answer_types/likert_scale', locals: { f: form } %>
         <% end %>
 
         <!-- Navigation -->
