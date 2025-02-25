@@ -1,5 +1,5 @@
 $(document).on("turbolinks:load", function () {
-  const vignetteSlideList = $("#vignettes-slides-list");
+  const vignetteSlideList = $("#vignettes-slides-accordion");
   createSortableVignetteSlides(vignetteSlideList);
   registerVignetteSlideListeners(vignetteSlideList);
 });
@@ -38,7 +38,7 @@ function createSortableVignetteSlides(vignetteSlideList) {
 }
 
 function registerVignetteSlideListeners(vignetteSlideList) {
-  $(vignetteSlideList).on("click", "li", function (evt) {
+  $(vignetteSlideList).on("click", ".accordion-button", function (evt) {
     const slideId = evt.target.dataset.slideId;
     if (slideId === undefined) {
       console.error("Slide id is missing");
@@ -57,7 +57,8 @@ function registerVignetteSlideListeners(vignetteSlideList) {
       method: "GET",
       dataType: "html",
       success: function (response) {
-        $("#vignette-slide-edit-form-container").html(response);
+        $(".slides-edit-form-container").html(""); // remove old forms
+        $(`#slide-edit-form-container-${slideId}`).html(response);
       },
       error: function (xhr, status, error) {
         console.error(`Failed to load slide edit form: ${error}`);

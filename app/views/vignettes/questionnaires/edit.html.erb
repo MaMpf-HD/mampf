@@ -6,14 +6,38 @@
     <!-- Slides -->
     <h1 class="vignette-edit-header"> Slides </h1>
 
-    <ul id="vignettes-slides-list" class="list-group"
-        data-questionnaire-id="<%= @questionnaire.id %>">
+    <div class="accordion" id="vignettes-slides-accordion"
+         data-questionnaire-id="<%= @questionnaire.id %>">
         <% @slides.each() do |slide| %>
-            <li class="list-group-item" data-slide-id="<%= slide.id %>">
-                This is my slide with ID <%= slide.id %>
-            </li>
+        <div class="accordion-item">
+
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button"
+                    data-slide-id="<%= slide.id %>"
+                    data-bs-toggle="collapse" data-bs-target="#slides-collapse-<%= slide.id %>"
+                    aria-expanded="false" aria-controls="slides-collapse-<%= slide.id %>">
+                    <!-- TODO: show useful information here, e.g. answer type -->
+                    Slide with id <%= slide.id %>
+                </button>
+            </h2>
+
+            <div id="slides-collapse-<%= slide.id %>"
+                 class="accordion-collapse collapse collapse"
+                 data-bs-parent="#vignettes-slides-accordion">
+
+                <div class="accordion-body slides-edit-form-container"
+                     id="slide-edit-form-container-<%= slide.id %>">
+                    <!-- The slide edit form will be dynamically loaded here -->
+                </div>
+
+            </div>
+        </div>
         <% end %>
-    </ul>
+    </div>
+
+    <br>
+    <br>
+
     <%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
 
     <!-- Info Slides -->
@@ -29,9 +53,4 @@
 
     <!-- Export -->
     <%= button_to "Export answers", export_answers_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
-
-    <div id="vignette-slide-edit-form-container">
-        <!-- The slide edit form will be dynamically loaded here -->
-    </div>
-
 </div>
