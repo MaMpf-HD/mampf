@@ -1,20 +1,19 @@
 function handleQuestionTypes() {
-  const questionTypeDropdown = $("#vignettes-question-type");
+  const questionTypeDropdown = $("#vignettes-question-type-select");
 
   questionTypeDropdown.on("change", function (event) {
     const questionFields = $(".vignette-question-field");
     questionFields.each(function () {
-      $(this).hide();
+      $(this).collapse("hide");
     });
 
-    if (event.target.value === "") {
-      // No question type selected
+    if (event.target.value === "vignettes-edit-no-question") {
       return;
     }
 
     const selectedField = $("#" + event.target.value);
     if (selectedField) {
-      selectedField.show();
+      selectedField.collapse("show");
     }
   });
 }

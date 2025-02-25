@@ -19,6 +19,7 @@
   </div>
 
   <%= render partial: 'form_content', locals: { form: form } %>
+  <br>
   <%= render partial: 'form_question', locals: { form: form } %>
 
   <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide',

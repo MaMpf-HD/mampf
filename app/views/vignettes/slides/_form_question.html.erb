@@ -1,40 +1,40 @@
 <%= form.fields_for :question do |question_form| %>
-    <div>
+
+    <!-- Question Type Selection -->
+    <div class="form-floating">
+        <%= question_form.select :type,
+            options_for_select([
+                ["No Question", "vignettes-edit-no-question"],
+                ["Text Area", 'vignettes-edit-text-question'],
+                ["Multiple Choice", "vignettes-edit-multiple-choice"],
+                ["Likert Scale", "vignettes-edit-likert"]
+            ], question_form.object.type),
+            {},
+            {
+                class: "form-select",
+                id: "vignettes-question-type-select",
+                "aria-label": "Selection for question type"
+            } %>
         <%= question_form.label :type, "Question Type" %>
-        <%= question_form.select :type, options_for_select([
-            ['No Question', ''],
-            ['Text Field', 'Vignettes-TextQuestion'],
-            ['Multiple Choice', 'Vignettes-MultipleChoiceQuestion'],
-            ['Likert Scale', 'Vignettes-LikertScaleQuestion']
-        ], question_form.object.type), {}, { id:  "vignettes-question-type" } %>
     </div>
 
-    <div id="question-text">
-        <div class="form-floating mt-3">
-            <%= question_form.text_area :question_text,
-                placeholder: '_',
-                class: 'form-control',
-                style: 'height: 120px',
-                required: true
-            %>
-            <%= question_form.label :question_text, "Your question" %>
-        </div>
+    <div id="question-text" class="form-floating mt-3">
+        <%= question_form.text_area :question_text,
+            placeholder: '_',
+            class: 'form-control',
+            style: 'height: 120px',
+            required: true
+        %>
+        <%= question_form.label :question_text, "Your question" %>
     </div>
 
-    <!-- The id must be the name of the corresponding class -->
-    <div id="Vignettes-TextQuestion"
-         class="vignette-question-field"
-         style="display: none;">
+    <div id="vignettes-edit-text-question" class="vignette-question-field collapse">
     </div>
 
-    <div id="Vignettes-LikertScaleQuestion" 
-         class="vignette-question-field"
-         style="display: none;">
+    <div id="vignettes-edit-likert collapse" class="vignette-question-field">
     </div>
 
-    <div id="Vignettes-MultipleChoiceQuestion"
-         class="vignette-question-field"
-         style="display: none;">
+    <div id="vignettes-edit-multiple-choice" class="vignette-question-field collapse">
         <div>
         <%= question_form.label :options, "Options" %>
         <div id="vignette-options-container">
@@ -62,4 +62,5 @@
         <button type="button" id="add-option">Add Option</button>
         </div>
     </div>
+
 <% end %>
