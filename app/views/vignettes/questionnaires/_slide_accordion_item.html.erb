@@ -1,0 +1,29 @@
+<div class="accordion-item">
+
+    <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button"
+                data-slide-id="<%= slide.id %>"
+                data-bs-toggle="collapse" data-bs-target="#slides-collapse-<%= slide.id %>"
+                aria-expanded="false" aria-controls="slides-collapse-<%= slide.id %>">
+            <!-- TODO: show useful information here, e.g. answer type -->
+            Slide with id <%= slide.id %>
+        </button>
+    </h2>
+
+    <div id="slides-collapse-<%= slide.id %>" class="accordion-collapse collapse collapse"
+        data-bs-parent="#vignettes-slides-accordion">
+
+        <% if slide.id %>
+        <div class="accordion-body slides-edit-form-container"
+             id="slide-edit-form-container-<%= slide.id %>">
+            <!-- The slide edit form will be dynamically loaded here -->
+        </div>
+        <% else %>
+        <div class="accordion-body">
+            <%= render partial: 'vignettes/slides/new' %>
+        </div>
+        <% end %>
+
+    </div>
+
+</div>

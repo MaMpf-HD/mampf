@@ -9,38 +9,15 @@
     <div class="accordion" id="vignettes-slides-accordion"
          data-questionnaire-id="<%= @questionnaire.id %>">
         <% @slides.each() do |slide| %>
-        <div class="accordion-item">
-
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button"
-                    data-slide-id="<%= slide.id %>"
-                    data-bs-toggle="collapse" data-bs-target="#slides-collapse-<%= slide.id %>"
-                    aria-expanded="false" aria-controls="slides-collapse-<%= slide.id %>">
-                    <!-- TODO: show useful information here, e.g. answer type -->
-                    Slide with id <%= slide.id %>
-                </button>
-            </h2>
-
-            <div id="slides-collapse-<%= slide.id %>"
-                 class="accordion-collapse collapse collapse"
-                 data-bs-parent="#vignettes-slides-accordion">
-
-                <div class="accordion-body slides-edit-form-container"
-                     id="slide-edit-form-container-<%= slide.id %>">
-                    <!-- The slide edit form will be dynamically loaded here -->
-                </div>
-
-            </div>
-        </div>
+            <%= render partial: "slide_accordion_item", locals: { slide: slide } %>
         <% end %>
     </div>
 
     <!-- Add new slide (at the end of the list) -->
-    <%= link_to new_vignettes_questionnaire_slide_path(@questionnaire),
-                class: "btn btn-outline-primary mt-2" do %>
+    <button type="button" id="vignettes-new-slide-btn" class="btn btn-outline-primary mt-2">
         <i class="bi bi-plus-circle"></i>
         Add new slide
-    <% end %>
+    </button>
 
     <br>
     <br>

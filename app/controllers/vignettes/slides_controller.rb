@@ -14,6 +14,11 @@ module Vignettes
       @slide = @questionnaire.slides.new
       @slide.build_question
       @slide.question.options.build
+
+      return unless request.xhr?
+
+      render partial: "vignettes/questionnaires/slide_accordion_item",
+             locals: { slide: @slide }
     end
 
     def edit

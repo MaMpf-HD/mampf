@@ -2,6 +2,7 @@ $(document).on("turbolinks:load", function () {
   const vignetteSlideList = $("#vignettes-slides-accordion");
   createSortableVignetteSlides(vignetteSlideList);
   registerVignetteSlideListeners(vignetteSlideList);
+  registerNewSlideButtonListener(vignetteSlideList);
 });
 
 function createSortableVignetteSlides(vignetteSlideList) {
@@ -63,5 +64,37 @@ function registerVignetteSlideListeners(vignetteSlideList) {
         console.error(`Failed to load slide edit form: ${error}`);
       },
     });
+  });
+}
+
+function registerNewSlideButtonListener(vignetteSlideList) {
+  $("#vignettes-new-slide-btn").click(function () {
+    $(this).prop("disabled", true);
+
+    const questionnaireId = vignetteSlideList.attr("data-questionnaire-id");
+    if (questionnaireId === undefined) {
+      console.error("Questionnaire id is missing");
+      return;
+    }
+
+    $.ajax({
+      url: Routes.new_vignettes_questionnaire_slide_path(questionnaireId),
+      method: "GET",
+      dataType: "html",
+      success: function (response) {
+        $(vignetteSlideList).append(response);
+        const newSlide = $(vignetteSlideList).children().last();
+        openAccordionItem(newSlide);
+      },
+      error: function (xhr, status, error) {
+        console.error(`Failed to load new slide form: ${error}`);
+      },
+    });
+  });
+}
+
+function openAccordionItem($item) {
+  new bootstrap.Collapse($item.find(".collapse"), {
+    toggle: true,
   });
 }
