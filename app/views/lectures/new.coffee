@@ -11,16 +11,6 @@ initBootstrapPopovers()
 # hide all other buttons on admin index page
 $('.admin-index-button').hide()
 
-# make sure that there will always be a teacher selected
-teacherSelector = document.getElementById('lecture_teacher_id')
-if teacherSelector?
-  sel = teacherSelector.tomselect
-  sel.on 'blur', ->
-    value = sel.getValue()
-    if value == ''
-      sel.setValue(teacherSelector.dataset.current)
-   return
-
 # show the modal if the new action was triggered from course edit page
 <% if @from == 'course' %>
 $('#newLectureModal').modal('show')
