@@ -1,24 +1,38 @@
+var QUESTION_TYPE_SELECT_ID = "#vignettes-question-type-select";
+
 function handleQuestionTypes() {
-  const questionTypeDropdown = $("#vignettes-question-type-select");
+  const questionTypeDropdown = $(QUESTION_TYPE_SELECT_ID);
 
   questionTypeDropdown.on("change", function (event) {
-    const questionFields = $(".vignette-question-field");
-    questionFields.each(function () {
-      $(this).collapse("hide");
-    });
-
-    if (event.target.value === "vignettes-edit-no-question") {
-      return;
-    }
-
-    const selectedField = $("#" + event.target.value);
-    if (selectedField) {
-      selectedField.collapse("show");
-    }
+    updateQuestionFieldState(event.target.value);
   });
 }
 
-handleQuestionTypes();
+function updateQuestionFieldState(selectedName) {
+  const questionFields = $(".vignette-question-field");
+  questionFields.each(function () {
+    $(this).collapse("hide");
+  });
+
+  const questionField = $("#vignette-question-text");
+
+  // Type "No question" selected
+  if (selectedName === "") {
+    questionField.find("textarea").val("");
+    questionField.collapse("hide");
+  }
+  else {
+    questionField.collapse("show");
+    if (selectedName === "Vignettes::MultipleChoiceQuestion") {
+      $("#vignette-edit-multiple-choice").collapse("show");
+    }
+  }
+}
+
+$(document).ready(function () {
+  handleQuestionTypes();
+  updateQuestionFieldState($(QUESTION_TYPE_SELECT_ID).val());
+});
 
 // document.addEventListener("turbolinks:load", () => {
 //   const optionsContainer = document.getElementById("options-container");
