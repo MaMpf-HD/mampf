@@ -4,7 +4,7 @@
 
 <div class="container-md small-width">
     <!-- Slides -->
-    <h1 class="vignette-edit-header"> Slides </h1>
+    <h1 class="fs-4 fw-bold"> Slides </h1>
 
     <div class="accordion" id="vignettes-slides-accordion"
          data-questionnaire-id="<%= @questionnaire.id %>">
@@ -35,10 +35,17 @@
         <% end %>
     </div>
 
-    <br>
-    <br>
+    <!-- Add new slide (at the end of the list) -->
+    <%= link_to new_vignettes_questionnaire_slide_path(@questionnaire),
+                class: "btn btn-outline-primary mt-2" do %>
+        <i class="bi bi-plus-circle"></i>
+        Add new slide
+    <% end %>
 
-    <%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+    <br>
+    <br>
+    <br>
+    <br>
 
     <!-- Info Slides -->
     <h1 class="vignette-edit-header">Info slides</h1>
