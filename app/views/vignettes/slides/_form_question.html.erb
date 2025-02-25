@@ -10,8 +10,15 @@
   </div>
 
   <div id="question-text">
-    <%= question_form.label :question_text, "Question Text" %><br>
-    <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
+    <div class="form-floating mt-3">
+        <%= question_form.text_area :question_text,
+            placeholder: '_',
+            class: 'form-control',
+            style: 'height: 120px',
+            required: true
+        %>
+        <%= question_form.label :question_text, "Your question" %>
+    </div>
   </div>
 
   <!-- The id must be the name of the corresponding class -->

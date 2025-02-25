@@ -22,7 +22,7 @@
   <%= render partial: 'form_content', locals: { form: form } %>
   <%= render partial: 'form_question', locals: { form: form } %>
 
-  <div>
-    <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide' %>
-  </div>
+  <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide',
+        class: "btn btn-primary mt-2"
+  %>
 <% end %>
