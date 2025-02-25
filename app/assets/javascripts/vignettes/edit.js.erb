@@ -1,0 +1,67 @@
+$(document).on("turbolinks:load", function () {
+  const vignetteSlideList = $("#vignettes-slides-list");
+  createSortableVignetteSlides(vignetteSlideList);
+  registerVignetteSlideListeners(vignetteSlideList);
+});
+
+function createSortableVignetteSlides(vignetteSlideList) {
+  Sortable.create(vignetteSlideList.get(0), {
+    animation: 150,
+    ghostClass: "vignette-sortable-ghost",
+    onEnd: function (_evt) {
+      // console.log(`Moved element from ${evt.oldIndex} to ${evt.newIndex}`);
+      // TODO: send a request to update the order of the slides in the database
+      // TODO: see more options here:
+      // https://github.com/SortableJS/Sortable?tab=readme-ov-file#options
+      // TODO: Watch out (!) We also get this event when oldIndex === newIndex
+      // in this case we should not send a request to the server as nothing
+      // changed. And the server should of course check for bounds.
+      //
+      // Something like that should work:
+      // $.ajax({
+      //   url: `/vignettes/slides/${slideId}/update_position`,
+      //   method: "PATCH",
+      //   data: {
+      //     slide: {
+      //       position: newPosition,
+      //     },
+      //   },
+      //   success: function (response) {
+      //     console.log(`Slide ${slideId} moved to position ${newPosition}`);
+      //   },
+      //   error: function (xhr, status, error) {
+      //     console.error(`Failed to update position: ${error}`);
+      //   },
+      // });
+    },
+  });
+}
+
+function registerVignetteSlideListeners(vignetteSlideList) {
+  $(vignetteSlideList).on("click", "li", function (evt) {
+    const slideId = evt.target.dataset.slideId;
+    if (slideId === undefined) {
+      console.error("Slide id is missing");
+      return;
+    }
+    console.log(`Clicked on slide with id ${slideId}`);
+    const questionnaireId = vignetteSlideList.attr("data-questionnaire-id");
+    if (questionnaireId === undefined) {
+      console.error("Questionnaire id is missing");
+      return;
+    }
+    console.log(`Questionnaire id is ${questionnaireId}`);
+
+    $.ajax({
+      url: Routes.edit_vignettes_questionnaire_slide_path(questionnaireId, slideId),
+      method: "GET",
+      dataType: "html",
+      success: function (response) {
+        $("#vignette-slide-edit-form-container").html(response);
+      },
+      error: function (xhr, status, error) {
+        console.error(`Failed to load slide edit form: ${error}`);
+      },
+    });
+  });
+}

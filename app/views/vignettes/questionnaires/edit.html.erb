@@ -6,10 +6,11 @@
     <!-- Slides -->
     <h1 class="vignette-edit-header"> Slides </h1>
 
-    <ul id="vignettes-slides-list" class="list-group">
+    <ul id="vignettes-slides-list" class="list-group"
+        data-questionnaire-id="<%= @questionnaire.id %>">
         <% @slides.each() do |slide| %>
-            <li class="list-group-item">
-                <%= link_to slide.position, edit_vignettes_questionnaire_slide_path(@questionnaire, slide) %>
+            <li class="list-group-item" data-slide-id="<%= slide.id %>">
+                This is my slide with ID <%= slide.id %>
             </li>
         <% end %>
     </ul>
@@ -28,4 +29,9 @@
 
     <!-- Export -->
     <%= button_to "Export answers", export_answers_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+
+    <div id="vignette-slide-edit-form-container">
+        <!-- The slide edit form will be dynamically loaded here -->
+    </div>
+
 </div>
