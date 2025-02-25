@@ -1,59 +1,65 @@
 <%= form.fields_for :question do |question_form| %>
-  <div>
-    <%= question_form.label :type, "Question Type" %>
-    <%= question_form.select :type, options_for_select([
-        ['No Question', ''],
-        ['Text Field', 'Vignettes::TextQuestion'],
-        ['Multiple Choice', 'Vignettes::MultipleChoiceQuestion'],
-        ['Likert Scale', 'Vignettes::LikertScaleQuestion']
-    ], question_form.object.type), {}, { id:  "question-type" } %>
-  </div>
-
-  <div id="question-text">
-    <div class="form-floating mt-3">
-        <%= question_form.text_area :question_text,
-            placeholder: '_',
-            class: 'form-control',
-            style: 'height: 120px',
-            required: true
-        %>
-        <%= question_form.label :question_text, "Your question" %>
-    </div>
-  </div>
-
-  <!-- The id must be the name of the corresponding class -->
-  <div id="Vignettes::TextQuestion" class="question-field" style="display: none;">
-  </div>
-
-  <div id="Vignettes::LikertScaleQuestion", class="question-field" style="display: none;">
-  </div>
-
-  <div id="Vignettes::MultipleChoiceQuestion" class="question-field" style="display: none;">
     <div>
-      <%= question_form.label :options, "Options" %>
-      <div id="options-container">
-        <% question_form.object.options.each do |option| %>
-          <div class="option-block">
-            <%= question_form.fields_for :options, option do |option_form| %>
-              <div class="option-field">
-                <%= option_form.text_field :text, placeholder: "Option Text" %>
+        <%= question_form.label :type, "Question Type" %>
+        <%= question_form.select :type, options_for_select([
+            ['No Question', ''],
+            ['Text Field', 'Vignettes-TextQuestion'],
+            ['Multiple Choice', 'Vignettes-MultipleChoiceQuestion'],
+            ['Likert Scale', 'Vignettes-LikertScaleQuestion']
+        ], question_form.object.type), {}, { id:  "vignettes-question-type" } %>
+    </div>
+
+    <div id="question-text">
+        <div class="form-floating mt-3">
+            <%= question_form.text_area :question_text,
+                placeholder: '_',
+                class: 'form-control',
+                style: 'height: 120px',
+                required: true
+            %>
+            <%= question_form.label :question_text, "Your question" %>
+        </div>
+    </div>
+
+    <!-- The id must be the name of the corresponding class -->
+    <div id="Vignettes-TextQuestion"
+         class="vignette-question-field"
+         style="display: none;">
+    </div>
+
+    <div id="Vignettes-LikertScaleQuestion" 
+         class="vignette-question-field"
+         style="display: none;">
+    </div>
+
+    <div id="Vignettes-MultipleChoiceQuestion"
+         class="vignette-question-field"
+         style="display: none;">
+        <div>
+        <%= question_form.label :options, "Options" %>
+        <div id="vignette-options-container">
+            <% question_form.object.options.each do |option| %>
+            <div class="option-block">
+                <%= question_form.fields_for :options, option do |option_form| %>
+                <div class="option-field">
+                    <%= option_form.text_field :text, placeholder: "Option Text" %>
+                    <%= option_form.hidden_field :_destroy %>
+                    <button type="button" class="remove-option">Remove</button>
+                </div>
+                <% end %>
+            </div>
+            <% end %>
+            <div id="new-option-template" style="display: none;">
+            <%= question_form.fields_for :options, question_form.object.options.build, child_index: "NEW_RECORD" do |option_form|%>
+                <div class="option-field">
+                <%= option_form.text_field :text %>
                 <%= option_form.hidden_field :_destroy %>
                 <button type="button" class="remove-option">Remove</button>
-              </div>
+                </div>
             <% end %>
-          </div>
-        <% end %>
-        <div id="new-option-template" style="display: none;">
-          <%= question_form.fields_for :options, question_form.object.options.build, child_index: "NEW_RECORD" do |option_form|%>
-            <div class="option-field">
-              <%= option_form.text_field :text %>
-              <%= option_form.hidden_field :_destroy %>
-              <button type="button" class="remove-option">Remove</button>
             </div>
-          <% end %>
         </div>
-      </div>
-      <button type="button" id="add-option">Add Option</button>
+        <button type="button" id="add-option">Add Option</button>
+        </div>
     </div>
-  </div>
 <% end %>

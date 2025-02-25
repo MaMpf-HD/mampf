@@ -1,62 +1,58 @@
-document.addEventListener("turbolinks:load", () => {
-  const questionTypeDropdown = document.getElementById("question-type");
-  if (questionTypeDropdown) {
-    questionTypeDropdown.addEventListener("change", function (event) {
-      // Disable all fields by default
-      const allQuestionFields = document.getElementsByClassName("question-field");
-      const questionTextField = document.getElementById("question-text");
-      for (let field of allQuestionFields) {
-        field.style.display = "none";
-        if (questionTextField) {
-          questionTextField.style.display = "none";
-        }
-      }
-      // make selected field visible
-      const selectedType = event.target.value;
-      if (selectedType) {
-        const selectedField = document.getElementById(selectedType);
-        if (questionTextField && selectedType != "") {
-          questionTextField.style.display = "block";
-        }
-        if (selectedField) {
-          selectedField.style.display = "block";
-        }
-      }
+function handleQuestionTypes() {
+  const questionTypeDropdown = $("#vignettes-question-type");
+
+  questionTypeDropdown.on("change", function (event) {
+    const questionFields = $(".vignette-question-field");
+    questionFields.each(function () {
+      $(this).hide();
     });
 
-    questionTypeDropdown.dispatchEvent(new Event("change"));
-  };
-  const optionsContainer = document.getElementById("options-container");
+    if (event.target.value === "") {
+      // No question type selected
+      return;
+    }
 
-  // Handle dynamic addition of options
-  const addOptionButton = document.getElementById("add-option");
-  const optionTemplate = document.getElementById("new-option-template");
-  if (addOptionButton) {
-    addOptionButton.addEventListener("click", () => {
-      const optionTemplateHTML = optionTemplate.innerHTML;
-      const uniqueId = new Date().getTime().toString();
-      const newBlockHTML = optionTemplateHTML.replace(/NEW_RECORD/g, uniqueId);
+    const selectedField = $("#" + event.target.value);
+    if (selectedField) {
+      selectedField.show();
+    }
+  });
+}
 
-      optionsContainer.insertAdjacentHTML("beforeend", newBlockHTML);
-    });
-  }
+handleQuestionTypes();
 
-  // Handle removal of options
-  if (optionsContainer) {
-    optionsContainer.addEventListener("click", (e) => {
-      console.log(e.target);
-      if (e.target.className == "remove-option") {
-        e.preventDefault();
-        const optionBlock = e.target.parentElement;
-        if (optionBlock.className == "option-field") {
-          const destroyField = optionBlock.querySelector("input[type='hidden'][name*='_destroy']");
-          console.log(destroyField);
-          if (destroyField) {
-            destroyField.value = "1";
-            optionBlock.style.display = "none";
-          }
-        }
-      }
-    });
-  }
-});
+// document.addEventListener("turbolinks:load", () => {
+//   const optionsContainer = document.getElementById("options-container");
+
+//   // Handle dynamic addition of options
+//   const addOptionButton = document.getElementById("add-option");
+//   const optionTemplate = document.getElementById("new-option-template");
+//   if (addOptionButton) {
+//     addOptionButton.addEventListener("click", () => {
+//       const optionTemplateHTML = optionTemplate.innerHTML;
+//       const uniqueId = new Date().getTime().toString();
+//       const newBlockHTML = optionTemplateHTML.replace(/NEW_RECORD/g, uniqueId);
+
+//       optionsContainer.insertAdjacentHTML("beforeend", newBlockHTML);
+//     });
+//   }
+
+//   // Handle removal of options
+//   if (optionsContainer) {
+//     optionsContainer.addEventListener("click", (e) => {
+//       console.log(e.target);
+//       if (e.target.className == "remove-option") {
+//         e.preventDefault();
+//         const optionBlock = e.target.parentElement;
+//         if (optionBlock.className == "option-field") {
+//           const destroyField = optionBlock.querySelector("input[type='hidden'][name*='_destroy']");
+//           console.log(destroyField);
+//           if (destroyField) {
+//             destroyField.value = "1";
+//             optionBlock.style.display = "none";
+//           }
+//         }
+//       }
+//     });
+//   }
+// });
