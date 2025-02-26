@@ -28,8 +28,7 @@
         <%= question_form.label :question_text, "Your question" %>
     </div>
 
-    <div id="vignette-edit-multiple-choice" class="vignette-question-field collapse">
-        <div>
+    <div id="vignette-edit-multiple-choice" class="collapse">
         <%= question_form.label :options, "Options" %>
         <div id="vignette-options-container">
             <% question_form.object.options.each do |option| %>
@@ -54,7 +53,6 @@
             </div>
         </div>
         <button type="button" id="add-option">Add Option</button>
-        </div>
     </div>
 
 <% end %>

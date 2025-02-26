@@ -9,23 +9,23 @@ function handleQuestionTypes() {
 }
 
 function updateQuestionFieldState(selectedName) {
-  const questionFields = $(".vignette-question-field");
-  questionFields.each(function () {
-    $(this).collapse("hide");
-  });
+  const multipleChoiceField = $("#vignette-edit-multiple-choice");
+  const questionTextField = $("#vignette-question-text");
 
-  const questionField = $("#vignette-question-text");
-
-  // Type "No question" selected
+  // Type "No question"
   if (selectedName === "") {
-    questionField.find("textarea").val("");
-    questionField.collapse("hide");
+    questionTextField.find("textarea").val("");
+    questionTextField.collapse("hide");
   }
   else {
-    questionField.collapse("show");
-    if (selectedName === "Vignettes::MultipleChoiceQuestion") {
-      $("#vignette-edit-multiple-choice").collapse("show");
-    }
+    questionTextField.collapse("show");
+  }
+
+  if (selectedName === "Vignettes::MultipleChoiceQuestion") {
+    multipleChoiceField.collapse("show");
+  }
+  else {
+    multipleChoiceField.collapse("hide");
   }
 }
 
