@@ -36,11 +36,19 @@ function updateQuestionFieldState(selectedName) {
 }
 
 function handleMultipleChoiceEditor() {
+  // Adding an option
   $("#vignette-multiple-choice-add").click(function (_evt) {
     const template = $("#vignette-multiple-choice-options-template");
     const newOptionHtml = template.html();
     const uniqueId = new Date().getTime();
     const newBlockHtml = newOptionHtml.replace(/NEW_RECORD/g, uniqueId);
     $("#vignette-multiple-choice-options").append(newBlockHtml);
+  });
+
+  // Removing an option
+  $(".remove-vignette-mc-option").click(function (evt) {
+    const parentDiv = $(evt.target).closest("div");
+    parentDiv.find(".vignette-mc-hidden-destroy").val("1");
+    parentDiv.removeClass("d-flex").hide();
   });
 }
