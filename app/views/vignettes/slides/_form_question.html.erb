@@ -1,44 +1,49 @@
-<%= form.fields_for :question do |question_form| %>
+<%= form.fields_for :question do |f| %>
 
 <!-- Question Type Selection -->
 <div class="form-floating">
-    <%= question_form.select :type,
+    <%= f.select :type,
         options_for_select([
             ['No Question', ''],
             ['Text Area', 'Vignettes::TextQuestion'],
             ['Multiple Choice', 'Vignettes::MultipleChoiceQuestion'],
             ['Likert Scale', 'Vignettes::LikertScaleQuestion']
-        ], question_form.object.type),
+        ], f.object.type),
         {},
         {
             class: "form-select",
             id: "vignettes-question-type-select",
             "aria-label": "Selection for question type"
         } %>
-    <%= question_form.label :type, "Question Type" %>
+    <%= f.label :type, "Question Type" %>
 </div>
 
 <div id="vignette-question-text" class="form-floating mt-3 show">
-    <%= question_form.text_area :question_text,
+    <%= f.text_area :question_text,
         placeholder: '_',
         class: 'form-control',
         style: 'height: 120px',
         required: false
     %>
-    <%= question_form.label :question_text, "Your question" %>
+    <%= f.label :question_text, "Your question" %>
 </div>
 
 <div id="vignette-edit-multiple-choice" class="collapse mt-3">
+
     <div id="vignette-multiple-choice-options">
-        <%= question_form.fields_for :options do |option_form|%>
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <%= option_form.text_field :text, class: "form-control me-2" %>
-            <button class="btn btn-outline-danger" type="button">
-                <i class="bi bi-trash3-fill"></i>
-            </button>
-        </div>
+        <%= f.fields_for :options do |option_form| %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form } %>
         <% end %>
     </div>
+
+    <!-- later with Stimulus: -->
+    <!-- https://jonathanyeong.com/rails-stimulus-dynamic-nested-form/ -->
+    <template id="vignette-multiple-choice-options-template" class="d-none">
+        <%= f.fields_for :options, f.object.options.build,
+                         child_index: 'NEW_RECORD' do |option_form| %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form } %>
+        <% end %>
+    </template>
     
     <button type="button" id="vignette-multiple-choice-add"
             class="btn btn-outline-secondary">

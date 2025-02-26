@@ -36,12 +36,11 @@ function updateQuestionFieldState(selectedName) {
 }
 
 function handleMultipleChoiceEditor() {
-  console.log("Handling multiple choice editor");
-
-  const multipleChoiceOptionList = $("#vignette-multiple-choice-options");
-  const addOptionButton = $("#vignette-multiple-choice-add");
-
-  addOptionButton.click(function (event) {
-    // TODO
+  $("#vignette-multiple-choice-add").click(function (_evt) {
+    const template = $("#vignette-multiple-choice-options-template");
+    const newOptionHtml = template.html();
+    const uniqueId = new Date().getTime();
+    const newBlockHtml = newOptionHtml.replace(/NEW_RECORD/g, uniqueId);
+    $("#vignette-multiple-choice-options").append(newBlockHtml);
   });
 }
