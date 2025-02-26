@@ -46,7 +46,7 @@ function handleMultipleChoiceEditor() {
   });
 
   // Removing an option
-  $(".remove-vignette-mc-option").click(function (evt) {
+  $(document).on("click", ".remove-vignette-mc-option", function (evt) {
     const parentDiv = $(evt.target).closest("div");
     parentDiv.find(".vignette-mc-hidden-destroy").val("1");
     parentDiv.removeClass("d-flex").hide();
