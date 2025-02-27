@@ -9,7 +9,6 @@ function createSortableVignetteSlides(vignetteSlideList) {
   Sortable.create(vignetteSlideList.get(0), {
     filter: ".accordion-collapse",
     animation: 150,
-    ghostClass: "vignette-sortable-ghost",
     onEnd: function (_evt) {
       // console.log(`Moved element from ${evt.oldIndex} to ${evt.newIndex}`);
       // TODO: send a request to update the order of the slides in the database
