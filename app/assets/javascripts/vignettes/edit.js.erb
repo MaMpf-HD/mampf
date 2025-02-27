@@ -64,11 +64,10 @@ function registerVignetteSlideListeners(vignetteSlideList) {
       method: "GET",
       dataType: "html",
       success: function (response) {
-        clearTimeout(spinnerTimeout);
-
         $(vignetteSlideList).find(".slides-edit-form-container").html("");
         const editFormContainer = $(`#slide-edit-form-container-${slideId}`);
         editFormContainer.hide().html(response).ready(function () {
+          clearTimeout(spinnerTimeout);
           loadingSpinner.hide();
           editFormContainer.show();
         });
