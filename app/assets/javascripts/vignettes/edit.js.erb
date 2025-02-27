@@ -43,7 +43,8 @@ function registerVignetteSlideListeners(vignetteSlideList) {
   $(".vignette-accordion-collapse").on("shown.bs.collapse", function (evt) {
     const slideId = evt.target.dataset.slideId;
     if (slideId === undefined) {
-      console.error("Slide id is missing");
+      // multiple choice options are also collapsible
+      // and trigger shown.bs.collapse
       return;
     }
 
