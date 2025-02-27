@@ -3,6 +3,7 @@ var QUESTION_TYPE_SELECT_ID = "#vignettes-question-type-select";
 $(document).ready(function () {
   handleQuestionTypes();
   updateQuestionFieldState($(QUESTION_TYPE_SELECT_ID).val());
+  new TomSelect(QUESTION_TYPE_SELECT_ID, { allowEmptyOption: true });
   handleMultipleChoiceEditor();
 });
 
