@@ -40,7 +40,7 @@ function createSortableVignetteSlides(vignetteSlideList) {
 }
 
 function registerVignetteSlideListeners(vignetteSlideList) {
-  $(vignetteSlideList).on("click", ".accordion-button", function (evt) {
+  $(".vignette-accordion-collapse").on("shown.bs.collapse", function (evt) {
     const slideId = evt.target.dataset.slideId;
     if (slideId === undefined) {
       console.error("Slide id is missing");
@@ -53,15 +53,27 @@ function registerVignetteSlideListeners(vignetteSlideList) {
       return;
     }
 
+    const loadingSpinner = $(`#vignette-slide-loading-${slideId}`);
+    let spinnerTimeout = setTimeout(function () {
+      loadingSpinner.show();
+    }, 100); // avoid flickering when loading is fast
+
     $.ajax({
       url: Routes.edit_vignettes_questionnaire_slide_path(questionnaireId, slideId),
       method: "GET",
       dataType: "html",
       success: function (response) {
-        $(".slides-edit-form-container").html(""); // remove old forms
-        $(`#slide-edit-form-container-${slideId}`).html(response);
+        clearTimeout(spinnerTimeout);
+
+        $(vignetteSlideList).find(".slides-edit-form-container").html("");
+        const editFormContainer = $(`#slide-edit-form-container-${slideId}`);
+        editFormContainer.hide().html(response).ready(function () {
+          loadingSpinner.hide();
+          editFormContainer.show();
+        });
       },
       error: function (xhr, status, error) {
+        clearTimeout(spinnerTimeout);
         console.error(`Failed to load slide edit form: ${error}`);
       },
     });

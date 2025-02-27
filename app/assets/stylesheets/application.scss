@@ -341,3 +341,11 @@ a {
     opacity: 0;
   }
 }
+
+// Make sure that d-flex elements with display: none are hidden
+// https://stackoverflow.com/a/56073779/
+// https://github.com/twbs/bootstrap/issues/22076
+.d-flex[style*="display:none"],
+.d-flex[style*="display: none"] {
+  display: none !important;
+}
