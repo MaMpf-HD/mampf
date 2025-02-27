@@ -302,3 +302,42 @@ a {
   background-size: 6em 6em;
   background-color: #ffffff;
 }
+
+// Tom Select Floating Label with Boostrap until this PR is merged:
+// https://github.com/orchidjs/tom-select/pull/891/
+.form-floating {
+
+  /* move ts-control input element below the floating label */
+  .ts-wrapper.form-control,
+  .ts-wrapper.form-select {
+    height: 0 !important;
+  }
+
+  .ts-wrapper.form-control .ts-control,
+  .ts-wrapper.form-select .ts-control {
+    padding-top: 1.625rem !important;
+    padding-bottom: 0.625rem !important;
+  }
+
+  /* if field is styled as a text field (.form-control instead of .form-select)
+  	 * make sure we apply the same animation as Bootstrap 5 */
+  .ts-wrapper.form-control~label,
+  .ts-wrapper.form-select~label {
+    transform: scale(1) translateY(0) translateX(0);
+    color: rgba(var(--bs-body-color-rgb), 1);
+  }
+
+  .ts-wrapper.form-control.focus~label,
+  .ts-wrapper.form-control.full~label,
+  .ts-wrapper.form-select.focus~label,
+  .ts-wrapper.form-select.full~label,
+  .ts-wrapper.form-select.has-items~label {
+    transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+    color: rgba(var(--bs-body-color-rgb), 0.65);
+  }
+
+  /* hides empty value which tomselect uses as placeholder */
+  .ts-wrapper.form-select:not(.focus) .ts-control ::placeholder {
+    opacity: 0;
+  }
+}

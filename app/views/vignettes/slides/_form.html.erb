@@ -5,17 +5,15 @@
       id: "slide-form"
     ) do |form| %>
 
-  <div>
-    <%= form.label :vignettes_info_slide_ids, "Select Info Slides" %><br>
-    <%= form.collection_select(
-          :info_slide_ids,
-          @questionnaire.info_slides,
-          :id,
-          :title,
-          {},
-          multiple: true
-        ) 
-    %>
+  <div class="form-floating mb-3">
+    <%= form.select :info_slide_ids,
+        options_for_select(
+          @questionnaire.info_slides.map { |s| [s.title, s.id] },
+          @slide.info_slides.map(&:id)
+        ),
+      { include_blank: true, multiple: true },
+      { id: "vignettes-linked-info-slides", class: "form-select" } %>
+    <%= form.label :info_slides, "Linked Info Slides" %>
   </div>
 
   <%= render partial: 'form_content', locals: { form: form } %>
@@ -26,3 +24,5 @@
         class: "btn btn-primary mt-3"
   %>
 <% end %>
+
+<%= javascript_include_tag 'vignettes/edit_slide' %>
