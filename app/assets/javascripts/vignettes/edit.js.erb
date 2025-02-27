@@ -7,6 +7,7 @@ $(document).on("turbolinks:load", function () {
 
 function createSortableVignetteSlides(vignetteSlideList) {
   Sortable.create(vignetteSlideList.get(0), {
+    filter: ".accordion-collapse",
     animation: 150,
     ghostClass: "vignette-sortable-ghost",
     onEnd: function (_evt) {
