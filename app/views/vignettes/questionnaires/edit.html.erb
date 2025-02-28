@@ -1,23 +1,41 @@
-<h1> Slides </h1>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15/Sortable.min.js"></script>
+<%= javascript_include_tag 'vignettes/edit' %>
 
-<ul>
-    <% @slides.each() do |slide| %>
-        <li>
-            <%= link_to slide.position, edit_vignettes_questionnaire_slide_path(@questionnaire, slide) %>
-        </li>
-    <%end%>
-</ul>
-<%= button_to 'Create new slide', new_vignettes_questionnaire_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
-<h1> Info slides </h1>
-<ul>
-    <% @questionnaire.info_slides.each() do |info_slide| %>
-        <li>
-            <%= link_to info_slide.title, edit_vignettes_questionnaire_info_slide_path(@questionnaire, info_slide) %>
-        </li>
-    <%end%>
-</ul>
-<%= button_to 'Create new info slide', new_vignettes_questionnaire_info_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+<div class="container-md small-width">
+    <!-- Slides -->
+    <h1 class="fs-4 fw-bold">Slides</h1>
 
-<br>
+    <p>Drag the slides to change their order.</p>
 
-<%= button_to "Export answers", export_answers_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+    <div class="accordion" id="vignettes-slides-accordion"
+         data-questionnaire-id="<%= @questionnaire.id %>">
+        <% @slides.each() do |slide| %>
+            <%= render partial: "slide_accordion_item", locals: { slide: slide } %>
+        <% end %>
+    </div>
+
+    <!-- Add new slide (at the end of the list) -->
+    <button type="button" id="vignettes-new-slide-btn" class="btn btn-outline-primary mt-2">
+        <i class="bi bi-plus-circle"></i>
+        Add new slide
+    </button>
+
+    <br>
+    <br>
+    <br>
+    <br>
+
+    <!-- Info Slides -->
+    <h1 class="vignette-edit-header">Info slides</h1>
+    <ul>
+        <% @questionnaire.info_slides.each() do |info_slide| %>
+            <li>
+                <%= link_to info_slide.title, edit_vignettes_questionnaire_info_slide_path(@questionnaire, info_slide) %>
+            </li>
+        <%end%>
+    </ul>
+    <%= button_to 'Create new info slide', new_vignettes_questionnaire_info_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+
+    <!-- Export -->
+    <%= button_to "Export answers", export_answers_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+</div>

@@ -1,78 +1,170 @@
-document.addEventListener("turbolinks:load", () => {
-  const infoSlideButtons = document.querySelectorAll(".info-slide-button");
-  const closeInfoSlideButtons = document.querySelectorAll(".close-info-slide-button");
-  const infoSlideContainers = document.querySelectorAll(".info-slide-container");
-  const slideContainer = document.getElementById("current-slide-container");
+var VIGNETTE_FORM_ID = "#vignettes-answer-form";
+function shouldRegisterVignette() {
+  return $(VIGNETTE_FORM_ID).length > 0;
+}
 
-  const timeOnSlideField = document.getElementById("time-on-slide-field");
-  const timeOnInfoSlidesField = document.getElementById("time-on-info-slides-field");
-  const infoSlidesAccessCountField = document.getElementById("info-slides-access-count-field");
+$(document).on("turbolinks:load", () => {
+  if (!shouldRegisterVignette()) {
+    return;
+  }
 
-  const form = document.querySelector("form");
+  registerSubmitHandler();
+  registerTextAnswerValidator();
 
-  let SlideStartTime = new Date();
-  let InfoSlideStartTime = null;
-
-  var activeInfoSlideIndex = null;
-
-  // Time in seconds
-  let totalSlideTime = 0;
-  let infoSlideTimes = {};
-
-  let infoSlidesAccessCount = {};
-
-  infoSlideButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      const index = button.getAttribute("data-index");
-      activeInfoSlideIndex = index;
-
-      // Hide all info slides and the slide
-      infoSlideContainers.forEach(container => container.style.display = "none");
-      slideContainer.style.display = "none";
-      // Make selected info slide visible
-      document.getElementById(`info-slide-container-${index}`).style.display = "block";
-
-      // Increase access count on selected info slide
-      infoSlidesAccessCount[index] = (infoSlidesAccessCount[index] || 0) + 1;
-
-      totalSlideTime += (Date.now() - SlideStartTime);
-      SlideStartTime = null;
-
-      InfoSlideStartTime = Date.now();
-    });
-  });
-
-  closeInfoSlideButtons.forEach((button) => {
-    button.addEventListener("click", () => {
-      activeInfoSlideIndex = null;
-      const index = button.getAttribute("data-index");
-      document.getElementById(`info-slide-container-${index}`).style.display = "none";
-      slideContainer.style.display = "block";
-
-      const timeSpentOnInfoSlide = (Date.now() - InfoSlideStartTime);
-      infoSlideTimes[index] = (timeSpentOnInfoSlide[index] || 0) + timeSpentOnInfoSlide;
-      InfoSlideStartTime = null;
-
-      SlideStartTime = Date.now();
-    });
-  });
-
-  form.addEventListener("submit", () => {
-    event.preventDefault();
-  });
-
-  $(document).on("submit", "#answer_form", () => {
-    if (SlideStartTime) {
-      totalSlideTime += (Date.now() - SlideStartTime);
-    }
-    else if (activeInfoSlideIndex) {
-      infoSlideTimes[activeInfoSlideIndex] += (Date.now() - InfoSlideStartTime);
-    }
-    for (let key in infoSlideTimes) {
-      infoSlideTimes[key] = Math.floor(infoSlideTimes[key] / 1000);
-    }
-    timeOnSlideField.value = Math.floor(totalSlideTime / 1000);
-    timeOnInfoSlidesField.value = JSON.stringify(infoSlideTimes);
-    infoSlidesAccessCountField.value = JSON.stringify(infoSlidesAccessCount);
-  });
+  const stats = new VignetteSlideStatistics();
+  registerStatisticsHandler(stats);
 });
+
+function registerSubmitHandler() {
+  $(VIGNETTE_FORM_ID).submit((event) => {
+    let isValid = false;
+    isValid = validateTextAnswer();
+
+    if (!isValid) {
+      event.preventDefault();
+      return false;
+    }
+  });
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Text Answer Fields
+////////////////////////////////////////////////////////////////////////////////
+var TEXT_ANSWER_ID = "vignettes_answer_text";
+
+function registerTextAnswerValidator() {
+  const textBody = document.getElementById(TEXT_ANSWER_ID);
+  if (!textBody) {
+    return;
+  }
+  $(textBody).on("input", () => {
+    validateTextAnswer();
+  });
+}
+
+function validateTextAnswer() {
+  const textBody = document.getElementById(TEXT_ANSWER_ID);
+  if (!textBody) {
+    return true;
+  }
+
+  let isValid = false;
+
+  const validityState = textBody.validity;
+  if (validityState.tooShort) {
+    const tooShortMessage = textBody.dataset.tooShortMessage;
+    textBody.setCustomValidity(tooShortMessage);
+  }
+  else if (validityState.valueMissing) {
+    const valueMissingMessage = textBody.dataset.valueMissingMessage;
+    textBody.setCustomValidity(valueMissingMessage);
+  }
+  else {
+    // render input valid, so that form will submit
+    textBody.setCustomValidity("");
+    isValid = true;
+  }
+
+  textBody.reportValidity();
+  return isValid;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// Statistics
+////////////////////////////////////////////////////////////////////////////////
+
+class VignetteSlideStatistics {
+  slideStartTime = new Date();
+  totalSlideTime = 0;
+
+  infoSlideAccessCounts = {};
+  infoSlideStartTime = null;
+  infoSlideTimes = {};
+
+  increaseInfoSlideAccessCount(index) {
+    this.infoSlideAccessCounts[index] ??= 0;
+    this.infoSlideAccessCounts[index]++;
+  }
+
+  freezeSlideTime() {
+    if (this.slideStartTime === null) {
+      console.error("Attempted to freeze slide time when it was already frozen");
+      return;
+    }
+    this.totalSlideTime += (Date.now() - this.slideStartTime);
+    this.slideStartTime = null;
+  }
+
+  unfreezeSlideTime() {
+    this.slideStartTime = Date.now();
+  }
+
+  startInfoSlideTimer() {
+    this.infoSlideStartTime = Date.now();
+  }
+
+  stopInfoSlideTimer(index) {
+    if (this.infoSlideStartTime === null) {
+      console.error("Attempted to stop info slide timer when it was already stopped");
+      return;
+    }
+    const timeOnInfoSlide = (Date.now() - this.infoSlideStartTime);
+    this.infoSlideTimes[index] = (this.infoSlideTimes[index] || 0.0) + timeOnInfoSlide;
+    this.infoSlideStartTime = null;
+  }
+
+  postProcessTimes() {
+    for (let key in this.infoSlideTimes) {
+      this.infoSlideTimes[key] = Math.floor(this.infoSlideTimes[key] / 1000);
+    }
+    this.totalSlideTime = Math.floor(this.totalSlideTime / 1000);
+  }
+}
+
+function registerStatisticsHandler(stats) {
+  // Info Slide - Opening
+  const openInfoSlideButtons = $(".open-info-slide-btn");
+  if (!openInfoSlideButtons) {
+    return;
+  }
+  openInfoSlideButtons.each(function () {
+    const index = $(this).attr("data-info-slide-index");
+    $(this).click(() => {
+      stats.freezeSlideTime();
+      stats.increaseInfoSlideAccessCount(index);
+      stats.startInfoSlideTimer();
+    });
+  });
+
+  // Info Slide - Closing
+  const infoSlideModals = $(".vignette-info-slide-modal");
+  if (!infoSlideModals) {
+    console.error("No info slide modals found");
+    return;
+  }
+  infoSlideModals.each(function () {
+    $(this).on("hidden.bs.modal", function () {
+      const index = $(this).attr("data-info-slide-index");
+      stats.stopInfoSlideTimer(index);
+      stats.unfreezeSlideTime();
+    });
+  });
+
+  // Form Submission
+  $(VIGNETTE_FORM_ID).submit(() => {
+    // Take rest of time into account
+    if (stats.slideStartTime) {
+      stats.freezeSlideTime();
+    }
+
+    stats.postProcessTimes();
+
+    // Transfer results to hidden form-fields
+    const timeOnSlideField = $("#time-on-slide-field");
+    const timeOnInfoSlidesField = $("#time-on-info-slides-field");
+    const infoSlidesAccessCountField = $("#info-slides-access-count-field");
+    timeOnSlideField.value = stats.totalSlideTime;
+    timeOnInfoSlidesField.value = JSON.stringify(stats.infoSlideTimes);
+    infoSlidesAccessCountField.value = JSON.stringify(stats.infoSlideAccessCounts);
+  });
+}

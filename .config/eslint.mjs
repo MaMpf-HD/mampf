@@ -101,6 +101,8 @@ const customGlobals = {
   renderMathInElement: "readable",
 
   openAnnotationIfSpecifiedInUrl: "readable",
+
+  Sortable: "readable",
 };
 
 export default [

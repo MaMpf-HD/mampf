@@ -1,52 +1,57 @@
-<%= form.fields_for :question do |question_form| %>
-  <div>
-    <%= question_form.label :type, "Question Type" %>
-    <%= question_form.select :type, options_for_select([
-        ['No Question', ''],
-        ['Text Field', 'Vignettes::TextQuestion'],
-        ['Multiple Choice', 'Vignettes::MultipleChoiceQuestion'],
-        ['Likert Scale', 'Vignettes::LikertScaleQuestion']
-    ], question_form.object.type), {}, { id:  "question-type" } %>
-  </div>
+<%= javascript_include_tag 'vignettes/question_type' %>
 
-  <div id="question-text">
-    <%= question_form.label :question_text, "Question Text" %><br>
-    <%= question_form.text_area :question_text, placeholder: "Enter your question here" %>
-  </div>
+<%= form.fields_for :question do |f| %>
 
-  <!-- The id must be the name of the corresponding class -->
-  <div id="Vignettes::TextQuestion" class="question-field" style="display: none;">
-  </div>
+<!-- Question Type Selection -->
+<div class="form-floating">
+    <%= f.select :type,
+        options_for_select([
+            ['No Question', ''],
+            ['Text Area', 'Vignettes::TextQuestion'],
+            ['Multiple Choice', 'Vignettes::MultipleChoiceQuestion'],
+            ['Likert Scale', 'Vignettes::LikertScaleQuestion']
+        ], f.object.type),
+        {},
+        {
+            class: "form-select",
+            id: "vignettes-question-type-select",
+            "aria-label": "Selection for question type"
+        } %>
+    <%= f.label :type, "Question Type" %>
+</div>
 
-  <div id="Vignettes::LikertScaleQuestion", class="question-field" style="display: none;">
-  </div>
+<div id="vignette-question-text" class="form-floating mt-3 show">
+    <%= f.text_area :question_text,
+        placeholder: '_',
+        class: 'form-control',
+        style: 'height: 120px',
+        required: false
+    %>
+    <%= f.label :question_text, "Your question" %>
+</div>
 
-  <div id="Vignettes::MultipleChoiceQuestion" class="question-field" style="display: none;">
-    <div>
-      <%= question_form.label :options, "Options" %>
-      <div id="options-container">
-        <% question_form.object.options.each do |option| %>
-          <div class="option-block">
-            <%= question_form.fields_for :options, option do |option_form| %>
-              <div class="option-field">
-                <%= option_form.text_field :text, placeholder: "Option Text" %>
-                <%= option_form.hidden_field :_destroy %>
-                <button type="button" class="remove-option">Remove</button>
-              </div>
-            <% end %>
-          </div>
+<div id="vignette-edit-multiple-choice" class="collapse mt-3">
+
+    <div id="vignette-multiple-choice-options">
+        <%= f.fields_for :options do |option_form| %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form } %>
         <% end %>
-        <div id="new-option-template" style="display: none;">
-          <%= question_form.fields_for :options, question_form.object.options.build, child_index: "NEW_RECORD" do |option_form|%>
-            <div class="option-field">
-              <%= option_form.text_field :text %>
-              <%= option_form.hidden_field :_destroy %>
-              <button type="button" class="remove-option">Remove</button>
-            </div>
-          <% end %>
-        </div>
-      </div>
-      <button type="button" id="add-option">Add Option</button>
     </div>
-  </div>
+
+    <!-- later with Stimulus: -->
+    <!-- https://jonathanyeong.com/rails-stimulus-dynamic-nested-form/ -->
+    <template id="vignette-multiple-choice-options-template" class="d-none">
+        <%= f.fields_for :options, f.object.options.build,
+                         child_index: 'NEW_RECORD' do |option_form| %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form } %>
+        <% end %>
+    </template>
+    
+    <button type="button" id="vignette-multiple-choice-add"
+            class="btn btn-outline-secondary">
+        <i class="bi bi-plus-circle"></i>
+        Add Multiple Choice Option
+    </button>
+</div>
+
 <% end %>

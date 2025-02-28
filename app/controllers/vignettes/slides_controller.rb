@@ -14,12 +14,19 @@ module Vignettes
       @slide = @questionnaire.slides.new
       @slide.build_question
       @slide.question.options.build
+
+      return unless request.xhr?
+
+      render partial: "vignettes/questionnaires/slide_accordion_item",
+             locals: { slide: @slide }
     end
 
     def edit
       @slide = @questionnaire.slides.find(params[:id])
       @slide.build_question unless @slide.question
       @slide.question.options.build unless @slide.question.options.any?
+
+      render partial: "vignettes/slides/form" if request.xhr?
     end
 
     def create

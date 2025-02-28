@@ -1,62 +1,55 @@
-document.addEventListener("turbolinks:load", () => {
-  const questionTypeDropdown = document.getElementById("question-type");
-  if (questionTypeDropdown) {
-    questionTypeDropdown.addEventListener("change", function (event) {
-      // Disable all fields by default
-      const allQuestionFields = document.getElementsByClassName("question-field");
-      const questionTextField = document.getElementById("question-text");
-      for (let field of allQuestionFields) {
-        field.style.display = "none";
-        if (questionTextField) {
-          questionTextField.style.display = "none";
-        }
-      }
-      // make selected field visible
-      const selectedType = event.target.value;
-      if (selectedType) {
-        const selectedField = document.getElementById(selectedType);
-        if (questionTextField && selectedType != "") {
-          questionTextField.style.display = "block";
-        }
-        if (selectedField) {
-          selectedField.style.display = "block";
-        }
-      }
-    });
+var QUESTION_TYPE_SELECT_ID = "#vignettes-question-type-select";
 
-    questionTypeDropdown.dispatchEvent(new Event("change"));
-  };
-  const optionsContainer = document.getElementById("options-container");
-
-  // Handle dynamic addition of options
-  const addOptionButton = document.getElementById("add-option");
-  const optionTemplate = document.getElementById("new-option-template");
-  if (addOptionButton) {
-    addOptionButton.addEventListener("click", () => {
-      const optionTemplateHTML = optionTemplate.innerHTML;
-      const uniqueId = new Date().getTime().toString();
-      const newBlockHTML = optionTemplateHTML.replace(/NEW_RECORD/g, uniqueId);
-
-      optionsContainer.insertAdjacentHTML("beforeend", newBlockHTML);
-    });
-  }
-
-  // Handle removal of options
-  if (optionsContainer) {
-    optionsContainer.addEventListener("click", (e) => {
-      console.log(e.target);
-      if (e.target.className == "remove-option") {
-        e.preventDefault();
-        const optionBlock = e.target.parentElement;
-        if (optionBlock.className == "option-field") {
-          const destroyField = optionBlock.querySelector("input[type='hidden'][name*='_destroy']");
-          console.log(destroyField);
-          if (destroyField) {
-            destroyField.value = "1";
-            optionBlock.style.display = "none";
-          }
-        }
-      }
-    });
-  }
+$(document).ready(function () {
+  handleQuestionTypes();
+  updateQuestionFieldState($(QUESTION_TYPE_SELECT_ID).val());
+  new TomSelect(QUESTION_TYPE_SELECT_ID, { allowEmptyOption: true });
+  handleMultipleChoiceEditor();
 });
+
+function handleQuestionTypes() {
+  const questionTypeDropdown = $(QUESTION_TYPE_SELECT_ID);
+
+  questionTypeDropdown.on("change", function (event) {
+    updateQuestionFieldState(event.target.value);
+  });
+}
+
+function updateQuestionFieldState(selectedName) {
+  const multipleChoiceField = $("#vignette-edit-multiple-choice");
+  const questionTextField = $("#vignette-question-text");
+
+  // Type "No question"
+  if (selectedName === "") {
+    questionTextField.find("textarea").val("");
+    questionTextField.collapse("hide");
+  }
+  else {
+    questionTextField.collapse("show");
+  }
+
+  if (selectedName === "Vignettes::MultipleChoiceQuestion") {
+    multipleChoiceField.collapse("show");
+  }
+  else {
+    multipleChoiceField.collapse("hide");
+  }
+}
+
+function handleMultipleChoiceEditor() {
+  // Adding an option
+  $("#vignette-multiple-choice-add").click(function (_evt) {
+    const template = $("#vignette-multiple-choice-options-template");
+    const newOptionHtml = template.html();
+    const uniqueId = new Date().getTime();
+    const newBlockHtml = newOptionHtml.replace(/NEW_RECORD/g, uniqueId);
+    $("#vignette-multiple-choice-options").append(newBlockHtml);
+  });
+
+  // Removing an option
+  $(document).on("click", ".remove-vignette-mc-option", function (evt) {
+    const parentDiv = $(evt.target).closest("div");
+    parentDiv.find(".vignette-mc-hidden-destroy").val("1");
+    parentDiv.removeClass("d-flex").hide();
+  });
+}

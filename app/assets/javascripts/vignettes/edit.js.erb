@@ -1,0 +1,113 @@
+$(document).on("turbolinks:load", function () {
+  const vignetteSlideList = $("#vignettes-slides-accordion");
+  createSortableVignetteSlides(vignetteSlideList);
+  registerVignetteSlideListeners(vignetteSlideList);
+  registerNewSlideButtonListener(vignetteSlideList);
+});
+
+function createSortableVignetteSlides(vignetteSlideList) {
+  Sortable.create(vignetteSlideList.get(0), {
+    animation: 150,
+    filter: ".accordion-collapse",
+    preventOnFilter: false,
+    onEnd: function (_evt) {
+      // console.log(`Moved element from ${evt.oldIndex} to ${evt.newIndex}`);
+      // TODO: send a request to update the order of the slides in the database
+      // TODO: see more options here:
+      // https://github.com/SortableJS/Sortable?tab=readme-ov-file#options
+      // TODO: Watch out (!) We also get this event when oldIndex === newIndex
+      // in this case we should not send a request to the server as nothing
+      // changed. And the server should of course check for bounds.
+      //
+      // Something like that should work:
+      // $.ajax({
+      //   url: `/vignettes/slides/${slideId}/update_position`,
+      //   method: "PATCH",
+      //   data: {
+      //     slide: {
+      //       position: newPosition,
+      //     },
+      //   },
+      //   success: function (response) {
+      //     console.log(`Slide ${slideId} moved to position ${newPosition}`);
+      //   },
+      //   error: function (xhr, status, error) {
+      //     console.error(`Failed to update position: ${error}`);
+      //   },
+      // });
+    },
+  });
+}
+
+function registerVignetteSlideListeners(vignetteSlideList) {
+  $(".vignette-accordion-collapse").on("shown.bs.collapse", function (evt) {
+    const slideId = evt.target.dataset.slideId;
+    if (slideId === undefined) {
+      // multiple choice options are also collapsible
+      // and trigger shown.bs.collapse
+      return;
+    }
+
+    const questionnaireId = vignetteSlideList.attr("data-questionnaire-id");
+    if (questionnaireId === undefined) {
+      console.error("Questionnaire id is missing");
+      return;
+    }
+
+    const loadingSpinner = $(`#vignette-slide-loading-${slideId}`);
+    let spinnerTimeout = setTimeout(function () {
+      loadingSpinner.show();
+    }, 100); // avoid flickering when loading is fast
+
+    $.ajax({
+      url: Routes.edit_vignettes_questionnaire_slide_path(questionnaireId, slideId),
+      method: "GET",
+      dataType: "html",
+      success: function (response) {
+        $(vignetteSlideList).find(".slides-edit-form-container").html("");
+        const editFormContainer = $(`#slide-edit-form-container-${slideId}`);
+        editFormContainer.hide().html(response).ready(function () {
+          clearTimeout(spinnerTimeout);
+          loadingSpinner.hide();
+          editFormContainer.show();
+        });
+      },
+      error: function (xhr, status, error) {
+        clearTimeout(spinnerTimeout);
+        console.error(`Failed to load slide edit form: ${error}`);
+      },
+    });
+  });
+}
+
+function registerNewSlideButtonListener(vignetteSlideList) {
+  $("#vignettes-new-slide-btn").click(function () {
+    $(this).prop("disabled", true);
+
+    const questionnaireId = vignetteSlideList.attr("data-questionnaire-id");
+    if (questionnaireId === undefined) {
+      console.error("Questionnaire id is missing");
+      return;
+    }
+
+    $.ajax({
+      url: Routes.new_vignettes_questionnaire_slide_path(questionnaireId),
+      method: "GET",
+      dataType: "html",
+      success: function (response) {
+        $(vignetteSlideList).append(response);
+        const newSlide = $(vignetteSlideList).children().last();
+        openAccordionItem(newSlide);
+      },
+      error: function (xhr, status, error) {
+        console.error(`Failed to load new slide form: ${error}`);
+      },
+    });
+  });
+}
+
+function openAccordionItem($item) {
+  new bootstrap.Collapse($item.find(".collapse"), {
+    toggle: true,
+  });
+}

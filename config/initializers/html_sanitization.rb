@@ -1,7 +1,7 @@
 Rails.application.config.after_initialize do
   default_allowed_attributes =
-    Rails::HTML5::Sanitizer.safe_list_sanitizer.allowed_attributes + \
-    ActionText::Attachment::ATTRIBUTES.to_set
+    Rails::HTML5::Sanitizer.safe_list_sanitizer.allowed_attributes \
+    + ActionText::Attachment::ATTRIBUTES.to_set
   custom_allowed_attributes = Set.new(["controls"])
   ActionText::ContentHelper.allowed_attributes = (default_allowed_attributes +
   custom_allowed_attributes).freeze
