@@ -1,9 +1,13 @@
-<%= form_with(model: @questionnaire, local: true) do |form| %>
+<%= form_with(url: vignettes_questionnaires_path, scope: :vignettes_questionnaire) do |form| %>
+  <%= form.hidden_field :course_id, value: course.id %>
+  
   <div class="mb-3">
-    <%= form.label :title %>
-    <%= form.text_field :title, class: 'form-control', placeholder: 'Enter title' %>
+    <%= form.label :title, class: 'form-label' %>
+    <%= form.text_field :title, class: 'form-control', placeholder: 'Enter title', required: true %>
   </div>
-  <div class="mb-3">
+  
+  <div class="d-flex justify-content-between">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
     <%= form.submit 'Create Vignette', class: 'btn btn-primary' %>
   </div>
 <% end %>

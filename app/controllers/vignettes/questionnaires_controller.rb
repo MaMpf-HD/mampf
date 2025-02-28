@@ -3,8 +3,9 @@ require "csv"
 module Vignettes
   class QuestionnairesController < ApplicationController
     before_action :set_questionnaire, only: [:show, :take, :submit_answer]
+    before_action :set_course, only: [:index, :new, :create]
     def index
-      @questionnaires = Questionnaire.all
+      @questionnaires = @course.questionnaires
       # Because the create model form works on the index page.
       @questionnaire = Questionnaire.new
     end
@@ -120,8 +121,12 @@ module Vignettes
         @questionnaire = Questionnaire.find(params[:id])
       end
 
+      def set_course
+        @course = Course.find(params[:vignettes_questionnaire][:course_id])
+      end
+
       def questionnaire_params
-        params.require(:vignettes_questionnaire).permit(:title)
+        params.require(:vignettes_questionnaire).permit(:title, :course_id)
       end
 
       def answer_params

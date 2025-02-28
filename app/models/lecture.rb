@@ -382,6 +382,13 @@ class Lecture < ApplicationRecord
     project?("reste", user) || imported_any?("reste")
   end
 
+  def questionnaire?
+    return false
+    Rails.cache.fetch("#{cache_key_with_version}/has_questionnaire") do
+      Vignettes::Questionnaire.exists?(lecture_id: id)
+    end
+  end
+
   # the next methods put together some information on the lecture (teacher,
   # term, title) in various combinations
 

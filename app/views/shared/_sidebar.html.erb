@@ -151,6 +151,17 @@
     </a>
   </li>
 
+  <!--
+  <% fullpath = get_lecture_questionnaires %>
+  <% active_class = get_class_for_project(project_name) %>
+  <li class="sidebar-item nav-link <%= active_class %>
+          <%= !lecture || !lecture.questionnaire? ? "disabled" : ""%>">
+    <a href="<%= url_for(fullpath)%>">
+      <i class="bi bi-layers<%= active_class.present? ? "-fill" : "" %>"> Vignettes </i>
+    </a>
+  </li>
+  -->
+
   <%# Diverse (Rest) %>
   <% project_name = 'reste' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
