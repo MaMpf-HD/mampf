@@ -11,6 +11,8 @@ module Vignettes
     end
 
     def new
+      return if @questionnaire.published
+
       @slide = @questionnaire.slides.new
       @slide.build_question
       @slide.question.options.build
@@ -46,8 +48,8 @@ module Vignettes
       if @slide.update(slide_params)
         redirect_to edit_vignettes_questionnaire_path(@questionnaire),
                     notice: t("vignettes.slide_updated")
-      else
-        render :edit, status: :unprocessable_entity
+      elsif request.xhr?
+        render partial: "vignettes/slides/form"
       end
     end
 

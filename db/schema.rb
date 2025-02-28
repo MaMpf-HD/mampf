@@ -991,6 +991,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   create_table "vignettes_questionnaires", force: :cascade do |t|
     t.string "title"
     t.bigint "course_id", null: false
+    t.boolean "published"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["course_id"], name: "index_vignettes_questionnaires_on_course_id"

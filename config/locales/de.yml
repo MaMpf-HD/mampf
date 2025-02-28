@@ -322,6 +322,9 @@ de:
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
+    vignettes:
+      published: 'Vignette wurde erfolgreich veröffentlicht.'
+      not_published: 'Vignette konnte nicht veröffentlicht werden.'
     annotation:
       your_annotations: 'Deine Annotationen'
       students_annotations: 'Annotationen der Studierenden'

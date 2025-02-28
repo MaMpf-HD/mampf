@@ -3,7 +3,18 @@
 
 <div class="container-md small-width">
     <!-- Slides -->
-    <h1 class="fs-4 fw-bold">Slides</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="fs-4 fw-bold mb-0">Slides</h1>
+        
+        <!-- Publish Questionnaire -->
+        <%= button_to @questionnaire.published ? 'Published' : 'Publish', 
+                      publish_vignettes_questionnaire_path(@questionnaire),
+                      method: :patch,
+                      class: "btn #{@questionnaire.published ? 'btn-success' : 'btn-danger'}",
+                      disabled: @questionnaire.published,
+                      form_class: 'd-inline-block',
+                      id: "vignettes-publish-btn" %>
+    </div>
 
     <p>Drag the slides to change their order.</p>
 
@@ -15,7 +26,10 @@
     </div>
 
     <!-- Add new slide (at the end of the list) -->
-    <button type="button" id="vignettes-new-slide-btn" class="btn btn-outline-primary mt-2">
+    <button type="button" id="vignettes-new-slide-btn" 
+            class="btn btn-outline-primary mt-2" 
+            <%= 'disabled' if @questionnaire.published %>
+            >
         <i class="bi bi-plus-circle"></i>
         Add new slide
     </button>

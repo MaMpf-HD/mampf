@@ -72,6 +72,15 @@ module Vignettes
       end
     end
 
+    def publish
+      questionnaire = Questionnaire.find(params[:id])
+      if questionnaire.update(published: !questionnaire.published)
+        redirect_to vignettes_questionnaire_path(questionnaire), notice: t("vignettes.published")
+      else
+        redirect_to vignettes_questionnaire_path(questionnaire), alert: t("vignettes.not_published")
+      end
+    end
+
     def export_answers
       questionnaire = Questionnaire.find(params[:id])
       answers = questionnaire.slides.includes(:answers).flat_map(&:answers)

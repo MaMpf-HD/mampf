@@ -2516,6 +2516,8 @@ en:
     info_slide_updated: 'Info slide updated.'
     slide_updated: 'Slide was successfully updated.'
     slide_created: 'Slide was successfully created.'
+    published: 'Vignette was successfully published.'
+    not_published: 'Vignette could not be published.'
 
 
   external_link_lc: 'external link'

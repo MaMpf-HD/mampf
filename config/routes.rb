@@ -194,10 +194,6 @@ Rails.application.routes.draw do
       to: "media#index",
       as: "lecture_food"
 
-  get "lectures/:id/questionnaire",
-      to: "vignettes/questionnaires#index",
-      as: "lecture_questionnaires"
-
   get "lectures/:id/update_teacher",
       to: "lectures#update_teacher",
       as: "update_teacher"
@@ -579,6 +575,7 @@ Rails.application.routes.draw do
       member do
         get :export_answers
         post :submit_answer
+        patch :publish
       end
       resources :info_slides, only: [:new, :create, :edit, :update]
       resources :slides, only: [:new, :create, :edit, :update] do
