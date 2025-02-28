@@ -1,4 +1,4 @@
-class CreateOptions < ActiveRecord::Migration[7.1]
+class CreateVignettesOptions < ActiveRecord::Migration[7.1]
   def change
     create_table :vignettes_options do |t|
       t.string :text

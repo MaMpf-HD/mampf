@@ -11,26 +11,26 @@ on:
 
 jobs:
   # For the setup idea using Docker Buildx, see StackOverflow answer [1].
-  # [2] and [3] might also be very useful. [4] is generally about Docker
-  # cache management within GitHub Actions.
+  # [2] might also be very useful. [3] and [4] are generally about Docker
+  # cache management (within GitHub Actions). Note that the GitHub Actions cache
+  # is different from the GitHub Container Registry (ghcr).
   #
   # [1] https://stackoverflow.com/a/75544124/
-  # [2] https://depot.dev/blog/docker-layer-caching-in-github-actions#docker-layer-caching-in-github-actions
-  # [3] https://www.deploysentinel.com/blog/docker-buildx-cache-with-github-actions
-  # [4] https://docs.docker.com/build/ci/github-actions/cache/
-  unit-tests:
-    name: Unit tests
-    environment: testing
+  # [2] https://www.deploysentinel.com/blog/docker-buildx-cache-with-github-actions
+  # [3] https://docs.docker.com/build/ci/github-actions/cache/
+  # [4] https://docs.docker.com/build/cache/backends/
+  build-mampf:
+    name: Build MaMpf
+    environment: testing-review
     runs-on: ubuntu-latest
-    permissions: write-all
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
             submodules: recursive
-
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
 
       # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
@@ -40,17 +40,64 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build docker images
-        # As the docker-compose.yml file uses contexts like "./../..", we have
-        # to change the working directory here.
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push docker image to GHCR
         working-directory: docker/test
-        run: |
-          docker buildx bake --file ./docker-compose.yml --file ./../../.github/workflows/docker-compose-cache.json
+        # We don't use the docker/build-push-action here since it doesn't
+        # support passing custom docker compose files (just dockerfiles).
+        #
+        # See this link for a reference of target options:
+        # https://docs.docker.com/build/bake/reference/#target
+        #
+        # Note it's essential to use the inline type such that the build cache
+        # is embedded in the image. See the Cache storage backends:
+        # https://docs.docker.com/build/cache/backends/
+        # https://docs.docker.com/reference/cli/docker/buildx/build/#cache-to
+        #
+        # Push image and cache separately to GHCR, since otherwise inline mode
+        # does not support mode=max caching.
+        # https://github.com/moby/buildkit?tab=readme-ov-file#registry-push-image-and-cache-separately
+        run: >
+          docker buildx bake
+          --allow=fs.read=/home/runner/work/mampf/mampf
+          -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
+          --set mampf.tags=ghcr.io/mampf-hd/mampftest:image
+          --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
+          --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
+          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
+
+  unit-tests:
+    name: Unit tests
+    environment: testing
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: build-mampf
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+            submodules: recursive
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull MaMpf image (from GHCR)
+        working-directory: docker/test
+        run: >
+          docker pull ghcr.io/mampf-hd/mampftest:image
 
       - name: Run unit tests
         working-directory: docker/test
-        run: |
-          docker compose run --entrypoint="" mampf sh -c "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
+        run: >
+          docker compose -f docker-compose.yml -f docker-compose.cicd.yml
+          run --entrypoint="" mampf sh -c
+          "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
         uses: codecov/codecov-action@v4
@@ -60,22 +107,19 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
 
-  # Cypress end-to-end tests
+  # Cypress end-to-end (e2e) tests
   e2e-tests:
     name: e2e (Cypress)
     environment: testing
     runs-on: ubuntu-latest
     permissions: write-all
+    needs: build-mampf
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
             submodules: recursive
 
-      - name: Setup Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -83,15 +127,15 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build docker images
-        # As the docker-compose.yml file uses contexts like "./../..", we have
-        # to change the working directory here.
+      - name: Pull MaMpf image (from GHCR)
         working-directory: docker/test
         run: >
-          docker buildx bake -f ./docker-compose.yml -f ./cypress.yml
-          -f ./../../.github/workflows/docker-compose-cache.json
-      
+          docker pull ghcr.io/mampf-hd/mampftest:image
+
       - name: Run Cypress tests
         working-directory: docker/test
-        # "cypress run" is defined in the cypress.yml entrypoint
-        run: docker compose -f ./docker-compose.yml -f ./cypress.yml run cypress
+        run: > 
+          docker compose
+          -f ./docker-compose.yml -f docker-compose.cicd.yml
+          -f ./cypress.yml
+          run cypress

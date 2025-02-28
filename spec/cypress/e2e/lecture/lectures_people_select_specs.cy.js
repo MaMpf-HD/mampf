@@ -1,4 +1,4 @@
-import FactoryBot from "../support/factorybot";
+import FactoryBot from "../../support/factorybot";
 
 describe("Lecture edit page", () => {
   it("shows content tab button", function () {
@@ -14,14 +14,23 @@ describe("Lecture edit page", () => {
   });
 });
 
-function typeCyInInput(selector, waitForUserFill = true) {
+function typeCyInInput(selector, waitForUserFill = true, isMultiple = true) {
   if (waitForUserFill) {
     cy.intercept("GET", "/users/fill_user_select*").as("userFill");
   }
 
   cy.getBySelector(selector).find("input:not([type='hidden'])")
     .should("have.length", 1).first().as("input");
-  cy.get("@input").clear(); // without clearing first, tests are flaky (!)
+
+  // depending on whether the input is a multiple select or not, we need to
+  // clear the input field differently
+  if (isMultiple) {
+    cy.get("@input").clear();
+  }
+  else {
+    cy.getBySelector(selector).find("a.remove").click();
+  }
+
   cy.get("@input").click();
 
   // eslint-disable-next-line cypress/unsafe-to-chain-command
@@ -88,7 +97,7 @@ describe("Lecture people edit page: teacher & editor", () => {
 
     it("allows searching for arbitrary users to assign them as teachers", function () {
       cy.visit(this.lecturePeopleUrl);
-      typeCyInInput("teacher-select");
+      typeCyInInput("teacher-select", true, false);
       shouldContainUsers("teacher-select", this, true, true);
     });
 

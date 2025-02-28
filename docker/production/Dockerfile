@@ -89,7 +89,7 @@ COPY --chown=app:app . /usr/src/app
 # `assets:precompile` task. Therefore, it also needs to access the env variables
 # to correctly start the initializers.
 #
-# However (after a long ime researching), docker compose does not seem to offer
+# However (after a long time researching), docker compose does not seem to offer
 # an easy solution to have an env file from the host machine available during
 # the build step (Dockerfile) and not just during the run time of the container.
 # Note that the env file is indeed available on our host, just not in the build

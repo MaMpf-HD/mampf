@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class CreateProbes < ActiveRecord::Migration[6.0]
   def change
     create_table :probes do |t|
@@ -11,4 +10,3 @@ class CreateProbes < ActiveRecord::Migration[6.0]
     end
   end
 end
-# rubocop:enable Rails/

@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class CreateReferrals < ActiveRecord::Migration[5.2]
   def change
     create_table :referrals do |t|
@@ -14,4 +13,3 @@ class CreateReferrals < ActiveRecord::Migration[5.2]
     end
   end
 end
-# rubocop:enable Rails/

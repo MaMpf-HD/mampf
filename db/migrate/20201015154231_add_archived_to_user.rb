@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class AddArchivedToUser < ActiveRecord::Migration[6.0]
   def up
     add_column :users, :archived, :boolean
@@ -8,4 +7,3 @@ class AddArchivedToUser < ActiveRecord::Migration[6.0]
     remove_column :users, :archived, :boolean
   end
 end
-# rubocop:enable Rails/
