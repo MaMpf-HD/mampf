@@ -2509,6 +2509,7 @@ en:
         fewer questions availabale for your specified content than you selected.
   
   vignettes:
+    vignettes: 'Vignettes'
     destroy_answer: 'Answer was destroyed'  
     answered: 'Vignette was successfully answered'
     no_slides: 'No slides to answer'

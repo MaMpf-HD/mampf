@@ -1,6 +1,6 @@
 module Vignettes
   class Questionnaire < ApplicationRecord
-    belongs_to :course
+    belongs_to :lecture
     has_many :slides,
              foreign_key: "vignettes_questionnaire_id",
              dependent: :destroy,

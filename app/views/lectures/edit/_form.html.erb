@@ -62,6 +62,13 @@
           aria-controls="lecture-pane-info" aria-selected="false">
           <%= t('info') %>
         </button>
+        <button class="nav-link lecture-nav-pill-button"
+          id="lecture-nav-vignettes" type="button" role="tab"
+          href="#vignettes"
+          data-bs-toggle="pill" data-bs-target="#lecture-pane-vignettes"
+          aria-controls="lecture-pane-vignettes" aria-selected="false">
+          <%= t('vignettes.vignettes') %>
+        </button>
       </div>
     </nav>
 
@@ -174,12 +181,22 @@
               locals: { lecture: lecture } %>
         </div>
       </div>
+
+      <!-- Vignettes -->
+      <div class="tab-pane fade" id="lecture-pane-vignettes"
+          role="tabpanel" aria-labelledby="lecture-nav-vignettes" tabindex="0">
+        <div class="container small-width lecture-pane">
+          <%= render partial: 'vignettes/questionnaires/questionnaire_accordion',
+              locals: { lecture: lecture } %>
+        </div>
+      </div>
     </div>
   </div>
 
 
   <!-- Modals -->
   <%= render partial: 'media/modal' %>
+  <%= render 'vignettes/questionnaires/vignette_modal', lecture: @lecture %>
   <%= render partial: 'sections/content_modal' %>
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/publish/publish',

@@ -990,11 +990,11 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
 
   create_table "vignettes_questionnaires", force: :cascade do |t|
     t.string "title"
-    t.bigint "course_id", null: false
+    t.bigint "lecture_id", null: false
     t.boolean "published"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_vignettes_questionnaires_on_course_id"
+    t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
 
   create_table "vignettes_questions", force: :cascade do |t|
@@ -1144,7 +1144,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"
   add_foreign_key "vignettes_options", "vignettes_questions"
-  add_foreign_key "vignettes_questionnaires", "courses"
+  add_foreign_key "vignettes_questionnaires", "lectures"
   add_foreign_key "vignettes_questions", "vignettes_slides"
   add_foreign_key "vignettes_slide_statistics", "users"
   add_foreign_key "vignettes_slide_statistics", "vignettes_answers"

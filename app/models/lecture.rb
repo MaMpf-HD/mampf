@@ -35,6 +35,11 @@ class Lecture < ApplicationRecord
            as: :teachable,
            inverse_of: :teachable
 
+  has_many :vignettes_questionnaires, -> { order(id: :asc) },
+           class_name: "Vignettes::Questionnaire",
+           dependent: :destroy,
+           inverse_of: :lecture
+
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
@@ -1054,5 +1059,9 @@ class Lecture < ApplicationRecord
 
     def talk_ids_for_speaker(speaker)
       SpeakerTalkJoin.where(speaker: speaker).select(:talk_id)
+    end
+
+    def vignettes?
+      vignettes_questionnaires.any?
     end
 end

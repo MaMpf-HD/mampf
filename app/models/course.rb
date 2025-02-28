@@ -18,11 +18,6 @@ class Course < ApplicationRecord
            as: :teachable,
            inverse_of: :teachable
 
-  has_many :vignettes_questionnaires, -> { order(id: :asc) },
-           class_name: "Vignettes::Questionnaire",
-           dependent: :destroy,
-           inverse_of: :course
-
   # in a course, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium

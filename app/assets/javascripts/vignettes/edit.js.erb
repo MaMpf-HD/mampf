@@ -1,4 +1,5 @@
-$(document).on("turbolinks:load", function () {
+// When using turbolinks, the event is not fired on redirect
+$(document).ready(function () {
   const vignetteSlideList = $("#vignettes-slides-accordion");
   createSortableVignetteSlides(vignetteSlideList);
   registerVignetteSlideListeners(vignetteSlideList);

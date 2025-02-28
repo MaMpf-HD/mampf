@@ -24,7 +24,7 @@
     </div>
     <div class="card-body">
       <ul class="list-group"> 
-        <% questionnaires = course.vignettes_questionnaires %>
+        <% questionnaires = lecture.vignettes_questionnaires %>
         <% if questionnaires.present? %>
           <% questionnaires.each do |questionnaire| %>
             <li class="list-group-item">
@@ -33,7 +33,7 @@
           <% end %>
         <% else %>
           <li class="list-group-item">
-            <%= t('admin.course.no_questionnaires', default: 'No questionnaires available') %>
+            <%= t('admin.lecture.no_questionnaires', default: 'No questionnaires available') %>
           </li>
         <% end %>
       </ul>
