@@ -1,7 +1,7 @@
 <%= form_with(
       model: [@questionnaire, @slide],
       local: true,
-      url: @slide.new_record? ? vignettes_questionnaire_slides_path(@questionnaire) : vignettes_questionnaire_slide_path(@questionnaire, @slide),
+      url: @slide.new_record? ? questionnaire_slides_path(@questionnaire) : questionnaire_slide_path(@questionnaire, @slide),
       id: "slide-form"
     ) do |form| %>
 

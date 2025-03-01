@@ -8,7 +8,7 @@
         
         <!-- Publish Questionnaire -->
         <%= button_to @questionnaire.published ? 'Published' : 'Publish', 
-                      publish_vignettes_questionnaire_path(@questionnaire),
+                      publish_questionnaire_path(@questionnaire),
                       method: :patch,
                       class: "btn #{@questionnaire.published ? 'btn-success' : 'btn-danger'}",
                       disabled: @questionnaire.published,
@@ -44,12 +44,12 @@
     <ul>
         <% @questionnaire.info_slides.each() do |info_slide| %>
             <li>
-                <%= link_to info_slide.title, edit_vignettes_questionnaire_info_slide_path(@questionnaire, info_slide) %>
+                <%= link_to info_slide.title, edit_questionnaire_info_slide_path(@questionnaire, info_slide) %>
             </li>
         <%end%>
     </ul>
-    <%= button_to 'Create new info slide', new_vignettes_questionnaire_info_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+    <%= button_to 'Create new info slide', new_questionnaire_info_slide_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
 
     <!-- Export -->
-    <%= button_to "Export answers", export_answers_vignettes_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
+    <%= button_to "Export answers", export_answers_questionnaire_path(@questionnaire), method: :get, class: 'btn btn-primary' %>
 </div>

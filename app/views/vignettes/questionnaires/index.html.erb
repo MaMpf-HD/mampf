@@ -3,12 +3,7 @@
 <ul>
     <% @questionnaires.each do |questionnaire| %>
         <li>
-            <%= link_to questionnaire.title, edit_vignettes_questionnaire_path(questionnaire) %>
+            <%= link_to questionnaire.title, take_questionnaire_path(questionnaire) %>
         </li>
     <%end%>
 </ul>
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#vignetteModal">
-  Create new Vignette
-</button>
-
-<%= render 'vignettes/questionnaires/vignette_modal' %>

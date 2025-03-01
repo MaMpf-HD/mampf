@@ -192,7 +192,7 @@ Rails.application.routes.draw do
 
   get "lectures/:lecture_id/vignettes",
       to: "vignettes/questionnaires#index",
-      as: "lecture_vignettes"
+      as: "lecture_questionnaires"
 
   get "lectures/:id/update_teacher",
       to: "lectures#update_teacher",
@@ -566,11 +566,11 @@ Rails.application.routes.draw do
   end
 
   # vignettes routes
-  namespace :vignettes do
-    get "questionnaires/:id/take",
-        to: "questionnaires#take",
-        as: "take_questionnaire"
+  get "questionnaires/:id/take",
+      to: "vignettes/questionnaires#take",
+      as: "take_questionnaire"
 
+  scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:index, :show, :new, :create, :edit, :update] do
       member do
         get :export_answers

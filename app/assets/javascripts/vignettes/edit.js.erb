@@ -61,7 +61,7 @@ function registerVignetteSlideListeners(vignetteSlideList) {
     }, 100); // avoid flickering when loading is fast
 
     $.ajax({
-      url: Routes.edit_vignettes_questionnaire_slide_path(questionnaireId, slideId),
+      url: Routes.edit_questionnaire_slide_path(questionnaireId, slideId),
       method: "GET",
       dataType: "html",
       success: function (response) {
@@ -92,7 +92,7 @@ function registerNewSlideButtonListener(vignetteSlideList) {
     }
 
     $.ajax({
-      url: Routes.new_vignettes_questionnaire_slide_path(questionnaireId),
+      url: Routes.new_questionnaire_slide_path(questionnaireId),
       method: "GET",
       dataType: "html",
       success: function (response) {

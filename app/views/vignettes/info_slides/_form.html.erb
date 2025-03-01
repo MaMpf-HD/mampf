@@ -1,6 +1,6 @@
 <%= form_with(
       model: @info_slide,
-            url: @info_slide.new_record? ? vignettes_questionnaire_info_slides_path(@questionnaire) : vignettes_questionnaire_info_slide_path(@questionnaire, @info_slide),
+            url: @info_slide.new_record? ? questionnaire_info_slides_path(@questionnaire) : questionnaire_info_slide_path(@questionnaire, @info_slide),
       local: true
     ) do |form| %>
   <%= form.text_field :title, placeholder: "Enter a title" %>

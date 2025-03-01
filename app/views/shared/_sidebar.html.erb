@@ -106,7 +106,7 @@
   </li>
 
   <%# Vignetten %>
-  <% path = lecture_vignettes_path(lecture)%>
+  <% path = lecture_questionnaires_path(lecture)%>
   <% active_class = get_class_for_path_startswith(path) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.vignettes? ? "disabled" : ""%>">

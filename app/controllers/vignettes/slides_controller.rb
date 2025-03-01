@@ -35,7 +35,7 @@ module Vignettes
       @slide = @questionnaire.slides.new(slide_params)
       @slide.position = @questionnaire.slides.maximum(:position).to_i + 1
       if @slide.save
-        redirect_to edit_vignettes_questionnaire_path(@questionnaire),
+        redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.slide_created")
       else
         flash[:alert] = "Failed to create slide: #{@slide.errors.full_messages.join(", ")}"
@@ -46,7 +46,7 @@ module Vignettes
     def update
       @slide = @questionnaire.slides.find(params[:id])
       if @slide.update(slide_params)
-        redirect_to edit_vignettes_questionnaire_path(@questionnaire),
+        redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.slide_updated")
       elsif request.xhr?
         render partial: "vignettes/slides/form"

@@ -5,13 +5,13 @@ module Vignettes
     before_action :set_questionnaire, only: [:show, :take, :submit_answer]
     before_action :set_lecture, only: [:index, :new, :create]
     def index
-      @questionnaires = @lecture.vignettes_questionnaires
+      @questionnaires = @lecture.vignettes_questionnaires.reject { |q| q.slides.empty? }
       # Because the create model form works on the index page.
       @questionnaire = Questionnaire.new
     end
 
     def show
-      redirect_to edit_vignettes_questionnaire_path
+      redirect_to edit_questionnaire_path
     end
 
     def take
@@ -22,20 +22,20 @@ module Vignettes
       if params[:position].to_i == -1
         # ONLY FOR DEBUG
         user_answer.destroy
-        redirect_to vignettes_questionnaire_path, notice: t("vignettes.destroy_answer")
+        redirect_to questionnaire_path, notice: t("vignettes.destroy_answer")
         return
       end
 
       # Vignettes was already fully answered by user
       if user_answer.last_slide_answered?
-        redirect_to vignettes_questionnaire_path, notice: t("vignettes.answered")
+        redirect_to questionnaire_path, notice: t("vignettes.answered")
         return
       end
 
       first_unanswered_slide = user_answer.first_unanswered_slide
       # This case should never happen
       if first_unanswered_slide.nil?
-        redirect_to vignettes_questionnaire_path, notice: t("vignettes.no_slides")
+        redirect_to questionnaire_path, notice: t("vignettes.no_slides")
         return
       end
 
@@ -43,8 +43,8 @@ module Vignettes
 
       # If there is no position given or the requested position is invalid
       if requested_position.zero? || requested_position != first_unanswered_slide.position
-        redirect_to vignettes_take_questionnaire_path(@questionnaire,
-                                                      position: first_unanswered_slide.position)
+        redirect_to take_questionnaire_path(@questionnaire,
+                                            position: first_unanswered_slide.position)
         return
       end
 
@@ -65,7 +65,7 @@ module Vignettes
       @answer.user_answer = @user_answer
 
       if @answer.save
-        redirect_to vignettes_take_questionnaire_path(@questionnaire, position: @slide.position + 1)
+        redirect_to take_questionnaire_path(@questionnaire, position: @slide.position + 1)
       else
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
         render :take, status: :unprocessable_entity
@@ -75,9 +75,9 @@ module Vignettes
     def publish
       questionnaire = Questionnaire.find(params[:id])
       if questionnaire.update(published: !questionnaire.published)
-        redirect_to vignettes_questionnaire_path(questionnaire), notice: t("vignettes.published")
+        redirect_to questionnaire_path(questionnaire), notice: t("vignettes.published")
       else
-        redirect_to vignettes_questionnaire_path(questionnaire), alert: t("vignettes.not_published")
+        redirect_to questionnaire_path(questionnaire), alert: t("vignettes.not_published")
       end
     end
 
@@ -115,7 +115,7 @@ module Vignettes
     def create
       @questionnaire = Questionnaire.new(questionnaire_params)
       if @questionnaire.save
-        redirect_to @questionnaire
+        redirect_to edit_questionnaire_path(@questionnaire)
       else
         render :new, status: :unprocessable_entity
       end
