@@ -2,16 +2,14 @@ require "csv"
 
 module Vignettes
   class QuestionnairesController < ApplicationController
-    before_action :set_questionnaire, only: [:show, :take, :submit_answer]
+    before_action :set_questionnaire, only: [:show, :take, :submit_answer, :edit, :publish]
     before_action :set_lecture, only: [:index, :new, :create]
+    before_action :check_take_accessibility, only: [:take, :submit_answer]
+    before_action :check_edit_accessibility, only: [:edit, :destroy, :publish]
     def index
       @questionnaires = @lecture.vignettes_questionnaires.reject { |q| q.slides.empty? }
       # Because the create model form works on the index page.
       @questionnaire = Questionnaire.new
-    end
-
-    def show
-      redirect_to edit_questionnaire_path
     end
 
     def take
@@ -22,20 +20,23 @@ module Vignettes
       if params[:position].to_i == -1
         # ONLY FOR DEBUG
         user_answer.destroy
-        redirect_to questionnaire_path, notice: t("vignettes.destroy_answer")
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    notice: t("vignettes.destroy_answer")
         return
       end
 
       # Vignettes was already fully answered by user
       if user_answer.last_slide_answered?
-        redirect_to questionnaire_path, notice: t("vignettes.answered")
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    notice: t("vignettes.answered")
         return
       end
 
       first_unanswered_slide = user_answer.first_unanswered_slide
       # This case should never happen
       if first_unanswered_slide.nil?
-        redirect_to questionnaire_path, notice: t("vignettes.no_slides")
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    notice: t("vignettes.no_slides")
         return
       end
 
@@ -73,11 +74,10 @@ module Vignettes
     end
 
     def publish
-      questionnaire = Questionnaire.find(params[:id])
-      if questionnaire.update(published: !questionnaire.published)
-        redirect_to questionnaire_path(questionnaire), notice: t("vignettes.published")
+      if @questionnaire.update(published: !@questionnaire.published)
+        redirect_to edit_questionnaire_path(@questionnaire), notice: t("vignettes.published")
       else
-        redirect_to questionnaire_path(questionnaire), alert: t("vignettes.not_published")
+        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.not_published")
       end
     end
 
@@ -122,7 +122,6 @@ module Vignettes
     end
 
     def edit
-      @questionnaire = Questionnaire.find(params[:id])
       @slides = @questionnaire.slides.order(:position)
 
       render layout: "application_no_sidebar"
@@ -136,6 +135,22 @@ module Vignettes
 
       def set_lecture
         @lecture = Lecture.find(params[:lecture_id])
+      end
+
+      def check_take_accessibility
+        return if @questionnaire.published &&
+                  (current_user.admin || current_user.in?(@questionnaire.lecture.users))
+
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    alert: t("vignettes.not_accessible")
+      end
+
+      def check_edit_accessibility
+        return if current_user.admin
+        return if current_user.in?(@questionnaire.lecture.editors_with_inheritance)
+
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    alert: t("vignettes.not_accessible")
       end
 
       def questionnaire_params

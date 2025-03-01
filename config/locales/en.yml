@@ -2519,6 +2519,7 @@ en:
     slide_created: 'Slide was successfully created.'
     published: 'Vignette was successfully published.'
     not_published: 'Vignette could not be published.'
+    not_accessible: 'Vignette is not accessible.'
 
 
   external_link_lc: 'external link'

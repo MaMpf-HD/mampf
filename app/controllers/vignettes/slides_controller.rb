@@ -1,6 +1,7 @@
 module Vignettes
   class SlidesController < ApplicationController
     before_action :set_questionnaire
+    before_action :check_edit_accessibility, only: [:new, :create, :edit, :update]
 
     def index
     end
@@ -57,6 +58,14 @@ module Vignettes
 
       def set_questionnaire
         @questionnaire = Questionnaire.find(params[:questionnaire_id])
+      end
+
+      def check_edit_accessibility
+        return if current_user.admin
+        return if current_user.in?(@questionnaire.lecture.editors_with_inheritance)
+
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    alert: t("vignettes.not_accessible")
       end
 
       def redirect_params
