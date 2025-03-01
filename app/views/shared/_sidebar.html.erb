@@ -106,12 +106,11 @@
   </li>
 
   <%# Vignetten %>
-  <% project_name = 'keks' %>
-  <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
-  <% active_class = get_class_for_project(project_name) %>
+  <% path = lecture_vignettes_path(lecture)%>
+  <% active_class = get_class_for_path_startswith(path) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.vignettes? ? "disabled" : ""%>">
-    <a href="<%= url_for(fullpath)%>">
+    <a href="<%= url_for(path)%>">
       <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
       <%= t('vignettes.vignettes') %>
     </a>

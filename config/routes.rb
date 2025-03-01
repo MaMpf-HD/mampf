@@ -149,10 +149,6 @@ Rails.application.routes.draw do
        to: "courses#take_random_quiz",
        as: "random_quiz"
 
-  get "courses/:id/questionnaire",
-      to: "vignettes/questionnaires#index",
-      as: "courses_questionnaire"
-
   get "courses/:id/render_question_counter",
       to: "courses#render_question_counter",
       as: "render_question_counter"
@@ -193,6 +189,10 @@ Rails.application.routes.draw do
   get "lectures/:id/food",
       to: "media#index",
       as: "lecture_food"
+
+  get "lectures/:lecture_id/vignettes",
+      to: "vignettes/questionnaires#index",
+      as: "lecture_vignettes"
 
   get "lectures/:id/update_teacher",
       to: "lectures#update_teacher",

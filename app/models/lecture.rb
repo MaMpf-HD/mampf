@@ -942,6 +942,10 @@ class Lecture < ApplicationRecord
     talks.where.not(id: talk_ids_for_speaker(speaker))
   end
 
+  def vignettes?
+    vignettes_questionnaires.any?
+  end
+
   private
 
     # used for after save callback
@@ -1059,9 +1063,5 @@ class Lecture < ApplicationRecord
 
     def talk_ids_for_speaker(speaker)
       SpeakerTalkJoin.where(speaker: speaker).select(:talk_id)
-    end
-
-    def vignettes?
-      vignettes_questionnaires.any?
     end
 end

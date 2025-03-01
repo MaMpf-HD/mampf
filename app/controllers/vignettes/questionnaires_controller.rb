@@ -5,7 +5,7 @@ module Vignettes
     before_action :set_questionnaire, only: [:show, :take, :submit_answer]
     before_action :set_lecture, only: [:index, :new, :create]
     def index
-      @questionnaires = @lecture.questionnaires
+      @questionnaires = @lecture.vignettes_questionnaires
       # Because the create model form works on the index page.
       @questionnaire = Questionnaire.new
     end
@@ -135,11 +135,11 @@ module Vignettes
       end
 
       def set_lecture
-        @lecture = Lecture.find(params[:vignettes_questionnaire][:lecture_id])
+        @lecture = Lecture.find(params[:lecture_id])
       end
 
       def questionnaire_params
-        params.require(:vignettes_questionnaire).permit(:title, :lecture_id)
+        params.permit(:title, :lecture_id)
       end
 
       def answer_params
