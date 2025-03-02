@@ -2520,6 +2520,7 @@ en:
     published: 'Vignette was successfully published.'
     not_published: 'Vignette could not be published.'
     not_accessible: 'Vignette is not accessible.'
+    no_slides: "Vignette is empty"
 
 
   external_link_lc: 'external link'

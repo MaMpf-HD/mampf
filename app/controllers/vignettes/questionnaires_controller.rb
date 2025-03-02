@@ -1,13 +1,13 @@
-require "csv"
-
 module Vignettes
   class QuestionnairesController < ApplicationController
-    before_action :set_questionnaire, only: [:show, :take, :submit_answer, :edit, :publish]
+    before_action :set_questionnaire,
+                  only: [:show, :take, :submit_answer, :edit, :publish, :export_answers]
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]
     before_action :check_edit_accessibility, only: [:edit, :destroy, :publish]
+    before_action :check_empty, only: [:publish, :take, :submit_answer]
     def index
-      @questionnaires = @lecture.vignettes_questionnaires.reject { |q| q.slides.empty? }
+      @questionnaires = @lecture.vignettes_questionnaires
       # Because the create model form works on the index page.
       @questionnaire = Questionnaire.new
     end
@@ -58,12 +58,13 @@ module Vignettes
 
     def submit_answer
       @slide = @questionnaire.slides.find(answer_params[:slide_id])
-      @answer = @slide.answers.build(answer_params.except(:slide_id))
+      @answer = @slide.answers.build
       @answer.question = @slide.question
       @answer.type = @slide.question.type.gsub("Question", "Answer")
       @user_answer = current_user.vignettes_user_answers.find_by(user: current_user,
                                                                  questionnaire: @questionnaire)
       @answer.user_answer = @user_answer
+      @answer.assign_attributes(answer_params.except(:slide_id))
 
       if @answer.save
         redirect_to take_questionnaire_path(@questionnaire, position: @slide.position + 1)
@@ -82,30 +83,8 @@ module Vignettes
     end
 
     def export_answers
-      questionnaire = Questionnaire.find(params[:id])
-      answers = questionnaire.slides.includes(:answers).flat_map(&:answers)
-
-      csv_data = CSV.generate(headers: true) do |csv|
-        csv << ["Answer ID", "User", "Question Slide", "Time on slide", "Time on info slide",
-                "Info slide accessed", "Question Text", "Answer", "Selected Options"]
-        answers.each do |answer|
-          row = [answer.id, answer.user_answer.user.name_or_email, answer.slide.position,
-                 answer.slide_statistic.time_on_slide, answer.slide_statistic.time_on_info_slides,
-                 answer.slide_statistic.info_slides_access_count,
-                 answer.slide.question.question_text]
-          case answer.type
-          when "Vignettes::TextAnswer"
-            row << answer.text
-          when "Vignettes::MultipleChoiceAnswer"
-            selected_options = answer.options.map(&:text).join(", ")
-            row << ""
-            row << selected_options
-          end
-          csv << row
-        end
-      end
-
-      send_data(csv_data, filename: "questionnaire-#{questionnaire.id}-answers.csv")
+      csv_data = @questionnaire.answer_data_csv
+      send_data(csv_data, filename: "questionnaire-#{@questionnaire.id}-answers.csv")
     end
 
     def new
@@ -151,6 +130,12 @@ module Vignettes
 
         redirect_to lecture_questionnaires_path(@questionnaire.lecture),
                     alert: t("vignettes.not_accessible")
+      end
+
+      def check_empty
+        return unless @questionnaire.slides.empty?
+
+        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_slides")
       end
 
       def questionnaire_params

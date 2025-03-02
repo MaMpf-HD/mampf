@@ -949,7 +949,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
     t.bigint "vignettes_slide_id", null: false
     t.bigint "vignettes_user_answer_id", null: false
     t.text "text"
-    t.integer "likert_scale_value"
+    t.string "likert_scale_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["vignettes_question_id"], name: "index_vignettes_answers_on_vignettes_question_id"

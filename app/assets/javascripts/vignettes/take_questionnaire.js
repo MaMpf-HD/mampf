@@ -163,8 +163,8 @@ function registerStatisticsHandler(stats) {
     const timeOnSlideField = $("#time-on-slide-field");
     const timeOnInfoSlidesField = $("#time-on-info-slides-field");
     const infoSlidesAccessCountField = $("#info-slides-access-count-field");
-    timeOnSlideField.value = stats.totalSlideTime;
-    timeOnInfoSlidesField.value = JSON.stringify(stats.infoSlideTimes);
-    infoSlidesAccessCountField.value = JSON.stringify(stats.infoSlideAccessCounts);
+    timeOnSlideField.val(stats.totalSlideTime);
+    timeOnInfoSlidesField.val(JSON.stringify(stats.infoSlideTimes));
+    infoSlidesAccessCountField.val(JSON.stringify(stats.infoSlideAccessCounts));
   });
 }
