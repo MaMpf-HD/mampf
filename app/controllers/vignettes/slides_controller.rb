@@ -1,7 +1,7 @@
 module Vignettes
   class SlidesController < ApplicationController
     before_action :set_questionnaire
-    before_action :check_edit_accessibility, only: [:new, :create, :edit, :update]
+    before_action :check_edit_accessibility, only: [:new, :create, :edit, :update, :destroy]
 
     def new
       return if @questionnaire.published
@@ -43,6 +43,27 @@ module Vignettes
                     notice: t("vignettes.slide_updated")
       elsif request.xhr?
         render partial: "vignettes/slides/form"
+      end
+    end
+
+    def destroy
+      @slide = @questionnaire.slides.find(params[:id])
+      position = @slide.position
+
+      begin
+        ActiveRecord::Base.transaction do
+          @slide.destroy
+
+          @questionnaire.slides.where("position > ?",
+                                      position).update_all("position = position - 1")
+        end
+
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.slide_deleted")
+      rescue StandardError => e
+        Rails.logger.error("Slide deletion failed: #{e.message}")
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.slide_not_deleted")
       end
     end
 

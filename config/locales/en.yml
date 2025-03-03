@@ -2521,6 +2521,14 @@ en:
     not_published: 'Vignette could not be published.'
     not_accessible: 'Vignette is not accessible.'
     no_slides: "Vignette is empty"
+    questionnaire_deleted: 'Questionnaire was successfully deleted'
+    questionnaire_not_deleted: 'Questionnaire could not be deleted'
+    slide_deleted: 'Slide was successfully deleted.'
+    slide_not_deleted: 'Slide could not be deleted.'
+    slide_confirm_delete: 'Are you sure you want to delete this slide? 
+      This action cannot be undone.'
+    questionnaire_confirm_delete: 'Are you sure you want to delete this questionnaire?
+      This will also delete all associated slides, answers and statistics'
 
 
   external_link_lc: 'external link'

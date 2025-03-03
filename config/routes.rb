@@ -571,7 +571,7 @@ Rails.application.routes.draw do
       as: "take_questionnaire"
 
   scope module: "vignettes", path: "" do
-    resources :questionnaires, only: [:create, :edit, :update] do
+    resources :questionnaires, only: [:create, :edit, :update, :destroy] do
       member do
         get :export_answers
         post :submit_answer
@@ -579,7 +579,7 @@ Rails.application.routes.draw do
         patch :update_slide_position
       end
       resources :info_slides, only: [:new, :create, :edit, :update]
-      resources :slides, only: [:new, :create, :edit, :update] do
+      resources :slides, only: [:new, :create, :edit, :update, :destroy] do
         resources :answers, only: [:new, :create]
       end
     end

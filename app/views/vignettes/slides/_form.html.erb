@@ -20,9 +20,47 @@
   <br>
   <%= render partial: 'form_question', locals: { form: form } %>
 
-  <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide',
-        class: "btn btn-primary mt-3"
-  %>
+  <div class="d-flex justify-content-between align-items-center mt-3">
+    <%= form.submit @slide.new_record? ? 'Create Slide' : 'Update Slide',
+          class: "btn btn-primary"
+    %>
+    
+    <% unless @slide.new_record? %>
+    <button type="button" 
+            class="btn btn-danger" 
+            data-bs-toggle="<%= @slide.questionnaire.published ? '' : 'modal' %>" 
+            data-bs-target="#deleteModal<%= @slide.id %>"
+            <%= 'disabled' if @slide.questionnaire.published %>>
+      Delete Slide
+    </button>
+ 
+    <% end %>
+  </div>
+<% end %>
+
+<!-- Delete Confirmation Modal -->
+<% unless @slide.new_record? %>
+  <div class="modal fade" id="deleteModal<%= @slide.id %>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><%= t("vignettes.slide_confirm_delete") %></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= button_to "Delete Slide", 
+                questionnaire_slide_path(@questionnaire, @slide),
+                method: :delete,
+                class: "btn btn-danger"
+          %>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>
 
 <%= javascript_include_tag 'vignettes/edit_slide' %>

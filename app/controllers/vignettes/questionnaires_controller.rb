@@ -2,7 +2,7 @@ module Vignettes
   class QuestionnairesController < ApplicationController
     before_action :set_questionnaire,
                   only: [:take, :submit_answer, :edit, :publish, :export_answers,
-                         :update_slide_position]
+                         :update_slide_position, :destroy]
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]
     before_action :check_edit_accessibility,
@@ -137,6 +137,17 @@ module Vignettes
       @slides = @questionnaire.slides.order(:position)
 
       render layout: "application_no_sidebar"
+    end
+
+    def destroy
+      @lecture = @questionnaire.lecture
+      if @questionnaire.destroy
+        redirect_to edit_lecture_path(@lecture),
+                    notice: t("vignettes.questionnaire_deleted")
+      else
+        redirect_to edit_lecture_path(@lecture),
+                    alert: t("vignettes.questionnaire_not_deleted")
+      end
     end
 
     private
