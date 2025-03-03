@@ -2,8 +2,16 @@ require "csv"
 
 module Vignettes
   class CsvHandler
-    HEADERS = ["Answer ID", "User", "Slide position", "Time on slide", "Time on info slide",
-               "Info slide access count", "Question Text", "Answer", "Selected Options", "Likert Scale Option"]
+    HEADERS = ["Answer ID",
+               "User",
+               "Slide position",
+               "Time on slide",
+               "Time on info slide",
+               "Info slide access count",
+               "Question Text",
+               "Answer",
+               "Selected Options",
+               "Likert Scale Option"].freeze
 
     def self.answer_data(answer)
       data = [
