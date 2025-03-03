@@ -388,7 +388,6 @@ class Lecture < ApplicationRecord
   end
 
   def questionnaire?
-    return false
     Rails.cache.fetch("#{cache_key_with_version}/has_questionnaire") do
       Vignettes::Questionnaire.exists?(lecture_id: id)
     end
