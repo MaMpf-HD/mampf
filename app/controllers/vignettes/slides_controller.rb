@@ -3,14 +3,6 @@ module Vignettes
     before_action :set_questionnaire
     before_action :check_edit_accessibility, only: [:new, :create, :edit, :update]
 
-    def index
-    end
-
-    def show
-      @slide = @questionnaire.slides.find(params[:id])
-      @answer = Answer.build(slide: @slide, type: @slide.question.type.gsub("Question", "Answer"))
-    end
-
     def new
       return if @questionnaire.published
 

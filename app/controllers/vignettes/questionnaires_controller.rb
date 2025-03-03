@@ -1,7 +1,7 @@
 module Vignettes
   class QuestionnairesController < ApplicationController
     before_action :set_questionnaire,
-                  only: [:show, :take, :submit_answer, :edit, :publish, :export_answers,
+                  only: [:take, :submit_answer, :edit, :publish, :export_answers,
                          :update_slide_position]
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]

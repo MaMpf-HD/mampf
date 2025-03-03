@@ -571,7 +571,7 @@ Rails.application.routes.draw do
       as: "take_questionnaire"
 
   scope module: "vignettes", path: "" do
-    resources :questionnaires, only: [:index, :show, :new, :create, :edit, :update] do
+    resources :questionnaires, only: [:create, :edit, :update] do
       member do
         get :export_answers
         post :submit_answer
