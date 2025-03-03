@@ -12,30 +12,23 @@ function createSortableVignetteSlides(vignetteSlideList) {
     filter: ".accordion-collapse",
     preventOnFilter: false,
     onEnd: function (_evt) {
-      // console.log(`Moved element from ${evt.oldIndex} to ${evt.newIndex}`);
-      // TODO: send a request to update the order of the slides in the database
-      // TODO: see more options here:
-      // https://github.com/SortableJS/Sortable?tab=readme-ov-file#options
-      // TODO: Watch out (!) We also get this event when oldIndex === newIndex
-      // in this case we should not send a request to the server as nothing
-      // changed. And the server should of course check for bounds.
-      //
-      // Something like that should work:
-      // $.ajax({
-      //   url: `/vignettes/slides/${slideId}/update_position`,
-      //   method: "PATCH",
-      //   data: {
-      //     slide: {
-      //       position: newPosition,
-      //     },
-      //   },
-      //   success: function (response) {
-      //     console.log(`Slide ${slideId} moved to position ${newPosition}`);
-      //   },
-      //   error: function (xhr, status, error) {
-      //     console.error(`Failed to update position: ${error}`);
-      //   },
-      // });
+      if (_evt.oldIndex == _evt.newIndex) return;
+
+      let questionnaire_id = _evt.target.dataset.questionnaireId;
+      $.ajax({
+        url: `/questionnaires/${questionnaire_id}/update_slide_position`,
+        method: "PATCH",
+        data: {
+          old_position: _evt.oldIndex,
+          new_position: _evt.newIndex,
+        },
+        success: function (response) {
+          console.log(`Slide was moved from position ${_evt.oldIndex} to ${_evt.newIndex}`);
+        },
+        error: function (xhr, status, error) {
+          console.error(`Failed to update position: ${error}`);
+        },
+      });
     },
   });
 }

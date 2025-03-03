@@ -576,6 +576,7 @@ Rails.application.routes.draw do
         get :export_answers
         post :submit_answer
         patch :publish
+        patch :update_slide_position
       end
       resources :info_slides, only: [:new, :create, :edit, :update]
       resources :slides, only: [:new, :create, :edit, :update] do

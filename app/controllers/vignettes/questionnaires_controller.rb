@@ -1,10 +1,12 @@
 module Vignettes
   class QuestionnairesController < ApplicationController
     before_action :set_questionnaire,
-                  only: [:show, :take, :submit_answer, :edit, :publish, :export_answers]
+                  only: [:show, :take, :submit_answer, :edit, :publish, :export_answers,
+                         :update_slide_position]
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]
-    before_action :check_edit_accessibility, only: [:edit, :destroy, :publish]
+    before_action :check_edit_accessibility,
+                  only: [:edit, :destroy, :publish, :update_slide_position]
     before_action :check_empty, only: [:publish, :take, :submit_answer]
     def index
       @questionnaires = @lecture.vignettes_questionnaires
@@ -80,6 +82,37 @@ module Vignettes
       else
         redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.not_published")
       end
+    end
+
+    def update_slide_position
+      old_position = params[:old_position].to_i + 1
+      new_position = params[:new_position].to_i + 1
+
+      @slide = @questionnaire.slides.find_by(position: old_position)
+
+      if new_position < 1 || new_position > @questionnaire.slides.maximum(:position)
+        render json: { error: "Invalid position" }, status: :unprocessable_entity
+        return
+      end
+
+      ActiveRecord::Base.transaction do
+        # Move slide with update_column to invalid position to not violate uniqueness constraint
+        @slide.update_column(:position, -1)
+        if new_position > old_position
+          @questionnaire.slides.where("position > ? AND position <= ?", old_position, new_position)
+                        .update_all("position = position - 1")
+        else
+          @questionnaire.slides.where("position < ? AND position >= ?", old_position, new_position)
+                        .update_all("position = position + 1")
+        end
+
+        @slide.update_column(:position, new_position)
+      end
+
+      render json: { success: true }
+    rescue StandardError => e
+      Rails.logger.error("Slide position update failed: #{e.message}")
+      render json: { error: e.message }, status: :unprocessable_entity
     end
 
     def export_answers
