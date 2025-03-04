@@ -46,7 +46,7 @@ gem "premailer-rails", "~> 1.12"
 gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
-gem "rack", "~> 2.2"
+gem "rack", "~> 3.1"
 gem "rails", "~> 7.2.2"
 gem "rails-i18n", "~> 7.0"
 gem "responders", "~> 3.1"
