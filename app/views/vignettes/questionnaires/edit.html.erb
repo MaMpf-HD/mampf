@@ -18,7 +18,9 @@
         <% end %>
     </div>
 
-    <p>Drag the slides to change their order.</p>
+	<% if @slides.size > 1 %>
+		<p>Drag the slides to change their order.</p>
+	<% end %>
 
     <div class="accordion" id="vignettes-slides-accordion"
          data-questionnaire-id="<%= @questionnaire.id %>">
