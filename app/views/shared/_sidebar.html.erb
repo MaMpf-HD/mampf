@@ -16,15 +16,15 @@
     </li>
   <% end %>
 
-  <%# Lectures (Kaviar) %>
-  <% project_name = 'kaviar' %>
+  <%# Lectures (LessonMaterial) %>
+  <% project_name = 'lesson_material' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.kaviar?(current_user) ? "disabled" : ""%>">
+          <%= !lecture || !lecture.lesson_material?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
       <i class="bi bi-collection-play<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.kaviar.plural') %>
+      <%= t('categories.lesson_material.plural') %>
     </a>
   </li>
   

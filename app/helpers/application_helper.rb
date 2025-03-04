@@ -85,7 +85,7 @@ module ApplicationHelper
 
   # media_sort -> database fields
   def media_types
-    { "kaviar" => ["Kaviar"], "sesam" => ["Sesam"],
+    { "lesson_material" => ["LessonMaterial"], "sesam" => ["Sesam"],
       "keks" => ["Quiz"],
       "kiwi" => ["Kiwi"],
       "erdbeere" => ["Erdbeere"], "nuesse" => ["Nuesse"],
@@ -95,13 +95,13 @@ module ApplicationHelper
 
   # media_sorts
   def media_sorts
-    ["kaviar", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
+    ["lesson_material", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
      "reste"]
   end
 
   # media_sort -> acronym
   def media_names
-    { "kaviar" => t("categories.kaviar.plural"),
+    { "lesson_material" => t("categories.lesson_material.plural"),
       "sesam" => t("categories.sesam.plural"),
       "keks" => t("categories.quiz.plural"),
       "kiwi" => t("categories.kiwi.singular"),

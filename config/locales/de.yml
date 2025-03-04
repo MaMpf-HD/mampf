@@ -14,7 +14,7 @@ de:
             teacher:
               required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
-    kaviar:
+    lesson_material:
       singular: 'Lektion'
       plural: 'Lektionen'
       short: 'Lek'

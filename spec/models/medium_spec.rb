@@ -142,14 +142,14 @@ RSpec.describe(Medium, type: :model) do
   #   it 'returns the correct search results' do
   #     lesson = FactoryBot.create(:lesson)
   #     course = lesson.course
-  #     kaviar_medium = FactoryBot.create(:medium, teachable: lesson,
-  #                                       sort: 'Kaviar')
+  #     lesson_material_medium = FactoryBot.create(:medium, teachable: lesson,
+  #                                       sort: 'LessonMaterial')
   #     sesam_medium = FactoryBot.create(:medium, teachable: lesson.lecture,
   #                                      sort: 'Sesam')
   #     params = { course_id: course.id.to_s,
-  #                lecture_id: lesson.lecture.id.to_s, project: 'kaviar'}
+  #                lecture_id: lesson.lecture.id.to_s, project: 'lesson_material'}
   #     expect(Medium.search_all(lesson.lecture, params))
-  #       .to match_array([kaviar_medium])
+  #       .to match_array([lesson_material_medium])
   #   end
   # end
 
@@ -177,7 +177,7 @@ RSpec.describe(Medium, type: :model) do
   #                                        title: 'schon wieder')
   #     lesson = FactoryBot.build(:lesson, lecture: lecture,
   #                               sections: [first_section, second_section])
-  #     medium = FactoryBot.create(:medium, teachable: lesson, sort: 'Kaviar')
+  #     medium = FactoryBot.create(:medium, teachable: lesson, sort: 'LessonMaterial')
   #     expect(medium.caption).to eq('Unsinn, schon wieder')
   #   end
   # end

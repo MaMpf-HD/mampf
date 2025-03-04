@@ -346,12 +346,12 @@ class Lecture < ApplicationRecord
     !released.nil?
   end
 
-  # The next methods return if there are any media in the Kaviar, Sesam etc.
+  # The next methods return if there are any media in the LessonMaterial, Sesam etc.
   # projects that are associated to this lecture *with inheritance*
   # These methods make use of caching.
 
-  def kaviar?(user)
-    project?("kaviar", user) || imported_any?("kaviar")
+  def lesson_material?(user)
+    project?("lesson_material", user) || imported_any?("lesson_material")
   end
 
   def sesam?(user)
@@ -938,7 +938,7 @@ class Lecture < ApplicationRecord
     end
 
     # looks in the cache if there are any media associated *with inheritance*
-    # to this lecture and a given project (kaviar, sesam etc.)
+    # to this lecture and a given project (lesson_material, sesam etc.)
     def project_as_user?(project)
       Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
         Medium.exists?(sort: medium_sort[project],
@@ -984,7 +984,7 @@ class Lecture < ApplicationRecord
     end
 
     def medium_sort
-      { "kaviar" => ["Kaviar"], "sesam" => ["Sesam"], "kiwi" => ["Kiwi"],
+      { "lesson_material" => ["LessonMaterial"], "sesam" => ["Sesam"], "kiwi" => ["Kiwi"],
         "keks" => ["Quiz"], "nuesse" => ["Nuesse"],
         "erdbeere" => ["Erdbeere"], "script" => ["Script"], "reste" => ["Reste"] }
     end

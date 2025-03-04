@@ -162,13 +162,13 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    ["Kaviar", "Erdbeere", "Sesam", "Kiwi", "Nuesse", "Script", "Question", "Quiz", "Reste",
+    ["LessonMaterial", "Erdbeere", "Sesam", "Kiwi", "Nuesse", "Script", "Question", "Quiz", "Reste",
      "Remark", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
   def self.sort_localized
-    { "Kaviar" => I18n.t("categories.kaviar.singular"),
+    { "LessonMaterial" => I18n.t("categories.lesson_material.singular"),
       "Sesam" => I18n.t("categories.sesam.singular"),
       "Nuesse" => I18n.t("categories.exercises.singular"),
       "Script" => I18n.t("categories.script.singular"),
@@ -183,7 +183,7 @@ class Medium < ApplicationRecord
 
   # media sorts and their short descriptions
   def self.sort_localized_short
-    { "Kaviar" => I18n.t("categories.kaviar.short"),
+    { "LessonMaterial" => I18n.t("categories.lesson_material.short"),
       "Sesam" => I18n.t("categories.sesam.short"),
       "Nuesse" => I18n.t("categories.exercises.short"),
       "Script" => I18n.t("categories.script.short"),
@@ -205,7 +205,7 @@ class Medium < ApplicationRecord
   end
 
   def self.generic_sorts
-    ["Kaviar", "Sesam", "Nuesse", "Script", "Kiwi", "Quiz", "Reste"]
+    ["LessonMaterial", "Sesam", "Nuesse", "Script", "Kiwi", "Quiz", "Reste"]
   end
 
   def self.select_generic
@@ -669,7 +669,7 @@ class Medium < ApplicationRecord
 
   def caption
     return description if description.present?
-    return "" unless sort == "Kaviar" && teachable_type == "Lesson"
+    return "" unless sort == "LessonMaterial" && teachable_type == "Lesson"
 
     teachable.section_titles || ""
   end
@@ -794,7 +794,7 @@ class Medium < ApplicationRecord
     end
   end
 
-  # returns description unless medium is Kaviar associated to a lesson or a
+  # returns description unless medium is LessonMaterial associated to a lesson or a
   # question, in which case details about the lesson/the question are
   # returned, or a Script
 
@@ -802,7 +802,7 @@ class Medium < ApplicationRecord
     return description if description.present?
     return I18n.t("admin.medium.local_info.no_title") unless undescribable?
 
-    if sort == "Kaviar" && teachable_type == "Lesson"
+    if sort == "LessonMaterial" && teachable_type == "Lesson"
       return I18n.t("admin.medium.local_info.to_session",
                     number: teachable.number,
                     date: teachable.date_localized)
@@ -923,7 +923,7 @@ class Medium < ApplicationRecord
   def select_sorts
     result = if new_record?
       Medium.sort_localized.except("RandomQuiz")
-    elsif sort.in?(["Kaviar", "Sesam", "Erdbeere", "Kiwi", "Nuesse",
+    elsif sort.in?(["LessonMaterial", "Sesam", "Erdbeere", "Kiwi", "Nuesse",
                     "Reste"])
       Medium.sort_localized.except("RandomQuiz", "Script", "Quiz",
                                    "Question", "Remark")
@@ -1109,10 +1109,10 @@ class Medium < ApplicationRecord
 
   private
 
-    # media of type kaviar associated to a lesson and script do not require
+    # media of type lesson_material associated to a lesson and script do not require
     # a description
     def undescribable?
-      (sort == "Kaviar" && teachable.instance_of?(::Lesson)) ||
+      (sort == "LessonMaterial" && teachable.instance_of?(::Lesson)) ||
         sort == "Script"
     end
 
@@ -1129,8 +1129,8 @@ class Medium < ApplicationRecord
     # returns info made from sort and description
     def local_title_for_viewers_uncached
       return "#{sort_localized}, #{description}" if description.present?
-      if sort == "Kaviar" && teachable.instance_of?(::Lesson)
-        return "#{I18n.t("categories.kaviar.singular")}, #{teachable.local_title_for_viewers}"
+      if sort == "LessonMaterial" && teachable.instance_of?(::Lesson)
+        return "#{I18n.t("categories.lesson_material.singular")}, #{teachable.local_title_for_viewers}"
       end
 
       "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"

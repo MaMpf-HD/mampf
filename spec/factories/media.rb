@@ -69,7 +69,7 @@ FactoryBot.define do
 
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
-      sort { "Kaviar" }
+      sort { "LessonMaterial" }
       teachable_sort { :valid_lesson }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
 
@@ -96,7 +96,7 @@ FactoryBot.define do
 
     factory :talk_medium,
             traits: [:with_description, :with_teachable] do
-      sort { "Kaviar" }
+      sort { "LessonMaterial" }
       teachable_sort { :valid_talk_with_speaker }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
     end

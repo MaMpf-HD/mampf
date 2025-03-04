@@ -48,7 +48,7 @@ class MediaController < ApplicationController
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
     I18n.locale = @teachable.locale_with_inheritance
-    @medium.sort = params[:sort] || "Kaviar"
+    @medium.sort = params[:sort] || "LessonMaterial"
   end
 
   def edit
@@ -300,7 +300,7 @@ class MediaController < ApplicationController
     @time = params[:time].to_f
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
-    if @medium.sort == "Kaviar" &&
+    if @medium.sort == "LessonMaterial" &&
        @medium.teachable_type.in?(["Lesson", "Lecture"])
       @item.section = @medium.teachable&.sections&.first
     end

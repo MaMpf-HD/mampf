@@ -38,7 +38,7 @@ en:
       previous: "&lsaquo; Previous"
       next: "Next &rsaquo;"
   categories:
-    kaviar:
+    lesson_material:
       singular: 'Lesson'
       plural: 'Lessons'
       short: 'Les'

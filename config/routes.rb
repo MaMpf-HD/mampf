@@ -190,6 +190,46 @@ Rails.application.routes.draw do
       to: "media#index",
       as: "lecture_food"
 
+  # New semantic routes replace the old food routes
+  get "lectures/:id/lesson_materials",
+      to: "media#index",
+      as: "lecture_lesson_materials",
+      defaults: { project: "lesson_material" }
+
+  get "lectures/:id/scripts",
+      to: "media#index",
+      as: "lecture_scripts",
+      defaults: { project: "script" }
+
+  get "lectures/:id/exercises",
+      to: "media#index",
+      as: "lecture_exercises",
+      defaults: { project: "nuesse" }
+
+  get "lectures/:id/quizzes",
+      to: "media#index",
+      as: "lecture_quizzes",
+      defaults: { project: "keks" }
+
+  get "lectures/:id/worked_examples",
+      to: "media#index",
+      as: "lecture_worked_examples",
+      defaults: { project: "sesam" }
+
+  get "lectures/:id/repetitions",
+      to: "media#index",
+      as: "lecture_repetitions",
+      defaults: { project: "kiwi" }
+
+  get "lectures/:id/applications", to: "media#index", as: "lecture_applications",
+                                   defaults: { project: "kiwi" }
+
+  get "lectures/:id/remarks", to: "media#index", as: "lecture_remarks",
+                              defaults: { project: "remark" }
+  get "lectures/:id/miscellaneous",
+      to: "media#index", as: "lecture_supplements",
+      defaults: { project: "reste" }
+
   get "lectures/:id/update_teacher",
       to: "lectures#update_teacher",
       as: "update_teacher"
