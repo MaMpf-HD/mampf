@@ -1,9 +1,9 @@
 <%= form_with(url: questionnaires_url) do |form| %>
   <%= form.hidden_field :lecture_id, value: lecture.id %>
   
-  <div class="mb-3">
-    <%= form.label :title, class: 'form-label' %>
+  <div class="form-floating mb-3">
     <%= form.text_field :title, class: 'form-control', placeholder: 'Enter title', required: true %>
+    <%= form.label :title, class: 'form-label' %>
   </div>
   
   <div class="d-flex justify-content-between">
