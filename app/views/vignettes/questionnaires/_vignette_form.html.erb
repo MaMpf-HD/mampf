@@ -1,13 +1,15 @@
 <%= form_with(url: questionnaires_url) do |form| %>
   <%= form.hidden_field :lecture_id, value: lecture.id %>
   
-  <div class="mb-3">
-    <%= form.label :title, class: 'form-label' %>
-    <%= form.text_field :title, class: 'form-control', placeholder: 'Enter title', required: true %>
+  <div class="modal-body">
+    <div class="form-floating">
+      <%= form.text_field :title, class: 'form-control', required: true %>
+      <%= form.label :title, class: 'form-label' %>
+    </div>
   </div>
   
-  <div class="d-flex justify-content-between">
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+  <div class="modal-footer">
     <%= form.submit 'Create Vignette', class: 'btn btn-primary' %>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
   </div>
 <% end %>
