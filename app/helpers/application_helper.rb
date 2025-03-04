@@ -85,32 +85,32 @@ module ApplicationHelper
 
   # media_sort -> database fields
   def media_types
-    { "lesson_material" => ["LessonMaterial"], "sesam" => ["Sesam"],
+    { "lesson_material" => ["LessonMaterial"], "worked_example" => ["WorkedExample"],
       "keks" => ["Quiz"],
-      "kiwi" => ["Kiwi"],
-      "erdbeere" => ["Erdbeere"], "nuesse" => ["Nuesse"],
+      "repetition" => ["Repetition"],
+      "erdbeere" => ["Erdbeere"], "exercise" => ["Exercise"],
       "script" => ["Script"], "questions" => ["Question"],
-      "remarks" => ["Remark"], "reste" => ["Reste"] }
+      "remarks" => ["Remark"], "miscellaneous" => ["Miscellaneous"] }
   end
 
   # media_sorts
   def media_sorts
-    ["lesson_material", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
-     "reste"]
+    ["lesson_material", "worked_example", "keks", "repetition", "erdbeere", "exercise", "script", "questions", "remarks",
+     "miscellaneous"]
   end
 
   # media_sort -> acronym
   def media_names
     { "lesson_material" => t("categories.lesson_material.plural"),
-      "sesam" => t("categories.sesam.plural"),
+      "worked_example" => t("categories.worked_example.plural"),
       "keks" => t("categories.quiz.plural"),
-      "kiwi" => t("categories.kiwi.singular"),
+      "repetition" => t("categories.repetition.singular"),
       "erdbeere" => t("categories.erdbeere.singular"),
-      "nuesse" => t("categories.exercises.plural"),
+      "exercise" => t("categories.exercises.plural"),
       "script" => t("categories.script.singular"),
       "questions" => t("categories.question.plural"),
       "remarks" => t("categories.remark.plural"),
-      "reste" => t("categories.reste.singular") }
+      "miscellaneous" => t("categories.miscellaneous.singular") }
   end
 
   # Selects all media associated to lectures and lessons from a given list

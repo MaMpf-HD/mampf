@@ -162,38 +162,37 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    ["LessonMaterial", "Erdbeere", "Sesam", "Kiwi", "Nuesse", "Script", "Question", "Quiz", "Reste",
-     "Remark", "RandomQuiz"]
+    ["LessonMaterial", "Erdbeere", "WorkedExample", "Repetition", "Exercise", "Script", "Question", "Quiz", "Miscellaneous", "Remark", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
   def self.sort_localized
     { "LessonMaterial" => I18n.t("categories.lesson_material.singular"),
-      "Sesam" => I18n.t("categories.sesam.singular"),
-      "Nuesse" => I18n.t("categories.exercises.singular"),
+      "WorkedExample" => I18n.t("categories.worked_example.singular"),
+      "Exercise" => I18n.t("categories.exercises.singular"),
       "Script" => I18n.t("categories.script.singular"),
-      "Kiwi" => I18n.t("categories.kiwi.singular"),
+      "Repetition" => I18n.t("categories.repetition.singular"),
       "Quiz" => I18n.t("categories.quiz.singular"),
       "Question" => I18n.t("categories.question.singular"),
       "Remark" => I18n.t("categories.remark.singular"),
       "RandomQuiz" => I18n.t("categories.randomquiz.singular"),
       "Erdbeere" => I18n.t("categories.erdbeere.singular"),
-      "Reste" => I18n.t("categories.reste.singular") }
+      "Miscellaneous" => I18n.t("categories.miscellaneous.singular") }
   end
 
   # media sorts and their short descriptions
   def self.sort_localized_short
     { "LessonMaterial" => I18n.t("categories.lesson_material.short"),
-      "Sesam" => I18n.t("categories.sesam.short"),
-      "Nuesse" => I18n.t("categories.exercises.short"),
+      "WorkedExample" => I18n.t("categories.worked_example.short"),
+      "Exercise" => I18n.t("categories.exercises.short"),
       "Script" => I18n.t("categories.script.short"),
-      "Kiwi" => I18n.t("categories.kiwi.short"),
+      "Repetition" => I18n.t("categories.repetition.short"),
       "Quiz" => I18n.t("categories.quiz.short"),
       "Question" => I18n.t("categories.question.short"),
       "Remark" => I18n.t("categories.remark.short"),
       "RandomQuiz" => I18n.t("categories.randomquiz.short"),
       "Erdbeere" => I18n.t("categories.erdbeere.short"),
-      "Reste" => I18n.t("categories.reste.short") }
+      "Miscellaneous" => I18n.t("categories.miscellaneous.short") }
   end
 
   def self.select_sorts
@@ -205,7 +204,7 @@ class Medium < ApplicationRecord
   end
 
   def self.generic_sorts
-    ["LessonMaterial", "Sesam", "Nuesse", "Script", "Kiwi", "Quiz", "Reste"]
+    ["LessonMaterial", "WorkedExample", "Exercise", "Script", "Repetition", "Quiz", "Miscellaneous"]
   end
 
   def self.select_generic
@@ -217,8 +216,7 @@ class Medium < ApplicationRecord
   end
 
   def self.select_importables
-    Medium.sort_localized.except("RandomQuiz", "Question", "Remark",
-                                 "Manuscript").map { |k, v| [v, k] }
+    Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
   end
 
   def self.select_question
@@ -687,7 +685,7 @@ class Medium < ApplicationRecord
   end
 
   def card_tooltip
-    return Medium.sort_localized[sort] unless sort == "Nuesse" && file_last_edited
+    return Medium.sort_localized[sort] unless sort == "Exercise" && file_last_edited
 
     I18n.t("categories.exercises.singular_updated")
   end
@@ -697,7 +695,7 @@ class Medium < ApplicationRecord
   end
 
   def subheader_style
-    return "badge bg-secondary" unless sort == "Nuesse" && file_last_edited
+    return "badge bg-secondary" unless sort == "Exercise" && file_last_edited
 
     "badge bg-danger"
   end
@@ -923,8 +921,8 @@ class Medium < ApplicationRecord
   def select_sorts
     result = if new_record?
       Medium.sort_localized.except("RandomQuiz")
-    elsif sort.in?(["LessonMaterial", "Sesam", "Erdbeere", "Kiwi", "Nuesse",
-                    "Reste"])
+    elsif sort.in?(["LessonMaterial", "WorkedExample", "Erdbeere", "Repetition", "Exercise",
+                    "Miscellaneous"])
       Medium.sort_localized.except("RandomQuiz", "Script", "Quiz",
                                    "Question", "Remark")
     else

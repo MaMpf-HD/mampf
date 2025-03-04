@@ -144,8 +144,8 @@ RSpec.describe(Medium, type: :model) do
   #     course = lesson.course
   #     lesson_material_medium = FactoryBot.create(:medium, teachable: lesson,
   #                                       sort: 'LessonMaterial')
-  #     sesam_medium = FactoryBot.create(:medium, teachable: lesson.lecture,
-  #                                      sort: 'Sesam')
+  #     worked_example_medium = FactoryBot.create(:medium, teachable: lesson.lecture,
+  #                                      sort: 'WorkedExample')
   #     params = { course_id: course.id.to_s,
   #                lecture_id: lesson.lecture.id.to_s, project: 'lesson_material'}
   #     expect(Medium.search_all(lesson.lecture, params))
@@ -227,7 +227,7 @@ RSpec.describe(Medium, type: :model) do
   #     it 'returns the correct subheader' do
   #       lecture = FactoryBot.create(:lecture)
   #       medium = FactoryBot.build(:medium, teachable: lecture,
-  #                                 description: nil, sort: 'Sesam')
+  #                                 description: nil, sort: 'WorkedExample')
   #       expect(medium.card_subheader).to eq('SeSAM Video')
   #     end
   #   end

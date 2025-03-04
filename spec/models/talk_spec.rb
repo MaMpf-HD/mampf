@@ -199,7 +199,7 @@ RSpec.describe(Talk, type: :model) do
         medium1 = FactoryBot.create(:talk_medium, teachable: talk,
                                                   sort: "LessonMaterial")
         medium2 = FactoryBot.create(:talk_medium, teachable: talk,
-                                                  sort: "Sesam")
+                                                  sort: "WorkedExample")
         FactoryBot.create(:talk_medium, teachable: talk,
                                         sort: "Question")
         FactoryBot.create(:talk_medium, teachable: talk,

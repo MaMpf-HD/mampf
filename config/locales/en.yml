@@ -53,12 +53,12 @@ en:
     script:
       singular: 'Manuscript'
       short: 'Man'
-    nuesse: 'Worksheets'
-    sesam:
+    exercise: 'Worksheets'
+    worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
       short: 'WEx'
-    kiwi:
+    repetition:
       singular: 'Repetition'
       short: 'Rep'
     quiz:
@@ -88,7 +88,7 @@ en:
     comments: 'Comments'
     organizational_html: 'General Information'
     announcements: 'Announcements'
-    reste:
+    miscellaneous:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'

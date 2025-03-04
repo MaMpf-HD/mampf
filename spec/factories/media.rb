@@ -84,13 +84,13 @@ FactoryBot.define do
     factory :lecture_medium,
             traits: [:with_description, :with_teachable],
             aliases: [:valid_medium] do
-      sort { "Sesam" }
+      sort { "WorkedExample" }
       after(:build) { |m| m.editors << m.teachable.teacher }
     end
 
     factory :course_medium,
             traits: [:with_description, :with_teachable, :with_editors] do
-      sort { "Sesam" }
+      sort { "WorkedExample" }
       teachable_sort { :course }
     end
 

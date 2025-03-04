@@ -196,15 +196,15 @@ Rails.application.routes.draw do
       as: "lecture_lesson_materials",
       defaults: { project: "lesson_material" }
 
-  get "lectures/:id/scripts",
+  get "lectures/:id/script",
       to: "media#index",
-      as: "lecture_scripts",
+      as: "lecture_script",
       defaults: { project: "script" }
 
   get "lectures/:id/exercises",
       to: "media#index",
       as: "lecture_exercises",
-      defaults: { project: "nuesse" }
+      defaults: { project: "exercise" }
 
   get "lectures/:id/quizzes",
       to: "media#index",
@@ -214,21 +214,16 @@ Rails.application.routes.draw do
   get "lectures/:id/worked_examples",
       to: "media#index",
       as: "lecture_worked_examples",
-      defaults: { project: "sesam" }
+      defaults: { project: "worked_example" }
 
   get "lectures/:id/repetitions",
       to: "media#index",
       as: "lecture_repetitions",
-      defaults: { project: "kiwi" }
+      defaults: { project: "repetition" }
 
-  get "lectures/:id/applications", to: "media#index", as: "lecture_applications",
-                                   defaults: { project: "kiwi" }
-
-  get "lectures/:id/remarks", to: "media#index", as: "lecture_remarks",
-                              defaults: { project: "remark" }
   get "lectures/:id/miscellaneous",
       to: "media#index", as: "lecture_supplements",
-      defaults: { project: "reste" }
+      defaults: { project: "miscellaneous" }
 
   get "lectures/:id/update_teacher",
       to: "lectures#update_teacher",

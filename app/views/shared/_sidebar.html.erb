@@ -16,7 +16,7 @@
     </li>
   <% end %>
 
-  <%# Lectures (LessonMaterial) %>
+  <%# LessonMaterials %>
   <% project_name = 'lesson_material' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
   <% active_class = get_class_for_project(project_name) %>
@@ -43,19 +43,19 @@
   <%# Divider %>
   <span class="border-top my-3"></span>
 
-  <%# Exercises (Nüsse) %>
-  <% project_name = 'nuesse' %>
+  <%# Exercises %>
+  <% project_name = 'exercise' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.nuesse?(current_user) ? "disabled" : ""%>">
+          <%= !lecture || !lecture.exercise?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
       <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
       <%= t('categories.exercises.plural') %>
     </a>
   </li>
 
-  <%# Tutorien %>
+  <%# Tutorials %>
   <% if lecture %>
     <% if current_user.in?(lecture.tutors)
         link_text, path = [t('categories.tutorials'), lecture_tutorials_path(lecture)]
@@ -93,7 +93,7 @@
   <%# Divider %>
   <span class="border-top my-3"></span>
 
-  <%# Quiz (Keks) %>
+  <%# Quizzes %>
   <% project_name = 'keks' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
   <% active_class = get_class_for_project(project_name) %>
@@ -116,15 +116,15 @@
     </a>
   </li>
 
-  <%# Worked Examples (Sesam) %>
-  <% project_name = 'sesam' %>
+  <%# Worked Examples %>
+  <% project_name = 'worked_example' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.sesam?(current_user) ? "disabled" : ""%>">
+          <%= !lecture || !lecture.worked_example?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
       <i class="bi bi-mortarboard<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.sesam.plural') %>
+      <%= t('categories.worked_example.plural') %>
     </a>
   </li>
 
@@ -139,27 +139,27 @@
     </a>
   </li>
 
-  <%# Repetition (Kiwi) %>
-  <% project_name = 'kiwi' %>
+  <%# Repetition %>
+  <% project_name = 'repetition' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.kiwi?(current_user) ? "disabled" : ""%>">
+          <%= !lecture || !lecture.repetition?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
       <i class="bi bi-layers<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.kiwi.singular') %>
+      <%= t('categories.repetition.singular') %>
     </a>
   </li>
 
-  <%# Diverse (Rest) %>
-  <% project_name = 'reste' %>
+  <%# Miscellaneous %>
+  <% project_name = 'miscellaneous' %>
   <% fullpath = lecture_food_path(lecture, params: { project: project_name })%>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.reste?(current_user) ? "disabled" : ""%>">
+          <%= !lecture || !lecture.miscellaneous?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
       <i class="bi bi-circle<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.reste.singular') %>
+      <%= t('categories.miscellaneous.singular') %>
     </a>
   </li>
 

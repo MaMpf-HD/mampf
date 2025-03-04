@@ -29,12 +29,12 @@ de:
     script:
       singular: 'Skript'
       short: 'Skr'
-    nuesse: 'Blätter'
-    sesam:
+    exercise: 'Blätter'
+    worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
       short: 'WEx'
-    kiwi:
+    repetition:
       singular: 'Wiederholung'
       short: 'Wdh'
     quiz:
@@ -64,7 +64,7 @@ de:
     comments: 'Kommentare'
     organizational_html: 'Organisa&shy;torisches'
     announcements: 'Mitteilungen'
-    reste:
+    miscellaneous:
       singular: 'Sonstiges'
       short: 'Sns'
     course: 'Modul'
