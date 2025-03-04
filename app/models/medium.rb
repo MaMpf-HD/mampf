@@ -245,7 +245,7 @@ class Medium < ApplicationRecord
   def self.media_in_project(project)
     return Medium.none if project.blank?
 
-    sort = project == "keks" ? "Quiz" : project.capitalize
+    sort = project == "quiz" ? "Quiz" : project.capitalize
     Medium.where(sort: sort)
   end
 

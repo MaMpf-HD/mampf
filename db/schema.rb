@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_03_03_190217) do
+ActiveRecord::Schema[7.2].define(version: 2025_03_04_163502) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -374,7 +374,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_03_03_190217) do
     t.text "type"
     t.text "text"
     t.boolean "independent"
-    t.integer "keks_id"
     t.text "locale"
     t.text "solution"
     t.text "question_sort"

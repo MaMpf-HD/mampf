@@ -358,8 +358,8 @@ class Lecture < ApplicationRecord
     project?("worked_example", user) || imported_any?("worked_example")
   end
 
-  def keks?(user)
-    project?("keks", user)  || imported_any?("keks")
+  def quiz?(user)
+    project?("quiz", user)  || imported_any?("quiz")
   end
 
   def erdbeere?(user)
@@ -985,7 +985,7 @@ class Lecture < ApplicationRecord
 
     def medium_sort
       { "lesson_material" => ["LessonMaterial"], "worked_example" => ["WorkedExample"], "repetition" => ["Repetition"],
-        "keks" => ["Quiz"], "exercise" => ["Exercise"],
+        "quiz" => ["Quiz"], "exercise" => ["Exercise"],
         "erdbeere" => ["Erdbeere"], "script" => ["Script"], "miscellaneous" => ["Miscellaneous"] }
     end
 

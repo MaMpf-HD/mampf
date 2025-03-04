@@ -186,9 +186,9 @@ Rails.application.routes.draw do
 
   # lectures routes
 
-  get "lectures/:id/food",
+  get "lectures/:id/material",
       to: "media#index",
-      as: "lecture_food"
+      as: "lecture_material"
 
   # New semantic routes replace the old food routes
   get "lectures/:id/lesson_materials",
@@ -209,7 +209,7 @@ Rails.application.routes.draw do
   get "lectures/:id/quizzes",
       to: "media#index",
       as: "lecture_quizzes",
-      defaults: { project: "keks" }
+      defaults: { project: "quiz" }
 
   get "lectures/:id/worked_examples",
       to: "media#index",

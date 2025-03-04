@@ -86,7 +86,7 @@ module ApplicationHelper
   # media_sort -> database fields
   def media_types
     { "lesson_material" => ["LessonMaterial"], "worked_example" => ["WorkedExample"],
-      "keks" => ["Quiz"],
+      "quiz" => ["Quiz"],
       "repetition" => ["Repetition"],
       "erdbeere" => ["Erdbeere"], "exercise" => ["Exercise"],
       "script" => ["Script"], "questions" => ["Question"],
@@ -95,7 +95,7 @@ module ApplicationHelper
 
   # media_sorts
   def media_sorts
-    ["lesson_material", "worked_example", "keks", "repetition", "erdbeere", "exercise", "script", "questions", "remarks",
+    ["lesson_material", "worked_example", "quiz", "repetition", "erdbeere", "exercise", "script", "questions", "remarks",
      "miscellaneous"]
   end
 
@@ -103,7 +103,7 @@ module ApplicationHelper
   def media_names
     { "lesson_material" => t("categories.lesson_material.plural"),
       "worked_example" => t("categories.worked_example.plural"),
-      "keks" => t("categories.quiz.plural"),
+      "quiz" => t("categories.quiz.plural"),
       "repetition" => t("categories.repetition.singular"),
       "erdbeere" => t("categories.erdbeere.singular"),
       "exercise" => t("categories.exercises.plural"),
