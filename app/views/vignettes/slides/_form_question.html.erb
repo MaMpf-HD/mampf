@@ -35,7 +35,7 @@
 
     <div id="vignette-multiple-choice-options">
         <%= f.fields_for :options do |option_form| %>
-            <%= render partial: "multiple_choice_fields", locals: { f: option_form } %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form, published: form.object.questionnaire.published } %>
         <% end %>
     </div>
 
@@ -44,7 +44,7 @@
     <template id="vignette-multiple-choice-options-template" class="d-none">
         <%= f.fields_for :options, f.object.options.build,
                          child_index: 'NEW_RECORD' do |option_form| %>
-            <%= render partial: "multiple_choice_fields", locals: { f: option_form } %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form, published: form.object.questionnaire.published } %>
         <% end %>
     </template>
     

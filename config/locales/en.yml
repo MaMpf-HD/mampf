@@ -2517,9 +2517,11 @@ en:
     info_slide_updated: 'Info slide updated.'
     slide_updated: 'Slide was successfully updated.'
     slide_created: 'Slide was successfully created.'
+    slide_not_created: 'Slide could not be created.'
     published: 'Vignette was successfully published.'
     not_published: 'Vignette could not be published.'
     not_accessible: 'Vignette is not accessible.'
+    not_editable: 'Vignette is not editable, because it was already published.'
     no_slides: "Vignette is empty"
     questionnaire_deleted: 'Questionnaire was successfully deleted'
     questionnaire_not_deleted: 'Questionnaire could not be deleted'

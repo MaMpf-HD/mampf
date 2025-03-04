@@ -31,13 +31,21 @@ module Vignettes
         redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.slide_created")
       else
-        flash[:alert] = "Failed to create slide: #{@slide.errors.full_messages.join(", ")}"
-        render :new, status: :unprocessable_entity
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.slide_not_created")
       end
     end
 
     def update
       @slide = @questionnaire.slides.find(params[:id])
+
+      if @questionnaire.published &&
+         (slide_params[:question_attributes][:type] != (@slide.question.type) ||
+          any_option_deleted?)
+        return redirect_to edit_questionnaire_path(@questionnaire),
+                           alert: t("vignettes.not_editable")
+      end
+
       if @slide.update(slide_params)
         redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.slide_updated")
@@ -47,6 +55,10 @@ module Vignettes
     end
 
     def destroy
+      if @questionnaire.published
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.slide_not_deleted")
+      end
       @slide = @questionnaire.slides.find(params[:id])
       position = @slide.position
 
@@ -60,14 +72,25 @@ module Vignettes
 
         redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.slide_deleted")
-      rescue StandardError => e
-        Rails.logger.error("Slide deletion failed: #{e.message}")
+      rescue StandardError => _e
         redirect_to edit_questionnaire_path(@questionnaire),
                     alert: t("vignettes.slide_not_deleted")
       end
     end
 
     private
+
+      def any_option_deleted?
+        options = slide_params.dig(:question_attributes, :options_attributes)
+        return false unless options
+
+        option_destroyed = false
+        options.each_value do |v|
+          option_destroyed = true if v[:_destroy] == "1"
+        end
+
+        option_destroyed
+      end
 
       def set_questionnaire
         @questionnaire = Questionnaire.find(params[:questionnaire_id])

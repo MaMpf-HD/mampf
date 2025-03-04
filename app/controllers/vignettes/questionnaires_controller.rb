@@ -77,7 +77,7 @@ module Vignettes
     end
 
     def publish
-      if @questionnaire.update(published: !@questionnaire.published)
+      if @questionnaire.update(published: true)
         redirect_to edit_questionnaire_path(@questionnaire), notice: t("vignettes.published")
       else
         redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.not_published")

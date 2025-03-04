@@ -11,19 +11,19 @@ function createSortableVignetteSlides(vignetteSlideList) {
     animation: 150,
     filter: ".accordion-collapse",
     preventOnFilter: false,
-    onEnd: function (_evt) {
-      if (_evt.oldIndex == _evt.newIndex) return;
+    onEnd: function (evt) {
+      if (evt.oldIndex == evt.newIndex) return;
 
-      let questionnaire_id = _evt.target.dataset.questionnaireId;
+      let questionnaire_id = evt.target.dataset.questionnaireId;
       $.ajax({
         url: `/questionnaires/${questionnaire_id}/update_slide_position`,
         method: "PATCH",
         data: {
-          old_position: _evt.oldIndex,
-          new_position: _evt.newIndex,
+          old_position: evt.oldIndex,
+          new_position: evt.newIndex,
         },
-        success: function (response) {
-          console.log(`Slide was moved from position ${_evt.oldIndex} to ${_evt.newIndex}`);
+        success: function (_response) {
+          console.log(`Slide was moved from position ${evt.oldIndex} to ${evt.newIndex}`);
         },
         error: function (xhr, status, error) {
           console.error(`Failed to update position: ${error}`);
