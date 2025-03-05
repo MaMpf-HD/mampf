@@ -359,7 +359,7 @@ class Lecture < ApplicationRecord
   end
 
   def quiz?(user)
-    project?("quiz", user)  || imported_any?("quiz")
+    project?("quiz", user) || imported_any?("quiz")
   end
 
   def erdbeere?(user)
@@ -984,8 +984,8 @@ class Lecture < ApplicationRecord
     end
 
     def medium_sort
-      { "lesson_material" => ["LessonMaterial"], "worked_example" => ["WorkedExample"], "repetition" => ["Repetition"],
-        "quiz" => ["Quiz"], "exercise" => ["Exercise"],
+      { "lesson_material" => ["LessonMaterial"], "worked_example" => ["WorkedExample"],
+        "repetition" => ["Repetition"], "quiz" => ["Quiz"], "exercise" => ["Exercise"],
         "erdbeere" => ["Erdbeere"], "script" => ["Script"], "miscellaneous" => ["Miscellaneous"] }
     end
 
