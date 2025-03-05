@@ -162,8 +162,8 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    ["LessonMaterial", "Erdbeere", "WorkedExample", "Repetition", "Exercise", "Script", "Question",
-     "Quiz", "Miscellaneous", "Remark", "RandomQuiz"]
+    ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Erdbeere",
+     "Exercise", "Script", "Question", "Remark", "Miscellaneous", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
