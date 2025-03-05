@@ -51,7 +51,7 @@
           <%= !lecture || !lecture.exercise?(current_user) ? "disabled" : ""%>">
     <a href="<%= url_for(fullpath)%>">
       <i class="bi bi-pencil<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.exercises.plural') %>
+      <%= t('categories.exercise.plural') %>
     </a>
   </li>
 

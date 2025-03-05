@@ -273,7 +273,7 @@ class Tag < ApplicationRecord
     question_ids = questions.pluck(:id).sample(5)
     quiz_graph = QuizGraph.build_from_questions(question_ids)
 
-    quiz_i18n = I18n.t("categories.randomquiz.singular")
+    quiz_i18n = I18n.t("categories.random_quiz.singular")
     quiz = Quiz.new(description: "#{quiz_i18n} #{title} #{Time.zone.now}",
                     level: 1,
                     quiz_graph: quiz_graph,

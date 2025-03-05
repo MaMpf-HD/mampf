@@ -18,18 +18,14 @@ de:
       singular: 'Lektion'
       plural: 'Lektionen'
       short: 'Lek'
-    exercises:
+    exercise:
       singular: 'Übung'
       singular_updated: 'Übung (aktualisiert)'
       plural: 'Übungen'
       short: 'Ü'
-    examples:
-      plural: 'Beispiele'
-      short: 'Bsp'
     script:
       singular: 'Skript'
       short: 'Skr'
-    exercise: 'Blätter'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
@@ -41,7 +37,7 @@ de:
       singular: 'Quiz'
       plural: 'Quizzes'
       short: 'Q'
-    randomquiz:
+    random_quiz:
       singular: 'Zufallsquiz'
       short: 'ZufQ'
     test:

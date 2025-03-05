@@ -42,18 +42,14 @@ en:
       singular: 'Lesson'
       plural: 'Lessons'
       short: 'Les'
-    exercises:
+    exercise:
       singular: 'Exercise'
       singular_updated: 'Exercise (updated)'
       plural: 'Exercises'
       short: 'Exc'
-    examples:
-      plural: 'Examples'
-      short: 'Exa'
     script:
       singular: 'Manuscript'
       short: 'Man'
-    exercise: 'Worksheets'
     worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
@@ -65,7 +61,7 @@ en:
       singular: 'Quiz'
       plural: 'Quizzes'
       short: 'Quiz'
-    randomquiz:
+    random_quiz:
       singular: 'Random Quiz'
       short: 'RanQ'
     test:

@@ -110,7 +110,7 @@ module ApplicationHelper
       "quiz" => t("categories.quiz.plural"),
       "repetition" => t("categories.repetition.singular"),
       "erdbeere" => t("categories.erdbeere.singular"),
-      "exercise" => t("categories.exercises.plural"),
+      "exercise" => t("categories.exercise.plural"),
       "script" => t("categories.script.singular"),
       "questions" => t("categories.question.plural"),
       "remarks" => t("categories.remark.plural"),

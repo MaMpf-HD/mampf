@@ -168,32 +168,16 @@ class Medium < ApplicationRecord
 
   # media sorts and their descriptions
   def self.sort_localized
-    { "LessonMaterial" => I18n.t("categories.lesson_material.singular"),
-      "WorkedExample" => I18n.t("categories.worked_example.singular"),
-      "Exercise" => I18n.t("categories.exercises.singular"),
-      "Script" => I18n.t("categories.script.singular"),
-      "Repetition" => I18n.t("categories.repetition.singular"),
-      "Quiz" => I18n.t("categories.quiz.singular"),
-      "Question" => I18n.t("categories.question.singular"),
-      "Remark" => I18n.t("categories.remark.singular"),
-      "RandomQuiz" => I18n.t("categories.randomquiz.singular"),
-      "Erdbeere" => I18n.t("categories.erdbeere.singular"),
-      "Miscellaneous" => I18n.t("categories.miscellaneous.singular") }
+    sort_enum.index_with do |sort|
+      I18n.t("categories.#{sort.underscore}.singular")
+    end
   end
 
   # media sorts and their short descriptions
   def self.sort_localized_short
-    { "LessonMaterial" => I18n.t("categories.lesson_material.short"),
-      "WorkedExample" => I18n.t("categories.worked_example.short"),
-      "Exercise" => I18n.t("categories.exercises.short"),
-      "Script" => I18n.t("categories.script.short"),
-      "Repetition" => I18n.t("categories.repetition.short"),
-      "Quiz" => I18n.t("categories.quiz.short"),
-      "Question" => I18n.t("categories.question.short"),
-      "Remark" => I18n.t("categories.remark.short"),
-      "RandomQuiz" => I18n.t("categories.randomquiz.short"),
-      "Erdbeere" => I18n.t("categories.erdbeere.short"),
-      "Miscellaneous" => I18n.t("categories.miscellaneous.short") }
+    sort_enum.index_with do |sort|
+      I18n.t("categories.#{sort.underscore}.short")
+    end
   end
 
   def self.select_sorts
@@ -687,7 +671,7 @@ class Medium < ApplicationRecord
   def card_tooltip
     return Medium.sort_localized[sort] unless sort == "Exercise" && file_last_edited
 
-    I18n.t("categories.exercises.singular_updated")
+    I18n.t("categories.exercise.singular_updated")
   end
 
   def sort_localized
