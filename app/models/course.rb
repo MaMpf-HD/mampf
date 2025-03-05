@@ -341,7 +341,7 @@ class Course < ApplicationRecord
 
     def create_quiz_by_questions!(question_ids)
       quiz_graph = QuizGraph.build_from_questions(question_ids)
-      Quiz.create(description: "#{I18n.t("categories.randomquiz.singular")} " \
+      Quiz.create(description: "#{I18n.t("categories.random_quiz.singular")} " \
                                "#{course.title} #{Time.current}",
                   level: 1,
                   quiz_graph: quiz_graph,

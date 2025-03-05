@@ -69,7 +69,7 @@ FactoryBot.define do
 
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
-      sort { "Kaviar" }
+      sort { "LessonMaterial" }
       teachable_sort { :valid_lesson }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
 
@@ -84,19 +84,19 @@ FactoryBot.define do
     factory :lecture_medium,
             traits: [:with_description, :with_teachable],
             aliases: [:valid_medium] do
-      sort { "Sesam" }
+      sort { "WorkedExample" }
       after(:build) { |m| m.editors << m.teachable.teacher }
     end
 
     factory :course_medium,
             traits: [:with_description, :with_teachable, :with_editors] do
-      sort { "Sesam" }
+      sort { "WorkedExample" }
       teachable_sort { :course }
     end
 
     factory :talk_medium,
             traits: [:with_description, :with_teachable] do
-      sort { "Kaviar" }
+      sort { "LessonMaterial" }
       teachable_sort { :valid_talk_with_speaker }
       after(:build) { |m| m.editors << m.teachable.lecture.teacher }
     end

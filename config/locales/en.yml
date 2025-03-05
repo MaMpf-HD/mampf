@@ -38,34 +38,30 @@ en:
       previous: "&lsaquo; Previous"
       next: "Next &rsaquo;"
   categories:
-    kaviar:
+    lesson_material:
       singular: 'Lesson'
       plural: 'Lessons'
       short: 'Les'
-    exercises:
+    exercise:
       singular: 'Exercise'
       singular_updated: 'Exercise (updated)'
       plural: 'Exercises'
       short: 'Exc'
-    examples:
-      plural: 'Examples'
-      short: 'Exa'
     script:
       singular: 'Manuscript'
       short: 'Man'
-    nuesse: 'Worksheets'
-    sesam:
+    worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
       short: 'WEx'
-    kiwi:
+    repetition:
       singular: 'Repetition'
       short: 'Rep'
     quiz:
       singular: 'Quiz'
       plural: 'Quizzes'
       short: 'Quiz'
-    randomquiz:
+    random_quiz:
       singular: 'Random Quiz'
       short: 'RanQ'
     test:
@@ -88,7 +84,7 @@ en:
     comments: 'Comments'
     organizational_html: 'General Information'
     announcements: 'Announcements'
-    reste:
+    miscellaneous:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
