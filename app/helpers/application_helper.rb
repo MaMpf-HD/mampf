@@ -85,18 +85,22 @@ module ApplicationHelper
 
   # media_sort -> database fields
   def media_types
-    { "lesson_material" => ["LessonMaterial"], "worked_example" => ["WorkedExample"],
+    { "lesson_material" => ["LessonMaterial"],
+      "worked_example" => ["WorkedExample"],
       "quiz" => ["Quiz"],
       "repetition" => ["Repetition"],
-      "erdbeere" => ["Erdbeere"], "exercise" => ["Exercise"],
-      "script" => ["Script"], "questions" => ["Question"],
-      "remarks" => ["Remark"], "miscellaneous" => ["Miscellaneous"] }
+      "erdbeere" => ["Erdbeere"],
+      "exercise" => ["Exercise"],
+      "script" => ["Script"],
+      "questions" => ["Question"],
+      "remarks" => ["Remark"],
+      "miscellaneous" => ["Miscellaneous"] }
   end
 
   # media_sorts
   def media_sorts
-    ["lesson_material", "worked_example", "quiz", "repetition", "erdbeere", "exercise", "script", "questions", "remarks",
-     "miscellaneous"]
+    ["lesson_material", "worked_example", "quiz", "repetition", "erdbeere",
+     "exercise", "script", "questions", "remarks", "miscellaneous"]
   end
 
   # media_sort -> acronym

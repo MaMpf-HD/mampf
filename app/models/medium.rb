@@ -162,7 +162,8 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    ["LessonMaterial", "Erdbeere", "WorkedExample", "Repetition", "Exercise", "Script", "Question", "Quiz", "Miscellaneous", "Remark", "RandomQuiz"]
+    ["LessonMaterial", "Erdbeere", "WorkedExample", "Repetition", "Exercise", "Script", "Question",
+     "Quiz", "Miscellaneous", "Remark", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
@@ -245,8 +246,7 @@ class Medium < ApplicationRecord
   def self.media_in_project(project)
     return Medium.none if project.blank?
 
-    sort = project == "quiz" ? "Quiz" : project.capitalize
-    Medium.where(sort: sort)
+    Medium.where(sort: project.camelize)
   end
 
   # returns the array of all media (by title), together with their ids
@@ -1127,8 +1127,10 @@ class Medium < ApplicationRecord
     # returns info made from sort and description
     def local_title_for_viewers_uncached
       return "#{sort_localized}, #{description}" if description.present?
+
       if sort == "LessonMaterial" && teachable.instance_of?(::Lesson)
-        return "#{I18n.t("categories.lesson_material.singular")}, #{teachable.local_title_for_viewers}"
+        return "#{I18n.t("categories.lesson_material.singular")}, " \
+               "#{teachable.local_title_for_viewers}"
       end
 
       "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"
