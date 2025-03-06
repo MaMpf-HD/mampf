@@ -2513,6 +2513,8 @@ en:
     destroy_answer: 'Answer was destroyed'  
     answered: 'Vignette was successfully answered'
     no_slides: 'No slides to answer'
+    not_found: 'The requested vignette was not found'
+    no_lecture: 'The requested lecture was not found'
     info_slide_created: 'Info slide created.'
     info_slide_updated: 'Info slide updated.'
     slide_updated: 'Slide was successfully updated.'

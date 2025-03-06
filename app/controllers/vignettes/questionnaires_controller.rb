@@ -153,11 +153,21 @@ module Vignettes
     private
 
       def set_questionnaire
-        @questionnaire = Questionnaire.find(params[:id])
+        if Questionnaire.exists?(params[:id])
+          @questionnaire = Questionnaire.find(params[:id])
+          return
+        end
+
+        redirect_to :root, alert: t("vignettes.not_found")
       end
 
       def set_lecture
-        @lecture = Lecture.find(params[:lecture_id])
+        if Lecture.exists?(params[:lecture_id])
+          @lecture = Lecture.find(params[:lecture_id])
+          return
+        end
+
+        redirect_to :root, alert: t("vignettes.no_lecture")
       end
 
       def check_take_accessibility
