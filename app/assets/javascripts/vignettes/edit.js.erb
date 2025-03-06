@@ -1,7 +1,10 @@
 // When using turbolinks, the event is not fired on redirect
 $(document).ready(function () {
   const vignetteSlideList = $("#vignettes-slides-accordion");
-  createSortableVignetteSlides(vignetteSlideList);
+  const published = vignetteSlideList.data("questionnaire-published");
+  if (!published) {
+    createSortableVignetteSlides(vignetteSlideList);
+  }
   registerVignetteSlideListeners(vignetteSlideList);
   registerNewSlideButtonListener(vignetteSlideList);
 });

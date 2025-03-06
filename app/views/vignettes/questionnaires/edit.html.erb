@@ -23,7 +23,8 @@
 	<% end %>
 
     <div class="accordion" id="vignettes-slides-accordion"
-         data-questionnaire-id="<%= @questionnaire.id %>">
+         data-questionnaire-id="<%= @questionnaire.id %>"
+         data-questionnaire-published="<%= @questionnaire.published %>">
         <% @slides.each() do |slide| %>
             <%= render partial: "slide_accordion_item", locals: { slide: slide } %>
         <% end %>

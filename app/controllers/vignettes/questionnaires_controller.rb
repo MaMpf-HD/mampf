@@ -85,6 +85,10 @@ module Vignettes
     end
 
     def update_slide_position
+      if @questionnaire.published
+        render json: { error: t("vignettes.not_editable") }, status: :unprocessable_entity
+        return
+      end
       old_position = params[:old_position].to_i + 1
       new_position = params[:new_position].to_i + 1
 
