@@ -100,8 +100,7 @@ module Vignettes
       end
 
       ActiveRecord::Base.transaction do
-        # Move slide with update_column to invalid position to not violate uniqueness constraint
-        @slide.update_column(:position, -1)
+        @slide.update!(position: -1)
         if new_position > old_position
           @questionnaire.slides.where("position > ? AND position <= ?", old_position, new_position)
                         .update_all("position = position - 1")
@@ -110,7 +109,7 @@ module Vignettes
                         .update_all("position = position + 1")
         end
 
-        @slide.update_column(:position, new_position)
+        @slide.update!(position: new_position)
       end
 
       render json: { success: true }
