@@ -575,6 +575,7 @@ Rails.application.routes.draw do
       member do
         get :export_answers
         post :submit_answer
+        post :duplicate
         patch :publish
         patch :update_slide_position
       end

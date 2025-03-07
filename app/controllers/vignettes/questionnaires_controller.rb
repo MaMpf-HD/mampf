@@ -2,11 +2,11 @@ module Vignettes
   class QuestionnairesController < ApplicationController
     before_action :set_questionnaire,
                   only: [:take, :submit_answer, :edit, :publish, :export_answers,
-                         :update_slide_position, :destroy]
+                         :update_slide_position, :destroy, :duplicate]
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]
     before_action :check_edit_accessibility,
-                  only: [:edit, :destroy, :publish, :update_slide_position]
+                  only: [:edit, :destroy, :publish, :update_slide_position, :duplicate]
     before_action :check_empty, only: [:publish, :take, :submit_answer]
     def index
       @questionnaires = @lecture.vignettes_questionnaires
@@ -152,6 +152,45 @@ module Vignettes
         redirect_to edit_lecture_path(@lecture),
                     alert: t("vignettes.questionnaire_not_deleted")
       end
+    end
+
+    def duplicate
+      ActiveRecord::Base.transaction do
+        new_title = params[:title].presence || "Copy of #{@questionnaire.title}"
+        new_questionnaire = @questionnaire.dup
+        new_questionnaire.title = new_title
+        new_questionnaire.published = false
+        new_questionnaire.save!
+
+        # Update lecture cache to show the new questionnaire
+        @questionnaire.lecture.touch
+
+        # Duplicate slides
+        @questionnaire.slides.order(:position).each do |slide|
+          new_slide = slide.dup
+          new_slide.questionnaire = new_questionnaire
+          new_slide.save!
+
+          new_question = slide.question.dup
+          new_question.slide = new_slide
+          new_question.save!
+
+          next unless slide.question.type == "Vignettes::MultipleChoiceQuestion"
+
+          slide.question.options.each do |option|
+            new_option = option.dup
+            new_option.question = new_question
+            new_option.save!
+          end
+        end
+
+        redirect_to edit_lecture_path(@questionnaire.lecture),
+                    notice: t("vignettes.questionnaire_duplicated")
+      end
+    rescue StandardError => e
+      Rails.logger.error("Failed to duplicate questionnaire: #{e.message}")
+      redirect_to edit_questionnaire_path(@questionnaire),
+                  alert: t("vignettes.questionnaire_not_duplicated")
     end
 
     private
