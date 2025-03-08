@@ -40,7 +40,8 @@ module Vignettes
       @slide = @questionnaire.slides.find(params[:id])
 
       if @questionnaire.published &&
-         (slide_params[:question_attributes][:type] != (@slide.question.type) ||
+         ((slide_params.dig(:question_attributes, :type).present? &&
+          slide_params.dig(:question_attributes, :type) != @slide.question.type) ||
           any_option_deleted?)
         return redirect_to edit_questionnaire_path(@questionnaire),
                            alert: t("vignettes.not_editable")

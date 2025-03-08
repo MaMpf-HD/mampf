@@ -32,6 +32,11 @@
 		<p>Drag the slides to change their order.</p>
 	<% end %>
 
+    <!-- Add this before the accordion -->
+    <div id="unsaved-changes-warning" class="alert alert-warning d-none">
+      <i class="bi bi-exclamation-triangle"></i> You have unsaved changes. Please save your changes before navigating away.
+    </div>
+
     <div class="accordion" id="vignettes-slides-accordion"
          data-questionnaire-id="<%= @questionnaire.id %>"
          data-questionnaire-published="<%= @questionnaire.published %>">
@@ -145,6 +150,25 @@
           <button type="submit" class="btn btn-primary">Duplicate</button>
         </div>
       <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Unsaved Changes Modal -->
+<div class="modal fade" id="unsaved-changes-modal" tabindex="-1" aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="unsavedChangesModalLabel">Unsaved Changes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>You have unsaved changes in the current slide. Do you want to save or discard them before editing a new one?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="discardCurrentChanges()">Discard Changes</button>
+        <button type="button" class="btn btn-primary" onclick="saveCurrentChanges()">Save Changes</button>
+      </div>
     </div>
   </div>
 </div>
