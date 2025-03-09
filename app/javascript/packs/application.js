@@ -18,11 +18,6 @@ import {
   WidgetInstance,
 } from "friendly-challenge";
 
-import "trix";
-import "@rails/actiontext";
-import * as ActiveStorage from "@rails/activestorage";
-ActiveStorage.start();
-
 document.addEventListener("turbolinks:load", function () {
   var doneCallback, element, options;
 
