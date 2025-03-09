@@ -1,12 +1,12 @@
 module Vignettes
   class QuestionnairesController < ApplicationController
     before_action :set_questionnaire,
-                  only: [:take, :submit_answer, :edit, :publish, :export_answers,
+                  only: [:take, :preview, :submit_answer, :edit, :publish, :export_answers,
                          :update_slide_position, :destroy, :duplicate]
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]
     before_action :check_edit_accessibility,
-                  only: [:edit, :destroy, :publish, :update_slide_position, :duplicate]
+                  only: [:edit, :preview, :destroy, :publish, :update_slide_position, :duplicate]
     before_action :check_empty, only: [:publish, :take, :submit_answer]
     def index
       @questionnaires = @lecture.vignettes_questionnaires
@@ -56,6 +56,27 @@ module Vignettes
       @answer.build_slide_statistic
 
       render layout: "application_no_sidebar"
+    end
+
+    def preview
+      @preview = true
+      @position =
+        if params[:start].present?
+          params[:start].to_i
+        elsif params[:position].present?
+          params[:position].to_i
+        else
+          1
+        end
+
+      if @position > @questionnaire.slides.maximum(:position) || @position < 1
+        redirect_to edit_questionnaire_path(@questionnaire)
+        return
+      end
+
+      @slide = @questionnaire.slides.find_by(position: @position)
+
+      render :take, layout: "application_no_sidebar"
     end
 
     def submit_answer

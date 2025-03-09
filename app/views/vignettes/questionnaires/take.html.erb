@@ -77,14 +77,21 @@
         <% end %>
 
         <!-- Navigation -->
-        <div class="d-flex justify-content-end mt-3">
-            <!-- TODO: Do a better differentiation here -->
-            <% if @slide.question.type == "" %>
-                <%= form.submit "Next Slide", class: "btn slide-footer-btn" %>
-            <% else %>
-                <%= form.submit "Submit answer", class: "btn slide-footer-btn" %>
-            <% end %>
-        </div>
+        <% if !@preview %>
+            <div class="d-flex justify-content-end mt-3">
+                <!-- TODO: Do a better differentiation here -->
+                <% if @slide.question.type == "" %>
+                    <%= form.submit "Next Slide", class: "btn slide-footer-btn" %>
+                <% else %>
+                    <%= form.submit "Submit answer", class: "btn slide-footer-btn" %>
+                <% end %>
+            </div>
+        <% else %>
+            <div class="d-flex justify-content-end mt-3">
+                <%= link_to "Return to Edit View", edit_questionnaire_path(@questionnaire), class: "btn btn-slide-footer-btn" %>
+                <%= link_to "Next slide", preview_questionnaire_path(@questionnaire, position: @position.to_i + 1), class: "btn slide-footer-btn" %>
+            </div>
+        <% end %>
     </div>
 
 </div>

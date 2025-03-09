@@ -56,6 +56,7 @@
     // fires before accordion is collapsed
     $(".vignette-accordion-collapse").on("show.bs.collapse", function (e) {
       if (!hasUnsavedChanges) return;
+      if (!e.target.id.startsWith("slides-collapse-")) return;
       pendingSlideId = e.target.dataset.slideId;
       e.preventDefault();
       e.stopPropagation();

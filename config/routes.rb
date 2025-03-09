@@ -569,6 +569,9 @@ Rails.application.routes.draw do
   get "questionnaires/:id/take",
       to: "vignettes/questionnaires#take",
       as: "take_questionnaire"
+  get "questionnaires/:id/preview",
+      to: "vignettes/questionnaires#preview",
+      as: "preview_questionnaire"
 
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do
