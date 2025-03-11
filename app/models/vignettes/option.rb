@@ -6,6 +6,6 @@ module Vignettes
                             join_table: :vignettes_answers_options,
                             association_foreign_key: "vignettes_answer_id",
                             foreign_key: "vignettes_option_id"
-    validates :text, presence: true
+    validates :text, presence: true, length: { minimum: 1, maximum: 255 }
   end
 end

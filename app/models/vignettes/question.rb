@@ -1,6 +1,11 @@
 module Vignettes
   class Question < ApplicationRecord
-    validates :question_text, presence: true, if: :question_text_required?
+    TEXT_MIN_LENGTH = 1
+    TEXT_MAX_LENGTH = 5_000
+    validates(:question_text,
+              presence: true,
+              length: { minimum: TEXT_MIN_LENGTH, maximum: TEXT_MAX_LENGTH },
+              if: :question_text_required?)
 
     # Uses single table inheritance to store different types of answers
     belongs_to :slide, inverse_of: :question, foreign_key: "vignettes_slide_id"

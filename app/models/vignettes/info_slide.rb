@@ -2,7 +2,8 @@ module Vignettes
   class InfoSlide < ApplicationRecord
     ACCEPTED_CONTENT_TYPES = ["image/png", "image/jpeg"].freeze
 
-    validates :title, presence: true
+    validates :title, presence: true,
+                      length: { minimum: 1, maximum: 255 }
     validates :icon, content_type: ACCEPTED_CONTENT_TYPES,
                      size: { less_than: 2.megabytes }
 
