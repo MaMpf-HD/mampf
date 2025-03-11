@@ -18,13 +18,16 @@ function handleQuestionTypes() {
 function updateQuestionFieldState(selectedName) {
   const multipleChoiceField = $("#vignette-edit-multiple-choice");
   const questionTextField = $("#vignette-question-text");
+  const textArea = questionTextField.find("textarea");
 
   // Type "No question"
   if (selectedName === "") {
     questionTextField.find("textarea").val("");
     questionTextField.collapse("hide");
+    textArea.removeAttr("required");
   }
   else {
+    textArea.attr("required", true);
     questionTextField.collapse("show");
   }
 
@@ -49,6 +52,7 @@ function handleMultipleChoiceEditor() {
   // Removing an option
   $(document).on("click", ".remove-vignette-mc-option", function (evt) {
     const parentDiv = $(evt.target).closest("div");
+    parentDiv.find("input").removeAttr("required");
     parentDiv.find(".vignette-mc-hidden-destroy").val("1");
     parentDiv.removeClass("d-flex").hide();
   });

@@ -2531,6 +2531,7 @@ en:
     no_slides: "Vignette is empty"
     questionnaire_deleted: 'Questionnaire was successfully deleted'
     questionnaire_not_deleted: 'Questionnaire could not be deleted'
+    slide_not_updated: 'Slide could not be updated'
     slide_deleted: 'Slide was successfully deleted.'
     slide_not_deleted: 'Slide could not be deleted.'
     slide_confirm_delete: 'Are you sure you want to delete this slide? 
@@ -2539,6 +2540,8 @@ en:
       This will also delete all associated slides, answers and statistics'
     questionnaire_duplicated: 'Questionnaire was successfully duplicated'
     questionnaire_not_duplicated: 'Questionnaire could not be duplicated'
+    body_too_short_error: 'The body is too short'
+    body_missing_error: 'The body is missing'
 
 
   external_link_lc: 'external link'

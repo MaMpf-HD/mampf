@@ -52,6 +52,9 @@ module Vignettes
                     notice: t("vignettes.slide_updated")
       elsif request.xhr?
         render partial: "vignettes/slides/form"
+      else
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.slide_not_updated")
       end
     end
 

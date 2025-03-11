@@ -110,7 +110,7 @@
             loadingSpinner.hide();
             editFormContainer.show();
           });
-          setupChangeDetection(editFormContainer);
+          setupChangeDetection();
           // Fix video attachment
           fixVideoAttachments();
         },
@@ -122,23 +122,33 @@
     });
   }
 
-  function setupChangeDetection(formContainer) {
-    const form = formContainer.find("form");
+  function setupChangeDetection() {
+    const form = $("#slide-form");
     const unsavedChangesWarning = $("#unsaved-changes-warning");
+    const formSubmitButton = form.find(".slide-submit-btn");
     const initialState = form.serialize();
-    form.find("input, select, textarea, trix-editor").on("change keyup", function () {
-      console.log(initialState === form.serialize());
-      if (form.serialize() !== initialState) {
+
+    form.find("input, select, textarea, trix-editor").on("change keyup", checkForChanges);
+    // form.on("change keyup", "input, select, textarea, trix-editor", checkForChanges);
+
+    $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
+
+    function checkForChanges() {
+      console.log("HELLO");
+      const currentState = form.serialize();
+      if (currentState !== initialState) {
         unsavedChangesWarning.removeClass("d-none");
+        formSubmitButton.removeClass("d-none");
         currentUnsavedSlideForm = form;
         hasUnsavedChanges = true;
       }
       else if (hasUnsavedChanges) {
         unsavedChangesWarning.addClass("d-none");
+        formSubmitButton.addClass("d-none");
         currentUnsavedSlideForm = null;
         hasUnsavedChanges = false;
       }
-    });
+    }
   }
 
   function registerNewSlideButtonListener(vignetteSlideList) {
@@ -159,6 +169,7 @@
           $(vignetteSlideList).append(response);
           const newSlide = $(vignetteSlideList).children().last();
           openAccordionItem(newSlide);
+          setupChangeDetection();
         },
         error: function (xhr, status, error) {
           console.error(`Failed to load new slide form: ${error}`);
@@ -217,7 +228,8 @@
             // Clean up
             document.body.removeChild(hiddenVideo);
           }
-          catch (_e) {
+          catch (e) {
+            console.warn("Failed to create video thumbnail", e);
             document.body.removeChild(hiddenVideo);
           }
         };
