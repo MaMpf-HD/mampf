@@ -190,6 +190,7 @@ module Vignettes
         # Duplicate slides
         @questionnaire.slides.order(:position).each do |slide|
           new_slide = slide.dup
+          new_slide.content = slide.content
           new_slide.questionnaire = new_questionnaire
           new_slide.save!
 
