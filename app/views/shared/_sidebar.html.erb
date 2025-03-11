@@ -106,15 +106,17 @@
   </li>
 
   <%# Vignetten %>
-  <% path = lecture_questionnaires_path(lecture)%>
-  <% active_class = get_class_for_path_startswith(path) %>
-  <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.vignettes? ? "disabled" : ""%>">
-    <a href="<%= url_for(path)%>">
-      <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('vignettes.vignettes') %>
-    </a>
-  </li>
+  <% if lecture.sort == "vignettes" %>
+    <% path = lecture_questionnaires_path(lecture)%>
+    <% active_class = get_class_for_path_startswith(path) %>
+    <li class="sidebar-item nav-link <%= active_class %>
+            <%= !lecture || !lecture.vignettes? ? "disabled" : ""%>">
+      <a href="<%= url_for(path)%>">
+        <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
+        <%= t('vignettes.vignettes') %>
+      </a>
+    </li>
+  <% end %>
 
   <%# Self test %>
   <% path = show_random_quizzes_path(lecture) %>

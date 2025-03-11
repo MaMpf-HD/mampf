@@ -229,6 +229,9 @@ module Vignettes
       def set_lecture
         if Lecture.exists?(params[:lecture_id])
           @lecture = Lecture.find(params[:lecture_id])
+          if @lecture.sort != "vignettes"
+            redirect_to :root, alert: t("vignettes.not_vignettes_lecture")
+          end
           return
         end
 

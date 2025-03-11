@@ -87,7 +87,7 @@ class Lecture < ApplicationRecord
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
   validates :sort, inclusion: { in: ["lecture", "seminar", "oberseminar",
-                                     "proseminar", "special"] }
+                                     "proseminar", "special", "vignettes"] }
 
   validates :term, presence: { unless: :term_independent? }
 
@@ -638,7 +638,7 @@ class Lecture < ApplicationRecord
   end
 
   def self.sorts
-    ["lecture", "seminar", "proseminar", "oberseminar"]
+    ["lecture", "seminar", "proseminar", "oberseminar", "vignettes"]
   end
 
   def self.sort_localized
