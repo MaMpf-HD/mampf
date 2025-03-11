@@ -42,6 +42,7 @@ const customGlobals = {
   Routes: "readable",
   App: "readable",
   ActionCable: "readable",
+  ActiveStorage: "readable",
 
   // Common global methods
   initBootstrapPopovers: "readable",

@@ -120,6 +120,7 @@ module Vignettes
         return
       end
 
+      # rubocop:disable Rails/SkipsModelValidations
       ActiveRecord::Base.transaction do
         @slide.update!(position: -1)
         if new_position > old_position
@@ -132,6 +133,7 @@ module Vignettes
 
         @slide.update!(position: new_position)
       end
+      # rubocop:enable Rails/SkipsModelValidations
 
       render json: { success: true }
     rescue StandardError => e
