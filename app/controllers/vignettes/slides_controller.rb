@@ -63,6 +63,7 @@ module Vignettes
       @slide = @questionnaire.slides.find(params[:id])
       position = @slide.position
 
+      # rubocop:disable Rails/SkipsModelValidations
       begin
         ActiveRecord::Base.transaction do
           @slide.destroy
@@ -77,6 +78,7 @@ module Vignettes
         redirect_to edit_questionnaire_path(@questionnaire),
                     alert: t("vignettes.slide_not_deleted")
       end
+      # rubocop:enable Rails/SkipsModelValidations
     end
 
     private
