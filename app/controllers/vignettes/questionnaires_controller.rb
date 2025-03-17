@@ -30,7 +30,7 @@ module Vignettes
       # Vignettes was already fully answered by user
       if user_answer.last_slide_answered?
         redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    notice: t("vignettes.answered")
+                    notice: t("vignettes.already_answered")
         return
       end
 
@@ -89,12 +89,19 @@ module Vignettes
       @answer.user_answer = @user_answer
       @answer.assign_attributes(answer_params.except(:slide_id))
 
-      if @answer.save
-        redirect_to take_questionnaire_path(@questionnaire, position: @slide.position + 1)
-      else
+      unless @answer.save
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
         render :take, status: :unprocessable_entity
+        return
       end
+
+      if @slide.last_position?
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    notice: t("vignettes.answered")
+        return
+      end
+
+      redirect_to take_questionnaire_path(@questionnaire, position: @slide.position + 1)
     end
 
     def publish

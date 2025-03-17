@@ -15,5 +15,9 @@ module Vignettes
 
     validates :position, presence: true, numericality: { only_integer: true }
     validates :position, uniqueness: { scope: :vignettes_questionnaire_id }
+
+    def last_position?
+      position == questionnaire.slides.maximum(:position)
+    end
   end
 end

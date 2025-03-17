@@ -2515,6 +2515,7 @@ en:
     vignettes: 'Vignettes'
     destroy_answer: 'Answer was destroyed'  
     answered: 'Vignette was successfully answered'
+    already_answered: 'You have already answered this vignette'
     no_slides: 'No slides to answer'
     not_found: 'The requested vignette was not found'
     no_lecture: 'The requested lecture was not found'
