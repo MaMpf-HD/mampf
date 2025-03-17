@@ -3,9 +3,9 @@ module Vignettes
     def select_info_slide_icon_path(info_slide)
       case info_slide.icon_type
       when "eye"
-        "vignettes/eye.png"
+        "vignettes/eye.svg"
       when "dotplot"
-        "vignettes/dotplot.png"
+        "vignettes/dotplot.svg"
       else
         "vignettes/fallback.svg"
       end
