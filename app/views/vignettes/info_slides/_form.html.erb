@@ -9,6 +9,24 @@
   <br>
   <%= form.file_field :icon, accept: @accepted_content_types.join(',') %>
 
+  <%= form.label(:icon_type, "Select an Icon", class:"form-label") %>
+
+  <div class="icon-selection d-flex gap-4 my-3">
+    <label class="icon-option">
+      <%= form.radio_button :icon_type, "eye", class: "icon-radio" %>
+      <div class="icon-preview p-3 border rounded text-center">
+        <%= image_tag "vignettes/eye.png", class: "img-fluid", style: "height: 40px;" %>
+      </div>
+    </label>
+    
+    <label class="icon-option">
+      <%= form.radio_button :icon_type, "dotplot", class: "icon-radio" %>
+      <div class="icon-preview p-3 border rounded text-center">
+        <%= image_tag "vignettes/dotplot.png", class: "img-fluid", style: "height: 40px;" %>
+      </div>
+    </label>
+  </div>
+
   <%= render partial: 'vignettes/slides/form_content', locals: { form: form } %>
 
   <div>

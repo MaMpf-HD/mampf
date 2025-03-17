@@ -24,7 +24,7 @@ module Vignettes
     def update
       if @info_slide.update(info_slide_params)
         redirect_to edit_questionnaire_path(@questionnaire),
-                    t("vignettes.info_slide_updated")
+                    notice: t("vignettes.info_slide_updated")
       else
         render :edit
       end
@@ -45,7 +45,7 @@ module Vignettes
       end
 
       def info_slide_params
-        params.require(:vignettes_info_slide).permit(:title, :content, :icon)
+        params.require(:vignettes_info_slide).permit(:title, :content, :icon_type)
       end
   end
 end

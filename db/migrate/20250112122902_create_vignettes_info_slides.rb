@@ -3,7 +3,7 @@ class CreateVignettesInfoSlides < ActiveRecord::Migration[7.1]
     create_table :vignettes_info_slides do |t|
       t.string :title
       t.references :vignettes_questionnaire, index: true
-      t.string :icon
+      t.string :icon_type
 
       t.timestamps
     end
