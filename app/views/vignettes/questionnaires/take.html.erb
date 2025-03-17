@@ -41,6 +41,7 @@
                     title="Find information about: <%= info_slide.title %>"
                     data-bs-toggle="modal"
                     data-bs-target="#vignette-info-slide-modal-<%= index %>"
+                    data-info-slide-id = "<%= info_slide.id %>"
                     data-info-slide-index="<%= index %>">
                 <i class="bi bi-info-circle-fill me-1"></i>
                 <p class="mb-0 text-start">
@@ -64,6 +65,7 @@
             <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
             <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
             <%= stat_form.hidden_field :info_slides_access_count, id:"info-slides-access-count-field" %>
+            <%= stat_form.hidden_field :info_slides_first_access_time, id: "info-slides-first-access-times-field" %>
         <% end %>
 
         <% case @slide.question.type %>

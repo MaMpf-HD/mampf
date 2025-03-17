@@ -74,16 +74,24 @@ function validateTextAnswer() {
 ////////////////////////////////////////////////////////////////////////////////
 
 class VignetteSlideStatistics {
+  slideAccessDate = Date.now();
   slideStartTime = new Date();
   totalSlideTime = 0;
 
   infoSlideAccessCounts = {};
   infoSlideStartTime = null;
   infoSlideTimes = {};
+  infoSlideFirstAccessTimes = {};
 
-  increaseInfoSlideAccessCount(index) {
-    this.infoSlideAccessCounts[index] ??= 0;
-    this.infoSlideAccessCounts[index]++;
+  increaseInfoSlideAccessCount(id) {
+    this.infoSlideAccessCounts[id] ??= 0;
+    this.infoSlideAccessCounts[id]++;
+  }
+
+  checkInfoSlideFirstAccess(id) {
+    if (!this.infoSlideFirstAccessTimes[id]) {
+      this.infoSlideFirstAccessTimes[id] = Date.now() - this.slideAccessDate;
+    }
   }
 
   freezeSlideTime() {
@@ -103,19 +111,22 @@ class VignetteSlideStatistics {
     this.infoSlideStartTime = Date.now();
   }
 
-  stopInfoSlideTimer(index) {
+  stopInfoSlideTimer(id) {
     if (this.infoSlideStartTime === null) {
       console.error("Attempted to stop info slide timer when it was already stopped");
       return;
     }
     const timeOnInfoSlide = (Date.now() - this.infoSlideStartTime);
-    this.infoSlideTimes[index] = (this.infoSlideTimes[index] || 0.0) + timeOnInfoSlide;
+    this.infoSlideTimes[id] = (this.infoSlideTimes[id] || 0.0) + timeOnInfoSlide;
     this.infoSlideStartTime = null;
   }
 
   postProcessTimes() {
     for (let key in this.infoSlideTimes) {
       this.infoSlideTimes[key] = Math.floor(this.infoSlideTimes[key] / 1000);
+    }
+    for (let key in this.infoSlideFirstAccessTimes) {
+      this.infoSlideFirstAccessTimes[key] = Math.floor(this.infoSlideFirstAccessTimes[key] / 1000);
     }
     this.totalSlideTime = Math.floor(this.totalSlideTime / 1000);
   }
@@ -128,10 +139,11 @@ function registerStatisticsHandler(stats) {
     return;
   }
   openInfoSlideButtons.each(function () {
-    const index = $(this).attr("data-info-slide-index");
+    const id = $(this).attr("data-info-slide-id");
     $(this).click(() => {
       stats.freezeSlideTime();
-      stats.increaseInfoSlideAccessCount(index);
+      stats.checkInfoSlideFirstAccess(id);
+      stats.increaseInfoSlideAccessCount(id);
       stats.startInfoSlideTimer();
     });
   });
@@ -144,8 +156,8 @@ function registerStatisticsHandler(stats) {
   }
   infoSlideModals.each(function () {
     $(this).on("hidden.bs.modal", function () {
-      const index = $(this).attr("data-info-slide-index");
-      stats.stopInfoSlideTimer(index);
+      const id = $(this).attr("data-info-slide-id");
+      stats.stopInfoSlideTimer(id);
       stats.unfreezeSlideTime();
     });
   });
@@ -163,8 +175,10 @@ function registerStatisticsHandler(stats) {
     const timeOnSlideField = $("#time-on-slide-field");
     const timeOnInfoSlidesField = $("#time-on-info-slides-field");
     const infoSlidesAccessCountField = $("#info-slides-access-count-field");
+    const infoSlideFirstAccessTimes = $("#info-slides-first-access-times-field");
     timeOnSlideField.val(stats.totalSlideTime);
     timeOnInfoSlidesField.val(JSON.stringify(stats.infoSlideTimes));
     infoSlidesAccessCountField.val(JSON.stringify(stats.infoSlideAccessCounts));
+    infoSlideFirstAccessTimes.val(JSON.stringify(stats.infoSlideFirstAccessTimes));
   });
 }

@@ -8,6 +8,7 @@ module Vignettes
                "Time on slide",
                "Time on info slide",
                "Info slide access count",
+               "Info slide first access time",
                "Question Text",
                "Answer",
                "Selected Options",
@@ -21,6 +22,7 @@ module Vignettes
         answer.slide_statistic.time_on_slide,
         answer.slide_statistic.time_on_info_slides,
         answer.slide_statistic.info_slides_access_count,
+        answer.slide_statistic.info_slides_first_access_time,
         answer.slide.question.question_text
       ]
 
