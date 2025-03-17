@@ -4,6 +4,7 @@
   let currentUnsavedSlideForm = null;
   let pendingSlideId = null;
   let hasUnsavedChanges = false;
+  let pendingAction = null;
 
   // When using turbolinks, the event is not fired on redirect
   $(document).ready(function () {
@@ -52,16 +53,27 @@
     });
   }
 
+  function handleUnsavedChanges(event, slideId) {
+    if (!hasUnsavedChanges) return true;
+    if (!event.target.id.startsWith("slides-collapse-")) return true;
+
+    pendingSlideId = slideId;
+
+    event.preventDefault();
+    event.stopPropagation();
+    $("#unsaved-changes-modal").modal("show");
+    return false;
+  }
+
   function registerVignetteSlideOpenListener() {
-    // fires before accordion is collapsed
     $(".vignette-accordion-collapse").on("show.bs.collapse", function (e) {
-      if (!hasUnsavedChanges) return;
-      if (!e.target.id.startsWith("slides-collapse-")) return;
-      pendingSlideId = e.target.dataset.slideId;
-      e.preventDefault();
-      e.stopPropagation();
-      $("#unsaved-changes-modal").modal("show");
-      return false;
+      pendingAction = "show";
+      return handleUnsavedChanges(e, e.target.dataset.slideId);
+    });
+
+    $(".vignette-accordion-collapse").on("hide.bs.collapse", function (e) {
+      pendingAction = "hide";
+      return handleUnsavedChanges(e, e.target.dataset.slideId);
     });
   }
 
@@ -70,7 +82,13 @@
     hasUnsavedChanges = false;
     currentUnsavedSlideForm = null;
     $("#unsaved-changes-warning").addClass("d-none");
-    $(`#slides-collapse-${pendingSlideId}`).collapse("show");
+
+    if (pendingAction === "show") {
+      $(`#slides-collapse-${pendingSlideId}`).collapse("show");
+    }
+    else if (pendingAction === "hide") {
+      $(`#slides-collapse-${pendingSlideId}`).collapse("hide");
+    }
   }
 
   function saveCurrentChanges() {
@@ -134,7 +152,6 @@
     $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
 
     function checkForChanges() {
-      console.log("HELLO");
       const currentState = form.serialize();
       if (currentState !== initialState) {
         unsavedChangesWarning.removeClass("d-none");
