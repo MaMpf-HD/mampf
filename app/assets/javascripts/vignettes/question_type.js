@@ -33,9 +33,13 @@ function updateQuestionFieldState(selectedName) {
 
   if (selectedName === "Vignettes::MultipleChoiceQuestion") {
     multipleChoiceField.collapse("show");
+    multipleChoiceField.find("input").removeAttr("disabled");
+    multipleChoiceField.find("input").attr("required", true);
   }
   else {
     multipleChoiceField.collapse("hide");
+    multipleChoiceField.find("input").attr("disabled", "disabled");
+    multipleChoiceField.find("input").removeAttr("required");
   }
 }
 
