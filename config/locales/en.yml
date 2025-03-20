@@ -2547,6 +2547,8 @@ en:
     number_missing_error: "Please provide a numeric answer"
     number_too_large_error: "Please enter a number less than or equal to %{max}"
     number_too_small_error: "Please enter a number greater than or equal to %{min}"
+    no_option: "At least one option must be specified"
+    empty_option: "All options must have text"
 
 
   external_link_lc: 'external link'

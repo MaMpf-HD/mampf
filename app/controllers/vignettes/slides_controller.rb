@@ -2,6 +2,7 @@ module Vignettes
   class SlidesController < ApplicationController
     before_action :set_questionnaire
     before_action :check_edit_accessibility, only: [:new, :create, :edit, :update, :destroy]
+    before_action :check_empty_multiple_choice_option, only: [:update, :create]
 
     def new
       return if @questionnaire.published
@@ -108,6 +109,32 @@ module Vignettes
 
         redirect_to lecture_questionnaires_path(@questionnaire.lecture),
                     alert: t("vignettes.not_accessible")
+      end
+
+      def check_empty_multiple_choice_option
+        return unless slide_params.present? &&
+                      slide_params&.dig(:question_attributes,
+                                        :type) == "Vignettes::MultipleChoiceQuestion"
+
+        if slide_params.dig(:question_attributes, :options_attributes).empty?
+          redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_option")
+          return
+        end
+
+        exists_non_destroyed_option = false
+
+        slide_params.dig(:question_attributes, :options_attributes).each_value do |option|
+          exists_non_destroyed_option = true if option[:_destroy] == "false"
+          next unless option[:_destroy] == "false"
+          next unless option[:text].empty?
+
+          redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.empty_option")
+          break
+        end
+
+        return if exists_non_destroyed_option
+
+        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_option")
       end
 
       def redirect_params
