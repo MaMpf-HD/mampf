@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_17_165644) do
+ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -967,10 +967,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_17_165644) do
   create_table "vignettes_info_slides", force: :cascade do |t|
     t.string "title"
     t.bigint "vignettes_questionnaire_id"
-    t.string "icon"
+    t.string "icon_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "icon_type"
     t.index ["vignettes_questionnaire_id"], name: "index_vignettes_info_slides_on_vignettes_questionnaire_id"
   end
 
@@ -1002,6 +1001,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_17_165644) do
     t.string "type"
     t.text "question_text"
     t.bigint "vignettes_slide_id", null: false
+    t.boolean "only_integer", default: false
+    t.decimal "min_number", precision: 10
+    t.decimal "max_number", precision: 10
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["vignettes_slide_id"], name: "index_vignettes_questions_on_vignettes_slide_id"
@@ -1013,9 +1015,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_17_165644) do
     t.integer "time_on_slide"
     t.text "time_on_info_slides"
     t.text "info_slides_access_count"
+    t.text "info_slides_first_access_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.text "info_slides_first_access_time"
     t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
     t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
   end

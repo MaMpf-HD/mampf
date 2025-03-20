@@ -27,7 +27,7 @@ module Vignettes
       ]
 
       case answer.type
-      when "Vignettes::TextAnswer"
+      when "Vignettes::TextAnswer", "Vignettes::NumberAnswer"
         data << answer.text
       when "Vignettes::MultipleChoiceAnswer"
         selected_options = answer.options.map(&:text).join(", ")

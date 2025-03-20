@@ -10,6 +10,7 @@
 <!-- Slide -->
 <%= form_with(model: @answer, id: "vignettes-answer-form",
               url: submit_answer_questionnaire_url(@questionnaire),
+              data: { preview: @preview || false },
               local: true) do |form| %>
 
 <div id="vignette-take-card" class="container-md small-width card">
@@ -70,6 +71,8 @@
         <% case @slide.question.type %>
             <% when "Vignettes::TextQuestion" %>
                 <%= render partial: 'vignettes/answer_types/text', locals: { f: form } %>
+            <% when "Vignettes::NumberQuestion" %>
+                <%= render partial: 'vignettes/answer_types/number', locals: { f: form } %>
             <% when "Vignettes::MultipleChoiceQuestion" %>
                 <%= render partial: 'vignettes/answer_types/multiple_choice',
                                     locals: { f: form } %>

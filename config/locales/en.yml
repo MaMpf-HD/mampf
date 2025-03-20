@@ -2543,6 +2543,10 @@ en:
     questionnaire_not_duplicated: 'Questionnaire could not be duplicated'
     body_too_short_error: 'The body is too short'
     body_missing_error: 'The body is missing'
+    not_a_number_error: "Please enter a valid number"
+    number_missing_error: "Please provide a numeric answer"
+    number_too_large_error: "Please enter a number less than or equal to %{max}"
+    number_too_small_error: "Please enter a number greater than or equal to %{min}"
 
 
   external_link_lc: 'external link'

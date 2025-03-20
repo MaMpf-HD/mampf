@@ -24,6 +24,15 @@
     $("#save-changes-btn").on("click", function () {
       saveCurrentChanges();
     });
+
+    /* window.addEventListener("beforeunload", function (event) {
+      if (hasUnsavedChanges) {
+        const fallback_message = "You have unsaved changes. Are you sure you want to leave this page?";
+        event.preventDefault();
+        event.returnValue = fallback_message;
+        return fallback_message;
+      }
+    }); */
   });
 
   function createSortableVignetteSlides(vignetteSlideList) {

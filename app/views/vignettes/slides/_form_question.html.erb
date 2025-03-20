@@ -8,6 +8,7 @@
         options_for_select([
             ['No Question', ''],
             ['Text Area', 'Vignettes::TextQuestion'],
+            ['Number field', 'Vignettes::NumberQuestion'],
             ['Multiple Choice', 'Vignettes::MultipleChoiceQuestion'],
             ['Likert Scale', 'Vignettes::LikertScaleQuestion']
         ], f.object.type),
@@ -53,6 +54,53 @@
         <i class="bi bi-plus-circle"></i>
         Add Multiple Choice Option
     </button>
+</div>
+
+<div id="vignette-number-question-options" class="collapse mt-3">
+  <div class="card">
+    <div class="card-header">Number Question Settings</div>
+    <div class="card-body">
+      <div class="form-check mb-3">
+        <%= f.check_box :only_integer, 
+            class: 'form-check-input', 
+            id: 'vignette-number-only-integer',
+            disabled: form.object.questionnaire.published %>
+        <%= f.label :only_integer, "Allow integers only (no decimals)", 
+            class: 'form-check-label',
+            for: 'vignette-number-only-integer' %>
+      </div>
+      
+      <!-- Min/Max controls -->
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <%= f.number_field :min_number,
+                class: 'form-control',
+                id: 'vignette-number-min',
+                placeholder: 'Minimum value',
+                step: 'any',
+                disabled: form.object.questionnaire.published %>
+            <%= f.label :min_number, "Minimum value" %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <%= f.number_field :max_number,
+                class: 'form-control',
+                id: 'vignette-number-max',
+                placeholder: 'Maximum value',
+                step: 'any',
+                disabled: form.object.questionnaire.published %>
+            <%= f.label :max_number, "Maximum value" %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-text mt-2">
+        Leave min/max fields empty for unlimited range
+      </div>
+    </div>
+  </div>
 </div>
 
 <% end %>

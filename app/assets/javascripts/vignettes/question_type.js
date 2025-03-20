@@ -5,6 +5,7 @@ $(document).ready(function () {
   updateQuestionFieldState($(QUESTION_TYPE_SELECT_ID).val());
   new TomSelect(QUESTION_TYPE_SELECT_ID, { allowEmptyOption: true });
   handleMultipleChoiceEditor();
+  handleNumberOptions();
 });
 
 function handleQuestionTypes() {
@@ -18,6 +19,7 @@ function handleQuestionTypes() {
 function updateQuestionFieldState(selectedName) {
   const multipleChoiceField = $("#vignette-edit-multiple-choice");
   const questionTextField = $("#vignette-question-text");
+  const numberQuestionOptionContainer = $("#vignette-number-question-options");
   const textArea = questionTextField.find("textarea");
 
   // Type "No question"
@@ -41,6 +43,15 @@ function updateQuestionFieldState(selectedName) {
     multipleChoiceField.find("input").attr("disabled", "disabled");
     multipleChoiceField.find("input").removeAttr("required");
   }
+
+  if (selectedName === "Vignettes::NumberQuestion") {
+    numberQuestionOptionContainer.collapse("show");
+    numberQuestionOptionContainer.find("input").removeAttr("disabled");
+  }
+  else {
+    numberQuestionOptionContainer.collapse("hide");
+    numberQuestionOptionContainer.find("input").attr("disabled", "disabled");
+  }
 }
 
 function handleMultipleChoiceEditor() {
@@ -60,4 +71,36 @@ function handleMultipleChoiceEditor() {
     parentDiv.find(".vignette-mc-hidden-destroy").val("1");
     parentDiv.removeClass("d-flex").hide();
   });
+}
+
+function handleNumberOptions() {
+  const minField = $("#vignette-number-min");
+  const maxField = $("#vignette-number-max");
+
+  if (!minField.length || !maxField.length) {
+    return;
+  }
+  function validateMinMax() {
+    if (minField.val() && maxField.val()) {
+      const minValue = parseFloat(minField.val());
+      const maxValue = parseFloat(maxField.val());
+
+      if (minValue >= maxValue) {
+        minField[0].setCustomValidity("Minimum value must be less than maximum");
+        maxField[0].setCustomValidity("Maximum value must be greater than minimum");
+      }
+      else {
+        minField[0].setCustomValidity("");
+        maxField[0].setCustomValidity("");
+      }
+    }
+    else {
+      minField[0].setCustomValidity("");
+      maxField[0].setCustomValidity("");
+    }
+  }
+
+  // Add event listeners to both fields
+  minField.on("input", validateMinMax);
+  maxField.on("input", validateMinMax);
 }

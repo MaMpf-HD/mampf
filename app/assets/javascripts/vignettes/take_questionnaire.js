@@ -163,7 +163,11 @@ function registerStatisticsHandler(stats) {
   });
 
   // Form Submission
-  $(VIGNETTE_FORM_ID).submit(() => {
+  $(VIGNETTE_FORM_ID).submit((e) => {
+    if ($(VIGNETTE_FORM_ID).data("preview")) {
+      e.preventDefault();
+      return;
+    }
     // Take rest of time into account
     if (stats.slideStartTime) {
       stats.freezeSlideTime();

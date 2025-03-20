@@ -1,0 +1,32 @@
+<div class="form-floating mt-3">
+    <%= f.text_field :text,
+        type: 'number',
+        placeholder: '_',
+        class: 'form-control',
+        required: true,
+        step: @slide.question.only_integer ? "1" : "any",
+        min: @slide.question.min_number.present? ? @slide.question.min_number : nil,
+        max: @slide.question.max_number.present? ? @slide.question.max_number : nil,
+        inputmode: "decimal",
+        'data-not-a-number-message': t('vignettes.not_a_number_error'),
+        'data-value-missing-message': t('vignettes.number_missing_error'),
+        # Only include constraint messages if constraints exist
+        'data-range-overflow-message': @slide.question.max_number.present? ? 
+            t('vignettes.number_too_large_error', max: @slide.question.max_number) : nil,
+        'data-range-underflow-message': @slide.question.min_number.present? ? 
+            t('vignettes.number_too_small_error', min: @slide.question.min_number) : nil
+    %>
+    <%= f.label :text, 'Your numeric answer' %>
+    
+    <% if @slide.question.min_number.present? || @slide.question.max_number.present? %>
+        <div class="form-text mt-1">
+            <% if @slide.question.min_number.present? && @slide.question.max_number.present? %>
+                Enter a number between <%= @slide.question.min_number %> and <%= @slide.question.max_number %>
+            <% elsif @slide.question.min_number.present? %>
+                Enter a number greater than or equal to <%= @slide.question.min_number %>
+            <% elsif @slide.question.max_number.present? %>
+                Enter a number less than or equal to <%= @slide.question.max_number %>
+            <% end %>
+        </div>
+    <% end %>
+</div>

@@ -123,6 +123,9 @@ module Vignettes
             :id,
             :type,
             :question_text,
+            :only_integer,
+            :min_number,
+            :max_number,
             :_destroy,
             { options_attributes: [:id, :text, :_destroy] }
           ]
