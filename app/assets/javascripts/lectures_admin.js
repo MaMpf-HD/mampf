@@ -29,7 +29,7 @@ function navigateToActiveNavTab() {
   }
 }
 
-$(document).on("ready turbolinks:load", function () {
+$(document).ready(function () {
   initBootstrapPopovers();
   configureUrlHashesForBootstrapTabs();
   navigateToActiveNavTab();
