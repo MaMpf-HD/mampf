@@ -17,9 +17,8 @@
 <% if questionnaires.present? %>
 <ul class="list-group"> 
   <% questionnaires.each do |questionnaire| %>
-  <li class="list-group-item">
-    <%= link_to questionnaire.title, edit_questionnaire_path(questionnaire) %>
-  </li>
+    <%= link_to questionnaire.title, edit_questionnaire_path(questionnaire),
+        class: "list-group-item list-group-item-action" %>
   <% end %>
 </ul>
 <% end %>
