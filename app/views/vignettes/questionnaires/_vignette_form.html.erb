@@ -6,12 +6,14 @@
       <%= form.text_field :title,
           id: 'new-vignette-title', class: 'form-control',
           required: true %>
-      <%= form.label :title, class: 'form-label' %>
+      <%= form.label t("basics.title"), class: 'form-label' %>
     </div>
   </div>
   
   <div class="modal-footer">
-    <%= form.submit 'Create Vignette', class: 'btn btn-primary' %>
-    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+    <%= form.submit t("buttons.create"), class: 'btn btn-primary' %>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <%= t("buttons.cancel") %>
+    </button>
   </div>
 <% end %>

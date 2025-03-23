@@ -176,10 +176,11 @@ module Vignettes
     def destroy
       @lecture = @questionnaire.lecture
       if @questionnaire.destroy
-        redirect_to edit_lecture_path(@lecture),
+        @lecture.touch
+        redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
                     notice: t("vignettes.questionnaire_deleted")
       else
-        redirect_to edit_lecture_path(@lecture),
+        redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
                     alert: t("vignettes.questionnaire_not_deleted")
       end
     end
@@ -215,7 +216,7 @@ module Vignettes
           end
         end
 
-        redirect_to edit_lecture_path(@questionnaire.lecture),
+        redirect_to edit_lecture_path(@questionnaire.lecture, anchor: "vignettes"),
                     notice: t("vignettes.questionnaire_duplicated")
       end
     rescue StandardError => e

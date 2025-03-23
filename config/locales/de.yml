@@ -2659,7 +2659,13 @@ de:
 
   vignettes:
     vignettes: 'Vignettes'
-    create_new: 'Neue Vignette (Umfrage) erstellen'
+    not_found: 'Die angeforderte Vignette existiert nicht.'
+    create_new: 'Neue Umfrage erstellen'
+    questionnaire_delete: "Umfrage löschen"
+    questionnaire_deleted: "Umfrage erfolgreich gelöscht"
+    questionnaire_confirm_delete: >
+      Bist Du sicher, dass Du diese Umfrage löschen willst?
+      Alle zugehörigen Slides, Antworten und Statistiken werden ebenfalls gelöscht.
   
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
