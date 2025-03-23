@@ -27,7 +27,7 @@ class LecturesController < ApplicationController
                                                   &.last_seen_at || @lecture.updated_at,
                               @lecture.forum&.updated_at || @lecture.updated_at].max)
       @lecture = Lecture.includes(:teacher, :term, :editors, :users,
-                                  :vignettes_questionnaires, :announcements, :imported_media,
+                                  :announcements, :imported_media,
                                   course: [:editors],
                                   media: [:teachable, :tags],
                                   lessons: [media: [:tags]],

@@ -160,6 +160,7 @@ module Vignettes
     def create
       @questionnaire = Questionnaire.new(questionnaire_params)
       if @questionnaire.save
+        @questionnaire.lecture.touch
         redirect_to edit_questionnaire_path(@questionnaire)
       else
         render :new, status: :unprocessable_entity
