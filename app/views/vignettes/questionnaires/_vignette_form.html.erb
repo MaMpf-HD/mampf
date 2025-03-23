@@ -3,7 +3,9 @@
   
   <div class="modal-body">
     <div class="form-floating">
-      <%= form.text_field :title, class: 'form-control', required: true %>
+      <%= form.text_field :title,
+          id: 'new-vignette-title', class: 'form-control',
+          required: true %>
       <%= form.label :title, class: 'form-label' %>
     </div>
   </div>
