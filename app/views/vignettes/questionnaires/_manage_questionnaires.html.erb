@@ -14,16 +14,12 @@
 </div>
 
 <% questionnaires = lecture.vignettes_questionnaires %>
-<ul class="list-group"> 
 <% if questionnaires.present? %>
+<ul class="list-group"> 
   <% questionnaires.each do |questionnaire| %>
   <li class="list-group-item">
     <%= link_to questionnaire.title, edit_questionnaire_path(questionnaire) %>
   </li>
   <% end %>
-<% else %>
-  <li class="list-group-item">
-    <%= t('admin.lecture.no_questionnaires', default: 'No questionnaires available') %>
-  </li>
-<% end %>
 </ul>
+<% end %>
