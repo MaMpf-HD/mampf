@@ -11,11 +11,18 @@
  * https://webdesign.tutsplus.com/how-to-add-deep-linking-to-the-bootstrap-4-tabs-component--cms-31180t
  */
 function configureUrlHashesForBootstrapTabs() {
-  $('#lecture-nav-pills button[role="tab"]').on("focus", function () {
+  $('#lecture-nav-pills button[role="tab"]').off("focus").on("focus", function () {
     const hash = $(this).attr("href");
+    if (hash === "#content") {
+      // Do not add a hash for the content tab, as this is the default tab.
+      // Otherwise, users cannot navigate back anymore to the previous tab
+      // since this is triggered.
+      return;
+    }
     const urlWithoutHash = location.href.split("#")[0];
     const newUrl = `${urlWithoutHash}${hash}`;
-    history.pushState(null, "", newUrl);
+    // https://github.com/turbolinks/turbolinks-classic/issues/363#issuecomment-85626145
+    history.pushState({ turbolinks: true, url: newUrl }, "", newUrl);
   });
 }
 
@@ -25,6 +32,8 @@ function navigateToActiveNavTab() {
     $(`#lecture-nav-pills ${hrefXPathIdentifier}`).tab("show");
   }
   else {
+    const newUrl = `${location.href.split("#")[0]}#content`;
+    history.replaceState({ turbolinks: true, url: newUrl }, "", newUrl);
     $("#lecture-nav-content").focus();
   }
 }
