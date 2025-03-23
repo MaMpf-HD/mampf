@@ -42,16 +42,7 @@ module Vignettes
         return
       end
 
-      requested_position = params[:position].to_i
-
-      # If there is no position given or the requested position is invalid
-      if requested_position.zero? || requested_position != first_unanswered_slide.position
-        redirect_to take_questionnaire_path(@questionnaire,
-                                            position: first_unanswered_slide.position)
-        return
-      end
-
-      @slide = @questionnaire.slides.find_by(position: requested_position)
+      @slide = first_unanswered_slide
       @answer = @slide.answers.build
       @answer.build_slide_statistic
 
@@ -101,7 +92,7 @@ module Vignettes
         return
       end
 
-      redirect_to take_questionnaire_path(@questionnaire, position: @slide.position + 1)
+      redirect_to take_questionnaire_path(@questionnaire)
     end
 
     def publish
