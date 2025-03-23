@@ -1,0 +1,29 @@
+<h3 class="lecture-pane-header">
+  Vignettes
+</h3>
+
+<div class="d-flex justify-content-center mt-2">
+  <button type="button"
+          class="btn btn-outline-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#vignetteModal"
+          data-bs-tooltip="tooltip">
+    <i class="bi bi-plus-circle"></i>
+    <%= t('vignettes.create_new') %>
+  </button>
+</div>
+
+<% questionnaires = lecture.vignettes_questionnaires %>
+<ul class="list-group"> 
+<% if questionnaires.present? %>
+  <% questionnaires.each do |questionnaire| %>
+  <li class="list-group-item">
+    <%= link_to questionnaire.title, edit_questionnaire_path(questionnaire) %>
+  </li>
+  <% end %>
+<% else %>
+  <li class="list-group-item">
+    <%= t('admin.lecture.no_questionnaires', default: 'No questionnaires available') %>
+  </li>
+<% end %>
+</ul>

@@ -2513,6 +2513,7 @@ en:
   
   vignettes:
     vignettes: 'Vignettes'
+    create_new: "Create new vignette (questionnaire)"
     destroy_answer: 'Answer was destroyed'  
     answered: 'Vignette was successfully answered'
     already_answered: 'You have already answered this vignette'

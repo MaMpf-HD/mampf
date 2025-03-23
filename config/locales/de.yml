@@ -2656,6 +2656,11 @@ de:
       reduced_questions: >
         Die Zahl der Fragen reduziert sich entsprechend, wenn für die
         gewählten Inhalte weniger Fragen zur Verfügung stehen als ausgewählt.
+
+  vignettes:
+    vignettes: 'Vignettes'
+    create_new: 'Neue Vignette (Umfrage) erstellen'
+  
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
   click_here: 'Hier klicken'
