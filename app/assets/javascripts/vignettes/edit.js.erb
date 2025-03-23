@@ -5,6 +5,7 @@
   let pendingSlideId = null;
   let hasUnsavedChanges = false;
   let pendingAction = null;
+  let formSubmit = false;
 
   // When using turbolinks, the event is not fired on redirect
   $(document).ready(function () {
@@ -25,14 +26,23 @@
       saveCurrentChanges();
     });
 
-    /* window.addEventListener("beforeunload", function (event) {
-      if (hasUnsavedChanges) {
+    // Mark intentional form submit to not prevent redirect
+    $(document).on("click", "form button[type='submit'], form input[type='submit']", function () {
+      formSubmit = true;
+    });
+
+    window.addEventListener("beforeunload", function (event) {
+      let unsavedChangesModalOpen = $("#unsaved-changes-modal").hasClass("show");
+      console.warn(unsavedChangesModalOpen);
+      console.warn(formSubmit);
+      if (hasUnsavedChanges && !unsavedChangesModalOpen && !formSubmit) {
         const fallback_message = "You have unsaved changes. Are you sure you want to leave this page?";
         event.preventDefault();
         event.returnValue = fallback_message;
         return fallback_message;
       }
-    }); */
+      formSubmit = false;
+    });
   });
 
   function createSortableVignetteSlides(vignetteSlideList) {
