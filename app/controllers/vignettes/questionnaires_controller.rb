@@ -173,10 +173,10 @@ module Vignettes
       if @questionnaire.destroy
         @lecture.touch
         redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
-                    notice: t("vignettes.questionnaire_deleted")
+                    notice: t("vignettes.deleted")
       else
         redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
-                    alert: t("vignettes.questionnaire_not_deleted")
+                    alert: t("vignettes.not_deleted")
       end
     end
 
@@ -212,12 +212,12 @@ module Vignettes
         end
 
         redirect_to edit_lecture_path(@questionnaire.lecture, anchor: "vignettes"),
-                    notice: t("vignettes.questionnaire_duplicated")
+                    notice: t("vignettes.duplicated")
       end
     rescue StandardError => e
       Rails.logger.error("Failed to duplicate questionnaire: #{e.message}")
       redirect_to edit_questionnaire_path(@questionnaire),
-                  alert: t("vignettes.questionnaire_not_duplicated")
+                  alert: t("vignettes.not_duplicated")
     end
 
     private

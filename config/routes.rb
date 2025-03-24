@@ -190,7 +190,7 @@ Rails.application.routes.draw do
       to: "media#index",
       as: "lecture_food"
 
-  get "lectures/:lecture_id/vignettes",
+  get "lectures/:lecture_id/questionnaires",
       to: "vignettes/questionnaires#index",
       as: "lecture_questionnaires"
 

@@ -113,7 +113,7 @@
             <%= !lecture || !lecture.vignettes? ? "disabled" : ""%>">
       <a href="<%= url_for(path)%>">
         <i class="bi bi-question-square<%= active_class.present? ? "-fill" : "" %>"></i>
-        <%= t('vignettes.vignettes') %>
+        <%= t('vignettes.questionnaire') %>
       </a>
     </li>
   <% end %>

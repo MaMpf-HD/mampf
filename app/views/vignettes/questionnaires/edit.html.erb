@@ -44,7 +44,7 @@
             <button type="button" class="btn btn-outline-danger"
                     data-bs-toggle="modal" data-bs-target="#deleteQuestionnaireModal">
                 <i class="bi bi-trash"></i>
-                <%= t("vignettes.questionnaire_delete") %>
+                <%= t("vignettes.delete") %>
             </button>
         </div>
     </div>
@@ -103,15 +103,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteQuestionnaireModalLabel">
-            <%= t("vignettes.questionnaire_delete") %>
+            <%= t("vignettes.delete") %>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p><%= t("vignettes.questionnaire_confirm_delete") %></p>
+        <p><%= t("vignettes.confirm_delete") %></p>
       </div>
       <div class="modal-footer">
-        <%= button_to t("vignettes.questionnaire_delete"), 
+        <%= button_to t("vignettes.delete"), 
           questionnaire_path(@questionnaire),
           method: :delete,
           class: "btn btn-danger"
