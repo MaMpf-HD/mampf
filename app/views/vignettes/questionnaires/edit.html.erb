@@ -11,6 +11,7 @@
         <!-- Action Items -->
         <div class="d-flex">
             <%= button_to preview_questionnaire_path(@questionnaire),
+                :disabled => @questionnaire.slides.empty?,
                 class: "btn btn-outline-primary me-2",
                 method: :get do %>
                 <i class="bi bi-eye"></i>

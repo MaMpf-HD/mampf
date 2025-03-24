@@ -50,11 +50,15 @@ module Vignettes
     end
 
     def preview
+      if @questionnaire.slides.empty?
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.no_slides")
+        return
+      end
+
       @preview = true
       @position =
-        if params[:start].present?
-          params[:start].to_i
-        elsif params[:position].present?
+        if params[:position].present?
           params[:position].to_i
         else
           1
