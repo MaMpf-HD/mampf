@@ -2528,7 +2528,22 @@ en:
     slide_created: 'Slide was successfully created.'
     slide_not_created: 'Slide could not be created.'
     published: 'Vignette was successfully published.'
+    unpublished: 'Vignette was successfully unpublished.'
+    publish_modal: |
+      Are you sure you want to publish this vignette?
+
+      Important: After publishing, you will no longer be able to edit the vignette's content or questions.
+
+      While you can unpublish it later to hide it from students, the content will remain locked for editing.
+    unpublish_modal: |
+      Are you sure you want to unpublish this vignette?
+
+      Unpublishing will hide this vignette from students, but all student responses and statistics will be preserved.
+
+      Important: The vignette will remain locked for editing. If you need to make changes, please duplicate the vignette instead.
+
     not_published: 'Vignette could not be published.'
+    not_unpublished: 'Vignette could not be unpublished.'
     not_accessible: 'Questionnaire is not accessible.'
     not_editable: 'Vignette is not editable, because it was already published.'
     no_slides: "Vignette is empty"

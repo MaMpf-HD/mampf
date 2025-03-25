@@ -5,7 +5,7 @@ module Vignettes
     before_action :check_empty_multiple_choice_option, only: [:update, :create]
 
     def new
-      return if @questionnaire.published
+      return unless @questionnaire.editable
 
       @slide = @questionnaire.slides.new
       @slide.build_question
@@ -40,7 +40,7 @@ module Vignettes
     def update
       @slide = @questionnaire.slides.find(params[:id])
 
-      if @questionnaire.published &&
+      if !@questionnaire.editable &&
          ((slide_params.dig(:question_attributes, :type).present? &&
           slide_params.dig(:question_attributes, :type) != @slide.question.type) ||
           any_option_deleted?)
@@ -60,7 +60,7 @@ module Vignettes
     end
 
     def destroy
-      if @questionnaire.published
+      unless @questionnaire.editable
         redirect_to edit_questionnaire_path(@questionnaire),
                     alert: t("vignettes.slide_not_deleted")
       end

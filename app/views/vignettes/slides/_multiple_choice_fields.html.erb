@@ -2,7 +2,7 @@
     <%= f.text_field :text, class: "form-control me-2", required: true %>
     <%= f.hidden_field :_destroy, class: "vignette-mc-hidden-destroy" %>
     <button class="btn btn-outline-danger remove-vignette-mc-option" type="button"
-            <%= published ? 'disabled' : '' %>>
+            <%= editable ? '' : 'disabled' %>>
         <i class="bi bi-trash3-fill"></i>
     </button>
 </div>

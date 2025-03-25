@@ -100,15 +100,18 @@ module Vignettes
     end
 
     def publish
-      if @questionnaire.update(published: true)
-        redirect_to edit_questionnaire_path(@questionnaire), notice: t("vignettes.published")
+      published = @questionnaire.published
+      if @questionnaire.update(published: !published, editable: false)
+        message_key = published ? "vignettes.unpublished" : "vignettes.published"
+        redirect_to edit_questionnaire_path(@questionnaire), notice: t(message_key)
       else
-        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.not_published")
+        message_key = published ? "vignettes.published" : "vignettes.not_published"
+        redirect_to edit_questionnaire_path(@questionnaire), alert: t(message_key)
       end
     end
 
     def update_slide_position
-      if @questionnaire.published
+      unless @questionnaire.editable
         render json: { error: t("vignettes.not_editable") }, status: :unprocessable_entity
         return
       end
@@ -186,6 +189,7 @@ module Vignettes
         new_questionnaire = @questionnaire.dup
         new_questionnaire.title = new_title
         new_questionnaire.published = false
+        new_questionnaire.editable = true
         new_questionnaire.save!
 
         # Update lecture cache to show the new questionnaire

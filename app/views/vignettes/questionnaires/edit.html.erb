@@ -18,15 +18,11 @@
                 Preview
             <% end %>
 
-            <% unless @questionnaire.published %>
             <button type="button" class="btn btn-outline-primary me-2"
                     data-bs-toggle="modal" data-bs-target="#publishModal">
                 <i class="bi bi-globe-europe-africa"></i>
-                Publish
+                <%= @questionnaire.published ? "Unpublish" : "Publish" %>
             </button>
-            <% else %>
-            <span class="btn btn-success disabled me-2">Published</span>
-            <% end %>
 
             <button type="button" class="btn btn-outline-secondary me-2"
                     data-bs-toggle="modal" data-bs-target="#duplicateModal">
@@ -62,7 +58,7 @@
     <!-- new_questionnaire_info_slide_path(@questionnaire) -->
     <button type="button"
             class="btn btn-outline-primary mt-2" 
-            <%= 'disabled' if @questionnaire.published %>
+            <%= 'disabled' unless @questionnaire.editable %>
             >
         <i class="bi bi-plus-circle"></i>
         Add new info slide
@@ -81,7 +77,7 @@
 
     <div class="accordion" id="vignettes-slides-accordion"
          data-questionnaire-id="<%= @questionnaire.id %>"
-         data-questionnaire-published="<%= @questionnaire.published %>">
+         data-questionnaire-editable="<%= @questionnaire.editable %>">
         <% @slides.each() do |slide| %>
             <%= render partial: "slide_accordion_item", locals: { slide: slide } %>
         <% end %>
@@ -90,7 +86,7 @@
     <!-- Add new slide (at the end of the list) -->
     <button type="button" id="vignettes-new-slide-btn" 
             class="btn btn-outline-primary mt-2" 
-            <%= 'disabled' if @questionnaire.published %>
+            <%= 'disabled' unless @questionnaire.editable %>
             >
         <i class="bi bi-plus-circle"></i>
         Add new slide
@@ -134,15 +130,21 @@
       </div>
       <div class="modal-body">
         <!-- TO DO: Write better message -->
-        <p>After publishing, you can only change typos and nothing else</p>
+        <% if @questionnaire.published %>
+          <%= simple_format(t("vignettes.unpublish_modal")) %>
+        <% else %>
+          <%= simple_format(t("vignettes.publish_modal")) %>
+        <% end %>
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <%= button_to "Publish", 
+        <% button_text = @questionnaire.published ? "Unpublish" : "Publish" %>
+        <%= button_to button_text, 
               publish_questionnaire_path(@questionnaire),
               method: :patch,
               class: "btn btn-primary"
         %>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

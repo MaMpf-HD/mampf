@@ -17,7 +17,7 @@
             class: "form-select",
             id: "vignettes-question-type-select",
             "aria-label": "Selection for question type",
-            disabled: form.object.questionnaire.published
+            disabled: !form.object.questionnaire.editable
         } %>
     <%= f.label :type, "Question Type" %>
 </div>
@@ -36,7 +36,7 @@
 
     <div id="vignette-multiple-choice-options">
         <%= f.fields_for :options do |option_form| %>
-            <%= render partial: "multiple_choice_fields", locals: { f: option_form, published: form.object.questionnaire.published } %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form, editable: form.object.questionnaire.editable } %>
         <% end %>
     </div>
 
@@ -45,7 +45,7 @@
     <template id="vignette-multiple-choice-options-template" class="d-none">
         <%= f.fields_for :options, f.object.options.build,
                          child_index: 'NEW_RECORD' do |option_form| %>
-            <%= render partial: "multiple_choice_fields", locals: { f: option_form, published: form.object.questionnaire.published } %>
+            <%= render partial: "multiple_choice_fields", locals: { f: option_form, editable: form.object.questionnaire.editable } %>
         <% end %>
     </template>
     
@@ -64,7 +64,7 @@
         <%= f.check_box :only_integer, 
             class: 'form-check-input', 
             id: 'vignette-number-only-integer',
-            disabled: form.object.questionnaire.published %>
+            disabled: !form.object.questionnaire.editable %>
         <%= f.label :only_integer, "Allow integers only (no decimals)", 
             class: 'form-check-label',
             for: 'vignette-number-only-integer' %>
@@ -79,7 +79,7 @@
                 id: 'vignette-number-min',
                 placeholder: 'Minimum value',
                 step: 'any',
-                disabled: form.object.questionnaire.published %>
+                disabled: !form.object.questionnaire.editable %>
             <%= f.label :min_number, "Minimum value" %>
           </div>
         </div>
@@ -90,7 +90,7 @@
                 id: 'vignette-number-max',
                 placeholder: 'Maximum value',
                 step: 'any',
-                disabled: form.object.questionnaire.published %>
+                disabled: !form.object.questionnaire.editable %>
             <%= f.label :max_number, "Maximum value" %>
           </div>
         </div>
