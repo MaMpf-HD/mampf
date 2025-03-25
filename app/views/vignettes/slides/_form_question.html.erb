@@ -27,6 +27,7 @@
         placeholder: '_',
         class: 'form-control',
         style: 'height: 120px',
+        maxlength: Vignettes::Question::TEXT_MAX_LENGTH,
         required: f.object.question_text_required?
     %>
     <%= f.label :question_text, "Your question" %>
