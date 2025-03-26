@@ -28,7 +28,10 @@
         <% end %>
 
         <% if slide.id %>
-        <div class="accordion-body slides-edit-form-container">
+        <!-- Note that vignette-body-container is a class and not an ID -->
+        <!-- since it might occur multiple times: once at an info slide -->
+        <!-- and once at a "normal" slide -->
+        <div class="accordion-body slides-edit-form-container vignette-body-container-<%= slide.id %>">
             <!-- The slide edit form will be dynamically loaded here -->
         </div>
         <% else %>

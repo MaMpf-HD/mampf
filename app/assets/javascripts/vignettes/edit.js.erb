@@ -122,11 +122,12 @@
         method: "GET",
         dataType: "html",
         success: function (response) {
-          const formContainer = $list.find(".slides-edit-form-container");
-          formContainer.hide().html(response).ready(function () {
+          $list.find(".slides-edit-form-container").html("");
+          const currentContainer = $list.find(`.vignette-body-container-${slideId}`);
+          currentContainer.hide().html(response).ready(function () {
             clearTimeout(spinnerTimeout);
             loadingSpinner.hide();
-            formContainer.show();
+            currentContainer.show();
           });
           setupChangeDetection(isInfoSlide);
           fixVideoAttachments();
@@ -196,6 +197,7 @@
         method: "GET",
         dataType: "html",
         success: function (response) {
+          $list.find(".slides-edit-form-container").html("");
           $list.append(response);
           const newSlide = $list.children().last();
           openAccordionItem(newSlide);
