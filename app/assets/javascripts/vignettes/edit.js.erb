@@ -9,8 +9,8 @@
   // When using turbolinks, the event is not fired on redirect
   $(document).ready(function () {
     const slideList = $("#vignettes-slides-accordion");
-    const published = slideList.data("questionnaire-published");
-    if (!published) {
+    const editable = slideList.data("questionnaire-editable");
+    if (editable) {
       createSortableVignetteSlides(slideList);
     }
     registerVignetteSlideOpenListener();
@@ -241,47 +241,47 @@
 
       const attachment = JSON.parse(decodeURIComponent(attachmentData.replace(/&quot;/g, '"')));
 
-      if (attachment.contentType && attachment.contentType.includes("video/")) {
-        img.setAttribute("data-video-fixed", "true");
+      if (!attachment.contentType || !attachment.contentType.includes("video/")) return;
 
-        // Create hidden video element to use first frame as preview
-        const hiddenVideo = document.createElement("video");
-        hiddenVideo.style.display = "none";
-        hiddenVideo.preload = "metadata";
-        hiddenVideo.src = attachment.url;
-        document.body.appendChild(hiddenVideo);
+      img.setAttribute("data-video-fixed", "true");
 
-        // When video loads, capture first frame
-        hiddenVideo.onloadeddata = function () {
-          hiddenVideo.currentTime = 0;
-        };
+      // Create hidden video element to use first frame as preview
+      const hiddenVideo = document.createElement("video");
+      hiddenVideo.style.display = "none";
+      hiddenVideo.preload = "metadata";
+      hiddenVideo.src = attachment.url;
+      document.body.appendChild(hiddenVideo);
 
-        // When seeked, create thumbnail
-        hiddenVideo.onseeked = function () {
-          try {
-            // Draw frame to canvas
-            const canvas = document.createElement("canvas");
-            canvas.width = hiddenVideo.videoWidth;
-            canvas.height = hiddenVideo.videoHeight;
-            const ctx = canvas.getContext("2d");
-            ctx.drawImage(hiddenVideo, 0, 0, canvas.width, canvas.height);
+      // When video loads, capture first frame
+      hiddenVideo.onloadeddata = function () {
+        hiddenVideo.currentTime = 0;
+      };
 
-            // Set thumbnail image
-            img.src = canvas.toDataURL();
+      // When seeked, create thumbnail
+      hiddenVideo.onseeked = function () {
+        try {
+          // Draw frame to canvas
+          const canvas = document.createElement("canvas");
+          canvas.width = hiddenVideo.videoWidth;
+          canvas.height = hiddenVideo.videoHeight;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(hiddenVideo, 0, 0, canvas.width, canvas.height);
 
-            // Clean up
-            document.body.removeChild(hiddenVideo);
-          }
-          catch (err) {
-            console.error("Failed to create video thumbnail", err);
-            document.body.removeChild(hiddenVideo);
-          }
-        };
+          // Set thumbnail image
+          img.src = canvas.toDataURL();
 
-        hiddenVideo.onerror = function () {
+          // Clean up
           document.body.removeChild(hiddenVideo);
-        };
-      }
+        }
+        catch (err) {
+          console.error("Failed to create video thumbnail", err);
+          document.body.removeChild(hiddenVideo);
+        }
+      };
+
+      hiddenVideo.onerror = function () {
+        document.body.removeChild(hiddenVideo);
+      };
     });
   }
 })();

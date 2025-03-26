@@ -50,11 +50,15 @@ module Vignettes
     end
 
     def preview
+      if @questionnaire.slides.empty?
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.no_slides")
+        return
+      end
+
       @preview = true
       @position =
-        if params[:start].present?
-          params[:start].to_i
-        elsif params[:position].present?
+        if params[:position].present?
           params[:position].to_i
         else
           1
@@ -96,15 +100,18 @@ module Vignettes
     end
 
     def publish
-      if @questionnaire.update(published: true)
-        redirect_to edit_questionnaire_path(@questionnaire), notice: t("vignettes.published")
+      published = @questionnaire.published
+      if @questionnaire.update(published: !published, editable: false)
+        message_key = published ? "vignettes.unpublished" : "vignettes.published"
+        redirect_to edit_questionnaire_path(@questionnaire), notice: t(message_key)
       else
-        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.not_published")
+        message_key = published ? "vignettes.published" : "vignettes.not_published"
+        redirect_to edit_questionnaire_path(@questionnaire), alert: t(message_key)
       end
     end
 
     def update_slide_position
-      if @questionnaire.published
+      unless @questionnaire.editable
         render json: { error: t("vignettes.not_editable") }, status: :unprocessable_entity
         return
       end
@@ -169,10 +176,10 @@ module Vignettes
       if @questionnaire.destroy
         @lecture.touch
         redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
-                    notice: t("vignettes.questionnaire_deleted")
+                    notice: t("vignettes.deleted")
       else
         redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
-                    alert: t("vignettes.questionnaire_not_deleted")
+                    alert: t("vignettes.not_deleted")
       end
     end
 
@@ -182,6 +189,7 @@ module Vignettes
         new_questionnaire = @questionnaire.dup
         new_questionnaire.title = new_title
         new_questionnaire.published = false
+        new_questionnaire.editable = true
         new_questionnaire.save!
 
         # Update lecture cache to show the new questionnaire
@@ -208,12 +216,12 @@ module Vignettes
         end
 
         redirect_to edit_lecture_path(@questionnaire.lecture, anchor: "vignettes"),
-                    notice: t("vignettes.questionnaire_duplicated")
+                    notice: t("vignettes.duplicated")
       end
     rescue StandardError => e
       Rails.logger.error("Failed to duplicate questionnaire: #{e.message}")
       redirect_to edit_questionnaire_path(@questionnaire),
-                  alert: t("vignettes.questionnaire_not_duplicated")
+                  alert: t("vignettes.not_duplicated")
     end
 
     private

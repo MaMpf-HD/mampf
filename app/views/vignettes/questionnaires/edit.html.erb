@@ -11,21 +11,18 @@
     <!-- Action Items -->
     <div class="d-flex">
       <%= button_to preview_questionnaire_path(@questionnaire),
+          :disabled => @questionnaire.slides.empty?,
           class: "btn btn-outline-primary me-2",
           method: :get do %>
         <i class="bi bi-eye"></i>
         Preview
       <% end %>
 
-      <% unless @questionnaire.published %>
       <button type="button" class="btn btn-outline-primary me-2"
               data-bs-toggle="modal" data-bs-target="#publishModal">
         <i class="bi bi-globe-europe-africa"></i>
-        Publish
+        <%= @questionnaire.published ? "Unpublish" : "Publish" %>
       </button>
-      <% else %>
-      <span class="btn btn-success disabled me-2">Published</span>
-      <% end %>
 
       <button type="button" class="btn btn-outline-secondary me-2"
               data-bs-toggle="modal" data-bs-target="#duplicateModal">
@@ -43,7 +40,7 @@
       <button type="button" class="btn btn-outline-danger"
               data-bs-toggle="modal" data-bs-target="#deleteQuestionnaireModal">
         <i class="bi bi-trash"></i>
-        <%= t("vignettes.questionnaire_delete") %>
+        <%= t("vignettes.delete") %>
       </button>
     </div>
   </div>
@@ -65,7 +62,7 @@
 
   <button type="button" id="info-vignettes-new-slide-btn"
           class="btn btn-outline-primary mt-2" 
-          <%= 'disabled' if @questionnaire.published %>>
+          <%= 'disabled' unless @questionnaire.editable %>>
     <i class="bi bi-plus-circle"></i>
     <%= t("vignettes.create_new_info_slide") %>
   </button>
@@ -78,7 +75,7 @@
 
   <div class="accordion" id="vignettes-slides-accordion"
         data-questionnaire-id="<%= @questionnaire.id %>"
-        data-questionnaire-published="<%= @questionnaire.published %>">
+        data-questionnaire-editable="<%= @questionnaire.editable %>">
     <% @slides.each() do |slide| %>
       <%= render partial: "slide_accordion_item", locals: { slide: slide } %>
     <% end %>
@@ -86,7 +83,7 @@
 
   <button type="button" id="vignettes-new-slide-btn" 
           class="btn btn-outline-primary mt-2" 
-          <%= 'disabled' if @questionnaire.published %>>
+          <%= 'disabled' unless @questionnaire.editable %>>
     <i class="bi bi-plus-circle"></i>
     <%= t("vignettes.create_new_slide") %>
   </button>
@@ -98,15 +95,15 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="deleteQuestionnaireModalLabel">
-            <%= t("vignettes.questionnaire_delete") %>
+            <%= t("vignettes.delete") %>
         </h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p><%= t("vignettes.questionnaire_confirm_delete") %></p>
+        <p><%= t("vignettes.confirm_delete") %></p>
       </div>
       <div class="modal-footer">
-        <%= button_to t("vignettes.questionnaire_delete"), 
+        <%= button_to t("vignettes.delete"), 
           questionnaire_path(@questionnaire),
           method: :delete,
           class: "btn btn-danger"
@@ -129,15 +126,21 @@
       </div>
       <div class="modal-body">
         <!-- TO DO: Write better message -->
-        <p>After publishing, you can only change typos and nothing else</p>
+        <% if @questionnaire.published %>
+          <%= simple_format(t("vignettes.unpublish_modal")) %>
+        <% else %>
+          <%= simple_format(t("vignettes.publish_modal")) %>
+        <% end %>
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-        <%= button_to "Publish", 
+        <% button_text = @questionnaire.published ? "Unpublish" : "Publish" %>
+        <%= button_to button_text, 
               publish_questionnaire_path(@questionnaire),
               method: :patch,
               class: "btn btn-primary"
         %>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
       </div>
     </div>
   </div>

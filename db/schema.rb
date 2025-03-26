@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_25_195638) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -994,6 +994,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_01_17_225808) do
     t.boolean "published"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "editable", default: false
     t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
 

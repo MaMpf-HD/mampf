@@ -7,10 +7,6 @@
 
   <%= form.text_field :title, placeholder: "Enter a title" %>
   <br>
-  <%= form.label(:icon, "Select an Icon as display button", class:"form-label") %>
-  <br>
-  <%= form.file_field :icon, accept: @accepted_content_types.join(',') %>
-
   <%= form.label(:icon_type, "Select an Icon", class:"form-label") %>
 
   <div class="icon-selection d-flex gap-4 my-3">

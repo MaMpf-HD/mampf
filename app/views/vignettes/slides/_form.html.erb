@@ -30,9 +30,9 @@
     <% unless @slide.new_record? %>
     <button type="button" 
             class="btn btn-danger" 
-            data-bs-toggle="<%= @slide.questionnaire.published ? '' : 'modal' %>" 
+            data-bs-toggle="<%= @slide.questionnaire.editable ? 'modal' : '' %>" 
             data-bs-target="#deleteModal<%= @slide.id %>"
-            <%= 'disabled' if @slide.questionnaire.published %>>
+            <%= 'disabled' unless @slide.questionnaire.editable %>>
       Delete Slide
     </button>
     <% end %>

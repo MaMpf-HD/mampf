@@ -2513,12 +2513,13 @@ en:
   
   vignettes:
     vignettes: 'Vignettes'
-    create_new: "Create new questionnaire"
+    questionnaires: 'Questionnaires'
+    create_new: "Create new vignette"
     destroy_answer: 'Answer was destroyed'  
-    answered: 'Vignette was successfully answered'
-    already_answered: 'You have already answered this vignette'
+    answered: 'Questionnaire was successfully answered'
+    already_answered: 'You have already answered this questionnaire'
     no_slides: 'No slides to answer'
-    not_found: 'The requested vignette was not found'
+    not_found: 'The requested questionnaire was not found'
     no_lecture: 'The requested lecture was not found'
     not_vignettes_lecture: 'The lecture cannot be used for vignettes'
     create_new_info_slide: 'Create new info slide'
@@ -2529,23 +2530,38 @@ en:
     slide_created: 'Slide was successfully created.'
     slide_not_created: 'Slide could not be created.'
     published: 'Vignette was successfully published.'
+    unpublished: 'Vignette was successfully unpublished.'
+    publish_modal: |
+      Are you sure you want to publish this vignette?
+
+      Important: After publishing, you will no longer be able to edit the vignette's content or questions.
+
+      While you can unpublish it later to hide it from students, the content will remain locked for editing.
+    unpublish_modal: |
+      Are you sure you want to unpublish this vignette?
+
+      Unpublishing will hide this vignette from students, but all student responses and statistics will be preserved.
+
+      Important: The vignette will remain locked for editing. If you need to make changes, please duplicate the vignette instead.
+
     not_published: 'Vignette could not be published.'
-    not_accessible: 'Vignette is not accessible.'
+    not_unpublished: 'Vignette could not be unpublished.'
+    not_accessible: 'Questionnaire is not accessible.'
     not_editable: 'Vignette is not editable, because it was already published.'
     no_slides: "Vignette is empty"
-    questionnaire_not_deleted: 'Questionnaire could not be deleted'
+    not_deleted: 'Vignette could not be deleted'
     slide_not_updated: 'Slide could not be updated'
     slide_deleted: 'Slide was successfully deleted.'
     slide_not_deleted: 'Slide could not be deleted.'
     slide_confirm_delete: 'Are you sure you want to delete this slide? 
       This action cannot be undone.'
-    questionnaire_delete: "Delete Questionnaire"
-    questionnaire_deleted: 'Questionnaire successfully deleted'
-    questionnaire_confirm_delete: > 
-      Are you sure you want to delete this questionnaire?
+    delete: "Delete Vignette"
+    deleted: 'Vignette successfully deleted'
+    confirm_delete: > 
+      Are you sure you want to delete this vignette?
       This will also delete all associated slides, answers and statistics.
-    questionnaire_duplicated: 'Questionnaire was successfully duplicated'
-    questionnaire_not_duplicated: 'Questionnaire could not be duplicated'
+    duplicated: 'Vignette was successfully duplicated'
+    not_duplicated: 'Vignette could not be duplicated'
     body_too_short_error: 'The body is too short'
     body_missing_error: 'The body is missing'
     not_a_number_error: "Please enter a valid number"
