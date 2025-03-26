@@ -5,27 +5,26 @@
     id: "info-slide-form"
     ) do |form| %>
 
-  <div class="form-floating">
+  <div class="form-floating mb-3">
     <%= form.text_field :title, class: 'form-control',
       required: true, placeholder: "" %>
     <%= form.label t("basics.title") %>
   </div>
-
-  <%= form.label(:icon_type, "Select an Icon", class:"form-label") %>
-
-  <div class="icon-selection d-flex gap-4 my-3">
-    <label class="icon-option">
-      <%= form.radio_button :icon_type, "eye", class: "icon-radio" %>
-      <div class="icon-preview p-3 border rounded text-center">
-        <%= image_tag "vignettes/eye.svg", class: "img-fluid", style: "height: 60px;" %>
-      </div>
+  
+  <%= form.label(:icon_type, "Icon", class:"form-label") %>
+  <div class="d-flex gap-3 mb-3" id="vignettes-icon-selection">
+    <label>
+      <%= form.radio_button :icon_type, "eye", required: true %>
+      <%= image_tag "vignettes/eye.svg",
+        alt: "Icon of an eye" %>
+      </input>
     </label>
-    
-    <label class="icon-option">
-      <%= form.radio_button :icon_type, "dotplot", class: "icon-radio" %>
-      <div class="icon-preview p-3 border rounded text-center">
-        <%= image_tag "vignettes/dotplot.svg", class: "img-fluid", style: "height: 60px;" %>
-      </div>
+
+    <label>
+      <%= form.radio_button :icon_type, "dotplot", required: true %>
+      <%= image_tag "vignettes/dotplot.svg",
+        alt: "Icon of a dotplot including an error bar and a vertical bar chart" %>
+      </input>
     </label>
   </div>
 

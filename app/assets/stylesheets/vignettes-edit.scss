@@ -11,3 +11,31 @@
 h1, h2 {
     color: $mampf-blue;
 }
+
+#vignettes-icon-selection {
+    input {
+        position: fixed;
+        pointer-events: none;
+        opacity: 0;
+
+        &:checked+img {
+            background: transparent;
+            outline: black auto 1px;
+        }
+    }
+
+    img {
+        height: 70px;
+        width: 100%;
+        border-radius: 5px;
+        padding: 7px;
+        cursor: pointer;
+        background: #f5f5f5;
+        transition: background 180ms ease-in-out;
+
+        &:hover {
+            background: #f1f1f1;
+            outline: lightgrey auto 0.5px;
+        }
+    }
+}
