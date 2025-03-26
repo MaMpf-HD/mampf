@@ -5,8 +5,12 @@
     id: "info-slide-form"
     ) do |form| %>
 
-  <%= form.text_field :title, placeholder: "Enter a title" %>
-  <br>
+  <div class="form-floating">
+    <%= form.text_field :title, class: 'form-control',
+      required: true, placeholder: "" %>
+    <%= form.label t("basics.title") %>
+  </div>
+
   <%= form.label(:icon_type, "Select an Icon", class:"form-label") %>
 
   <div class="icon-selection d-flex gap-4 my-3">
