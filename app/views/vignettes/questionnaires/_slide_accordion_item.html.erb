@@ -16,7 +16,7 @@
          data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
          data-slide-id="<%= slide.id %>"
          class="accordion-collapse collapse vignette-accordion-collapse"
-         data-bs-parent="#info-vignettes-slides-accordion">
+         data-bs-parent="#<%= info_prefix %>vignettes-slides-accordion">
 
         <% unless slide.new_record? %>
         <div id="<%= info_prefix %>vignette-slide-loading-<%= slide.id %>" 
