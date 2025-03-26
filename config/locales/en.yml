@@ -2515,6 +2515,7 @@ en:
     vignettes: 'Vignettes'
     questionnaires: 'Questionnaires'
     create_new: "Create new vignette"
+    duplicate_new_questionnaire_title: "New questionnaire title"
     destroy_answer: 'Answer was destroyed'  
     answered: 'Questionnaire was successfully answered'
     already_answered: 'You have already answered this questionnaire'

@@ -156,15 +156,17 @@
       </div>
       <%= form_with url: duplicate_questionnaire_path(@questionnaire), method: :post do |form| %>
         <div class="modal-body">
-          <div class="mb-3">
-            <label for="duplicateQuestionnaireTitle" class="form-label">New questionnaire title</label>
-            <input type="text" class="form-control" id="duplicateQuestionnaireTitle" name="title" 
-                   value="Copy of <%= @questionnaire.title %>" required>
+          <div class="form-floating mb-3">
+            <%= form.text_field :title, class: 'form-control', required: true,
+              placeholder: "", value: "Copy of #{@questionnaire.title}",
+              id: "vignettes_new_questionnaire_title" %>
+            <%= form.label "vignettes_new_questionnaire_title",
+              t("vignettes.duplicate_new_questionnaire_title") %>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
           <button type="submit" class="btn btn-primary">Duplicate</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         </div>
       <% end %>
     </div>
