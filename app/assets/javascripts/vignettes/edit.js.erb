@@ -64,6 +64,8 @@
 
     function handleUnsavedChanges(event, action) {
       if (!hasUnsavedChanges) return true;
+      if (!event.target.id.contains("slides-collapse-")) return true;
+
       event.preventDefault();
       event.stopPropagation();
       $("#unsaved-changes-modal").modal("show");
