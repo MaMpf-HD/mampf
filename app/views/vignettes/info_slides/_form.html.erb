@@ -1,8 +1,10 @@
 <%= form_with(
-      model: @info_slide,
-            url: @info_slide.new_record? ? questionnaire_info_slides_path(@questionnaire) : questionnaire_info_slide_path(@questionnaire, @info_slide),
-      local: true
+    model: @info_slide,
+    local: true,
+    url: @info_slide.new_record? ? questionnaire_info_slides_path(@questionnaire) : questionnaire_info_slide_path(@questionnaire, @info_slide),
+    id: "info-slide-form"
     ) do |form| %>
+
   <%= form.text_field :title, placeholder: "Enter a title" %>
   <br>
   <%= form.label(:icon, "Select an Icon as display button", class:"form-label") %>
@@ -29,7 +31,12 @@
 
   <%= render partial: 'vignettes/slides/form_content', locals: { form: form } %>
 
-  <div>
-    <%= form.submit @info_slide.new_record? ? 'Create Info Slide' : 'Update Info Slide' %>
+  <div class="d-flex justify-content-end align-items-center mt-3">
+    <div class="me-auto">
+      <%= form.submit @info_slide.new_record? ? 'Create Info Slide' : 'Update Info Slide',
+          class: "btn btn-primary slide-submit-btn d-none"
+      %>
+    </div>
   </div>
+
 <% end %>

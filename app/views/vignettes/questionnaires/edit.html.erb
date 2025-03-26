@@ -3,97 +3,93 @@
 <%=stylesheet_link_tag 'vignettes-edit' %>
 
 <div class="container-md small-width">
-    <div id="vignette-edit-header">
-        <h1 class="fs-3 fw-bold">
-            <%= @questionnaire.title%>
-        </h1>
+  <div id="vignette-edit-header">
+    <h1 class="fs-3 fw-bold">
+      <%= @questionnaire.title%>
+    </h1>
 
-        <!-- Action Items -->
-        <div class="d-flex">
-            <%= button_to preview_questionnaire_path(@questionnaire),
-                class: "btn btn-outline-primary me-2",
-                method: :get do %>
-                <i class="bi bi-eye"></i>
-                Preview
-            <% end %>
+    <!-- Action Items -->
+    <div class="d-flex">
+      <%= button_to preview_questionnaire_path(@questionnaire),
+          class: "btn btn-outline-primary me-2",
+          method: :get do %>
+        <i class="bi bi-eye"></i>
+        Preview
+      <% end %>
 
-            <% unless @questionnaire.published %>
-            <button type="button" class="btn btn-outline-primary me-2"
-                    data-bs-toggle="modal" data-bs-target="#publishModal">
-                <i class="bi bi-globe-europe-africa"></i>
-                Publish
-            </button>
-            <% else %>
-            <span class="btn btn-success disabled me-2">Published</span>
-            <% end %>
+      <% unless @questionnaire.published %>
+      <button type="button" class="btn btn-outline-primary me-2"
+              data-bs-toggle="modal" data-bs-target="#publishModal">
+        <i class="bi bi-globe-europe-africa"></i>
+        Publish
+      </button>
+      <% else %>
+      <span class="btn btn-success disabled me-2">Published</span>
+      <% end %>
 
-            <button type="button" class="btn btn-outline-secondary me-2"
-                    data-bs-toggle="modal" data-bs-target="#duplicateModal">
-                <i class="bi bi-files"></i>
-                Duplicate
-            </button>
+      <button type="button" class="btn btn-outline-secondary me-2"
+              data-bs-toggle="modal" data-bs-target="#duplicateModal">
+        <i class="bi bi-files"></i>
+        Duplicate
+      </button>
 
-            <%= button_to export_answers_questionnaire_path(@questionnaire),
-                class: 'btn btn-outline-secondary me-2',
-                method: :get do %>
-                <i class="bi bi-file-earmark-spreadsheet"></i>
-                Export Answers
-            <% end %>
+      <%= button_to export_answers_questionnaire_path(@questionnaire),
+          class: 'btn btn-outline-secondary me-2',
+          method: :get do %>
+        <i class="bi bi-file-earmark-spreadsheet"></i>
+        Export Answers
+      <% end %>
 
-            <button type="button" class="btn btn-outline-danger"
-                    data-bs-toggle="modal" data-bs-target="#deleteQuestionnaireModal">
-                <i class="bi bi-trash"></i>
-                <%= t("vignettes.questionnaire_delete") %>
-            </button>
-        </div>
+      <button type="button" class="btn btn-outline-danger"
+              data-bs-toggle="modal" data-bs-target="#deleteQuestionnaireModal">
+        <i class="bi bi-trash"></i>
+        <%= t("vignettes.questionnaire_delete") %>
+      </button>
     </div>
+  </div>
 
-    <!-- Info Slides -->
-    <h2 class="fs-4 fw-bold mt-4 mb-0">Info Slides</h1>
-    <ul>
-        <% @questionnaire.info_slides.each() do |info_slide| %>
-        <li>
-            <%= link_to info_slide.title, edit_questionnaire_info_slide_path(@questionnaire, info_slide) %>
-        </li>
-        <% end %>
-    </ul>
+  <!-- Unsaved changes -->
+  <div id="unsaved-changes-warning" class="alert alert-warning d-none mt-3">
+    <i class="bi bi-exclamation-triangle"></i>
+    You have unsaved changes. Please save your changes before navigating away.
+  </div>
 
-    <!-- new_questionnaire_info_slide_path(@questionnaire) -->
-    <button type="button"
-            class="btn btn-outline-primary mt-2" 
-            <%= 'disabled' if @questionnaire.published %>
-            >
-        <i class="bi bi-plus-circle"></i>
-        Add new info slide
-    </button>
+  <!-- Info Slides -->
+  <h2 class="fs-4 fw-bold mt-4 mb-0">Info Slides</h1>
 
-    <!-- Slides -->
-    <h2 class="fs-4 fw-bold mt-4 mb-0">Slides</h1>
-    <% if @slides.size > 1 %>
-    <p>Drag the slides to change their order.</p>
+  <div class="accordion" id="info-vignettes-slides-accordion">
+    <% @questionnaire.info_slides.each() do |info_slide| %>
+      <%= render partial: "slide_accordion_item", locals: { slide: info_slide } %>
     <% end %>
+  </div>
 
-    <!-- Add this before the accordion -->
-    <div id="unsaved-changes-warning" class="alert alert-warning d-none">
-      <i class="bi bi-exclamation-triangle"></i> You have unsaved changes. Please save your changes before navigating away.
-    </div>
+  <button type="button" id="info-vignettes-new-slide-btn"
+          class="btn btn-outline-primary mt-2" 
+          <%= 'disabled' if @questionnaire.published %>>
+    <i class="bi bi-plus-circle"></i>
+    <%= t("vignettes.create_new_info_slide") %>
+  </button>
 
-    <div class="accordion" id="vignettes-slides-accordion"
-         data-questionnaire-id="<%= @questionnaire.id %>"
-         data-questionnaire-published="<%= @questionnaire.published %>">
-        <% @slides.each() do |slide| %>
-            <%= render partial: "slide_accordion_item", locals: { slide: slide } %>
-        <% end %>
-    </div>
+  <!-- Slides -->
+  <h2 class="fs-4 fw-bold mt-4 mb-0">Slides</h1>
+  <% if @slides.size > 1 %>
+  <p>Drag the slides to change their order.</p>
+  <% end %>
 
-    <!-- Add new slide (at the end of the list) -->
-    <button type="button" id="vignettes-new-slide-btn" 
-            class="btn btn-outline-primary mt-2" 
-            <%= 'disabled' if @questionnaire.published %>
-            >
-        <i class="bi bi-plus-circle"></i>
-        Add new slide
-    </button>
+  <div class="accordion" id="vignettes-slides-accordion"
+        data-questionnaire-id="<%= @questionnaire.id %>"
+        data-questionnaire-published="<%= @questionnaire.published %>">
+    <% @slides.each() do |slide| %>
+      <%= render partial: "slide_accordion_item", locals: { slide: slide } %>
+    <% end %>
+  </div>
+
+  <button type="button" id="vignettes-new-slide-btn" 
+          class="btn btn-outline-primary mt-2" 
+          <%= 'disabled' if @questionnaire.published %>>
+    <i class="bi bi-plus-circle"></i>
+    <%= t("vignettes.create_new_slide") %>
+  </button>
 </div>
 
 <!-- Delete Confirmation Modal -->

@@ -9,14 +9,14 @@
 
   // When using turbolinks, the event is not fired on redirect
   $(document).ready(function () {
-    const vignetteSlideList = $("#vignettes-slides-accordion");
-    const published = vignetteSlideList.data("questionnaire-published");
+    const slideList = $("#vignettes-slides-accordion");
+    const published = slideList.data("questionnaire-published");
     if (!published) {
-      createSortableVignetteSlides(vignetteSlideList);
+      createSortableVignetteSlides(slideList);
     }
     registerVignetteSlideOpenListener();
-    registerVignetteSlideLoadedListener(vignetteSlideList);
-    registerNewSlideButtonListener(vignetteSlideList);
+    registerVignetteSlideLoadedListener(slideList);
+    registerNewSlideButtonListener(slideList);
 
     $("#discard-changes-btn").on("click", function () {
       discardCurrentChanges();
@@ -33,8 +33,6 @@
 
     window.addEventListener("beforeunload", function (event) {
       let unsavedChangesModalOpen = $("#unsaved-changes-modal").hasClass("show");
-      console.warn(unsavedChangesModalOpen);
-      console.warn(formSubmit);
       if (hasUnsavedChanges && !unsavedChangesModalOpen && !formSubmit) {
         const fallback_message = "You have unsaved changes. Are you sure you want to leave this page?";
         event.preventDefault();
@@ -45,8 +43,8 @@
     });
   });
 
-  function createSortableVignetteSlides(vignetteSlideList) {
-    Sortable.create(vignetteSlideList.get(0), {
+  function createSortableVignetteSlides(slideList) {
+    Sortable.create(slideList.get(0), {
       animation: 150,
       filter: ".accordion-collapse",
       preventOnFilter: false,
@@ -60,9 +58,6 @@
           data: {
             old_position: evt.oldIndex,
             new_position: evt.newIndex,
-          },
-          success: function (_response) {
-            console.log(`Slide was moved from position ${evt.oldIndex} to ${evt.newIndex}`);
           },
           error: function (xhr, status, error) {
             console.error(`Failed to update position: ${error}`);
@@ -111,11 +106,12 @@
   }
 
   function saveCurrentChanges() {
+    if (!currentUnsavedSlideForm) return;
     const submitButton = currentUnsavedSlideForm.find(".slide-submit-btn");
     submitButton.click();
   }
 
-  function registerVignetteSlideLoadedListener(vignetteSlideList) {
+  function registerVignetteSlideLoadedListener($slideList) {
     $(".vignette-accordion-collapse").on("shown.bs.collapse", function (evt) {
       const slideId = evt.target.dataset.slideId;
       if (slideId === undefined) {
@@ -124,7 +120,7 @@
         return;
       }
 
-      const questionnaireId = vignetteSlideList.attr("data-questionnaire-id");
+      const questionnaireId = $slideList.attr("data-questionnaire-id");
       if (questionnaireId === undefined) {
         console.error("Questionnaire id is missing");
         return;
@@ -140,7 +136,7 @@
         method: "GET",
         dataType: "html",
         success: function (response) {
-          $(vignetteSlideList).find(".slides-edit-form-container").html("");
+          $slideList.find(".slides-edit-form-container").html("");
           const editFormContainer = $(`#slide-edit-form-container-${slideId}`);
           editFormContainer.hide().html(response).ready(function () {
             clearTimeout(spinnerTimeout);
@@ -148,7 +144,6 @@
             editFormContainer.show();
           });
           setupChangeDetection();
-          // Fix video attachment
           fixVideoAttachments();
         },
         error: function (xhr, status, error) {
@@ -159,8 +154,14 @@
     });
   }
 
-  function setupChangeDetection() {
-    const form = $("#slide-form");
+  function getInfoSlidePrefix(isInfoSlide) {
+    return isInfoSlide ? "info-" : "";
+  }
+
+  function setupChangeDetection(isInfoSlide) {
+    const prefix = getInfoSlidePrefix(isInfoSlide);
+
+    const form = $(`#${prefix}slide-form`);
     const unsavedChangesWarning = $("#unsaved-changes-warning");
     const formSubmitButton = form.find(".slide-submit-btn");
     const initialState = form.serialize();
@@ -187,31 +188,42 @@
     }
   }
 
-  function registerNewSlideButtonListener(vignetteSlideList) {
-    $("#vignettes-new-slide-btn").click(function () {
-      $(this).prop("disabled", true);
+  function registerNewSlideButtonListener($slideList) {
+    const questionnaireId = $slideList.attr("data-questionnaire-id");
+    if (questionnaireId === undefined) {
+      console.error("Questionnaire id is missing");
+      return;
+    }
 
-      const questionnaireId = vignetteSlideList.attr("data-questionnaire-id");
-      if (questionnaireId === undefined) {
-        console.error("Questionnaire id is missing");
-        return;
-      }
+    $("#vignettes-new-slide-btn").click(function () {
+      handleNew($(this), Routes.new_questionnaire_slide_path(questionnaireId),
+        $("#vignettes-slides-accordion"), false);
+    });
+
+    $("#info-vignettes-new-slide-btn").click(function () {
+      handleNew($(this), Routes.new_questionnaire_info_slide_path(questionnaireId),
+        $("#info-vignettes-slides-accordion"), true);
+    });
+
+    function handleNew($this, url, $list, isInfoSlide) {
+      $this.prop("disabled", true);
 
       $.ajax({
-        url: Routes.new_questionnaire_slide_path(questionnaireId),
+        url: url,
         method: "GET",
         dataType: "html",
         success: function (response) {
-          $(vignetteSlideList).append(response);
-          const newSlide = $(vignetteSlideList).children().last();
+          $list.append(response);
+          const newSlide = $list.children().last();
           openAccordionItem(newSlide);
-          setupChangeDetection();
+          // TODO: Make change detection work with normal slide as well as info slide
+          setupChangeDetection(isInfoSlide);
         },
         error: function (xhr, status, error) {
           console.error(`Failed to load new slide form: ${error}`);
         },
       });
-    });
+    }
   }
 
   function openAccordionItem($item) {
@@ -264,8 +276,8 @@
             // Clean up
             document.body.removeChild(hiddenVideo);
           }
-          catch (e) {
-            console.warn("Failed to create video thumbnail", e);
+          catch (err) {
+            console.error("Failed to create video thumbnail", err);
             document.body.removeChild(hiddenVideo);
           }
         };

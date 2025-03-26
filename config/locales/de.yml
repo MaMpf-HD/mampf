@@ -2661,6 +2661,8 @@ de:
     vignettes: 'Vignettes'
     not_found: 'Die angeforderte Vignette existiert nicht.'
     create_new: 'Neue Umfrage erstellen'
+    create_new_info_slide: 'Neue Info Slide erstellen'
+    create_new_slide: 'Neue Slide erstellen'
     questionnaire_delete: "Umfrage löschen"
     questionnaire_deleted: "Umfrage erfolgreich gelöscht"
     questionnaire_confirm_delete: >

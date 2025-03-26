@@ -6,6 +6,11 @@ module Vignettes
 
     def new
       @info_slide = InfoSlide.new
+
+      return unless request.xhr?
+
+      render partial: "vignettes/questionnaires/slide_accordion_item",
+             locals: { slide: @info_slide }
     end
 
     def create
@@ -19,14 +24,18 @@ module Vignettes
     end
 
     def edit
+      render partial: "vignettes/info_slides/form" if request.xhr?
     end
 
     def update
       if @info_slide.update(info_slide_params)
         redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.info_slide_updated")
+      elsif request.xhr?
+        render partial: "vignettes/info_slides/form"
       else
-        render :edit
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.info_slide_not_updated")
       end
     end
 

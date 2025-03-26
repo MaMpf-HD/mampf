@@ -1,18 +1,21 @@
+<% info_prefix = slide.is_a?(Vignettes::InfoSlide) ? 'info-' : '' %>
+<% collapse_id = "#{info_prefix}slides-collapse-#{slide.id}" %>
+
 <div class="accordion-item">
 
     <h2 class="accordion-header">
         <button class="accordion-button collapsed" type="button"
-                data-bs-toggle="collapse" data-bs-target="#slides-collapse-<%= slide.id %>"
-                aria-expanded="false" aria-controls="slides-collapse-<%= slide.id %>">
+                data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
+                aria-expanded="false" aria-controls="<%= collapse_id %>">
             <!-- TODO: show useful information here, e.g. answer type -->
             Slide with id <%= slide.id %>
         </button>
     </h2>
 
-    <div id="slides-collapse-<%= slide.id %>"
+    <div id="<%= collapse_id %>"
          data-slide-id="<%= slide.id %>"
          class="accordion-collapse collapse vignette-accordion-collapse"
-         data-bs-parent="#vignettes-slides-accordion">
+         data-bs-parent="#info-vignettes-slides-accordion">
 
         <% unless slide.new_record? %>
         <div id="vignette-slide-loading-<%= slide.id %>" 

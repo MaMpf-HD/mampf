@@ -2521,6 +2521,8 @@ en:
     not_found: 'The requested vignette was not found'
     no_lecture: 'The requested lecture was not found'
     not_vignettes_lecture: 'The lecture cannot be used for vignettes'
+    create_new_info_slide: 'Create new info slide'
+    create_new_slide: 'Create new slide'
     info_slide_created: 'Info slide created.'
     info_slide_updated: 'Info slide updated.'
     slide_updated: 'Slide was successfully updated.'
