@@ -3,6 +3,7 @@
 
   let currentUnsavedSlideForm = null;
   let pendingSlideId = null;
+  let pendingAction = null;
   let hasUnsavedChanges = false;
   let formSubmit = false;
 
@@ -54,30 +55,39 @@
 
   function registerVignetteSlideOpenListener() {
     $(".vignette-accordion-collapse").on("show.bs.collapse", function (event) {
-      return handleUnsavedChanges(event);
+      return handleUnsavedChanges(event, "show");
     });
 
     $(".vignette-accordion-collapse").on("hide.bs.collapse", function (event) {
-      return handleUnsavedChanges(event);
+      return handleUnsavedChanges(event, "hide");
     });
 
-    function handleUnsavedChanges(event) {
+    function handleUnsavedChanges(event, action) {
       if (!hasUnsavedChanges) return true;
       event.preventDefault();
       event.stopPropagation();
       $("#unsaved-changes-modal").modal("show");
+      pendingAction = action;
+      pendingSlideId = event.target.id;
       return false;
     }
   }
 
   function discardCurrentChanges() {
-    $("#unsaved-changes-modal").modal("hide");
     hasUnsavedChanges = false;
-    const collapse = currentUnsavedSlideForm.closest(".vignette-accordion-collapse");
-    collapse.collapse("hide");
     currentUnsavedSlideForm = null;
+
+    $("#unsaved-changes-modal").modal("hide");
     $("#unsaved-changes-warning").addClass("d-none");
-    $(`#${pendingSlideId}`).collapse("hide");
+    closeAllOpenSlides();
+
+    const pendingSlide = $(`#${pendingSlideId}`);
+    if (pendingAction === "show") {
+      pendingSlide.collapse("show");
+    }
+    else if (pendingAction === "hide") {
+      pendingSlide.collapse("hide");
+    }
   }
 
   function saveCurrentChanges() {
@@ -213,6 +223,15 @@
   function openAccordionItem($item) {
     new bootstrap.Collapse($item.find(".collapse"), {
       toggle: true,
+    });
+  }
+
+  function closeAllOpenSlides() {
+    $(".vignette-accordion-collapse").each(function () {
+      const $this = $(this);
+      if ($this.hasClass("show")) {
+        $this.collapse("hide");
+      }
     });
   }
 
