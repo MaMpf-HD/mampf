@@ -50,7 +50,9 @@ module Vignettes
       end
 
       def set_accepted_content_types
-        @accepted_content_types = InfoSlide::ACCEPTED_CONTENT_TYPES
+        # TODO: Fix (Florian)
+        # @accepted_content_types = InfoSlide::ACCEPTED_CONTENT_TYPES
+        @accepted_content_types = nil
       end
 
       def info_slide_params
