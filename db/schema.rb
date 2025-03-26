@@ -994,7 +994,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_195638) do
     t.boolean "published"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "editable", default: false
+    t.boolean "editable", default: true
     t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
 
