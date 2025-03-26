@@ -15,7 +15,7 @@
       createSortableVignetteSlides(slideList);
     }
     registerVignetteSlideOpenListener();
-    registerVignetteSlideLoadedListener(slideList);
+    registerVignetteEditSlideListener();
     registerNewSlideButtonListener(slideList);
 
     $("#discard-changes-btn").on("click", function () {
@@ -67,12 +67,9 @@
     });
   }
 
-  function handleUnsavedChanges(event, slideId) {
+  function handleUnsavedChanges(event) {
     if (!hasUnsavedChanges) return true;
-    if (!event.target.id.startsWith("slides-collapse-")) return true;
-
-    pendingSlideId = slideId;
-
+    pendingSlideId = event.target.id;
     event.preventDefault();
     event.stopPropagation();
     $("#unsaved-changes-modal").modal("show");
@@ -80,14 +77,14 @@
   }
 
   function registerVignetteSlideOpenListener() {
-    $(".vignette-accordion-collapse").on("show.bs.collapse", function (e) {
+    $(".vignette-accordion-collapse").on("show.bs.collapse", function (event) {
       pendingAction = "show";
-      return handleUnsavedChanges(e, e.target.dataset.slideId);
+      return handleUnsavedChanges(event);
     });
 
-    $(".vignette-accordion-collapse").on("hide.bs.collapse", function (e) {
+    $(".vignette-accordion-collapse").on("hide.bs.collapse", function (event) {
       pendingAction = "hide";
-      return handleUnsavedChanges(e, e.target.dataset.slideId);
+      return handleUnsavedChanges(event);
     });
   }
 
@@ -98,10 +95,10 @@
     $("#unsaved-changes-warning").addClass("d-none");
 
     if (pendingAction === "show") {
-      $(`#slides-collapse-${pendingSlideId}`).collapse("show");
+      $(`#${pendingSlideId}`).collapse("show");
     }
     else if (pendingAction === "hide") {
-      $(`#slides-collapse-${pendingSlideId}`).collapse("hide");
+      $(`#${pendingSlideId}`).collapse("hide");
     }
   }
 
@@ -111,7 +108,9 @@
     submitButton.click();
   }
 
-  function registerVignetteSlideLoadedListener($slideList) {
+  function registerVignetteEditSlideListener() {
+    const $slideList = $("#vignettes-slides-accordion");
+
     $(".vignette-accordion-collapse").on("shown.bs.collapse", function (evt) {
       const slideId = evt.target.dataset.slideId;
       if (slideId === undefined) {
@@ -126,24 +125,32 @@
         return;
       }
 
-      const loadingSpinner = $(`#vignette-slide-loading-${slideId}`);
+      const isInfoSlide = $(this).attr("data-is-info-slide") === "true";
+      const prefix = getInfoSlidePrefix(isInfoSlide);
+      const $list = $(`#${prefix}vignettes-slides-accordion`);
+      const url = isInfoSlide ? Routes.edit_questionnaire_info_slide_path(questionnaireId, slideId) : Routes.edit_questionnaire_slide_path(questionnaireId, slideId);
+      handleEdit(url, $list, isInfoSlide, questionnaireId, slideId);
+    });
+
+    function handleEdit(url, $list, isInfoSlide, questionnaireId, slideId) {
+      const prefix = getInfoSlidePrefix(isInfoSlide);
+      const loadingSpinner = $(`#${prefix}vignette-slide-loading-${slideId}`);
       let spinnerTimeout = setTimeout(function () {
         loadingSpinner.show();
       }, 100); // avoid flickering when loading is fast
 
       $.ajax({
-        url: Routes.edit_questionnaire_slide_path(questionnaireId, slideId),
+        url: url,
         method: "GET",
         dataType: "html",
         success: function (response) {
-          $slideList.find(".slides-edit-form-container").html("");
-          const editFormContainer = $(`#slide-edit-form-container-${slideId}`);
-          editFormContainer.hide().html(response).ready(function () {
+          const formContainer = $list.find(".slides-edit-form-container");
+          formContainer.hide().html(response).ready(function () {
             clearTimeout(spinnerTimeout);
             loadingSpinner.hide();
-            editFormContainer.show();
+            formContainer.show();
           });
-          setupChangeDetection();
+          setupChangeDetection(isInfoSlide);
           fixVideoAttachments();
         },
         error: function (xhr, status, error) {
@@ -151,7 +158,7 @@
           console.error(`Failed to load slide edit form: ${error}`);
         },
       });
-    });
+    }
   }
 
   function getInfoSlidePrefix(isInfoSlide) {
@@ -167,8 +174,6 @@
     const initialState = form.serialize();
 
     form.find("input, select, textarea, trix-editor").on("change keyup", checkForChanges);
-    // form.on("change keyup", "input, select, textarea, trix-editor", checkForChanges);
-
     $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
 
     function checkForChanges() {
@@ -216,7 +221,6 @@
           $list.append(response);
           const newSlide = $list.children().last();
           openAccordionItem(newSlide);
-          // TODO: Make change detection work with normal slide as well as info slide
           setupChangeDetection(isInfoSlide);
         },
         error: function (xhr, status, error) {

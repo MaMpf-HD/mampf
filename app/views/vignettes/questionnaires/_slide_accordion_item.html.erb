@@ -13,12 +13,13 @@
     </h2>
 
     <div id="<%= collapse_id %>"
+         data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
          data-slide-id="<%= slide.id %>"
          class="accordion-collapse collapse vignette-accordion-collapse"
          data-bs-parent="#info-vignettes-slides-accordion">
 
         <% unless slide.new_record? %>
-        <div id="vignette-slide-loading-<%= slide.id %>" 
+        <div id="<%= info_prefix %>vignette-slide-loading-<%= slide.id %>" 
              class="d-flex justify-content-center mt-3 mb-3">
             <div class="spinner-border text-secondary" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -27,8 +28,7 @@
         <% end %>
 
         <% if slide.id %>
-        <div class="accordion-body slides-edit-form-container"
-             id="slide-edit-form-container-<%= slide.id %>">
+        <div class="accordion-body slides-edit-form-container">
             <!-- The slide edit form will be dynamically loaded here -->
         </div>
         <% else %>
