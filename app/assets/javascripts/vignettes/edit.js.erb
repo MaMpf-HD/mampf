@@ -4,7 +4,6 @@
   let currentUnsavedSlideForm = null;
   let pendingSlideId = null;
   let hasUnsavedChanges = false;
-  let pendingAction = null;
   let formSubmit = false;
 
   // When using turbolinks, the event is not fired on redirect
@@ -67,39 +66,32 @@
     });
   }
 
-  function handleUnsavedChanges(event) {
-    if (!hasUnsavedChanges) return true;
-    pendingSlideId = event.target.id;
-    event.preventDefault();
-    event.stopPropagation();
-    $("#unsaved-changes-modal").modal("show");
-    return false;
-  }
-
   function registerVignetteSlideOpenListener() {
     $(".vignette-accordion-collapse").on("show.bs.collapse", function (event) {
-      pendingAction = "show";
       return handleUnsavedChanges(event);
     });
 
     $(".vignette-accordion-collapse").on("hide.bs.collapse", function (event) {
-      pendingAction = "hide";
       return handleUnsavedChanges(event);
     });
+
+    function handleUnsavedChanges(event) {
+      if (!hasUnsavedChanges) return true;
+      event.preventDefault();
+      event.stopPropagation();
+      $("#unsaved-changes-modal").modal("show");
+      return false;
+    }
   }
 
   function discardCurrentChanges() {
     $("#unsaved-changes-modal").modal("hide");
     hasUnsavedChanges = false;
+    const collapse = currentUnsavedSlideForm.closest(".vignette-accordion-collapse");
+    collapse.collapse("hide");
     currentUnsavedSlideForm = null;
     $("#unsaved-changes-warning").addClass("d-none");
-
-    if (pendingAction === "show") {
-      $(`#${pendingSlideId}`).collapse("show");
-    }
-    else if (pendingAction === "hide") {
-      $(`#${pendingSlideId}`).collapse("hide");
-    }
+    $(`#${pendingSlideId}`).collapse("hide");
   }
 
   function saveCurrentChanges() {
