@@ -25,21 +25,7 @@
       saveCurrentChanges();
     });
 
-    // Mark intentional form submit to not prevent redirect
-    $(document).on("click", "form button[type='submit'], form input[type='submit']", function () {
-      formSubmit = true;
-    });
-
-    window.addEventListener("beforeunload", function (event) {
-      let unsavedChangesModalOpen = $("#unsaved-changes-modal").hasClass("show");
-      if (hasUnsavedChanges && !unsavedChangesModalOpen && !formSubmit) {
-        const fallback_message = "You have unsaved changes. Are you sure you want to leave this page?";
-        event.preventDefault();
-        event.returnValue = fallback_message;
-        return fallback_message;
-      }
-      formSubmit = false;
-    });
+    preventLeavingSiteOnUnsavedChanges();
   });
 
   function createSortableVignetteSlides(slideList) {
@@ -282,6 +268,24 @@
       hiddenVideo.onerror = function () {
         document.body.removeChild(hiddenVideo);
       };
+    });
+  }
+
+  function preventLeavingSiteOnUnsavedChanges() {
+    // Mark intentional form submit to not prevent redirect
+    $(document).on("click", "form button[type='submit'], form input[type='submit']", function () {
+      formSubmit = true;
+    });
+
+    window.addEventListener("beforeunload", function (event) {
+      let unsavedChangesModalOpen = $("#unsaved-changes-modal").hasClass("show");
+      if (hasUnsavedChanges && !unsavedChangesModalOpen && !formSubmit) {
+        const fallback_message = "You have unsaved changes. Are you sure you want to leave this page?";
+        event.preventDefault();
+        event.returnValue = fallback_message;
+        return fallback_message;
+      }
+      formSubmit = false;
     });
   }
 })();
