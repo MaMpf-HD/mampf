@@ -2572,6 +2572,13 @@ en:
     no_option: "At least one option must be specified"
     empty_option: "All options must have text"
 
+    info_slide_empty_title: "Title is missing"
+    info_slide_empty_icon: "Icon is missing"
+    info_slide_deleted: "Info slide was successfully deleted"
+    info_slide_not_deleted: "Info slide could not be deleted"
+    info_slide_confirm_delete: 'Are you sure you want to delete this info slide? 
+      This action cannot be undone.'
+
 
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'

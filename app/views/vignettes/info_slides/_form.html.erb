@@ -34,6 +34,40 @@
           class: "btn btn-primary slide-submit-btn d-none"
       %>
     </div>
-  </div>
 
+    <% unless @info_slide.new_record? %>
+    <button type="button" 
+            class="btn btn-danger" 
+            data-bs-toggle="<%= @info_slide.questionnaire.editable ? 'modal' : '' %>" 
+            data-bs-target="#deleteModal<%= @info_slide.id %>"
+            <%= 'disabled' unless @info_slide.questionnaire.editable %>>
+      Delete Slide
+    </button>
+    <% end %>
+  </div>
+<% end %>
+
+<!-- Delete Confirmation Modal -->
+<% unless @info_slide.new_record? %>
+  <div class="modal fade" id="deleteModal<%= @info_slide.id %>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p><%= t("vignettes.info_slide_confirm_delete") %></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <%= button_to "Delete Info Slide", 
+                questionnaire_info_slide_path(@questionnaire, @info_slide),
+                method: :delete,
+                class: "btn btn-danger"
+          %>
+        </div>
+      </div>
+    </div>
+  </div>
 <% end %>

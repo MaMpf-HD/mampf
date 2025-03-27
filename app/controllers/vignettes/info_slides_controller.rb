@@ -2,6 +2,8 @@ module Vignettes
   class InfoSlidesController < ApplicationController
     before_action :set_questionnaire
     before_action :set_info_slide, only: [:edit, :update]
+    before_action :check_empty_title, only: [:create, :update]
+    before_action :check_empty_icon, only: [:create, :update]
 
     def new
       @info_slide = InfoSlide.new
@@ -38,7 +40,49 @@ module Vignettes
       end
     end
 
+    def destroy
+      unless @questionnaire.editable
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.info_slide_not_deleted")
+        return
+      end
+
+      @info_slide = @questionnaire.info_slides.find(params[:id])
+
+      begin
+        ActiveRecord::Base.transaction do
+          # Remove associations with slides before destroying
+          @info_slide.slides.clear
+
+          @info_slide.destroy
+        end
+
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    notice: t("vignettes.info_slide_deleted")
+      rescue StandardError => e
+        Rails.logger.error("Error deleting info slide: #{e.message}")
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.info_slide_not_deleted")
+      end
+    end
+
     private
+
+      def check_empty_title
+        return if info_slide_params[:title].present? && info_slide_params[:title].length.positive?
+
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.info_slide_empty_title")
+      end
+
+      def check_empty_icon
+        if info_slide_params[:icon_type].present? && info_slide_params[:icon_type].length.positive?
+          return
+        end
+
+        redirect_to edit_questionnaire_path(@questionnaire),
+                    alert: t("vignettes.info_slide_empty_icon")
+      end
 
       def set_questionnaire
         @questionnaire = Questionnaire.find(params[:questionnaire_id])
