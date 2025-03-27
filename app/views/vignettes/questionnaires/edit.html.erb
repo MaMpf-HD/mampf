@@ -4,15 +4,15 @@
 
 <% lecture_edit_path = edit_lecture_path(@questionnaire.lecture, anchor: 'vignettes') %>
 
-<!-- Back Button -->
-<div id="vignette-back-btn-container" class="container-md">
-  <a href="<%= lecture_edit_path %>" class="btn btn-outline-secondary">
+
+<div class="container-md small-width">
+  <!-- Back Button -->
+  <a href="<%= lecture_edit_path %>" id="vignettes-back-btn"
+    class="btn btn-outline-secondary">
     <i class="bi bi-arrow-left"></i>
     Back
   </a>
-</div>
 
-<div class="container-md small-width">
   <div id="vignette-edit-header">
     <h1 class="fs-3 fw-bold">
       <%= @questionnaire.title%>
