@@ -1,5 +1,9 @@
 @import "branding";
 
+.admin-background {
+    background: none;
+}
+
 #vignette-edit-header {
     border: $mampf-blue 1.5px solid;
     border-radius: 0.5em;
@@ -37,5 +41,15 @@ h1, h2 {
             background: #f1f1f1;
             outline: lightgrey auto 0.5px;
         }
+    }
+}
+
+#vignettes-back-btn {
+    border: none;
+
+    @media(min-width: calc(#{$small-width} + 15em)) {
+        position: fixed;
+        margin-top: 1em;
+        margin-left: -6em;
     }
 }

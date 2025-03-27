@@ -168,7 +168,7 @@ module Vignettes
     def edit
       @slides = @questionnaire.slides.order(:position)
 
-      render layout: "application_no_sidebar"
+      render layout: "administration"
     end
 
     def destroy

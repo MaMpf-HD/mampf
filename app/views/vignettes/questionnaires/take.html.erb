@@ -16,10 +16,14 @@
 <div id="vignette-take-card" class="container-md small-width card">
 
     <!-- Header -->
-    <div class="slide-header text-light">
-        <!-- TODO: add a proper user-defined slide title -->
-        <!-- TODO: add a marker where the user currently is, e.g. (1/5) -->
-        <p class="mb-0 fs-5 fw-bold"> Slide <%= @slide.position %></p>
+    <% progress = [((@slide.position.to_f - 1) / @questionnaire.slides.count * 100).round, 0].max %>
+
+    <div id="vignettes-progress" class="progress"
+        role="progressbar" aria-label="Questionnaire progress"
+        aria-valuenow="<%= progress %>" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar progress-bar-striped"
+            style="width: <%= progress %>%">
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -30,20 +34,18 @@
     <!-- Additional information section -->
     <% if @slide.info_slides.any? %>
     <div class="card-body">
-        <div class="mb-3 text-center">
-            <p class="mb-0">Additional information</p>
-        </div>
-        
-        <div class="d-flex flex-wrap gap-3 justify-content-center">
+        <div class="d-flex flex-wrap align-items-center w-100">
+            <p class="mb-0 me-1">Additional information</p>
+
             <% @slide.info_slides.each_with_index do |info_slide, index| %>
             <button type="button"
                     class="btn open-info-slide-btn d-flex align-items-center"
                     title="Find information about: <%= info_slide.title %>"
                     data-bs-toggle="modal"
                     data-bs-target="#vignette-info-slide-modal-<%= index %>"
-                    data-info-slide-id="<%= info_slide.id %>"
-                    data-info-slide-index="<%= index %>">
-                <%= image_tag select_info_slide_icon_path(info_slide), class: "me-2", style: "height: 90px;" %>
+                    data-info-slide-id="<%= info_slide.id %>">
+                <%= image_tag select_info_slide_icon_path(info_slide),
+                    class: "me-2 vignettes-info-slides-icon" %>
                 <p class="mb-0 text-start">
                     <%= info_slide.title %>
                 </p>
@@ -93,7 +95,7 @@
             </div>
         <% else %>
             <div class="d-flex justify-content-end mt-3">
-                <%= link_to "Return to Edit View", edit_questionnaire_path(@questionnaire), class: "btn btn-slide-footer-btn" %>
+                <%= link_to "Return to Edit View", edit_questionnaire_path(@questionnaire), class: "btn" %>
                 <%= link_to "Next slide", preview_questionnaire_path(@questionnaire, position: @position.to_i + 1), class: "btn slide-footer-btn" %>
             </div>
         <% end %>
