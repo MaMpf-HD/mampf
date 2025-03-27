@@ -39,3 +39,19 @@ h1, h2 {
         }
     }
 }
+
+#vignette-back-btn-container {
+    max-width: $small-width;
+    margin: 0 auto;
+
+    a {
+        border: none;
+    }
+
+    @media (min-width: calc(#{$small-width} + 15em)) {
+        position: fixed;
+        margin: 0;
+        margin-top: 1em;
+        left: calc(50% - (#{$small-width} / 2) - 6em);
+    }
+}
