@@ -8,7 +8,12 @@
                 data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
                 aria-expanded="false" aria-controls="<%= collapse_id %>">
             <!-- TODO: show useful information here, e.g. answer type -->
-            Slide with id <%= slide.id %>
+            <% if slide.is_a?(Vignettes::InfoSlide) %>
+                <span class="me-2 text-secondary">#<%= slide.id %></span>
+                <%= slide.title %>
+            <% else %>
+                Slide with id <%= slide.id %>
+            <% end %>
         </button>
     </h2>
 
