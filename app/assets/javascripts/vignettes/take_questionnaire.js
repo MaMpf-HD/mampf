@@ -76,6 +76,7 @@ function validateTextAnswer() {
 class VignetteSlideStatistics {
   slideAccessDate = Date.now();
   slideStartTime = new Date();
+  slideTime = 0;
   totalSlideTime = 0;
 
   infoSlideAccessCounts = {};
@@ -94,12 +95,16 @@ class VignetteSlideStatistics {
     }
   }
 
+  setTotalSlideTime() {
+    this.totalSlideTime = Date.now() - this.slideAccessDate;
+  }
+
   freezeSlideTime() {
     if (this.slideStartTime === null) {
       console.error("Attempted to freeze slide time when it was already frozen");
       return;
     }
-    this.totalSlideTime += (Date.now() - this.slideStartTime);
+    this.slideTime += (Date.now() - this.slideStartTime);
     this.slideStartTime = null;
   }
 
@@ -128,6 +133,7 @@ class VignetteSlideStatistics {
     for (let key in this.infoSlideFirstAccessTimes) {
       this.infoSlideFirstAccessTimes[key] = Math.floor(this.infoSlideFirstAccessTimes[key] / 1000);
     }
+    this.slideTime = Math.floor(this.slideTime / 1000);
     this.totalSlideTime = Math.floor(this.totalSlideTime / 1000);
   }
 }
@@ -173,14 +179,17 @@ function registerStatisticsHandler(stats) {
       stats.freezeSlideTime();
     }
 
+    stats.setTotalSlideTime();
     stats.postProcessTimes();
 
     // Transfer results to hidden form-fields
     const timeOnSlideField = $("#time-on-slide-field");
+    const totalTimeOnSlideField = $("#total-time-on-slide-field");
     const timeOnInfoSlidesField = $("#time-on-info-slides-field");
     const infoSlidesAccessCountField = $("#info-slides-access-count-field");
     const infoSlideFirstAccessTimes = $("#info-slides-first-access-times-field");
-    timeOnSlideField.val(stats.totalSlideTime);
+    timeOnSlideField.val(stats.slideTime);
+    totalTimeOnSlideField.val(stats.totalSlideTime);
     timeOnInfoSlidesField.val(JSON.stringify(stats.infoSlideTimes));
     infoSlidesAccessCountField.val(JSON.stringify(stats.infoSlideAccessCounts));
     infoSlideFirstAccessTimes.val(JSON.stringify(stats.infoSlideFirstAccessTimes));

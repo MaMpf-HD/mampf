@@ -63,6 +63,7 @@
         <%= form.fields_for :slide_statistic do |stat_form| %>
             <%= stat_form.hidden_field :user_id, value: current_user.id %>
             <%= stat_form.hidden_field :time_on_slide, id: "time-on-slide-field" %>
+            <%= stat_form.hidden_field :total_time_on_slide, id: "total-time-on-slide-field" %>
             <%= stat_form.hidden_field :time_on_info_slides, id: "time-on-info-slides-field" %>
             <%= stat_form.hidden_field :info_slides_access_count, id:"info-slides-access-count-field" %>
             <%= stat_form.hidden_field :info_slides_first_access_time, id: "info-slides-first-access-times-field" %>

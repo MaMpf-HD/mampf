@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_25_195638) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_27_121828) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -994,7 +994,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_195638) do
     t.boolean "published"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "editable", default: true
+    t.boolean "editable", default: false
     t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
 
@@ -1019,6 +1019,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_25_195638) do
     t.text "info_slides_first_access_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "total_time_on_slide"
     t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
     t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
   end

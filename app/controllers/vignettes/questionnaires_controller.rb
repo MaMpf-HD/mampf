@@ -195,12 +195,30 @@ module Vignettes
         # Update lecture cache to show the new questionnaire
         @questionnaire.lecture.touch
 
+        # Used to map old info slides to new info slides
+        info_slides_mapping = {}
+
+        # Duplicate info slides
+        @questionnaire.info_slides.each do |info_slide|
+          new_info_slide = info_slide.dup
+          new_info_slide.content = info_slide.content
+          new_info_slide.questionnaire = new_questionnaire
+          new_info_slide.save!
+
+          info_slides_mapping[info_slide.id] = new_info_slide.id
+        end
+
         # Duplicate slides
         @questionnaire.slides.order(:position).each do |slide|
           new_slide = slide.dup
           new_slide.content = slide.content
           new_slide.questionnaire = new_questionnaire
           new_slide.save!
+
+          slide.info_slides.each do |info_slide|
+            new_info_slide_id = info_slides_mapping[info_slide.id]
+            new_slide.info_slides << new_questionnaire.info_slides.find(new_info_slide_id)
+          end
 
           new_question = slide.question.dup
           new_question.slide = new_slide
@@ -278,7 +296,7 @@ module Vignettes
               .permit(:slide_id, :text, :likert_scale_value,
                       option_ids: [],
                       slide_statistic_attributes:
-                      [:user_id, :time_on_slide,
+                      [:user_id, :time_on_slide, :total_time_on_slide,
                        :time_on_info_slides, :info_slides_access_count,
                        :info_slides_first_access_time])
       end
