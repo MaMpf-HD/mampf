@@ -19,14 +19,6 @@ module Vignettes
                                 .find_or_create_by(user: current_user,
                                                    questionnaire: @questionnaire)
 
-      if params[:position].to_i == -1
-        # ONLY FOR DEBUG
-        user_answer.destroy
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    notice: t("vignettes.destroy_answer")
-        return
-      end
-
       # Vignettes was already fully answered by user
       if user_answer.last_slide_answered?
         redirect_to lecture_questionnaires_path(@questionnaire.lecture),
