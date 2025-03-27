@@ -79,7 +79,7 @@
 
   <!-- Slides -->
   <h2 class="fs-4 fw-bold mt-4 mb-0">Slides</h1>
-  <% if @slides.size > 1 %>
+  <% if @questionnaire.editable && @slides.size > 1%>
   <p>Drag the slides to change their order.</p>
   <% end %>
 
