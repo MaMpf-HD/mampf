@@ -16,10 +16,14 @@
 <div id="vignette-take-card" class="container-md small-width card">
 
     <!-- Header -->
-    <div class="slide-header text-light">
-        <!-- TODO: add a proper user-defined slide title -->
-        <!-- TODO: add a marker where the user currently is, e.g. (1/5) -->
-        <p class="mb-0 fs-5 fw-bold"> Slide <%= @slide.position %></p>
+    <% progress = [((@slide.position.to_f - 1) / @questionnaire.slides.count * 100).round, 0].max %>
+
+    <div id="vignettes-progress" class="progress"
+        role="progressbar" aria-label="Questionnaire progress"
+        aria-valuenow="<%= progress %>" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar progress-bar-striped"
+            style="width: <%= progress %>%">
+        </div>
     </div>
 
     <!-- Main Content -->
@@ -92,7 +96,7 @@
             </div>
         <% else %>
             <div class="d-flex justify-content-end mt-3">
-                <%= link_to "Return to Edit View", edit_questionnaire_path(@questionnaire), class: "btn btn-slide-footer-btn" %>
+                <%= link_to "Return to Edit View", edit_questionnaire_path(@questionnaire), class: "btn" %>
                 <%= link_to "Next slide", preview_questionnaire_path(@questionnaire, position: @position.to_i + 1), class: "btn slide-footer-btn" %>
             </div>
         <% end %>

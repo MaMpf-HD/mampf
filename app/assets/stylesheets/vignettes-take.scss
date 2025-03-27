@@ -8,9 +8,14 @@
     box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
 }
 
-.slide-header {
-    padding: 0.75rem 1.25rem;
+#vignettes-progress {
+    border-radius: 4px 4px 0 0;
+    height: 22px;
     background-color: $mampf-blue;
+
+    .progress-bar {
+        background-color: saturate(lighten($mampf-blue, 15%), 10%);
+    }
 }
 
 .slide-footer-btn {
