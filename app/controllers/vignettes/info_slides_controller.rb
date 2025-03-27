@@ -2,7 +2,6 @@ module Vignettes
   class InfoSlidesController < ApplicationController
     before_action :set_questionnaire
     before_action :set_info_slide, only: [:edit, :update]
-    before_action :set_accepted_content_types, only: [:new, :edit]
 
     def new
       @info_slide = InfoSlide.new
@@ -47,12 +46,6 @@ module Vignettes
 
       def set_info_slide
         @info_slide = @questionnaire.info_slides.find(params[:id])
-      end
-
-      def set_accepted_content_types
-        # TODO: Fix (Florian)
-        # @accepted_content_types = InfoSlide::ACCEPTED_CONTENT_TYPES
-        @accepted_content_types = nil
       end
 
       def info_slide_params
