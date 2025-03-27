@@ -12,7 +12,8 @@
           @slide.info_slides.map(&:id)
         ),
       { include_blank: true, multiple: true },
-      { id: "vignettes-linked-info-slides", class: "form-select" } %>
+      { id: "vignettes-linked-info-slides", class: "form-select",
+        disabled: !@questionnaire.editable } %>
     <%= form.label :info_slides, "Linked Info Slides" %>
   </div>
 
