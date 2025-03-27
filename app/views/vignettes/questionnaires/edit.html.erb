@@ -19,7 +19,7 @@
     </h1>
 
     <!-- Action Items -->
-    <div class="d-flex">
+    <div class="d-flex flex-wrap">
       <%= button_to preview_questionnaire_path(@questionnaire),
           :disabled => @questionnaire.slides.empty?,
           class: "btn btn-outline-primary me-2",
