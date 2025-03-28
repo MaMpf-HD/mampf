@@ -2571,6 +2571,18 @@ en:
     number_too_small_error: "Please enter a number greater than or equal to %{min}"
     no_option: "At least one option must be specified"
     empty_option: "All options must have text"
+    publish: "Publish"
+    unpublish: "Unpublish"
+    unsaved_changes_warning: "You have unsaved changes. Please save your changes before navigating away."
+    unsaved_changes_modal: "You have unsaved changes in the current slide. Do you want to save or discard them before editing a new one?"
+    create_slide: "Create Slide"
+    update_slide: "Update Slide"
+    delete_slide: "Delete Slide"
+    add_multiple_choice_option: "Add Multiple Choice Option"
+    additional_information: "Additional information"
+    submit_answer: "Submit answer"
+    next_slide: "Next Slide"
+    return_to_edit: "Return to edit"
 
     info_slide_empty_title: "Title is missing"
     info_slide_empty_icon: "Icon is missing"
@@ -2578,12 +2590,36 @@ en:
     info_slide_not_deleted: "Info slide could not be deleted"
     info_slide_confirm_delete: 'Are you sure you want to delete this info slide? 
       This action cannot be undone.'
+    create_info_slide: "Create Info Slide"
+    update_info_slide: "Update Info Slide"
+    unsaved_changes: "Unsaved Changes"
+    unsaved_changes_modal: "You have unsaved changes in the current slide. Do you want to save or discard them before editing a new one?"
 
     preview: "Preview"
     duplicate: "Duplicate"
     export_answers: "Export answers"
     delete: "Delete Vignette"
     confirm_publication: "Confirm publication"
+
+    question_type: "Question Type"
+    question_type_selection: "Selection for question type"
+    your_question: "Your question"
+    question_types:
+      none: "No Question"
+      text_area: "Text Area"
+      number_field: "Number field"
+      multiple_choice: "Multiple Choice"
+      likert_scale: "Likert Scale"
+    
+    number_question_settings: "Number Question Settings"
+    only_integer: "Allow integers only (no decimals)"
+    min_number: "Minimum value"
+    max_number: "Maximum value"
+    number_range_help: "Leave min/max fields empty for unlimited range"
+    your_numeric_answer: "Your numeric answer"
+    number_range_between: "Enter a number between %{min} and %{max}"
+    number_range_min: "Enter a number greater than or equal to %{min}"
+    number_range_max: "Enter a number less than or equal to %{max}"
 
 
   external_link_lc: 'external link'
@@ -3548,6 +3584,8 @@ en:
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'
+    save_changes: "Save Changes"
+    discard_changes: "Discard Changes"
     delete: 'Delete'
     publish: 'Publish'
     parent_course: 'Parent Course'

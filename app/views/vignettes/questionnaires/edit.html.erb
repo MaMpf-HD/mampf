@@ -10,7 +10,7 @@
   <a href="<%= lecture_edit_path %>" id="vignettes-back-btn"
     class="btn btn-outline-secondary">
     <i class="bi bi-arrow-left"></i>
-    Back
+    <%= t("buttons.back") %>
   </a>
 
   <div id="vignette-edit-header" class="mt-4">
@@ -31,7 +31,7 @@
       <button type="button" class="btn btn-outline-primary me-2"
               data-bs-toggle="modal" data-bs-target="#publishModal">
         <i class="bi bi-globe-europe-africa"></i>
-        <%= @questionnaire.published ? "Unpublish" : "Publish" %>
+        <%= @questionnaire.published ? t("vignettes.unpublish") : t("vignettes.publish") %>
       </button>
 
       <button type="button" class="btn btn-outline-secondary me-2"
@@ -58,7 +58,7 @@
   <!-- Unsaved changes -->
   <div id="unsaved-changes-warning" class="alert alert-warning d-none mt-3">
     <i class="bi bi-exclamation-triangle"></i>
-    You have unsaved changes. Please save your changes before navigating away.
+    <%= t("vignettes.unsaved_changes_warning") %>
   </div>
 
   <!-- Info Slides -->
@@ -144,13 +144,13 @@
 
       </div>
       <div class="modal-footer">
-        <% button_text = @questionnaire.published ? "Unpublish" : "Publish" %>
+        <% button_text = @questionnaire.published ? t("vignettes.unpublish") : t("vignettes.publish") %>
         <%= button_to button_text, 
               publish_questionnaire_path(@questionnaire),
               method: :patch,
               class: "btn btn-primary"
         %>
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t("buttons.cancel") %></button>
       </div>
     </div>
   </div>
@@ -176,7 +176,7 @@
         </div>
         <div class="modal-footer">
           <button type="submit" class="btn btn-primary">Duplicate</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t("buttons.cancel") %></button>
         </div>
       <% end %>
     </div>
@@ -188,15 +188,15 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="unsavedChangesModalLabel">Unsaved Changes</h5>
+        <h5 class="modal-title" id="unsavedChangesModalLabel"><%= t("vignettes.unsaved_changes") %></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>You have unsaved changes in the current slide. Do you want to save or discard them before editing a new one?</p>
+        <%= t("vignettes.unsaved_changes_modal") %>
       </div>
       <div class="modal-footer">
-        <button type="button" id="save-changes-btn" class="btn btn-primary">Save Changes</button>
-        <button type="button" id="discard-changes-btn" class="btn btn-secondary">Discard Changes</button>
+        <button type="button" id="save-changes-btn" class="btn btn-primary"><%= t("buttons.save_changes") %></button>
+        <button type="button" id="discard-changes-btn" class="btn btn-secondary"><%= t("buttons.discard_changes") %></button>
       </div>
     </div>
   </div>

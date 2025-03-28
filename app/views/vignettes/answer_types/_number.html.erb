@@ -16,16 +16,16 @@
         'data-range-underflow-message': @slide.question.min_number.present? ? 
             t('vignettes.number_too_small_error', min: @slide.question.min_number) : nil
     %>
-    <%= f.label :text, 'Your numeric answer' %>
+    <%= f.label :text, t('vignettes.your_numeric_answer') %>
     
     <% if @slide.question.min_number.present? || @slide.question.max_number.present? %>
         <div class="form-text mt-1">
             <% if @slide.question.min_number.present? && @slide.question.max_number.present? %>
-                Enter a number between <%= @slide.question.min_number %> and <%= @slide.question.max_number %>
+                <%= t('vignettes.number_range_between', min: @slide.question.min_number, max: @slide.question.max_number) %>
             <% elsif @slide.question.min_number.present? %>
-                Enter a number greater than or equal to <%= @slide.question.min_number %>
+                <%= t('vignettes.number_range_min', min: @slide.question.min_number) %>
             <% elsif @slide.question.max_number.present? %>
-                Enter a number less than or equal to <%= @slide.question.max_number %>
+                <%= t('vignettes.number_range_max', max: @slide.question.max_number) %>
             <% end %>
         </div>
     <% end %>

@@ -35,7 +35,7 @@
     <% if @slide.info_slides.any? %>
     <div class="card-body">
         <div class="d-flex flex-wrap align-items-center w-100">
-            <p class="mb-0 me-1">Additional information</p>
+            <p class="mb-0 me-1"><%= t("vignettes.additional_information") %></p>
 
             <% @slide.info_slides.each_with_index do |info_slide, index| %>
             <button type="button"
@@ -88,15 +88,15 @@
             <div class="d-flex justify-content-end mt-3">
                 <!-- TODO: Do a better differentiation here -->
                 <% if @slide.question.type == "" %>
-                    <%= form.submit "Next Slide", class: "btn slide-footer-btn" %>
+                    <%= form.submit t("vignettes.next_slide"), class: "btn slide-footer-btn" %>
                 <% else %>
-                    <%= form.submit "Submit answer", class: "btn slide-footer-btn" %>
+                    <%= form.submit t("vignettes.submit_answer"), class: "btn slide-footer-btn" %>
                 <% end %>
             </div>
         <% else %>
             <div class="d-flex justify-content-end mt-3">
-                <%= link_to "Return to Edit View", edit_questionnaire_path(@questionnaire), class: "btn" %>
-                <%= link_to "Next slide", preview_questionnaire_path(@questionnaire, position: @position.to_i + 1), class: "btn slide-footer-btn" %>
+                <%= link_to t("vignettes.return_to_edit"), edit_questionnaire_path(@questionnaire), class: "btn" %>
+                <%= link_to t("vignettes.next_slide"), preview_questionnaire_path(@questionnaire, position: @position.to_i + 1), class: "btn slide-footer-btn" %>
             </div>
         <% end %>
     </div>

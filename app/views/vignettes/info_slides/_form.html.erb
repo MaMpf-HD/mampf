@@ -30,9 +30,8 @@
 
   <div class="d-flex justify-content-end align-items-center mt-3">
     <div class="me-auto">
-      <%= form.submit @info_slide.new_record? ? 'Create Info Slide' : 'Update Info Slide',
-          class: "btn btn-primary slide-submit-btn d-none"
-      %>
+      <%= form.submit @info_slide.new_record? ? t("vignettes.create_info_slide") : t("vignettes.update_info_slide"),
+          class: "btn btn-primary slide-submit-btn d-none" %>
     </div>
 
     <% unless @info_slide.new_record? %>
@@ -41,7 +40,7 @@
             data-bs-toggle="<%= @info_slide.questionnaire.editable ? 'modal' : '' %>" 
             data-bs-target="#deleteModal<%= @info_slide.id %>"
             <%= 'disabled' unless @info_slide.questionnaire.editable %>>
-      Delete Slide
+      <%= t("vignettes.delete_slide") %>
     </button>
     <% end %>
   </div>
@@ -60,7 +59,7 @@
           <p><%= t("vignettes.info_slide_confirm_delete") %></p>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t("buttons.cancel") %></button>
           <%= button_to "Delete Info Slide", 
                 questionnaire_info_slide_path(@questionnaire, @info_slide),
                 method: :delete,

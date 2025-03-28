@@ -6,11 +6,11 @@
 <div class="form-floating">
     <%= f.select :type,
         options_for_select([
-            ['No Question', ''],
-            ['Text Area', 'Vignettes::TextQuestion'],
-            ['Number field', 'Vignettes::NumberQuestion'],
-            ['Multiple Choice', 'Vignettes::MultipleChoiceQuestion'],
-            ['Likert Scale', 'Vignettes::LikertScaleQuestion']
+            [t('vignettes.question_types.none'), ''],
+            [t('vignettes.question_types.text_area'), 'Vignettes::TextQuestion'],
+            [t('vignettes.question_types.number_field'), 'Vignettes::NumberQuestion'],
+            [t('vignettes.question_types.multiple_choice'), 'Vignettes::MultipleChoiceQuestion'],
+            [t('vignettes.question_types.likert_scale'), 'Vignettes::LikertScaleQuestion']
         ], f.object.type),
         {},
         {
@@ -19,7 +19,7 @@
             "aria-label": "Selection for question type",
             disabled: !form.object.questionnaire.editable
         } %>
-    <%= f.label :type, "Question Type" %>
+    <%= f.label :type, t('vignettes.question_type') %>
 </div>
 
 <div id="vignette-question-text" class="form-floating mt-3 show">
@@ -30,7 +30,7 @@
         maxlength: Vignettes::Question::TEXT_MAX_LENGTH,
         required: f.object.question_text_required?
     %>
-    <%= f.label :question_text, "Your question" %>
+    <%= f.label :question_text, t('vignettes.your_question') %>
 </div>
 
 <div id="vignette-edit-multiple-choice" class="collapse mt-3">
@@ -53,20 +53,20 @@
     <button type="button" id="vignette-multiple-choice-add"
             class="btn btn-outline-secondary">
         <i class="bi bi-plus-circle"></i>
-        Add Multiple Choice Option
+        <%= t("vignettes.add_multiple_choice_option") %>
     </button>
 </div>
 
 <div id="vignette-number-question-options" class="collapse mt-3">
   <div class="card">
-    <div class="card-header">Number Question Settings</div>
+    <div class="card-header"><%= t('vignettes.number_question_settings') %></div>
     <div class="card-body">
       <div class="form-check mb-3">
         <%= f.check_box :only_integer, 
             class: 'form-check-input', 
             id: 'vignette-number-only-integer',
             disabled: !form.object.questionnaire.editable %>
-        <%= f.label :only_integer, "Allow integers only (no decimals)", 
+        <%= f.label :only_integer, t('vignettes.only_integer'), 
             class: 'form-check-label',
             for: 'vignette-number-only-integer' %>
       </div>
@@ -81,7 +81,7 @@
                 placeholder: 'Minimum value',
                 step: 'any',
                 disabled: !form.object.questionnaire.editable %>
-            <%= f.label :min_number, "Minimum value" %>
+            <%= f.label :min_number, t('vignettes.min_number') %>
           </div>
         </div>
         <div class="col-md-6">
@@ -92,13 +92,13 @@
                 placeholder: 'Maximum value',
                 step: 'any',
                 disabled: !form.object.questionnaire.editable %>
-            <%= f.label :max_number, "Maximum value" %>
+            <%= f.label :max_number, t('vignettes.max_number') %>
           </div>
         </div>
       </div>
       
       <div class="form-text mt-2">
-        Leave min/max fields empty for unlimited range
+        <%= t('vignettes.number_range_help') %>
       </div>
     </div>
   </div>

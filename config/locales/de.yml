@@ -2714,18 +2714,55 @@ de:
     number_too_small_error: "Bitte geben Sie eine Zahl größer oder gleich %{min} ein"
     no_option: "Mindestens eine Option muss angegeben werden"
     empty_option: "Alle Optionen müssen Text enthalten"
+    publish: "Veröffentlichen"
+    unpublish: "Zurückziehen"
+    unsaved_changes_warning: "Sie haben ungespeicherte Änderungen. Bitte speichern Sie Ihre Änderungen, bevor Sie weggehen."
+    unsaved_changes_modal: "Sie haben ungespeicherte Änderungen in der aktuellen Folie. Möchten Sie diese speichern oder verwerfen, bevor Sie eine neue bearbeiten?"
+    create_slide: "Folie erstellen"
+    update_slide: "Folie aktualisieren"
+    delete_slide: "Folie löschen"
+    add_multiple_choice_option: "Multiple choice option hinzufügen"
+    additional_information: "Zusätzliche Informationen"
+    submit_answer: "Antwort absenden"
+    next_slide: "Nächste Folie"
+    return_to_edit: "Zurück zur Bearbeitung"
 
     info_slide_empty_title: "Titel fehlt"
     info_slide_empty_icon: "Symbol fehlt"
     info_slide_deleted: "Info-Folie wurde erfolgreich gelöscht"
     info_slide_not_deleted: "Info-Folie konnte nicht gelöscht werden"
     info_slide_confirm_delete: 'Sind Sie sicher, dass Sie diese Info-Folie löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    create_info_slide: "Info-Folie erstellen"
+    update_info_slide: "Info-Folie aktualisieren"
+
+    unsaved_changes: "Ungespeicherte Änderungen"
+    unsaved_changes_modal: "Sie haben ungespeicherte Änderungen in der aktuellen Folie. Möchten Sie diese speichern oder verwerfen, bevor Sie eine neue bearbeiten?"
 
     preview: "Vorschau"
     duplicate: "Duplizieren"
     export_answers: "Statistiken exportieren"
     delete: "Vignette löschen"
     confirm_publication: "Vignette veröffentlichen"
+
+    question_type: "Fragetyp"
+    question_type_selection: "Auswahl für Fragetyp"
+    your_question: "Deine Frage"
+    question_types:
+      none: "Keine Frage"
+      text_area: "Textfeld"
+      number_field: "Zahlenfeld"
+      multiple_choice: "Multiple Choice"
+      likert_scale: "Likert-Skala"
+      
+    number_question_settings: "Optionen für Zahlenfragen"
+    only_integer: "Nur ganze Zahlen erlauben"
+    min_number: "Minimalwert"
+    max_number: "Maximalwert"
+    number_range_help: "Min/Max-Felder leer lassen für unbegrenzten Bereich"
+    your_numeric_answer: "Deine Antwort"
+    number_range_between: "Gib eine Zahl zwischen %{min} und %{max} ein"
+    number_range_min: "Gib eine Zahl größer oder gleich %{min} ein"
+    number_range_max: "Gib eine Zahl kleiner oder gleich %{max} ein"
   
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
@@ -3736,6 +3773,8 @@ de:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
+    save_changes: "Änderungen speichern"
+    discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
