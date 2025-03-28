@@ -2763,6 +2763,14 @@ de:
     number_range_between: "Gib eine Zahl zwischen %{min} und %{max} ein"
     number_range_min: "Gib eine Zahl größer oder gleich %{min} ein"
     number_range_max: "Gib eine Zahl kleiner oder gleich %{max} ein"
+
+    completed: "Abgeschlossen"
+    in_progress: "In Bearbeitung"
+    not_started: "Nicht begonnen"
+    active_questionnaires: "Verfügbare Fragebögen"
+    completed_questionnaires: "Abgeschlossene Fragebögen"
+    take: "Ausfüllen"
+    continue: "Fortsetzen"
   
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'

@@ -9,9 +9,7 @@ module Vignettes
                   only: [:edit, :preview, :destroy, :publish, :update_slide_position, :duplicate]
     before_action :check_empty, only: [:publish, :take, :submit_answer]
     def index
-      @questionnaires = @lecture.vignettes_questionnaires
-      # Because the create model form works on the index page.
-      @questionnaire = Questionnaire.new
+      @questionnaires = @lecture.vignettes_questionnaires.where(published: true)
     end
 
     def take

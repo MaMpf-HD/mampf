@@ -2621,6 +2621,14 @@ en:
     number_range_min: "Enter a number greater than or equal to %{min}"
     number_range_max: "Enter a number less than or equal to %{max}"
 
+    completed: "Completed"
+    in_progress: "In progress"
+    not_started: "Not started"
+    active_questionnaires: "Available Questionnaires"
+    completed_questionnaires: "Completed Questionnaires"
+    take: "Take"
+    continue: "Continue"
+
 
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
