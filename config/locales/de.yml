@@ -322,9 +322,7 @@ de:
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
-    vignettes:
-      published: 'Vignette wurde erfolgreich veröffentlicht.'
-      not_published: 'Vignette konnte nicht veröffentlicht werden.'
+
     annotation:
       your_annotations: 'Deine Annotationen'
       students_annotations: 'Annotationen der Studierenden'
@@ -2659,16 +2657,74 @@ de:
 
   vignettes:
     vignettes: 'Vignettes'
-    not_found: 'Die angeforderte Vignette existiert nicht.'
-    create_new: 'Neue Umfrage erstellen'
-    duplicate_new_questionnaire_title: "Neuer Umfragentitel"
-    create_new_info_slide: 'Neue Info Slide erstellen'
-    create_new_slide: 'Neue Slide erstellen'
-    questionnaire_delete: "Umfrage löschen"
-    questionnaire_deleted: "Umfrage erfolgreich gelöscht"
-    questionnaire_confirm_delete: >
-      Bist Du sicher, dass Du diese Umfrage löschen willst?
-      Alle zugehörigen Slides, Antworten und Statistiken werden ebenfalls gelöscht.
+    questionnaires: 'Fragebögen'
+    create_new: "Neue Vignette erstellen"
+    duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
+    destroy_answer: 'Antwort wurde gelöscht'  
+    answered: 'Fragebogen wurde erfolgreich beantwortet'
+    already_answered: 'Sie haben diesen Fragebogen bereits beantwortet'
+    no_slides: 'Keine Folien zum Beantworten'
+    not_found: 'Der angeforderte Fragebogen wurde nicht gefunden'
+    no_lecture: 'Die angeforderte Vorlesung wurde nicht gefunden'
+    not_vignettes_lecture: 'Die Vorlesung kann nicht für Vignetten verwendet werden'
+    create_new_info_slide: 'Neue Info-Folie erstellen'
+    create_new_slide: 'Neue Folie erstellen'
+    info_slide_created: 'Info-Folie wurde erstellt.'
+    info_slide_updated: 'Info-Folie wurde aktualisiert.'
+    slide_updated: 'Folie wurde erfolgreich aktualisiert.'
+    slide_created: 'Folie wurde erfolgreich erstellt.'
+    slide_not_created: 'Folie konnte nicht erstellt werden.'
+    published: 'Vignette wurde erfolgreich veröffentlicht.'
+    unpublished: 'Vignette wurde erfolgreich zurückgezogen.'
+    publish_modal: |
+      Sind Sie sicher, dass Sie diese Vignette veröffentlichen möchten?
+
+      Wichtig: Nach der Veröffentlichung können Sie den Inhalt und die Fragen der Vignette nicht mehr bearbeiten.
+
+      Sie können die Vignette später zwar wieder zurückziehen, um sie vor Studierenden zu verbergen, aber der Inhalt bleibt für die Bearbeitung gesperrt.
+    unpublish_modal: |
+      Sind Sie sicher, dass Sie diese Vignette zurückziehen möchten?
+
+      Durch das Zurückziehen wird diese Vignette für Studierende unsichtbar, aber alle Antworten und Statistiken bleiben erhalten.
+
+      Wichtig: Die Vignette bleibt für die Bearbeitung gesperrt. Wenn Sie Änderungen vornehmen möchten, duplizieren Sie bitte die Vignette.
+
+    not_published: 'Vignette konnte nicht veröffentlicht werden.'
+    not_unpublished: 'Vignette konnte nicht zurückgezogen werden.'
+    not_accessible: 'Fragebogen ist nicht zugänglich.'
+    not_editable: 'Vignette kann nicht bearbeitet werden, da sie bereits veröffentlicht wurde.'
+    no_slides: "Vignette ist leer"
+    not_deleted: 'Vignette konnte nicht gelöscht werden'
+    slide_not_updated: 'Folie konnte nicht aktualisiert werden'
+    slide_deleted: 'Folie wurde erfolgreich gelöscht.'
+    slide_not_deleted: 'Folie konnte nicht gelöscht werden.'
+    slide_confirm_delete: 'Sind Sie sicher, dass Sie diese Folie löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    deleted: 'Vignette erfolgreich gelöscht'
+    confirm_delete: > 
+      Sind Sie sicher, dass Sie diese Vignette löschen möchten?
+      Dadurch werden auch alle zugehörigen Folien, Antworten und Statistiken gelöscht.
+    duplicated: 'Vignette wurde erfolgreich dupliziert'
+    not_duplicated: 'Vignette konnte nicht dupliziert werden'
+    body_too_short_error: 'Der Text ist zu kurz'
+    body_missing_error: 'Der Text fehlt'
+    not_a_number_error: "Bitte geben Sie eine gültige Zahl ein"
+    number_missing_error: "Bitte geben Sie eine Zahl ein"
+    number_too_large_error: "Bitte geben Sie eine Zahl kleiner oder gleich %{max} ein"
+    number_too_small_error: "Bitte geben Sie eine Zahl größer oder gleich %{min} ein"
+    no_option: "Mindestens eine Option muss angegeben werden"
+    empty_option: "Alle Optionen müssen Text enthalten"
+
+    info_slide_empty_title: "Titel fehlt"
+    info_slide_empty_icon: "Symbol fehlt"
+    info_slide_deleted: "Info-Folie wurde erfolgreich gelöscht"
+    info_slide_not_deleted: "Info-Folie konnte nicht gelöscht werden"
+    info_slide_confirm_delete: 'Sind Sie sicher, dass Sie diese Info-Folie löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+
+    preview: "Vorschau"
+    duplicate: "Duplizieren"
+    export_answers: "Statistiken exportieren"
+    delete: "Vignette löschen"
+    confirm_publication: "Vignette veröffentlichen"
   
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'

@@ -2556,7 +2556,6 @@ en:
     slide_not_deleted: 'Slide could not be deleted.'
     slide_confirm_delete: 'Are you sure you want to delete this slide? 
       This action cannot be undone.'
-    delete: "Delete Vignette"
     deleted: 'Vignette successfully deleted'
     confirm_delete: > 
       Are you sure you want to delete this vignette?
@@ -2578,6 +2577,12 @@ en:
     info_slide_not_deleted: "Info slide could not be deleted"
     info_slide_confirm_delete: 'Are you sure you want to delete this info slide? 
       This action cannot be undone.'
+
+    preview: "Preview"
+    duplicate: "Duplicate"
+    export_answers: "Export answers"
+    delete: "Delete Vignette"
+    confirm_publication: "Confirm publication"
 
 
   external_link_lc: 'external link'

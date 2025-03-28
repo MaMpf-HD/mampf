@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_27_121828) do
+ActiveRecord::Schema[7.1].define(version: 2025_03_28_001000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -965,8 +965,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_27_121828) do
   end
 
   create_table "vignettes_info_slides", force: :cascade do |t|
-    t.string "title"
-    t.bigint "vignettes_questionnaire_id"
+    t.string "title", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
     t.string "icon_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -992,9 +992,9 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_27_121828) do
     t.string "title"
     t.bigint "lecture_id", null: false
     t.boolean "published"
+    t.boolean "editable", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "editable", default: false
     t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
   end
 
@@ -1014,19 +1014,19 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_27_121828) do
     t.bigint "user_id", null: false
     t.bigint "vignettes_answer_id"
     t.integer "time_on_slide"
+    t.integer "total_time_on_slide"
     t.text "time_on_info_slides"
     t.text "info_slides_access_count"
     t.text "info_slides_first_access_time"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "total_time_on_slide"
     t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
     t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
   end
 
   create_table "vignettes_slides", force: :cascade do |t|
     t.bigint "vignettes_questionnaire_id", null: false
-    t.integer "position"
+    t.integer "position", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["position"], name: "index_vignettes_slides_on_position"

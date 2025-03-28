@@ -25,7 +25,7 @@
           class: "btn btn-outline-primary me-2",
           method: :get do %>
         <i class="bi bi-eye"></i>
-        Preview
+        <%= t("vignettes.preview") %>
       <% end %>
 
       <button type="button" class="btn btn-outline-primary me-2"
@@ -37,14 +37,14 @@
       <button type="button" class="btn btn-outline-secondary me-2"
               data-bs-toggle="modal" data-bs-target="#duplicateModal">
         <i class="bi bi-files"></i>
-        Duplicate
+        <%= t("vignettes.duplicate") %>
       </button>
 
       <%= button_to export_answers_questionnaire_path(@questionnaire),
           class: 'btn btn-outline-secondary me-2',
           method: :get do %>
         <i class="bi bi-file-earmark-spreadsheet"></i>
-        Export Answers
+        <%= t("vignettes.export_answers") %>
       <% end %>
 
       <button type="button" class="btn btn-outline-danger"
@@ -131,7 +131,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="publishModalLabel">Confirm Publication</h5>
+        <h5 class="modal-title" id="publishModalLabel"><%= t("vignettes.confirm_publication")%></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -161,7 +161,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="duplicateModalLabel">Duplicate Questionnaire</h5>
+        <h5 class="modal-title" id="duplicateModalLabel"><%= t("vignettes.duplicate") %></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <%= form_with url: duplicate_questionnaire_path(@questionnaire), method: :post do |form| %>
