@@ -1,75 +1,77 @@
-<div class="container mt-4">
-    <h2> <%= t('vignettes.questionnaires') %></h2>
-    <br>
-  
-  <% if @questionnaires.blank? %>
-    <div class="alert alert-info">
-      <%= t('vignettes.no_questionnaires') %>
-    </div>
-  <% else %>
-    <% grouped = group_questionnaires_by_completion(@questionnaires, current_user) %>
+<% I18n.with_locale(@lecture&.locale_with_inheritance) do %>
+    <div class="container mt-4">
+        <h2> <%= t('vignettes.questionnaires') %></h2>
+        <br>
     
-    <!-- Available Questionnaires -->
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5>
-          <%= t('vignettes.active_questionnaires') %>
-          <span class="badge bg-primary rounded-pill ms-2"><%= grouped[:incomplete].count %></span>
-        </h5>
-      </div>
-      <div class="card-body">
-        <% if grouped[:incomplete].any? %>
-          <div class="list-group">
-            <% sort_questionnaires_by_completion_status(grouped[:incomplete], current_user).each do |questionnaire| %>
-              <% user_answer = current_user.vignettes_user_answers.find_by(questionnaire: questionnaire) %>
-              
-              <%= link_to take_questionnaire_path(questionnaire), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
-                    <h6 class="mb-1 fw-bold"><%= questionnaire.title %></h6>
-               
-                <% unless user_answer.present? %>
-                    <span class="btn btn-sm btn-outline-primary">
-                        <%= t('vignettes.take') %>
-                    </span>
-                <% else %>
-                    <span class="btn btn-sm btn-outline-primary">
-                        <%= t('vignettes.continue') %>
-                    </span>
+    <% if @questionnaires.blank? %>
+        <div class="alert alert-info">
+        <%= t('vignettes.no_questionnaires') %>
+        </div>
+    <% else %>
+        <% grouped = group_questionnaires_by_completion(@questionnaires, current_user) %>
+        
+        <!-- Available Questionnaires -->
+        <div class="card mb-4">
+        <div class="card-header">
+            <h5>
+            <%= t('vignettes.active_questionnaires') %>
+            <span class="badge bg-primary rounded-pill ms-2"><%= grouped[:incomplete].count %></span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <% if grouped[:incomplete].any? %>
+            <div class="list-group">
+                <% sort_questionnaires_by_completion_status(grouped[:incomplete], current_user).each do |questionnaire| %>
+                <% user_answer = current_user.vignettes_user_answers.find_by(questionnaire: questionnaire) %>
+                
+                <%= link_to take_questionnaire_path(questionnaire), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+                        <h6 class="mb-1 fw-bold"><%= questionnaire.title %></h6>
+                
+                    <% unless user_answer.present? %>
+                        <span class="btn btn-sm btn-outline-primary">
+                            <%= t('vignettes.take') %>
+                        </span>
+                    <% else %>
+                        <span class="btn btn-sm btn-outline-primary">
+                            <%= t('vignettes.continue') %>
+                        </span>
+                    <% end %>
+                    
                 <% end %>
-                
-              <% end %>
+                <% end %>
+            </div>
+            <% else %>
+            <p class="text-muted"><%= t('vignettes.no_active_questionnaires') %></p>
             <% end %>
-          </div>
-        <% else %>
-          <p class="text-muted"><%= t('vignettes.no_active_questionnaires') %></p>
-        <% end %>
-      </div>
-    </div>
+        </div>
+        </div>
 
-    <!-- Completed Questionnaires -->
-    <div class="card mb-4">
-      <div class="card-header">
-        <h5>
-          <%= t('vignettes.completed_questionnaires') %>
-          <span class="badge bg-primary rounded-pill ms-2"><%= grouped[:completed].count %></span>
-        </h5>
-      </div>
-      <div class="card-body">
-        <% if grouped[:completed].any? %>
-          <div class="list-group">
-            <% grouped[:completed].each do |questionnaire| %>
-              <div class="list-group-item d-flex justify-content-between align-items-center text-muted">
-                <h6 class="mb-1 fw-bold"><%= questionnaire.title %></h6>
-                
-                <span class="btn btn-sm btn-outline-secondary disabled">
-                  <%= t('vignettes.completed') %>
-                </span>
-              </div>
+        <!-- Completed Questionnaires -->
+        <div class="card mb-4">
+        <div class="card-header">
+            <h5>
+            <%= t('vignettes.completed_questionnaires') %>
+            <span class="badge bg-primary rounded-pill ms-2"><%= grouped[:completed].count %></span>
+            </h5>
+        </div>
+        <div class="card-body">
+            <% if grouped[:completed].any? %>
+            <div class="list-group">
+                <% grouped[:completed].each do |questionnaire| %>
+                <div class="list-group-item d-flex justify-content-between align-items-center text-muted">
+                    <h6 class="mb-1 fw-bold"><%= questionnaire.title %></h6>
+                    
+                    <span class="btn btn-sm btn-outline-secondary disabled">
+                    <%= t('vignettes.completed') %>
+                    </span>
+                </div>
+                <% end %>
+            </div>
+            <% else %>
+            <p class="text-muted"><%= t('vignettes.no_completed_questionnaires') %></p>
             <% end %>
-          </div>
-        <% else %>
-          <p class="text-muted"><%= t('vignettes.no_completed_questionnaires') %></p>
-        <% end %>
-      </div>
+        </div>
+        </div>
+    <% end %>
     </div>
-  <% end %>
-</div>
+<% end %>
