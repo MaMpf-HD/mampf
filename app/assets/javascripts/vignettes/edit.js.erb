@@ -162,10 +162,17 @@
     const form = $(`#${prefix}slide-form`);
     const unsavedChangesWarning = $("#unsaved-changes-warning");
     const formSubmitButton = form.find(".slide-submit-btn");
-    const initialState = form.serialize();
 
-    form.find("input, select, textarea, trix-editor").on("change keyup", checkForChanges);
-    $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
+    let initialState = null;
+
+    const trixEditor = form.find("trix-editor");
+    if (trixEditor.length > 0) {
+      trixEditor.on("trix-initialize", function () {
+        initialState = form.serialize();
+        form.find("input, select, textarea, trix-editor").on("change keyup", checkForChanges);
+        $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
+      });
+    }
 
     function checkForChanges() {
       const currentState = form.serialize();
