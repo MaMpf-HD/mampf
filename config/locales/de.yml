@@ -2658,6 +2658,7 @@ de:
   vignettes:
     vignettes: 'Vignettes'
     questionnaires: 'Fragebögen'
+    questionnaire: 'Fragebogen'
     create_new: "Neue Vignette erstellen"
     duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
     destroy_answer: 'Antwort wurde gelöscht'  
