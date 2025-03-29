@@ -476,13 +476,13 @@ de:
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       comments_disabled: >
         Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
-      enable_annotation_button: 'Dürfen Studierende Annotationen für Sie sichtbar machen?'
+      enable_annotation_button: 'Dürfen Studierende Annotationen für Dich sichtbar machen?'
       enable_annotation_button_helpdesk: >
-        Wenn Sie "ja" anwählen, dann haben Studierende die Möglichkeit,
+        Wenn Du "ja" auswählst, dann haben Studierende die Möglichkeit,
         ihre Annotationen für den/die Dozent*in bzw. alle Editor*innen
-        der Vorlesung sichtbar machen. Sie können diese dann entweder
+        der Vorlesung sichtbar machen. Du kannst diese dann entweder
         im normalen Thyme-Player oder im Thyme-Feedback-Player einsehen
-        und dadurch Rückmeldung zu Ihren Vorlesungsvideos erhalten.
+        und dadurch Rückmeldung zu Deinen Vorlesungsvideos erhalten.
       enable_annotation_button_inherit_helpdesk: >
         Ist die Option "von Vorlesung erben" ausgewählt, dann wird die
         globale Option aus den Vorlesungseinstellungen (Kommentare) übernommen.
@@ -2667,7 +2667,7 @@ de:
     duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
     destroy_answer: 'Antwort wurde gelöscht'  
     answered: 'Fragebogen wurde erfolgreich beantwortet'
-    already_answered: 'Sie haben diesen Fragebogen bereits beantwortet'
+    already_answered: 'Du hast diesen Fragebogen bereits beantwortet'
     no_slides: 'Keine Folien zum Beantworten'
     not_found: 'Der angeforderte Fragebogen wurde nicht gefunden'
     no_lecture: 'Die angeforderte Vorlesung wurde nicht gefunden'
@@ -2682,17 +2682,17 @@ de:
     published: 'Vignette wurde erfolgreich veröffentlicht.'
     unpublished: 'Vignette wurde erfolgreich zurückgezogen.'
     publish_modal: |
-      Sind Sie sicher, dass Sie diese Vignette veröffentlichen möchten?
+      Bist Du sicher, dass Du diese Vignette veröffentlichen möchtest?
 
-      Wichtig: Nach der Veröffentlichung können Sie den Inhalt und die Fragen der Vignette nicht mehr bearbeiten.
+      Wichtig: Nach der Veröffentlichung kannst Du den Inhalt und die Fragen der Vignette nicht mehr bearbeiten.
 
-      Sie können die Vignette später zwar wieder zurückziehen, um sie vor Studierenden zu verbergen, aber der Inhalt bleibt für die Bearbeitung gesperrt.
+      Du kannst die Vignette später zwar wieder zurückziehen, um sie vor Studierenden zu verbergen, aber der Inhalt bleibt für die Bearbeitung gesperrt.
     unpublish_modal: |
-      Sind Sie sicher, dass Sie diese Vignette zurückziehen möchten?
+      Bist Du sicher, dass Du diese Vignette zurückziehen möchten?
 
       Durch das Zurückziehen wird diese Vignette für Studierende unsichtbar, aber alle Antworten und Statistiken bleiben erhalten.
 
-      Wichtig: Die Vignette bleibt für die Bearbeitung gesperrt. Wenn Sie Änderungen vornehmen möchten, duplizieren Sie bitte die Vignette.
+      Wichtig: Die Vignette bleibt für die Bearbeitung gesperrt. Wenn Du Änderungen vornehmen möchtest, dupliziere bitte die Vignette.
 
     not_published: 'Vignette konnte nicht veröffentlicht werden.'
     not_unpublished: 'Vignette konnte nicht zurückgezogen werden.'
@@ -2703,25 +2703,23 @@ de:
     slide_not_updated: 'Folie konnte nicht aktualisiert werden'
     slide_deleted: 'Folie wurde erfolgreich gelöscht.'
     slide_not_deleted: 'Folie konnte nicht gelöscht werden.'
-    slide_confirm_delete: 'Sind Sie sicher, dass Sie diese Folie löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    slide_confirm_delete: 'Bist Du sicher, dass Du diese Folie löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.'
     deleted: 'Vignette erfolgreich gelöscht'
     confirm_delete: > 
-      Sind Sie sicher, dass Sie diese Vignette löschen möchten?
+      Bist Du sicher, dass Du diese Vignette löschen möchtest?
       Dadurch werden auch alle zugehörigen Folien, Antworten und Statistiken gelöscht.
     duplicated: 'Vignette wurde erfolgreich dupliziert'
     not_duplicated: 'Vignette konnte nicht dupliziert werden'
     body_too_short_error: 'Der Text ist zu kurz'
     body_missing_error: 'Der Text fehlt'
-    not_a_number_error: "Bitte geben Sie eine gültige Zahl ein"
-    number_missing_error: "Bitte geben Sie eine Zahl ein"
-    number_too_large_error: "Bitte geben Sie eine Zahl kleiner oder gleich %{max} ein"
-    number_too_small_error: "Bitte geben Sie eine Zahl größer oder gleich %{min} ein"
+    not_a_number_error: "Bitte gib eine gültige Zahl ein"
+    number_missing_error: "Bitte gib eine Zahl ein"
+    number_too_large_error: "Bitte gib eine Zahl kleiner oder gleich %{max} ein"
+    number_too_small_error: "Bitte gib eine Zahl größer oder gleich %{min} ein"
     no_option: "Mindestens eine Option muss angegeben werden"
     empty_option: "Alle Optionen müssen Text enthalten"
     publish: "Veröffentlichen"
     unpublish: "Zurückziehen"
-    unsaved_changes_warning: "Sie haben ungespeicherte Änderungen. Bitte speichern Sie Ihre Änderungen, bevor Sie weggehen."
-    unsaved_changes_modal: "Sie haben ungespeicherte Änderungen in der aktuellen Folie. Möchten Sie diese speichern oder verwerfen, bevor Sie eine neue bearbeiten?"
     create_slide: "Folie erstellen"
     update_slide: "Folie aktualisieren"
     delete_slide: "Folie löschen"
@@ -2735,13 +2733,14 @@ de:
     info_slide_empty_icon: "Symbol fehlt"
     info_slide_deleted: "Info-Folie wurde erfolgreich gelöscht"
     info_slide_not_deleted: "Info-Folie konnte nicht gelöscht werden"
-    info_slide_confirm_delete: 'Sind Sie sicher, dass Sie diese Info-Folie löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.'
+    info_slide_confirm_delete: 'Bist Du sicher, dass Du diese Info-Folie löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.'
     create_info_slide: "Info-Folie erstellen"
     update_info_slide: "Info-Folie aktualisieren"
 
     drag_slides_tip: "Ziehe die Folien, um deren Reihenfolge zu ändern."
+    unsaved_changes_warning: "Du hast ungespeicherte Änderungen. Bitte speichere sie, bevor Du weggehst."
     unsaved_changes: "Ungespeicherte Änderungen"
-    unsaved_changes_modal: "Sie haben ungespeicherte Änderungen in der aktuellen Folie. Möchten Sie diese speichern oder verwerfen, bevor Sie eine neue bearbeiten?"
+    unsaved_changes_modal: "Du hast ungespeicherte Änderungen in der aktuellen Folie. Möchtest Du diese speichern oder verwerfen, bevor Du eine neue bearbeitest?"
 
     preview: "Vorschau"
     duplicate: "Duplizieren"
