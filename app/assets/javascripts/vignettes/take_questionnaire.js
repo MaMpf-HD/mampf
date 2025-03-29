@@ -8,6 +8,7 @@ $(document).on("turbolinks:load", () => {
     return;
   }
 
+  testFormValidityOnPreview();
   registerSubmitHandler();
   registerTextAnswerValidator();
 
@@ -23,6 +24,18 @@ function registerSubmitHandler() {
     if (!isValid) {
       event.preventDefault();
       return false;
+    }
+  });
+}
+
+function testFormValidityOnPreview() {
+  const previewNext = $("#vignettes-next-slide-preview");
+  if (previewNext.length === 0) return;
+
+  previewNext.click((e) => {
+    const form = document.querySelector(VIGNETTE_FORM_ID);
+    if (!form.reportValidity()) {
+      e.preventDefault();
     }
   });
 }
