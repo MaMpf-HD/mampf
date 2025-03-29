@@ -2722,6 +2722,7 @@ de:
     number_too_large_error: "Bitte gib eine Zahl kleiner oder gleich %{max} ein"
     number_too_small_error: "Bitte gib eine Zahl größer oder gleich %{min} ein"
     no_option: "Mindestens eine Option muss angegeben werden"
+    multiple_choice_at_least_one: "Wähle mindestens eine Antwortmöglichkeit aus"
     empty_option: "Alle Optionen müssen Text enthalten"
     publish: "Veröffentlichen"
     unpublish: "Zurückziehen"

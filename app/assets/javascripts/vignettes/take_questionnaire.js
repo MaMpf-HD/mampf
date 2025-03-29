@@ -1,12 +1,12 @@
-const VIGNETTE_FORM_ID = "#vignettes-answer-form";
-const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
-const TEXT_ANSWER_ID = "vignettes_answer_text";
+var VIGNETTE_FORM_ID = "#vignettes-answer-form";
+var CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
+var TEXT_ANSWER_ID = "vignettes_answer_text";
 
 function shouldRegisterVignette() {
   return $(VIGNETTE_FORM_ID).length > 0;
 }
 
-$(document).on("turbolinks:load", function () {
+$(document).ready(function () {
   if (!shouldRegisterVignette()) {
     return;
   }
@@ -16,6 +16,7 @@ $(document).on("turbolinks:load", function () {
   });
 
   registerTextAnswerValidator();
+  registerMultipleChoiceAnswerValidator();
   testFormValidityOnPreview();
 
   const stats = new VignetteSlideStatistics();
@@ -89,6 +90,15 @@ function validateTextAnswer() {
   return isValid;
 }
 
+function registerMultipleChoiceAnswerValidator() {
+  const checkboxes = document.querySelectorAll(CHECK_BOXES_ID);
+  checkboxes.forEach((checkbox) => {
+    $(checkbox).on("change", () => {
+      validateMultipleChoiceAnswer(checkboxes);
+    });
+  });
+}
+
 function validateMultipleChoiceAnswer(checkboxes) {
   if (checkboxes.length === 0) {
     return true;
@@ -99,7 +109,7 @@ function validateMultipleChoiceAnswer(checkboxes) {
   // Use the last checkbox to set custom validity for the group
   const lastCheckbox = checkboxes[checkboxes.length - 1];
   if (!isValid) {
-    lastCheckbox.setCustomValidity("Please select at least one option.");
+    lastCheckbox.setCustomValidity(lastCheckbox.dataset.messageAtLeastOne);
   }
   else {
     lastCheckbox.setCustomValidity("");
@@ -113,7 +123,7 @@ function validateMultipleChoiceAnswer(checkboxes) {
 // Statistics
 ////////////////////////////////////////////////////////////////////////////////
 
-class VignetteSlideStatistics {
+var VignetteSlideStatistics = class {
   slideAccessDate = Date.now();
   slideStartTime = new Date();
   slideTime = 0;
@@ -176,7 +186,7 @@ class VignetteSlideStatistics {
     this.slideTime = Math.floor(this.slideTime / 1000);
     this.totalSlideTime = Math.floor(this.totalSlideTime / 1000);
   }
-}
+};
 
 function registerStatisticsHandler(stats) {
   // Info Slide - Opening
