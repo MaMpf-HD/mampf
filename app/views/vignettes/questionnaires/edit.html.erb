@@ -8,7 +8,8 @@
 <div class="container-md small-width" id="vignettes-wrapper">
   <!-- Back Button -->
   <a href="<%= lecture_edit_path %>" id="vignettes-back-btn"
-    class="btn btn-outline-secondary">
+    class="btn btn-outline-secondary"
+    data-navigate-away-message="<%= t('vignettes.unsaved_changes_navigation') %>">
     <i class="bi bi-arrow-left"></i>
     <%= t("buttons.back") %>
   </a>

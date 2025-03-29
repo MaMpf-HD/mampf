@@ -2604,6 +2604,8 @@ en:
     drag_slides_tip: 'Drag slides to change their order.'
     unsaved_changes_warning: "You have unsaved changes."
     unsaved_changes: "Unsaved Changes"
+    unsaved_changes_navigation: >
+      You have unsaved changes. Are you sure you want to leave this page?
     unsaved_changes_modal: > 
       You have unsaved changes in the current slide.
       Do you want to save or discard them before editing a new one?

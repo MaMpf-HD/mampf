@@ -301,15 +301,38 @@
       formSubmit = true;
     });
 
-    window.addEventListener("beforeunload", function (event) {
-      let unsavedChangesModalOpen = $("#unsaved-changes-modal").hasClass("show");
-      if (hasUnsavedChanges && !unsavedChangesModalOpen && !formSubmit) {
-        const fallback_message = "You have unsaved changes. Are you sure you want to leave this page?";
-        event.preventDefault();
-        event.returnValue = fallback_message;
-        return fallback_message;
+    const backButton = $("#vignettes-back-btn");
+    const confirmMessage = backButton.attr("data-navigate-away-message");
+
+    window.addEventListener("beforeunload", checkForChangesAndPreventFromLeaving);
+    backButton.click(function () {
+      if (shouldAllowNavigatingAway()) {
+        formSubmit = false;
+        return;
       }
-      formSubmit = false;
+      const wantsToNavigateAway = confirm(confirmMessage);
+      if (wantsToNavigateAway) {
+        formSubmit = false;
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
     });
+
+    function shouldAllowNavigatingAway() {
+      const unsavedChangesModalOpen = $("#unsaved-changes-modal").hasClass("show");
+      return !hasUnsavedChanges || unsavedChangesModalOpen || formSubmit;
+    }
+
+    function checkForChangesAndPreventFromLeaving() {
+      if (shouldAllowNavigatingAway()) {
+        formSubmit = false;
+        return;
+      }
+
+      event.preventDefault();
+      event.returnValue = confirmMessage;
+      return confirmMessage;
+    }
   }
 })();
