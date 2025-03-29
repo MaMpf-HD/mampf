@@ -80,6 +80,7 @@ function handleNumberOptions() {
   if (!minField.length || !maxField.length) {
     return;
   }
+
   function validateMinMax() {
     if (minField.val() && maxField.val()) {
       const minValue = parseFloat(minField.val());
@@ -100,7 +101,6 @@ function handleNumberOptions() {
     }
   }
 
-  // Add event listeners to both fields
   minField.on("input", validateMinMax);
   maxField.on("input", validateMinMax);
 }

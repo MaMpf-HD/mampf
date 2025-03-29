@@ -88,15 +88,20 @@
             <div class="d-flex justify-content-end mt-3">
                 <!-- TODO: Do a better differentiation here -->
                 <% if @slide.question.type == "" %>
-                    <%= form.submit t("vignettes.next_slide"), class: "btn slide-footer-btn" %>
+                    <%= form.submit t("vignettes.next_slide"),
+                        class: "btn slide-footer-btn" %>
                 <% else %>
-                    <%= form.submit t("vignettes.submit_answer"), class: "btn slide-footer-btn" %>
+                    <%= form.submit t("vignettes.submit_answer"),
+                        class: "btn slide-footer-btn" %>
                 <% end %>
             </div>
         <% else %>
             <div class="d-flex justify-content-end mt-3">
-                <%= link_to t("vignettes.return_to_edit"), edit_questionnaire_path(@questionnaire), class: "btn" %>
-                <%= link_to t("vignettes.next_slide"), preview_questionnaire_path(@questionnaire, position: @position.to_i + 1), class: "btn slide-footer-btn" %>
+                <%= link_to t("vignettes.return_to_edit"),
+                    edit_questionnaire_path(@questionnaire), class: "btn" %>
+                <%= link_to t("vignettes.next_slide"),
+                    preview_questionnaire_path(@questionnaire, position: @position.to_i + 1),
+                    class: "btn slide-footer-btn", id: "vignettes-next-slide-preview" %>
             </div>
         <% end %>
     </div>
