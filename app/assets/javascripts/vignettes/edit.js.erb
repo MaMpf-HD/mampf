@@ -140,8 +140,8 @@
             clearTimeout(spinnerTimeout);
             loadingSpinner.hide();
             currentContainer.show();
+            setupChangeDetection(isInfoSlide);
           });
-          setupChangeDetection(isInfoSlide);
           fixVideoAttachments();
         },
         error: function (xhr, status, error) {
@@ -163,19 +163,13 @@
     const unsavedChangesWarning = $("#unsaved-changes-warning");
     const formSubmitButton = form.find(".slide-submit-btn");
 
-    let initialState = null;
-
-    const trixEditor = form.find("trix-editor");
-    if (trixEditor.length > 0) {
-      trixEditor.on("trix-initialize", function () {
-        initialState = form.serialize();
-        form.find("input, select, textarea, trix-editor").on("change keyup", checkForChanges);
-        $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
-      });
-    }
+    const initialState = form.serialize();
+    form.find("input, select, textarea, trix-editor").on("change keyup", checkForChanges);
+    $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
 
     function checkForChanges() {
       const currentState = form.serialize();
+
       if (currentState !== initialState) {
         unsavedChangesWarning.removeClass("d-none");
         formSubmitButton.removeClass("d-none");
