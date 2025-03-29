@@ -49,11 +49,11 @@
         <%= t("vignettes.duplicate") %>
       </button>
 
-      <%= button_to export_answers_questionnaire_path(@questionnaire),
+      <%= button_to export_statistics_questionnaire_path(@questionnaire),
           class: 'btn btn-outline-secondary me-2',
           method: :get do %>
         <i class="bi bi-file-earmark-spreadsheet"></i>
-        <%= t("vignettes.export_answers") %>
+        <%= t("vignettes.export_statistics") %>
       <% end %>
 
       <button type="button" class="btn btn-outline-danger"

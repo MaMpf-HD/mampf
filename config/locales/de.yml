@@ -2744,7 +2744,7 @@ de:
 
     preview: "Vorschau"
     duplicate: "Duplizieren"
-    export_answers: "Statistiken exportieren"
+    export_statistics: "Statistiken exportieren"
     delete: "Vignette löschen"
     confirm_publication: "Vignette veröffentlichen"
 

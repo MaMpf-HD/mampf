@@ -576,7 +576,7 @@ Rails.application.routes.draw do
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do
       member do
-        get :export_answers
+        get :export_statistics
         post :submit_answer
         post :duplicate
         patch :publish

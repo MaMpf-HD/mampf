@@ -2602,7 +2602,7 @@ en:
 
     preview: "Preview"
     duplicate: "Duplicate"
-    export_answers: "Export answers"
+    export_statistics: "Export statistics"
     delete: "Delete Vignette"
     confirm_publication: "Confirm publication"
 

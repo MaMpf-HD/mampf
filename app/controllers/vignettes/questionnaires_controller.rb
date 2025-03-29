@@ -1,7 +1,7 @@
 module Vignettes
   class QuestionnairesController < ApplicationController
     before_action :set_questionnaire,
-                  only: [:take, :preview, :submit_answer, :edit, :publish, :export_answers,
+                  only: [:take, :preview, :submit_answer, :edit, :publish, :export_statistics,
                          :update_slide_position, :destroy, :duplicate]
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :check_take_accessibility, only: [:take, :submit_answer]
@@ -136,7 +136,7 @@ module Vignettes
       render json: { error: e.message }, status: :unprocessable_entity
     end
 
-    def export_answers
+    def export_statistics
       csv_data = @questionnaire.answer_data_csv
       send_data(csv_data, filename: "questionnaire-#{@questionnaire.id}-answers.csv")
     end
