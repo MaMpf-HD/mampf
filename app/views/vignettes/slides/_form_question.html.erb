@@ -51,7 +51,8 @@
     </template>
     
     <button type="button" id="vignette-multiple-choice-add"
-            class="btn btn-outline-secondary">
+            class="btn btn-outline-secondary"
+            <%= form.object.questionnaire.editable ? '' : 'disabled' %>>
         <i class="bi bi-plus-circle"></i>
         <%= t("vignettes.add_multiple_choice_option") %>
     </button>
