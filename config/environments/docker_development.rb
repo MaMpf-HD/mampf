@@ -30,7 +30,7 @@ Rails.application.configure do
   end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :docker_development
+  config.active_storage.service = :development
 
   config.i18n.default_locale = :de
 
