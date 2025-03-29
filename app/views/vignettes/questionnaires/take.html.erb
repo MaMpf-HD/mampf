@@ -1,5 +1,4 @@
 <%= stylesheet_link_tag 'vignettes-take' %>
-<%= javascript_include_tag 'vignettes/take_questionnaire' %>
 
 <!-- Info Slide Modals -->
 <% @slide.info_slides.each_with_index do |info_slide, index| %>
@@ -109,3 +108,7 @@
 </div>
 
 <% end %>
+
+<!-- In general, for why we include this tag at the bottom -->
+<!-- https://stackoverflow.com/a/39750190/ -->
+<%= javascript_include_tag 'vignettes/take_questionnaire', "data-turbolinks-eval" => "false" %>

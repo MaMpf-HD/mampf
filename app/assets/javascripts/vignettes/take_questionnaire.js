@@ -1,49 +1,56 @@
-var VIGNETTE_FORM_ID = "#vignettes-answer-form";
+const VIGNETTE_FORM_ID = "#vignettes-answer-form";
+const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
+const TEXT_ANSWER_ID = "vignettes_answer_text";
+
 function shouldRegisterVignette() {
   return $(VIGNETTE_FORM_ID).length > 0;
 }
 
-$(document).on("turbolinks:load", () => {
+$(document).on("turbolinks:load", function () {
   if (!shouldRegisterVignette()) {
     return;
   }
 
-  testFormValidityOnPreview();
-  registerSubmitHandler();
+  $(VIGNETTE_FORM_ID).submit((event) => {
+    return validateForm(event);
+  });
+
   registerTextAnswerValidator();
+  testFormValidityOnPreview();
 
   const stats = new VignetteSlideStatistics();
   registerStatisticsHandler(stats);
 });
 
-function registerSubmitHandler() {
-  $(VIGNETTE_FORM_ID).submit((event) => {
-    let isValid = false;
-    isValid = validateTextAnswer();
+////////////////////////////////////////////////////////////////////////////////
+// Validators
+////////////////////////////////////////////////////////////////////////////////
 
-    if (!isValid) {
-      event.preventDefault();
-      return false;
-    }
-  });
+function validateForm(event) {
+  const form = document.querySelector(VIGNETTE_FORM_ID);
+  const isValidFirstCheck = validateTextAnswer();
+
+  if (isValidFirstCheck) {
+    const checkboxes = $(form).find(CHECK_BOXES_ID);
+    validateMultipleChoiceAnswer(checkboxes);
+  }
+
+  if (!form.reportValidity()) {
+    event.preventDefault();
+    return false;
+  }
+
+  return true;
 }
 
 function testFormValidityOnPreview() {
   const previewNext = $("#vignettes-next-slide-preview");
   if (previewNext.length === 0) return;
 
-  previewNext.click((e) => {
-    const form = document.querySelector(VIGNETTE_FORM_ID);
-    if (!form.reportValidity()) {
-      e.preventDefault();
-    }
+  previewNext.click((event) => {
+    return validateForm(event);
   });
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// Text Answer Fields
-////////////////////////////////////////////////////////////////////////////////
-var TEXT_ANSWER_ID = "vignettes_answer_text";
 
 function registerTextAnswerValidator() {
   const textBody = document.getElementById(TEXT_ANSWER_ID);
@@ -79,6 +86,26 @@ function validateTextAnswer() {
   }
 
   textBody.reportValidity();
+  return isValid;
+}
+
+function validateMultipleChoiceAnswer(checkboxes) {
+  if (checkboxes.length === 0) {
+    return true;
+  }
+
+  const isValid = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+  // Use the last checkbox to set custom validity for the group
+  const lastCheckbox = checkboxes[checkboxes.length - 1];
+  if (!isValid) {
+    lastCheckbox.setCustomValidity("Please select at least one option.");
+  }
+  else {
+    lastCheckbox.setCustomValidity("");
+  }
+
+  lastCheckbox.reportValidity();
   return isValid;
 }
 
