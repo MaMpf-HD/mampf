@@ -62,7 +62,7 @@
   </div>
 
   <!-- Info Slides -->
-  <h2 class="fs-4 fw-bold mt-4 mb-0">Info Slides</h1>
+  <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h1>
 
   <div class="accordion" id="info-vignettes-slides-accordion">
     <% @questionnaire.info_slides.each() do |info_slide| %>
@@ -78,7 +78,7 @@
   </button>
 
   <!-- Slides -->
-  <h2 class="fs-4 fw-bold mt-4 mb-0">Slides</h1>
+  <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.slides") %></h1>
   <% if @questionnaire.editable && @slides.size > 1%>
   <p>Drag the slides to change their order.</p>
   <% end %>

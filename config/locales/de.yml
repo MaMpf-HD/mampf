@@ -2658,6 +2658,8 @@ de:
   vignettes:
     vignettes: 'Vignettes'
     slide: 'Folie'
+    slides: 'Folien'
+    info_slides: 'Info-Folien'
     questionnaires: 'Fragebögen'
     questionnaire: 'Fragebogen'
     create_new: "Neue Vignette erstellen"

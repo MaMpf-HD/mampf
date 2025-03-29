@@ -2514,6 +2514,8 @@ en:
   vignettes:
     vignettes: 'Vignettes'
     slide: 'Slide'
+    slides: 'Slides'
+    info_slides: 'Info Slides'
     questionnaires: 'Questionnaires'
     questionnaires: 'Questionnaire'
     create_new: "Create new vignette"
