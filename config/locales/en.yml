@@ -2596,7 +2596,7 @@ en:
     update_info_slide: "Update Info Slide"
 
     drag_slides_tip: 'Drag slides to change their order.'
-    unsaved_changes_warning: "You have unsaved changes. Please save them before navigating away."
+    unsaved_changes_warning: "You have unsaved changes."
     unsaved_changes: "Unsaved Changes"
     unsaved_changes_modal: "You have unsaved changes in the current slide. Do you want to save or discard them before editing a new one?"
 

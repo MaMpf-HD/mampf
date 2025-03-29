@@ -14,9 +14,18 @@
   </a>
 
   <div id="vignette-edit-header">
-    <h1 class="fs-3 fw-bold">
-      <%= @questionnaire.title%>
-    </h1>
+    <div class="d-flex flex-wrap align-items-center mb-3">
+      <!-- Questionnaire Title -->
+      <h1 class="fs-3 fw-bold m-0 me-4">
+        <%= @questionnaire.title%>
+      </h1>
+
+      <!-- Unsaved changes -->
+      <div id="unsaved-changes-warning" class="alert alert-warning d-none m-0 p-1">
+        <i class="bi bi-exclamation-triangle"></i>
+        <%= t("vignettes.unsaved_changes_warning") %>
+      </div>
+    </div>
 
     <!-- Action Items -->
     <div class="d-flex flex-wrap">
@@ -53,12 +62,6 @@
         <%= t("vignettes.delete") %>
       </button>
     </div>
-  </div>
-
-  <!-- Unsaved changes -->
-  <div id="unsaved-changes-warning" class="alert alert-warning d-none mt-3">
-    <i class="bi bi-exclamation-triangle"></i>
-    <%= t("vignettes.unsaved_changes_warning") %>
   </div>
 
   <!-- Info Slides -->

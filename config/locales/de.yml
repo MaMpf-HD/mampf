@@ -2738,7 +2738,7 @@ de:
     update_info_slide: "Info-Folie aktualisieren"
 
     drag_slides_tip: "Ziehe die Folien, um deren Reihenfolge zu ändern."
-    unsaved_changes_warning: "Du hast ungespeicherte Änderungen. Bitte speichere sie, bevor Du weggehst."
+    unsaved_changes_warning: "Du hast ungespeicherte Änderungen."
     unsaved_changes: "Ungespeicherte Änderungen"
     unsaved_changes_modal: "Du hast ungespeicherte Änderungen in der aktuellen Folie. Möchtest Du diese speichern oder verwerfen, bevor Du eine neue bearbeitest?"
 
