@@ -2559,8 +2559,8 @@ en:
     slide_not_updated: 'Slide could not be updated'
     slide_deleted: 'Slide was successfully deleted.'
     slide_not_deleted: 'Slide could not be deleted.'
-    slide_confirm_delete: 'Are you sure you want to delete this slide? 
-      This action cannot be undone.'
+    slide_confirm_delete: >
+      Are you sure you want to delete this slide? This action cannot be undone.
     deleted: 'Vignette successfully deleted'
     confirm_delete: > 
       Are you sure you want to delete this vignette?
@@ -2577,6 +2577,11 @@ en:
     empty_option: "All options must have text"
     publish: "Publish"
     unpublish: "Unpublish"
+    editing_locked: "Editing locked"
+    editing_locked_info: >
+      This vignette has already been published (at least once) and can therefore
+      no longer be edited (or only a few elements remain available for editing).
+      If you want to make changes, please duplicate the vignette.
     create_slide: "Create Slide"
     update_slide: "Update Slide"
     delete_slide: "Delete Slide"
@@ -2590,15 +2595,17 @@ en:
     info_slide_empty_icon: "Icon is missing"
     info_slide_deleted: "Info slide was successfully deleted"
     info_slide_not_deleted: "Info slide could not be deleted"
-    info_slide_confirm_delete: 'Are you sure you want to delete this info slide? 
-      This action cannot be undone.'
+    info_slide_confirm_delete: >
+      Are you sure you want to delete this info slide? This action cannot be undone.
     create_info_slide: "Create Info Slide"
     update_info_slide: "Update Info Slide"
 
     drag_slides_tip: 'Drag slides to change their order.'
     unsaved_changes_warning: "You have unsaved changes."
     unsaved_changes: "Unsaved Changes"
-    unsaved_changes_modal: "You have unsaved changes in the current slide. Do you want to save or discard them before editing a new one?"
+    unsaved_changes_modal: > 
+      You have unsaved changes in the current slide.
+      Do you want to save or discard them before editing a new one?
 
     preview: "Preview"
     duplicate: "Duplicate"

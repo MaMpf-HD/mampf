@@ -14,10 +14,18 @@
   </a>
 
   <div id="vignette-edit-header">
-    <div class="d-flex flex-wrap align-items-center mb-3">
+    <div class="d-flex flex-wrap mb-3">
       <!-- Questionnaire Title -->
-      <h1 class="fs-3 fw-bold m-0 me-4">
+      <h1 class="fs-3 fw-bold m-0 me-2">
         <%= @questionnaire.title%>
+        <% if !@questionnaire.editable %>
+        <i class="bi bi-lock-fill text-secondary fs-4 m-0"
+           tabindex="0"
+           data-bs-toggle="popover"
+           data-bs-trigger="hover focus"
+           data-bs-title="<%= t('vignettes.editing_locked') %>"
+           data-bs-content="<%= t('vignettes.editing_locked_info') %>"></i>
+        <% end %>
       </h1>
 
       <!-- Unsaved changes -->

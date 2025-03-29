@@ -2703,7 +2703,9 @@ de:
     slide_not_updated: 'Folie konnte nicht aktualisiert werden'
     slide_deleted: 'Folie wurde erfolgreich gelöscht.'
     slide_not_deleted: 'Folie konnte nicht gelöscht werden.'
-    slide_confirm_delete: 'Bist Du sicher, dass Du diese Folie löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.'
+    slide_confirm_delete: >
+      Bist Du sicher, dass Du diese Folie löschen möchtest?
+      Diese Aktion kann nicht rückgängig gemacht werden.'
     deleted: 'Vignette erfolgreich gelöscht'
     confirm_delete: > 
       Bist Du sicher, dass Du diese Vignette löschen möchtest?
@@ -2720,6 +2722,12 @@ de:
     empty_option: "Alle Optionen müssen Text enthalten"
     publish: "Veröffentlichen"
     unpublish: "Zurückziehen"
+    editing_locked: "Bearbeitung gesperrt"
+    editing_locked_info: >
+      Diese Vignette ist bereits (mindestens einmal) veröffentlicht worden
+      und kann daher nicht mehr bearbeitet werden (bzw. nur noch wenige Elemente
+      stehen weiterhin zur Bearbeitung zur Verfügung). Falls Du Änderungen
+      vornehmen möchtest, dupliziere bitte die Vignette.
     create_slide: "Folie erstellen"
     update_slide: "Folie aktualisieren"
     delete_slide: "Folie löschen"
@@ -2733,14 +2741,18 @@ de:
     info_slide_empty_icon: "Symbol fehlt"
     info_slide_deleted: "Info-Folie wurde erfolgreich gelöscht"
     info_slide_not_deleted: "Info-Folie konnte nicht gelöscht werden"
-    info_slide_confirm_delete: 'Bist Du sicher, dass Du diese Info-Folie löschen möchtest? Diese Aktion kann nicht rückgängig gemacht werden.'
+    info_slide_confirm_delete: >
+      Bist Du sicher, dass Du diese Info-Folie löschen möchtest?
+      Diese Aktion kann nicht rückgängig gemacht werden.'
     create_info_slide: "Info-Folie erstellen"
     update_info_slide: "Info-Folie aktualisieren"
 
     drag_slides_tip: "Ziehe die Folien, um deren Reihenfolge zu ändern."
     unsaved_changes_warning: "Du hast ungespeicherte Änderungen."
     unsaved_changes: "Ungespeicherte Änderungen"
-    unsaved_changes_modal: "Du hast ungespeicherte Änderungen in der aktuellen Folie. Möchtest Du diese speichern oder verwerfen, bevor Du eine neue bearbeitest?"
+    unsaved_changes_modal: >
+      Du hast ungespeicherte Änderungen in der aktuellen Folie.
+      Möchtest Du diese speichern oder verwerfen, bevor Du eine neue bearbeitest?
 
     preview: "Vorschau"
     duplicate: "Duplizieren"
