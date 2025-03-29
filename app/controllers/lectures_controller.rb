@@ -18,6 +18,11 @@ class LecturesController < ApplicationController
   end
 
   def show
+    if @lecture.sort == "vignettes"
+      redirect_to lecture_questionnaires_path(@lecture)
+      return
+    end
+
     # deactivate http caching for the moment
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at,

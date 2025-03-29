@@ -10,6 +10,8 @@ module Vignettes
     before_action :check_empty, only: [:publish, :take, :submit_answer]
     def index
       @questionnaires = @lecture.vignettes_questionnaires.where(published: true)
+
+      render layout: "application_no_sidebar"
     end
 
     def take

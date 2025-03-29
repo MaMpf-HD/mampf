@@ -1,23 +1,28 @@
+<%= stylesheet_link_tag 'vignettes-questionnaires-take' %>
+
 <% I18n.with_locale(@lecture&.locale_with_inheritance) do %>
-    <div class="container mt-4">
-        <h2> <%= t('vignettes.questionnaires') %></h2>
-        <br>
-    
+<div class="container-md small-width mt-4">
+    <h1 class="mb-0 fw-bold fs-3"><%= t('vignettes.questionnaires') %></h1>
+    <br>
+
     <% if @questionnaires.blank? %>
-        <div class="alert alert-info">
-        <%= t('vignettes.no_questionnaires') %>
-        </div>
+    <div class="alert alert-info">
+    <%= t('vignettes.no_questionnaires') %>
+    </div>
     <% else %>
-        <% grouped = group_questionnaires_by_completion(@questionnaires, current_user) %>
-        
-        <!-- Available Questionnaires -->
-        <div class="card mb-4">
+    <% grouped = group_questionnaires_by_completion(@questionnaires, current_user) %>
+    
+    <!-- Available Questionnaires -->
+    <div class="card mb-4">
         <div class="card-header">
-            <h5>
-            <%= t('vignettes.active_questionnaires') %>
-            <span class="badge bg-primary rounded-pill ms-2"><%= grouped[:incomplete].count %></span>
-            </h5>
+            <h2>
+                <%= t('vignettes.active_questionnaires') %>
+                <span class="badge bg-secondary rounded-pill ms-2">
+                    <%= grouped[:incomplete].count %>
+                </span>
+            </h2>
         </div>
+
         <div class="card-body">
             <% if grouped[:incomplete].any? %>
             <div class="list-group">
@@ -36,7 +41,6 @@
                             <%= t('vignettes.continue') %>
                         </span>
                     <% end %>
-                    
                 <% end %>
                 <% end %>
             </div>
@@ -44,16 +48,21 @@
             <p class="text-muted"><%= t('vignettes.no_active_questionnaires') %></p>
             <% end %>
         </div>
+
+    </div>
+
+    <!-- Completed Questionnaires -->
+    <div class="card mb-4">
+
+        <div class="card-header">
+            <h2>
+                <%= t('vignettes.completed_questionnaires') %>
+                <span class="badge bg-secondary rounded-pill ms-2">
+                    <%= grouped[:completed].count %>
+                </span>
+            </h2>
         </div>
 
-        <!-- Completed Questionnaires -->
-        <div class="card mb-4">
-        <div class="card-header">
-            <h5>
-            <%= t('vignettes.completed_questionnaires') %>
-            <span class="badge bg-primary rounded-pill ms-2"><%= grouped[:completed].count %></span>
-            </h5>
-        </div>
         <div class="card-body">
             <% if grouped[:completed].any? %>
             <div class="list-group">
@@ -71,7 +80,10 @@
             <p class="text-muted"><%= t('vignettes.no_completed_questionnaires') %></p>
             <% end %>
         </div>
-        </div>
-    <% end %>
+
     </div>
+
+<% end %>
+</div>
+
 <% end %>
