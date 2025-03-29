@@ -2,11 +2,11 @@ test:
   service: Disk
   root: <%= Rails.root.join("tmp/storage") %>
 
-docker_development:
+development:
   service: Disk
-  root: <%= Rails.root.join("storage") %>
+  root: <%= Rails.root.join("public/uploads/store/vignettes") %>
 
-local:
+production:
   service: Disk
   root: /private/media/vignettes
 

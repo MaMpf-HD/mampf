@@ -43,6 +43,7 @@ module Vignettes
       if !@questionnaire.editable &&
          ((slide_params.dig(:question_attributes, :type).present? &&
           slide_params.dig(:question_attributes, :type) != @slide.question.type) ||
+          slide_params.dig(:question_attributes, :options_attributes).present? ||
           slide_params[:info_slide_ids].present? ||
           any_option_deleted?)
         return redirect_to edit_questionnaire_path(@questionnaire),
