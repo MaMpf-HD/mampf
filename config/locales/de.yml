@@ -2657,6 +2657,7 @@ de:
 
   vignettes:
     vignettes: 'Vignettes'
+    slide: 'Folie'
     questionnaires: 'Fragebögen'
     questionnaire: 'Fragebogen'
     create_new: "Neue Vignette erstellen"

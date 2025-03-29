@@ -2513,6 +2513,7 @@ en:
   
   vignettes:
     vignettes: 'Vignettes'
+    slide: 'Slide'
     questionnaires: 'Questionnaires'
     questionnaires: 'Questionnaire'
     create_new: "Create new vignette"
