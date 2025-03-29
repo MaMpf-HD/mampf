@@ -2580,7 +2580,7 @@ en:
     editing_locked: "Editing locked"
     editing_locked_info: >
       This vignette has already been published (at least once) and can therefore
-      no longer be edited (or only a few elements remain available for editing).
+      no longer be edited (or only few elements remain available for editing).
       If you want to make changes, please duplicate the vignette.
     create_slide: "Create Slide"
     update_slide: "Update Slide"
