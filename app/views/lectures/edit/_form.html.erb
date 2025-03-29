@@ -10,7 +10,8 @@
     <!-- Menu to switch between "tabs" ("pillars") -->
     <nav>
       <div class="nav nav-pills container small-width flex-column flex-sm-row"
-          id="lecture-nav-pills" role="tablist">
+          id="lecture-nav-pills" role="tablist"
+          data-is-vignette-lecture="<%= lecture.sort == 'vignettes' %>">
         <button class="nav-link active lecture-nav-pill-button"
             id="lecture-nav-content" type="button" role="tab"
              href="#content"

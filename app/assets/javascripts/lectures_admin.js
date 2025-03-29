@@ -13,12 +13,6 @@
 function configureUrlHashesForBootstrapTabs() {
   $('#lecture-nav-pills button[role="tab"]').off("focus").on("focus", function () {
     const hash = $(this).attr("href");
-    if (hash === "#content") {
-      // Do not add a hash for the content tab, as this is the default tab.
-      // Otherwise, users cannot navigate back anymore to the previous tab
-      // since this is triggered.
-      return;
-    }
     const urlWithoutHash = location.href.split("#")[0];
     const newUrl = `${urlWithoutHash}${hash}`;
     // https://github.com/turbolinks/turbolinks-classic/issues/363#issuecomment-85626145
@@ -27,15 +21,18 @@ function configureUrlHashesForBootstrapTabs() {
 }
 
 function navigateToActiveNavTab() {
-  if (location.hash) {
-    const hrefXPathIdentifier = `button[href="${location.hash}"]`;
-    $(`#lecture-nav-pills ${hrefXPathIdentifier}`).tab("show");
-  }
-  else {
-    const newUrl = `${location.href.split("#")[0]}#content`;
+  let hash = location.hash;
+
+  if (!location.hash) {
+    hash = $("#lecture-nav-pills").attr("data-is-vignette-lecture") === "true"
+      ? "#vignettes"
+      : "#content";
+    const newUrl = `${location.href.split("#")[0]}${hash}`;
     history.replaceState({ turbolinks: true, url: newUrl }, "", newUrl);
-    $("#lecture-nav-content").focus();
   }
+
+  const hrefXPathIdentifier = `button[href="${hash}"]`;
+  $(`#lecture-nav-pills ${hrefXPathIdentifier}`).tab("show");
 }
 
 $(document).ready(function () {
