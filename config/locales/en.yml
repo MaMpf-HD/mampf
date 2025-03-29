@@ -2516,8 +2516,9 @@ en:
     slide: 'Slide'
     slides: 'Slides'
     info_slides: 'Info Slides'
+    questionnaire: 'Questionnaire'
     questionnaires: 'Questionnaires'
-    questionnaires: 'Questionnaire'
+    slide_content: 'Content'
     create_new: "Create new vignette"
     duplicate_new_questionnaire_title: "New questionnaire title"
     destroy_answer: 'Answer was destroyed'  
@@ -2595,6 +2596,8 @@ en:
       This action cannot be undone.'
     create_info_slide: "Create Info Slide"
     update_info_slide: "Update Info Slide"
+
+    drag_slides_tip: 'Drag slides to change their order.'
     unsaved_changes: "Unsaved Changes"
     unsaved_changes_modal: "You have unsaved changes in the current slide. Do you want to save or discard them before editing a new one?"
 
