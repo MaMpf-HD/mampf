@@ -2,8 +2,20 @@
 
 <% I18n.with_locale(@lecture&.locale_with_inheritance) do %>
 <div class="container-md small-width mt-4">
-    <h1 class="mb-0 fw-bold fs-3"><%= t('vignettes.questionnaires') %></h1>
+    <div class="d-flex flex-wrap mb-4 align-items-end">
+        <h1 class="mb-0 fw-bold fs-3">
+            <%= t('vignettes.questionnaires') %>
+        </h1>
+        <% if current_user.admin || current_user.in?(@lecture.editors_with_inheritance) %>
+            <%= link_to edit_lecture_path(@lecture),
+                        role: "button",
+                        class: "btn btn-sm btn-outline-primary ms-2" do %>
+                <i class="bi bi-pencil-fill"></i>
+                <%= t('buttons.edit') %>
+            <% end %>
+        <% end %>
     <br>
+    </div>
 
     <% if @questionnaires.blank? %>
     <div class="alert alert-info">
