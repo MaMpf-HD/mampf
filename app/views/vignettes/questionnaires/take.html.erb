@@ -58,7 +58,7 @@
     <!-- Answer Section -->
     <div class="card-footer vignette-answer">
         <p>
-            <%= @slide.question.question_text %>
+            <%= format_question_text(@slide.question.question_text) %>
         </p>
 
         <%= form.hidden_field :slide_id, value: @slide.id %>

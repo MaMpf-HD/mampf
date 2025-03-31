@@ -30,5 +30,15 @@ module Vignettes
         end
       end
     end
+
+    def format_question_text(text)
+      return "" if text.blank?
+
+      text = text.to_s.dup
+      text.gsub!(/\*\*(.*?)\*\*/, '<strong>\1</strong>') # Bold
+      text.gsub!(/\*([^\*]+)\*/, '<em>\1</em>') # Italic
+
+      simple_format(text, {}, sanitize: false)
+    end
   end
 end

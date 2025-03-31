@@ -31,6 +31,9 @@
         required: f.object.question_text_required?
     %>
     <%= f.label :question_text, t('vignettes.your_question') %>
+    <div class="form-text small text-muted mt-1">
+        <%= t('vignettes.markdown_help') %>
+    </div>
 </div>
 
 <div id="vignette-edit-multiple-choice" class="collapse mt-3">

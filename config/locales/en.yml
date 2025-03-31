@@ -2643,6 +2643,7 @@ en:
     completed_questionnaires: "Completed Questionnaires"
     take: "Take"
     continue: "Continue"
+    markdown_help: "Supports Markdown: **bold** & *italic*"
 
 
   external_link_lc: 'external link'
