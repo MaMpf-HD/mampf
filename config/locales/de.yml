@@ -2770,7 +2770,7 @@ de:
     question_type_selection: "Auswahl für Fragetyp"
     your_question: "Deine Frage"
     question_types:
-      none: "Keine Frage"
+      none: "Keine Antwort"
       text_area: "Textfeld"
       number_field: "Zahlenfeld"
       multiple_choice: "Multiple Choice"

@@ -2620,7 +2620,7 @@ en:
     question_type_selection: "Selection for question type"
     your_question: "Your question"
     question_types:
-      none: "No Question"
+      none: "No Answer"
       text_area: "Text Area"
       number_field: "Number field"
       multiple_choice: "Multiple Choice"

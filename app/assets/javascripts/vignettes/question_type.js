@@ -19,17 +19,18 @@ function handleQuestionTypes() {
 function updateQuestionFieldState(selectedName) {
   const multipleChoiceField = $("#vignette-edit-multiple-choice");
   const questionTextField = $("#vignette-question-text");
+  const questionLabel = questionTextField.find("label");
   const numberQuestionOptionContainer = $("#vignette-number-question-options");
   const likertScaleLanguageSelection = $("#vignette-likert-scale-language-selection");
   const textArea = questionTextField.find("textarea");
 
-  // Type "No question"
+  // Type "No answer"
   if (selectedName === "") {
-    questionTextField.find("textarea").val("");
-    questionTextField.collapse("hide");
+    questionLabel.text("Your Question or leave empty");
     textArea.removeAttr("required");
   }
   else {
+    questionLabel.text("Your Question");
     textArea.attr("required", true);
     questionTextField.collapse("show");
   }

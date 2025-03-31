@@ -44,6 +44,7 @@ module Vignettes
          ((slide_params.dig(:question_attributes, :type).present? &&
           slide_params.dig(:question_attributes, :type) != @slide.question.type) ||
           slide_params.dig(:question_attributes, :options_attributes).present? ||
+          slide_params.dig(:question_attributes, :language).present? ||
           slide_params[:title].present? ||
           slide_params[:info_slide_ids].present? ||
           any_option_deleted?)
