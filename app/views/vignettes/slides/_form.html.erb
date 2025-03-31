@@ -6,12 +6,22 @@
     ) do |form| %>
 
   <div class="form-floating mb-3">
+    <%= form.text_field :title, 
+        class: 'form-control', 
+        placeholder: 'Title (optional)',
+        required: true,
+        disabled: !@questionnaire.editable %>
+    <%= form.label :title, 'Slide Title' %>
+  </div>
+
+  <div class="form-floating mb-3">
     <%= form.select :info_slide_ids,
         options_for_select(
           @questionnaire.info_slides.map { |s| [s.title, s.id] },
           @slide.info_slides.map(&:id)
         ),
       { include_blank: true, multiple: true },
+
       { id: "vignettes-linked-info-slides", class: "form-select",
         disabled: !@questionnaire.editable } %>
     <%= form.label :info_slides, "Linked Info Slides" %>

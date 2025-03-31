@@ -3,17 +3,38 @@ module Vignettes
     LIKERT_ENUM = {
       strongly_disagree: 1,
       disagree: 2,
-      neither_agree_nor_disagree: 3,
       agree: 4,
       strongly_agree: 5
     }.freeze
 
-    LIKERT_LABELS = {
-      strongly_disagree: "Strongly Disagree",
-      disagree: "Disagree",
-      neither_agree_nor_disagree: "Neither agree nor disagree",
-      agree: "Agree",
-      strongly_agree: "Strongly Agree"
+    def labels
+      case language&.to_s&.downcase
+      when "de"
+        LIKERT_LABELS_DE
+      when "nl"
+        LIKERT_LABELS_NL
+      else
+        LIKERT_LABELS_EN
+      end
+    end
+
+    LIKERT_LABELS_EN = {
+      strongly_disagree: "Not at all",
+      disagree: "very little",
+      agree: "somewhat",
+      strongly_agree: "To greater extend"
+    }.freeze
+    LIKERT_LABELS_DE = {
+      strongly_disagree: "Überhaupt nicht",
+      disagree: "Sehr wenig",
+      agree: "Etwas",
+      strongly_agree: "In größerem Umfang"
+    }.freeze
+    LIKERT_LABELS_NL = {
+      strongly_disagree: "helmaal niet",
+      disagree: "zeer weinig",
+      agree: "enigszins",
+      strongly_agree: "in grotere mate"
     }.freeze
   end
 end

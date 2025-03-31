@@ -1005,6 +1005,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_28_001000) do
     t.boolean "only_integer", default: false
     t.decimal "min_number", precision: 10
     t.decimal "max_number", precision: 10
+    t.string "language", default: "en"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["vignettes_slide_id"], name: "index_vignettes_questions_on_vignettes_slide_id"
@@ -1025,6 +1026,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_28_001000) do
   end
 
   create_table "vignettes_slides", force: :cascade do |t|
+    t.string "title", null: false
     t.bigint "vignettes_questionnaire_id", null: false
     t.integer "position", null: false
     t.datetime "created_at", null: false

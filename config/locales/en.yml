@@ -2626,6 +2626,13 @@ en:
       multiple_choice: "Multiple Choice"
       likert_scale: "Likert Scale"
     
+    language_selection: "Language Selection"
+    
+    locales:
+      en: "English"
+      de: "German"
+      nl: "Dutch"
+    
     number_question_settings: "Number Question Settings"
     only_integer: "Allow integers only (no decimals)"
     min_number: "Minimum value"

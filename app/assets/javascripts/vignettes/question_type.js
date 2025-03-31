@@ -20,6 +20,7 @@ function updateQuestionFieldState(selectedName) {
   const multipleChoiceField = $("#vignette-edit-multiple-choice");
   const questionTextField = $("#vignette-question-text");
   const numberQuestionOptionContainer = $("#vignette-number-question-options");
+  const likertScaleLanguageSelection = $("#vignette-likert-scale-language-selection");
   const textArea = questionTextField.find("textarea");
 
   // Type "No question"
@@ -51,6 +52,15 @@ function updateQuestionFieldState(selectedName) {
   else {
     numberQuestionOptionContainer.collapse("hide");
     numberQuestionOptionContainer.find("input").attr("disabled", "disabled");
+  }
+
+  if (selectedName === "Vignettes::LikertScaleQuestion") {
+    likertScaleLanguageSelection.collapse("show");
+    likertScaleLanguageSelection.find("input").removeAttr("disabled");
+  }
+  else {
+    likertScaleLanguageSelection.collapse("hide");
+    likertScaleLanguageSelection.find("input").attr("disabled", "disabled");
   }
 }
 

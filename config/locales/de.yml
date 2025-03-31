@@ -2775,6 +2775,13 @@ de:
       number_field: "Zahlenfeld"
       multiple_choice: "Multiple Choice"
       likert_scale: "Likert-Skala"
+
+    language_selection: "Sprachauswahl"
+
+    locales:
+      en: "Englisch"
+      de: "Deutsch"
+      nl: "Niederländisch"
       
     number_question_settings: "Optionen für Zahlenfragen"
     only_integer: "Nur ganze Zahlen erlauben"

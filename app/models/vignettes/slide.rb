@@ -1,5 +1,7 @@
 module Vignettes
   class Slide < ApplicationRecord
+    validates :title, presence: true,
+                      length: { minimum: 1, maximum: 255 }
     belongs_to :questionnaire, foreign_key: "vignettes_questionnaire_id"
     has_rich_text :content
     has_one :question, dependent: :destroy, inverse_of: :slide

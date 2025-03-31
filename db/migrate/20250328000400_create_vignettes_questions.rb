@@ -7,6 +7,7 @@ class CreateVignettesQuestions < ActiveRecord::Migration[7.1]
       t.boolean :only_integer, default: false
       t.decimal :min_number, precision: 10
       t.decimal :max_number, precision: 10
+      t.string :language, default: "en"
 
       t.timestamps
     end

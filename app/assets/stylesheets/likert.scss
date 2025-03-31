@@ -2,7 +2,7 @@
 // https://jamesalvarez.co.uk/blog/how-to-make-responsive-likert-scales-in-css-(like-qualtrics)/
 
 .likert {
-    --likert-rows: 5;
+    --likert-rows: 4;
     display: inline-grid;
     max-width: 900px;
     grid-auto-rows: 1fr;

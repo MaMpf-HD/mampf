@@ -44,6 +44,7 @@ module Vignettes
          ((slide_params.dig(:question_attributes, :type).present? &&
           slide_params.dig(:question_attributes, :type) != @slide.question.type) ||
           slide_params.dig(:question_attributes, :options_attributes).present? ||
+          slide_params[:title].present? ||
           slide_params[:info_slide_ids].present? ||
           any_option_deleted?)
         return redirect_to edit_questionnaire_path(@questionnaire),
@@ -145,6 +146,7 @@ module Vignettes
 
       def slide_params
         params.require(:vignettes_slide).permit(
+          :title,
           :content,
           :position,
           { info_slide_ids: [] },
@@ -152,6 +154,7 @@ module Vignettes
             :id,
             :type,
             :question_text,
+            :language,
             :only_integer,
             :min_number,
             :max_number,

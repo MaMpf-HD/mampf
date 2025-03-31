@@ -3,7 +3,7 @@
 <!-- Adapted from this great blog post -->
 <!-- https://jamesalvarez.co.uk/blog/how-to-make-responsive-likert-scales-in-css-(like-qualtrics)/ -->
 <div class="likert w-100">
-    <% Vignettes::LikertScaleQuestion::LIKERT_LABELS.each do |value, label| %>
+    <% @slide.question.labels.each do |value, label| %>
         <label>
             <%= f.radio_button :likert_scale_value, label, required: true %>
             <span>
