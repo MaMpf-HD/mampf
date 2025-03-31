@@ -3,8 +3,8 @@ module Vignettes
     LIKERT_ENUM = {
       strongly_disagree: 1,
       disagree: 2,
-      agree: 4,
-      strongly_agree: 5
+      agree: 3,
+      strongly_agree: 4
     }.freeze
 
     def labels

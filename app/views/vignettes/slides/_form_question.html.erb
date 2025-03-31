@@ -48,6 +48,7 @@
         {
             class: "form-select",
             id: "vignettes-likert-language-select",
+            disabled: !form.object.questionnaire.editable
         } %>
     <%= f.label :language, t('vignettes.language_selection') %>
   </div>
