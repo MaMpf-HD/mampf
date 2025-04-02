@@ -8,7 +8,8 @@ development:
 
 production:
   service: Disk
-  root: /private/media/vignettes
+  root: <%= Rails.root.join("private/media/vignettes") %>
+  # https://discuss.rubyonrails.org/t/active-storage-in-production-lessons-learned-and-in-depth-look-at-how-it-works/83289#h-233-serving-files-through-rediret-mode-proxy-mode-and-public-mode-11
 
 # Use rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
