@@ -976,7 +976,8 @@ Rails.application.routes.draw do
 
   # redirect bs requests to error page (except active storage routes)
   match "*path", to: "main#error", via: :all, constraints: lambda { |req|
-    !req.path.start_with?("/rails/active_storage")
+    # https://github.com/rails/rails/issues/33423#issuecomment-407264058
+    !req.path_parameters[:anything].start_with?("rails/")
   }
 
   match "/", to: "main#error", via: [:post, :put, :patch, :delete]
