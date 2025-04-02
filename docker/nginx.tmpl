@@ -218,7 +218,7 @@ server {
 
     location /__accel_redirect {
         internal;
-        alias   /private/;
+        alias   /private;
         add_header Content-Encoding $upstream_http_content_encoding;
         gzip off;
     }
