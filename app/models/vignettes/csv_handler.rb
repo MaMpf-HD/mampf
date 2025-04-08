@@ -46,7 +46,7 @@ module Vignettes
 
     def self.generate_questionnaire_csv(questionnaire)
       answer_data = questionnaire.answers_data
-      CSV.generate do |csv|
+      CSV.generate(col_sep: ";", encoding: "UTF-8") do |csv|
         csv << HEADERS
         answer_data.each do |answer|
           csv << answer_data(answer)
