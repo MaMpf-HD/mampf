@@ -68,6 +68,7 @@ module Vignettes
 
     def submit_answer
       @slide = @questionnaire.slides.find(answer_params[:slide_id])
+
       @answer = @slide.answers.build
       @answer.question = @slide.question
       @answer.type = @slide.question.type.gsub("Question", "Answer")
@@ -75,6 +76,13 @@ module Vignettes
                                                                  questionnaire: @questionnaire)
       @answer.user_answer = @user_answer
       @answer.assign_attributes(answer_params.except(:slide_id))
+
+      # Check if user already answered this slide
+      if @user_answer.answered_slide_ids.include?(@slide.id)
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    notice: t("vignettes.already_answered")
+        return
+      end
 
       unless @answer.save
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }

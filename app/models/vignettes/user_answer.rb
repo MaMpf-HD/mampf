@@ -13,7 +13,7 @@ module Vignettes
     def last_slide_answered?
       return true if questionnaire.slides.empty?
 
-      answered_slide_ids.include?(questionnaire.slides.order(:position).last.id)
+      answered_slide_ids.include?(questionnaire.last_slide.id)
     end
 
     def first_unanswered_slide

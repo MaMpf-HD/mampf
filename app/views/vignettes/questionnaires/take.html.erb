@@ -35,7 +35,6 @@
     <% if @slide.info_slides.any? %>
     <div class="card-body">
         <div class="d-flex flex-wrap align-items-center w-100">
-            <p class="mb-0 me-1"><%= t("vignettes.additional_information") %></p>
 
             <% @slide.info_slides.each_with_index do |info_slide, index| %>
             <button type="button"
@@ -84,15 +83,24 @@
         <% end %>
 
         <!-- Navigation -->
-        <% if !@preview %>
+        <% unless @preview %>
             <div class="d-flex justify-content-end mt-3">
                 <!-- TODO: Do a better differentiation here -->
-                <% if @slide.question.type == "" %>
-                    <%= form.submit t("vignettes.next_slide"),
-                        class: "btn slide-footer-btn" %>
+                <% unless @slide.id == @questionnaire.last_slide.id %>
+                    <%= form.button type: "submit", 
+                        class: "btn btn-primary slide-footer-btn",
+                        title: t("vignettes.next_slide"),
+                        data: { bs_toggle: "tooltip" } do %>
+                        <i class="bi bi-arrow-right fs-5"></i>
+                    <% end %>
                 <% else %>
-                    <%= form.submit t("vignettes.submit_answer"),
-                        class: "btn slide-footer-btn" %>
+                    <!-- For final slide button -->
+                    <%= form.button type: "submit", 
+                        class: "btn btn-success slide-footer-btn",
+                        title: t("vignettes.submit_answer"),
+                        data: { bs_toggle: "tooltip" } do %>
+                        <i class="bi bi-check2-circle fs-5"></i>
+                    <% end %>
                 <% end %>
             </div>
         <% else %>

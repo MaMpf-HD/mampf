@@ -22,5 +22,11 @@ module Vignettes
     def answer_data_csv
       Vignettes::CsvHandler.generate_questionnaire_csv(self)
     end
+
+    def last_slide
+      return nil if slides.empty?
+
+      slides.order(:position).last
+    end
   end
 end
