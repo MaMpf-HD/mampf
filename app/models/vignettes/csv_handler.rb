@@ -4,13 +4,13 @@ module Vignettes
   class CsvHandler
     HEADERS = ["Answer ID",
                "User",
+               "Slide title",
                "Slide position",
                "Total time on slide",
                "Time on slide",
                "Time on info slide",
                "Info slide access count",
                "Info slide first access time",
-               "Question Text",
                "Answer",
                "Selected Options",
                "Likert Scale Option"].freeze
@@ -20,12 +20,12 @@ module Vignettes
         answer.id,
         answer.user_answer.user.name_or_email,
         answer.slide.position,
+        answer.slide.title,
         answer.slide_statistic.total_time_on_slide,
         answer.slide_statistic.time_on_slide,
         answer.slide_statistic.time_on_info_slides,
         answer.slide_statistic.info_slides_access_count,
-        answer.slide_statistic.info_slides_first_access_time,
-        answer.slide.question.question_text
+        answer.slide_statistic.info_slides_first_access_time
       ]
 
       case answer.type
