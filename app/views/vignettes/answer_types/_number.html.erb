@@ -16,7 +16,9 @@
         'data-range-underflow-message': @slide.question.min_number.present? ? 
             t('vignettes.number_too_small_error', min: @slide.question.min_number) : nil
     %>
-    <%= f.label :text, t('vignettes.your_numeric_answer') %>
+    <%= f.label :text do %>
+      <i class="bi bi-pencil"></i> <%= t('vignettes.your_numeric_answer') %>
+    <% end %>
     
     <% if @slide.question.min_number.present? || @slide.question.max_number.present? %>
         <div class="form-text mt-1">

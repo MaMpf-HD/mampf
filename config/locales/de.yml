@@ -2788,6 +2788,7 @@ de:
     min_number: "Minimalwert"
     max_number: "Maximalwert"
     number_range_help: "Min/Max-Felder leer lassen für unbegrenzten Bereich"
+    your_answer: "Deine Antwort"
     your_numeric_answer: "Deine Antwort"
     number_range_between: "Gib eine Zahl zwischen %{min} und %{max} ein"
     number_range_min: "Gib eine Zahl größer oder gleich %{min} ein"

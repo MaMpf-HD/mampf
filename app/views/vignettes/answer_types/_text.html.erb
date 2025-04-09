@@ -12,5 +12,7 @@
         'data-value-missing-message':
             t('vignettes.body_missing_error')
     %>
-    <%= f.label :text, 'Your answer' %>
+    <%= f.label :text do %>
+      <i class="bi bi-pencil"></i> <%= t('vignettes.your_answer') %>
+    <% end %>
 </div>
