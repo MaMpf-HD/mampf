@@ -2652,6 +2652,8 @@ en:
     continue: "Continue"
     markdown_help: "Supports Markdown: **bold** & *italic*"
 
+    information: "Information"
+
 
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'

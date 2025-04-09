@@ -8,10 +8,10 @@ module Vignettes
     before_action :check_edit_accessibility,
                   only: [:edit, :preview, :destroy, :publish, :update_slide_position, :duplicate]
     before_action :check_empty, only: [:publish, :take, :submit_answer]
+    layout "vignettes_navbar"
+
     def index
       @questionnaires = @lecture.vignettes_questionnaires.where(published: true)
-
-      render layout: "application_no_sidebar"
     end
 
     def take

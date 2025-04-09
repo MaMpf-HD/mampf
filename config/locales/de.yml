@@ -2800,8 +2800,9 @@ de:
     completed_questionnaires: "Abgeschlossene Fragebögen"
     take: "Ausfüllen"
     continue: "Fortsetzen"
-
     markdown_help: "Unterstützt Markdown: **fett** & *kursiv*"
+
+    information: "Informationen"
   
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'

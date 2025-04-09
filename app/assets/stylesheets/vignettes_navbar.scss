@@ -1,0 +1,24 @@
+.vignettes-navbar-container {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  margin-bottom: 2rem;
+  padding: 0.5rem 0;
+}
+
+.vignettes-navbar {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.vignettes-navbar .nav-link {
+  border-radius: 0;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  color: #495057;
+}
+
+.vignettes-navbar .nav-link.active {
+  background-color: #fff;
+  color: #007bff;
+  border-bottom: 2px solid #007bff;
+}

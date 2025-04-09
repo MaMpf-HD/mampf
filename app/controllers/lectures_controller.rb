@@ -19,6 +19,10 @@ class LecturesController < ApplicationController
 
   def show
     if @lecture.sort == "vignettes"
+      if @lecture.organizational
+        redirect_to organizational_path(@lecture)
+        return
+      end
       redirect_to lecture_questionnaires_path(@lecture)
       return
     end
@@ -196,8 +200,12 @@ class LecturesController < ApplicationController
   end
 
   def organizational
-    I18n.locale = @lecture.locale_with_inheritance
-    render layout: "application"
+    if @lecture.sort == "vignettes"
+      render layout: "vignettes_navbar"
+    else
+      I18n.locale = @lecture.locale_with_inheritance
+      render layout: "application"
+    end
   end
 
   def import_media
