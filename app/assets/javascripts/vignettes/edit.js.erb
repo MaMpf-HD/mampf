@@ -167,6 +167,14 @@
     form.find("input, select, textarea, trix-editor").on("change keyup", checkForChanges);
     $("#vignette-multiple-choice-options").on("change keyup", "input", checkForChanges);
 
+    $(document).on("direct-upload:end", function () {
+      checkForChanges();
+    });
+
+    $(document).on("trix-attachment-remove", function () {
+      setTimeout(checkForChanges, 300);
+    });
+
     function checkForChanges() {
       const currentState = form.serialize();
 
