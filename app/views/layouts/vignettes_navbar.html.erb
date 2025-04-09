@@ -19,7 +19,7 @@
               <% active_class = get_class_for_path(path) %>
               <a href="<%= url_for(path)%>"
                   class="nav-link <%= active_class.present? ? 'active' : '' %>
-                        <%= !lecture || !lecture.reste?(current_user) || !lecture.organizational ? 'disabled' : '' %>">
+                        <%= !lecture ||  !lecture.organizational ? 'disabled' : '' %>">
                 <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
                 <%= t('categories.organizational_html') %>
               </a>

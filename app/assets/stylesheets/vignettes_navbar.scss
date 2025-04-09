@@ -22,3 +22,10 @@
   color: #007bff;
   border-bottom: 2px solid #007bff;
 }
+
+.vignettes-navbar .nav-link.disabled {
+  color: #6c757d !important;  // Gray text
+  opacity: 0.6;               // Slightly transparent
+  cursor: not-allowed;        // Shows "prohibited" cursor
+  background-color: #f8f9fa;  // Light gray background
+}
