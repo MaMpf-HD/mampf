@@ -49,7 +49,7 @@
     <% end %>
     
     <!-- Main Content -->
-    <main class="container-fluid flex-grow-1 pt-3" role="main">
+    <main class="container-fluid flex-grow-1" role="main">
       <% if alert.present? %>
         <div class="alert alert-danger" role="alert">
           <%= sanitize alert, :tags => %w(br) %>
