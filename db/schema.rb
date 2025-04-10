@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_03_28_001000) do
+ActiveRecord::Schema[7.1].define(version: 2025_04_10_121500) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -964,6 +964,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_28_001000) do
     t.index ["vignettes_option_id", "vignettes_answer_id"], name: "index_answers_options_on_option_id_and_answer_id"
   end
 
+  create_table "vignettes_codenames", force: :cascade do |t|
+    t.string "pseudonym"
+    t.bigint "user_id"
+    t.bigint "lecture_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vignettes_codenames_on_lecture_id"
+    t.index ["user_id"], name: "index_vignettes_codenames_on_user_id"
+  end
+
   create_table "vignettes_info_slides", force: :cascade do |t|
     t.string "title", null: false
     t.bigint "vignettes_questionnaire_id", null: false
@@ -1151,6 +1161,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_03_28_001000) do
   add_foreign_key "vignettes_answers", "vignettes_questions"
   add_foreign_key "vignettes_answers", "vignettes_slides"
   add_foreign_key "vignettes_answers", "vignettes_user_answers"
+  add_foreign_key "vignettes_codenames", "lectures"
+  add_foreign_key "vignettes_codenames", "users"
   add_foreign_key "vignettes_options", "vignettes_questions"
   add_foreign_key "vignettes_questionnaires", "lectures"
   add_foreign_key "vignettes_questions", "vignettes_slides"

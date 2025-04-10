@@ -1,0 +1,26 @@
+document.addEventListener("DOMContentLoaded", function () {
+  const codenameInput = document.getElementById("codename-input");
+  const saveButton = document.getElementById("codename-save-button");
+  const minLength = <%= Vignettes::Codename::MIN_LENGTH %>;
+  const maxLength = <%= Vignettes::Codename::MAX_LENGTH %>;
+
+  if (codenameInput) {
+    codenameInput.addEventListener("input", function () {
+      this.setCustomValidity("");
+
+      if (this.validity.valueMissing) {
+        this.setCustomValidity("Please enter a codename");
+      }
+      else if (this.value.length < minLength) {
+        this.setCustomValidity(`Codename must have at least ${minLength} character`);
+      }
+      else if (this.value.length > maxLength) {
+        this.setCustomValidity(`Codename must have at most ${maxLength} characters`);
+      }
+    });
+
+    saveButton.addEventListener("click", function () {
+      this.reportValidity();
+    });
+  }
+});

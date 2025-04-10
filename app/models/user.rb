@@ -79,6 +79,12 @@ class User < ApplicationRecord
   # a user may have many user answers for questionnaires that they filled out.
   has_many :vignettes_user_answers, dependent: :destroy, class_name: "Vignettes::UserAnswer"
 
+  # a user has a codename per vignettes lecture that is used as a pseudonym
+  has_many :vignettes_codenames,
+           dependent: :destroy,
+           class_name: "Vignettes::Codename",
+           inverse_of: :user
+
   # a user has a watchlist with watchlist_entries
   has_many :watchlists, dependent: :destroy
 

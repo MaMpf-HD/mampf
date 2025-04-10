@@ -2655,6 +2655,9 @@ en:
 
     information: "Information"
 
+    codenames:
+      set_success: "Codename successfully updated"
+      set_error: "Codename could not be updated"
 
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'

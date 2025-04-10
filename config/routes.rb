@@ -572,6 +572,9 @@ Rails.application.routes.draw do
   get "questionnaires/:id/preview",
       to: "vignettes/questionnaires#preview",
       as: "preview_questionnaire"
+  post "lectures/:id/questionnaires/set_codename",
+       to: "vignettes/codenames#set_codename",
+       as: "set_lecture_codename"
 
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do

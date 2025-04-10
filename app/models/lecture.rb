@@ -40,6 +40,11 @@ class Lecture < ApplicationRecord
            dependent: :destroy,
            inverse_of: :lecture
 
+  has_many :vignettes_codenames,
+           class_name: "Vignettes::Codename",
+           dependent: :destroy,
+           inverse_of: :lecture
+
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
