@@ -6,6 +6,8 @@ module Vignettes
         "vignettes/eye.svg"
       when "dotplot"
         "vignettes/dotplot.svg"
+      when "media"
+        "vignettes/media.svg"
       else
         "vignettes/fallback.svg"
       end

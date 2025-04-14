@@ -24,6 +24,12 @@
       <%= image_tag "vignettes/dotplot.svg",
         alt: "Icon of a dotplot including an error bar and a vertical bar chart" %>
     </label>
+
+    <label>
+      <%= form.radio_button :icon_type, "media", required: true %>
+      <%= image_tag "vignettes/media.svg",
+        alt: "Icon of a generic media recorder" %>
+    </label>
   </div>
 
   <%= render partial: 'vignettes/slides/form_content', locals: { form: form } %>
