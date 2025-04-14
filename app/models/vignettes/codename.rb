@@ -9,5 +9,9 @@ module Vignettes
 
     belongs_to :user
     belongs_to :lecture
+
+    def self.user_codename(user, lecture)
+      find_by(user: user, lecture: lecture)&.pseudonym
+    end
   end
 end

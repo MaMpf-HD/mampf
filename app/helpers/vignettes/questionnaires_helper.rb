@@ -31,6 +31,26 @@ module Vignettes
       end
     end
 
+    def user_has_codename?(user, lecture)
+      Vignettes::Codename.find_by(user: user, lecture: lecture).present?
+    end
+
+    def user_codename(user, lecture)
+      Vignettes::Codename.find_by(user: user, lecture: lecture)&.pseudonym
+    end
+
+    def user_started_questionnaire?(user, questionnaire)
+      user.vignettes_user_answers.find_by(questionnaire: questionnaire).present?
+    end
+
+    def questionnaire_take_text(user, questionnaire)
+      if user_started_questionnaire?(user, questionnaire)
+        t("vignettes.continue")
+      else
+        t("vignettes.take")
+      end
+    end
+
     def format_question_text(text)
       return "" if text.blank?
 

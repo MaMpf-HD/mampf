@@ -22,7 +22,7 @@ module Vignettes
       strongly_disagree: "Not at all",
       disagree: "very little",
       agree: "somewhat",
-      strongly_agree: "To greater extend"
+      strongly_agree: "To greater extent"
     }.freeze
     LIKERT_LABELS_DE = {
       strongly_disagree: "Überhaupt nicht",

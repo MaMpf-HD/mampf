@@ -4,6 +4,7 @@ module Vignettes
   class CsvHandler
     HEADERS = ["Answer ID",
                "User",
+               "Codename",
                "Slide title",
                "Slide position",
                "Total time on slide",
@@ -19,6 +20,7 @@ module Vignettes
       data = [
         answer.id,
         answer.user_answer.user.name_or_email,
+        Codename.user_codename(answer.user_answer.user, answer.user_answer.questionnaire.lecture),
         answer.slide.position,
         answer.slide.title,
         answer.slide_statistic.total_time_on_slide,

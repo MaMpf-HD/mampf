@@ -15,6 +15,12 @@ module Vignettes
     end
 
     def take
+      unless user_has_codename?(current_user, @questionnaire.lecture)
+        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
+                    alert: t("vignettes.codenames.please_set_codename")
+        return
+      end
+
       user_answer = current_user.vignettes_user_answers
                                 .find_or_create_by(user: current_user,
                                                    questionnaire: @questionnaire)
@@ -299,6 +305,10 @@ module Vignettes
                       [:user_id, :time_on_slide, :total_time_on_slide,
                        :time_on_info_slides, :info_slides_access_count,
                        :info_slides_first_access_time])
+      end
+
+      def user_has_codename?(user, lecture)
+        Vignettes::Codename.find_by(user: user, lecture: lecture).present?
       end
   end
 end

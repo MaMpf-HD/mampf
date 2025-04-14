@@ -2808,6 +2808,7 @@ de:
     codenames:
       set_success: "Pseudonym wurde erfolgreich geändert"
       set_error: "Pseudonym konnte nicht gesetzt werden"
+      please_set_codename: "Bitte setze deinen Codenamen bevor du einen Fragebogen ausfüllst"
   
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
