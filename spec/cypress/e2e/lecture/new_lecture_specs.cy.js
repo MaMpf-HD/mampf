@@ -21,11 +21,14 @@ describe("New lecture (as admin)", () => {
   });
 });
 
-describe.only("New lecture as course editor", () => {
+describe.only("New lecture (as course editor)", () => {
   beforeEach(function () {
     cy.createUserAndLogin("course_editor").as("user");
 
-    FactoryBot.create("course").as("course");
+    cy.then(() => {
+      FactoryBot.create("course", "with_editor_by_id", { editor_id: this.user.id }).as("course");
+    });
+
     cy.then(() => {
       FactoryBot.create("term").as("term");
     });
