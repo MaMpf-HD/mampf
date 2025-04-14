@@ -9,11 +9,12 @@
 // [3] https://eslint.style/packages/js#rules
 // [4] https://eslint.org/docs/rules/
 import js from "@eslint/js";
-import stylistic from "@stylistic/eslint-plugin";
-import erb from "eslint-plugin-erb";
-import pluginCypress from "eslint-plugin-cypress/flat";
-import globals from "globals";
 import html from "@html-eslint/eslint-plugin";
+import htmlParser, { TEMPLATE_ENGINE_SYNTAX } from "@html-eslint/parser";
+import stylistic from "@stylistic/eslint-plugin";
+import pluginCypress from "eslint-plugin-cypress/flat";
+import erb from "eslint-plugin-erb";
+import globals from "globals";
 
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/javascripts/application.js",
@@ -157,11 +158,17 @@ export default [
   {
     // HTML linting (aside from erb_lint)
     files: ["**/*.html", "**/*.html.erb"],
-    processor: erb.processors["processorHtml"],
     ...html.configs["flat/recommended"],
     plugins: {
       "@html-eslint": html,
       "@stylistic": stylistic,
+    },
+    // https://html-eslint.org/docs/integrating-template-engine
+    languageOptions: {
+      parser: htmlParser,
+      parserOptions: {
+        templateEngineSyntax: TEMPLATE_ENGINE_SYNTAX.ERB,
+      },
     },
     rules: {
       "@stylistic/eol-last": ["error", "always"],
