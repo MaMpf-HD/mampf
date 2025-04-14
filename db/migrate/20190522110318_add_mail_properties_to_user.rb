@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class AddMailPropertiesToUser < ActiveRecord::Migration[6.0]
   def change
     add_column :users, :email_for_medium, :boolean
@@ -7,4 +6,3 @@ class AddMailPropertiesToUser < ActiveRecord::Migration[6.0]
     add_column :users, :email_for_news, :boolean
   end
 end
-# rubocop:enable Rails/

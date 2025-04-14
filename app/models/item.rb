@@ -185,7 +185,7 @@ class Item < ApplicationRecord
                           "proposition"].include?(sort)
     return "#75d7f0;" if ["definition", "annotation", "example",
                           "figure", "exercise", "equation"].include?(sort)
-    return "lightgray;" if sort == "link" || sort == "self"
+    return "lightgray;" if ["link", "self"].include?(sort)
 
     ""
   end

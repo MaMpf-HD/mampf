@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class CreateWatchlistEntries < ActiveRecord::Migration[6.1]
   def up
     create_table :watchlists
@@ -24,4 +23,3 @@ class CreateWatchlistEntries < ActiveRecord::Migration[6.1]
     drop_table :watchlist_entries
   end
 end
-# rubocop:enable Rails/

@@ -1,3 +1,7 @@
+<% if @erdbeere_error %>
+  $('#erdbeereStructuresBody').empty()
+  .append('<%= t("erdbeere.error") %>')
+<% else %>
 $('#erdbeereStructuresBody').empty()
 .append('<%= j render partial: "lectures/edit/structures",
                       locals: { lecture: @lecture,
@@ -32,3 +36,4 @@ renderMathInElement structuresBody,
 
 initBootstrapPopovers()
 registerErdbeereExampleChanges()
+<% end %>
