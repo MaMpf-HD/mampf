@@ -17,8 +17,8 @@
     "webpack-cli": "^4.10.0"
   },
   "devDependencies": {
-    "@html-eslint/eslint-plugin": "^0.31.1",
-    "@html-eslint/parser": "^0.31.0",
+    "@html-eslint/eslint-plugin": "^0.38.1",
+    "@html-eslint/parser": "^0.38.0",
     "@stylistic/eslint-plugin": "^1.8.0",
     "eslint": "^9.17.0",
     "eslint-plugin-cypress": "^3.3.0",
