@@ -114,9 +114,6 @@ beforeEach(() => {
 });
 
 Cypress.Commands.add("createUser", (role) => {
-  if (!["admin", "editor", "teacher", "generic", "tutor"].includes(role)) {
-    throw new Error(`Invalid role: ${role}`);
-  }
   return BackendCaller.callCypressRoute("user_creator", "cy.createUser()", { role: role });
 });
 
