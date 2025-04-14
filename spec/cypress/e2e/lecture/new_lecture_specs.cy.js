@@ -1,47 +1,38 @@
 import FactoryBot from "../../support/factorybot";
 
-describe("New lecture (as admin)", () => {
-  beforeEach(function () {
-    cy.createUserAndLogin("admin").as("user");
+describe("New lecture", () => {
+  const roles = ["admin", "course_editor"];
 
-    FactoryBot.create("course").as("course");
-    cy.then(() => {
-      FactoryBot.create("term").as("term");
+  roles.forEach((role) => {
+    context(`as ${role}`, function () {
+      beforeEach(function () {
+        cy.createUserAndLogin(role).as("user");
+
+        cy.then(() => {
+          if (role === "admin") {
+            FactoryBot.create("course").as("course");
+          }
+          else {
+            FactoryBot.create("course", "with_editor_by_id", { editor_id: this.user.id })
+              .as("course");
+          }
+        });
+
+        cy.then(() => {
+          FactoryBot.create("term").as("term");
+        });
+      });
+
+      it("Creates new lecture (via index page)", function () {
+        cy.visit("/administration");
+        testCreateNewLecture(this, false);
+      });
+
+      it("Creates new lecture (via course edit page)", function () {
+        cy.visit(`/courses/${this.course.id}/edit`);
+        testCreateNewLecture(this, true);
+      });
     });
-  });
-
-  it("Creates new lecture (via index page", function () {
-    cy.visit("/administration");
-    testCreateNewLecture(this, false);
-  });
-
-  it("Creates new lecture (via course edit page)", function () {
-    cy.visit(`/courses/${this.course.id}/edit`);
-    testCreateNewLecture(this, true);
-  });
-});
-
-describe.only("New lecture (as course editor)", () => {
-  beforeEach(function () {
-    cy.createUserAndLogin("course_editor").as("user");
-
-    cy.then(() => {
-      FactoryBot.create("course", "with_editor_by_id", { editor_id: this.user.id }).as("course");
-    });
-
-    cy.then(() => {
-      FactoryBot.create("term").as("term");
-    });
-  });
-
-  it("Creates new lecture (via index page)", function () {
-    cy.visit("/administration");
-    testCreateNewLecture(this, false);
-  });
-
-  it("Creates new lecture (via course edit page)", function () {
-    cy.visit(`/courses/${this.course.id}/edit`);
-    testCreateNewLecture(this, true);
   });
 });
 
