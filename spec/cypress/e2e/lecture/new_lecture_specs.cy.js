@@ -1,6 +1,6 @@
 import FactoryBot from "../../support/factorybot";
 
-describe("New lecture (via admin index page)", () => {
+describe("New lecture", () => {
   beforeEach(function () {
     cy.createUserAndLogin("admin").as("admin");
 
@@ -10,20 +10,32 @@ describe("New lecture (via admin index page)", () => {
     });
   });
 
-  it("Creates new lecture", function () {
+  it("Creates new lecture (via index page", function () {
     cy.visit("/administration");
-    cy.getBySelector("new-lecture-button-admin-index").click();
+    testCreateNewLecture(this, false);
+  });
 
-    cy.getBySelector("new-lecture-course-select-div").then(($wrapperDiv) => {
-      cy.wrap($wrapperDiv).selectTom(this.course.title);
-    });
-    cy.getBySelector("new-lecture-submit").click();
-
-    const successMessage = this.admin.locale === "de" ? "erfolgreich" : "successfully";
-    cy.get("div.alert")
-      .should("contain", this.course.title)
-      .should("contain", this.term.season)
-      .should("contain", this.admin.name)
-      .should("contain", successMessage);
+  it("Creates new lecture (via course edit page)", function () {
+    cy.visit(`/courses/${this.course.id}/edit`);
+    testCreateNewLecture(this, true);
   });
 });
+
+function testCreateNewLecture(context, isCoursePrefilled) {
+  cy.getBySelector("new-lecture-button-admin-index").click();
+
+  if (!isCoursePrefilled) {
+    cy.getBySelector("new-lecture-course-select-div").then(($wrapperDiv) => {
+      cy.wrap($wrapperDiv).selectTom(context.course.title);
+    });
+  }
+
+  cy.getBySelector("new-lecture-submit").click();
+
+  const successMessage = context.admin.locale === "de" ? "erfolgreich" : "successfully";
+  cy.get("div.alert")
+    .should("contain", context.course.title)
+    .should("contain", context.term.season)
+    .should("contain", context.admin.name)
+    .should("contain", successMessage);
+}
