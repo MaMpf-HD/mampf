@@ -7,7 +7,9 @@
     // https://github.com/microsoft/vscode-eslint#settings-options
     "[javascript]": {
         "editor.formatOnSave": false, // to avoid formatting twice (ESLint + VSCode)
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
@@ -27,7 +29,9 @@
     //////////////////////////////////////
     "[html]": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
     },
     "emeraldwalk.runonsave": {
         "autoClearConsole": true,
@@ -44,7 +48,9 @@
     //////////////////////////////////////
     "[ruby]": {
         "editor.defaultFormatter": "Shopify.ruby-lsp",
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
     },
     "rubyLsp.formatter": "rubocop",
     "rubyLsp.rubyVersionManager": {
