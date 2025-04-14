@@ -2664,7 +2664,7 @@ de:
     slides: 'Folien'
     info_slides: 'Info-Folien'
     questionnaire: 'Fragebogen'
-    questionnaires: 'Fragebögen'
+    questionnaires: 'Fragebogen'
     slide_content: 'Inhalt'
     create_new: "Neue Vignette erstellen"
     duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
@@ -2797,8 +2797,8 @@ de:
     completed: "Abgeschlossen"
     in_progress: "In Bearbeitung"
     not_started: "Nicht begonnen"
-    active_questionnaires: "Verfügbare Fragebögen"
-    completed_questionnaires: "Abgeschlossene Fragebögen"
+    active_questionnaires: "Verfügbare Fragebogen"
+    completed_questionnaires: "Abgeschlossene Fragebogen"
     take: "Ausfüllen"
     continue: "Fortsetzen"
     markdown_help: "Unterstützt Markdown: **fett** & *kursiv*"
