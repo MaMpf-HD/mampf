@@ -655,8 +655,8 @@ class User < ApplicationRecord
   end
 
   def current_subscribable_lectures
-    current_lectures = Lecture.in_current_term.includes(:course, :term)
-    no_term_lectures = Lecture.no_term.includes(:course, :term)
+    current_lectures = Lecture.in_current_term.where.not(sort: "vignettes").includes(:course, :term)
+    no_term_lectures = Lecture.no_term.where.not(sort: "vignettes").includes(:course, :term)
     return current_lectures.sort + no_term_lectures.sort if admin
     unless editor? || teacher?
       return current_lectures.published.sort + no_term_lectures.published.sort

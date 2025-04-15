@@ -816,6 +816,8 @@ de:
         nur die DozentIn und ModuleditorInnen an dieser Stelle Änderungen
         vornehmen. Sollten aus wichtigem Grund noch Änderungen an dieser Stelle
         gemacht werden, kannst Du Dich per Email an %{project_mail} wenden.
+      subscribe_link: "Link zum Modul abonnieren"
+      subscribe_link_info: "Dieser Link kann mit Studenten geteilt werden um darüber das Modul zu abonnieren."
     clicker:
       new_clicker: 'Neuen Clicker anlegen'
       user_link: 'Link für NutzerInnen'
