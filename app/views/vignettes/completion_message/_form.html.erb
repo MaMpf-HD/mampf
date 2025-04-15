@@ -11,7 +11,11 @@
   </div>
 
   <div class="mb-3">
-    <%= form.label :content, t('vignettes.completion_message.label'), class: "form-label" %>
+    <h3 class="lecture-pane-header">
+      <%= t('vignettes.completion_message.label') %>
+    </h3>
+  </div>
+  <div class="mb-3">
     <%= form.rich_text_area :content, value: @lecture&.vignettes_completion_message&.content, class: 'trix-content' %>
     <small class="text-muted"><%= t('vignettes.completion_message.help_text') %></small>
   </div>
