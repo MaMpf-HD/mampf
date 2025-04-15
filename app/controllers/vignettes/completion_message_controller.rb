@@ -3,6 +3,8 @@ module Vignettes
     before_action :set_lecture, only: [:set_completion_message, :destroy]
 
     def set_completion_message
+      return unless current_user.can_edit?(@lecture)
+
       @completion_message = CompletionMessage.find_or_initialize_by(lecture: @lecture)
       @completion_message.content = completion_message_params[:content]
 
@@ -16,6 +18,8 @@ module Vignettes
     end
 
     def destroy
+      return unless current_user.can_edit?(@lecture)
+
       @completion_message = @lecture.vignettes_completion_message
       if @completion_message&.destroy
         redirect_back(fallback_location: edit_lecture_path(@lecture),
