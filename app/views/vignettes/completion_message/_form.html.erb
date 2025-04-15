@@ -20,12 +20,12 @@
     <small class="text-muted"><%= t('vignettes.completion_message.help_text') %></small>
   </div>
 
-  <div class="mb-3 d-none" id="completion-message-buttons">
+  <div class="mb-3">
     <% completion_message_exists = @lecture.vignettes_completion_message.present? %>
     <% button_text = completion_message_exists ? 
                      t('buttons.save') : 
                      t('buttons.create') %>
-    <%= form.submit button_text, class: 'btn btn-primary' %>
+    <%= form.submit button_text, class: 'btn btn-primary d-none', id: 'completion-message-save-button' %>
     
     <% if completion_message_exists %>
       <%= link_to t('buttons.delete'), 

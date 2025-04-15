@@ -1,12 +1,12 @@
 $(document).ready(function () {
-  const buttonDiv = $("#completion-message-buttons");
+  const completionSaveButton = $("#completion-message-save-button");
   const changesWarningDiv = $("#unsaved-changes-warning");
   const trixEditor = document.querySelector("trix-editor");
 
-  if (!trixEditor || !buttonDiv) return;
+  if (!trixEditor || !completionSaveButton) return;
 
   $(document).on("trix-change", "trix-editor", function () {
-    buttonDiv.removeClass("d-none");
+    completionSaveButton.removeClass("d-none");
     changesWarningDiv.removeClass("d-none");
   });
 });
