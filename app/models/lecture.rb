@@ -45,6 +45,11 @@ class Lecture < ApplicationRecord
            dependent: :destroy,
            inverse_of: :lecture
 
+  has_one :vignettes_completion_message,
+          class_name: "Vignettes::CompletionMessage",
+          dependent: :destroy,
+          inverse_of: :lecture
+
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium

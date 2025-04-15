@@ -36,6 +36,15 @@ module Vignettes
       end
     end
 
+    def all_questionnaires_completed?(user, questionnaires)
+      return false if questionnaires.empty?
+
+      questionnaires.all? do |questionnaire|
+        user_answer = user.vignettes_user_answers.find_by(questionnaire: questionnaire)
+        user_answer&.last_slide_answered?
+      end
+    end
+
     def user_has_codename?(user, lecture)
       Vignettes::Codename.find_by(user: user, lecture: lecture).present?
     end

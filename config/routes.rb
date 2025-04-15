@@ -575,6 +575,12 @@ Rails.application.routes.draw do
   post "lectures/:id/questionnaires/set_codename",
        to: "vignettes/codenames#set_codename",
        as: "set_lecture_codename"
+  post "lectures/:id/questionnaires/set_completion_message",
+       to: "vignettes/completion_message#set_completion_message",
+       as: "set_lecture_completion_message"
+  delete "lectures/:id/questionnaires/destroy_completion_message",
+         to: "vignettes/completion_message#destroy",
+         as: "destroy_lecture_completion_message"
 
   scope module: "vignettes", path: "" do
     resources :questionnaires, only: [:create, :edit, :update, :destroy] do

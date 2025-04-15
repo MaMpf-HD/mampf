@@ -2520,6 +2520,7 @@ en:
     info_slides: 'Info Slides'
     questionnaire: 'Questionnaire'
     questionnaires: 'Questionnaires'
+    no_active_questionnaires: 'No questionnaires available'
     slide_content: 'Content'
     create_new: "Create new vignette"
     duplicate_new_questionnaire_title: "New questionnaire title"
@@ -2662,6 +2663,16 @@ en:
       set_success: "Personal code successfully updated"
       set_error: "Personal code could not be updated"
       please_set_codename: "Please set your personal code before taking a questionnaire"
+
+    completion_message:
+      label: "Completion Message"
+      help_text: "This message will be shown to users after they complete all available questionnaires"
+      delete: "Are you sure you want to delete this completion message?"
+      set_success: "Completion message saved successfully"
+      set_failure: "Could not save completion message"
+      delete_success: "Completion message deleted successfully"
+      delete_failure: "Could not delete completion message"
+      all_completed: "All questionnaires completed"
 
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'

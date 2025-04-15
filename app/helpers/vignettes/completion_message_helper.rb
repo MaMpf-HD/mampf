@@ -1,0 +1,2 @@
+module Vignettes::CompletionMessageHelper
+end

@@ -56,6 +56,23 @@
         </div>
     <% end %>
 
+    <% if all_questionnaires_completed?(current_user, @questionnaires) && @lecture.vignettes_completion_message.present? %>
+    <div class="card border-success mb-4 completion-card pulse-animation">
+        <div class="card-header bg-success text-white">
+        <h5 class="mb-0">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <%= t('vignettes.completion_message.all_completed') %>
+        </h5>
+        </div>
+        
+        <div class="card-body">
+        <div class="trix-content completion-message-content">
+            <%= @lecture.vignettes_completion_message.content %>
+        </div>
+        </div>
+    </div>
+    <% end %>
+
 
     <% grouped = group_questionnaires_by_completion(@questionnaires, current_user) %>
     
@@ -122,5 +139,5 @@
 
     </div>
 
-</div>
+
 <% end %>

@@ -2667,6 +2667,7 @@ de:
     info_slides: 'Info-Folien'
     questionnaire: 'Fragebogen'
     questionnaires: 'Fragebogen'
+    no_active_questionnaires: 'Kein Fragebogen verfügbar'
     slide_content: 'Inhalt'
     create_new: "Neue Vignette erstellen"
     duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
@@ -2813,6 +2814,16 @@ de:
       set_error: "Persönlicher Code konnte nicht gesetzt werden"
       please_set_codename: "Bitte setze deinen persönlichen Code bevor du einen Fragebogen ausfüllst"
   
+    completion_message:
+      label: "Abschlussnachricht"
+      help_text: "Diese Nachricht wird Studierenden gezeigt, nachdem diese alle verfügbaren Vignetten ausgefüllt haben."
+      delete: "Willst du diese Nachricht wirklich löschen?"
+      set_success: "Abschlussnachricht erfolgreich gespeichert"
+      set_failure: "Abschlussnachricht konnte nicht gespeichert werden"
+      delete_success: "Abschlussnachricht erfolgreich gelöscht"
+      delete_failure: "Abschlussnachricht konnte nicht gelöscht werden"
+      all_completed: "Alle Fragebogen wurden ausgefüllt"
+
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
   click_here: 'Hier klicken'
