@@ -11,7 +11,7 @@ module Vignettes
     layout "vignettes_navbar"
 
     def index
-      @questionnaires = @lecture.vignettes_questionnaires.where(published: true)
+      @questionnaires = @lecture.vignettes_questionnaires.where(published: true).order(title: :desc)
     end
 
     def take

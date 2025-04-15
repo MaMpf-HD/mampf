@@ -2656,9 +2656,10 @@ en:
     information: "Information"
 
     codenames:
-      set_success: "Codename successfully updated"
-      set_error: "Codename could not be updated"
-      please_set_codename: "Please set your codename before taking a questionnaire"
+      codename: "Personal code"
+      set_success: "Personal code successfully updated"
+      set_error: "Personal code could not be updated"
+      please_set_codename: "Please set your personal code before taking a questionnaire"
 
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'

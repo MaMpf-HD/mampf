@@ -18,16 +18,21 @@ module Vignettes
       { completed: completed, incomplete: incomplete }
     end
 
+    # sorts questionnaire by completion status and title
+    # the title is sorted alphanumerical where numbers have a higher priority then letters
     def sort_questionnaires_by_completion_status(questionnaires, user)
       questionnaires.sort_by do |questionnaire|
         user_answer = user.vignettes_user_answers.find_by(questionnaire: questionnaire)
-        if user_answer&.last_slide_answered?
-          2  # Completed questionnaires last
-        elsif user_answer.present?
-          0  # In-progress questionnaires in the middle
-        else
-          1  # Not-started questionnaires first
+        in_progress = user_answer.present? ? 0 : 1
+        title_key = questionnaire.title.downcase.chars.map do |c|
+          if /\d/.match?(c)
+            c.to_i
+          else
+            c.ord + 10
+          end
         end
+
+        [in_progress, title_key]
       end
     end
 
