@@ -151,17 +151,4 @@
     </div>
   </div>
 
-  <% if @lecture.sort == "vignettes" %>
-    <div class="row mb-3">
-      <div class="col-12">
-        <%= f.label :invite_link, t('admin.lecture.subscribe_link'), class: "form-label" %>
-        <%= helpdesk(t('admin.lecture.subscribe_link_info'), false) %>
-        <input type="text" 
-              class="form-control" 
-              value="<%= subscribe_lecture_page_url(@lecture) %>" 
-              readonly
-              onclick="this.select();">
-      </div>
-    </div>
-  <% end %>
 <% end %>

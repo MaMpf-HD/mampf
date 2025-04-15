@@ -177,6 +177,11 @@
                   <% end %>
           </div>
 
+          <% if @lecture.sort == "vignettes" %>
+              <%= render partial: 'lectures/edit/link_to_lecture',
+                      locals: { lecture: @lecture } %>
+          <% end %>
+
           <%= render partial: 'lectures/edit/tags',
               locals: { lecture: lecture } %>
           <%= render partial: 'lectures/edit/imported_media',

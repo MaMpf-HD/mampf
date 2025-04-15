@@ -37,9 +37,11 @@ module Vignettes
     end
 
     def all_questionnaires_completed?(user, questionnaires)
-      return false if questionnaires.empty?
+      published_questionnaires = questionnaires.where(published: true)
 
-      questionnaires.all? do |questionnaire|
+      return false if published_questionnaires.empty?
+
+      published_questionnaires.all? do |questionnaire|
         user_answer = user.vignettes_user_answers.find_by(questionnaire: questionnaire)
         user_answer&.last_slide_answered?
       end
