@@ -7,7 +7,9 @@
     // https://github.com/microsoft/vscode-eslint#settings-options
     "[javascript]": {
         "editor.formatOnSave": false, // to avoid formatting twice (ESLint + VSCode)
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
     },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
@@ -18,18 +20,37 @@
     "eslint.options": {
         "overrideConfigFile": ".config/eslint.mjs"
     },
+    "eslint.validate": [
+        "javascript",
+        "html"
+    ],
     //////////////////////////////////////
     // HTML
     //////////////////////////////////////
     "[html]": {
-        "editor.formatOnSave": false // TODO: activate once HTML formatter installed
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
+    },
+    "emeraldwalk.runonsave": {
+        "autoClearConsole": true,
+        "commands": [
+            {
+                "match": "\\.(html|text|js).erb$",
+                "cmd": "just lint erb ${file}",
+                "isAsync": true
+            }
+        ]
     },
     //////////////////////////////////////
     // Ruby (Rubocop)
     //////////////////////////////////////
     "[ruby]": {
         "editor.defaultFormatter": "Shopify.ruby-lsp",
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
     },
     "rubyLsp.formatter": "rubocop",
     "rubyLsp.rubyVersionManager": {
@@ -52,7 +73,6 @@
         "codeLens": true,
         "definition": true
     },
-    "rubyLsp.enableExperimentalFeatures": true,
     //////////////////////////////////////
     // Ruby Test Explorer
     //////////////////////////////////////
@@ -67,7 +87,7 @@
     // Files
     //////////////////////////////////////
     "files.exclude": {
-        "node_modules/": true,
+        "node_modules/": false,
         "pdfcomprezzor/": true,
         "coverage/": true,
         "solr/": true,
@@ -77,6 +97,7 @@
         "*.js.erb": "javascript",
         "*.html.erb": "html"
     },
+    "files.saveConflictResolution": "overwriteFileOnDisk",
     //////////////////////////////////////
     // Editor
     //////////////////////////////////////
@@ -111,6 +132,7 @@
     "cSpell.words": [
         "activerecord",
         "ajax",
+        "autocorrect",
         "buildcache",
         "cicd",
         "commontator",
@@ -133,12 +155,14 @@
         "preseed",
         "preseeds",
         "preselection",
+        "Rubocop",
         "psql",
         "realpath",
         "selectize",
         "Timecop",
         "turbolinks",
         "uncached",
+        "Unsets",
         "Unsets",
         "webpacker",
         "whitespaces"
