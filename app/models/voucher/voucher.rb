@@ -20,7 +20,7 @@ class Voucher < ApplicationRecord
   DEFAULT_EXPIRATION_DAYS = 3
 
   ROLE_HASH = { tutor: 0, editor: 1, teacher: 2, speaker: 3 }.freeze
-  enum role: ROLE_HASH
+  enum :role, ROLE_HASH
   validates :role, presence: true
 
   belongs_to :lecture, touch: true

@@ -2,7 +2,7 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.1.4"
+ruby "3.3.7"
 
 gem "active_model_serializers", "~> 0.10"
 gem "activerecord-import", "~>1.7"
@@ -19,6 +19,7 @@ gem "clipboard-rails", "~> 1.7"
 gem "coffee-rails", "~> 5.0" # CoffeeScript for .coffee assets and views
 gem "commontator", "~> 7.0.1"
 gem "coveralls", "~> 0.7", require: false
+gem "csv", "~> 3.3" # silence warning: no longer part of default gems for Ruby >=3.4.0
 gem "dalli", "~> 3.2" # caching to memcached in production
 gem "devise", "~> 4.9"
 gem "devise-bootstrap-views", "~> 1.1"
@@ -46,7 +47,7 @@ gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
 gem "rack", "~> 2.2"
-gem "rails", "~> 7.1.3"
+gem "rails", "~> 7.2.2"
 gem "rails-i18n", "~> 7.0"
 gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
@@ -62,7 +63,7 @@ gem "sunspot_rails", "~> 2.7"
 gem "sunspot_solr", "~> 2.7"
 gem "terser", "~> 1.2" # Ruby wrapper for UglifyJS JavaScript compressor
 gem "thredded", git: "https://github.com/thredded/thredded.git",
-                ref: "1340e913affd1af5fcc060fbccd271184ece9a6a"
+                ref: "94fbf890a984527bab399c8c7f1eec7af7006843"
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
@@ -73,6 +74,7 @@ gem "webpacker", "~> 5.4"
 group :development, :docker_development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
+  gem "mutex_m", "~> 0.3" # silence warning: no longer part of default gems for Ruby >=3.4.0
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
   gem "rubocop", "~> 1.65", require: false

@@ -9,8 +9,8 @@ class Annotation < ApplicationRecord
   # the timestamp for the annotation position is serialized as text in the db
   serialize :timestamp, coder: TimeStamp
 
-  enum category: { note: 0, content: 1, mistake: 2, presentation: 3 }
-  enum subcategory: { definition: 0, argument: 1, strategy: 2 }
+  enum :category, { note: 0, content: 1, mistake: 2, presentation: 3 }
+  enum :subcategory, { definition: 0, argument: 1, strategy: 2 }
 
   # If the annotation has an associated commontator comment, its comment will
   # be saved in the commontator comment. While calling annotation.comment returns
