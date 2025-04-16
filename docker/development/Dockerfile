@@ -1,3 +1,6 @@
+# https://docs.docker.com/build/checks/#fail-build-on-check-violations
+# check=error=true
+
 # First build the PDF compressor Web assembly binary
 # this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
 FROM golang:1.20 AS build-pdfcomprezzor
@@ -6,10 +9,9 @@ COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
-# Now build the actual mampf application
+# Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
 FROM ruby:3.1.4-bullseye
-ENV RAILS_ENV=production
 
 EXPOSE 3000
 EXPOSE 9394
@@ -44,7 +46,7 @@ RUN corepack prepare "yarn@${YARN_VERSION}" --activate
 RUN which yarn; yarn --version
 # even though this is not specified in the corepack documentation, we need to
 # run "set version", otherwise the app user will have an old version of
-# yarn avaialble instead of our specified version
+# yarn available instead of our specified version
 RUN yarn set version "${YARN_VERSION}"
 
 # Install other dependencies
@@ -59,11 +61,29 @@ RUN apt update && \
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
 WORKDIR /usr/src/app
-ENTRYPOINT ["./entrypoint.sh"]
+ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
 
 COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
-RUN bundle install
-RUN yarn install --production=false
+ARG IN_CI_CD
+RUN if [ "$IN_CI_CD" = "true" ]; then \
+        echo "Running bundle install"; \
+        bundle install; \
+    fi
+# https://stackoverflow.com/a/66158709/9655481
+RUN if [ "$IN_CI_CD" = "true" ]; then \
+        echo "Running yarn install"; \
+        yarn install --production --frozen-lockfile; \
+    fi
+    
+# Precompile assets in CI/CD
+# (See the production Dockerfile for an explanation of the dummy env file)
+COPY . /usr/src/app/
+RUN if [ "$IN_CI_CD" = "true" ]; then \
+        echo "Compiling MaMpf assets in pipeline"; \
+        set -o allexport; . ./docker/production/docker.env; set +o allexport; \
+        SECRET_KEY_BASE="$(bundle exec rails secret)" \
+        RAILS_ENV=test TEST_DATABASE_ADAPTER=nulldb bundle exec rails assets:precompile; \
+    fi
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /

@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class DropAsset < ActiveRecord::Migration[5.1]
   def change
     drop_table :assets
@@ -6,4 +5,3 @@ class DropAsset < ActiveRecord::Migration[5.1]
     drop_table :connections
   end
 end
-# rubocop:enable Rails/

@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class AddDetailsToInteraction < ActiveRecord::Migration[6.0]
   def change
     add_column :interactions, :controller_name, :text
@@ -6,4 +5,3 @@ class AddDetailsToInteraction < ActiveRecord::Migration[6.0]
     add_column :interactions, :referrer_url, :text
   end
 end
-# rubocop:enable Rails/

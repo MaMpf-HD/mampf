@@ -1,4 +1,3 @@
-# rubocop:disable Rails/
 class RemoveBooleansFromReferral < ActiveRecord::Migration[5.2]
   def change
     remove_column :referrals, :video, :boolean
@@ -6,4 +5,3 @@ class RemoveBooleansFromReferral < ActiveRecord::Migration[5.2]
     remove_column :referrals, :medium_link, :boolean
   end
 end
-# rubocop:enable Rails/
