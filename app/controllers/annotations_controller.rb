@@ -151,7 +151,7 @@ class AnnotationsController < ApplicationController
 
     def valid_time?(annotation)
       time = annotation.timestamp.total_seconds
-      time >= 0 and time <= annotation.medium.video["duration"]
+      time.between?(0, annotation.medium.video["duration"])
     end
 
     # checks that the subcategory is non-nil if the category is "content" and

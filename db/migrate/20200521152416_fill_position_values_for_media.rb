@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class FillPositionValuesForMedia < ActiveRecord::Migration[6.0]
   def change
     Course.all.each do |course|
@@ -18,4 +18,4 @@ class FillPositionValuesForMedia < ActiveRecord::Migration[6.0]
     end
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails

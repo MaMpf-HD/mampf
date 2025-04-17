@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class AddReleaseInfosToMedium < ActiveRecord::Migration[6.0]
   def up
     add_column :media, :released_at, :datetime
@@ -14,4 +14,4 @@ class AddReleaseInfosToMedium < ActiveRecord::Migration[6.0]
     remove_column :media, :release_date, :datetime
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails

@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class AddDefaultLocaleToCourse < ActiveRecord::Migration[6.0]
   def change
     Course.update_all(locale: I18n.default_locale.to_s)
@@ -6,4 +6,4 @@ class AddDefaultLocaleToCourse < ActiveRecord::Migration[6.0]
     User.update_all(locale: I18n.default_locale.to_s)
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails
