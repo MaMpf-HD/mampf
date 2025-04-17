@@ -1,0 +1,260 @@
+# This file was originally generated via the following command:
+# find . -type f -name '*.coffee' ! -path './node_modules/*' | xargs wc -l | sort -n
+
+### Usage
+# See https://github.com/decaffeinate/decaffeinate
+# Use npm install -g decaffeinate
+# Use decaffeinate app/views/whatever.coffee
+#
+# You might also want to use the REPL since ERB syntax is not supported
+# (and with the REPL, you can paste in parts of the file as well).
+# https://decaffeinate-project.org/repl/
+
+### Watch out for
+- Don't forget to change .js to .js.erb if needed. But use the pure 
+  .js whenever possible, i.e. when no ERB syntax is used.
+- Strings inside Strings, e.g. this:
+    .append('<%= j render partial: "quiz_certificates/form" %>')
+ should be converted to
+    .append("<%= j render partial: 'quiz_certificates/form' %>");
+ Watch out for this since ESLint won't see ERB syntax and thus replace the outer
+ ' quotes with ", but this leads to errors, so you have to replace the inner
+ " quotes with ' manually. You should be warned by the weird syntax highlights
+ in the editor though.
+
+### 🌟 DONE
+- "D" as first character in the line means that the file has been deleted
+  entirely because it was not needed anymore.
+- The number indicates the number of lines in that file minus 1.
+- Everywhere where I don't specify something in parentheses, I've manually checked
+  that the new new .js or .js.erb file is called (via console.log) and that it works.
+- Double-check files marked with ⚠️
+
+D0 ./app/views/media/import_manuscript.coffee (⚠️ haven't checked manually)
+D0 ./app/views/submissions/error.coffee (⚠️ haven't checked manually)
+
+0 ./app/views/notifications/destroy_all.coffee
+0 ./app/views/profile/toggle_thread_subscription.coffee
+2 ./app/views/users/delete_account.coffee
+
+0 ./app/views/tags/identify.coffee
+1 ./app/views/answers/update.coffee
+
+2 ./app/views/quizzes/delete_edge.coffee
+D2 ./app/views/quizzes/new.coffee
+2 ./app/views/quizzes/update_default_target.coffee (same as delete_edge.coffee)
+
+1 ./app/views/erdbeere/cancel_edit_tags.coffee
+1 ./app/views/erdbeere/edit_tags.coffee
+1 ./app/views/erdbeere/display_info.coffee (⚠️ could not find where it is used)
+
+# Tutorials as tutor
+2 ./app/views/tutorials/cancel_edit.coffee
+3 ./app/views/tutorials/validate_certificate.coffee
+2 ./app/views/submissions/cancel_action.coffee
+2 ./app/views/submissions/cancel_edit_correction.coffee
+3 ./app/views/quiz_certificates/validate.coffee
+3 ./app/views/submissions/accept.coffee (⚠️ too annoying to reproduce this late
+    submission case. The decaffeination was straightforward. Just double-check
+    it)
+3 ./app/views/submissions/reject.coffee (exactly the same as accept.coffee)
+3 ./app/views/submissions/refresh_token.coffee
+    (⚠️ haven't checked manually as only used when assignment is semiactive.
+    But decaffeination is almost 1:1).
+
+2 ./app/views/assignments/cancel_edit.coffee
+
+2 ./app/views/media/cancel_import_media.coffee
+
+2 ./app/views/vertices/new.coffee
+
+D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
+    the sidebar is rendered directly in application.html.erb. Furthermore it
+    doesn't use @course any where in _sidebar.html.erb and the coffee file
+    was added 6 years ago, that's why I think it's safe to delete it. The sidebar
+    renders correctly without it.)
+
+
+### 😐 TODO
+4 ./app/assets/javascripts/file_upload.coffee
+4 ./app/views/assignments/cancel_new.coffee
+4 ./app/views/divisions/edit.coffee
+4 ./app/views/divisions/new.coffee
+4 ./app/views/media/remove_screenshot.coffee
+4 ./app/views/media/update_tags.coffee
+4 ./app/views/programs/edit.coffee
+4 ./app/views/programs/new.coffee
+4 ./app/views/quiz_certificates/claim.coffee
+4 ./app/views/readers/update_all.coffee
+4 ./app/views/subjects/edit.coffee
+4 ./app/views/subjects/new.coffee
+4 ./app/views/tutorials/cancel_new.coffee
+4 ./app/views/users/elevate.coffee
+
+5 ./app/views/answers/destroy.coffee
+5 ./app/views/answers/new.coffee
+5 ./app/views/erdbeere/fill_realizations_select.coffee
+5 ./app/views/media/destination_warning.coffee
+5 ./app/views/submissions/enter_code.coffee
+5 ./app/views/tutorials/edit.coffee
+5 ./app/views/tutorials/new.coffee
+5 ./app/views/watchlists/new.coffee
+
+6 ./app/assets/javascripts/erdbeere.coffee
+6 ./app/views/announcements/create.coffee
+6 ./app/views/announcements/new.coffee
+6 ./app/views/courses/search.coffee
+6 ./app/views/lectures/search.coffee
+6 ./app/views/media/new.coffee
+6 ./app/views/remarks/update.coffee
+6 ./app/views/submissions/move.coffee
+6 ./app/views/terms/edit.coffee
+
+7 ./app/views/assignments/destroy.coffee
+7 ./app/views/chapters/new.coffee
+7 ./app/views/courses/render_question_counter.coffee
+7 ./app/views/lectures/remove_imported_medium.coffee
+7 ./app/views/media/add_screenshot.coffee
+7 ./app/views/tutorials/destroy.coffee
+
+8 ./app/views/lessons/new.coffee
+8 ./app/views/sections/new.coffee
+8 ./app/views/submissions/add_correction.coffee
+8 ./app/views/submissions/cancel_new.coffee
+8 ./app/views/submissions/destroy.coffee
+8 ./app/views/submissions/leave.coffee
+8 ./app/views/terms/new.coffee
+
+9 ./app/views/clickers/create.coffee
+9 ./app/views/erdbeere/find_tags.coffee
+9 ./app/views/lectures/import_media.coffee
+9 ./app/views/profile/unstar_lecture.coffee
+9 ./app/views/quizzes/update.coffee
+9 ./app/views/submissions/cancel_edit.coffee
+
+10 ./app/views/chapters/create.coffee
+10 ./app/views/courses/new.coffee
+10 ./app/views/media/render_medium_tags.coffee
+10 ./app/views/readers/update.coffee
+10 ./app/views/submissions/edit_correction.coffee
+10 ./app/views/talks/create.coffee
+10 ./app/views/terms/cancel.coffee
+11 ./app/views/chapters/_edit.coffee
+11 ./app/views/media/add_item.coffee
+11 ./app/views/profile/star_lecture.coffee
+11 ./app/views/terms/update.coffee
+12 ./app/views/referrals/edit.coffee
+12 ./app/views/sections/update.coffee
+12 ./app/views/talks/new.coffee
+12 ./app/views/watchlists/add_medium.coffee
+13 ./app/views/chapters/update.coffee
+13 ./app/views/media/add_reference.coffee
+13 ./app/views/talks/update.coffee
+14 ./app/views/sections/create.coffee
+14 ./app/views/submissions/join.coffee
+14 ./app/views/watchlists/edit.coffee
+15 ./app/assets/javascripts/submissions.coffee
+15 ./app/views/clickers/close.coffee
+15 ./app/views/clickers/new.coffee
+16 ./app/views/tutorials/update.coffee
+17 ./app/assets/javascripts/tutorials.coffee
+17 ./app/views/clickers/open.coffee
+17 ./app/views/courses/create.coffee
+17 ./app/views/tags/modal.coffee
+17 ./app/views/tags/render_tag_title.coffee
+17 ./app/views/tutorials/create.coffee
+18 ./app/assets/javascripts/registration.coffee
+18 ./app/views/assignments/edit.coffee
+18 ./app/views/tutorials/bulk_upload.coffee
+19 ./app/views/lectures/create.coffee
+19 ./app/views/lectures/update.coffee
+19 ./app/views/profile/unsubscribe_lecture.coffee
+
+20 ./app/assets/javascripts/terms.coffee
+20 ./app/views/courses/update.coffee
+21 ./app/views/media/render_import_media.coffee
+21 ./app/views/submissions/enter_invitees.coffee
+23 ./app/views/profile/subscribe_lecture.coffee
+24 ./app/views/items/edit.coffee
+25 ./app/views/submissions/edit.coffee
+25 ./app/views/submissions/update.coffee
+26 ./app/views/lectures/new.coffee
+27 ./app/assets/javascripts/administration.coffee
+27 ./app/assets/javascripts/katex.coffee
+27 ./app/views/assignments/update.coffee
+28 ./app/views/lessons/update.coffee
+28 ./app/views/questions/cancel_question_basics.coffee
+28 ./app/views/questions/render_question_parameters.coffee
+28 ./app/views/remarks/cancel_remark_basics.coffee
+28 ./app/views/submissions/create.coffee
+29 ./app/views/answers/create.coffee
+29 ./app/views/quizzes/edit_vertex_targets.coffee
+
+30 ./app/views/assignments/create.coffee
+30 ./app/views/quizzes/update_branching.coffee
+30 ./app/views/remarks/reassign.coffee
+30 ./app/views/users/update.coffee
+31 ./app/views/submissions/new.coffee
+31 ./app/views/tags/search.coffee
+32 ./app/views/media/fill_medium_preview.coffee
+32 ./app/views/profile/update.coffee
+32 ./app/views/questions/reassign.coffee
+33 ./app/views/lectures/edit_structures.coffee
+33 ./app/views/media/fill_quizzable_area.coffee
+33 ./app/views/media/publish.coffee
+33 ./app/views/questions/cancel_solution_edit.coffee
+34 ./app/views/questions/set_solution_type.coffee
+35 ./app/assets/javascripts/remarks.coffee
+35 ./app/assets/javascripts/watchlists.coffee
+35 ./app/views/media/fill_quizzable_preview.coffee
+35 ./app/views/sections/display.coffee
+36 ./app/assets/javascripts/announcements.coffee
+36 ./app/views/media/import_script_items.coffee
+37 ./app/views/quizzes/render_vertex_quizzable.coffee
+
+40 ./app/views/referrals/destroy.coffee
+42 ./app/assets/javascripts/geogebra.coffee
+42 ./app/views/clickers/render_clickerizable_actions.coffee
+42 ./app/views/media/fill_reassign_modal.coffee
+42 ./app/views/questions/update.coffee
+44 ./app/assets/javascripts/main.coffee
+44 ./app/views/media/render_medium_actions.coffee
+46 ./app/views/profile/show_accordion.coffee
+50 ./app/assets/javascripts/users.coffee
+51 ./app/views/items/display.coffee
+52 ./app/views/media/search.coffee
+54 ./app/views/media/catalog/import_preview.coffee
+58 ./app/views/media/update.coffee
+61 ./app/assets/javascripts/chapters.coffee
+71 ./app/views/items/destroy.coffee
+77 ./app/assets/javascripts/notifications.coffee
+80 ./app/assets/javascripts/clickers.coffee
+85 ./app/views/tags/update.coffee
+86 ./app/assets/javascripts/talks.coffee
+87 ./app/assets/javascripts/courses.coffee
+87 ./app/assets/javascripts/sections.coffee
+90 ./app/assets/javascripts/referrals.coffee
+91 ./app/assets/javascripts/tex_preview.coffee
+91 ./app/assets/javascripts/vertices.coffee
+91 ./app/views/items/update.coffee
+93 ./app/views/referrals/update.coffee
+97 ./app/assets/javascripts/items.coffee
+
+😭
+112 ./app/assets/javascripts/lessons.coffee
+130 ./app/assets/javascripts/show_clicker.coffee
+192 ./app/views/media/statistics.coffee
+210 ./app/assets/javascripts/tags.coffee
+293 ./app/views/quizzes/proceed.coffee
+352 ./app/assets/javascripts/questions.coffee
+395 ./app/assets/javascripts/quizzes.coffee
+421 ./app/assets/javascripts/media.coffee
+745 ./app/assets/javascripts/upload.coffee
+6689 in total
+
+# What API? Might need more holistic approach (get rid of API entirely)
+3 ./app/assets/javascripts/api/v1/medium.coffee
+3 ./app/assets/javascripts/api/v1/tag.coffee
+
+# Won't do (only when migrating to new build system)
+1 ./app/javascript/hello_coffee.coffee
