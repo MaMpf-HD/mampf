@@ -2810,9 +2810,13 @@ de:
 
     codenames:
       codename: "Persönlicher code"  
+      your_codename: "Dein persönlicher Code"
       set_success: "Persönlicher Code wurde erfolgreich geändert"
       set_error: "Persönlicher Code konnte nicht gesetzt werden"
       please_set_codename: "Bitte setze deinen persönlichen Code bevor du einen Fragebogen ausfüllst"
+      not_empty: "Persönlicher Code darf nicht leer sein"
+      min_length: "Persönlicher Code muss mindestens %{min} Zeichen lang sein"
+      max_length: "Personlicher Code darf maximal %{max} Zeichen lang sein"
   
     completion_message:
       label: "Abschlussnachricht"

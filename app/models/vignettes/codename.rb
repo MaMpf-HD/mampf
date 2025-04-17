@@ -1,6 +1,6 @@
 module Vignettes
   class Codename < ApplicationRecord
-    MIN_LENGTH = 1
+    MIN_LENGTH = 3
     MAX_LENGTH = 16
 
     validates :pseudonym, length: { minimum: MIN_LENGTH,

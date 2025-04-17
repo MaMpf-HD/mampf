@@ -37,7 +37,12 @@
                     <%= f.text_field :pseudonym, value: current_codename, class: 'form-control',
                         id: 'codename-input',
                         minlength: Vignettes::Codename::MIN_LENGTH,
-                        maxlength: Vignettes::Codename::MAX_LENGTH
+                        maxlength: Vignettes::Codename::MAX_LENGTH,
+                        data: {
+                        empty_message: t('vignettes.codenames.not_empty'),
+                        min_message: t('vignettes.codenames.min_length', min: Vignettes::Codename::MIN_LENGTH),
+                        max_message: t('vignettes.codenames.max_length', max: Vignettes::Codename::MAX_LENGTH)
+                        }
                     %>
                 </div>
                 <div class="col-auto">

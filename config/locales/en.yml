@@ -2660,9 +2660,13 @@ en:
 
     codenames:
       codename: "Personal code"
+      your_codename: "Your personal code"
       set_success: "Personal code successfully updated"
       set_error: "Personal code could not be updated"
       please_set_codename: "Please set your personal code before taking a questionnaire"
+      not_empty: "Personal code can't be empty"
+      min_length: "Personal code must have at least %{min} character"
+      max_length: "Personal code must have at least %{max} character"
 
     completion_message:
       label: "Completion Message"
