@@ -60,5 +60,15 @@ FactoryBot.define do
         end
       end
     end
+
+    trait :with_editor_by_id do
+      transient do
+        editor_id { nil }
+      end
+
+      after(:build) do |course, evaluator|
+        course.editors << User.find(evaluator.editor_id)
+      end
+    end
   end
 end

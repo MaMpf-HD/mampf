@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 # rubocop:disable Lint/SymbolConversion
 class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
   def up
@@ -33,5 +33,5 @@ class ChangeSubmissionForeignKeys < ActiveRecord::Migration[6.0]
     rename_column table_name, new_foreign_key, foreign_key
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails
 # rubocop:enable Lint/SymbolConversion
