@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class RenameKeksQuestionRemarkQuiz < ActiveRecord::Migration[5.2]
   def up
     Medium.where(sort: "KeksQuestion").update_all(sort: "Question")
@@ -12,4 +12,4 @@ class RenameKeksQuestionRemarkQuiz < ActiveRecord::Migration[5.2]
     Medium.where(sort: "Quiz").update_all(sort: "KeksQuiz")
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails

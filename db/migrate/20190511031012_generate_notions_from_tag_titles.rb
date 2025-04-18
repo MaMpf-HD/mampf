@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class GenerateNotionsFromTagTitles < ActiveRecord::Migration[6.0]
   def change
     Tag.all.each do |t|
@@ -8,4 +8,4 @@ class GenerateNotionsFromTagTitles < ActiveRecord::Migration[6.0]
     end
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails
