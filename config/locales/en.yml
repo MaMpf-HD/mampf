@@ -101,7 +101,7 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2024. MaMpf is on %{github}.
+      &copy; MaMpf Team. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.

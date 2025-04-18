@@ -10,8 +10,8 @@
 // [4] https://eslint.org/docs/rules/
 import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
-import erb from "eslint-plugin-erb";
 import pluginCypress from "eslint-plugin-cypress/flat";
+import erb from "eslint-plugin-erb";
 import globals from "globals";
 
 const ignoreFilesWithSprocketRequireSyntax = [
@@ -103,6 +103,7 @@ const customGlobals = {
 
   openAnnotationIfSpecifiedInUrl: "readable",
 
+  reloadUrl: "readable",
   Sortable: "readable",
 };
 

@@ -78,7 +78,7 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2024. MaMpf ist auf %{github}.
+      &copy; MaMpf Team. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
