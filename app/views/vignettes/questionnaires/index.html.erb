@@ -112,14 +112,14 @@
             <% if grouped[:incomplete].any? %>
                 <div class="list-group">
                     <% sort_questionnaires_by_completion_status(grouped[:incomplete], current_user).each do |questionnaire| %>
-                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <%= link_to take_questionnaire_path(questionnaire),
+                                    class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center",
+                                    disabled: !user_has_codename?(current_user, @lecture) do %>
                             <h6 class="mb-0 fw-bold"><%= questionnaire.title %></h6>
-                            <%= button_to questionnaire_take_text(current_user, questionnaire),
-                                        take_questionnaire_path(questionnaire),
-                                        method: :get,
-                                        class: "btn btn-sm btn-outline-primary",
-                                        disabled: !user_has_codename?(current_user, @lecture) %>
-                        </div>
+                            <span class="badge bg-primary rounded-pill" style="cursor: pointer;">
+                                <%= questionnaire_take_text(current_user, questionnaire) %>
+                            </span>
+                        <% end %>
                     <% end %>
                 </div>
             <% else %>
@@ -146,9 +146,8 @@
                 <% grouped[:completed].each do |questionnaire| %>
                 <div class="list-group-item d-flex justify-content-between align-items-center text-muted">
                     <h6 class="mb-1 fw-bold"><%= questionnaire.title %></h6>
-                    
-                    <span class="btn btn-sm btn-outline-secondary disabled">
-                    <%= t('vignettes.completed') %>
+                    <span class="badge bg-secondary rounded-pill disabled">
+                        <%= t('vignettes.completed') %>
                     </span>
                 </div>
                 <% end %>
