@@ -394,7 +394,6 @@ GEM
       ast (~> 2.4.1)
       racc
     pdf-reader (2.14.1)
-    pdf-reader (2.14.1)
       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
       afm (~> 0.2.1)
       hashery (~> 2.0)
@@ -562,7 +561,6 @@ GEM
       rexml
     ruby-progressbar (1.13.0)
     ruby-rc4 (0.1.5)
-    ruby-vips (2.2.3)
     ruby-vips (2.2.3)
       ffi (~> 1.12)
       logger
