@@ -24,38 +24,54 @@
     <% else %>
 
     <% unless user_has_codename?(current_user, @lecture) %>
-        <div class="alert alert-warning mb-4" role="alert">
+        <div class="alert alert-warning mb-3" role="alert">
             <i class="bi bi-exclamation-triangle-fill me-2"></i>
             <%= t('vignettes.codenames.please_set_codename') %>
         </div>
 
-        <%= form_with(url: set_lecture_codename_path(@lecture), method: :post, local: false) do |f| %>
-            <div class="row align-items-end mb-5">
-                <div class="col-md-3 col-sm-6">
-                    <%= f.label :pseudonym, t('vignettes.codenames.codename') %>
-                    <% current_codename = Vignettes::Codename.find_by(user: current_user, lecture: @lecture)&.pseudonym %>
-                    <%= f.text_field :pseudonym, value: current_codename, class: 'form-control',
-                        id: 'codename-input',
-                        minlength: Vignettes::Codename::MIN_LENGTH,
-                        maxlength: Vignettes::Codename::MAX_LENGTH,
-                        data: {
-                        empty_message: t('vignettes.codenames.not_empty'),
-                        min_message: t('vignettes.codenames.min_length', min: Vignettes::Codename::MIN_LENGTH),
-                        max_message: t('vignettes.codenames.max_length', max: Vignettes::Codename::MAX_LENGTH)
-                        }
-                    %>
+        <%= form_with(url: set_lecture_codename_path(@lecture),
+            method: :post, local: false,
+            class: "row row-cols-md-auto g-3 align-items-center mb-4") do |f| %>
+
+                <% current_codename = Vignettes::Codename.find_by(user: current_user, lecture: @lecture)&.pseudonym %>
+
+                <div class="col-12">
+                    <%= f.label :pseudonym, t('vignettes.codenames.codename'),
+                        class: "visually-hidden" %>
+                    <div class="input-group">
+                        <div class="input-group-text">
+                            <%= t('vignettes.codenames.codename') %>
+                        </div>
+                        <%= f.text_field :pseudonym,
+                            value: current_codename,
+                            placeholder: "",
+                            class: "form-control",
+                            id: "codename-input",
+                            minlength: Vignettes::Codename::MIN_LENGTH,
+                            maxlength: Vignettes::Codename::MAX_LENGTH,
+                            data: {
+                            empty_message: t('vignettes.codenames.not_empty'),
+                            min_message: t('vignettes.codenames.min_length',
+                                min: Vignettes::Codename::MIN_LENGTH),
+                            max_message: t('vignettes.codenames.max_length',
+                                max: Vignettes::Codename::MAX_LENGTH)
+                            }
+                        %>
+                    </div>
                 </div>
-                <div class="col-auto">
-                    <%= f.submit t('buttons.save'), class: 'btn btn-primary', id: 'codename-save-button' %>
+
+                
+                <div class="col-12">
+                    <%= f.submit t('buttons.save'), class: 'btn btn-primary' , id: 'codename-save-button' %>
                 </div>
-            </div>
+
         <% end %>
     <% else %>
-        <div class="mb-3">
+        <div class="mb-4">
             <h5 class="d-inline-block">
-            <strong><%= t('vignettes.codenames.your_codename') %>:</strong>
+            <%= t('vignettes.codenames.your_codename') %>:
             </h5>
-            <span class="badge bg-light text-dark ms-2 p-2 fs-5">
+            <span class="badge bg-light text-dark ms-2 p-2 fs-5 fw-semibold">
             <%= Vignettes::Codename.find_by(user: current_user, lecture: @lecture)&.pseudonym %>
             </span>
         </div>
@@ -97,7 +113,7 @@
                 <div class="list-group">
                     <% sort_questionnaires_by_completion_status(grouped[:incomplete], current_user).each do |questionnaire| %>
                         <div class="list-group-item d-flex justify-content-between align-items-center">
-                            <h6 class="mb-1 fw-bold"><%= questionnaire.title %></h6>
+                            <h6 class="mb-0 fw-bold"><%= questionnaire.title %></h6>
                             <%= button_to questionnaire_take_text(current_user, questionnaire),
                                         take_questionnaire_path(questionnaire),
                                         method: :get,
