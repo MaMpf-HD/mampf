@@ -2663,14 +2663,17 @@ en:
       your_codename: "Your personal code"
       set_success: "Personal code successfully updated"
       set_error: "Personal code could not be updated"
-      please_set_codename: "Please set your personal code before taking a questionnaire"
+      please_set_codename: >
+        Please set your personal code before taking a questionnaire.
       not_empty: "Personal code can't be empty"
       min_length: "Personal code must have at least %{min} character"
       max_length: "Personal code must have at least %{max} character"
 
     completion_message:
       label: "Completion Message"
-      help_text: "This message will be shown to users after they complete all available questionnaires"
+      help_text: >
+        This message will be shown to users after they complete all
+        available questionnaires.
       delete: "Are you sure you want to delete this completion message?"
       set_success: "Completion message saved successfully"
       set_failure: "Could not save completion message"

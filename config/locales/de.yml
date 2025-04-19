@@ -2813,14 +2813,17 @@ de:
       your_codename: "Dein persönlicher Code"
       set_success: "Persönlicher Code wurde erfolgreich geändert"
       set_error: "Persönlicher Code konnte nicht gesetzt werden"
-      please_set_codename: "Bitte setze deinen persönlichen Code bevor du einen Fragebogen ausfüllst"
+      please_set_codename: >
+        Bitte setze deinen persönlichen Code bevor du einen Fragebogen ausfüllst.
       not_empty: "Persönlicher Code darf nicht leer sein"
       min_length: "Persönlicher Code muss mindestens %{min} Zeichen lang sein"
       max_length: "Personlicher Code darf maximal %{max} Zeichen lang sein"
   
     completion_message:
       label: "Abschlussnachricht"
-      help_text: "Diese Nachricht wird Studierenden gezeigt, nachdem diese alle verfügbaren Vignetten ausgefüllt haben."
+      help_text: >
+        Diese Nachricht wird Studierenden gezeigt, nachdem diese alle
+        verfügbaren Vignetten ausgefüllt haben."
       delete: "Willst du diese Nachricht wirklich löschen?"
       set_success: "Abschlussnachricht erfolgreich gespeichert"
       set_failure: "Abschlussnachricht konnte nicht gespeichert werden"
