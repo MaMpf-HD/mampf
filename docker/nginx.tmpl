@@ -218,12 +218,14 @@ server {
 
     location /__accel_redirect {
         internal;
-        alias   /private/;
+        alias   /private;
         add_header Content-Encoding $upstream_http_content_encoding;
         gzip off;
     }
 
     location @rails {
+        # https://gist.github.com/Djo/11374407
+        # https://blog.horejsek.com/nginx-x-accel-explained/
         proxy_pass http://workers;
         proxy_set_header  X-Accel-Mapping       /private=/__accel_redirect;
         proxy_read_timeout 240s;

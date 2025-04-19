@@ -10,7 +10,8 @@
     <!-- Menu to switch between "tabs" ("pillars") -->
     <nav>
       <div class="nav nav-pills container small-width flex-column flex-sm-row"
-          id="lecture-nav-pills" role="tablist">
+          id="lecture-nav-pills" role="tablist"
+          data-is-vignette-lecture="<%= lecture.sort == 'vignettes' %>">
         <button class="nav-link active lecture-nav-pill-button"
             id="lecture-nav-content" type="button" role="tab"
              href="#content"
@@ -62,6 +63,16 @@
           aria-controls="lecture-pane-info" aria-selected="false">
           <%= t('info') %>
         </button>
+
+        <% if lecture.sort == "vignettes" %>
+          <button class="nav-link lecture-nav-pill-button"
+            id="lecture-nav-vignettes" type="button" role="tab"
+            href="#vignettes"
+            data-bs-toggle="pill" data-bs-target="#lecture-pane-vignettes"
+            aria-controls="lecture-pane-vignettes" aria-selected="false">
+            <%= t('vignettes.vignettes') %>
+          </button>
+        <% end %>
       </div>
     </nav>
 
@@ -166,6 +177,11 @@
                   <% end %>
           </div>
 
+          <% if @lecture.sort == "vignettes" %>
+              <%= render partial: 'lectures/edit/link_to_lecture',
+                      locals: { lecture: @lecture } %>
+          <% end %>
+
           <%= render partial: 'lectures/edit/tags',
               locals: { lecture: lecture } %>
           <%= render partial: 'lectures/edit/imported_media',
@@ -174,12 +190,29 @@
               locals: { lecture: lecture } %>
         </div>
       </div>
+
+      <!-- Vignettes -->
+      <% if lecture.sort == "vignettes" %>
+        <div class="tab-pane fade" id="lecture-pane-vignettes"
+            role="tabpanel" aria-labelledby="lecture-nav-vignettes" tabindex="0">
+          <div class="container small-width lecture-pane mb-3">
+            <%= render partial: 'vignettes/questionnaires/manage_questionnaires',
+                locals: { lecture: lecture } %>
+          </div>
+          <div class="container small-width lecture-pane">
+            <%= render partial: 'vignettes/completion_message/form',
+                locals: { lecture: lecture } %>
+          </div>
+        </div>
+      <% end %>
+
     </div>
   </div>
 
 
   <!-- Modals -->
   <%= render partial: 'media/modal' %>
+  <%= render 'vignettes/questionnaires/vignette_modal', lecture: @lecture %>
   <%= render partial: 'sections/content_modal' %>
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/publish/publish',

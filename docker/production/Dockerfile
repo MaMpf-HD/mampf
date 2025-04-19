@@ -57,7 +57,7 @@ RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/y
 # Install other dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info
+        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml

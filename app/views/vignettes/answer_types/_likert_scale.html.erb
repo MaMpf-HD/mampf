@@ -1,0 +1,14 @@
+<%= stylesheet_link_tag 'likert' %>
+
+<!-- Adapted from this great blog post -->
+<!-- https://jamesalvarez.co.uk/blog/how-to-make-responsive-likert-scales-in-css-(like-qualtrics)/ -->
+<div class="likert w-100">
+    <% @slide.question.labels.each do |key, label| %>
+        <label>
+            <%= f.radio_button :likert_scale_value, key, required: true %>
+            <span>
+                <%= label %>
+            </span>
+        </label>
+        <% end %>
+</div>

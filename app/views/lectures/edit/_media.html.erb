@@ -35,7 +35,7 @@
         <ul class="nav flex-column nav-pills"
             id="edited-media-tab"
             role="tablist">
-          <% media_sorts.each do |s| %>
+          <% media_sorts(lecture).each do |s| %>
             <li class="nav-item w-100">
               <a class="nav-link <%= active(s == 'kaviar') %>"
                  id="<%= s %>-tab"
@@ -51,7 +51,7 @@
       </div>
       <div class="col-7">
         <div class="tab-content" id="edited-media-tabContent">
-          <% media_sorts.each do |s| %>
+          <% media_sorts(lecture).each do |s| %>
             <div class="tab-pane fade <%= show_tab(s == 'kaviar') %>"
                  id="<%= s %>-media"
                  role="tabpanel"

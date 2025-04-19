@@ -1,0 +1,52 @@
+@import "branding";
+
+#vignette-take-card {
+    padding: 0em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border: $mampf-blue 2px solid;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px;
+}
+
+#vignettes-progress {
+    border-radius: 4px 4px 0 0;
+    height: 22px;
+    background-color: $mampf-blue;
+
+    .progress-bar {
+        background-color: saturate(lighten($mampf-blue, 15%), 10%);
+    }
+}
+
+.slide-footer-btn {
+    background-color: $mampf-blue;
+    color: white;
+    transition: 150ms ease-in-out;
+
+    &:hover,
+    &:focus,
+    &:active {
+        background-color: $mampf-blue-focus !important;
+        color: white !important;
+        box-shadow: 0px 2px 7px 0rem mampf-blue(0.2);
+    }
+
+    &:focus {
+        outline: $mampf-blue auto 0.7px;
+    }
+}
+
+.vignette-answer {
+    padding: var(--bs-card-spacer-y) var(--bs-card-spacer-x);
+}
+
+.open-info-slide-btn {
+    &:focus {
+        outline: lightgrey auto 0.5px;
+    }
+}
+
+.vignettes-info-slides-icon {
+    height: 55px;
+    margin-top: -0.5em;
+}

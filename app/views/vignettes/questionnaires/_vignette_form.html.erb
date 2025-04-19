@@ -1,0 +1,19 @@
+<%= form_with url: questionnaires_path do |form| %>
+  <%= form.hidden_field :lecture_id, value: lecture.id %>
+  
+  <div class="modal-body">
+    <div class="form-floating">
+      <%= form.text_field :title,
+          id: 'new-vignette-title', class: 'form-control',
+          required: true, placeholder: "" %>
+      <%= form.label t("basics.title"), class: 'form-label' %>
+    </div>
+  </div>
+  
+  <div class="modal-footer">
+    <%= form.submit t("buttons.create"), class: 'btn btn-primary' %>
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+      <%= t("buttons.cancel") %>
+    </button>
+  </div>
+<% end %>

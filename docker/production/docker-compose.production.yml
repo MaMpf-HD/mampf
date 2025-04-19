@@ -43,6 +43,7 @@ services:
     container_name: mampf-docker-proxy
     volumes:
       - "nginx-conf-d:/etc/nginx/conf.d"
+      - "media:/private/media:ro,nocopy"  # nginx only accesses /private/media/vignettes/ here
       - "submissions:/private/submissions:ro,nocopy"
       - "public:/public:ro"
     restart: always
