@@ -22,7 +22,7 @@
                   aria-current="<%= active_class.present? ? 'page' : '' %>"
                   class="nav-link <%= active_class.present? ? 'active' : '' %>
                         <%= is_disabled ? 'disabled' : '' %>"
-                  aria-disabled="<%= is_disabled %>">
+                  aria-disabled="<%= is_disabled %>"
                 >
                 <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
                 <%= t('categories.organizational_html') %>
