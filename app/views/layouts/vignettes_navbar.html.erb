@@ -17,18 +17,23 @@
             <% if lecture.organizational %>
               <% path = organizational_path(lecture) %>
               <% active_class = get_class_for_path(path) %>
+              <% is_disabled = !lecture || !lecture.organizational %>
               <a href="<%= url_for(path)%>"
+                  aria-current="<%= active_class.present? ? 'page' : '' %>"
                   class="nav-link <%= active_class.present? ? 'active' : '' %>
-                        <%= !lecture ||  !lecture.organizational ? 'disabled' : '' %>">
+                        <%= is_disabled ? 'disabled' : '' %>"
+                  aria-disabled="<%= is_disabled %>">
+                >
                 <i class="bi bi-info-square<%= active_class.present? ? "-fill" : "" %>"></i>
                 <%= t('categories.organizational_html') %>
               </a>
             <% end %>
 
-
             <!-- Questionnaires -->
-            <a href="<%= lecture_questionnaires_path(lecture) %>" 
-               class="nav-link <%= request.path.include?('questionnaires') ? 'active' : '' %>">
+            <% is_questionnaires_active = request.path.include?('questionnaires') %>
+            <a href="<%= lecture_questionnaires_path(lecture) %>"
+               aria-current="<%= is_questionnaires_active ? 'page' : '' %>"
+               class="nav-link <%= is_questionnaires_active ? 'active' : '' %>">
               <i class="bi bi-ui-checks me-2"></i>
               <%= t('vignettes.questionnaires') %>
             </a>
@@ -36,9 +41,13 @@
             <!-- Information -->
             <% project_name = 'reste' %>
             <% active_class = get_class_for_project(project_name) %>
+            <% is_disabled = !lecture || !lecture.reste?(current_user) %>
             <a href="<%= lecture_food_path(lecture, params: { project: project_name }) %>" 
+               aria-current="<%= active_class.present? ? 'page' : '' %>"
                class="nav-link <%= active_class.present? ? 'active' : '' %>
-                      <%= !lecture || !lecture.reste?(current_user) ? 'disabled' : '' %>">
+                      <%= is_disabled ? 'disabled' : '' %>"
+               aria-disabled="<%= is_disabled %>"
+              >  
               <i class="bi bi-info-circle<%= active_class.present? ? "-fill" : "" %> me-2"></i>
               <%= t('vignettes.information') %>
             </a>
