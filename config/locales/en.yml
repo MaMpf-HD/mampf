@@ -777,7 +777,8 @@ en:
         If changes are necessary for some reason, you can contact the
         site administrators by mail: %{project_mail}.
       subscribe_link: "Lecture subscription link"
-      subscribe_link_info: "This URL can be shared with students for lecture subscription"
+      subscribe_link_info: >
+        This URL can be shared with students for lecture subscription.
     clicker:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'
