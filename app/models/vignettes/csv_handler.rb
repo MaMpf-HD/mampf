@@ -4,8 +4,8 @@ module Vignettes
   class CsvHandler
     HEADERS = ["Answer ID",
                "Codename",
-               "Slide title",
                "Slide position",
+               "Slide title",
                "Total time on slide",
                "Time on slide",
                "Time on info slide",

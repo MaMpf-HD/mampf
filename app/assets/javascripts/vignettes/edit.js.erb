@@ -312,8 +312,8 @@
     const backButton = $("#vignettes-back-btn");
     const confirmMessage = backButton.attr("data-navigate-away-message");
 
-    window.addEventListener("beforeunload", checkForChangesAndPreventFromLeaving);
-    backButton.click(function () {
+    window.addEventListener("beforeunload", event => checkForChangesAndPreventFromLeaving(event));
+    backButton.click(function (event) {
       if (shouldAllowNavigatingAway()) {
         formSubmit = false;
         return;
@@ -332,7 +332,7 @@
       return !hasUnsavedChanges || unsavedChangesModalOpen || formSubmit;
     }
 
-    function checkForChangesAndPreventFromLeaving() {
+    function checkForChangesAndPreventFromLeaving(event) {
       if (shouldAllowNavigatingAway()) {
         formSubmit = false;
         return;
