@@ -12,7 +12,6 @@ $(document).ready(function () {
     codenameInput.setCustomValidity(emptyMessage);
 
     codenameInput.addEventListener("input", function () {
-      console.log(emptyMessage);
       if (this.validity.valueMissing) {
         this.setCustomValidity(emptyMessage);
       }
