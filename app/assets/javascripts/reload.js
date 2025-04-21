@@ -7,7 +7,6 @@
  */
 // eslint-disable-next-line no-unused-vars
 function reloadUrl() {
-  console.log("in reloadUrl");
   const queryParams = new URLSearchParams(window.location.search);
   queryParams.set("lr", new Date().getTime());
   const query = queryParams.toString();

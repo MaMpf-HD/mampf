@@ -118,7 +118,7 @@ db-tear-down:
     echo -e "\033[33mIgnore the error 'Resource is still in use' for the development_default network\033[0m"
     cd {{justfile_directory()}}/docker/development/
     docker compose down db --volumes
-    docker-compose up -d --force-recreate db
+    docker compose up -d --force-recreate db
     just docker wait-for-postgres
 
 # Removes the development docker containers

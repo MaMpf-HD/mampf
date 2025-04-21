@@ -1,0 +1,15 @@
+<% @slide.question.options.each do |option| %>
+<div class="form-check">
+    <%= check_box_tag "vignettes_answer[option_ids][]", 
+                       option.id,
+                       false,
+                       id: "vignette-multiple-choice-#{option.id}",
+                       data: {
+                        "message-at-least-one" => t('vignettes.multiple_choice_at_least_one'),
+                       },
+                       class: "form-check-input" %>
+    <%= label_tag "vignette-multiple-choice-#{option.id}", 
+                 option.text, 
+                 class: "form-check-label" %>
+</div>
+<% end %>
