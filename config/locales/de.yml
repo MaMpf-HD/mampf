@@ -2825,7 +2825,7 @@ de:
       label: "Abschlussnachricht"
       help_text: >
         Diese Nachricht wird Studierenden gezeigt, nachdem diese alle
-        verfügbaren Vignetten ausgefüllt haben."
+        verfügbaren Vignetten ausgefüllt haben.
       delete: "Willst du diese Nachricht wirklich löschen?"
       set_success: "Abschlussnachricht erfolgreich gespeichert"
       set_failure: "Abschlussnachricht konnte nicht gespeichert werden"
