@@ -1,5 +1,5 @@
 # https://github.com/Shopify/erb_lint
-glob: "**/*.{text,js}{+*,}.erb"
+glob: "**/*.{html,text,js}{+*,}.erb"
 exclude:
   - '**/vendor/**/*'
   - '**/node_modules/**/*'
@@ -34,9 +34,9 @@ linters:
     rubocop_config:
       inherit_from:
         - .config/.rubocop.yml
-        # Disable some rules that would require global context, since each
-        # ruby statement (between ERB tags) is parsed and analyzed independently
-        # of each other by erb_lint.
+      # Disable some rules that would require global context, since each
+      # ruby statement (between ERB tags) is parsed and analyzed independently
+      # of each other by erb_lint.
       Layout/InitialIndentation:
         Enabled: false
       Layout/LineLength:

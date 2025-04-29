@@ -120,6 +120,8 @@
     //////////////////////////////////////
     // Editor
     //////////////////////////////////////
+    "editor.detectIndentation": false,
+    "editor.renderFinalNewline": "on",
     "editor.wordWrap": "wordWrapColumn",
     "editor.wordWrapColumn": 100, // toggle via Alt + Z shortcut
     "editor.mouseWheelZoom": true,
