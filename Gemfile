@@ -75,13 +75,12 @@ gem "webpacker", "~> 5.4"
 group :development, :docker_development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
-  # gem "mutex_m", "~> 0.3" # silence warning: no longer part of default gems for Ruby >=3.4.0
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
   gem "rubocop", "~> 1.65", require: false
   gem "rubocop-performance", "~> 1.21", require: false
   gem "rubocop-rails", "~> 2.24", require: false
-  gem "spring", "~> 2.1" # app preloader, keeps app running in background for development
+  gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
   gem "web-console", "~> 4.2" # interactive console on exception pages
 end
