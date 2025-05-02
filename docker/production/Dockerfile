@@ -7,7 +7,8 @@ RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
-FROM ruby:3.3.7-bullseye
+# https://hub.docker.com/_/ruby/
+FROM ruby:3.3.8-bookworm
 
 ENV RAILS_ENV=production
 

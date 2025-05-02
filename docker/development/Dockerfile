@@ -11,7 +11,7 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.3.7-bullseye
+FROM ruby:3.3.8-bookworm
 
 EXPOSE 3000
 EXPOSE 9394
@@ -50,7 +50,7 @@ RUN which yarn; yarn --version
 RUN yarn set version "${YARN_VERSION}"
 
 # Install other dependencies
-# Note that postgresql-client-13 is available through debian bullseye
+# Note that postgresql-client-13 is available through debian bookworm
 # that the ruby image is based on
 RUN apt update && \
     apt-get install -y --no-install-recommends \

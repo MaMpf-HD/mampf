@@ -27,7 +27,7 @@ jobs:
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.7
+          ruby-version: 3.3.8
           bundler-cache: true
 
       - name: Run RuboCop
