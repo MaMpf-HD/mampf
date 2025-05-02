@@ -66,5 +66,12 @@ erd:
         exclude="${exclude_default},Claimable,Editable,Teachable" \
         only="Lecture,Lesson,Chapter,Section,Item,LessonSectionJoin,Term"
 
+    # 🌟 Vignettes
+    docker compose exec -it mampf rake erd warn=false \
+        title="Vignettes" filename=/usr/src/app/tmp/erd/mampf-erd-vignettes \
+        inheritance=true polymorphism=true indirect=true attributes=content \
+        exclude="${exclude_default},Claimable,Editable,Teachable,Notifiable,Record" \
+        only="Vignettes::Questionnaire, Vignettes::Slide, Vignettes::InfoSlide, Vignettes::Answer, Vignettes::UserAnswer, Vignettes::Question, Vignettes::SlideStatistic, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextQuestion, Vignettes::TextAnswer, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextAnswer, Vignettes::Option, Vignettes::Codename, Vignettes::CompletionMessage, Vignettes::NumberQuestion, Vignettes::NumberAnswer, Lecture, User"
+
     echo "📂 Diagrams are ready for you in the folder {{justfile_directory()}}/tmp/erd/"
     echo "🔀 For the meanings of the arrows, refer to https://voormedia.github.io/rails-erd/gallery.html#notations"

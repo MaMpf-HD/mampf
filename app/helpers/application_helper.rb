@@ -94,9 +94,13 @@ module ApplicationHelper
   end
 
   # media_sorts
-  def media_sorts
-    ["kaviar", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
-     "reste"]
+  def media_sorts(lecture = nil)
+    if lecture && lecture.sort == "vignettes"
+      ["reste"]
+    else
+      ["kaviar", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
+       "reste"]
+    end
   end
 
   # media_sort -> acronym

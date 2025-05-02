@@ -10,10 +10,48 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_09_21_221000) do
+ActiveRecord::Schema[7.2].define(version: 2025_04_19_000012) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "annotations", force: :cascade do |t|
     t.bigint "medium_id", null: false
@@ -905,6 +943,124 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_21_221000) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vignettes_answers", force: :cascade do |t|
+    t.string "type"
+    t.bigint "vignettes_question_id", null: false
+    t.bigint "vignettes_slide_id", null: false
+    t.bigint "vignettes_user_answer_id", null: false
+    t.text "text"
+    t.string "likert_scale_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_question_id"], name: "index_vignettes_answers_on_vignettes_question_id"
+    t.index ["vignettes_slide_id"], name: "index_vignettes_answers_on_vignettes_slide_id"
+    t.index ["vignettes_user_answer_id"], name: "index_vignettes_answers_on_vignettes_user_answer_id"
+  end
+
+  create_table "vignettes_answers_options", id: false, force: :cascade do |t|
+    t.bigint "vignettes_answer_id", null: false
+    t.bigint "vignettes_option_id", null: false
+    t.index ["vignettes_answer_id", "vignettes_option_id"], name: "index_answers_options_on_answer_id_and_option_id"
+    t.index ["vignettes_option_id", "vignettes_answer_id"], name: "index_answers_options_on_option_id_and_answer_id"
+  end
+
+  create_table "vignettes_codenames", force: :cascade do |t|
+    t.string "pseudonym"
+    t.bigint "user_id"
+    t.bigint "lecture_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vignettes_codenames_on_lecture_id"
+    t.index ["user_id"], name: "index_vignettes_codenames_on_user_id"
+  end
+
+  create_table "vignettes_completion_messages", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vignettes_completion_messages_on_lecture_id"
+  end
+
+  create_table "vignettes_info_slides", force: :cascade do |t|
+    t.string "title", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
+    t.string "icon_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_info_slides_on_vignettes_questionnaire_id"
+  end
+
+  create_table "vignettes_info_slides_slides", id: false, force: :cascade do |t|
+    t.bigint "vignettes_info_slide_id", null: false
+    t.bigint "vignettes_slide_id", null: false
+    t.index ["vignettes_info_slide_id", "vignettes_slide_id"], name: "idx_on_vignettes_info_slide_id_vignettes_slide_id_2bdc65ab76"
+    t.index ["vignettes_slide_id", "vignettes_info_slide_id"], name: "idx_on_vignettes_slide_id_vignettes_info_slide_id_c74f04e951"
+  end
+
+  create_table "vignettes_options", force: :cascade do |t|
+    t.string "text"
+    t.bigint "vignettes_question_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_question_id"], name: "index_vignettes_options_on_vignettes_question_id"
+  end
+
+  create_table "vignettes_questionnaires", force: :cascade do |t|
+    t.string "title"
+    t.bigint "lecture_id", null: false
+    t.boolean "published"
+    t.boolean "editable", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
+  end
+
+  create_table "vignettes_questions", force: :cascade do |t|
+    t.string "type"
+    t.text "question_text"
+    t.bigint "vignettes_slide_id", null: false
+    t.boolean "only_integer", default: false
+    t.decimal "min_number", precision: 10
+    t.decimal "max_number", precision: 10
+    t.string "language", default: "en"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_slide_id"], name: "index_vignettes_questions_on_vignettes_slide_id"
+  end
+
+  create_table "vignettes_slide_statistics", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "vignettes_answer_id"
+    t.integer "time_on_slide"
+    t.integer "total_time_on_slide"
+    t.text "time_on_info_slides"
+    t.text "info_slides_access_count"
+    t.text "info_slides_first_access_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
+    t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
+  end
+
+  create_table "vignettes_slides", force: :cascade do |t|
+    t.string "title", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_vignettes_slides_on_position"
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_slides_on_vignettes_questionnaire_id"
+  end
+
+  create_table "vignettes_user_answers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_vignettes_user_answers_on_user_id"
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_user_answers_on_vignettes_questionnaire_id"
+  end
+
   create_table "votes", force: :cascade do |t|
     t.string "votable_type"
     t.bigint "votable_id"
@@ -962,6 +1118,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_21_221000) do
     t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "annotations", "media"
   add_foreign_key "annotations", "users"
   add_foreign_key "announcements", "lectures"
@@ -1007,6 +1165,20 @@ ActiveRecord::Schema[7.2].define(version: 2024_09_21_221000) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "vignettes_answers", "vignettes_questions"
+  add_foreign_key "vignettes_answers", "vignettes_slides"
+  add_foreign_key "vignettes_answers", "vignettes_user_answers"
+  add_foreign_key "vignettes_codenames", "lectures"
+  add_foreign_key "vignettes_codenames", "users"
+  add_foreign_key "vignettes_completion_messages", "lectures"
+  add_foreign_key "vignettes_options", "vignettes_questions"
+  add_foreign_key "vignettes_questionnaires", "lectures"
+  add_foreign_key "vignettes_questions", "vignettes_slides"
+  add_foreign_key "vignettes_slide_statistics", "users"
+  add_foreign_key "vignettes_slide_statistics", "vignettes_answers"
+  add_foreign_key "vignettes_slides", "vignettes_questionnaires"
+  add_foreign_key "vignettes_user_answers", "users"
+  add_foreign_key "vignettes_user_answers", "vignettes_questionnaires"
   add_foreign_key "vouchers", "lectures"
   add_foreign_key "watchlist_entries", "media"
   add_foreign_key "watchlist_entries", "watchlists"

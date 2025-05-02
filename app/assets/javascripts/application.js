@@ -18,6 +18,7 @@
 //= require js-routes
 //= require jquery-ui
 //= require trix
+//= require @rails/actiontext
 //= require clipboard
 //= require _selectize_turbolinks_fix
 //= require administration
@@ -56,6 +57,7 @@
 //= require vertices
 //= require watchlists
 //= require turbolinks
+//= require reload
 
 //= require search_tags
 

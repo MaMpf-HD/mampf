@@ -39,6 +39,9 @@ coverage
 # Ignore shrine store
 /public/uploads
 
+# Ignore activeStorage uploads
+/storage/*
+
 # Ignore environment variables
 completed_initial_run
 /public/uploads.zip

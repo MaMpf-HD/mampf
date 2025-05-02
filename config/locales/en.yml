@@ -101,7 +101,7 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2024. MaMpf is on %{github}.
+      &copy; MaMpf Team. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
@@ -450,6 +450,9 @@ en:
       oberseminar: 'Research Seminar'
       oberseminar_short: 'RS'
       oberseminar_content: 'Research Seminar Contents'
+      vignettes: 'Vignettes'
+      vignettes_short: 'V'
+      vignettes_content: 'Vignettes Contents'
       special: 'Special'
       special_short: ''
       special_content: 'Content'
@@ -773,6 +776,9 @@ en:
         only the teacher and course editors can make changes here.
         If changes are necessary for some reason, you can contact the
         site administrators by mail: %{project_mail}.
+      subscribe_link: "Lecture subscription link"
+      subscribe_link_info: >
+        This URL can be shared with students for lecture subscription.
     clicker:
       new_clicker: 'Create new Clicker'
       user_link: 'Link for users'
@@ -2507,6 +2513,175 @@ en:
       reduced_questions: >
         The number of questions will be reduced accordingly if there are
         fewer questions availabale for your specified content than you selected.
+  
+  vignettes:
+    vignettes: 'Vignettes'
+    slide: 'Slide'
+    slides: 'Slides'
+    info_slides: 'Info Slides'
+    questionnaire: 'Questionnaire'
+    questionnaires: 'Questionnaires'
+    no_active_questionnaires: 'No questionnaires available'
+    slide_content: 'Content'
+    create_new: "Create new vignette"
+    duplicate_new_questionnaire_title: "New questionnaire title"
+    destroy_answer: 'Answer was destroyed'  
+    answered: 'Questionnaire was successfully answered'
+    already_answered: 'You have already answered this questionnaire'
+    no_slides: 'No slides to answer'
+    not_found: 'The requested questionnaire was not found'
+    no_lecture: 'The requested lecture was not found'
+    not_vignettes_lecture: 'The lecture cannot be used for vignettes'
+    create_new_info_slide: 'Create new info slide'
+    create_new_slide: 'Create new slide'
+    info_slide_created: 'Info slide created.'
+    info_slide_updated: 'Info slide updated.'
+    slide_updated: 'Slide was successfully updated.'
+    slide_created: 'Slide was successfully created.'
+    slide_not_created: 'Slide could not be created.'
+    published: 'Vignette was successfully published.'
+    unpublished: 'Vignette was successfully unpublished.'
+    publish_modal: |
+      Are you sure you want to publish this vignette?
+
+      Important: After publishing, you will no longer be able to edit the vignette's content or questions.
+
+      While you can unpublish it later to hide it from students, the content will remain locked for editing.
+    unpublish_modal: |
+      Are you sure you want to unpublish this vignette?
+
+      Unpublishing will hide this vignette from students, but all student responses and statistics will be preserved.
+
+      Important: The vignette will remain locked for editing. If you need to make changes, please duplicate the vignette instead.
+
+    not_published: 'Vignette could not be published.'
+    not_unpublished: 'Vignette could not be unpublished.'
+    not_accessible: 'Questionnaire is not accessible.'
+    not_editable: 'Vignette is not editable, because it was already published.'
+    no_slides: "Vignette is empty"
+    not_deleted: 'Vignette could not be deleted'
+    slide_not_updated: 'Slide could not be updated'
+    slide_deleted: 'Slide was successfully deleted.'
+    slide_not_deleted: 'Slide could not be deleted.'
+    slide_confirm_delete: >
+      Are you sure you want to delete this slide? This action cannot be undone.
+    deleted: 'Vignette successfully deleted'
+    confirm_delete: > 
+      Are you sure you want to delete this vignette?
+      This will also delete all associated slides, answers and statistics.
+    duplicated: 'Vignette was successfully duplicated'
+    not_duplicated: 'Vignette could not be duplicated'
+    body_too_short_error: 'The body is too short'
+    body_missing_error: 'The body is missing'
+    not_a_number_error: "Please enter a valid number"
+    number_missing_error: "Please provide a numeric answer"
+    number_too_large_error: "Please enter a number less than or equal to %{max}"
+    number_too_small_error: "Please enter a number greater than or equal to %{min}"
+    no_option: "At least one option must be specified"
+    multiple_choice_at_least_one: "Select at least one option"
+    empty_option: "All options must have text"
+    publish: "Publish"
+    unpublish: "Unpublish"
+    editing_locked: "Editing locked"
+    editing_locked_info: >
+      This vignette has already been published (at least once) and can therefore
+      no longer be edited (or only few elements remain available for editing).
+      If you want to make changes, please duplicate the vignette.
+    create_slide: "Create Slide"
+    update_slide: "Update Slide"
+    delete_slide: "Delete Slide"
+    add_multiple_choice_option: "Add Multiple Choice Option"
+    additional_information: "Additional information"
+    submit_answer: "Submit answer"
+    next_slide: "Next Slide"
+    return_to_edit: "Return to edit"
+
+    info_slide_empty_title: "Title is missing"
+    info_slide_empty_icon: "Icon is missing"
+    info_slide_deleted: "Info slide was successfully deleted"
+    info_slide_not_deleted: "Info slide could not be deleted"
+    info_slide_confirm_delete: >
+      Are you sure you want to delete this info slide? This action cannot be undone.
+    create_info_slide: "Create Info Slide"
+    update_info_slide: "Update Info Slide"
+
+    drag_slides_tip: 'Drag slides to change their order.'
+    unsaved_changes_warning: "You have unsaved changes."
+    unsaved_changes: "Unsaved Changes"
+    unsaved_changes_navigation: >
+      You have unsaved changes. Are you sure you want to leave this page?
+    unsaved_changes_modal: > 
+      You have unsaved changes in the current slide.
+      Do you want to save or discard them before editing a new one?
+
+    preview: "Preview"
+    duplicate: "Duplicate"
+    export_statistics: "Export statistics"
+    delete: "Delete Vignette"
+    confirm_publication: "Confirm publication"
+
+    question_type: "Question Type"
+    question_type_selection: "Selection for question type"
+    your_question: "Your question"
+    question_types:
+      none: "No Answer"
+      text_area: "Text Area"
+      number_field: "Number field"
+      multiple_choice: "Multiple Choice"
+      likert_scale: "Likert Scale"
+    
+    language_selection: "Language Selection"
+    
+    locales:
+      en: "English"
+      de: "German"
+      nl: "Dutch"
+    
+    number_question_settings: "Number Question Settings"
+    only_integer: "Allow integers only (no decimals)"
+    min_number: "Minimum value"
+    max_number: "Maximum value"
+    number_range_help: "Leave min/max fields empty for unlimited range"
+    your_answer: "Your answer"    
+    your_numeric_answer: "Your numeric answer"
+    number_range_between: "Enter a number between %{min} and %{max}"
+    number_range_min: "Enter a number greater than or equal to %{min}"
+    number_range_max: "Enter a number less than or equal to %{max}"
+
+    completed: "Completed"
+    in_progress: "In progress"
+    not_started: "Not started"
+    active_questionnaires: "Available Questionnaires"
+    completed_questionnaires: "Completed Questionnaires"
+    take: "Take"
+    continue: "Continue"
+    markdown_help: "Supports Markdown: **bold** & *italic*"
+
+    information: "Information"
+
+    codenames:
+      codename: "Personal code"
+      your_codename: "Your personal code"
+      set_success: "Personal code successfully updated"
+      set_error: "Personal code could not be updated"
+      please_set_codename: >
+        Please set your personal code before taking a questionnaire.
+      not_empty: "Personal code can't be empty"
+      min_length: "Personal code must have at least %{min} character"
+      max_length: "Personal code must have at least %{max} character"
+
+    completion_message:
+      label: "Completion Message"
+      help_text: >
+        This message will be shown to users after they complete all
+        available questionnaires.
+      delete: "Are you sure you want to delete this completion message?"
+      set_success: "Completion message saved successfully"
+      set_failure: "Could not save completion message"
+      delete_success: "Completion message deleted successfully"
+      delete_failure: "Could not delete completion message"
+      all_completed: "All questionnaires completed"
+
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
   click_here: 'Click here'
@@ -3471,6 +3646,8 @@ en:
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'
+    save_changes: "Save Changes"
+    discard_changes: "Discard Changes"
     delete: 'Delete'
     publish: 'Publish'
     parent_course: 'Parent Course'
@@ -3904,6 +4081,11 @@ en:
           team_size: >
             You are not allowed to join as otherwise the submission team would
             have more members than allowed.
+        vignettes/question:
+          format: '%{message}'
+          attributes:
+            question_text:
+              blank: 'cannot be empty'
         vote:
           attributes:
             clicker:
