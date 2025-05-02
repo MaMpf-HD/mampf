@@ -20,7 +20,7 @@ gem "clipboard-rails", "~> 1.7"
 gem "coffee-rails", "~> 5.0" # CoffeeScript for .coffee assets and views
 gem "commontator", "~> 7.0.1"
 gem "coveralls", "~> 0.7", require: false
-# gem "csv", "~> 3.3" # silence warning: no longer part of default gems for Ruby >=3.4.0
+gem "csv", "~> 3.3" # for example used in Vignettes::CsvHandler
 gem "dalli", "~> 3.2" # caching to memcached in production
 gem "devise", "~> 4.9"
 gem "devise-bootstrap-views", "~> 1.1"
