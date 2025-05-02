@@ -50,12 +50,10 @@ RUN which yarn; yarn --version
 RUN yarn set version "${YARN_VERSION}"
 
 # Install other dependencies
-# Note that postgresql-client-13 is available through debian bookworm
-# that the ruby image is based on
 RUN apt update && \
     apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools postgresql-client-13 wget wait-for-it graphviz libvips42
+        libarchive-tools postgresql-client-15 wget wait-for-it graphviz libvips42
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
