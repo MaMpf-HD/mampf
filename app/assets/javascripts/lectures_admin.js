@@ -11,25 +11,31 @@
  * https://webdesign.tutsplus.com/how-to-add-deep-linking-to-the-bootstrap-4-tabs-component--cms-31180t
  */
 function configureUrlHashesForBootstrapTabs() {
-  $('#lecture-nav-pills button[role="tab"]').on("focus", function () {
+  $('#lecture-nav-pills button[role="tab"]').off("focus").on("focus", function () {
     const hash = $(this).attr("href");
     const urlWithoutHash = location.href.split("#")[0];
     const newUrl = `${urlWithoutHash}${hash}`;
-    history.pushState(null, "", newUrl);
+    // https://github.com/turbolinks/turbolinks-classic/issues/363#issuecomment-85626145
+    history.pushState({ turbolinks: true, url: newUrl }, "", newUrl);
   });
 }
 
 function navigateToActiveNavTab() {
-  if (location.hash) {
-    const hrefXPathIdentifier = `button[href="${location.hash}"]`;
-    $(`#lecture-nav-pills ${hrefXPathIdentifier}`).tab("show");
+  let hash = location.hash;
+
+  if (!location.hash) {
+    hash = $("#lecture-nav-pills").attr("data-is-vignette-lecture") === "true"
+      ? "#vignettes"
+      : "#content";
+    const newUrl = `${location.href.split("#")[0]}${hash}`;
+    history.replaceState({ turbolinks: true, url: newUrl }, "", newUrl);
   }
-  else {
-    $("#lecture-nav-content").focus();
-  }
+
+  const hrefXPathIdentifier = `button[href="${hash}"]`;
+  $(`#lecture-nav-pills ${hrefXPathIdentifier}`).tab("show");
 }
 
-$(document).on("ready turbolinks:load", function () {
+$(document).ready(function () {
   initBootstrapPopovers();
   configureUrlHashesForBootstrapTabs();
   navigateToActiveNavTab();

@@ -76,6 +76,15 @@ class User < ApplicationRecord
   # and claiming the certificate
   has_many :quiz_certificates, dependent: :destroy
 
+  # a user may have many user answers for questionnaires that they filled out.
+  has_many :vignettes_user_answers, dependent: :destroy, class_name: "Vignettes::UserAnswer"
+
+  # a user has a codename per vignettes lecture that is used as a pseudonym
+  has_many :vignettes_codenames,
+           dependent: :destroy,
+           class_name: "Vignettes::Codename",
+           inverse_of: :user
+
   # a user has a watchlist with watchlist_entries
   has_many :watchlists, dependent: :destroy
 
@@ -646,8 +655,8 @@ class User < ApplicationRecord
   end
 
   def current_subscribable_lectures
-    current_lectures = Lecture.in_current_term.includes(:course, :term)
-    no_term_lectures = Lecture.no_term.includes(:course, :term)
+    current_lectures = Lecture.in_current_term.where.not(sort: "vignettes").includes(:course, :term)
+    no_term_lectures = Lecture.no_term.where.not(sort: "vignettes").includes(:course, :term)
     return current_lectures.sort + no_term_lectures.sort if admin
     unless editor? || teacher?
       return current_lectures.published.sort + no_term_lectures.published.sort

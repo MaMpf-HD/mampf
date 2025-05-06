@@ -1,4 +1,5 @@
-# Tutorial model
+require "csv"
+
 class Tutorial < ApplicationRecord
   belongs_to :lecture, touch: true
 

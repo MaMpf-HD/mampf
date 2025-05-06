@@ -27,9 +27,7 @@ class Solution
     @content.class.name
   end
 
-  def nerd
-    @content.nerd
-  end
+  delegate :nerd, to: :@content
 
   def tex
     return "" unless @content.tex

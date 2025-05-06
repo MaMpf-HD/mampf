@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class AddDeletionDateToAssignments < ActiveRecord::Migration[6.1]
   def up
     default_deletion_date = (Term.active&.end_date || (Date.today + 180.days)) + 15.days
@@ -13,4 +13,4 @@ class AddDeletionDateToAssignments < ActiveRecord::Migration[6.1]
     add_column :assignments, :protected, :boolean, default: false
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails

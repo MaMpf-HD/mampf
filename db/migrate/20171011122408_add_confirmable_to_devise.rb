@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class AddConfirmableToDevise < ActiveRecord::Migration[5.1]
   def up
     add_column :users, :confirmation_token, :string
@@ -12,4 +12,4 @@ class AddConfirmableToDevise < ActiveRecord::Migration[5.1]
     remove_columns :users, :confirmation_token, :confirmed_at, :confirmation_sent_at
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails

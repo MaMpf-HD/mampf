@@ -2,11 +2,12 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.3.7"
+ruby "3.3.8"
 
 gem "active_model_serializers", "~> 0.10"
 gem "activerecord-import", "~>1.7"
 gem "activerecord-nulldb-adapter", "~> 1.0" # for assets precompilation in production
+gem "active_storage_validations", "~> 2.0.2"
 gem "acts_as_list", "~> 1.2"
 gem "acts_as_tree", "~> 2.9"
 gem "acts_as_votable", "~> 0.14"
@@ -19,7 +20,7 @@ gem "clipboard-rails", "~> 1.7"
 gem "coffee-rails", "~> 5.0" # CoffeeScript for .coffee assets and views
 gem "commontator", "~> 7.0.1"
 gem "coveralls", "~> 0.7", require: false
-gem "csv", "~> 3.3" # silence warning: no longer part of default gems for Ruby >=3.4.0
+gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 3.2" # caching to memcached in production
 gem "devise", "~> 4.9"
 gem "devise-bootstrap-views", "~> 1.1"
@@ -63,7 +64,7 @@ gem "sunspot_rails", "~> 2.7"
 gem "sunspot_solr", "~> 2.7"
 gem "terser", "~> 1.2" # Ruby wrapper for UglifyJS JavaScript compressor
 gem "thredded", git: "https://github.com/thredded/thredded.git",
-                ref: "94fbf890a984527bab399c8c7f1eec7af7006843"
+                ref: "566100f6a020ccc390aa60689d58b007a55506d2"
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
@@ -74,13 +75,12 @@ gem "webpacker", "~> 5.4"
 group :development, :docker_development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
-  gem "mutex_m", "~> 0.3" # silence warning: no longer part of default gems for Ruby >=3.4.0
   gem "pgreset", "~> 0.4"
   gem "rails-erd", "~> 1.7"
   gem "rubocop", "~> 1.65", require: false
   gem "rubocop-performance", "~> 1.21", require: false
   gem "rubocop-rails", "~> 2.24", require: false
-  gem "spring", "~> 2.1" # app preloader, keeps app running in background for development
+  gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
   gem "web-console", "~> 4.2" # interactive console on exception pages
 end
