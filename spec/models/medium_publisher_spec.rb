@@ -136,8 +136,8 @@ RSpec.describe(MediumPublisher, type: :model) do
                                    user_id: user.id,
                                    create_assignment: true,
                                    assignment_title: "Blatt 1",
-                                   assignment_deadline: "2025-05-02 12:00",
-                                   assignment_deletion_date: "2025-05-02",
+                                   assignment_deadline: Time.zone.today + 2.days,
+                                   assignment_deletion_date: Time.zone.today + 3.days,
                                    assignment_file_type: ".pdf")
       publisher.publish!
       lecture.reload
@@ -165,15 +165,14 @@ RSpec.describe(MediumPublisher, type: :model) do
       @lecture = @medium.teachable
       user = FactoryBot.create(:confirmed_user)
       @medium.editors << user
+      @deadline = (Time.zone.today + 2.days).beginning_of_day
       @publisher = FactoryBot.build(:medium_publisher,
                                     medium_id: @medium.id,
                                     user_id: user.id,
                                     create_assignment: true,
                                     assignment_title: "Blatt 1",
-                                    assignment_deadline:
-                                     Time.zone.parse("2025-05-02 12:00"),
-                                    assignment_deletion_date:
-                                     Time.zone.parse("2025-05-02"),
+                                    assignment_deadline: @deadline,
+                                    assignment_deletion_date: Time.zone.today + 3.days,
                                     assignment_file_type: ".pdf")
     end
 
@@ -181,13 +180,12 @@ RSpec.describe(MediumPublisher, type: :model) do
       expect(@publisher.assignment).to be_kind_of(Assignment)
     end
 
-    it "builds the correspnding assignment if the create_assignment flag is " \
+    it "builds the corresponding assignment if the create_assignment flag is " \
        "set" do
       assignment = @publisher.assignment
       expect([assignment.medium, assignment.lecture, assignment.title,
               assignment.deadline, assignment.accepted_file_type])
-        .to eq([@medium, @lecture, "Blatt 1",
-                Time.zone.parse("2025-05-02 12:00"), ".pdf"])
+        .to eq([@medium, @lecture, "Blatt 1", @deadline, ".pdf"])
     end
   end
 
@@ -211,12 +209,12 @@ RSpec.describe(MediumPublisher, type: :model) do
                                    medium_id: @medium.id,
                                    user_id: @user.id,
                                    release_now: false,
-                                   release_date: 1.day.from_now,
+                                   release_date: Time.zone.today + 1.day,
                                    create_assignment: true,
                                    assignment_title: "Blatt 1",
                                    assignment_file_type: ".pdf",
-                                   assignment_deadline: 2.days.from_now,
-                                   assignment_deletion_date: Time.zone.today + 2.days)
+                                   assignment_deadline: Time.zone.today + 2.days,
+                                   assignment_deletion_date: Time.zone.today + 3.days)
       expect(publisher.errors).to eq({})
     end
 
@@ -297,8 +295,8 @@ RSpec.describe(MediumPublisher, type: :model) do
                                    release_now: true,
                                    create_assignment: true,
                                    assignment_title: "Blatt 1",
-                                   assignment_deadline: 2.days.from_now,
-                                   assignment_deletion_date: Time.zone.today + 2.days,
+                                   assignment_deadline: Time.zone.today + 2.days,
+                                   assignment_deletion_date: Time.zone.today + 3.days,
                                    assignment_file_type: ".pdf")
       expect(publisher.errors[:assignment_title]).not_to be_nil
     end
