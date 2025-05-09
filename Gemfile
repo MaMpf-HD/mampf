@@ -92,8 +92,7 @@ group :test do
 end
 
 group :test, :development, :docker_development do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", "~> 11.1", platforms: [:mri, :mingw, :x64_mingw]
+  gem "byebug", "~> 11.1"
   gem "factory_bot_rails", "~> 6.4"
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"
