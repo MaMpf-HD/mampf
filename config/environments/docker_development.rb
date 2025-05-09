@@ -92,4 +92,9 @@ Rails.application.configure do
   # and not `development`. Rails tries to protect us from accidentally
   # enabling web_console in production.
   config.web_console.development_only = false
+
+  # Logging
+  logger           = ActiveSupport::Logger.new($stdout)
+  logger.formatter = config.log_formatter
+  config.logger    = ActiveSupport::TaggedLogging.new(logger)
 end
