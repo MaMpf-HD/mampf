@@ -2804,6 +2804,7 @@ de:
     not_started: "Nicht begonnen"
     active_questionnaires: "Verfügbare Fragebogen"
     completed_questionnaires: "Abgeschlossene Fragebogen"
+    no_completed_questionnaires: "Du hast noch keine Fragebogen ausgefüllt."
     take: "Ausfüllen"
     continue: "Fortsetzen"
     markdown_help: "Unterstützt Markdown: **fett** & *kursiv*"
