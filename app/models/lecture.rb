@@ -361,40 +361,40 @@ class Lecture < ApplicationRecord
     !released.nil?
   end
 
-  # The next methods return if there are any media in the Kaviar, Sesam etc.
+  # The next methods return if there are any media in the LessonMaterial, WorkedExample etc.
   # projects that are associated to this lecture *with inheritance*
   # These methods make use of caching.
 
-  def kaviar?(user)
-    project?("kaviar", user) || imported_any?("kaviar")
+  def lesson_material?(user)
+    project?("lesson_material", user) || imported_any?("lesson_material")
   end
 
-  def sesam?(user)
-    project?("sesam", user) || imported_any?("sesam")
+  def worked_example?(user)
+    project?("worked_example", user) || imported_any?("worked_example")
   end
 
-  def keks?(user)
-    project?("keks", user)  || imported_any?("keks")
+  def quiz?(user)
+    project?("quiz", user) || imported_any?("quiz")
   end
 
   def erdbeere?(user)
     project?("erdbeere", user) || imported_any?("erdbeere")
   end
 
-  def kiwi?(user)
-    project?("kiwi", user) || imported_any?("kiwi")
+  def repetition?(user)
+    project?("repetition", user) || imported_any?("repetition")
   end
 
-  def nuesse?(user)
-    project?("nuesse", user) || imported_any?("nuesse")
+  def exercise?(user)
+    project?("exercise", user) || imported_any?("exercise")
   end
 
   def script?(user)
-    project?("script", user) || imported_any?("nuesse")
+    project?("script", user) || imported_any?("exercise")
   end
 
-  def reste?(user)
-    project?("reste", user) || imported_any?("reste")
+  def miscellaneous?(user)
+    project?("miscellaneous", user) || imported_any?("miscellaneous")
   end
 
   def questionnaire?
@@ -804,12 +804,12 @@ class Lecture < ApplicationRecord
   end
 
   def scheduled_assignments?
-    media.where(sort: "Nuesse").where.not(publisher: nil)
+    media.where(sort: "Exercise").where.not(publisher: nil)
          .any? { |m| m.publisher.create_assignment }
   end
 
   def scheduled_assignments
-    media.where(sort: "Nuesse").where.not(publisher: nil)
+    media.where(sort: "Exercise").where.not(publisher: nil)
          .select { |m| m.publisher.create_assignment }
          .map { |m| m.publisher.assignment }
   end
@@ -963,7 +963,7 @@ class Lecture < ApplicationRecord
     end
 
     # looks in the cache if there are any media associated *with inheritance*
-    # to this lecture and a given project (kaviar, sesam etc.)
+    # to this lecture and a given project (lesson_material, worked_example etc.)
     def project_as_user?(project)
       Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
         Medium.exists?(sort: medium_sort[project],
@@ -1009,9 +1009,14 @@ class Lecture < ApplicationRecord
     end
 
     def medium_sort
-      { "kaviar" => ["Kaviar"], "sesam" => ["Sesam"], "kiwi" => ["Kiwi"],
-        "keks" => ["Quiz"], "nuesse" => ["Nuesse"],
-        "erdbeere" => ["Erdbeere"], "script" => ["Script"], "reste" => ["Reste"] }
+      { "lesson_material" => ["LessonMaterial"],
+        "worked_example" => ["WorkedExample"],
+        "repetition" => ["Repetition"],
+        "quiz" => ["Quiz"],
+        "exercise" => ["Exercise"],
+        "erdbeere" => ["Erdbeere"],
+        "script" => ["Script"],
+        "miscellaneous" => ["Miscellaneous"] }
     end
 
     def touch_media

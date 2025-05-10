@@ -14,34 +14,30 @@ de:
             teacher:
               required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
-    kaviar:
+    lesson_material:
       singular: 'Lektion'
       plural: 'Lektionen'
       short: 'Lek'
-    exercises:
+    exercise:
       singular: 'Übung'
       singular_updated: 'Übung (aktualisiert)'
       plural: 'Übungen'
       short: 'Ü'
-    examples:
-      plural: 'Beispiele'
-      short: 'Bsp'
     script:
       singular: 'Skript'
       short: 'Skr'
-    nuesse: 'Blätter'
-    sesam:
+    worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
       short: 'WEx'
-    kiwi:
+    repetition:
       singular: 'Wiederholung'
       short: 'Wdh'
     quiz:
       singular: 'Quiz'
       plural: 'Quizzes'
       short: 'Q'
-    randomquiz:
+    random_quiz:
       singular: 'Zufallsquiz'
       short: 'ZufQ'
     test:
@@ -64,7 +60,7 @@ de:
     comments: 'Kommentare'
     organizational_html: 'Organisa&shy;torisches'
     announcements: 'Mitteilungen'
-    reste:
+    miscellaneous:
       singular: 'Sonstiges'
       short: 'Sns'
     course: 'Modul'

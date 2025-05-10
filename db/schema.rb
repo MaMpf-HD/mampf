@@ -412,7 +412,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_04_19_000012) do
     t.text "type"
     t.text "text"
     t.boolean "independent"
-    t.integer "keks_id"
     t.text "locale"
     t.text "solution"
     t.text "question_sort"
