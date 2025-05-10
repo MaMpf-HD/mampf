@@ -4,34 +4,26 @@ $(document).ready(function () {
     $("#profileChangeBottom").removeClass("d-none");
   });
 
-  $('input:checkbox[name^="user[lecture"]').on("change", function () {
+  $('input:checkbox[id^="user_lecture"]').on("change", function () {
     const courseId = this.dataset.course;
-    const lectureId = this.dataset.lecture;
-    const checkedCount = $('input:checked[data-course="' + courseId + '"]').length;
-    const authRequiredLectureIds = $("#lectures-for-course-" + courseId).data("authorize");
+    const lectureId = parseInt(this.dataset.lecture);
+    const checkedCount = $(`input:checked[data-course="${courseId}"]`).length;
+    const authRequiredLectureIds = $(`#lectures-for-course-${courseId}`).data("authorize");
 
-    if ($(this).prop("checked") && authRequiredLectureIds.includes(parseInt(lectureId))) {
-      $("#pass-lecture-" + lectureId).show();
-    }
-    else {
-      $("#pass-lecture-" + lectureId).hide();
-      if (checkedCount === 0) {
-        $('.courseSubInfo[data-course="' + courseId + '"]').removeClass("fas fa-check-circle")
-          .addClass("far fa-circle");
-      }
-      else {
-        $('.courseSubInfo[data-course="' + courseId + '"]').removeClass("far fa-circle")
-          .addClass("fas fa-check-circle");
-      }
-    }
+    $(`.courseSubInfo[data-course="${courseId}"]`)
+      .toggleClass("fas fa-check-circle", checkedCount > 0)
+      .toggleClass("far fa-circle", checkedCount === 0);
+
+    const showPasswordField = $(this).prop("checked") && authRequiredLectureIds.includes(lectureId);
+    $(`#pass-lecture-${lectureId}`).toggle(showPasswordField);
   });
 
   $(".programCollapse").on("show.bs.collapse", function () {
     const program = $(this).data("program");
-    $("#program-" + program + "-collapse").find(".coursePlaceholder").each(function () {
+    $(`#program-${program}-collapse`).find(".coursePlaceholder").each(function () {
       const course = $(this).data("course");
-      $(this).append($("#course-card-" + course));
-      $("#course-card-" + course).show();
+      $(this).append($(`#course-card-${course}`));
+      $(`#course-card-${course}`).show();
     });
   });
 

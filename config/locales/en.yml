@@ -2653,6 +2653,7 @@ en:
     not_started: "Not started"
     active_questionnaires: "Available Questionnaires"
     completed_questionnaires: "Completed Questionnaires"
+    no_completed_questionnaires: "You have not completed any questionnaires yet."
     take: "Take"
     continue: "Continue"
     markdown_help: "Supports Markdown: **bold** & *italic*"
