@@ -1009,9 +1009,14 @@ class Lecture < ApplicationRecord
     end
 
     def medium_sort
-      { "lesson_material" => ["LessonMaterial"], "worked_example" => ["WorkedExample"],
-        "repetition" => ["Repetition"], "quiz" => ["Quiz"], "exercise" => ["Exercise"],
-        "erdbeere" => ["Erdbeere"], "script" => ["Script"], "miscellaneous" => ["Miscellaneous"] }
+      { "lesson_material" => ["LessonMaterial"],
+        "worked_example" => ["WorkedExample"],
+        "repetition" => ["Repetition"],
+        "quiz" => ["Quiz"],
+        "exercise" => ["Exercise"],
+        "erdbeere" => ["Erdbeere"],
+        "script" => ["Script"],
+        "miscellaneous" => ["Miscellaneous"] }
     end
 
     def touch_media
