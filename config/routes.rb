@@ -225,6 +225,10 @@ Rails.application.routes.draw do
       to: "media#index", as: "lecture_supplements",
       defaults: { project: "miscellaneous" }
 
+  get "lectures/:lecture_id/questionnaires",
+      to: "vignettes/questionnaires#index",
+      as: "lecture_questionnaires"
+
   get "lectures/:id/update_teacher",
       to: "lectures#update_teacher",
       as: "update_teacher"
@@ -594,6 +598,39 @@ Rails.application.routes.draw do
 
   resources :quizzes, except: [:show, :index, :create] do
     resources :vertices, except: [:index, :show, :edit]
+  end
+
+  # vignettes routes
+  get "questionnaires/:id/take",
+      to: "vignettes/questionnaires#take",
+      as: "take_questionnaire"
+  get "questionnaires/:id/preview",
+      to: "vignettes/questionnaires#preview",
+      as: "preview_questionnaire"
+  post "lectures/:id/questionnaires/set_codename",
+       to: "vignettes/codenames#set_codename",
+       as: "set_lecture_codename"
+  post "lectures/:id/questionnaires/set_completion_message",
+       to: "vignettes/completion_message#set_completion_message",
+       as: "set_lecture_completion_message"
+  delete "lectures/:id/questionnaires/destroy_completion_message",
+         to: "vignettes/completion_message#destroy",
+         as: "destroy_lecture_completion_message"
+
+  scope module: "vignettes", path: "" do
+    resources :questionnaires, only: [:create, :edit, :update, :destroy] do
+      member do
+        get :export_statistics
+        post :submit_answer
+        post :duplicate
+        patch :publish
+        patch :update_slide_position
+      end
+      resources :info_slides, only: [:new, :create, :edit, :update, :destroy]
+      resources :slides, only: [:new, :create, :edit, :update, :destroy] do
+        resources :answers, only: [:new, :create]
+      end
+    end
   end
 
   # readers routes
@@ -981,9 +1018,12 @@ Rails.application.routes.draw do
 
   mount Thredded::Engine => "/forum"
 
-  # redirect bs requests to error page
+  # redirect bs requests to error page (except active storage routes)
+  match "*path", to: "main#error", via: :all, constraints: lambda { |req|
+    # https://github.com/rails/rails/issues/33423#issuecomment-407264058
+    !req.path.starts_with?("/rails/active_storage")
+  }
 
-  match "*path", to: "main#error", via: :all
   match "/", to: "main#error", via: [:post, :put, :patch, :delete]
 
   # For details on the DSL available within this file,

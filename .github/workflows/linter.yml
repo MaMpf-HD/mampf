@@ -27,14 +27,14 @@ jobs:
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.7
+          ruby-version: 3.3.8
           bundler-cache: true
 
       - name: Run RuboCop
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         run: |
           echo "🚨 Running RuboCop version: $(bundle info rubocop | head -1)"
-          bundle exec rubocop --format github --fail-level 'convention' --force-exclusion -- $CHANGED_FILES
+          bundle exec rubocop --config ./.config/.rubocop.yml --format github --fail-level 'convention' --force-exclusion -- $CHANGED_FILES
 
   eslint:
       name: ESLint (JS)

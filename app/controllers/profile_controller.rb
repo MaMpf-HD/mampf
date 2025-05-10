@@ -177,7 +177,7 @@ class ProfileController < ApplicationController
 
     # extracts all lecture ids from user params
     def lecture_ids
-      params[:user][:lecture].select { |_k, v| v == "1" }.keys.map(&:to_i)
+      params[:user][:lecture].select { |_k, v| v["subscribed"] == "1" }.keys.map(&:to_i)
     end
 
     def clean_up_notifications
@@ -209,7 +209,7 @@ class ProfileController < ApplicationController
                .to_be_authorized_lectures(current_user))
       end
       restricted_lectures.each do |l|
-        given_passphrase = params[:user][:pass_lecture][l.id.to_s]
+        given_passphrase = params[:user][:lecture][l.id.to_s][:passphrase]
         unless given_passphrase == l.passphrase
           @errors[:passphrase] ||= []
           @errors[:passphrase].push(l.id)

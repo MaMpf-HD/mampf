@@ -30,7 +30,11 @@ class MediaController < ApplicationController
   def index
     authorize! :index, Medium.new
     @media = paginated_results
-    render layout: "application"
+    if @lecture.sort == "vignettes"
+      render layout: "vignettes_navbar"
+    else
+      render layout: "application"
+    end
   end
 
   def show

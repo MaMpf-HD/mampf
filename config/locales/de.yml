@@ -74,7 +74,7 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2024. MaMpf ist auf %{github}.
+      &copy; MaMpf Team. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
@@ -318,6 +318,7 @@ de:
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
+
     annotation:
       your_annotations: 'Deine Annotationen'
       students_annotations: 'Annotationen der Studierenden'
@@ -447,6 +448,9 @@ de:
       oberseminar: 'Oberseminar'
       oberseminar_short: 'OS'
       oberseminar_content: 'Oberseminarinhalt'
+      vignettes: 'Vignettes'
+      vignettes_short: 'V'
+      vignettes_content: 'Vignettes Inhalt'
       special: 'Special'
       special_short: ''
       special_content: 'Inhalt'
@@ -471,13 +475,13 @@ de:
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       comments_disabled: >
         Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
-      enable_annotation_button: 'Dürfen Studierende Annotationen für Sie sichtbar machen?'
+      enable_annotation_button: 'Dürfen Studierende Annotationen für Dich sichtbar machen?'
       enable_annotation_button_helpdesk: >
-        Wenn Sie "ja" anwählen, dann haben Studierende die Möglichkeit,
+        Wenn Du "ja" auswählst, dann haben Studierende die Möglichkeit,
         ihre Annotationen für den/die Dozent*in bzw. alle Editor*innen
-        der Vorlesung sichtbar machen. Sie können diese dann entweder
+        der Vorlesung sichtbar machen. Du kannst diese dann entweder
         im normalen Thyme-Player oder im Thyme-Feedback-Player einsehen
-        und dadurch Rückmeldung zu Ihren Vorlesungsvideos erhalten.
+        und dadurch Rückmeldung zu Deinen Vorlesungsvideos erhalten.
       enable_annotation_button_inherit_helpdesk: >
         Ist die Option "von Vorlesung erben" ausgewählt, dann wird die
         globale Option aus den Vorlesungseinstellungen (Kommentare) übernommen.
@@ -808,6 +812,10 @@ de:
         nur die DozentIn und ModuleditorInnen an dieser Stelle Änderungen
         vornehmen. Sollten aus wichtigem Grund noch Änderungen an dieser Stelle
         gemacht werden, kannst Du Dich per Email an %{project_mail} wenden.
+      subscribe_link: "Link zum Modul abonnieren"
+      subscribe_link_info: >
+        Dieser Link kann mit Studenten geteilt werden um darüber das Modul
+        zu abonnieren.
     clicker:
       new_clicker: 'Neuen Clicker anlegen'
       user_link: 'Link für NutzerInnen'
@@ -2649,6 +2657,179 @@ de:
       reduced_questions: >
         Die Zahl der Fragen reduziert sich entsprechend, wenn für die
         gewählten Inhalte weniger Fragen zur Verfügung stehen als ausgewählt.
+
+  vignettes:
+    vignettes: 'Vignettes'
+    slide: 'Folie'
+    slides: 'Folien'
+    info_slides: 'Info-Folien'
+    questionnaire: 'Fragebogen'
+    questionnaires: 'Fragebogen'
+    no_active_questionnaires: 'Kein Fragebogen verfügbar'
+    slide_content: 'Inhalt'
+    create_new: "Neue Vignette erstellen"
+    duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
+    destroy_answer: 'Antwort wurde gelöscht'  
+    answered: 'Fragebogen wurde erfolgreich beantwortet'
+    already_answered: 'Du hast diesen Fragebogen bereits beantwortet'
+    no_slides: 'Keine Folien zum Beantworten'
+    not_found: 'Der angeforderte Fragebogen wurde nicht gefunden'
+    no_lecture: 'Die angeforderte Vorlesung wurde nicht gefunden'
+    not_vignettes_lecture: 'Die Vorlesung kann nicht für Vignetten verwendet werden'
+    create_new_info_slide: 'Neue Info-Folie erstellen'
+    create_new_slide: 'Neue Folie erstellen'
+    info_slide_created: 'Info-Folie wurde erstellt.'
+    info_slide_updated: 'Info-Folie wurde aktualisiert.'
+    slide_updated: 'Folie wurde erfolgreich aktualisiert.'
+    slide_created: 'Folie wurde erfolgreich erstellt.'
+    slide_not_created: 'Folie konnte nicht erstellt werden.'
+    published: 'Vignette wurde erfolgreich veröffentlicht.'
+    unpublished: 'Vignette wurde erfolgreich zurückgezogen.'
+    publish_modal: |
+      Bist Du sicher, dass Du diese Vignette veröffentlichen möchtest?
+
+      Wichtig: Nach der Veröffentlichung kannst Du den Inhalt und die Fragen der Vignette nicht mehr bearbeiten.
+
+      Du kannst die Vignette später zwar wieder zurückziehen, um sie vor Studierenden zu verbergen, aber der Inhalt bleibt für die Bearbeitung gesperrt.
+    unpublish_modal: |
+      Bist Du sicher, dass Du diese Vignette zurückziehen möchten?
+
+      Durch das Zurückziehen wird diese Vignette für Studierende unsichtbar, aber alle Antworten und Statistiken bleiben erhalten.
+
+      Wichtig: Die Vignette bleibt für die Bearbeitung gesperrt. Wenn Du Änderungen vornehmen möchtest, dupliziere bitte die Vignette.
+
+    not_published: 'Vignette konnte nicht veröffentlicht werden.'
+    not_unpublished: 'Vignette konnte nicht zurückgezogen werden.'
+    not_accessible: 'Fragebogen ist nicht zugänglich.'
+    not_editable: 'Vignette kann nicht bearbeitet werden, da sie bereits veröffentlicht wurde.'
+    no_slides: "Vignette ist leer"
+    not_deleted: 'Vignette konnte nicht gelöscht werden'
+    slide_not_updated: 'Folie konnte nicht aktualisiert werden'
+    slide_deleted: 'Folie wurde erfolgreich gelöscht.'
+    slide_not_deleted: 'Folie konnte nicht gelöscht werden.'
+    slide_confirm_delete: >
+      Bist Du sicher, dass Du diese Folie löschen möchtest?
+      Diese Aktion kann nicht rückgängig gemacht werden.'
+    deleted: 'Vignette erfolgreich gelöscht'
+    confirm_delete: > 
+      Bist Du sicher, dass Du diese Vignette löschen möchtest?
+      Dadurch werden auch alle zugehörigen Folien, Antworten und Statistiken gelöscht.
+    duplicated: 'Vignette wurde erfolgreich dupliziert'
+    not_duplicated: 'Vignette konnte nicht dupliziert werden'
+    body_too_short_error: 'Der Text ist zu kurz'
+    body_missing_error: 'Der Text fehlt'
+    not_a_number_error: "Bitte gib eine gültige Zahl ein"
+    number_missing_error: "Bitte gib eine Zahl ein"
+    number_too_large_error: "Bitte gib eine Zahl kleiner oder gleich %{max} ein"
+    number_too_small_error: "Bitte gib eine Zahl größer oder gleich %{min} ein"
+    no_option: "Mindestens eine Option muss angegeben werden"
+    multiple_choice_at_least_one: "Wähle mindestens eine Antwortmöglichkeit aus"
+    empty_option: "Alle Optionen müssen Text enthalten"
+    publish: "Veröffentlichen"
+    unpublish: "Zurückziehen"
+    editing_locked: "Bearbeitung gesperrt"
+    editing_locked_info: >
+      Diese Vignette ist bereits (mindestens einmal) veröffentlicht worden
+      und kann daher nicht mehr bearbeitet werden (bzw. nur noch wenige Elemente
+      stehen weiterhin zur Bearbeitung zur Verfügung). Falls Du Änderungen
+      vornehmen möchtest, dupliziere bitte die Vignette.
+    create_slide: "Folie erstellen"
+    update_slide: "Folie aktualisieren"
+    delete_slide: "Folie löschen"
+    add_multiple_choice_option: "Multiple choice option hinzufügen"
+    additional_information: "Zusätzliche Informationen"
+    submit_answer: "Antwort absenden"
+    next_slide: "Nächste Folie"
+    return_to_edit: "Zurück zur Bearbeitung"
+
+    info_slide_empty_title: "Titel fehlt"
+    info_slide_empty_icon: "Symbol fehlt"
+    info_slide_deleted: "Info-Folie wurde erfolgreich gelöscht"
+    info_slide_not_deleted: "Info-Folie konnte nicht gelöscht werden"
+    info_slide_confirm_delete: >
+      Bist Du sicher, dass Du diese Info-Folie löschen möchtest?
+      Diese Aktion kann nicht rückgängig gemacht werden.'
+    create_info_slide: "Info-Folie erstellen"
+    update_info_slide: "Info-Folie aktualisieren"
+
+    drag_slides_tip: "Ziehe die Folien, um deren Reihenfolge zu ändern."
+    unsaved_changes_warning: "Du hast ungespeicherte Änderungen."
+    unsaved_changes: "Ungespeicherte Änderungen"
+    unsaved_changes_navigation: >
+      You have unsaved changes. Are you sure you want to leave this page?
+    unsaved_changes_modal: >
+      Du hast ungespeicherte Änderungen in der aktuellen Folie.
+      Möchtest Du diese speichern oder verwerfen, bevor Du eine neue bearbeitest?
+
+    preview: "Vorschau"
+    duplicate: "Duplizieren"
+    export_statistics: "Statistiken exportieren"
+    delete: "Vignette löschen"
+    confirm_publication: "Vignette veröffentlichen"
+
+    question_type: "Fragetyp"
+    question_type_selection: "Auswahl für Fragetyp"
+    your_question: "Deine Frage"
+    question_types:
+      none: "Keine Antwort"
+      text_area: "Textfeld"
+      number_field: "Zahlenfeld"
+      multiple_choice: "Multiple Choice"
+      likert_scale: "Likert-Skala"
+
+    language_selection: "Sprachauswahl"
+
+    locales:
+      en: "Englisch"
+      de: "Deutsch"
+      nl: "Niederländisch"
+      
+    number_question_settings: "Optionen für Zahlenfragen"
+    only_integer: "Nur ganze Zahlen erlauben"
+    min_number: "Minimalwert"
+    max_number: "Maximalwert"
+    number_range_help: "Min/Max-Felder leer lassen für unbegrenzten Bereich"
+    your_answer: "Deine Antwort"
+    your_numeric_answer: "Deine Antwort"
+    number_range_between: "Gib eine Zahl zwischen %{min} und %{max} ein"
+    number_range_min: "Gib eine Zahl größer oder gleich %{min} ein"
+    number_range_max: "Gib eine Zahl kleiner oder gleich %{max} ein"
+
+    completed: "Abgeschlossen"
+    in_progress: "In Bearbeitung"
+    not_started: "Nicht begonnen"
+    active_questionnaires: "Verfügbare Fragebogen"
+    completed_questionnaires: "Abgeschlossene Fragebogen"
+    no_completed_questionnaires: "Du hast noch keine Fragebogen ausgefüllt."
+    take: "Ausfüllen"
+    continue: "Fortsetzen"
+    markdown_help: "Unterstützt Markdown: **fett** & *kursiv*"
+
+    information: "Informationen"
+
+    codenames:
+      codename: "Persönlicher code"  
+      your_codename: "Dein persönlicher Code"
+      set_success: "Persönlicher Code wurde erfolgreich geändert"
+      set_error: "Persönlicher Code konnte nicht gesetzt werden"
+      please_set_codename: >
+        Bitte setze deinen persönlichen Code bevor du einen Fragebogen ausfüllst.
+      not_empty: "Persönlicher Code darf nicht leer sein"
+      min_length: "Persönlicher Code muss mindestens %{min} Zeichen lang sein"
+      max_length: "Personlicher Code darf maximal %{max} Zeichen lang sein"
+  
+    completion_message:
+      label: "Abschlussnachricht"
+      help_text: >
+        Diese Nachricht wird Studierenden gezeigt, nachdem diese alle
+        verfügbaren Vignetten ausgefüllt haben.
+      delete: "Willst du diese Nachricht wirklich löschen?"
+      set_success: "Abschlussnachricht erfolgreich gespeichert"
+      set_failure: "Abschlussnachricht konnte nicht gespeichert werden"
+      delete_success: "Abschlussnachricht erfolgreich gelöscht"
+      delete_failure: "Abschlussnachricht konnte nicht gelöscht werden"
+      all_completed: "Alle Fragebogen wurden ausgefüllt"
+
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
   click_here: 'Hier klicken'
@@ -3660,6 +3841,8 @@ de:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
+    save_changes: "Änderungen speichern"
+    discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
@@ -4116,6 +4299,12 @@ de:
           team_size: >
             Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
             hätte als erlaubt.
+                vignettes/question:
+        vignettes/question:
+          attributes:
+            question_text:
+              blank: 'Question Text cannot be empty'
+              format: '%{message}'
         vote:
           attributes:
             clicker:

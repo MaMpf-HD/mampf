@@ -21,7 +21,7 @@ services:
       - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
 
   db:
-    image: postgres:13
+    image: postgres:15-bookworm
     environment:
       - POSTGRES_USER=localroot
       - POSTGRES_HOST_AUTH_METHOD=trust

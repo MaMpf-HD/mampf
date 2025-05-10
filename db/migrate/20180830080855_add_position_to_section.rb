@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class AddPositionToSection < ActiveRecord::Migration[5.2]
   def change
     add_column :sections, :position, :integer
@@ -9,4 +9,4 @@ class AddPositionToSection < ActiveRecord::Migration[5.2]
     end
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails

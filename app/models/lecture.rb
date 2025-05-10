@@ -35,6 +35,21 @@ class Lecture < ApplicationRecord
            as: :teachable,
            inverse_of: :teachable
 
+  has_many :vignettes_questionnaires, -> { order(id: :asc) },
+           class_name: "Vignettes::Questionnaire",
+           dependent: :destroy,
+           inverse_of: :lecture
+
+  has_many :vignettes_codenames,
+           class_name: "Vignettes::Codename",
+           dependent: :destroy,
+           inverse_of: :lecture
+
+  has_one :vignettes_completion_message,
+          class_name: "Vignettes::CompletionMessage",
+          dependent: :destroy,
+          inverse_of: :lecture
+
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
@@ -82,7 +97,7 @@ class Lecture < ApplicationRecord
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
   validates :sort, inclusion: { in: ["lecture", "seminar", "oberseminar",
-                                     "proseminar", "special"] }
+                                     "proseminar", "special", "vignettes"] }
 
   validates :term, presence: { unless: :term_independent? }
 
@@ -382,6 +397,12 @@ class Lecture < ApplicationRecord
     project?("miscellaneous", user) || imported_any?("miscellaneous")
   end
 
+  def questionnaire?
+    Rails.cache.fetch("#{cache_key_with_version}/has_questionnaire") do
+      Vignettes::Questionnaire.exists?(lecture_id: id)
+    end
+  end
+
   # the next methods put together some information on the lecture (teacher,
   # term, title) in various combinations
 
@@ -627,7 +648,7 @@ class Lecture < ApplicationRecord
   end
 
   def self.sorts
-    ["lecture", "seminar", "proseminar", "oberseminar"]
+    ["lecture", "seminar", "proseminar", "oberseminar", "vignettes"]
   end
 
   def self.sort_localized
@@ -928,6 +949,10 @@ class Lecture < ApplicationRecord
 
   def talks_without_speaker(speaker)
     talks.where.not(id: talk_ids_for_speaker(speaker))
+  end
+
+  def vignettes?
+    vignettes_questionnaires.any?
   end
 
   private

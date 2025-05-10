@@ -10,8 +10,8 @@
 // [4] https://eslint.org/docs/rules/
 import js from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
-import erb from "eslint-plugin-erb";
 import pluginCypress from "eslint-plugin-cypress/flat";
+import erb from "eslint-plugin-erb";
 import globals from "globals";
 
 const ignoreFilesWithSprocketRequireSyntax = [
@@ -42,6 +42,7 @@ const customGlobals = {
   Routes: "readable",
   App: "readable",
   ActionCable: "readable",
+  ActiveStorage: "readable",
 
   // Common global methods
   initBootstrapPopovers: "readable",
@@ -101,6 +102,9 @@ const customGlobals = {
   renderMathInElement: "readable",
 
   openAnnotationIfSpecifiedInUrl: "readable",
+
+  reloadUrl: "readable",
+  Sortable: "readable",
 };
 
 export default [
