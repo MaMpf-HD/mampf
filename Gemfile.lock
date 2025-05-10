@@ -737,7 +737,6 @@ DEPENDENCIES
   marcel (~> 1.0)
   mini_magick (~> 4.13)
   mobility (~> 1.2)
-  mutex_m (~> 0.3)
   net-smtp (~> 0.5)
   pdf-reader (~> 2.12)
   pg (~> 1.5)
