@@ -15,7 +15,7 @@
  * - Other workaround using "tabbed" mode, but that one is currently experimental:
  *   https://github.com/WICG/manifest-incubations/blob/gh-pages/tabbed-mode-explainer.md
  */
-document.addEventListener("turbolinks:load", function () {
+$(document).on("turbolinks:load", function () {
   $(document).on("click", "a[target='_blank']", function (event) {
     const url = $(this).attr("href");
     const isPWA = window.matchMedia("(display-mode: standalone)").matches
@@ -26,8 +26,14 @@ document.addEventListener("turbolinks:load", function () {
     }
 
     event.preventDefault();
-    const width = window.screen.width / 2;
-    const height = window.screen.height / 2;
-    window.open(url, "MaMpf Media View", `width=${width},height=${height}`);
+
+    // Most MaMpf videos are 2:3 and (unfortunately) don't have any remarks
+    // in the right sidebar, which would make the format 16:9. So, by default,
+    // we open the new window in 2:3 format. The user can always resize it later
+    // to their likings. Note that this window does not only host videos, but
+    // also other media, such as PDFs.
+    const width = 0.5 * window.screen.width;
+    const height = (2 / 3) * width;
+    window.open(url, "MaMpf Media View", `width=${width},height=${height},left=50,top=50`);
   });
 });

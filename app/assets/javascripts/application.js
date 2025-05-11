@@ -10,7 +10,6 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require pwa_windows
 //= require jquery3
 //= require popper
 //= require bootstrap
@@ -58,6 +57,7 @@
 //= require vertices
 //= require watchlists
 //= require turbolinks
+//= require pwa_windows
 //= require reload
 
 //= require search_tags
