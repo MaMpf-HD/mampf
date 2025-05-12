@@ -3,7 +3,7 @@
     <%= image_tag blob.representation(resize_to_limit: local_assigns[:in_gallery] ? [ 800, 600 ] : [ 1024, 768 ]) %>
   <% end %>
   <% if blob.video? %>
-    <video controls="true" width="75%">
+    <video controls="true" controlsList="nodownload" width="75%">
       <source src=<%= rails_blob_url(blob) %>, type=<%= blob.content_type %> >
     </video>
   <% end %>
