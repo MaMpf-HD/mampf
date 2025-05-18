@@ -2,7 +2,7 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.1.4"
+ruby "3.3.8"
 
 gem "active_model_serializers", "~> 0.10"
 gem "activerecord-import", "~>1.7"
@@ -20,6 +20,7 @@ gem "clipboard-rails", "~> 1.7"
 gem "coffee-rails", "~> 5.0" # CoffeeScript for .coffee assets and views
 gem "commontator", "~> 7.0.1"
 gem "coveralls", "~> 0.7", require: false
+gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 3.2" # caching to memcached in production
 gem "devise", "~> 4.9"
 gem "devise-bootstrap-views", "~> 1.1"
@@ -46,8 +47,8 @@ gem "premailer-rails", "~> 1.12"
 gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
-gem "rack", "~> 2.2"
-gem "rails", "~> 7.1.3"
+gem "rack", "~> 3.1"
+gem "rails", "~> 7.2.2"
 gem "rails-i18n", "~> 7.0"
 gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
@@ -63,7 +64,7 @@ gem "sunspot_rails", "~> 2.7"
 gem "sunspot_solr", "~> 2.7"
 gem "terser", "~> 1.2" # Ruby wrapper for UglifyJS JavaScript compressor
 gem "thredded", git: "https://github.com/thredded/thredded.git",
-                ref: "1340e913affd1af5fcc060fbccd271184ece9a6a"
+                ref: "566100f6a020ccc390aa60689d58b007a55506d2"
 gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
@@ -79,7 +80,7 @@ group :development, :docker_development do
   gem "rubocop", "~> 1.65", require: false
   gem "rubocop-performance", "~> 1.21", require: false
   gem "rubocop-rails", "~> 2.24", require: false
-  gem "spring", "~> 2.1" # app preloader, keeps app running in background for development
+  gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
   gem "web-console", "~> 4.2" # interactive console on exception pages
 end
@@ -92,8 +93,7 @@ group :test do
 end
 
 group :test, :development, :docker_development do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem "byebug", "~> 11.1", platforms: [:mri, :mingw, :x64_mingw]
+  gem "byebug", "~> 11.1"
   gem "factory_bot_rails", "~> 6.4"
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"
