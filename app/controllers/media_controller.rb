@@ -649,7 +649,7 @@ class MediaController < ApplicationController
           end
         end
       end
-      sort = params[:project] == "quiz" ? "Quiz" : params[:project]&.capitalize
+      sort = params[:project]&.capitalize
       search_results += @lecture.imported_media
                                 .where(sort: sort)
                                 .locally_visible
