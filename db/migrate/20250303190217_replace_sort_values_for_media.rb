@@ -1,3 +1,6 @@
+# In the context of media "sorts", the word "sort" is used as synonym for the
+# word "type" (as in "media type"). It does NOT refer to a "sorting"
+# operation (in the sense of ordering).
 class ReplaceSortValuesForMedia < ActiveRecord::Migration[7.2]
   # NOTE: Use this migration only if you also updated the code in medium.rb
   # to reflect the new values for sort and replaced all occurrences of the old
