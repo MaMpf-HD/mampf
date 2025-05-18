@@ -1019,6 +1019,9 @@ Rails.application.routes.draw do
 
   mount Thredded::Engine => "/forum"
 
+  # Render dynamic PWA files from app/views/pwa/*
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+
   # redirect bs requests to error page (except active storage routes)
   match "*path", to: "main#error", via: :all, constraints: lambda { |req|
     # https://github.com/rails/rails/issues/33423#issuecomment-407264058
