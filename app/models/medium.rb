@@ -1091,7 +1091,7 @@ class Medium < ApplicationRecord
 
   private
 
-    # media of type lesson_material associated to a lesson and script do not require
+    # media of type LessonMaterial associated to a lesson and script do not require
     # a description
     def undescribable?
       (sort == "LessonMaterial" && teachable.instance_of?(::Lesson)) ||
