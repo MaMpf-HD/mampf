@@ -52,7 +52,7 @@ class MediaController < ApplicationController
                          level: 1,
                          locale: @teachable.locale_with_inheritance)
     I18n.locale = @teachable.locale_with_inheritance
-    @medium.sort = params[:sort] || "Kaviar"
+    @medium.sort = params[:sort] || "LessonMaterial"
   end
 
   def edit
@@ -304,7 +304,7 @@ class MediaController < ApplicationController
     @time = params[:time].to_f
     @item = Item.new(medium: @medium,
                      start_time: TimeStamp.new(total_seconds: @time))
-    if @medium.sort == "Kaviar" &&
+    if @medium.sort == "LessonMaterial" &&
        @medium.teachable_type.in?(["Lesson", "Lecture"])
       @item.section = @medium.teachable&.sections&.first
     end
@@ -586,7 +586,7 @@ class MediaController < ApplicationController
         @medium.update(video: nil)
         @medium.update(screenshot: nil)
       end
-      if params[:medium][:detach_geogebra] == "true" || @medium.sort != "Sesam"
+      if params[:medium][:detach_geogebra] == "true" || @medium.sort != "WorkedExample"
         @medium.update(geogebra: nil)
       end
       return unless params[:medium][:detach_manuscript] == "true"
@@ -649,7 +649,7 @@ class MediaController < ApplicationController
           end
         end
       end
-      sort = params[:project] == "keks" ? "Quiz" : params[:project]&.capitalize
+      sort = params[:project]&.capitalize
       search_results += @lecture.imported_media
                                 .where(sort: sort)
                                 .locally_visible

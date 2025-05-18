@@ -162,38 +162,22 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of food(=projects) we currently serve
   def self.sort_enum
-    ["Kaviar", "Erdbeere", "Sesam", "Kiwi", "Nuesse", "Script", "Question", "Quiz", "Reste",
-     "Remark", "RandomQuiz"]
+    ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Erdbeere",
+     "Exercise", "Script", "Question", "Remark", "Miscellaneous", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
   def self.sort_localized
-    { "Kaviar" => I18n.t("categories.kaviar.singular"),
-      "Sesam" => I18n.t("categories.sesam.singular"),
-      "Nuesse" => I18n.t("categories.exercises.singular"),
-      "Script" => I18n.t("categories.script.singular"),
-      "Kiwi" => I18n.t("categories.kiwi.singular"),
-      "Quiz" => I18n.t("categories.quiz.singular"),
-      "Question" => I18n.t("categories.question.singular"),
-      "Remark" => I18n.t("categories.remark.singular"),
-      "RandomQuiz" => I18n.t("categories.randomquiz.singular"),
-      "Erdbeere" => I18n.t("categories.erdbeere.singular"),
-      "Reste" => I18n.t("categories.reste.singular") }
+    sort_enum.index_with do |sort|
+      I18n.t("categories.#{sort.underscore}.singular")
+    end
   end
 
   # media sorts and their short descriptions
   def self.sort_localized_short
-    { "Kaviar" => I18n.t("categories.kaviar.short"),
-      "Sesam" => I18n.t("categories.sesam.short"),
-      "Nuesse" => I18n.t("categories.exercises.short"),
-      "Script" => I18n.t("categories.script.short"),
-      "Kiwi" => I18n.t("categories.kiwi.short"),
-      "Quiz" => I18n.t("categories.quiz.short"),
-      "Question" => I18n.t("categories.question.short"),
-      "Remark" => I18n.t("categories.remark.short"),
-      "RandomQuiz" => I18n.t("categories.randomquiz.short"),
-      "Erdbeere" => I18n.t("categories.erdbeere.short"),
-      "Reste" => I18n.t("categories.reste.short") }
+    sort_enum.index_with do |sort|
+      I18n.t("categories.#{sort.underscore}.short")
+    end
   end
 
   def self.select_sorts
@@ -205,7 +189,7 @@ class Medium < ApplicationRecord
   end
 
   def self.generic_sorts
-    ["Kaviar", "Sesam", "Nuesse", "Script", "Kiwi", "Quiz", "Reste"]
+    ["LessonMaterial", "WorkedExample", "Exercise", "Script", "Repetition", "Quiz", "Miscellaneous"]
   end
 
   def self.select_generic
@@ -217,8 +201,7 @@ class Medium < ApplicationRecord
   end
 
   def self.select_importables
-    Medium.sort_localized.except("RandomQuiz", "Question", "Remark",
-                                 "Manuscript").map { |k, v| [v, k] }
+    Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
   end
 
   def self.select_question
@@ -247,8 +230,7 @@ class Medium < ApplicationRecord
   def self.media_in_project(project)
     return Medium.none if project.blank?
 
-    sort = project == "keks" ? "Quiz" : project.capitalize
-    Medium.where(sort: sort)
+    Medium.where(sort: project.camelize)
   end
 
   # returns the array of all media (by title), together with their ids
@@ -669,7 +651,7 @@ class Medium < ApplicationRecord
 
   def caption
     return description if description.present?
-    return "" unless sort == "Kaviar" && teachable_type == "Lesson"
+    return "" unless sort == "LessonMaterial" && teachable_type == "Lesson"
 
     teachable.section_titles || ""
   end
@@ -687,9 +669,9 @@ class Medium < ApplicationRecord
   end
 
   def card_tooltip
-    return Medium.sort_localized[sort] unless sort == "Nuesse" && file_last_edited
+    return Medium.sort_localized[sort] unless sort == "Exercise" && file_last_edited
 
-    I18n.t("categories.exercises.singular_updated")
+    I18n.t("categories.exercise.singular_updated")
   end
 
   def sort_localized
@@ -697,7 +679,7 @@ class Medium < ApplicationRecord
   end
 
   def subheader_style
-    return "badge bg-secondary" unless sort == "Nuesse" && file_last_edited
+    return "badge bg-secondary" unless sort == "Exercise" && file_last_edited
 
     "badge bg-danger"
   end
@@ -794,7 +776,7 @@ class Medium < ApplicationRecord
     end
   end
 
-  # returns description unless medium is Kaviar associated to a lesson or a
+  # returns description unless medium is LessonMaterial associated to a lesson or a
   # question, in which case details about the lesson/the question are
   # returned, or a Script
 
@@ -802,7 +784,7 @@ class Medium < ApplicationRecord
     return description if description.present?
     return I18n.t("admin.medium.local_info.no_title") unless undescribable?
 
-    if sort == "Kaviar" && teachable_type == "Lesson"
+    if sort == "LessonMaterial" && teachable_type == "Lesson"
       return I18n.t("admin.medium.local_info.to_session",
                     number: teachable.number,
                     date: teachable.date_localized)
@@ -923,8 +905,8 @@ class Medium < ApplicationRecord
   def select_sorts
     result = if new_record?
       Medium.sort_localized.except("RandomQuiz")
-    elsif sort.in?(["Kaviar", "Sesam", "Erdbeere", "Kiwi", "Nuesse",
-                    "Reste"])
+    elsif sort.in?(["LessonMaterial", "WorkedExample", "Erdbeere", "Repetition", "Exercise",
+                    "Miscellaneous"])
       Medium.sort_localized.except("RandomQuiz", "Script", "Quiz",
                                    "Question", "Remark")
     else
@@ -1109,10 +1091,10 @@ class Medium < ApplicationRecord
 
   private
 
-    # media of type kaviar associated to a lesson and script do not require
+    # media of type LessonMaterial associated to a lesson and script do not require
     # a description
     def undescribable?
-      (sort == "Kaviar" && teachable.instance_of?(::Lesson)) ||
+      (sort == "LessonMaterial" && teachable.instance_of?(::Lesson)) ||
         sort == "Script"
     end
 
@@ -1129,8 +1111,10 @@ class Medium < ApplicationRecord
     # returns info made from sort and description
     def local_title_for_viewers_uncached
       return "#{sort_localized}, #{description}" if description.present?
-      if sort == "Kaviar" && teachable.instance_of?(::Lesson)
-        return "#{I18n.t("categories.kaviar.singular")}, #{teachable.local_title_for_viewers}"
+
+      if sort == "LessonMaterial" && teachable.instance_of?(::Lesson)
+        return "#{I18n.t("categories.lesson_material.singular")}, " \
+               "#{teachable.local_title_for_viewers}"
       end
 
       "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"

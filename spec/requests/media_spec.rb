@@ -16,15 +16,15 @@ RSpec.describe("Media", type: :request) do
   describe "#search_by" do
     before do
       @medium1 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   sort: "Nuesse", description: "Erstes Medium")
+                                   sort: "Exercise", description: "Erstes Medium")
       @medium2 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   sort: "Nuesse", description: "Zweites Medium")
+                                   sort: "Exercise", description: "Zweites Medium")
       @medium3 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
                                    sort: "Quiz", description: "Drittes Medium")
       @medium4 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   :with_tags, sort: "Nuesse", description: "Getagtes Medium")
+                                   :with_tags, sort: "Exercise", description: "Getagtes Medium")
       @medium5 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   :with_tags, sort: "Nuesse", description: "Anderes Medium")
+                                   :with_tags, sort: "Exercise", description: "Anderes Medium")
 
       @tag1 = FactoryBot.create(:tag, title: "mampf adventures")
       @tag2 = FactoryBot.create(:tag, title: "topology")
@@ -33,14 +33,14 @@ RSpec.describe("Media", type: :request) do
 
       @lecture1 = FactoryBot.create(:lecture)
       @medium6 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   teachable: @lecture1, sort: "Nuesse",
+                                   teachable: @lecture1, sort: "Exercise",
                                    description: "Erstes Medium mit Lehrer")
       @lecture2 = FactoryBot.create(:lecture, teacher: @lecture1.teacher)
       @medium7 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   teachable: @lecture2, sort: "Nuesse",
+                                   teachable: @lecture2, sort: "Exercise",
                                    description: "Zweites Medium mit Lehrer")
       @medium8 = FactoryBot.create(:medium, :with_teachable, :with_editors,
-                                   sort: "Nuesse", description: "Unveröffentlichtes Medium")
+                                   sort: "Exercise", description: "Unveröffentlichtes Medium")
 
       sign_in FactoryBot.create(:confirmed_user_en)
       User.last.subscribe_lecture!(@lecture1)
