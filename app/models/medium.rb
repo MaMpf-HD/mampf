@@ -160,7 +160,7 @@ class Medium < ApplicationRecord
     end
   end
 
-  # these are all the sorts of food(=projects) we currently serve
+  # these are all the sorts of projects we currently serve
   def self.sort_enum
     ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Erdbeere",
      "Exercise", "Script", "Question", "Remark", "Miscellaneous", "RandomQuiz"]
