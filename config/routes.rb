@@ -222,7 +222,8 @@ Rails.application.routes.draw do
       defaults: { project: "repetition" }
 
   get "lectures/:id/miscellaneous",
-      to: "media#index", as: "lecture_supplements",
+      to: "media#index",
+      as: "lecture_miscellaneous",
       defaults: { project: "miscellaneous" }
 
   get "lectures/:lecture_id/questionnaires",
