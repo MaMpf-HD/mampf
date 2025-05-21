@@ -4,3 +4,7 @@
 require_relative "config/application"
 
 Rails.application.load_tasks
+
+# Before assets:precompile, we need to run js:routes to generate the routes file
+# see the js-routes gem
+task "assets:precompile" => "js:routes"
