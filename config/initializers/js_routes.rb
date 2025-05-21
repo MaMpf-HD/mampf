@@ -1,7 +1,7 @@
-# TODO: This is the config for the deprecated Sprockets configuration.
-# Once we update our asset pipeline, update the js-routes config here accordingly.
-# https://github.com/railsware/js-routes/tree/main?tab=readme-ov-file#sprockets-deprecated
+# Provide a global `Routes` object with all the Rails routes available
+# in JavaScript.
 JsRoutes.setup do |config|
   config.module_type = nil
-  config.namespace = "Routes"
+  config.namespace = "Routes" # global namespace
+  config.file = "../../app/assets/javascripts/mampf_routes.js"
 end
