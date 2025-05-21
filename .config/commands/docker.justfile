@@ -2,6 +2,15 @@
 help:
     @just --list --justfile {{source_file()}}
 
+# Recreates the MaMpf docker container (without reusing containers).
+recreate *args:
+    #!/usr/bin/env bash
+    # This is the same as deleting the MaMpf container via Docker Desktop,
+    # then running `just docker up`. It will enforce that the container is
+    # recreated, thus also dependencies will be rechecked.
+    cd {{justfile_directory()}}/docker/development/
+    docker compose up mampf --force-recreate {{args}}
+
 # Starts the dev containers (assumes a valid database)
 @up *args:
     #!/usr/bin/env bash
