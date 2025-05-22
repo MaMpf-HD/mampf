@@ -62,3 +62,5 @@ yarn-debug.log*
 .yarn-integrity
 
 node_modules
+
+docker/metrics/grafana_db/

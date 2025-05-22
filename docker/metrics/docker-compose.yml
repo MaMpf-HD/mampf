@@ -11,7 +11,7 @@ services:
   grafana:
     image: grafana/grafana:11.2.10
     ports:
-      - 3000:3000
+      - 3141:3141
     depends_on:
       - prometheus    
     volumes: 

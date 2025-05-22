@@ -71,6 +71,7 @@ gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbolinks", "~> 5.2" # make navigating the app faster
 gem "webpacker", "~> 5.4"
 gem "yabeda-prometheus", "~> 0.9.1"
+gem "yabeda-prometheus-mmap", "~> 0.4.0"
 gem "yabeda-rails", "~> 0.9.0"
 
 group :development, :docker_development do
