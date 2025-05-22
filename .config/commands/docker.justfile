@@ -31,7 +31,7 @@ recreate *args:
     cd {{justfile_directory()}}/docker/development/
     docker compose up mampf --force-recreate {{args}}
 
-# Restarts the MaMpf docker container (might reuse a stopped container)
+# Restarts the MaMpf docker container (might reuse a stopped container) — Also see `recreate`
 restart:
     #!/usr/bin/env bash
     # This is the same as restarting the MaMpf container via Docker Desktop.
@@ -168,7 +168,7 @@ db-tear-down:
     cd {{justfile_directory()}}/docker/development/
     docker compose exec mampf bundle exec rails c {{args}}
 
-# Rebuilds the MaMpf container (in the dev or test env) — Favor the `recreate` command over this.
+# Rebuilds the MaMpf container (in the dev or test env) — Favor the `recreate` command over this
 rebuild env="dev":
     #!/usr/bin/env bash
     environment={{ if env == "test" {"test"} else {"development"} }}
