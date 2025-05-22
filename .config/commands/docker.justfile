@@ -22,6 +22,23 @@ up-logs *args:
     cd {{justfile_directory()}}/docker/development/
     docker compose logs -f {{name}}
 
+# Recreates the MaMpf docker container (without reusing containers)
+recreate *args:
+    #!/usr/bin/env bash
+    # This is the same as deleting the MaMpf container via Docker Desktop,
+    # then running `just docker up`. It will enforce that the container is
+    # recreated, thus also dependencies will be rechecked.
+    cd {{justfile_directory()}}/docker/development/
+    docker compose up mampf --force-recreate {{args}}
+
+# Restarts the MaMpf docker container (might reuse a stopped container)
+restart:
+    #!/usr/bin/env bash
+    # This is the same as restarting the MaMpf container via Docker Desktop.
+    # It may reuse a stopped container, thus dependencies won't be rechecked.
+    cd {{justfile_directory()}}/docker/development/
+    docker compose restart mampf
+
 # Starts the dev docker containers and preseeds the database
 [confirm("This will reset all your data in the database locally. Continue? (y/n)")]
 up-reseed *args:
@@ -151,7 +168,7 @@ db-tear-down:
     cd {{justfile_directory()}}/docker/development/
     docker compose exec mampf bundle exec rails c {{args}}
 
-# Rebuilds the MaMpf container (in the dev or test environment)
+# Rebuilds the MaMpf container (in the dev or test env) — Favor the `recreate` command over this.
 rebuild env="dev":
     #!/usr/bin/env bash
     environment={{ if env == "test" {"test"} else {"development"} }}
