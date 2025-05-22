@@ -45,7 +45,6 @@ gem "pdf-reader", "~> 2.12"
 gem "pg", "~> 1.5"
 gem "premailer-rails", "~> 1.12"
 gem "progress_bar", "~> 1.3"
-gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
 gem "rack", "~> 3.1"
 gem "rails", "~> 7.2.2"
@@ -71,6 +70,8 @@ gem "thredded-markdown_katex",
 gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbolinks", "~> 5.2" # make navigating the app faster
 gem "webpacker", "~> 5.4"
+gem "yabeda-prometheus", "~> 0.9.1"
+gem "yabeda-rails", "~> 0.9.0"
 
 group :development, :docker_development do
   gem "listen", "~> 3.9"
