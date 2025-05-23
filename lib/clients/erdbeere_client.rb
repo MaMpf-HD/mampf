@@ -4,7 +4,7 @@ module Clients
 
     def self.get(path, params: nil, headers: {}, &)
       headers = headers.dup
-      headers["Host"] = "localhost" if Rails.env.docker_development?
+      headers["Host"] = "localhost" if Rails.env.development?
       ERDBEERE_CONNECTION.get(path, params, headers, &)
     rescue Faraday::Error => e
       Rails.logger.error("ErdbeereClient.get error: #{e.message}")

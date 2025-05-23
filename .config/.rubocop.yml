@@ -80,7 +80,7 @@ Rails/SkipsModelValidations:
   AllowedMethods: ["touch", "touch_all"]
 
 Rails/UnknownEnv:
-  Environments: ["development", "test", "production", "docker_development"]
+  Environments: ["development", "test", "production"]
 
 #############################################
 # Style

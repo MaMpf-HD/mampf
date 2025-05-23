@@ -11,9 +11,9 @@ check_for_preseeds() {
       latest=$DB_SQL_PRESEED_URL
     else
       echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
-      mkdir -pv db/backups/docker_development
-      wget --content-disposition --directory-prefix=db/backups/docker_development/ --timestamping $DB_SQL_PRESEED_URL
-      for file in db/backups/docker_development/*.sql; do
+      mkdir -pv db/backups/development
+      wget --content-disposition --directory-prefix=db/backups/development/ --timestamping $DB_SQL_PRESEED_URL
+      for file in db/backups/development/*.sql; do
         [[ $file -nt $latest ]] && latest=$file
       done
     fi
@@ -52,7 +52,7 @@ if ! [ -f /completed_initial_run ]; then
 
   # Wait for database to come online
   echo "🕖  Waiting for database to come online"
-  if [ "$RAILS_ENV" = "docker_development" ]; then
+  if [ "$RAILS_ENV" = "development" ]; then
       wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
   fi
   if [ "$RAILS_ENV" = "test" ]; then
@@ -63,7 +63,7 @@ if ! [ -f /completed_initial_run ]; then
   bundle exec rails db:create:interactions
   bundle exec rails db:create
 
-  if [ "$RAILS_ENV" = "docker_development" ]; then
+  if [ "$RAILS_ENV" = "development" ]; then
       check_for_preseeds
   fi
   if [ "$RAILS_ENV" = "test" ]; then

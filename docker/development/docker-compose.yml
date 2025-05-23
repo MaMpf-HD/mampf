@@ -79,7 +79,7 @@ services:
     # https://github.com/docker/compose/issues/3660
     pull_policy: never
     environment:
-      RAILS_ENV: docker_development
+      RAILS_ENV: development
       # If you change these variables, make sure to adapt accordingly in
       # config/db-pgadmin.json
       DEVELOPMENT_DATABASE_ADAPTER: postgresql
