@@ -15,7 +15,7 @@
 //= require bootstrap
 //= require rails-ujs
 //= require activestorage
-//= require js-routes
+//= require mampf_routes
 //= require jquery-ui
 //= require trix
 //= require @rails/actiontext
