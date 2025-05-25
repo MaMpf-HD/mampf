@@ -138,7 +138,7 @@ class Item < ApplicationRecord
   # it returns the short reference together with a description
   # result might look like this:   "Bem. 29.13 zu freien Moduln"
   # in the other cases, it might look like that:
-  # "KaViaR, Sitzung 27 vom 17.8.2017"  (self)
+  # "Lektion, Sitzung 27 vom 17.8.2017"  (self)
   # "extern Spiegel" (link)
   def local_reference
     unless sort.in?(["self", "link", "pdf_destination"])
