@@ -228,7 +228,7 @@ RSpec.describe(Medium, type: :model) do
   #       lecture = FactoryBot.create(:lecture)
   #       medium = FactoryBot.build(:medium, teachable: lecture,
   #                                 description: nil, sort: 'WorkedExample')
-  #       expect(medium.card_subheader).to eq('SeSAM Video')
+  #       expect(medium.card_subheader).to eq('WorkedExample Video')
   #     end
   #   end
   # end

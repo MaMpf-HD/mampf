@@ -1639,7 +1639,6 @@ de:
           Ist das Medium zu einer Veranstaltung oder einer Sitzung assoziiert,
           kannst Du einen von den Abschnitten auswählen, die zu dieser
           Veranstaltung bzw. Sitzung assoziiert sind.
-          Dies ist im Wesentlichen für KaViaR-Videos gedacht.
           </li>
           <li>
           Du möchtest keinen Abschnitt aus der Datenbank assoziieren.
@@ -2669,7 +2668,7 @@ de:
     slide_content: 'Inhalt'
     create_new: "Neue Vignette erstellen"
     duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
-    destroy_answer: 'Antwort wurde gelöscht'  
+    destroy_answer: 'Antwort wurde gelöscht'
     answered: 'Fragebogen wurde erfolgreich beantwortet'
     already_answered: 'Du hast diesen Fragebogen bereits beantwortet'
     no_slides: 'Keine Folien zum Beantworten'
@@ -2711,7 +2710,7 @@ de:
       Bist Du sicher, dass Du diese Folie löschen möchtest?
       Diese Aktion kann nicht rückgängig gemacht werden.'
     deleted: 'Vignette erfolgreich gelöscht'
-    confirm_delete: > 
+    confirm_delete: >
       Bist Du sicher, dass Du diese Vignette löschen möchtest?
       Dadurch werden auch alle zugehörigen Folien, Antworten und Statistiken gelöscht.
     duplicated: 'Vignette wurde erfolgreich dupliziert'
@@ -2783,7 +2782,7 @@ de:
       en: "Englisch"
       de: "Deutsch"
       nl: "Niederländisch"
-      
+
     number_question_settings: "Optionen für Zahlenfragen"
     only_integer: "Nur ganze Zahlen erlauben"
     min_number: "Minimalwert"
@@ -2808,7 +2807,7 @@ de:
     information: "Informationen"
 
     codenames:
-      codename: "Persönlicher code"  
+      codename: "Persönlicher code"
       your_codename: "Dein persönlicher Code"
       set_success: "Persönlicher Code wurde erfolgreich geändert"
       set_error: "Persönlicher Code konnte nicht gesetzt werden"
@@ -2817,7 +2816,7 @@ de:
       not_empty: "Persönlicher Code darf nicht leer sein"
       min_length: "Persönlicher Code muss mindestens %{min} Zeichen lang sein"
       max_length: "Personlicher Code darf maximal %{max} Zeichen lang sein"
-  
+
     completion_message:
       label: "Abschlussnachricht"
       help_text: >

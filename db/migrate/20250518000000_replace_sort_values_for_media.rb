@@ -12,7 +12,6 @@ class ReplaceSortValuesForMedia < ActiveRecord::Migration[7.2]
       "Sesam" => "WorkedExample",
       "Kiwi" => "Repetition",
       "Nuesse" => "Exercise",
-      "Script" => "Manuscript",
       "Reste" => "Miscellaneous"
     }
 
@@ -37,7 +36,6 @@ class ReplaceSortValuesForMedia < ActiveRecord::Migration[7.2]
       "WorkedExample" => "Sesam",
       "Repetition" => "Kiwi",
       "Exercise" => "Nuesse",
-      "Manuscript" => "Script",
       "Miscellaneous" => "Reste"
     }
 
