@@ -11,6 +11,6 @@
 // about supported directives.
 //
 //= require rails-ujs
-//= require js-routes
+//= require mampf_routes
 //= require clickers
 //= require katex
