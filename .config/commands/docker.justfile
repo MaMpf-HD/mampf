@@ -236,6 +236,16 @@ ensure-db-container-running:
         docker compose up -d db
     fi
 
+# Ensures that the MaMpf container is running
+[private]
+ensure-mampf-container-running:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+
+    if [ -z "$(docker compose ps --services --filter 'status=running' | grep mampf)" ]; then
+        echo "The mampf dev container is not running. Please start it first (use 'just docker')."
+        exit 1
+    fi
 
 # Ensures that the db container is running and postgres is ready (if not, starts the db container and waits for postgres)
 [private]
