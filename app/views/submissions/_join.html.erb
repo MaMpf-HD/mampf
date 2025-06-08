@@ -13,19 +13,20 @@
       </span>
       <%= f.hidden_field :code, value: invite[:token] %>
       
-      <%= button_tag t("submission.accept_invitation"), type: 'submit',
-          name: 'join[code]', value: invite[:token],
-          class: 'btn btn-primary' %>
+      <%= button_tag t("submission.accept_invitation"), type: "submit",
+          name: "join[code]", value: invite[:token],
+          class: "btn btn-primary" %>
     </div>
     <% end %>
-
-    <div class="row mb-2">
-      <div class="col-12">
-        <%= f.label :code, t('basics.code') %>
-        <%= f.text_field :code, class: 'form-control' %>
-        <div class="invalid-feedback" id="submission-code-error"/>
-        <%= f.hidden_field :assignment_id, value: assignment.id %>
-      </div>
+    
+    <div class="form-floating mb-3">
+      <%= f.text_field :code,
+        placeholder: "",
+        class: "form-control",
+        autocomplete: "off" %>
+      <%= f.label :code, t('basics.code') %>
+      <div class="invalid-feedback" id="submission-code-error"/>
+      <%= f.hidden_field :assignment_id, value: assignment.id %>
     </div>
 
   </div>
