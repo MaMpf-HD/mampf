@@ -25,26 +25,21 @@
         class: "form-control",
         autocomplete: "off" %>
       <%= f.label :code, t('basics.code') %>
-      <div class="invalid-feedback" id="submission-code-error"/>
+      <div class="invalid-feedback" id="submission-code-error"></div>
       <%= f.hidden_field :assignment_id, value: assignment.id %>
     </div>
 
   </div>
 
-  <div class="card-footer submissionFooter"
+  <div class="card-footer submissionFooter text-center p-2"
        data-id="<%= assignment.id %>">
-    <div class="row">
-      <div class="col-12 text-center">
-        <% unless @submission && @submission.invited_user_ids&.include?(current_user.id) %>
-          <%= f.submit t('buttons.join'),
-                       class: 'btn btn-sm btn-primary me-2' %>
-        <% end %>
-        <%= link_to t('buttons.cancel'),
-                    cancel_new_submission_path(params: { assignment_id: assignment.id }),
-                    class: 'btn btn-sm btn-secondary',
-                    remote: true %>
-      </div>
-    </div>
+    <% unless @submission && @submission.invited_user_ids&.include?(current_user.id) %>
+      <%= f.submit t('buttons.join'), class: 'btn btn-primary' %>
+    <% end %>
+    <%= link_to t('buttons.cancel'),
+                cancel_new_submission_path(params: { assignment_id: assignment.id }),
+                class: 'btn btn-secondary',
+                remote: true %>
   </div>
 
 <% end %>
