@@ -14,7 +14,7 @@
 
       <%= button_tag t("submission.accept_invitation"), type: "submit",
           name: "join[code]", value: invite[:token],
-          class: "btn btn-primary" %>
+          class: "btn btn-primary", "data-cy": "accept-invite-btn" %>
     </div>
     <% end %>
     
@@ -22,7 +22,8 @@
       <%= f.text_field :code,
         placeholder: "",
         class: "form-control",
-        autocomplete: "off" %>
+        autocomplete: "off",
+        "data-cy": "submission-token-input" %>
       <%= f.label :code, t('basics.code') %>
       <div class="invalid-feedback" id="submission-code-error"></div>
       <%= f.hidden_field :assignment_id, value: assignment.id %>
@@ -33,7 +34,9 @@
   <div class="card-footer submissionFooter text-center p-2"
        data-id="<%= assignment.id %>">
     <% unless @submission && @submission.invited_user_ids&.include?(current_user.id) %>
-      <%= f.submit t('buttons.join'), class: 'btn btn-primary' %>
+      <%= f.submit t('buttons.join'),
+          class: 'btn btn-primary',
+          "data-cy": "submission-join-via-code" %>
     <% end %>
     <%= link_to t('buttons.cancel'),
                 cancel_new_submission_path(params: { assignment_id: assignment.id }),

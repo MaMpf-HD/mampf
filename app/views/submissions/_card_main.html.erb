@@ -18,7 +18,8 @@
               <%= helpdesk(t('submission.code_explanation'), false) %>
             </th>
             <td>
-              <span class="submissionToken" data-id="<%= submission.id %>">
+              <span class="submissionToken" data-id="<%= submission.id %>"
+                data-cy="submission-token">
                 <%= submission.token %>
               </span>
               <i class="clipboardpopup far fa-copy clickable
@@ -164,7 +165,8 @@
                         method: :delete,
                         remote: true,
                         data: { confirm: t('confirmation.generic'),
-                                color: 'btn-outline-danger' } %>
+                                color: 'btn-outline-danger',
+                                cy: "submission-leave" } %>
           <% end %>
         <% else %>
           <%= link_to t('buttons.create'),
@@ -180,7 +182,7 @@
                                                         assignment.id }),
                       class: 'btn btn-outline-primary',
                       remote: true,
-                      data: { color: 'btn-outline-primary' } %>
+                      data: { color: 'btn-outline-primary', cy: "submission-join" } %>
         <% end %>
         <% if assignment.in_grace_period? %>
           <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ms-2',
