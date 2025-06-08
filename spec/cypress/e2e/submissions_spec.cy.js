@@ -33,14 +33,14 @@ describe("Submissions Joining", () => {
   }
 
   it.only("can join a submission by direct invite", function () {
-    // "Inviter" creates a submission, copies code
+    // "Inviter" creates a submission & stores code
     cy.login(this.inviter).then(() => {
       subscribeToLecture(this.lecture.id);
       createEmptySubmission(this.lecture.id);
       cy.logout();
     });
 
-    // "Joiner" joins the submission using the copied code
+    // "Joiner" joins the submission using the code
     cy.login(this.joiner).then(() => {
       subscribeToLecture(this.lecture.id);
       cy.visit(`/lectures/${this.tutorial.lecture_id}/submissions`);
@@ -63,7 +63,8 @@ describe("Submissions Joining", () => {
       });
 
       // "Joiner" can now join without a code
-      // (since they have previously handed in a submission together with the inviter)
+      // (since this user has previously handed in a submission together
+      // with the inviter, see above)
       cy.login(this.joiner).then(() => {
         cy.visit(`/lectures/${this.tutorial.lecture_id}/submissions`);
         cy.getBySelector("submission-join").click();
