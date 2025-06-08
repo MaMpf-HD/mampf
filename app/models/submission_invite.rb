@@ -21,9 +21,18 @@ class SubmissionInvite
         "Multiple submissions found for user #{@user.id} and assignment #{assignment.id}"
       )
     end
-
     submission = submissions.first
+
     inviter = UserSubmissionJoin.find_by(submission_id: submission.id)&.user
-    { token: submission.token, inviter: inviter.name }
+    if inviter.nil?
+      Rails.error.unexpected(
+        "No inviter found for submission #{submission.id} of assignment #{assignment.id}"
+      )
+      inviter_name = "Unknown Inviter"
+    else
+      inviter_name = inviter.name
+    end
+
+    { token: submission.token, inviter: inviter_name }
   end
 end
