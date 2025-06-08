@@ -11,8 +11,7 @@
         <i class="bi bi-people-fill"></i>
         <%= I18n.t("submission.invited", inviter: invite[:inviter]) %>
       </span>
-      <%= f.hidden_field :code, value: invite[:token] %>
-      
+
       <%= button_tag t("submission.accept_invitation"), type: "submit",
           name: "join[code]", value: invite[:token],
           class: "btn btn-primary" %>
