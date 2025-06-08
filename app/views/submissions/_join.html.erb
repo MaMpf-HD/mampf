@@ -6,15 +6,14 @@
 
     <% invite = SubmissionInvite.new(current_user).invites_for(assignment) %>
     <% if invite %>
-
     <div class="alert alert-info" role="alert">
       You were invited by <%= invite[:inviter] %>
       <%= f.hidden_field :code, value: invite[:token] %>
       
       <%= button_tag "Accept invitation", type: 'submit',
+          name: 'join[code]', value: invite[:token],
           class: 'btn btn-primary' %>
     </div>
-
     <% end %>
 
     <div class="row mb-2">
