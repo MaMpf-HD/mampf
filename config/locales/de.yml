@@ -3068,6 +3068,8 @@ de:
       Anzahl der Medien in von den von Dir abonnierten
       Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
   submission:
+    invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
+    accept_invitation: Einladung annehmen
     invalid_code: Der eingegebene Code ist ungültig.
     invalid_code_for_assignment: >
       Der eingegebene Code ist ungültig für %{assignment}.
