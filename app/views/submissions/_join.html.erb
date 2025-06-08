@@ -1,26 +1,41 @@
 <%= form_with url: join_submission_path,
               method: :post,
               scope: 'join' do |f| %>
-  <div class="card-body submissionBody"
-       data-id="<%= assignment.id %>">
+
+  <div class="card-body submissionBody" data-id="<%= assignment.id %>">
+
+    <% invite = SubmissionInvite.new(current_user).invites_for(assignment) %>
+    <% if invite %>
+
+    <div class="alert alert-info" role="alert">
+      You were invited by <%= invite[:inviter] %>
+      <%= f.hidden_field :code, value: invite[:token] %>
+      
+      <%= button_tag "Accept invitation", type: 'submit',
+          class: 'btn btn-primary' %>
+    </div>
+
+    <% end %>
+
     <div class="row mb-2">
       <div class="col-12">
         <%= f.label :code, t('basics.code') %>
         <%= f.text_field :code, class: 'form-control' %>
-        <div class="invalid-feedback"
-             id="submission-code-error">
-        </div>
-        <%= f.hidden_field :assignment_id,
-                           value: assignment.id %>
+        <div class="invalid-feedback" id="submission-code-error"/>
+        <%= f.hidden_field :assignment_id, value: assignment.id %>
       </div>
     </div>
+
   </div>
+
   <div class="card-footer submissionFooter"
        data-id="<%= assignment.id %>">
     <div class="row">
       <div class="col-12 text-center">
-        <%= f.submit t('buttons.join'),
-                     class: 'btn btn-sm btn-primary me-2' %>
+        <% unless @submission && @submission.invited_user_ids&.include?(current_user.id) %>
+          <%= f.submit t('buttons.join'),
+                       class: 'btn btn-sm btn-primary me-2' %>
+        <% end %>
         <%= link_to t('buttons.cancel'),
                     cancel_new_submission_path(params: { assignment_id: assignment.id }),
                     class: 'btn btn-sm btn-secondary',
@@ -28,4 +43,5 @@
       </div>
     </div>
   </div>
+
 <% end %>
