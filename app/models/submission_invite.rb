@@ -16,7 +16,9 @@ class SubmissionInvite
     return nil if submissions.empty?
 
     if submissions.count > 1
-      raise("Multiple submissions found for user #{@user.id} and assignment #{assignment.id}")
+      Rails.error.unexpected(
+        "Multiple submissions found for user #{@user.id} and assignment #{assignment.id}"
+      )
     end
 
     submission = submissions.first
