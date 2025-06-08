@@ -32,7 +32,12 @@ check_for_preseeds() {
 }
 
 if [ "$RAILS_ENV" = "production" ]; then
-    echo "❌  This script is not intended for usage with RAILS_ENV=production. Aborting."
+    echo "❌  This script is NOT intended for usage with RAILS_ENV=production. Only for local development. Aborting."
+    exit 1
+fi
+
+if [ "$RAILS_ENV" != "development" ] && [ "$RAILS_ENV" != "test" ]; then
+    echo "❌  This script is only intended for usage with RAILS_ENV=development or RAILS_ENV=test. Aborting."
     exit 1
 fi
 
@@ -60,8 +65,15 @@ if ! [ -f /completed_initial_run ]; then
   fi
 
   echo "➕  Creating database (db:create)"
-  bundle exec rails db:create:interactions
-  bundle exec rails db:create
+  if [ "$RAILS_ENV" = "development" ]; then
+    # problem: https://github.com/rails/rails/issues/27299#issuecomment-295536459
+    # solution: https://github.com/rails/rails/issues/27299#issuecomment-1214684427
+    bundle exec rails db:create:interactions SKIP_TEST_DATABASE=true
+    bundle exec rails db:create SKIP_TEST_DATABASE=true
+  elif [ "$RAILS_ENV" = "test" ]; then
+      bundle exec rails db:create:interactions
+      bundle exec rails db:create
+  fi
 
   if [ "$RAILS_ENV" = "development" ]; then
       check_for_preseeds
