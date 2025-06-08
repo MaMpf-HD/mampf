@@ -7,9 +7,10 @@ class SubmissionInvite
   # invited to, if any. Returns a hash with the submission token and the user who
   # created it, or nil if no submission is found.
   #
-  # Raises an error if multiple submissions are found for the user and assignment.
+  # There should never be multiple submissions for the same user and assignment,
+  # but if there are, we log this as an error and return the first one found.
   def invites_for(assignment)
-    return false unless @user && assignment
+    return nil unless @user && assignment
 
     submissions = Submission.where(assignment: assignment)
                             .where("? = ANY(invited_user_ids)", @user.id)
