@@ -117,6 +117,10 @@ Cypress.Commands.add("createUser", (role) => {
   return BackendCaller.callCypressRoute("user_creator", "cy.createUser()", { role: role });
 });
 
+/**
+ * Logs in a user via the API. Note that you must log out the previous user
+ * before, otherwise the session will not be cleared.
+ */
 Cypress.Commands.add("login", (user) => {
   return cy.request({
     method: "POST",
