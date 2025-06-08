@@ -32,7 +32,7 @@ describe("Submissions Joining", () => {
     });
   }
 
-  it.only("can join a submission by direct invite", function () {
+  it("can join a submission by direct invite", function () {
     // "Inviter" creates a submission & stores code
     cy.login(this.inviter).then(() => {
       subscribeToLecture(this.lecture.id);
