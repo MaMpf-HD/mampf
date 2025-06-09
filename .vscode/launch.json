@@ -6,7 +6,6 @@
             "type": "ruby_lsp",
             "request": "attach",
             "debugPort": 13254,
-            "localfsMap": "/usr/src/app/:${workspaceFolder}",
         },
     ]
 }
