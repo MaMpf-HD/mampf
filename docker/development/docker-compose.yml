@@ -129,8 +129,7 @@ services:
       UPLOADS_PRESEED_URL:
     ports:
       - "127.0.0.1:3035:3035"  # webpacker dev server
-      # Let debug gem communicate with host (see config/Initializers/debug.rb)
-      - "127.0.0.1:13254:13254"
+      - "127.0.0.1:13254:13254" # for debug gem communication with host
     volumes:
       - ../../:/usr/src/app/
       - sprockets-cache:/cache
