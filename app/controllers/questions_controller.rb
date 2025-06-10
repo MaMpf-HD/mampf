@@ -17,21 +17,23 @@ class QuestionsController < ApplicationController
   def update
     return if @errors
 
-    update_params = question_params.except(:solution_error)
-    @success = true if @question.update!(update_params)
-    if question_params[:question_sort] == "free"
-      answer = @question.answers.first
-      @question.answers.where.not(id: answer.id).destroy_all
+    ActiveRecord::Base.transaction do
+      update_params = question_params.except(:solution_error)
+      @success = true if @question.update(update_params)
+      if question_params[:question_sort] == "free"
+        answer = @question.answers.first
+        @question.answers.where.not(id: answer.id).destroy_all
+      end
+      if question_params[:solution]
+        answer = @question.answers.first
+        @question.answers.where.not(id: answer.id).destroy_all
+        answer.update(text: question_params[:solution].tex_mc_answer,
+                      value: true,
+                      explanation: question_params[:solution].explanation)
+      end
+      @no_solution_update = question_params[:solution].nil?
+      @errors = @question.errors
     end
-    if question_params[:solution]
-      answer = @question.answers.first
-      @question.answers.where.not(id: answer.id).destroy_all
-      answer.update(text: question_params[:solution].tex_mc_answer,
-                    value: true,
-                    explanation: question_params[:solution].explanation)
-    end
-    @no_solution_update = question_params[:solution].nil?
-    @errors = @question.errors
   end
 
   def reassign
