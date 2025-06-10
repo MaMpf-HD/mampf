@@ -14,6 +14,6 @@ class MampfExpression
   end
 
   def self.from_hash(content)
-    MampfExpression.new(content["0"], content["tex"], content["nerd"])
+    MampfExpression.new(content[:dynamic]["0"][:content], content["tex"], content["nerd"])
   end
 end
