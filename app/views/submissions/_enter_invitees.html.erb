@@ -19,17 +19,13 @@
       </div>
     </div>
   </div>
-  <div class="card-footer submissionFooter"
+  <div class="card-footer submissionFooter text-center p-2"
        data-id="<%= assignment.id %>">
-    <div class="row">
-      <div class="col-12 text-center">
-        <%= f.submit t('buttons.send'),
-                     class: 'btn btn-sm btn-primary me-2' %>
-        <%= link_to t('buttons.cancel'),
-                    cancel_editing_submission_path(submission),
-                    class: 'btn btn-sm btn-secondary',
-                    remote: true %>
-      </div>
-    </div>
+    <%= f.submit t('buttons.send'),
+                  class: 'btn btn-primary' %>
+    <%= link_to t('buttons.cancel'),
+                cancel_editing_submission_path(submission),
+                class: 'btn btn-secondary',
+                remote: true %>
   </div>
 <% end %>

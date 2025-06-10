@@ -5,14 +5,9 @@ help:
 # Generates entity-relationship diagrams (ERD) of the database
 erd:
     #!/usr/bin/env bash
+    just docker ensure-mampf-container-running
 
-    # Make sure the mampf dev container is running
     cd {{justfile_directory()}}/docker/development/
-    if [ -z "$(docker compose ps --services --filter 'status=running' | grep mampf)" ]; then
-        echo "The mampf dev container is not running. Please start it first (use 'just docker')."
-        exit 1
-    fi
-
     mkdir -p {{justfile_directory()}}/tmp/erd/
 
     # ▶ Generate ERDs
@@ -65,6 +60,13 @@ erd:
         inheritance=true polymorphism=true indirect=true attributes=content \
         exclude="${exclude_default},Claimable,Editable,Teachable" \
         only="Lecture,Lesson,Chapter,Section,Item,LessonSectionJoin,Term"
+
+    # 🌟 Submissions
+    docker compose exec -it mampf rake erd warn=false \
+        title="Submissions" filename=/usr/src/app/tmp/erd/mampf-erd-submissions \
+        inheritance=true polymorphism=true indirect=true attributes=content \
+        exclude="${exclude_default},Claimable,Editable,Teachable,Notifiable,Record" \
+        only="Submission,Tutorial,Assignment,User,UserSubmissionJoin"
 
     # 🌟 Vignettes
     docker compose exec -it mampf rake erd warn=false \
