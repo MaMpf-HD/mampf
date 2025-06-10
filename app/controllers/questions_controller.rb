@@ -104,7 +104,11 @@ class QuestionsController < ApplicationController
                      .permit(:label, :text, :type, :hint, :level,
                              :question_sort, :independent, :vertex_id,
                              :solution_type,
-                             solution_content: {})
+                             solution_content:
+                             [
+                               :row_count, :column_count, :tex, :nerd, :explanation,
+                               { dynamic: [[:content]] }
+                             ])
       if result[:solution_type] && result[:solution_content]
         result[:solution] = Solution.from_hash(result[:solution_type],
                                                result[:solution_content])

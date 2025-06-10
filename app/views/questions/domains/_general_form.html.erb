@@ -1,22 +1,27 @@
-<% if type.in?(['MampfExpression', 'MampfTuple', 'MampfSet']) %>
-  <%= render partial: 'questions/domains/expression',
-             locals: { f: f,
-                       value: content.value,
-                       counter: '[0]',
-                       type: type } %>
-<% elsif type == 'MampfMatrix' %>
-  <%= render partial: 'questions/domains/matrix',
-             locals: { f: f,
-                       content: content } %>
+<%= f.fields_for :solution_content do |solution_content_fields| %>
+  <% if type.in?(['MampfExpression', 'MampfTuple', 'MampfSet']) %>
+    <%= render partial: 'questions/domains/expression',
+              locals: { solution_content_fields: solution_content_fields,
+                        value: content.value,
+                        counter: "0",
+                        type: type } %>
+  <% elsif type == 'MampfMatrix' %>
+    <%= render partial: 'questions/domains/matrix',
+              locals: { solution_content_fields: solution_content_fields,
+                        content: content } %>
+  <% end %>
+  <%= solution_content_fields.hidden_field :tex,
+                    value: content.tex,
+                    id: 'solution_input_tex' %>
 <% end %>
-<%= f.hidden_field 'solution_content[tex]',
-                   value: content.tex,
-                   id: 'solution_input_tex' %>
+
 <%= f.hidden_field 'solution_error',
-                   value: nil,
-                   id: 'solution_input_error' %>
+                  value: nil,
+                  id: 'solution_input_error' %>
+
 <div class="invalid-feedback" id="solution-error">
 </div>
+
 <div class="row mt-2">
   <div class="col-12 text-center">
     <button type="button"
