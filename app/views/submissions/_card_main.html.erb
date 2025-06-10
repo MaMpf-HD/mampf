@@ -1,5 +1,12 @@
 <div class="card-body submissionBody"
      data-id="<%= assignment.id %>">
+
+  <!-- 🐰 Invites -->
+  <%= form_with url: join_submission_path, method: :post, scope: 'join' do |f| %>
+    <%= render partial: 'submissions/invites', locals: { assignment: assignment } %>
+    <%= f.hidden_field :assignment_id, value: assignment.id %>
+  <% end %>
+
   <% if submission %>
     <table class="table table-bordered submission-table-bordered">
       <tbody>
@@ -18,7 +25,8 @@
               <%= helpdesk(t('submission.code_explanation'), false) %>
             </th>
             <td>
-              <span class="submissionToken" data-id="<%= submission.id %>">
+              <span class="submissionToken" data-id="<%= submission.id %>"
+                data-cy="submission-token">
                 <%= submission.token %>
               </span>
               <i class="clipboardpopup far fa-copy clickable
@@ -93,7 +101,7 @@
             <%= t('basics.team') %>
             <%= helpdesk(t('submission.team_info'), false) %>
           </th>
-          <td>
+          <td data-cy="submission-team">
             <% if submission.users.count == 1 %>
               <%= t('basics.you') %>
             <% else %>
@@ -130,7 +138,7 @@
   <% end %>
 </div>
 <% if show_submission_footer?(submission, assignment) %>
-  <div class="card-footer submissionFooter"
+  <div class="card-footer submissionFooter p-2"
        data-id="<%= assignment.id %>">
     <div class="row">
       <div class="col-12 text-center">
@@ -138,13 +146,13 @@
           <% edit_button_class = submission.not_updatable? ? "secondary disabled" : "primary" %>
           <%= link_to t('buttons.edit'),
                       edit_submission_path(submission),
-                      class: "btn btn-sm btn-outline-#{edit_button_class}",
+                      class: "btn btn-outline-#{edit_button_class}",
                       remote: true,
                       data: { color: 'btn-outline-primary'} %>
           <% if invitations_possible?(submission, current_user) %>
             <%= link_to t('buttons.invite'),
                         enter_submission_invitees_path(submission),
-                        class: 'btn btn-sm btn-outline-primary',
+                        class: 'btn btn-outline-primary',
                         remote: true,
                         data: { color: 'btn-outline-primary'} %>
           <% end %>
@@ -152,7 +160,7 @@
             <% delete_button_class = submission.not_updatable? ? "disabled" : "" %>
             <%= link_to t('buttons.delete'),
                         submission_path(submission),
-                        class: "btn btn-sm btn-outline-danger #{delete_button_class}",
+                        class: "btn btn-outline-danger #{delete_button_class}",
                         method: :delete,
                         remote: true,
                         data: { confirm: t('confirmation.generic'),
@@ -160,17 +168,18 @@
           <% else %>
             <%= link_to t('buttons.leave'),
                         leave_submission_path(submission),
-                        class: 'btn btn-sm btn-outline-danger',
+                        class: 'btn btn-outline-danger',
                         method: :delete,
                         remote: true,
                         data: { confirm: t('confirmation.generic'),
-                                color: 'btn-outline-danger' } %>
+                                color: 'btn-outline-danger',
+                                cy: "submission-leave" } %>
           <% end %>
         <% else %>
           <%= link_to t('buttons.create'),
                       new_submission_path(params:
                                             { assignment_id: assignment.id }),
-                      class: 'btn btn-sm btn-outline-primary',
+                      class: 'btn btn-outline-primary',
                       remote: true,
                       data: { color: 'btn-outline-primary', cy: "create-submission" } %>
           <%= link_to t('buttons.join'),
@@ -178,9 +187,9 @@
                                                   params:
                                                     { assignment_id:
                                                         assignment.id }),
-                      class: 'btn btn-sm btn-outline-primary',
+                      class: 'btn btn-outline-primary',
                       remote: true,
-                      data: { color: 'btn-outline-primary' } %>
+                      data: { color: 'btn-outline-primary', cy: "submission-join" } %>
         <% end %>
         <% if assignment.in_grace_period? %>
           <%= tag.i class: 'fas fa-2x fa-info-circle helpdesk ms-2',

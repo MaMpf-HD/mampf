@@ -5,6 +5,9 @@ import BackendCaller from "./backend_caller";
  * time in the backend.
  *
  * This is different from cy.clock() which only affects the frontend.
+ *
+ * ❗ You should always reset the time after using this helper, otherwise
+ * the backend will remain in the frozen/traveled state ❗
  */
 class Timecop {
   /**

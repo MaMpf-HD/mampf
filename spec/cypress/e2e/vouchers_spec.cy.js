@@ -144,7 +144,7 @@ context("When traveling into the future", () => {
     });
 
     function textExpiresAtWithTimeTravel(role) {
-    // find date string, read it, then travel to that date (+1 minute)
+      // find date string, read it, then travel to that date (+1 minute)
       cy.getBySelector(`${role}-voucher-expires-at`).then(($expiresAt) => {
         const date = new Date($expiresAt.text());
         date.setMinutes(date.getMinutes() + 1);

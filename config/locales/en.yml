@@ -2899,15 +2899,17 @@ en:
     en: 'English'
     de: 'German'
   submission:
+    invited: You have been invited by '%{inviter}' for this submission.
+    accept_invitation: Accept invitation
     invalid_code_for_assignment: >
       The code you entered is invalid for %{assignment}.
     invalid_code: The code you entered is invalid.
     assignment_expired: >
       The due date for this homework assignment has already
       expired.
-    already_in: You are already a partner for this assgnment.
+    already_in: You are already a partner for this assignment.
     lecture_not_subscribed: >
-      You are not subscribed to the coresponding event series.
+      You are not subscribed to the corresponding event series.
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).
@@ -2917,7 +2919,7 @@ en:
       Nothing was submitted for this assignment.
     invitations_to: Invitations to
     joined_successfully: >
-      You successfully joind the submission to %{assignment}.
+      You successfully joined the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
     current: Current Submission
