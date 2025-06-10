@@ -207,7 +207,7 @@ class Manuscript
         pdf_destination: c["destination"],
         section_id: @sections.find do |s|
                       c["section"] == s["section"]
-                    end ["mampf_section"]&.id,
+                    end["mampf_section"]&.id,
         sort: Item.internal_sort(c["sort"]),
         page: c["page"].to_i,
         description: c["description"],

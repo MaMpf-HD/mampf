@@ -37,12 +37,8 @@ class Course < ApplicationRecord
   has_many :division_course_joins, dependent: :destroy
   has_many :divisions, through: :division_course_joins
 
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, presence: true, uniqueness: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :short_title, presence: true, uniqueness: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   # some information about media and lectures are cached
   # to find out whether the cache is out of date, always touch'em after saving

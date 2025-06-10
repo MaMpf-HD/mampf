@@ -5,9 +5,7 @@ class Assignment < ApplicationRecord
 
   before_destroy :check_destructibility, prepend: true
 
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, uniqueness: { scope: [:lecture_id] }, presence: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
   validates :deadline, presence: true
   validates :deletion_date, presence: true
   validate :deletion_date_cannot_be_in_the_past

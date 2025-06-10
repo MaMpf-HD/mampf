@@ -115,7 +115,7 @@ class Term < ApplicationRecord
   end
 
   def self.previous_by_date(date)
-    season = date.month.in?((4..9)) ? "SS" : "WS"
+    season = date.month.in?(4..9) ? "SS" : "WS"
     year = date.year
     previous_year = season == "WS" ? year : year - 1
     previous_season = season == "WS" ? "SS" : "WS"

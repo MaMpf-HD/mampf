@@ -68,7 +68,6 @@ Performance:
 Performance/FlatMap:
   Severity: warning # an error in CI/CD
 
-
 #############################################
 # Rails
 #############################################
@@ -78,6 +77,25 @@ Rails/HasManyOrHasOneDependent:
 
 Rails/SkipsModelValidations:
   AllowedMethods: ["touch", "touch_all"]
+
+# TODO RuboCop
+Rails/InverseOf:
+  Enabled: false
+
+# TODO RuboCop
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+# TODO RuboCop
+Rails/UniqueValidationWithoutIndex:
+  Enabled: false
+
+#############################################
+# Naming
+#############################################
+
+Naming/PredicateMethod:
+  Enabled: false
 
 #############################################
 # Style
