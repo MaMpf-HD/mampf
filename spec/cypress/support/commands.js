@@ -114,7 +114,10 @@ beforeEach(() => {
 });
 
 Cypress.Commands.add("createUser", (role) => {
-  return BackendCaller.callCypressRoute("user_creator", "cy.createUser()", { role: role });
+  return BackendCaller.callCypressRoute("user_creator", "cy.createUser()", { role: role })
+    .then((user) => {
+      console.log("Created user:", user);
+    });
 });
 
 /**
