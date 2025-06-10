@@ -21,7 +21,7 @@ class SubmissionInvite
         )
         inviter_name = "Unknown Inviter"
       else
-        inviter_name = inviter.name
+        inviter_name = inviter.tutorial_name
       end
       { token: submission.token, inviter: inviter_name }
     end
