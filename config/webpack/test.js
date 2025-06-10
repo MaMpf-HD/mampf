@@ -6,5 +6,5 @@
 // https://rossta.net/blog/how-to-use-webpacker-yml.html
 const environment = require("./environment");
 const config = environment.toWebpackConfig();
-// config.output.filename = "js/[name]-[hash].js";
+config.output.filename = "js/[name]-[hash].js";
 module.exports = config;

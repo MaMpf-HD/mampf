@@ -30,7 +30,7 @@ end
 # Allow overriding of the sprockets cache path
 # This is done to fix this problem:
 # (https://github.com/rails/sprockets/issues/283#issuecomment-578728257)
-if Rails.env.docker_development?
+if Rails.env.development?
   Rails.application.config.assets.configure do |env|
     env.cache = Sprockets::Cache::FileStore.new(
       ENV.fetch("SPROCKETS_CACHE", "#{env.root}/tmp/cache/assets"),

@@ -72,7 +72,7 @@ gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbolinks", "~> 5.2" # make navigating the app faster
 gem "webpacker", "~> 5.4"
 
-group :development, :docker_development do
+group :development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
@@ -92,7 +92,7 @@ group :test do
   gem "timecop", "~> 0.9.10"
 end
 
-group :test, :development, :docker_development do
+group :development, :test do
   gem "byebug", "~> 11.1"
   gem "factory_bot_rails", "~> 6.4"
   gem "rspec-github", "~> 2.4"
