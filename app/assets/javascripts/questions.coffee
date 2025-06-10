@@ -11,7 +11,7 @@ class MampfExpression
     @nerd.expand().eq(otherExpression.nerd.expand())
 
   @parse: (content) ->
-    expression = content['question[solution_content[0]]']
+    expression = content['question[solution_content][dynamic][0][content]']
     new MampfExpression(expression)
 
 class MampfMatrix
@@ -34,13 +34,13 @@ class MampfMatrix
     result
 
   @parse: (content) ->
-    rowCount = parseInt(content['question[solution_content[row_count]]'])
-    columnCount = parseInt(content['question[solution_content[column_count]]'])
+    rowCount = parseInt(content['question[solution_content][row_count]'])
+    columnCount = parseInt(content['question[solution_content][column_count]'])
     matrix = ''
     for i in [1..rowCount]
       column = '['
       for j in [1..columnCount]
-        column += content['question[solution_content[' + i + ',' + j + ']]']
+        column += content['question[solution_content][dynamic][' + i + ',' + j + '][content]']
         column += ',' unless j == columnCount
       column += ']'
       matrix += column
@@ -65,7 +65,7 @@ class MampfTuple
     result
 
   @parse: (content) ->
-    coeffs = content['question[solution_content[0]]']
+    coeffs = content['question[solution_content][dynamic][0][content]']
     expression = 'vector(' + coeffs + ')'
     new MampfTuple(expression)
 
@@ -92,7 +92,7 @@ class MampfSet
     result
 
   @parse: (content) ->
-    elements = content['question[solution_content[0]]'].split(',')
+    elements = content['question[solution_content][dynamic][0][content]'].split(',')
     size = elements.length
     nerds = []
     set = []
