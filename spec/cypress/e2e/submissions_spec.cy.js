@@ -110,9 +110,13 @@ describe("Submissions Joining", () => {
         cy.getBySelector("submission-team").should("contain", this.inviter.name_in_tutorials);
         cy.getBySelector("submission-leave").click();
 
-        cy.getBySelector("submission-join").click();
         // now there is only one invite left (that from "Inviter2")
+        cy.getBySelector("submission-join").click();
         cy.getBySelector("accept-invite-1").should("not.exist");
+        cy.getBySelector("accept-invite-0").should("be.visible");
+        cy.getBySelector("submission-cancel-join").click();
+
+        // can also join on parent page
         cy.getBySelector("accept-invite-0").click();
         cy.getBySelector("submission-team").should("contain", this.inviter2.name_in_tutorials);
       });

@@ -1,5 +1,12 @@
 <div class="card-body submissionBody"
      data-id="<%= assignment.id %>">
+
+  <!-- 🐰 Invites -->
+  <%= form_with url: join_submission_path, method: :post, scope: 'join' do |f| %>
+    <%= render partial: 'submissions/invites', locals: { assignment: assignment } %>
+    <%= f.hidden_field :assignment_id, value: assignment.id %>
+  <% end %>
+
   <% if submission %>
     <table class="table table-bordered submission-table-bordered">
       <tbody>

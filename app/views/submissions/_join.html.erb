@@ -29,6 +29,7 @@
     <%= link_to t('buttons.cancel'),
                 cancel_new_submission_path(params: { assignment_id: assignment.id }),
                 class: 'btn btn-secondary',
+                "data-cy": "submission-cancel-join",
                 remote: true %>
   </div>
 
