@@ -25,7 +25,7 @@
         "editor.formatOnSave": false // TODO: activate once HTML formatter installed
     },
     //////////////////////////////////////
-    // Ruby (Rubocop)
+    // Ruby (RuboCop)
     //////////////////////////////////////
     "[ruby]": {
         "editor.defaultFormatter": "Shopify.ruby-lsp",
@@ -103,6 +103,8 @@
     // Spell Checker
     //////////////////////////////////////
     "cSpell.enabled": true,
+    "cSpell.diagnosticLevel": "Hint",
+    "cSpell.maxNumberOfProblems": 10000,
     "cSpell.ignorePaths": [
         "node_modules",
         ".git"
@@ -140,7 +142,8 @@
         "preselection",
         "psql",
         "realpath",
-        "Rubo",
+        "rubocop",
+        "RuboCop",
         "selectize",
         "Timecop",
         "trix",
@@ -150,9 +153,4 @@
         "webpacker",
         "whitespaces"
     ],
-    "cSpell.enableFiletypes": [
-        "ruby"
-        // Other filetypes are handled by the default spell checker
-    ],
-    "cSpell.maxNumberOfProblems": 10000
 }
