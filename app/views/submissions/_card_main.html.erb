@@ -94,7 +94,7 @@
             <%= t('basics.team') %>
             <%= helpdesk(t('submission.team_info'), false) %>
           </th>
-          <td>
+          <td data-cy="submission-team">
             <% if submission.users.count == 1 %>
               <%= t('basics.you') %>
             <% else %>

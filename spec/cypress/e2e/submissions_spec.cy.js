@@ -22,9 +22,9 @@ describe("Submissions Joining", () => {
     });
   });
 
-  // afterEach(() => {
-  //   Timecop.reset();
-  // });
+  afterEach(() => {
+    Timecop.reset();
+  });
 
   function createEmptySubmission(lectureId, inviteName = "") {
     cy.visit(`/lectures/${lectureId}/submissions`);
@@ -106,8 +106,15 @@ describe("Submissions Joining", () => {
       cy.login(this.joiner).then(() => {
         cy.visit(`/lectures/${this.tutorial.lecture_id}/submissions`);
         cy.getBySelector("submission-join").click();
-        // cy.getBySelector("accept-invite").click();
-        // cy.getBySelector("submission-leave").should("be.visible");
+        cy.getBySelector("accept-invite-0").click();
+        cy.getBySelector("submission-team").should("contain", this.inviter.name_in_tutorials);
+        cy.getBySelector("submission-leave").click();
+
+        cy.getBySelector("submission-join").click();
+        // now there is only one invite left (that from "Inviter2")
+        cy.getBySelector("accept-invite-1").should("not.exist");
+        cy.getBySelector("accept-invite-0").click();
+        cy.getBySelector("submission-team").should("contain", this.inviter2.name_in_tutorials);
       });
     });
   });
