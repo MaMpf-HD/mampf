@@ -112,7 +112,7 @@ describe("Media", () => {
         cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
         cy.get("#publishMediumModal").contains("Speichern").click();
         cy.wait(100);
-        cy.visit(`lectures/${lectures[0].id}/food?project=kaviar`);
+        cy.visit(`lectures/${lectures[0].id}/lesson_material`);
         cy.contains("Media 1").should("exist");
       });
     });
@@ -217,7 +217,7 @@ describe("Media", () => {
         cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
         cy.get("#publishMediumModal").contains("Speichern").click();
         cy.wait(100);
-        cy.visit(`lectures/${lectures[0].id}/food?project=kaviar`);
+        cy.visit(`lectures/${lectures[0].id}/lesson_material`);
         cy.contains("Media 1").should("exist");
       });
     });
@@ -362,7 +362,7 @@ describe("Media", () => {
         cy.contains("Ich bestätige hiermit, dass durch die Veröffentlichung des Mediums auf der MaMpf-Plattform keine Rechte Dritter verletzt werden.").click();
         cy.get("#publishMediumModal").contains("Speichern").click();
         cy.wait(100);
-        cy.visit(`lectures/${lectures[0].id}/food?project=kaviar`);
+        cy.visit(`lectures/${lectures[0].id}/lesson_material`);
         cy.contains("Media 1").should("exist");
       });
     });

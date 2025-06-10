@@ -39,10 +39,10 @@
             </a>
 
             <!-- Information -->
-            <% project_name = 'reste' %>
+            <% project_name = 'miscellaneous' %>
             <% active_class = get_class_for_project(project_name) %>
-            <% is_disabled = !lecture || !lecture.reste?(current_user) %>
-            <a href="<%= lecture_food_path(lecture, params: { project: project_name }) %>" 
+            <% is_disabled = !lecture || !lecture.miscellaneous?(current_user) %>
+            <a href="<%= lecture_material_path(lecture, params: { project: project_name }) %>" 
                aria-current="<%= active_class.present? ? 'page' : '' %>"
                class="nav-link <%= active_class.present? ? 'active' : '' %>
                       <%= is_disabled ? 'disabled' : '' %>"

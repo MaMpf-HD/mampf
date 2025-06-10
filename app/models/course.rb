@@ -37,12 +37,8 @@ class Course < ApplicationRecord
   has_many :division_course_joins, dependent: :destroy
   has_many :divisions, through: :division_course_joins
 
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :title, presence: true, uniqueness: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :short_title, presence: true, uniqueness: true
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   # some information about media and lectures are cached
   # to find out whether the cache is out of date, always touch'em after saving
@@ -341,7 +337,7 @@ class Course < ApplicationRecord
 
     def create_quiz_by_questions!(question_ids)
       quiz_graph = QuizGraph.build_from_questions(question_ids)
-      Quiz.create(description: "#{I18n.t("categories.randomquiz.singular")} " \
+      Quiz.create(description: "#{I18n.t("categories.random_quiz.singular")} " \
                                "#{course.title} #{Time.current}",
                   level: 1,
                   quiz_graph: quiz_graph,

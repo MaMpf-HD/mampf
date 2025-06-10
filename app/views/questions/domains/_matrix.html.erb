@@ -6,12 +6,12 @@
   </span>
   <% (1..4).each do |i| %>
     <div class="form-check form-check-inline">
-      <%= f.radio_button 'solution_content[row_count]',
+      <%= solution_content_fields.radio_button :row_count,
                          i,
                          class: 'form-check-input rowCount',
                          checked: content.row_count == i,
                          data: { count: i } %>
-      <%= f.label 'solution_content[row_count]',
+      <%= solution_content_fields.label :row_count,
                   "#{i}",
                   value: i,
                   class: 'form-check-label' %>
@@ -26,18 +26,19 @@
   </span>
   <% (1..4).each do |i| %>
     <div class="form-check form-check-inline">
-      <%= f.radio_button 'solution_content[column_count]',
+      <%= solution_content_fields.radio_button :column_count,
                          i,
                          class: 'form-check-input columnCount',
                          checked: content.column_count == i,
                          data: { count: i } %>
-      <%= f.label 'solution_content[column_count]',
+      <%= solution_content_fields.label :column_count,
                   "#{i}",
                   value: i,
                   class: 'form-check-label' %>
     </div>
   <% end %>
 </div>
+
 <% (1..4).each do |i| %>
   <div class="row mb-2">
     <% (1..4).each do |j| %>
@@ -46,9 +47,9 @@
            data-row="<%= i %>"
            data-column="<%= j %>">
         <%= render partial: 'questions/domains/expression',
-                   locals: { f: f,
+                   locals: { solution_content_fields: solution_content_fields,
                              value: content.entry(i,j),
-                             counter: "[#{i},#{j}]",
+                             counter: "#{i},#{j}",
                              type: 'MampfExpression' } %>
       </div>
     <% end %>

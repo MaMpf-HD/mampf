@@ -11,9 +11,9 @@ check_for_preseeds() {
       latest=$DB_SQL_PRESEED_URL
     else
       echo "💾  Found DB preseed at URL: $DB_SQL_PRESEED_URL"
-      mkdir -pv db/backups/docker_development
-      wget --content-disposition --directory-prefix=db/backups/docker_development/ --timestamping $DB_SQL_PRESEED_URL
-      for file in db/backups/docker_development/*.sql; do
+      mkdir -pv db/backups/development
+      wget --content-disposition --directory-prefix=db/backups/development/ --timestamping $DB_SQL_PRESEED_URL
+      for file in db/backups/development/*.sql; do
         [[ $file -nt $latest ]] && latest=$file
       done
     fi
@@ -32,7 +32,12 @@ check_for_preseeds() {
 }
 
 if [ "$RAILS_ENV" = "production" ]; then
-    echo "❌  This script is not intended for usage with RAILS_ENV=production. Aborting."
+    echo "❌  This script is NOT intended for usage with RAILS_ENV=production. Only for local development. Aborting."
+    exit 1
+fi
+
+if [ "$RAILS_ENV" != "development" ] && [ "$RAILS_ENV" != "test" ]; then
+    echo "❌  This script is only intended for usage with RAILS_ENV=development or RAILS_ENV=test. Aborting."
     exit 1
 fi
 
@@ -52,7 +57,7 @@ if ! [ -f /completed_initial_run ]; then
 
   # Wait for database to come online
   echo "🕖  Waiting for database to come online"
-  if [ "$RAILS_ENV" = "docker_development" ]; then
+  if [ "$RAILS_ENV" = "development" ]; then
       wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
   fi
   if [ "$RAILS_ENV" = "test" ]; then
@@ -60,10 +65,17 @@ if ! [ -f /completed_initial_run ]; then
   fi
 
   echo "➕  Creating database (db:create)"
-  bundle exec rails db:create:interactions
-  bundle exec rails db:create
+  if [ "$RAILS_ENV" = "development" ]; then
+    # problem: https://github.com/rails/rails/issues/27299#issuecomment-295536459
+    # solution: https://github.com/rails/rails/issues/27299#issuecomment-1214684427
+    bundle exec rails db:create:interactions SKIP_TEST_DATABASE=true
+    bundle exec rails db:create SKIP_TEST_DATABASE=true
+  elif [ "$RAILS_ENV" = "test" ]; then
+      bundle exec rails db:create:interactions
+      bundle exec rails db:create
+  fi
 
-  if [ "$RAILS_ENV" = "docker_development" ]; then
+  if [ "$RAILS_ENV" = "development" ]; then
       check_for_preseeds
   fi
   if [ "$RAILS_ENV" = "test" ]; then

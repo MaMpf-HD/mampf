@@ -186,9 +186,45 @@ Rails.application.routes.draw do
 
   # lectures routes
 
-  get "lectures/:id/food",
+  get "lectures/:id/material",
       to: "media#index",
-      as: "lecture_food"
+      as: "lecture_material"
+
+  # New semantic routes replace the old food routes
+  get "lectures/:id/lesson_materials",
+      to: "media#index",
+      as: "lecture_lesson_materials",
+      defaults: { project: "lesson_material" }
+
+  get "lectures/:id/script",
+      to: "media#index",
+      as: "lecture_script",
+      defaults: { project: "script" }
+
+  get "lectures/:id/exercises",
+      to: "media#index",
+      as: "lecture_exercises",
+      defaults: { project: "exercise" }
+
+  get "lectures/:id/quizzes",
+      to: "media#index",
+      as: "lecture_quizzes",
+      defaults: { project: "quiz" }
+
+  get "lectures/:id/worked_examples",
+      to: "media#index",
+      as: "lecture_worked_examples",
+      defaults: { project: "worked_example" }
+
+  get "lectures/:id/repetitions",
+      to: "media#index",
+      as: "lecture_repetitions",
+      defaults: { project: "repetition" }
+
+  get "lectures/:id/miscellaneous",
+      to: "media#index",
+      as: "lecture_miscellaneous",
+      defaults: { project: "miscellaneous" }
 
   get "lectures/:lecture_id/questionnaires",
       to: "vignettes/questionnaires#index",
@@ -982,6 +1018,9 @@ Rails.application.routes.draw do
   # thredded routes
 
   mount Thredded::Engine => "/forum"
+
+  # Render dynamic PWA files from app/views/pwa/*
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
   # redirect bs requests to error page (except active storage routes)
   match "*path", to: "main#error", via: :all, constraints: lambda { |req|

@@ -14,6 +14,6 @@ class MampfSet
   end
 
   def self.from_hash(content)
-    MampfSet.new(content["0"], content["tex"], content["nerd"])
+    MampfSet.new(content[:dynamic]["0"][:content], content["tex"], content["nerd"])
   end
 end

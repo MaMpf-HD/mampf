@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - main
-      - dev
+      - next
       - experimental
   pull_request:
     types: [opened, reopened, synchronize, ready_for_review]
+    branches:
+      - main
+      - next
 
 jobs:
   # For the setup idea using Docker Buildx, see StackOverflow answer [1].

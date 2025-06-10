@@ -4,7 +4,5 @@ class WatchlistEntry < ApplicationRecord
   belongs_to :medium
   acts_as_list scope: :watchlist, top_of_list: 0, column: :medium_position
 
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :medium_id, uniqueness: { scope: :watchlist_id }
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 end

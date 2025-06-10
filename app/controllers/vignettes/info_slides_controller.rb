@@ -14,6 +14,10 @@ module Vignettes
              locals: { slide: @info_slide }
     end
 
+    def edit
+      render partial: "vignettes/info_slides/form" if request.xhr?
+    end
+
     def create
       @info_slide = @questionnaire.info_slides.new(info_slide_params)
       if @info_slide.save
@@ -22,10 +26,6 @@ module Vignettes
       else
         render :new
       end
-    end
-
-    def edit
-      render partial: "vignettes/info_slides/form" if request.xhr?
     end
 
     def update

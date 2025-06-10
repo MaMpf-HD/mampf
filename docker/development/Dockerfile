@@ -11,13 +11,13 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.1.4-bullseye
+FROM ruby:3.3.8-bookworm
 
 EXPOSE 3000
 EXPOSE 9394
 
 # use "--login" option, so that .bashrc is sourced in new shells
-SHELL ["/bin/bash", "--login", "-c"] 
+SHELL ["/bin/bash", "--login", "-c"]
 
 # Install Node.js
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
@@ -50,12 +50,10 @@ RUN which yarn; yarn --version
 RUN yarn set version "${YARN_VERSION}"
 
 # Install other dependencies
-# Note that postgresql-client-13 is available through debian bullseye
-# that the ruby image is based on
 RUN apt update && \
     apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools postgresql-client-13 wget wait-for-it graphviz libvips42
+        libarchive-tools postgresql-client-15 wget wait-for-it graphviz libvips42
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
@@ -74,7 +72,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
         yarn install --production --frozen-lockfile; \
     fi
-    
+
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
 COPY . /usr/src/app/

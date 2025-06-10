@@ -151,7 +151,8 @@ module MediaHelper
   end
 
   def video_link_timed(medium, timestamp)
-    play_medium_path(medium, params: { time: timestamp.total_seconds })
+    Rails.application.routes.url_helpers
+         .play_medium_path(medium, params: { time: timestamp.total_seconds })
   end
 
   def feedback_video_link_timed(medium, timestamp)

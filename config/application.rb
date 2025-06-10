@@ -9,8 +9,7 @@ Bundler.require(*Rails.groups)
 module Mampf
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults(7.1)
-    config.autoloader = :zeitwerk
+    config.load_defaults(7.2)
 
     # Autoload subfolders of modules (recursively)
     # https://stackoverflow.com/a/4794775/
