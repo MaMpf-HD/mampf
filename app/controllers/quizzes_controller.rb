@@ -1,4 +1,3 @@
-# Quizzes controller
 class QuizzesController < ApplicationController
   skip_before_action :authenticate_user!, only: [:take, :proceed]
   before_action :set_quiz, except: [:new, :update_branching]
