@@ -93,7 +93,7 @@ group :test do
 end
 
 group :development, :test do
-  gem "byebug", "~> 11.1"
+  gem "debug", "~> 1.8"
   gem "factory_bot_rails", "~> 6.4"
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"

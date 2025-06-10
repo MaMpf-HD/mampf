@@ -27,7 +27,6 @@ app/assets/javascripts/mampf_routes.js
 /solr/default/data
 /solr/pids
 
-.byebug_history
 coverage
 
 # Ignore master key for decrypting credentials and more.

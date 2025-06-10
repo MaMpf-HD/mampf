@@ -129,7 +129,8 @@ services:
       DB_SQL_PRESEED_URL:
       UPLOADS_PRESEED_URL:
     ports:
-      - '127.0.0.1:3035:3035'  # webpacker dev server
+      - "127.0.0.1:3035:3035"  # webpacker dev server
+      - "127.0.0.1:13254:13254" # for debug gem communication with host
     volumes:
       - ../../:/usr/src/app/
       - sprockets-cache:/cache
