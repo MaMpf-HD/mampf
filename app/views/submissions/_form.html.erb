@@ -24,7 +24,7 @@
     </div>
     <% unless submission.persisted? %>
       <div class="row">
-        <div class="col-12">
+        <div class="col-12" data-cy="submission-invites">
           <%= f.label :invitee_ids,
                      t('submission.invitations_to') %>
           <%= f.select :invitee_ids,
