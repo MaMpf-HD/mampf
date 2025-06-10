@@ -17,7 +17,8 @@ class QuestionsController < ApplicationController
   def update
     return if @errors
 
-    @success = true if @question.update(question_params)
+    update_params = question_params.except(:solution_error)
+    @success = true if @question.update!(update_params)
     if question_params[:question_sort] == "free"
       answer = @question.answers.first
       @question.answers.where.not(id: answer.id).destroy_all
@@ -104,6 +105,7 @@ class QuestionsController < ApplicationController
                      .permit(:label, :text, :type, :hint, :level,
                              :question_sort, :independent, :vertex_id,
                              :solution_type,
+                             :solution_error,
                              solution_content:
                              [
                                :row_count, :column_count, :tex, :nerd, :explanation,
