@@ -109,7 +109,7 @@ class QuestionsController < ApplicationController
                              solution_content:
                              [
                                :row_count, :column_count, :tex, :nerd, :explanation,
-                               { dynamic: [[:content]] }
+                               { dynamic: {} }
                              ])
       if result[:solution_type] && result[:solution_content]
         result[:solution] = Solution.from_hash(result[:solution_type],

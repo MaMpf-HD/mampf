@@ -14,6 +14,6 @@ class MampfTuple
   end
 
   def self.from_hash(content)
-    MampfTuple.new(content["0"], content["tex"], content["nerd"])
+    MampfTuple.new(content[:dynamic]["0"][:content], content["tex"], content["nerd"])
   end
 end
