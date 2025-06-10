@@ -12,13 +12,6 @@ development:
     hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
     port: <%= ENV.fetch('SOLR_PORT', '8983') %>
     log_level: INFO
-    path: <%= ENV.fetch('SOLR_PATH', '/solr/development') %>
-
-docker_development:
-  solr:
-    hostname: <%= ENV.fetch('SOLR_HOST', 'solr') %>
-    port: <%= ENV.fetch('SOLR_PORT', '8983') %>
-    log_level: INFO
     path:  <%= ENV.fetch('SOLR_PATH', '/solr/development') %>
 
 test:

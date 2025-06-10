@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 
-# Sets this to development, even when we are in docker_development.
-# This is not a problem in production, since we are not using webpack-dev-server
-# there.
 ENV["RAILS_ENV"] ||= ENV["RACK_ENV"] || "development"
 ENV["NODE_ENV"]  ||= "development"
 

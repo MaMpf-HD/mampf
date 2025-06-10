@@ -6,25 +6,6 @@ default: &default
 development:
   primary:
     <<: *default
-    database: mampf
-    encoding: unicode
-    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
-    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
-    template: template0
-  interactions:
-    <<: *default
-    database: interactions
-    encoding: unicode
-    database: interactions
-    username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
-    password: <%= ENV['DEVELOPMENT_DATABASE_PASSWORD'] %>
-    template: template0
-    migrations_paths: db/interactions_migrate
-
-
-docker_development:
-  primary:
-    <<: *default
     adapter: <%= ENV['DEVELOPMENT_DATABASE_ADAPTER'] %>
     encoding: <%= ENV['DEVELOPMENT_DATABASE_ENCODING'] %>
     database: <%= ENV['DEVELOPMENT_DATABASE_DATABASE'] %>
