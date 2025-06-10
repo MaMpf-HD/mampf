@@ -6,10 +6,15 @@
       </div>
     </div>
   <% end %>
-  <%= f.text_field "solution_content#{counter}",
+  <%= solution_content_fields.fields_for :dynamic, index: counter do |dynamic_fields| %>
+
+  <%= dynamic_fields.text_field :content,
                    value: value,
                    class: 'form-control',
                    data: { counter: 0 } %>
+
+  <% end %>
+
   <% if type.in?(['MampfTuple', 'MampfSet']) %>
     <div class="input-group-append">
       <div class="input-group-text">
