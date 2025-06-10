@@ -4,19 +4,7 @@
 
   <div class="card-body submissionBody" data-id="<%= assignment.id %>">
 
-    <% invites = SubmissionInvite.new(current_user).invites_for(assignment) %>
-    <% invites.each_with_index do |invite, idx| %>
-      <div class="alert alert-info d-flex align-items-center flex-wrap" role="alert">
-        <span class="me-2">
-          <i class="bi bi-people-fill"></i>
-          <%= I18n.t("submission.invited", inviter: invite[:inviter]) %>
-        </span>
-
-        <%= button_tag t("submission.accept_invitation"), type: "submit",
-            name: "join[code]", value: invite[:token],
-            class: "btn btn-primary", "data-cy": "accept-invite-#{idx}" %>
-      </div>
-    <% end %>
+    <%= render partial: 'submissions/invites', locals: { assignment: assignment } %>
     
     <div class="form-floating mb-3">
       <%= f.text_field :code,
