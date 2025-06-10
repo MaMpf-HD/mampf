@@ -5,7 +5,7 @@ cd /usr/src/app/
 ./docker/init-dev-test.sh &> >(tee -a /usr/src/app/log/initialization.log)
 
 echo "💫  Starting webpack server (in background)"
-./bin/webpack-dev-server &
+NODE_ENV=development ./bin/webpack-dev-server &
 
 rm -f tmp/pids/server.pid
 cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
