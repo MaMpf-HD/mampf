@@ -34,7 +34,7 @@ gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "jquery-rails", "~> 4.6"
 gem "jquery-ui-rails", "~> 7.0"
-gem "js-routes", "1.4.9"
+gem "js-routes", "~> 2.3"
 gem "kaminari", "~> 1.2"
 gem "kaminari-i18n", "~> 0.5"
 gem "kramdown-parser-gfm", "~> 1.1"
@@ -72,7 +72,7 @@ gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbolinks", "~> 5.2" # make navigating the app faster
 gem "webpacker", "~> 5.4"
 
-group :development, :docker_development do
+group :development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
@@ -92,8 +92,8 @@ group :test do
   gem "timecop", "~> 0.9.10"
 end
 
-group :test, :development, :docker_development do
-  gem "byebug", "~> 11.1"
+group :development, :test do
+  gem "debug", "~> 1.8"
   gem "factory_bot_rails", "~> 6.4"
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"

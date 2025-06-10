@@ -1,3 +1,5 @@
+# See also the current mime.types file on the nginx repo:
+# https://github.com/nginx/nginx/blob/master/conf/mime.types
 types {
 
   # Data interchange
@@ -49,6 +51,7 @@ types {
     image/vnd.wap.wbmp                    wbmp;
     image/webp                            webp;
     image/x-jng                           jng;
+    image/x-icon                          cur ico;
     video/3gpp                            3gp 3gpp;
     video/mp4                             f4p f4v m4v mp4;
     video/mpeg                            mpeg mpg;
@@ -61,12 +64,6 @@ types {
     video/x-ms-wmv                        wmv;
     video/x-msvideo                       avi;
     video/x-matroska                      mkv mk3d;
-
-    # Serving `.ico` image files with a different media type
-    # prevents Internet Explorer from displaying then as images:
-    # https://github.com/h5bp/html5-boilerplate/commit/37b5fec090d00f38de64b591bcddcb205aadf8ee
-
-    image/x-icon                          cur ico;
 
 
   # Microsoft Office
