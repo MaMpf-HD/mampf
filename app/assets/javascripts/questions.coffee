@@ -283,7 +283,6 @@ $(document).on 'turbolinks:load', ->
     try
       inputSolution = extractSolution()
     catch err
-      console.log("Error while extracting solution: #{err}")
       inputSolution = 'Syntax Error'
     if inputSolution == 'Syntax Error'
       $('#solution-tex').empty().append(inputSolution)
