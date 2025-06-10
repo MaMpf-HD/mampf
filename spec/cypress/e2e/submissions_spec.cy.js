@@ -50,14 +50,14 @@ describe("Submissions Joining", () => {
   }
 
   it("can join a submission via code & direct invite", function () {
-    // "Inviter" creates a submission & stores code
+    // 🎈 "Inviter" creates a submission & stores code
     cy.login(this.inviter).then(() => {
       subscribeToLecture(this.lecture.id);
       createEmptySubmission(this.lecture.id);
       cy.logout();
     });
 
-    // "Joiner" joins the submission using the code
+    // 🐰 "Joiner" joins the submission using the code
     cy.login(this.joiner).then(() => {
       subscribeToLecture(this.lecture.id);
       joinSubmissionViaToken(this.lecture.id, this.token);
@@ -68,14 +68,14 @@ describe("Submissions Joining", () => {
     Timecop.moveAheadDays(1000).then(() => {
       FactoryBot.create("assignment", { lecture_id: this.lecture.id }).as("assignment");
 
-      // "Inviter2" creates a submission & stores code
+      // 🎈🎈 "Inviter2" creates a submission & stores code
       cy.login(this.inviter2).then(() => {
         subscribeToLecture(this.lecture.id);
         createEmptySubmission(this.lecture.id);
         cy.logout();
       });
 
-      // "Joiner" joins the submission using the code
+      // 🐰 "Joiner" joins the submission using the code
       cy.login(this.joiner).then(() => {
         joinSubmissionViaToken(this.lecture.id, this.token);
         cy.logout();
@@ -86,7 +86,7 @@ describe("Submissions Joining", () => {
     Timecop.moveAheadDays(2000).then(() => {
       FactoryBot.create("assignment", { lecture_id: this.lecture.id }).as("assignment");
 
-      // "Inviter" invites "Joiner" to a new submission
+      // 🎈 "Inviter" invites "Joiner" to a new submission
       cy.login(this.inviter).then(() => {
         // The "Joiner" name is not prefilled here since for the last assignment
         // "Inviter" did not submit anything (only "Inviter2" did)
@@ -94,13 +94,13 @@ describe("Submissions Joining", () => {
         cy.logout();
       });
 
-      // "Inviter2" invites "Joiner" to a new submission
+      // 🎈🎈 "Inviter2" invites "Joiner" to a new submission
       cy.login(this.inviter2).then(() => {
         createEmptySubmission(this.lecture.id);
         cy.logout();
       });
 
-      // "Joiner" can now join without a code
+      // 🐰 "Joiner" can now join without a code
       // (since this user has previously handed in a submission together
       // with the inviter, see above)
       cy.login(this.joiner).then(() => {
