@@ -10,6 +10,6 @@ module VerticesHelper
   end
 
   def crosses_id(crosses)
-    crosses.keys.collect { |k| [k, crosses[k].to_s.first] }.flatten.join
+    crosses.keys.collect { |k| [k, crosses[k].to_s.first] }.join
   end
 end

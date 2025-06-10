@@ -161,6 +161,12 @@ module Vignettes
       @questionnaire = Questionnaire.new
     end
 
+    def edit
+      @slides = @questionnaire.slides.order(:position)
+
+      render layout: "administration"
+    end
+
     def create
       @questionnaire = Questionnaire.new(questionnaire_params)
       if @questionnaire.save
@@ -169,12 +175,6 @@ module Vignettes
       else
         render :new, status: :unprocessable_entity
       end
-    end
-
-    def edit
-      @slides = @questionnaire.slides.order(:position)
-
-      render layout: "administration"
     end
 
     def destroy

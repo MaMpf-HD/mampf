@@ -15,8 +15,7 @@ elsif Rails.env.production?
   submission_path = ENV["SUBMISSION_PATH"] || "/private/submissions"
   Shrine.storages = {
     cache: Shrine::Storage::FileSystem.new("/caches", prefix: "medien_uploads", clean: false),
-    store: Shrine::Storage::FileSystem.new((ENV["MEDIA_PATH"] || "/private/media"),
-                                           prefix: "/"),
+    store: Shrine::Storage::FileSystem.new(ENV["MEDIA_PATH"] || "/private/media", prefix: "/"),
     submission_cache: Shrine::Storage::FileSystem.new(submission_path, prefix: "cache"),
     submission_store: Shrine::Storage::FileSystem.new(submission_path, prefix: "store")
   }

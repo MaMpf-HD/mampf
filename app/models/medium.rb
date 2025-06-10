@@ -1243,7 +1243,7 @@ class Medium < ApplicationRecord
       return false unless type == "Question"
 
       question = becomes(Question)
-      return false unless question.answers.count.in?((2..6))
+      return false unless question.answers.count.in?(2..6)
 
       question.answers.pluck(:value).count(true) == 1
     end

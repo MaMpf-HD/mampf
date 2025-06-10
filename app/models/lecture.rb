@@ -90,9 +90,7 @@ class Lecture < ApplicationRecord
 
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
