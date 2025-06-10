@@ -164,8 +164,8 @@ cleanSolutionBox = ->
   try
     solutionInput = extractSolution()
   catch err
-    solutionInput = 'Syntax Error1'
-  if solutionInput == 'Syntax Error1'
+    solutionInput = 'Syntax Error'
+  if solutionInput == 'Syntax Error'
     $('#solution_input_tex').val('')
     $('#solution_input_error').val(solutionInput)
     $('#solution_content_nerd').val('')
@@ -284,8 +284,8 @@ $(document).on 'turbolinks:load', ->
       inputSolution = extractSolution()
     catch err
       console.log("Error while extracting solution: #{err}")
-      inputSolution = 'Syntax Error2'
-    if inputSolution == 'Syntax Error2'
+      inputSolution = 'Syntax Error'
+    if inputSolution == 'Syntax Error'
       $('#solution-tex').empty().append(inputSolution)
       $('#solution_input_tex').val('')
       $('#solution_input_error').val(inputSolution)
