@@ -75,7 +75,7 @@ class TermsController < ApplicationController
     end
 
     def term_params
-      params.require(:term).permit(:year, :season)
+      params.expect(term: [:year, :season])
     end
 
     def active_term_params

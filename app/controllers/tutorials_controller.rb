@@ -165,7 +165,7 @@ class TutorialsController < ApplicationController
     end
 
     def tutorial_params
-      params.require(:tutorial).permit(:title, :lecture_id, tutor_ids: [])
+      params.expect(tutorial: [:title, :lecture_id, { tutor_ids: [] }])
     end
 
     def bulk_params

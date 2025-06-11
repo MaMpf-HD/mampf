@@ -56,7 +56,7 @@ class AnnouncementsController < ApplicationController
   private
 
     def announcement_params
-      params.require(:announcement).permit(:details, :lecture_id, :on_main_page)
+      params.expect(announcement: [:details, :lecture_id, :on_main_page])
     end
 
     def create_notifications

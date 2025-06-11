@@ -356,15 +356,15 @@ class LecturesController < ApplicationController
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
-      params.require(:lecture).permit(allowed_params)
+      params.expect(lecture: [allowed_params])
     end
 
     def structure_params
-      params.require(:lecture).permit(structures: {})[:structures]
+      params.expect(lecture: [structures: {}])[:structures]
     end
 
     def comment_params
-      params.require(:lecture).permit(:close_comments)
+      params.expect(lecture: [:close_comments])
     end
 
     def import_toc_params
@@ -460,13 +460,13 @@ class LecturesController < ApplicationController
       types = nil if types == []
       params[:search][:types] = types
       params[:search][:user_id] = current_user.id
-      params.require(:search).permit(:all_types, :all_terms, :all_programs,
-                                     :all_teachers, :fulltext, :per, :user_id,
-                                     :results_as_list,
-                                     types: [],
-                                     term_ids: [],
-                                     program_ids: [],
-                                     teacher_ids: [])
+      params.expect(search: [:all_types, :all_terms, :all_programs,
+                             :all_teachers, :fulltext, :per, :user_id,
+                             :results_as_list,
+                             { types: [],
+                               term_ids: [],
+                               program_ids: [],
+                               teacher_ids: [] }])
     end
 
     def check_if_enough_questions
