@@ -8,7 +8,7 @@ Bundler.require(*Rails.groups)
 
 module Mampf
   class Application < Rails::Application
-    config.load_defaults(8.1)
+    config.load_defaults(8.0)
 
     # Autoload subfolders of modules (recursively)
     # https://stackoverflow.com/a/4794775/
