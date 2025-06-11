@@ -112,12 +112,12 @@ class ErdbeereController < ApplicationController
   private
 
     def erdbeere_params
-      params.require(:erdbeere).permit(:sort, :id, tag_ids: [])
+      params.expect(erdbeere: [:sort, :id, { tag_ids: [] }])
     end
 
     def find_params
-      params.require(:find).permit(:structure_id,
-                                   satisfies: [],
-                                   violates: [])
+      params.expect(find: [:structure_id,
+                           { satisfies: [],
+                             violates: [] }])
     end
 end

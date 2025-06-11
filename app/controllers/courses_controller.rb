@@ -99,7 +99,7 @@ class CoursesController < ApplicationController
                         :term_independent, :image,
                         { tag_ids: [], preceding_course_ids: [], division_ids: [] }]
       allowed_params.push(editor_ids: []) if current_user.admin?
-      params.require(:course).permit(allowed_params)
+      params.expect(course: [allowed_params])
     end
 
     def tag_params
@@ -107,15 +107,15 @@ class CoursesController < ApplicationController
     end
 
     def search_params
-      params.require(:search).permit(:all_editors, :all_programs, :fulltext,
-                                     :term_independent, :per,
-                                     editor_ids: [],
-                                     program_ids: [])
+      params.expect(search: [:all_editors, :all_programs, :fulltext,
+                             :term_independent, :per,
+                             { editor_ids: [],
+                               program_ids: [] }])
     end
 
     def random_quiz_params
-      params.require(:quiz).permit(:random_quiz_count,
-                                   search_course_tag_ids: [])
+      params.expect(quiz: [:random_quiz_count,
+                           { search_course_tag_ids: [] }])
     end
 
     # destroy all notifications related to this course

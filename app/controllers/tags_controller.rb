@@ -284,20 +284,20 @@ class TagsController < ApplicationController
     end
 
     def tag_params
-      params.require(:tag).permit(related_tag_ids: [],
-                                  notions_attributes: [:title, :locale, :id,
-                                                       :_destroy],
-                                  aliases_attributes: [:title, :locale, :id,
-                                                       :_destroy],
-                                  course_ids: [],
-                                  section_ids: [],
-                                  lesson_ids: [],
-                                  talk_ids: [],
-                                  media_ids: [])
+      params.expect(tag: [related_tag_ids: [],
+                          notions_attributes: [:title, :locale, :id,
+                                               :_destroy],
+                          aliases_attributes: [:title, :locale, :id,
+                                               :_destroy],
+                          course_ids: [],
+                          section_ids: [],
+                          lesson_ids: [],
+                          talk_ids: [],
+                          media_ids: []])
     end
 
     def realization_params
-      (params.require(:tag).permit(realizations: [])[:realizations] - [""])
+      (params.expect(tag: [realizations: []])[:realizations] - [""])
         .map { |r| r.split("-") }
         .map { |x| [x.first, x.second.to_i] }
     end
@@ -361,6 +361,6 @@ class TagsController < ApplicationController
     end
 
     def search_params
-      params.require(:search).permit(:title, :all_courses, :per, course_ids: [])
+      params.expect(search: [:title, :all_courses, :per, { course_ids: [] }])
     end
 end
