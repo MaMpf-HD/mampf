@@ -151,7 +151,7 @@ module Vignettes
                             :content,
                             :position,
                             { info_slide_ids: [],
-                              question_attributes: [[
+                              question_attributes: [
                                 :id,
                                 :type,
                                 :question_text,
@@ -161,7 +161,7 @@ module Vignettes
                                 :max_number,
                                 :_destroy,
                                 { options_attributes: [[:id, :text, :_destroy]] }
-                              ]] }]
+                              ] }]
         )
       end
   end
