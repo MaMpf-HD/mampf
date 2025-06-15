@@ -82,9 +82,9 @@ class ReferralsController < ApplicationController
     def referral_params
       # clone referral params in order to convert start and end time to proper
       # TimeStamp instances
-      filter = params.require(:referral).permit(:medium_id, :item_id, :start_time,
-                                                :end_time, :description, :link,
-                                                :explanation, :ref_id).clone
+      filter = params.expect(referral: [:medium_id, :item_id, :start_time,
+                                        :end_time, :description, :link,
+                                        :explanation, :ref_id]).clone
       filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
       filter[:end_time] = TimeStamp.new(time_string: filter[:end_time])
       filter

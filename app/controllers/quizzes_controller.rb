@@ -127,7 +127,7 @@ class QuizzesController < ApplicationController
     end
 
     def quiz_params
-      params.require(:quiz).permit(:label, :root, :level, :id_js)
+      params.expect(quiz: [:label, :root, :level, :id_js])
     end
 
     def check_accessibility

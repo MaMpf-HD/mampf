@@ -112,8 +112,8 @@ class ClickersController < ApplicationController
   private
 
     def clicker_params
-      params.require(:clicker).permit(:editor_id, :teachable_type,
-                                      :teachable_id, :question_id, :title)
+      params.expect(clicker: [:editor_id, :teachable_type,
+                              :teachable_id, :question_id, :title])
     end
 
     def code_params

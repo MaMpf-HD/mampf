@@ -43,6 +43,6 @@ class DivisionsController < ApplicationController
     end
 
     def division_params
-      params.require(:division).permit(*Division.locale_accessor_names)
+      params.expect(division: [*Division.locale_accessor_names])
     end
 end

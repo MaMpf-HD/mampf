@@ -15,6 +15,6 @@ class ClickerVotesController < ApplicationController
   private
 
     def vote_params
-      params.require(:clicker_vote).permit(:clicker_id, :value)
+      params.expect(clicker_vote: [:clicker_id, :value])
     end
 end

@@ -48,6 +48,6 @@ class AnswersController < ApplicationController
     end
 
     def answer_params
-      params.require(:answer).permit(:text, :value, :explanation, :question_id)
+      params.expect(answer: [:text, :value, :explanation, :question_id])
     end
 end
