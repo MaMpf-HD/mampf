@@ -360,11 +360,7 @@ class LecturesController < ApplicationController
     end
 
     def structure_params
-      params.expect(lecture: [structures: {}])[:structures]
-    end
-
-    def comment_params
-      params.expect(lecture: [:close_comments])
+      params.permit(structures: {})[:structures]
     end
 
     def import_toc_params
