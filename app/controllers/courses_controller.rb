@@ -99,7 +99,7 @@ class CoursesController < ApplicationController
                         :term_independent, :image,
                         { tag_ids: [], preceding_course_ids: [], division_ids: [] }]
       allowed_params.push(editor_ids: []) if current_user.admin?
-      params.expect(course: [allowed_params])
+      params.expect(course: allowed_params)
     end
 
     def tag_params
