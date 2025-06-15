@@ -285,10 +285,8 @@ class TagsController < ApplicationController
 
     def tag_params
       params.expect(tag: [related_tag_ids: [],
-                          notions_attributes: [:title, :locale, :id,
-                                               :_destroy],
-                          aliases_attributes: [:title, :locale, :id,
-                                               :_destroy],
+                          notions_attributes: [[:title, :locale, :id, :_destroy]],
+                          aliases_attributes: [[:title, :locale, :id, :_destroy]],
                           course_ids: [],
                           section_ids: [],
                           lesson_ids: [],

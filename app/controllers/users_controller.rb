@@ -93,13 +93,11 @@ class UsersController < ApplicationController
   private
 
     def elevate_params
-      params.expect(generic_user: [:id, :admin, :editor, :teacher,
-                                   :name])
+      params.expect(generic_user: [:id, :admin, :editor, :teacher, :name])
     end
 
     def user_params
-      params.expect(user: [:name, :email, :homepage,
-                           :current_lecture_id, :image])
+      params.expect(user: [:name, :email, :homepage, :current_lecture_id, :image])
     end
 
     def set_user

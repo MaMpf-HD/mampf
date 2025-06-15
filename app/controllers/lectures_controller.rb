@@ -356,7 +356,7 @@ class LecturesController < ApplicationController
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
-      params.expect(lecture: [allowed_params])
+      params.expect(lecture: allowed_params)
     end
 
     def structure_params

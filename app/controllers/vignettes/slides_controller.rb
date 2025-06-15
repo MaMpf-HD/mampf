@@ -150,18 +150,18 @@ module Vignettes
           vignettes_slide: [:title,
                             :content,
                             :position,
-                            { info_slide_ids: [] },
-                            { question_attributes: [
-                              :id,
-                              :type,
-                              :question_text,
-                              :language,
-                              :only_integer,
-                              :min_number,
-                              :max_number,
-                              :_destroy,
-                              { options_attributes: [:id, :text, :_destroy] }
-                            ] }]
+                            { info_slide_ids: [],
+                              question_attributes: [[
+                                :id,
+                                :type,
+                                :question_text,
+                                :language,
+                                :only_integer,
+                                :min_number,
+                                :max_number,
+                                :_destroy,
+                                { options_attributes: [[:id, :text, :_destroy]] }
+                              ]] }]
         )
       end
   end
