@@ -40,10 +40,10 @@ def switch_formatter_path():
         sys.exit(1)
 
     # Switch the path of the custom formatter to the memory-mapped path
-    path_on_host = sys.argv[formatter_argument_index + 1]
+    formatter_path_on_host = sys.argv[formatter_argument_index + 1]
     sys.argv[formatter_argument_index + 1] = FORMATTER_PATH_IN_DOCKER
 
-    return path_on_host
+    return formatter_path_on_host
 
 
 def replace_absolute_paths_by_relative_paths(path):
