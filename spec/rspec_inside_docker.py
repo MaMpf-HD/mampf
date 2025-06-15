@@ -1,11 +1,11 @@
 """
 Script to run RSpec tests inside a Docker container. Works with the Ruby LSP
-VSCode extension [1] and the Ruby LSP RSpec addon [2].
+VSCode extension [1] and the Ruby Test Explorer [2].
 
 For ongoing development, see also [3] and [4].
 
 [1] https://marketplace.visualstudio.com/items?itemName=Shopify.ruby-lsp
-[2] https://github.com/st0012/ruby-lsp-rspec
+[2] https://marketplace.visualstudio.com/items?itemName=connorshea.vscode-ruby-test-adapter
 [3] https://github.com/Shopify/ruby-lsp/issues/3586
 [4] https://github.com/Shopify/ruby-lsp/pull/2919
 """
@@ -21,12 +21,12 @@ DOCKER_COMPOSE_FOLDER = "./docker/test"
 
 def switch_formatter_path():
     """
-    Memory-maps the custom formatter of the Ruby LSP RSpec addon.
+    Memory-maps the custom formatter of the Ruby Test Explorer extension.
 
-    The Ruby LSP RSpec addon uses a custom formatter to get a specific output
-    format for the test runs. The path to the formatter is automatically passed
-    as an argument to the rspec command. We need to replace this path by the
-    path to the memory-mapped formatter in the Docker container.
+    The Ruby Test Explorer extension uses a custom formatter to get a specific
+    output format for the test runs. The path to the formatter is automatically
+    passed as an argument to the rspec command. We need to replace this path by
+    the path to the memory-mapped formatter in the Docker container.
     """
     formatter_argument_index = None
     for i, arg in enumerate(sys.argv):
@@ -35,7 +35,7 @@ def switch_formatter_path():
             break
 
     if formatter_argument_index is None:
-        # the addon should pass this automatically for you
+        # the extension should pass this automatically for you
         print('Please specify "--require path/to/custom/formatter.rb"')
         sys.exit(1)
 
@@ -48,7 +48,7 @@ def switch_formatter_path():
 
 def replace_absolute_paths_by_relative_paths(path):
     """
-    Replaces absolute paths in the given path by relative paths.
+    Replaces absolute paths by relative paths for usage inside the Docker container.
     """
     res = path.split(PROJECT_ROOT_FOLDER_NAME + "/")[1]
     if not res:
@@ -75,16 +75,12 @@ def main():
         f'{DOCKER_SERVICE_NAME} sh -c "{test_command}"'
     )
 
-    print(f"🎈 Running command: {docker_cmd}")
     result = subprocess.run(
         docker_cmd, shell=True, capture_output=True, text=True, check=False
     )
-    print("🎈 Command output:")
     print(result.stdout, end="")
     if result.stderr:
         print(result.stderr, file=sys.stderr, end="")
-
-    print("🎈 Command finished with exit code:", result.returncode)
     sys.exit(result.returncode)
 
 
