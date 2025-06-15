@@ -52,10 +52,12 @@
         "codeLens": true,
         "definition": true
     },
-    "rubyLsp.enableExperimentalFeatures": true,
     //////////////////////////////////////
     // Ruby Test Explorer
     //////////////////////////////////////
+    "rubyLsp.featureFlags": {
+        "fullTestDiscovery": false,
+    },
     "rubyTestExplorer.testFramework": "rspec",
     "rubyTestExplorer.rspecCommand": "python3 ./spec/rspec_inside_docker.py",
     "rubyTestExplorer.rspecDirectory": "./spec/",
