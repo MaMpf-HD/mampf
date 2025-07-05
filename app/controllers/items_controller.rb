@@ -1,4 +1,3 @@
-# ItemsController
 class ItemsController < ApplicationController
   before_action :set_item, except: [:create]
   authorize_resource except: [:create]
