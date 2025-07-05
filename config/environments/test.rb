@@ -54,7 +54,6 @@ Rails.application.configure do
 
   # Make template changes take effect immediately.
   config.action_mailer.perform_caching = false
-  config.action_mailer.perform_caching = false
 
   # Annotate rendered view with file names.
   config.action_view.annotate_rendered_view_with_filenames = true
