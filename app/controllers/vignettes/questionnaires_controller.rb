@@ -68,6 +68,7 @@ module Vignettes
       end
 
       @slide = @questionnaire.slides.find_by(position: @position)
+      @answer = @slide.answers.build
 
       render :take, layout: "application_no_sidebar"
     end
