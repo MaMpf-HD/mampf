@@ -68,6 +68,7 @@ module Vignettes
       end
 
       @slide = @questionnaire.slides.find_by(position: @position)
+      @answer = @slide.answers.build
 
       render :take, layout: "application_no_sidebar"
     end
@@ -298,13 +299,13 @@ module Vignettes
       end
 
       def answer_params
-        params.require(:vignettes_answer)
-              .permit(:slide_id, :text, :likert_scale_value,
-                      option_ids: [],
-                      slide_statistic_attributes:
-                      [:user_id, :time_on_slide, :total_time_on_slide,
-                       :time_on_info_slides, :info_slides_access_count,
-                       :info_slides_first_access_time])
+        params
+          .expect(vignettes_answer: [:slide_id, :text, :likert_scale_value,
+                                     { option_ids: [],
+                                       slide_statistic_attributes:
+                                     [[:user_id, :time_on_slide, :total_time_on_slide,
+                                       :time_on_info_slides, :info_slides_access_count,
+                                       :info_slides_first_access_time]] }])
       end
 
       def user_has_codename?(user, lecture)

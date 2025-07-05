@@ -1,4 +1,3 @@
-# ItemsController
 class ItemsController < ApplicationController
   before_action :set_item, except: [:create]
   authorize_resource except: [:create]
@@ -62,10 +61,10 @@ class ItemsController < ApplicationController
 
     def item_params
       # params are cloned and then start time is converted to a TimeStamp object
-      filter = params.require(:item).permit(:sort, :start_time, :section_id,
-                                            :medium_id, :ref_number, :description,
-                                            :link, :page, :pdf_destination,
-                                            :explanation, :hidden).clone
+      filter = params.expect(item: [:sort, :start_time, :section_id,
+                                    :medium_id, :ref_number, :description,
+                                    :link, :page, :pdf_destination,
+                                    :explanation, :hidden]).clone
       if filter[:medium_id].present?
         filter[:start_time] = TimeStamp.new(time_string: filter[:start_time])
       end

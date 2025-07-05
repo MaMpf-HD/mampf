@@ -93,7 +93,7 @@ module Vignettes
       end
 
       def info_slide_params
-        params.require(:vignettes_info_slide).permit(:title, :content, :icon_type)
+        params.expect(vignettes_info_slide: [:title, :content, :icon_type])
       end
   end
 end

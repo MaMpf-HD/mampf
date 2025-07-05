@@ -3433,6 +3433,7 @@ en:
     error: >
       An error has occurred. Please try again later.
   basics:
+    division: 'Division'
     error: Error
     course: 'Course'
     courses: 'Courses'

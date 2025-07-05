@@ -95,12 +95,12 @@ class TalksController < ApplicationController
          !@talk.display_description
         attributes.delete(:display_description)
       end
-      params.require(:talk).permit(attributes)
+      params.expect(talk: [attributes])
     end
 
     def modify_params
-      params.require(:talk).permit(:description, :display_description,
-                                   tag_ids: [])
+      params.expect(talk: [:description, :display_description,
+                           { tag_ids: [] }])
     end
 
     def set_view_locale
