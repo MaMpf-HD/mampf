@@ -24,6 +24,8 @@
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-erb": "^2.0.0",
     "globals": "^15.1.0",
+    "vite": "^5.0.0",
+    "vite-plugin-ruby": "^5.1.0",
     "webpack-dev-server": "^4.15.1"
   },
   "scripts": {

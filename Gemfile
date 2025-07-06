@@ -54,7 +54,6 @@ gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
 gem "rqrcode", "~> 2.2"
 gem "rubyzip", "~> 2.3"
-gem "sass-rails", "~> 6.0" # SCSS for stylesheets
 gem "shrine", "~> 3.6"
 gem "sidekiq", "~> 7.3"
 gem "sidekiq-cron", "~> 1.12"
@@ -70,7 +69,7 @@ gem "thredded-markdown_katex",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
 gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbolinks", "~> 5.2" # make navigating the app faster
-gem "webpacker", "~> 5.4"
+gem "vite_rails", "~> 3.0", ">= 3.0.17"
 
 group :development do
   gem "listen", "~> 3.9"

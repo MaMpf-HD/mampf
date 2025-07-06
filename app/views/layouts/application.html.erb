@@ -3,6 +3,18 @@
   <head>
     <%= render partial: 'layouts/head' %>
     <%= stylesheet_link_tag 'sidebar' %>
+    <%= vite_client_tag %>
+    <%= vite_javascript_tag 'application' %>
+    <!--
+      If using a TypeScript entrypoint file:
+        vite_typescript_tag 'application'
+
+      If using a .jsx or .tsx entrypoint, add the extension:
+        vite_javascript_tag 'application.jsx'
+
+      Visit the guide for more information: https://vite-ruby.netlify.app/guide/rails
+    -->
+
   </head>
   <body data-locale="<%= I18n.locale %>"
       class="d-flex flex-column min-vh-100">
