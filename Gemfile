@@ -29,8 +29,6 @@ gem "filesize", "~> 0.2"
 gem "fuzzy-string-match", "~> 1.0"
 gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
-gem "jquery-rails", "~> 4.6"
-gem "jquery-ui-rails", "~> 7.0"
 gem "js-routes", "~> 2.3"
 gem "kaminari", "~> 1.2"
 gem "kaminari-i18n", "~> 0.5"

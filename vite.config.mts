@@ -1,8 +1,12 @@
+import inject from "@rollup/plugin-inject";
 import { defineConfig } from 'vite';
 import RubyPlugin from 'vite-plugin-ruby';
 
 export default defineConfig({
   plugins: [
+    inject({
+      $: "jquery",
+    }),
     RubyPlugin(),
   ],
   // Bootstrap: Silence Sass deprecation warnings.
