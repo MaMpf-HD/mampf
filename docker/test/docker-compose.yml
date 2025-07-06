@@ -53,7 +53,6 @@ services:
       SOLR_HOST: solr
       SOLR_PORT: 8983
       SOLR_PATH: /solr/test
-      SPROCKETS_CACHE: /cache
       WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
       BLOG: https://mampf.blog
     ports:
@@ -63,7 +62,6 @@ services:
       - ../../coverage:/usr/src/app/coverage/
       # Anonymous volume for the public folder where the assets are compiled to
       - "/usr/src/app/public/"
-      - sprockets-cache-test:/cache
       # https://stackoverflow.com/a/62611202/
       - bundle_cache:/usr/local/bundle/
     depends_on:
@@ -74,4 +72,3 @@ services:
 
 volumes:
   bundle_cache:
-  sprockets-cache-test:
