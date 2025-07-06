@@ -13,8 +13,6 @@ gem "acts_as_tree", "~> 2.9"
 gem "acts_as_votable", "~> 0.14"
 gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
-gem "bootstrap", "~>5.3"
-gem "bootstrap_form", "~> 5.4"
 gem "cancancan", "~> 3.6"
 gem "clipboard-rails", "~> 1.7"
 gem "coffee-rails", "~> 5.0" # CoffeeScript for .coffee assets and views
@@ -23,7 +21,6 @@ gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 3.2" # caching to memcached in production
 gem "devise", "~> 4.9"
-gem "devise-bootstrap-views", "~> 1.1"
 gem "erubis", "~> 2.7"
 gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"
 gem "faraday", "~> 1.8", "~> 1.10"
