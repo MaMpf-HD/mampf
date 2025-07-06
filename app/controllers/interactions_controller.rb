@@ -39,6 +39,6 @@ class InteractionsController < ApplicationController
   private
 
     def interaction_params
-      params.require(:interactions).permit(:start_date, :end_date)
+      params.expect(interactions: [:start_date, :end_date])
     end
 end

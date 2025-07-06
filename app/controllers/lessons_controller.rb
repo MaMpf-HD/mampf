@@ -79,10 +79,10 @@ class LessonsController < ApplicationController
     end
 
     def lesson_params
-      params.require(:lesson).permit(:date, :lecture_id, :start_destination,
-                                     :end_destination, :details,
-                                     section_ids: [],
-                                     tag_ids: [])
+      params.expect(lesson: [:date, :lecture_id, :start_destination,
+                             :end_destination, :details,
+                             { section_ids: [],
+                               tag_ids: [] }])
     end
 
     def update_media_order

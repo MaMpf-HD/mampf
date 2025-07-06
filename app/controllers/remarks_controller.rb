@@ -54,6 +54,6 @@ class RemarksController < MediaController
     end
 
     def remark_params
-      params.require(:remark).permit(:text, :text_input, :type)
+      params.expect(remark: [:text, :text_input, :type])
     end
 end
