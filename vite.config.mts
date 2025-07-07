@@ -26,13 +26,16 @@ export default defineConfig({
     }
   },
 
+  // TODO (keep track).
   // Bootstrap: Silence Sass deprecation warnings.
   // See https://getbootstrap.com/docs/5.3/getting-started/vite/#configure-vite
   // and https://github.com/twbs/bootstrap/issues/40962
+  // https://github.com/sass/dart-sass/issues/2352#issuecomment-2856939940
   css: {
     preprocessorOptions: {
       scss: {
         silenceDeprecations: [
+          "legacy-js-api",
           "import",
           "mixed-decls",
           "color-functions",
