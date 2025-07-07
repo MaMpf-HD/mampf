@@ -84,13 +84,13 @@
   </div>
   <% if subscribed %>
      <%= link_to image_tag(lecture.course.normalized_image_url_with_host ||
-                             "images/no_course_information.png",
+                             "/no_course_information.png",
                           class: 'card-img-top teachableThumbnail border-bottom',
                           alt: 'Card image cap'),
                  lecture %>
   <% else %>
     <%= image_tag(lecture.course.normalized_image_url_with_host ||
-                    "images/no_course_information.png",
+                    "/no_course_information.png",
                   class: 'card-img-top teachableThumbnail border-bottom',
                   alt: 'Card image cap') %>
   <% end %>

@@ -54,8 +54,8 @@
 <%= t('admin.users.profile_image') %>
 <%= helpdesk(t('admin.user.info.profile_image'), false) %>
 <div class="row">
-<%= vite_image_tag(user.image_url_with_host.presence ||
-                          "images/unknown-person.gif",
+<%= image_tag(user.image_url_with_host.presence ||
+                          "/unknown-person.gif",
                           width: 128,
                           class: 'img-fluid mx-auto pt-3',
                           id: 'image-preview') %>

@@ -30,8 +30,8 @@
       <div class="card-body">
         <div class="row mb-3">
           <div class="col-12">
-            <%= vite_image_tag(course.image_url_with_host.presence ||
-                            "images/no_course_information.png",
+            <%= image_tag(course.image_url_with_host.presence ||
+                            "/no_course_information.png",
                           class: 'img-fluid',
                           id: 'image-preview') %>
           </div>
