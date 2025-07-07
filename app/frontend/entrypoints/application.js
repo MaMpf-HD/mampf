@@ -26,14 +26,3 @@ console.log("Visit the guide for more information: ", "https://vite-ruby.netlify
 
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
-
-import $ from "jquery";
-window.$ = $;
-
-window.test_jquery = function () {
-  console.log("jQuery is loaded:", $);
-  console.log("jQuery version:", $.fn.jquery);
-  console.log("jQuery is ready:", $(document).ready(function () {
-    console.log("Document is ready!");
-  }));
-};
