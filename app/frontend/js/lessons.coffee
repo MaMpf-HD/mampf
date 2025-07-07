@@ -93,7 +93,8 @@ $(document).on 'turbolinks:load', ->
         throwOnError: false
       return
 
-  $('#sortableLessonMedia').sortable()
+  # TODO: Use SortableJS here instead
+  # $('#sortableLessonMedia').sortable()
 
   $('#sortableLessonMedia').on 'sortupdate', ->
     $('#lesson-basics-warning').show()

@@ -15,11 +15,13 @@ console.log("Visit the guide for more information: ", "https://vite-ruby.netlify
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
 
+import "~/entrypoints/jQueryGlobal";
+
+import "bootstrap"; // AFTER JQuery
+
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
-import * as bootstrap from "bootstrap";
 import Turbolinks from "turbolinks";
-Turbolinks.start();
 
 import "~/js/_selectize_turbolinks_fix";
 import "~/js/administration.coffee";
@@ -43,7 +45,6 @@ import "~/js/lectures";
 import "~/js/lessons.coffee";
 import "~/js/main.coffee";
 import "~/js/mampf_routes";
-import "~/js/masonry_grid";
 import "~/js/media.coffee";
 import "~/js/notifications.coffee";
 import "~/js/pwa_windows";
@@ -108,10 +109,11 @@ import "~/js/thyme/thyme_feedback";
 import "~/js/thyme/thyme_player";
 import "~/js/thyme/utility";
 
+Turbolinks.start();
 ActiveStorage.start();
-console.log(bootstrap);
 
 import { WidgetInstance } from "friendly-challenge";
+import "~/js/masonry_grid";
 
 document.addEventListener("turbolinks:load", function () {
   var doneCallback, element, options;

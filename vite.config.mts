@@ -10,7 +10,7 @@ export default defineConfig({
   plugins: [
     coffee(),
     inject({
-      $: "jquery",
+      jQuery: "jquery",
       include: ["**/*.js", "**/*.ts", "**/*.coffee"],
     }),
     RubyPlugin(),

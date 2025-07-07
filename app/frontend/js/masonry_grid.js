@@ -1,3 +1,5 @@
+import Masonry from "masonry-layout";
+
 $(document).on("turbolinks:load", function () {
   initMasonryGridSystem();
 });
@@ -5,8 +7,11 @@ $(document).on("turbolinks:load", function () {
 /**
  * Inits the masonry grid system for elements with the class "masonry-grid".
  */
-function initMasonryGridSystem() {
-  $(".masonry-grid").masonry({
-    percentPosition: true,
-  });
+export function initMasonryGridSystem() {
+  const gridElements = document.querySelector(".masonry-grid");
+  if (gridElements) {
+    new Masonry(gridElements, {
+      percentPosition: true,
+    });
+  }
 }

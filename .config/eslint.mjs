@@ -46,7 +46,6 @@ const customGlobals = {
 
   // Common global methods
   initBootstrapPopovers: "readable",
-  initMasonryGridSystem: "readable",
 
   // Thyme & Annotation tool globals
   // TODO: This is a "hack" right now to get rid of "xy is not defined" error
@@ -144,7 +143,6 @@ export default [
         ...customGlobals,
         ...globals.browser,
         ...globals.jquery,
-        ...globals.node,
       },
     },
     linterOptions: {

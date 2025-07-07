@@ -1,3 +1,5 @@
+import { initMasonryGridSystem } from "~/js/masonry_grid";
+
 /**
  * Takes care of the URL hashes, such that each bootstrab tab gets assigned
  * its own URL hash, e.g. "#assignments".

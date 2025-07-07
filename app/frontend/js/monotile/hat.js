@@ -8,15 +8,9 @@
 // It works as intended and is pretty much unrelated to the rest of our code base.
 // For these reasons, we disable some ESLint rules for this file.
 /* eslint-disable no-undef, no-unused-vars */
-
-// A bit of a "hacky" fix. This is the only way I found that works
-// so that the canvas is loaded even if the site is left
-// e.g. user clicks on "Register" or changes language from "De" to "En"
-// with the button on the landing page.
-// Also see the following link for a possible workaround, which does not work
-// for us in conjunction with turbolink:
-// https://github.com/processing/p5.js/wiki/p5.js-overview#why-cant-i-assign-variables-using-p5-functions-and-variables-before-setup
 $(document).on("turbolinks:load", () => {
+  console.log("Monotile loaded");
+
   try {
     setup();
   }
@@ -432,7 +426,7 @@ function windowResized() {
 
 /* Mouse movement */
 let dragging = false;
-DELTA_THRESHOLD = 5;
+let DELTA_THRESHOLD = 5;
 
 function mousePressed() {
   dragging = true;
