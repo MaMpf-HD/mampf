@@ -8,12 +8,12 @@ const gemPaths = JSON.parse(process.env.GEM_PATHS || '[]');
 
 export default defineConfig({
   plugins: [
+    coffee(),
     inject({
       $: "jquery",
-      include: ["**/*.js"],
+      include: ["**/*.js", "**/*.ts", "**/*.coffee"],
     }),
     RubyPlugin(),
-    coffee(),
   ],
 
   resolve: {
