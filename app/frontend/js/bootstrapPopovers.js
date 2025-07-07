@@ -1,5 +1,10 @@
 import { Popover } from "bootstrap";
 
+$(document).on("turbolinks:load", () => {
+  // Initialize Bootstrap popovers on page load
+  initBootstrapPopovers();
+});
+
 /**
  * Initializes all Bootstrap popovers on the page.
  *
