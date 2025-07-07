@@ -27,7 +27,7 @@ console.log("Visit the guide for more information: ", "https://vite-ruby.netlify
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
 
-import WidgetInstance from "friendly-challenge";
+import { WidgetInstance } from "friendly-challenge";
 
 document.addEventListener("turbolinks:load", function () {
   var doneCallback, element, options;
