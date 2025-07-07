@@ -1,3 +1,5 @@
+import { Toast } from "bootstrap";
+
 $(document).on("turbolinks:load", () => {
   if (!shouldRegisterFeedback()) {
     return;
@@ -22,7 +24,7 @@ function shouldRegisterFeedback() {
 function registerToasts() {
   const toastElements = document.querySelectorAll(".toast");
   [...toastElements].map((toast) => {
-    new bootstrap.Toast(toast, TOAST_OPTIONS);
+    new Toast(toast, TOAST_OPTIONS);
   });
 }
 
