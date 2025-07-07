@@ -152,6 +152,7 @@
         "turbolinks",
         "uncached",
         "Unsets",
+        "Vite",
         "webpacker",
         "whitespaces"
     ],

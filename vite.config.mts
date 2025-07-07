@@ -2,6 +2,10 @@ import inject from "@rollup/plugin-inject";
 import { defineConfig } from 'vite';
 import RubyPlugin from 'vite-plugin-ruby';
 
+// also see config/vite.rb
+const gemPaths = JSON.parse(process.env.GEM_PATHS || '[]');
+console.log("GEM_PATHS:", gemPaths);
+
 export default defineConfig({
   plugins: [
     inject({
@@ -9,6 +13,17 @@ export default defineConfig({
     }),
     RubyPlugin(),
   ],
+
+  resolve: {
+    alias: gemPaths,
+  },
+
+  server: {
+    fs: {
+      allow: Object.values(gemPaths),
+    }
+  },
+
   // Bootstrap: Silence Sass deprecation warnings.
   // See https://getbootstrap.com/docs/5.3/getting-started/vite/#configure-vite
   // and https://github.com/twbs/bootstrap/issues/40962
