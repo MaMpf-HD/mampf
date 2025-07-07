@@ -162,13 +162,6 @@ GEM
     choice (0.2.0)
     chunky_png (1.4.0)
     clipboard-rails (1.7.1)
-    coffee-rails (5.0.0)
-      coffee-script (>= 2.2.0)
-      railties (>= 5.2.0)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.12.2)
     commontator (7.0.1)
       rails (>= 6.0)
       sprockets-rails
@@ -705,7 +698,6 @@ DEPENDENCIES
   bootstrap_form (~> 5.4)
   cancancan (~> 3.6)
   clipboard-rails (~> 1.7)
-  coffee-rails (~> 5.0)
   commontator (~> 7.0.1)
   coveralls (~> 0.7)
   csv (~> 3.3)
