@@ -5,10 +5,10 @@
     <link rel="manifest" href="/manifest.json">
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <%= stylesheet_link_tag 'thredded', 'data-turbolinks-track': 'reload' %>
-    <%= stylesheet_link_tag 'thredded_katex', 'data-turbolinks-track': 'reload' %>
+    <%= vite_stylesheet_tag 'thredded', 'data-turbolinks-track': 'reload' %>
+    <%= vite_stylesheet_tag 'thredded_katex', 'data-turbolinks-track': 'reload' %>
     <%= csrf_meta_tag %>
-    <%= javascript_include_tag 'thredded_timeago',
+    <%= vite_javascript_tag 'thredded_timeago',
                                defer: true,
                                'data-turbolinks-track': 'reload'%>
     <%== RailsGravatar.prefetch_dns_tag %>

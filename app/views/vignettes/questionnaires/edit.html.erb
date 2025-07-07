@@ -1,6 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15/Sortable.min.js"></script>
-<%= javascript_include_tag 'vignettes/edit' %>
-<%=stylesheet_link_tag 'vignettes-edit' %>
+<%= vite_javascript_tag 'vignettes/edit' %>
+<%=vite_stylesheet_tag 'vignettes-edit' %>
 
 <% lecture_edit_path = edit_lecture_path(@questionnaire.lecture, anchor: 'vignettes') %>
 
