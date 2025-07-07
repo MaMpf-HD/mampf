@@ -650,9 +650,6 @@ GEM
       rails (> 4.1)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
-    turbolinks (5.2.1)
-      turbolinks-source (~> 5.2)
-    turbolinks-source (5.2.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
@@ -772,7 +769,6 @@ DEPENDENCIES
   thredded-markdown_katex!
   timecop (~> 0.9.10)
   trix-rails (~> 2.4)
-  turbolinks (~> 5.2)
   vite_rails (~> 3.0, >= 3.0.17)
   web-console (~> 4.2)
 

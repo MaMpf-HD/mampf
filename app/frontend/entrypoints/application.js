@@ -1,16 +1,4 @@
-// To see this message, add the following to the `<head>` section in your
-// views/layouts/application.html.erb
-//
-//    <%= vite_client_tag %>
-//    <%= vite_javascript_tag 'application' %>
 console.log("Vite ⚡️ Rails");
-
-// If using a TypeScript entrypoint file:
-//     <%= vite_typescript_tag 'application' %>
-//
-// If you want to use .jsx or .tsx, add the extension:
-//     <%= vite_javascript_tag 'application.jsx' %>
-
 console.log("Visit the guide for more information: ", "https://vite-ruby.netlify.app/guide/rails");
 
 // Example: Load Rails libraries in Vite.
@@ -27,44 +15,20 @@ console.log("Visit the guide for more information: ", "https://vite-ruby.netlify
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
 
-import { WidgetInstance } from "friendly-challenge";
-
-document.addEventListener("turbolinks:load", function () {
-  var doneCallback, element, options;
-
-  doneCallback = function (solution) {
-    console.log(solution);
-    document.querySelector("#register-user").disabled = false;
-  };
-  const errorCallback = (err) => {
-    console.log("There was an error when trying to solve the Captcha.");
-    console.log(err);
-  };
-  element = document.querySelector("#captcha-widget");
-  if (element != null) {
-    options = {
-      doneCallback: doneCallback,
-      errorCallback,
-      puzzleEndpoint: $("#captcha-widget").data("captcha-url"),
-      startMode: "auto",
-      language: $("#captcha-widget").data("lang"),
-    };
-    console.log(options);
-    new WidgetInstance(element, options);
-    // DO not uncomment, evil
-    //    widget.reset();
-  }
-});
-
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
 import * as bootstrap from "bootstrap";
+import Turbolinks from "turbolinks";
+Turbolinks.start();
+
 import "~/js/_selectize_turbolinks_fix";
 import "~/js/administration.coffee";
 import "~/js/announcements.coffee";
 import "~/js/answers.coffee";
 
+import "@popperjs/core";
 import "gems/clipboard-rails/vendor/assets/javascripts/clipboard";
+import "trix";
 import "~/js/bootstrap_modal_turbolinks_fix";
 import "~/js/bootstrap_popovers";
 import "~/js/chapters.coffee";
@@ -82,9 +46,6 @@ import "~/js/mampf_routes";
 import "~/js/masonry_grid";
 import "~/js/media.coffee";
 import "~/js/notifications.coffee";
-import "@popperjs/core";
-import "gems/turbolinks-source/lib/assets/javascripts/turbolinks";
-import "trix";
 import "~/js/pwa_windows";
 import "~/js/questions.coffee";
 import "~/js/quizzes.coffee";
@@ -149,3 +110,32 @@ import "~/js/thyme/utility";
 
 ActiveStorage.start();
 console.log(bootstrap);
+
+import { WidgetInstance } from "friendly-challenge";
+
+document.addEventListener("turbolinks:load", function () {
+  var doneCallback, element, options;
+
+  doneCallback = function (solution) {
+    console.log(solution);
+    document.querySelector("#register-user").disabled = false;
+  };
+  const errorCallback = (err) => {
+    console.log("There was an error when trying to solve the Captcha.");
+    console.log(err);
+  };
+  element = document.querySelector("#captcha-widget");
+  if (element != null) {
+    options = {
+      doneCallback: doneCallback,
+      errorCallback,
+      puzzleEndpoint: $("#captcha-widget").data("captcha-url"),
+      startMode: "auto",
+      language: $("#captcha-widget").data("lang"),
+    };
+    console.log(options);
+    new WidgetInstance(element, options);
+    // DO not uncomment, evil
+    //    widget.reset();
+  }
+});
