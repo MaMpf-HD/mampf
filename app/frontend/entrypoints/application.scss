@@ -26,27 +26,27 @@ $container-max-widths: (
 
 /* override the !default vars with the values we set above */
 @import "gems/bootstrap_form/app/assets/stylesheets/rails_bootstrap_forms.css";
-@import "@/styles/annotations.scss";
-@import "@/styles/chapters.scss";
-@import "@/styles/clickers.scss";
-@import "@/styles/colors.scss";
-@import "@/styles/courses.scss";
-@import "@/styles/lectures.scss";
-@import "@/styles/lessons.scss";
-@import "@/styles/main.scss";
-@import "@/styles/media.scss";
-@import "@/styles/notifications.scss";
-@import "@/styles/sections.scss";
-@import "@/styles/tags.scss";
-@import "@/styles/talks.scss";
-@import "@/styles/thyme.scss";
-@import "@/styles/thyme_feedback.scss";
-@import "@/styles/users.scss";
-@import "@/styles/submissions.scss";
-@import "@/styles/vertices.scss";
+@import "~/styles/annotations.scss";
+@import "~/styles/chapters.scss";
+@import "~/styles/clickers.scss";
+@import "~/styles/colors.scss";
+@import "~/styles/courses.scss";
+@import "~/styles/lectures.scss";
+@import "~/styles/lessons.scss";
+@import "~/styles/main.scss";
+@import "~/styles/media.scss";
+@import "~/styles/notifications.scss";
+@import "~/styles/sections.scss";
+@import "~/styles/tags.scss";
+@import "~/styles/talks.scss";
+@import "~/styles/thyme.scss";
+@import "~/styles/thyme_feedback.scss";
+@import "~/styles/users.scss";
+@import "~/styles/submissions.scss";
+@import "~/styles/vertices.scss";
 @import "trix";
 
-@import "@/styles/_branding.scss";
+@import "~/styles/_branding.scss";
 
 
 trix-toolbar .trix-button-row {
