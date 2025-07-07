@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class AnnotationCategoryToggle extends Component {
+import { Component } from "~/js/thyme/components/component";
+
+export class AnnotationCategoryToggle extends Component {
   /*
      element = A reference on the HTML component (via document.getElementByID()).
     category = The category which this toggle triggers.

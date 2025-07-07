@@ -1,10 +1,11 @@
+import { Component } from "~/js/thyme/components/component";
+
 /**
  * The Interactive Area Button can show/hide specific elements of the
  * thyme player (normally interactive and annotation area) and
  * adjust the video position/size accordingly.
  */
-// eslint-disable-next-line no-unused-vars
-class IaButton extends Component {
+export class IaButton extends Component {
   /*
         toHide = An array consisting of all the components that
                  should be hidden/shown when this button is clicked.

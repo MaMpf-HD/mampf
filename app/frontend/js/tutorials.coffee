@@ -1,4 +1,4 @@
-@clearBulkUploadArea = ->
+window.clearBulkUploadArea = ->
   $('#bulk-upload-area').hide()
   $('#show-bulk-upload-area').show()
   $('#upload-bulk-correction-hidden').val('')

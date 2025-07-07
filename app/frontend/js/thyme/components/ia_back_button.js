@@ -1,3 +1,5 @@
+import { Component } from "~/js/thyme/components/component";
+
 /**
  * The Interactive Area Back Button saves a reference on the
  * current time. If one clicks on a chapter field in the
@@ -5,8 +7,7 @@
  * of the chapter), one has the possibility to go back by
  * clicking this button.
  */
-// eslint-disable-next-line no-unused-vars
-class IaBackButton extends Component {
+export class IaBackButton extends Component {
   constructor(element, chapterListId) {
     super(element);
     this.chapterListId = chapterListId;

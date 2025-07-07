@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-@trixTalkPreview = (trixElement) ->
+window.trixTalkPreview = (trixElement) ->
   content = trixElement.dataset.content
   preview = trixElement.dataset.preview
   editor = trixElement.editor

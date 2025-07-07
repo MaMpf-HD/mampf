@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class SpeedSelector extends Component {
+import { Component } from "~/js/thyme/components/component";
+
+export class SpeedSelector extends Component {
   constructor(element) {
     super(element);
   }

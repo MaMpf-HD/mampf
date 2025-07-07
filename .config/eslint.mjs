@@ -68,10 +68,6 @@ const customGlobals = {
   DisplayManager: "readable",
   MetadataManager: "readable",
 
-  Component: "readable",
-  Category: "readable",
-  CategoryEnum: "readable",
-  Subcategory: "readable",
   VolumeBar: "readable",
   TimeButton: "readable",
   MuteButton: "readable",

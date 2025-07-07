@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class SeekBar extends Component {
+import { Component } from "~/js/thyme/components/component";
+
+export class SeekBar extends Component {
   constructor(element) {
     super(element);
     thymeAttributes.seekBar = this; // save a reference for this seek bar

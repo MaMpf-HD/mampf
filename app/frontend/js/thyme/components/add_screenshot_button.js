@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class AddScreenshotButton extends Component {
+import { Component } from "~/js/thyme/components/component";
+
+export class AddScreenshotButton extends Component {
   constructor(element, canvasId) {
     super(element);
     this.canvas = document.getElementById(canvasId);

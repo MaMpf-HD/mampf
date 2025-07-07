@@ -42,7 +42,7 @@ videoUpload = (fileInput) ->
   hiddenInput = document.getElementById('upload-video-hidden')
 
   fileInput.style.display = 'none'
-  @directUpload(
+  window.directUpload(
     "upload-video"
     "#video-uploadButton-button-actual"
     '#video-uploadButton-button'
@@ -90,7 +90,7 @@ manuscriptUpload = (fileInput) ->
   metaData = ('manuscript-meta')
   hiddenInput = ('upload-manuscript-hidden')
   return if document.getElementById(fileInput) == null
-  @directUpload(
+  window.directUpload(
     fileInput
     "#manuscript-uploadButton-button-actual"
     '#manuscript-uploadButton-button'
@@ -145,7 +145,7 @@ geogebraUpload = (fileInput) ->
   progressBar = document.getElementById('geogebra-progressBar')
   metaData = document.getElementById('geogebra-meta')
   hiddenInput = document.getElementById('upload-geogebra-hidden')
-  @directUpload(
+  window.directUpload(
     "upload-geogebra"
     "#geogebra-uploadButton-button-actual"
     '#geogebra-uploadButton-button'
@@ -242,7 +242,7 @@ imageUpload = (fileInput,endpoint='/screenshots/upload', classname="course") ->
     true
     )
 
-@correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData,actualButton) ->
+window.correctionUpload = (fileInput, uploadButton, informer, statusBar, hiddenInput, metaData,actualButton) ->
   $("#"+fileInput).hide()
   directUpload(
     fileInput
@@ -353,7 +353,7 @@ directUpload provides an interface to upload (multiple) files to an endpoint
 @param fileChangeCallBack will be called, if selected files have changed
 @param single true if only one file is uploaded
 ###
-@directUpload = (
+window.directUpload = (
   fileInputElement
   uploadStatusElement
   uploadButtonElement
@@ -468,8 +468,8 @@ directUpload provides an interface to upload (multiple) files to an endpoint
 ###
 @param fileInput: dom element to listen to.
 ###
-@result = undefined
-@userManuscriptUpload = (fileInput) ->
+window.result = undefined
+window.userManuscriptUpload = (fileInput) ->
   initBootstrapPopovers()
   hiddenInput = document.getElementById('upload-userManuscript-hidden')
   hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')

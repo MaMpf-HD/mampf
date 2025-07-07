@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class VolumeBar extends Component {
+import { Component } from "~/js/thyme/components/component";
+
+export class VolumeBar extends Component {
   add() {
     const video = thymeAttributes.video;
     const element = this.element;

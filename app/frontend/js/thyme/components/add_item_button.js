@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class AddItemButton extends Component {
+import { Component } from "~/js/thyme/components/component";
+
+export class AddItemButton extends Component {
   add() {
     const video = thymeAttributes.video;
 

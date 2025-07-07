@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class Category extends CategoryEnum {
+import { CategoryEnum } from "~/js/thyme/annotations/category_enum";
+
+export class Category extends CategoryEnum {
   static _categories = [];
 
   static NOTE = new Category("note", "#f78f19");

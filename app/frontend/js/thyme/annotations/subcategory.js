@@ -1,5 +1,6 @@
-// eslint-disable-next-line no-unused-vars
-class Subcategory extends CategoryEnum {
+import { CategoryEnum } from "~/js/thyme/annotations/category_enum";
+
+export class Subcategory extends CategoryEnum {
   static _subcategories = []; // do not manipulate this array outside of this class!
 
   static DEFINITION = new Subcategory("definition");
