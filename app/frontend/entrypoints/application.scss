@@ -200,14 +200,14 @@ table.submission-table-bordered td {
 
 @font-face {
   font-family: 'Roboto';
-  src: url('./fonts/Roboto-Regular.ttf') format('truetype');
+  src: url('~/fonts/Roboto-Regular.ttf') format('truetype');
 }
 
 @font-face {
   font-family: 'Material Icons';
   font-style: normal;
   font-weight: 400;
-  src: url('./fonts/MaterialIcons-Regular.woff2') format('woff2');
+  src: url('~/fonts/MaterialIcons-Regular.woff2') format('woff2');
 }
 
 .material-icons {
