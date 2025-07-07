@@ -114,7 +114,7 @@ services:
       SOLR_PORT: 8983
       SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+      VITE_RUBY_HOST: 0.0.0.0
       MAMPF_REGISTRATION_TIMEFRAME: 25
       MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
       IMAPSERVER: imap:10993
@@ -129,7 +129,7 @@ services:
       DB_SQL_PRESEED_URL:
       UPLOADS_PRESEED_URL:
     ports:
-      - "127.0.0.1:3035:3035"  # webpacker dev server
+      - "127.0.0.1:3036:3036"  # Vite dev server
       - "127.0.0.1:13254:13254" # for debug gem communication with host
     volumes:
       - ../../:/usr/src/app/

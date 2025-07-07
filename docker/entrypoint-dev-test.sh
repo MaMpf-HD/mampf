@@ -4,6 +4,9 @@ cd /usr/src/app/
 
 ./docker/init-dev-test.sh &> >(tee -a /usr/src/app/log/initialization.log)
 
+echo "💫  Starting Vite dev server (in background)"
+NODE_ENV=development bundle exec vite dev &
+
 rm -f tmp/pids/server.pid
 cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
 
