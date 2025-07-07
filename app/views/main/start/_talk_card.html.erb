@@ -17,8 +17,8 @@
                            'display: inline;' %>
     </div>
   </div>
-  <%= image_tag(talk.lecture.course.normalized_image_url_with_host ||
-                '/no_course_information.png',
+  <%= vite_image_tag(talk.lecture.course.normalized_image_url_with_host ||
+                "images/no_course_information.png",
                 class: 'card-img-top teachableThumbnail border-bottom',
                 alt: 'Card image cap') %>
   <div class="card-body">

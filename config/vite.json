@@ -2,7 +2,7 @@
   "all": {
     "sourceCodeDir": "app/frontend",
     "additionalEntrypoints": [
-      "~/{js,styles}/**/*"
+      "~/{js,styles,images}/**/*"
     ]
   },
   "development": {
