@@ -3,7 +3,7 @@
 @import "bootstrap/scss/mixins";
 
 .voucher-redemption-pattern {
-  background-image: image-url('voronoi_pattern.svg');
+  background-image: url("~/images/voronoi_pattern.svg");
   background-position: center;
   background-size: 110%;
   background-color: #FFFFFF;
