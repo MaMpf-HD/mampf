@@ -3,7 +3,6 @@
   "private": true,
   "dependencies": {
     "@rails/actiontext": "^8.0.0",
-    "coffeescript": "2.6.1",
     "friendly-challenge": "^0.9.1",
     "jquery": "^3.7.1",
     "sass-loader": "^10.1.1",
