@@ -5,7 +5,6 @@ import RubyPlugin from 'vite-plugin-ruby';
 
 // also see config/vite.rb
 const gemPaths = JSON.parse(process.env.GEM_PATHS || '[]');
-console.log("GEM_PATHS:", gemPaths);
 
 export default defineConfig({
   plugins: [
