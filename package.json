@@ -6,7 +6,6 @@
     "coffeescript": "2.6.1",
     "friendly-challenge": "^0.9.1",
     "jquery": "^3.7.1",
-    "regenerator-runtime": "^0.13.11",
     "sass-loader": "^10.1.1",
     "trix": "^2.1.8"
   },
