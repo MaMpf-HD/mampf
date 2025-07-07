@@ -25,6 +25,7 @@ import "trix";
 import "~/js/_selectize_turbolinks_fix";
 import "~/js/main.coffee";
 import "~/js/pwa_windows";
+import "~/js/reload";
 import "~/js/thyme/attributes";
 
 // TODO: use vite_javascript_tag at the respective files instead of importing
@@ -49,7 +50,6 @@ import "~/js/questions.coffee";
 import "~/js/quizzes.coffee";
 import "~/js/referrals.coffee";
 import "~/js/registration.coffee";
-import "~/js/reload";
 import "~/js/remarks.coffee";
 import "~/js/search_tags";
 import "~/js/sections.coffee";

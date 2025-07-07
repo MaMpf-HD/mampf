@@ -4,11 +4,14 @@
  *
  * Note that images and other assets may still be cached.
  * From https://stackoverflow.com/a/74091027/
+ *
+ * We need to attach this function to the global `window` object so that it can
+ * be called from JS / JS-ERB files sent from the server (in controllers).
  */
-// eslint-disable-next-line no-unused-vars
-function reloadUrl() {
+window.reloadUrl = function () {
+  console.log("Reloading URL with cache busting...");
   const queryParams = new URLSearchParams(window.location.search);
   queryParams.set("lr", new Date().getTime());
   const query = queryParams.toString();
   window.location.search = query; // navigates
-}
+};

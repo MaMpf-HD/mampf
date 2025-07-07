@@ -52,7 +52,6 @@ const customGlobals = {
   // KaTeX
   renderMathInElement: "readable",
 
-  reloadUrl: "readable",
   Sortable: "readable",
 };
 
