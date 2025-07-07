@@ -17,7 +17,11 @@ console.log("Visit the guide for more information: ", "https://vite-ruby.netlify
 
 import "~/entrypoints/jQueryGlobal";
 
-import "bootstrap"; // AFTER JQuery
+// Bootstrap must be imported AFTER jQuery for bootstrap jQuery plugins to work,
+// e.g. $(".modal").modal("show")
+import "bootstrap";
+import "~/js/bootstrap_modal_turbolinks_fix";
+import "~/js/bootstrapPopovers";
 
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
@@ -31,8 +35,6 @@ import "~/js/answers.coffee";
 import "@popperjs/core";
 import "gems/clipboard-rails/vendor/assets/javascripts/clipboard";
 import "trix";
-import "~/js/bootstrap_modal_turbolinks_fix";
-import "~/js/bootstrap_popovers";
 import "~/js/chapters.coffee";
 import "~/js/clickers.coffee";
 import "~/js/copy_and_paste_button";
