@@ -10,14 +10,21 @@ import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
 import Turbolinks from "turbolinks";
 
-import "~/js/_selectize_turbolinks_fix";
-import "~/js/administration.coffee";
-import "~/js/announcements.coffee";
-import "~/js/answers.coffee";
-
 import "@popperjs/core";
 import "gems/clipboard-rails/vendor/assets/javascripts/clipboard";
 import "trix";
+
+// Custom JS needed on every page
+import "~/js/_selectize_turbolinks_fix";
+import "~/js/main.coffee";
+import "~/js/pwa_windows";
+import "~/js/thyme/attributes";
+
+// TODO: use vite_javascript_tag at the respective files instead of importing
+// everything here. This is just a temporary solution during the Vite migration.
+import "~/js/administration.coffee";
+import "~/js/announcements.coffee";
+import "~/js/answers.coffee";
 import "~/js/chapters.coffee";
 import "~/js/clickers.coffee";
 import "~/js/copy_and_paste_button";
@@ -28,11 +35,9 @@ import "~/js/items.coffee";
 import "~/js/katex.coffee";
 import "~/js/lectures";
 import "~/js/lessons.coffee";
-import "~/js/main.coffee";
 import "~/js/mampf_routes";
 import "~/js/media.coffee";
 import "~/js/notifications.coffee";
-import "~/js/pwa_windows";
 import "~/js/questions.coffee";
 import "~/js/quizzes.coffee";
 import "~/js/referrals.coffee";
@@ -51,48 +56,6 @@ import "~/js/upload.coffee";
 import "~/js/users.coffee";
 import "~/js/vertices.coffee";
 import "~/js/watchlists.coffee";
-
-/**
- * THYME-related scripts.
- */
-import "~/js/thyme/annotations/annotation";
-import "~/js/thyme/annotations/annotation_area";
-import "~/js/thyme/annotations/annotation_manager";
-import "~/js/thyme/annotations/category";
-import "~/js/thyme/annotations/category_enum";
-import "~/js/thyme/annotations/subcategory";
-import "~/js/thyme/annotations/url_annotation_opener";
-import "~/js/thyme/attributes";
-import "~/js/thyme/chapter_manager";
-import "~/js/thyme/components/add_item_button";
-import "~/js/thyme/components/add_reference_button";
-import "~/js/thyme/components/add_screenshot_button";
-import "~/js/thyme/components/annotation_button";
-import "~/js/thyme/components/annotation_category_toggle";
-import "~/js/thyme/components/annotations_toggle";
-import "~/js/thyme/components/component";
-import "~/js/thyme/components/full_screen_button";
-import "~/js/thyme/components/ia_back_button";
-import "~/js/thyme/components/ia_button";
-import "~/js/thyme/components/ia_close_button";
-import "~/js/thyme/components/mute_button";
-import "~/js/thyme/components/next_chapter_button";
-import "~/js/thyme/components/play_button";
-import "~/js/thyme/components/previous_chapter_button";
-import "~/js/thyme/components/seek_bar";
-import "~/js/thyme/components/speed_selector";
-import "~/js/thyme/components/time_button";
-import "~/js/thyme/components/volume_bar";
-import "~/js/thyme/control_bar_hider";
-import "~/js/thyme/display_manager";
-import "~/js/thyme/heatmap";
-import "~/js/thyme/key_shortcuts";
-import "~/js/thyme/metadata_manager";
-import "~/js/thyme/resizer";
-import "~/js/thyme/thyme_editor";
-import "~/js/thyme/thyme_feedback";
-import "~/js/thyme/thyme_player";
-import "~/js/thyme/utility";
 
 Turbolinks.start();
 ActiveStorage.start();

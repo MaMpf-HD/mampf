@@ -20,7 +20,7 @@ import { ControlBarHider } from "./control_bar_hider";
 import { DisplayManager } from "./display_manager";
 import { addGeneralShortcuts, addPlayerShortcuts } from "./key_shortcuts";
 import { MetadataManager } from "./metadata_manager";
-import { Resizer } from "./resizer";
+import { resizeThymeContainer } from "./resizer";
 import { playOnClick, setUpMaxTime } from "./utility";
 
 $(document).on("turbolinks:load", function () {
@@ -205,7 +205,7 @@ $(document).on("turbolinks:load", function () {
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
     const factor = $("#caption").is(":hidden") && $("#annotation-caption").is(":hidden") ? 1 : 1 / 0.82;
-    Resizer.resizeContainer(thymeContainer, factor, 0);
+    resizeThymeContainer(thymeContainer, factor, 0);
     annotationManager.updateMarkers();
   }
 

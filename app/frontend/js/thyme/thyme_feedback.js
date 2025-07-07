@@ -10,7 +10,7 @@ import { TimeButton } from "./components/time_button";
 import { VolumeBar } from "./components/volume_bar";
 import { Heatmap } from "./heatmap";
 import { addFeedbackShortcuts, addGeneralShortcuts } from "./key_shortcuts";
-import { Resizer } from "./resizer";
+import { resizeThymeContainer } from "./resizer";
 import { playOnClick, setUpMaxTime } from "./utility";
 
 $(document).on("turbolinks:load", function () {
@@ -117,7 +117,7 @@ $(document).on("turbolinks:load", function () {
 
   // resizes the thyme container to the window dimensions
   function resizeContainer() {
-    Resizer.resizeContainer(thymeContainer, 1 / 0.82, 0);
+    resizeThymeContainer(thymeContainer, 1 / 0.82, 0);
     annotationManager.updateMarkers();
   }
 
@@ -125,4 +125,5 @@ $(document).on("turbolinks:load", function () {
   video.onloadedmetadata = resizeContainer;
 
   $("#video").width("82%");
+  resizeContainer();
 });
