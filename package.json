@@ -29,6 +29,7 @@
     "globals": "^15.1.0",
     "sass": "^1.89.2",
     "vite": "^5.0.0",
+    "vite-plugin-coffee3": "^1.0.1",
     "vite-plugin-ruby": "^5.1.0"
   },
   "scripts": {

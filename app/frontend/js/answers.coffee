@@ -1,5 +1,3 @@
-<% environment.context_class.instance_eval { include ApplicationHelper } %>
-
 # The "target button" is either the "discard" button or the "edit" button
 # what its purpose is is stored in this object with a mapping:
 # answerId -> boolean

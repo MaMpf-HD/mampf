@@ -1,5 +1,6 @@
 import inject from "@rollup/plugin-inject";
 import { defineConfig } from 'vite';
+import { coffee } from "vite-plugin-coffee3";
 import RubyPlugin from 'vite-plugin-ruby';
 
 // also see config/vite.rb
@@ -10,8 +11,10 @@ export default defineConfig({
   plugins: [
     inject({
       $: "jquery",
+      include: ["**/*.js"],
     }),
     RubyPlugin(),
+    coffee(),
   ],
 
   resolve: {

@@ -57,23 +57,23 @@ document.addEventListener("turbolinks:load", function () {
 });
 
 import "@rails/actiontext";
+import * as ActiveStorage from "@rails/activestorage";
+import * as bootstrap from "bootstrap";
 import "~/js/_selectize_turbolinks_fix";
-import "~/js/activestorage";
 import "~/js/administration.coffee";
 import "~/js/announcements.coffee";
-import "~/js/answers";
-import "~/js/bootstrap";
+import "~/js/answers.coffee";
+
+import "gems/clipboard-rails/vendor/assets/javascripts/clipboard";
 import "~/js/bootstrap_modal_turbolinks_fix";
 import "~/js/bootstrap_popovers";
 import "~/js/chapters.coffee";
 import "~/js/clickers.coffee";
-import "~/js/clipboard";
 import "~/js/copy_and_paste_button";
 import "~/js/courses.coffee";
 import "~/js/erdbeere.coffee";
 import "~/js/file_upload.coffee";
 import "~/js/items.coffee";
-import "~/js/jquery3";
 import "~/js/katex.coffee";
 import "~/js/lectures";
 import "~/js/lessons.coffee";
@@ -82,11 +82,12 @@ import "~/js/mampf_routes";
 import "~/js/masonry_grid";
 import "~/js/media.coffee";
 import "~/js/notifications.coffee";
-import "~/js/popper";
+import "@popperjs/core";
+import "gems/turbolinks-source/lib/assets/javascripts/turbolinks";
+import "trix";
 import "~/js/pwa_windows";
 import "~/js/questions.coffee";
 import "~/js/quizzes.coffee";
-import "~/js/rails-ujs";
 import "~/js/referrals.coffee";
 import "~/js/registration.coffee";
 import "~/js/reload";
@@ -98,8 +99,6 @@ import "~/js/tags.coffee";
 import "~/js/talks.coffee";
 import "~/js/terms.coffee";
 import "~/js/tex_preview.coffee";
-import "~/js/trix";
-import "~/js/turbolinks";
 import "~/js/tutorials.coffee";
 import "~/js/upload.coffee";
 import "~/js/users.coffee";
@@ -108,8 +107,6 @@ import "~/js/watchlists.coffee";
 
 /**
  * THYME-related scripts.
- *
- * Note that the order of the scripts imports is important here.
  */
 import "~/js/thyme/annotations/annotation";
 import "~/js/thyme/annotations/annotation_area";
@@ -149,3 +146,6 @@ import "~/js/thyme/thyme_editor";
 import "~/js/thyme/thyme_feedback";
 import "~/js/thyme/thyme_player";
 import "~/js/thyme/utility";
+
+ActiveStorage.start();
+console.log(bootstrap);
