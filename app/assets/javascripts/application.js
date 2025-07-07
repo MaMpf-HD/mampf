@@ -16,7 +16,6 @@
 //= require rails-ujs
 //= require activestorage
 //= require mampf_routes
-//= require jquery-ui
 //= require trix
 //= require @rails/actiontext
 //= require clipboard
