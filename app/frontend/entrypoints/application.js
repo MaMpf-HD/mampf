@@ -1,10 +1,17 @@
 import "~/entrypoints/jQueryGlobal";
 
-// Bootstrap must be imported AFTER jQuery for bootstrap jQuery plugins to work,
+// Bootstrap must be imported AFTER jQuery for Bootstrap-jQuery plugins to work,
 // e.g. $(".modal").modal("show")
 import "bootstrap";
 import "~/js/bootstrap_modal_turbolinks_fix";
 import "~/js/bootstrapPopovers";
+
+// Before switching to Turbo, we still want to use UJS (unobtrusive JavaScript)
+// such that anchor tags with `data-method="post"` or similar work as expected.
+// Example: _dropdown_notifications.html.erb
+// We can later use `turbo-method` for this instead.
+// See also: https://stackoverflow.com/a/70769655/
+import Rails from "@rails/ujs";
 
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
@@ -57,6 +64,9 @@ import "~/js/users.coffee";
 import "~/js/vertices.coffee";
 import "~/js/watchlists.coffee";
 
+// Rails UJS
+// https://github.com/rails/rails/issues/49499#issuecomment-1749086834
+Rails.start();
 Turbolinks.start();
 ActiveStorage.start();
 
