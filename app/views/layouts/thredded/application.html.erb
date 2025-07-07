@@ -8,7 +8,7 @@
     <%= vite_stylesheet_tag "thredded", 'data-turbolinks-track': 'reload' %>
     <%= vite_stylesheet_tag "styles/thredded_katex", 'data-turbolinks-track': 'reload' %>
     <%= csrf_meta_tag %>
-    <%= vite_javascript_tag 'thredded_timeago',
+    <%= javascript_include_tag "thredded_timeago",
                                defer: true,
                                'data-turbolinks-track': 'reload'%>
     <%== RailsGravatar.prefetch_dns_tag %>
