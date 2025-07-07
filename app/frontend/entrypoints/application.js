@@ -26,3 +26,32 @@ console.log("Visit the guide for more information: ", "https://vite-ruby.netlify
 
 // Example: Import a stylesheet in app/frontend/index.css
 // import '~/index.css'
+
+import WidgetInstance from "friendly-challenge";
+
+document.addEventListener("turbolinks:load", function () {
+  var doneCallback, element, options;
+
+  doneCallback = function (solution) {
+    console.log(solution);
+    document.querySelector("#register-user").disabled = false;
+  };
+  const errorCallback = (err) => {
+    console.log("There was an error when trying to solve the Captcha.");
+    console.log(err);
+  };
+  element = document.querySelector("#captcha-widget");
+  if (element != null) {
+    options = {
+      doneCallback: doneCallback,
+      errorCallback,
+      puzzleEndpoint: $("#captcha-widget").data("captcha-url"),
+      startMode: "auto",
+      language: $("#captcha-widget").data("lang"),
+    };
+    console.log(options);
+    new WidgetInstance(element, options);
+    // DO not uncomment, evil
+    //    widget.reset();
+  }
+});
