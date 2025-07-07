@@ -1,9 +1,8 @@
 {
   "all": {
     "sourceCodeDir": "app/frontend",
-    "watchAdditionalPaths": [],
-    "additionalEntryPoints": [
-      "styles"
+    "additionalEntrypoints": [
+      "~/{images,styles}/**/*"
     ]
   },
   "development": {
