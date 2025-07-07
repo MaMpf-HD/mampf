@@ -1,7 +1,10 @@
 {
   "all": {
     "sourceCodeDir": "app/frontend",
-    "watchAdditionalPaths": []
+    "watchAdditionalPaths": [],
+    "additionalEntryPoints": [
+      "styles"
+    ]
   },
   "development": {
     "autoBuild": true,

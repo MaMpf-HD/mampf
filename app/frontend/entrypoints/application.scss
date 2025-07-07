@@ -24,31 +24,29 @@ $container-max-widths: (
   xxl: 1440px,
 );
 
-
 /* override the !default vars with the values we set above */
-@import "annotations";
 @import "gems/bootstrap_form/app/assets/stylesheets/rails_bootstrap_forms.css";
-@import "bootstrap";
-@import "chapters";
-@import "clickers";
-@import "colors";
-@import "courses";
-@import "lectures";
-@import "lessons";
-@import "main";
-@import "media";
-@import "notifications";
-@import "sections";
-@import "tags";
-@import "talks";
-@import "thyme";
-@import "thyme_feedback";
-@import "users";
-@import "submissions";
-@import "vertices";
+@import "@/styles/annotations";
+@import "@/styles/chapters";
+@import "@/styles/clickers";
+@import "@/styles/colors";
+@import "@/styles/courses";
+@import "@/styles/lectures";
+@import "@/styles/lessons";
+@import "@/styles/main";
+@import "@/styles/media";
+@import "@/styles/notifications";
+@import "@/styles/sections";
+@import "@/styles/tags";
+@import "@/styles/talks";
+@import "@/styles/thyme";
+@import "@/styles/thyme_feedback";
+@import "@/styles/users";
+@import "@/styles/submissions";
+@import "@/styles/vertices";
 @import "trix";
 
-@import "branding";
+@import "@/styles/branding";
 
 
 trix-toolbar .trix-button-row {
