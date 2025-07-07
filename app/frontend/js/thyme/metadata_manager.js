@@ -1,8 +1,9 @@
+import { renderLatex } from "./utility";
+
 /**
   This file wraps up most functionality of the thyme player(s) concerning metadata.
 */
-// eslint-disable-next-line no-unused-vars
-class MetadataManager {
+export class MetadataManager {
   constructor(metadataListId) {
     this.metadataListId = metadataListId;
   }
@@ -22,7 +23,7 @@ class MetadataManager {
      only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
      i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
      for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-    video.addEventListener("loadedmetadata", function () {
+    thymeAttributes.video.addEventListener("loadedmetadata", function () {
       if (initialMetadata && metadata.readyState === 2) {
         metadataManager.#displayMetadata();
         initialMetadata = false;
@@ -31,7 +32,7 @@ class MetadataManager {
         }
       }
     });
-    video.addEventListener("canplay", function () {
+    thymeAttributes.video.addEventListener("canplay", function () {
       if (initialMetadata && metadata.readyState === 2) {
         metadataManager.#displayMetadata();
         initialMetadata = false;
@@ -203,7 +204,7 @@ class MetadataManager {
         video.currentTime = this.id.replace("l-", "");
       });
       let metaElement = $listItem.get(0);
-      thymeUtility.renderLatex(metaElement);
+      renderLatex(metaElement);
     }
     // store metadata start times as data attribute
     $metaList.get(0).dataset.times = JSON.stringify(times);

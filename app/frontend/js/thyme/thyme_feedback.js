@@ -1,3 +1,18 @@
+import { AnnotationArea } from "./annotations/annotation_area";
+import { AnnotationManager } from "./annotations/annotation_manager";
+import { Category } from "./annotations/category";
+import { openAnnotationIfSpecifiedInUrl } from "./annotations/url_annotation_opener";
+import { AnnotationCategoryToggle } from "./components/annotation_category_toggle";
+import { MuteButton } from "./components/mute_button";
+import { PlayButton } from "./components/play_button";
+import { SeekBar } from "./components/seek_bar";
+import { TimeButton } from "./components/time_button";
+import { VolumeBar } from "./components/volume_bar";
+import { Heatmap } from "./heatmap";
+import { addFeedbackShortcuts, addGeneralShortcuts } from "./key_shortcuts";
+import { Resizer } from "./resizer";
+import { playOnClick, setUpMaxTime } from "./utility";
+
 $(document).on("turbolinks:load", function () {
   /*
     VIDEO INITIALIZATION
@@ -91,14 +106,14 @@ $(document).on("turbolinks:load", function () {
   /*
     KEYBOARD SHORTCUTS
    */
-  thymeKeyShortcuts.addGeneralShortcuts();
-  thymeKeyShortcuts.addFeedbackShortcuts();
+  addGeneralShortcuts();
+  addFeedbackShortcuts();
 
   /*
     MISC
    */
-  thymeUtility.playOnClick();
-  thymeUtility.setUpMaxTime("max-time");
+  playOnClick();
+  setUpMaxTime("max-time");
 
   // resizes the thyme container to the window dimensions
   function resizeContainer() {

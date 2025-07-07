@@ -1,15 +1,19 @@
+import { timestampToSeconds } from "../utility";
+import { Category } from "./category";
+import { Subcategory } from "./subcategory";
+
 /**
   This class helps to represent an annotation in JavaScript.
 */
 // eslint-disable-next-line no-unused-vars
-class Annotation {
+export class Annotation {
   constructor(json) {
     // We only save attributes that are needed in the thyme related JavaScripts!
     this.category = Category.getByName(json.category);
     this.color = json.color;
     this.comment = json.comment;
     this.id = json.id;
-    this.seconds = thymeUtility.timestampToSeconds(json.timestamp);
+    this.seconds = timestampToSeconds(json.timestamp);
     this.subcategory = Subcategory.getByName(json.subcategory);
     this.belongsToCurrentUser = json.belongs_to_current_user;
   }

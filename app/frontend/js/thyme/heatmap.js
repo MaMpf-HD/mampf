@@ -1,9 +1,11 @@
+import { AnnotationCategoryToggle } from "./components/annotation_category_toggle";
+import { mixColors } from "./utility";
+
 /**
  * Objects of this class represent heatmaps. It provides the function draw() which
  * draws the heatmap to the thyme player.
  */
-// eslint-disable-next-line no-unused-vars
-class Heatmap {
+export class Heatmap {
   static RADIUS = 10; // this number adjusts the radius of the peaks of the heatmap
   static MAX_HEIGHT = 0.25; // this number adjusts the maximum heights of the heatmap peaks
 
@@ -32,7 +34,7 @@ class Heatmap {
     const width = seekBarWidth + 2 * stickOutWidthOneSided + thresh;
     const stretch = seekBarWidth / (seekBarWidth + 4 * stickOutWidthOneSided + thresh);
 
-    const maxHeight = video.clientHeight * Heatmap.MAX_HEIGHT;
+    const maxHeight = thymeAttributes.video.clientHeight * Heatmap.MAX_HEIGHT;
     this.heatmap.css("top", -maxHeight - 11); // vertical offset
 
     const numDivisons = width + 4 * Heatmap.RADIUS + 1;
@@ -60,7 +62,7 @@ class Heatmap {
         colors.push(a.category.color);
       }
       const time = a.seconds;
-      const position = Math.round(stretch * width * (time / video.duration));
+      const position = Math.round(stretch * width * (time / thymeAttributes.video.duration));
       for (let x = position - Heatmap.RADIUS; x <= position + Heatmap.RADIUS; x++) {
         let y = Heatmap.#sinX(x, position, Heatmap.RADIUS);
         pixelsAll[x + Heatmap.RADIUS] += y;
@@ -84,7 +86,7 @@ class Heatmap {
     const heatmapStr = `<svg width="${(width - stickOutWidthOneSided - thresh)}"
                              height="${maxHeight}">
                          <polyline points="${pointsStr}"
-                           style="fill:${thymeUtility.mixColors(colors)};
+                           style="fill:${mixColors(colors)};
                            fill-opacity:0.4;
                            stroke:black;
                            stroke-width:1"/>

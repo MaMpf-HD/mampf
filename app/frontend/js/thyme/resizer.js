@@ -2,7 +2,7 @@
   Use the method here to resize thyme players.
 */
 // eslint-disable-next-line no-unused-vars
-const Resizer = {
+export const Resizer = {
   resizeContainer: function (container, factor, offset) {
     // see https://stackoverflow.com/a/73425736/
     const windowWidth = window.innerWidth;

@@ -1,8 +1,11 @@
+import { lightenUp, renderLatex } from "../utility";
+import { AnnotationManager } from "./annotation_manager";
+
 /**
   This class helps to represent the annotation area in java script.
 */
 // eslint-disable-next-line no-unused-vars
-class AnnotationArea {
+export class AnnotationArea {
   static DISABLED_BUTTON_OPACITY = 0.2;
 
   /*
@@ -89,7 +92,7 @@ class AnnotationArea {
 
     // render LaTex
     const commentId = this.commentField.attr("id");
-    thymeUtility.renderLatex(document.getElementById(commentId));
+    renderLatex(document.getElementById(commentId));
   }
 
   showAnnotationWithId(id) {
@@ -105,14 +108,14 @@ class AnnotationArea {
   #updateInfoAndCommentField(annotation, color) {
     const head = annotation.categoryLocale();
     const comment = annotation.comment.replaceAll("\n", "<br>");
-    const headColor = thymeUtility.lightenUp(color, 2);
-    const backgroundColor = thymeUtility.lightenUp(color, 3);
+    const headColor = lightenUp(color, 2);
+    const backgroundColor = lightenUp(color, 3);
     this.infoBar.empty().append(head);
     this.infoBar.css("background-color", headColor);
     this.commentField.empty().append(comment);
 
     // Comment field background gradient
-    const colorGradientEnd = thymeUtility.lightenUp(color, 2.5);
+    const colorGradientEnd = lightenUp(color, 2.5);
     const gradient = `linear-gradient(to bottom, ${backgroundColor} 50%, ${colorGradientEnd} 100%)`;
     this.caption.css("background-image", gradient);
 
@@ -151,7 +154,7 @@ class AnnotationArea {
   #updateGotoButton(annotation) {
     this.gotoButton.off("click");
     this.gotoButton.on("click", function () {
-      video.currentTime = annotation.seconds;
+      thymeAttributes.video.currentTime = annotation.seconds;
     });
   }
 

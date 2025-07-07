@@ -1,4 +1,5 @@
 import { Component } from "~/js/thyme/components/component";
+import { renderLatex } from "../utility";
 
 /**
  * The Interactive Area Back Button saves a reference on the
@@ -16,14 +17,14 @@ export class IaBackButton extends Component {
   add() {
     // Event Handler for Back Button
     this.element.addEventListener("click", function () {
-      video.currentTime = this.dataset.time;
+      thymeAttributes.video.currentTime = this.dataset.time;
       $(this).hide();
     });
   }
 
   update() {
     // set up back button (transports back to the current chapter)
-    this.element.dataset.time = video.currentTime;
+    this.element.dataset.time = thymeAttributes.video.currentTime;
     const currentChapter = $("#" + this.chapterListId + " .current");
     if (currentChapter.length > 0) {
       let backInfo = currentChapter.data("text").split(":", 1)[0];
@@ -34,7 +35,7 @@ export class IaBackButton extends Component {
         backInfo = this.element.dataset.backto + backInfo;
       }
       $(this.element).empty().append(backInfo).show();
-      thymeUtility.renderLatex(this.element);
+      renderLatex(this.element);
     }
   }
 }

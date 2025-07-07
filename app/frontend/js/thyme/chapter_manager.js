@@ -1,8 +1,9 @@
+import { renderLatex } from "./utility";
+
 /**
   This file wraps up most functionality of the thyme player(s) concerning chapters.
 */
-// eslint-disable-next-line no-unused-vars
-class ChapterManager {
+export class ChapterManager {
   constructor(chapterListId, iaBackButton) {
     this.chapterListId = chapterListId;
     this.iaBackButton = iaBackButton;
@@ -22,7 +23,7 @@ class ChapterManager {
      only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
      i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
      for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-    video.addEventListener("loadedmetadata", function () {
+    thymeAttributes.video.addEventListener("loadedmetadata", function () {
       if (initialChapters && chapters.readyState === 2) {
         chapterManager.#displayChapters();
         initialChapters = false;
@@ -31,7 +32,7 @@ class ChapterManager {
         }
       }
     });
-    video.addEventListener("canplay", function () {
+    thymeAttributes.video.addEventListener("canplay", function () {
       if (initialChapters && chapters.readyState === 2) {
         chapterManager.#displayChapters();
         initialChapters = false;
@@ -41,9 +42,14 @@ class ChapterManager {
 
   previousChapterStart() {
     const currentTime = thymeAttributes.video.currentTime;
-    /* NOTE: We cannot use times as an attribute (yet) because it's initialized
-       before the dataset times is loaded into the HTML. */
-    const times = JSON.parse(document.getElementById(this.chapterListId).dataset.times);
+    // NOTE: We cannot use times as an attribute (yet) because it's initialized
+    // before the dataset times is loaded into the HTML.
+    const chapterList = document.getElementById(this.chapterListId);
+    if (!chapterList || !chapterList.dataset.times) {
+      console.error("Chapter list not found or dataset times not set.");
+      return;
+    }
+    const times = JSON.parse(chapterList.dataset.times);
     if (times.length === 0) {
       return;
     }
@@ -107,12 +113,12 @@ class ChapterManager {
       });
       chapterList.append($listItem.append($link));
       const chapterElement = $link.get(0);
-      thymeUtility.renderLatex(chapterElement);
+      renderLatex(chapterElement);
       $link.data("text", chapterName);
       // if a chapter element is clicked, transport to chapter start time
       $link.on("click", function () {
         iaBackButton.update();
-        video.currentTime = this.id.replace("c-", "");
+        thymeAttributes.video.currentTime = this.id.replace("c-", "");
       });
     }
     // store start times as data attribute

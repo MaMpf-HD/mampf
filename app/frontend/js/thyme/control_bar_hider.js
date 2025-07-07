@@ -1,8 +1,7 @@
 /**
  * This class contains the functionality for (auto-)hiding the control bar.
  */
-// eslint-disable-next-line no-unused-vars
-class ControlBarHider {
+export class ControlBarHider {
   /*
     controlBarId = The ID of the control bar.
            delay = The delay after which the control bar is automatically hidden.

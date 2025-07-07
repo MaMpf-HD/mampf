@@ -1,3 +1,28 @@
+import { AnnotationArea } from "./annotations/annotation_area";
+import { AnnotationManager } from "./annotations/annotation_manager";
+import { openAnnotationIfSpecifiedInUrl } from "./annotations/url_annotation_opener";
+import { ChapterManager } from "./chapter_manager";
+import { AnnotationButton } from "./components/annotation_button";
+import { AnnotationsToggle } from "./components/annotations_toggle";
+import { FullScreenButton } from "./components/full_screen_button";
+import { IaBackButton } from "./components/ia_back_button";
+import { IaButton } from "./components/ia_button";
+import { IaCloseButton } from "./components/ia_close_button";
+import { MuteButton } from "./components/mute_button";
+import { NextChapterButton } from "./components/next_chapter_button";
+import { PlayButton } from "./components/play_button";
+import { PreviousChapterButton } from "./components/previous_chapter_button";
+import { SeekBar } from "./components/seek_bar";
+import { SpeedSelector } from "./components/speed_selector";
+import { TimeButton } from "./components/time_button";
+import { VolumeBar } from "./components/volume_bar";
+import { ControlBarHider } from "./control_bar_hider";
+import { DisplayManager } from "./display_manager";
+import { addGeneralShortcuts, addPlayerShortcuts } from "./key_shortcuts";
+import { MetadataManager } from "./metadata_manager";
+import { Resizer } from "./resizer";
+import { playOnClick, setUpMaxTime } from "./utility";
+
 $(document).on("turbolinks:load", function () {
   /*
     VIDEO INITIALIZATION
@@ -42,9 +67,9 @@ $(document).on("turbolinks:load", function () {
   // when we can define toHide (second argument which is set to null here)
   const iaButton = new IaButton("ia-active", null, [$(video), $("#video-controlBar")], "82%");
   (new VolumeBar("volume-bar")).add();
-  seekBar = new SeekBar("seek-bar");
-  seekBar.add();
-  seekBar.addChapterTooltips();
+  thymeAttributes.seekBar = new SeekBar("seek-bar");
+  thymeAttributes.seekBar.add();
+  thymeAttributes.seekBar.addChapterTooltips();
 
   /*
     ANNOTATION FUNCTIONALITY
@@ -190,8 +215,8 @@ $(document).on("turbolinks:load", function () {
   /*
     KEYBOARD SHORTCUTS
    */
-  thymeKeyShortcuts.addGeneralShortcuts();
-  thymeKeyShortcuts.addPlayerShortcuts();
+  addGeneralShortcuts();
+  addPlayerShortcuts();
 
   /*
     MISC
@@ -199,8 +224,8 @@ $(document).on("turbolinks:load", function () {
   const controlBarHider = new ControlBarHider("video-controlBar", 3000);
   controlBarHider.install();
   displayManager.updateControlBarType();
-  thymeUtility.playOnClick();
-  thymeUtility.setUpMaxTime("max-time");
+  playOnClick();
+  setUpMaxTime("max-time");
 
   if (document.documentMode) {
     alert($("body").data("badbrowser"));

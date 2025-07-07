@@ -1,8 +1,10 @@
+import { Annotation } from "./annotation";
+
 /**
  * This class provides methods that help to manage all annotations in a thyme player.
  */
 // eslint-disable-next-line no-unused-vars
-class AnnotationManager {
+export class AnnotationManager {
   /*
           colorFunc = A function which takes an annotation and gives
                       back a color for the corresponding marker.

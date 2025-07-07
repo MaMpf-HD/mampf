@@ -1,4 +1,5 @@
 import { Component } from "~/js/thyme/components/component";
+import { dataURLtoBlob } from "../utility";
 
 export class AddScreenshotButton extends Component {
   constructor(element, canvasId) {
@@ -18,7 +19,7 @@ export class AddScreenshotButton extends Component {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       const base64image = canvas.toDataURL("image/png");
       // Get our file
-      const file = thymeUtility.dataURLtoBlob(base64image);
+      const file = dataURLtoBlob(base64image);
       // Create new form data
       const fd = new FormData();
       // Append our Canvas image file to the form data

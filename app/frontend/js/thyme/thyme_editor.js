@@ -1,3 +1,13 @@
+import { AddItemButton } from "./components/add_item_button";
+import { AddReferenceButton } from "./components/add_reference_button";
+import { AddScreenshotButton } from "./components/add_screenshot_button";
+import { MuteButton } from "./components/mute_button";
+import { PlayButton } from "./components/play_button";
+import { SeekBar } from "./components/seek_bar";
+import { TimeButton } from "./components/time_button";
+import { VolumeBar } from "./components/volume_bar";
+import { setUpMaxTime } from "./utility";
+
 $(document).on("turbolinks:load", function () {
   /*
     VIDEO INITIALIZATION
@@ -42,5 +52,5 @@ $(document).on("turbolinks:load", function () {
   (new AddReferenceButton("add-reference")).add();
   (new AddScreenshotButton("add-screenshot", canvasId)).add();
 
-  thymeUtility.setUpMaxTime("max-time");
+  setUpMaxTime("max-time");
 });

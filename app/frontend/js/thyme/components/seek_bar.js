@@ -1,4 +1,5 @@
 import { Component } from "~/js/thyme/components/component";
+import { secondsToTime } from "../utility";
 
 export class SeekBar extends Component {
   constructor(element) {
@@ -38,7 +39,7 @@ export class SeekBar extends Component {
       + value
       + "%, #ffffff)";
       const currentTime = document.getElementById("current-time");
-      currentTime.innerHTML = thymeUtility.secondsToTime(video.currentTime);
+      currentTime.innerHTML = secondsToTime(video.currentTime);
     });
 
     // Pause the video when the seek handle is being dragged
