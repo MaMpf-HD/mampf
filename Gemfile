@@ -22,6 +22,7 @@ gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 3.2" # caching to memcached in production
 gem "devise", "~> 4.9"
+gem "devise-bootstrap-views", "~> 1.1"
 gem "erubis", "~> 2.7"
 gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"
 gem "faraday", "~> 1.8", "~> 1.10"
