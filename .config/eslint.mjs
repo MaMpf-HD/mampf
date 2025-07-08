@@ -96,6 +96,7 @@ export default [
         ...customGlobals,
         ...globals.browser,
         ...globals.jquery,
+        ...globals.node,
       },
     },
     linterOptions: {

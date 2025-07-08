@@ -1,10 +1,10 @@
 import inject from "@rollup/plugin-inject";
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
 import { coffee } from "vite-plugin-coffee3";
-import RubyPlugin from 'vite-plugin-ruby';
+import RubyPlugin from "vite-plugin-ruby";
 
 // also see config/vite.rb
-const gemPaths = JSON.parse(process.env.GEM_PATHS || '[]');
+const gemPaths = JSON.parse(process.env.GEM_PATHS || "[]");
 
 export default defineConfig({
   plugins: [
@@ -23,7 +23,7 @@ export default defineConfig({
   server: {
     fs: {
       allow: Object.values(gemPaths),
-    }
+    },
   },
 
   // TODO (keep track).
