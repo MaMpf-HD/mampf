@@ -150,8 +150,6 @@ describe("Submissions Joining", () => {
     });
 
     Timecop.moveAheadDays(2000).then(() => {
-      console.log("Assignment has title:", this.assignment.title);
-
       // 🐰 "Joiner" should not be able to join via an invite now
       // as the assignment is overdue (deadline is in the past).
       cy.login(this.joiner).then(() => {
