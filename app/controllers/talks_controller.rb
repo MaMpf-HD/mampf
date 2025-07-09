@@ -95,7 +95,7 @@ class TalksController < ApplicationController
          !@talk.display_description
         attributes.delete(:display_description)
       end
-      params.expect(talk: [attributes])
+      params.expect(talk: attributes)
     end
 
     def modify_params
