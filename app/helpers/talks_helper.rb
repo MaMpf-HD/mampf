@@ -18,7 +18,7 @@ module TalksHelper
   end
 
   def speaker_icon_class(talk)
-    return "bi bi-person-fill" unless talk.speakers.count > 1
+    return "bi bi-person-fill" unless talk.speakers.many?
 
     "bi bi-people-fill"
   end
