@@ -1,0 +1,7 @@
+$("#talk-modal-content").empty()
+  .append("<%= j render partial: 'talks/new',
+                        locals: { lecture: @lecture, talk: @talk } %>").show();
+fillOptionsByAjax($("#talk_speaker_ids"));
+previewTrixTalkContent("#talk-details-trix");
+$("#talkModal").modal("show");
+initBootstrapPopovers();
