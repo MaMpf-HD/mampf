@@ -17,7 +17,7 @@ describe("Submissions Joining", () => {
 
     FactoryBot.create("lecture", "released_for_all").as("lecture");
     cy.then(() => {
-      FactoryBot.create("tutorial", "with_tutors", { lecture_id: this.lecture.id }).as("tutorial");
+      FactoryBot.create("tutorial", "with_tutors", { lecture_id: this.lecture.id });
       FactoryBot.create("assignment", { lecture_id: this.lecture.id }).as("assignment");
     });
   });
@@ -104,7 +104,7 @@ describe("Submissions Joining", () => {
       // (since this user has previously handed in a submission together
       // with the inviter, see above)
       cy.login(this.joiner).then(() => {
-        cy.visit(`/lectures/${this.tutorial.lecture_id}/submissions`);
+        cy.visit(`/lectures/${this.lecture.id}/submissions`);
         cy.getBySelector("submission-join").click();
         cy.getBySelector("accept-invite-0").click();
         cy.getBySelector("submission-team").should("contain", this.inviter.name_in_tutorials);
@@ -155,7 +155,7 @@ describe("Submissions Joining", () => {
       // 🐰 "Joiner" should not be able to join via an invite now
       // as the assignment is overdue (deadline is in the past).
       cy.login(this.joiner).then(() => {
-        cy.visit(`/lectures/${this.tutorial.lecture_id}/submissions`);
+        cy.visit(`/lectures/${this.lecture.id}/submissions`);
         cy.contains(this.assignment.title).should("be.visible");
         cy.getBySelector("accept-invite-0").should("not.exist");
         cy.getBySelector("accept-invite-1").should("not.exist");
