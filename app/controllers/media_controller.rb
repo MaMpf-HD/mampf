@@ -719,7 +719,7 @@ class MediaController < ApplicationController
 
       @medium.teachable.tags << @tags_outside_lesson
       @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
-      return unless @medium.teachable.sections.count == 1
+      return unless @medium.teachable.sections.one?
 
       section = @medium.teachable.sections.first
       section.tags << @tags_without_section

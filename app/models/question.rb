@@ -127,7 +127,7 @@ class Question < Medium
     def prelim_answer_table
       table = []
       size = answer_ids.count
-      (0..(2**size) - 1).each do |i|
+      (0..((2**size) - 1)).each do |i|
         hash = {}
         i.to_bool_a(size).each_with_index.map { |x, j| hash[answer_ids[j]] = x }
         table.push(hash)

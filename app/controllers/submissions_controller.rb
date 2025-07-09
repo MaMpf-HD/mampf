@@ -131,7 +131,7 @@ class SubmissionsController < ApplicationController
   def leave
     return if @too_late
 
-    if @submission.users.count == 1
+    if @submission.users.one?
       @error = I18n.t("submission.no_partners_no_leave")
       return
     end
