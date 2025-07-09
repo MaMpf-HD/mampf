@@ -122,4 +122,44 @@ describe("Submissions Joining", () => {
       });
     });
   });
+
+  it("does not show invite when assignment is overdue", function () {
+    // 🎈 "Inviter" creates a submission & stores code
+    cy.login(this.inviter).then(() => {
+      subscribeToLecture(this.lecture.id);
+      createEmptySubmission(this.lecture.id);
+      cy.logout();
+    });
+
+    // 🐰 "Joiner" joins the submission using the code
+    cy.login(this.joiner).then(() => {
+      subscribeToLecture(this.lecture.id);
+      joinSubmissionViaToken(this.lecture.id, this.token);
+      cy.logout();
+    });
+
+    // New assignment
+    Timecop.moveAheadDays(1000).then(() => {
+      FactoryBot.create("assignment", { lecture_id: this.lecture.id }).as("assignment");
+
+      // 🎈 "Inviter" invites "Joiner" to a new submission
+      cy.login(this.inviter).then(() => {
+        createEmptySubmission(this.lecture.id);
+        cy.logout();
+      });
+    });
+
+    Timecop.moveAheadDays(2000).then(() => {
+      console.log("Assignment has title:", this.assignment.title);
+
+      // 🐰 "Joiner" should not be able to join via an invite now
+      // as the assignment is overdue (deadline is in the past).
+      cy.login(this.joiner).then(() => {
+        cy.visit(`/lectures/${this.tutorial.lecture_id}/submissions`);
+        cy.contains(this.assignment.title).should("be.visible");
+        cy.getBySelector("accept-invite-0").should("not.exist");
+        cy.getBySelector("accept-invite-1").should("not.exist");
+      });
+    });
+  });
 });
