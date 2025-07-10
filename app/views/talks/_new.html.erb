@@ -1,4 +1,5 @@
 <%= form_with model: talk, html: { data: { cy: 'talk-form' } } do |f| %>
+
   <div class="row">
     <div class="col-12 mb-3">
       <%= f.label :title, t('basics.title'),
@@ -11,6 +12,8 @@
            id="new-talk-title-error">
       </div>
     </div>
+
+    <!-- 📅 Dates -->
     <div class="col-12">
       <%= f.label :date, t('basics.date') %>
       <a class="fas fa-plus-circle clickable text-dark"
@@ -21,7 +24,6 @@
       </a>
     </div>
 
-    <!-- 📅 Dates -->
     <div class="col-12" id="talk-dates">
       <%= f.fields_for :dates, index: 0 do |date_form| %>
         <div>
