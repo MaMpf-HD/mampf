@@ -60,20 +60,18 @@ module I18nVerify
     end
 
     def duplicates
-      any = false
+      any_duplicates_found = false
       @filenames.each do |filename|
         next if filename.include?("gem")
 
-        puts "Checking #{filename} for duplicate keys..."
+        duplicates = YamlDuplicateKeyDetector.duplicates_in_file(filename)
+        next if duplicates.empty?
 
-        dups = YamlDuplicateKeyDetector.duplicates_in_file(filename)
-        next if dups.empty?
-
-        any = true
-        puts "Duplicate keys in #{filename}:"
-        dups.each { |key| puts "  #{key}" }
+        any_duplicates_found = true
+        puts "\n▶ Duplicate keys in #{filename}:"
+        duplicates.each { |key| puts "  #{key}" }
       end
-      puts "No duplicate keys found." unless any
+      puts "No duplicate keys found." unless any_duplicates_found
     end
   end
 end
