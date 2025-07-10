@@ -49,13 +49,23 @@ window.previewTrixTalkContent = function (trixElement) {
   });
 };
 
-function constructDatePickerElement(index) {
-  return `<div class="mt-2" id="talk_dates_${index}">
-            <input type="date" name="talk[dates[${index}]]">
-            <a class="fas fa-trash-alt clickable text-dark ms-2 remove-talk-date"
-               data-index="${index}">
-            </a>
-          </div>`;
+function handleDateSelection() {
+  // Adding
+  $(document).on("click", "#new-talk-date-button", function () {
+    const newIndex = $(this).data("index");
+    $(this).data("index", newIndex + 1); // next index if clicked again
+
+    const template = $("#talk-date-template");
+    const newDateHtml = template.html().replace(/NEW_RECORD/g, newIndex);
+    $("#talk-dates").append(newDateHtml);
+
+    $("#talk-basics-warning").show();
+  });
+
+  // Removing
+  $(document).on("click", ".remove-talk-date", function (evt) {
+    $(evt.target).closest("div").remove();
+  });
 }
 
 $(document).on("turbolinks:load", function () {
@@ -74,12 +84,7 @@ $(document).on("turbolinks:load", function () {
   previewTrixTalkContent("#talk-details-trix");
   previewTrixTalkContent("#talk-description-trix");
 
-  $(document).on("click", "#new-talk-date-button", function () {
-    const index = $(this).data("index");
-    $("#talk-date-picker").append(constructDatePickerElement(index));
-    $(this).data("index", index + 1);
-    $("#talk-basics-warning").show();
-  });
+  handleDateSelection();
 
   $(document).on("click", ".remove-talk-date", function () {
     const index = $(this).data("index");

@@ -16,19 +16,37 @@
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-talk-date-button"
          data-bs-toggle="tooltip"
-         data-count="1"
+         data-index="1"
          title="<%= t('admin.tag.create') %>">
       </a>
     </div>
-    <div class="col-12" id="talk-date-picker">
-      <div id="talk_dates_0">
-        <input type="date" name="talk[dates[0]]">
-      </div>
+
+    <!-- 📅 Dates -->
+    <div class="col-12" id="talk-dates">
+      <%= f.fields_for :dates, index: 0 do |date_form| %>
+        <div>
+          <%= date_form.date_field :date, required: true %>
+        </div>
+      <% end %>
+
+      <!-- later with Stimulus: -->
+      <!-- https://jonathanyeong.com/rails-stimulus-dynamic-nested-form/ -->
+      <template id="talk-date-template">
+        <%= f.fields_for :dates, index: "NEW_RECORD" do |date_form| %>
+          <div class="d-flex align-items-center mt-2">
+            <%= date_form.date_field :date, required: true %>
+            <button class="btn btn-outline-danger ms-2 remove-talk-date" type="button">
+              <i class="bi bi-trash3-fill"></i>
+            </button>
+          </div>
+        <% end %>
+      </template>
     </div>
+    
     <div class="col-12 mb-3">
-      <div class="invalid-feedback" id="talk-date-error">
-      </div>
+      <div class="invalid-feedback" id="talk-date-error"></div>
     </div>
+
     <div class="col-12 mb-3" data-cy="speaker-select-div">
       <%= speaker_select(f, talk, with_preselection=false) %>
     </div>
