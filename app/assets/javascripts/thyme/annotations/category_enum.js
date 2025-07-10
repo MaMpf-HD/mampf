@@ -9,7 +9,7 @@ class CategoryEnum {
    * This method will only work if the given thyme player
    * has a div-tag with the id "annotation-locales" which
    * includes the name of the categories as data sets, e.g.
-   * data-note="<%= t(...) %>".
+   * data-note="< Rails code to get translation >".
    */
   locale() {
     return document.getElementById("annotation-locales").dataset[this.name];
