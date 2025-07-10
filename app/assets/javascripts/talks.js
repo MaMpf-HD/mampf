@@ -85,12 +85,6 @@ $(document).on("turbolinks:load", function () {
   previewTrixTalkContent("#talk-description-trix");
 
   handleDateSelection();
-
-  $(document).on("click", ".remove-talk-date", function () {
-    const index = $(this).data("index");
-    $("#talk_dates_" + index).remove();
-    $("#talk-basics-warning").show();
-  });
 });
 
 $(document).on("turbolinks:before-cache", function () {
