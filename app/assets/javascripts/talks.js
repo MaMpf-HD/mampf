@@ -65,6 +65,7 @@ function handleDateSelection() {
   // Removing
   $(document).on("click", ".remove-talk-date", function (evt) {
     $(evt.target).closest("div").remove();
+    $("#talk-basics-warning").show();
   });
 }
 

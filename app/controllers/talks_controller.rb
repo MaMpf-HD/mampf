@@ -29,7 +29,7 @@ class TalksController < ApplicationController
     authorize! :create, @talk
 
     dates = parse_talk_dates(params[:talk][:dates])
-    @talk.dates = dates if dates.any?
+    @talk.dates = dates
 
     I18n.locale = @talk&.lecture&.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
@@ -50,7 +50,7 @@ class TalksController < ApplicationController
     @talk.update(talk_params)
     if @talk.valid?
       dates = parse_talk_dates(params[:talk][:dates])
-      @talk.update(dates: dates) if dates.any?
+      @talk.update(dates: dates)
 
       predecessor = params[:talk][:predecessor]
       # place the chapter in the correct position
@@ -115,7 +115,5 @@ class TalksController < ApplicationController
       return [] unless dates_param
 
       dates_param.values.filter_map { |d| d[:date] }.compact_blank
-    rescue StandardError
-      []
     end
 end
