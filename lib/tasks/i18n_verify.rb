@@ -1,81 +1,79 @@
-# Adapted from the i18n-verify gem
-# https://github.com/fastcatch/i18n-verify/
-
 # rubocop:disable Rails/Output
 
+require "yaml"
+
 module I18nVerify
-  class Translations < Array
-    def initialize(filenames) # rubocop:disable Lint/MissingSuper
-      # Reads files and stores translations (similar to i18n's internals but include filenames)
-      filenames.each do |filename|
-        # puts "Loading: #{filename}"
-        type = File.extname(filename).tr(".", "").downcase.to_sym
+  # Helper to detect duplicate keys in a YAML file
+  module YamlDuplicateKeyDetector
+    class DuplicateKeyHandler < Psych::Handler
+      def initialize
+        super
+        @stack = []
+        @duplicates = []
+        @expecting_value = false
+      end
+      attr_reader :duplicates
 
-        next if type == :rb
-        raise(I18n::UnknownFileType.new(type, filename)) unless type == :yml
+      def start_mapping(*)
+        @stack.push(Set.new)
+      end
 
-        data = YAML.unsafe_load_file(filename)
+      def end_mapping(*)
+        @stack.pop
+      end
 
-        raise(I18n::InvalidLocaleData, filename) unless data.is_a?(Hash)
+      def scalar(value, *)
+        return unless @stack.any? && !@expecting_value
 
-        data.each_pair do |locale, d|
-          flatten_keys(d || {}) do |flat_key, translation|
-            push({ filename: filename, locale: locale.to_s,
-                   key: flat_key, translation: translation })
-          end
+        if @stack.last.include?(value)
+          @duplicates << value
+        else
+          @stack.last << value
         end
+      end
+
+      def mapping_key(*)
+        @expecting_value = false
+      end
+
+      def mapping_value(*)
+        @expecting_value = true
       end
     end
 
-    def select(*args, &)
-      if block_given?
-        super(&)
-      else
-        options = args.extract_options!
-        super { |h| options.all? { |key, value| h[key] == value } }
+    def self.duplicates_in_file(filename)
+      handler = DuplicateKeyHandler.new
+      File.open(filename, "r") do |f|
+        parser = Psych::Parser.new(handler)
+        parser.parse(f)
       end
+      handler.duplicates.uniq
+    rescue StandardError => e
+      warn("YAML parse error in #{filename}: #{e}")
+      []
     end
-
-    protected
-
-      # Converts translations hash to flat keys
-      # i.e. from { :de => {:new => neue, :old => alt} }
-      # to [ ['de.new', 'neue'], ['de.old', 'alte'] ]
-      # and yields a flat key and the value to the block
-      def flatten_keys(hash, prev_key = nil, &block)
-        hash.each_pair do |key, value|
-          curr_key = [prev_key, key].compact.join(".")
-          if value.is_a?(Hash)
-            flatten_keys(value, curr_key, &block)
-          else
-            yield(curr_key, value)
-          end
-        end
-      end
   end
 
   class Checker
     def initialize(filenames)
-      @translations = Translations.new(filenames)
+      @filenames = filenames
     end
 
-    def duplicates(locales_requested = [])
-      locales = @translations.pluck(:locale).uniq
-      locales_to_check = locales_requested.empty? ? locales : (locales & locales_requested)
+    def duplicates
+      any = false
+      @filenames.each do |filename|
+        next if filename.include?("gem")
 
-      puts "Checking locales #{locales_to_check.inspect} out of #{locales.inspect} for redundancy"
+        puts "Checking #{filename} for duplicate keys..."
 
-      # Collect and print duplicate translations
-      locales_to_check.each do |locale|
-        puts "#{locale}:"
-        translations_by_key = @translations.select do |t|
-          t[:locale] == locale
-        end
-        translations_by_key = translations_by_key.uniq.group_by { |t| t[:key] }
-        translations_by_key.reject { |_key, value| value.one? }.each_pair do |key, translations|
-          puts " #{key}: #{translations.collect { |t| t[:filename] }.join(", ")}"
-        end
+        dups = YamlDuplicateKeyDetector.duplicates_in_file(filename)
+        next if dups.empty?
+
+        any = true
+        puts "Duplicate keys in #{filename}:"
+        dups.each { |key| puts "  #{key}" }
       end
+      puts "No duplicate keys found." unless any
     end
   end
 end
