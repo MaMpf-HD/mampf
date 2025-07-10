@@ -26,11 +26,9 @@
 
     <div class="col-12" id="talk-dates">
       <%= f.fields_for :dates, index: 0 do |date_form| %>
-        <div>
-          <%= date_form.date_field :date, required: true %>
-        </div>
+        <%= render partial: "date_field", locals: { date_form: date_form, date: nil } %>
       <% end %>
-      <%= render partial: "new_date_template", locals: { f: f } %>
+      <%= render partial: "date_field_template", locals: { f: f } %>
     </div>
     
     <div class="col-12 mb-3">
