@@ -39,19 +39,7 @@
             </div>
           <% end %>
         <% end %>
-  
-        <!-- later with Stimulus: -->
-        <!-- https://jonathanyeong.com/rails-stimulus-dynamic-nested-form/ -->
-        <template id="talk-date-template">
-          <%= f.fields_for :dates, index: "NEW_RECORD" do |date_form| %>
-            <div class="d-flex align-items-center mt-2">
-              <%= date_form.date_field :date, required: true %>
-              <button class="btn btn-outline-danger ms-2 remove-talk-date" type="button">
-                <i class="bi bi-trash3-fill"></i>
-              </button>
-            </div>
-          <% end %>
-        </template>
+        <%= render partial: "new_date_template", locals: { f: f } %>
       </div>
 
       <div class="col-12 mb-3">
