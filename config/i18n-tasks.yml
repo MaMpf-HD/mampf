@@ -51,8 +51,8 @@ search:
   #   - 'I18n::Tasks::Scanners::AstMatchers::DefaultI18nSubjectMatcher'
 
 ## Do not consider these keys missing:
-# ignore_missing:
-  # - 'activerecord.errors.*'
+ignore_missing:
+  - "layouts.devise_mailer.reason"
 
 ## Consider these keys used:
 ignore_unused:

@@ -50,6 +50,12 @@ en:
           you, please ignore this email.
       unlock_instructions:
         subject: "Unlock instructions"
+        greeting: "Hello %{recipient}"
+        message: >
+          Your account has been locked due to an excessive amount of
+          unsuccessful sign in attempts.
+        instruction: "Click the link below to unlock your account."
+        action: "Unlock my account"
       email_changed:
         subject: "Email changed"
       password_change:
@@ -110,10 +116,13 @@ en:
         sign_up: "Sign up"
         forgot_password: "Forgot your password?"
         didn_t_receive_confirmation_instructions: Didn't receive confirmation email?
+        didn_t_receive_unlock_instructions: Didn't receive unlock instructions?
     unlocks:
       send_instructions: "You will receive an email with instructions for how to unlock your account in a few minutes."
       send_paranoid_instructions: "If your account exists, you will receive an email with instructions for how to unlock it in a few minutes."
       unlocked: "Your account has been unlocked successfully. Please sign in to continue."
+      new:
+        resend_unlock_instructions: "Resend unlock instructions"
     edit:
       title: "Change login data"
       email: "Email address"

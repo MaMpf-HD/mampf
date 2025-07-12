@@ -46,6 +46,13 @@ de:
           wurde. Falls Du dies nicht getan hast, ignoriere diese Email bitte.
       unlock_instructions:
         subject: "Anleitung um Deinen Account freizuschalten"
+        greeting: "Hallo %{recipient}"
+        message: >
+          Dein Account wurde aufgrund zu vieler fehlgeschlagener Anmeldeversuche
+          gesperrt.
+        instruction: >
+          Klicke auf den untenstehenden Link, um Deinen Account zu entsperren.
+        action: "Account entsperren"
       email_changed:
         subject: "E-Mail geändert"
       password_change:
@@ -106,10 +113,13 @@ de:
         sign_up: 'Registrieren'
         forgot_password: 'Passwort vergessen?'
         didn_t_receive_confirmation_instructions: 'Bestätigungsmail nicht erhalten?'
+        didn_t_receive_unlock_instructions: 'Anleitung zum Entsperren nicht erhalten?'
     unlocks:
       send_instructions: "Du erhältst in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren können."
       send_paranoid_instructions: "Falls Deine E-Mail-Adresse in unserer Datenbank existiert erhältst Du in wenigen Minuten eine E-Mail mit der Anleitung, wie Du Deinen Account entsperren kannst."
       unlocked: "Dein Account wurde entsperrt. Du bist jetzt angemeldet."
+      new:
+        resend_unlock_instructions: "Anleitung zum Entsperren erneut senden"
     edit:
       title: "Zugangsdaten ändern"
       email: "Emailaddresse"

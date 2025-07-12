@@ -9,7 +9,7 @@
                        url: confirmation_path(resource_name),
                        html: { method: :post, role: 'form' }) do |f| %>
   <div class="mb-3">
-    <%= f.label :email, t('.email'),
+    <%= f.label :email, t('basics.email'),
                 class: "form-label" %>
     <%= f.email_field :email, autofocus: true, class: "form-control"  %>
   </div>
