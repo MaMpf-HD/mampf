@@ -8,7 +8,7 @@ class SubmissionInvite
   # created it, or an empty array if no submissions are found.
   def invites_for(assignment)
     return [] unless @user && assignment
-    return [] unless assignment.active?
+    return [] unless assignment.semiactive?
 
     submissions = Submission.where(assignment: assignment)
                             .where("? = ANY(invited_user_ids)", @user.id)
