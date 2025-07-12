@@ -123,7 +123,7 @@ describe("Submissions Joining", () => {
     });
   });
 
-  it("does not show invite when assignment is overdue", function () {
+  it("does not show invite when assignment is overdue (also check grace period)", function () {
     // 🎈 "Inviter" creates a submission & stores code
     cy.login(this.inviter).then(() => {
       subscribeToLecture(this.lecture.id);
@@ -139,7 +139,7 @@ describe("Submissions Joining", () => {
     });
 
     // New assignment
-    Timecop.moveAheadDays(1000).then(() => {
+    Timecop.moveAheadDays(100).then(() => {
       FactoryBot.create("assignment", { lecture_id: this.lecture.id }).as("assignment");
 
       // 🎈 "Inviter" invites "Joiner" to a new submission
@@ -149,14 +149,41 @@ describe("Submissions Joining", () => {
       });
     });
 
-    Timecop.moveAheadDays(2000).then(() => {
-      // 🐰 "Joiner" should not be able to join via an invite now
-      // as the assignment is overdue (deadline is in the past).
-      cy.login(this.joiner).then(() => {
-        cy.visit(`/lectures/${this.lecture.id}/submissions`);
-        cy.contains(this.assignment.title).should("be.visible");
-        cy.getBySelector("accept-invite-0").should("not.exist");
-        cy.getBySelector("accept-invite-1").should("not.exist");
+    // During grace period
+    cy.then(() => {
+      const deadline = this.assignment.deadline;
+      console.log(`Assignment deadline is ${deadline}`);
+      const gracePeriodMinutes = this.lecture.submission_grace_period;
+      const duringGracePeriodMinutes = Math.floor(Math.random() * (gracePeriodMinutes - 1)) + 1;
+      const travelDate = new Date(deadline);
+      travelDate.setMinutes(travelDate.getMinutes() + duringGracePeriodMinutes);
+      console.log(`Traveling to ${travelDate.toISOString()} (grace period)`);
+      Timecop.travelToDate(travelDate, true).then(() => {
+        // 🐰 "Joiner" should still see the invite button, even if the assignment
+        // is overdue, if we are still in the "grace period".
+        cy.login(this.joiner).then(() => {
+          cy.visit(`/lectures/${this.lecture.id}/submissions`);
+          cy.contains(this.assignment.title).should("be.visible");
+          cy.getBySelector("accept-invite-0").should("be.visible");
+        });
+      });
+
+      // After grace period
+      cy.then(() => {
+        const newTravelDate = new Date(deadline);
+        newTravelDate.setMinutes(newTravelDate.getMinutes() + gracePeriodMinutes + 1);
+        console.log(`Traveling to ${newTravelDate.toISOString()} (after grace period)`);
+        Timecop.travelToDate(newTravelDate, true).then(() => {
+          // 🐰 "Joiner" should not be able to join via an invite now
+          // as the assignment is overdue (deadline is in the past and "grace period"
+          // is over).
+          cy.login(this.joiner).then(() => {
+            cy.visit(`/lectures/${this.lecture.id}/submissions`);
+            cy.contains(this.assignment.title).should("be.visible");
+            cy.getBySelector("accept-invite-0").should("not.exist");
+            cy.getBySelector("accept-invite-1").should("not.exist");
+          });
+        });
       });
     });
   });

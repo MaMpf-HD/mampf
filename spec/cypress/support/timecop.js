@@ -39,7 +39,8 @@ class Timecop {
   }
 
   /**
-   * Moves the time ahead by the given number of days.
+   * Moves the time ahead by the given number of days starting from the
+   * current time (that is never shifted).
    */
   moveAheadDays(days) {
     const now = new Date();
@@ -52,7 +53,7 @@ class Timecop {
   }
 
   /**
-   * Resets the time in the backend to the current time.
+   * Resets the time in the backend to the current time (that is never shifted).
    */
   reset() {
     return BackendCaller.callCypressRoute("timecop/reset", "Timecop.reset()");
