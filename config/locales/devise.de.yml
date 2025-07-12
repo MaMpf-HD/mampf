@@ -16,6 +16,7 @@ de:
       invalid: "Ungültige Anmeldedaten."
       invalid_token: "Der Anmelde-Token ist ungültig."
       locked: "Dein Account ist gesperrt."
+      last_attempt: "Du hast noch einen Versuch, bevor Dein Account gesperrt wird."
       not_found_in_database: "E-Mail-Adresse oder Passwort ungültig."
       timeout: "Deine Sitzung ist abgelaufen, bitte melde Dich erneut an."
       unauthenticated: "Du musst Dich anmelden oder registrieren, bevor Du fortfahren kannst."
@@ -45,6 +46,10 @@ de:
           wurde. Falls Du dies nicht getan hast, ignoriere diese Email bitte.
       unlock_instructions:
         subject: "Anleitung um Deinen Account freizuschalten"
+      email_changed:
+        subject: "E-Mail geändert"
+      password_change:
+        subject: "Passwort geändert"
     omniauth_callbacks:
       failure: "Du konntest nicht Deinem %{kind}-Account angemeldet werden, weil '%{reason}'."
       success: "Du hast Dich erfolgreich mit Deinem %{kind}-Account angemeldet."
@@ -72,6 +77,7 @@ de:
       signed_up_but_unconfirmed: "Du hast Dich erfolgreich registriert. Wir konnten Dich noch nicht anmelden, da Dein Account noch nicht bestätigt ist. Du erhältst in Kürze eine E-Mail mit der Anleitung, wie Du Deinen Account freischalten kannst. Falls die Mail in Deinem Mailordner nicht angezeigt wird, schau bitte nach, ob Dein Mailprovider sie in den Spamordner einsortiert hat."
       update_needs_confirmation: "Deine Daten wurden aktualisiert, aber Du musst Deine neue E-Mail-Adresse bestätigen. Du erhältst in wenigen Minuten eine E-Mail, mit der Du die Änderung Deiner E-Mail-Adresse abschließen kannst."
       updated: "Deine Daten wurden aktualisiert."
+      updated_but_not_signed_in: "Dein Account wurde erfolgreich aktualisiert, aber da Dein Passwort geändert wurde, musst Du Dich erneut anmelden."
       new:
         sign_up: 'Registrieren'
         email: 'Email'
