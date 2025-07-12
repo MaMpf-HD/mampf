@@ -4,6 +4,7 @@ en:
   devise:
     confirmations:
       confirmed: "Your email address has been successfully confirmed. Please take aminute to complete your profile."
+      confirmed_and_signed_in: "Thank you for registering. You are now signed in."
       send_instructions: "You will receive an email with instructions for how to confirm your email address in a few minutes."
       send_paranoid_instructions: "If your email address exists in our database, you will receive an email with instructions for how to confirm your email address in a few minutes."
       new:
@@ -13,6 +14,7 @@ en:
       already_authenticated: "You are already signed in."
       inactive: "Your account is not activated yet."
       invalid: "Invalid %{authentication_keys} or password."
+      invalid_token: "The sign-in token is invalid."
       locked: "Your account is locked."
       last_attempt: "You have one more attempt before your account is locked."
       not_found_in_database: "Invalid %{authentication_keys} or password."
@@ -96,6 +98,7 @@ en:
       signed_in: "Signed in successfully."
       signed_out: "Signed out successfully."
       already_signed_out: "Signed out successfully."
+      remember_me: "Remember me (a cookie will be used for that)"
       new:
         email: "Email"
         password: "Password"

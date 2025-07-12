@@ -2340,6 +2340,7 @@ en:
     creation_success: 'Watchlist was successfully created'
     creation_fail: 'Watchlist could not be created'
     change: 'Change'
+    save_change: 'Save changes'
     change_success: 'Watchlist was changed'
     new: 'New'
     delete: 'Delete'
@@ -3117,6 +3118,7 @@ en:
       You can decide whether you accept it or reject it.
     own_tutorials: >
       Own Tutorials
+    other_tutorials: 'Other Tutorials'
     deadline_warning: >
       The deadline for submission is still %{deadline}. Only after the deadline
       corrections can be uploaded.
@@ -3877,6 +3879,7 @@ en:
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
     no_announcement: There is no announcement with this id.
+    no_watchlist: 'Watchlist does not exist or is private.'
     created_lecture_success: >
       The lecture %{lecture} has been successfully created.
     created_course_success: >

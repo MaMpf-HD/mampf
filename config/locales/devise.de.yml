@@ -93,6 +93,7 @@ de:
     sessions:
       signed_in: "Du hast Dich erfolgreich angemeldet."
       signed_out: "Du hast Dich erfolgreich abgemeldet."
+      already_signed_out: "Du hast Dich erfolgreich abgemeldet."
       remember_me: "Erinnere Dich an mich (hierzu wird ein Cookie gesetzt)"
       new:
         email: 'Email'
