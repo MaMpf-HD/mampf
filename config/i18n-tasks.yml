@@ -8,6 +8,7 @@ locales: [de, en]
 # Read and write translations.
 data:
   read:
+    - config/locales/**/%{locale}.yml
     - config/locales/**/*.%{locale}.yml
 
 # Find translate calls
