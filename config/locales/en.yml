@@ -2305,8 +2305,9 @@ en:
     empty: 'This watchlist is empty'
     none_added: 'You have not added any media to this watchlist yet.'
     create: 'Create'
-    creation_confirm: 'The textfield for creating a watchlist is not empty.
-                       Are you sure you want to add the medium to the watchlist "%{watchlist}"?'
+    creation_confirm: >
+      The textfield for creating a watchlist is not empty.
+      Are you sure you want to add the medium to the watchlist "%{watchlist}"?
     creation_success: 'Watchlist was successfully created'
     creation_fail: 'Watchlist could not be created'
     change: 'Change'
@@ -2953,7 +2954,7 @@ en:
     move_to_tutorial: move to tutorial
     manuscript_no_pdf: The uploaded file is not a valid pdf file.
     manuscript_size_too_big: >
-      The uploaded file is too big (maximum allowed size is 10 MB).
+      The uploaded file is too big (maximum allowed size is %{max_size}).
     wrong_file_type: >
       This file has the wrong file type %{file_type}.Expected file type:
       %{accepted_file_type}.
@@ -3992,7 +3993,7 @@ en:
           attributes:
             title:
               taken:  >
-                This title is already taken in the chosen language.
+                The title %{value} is already taken in the chosen language.
               blank: 'The title cannot be blank.'
             tag:
               no_tag: 'A related tag has to be given.'

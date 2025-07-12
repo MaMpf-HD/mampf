@@ -2479,6 +2479,7 @@ de:
     creation_confirm: >
       Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
       Bist Du sicher, dass Du das Medium zu folgender Watchlist hinzufügen willst:
+      "%{watchlist}"?
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
@@ -3067,7 +3068,7 @@ de:
     no_comments: Es liegen keine neuen Kommentare vor.
     media_comments: >
       Anzahl der Medien in von den von Dir abonnierten
-      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
+      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
     invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
     accept_invitation: Einladung annehmen

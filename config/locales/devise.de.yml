@@ -13,7 +13,7 @@ de:
     failure:
       already_authenticated: "Du bist bereits angemeldet."
       inactive: "Dein Account ist nicht aktiv."
-      invalid: "Ungültige Anmeldedaten."
+      invalid: "E-Mail-Adresse oder Passwort ungültig."
       invalid_token: "Der Anmelde-Token ist ungültig."
       locked: "Dein Account ist gesperrt."
       last_attempt: "Du hast noch einen Versuch, bevor Dein Account gesperrt wird."
