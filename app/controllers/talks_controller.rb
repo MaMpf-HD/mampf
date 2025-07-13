@@ -27,8 +27,10 @@ class TalksController < ApplicationController
   def create
     @talk = Talk.new(talk_params)
     authorize! :create, @talk
-    dates = params[:talk][:dates].values.compact - [""]
-    @talk.dates = dates if dates
+
+    dates = parse_talk_dates(params[:talk][:dates])
+    @talk.dates = dates
+
     I18n.locale = @talk&.lecture&.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
     position = params[:talk][:predecessor]
@@ -45,10 +47,11 @@ class TalksController < ApplicationController
   def update
     I18n.locale = @talk.lecture.locale_with_inheritance ||
                   current_user.locale || I18n.default_locale
-    dates = params[:talk][:dates]&.values&.compact.to_a - [""]
     @talk.update(talk_params)
-    @talk.update(dates: dates) if dates && @talk.valid?
     if @talk.valid?
+      dates = parse_talk_dates(params[:talk][:dates])
+      @talk.update(dates: dates)
+
       predecessor = params[:talk][:predecessor]
       # place the chapter in the correct position
       if predecessor.present?
@@ -95,7 +98,7 @@ class TalksController < ApplicationController
          !@talk.display_description
         attributes.delete(:display_description)
       end
-      params.expect(talk: [attributes])
+      params.expect(talk: attributes)
     end
 
     def modify_params
@@ -106,5 +109,11 @@ class TalksController < ApplicationController
     def set_view_locale
       I18n.locale = @talk.lecture.locale_with_inheritance ||
                     current_user.locale || I18n.default_locale
+    end
+
+    def parse_talk_dates(dates_param)
+      return [] unless dates_param
+
+      dates_param.values.filter_map { |d| d[:date] }.compact_blank
     end
 end
