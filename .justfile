@@ -21,6 +21,9 @@ mod utils ".config/commands/utils.justfile"
 # Commands to interact with the production server
 mod prod ".config/commands/prod.justfile"
 
+# Commands for internationalization (i18n)
+mod i18n ".config/commands/i18n.justfile"
+
 # Opens the MaMpf wiki in the default browser
 wiki:
     #!/usr/bin/env bash
