@@ -53,7 +53,14 @@ RUN yarn set version "${YARN_VERSION}"
 RUN apt update && \
     apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools postgresql-client-17 wget wait-for-it graphviz libvips42
+        libarchive-tools lsb-release wget wait-for-it graphviz libvips42
+
+# Install PostgreSQL client 17
+RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" \
+    > /etc/apt/sources.list.d/pgdg.list' && \
+    wget -qO - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - && \
+    apt update && \
+    apt-get install -y postgresql-client-17
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
