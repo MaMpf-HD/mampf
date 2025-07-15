@@ -61,7 +61,7 @@ RUN mkdir -p /usr/share/postgresql-common/pgdg \
     && . /etc/os-release \
     && sh -c "echo 'deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main' > /etc/apt/sources.list.d/pgdg.list" \
     && apt-get update \
-    && apt-get install -y postgresql-client-17 \
+    && apt-get install -y postgresql-client-17
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
