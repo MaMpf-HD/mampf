@@ -14,8 +14,6 @@ Rails.application.config.assets.paths << Rails.root.join("node_modules")
 # folder are already added.
 Rails.application.config.assets.precompile += ["thredded_katex.scss"]
 Rails.application.config.assets.precompile += ["thredded_timeago.js"]
-Rails.application.config.assets.precompile += ["show_clicker_assets.js"]
-Rails.application.config.assets.precompile += ["edit_clicker_assets.js"]
 
 # fix concurrency issue that leads to occasional seg fault
 # See https://github.com/sass/sassc-ruby/issues/207
