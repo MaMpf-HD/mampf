@@ -17,7 +17,6 @@ import globals from "globals";
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/javascripts/application.js",
   "app/assets/config/manifest.js",
-  "app/assets/javascripts/geogebra_assets.js",
   "vendor/assets/javascripts/thredded_timeago.js",
 ];
 
