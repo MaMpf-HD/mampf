@@ -1,11 +1,11 @@
 {
   "name": "mampf",
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "@rails/actiontext": "^8.0.0",
     "friendly-challenge": "^0.9.1",
     "jquery": "^3.7.1",
-    "sass-loader": "^10.1.1",
     "trix": "^2.1.8"
   },
   "devDependencies": {
