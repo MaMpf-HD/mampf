@@ -30,20 +30,23 @@ import "~/js/thyme/attributes";
 
 // TODO: use vite_javascript_tag at the respective files instead of importing
 // everything here. This is just a temporary solution during the Vite migration.
+import "~/js/copy_and_paste_button";
+import "~/js/lectures";
+import "~/js/mampf_routes";
+import "~/js/search_tags";
+import "~/js/talks";
+
 import "~/js/administration.coffee";
 import "~/js/announcements.coffee";
 import "~/js/answers.coffee";
 import "~/js/chapters.coffee";
 import "~/js/clickers.coffee";
-import "~/js/copy_and_paste_button";
 import "~/js/courses.coffee";
 import "~/js/erdbeere.coffee";
 import "~/js/file_upload.coffee";
 import "~/js/items.coffee";
 import "~/js/katex.coffee";
-import "~/js/lectures";
 import "~/js/lessons.coffee";
-import "~/js/mampf_routes";
 import "~/js/media.coffee";
 import "~/js/notifications.coffee";
 import "~/js/questions.coffee";
@@ -51,11 +54,9 @@ import "~/js/quizzes.coffee";
 import "~/js/referrals.coffee";
 import "~/js/registration.coffee";
 import "~/js/remarks.coffee";
-import "~/js/search_tags";
 import "~/js/sections.coffee";
 import "~/js/submissions.coffee";
 import "~/js/tags.coffee";
-import "~/js/talks.coffee";
 import "~/js/terms.coffee";
 import "~/js/tex_preview.coffee";
 import "~/js/tutorials.coffee";
