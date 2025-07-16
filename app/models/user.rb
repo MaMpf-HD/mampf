@@ -857,7 +857,7 @@ class User < ApplicationRecord
     end
 
     def destroy_single_submissions
-      Submission.where(id: submissions.select { |s| s.users.count == 1 }
+      Submission.where(id: submissions.select { |s| s.users.one? }
                                       .map(&:id)).destroy_all
     end
 
@@ -868,7 +868,7 @@ class User < ApplicationRecord
       return if edited_media.where.not(teachable_type: "Talk").any?
 
       # Only delete media where the user is the sole editor.
-      sole_editor_media = edited_media.select { |m| m.editors.count == 1 }
+      sole_editor_media = edited_media.select { |m| m.editors.one? }
       Medium.where(id: sole_editor_media.pluck(:id)).destroy_all
     end
 

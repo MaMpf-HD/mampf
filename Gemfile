@@ -91,6 +91,7 @@ end
 group :development, :test do
   gem "debug", "~> 1.8"
   gem "factory_bot_rails", "~> 6.4"
+  gem "i18n-tasks", "~> 1.0.15"
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"
   gem "simplecov-cobertura", "~> 2.1"

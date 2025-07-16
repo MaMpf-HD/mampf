@@ -53,6 +53,9 @@ const customGlobals = {
   renderMathInElement: "readable",
 
   Sortable: "readable",
+
+  fillOptionsByAjax: "readable",
+  previewTrixTalkContent: "readable",
 };
 
 export default [

@@ -368,7 +368,7 @@ class Tag < ApplicationRecord
     I18n.available_locales.each do |l|
       result[l] = [locale_title_hash[l.to_s]] + [tag.locale_title_hash[l.to_s]]
       result[l].delete(nil)
-      result[:contradictions].push(l) if result[l].count > 1
+      result[:contradictions].push(l) if result[l].many?
       result.delete(l) if result[l].blank?
     end
     result

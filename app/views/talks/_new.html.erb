@@ -1,4 +1,5 @@
 <%= form_with model: talk, html: { data: { cy: 'talk-form' } } do |f| %>
+
   <div class="row">
     <div class="col-12 mb-3">
       <%= f.label :title, t('basics.title'),
@@ -11,24 +12,29 @@
            id="new-talk-title-error">
       </div>
     </div>
+
+    <!-- 📅 Dates -->
     <div class="col-12">
       <%= f.label :date, t('basics.date') %>
       <a class="fas fa-plus-circle clickable text-dark"
          id="new-talk-date-button"
          data-bs-toggle="tooltip"
-         data-count="1"
+         data-index="1"
          title="<%= t('admin.tag.create') %>">
       </a>
     </div>
-    <div class="col-12" id="talk-date-picker">
-      <div id="talk_dates_0">
-        <input type="date" name="talk[dates[0]]">
-      </div>
+
+    <div class="col-12" id="talk-dates">
+      <%= f.fields_for :dates, index: 0 do |date_form| %>
+        <%= render partial: "date_field", locals: { date_form: date_form, date: nil } %>
+      <% end %>
+      <%= render partial: "date_field_template", locals: { f: f } %>
     </div>
+    
     <div class="col-12 mb-3">
-      <div class="invalid-feedback" id="talk-date-error">
-      </div>
+      <div class="invalid-feedback" id="talk-date-error"></div>
     </div>
+
     <div class="col-12 mb-3" data-cy="speaker-select-div">
       <%= speaker_select(f, talk, with_preselection=false) %>
     </div>

@@ -1,3 +1,6 @@
+> [!warning]
+> This guide is not up to date, please refer to the [MaMpf Wiki](https://github.com/MaMpf-HD/mampf/wiki/Installation-&-Setup) in addition to this document, until information from here is fully migrated to the Wiki.
+
 ## Installation (with docker compose)
 
 To simply try out mampf you can use `docker compose` (needs [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)). Simply clone the MaMpf repository and run docker compose by executing

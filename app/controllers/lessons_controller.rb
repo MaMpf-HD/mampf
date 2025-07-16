@@ -49,7 +49,7 @@ class LessonsController < ApplicationController
 
     update_media_order if params[:lesson][:media_order]
     @tags_without_section = @lesson.tags_without_section
-    return unless @lesson.sections.count == 1 && @tags_without_section.any?
+    return unless @lesson.sections.one? && @tags_without_section.any?
 
     section = @lesson.sections.first
     section.tags << @tags_without_section
