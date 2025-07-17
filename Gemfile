@@ -40,7 +40,6 @@ gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
 gem "pdf-reader", "~> 2.12"
 gem "pg", "~> 1.5"
-gem "premailer-rails", "~> 1.12"
 gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
