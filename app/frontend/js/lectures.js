@@ -85,6 +85,9 @@ $(document).on("turbolinks:load", function () {
   if (trixElement) {
     const { content } = trixElement.dataset;
     const { editor } = trixElement;
+    if (!editor) {
+      return;
+    }
     editor.setSelectedRange([0, 65535]);
     editor.deleteInDirection("forward");
     editor.insertHTML(content);

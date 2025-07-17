@@ -25,7 +25,7 @@ resetSelectized = function (index, select) {
   }
 };
 
-function fillOptionsByAjax($selectizedSelection) {
+window.fillOptionsByAjax = function ($selectizedSelection) {
   // TODO: this function definitely needs some refactoring
   $selectizedSelection.each(function () {
     let plugins = [];
@@ -145,7 +145,7 @@ function fillOptionsByAjax($selectizedSelection) {
       });
     }
   });
-}
+};
 
 $(document).on("turbolinks:before-cache", function () {
   $(".tomselected").each(resetSelectized);

@@ -35,6 +35,9 @@ window.previewTrixTalkContent = function (trixElement) {
   const { content } = trixElement.dataset;
   const { preview } = trixElement.dataset;
   const { editor } = trixElement;
+  if (!editor) {
+    return;
+  }
 
   editor.setSelectedRange([0, 65535]);
   editor.deleteInDirection("forward");
