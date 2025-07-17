@@ -55,7 +55,7 @@ services:
       SOLR_PORT: 8983
       SOLR_PATH: /solr/test
       SPROCKETS_CACHE: /cache
-      VITE_RUBY_HOST: 0.0.0.0
+      VITE_RUBY_HOST: mampf
       BLOG: https://mampf.blog
     ports:
       - '127.0.0.1:3001:3001'  # Rails test server
