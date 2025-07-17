@@ -23,7 +23,8 @@ updates:
     open-pull-requests-limit: 0
 
   - package-ecosystem: "docker"
-    directories: "/docker/**/*"
+    directories:
+      - "/docker/**/*"
     target-branch: "next"
     schedule:
       interval: "weekly"
