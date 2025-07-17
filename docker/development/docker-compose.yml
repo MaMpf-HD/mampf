@@ -81,6 +81,7 @@ services:
     environment:
       RAILS_ENV: development
       NODE_ENV: development
+      MAMPF_PORT: 3000
       # If you change these variables, make sure to adapt accordingly in
       # config/db-pgadmin.json
       DEVELOPMENT_DATABASE_ADAPTER: postgresql

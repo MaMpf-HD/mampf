@@ -29,6 +29,7 @@ services:
     environment:
       RAILS_ENV: test
       NODE_ENV: test
+      MAMPF_PORT: 3001
       TEST_DATABASE_ADAPTER: postgresql
       TEST_DATABASE_DATABASE: mampf
       TEST_DATABASE_INTERACTIONS: interactions
@@ -38,8 +39,8 @@ services:
       MAX_DELETIONS_PER_RUN: 50
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
-      URL_HOST: mampf
-      URL_HOST_SHORT: mampf
+      URL_HOST: localhost
+      URL_HOST_SHORT: localhost
       SECRET_KEY_BASE: testenvironment
       ERDBEERE_SERVER: https://erdbeere.mathi.uni-heidelberg.de
       ERDBEERE_API: https://erdbeere.mathi.uni-heidelberg.de/api/v1
@@ -57,7 +58,8 @@ services:
       VITE_RUBY_HOST: 0.0.0.0
       BLOG: https://mampf.blog
     ports:
-      - '127.0.0.1:3036:3036'  # Vite dev server
+      - '127.0.0.1:3001:3001'  # Rails test server
+      - '127.0.0.1:3037:3037'  # Vite dev server
     volumes:
       - ../../:/usr/src/app/
       - ../../coverage:/usr/src/app/coverage/
