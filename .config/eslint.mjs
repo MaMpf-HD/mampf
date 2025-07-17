@@ -105,6 +105,9 @@ const customGlobals = {
 
   reloadUrl: "readable",
   Sortable: "readable",
+
+  fillOptionsByAjax: "readable",
+  previewTrixTalkContent: "readable",
 };
 
 export default [

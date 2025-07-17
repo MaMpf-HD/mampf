@@ -103,16 +103,16 @@ class QuestionsController < ApplicationController
     end
 
     def question_params
-      result = params.require(:question)
-                     .permit(:label, :text, :type, :hint, :level,
-                             :question_sort, :independent, :vertex_id,
-                             :solution_type,
-                             :solution_error,
-                             solution_content:
-                             [
-                               :row_count, :column_count, :tex, :nerd, :explanation,
-                               { dynamic: {} }
-                             ])
+      result = params
+               .expect(question: [:label, :text, :type, :hint, :level,
+                                  :question_sort, :independent, :vertex_id,
+                                  :solution_type,
+                                  :solution_error,
+                                  { solution_content:
+                                  [
+                                    :row_count, :column_count, :tex, :nerd, :explanation,
+                                    { dynamic: {} }
+                                  ] }])
       if result[:solution_type] && result[:solution_content]
         result[:solution] = Solution.from_hash(result[:solution_type],
                                                result[:solution_content])

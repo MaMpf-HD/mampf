@@ -1,34 +1,3 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# Use `I18n.t` for locales:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# If you want to use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This uses the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   'true': 'foo'
-#
-# For more information, please read the Rails Internationalization guide
-# available at https://guides.rubyonrails.org/i18n.html.
-
 en:
   mampf: 'MaMpf'
   views:
@@ -37,6 +6,7 @@ en:
       last: "Last &raquo;"
       previous: "&lsaquo; Previous"
       next: "Next &rsaquo;"
+      truncate: "Truncate"
   categories:
     lesson_material:
       singular: 'Lesson'
@@ -2335,11 +2305,13 @@ en:
     empty: 'This watchlist is empty'
     none_added: 'You have not added any media to this watchlist yet.'
     create: 'Create'
-    creation_confirm: 'The textfield for creating a watchlist is not empty.
-                       Are you sure you want to add the medium to the watchlist "%{watchlist}"?'
+    creation_confirm: >
+      The textfield for creating a watchlist is not empty.
+      Are you sure you want to add the medium to the watchlist "%{watchlist}"?
     creation_success: 'Watchlist was successfully created'
     creation_fail: 'Watchlist could not be created'
     change: 'Change'
+    save_change: 'Save changes'
     change_success: 'Watchlist was changed'
     new: 'New'
     delete: 'Delete'
@@ -2515,6 +2487,7 @@ en:
     slide: 'Slide'
     slides: 'Slides'
     info_slides: 'Info Slides'
+    info_slide_not_updated: "Info slide could not be updated"
     questionnaire: 'Questionnaire'
     questionnaires: 'Questionnaires'
     no_active_questionnaires: 'No questionnaires available'
@@ -2981,7 +2954,7 @@ en:
     move_to_tutorial: move to tutorial
     manuscript_no_pdf: The uploaded file is not a valid pdf file.
     manuscript_size_too_big: >
-      The uploaded file is too big (maximum allowed size is 10 MB).
+      The uploaded file is too big (maximum allowed size is %{max_size}).
     wrong_file_type: >
       This file has the wrong file type %{file_type}.Expected file type:
       %{accepted_file_type}.
@@ -3117,6 +3090,7 @@ en:
       You can decide whether you accept it or reject it.
     own_tutorials: >
       Own Tutorials
+    other_tutorials: 'Other Tutorials'
     deadline_warning: >
       The deadline for submission is still %{deadline}. Only after the deadline
       corrections can be uploaded.
@@ -3188,7 +3162,7 @@ en:
         In case of repeated occurrence please contact the MaMpf team.
   package:
     no_zip: This file is not a .zip archive.
-    to_big: This file is too big.
+    too_big: This file is too big.
   mailer:
     warning: "MaMpf Warning"
     pending_deletion_subject: "%{num_days_until_deletion} days before your
@@ -3433,6 +3407,7 @@ en:
     error: >
       An error has occurred. Please try again later.
   basics:
+    division: 'Division'
     error: Error
     course: 'Course'
     courses: 'Courses'
@@ -3794,6 +3769,11 @@ en:
       A list of supported symbols can be found
       <a href="https://katex.org/docs/supported.html">
       here</a>.
+    nav:
+      moderation: "Moderation"
+      moderation_activity: "Moderation Activity"
+      moderation_history: "Moderation History"
+      moderation_pending: "Pending Moderation"
   controllers:
     no_answer: 'There is no answer with this id.'
     session_expired: 'Your session has expired. Please login again.'
@@ -3873,9 +3853,11 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+    no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
     no_announcement: There is no announcement with this id.
+    no_watchlist: 'Watchlist does not exist or is private.'
     created_lecture_success: >
       The lecture %{lecture} has been successfully created.
     created_course_success: >
@@ -4011,7 +3993,7 @@ en:
           attributes:
             title:
               taken:  >
-                This title is already taken in the chosen language.
+                The title %{value} is already taken in the chosen language.
               blank: 'The title cannot be blank.'
             tag:
               no_tag: 'A related tag has to be given.'

@@ -5,6 +5,7 @@
     </h5>
   </div>
   <div class="card-body">
+    
     <div class="row">
       <div class="col-12 mb-3">
         <%= f.label :title, t('basics.title'),
@@ -16,6 +17,8 @@
         </div>
       </div>
     </div>
+
+    <!-- 📅 Dates -->
     <div class="row">
       <div class="col-12">
         <%= f.label :date, t('basics.date'),
@@ -23,30 +26,27 @@
         <a class="fas fa-plus-circle clickable text-dark"
            id="new-talk-date-button"
            data-bs-toggle="tooltip"
-           data-count="<%= talk.dates.size + 1 %>"
+           data-index="<%= talk.dates.size + 1 %>"
            title="<%= t('admin.tag.create') %>">
         </a>
       </div>
-      <div class="col-12" id="talk-date-picker">
+
+      <div class="col-12" id="talk-dates">
         <% talk.dates.each_with_index do |date, i| %>
-          <div id="talk_dates_<%= i %>" class="<%= i == 0 ? '' : 'mt-2' %>">
-            <input type="date"
-                   name="talk[dates[<%= i %>]]"
-                   value="<%= date %>">
-            <% if i > 0 %>
-              <a class="fas fa-trash-alt clickable text-dark ms-2
-                        remove-talk-date"
-                 data-count="<%= i %>">
-              </a>
-            <% end %>
-          </div>
+          <%= f.fields_for :dates, index: i do |date_form| %>
+            <%= render partial: "date_field",
+                       locals: { date_form: date_form, date: date } %>
+          <% end %>
         <% end %>
+        <%= render partial: "date_field_template", locals: { f: f } %>
       </div>
+
       <div class="col-12 mb-3">
         <div class="invalid-feedback" id="talk-date-error">
         </div>
       </div>
     </div>
+
     <div class="row">
       <div class="col-12 mb-3" data-cy="speaker-select-div">
         <%= speaker_select(f, talk, with_preselection=true) %>

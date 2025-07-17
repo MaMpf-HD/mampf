@@ -133,10 +133,10 @@ class WatchlistsController < ApplicationController
     end
 
     def update_params
-      params.require(:watchlist).permit(:name, :description)
+      params.expect(watchlist: [:name, :description])
     end
 
     def create_params
-      params.require(:watchlist).permit(:name, :description, :medium_id)
+      params.expect(watchlist: [:name, :description, :medium_id])
     end
 end

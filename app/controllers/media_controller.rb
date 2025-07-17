@@ -535,25 +535,25 @@ class MediaController < ApplicationController
   private
 
     def medium_params
-      params.require(:medium).permit(:sort, :description, :video, :manuscript,
-                                     :external_reference_link,
-                                     :external_link_description,
-                                     :geogebra, :geogebra_app_name,
-                                     :teachable_type, :teachable_id,
-                                     :released, :text, :locale,
-                                     :content, :boost,
-                                     :annotations_status,
-                                     editor_ids: [],
-                                     tag_ids: [],
-                                     linked_medium_ids: [])
+      params.expect(medium: [:sort, :description, :video, :manuscript,
+                             :external_reference_link,
+                             :external_link_description,
+                             :geogebra, :geogebra_app_name,
+                             :teachable_type, :teachable_id,
+                             :released, :text, :locale,
+                             :content, :boost,
+                             :annotations_status,
+                             { editor_ids: [],
+                               tag_ids: [],
+                               linked_medium_ids: [] }])
     end
 
     def publish_params
-      params.require(:medium).permit(:release_now, :released, :release_date,
-                                     :lock_comments, :publish_vertices,
-                                     :create_assignment, :assignment_title,
-                                     :assignment_deadline, :assignment_file_type,
-                                     :assignment_deletion_date)
+      params.expect(medium: [:release_now, :released, :release_date,
+                             :lock_comments, :publish_vertices,
+                             :create_assignment, :assignment_title,
+                             :assignment_deadline, :assignment_file_type,
+                             :assignment_deletion_date])
     end
 
     def set_medium
@@ -690,20 +690,20 @@ class MediaController < ApplicationController
       types = nil if types == []
       params[:search][:types] = types
       params[:search][:user_id] = current_user.id
-      params.require(:search)
-            .permit(:all_types, :all_teachables, :all_tags,
-                    :all_editors, :tag_operator, :quiz, :access,
-                    :teachable_inheritance, :fulltext, :per,
-                    :clicker, :purpose, :answers_count,
-                    :results_as_list, :all_terms, :all_teachers,
-                    :lecture_option, :user_id, :from,
-                    types: [],
-                    teachable_ids: [],
-                    tag_ids: [],
-                    editor_ids: [],
-                    term_ids: [],
-                    teacher_ids: [],
-                    media_lectures: [])
+      params
+        .expect(search: [:all_types, :all_teachables, :all_tags,
+                         :all_editors, :tag_operator, :quiz, :access,
+                         :teachable_inheritance, :fulltext, :per,
+                         :clicker, :purpose, :answers_count,
+                         :results_as_list, :all_terms, :all_teachers,
+                         :lecture_option, :user_id, :from,
+                         { types: [],
+                           teachable_ids: [],
+                           tag_ids: [],
+                           editor_ids: [],
+                           term_ids: [],
+                           teacher_ids: [],
+                           media_lectures: [] }])
       # .with_defaults(access: 'all')
     end
 
@@ -719,7 +719,7 @@ class MediaController < ApplicationController
 
       @medium.teachable.tags << @tags_outside_lesson
       @tags_without_section = @tags_outside_lesson & @medium.teachable.tags_without_section
-      return unless @medium.teachable.sections.count == 1
+      return unless @medium.teachable.sections.one?
 
       section = @medium.teachable.sections.first
       section.tags << @tags_without_section

@@ -43,6 +43,6 @@ class ProgramsController < ApplicationController
     end
 
     def program_params
-      params.require(:program).permit(*Program.locale_accessor_names)
+      params.expect(program: [*Program.locale_accessor_names])
     end
 end

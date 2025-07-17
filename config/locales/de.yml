@@ -6,6 +6,7 @@ de:
       last: "Letzte &raquo;"
       previous: "&lsaquo; Vorige"
       next: "Nächste &rsaquo;"
+      truncate: "Abkürzen"
   activerecord:
     errors:
       models:
@@ -1031,7 +1032,7 @@ de:
         media: >
           Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
           sind. Du kannst neue Medien hinzufügen.
-        tags: >
+        talks: >
           Das ist die Liste der Tags, die zu diesem Vortrag assoziiert sind.
           Diese kann nicht von den Vortragenden bearbeitet werden.
         by_speakers: >
@@ -2478,6 +2479,7 @@ de:
     creation_confirm: >
       Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
       Bist Du sicher, dass Du das Medium zu folgender Watchlist hinzufügen willst:
+      "%{watchlist}"?
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
@@ -2662,6 +2664,7 @@ de:
     slide: 'Folie'
     slides: 'Folien'
     info_slides: 'Info-Folien'
+    info_slide_not_updated: "Info-Folie konnte nicht aktualisiert werden"
     questionnaire: 'Fragebogen'
     questionnaires: 'Fragebogen'
     no_active_questionnaires: 'Kein Fragebogen verfügbar'
@@ -3065,7 +3068,7 @@ de:
     no_comments: Es liegen keine neuen Kommentare vor.
     media_comments: >
       Anzahl der Medien in von den von Dir abonnierten
-      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
+      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
     invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
     accept_invitation: Einladung annehmen
@@ -3302,8 +3305,7 @@ de:
       Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
     own_tutorials: >
       Eigene Tutorien
-    other_tutorials: >
-      Sonstige Tutorien
+    other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
       Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
       können Korrekturen hochgeladen werden.
@@ -3379,7 +3381,7 @@ de:
         Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
-    to_big: Die Datei ist zu groß.
+    too_big: Die Datei ist zu groß.
   locales:
     en: 'Englisch'
     de: 'Deutsch'
@@ -3632,6 +3634,7 @@ de:
     error: >
       Es ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.
   basics:
+    division: 'Teilbereich'
     error: Fehler
     course: 'Modul'
     courses: 'Module'
@@ -3998,6 +4001,11 @@ de:
       Eine Liste der unterstützten Symbole gibt es
       <a href="https://katex.org/docs/supported.html">
       hier</a>.
+    nav:
+      moderation: "Moderation"
+      moderation_activity: "Moderationsaktivität"
+      moderation_history: "Moderationsverlauf"
+      moderation_pending: "Ausstehende Moderation"
   controllers:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
     session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
@@ -4077,6 +4085,7 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
     no_announcement: >
@@ -4302,10 +4311,10 @@ de:
             hätte als erlaubt.
                 vignettes/question:
         vignettes/question:
+          format: '%{message}'
           attributes:
             question_text:
-              blank: 'Question Text cannot be empty'
-              format: '%{message}'
+              blank: 'darf nicht leer sein'
         vote:
           attributes:
             clicker:
