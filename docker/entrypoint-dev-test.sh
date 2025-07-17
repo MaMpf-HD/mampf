@@ -4,6 +4,7 @@ cd /usr/src/app/
 
 ./docker/init-dev-test.sh &> >(tee -a /usr/src/app/log/initialization.log)
 
+bundle exec rake js:recompile_routes
 echo "💫  Starting Vite dev server (in background)"
 NODE_ENV=test bundle exec vite dev &
 
