@@ -15,7 +15,6 @@ import Rails from "@rails/ujs";
 
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
-import Turbolinks from "turbolinks";
 
 import "@popperjs/core";
 import "gems/clipboard-rails/vendor/assets/javascripts/clipboard";
@@ -68,7 +67,6 @@ import "~/js/watchlists.coffee";
 // Rails UJS
 // https://github.com/rails/rails/issues/49499#issuecomment-1749086834
 Rails.start();
-Turbolinks.start();
 ActiveStorage.start();
 
 import { WidgetInstance } from "friendly-challenge";
