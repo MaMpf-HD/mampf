@@ -6,7 +6,7 @@ cd /usr/src/app/
 
 bundle exec rake js:recompile_routes
 echo "💫  Starting Vite dev server (in background)"
-NODE_ENV=test bundle exec vite dev &
+bundle exec vite dev &
 
 rm -f tmp/pids/server.pid
 cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
