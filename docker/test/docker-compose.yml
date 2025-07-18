@@ -63,7 +63,6 @@ services:
     volumes:
       - ../../:/usr/src/app/
       - ../../coverage:/usr/src/app/coverage/
-      - public-test:/public
       - sprockets-cache-test:/cache
       # https://stackoverflow.com/a/62611202/
       - bundle_cache:/usr/local/bundle/
@@ -76,4 +75,3 @@ services:
 volumes:
   bundle_cache:
   sprockets-cache-test:
-  public-test:
