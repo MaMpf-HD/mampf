@@ -42,6 +42,8 @@ $(document).on 'turbolinks:load', ->
   if trixElement?
     content = trixElement.dataset.content
     editor = trixElement.editor
+    if !editor
+      return
     editor.setSelectedRange([0,65535])
     editor.deleteInDirection("forward")
     editor.insertHTML(content)
