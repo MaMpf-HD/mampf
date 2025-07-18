@@ -49,7 +49,7 @@ export class Annotation {
     An auxiliary method, only used for a better structure of createMarker() and createBigMarker()!
    */
   #create(color, isBigMarker, onClick) {
-    const markerStr = `<span id="marker-${this.id}">
+    const markerStr = `<span id="marker-${this.id}" data-cy="annotation-marker-${this.id}">
                         <i class="fas fa-map-pin" style="color: ${color};"></i>
                       </span>`;
     $("#" + thymeAttributes.markerBarId).append(markerStr);

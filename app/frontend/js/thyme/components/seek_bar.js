@@ -17,16 +17,6 @@ export class SeekBar extends Component {
       video.currentTime = time;
     });
 
-    // if videomedtadata have been loaded, set up seek bar
-    video.addEventListener("loadedmetadata", function () {
-      if (video.dataset.time) {
-        element.value = video.currentTime / video.duration * 100;
-      }
-      else {
-        element.value = 0;
-      }
-    });
-
     // Update the seek bar as the video plays.
     // Uses a gradient for seekbar video time visualization.
     video.addEventListener("timeupdate", function () {
@@ -41,6 +31,20 @@ export class SeekBar extends Component {
       const currentTime = document.getElementById("current-time");
       currentTime.innerHTML = secondsToTime(video.currentTime);
     });
+
+    function setupSeekBar() {
+      if (video.dataset.time) {
+        video.currentTime = video.dataset.time;
+        element.value = video.dataset.time / video.duration * 100;
+      }
+      else {
+        element.value = 0;
+      }
+    }
+    video.addEventListener("loadedmetadata", setupSeekBar);
+    if (video.readyState >= 1 && video.duration) {
+      setupSeekBar();
+    }
 
     // Pause the video when the seek handle is being dragged
     element.addEventListener("mousedown", function () {
