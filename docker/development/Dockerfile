@@ -89,7 +89,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
-        RAILS_ENV=production DB_ADAPTER=nulldb bundle exec rails assets:precompile; \
+        RAILS_ENV=test NODE_ENV=test DB_ADAPTER=nulldb bundle exec rails assets:precompile; \
     fi
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
