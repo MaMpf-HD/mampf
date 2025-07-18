@@ -116,5 +116,5 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     set -o allexport && . ./docker-dummy.env && set +o allexport && \
     SECRET_KEY_BASE="$(bundle exec rails secret)" \
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
-    DB_ADAPTER=nulldb \
+    RAILS_ENV=production DATABASE_ADAPTER=nulldb \
     bundle exec rails assets:precompile
