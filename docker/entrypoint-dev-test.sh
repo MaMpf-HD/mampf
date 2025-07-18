@@ -6,6 +6,7 @@ cd /usr/src/app/
 
 bundle exec rake js:recompile_routes
 echo "💫  Starting Vite dev server (in background)"
+echo "NODE_ENV: $NODE_ENV"
 bundle exec vite dev &
 
 rm -f tmp/pids/server.pid
