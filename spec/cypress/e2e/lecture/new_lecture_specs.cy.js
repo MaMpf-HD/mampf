@@ -45,6 +45,7 @@ function testCreateNewLecture(context, isCoursePrefilled) {
     });
   }
 
+  cy.get("body").click(0, 0); // click outside to close the dropdown
   cy.getBySelector("new-lecture-submit").click();
 
   const successMessage = context.user.locale === "de" ? "erfolgreich" : "successfully";
