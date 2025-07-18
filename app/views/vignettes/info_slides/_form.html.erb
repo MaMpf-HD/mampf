@@ -15,19 +15,19 @@
   <div class="d-flex gap-3 mb-3" id="vignettes-icon-selection">
     <label>
       <%= form.radio_button :icon_type, "eye", required: true %>
-      <%= image_tag "vignettes/eye.svg",
+      <%= vite_image_tag "images/vignettes/eye.svg",
         alt: "Icon of an eye" %>
     </label>
 
     <label>
       <%= form.radio_button :icon_type, "dotplot", required: true %>
-      <%= image_tag "vignettes/dotplot.svg",
+      <%= vite_image_tag "images/vignettes/dotplot.svg",
         alt: "Icon of a dotplot including an error bar and a vertical bar chart" %>
     </label>
 
     <label>
       <%= form.radio_button :icon_type, "media", required: true %>
-      <%= image_tag "vignettes/media.svg",
+      <%= vite_image_tag "images/vignettes/media.svg",
         alt: "Icon of a generic media recorder" %>
     </label>
   </div>

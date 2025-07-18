@@ -34,6 +34,14 @@ renderMathInElement structuresBody,
   ]
   throwOnError: false
 
+registerErdbeereExampleChanges = ->
+  # Erdbeere Examples unsaved changes warning
+  $("#lecture-structures-form").on "input", ->
+    $("#lecture-erdbeere-examples-warning").show()
+
+  $("#erdbeere-structures-cancel").on "click", ->
+    $("#lecture-erdbeere-examples-warning").hide()
+
 initBootstrapPopovers()
 registerErdbeereExampleChanges()
 <% end %>

@@ -79,7 +79,7 @@ COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js 
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
-RUN yarn install --production=true
+RUN yarn install --frozen-lockfile
 
 COPY --chown=app:app . /usr/src/app
 
@@ -114,4 +114,7 @@ COPY ./docker/production/docker.env ./docker-dummy.env
 
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \
     set -o allexport && . ./docker-dummy.env && set +o allexport && \
-    SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb bundle exec rails assets:precompile
+    SECRET_KEY_BASE="$(bundle exec rails secret)" \
+    VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
+    RAILS_ENV=production DATABASE_ADAPTER=nulldb \
+    bundle exec rails assets:precompile

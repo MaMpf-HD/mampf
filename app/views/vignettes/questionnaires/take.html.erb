@@ -1,5 +1,5 @@
-<%= stylesheet_link_tag 'vignettes-take' %>
-<%= javascript_include_tag 'vignettes/take_questionnaire' %>
+<%= vite_stylesheet_tag "styles/vignettes-take.scss" %>
+<%= vite_javascript_tag "js/vignettes/take_questionnaire" %>
 
 <!-- Info Slide Modals -->
 <% @slide.info_slides.each_with_index do |info_slide, index| %>
@@ -43,7 +43,7 @@
                     data-bs-toggle="modal"
                     data-bs-target="#vignette-info-slide-modal-<%= index %>"
                     data-info-slide-id="<%= info_slide.id %>">
-                <%= image_tag select_info_slide_icon_path(info_slide),
+                <%= vite_image_tag select_info_slide_icon_path(info_slide),
                     class: "me-2 vignettes-info-slides-icon" %>
                 <p class="mb-0 text-start">
                     <%= info_slide.title %>

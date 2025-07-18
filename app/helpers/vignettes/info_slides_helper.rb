@@ -3,13 +3,13 @@ module Vignettes
     def select_info_slide_icon_path(info_slide)
       case info_slide.icon_type
       when "eye"
-        "vignettes/eye.svg"
+        "images/vignettes/eye.svg"
       when "dotplot"
-        "vignettes/dotplot.svg"
+        "images/vignettes/dotplot.svg"
       when "media"
-        "vignettes/media.svg"
+        "images/vignettes/media.svg"
       else
-        "vignettes/fallback.svg"
+        "images/vignettes/fallback.svg"
       end
     end
   end

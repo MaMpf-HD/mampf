@@ -318,9 +318,9 @@ end
 Rails.application.config.to_prepare do
   # Load the Commontator extensions only if we are not in the assets:precompile
   # step where no db connection is available. See the production Dockerfile.
-  db_adapter = ENV.fetch("DB_ADAPTER", nil)
+  db_adapter = ENV.fetch("DATABASE_ADAPTER", nil)
   if db_adapter == "nulldb"
-    Rails.logger.info("DB_ADAPTER env var is #{db_adapter}. Skipping Commontator extensions.")
+    Rails.logger.info("DATABASE_ADAPTER env var is #{db_adapter}. Skipping Commontator extensions.")
     next
   end
 

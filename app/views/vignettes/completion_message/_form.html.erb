@@ -1,4 +1,4 @@
-<%= javascript_include_tag 'vignettes/completion_message' %>
+<%= vite_javascript_tag "js/vignettes/completion_message" %>
 <%= form_with(url: set_lecture_completion_message_path(@lecture),
               method: :post,
               local: true) do |form| %>

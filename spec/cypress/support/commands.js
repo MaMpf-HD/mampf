@@ -17,7 +17,8 @@ Cypress.Commands.add("clickExpectNewTab", { prevSubject: true }, ($subject, args
   expect($subject.is("a"), errMsg).to.be.true;
 
   cy.wrap($subject).should("have.attr", "target", "_blank");
-  return cy.wrap($subject).invoke("removeAttr", "target").click(args);
+  cy.wrap($subject).invoke("removeAttr", "target").click(args);
+  cy.reload();
 });
 
 /**

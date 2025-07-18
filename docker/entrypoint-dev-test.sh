@@ -4,8 +4,10 @@ cd /usr/src/app/
 
 ./docker/init-dev-test.sh &> >(tee -a /usr/src/app/log/initialization.log)
 
-echo "💫  Starting webpack server (in background)"
-NODE_ENV=development ./bin/webpack-dev-server &
+bundle exec rake js:recompile_routes
+echo "💫  Starting Vite dev server (in background)"
+echo "NODE_ENV: $NODE_ENV"
+bundle exec vite dev &
 
 rm -f tmp/pids/server.pid
 cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
@@ -20,4 +22,4 @@ bundle exec sidekiq &
 
 # https://shopify.github.io/ruby-lsp/vscode-extension.html#debugging-live-processes
 # https://marketplace.visualstudio.com/items?itemName=KoichiSasada.vscode-rdbg
-RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p 3000 -b '0.0.0.0' &> >(tee -a /usr/src/app/log/runtime.log)
+RUBY_DEBUG_OPEN=true RUBY_DEBUG_NONSTOP=true RUBY_DEBUG_HOST="0.0.0.0" RUBY_DEBUG_PORT=13254 bundle exec bin/rails s -p "$MAMPF_PORT" -b '0.0.0.0' &> >(tee -a /usr/src/app/log/runtime.log)

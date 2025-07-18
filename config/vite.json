@@ -1,0 +1,17 @@
+{
+  "all": {
+    "sourceCodeDir": "app/frontend",
+    "additionalEntrypoints": [
+      "~/{js,styles,images}/**/*"
+    ],
+    "autoBuild": false
+  },
+  "development": {
+    "publicOutputDir": "vite-dev",
+    "port": 3036
+  },
+  "test": {
+    "publicOutputDir": "vite-test",
+    "port": 3037
+  }
+}

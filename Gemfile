@@ -13,11 +13,10 @@ gem "acts_as_tree", "~> 2.9"
 gem "acts_as_votable", "~> 0.14"
 gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
-gem "bootstrap", "~>5.3"
 gem "bootstrap_form", "~> 5.4"
 gem "cancancan", "~> 3.6"
 gem "clipboard-rails", "~> 1.7"
-gem "coffee-rails", "~> 5.0" # CoffeeScript for .coffee assets and views
+gem "coffee-rails", "~> 5.0"
 gem "commontator", "~> 7.0.1"
 gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
@@ -32,8 +31,6 @@ gem "filesize", "~> 0.2"
 gem "fuzzy-string-match", "~> 1.0"
 gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
-gem "jquery-rails", "~> 4.6"
-gem "jquery-ui-rails", "~> 7.0"
 gem "js-routes", "~> 2.3"
 gem "kaminari", "~> 1.2"
 gem "kaminari-i18n", "~> 0.5"
@@ -43,7 +40,6 @@ gem "mobility", "~> 1.2"
 gem "net-smtp", "~> 0.5"
 gem "pdf-reader", "~> 2.12"
 gem "pg", "~> 1.5"
-gem "premailer-rails", "~> 1.12"
 gem "progress_bar", "~> 1.3"
 gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
@@ -54,7 +50,7 @@ gem "responders", "~> 3.1"
 gem "rgl", "~> 0.6"
 gem "rqrcode", "~> 2.2"
 gem "rubyzip", "~> 2.3"
-gem "sass-rails", "~> 6.0" # SCSS for stylesheets
+gem "sass-rails", "~> 6.0"
 gem "shrine", "~> 3.6"
 gem "sidekiq", "~> 7.3"
 gem "sidekiq-cron", "~> 1.12"
@@ -69,8 +65,8 @@ gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
 gem "trix-rails", "~> 2.4", require: "trix"
-gem "turbolinks", "~> 5.2" # make navigating the app faster
-gem "webpacker", "~> 5.4"
+gem "turbolinks", "~> 5.2"
+gem "vite_rails", "~> 3.0", ">= 3.0.17"
 
 group :development do
   gem "listen", "~> 3.9"
