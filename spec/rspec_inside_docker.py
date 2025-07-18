@@ -68,16 +68,17 @@ def ensure_mampf_test_container_running():
     docker_command = (
         "docker compose ps --services --filter 'status=running' | grep mampf"
     )
-    result = subprocess.run(
-        docker_command,
-        cwd=DOCKER_COMPOSE_FOLDER,
-        shell=True,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
-    print(f"Got result {result}")
-    if not result.stdout.strip():
+    try:
+        subprocess.run(
+            docker_command,
+            cwd=DOCKER_COMPOSE_FOLDER,
+            shell=True,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        print(f"{DOCKER_SERVICE_NAME} container is already running.")
+    except subprocess.CalledProcessError:
         print(f"Not running yet, starting {DOCKER_SERVICE_NAME} container...")
         subprocess.run(
             ["docker", "compose", "up", "-d", DOCKER_SERVICE_NAME],
