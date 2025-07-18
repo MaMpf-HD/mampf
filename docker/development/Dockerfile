@@ -89,7 +89,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
-        RAILS_ENV=test DB_ADAPTER=nulldb DATABASE_URL="" \
+        RAILS_ENV=test DB_ADAPTER=nulldb RAILS_GROUPS=assets \
         bundle exec rails assets:precompile; \
     fi
 

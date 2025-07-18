@@ -1,5 +1,3 @@
-# Load the Rails application.
 require_relative "application"
 
-# Initialize the Rails application.
-Rails.application.initialize!
+Rails.application.initialize! unless ENV["RAILS_GROUPS"] == "assets"
