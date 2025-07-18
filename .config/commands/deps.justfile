@@ -32,7 +32,6 @@ simulate-production-asset-build:
         set +o allexport && \
         SECRET_KEY_BASE=\"\$(bundle exec rails secret)\" \
         VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
-        RAILS_ENV=production \
-        DB_ADAPTER=nulldb \
+        RAILS_ENV=production DB_ADAPTER=nulldb \
         bundle exec rails assets:precompile"
     docker compose run --entrypoint="" mampf sh -c "$COMMAND"
