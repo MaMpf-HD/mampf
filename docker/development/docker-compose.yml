@@ -84,18 +84,12 @@ services:
       MAMPF_PORT: 3000
       # If you change these variables, make sure to adapt accordingly in
       # config/db-pgadmin.json
-      DEVELOPMENT_DATABASE_ADAPTER: postgresql
+      DATABASE_ADAPTER: postgresql
       DEVELOPMENT_DATABASE_DATABASE: mampf
       DEVELOPMENT_DATABASE_INTERACTIONS: mampf_interactions
       DEVELOPMENT_DATABASE_USERNAME: localroot
       DEVELOPMENT_DATABASE_HOST: db
       DEVELOPMENT_DATABASE_PORT: 5432
-      TEST_DATABASE_ADAPTER: postgresql
-      TEST_DATABASE_DATABASE: mampf-test
-      TEST_DATABASE_INTERACTIONS: interactions-test
-      TEST_DATABASE_USERNAME: localroot
-      TEST_DATABASE_HOST: db
-      TEST_DATABASE_PORT: 5432
       MAX_DELETIONS_PER_RUN: 50
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost

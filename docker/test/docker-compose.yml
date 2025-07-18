@@ -30,7 +30,7 @@ services:
       RAILS_ENV: test
       NODE_ENV: test
       MAMPF_PORT: 3001
-      TEST_DATABASE_ADAPTER: postgresql
+      DATABASE_ADAPTER: postgresql
       TEST_DATABASE_DATABASE: mampf
       TEST_DATABASE_INTERACTIONS: interactions
       TEST_DATABASE_USERNAME: localroot
