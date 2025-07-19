@@ -27,7 +27,6 @@ $container-max-widths: (
 @import "gems/bootstrap_form/app/assets/stylesheets/rails_bootstrap_forms.css";
 @import "~/styles/annotations.scss";
 @import "~/styles/chapters.scss";
-@import "~/styles/clickers.scss";
 @import "~/styles/colors.scss";
 @import "~/styles/courses.scss";
 @import "~/styles/lectures.scss";
@@ -113,10 +112,6 @@ trix-toolbar .trix-button-row {
 
 .card-fixed-xxl {
   height: 85vh;
-}
-
-.card-fixed-medium {
-  height: 65vh;
 }
 
 .card-fixed-small {

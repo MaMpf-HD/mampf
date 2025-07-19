@@ -11,7 +11,7 @@
 # https://decaffeinate-project.org/repl/
 
 ### Watch out for
-- Don't forget to change .js to .js.erb if needed. But use the pure 
+- Don't forget to change .js to .js.erb if needed. But use the pure
   .js whenever possible, i.e. when no ERB syntax is used.
 - Strings inside Strings, e.g. this:
     .append('<%= j render partial: "quiz_certificates/form" %>')
@@ -125,7 +125,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 8 ./app/views/submissions/leave.coffee
 8 ./app/views/terms/new.coffee
 
-9 ./app/views/clickers/create.coffee
 9 ./app/views/erdbeere/find_tags.coffee
 9 ./app/views/lectures/import_media.coffee
 9 ./app/views/profile/unstar_lecture.coffee
@@ -154,11 +153,8 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 14 ./app/views/submissions/join.coffee
 14 ./app/views/watchlists/edit.coffee
 15 ./app/assets/javascripts/submissions.coffee
-15 ./app/views/clickers/close.coffee
-15 ./app/views/clickers/new.coffee
 16 ./app/views/tutorials/update.coffee
 17 ./app/assets/javascripts/tutorials.coffee
-17 ./app/views/clickers/open.coffee
 17 ./app/views/courses/create.coffee
 17 ./app/views/tags/modal.coffee
 17 ./app/views/tags/render_tag_title.coffee
@@ -214,7 +210,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 
 40 ./app/views/referrals/destroy.coffee
 42 ./app/assets/javascripts/geogebra.coffee
-42 ./app/views/clickers/render_clickerizable_actions.coffee
 42 ./app/views/media/fill_reassign_modal.coffee
 42 ./app/views/questions/update.coffee
 44 ./app/assets/javascripts/main.coffee
@@ -228,7 +223,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 61 ./app/assets/javascripts/chapters.coffee
 71 ./app/views/items/destroy.coffee
 77 ./app/assets/javascripts/notifications.coffee
-80 ./app/assets/javascripts/clickers.coffee
 85 ./app/views/tags/update.coffee
 86 ./app/assets/javascripts/talks.coffee
 87 ./app/assets/javascripts/courses.coffee
@@ -242,7 +236,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 
 😭
 112 ./app/assets/javascripts/lessons.coffee
-130 ./app/assets/javascripts/show_clicker.coffee
 192 ./app/views/media/statistics.coffee
 210 ./app/assets/javascripts/tags.coffee
 293 ./app/views/quizzes/proceed.coffee

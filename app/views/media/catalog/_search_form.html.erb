@@ -14,17 +14,14 @@
                    { id: 'search_media_types',
                      multiple: purpose.in?(['media', 'import']),
                      class: 'selectize',
-                     disabled: purpose.in?(['media', 'clicker']),
+                     disabled: purpose == 'media',
                      required: true } %>
-      <% if purpose == 'clicker' %>
-        <%= f.hidden_field :types, value: ['Question'] %>
-      <% end %>
       <% if purpose == 'media' %>
         <div class="form-check mb-2">
           <%= f.check_box :all_types,
                           id: 'search_all_media_types',
                           class: 'form-check-input',
-                          checked: purpose.in?(['media', 'clicker']),
+                          checked: true,
                           data: { id: 'search_media_types'} %>
           <%= f.label :all_media_types,
                       t('basics.all'),
@@ -201,7 +198,7 @@
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),
                    class: 'btn btn-primary' %>
-      <% if purpose.in?(['clicker', 'import']) %>
+      <% if purpose == 'import' %>
         <button type="button"
                 class="btn btn-secondary"
                 id="cancelSearch"

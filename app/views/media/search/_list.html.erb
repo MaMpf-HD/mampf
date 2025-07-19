@@ -80,7 +80,7 @@
       <% end %>
     </div>
   </div>
-  <% if purpose.in?(['media', 'clicker']) %>
+  <% if purpose == 'media' %>
     <div class="<%= purpose == 'media' ? 'col-3' : 'col-4' %>">
       <div class="row bg-mdb-color-lighten-5 mb-2 py-2">
         <div class="col-12">
@@ -89,9 +89,7 @@
           </strong>
         </div>
       </div>
-      <% if purpose == 'media' %>
-        <%= render partial: 'media/catalog/tags_form' %>
-      <% end %>
+      <%= render partial: 'media/catalog/tags_form' %>
       <div class="row">
         <div class="col-12">
           <div id="mediumActions">

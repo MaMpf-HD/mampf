@@ -104,45 +104,6 @@ Rails.application.routes.draw do
 
   resources :chapters, except: [:index, :show]
 
-  # clickers routes
-
-  get "clickers/:id/open",
-      to: "clickers#open",
-      as: "open_clicker"
-
-  get "clickers/:id/close",
-      to: "clickers#close",
-      as: "close_clicker"
-
-  post "clickers/:id/set_alternatives",
-       to: "clickers#set_alternatives",
-       as: "set_clicker_alternatives"
-
-  post "clickers/:id/associate_question",
-       to: "clickers#associate_question",
-       as: "associate_question"
-
-  get "clickers/:id/votes_count",
-      to: "clickers#votes_count",
-      as: "votes_count"
-
-  delete "clickers/:id/remove_question",
-         to: "clickers#remove_question",
-         as: "remove_question"
-
-  get "clickers/:id/render_clickerizable_actions",
-      to: "clickers#render_clickerizable_actions",
-      as: "render_clickerizable_actions"
-
-  get "c/:id",
-      to: "clickers#show"
-
-  resources :clickers, except: [:index, :update]
-
-  # clickervotes routes
-
-  resources :clicker_votes, only: :create
-
   # courses routes
 
   post "courses/:id/take_random_quiz",
