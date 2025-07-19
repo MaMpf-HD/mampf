@@ -196,9 +196,6 @@ de:
         eingetragen bist.
       my_courses: 'Meine Module'
       create_course: 'Modul anlegen'
-      my_clickers: 'Meine Clicker'
-      create_clicker: 'Clicker anlegen'
-      no_edited_clickers: 'Du hast aktuell keine Clicker angelegt.'
       no_edited_courses: >
         Es gibt keine Module, für die Du als EditorIn eingetragen bist.
       my_media: 'Meine Medien'
@@ -296,17 +293,6 @@ de:
           ein Quiz.
           </li>
           </ul>
-        clicker_definition: >
-          Dies ist eine Liste aller Deiner
-          <i>Clicker</i>,
-          </br>
-          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei
-          ein Feedbackkanal in Form einer speziellen Webseite.
-          Personen mit dem EditorInnen-Link können Feedback zu einer
-          Fragestellung erbitten und Personen mit dem TeilnehmerInnen-Link
-          können dieses Feedback liefern.
-          Pro Clicker ist zu jedem Zeitpunkt genau eine Fragestellung
-          möglich, aber Clicker können wiederverwendet werden.
         other_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die Du keine
           Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
@@ -817,33 +803,6 @@ de:
       subscribe_link_info: >
         Dieser Link kann mit Studenten geteilt werden um darüber das Modul
         zu abonnieren.
-    clicker:
-      new_clicker: 'Neuen Clicker anlegen'
-      user_link: 'Link für NutzerInnen'
-      editor_link: 'Link für EditorInnen (ohne Authentifizierung)'
-      close: 'Clicker schließen'
-      open: 'Clicker freischalten'
-      reset: 'Clicker zurücksetzen'
-      delete: 'Clicker löschen'
-      alternatives: 'Anzahl der Auswahlmöglichkeiten'
-      is_open: 'Der Clicker ist offen.'
-      is_closed: 'Der Clicker ist geschlossen.'
-      thank_vote: 'Danke für Dein Votum.'
-      voted_already: 'Du hast schon abgestimmt.'
-      show_qr: 'QR-Code zeigen'
-      hide_qr: 'QR-Code verstecken'
-      remove_question: 'Assoziierung zu Quizfrage aufheben'
-      last_poll_results: 'Ergebnis der letzten Abstimmung'
-      number_of_votes: 'Anzahl der Voten'
-      associated_to_question: >
-        Dieser Clicker ist zu einer Frage aus der Datenbank assoziiert:
-      change_associated_question: >
-        Andere Quizfrage assoziieren
-      associate_question: 'Quizfrage assoziieren'
-      info:
-        title: >
-          Hier musst Du den Titel des Clickers eintragen.
-          Du darfst jeden Titel nur einmal vergeben.
     course:
       new_course: 'Neues Modul anlegen'
       preceding_courses: 'Module, auf denen das vorliegende Modul aufbaut'
@@ -3579,7 +3538,6 @@ de:
       -Vorträge<br>
       -erhaltene Notifications (z.B. über neue Medien etc.)<br>
       -erstellte Announcements<br>
-      -registrierte Clicker<br>
       -Zettelabgaben<br>
       -Watchlists<br>
       -Quizzertifikate<br>
@@ -3914,7 +3872,6 @@ de:
     default_target: 'Standard-Ziel'
     ramification: 'Verzweigung'
     edit_tags: 'Tags bearbeiten'
-    vote: 'Abstimmen'
     show: 'Anzeigen'
     hide: 'Verbergen'
     interpret: 'Interpretieren'
@@ -4048,8 +4005,6 @@ de:
       Editorenrechte für das Hinzufügen von Tags.
     no_term: 'Ein Semester mit der angeforderten id existiert nicht.'
     no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
-    no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
-    no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
     no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
     no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
@@ -4135,17 +4090,6 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
-        clicker:
-          attributes:
-            title:
-              blank: 'Es muss ein Titel angegeben werden.'
-              taken: 'Dieser Titel ist bereits vergeben.'
-        clicker_vote:
-          attributes:
-            clicker:
-              clicker_closed: 'Der zugehörige Clicker ist geschlossen.'
-            value:
-              out_of_range: 'Der Wert ist außerhalb des zulässigen Bereichs.'
         course:
           attributes:
             title:
@@ -4315,14 +4259,6 @@ de:
           attributes:
             question_text:
               blank: 'darf nicht leer sein'
-        vote:
-          attributes:
-            clicker:
-              closed: 'Der Clicker ist leider geschlossen.'
-            value:
-              out_of_range: >
-                Das abgegebene Votum ist leider außerhalb des zulässingen
-                Bereiches.
         voucher:
           attributes:
             role:

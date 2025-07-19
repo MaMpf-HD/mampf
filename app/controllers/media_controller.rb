@@ -694,7 +694,7 @@ class MediaController < ApplicationController
         .expect(search: [:all_types, :all_teachables, :all_tags,
                          :all_editors, :tag_operator, :quiz, :access,
                          :teachable_inheritance, :fulltext, :per,
-                         :clicker, :purpose, :answers_count,
+                         :purpose, :answers_count,
                          :results_as_list, :all_terms, :all_teachers,
                          :lecture_option, :user_id, :from,
                          { types: [],
