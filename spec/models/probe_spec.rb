@@ -21,7 +21,7 @@ RSpec.describe(Probe, type: :model) do
       expect(@probe.correct).to be_in([true, false])
     end
     it "has an attempt token" do
-      expect(@probe.attempto_token).to be_truthy
+      expect(@probe.attempt_token).to be_truthy
     end
     it "has a progress" do
       expect(@probe.progress).to be_kind_of(Integer)
