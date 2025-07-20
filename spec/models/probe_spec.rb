@@ -20,8 +20,8 @@ RSpec.describe(Probe, type: :model) do
     it "is correct or not" do
       expect(@probe.correct).to be_in([true, false])
     end
-    it "has a session id" do
-      expect(@probe.session_id).to be_truthy
+    it "has an attempt token" do
+      expect(@probe.attempto_token).to be_truthy
     end
     it "has a progress" do
       expect(@probe.progress).to be_kind_of(Integer)

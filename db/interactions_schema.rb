@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_20_114532) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_20_124006) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,7 +26,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_20_114532) do
     t.integer "question_id"
     t.integer "quiz_id"
     t.boolean "correct"
-    t.text "session_id"
+    t.text "attempt_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "progress"

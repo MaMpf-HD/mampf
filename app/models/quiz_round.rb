@@ -6,7 +6,7 @@ class QuizRound
               :answer_scheme, :progress_old, :counter_old, :round_id_old,
               :input, :correct, :hide_solution, :vertex_old, :question_id,
               :answer_shuffle, :answer_shuffle_old, :solution_input, :result,
-              :session_id, :certificate, :save_probe
+              :attempt_token, :certificate, :save_probe
 
   def initialize(params)
     @quiz = Quiz.find(params[:id])
@@ -80,17 +80,10 @@ class QuizRound
       if params[:quiz].present?
         @counter = params[:quiz][:counter].to_i
         @progress = params[:quiz][:progress].to_i
-        @session_id = params[:quiz][:session_id]
+        @attempt_token = params[:quiz][:attempt_token]
       end
       @progress ||= @quiz.root
       @counter ||= 0
-      # In the first round of a quiz, a new session_id is randomly created
-      # Note that this session_id has nothing to do with the user's session_id
-      # that is used for authentication. It is only used to identify the quiz
-      # session in order to keep track of how many questions the user answered
-      # correctly. This is used in quiz statistics in order to calculate the
-      # success rate of the quiz.
-      @session_id ||= SecureRandom.uuid.first(13).remove("-")
       @progress_old = @progress
       @counter_old = @counter
       @round_id_old = round_id
@@ -117,13 +110,13 @@ class QuizRound
 
       quiz_id = @quiz.id unless @quiz.sort == "RandomQuiz"
       ProbeSaver.perform_async(quiz_id, @question_id, @correct, @progress,
-                               @session_id)
+                               @attempt_token)
     end
 
     def create_certificate_final_probe
       return unless @save_probe
 
       @certificate = QuizCertificate.create(quiz: @quiz)
-      ProbeSaver.perform_async(@quiz.id, nil, nil, -1, @session_id)
+      ProbeSaver.perform_async(@quiz.id, nil, nil, -1, @attempt_token)
     end
 end
