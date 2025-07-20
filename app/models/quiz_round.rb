@@ -88,6 +88,12 @@ class QuizRound
       end
       @progress ||= @quiz.root
       @counter ||= 0
+      # In the first round of a quiz, a new session_id is randomly created
+      # Note that this session_id has nothing to do with the user's session_id
+      # that is used for authentication. It is only used to identify the quiz
+      # session in order to keep track of how many questions the user answered
+      # correctly. This is used in quiz statistics in order to calculate the
+      # success rate of the quiz.
       @session_id ||= SecureRandom.uuid.first(13).remove("-")
       @progress_old = @progress
       @counter_old = @counter

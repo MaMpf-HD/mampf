@@ -166,13 +166,6 @@ Rails.application.routes.draw do
   # feedback routes
   resources :feedbacks, only: [:create]
 
-  # interactions routes
-
-  get "interactions/export_probes",
-      as: "export_probes"
-
-  resources :interactions, only: [:index]
-
   # items routes
 
   get "items/:id/display",

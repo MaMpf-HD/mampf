@@ -84,12 +84,6 @@
                   title: t('admin.navbar.stats'),
                   target: :_blank %>
         </li>
-        <li>
-          <%= link_to '', interactions_path,
-                  class: 'nav-link bi-cloud-arrow-down-fill ' + get_class_for_path(interactions_path()),
-                  data: { 'bs-toggle': 'tooltip' },
-                  title: t('admin.navbar.export_stats') %>
-        </li>
       <% end %>
     </ul>
 

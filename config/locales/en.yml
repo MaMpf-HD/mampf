@@ -1939,10 +1939,6 @@ en:
       name: 'Title'
       new: 'Create new division'
       no_courses: 'There are no courses in this division yet.'
-    interaction:
-      export_probes: Export Probes
-      start: Start Date
-      end: End Date
     tutorial:
       new: 'Add tutorial'
     assignment:

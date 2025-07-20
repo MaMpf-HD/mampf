@@ -7,7 +7,6 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   before_action :set_locale
-  #  after_action :store_interaction, if: :user_signed_in?
   before_action :set_current_user
 
   etag { current_user.try(:id) }
@@ -98,27 +97,6 @@ class ApplicationController < ActionController::Base
       return if user_signed_in?
 
       cookies[:locale] = I18n.locale
-    end
-
-    def store_interaction
-      return if controller_name.in?(["sessions", "administration", "users",
-                                     "events", "interactions", "profile",
-                                     "clickers", "clicker_votes", "registrations"])
-      return if controller_name == "main" && action_name == "home"
-      return if controller_name == "tags" && action_name.in?(["fill_tag_select",
-                                                              "fill_course_tags"])
-
-      study_participant = current_user.anonymized_id if current_user.study_participant
-      # as of Rack 2.0.8, the session_id is wrapped in a class of its own
-      # it is not a string anymore
-      # see https://github.com/rack/rack/issues/1433
-
-      return if request.session_options[:id].nil?
-
-      InteractionSaver.perform_async(request.session_options[:id].public_id,
-                                     request.original_fullpath,
-                                     request.referer,
-                                     study_participant)
     end
 
     def locale_param

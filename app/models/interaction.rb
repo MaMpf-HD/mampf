@@ -1,2 +1,0 @@
-class Interaction < InteractionsRecord
-end

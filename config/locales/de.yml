@@ -2099,10 +2099,6 @@ de:
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
       no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
-    interaction:
-      export_probes: Quizdaten exportieren
-      start: Startdatum
-      end: Enddatum
     tutorial:
       new: 'Neues Tutorium anlegen'
     assignment:
