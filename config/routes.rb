@@ -168,9 +168,6 @@ Rails.application.routes.draw do
 
   # interactions routes
 
-  get "interactions/export_interactions",
-      as: "export_interactions"
-
   get "interactions/export_probes",
       as: "export_probes"
 

@@ -2100,7 +2100,6 @@ de:
       new: 'Teilbereich anlegen'
       no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
     interaction:
-      export_interactions: Interaktionen exportieren
       export_probes: Quizdaten exportieren
       start: Startdatum
       end: Enddatum

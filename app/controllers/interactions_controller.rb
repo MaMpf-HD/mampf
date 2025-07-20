@@ -10,19 +10,6 @@ class InteractionsController < ApplicationController
   def index
   end
 
-  def export_interactions
-    start_date = interaction_params[:start_date].to_date
-    end_date = interaction_params[:end_date].to_date
-    @interactions = Interaction.created_between(start_date, end_date)
-    respond_to do |format|
-      format.html { head :ok }
-      format.csv do
-        csv_filename = "interactions-from-#{start_date}-to-#{end_date}-at-#{Time.zone.now}.csv"
-        send_data(@interactions.to_csv, filename: csv_filename)
-      end
-    end
-  end
-
   def export_probes
     start_date = interaction_params[:start_date].to_date
     end_date = interaction_params[:end_date].to_date
