@@ -20,7 +20,6 @@ class QuizRound
     @vertex = @quiz.vertices[@progress]
     @vertex_old = @vertex
     question_details(params) if @vertex.present? && @vertex[:type] == "Question"
-    # remark_details(params) if @vertex.present? && @vertex[:type] == "Remark"
     @answer_scheme ||= {}
     @answer_shuffle ||= []
     @answer_shuffle_old = []
@@ -107,11 +106,6 @@ class QuizRound
         Question.find(@question_id).answers.map(&:id).shuffle
       end
     end
-
-    # def remark_details(_params)
-    #   @is_remark = true
-    #   @remark_id = @vertex[:id]
-    # end
 
     def update_answer_shuffle
       @answer_shuffle = Question.find_by(id: @vertex[:id])&.answers&.map(&:id)
