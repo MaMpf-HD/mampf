@@ -81,7 +81,7 @@ $(document).on 'turbo:load', ->
   return
 
 # clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#section-form :input'
   $(document).off 'change', '#section_chapter_id'
   $(document).off 'click', '#cancel-section-edit'

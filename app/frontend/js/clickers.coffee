@@ -71,7 +71,7 @@ $(document).on 'turbo:load', ->
   return
 
 # clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '.clickerAlternatives'
   $(document).off 'click', '#clickerQRButton'
   $(document).off 'click', '#toggleClickerResults'

@@ -202,7 +202,7 @@ $(document).on 'turbo:load', ->
 
   return
 # clean up before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#new-tag-button'
   $(document).off 'change', '#tag_identified_tag_id'
   $(document).off 'click', '.cancel-section-association'

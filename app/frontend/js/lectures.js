@@ -398,7 +398,7 @@ $(document).on("turbo:load", function () {
 });
 
 // clean up everything before turbolinks caches
-$(document).on("turbolinks:before-cache", function () {
+$(document).on("turbo:before-cache", function () {
   $(".lecture-tag").removeClass("bg-warning");
   $(".lecture-lesson").removeClass("bg-info").addClass("bg-secondary");
   $(document).off("change", "#lecture_course_id");

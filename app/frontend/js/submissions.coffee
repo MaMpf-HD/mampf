@@ -11,6 +11,6 @@ $(document).on 'turbo:load', ->
   return
 
 # clean up for turbolinks
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#removeUserManuscript'
   return

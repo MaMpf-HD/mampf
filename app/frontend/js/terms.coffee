@@ -15,6 +15,6 @@ $(document).on 'turbo:load', ->
   return
 
 # clean up before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#cancel-term-edit'
   return

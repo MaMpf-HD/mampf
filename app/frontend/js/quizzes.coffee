@@ -378,7 +378,7 @@ $(document).on 'turbo:load', ->
   return
 
 # clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '[id^="toggle_results-"]'
   $(document).off 'click', '[id^="reveal-explanation-"]'
   $(document).off 'click', '[id^="reveal-hint-"]'

@@ -87,7 +87,7 @@ $(document).on 'turbo:load', ->
 
   return
 
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#item_sort'
   $(document).off 'change', '#item_section_id'
   $(document).off 'change', '#item_pdf_destination'

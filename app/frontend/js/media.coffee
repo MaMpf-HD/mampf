@@ -403,7 +403,7 @@ $(document).on 'turbo:load', ->
 
   return
 
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#test-external-link'
   $(document).off 'click', '.timer'
   $(document).off 'click', '#export-toc'
