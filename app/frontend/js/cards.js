@@ -1,4 +1,4 @@
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $(".mampf-card").on("mousemove", function (event) {
     const { x, y } = this.getBoundingClientRect();
     this.style.setProperty("--x", event.clientX - x);

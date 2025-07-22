@@ -181,7 +181,7 @@ cleanSolutionBox = ->
   $('#submit-solution').hide()
   return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'keyup', '#question-basics-edit', ->
     $('#question-basics-options').removeClass("no_display")

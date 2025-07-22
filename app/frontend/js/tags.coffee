@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   # fill courses selector in admin tag search with user's edited courses
   $('#tags-edited-courses').on 'click', ->
     search_course_ids.tomselect.setValue(JSON.parse(this.dataset.courses))

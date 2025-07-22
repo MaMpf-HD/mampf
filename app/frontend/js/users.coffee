@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # if any input is given to the user form, issue a warning
   $('#user-form :input').on 'change', ->

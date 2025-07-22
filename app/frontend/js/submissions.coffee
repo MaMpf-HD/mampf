@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'click', '#removeUserManuscript', ->
     $('#userManuscriptMetadata').hide()

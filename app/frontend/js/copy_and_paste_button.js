@@ -1,4 +1,4 @@
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   // TODO: this is using clipboard.js, which makes use of deprecated browser APIs
   // see issue #684
   new Clipboard(".clipboard-btn");

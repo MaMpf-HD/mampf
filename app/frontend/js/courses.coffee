@@ -9,7 +9,7 @@ showWarning = ->
   $('#new-tag-button').hide()
   return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # hide download button for media on mobile devices
   mobile = ! !navigator.platform and /iPad|iPhone|Android/.test(navigator.platform)

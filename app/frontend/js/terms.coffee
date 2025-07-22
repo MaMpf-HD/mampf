@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # restore site after editing of term was cancelled (via ajax)
   $(document).on 'click', '#cancel-term-edit', ->

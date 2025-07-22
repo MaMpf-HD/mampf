@@ -7,7 +7,7 @@ targetButtonIsDiscardButton = {}
 # This is to avoid registering the same listener multiple times.
 window.registeredDiscardListeners = new Set(); 
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'shown.bs.collapse', '[id^="collapse-answer-"]', ->
     # Answer is now shown to the user and can be edited

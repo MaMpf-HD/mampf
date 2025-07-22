@@ -723,7 +723,7 @@ window.userManuscriptUpload = (fileInput) ->
     e.preventDefault()
     $('#upload-userManuscript').trigger('click')
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   video = document.getElementById('upload-video')
   manuscript = 'upload-manuscript'
   geogebra = document.getElementById('upload-geogebra')

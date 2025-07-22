@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   $(document).on 'change', '.clickerAlternatives', ->
     alternatives = $(this).data('alternatives')
     clickerId = $(this).data('clicker')

@@ -1,4 +1,4 @@
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $(".activeModal").modal("show");
   $(".activeModal").removeClass("activeModal");
 });

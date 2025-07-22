@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'trix-change', '#announcement-details-trix', ->
     $('#announcement-details-preview').html($('#announcement-details-trix').html())

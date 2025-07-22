@@ -1,9 +1,9 @@
 import p5 from "p5";
 import {
-  hat_outline,
-  hr3, ident,
-  intersect, matchTwo, mul,
-  padd, psub, pt, rotAbout, transPt, trot, ttrans,
+    hat_outline,
+    hr3, ident,
+    intersect, matchTwo, mul,
+    padd, psub, pt, rotAbout, transPt, trot, ttrans,
 } from "~/js/monotile/geometry";
 
 // BSD-3-Clause licensed by Craig sketch. Kaplan
@@ -454,6 +454,6 @@ $(document).ready(function () {
   });
 });
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   new p5(sketchObject, "einstein-monotile");
 });

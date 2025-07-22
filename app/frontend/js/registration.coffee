@@ -2,7 +2,7 @@
 # All this logic will automatically be available in application.js.
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # make sure user can only register if DSVGO checkbox has been checked
   $(document).on 'click', '#register-user', (evt) ->

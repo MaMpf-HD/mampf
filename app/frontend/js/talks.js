@@ -72,7 +72,7 @@ function handleDateSelection() {
   });
 }
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $(document).on("change", "#talk-form :input", function () {
     $("#talk-basics-warning").show();
   });

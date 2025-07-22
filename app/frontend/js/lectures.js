@@ -25,7 +25,7 @@ function disableExceptOrganizational() {
   $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
 };
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $("#delete-forum").on("click", () => {
     const sureToDeleteMsg = $("#delete-forum").data("sureToDelete");
     const reallyDelete = confirm(sureToDeleteMsg);

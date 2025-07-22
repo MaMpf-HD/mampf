@@ -151,6 +151,6 @@ $(document).on("turbolinks:before-cache", function () {
   $(".tomselected").each(resetSelectized);
 });
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   fillOptionsByAjax($(".selectize"));
 });
