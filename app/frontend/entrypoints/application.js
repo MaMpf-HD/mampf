@@ -75,8 +75,6 @@ import { WidgetInstance } from "friendly-challenge";
 import "~/js/masonry_grid";
 
 document.addEventListener("turbo:load", function () {
-  console.log("turbo:load event fired, initializing Captcha widget");
-
   var doneCallback, element, options;
 
   doneCallback = function (solution) {
