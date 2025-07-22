@@ -1,4 +1,3 @@
-# ApplicationController
 class ApplicationController < ActionController::Base
   include Turbo::Redirection
 
