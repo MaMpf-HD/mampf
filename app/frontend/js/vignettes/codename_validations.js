@@ -1,8 +1,9 @@
 $(document).ready(function () {
   const codenameInput = document.getElementById("codename-input");
   const saveButton = document.getElementById("codename-save-button");
-  const minLength = <%= Vignettes::Codename::MIN_LENGTH %>;
-  const maxLength = <%= Vignettes::Codename::MAX_LENGTH %>;
+  // TODO: find a way to sync this with backend without having to use ERB syntax
+  const minLength = 3;
+  const maxLength = 16;
 
   const emptyMessage = codenameInput.dataset.emptyMessage;
   const minMessage = codenameInput.dataset.minMessage;
