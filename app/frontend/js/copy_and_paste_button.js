@@ -26,7 +26,6 @@ $(document).on("turbo:load", function () {
   });
 });
 
-// clean up for turbolinks
 $(document).on("turbo:before-cache", function () {
   $(document).off("click", ".clipboard-button");
 });

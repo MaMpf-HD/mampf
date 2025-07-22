@@ -56,7 +56,6 @@ $(document).on 'turbo:load', ->
 
   return
 
-# clean up everything before turbolinks caches
 $(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#chapter-form :input'
   $(document).off 'click', '#cancel-chapter-edit'

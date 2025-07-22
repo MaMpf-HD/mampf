@@ -79,7 +79,6 @@ $(document).on 'turbo:load', ->
 
   return
 
-# clean up everything before turbolinks caches
 $(document).on 'turbo:before-cache', ->
   $(document).off 'change', '[id^="default_target_select_"]'
   $(document).off 'change', '[id^="branching_select-"]'

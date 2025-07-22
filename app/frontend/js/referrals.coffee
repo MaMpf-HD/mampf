@@ -82,7 +82,6 @@ $(document).on 'turbo:load', ->
 
   return
 
-# clean up for turbolinks
 $(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#referral_item_id'
   $(document).off 'change', '#referral_teachable'

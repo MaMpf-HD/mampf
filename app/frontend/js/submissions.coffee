@@ -10,7 +10,6 @@ $(document).on 'turbo:load', ->
 
   return
 
-# clean up for turbolinks
 $(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#removeUserManuscript'
   return

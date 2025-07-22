@@ -377,7 +377,6 @@ $(document).on 'turbo:load', ->
     $('.basicQuizButton').show()
   return
 
-# clean up everything before turbolinks caches
 $(document).on 'turbo:before-cache', ->
   $(document).off 'click', '[id^="toggle_results-"]'
   $(document).off 'click', '[id^="reveal-explanation-"]'

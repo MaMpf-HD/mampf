@@ -334,7 +334,6 @@ $(document).on 'turbo:load', ->
 
   return
 
-# clean up everything before turbolinks caches
 $(document).on 'turbo:before-cache', ->
   $(document).off 'keyup', '#question-basics-edit'
   $(document).off 'change', '#question-basics-edit :input'

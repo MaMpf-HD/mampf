@@ -41,7 +41,6 @@ $(document).on 'turbo:load', ->
     return
   return
 
-# clean up everything before turbolinks caches
 $(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#generic_user_id'
   $(document).off 'change', '#generic_user_admin'

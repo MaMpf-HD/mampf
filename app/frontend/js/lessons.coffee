@@ -107,7 +107,6 @@ $(document).on 'turbo:load', ->
 
   return
 
-# clean up everything before turbolinks caches
 $(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#lesson-form :input'
   $(document).off 'click', '#cancel-new-lesson'
