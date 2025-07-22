@@ -13,6 +13,8 @@ import "~/js/bootstrapPopovers";
 // See also: https://stackoverflow.com/a/70769655/
 import Rails from "@rails/ujs";
 
+import "@hotwired/turbo-rails";
+
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
 
@@ -73,6 +75,8 @@ import { WidgetInstance } from "friendly-challenge";
 import "~/js/masonry_grid";
 
 document.addEventListener("turbolinks:load", function () {
+  console.log("Turbolinks:load event fired, initializing Captcha widget");
+
   var doneCallback, element, options;
 
   doneCallback = function (solution) {
