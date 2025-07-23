@@ -42,7 +42,8 @@
     <% if medium.video.present? %>
       <%= link_to t('basics.thyme_editor'),
                   enrich_medium_path(medium),
-                  class: 'btn btn-sm btn-outline-secondary' %>
+                  class: 'btn btn-sm btn-outline-secondary',
+                  "data-turbo": false %>
       <%= link_to 'Feedback',
                   feedback_medium_path(medium),
                   class: 'btn btn-sm btn-outline-secondary',
