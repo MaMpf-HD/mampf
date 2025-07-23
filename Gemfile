@@ -15,7 +15,6 @@ gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
 gem "bootstrap_form", "~> 5.4"
 gem "cancancan", "~> 3.6"
-gem "clipboard-rails", "~> 1.7"
 gem "coffee-rails", "~> 5.0"
 gem "commontator", "~> 7.0.1"
 gem "coveralls", "~> 0.7", require: false

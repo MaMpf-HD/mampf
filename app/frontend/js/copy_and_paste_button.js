@@ -1,3 +1,5 @@
+import Clipboard from "clipboard";
+
 $(document).on("turbo:load", function () {
   // TODO: this is using clipboard.js, which makes use of deprecated browser APIs
   // see issue #684

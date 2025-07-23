@@ -19,7 +19,6 @@ import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
 
 import "@popperjs/core";
-import "gems/clipboard-rails/vendor/assets/javascripts/clipboard";
 import "trix";
 
 // Custom JS needed on every page
