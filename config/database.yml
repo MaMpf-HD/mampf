@@ -6,7 +6,7 @@ default: &default
 development:
   primary:
     <<: *default
-    adapter: <%= ENV['DEVELOPMENT_DATABASE_ADAPTER'] %>
+    adapter: <%= ENV['DATABASE_ADAPTER'] %>
     encoding: <%= ENV['DEVELOPMENT_DATABASE_ENCODING'] %>
     database: <%= ENV['DEVELOPMENT_DATABASE_DATABASE'] %>
     username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
@@ -15,7 +15,7 @@ development:
     port: <%= ENV['DEVELOPMENT_DATABASE_PORT'] %>
   interactions:
     <<: *default
-    adapter: <%= ENV['DEVELOPMENT_DATABASE_ADAPTER'] %>
+    adapter: <%= ENV['DATABASE_ADAPTER'] %>
     encoding: <%= ENV['DEVELOPMENT_DATABASE_ENCODING'] %>
     database: <%= ENV['DEVELOPMENT_DATABASE_INTERACTIONS'] %>
     username: <%= ENV['DEVELOPMENT_DATABASE_USERNAME'] %>
@@ -30,7 +30,7 @@ development:
 test:
   primary:
     <<: *default
-    adapter: <%= ENV['TEST_DATABASE_ADAPTER'] %>
+    adapter: <%= ENV['DATABASE_ADAPTER'] %>
     encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
     database: <%= ENV['TEST_DATABASE_DATABASE'] %>
     username: <%= ENV['TEST_DATABASE_USERNAME'] %>
@@ -39,7 +39,7 @@ test:
     port: <%= ENV['TEST_DATABASE_PORT'] %>
   interactions:
     <<: *default
-    adapter: <%= ENV['TEST_DATABASE_ADAPTER'] %>
+    adapter: <%= ENV['DATABASE_ADAPTER'] %>
     encoding: <%= ENV['TEST_DATABASE_ENCODING'] %>
     database: <%= ENV['TEST_DATABASE_INTERACTIONS'] %>
     username: <%= ENV['TEST_DATABASE_USERNAME'] %>

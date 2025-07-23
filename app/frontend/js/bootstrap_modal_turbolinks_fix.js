@@ -1,0 +1,12 @@
+$(document).on("turbolinks:load", function () {
+  $(".activeModal").modal("show");
+  $(".activeModal").removeClass("activeModal");
+});
+
+$(document).on("turbolinks:before-cache", function () {
+  if ($("body").hasClass("modal-open")) {
+    $(".modal.show").addClass("activeModal");
+    $(".modal.show").modal("hide");
+    $(".modal-backdrop").remove();
+  }
+});
