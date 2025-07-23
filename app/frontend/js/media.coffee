@@ -1,7 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
 # converts a time in seconds given as a float to a string of the form
 # hh:mm:ss.MMM
 fancyTimeFormat = (time) ->
