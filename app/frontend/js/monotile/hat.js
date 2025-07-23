@@ -441,7 +441,15 @@ const sketchObject = (sketch) => {
   }
 };
 
-$(document).ready(function () {
+let p5Obj = null;
+
+$(document).on("turbo:load", function () {
+  if (p5Obj) {
+    p5Obj.remove();
+    p5Obj = null;
+    return;
+  }
+
   // Prevent mousemove on divs to propagate to canvas
   $("#signin-box").on("mousemove", (event) => {
     event.stopPropagation();
@@ -453,5 +461,5 @@ $(document).ready(function () {
     event.stopPropagation();
   });
 
-  new p5(sketchObject, "einstein-monotile");
+  p5Obj = new p5(sketchObject, "einstein-monotile");
 });
