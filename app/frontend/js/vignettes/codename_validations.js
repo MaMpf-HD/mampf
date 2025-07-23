@@ -1,9 +1,8 @@
 $(document).ready(function () {
   const codenameInput = document.getElementById("codename-input");
   const saveButton = document.getElementById("codename-save-button");
-  // TODO: find a way to sync this with backend without having to use ERB syntax
-  const minLength = 3;
-  const maxLength = 16;
+  const minLength = parseInt(codenameInput.dataset.minLength, 10) || 3;
+  const maxLength = parseInt(codenameInput.dataset.maxLength, 10) || 16;
 
   const emptyMessage = codenameInput.dataset.emptyMessage;
   const minMessage = codenameInput.dataset.minMessage;
