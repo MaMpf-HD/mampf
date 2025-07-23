@@ -90,6 +90,13 @@ services:
       DEVELOPMENT_DATABASE_USERNAME: localroot
       DEVELOPMENT_DATABASE_HOST: db
       DEVELOPMENT_DATABASE_PORT: 5432
+      # Some Rails tasks like db:drop etc. iterate over all environments,
+      # so we need to set the test database variables here as well.
+      TEST_DATABASE_DATABASE: mampf-test
+      TEST_DATABASE_INTERACTIONS: interactions-test
+      TEST_DATABASE_USERNAME: localroot
+      TEST_DATABASE_HOST: db
+      TEST_DATABASE_PORT: 5432
       MAX_DELETIONS_PER_RUN: 50
       MAILSERVER: mailcatcher
       FROM_ADDRESS: development@localhost
