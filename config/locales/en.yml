@@ -2637,8 +2637,8 @@ en:
       please_set_codename: >
         Please set your personal code before taking a questionnaire.
       not_empty: "Personal code can't be empty"
-      min_length: "Personal code must have at least %{min} character"
-      max_length: "Personal code must have at least %{max} character"
+      min_length: "Personal code must have at least %{min} characters"
+      max_length: "Personal code must have at most %{max} characters"
 
     completion_message:
       label: "Completion Message"
