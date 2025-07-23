@@ -1,7 +1,3 @@
-// important: filename starts with underscore to move it in the first
-// position of the asset pipeline (it is important that this files methods are
-// executed before all others)
-
 // transfer knowledge about selected items from selectize to html options
 var resetSelectized;
 
