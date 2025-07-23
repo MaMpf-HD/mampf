@@ -1,3 +1,5 @@
+import { Collapse } from "bootstrap";
+
 let currentUnsavedSlideForm = null;
 let pendingSlideId = null;
 let pendingAction = null;
@@ -229,7 +231,7 @@ function registerNewSlideButtonListener($slideList) {
 }
 
 function openAccordionItem($item) {
-  new bootstrap.Collapse($item.find(".collapse"), {
+  new Collapse($item.find(".collapse"), {
     toggle: true,
   });
 }
