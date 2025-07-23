@@ -1,8 +1,6 @@
-$(document).ready(function () {
+$(document).on("turbo:load", function () {
   const codenameInput = document.getElementById("codename-input");
   const saveButton = document.getElementById("codename-save-button");
-  const minLength = parseInt(codenameInput.dataset.minLength, 10) || 3;
-  const maxLength = parseInt(codenameInput.dataset.maxLength, 10) || 16;
 
   const emptyMessage = codenameInput.dataset.emptyMessage;
   const minMessage = codenameInput.dataset.minMessage;
@@ -10,6 +8,9 @@ $(document).ready(function () {
 
   if (codenameInput) {
     codenameInput.setCustomValidity(emptyMessage);
+
+    const minLength = parseInt(codenameInput.dataset.minLength, 10) || 3;
+    const maxLength = parseInt(codenameInput.dataset.maxLength, 10) || 16;
 
     codenameInput.addEventListener("input", function () {
       if (this.validity.valueMissing) {
