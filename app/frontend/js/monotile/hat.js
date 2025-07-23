@@ -452,8 +452,6 @@ $(document).ready(function () {
   $("#announcement-box").on("mousemove", (event) => {
     event.stopPropagation();
   });
-});
 
-$(document).on("turbo:load", function () {
   new p5(sketchObject, "einstein-monotile");
 });
