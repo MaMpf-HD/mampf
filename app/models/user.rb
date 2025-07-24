@@ -615,10 +615,6 @@ class User < ApplicationRecord
     Lecture.where.not(id: lectures.pluck(:id))
   end
 
-  def anonymized_id
-    Digest::SHA2.hexdigest(id.to_s + created_at.to_s).first(20)
-  end
-
   def subscribe_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
     return false if lecture.in?(lectures)

@@ -111,9 +111,6 @@ class QuizzesController < ApplicationController
       else
         params
       end
-      if user_signed_in? && current_user.study_participant
-        quiz_round_params[:study_participant] = current_user.anonymized_id
-      end
 
       quiz_round_params[:save_probe] =
         if user_signed_in?
