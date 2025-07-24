@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_23_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -123,26 +123,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.datetime "updated_at", null: false
     t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
-  end
-
-  create_table "clicker_votes", force: :cascade do |t|
-    t.integer "value"
-    t.integer "clicker_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "clickers", force: :cascade do |t|
-    t.integer "editor_id"
-    t.integer "question_id"
-    t.text "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "title"
-    t.boolean "open"
-    t.integer "alternatives"
-    t.text "instance"
-    t.index ["editor_id"], name: "index_clickers_on_editor_id"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
