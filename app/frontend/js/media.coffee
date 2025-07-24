@@ -42,7 +42,7 @@ $(document).on 'turbo:load', ->
       else
         selector.disable()
     catch e
-    
+
     prev = this
     return
 
@@ -173,7 +173,7 @@ $(document).on 'turbo:load', ->
     return
 
   $(document).on 'mouseenter', '[id^="row-medium-"]', ->
-    if $(this).data('purpose') in ['media', 'clicker', 'statistics']
+    if $(this).data('purpose') in ['media', 'statistics']
       mediumActions = document.getElementById('mediumActions')
       unless mediumActions.dataset.filled == 'true'
         $(this).addClass('bg-orange-lighten-4')
@@ -207,7 +207,7 @@ $(document).on 'turbo:load', ->
     return
 
   $(document).on 'click', '[id^="row-medium-"]', ->
-    if $(this).data('purpose') in ['media', 'clicker', 'statistics']
+    if $(this).data('purpose') in ['media', 'statistics']
       mediumActions = document.getElementById('mediumActions')
       if $(this).hasClass('bg-green-lighten-4')
         $(this).removeClass('bg-green-lighten-4')
@@ -223,16 +223,6 @@ $(document).on 'turbo:load', ->
           $.ajax Routes.render_medium_actions_path(id: $(this).data('id')),
             type: 'GET'
             dataType: 'script'
-            error: (jqXHR, textStatus, errorThrown) ->
-              console.log("AJAX Error: #{textStatus}")
-        else if $(this).data('purpose') == 'clicker'
-          clickerId = $('#clickerSearchForm').data('clicker')
-          $.ajax Routes.render_clickerizable_actions_path(clickerId),
-            type: 'GET'
-            dataType: 'script'
-            data: {
-              medium_id: $(this).data('id')
-            }
             error: (jqXHR, textStatus, errorThrown) ->
               console.log("AJAX Error: #{textStatus}")
     else if $(this).data('purpose') == 'quiz'

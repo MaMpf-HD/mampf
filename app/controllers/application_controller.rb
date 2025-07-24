@@ -21,7 +21,6 @@ class ApplicationController < ActionController::Base
                                                   associations:
                                                     [:lectures,
                                                      :edited_media,
-                                                     :clickers,
                                                      { edited_courses:
                                                        [:editors,
                                                         { lectures: [:term,
@@ -104,7 +103,7 @@ class ApplicationController < ActionController::Base
     def store_interaction
       return if controller_name.in?(["sessions", "administration", "users",
                                      "events", "interactions", "profile",
-                                     "clickers", "clicker_votes", "registrations"])
+                                     "registrations"])
       return if controller_name == "main" && action_name == "home"
       return if controller_name == "tags" && action_name.in?(["fill_tag_select",
                                                               "fill_course_tags"])

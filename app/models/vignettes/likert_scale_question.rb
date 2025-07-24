@@ -33,7 +33,7 @@ module Vignettes
     LIKERT_LABELS_NL = {
       strongly_disagree: "Helemaal geen overeenstemming",
       disagree: "Weinig overeenstemming",
-      agree: "Wogal wat overeenstemming",
+      agree: "Nogal wat overeenstemming",
       strongly_agree: "Volledige overeenstemming"
     }.freeze
   end
