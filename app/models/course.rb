@@ -1,8 +1,5 @@
 # Course class
 class Course < ApplicationRecord
-  include Searchable
-  include ApplicationHelper
-
   has_many :lectures, dependent: :destroy
 
   has_many :notifications, as: :notifiable, dependent: :destroy
@@ -50,6 +47,13 @@ class Course < ApplicationRecord
   # this makes use of the shrine gem
   include ScreenshotUploader[:image]
 
+  # include the generic search engine
+  include Searchable
+  # include the course-specific search engine
+  include CourseSearchable
+
+  include ApplicationHelper
+
   pg_search_scope :search_by_title,
                   against: :title,
                   using: {
@@ -57,26 +61,6 @@ class Course < ApplicationRecord
                     trigram: { word_similarity: true,
                                threshold: 0.3 }
                   }
-
-  # Define which filters to apply in order
-  def self.search_filters
-    [:apply_editor_filter, :apply_program_filter, :apply_term_independence_filter,
-     :apply_fulltext_filter]
-  end
-
-  scope :by_editors, lambda { |editor_ids|
-    return all if editor_ids.blank?
-
-    joins(:editable_user_joins).where(editable_user_joins: { user_id: editor_ids }).distinct
-  }
-
-  scope :by_programs, lambda { |program_ids|
-    return all if program_ids.blank?
-
-    joins(:divisions).where(divisions: { program_id: program_ids }).distinct
-  }
-
-  scope :term_independent_only, -> { where(term_independent: true) }
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*

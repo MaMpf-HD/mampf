@@ -7,20 +7,26 @@ module Searchable
 
   class_methods do
     def search_by(search_params)
-      build_search_scope(search_params)
-        .then { |scope| apply_ordering(scope) }
+      scope = build_search_scope(search_params)
+      apply_ordering(scope, search_params)
     end
 
     private
 
       def build_search_scope(search_params)
         search_filters.reduce(all) do |scope, filter_method|
+          # It finds the apply_* methods from the included filter concerns
           send(filter_method, scope, search_params)
         end
       end
 
-      def apply_ordering(scope)
-        scope.order(default_search_order)
+      def apply_ordering(scope, search_params)
+        # If a full-text search is active, let pg_search order by relevance.
+        return scope if search_params[:fulltext].present?
+
+        # Otherwise, apply the model's specific default sort order.
+        order_expression = default_search_order
+        scope.select(Arel.star, order_expression).order(order_expression)
       end
 
       # Override these in each model
@@ -29,7 +35,7 @@ module Searchable
       end
 
       def default_search_order
-        Arel.sql("LOWER(unaccent(title)) ASC")
+        raise(NotImplementedError, "Define default_search_order in #{name}")
       end
   end
 end
