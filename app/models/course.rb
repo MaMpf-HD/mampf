@@ -1,5 +1,6 @@
 # Course class
 class Course < ApplicationRecord
+  include Searchable
   include ApplicationHelper
 
   has_many :lectures, dependent: :destroy
@@ -49,18 +50,33 @@ class Course < ApplicationRecord
   # this makes use of the shrine gem
   include ScreenshotUploader[:image]
 
-  searchable do
-    text :title
-    integer :program_ids, multiple: true do
-      divisions.pluck(:program_id).uniq
-    end
-    integer :editor_ids, multiple: true
-    boolean :term_independent
-    # this is for ordering
-    string :sort_title do
-      ActiveSupport::Inflector.transliterate(course.title).downcase
-    end
+  pg_search_scope :search_by_title,
+                  against: :title,
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { word_similarity: true,
+                               threshold: 0.3 }
+                  }
+
+  # Define which filters to apply in order
+  def self.search_filters
+    [:apply_editor_filter, :apply_program_filter, :apply_term_independence_filter,
+     :apply_fulltext_filter]
   end
+
+  scope :by_editors, lambda { |editor_ids|
+    return all if editor_ids.blank?
+
+    joins(:editable_user_joins).where(editable_user_joins: { user_id: editor_ids }).distinct
+  }
+
+  scope :by_programs, lambda { |program_ids|
+    return all if program_ids.blank?
+
+    joins(:divisions).where(divisions: { program_id: program_ids }).distinct
+  }
+
+  scope :term_independent_only, -> { where(term_independent: true) }
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
@@ -300,23 +316,6 @@ class Course < ApplicationRecord
     titles.select do |t|
       jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
     end
-  end
-
-  def self.search_by(search_params, page)
-    editor_ids = search_params[:editor_ids]
-    editor_ids = [] if search_params[:all_editors] == "1"
-    program_ids = search_params[:program_ids] || []
-    program_ids = [] if search_params[:all_programs] == "1"
-    search = Sunspot.new_search(Course)
-    search.build do
-      with(:editor_ids, editor_ids)
-      with(:program_ids, program_ids) unless program_ids.empty?
-      with(:term_independent, true) if search_params[:term_independent] == "1"
-      fulltext(search_params[:fulltext]) if search_params[:fulltext].present?
-      order_by(:sort_title, :asc)
-      paginate(page: page, per_page: search_params[:per])
-    end
-    search
   end
 
   private
