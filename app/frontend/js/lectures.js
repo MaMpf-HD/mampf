@@ -25,7 +25,7 @@ function disableExceptOrganizational() {
   $('[data-bs-toggle="collapse"]').prop("disabled", true).removeClass("clickable");
 };
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $("#delete-forum").on("click", () => {
     const sureToDeleteMsg = $("#delete-forum").data("sureToDelete");
     const reallyDelete = confirm(sureToDeleteMsg);
@@ -397,8 +397,7 @@ $(document).on("turbolinks:load", function () {
   });
 });
 
-// clean up everything before turbolinks caches
-$(document).on("turbolinks:before-cache", function () {
+$(document).on("turbo:before-cache", function () {
   $(".lecture-tag").removeClass("bg-warning");
   $(".lecture-lesson").removeClass("bg-info").addClass("bg-secondary");
   $(document).off("change", "#lecture_course_id");

@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   renderMathInElement document.body,
     delimiters: [
       {

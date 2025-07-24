@@ -1,8 +1,4 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # if any input is given to the lesson form, disable creation of media and
   # issue warning
@@ -107,8 +103,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#lesson-form :input'
   $(document).off 'click', '#cancel-new-lesson'
   $(document).off 'click', '.cancel-lesson-edit'

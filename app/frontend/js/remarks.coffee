@@ -1,10 +1,6 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
 # highlight 'Ungespeicherte Änderungen' if something is entered in remark basics
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'keyup', '#remark-basics-edit', ->
     $('#remark-basics-options').removeClass("no_display")
@@ -28,8 +24,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'keyup', '#remark-basics-edit'
   $(document).off 'change', '#remark-basics-edit'
   $(document).off 'click', '#remark-basics-cancel'

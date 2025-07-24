@@ -1,4 +1,4 @@
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $("#search_all_tags").change(evt => toggleSearchAllTags(evt));
 });
 

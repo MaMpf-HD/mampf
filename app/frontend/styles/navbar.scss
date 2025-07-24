@@ -45,8 +45,8 @@
         padding: 0 9px;
         color: white;
 
-        &::after {
-            &.active-item {
+        &.active-item {
+            &::after {
                 content: "\2022"; // dot
                 font-size: 1rem;
                 position: absolute;

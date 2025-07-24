@@ -62,12 +62,6 @@ class User < ApplicationRecord
            dependent: :destroy,
            inverse_of: :announcer
 
-  # a user has many clickers as editor
-  has_many :clickers,
-           foreign_key: "editor_id",
-           dependent: :destroy,
-           inverse_of: :editor
-
   # a user has many submissions (of assignments)
   has_many :user_submission_joins, dependent: :destroy
   has_many :submissions, through: :user_submission_joins

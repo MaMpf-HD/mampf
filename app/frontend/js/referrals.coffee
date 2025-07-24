@@ -1,8 +1,4 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # if a reference item is clicked in the references box, jump to the
   # corresponding time in the video and render edit referral view in the
@@ -82,8 +78,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up for turbolinks
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'change', '#referral_item_id'
   $(document).off 'change', '#referral_teachable'
   $(document).off 'click', '#test-link'

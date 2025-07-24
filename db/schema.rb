@@ -127,26 +127,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_150154) do
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
   end
 
-  create_table "clicker_votes", force: :cascade do |t|
-    t.integer "value"
-    t.integer "clicker_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "clickers", force: :cascade do |t|
-    t.integer "editor_id"
-    t.integer "question_id"
-    t.text "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "title"
-    t.boolean "open"
-    t.integer "alternatives"
-    t.text "instance"
-    t.index ["editor_id"], name: "index_clickers_on_editor_id"
-  end
-
   create_table "commontator_comments", force: :cascade do |t|
     t.bigint "thread_id", null: false
     t.string "creator_type", null: false

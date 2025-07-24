@@ -9,9 +9,9 @@
 <%= csrf_meta_tags %>
 <%= vite_stylesheet_tag "application.scss",
                         media: "all",
-                        "data-turbolinks-track": "reload" %>
+                        "data-turbo-track": "reload" %>
 
-<!-- For old sprockets assets (turbolinks, commontator, thredded, exception_handler) -->
+<!-- For old sprockets assets (commontator, thredded, exception_handler) -->
 <%= stylesheet_link_tag "sprockets" , media: "all" %>
 
 <link rel="stylesheet"
@@ -61,6 +61,5 @@
 <meta name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-<%= javascript_include_tag "sprockets", "data-turbolinks-track": "reload" %>
 <%= vite_client_tag %>
 <%= vite_javascript_tag "application" %>
