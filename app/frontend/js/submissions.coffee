@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'click', '#removeUserManuscript', ->
     $('#userManuscriptMetadata').hide()
@@ -10,7 +10,6 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up for turbolinks
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#removeUserManuscript'
   return

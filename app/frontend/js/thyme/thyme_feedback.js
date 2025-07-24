@@ -13,7 +13,7 @@ import { addFeedbackShortcuts, addGeneralShortcuts } from "./key_shortcuts";
 import { resizeThymeContainer } from "./resizer";
 import { playOnClick, setUpMaxTime } from "./utility";
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   /*
     VIDEO INITIALIZATION
    */

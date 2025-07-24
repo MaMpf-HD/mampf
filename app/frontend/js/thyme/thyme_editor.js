@@ -8,7 +8,7 @@ import { TimeButton } from "./components/time_button";
 import { VolumeBar } from "./components/volume_bar";
 import { setUpMaxTime } from "./utility";
 
-$(document).on("turbolinks:load", function () {
+$(document).ready(function () {
   /*
     VIDEO INITIALIZATION
    */

@@ -18,7 +18,7 @@ function configureUrlHashesForBootstrapTabs() {
     const urlWithoutHash = location.href.split("#")[0];
     const newUrl = `${urlWithoutHash}${hash}`;
     // https://github.com/turbolinks/turbolinks-classic/issues/363#issuecomment-85626145
-    history.pushState({ turbolinks: true, url: newUrl }, "", newUrl);
+    history.pushState({ turbo: true, url: newUrl }, "", newUrl);
   });
 }
 
@@ -30,7 +30,7 @@ function navigateToActiveNavTab() {
       ? "#vignettes"
       : "#content";
     const newUrl = `${location.href.split("#")[0]}${hash}`;
-    history.replaceState({ turbolinks: true, url: newUrl }, "", newUrl);
+    history.replaceState({ turbo: true, url: newUrl }, "", newUrl);
   }
 
   const hrefXPathIdentifier = `button[href="${hash}"]`;

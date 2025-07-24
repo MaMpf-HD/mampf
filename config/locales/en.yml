@@ -179,9 +179,6 @@ en:
         You are not listed as a teacher or an editor for any event series.
       my_courses: 'My Courses'
       create_course: 'Create Course'
-      my_clickers: 'My Clickers'
-      create_clicker: 'Create Clicker'
-      no_edited_clickers: 'Currently, you do not have any clickers.'
       no_edited_courses: >
         You are not listed as a course editor for any courses.
       my_media: 'My Media'
@@ -269,15 +266,6 @@ en:
           a quiz.
           </li>
           </ul>
-        clicker_definition: >
-          This is the list of all your
-          <i>Clickers</i>,
-          </br>
-          A <i>Clicker</i> in the sense of MaMpf is
-          a feedback channel in the form of a special website.
-          People who have the editor link can ask for feedback for a question,
-          and people with the user link can give feedback.
-          You can associate one question to a clicker, but clickers can be reused.
         other_lectures: >
           This is the list of event series you cannot edit.
           (Except if you are an admin :-P )
@@ -745,33 +733,6 @@ en:
       subscribe_link: "Lecture subscription link"
       subscribe_link_info: >
         This URL can be shared with students for lecture subscription.
-    clicker:
-      new_clicker: 'Create new Clicker'
-      user_link: 'Link for users'
-      editor_link: 'Link for editors (without authentification)'
-      open: 'Enable Clicker'
-      close: 'Close Clicker'
-      reset: 'Reset Clicker'
-      delete: 'Delete Clicker'
-      is_open: 'Clicker is open.'
-      is_closed: 'Clicker is closed.'
-      thank_vote: 'Thank you for your vote.'
-      voted_already: 'You have voted already.'
-      alternatives: 'Number of alternatives'
-      show_qr: 'Show QR Code'
-      hide_qr: 'Hide QR Code'
-      remove_question: 'Remove association to Question'
-      last_poll_results: 'Result of the last poll'
-      number_of_votes: 'Number of votes'
-      associated_to_question: >
-        This clicker is associated to a question from the database:
-      change_associated_question: >
-        Associate different Question
-      associate_question: 'Associate Question'
-      info:
-        title: >
-          Here you have to enter the title of the clicker.
-          The title has to be unique among your clickers.
     course:
       new_course: 'Create new course'
       preceding_courses: 'Preceding courses'
@@ -2632,8 +2593,8 @@ en:
       please_set_codename: >
         Please set your personal code before taking a questionnaire.
       not_empty: "Personal code can't be empty"
-      min_length: "Personal code must have at least %{min} character"
-      max_length: "Personal code must have at least %{max} character"
+      min_length: "Personal code must have at least %{min} characters"
+      max_length: "Personal code must have at most %{max} characters"
 
     completion_message:
       label: "Completion Message"
@@ -3347,7 +3308,6 @@ en:
       -lectures<br>
       -received notifications (e.g. about new media etc.)<br>
       -created Announcements<br>
-      -registered clickers<br>
       -Note submissions<br>
       -watchlists<br>
       -quizzes certificates<br>
@@ -3682,7 +3642,6 @@ en:
     default_target: 'Default Target'
     ramification: 'Ramification'
     edit_tags: 'Edit tags'
-    vote: 'Vote'
     show: 'Show'
     hide: 'Hide'
     interpret: 'Interpret'
@@ -3808,8 +3767,6 @@ en:
       the necessary editing rights for the adding of tags.
     no_term: 'There is no term for this id.'
     no_teacher: 'There is no teacher with this id.'
-    no_clicker: 'There is no clicker with this id.'
-    no_clicker_access: 'You cannot to edit this clicker.'
     no_subject: 'There is no subject with this id.'
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
@@ -3891,17 +3848,6 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
-        clicker:
-          attributes:
-            title:
-              blank: 'You need to give a title.'
-              taken: 'This title is already taken.'
-        clicker_vote:
-          attributes:
-            clicker:
-              clicker_closed: 'The associated clicker is closed.'
-            value:
-              out_of_range: 'The value is out of the admissible range.'
         course:
           attributes:
             title:
@@ -4061,13 +4007,6 @@ en:
           attributes:
             question_text:
               blank: 'cannot be empty'
-        vote:
-          attributes:
-            clicker:
-              closed: 'The Clicker is closed.'
-            value:
-              out_of_range: >
-                Your vote is outside of the allowed range.
         voucher:
           attributes:
             role:

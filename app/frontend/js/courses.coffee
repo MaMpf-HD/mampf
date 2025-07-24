@@ -1,7 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
 showWarning = ->
   $('#course-basics-warning').show()
   $('#new-lecture-button').hide()
@@ -9,7 +5,7 @@ showWarning = ->
   $('#new-tag-button').hide()
   return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # hide download button for media on mobile devices
   mobile = ! !navigator.platform and /iPad|iPhone|Android/.test(navigator.platform)
@@ -81,8 +77,7 @@ $(document).on 'turbolinks:load', ->
     $('#search_fulltext').val($(this).data('title'))
     return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'
   $(document).off 'change', '#search_course_tag_ids'
   $(document).off 'click', '.courseAlternativeSearch'

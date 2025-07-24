@@ -1,9 +1,9 @@
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $(".activeModal").modal("show");
   $(".activeModal").removeClass("activeModal");
 });
 
-$(document).on("turbolinks:before-cache", function () {
+$(document).on("turbo:before-cache", function () {
   if ($("body").hasClass("modal-open")) {
     $(".modal.show").addClass("activeModal");
     $(".modal.show").modal("hide");

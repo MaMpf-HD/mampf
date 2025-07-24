@@ -3,25 +3,26 @@ import "~/entrypoints/jQueryGlobal";
 // Bootstrap must be imported AFTER jQuery for Bootstrap-jQuery plugins to work,
 // e.g. $(".modal").modal("show")
 import "bootstrap";
-import "~/js/bootstrap_modal_turbolinks_fix";
 import "~/js/bootstrapPopovers";
 
-// Before switching to Turbo, we still want to use UJS (unobtrusive JavaScript)
-// such that anchor tags with `data-method="post"` or similar work as expected.
-// Example: _dropdown_notifications.html.erb
-// We can later use `turbo-method` for this instead.
-// See also: https://stackoverflow.com/a/70769655/
+// Rails UJS in principle not needed for Turbo anymore. We keep it in the
+// transition phase.
+// https://github.com/hotwired/turbo-rails/blob/main/UPGRADING.md#upgrading-from-rails-ujs--turbolinks-to-turbo
 import Rails from "@rails/ujs";
+
+import "@hotwired/turbo-rails";
+// These two fixes were originally used with Turbolinks.
+// They might not be needed with Turbo anymore.
+import "~/js/_turbo_fix_bootstrap_modal";
+import "~/js/_turbo_fix_selectize";
 
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
 
 import "@popperjs/core";
-import "gems/clipboard-rails/vendor/assets/javascripts/clipboard";
 import "trix";
 
 // Custom JS needed on every page
-import "~/js/_selectize_turbolinks_fix";
 import "~/js/main.coffee";
 import "~/js/pwa_windows";
 import "~/js/reload";
@@ -39,7 +40,6 @@ import "~/js/administration.coffee";
 import "~/js/announcements.coffee";
 import "~/js/answers.coffee";
 import "~/js/chapters.coffee";
-import "~/js/clickers.coffee";
 import "~/js/courses.coffee";
 import "~/js/erdbeere.coffee";
 import "~/js/file_upload.coffee";
@@ -72,7 +72,7 @@ ActiveStorage.start();
 import { WidgetInstance } from "friendly-challenge";
 import "~/js/masonry_grid";
 
-document.addEventListener("turbolinks:load", function () {
+document.addEventListener("turbo:load", function () {
   var doneCallback, element, options;
 
   doneCallback = function (solution) {

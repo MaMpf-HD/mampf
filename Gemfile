@@ -15,7 +15,6 @@ gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
 gem "bootstrap_form", "~> 5.4"
 gem "cancancan", "~> 3.6"
-gem "clipboard-rails", "~> 1.7"
 gem "coffee-rails", "~> 5.0"
 gem "commontator", "~> 7.0.1"
 gem "coveralls", "~> 0.7", require: false
@@ -65,7 +64,7 @@ gem "thredded-markdown_katex",
     git: "https://github.com/thredded/thredded-markdown_katex.git",
     ref: "e2830bdb40880018a0e59d2b82c94b0a9f237365"
 gem "trix-rails", "~> 2.4", require: "trix"
-gem "turbolinks", "~> 5.2"
+gem "turbo-rails", "~> 2.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"
 
 group :development do
