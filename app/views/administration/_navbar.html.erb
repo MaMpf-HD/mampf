@@ -1,8 +1,8 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
-<%= stylesheet_link_tag 'navbar' %>
+<%= vite_stylesheet_tag "styles/navbar.scss" %>
 <div class="admin-navbars-container">
   <nav class="navbar navbar-expand" id="first-admin-nav">
-    <%= link_to image_tag('MaMpf-Logo.svg',
+    <%= link_to vite_image_tag("images/MaMpf-Logo.svg",
                           class: 'me-2',
                           id: 'mampf-logo'),
                 exit_administration_path,

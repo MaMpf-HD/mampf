@@ -2,7 +2,7 @@
 <html>
   <head>
     <%= render partial: 'layouts/head' %>
-    <%= stylesheet_link_tag 'landing' %>
+    <%= vite_stylesheet_tag "styles/landing.scss" %>
 
     <!-- --- ein Stein -- Aperiodic Monotile --- -->
     <!-- Official website: https://cs.uwaterloo.ca/~csk/hat/ -->
@@ -14,9 +14,7 @@
     <!-- Play around with it: https://cs.uwaterloo.ca/~csk/hat/app.html -->
     <!-- App source code licensed under BSD-3-Clause by Craig S. Kaplan -->
     <!-- adapted from: https://github.com/isohedral/hatviz -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.min.js"></script>
-    <%= javascript_include_tag 'monotile/geometry' %>
-    <%= javascript_include_tag 'monotile/hat' %>
+    <%= vite_javascript_tag "js/monotile/hat" %>
   </head>
 
   <body data-locale="<%= I18n.locale %>"
@@ -54,7 +52,7 @@
             <a href="<%= url_for(DefaultSetting::BLOG_LINK) %>" target="_blank"
                 class="d-inline-block mb-2" id="logo-area">
               <h1>
-                  <%= image_tag "MaMpf-Logo.svg", class: 'img-fluid mr-2', id:'mampf-logo' %>
+                  <%= vite_image_tag "images/MaMpf-Logo.svg", class: 'img-fluid mr-2', id:'mampf-logo' %>
                   <%= t('mampf') %>
               </h1>
             </a>

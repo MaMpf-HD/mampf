@@ -39,7 +39,7 @@
   </p>
   <%end %>
   <div class="mb-3">
-    <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'register-user', disabled:ENV.fetch("USE_CAPTCHA_SERVICE") %>
+    <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'register-user', disabled:ENV.fetch("USE_CAPTCHA_SERVICE", false) %>
   </div>
 <% end %>
 

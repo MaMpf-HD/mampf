@@ -81,15 +81,17 @@ services:
     environment:
       RAILS_ENV: development
       NODE_ENV: development
+      MAMPF_PORT: 3000
       # If you change these variables, make sure to adapt accordingly in
       # config/db-pgadmin.json
-      DEVELOPMENT_DATABASE_ADAPTER: postgresql
+      DATABASE_ADAPTER: postgresql
       DEVELOPMENT_DATABASE_DATABASE: mampf
       DEVELOPMENT_DATABASE_INTERACTIONS: mampf_interactions
       DEVELOPMENT_DATABASE_USERNAME: localroot
       DEVELOPMENT_DATABASE_HOST: db
       DEVELOPMENT_DATABASE_PORT: 5432
-      TEST_DATABASE_ADAPTER: postgresql
+      # Some Rails tasks like db:drop etc. iterate over all environments,
+      # so we need to set the test database variables here as well.
       TEST_DATABASE_DATABASE: mampf-test
       TEST_DATABASE_INTERACTIONS: interactions-test
       TEST_DATABASE_USERNAME: localroot
@@ -114,7 +116,7 @@ services:
       SOLR_PORT: 8983
       SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
-      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+      VITE_RUBY_HOST: 0.0.0.0
       MAMPF_REGISTRATION_TIMEFRAME: 25
       MAMPF_MAX_REGISTRATION_PER_TIMEFRAME: 40
       IMAPSERVER: imap:10993
@@ -129,7 +131,7 @@ services:
       DB_SQL_PRESEED_URL:
       UPLOADS_PRESEED_URL:
     ports:
-      - "127.0.0.1:3035:3035"  # webpacker dev server
+      - "127.0.0.1:3036:3036"  # Vite dev server
       - "127.0.0.1:13254:13254" # for debug gem communication with host
     volumes:
       - ../../:/usr/src/app/

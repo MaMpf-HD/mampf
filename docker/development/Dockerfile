@@ -78,7 +78,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 # https://stackoverflow.com/a/66158709/9655481
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
-        yarn install --production --frozen-lockfile; \
+        yarn install --frozen-lockfile; \
     fi
 
 # Precompile assets in CI/CD
@@ -88,7 +88,9 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
-        RAILS_ENV=test TEST_DATABASE_ADAPTER=nulldb bundle exec rails assets:precompile; \
+        VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
+        RAILS_ENV=test DATABASE_ADAPTER=nulldb \
+        bundle exec rails assets:precompile; \
     fi
 
 COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/

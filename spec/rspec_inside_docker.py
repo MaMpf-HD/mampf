@@ -57,10 +57,42 @@ def replace_absolute_paths_by_relative_paths(path):
     return "./" + res
 
 
+def ensure_mampf_test_container_running():
+    """
+    Ensures that the mampf test Docker container is running.
+    If not, it starts the container. This is necessary to ensure that the
+    Vite dev server is running, which will provide the necessary assets
+    on the fly for the tests.
+    """
+    print("Ensuring mampf test container is running...")
+    docker_command = (
+        "docker compose ps --services --filter 'status=running' | grep mampf"
+    )
+    try:
+        subprocess.run(
+            docker_command,
+            cwd=DOCKER_COMPOSE_FOLDER,
+            shell=True,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        print(f"{DOCKER_SERVICE_NAME} container is already running.")
+    except subprocess.CalledProcessError:
+        print(f"Not running yet, starting {DOCKER_SERVICE_NAME} container...")
+        subprocess.run(
+            ["docker", "compose", "up", "-d", DOCKER_SERVICE_NAME],
+            cwd=DOCKER_COMPOSE_FOLDER,
+            check=True,
+        )
+
+
 def main():
     """
     Main function to run RSpec tests inside a Docker container.
     """
+    ensure_mampf_test_container_running()
+
     formatter_path_on_host = switch_formatter_path()
     for i, arg in enumerate(sys.argv):
         if not arg.startswith("./") and "spec" in arg:
