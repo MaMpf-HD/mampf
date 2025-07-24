@@ -42,14 +42,16 @@
     <% if medium.video.present? %>
       <%= link_to t('basics.thyme_editor'),
                   enrich_medium_path(medium),
-                  class: 'btn btn-sm btn-outline-secondary' %>
+                  class: 'btn btn-sm btn-outline-secondary',
+                  "data-turbo": false %>
       <%= link_to 'Feedback',
                   feedback_medium_path(medium),
-                  class: 'btn btn-sm btn-outline-secondary' %>
+                  class: 'btn btn-sm btn-outline-secondary',
+                  target: "_blank" %>
       <%= link_to t('basics.thyme'),
                   play_medium_path(medium),
                   class: 'btn btn-outline-secondary btn-sm',
-                  target: :blank %>
+                  target: "_blank" %>
     <% end %>
   </div>
 </div>

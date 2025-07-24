@@ -7,7 +7,7 @@ targetButtonIsDiscardButton = {}
 # This is to avoid registering the same listener multiple times.
 window.registeredDiscardListeners = new Set(); 
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'shown.bs.collapse', '[id^="collapse-answer-"]', ->
     # Answer is now shown to the user and can be edited
@@ -54,8 +54,7 @@ $(document).on 'turbolinks:load', ->
     $('#new-answer').show()
     $('#new-answer-field').empty()
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'shown.bs.collapse', '[id^="collapse-answer-"]'
   $(document).off 'hidden.bs.collapse', '[id^="collapse-answer-"]'
   $(document).off 'change', '[id^="answer-value-"]'

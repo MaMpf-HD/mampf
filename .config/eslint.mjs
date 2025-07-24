@@ -15,7 +15,6 @@ import erb from "eslint-plugin-erb";
 import globals from "globals";
 
 const ignoreFilesWithSprocketRequireSyntax = [
-  "app/assets/javascripts/sprockets.js",
   "app/assets/config/manifest.js",
   "vendor/assets/javascripts/thredded_timeago.js",
 ];

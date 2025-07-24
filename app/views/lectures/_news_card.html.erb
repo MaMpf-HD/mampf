@@ -41,12 +41,12 @@
           <%= t('notifications.lecture.new_post_html',
                 board: link_to(t('categories.board'),
                                '/forum/' + lecture.forum.slug,
-                               target: :blank)) %>
+                               target: "_blank")) %>
         <% else %>
           <%= t('notifications.lecture.new_posts_html',
                 board: link_to(t('categories.board'),
                                '/forum/' + lecture.forum.slug,
-                               target: :blank),
+                               target: "_blank"),
                 count: posts_count) %>
         <% end %>
       </div>

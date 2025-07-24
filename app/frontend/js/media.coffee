@@ -1,7 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
 # converts a time in seconds given as a float to a string of the form
 # hh:mm:ss.MMM
 fancyTimeFormat = (time) ->
@@ -16,7 +12,7 @@ fancyTimeFormat = (time) ->
   output += '' + (if milli < 10 then '0' else '') + milli
   output
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
   # disable/enable search field on the media search page, depending on
   # whether 'all tags'/'all editors'/... are selected
   $('[id^="search_all_"]').on 'change', ->
@@ -393,7 +389,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#test-external-link'
   $(document).off 'click', '.timer'
   $(document).off 'click', '#export-toc'

@@ -1,4 +1,6 @@
-$(document).on("turbolinks:load", function () {
+import Clipboard from "clipboard";
+
+$(document).on("turbo:load", function () {
   // TODO: this is using clipboard.js, which makes use of deprecated browser APIs
   // see issue #684
   new Clipboard(".clipboard-btn");
@@ -26,7 +28,6 @@ $(document).on("turbolinks:load", function () {
   });
 });
 
-// clean up for turbolinks
-$(document).on("turbolinks:before-cache", function () {
+$(document).on("turbo:before-cache", function () {
   $(document).off("click", ".clipboard-button");
 });

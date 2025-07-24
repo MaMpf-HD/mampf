@@ -1,6 +1,6 @@
 import { Toast } from "bootstrap";
 
-$(document).on("turbolinks:load", () => {
+$(document).on("turbo:load", () => {
   if (!shouldRegisterFeedback()) {
     return;
   }

@@ -1,7 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://coffeescript.org/
-
 class MampfExpression
   constructor: (@expression) ->
     @nerd = nerdamer(@expression)
@@ -181,7 +177,7 @@ cleanSolutionBox = ->
   $('#submit-solution').hide()
   return
 
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   $(document).on 'keyup', '#question-basics-edit', ->
     $('#question-basics-options').removeClass("no_display")
@@ -334,8 +330,7 @@ $(document).on 'turbolinks:load', ->
 
   return
 
-# clean up everything before turbolinks caches
-$(document).on 'turbolinks:before-cache', ->
+$(document).on 'turbo:before-cache', ->
   $(document).off 'keyup', '#question-basics-edit'
   $(document).off 'change', '#question-basics-edit :input'
   $(document).off 'click', '#question-basics-cancel'

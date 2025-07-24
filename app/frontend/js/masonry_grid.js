@@ -1,6 +1,6 @@
 import Masonry from "masonry-layout";
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   initMasonryGridSystem();
 });
 

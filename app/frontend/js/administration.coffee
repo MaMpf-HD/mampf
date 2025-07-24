@@ -1,4 +1,4 @@
-$(document).on 'turbolinks:load', ->
+$(document).on 'turbo:load', ->
 
   # disable active state for menu entries when submenus are triggered
   $('.dropdown-submenu > a').on 'click', (e) ->

@@ -161,7 +161,6 @@ GEM
       activesupport
     choice (0.2.0)
     chunky_png (1.4.0)
-    clipboard-rails (1.7.1)
     coffee-rails (5.0.0)
       coffee-script (>= 2.2.0)
       railties (>= 5.2.0)
@@ -654,9 +653,9 @@ GEM
       rails (> 4.1)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
-    turbolinks (5.2.1)
-      turbolinks-source (~> 5.2)
-    turbolinks-source (5.2.0)
+    turbo-rails (2.0.16)
+      actionpack (>= 7.1.0)
+      railties (>= 7.1.0)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (3.1.4)
@@ -711,7 +710,6 @@ DEPENDENCIES
   bootsnap (~> 1.18)
   bootstrap_form (~> 5.4)
   cancancan (~> 3.6)
-  clipboard-rails (~> 1.7)
   coffee-rails (~> 5.0)
   commontator (~> 7.0.1)
   coveralls (~> 0.7)
@@ -777,7 +775,7 @@ DEPENDENCIES
   thredded-markdown_katex!
   timecop (~> 0.9.10)
   trix-rails (~> 2.4)
-  turbolinks (~> 5.2)
+  turbo-rails (~> 2.0)
   vite_rails (~> 3.0, >= 3.0.17)
   web-console (~> 4.2)
 

@@ -72,7 +72,7 @@ function handleDateSelection() {
   });
 }
 
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $(document).on("change", "#talk-form :input", function () {
     $("#talk-basics-warning").show();
   });
@@ -91,7 +91,7 @@ $(document).on("turbolinks:load", function () {
   handleDateSelection();
 });
 
-$(document).on("turbolinks:before-cache", function () {
+$(document).on("turbo:before-cache", function () {
   $(document).off("change", "#talk-form :input");
   $(document).off("click", "#new-talk-date-button");
   $(document).off("click", ".remove-talk-date");

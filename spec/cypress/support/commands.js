@@ -18,6 +18,11 @@ Cypress.Commands.add("clickExpectNewTab", { prevSubject: true }, ($subject, args
 
   cy.wrap($subject).should("have.attr", "target", "_blank");
   cy.wrap($subject).invoke("removeAttr", "target").click(args);
+  // TODO: Unfortunately, due to how the Thyme player loads its components,
+  // we need a small wait here to ensure the new page is correctly rendered.
+  // This should be improved by a more robust Thyme player implementation.
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(500);
   cy.reload();
 });
 

@@ -15,7 +15,7 @@
  * - Other workaround using "tabbed" mode, but that one is currently experimental:
  *   https://github.com/WICG/manifest-incubations/blob/gh-pages/tabbed-mode-explainer.md
  */
-$(document).on("turbolinks:load", function () {
+$(document).on("turbo:load", function () {
   $(document).on("click", "a[target='_blank'], a[target='blank']", function (event) {
     const url = $(this).attr("href");
     const isPWA = window.matchMedia("(display-mode: standalone)").matches
