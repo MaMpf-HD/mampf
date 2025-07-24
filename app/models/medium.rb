@@ -140,9 +140,6 @@ class Medium < ApplicationRecord
     string :release_state do
       release_state
     end
-    boolean :clickerizable do
-      clickerizable?
-    end
     integer :id
     integer :teachable_id
     integer :tag_ids, multiple: true
@@ -202,10 +199,6 @@ class Medium < ApplicationRecord
 
   def self.select_importables
     Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
-  end
-
-  def self.select_question
-    Medium.sort_localized.slice("Question").map { |k, v| [v, k] }
   end
 
   # returns the array of all media subject to the conditions
@@ -298,11 +291,6 @@ class Medium < ApplicationRecord
       unless search_params[:all_teachers] == "1"
         with(:teacher_id,
              search_params[:teacher_ids])
-      end
-    end
-    if search_params[:purpose] == "clicker"
-      search.build do
-        with(:clickerizable, true)
       end
     end
     unless search_params[:answers_count] == "irrelevant"
@@ -1237,15 +1225,6 @@ class Medium < ApplicationRecord
       return released unless released.nil?
 
       "unpublished"
-    end
-
-    def clickerizable?
-      return false unless type == "Question"
-
-      question = becomes(Question)
-      return false unless question.answers.count.in?(2..6)
-
-      question.answers.pluck(:value).count(true) == 1
     end
 
     def answers_count
