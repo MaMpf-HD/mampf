@@ -201,10 +201,6 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
   end
 
-  def self.select_question
-    Medium.sort_localized.slice("Question").map { |k, v| [v, k] }
-  end
-
   # returns the array of all media subject to the conditions
   # provided by the params hash (keys: :id, :project)
   # :id represents the lecture id
