@@ -47,12 +47,9 @@ class Course < ApplicationRecord
   # this makes use of the shrine gem
   include ScreenshotUploader[:image]
 
-  # include the generic search engine
-  include Searchable
-  # include the course-specific search engine
-  include CourseSearchable
-
   include ApplicationHelper
+
+  include PgSearch::Model
 
   pg_search_scope :search_by_title,
                   against: :title,
@@ -64,6 +61,10 @@ class Course < ApplicationRecord
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
+
+  def self.default_search_order
+    Arel.sql("LOWER(unaccent(courses.title))")
+  end
 
   def course
     self

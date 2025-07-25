@@ -63,10 +63,18 @@ class Tag < ApplicationRecord
   after_save :touch_lectures
   after_save :touch_sections
 
-  # include the generic search engine
-  include Searchable
-  # include the tag-specific search engine
-  include TagSearchable
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title,
+                  associated_against: {
+                    notions: :title,
+                    aliases: :title
+                  },
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { word_similarity: true,
+                               threshold: 0.3 }
+                  }
 
   def self.find_erdbeere_tags(sort, id)
     Tag.where(id: Tag.pluck(:id, :realizations)

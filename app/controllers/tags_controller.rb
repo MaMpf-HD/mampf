@@ -136,7 +136,14 @@ class TagsController < ApplicationController
     authorize! :search, Tag.new
 
     per_page = search_params[:per] || 10
-    search_results = Tag.search_by(search_params)
+
+    tag_filters = [
+      ::Search::CourseFilter,
+      ::Search::FulltextFilter
+    ]
+
+    search_results = ModelSearchService.new(Tag, search_params, tag_filters,
+                                            fulltext_param: :title).call
     @total = Tag.from(search_results, :tags).count
 
     @tags = Kaminari.paginate_array(search_results.to_a, total_count: @total)
