@@ -752,6 +752,8 @@ en:
         title: >
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
+        search_title: >
+          Enter text to search within course titles.         
         short_title: >
           The short title will be used as abbreviation in several places.
         editors: >
@@ -759,6 +761,12 @@ en:
           in particular they can create event series within the course. Every course
           editor inherits editing access for all event series belonging to the
           course.
+        search_editors: >
+          Here you can select the editor of the course (in the sense of
+          <i>
+          OR
+          </i>
+          ).
         no_right_to_change_editors: >
           Course editors can only be changed by administrators.
           Please contact %{project_email} by email if you want a change to be made
@@ -2744,8 +2752,6 @@ en:
         Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
         <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
         The operator used is the inclusive <i>OR</i>.
-    tag_title: >
-      enter at least 2 letters (or leave free for all tags)
   errors:
     not_subscribed: You are currently not subscribed to this lecture.
     profile:

@@ -823,6 +823,9 @@ de:
           Hier musst Du den Titel des Moduls eintragen.
           Typischerweise sollte das der Titel aus dem Modulhandbuch sein.
           Modulnamen dürfen nur einmal vergeben werden.
+        search_title: >
+          Hier kannst Du den Text eingeben, nach dem im Titel des Moduls gesucht
+          wird. 
         short_title: >
           Der Kurztitel wird an mehreren Stellen als Abkürzung verwendet.
         editors: >
@@ -830,6 +833,12 @@ de:
           das Modul bearbeiten, insbesondere können sie Veranstaltungen innerhalb
           des Moduls anlegen. ModuleditorInnen erben die Bearbeitungsrechte für
           alle Veranstaltungen innerhalb des Moduls.
+        search_editors: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, wer ModulEditorIn ist.
         no_right_to_change_editors: >
           ModuleditorInnen können nur von AdministratorInnen geändert werden.
           Bitte wende Dich per Email an %{project_email}, wenn hier
@@ -2935,8 +2944,6 @@ de:
         Hier kannst Du einen,   mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
         <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i> und
         <i>Sonstiges</i>. Dabei wird der Operator inklusives <i>ODER</i> verwendet.
-    tag_title: >
-      mind. 2 Zeichen eingeben (frei lassen für alle Tags)
   errors:
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
