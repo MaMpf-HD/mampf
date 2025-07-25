@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_24_150154) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_25_172231) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -199,6 +199,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_150154) do
     t.text "locale"
     t.boolean "term_independent", default: false
     t.text "image_data"
+    t.index "to_tsvector('simple'::regconfig, (title)::text)", name: "index_courses_on_title_tsearch", using: :gin
+    t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "division_course_joins", force: :cascade do |t|
@@ -439,8 +441,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_24_150154) do
     t.text "locale"
     t.integer "tag_id"
     t.integer "aliased_tag_id"
+    t.index "to_tsvector('simple'::regconfig, title)", name: "index_notions_on_title_tsearch", using: :gin
     t.index ["aliased_tag_id"], name: "index_notions_on_aliased_tag_id"
     t.index ["tag_id"], name: "index_notions_on_tag_id"
+    t.index ["title"], name: "index_notions_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "program_translations", force: :cascade do |t|
