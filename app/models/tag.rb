@@ -63,12 +63,10 @@ class Tag < ApplicationRecord
   after_save :touch_lectures
   after_save :touch_sections
 
-  searchable do
-    text :titles do
-      title_join
-    end
-    integer :course_ids, multiple: true
-  end
+  # include the generic search engine
+  include Searchable
+  # include the tag-specific search engine
+  include TagSearchable
 
   def self.find_erdbeere_tags(sort, id)
     Tag.where(id: Tag.pluck(:id, :realizations)
@@ -393,12 +391,5 @@ class Tag < ApplicationRecord
     def destroy_relations(related_tag)
       Relation.where(tag: [self, related_tag],
                      related_tag: [self, related_tag]).delete_all
-    end
-
-    def title_join
-      result = notions.pluck(:title).join(" ")
-      return result unless aliases.any?
-
-      "#{result} #{aliases.pluck(:title).join(" ")}"
     end
 end
