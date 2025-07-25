@@ -134,25 +134,24 @@ class TagsController < ApplicationController
 
   def search
     authorize! :search, Tag.new
+
     per_page = search_params[:per] || 10
-    search = Sunspot.new_search(Tag)
-    search.build do
-      fulltext(search_params[:title])
-    end
-    course_ids = if search_params[:all_courses] == "1"
-      []
-    elsif search_params[:course_ids] != [""]
-      search_params[:course_ids]
-    end
-    search.build do
-      with(:course_ids, course_ids)
-      paginate(page: params[:page], per_page: per_page)
-    end
-    search.execute
-    results = search.results
-    @total = search.total
-    @tags = Kaminari.paginate_array(results, total_count: @total)
+
+    tag_filters = [
+      ::Filters::CourseFilter,
+      ::Filters::FulltextFilter
+    ]
+
+    search_results = ::ModelSearch.new(Tag, search_params, tag_filters,
+                                       fulltext_param: :title).call
+    @total = Tag.from(search_results, :tags).count
+
+    @tags = Kaminari.paginate_array(search_results.to_a, total_count: @total)
                     .page(params[:page]).per(per_page)
+
+    respond_to do |format|
+      format.js { render "tags/search" }
+    end
   end
 
   def take_random_quiz

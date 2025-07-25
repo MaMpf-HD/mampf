@@ -19,6 +19,9 @@ module Mampf
     config.autoload_paths -= namespace_paths
     config.eager_load_paths -= namespace_paths
 
+    config.autoload_paths << Rails.root.join("app/search")
+    config.eager_load_paths << Rails.root.join("app/search")
+
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])
 

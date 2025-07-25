@@ -7,7 +7,7 @@
          id="editorSearch">
       <%= f.label :editor_ids, t('basics.editors'),
                   class: 'form-label' %>
-      <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+      <%= helpdesk(t('admin.course.info.search_editors'), true) %>
 
       <%= f.select :editor_ids,
                    options_for_select(add_prompt(User.select_teachers)),
@@ -51,10 +51,10 @@
       </div>
     </div>
     <div class="col-6 col-lg-3 mb-3">
-      <%= f.label :fulltext, t('basics.fulltext'),
+      <%= f.label :title, t('basics.title'),
                   class: 'form-label' %>
-      <%= helpdesk(t('admin.lecture.info.search_fulltext'), false) %>
-      <%= f.text_field :fulltext,
+      <%= helpdesk(t('admin.course.info.search_title'), false) %>
+      <%= f.text_field :title,
                         class: 'form-control' %>
     </div>
     <div class="col-6 col-lg-3 mb-3">

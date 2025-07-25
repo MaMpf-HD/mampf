@@ -69,12 +69,28 @@ class CoursesController < ApplicationController
 
   def search
     authorize! :search, Course.new
-    search = Course.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @courses = Kaminari.paginate_array(results, total_count: @total)
-                       .page(params[:page]).per(search_params[:per])
+
+    per_page = search_params[:per] || 20
+
+    course_filters = [
+      ::Filters::EditorFilter,
+      ::Filters::ProgramFilter,
+      ::Filters::TermIndependenceFilter,
+      ::Filters::FulltextFilter
+    ]
+
+    search_results = ::ModelSearch.new(Course, search_params,
+                                       course_filters,
+                                       fulltext_param: :title).call
+    @total = Course.from(search_results, :courses).count
+
+    @courses = Kaminari.paginate_array(search_results.to_a, total_count: @total)
+                       .page(params[:page])
+                       .per(per_page)
+
+    respond_to do |format|
+      format.js { render "courses/search" }
+    end
   end
 
   private
@@ -107,7 +123,7 @@ class CoursesController < ApplicationController
     end
 
     def search_params
-      params.expect(search: [:all_editors, :all_programs, :fulltext,
+      params.expect(search: [:all_editors, :all_programs, :title,
                              :term_independent, :per,
                              { editor_ids: [],
                                program_ids: [] }])

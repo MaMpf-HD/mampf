@@ -1,7 +1,5 @@
 # Course class
 class Course < ApplicationRecord
-  include ApplicationHelper
-
   has_many :lectures, dependent: :destroy
 
   has_many :notifications, as: :notifiable, dependent: :destroy
@@ -49,21 +47,24 @@ class Course < ApplicationRecord
   # this makes use of the shrine gem
   include ScreenshotUploader[:image]
 
-  searchable do
-    text :title
-    integer :program_ids, multiple: true do
-      divisions.pluck(:program_id).uniq
-    end
-    integer :editor_ids, multiple: true
-    boolean :term_independent
-    # this is for ordering
-    string :sort_title do
-      ActiveSupport::Inflector.transliterate(course.title).downcase
-    end
-  end
+  include ApplicationHelper
+
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title,
+                  against: :title,
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { word_similarity: true,
+                               threshold: 0.3 }
+                  }
 
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
+
+  def self.default_search_order
+    Arel.sql("LOWER(unaccent(courses.title))")
+  end
 
   def course
     self
@@ -300,23 +301,6 @@ class Course < ApplicationRecord
     titles.select do |t|
       jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
     end
-  end
-
-  def self.search_by(search_params, page)
-    editor_ids = search_params[:editor_ids]
-    editor_ids = [] if search_params[:all_editors] == "1"
-    program_ids = search_params[:program_ids] || []
-    program_ids = [] if search_params[:all_programs] == "1"
-    search = Sunspot.new_search(Course)
-    search.build do
-      with(:editor_ids, editor_ids)
-      with(:program_ids, program_ids) unless program_ids.empty?
-      with(:term_independent, true) if search_params[:term_independent] == "1"
-      fulltext(search_params[:fulltext]) if search_params[:fulltext].present?
-      order_by(:sort_title, :asc)
-      paginate(page: page, per_page: search_params[:per])
-    end
-    search
   end
 
   private
