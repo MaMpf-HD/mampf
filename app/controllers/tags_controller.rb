@@ -134,11 +134,17 @@ class TagsController < ApplicationController
 
   def search
     authorize! :search, Tag.new
+
     per_page = search_params[:per] || 10
     search_results = Tag.search_by(search_params)
     @total = Tag.from(search_results, :tags).count
+
     @tags = Kaminari.paginate_array(search_results.to_a, total_count: @total)
                     .page(params[:page]).per(per_page)
+
+    respond_to do |format|
+      format.js { render "tags/search" }
+    end
   end
 
   def take_random_quiz

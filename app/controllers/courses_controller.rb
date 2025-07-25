@@ -71,7 +71,7 @@ class CoursesController < ApplicationController
     authorize! :search, Course.new
 
     per_page = search_params[:per] || 20
-    search_results = Course.search_by(search_params.except(:per))
+    search_results = Course.search_by(search_params)
     @total = Course.from(search_results, :courses).count
 
     @courses = Kaminari.paginate_array(search_results.to_a, total_count: @total)
