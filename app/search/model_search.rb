@@ -29,10 +29,7 @@ class ModelSearch
 
       if model_class.respond_to?(:default_search_order)
         order_expression = model_class.default_search_order
-        if order_expression.present?
-          return scope.select(model_class.arel_table[Arel.star], order_expression)
-                      .order(order_expression)
-        end
+        return scope.order(order_expression) if order_expression.present?
       end
 
       # If no other ordering was applied, return the original scope

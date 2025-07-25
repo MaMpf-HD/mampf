@@ -1,9 +1,10 @@
 module Filters
   class CourseFilter < BaseFilter
     def call
-      if params[:all_courses] == "1" || params[:course_ids].blank? || params[:course_ids] == [""]
-        return scope
-      end
+      # This single check handles nil, [], [""], [nil], etc.
+      no_specific_courses = params[:course_ids].to_a.compact_blank.empty?
+
+      return scope if params[:all_courses] == "1" || no_specific_courses
 
       scope.joins(:courses)
            .where(courses: { id: params[:course_ids] })
