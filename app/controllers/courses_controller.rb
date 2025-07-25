@@ -73,15 +73,15 @@ class CoursesController < ApplicationController
     per_page = search_params[:per] || 20
 
     course_filters = [
-      ::Search::EditorFilter,
-      ::Search::ProgramFilter,
-      ::Search::TermIndependenceFilter,
-      ::Search::FulltextFilter
+      ::Filters::EditorFilter,
+      ::Filters::ProgramFilter,
+      ::Filters::TermIndependenceFilter,
+      ::Filters::FulltextFilter
     ]
 
-    search_results = ModelSearchService.new(Course, search_params,
-                                            course_filters,
-                                            fulltext_param: :fulltext).call
+    search_results = ::ModelSearch.new(Course, search_params,
+                                       course_filters,
+                                       fulltext_param: :fulltext).call
     @total = Course.from(search_results, :courses).count
 
     @courses = Kaminari.paginate_array(search_results.to_a, total_count: @total)

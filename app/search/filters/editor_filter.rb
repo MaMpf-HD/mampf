@@ -1,4 +1,4 @@
-module Search
+module Filters
   class EditorFilter < BaseFilter
     def call
       return scope if params[:all_editors] == "1" || params[:editor_ids].blank?

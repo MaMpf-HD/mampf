@@ -1,4 +1,4 @@
-module Search
+module Filters
   class FulltextFilter < BaseFilter
     def call
       return scope unless fulltext_param

@@ -1,4 +1,4 @@
-module Search
+module Filters
   class BaseFilter
     attr_reader :scope, :params, :fulltext_param
 

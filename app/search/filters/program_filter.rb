@@ -1,4 +1,4 @@
-module Search
+module Filters
   class ProgramFilter < BaseFilter
     def call
       return scope if params[:all_programs] == "1" || params[:program_ids].blank?

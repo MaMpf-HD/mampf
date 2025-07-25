@@ -1,4 +1,4 @@
-module Search
+module Filters
   class CourseFilter < BaseFilter
     def call
       if params[:all_courses] == "1" || params[:course_ids].blank? || params[:course_ids] == [""]

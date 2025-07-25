@@ -1,4 +1,4 @@
-module Search
+module Filters
   class TermIndependenceFilter < BaseFilter
     def call
       return scope unless params[:term_independent] == "1"

@@ -1,4 +1,4 @@
-class ModelSearchService
+class ModelSearch
   attr_reader :model_class, :params, :filter_classes, :fulltext_param
 
   def initialize(model_class, params, filter_classes, fulltext_param: nil)
