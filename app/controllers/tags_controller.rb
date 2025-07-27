@@ -144,9 +144,10 @@ class TagsController < ApplicationController
 
     search_results = ::ModelSearch.new(Tag, search_params, tag_filters,
                                        fulltext_param: :title).call
-    @total = Tag.from(search_results, :tags).count
+    @total = search_results.select(:id).count
 
-    @tags = Kaminari.paginate_array(search_results.to_a, total_count: @total)
+    @tags = Kaminari.paginate_array(search_results.to_a,
+                                    total_count: @total)
                     .page(params[:page]).per(per_page)
 
     respond_to do |format|

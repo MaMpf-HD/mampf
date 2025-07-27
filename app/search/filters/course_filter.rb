@@ -8,7 +8,6 @@ module Filters
 
       scope.joins(:courses)
            .where(courses: { id: params[:course_ids] })
-           .distinct
     end
   end
 end

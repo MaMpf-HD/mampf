@@ -278,12 +278,26 @@ class LecturesController < ApplicationController
 
   def search
     authorize! :search, Lecture.new
-    search = Lecture.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @lectures = Kaminari.paginate_array(results, total_count: @total)
-                        .page(params[:page]).per(search_params[:per])
+
+    lecture_filters = [
+      ::Filters::LectureTypeFilter,
+      ::Filters::TermFilter,
+      ::Filters::ProgramFilter,
+      ::Filters::TeacherFilter,
+      ::Filters::LectureVisibilityFilter,
+      ::Filters::FulltextFilter
+    ]
+
+    search_results = ::ModelSearch.new(Lecture, search_params,
+                                       lecture_filters,
+                                       fulltext_param: :fulltext).call
+
+    @total = search_results.select(:id).count
+    @lectures = Kaminari.paginate_array(search_results.to_a,
+                                        total_count: @total)
+                        .page(params[:page])
+                        .per(search_params[:per])
+
     @results_as_list = search_params[:results_as_list] == "true"
     return unless @total.zero?
     return unless search_params[:fulltext]&.length.to_i > 1

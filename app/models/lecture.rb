@@ -136,6 +136,25 @@ class Lecture < ApplicationRecord
 
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
 
+  include PgSearch::Model
+  pg_search_scope :search_by_title,
+                  associated_against: {
+                    course: [:title, :short_title]
+                  },
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { threshold: 0.3 }
+                  }
+
+  def self.default_search_order
+    # NOTE: This requires the query to join :course and :term
+    Arel.sql("terms.year DESC, terms.season DESC, courses.title ASC")
+  end
+
+  def self.default_search_order_joins
+    [:course, :term]
+  end
+
   searchable do
     integer :term_id do
       term_id || 0

@@ -5,7 +5,6 @@ module Filters
 
       scope.joins(:editors)
            .where(users: { id: params[:editor_ids] })
-           .distinct
     end
   end
 end

@@ -11,6 +11,16 @@ class ModelSearch
   def call
     scope = model_class.all
     scope = apply_filters(scope)
+
+    # Add required joins for the ordering *before* applying distinct or order.
+    # This ensures they are present for any subsequent query, including .count.
+    if model_class.respond_to?(:default_search_order_joins)
+      scope = scope.left_outer_joins(model_class.default_search_order_joins)
+    end
+
+    # Always apply distinct before ordering to ensure uniqueness, as filters
+    # can introduce duplicates through joins.
+    scope = scope.distinct
     apply_ordering(scope)
   end
 
@@ -33,12 +43,15 @@ class ModelSearch
       # Exit early if the default order expression is blank
       return scope if order_expression.blank?
 
-      # If a distinct clause is present, we must also select the order expression
-      # to avoid a PG::InvalidColumnReference error.
-      if scope.distinct_value
-        scope = scope.select(model_class.arel_table[Arel.star],
-                             order_expression)
-      end
+      # The order expression string might contain ASC/DESC, which is invalid
+      # in a SELECT list. We need to extract just the column names for the SELECT.
+      select_columns_sql = order_expression.to_s.gsub(/\s+(ASC|DESC)\b/i, "")
+      select_expression = Arel.sql(select_columns_sql)
+
+      # Always include the order expression in the SELECT list.
+      # This is necessary because we are now always using .distinct.
+      scope = scope.select(model_class.arel_table[Arel.star],
+                           select_expression)
 
       scope.order(order_expression)
     end

@@ -52,7 +52,7 @@ class Course < ApplicationRecord
   include PgSearch::Model
 
   pg_search_scope :search_by_title,
-                  against: :title,
+                  against: [:title, :short_title],
                   using: {
                     tsearch: { prefix: true, any_word: true },
                     trigram: { word_similarity: true,
