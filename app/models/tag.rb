@@ -143,16 +143,10 @@ class Tag < ApplicationRecord
   end
 
   def self.select_with_substring(search_string)
-    return {} unless search_string
-    return {} unless search_string.length >= 2
+    return {} if search_string.blank? || search_string.length < 2
 
-    search = Sunspot.new_search(Tag)
-    search.build do
-      fulltext(search_string)
-    end
-    search.execute
-    search.results
-          .map { |t| { value: t.id, text: t.title } }
+    search_by_title(search_string)
+      .map { |t| { value: t.id, text: t.title } }
   end
 
   def self.select_by_title_cached

@@ -284,7 +284,7 @@ class LecturesController < ApplicationController
       ::Filters::TermFilter,
       ::Filters::ProgramFilter,
       ::Filters::TeacherFilter,
-      # ::Filters::LectureVisibilityFilter,
+      ::Filters::LectureVisibilityFilter,
       ::Filters::FulltextFilter
     ]
 
@@ -300,10 +300,6 @@ class LecturesController < ApplicationController
                         .per(search_params[:per])
 
     @results_as_list = search_params[:results_as_list] == "true"
-    return unless @total.zero?
-    return unless search_params[:fulltext]&.length.to_i > 1
-
-    @similar_titles = Course.similar_courses(search_params[:fulltext])
   end
 
   def show_random_quizzes
