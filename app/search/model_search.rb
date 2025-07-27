@@ -40,15 +40,4 @@ class ModelSearch
     SearchOrderer.call(scope: scope, model_class: model_class,
                        params: params, fulltext_param: fulltext_param)
   end
-
-  private
-
-    # Adds any necessary `left_outer_joins` that are required for the default
-    # ordering of the model. This prevents errors when the ordering depends on
-    # columns from associated tables that might not have been joined by the filters.
-    def add_required_joins_for_ordering(scope)
-      return scope unless model_class.respond_to?(:default_search_order_joins)
-
-      scope.left_outer_joins(model_class.default_search_order_joins)
-    end
 end
