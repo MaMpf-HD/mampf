@@ -148,36 +148,11 @@ class Lecture < ApplicationRecord
 
   def self.default_search_order
     # NOTE: This requires the query to join :course and :term
-    Arel.sql("terms.year DESC, terms.season DESC, courses.title ASC")
+    Arel.sql("terms.year DESC, terms.season DESC, LOWER(unaccent(courses.title)) ASC")
   end
 
   def self.default_search_order_joins
     [:course, :term]
-  end
-
-  searchable do
-    integer :term_id do
-      term_id || 0
-    end
-    integer :teacher_id
-    string :sort
-    text :text do
-      "#{course.title} #{course.short_title}"
-    end
-    integer :program_ids, multiple: true do
-      course.divisions.pluck(:program_id).uniq
-    end
-    integer :editor_ids, multiple: true
-    boolean :is_published do
-      published?
-    end
-    # these two are for ordering
-    time :sort_date do
-      begin_date
-    end
-    string :sort_title do
-      ActiveSupport::Inflector.transliterate(course.title).downcase
-    end
   end
 
   def self.select
