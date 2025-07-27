@@ -73,12 +73,7 @@ $(document).on 'turbo:load', ->
     $('#user-basics-warning').show()
     return
 
-  $(document).on 'click', '.courseAlternativeSearch', ->
-    $('#search_fulltext').val($(this).data('title'))
-    return
-
 $(document).on 'turbo:before-cache', ->
   $(document).off 'click', '#cancel-new-lecture'
   $(document).off 'change', '#search_course_tag_ids'
-  $(document).off 'click', '.courseAlternativeSearch'
   return
