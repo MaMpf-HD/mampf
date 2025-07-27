@@ -284,12 +284,13 @@ class LecturesController < ApplicationController
       ::Filters::TermFilter,
       ::Filters::ProgramFilter,
       ::Filters::TeacherFilter,
-      ::Filters::LectureVisibilityFilter,
+      # ::Filters::LectureVisibilityFilter,
       ::Filters::FulltextFilter
     ]
 
     search_results = ::ModelSearch.new(Lecture, search_params,
                                        lecture_filters,
+                                       user: current_user,
                                        fulltext_param: :fulltext).call
 
     @total = search_results.select(:id).count

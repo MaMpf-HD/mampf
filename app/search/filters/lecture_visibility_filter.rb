@@ -1,7 +1,6 @@
 module Filters
   class LectureVisibilityFilter < BaseFilter
     def call
-      user = User.find_by(id: params[:user_id])
       return scope if user&.admin?
 
       # Get a reference to the base scope to build the .or clauses

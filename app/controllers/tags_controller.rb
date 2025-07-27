@@ -143,6 +143,7 @@ class TagsController < ApplicationController
     ]
 
     search_results = ::ModelSearch.new(Tag, search_params, tag_filters,
+                                       user: current_user,
                                        fulltext_param: :fulltext).call
     @total = search_results.select(:id).count
 

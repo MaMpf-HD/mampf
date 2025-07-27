@@ -293,14 +293,9 @@ class Course < ApplicationRecord
     "#{image.metadata["width"]}x#{image.metadata["height"]}"
   end
 
-  # returns all titles of courses whose title is close to the given search
-  # string wrt to the JaroWinkler metric
+  # returns all titles of courses whose title is close to the given search string
   def self.similar_courses(search_string)
-    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
-    titles = Course.pluck(:title)
-    titles.select do |t|
-      jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
-    end
+    search_by_title(search_string).pluck(:title)
   end
 
   private
@@ -311,7 +306,6 @@ class Course < ApplicationRecord
 
     def touch_tag(tag)
       tag.touch
-      Sunspot.index!(tag)
     end
 
     def touch_lectures_and_lessons

@@ -155,17 +155,6 @@ class Tag < ApplicationRecord
           .map { |t| { value: t.id, text: t.title } }
   end
 
-  # returns all tags whose title is close to the given search string
-  # wrt to the JaroWinkler metric
-  def self.similar_tags(search_string)
-    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
-    Tag.where(id: Tag.all.select do |t|
-                    jarowinkler.getDistance(t.title.downcase,
-                                            search_string.downcase) > 0.9
-                  end
-                  .map(&:id))
-  end
-
   def self.select_by_title_cached
     Rails.cache.fetch("tag_select_by_title_#{I18n.locale}") do
       Tag.select_by_title.map { |t| { value: t[1], text: t[0] } }.to_json

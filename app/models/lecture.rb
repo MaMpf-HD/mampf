@@ -143,7 +143,8 @@ class Lecture < ApplicationRecord
                   },
                   using: {
                     tsearch: { prefix: true, any_word: true },
-                    trigram: { threshold: 0.3 }
+                    trigram: {  word_similarity: true,
+                                threshold: 0.3 }
                   }
 
   def self.default_search_order
@@ -696,66 +697,6 @@ class Lecture < ApplicationRecord
 
   def subscribed_by?(user)
     in?(user.lectures)
-  end
-
-  def self.search_by(search_params, page)
-    if search_params[:all_types] == "1" || search_params[:types].nil?
-      search_params[:types] =
-        []
-    end
-    if search_params[:all_terms] == "1" || search_params[:term_ids].nil?
-      search_params[:term_ids] =
-        []
-    end
-    if search_params[:all_teachers] == "1" || search_params[:teacher_ids].nil?
-      search_params[:teacher_ids] =
-        []
-    end
-    if search_params[:all_programs] == "1" || search_params[:program_ids].nil?
-      search_params[:program_ids] =
-        []
-    end
-    search = Sunspot.new_search(Lecture)
-    # add lectures without term to current term
-    if Term.active.try(:id).to_i.to_s.in?(search_params[:term_ids])
-      search_params[:term_ids].push("0")
-    end
-    search.build do
-      with(:sort, search_params[:types]) unless search_params[:types].empty?
-      unless search_params[:teacher_ids].empty?
-        with(:teacher_id,
-             search_params[:teacher_ids])
-      end
-      unless search_params[:program_ids].empty?
-        with(:program_ids,
-             search_params[:program_ids])
-      end
-      unless search_params[:term_ids].empty?
-        with(:term_id,
-             search_params[:term_ids])
-      end
-    end
-    admin = User.find_by(id: search_params[:user_id])&.admin
-    unless admin
-      search.build do
-        any_of do
-          with(:is_published, true)
-          with(:teacher_id, search_params[:user_id])
-          with(:editor_ids, search_params[:user_id])
-        end
-      end
-    end
-    if search_params[:fulltext].present?
-      search.build do
-        fulltext(search_params[:fulltext])
-      end
-    end
-    search.build do
-      order_by(:sort_date, :desc)
-      order_by(:sort_title, :asc)
-      paginate(page: page, per_page: search_params[:per])
-    end
-    search
   end
 
   def term_to_label
