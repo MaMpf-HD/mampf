@@ -752,7 +752,7 @@ en:
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
         search_fulltext: >
-          Here you can enter text that which will be searched for in the course
+          Here you can enter text that will be searched for in the course
           titles and short titles. If you leave the text field empty it will be
           ignored.
         short_title: >
