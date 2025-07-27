@@ -1,5 +1,16 @@
+# This service class orchestrates the process of building a complex, filterable,
+# and sortable database query for a given model. It uses a set of filter
+# classes to apply various conditions and then ensures the results are unique
+# and correctly ordered.
 class ModelSearch
   attr_reader :model_class, :params, :filter_classes, :fulltext_param
+
+  # Initializes the search service.
+  #
+  # @param model_class [Class] The ActiveRecord model class to be searched (e.g., Course).
+  # @param params [Hash] The search parameters from the controller.
+  # @param filter_classes [Array<Class>] An array of filter classes to be applied.
+  # @param fulltext_param [Symbol, nil] The key in `params` that contains the full-text search query.
 
   def initialize(model_class, params, filter_classes, fulltext_param: nil)
     @model_class = model_class
@@ -8,51 +19,34 @@ class ModelSearch
     @fulltext_param = fulltext_param
   end
 
+  # Executes the search by applying filters and ordering.
+  #
+  # @return [ActiveRecord::Relation] The resulting query object.
   def call
     scope = model_class.all
-    scope = apply_filters(scope)
 
-    # Add required joins for the ordering *before* applying distinct or order.
-    # This ensures they are present for any subsequent query, including .count.
-    if model_class.respond_to?(:default_search_order_joins)
-      scope = scope.left_outer_joins(model_class.default_search_order_joins)
-    end
+    # Apply all registered filters to the scope.
+    scope = FilterApplier.call(scope: scope, filter_classes: filter_classes,
+                               params: params, fulltext_param: fulltext_param)
 
-    # Always apply distinct before ordering to ensure uniqueness, as filters
-    # can introduce duplicates through joins.
+    # Ensure necessary tables are joined for the default ordering.
+    scope = add_required_joins_for_ordering(scope)
+    # Ensure the results are unique, as joins can create duplicates.
     scope = scope.distinct
-    apply_ordering(scope)
+
+    # Apply the final ordering to the result set.
+    SearchOrderer.call(scope: scope, model_class: model_class,
+                       params: params, fulltext_param: fulltext_param)
   end
 
   private
 
-    def apply_filters(initial_scope)
-      filter_classes.reduce(initial_scope) do |current_scope, filter_class|
-        filter_class.new(current_scope, params, fulltext_param: @fulltext_param).call
-      end
-    end
+    # Adds any necessary `left_outer_joins` that are required for the default
+    # ordering of the model. This prevents errors when the ordering depends on
+    # columns from associated tables that might not have been joined by the filters.
+    def add_required_joins_for_ordering(scope)
+      return scope unless model_class.respond_to?(:default_search_order_joins)
 
-    def apply_ordering(scope)
-      # if fulltext is given then pg_search's .with_pg_search_rank already added
-      # the order by rank
-      return scope if @fulltext_param && params[@fulltext_param].present?
-      # Exit early if the model doesn't define a default order
-      return scope unless model_class.respond_to?(:default_search_order)
-
-      order_expression = model_class.default_search_order
-      # Exit early if the default order expression is blank
-      return scope if order_expression.blank?
-
-      # The order expression string might contain ASC/DESC, which is invalid
-      # in a SELECT list. We need to extract just the column names for the SELECT.
-      select_columns_sql = order_expression.to_s.gsub(/\s+(ASC|DESC)\b/i, "")
-      select_expression = Arel.sql(select_columns_sql)
-
-      # Always include the order expression in the SELECT list.
-      # This is necessary because we are now always using .distinct.
-      scope = scope.select(model_class.arel_table[Arel.star],
-                           select_expression)
-
-      scope.order(order_expression)
+      scope.left_outer_joins(model_class.default_search_order_joins)
     end
 end
