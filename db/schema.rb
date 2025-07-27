@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_25_172231) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_27_144632) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -200,6 +200,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_25_172231) do
     t.boolean "term_independent", default: false
     t.text "image_data"
     t.index "to_tsvector('simple'::regconfig, (title)::text)", name: "index_courses_on_title_tsearch", using: :gin
+    t.index ["term_independent"], name: "index_courses_on_term_independent"
     t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
@@ -331,6 +332,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_25_172231) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
+    t.index ["released"], name: "index_lectures_on_released"
+    t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -612,6 +615,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_25_172231) do
     t.datetime "submission_deletion_mail", precision: nil
     t.datetime "submission_deletion_reminder", precision: nil
     t.datetime "submissions_deleted_at", precision: nil
+    t.index ["year", "season"], name: "index_terms_on_year_and_season"
   end
 
   create_table "thredded_categories", force: :cascade do |t|
