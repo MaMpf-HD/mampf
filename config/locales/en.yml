@@ -639,7 +639,7 @@ en:
           Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>,
           <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is the inclusive <i>OR</i>.
         search_program: >
-          Here you have to select (in the sense of
+          Here you can select (in the sense of
           <i>
           OR
           </i>
@@ -659,8 +659,7 @@ en:
           ).
         search_fulltext: >
           Here you can enter text that will be searched for in the title of the
-          event series. If you leave the text field empty (or enter less than two letters),
-          it will be ignored.
+          event series. If you leave the text field empty it will be ignored.
         disable_teacher_display: >
           If you check this box, the teacher's name will be omitted from the
           lecture card on the start page and from the lecture page for generic
@@ -752,8 +751,10 @@ en:
         title: >
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
-        search_title: >
-          Enter text to search within course titles.         
+        search_fulltext: >
+          Here you can enter text that which will be searched for in the course
+          titles and short titles. If you leave the text field empty it will be
+          ignored.
         short_title: >
           The short title will be used as abbreviation in several places.
         editors: >
@@ -767,6 +768,12 @@ en:
           OR
           </i>
           ).
+        search_program: >
+          Here you can select (in the sense of
+          <i>
+          OR
+          </i>
+          ) to which program the course belongs to.
         no_right_to_change_editors: >
           Course editors can only be changed by administrators.
           Please contact %{project_email} by email if you want a change to be made
@@ -802,7 +809,7 @@ en:
           Here you can choose to which divisions of which subjects the course is
           associated to.
         programs: >
-          Here you can select to ehich study paths of which subjects this course
+          Here you can select to which study paths of which subjects this course
           is associated to.
         term_independent: >
           Check this box for courses that do not match the usual pattern of
@@ -1393,9 +1400,10 @@ en:
           Here you can select the sections that this tag is associated to.
         list: >
           This is the list of all associated tags.
-        search_title: >
-          Here you can enter the title of the tag that you are searching for.
-          The list of all tags will be filtered correspondingly.
+        search_fulltext: >
+          Here you can enter text that will be searched for in the title of
+          tags and aliases. If you leave the text field empty it will be
+          ignored.
         search_course: >
           Here you can enter the courses that the tag is associated to (in
           the sense of <i>OR</i>).

@@ -81,7 +81,7 @@ class CoursesController < ApplicationController
 
     search_results = ::ModelSearch.new(Course, search_params,
                                        course_filters,
-                                       fulltext_param: :title).call
+                                       fulltext_param: :fulltext).call
     @total = search_results.select(:id).count
 
     @courses = Kaminari.paginate_array(search_results.to_a,
@@ -124,7 +124,7 @@ class CoursesController < ApplicationController
     end
 
     def search_params
-      params.expect(search: [:all_editors, :all_programs, :title,
+      params.expect(search: [:all_editors, :all_programs, :fulltext,
                              :term_independent, :per,
                              { editor_ids: [],
                                program_ids: [] }])

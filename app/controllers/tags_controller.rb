@@ -143,7 +143,7 @@ class TagsController < ApplicationController
     ]
 
     search_results = ::ModelSearch.new(Tag, search_params, tag_filters,
-                                       fulltext_param: :title).call
+                                       fulltext_param: :fulltext).call
     @total = search_results.select(:id).count
 
     @tags = Kaminari.paginate_array(search_results.to_a,
@@ -359,6 +359,6 @@ class TagsController < ApplicationController
     end
 
     def search_params
-      params.expect(search: [:title, :all_courses, :per, { course_ids: [] }])
+      params.expect(search: [:fulltext, :all_courses, :per, { course_ids: [] }])
     end
 end
