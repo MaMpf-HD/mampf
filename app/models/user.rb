@@ -145,6 +145,16 @@ class User < ApplicationRecord
     User.teachers.pluck(:name, :id).natural_sort_by(&:first)
   end
 
+  # returns the array of all course editors
+  def self.course_editors
+    User.where(id: EditableUserJoin.where(editable_type: "Course")
+                                   .distinct.select(:user_id))
+  end
+
+  def self.select_course_editors
+    User.course_editors.pluck(:name, :id).natural_sort_by(&:first)
+  end
+
   # returns the array of all editors
   def self.editors
     User.where(id: EditableUserJoin.distinct.select(:user_id))

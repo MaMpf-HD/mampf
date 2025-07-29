@@ -10,7 +10,7 @@
       <%= helpdesk(t('admin.course.info.search_editors'), true) %>
 
       <%= f.select :editor_ids,
-                   options_for_select(add_prompt(User.select_teachers)),
+                   options_for_select(add_prompt(User.select_course_editors)),
                    {},
                    { multiple: true,
                      class: 'selectize',
