@@ -2740,7 +2740,6 @@ en:
       title: >
         You can search the titles of media or related sessions. If you do not wantto use
         this criterion, leave the input box empty.
-      title_placeholder: leave free or enter at least 2 letters
       lectures: >
         Select the event series you want to search. You can choose all event series, the
         ones you are subscribed to, or make up your own selection. If you opt for your own

@@ -87,7 +87,6 @@
                              ajax: true,
                              model: 'tag',
                              locale: I18n.locale,
-                             placeholder: t('basics.enter_two_letters'),
                              no_results: t('basics.no_results') } } %>
       <div class="form-check mb-2">
         <%= f.check_box :all_tags,
@@ -149,8 +148,7 @@
       <%= helpdesk(t('admin.medium.info.search_fulltext'), false) %>
       <%= f.text_field :fulltext,
                         id: 'media_fulltext',
-                        class: 'form-control',
-                        placeholder: t('search.media.title_placeholder') %>
+                        class: 'form-control' %>
     </div>
     <div class="col-6 col-lg-3 form-.group">
       <%= f.label :access, t('basics.access_rights'),
