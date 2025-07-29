@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_28_144354) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_29_155017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -89,7 +89,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_144354) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "question_id"
+    t.index ["explanation"], name: "index_answers_on_explanation_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["question_id"], name: "index_answers_on_question_id"
+    t.index ["text"], name: "index_answers_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "assignments", force: :cascade do |t|
@@ -200,6 +202,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_144354) do
     t.boolean "term_independent", default: false
     t.text "image_data"
     t.index "to_tsvector('simple'::regconfig, (title)::text)", name: "index_courses_on_title_tsearch", using: :gin
+    t.index ["short_title"], name: "index_courses_on_short_title_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["term_independent"], name: "index_courses_on_term_independent"
     t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
@@ -415,8 +418,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_144354) do
     t.integer "annotations_status", default: -1, null: false
     t.integer "answers_count", default: 0, null: false
     t.index ["answers_count"], name: "index_media_on_answers_count"
+    t.index ["content"], name: "index_media_on_content_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["description"], name: "index_media_on_description_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["external_link_description"], name: "index_media_on_external_link_description_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
+    t.index ["released"], name: "index_media_on_released"
+    t.index ["sort"], name: "index_media_on_sort"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
+    t.index ["text"], name: "index_media_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|
@@ -538,6 +547,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_28_144354) do
     t.text "tags_order"
     t.text "details"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
+    t.index ["title"], name: "index_sections_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "speaker_talk_joins", force: :cascade do |t|
