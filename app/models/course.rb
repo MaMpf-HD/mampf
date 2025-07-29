@@ -59,11 +59,15 @@ class Course < ApplicationRecord
                                threshold: 0.3 }
                   }
 
+  def self.default_search_order
+    Arel.sql("LOWER(unaccent(courses.title))")
+  end
+
   # The next methods coexist for lectures and lessons as well.
   # Therefore, they can be called on any *teachable*
 
-  def self.default_search_order
-    Arel.sql("LOWER(unaccent(courses.title))")
+  def self.default_search_order_joins
+    []
   end
 
   def course

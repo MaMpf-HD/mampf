@@ -166,6 +166,14 @@ class Medium < ApplicationRecord
                                threshold: 0.3 }
                   }
 
+  def self.default_search_order
+    Arel.sql("media.created_at DESC")
+  end
+
+  def self.default_search_order_joins
+    []
+  end
+
   searchable do
     text :description do
       caption
