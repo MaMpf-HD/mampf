@@ -4002,6 +4002,8 @@ de:
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
     no_search_term: >
       Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
+    search_only_js: >
+      Der direkte Aufruf von Suchergebnissen ist nicht möglich. Bitte benutze das Suchfeld.
     search_term_short: >
       Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
     no_section: 'Ein Abschnitt mit der angeforderten id existiert nicht.'

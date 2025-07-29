@@ -135,8 +135,8 @@ class TagsController < ApplicationController
   def search
     authorize! :search, Tag.new
 
-    search_config = ::TagSearchConfigurator.call(user: current_user,
-                                                 search_params: search_params)
+    search_config = ::Configurators::TagSearchConfigurator.call(user: current_user,
+                                                                search_params: search_params)
 
     config = ::PaginatedSearcher::SearchConfig.new(
       search_params: search_config.params,
@@ -153,7 +153,10 @@ class TagsController < ApplicationController
     @tags = search.results
 
     respond_to do |format|
-      format.js { render "tags/search" }
+      format.js
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
     end
   end
 

@@ -3771,6 +3771,8 @@ en:
     no_remark: 'There is no remark with this id.'
     no_search_term: >
       You have searched without a search term. That does not work.
+    search_only_js: >
+      Directly accessing search results is not possible. Please use the search field.
     search_term_short: >
       Your search term should have at least two letters.
     no_section: 'There is no section with this id.'

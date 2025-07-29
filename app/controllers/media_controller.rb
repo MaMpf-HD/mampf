@@ -223,8 +223,8 @@ class MediaController < ApplicationController
     @purpose = search_params[:purpose]
     @results_as_list = search_params[:results_as_list] == "true"
 
-    configurator = ::MediaSearchConfigurator.call(user: current_user,
-                                                  search_params: search_params)
+    configurator = ::Configurators::MediaSearchConfigurator.call(user: current_user,
+                                                                 search_params: search_params)
 
     config = ::PaginatedSearcher::SearchConfig.new(
       search_params: configurator.params,
@@ -240,9 +240,16 @@ class MediaController < ApplicationController
     @total = search.total_count
     @media = search.results
 
-    return unless @purpose.in?(["quiz", "import"])
-
-    render template: "media/catalog/import_preview"
+    respond_to do |format|
+      format.js do
+        # For the special cases of quiz/import, a different template is rendered.
+        render template: "media/catalog/import_preview" if @purpose.in?(["quiz", "import"])
+        # Otherwise, the default media/search.coffee is rendered implicitly.
+      end
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
+    end
   end
 
   # play the video using thyme player

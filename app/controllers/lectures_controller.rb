@@ -279,8 +279,8 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    search_config = ::LectureSearchConfigurator.call(user: current_user,
-                                                     search_params: search_params)
+    search_config = ::Configurators::LectureSearchConfigurator.call(user: current_user,
+                                                                    search_params: search_params)
 
     config = ::PaginatedSearcher::SearchConfig.new(
       search_params: search_config.params,
@@ -296,6 +296,13 @@ class LecturesController < ApplicationController
     @lectures = search.results
 
     @results_as_list = search_params[:results_as_list] == "true"
+
+    respond_to do |format|
+      format.js
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
+    end
   end
 
   def show_random_quizzes

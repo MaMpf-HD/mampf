@@ -70,8 +70,8 @@ class CoursesController < ApplicationController
   def search
     authorize! :search, Course.new
 
-    search_config = ::CourseSearchConfigurator.call(user: current_user,
-                                                    search_params: search_params)
+    search_config = ::Configurators::CourseSearchConfigurator.call(user: current_user,
+                                                                   search_params: search_params)
 
     config = ::PaginatedSearcher::SearchConfig.new(
       search_params: search_config.params,
@@ -88,7 +88,10 @@ class CoursesController < ApplicationController
     @courses = search.results
 
     respond_to do |format|
-      format.js { render "courses/search" }
+      format.js
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
     end
   end
 
