@@ -250,24 +250,6 @@ class Medium < ApplicationRecord
           .map { |m| [m.title_for_viewers, m.id] }
   end
 
-  # returns the array of media sorts specified by the search params
-  # search_params is a hash with keys :all_types, :types
-  # value for :types is an array of integers which correspond to indices
-  # in the sort_enum array
-  def self.search_sorts(search_params)
-    return (Medium.sort_enum - ["RandomQuiz"]) unless search_params[:all_types] == "0"
-
-    search_params[:types] || []
-  end
-
-  def self.lecture_search_option
-    {
-      "0" => "all",
-      "1" => "subscribed",
-      "2" => "custom"
-    }
-  end
-
   # protected items are items of type 'pdf_destination' inside associated to
   # this medium that are referred to from other media or from an entry
   # within the table of contents of the video associated to this medium.
