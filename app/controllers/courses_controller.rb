@@ -70,24 +70,22 @@ class CoursesController < ApplicationController
   def search
     authorize! :search, Course.new
 
-    per_page = search_params[:per] || 20
+    search_config = ::CourseSearchConfigurator.call(user: current_user,
+                                                    search_params: search_params)
 
-    course_filters = [
-      ::Filters::EditorFilter,
-      ::Filters::ProgramFilter,
-      ::Filters::TermIndependenceFilter,
-      ::Filters::FulltextFilter
-    ]
+    config = ::PaginatedSearcher::SearchConfig.new(
+      search_params: search_config.params,
+      pagination_params: params,
+      default_per_page: 20
+    )
 
-    search_results = ::ModelSearch.new(Course, search_params,
-                                       course_filters,
-                                       user: current_user).call
-    @total = search_results.select(:id).count
+    search = ::PaginatedSearcher.call(model_class: Course,
+                                      filter_classes: search_config.filters,
+                                      user: current_user,
+                                      config: config)
 
-    @courses = Kaminari.paginate_array(search_results.to_a,
-                                       total_count: @total)
-                       .page(params[:page])
-                       .per(per_page)
+    @total = search.total_count
+    @courses = search.results
 
     respond_to do |format|
       format.js { render "courses/search" }

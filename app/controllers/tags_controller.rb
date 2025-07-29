@@ -135,20 +135,22 @@ class TagsController < ApplicationController
   def search
     authorize! :search, Tag.new
 
-    per_page = search_params[:per] || 10
+    search_config = ::TagSearchConfigurator.call(user: current_user,
+                                                 search_params: search_params)
 
-    tag_filters = [
-      ::Filters::CourseFilter,
-      ::Filters::FulltextFilter
-    ]
+    config = ::PaginatedSearcher::SearchConfig.new(
+      search_params: search_config.params,
+      pagination_params: params,
+      default_per_page: 10
+    )
 
-    search_results = ::ModelSearch.new(Tag, search_params, tag_filters,
-                                       user: current_user).call
-    @total = search_results.select(:id).count
+    search = ::PaginatedSearcher.call(model_class: Tag,
+                                      filter_classes: search_config.filters,
+                                      user: current_user,
+                                      config: config)
 
-    @tags = Kaminari.paginate_array(search_results.to_a,
-                                    total_count: @total)
-                    .page(params[:page]).per(per_page)
+    @total = search.total_count
+    @tags = search.results
 
     respond_to do |format|
       format.js { render "tags/search" }

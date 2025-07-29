@@ -223,41 +223,22 @@ class MediaController < ApplicationController
     @purpose = search_params[:purpose]
     @results_as_list = search_params[:results_as_list] == "true"
 
-    # Start with the base set of filters
-    media_filters = [
-      ::Filters::ProperFilter,
-      ::Filters::TypeFilter,
-      ::Filters::TeachableFilter,
-      ::Filters::TagFilter,
-      ::Filters::EditorFilter,
-      ::Filters::AnswerCountFilter,
-      ::Filters::LectureScopeFilter,
-      ::Filters::FulltextFilter
-    ]
+    configurator = ::MediaSearchConfigurator.call(user: current_user,
+                                                  search_params: search_params)
 
-    processed_params = search_params.to_h
+    config = ::PaginatedSearcher::SearchConfig.new(
+      search_params: configurator.params,
+      pagination_params: params,
+      default_per_page: 10
+    )
 
-    if current_user.active_teachable_editor?
-      # Editors can search by access level, so we add the AccessFilter.
-      media_filters << ::Filters::MediumAccessFilter
-    else
-      # Non-editors have their results strictly filtered by their permissions.
-      media_filters << ::Filters::MediumVisibilityFilter
-      # We also ignore any access param they might have sent.
-      processed_params.delete(:access)
-    end
+    search = ::PaginatedSearcher.call(model_class: Medium,
+                                      filter_classes: configurator.filters,
+                                      user: current_user,
+                                      config: config)
 
-    if processed_params[:all_types] == "1" && processed_params[:from] == "start"
-      processed_params[:types] = Medium.generic_sorts
-    end
-
-    search_results = ::ModelSearch.new(Medium, processed_params,
-                                       media_filters,
-                                       user: current_user).call
-    @total = search_results.select(:id).count
-
-    @media = Kaminari.paginate_array(search_results.to_a, total_count: @total)
-                     .page(params[:page]).per(processed_params[:per] || 10)
+    @total = search.total_count
+    @media = search.results
 
     return unless @purpose.in?(["quiz", "import"])
 

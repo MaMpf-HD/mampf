@@ -279,24 +279,21 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    lecture_filters = [
-      ::Filters::LectureTypeFilter,
-      ::Filters::TermFilter,
-      ::Filters::ProgramFilter,
-      ::Filters::TeacherFilter,
-      ::Filters::LectureVisibilityFilter,
-      ::Filters::FulltextFilter
-    ]
+    search_config = ::LectureSearchConfigurator.call(user: current_user,
+                                                     search_params: search_params)
 
-    search_results = ::ModelSearch.new(Lecture, search_params,
-                                       lecture_filters,
-                                       user: current_user).call
+    config = ::PaginatedSearcher::SearchConfig.new(
+      search_params: search_config.params,
+      pagination_params: params
+    )
 
-    @total = search_results.select(:id).count
-    @lectures = Kaminari.paginate_array(search_results.to_a,
-                                        total_count: @total)
-                        .page(params[:page])
-                        .per(search_params[:per])
+    search = ::PaginatedSearcher.call(model_class: Lecture,
+                                      filter_classes: search_config.filters,
+                                      user: current_user,
+                                      config: config)
+
+    @total = search.total_count
+    @lectures = search.results
 
     @results_as_list = search_params[:results_as_list] == "true"
   end
