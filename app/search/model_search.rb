@@ -3,7 +3,7 @@
 # classes to apply various conditions and then ensures the results are unique
 # and correctly ordered.
 class ModelSearch
-  attr_reader :model_class, :params, :filter_classes, :user, :fulltext_param
+  attr_reader :model_class, :params, :filter_classes, :user
 
   # Initializes the search service.
   #
@@ -11,15 +11,13 @@ class ModelSearch
   # @param params [Hash] The search parameters from the controller.
   # @param user [User] The current user, for permission-sensitive filters.
   # @param filter_classes [Array<Class>] An array of filter classes to be applied.
-  # @param fulltext_param [Symbol, nil] The key in `params` that contains the
   # full-text search query.
 
-  def initialize(model_class, params, filter_classes, user:, fulltext_param: nil)
+  def initialize(model_class, params, filter_classes, user:)
     @model_class = model_class
     @params = params.to_h.with_indifferent_access
     @filter_classes = filter_classes
     @user = user
-    @fulltext_param = fulltext_param
   end
 
   # Executes the search by applying filters and ordering.
@@ -30,14 +28,13 @@ class ModelSearch
 
     # Apply all registered filters to the scope.
     scope = FilterApplier.call(scope: scope, filter_classes: filter_classes,
-                               params: params, user: user,
-                               fulltext_param: fulltext_param)
+                               params: params, user: user)
 
     # Ensure the results are unique, as joins can create duplicates.
     scope = scope.distinct
 
     # Apply the final ordering to the result set.
     SearchOrderer.call(scope: scope, model_class: model_class,
-                       params: params, fulltext_param: fulltext_param)
+                       params: params)
   end
 end

@@ -253,8 +253,7 @@ class MediaController < ApplicationController
 
     search_results = ::ModelSearch.new(Medium, processed_params,
                                        media_filters,
-                                       user: current_user,
-                                       fulltext_param: :fulltext).call
+                                       user: current_user).call
     @total = search_results.select(:id).count
 
     @media = Kaminari.paginate_array(search_results.to_a, total_count: @total)

@@ -4,24 +4,22 @@
 # search order. It also ensures that any columns required for ordering are
 # included in the SELECT statement to prevent database errors when using DISTINCT.
 class SearchOrderer
-  attr_reader :scope, :model_class, :params, :fulltext_param
+  attr_reader :scope, :model_class, :params
 
   # Entry point for the service.
   #
   # @param scope [ActiveRecord::Relation] The scope to be ordered.
   # @param model_class [Class] The ActiveRecord model class being searched.
   # @param params [Hash] The search parameters.
-  # @param fulltext_param [Symbol, nil] The key for the full-text search parameter.
   # @return [ActiveRecord::Relation] The ordered scope.
   def self.call(...)
     new(...).call
   end
 
-  def initialize(scope:, model_class:, params:, fulltext_param:)
+  def initialize(scope:, model_class:, params:)
     @scope = scope
     @model_class = model_class
     @params = params.to_h.with_indifferent_access
-    @fulltext_param = fulltext_param
   end
 
   # Applies the ordering logic.
@@ -35,7 +33,7 @@ class SearchOrderer
 
     # Checks if a full-text search is being performed.
     def fulltext_search?
-      fulltext_param && params[fulltext_param].present?
+      params[:fulltext].present?
     end
 
     # Checks if the model has a valid default search order defined.

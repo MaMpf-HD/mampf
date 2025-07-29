@@ -1,12 +1,11 @@
 module Filters
   class BaseFilter
-    attr_reader :scope, :params, :user, :fulltext_param
+    attr_reader :scope, :params, :user
 
-    def initialize(scope, params, user:, fulltext_param: nil)
+    def initialize(scope, params, user:)
       @scope = scope
       @params = params.to_h.with_indifferent_access
       @user = user
-      @fulltext_param = fulltext_param
     end
 
     def call

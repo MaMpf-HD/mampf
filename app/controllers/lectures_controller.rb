@@ -290,8 +290,7 @@ class LecturesController < ApplicationController
 
     search_results = ::ModelSearch.new(Lecture, search_params,
                                        lecture_filters,
-                                       user: current_user,
-                                       fulltext_param: :fulltext).call
+                                       user: current_user).call
 
     @total = search_results.select(:id).count
     @lectures = Kaminari.paginate_array(search_results.to_a,
