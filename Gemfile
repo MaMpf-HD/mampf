@@ -55,8 +55,6 @@ gem "sidekiq", "~> 7.3"
 gem "sidekiq-cron", "~> 1.12"
 gem "sprockets-rails", "~>3.5"
 gem "streamio-ffmpeg", "~> 3.0"
-gem "sunspot_rails", "~> 2.7"
-gem "sunspot_solr", "~> 2.7"
 gem "terser", "~> 1.2" # Ruby wrapper for UglifyJS JavaScript compressor
 gem "thredded", git: "https://github.com/thredded/thredded.git",
                 ref: "566100f6a020ccc390aa60689d58b007a55506d2"

@@ -264,45 +264,6 @@ class MediaController < ApplicationController
     render template: "media/catalog/import_preview"
   end
 
-  # return all media that match the search parameters
-  def search_old
-    authorize! :search, Medium.new
-
-    # get all media, then set them to only those that are visible to the current user
-    if !current_user.active_teachable_editor? || search_params[:access].blank?
-      filter_media = true
-      params["search"]["access"] = "irrelevant"
-    end
-    if search_params[:answers_count].blank?
-      params["search"]["answers_count"] =
-        "irrelevant"
-    end
-
-    search = Medium.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-
-    if filter_media
-      search_arel = Medium.where(id: results.pluck(:id))
-      visible_search_results = current_user.filter_visible_media(search_arel)
-      results &= visible_search_results
-      @total = results.size
-    end
-
-    @media = Kaminari.paginate_array(results, total_count: @total)
-                     .page(params[:page]).per(search_params[:per])
-    @purpose = search_params[:purpose]
-    @results_as_list = search_params[:results_as_list] == "true"
-    if @purpose.in?(["quiz", "import"])
-      render template: "media/catalog/import_preview"
-      return
-    end
-    return unless @total.zero?
-
-    nil unless search_params[:fulltext]&.length.to_i > 1
-  end
-
   # play the video using thyme player
   def play
     if @medium.video.nil?
