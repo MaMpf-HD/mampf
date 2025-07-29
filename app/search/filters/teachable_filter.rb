@@ -1,23 +1,34 @@
 module Filters
   class TeachableFilter < BaseFilter
     def call
-      # The TeachableParser handles the logic for `all_teachables` and
-      # `teachable_inheritance`. It returns the correct list of teachable
-      # strings to filter by.
-      parser = TeachableParser.new(params)
-      teachable_id_strings = parser.teachables_as_strings
+      conditions = build_arel_conditions
+      return scope if conditions.blank?
 
-      # If the parser returns an empty list (e.g., 'all teachables' was
-      # selected or no teachables were provided), we don't apply any filter.
-      return scope if teachable_id_strings.blank?
-
-      # The teachable_ids are strings like "Course-1", "Lecture-5"
-      conditions = teachable_id_strings.map do |id_string|
-        type, id = id_string.split("-")
-        "(teachable_type = '#{type}' AND teachable_id = #{id.to_i})"
-      end
-
-      scope.where(conditions.join(" OR "))
+      # Chain all individual conditions together with OR.
+      combined_conditions = conditions.reduce(:or)
+      scope.where(combined_conditions)
     end
+
+    private
+
+      # Builds an array of Arel conditions based on the teachable parameters.
+      #
+      # @return [Array<Arel::Node>] An array of conditions, or an empty array.
+      def build_arel_conditions
+        teachable_id_strings = TeachableParser.new(params).teachables_as_strings
+        return [] if teachable_id_strings.blank?
+
+        media = Medium.arel_table
+        allowed_types = ["Course", "Lecture", "Lesson"]
+
+        teachable_id_strings.filter_map do |id_string|
+          type, id = id_string.split("-", 2)
+
+          # Ensure the type is one of the allowed polymorphic types.
+          if type.in?(allowed_types)
+            media[:teachable_type].eq(type).and(media[:teachable_id].eq(id.to_i))
+          end
+        end
+      end
   end
 end
