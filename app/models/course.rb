@@ -293,11 +293,6 @@ class Course < ApplicationRecord
     "#{image.metadata["width"]}x#{image.metadata["height"]}"
   end
 
-  # returns all titles of courses whose title is close to the given search string
-  def self.similar_courses(search_string)
-    search_by_title(search_string).pluck(:title)
-  end
-
   private
 
     def touch_media

@@ -378,14 +378,6 @@ class Medium < ApplicationRecord
     search
   end
 
-  def self.similar_courses(search_string)
-    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
-    titles = Medium.pluck(:description)
-    titles.select do |t|
-      jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
-    end
-  end
-
   # protected items are items of type 'pdf_destination' inside associated to
   # this medium that are referred to from other media or from an entry
   # within the table of contents of the video associated to this medium.

@@ -884,30 +884,6 @@ RSpec.describe(Course, type: :model) do
     end
   end
 
-  describe "self.similar_courses" do
-    before :each do
-      Course.destroy_all
-      @course1 = FactoryBot.create(:course, title: "Algebra 1")
-      @course2 = FactoryBot.create(:course, title: "Algebra 2")
-      @course3 = FactoryBot.create(:course, title: "Analysis 1")
-      @course3 = FactoryBot.create(:course, title: "Analysis 2")
-    end
-
-    it "returns courses whose title is similar to a given string (#1)" do
-      expect(Course.similar_courses("Algebra"))
-        .to match_array(["Algebra 1", "Algebra 2"])
-    end
-
-    it "returns courses whose title is similar to a given string (#2)" do
-      expect(Course.similar_courses("Algbera"))
-        .to match_array(["Algebra 1", "Algebra 2"])
-    end
-
-    it "returns courses whose title is similar to a given string (#3)" do
-      expect(Course.similar_courses("Ara")).to eq([])
-    end
-  end
-
   describe "#search_by" do
     before :each do
       Course.destroy_all
