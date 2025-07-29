@@ -174,37 +174,6 @@ class Medium < ApplicationRecord
     []
   end
 
-  searchable do
-    text :description do
-      caption
-    end
-    text :text do
-      text_join
-    end
-    string :sort
-    string :teachable_compact do
-      "#{teachable_type}-#{teachable_id}"
-    end
-    string :release_state do
-      release_state
-    end
-    integer :id
-    integer :teachable_id
-    integer :tag_ids, multiple: true
-    integer :editor_ids, multiple: true
-    integer :answers_count
-    integer :term_id do
-      term_id || 0
-    end
-    integer :teacher_id do
-      supervising_teacher_id
-    end
-    integer :subscribed_users, multiple: true
-    integer :lecture do
-      lecture&.id
-    end
-  end
-
   # these are all the sorts of projects we currently serve
   def self.sort_enum
     ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Erdbeere",
@@ -297,93 +266,6 @@ class Medium < ApplicationRecord
       "1" => "subscribed",
       "2" => "custom"
     }
-  end
-
-  # returns search results for the media search with search_params provided
-  # by the controller
-  def self.search_by(search_params, _page)
-    # If the search is initiated from the start page, you can only get
-    # generic media sorts as results even if the 'all' radio button
-    # is seleted
-    if search_params[:all_types] == "1"
-      search_params[:types] =
-        if search_params[:from] == "start"
-          Medium.generic_sorts
-        else
-          []
-        end
-    end
-    search_params[:teachable_ids] = TeachableParser.new(search_params)
-                                                   .teachables_as_strings
-    if search_params[:all_editors] == "1" || search_params[:all_editors].nil?
-      search_params[:editor_ids] =
-        []
-    end
-    # add media without term to current term
-
-    search_params[:all_terms] = "1" if search_params[:all_terms].blank?
-    search_params[:all_teachers] = "1" if search_params[:all_teachers].blank?
-    search_params[:term_ids].push("0") if search_params[:term_ids].present?
-    user = User.find_by(id: search_params[:user_id])
-    search = Sunspot.new_search(Medium)
-    search.build do
-      with(:sort, search_params[:types])
-      without(:sort, "RandomQuiz")
-      without(:sort, Medium.advanced_sorts) unless user&.admin_or_editor?
-      with(:editor_ids, search_params[:editor_ids])
-      with(:teachable_compact, search_params[:teachable_ids])
-      unless search_params[:all_terms] == "1"
-        with(:term_id,
-             search_params[:term_ids])
-      end
-      unless search_params[:all_teachers] == "1"
-        with(:teacher_id,
-             search_params[:teacher_ids])
-      end
-    end
-    unless search_params[:answers_count] == "irrelevant"
-      search.build do
-        with(:answers_count, [-1, search_params[:answers_count].to_i])
-      end
-    end
-    unless search_params[:access] == "irrelevant"
-      search.build do
-        with(:release_state, search_params[:access])
-      end
-    end
-    if search_params[:all_tags] == "0" && search_params[:tag_ids].any?
-      search.build do
-        if search_params[:tag_operator] == "and"
-          with(:tag_ids).all_of(search_params[:tag_ids])
-        else
-          with(:tag_ids).any_of(search_params[:tag_ids])
-        end
-      end
-    end
-    if search_params[:fulltext].present?
-      search.build do
-        fulltext(search_params[:fulltext]) do
-          boost_fields(description: 2.0)
-        end
-      end
-    end
-    if search_params[:lecture_scope].present?
-      case Medium.lecture_search_option[search_params[:lecture_scope]]
-      when "subscribed"
-        search.build do
-          with(:subscribed_users, search_params[:user_id])
-        end
-      when "custom"
-        search.build do
-          with(:lecture, search_params[:media_lectures])
-        end
-      end
-    end
-    # this is needed for kaminari to function correctly
-    search.build do
-      paginate(page: 1, per_page: Medium.count)
-    end
-    search
   end
 
   # protected items are items of type 'pdf_destination' inside associated to
