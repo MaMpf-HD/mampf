@@ -220,25 +220,17 @@ class MediaController < ApplicationController
 
   def search
     authorize! :search, Medium.new
+
     @purpose = search_params[:purpose]
     @results_as_list = search_params[:results_as_list] == "true"
 
-    configurator = ::Configurators::MediaSearchConfigurator.call(user: current_user,
-                                                                 search_params: search_params)
-
-    config = ::PaginatedSearcher::SearchConfig.new(
-      search_params: configurator.params,
-      pagination_params: params,
+    ::ControllerSearcher.call(
+      controller: self,
+      model_class: Medium,
+      configurator_class: ::Configurators::MediaSearchConfigurator,
+      instance_variable_name: :media,
       default_per_page: 10
     )
-
-    search = ::PaginatedSearcher.call(model_class: Medium,
-                                      filter_classes: configurator.filters,
-                                      user: current_user,
-                                      config: config)
-
-    @total = search.total_count
-    @media = search.results
 
     respond_to do |format|
       format.js do

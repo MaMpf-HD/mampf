@@ -70,22 +70,13 @@ class CoursesController < ApplicationController
   def search
     authorize! :search, Course.new
 
-    search_config = ::Configurators::CourseSearchConfigurator.call(user: current_user,
-                                                                   search_params: search_params)
-
-    config = ::PaginatedSearcher::SearchConfig.new(
-      search_params: search_config.params,
-      pagination_params: params,
+    ::ControllerSearcher.call(
+      controller: self,
+      model_class: Course,
+      configurator_class: ::Configurators::CourseSearchConfigurator,
+      instance_variable_name: :courses,
       default_per_page: 20
     )
-
-    search = ::PaginatedSearcher.call(model_class: Course,
-                                      filter_classes: search_config.filters,
-                                      user: current_user,
-                                      config: config)
-
-    @total = search.total_count
-    @courses = search.results
 
     respond_to do |format|
       format.js

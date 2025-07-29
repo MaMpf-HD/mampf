@@ -279,21 +279,12 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    search_config = ::Configurators::LectureSearchConfigurator.call(user: current_user,
-                                                                    search_params: search_params)
-
-    config = ::PaginatedSearcher::SearchConfig.new(
-      search_params: search_config.params,
-      pagination_params: params
+    ::ControllerSearcher.call(
+      controller: self,
+      model_class: Lecture,
+      configurator_class: ::Configurators::LectureSearchConfigurator,
+      instance_variable_name: :lectures
     )
-
-    search = ::PaginatedSearcher.call(model_class: Lecture,
-                                      filter_classes: search_config.filters,
-                                      user: current_user,
-                                      config: config)
-
-    @total = search.total_count
-    @lectures = search.results
 
     @results_as_list = search_params[:results_as_list] == "true"
 

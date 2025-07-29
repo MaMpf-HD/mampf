@@ -135,22 +135,13 @@ class TagsController < ApplicationController
   def search
     authorize! :search, Tag.new
 
-    search_config = ::Configurators::TagSearchConfigurator.call(user: current_user,
-                                                                search_params: search_params)
-
-    config = ::PaginatedSearcher::SearchConfig.new(
-      search_params: search_config.params,
-      pagination_params: params,
+    ::ControllerSearcher.call(
+      controller: self,
+      model_class: Tag,
+      configurator_class: ::Configurators::TagSearchConfigurator,
+      instance_variable_name: :tags,
       default_per_page: 10
     )
-
-    search = ::PaginatedSearcher.call(model_class: Tag,
-                                      filter_classes: search_config.filters,
-                                      user: current_user,
-                                      config: config)
-
-    @total = search.total_count
-    @tags = search.results
 
     respond_to do |format|
       format.js

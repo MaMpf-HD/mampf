@@ -1,5 +1,5 @@
 # This service object encapsulates the logic for performing a search via
-# ModelSearch, counting the results, and preparing a paginated collection.
+# ModelSearcher, counting the results, and preparing a paginated collection.
 class PaginatedSearcher
   # A simple struct to return multiple values from the call method.
   SearchResult = Struct.new(:results, :total_count, keyword_init: true)
@@ -23,9 +23,9 @@ class PaginatedSearcher
   end
 
   def call
-    search_results = ::ModelSearch.new(@model_class, @config.search_params,
-                                       @filter_classes,
-                                       user: @user).call
+    search_results = ::ModelSearcher.new(@model_class, @config.search_params,
+                                         @filter_classes,
+                                         user: @user).call
 
     total_count = calculate_total_count(search_results)
 

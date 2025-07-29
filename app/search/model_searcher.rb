@@ -2,7 +2,7 @@
 # and sortable database query for a given model. It uses a set of filter
 # classes to apply various conditions and then ensures the results are unique
 # and correctly ordered.
-class ModelSearch
+class ModelSearcher
   attr_reader :model_class, :params, :filter_classes, :user
 
   # Initializes the search service.
