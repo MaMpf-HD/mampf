@@ -27,7 +27,6 @@ gem "exception_handler", "~> 0.8.0.0", "~> 0.8.0"
 gem "faraday", "~> 1.8", "~> 1.10"
 gem "fastimage", "~> 2.3"
 gem "filesize", "~> 0.2"
-gem "fuzzy-string-match", "~> 1.0"
 gem "image_processing", "~> 1.13"
 gem "jbuilder", "~> 2.12" # build JSON APIs easily
 gem "js-routes", "~> 2.3"

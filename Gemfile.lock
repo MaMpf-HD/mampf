@@ -37,9 +37,6 @@ GEM
   remote: https://rubygems.org/
   specs:
     Ascii85 (2.0.1)
-    RubyInline (3.14.2)
-      ZenTest (~> 4.3)
-    ZenTest (4.12.2)
     actioncable (8.0.2)
       actionpack (= 8.0.2)
       activesupport (= 8.0.2)
@@ -263,8 +260,6 @@ GEM
     fugit (1.11.1)
       et-orbi (~> 1, >= 1.2.11)
       raabro (~> 1.4)
-    fuzzy-string-match (1.0.1)
-      RubyInline (>= 3.8.6)
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashery (2.1.2)
@@ -729,7 +724,6 @@ DEPENDENCIES
   faraday (~> 1.8, ~> 1.10)
   fastimage (~> 2.3)
   filesize (~> 0.2)
-  fuzzy-string-match (~> 1.0)
   i18n-tasks (~> 1.0.15)
   image_processing (~> 1.13)
   jbuilder (~> 2.12)
