@@ -9,6 +9,32 @@ class Medium < ApplicationRecord
   belongs_to :teachable, polymorphic: true, optional: true
   acts_as_list scope: [:teachable_id, :teachable_type], top_of_list: 0
 
+  # This private association is ONLY for pg_search's JOIN query.
+  # It provides a queryable path to a medium's answers if it is a Question.
+  # DO NOT call this directly on an instance, as it will fail.
+  # The Question subclass has its own public `has_many :answers` association
+  # which is used in regular application code.
+  has_many :_search_answers,
+           -> { where(media: { type: "Question" }) },
+           class_name: "Answer",
+           foreign_key: "question_id"
+
+  # This private association is ONLY for pg_search's JOIN query.
+  # The string scope correctly adds the type check to the JOIN's ON clause.
+  # DO NOT call this directly on an instance, as it will fail.
+  # Use the public `lesson` method for direct access.
+  has_one :_search_lesson,
+          -> { where(media: { teachable_type: "Lesson" }) },
+          class_name: "Lesson",
+          primary_key: "teachable_id",
+          foreign_key: "id"
+
+  # This private association is ONLY for pg_search's JOIN query.
+  # It provides a direct path from Medium to Section for pg_search
+  # to traverse the has_many :through relationship on the Lesson model.
+  # DO NOT call this directly on an instance, as it will fail.
+  has_many :_search_sections, through: :_search_lesson, source: :sections
+
   # a teachable may belong to a quizzable (quiz/question/remark)
   belongs_to :quizzable, polymorphic: true, optional: true
 
@@ -124,6 +150,20 @@ class Medium < ApplicationRecord
   scope :proper, -> { where.not(sort: "RandomQuiz") }
   scope :expired, lambda {
                     where(sort: "RandomQuiz").where(created_at: ...1.day.ago)
+                  }
+
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title,
+                  against: [:description, :content, :external_link_description, :text],
+                  associated_against: {
+                    _search_answers: [:text, :explanation],
+                    _search_sections: [:title]
+                  },
+                  using: {
+                    tsearch: { prefix: true, any_word: true, dictionary: "simple" },
+                    trigram: { word_similarity: true,
+                               threshold: 0.3 }
                   }
 
   searchable do
@@ -319,8 +359,8 @@ class Medium < ApplicationRecord
         end
       end
     end
-    if search_params[:lecture_option].present?
-      case Medium.lecture_search_option[search_params[:lecture_option]]
+    if search_params[:lecture_scope].present?
+      case Medium.lecture_search_option[search_params[:lecture_scope]]
       when "subscribed"
         search.build do
           with(:subscribed_users, search_params[:user_id])
@@ -334,17 +374,6 @@ class Medium < ApplicationRecord
     # this is needed for kaminari to function correctly
     search.build do
       paginate(page: 1, per_page: Medium.count)
-    end
-    search
-  end
-
-  def self.search_questions_by_tags(search_params)
-    search = Sunspot.new_search(Medium)
-    search.build do
-      with(:sort, "Question")
-      with(:teachable_compact, search_params[:teachable_ids])
-      with(:tag_ids).all_of(search_params[:tag_ids])
-      paginate(per_page: Question.count)
     end
     search
   end
@@ -1225,11 +1254,5 @@ class Medium < ApplicationRecord
       return released unless released.nil?
 
       "unpublished"
-    end
-
-    def answers_count
-      return -1 unless type == "Question"
-
-      becomes(Question).answers.count
     end
 end

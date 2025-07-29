@@ -2936,7 +2936,7 @@ de:
         Du alle, nur die von Dir abonnierten oder eine eigene Auswahl an Veranstaltungen berücksichtigen
         lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator
         inklusives <i>ODER</i> verwendet.
-      lecture_options:
+      lecture_scope:
         subscribed: 'abonnierte'
         all: 'alle'
         own_selection: 'eigene Auswahl'

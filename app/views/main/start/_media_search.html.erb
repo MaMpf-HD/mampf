@@ -105,34 +105,34 @@
       <%= f.label :teachable_ids, t('basics.lectures') %>
       <%= helpdesk(t('search.media.lectures'), true) %>
       <div class="form-check mb-2">
-        <%= f.radio_button :lecture_option,
+        <%= f.radio_button :lecture_scope,
                             '0',
                             checked: true,
                             class: 'form-check-input' %>
-        <%= f.label :lecture_option,
-                    t('search.media.lecture_options.all'),
+        <%= f.label :lecture_scope,
+                    t('search.media.lecture_scope.all'),
                     value: '0',
                     class: 'form-check-label' %>
       </div>
       <div class="form-check mb-2">
-        <%= f.radio_button :lecture_option,
+        <%= f.radio_button :lecture_scope,
                             '1',
                             checked: false,
                             class: 'form-check-input' %>
-        <%= f.label :lecture_option,
-                    t('search.media.lecture_options.subscribed'),
+        <%= f.label :lecture_scope,
+                    t('search.media.lecture_scope.subscribed'),
                     value: '1',
                     class: 'form-check-label' %>
       </div>
       <div class="form-check mb-2">
-        <%= f.radio_button :lecture_option,
+        <%= f.radio_button :lecture_scope,
                             '2',
                             checked: false,
                             class: 'form-check-input',
                             data: { type: 'toggle',
                                     id: 'search_media_lectures'} %>
-        <%= f.label :lecture_option,
-                    t('search.media.lecture_options.own_selection'),
+        <%= f.label :lecture_scope,
+                    t('search.media.lecture_scope.own_selection'),
                     value: '2',
                     class: 'form-check-label' %>
       </div>

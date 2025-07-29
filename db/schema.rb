@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_27_144632) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_28_144354) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -413,6 +413,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_27_144632) do
     t.datetime "file_last_edited", precision: nil
     t.text "external_link_description"
     t.integer "annotations_status", default: -1, null: false
+    t.integer "answers_count", default: 0, null: false
+    t.index ["answers_count"], name: "index_media_on_answers_count"
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
   end

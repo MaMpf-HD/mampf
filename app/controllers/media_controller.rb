@@ -218,8 +218,55 @@ class MediaController < ApplicationController
   def inspect
   end
 
-  # return all media that match the search parameters
   def search
+    authorize! :search, Medium.new
+    @purpose = search_params[:purpose]
+    @results_as_list = search_params[:results_as_list] == "true"
+
+    # Start with the base set of filters
+    media_filters = [
+      ::Filters::ProperFilter,
+      ::Filters::TypeFilter,
+      ::Filters::TeachableFilter,
+      ::Filters::TagFilter,
+      ::Filters::EditorFilter,
+      ::Filters::AnswerCountFilter,
+      ::Filters::LectureScopeFilter,
+      ::Filters::FulltextFilter
+    ]
+
+    processed_params = search_params.to_h
+
+    if current_user.active_teachable_editor?
+      # Editors can search by access level, so we add the AccessFilter.
+      media_filters << ::Filters::MediumAccessFilter
+    else
+      # Non-editors have their results strictly filtered by their permissions.
+      media_filters << ::Filters::MediumVisibilityFilter
+      # We also ignore any access param they might have sent.
+      processed_params.delete(:access)
+    end
+
+    if processed_params[:all_types] == "1" && processed_params[:from] == "start"
+      processed_params[:types] = Medium.generic_sorts
+    end
+
+    search_results = ::ModelSearch.new(Medium, processed_params,
+                                       media_filters,
+                                       user: current_user,
+                                       fulltext_param: :fulltext).call
+    @total = search_results.select(:id).count
+
+    @media = Kaminari.paginate_array(search_results.to_a, total_count: @total)
+                     .page(params[:page]).per(processed_params[:per] || 10)
+
+    return unless @purpose.in?(["quiz", "import"])
+
+    render template: "media/catalog/import_preview"
+  end
+
+  # return all media that match the search parameters
+  def search_old
     authorize! :search, Medium.new
 
     # get all media, then set them to only those that are visible to the current user
@@ -696,7 +743,7 @@ class MediaController < ApplicationController
                          :teachable_inheritance, :fulltext, :per,
                          :purpose, :answers_count,
                          :results_as_list, :all_terms, :all_teachers,
-                         :lecture_option, :user_id, :from,
+                         :lecture_scope, :user_id, :from,
                          { types: [],
                            teachable_ids: [],
                            tag_ids: [],

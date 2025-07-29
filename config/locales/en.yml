@@ -2746,7 +2746,7 @@ en:
         ones you are subscribed to, or make up your own selection. If you opt for your own
         selection, you can choose one or several event series. The operator used is the
         inclusive <i>OR</i>.
-      lecture_options:
+      lecture_scope:
         subscribed: 'subscribed'
         all: 'all'
         own_selection: 'custom selection'

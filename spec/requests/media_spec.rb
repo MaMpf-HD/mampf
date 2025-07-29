@@ -53,7 +53,7 @@ RSpec.describe("Media", type: :request) do
           all_tags: 1,
           tag_operator: "or",
           all_teachers: 1,
-          lecture_option: 0,
+          lecture_scope: 0,
           fulltext: "",
           per: 6,
           purpose: "media",
@@ -150,7 +150,7 @@ RSpec.describe("Media", type: :request) do
     end
 
     it "can search for media of subscribed lectures" do
-      @params[:search][:lecture_option] = 1
+      @params[:search][:lecture_scope] = 1
       get media_search_path, params: @params
 
       expect(response.body).not_to include(NO_HITS_MSG)
@@ -160,7 +160,7 @@ RSpec.describe("Media", type: :request) do
     end
 
     it "can search for media of custom lecture" do
-      @params[:search][:lecture_option] = 2
+      @params[:search][:lecture_scope] = 2
       @params[:search][:media_lectures] = [@lecture2.id]
       get media_search_path, params: @params
 
