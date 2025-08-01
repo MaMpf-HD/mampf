@@ -1,3 +1,12 @@
+# Filters media by their specific teachable parent (e.g., a Course or Lecture).
+#
+# This filter is skipped if no teachable parameters are provided.
+#
+# It relies on the `TeachableParser` to extract a list of teachable
+# identifiers (e.g., "Course-1", "Lecture-5") from the request parameters.
+# For each valid identifier, it constructs an Arel condition to match the
+# `teachable_type` and `teachable_id`. These conditions are then combined
+# with OR to find all media that belong to any of the specified teachables.
 module Filters
   class TeachableFilter < BaseFilter
     def call

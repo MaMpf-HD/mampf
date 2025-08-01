@@ -1,3 +1,10 @@
+# Applies a full-text search to the scope if a search term is provided.
+#
+# This filter uses the `search_by_title` scope (defined by `pg_search`)
+# to perform the search and adds the `with_pg_search_rank` scope to make
+# the search rank available for ordering.
+#
+# If the `fulltext` parameter is blank, it returns the scope unmodified.
 module Filters
   class FulltextFilter < BaseFilter
     def call

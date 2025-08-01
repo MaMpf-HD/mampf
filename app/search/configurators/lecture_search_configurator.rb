@@ -11,7 +11,7 @@ module Configurators
 
       def filters
         [
-          ::Filters::LectureTypeFilter,
+          ::Filters::TypeFilter,
           ::Filters::TermFilter,
           ::Filters::ProgramFilter,
           ::Filters::TeacherFilter,

@@ -1,3 +1,12 @@
+# This is the abstract base class for all search configurators.
+#
+# It establishes a common interface and structure for defining which search
+# filters and parameters should be applied for a given model (e.g., Media,
+# Lectures).
+#
+# Subclasses are responsible for implementing the `call` method, which should
+# return a `Configuration` struct containing an array of filter classes and the
+# processed search parameters.
 module Configurators
   class BaseSearchConfigurator
     # This struct provides a consistent return object for all configurators.

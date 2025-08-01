@@ -1,3 +1,11 @@
+# Filters media of type 'Question' by the number of answers.
+#
+# This filter only modifies the scope if the search is exclusively for 'Question'
+# media and a specific answer count is provided. Otherwise, it returns the
+# scope unmodified.
+#
+# It handles a special case where an input of '7' filters for questions with
+# more than 6 answers.
 module Filters
   class AnswerCountFilter < BaseFilter
     def call

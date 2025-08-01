@@ -1,3 +1,12 @@
+# Filters media based on their association with lectures, offering different
+# scopes like 'subscribed' or 'custom'.
+#
+# This filter modifies the scope based on the `lecture_scope` parameter:
+# - '0' or blank: The scope is returned unmodified.
+# - '1': Filters for media whose teachable parent (Course, Lecture,
+#   or Lesson) is one the user is subscribed to.
+# - '2': Filters for media whose teachable parent is one of a specific
+#   list of lectures (or their lessons) provided in the `media_lectures` param.
 module Filters
   class LectureScopeFilter < BaseFilter
     def call

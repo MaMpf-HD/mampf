@@ -1,3 +1,8 @@
+# Filters a scope to include only records that are marked as term-independent.
+#
+# This filter is only active when the `term_independent` parameter is set
+# to '1'. When active, it filters for records where the `term_independent`
+# attribute is `true`.
 module Filters
   class TermIndependenceFilter < BaseFilter
     def call

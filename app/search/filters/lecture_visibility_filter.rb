@@ -1,3 +1,14 @@
+# Filters a scope of lectures to only include records that are visible to the
+# current user.
+#
+# This filter ensures that non-admin users can only see lectures that meet
+# at least one of the following criteria:
+# - The lecture is published (i.e., its `released` status is not nil).
+# - The user is the teacher of the lecture.
+# - The user is an editor of the lecture.
+#
+# If the user is an admin, the scope is returned unmodified, granting them
+# access to all lectures.
 module Filters
   class LectureVisibilityFilter < BaseFilter
     def call

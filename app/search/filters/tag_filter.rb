@@ -1,3 +1,13 @@
+# Filters a scope of media by associated tags, supporting both "AND" and "OR" logic.
+#
+# This filter is skipped if the 'all_tags' parameter is set to '1' or if
+# no specific tag IDs are provided.
+#
+# It supports two modes based on the `tag_operator` parameter:
+# - 'and': Filters for records that are associated with *all* of the
+#   specified tags.
+# - 'or' (default): Filters for records that are associated with *any* of the
+#   specified tags.
 module Filters
   class TagFilter < BaseFilter
     def call
