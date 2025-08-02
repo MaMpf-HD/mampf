@@ -1,7 +1,10 @@
-# Defines the search configuration for the Course model.
+# This class is responsible for configuring a search for the Course model.
+# It acts as a bridge between the controller's search parameters and the
+# generic ModelSearch service.
 #
-# This class specifies the set of filters that are applied when searching for
-# courses.
+# Its primary role is to define the specific, static set of filter classes
+# that are applied when searching for courses. It returns a Configuration
+# object that the ModelSearch service can then execute.
 module Configurators
   class CourseSearchConfigurator < BaseSearchConfigurator
     def call

@@ -1,3 +1,10 @@
+# This class is responsible for configuring a search for the Lecture model.
+# It acts as a bridge between the controller's search parameters and the
+# generic ModelSearch service.
+#
+# Its primary role is to define the specific, static set of filter classes
+# that are applied when searching for lectures. It returns a Configuration
+# object that the ModelSearch service can then execute.
 module Configurators
   class LectureSearchConfigurator < BaseSearchConfigurator
     def call

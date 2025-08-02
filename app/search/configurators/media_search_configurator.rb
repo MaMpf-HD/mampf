@@ -1,3 +1,18 @@
+# This class is responsible for configuring a search for the Medium model.
+# It acts as a bridge between the raw search parameters from the controller and
+# the generic ModelSearch service.
+#
+# Its primary responsibilities are:
+# 1.  Assembling the correct set of filter classes to be applied. This includes
+#     conditionally selecting a visibility filter (MediumAccessFilter for editors,
+#     MediumVisibilityFilter for regular users) based on user permissions.
+# 2.  Pre-processing the search parameters to normalize them before they are
+#     passed to the filters. For example, it sets default media types when
+#     searching from the start page and removes parameters that are not
+#     relevant for the current user's role.
+#
+# The result is a Configuration object containing the finalized list of filters
+# and processed parameters, ready to be executed by the ModelSearch service.
 module Configurators
   class MediaSearchConfigurator < BaseSearchConfigurator
     def call
