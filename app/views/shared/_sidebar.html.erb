@@ -22,10 +22,10 @@
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.lesson_material?(current_user) ? "disabled" : ""%>">
-    <a href="<%= url_for(fullpath)%>">
+    <%= link_to url_for(fullpath), data: { turbo_frame: "main" } do %>
       <i class="bi bi-collection-play<%= active_class.present? ? "-fill" : "" %>"></i>
       <%= t('categories.lesson_material.plural') %>
-    </a>
+    <% end %>
   </li>
   
   <%# Script %>
