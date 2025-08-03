@@ -1,4 +1,3 @@
-# QuizRound class
 # service model for quizzes_controller
 class QuizRound
   include ActiveModel::Validations
