@@ -18,7 +18,7 @@
 
   <%# LessonMaterials %>
   <% project_name = 'lesson_material' %>
-  <% fullpath = lecture_material_path(lecture, params: { project: project_name })%>
+  <% fullpath = lecture_lesson_materials_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.lesson_material?(current_user) ? "disabled" : ""%>">
@@ -30,7 +30,7 @@
   
   <%# Script %>
   <% project_name = 'script' %>
-  <% fullpath = lecture_material_path(lecture, params: { project: project_name })%>
+  <% fullpath = lecture_script_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.script?(current_user) ? "disabled" : ""%>">
@@ -45,7 +45,7 @@
 
   <%# Exercises %>
   <% project_name = 'exercise' %>
-  <% fullpath = lecture_material_path(lecture, params: { project: project_name })%>
+  <% fullpath = lecture_exercises_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.exercise?(current_user) ? "disabled" : ""%>">
@@ -95,7 +95,7 @@
 
   <%# Quizzes %>
   <% project_name = 'quiz' %>
-  <% fullpath = lecture_material_path(lecture, params: { project: project_name })%>
+  <% fullpath = lecture_quizzes_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.quiz?(current_user) ? "disabled" : ""%>">
@@ -122,7 +122,7 @@
 
   <%# Worked Examples %>
   <% project_name = 'worked_example' %>
-  <% fullpath = lecture_material_path(lecture, params: { project: project_name })%>
+  <% fullpath = lecture_worked_examples_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.worked_example?(current_user) ? "disabled" : ""%>">
@@ -145,7 +145,7 @@
 
   <%# Repetition %>
   <% project_name = 'repetition' %>
-  <% fullpath = lecture_material_path(lecture, params: { project: project_name })%>
+  <% fullpath = lecture_repetitions_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.repetition?(current_user) ? "disabled" : ""%>">
@@ -157,7 +157,7 @@
 
   <%# Miscellaneous %>
   <% project_name = 'miscellaneous' %>
-  <% fullpath = lecture_material_path(lecture, params: { project: project_name })%>
+  <% fullpath = lecture_miscellaneous_path(lecture) %>
   <% active_class = get_class_for_project(project_name) %>
   <li class="sidebar-item nav-link <%= active_class %>
           <%= !lecture || !lecture.miscellaneous?(current_user) ? "disabled" : ""%>">
@@ -183,7 +183,7 @@
     </li>
 
     <%# Announcements %>
-    <% path = show_announcements_path(lecture) %>
+    <% path = lecture_announcements_path(lecture) %>
     <% active_class = get_class_for_path(path) %>
     <li class="sidebar-item nav-link <%= active_class %>
             <%= !lecture.announcements.exists? ? "disabled" : ""%>">
@@ -194,7 +194,7 @@
     </li>
 
     <%# Organizational %>
-    <% path = organizational_path(lecture) %>
+    <% path = lecture_organizational_path(lecture) %>
     <% active_class = get_class_for_path(path) %>
     <li class="sidebar-item nav-link <%= active_class %>
             <%= !lecture.organizational ? "disabled" : ""%>">
@@ -205,7 +205,7 @@
     </li>
 
     <%# Modul %>
-    <% path = display_course_path(lecture) %>
+    <% path = lecture_course_path(lecture) %>
     <% active_class = get_class_for_path(path) %>
     <li class="sidebar-item nav-link <%= active_class %>">
       <%= link_to url_for(path), data: { turbo_frame: "main" } do %>
