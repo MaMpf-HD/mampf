@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_23_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_03_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -900,7 +900,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_000000) do
     t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.boolean "unread_comments", default: false
-    t.boolean "study_participant", default: false
     t.boolean "email_for_submission_upload"
     t.boolean "email_for_submission_removal"
     t.boolean "email_for_submission_join"
