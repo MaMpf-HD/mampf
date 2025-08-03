@@ -44,7 +44,7 @@ export default class extends Controller {
   }
 
   setActiveLink(event) {
-    this.active_link = event.target.closest("li");
+    this.active_link = event.currentTarget.closest("li");
     this.active_link.classList.add(ACTIVE_ITEM_CSS_CLASS);
   }
 
