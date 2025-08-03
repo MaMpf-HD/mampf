@@ -8,7 +8,10 @@
 module Filters
   class EditorFilter < BaseFilter
     def call
-      return scope if params[:all_editors] == "1" || params[:editor_ids].blank?
+      # This single check handles nil, [], [""], [nil], etc.
+      no_specific_editors = params[:editor_ids].to_a.compact_blank.empty?
+
+      return scope if params[:all_editors] == "1" || no_specific_editors
 
       scope.joins(:editors)
            .where(users: { id: params[:editor_ids] })

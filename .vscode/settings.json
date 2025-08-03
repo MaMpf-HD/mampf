@@ -63,7 +63,8 @@
     "rubyTestExplorer.rspecDirectory": "./spec/",
     "rubyTestExplorer.logpanel": true,
     "rubyTestExplorer.filePattern": [
-        "*_spec.rb"
+        "*_spec.rb",
+        "**/*_spec.rb"
     ],
     //////////////////////////////////////
     // Files

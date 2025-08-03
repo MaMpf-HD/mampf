@@ -1,0 +1,89 @@
+require "rails_helper"
+
+RSpec.describe(Filters::CourseFilter, type: :filter) do
+  describe "#call" do
+    let(:user) { create(:user) }
+    let!(:course1) { FactoryBot.create(:course) }
+    let!(:course2) { FactoryBot.create(:course) }
+    let!(:course3) { FactoryBot.create(:course) }
+    let!(:tag1) { FactoryBot.create(:tag) }
+    let!(:tag2) { FactoryBot.create(:tag) }
+    let!(:tag3) { FactoryBot.create(:tag) }
+    let!(:tag4) { FactoryBot.create(:tag) }
+
+    before do
+      # Explicitly create the join records to ensure associations are set
+      # before the filter is called.
+      FactoryBot.create(:course_tag_join, course: course1, tag: tag1)
+      FactoryBot.create(:course_tag_join, course: course2, tag: tag2)
+      FactoryBot.create(:course_tag_join, course: course2, tag: tag3)
+      FactoryBot.create(:course_tag_join, course: course3, tag: tag4)
+    end
+
+    # Tags have a direct many-to-many relationship with courses
+    # so we can test the filter with them
+    let(:scope) { Tag.all }
+
+    subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
+
+    context "when all_courses is set to '1'" do
+      let(:params) { { all_courses: "1", course_ids: [course1.id] } }
+
+      it "returns the original scope without filtering" do
+        expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
+      end
+    end
+
+    context "when no course_ids are provided" do
+      context "with empty array" do
+        let(:params) { { course_ids: [] } }
+
+        it "returns the original scope without filtering" do
+          expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
+        end
+      end
+
+      context "with nil" do
+        let(:params) { { course_ids: nil } }
+
+        it "returns the original scope without filtering" do
+          expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
+        end
+      end
+
+      context "with empty strings" do
+        let(:params) { { course_ids: [""] } }
+
+        it "returns the original scope without filtering" do
+          expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
+        end
+      end
+    end
+
+    context "when specific course_ids are provided" do
+      context "with a single course ID" do
+        let(:params) { { course_ids: [course2.id] } }
+
+        it "filters the scope to include only records associated with that course" do
+          expect(filtered_scope).to match_array([tag2, tag3])
+        end
+      end
+
+      context "with multiple course IDs" do
+        let(:params) { { course_ids: [course1.id, course2.id] } }
+
+        it "filters the scope to include records associated with any of those courses" do
+          expect(filtered_scope).to match_array([tag1, tag2, tag3])
+        end
+      end
+
+      context "with non-existent course IDs" do
+        let(:params) { { course_ids: [999_999] } }
+
+        it "returns an empty result set" do
+          expect(filtered_scope).to be_empty
+        end
+      end
+    end
+  end
+end
