@@ -48,7 +48,8 @@ class LecturesController < ApplicationController
                         .find_by(id: params[:id])
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-      render layout: "application"
+
+      render layout: turbo_frame_request? ? false : "application"
     end
   end
 
