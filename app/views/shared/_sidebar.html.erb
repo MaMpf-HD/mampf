@@ -9,10 +9,10 @@
     <% active_class = get_class_for_path(lecture_path(lecture)) %>
     <li class="sidebar-item nav-link <%= active_class %>
             <%= !lecture ? "disabled" : ""%>">
-      <a href="<%= url_for(fullpath)%>">
+      <%= link_to url_for(fullpath), data: { turbo_frame: "lecture_main"} do %>
         <i class="bi bi-house<%= active_class.present? ? "-fill" : "" %>"></i>
         <%= t('basics.overview') %>
-      </a>
+      <% end %>
     </li>
   <% end %>
 

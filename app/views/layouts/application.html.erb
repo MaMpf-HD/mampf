@@ -21,20 +21,22 @@
           </div>
         <% end %>
         <main class="col-sm-8 ml-auto col-md-9 col-xl-10 pt-3" role="main">
-          <div class="alert alert-danger" id="js-messages" role="alert"
-               style="display: none;">
-          </div>
-          <% if alert.present? %>
-            <div class="alert alert-danger" role="alert">
-              <%= sanitize alert, :tags => %w(br) %>
+          <%= turbo_frame_tag "lecture_main" do %>
+            <div class="alert alert-danger" id="js-messages" role="alert"
+                style="display: none;">
             </div>
+            <% if alert.present? %>
+              <div class="alert alert-danger" role="alert">
+                <%= sanitize alert, :tags => %w(br) %>
+              </div>
+            <% end %>
+            <% if notice.present? %>
+              <div class="alert alert-secondary" role="alert">
+                <%= sanitize notice, :tags => %w(br) %>
+              </div>
+            <% end %>
+            <%= yield %>
           <% end %>
-          <% if notice.present? %>
-            <div class="alert alert-secondary" role="alert">
-              <%= sanitize notice, :tags => %w(br) %>
-            </div>
-          <% end %>
-          <%= yield %>
         </main>
       </div>
     </div>
