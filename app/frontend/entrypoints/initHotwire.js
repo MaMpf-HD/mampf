@@ -1,10 +1,10 @@
-// Hotwired: Stimulus
+// Hotwire: Stimulus
 import { Application } from "@hotwired/stimulus";
 import LectureSidebarController from "~/js/lecture_sidebar.controller";
 window.Stimulus = Application.start();
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 
-// Hotwired: Turbo
+// Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
 // They might not be needed with Turbo anymore.

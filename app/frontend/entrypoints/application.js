@@ -10,7 +10,7 @@ import "~/js/bootstrapPopovers";
 // https://github.com/hotwired/turbo-rails/blob/main/UPGRADING.md#upgrading-from-rails-ujs--turbolinks-to-turbo
 import Rails from "@rails/ujs";
 
-import "./initHotwired";
+import "./initHotwire";
 
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";
