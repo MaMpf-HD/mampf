@@ -83,6 +83,7 @@ class QuizRound
       end
       @progress ||= @quiz.root
       @counter ||= 0
+      @attempt_token ||= SecureRandom.uuid.first(13).remove("-")
       @progress_old = @progress
       @counter_old = @counter
       @round_id_old = round_id
