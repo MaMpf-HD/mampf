@@ -4,7 +4,7 @@ FactoryBot.define do
       question_id { Faker::Number.number }
       quiz_id { Faker::Number.number }
       correct { [true, false].sample }
-      session_id { Faker::Crypto.md5 }
+      attempt_token { Faker::Crypto.md5 }
       progress { [-1, 1, 2, 3].sample }
       success do
         if progress == -1

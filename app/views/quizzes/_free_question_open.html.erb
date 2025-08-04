@@ -40,7 +40,7 @@
                       id: 'quiz_question_crosses' %>
     <%= quiz_fields.hidden_field :solution_input, id: 'question_quiz_solution_input' %>
     <%= quiz_fields.hidden_field :result, id: 'question_quiz_result' %>
-    <%= quiz_fields.hidden_field :session_id, value: quiz_round.session_id %>
+    <%= quiz_fields.hidden_field :attempt_token, value: quiz_round.attempt_token %>
   <% end %>
 
   <%= f.hidden_field :id, value: quiz_round.quiz.id %>
