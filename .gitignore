@@ -21,12 +21,6 @@ app/frontend/js/mampf_routes.js
 /node_modules
 /yarn-error.log
 
-/solr/data
-/solr/test/data
-/solr/development/data
-/solr/default/data
-/solr/pids
-
 coverage
 
 # Ignore master key for decrypting credentials and more.
