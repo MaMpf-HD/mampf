@@ -1,5 +1,21 @@
-# Teachable parser class
-# This is a service PORO model that is used in the media search
+# This service object is responsible for parsing and expanding a list of
+# "teachable" identifiers provided in search parameters.
+#
+# Its primary purpose is to handle the "inheritance" logic for teachables.
+# When a user selects a course and enables inheritance, this parser finds not
+# only the course itself but also all associated lectures and lessons.
+#
+# It is designed to be efficient, using a minimal number of database queries
+# to gather all related records.
+#
+# @example
+#   params = {
+#     teachable_ids: ["Course-1"],
+#     teachable_inheritance: "1"
+#   }
+#   Search::TeachableParser.call(params)
+#   # => ["Course-1", "Lecture-10", "Lecture-11", "Lesson-101", ...]
+#
 class TeachableParser
   # Convenience class method to initialize and call the parser in one step.
   def self.call(params)

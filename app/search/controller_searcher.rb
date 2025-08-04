@@ -31,29 +31,44 @@ class ControllerSearcher
   end
 
   def call
-    # Use the controller's context to get the current user and params.
-    user = controller.current_user
-    search_params = controller.send(:search_params)
-    pagination_params = controller.params
-
-    # 1. Get the configuration (filters and processed params).
-    configurator = configurator_class.call(user: user, search_params: search_params)
-
-    # 2. Build the config for the paginated searcher.
-    config = ::PaginatedSearcher::SearchConfig.new(
-      search_params: configurator.params,
-      pagination_params: pagination_params,
-      default_per_page: default_per_page
-    )
-
-    # 3. Run the search.
-    search = ::PaginatedSearcher.call(model_class: model_class,
-                                      filter_classes: configurator.filters,
-                                      user: user,
-                                      config: config)
-
-    # 4. Set the instance variables on the controller for the view.
-    controller.instance_variable_set(:@total, search.total_count)
-    controller.instance_variable_set("@#{instance_variable_name}", search.results)
+    config = search_configuration
+    search_result = execute_paginated_search(config)
+    assign_results_to_controller(search_result)
   end
+
+  private
+
+    # Calls the specific configurator class to get the list of filters
+    # and the processed search parameters.
+    # @return [Configurators::BaseSearchConfigurator::Configuration]
+    def search_configuration
+      configurator_class.call(user: controller.current_user,
+                              search_params: controller.send(:search_params))
+    end
+
+    # Executes the search using the PaginatedSearcher.
+    # @param search_config [Configurators::BaseSearchConfigurator::Configuration]
+    # @return [PaginatedSearcher::SearchResult]
+    def execute_paginated_search(search_config)
+      paginated_search_config = ::PaginatedSearcher::SearchConfig.new(
+        search_params: search_config.params,
+        pagination_params: controller.params,
+        default_per_page: default_per_page
+      )
+
+      ::PaginatedSearcher.call(
+        model_class: model_class,
+        filter_classes: search_config.filters,
+        user: controller.current_user,
+        config: paginated_search_config
+      )
+    end
+
+    # Sets the final instance variables on the controller for the view.
+    # @param search_result [PaginatedSearcher::SearchResult]
+    def assign_results_to_controller(search_result)
+      controller.instance_variable_set(:@total, search_result.total_count)
+      controller.instance_variable_set("@#{instance_variable_name}",
+                                       search_result.results)
+    end
 end
