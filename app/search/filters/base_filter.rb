@@ -17,5 +17,16 @@ module Filters
     def call
       raise(NotImplementedError, "Subclasses must implement #call")
     end
+
+    private
+
+      # Helper to check for the standard "all" and blank ID guard clauses.
+      #
+      # @param all_param [Symbol] The key for the 'all' flag (e.g., :all_editors).
+      # @param ids_param [Symbol] The key for the ID list (e.g., :editor_ids).
+      # @return [Boolean] True if the filter should be skipped.
+      def skip_filter?(all_param:, ids_param:)
+        params[all_param] == "1" || params[ids_param].to_a.compact_blank.empty?
+      end
   end
 end

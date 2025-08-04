@@ -11,7 +11,7 @@
 module Filters
   class TagFilter < BaseFilter
     def call
-      return scope if params[:all_tags] == "1" || params[:tag_ids].blank?
+      return scope if skip_filter?(all_param: :all_tags, ids_param: :tag_ids)
 
       tag_ids = params[:tag_ids].map(&:to_i)
 

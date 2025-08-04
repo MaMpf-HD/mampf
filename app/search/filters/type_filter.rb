@@ -8,7 +8,7 @@
 module Filters
   class TypeFilter < BaseFilter
     def call
-      return scope if params[:all_types] == "1" || params[:types].blank?
+      return scope if skip_filter?(all_param: :all_types, ids_param: :types)
 
       scope.where(sort: params[:types])
     end

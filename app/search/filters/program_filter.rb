@@ -9,7 +9,7 @@
 module Filters
   class ProgramFilter < BaseFilter
     def call
-      return scope if params[:all_programs] == "1" || params[:program_ids].blank?
+      return scope if skip_filter?(all_param: :all_programs, ids_param: :program_ids)
 
       join_path = case scope.klass.name
                   when "Course"

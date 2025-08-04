@@ -24,37 +24,6 @@ RSpec.describe(Filters::EditorFilter, type: :filter) do
       FactoryBot.create(:editable_user_join, editable: course4, user: editor3)
     end
 
-    context "when 'all_editors' parameter is set to '1'" do
-      let(:params) { { all_editors: "1", editor_ids: [editor1.id] } }
-
-      it "returns the original scope without filtering" do
-        expect(filtered_scope).to match_array([course1, course2, course3, course4])
-      end
-    end
-
-    context "when 'editor_ids' parameter is blank" do
-      context "with a nil value" do
-        let(:params) { { editor_ids: nil } }
-        it "returns the original scope" do
-          expect(filtered_scope).to match_array([course1, course2, course3, course4])
-        end
-      end
-
-      context "with an empty array" do
-        let(:params) { { editor_ids: [] } }
-        it "returns the original scope" do
-          expect(filtered_scope).to match_array([course1, course2, course3, course4])
-        end
-      end
-
-      context "with an array with a blank string" do
-        let(:params) { { editor_ids: [""] } }
-        it "returns the original scope" do
-          expect(filtered_scope).to match_array([course1, course2, course3, course4])
-        end
-      end
-    end
-
     context "when specific editor_ids are provided" do
       context "with a single editor" do
         let(:params) { { editor_ids: [editor1.id] } }

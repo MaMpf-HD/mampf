@@ -10,8 +10,15 @@
 module Filters
   class TeachableFilter < BaseFilter
     def call
+      # This single check handles nil, [], [""], [nil], etc.
+      no_specific_teachables = params[:teachable_ids].to_a.compact_blank.empty?
+
+      return scope if no_specific_teachables
+
       conditions = build_arel_conditions
-      return scope if conditions.blank?
+
+      # If params were provided but none were valid, return an empty scope.
+      return scope.none if conditions.blank?
 
       # Chain all individual conditions together with OR.
       combined_conditions = conditions.reduce(:or)

@@ -54,4 +54,48 @@ RSpec.describe(Filters::BaseFilter) do
       )
     end
   end
+
+  describe "#skip_filter?" do
+    # Since BaseFilter is abstract, we use a dummy subclass for testing.
+    let(:dummy_class) do
+      Class.new(described_class) do
+        # Dummy implementation
+        def call
+        end
+      end
+    end
+    let(:filter) { dummy_class.new(scope, params, user: user) }
+
+    subject(:skip) { filter.send(:skip_filter?, all_param: :all_items, ids_param: :item_ids) }
+
+    context "when the 'all' parameter is '1'" do
+      let(:params) { { all_items: "1", item_ids: [1] } }
+      it { is_expected.to be(true) }
+    end
+
+    context "when the 'ids' parameter is nil" do
+      let(:params) { { item_ids: nil } }
+      it { is_expected.to be(true) }
+    end
+
+    context "when the 'ids' parameter is an empty array" do
+      let(:params) { { item_ids: [] } }
+      it { is_expected.to be(true) }
+    end
+
+    context "when the 'ids' parameter contains only blank values" do
+      let(:params) { { item_ids: ["", nil] } }
+      it { is_expected.to be(true) }
+    end
+
+    context "when valid IDs are provided and 'all' is not '1'" do
+      let(:params) { { item_ids: [1, 2] } }
+      it { is_expected.to be(false) }
+    end
+
+    context "when the 'all' parameter is not '1'" do
+      let(:params) { { all_items: "0", item_ids: [1] } }
+      it { is_expected.to be(false) }
+    end
+  end
 end

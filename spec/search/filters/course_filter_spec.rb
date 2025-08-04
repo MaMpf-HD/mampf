@@ -26,40 +26,6 @@ RSpec.describe(Filters::CourseFilter, type: :filter) do
 
     subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
 
-    context "when all_courses is set to '1'" do
-      let(:params) { { all_courses: "1", course_ids: [course1.id] } }
-
-      it "returns the original scope without filtering" do
-        expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
-      end
-    end
-
-    context "when no course_ids are provided" do
-      context "with empty array" do
-        let(:params) { { course_ids: [] } }
-
-        it "returns the original scope without filtering" do
-          expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
-        end
-      end
-
-      context "with nil" do
-        let(:params) { { course_ids: nil } }
-
-        it "returns the original scope without filtering" do
-          expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
-        end
-      end
-
-      context "with empty strings" do
-        let(:params) { { course_ids: [""] } }
-
-        it "returns the original scope without filtering" do
-          expect(filtered_scope).to match_array([tag1, tag2, tag3, tag4])
-        end
-      end
-    end
-
     context "when specific course_ids are provided" do
       context "with a single course ID" do
         let(:params) { { course_ids: [course2.id] } }

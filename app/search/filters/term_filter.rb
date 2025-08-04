@@ -10,7 +10,7 @@
 module Filters
   class TermFilter < BaseFilter
     def call
-      return scope if params[:all_terms] == "1" || params[:term_ids].blank?
+      return scope if skip_filter?(all_param: :all_terms, ids_param: :term_ids)
 
       # Add lectures without a term if the active term is selected
       if Term.active.try(:id).to_s.in?(params[:term_ids])
