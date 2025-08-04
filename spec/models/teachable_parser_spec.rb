@@ -5,7 +5,7 @@ RSpec.describe(TeachableParser, type: :model) do
     expect(FactoryBot.build(:teachable_parser)).to be_kind_of(TeachableParser)
   end
 
-  describe "#teachables_as_strings" do
+  describe "#call" do
     before :each do
       DatabaseCleaner.clean
       course1 = FactoryBot.create(:course)
@@ -27,7 +27,7 @@ RSpec.describe(TeachableParser, type: :model) do
     it "returns [] if :all_teachables flag is set" do
       teachable_parser = FactoryBot.build(:teachable_parser,
                                           all_teachables: "1")
-      expect(teachable_parser.teachables_as_strings).to eq([])
+      expect(teachable_parser.call).to eq([])
     end
 
     it "returns the given teachable strings if teachable_inheritance flag" \
@@ -35,7 +35,7 @@ RSpec.describe(TeachableParser, type: :model) do
       teachable_parser = FactoryBot.build(:teachable_parser,
                                           teachable_ids: [@course1_str],
                                           teachable_inheritance: "0")
-      expect(teachable_parser.teachables_as_strings)
+      expect(teachable_parser.call)
         .to eq([@course1_str])
     end
 
@@ -44,7 +44,7 @@ RSpec.describe(TeachableParser, type: :model) do
       teachable_parser = FactoryBot.build(:teachable_parser,
                                           teachable_ids: [@course1_str],
                                           teachable_inheritance: "1")
-      expect(teachable_parser.teachables_as_strings)
+      expect(teachable_parser.call)
         .to match_array([@course1_str, @lecture1_str, @lecture2_str,
                          @lesson1_str])
     end
@@ -54,7 +54,7 @@ RSpec.describe(TeachableParser, type: :model) do
                                           teachable_ids:
                                             [@lecture1_str, @lecture2_str],
                                           teachable_inheritance: "1")
-      expect(teachable_parser.teachables_as_strings)
+      expect(teachable_parser.call)
         .to match_array([@lecture1_str, @lecture2_str, @lesson1_str])
     end
   end

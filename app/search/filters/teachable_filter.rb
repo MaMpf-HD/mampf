@@ -31,7 +31,7 @@ module Filters
       #
       # @return [Array<Arel::Node>] An array of conditions, or an empty array.
       def build_arel_conditions
-        teachable_id_strings = TeachableParser.new(params).teachables_as_strings
+        teachable_id_strings = TeachableParser.call(params)
         return [] if teachable_id_strings.blank?
 
         media = Medium.arel_table
