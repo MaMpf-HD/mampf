@@ -45,8 +45,6 @@ RSpec.describe("Media", type: :request) do
       sign_in FactoryBot.create(:confirmed_user_en)
       User.last.subscribe_lecture!(@lecture1)
 
-      Medium.reindex
-
       @params = {
         search: {
           all_types: 1,
