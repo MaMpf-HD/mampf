@@ -5,13 +5,15 @@
 #
 # When active, it joins the `editors` association and filters by the given
 # user IDs.
-module Filters
-  class EditorFilter < BaseFilter
-    def call
-      return scope if skip_filter?(all_param: :all_editors, ids_param: :editor_ids)
+module Search
+  module Filters
+    class EditorFilter < BaseFilter
+      def call
+        return scope if skip_filter?(all_param: :all_editors, ids_param: :editor_ids)
 
-      scope.joins(:editors)
-           .where(users: { id: params[:editor_ids] })
+        scope.joins(:editors)
+             .where(users: { id: params[:editor_ids] })
+      end
     end
   end
 end

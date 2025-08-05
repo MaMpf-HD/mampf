@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::MediumVisibilityFilter, type: :filter) do
+RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
   describe "#call" do
     let(:user) { create(:user) }
     let(:admin) { create(:user, admin: true) }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::LectureScopeFilter, type: :filter) do
+RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
   describe "#call" do
     let(:user) { FactoryBot.create(:confirmed_user) }
     let(:scope) { Medium.all }

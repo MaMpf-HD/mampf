@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::TypeFilter, type: :filter) do
+RSpec.describe(Search::Filters::TypeFilter, type: :filter) do
   describe "#call" do
     let(:user) { create(:user) }
     let!(:medium_question) { create(:valid_medium, sort: "Question") }

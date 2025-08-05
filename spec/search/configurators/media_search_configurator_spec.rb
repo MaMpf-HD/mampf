@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Configurators::MediaSearchConfigurator) do
+RSpec.describe(Search::Configurators::MediaSearchConfigurator) do
   let(:user) { create(:user) }
   let(:search_params) { {} }
   subject(:configuration) { described_class.call(user: user, search_params: search_params) }
@@ -8,14 +8,14 @@ RSpec.describe(Configurators::MediaSearchConfigurator) do
   # Define the static list of base filters for media search
   let(:base_filters) do
     [
-      Filters::ProperFilter,
-      Filters::TypeFilter,
-      Filters::TeachableFilter,
-      Filters::TagFilter,
-      Filters::EditorFilter,
-      Filters::AnswerCountFilter,
-      Filters::LectureScopeFilter,
-      Filters::FulltextFilter
+      Search::Filters::ProperFilter,
+      Search::Filters::TypeFilter,
+      Search::Filters::TeachableFilter,
+      Search::Filters::TagFilter,
+      Search::Filters::EditorFilter,
+      Search::Filters::AnswerCountFilter,
+      Search::Filters::LectureScopeFilter,
+      Search::Filters::FulltextFilter
     ]
   end
 
@@ -25,7 +25,7 @@ RSpec.describe(Configurators::MediaSearchConfigurator) do
         before { allow(user).to receive(:active_teachable_editor?).and_return(true) }
 
         it "returns the base filters plus the MediumAccessFilter" do
-          expected_filters = base_filters + [Filters::MediumAccessFilter]
+          expected_filters = base_filters + [Search::Filters::MediumAccessFilter]
           expect(configuration.filters).to match_array(expected_filters)
         end
       end
@@ -34,7 +34,7 @@ RSpec.describe(Configurators::MediaSearchConfigurator) do
         before { allow(user).to receive(:active_teachable_editor?).and_return(false) }
 
         it "returns the base filters plus the MediumVisibilityFilter" do
-          expected_filters = base_filters + [Filters::MediumVisibilityFilter]
+          expected_filters = base_filters + [Search::Filters::MediumVisibilityFilter]
           expect(configuration.filters).to match_array(expected_filters)
         end
       end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::EditorFilter, type: :filter) do
+RSpec.describe(Search::Filters::EditorFilter, type: :filter) do
   describe "#call" do
     let!(:editor1) { FactoryBot.create(:confirmed_user) }
     let!(:editor2) { FactoryBot.create(:confirmed_user) }

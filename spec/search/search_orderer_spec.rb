@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchOrderer) do
+RSpec.describe(Search::SearchOrderer) do
   let(:initial_scope) { instance_spy(ActiveRecord::Relation, "InitialScope") }
   let(:model_class) { class_spy(Course, "ModelClass") }
   let(:params) { {} }

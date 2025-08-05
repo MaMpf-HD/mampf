@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::CourseFilter, type: :filter) do
+RSpec.describe(Search::Filters::CourseFilter, type: :filter) do
   describe "#call" do
     let(:user) { create(:user) }
     let!(:course1) { FactoryBot.create(:course) }

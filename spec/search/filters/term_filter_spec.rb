@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::TermFilter, type: :filter) do
+RSpec.describe(Search::Filters::TermFilter, type: :filter) do
   describe "#call" do
     let(:user) { create(:user) }
     let!(:active_term) { create(:term, active: true) }

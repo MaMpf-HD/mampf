@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::ProgramFilter, type: :filter) do
+RSpec.describe(Search::Filters::ProgramFilter, type: :filter) do
   describe "#call" do
     let(:user) { create(:user) }
     let!(:program1) { create(:program) }

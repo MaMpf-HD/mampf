@@ -224,10 +224,10 @@ class MediaController < ApplicationController
     @purpose = search_params[:purpose]
     @results_as_list = search_params[:results_as_list] == "true"
 
-    ::ControllerSearcher.call(
+    Search::ControllerSearcher.call(
       controller: self,
       model_class: Medium,
-      configurator_class: ::Configurators::MediaSearchConfigurator,
+      configurator_class: Search::Configurators::MediaSearchConfigurator,
       instance_variable_name: :media,
       default_per_page: 10
     )

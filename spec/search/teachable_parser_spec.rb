@@ -1,7 +1,7 @@
 require "rails_helper"
 
 # NOTE: The class is now namespaced under Search
-RSpec.describe(TeachableParser) do
+RSpec.describe(Search::TeachableParser) do
   let!(:course) { create(:course) }
   let!(:lecture1) { create(:lecture, :with_sparse_toc, course: course) }
   let!(:lecture2) { create(:lecture, course: course) }

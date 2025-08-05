@@ -135,10 +135,10 @@ class TagsController < ApplicationController
   def search
     authorize! :search, Tag.new
 
-    ::ControllerSearcher.call(
+    Search::ControllerSearcher.call(
       controller: self,
       model_class: Tag,
-      configurator_class: ::Configurators::TagSearchConfigurator,
+      configurator_class: Search::Configurators::TagSearchConfigurator,
       instance_variable_name: :tags,
       default_per_page: 10
     )

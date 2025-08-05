@@ -70,10 +70,10 @@ class CoursesController < ApplicationController
   def search
     authorize! :search, Course.new
 
-    ::ControllerSearcher.call(
+    Search::ControllerSearcher.call(
       controller: self,
       model_class: Course,
-      configurator_class: ::Configurators::CourseSearchConfigurator,
+      configurator_class: Search::Configurators::CourseSearchConfigurator,
       instance_variable_name: :courses,
       default_per_page: 20
     )

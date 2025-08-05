@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::FulltextFilter, type: :filter) do
+RSpec.describe(Search::Filters::FulltextFilter, type: :filter) do
   describe "#call" do
     let!(:course1) { FactoryBot.create(:course, title: "Introduction to Ruby") }
     let!(:course2) { FactoryBot.create(:course, title: "Advanced Ruby Programming") }

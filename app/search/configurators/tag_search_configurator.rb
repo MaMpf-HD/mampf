@@ -5,22 +5,24 @@
 # Its primary role is to define the specific, static set of filter classes
 # that are applied when searching for tags. It returns a Configuration
 # object that the ModelSearch service can then execute.
-module Configurators
-  class TagSearchConfigurator < BaseSearchConfigurator
-    def call
-      Configuration.new(
-        filters: filters,
-        params: search_params
-      )
-    end
-
-    private
-
-      def filters
-        [
-          ::Filters::CourseFilter,
-          ::Filters::FulltextFilter
-        ]
+module Search
+  module Configurators
+    class TagSearchConfigurator < BaseSearchConfigurator
+      def call
+        Configuration.new(
+          filters: filters,
+          params: search_params
+        )
       end
+
+      private
+
+        def filters
+          [
+            Filters::CourseFilter,
+            Filters::FulltextFilter
+          ]
+        end
+    end
   end
 end

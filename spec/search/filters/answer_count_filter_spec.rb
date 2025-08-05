@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::AnswerCountFilter) do
+RSpec.describe(Search::Filters::AnswerCountFilter) do
   let(:user) { create(:user) }
   let!(:question1) { create(:valid_question, :with_answers, answers_count: 1) }
   let!(:question2) { create(:valid_question, :with_answers, answers_count: 2) }

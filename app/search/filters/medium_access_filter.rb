@@ -5,15 +5,17 @@
 # It handles a special case for 'unpublished', which corresponds to a `nil`
 # value in the `released` column. For all other values, it filters for records
 # where the `released` column matches the provided `access` parameter.
-module Filters
-  class MediumAccessFilter < BaseFilter
-    def call
-      return scope if params[:access].blank? || params[:access] == "irrelevant"
+module Search
+  module Filters
+    class MediumAccessFilter < BaseFilter
+      def call
+        return scope if params[:access].blank? || params[:access] == "irrelevant"
 
-      if params[:access] == "unpublished"
-        scope.where(released: nil)
-      else
-        scope.where(released: params[:access])
+        if params[:access] == "unpublished"
+          scope.where(released: nil)
+        else
+          scope.where(released: params[:access])
+        end
       end
     end
   end

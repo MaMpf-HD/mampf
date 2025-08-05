@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Configurators::TagSearchConfigurator) do
+RSpec.describe(Search::Configurators::TagSearchConfigurator) do
   describe "#call" do
     it "returns a configuration with the correct set of filters" do
       user = create(:user)
@@ -11,8 +11,8 @@ RSpec.describe(Configurators::TagSearchConfigurator) do
 
       # Define the expected list of filters
       expected_filters = [
-        Filters::CourseFilter,
-        Filters::FulltextFilter
+        Search::Filters::CourseFilter,
+        Search::Filters::FulltextFilter
       ]
 
       # This is the single, most important expectation for this class.

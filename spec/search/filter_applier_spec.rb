@@ -1,17 +1,17 @@
 require "rails_helper"
 
-RSpec.describe(FilterApplier) do
+RSpec.describe(Search::FilterApplier) do
   let(:user) { create(:user) }
   let(:params) { { key: "value" } }
   let(:initial_scope) { double("InitialScope") }
 
   # Create test doubles for filter classes
-  let(:filter_class1) { class_double(Filters::BaseFilter, new: filter_instance1) }
-  let(:filter_class2) { class_double(Filters::BaseFilter, new: filter_instance2) }
+  let(:filter_class1) { class_double(Search::Filters::BaseFilter, new: filter_instance1) }
+  let(:filter_class2) { class_double(Search::Filters::BaseFilter, new: filter_instance2) }
 
   # Create test doubles for filter instances
-  let(:filter_instance1) { instance_double(Filters::BaseFilter, call: scope_after_filter1) }
-  let(:filter_instance2) { instance_double(Filters::BaseFilter, call: scope_after_filter2) }
+  let(:filter_instance1) { instance_double(Search::Filters::BaseFilter, call: scope_after_filter1) }
+  let(:filter_instance2) { instance_double(Search::Filters::BaseFilter, call: scope_after_filter2) }
 
   # Create test doubles for the scopes returned by each filter
   let(:scope_after_filter1) { double("ScopeAfterFilter1") }

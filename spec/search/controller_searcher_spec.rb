@@ -1,11 +1,11 @@
 require "rails_helper"
 
-RSpec.describe(ControllerSearcher) do
+RSpec.describe(Search::ControllerSearcher) do
   # --- Test Doubles & Setup ---
   let(:controller) { instance_spy(ApplicationController, "Controller") }
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
-  let(:configurator_class) { class_spy(Configurators::BaseSearchConfigurator, "ConfiguratorClass") }
+  let(:configurator_class) { class_spy(Search::Configurators::BaseSearchConfigurator, "ConfiguratorClass") }
   let(:instance_variable_name) { :courses }
   let(:default_per_page) { 15 }
 
@@ -16,14 +16,14 @@ RSpec.describe(ControllerSearcher) do
   # Results from collaborators
   let(:configurator_result) do
     instance_double(
-      Configurators::BaseSearchConfigurator::Configuration,
+      Search::Configurators::BaseSearchConfigurator::Configuration,
       filters: [double("FilterClass")],
       params: { fulltext: "Ruby", processed: true } # Simulate processed params
     )
   end
   let(:paginated_search_result) do
     instance_double(
-      PaginatedSearcher::SearchResult,
+      Search::PaginatedSearcher::SearchResult,
       results: [double("Result1"), double("Result2")],
       total_count: 123
     )
@@ -50,7 +50,7 @@ RSpec.describe(ControllerSearcher) do
 
     # Stub collaborator class methods
     allow(configurator_class).to receive(:call).and_return(configurator_result)
-    allow(PaginatedSearcher).to receive(:call).and_return(paginated_search_result)
+    allow(Search::PaginatedSearcher).to receive(:call).and_return(paginated_search_result)
   end
 
   # --- Tests ---
@@ -86,13 +86,13 @@ RSpec.describe(ControllerSearcher) do
       search
       # Use an argument matcher to check the contents of the config struct
       expected_paginated_config = have_attributes(
-        class: PaginatedSearcher::SearchConfig,
+        class: Search::PaginatedSearcher::SearchConfig,
         search_params: configurator_result.params,
         pagination_params: pagination_params,
         default_per_page: default_per_page
       )
 
-      expect(PaginatedSearcher).to have_received(:call).with(
+      expect(Search::PaginatedSearcher).to have_received(:call).with(
         model_class: model_class,
         filter_classes: configurator_result.filters,
         user: user,

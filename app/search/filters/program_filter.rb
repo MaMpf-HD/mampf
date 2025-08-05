@@ -6,23 +6,25 @@
 # When active, it dynamically determines the correct join path based on the
 # model being filtered (e.g., `Course` or `Lecture`) to filter by the given
 # program IDs. It does not modify the scope for unsupported models.
-module Filters
-  class ProgramFilter < BaseFilter
-    def call
-      return scope if skip_filter?(all_param: :all_programs, ids_param: :program_ids)
+module Search
+  module Filters
+    class ProgramFilter < BaseFilter
+      def call
+        return scope if skip_filter?(all_param: :all_programs, ids_param: :program_ids)
 
-      join_path = case scope.klass.name
-                  when "Course"
-                    :divisions
-                  when "Lecture"
-                    { course: :divisions }
-                  else
-                    # If the filter is used on an unsupported model, do nothing.
-                    return scope
+        join_path = case scope.klass.name
+                    when "Course"
+                      :divisions
+                    when "Lecture"
+                      { course: :divisions }
+                    else
+                      # If the filter is used on an unsupported model, do nothing.
+                      return scope
+        end
+
+        scope.joins(join_path)
+             .where(divisions: { program_id: params[:program_ids] })
       end
-
-      scope.joins(join_path)
-           .where(divisions: { program_id: params[:program_ids] })
     end
   end
 end

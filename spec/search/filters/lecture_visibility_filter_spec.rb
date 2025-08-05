@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::LectureVisibilityFilter, type: :filter) do
+RSpec.describe(Search::Filters::LectureVisibilityFilter, type: :filter) do
   describe "#call" do
     let!(:admin) { create(:user, admin: true) }
     let!(:regular_user) { create(:user) }

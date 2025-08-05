@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Filters::BaseFilter) do
+RSpec.describe(Search::Filters::BaseFilter) do
   let(:scope) { Medium.all }
   let(:params) { { key: "value", another_key: "another_value" } }
   let(:user) { create(:user) }

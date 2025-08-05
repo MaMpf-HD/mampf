@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Configurators::BaseSearchConfigurator) do
+RSpec.describe(Search::Configurators::BaseSearchConfigurator) do
   let(:user) { create(:user) }
   let(:search_params) { { key: "value", another_key: "another_value" } }
   let(:configurator) { described_class.new(user: user, search_params: search_params) }
@@ -69,7 +69,7 @@ RSpec.describe(Configurators::BaseSearchConfigurator) do
 
   describe "Configuration" do
     it "can be initialized with filters and params" do
-      filters = [Filters::FulltextFilter]
+      filters = [Search::Filters::FulltextFilter]
       params = { fulltext: "test" }
       configuration = described_class::Configuration.new(filters: filters, params: params)
 

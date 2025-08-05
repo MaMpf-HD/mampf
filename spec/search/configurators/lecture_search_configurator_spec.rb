@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Configurators::LectureSearchConfigurator) do
+RSpec.describe(Search::Configurators::LectureSearchConfigurator) do
   describe "#call" do
     it "returns a configuration with the correct set of filters" do
       user = create(:user)
@@ -11,12 +11,12 @@ RSpec.describe(Configurators::LectureSearchConfigurator) do
 
       # Define the expected list of filters
       expected_filters = [
-        Filters::TypeFilter,
-        Filters::TermFilter,
-        Filters::ProgramFilter,
-        Filters::TeacherFilter,
-        Filters::LectureVisibilityFilter,
-        Filters::FulltextFilter
+        Search::Filters::TypeFilter,
+        Search::Filters::TermFilter,
+        Search::Filters::ProgramFilter,
+        Search::Filters::TeacherFilter,
+        Search::Filters::LectureVisibilityFilter,
+        Search::Filters::FulltextFilter
       ]
 
       # This is the single, most important expectation for this class.

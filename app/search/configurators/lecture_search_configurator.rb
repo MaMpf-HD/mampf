@@ -5,26 +5,28 @@
 # Its primary role is to define the specific, static set of filter classes
 # that are applied when searching for lectures. It returns a Configuration
 # object that the ModelSearch service can then execute.
-module Configurators
-  class LectureSearchConfigurator < BaseSearchConfigurator
-    def call
-      Configuration.new(
-        filters: filters,
-        params: search_params
-      )
-    end
-
-    private
-
-      def filters
-        [
-          ::Filters::TypeFilter,
-          ::Filters::TermFilter,
-          ::Filters::ProgramFilter,
-          ::Filters::TeacherFilter,
-          ::Filters::LectureVisibilityFilter,
-          ::Filters::FulltextFilter
-        ]
+module Search
+  module Configurators
+    class LectureSearchConfigurator < BaseSearchConfigurator
+      def call
+        Configuration.new(
+          filters: filters,
+          params: search_params
+        )
       end
+
+      private
+
+        def filters
+          [
+            Filters::TypeFilter,
+            Filters::TermFilter,
+            Filters::ProgramFilter,
+            Filters::TeacherFilter,
+            Filters::LectureVisibilityFilter,
+            Filters::FulltextFilter
+          ]
+        end
+    end
   end
 end
