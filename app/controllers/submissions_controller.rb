@@ -26,6 +26,8 @@ class SubmissionsController < ApplicationController
                        @previous_assignments
     @future_assignments = @assignments.active.order(:deadline) -
                           @current_assignments
+
+    render layout: turbo_frame_request? ? false : "application"
   end
 
   def new

@@ -205,13 +205,13 @@ Rails.application.routes.draw do
       to: "lectures#destroy_forum",
       as: "destroy_forum"
 
-  get "lectures/:id/show_announcements",
+  get "lectures/:id/announcements",
       to: "lectures#show_announcements",
-      as: "show_announcements"
+      as: "lecture_announcements"
 
   get "lectures/:id/organizational",
       to: "lectures#organizational",
-      as: "organizational"
+      as: "lecture_organizational"
 
   get "lectures/:id/show_random_quizzes",
       to: "lectures#show_random_quizzes",
@@ -237,9 +237,9 @@ Rails.application.routes.draw do
       to: "lectures#search",
       as: "lecture_search"
 
-  get "lectures/:id/display_course",
+  get "lectures/:id/course",
       to: "lectures#display_course",
-      as: "display_course"
+      as: "lecture_course"
 
   post "lectures/:id/publish",
        to: "lectures#publish",
