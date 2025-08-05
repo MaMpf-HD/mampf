@@ -2,10 +2,10 @@ require "rails_helper"
 
 RSpec.describe(Search::Filters::FulltextFilter, type: :filter) do
   describe "#call" do
-    let!(:course1) { FactoryBot.create(:course, title: "Introduction to Ruby") }
-    let!(:course2) { FactoryBot.create(:course, title: "Advanced Ruby Programming") }
-    let!(:course3) { FactoryBot.create(:course, title: "Web Development with Rails") }
-    let(:user) { FactoryBot.create(:confirmed_user) }
+    let!(:course1) { create(:course, title: "Introduction to Ruby") }
+    let!(:course2) { create(:course, title: "Advanced Ruby Programming") }
+    let!(:course3) { create(:course, title: "Web Development with Rails") }
+    let(:user) { create(:confirmed_user) }
     let(:scope) { Course.all }
 
     subject(:filtered_scope) { described_class.new(scope, params, user: user).call }

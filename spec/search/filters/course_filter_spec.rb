@@ -3,21 +3,21 @@ require "rails_helper"
 RSpec.describe(Search::Filters::CourseFilter, type: :filter) do
   describe "#call" do
     let(:user) { create(:user) }
-    let!(:course1) { FactoryBot.create(:course) }
-    let!(:course2) { FactoryBot.create(:course) }
-    let!(:course3) { FactoryBot.create(:course) }
-    let!(:tag1) { FactoryBot.create(:tag) }
-    let!(:tag2) { FactoryBot.create(:tag) }
-    let!(:tag3) { FactoryBot.create(:tag) }
-    let!(:tag4) { FactoryBot.create(:tag) }
+    let!(:course1) { create(:course) }
+    let!(:course2) { create(:course) }
+    let!(:course3) { create(:course) }
+    let!(:tag1) { create(:tag) }
+    let!(:tag2) { create(:tag) }
+    let!(:tag3) { create(:tag) }
+    let!(:tag4) { create(:tag) }
 
     before do
       # Explicitly create the join records to ensure associations are set
       # before the filter is called.
-      FactoryBot.create(:course_tag_join, course: course1, tag: tag1)
-      FactoryBot.create(:course_tag_join, course: course2, tag: tag2)
-      FactoryBot.create(:course_tag_join, course: course2, tag: tag3)
-      FactoryBot.create(:course_tag_join, course: course3, tag: tag4)
+      create(:course_tag_join, course: course1, tag: tag1)
+      create(:course_tag_join, course: course2, tag: tag2)
+      create(:course_tag_join, course: course2, tag: tag3)
+      create(:course_tag_join, course: course3, tag: tag4)
     end
 
     # Tags have a direct many-to-many relationship with courses

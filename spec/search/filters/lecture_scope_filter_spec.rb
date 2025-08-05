@@ -2,34 +2,34 @@ require "rails_helper"
 
 RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
   describe "#call" do
-    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:user) { create(:confirmed_user) }
     let(:scope) { Medium.all }
 
     # -- Teachable & Media Setup (Bottom-up) --
     # Create media and their associated teachables together to ensure valid associations.
 
     # 1. Subscribed hierarchy
-    let!(:medium_on_subscribed_lesson) { FactoryBot.create(:lesson_medium) }
+    let!(:medium_on_subscribed_lesson) { create(:lesson_medium) }
     let!(:subscribed_lesson) { medium_on_subscribed_lesson.teachable }
     let!(:subscribed_lecture) { subscribed_lesson.lecture }
     let!(:subscribed_course) { subscribed_lecture.course }
     let!(:medium_on_subscribed_course) do
-      FactoryBot.create(:course_medium, teachable: subscribed_course)
+      create(:course_medium, teachable: subscribed_course)
     end
     let!(:medium_on_subscribed_lecture) do
-      FactoryBot.create(:lecture_medium, teachable: subscribed_lecture)
+      create(:lecture_medium, teachable: subscribed_lecture)
     end
 
     # 2. Custom hierarchy
-    let!(:medium_on_custom_lesson) { FactoryBot.create(:lesson_medium) }
+    let!(:medium_on_custom_lesson) { create(:lesson_medium) }
     let!(:custom_lesson) { medium_on_custom_lesson.teachable }
     let!(:custom_lecture) { custom_lesson.lecture }
     let!(:medium_on_custom_lecture) do
-      FactoryBot.create(:lecture_medium, teachable: custom_lecture)
+      create(:lecture_medium, teachable: custom_lecture)
     end
 
     # 3. Unrelated items
-    let!(:medium_on_unrelated_lecture) { FactoryBot.create(:lecture_medium) }
+    let!(:medium_on_unrelated_lecture) { create(:lecture_medium) }
     let!(:unrelated_lecture) { medium_on_unrelated_lecture.teachable }
 
     let(:all_media) do
