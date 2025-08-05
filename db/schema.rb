@@ -922,7 +922,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_29_155017) do
     t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.boolean "unread_comments", default: false
-    t.boolean "study_participant", default: false
     t.boolean "email_for_submission_upload"
     t.boolean "email_for_submission_removal"
     t.boolean "email_for_submission_join"

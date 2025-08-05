@@ -48,7 +48,8 @@ class LecturesController < ApplicationController
                         .find_by(id: params[:id])
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-      render layout: "application"
+
+      render layout: turbo_frame_request? ? false : "application"
     end
   end
 
@@ -196,7 +197,7 @@ class LecturesController < ApplicationController
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
     I18n.locale = @lecture.locale_with_inheritance
-    render layout: "application"
+    render layout: turbo_frame_request? ? false : "application"
   end
 
   def organizational
@@ -204,7 +205,7 @@ class LecturesController < ApplicationController
       render layout: "vignettes_navbar"
     else
       I18n.locale = @lecture.locale_with_inheritance
-      render layout: "application"
+      render layout: turbo_frame_request? ? false : "application"
     end
   end
 
@@ -298,13 +299,13 @@ class LecturesController < ApplicationController
 
   def show_random_quizzes
     @course = @lecture.course
-    render layout: "application"
+    render layout: turbo_frame_request? ? false : "application"
   end
 
   def display_course
     @course = @lecture.course
     I18n.locale = @course.locale || @lecture.locale
-    render layout: "application"
+    render layout: turbo_frame_request? ? false : "application"
   end
 
   def subscribe_page

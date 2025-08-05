@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2020_06_13_112557) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_03_000003) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,25 +22,15 @@ ActiveRecord::Schema[8.0].define(version: 2020_06_13_112557) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "interactions", force: :cascade do |t|
-    t.text "session_id"
-    t.text "referrer_url"
-    t.text "full_path"
-    t.datetime "created_at", precision: nil
-    t.string "study_participant"
-  end
-
   create_table "probes", force: :cascade do |t|
     t.integer "question_id"
     t.integer "quiz_id"
     t.boolean "correct"
-    t.text "session_id"
+    t.text "attempt_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "progress"
     t.integer "success"
-    t.string "study_participant"
-    t.text "input"
-    t.integer "remark_id"
+    t.index ["attempt_token", "correct"], name: "index_probes_on_attempt_token_and_correct"
   end
 end

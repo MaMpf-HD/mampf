@@ -1917,11 +1917,6 @@ en:
       name: 'Title'
       new: 'Create new division'
       no_courses: 'There are no courses in this division yet.'
-    interaction:
-      export_interactions: Export Interactions
-      export_probes: Export Probes
-      start: Start Date
-      end: End Date
     tutorial:
       new: 'Add tutorial'
     assignment:
@@ -3300,7 +3295,6 @@ en:
       Emails for lectures: %{email_for_teachable}<br>
       Emails for news: %{email_for_news}<br>
       Unread comments: %{unread_comments}<br>
-      Study participant: %{study_participant}<br>
       Emails for submission Upload: %{email_for_submission_upload}<br>
       Emails for submission deletion: %{email_for_submission_removal}<br>
       Emails for submission joining: %{email_for_submission_join}<br>

@@ -10,11 +10,7 @@ import "~/js/bootstrapPopovers";
 // https://github.com/hotwired/turbo-rails/blob/main/UPGRADING.md#upgrading-from-rails-ujs--turbolinks-to-turbo
 import Rails from "@rails/ujs";
 
-import "@hotwired/turbo-rails";
-// These two fixes were originally used with Turbolinks.
-// They might not be needed with Turbo anymore.
-import "~/js/_turbo_fix_bootstrap_modal";
-import "~/js/_turbo_fix_selectize";
+import "./initHotwire";
 
 import "@rails/actiontext";
 import * as ActiveStorage from "@rails/activestorage";

@@ -2075,11 +2075,6 @@ de:
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
       no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
-    interaction:
-      export_interactions: Interaktionen exportieren
-      export_probes: Quizdaten exportieren
-      start: Startdatum
-      end: Enddatum
     tutorial:
       new: 'Neues Tutorium anlegen'
     assignment:
@@ -3523,7 +3518,6 @@ de:
       Emails für Vorlesungen: %{email_for_teachable}<br>
       Emails für Neuigkeiten: %{email_for_news}<br>
       Ungelesene Kommentare: %{unread_comments}<br>
-      Studien-Teilnehmer: %{study_participant}<br>
       Emails für Abgaben-Upload: %{email_for_submission_upload}<br>
       Emails für Abgaben-Löschung: %{email_for_submission_removal}<br>
       Emails für Abgaben-Beitritt: %{email_for_submission_join}<br>
