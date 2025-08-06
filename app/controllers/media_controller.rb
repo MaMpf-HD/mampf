@@ -674,7 +674,7 @@ class MediaController < ApplicationController
       params.expect(search: [:all_types, :all_teachables, :all_tags,
                              :all_editors, :tag_operator, :access,
                              :teachable_inheritance, :fulltext, :per,
-                             :answers_count, :lecture_scope,
+                             :answers_count, :lecture_scope, :from,
                              { types: [],
                                teachable_ids: [],
                                tag_ids: [],

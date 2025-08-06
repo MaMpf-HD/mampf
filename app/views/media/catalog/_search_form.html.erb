@@ -12,7 +12,7 @@
                                       sort_preselect(purpose)),
                    {},
                    { id: 'search_media_types',
-                     multiple: purpose.in?(['media', 'import']),
+                     multiple: true,
                      class: 'selectize',
                      disabled: purpose == 'media',
                      required: true } %>
