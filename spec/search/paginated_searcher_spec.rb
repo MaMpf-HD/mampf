@@ -107,15 +107,15 @@ RSpec.describe(Search::PaginatedSearcher) do
         expect(paginated_array).to have_received(:page).with(2)
       end
 
-      context "when :per is in search_params" do
-        let(:search_params) { { per: 5 } }
-        it "uses the :per value from search_params" do
+      context "when :per is in pagination_params" do
+        let(:pagination_params) { { page: 2, per: 5 } }
+        it "uses the :per value from pagination_params" do
           search_result
           expect(paginated_array).to have_received(:per).with(5)
         end
       end
 
-      context "when :per is not in search_params" do
+      context "when :per is not in pagination_params" do
         it "uses the default_per_page from the config" do
           search_result
           expect(paginated_array).to have_received(:per).with(25)

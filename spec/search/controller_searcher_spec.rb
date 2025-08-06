@@ -9,9 +9,12 @@ RSpec.describe(Search::ControllerSearcher) do
   let(:instance_variable_name) { :courses }
   let(:default_per_page) { 15 }
 
-  # Params from the controller
-  let(:search_params) { { fulltext: "Ruby" } }
-  let(:pagination_params) { { page: 2, per: 15 } }
+  # The hash returned by the controller's #search_params method, containing :per
+  let(:permitted_search_params) { { fulltext: "Ruby", per: 15 } }
+  # The top-level params hash, containing :page
+  let(:top_level_params) { { page: 2 } }
+  # The final pagination hash we expect to be constructed by the searcher
+  let(:expected_pagination_params) { { page: 2, per: 15 } }
 
   # Results from collaborators
   let(:configurator_result) do
@@ -42,9 +45,10 @@ RSpec.describe(Search::ControllerSearcher) do
   before do
     # Stub controller methods
     allow(controller).to receive(:current_user).and_return(user)
-    allow(controller).to receive(:params).and_return(pagination_params)
+    # Simulate the full params hash, which only has :page at the top level
+    allow(controller).to receive(:params).and_return(top_level_params)
     # Stub the private #search_params method on the controller
-    allow(controller).to receive(:send).with(:search_params).and_return(search_params)
+    allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
     # Allow the controller spy to receive instance_variable_set
     allow(controller).to receive(:instance_variable_set)
 
@@ -78,7 +82,7 @@ RSpec.describe(Search::ControllerSearcher) do
       search
       expect(configurator_class).to have_received(:call).with(
         user: user,
-        search_params: search_params
+        search_params: permitted_search_params
       )
     end
 
@@ -88,7 +92,7 @@ RSpec.describe(Search::ControllerSearcher) do
       expected_paginated_config = have_attributes(
         class: Search::PaginatedSearcher::SearchConfig,
         search_params: configurator_result.params,
-        pagination_params: pagination_params,
+        pagination_params: expected_pagination_params,
         default_per_page: default_per_page
       )
 
