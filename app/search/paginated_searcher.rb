@@ -6,7 +6,13 @@ module Search
     SearchResult = Struct.new(:results, :total_count, keyword_init: true)
     # A struct to bundle configuration options for the search.
     SearchConfig = Struct.new(:search_params, :pagination_params, :default_per_page,
-                              keyword_init: true)
+                              :all, keyword_init: true) do
+      # Override initialize to set the default for the 'all' flag to false.
+      def initialize(*args)
+        super
+        self.all = false if all.nil?
+      end
+    end
 
     def self.call(...)
       new(...).call
@@ -46,9 +52,19 @@ module Search
       end
 
       def paginate(scope, total_count)
-        per_page = @config.pagination_params[:per] || @config.default_per_page || 10
-        Kaminari.paginate_array(scope.to_a, total_count: total_count)
-                .page(@config.pagination_params[:page]).per(per_page)
+        # Always convert to an array first for Kaminari.paginate_array
+        results_array = scope.to_a
+        paginatable_array = Kaminari.paginate_array(results_array, total_count: total_count)
+
+        if @config.all
+          # If 'all' is requested, set 'per' to the total count to show all items on one page.
+          # We still call .page(1) to ensure it returns a Kaminari object for the view.
+          # Use [total_count, 1].max to avoid per(0) if the result set is empty.
+          paginatable_array.page(1).per([total_count, 1].max)
+        else
+          per_page = @config.pagination_params[:per] || @config.default_per_page || 10
+          paginatable_array.page(@config.pagination_params[:page]).per(per_page)
+        end
       end
   end
 end

@@ -29,7 +29,47 @@ class MediaController < ApplicationController
 
   def index
     authorize! :index, Medium.new
-    @media = paginated_results
+
+    # Separate parameters by their concern: filtering vs. pagination.
+    # These parameters are for filtering the data.
+    filter_params = {
+      project: params[:project],
+      visibility: params[:visibility],
+      lecture_id: @lecture.id
+    }
+
+    # These parameters control pagination behavior.
+    pagination_params = {
+      page: params[:page],
+      per: params[:per],
+      all: params[:all]
+    }
+
+    # 1. Get the search configuration using only the filtering parameters.
+    config = Search::Configurators::LectureMediaSearchConfigurator.call(
+      user: current_user,
+      search_params: filter_params
+    )
+
+    # 2. Execute the search and pagination with clearly separated params.
+    search_result = Search::PaginatedSearcher.call(
+      model_class: Medium,
+      filter_classes: config.filters,
+      user: current_user,
+      config: Search::PaginatedSearcher::SearchConfig.new(
+        search_params: config.params,
+        pagination_params: pagination_params.slice(:page, :per),
+        default_per_page: 8, # Default from legacy sanitize_per!
+        all: pagination_params[:all]
+      )
+    )
+
+    # Set instance variables for the view.
+    @media = search_result.results
+    @total = search_result.total_count
+    @hidden = @media.empty? && @total.positive?
+
+    # @media = paginated_results
     if @lecture.sort == "vignettes"
       render layout: "vignettes_navbar"
     else
