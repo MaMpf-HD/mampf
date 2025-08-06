@@ -11,7 +11,7 @@
                 id: 'create-new-tag' %>
   </div>
 </div>
-<%= form_with url: tags_search_path,
+<%= form_with url: search_tags_path,
               scope: 'search',
               remote: true,
               method: :get do |f| %>
