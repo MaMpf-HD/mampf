@@ -355,6 +355,7 @@ class TagsController < ApplicationController
     end
 
     def search_params
-      params.expect(search: [:fulltext, :all_courses, :per, { course_ids: [] }])
+      params.expect(search: [:fulltext, :all_courses, :per,
+                             { course_ids: [] }])
     end
 end

@@ -221,8 +221,8 @@ class MediaController < ApplicationController
   def search
     authorize! :search, Medium.new
 
-    @purpose = search_params[:purpose]
-    @results_as_list = search_params[:results_as_list] == "true"
+    @purpose = params.dig(:search, :purpose)
+    @results_as_list = params.dig(:search, :results_as_list) == "true"
 
     Search::ControllerSearcher.call(
       controller: self,
@@ -671,27 +671,15 @@ class MediaController < ApplicationController
     end
 
     def search_params
-      types = params[:search][:types] || []
-      types = [types] if types && !types.is_a?(Array)
-      types -= [""] if types
-      types = nil if types == []
-      params[:search][:types] = types
-      params[:search][:user_id] = current_user.id
-      params
-        .expect(search: [:all_types, :all_teachables, :all_tags,
-                         :all_editors, :tag_operator, :quiz, :access,
-                         :teachable_inheritance, :fulltext, :per,
-                         :purpose, :answers_count,
-                         :results_as_list, :all_terms, :all_teachers,
-                         :lecture_scope, :user_id, :from,
-                         { types: [],
-                           teachable_ids: [],
-                           tag_ids: [],
-                           editor_ids: [],
-                           term_ids: [],
-                           teacher_ids: [],
-                           media_lectures: [] }])
-      # .with_defaults(access: 'all')
+      params.expect(search: [:all_types, :all_teachables, :all_tags,
+                             :all_editors, :tag_operator, :access,
+                             :teachable_inheritance, :fulltext, :per,
+                             :answers_count, :lecture_scope,
+                             { types: [],
+                               teachable_ids: [],
+                               tag_ids: [],
+                               editor_ids: [],
+                               media_lectures: [] }])
     end
 
     # destroy all notifications related to this medium

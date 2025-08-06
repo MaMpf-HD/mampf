@@ -46,7 +46,7 @@ module Search
       end
 
       def paginate(scope, total_count)
-        per_page = @config.search_params[:per] || @config.default_per_page || 10
+        per_page = @config.pagination_params[:per] || @config.default_per_page || 10
         Kaminari.paginate_array(scope.to_a, total_count: total_count)
                 .page(@config.pagination_params[:page]).per(per_page)
       end

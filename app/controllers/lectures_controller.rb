@@ -287,7 +287,7 @@ class LecturesController < ApplicationController
       instance_variable_name: :lectures
     )
 
-    @results_as_list = search_params[:results_as_list] == "true"
+    @results_as_list = params.dig(:search, :results_as_list) == "true"
 
     respond_to do |format|
       format.js
@@ -456,15 +456,8 @@ class LecturesController < ApplicationController
     end
 
     def search_params
-      types = params[:search][:types]
-      types = [types] if types && !types.is_a?(Array)
-      types -= [""] if types
-      types = nil if types == []
-      params[:search][:types] = types
-      params[:search][:user_id] = current_user.id
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per, :user_id,
-                             :results_as_list,
+                             :all_teachers, :fulltext, :per,
                              { types: [],
                                term_ids: [],
                                program_ids: [],
