@@ -10,7 +10,8 @@ module Search
       def call
         Configuration.new(
           filters: filters,
-          params: search_params
+          params: search_params,
+          orderer_class: Search::Orderers::LectureMediaOrderer
         )
       end
 

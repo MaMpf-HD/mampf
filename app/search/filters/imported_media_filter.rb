@@ -22,7 +22,7 @@ module Search
         all_ids = (current_scope_ids + imported_media_ids).uniq
 
         # Return a new scope based on the combined IDs. This loses any previous
-        # ordering, but the final ordering is applied later by SearchOrderer.
+        # ordering, but the final ordering is applied later by LectureMediaOrderer.
         Medium.where(id: all_ids)
       end
     end

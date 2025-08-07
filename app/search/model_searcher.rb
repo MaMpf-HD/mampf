@@ -4,21 +4,22 @@
 # and correctly ordered.
 module Search
   class ModelSearcher
-    attr_reader :model_class, :params, :filter_classes, :user
+    attr_reader :model_class, :params, :filter_classes, :user, :orderer_class
 
     # Initializes the search service.
     #
     # @param model_class [Class] The ActiveRecord model class to be searched (e.g., Course).
     # @param params [Hash] The search parameters from the controller.
-    # @param user [User] The current user, for permission-sensitive filters.
     # @param filter_classes [Array<Class>] An array of filter classes to be applied.
     # full-text search query.
-
-    def initialize(model_class, params, filter_classes, user:)
+    # @param user [User] The current user, for permission-sensitive filters.
+    # @param orderer_class [Class] An optional class to handle ordering.
+    def initialize(model_class, params, filter_classes, user:, orderer_class: nil)
       @model_class = model_class
       @params = params.to_h.with_indifferent_access
       @filter_classes = filter_classes
       @user = user
+      @orderer_class = orderer_class
     end
 
     # Executes the search by applying filters and ordering.
@@ -34,9 +35,11 @@ module Search
       # Ensure the results are unique, as joins can create duplicates.
       scope = scope.distinct
 
-      # Apply the final ordering to the result set.
-      SearchOrderer.call(scope: scope, model_class: model_class,
-                         params: params)
+      # Use the specified orderer class from the config, or the default.
+      orderer = orderer_class || Orderers::SearchOrderer
+      orderer.call(model_class: model_class,
+                   scope: scope,
+                   search_params: params)
     end
   end
 end

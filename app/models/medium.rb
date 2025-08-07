@@ -29,6 +29,13 @@ class Medium < ApplicationRecord
           primary_key: "teachable_id",
           foreign_key: "id"
 
+  # This private association is ONLY for ordering in LectureMediaOrderer.
+  has_one :_search_talk,
+          -> { where(media: { teachable_type: "Talk" }) },
+          class_name: "Talk",
+          primary_key: "teachable_id",
+          foreign_key: "id"
+
   # This private association is ONLY for pg_search's JOIN query.
   # It provides a direct path from Medium to Section for pg_search
   # to traverse the has_many :through relationship on the Lesson model.

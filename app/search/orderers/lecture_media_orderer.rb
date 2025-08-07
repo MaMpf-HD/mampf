@@ -1,0 +1,86 @@
+# This orderer replicates the complex, multi-stage sorting logic from the
+# legacy MediaController#search_results method.
+#
+# The desired order is:
+# 1. "Native" media, sorted by their teachable type:
+#    - Media on the Lecture itself (by creation date)
+#    - Media on Lessons (by lesson date, then position)
+#    - Media on Talks (by talk position)
+#    - Media on the Course (by description)
+# 2. Imported media, appended at the end.
+module Search
+  module Orderers
+    class LectureMediaOrderer < BaseOrderer
+      def call
+        lecture = Lecture.find_by(id: search_params[:lecture_id])
+        return scope.order(model_class.default_search_order) unless lecture
+
+        # Get Arel table references for building the query.
+        media_table = Medium.arel_table
+        lessons_table = Lesson.arel_table
+        talks_table = Talk.arel_table
+
+        # Pre-fetch the imported media IDs into an array to avoid subquery
+        # issues with bind parameters when ActiveRecord builds its COUNT query.
+        imported_media_ids = lecture.imported_media.pluck(:id)
+
+        # Determine sort direction for lessons based on the lecture's term.
+        order_factor = lecture.order_factor
+        lesson_date_order = order_factor == 1 ? :asc : :desc
+        lesson_id_order = order_factor == 1 ? :asc : :desc
+
+        # Define the complex sorting expressions using Arel's CASE statements.
+        # These will be used for both SELECTing and ORDERING.
+        sort_expressions = {
+          sort_group1: Arel::Nodes::Case.new
+                                        .when(media_table[:id].in(imported_media_ids)).then(2)
+                                        .else(1),
+          sort_group2: Arel::Nodes::Case.new(media_table[:teachable_type])
+                                        .when("Lecture").then(1)
+                                        .when("Lesson").then(2)
+                                        .when("Talk").then(3)
+                                        .when("Course").then(4)
+                                        .else(5),
+          sort_lecture_created_at: Arel::Nodes::Case.new
+                                                    .when(media_table[:teachable_type]
+                                                    .eq("Lecture")).then(media_table[:created_at]),
+          sort_lesson_date: Arel::Nodes::Case.new
+                                             .when(media_table[:teachable_type]
+                                             .eq("Lesson")).then(lessons_table[:date]),
+          sort_lesson_id: Arel::Nodes::Case.new
+                                           .when(media_table[:teachable_type]
+                                           .eq("Lesson")).then(lessons_table[:id]),
+          sort_lesson_position: Arel::Nodes::Case.new
+                                                 .when(media_table[:teachable_type]
+                                                 .eq("Lesson")).then(media_table[:position]),
+          sort_talk_position: Arel::Nodes::Case.new
+                                               .when(media_table[:teachable_type]
+                                               .eq("Talk")).then(talks_table[:position]),
+          sort_course_description: Arel::Nodes::Case.new
+                                                    .when(media_table[:teachable_type]
+                                                    .eq("Course")).then(media_table[:description])
+        }
+
+        # Build the final order clause using the Arel expressions.
+        order_clause = [
+          sort_expressions[:sort_group1].asc,
+          sort_expressions[:sort_group2].asc,
+          sort_expressions[:sort_lecture_created_at].desc,
+          sort_expressions[:sort_lesson_date].send(lesson_date_order),
+          sort_expressions[:sort_lesson_id].send(lesson_id_order),
+          sort_expressions[:sort_lesson_position].asc,
+          sort_expressions[:sort_talk_position].asc,
+          sort_expressions[:sort_course_description].asc
+        ]
+
+        # Join the necessary tables for sorting.
+        # Select the original columns plus our new aliased sort expressions.
+        # Order by the Arel expressions.
+        scope
+          .left_outer_joins(:_search_lesson, :_search_talk)
+          .select(media_table[Arel.star], *sort_expressions.map { |k, v| v.as(k.to_s) })
+          .order(order_clause)
+      end
+    end
+  end
+end

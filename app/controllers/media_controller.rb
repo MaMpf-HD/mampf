@@ -60,7 +60,8 @@ class MediaController < ApplicationController
         search_params: config.params,
         pagination_params: pagination_params.slice(:page, :per),
         default_per_page: 8, # Default from legacy sanitize_per!
-        all: pagination_params[:all]
+        all: pagination_params[:all],
+        orderer_class: config.orderer_class
       )
     )
 

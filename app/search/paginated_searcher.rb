@@ -6,7 +6,7 @@ module Search
     SearchResult = Struct.new(:results, :total_count, keyword_init: true)
     # A struct to bundle configuration options for the search.
     SearchConfig = Struct.new(:search_params, :pagination_params, :default_per_page,
-                              :all, keyword_init: true) do
+                              :all, :orderer_class, keyword_init: true) do
       # Override initialize to set the default for the 'all' flag to false.
       def initialize(*args)
         super
@@ -32,7 +32,8 @@ module Search
     def call
       search_results = ModelSearcher.new(@model_class, @config.search_params,
                                          @filter_classes,
-                                         user: @user).call
+                                         user: @user,
+                                         orderer_class: @config.orderer_class).call
 
       total_count = calculate_total_count(search_results)
 

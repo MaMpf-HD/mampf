@@ -71,7 +71,8 @@ module Search
           # as it may have processed them (e.g., MediaSearchConfigurator).
           search_params: search_config.params,
           pagination_params: pagination_params,
-          default_per_page: default_per_page
+          default_per_page: default_per_page,
+          orderer_class: search_config.orderer_class
         )
 
         PaginatedSearcher.call(
