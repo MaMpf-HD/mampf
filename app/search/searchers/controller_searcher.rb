@@ -40,8 +40,7 @@ module Search
       end
 
       def call
-        # Get the search configuration. The `config.params` becomes the
-        # single source of truth from this point forward.
+        # Get the search configuration from the configurator.
         config = configurator_class.call(user: controller.current_user,
                                          search_params: permitted_controller_params)
 
@@ -53,40 +52,19 @@ module Search
           )
         end
 
-        # Execute the search using the configuration.
-        search_result = execute_paginated_search(config)
+        # Execute the search by passing the config directly.
+        search_result = PaginatedSearcher.call(
+          model_class: model_class,
+          user: controller.current_user,
+          config: config,
+          default_per_page: default_per_page
+        )
 
-        # Assign the results to instance variables on the controller.
+        # 3. Assign the results to instance variables on the controller.
         assign_results_to_controller(search_result)
       end
 
       private
-
-        # Executes the search using the PaginatedSearcher.
-        # @param search_config [Configurators::BaseSearchConfigurator::Configuration]
-        #   The configuration from the model's configurator. This is the single
-        #   source of truth for all parameters.
-        # @return [PaginatedSearcher::SearchResult]
-        def execute_paginated_search(search_config)
-          # Extract all pagination-related parameters from the authoritative config.
-          pagination_params = search_config.params.slice(:page, :per)
-          all_param = search_config.params[:all]
-
-          paginated_search_config = PaginatedSearcher::SearchConfig.new(
-            search_params: search_config.params,
-            pagination_params: pagination_params,
-            default_per_page: default_per_page,
-            orderer_class: search_config.orderer_class,
-            all: all_param
-          )
-
-          PaginatedSearcher.call(
-            model_class: model_class,
-            filter_classes: search_config.filters,
-            user: controller.current_user,
-            config: paginated_search_config
-          )
-        end
 
         # Sets the final instance variables on the controller for the view.
         # @param search_result [PaginatedSearcher::SearchResult]
@@ -97,9 +75,17 @@ module Search
         end
 
         # Gets the initial, permitted parameters by calling the specified method
-        # on the controller.
+        # on the controller, and then merges in the top-level :page parameter.
         def permitted_controller_params
-          controller.send(params_method_name)
+          # Get the search-specific parameters (e.g., from params[:search]).
+          # This hash should contain any nested pagination params like :per.
+          search_specific_params = controller.send(params_method_name)
+
+          # Get the top-level :page parameter, which is handled separately.
+          page_param = controller.params.permit(:page)
+
+          # Merge them to ensure the :page parameter is always available.
+          search_specific_params.merge(page_param)
         end
     end
   end
