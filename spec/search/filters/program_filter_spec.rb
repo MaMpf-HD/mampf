@@ -8,7 +8,7 @@ RSpec.describe(Search::Filters::ProgramFilter, type: :filter) do
     let!(:division1) { create(:division, program: program1) }
     let!(:division2) { create(:division, program: program2) }
 
-    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
+    subject(:filtered_scope) { described_class.apply(scope: scope, params: params, user: user) }
 
     context "when filtering Course records" do
       let!(:course1) { create(:course, divisions: [division1]) }

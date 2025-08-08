@@ -7,30 +7,25 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   let(:model_class) { class_spy(Course, "ModelClass") }
   let(:configurator_class) { class_spy(Search::Configurators::BaseSearchConfigurator, "ConfiguratorClass") }
   let(:instance_variable_name) { :courses }
-  let(:default_per_page) { 15 }
+  let(:options) { { default_per_page: 15 } }
 
-  # The hash returned by the controller's #search_params method, containing :per
+  # The hash returned by the controller's #search_params method
   let(:permitted_search_params) { { fulltext: "Ruby", per: 15 } }
   # The top-level params hash, containing :page
-  let(:top_level_params) { { page: 2 } }
-  # The final pagination hash we expect to be constructed by the searcher
-  let(:expected_pagination_params) { { page: 2, per: 15 } }
+  let(:top_level_params) { ActionController::Parameters.new(page: 2) }
+  # The final merged params we expect to be passed to the configurator
+  let(:expected_merged_params) { { fulltext: "Ruby", per: 15, page: 2 } }
 
-  # Results from collaborators
-  let(:orderer_class) { class_spy(Search::Orderers::BaseOrderer, "OrdererClass") }
+  # The Configuration object returned by the configurator
   let(:configurator_result) do
-    instance_double(
-      Search::Configurators::BaseSearchConfigurator::Configuration,
-      filters: [double("FilterClass")],
-      params: { fulltext: "Ruby", processed: true }, # Simulate processed params
-      orderer_class: orderer_class
-    )
+    instance_double(Search::Configurators::BaseSearchConfigurator::Configuration)
   end
+  # The SearchResult object returned by the paginated searcher
   let(:paginated_search_result) do
     instance_double(
       Search::Searchers::PaginatedSearcher::SearchResult,
-      results: [double("Result1"), double("Result2")],
-      total_count: 123
+      results: [double("Result1")],
+      total_count: 42
     )
   end
 
@@ -40,81 +35,84 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       model_class: model_class,
       configurator_class: configurator_class,
       instance_variable_name: instance_variable_name,
-      default_per_page: default_per_page
+      options: options
     )
   end
 
   before do
     # Stub controller methods
     allow(controller).to receive(:current_user).and_return(user)
-    # Simulate the full params hash, which only has :page at the top level
     allow(controller).to receive(:params).and_return(top_level_params)
-    # Stub the private #search_params method on the controller
     allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
-    # Allow the controller spy to receive instance_variable_set
     allow(controller).to receive(:instance_variable_set)
 
     # Stub collaborator class methods
     allow(configurator_class).to receive(:call).and_return(configurator_result)
-    allow(Search::Searchers::PaginatedSearcher).to receive(:call).and_return(paginated_search_result)
+    allow(Search::Searchers::PaginatedSearcher).to receive(:call)
+      .and_return(paginated_search_result)
   end
 
   # --- Tests ---
 
-  describe ".call" do
-    it "initializes an instance and calls #call on it" do
-      searcher_instance = instance_spy(described_class)
-      allow(described_class).to receive(:new).and_return(searcher_instance)
-
-      search
-
-      expect(described_class).to have_received(:new).with(
-        controller: controller,
-        model_class: model_class,
-        configurator_class: configurator_class,
-        instance_variable_name: instance_variable_name,
-        default_per_page: default_per_page
-      )
-      expect(searcher_instance).to have_received(:call)
-    end
-  end
-
   describe "orchestration logic" do
-    it "calls the configurator to get search setup" do
+    it "calls the configurator with correctly merged params" do
       search
       expect(configurator_class).to have_received(:call).with(
         user: user,
-        search_params: permitted_search_params
+        search_params: expected_merged_params
       )
     end
 
-    it "calls the PaginatedSearcher with the correct configuration" do
+    it "calls the PaginatedSearcher with the config from the configurator" do
       search
-      # Use an argument matcher to check the contents of the config struct
-      expected_paginated_config = have_attributes(
-        class: Search::PaginatedSearcher::SearchConfig,
-        search_params: configurator_result.params,
-        pagination_params: expected_pagination_params,
-        default_per_page: default_per_page
-      )
-
       expect(Search::Searchers::PaginatedSearcher).to have_received(:call).with(
         model_class: model_class,
-        filter_classes: configurator_result.filters,
         user: user,
-        config: expected_paginated_config
+        config: configurator_result,
+        default_per_page: 15
       )
     end
 
     it "assigns the results and total count to the controller" do
       search
-      # Check for @total
       expect(controller).to have_received(:instance_variable_set)
         .with(:@total, paginated_search_result.total_count)
-
-      # Check for @<instance_variable_name>
       expect(controller).to have_received(:instance_variable_set)
         .with("@#{instance_variable_name}", paginated_search_result.results)
+    end
+
+    context "when the configurator returns nil" do
+      let(:empty_scope) { double("EmptyScope") }
+      before do
+        allow(configurator_class).to receive(:call).and_return(nil)
+        allow(model_class).to receive(:none).and_return(empty_scope)
+      end
+
+      it "does not call the PaginatedSearcher" do
+        search
+        expect(Search::Searchers::PaginatedSearcher).not_to have_received(:call)
+      end
+
+      it "assigns empty results to the controller" do
+        search
+        expect(controller).to have_received(:instance_variable_set).with(:@total, 0)
+        expect(controller).to have_received(:instance_variable_set).with(
+          "@#{instance_variable_name}", empty_scope
+        )
+      end
+    end
+
+    context "with a custom params_method_name" do
+      let(:options) { { params_method_name: :custom_search_params } }
+      before do
+        allow(controller).to receive(:send).with(:custom_search_params)
+                                           .and_return(permitted_search_params)
+      end
+
+      it "calls the custom method to get params" do
+        search
+        expect(controller).to have_received(:send).with(:custom_search_params)
+      end
     end
   end
 end

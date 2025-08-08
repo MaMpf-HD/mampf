@@ -8,7 +8,7 @@ RSpec.describe(Search::Filters::LectureMediaVisibilityFilter) do
   let(:lecture) { create(:lecture_with_toc, course: course, editor_ids: [editor.id]) }
   let(:lesson) { create(:valid_lesson, lecture: lecture) }
   let(:initial_scope) { Medium.all }
-  let(:params) { { visibility: visibility, lecture_id: lecture.id } }
+  let(:params) { { visibility: visibility, id: lecture.id } }
 
   # Media for testing
   let!(:course_medium) { create(:course_medium, teachable: course) }
@@ -37,17 +37,17 @@ RSpec.describe(Search::Filters::LectureMediaVisibilityFilter) do
       end
     end
 
-    context "with missing lecture_id" do
+    context "with missing lecture id" do
       let(:visibility) { "lecture" }
-      let(:params) { { visibility: visibility, lecture_id: nil } }
+      let(:params) { { visibility: visibility, id: nil } }
       it "returns the original scope" do
         expect(filtered_scope).to match_array(all_media)
       end
     end
 
-    context "with non-existent lecture_id" do
+    context "with non-existent lecture id" do
       let(:visibility) { "lecture" }
-      let(:params) { { visibility: visibility, lecture_id: -1 } }
+      let(:params) { { visibility: visibility, id: -1 } }
       it "returns the original scope" do
         expect(filtered_scope).to match_array(all_media)
       end

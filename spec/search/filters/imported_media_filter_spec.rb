@@ -6,7 +6,7 @@ RSpec.describe(Search::Filters::ImportedMediaFilter) do
   let!(:lecture) { create(:lecture) }
   let!(:medium_in_initial_scope) { create(:valid_medium, sort: project_name) }
   let(:initial_scope) { Medium.where(id: medium_in_initial_scope.id) }
-  let(:params) { { lecture_id: lecture.id, project: project_name } }
+  let(:params) { { id: lecture.id, project: project_name } }
 
   subject(:filtered_scope) do
     described_class.new(scope: initial_scope, params: params, user: user).call

@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe(Search::Filters::LectureMediaScopeFilter) do
   let(:user) { create(:user) }
   let(:initial_scope) { Medium.all }
-  let(:params) { { lecture_id: lecture.id, project: project_name } }
+  let(:params) { { id: lecture.id, project: project_name } }
   let(:project_name) { "LessonMaterial" }
   let!(:course) { create(:course) }
   let!(:lecture) { create(:lecture_with_toc, course: course) }

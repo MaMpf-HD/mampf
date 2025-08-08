@@ -10,7 +10,7 @@ RSpec.describe(Search::Filters::TypeFilter, type: :filter) do
     let(:scope) { Medium.all }
     let(:all_media) { [medium_question, medium_remark, medium_exercise] }
 
-    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
+    subject(:filtered_scope) { described_class.apply(scope: scope, params: params, user: user) }
 
     context "when filtering for specific types" do
       context "by a single type" do

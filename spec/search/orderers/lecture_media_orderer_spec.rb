@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe(Search::Orderers::LectureMediaOrderer) do
   let(:initial_scope) { Medium.all }
   let(:model_class) { Medium }
-  let(:search_params) { { lecture_id: lecture.id } }
+  let(:search_params) { { id: lecture.id } }
   let(:lecture) { create(:lecture_with_toc) }
 
   subject(:ordered_scope) do

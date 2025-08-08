@@ -52,7 +52,7 @@ RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
     end
 
     context "for an editor" do
-      subject(:filtered_scope) { described_class.new(scope, {}, user: editor).call }
+      subject(:filtered_scope) { described_class.apply(scope: scope, params: {}, user: editor) }
 
       it "includes media they edit, even if unpublished" do
         expect(filtered_scope).to include(edited_media)
@@ -60,7 +60,7 @@ RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
     end
 
     context "for an admin" do
-      subject(:filtered_scope) { described_class.new(scope, {}, user: admin).call }
+      subject(:filtered_scope) { described_class.apply(scope: scope, params: {}, user: admin) }
 
       it "returns all media" do
         expect(filtered_scope).to match_array(Medium.all)
