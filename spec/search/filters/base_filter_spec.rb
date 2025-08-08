@@ -4,7 +4,7 @@ RSpec.describe(Search::Filters::BaseFilter) do
   let(:scope) { Medium.all }
   let(:params) { { key: "value", another_key: "another_value" } }
   let(:user) { create(:user) }
-  let(:filter) { described_class.new(scope, params, user: user) }
+  let(:filter) { described_class.new(scope: scope, params: params, user: user) }
 
   describe "#initialize" do
     it "sets the scope" do

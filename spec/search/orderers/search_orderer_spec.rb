@@ -1,21 +1,21 @@
 require "rails_helper"
 
-RSpec.describe(Search::SearchOrderer) do
+RSpec.describe(Search::Orderers::SearchOrderer) do
   let(:initial_scope) { instance_spy(ActiveRecord::Relation, "InitialScope") }
-  let(:model_class) { class_spy(Course, "ModelClass") }
-  let(:params) { {} }
+  let(:model_class) { Course }
+  let(:search_params) { {} }
 
   subject(:ordered_scope) do
     described_class.call(
       scope: initial_scope,
       model_class: model_class,
-      params: params
+      search_params: search_params
     )
   end
 
   describe "#call" do
     context "when performing a full-text search" do
-      let(:params) { { fulltext: "search term" } }
+      let(:search_params) { { fulltext: "search term" } }
 
       it "returns the original scope without modification" do
         expect(ordered_scope).to eq(initial_scope)
@@ -29,7 +29,7 @@ RSpec.describe(Search::SearchOrderer) do
 
         it "returns the original scope" do
           result = described_class.call(scope: initial_scope, model_class: unorderable_model,
-                                        params: params)
+                                        search_params: search_params)
           expect(result).to eq(initial_scope)
         end
       end
@@ -45,43 +45,42 @@ RSpec.describe(Search::SearchOrderer) do
 
     context "when applying the default order" do
       let(:order_expression) { "title DESC, created_at ASC" }
-      let(:select_expression) { Arel.sql("title, created_at") }
 
       before do
-        # Stub the model to be orderable. This includes the check that fails.
-        allow(model_class).to receive(:respond_to?).with(:default_search_order).and_return(true)
+        allow(model_class).to receive(:respond_to?) do |method_name, *args|
+          case method_name
+          when :default_search_order
+            true
+          when :default_search_order_joins
+            false
+          else
+            # Call the original respond_to? implementation, bypassing the stub
+            Course.method(:respond_to?).super_method.call(method_name, *args)
+          end
+        end
         allow(model_class).to receive(:default_search_order).and_return(order_expression)
         allow(model_class).to receive(:arel_table).and_return(Course.arel_table)
-
-        # Stub the chain of calls on the scope
-        allow(initial_scope).to receive(:select)
-          .and_return(instance_spy(ActiveRecord::Relation, "SelectedScope"))
-        allow(initial_scope).to receive(:left_outer_joins)
-          .and_return(instance_spy(ActiveRecord::Relation, "JoinedScope"))
       end
 
-      context "and the model does not require extra joins" do
-        before do
-          # Ensure the model does not respond to the joins method
-          allow(model_class).to receive(:respond_to?).with(:default_search_order_joins)
-                                                     .and_return(false)
+      it "applies the select and order clauses to the original scope" do
+        selected_scope = instance_spy(ActiveRecord::Relation)
+        allow(initial_scope).to receive(:select).and_return(selected_scope)
+
+        ordered_scope
+
+        expect(initial_scope).to have_received(:select) do |arel_star, sql_literal|
+          expect(arel_star).to be_a(Arel::Attributes::Attribute)
+          expect(arel_star.relation.name).to eq("courses")
+          expect(arel_star.name).to eq("*")
+          expect(sql_literal).to be_a(Arel::Nodes::SqlLiteral)
+          expect(sql_literal.to_s).to eq("title, created_at")
         end
+        expect(selected_scope).to have_received(:order).with(order_expression)
+      end
 
-        it "applies the select and order clauses to the original scope" do
-          selected_scope = instance_spy(ActiveRecord::Relation)
-          allow(initial_scope).to receive(:select).and_return(selected_scope)
-
-          ordered_scope
-
-          expect(initial_scope).to have_received(:select).with(Course.arel_table[Arel.star],
-                                                               select_expression)
-          expect(selected_scope).to have_received(:order).with(order_expression)
-        end
-
-        it "does not attempt to join" do
-          ordered_scope
-          expect(initial_scope).not_to have_received(:left_outer_joins)
-        end
+      it "does not attempt to join" do
+        ordered_scope
+        expect(initial_scope).not_to have_received(:left_outer_joins)
       end
 
       context "and the model requires extra joins" do
@@ -90,12 +89,9 @@ RSpec.describe(Search::SearchOrderer) do
         let(:selected_scope) { instance_spy(ActiveRecord::Relation, "SelectedScope") }
 
         before do
-          # Stub the model to require joins
-          allow(model_class).to receive(:respond_to?).with(:default_search_order_joins)
-                                                     .and_return(true)
+          allow(model_class).to receive(:respond_to?).with(:default_search_order_joins,
+                                                           any_args).and_return(true)
           allow(model_class).to receive(:default_search_order_joins).and_return(joins)
-
-          # Stub the chain of calls
           allow(initial_scope).to receive(:left_outer_joins).with(joins).and_return(joined_scope)
           allow(joined_scope).to receive(:select).and_return(selected_scope)
         end
@@ -104,8 +100,13 @@ RSpec.describe(Search::SearchOrderer) do
           ordered_scope
 
           expect(initial_scope).to have_received(:left_outer_joins).with(joins)
-          expect(joined_scope).to have_received(:select).with(Course.arel_table[Arel.star],
-                                                              select_expression)
+          expect(joined_scope).to have_received(:select) do |arel_star, sql_literal|
+            expect(arel_star).to be_a(Arel::Attributes::Attribute)
+            expect(arel_star.relation.name).to eq("courses")
+            expect(arel_star.name).to eq("*")
+            expect(sql_literal).to be_a(Arel::Nodes::SqlLiteral)
+            expect(sql_literal.to_s).to eq("title, created_at")
+          end
           expect(selected_scope).to have_received(:order).with(order_expression)
         end
 

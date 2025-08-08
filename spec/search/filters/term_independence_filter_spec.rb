@@ -10,7 +10,7 @@ RSpec.describe(Search::Filters::TermIndependenceFilter, type: :filter) do
     let(:scope) { Course.all }
     let(:all_courses) { [term_independent_course, regular_course] }
 
-    subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
+    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
 
     context "when the filter is not active" do
       context "because 'term_independent' is not '1'" do

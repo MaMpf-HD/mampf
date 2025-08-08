@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe(Search::Filters::ProperFilter, type: :filter) do
   describe "#call" do
     let(:user) { create(:user) }
-    subject(:filtered_scope) { described_class.new(scope, {}, user: user).call }
+    subject(:filtered_scope) { described_class.new(scope: scope, params: {}, user: user).call }
 
     context "when the model responds to the .proper scope" do
       # The Medium model's .proper scope filters out 'RandomQuiz' media.

@@ -17,8 +17,26 @@ module Search
 
         # Get Arel table references for building the query.
         media_table = Medium.arel_table
-        lessons_table = Lesson.arel_table
-        talks_table = Talk.arel_table
+
+        # Create aliased table references to ensure stable names in the query.
+        lessons_table = Lesson.arel_table.alias("_search_lessons_media")
+        talks_table = Talk.arel_table.alias("_search_talks_media")
+
+        # Build the join nodes manually using the aliased tables.
+        lessons_join = Arel::Nodes::OuterJoin.new(
+          lessons_table,
+          Arel::Nodes::On.new(
+            media_table[:teachable_type].eq("Lesson").and(media_table[:teachable_id]
+            .eq(lessons_table[:id]))
+          )
+        )
+        talks_join = Arel::Nodes::OuterJoin.new(
+          talks_table,
+          Arel::Nodes::On.new(
+            media_table[:teachable_type].eq("Talk").and(media_table[:teachable_id]
+            .eq(talks_table[:id]))
+          )
+        )
 
         # Pre-fetch the imported media IDs into an array to avoid subquery
         # issues with bind parameters when ActiveRecord builds its COUNT query.
@@ -77,7 +95,8 @@ module Search
         # Select the original columns plus our new aliased sort expressions.
         # Order by the Arel expressions.
         scope
-          .left_outer_joins(:_search_lesson, :_search_talk)
+          .joins(lessons_join)
+          .joins(talks_join)
           .select(media_table[Arel.star], *sort_expressions.map { |k, v| v.as(k.to_s) })
           .order(order_clause)
       end

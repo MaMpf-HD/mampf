@@ -52,19 +52,19 @@ RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
     context "when 'lecture_scope' is '0' or blank" do
       it "returns the original scope for a nil value" do
         params = { lecture_scope: nil }
-        filter = described_class.new(scope, params, user: user)
+        filter = described_class.new(scope: scope, params: params, user: user)
         expect(filter.call).to match_array(all_media)
       end
 
       it "returns the original scope for a blank string" do
         params = { lecture_scope: "" }
-        filter = described_class.new(scope, params, user: user)
+        filter = described_class.new(scope: scope, params: params, user: user)
         expect(filter.call).to match_array(all_media)
       end
 
       it "returns the original scope for '0'" do
         params = { lecture_scope: "0" }
-        filter = described_class.new(scope, params, user: user)
+        filter = described_class.new(scope: scope, params: params, user: user)
         expect(filter.call).to match_array(all_media)
       end
     end
@@ -72,7 +72,7 @@ RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
     context "when 'lecture_scope' is '1' (subscribed)" do
       it "filters to media from the user's subscribed courses, lectures, and lessons" do
         params = { lecture_scope: "1" }
-        filter = described_class.new(scope, params, user: user)
+        filter = described_class.new(scope: scope, params: params, user: user)
         expected_media = [
           medium_on_subscribed_course,
           medium_on_subscribed_lecture,
@@ -85,7 +85,7 @@ RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
     context "when 'lecture_scope' is '2' (custom)" do
       it "filters to media from the specified lectures and their lessons" do
         params = { lecture_scope: "2", media_lectures: [custom_lecture.id] }
-        filter = described_class.new(scope, params, user: user)
+        filter = described_class.new(scope: scope, params: params, user: user)
         expected_media = [
           medium_on_custom_lecture,
           medium_on_custom_lesson
@@ -95,7 +95,7 @@ RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
 
       it "returns the original scope if 'media_lectures' is blank" do
         params = { lecture_scope: "2", media_lectures: [] }
-        filter = described_class.new(scope, params, user: user)
+        filter = described_class.new(scope: scope, params: params, user: user)
         expect(filter.call).to match_array(all_media)
       end
     end
@@ -103,7 +103,7 @@ RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
     context "when 'lecture_scope' is an invalid value" do
       it "returns the original scope" do
         params = { lecture_scope: "invalid_option" }
-        filter = described_class.new(scope, params, user: user)
+        filter = described_class.new(scope: scope, params: params, user: user)
         expect(filter.call).to match_array(all_media)
       end
     end

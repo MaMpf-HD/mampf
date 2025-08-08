@@ -26,7 +26,7 @@ module Search
 
     def call
       filter_classes.reduce(scope) do |current_scope, filter_class|
-        filter_class.new(current_scope, params, user: user).call
+        filter_class.new(scope: current_scope, params: params, user: user).call
       end
     end
   end

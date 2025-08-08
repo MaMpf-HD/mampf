@@ -32,7 +32,7 @@ RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
     end
 
     context "for a regular user" do
-      subject(:filtered_scope) { described_class.new(scope, {}, user: user).call }
+      subject(:filtered_scope) { described_class.new(scope: scope, params: {}, user: user).call }
 
       it "includes media from subscribed lectures" do
         expect(filtered_scope).to include(media_in_subscribed_lecture)

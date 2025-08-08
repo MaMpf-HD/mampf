@@ -9,7 +9,7 @@ module Search
     class BaseFilter
       attr_reader :scope, :params, :user
 
-      def initialize(scope, params, user:)
+      def initialize(scope:, params:, user:)
         @scope = scope
         @params = params.to_h.with_indifferent_access
         @user = user

@@ -17,11 +17,13 @@ RSpec.describe(Search::ControllerSearcher) do
   let(:expected_pagination_params) { { page: 2, per: 15 } }
 
   # Results from collaborators
+  let(:orderer_class) { class_spy(Search::Orderers::BaseOrderer, "OrdererClass") }
   let(:configurator_result) do
     instance_double(
       Search::Configurators::BaseSearchConfigurator::Configuration,
       filters: [double("FilterClass")],
-      params: { fulltext: "Ruby", processed: true } # Simulate processed params
+      params: { fulltext: "Ruby", processed: true }, # Simulate processed params
+      orderer_class: orderer_class
     )
   end
   let(:paginated_search_result) do

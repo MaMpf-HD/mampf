@@ -6,46 +6,46 @@
 #   - @<instance_variable_name>: The paginated array of results.
 #
 # The calling controller is expected to implement a private `search_params` method
-# that uses `params.expect` to permit the search form parameters.module Search
+# that uses `params.expect` to permit the search form parameters.
 module Search
   class ControllerSearcher
     # @param controller [ApplicationController] The instance of the calling controller.
-    #   Must implement a private `search_params` method.
     # @param model_class [Class] The ActiveRecord model to be searched.
     # @param configurator_class [Class] The specific configurator for the model.
     # @param instance_variable_name [Symbol] The name for the results instance variable.
-    # @param default_per_page [Integer] The default number of items per page.
+    # @param options [Hash] A hash of optional settings:
+    #   - default_per_page [Integer]
+    #   - params_method_name [Symbol] The method to call on the controller to get
+    #     the permitted search parameters. Defaults to :search_params.
     def self.call(controller:, model_class:, configurator_class:, instance_variable_name:,
-                  default_per_page: 10)
+                  options: {})
       new(controller: controller, model_class: model_class,
           configurator_class: configurator_class,
           instance_variable_name: instance_variable_name,
-          default_per_page: default_per_page).call
+          options: options).call
     end
 
     attr_reader :controller, :model_class, :configurator_class,
-                :instance_variable_name, :default_per_page
+                :instance_variable_name, :default_per_page, :params_method_name
 
     def initialize(controller:, model_class:, configurator_class:, instance_variable_name:,
-                   default_per_page:)
+                   options:)
       @controller = controller
       @model_class = model_class
       @configurator_class = configurator_class
       @instance_variable_name = instance_variable_name
-      @default_per_page = default_per_page
+      @default_per_page = options.fetch(:default_per_page, 10)
+      @params_method_name = options.fetch(:params_method_name, :search_params)
     end
 
     def call
-      # This holds the fully permitted search parameters object.
-      permitted_search_params = controller.send(:search_params)
-
       # Pass the full object to the configurator. The configurator can
       # decide to do further processing if needed.
       config = configurator_class.call(user: controller.current_user,
-                                       search_params: permitted_search_params)
+                                       search_params: search_params)
 
       # Pass the permitted object to the paginated search as well.
-      search_result = execute_paginated_search(config, permitted_search_params)
+      search_result = execute_paginated_search(config, search_params)
       assign_results_to_controller(search_result)
     end
 
@@ -63,8 +63,10 @@ module Search
         page_param = controller.params.slice(:page)
         # Get :per from the permitted search params object.
         per_param = permitted_search_params.slice(:per)
+        # Get :all from the (potentially modified) params from the configurator.
+        all_param = search_config.params.slice(:all)
         # Merge them into a single, clean hash.
-        pagination_params = page_param.merge(per_param)
+        pagination_params = page_param.merge(per_param).merge(all_param)
 
         paginated_search_config = PaginatedSearcher::SearchConfig.new(
           # IMPORTANT: Use the params from the configurator's result,
@@ -72,7 +74,8 @@ module Search
           search_params: search_config.params,
           pagination_params: pagination_params,
           default_per_page: default_per_page,
-          orderer_class: search_config.orderer_class
+          orderer_class: search_config.orderer_class,
+          all: all_param[:all]
         )
 
         PaginatedSearcher.call(
@@ -89,6 +92,12 @@ module Search
         controller.instance_variable_set(:@total, search_result.total_count)
         controller.instance_variable_set("@#{instance_variable_name}",
                                          search_result.results)
+      end
+
+      # Gets the search parameters by calling the specified method on the controller.
+      # This makes the service object more flexible and reusable.
+      def search_params
+        controller.send(params_method_name)
       end
   end
 end

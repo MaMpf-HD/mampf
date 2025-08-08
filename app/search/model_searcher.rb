@@ -19,7 +19,7 @@ module Search
       @params = params.to_h.with_indifferent_access
       @filter_classes = filter_classes
       @user = user
-      @orderer_class = orderer_class
+      @orderer_class = orderer_class || Orderers::SearchOrderer
     end
 
     # Executes the search by applying filters and ordering.
@@ -35,11 +35,10 @@ module Search
       # Ensure the results are unique, as joins can create duplicates.
       scope = scope.distinct
 
-      # Use the specified orderer class from the config, or the default.
-      orderer = orderer_class || Orderers::SearchOrderer
-      orderer.call(model_class: model_class,
-                   scope: scope,
-                   search_params: params)
+      # Use the specified orderer class.
+      orderer_class.call(model_class: model_class,
+                         scope: scope,
+                         search_params: params)
     end
   end
 end

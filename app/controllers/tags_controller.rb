@@ -140,7 +140,7 @@ class TagsController < ApplicationController
       model_class: Tag,
       configurator_class: Search::Configurators::TagSearchConfigurator,
       instance_variable_name: :tags,
-      default_per_page: 10
+      options: { default_per_page: 10 }
     )
 
     respond_to do |format|

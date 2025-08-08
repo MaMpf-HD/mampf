@@ -13,7 +13,7 @@ RSpec.describe(Search::Filters::TermFilter, type: :filter) do
     let(:scope) { Lecture.all }
     let(:all_lectures) { [lecture_in_active_term, lecture_in_inactive_term, lecture_with_no_term] }
 
-    subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
+    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
 
     context "when filtering for specific terms" do
       context "and the active term is selected" do

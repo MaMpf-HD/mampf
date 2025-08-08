@@ -16,7 +16,14 @@ module Search
       # @param search_params [Hash] The search parameters.
       # @return [ActiveRecord::Relation] The ordered scope.
       def self.call(scope:, model_class:, search_params:)
-        new(scope: scope, model_class: model_class, search_params: search_params).call
+        # Get the ordered scope from the specific orderer subclass.
+        ordered_scope = new(scope: scope, model_class: model_class,
+                            search_params: search_params).call
+
+        # If the 'reverse' parameter is true, reverse the order of the scope.
+        return ordered_scope.reverse_order if search_params[:reverse]
+
+        ordered_scope
       end
 
       def initialize(scope:, model_class:, search_params:)

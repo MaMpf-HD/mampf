@@ -24,7 +24,7 @@ RSpec.describe(Search::Filters::CourseFilter, type: :filter) do
     # so we can test the filter with them
     let(:scope) { Tag.all }
 
-    subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
+    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
 
     context "when specific course_ids are provided" do
       context "with a single course ID" do

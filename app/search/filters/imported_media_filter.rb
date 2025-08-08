@@ -3,27 +3,27 @@ module Search
   module Filters
     class ImportedMediaFilter < BaseFilter
       def call
-        lecture_id = params[:lecture_id]
         project = params[:project]
-
-        return scope unless lecture_id && project.present?
+        lecture_id = params[:lecture_id]
 
         lecture = Lecture.find_by(id: lecture_id)
-        return scope unless lecture
+        return scope unless lecture && project.present?
 
-        # Get the scope of imported media for the given project.
-        imported_media_scope = lecture.imported_media
-                                      .where(sort: project.camelize)
-                                      .locally_visible
+        # Pluck the IDs from the imported media scope to resolve the
+        # structurally incompatible join from the has_many :through association.
+        imported_media_ids = lecture.imported_media
+                                    .where(sort: project.camelize)
+                                    .pluck(:id)
 
-        # Combine the IDs from the current scope and the imported media.
-        current_scope_ids = scope.pluck(:id)
-        imported_media_ids = imported_media_scope.pluck(:id)
-        all_ids = (current_scope_ids + imported_media_ids).uniq
+        # If there are no imported media to add, return the original scope.
+        return scope if imported_media_ids.empty?
 
-        # Return a new scope based on the combined IDs. This loses any previous
-        # ordering, but the final ordering is applied later by LectureMediaOrderer.
-        Medium.where(id: all_ids)
+        # Build a new, compatible scope from the IDs. This scope has no joins
+        # and can be safely combined with the original scope.
+        compatible_imported_scope = Medium.where(id: imported_media_ids)
+
+        # Combine the original scope with the compatible imported media scope.
+        scope.or(compatible_imported_scope)
       end
     end
   end

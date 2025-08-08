@@ -8,7 +8,7 @@ RSpec.describe(Search::Filters::FulltextFilter, type: :filter) do
     let(:user) { create(:confirmed_user) }
     let(:scope) { Course.all }
 
-    subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
+    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
 
     context "when 'fulltext' parameter is blank" do
       context "with a nil value" do

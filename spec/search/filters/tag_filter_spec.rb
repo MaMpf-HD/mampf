@@ -17,7 +17,7 @@ RSpec.describe(Search::Filters::TagFilter, type: :filter) do
     let(:scope) { Medium.all }
     let(:all_media) { [medium1, medium2, medium3, medium4, medium_no_tags] }
 
-    subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
+    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
 
     context "when filtering with 'or' logic (default)" do
       let(:params) { { tag_ids: [tag1.id, tag2.id] } }

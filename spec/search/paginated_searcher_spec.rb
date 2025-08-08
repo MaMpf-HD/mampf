@@ -4,14 +4,16 @@ RSpec.describe(Search::PaginatedSearcher) do
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
   let(:filter_classes) { [double("FilterClass")] }
-  let(:search_params) { {} }
+  let(:orderer_class) { class_spy(Search::Orderers::BaseOrderer, "OrdererClass") }
+  let(:search_params) { { fulltext: "search" } }
   let(:pagination_params) { { page: 2 } }
   let(:default_per_page) { 25 }
   let(:config) do
     described_class::SearchConfig.new(
       search_params: search_params,
       pagination_params: pagination_params,
-      default_per_page: default_per_page
+      default_per_page: default_per_page,
+      orderer_class: orderer_class
     )
   end
 
@@ -41,13 +43,14 @@ RSpec.describe(Search::PaginatedSearcher) do
   end
 
   describe "#call" do
-    it "initializes and calls ModelSearcher" do
+    it "initializes and calls ModelSearcher with the correct arguments" do
       search_result
       expect(Search::ModelSearcher).to have_received(:new).with(
         model_class,
         search_params,
         filter_classes,
-        user: user
+        user: user,
+        orderer_class: orderer_class
       )
       expect(model_searcher_instance).to have_received(:call)
     end

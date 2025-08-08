@@ -75,7 +75,7 @@ class CoursesController < ApplicationController
       model_class: Course,
       configurator_class: Search::Configurators::CourseSearchConfigurator,
       instance_variable_name: :courses,
-      default_per_page: 20
+      options: { default_per_page: 20 }
     )
 
     respond_to do |format|

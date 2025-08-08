@@ -12,7 +12,7 @@ RSpec.describe(Search::Filters::EditorFilter, type: :filter) do
     let(:user) { create(:confirmed_user) }
     let(:scope) { Course.all }
 
-    subject(:filtered_scope) { described_class.new(scope, params, user: user).call }
+    subject(:filtered_scope) { described_class.new(scope: scope, params: params, user: user).call }
 
     before do
       # Explicitly create the join records to ensure associations are set

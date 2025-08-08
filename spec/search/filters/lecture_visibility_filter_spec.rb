@@ -20,7 +20,9 @@ RSpec.describe(Search::Filters::LectureVisibilityFilter, type: :filter) do
     let(:scope) { Lecture.all }
     let(:all_lectures) { [published_lecture, taught_lecture, edited_lecture, private_lecture] }
 
-    subject(:filtered_scope) { described_class.new(scope, {}, user: current_user).call }
+    subject(:filtered_scope) do
+      described_class.new(scope: scope, params: {}, user: current_user).call
+    end
 
     context "when the user is an admin" do
       let(:current_user) { admin }
