@@ -225,31 +225,6 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
   end
 
-  # returns the array of all media subject to the conditions
-  # provided by the params hash (keys: :id, :project)
-  # :id represents the lecture id
-  def self.search_all(params)
-    lecture = Lecture.find_by(id: params[:id])
-    return Medium.none if lecture.nil?
-
-    media_in_project = Medium.media_in_project(params[:project])
-    # media sitting at course level
-    course_media_in_project = media_in_project.includes(:tags)
-                                              .where(teachable: lecture.course)
-                                              .order(boost: :desc,
-                                                     description: :asc)
-    # media sitting at lecture level
-    # append results at course level to lecture/lesson level results
-    lecture.lecture_lesson_results(media_in_project) + course_media_in_project
-  end
-
-  # returns the ARel of all media for the given project
-  def self.media_in_project(project)
-    return Medium.none if project.blank?
-
-    Medium.where(sort: project.camelize)
-  end
-
   # returns the array of all media (by title), together with their ids
   # is used in options_for_select in form helpers.
   def self.select_by_name

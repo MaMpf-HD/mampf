@@ -606,58 +606,6 @@ class MediaController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    # paginate results obtained by the search_results method
-    def paginated_results
-      if params[:all]
-        total_count = search_results.count
-        # without the total count parameter, kaminary will consider only only the
-        # first 25 entries
-        return Kaminari.paginate_array(search_results,
-                                       total_count: total_count + 1)
-      end
-      Kaminari.paginate_array(search_results).page(params[:page])
-              .per(params[:per])
-    end
-
-    # search is done in search class method for Medium
-    def search_results
-      search_results = Medium.search_all(params)
-      # search_results are ordered in a certain way
-      # the next lines ensure that filtering for visible media does not
-      # mess up the ordering
-      search_arel = Medium.where(id: search_results.pluck(:id))
-      visible_search_results = current_user.filter_visible_media(search_arel)
-      search_results &= visible_search_results
-      total = search_results.size
-      @lecture = Lecture.find_by(id: params[:id])
-      # filter out stuff from course level for generic users
-      if params[:visibility] == "lecture"
-        search_results.reject! { |m| m.teachable_type == "Course" }
-        # yields only lecture media and course media
-      elsif params[:visibility] == "all"
-        # yields all lecture media and course media
-      else
-        # this is the default setting: 'thematic' selection of media
-        # yields all lecture media and course media whose tags have
-        # already been dealt with in the lecture
-        unless current_user.admin || @lecture.edited_by?(current_user)
-          lecture_tags = @lecture.tags_including_media_tags
-          search_results.reject! do |m|
-            m.teachable_type == "Course" && !m.tags.to_a.intersect?(lecture_tags)
-          end
-        end
-      end
-      sort = params[:project]&.capitalize
-      search_results += @lecture.imported_media
-                                .where(sort: sort)
-                                .locally_visible
-      search_results.uniq!
-      @hidden = search_results.empty? && total.positive?
-      return search_results unless params[:reverse]
-
-      search_results.reverse
-    end
-
     def reveal_contradictions
       return if params[:lecture_id].blank?
       return if params[:lecture_id].to_i.in?(@course.lecture_ids)
