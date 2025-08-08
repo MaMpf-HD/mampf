@@ -12,7 +12,7 @@ module Search
   module Orderers
     class LectureMediaOrderer < BaseOrderer
       def call
-        lecture = Lecture.find_by(id: search_params[:lecture_id])
+        lecture = Lecture.find_by(id: search_params[:id])
         return scope.order(model_class.default_search_order) unless lecture
 
         # Get Arel table references for building the query.

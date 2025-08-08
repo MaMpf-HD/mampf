@@ -29,6 +29,8 @@ class MediaController < ApplicationController
 
   def index
     authorize! :index, Medium.new
+    pp("++++++++++++++++++++++++++")
+    pp(lecture_media_search_params)
 
     Search::Searchers::ControllerSearcher.call(
       controller: self,
@@ -695,7 +697,7 @@ class MediaController < ApplicationController
 
     def lecture_media_search_params
       params.permit(:project, :visibility, :reverse, :id, :all, :page, :per)
-            .merge(lecture_id: @lecture.id)
+      #  .merge(lecture_id: @lecture.id)
     end
 
     # destroy all notifications related to this medium

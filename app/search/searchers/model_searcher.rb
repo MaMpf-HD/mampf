@@ -5,43 +5,41 @@
 module Search
   module Searchers
     class ModelSearcher
-      attr_reader :model_class, :search_params, :filter_classes, :user, :orderer_class
+      attr_reader :model_class, :user, :config
 
-      # @param model_class [Class] The ActiveRecord model class to be searched (e.g., Course).
-      # @param search_params [Hash] The search parameters from the controller.
-      # @param filter_classes [Array<Class>] An array of filter classes to be applied.
+      # @param model_class [Class] The ActiveRecord model class to be searched.
       # @param user [User] The current user, for permission-sensitive filters.
-      # @param orderer_class [Class] An optional class to handle ordering.
-      def self.call(model_class:, search_params:, filter_classes:, user:, orderer_class: nil)
-        new(model_class: model_class, search_params: search_params,
-            filter_classes: filter_classes, user: user,
-            orderer_class: orderer_class).call
+      # @param config [Configurators::BaseSearchConfigurator::Configuration]
+      #   The configuration object from the model's configurator.
+      def self.call(model_class:, user:, config:)
+        new(model_class: model_class, user: user, config: config).call
       end
 
-      def initialize(model_class:, search_params:, filter_classes:, user:, orderer_class:)
+      def initialize(model_class:, user:, config:)
         @model_class = model_class
-        @search_params = search_params.to_h.with_indifferent_access
-        @filter_classes = filter_classes
         @user = user
-        @orderer_class = orderer_class || Orderers::SearchOrderer
+        @config = config
       end
 
       # Executes the search by applying filters and ordering.
       #
       # @return [ActiveRecord::Relation] The resulting query object.
       def call
+        # Use a local variable for the orderer, providing a default if nil.
+        orderer_class = config.orderer_class || Orderers::SearchOrderer
+
         # Apply all registered filters to the scope.
-        scope = Search::Filters::FilterApplier.call(scope: model_class.all,
-                                                    filter_classes: filter_classes,
-                                                    params: search_params, user: user)
+        scope = Filters::FilterApplier.call(scope: model_class.all,
+                                            user: user,
+                                            config: config)
 
         # Ensure the results are unique, as joins can create duplicates.
         scope = scope.distinct
 
-        # Use the specified orderer class.
+        # Use the specified orderer class to sort the results.
         orderer_class.call(model_class: model_class,
                            scope: scope,
-                           search_params: search_params)
+                           search_params: config.params)
       end
     end
   end

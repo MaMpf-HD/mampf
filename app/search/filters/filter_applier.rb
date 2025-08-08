@@ -1,33 +1,33 @@
-# This service is responsible for applying a series of filter classes to an
-# ActiveRecord scope. It iterates through the provided filter classes,
-# initializes each with the current scope and parameters, and then calls it.
-# This pattern allows for modular and reusable filtering logic.
 module Search
   module Filters
+    # This service class takes a scope and applies a series of filters to it,
+    # based on a provided configuration.
     class FilterApplier
-      attr_reader :scope, :filter_classes, :params, :user
+      attr_reader :scope, :user, :config
 
-      # Applies the filters to the scope.
-      #
       # @param scope [ActiveRecord::Relation] The initial scope to be filtered.
-      # @param filter_classes [Array<Class>] An array of filter classes to apply.
-      # @param params [Hash] The search parameters.
-      # @param user [User] The current user.
-      # @return [ActiveRecord::Relation] The filtered scope.
-      def self.call(...)
-        new(...).call
+      # @param user [User] The current user, for permission-sensitive filters.
+      # @param config [Configurators::BaseSearchConfigurator::Configuration]
+      #   The configuration object containing filters and parameters.
+      def self.call(scope:, user:, config:)
+        new(scope: scope, user: user, config: config).call
       end
 
-      def initialize(scope:, filter_classes:, params:, user:)
+      def initialize(scope:, user:, config:)
         @scope = scope
-        @filter_classes = filter_classes
-        @params = params.to_h.with_indifferent_access
         @user = user
+        @config = config
       end
 
+      # Applies each filter class from the configuration to the scope.
+      #
+      # @return [ActiveRecord::Relation] The filtered scope.
       def call
-        filter_classes.reduce(scope) do |current_scope, filter_class|
-          filter_class.new(scope: current_scope, params: params, user: user).call
+        config.filters.reduce(scope) do |current_scope, filter_class|
+          # Pass the necessary parts of the config to each individual filter.
+          filter_class.apply(scope: current_scope,
+                             params: config.params,
+                             user: user)
         end
       end
     end

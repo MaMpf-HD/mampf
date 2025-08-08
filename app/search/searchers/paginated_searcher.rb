@@ -24,16 +24,17 @@ module Search
       end
 
       def call
+        # Get the fully filtered and ordered results.
         search_results = ModelSearcher.call(
           model_class: model_class,
-          filter_classes: config.filters,
           user: user,
-          search_params: config.params,
-          orderer_class: config.orderer_class # Pass it through; ModelSearcher will handle defaults.
+          config: config
         )
 
+        # Get the total count before pagination.
         total_count = calculate_total_count(search_results)
 
+        # Paginate the results.
         paginated_results = paginate(search_results, total_count)
 
         # Return the final results and the total count for the view.
@@ -46,8 +47,10 @@ module Search
       private
 
         def calculate_total_count(scope)
-          if scope.group_values.any?
-            @model_class.from(scope, :subquery).count
+          if scope.is_a?(Array)
+            scope.size
+          elsif scope.group_values.any?
+            model_class.from(scope, :subquery).count
           else
             scope.select(:id).count
           end
@@ -57,14 +60,14 @@ module Search
           # Always convert to an array first for Kaminari.paginate_array
           results_array = scope.to_a
           paginatable_array = Kaminari.paginate_array(results_array, total_count: total_count)
-          pagination_params = @config.params.slice(:page, :per)
+          pagination_params = config.params.slice(:page, :per)
           if config.params[:all]
             # If 'all' is requested, set 'per' to the total count to show all items on one page.
             # We still call .page(1) to ensure it returns a Kaminari object for the view.
             # Use [total_count, 1].max to avoid per(0) if the result set is empty.
             paginatable_array.page(1).per([total_count, 1].max)
           else
-            per_page = pagination_params[:per] || @default_per_page || 10
+            per_page = pagination_params[:per] || default_per_page || 10
             paginatable_array.page(pagination_params[:page]).per(per_page)
           end
         end

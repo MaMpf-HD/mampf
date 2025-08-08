@@ -81,11 +81,15 @@ module Search
           # This hash should contain any nested pagination params like :per.
           search_specific_params = controller.send(params_method_name)
 
-          # Get the top-level :page parameter, which is handled separately.
-          page_param = controller.params.permit(:page)
+          # Convert to a plain hash to ensure we can safely manipulate it.
+          permitted_hash = search_specific_params.to_h
 
-          # Merge them to ensure the :page parameter is always available.
-          search_specific_params.merge(page_param)
+          # If a top-level :page parameter exists, explicitly set it on our hash.
+          # This ensures it is always the authoritative value for pagination,
+          # overwriting any nested :page parameter if one existed.
+          permitted_hash[:page] = controller.params[:page] if controller.params.key?(:page)
+
+          permitted_hash
         end
     end
   end

@@ -3,8 +3,8 @@ module Search
   module Filters
     class ImportedMediaFilter < BaseFilter
       def call
+        lecture_id = params[:id]
         project = params[:project]
-        lecture_id = params[:lecture_id]
 
         lecture = Lecture.find_by(id: lecture_id)
         return scope unless lecture && project.present?

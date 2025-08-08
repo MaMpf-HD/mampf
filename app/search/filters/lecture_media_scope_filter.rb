@@ -6,7 +6,7 @@ module Search
   module Filters
     class LectureMediaScopeFilter < BaseFilter
       def call
-        lecture_id = params[:lecture_id]
+        lecture_id = params[:id]
         project = params[:project]
 
         return scope.none unless lecture_id && project.present?

@@ -6,8 +6,8 @@ module Search
   module Filters
     class LectureMediaVisibilityFilter < BaseFilter
       def call
+        lecture_id = params[:_id]
         visibility = params[:visibility]
-        lecture_id = params[:lecture_id]
 
         # Default behavior if no visibility is set, or if it's 'all'.
         return scope if visibility.blank? || visibility == "all" || lecture_id.blank?
