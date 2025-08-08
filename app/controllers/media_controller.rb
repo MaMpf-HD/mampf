@@ -29,8 +29,6 @@ class MediaController < ApplicationController
 
   def index
     authorize! :index, Medium.new
-    pp("++++++++++++++++++++++++++")
-    pp(lecture_media_search_params)
 
     Search::Searchers::ControllerSearcher.call(
       controller: self,

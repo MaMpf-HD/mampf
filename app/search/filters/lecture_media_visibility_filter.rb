@@ -6,7 +6,7 @@ module Search
   module Filters
     class LectureMediaVisibilityFilter < BaseFilter
       def call
-        lecture_id = params[:_id]
+        lecture_id = params[:id]
         visibility = params[:visibility]
 
         # Default behavior if no visibility is set, or if it's 'all'.

@@ -32,7 +32,7 @@ module Search
         #
         # @return [Array<Arel::Node>] An array of conditions, or an empty array.
         def build_arel_conditions
-          teachable_id_strings = Search::Searchers::TeachableParser.call(params)
+          teachable_id_strings = Search::Parsers::TeachableParser.call(params)
           return [] if teachable_id_strings.blank?
 
           media = Medium.arel_table
