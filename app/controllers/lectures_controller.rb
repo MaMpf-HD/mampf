@@ -280,7 +280,7 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    Search::ControllerSearcher.call(
+    Search::Searchers::ControllerSearcher.call(
       controller: self,
       model_class: Lecture,
       configurator_class: Search::Configurators::LectureSearchConfigurator,

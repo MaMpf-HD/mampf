@@ -30,7 +30,7 @@ class MediaController < ApplicationController
   def index
     authorize! :index, Medium.new
 
-    Search::ControllerSearcher.call(
+    Search::Searchers::ControllerSearcher.call(
       controller: self,
       model_class: Medium,
       configurator_class: Search::Configurators::LectureMediaSearchConfigurator,
@@ -235,7 +235,7 @@ class MediaController < ApplicationController
     @purpose = params.dig(:search, :purpose)
     @results_as_list = params.dig(:search, :results_as_list) == "true"
 
-    Search::ControllerSearcher.call(
+    Search::Searchers::ControllerSearcher.call(
       controller: self,
       model_class: Medium,
       configurator_class: Search::Configurators::MediaSearchConfigurator,

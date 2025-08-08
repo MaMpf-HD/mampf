@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Search::PaginatedSearcher) do
+RSpec.describe(Search::Searchers::PaginatedSearcher) do
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
   let(:filter_classes) { [double("FilterClass")] }
@@ -27,13 +27,13 @@ RSpec.describe(Search::PaginatedSearcher) do
   end
 
   # Mocks for dependencies
-  let(:model_searcher_instance) { instance_spy(Search::ModelSearcher, call: search_scope) }
+  let(:model_searcher_instance) { instance_spy(Search::Searchers::ModelSearcher, call: search_scope) }
   let(:search_scope) { instance_spy(ActiveRecord::Relation, "SearchScope") }
   let(:paginated_array) { double("PaginatedArray") }
 
   before do
     # Stub ModelSearcher
-    allow(Search::ModelSearcher).to receive(:new).and_return(model_searcher_instance)
+    allow(Search::Searchers::ModelSearcher).to receive(:new).and_return(model_searcher_instance)
     # Stub Kaminari
     allow(Kaminari).to receive(:paginate_array).and_return(paginated_array)
     allow(paginated_array).to receive(:page).and_return(paginated_array)
@@ -45,7 +45,7 @@ RSpec.describe(Search::PaginatedSearcher) do
   describe "#call" do
     it "initializes and calls ModelSearcher with the correct arguments" do
       search_result
-      expect(Search::ModelSearcher).to have_received(:new).with(
+      expect(Search::Searchers::ModelSearcher).to have_received(:new).with(
         model_class,
         search_params,
         filter_classes,

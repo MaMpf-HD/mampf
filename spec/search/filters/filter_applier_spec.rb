@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Search::FilterApplier) do
+RSpec.describe(Search::Filters::FilterApplier) do
   let(:user) { create(:user) }
   let(:params) { { key: "value" } }
   let(:initial_scope) { double("InitialScope") }

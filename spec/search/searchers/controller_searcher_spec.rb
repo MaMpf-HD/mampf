@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Search::ControllerSearcher) do
+RSpec.describe(Search::Searchers::ControllerSearcher) do
   # --- Test Doubles & Setup ---
   let(:controller) { instance_spy(ApplicationController, "Controller") }
   let(:user) { create(:user) }
@@ -28,7 +28,7 @@ RSpec.describe(Search::ControllerSearcher) do
   end
   let(:paginated_search_result) do
     instance_double(
-      Search::PaginatedSearcher::SearchResult,
+      Search::Searchers::PaginatedSearcher::SearchResult,
       results: [double("Result1"), double("Result2")],
       total_count: 123
     )
@@ -56,7 +56,7 @@ RSpec.describe(Search::ControllerSearcher) do
 
     # Stub collaborator class methods
     allow(configurator_class).to receive(:call).and_return(configurator_result)
-    allow(Search::PaginatedSearcher).to receive(:call).and_return(paginated_search_result)
+    allow(Search::Searchers::PaginatedSearcher).to receive(:call).and_return(paginated_search_result)
   end
 
   # --- Tests ---
@@ -98,7 +98,7 @@ RSpec.describe(Search::ControllerSearcher) do
         default_per_page: default_per_page
       )
 
-      expect(Search::PaginatedSearcher).to have_received(:call).with(
+      expect(Search::Searchers::PaginatedSearcher).to have_received(:call).with(
         model_class: model_class,
         filter_classes: configurator_result.filters,
         user: user,

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Search::ModelSearcher) do
+RSpec.describe(Search::Searchers::ModelSearcher) do
   let(:user) { create(:user) }
   let(:params) { { key: "value" } }
   let(:model_class) { class_spy(Course, "ModelClass") }
@@ -49,7 +49,7 @@ RSpec.describe(Search::ModelSearcher) do
     before do
       # Stub the common chain of calls
       allow(model_class).to receive(:all).and_return(initial_scope)
-      allow(Search::FilterApplier).to receive(:call).and_return(filtered_scope)
+      allow(Search::Filters::FilterApplier).to receive(:call).and_return(filtered_scope)
       allow(filtered_scope).to receive(:distinct).and_return(distinct_scope)
     end
 
@@ -62,7 +62,7 @@ RSpec.describe(Search::ModelSearcher) do
         expect(model_class).to have_received(:all)
 
         # 2. Applies the filters
-        expect(Search::FilterApplier).to have_received(:call).with(
+        expect(Search::Filters::FilterApplier).to have_received(:call).with(
           scope: initial_scope,
           filter_classes: filter_classes,
           params: params.with_indifferent_access,

@@ -70,7 +70,7 @@ class CoursesController < ApplicationController
   def search
     authorize! :search, Course.new
 
-    Search::ControllerSearcher.call(
+    Search::Searchers::ControllerSearcher.call(
       controller: self,
       model_class: Course,
       configurator_class: Search::Configurators::CourseSearchConfigurator,

@@ -135,7 +135,7 @@ class TagsController < ApplicationController
   def search
     authorize! :search, Tag.new
 
-    Search::ControllerSearcher.call(
+    Search::Searchers::ControllerSearcher.call(
       controller: self,
       model_class: Tag,
       configurator_class: Search::Configurators::TagSearchConfigurator,
