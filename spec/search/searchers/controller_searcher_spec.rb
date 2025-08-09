@@ -8,6 +8,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   let(:configurator_class) { class_spy(Search::Configurators::BaseSearchConfigurator, "ConfiguratorClass") }
   let(:instance_variable_name) { :courses }
   let(:options) { { default_per_page: 15 } }
+  let(:cookies) { { "some_cookie" => "some_value" } }
 
   # The hash returned by the controller's #search_params method
   let(:permitted_search_params) { { fulltext: "Ruby", per: 15 } }
@@ -43,7 +44,9 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
     # Stub controller methods
     allow(controller).to receive(:current_user).and_return(user)
     allow(controller).to receive(:params).and_return(top_level_params)
+    # Allow .send to be called for both :search_params and :cookies
     allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
+    allow(controller).to receive(:send).with(:cookies).and_return(cookies)
     allow(controller).to receive(:instance_variable_set)
 
     # Stub collaborator class methods
@@ -55,11 +58,12 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   # --- Tests ---
 
   describe "orchestration logic" do
-    it "calls the configurator with correctly merged params" do
+    it "calls the configurator with correctly merged params and cookies" do
       search
       expect(configurator_class).to have_received(:call).with(
         user: user,
-        search_params: expected_merged_params
+        search_params: expected_merged_params,
+        cookies: cookies
       )
     end
 

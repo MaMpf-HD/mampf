@@ -37,12 +37,12 @@ module Search
 
           # Handle 'all' parameter, falling back to cookie value.
           show_all = (processed[:all] == "true") || (cookies[:all] == "true")
-          cookies[:all] = show_all
+          cookies[:all] = show_all.to_s
           processed[:all] = show_all
 
           # If showing all, clear the 'per' cookie. Otherwise, sanitize 'per'.
           if show_all
-            cookies[:per] = false
+            cookies.delete(:per)
           else
             processed[:per] = sanitized_per_page(processed[:per])
           end

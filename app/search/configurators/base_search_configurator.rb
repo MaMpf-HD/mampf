@@ -19,13 +19,13 @@ module Search
       # @param search_params [Hash] The search parameters.
       # @param cookies [ActionDispatch::Cookies::CookieJar] The controller's cookies.
       # @return [Configuration] An object containing the filter classes and params.
-      def self.call(user:, search_params:, cookies:)
+      def self.call(user:, search_params:, cookies: {})
         new(user: user, search_params: search_params, cookies: cookies).call
       end
 
       attr_reader :user, :search_params, :cookies
 
-      def initialize(user:, search_params:, cookies:)
+      def initialize(user:, search_params:, cookies: {})
         @user = user
         @search_params = search_params.to_h.with_indifferent_access
         @cookies = cookies

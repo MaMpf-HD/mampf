@@ -60,7 +60,7 @@ RSpec.describe(Search::Configurators::BaseSearchConfigurator) do
 
       # Verify that .new was called with the correct arguments
       expect(dummy_configurator_class).to have_received(:new)
-        .with(user: user, search_params: search_params)
+        .with(user: user, search_params: search_params, cookies: {})
 
       # Verify that the instance's #call method was executed
       expect(dummy_instance).to have_received(:call)
