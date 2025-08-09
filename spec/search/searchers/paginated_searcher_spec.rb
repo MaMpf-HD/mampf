@@ -1,91 +1,139 @@
 require "rails_helper"
 
-RSpec.describe(Search::Searchers::ModelSearcher) do
+RSpec.describe(Search::Searchers::PaginatedSearcher) do
+  # Define spies and doubles for dependencies
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
-  let(:params) { { key: "value" } }
-  let(:filter_classes) { [double("FilterClass1")] }
-  let(:custom_orderer_class) { class_spy(Search::Orderers::BaseOrderer, "CustomOrderer") }
+  let(:search_results) { instance_spy(ActiveRecord::Relation, "SearchResults") }
+  let(:paginatable_array) { instance_spy(Kaminari::PaginatableArray, "PaginatableArray") }
+  # Use a simple 'double' for the page_scope, as its class is a Kaminari internal.
+  let(:page_scope) { double("PageScope") }
+  let(:paginated_scope) { double("PaginatedScope") }
 
   # Set up a double for the configuration object
+  let(:params) { { page: "2", per: "20" } }
   let(:config) do
     instance_double(
       Search::Configurators::BaseSearchConfigurator::Configuration,
-      filters: filter_classes,
-      params: params,
-      orderer_class: orderer_class_from_config
+      params: params
     )
   end
 
-  # Stubs for the chained scopes
-  let(:initial_scope) { double("InitialScope") }
-  let(:filtered_scope) { instance_spy(ActiveRecord::Relation, "FilteredScope") }
-  let(:distinct_scope) { instance_spy(ActiveRecord::Relation, "DistinctScope") }
-  let(:ordered_scope) { double("OrderedScope") }
+  # Default arguments for the service call
+  let(:default_per_page) { 15 }
 
-  subject(:searcher) { described_class.new(model_class: model_class, user: user, config: config) }
-
-  before do
-    # Stub the common chain of calls
-    allow(model_class).to receive(:all).and_return(initial_scope)
-    allow(Search::Filters::FilterApplier).to receive(:call).and_return(filtered_scope)
-    allow(filtered_scope).to receive(:distinct).and_return(distinct_scope)
+  subject(:search) do
+    described_class.call(
+      model_class: model_class,
+      user: user,
+      config: config,
+      default_per_page: default_per_page
+    )
   end
 
-  describe "#call" do
-    # This shared example now relies on a `let(:expected_orderer)` to be defined
-    # in the context where it is included.
-    shared_examples "search orchestration" do
-      it "orchestrates the search by calling services in the correct order" do
-        # Trigger the call
-        searcher.call
+  before do
+    # Stub the main dependencies, correctly modeling the Kaminari chain.
+    allow(Search::Searchers::ModelSearcher).to receive(:call).and_return(search_results)
+    allow(Kaminari).to receive(:paginate_array).and_return(paginatable_array)
+    # .page is called on paginatable_array and returns our new page_scope double
+    allow(paginatable_array).to receive(:page).and_return(page_scope)
+    # .per is called on the page_scope double
+    allow(page_scope).to receive(:per).and_return(paginated_scope)
+  end
 
-        # 1. Starts with the model's .all scope
-        expect(model_class).to have_received(:all)
+  it "calls the ModelSearcher to get the base results" do
+    search
+    expect(Search::Searchers::ModelSearcher).to have_received(:call).with(
+      model_class: model_class,
+      user: user,
+      config: config
+    )
+  end
 
-        # 2. Applies the filters via the FilterApplier
-        expect(Search::Filters::FilterApplier).to have_received(:call).with(
-          scope: initial_scope,
-          user: user,
-          config: config
-        )
+  it "returns a SearchResult struct" do
+    expect(search).to be_a(Search::Searchers::PaginatedSearcher::SearchResult)
+    expect(search.results).to eq(paginated_scope)
+  end
 
-        # 3. Makes the results distinct
-        expect(filtered_scope).to have_received(:distinct)
-
-        # 4. Applies the final ordering using the expected orderer
-        expect(expected_orderer).to have_received(:call).with(
-          model_class: model_class,
-          scope: distinct_scope,
-          search_params: params
-        )
-      end
-
-      it "returns the final, ordered scope" do
-        expect(searcher.call).to eq(ordered_scope)
+  describe "count calculation" do
+    context "when the scope is a standard ActiveRecord::Relation" do
+      it "calculates the total count using an efficient query" do
+        allow(search_results).to receive(:group_values).and_return([])
+        allow(search_results).to receive(:select).with(:id).and_return(search_results)
+        search
+        expect(search_results).to have_received(:count)
       end
     end
 
-    context "with the default orderer" do
-      let(:orderer_class_from_config) { nil }
-      let(:expected_orderer) { Search::Orderers::SearchOrderer }
-
-      before do
-        allow(expected_orderer).to receive(:call).and_return(ordered_scope)
+    context "when the scope has group_values" do
+      it "calculates the count using a subquery" do
+        allow(search_results).to receive(:group_values).and_return(["some_column"])
+        allow(model_class).to receive(:from).and_return(model_class)
+        allow(model_class).to receive(:count)
+        search
+        expect(model_class).to have_received(:from).with(search_results, :subquery)
+        expect(model_class).to have_received(:count)
       end
-
-      include_examples "search orchestration"
     end
 
-    context "with a custom orderer class" do
-      let(:orderer_class_from_config) { custom_orderer_class }
-      let(:expected_orderer) { custom_orderer_class }
+    context "when the scope is an Array" do
+      let(:search_results) { [1, 2, 3] } # Override with a real array
 
-      before do
-        allow(expected_orderer).to receive(:call).and_return(ordered_scope)
+      it "calculates the count using Array#size" do
+        expect(search.total_count).to eq(3)
+      end
+    end
+  end
+
+  describe "pagination logic" do
+    before do
+      # For pagination tests, we need a real array and a real count
+      allow(search_results).to receive(:to_a).and_return([1, 2, 3, 4, 5])
+      allow(search_results).to receive(:group_values).and_return([])
+      allow(search_results).to receive_message_chain(:select, :count).and_return(5)
+    end
+
+    context "with standard pagination" do
+      it "paginates with the 'per' value from params" do
+        search
+        expect(paginatable_array).to have_received(:page).with("2")
+        # Correctly check that .per is called on the page_scope object
+        expect(page_scope).to have_received(:per).with("20")
       end
 
-      include_examples "search orchestration"
+      context "when 'per' is not in params" do
+        let(:params) { { page: "2" } }
+
+        it "uses the default_per_page value" do
+          search
+          # Correctly check that .per is called on the page_scope object
+          expect(page_scope).to have_received(:per).with(15)
+        end
+      end
+    end
+
+    context "when 'all' param is present" do
+      let(:params) { { all: "1" } }
+
+      it "paginates with a 'per' value equal to the total count" do
+        search
+        expect(paginatable_array).to have_received(:page).with(1)
+        # Correctly check that .per is called on the page_scope object
+        expect(page_scope).to have_received(:per).with(5)
+      end
+
+      context "when the result set is empty" do
+        before do
+          allow(search_results).to receive(:to_a).and_return([])
+          allow(search_results).to receive_message_chain(:select, :count).and_return(0)
+        end
+
+        it "uses a 'per' value of 1 to avoid errors" do
+          search
+          # Correctly check that .per is called on the page_scope object
+          expect(page_scope).to have_received(:per).with(1)
+        end
+      end
     end
   end
 end
