@@ -13,13 +13,14 @@ module Search
       def call
         return scope if skip_filter?(all_param: :all_terms, ids_param: :term_ids)
 
-        # Add lectures without a term if the active term is selected
-        if Term.active.try(:id).to_s.in?(params[:term_ids])
-          scope.left_outer_joins(:term)
-               .where(term_id: params[:term_ids] + [nil])
-        else
-          scope.where(term_id: params[:term_ids])
-        end
+        ids_to_filter = params[:term_ids].dup
+
+        # If the active term is selected, we also include records without a term
+        # (e.g., term-independent lectures).
+        ids_to_filter << nil if Term.active.try(:id).to_s.in?(ids_to_filter)
+
+        # This is now a simple, efficient WHERE clause with no redundant JOIN.
+        scope.where(term_id: ids_to_filter)
       end
     end
   end

@@ -43,9 +43,7 @@ module Search
         imported_media_ids = lecture.imported_media.pluck(:id)
 
         # Determine sort direction for lessons based on the lecture's term.
-        order_factor = lecture.order_factor
-        lesson_date_order = order_factor == 1 ? :asc : :desc
-        lesson_id_order = order_factor == 1 ? :asc : :desc
+        lesson_sort_dir = determine_lesson_sort_direction(lecture)
 
         # Define the complex sorting expressions using Arel's CASE statements.
         # These will be used for both SELECTing and ORDERING.
@@ -84,8 +82,8 @@ module Search
           sort_expressions[:sort_group1].asc,
           sort_expressions[:sort_group2].asc,
           sort_expressions[:sort_lecture_created_at].desc,
-          sort_expressions[:sort_lesson_date].send(lesson_date_order),
-          sort_expressions[:sort_lesson_id].send(lesson_id_order),
+          sort_expressions[:sort_lesson_date].send(lesson_sort_dir),
+          sort_expressions[:sort_lesson_id].send(lesson_sort_dir),
           sort_expressions[:sort_lesson_position].asc,
           sort_expressions[:sort_talk_position].asc,
           sort_expressions[:sort_course_description].asc
@@ -100,6 +98,19 @@ module Search
           .select(media_table[Arel.star], *sort_expressions.map { |k, v| v.as(k.to_s) })
           .order(order_clause)
       end
+
+      private
+
+        # Determines the sort direction for lessons. For the active term or for
+        # term-independent lectures, lessons are sorted newest-first (desc).
+        # For all other (older) terms, they are sorted chronologically (asc).
+        def determine_lesson_sort_direction(lecture)
+          if lecture.term.blank? || lecture.term.active?
+            :desc
+          else
+            :asc
+          end
+        end
     end
   end
 end

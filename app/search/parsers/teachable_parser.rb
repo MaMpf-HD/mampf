@@ -1,100 +1,94 @@
 # This service object is responsible for parsing and expanding a list of
 # "teachable" identifiers provided in search parameters.
 #
-# Its primary purpose is to handle the "inheritance" logic for teachables.
-# When a user selects a course and enables inheritance, this parser finds not
-# only the course itself but also all associated lectures and lessons.
+# It returns a hash grouping the teachable IDs by their class name, which can
+# be used to build an efficient database query.
 #
-# It is designed to be efficient, using a minimal number of database queries
-# to gather all related records.
+# When inheritance is enabled, it uses efficient subqueries to find all
+# child teachables (e.g., lectures and lessons under a given course) without
+# loading the full records into memory.
 #
-# @example
-#   params = {
-#     teachable_ids: ["Course-1"],
-#     teachable_inheritance: "1"
-#   }
-#   Search::TeachableParser.call(params)
-#   # => ["Course-1", "Lecture-10", "Lecture-11", "Lesson-101", ...]
+# Example with inheritance:
+#
+# Given `params[:teachable_ids]` = `["Course-1", "Lecture-5"]` and
+# `params[:teachable_inheritance]` = `"1"`, the parser will return a hash
+# containing:
+# - "Course" => [1]
+# - "Lecture" => An ActiveRecord::Relation subquery for all lectures in course 1
+#                plus lecture 5.
+# - "Lesson" => An ActiveRecord::Relation subquery for all lessons belonging
+#               to the lectures found above.
 #
 module Search
   module Parsers
     class TeachableParser
-      # Convenience class method to initialize and call the parser in one step.
       def self.call(params)
         new(params).call
       end
 
-      # Initializes the parser with parameters from a search request.
-      #
-      # @param params [Hash] A hash that may contain the following keys:
-      #   - :teachable_ids [Array<String>] An array of teachable identifiers
-      #     (e.g., ["Course-1", "Lecture-5"]).
-      #   - :all_teachables [String] If "1", signals that filtering by teachable
-      #     should be skipped.
-      #   - :teachable_inheritance [String] If "1", expands the scope to include
-      #     child teachables (e.g., lectures and lessons under a given course).
       def initialize(params)
-        @teachable_ids = params[:teachable_ids] || []
+        @teachable_ids = params[:teachable_ids].to_a.compact_blank
         @all_teachables = params[:all_teachables] == "1"
         @inheritance = params[:teachable_inheritance] == "1"
       end
 
-      # Performs the parsing logic based on the initialized parameters.
-      #
-      # This method resolves a list of teachable identifiers (e.g., "Course-1").
-      # - If the `all_teachables` flag was set, it returns an empty array to
-      #   signal that filtering should be skipped.
-      # - If `inheritance` is disabled, it returns the original list of IDs.
-      # - If `inheritance` is enabled, it expands the list to include child
-      #   teachables (e.g., lectures and lessons under a given course).
-      #
-      # @return [Array<String>] An array of teachable identifiers.
+      # @return [Hash{String => Array<Integer>}] A hash like {"Course" => [1, 7]}
       def call
-        return [] if @all_teachables
-        return @teachable_ids unless @inheritance
+        return {} if @all_teachables || @teachable_ids.empty?
+        return group_simple_teachables unless @inheritance
 
-        teachables_with_inheritance.map { |t| "#{t.class.name}-#{t.id}" }
+        group_teachables_with_inheritance
       end
 
       private
 
-        # Memoized parsing of lecture IDs from the input strings.
-        def lecture_ids
-          @lecture_ids ||= @teachable_ids.filter_map do |t|
-            t.delete_prefix("Lecture-").to_i if t.start_with?("Lecture-")
+        # Groups IDs from strings without inheritance logic.
+        def group_simple_teachables
+          @teachable_ids.each_with_object(Hash.new { |h, k| h[k] = [] }) do |id_string, hash|
+            type, id = id_string.split("-", 2)
+            hash[type] << id.to_i if type.in?(["Course", "Lecture", "Lesson"]) && id.present?
           end
         end
 
-        # Memoized parsing of course IDs from the input strings.
-        def course_ids
-          @course_ids ||= @teachable_ids.filter_map do |t|
-            t.delete_prefix("Course-").to_i if t.start_with?("Course-")
+        # Gathers all teachable IDs with inheritance using efficient subqueries.
+        def group_teachables_with_inheritance
+          simple_groups = group_simple_teachables
+          course_ids = simple_groups.fetch("Course", [])
+          lecture_ids = simple_groups.fetch("Lecture", [])
+          lesson_ids = simple_groups.fetch("Lesson", [])
+
+          lectures_subquery = build_lectures_subquery(course_ids, lecture_ids)
+          lessons_result = build_lessons_result(lectures_subquery, lesson_ids)
+
+          # If no courses or lectures were given, the lesson part will be a
+          # subquery. If the user only selected lessons, we can just return the array.
+          final_lessons = if course_ids.empty? && lecture_ids.empty?
+            lesson_ids
+          else
+            lessons_result
           end
+
+          {
+            "Course" => course_ids,
+            "Lecture" => lectures_subquery,
+            "Lesson" => final_lessons
+          }
         end
 
-        # Finds all specified courses in a single query.
-        def courses
-          @courses ||= Course.where(id: course_ids)
+        # Builds a subquery for lectures that were explicitly selected OR belong
+        # to selected courses.
+        def build_lectures_subquery(course_ids, lecture_ids)
+          Lecture.where(id: lecture_ids)
+                 .or(Lecture.where(course_id: course_ids))
+                 .select(:id)
         end
 
-        # Finds all specified lectures and lectures from specified courses
-        # in a single, efficient query using OR.
-        def lectures_with_inheritance
-          @lectures_with_inheritance ||=
-            Lecture.where(id: lecture_ids).or(Lecture.where(course_id: course_ids))
-        end
-
-        # Finds all lessons belonging to the relevant lectures in a single query,
-        # avoiding N+1 problems.
-        def lessons_with_inheritance
-          @lessons_with_inheritance ||= Lesson.where(lecture: lectures_with_inheritance)
-        end
-
-        # Gathers all teachable records. Each method call triggers at most one
-        # efficient query.
-        def teachables_with_inheritance
-          # The '+' operator on relations will trigger the queries and return an array.
-          courses.to_a + lectures_with_inheritance.to_a + lessons_with_inheritance.to_a
+        # Builds a subquery for lessons that belong to the given lectures OR were
+        # explicitly selected.
+        def build_lessons_result(lectures_subquery, lesson_ids)
+          Lesson.where(lecture_id: lectures_subquery)
+                .or(Lesson.where(id: lesson_ids))
+                .select(:id)
         end
     end
   end

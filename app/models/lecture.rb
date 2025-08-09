@@ -566,13 +566,6 @@ class Lecture < ApplicationRecord
            .select { |l| l.sections.blank? }
   end
 
-  def order_factor
-    return -1 if lecture.term.blank?
-    return -1 if lecture.term.active
-
-    1
-  end
-
   def begin_date
     Rails.cache.fetch("#{cache_key_with_version}/begin_date") do
       term&.begin_date || Term.active.begin_date || Time.zone.today

@@ -6,24 +6,21 @@ module Search
         lecture_id = params[:id]
         project = params[:project]
 
-        lecture = Lecture.find_by(id: lecture_id)
-        return scope unless lecture && project.present?
+        # Skip the filter unless we have a lecture and a project to work with.
+        return scope unless lecture_id.present? && project.present?
 
-        # Pluck the IDs from the imported media scope to resolve the
-        # structurally incompatible join from the has_many :through association.
-        imported_media_ids = lecture.imported_media
-                                    .where(sort: project.camelize)
-                                    .pluck(:id)
+        # Create a subquery to find the IDs of the relevant imported media.
 
-        # If there are no imported media to add, return the original scope.
-        return scope if imported_media_ids.empty?
+        imported_media_ids_subquery = Import.where(teachable_id: lecture_id,
+                                                   teachable_type: "Lecture")
+                                            .joins(:medium)
+                                            .where(media: { sort: project.camelize })
+                                            .select(:medium_id)
 
-        # Build a new, compatible scope from the IDs. This scope has no joins
-        # and can be safely combined with the original scope.
-        compatible_imported_scope = Medium.where(id: imported_media_ids)
-
-        # Combine the original scope with the compatible imported media scope.
-        scope.or(compatible_imported_scope)
+        # Combine the original scope with the imported media scope using OR.
+        # Using a subquery for the `id` list is robust and avoids potential
+        # issues with complex joins from the has_many :through association.
+        scope.or(Medium.where(id: imported_media_ids_subquery))
       end
     end
   end

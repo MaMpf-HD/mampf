@@ -11,20 +11,26 @@ module Search
 
         return scope.none unless lecture_id && project.present?
 
-        lecture = Lecture.find_by(id: lecture_id)
-        return scope.none unless lecture
+        # This is a more efficient way to get the course_id without loading
+        # the entire lecture object.
+        course_id = Lecture.where(id: lecture_id).pick(:course_id)
+        return scope.none unless course_id
 
-        media_in_project = Medium.where(sort: project.camelize)
+        # Define subqueries for lesson and talk IDs. This keeps the logic in the DB.
+        lesson_ids = Lesson.where(lecture_id: lecture_id).select(:id)
+        talk_ids = Talk.where(lecture_id: lecture_id).select(:id)
 
-        course_media_ids = media_in_project.where(teachable: lecture.course).pluck(:id)
-        lecture_media_ids = media_in_project.where(teachable: lecture).pluck(:id)
-        lesson_media_ids = media_in_project.where(teachable: lecture.lessons).pluck(:id)
-        talk_media_ids = media_in_project.where(teachable: lecture.talks).pluck(:id)
+        # First, build the query to find all media associated with the lecture's
+        # hierarchy (Course, Lecture, Lesson, Talk).
+        media_in_hierarchy = scope
+                             .where(teachable_type: "Course", teachable_id: course_id)
+                             .or(scope.where(teachable_type: "Lecture", teachable_id: lecture_id))
+                             .or(scope.where(teachable_type: "Lesson", teachable_id: lesson_ids))
+                             .or(scope.where(teachable_type: "Talk", teachable_id: talk_ids))
 
-        all_ids = (course_media_ids + lecture_media_ids + lesson_media_ids + talk_media_ids).uniq
-
-        # Return a new scope containing only the media that matched.
-        scope.where(id: all_ids)
+        # Then, apply the project/sort filter to the *entire* result of that query.
+        # This ensures the sort is applied to all parts of the OR condition.
+        media_in_hierarchy.where(sort: project.camelize)
       end
     end
   end

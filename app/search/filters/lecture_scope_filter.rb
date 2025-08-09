@@ -12,69 +12,40 @@ module Search
     class LectureScopeFilter < BaseFilter
       def call
         option = params[:lecture_scope]
-        # '0' is for 'all', which is the default and requires no filtering.
         return scope if option.blank? || option == "0"
 
         case option
-        when "1" # subscribed
-          apply_subscribed_filter
-        when "2" # custom
-          apply_custom_filter
-        else
-          scope
+        when "1" then apply_subscribed_filter
+        when "2" then apply_custom_filter
+        else scope
         end
       end
 
       private
 
         def apply_subscribed_filter
-          ids = subscribed_teachable_ids
-          media = Medium.arel_table
+          # Use subqueries to define the sets of IDs we need. This keeps all
+          # logic in the database and avoids loading arrays into Ruby.
+          subscribed_lecture_ids = user.lectures.select(:id)
+          subscribed_course_ids = user.lectures.select(:course_id).distinct
+          subscribed_lesson_ids = Lesson.where(lecture_id: subscribed_lecture_ids).select(:id)
 
-          # Build the query conditions using Arel
-          course_cond = media[:teachable_type].eq("Course")
-                                              .and(media[:teachable_id].in(ids[:course_ids]))
-          lecture_cond = media[:teachable_type].eq("Lecture")
-                                               .and(media[:teachable_id].in(ids[:lecture_ids]))
-          lesson_cond = media[:teachable_type].eq("Lesson")
-                                              .and(media[:teachable_id].in(ids[:lesson_ids]))
-
-          # Filter media that are teachable by any of these courses, lectures, or lessons.
-          scope.where(course_cond.or(lecture_cond).or(lesson_cond))
+          # Build a single, efficient query using .or()
+          scope.where(teachable_type: "Course", teachable_id: subscribed_course_ids)
+               .or(scope.where(teachable_type: "Lecture", teachable_id: subscribed_lecture_ids))
+               .or(scope.where(teachable_type: "Lesson", teachable_id: subscribed_lesson_ids))
         end
 
         def apply_custom_filter
-          custom_lecture_ids = params[:media_lectures]
-          return scope if custom_lecture_ids.blank?
+          custom_lecture_ids = params[:media_lectures].to_a.compact_blank
+          return scope if custom_lecture_ids.empty?
 
-          # Find all lessons that belong to the selected lectures.
-          lesson_ids = Lesson.where(lecture_id: custom_lecture_ids).pluck(:id)
-          media = Medium.arel_table
+          # Use a subquery for lesson_ids to avoid a separate DB round-trip.
+          lesson_ids = Lesson.where(lecture_id: custom_lecture_ids).select(:id)
 
-          # Build the query conditions using Arel.
-          lecture_cond = media[:teachable_type].eq("Lecture")
-                                               .and(media[:teachable_id].in(custom_lecture_ids))
-          lesson_cond = media[:teachable_type].eq("Lesson")
-                                              .and(media[:teachable_id].in(lesson_ids))
-
-          # Filter media that are teachable by any of these lectures or lessons.
-          scope.where(lecture_cond.or(lesson_cond))
-        end
-
-        # Gathers all teachable IDs related to the user's subscriptions.
-        def subscribed_teachable_ids
-          # Get the user's subscribed lectures.
-          subscribed_lectures = user.lectures
-          lecture_ids = subscribed_lectures.pluck(:id)
-
-          {
-            # Get the unique IDs of the courses these lectures belong to.
-            course_ids: subscribed_lectures.pluck(:course_id).uniq,
-            # Get the IDs of these lectures.
-            lecture_ids: lecture_ids,
-            # Find all lessons that belong to the subscribed lectures.
-            lesson_ids: Lesson.where(lecture_id: lecture_ids).pluck(:id)
-          }
+          # Build the query using .or()
+          scope.where(teachable_type: "Lecture", teachable_id: custom_lecture_ids)
+               .or(scope.where(teachable_type: "Lesson", teachable_id: lesson_ids))
         end
     end
   end

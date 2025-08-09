@@ -1,4 +1,7 @@
-# Filters a scope of media by associated tags, supporting both "AND" and "OR" logic.
+# Filters a scope of records by associated tags, supporting both "AND" and "OR" logic.
+#
+## This filter is model-agnostic and works for any model that has a `tags`
+# association (e.g., Course, Medium).
 #
 # This filter is skipped if the 'all_tags' parameter is set to '1' or if
 # no specific tag IDs are provided.
@@ -12,21 +15,26 @@ module Search
   module Filters
     class TagFilter < BaseFilter
       def call
+        # First, check if the model can be tagged before doing anything else.
+        return scope unless scope.klass.reflect_on_association(:tags)
         return scope if skip_filter?(all_param: :all_tags, ids_param: :tag_ids)
 
         tag_ids = params[:tag_ids].map(&:to_i)
+        table_name = scope.klass.table_name
+        primary_key = scope.klass.primary_key
 
         if params[:tag_operator] == "and"
-          # Find the IDs of media within the current scope that have
+          # Find the IDs of records within the current scope that have
           # all the specified tags.
-          matching_media_ids = scope.joins(:tags)
-                                    .where(tags: { id: tag_ids })
-                                    .group("media.id")
-                                    .having("COUNT(DISTINCT tags.id) = ?", tag_ids.count)
-                                    .pluck(:id)
+          matching_ids_subquery = scope.joins(:tags)
+                                       .where(tags: { id: tag_ids })
+                                       .group("#{table_name}.#{primary_key}")
+                                       .having("COUNT(DISTINCT tags.id) = ?", tag_ids.count)
+                                       .select("#{table_name}.#{primary_key}")
 
-          # Return a new, non-grouped scope containing only the media that matched.
-          scope.where(id: matching_media_ids)
+          # Use the subquery to filter the scope. This results in a single
+          # SQL query and keeps the final scope clean for further chaining.
+          scope.where(primary_key => matching_ids_subquery)
         else
           # Standard OR search
           scope.joins(:tags).where(tags: { id: tag_ids }).distinct

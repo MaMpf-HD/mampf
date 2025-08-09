@@ -1,52 +1,32 @@
-# Filters media by their specific teachable parent (e.g., a Course or Lecture).
+# Filters media based on a list of "teachable" entities (Courses, Lectures,
+# Lessons). It uses the TeachableParser to resolve the full list of relevant
+# teachable IDs, including handling inheritance logic.
 #
-# This filter is skipped if no teachable parameters are provided.
-#
-# It relies on the `TeachableParser` to extract a list of teachable
-# identifiers (e.g., "Course-1", "Lecture-5") from the request parameters.
-# For each valid identifier, it constructs an Arel condition to match the
+# For each valid identifier, it constructs a query to match the
 # `teachable_type` and `teachable_id`. These conditions are then combined
 # with OR to find all media that belong to any of the specified teachables.
 module Search
   module Filters
     class TeachableFilter < BaseFilter
       def call
-        # This single check handles nil, [], [""], [nil], etc.
-        no_specific_teachables = params[:teachable_ids].to_a.compact_blank.empty?
+        # First, check if the user actually provided any teachable IDs to filter by.
+        # If not, the filter is inactive and should return the original scope.
+        return scope if params[:teachable_ids].to_a.compact_blank.empty?
 
-        return scope if no_specific_teachables
+        grouped_teachables = Search::Parsers::TeachableParser.call(params)
 
-        conditions = build_arel_conditions
+        # If the parser returns an empty hash, it means the user provided IDs,
+        # but none were valid. In this case, the result should be an empty set.
+        return scope.none if grouped_teachables.empty?
 
-        # If params were provided but none were valid, return an empty scope.
-        return scope.none if conditions.blank?
+        # Build a query for each teachable type and chain them with .or()
+        queries = grouped_teachables.map do |type, ids|
+          scope.where(teachable_type: type, teachable_id: ids)
+        end
 
         # Chain all individual conditions together with OR.
-        combined_conditions = conditions.reduce(:or)
-        scope.where(combined_conditions)
+        queries.reduce(:or)
       end
-
-      private
-
-        # Builds an array of Arel conditions based on the teachable parameters.
-        #
-        # @return [Array<Arel::Node>] An array of conditions, or an empty array.
-        def build_arel_conditions
-          teachable_id_strings = Search::Parsers::TeachableParser.call(params)
-          return [] if teachable_id_strings.blank?
-
-          media = Medium.arel_table
-          allowed_types = ["Course", "Lecture", "Lesson"]
-
-          teachable_id_strings.filter_map do |id_string|
-            type, id = id_string.split("-", 2)
-
-            # Ensure the type is one of the allowed polymorphic types.
-            if type.in?(allowed_types)
-              media[:teachable_type].eq(type).and(media[:teachable_id].eq(id.to_i))
-            end
-          end
-        end
     end
   end
 end

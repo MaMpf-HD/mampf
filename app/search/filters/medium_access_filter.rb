@@ -9,13 +9,14 @@ module Search
   module Filters
     class MediumAccessFilter < BaseFilter
       def call
-        return scope if params[:access].blank? || params[:access] == "irrelevant"
+        access_param = params[:access]
+        return scope if access_param.blank? || access_param == "irrelevant"
 
-        if params[:access] == "unpublished"
-          scope.where(released: nil)
-        else
-          scope.where(released: params[:access])
-        end
+        # Determine the value for the WHERE clause based on the special
+        # 'unpublished' case. This avoids branching on the `scope` object.
+        released_value = access_param == "unpublished" ? nil : access_param
+
+        scope.where(released: released_value)
       end
     end
   end

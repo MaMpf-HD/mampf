@@ -15,18 +15,22 @@ module Search
       def call
         return scope if user&.admin?
 
-        # Get a reference to the base scope to build the .or clauses
-        lectures = Lecture.arel_table
-        joins = EditableUserJoin.arel_table
-
-        # Define the three separate conditions for visibility
-        is_published = lectures[:released].not_eq(nil)
-        is_teacher = lectures[:teacher_id].eq(user.id)
-        is_editor = joins[:user_id].eq(user.id)
-
-        # Chain the conditions together using .or()
+        # For complex OR conditions involving joins, using a SQL string fragment
+        # is often the clearest and most robust solution. It avoids issues with
+        # structurally incompatible relations that can occur with chaining .or().
+        #
+        # A left_outer_join is necessary because a lecture might not have an
+        # editor, but we still need to check the other conditions.
+        #
+        # This query is safe from SQL injection because it uses parameterized
+        # queries (the `:user_id` placeholder) instead of string interpolation.#
         scope.left_outer_joins(:editable_user_joins)
-             .where(is_published.or(is_teacher).or(is_editor))
+             .where(
+               "lectures.released IS NOT NULL OR " \
+               "lectures.teacher_id = :user_id OR " \
+               "editable_user_joins.user_id = :user_id",
+               user_id: user.id
+             )
       end
     end
   end
