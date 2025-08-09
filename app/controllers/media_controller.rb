@@ -12,7 +12,6 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :sanitize_params, only: [:index]
   before_action :check_for_consent, except: [:play, :display]
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
@@ -592,41 +591,8 @@ class MediaController < ApplicationController
       @medium.update(manuscript: nil)
     end
 
-    def sanitize_params
-      reveal_contradictions
-      sanitize_page!
-      sanitize_per!
-      params[:all] = (params[:all] == "true") || (cookies[:all] == "true")
-      cookies[:all] = params[:all]
-      cookies[:per] = false if cookies[:all]
-      params[:reverse] = params[:reverse] == "true"
-    end
-
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
-    end
-
-    def reveal_contradictions
-      return if params[:lecture_id].blank?
-      return if params[:lecture_id].to_i.in?(@course.lecture_ids)
-
-      redirect_to :root, alert: I18n.t("controllers.contradiction")
-    end
-
-    def sanitize_page!
-      params[:page] = params[:page].to_i.positive? ? params[:page].to_i : 1
-    end
-
-    def sanitize_per!
-      cookies[:all] = "false" if params[:per] || cookies[:per].to_i.positive?
-      params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
-        params[:per].to_i
-      elsif cookies[:per].to_i.positive?
-        cookies[:per].to_i
-      else
-        8
-      end
-      cookies[:per] = params[:per]
     end
 
     def search_params
@@ -643,7 +609,6 @@ class MediaController < ApplicationController
 
     def lecture_media_search_params
       params.permit(:project, :visibility, :reverse, :id, :all, :page, :per)
-      #  .merge(lecture_id: @lecture.id)
     end
 
     # destroy all notifications related to this medium

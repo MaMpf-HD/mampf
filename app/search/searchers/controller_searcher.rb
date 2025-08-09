@@ -42,7 +42,8 @@ module Search
       def call
         # Get the search configuration from the configurator.
         config = configurator_class.call(user: controller.current_user,
-                                         search_params: permitted_controller_params)
+                                         search_params: permitted_controller_params,
+                                         cookies: controller.send(:cookies))
 
         # If the configurator returns nil (e.g., required lecture not found),
         # set empty results and stop.
