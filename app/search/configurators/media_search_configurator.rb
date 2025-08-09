@@ -53,18 +53,38 @@ module Search
         def process_params
           processed = search_params.deep_dup
 
-          # Remove the :access parameter if the user is not an editor, as the
-          # MediumVisibilityFilter does not use it.
-          processed.delete(:access) unless user.active_teachable_editor?
-
-          # If "all types" is selected from the start page search, we default to
-          # searching within all generic media types.
-          if processed[:all_types] == "1" && processed[:from] == "start"
-            processed[:types] = Medium.generic_sorts
-            processed[:all_types] = "0"
+          if user.active_teachable_editor?
+            process_for_editor(processed)
+          else
+            process_for_generic_user(processed)
           end
 
           processed
+        end
+
+        # Applies strict security restrictions for a generic user.
+        def process_for_generic_user(processed)
+          restrict_to_generic_types(processed)
+          processed.delete(:access)
+        end
+
+        # Applies restrictions for an editor, but only on the start page.
+        def process_for_editor(processed)
+          return unless processed[:from] == "start"
+
+          restrict_to_generic_types(processed)
+        end
+
+        # This helper method contains the shared logic for restricting a search
+        # to only the generic media types.
+        def restrict_to_generic_types(processed)
+          if processed[:types].present?
+            processed[:types] &= Medium.generic_sorts
+          else
+            processed[:types] = Medium.generic_sorts
+          end
+          # Force 'all_types' to off to ensure the TypeFilter is always applied.
+          processed[:all_types] = "0"
         end
     end
   end
