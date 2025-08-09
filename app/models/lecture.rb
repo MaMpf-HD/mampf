@@ -566,29 +566,6 @@ class Lecture < ApplicationRecord
            .select { |l| l.sections.blank? }
   end
 
-  # for a given list of media, sorts them as follows:
-  # 1) media associated to the lecture, sorted first by boost and second
-  # by creation date
-  # 2) media associated to lessons of the lecture, sorted by lesson numbers
-  def lecture_lesson_results(filtered_media)
-    lecture_results = filtered_media.where(teachable: self)
-                                    .order(boost: :desc, created_at: :desc)
-    lesson_results = filtered_media.where(teachable:
-                                            Lesson.where(lecture: self))
-    talk_results = filtered_media.where(teachable:
-                                            Talk.where(lecture: self))
-    lecture_results +
-      lesson_results.includes(:teachable)
-                    .sort_by do |m|
-                      [order_factor * m.lesson.date.jd,
-                       order_factor * m.lesson.id,
-                       m.position]
-                    end +
-      talk_results.includes(:teachable).sort_by do |m|
-        m.teachable.position
-      end
-  end
-
   def order_factor
     return -1 if lecture.term.blank?
     return -1 if lecture.term.active

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_05_000010) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_05_000011) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -410,7 +410,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_05_000010) do
     t.text "geogebra_app_name"
     t.integer "position"
     t.boolean "text_input", default: false
-    t.float "boost", default: 0.0
     t.datetime "released_at", precision: nil
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil

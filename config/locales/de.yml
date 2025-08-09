@@ -1150,7 +1150,6 @@ de:
       lock_comments: Kommentare für dieses Medium deaktivieren
       comments_locked: Kommentare deaktiviert
       release_date: 'Veröffentlichungsdatum'
-      boost: Boost
       invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
       scheduled_for_release: >
         Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
@@ -1454,13 +1453,6 @@ de:
           die mit dem THymE-Editor bearbeitet wurden).
         details_warning: >
           Es wurden Details geändert, die noch nicht übernommen wurden.
-        boost: >
-          Über den Boost kannst Du die Reihenfolge überschreiben, in der
-          standardmäßig Medien angeordnet werden, die zu Modulen bzw.
-          Veranstaltungen gehören (der Boost wirkt sich nicht auf Medien aus,
-          die zu einer Sitzung assoziiert sind). Der Standardwert ist 0,
-          Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
-          niedrigerem Boost weiter hinten.
         scheduled_release: >
           Die Veröffentlichung erfolgt nicht sekundengenau, sollte jedoch
           spätestens etwa eine Minute nach der angegebenen Uhrzeit erfolgen.
