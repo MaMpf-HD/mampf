@@ -61,6 +61,7 @@ module Search
           # searching within all generic media types.
           if processed[:all_types] == "1" && processed[:from] == "start"
             processed[:types] = Medium.generic_sorts
+            processed[:all_types] = "0"
           end
 
           processed
