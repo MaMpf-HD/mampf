@@ -9,5 +9,4 @@ import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
 // They might not be needed with Turbo anymore.
 import "~/js/_turbo_fix_bootstrap_modal";
-import "~/js/_turbo_fix_frame_missing";
 import "~/js/_turbo_fix_selectize";
