@@ -1,3 +1,4 @@
-<%= turbo_frame_tag(request.headers["Turbo-Frame"]) do %>
+<% turbo_frame_id = request.headers["Turbo-Frame"] %>
+<%= turbo_frame_tag(turbo_frame_id =~ /\A[\w-]+\z/ ? turbo_frame_id : nil) do %>
   <%= yield %>
 <% end %>
