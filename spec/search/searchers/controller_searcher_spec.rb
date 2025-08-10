@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Search::Searchers::ControllerSearcher) do
-  # --- Test Doubles & Setup ---
   let(:controller) { instance_spy(ApplicationController, "Controller") }
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
@@ -10,23 +9,20 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   let(:options) { { default_per_page: 15 } }
   let(:cookies) { { "some_cookie" => "some_value" } }
 
-  # The hash returned by the controller's #search_params method
   let(:permitted_search_params) { { fulltext: "Ruby", per: 15 } }
-  # The top-level params hash, containing :page
   let(:top_level_params) { ActionController::Parameters.new(page: 2) }
-  # The final merged params we expect to be passed to the configurator
   let(:expected_merged_params) { { fulltext: "Ruby", per: 15, page: 2 } }
 
-  # The Configuration object returned by the configurator
   let(:configurator_result) do
     instance_double(Search::Configurators::BaseSearchConfigurator::Configuration)
   end
-  # The SearchResult object returned by the paginated searcher
+
+  let(:pagy_object) { instance_double(Pagy) }
   let(:paginated_search_result) do
     instance_double(
       Search::Searchers::PaginatedSearcher::SearchResult,
       results: [double("Result1")],
-      total_count: 42
+      pagy: pagy_object
     )
   end
 
@@ -41,21 +37,16 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   end
 
   before do
-    # Stub controller methods
     allow(controller).to receive(:current_user).and_return(user)
     allow(controller).to receive(:params).and_return(top_level_params)
-    # Allow .send to be called for both :search_params and :cookies
     allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
     allow(controller).to receive(:send).with(:cookies).and_return(cookies)
     allow(controller).to receive(:instance_variable_set)
 
-    # Stub collaborator class methods
     allow(configurator_class).to receive(:call).and_return(configurator_result)
     allow(Search::Searchers::PaginatedSearcher).to receive(:call)
       .and_return(paginated_search_result)
   end
-
-  # --- Tests ---
 
   describe "orchestration logic" do
     it "calls the configurator with correctly merged params and cookies" do
@@ -77,19 +68,21 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       )
     end
 
-    it "assigns the results and total count to the controller" do
+    it "assigns the pagy object and results to the controller" do
       search
       expect(controller).to have_received(:instance_variable_set)
-        .with(:@total, paginated_search_result.total_count)
+        .with(:@pagy, pagy_object)
       expect(controller).to have_received(:instance_variable_set)
         .with("@#{instance_variable_name}", paginated_search_result.results)
     end
 
     context "when the configurator returns nil" do
       let(:empty_scope) { double("EmptyScope") }
+      let(:empty_pagy) { instance_double(Pagy) }
       before do
         allow(configurator_class).to receive(:call).and_return(nil)
         allow(model_class).to receive(:none).and_return(empty_scope)
+        allow(Pagy).to receive(:new).and_return(empty_pagy)
       end
 
       it "does not call the PaginatedSearcher" do
@@ -97,9 +90,9 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
         expect(Search::Searchers::PaginatedSearcher).not_to have_received(:call)
       end
 
-      it "assigns empty results to the controller" do
+      it "assigns empty results and pagy to the controller" do
         search
-        expect(controller).to have_received(:instance_variable_set).with(:@total, 0)
+        expect(controller).to have_received(:instance_variable_set).with(:@pagy, empty_pagy)
         expect(controller).to have_received(:instance_variable_set).with(
           "@#{instance_variable_name}", empty_scope
         )
