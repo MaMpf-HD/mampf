@@ -1,4 +1,3 @@
-<%= turbo_frame_tag_if_turbo_request "main" do %>
 <% if @lecture.tutorials.present? %>
   <% if @assignments.present? %>
       <%= render partial: 'tutorials/header_overview',
@@ -85,5 +84,4 @@
     <div class="jumbotron">
       <%= t('lecture.no_tutorials_yet') %>
     </div>
-<% end %>
 <% end %>
