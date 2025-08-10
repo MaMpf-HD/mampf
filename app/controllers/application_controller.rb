@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include Turbo::Redirection
+  include Pagy::Backend
 
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you

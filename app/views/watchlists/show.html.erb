@@ -47,7 +47,7 @@
   <% unless params[:all] %>
     <div class="row my-2">
       <div class="col-12">
-        <%= paginate @watchlist_entries, window: 2 %>
+        <%== pagy_bootstrap_nav(@pagy) %>
       </div>
     </div>
   <% end %>

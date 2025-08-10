@@ -2,7 +2,7 @@
 # It uses a configurator to get the search setup, runs the search via the
 # PaginatedSearcher, and then sets two instance variables on the calling
 # controller for the view:
-#   - @total: The total number of unpaginated results.
+#   - @pagy: The Pagy metadata object.
 #   - @<instance_variable_name>: The paginated array of results.
 #
 # The calling controller is expected to implement a private `search_params` method
@@ -48,8 +48,11 @@ module Search
         # If the configurator returns nil (e.g., required lecture not found),
         # set empty results and stop.
         unless config
+          # Create a valid, empty Pagy object for the view.
+          empty_pagy = Pagy.new(count: 0, page: 1)
           return assign_results_to_controller(
-            PaginatedSearcher::SearchResult.new(results: model_class.none, total_count: 0)
+            PaginatedSearcher::SearchResult.new(pagy: empty_pagy,
+                                                results: model_class.none)
           )
         end
 
@@ -70,7 +73,8 @@ module Search
         # Sets the final instance variables on the controller for the view.
         # @param search_result [PaginatedSearcher::SearchResult]
         def assign_results_to_controller(search_result)
-          controller.instance_variable_set(:@total, search_result.total_count)
+          # Set @pagy instead of @total.
+          controller.instance_variable_set(:@pagy, search_result.pagy)
           controller.instance_variable_set("@#{instance_variable_name}",
                                            search_result.results)
         end

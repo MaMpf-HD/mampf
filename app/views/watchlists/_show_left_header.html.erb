@@ -68,7 +68,7 @@
   </li>
   <%= helpdesk(t('watchlist.order_help'), false) %>
   <%# All button%>
-  <% unless @watchlist_entries.page(1).total_pages == 1 || params[:all] %>
+  <% unless @pagy.pages == 1 || params[:all] %>
     <li class="nav-item ps-2 pr-1">
       <%= link_to t('all'),
             watchlist_path(@watchlist, params: { reverse: params[:reverse],

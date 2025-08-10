@@ -1,7 +1,8 @@
 # render media reults partial
 searchResults = document.getElementById('tag-search-results')
 searchResults.innerHTML = '<%= j render partial: "tags/results",
-                                  locals: { tags: @tags } %>'
+                                  locals: { tags: @tags,
+                                            pagy: @pagy } %>'
 
 # run katex on search results
 tagResults = document.getElementById('tag-search-results')

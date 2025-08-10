@@ -1,5 +1,5 @@
 <%= turbo_frame_tag "main" do %>
-  <div class="row pb-2">
+<div class="row pb-2">
     <div class="col-sm-12 col-md-12 col-lg-6">
       <ul class="nav">
         <li class="nav-item pr-1">
@@ -14,7 +14,7 @@
                       class: 'nav-link btn btn-sm text-primary bg-light text-dark' %>
         </li>
         <li class="nav-item ps-1 pr-1">
-          <% unless @media.page(1).total_pages == 1 || params[:all] %>
+          <% unless @pagy.pages == 1 || params[:all] %>
             <%= link_to t('all'),
                         lecture_material_path(@lecture,
                                           params: { project: params[:project],
@@ -96,7 +96,7 @@
     </div>
     <div class="col-sm-12 col-md-12 col-lg-6 pt-1">
       <% unless params[:all] %>
-        <%= paginate @media, window: 2 %>
+        <%== pagy_bootstrap_nav(@pagy) %>
       <% end %>
     </div>
   </div>
@@ -116,7 +116,7 @@
   <% unless params[:all] %>
     <div class="row my-2">
       <div class="col-12">
-        <%= paginate @media, window: 2 %>
+        <%== pagy_bootstrap_nav(@pagy) %>
       </div>
     </div>
   <% end %>

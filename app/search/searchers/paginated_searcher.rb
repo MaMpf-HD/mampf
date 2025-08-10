@@ -1,16 +1,17 @@
 module Search
   module Searchers
+    # This searcher takes a configured search, executes it, and then paginates
+    # the results using Pagy without any direct dependency on the controller.
     class PaginatedSearcher
-      # This struct holds the results of a paginated search.
-      SearchResult = Struct.new(:results, :total_count, keyword_init: true)
+      # The SearchResult struct returns the pagy metadata object and the
+      # paginated scope.
+      SearchResult = Struct.new(:pagy, :results, keyword_init: true)
 
-      # @param model_class [Class] The ActiveRecord model to be searched.
-      # @param user [User] The current user performing the search.
-      # @param config [Configurators::BaseSearchConfigurator::Configuration]
-      #   The configuration object from the model's configurator.
-      # @param default_per_page [Integer] The default number of items per page.
+      # The class method no longer needs the controller.
       def self.call(model_class:, user:, config:, default_per_page: 10)
-        new(model_class: model_class, user: user, config: config,
+        new(model_class: model_class,
+            user: user,
+            config: config,
             default_per_page: default_per_page).call
       end
 
@@ -24,53 +25,41 @@ module Search
       end
 
       def call
-        # Get the fully filtered and ordered results.
+        # 1. Get the full, ordered, unpaginated scope from the ModelSearcher.
         search_results = ModelSearcher.call(
           model_class: model_class,
           user: user,
           config: config
         )
 
-        # Get the total count before pagination.
-        total_count = calculate_total_count(search_results)
+        # Use a subquery to get the correct count
+        correct_count = model_class.from(search_results, :subquery_for_count).count
 
-        # Paginate the results.
-        paginated_results = paginate(search_results, total_count)
+        # 2. Determine pagination settings.
+        items_per_page = if config.params[:all]
+          search_results.count
+        else
+          config.params[:per] || default_per_page
+        end
 
-        # Return the final results and the total count for the view.
+        # 3. Instantiate a Pagy object directly. This is the core of the new
+        #    decoupled approach. We provide it with the total count, the items
+        #    per page, and the current page from the search parameters.
+        pagy = Pagy.new(count: correct_count,
+                        items: items_per_page,
+                        limit: items_per_page,
+                        page: config.params[:page])
+
+        # 4. Apply the pagination to the scope using the offset and limit
+        #    from the Pagy object.
+        paginated_results = search_results.offset(pagy.offset).limit(pagy.vars[:items])
+
+        # 5. Return the pagy object and the now-paginated results.
         SearchResult.new(
-          results: paginated_results,
-          total_count: total_count
+          pagy: pagy,
+          results: paginated_results
         )
       end
-
-      private
-
-        def calculate_total_count(scope)
-          if scope.is_a?(Array)
-            scope.size
-          elsif scope.group_values.any?
-            model_class.from(scope, :subquery).count
-          else
-            scope.select(:id).count
-          end
-        end
-
-        def paginate(scope, total_count)
-          # Always convert to an array first for Kaminari.paginate_array
-          results_array = scope.to_a
-          paginatable_array = Kaminari.paginate_array(results_array, total_count: total_count)
-          pagination_params = config.params.slice(:page, :per)
-          if config.params[:all]
-            # If 'all' is requested, set 'per' to the total count to show all items on one page.
-            # We still call .page(1) to ensure it returns a Kaminari object for the view.
-            # Use [total_count, 1].max to avoid per(0) if the result set is empty.
-            paginatable_array.page(1).per([total_count, 1].max)
-          else
-            per_page = pagination_params[:per] || default_per_page || 10
-            paginatable_array.page(pagination_params[:page]).per(per_page)
-          end
-        end
     end
   end
 end
