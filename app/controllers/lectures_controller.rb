@@ -232,7 +232,7 @@ class LecturesController < ApplicationController
   end
 
   def show_structures
-    render layout: "application"
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def edit_structures
