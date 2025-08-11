@@ -5,7 +5,7 @@
      aria-labelledby="importMediaModalLabel" aria-hidden="true"
      data-keyboard="false"
      data-backdrop="static">
-  <div class="modal-dialog modal-xl"
+  <div class="modal-dialog modal-xxl"
        role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -36,8 +36,10 @@
                        locals: { media: lecture.imported_media,
                                  lecture: lecture } %>
       </div>
+
+    <hr class="lecture-pane-separator">
+
       <div id="importedMediaArea">
-        <hr>
            <%= render partial: 'media/catalog/search_form',
                locals: { purpose: 'import' } %>
         <div id="media-search-results">

@@ -198,14 +198,6 @@
     <div class="col-12 text-center">
       <%= f.submit t('basics.search'),
                    class: 'btn btn-primary' %>
-      <% if purpose == 'import' %>
-        <button type="button"
-                class="btn btn-secondary"
-                id="cancelSearch"
-                data-purpose="<%= purpose %>">
-          <%= t('buttons.cancel') %>
-        </button>
-      <% end %>
     </div>
   </div>
 <% end %>
