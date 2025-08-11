@@ -268,22 +268,6 @@ class Lecture < ApplicationRecord
     end
   end
 
-  # course tags are all tags that are lecture tags as well as tags that are
-  # associated to the lecture's course
-  def course_tags(lecture_tags: tags)
-    lecture_tags & course.tags
-  end
-
-  # extra tags are tags that are lecture tags but not course tags
-  def extra_tags(lecture_tags: tags)
-    lecture_tags - course.tags
-  end
-
-  # deferred tags are tags that are course tags but not lecture tags
-  def deferred_tags(lecture_tags: tags)
-    course.tags.includes(:notions) - lecture_tags
-  end
-
   def tags_including_media_tags
     (tags +
        lessons.includes(media: :tags)
