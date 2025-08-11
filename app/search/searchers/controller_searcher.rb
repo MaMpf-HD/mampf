@@ -3,7 +3,7 @@
 # PaginatedSearcher, and then sets two instance variables on the calling
 # controller for the view:
 #   - @pagy: The Pagy metadata object.
-#   - @<instance_variable_name>: The paginated array of results.
+#   - @<instance_variable_name>: The paginated collection of results (an ActiveRecord::Relation).
 #
 # The calling controller is expected to implement a private `search_params` method
 # that uses `params.expect` to permit the search form parameters.
