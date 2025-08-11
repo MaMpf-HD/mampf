@@ -599,18 +599,6 @@ de:
           gesperrt.
           Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
           angesiedelt sind, so wird darauf hingewiesen.
-        course_tags: >
-          Hier werden diejenigen Tags aus dem zugeordneten
-          Modul angezeigt, die in mindestens einem Abschnitt dieser
-          Veranstaltung vorkommen.
-        additional_tags: >
-          Hier werden diejenigen Tags angezeigt, die
-          in mindestens einem Abschnitt dieser Veranstaltung vorkommen,
-          jedoch kein Tag des zugeordneten Moduls sind.
-        untreated_tags: >
-          Hier werden diejenigen Tags aus dem zugeordneten
-          Modul angezeigt, die in keinem Abschnitt dieser Veranstaltung
-          vorkommen.
         course_editors: >
           ModuleditorInnen haben das Bearbeitungsrecht
           für das zugeordnete Modul. Dieses vererbt sich auf jede
@@ -770,11 +758,6 @@ de:
       no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
-      course_tags_html: >
-        (Bisher) behandelte Begriffe aus dem zugehörigen Modul %{course}
-        (%{count})
-      no_course_tags: >
-        Es sind noch keine Begriffe vorhanden.
       additional_tags: >
         Zusätzlich behandelte Begriffe (%{count})
       untreated_tags: >

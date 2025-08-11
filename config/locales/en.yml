@@ -555,15 +555,6 @@ en:
           or its sessions. Media in red are unpublished or locked.
           If there are media on course level of the same course as this event
           series, you are informed about them.
-        course_tags: >
-          These are the tags associated with the parent course that appear in at
-          least one section of this event series.
-        additional_tags: >
-          These are the tags that appear in at least one section of this
-          event series, but are not associated with the parent course.
-        untreated_tags: >
-          These are the tags associated with the parent course that do
-          not appear in any section of this event series.
         course_editors: >
           Course editors have editing access to the parent course. They inherit
           editing access to any event series that belongs to this course.
@@ -701,11 +692,6 @@ en:
       no_talks: 'There are no talks yet.'
       orphaned_lessons: 'Orphaned Sessions'
       related_tags: 'Related tags'
-      course_tags_html: >
-        Tags from the parent course %{course} that have (already) been treated
-        (%{count})
-      no_course_tags: >
-        There are no tags yet.
       additional_tags:
         Additional tags (%{count})
       untreated_tags:
