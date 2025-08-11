@@ -43,7 +43,7 @@ class MediaController < ApplicationController
     if @lecture.sort == "vignettes"
       render layout: "vignettes_navbar"
     else
-      render layout: turbo_frame_request? ? false : "application"
+      render layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
 
