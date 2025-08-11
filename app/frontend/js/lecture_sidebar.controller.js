@@ -25,14 +25,14 @@ export default class extends Controller {
   }
 
   removeActiveStyling() {
-    const navLinks = document.querySelectorAll(".nav-link");
+    const navLinks = document.querySelectorAll(".sidebar-item");
     navLinks.forEach((link) => {
       link.classList.remove(ACTIVE_ITEM_CSS_CLASS);
     });
   }
 
   removeIconFill() {
-    const icons = document.querySelectorAll(".nav-link i");
+    const icons = document.querySelectorAll(".sidebar-item i");
     icons.forEach((icon) => {
       const classList = icon.classList;
       const lastClass = classList[classList.length - 1];

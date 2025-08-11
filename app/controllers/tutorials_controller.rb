@@ -43,6 +43,8 @@ class TutorialsController < ApplicationController
     @assignment = Assignment.find_by(id: params[:assignment]) ||
                   @assignments&.first
     @tutorials = @lecture.tutorials
+
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def new
