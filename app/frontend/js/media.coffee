@@ -296,8 +296,7 @@ $(document).on 'turbo:load', ->
     return
 
   $(document).on 'click', '#import-media-button', ->
-    $(this).hide()
-    $('#importedMediaArea').show()
+    $('#importMediaModal').modal('show')
     return
 
   $(document).on 'click', '#editMediumTags', ->
