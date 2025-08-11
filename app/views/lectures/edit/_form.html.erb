@@ -184,8 +184,6 @@
 
           <%= render partial: 'lectures/edit/tags',
               locals: { lecture: lecture } %>
-          <%= render partial: 'lectures/edit/imported_media',
-              locals: { lecture: lecture } %>
           <%= render partial: 'lectures/edit/erdbeere',
               locals: { lecture: lecture } %>
         </div>
@@ -216,6 +214,8 @@
   <%= render partial: 'sections/content_modal' %>
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/publish/publish',
+             locals: { lecture: lecture } %>
+  <%= render partial: 'lectures/import/modal',
              locals: { lecture: lecture } %>
 
   <% unless lecture.stale? %>
