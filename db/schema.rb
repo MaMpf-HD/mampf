@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_03_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -319,7 +319,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_000000) do
     t.text "locale"
     t.text "sort"
     t.integer "forum_id"
-    t.text "structure_ids"
     t.boolean "comments_disabled"
     t.boolean "organizational_on_top"
     t.boolean "disable_teacher_display", default: false
@@ -572,7 +571,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_03_000000) do
   create_table "tags", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.text "realizations"
   end
 
   create_table "talk_tag_joins", force: :cascade do |t|

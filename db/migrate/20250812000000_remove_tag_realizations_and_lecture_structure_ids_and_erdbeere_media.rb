@@ -5,7 +5,7 @@ class RemoveTagRealizationsAndLectureStructureIdsAndErdbeereMedia < ActiveRecord
     remove_column :lectures, :structure_ids, :text
 
     # Remove all media with sort == "Erdbeere"
-    Media.where(sort: "Erdbeere").delete_all
+    Medium.where(sort: "Erdbeere").delete_all
   end
 
   def down
