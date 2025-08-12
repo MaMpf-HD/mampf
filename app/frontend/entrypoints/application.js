@@ -37,7 +37,6 @@ import "~/js/announcements.coffee";
 import "~/js/answers.coffee";
 import "~/js/chapters.coffee";
 import "~/js/courses.coffee";
-import "~/js/erdbeere.coffee";
 import "~/js/file_upload.coffee";
 import "~/js/items.coffee";
 import "~/js/katex.coffee";

@@ -45,10 +45,6 @@ en:
       singular: 'Quiz Remark'
       plural: 'Quiz Remarks'
       short: 'Rem'
-    erdbeere:
-      singular: 'Example'
-      plural: 'Examples'
-      short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
     comments: 'Comments'
@@ -1120,10 +1116,6 @@ en:
           <li>
           Quiz Remark: single Quiz Remark. Quiz Remarks serve as link between
           successive questions in more complex quizzes (e.g. in guided proofs)
-          </li>
-          <li>
-          Example: Example from ErDBeere-Database
-          (currently only prototype)
           </li>
           <li>
           Miscellaneous: Here you can put anything that does not fit into
@@ -3329,23 +3321,6 @@ en:
     date: 'Date'
     count: 'Count'
     plays: 'Plays'
-  erdbeere:
-    show_structures: 'Structures, properties and examples'
-    select_structures: Select Structures
-    structure_index: 'Structure Index'
-    info:
-      structures:
-        Here you can select which structures from the ErDBeere database
-        are displayed for this lecture.
-    structures: 'Structures'
-    properties: 'Properties'
-    edit_realizations: 'Edit Realizations'
-    no_realizations: 'There are no realizations.'
-    search_examples: 'Search for Examples'
-    no_structures: >
-      There are no structures associated to this lecture.
-    error: >
-      An error has occurred. Please try again later.
   basics:
     division: 'Division'
     error: Error
@@ -3482,7 +3457,6 @@ en:
     optional: 'optional'
     statistics: 'Statistics'
     loading_data: 'Loading data...'
-    realizations: 'Realizations'
     comments: 'Comments'
     comment: 'Comment'
     comments_for: 'Comments for %{subject}'

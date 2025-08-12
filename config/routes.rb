@@ -221,18 +221,6 @@ Rails.application.routes.draw do
       to: "lectures#show_subscribers",
       as: "show_subscribers"
 
-  get "lectures/:id/show_structures",
-      to: "lectures#show_structures",
-      as: "show_structures"
-
-  get "lectures/:id/edit_structures",
-      to: "lectures#edit_structures",
-      as: "edit_structures"
-
-  get "lectures/:id/search_examples",
-      to: "lectures#search_examples",
-      as: "search_examples"
-
   get "lectures/search",
       to: "lectures#search",
       as: "lecture_search"
@@ -877,47 +865,6 @@ Rails.application.routes.draw do
   resources :watchlists
 
   resources :watchlist_entries
-
-  # erdbeere routes
-
-  get "examples/:id",
-      to: "erdbeere#show_example",
-      as: "erdbeere_example"
-
-  post "examples/find",
-       to: "erdbeere#find_example"
-
-  get "properties/:id",
-      to: "erdbeere#show_property",
-      as: "erdbeere_property"
-
-  get "structures/:id",
-      to: "erdbeere#show_structure",
-      as: "erdbeere_structure"
-
-  get "find_erdbeere_tags",
-      to: "erdbeere#find_tags",
-      as: "find_erdbeere_tags"
-
-  post "update_erdbeere_tags",
-       to: "erdbeere#update_tags",
-       as: "update_erdbeere_tags"
-
-  get "edit_erdbeere_tags",
-      to: "erdbeere#edit_tags",
-      as: "edit_erdbeere_tags"
-
-  get "cancel_edit_erdbeere_tags",
-      to: "erdbeere#cancel_edit_tags",
-      as: "cancel_edit_erdbeere_tags"
-
-  get "display_erdbeere_info",
-      to: "erdbeere#display_info",
-      as: "display_erdbeere_info"
-
-  get "fill_realizations_select",
-      to: "erdbeere#fill_realizations_select",
-      as: "fill_realizations_select"
 
   # main routes
 
