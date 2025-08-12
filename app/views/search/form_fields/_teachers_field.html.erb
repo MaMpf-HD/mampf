@@ -1,0 +1,24 @@
+    <div class="col-6 col-lg-4 mb-3 form-group">
+      <%= f.label :teacher_ids,
+                  t('basics.teachers'),
+                  class: "form-label" %>
+      <%= helpdesk(t('admin.medium.info.search_teachers'), true) %>
+      <%= f.select :teacher_ids,
+                  options_for_select(add_prompt(User.select_teachers)),
+                  {},
+                  { id: 'search_media_teacher_ids',
+                    multiple: true,
+                    class: 'selectize',
+                    disabled: true,
+                    required: true } %>
+      <div class="form-check mb-2">
+        <%= f.check_box :all_teachers,
+                        id: 'search_all_media_teachers',
+                        class: 'form-check-input',
+                        checked: true,
+                        data: { id: 'search_media_teacher_ids' } %>
+        <%= f.label :all_media_teachers,
+                    t('basics.all'),
+                    { class: 'form-check-label' } %>
+      </div>
+    </div>

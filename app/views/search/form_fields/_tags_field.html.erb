@@ -1,0 +1,31 @@
+<div class="col-6 col-lg-3 mb-3">
+  <%= f.label :tag_ids, t('basics.related_tags'), class: 'form-label' %>
+  <%= helpdesk(t('admin.medium.info.search_tags'), true) %>
+  <%= f.select :tag_ids,
+               options_for_select([[]]),
+               { prompt: t('basics.select') },
+               { multiple: true,
+                 class: 'selectize',
+                 disabled: true,
+                 required: true,
+                 data: { filled: false,
+                         ajax: true,
+                         model: 'tag',
+                         locale: I18n.locale,
+                         no_results: t('basics.no_results') } } %>
+  <div class="form-check mb-2">
+    <%= f.check_box :all_tags,
+                    class: 'form-check-input',
+                    checked: true,
+                    data: { id: 'search_tag_ids' } %>
+    <%= f.label :all_tags, t('basics.all'), class: 'form-check-label' %>
+  </div>
+  <div class="form-check form-check-inline">
+    <%= f.radio_button :tag_operator, 'or', checked: true, class: 'form-check-input', disabled: true %>
+    <%= f.label :tag_operator, t('basics.OR'), value: 'or', class: 'form-check-label' %>
+  </div>
+  <div class="form-check form-check-inline">
+    <%= f.radio_button :tag_operator, 'and', class: 'form-check-input', disabled: true %>
+    <%= f.label :tag_operator, t('basics.AND'), value: 'and', class: 'form-check-label' %>
+  </div>
+</div>

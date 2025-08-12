@@ -1,0 +1,21 @@
+<%= form_with url: search_media_path, scope: :search, method: :get, remote: true do |f| %>
+  <div class="row p-2">
+    <%= render 'search/form_fields/types_field',        f: f, purpose: purpose %>
+    <%= render 'search/form_fields/teachable_field',    f: f %>
+    <%= render 'search/form_fields/tags_field',         f: f %>
+    <%= render 'search/form_fields/editors_field',      f: f %>
+    <%= render 'search/form_fields/fulltext_field',     f: f %>
+    <%= render 'search/form_fields/access_field',       f: f %>
+    <%= render 'search/form_fields/answer_count_field', f: f, purpose: purpose %>
+    <%= render 'search/form_fields/per_page_field',     f: f, results_as_list: true %>
+  </div>
+
+  <%= f.hidden_field :purpose, value: purpose %>
+  <%= f.hidden_field :results_as_list, value: 'true' %>
+
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= f.submit t('basics.search'), class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>
