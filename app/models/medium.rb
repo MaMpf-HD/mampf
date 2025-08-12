@@ -183,8 +183,8 @@ class Medium < ApplicationRecord
 
   # these are all the sorts of projects we currently serve
   def self.sort_enum
-    ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Erdbeere",
-     "Exercise", "Script", "Question", "Remark", "Miscellaneous", "RandomQuiz"]
+    ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Exercise", "Script", "Question",
+     "Remark", "Miscellaneous", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
@@ -206,7 +206,7 @@ class Medium < ApplicationRecord
   end
 
   def self.advanced_sorts
-    ["Question", "Remark", "Erdbeere"]
+    ["Question", "Remark"]
   end
 
   def self.generic_sorts
@@ -768,16 +768,14 @@ class Medium < ApplicationRecord
   def select_sorts
     result = if new_record?
       Medium.sort_localized.except("RandomQuiz")
-    elsif sort.in?(["LessonMaterial", "WorkedExample", "Erdbeere", "Repetition", "Exercise",
+    elsif sort.in?(["LessonMaterial", "WorkedExample", "Repetition", "Exercise",
                     "Miscellaneous"])
       Medium.sort_localized.except("RandomQuiz", "Script", "Quiz",
                                    "Question", "Remark")
     else
       Medium.sort_localized.slice(sort)
     end
-    if teachable_type == "Talk"
-      result.except!("RandomQuiz", "Question", "Remark", "Erdbeere", "Script")
-    end
+    result.except!("RandomQuiz", "Question", "Remark", "Script") if teachable_type == "Talk"
     result.map { |k, v| [v, k] }
   end
 

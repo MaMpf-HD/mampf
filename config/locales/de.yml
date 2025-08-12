@@ -52,10 +52,6 @@ de:
       singular: 'Quiz-Erläuterung'
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
-    erdbeere:
-      singular: 'Beispiel'
-      plural: 'Beispiele'
-      short: 'DB'
     muesli: 'MÜSLI'
     board: 'Forum'
     comments: 'Kommentare'
@@ -1233,9 +1229,6 @@ de:
           (z.B. angeleiteten Beweisen)
           </li>
           <li>
-          Beispiel-Datenbank: Beispiel aus der ErDBeere-Datenbank
-          (z.Zt. nur Prototyp)
-          </li>
           <li>
           Sonstiges: Hier kannst Du alles unterbringen, was in keine andere
           Rubrik passt.
@@ -3551,24 +3544,6 @@ de:
     date: 'Datum'
     count: 'Anzahl'
     plays: 'Aufrufe'
-  erdbeere:
-    show_structures: Strukturen, Eigenschaften und Beispiele
-    select_structures: Strukturen auswählen
-    info:
-      structures:
-        Hier kannst Du wählen, welche Strukturen aus der ErDBeere-Datenbank
-        für diese Vorlesung angezeigt werden sollen.
-    structures: 'Strukturen'
-    structure_index: 'zur Strukturenübersicht'
-    properties: 'Eigenschaften'
-    edit_realizations: 'Realisierungen bearbeiten'
-    no_realizations: 'Es sind keine Realisierungen vorhanden.'
-    search_examples: 'Beispiele suchen'
-    no_structures: >
-      Zu dieser Vorlesung sind keine Strukturen aus der Beispieldatenbank
-      assoziiert.
-    error: >
-      Es ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.
   basics:
     division: 'Teilbereich'
     error: Fehler
@@ -3706,7 +3681,6 @@ de:
     optional: 'optional'
     statistics: 'Statistik'
     loading_data: 'Lade Daten...'
-    realizations: 'Realisierungen'
     comments: 'Kommentare'
     comment: 'Kommentar'
     comments_for: 'Kommentare für %{subject}'

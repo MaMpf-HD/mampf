@@ -91,7 +91,6 @@ module ApplicationHelper
       "worked_example" => ["WorkedExample"],
       "quiz" => ["Quiz"],
       "repetition" => ["Repetition"],
-      "erdbeere" => ["Erdbeere"],
       "exercise" => ["Exercise"],
       "script" => ["Script"],
       "questions" => ["Question"],
@@ -104,7 +103,7 @@ module ApplicationHelper
     if lecture && lecture.sort == "vignettes"
       ["miscellaneous"]
     else
-      ["lesson_material", "worked_example", "quiz", "repetition", "erdbeere",
+      ["lesson_material", "worked_example", "quiz", "repetition",
        "exercise", "script", "questions", "remarks", "miscellaneous"]
     end
   end
@@ -115,7 +114,6 @@ module ApplicationHelper
       "worked_example" => t("categories.worked_example.plural"),
       "quiz" => t("categories.quiz.plural"),
       "repetition" => t("categories.repetition.singular"),
-      "erdbeere" => t("categories.erdbeere.singular"),
       "exercise" => t("categories.exercise.plural"),
       "script" => t("categories.script.singular"),
       "questions" => t("categories.question.plural"),
@@ -293,10 +291,6 @@ module ApplicationHelper
           "data-bs-content": text,
           "data-bs-html": html,
           title: title)
-  end
-
-  def realization_path(realization)
-    "/#{realization.first.downcase.pluralize}/#{realization.second}"
   end
 
   def first_course_independent?

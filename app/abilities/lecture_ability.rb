@@ -15,7 +15,7 @@ class LectureAbility
     can [:edit, :update, :update_teacher, :update_editors, :destroy, :add_forum,
          :publish, :lock_forum, :unlock_forum, :destroy_forum, :import_media,
          :remove_imported_medium, :show_subscribers, :import_toc,
-         :edit_structures, :close_comments, :open_comments],
+         :close_comments, :open_comments],
         Lecture do |lecture|
       user.can_edit?(lecture)
     end
@@ -26,7 +26,7 @@ class LectureAbility
 
     can :search, Lecture
 
-    can [:show_announcements, :organizational, :show_structures,
+    can [:show_announcements, :organizational,
          :search_examples, :show_random_quizzes,
          :display_course], Lecture do |lecture|
       lecture.in?(user.lectures)

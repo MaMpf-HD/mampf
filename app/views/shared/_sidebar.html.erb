@@ -29,7 +29,7 @@
       <%= t('categories.lesson_material.plural') %>
     <% end %>
   </li>
-  
+
   <%# Script %>
   <% project_name = 'script' %>
   <% fullpath = lecture_script_path(lecture) %>
@@ -137,18 +137,6 @@
         data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
       <i class="bi bi-mortarboard<%= active_class.present? ? "-fill" : "" %>"></i>
       <%= t('categories.worked_example.plural') %>
-    <% end %>
-  </li>
-
-  <%# Examples (Erdbeere) %>
-  <% path = show_structures_path(lecture) %>
-  <% active_class = get_class_for_path(path) %>
-  <li class="sidebar-item nav-link <%= active_class %>
-          <%= !lecture || !lecture.structure_ids.any? ? "disabled" : ""%>">
-    <%= link_to url_for(path),
-        data: { turbo_frame: "main", action: "click->lecture-sidebar#setActive" } do %>
-      <i class="bi bi-box<%= active_class.present? ? "-fill" : "" %>"></i>
-      <%= t('categories.erdbeere.plural') %>
     <% end %>
   </li>
 

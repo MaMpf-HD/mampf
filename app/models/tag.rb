@@ -39,8 +39,6 @@ class Tag < ApplicationRecord
            class_name: "Notion",
            inverse_of: :aliased_tag
 
-  serialize :realizations, type: Array, coder: YAML
-
   accepts_nested_attributes_for :notions,
                                 reject_if: lambda { |attributes|
                                              attributes["title"].blank?
@@ -75,12 +73,6 @@ class Tag < ApplicationRecord
                     trigram: { word_similarity: true,
                                threshold: 0.3 }
                   }
-
-  def self.find_erdbeere_tags(sort, id)
-    Tag.where(id: Tag.pluck(:id, :realizations)
-                     .select { |x| [sort, id].in?(x.second) }
-                     .map(&:first))
-  end
 
   def title
     Rails.cache.fetch("#{cache_key_with_version}/title") do
@@ -187,12 +179,6 @@ class Tag < ApplicationRecord
       end
     end
     result
-  end
-
-  def realizations_cached
-    Rails.cache.fetch("#{cache_key_with_version}/realizations") do
-      realizations
-    end
   end
 
   # returns the ARel of all tags or whose id is among a given array of ids
