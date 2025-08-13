@@ -1,13 +1,13 @@
-    <div class="row mb-3">
-        <div class="col-12">
-            <h3 class="lecture-pane-header">
-                <%= t('admin.lecture.subscribe_link') %>
-                <%= helpdesk(t('admin.lecture.subscribe_link_info'), false) %>
-            </h3>
-            <input type="text"
-                    class="form-control"
-                    value="<%= subscribe_lecture_page_url(@lecture) %>"
-                    readonly
-                    onclick="this.select();">
-        </div>
+<div class="row mb-3">
+    <div class="col-12">
+        <h3 class="lecture-pane-header">
+            <%= t('admin.lecture.subscribe_link') %>
+            <%= helpdesk(t('admin.lecture.subscribe_link_info'), false) %>
+        </h3>
+        <input type="text"
+                class="form-control"
+                value="<%= subscribe_lecture_page_url(@lecture) %>"
+                readonly
+                onclick="this.select();">
     </div>
+</div>
