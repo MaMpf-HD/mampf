@@ -56,13 +56,6 @@
             aria-controls="lecture-pane-homework" aria-selected="false">
           <%= t('basics.assignments') %>
         </button>
-        <button class="nav-link lecture-nav-pill-button"
-          id="lecture-nav-info" type="button" role="tab"
-          href="#info"
-          data-bs-toggle="pill" data-bs-target="#lecture-pane-info"
-          aria-controls="lecture-pane-info" aria-selected="false">
-          <%= t('info') %>
-        </button>
 
         <% if lecture.sort == "vignettes" %>
           <button class="nav-link lecture-nav-pill-button"
@@ -153,42 +146,6 @@
         </div>
       </div>
 
-      <!-- Info -->
-      <div class="tab-pane fade" id="lecture-pane-info"
-          role="tabpanel" aria-labelledby="lecture-nav-info" tabindex="0">
-        <div class="container small-width lecture-pane">
-          <h3 class="lecture-pane-header">
-            <%= t('basics.course_editors') %>
-              <%= helpdesk(t('admin.lecture.info.course_editors'), false) %>
-          </h3>
-
-          <div class="col-4">
-            <% if lecture.course.editors.present? %>
-              <ul>
-                <% lecture.course.editors.each do |e| %>
-                  <li>
-                    <%= e.name %>
-                  </li>
-                  <% end %>
-              </ul>
-              <% else %>
-                <br>
-                <%= t('admin.lecture.no_course_editors') %>
-                  <% end %>
-          </div>
-
-          <% if @lecture.sort == "vignettes" %>
-              <%= render partial: 'lectures/edit/link_to_lecture',
-                      locals: { lecture: @lecture } %>
-          <% end %>
-
-          <%= render partial: 'lectures/edit/tags',
-              locals: { lecture: lecture } %>
-          <%= render partial: 'lectures/edit/erdbeere',
-              locals: { lecture: lecture } %>
-        </div>
-      </div>
-
       <!-- Vignettes -->
       <% if lecture.sort == "vignettes" %>
         <div class="tab-pane fade" id="lecture-pane-vignettes"
@@ -196,6 +153,10 @@
           <div class="container small-width lecture-pane mb-3">
             <%= render partial: 'vignettes/questionnaires/manage_questionnaires',
                 locals: { lecture: lecture } %>
+          </div>
+          <div class="container small-width lecture-pane mb-3">
+            <%= render partial: 'lectures/edit/link_to_lecture',
+                       locals: { lecture: @lecture } %>
           </div>
           <div class="container small-width lecture-pane">
             <%= render partial: 'vignettes/completion_message/form',
