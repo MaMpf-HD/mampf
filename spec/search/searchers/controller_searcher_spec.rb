@@ -6,7 +6,6 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
   let(:configurator_class) { class_spy(Search::Configurators::BaseSearchConfigurator, "ConfiguratorClass") }
-  let(:instance_variable_name) { :courses }
   let(:options) { { default_per_page: 15 } }
   let(:cookies) { { "some_cookie" => "some_value" } }
 
@@ -24,18 +23,18 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   # The SearchResult object returned by the paginated searcher
   let(:paginated_search_result) do
     instance_double(
-      Search::Searchers::PaginatedSearcher::SearchResult,
+      Search::Searchers::SearchResult,
       results: [double("Result1")],
       total_count: 42
     )
   end
 
+  # The subject now calls the .search method and no longer needs instance_variable_name
   subject(:search) do
-    described_class.call(
+    described_class.search(
       controller: controller,
       model_class: model_class,
       configurator_class: configurator_class,
-      instance_variable_name: instance_variable_name,
       options: options
     )
   end
@@ -44,20 +43,18 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
     # Stub controller methods
     allow(controller).to receive(:current_user).and_return(user)
     allow(controller).to receive(:params).and_return(top_level_params)
-    # Allow .send to be called for both :search_params and :cookies
     allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
     allow(controller).to receive(:send).with(:cookies).and_return(cookies)
-    allow(controller).to receive(:instance_variable_set)
 
     # Stub collaborator class methods
     allow(configurator_class).to receive(:call).and_return(configurator_result)
-    allow(Search::Searchers::PaginatedSearcher).to receive(:call)
+    allow(Search::Searchers::PaginatedSearcher).to receive(:search)
       .and_return(paginated_search_result)
   end
 
   # --- Tests ---
 
-  describe "orchestration logic" do
+  describe ".search" do
     it "calls the configurator with correctly merged params and cookies" do
       search
       expect(configurator_class).to have_received(:call).with(
@@ -69,7 +66,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
     it "calls the PaginatedSearcher with the config from the configurator" do
       search
-      expect(Search::Searchers::PaginatedSearcher).to have_received(:call).with(
+      expect(Search::Searchers::PaginatedSearcher).to have_received(:search).with(
         model_class: model_class,
         user: user,
         config: configurator_result,
@@ -77,12 +74,8 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
       )
     end
 
-    it "assigns the results and total count to the controller" do
-      search
-      expect(controller).to have_received(:instance_variable_set)
-        .with(:@total, paginated_search_result.total_count)
-      expect(controller).to have_received(:instance_variable_set)
-        .with("@#{instance_variable_name}", paginated_search_result.results)
+    it "returns the result from the PaginatedSearcher" do
+      expect(search).to eq(paginated_search_result)
     end
 
     context "when the configurator returns nil" do
@@ -94,15 +87,14 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
       it "does not call the PaginatedSearcher" do
         search
-        expect(Search::Searchers::PaginatedSearcher).not_to have_received(:call)
+        expect(Search::Searchers::PaginatedSearcher).not_to have_received(:search)
       end
 
-      it "assigns empty results to the controller" do
-        search
-        expect(controller).to have_received(:instance_variable_set).with(:@total, 0)
-        expect(controller).to have_received(:instance_variable_set).with(
-          "@#{instance_variable_name}", empty_scope
-        )
+      it "returns an empty search result object" do
+        result = search
+        expect(result).to be_a(Search::Searchers::SearchResult)
+        expect(result.results).to eq(empty_scope)
+        expect(result.total_count).to eq(0)
       end
     end
 

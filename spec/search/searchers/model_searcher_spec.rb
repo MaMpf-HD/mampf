@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Searchers::ModelSearcher) do
+  # --- Test Doubles & Setup ---
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
   let(:params) { { key: "value" } }
@@ -23,7 +24,14 @@ RSpec.describe(Search::Searchers::ModelSearcher) do
   let(:distinct_scope) { instance_spy(ActiveRecord::Relation, "DistinctScope") }
   let(:ordered_scope) { double("OrderedScope") }
 
-  subject(:searcher) { described_class.new(model_class: model_class, user: user, config: config) }
+  # The subject now calls the .search class method directly.
+  subject(:search) do
+    described_class.search(
+      model_class: model_class,
+      user: user,
+      config: config
+    )
+  end
 
   before do
     # Stub the common chain of calls
@@ -32,13 +40,14 @@ RSpec.describe(Search::Searchers::ModelSearcher) do
     allow(filtered_scope).to receive(:distinct).and_return(distinct_scope)
   end
 
-  describe "#call" do
+  # The describe block now targets the .search method.
+  describe ".search" do
     # This shared example now relies on a `let(:expected_orderer)` to be defined
     # in the context where it is included.
     shared_examples "search orchestration" do
       it "orchestrates the search by calling services in the correct order" do
-        # Trigger the call
-        searcher.call
+        # Trigger the call by evaluating the subject.
+        search
 
         # 1. Starts with the model's .all scope
         expect(model_class).to have_received(:all)
@@ -62,7 +71,7 @@ RSpec.describe(Search::Searchers::ModelSearcher) do
       end
 
       it "returns the final, ordered scope" do
-        expect(searcher.call).to eq(ordered_scope)
+        expect(search).to eq(ordered_scope)
       end
     end
 

@@ -9,7 +9,6 @@ module Search
     class BaseFilter
       attr_reader :scope, :params, :user
 
-      # Syntactic sugar to allow calling FilterClass.apply(...) instead of .new(...).call
       def self.apply(scope:, params:, user:)
         new(scope: scope, params: params, user: user).call
       end
