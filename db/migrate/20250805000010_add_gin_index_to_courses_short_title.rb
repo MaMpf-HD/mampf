@@ -1,4 +1,3 @@
-# filepath: /home/denis/mampf/db/migrate/YYYYMMDDHHMMSS_add_gin_index_to_courses_short_title.rb
 class AddGinIndexToCoursesShortTitle < ActiveRecord::Migration[8.0]
   # Disable the transaction that wraps the migration.
   # This is necessary to use `algorithm: :concurrently`.
