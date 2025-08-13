@@ -563,9 +563,7 @@ class User < ApplicationRecord
     filter_media(Medium.where.not(sort: ["RandomQuiz", "Question", "Remark"])
                        .where(teachable: courses + lectures + lessons))
       .includes(commontator_thread: :comments)
-      .select do |m|
-      m.commontator_thread.comments.any?
-    end
+      .select { |m| m.commontator_thread.comments.any? }
   end
 
   # Returns the media that the user has subscribed to and that have been
