@@ -71,7 +71,7 @@ RSpec.describe(Search::Configurators::BaseSearchConfigurator) do
     it "can be initialized with filters and params" do
       filters = [Search::Filters::FulltextFilter]
       params = { fulltext: "test" }
-      configuration = described_class::Configuration.new(filters: filters, params: params)
+      configuration = Search::Configurators::Configuration.new(filters: filters, params: params)
 
       expect(configuration.filters).to eq(filters)
       expect(configuration.params).to eq(params)

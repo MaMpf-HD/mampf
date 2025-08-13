@@ -10,7 +10,7 @@ RSpec.describe(Search::Searchers::ModelSearcher) do
   # Set up a double for the configuration object
   let(:config) do
     instance_double(
-      Search::Configurators::BaseSearchConfigurator::Configuration,
+      Search::Configurators::Configuration,
       filters: filter_classes,
       params: params,
       orderer_class: orderer_class_from_config

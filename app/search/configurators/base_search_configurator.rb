@@ -10,9 +10,6 @@
 module Search
   module Configurators
     class BaseSearchConfigurator
-      # This struct provides a consistent return object for all configurators.
-      Configuration = Struct.new(:filters, :params, :orderer_class, keyword_init: true)
-
       # Entry point for the service.
       #
       # @param user [User] The current user.

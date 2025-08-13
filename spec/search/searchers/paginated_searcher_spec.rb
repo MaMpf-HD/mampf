@@ -14,7 +14,7 @@ RSpec.describe(Search::Searchers::PaginatedSearcher) do
   let(:params) { { page: "2", per: "20" } }
   let(:config) do
     instance_double(
-      Search::Configurators::BaseSearchConfigurator::Configuration,
+      Search::Configurators::Configuration,
       params: params
     )
   end

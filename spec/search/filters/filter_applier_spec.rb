@@ -16,7 +16,7 @@ RSpec.describe(Search::Filters::FilterApplier) do
   # Create a double for the configuration object
   let(:config) do
     instance_double(
-      Search::Configurators::BaseSearchConfigurator::Configuration,
+      Search::Configurators::Configuration,
       filters: filter_classes,
       params: params
     )

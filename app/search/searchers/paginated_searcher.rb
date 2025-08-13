@@ -6,7 +6,7 @@ module Search
 
       # @param model_class [Class] The ActiveRecord model to be searched.
       # @param user [User] The current user performing the search.
-      # @param config [Configurators::BaseSearchConfigurator::Configuration]
+      # @param config [Configurators::Configuration]
       #   The configuration object from the model's configurator.
       # @param default_per_page [Integer] The default number of items per page.
       def self.call(model_class:, user:, config:, default_per_page: 10)

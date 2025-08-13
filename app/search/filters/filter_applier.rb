@@ -7,8 +7,8 @@ module Search
 
       # @param scope [ActiveRecord::Relation] The initial scope to be filtered.
       # @param user [User] The current user, for permission-sensitive filters.
-      # @param config [Configurators::BaseSearchConfigurator::Configuration]
-      #   The configuration object containing filters and parameters.
+      # @param config [Configurators::Configuration]
+      #   The configuration object from the model's configurator.
       def self.call(scope:, user:, config:)
         new(scope: scope, user: user, config: config).call
       end

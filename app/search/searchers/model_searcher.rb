@@ -9,7 +9,7 @@ module Search
 
       # @param model_class [Class] The ActiveRecord model class to be searched.
       # @param user [User] The current user, for permission-sensitive filters.
-      # @param config [Configurators::BaseSearchConfigurator::Configuration]
+      # @param config [Configurators::Configuration]
       #   The configuration object from the model's configurator.
       def self.call(model_class:, user:, config:)
         new(model_class: model_class, user: user, config: config).call

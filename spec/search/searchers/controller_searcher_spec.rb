@@ -19,7 +19,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
   # The Configuration object returned by the configurator
   let(:configurator_result) do
-    instance_double(Search::Configurators::BaseSearchConfigurator::Configuration)
+    instance_double(Search::Configurators::Configuration)
   end
   # The SearchResult object returned by the paginated searcher
   let(:paginated_search_result) do
