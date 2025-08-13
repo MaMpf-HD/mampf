@@ -2,13 +2,13 @@
 <div class="card bg-mdb-color-lighten-6">
   <div class="card-header">
     <div class="row">
-      <div class="col-4">
+      <div class="col-3">
         <h5>
           <%= t('basics.media') %>
           <%= helpdesk(t('admin.lecture.info.media'), false) %>
         </h5>
       </div>
-      <div class="col-6">
+      <div class="col-7">
         <%= link_to t('buttons.create_medium'),
                     new_medium_path(params:
                                     { 
@@ -19,6 +19,12 @@
                     class: 'btn btn-sm btn-secondary new-in-lecture',
                     id: 'create-new-medium',
                     remote: true %>
+        <button type="button"
+                class="btn btn-sm btn-outline-secondary mt-2 mt-sm-0"
+                data-bs-toggle="modal"
+                data-bs-target="#importMediaModal">
+          <%= t('buttons.import_media') %>
+        </button>        
       </div>
       <div class="col-2 text-end">
         <i id="hide-media-button"
