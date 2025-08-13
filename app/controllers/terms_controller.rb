@@ -1,4 +1,3 @@
-# TermsController
 class TermsController < ApplicationController
   before_action :set_term, except: [:index, :new, :create, :cancel, :set_active]
   layout "administration"

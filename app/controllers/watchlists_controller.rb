@@ -1,4 +1,3 @@
-# WatchlistsController
 class WatchlistsController < ApplicationController
   before_action :set_watchlist, only: [:update, :destroy, :show, :edit,
                                        :update_order, :change_visibility]

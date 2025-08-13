@@ -1,4 +1,3 @@
-# MainController
 class MainController < ApplicationController
   before_action :check_for_consent
   authorize_resource class: false, only: :start

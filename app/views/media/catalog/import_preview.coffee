@@ -1,4 +1,3 @@
-# render media reults partial
 searchResults = document.getElementById('media-search-results')
 searchResults.innerHTML = '<%= j render partial: "media/catalog/search_results",
                                  locals: { media: @media,

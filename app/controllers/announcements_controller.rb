@@ -1,4 +1,3 @@
-# AnnouncementsController
 class AnnouncementsController < ApplicationController
   layout "administration"
   before_action :set_announcement, except: [:new, :create, :index]
