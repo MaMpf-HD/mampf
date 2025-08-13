@@ -23,14 +23,14 @@ RSpec.describe(Search::Filters::FilterApplier) do
   end
 
   subject(:apply_filters) do
-    described_class.call(
+    described_class.apply(
       scope: initial_scope,
       user: user,
       config: config
     )
   end
 
-  describe ".call" do
+  describe ".apply" do
     context "when given a configuration with an empty list of filters" do
       let(:filter_classes) { [] }
 

@@ -29,9 +29,9 @@ module Search
         orderer_class = config.orderer_class || Orderers::SearchOrderer
 
         # Apply all registered filters to the scope.
-        scope = Filters::FilterApplier.call(scope: model_class.all,
-                                            user: user,
-                                            config: config)
+        scope = Filters::FilterApplier.apply(scope: model_class.all,
+                                             user: user,
+                                             config: config)
 
         # Ensure the results are unique, as joins can create duplicates.
         scope = scope.distinct
