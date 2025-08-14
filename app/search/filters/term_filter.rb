@@ -19,7 +19,6 @@ module Search
         # (e.g., term-independent lectures).
         ids_to_filter << nil if Term.active.try(:id).to_s.in?(ids_to_filter)
 
-        # This is now a simple, efficient WHERE clause with no redundant JOIN.
         scope.where(term_id: ids_to_filter)
       end
     end

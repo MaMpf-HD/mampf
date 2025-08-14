@@ -16,20 +16,15 @@ module Search
         course_id = Lecture.where(id: lecture_id).pick(:course_id)
         return scope.none unless course_id
 
-        # Define subqueries for lesson and talk IDs. This keeps the logic in the DB.
         lesson_ids = Lesson.where(lecture_id: lecture_id).select(:id)
         talk_ids = Talk.where(lecture_id: lecture_id).select(:id)
 
-        # First, build the query to find all media associated with the lecture's
-        # hierarchy (Course, Lecture, Lesson, Talk).
         media_in_hierarchy = scope
                              .where(teachable_type: "Course", teachable_id: course_id)
                              .or(scope.where(teachable_type: "Lecture", teachable_id: lecture_id))
                              .or(scope.where(teachable_type: "Lesson", teachable_id: lesson_ids))
                              .or(scope.where(teachable_type: "Talk", teachable_id: talk_ids))
 
-        # Then, apply the project/sort filter to the *entire* result of that query.
-        # This ensures the sort is applied to all parts of the OR condition.
         media_in_hierarchy.where(sort: project.camelize)
       end
     end

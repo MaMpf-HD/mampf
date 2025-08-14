@@ -70,13 +70,15 @@ class CoursesController < ApplicationController
   def search
     authorize! :search, Course.new
 
-    Search::Searchers::ControllerSearcher.call(
+    search_result = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Course,
       configurator_class: Search::Configurators::CourseSearchConfigurator,
-      instance_variable_name: :courses,
       options: { default_per_page: 20 }
     )
+
+    @courses = search_result.results
+    @total = search_result.total_count
 
     respond_to do |format|
       format.js

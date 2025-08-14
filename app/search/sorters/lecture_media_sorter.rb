@@ -1,5 +1,4 @@
-# This orderer replicates the complex, multi-stage sorting logic from the
-# legacy MediaController#search_results method.
+# Applies the complex, multi-stage sorting logic used by media_controller#index
 #
 # The desired order is:
 # 1. "Native" media, sorted by their teachable type:
@@ -9,13 +8,12 @@
 #    - Media on the Course (by description)
 # 2. Imported media, appended at the end.
 module Search
-  module Orderers
-    class LectureMediaOrderer < BaseOrderer
+  module Sorters
+    class LectureMediaSorter < BaseSorter
       def call
         lecture = Lecture.find_by(id: search_params[:id])
         return scope.order(model_class.default_search_order) unless lecture
 
-        # Get Arel table references for building the query.
         media_table = Medium.arel_table
 
         # Create aliased table references to ensure stable names in the query.
@@ -26,14 +24,16 @@ module Search
         lessons_join = Arel::Nodes::OuterJoin.new(
           lessons_table,
           Arel::Nodes::On.new(
-            media_table[:teachable_type].eq("Lesson").and(media_table[:teachable_id]
+            media_table[:teachable_type].eq("Lesson")
+            .and(media_table[:teachable_id]
             .eq(lessons_table[:id]))
           )
         )
         talks_join = Arel::Nodes::OuterJoin.new(
           talks_table,
           Arel::Nodes::On.new(
-            media_table[:teachable_type].eq("Talk").and(media_table[:teachable_id]
+            media_table[:teachable_type].eq("Talk")
+            .and(media_table[:teachable_id]
             .eq(talks_table[:id]))
           )
         )
@@ -42,7 +42,6 @@ module Search
         # issues with bind parameters when ActiveRecord builds its COUNT query.
         imported_media_ids = lecture.imported_media.pluck(:id)
 
-        # Determine sort direction for lessons based on the lecture's term.
         lesson_sort_dir = determine_lesson_sort_direction(lecture)
 
         # Define the complex sorting expressions using Arel's CASE statements.
@@ -77,7 +76,6 @@ module Search
                                                     .eq("Course")).then(media_table[:description])
         }
 
-        # Build the final order clause using the Arel expressions.
         order_clause = [
           sort_expressions[:sort_group1].asc,
           sort_expressions[:sort_group2].asc,
@@ -89,9 +87,6 @@ module Search
           sort_expressions[:sort_course_description].asc
         ]
 
-        # Join the necessary tables for sorting.
-        # Select the original columns plus our new aliased sort expressions.
-        # Order by the Arel expressions.
         scope
           .joins(lessons_join)
           .joins(talks_join)

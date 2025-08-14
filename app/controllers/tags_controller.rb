@@ -135,13 +135,15 @@ class TagsController < ApplicationController
   def search
     authorize! :search, Tag.new
 
-    Search::Searchers::ControllerSearcher.call(
+    search_result = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Tag,
       configurator_class: Search::Configurators::TagSearchConfigurator,
-      instance_variable_name: :tags,
       options: { default_per_page: 10 }
     )
+
+    @tags = search_result.results
+    @total = search_result.total_count
 
     respond_to do |format|
       format.js

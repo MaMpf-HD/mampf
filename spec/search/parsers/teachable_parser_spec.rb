@@ -1,6 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Parsers::TeachableParser) do
+  # Create test data
   let!(:course) { create(:course) }
   let!(:lecture1) { create(:lecture, :with_sparse_toc, course: course) }
   let!(:lecture2) { create(:lecture, course: course) }
@@ -12,33 +13,37 @@ RSpec.describe(Search::Parsers::TeachableParser) do
   let(:lecture2_str) { "Lecture-#{lecture2.id}" }
   let(:lesson_str) { "Lesson-#{lesson.id}" }
 
-  subject(:call) { described_class.call(params) }
-
-  describe "#call" do
+  # The main describe block now targets the .parse class method
+  describe ".parse" do
     context "when no teachables are provided" do
-      let(:params) { { teachable_ids: [] } }
+      # The subject now calls the .parse method
+      subject(:parse) { described_class.parse(teachable_ids: []) }
+
       it "returns an empty hash" do
-        expect(call).to eq({})
+        expect(parse).to eq({})
       end
     end
 
-    context "when 'all_teachables' is set" do
-      let(:params) { { all_teachables: "1" } }
+    context "when 'all_teachables' is set to true" do
+      # The subject now calls the .parse method
+      subject(:parse) { described_class.parse(all_teachables: true) }
+
       it "returns an empty hash" do
-        expect(call).to eq({})
+        expect(parse).to eq({})
       end
     end
 
     context "when inheritance is disabled" do
-      let(:params) do
-        {
+      # The subject now calls the .parse method
+      subject(:parse) do
+        described_class.parse(
           teachable_ids: [course_str, lecture1_str, lesson_str],
-          teachable_inheritance: "0"
-        }
+          inheritance: false
+        )
       end
 
       it "returns a hash of exactly the provided teachables" do
-        expect(call).to eq(
+        expect(parse).to eq(
           "Course" => [course.id],
           "Lecture" => [lecture1.id],
           "Lesson" => [lesson.id]
@@ -47,20 +52,16 @@ RSpec.describe(Search::Parsers::TeachableParser) do
     end
 
     context "when inheritance is enabled" do
-      let(:params) do
-        {
-          teachable_ids: teachable_ids,
-          teachable_inheritance: "1"
-        }
-      end
+      # The subject is defined within each sub-context to pass the correct IDs
+      subject(:parse) { described_class.parse(teachable_ids: teachable_ids, inheritance: true) }
 
       context "with a course" do
         let(:teachable_ids) { [course_str] }
 
         it "returns the course, all its lectures, and their lessons" do
-          expect(call["Course"]).to contain_exactly(course.id)
-          expect(call["Lecture"].pluck(:id)).to contain_exactly(lecture1.id, lecture2.id)
-          expect(call["Lesson"].pluck(:id)).to contain_exactly(lesson.id)
+          expect(parse["Course"]).to contain_exactly(course.id)
+          expect(parse["Lecture"].pluck(:id)).to contain_exactly(lecture1.id, lecture2.id)
+          expect(parse["Lesson"].pluck(:id)).to contain_exactly(lesson.id)
         end
       end
 
@@ -68,9 +69,9 @@ RSpec.describe(Search::Parsers::TeachableParser) do
         let(:teachable_ids) { [lecture1_str] }
 
         it "returns the lecture and its lesson" do
-          expect(call["Course"]).to be_empty
-          expect(call["Lecture"].pluck(:id)).to contain_exactly(lecture1.id)
-          expect(call["Lesson"].pluck(:id)).to contain_exactly(lesson.id)
+          expect(parse["Course"]).to be_empty
+          expect(parse["Lecture"].pluck(:id)).to contain_exactly(lecture1.id)
+          expect(parse["Lesson"].pluck(:id)).to contain_exactly(lesson.id)
         end
       end
 
@@ -78,9 +79,9 @@ RSpec.describe(Search::Parsers::TeachableParser) do
         let(:teachable_ids) { [lecture2_str] }
 
         it "returns the lecture and no lessons" do
-          expect(call["Course"]).to be_empty
-          expect(call["Lecture"].pluck(:id)).to contain_exactly(lecture2.id)
-          expect(call["Lesson"]).to be_empty
+          expect(parse["Course"]).to be_empty
+          expect(parse["Lecture"].pluck(:id)).to contain_exactly(lecture2.id)
+          expect(parse["Lesson"]).to be_empty
         end
       end
 
@@ -89,7 +90,7 @@ RSpec.describe(Search::Parsers::TeachableParser) do
 
         it "returns only the specified lesson" do
           # When only a lesson is passed, the result is not a subquery.
-          expect(call).to eq(
+          expect(parse).to eq(
             "Course" => [],
             "Lecture" => [],
             "Lesson" => [lesson.id]

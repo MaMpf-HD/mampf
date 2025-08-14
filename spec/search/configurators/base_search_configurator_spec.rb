@@ -39,8 +39,8 @@ RSpec.describe(Search::Configurators::BaseSearchConfigurator) do
     end
   end
 
-  describe ".call" do
-    # Use a dummy subclass to test the behavior of the abstract base class's .call method
+  describe ".configure" do
+    # Use a dummy subclass to test the behavior of the abstract base class's .configure method
     let(:dummy_configurator_class) do
       Class.new(described_class) do
         def call
@@ -56,7 +56,7 @@ RSpec.describe(Search::Configurators::BaseSearchConfigurator) do
       allow(dummy_configurator_class).to receive(:new).and_return(dummy_instance)
 
       # Trigger the class method
-      dummy_configurator_class.call(user: user, search_params: search_params)
+      dummy_configurator_class.configure(user: user, search_params: search_params)
 
       # Verify that .new was called with the correct arguments
       expect(dummy_configurator_class).to have_received(:new)
@@ -71,7 +71,7 @@ RSpec.describe(Search::Configurators::BaseSearchConfigurator) do
     it "can be initialized with filters and params" do
       filters = [Search::Filters::FulltextFilter]
       params = { fulltext: "test" }
-      configuration = described_class::Configuration.new(filters: filters, params: params)
+      configuration = Search::Configurators::Configuration.new(filters: filters, params: params)
 
       expect(configuration.filters).to eq(filters)
       expect(configuration.params).to eq(params)

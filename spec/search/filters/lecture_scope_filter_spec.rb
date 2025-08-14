@@ -34,7 +34,7 @@ RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
       ]
     end
 
-    subject(:filtered_scope) { described_class.apply(scope: scope, params: params, user: user) }
+    subject(:filtered_scope) { described_class.filter(scope: scope, params: params, user: user) }
 
     before do
       user.lectures << subscribed_lecture

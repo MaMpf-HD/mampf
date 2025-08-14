@@ -15,10 +15,6 @@ module Search
       def call
         return scope if user&.admin?
 
-        # For complex OR conditions involving joins, using a SQL string fragment
-        # is often the clearest and most robust solution. It avoids issues with
-        # structurally incompatible relations that can occur with chaining .or().
-        #
         # A left_outer_join is necessary because a lecture might not have an
         # editor, but we still need to check the other conditions.
         #

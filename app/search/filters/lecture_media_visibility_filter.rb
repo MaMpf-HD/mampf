@@ -9,7 +9,6 @@ module Search
         lecture_id = params[:id]
         visibility = params[:visibility]
 
-        # Default behavior if no visibility is set, or if it's 'all'.
         return scope if visibility.blank? || visibility == "all" || lecture_id.blank?
 
         lecture = Lecture.find_by(id: lecture_id)
@@ -17,10 +16,8 @@ module Search
 
         case visibility
         when "lecture"
-          # Reject media whose teachable is a Course.
           scope.where.not(teachable_type: "Course")
         when "thematic"
-          # For admins/editors, show everything.
           return scope if user.admin? || lecture.edited_by?(user)
 
           # For regular users, keep media that are either:

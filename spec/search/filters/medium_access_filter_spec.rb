@@ -21,7 +21,7 @@ RSpec.describe(Search::Filters::MediumAccessFilter, type: :filter) do
       [medium_all, medium_users, medium_subscribers, medium_locked, medium_unpublished]
     end
 
-    subject(:filtered_scope) { described_class.apply(scope: scope, params: params, user: user) }
+    subject(:filtered_scope) { described_class.filter(scope: scope, params: params, user: user) }
 
     context "when the filter is not applicable" do
       context "because access is 'irrelevant'" do

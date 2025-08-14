@@ -4,7 +4,7 @@ RSpec.describe(Search::Configurators::MediaSearchConfigurator) do
   let(:user) { create(:user) }
   let(:search_params) { {} }
   let(:generic_sorts) { ["Question", "Remark"] } # Mock generic sorts for predictability
-  subject(:configuration) { described_class.call(user: user, search_params: search_params) }
+  subject(:configuration) { described_class.configure(user: user, search_params: search_params) }
 
   before do
     allow(Medium).to receive(:generic_sorts).and_return(generic_sorts)

@@ -24,13 +24,10 @@ module Search
       private
 
         def apply_subscribed_filter
-          # Use subqueries to define the sets of IDs we need. This keeps all
-          # logic in the database and avoids loading arrays into Ruby.
           subscribed_lecture_ids = user.lectures.select(:id)
           subscribed_course_ids = user.lectures.select(:course_id).distinct
           subscribed_lesson_ids = Lesson.where(lecture_id: subscribed_lecture_ids).select(:id)
 
-          # Build a single, efficient query using .or()
           scope.where(teachable_type: "Course", teachable_id: subscribed_course_ids)
                .or(scope.where(teachable_type: "Lecture", teachable_id: subscribed_lecture_ids))
                .or(scope.where(teachable_type: "Lesson", teachable_id: subscribed_lesson_ids))
@@ -40,10 +37,8 @@ module Search
           custom_lecture_ids = params[:media_lectures].to_a.compact_blank
           return scope if custom_lecture_ids.empty?
 
-          # Use a subquery for lesson_ids to avoid a separate DB round-trip.
           lesson_ids = Lesson.where(lecture_id: custom_lecture_ids).select(:id)
 
-          # Build the query using .or()
           scope.where(teachable_type: "Lecture", teachable_id: custom_lecture_ids)
                .or(scope.where(teachable_type: "Lesson", teachable_id: lesson_ids))
         end

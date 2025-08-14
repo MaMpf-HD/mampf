@@ -15,7 +15,6 @@ module Search
   module Filters
     class TagFilter < BaseFilter
       def call
-        # First, check if the model can be tagged before doing anything else.
         return scope unless scope.klass.reflect_on_association(:tags)
         return scope if skip_filter?(all_param: :all_tags, ids_param: :tag_ids)
 
@@ -36,7 +35,6 @@ module Search
           # SQL query and keeps the final scope clean for further chaining.
           scope.where(primary_key => matching_ids_subquery)
         else
-          # Standard OR search
           scope.joins(:tags).where(tags: { id: tag_ids }).distinct
         end
       end

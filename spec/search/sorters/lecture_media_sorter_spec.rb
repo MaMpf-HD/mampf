@@ -1,12 +1,12 @@
 require "rails_helper"
 
-RSpec.describe(Search::Orderers::LectureMediaOrderer) do
+RSpec.describe(Search::Sorters::LectureMediaSorter) do
   let(:initial_scope) { Medium.all }
   let(:model_class) { Medium }
   let(:search_params) { { id: lecture.id } }
 
   subject(:ordered_scope) do
-    described_class.call(
+    described_class.sort(
       scope: initial_scope,
       model_class: model_class,
       search_params: search_params

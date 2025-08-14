@@ -40,12 +40,12 @@ RSpec.describe(Search::Filters::BaseFilter) do
     end
   end
 
-  describe ".apply" do
+  describe ".filter" do
     it "initializes a new instance and calls #call" do
       filter_instance = instance_spy(dummy_class)
       allow(dummy_class).to receive(:new).and_return(filter_instance)
 
-      dummy_class.apply(scope: scope, params: params, user: user)
+      dummy_class.filter(scope: scope, params: params, user: user)
 
       expect(dummy_class).to have_received(:new)
         .with(scope: scope, params: params, user: user)

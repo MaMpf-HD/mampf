@@ -9,28 +9,28 @@ RSpec.describe(Search::Filters::FilterApplier) do
   let(:scope_after_filter1) { double("ScopeAfterFilter1") }
   let(:scope_after_filter2) { double("ScopeAfterFilter2") }
 
-  # Create test doubles for filter classes, stubbing the .apply method
-  let(:filter_class1) { class_double(Search::Filters::BaseFilter, apply: scope_after_filter1) }
-  let(:filter_class2) { class_double(Search::Filters::BaseFilter, apply: scope_after_filter2) }
+  # Create test doubles for filter classes, stubbing the .filter method
+  let(:filter_class1) { class_double(Search::Filters::BaseFilter, filter: scope_after_filter1) }
+  let(:filter_class2) { class_double(Search::Filters::BaseFilter, filter: scope_after_filter2) }
 
   # Create a double for the configuration object
   let(:config) do
     instance_double(
-      Search::Configurators::BaseSearchConfigurator::Configuration,
+      Search::Configurators::Configuration,
       filters: filter_classes,
       params: params
     )
   end
 
   subject(:apply_filters) do
-    described_class.call(
+    described_class.apply(
       scope: initial_scope,
       user: user,
       config: config
     )
   end
 
-  describe ".call" do
+  describe ".apply" do
     context "when given a configuration with an empty list of filters" do
       let(:filter_classes) { [] }
 
@@ -42,16 +42,16 @@ RSpec.describe(Search::Filters::FilterApplier) do
     context "when given a configuration with a list of filters" do
       let(:filter_classes) { [filter_class1, filter_class2] }
 
-      it "calls .apply on each filter in sequence" do
+      it "calls .filter on each filter in sequence" do
         # Trigger the call
         apply_filters
 
         # Expect the first filter to be applied to the initial scope
-        expect(filter_class1).to have_received(:apply)
+        expect(filter_class1).to have_received(:filter)
           .with(scope: initial_scope, params: params, user: user)
 
         # Expect the second filter to be applied to the result of the first
-        expect(filter_class2).to have_received(:apply)
+        expect(filter_class2).to have_received(:filter)
           .with(scope: scope_after_filter1, params: params, user: user)
       end
 

@@ -3,30 +3,14 @@ module Search
     # This searcher takes a configured search, executes it, and then paginates
     # the results using Pagy without any direct dependency on the controller.
     class PaginatedSearcher
-      # The SearchResult struct returns the pagy metadata object and the
-      # paginated scope.
-      SearchResult = Struct.new(:pagy, :results, keyword_init: true)
-
-      # The class method no longer needs the controller.
-      def self.call(model_class:, user:, config:, default_per_page: 10)
-        new(model_class: model_class,
-            user: user,
-            config: config,
-            default_per_page: default_per_page).call
-      end
-
-      attr_reader :model_class, :user, :config, :default_per_page
-
-      def initialize(model_class:, user:, config:, default_per_page:)
-        @model_class = model_class
-        @user = user
-        @config = config
-        @default_per_page = default_per_page
-      end
-
-      def call
-        # 1. Get the full, ordered, unpaginated scope from the ModelSearcher.
-        search_results = ModelSearcher.call(
+      # @param model_class [Class] The ActiveRecord model to be searched.
+      # @param user [User] The current user performing the search.
+      # @param config [Configurators::Configuration]
+      #   The configuration object from the model's configurator.
+      # @param default_per_page [Integer] The default number of items per page.
+      # @return [SearchResult] An object containing the paginated results and total count.
+      def self.search(model_class:, user:, config:, default_per_page: 10)
+        search_results = ModelSearcher.search(
           model_class: model_class,
           user: user,
           config: config

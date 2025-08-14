@@ -280,12 +280,14 @@ class LecturesController < ApplicationController
   def search
     authorize! :search, Lecture.new
 
-    Search::Searchers::ControllerSearcher.call(
+    search_result = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Lecture,
-      configurator_class: Search::Configurators::LectureSearchConfigurator,
-      instance_variable_name: :lectures
+      configurator_class: Search::Configurators::LectureSearchConfigurator
     )
+
+    @lectures = search_result.results
+    @total = search_result.total_count
 
     @results_as_list = params.dig(:search, :results_as_list) == "true"
 

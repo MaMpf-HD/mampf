@@ -9,7 +9,7 @@ RSpec.describe(Search::Filters::AnswerCountFilter) do
   let!(:other_medium) { create(:valid_medium, sort: "Remark") }
   let(:scope) { Medium.all }
 
-  subject(:filtered_scope) { described_class.apply(scope: scope, params: params, user: user) }
+  subject(:filtered_scope) { described_class.filter(scope: scope, params: params, user: user) }
 
   context "when the filter is not applicable" do
     context "because answer count is irrelevant" do

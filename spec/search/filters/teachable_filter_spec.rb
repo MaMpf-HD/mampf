@@ -20,7 +20,7 @@ RSpec.describe(Search::Filters::TeachableFilter, type: :filter) do
     let(:scope) { Medium.all }
     let(:all_media) { [course_medium, lecture_medium, lesson_medium, other_medium] }
 
-    subject(:filtered_scope) { described_class.apply(scope: scope, params: params, user: user) }
+    subject(:filtered_scope) { described_class.filter(scope: scope, params: params, user: user) }
 
     context "when the filter is not applicable" do
       context "because 'teachable_ids' is nil" do

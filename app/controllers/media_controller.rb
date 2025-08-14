@@ -29,16 +29,18 @@ class MediaController < ApplicationController
   def index
     authorize! :index, Medium.new
 
-    Search::Searchers::ControllerSearcher.call(
+    search_result = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Medium,
       configurator_class: Search::Configurators::LectureMediaSearchConfigurator,
-      instance_variable_name: :media,
       options: {
         params_method_name: :lecture_media_search_params,
         default_per_page: 8
       }
     )
+
+    @media = search_result.results
+    @total = search_result.total_count
 
     if @lecture.sort == "vignettes"
       render layout: "vignettes_navbar"
@@ -234,13 +236,15 @@ class MediaController < ApplicationController
     @purpose = params.dig(:search, :purpose)
     @results_as_list = params.dig(:search, :results_as_list) == "true"
 
-    Search::Searchers::ControllerSearcher.call(
+    search_result = Search::Searchers::ControllerSearcher.search(
       controller: self,
       model_class: Medium,
       configurator_class: Search::Configurators::MediaSearchConfigurator,
-      instance_variable_name: :media,
       options: { default_per_page: 10 }
     )
+
+    @media = search_result.results
+    @total = search_result.total_count
 
     respond_to do |format|
       format.js do

@@ -9,22 +9,25 @@ module Search
   module Filters
     class TeachableFilter < BaseFilter
       def call
-        # First, check if the user actually provided any teachable IDs to filter by.
-        # If not, the filter is inactive and should return the original scope.
-        return scope if params[:teachable_ids].to_a.compact_blank.empty?
+        teachable_ids = params[:teachable_ids].to_a.compact_blank
+        all_teachables = params[:all_teachables] == "1"
+        inheritance = params[:teachable_inheritance] == "1"
 
-        grouped_teachables = Search::Parsers::TeachableParser.call(params)
+        return scope if teachable_ids.empty?
+
+        grouped_teachables = Search::Parsers::TeachableParser
+                             .parse(teachable_ids: teachable_ids,
+                                    all_teachables: all_teachables,
+                                    inheritance: inheritance)
 
         # If the parser returns an empty hash, it means the user provided IDs,
         # but none were valid. In this case, the result should be an empty set.
         return scope.none if grouped_teachables.empty?
 
-        # Build a query for each teachable type and chain them with .or()
         queries = grouped_teachables.map do |type, ids|
           scope.where(teachable_type: type, teachable_id: ids)
         end
 
-        # Chain all individual conditions together with OR.
         queries.reduce(:or)
       end
     end
