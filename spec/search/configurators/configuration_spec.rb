@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe(Search::Configurators::Configuration) do
   let(:filters) { [double("FilterClass1"), double("FilterClass2")] }
   let(:params) { { key: "value" } }
-  let(:orderer_class) { double("OrdererClass") }
+  let(:sorter_class) { double("SorterClass") }
 
   describe "#initialize" do
     context "with only required arguments" do
@@ -17,8 +17,8 @@ RSpec.describe(Search::Configurators::Configuration) do
         expect(config.params).to eq(params)
       end
 
-      it "defaults the orderer_class to nil" do
-        expect(config.orderer_class).to be_nil
+      it "defaults the sorter_class to nil" do
+        expect(config.sorter_class).to be_nil
       end
     end
 
@@ -26,7 +26,7 @@ RSpec.describe(Search::Configurators::Configuration) do
       subject(:config) do
         described_class.new(filters: filters,
                             params: params,
-                            orderer_class: orderer_class)
+                            sorter_class: sorter_class)
       end
 
       it "assigns the filters correctly" do
@@ -37,8 +37,8 @@ RSpec.describe(Search::Configurators::Configuration) do
         expect(config.params).to eq(params)
       end
 
-      it "assigns the orderer_class correctly" do
-        expect(config.orderer_class).to eq(orderer_class)
+      it "assigns the sorter_class correctly" do
+        expect(config.sorter_class).to eq(sorter_class)
       end
     end
 

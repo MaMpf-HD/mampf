@@ -4,9 +4,9 @@
 # search order. It also ensures that any columns required for ordering are
 # included in the SELECT statement to prevent database errors when using DISTINCT.
 module Search
-  module Orderers
-    class SearchOrderer < BaseOrderer
-      # Applies the ordering logic.
+  module Sorters
+    class SearchSorter < BaseSorter
+      # Applies the sorting logic.
       def call
         return scope if fulltext_search? || !orderable?
 

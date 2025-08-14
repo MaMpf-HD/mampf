@@ -10,7 +10,7 @@ module Search
       #   The configuration object from the model's configurator.
       # @return [ActiveRecord::Relation] The resulting query object.
       def self.search(model_class:, user:, config:)
-        orderer_class = config.orderer_class || Orderers::SearchOrderer
+        sorter_class = config.sorter_class || Sorters::SearchSorter
 
         scope = Filters::FilterApplier.apply(scope: model_class.all,
                                              user: user,
@@ -18,9 +18,9 @@ module Search
 
         scope = scope.distinct
 
-        orderer_class.call(model_class: model_class,
-                           scope: scope,
-                           search_params: config.params)
+        sorter_class.call(model_class: model_class,
+                          scope: scope,
+                          search_params: config.params)
       end
     end
   end

@@ -29,7 +29,7 @@ class Medium < ApplicationRecord
           primary_key: "teachable_id",
           foreign_key: "id"
 
-  # This private association is ONLY for ordering in LectureMediaOrderer.
+  # This private association is ONLY for sorting in LectureMediaSorter.
   has_one :_search_talk,
           -> { where(media: { teachable_type: "Talk" }) },
           class_name: "Talk",

@@ -20,8 +20,8 @@ RSpec.describe(Search::Configurators::LectureMediaSearchConfigurator) do
       expect(configuration.filters).to match_array(expected_filters)
     end
 
-    it "returns a configuration with the correct orderer class" do
-      expect(configuration.orderer_class).to eq(Search::Orderers::LectureMediaOrderer)
+    it "returns a configuration with the correct sorter class" do
+      expect(configuration.sorter_class).to eq(Search::Sorters::LectureMediaSorter)
     end
 
     context "with parameter processing" do

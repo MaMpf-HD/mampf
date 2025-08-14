@@ -11,7 +11,7 @@ module Search
         Configuration.new(
           filters: filters,
           params: processed_params,
-          orderer_class: Search::Orderers::LectureMediaOrderer
+          sorter_class: Search::Sorters::LectureMediaSorter
         )
       end
 

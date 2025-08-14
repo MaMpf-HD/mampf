@@ -1,4 +1,4 @@
-# This orderer replicates the complex, multi-stage sorting logic from the
+# This sorter replicates the complex, multi-stage sorting logic from the
 # legacy MediaController#search_results method.
 #
 # The desired order is:
@@ -9,8 +9,8 @@
 #    - Media on the Course (by description)
 # 2. Imported media, appended at the end.
 module Search
-  module Orderers
-    class LectureMediaOrderer < BaseOrderer
+  module Sorters
+    class LectureMediaSorter < BaseSorter
       def call
         lecture = Lecture.find_by(id: search_params[:id])
         return scope.order(model_class.default_search_order) unless lecture
