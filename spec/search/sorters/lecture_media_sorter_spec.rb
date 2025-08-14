@@ -6,7 +6,7 @@ RSpec.describe(Search::Sorters::LectureMediaSorter) do
   let(:search_params) { { id: lecture.id } }
 
   subject(:ordered_scope) do
-    described_class.call(
+    described_class.sort(
       scope: initial_scope,
       model_class: model_class,
       search_params: search_params

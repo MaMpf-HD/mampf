@@ -6,7 +6,7 @@ RSpec.describe(Search::Sorters::SearchSorter) do
   let(:search_params) { {} }
 
   subject(:ordered_scope) do
-    described_class.call(
+    described_class.sort(
       scope: initial_scope,
       model_class: model_class,
       search_params: search_params
@@ -28,7 +28,7 @@ RSpec.describe(Search::Sorters::SearchSorter) do
         let(:unorderable_model) { Class.new }
 
         it "returns the original scope" do
-          result = described_class.call(scope: initial_scope, model_class: unorderable_model,
+          result = described_class.sort(scope: initial_scope, model_class: unorderable_model,
                                         search_params: search_params)
           expect(result).to eq(initial_scope)
         end
