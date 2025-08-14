@@ -14,7 +14,7 @@ RSpec.describe(Search::Filters::TeacherFilter, type: :filter) do
     let(:scope) { Lecture.all }
     let(:all_lectures) { [lecture1, lecture2, lecture3] }
 
-    subject(:filtered_scope) { described_class.apply(scope: scope, params: params, user: user) }
+    subject(:filtered_scope) { described_class.filter(scope: scope, params: params, user: user) }
 
     context "when filtering for specific teachers" do
       context "by a single teacher" do

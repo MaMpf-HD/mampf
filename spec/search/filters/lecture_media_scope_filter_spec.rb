@@ -11,7 +11,7 @@ RSpec.describe(Search::Filters::LectureMediaScopeFilter) do
   let!(:talk) { create(:talk, lecture: lecture) }
 
   subject(:filtered_scope) do
-    described_class.new(scope: initial_scope, params: params, user: user).call
+    described_class.filter(scope: initial_scope, params: params, user: user)
   end
 
   context "with invalid parameters" do

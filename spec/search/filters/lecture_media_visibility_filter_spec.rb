@@ -17,7 +17,7 @@ RSpec.describe(Search::Filters::LectureMediaVisibilityFilter) do
   let(:all_media) { [course_medium, lecture_medium, lesson_medium] }
 
   subject(:filtered_scope) do
-    described_class.new(scope: initial_scope, params: params, user: current_user).call
+    described_class.filter(scope: initial_scope, params: params, user: current_user)
   end
 
   context "when filter should be bypassed" do
