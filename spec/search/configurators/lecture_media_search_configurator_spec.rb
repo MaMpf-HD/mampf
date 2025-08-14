@@ -7,7 +7,7 @@ RSpec.describe(Search::Configurators::LectureMediaSearchConfigurator) do
     let(:search_params) { { id: lecture.id } }
 
     subject(:configuration) do
-      described_class.call(user: user, search_params: search_params)
+      described_class.configure(user: user, search_params: search_params)
     end
 
     it "returns a configuration with the correct set of filters" do
@@ -28,7 +28,7 @@ RSpec.describe(Search::Configurators::LectureMediaSearchConfigurator) do
       let(:cookies) { {} }
 
       subject(:configuration) do
-        described_class.call(user: user, search_params: search_params, cookies: cookies)
+        described_class.configure(user: user, search_params: search_params, cookies: cookies)
       end
 
       context "when 'reverse' param is a string 'true'" do

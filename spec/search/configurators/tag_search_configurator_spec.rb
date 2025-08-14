@@ -7,7 +7,7 @@ RSpec.describe(Search::Configurators::TagSearchConfigurator) do
       search_params = { fulltext: "Algebra" }
 
       # Instantiate and call the configurator
-      configuration = described_class.call(user: user, search_params: search_params)
+      configuration = described_class.configure(user: user, search_params: search_params)
 
       # Define the expected list of filters
       expected_filters = [
