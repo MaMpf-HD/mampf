@@ -1,7 +1,7 @@
-# This service is responsible for applying the correct ordering to a search
-# result scope. It prioritizes ordering by full-text search rank if a search
+# Applies the correct sorting to a search result scope.
+# It prioritizes sorting by full-text search rank if a search
 # term is present. Otherwise, it falls back to the model's defined default
-# search order. It also ensures that any columns required for ordering are
+# search order. It also ensures that any columns required for sorting are
 # included in the SELECT statement to prevent database errors when using DISTINCT.
 module Search
   module Sorters
@@ -47,7 +47,6 @@ module Search
           select_columns_sql = order_expression.to_s.gsub(/\s+(ASC|DESC)\b/i, "")
           select_expression = Arel.sql(select_columns_sql)
 
-          # First, add the necessary joins to the scope.
           scope_with_joins = add_required_joins(scope)
 
           # Always include the order expression in the SELECT list to prevent errors

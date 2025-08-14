@@ -1,4 +1,4 @@
-# This service orchestrates the entire search process from within a controller.
+# Orchestrates the entire search process from within a controller.
 # It uses a configurator to get the search setup, runs the search via the
 # PaginatedSearcher, and returns a `PaginatedSearcher::SearchResult` object.
 #

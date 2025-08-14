@@ -12,7 +12,6 @@ module Search
       # @return [ActiveRecord::Relation] The filtered scope.
       def self.apply(scope:, user:, config:)
         config.filters.reduce(scope) do |current_scope, filter_class|
-          # Pass the necessary parts of the config to each individual filter.
           filter_class.filter(scope: current_scope,
                               params: config.params,
                               user: user)

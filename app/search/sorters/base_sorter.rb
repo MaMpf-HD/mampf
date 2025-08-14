@@ -20,7 +20,6 @@ module Search
         sorted_scope = new(scope: scope, model_class: model_class,
                            search_params: search_params).call
 
-        # If the 'reverse' parameter is true, reverse the order of the scope.
         return sorted_scope.reverse_order if search_params[:reverse]
 
         sorted_scope

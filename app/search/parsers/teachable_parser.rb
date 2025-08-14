@@ -57,8 +57,6 @@ module Search
             lectures_subquery = build_lectures_subquery(course_ids, lecture_ids)
             lessons_result = build_lessons_result(lectures_subquery, lesson_ids)
 
-            # If no courses or lectures were given, the lesson part will be a
-            # subquery. If the user only selected lessons, we can just return the array.
             final_lessons = if course_ids.empty? && lecture_ids.empty?
               lesson_ids
             else

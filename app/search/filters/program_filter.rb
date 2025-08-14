@@ -18,7 +18,6 @@ module Search
                     when "Lecture"
                       { course: :divisions }
                     else
-                      # If the filter is used on an unsupported model, do nothing.
                       return scope
         end
 
