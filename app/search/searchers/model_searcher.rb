@@ -1,6 +1,6 @@
 # Orchestrates the process of building a complex, filterable,  and sortable
 # database query for a given model. It uses a set of filter classes to apply
-# various conditions and then ensures the results are unique and correctly ordered.
+# various conditions and then ensures the results are unique and correctly sorted.
 module Search
   module Searchers
     class ModelSearcher
@@ -18,7 +18,7 @@ module Search
 
         scope = scope.distinct
 
-        sorter_class.call(model_class: model_class,
+        sorter_class.sort(model_class: model_class,
                           scope: scope,
                           search_params: config.params)
       end

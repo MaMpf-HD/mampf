@@ -1,6 +1,6 @@
 require "rails_helper"
 
-# A dummy sorter for testing the BaseSorter's class-level call method.
+# A dummy sorter for testing the BaseSorter's class-level sort method.
 # Defined at the top level to avoid linter warnings (Lint/ConstantDefinitionInBlock).
 class DummySorter < Search::Sorters::BaseSorter
   def call
@@ -42,23 +42,23 @@ RSpec.describe(Search::Sorters::BaseSorter) do
     end
   end
 
-  # This block tests the class method's logic, including the new `reverse` functionality.
+  # This block tests the class method's logic, including the `reverse` functionality.
   # It uses a real scope and a dummy subclass to verify the end-to-end behavior.
-  describe ".call" do
+  describe ".sort" do
     let!(:medium1) { create(:valid_medium, created_at: 1.day.ago) }
     let!(:medium2) { create(:valid_medium, created_at: Time.current) }
     let(:scope) { Medium.all }
     let(:model_class) { Medium }
 
-    subject(:ordered_scope) do
-      DummySorter.call(scope: scope, model_class: model_class, search_params: search_params)
+    subject(:sorted_scope) do
+      DummySorter.sort(scope: scope, model_class: model_class, search_params: search_params)
     end
 
     context "without the reverse parameter" do
       let(:search_params) { {} }
 
       it "returns the scope ordered by the subclass's logic" do
-        expect(ordered_scope.to_a).to eq([medium1, medium2])
+        expect(sorted_scope.to_a).to eq([medium1, medium2])
       end
     end
 
@@ -66,7 +66,7 @@ RSpec.describe(Search::Sorters::BaseSorter) do
       let(:search_params) { { reverse: true } }
 
       it "reverses the order of the scope" do
-        expect(ordered_scope.to_a).to eq([medium2, medium1])
+        expect(sorted_scope.to_a).to eq([medium2, medium1])
       end
     end
 
@@ -74,7 +74,7 @@ RSpec.describe(Search::Sorters::BaseSorter) do
       let(:search_params) { { reverse: "true" } }
 
       it "reverses the order of the scope" do
-        expect(ordered_scope.to_a).to eq([medium2, medium1])
+        expect(sorted_scope.to_a).to eq([medium2, medium1])
       end
     end
 
@@ -82,7 +82,7 @@ RSpec.describe(Search::Sorters::BaseSorter) do
       let(:search_params) { { reverse: false } }
 
       it "does not reverse the order of the scope" do
-        expect(ordered_scope.to_a).to eq([medium1, medium2])
+        expect(sorted_scope.to_a).to eq([medium1, medium2])
       end
     end
   end

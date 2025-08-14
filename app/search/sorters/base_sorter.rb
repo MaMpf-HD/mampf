@@ -11,11 +11,11 @@ module Search
 
       # Entry point for the service.
       #
-      # @param scope [ActiveRecord::Relation] The scope to be ordered.
+      # @param scope [ActiveRecord::Relation] The scope to be sorted.
       # @param model_class [Class] The ActiveRecord model class being searched.
       # @param search_params [Hash] The search parameters.
-      # @return [ActiveRecord::Relation] The ordered scope.
-      def self.call(scope:, model_class:, search_params:)
+      # @return [ActiveRecord::Relation] The sorted scope.
+      def self.sort(scope:, model_class:, search_params:)
         # Get the ordered scope from the specific sorter subclass.
         sorted_scope = new(scope: scope, model_class: model_class,
                            search_params: search_params).call

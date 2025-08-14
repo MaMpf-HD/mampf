@@ -62,8 +62,8 @@ RSpec.describe(Search::Searchers::ModelSearcher) do
         # 3. Makes the results distinct
         expect(filtered_scope).to have_received(:distinct)
 
-        # 4. Applies the final ordering using the expected sorter
-        expect(expected_sorter).to have_received(:call).with(
+        # 4. Applies the final ordering using the expected sorter's .sort method
+        expect(expected_sorter).to have_received(:sort).with(
           model_class: model_class,
           scope: distinct_scope,
           search_params: params
@@ -80,7 +80,7 @@ RSpec.describe(Search::Searchers::ModelSearcher) do
       let(:expected_sorter) { Search::Sorters::SearchSorter }
 
       before do
-        allow(expected_sorter).to receive(:call).and_return(ordered_scope)
+        allow(expected_sorter).to receive(:sort).and_return(ordered_scope)
       end
 
       include_examples "search orchestration"
@@ -91,7 +91,7 @@ RSpec.describe(Search::Searchers::ModelSearcher) do
       let(:expected_sorter) { custom_sorter_class }
 
       before do
-        allow(expected_sorter).to receive(:call).and_return(ordered_scope)
+        allow(expected_sorter).to receive(:sort).and_return(ordered_scope)
       end
 
       include_examples "search orchestration"
