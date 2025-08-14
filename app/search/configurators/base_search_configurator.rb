@@ -16,7 +16,7 @@ module Search
       # @param search_params [Hash] The search parameters.
       # @param cookies [ActionDispatch::Cookies::CookieJar] The controller's cookies.
       # @return [Configuration] An object containing the filter classes and params.
-      def self.call(user:, search_params:, cookies: {})
+      def self.configure(user:, search_params:, cookies: {})
         new(user: user, search_params: search_params, cookies: cookies).call
       end
 

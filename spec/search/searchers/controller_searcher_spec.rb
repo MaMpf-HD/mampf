@@ -47,7 +47,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
     allow(controller).to receive(:send).with(:cookies).and_return(cookies)
 
     # Stub collaborator class methods
-    allow(configurator_class).to receive(:call).and_return(configurator_result)
+    allow(configurator_class).to receive(:configure).and_return(configurator_result)
     allow(Search::Searchers::PaginatedSearcher).to receive(:search)
       .and_return(paginated_search_result)
   end
@@ -57,7 +57,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   describe ".search" do
     it "calls the configurator with correctly merged params and cookies" do
       search
-      expect(configurator_class).to have_received(:call).with(
+      expect(configurator_class).to have_received(:configure).with(
         user: user,
         search_params: expected_merged_params,
         cookies: cookies
@@ -81,7 +81,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
     context "when the configurator returns nil" do
       let(:empty_scope) { double("EmptyScope") }
       before do
-        allow(configurator_class).to receive(:call).and_return(nil)
+        allow(configurator_class).to receive(:configure).and_return(nil)
         allow(model_class).to receive(:none).and_return(empty_scope)
       end
 

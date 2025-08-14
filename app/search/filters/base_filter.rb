@@ -9,7 +9,7 @@ module Search
     class BaseFilter
       attr_reader :scope, :params, :user
 
-      def self.apply(scope:, params:, user:)
+      def self.filter(scope:, params:, user:)
         new(scope: scope, params: params, user: user).call
       end
 

@@ -29,7 +29,7 @@ module Search
         default_per_page = options.fetch(:default_per_page, 10)
         params_method_name = options.fetch(:params_method_name, :search_params)
 
-        config = configurator_class.call(
+        config = configurator_class.configure(
           user: controller.current_user,
           search_params: permitted_controller_params(controller, params_method_name),
           cookies: controller.send(:cookies)
