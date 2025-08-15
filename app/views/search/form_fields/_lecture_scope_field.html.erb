@@ -1,0 +1,30 @@
+
+<div class="col-6 col-lg-4 mb-3 form-group">
+  <%= f.label :teachable_ids, t('basics.lectures'), class: 'form-label' %>
+  <%= helpdesk(t('search.media.lectures'), true) %>
+
+  <div class="form-check mb-2">
+    <%= f.radio_button :lecture_option, '0', checked: true, class: 'form-check-input' %>
+    <%= f.label :lecture_option, t('search.media.lecture_options.all'), value: '0', class: 'form-check-label' %>
+  </div>
+
+  <div class="form-check mb-2">
+    <%= f.radio_button :lecture_option, '1', class: 'form-check-input' %>
+    <%= f.label :lecture_option, t('search.media.lecture_options.subscribed'), value: '1', class: 'form-check-label' %>
+  </div>
+
+  <div class="form-check mb-2">
+    <%= f.radio_button :lecture_option, '2',
+                       class: 'form-check-input',
+                       data: { type: 'toggle', id: 'search_media_lectures' } %>
+    <%= f.label :lecture_option, t('search.media.lecture_options.own_selection'), value: '2', class: 'form-check-label' %>
+  </div>
+
+  <%= f.select :media_lectures,
+               options_for_select(add_prompt(Lecture.select)),
+               {},
+               { multiple: true,
+                 class: 'pl-4 selectize',
+                 disabled: true,
+                 required: true } %>
+</div>

@@ -1,0 +1,40 @@
+    <div class="col-6 col-lg-3 mb-3">
+      <%= f.label :teachable_ids, t('basics.associated_to'),
+                  class: 'form-label' %>
+      <%= helpdesk(t('admin.medium.info.search_teachable'), true) %>
+      <%= f.select :teachable_ids,
+                   grouped_options_for_select(grouped_teachable_list_alternative),
+                   { prompt: t('basics.select')},
+                   { multiple: true,
+                     class: 'selectize',
+                     disabled: true,
+                     required: true } %>
+      <div class="form-check mb-2">
+        <%= f.check_box :all_teachables,
+                        class: 'form-check-input',
+                        checked: true,
+                        data: { id: 'search_teachable_ids' } %>
+        <%= f.label :all_teachables,
+                    t('basics.all'),
+                    { class: 'form-check-label' } %>
+      </div>
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :teachable_inheritance,
+                           '1',
+                           checked: true,
+                           class: 'form-check-input' %>
+        <%= f.label :teachable_inheritance,
+                    t('basics.with_inheritance'),
+                    value: '1',
+                    class: 'form-check-label' %>
+      </div>
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :teachable_inheritance,
+                           '0',
+                           class: 'form-check-input' %>
+        <%= f.label :teachable_inheritance,
+                    t('basics.without_inheritance'),
+                    value: '0',
+                    class: 'form-check-label' %>
+      </div>
+    </div>

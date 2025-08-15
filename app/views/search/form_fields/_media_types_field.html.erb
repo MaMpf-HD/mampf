@@ -1,0 +1,26 @@
+  <div class="row p-2">
+    <div class="col-6 col-lg-4 mb-3">
+      <%= f.label :types,
+                  t('basics.types'),
+                  class: 'form-label' %>
+      <%= helpdesk(t('search.media.type'), true) %>
+      <%= f.select :types,
+                   options_for_select(add_prompt(Medium.select_generic),
+                                      sort_preselect(purpose)),
+                   {},
+                   { id: 'search_media_types',
+                     multiple: purpose.in?(['media', 'import']),
+                     class: 'selectize',
+                     disabled: purpose == 'media',
+                     required: true } %>
+      <div class="form-check mb-2">
+        <%= f.check_box :all_types,
+                        id: 'search_all_media_types',
+                        class: 'form-check-input',
+                        checked: purpose == 'media',
+                        data: { id: 'search_media_types'} %>
+        <%= f.label :all_media_types,
+                    t('basics.all'),
+                    { class: 'form-check-label' } %>
+      </div>
+    </div>
