@@ -286,8 +286,8 @@ class LecturesController < ApplicationController
       configurator_class: Search::Configurators::LectureSearchConfigurator
     )
 
+    @pagy = search_result.pagy
     @lectures = search_result.results
-    @total = search_result.total_count
 
     @results_as_list = params.dig(:search, :results_as_list) == "true"
 

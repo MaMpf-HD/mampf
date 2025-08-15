@@ -39,8 +39,8 @@ class MediaController < ApplicationController
       }
     )
 
+    @pagy = search_result.pagy
     @media = search_result.results
-    @total = search_result.total_count
 
     if @lecture.sort == "vignettes"
       render layout: "vignettes_navbar"
@@ -243,8 +243,8 @@ class MediaController < ApplicationController
       options: { default_per_page: 10 }
     )
 
+    @pagy = search_result.pagy
     @media = search_result.results
-    @total = search_result.total_count
 
     respond_to do |format|
       format.js do

@@ -91,7 +91,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
         result = search
         expect(result).to be_a(Search::Searchers::SearchResult)
         expect(result.results).to eq(empty_scope)
-        expect(result.total_count).to eq(0)
+        expect(result.pagy).to eq(empty_pagy)
       end
     end
 

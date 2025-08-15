@@ -77,8 +77,8 @@ class CoursesController < ApplicationController
       options: { default_per_page: 20 }
     )
 
+    @pagy = search_result.pagy
     @courses = search_result.results
-    @total = search_result.total_count
 
     respond_to do |format|
       format.js
