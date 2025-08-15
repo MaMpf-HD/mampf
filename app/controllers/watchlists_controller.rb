@@ -115,7 +115,7 @@ class WatchlistsController < ApplicationController
     def paginated_results
       entries = filter_results
       if params[:all]
-        pagy = Pagy.new(count: entries.count, items: entries.count, page: 1)
+        pagy = Pagy.new(count: entries.count, limit: entries.count, page: 1)
         [pagy, entries]
       else
         per = (params[:per] || 10).to_i
