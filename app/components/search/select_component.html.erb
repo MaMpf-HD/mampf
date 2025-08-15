@@ -1,0 +1,7 @@
+<div class="<%= column_class %>">
+  <%= form.label name, label, class: "form-label" %>
+  <% if help_text %>
+    <%= helpers.helpdesk(help_text, false) %>
+  <% end %>
+  <%= form.select name, collection, {}, options %>
+</div>

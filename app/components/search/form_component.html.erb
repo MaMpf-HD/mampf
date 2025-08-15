@@ -1,0 +1,21 @@
+<% if header %>
+  <%= render header %>
+<% end %>
+
+<%= form_with url: url, scope: scope, method: method, remote: remote do |f| %>
+  <div class="row mb-3 p-2">
+    <% fields.each do |field| %>
+      <%= render field.with_form(f) if field.respond_to?(:with_form) %>
+    <% end %>
+  </div>
+  
+  <% if footer %>
+    <%= render footer %>
+  <% end %>
+
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <%= f.submit submit_label || t('basics.search'), class: 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

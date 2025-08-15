@@ -1,0 +1,20 @@
+<div class="<%= column_class %>">
+  <%= form.label name, label, class: "form-label" %>
+  <% if help_text %>
+    <%= helpers.helpdesk(help_text, true) %>
+  <% end %>
+  
+  <%= form.select name, collection, {}, options %>
+  
+  <div class="form-check mb-2">
+    <%= form.check_box all_toggle_name,
+                     class: "form-check-input",
+                     checked: true,
+                     data: { id: "search_#{name}" } %>
+    <%= form.label all_toggle_name,
+                 t("basics.all"),
+                 { class: "form-check-label" } %>
+  </div>
+  
+  <%= content %>
+</div>
