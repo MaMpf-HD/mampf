@@ -9,6 +9,11 @@
       <%= render partial: 'watchlists/show_right_header' %>
     </ul>
   </div>
+  <% unless params[:all] %>
+    <div class="col-12 mt-3">
+      <%== pagy_bootstrap_nav(@pagy) if @pagy.pages > 1 %>
+    </div>
+  <% end %>
 </div>
 <% if @watchlist.present? && !@watchlist.description.blank? %>
   <div class="col-sm-12 col-md-12 col-lg-6">
