@@ -26,8 +26,7 @@ class LectureAbility
 
     can :search, Lecture
 
-    can [:show_announcements, :organizational,
-         :search_examples, :show_random_quizzes,
+    can [:show_announcements, :organizational, :show_random_quizzes,
          :display_course], Lecture do |lecture|
       lecture.in?(user.lectures)
     end
