@@ -31,17 +31,17 @@ module Search
         correct_count = model_class.from(search_results, :subquery_for_count).count
 
         items_per_page = if config.params[:all]
-          search_results.count
+          # Use a minimum of 1 to avoid Pagy errors if the count is 0.
+          [correct_count, 1].max
         else
           config.params[:per] || default_per_page
         end
 
         pagy = Pagy.new(count: correct_count,
-                        items: items_per_page,
                         limit: items_per_page,
                         page: config.params[:page])
 
-        paginated_results = search_results.offset(pagy.offset).limit(pagy.vars[:items])
+        paginated_results = search_results.offset(pagy.offset).limit(pagy.limit)
 
         SearchResult.new(
           pagy: pagy,
