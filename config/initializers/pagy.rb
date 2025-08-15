@@ -1,4 +1,4 @@
-# Pagy initializer file (9.3.3)
+# Pagy initializer file (9.4.0)
 # Customize only what you really need and notice that the core Pagy works also
 # without any of the following lines.
 # Should you just cherry pick part of this file, please maintain the require-order of the extras
@@ -7,7 +7,8 @@
 # See https://ddnexus.github.io/pagy/docs/api/pagy#variables
 # You can set any pagy variable as a Pagy::DEFAULT. They can also be overridden
 # per instance by just passing them to
-# Pagy.new|Pagy::Countless.new|Pagy::Calendar::*.new or any of the #pagy* controller methods
+# Pagy.new|Pagy::Countless.new|Pagy::Calendar::*.new or any of the
+# #pagy*controller methods
 # Here are the few that make more sense as DEFAULTs:
 # Pagy::DEFAULT[:limit]       = 20                    # default
 # Pagy::DEFAULT[:size]        = 7                     # default
@@ -91,8 +92,8 @@ require "pagy/extras/array"
 # Metadata extra: Provides the pagination metadata to Javascript frameworks
 # like Vue.js, react.js, etc.
 # See https://ddnexus.github.io/pagy/docs/extras/metadata
-# you must require the JS Tools internal extra (BEFORE the metadata extra)
-# ONLY if you need also the :sequels
+# you must require the JS Tools internal extra (BEFORE the metadata extra) ONLY
+# if you need also the :sequels
 # require 'pagy/extras/js_tools'
 # require 'pagy/extras/metadata'
 # For performance reasons, you should explicitly set ONLY the metadata you use in the frontend
@@ -122,7 +123,7 @@ require "pagy/extras/bootstrap"
 # Pagy extra: Add the pagy styled versions of the javascript-powered navs
 # and a few other components to the Pagy::Frontend module.
 # See https://ddnexus.github.io/pagy/docs/extras/pagy
-# require "pagy/extras/pagy"
+# require 'pagy/extras/pagy'
 
 # Multi size var used by the *_nav_js helpers
 # See https://ddnexus.github.io/pagy/docs/extras/pagy#steps
