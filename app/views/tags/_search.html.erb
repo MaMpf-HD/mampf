@@ -1,41 +1,17 @@
 <%= render(Search::FormComponent.new(url: tags_search_path)) do |c| %>
   <% c.with_header(
-       title: t('admin.tag.index'), 
+       title: t('admin.tag.index'),
        button_text: t('admin.tag.create'),
        button_path: new_tag_path
      ) %>
-  
-  <% c.with_field(Search::TextFieldComponent.new(
-       name: :title,
-       label: t('basics.title'),
-       help_text: t('admin.tag.info.search_title'),
-       placeholder: t('search.tag_title')
-     )) %>
-     
-  <% c.with_field(Search::MultiSelectComponent.new(
-       name: :course_ids,
-       label: t('basics.courses'),
-       help_text: t('admin.tag.info.search_course'),
-       collection: options_for_select(
-         Course.all.pluck(:title, :id).natural_sort_by(&:first), nil
-       )
-     )) do %>
-       <button id="tags-edited-courses"
-               type="button"
-               class="btn btn-sm btn-outline-info"
-               data-courses="<%= current_user.edited_courses.map(&:id).to_json %>">
-         <%= t('buttons.edited_courses') %>
-       </button>
-     <% end %>
-     
-  <% c.with_field(Search::SelectComponent.new(
-       name: :per,
-       label: t('basics.hits_per_page'),
-       collection: options_for_select([[10,10],[20,20],[50,50]],[10]),
-       id: 'tags_per'
-     )) %>
-     
-  <% c.with_footer(
-       results_container_id: "tag-search-results"
-     ) %>
+
+  <% c.with_field(Search::Filters::TagTitleFilterComponent.new) %>
+
+  <% c.with_field(Search::Filters::CourseFilterComponent.new) do |filter| %>
+    <%= filter.render_edited_courses_button(current_user) %>
+  <% end %>
+
+  <% c.with_field(Search::Filters::PerPageFilterComponent.new(id: 'tags_per')) %>
+
+  <% c.with_footer(results_container_id: "tag-search-results") %>
 <% end %>
