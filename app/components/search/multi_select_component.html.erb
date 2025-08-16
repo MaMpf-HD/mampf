@@ -5,27 +5,19 @@
     <%= helpers.helpdesk(help_text, true) %>
   <% end %>
 
-  <%# Decide automatically: grouped or flat %>
-  <% options_html =
-       if collection.present? &&
-          collection.first.is_a?(Array) &&
-          collection.first.last.is_a?(Array) &&
-          collection.first.last.first.is_a?(Array)
-         grouped_options_for_select(collection)
-       else
-         options_for_select(collection)
-       end %>
-
-  <%= form.select name, options_html, {}, options %>
+  <%= form.select name,
+                  options_html,
+                  select_tag_options,
+                  select_html_options %>
 
   <div class="form-check mb-2">
     <%= form.check_box all_toggle_name,
-                      class: "form-check-input",
-                      checked: true,
-                      data: { id: element_id } %>
+                       class: "form-check-input",
+                       checked: true,
+                       data: { id: all_checkbox_id } %>
     <%= form.label all_toggle_name,
-                  I18n.t("basics.all"),
-                  class: "form-check-label" %>
+                   all_checkbox_label,
+                   class: "form-check-label" %>
   </div>
 
   <% if content %>

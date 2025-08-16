@@ -5,15 +5,57 @@ module Search
     def initialize(name:, label:, collection:, column_class: "col-5",
                    all_toggle_name: nil, **)
       @collection = collection
-      @all_toggle_name = all_toggle_name || "all_#{name.to_s.sub(/_ids$/, "s")}"
-      @content = nil
+      @all_toggle_name = all_toggle_name || default_all_toggle_name(name)
       super(name: name, label: label, column_class: column_class, **)
     end
 
-    protected
+    # HTML string with <option>/<optgroup> tags
+    def options_html
+      if grouped_collection?
+        helpers.grouped_options_for_select(collection, selected_value)
+      else
+        helpers.options_for_select(collection, selected_value)
+      end
+    end
 
-      def process_options(options)
-        options.reverse_merge(
+    # Hash passed as the (3rd) "options" argument to form.select
+    def select_tag_options
+      {} # extend later if you need :prompt etc.
+    end
+
+    # Hash passed as the HTML options (4th arg) to form.select
+    def select_html_options
+      # Remove :selected so it isn’t duplicated in the tag attributes
+      options.except(:selected)
+    end
+
+    def selected_value
+      options[:selected]
+    end
+
+    def grouped_collection?
+      first = collection.first
+      first.is_a?(Array) &&
+        first.last.is_a?(Array) &&
+        first.last.first.is_a?(Array)
+    end
+
+    def all_checkbox_id
+      element_id
+    end
+
+    def all_checkbox_label
+      I18n.t("basics.all")
+    end
+
+    private
+
+      def default_all_toggle_name(name)
+        "all_#{name.to_s.sub(/_ids$/, "s")}"
+      end
+
+      def process_options(opts)
+        opts.reverse_merge(
           multiple: true,
           class: "selectize",
           disabled: true,
