@@ -1,6 +1,6 @@
 module Search
   class FormFieldComponent < ViewComponent::Base
-    attr_reader :name, :label, :column_class, :help_text, :form, :context, :options
+    attr_reader :name, :label, :column_class, :help_text, :form, :context, :options, :content
 
     def initialize(name:, label:, column_class:, help_text: nil, context: nil, **options)
       super()
@@ -16,6 +16,12 @@ module Search
 
     def with_form(form)
       @form = form
+      self
+    end
+
+    # Allow all field components to accept an extra block chunk
+    def with_content(&block)
+      @content = block if block
       self
     end
 

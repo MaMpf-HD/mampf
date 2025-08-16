@@ -1,6 +1,6 @@
 module Search
   class MultiSelectComponent < FormFieldComponent
-    attr_reader :collection, :all_toggle_name, :content
+    attr_reader :collection, :all_toggle_name
 
     def initialize(name:, label:, collection:, column_class: "col-5",
                    all_toggle_name: nil, **)
@@ -8,11 +8,6 @@ module Search
       @all_toggle_name = all_toggle_name || "all_#{name.to_s.sub(/_ids$/, "s")}"
       @content = nil
       super(name: name, label: label, column_class: column_class, **)
-    end
-
-    def with_content(&block)
-      @content = block if block_given?
-      self
     end
 
     protected
