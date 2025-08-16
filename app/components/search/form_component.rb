@@ -1,6 +1,12 @@
 module Search
   class FormComponent < ViewComponent::Base
-    renders_many :fields, ->(component) { component }
+    renders_many :fields, lambda { |component, &block|
+      if block && component.respond_to?(:with_content)
+        # Pass the component into the block just like your view expects (|field|)
+        component.with_content { block.call(component) }
+      end
+      component
+    }
     renders_one :header, Search::HeaderComponent
     renders_one :footer, Search::FooterComponent
     renders_many :hidden_fields, Search::HiddenFieldComponent
