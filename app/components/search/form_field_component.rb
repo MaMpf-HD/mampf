@@ -10,7 +10,7 @@ module Search
       @help_text = help_text
       @context = context
 
-      options[:id] = "search_#{context}_#{name}" if context.present? && !options.key?(:id)
+      options[:id] ||= "search_#{context}_#{name}" if context
       @options = process_options(options)
     end
 
@@ -27,8 +27,7 @@ module Search
 
     # Generate an element ID based on context
     def element_id
-      options[:id].presence || "search_#{context}_#{name}" if context.present?
-      options[:id].presence || "search_#{name}"
+      options[:id] || (context ? "search_#{context}_#{name}" : "search_#{name}")
     end
 
     def before_render

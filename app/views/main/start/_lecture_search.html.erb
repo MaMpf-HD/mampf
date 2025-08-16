@@ -29,6 +29,6 @@
 
   <% c.with_footer(results_container_id: "lecture-search-results") %>
 
-  <%# c.with_hidden_field(:results_as_list, value: results_as_list) %>
+  <% c.with_hidden_field(name: :results_as_list, value: results_as_list) %>
 
 <% end %>
