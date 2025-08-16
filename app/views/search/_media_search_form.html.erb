@@ -37,8 +37,8 @@
     default: default_hits_per_page(true)
   )) %>
 
-  <%# c.with_hidden_field(:purpose, value: purpose) %>
-  <%# c.with_hidden_field(:results_as_list, value: 'true') %>
+  <% c.with_hidden_field(:purpose, value: purpose) %>
+  <% c.with_hidden_field(:results_as_list, value: 'true') %>
 
   <% c.with_footer(results_container_id: "medium-search-results")%>
 <% end %>

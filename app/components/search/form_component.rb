@@ -1,7 +1,7 @@
 module Search
   class FormComponent < ViewComponent::Base
     renders_many :fields, ->(component) { component }
-    renders_many :hidden_fields, ->(name, value) { { name: name, value: value } if name.present? }
+    #    renders_many :hidden_fields, ->(name, value) { { name: name, value: value } if name.present? }
     renders_one :header, lambda { |options = {}|
       Search::HeaderComponent.new(**options)
     }
@@ -22,8 +22,13 @@ module Search
     end
 
     def with_hidden_field(name, value:)
+      @hidden_fields ||= []
       @hidden_fields << { name: name, value: value }
       self
+    end
+
+    def hidden_fields
+      @hidden_fields || []
     end
   end
 end

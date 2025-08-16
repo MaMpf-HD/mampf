@@ -13,6 +13,8 @@
     <%= render footer %>
   <% end %>
 
+  <% Rails.logger.debug('################') %>
+  <% Rails.logger.debug("Hidden fields: #{hidden_fields.count}") %>
   <% hidden_fields.each do |field| %>
     <%= f.hidden_field field[:name], value: field[:value] %>
   <% end %>
