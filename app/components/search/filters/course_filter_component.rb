@@ -8,7 +8,7 @@ module Search
           label: I18n.t("basics.courses"),
           help_text: I18n.t("admin.tag.info.search_course"),
           collection: options_for_select(
-            Course.all.pluck(:title, :id).natural_sort_by(&:first), nil
+            Course.pluck(:title, :id).natural_sort_by(&:first), nil
           )
         )
       end

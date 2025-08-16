@@ -1,28 +1,29 @@
 module Search
-  class MultiSelectComponent < ViewComponent::Base
-    attr_reader :name, :label, :collection, :column_class, :help_text, :all_toggle_name, :options,
-                :form, :content
+  class MultiSelectComponent < FormFieldComponent
+    attr_reader :collection, :all_toggle_name, :content
 
     def initialize(name:, label:, collection:, column_class: "col-5",
-                   help_text: nil, all_toggle_name: nil, **options)
-      super()
-      @name = name
-      @label = label
+                   all_toggle_name: nil, **)
       @collection = collection
-      @column_class = column_class
-      @help_text = help_text
       @all_toggle_name = all_toggle_name || "all_#{name.to_s.sub(/_ids$/, "s")}"
-      @options = options.reverse_merge(
-        multiple: true,
-        class: "selectize",
-        disabled: true,
-        required: true
-      )
+      @content = nil
+      super(name: name, label: label, column_class: column_class, **)
     end
 
-    def with_form(form)
-      @form = form
+    def with_content(&block)
+      @content = block if block_given?
       self
     end
+
+    protected
+
+      def process_options(options)
+        options.reverse_merge(
+          multiple: true,
+          class: "selectize",
+          disabled: true,
+          required: true
+        )
+      end
   end
 end

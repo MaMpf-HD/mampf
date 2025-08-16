@@ -1,21 +1,16 @@
 module Search
-  class SelectComponent < ViewComponent::Base
-    attr_reader :name, :label, :collection, :column_class, :help_text, :options, :form
+  class SelectComponent < FormFieldComponent
+    attr_reader :collection
 
-    def initialize(name:, label:, collection:, column_class: "col-2",
-                   help_text: nil, **options)
-      super()
-      @name = name
-      @label = label
+    def initialize(name:, label:, collection:, column_class: "col-2", **)
       @collection = collection
-      @column_class = column_class
-      @help_text = help_text
-      @options = options.reverse_merge(class: "form-select")
+      super(name: name, label: label, column_class: column_class, **)
     end
 
-    def with_form(form)
-      @form = form
-      self
-    end
+    protected
+
+      def process_options(options)
+        options.reverse_merge(class: "form-select")
+      end
   end
 end
