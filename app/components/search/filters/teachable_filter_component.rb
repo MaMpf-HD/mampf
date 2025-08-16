@@ -6,7 +6,7 @@ module Search
           name: :teachable_ids,
           label: I18n.t("basics.associated_to"),
           help_text: I18n.t("admin.medium.info.search_teachable"),
-          collection: [], # Will be populated by grouped_teachable_list_alternative
+          collection: [], # Will be populated by grouped_teachable_list_alternative later
           all_toggle_name: :all_teachables,
           column_class: "col-6 col-lg-3",
           context: context,
@@ -21,6 +21,12 @@ module Search
           required: true,
           prompt: I18n.t("basics.select")
         )
+      end
+
+      # Load grouped collection just in time (helpers available now)
+      def before_render
+        super
+        @collection = helpers.grouped_teachable_list_alternative
       end
 
       # Method to render the teachable inheritance radio buttons
