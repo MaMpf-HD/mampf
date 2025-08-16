@@ -16,10 +16,6 @@ module Search
 
         attr_reader :form
 
-        def initialize
-          super
-        end
-
         def with_form(form)
           @form = form
           self

@@ -8,9 +8,13 @@
       <%= render field.with_form(f) if field.respond_to?(:with_form) %>
     <% end %>
   </div>
-  
+
   <% if footer %>
     <%= render footer %>
+  <% end %>
+
+  <% hidden_fields.each do |field| %>
+    <%= f.hidden_field field[:name], value: field[:value] %>
   <% end %>
 
   <div class="row mb-3">

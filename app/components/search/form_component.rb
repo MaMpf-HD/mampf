@@ -20,5 +20,10 @@ module Search
       @remote = remote
       @submit_label = submit_label || I18n.t("basics.search")
     end
+
+    def with_hidden_field(name, value:)
+      @hidden_fields << { name: name, value: value }
+      self
+    end
   end
 end
