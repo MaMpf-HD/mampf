@@ -1,25 +1,41 @@
-<%= form_with url: media_search_path,
-              scope: :search,
-              remote: true,
-              method: :get do |f| %>
-  <div class="row p-2">
-    <%= render 'search/form_fields/media_types_field',   f: f, purpose: purpose %>
-    <%= render 'search/form_fields/tags_field',          f: f %>
-    <%= render 'search/form_fields/teachers_field',      f: f %>
-    <%= render 'search/form_fields/lecture_scope_field', f: f %>
-    <%= render 'search/form_fields/fulltext_field',      f: f %>
-    <%= render 'search/form_fields/per_page_field',      f: f, results_as_list: false %>
-  </div>
+<%= render(Search::FormComponent.new(
+  url: media_search_path,
+  scope: 'search',
+  remote: true,
+  method: :get
+)) do |c| %>
 
-  <%= f.hidden_field :purpose, value: purpose %>
-  <%= f.hidden_field :results_as_list, value: 'false' %>
+  <% c.with_field(Search::Filters::MediaTypesFilterComponent.new(
+    purpose: purpose,
+    context: 'start'
+  )) %>
 
-  <%= f.hidden_field :from, value: 'start' %>
+  <% c.with_field(Search::Filters::TagsFilterComponent.new(
+    context: 'start'
+  )) do |field| %>
+    <%= field.render_tag_operator_radios %>
+  <% end %>
 
-  <div class="row mb-3">
-    <div class="col-12 text-center">
-      <%= f.submit t('basics.search'), class: 'btn btn-primary' %>
+  <% c.with_field(Search::Filters::TeacherFilterComponent.new(
+    context: 'start'
+  )) %>
 
-    </div>
-  </div>
+  <% c.with_field(Search::Filters::LectureScopeFilterComponent.new(
+    context: 'start'
+  )) %>
+
+  <% c.with_field(Search::Filters::FulltextFilterComponent.new(
+    context: 'start'
+  )) %>
+
+  <% c.with_field(Search::Filters::PerPageFilterComponent.new(
+    per_options: hits_per_page(false),
+    default: default_hits_per_page(false)
+  )) %>
+
+  <% c.with_hidden_field(name: :purpose, value: purpose) %>
+  <% c.with_hidden_field(name: :results_as_list, value: 'false') %>
+  <% c.with_hidden_field(name: :from, value: 'start') %>
+
+  <% c.with_footer(results_container_id: "medium-search-results") %>
 <% end %>

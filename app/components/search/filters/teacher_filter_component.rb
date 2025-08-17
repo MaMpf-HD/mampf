@@ -9,7 +9,6 @@ module Search
           collection: User.select_teachers,
           all_toggle_name: :all_teachers,
           column_class: "col-6 col-lg-3",
-          id: "teacherSearch",
           **
         )
       end
