@@ -1,14 +1,14 @@
 module Search
   class FormFieldComponent < ViewComponent::Base
-    attr_reader :name, :label, :column_class, :help_text, :form, :context, :options, :content
+    attr_reader :name, :label, :column_class, :help_text, :form, :options, :content
+    attr_accessor :context
 
-    def initialize(name:, label:, column_class:, help_text: nil, context: nil, **options)
+    def initialize(name:, label:, column_class:, help_text: nil, **options)
       super()
       @name = name
       @label = label
       @column_class = column_class
       @help_text = help_text
-      @context = context
 
       @options = process_options(options)
     end

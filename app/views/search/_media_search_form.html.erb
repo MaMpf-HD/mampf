@@ -1,13 +1,10 @@
 <%= render(Search::FormComponent.new(
   url: media_search_path,
-  scope: 'search',
-  remote: true,
-  method: :get
+  context: 'media'
 )) do |c| %>
 
   <% c.with_field(Search::Filters::MediaTypesFilterComponent.new(
-    purpose: purpose,
-    context: 'media'
+    purpose: purpose
   )) %>
 
   <% c.with_field(Search::Filters::TeachableFilterComponent.new) do |field| %>
@@ -18,13 +15,9 @@
   <%= field.render_tag_operator_radios %>
 <% end %>
 
-  <% c.with_field(Search::Filters::EditorFilterComponent.new(
-    context: 'media'
-  )) %>
+  <% c.with_field(Search::Filters::EditorFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::FulltextFilterComponent.new(
-    context: 'media'
-  )) %>
+  <% c.with_field(Search::Filters::FulltextFilterComponent.new) %>
 
   <% c.with_field(Search::Filters::AccessFilterComponent.new) %>
 

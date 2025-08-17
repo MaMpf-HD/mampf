@@ -1,8 +1,6 @@
 <%= render(Search::FormComponent.new(
   url: lecture_search_path,
-  scope: 'search',
-  remote: true,
-  method: :get
+  context: 'lectures',
 )) do |c| %>
 
   <% c.with_field(Search::Filters::TypesFilterComponent.new) %>
@@ -10,8 +8,7 @@
   <% c.with_field(Search::Filters::TermFilterComponent.new) %>
 
   <% c.with_field(Search::Filters::ProgramFilterComponent.new(
-    column_class: "col-6 col-lg-3",
-    context: 'lecture')) %>
+    column_class: "col-6 col-lg-3")) %>
 
   <% c.with_field(Search::Filters::TeacherFilterComponent.new) %>
 

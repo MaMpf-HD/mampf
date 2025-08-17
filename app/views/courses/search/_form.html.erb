@@ -1,14 +1,11 @@
-<!-- filepath: /home/denis/mampf/app/views/courses/search/_form.html.erb -->
 <%= render(Search::FormComponent.new(
   url: search_courses_path,
-  scope: 'search',
-  remote: true,
-  method: :get
+  context: 'courses'
 )) do |c| %>
 
   <% c.with_field(Search::Filters::EditorFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::ProgramFilterComponent.new(context: 'course')) %>
+  <% c.with_field(Search::Filters::ProgramFilterComponent.new) %>
 
   <% c.with_field(Search::Filters::FulltextFilterComponent.new) %>
 

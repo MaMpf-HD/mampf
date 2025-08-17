@@ -1,30 +1,22 @@
 <%= render(Search::FormComponent.new(
   url: media_search_path,
-  scope: 'search',
-  remote: true,
-  method: :get
+  context: 'media'
 )) do |c| %>
 
   <% c.with_field(Search::Filters::MediaTypesFilterComponent.new(
-    purpose: purpose,
-    context: 'start'
+    purpose: purpose
   )) %>
 
-  <% c.with_field(Search::Filters::TagsFilterComponent.new(
-    context: 'start'
-  )) do |field| %>
+  <% c.with_field(Search::Filters::TagsFilterComponent.new) do |field| %>
     <%= field.render_tag_operator_radios %>
   <% end %>
 
-<% c.with_field(Search::Filters::LectureScopeFilterComponent.new(
-   context: 'start')) do |field| %>
+<% c.with_field(Search::Filters::LectureScopeFilterComponent.new) do |field| %>
   <%= field.render_lecture_options %>
 <% end %>
 
 
-  <% c.with_field(Search::Filters::FulltextFilterComponent.new(
-    context: 'start'
-  )) %>
+    <% c.with_field(Search::Filters::FulltextFilterComponent.new) %>
 
   <% c.with_field(Search::Filters::PerPageFilterComponent.new(
     per_options: hits_per_page(false),

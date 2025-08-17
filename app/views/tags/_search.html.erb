@@ -1,4 +1,7 @@
-<%= render(Search::FormComponent.new(url: tags_search_path)) do |c| %>
+<%= render(Search::FormComponent.new(
+  url: tags_search_path,
+  context: 'tags'
+)) do |c| %>
   <% c.with_header(
        title: t('admin.tag.index'),
        button_text: t('admin.tag.create'),
