@@ -16,13 +16,11 @@
     <%= field.render_tag_operator_radios %>
   <% end %>
 
-  <% c.with_field(Search::Filters::TeacherFilterComponent.new(
-    context: 'start'
-  )) %>
+<% c.with_field(Search::Filters::LectureScopeFilterComponent.new(
+   context: 'start')) do |field| %>
+  <%= field.render_lecture_options %>
+<% end %>
 
-  <% c.with_field(Search::Filters::LectureScopeFilterComponent.new(
-    context: 'start'
-  )) %>
 
   <% c.with_field(Search::Filters::FulltextFilterComponent.new(
     context: 'start'

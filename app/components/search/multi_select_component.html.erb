@@ -9,7 +9,7 @@
                   options_html,
                   select_tag_options,
                   select_html_options %>
-
+<% unless respond_to?(:skip_all_checkbox?) && skip_all_checkbox? %>
   <div class="form-check mb-2">
     <%= form.check_box all_toggle_name,
                        class: "form-check-input",
@@ -19,7 +19,7 @@
                    all_checkbox_label,
                    class: "form-check-label" %>
   </div>
-
+<% end %>
   <% if content %>
     <%= capture(self, &content) %>
   <% end %>
