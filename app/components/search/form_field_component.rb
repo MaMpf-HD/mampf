@@ -10,8 +10,12 @@ module Search
       @help_text = help_text
       @context = context
 
-      options[:id] ||= "search_#{context}_#{name}" if context
+      # options[:id] ||= "search_#{context}_#{name}" if context
       @options = process_options(options)
+    end
+
+    def container_classes
+      "#{column_class} mb-3 form-field-group"
     end
 
     def with_form(form)

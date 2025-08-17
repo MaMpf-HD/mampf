@@ -32,8 +32,11 @@ module Search
                       content_tag(:div, class: "form-check mb-2") do
                         form.radio_button(:lecture_option, "2",
                                           class: "form-check-input",
-                                          data: { type: "toggle",
-                                                  id: "search_#{context}_lectures" }) +
+                                          data: {
+                                            search_form_target: "radioToggle",
+                                            action: "change->search-form#toggleFromRadio",
+                                            controls_select: "true"
+                                          }) +
                         form.label(:lecture_option,
                                    I18n.t("search.media.lecture_options.own_selection"),
                                    value: "2",
@@ -43,7 +46,12 @@ module Search
                       # "Subscribed" option
                       content_tag(:div, class: "form-check mb-2") do
                         form.radio_button(:lecture_option, "1",
-                                          class: "form-check-input") +
+                                          class: "form-check-input",
+                                          data: {
+                                            search_form_target: "radioToggle",
+                                            action: "change->search-form#toggleFromRadio",
+                                            controls_select: "false"
+                                          }) +
                         form.label(:lecture_option,
                                    I18n.t("search.media.lecture_options.subscribed"),
                                    value: "1",
@@ -54,7 +62,12 @@ module Search
                       content_tag(:div, class: "form-check mb-2") do
                         form.radio_button(:lecture_option, "0",
                                           checked: true,
-                                          class: "form-check-input") +
+                                          class: "form-check-input",
+                                          data: {
+                                            search_form_target: "radioToggle",
+                                            action: "change->search-form#toggleFromRadio",
+                                            controls_select: "false"
+                                          }) +
                         form.label(:lecture_option,
                                    I18n.t("search.media.lecture_options.all"),
                                    value: "0",

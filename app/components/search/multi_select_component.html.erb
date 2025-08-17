@@ -1,5 +1,4 @@
-<!-- filepath: /home/denis/mampf/app/components/search/multi_select_component.html.erb -->
-<div class="<%= column_class %> mb-3">
+<div class="<%= container_classes %>">
   <%= form.label name, label, class: "form-label" %>
   <% if help_text %>
     <%= helpers.helpdesk(help_text, true) %>
@@ -8,18 +7,29 @@
   <%= form.select name,
                   options_html,
                   select_tag_options,
-                  select_html_options %>
-<% unless respond_to?(:skip_all_checkbox?) && skip_all_checkbox? %>
-  <div class="form-check mb-2">
-    <%= form.check_box all_toggle_name,
-                       class: "form-check-input",
-                       checked: true,
-                       data: { id: all_checkbox_id } %>
-    <%= form.label all_toggle_name,
-                   all_checkbox_label,
-                   class: "form-check-label" %>
-  </div>
-<% end %>
+                  select_html_options.merge(
+                    data: (select_html_options[:data] || {}).merge(
+                      search_form_target: "select"
+                    )
+                  ) %>
+
+  <% unless respond_to?(:skip_all_checkbox?) && skip_all_checkbox? %>
+    <div class="form-check mb-2">
+      <%= form.check_box all_toggle_name,
+                        class: "form-check-input",
+                        checked: true,
+                        data: respond_to?(:all_toggle_data_attributes) ?
+                              all_toggle_data_attributes :
+                              {
+                                search_form_target: "allToggle",
+                                action: "change->search-form#toggleFromCheckbox"
+                              } %>
+      <%= form.label all_toggle_name,
+                    all_checkbox_label,
+                    class: "form-check-label" %>
+    </div>
+  <% end %>
+
   <% if content %>
     <%= capture(self, &content) %>
   <% end %>

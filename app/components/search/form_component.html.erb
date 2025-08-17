@@ -2,7 +2,11 @@
   <%= render header %>
 <% end %>
 
-<%= form_with url: url, scope: scope, method: method, remote: remote do |f| %>
+<%= form_with url: url,
+              scope: scope,
+              method: method,
+              remote: remote,
+              data: { controller: "search-form" } do |f| %>
   <div class="row mb-3 p-2">
     <% fields.each do |field| %>
       <%= render field.with_form(f) if field.respond_to?(:with_form) %>
