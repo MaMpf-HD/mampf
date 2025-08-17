@@ -4,4 +4,7 @@
     <%= helpers.helpdesk(help_text, false) %>
   <% end %>
   <%= form.text_field name, options %>
+  <% if content %>
+    <%= capture(self, &content) %>
+  <% end %>
 </div>
