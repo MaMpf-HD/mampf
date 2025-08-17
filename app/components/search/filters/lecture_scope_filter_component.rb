@@ -12,14 +12,6 @@ module Search
           context: context,
           **
         )
-
-        # These options match what's in the original partial
-        options.reverse_merge!(
-          multiple: true,
-          class: "pl-4 selectize",
-          disabled: true,
-          required: true
-        )
       end
 
       # Load collection just in time (helpers available now)
