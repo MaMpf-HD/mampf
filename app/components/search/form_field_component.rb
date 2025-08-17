@@ -10,7 +10,6 @@ module Search
       @help_text = help_text
       @context = context
 
-      # options[:id] ||= "search_#{context}_#{name}" if context
       @options = process_options(options)
     end
 
@@ -29,9 +28,11 @@ module Search
       self
     end
 
-    # Generate an element ID based on context
+    # Generate a unique ID based on context AND form scope
     def element_id
-      options[:id] || (context ? "search_#{context}_#{name}" : "search_#{name}")
+      scope_prefix = form&.object_name || "search"
+      context_part = context.present? ? "_#{context}" : ""
+      "#{scope_prefix}#{context_part}_#{name}"
     end
 
     def before_render

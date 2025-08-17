@@ -40,10 +40,6 @@ module Search
         first.last.first.is_a?(Array)
     end
 
-    def all_checkbox_id
-      element_id
-    end
-
     def all_checkbox_label
       I18n.t("basics.all")
     end

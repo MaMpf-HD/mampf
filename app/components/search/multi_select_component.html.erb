@@ -8,6 +8,7 @@
                   options_html,
                   select_tag_options,
                   select_html_options.merge(
+                    id: element_id,
                     data: (select_html_options[:data] || {}).merge(
                       search_form_target: "select"
                     )

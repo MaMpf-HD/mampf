@@ -3,7 +3,7 @@
   <% if help_text %>
     <%= helpers.helpdesk(help_text, false) %>
   <% end %>
-  <%= form.select name, collection, {}, options %>
+  <%= form.select name, collection, {}, options.merge(id: element_id) %>
   <% if content %>
     <%= capture(self, &content) %>
   <% end %>
