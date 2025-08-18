@@ -1,7 +1,7 @@
 # app/components/search/controls/radio_button_component.rb
-module Search
+module SearchForm
   module Controls
-    class RadioButtonComponent < ViewComponent::Base
+    class RadioButton < ViewComponent::Base
       attr_reader :form, :name, :value, :label, :checked, :options, :stimulus_config
 
       def initialize(form:, name:, value:, label:, checked: false, stimulus: {}, **options)

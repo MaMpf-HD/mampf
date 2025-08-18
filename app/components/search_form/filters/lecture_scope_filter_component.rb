@@ -1,6 +1,6 @@
-module Search
+module SearchForm
   module Filters
-    class LectureScopeFilterComponent < Search::MultiSelectComponent
+    class LectureScopeFilterComponent < SearchForm::MultiSelectComponent
       def initialize(context: "media", **)
         super(
           name: :lectures,
@@ -27,7 +27,7 @@ module Search
 
       # Render lecture options using block-based approach
       def render_lecture_options
-        render(Search::Controls::RadioGroupComponent.new(
+        render(SearchForm::Controls::RadioGroup.new(
                  form: form,
                  name: :lecture_option
                )) do |group|

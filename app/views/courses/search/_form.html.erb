@@ -1,20 +1,20 @@
-<%= render(Search::FormComponent.new(
+<%= render(SearchForm::FormComponent.new(
   url: search_courses_path,
   context: 'courses'
 )) do |c| %>
 
-  <% c.with_field(Search::Filters::EditorFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::EditorFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::ProgramFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::ProgramFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::FulltextFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::FulltextFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::PerPageFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::PerPageFilterComponent.new(
     per_options: hits_per_page(true),
     default: default_hits_per_page(true)
   )) %>
 
-  <% c.with_field(Search::Filters::TermIndependenceFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::TermIndependenceFilterComponent.new) %>
 
   <% c.with_footer(results_container_id: "course-search-results") %>
 <% end %>

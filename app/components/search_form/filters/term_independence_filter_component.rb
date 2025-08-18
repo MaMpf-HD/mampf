@@ -1,6 +1,6 @@
-module Search
+module SearchForm
   module Filters
-    class TermIndependenceFilterComponent < Search::FormFieldComponent
+    class TermIndependenceFilterComponent < SearchForm::FormFieldComponent
       def initialize(context: "course", **)
         super(
           name: :term_independent,
@@ -12,7 +12,7 @@ module Search
       end
 
       def call
-        render(Search::Controls::CheckboxComponent.new(
+        render(SearchForm::Controls::Checkbox.new(
                  form: form,
                  name: name,
                  label: label,

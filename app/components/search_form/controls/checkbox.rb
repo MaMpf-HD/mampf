@@ -1,6 +1,6 @@
-module Search
+module SearchForm
   module Controls
-    class CheckboxComponent < ViewComponent::Base
+    class Checkbox < ViewComponent::Base
       attr_reader :form, :name, :label, :checked, :options, :stimulus_config
 
       def initialize(form:, name:, label:, checked: false, stimulus: {}, **options)

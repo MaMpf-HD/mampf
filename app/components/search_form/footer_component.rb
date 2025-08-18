@@ -1,4 +1,4 @@
-module Search
+module SearchForm
   class FooterComponent < ViewComponent::Base
     attr_reader :results_container_id, :extra_classes
 

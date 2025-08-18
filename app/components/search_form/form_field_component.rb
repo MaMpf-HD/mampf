@@ -1,4 +1,4 @@
-module Search
+module SearchForm
   class FormFieldComponent < ViewComponent::Base
     attr_reader :name, :label, :column_class, :help_text, :form, :options, :content
     attr_accessor :context

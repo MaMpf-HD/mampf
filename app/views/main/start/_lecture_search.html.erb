@@ -1,23 +1,23 @@
-<%= render(Search::FormComponent.new(
+<%= render(SearchForm::FormComponent.new(
   url: lecture_search_path,
   context: 'lectures',
 )) do |c| %>
 
-  <% c.with_field(Search::Filters::TypesFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::TypesFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::TermFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::TermFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::ProgramFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::ProgramFilterComponent.new(
     column_class: "col-6 col-lg-3")) %>
 
-  <% c.with_field(Search::Filters::TeacherFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::TeacherFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::FulltextFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::FulltextFilterComponent.new(
     column_class: "col-6 col-lg-3",
     id: "fullTextSearch"
   )) %>
 
-  <% c.with_field(Search::Filters::PerPageFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::PerPageFilterComponent.new(
     id: "hitsPerPage",
     per_options: hits_per_page(results_as_list),
     default: default_hits_per_page(results_as_list)

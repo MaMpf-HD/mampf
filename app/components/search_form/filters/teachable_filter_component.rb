@@ -1,6 +1,6 @@
-module Search
+module SearchForm
   module Filters
-    class TeachableFilterComponent < Search::MultiSelectComponent
+    class TeachableFilterComponent < SearchForm::MultiSelectComponent
       def initialize(context: "media", **)
         super(
           name: :teachable_ids,
@@ -38,9 +38,9 @@ module Search
         @collection = helpers.grouped_teachable_list_alternative
       end
 
-      # Method to render the teachable inheritance radio buttons using RadioGroupComponent
+      # Method to render the teachable inheritance radio buttons using RadioGroup
       def render_inheritance_radios
-        render(Search::Controls::RadioGroupComponent.new(
+        render(SearchForm::Controls::RadioGroup.new(
                  form: form,
                  name: :teachable_inheritance
                )) do |group|

@@ -1,4 +1,4 @@
-module Search
+module SearchForm
   class HiddenFieldComponent < ViewComponent::Base
     attr_reader :name, :value
 

@@ -1,8 +1,8 @@
-module Search
+module SearchForm
   class MultiSelectComponent < FormFieldComponent
     attr_reader :collection, :all_toggle_name
 
-    renders_one :checkbox, "Search::Controls::CheckboxComponent"
+    renders_one :checkbox, "SearchForm::Controls::Checkbox"
 
     def initialize(name:, label:, collection:, column_class: "col-5",
                    all_toggle_name: nil, **)

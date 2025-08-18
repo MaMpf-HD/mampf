@@ -1,4 +1,4 @@
-module Search
+module SearchForm
   class HeaderComponent < ViewComponent::Base
     attr_reader :title, :button_text, :button_path
 

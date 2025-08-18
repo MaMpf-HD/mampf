@@ -1,4 +1,4 @@
-module Search
+module SearchForm
   class TextFieldComponent < FormFieldComponent
     def initialize(name:, label:, column_class: "col-4", **)
       super

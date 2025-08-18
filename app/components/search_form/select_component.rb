@@ -1,4 +1,4 @@
-module Search
+module SearchForm
   class SelectComponent < FormFieldComponent
     attr_reader :collection
 

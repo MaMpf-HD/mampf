@@ -1,6 +1,6 @@
-module Search
+module SearchForm
   module Filters
-    class TypesFilterComponent < Search::MultiSelectComponent
+    class TypesFilterComponent < SearchForm::MultiSelectComponent
       def initialize(**)
         super(
           name: :types,

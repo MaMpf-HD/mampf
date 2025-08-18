@@ -1,31 +1,31 @@
-<%= render(Search::FormComponent.new(
+<%= render(SearchForm::FormComponent.new(
   url: media_search_path,
   context: 'media'
 )) do |c| %>
 
-  <% c.with_field(Search::Filters::MediaTypesFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::MediaTypesFilterComponent.new(
     purpose: purpose
   )) %>
 
-  <% c.with_field(Search::Filters::TeachableFilterComponent.new) do |field| %>
+  <% c.with_field(SearchForm::Filters::TeachableFilterComponent.new) do |field| %>
     <%= field.render_inheritance_radios %>
   <% end %>
 
-<% c.with_field(Search::Filters::TagsFilterComponent.new) do |field| %>
+<% c.with_field(SearchForm::Filters::TagsFilterComponent.new) do |field| %>
   <%= field.render_tag_operator_radios %>
 <% end %>
 
-  <% c.with_field(Search::Filters::EditorFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::EditorFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::FulltextFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::FulltextFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::AccessFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::AccessFilterComponent.new) %>
 
-  <% c.with_field(Search::Filters::AnswerCountFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::AnswerCountFilterComponent.new(
     purpose: purpose
   )) %>
 
-  <% c.with_field(Search::Filters::PerPageFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::PerPageFilterComponent.new(
     per_options: hits_per_page(true),
     default: default_hits_per_page(true)
   )) %>

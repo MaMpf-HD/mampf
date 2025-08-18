@@ -1,6 +1,6 @@
-module Search
+module SearchForm
   module Filters
-    class TagsFilterComponent < Search::MultiSelectComponent
+    class TagsFilterComponent < SearchForm::MultiSelectComponent
       def initialize(context: "media", **)
         # Pass empty array for collection - tags will be loaded by AJAX
         super(
@@ -36,9 +36,9 @@ module Search
         }
       end
 
-      # Method to render the tag operators using our RadioGroupComponent
+      # Method to render the tag operators using our RadioGroup
       def render_tag_operator_radios
-        render(Search::Controls::RadioGroupComponent.new(
+        render(SearchForm::Controls::RadioGroup.new(
                  form: form,
                  name: :tag_operator
                )) do |group|

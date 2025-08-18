@@ -1,9 +1,9 @@
-module Search
+module SearchForm
   module Controls
-    class RadioGroupComponent < ViewComponent::Base
+    class RadioGroup < ViewComponent::Base
       attr_reader :form, :name, :options
 
-      renders_many :radio_buttons, RadioButtonComponent
+      renders_many :radio_buttons, RadioButton
 
       def initialize(form:, name:, **options)
         super()
