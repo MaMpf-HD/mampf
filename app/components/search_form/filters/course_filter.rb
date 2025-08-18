@@ -18,7 +18,10 @@ module SearchForm
           id: "tags-edited-courses",
           type: "button",
           class: "btn btn-sm btn-outline-info",
-          data: { courses: current_user.edited_courses.map(&:id).to_json }
+          data: {
+            courses: current_user.edited_courses.map(&:id).to_json,
+            action: "click->search-form#fillCourses"
+          }
         )
       end
     end

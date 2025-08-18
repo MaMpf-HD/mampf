@@ -93,16 +93,13 @@ export default class extends Controller {
 
     if (!fieldGroup) return;
 
-    // Get the radio group name from data attribute
     const radioGroupName = checkbox.dataset.toggleRadioGroup;
     if (!radioGroupName) return;
 
-    // Find all radio buttons with this name in the same field group
     const radioButtons = fieldGroup.querySelectorAll(`input[type="radio"][name$="[${radioGroupName}]"]`);
 
     if (!radioButtons.length) return;
 
-    // If checkbox is checked and there's a default value, select that radio
     const defaultValue = checkbox.dataset.defaultRadioValue;
     if (checkbox.checked && defaultValue) {
       radioButtons.forEach((radio) => {
@@ -112,9 +109,27 @@ export default class extends Controller {
       });
     }
 
-    // Disable/enable all radio buttons based on checkbox state
     radioButtons.forEach((radio) => {
       radio.disabled = checkbox.checked;
     });
+  }
+
+  fillCourses(event) {
+    const button = event.currentTarget;
+    const courseIds = JSON.parse(button.dataset.courses || "[]");
+    const fieldGroup = button.closest(".form-field-group");
+
+    if (!fieldGroup) return;
+
+    const select = fieldGroup.querySelector('[data-search-form-target="select"]');
+    if (select?.tomselect) {
+      select.tomselect.setValue(courseIds);
+      select.tomselect.enable();
+
+      const allToggle = fieldGroup.querySelector('[data-search-form-target="allToggle"]');
+      if (allToggle) {
+        allToggle.checked = false;
+      }
+    }
   }
 }
