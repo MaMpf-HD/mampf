@@ -48,7 +48,7 @@ module Search
             checked: true,
             disabled: true,
             inline: true,
-            data: { tag_operator: "or" }
+            stimulus: { tag_operator: "or" }
           )
 
           group.with_radio_button(
@@ -58,7 +58,7 @@ module Search
             label: I18n.t("basics.AND"),
             disabled: true,
             inline: true,
-            data: { tag_operator: "and" }
+            stimulus: { tag_operator: "and" }
           )
         end
       end
