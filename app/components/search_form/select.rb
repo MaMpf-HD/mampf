@@ -1,5 +1,5 @@
 module SearchForm
-  class SelectComponent < FormFieldComponent
+  class Select < Field
     attr_reader :collection
 
     def initialize(name:, label:, collection:, column_class: "col-2", **)

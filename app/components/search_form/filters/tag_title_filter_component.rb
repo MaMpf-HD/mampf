@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class TagTitleFilterComponent < SearchForm::TextFieldComponent
+    class TagTitleFilterComponent < SearchForm::TextField
       def initialize(**options)
         super(
           name: :title,

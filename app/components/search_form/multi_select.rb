@@ -1,5 +1,5 @@
 module SearchForm
-  class MultiSelectComponent < FormFieldComponent
+  class MultiSelect < Field
     attr_reader :collection, :all_toggle_name
 
     renders_one :checkbox, "SearchForm::Controls::Checkbox"

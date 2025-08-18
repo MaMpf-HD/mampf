@@ -1,5 +1,5 @@
 module SearchForm
-  class HiddenFieldComponent < ViewComponent::Base
+  class HiddenField < ViewComponent::Base
     attr_reader :name, :value
 
     def initialize(name:, value:)

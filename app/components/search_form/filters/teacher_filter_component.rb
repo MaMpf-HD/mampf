@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class TeacherFilterComponent < SearchForm::MultiSelectComponent
+    class TeacherFilterComponent < SearchForm::MultiSelect
       def initialize(**)
         super(
           name: :teacher_ids,

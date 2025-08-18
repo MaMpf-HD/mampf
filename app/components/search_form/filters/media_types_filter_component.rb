@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class MediaTypesFilterComponent < SearchForm::MultiSelectComponent
+    class MediaTypesFilterComponent < SearchForm::MultiSelect
       def initialize(purpose: "media", context: "media", **)
         super(
           name: :types,

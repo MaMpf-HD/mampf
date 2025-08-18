@@ -1,7 +1,7 @@
 # app/components/search/filters/course_filter_component.rb
 module SearchForm
   module Filters
-    class CourseFilterComponent < SearchForm::MultiSelectComponent
+    class CourseFilterComponent < SearchForm::MultiSelect
       def initialize
         super(
           name: :course_ids,

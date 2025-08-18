@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class TermFilterComponent < SearchForm::MultiSelectComponent
+    class TermFilterComponent < SearchForm::MultiSelect
       def initialize(**options)
         super(
           name: :term_ids,

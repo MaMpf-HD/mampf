@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class AnswerCountFilterComponent < SearchForm::SelectComponent
+    class AnswerCountFilterComponent < SearchForm::Select
       def initialize(purpose: "media", context: "media", **options)
         # Skip initialization for import purpose - component won't render
         return if purpose == "import"

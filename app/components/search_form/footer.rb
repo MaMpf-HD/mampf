@@ -1,5 +1,5 @@
 module SearchForm
-  class FooterComponent < ViewComponent::Base
+  class Footer < ViewComponent::Base
     attr_reader :results_container_id, :extra_classes
 
     def initialize(results_container_id:, extra_classes: "")
