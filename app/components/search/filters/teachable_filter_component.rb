@@ -22,6 +22,16 @@ module Search
         )
       end
 
+      # Override to provide custom data attributes for the "all_teachables" checkbox
+      def all_toggle_data_attributes
+        {
+          search_form_target: "allToggle",
+          action: "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup",
+          toggle_radio_group: "teachable_inheritance",
+          default_radio_value: "1" # Select "with_inheritance" by default
+        }
+      end
+
       # Load grouped collection just in time (helpers available now)
       def before_render
         super
@@ -40,6 +50,7 @@ module Search
             value: "1",
             label: I18n.t("basics.with_inheritance"),
             checked: true,
+            disabled: true,
             inline: true
           )
 
@@ -48,6 +59,7 @@ module Search
             name: :teachable_inheritance,
             value: "0",
             label: I18n.t("basics.without_inheritance"),
+            disabled: true,
             inline: true
           )
         end

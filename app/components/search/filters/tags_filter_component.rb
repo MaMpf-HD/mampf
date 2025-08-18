@@ -30,7 +30,9 @@ module Search
       def all_toggle_data_attributes
         {
           search_form_target: "allToggle",
-          action: "change->search-form#toggleFromCheckbox change->search-form#toggleTagOperators"
+          action: "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup",
+          toggle_radio_group: "tag_operator",
+          default_radio_value: "or"
         }
       end
 
@@ -47,8 +49,7 @@ module Search
             label: I18n.t("basics.OR"),
             checked: true,
             disabled: true,
-            inline: true,
-            stimulus: { tag_operator: "or" }
+            inline: true
           )
 
           group.with_radio_button(
@@ -57,8 +58,7 @@ module Search
             value: "and",
             label: I18n.t("basics.AND"),
             disabled: true,
-            inline: true,
-            stimulus: { tag_operator: "and" }
+            inline: true
           )
         end
       end

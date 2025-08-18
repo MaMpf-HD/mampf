@@ -87,25 +87,34 @@ export default class extends Controller {
     return null;
   }
 
-  toggleTagOperators(event) {
+  toggleRadioGroup(event) {
     const checkbox = event.currentTarget;
     const fieldGroup = checkbox.closest(".form-field-group");
 
     if (!fieldGroup) return;
 
-    // Find radio buttons with data-tag-operator attribute in the same field group
-    const orRadio = fieldGroup.querySelector('[data-tag-operator="or"]');
-    const andRadio = fieldGroup.querySelector('[data-tag-operator="and"]');
+    // Get the radio group name from data attribute
+    const radioGroupName = checkbox.dataset.toggleRadioGroup;
+    if (!radioGroupName) return;
 
-    if (!orRadio || !andRadio) return;
+    // Find all radio buttons with this name in the same field group
+    const radioButtons = fieldGroup.querySelectorAll(`input[type="radio"][name$="[${radioGroupName}]"]`);
 
-    // If "all tags" is checked, select the OR operator
-    if (checkbox.checked) {
-      orRadio.checked = true;
+    if (!radioButtons.length) return;
+
+    // If checkbox is checked and there's a default value, select that radio
+    const defaultValue = checkbox.dataset.defaultRadioValue;
+    if (checkbox.checked && defaultValue) {
+      radioButtons.forEach((radio) => {
+        if (radio.value === defaultValue) {
+          radio.checked = true;
+        }
+      });
     }
 
-    // Disable both operators when "all tags" is checked
-    orRadio.disabled = checkbox.checked;
-    andRadio.disabled = checkbox.checked;
+    // Disable/enable all radio buttons based on checkbox state
+    radioButtons.forEach((radio) => {
+      radio.disabled = checkbox.checked;
+    });
   }
 }

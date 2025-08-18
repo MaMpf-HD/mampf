@@ -29,7 +29,6 @@ import "~/js/thyme/attributes";
 import "~/js/copy_and_paste_button";
 import "~/js/lectures";
 import "~/js/mampf_routes";
-import "~/js/search_tags";
 import "~/js/talks";
 
 import "~/js/administration.coffee";
