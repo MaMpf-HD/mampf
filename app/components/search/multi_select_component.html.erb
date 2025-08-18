@@ -14,18 +14,7 @@
                     )
                   ) %>
 
-  <% unless respond_to?(:skip_all_checkbox?) && skip_all_checkbox? %>
-    <%= render(Search::Controls::CheckboxComponent.new(
-      form: form,
-      name: all_toggle_name,
-      label: all_checkbox_label,
-      checked: true,
-      data: respond_to?(:all_toggle_data_attributes) ? all_toggle_data_attributes : {
-        search_form_target: "allToggle",
-        action: "change->search-form#toggleFromCheckbox"
-      }
-    )) %>
-  <% end %>
+  <%= render(checkbox) if checkbox %>
 
   <% if content %>
     <%= capture(self, &content) %>
