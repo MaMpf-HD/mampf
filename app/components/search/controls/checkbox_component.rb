@@ -15,16 +15,29 @@ module Search
 
       # Generate data attributes from stimulus config
       def data_attributes
-        return {} if stimulus_config.empty?
+        return options[:data] || {} if stimulus_config.empty?
 
         data = options[:data] || {}
+
+        # Basic toggle functionality
         if stimulus_config[:toggle]
           data[:search_form_target] = "allToggle"
           data[:action] = "change->search-form#toggleFromCheckbox"
         end
 
-        if stimulus_config[:tag_operators]
-          data[:action] = "#{data[:action]} change->search-form#toggleTagOperators"
+        # Handle radio group toggling
+        if stimulus_config[:toggle_radio_group]
+          action = data[:action] || ""
+          data[:action] = if action.empty?
+            "change->search-form#toggleRadioGroup"
+          else
+            "#{action} change->search-form#toggleRadioGroup"
+          end
+          data[:toggle_radio_group] = stimulus_config[:toggle_radio_group]
+
+          if stimulus_config[:default_radio_value]
+            data[:default_radio_value] = stimulus_config[:default_radio_value]
+          end
         end
 
         data

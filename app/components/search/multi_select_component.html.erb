@@ -15,20 +15,16 @@
                   ) %>
 
   <% unless respond_to?(:skip_all_checkbox?) && skip_all_checkbox? %>
-    <div class="form-check mb-2">
-      <%= form.check_box all_toggle_name,
-                        class: "form-check-input",
-                        checked: true,
-                        data: respond_to?(:all_toggle_data_attributes) ?
-                              all_toggle_data_attributes :
-                              {
-                                search_form_target: "allToggle",
-                                action: "change->search-form#toggleFromCheckbox"
-                              } %>
-      <%= form.label all_toggle_name,
-                    all_checkbox_label,
-                    class: "form-check-label" %>
-    </div>
+    <%= render(Search::Controls::CheckboxComponent.new(
+      form: form,
+      name: all_toggle_name,
+      label: all_checkbox_label,
+      checked: true,
+      data: respond_to?(:all_toggle_data_attributes) ? all_toggle_data_attributes : {
+        search_form_target: "allToggle",
+        action: "change->search-form#toggleFromCheckbox"
+      }
+    )) %>
   <% end %>
 
   <% if content %>

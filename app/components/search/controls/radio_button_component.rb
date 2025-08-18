@@ -32,11 +32,6 @@ module Search
           if stimulus_config[:controls_select]
             result[:controls_select] = stimulus_config[:controls_select].to_s
           end
-
-          # Add any other stimulus config as direct data attributes
-          stimulus_config.each do |key, value|
-            result[key] = value.to_s unless [:radio_toggle, :controls_select].include?(key)
-          end
         end
 
         result
