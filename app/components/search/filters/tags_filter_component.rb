@@ -34,30 +34,32 @@ module Search
         }
       end
 
-      # Method to render the radio buttons, called from the template
+      # Method to render the tag operators using our RadioGroupComponent
       def render_tag_operator_radios
-        content_tag(:div, class: "mt-2") do
-          safe_join([
-                      content_tag(:div, class: "form-check form-check-inline") do
-                        form.radio_button(:tag_operator, "or",
-                                          checked: true,
-                                          class: "form-check-input",
-                                          disabled: true,
-                                          data: { tag_operator: "or" }) +
-                        form.label(:tag_operator, I18n.t("basics.OR"),
-                                   value: "or",
-                                   class: "form-check-label")
-                      end,
-                      content_tag(:div, class: "form-check form-check-inline") do
-                        form.radio_button(:tag_operator, "and",
-                                          class: "form-check-input",
-                                          disabled: true,
-                                          data: { tag_operator: "and" }) +
-                        form.label(:tag_operator, I18n.t("basics.AND"),
-                                   value: "and",
-                                   class: "form-check-label")
-                      end
-                    ])
+        render(Search::Controls::RadioGroupComponent.new(
+                 form: form,
+                 name: :tag_operator
+               )) do |group|
+          group.with_radio_button(
+            form: form,
+            name: :tag_operator,
+            value: "or",
+            label: I18n.t("basics.OR"),
+            checked: true,
+            disabled: true,
+            inline: true,
+            data: { tag_operator: "or" }
+          )
+
+          group.with_radio_button(
+            form: form,
+            name: :tag_operator,
+            value: "and",
+            label: I18n.t("basics.AND"),
+            disabled: true,
+            inline: true,
+            data: { tag_operator: "and" }
+          )
         end
       end
     end

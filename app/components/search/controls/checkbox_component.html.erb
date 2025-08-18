@@ -1,0 +1,8 @@
+<div class="form-check mb-2">
+  <%= form.check_box name,
+                   { class: "form-check-input",
+                     checked: checked }.merge(
+                       data_attributes.any? ? { data: data_attributes } : {}
+                     ).merge(options) %>
+  <%= form.label name, label, class: "form-check-label" %>
+</div>

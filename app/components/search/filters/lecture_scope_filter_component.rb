@@ -25,55 +25,36 @@ module Search
         true
       end
 
+      # Render lecture options using block-based approach
       def render_lecture_options
-        content_tag(:div, class: "mt-2") do
-          safe_join([
-                      # "Own selection" option
-                      content_tag(:div, class: "form-check mb-2") do
-                        form.radio_button(:lecture_option, "2",
-                                          class: "form-check-input",
-                                          data: {
-                                            search_form_target: "radioToggle",
-                                            action: "change->search-form#toggleFromRadio",
-                                            controls_select: "true"
-                                          }) +
-                        form.label(:lecture_option,
-                                   I18n.t("search.media.lecture_options.own_selection"),
-                                   value: "2",
-                                   class: "form-check-label")
-                      end,
+        render(Search::Controls::RadioGroupComponent.new(
+                 form: form,
+                 name: :lecture_option
+               )) do |group|
+          group.with_radio_button(
+            form: form,
+            name: :lecture_option,
+            value: "0",
+            label: I18n.t("search.media.lecture_options.all"),
+            checked: true,
+            stimulus: { radio_toggle: true, controls_select: false }
+          )
 
-                      # "Subscribed" option
-                      content_tag(:div, class: "form-check mb-2") do
-                        form.radio_button(:lecture_option, "1",
-                                          class: "form-check-input",
-                                          data: {
-                                            search_form_target: "radioToggle",
-                                            action: "change->search-form#toggleFromRadio",
-                                            controls_select: "false"
-                                          }) +
-                        form.label(:lecture_option,
-                                   I18n.t("search.media.lecture_options.subscribed"),
-                                   value: "1",
-                                   class: "form-check-label")
-                      end,
+          group.with_radio_button(
+            form: form,
+            name: :lecture_option,
+            value: "1",
+            label: I18n.t("search.media.lecture_options.subscribed"),
+            stimulus: { radio_toggle: true, controls_select: false }
+          )
 
-                      # "All" option
-                      content_tag(:div, class: "form-check mb-2") do
-                        form.radio_button(:lecture_option, "0",
-                                          checked: true,
-                                          class: "form-check-input",
-                                          data: {
-                                            search_form_target: "radioToggle",
-                                            action: "change->search-form#toggleFromRadio",
-                                            controls_select: "false"
-                                          }) +
-                        form.label(:lecture_option,
-                                   I18n.t("search.media.lecture_options.all"),
-                                   value: "0",
-                                   class: "form-check-label")
-                      end
-                    ])
+          group.with_radio_button(
+            form: form,
+            name: :lecture_option,
+            value: "2",
+            label: I18n.t("search.media.lecture_options.own_selection"),
+            stimulus: { radio_toggle: true, controls_select: true }
+          )
         end
       end
     end

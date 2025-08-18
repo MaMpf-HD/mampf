@@ -13,7 +13,6 @@ module Search
           **
         )
 
-        # These options match exactly what's in the partial
         options.reverse_merge!(
           multiple: true,
           class: "selectize",
@@ -29,28 +28,28 @@ module Search
         @collection = helpers.grouped_teachable_list_alternative
       end
 
-      # Method to render the teachable inheritance radio buttons
+      # Method to render the teachable inheritance radio buttons using RadioGroupComponent
       def render_inheritance_radios
-        content_tag(:div) do
-          safe_join([
-                      content_tag(:div, class: "form-check form-check-inline") do
-                        form.radio_button(:teachable_inheritance, "1",
-                                          checked: true,
-                                          class: "form-check-input") +
-                        form.label(:teachable_inheritance,
-                                   I18n.t("basics.with_inheritance"),
-                                   value: "1",
-                                   class: "form-check-label")
-                      end,
-                      content_tag(:div, class: "form-check form-check-inline") do
-                        form.radio_button(:teachable_inheritance, "0",
-                                          class: "form-check-input") +
-                        form.label(:teachable_inheritance,
-                                   I18n.t("basics.without_inheritance"),
-                                   value: "0",
-                                   class: "form-check-label")
-                      end
-                    ])
+        render(Search::Controls::RadioGroupComponent.new(
+                 form: form,
+                 name: :teachable_inheritance
+               )) do |group|
+          group.with_radio_button(
+            form: form,
+            name: :teachable_inheritance,
+            value: "1",
+            label: I18n.t("basics.with_inheritance"),
+            checked: true,
+            inline: true
+          )
+
+          group.with_radio_button(
+            form: form,
+            name: :teachable_inheritance,
+            value: "0",
+            label: I18n.t("basics.without_inheritance"),
+            inline: true
+          )
         end
       end
     end

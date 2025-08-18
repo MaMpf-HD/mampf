@@ -1,0 +1,12 @@
+<div class="form-check <%= options[:inline] ? 'form-check-inline' : 'mb-2' %>">
+  <%= form.radio_button name,
+                       value,
+                       { class: "form-check-input",
+                         checked: checked,
+                         disabled: options[:disabled] }.merge(
+                           data_attributes.any? ? { data: data_attributes } : {}
+                         ).merge(options.except(:inline)) %>
+  <%= form.label "#{name}_#{value}",
+                 label,
+                 class: "form-check-label" %>
+</div>

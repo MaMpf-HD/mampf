@@ -1,0 +1,5 @@
+<div class="<%= options[:class] || 'mt-2' %>">
+  <% radio_buttons.each do |radio| %>
+    <%= render(radio.with_form(form)) %>
+  <% end %>
+</div>
