@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class TagsFilterComponent < SearchForm::MultiSelect
+    class TagFilter < Fields::MultiSelectField
       def initialize(context: "media", **)
         # Pass empty array for collection - tags will be loaded by AJAX
         super(

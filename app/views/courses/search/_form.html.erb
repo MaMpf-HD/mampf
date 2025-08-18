@@ -3,18 +3,18 @@
   context: 'courses'
 )) do |c| %>
 
-  <% c.with_field(SearchForm::Filters::EditorFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::EditorFilter.new) %>
 
-  <% c.with_field(SearchForm::Filters::ProgramFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::ProgramFilter.new) %>
 
-  <% c.with_field(SearchForm::Filters::FulltextFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
 
-  <% c.with_field(SearchForm::Filters::PerPageFilterComponent.new(
+  <% c.with_field(SearchForm::Fields::PerPageField.new(
     per_options: hits_per_page(true),
     default: default_hits_per_page(true)
   )) %>
 
-  <% c.with_field(SearchForm::Filters::TermIndependenceFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::TermIndependenceFilter.new) %>
 
   <% c.with_footer(results_container_id: "course-search-results") %>
 <% end %>

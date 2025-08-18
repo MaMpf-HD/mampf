@@ -3,21 +3,21 @@
   context: 'lectures',
 )) do |c| %>
 
-  <% c.with_field(SearchForm::Filters::TypesFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::LectureTypeFilter.new) %>
 
-  <% c.with_field(SearchForm::Filters::TermFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::TermFilter.new) %>
 
-  <% c.with_field(SearchForm::Filters::ProgramFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::ProgramFilter.new(
     column_class: "col-6 col-lg-3")) %>
 
-  <% c.with_field(SearchForm::Filters::TeacherFilterComponent.new) %>
+  <% c.with_field(SearchForm::Filters::TeacherFilter.new) %>
 
-  <% c.with_field(SearchForm::Filters::FulltextFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::FulltextFilter.new(
     column_class: "col-6 col-lg-3",
     id: "fullTextSearch"
   )) %>
 
-  <% c.with_field(SearchForm::Filters::PerPageFilterComponent.new(
+  <% c.with_field(SearchForm::Fields::PerPageField.new(
     id: "hitsPerPage",
     per_options: hits_per_page(results_as_list),
     default: default_hits_per_page(results_as_list)

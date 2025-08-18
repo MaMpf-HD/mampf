@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class EditorFilterComponent < SearchForm::MultiSelect
+    class EditorFilter < Fields::MultiSelectField
       def initialize(**)
         super(
           name: :editor_ids,

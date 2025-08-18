@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class FulltextFilterComponent < SearchForm::TextField
+    class FulltextFilter < Fields::TextField
       def initialize(**)
         super(
           name: :fulltext,

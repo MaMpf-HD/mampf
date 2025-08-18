@@ -10,7 +10,7 @@ module SearchForm
     }
     renders_one :header, SearchForm::Header
     renders_one :footer, SearchForm::Footer
-    renders_many :hidden_fields, SearchForm::HiddenField
+    renders_many :hidden_fields, SearchForm::Fields::HiddenField
 
     attr_reader :url, :scope, :method, :remote, :submit_label, :context
 

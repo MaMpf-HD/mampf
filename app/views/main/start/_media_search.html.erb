@@ -3,22 +3,22 @@
   context: 'media'
 )) do |c| %>
 
-  <% c.with_field(SearchForm::Filters::MediaTypesFilterComponent.new(
+  <% c.with_field(SearchForm::Filters::MediumTypeFilter.new(
     purpose: purpose
   )) %>
 
-  <% c.with_field(SearchForm::Filters::TagsFilterComponent.new) do |field| %>
+  <% c.with_field(SearchForm::Filters::TagFilter.new) do |field| %>
     <%= field.render_tag_operator_radios %>
   <% end %>
 
-<% c.with_field(SearchForm::Filters::LectureScopeFilterComponent.new) do |field| %>
+<% c.with_field(SearchForm::Filters::LectureScopeFilter.new) do |field| %>
   <%= field.render_lecture_options %>
 <% end %>
 
 
-    <% c.with_field(SearchForm::Filters::FulltextFilterComponent.new) %>
+    <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
 
-  <% c.with_field(SearchForm::Filters::PerPageFilterComponent.new(
+  <% c.with_field(SearchForm::Fields::PerPageField.new(
     per_options: hits_per_page(false),
     default: default_hits_per_page(false)
   )) %>

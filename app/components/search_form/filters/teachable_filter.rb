@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class TeachableFilterComponent < SearchForm::MultiSelect
+    class TeachableFilter < Fields::MultiSelectField
       def initialize(context: "media", **)
         super(
           name: :teachable_ids,

@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class AccessFilterComponent < SearchForm::Select
+    class MediumAccessFilter < Fields::SelectField
       def initialize(context: "media", **options)
         super(
           name: :access,

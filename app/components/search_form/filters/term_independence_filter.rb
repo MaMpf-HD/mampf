@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class TermIndependenceFilterComponent < SearchForm::Field
+    class TermIndependenceFilter < SearchForm::Fields::Field
       def initialize(context: "course", **)
         super(
           name: :term_independent,

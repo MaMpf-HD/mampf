@@ -1,6 +1,6 @@
 module SearchForm
   module Filters
-    class ProgramFilterComponent < SearchForm::MultiSelect
+    class ProgramFilter < Fields::MultiSelectField
       def initialize(**)
         super(
           name: :program_ids,
