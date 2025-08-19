@@ -1,22 +1,18 @@
 module SearchForm
   module Controls
-    class RadioGroup < ViewComponent::Base
-      attr_reader :form, :name, :options
+    class RadioGroup < BaseControl
+      attr_reader :name
 
       renders_many :radio_buttons, RadioButton
 
-      def initialize(form:, name:, **options)
-        super()
-        @form = form
+      def initialize(form:, name:, **)
+        super(form: form, **)
         @name = name
-        @options = options
       end
 
-      # Determines the CSS class for the component's container element.
-      # Can be customized by passing container_class: "your-class" to
-      # the component.
-      def container_class
-        options[:container_class] || "mt-2"
+      # Override the default container class
+      def default_container_class
+        "mt-2"
       end
     end
   end
