@@ -3,13 +3,12 @@ module SearchForm
     # Base class for form control components that provides common functionality
     # for rendering, styling, and stimulus integration.
     class BaseControl < ViewComponent::Base
-      attr_reader :form, :options, :stimulus_config, :dom_uid
+      attr_reader :form, :options, :stimulus_config, :context
 
       def initialize(form:, context:, stimulus: {}, **options)
         super()
         @form = form
         @context = context
-        @dom_uid = context || SecureRandom.hex(6)
         @stimulus_config = stimulus
         @options = options
       end
@@ -65,7 +64,7 @@ module SearchForm
         # A single, private method to construct the core, unique part of the ID.
         def base_id_string
           # It relies on the subclass to provide the specific parts.
-          ([dom_uid] + id_parts.map { |p| p.to_s.strip }.reject(&:empty?)).join("_")
+          ([context] + id_parts.map { |p| p.to_s.strip }.reject(&:empty?)).join("_")
         end
 
         # This is the contract for subclasses. They must define what makes their ID unique.

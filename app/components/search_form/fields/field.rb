@@ -10,7 +10,6 @@ module SearchForm
         @label = label
         @column_class = column_class
         @help_text = help_text
-        # @context = context.presence || "sf#{SecureRandom.hex(4)}"
         @options = process_options(options)
       end
 
