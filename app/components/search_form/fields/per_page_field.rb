@@ -1,6 +1,6 @@
 module SearchForm
   module Fields
-    class PerPageField < SearchForm::Fields::SelectField
+    class PerPageField < SelectField
       def initialize(id: nil, per_options: [[10, 10], [20, 20], [50, 50]], default: 10)
         super(
           name: :per,
