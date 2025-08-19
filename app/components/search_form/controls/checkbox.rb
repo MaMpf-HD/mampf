@@ -39,10 +39,23 @@ module SearchForm
       end
 
       def checkbox_html_options
-        html_opts = { class: "form-check-input", checked: checked }
+        html_opts = { class: "form-check-input",
+                      checked: checked,
+                      id: element_id }
         html_opts[:data] = data_attributes if data_attributes.any?
         html_opts.merge(options.except(:container_class))
       end
+
+      def label_id
+        label_for
+      end
+
+      private
+
+        # This is the single source of truth for this component's ID parts.
+        def id_parts
+          [name]
+        end
     end
   end
 end

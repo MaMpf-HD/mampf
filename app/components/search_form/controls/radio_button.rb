@@ -37,7 +37,8 @@ module SearchForm
       def radio_button_html_options
         html_opts = {
           class: "form-check-input",
-          checked: checked
+          checked: checked,
+          id: element_id
         }
 
         html_opts[:disabled] = options[:disabled] if options.key?(:disabled)
@@ -48,8 +49,15 @@ module SearchForm
       end
 
       def label_id
-        "#{name}_#{value}"
+        label_for
       end
+
+      private
+
+        # This is the single source of truth for this component's ID parts.
+        def id_parts
+          [name, value]
+        end
     end
   end
 end
