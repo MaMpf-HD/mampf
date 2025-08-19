@@ -42,6 +42,20 @@ module SearchForm
 
         data
       end
+
+      def checkbox_html_options
+        html_opts = { class: "form-check-input", checked: checked }
+
+        # Add data attributes if present
+        html_opts[:data] = data_attributes if data_attributes.any?
+
+        # Merge any other options passed to the component
+        html_opts.merge(options)
+      end
+
+      def container_class
+        options[:container_class] || "form-check mb-2"
+      end
     end
   end
 end

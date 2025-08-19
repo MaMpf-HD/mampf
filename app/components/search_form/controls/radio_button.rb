@@ -36,6 +36,33 @@ module SearchForm
 
         result
       end
+
+      def container_class
+        if options[:container_class]
+          options[:container_class]
+        elsif options[:inline]
+          "form-check form-check-inline"
+        else
+          "form-check mb-2"
+        end
+      end
+
+      def radio_button_html_options
+        html_opts = {
+          class: "form-check-input",
+          checked: checked
+        }
+
+        html_opts[:disabled] = options[:disabled] if options.key?(:disabled)
+
+        html_opts[:data] = data_attributes if data_attributes.any?
+
+        html_opts.merge(options.except(:inline))
+      end
+
+      def label_id
+        "#{name}_#{value}"
+      end
     end
   end
 end
