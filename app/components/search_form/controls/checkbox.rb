@@ -3,8 +3,8 @@ module SearchForm
     class Checkbox < BaseControl
       attr_reader :name, :label, :checked
 
-      def initialize(form:, name:, label:, checked: false, **)
-        super(form: form, **)
+      def initialize(form:, context:, name:, label:, checked: false, **)
+        super(form: form, context: context, **)
         @name = name
         @label = label
         @checked = checked

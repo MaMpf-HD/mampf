@@ -29,10 +29,12 @@ module SearchForm
       def render_lecture_options
         render(SearchForm::Controls::RadioGroup.new(
                  form: form,
+                 context: context,
                  name: :lecture_option
                )) do |group|
           group.with_radio_button(
             form: form,
+            context: context,
             name: :lecture_option,
             value: "0",
             label: I18n.t("search.media.lecture_options.all"),
@@ -42,6 +44,7 @@ module SearchForm
 
           group.with_radio_button(
             form: form,
+            context: context,
             name: :lecture_option,
             value: "1",
             label: I18n.t("search.media.lecture_options.subscribed"),
@@ -50,6 +53,7 @@ module SearchForm
 
           group.with_radio_button(
             form: form,
+            context: context,
             name: :lecture_option,
             value: "2",
             label: I18n.t("search.media.lecture_options.own_selection"),

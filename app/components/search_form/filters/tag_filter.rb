@@ -40,10 +40,12 @@ module SearchForm
       def render_tag_operator_radios
         render(SearchForm::Controls::RadioGroup.new(
                  form: form,
+                 context: context,
                  name: :tag_operator
                )) do |group|
           group.with_radio_button(
             form: form,
+            context: context,
             name: :tag_operator,
             value: "or",
             label: I18n.t("basics.OR"),
@@ -54,6 +56,7 @@ module SearchForm
 
           group.with_radio_button(
             form: form,
+            context: context,
             name: :tag_operator,
             value: "and",
             label: I18n.t("basics.AND"),

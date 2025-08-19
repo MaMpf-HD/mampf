@@ -42,10 +42,12 @@ module SearchForm
       def render_inheritance_radios
         render(SearchForm::Controls::RadioGroup.new(
                  form: form,
+                 context: context,
                  name: :teachable_inheritance
                )) do |group|
           group.with_radio_button(
             form: form,
+            context: context,
             name: :teachable_inheritance,
             value: "1",
             label: I18n.t("basics.with_inheritance"),
@@ -56,6 +58,7 @@ module SearchForm
 
           group.with_radio_button(
             form: form,
+            context: context,
             name: :teachable_inheritance,
             value: "0",
             label: I18n.t("basics.without_inheritance"),

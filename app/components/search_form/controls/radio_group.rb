@@ -5,8 +5,8 @@ module SearchForm
 
       renders_many :radio_buttons, RadioButton
 
-      def initialize(form:, name:, **)
-        super(form: form, **)
+      def initialize(form:, context:, name:, **)
+        super(form: form, context: context, **)
         @name = name
       end
 

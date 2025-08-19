@@ -5,10 +5,11 @@ module SearchForm
     class BaseControl < ViewComponent::Base
       attr_reader :form, :options, :stimulus_config, :dom_uid
 
-      def initialize(form:, stimulus: {}, **options)
+      def initialize(form:, context:, stimulus: {}, **options)
         super()
         @form = form
-        @dom_uid = options.delete(:dom_uid) || SecureRandom.hex(6)
+        @context = context
+        @dom_uid = context || SecureRandom.hex(6)
         @stimulus_config = stimulus
         @options = options
       end

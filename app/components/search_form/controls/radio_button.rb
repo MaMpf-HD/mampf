@@ -3,8 +3,8 @@ module SearchForm
     class RadioButton < BaseControl
       attr_reader :name, :value, :label, :checked
 
-      def initialize(form:, name:, value:, label:, checked: false, **)
-        super(form: form, **)
+      def initialize(form:, context:, name:, value:, label:, checked: false, **)
+        super(form: form, context: context, **)
         @name = name
         @value = value
         @label = label

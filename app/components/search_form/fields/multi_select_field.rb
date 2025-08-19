@@ -31,6 +31,7 @@ module SearchForm
       def setup_default_checkbox
         with_checkbox(
           form: form,
+          context: context,
           name: all_toggle_name,
           label: all_checkbox_label,
           checked: true,

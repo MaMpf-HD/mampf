@@ -22,6 +22,7 @@ module SearchForm
       def call
         render(SearchForm::Controls::Checkbox.new(
                  form: form,
+                 context: context,
                  name: name,
                  label: label,
                  checked: false
