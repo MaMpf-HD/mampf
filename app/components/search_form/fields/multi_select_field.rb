@@ -1,3 +1,4 @@
+# app/components/search_form/fields/multi_select_field.rb
 module SearchForm
   module Fields
     class MultiSelectField < Field
@@ -27,21 +28,12 @@ module SearchForm
         end
       end
 
-      # Setup the default checkbox if one wasn't provided
-      def setup_default_checkbox
-        with_checkbox(
-          form_state: form_state,
-          name: all_toggle_name,
-          label: all_checkbox_label,
-          checked: true,
-          data: if respond_to?(:all_toggle_data_attributes)
-                  all_toggle_data_attributes
-                else
-                  {
-                    search_form_target: "allToggle",
-                    action: "change->search-form#toggleFromCheckbox"
-                  }
-                end
+      # HTML options for the select tag (4th parameter to form.select)
+      def select_html_options
+        base_options = options.except(:selected)
+        base_options.merge(
+          id: element_id,
+          data: select_data_attributes
         )
       end
 
@@ -50,10 +42,19 @@ module SearchForm
         {} # extend later if you need :prompt etc.
       end
 
-      # Hash passed as the HTML options (4th arg) to form.select
-      def select_html_options
-        # Remove :selected so it isn’t duplicated in the tag attributes
-        options.except(:selected)
+      # Whether to show help text
+      def show_help_text?
+        help_text.present?
+      end
+
+      # Whether to show checkbox
+      def show_checkbox?
+        checkbox.present?
+      end
+
+      # Whether to show additional content
+      def show_content?
+        content.present?
       end
 
       def selected_value
@@ -72,6 +73,36 @@ module SearchForm
       end
 
       private
+
+        # Data attributes for the select element
+        def select_data_attributes
+          base_data = options.dig(:data) || {}
+          base_data.merge(search_form_target: "select")
+        end
+
+        # Setup the default checkbox if one wasn't provided
+        def setup_default_checkbox
+          with_checkbox(
+            form_state: form_state,
+            name: all_toggle_name,
+            label: all_checkbox_label,
+            checked: true,
+            data: default_checkbox_data_attributes
+          )
+        end
+
+        # Get data attributes for the default checkbox
+        # Allows subclasses to override with custom attributes
+        def default_checkbox_data_attributes
+          if respond_to?(:all_toggle_data_attributes)
+            all_toggle_data_attributes
+          else
+            {
+              search_form_target: "allToggle",
+              action: "change->search-form#toggleFromCheckbox"
+            }
+          end
+        end
 
         def default_all_toggle_name(name)
           "all_#{name.to_s.sub(/_ids$/, "s")}"

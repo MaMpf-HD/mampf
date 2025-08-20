@@ -15,18 +15,8 @@ module SearchForm
       # Override to provide radio button specific data attributes
       def data_attributes
         data = super
-
-        unless stimulus_config.empty?
-          if stimulus_config[:radio_toggle]
-            data[:search_form_target] = "radioToggle"
-            data[:action] = "change->search-form#toggleFromRadio"
-          end
-
-          if stimulus_config[:controls_select]
-            data[:controls_select] = stimulus_config[:controls_select].to_s
-          end
-        end
-
+        add_radio_toggle_attributes(data)
+        add_controls_select_attributes(data)
         data
       end
 
@@ -58,6 +48,21 @@ module SearchForm
         # This is the single source of truth for this component's ID parts.
         def id_parts
           [name, value]
+        end
+
+        # Add radio toggle functionality data attributes
+        def add_radio_toggle_attributes(data)
+          return unless stimulus_config[:radio_toggle]
+
+          data[:search_form_target] = "radioToggle"
+          data[:action] = "change->search-form#toggleFromRadio"
+        end
+
+        # Add controls select functionality data attributes
+        def add_controls_select_attributes(data)
+          return unless stimulus_config[:controls_select]
+
+          data[:controls_select] = stimulus_config[:controls_select].to_s
         end
     end
   end

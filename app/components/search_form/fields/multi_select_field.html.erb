@@ -1,22 +1,17 @@
 <div class="<%= container_classes %>">
   <%= form.label name, label, class: "form-label" %>
-  <% if help_text %>
+  
+  <% if show_help_text? %>
     <%= helpers.helpdesk(help_text, true) %>
   <% end %>
 
-  <%= form.select name,
-                  options_html,
-                  select_tag_options,
-                  select_html_options.merge(
-                    id: element_id,
-                    data: (select_html_options[:data] || {}).merge(
-                      search_form_target: "select"
-                    )
-                  ) %>
+  <%= form.select name, options_html, select_tag_options, select_html_options %>
 
-  <%= render(checkbox) if checkbox %>
+  <% if show_checkbox? %>
+    <%= render(checkbox) %>
+  <% end %>
 
-  <% if content %>
+  <% if show_content? %>
     <%= capture(self, &content) %>
   <% end %>
 </div>

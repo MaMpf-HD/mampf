@@ -1,10 +1,13 @@
 <div class="<%= column_class %>">
   <%= form.label name, label, class: "form-label" %>
-  <% if help_text %>
+  
+  <% if show_help_text? %>
     <%= helpers.helpdesk(help_text, false) %>
   <% end %>
-  <%= form.select name, collection, {}, options.merge(id: element_id) %>
-  <% if content %>
+  
+  <%= form.select name, collection, select_tag_options, select_html_options %>
+  
+  <% if show_content? %>
     <%= capture(self, &content) %>
   <% end %>
 </div>

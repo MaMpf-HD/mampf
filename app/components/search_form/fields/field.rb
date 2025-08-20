@@ -29,7 +29,7 @@ module SearchForm
       end
 
       def with_form(form)
-        form_state.with_form(form) if form_state
+        form_state&.with_form(form)
         self
       end
 
@@ -41,7 +41,7 @@ module SearchForm
 
       # Generate a unique ID using form_state
       def element_id
-        form_state&.element_id_for(name) || "#{name}"
+        form_state&.element_id_for(name) || name.to_s
       end
 
       def before_render
