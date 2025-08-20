@@ -3,7 +3,7 @@ module SearchForm
   class FormState
     attr_reader :form, :context, :scope_prefix
 
-    def initialize(form:, context:)
+    def initialize(form: nil, context: nil)
       @form = form
       @context = context
       @scope_prefix = form&.object_name || "search"

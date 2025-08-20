@@ -1,37 +1,10 @@
-<%= render(SearchForm::SearchForm.new(
-  url: media_search_path,
-  context: 'media'
-)) do |c| %>
-
-  <% c.with_field(SearchForm::Filters::MediumTypeFilter.new(
-    purpose: purpose
-  )) %>
-
-  <% c.with_field(SearchForm::Filters::TeachableFilter.new) do |field| %>
-    <%= field.render_inheritance_radios %>
-  <% end %>
-
-<% c.with_field(SearchForm::Filters::TagFilter.new) do |field| %>
-  <%= field.render_tag_operator_radios %>
-<% end %>
-
-  <% c.with_field(SearchForm::Filters::EditorFilter.new) %>
-
-  <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
-
-  <% c.with_field(SearchForm::Filters::MediumAccessFilter.new) %>
-
-  <% c.with_field(SearchForm::Filters::AnswerCountFilter.new(
-    purpose: purpose
-  )) %>
-
-  <% c.with_field(SearchForm::Fields::PerPageField.new(
-    per_options: hits_per_page(true),
-    default: default_hits_per_page(true)
-  )) %>
-
-  <% c.with_hidden_field(name: :purpose, value: purpose) %>
-  <% c.with_hidden_field(name: :results_as_list, value: 'true') %>
-
-  <% c.with_footer(results_container_id: "medium-search-results")%>
-<% end %>
+<%= render_search_form(url: media_search_path, context: "media") do |f|
+  f.tag_filter do |tag|
+    tag.with_ajax(model: "tag")
+       .with_operator_radios
+  end
+  
+  f.medium_type_filter(purpose: "media")
+  f.fulltext_filter
+  f.hidden_field(:purpose, "media")
+end %>

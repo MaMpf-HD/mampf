@@ -341,4 +341,11 @@ module ApplicationHelper
       return truncated.length < length ? truncated : "#{truncated}..."
     end
   end
+
+  def render_search_form(url:, context: nil, **, &block)
+    form_state = SearchForm::FormState.new(context: context)
+    builder = SearchForm::Builders::FormBuilder.new(form_state)
+    yield(builder) if block_given?
+    render(builder.build_form(url: url, **))
+  end
 end

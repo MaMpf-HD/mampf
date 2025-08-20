@@ -1,0 +1,24 @@
+<!-- filepath: /home/denis/mampf/app/components/search_form/filters/tag_filter.html.erb -->
+<div class="col-5 mb-3 form-field-group">
+  <label class="form-label" for="search_media_tag_ids">Tags</label>
+  
+  <% if show_help_text? %>
+    <%= helpers.helpdesk(help_text, true) %>
+  <% end %>
+
+  <%= form.select name, options_html, select_tag_options, select_html_options %>
+
+  <% if show_checkbox? %>
+    <%= render(checkbox) %>
+  <% end %>
+
+  <% if show_content? %>
+    <%= capture(self, &content) %>
+  <% end %>
+
+  <% if show_operator_radios? %>
+    <div class="mt-2">
+      <%= render_operator_radios %>
+    </div>
+  <% end %>
+</div>

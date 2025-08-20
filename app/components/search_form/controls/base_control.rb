@@ -1,4 +1,3 @@
-# app/components/search_form/controls/base_control.rb
 module SearchForm
   module Controls
     class BaseControl < ViewComponent::Base

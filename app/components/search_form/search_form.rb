@@ -24,7 +24,7 @@ module SearchForm
       @remote = remote
       @submit_label = submit_label || I18n.t("basics.search")
       @context = context
-      @form_state = FormState.new(form: nil, context: context)
+      @form_state = FormState.new(context: context)
     end
   end
 end

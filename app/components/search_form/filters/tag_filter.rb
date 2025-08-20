@@ -24,6 +24,24 @@ module SearchForm
             no_results: I18n.t("basics.no_results")
           }
         )
+
+        @show_operator_radios = false
+      end
+
+      def with_operator_radios
+        @show_operator_radios = true
+        self
+      end
+
+      def show_operator_radios?
+        @show_operator_radios
+      end
+
+      def render_operator_radios
+        return unless show_operator_radios?
+
+        builder = Builders::OperatorRadioBuilder.new(form_state)
+        render(builder.build_radio_group)
       end
 
       # Override to provide custom data attributes for the "all_tags" checkbox
@@ -34,33 +52,6 @@ module SearchForm
           toggle_radio_group: "tag_operator",
           default_radio_value: "or"
         }
-      end
-
-      # Method to render the tag operators using our RadioGroup
-      def render_tag_operator_radios
-        render(Controls::RadioGroup.new(
-                 form_state: form_state,
-                 name: :tag_operator
-               )) do |group|
-          group.with_radio_button(
-            form_state: form_state,
-            name: :tag_operator,
-            value: "or",
-            label: I18n.t("basics.OR"),
-            checked: true,
-            disabled: true,
-            inline: true
-          )
-
-          group.with_radio_button(
-            form_state: form_state,
-            name: :tag_operator,
-            value: "and",
-            label: I18n.t("basics.AND"),
-            disabled: true,
-            inline: true
-          )
-        end
       end
     end
   end
