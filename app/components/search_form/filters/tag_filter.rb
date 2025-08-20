@@ -38,7 +38,7 @@ module SearchForm
 
       # Method to render the tag operators using our RadioGroup
       def render_tag_operator_radios
-        render(SearchForm::Controls::RadioGroup.new(
+        render(Controls::RadioGroup.new(
                  form: form,
                  context: context,
                  name: :tag_operator

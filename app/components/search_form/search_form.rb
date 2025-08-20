@@ -1,5 +1,5 @@
 module SearchForm
-  class Form < ViewComponent::Base
+  class SearchForm < ViewComponent::Base
     renders_many :fields, lambda { |component, &block|
       if @context.present? && component.respond_to?(:context=) && component.context.nil?
         component.context = @context
@@ -8,9 +8,9 @@ module SearchForm
       component.with_content(&block) if block
       component
     }
-    renders_one :header, SearchForm::Layout::Header
-    renders_one :footer, SearchForm::Layout::Footer
-    renders_many :hidden_fields, SearchForm::Fields::HiddenField
+    renders_one :header, Layout::Header
+    renders_one :footer, Layout::Footer
+    renders_many :hidden_fields, Fields::HiddenField
 
     attr_reader :url, :scope, :method, :remote, :submit_label, :context
 

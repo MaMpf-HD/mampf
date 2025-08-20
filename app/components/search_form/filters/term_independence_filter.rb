@@ -8,7 +8,7 @@
 # while promoting reuse of the underlying control components.
 module SearchForm
   module Filters
-    class TermIndependenceFilter < SearchForm::Fields::Field
+    class TermIndependenceFilter < Fields::Field
       def initialize(context: "course", **)
         super(
           name: :term_independent,
@@ -20,7 +20,7 @@ module SearchForm
       end
 
       def call
-        render(SearchForm::Controls::Checkbox.new(
+        render(Controls::Checkbox.new(
                  form: form,
                  context: context,
                  name: name,

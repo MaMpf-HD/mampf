@@ -40,7 +40,7 @@ module SearchForm
 
       # Method to render the teachable inheritance radio buttons using RadioGroup
       def render_inheritance_radios
-        render(SearchForm::Controls::RadioGroup.new(
+        render(Controls::RadioGroup.new(
                  form: form,
                  context: context,
                  name: :teachable_inheritance
