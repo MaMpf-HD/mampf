@@ -39,10 +39,6 @@ module SearchForm
         html_opts.merge(options.except(:inline, :container_class))
       end
 
-      def label_id
-        label_for
-      end
-
       private
 
         # This is the single source of truth for this component's ID parts.

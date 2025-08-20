@@ -29,10 +29,6 @@ module SearchForm
         html_opts.merge(options.except(:container_class))
       end
 
-      def label_id
-        label_for
-      end
-
       private
 
         def id_parts

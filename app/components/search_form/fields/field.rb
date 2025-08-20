@@ -41,7 +41,12 @@ module SearchForm
 
       # Generate a unique ID using form_state
       def element_id
-        form_state&.element_id_for(name) || name.to_s
+        form_state&.element_id_for(name)
+      end
+
+      # Public ID for the <label for="..."> attribute
+      def label_for
+        form_state&.label_for(name)
       end
 
       # Common conditional methods used by templates
