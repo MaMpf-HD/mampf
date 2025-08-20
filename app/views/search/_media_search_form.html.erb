@@ -1,8 +1,5 @@
 <%= render_search_form(url: media_search_path, context: "media") do |f|
-  f.tag_filter do |tag|
-    tag.with_ajax(model: "tag")
-       .with_operator_radios
-  end
+  f.tag_filter.with_ajax(model: "tag").with_operator_radios
   
   f.medium_type_filter(purpose: "media")
   f.fulltext_filter
