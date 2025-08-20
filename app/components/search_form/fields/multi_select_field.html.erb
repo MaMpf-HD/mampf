@@ -14,4 +14,8 @@
   <% if show_content? %>
     <%= capture(self, &content) %>
   <% end %>
+
+  <% if show_operator_radios? %>
+    <%= render_operator_radios %>
+  <% end %>
 </div>

@@ -43,6 +43,10 @@ module SearchForm
         checkbox.present?
       end
 
+      def show_operator_radios?
+        false
+      end
+
       def selected_value
         options[:selected]
       end

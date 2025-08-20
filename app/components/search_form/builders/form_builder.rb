@@ -1,4 +1,3 @@
-# app/components/search_form/builders/form_builder.rb
 module SearchForm
   module Builders
     class FormBuilder
@@ -9,25 +8,30 @@ module SearchForm
       end
 
       def tag_filter(&)
+        # Use the TagFilterBuilder instead of the filter directly
         builder = TagFilterBuilder.new(@form_state)
+
+        # If a block is given, yield the builder to configure it
         yield(builder) if block_given?
-        @fields << builder.build
-        self
+
+        # Build the filter and add it to fields
+        filter = builder.build
+        @fields << filter
+        filter  # Return the filter
       end
 
       def medium_type_filter(purpose: "media", &block)
-        # We'll implement MediumTypeFilterBuilder next
         filter = Filters::MediumTypeFilter.new(purpose: purpose)
         filter.form_state = @form_state
         @fields << filter
-        self
+        filter  # Return the filter
       end
 
       def fulltext_filter
         filter = Filters::FulltextFilter.new
         filter.form_state = @form_state
         @fields << filter
-        self
+        filter  # Return the filter
       end
 
       def hidden_field(name, value)
@@ -36,18 +40,10 @@ module SearchForm
       end
 
       def build_form(url:, **form_options)
-        form = SearchForm.new(url: url, **form_options)
-
-        # Override the form_state in the form component
-        form.instance_variable_set(:@form_state, @form_state)
-
-        @fields.each { |field| form.with_field(field) }
-        @hidden_fields.each do |field_data|
-          # Pass keyword arguments directly, not a HiddenField object
-          form.with_hidden_field(name: field_data[:name], value: field_data[:value])
+        SearchForm.new(url: url, **form_options).tap do |form|
+          @fields.each { |field| form.with_field(field) }
+          @hidden_fields.each { |hf| form.with_hidden_field(name: hf[:name], value: hf[:value]) }
         end
-
-        form
       end
     end
   end
