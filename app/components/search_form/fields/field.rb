@@ -44,6 +44,20 @@ module SearchForm
         form_state&.element_id_for(name) || name.to_s
       end
 
+      # Common conditional methods used by templates
+      def show_help_text?
+        help_text.present?
+      end
+
+      def show_content?
+        content.present?
+      end
+
+      # Common method for building HTML options with ID
+      def html_options_with_id(additional_options = {})
+        options.merge(id: element_id).merge(additional_options)
+      end
+
       def before_render
         raise("Form not set for #{self.class.name}. Call with_form before rendering.") unless form
       end

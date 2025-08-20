@@ -30,31 +30,17 @@ module SearchForm
 
       # HTML options for the select tag (4th parameter to form.select)
       def select_html_options
-        base_options = options.except(:selected)
-        base_options.merge(
-          id: element_id,
-          data: select_data_attributes
-        )
+        html_options_with_id(data: select_data_attributes)
       end
 
       # Hash passed as the (3rd) "options" argument to form.select
       def select_tag_options
-        {} # extend later if you need :prompt etc.
-      end
-
-      # Whether to show help text
-      def show_help_text?
-        help_text.present?
+        {} # extend later if we need :prompt etc.
       end
 
       # Whether to show checkbox
       def show_checkbox?
         checkbox.present?
-      end
-
-      # Whether to show additional content
-      def show_content?
-        content.present?
       end
 
       def selected_value
@@ -76,7 +62,7 @@ module SearchForm
 
         # Data attributes for the select element
         def select_data_attributes
-          base_data = options.dig(:data) || {}
+          base_data = options[:data] || {}
           base_data.merge(search_form_target: "select")
         end
 
