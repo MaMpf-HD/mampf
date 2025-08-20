@@ -18,6 +18,17 @@ module SearchForm
         builder
       end
 
+      def teachable_filter
+        # Return the builder directly for chaining
+        builder = TeachableFilterBuilder.new(@form_state)
+
+        # Add the built filter to @fields when the builder is done
+        filter = builder.build
+        @fields << filter
+
+        builder
+      end
+
       def medium_type_filter(purpose: "media", &block)
         filter = Filters::MediumTypeFilter.new(purpose: purpose)
         filter.form_state = @form_state

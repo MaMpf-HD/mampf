@@ -1,4 +1,3 @@
-# app/components/search_form/filters/teachable_filter.rb
 module SearchForm
   module Filters
     class TeachableFilter < Fields::MultiSelectField
@@ -20,6 +19,24 @@ module SearchForm
           required: true,
           prompt: I18n.t("basics.select")
         )
+
+        @show_operator_radios = false
+      end
+
+      def with_inheritance_radios
+        @show_operator_radios = true
+        self
+      end
+
+      def show_operator_radios?
+        @show_operator_radios
+      end
+
+      def render_operator_radios
+        return unless show_operator_radios?
+
+        builder = Builders::InheritanceRadioBuilder.new(form_state)
+        render(builder.build_radio_group)
       end
 
       # Override to provide custom data attributes for the "all_teachables" checkbox
@@ -28,7 +45,7 @@ module SearchForm
           search_form_target: "allToggle",
           action: "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup",
           toggle_radio_group: "teachable_inheritance",
-          default_radio_value: "1" # Select "with_inheritance" by default
+          default_radio_value: "1" # Select
         }
       end
 
@@ -36,33 +53,6 @@ module SearchForm
       def before_render
         super
         @collection = helpers.grouped_teachable_list_alternative
-      end
-
-      # Method to render the teachable inheritance radio buttons using RadioGroup
-      def render_inheritance_radios
-        render(Controls::RadioGroup.new(
-                 form_state: form_state,
-                 name: :teachable_inheritance
-               )) do |group|
-          group.with_radio_button(
-            form_state: form_state,
-            name: :teachable_inheritance,
-            value: "1",
-            label: I18n.t("basics.with_inheritance"),
-            checked: true,
-            disabled: true,
-            inline: true
-          )
-
-          group.with_radio_button(
-            form_state: form_state,
-            name: :teachable_inheritance,
-            value: "0",
-            label: I18n.t("basics.without_inheritance"),
-            disabled: true,
-            inline: true
-          )
-        end
       end
     end
   end
