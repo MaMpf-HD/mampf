@@ -1,7 +1,8 @@
+# app/components/search_form/filters/teachable_filter.rb
 module SearchForm
   module Filters
     class TeachableFilter < Fields::MultiSelectField
-      def initialize(context: "media", **)
+      def initialize(**)
         super(
           name: :teachable_ids,
           label: I18n.t("basics.associated_to"),
@@ -9,11 +10,10 @@ module SearchForm
           collection: [], # Will be populated by grouped_teachable_list_alternative later
           all_toggle_name: :all_teachables,
           column_class: "col-6 col-lg-3",
-          context: context,
           **
         )
 
-        options.reverse_merge!(
+        @options.reverse_merge!(
           multiple: true,
           class: "selectize",
           disabled: true,
@@ -41,13 +41,11 @@ module SearchForm
       # Method to render the teachable inheritance radio buttons using RadioGroup
       def render_inheritance_radios
         render(Controls::RadioGroup.new(
-                 form: form,
-                 context: context,
+                 form_state: form_state,
                  name: :teachable_inheritance
                )) do |group|
           group.with_radio_button(
-            form: form,
-            context: context,
+            form_state: form_state,
             name: :teachable_inheritance,
             value: "1",
             label: I18n.t("basics.with_inheritance"),
@@ -57,8 +55,7 @@ module SearchForm
           )
 
           group.with_radio_button(
-            form: form,
-            context: context,
+            form_state: form_state,
             name: :teachable_inheritance,
             value: "0",
             label: I18n.t("basics.without_inheritance"),

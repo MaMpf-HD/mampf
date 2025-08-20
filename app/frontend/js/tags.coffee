@@ -1,11 +1,4 @@
 $(document).on 'turbo:load', ->
-  # fill courses selector in admin tag search with user's edited courses
-  $('#tags-edited-courses').on 'click', ->
-    search_course_ids.tomselect.setValue(JSON.parse(this.dataset.courses))
-    search_course_ids.tomselect.enable()
-    $('#search_all_courses').prop('checked', false)
-    return
-
   # issue a warning if tag form has changed
   $('[id^="tag-form-"]').on 'change', ->
     id = this.dataset.id

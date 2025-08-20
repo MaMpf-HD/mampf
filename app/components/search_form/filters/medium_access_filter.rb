@@ -1,7 +1,8 @@
+# app/components/search_form/filters/medium_access_filter.rb
 module SearchForm
   module Filters
     class MediumAccessFilter < Fields::SelectField
-      def initialize(context: "media", **options)
+      def initialize(**options)
         super(
           name: :access,
           label: I18n.t("basics.access_rights"), # Not 'basics.access'
@@ -14,7 +15,6 @@ module SearchForm
             [I18n.t("access.locked"), "locked"],
             [I18n.t("access.unpublished"), "unpublished"]
           ],
-          context: context,
           **options.reverse_merge(class: "form-select")
         )
 

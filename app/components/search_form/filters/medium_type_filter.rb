@@ -1,7 +1,8 @@
+# app/components/search_form/filters/medium_type_filter.rb
 module SearchForm
   module Filters
     class MediumTypeFilter < Fields::MultiSelectField
-      def initialize(purpose: "media", context: "media", **)
+      def initialize(purpose: "media", **)
         super(
           name: :types,
           label: I18n.t("basics.types"), # Plural for media
@@ -9,7 +10,6 @@ module SearchForm
           collection: add_prompt(Medium.select_generic),
           all_toggle_name: :all_types,
           column_class: "col-6 col-lg-4",
-          context: context,
           **
         )
 
@@ -17,9 +17,9 @@ module SearchForm
         @purpose = purpose
 
         # Update options based on purpose
-        options[:multiple] = purpose.in?(["media", "import"])
-        options[:disabled] = purpose == "media"
-        options[:id] = "search_media_types"
+        @options[:multiple] = purpose.in?(["media", "import"])
+        @options[:disabled] = purpose == "media"
+        @options[:id] = "search_media_types"
 
         # Use helpers to properly initialize selected values
         @selected_value = sort_preselect(purpose)

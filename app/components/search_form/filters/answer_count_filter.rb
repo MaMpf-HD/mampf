@@ -1,7 +1,7 @@
 module SearchForm
   module Filters
     class AnswerCountFilter < Fields::SelectField
-      def initialize(purpose: "media", context: "media", **options)
+      def initialize(purpose: "media", **options)
         return if purpose == "import"
 
         super(
@@ -19,7 +19,6 @@ module SearchForm
             [6, 6],
             [">6", 7]
           ],
-          context: context,
           **options.reverse_merge(
             selected: "irrelevant",
             class: "form-select"

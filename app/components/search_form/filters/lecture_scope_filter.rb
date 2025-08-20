@@ -1,7 +1,8 @@
+# app/components/search_form/filters/lecture_scope_filter.rb
 module SearchForm
   module Filters
     class LectureScopeFilter < Fields::MultiSelectField
-      def initialize(context: "media", **)
+      def initialize(**)
         super(
           name: :lectures,
           label: I18n.t("basics.lectures"),
@@ -9,7 +10,6 @@ module SearchForm
           collection: [], # Will be populated in before_render
           all_toggle_name: nil, # We don't want the default "All" checkbox
           column_class: "col-6 col-lg-4",
-          context: context,
           **
         )
       end
@@ -27,14 +27,12 @@ module SearchForm
 
       # Render lecture options using block-based approach
       def render_lecture_options
-        render(SearchForm::Controls::RadioGroup.new(
-                 form: form,
-                 context: context,
+        render(Controls::RadioGroup.new(
+                 form_state: form_state,
                  name: :lecture_option
                )) do |group|
           group.with_radio_button(
-            form: form,
-            context: context,
+            form_state: form_state,
             name: :lecture_option,
             value: "0",
             label: I18n.t("search.media.lecture_options.all"),
@@ -43,8 +41,7 @@ module SearchForm
           )
 
           group.with_radio_button(
-            form: form,
-            context: context,
+            form_state: form_state,
             name: :lecture_option,
             value: "1",
             label: I18n.t("search.media.lecture_options.subscribed"),
@@ -52,8 +49,7 @@ module SearchForm
           )
 
           group.with_radio_button(
-            form: form,
-            context: context,
+            form_state: form_state,
             name: :lecture_option,
             value: "2",
             label: I18n.t("search.media.lecture_options.own_selection"),

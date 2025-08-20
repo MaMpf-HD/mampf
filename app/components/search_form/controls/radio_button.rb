@@ -1,10 +1,11 @@
+# app/components/search_form/controls/radio_button.rb
 module SearchForm
   module Controls
     class RadioButton < BaseControl
       attr_reader :name, :value, :label, :checked
 
-      def initialize(form:, context:, name:, value:, label:, checked: false, **)
-        super(form: form, context: context, **)
+      def initialize(form_state:, name:, value:, label:, checked: false, **)
+        super(form_state: form_state, **)
         @name = name
         @value = value
         @label = label

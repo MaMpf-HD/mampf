@@ -1,10 +1,11 @@
+# app/components/search_form/controls/checkbox.rb
 module SearchForm
   module Controls
     class Checkbox < BaseControl
       attr_reader :name, :label, :checked
 
-      def initialize(form:, context:, name:, label:, checked: false, **)
-        super(form: form, context: context, **)
+      def initialize(form_state:, name:, label:, checked: false, **)
+        super(form_state: form_state, **)
         @name = name
         @label = label
         @checked = checked
@@ -30,8 +31,7 @@ module SearchForm
           end
           data[:toggle_radio_group] = stimulus_config[:toggle_radio_group]
           if stimulus_config[:default_radio_value]
-            data[:default_radio_value] =
-              stimulus_config[:default_radio_value]
+            data[:default_radio_value] = stimulus_config[:default_radio_value]
           end
         end
 
@@ -39,9 +39,11 @@ module SearchForm
       end
 
       def checkbox_html_options
-        html_opts = { class: "form-check-input",
-                      checked: checked,
-                      id: element_id }
+        html_opts = {
+          class: "form-check-input",
+          checked: checked,
+          id: element_id
+        }
         html_opts[:data] = data_attributes if data_attributes.any?
         html_opts.merge(options.except(:container_class))
       end

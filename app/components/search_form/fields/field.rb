@@ -1,8 +1,9 @@
+# app/components/search_form/fields/field.rb
 module SearchForm
   module Fields
     class Field < ViewComponent::Base
-      attr_reader :name, :label, :column_class, :help_text, :form, :options, :content
-      attr_accessor :context
+      attr_reader :name, :label, :column_class, :help_text, :options, :content
+      attr_accessor :form_state
 
       def initialize(name:, label:, column_class:, help_text: nil, **options)
         super()
@@ -17,8 +18,18 @@ module SearchForm
         "#{column_class} mb-3 form-field-group"
       end
 
+      # Delegate form access to form_state
+      def form
+        form_state&.form
+      end
+
+      # Delegate context access to form_state
+      def context
+        form_state&.context
+      end
+
       def with_form(form)
-        @form = form
+        form_state.with_form(form) if form_state
         self
       end
 
@@ -28,11 +39,9 @@ module SearchForm
         self
       end
 
-      # Generate a unique ID based on context AND form scope
+      # Generate a unique ID using form_state
       def element_id
-        scope_prefix = form&.object_name || "search"
-        context_part = context.present? ? "_#{context}" : ""
-        "#{scope_prefix}#{context_part}_#{name}"
+        form_state&.element_id_for(name) || "#{name}"
       end
 
       def before_render

@@ -1,3 +1,4 @@
+# app/components/search_form/controls/radio_group.rb
 module SearchForm
   module Controls
     class RadioGroup < BaseControl
@@ -5,8 +6,8 @@ module SearchForm
 
       renders_many :radio_buttons, RadioButton
 
-      def initialize(form:, context:, name:, **)
-        super(form: form, context: context, **)
+      def initialize(form_state:, name:, **)
+        super(form_state: form_state, **)
         @name = name
       end
 
@@ -14,6 +15,13 @@ module SearchForm
       def default_container_class
         "mt-2"
       end
+
+      private
+
+        # RadioGroup uses just the name for its ID
+        def id_parts
+          [name]
+        end
     end
   end
 end

@@ -8,7 +8,6 @@ module SearchForm
           help_text: I18n.t("admin.lecture.info.search_program"),
           collection: Program.select_programs,
           all_toggle_name: :all_programs,
-          context: context,
           **
         )
       end

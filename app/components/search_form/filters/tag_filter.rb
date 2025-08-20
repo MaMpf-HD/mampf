@@ -1,7 +1,8 @@
+# app/components/search_form/filters/tag_filter.rb
 module SearchForm
   module Filters
     class TagFilter < Fields::MultiSelectField
-      def initialize(context: "media", **)
+      def initialize(**)
         # Pass empty array for collection - tags will be loaded by AJAX
         super(
           name: :tag_ids,
@@ -9,12 +10,11 @@ module SearchForm
           help_text: I18n.t("admin.medium.info.search_tags"),
           collection: [],
           all_toggle_name: :all_tags,
-          context: context,
           **
         )
 
         # Add AJAX-specific options
-        options.reverse_merge!(
+        @options.reverse_merge!(
           multiple: true,
           data: {
             filled: false,
@@ -39,13 +39,11 @@ module SearchForm
       # Method to render the tag operators using our RadioGroup
       def render_tag_operator_radios
         render(Controls::RadioGroup.new(
-                 form: form,
-                 context: context,
+                 form_state: form_state,
                  name: :tag_operator
                )) do |group|
           group.with_radio_button(
-            form: form,
-            context: context,
+            form_state: form_state,
             name: :tag_operator,
             value: "or",
             label: I18n.t("basics.OR"),
@@ -55,8 +53,7 @@ module SearchForm
           )
 
           group.with_radio_button(
-            form: form,
-            context: context,
+            form_state: form_state,
             name: :tag_operator,
             value: "and",
             label: I18n.t("basics.AND"),

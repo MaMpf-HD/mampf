@@ -30,8 +30,7 @@ module SearchForm
       # Setup the default checkbox if one wasn't provided
       def setup_default_checkbox
         with_checkbox(
-          form: form,
-          context: context,
+          form_state: form_state,
           name: all_toggle_name,
           label: all_checkbox_label,
           checked: true,

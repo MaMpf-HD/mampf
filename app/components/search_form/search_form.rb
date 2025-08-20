@@ -1,8 +1,9 @@
 module SearchForm
   class SearchForm < ViewComponent::Base
     renders_many :fields, lambda { |component, &block|
-      if @context.present? && component.respond_to?(:context=) && component.context.nil?
-        component.context = @context
+      # Inject the form_state into each field component
+      if component.respond_to?(:form_state=) && component.form_state.nil?
+        component.form_state = @form_state
       end
 
       component.with_content(&block) if block
@@ -23,6 +24,7 @@ module SearchForm
       @remote = remote
       @submit_label = submit_label || I18n.t("basics.search")
       @context = context
+      @form_state = FormState.new(form: nil, context: context)
     end
   end
 end
