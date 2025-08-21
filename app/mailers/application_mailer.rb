@@ -1,6 +1,6 @@
 class ApplicationMailer < ActionMailer::Base
   # TODO: Change to `prepend_view_path` once the majority of mailer view files
-  # resides somewhere in app/frontend/ instead of app/views/
+  # live somewhere in app/frontend/ instead of app/views/
   append_view_path "app/frontend/"
 
   helper EmailHelper

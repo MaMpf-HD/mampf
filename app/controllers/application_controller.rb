@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
-  # TODO: change order of view paths once the majority of view files
-  # live somewhere in app/frontend/
-  ActionController::Base.view_paths = ["app/views/", "app/frontend/"]
+  # TODO: Change to `prepend_view_path` once the majority of view files
+  # live somewhere in app/frontend/ instead of app/views/
+  append_view_path "app/frontend/"
 
   include Turbo::Redirection
 
