@@ -71,6 +71,7 @@ class LecturesController < ApplicationController
               last_modified: [current_user.updated_at, @lecture.updated_at,
                               Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       eager_load_stuff
+      render template: "lectures/edit/edit"
     end
   end
 
