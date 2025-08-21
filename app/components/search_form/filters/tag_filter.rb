@@ -48,10 +48,11 @@ module SearchForm
         @show_radio_group
       end
 
+      # In TagFilter
       def render_radio_group
         return unless show_radio_group?
 
-        builder = Builders::RadioGroupBuilder.operator_radios(form_state)
+        builder = Builders::RadioGroupFactories::OperatorRadios.build(form_state)
         render(builder.build_radio_group)
       end
 

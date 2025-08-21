@@ -38,44 +38,6 @@ module SearchForm
 
         radio_group
       end
-
-      # Factory methods for common radio group types
-      def self.operator_radios(form_state, or_checked: true, disabled: true, inline: true)
-        new(form_state, :tag_operator)
-          .add_button(
-            value: "or",
-            label: I18n.t("basics.OR"),
-            checked: or_checked,
-            disabled: disabled,
-            inline: inline
-          )
-          .add_button(
-            value: "and",
-            label: I18n.t("basics.AND"),
-            checked: !or_checked,
-            disabled: disabled,
-            inline: inline
-          )
-      end
-
-      def self.inheritance_radios(form_state, with_inheritance_checked: true, disabled: true,
-                                  inline: true)
-        new(form_state, :teachable_inheritance)
-          .add_button(
-            value: "1",
-            label: I18n.t("basics.with_inheritance"),
-            checked: with_inheritance_checked,
-            disabled: disabled,
-            inline: inline
-          )
-          .add_button(
-            value: "0",
-            label: I18n.t("basics.without_inheritance"),
-            checked: !with_inheritance_checked,
-            disabled: disabled,
-            inline: inline
-          )
-      end
     end
   end
 end

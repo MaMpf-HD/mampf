@@ -35,7 +35,7 @@ module SearchForm
       def render_radio_group
         return unless show_radio_group?
 
-        builder = Builders::RadioGroupBuilder.inheritance_radios(form_state)
+        builder = Builders::RadioGroupFactories::InheritanceRadios.build(form_state)
         render(builder.build_radio_group)
       end
 
