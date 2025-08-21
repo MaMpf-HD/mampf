@@ -2,15 +2,11 @@ module SearchForm
   module Fields
     class TextField < Field
       def initialize(name:, label:, **options)
-        # Extract field-specific classes and pass to unified system
-        field_classes = extract_field_classes(options)
+        super
 
-        super(
-          name: name,
-          label: label,
-          field_class: field_classes,
-          **options
-        )
+        # Extract and update field classes after initialization
+        extracted_classes = css.extract_field_classes(options)
+        @field_class = [field_class, extracted_classes].compact.join(" ").strip
       end
 
       def default_field_classes

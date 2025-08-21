@@ -9,15 +9,15 @@ module SearchForm
         @collection = collection
         @all_toggle_name = all_toggle_name || default_all_toggle_name(name)
 
-        # Extract field-specific classes from options
-        field_classes = extract_field_classes(options)
-
         super(
           name: name,
           label: label,
-          field_class: field_classes,
           **options
         )
+
+        # Extract and update field classes after initialization
+        extracted_classes = css.extract_field_classes(options)
+        @field_class = [field_class, extracted_classes].compact.join(" ").strip
       end
 
       # Create the default checkbox in before_render
@@ -37,7 +37,7 @@ module SearchForm
 
       # HTML options for the select tag (4th parameter to form.select)
       def field_html_options(additional_options = {})
-        super(additional_options.merge(data: select_data_attributes))
+        html.field_html_options(additional_options.merge(data: select_data_attributes))
       end
 
       # Hash passed as the (3rd) "options" argument to form.select

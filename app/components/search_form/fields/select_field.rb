@@ -6,15 +6,15 @@ module SearchForm
       def initialize(name:, label:, collection:, **options)
         @collection = collection
 
-        # Extract field-specific classes and pass to unified system
-        field_classes = extract_field_classes(options)
-
         super(
           name: name,
           label: label,
-          field_class: field_classes,
           **options
         )
+
+        # Extract and update field classes after initialization
+        extracted_classes = css.extract_field_classes(options)
+        @field_class = [field_class, extracted_classes].compact.join(" ").strip
       end
 
       # Options hash for the select tag (the second parameter to form.select)
