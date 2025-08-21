@@ -1,51 +1,51 @@
 module SearchForm
   module Builders
     class FormBuilder
+      # Simple filters use SimpleFilterBuilder and work directly with filter classes
+      SIMPLE_FILTERS = [
+        "editor", "medium_access", "fulltext", "teacher", "lecture_type",
+        "term", "program", "term_independence", "tag_title"
+      ].freeze
+
+      # Complex filters have dedicated builders with special configuration methods
+      # (like .with_ajax, .with_operator_radios, .with_inheritance_radios, etc.)
+      COMPLEX_FILTERS = ["tag", "teachable", "course", "lecture_scope"].freeze
+
       def initialize(form_state)
         @form_state = form_state
         @fields = []
         @hidden_fields = []
       end
 
-      # Simple filters (no special configuration needed)
-      ["editor", "medium_access", "fulltext", "teacher", "lecture_type", "term",
-       "program", "term_independence", "tag_title"].each do |filter_name|
+      # Dynamically define simple filter methods
+      SIMPLE_FILTERS.each do |filter_name|
         define_method "#{filter_name}_filter" do |**options|
-          create_simple_filter("SearchForm::Filters::#{filter_name.camelize}Filter".constantize,
-                               **options)
+          filter_class = "SearchForm::Filters::#{filter_name.camelize}Filter".constantize
+          create_simple_filter(filter_class, **options)
         end
       end
 
-      # Parameterized filters
-      def medium_type_filter(purpose: "media")
-        create_simple_filter(Filters::MediumTypeFilter, purpose: purpose)
+      # Dynamically define complex filter methods
+      COMPLEX_FILTERS.each do |filter_name|
+        define_method "#{filter_name}_filter" do |**options|
+          builder_class = "SearchForm::Builders::#{filter_name.camelize}FilterBuilder".constantize
+          create_filter_builder(builder_class, **options)
+        end
       end
 
-      def answer_count_filter(purpose: "media")
-        create_simple_filter(Filters::AnswerCountFilter, purpose: purpose)
+      # Parameterized filters that need special default handling
+      def medium_type_filter(purpose: "media", **)
+        create_simple_filter(Filters::MediumTypeFilter, purpose: purpose, **)
+      end
+
+      def answer_count_filter(purpose: "media", **)
+        create_simple_filter(Filters::AnswerCountFilter, purpose: purpose, **)
       end
 
       def per_page_filter(per_options: [[10, 10], [20, 20], [50, 50]], default: 10, id: nil,
                           **)
         create_simple_filter(Filters::PerPageFilter, per_options: per_options, default: default,
                                                      id: id, **)
-      end
-
-      # Complex filters with custom builders (that have special methods)
-      def tag_filter
-        create_filter_builder(TagFilterBuilder)
-      end
-
-      def teachable_filter
-        create_filter_builder(TeachableFilterBuilder)
-      end
-
-      def course_filter
-        create_filter_builder(CourseFilterBuilder)
-      end
-
-      def lecture_scope_filter
-        create_filter_builder(LectureScopeFilterBuilder)
       end
 
       def hidden_field(**fields)
