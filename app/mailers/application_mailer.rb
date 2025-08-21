@@ -34,10 +34,9 @@ class ApplicationMailer < ActionMailer::Base
     #   Instead, we modify the template path to just read "feedbacks"
     #   (instead of "feedback_mailer"), therefore obtaining the correct path:
     #   `app/frontend/feedbacks/new_user_feedback_email.text.erb`.
-    #
     def mail(headers = {}, &)
-      usual_rails_template_path = self.class.name.underscore.pluralize
-      custom_template_path = usual_rails_template_path.gsub("_mailer$", "")
+      usual_rails_template_path = self.class.name.underscore
+      custom_template_path = usual_rails_template_path.delete_suffix("_mailer").pluralize
 
       headers[:template_path] =
         Array(headers[:template_path]) << usual_rails_template_path << custom_template_path
