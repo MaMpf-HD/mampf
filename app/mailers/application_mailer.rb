@@ -37,9 +37,9 @@ class ApplicationMailer < ActionMailer::Base
     #
     def mail(headers = {}, &)
       usual_rails_template_path = self.class.name.underscore.pluralize
-      custom_template_path = usual_rails_template_path.gsub("_mailer", "")
+      custom_template_path = usual_rails_template_path.gsub("_mailer$", "")
 
-      headers[:template_path] = Array(headers[:template_path]) \
+      headers[:template_path] =
         Array(headers[:template_path]) << usual_rails_template_path << custom_template_path
       super
     end
