@@ -7,32 +7,29 @@ module SearchForm
         @hidden_fields = []
       end
 
+      # Simple filters (no special configuration needed)
+      ["editor", "medium_access", "fulltext"].each do |filter_name|
+        define_method "#{filter_name}_filter" do
+          create_simple_filter("SearchForm::Filters::#{filter_name.camelize}Filter".constantize)
+        end
+      end
+
+      # Parameterized filters
+      def medium_type_filter(purpose: "media")
+        create_simple_filter(Filters::MediumTypeFilter, purpose: purpose)
+      end
+
+      def answer_count_filter(purpose: "media")
+        create_simple_filter(Filters::AnswerCountFilter, purpose: purpose)
+      end
+
+      # Complex filters with custom builders (that have special methods)
       def tag_filter
         create_filter_builder(TagFilterBuilder)
       end
 
       def teachable_filter
         create_filter_builder(TeachableFilterBuilder)
-      end
-
-      def medium_type_filter(purpose: "media")
-        create_filter_builder(MediumTypeFilterBuilder, purpose: purpose)
-      end
-
-      def fulltext_filter
-        create_filter_builder(FulltextFilterBuilder)
-      end
-
-      def editor_filter
-        create_filter_builder(EditorFilterBuilder)
-      end
-
-      def medium_access_filter
-        create_filter_builder(MediumAccessFilterBuilder)
-      end
-
-      def answer_count_filter(purpose: "media")
-        create_filter_builder(AnswerCountFilterBuilder, purpose: purpose)
       end
 
       def hidden_field(**fields)
@@ -51,19 +48,22 @@ module SearchForm
 
       private
 
+        def create_simple_filter(filter_class, **)
+          builder = SimpleFilterBuilder.new(@form_state, filter_class, **)
+          filter = builder.build
+          @fields << filter
+          builder
+        end
+
         def create_filter_builder(builder_class, **options)
-          # Create builder with form_state and any additional options
           builder = if options.any?
             builder_class.new(@form_state, **options)
           else
             builder_class.new(@form_state)
           end
 
-          # Build the filter and add to @fields
           filter = builder.build
           @fields << filter
-
-          # Return the builder for chaining
           builder
         end
     end
