@@ -38,8 +38,9 @@ class ApplicationMailer < ActionMailer::Base
       usual_rails_template_path = self.class.name.underscore
       custom_template_path = usual_rails_template_path.delete_suffix("_mailer").pluralize
 
-      headers[:template_path] =
-        Array(headers[:template_path]) << usual_rails_template_path << custom_template_path
+      headers[:template_path] = [headers[:template_path],
+                                 usual_rails_template_path, custom_template_path]
+                                .flatten.compact
       super
     end
 end
