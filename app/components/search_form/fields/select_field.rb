@@ -3,7 +3,7 @@ module SearchForm
     class SelectField < Field
       attr_reader :collection
 
-      def initialize(name:, label:, collection:, column_class: "col-2", **options)
+      def initialize(name:, label:, collection:, **options)
         @collection = collection
 
         # Extract field-specific classes and pass to unified system
@@ -12,7 +12,6 @@ module SearchForm
         super(
           name: name,
           label: label,
-          column_class: column_class,
           field_class: field_classes,
           **options
         )

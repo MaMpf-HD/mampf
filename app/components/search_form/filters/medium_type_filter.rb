@@ -9,7 +9,6 @@ module SearchForm
           help_text: I18n.t("search.media.type"),
           collection: add_prompt(Medium.select_generic),
           all_toggle_name: :all_types,
-          column_class: "col-6 col-lg-4",
           **
         )
 

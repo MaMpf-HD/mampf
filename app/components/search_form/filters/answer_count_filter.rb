@@ -8,7 +8,6 @@ module SearchForm
           name: :answers_count,
           label: I18n.t("basics.answer_count"),
           help_text: I18n.t("admin.medium.info.answer_count"),
-          column_class: "col-6 col-lg-3",
           collection: [
             [I18n.t("access.irrelevant"), "irrelevant"],
             [1, 1],

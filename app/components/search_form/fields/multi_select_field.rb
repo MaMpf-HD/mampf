@@ -5,8 +5,7 @@ module SearchForm
 
       renders_one :checkbox, "SearchForm::Controls::Checkbox"
 
-      def initialize(name:, label:, collection:, column_class: "col-5",
-                     all_toggle_name: nil, **options)
+      def initialize(name:, label:, collection:, all_toggle_name: nil, **options)
         @collection = collection
         @all_toggle_name = all_toggle_name || default_all_toggle_name(name)
 
@@ -16,7 +15,6 @@ module SearchForm
         super(
           name: name,
           label: label,
-          column_class: column_class,
           field_class: field_classes,
           **options
         )

@@ -14,7 +14,6 @@ module SearchForm
         super(
           name: :term_independent,
           label: I18n.t("admin.course.term_independent"),
-          column_class: "col-6 col-lg-3",
           **
         )
       end

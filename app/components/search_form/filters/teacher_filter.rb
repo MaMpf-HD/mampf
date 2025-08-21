@@ -8,7 +8,6 @@ module SearchForm
           help_text: I18n.t("admin.lecture.info.search_teacher"),
           collection: User.select_teachers,
           all_toggle_name: :all_teachers,
-          column_class: "col-6 col-lg-3",
           **
         )
       end

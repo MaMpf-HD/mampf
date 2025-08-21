@@ -6,7 +6,6 @@ module SearchForm
         super(
           name: :access,
           label: I18n.t("basics.access_rights"), # Not 'basics.access'
-          column_class: "col-6 col-lg-3",
           collection: [
             [I18n.t("access.irrelevant"), "irrelevant"],
             [I18n.t("access.all"), "all"],

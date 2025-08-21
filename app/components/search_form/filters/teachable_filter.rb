@@ -8,7 +8,6 @@ module SearchForm
           help_text: I18n.t("admin.medium.info.search_teachable"),
           collection: [], # Will be populated by grouped_teachable_list_alternative later
           all_toggle_name: :all_teachables,
-          column_class: "col-6 col-lg-3",
           **
         )
 

@@ -5,7 +5,7 @@ module SearchForm
                   :content
       attr_accessor :form_state
 
-      def initialize(name:, label:, column_class: "col-12", field_class: "",
+      def initialize(name:, label:, column_class: "col-6 col-lg-3", field_class: "",
                      wrapper_class: "mb-3 form-field-group", help_text: nil, **options)
         super()
         @name = name
