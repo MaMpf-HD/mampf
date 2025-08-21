@@ -5,9 +5,9 @@ module SearchForm
 
       renders_one :checkbox, "SearchForm::Controls::Checkbox"
 
-      def initialize(name:, label:, collection:, all_toggle_name: nil, **options)
+      def initialize(name:, label:, collection:, **options)
         @collection = collection
-        @all_toggle_name = all_toggle_name || default_all_toggle_name(name)
+        @all_toggle_name = generate_all_toggle_name(name)
 
         super(
           name: name,
@@ -73,6 +73,10 @@ module SearchForm
 
       private
 
+        def generate_all_toggle_name(name)
+          :"all_#{name}"
+        end
+
         # Data attributes for the select element
         def select_data_attributes
           base_data = options[:data] || {}
@@ -101,10 +105,6 @@ module SearchForm
               action: "change->search-form#toggleFromCheckbox"
             }
           end
-        end
-
-        def default_all_toggle_name(name)
-          "all_#{name.to_s.sub(/_ids$/, "s")}"
         end
 
         def process_options(opts)

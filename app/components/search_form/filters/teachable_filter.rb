@@ -7,7 +7,6 @@ module SearchForm
           label: I18n.t("basics.associated_to"),
           help_text: I18n.t("admin.medium.info.search_teachable"),
           collection: [], # Will be populated by grouped_teachable_list_alternative later
-          all_toggle_name: :all_teachables,
           **
         )
 

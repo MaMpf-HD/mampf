@@ -8,7 +8,6 @@ module SearchForm
           label: I18n.t("basics.types"), # Plural for media
           help_text: I18n.t("search.media.type"),
           collection: add_prompt(Medium.select_generic),
-          all_toggle_name: :all_types,
           **
         )
 

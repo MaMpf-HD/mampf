@@ -8,7 +8,6 @@ module SearchForm
           label: I18n.t("basics.tags"),
           help_text: I18n.t("admin.medium.info.search_tags"),
           collection: [],
-          all_toggle_name: :all_tags,
           **
         )
 

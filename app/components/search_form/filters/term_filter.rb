@@ -7,7 +7,6 @@ module SearchForm
           label: I18n.t("basics.term"),
           help_text: I18n.t("admin.lecture.info.search_term"),
           collection: Term.select_terms,
-          all_toggle_name: :all_terms,
           id: "termSearch",
           **options.reverse_merge(prompt: I18n.t("basics.select"))
         )

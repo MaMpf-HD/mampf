@@ -7,7 +7,6 @@ module SearchForm
           label: I18n.t("basics.type"),
           help_text: I18n.t("admin.lecture.info.search_type"),
           collection: Lecture.select_sorts,
-          all_toggle_name: :all_types,
           **
         )
       end

@@ -7,7 +7,6 @@ module SearchForm
           label: I18n.t("basics.lectures"),
           help_text: I18n.t("search.media.lectures"),
           collection: [], # Will be populated in before_render
-          all_toggle_name: nil, # We don't want the default "All" checkbox
           **
         )
 
