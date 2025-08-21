@@ -27,6 +27,11 @@ module SearchForm
 
       attr_reader :purpose, :selected_value
 
+      # Skip the "all" checkbox when purpose is "import"
+      def skip_all_checkbox?
+        purpose == "import"
+      end
+
       # Helper method from the original partial
       def add_prompt(collection)
         [[I18n.t("basics.select"), ""]] + collection
@@ -34,9 +39,9 @@ module SearchForm
 
       # Helper method from the original partial
       def sort_preselect(purpose)
-        return nil unless purpose == "clicker"
+        return "" unless purpose == "quiz"
 
-        Medium.select_generic.find { |x| x[1] == "Question" }[1]
+        "Question"
       end
     end
   end

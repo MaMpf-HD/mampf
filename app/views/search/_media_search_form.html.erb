@@ -9,8 +9,10 @@
   
   f.medium_access_filter
   
-  f.answer_count_filter(purpose: purpose)
-
+  unless purpose == 'import' 
+    f.answer_count_filter(purpose: purpose)
+  end
+  
   f.fulltext_filter
 
   f.per_page_filter(per_options: hits_per_page(true),default: default_hits_per_page(true))
