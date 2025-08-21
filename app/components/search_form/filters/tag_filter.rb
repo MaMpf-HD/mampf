@@ -24,7 +24,7 @@ module SearchForm
           }
         )
 
-        @show_operator_radios = false
+        @show_radio_group = false
       end
 
       def configure_ajax(model: "tag", locale: nil, no_results: nil)
@@ -40,18 +40,18 @@ module SearchForm
       end
 
       def with_operator_radios
-        @show_operator_radios = true
+        @show_radio_group = true
         self
       end
 
-      def show_operator_radios?
-        @show_operator_radios
+      def show_radio_group?
+        @show_radio_group
       end
 
-      def render_operator_radios
-        return unless show_operator_radios?
+      def render_radio_group
+        return unless show_radio_group?
 
-        builder = Builders::OperatorRadioBuilder.new(form_state)
+        builder = Builders::RadioGroupBuilder.operator_radios(form_state)
         render(builder.build_radio_group)
       end
 

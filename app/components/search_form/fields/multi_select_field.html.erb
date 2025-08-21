@@ -11,11 +11,11 @@
     <%= render(checkbox) %>
   <% end %>
 
-  <% if show_content? %>
-    <%= capture(self, &content) %>
+  <% if show_radio_group? %>
+    <%= render_radio_group %>
   <% end %>
 
-  <% if show_operator_radios? %>
-    <%= render_operator_radios %>
+  <% if show_content? %>
+    <%= capture(self, &content) %>
   <% end %>
 </div>

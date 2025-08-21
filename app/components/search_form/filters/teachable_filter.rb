@@ -20,22 +20,22 @@ module SearchForm
           prompt: I18n.t("basics.select")
         )
 
-        @show_operator_radios = false
+        @show_radio_group = false
       end
 
       def with_inheritance_radios
-        @show_operator_radios = true
+        @show_radio_group = true
         self
       end
 
-      def show_operator_radios?
-        @show_operator_radios
+      def show_radio_group?
+        @show_radio_group
       end
 
-      def render_operator_radios
-        return unless show_operator_radios?
+      def render_radio_group
+        return unless show_radio_group?
 
-        builder = Builders::InheritanceRadioBuilder.new(form_state)
+        builder = Builders::RadioGroupBuilder.inheritance_radios(form_state)
         render(builder.build_radio_group)
       end
 
@@ -45,7 +45,7 @@ module SearchForm
           search_form_target: "allToggle",
           action: "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup",
           toggle_radio_group: "teachable_inheritance",
-          default_radio_value: "1" # Select
+          default_radio_value: "1" # Select "with_inheritance" by default
         }
       end
 

@@ -43,7 +43,7 @@ module SearchForm
         checkbox.present?
       end
 
-      def show_operator_radios?
+      def show_radio_group?
         false
       end
 
