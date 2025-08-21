@@ -60,6 +60,12 @@ module SearchForm
 
       protected
 
+        # Call this in subclass initialize after super to extract field classes
+        def extract_and_update_field_classes!(options)
+          extracted_classes = css.extract_field_classes(options)
+          @field_class = [field_class, extracted_classes].compact.join(" ").strip
+        end
+
         def process_options(options)
           options
         end

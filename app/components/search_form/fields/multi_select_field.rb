@@ -15,9 +15,7 @@ module SearchForm
           **options
         )
 
-        # Extract and update field classes after initialization
-        extracted_classes = css.extract_field_classes(options)
-        @field_class = [field_class, extracted_classes].compact.join(" ").strip
+        extract_and_update_field_classes!(options)
       end
 
       # Create the default checkbox in before_render
