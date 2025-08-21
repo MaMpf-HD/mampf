@@ -18,12 +18,12 @@ module SearchForm
 
       # Generate a unique ID using form_state
       def element_id
-        @field.form_state&.element_id_for(@field.name)
+        @field.form_state.element_id_for(@field.name)
       end
 
       # Public ID for the <label for="..."> attribute
       def label_for
-        @field.form_state&.label_for(@field.name)
+        @field.form_state.label_for(@field.name)
       end
 
       private

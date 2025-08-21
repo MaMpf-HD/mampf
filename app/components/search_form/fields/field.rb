@@ -5,15 +5,17 @@ module SearchForm
                   :content, :css, :html
       attr_accessor :form_state
 
-      def initialize(name:, label:, column_class: "col-6 col-lg-3", field_class: "",
-                     wrapper_class: "mb-3 form-field-group", help_text: nil, **options)
+      def initialize(name:, label:, **options)
         super()
         @name = name
         @label = label
-        @column_class = column_class
-        @field_class = field_class
-        @wrapper_class = wrapper_class
-        @help_text = help_text
+
+        # Extract layout options with defaults
+        @column_class = options.delete(:column_class) || "col-6 col-lg-3"
+        @field_class = options.delete(:field_class) || ""
+        @wrapper_class = options.delete(:wrapper_class) || "mb-3 form-field-group"
+        @help_text = options.delete(:help_text)
+
         @options = process_options(options)
 
         # Make services accessible as public APIs
@@ -22,16 +24,12 @@ module SearchForm
       end
 
       # Delegate form access to form_state
-      def form
-        form_state&.form
-      end
+      delegate :form, to: :form_state
 
-      def context
-        form_state&.context
-      end
+      delegate :context, to: :form_state
 
       def with_form(form)
-        form_state&.with_form(form)
+        form_state.with_form(form)
         self
       end
 
