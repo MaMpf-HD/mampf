@@ -207,7 +207,8 @@ class LecturesController < ApplicationController
       render layout: "vignettes_navbar"
     else
       I18n.locale = @lecture.locale_with_inheritance
-      render layout: turbo_frame_request? ? "turbo_frame" : "application"
+      render template: "lectures/organizational/organizational",
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
 
