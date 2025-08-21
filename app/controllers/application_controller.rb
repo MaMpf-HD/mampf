@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  ActionController::Base.view_paths = ["app/views/", "app/frontend/"]
+
   include Turbo::Redirection
 
   before_action :store_user_location!, if: :storable_location?
