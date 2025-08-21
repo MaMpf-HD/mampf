@@ -27,7 +27,7 @@ import "~/js/thyme/attributes";
 // TODO: use vite_javascript_tag at the respective files instead of importing
 // everything here. This is just a temporary solution during the Vite migration.
 import "~/js/copy_and_paste_button";
-import "~/js/lectures";
+import "~/lectures/lectures";
 import "~/js/mampf_routes";
 import "~/js/search_tags";
 import "~/js/talks";
