@@ -17,14 +17,23 @@ module SearchForm
         @options = process_options(options)
       end
 
-      # Unified CSS class methods
-      def container_classes
-        [column_class, wrapper_class].compact.join(" ")
+      # Delegate to CSS manager
+      delegate :container_classes, to: :css_manager
+
+      delegate :field_css_classes, to: :css_manager
+
+      # Delegate to HTML builder
+      def html_options_with_id(additional_options = {})
+        html_builder.html_options_with_id(additional_options)
       end
 
-      def field_css_classes
-        [field_class, additional_field_classes].compact.join(" ").strip
+      def field_html_options(additional_options = {})
+        html_builder.field_html_options(additional_options)
       end
+
+      delegate :element_id, to: :html_builder
+
+      delegate :label_for, to: :html_builder
 
       # Delegate form access to form_state
       def form
@@ -47,16 +56,6 @@ module SearchForm
         self
       end
 
-      # Generate a unique ID using form_state
-      def element_id
-        form_state&.element_id_for(name)
-      end
-
-      # Public ID for the <label for="..."> attribute
-      def label_for
-        form_state&.label_for(name)
-      end
-
       # Common conditional methods used by templates
       def show_help_text?
         help_text.present?
@@ -66,39 +65,19 @@ module SearchForm
         content.present?
       end
 
-      # Common method for building HTML options with ID
-      def html_options_with_id(additional_options = {})
-        options.merge(id: element_id).merge(additional_options)
-      end
-
-      # Common method for building HTML options with field CSS classes
-      def field_html_options(additional_options = {})
-        default_options = { class: field_css_classes }
-        html_options_with_id(default_options.merge(additional_options))
-      end
-
       def before_render
         raise("Form not set for #{self.class.name}. Call with_form before rendering.") unless form
       end
 
+      # Method for subclasses to extract field classes during initialization
+      delegate :extract_field_classes, to: :css_manager
+
+      # To be overridden by subclasses to provide default CSS classes
+      def default_field_classes
+        []
+      end
+
       protected
-
-        # Extract classes from options, combining with defaults from subclass
-        # This is used during initialization to build field_class
-        def extract_field_classes(options)
-          build_field_classes_from_options(options)
-        end
-
-        # Build additional field classes for runtime use
-        # This is used by field_css_classes method
-        def additional_field_classes
-          build_field_classes_from_options(options)
-        end
-
-        # To be overridden by subclasses to provide default CSS classes
-        def default_field_classes
-          []
-        end
 
         # To be overridden by subclasses
         def process_options(options)
@@ -107,11 +86,12 @@ module SearchForm
 
       private
 
-        # Common logic for building field classes
-        def build_field_classes_from_options(opts)
-          classes = Array(default_field_classes) # Get defaults from subclass
-          classes << opts[:class] if opts[:class] # Add manually specified classes
-          classes.compact.join(" ")
+        def css_manager
+          @css_manager ||= CssManager.new(self)
+        end
+
+        def html_builder
+          @html_builder ||= HtmlBuilder.new(self)
         end
     end
   end

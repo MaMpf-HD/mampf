@@ -22,11 +22,9 @@ module SearchForm
         {}
       end
 
-      protected
-
-        def default_field_classes
-          ["form-select"] # Bootstrap form-select class
-        end
+      def default_field_classes
+        ["form-select"] # Bootstrap form-select class
+      end
     end
   end
 end

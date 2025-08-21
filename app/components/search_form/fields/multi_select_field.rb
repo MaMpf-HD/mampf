@@ -69,11 +69,9 @@ module SearchForm
         I18n.t("basics.all")
       end
 
-      protected
-
-        def default_field_classes
-          ["selectize"] # Base selectize class for multi-select
-        end
+      def default_field_classes
+        ["selectize"] # Base selectize class for multi-select
+      end
 
       private
 

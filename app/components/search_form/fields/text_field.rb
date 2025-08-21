@@ -13,11 +13,9 @@ module SearchForm
         )
       end
 
-      protected
-
-        def default_field_classes
-          ["form-control"] # Bootstrap form-control class
-        end
+      def default_field_classes
+        ["form-control"] # Bootstrap form-control class
+      end
     end
   end
 end
