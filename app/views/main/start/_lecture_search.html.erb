@@ -1,30 +1,22 @@
-<%= render(SearchForm::SearchForm.new(
-  url: lecture_search_path,
-  context: 'lectures',
-)) do |c| %>
+<%= render_search_form(url: lecture_search_path, context: "lectures") do |f|
+  f.lecture_type_filter
 
-  <% c.with_field(SearchForm::Filters::LectureTypeFilter.new) %>
+  f.term_filter
 
-  <% c.with_field(SearchForm::Filters::TermFilter.new) %>
+  f.program_filter(column_class: "col-6 col-lg-3")
 
-  <% c.with_field(SearchForm::Filters::ProgramFilter.new(
-    column_class: "col-6 col-lg-3")) %>
+  f.teacher_filter
 
-  <% c.with_field(SearchForm::Filters::TeacherFilter.new) %>
-
-  <% c.with_field(SearchForm::Filters::FulltextFilter.new(
+  f.fulltext_filter(
     column_class: "col-6 col-lg-3",
     id: "fullTextSearch"
-  )) %>
-
-  <% c.with_field(SearchForm::Fields::PerPageField.new(
+  )
+  
+  f.per_page_filter(
     id: "hitsPerPage",
     per_options: hits_per_page(results_as_list),
     default: default_hits_per_page(results_as_list)
-  )) %>
-
-  <% c.with_footer(results_container_id: "lecture-search-results") %>
-
-  <% c.with_hidden_field(name: :results_as_list, value: results_as_list) %>
-
-<% end %>
+  )
+  
+  f.hidden_field(results_as_list: results_as_list)
+end %>

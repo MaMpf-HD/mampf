@@ -1,7 +1,3 @@
-<% if header %>
-  <%= render header %>
-<% end %>
-
 <%= form_with url: url,
               scope: scope,
               method: method,
@@ -12,10 +8,6 @@
       <%= render field.with_form(f) if field.respond_to?(:with_form) %>
     <% end %>
   </div>
-
-  <% if footer %>
-    <%= render footer %>
-  <% end %>
 
   <% hidden_fields.each do |field| %>
     <%= f.hidden_field field.name, value: field.value %>

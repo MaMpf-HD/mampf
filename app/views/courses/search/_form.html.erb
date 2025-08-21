@@ -1,20 +1,11 @@
-<%= render(SearchForm::SearchForm.new(
-  url: search_courses_path,
-  context: 'courses'
-)) do |c| %>
-
-  <% c.with_field(SearchForm::Filters::EditorFilter.new) %>
-
-  <% c.with_field(SearchForm::Filters::ProgramFilter.new) %>
-
-  <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
-
-  <% c.with_field(SearchForm::Fields::PerPageField.new(
+<!-- filepath: /home/denis/mampf/app/views/courses/search/_form.html.erb -->
+<%= render_search_form(url: search_courses_path, context: "courses") do |f|
+  f.editor_filter
+  f.program_filter
+  f.fulltext_filter
+  f.per_page_filter(
     per_options: hits_per_page(true),
     default: default_hits_per_page(true)
-  )) %>
-
-  <% c.with_field(SearchForm::Filters::TermIndependenceFilter.new) %>
-
-  <% c.with_footer(results_container_id: "course-search-results") %>
-<% end %>
+  )
+  f.term_independence_filter
+end %>

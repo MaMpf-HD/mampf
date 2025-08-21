@@ -1,20 +1,22 @@
-<%= render(SearchForm::SearchForm.new(
-  url: tags_search_path,
-  context: 'tags'
-)) do |c| %>
-  <% c.with_header(
-       title: t('admin.tag.index'),
-       button_text: t('admin.tag.create'),
-       button_path: new_tag_path
-     ) %>
+<div class="row mt-3 p-2">
+  <div class="col-10">
+    <h4>
+      <%= t('admin.tag.index') %>
+    </h4>
+  </div>
+  <div class="col-2">
+    <%= link_to t('admin.tag.create'),
+                new_tag_path,
+                class: 'btn btn-sm btn-secondary',
+                id: 'create-new-tag' %>
+  </div>
+</div>
 
-  <% c.with_field(SearchForm::Filters::TagTitleFilter.new) %>
+<%= render_search_form(url: tags_search_path, context: "tags") do |f|
+  f.tag_title_filter
+  f.course_filter.with_edited_courses_button(current_user)
+  f.per_page_filter(id: "tags_per")
+end %>
 
-  <% c.with_field(SearchForm::Filters::CourseFilter.new) do |filter| %>
-    <%= filter.render_edited_courses_button(current_user) %>
-  <% end %>
-
-  <% c.with_field(SearchForm::Fields::PerPageField.new(id: 'tags_per')) %>
-
-  <% c.with_footer(results_container_id: "tag-search-results") %>
-<% end %>
+<div id="tag-search-results">
+</div>

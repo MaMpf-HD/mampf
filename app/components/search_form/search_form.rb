@@ -9,8 +9,6 @@ module SearchForm
       component.with_content(&block) if block
       component
     }
-    renders_one :header, Layout::Header
-    renders_one :footer, Layout::Footer
     renders_many :hidden_fields, Fields::HiddenField
 
     attr_reader :url, :scope, :method, :remote, :submit_label, :context

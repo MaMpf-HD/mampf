@@ -8,9 +8,11 @@ module SearchForm
       end
 
       # Simple filters (no special configuration needed)
-      ["editor", "medium_access", "fulltext"].each do |filter_name|
-        define_method "#{filter_name}_filter" do
-          create_simple_filter("SearchForm::Filters::#{filter_name.camelize}Filter".constantize)
+      ["editor", "medium_access", "fulltext", "teacher", "lecture_type", "term",
+       "program", "term_independence", "tag_title"].each do |filter_name|
+        define_method "#{filter_name}_filter" do |**options|
+          create_simple_filter("SearchForm::Filters::#{filter_name.camelize}Filter".constantize,
+                               **options)
         end
       end
 
@@ -23,9 +25,10 @@ module SearchForm
         create_simple_filter(Filters::AnswerCountFilter, purpose: purpose)
       end
 
-      def per_page_filter(per_options: [[10, 10], [20, 20], [50, 50]], default: 10, id: nil)
+      def per_page_filter(per_options: [[10, 10], [20, 20], [50, 50]], default: 10, id: nil,
+                          **)
         create_simple_filter(Filters::PerPageFilter, per_options: per_options, default: default,
-                                                     id: id)
+                                                     id: id, **)
       end
 
       # Complex filters with custom builders (that have special methods)
@@ -35,6 +38,10 @@ module SearchForm
 
       def teachable_filter
         create_filter_builder(TeachableFilterBuilder)
+      end
+
+      def course_filter
+        create_filter_builder(CourseFilterBuilder)
       end
 
       def hidden_field(**fields)
