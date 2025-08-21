@@ -13,5 +13,8 @@
 
   f.fulltext_filter
 
+  f.per_page_filter(per_options: hits_per_page(true),default: default_hits_per_page(true))
+
   f.hidden_field(purpose: purpose)
+  f.hidden_field(results_as_list: 'true')
 end %>

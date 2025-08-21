@@ -23,6 +23,11 @@ module SearchForm
         create_simple_filter(Filters::AnswerCountFilter, purpose: purpose)
       end
 
+      def per_page_filter(per_options: [[10, 10], [20, 20], [50, 50]], default: 10, id: nil)
+        create_simple_filter(Filters::PerPageFilter, per_options: per_options, default: default,
+                                                     id: id)
+      end
+
       # Complex filters with custom builders (that have special methods)
       def tag_filter
         create_filter_builder(TagFilterBuilder)
