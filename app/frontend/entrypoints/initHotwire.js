@@ -1,6 +1,6 @@
 // Hotwire: Stimulus
 import { Application } from "@hotwired/stimulus";
-import LectureSidebarController from "~/lectures/lecture_sidebar.controller";
+import LectureSidebarController from "~/lectures/show/lecture_sidebar.controller";
 window.Stimulus = Application.start();
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 
