@@ -7,13 +7,14 @@ module SearchForm
         @buttons = []
       end
 
-      def add_button(value:, label:, checked: false, disabled: true, inline: true)
+      def add_button(value:, label:, checked: false, disabled: true, inline: true, stimulus: {})
         @buttons << {
           value: value,
           label: label,
           checked: checked,
           disabled: disabled,
-          inline: inline
+          inline: inline,
+          stimulus: stimulus
         }
         self
       end
@@ -32,7 +33,8 @@ module SearchForm
             label: button[:label],
             checked: button[:checked],
             disabled: button[:disabled],
-            inline: button[:inline]
+            inline: button[:inline],
+            stimulus: button[:stimulus]
           )
         end
 

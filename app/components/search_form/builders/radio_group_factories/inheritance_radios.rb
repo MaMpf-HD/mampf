@@ -9,14 +9,16 @@ module SearchForm
               label: I18n.t("basics.with_inheritance"),
               checked: with_inheritance_checked,
               disabled: disabled,
-              inline: inline
+              inline: inline,
+              stimulus: { radio_toggle: true, controls_select: false }
             )
             .add_button(
               value: "0",
               label: I18n.t("basics.without_inheritance"),
               checked: !with_inheritance_checked,
               disabled: disabled,
-              inline: inline
+              inline: inline,
+              stimulus: { radio_toggle: true, controls_select: false }
             )
         end
       end

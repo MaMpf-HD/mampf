@@ -9,14 +9,16 @@ module SearchForm
               label: I18n.t("basics.OR"),
               checked: or_checked,
               disabled: disabled,
-              inline: inline
+              inline: inline,
+              stimulus: { radio_toggle: true, controls_select: false }
             )
             .add_button(
               value: "and",
               label: I18n.t("basics.AND"),
               checked: !or_checked,
               disabled: disabled,
-              inline: inline
+              inline: inline,
+              stimulus: { radio_toggle: true, controls_select: false }
             )
         end
       end

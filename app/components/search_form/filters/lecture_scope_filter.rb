@@ -1,4 +1,3 @@
-# app/components/search_form/filters/lecture_scope_filter.rb
 module SearchForm
   module Filters
     class LectureScopeFilter < Fields::MultiSelectField
@@ -12,6 +11,24 @@ module SearchForm
           column_class: "col-6 col-lg-4",
           **
         )
+
+        @show_radio_group = false
+      end
+
+      def with_lecture_options
+        @show_radio_group = true
+        self
+      end
+
+      def show_radio_group?
+        @show_radio_group
+      end
+
+      def render_radio_group
+        return unless show_radio_group?
+
+        builder = Builders::RadioGroupFactories::LectureOptionsRadios.build(form_state)
+        render(builder.build_radio_group)
       end
 
       # Load collection just in time (helpers available now)
@@ -21,41 +38,8 @@ module SearchForm
       end
 
       # We don't want the all checkbox for this component
-      def skip_all_checkbox?
-        true
-      end
-
-      # Render lecture options using block-based approach
-      def render_lecture_options
-        render(Controls::RadioGroup.new(
-                 form_state: form_state,
-                 name: :lecture_option
-               )) do |group|
-          group.with_radio_button(
-            form_state: form_state,
-            name: :lecture_option,
-            value: "0",
-            label: I18n.t("search.media.lecture_options.all"),
-            checked: true,
-            stimulus: { radio_toggle: true, controls_select: false }
-          )
-
-          group.with_radio_button(
-            form_state: form_state,
-            name: :lecture_option,
-            value: "1",
-            label: I18n.t("search.media.lecture_options.subscribed"),
-            stimulus: { radio_toggle: true, controls_select: false }
-          )
-
-          group.with_radio_button(
-            form_state: form_state,
-            name: :lecture_option,
-            value: "2",
-            label: I18n.t("search.media.lecture_options.own_selection"),
-            stimulus: { radio_toggle: true, controls_select: true }
-          )
-        end
+      def show_checkbox?
+        false
       end
     end
   end

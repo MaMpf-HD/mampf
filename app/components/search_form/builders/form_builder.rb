@@ -44,6 +44,10 @@ module SearchForm
         create_filter_builder(CourseFilterBuilder)
       end
 
+      def lecture_scope_filter
+        create_filter_builder(LectureScopeFilterBuilder)
+      end
+
       def hidden_field(**fields)
         fields.each do |name, value|
           @hidden_fields << { name: name, value: value }

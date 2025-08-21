@@ -1,31 +1,20 @@
-<%= render(SearchForm::SearchForm.new(
-  url: media_search_path,
-  context: 'media'
-)) do |c| %>
+<%= render_search_form(url: media_search_path, context: "media") do |f|
+  f.medium_type_filter(purpose: purpose)
 
-  <% c.with_field(SearchForm::Filters::MediumTypeFilter.new(
-    purpose: purpose
-  )) %>
+  f.tag_filter.with_ajax(model: "tag").with_operator_radios
 
-  <% c.with_field(SearchForm::Filters::TagFilter.new) do |field| %>
-    <%= field.render_tag_operator_radios %>
-  <% end %>
+  f.lecture_scope_filter.with_lecture_options
 
-<% c.with_field(SearchForm::Filters::LectureScopeFilter.new) do |field| %>
-  <%= field.render_lecture_options %>
-<% end %>
-
-
-    <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
-
-  <% c.with_field(SearchForm::Fields::PerPageField.new(
+  f.fulltext_filter
+  
+  f.per_page_filter(
     per_options: hits_per_page(false),
     default: default_hits_per_page(false)
-  )) %>
-
-  <% c.with_hidden_field(name: :purpose, value: purpose) %>
-  <% c.with_hidden_field(name: :results_as_list, value: 'false') %>
-  <% c.with_hidden_field(name: :from, value: 'start') %>
-
-  <% c.with_footer(results_container_id: "medium-search-results") %>
-<% end %>
+  )
+  
+  f.hidden_field(
+    purpose: purpose,
+    results_as_list: 'false',
+    from: 'start'
+  )
+end %>
