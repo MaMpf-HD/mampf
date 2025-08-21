@@ -40,7 +40,7 @@ class ApplicationMailer < ActionMailer::Base
       custom_template_path = usual_rails_template_path.gsub("_mailer", "")
 
       headers[:template_path] = Array(headers[:template_path]) \
-        << usual_rails_template_path << custom_template_path
+        Array(headers[:template_path]) << usual_rails_template_path << custom_template_path
       super
     end
 end
