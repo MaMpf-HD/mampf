@@ -1,8 +1,17 @@
 <%= render_search_form(url: media_search_path, context: "media") do |f|
-  f.medium_type_filter(purpose: "media")
+  f.medium_type_filter(purpose: purpose)
+  
   f.teachable_filter.with_inheritance_radios
+  
   f.tag_filter.with_ajax(model: "tag").with_operator_radios
   
+  f.editor_filter
+  
+  f.medium_access_filter
+  
+  f.answer_count_filter(purpose: purpose)
+
   f.fulltext_filter
-  f.hidden_field(:purpose, "media")
+
+  f.hidden_field(purpose: purpose)
 end %>

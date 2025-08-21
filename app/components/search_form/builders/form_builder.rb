@@ -8,43 +8,37 @@ module SearchForm
       end
 
       def tag_filter
-        # Return the builder directly for chaining
-        builder = TagFilterBuilder.new(@form_state)
-
-        # Add the built filter to @fields when the builder is done
-        filter = builder.build
-        @fields << filter
-
-        builder
+        create_filter_builder(TagFilterBuilder)
       end
 
       def teachable_filter
-        # Return the builder directly for chaining
-        builder = TeachableFilterBuilder.new(@form_state)
-
-        # Add the built filter to @fields when the builder is done
-        filter = builder.build
-        @fields << filter
-
-        builder
+        create_filter_builder(TeachableFilterBuilder)
       end
 
-      def medium_type_filter(purpose: "media", &block)
-        filter = Filters::MediumTypeFilter.new(purpose: purpose)
-        filter.form_state = @form_state
-        @fields << filter
-        filter  # Return the filter
+      def medium_type_filter(purpose: "media")
+        create_filter_builder(MediumTypeFilterBuilder, purpose: purpose)
       end
 
       def fulltext_filter
-        filter = Filters::FulltextFilter.new
-        filter.form_state = @form_state
-        @fields << filter
-        filter  # Return the filter
+        create_filter_builder(FulltextFilterBuilder)
       end
 
-      def hidden_field(name, value)
-        @hidden_fields << { name: name, value: value }
+      def editor_filter
+        create_filter_builder(EditorFilterBuilder)
+      end
+
+      def medium_access_filter
+        create_filter_builder(MediumAccessFilterBuilder)
+      end
+
+      def answer_count_filter(purpose: "media")
+        create_filter_builder(AnswerCountFilterBuilder, purpose: purpose)
+      end
+
+      def hidden_field(**fields)
+        fields.each do |name, value|
+          @hidden_fields << { name: name, value: value }
+        end
         self
       end
 
@@ -54,6 +48,24 @@ module SearchForm
           @hidden_fields.each { |hf| form.with_hidden_field(name: hf[:name], value: hf[:value]) }
         end
       end
+
+      private
+
+        def create_filter_builder(builder_class, **options)
+          # Create builder with form_state and any additional options
+          builder = if options.any?
+            builder_class.new(@form_state, **options)
+          else
+            builder_class.new(@form_state)
+          end
+
+          # Build the filter and add to @fields
+          filter = builder.build
+          @fields << filter
+
+          # Return the builder for chaining
+          builder
+        end
     end
   end
 end
