@@ -5,7 +5,7 @@
     <%= helpers.helpdesk(help_text, true) %>
   <% end %>
 
-  <%= form.select name, options_html, select_tag_options, select_html_options %>
+  <%= form.select name, options_html, select_tag_options, field_html_options %>
 
   <% if show_checkbox? %>
     <%= render(checkbox) %>

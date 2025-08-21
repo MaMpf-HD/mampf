@@ -1,17 +1,21 @@
-# app/components/search_form/fields/select_field.rb
 module SearchForm
   module Fields
     class SelectField < Field
       attr_reader :collection
 
-      def initialize(name:, label:, collection:, column_class: "col-2", **)
+      def initialize(name:, label:, collection:, column_class: "col-2", **options)
         @collection = collection
-        super(name: name, label: label, column_class: column_class, **)
-      end
 
-      # HTML options for the select tag
-      def select_html_options
-        html_options_with_id
+        # Extract field-specific classes and pass to unified system
+        field_classes = extract_field_classes(options)
+
+        super(
+          name: name,
+          label: label,
+          column_class: column_class,
+          field_class: field_classes,
+          **options
+        )
       end
 
       # Options hash for the select tag (the second parameter to form.select)
@@ -21,8 +25,8 @@ module SearchForm
 
       protected
 
-        def process_options(options)
-          options.reverse_merge(class: "form-select")
+        def default_field_classes
+          ["form-select"] # Bootstrap form-select class
         end
     end
   end

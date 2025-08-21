@@ -1,4 +1,3 @@
-# app/components/search_form/fields/multi_select_field.rb
 module SearchForm
   module Fields
     class MultiSelectField < Field
@@ -7,10 +6,20 @@ module SearchForm
       renders_one :checkbox, "SearchForm::Controls::Checkbox"
 
       def initialize(name:, label:, collection:, column_class: "col-5",
-                     all_toggle_name: nil, **)
+                     all_toggle_name: nil, **options)
         @collection = collection
         @all_toggle_name = all_toggle_name || default_all_toggle_name(name)
-        super(name: name, label: label, column_class: column_class, **)
+
+        # Extract field-specific classes from options
+        field_classes = extract_field_classes(options)
+
+        super(
+          name: name,
+          label: label,
+          column_class: column_class,
+          field_class: field_classes,
+          **options
+        )
       end
 
       # Create the default checkbox in before_render
@@ -29,8 +38,8 @@ module SearchForm
       end
 
       # HTML options for the select tag (4th parameter to form.select)
-      def select_html_options
-        html_options_with_id(data: select_data_attributes)
+      def field_html_options(additional_options = {})
+        super(additional_options.merge(data: select_data_attributes))
       end
 
       # Hash passed as the (3rd) "options" argument to form.select
@@ -61,6 +70,12 @@ module SearchForm
       def all_checkbox_label
         I18n.t("basics.all")
       end
+
+      protected
+
+        def default_field_classes
+          ["selectize"] # Base selectize class for multi-select
+        end
 
       private
 
@@ -101,7 +116,6 @@ module SearchForm
         def process_options(opts)
           opts.reverse_merge(
             multiple: true,
-            class: "selectize",
             disabled: true,
             required: true
           )

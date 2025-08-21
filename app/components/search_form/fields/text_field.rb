@@ -1,20 +1,23 @@
-# app/components/search_form/fields/text_field.rb
 module SearchForm
   module Fields
     class TextField < Field
-      def initialize(name:, label:, column_class: "col-4", **)
-        super
-      end
+      def initialize(name:, label:, column_class: "col-4", **options)
+        # Extract field-specific classes and pass to unified system
+        field_classes = extract_field_classes(options)
 
-      # HTML options for the text field
-      def text_field_html_options
-        html_options_with_id
+        super(
+          name: name,
+          label: label,
+          column_class: column_class,
+          field_class: field_classes,
+          **options
+        )
       end
 
       protected
 
-        def process_options(options)
-          options.reverse_merge(class: "form-control")
+        def default_field_classes
+          ["form-control"] # Bootstrap form-control class
         end
     end
   end
