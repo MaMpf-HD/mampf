@@ -12,21 +12,24 @@
     <!-- Menu to switch between "tabs" ("pillars") -->
     <nav>
       <div class="nav nav-pills container small-width flex-column flex-sm-row"
-          id="lecture-nav-pills" role="tablist"
-          data-is-vignette-lecture="<%= @lecture.sort == 'vignettes' %>">
+            id="lecture-nav-pills" role="tablist"
+            data-controller="lecture-tabs"
+            data-is-vignette-lecture="<%= @lecture.sort == 'vignettes' %>">
         <button class="nav-link active lecture-nav-pill-button"
             id="lecture-nav-content" type="button" role="tab"
-             href="#content"
+            href="#content"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-content"
             data-cy="content-tab-btn"
-            aria-controls="lecture-pane-content" aria-selected="true">
+            aria-controls="lecture-pane-content" aria-selected="true"
+            data-lecture-tabs-target="tabButton">
           <%= t('content') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-settings" type="button" role="tab"
             href="#settings"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-settings"
-            aria-controls="lecture-pane-settings" aria-selected="false">
+            aria-controls="lecture-pane-settings" aria-selected="false"
+            data-lecture-tabs-target="tabButton">
           <%= t('basics.preferences') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
@@ -34,37 +37,42 @@
             href="#people"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-people"
             data-cy="people-tab-btn"
-            aria-controls="lecture-pane-people" aria-selected="false">
+            aria-controls="lecture-pane-people" aria-selected="false"
+            data-lecture-tabs-target="tabButton">
           <%= t('basics.people') %>/<%= t('basics.tutorials') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-orga" type="button" role="tab"
             href="#orga"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-orga"
-            aria-controls="lecture-pane-orga" aria-selected="false">
+            aria-controls="lecture-pane-orga" aria-selected="false"
+            data-lecture-tabs-target="tabButton">
           <%= t('admin.lecture.orga') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-communication" type="button" role="tab"
             href="#communication"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-communication"
-            aria-controls="lecture-pane-communication" aria-selected="false">
-          <%= t('admin.lecture.communication') %>
+            aria-controls="lecture-pane-communication" aria-selected="false"
+            data-lecture-tabs-target="tabButton">
+                <%= t('admin.lecture.communication') %>
         </button>
         <button class="nav-link lecture-nav-pill-button"
             id="lecture-nav-homework" type="button" role="tab"
             href="#assignments"
             data-bs-toggle="pill" data-bs-target="#lecture-pane-homework"
-            aria-controls="lecture-pane-homework" aria-selected="false">
+            aria-controls="lecture-pane-homework" aria-selected="false"
+            data-lecture-tabs-target="tabButton">
           <%= t('basics.assignments') %>
         </button>
 
         <% if @lecture.sort == "vignettes" %>
           <button class="nav-link lecture-nav-pill-button"
-            id="lecture-nav-vignettes" type="button" role="tab"
-            href="#vignettes"
-            data-bs-toggle="pill" data-bs-target="#lecture-pane-vignettes"
-            aria-controls="lecture-pane-vignettes" aria-selected="false">
+              id="lecture-nav-vignettes" type="button" role="tab"
+              href="#vignettes"
+              data-bs-toggle="pill" data-bs-target="#lecture-pane-vignettes"
+              aria-controls="lecture-pane-vignettes" aria-selected="false"
+              data-lecture-tabs-target="tabButton">
             <%= t('vignettes.vignettes') %>
           </button>
         <% end %>
