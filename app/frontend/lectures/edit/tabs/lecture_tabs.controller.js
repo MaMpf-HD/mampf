@@ -16,6 +16,7 @@ export default class extends Controller {
     const tabName = event.currentTarget.dataset.tabName;
     const url = new URL(window.location);
     url.searchParams.set("tab", tabName);
+
     history.replaceState({ turbo: true, url: url.toString() }, "", url.toString());
   }
 }
