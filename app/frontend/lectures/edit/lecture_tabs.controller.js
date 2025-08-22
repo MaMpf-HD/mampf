@@ -8,12 +8,6 @@ export default class extends Controller {
 
   connect() {
     this.configureUrlHashesForBootstrapTabs();
-    this.navigateToActiveNavTab();
-    window.addEventListener("hashchange", this.navigateToActiveNavTab);
-  }
-
-  disconnect() {
-    window.removeEventListener("hashchange", this.navigateToActiveNavTab);
   }
 
   configureUrlHashesForBootstrapTabs() {
@@ -23,24 +17,10 @@ export default class extends Controller {
   }
 
   onTabFocus(event) {
-    const hash = event.currentTarget.getAttribute("href");
-    console.log(`Hash: ${hash}`);
-    history.replaceState({ turbo: true, url: hash }, "", hash);
-  };
-
-  navigateToActiveNavTab() {
-    let hash = location.hash;
-    const navPills = document.getElementById("lecture-nav-pills");
-
-    // Default page
-    if (!hash) {
-      hash = navPills.getAttribute("data-is-vignette-lecture") === "true"
-        ? "#vignettes"
-        : "#content";
-      history.replaceState({ turbo: true, url: hash }, "", hash);
-    }
-
-    const tabButton = navPills.querySelector(`button[href='${hash}']`);
-    $(tabButton).tab("show");
-  };
+    const href = event.currentTarget.getAttribute("href"); // e.g. "#orga"
+    const tabName = href.replace("#", "");
+    const url = new URL(window.location);
+    url.searchParams.set("tab", tabName);
+    history.replaceState({ turbo: true, url: url.toString() }, "", url.toString());
+  }
 }
