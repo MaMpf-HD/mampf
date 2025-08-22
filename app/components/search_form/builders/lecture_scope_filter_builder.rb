@@ -1,6 +1,8 @@
 module SearchForm
   module Builders
     class LectureScopeFilterBuilder
+      # Interface documentation: Available configuration methods for LectureScopeFilter
+      # - with_lecture_options: Adds lecture options radio group
       def initialize(form_state)
         @form_state = form_state
         @filter = Filters::LectureScopeFilter.new

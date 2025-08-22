@@ -1,6 +1,8 @@
 module SearchForm
   module Builders
     class TeachableFilterBuilder
+      # Interface documentation: Available configuration methods for TeachableFilter
+      # - with_inheritance_radios: Adds inheritance radio group
       def initialize(form_state)
         @form_state = form_state
         @filter = Filters::TeachableFilter.new

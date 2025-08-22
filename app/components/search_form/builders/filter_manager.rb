@@ -11,13 +11,8 @@ module SearchForm
         builder.build
       end
 
-      def create_complex_filter_builder(filter_name, **options)
-        builder_class = "SearchForm::Builders::#{filter_name.camelize}FilterBuilder".constantize
-        if options.any?
-          builder_class.new(@form_state, **options)
-        else
-          builder_class.new(@form_state)
-        end
+      def create_dynamic_filter_builder(filter_name, config, **)
+        DynamicFilterBuilder.new(@form_state, filter_name, config, **)
       end
     end
   end

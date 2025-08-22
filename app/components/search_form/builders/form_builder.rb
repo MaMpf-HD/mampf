@@ -1,8 +1,9 @@
 module SearchForm
   module Builders
     class FormBuilder
-      # All simple filters with their default configurations
-      SIMPLE_FILTERS = {
+      # All filters with their configurations in one place
+      FILTERS = {
+        # Simple filters (no methods = simple)
         "editor" => {},
         "medium_access" => {},
         "fulltext" => {},
@@ -12,41 +13,82 @@ module SearchForm
         "program" => {},
         "term_independence" => {},
         "tag_title" => {},
-        "medium_type" => { purpose: "media" },
-        "answer_count" => { purpose: "media" },
+
+        # Simple filters with default options
+        "medium_type" => {
+          defaults: { purpose: "media" }
+        },
+        "answer_count" => {
+          defaults: { purpose: "media" }
+        },
         "per_page" => {
-          per_options: [[10, 10], [20, 20], [50, 50]],
-          default: 10,
-          id: nil
+          defaults: {
+            per_options: [[10, 10], [20, 20], [50, 50]],
+            default: 10,
+            id: nil
+          }
+        },
+
+        # Complex filters (has :methods = complex)
+        "tag" => {
+          methods: [:with_ajax, :with_operator_radios],
+          method_configs: {
+            with_ajax: {
+              target_method: :configure_ajax,
+              default_args: { model: "tag", locale: nil, no_results: nil }
+            },
+            with_operator_radios: {
+              target_method: :with_operator_radios
+            }
+          }
+        },
+        "teachable" => {
+          methods: [:with_inheritance_radios],
+          method_configs: {
+            with_inheritance_radios: {
+              target_method: :with_inheritance_radios
+            }
+          }
+        },
+        "course" => {
+          methods: [:with_edited_courses_button],
+          method_configs: {
+            with_edited_courses_button: {
+              target_method: :render_edited_courses_button,
+              wrapper: :with_content
+            }
+          }
+        },
+        "lecture_scope" => {
+          methods: [:with_lecture_options],
+          method_configs: {
+            with_lecture_options: {
+              target_method: :with_lecture_options
+            }
+          }
         }
       }.freeze
 
-      # Complex filters have dedicated builders with special configuration methods
-      COMPLEX_FILTERS = ["tag", "teachable", "course", "lecture_scope"].freeze
-
       def initialize(form_state)
         @form_state = form_state
-        @filter_manager = FilterManager.new(form_state) # or FilterBuilderFactory
+        @filter_manager = FilterManager.new(form_state)
         @fields = []
         @hidden_fields = []
       end
 
-      # Dynamically define simple filter methods
-      SIMPLE_FILTERS.each do |filter_name, default_options|
+      # Dynamically define ALL filter methods
+      FILTERS.each do |filter_name, config|
         define_method "#{filter_name}_filter" do |**options|
-          merged_options = default_options.merge(options)
-          filter = @filter_manager.build_simple_filter(filter_name, **merged_options)
-          @fields << filter
-          filter
-        end
-      end
-
-      # Dynamically define complex filter methods
-      COMPLEX_FILTERS.each do |filter_name|
-        define_method "#{filter_name}_filter" do |**options|
-          builder = @filter_manager.create_complex_filter_builder(filter_name, **options)
-          @fields << builder.build
-          builder
+          if config.key?(:methods) # Complex filter
+            builder = @filter_manager.create_dynamic_filter_builder(filter_name, config, **options)
+            @fields << builder.build
+            builder
+          else # Simple filter
+            merged_options = (config[:defaults] || {}).merge(options)
+            filter = @filter_manager.build_simple_filter(filter_name, **merged_options)
+            @fields << filter
+            filter
+          end
         end
       end
 
@@ -66,7 +108,7 @@ module SearchForm
 
       private
 
-        attr_reader :filter_factory
+        attr_reader :filter_manager
     end
   end
 end
