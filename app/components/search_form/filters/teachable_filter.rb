@@ -11,10 +11,6 @@ module SearchForm
         )
 
         @options.reverse_merge!(
-          multiple: true,
-          class: "selectize",
-          disabled: true,
-          required: true,
           prompt: I18n.t("basics.select")
         )
 

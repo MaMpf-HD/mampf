@@ -13,7 +13,6 @@ module SearchForm
 
         # Add AJAX-specific options
         @options.reverse_merge!(
-          multiple: true,
           data: {
             filled: false,
             ajax: true,
