@@ -1,170 +1,82 @@
 <%= vite_javascript_tag "lectures/lectures" %>
 <%= vite_javascript_tag "lectures/edit/edit" %>
 
-<% active_tab = params[:tab] || (@lecture.sort == 'vignettes' ? 'vignettes' : 'content') %>
-
 <% cache @lecture do %>
   <div id="lecture-area">
     <!-- Header -->
     <div class="container small-width">
-      <%= render partial: 'lectures/edit/header',
+      <%= render partial: "lectures/edit/header",
           locals: { lecture: @lecture } %>
     </div>
 
-    <!-- Menu to switch between "tabs" ("pillars") -->
-    <nav>
-      <div class="nav nav-pills container small-width flex-column flex-sm-row"
-            id="lecture-nav-pills" role="tablist"
-            data-controller="lecture-tabs"
-            data-is-vignette-lecture="<%= @lecture.sort == 'vignettes' %>">
-        <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == 'content' %>"
-            id="lecture-nav-content" type="button" role="tab"
-            href="#content"
-            data-bs-toggle="pill" data-bs-target="#lecture-pane-content"
-            data-cy="content-tab-btn"
-            aria-controls="lecture-pane-content" aria-selected="<%= active_tab == 'content' %>"
-            data-lecture-tabs-target="tabButton">
-          <%= t('content') %>
-        </button>
-        <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == 'settings' %>"
-            id="lecture-nav-settings" type="button" role="tab"
-            href="#settings"
-            data-bs-toggle="pill" data-bs-target="#lecture-pane-settings"
-            aria-controls="lecture-pane-settings" aria-selected="<%= active_tab == 'settings' %>"
-            data-lecture-tabs-target="tabButton">
-          <%= t('basics.preferences') %>
-        </button>
-        <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == 'people' %>"
-            id="lecture-nav-people" type="button" role="tab"
-            href="#people"
-            data-bs-toggle="pill" data-bs-target="#lecture-pane-people"
-            data-cy="people-tab-btn"
-            aria-controls="lecture-pane-people" aria-selected="<%= active_tab == 'people' %>"
-            data-lecture-tabs-target="tabButton">
-          <%= t('basics.people') %>/<%= t('basics.tutorials') %>
-        </button>
-        <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == 'orga' %>"
-            id="lecture-nav-orga" type="button" role="tab"
-            href="#orga"
-            data-bs-toggle="pill" data-bs-target="#lecture-pane-orga"
-            aria-controls="lecture-pane-orga" aria-selected="<%= active_tab == 'orga' %>"
-            data-lecture-tabs-target="tabButton">
-          <%= t('admin.lecture.orga') %>
-        </button>
-        <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == 'communication' %>"
-            id="lecture-nav-communication" type="button" role="tab"
-            href="#communication"
-            data-bs-toggle="pill" data-bs-target="#lecture-pane-communication"
-            aria-controls="lecture-pane-communication" aria-selected="<%= active_tab == 'communication' %>"
-            data-lecture-tabs-target="tabButton">
-                <%= t('admin.lecture.communication') %>
-        </button>
-        <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == 'assignments' %>"
-            id="lecture-nav-homework" type="button" role="tab"
-            href="#assignments"
-            data-bs-toggle="pill" data-bs-target="#lecture-pane-homework"
-            aria-controls="lecture-pane-homework" aria-selected="<%= active_tab == 'assignments' %>"
-            data-lecture-tabs-target="tabButton">
-          <%= t('basics.assignments') %>
-        </button>
+    <% active_tab = params[:tab] || (@lecture.sort == "vignettes" ? "vignettes" : "content") %>
+    <% is_vignette_lecture = @lecture.sort == "vignettes" %>
+    <%= render LectureTabsComponent.new(active_tab, is_vignette_lecture) do |component| %>
 
-        <% if @lecture.sort == "vignettes" %>
-          <button class="nav-link lecture-nav-pill-button <%= 'active' if active_tab == 'vignettes' %>"
-              id="lecture-nav-vignettes" type="button" role="tab"
-              href="#vignettes"
-              data-bs-toggle="pill" data-bs-target="#lecture-pane-vignettes"
-              aria-controls="lecture-pane-vignettes" aria-selected="<%= active_tab == 'vignettes' %>"
-              data-lecture-tabs-target="tabButton">
-            <%= t('vignettes.vignettes') %>
-          </button>
-        <% end %>
-      </div>
-    </nav>
-
-    <div class="tab-content">
-      <!-- Content (structure & media) -->
-      <div class="tab-pane fade <%= 'show active' if active_tab == 'content' %>" id="lecture-pane-content"
-          role="tabpanel" aria-labelledby="lecture-nav-content" tabindex="0">
+      <% component.with_tab(name: "content", label: t("content")) do %>
         <div class="row px-4 py-2">
           <% if !@lecture.seminar? || @lecture.legacy_seminar %>
             <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
               <%= render partial: 'lectures/edit/content',
-                  locals: { lecture: @lecture } %>
+                         locals: { lecture: @lecture } %>
             </div>
           <% else %>
             <div id="lecture-content-card" class="col-12 col-xxl-9 mb-1">
               <%= render partial: 'lectures/edit/seminar_content',
-                  locals: { lecture: @lecture } %>
+                         locals: { lecture: @lecture } %>
             </div>
           <% end %>
           <div id="lecture-media-card" class="col-12 col-xxl-3 mb-1">
             <%= render partial: 'lectures/edit/media',
-                locals: { media: @media, lecture: @lecture } %>
+                       locals: { media: @media, lecture: @lecture } %>
           </div>
         </div>
-      </div>
+      <% end %>
 
-      <!-- Settings -->
-      <div class="tab-pane fade <%= 'show active' if active_tab == 'settings' %>" id="lecture-pane-settings"
-          role="tabpanel" aria-labelledby="lecture-nav-settings" tabindex="0">
+      <% component.with_tab(name: "settings", label: t("basics.preferences")) do %>
         <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/preferences',
-              locals: { lecture: @lecture } %>
+          <%= render partial: 'lectures/edit/preferences', locals: { lecture: @lecture } %>
         </div>
-      </div>
+      <% end %>
 
-      <!-- People -->
-      <div class="tab-pane fade <%= 'show active' if active_tab == 'people' %>" id="lecture-pane-people"
-          role="tabpanel" aria-labelledby="lecture-nav-people" tabindex="0">
+      <% component.with_tab(name: "people",
+                            label: "#{t('basics.people')}/#{t('basics.tutorials')}") do %>
         <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/people',
-              locals: { lecture: @lecture } %>
-          <%= render partial: 'lectures/edit/tutorials',
-              locals: { lecture: @lecture } %>
-          <%= render partial: 'lectures/edit/vouchers',
-              locals: { lecture: @lecture } %>
+          <%= render partial: 'lectures/edit/people', locals: { lecture: @lecture } %>
+          <%= render partial: 'lectures/edit/tutorials', locals: { lecture: @lecture } %>
+          <%= render partial: 'lectures/edit/vouchers', locals: { lecture: @lecture } %>
         </div>
-      </div>
+      <% end %>
 
-      <!-- Organisation -->
-      <div class="tab-pane fade <%= 'show active' if active_tab == 'orga' %>" id="lecture-pane-orga"
-          role="tabpanel" aria-labelledby="lecture-nav-orga" tabindex="0">
+      <% component.with_tab(name: "orga", label: t("admin.lecture.orga")) do %>
         <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/organizational_concept',
-              locals: { lecture: @lecture } %>
+                     locals: { lecture: @lecture } %>
         </div>
-      </div>
+      <% end %>
 
-      <!-- Communication -->
-      <div class="tab-pane fade <%= 'show active' if active_tab == 'communication' %>" id="lecture-pane-communication"
-          data-cy="lecture-pane-communication"
-          role="tabpanel" aria-labelledby="lecture-nav-communication" tabindex="0">
+      <% component.with_tab(name: "communication", label: t("admin.lecture.communication")) do %>
         <div class="container small-width lecture-pane">
           <%= render partial: 'lectures/edit/announcements',
-              locals: { lecture: @lecture, announcements: @announcements } %>
+                     locals: { lecture: @lecture, announcements: @announcements } %>
           <%= render partial: 'lectures/edit/forum',
-              locals: { lecture: @lecture } %>
+                     locals: { lecture: @lecture } %>
           <%= render partial: 'lectures/edit/comments',
-              locals: { lecture: @lecture } %>
+                     locals: { lecture: @lecture } %>
         </div>
-      </div>
+      <% end %>
 
-      <!-- Homework -->
-      <div class="tab-pane fade <%= 'show active' if active_tab == 'assignments' %>" id="lecture-pane-homework"
-          role="tabpanel" aria-labelledby="lecture-nav-homework" tabindex="0">
+      <% component.with_tab(name: "assignments", label: t("basics.assignments")) do %>
         <div class="container small-width lecture-pane">
-          <%= render partial: 'lectures/edit/assignments',
-              locals: { lecture: @lecture } %>
+          <%= render partial: 'lectures/edit/assignments', locals: { lecture: @lecture } %>
         </div>
-      </div>
+      <% end %>
 
-      <!-- Vignettes -->
       <% if @lecture.sort == "vignettes" %>
-        <div class="tab-pane fade <%= 'show active' if active_tab == 'vignettes' %>" id="lecture-pane-vignettes"
-            role="tabpanel" aria-labelledby="lecture-nav-vignettes" tabindex="0">
+        <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
           <div class="container small-width lecture-pane mb-3">
             <%= render partial: 'vignettes/questionnaires/manage_questionnaires',
-                locals: { lecture: @lecture } %>
+                       locals: { lecture: @lecture } %>
           </div>
           <div class="container small-width lecture-pane mb-3">
             <%= render partial: 'lectures/edit/link_to_lecture',
@@ -172,14 +84,13 @@
           </div>
           <div class="container small-width lecture-pane">
             <%= render partial: 'vignettes/completion_message/form',
-                locals: { lecture: @lecture } %>
+                       locals: { lecture: @lecture } %>
           </div>
-        </div>
+        <% end %>
       <% end %>
 
-    </div>
+    <% end %>
   </div>
-
 
   <!-- Modals -->
   <%= render partial: 'media/modal' %>

@@ -1,0 +1,34 @@
+<nav>
+  <div class="nav nav-pills container small-width flex-column flex-sm-row"
+       id="lecture-nav-pills" role="tablist"
+       data-controller="lecture-tabs"
+       data-is-vignette-lecture="<%= @is_vignette_lecture %>">
+
+    <% tabs.each do |tab| %>
+      <button class="nav-link lecture-nav-pill-button <%= 'active' if @active_tab == tab.name %>"
+              id="lecture-nav-<%= tab.name %>" type="button" role="tab"
+              data-tab-name="<%= tab.name %>"
+              data-cy="<%= tab.name %>-tab-btn"
+              data-bs-toggle="pill" data-bs-target="#lecture-pane-<%= tab.name %>"
+              aria-controls="lecture-pane-<%= tab.name %>"
+              aria-selected="<%= @active_tab == tab.name %>"
+              data-lecture-tabs-target="tabButton">
+        <%= tab.label %>
+      </button>
+    <% end %>
+
+  </div>
+</nav>
+
+
+<div class="tab-content">
+
+  <% tabs.each do |tab| %>
+    <div class="tab-pane fade <%= 'show active' if @active_tab == tab.name %>"              
+        id="lecture-pane-<%= tab.name %>"
+        role="tabpanel" aria-labelledby="lecture-nav-<%= tab.name %>" tabindex="0">
+      <%= tab %>
+    </div>
+  <% end %>
+
+</div>
