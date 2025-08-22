@@ -20,17 +20,19 @@ module SearchForm
 
         def define_configuration_methods
           @config[:methods].each do |method_name|
-            method_config = @config[:method_configs][method_name]
+            # Handle case where method_configs is missing or specific method config is missing
+            method_config = @config.dig(:method_configs, method_name) || {}
 
             define_singleton_method(method_name) do |*args, **kwargs|
-              execute_method_config(method_config, *args, **kwargs)
+              execute_method_config(method_name, method_config, *args, **kwargs)
               self
             end
           end
         end
 
-        def execute_method_config(method_config, *, **kwargs)
-          target_method = method_config[:target_method]
+        def execute_method_config(method_name, method_config, *, **kwargs)
+          # Default target_method to the method_name if not specified
+          target_method = method_config[:target_method] || method_name
 
           # Determine arguments to pass
           if method_config[:default_args]

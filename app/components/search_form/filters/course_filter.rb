@@ -12,7 +12,7 @@ module SearchForm
         )
       end
 
-      def render_edited_courses_button(current_user)
+      def with_edited_courses_button(current_user)
         tag.button(
           I18n.t("buttons.edited_courses"),
           id: "tags-edited-courses",

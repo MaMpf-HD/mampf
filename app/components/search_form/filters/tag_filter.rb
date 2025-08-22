@@ -26,18 +26,6 @@ module SearchForm
         @show_radio_group = false
       end
 
-      def configure_ajax(model: "tag", locale: nil, no_results: nil)
-        locale ||= I18n.locale
-        no_results ||= I18n.t("basics.no_results")
-
-        @options[:data].merge!(
-          model: model,
-          locale: locale,
-          no_results: no_results
-        )
-        self
-      end
-
       def with_operator_radios
         @show_radio_group = true
         self
