@@ -17,6 +17,29 @@ module SearchForm
           html_options_with_id(default_options.merge(additional_options))
         end
 
+        # Standardized select tag options that handle prompts
+        def select_tag_options
+          base_options = {}
+
+          if should_add_prompt?
+            base_options[:prompt] = resolve_prompt_text
+          elsif @field.include_blank
+            base_options[:include_blank] =
+              @field.include_blank.is_a?(String) ? @field.include_blank : true
+          end
+
+          base_options
+        end
+
+        # Standardized method for adding prompts to collections
+        def prepare_collection_with_prompt(collection)
+          return collection unless should_add_prompt?
+
+          collection_array = ensure_array(collection)
+          prompt_text = resolve_prompt_text.to_s
+          [[prompt_text, ""]] + collection_array
+        end
+
         # Generate a unique ID using form_state
         def element_id
           @field.form_state.element_id_for(@field.name)
@@ -33,6 +56,35 @@ module SearchForm
 
           def css_manager
             @css_manager ||= CssManager.new(@field)
+          end
+
+          def should_add_prompt?
+            @field.prompt.present?
+          end
+
+          def resolve_prompt_text
+            case @field.prompt
+            when true
+              I18n.t("basics.select")
+            when String
+              @field.prompt
+            else
+              I18n.t("basics.select")
+            end
+          end
+
+          def ensure_array(collection)
+            case collection
+            when Array
+              collection
+            when ActiveSupport::SafeBuffer, String
+              # If it's HTML, we can't process it as a collection
+              # Return empty array and let Rails handle the HTML directly
+              []
+            else
+              # Try to convert to array
+              Array(collection)
+            end
           end
       end
     end

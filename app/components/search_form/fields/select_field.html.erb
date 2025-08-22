@@ -5,7 +5,7 @@
     <%= helpers.helpdesk(help_text, false) %>
   <% end %>
   
-  <%= form.select name, collection, select_tag_options, html.field_html_options %>
+  <%= form.select name, prepared_collection, html.select_tag_options, html.field_html_options %>
   
   <% if show_content? %>
     <%= capture(self, &content) %>

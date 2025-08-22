@@ -63,6 +63,10 @@ module SearchForm
         I18n.t("basics.all")
       end
 
+      def default_prompt
+        true
+      end
+
       def default_field_classes
         ["selectize"] # Base selectize class for multi-select
       end

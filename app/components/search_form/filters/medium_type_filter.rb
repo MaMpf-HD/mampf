@@ -7,7 +7,7 @@ module SearchForm
           name: :types,
           label: I18n.t("basics.types"), # Plural for media
           help_text: I18n.t("search.media.type"),
-          collection: add_prompt(Medium.select_generic),
+          collection: Medium.select_generic,
           **
         )
 

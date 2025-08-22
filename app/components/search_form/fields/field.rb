@@ -2,7 +2,7 @@ module SearchForm
   module Fields
     class Field < ViewComponent::Base
       attr_reader :name, :label, :column_class, :field_class, :wrapper_class, :help_text, :options,
-                  :content, :css, :html
+                  :content, :css, :html, :prompt, :include_blank
       attr_accessor :form_state
 
       def initialize(name:, label:, **options)
@@ -15,6 +15,10 @@ module SearchForm
         @field_class = options.delete(:field_class) || ""
         @wrapper_class = options.delete(:wrapper_class) || "mb-3 form-field-group"
         @help_text = options.delete(:help_text)
+
+        # Extract prompt configuration with defaults
+        @prompt = options.delete(:prompt) { default_prompt }
+        @include_blank = options.delete(:include_blank)
 
         @options = process_options(options)
 
@@ -54,6 +58,18 @@ module SearchForm
       # To be overridden by subclasses
       def default_field_classes
         []
+      end
+
+      # Override in subclasses to set appropriate defaults
+      def default_prompt
+        false
+      end
+
+      # For fields that have collections
+      def prepared_collection
+        return [] unless respond_to?(:collection)
+
+        html.prepare_collection_with_prompt(collection)
       end
 
       protected
