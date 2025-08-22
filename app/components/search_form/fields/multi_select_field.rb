@@ -18,9 +18,9 @@ module SearchForm
         extract_and_update_field_classes!(options)
 
         # Initialize service objects
-        @renderer = MultiSelectRenderer.new(self)
-        @checkbox_manager = CheckboxManager.new(self)
-        @data_builder = DataAttributesBuilder.new(self)
+        @renderer = Services::MultiSelectRenderer.new(self)
+        @checkbox_manager = Services::CheckboxManager.new(self)
+        @data_builder = Services::DataAttributesBuilder.new(self)
       end
 
       # Create the default checkbox in before_render

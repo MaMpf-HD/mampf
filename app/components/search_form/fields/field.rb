@@ -19,8 +19,8 @@ module SearchForm
         @options = process_options(options)
 
         # Make services accessible as public APIs
-        @css = CssManager.new(self)
-        @html = HtmlBuilder.new(self)
+        @css = Services::CssManager.new(self)
+        @html = Services::HtmlBuilder.new(self)
       end
 
       # Delegate form access to form_state
