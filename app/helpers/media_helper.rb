@@ -111,12 +111,6 @@ module MediaHelper
     add_prompt(Medium.select_sorts)
   end
 
-  def sort_preselect(purpose)
-    return "" unless purpose == "quiz"
-
-    "Question"
-  end
-
   def related_media_hash(references, media)
     media_list = references.map { |r| [r.medium, r.manuscript_link] } +
                  media.zip(Array.new(media.size))

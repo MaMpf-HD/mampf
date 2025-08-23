@@ -1,11 +1,11 @@
 <div class="<%= css.container_classes %>">
   <%= form.label html.label_for, label, class: "form-label" %>
-  
+
   <% if show_help_text? %>
     <%= helpers.helpdesk(help_text, true) %>
   <% end %>
 
-  <%= form.select name, prepared_collection, html.select_tag_options, field_html_options %>
+  <%= form.select name, collection, html.select_tag_options, field_html_options %>
 
   <% if show_checkbox? %>
     <%= render(checkbox) %>

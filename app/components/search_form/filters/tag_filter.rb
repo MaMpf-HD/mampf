@@ -18,6 +18,7 @@ module SearchForm
             ajax: true,
             model: "tag",
             locale: I18n.locale,
+            placeholder: I18n.t("basics.select"),
             no_results: I18n.t("basics.no_results")
           }
         )

@@ -47,16 +47,10 @@ module SearchForm
       end
 
       # Hash passed as the (3rd) "options" argument to form.select
-      def select_tag_options
-        {} # extend later if we need :prompt etc.
-      end
+      delegate :select_tag_options, to: :html
 
       def show_radio_group?
         false
-      end
-
-      def selected_value
-        options[:selected]
       end
 
       def all_checkbox_label
@@ -64,7 +58,7 @@ module SearchForm
       end
 
       def default_prompt
-        true
+        true # Multi-select fields should have prompts by default
       end
 
       def default_field_classes

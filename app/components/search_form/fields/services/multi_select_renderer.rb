@@ -8,9 +8,9 @@ module SearchForm
 
         def options_html
           if grouped_collection?
-            helpers.grouped_options_for_select(@field.collection, @field.selected_value)
+            helpers.grouped_options_for_select(@field.collection, @field.selected)
           else
-            helpers.options_for_select(@field.collection, @field.selected_value)
+            helpers.options_for_select(@field.collection, @field.selected)
           end
         end
 

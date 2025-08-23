@@ -6,7 +6,7 @@ module SearchForm
           name: :lectures,
           label: I18n.t("basics.lectures"),
           help_text: I18n.t("search.media.lectures"),
-          collection: [], # Will be populated in before_render
+          collection: Lecture.select,
           **
         )
 
@@ -27,12 +27,6 @@ module SearchForm
 
         builder = Builders::RadioGroupFactories::LectureOptionsRadios.build(form_state)
         render(builder.build_radio_group)
-      end
-
-      # Load collection just in time (helpers available now)
-      def before_render
-        super
-        @collection = helpers.add_prompt(Lecture.select)
       end
 
       # We don't want the all checkbox for this component

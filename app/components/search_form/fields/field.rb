@@ -60,16 +60,13 @@ module SearchForm
         []
       end
 
+      def selected
+        options[:selected] # Method name now matches the option key
+      end
+
       # Override in subclasses to set appropriate defaults
       def default_prompt
         false
-      end
-
-      # For fields that have collections
-      def prepared_collection
-        return [] unless respond_to?(:collection)
-
-        html.prepare_collection_with_prompt(collection)
       end
 
       protected

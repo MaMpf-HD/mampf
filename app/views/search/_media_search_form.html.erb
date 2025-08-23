@@ -1,18 +1,18 @@
 <%= render_search_form(url: media_search_path, context: "media") do |f|
-  f.medium_type_filter(purpose: purpose)
-  
+  f.medium_type_filter(current_user: current_user, purpose: purpose)
+
   f.teachable_filter.with_inheritance_radios
-  
+
   f.tag_filter.with_operator_radios
-  
+
   f.editor_filter
-  
+
   f.medium_access_filter
-  
-  unless purpose == 'import' 
+
+  unless purpose == 'import'
     f.answer_count_filter(purpose: purpose)
   end
-  
+
   f.fulltext_filter
 
   f.per_page_filter(per_options: hits_per_page(true),default: default_hits_per_page(true))

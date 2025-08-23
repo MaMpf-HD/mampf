@@ -16,9 +16,7 @@ module SearchForm
       end
 
       # Options hash for the select tag (the second parameter to form.select)
-      def select_tag_options
-        {}
-      end
+      delegate :select_tag_options, to: :html
 
       def default_field_classes
         ["form-select"] # Bootstrap form-select class

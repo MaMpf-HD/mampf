@@ -2,44 +2,50 @@
 module SearchForm
   module Filters
     class MediumTypeFilter < Fields::MultiSelectField
-      def initialize(purpose: "media", **)
+      def initialize(current_user:, purpose: "media", **)
         super(
           name: :types,
           label: I18n.t("basics.types"), # Plural for media
           help_text: I18n.t("search.media.type"),
-          collection: Medium.select_generic,
+          collection: [],
+          selected: sort_preselect(purpose),
           **
         )
 
-        # Additional media-specific options
         @purpose = purpose
+        @current_user = current_user
 
         # Update options based on purpose
         @options[:multiple] = purpose.in?(["media", "import"])
         @options[:disabled] = purpose == "media"
         @options[:id] = "search_media_types"
-
-        # Use helpers to properly initialize selected values
-        @selected_value = sort_preselect(purpose)
       end
 
-      attr_reader :purpose, :selected_value
+      attr_reader :purpose, :current_user
+
+      def before_render
+        super
+        # Populate collection using the helper method (has access to current_user)
+        @collection = helpers.media_sorts_select(purpose)
+      end
 
       # Skip the "all" checkbox when purpose is "import"
       def skip_all_checkbox?
-        purpose == "import"
+        purpose.in?(["import", "quiz"])
       end
 
-      # Helper method from the original partial
-      def add_prompt(collection)
-        [[I18n.t("basics.select"), ""]] + collection
-      end
-
-      # Helper method from the original partial
       def sort_preselect(purpose)
         return "" unless purpose == "quiz"
 
         "Question"
+      end
+
+      def media_sorts_select(purpose)
+        return Medium.select_quizzables if purpose == "quiz"
+        return Medium.select_importables if purpose == "import"
+        return Medium.select_generic unless current_user.admin_or_editor?
+
+        Medium.select_sorts
       end
     end
   end
