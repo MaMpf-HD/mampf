@@ -1,20 +1,19 @@
-<%= render_search_form(url: media_search_path, context: "media") do |f|
-  f.medium_type_filter(current_user: current_user, purpose: purpose)
+<%= render(SearchForm::SearchForm.new(url: media_search_path, context: "media")) do |c| %>
+  <% c.with_field(SearchForm::Filters::MediumTypeFilter.new(
+       current_user: current_user, purpose: purpose)) %>
 
-  f.tag_filter.with_operator_radios
+  <% c.with_field(SearchForm::Filters::TagFilter.new.with_operator_radios) %>
 
-  f.lecture_scope_filter.with_lecture_options
+  <% c.with_field(SearchForm::Filters::LectureScopeFilter.new.with_lecture_options) %>
 
-  f.fulltext_filter
+  <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
 
-  f.per_page_filter(
-    per_options: hits_per_page(false),
-    default: default_hits_per_page(false)
-  )
+  <% c.with_field(SearchForm::Filters::PerPageFilter.new(
+       per_options: hits_per_page(false),
+       default: default_hits_per_page(false)
+     )) %>
 
-  f.hidden_field(
-    purpose: purpose,
-    results_as_list: 'false',
-    from: 'start'
-  )
-end %>
+  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :purpose, value: purpose)) %>
+  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :results_as_list, value: 'false')) %>
+  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :from, value: 'start')) %>
+<% end %>

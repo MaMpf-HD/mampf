@@ -25,8 +25,31 @@ module SearchForm
       def render_radio_group
         return unless show_radio_group?
 
-        builder = Builders::RadioGroupFactories::InheritanceRadios.build(form_state)
-        render(builder.build_radio_group)
+        render(Controls::RadioGroup.new(
+                 form_state: form_state,
+                 name: :teachable_inheritance
+               )) do |group|
+          group.with_radio_button(
+            form_state: form_state,
+            name: :teachable_inheritance,
+            value: "1",
+            label: I18n.t("basics.with_inheritance"),
+            checked: true, # with_inheritance_checked default
+            disabled: true,
+            inline: true,
+            stimulus: { radio_toggle: true, controls_select: false }
+          )
+          group.with_radio_button(
+            form_state: form_state,
+            name: :teachable_inheritance,
+            value: "0",
+            label: I18n.t("basics.without_inheritance"),
+            checked: false, # !with_inheritance_checked
+            disabled: true,
+            inline: true,
+            stimulus: { radio_toggle: true, controls_select: false }
+          )
+        end
       end
 
       # Override to provide custom data attributes for the "all_teachables" checkbox

@@ -9,7 +9,10 @@ module SearchForm
       component.with_content(&block) if block
       component
     }
-    renders_many :hidden_fields, Fields::HiddenField
+    renders_many :hidden_fields, lambda { |component, &block|
+      component.with_content(&block) if block
+      component
+    }
 
     attr_reader :url, :scope, :method, :remote, :submit_label, :context
 

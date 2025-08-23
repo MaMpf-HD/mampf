@@ -12,11 +12,13 @@
   </div>
 </div>
 
-<%= render_search_form(url: tags_search_path, context: "tags") do |f|
-  f.tag_title_filter
-  f.course_filter.with_edited_courses_button(current_user)
-  f.per_page_filter(id: "tags_per")
-end %>
+<%= render(SearchForm::SearchForm.new(url: tags_search_path, context: "tags")) do |c| %>
+  <% c.with_field(SearchForm::Filters::TagTitleFilter.new) %>
+
+  <% c.with_field(SearchForm::Filters::CourseFilter.new.with_edited_courses_button(current_user)) %>
+
+  <% c.with_field(SearchForm::Filters::PerPageFilter.new(id: "tags_per")) %>
+<% end %>
 
 <div id="tag-search-results">
 </div>
