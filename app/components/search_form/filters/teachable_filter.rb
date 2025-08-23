@@ -29,22 +29,18 @@ module SearchForm
                  form_state: form_state,
                  name: :teachable_inheritance
                )) do |group|
-          group.with_radio_button(
-            form_state: form_state,
-            name: :teachable_inheritance,
+          group.add_radio_button( # Changed from with_radio_button to add_radio_button
             value: "1",
             label: I18n.t("basics.with_inheritance"),
-            checked: true, # with_inheritance_checked default
+            checked: true,
             disabled: true,
             inline: true,
             stimulus: { radio_toggle: true, controls_select: false }
           )
-          group.with_radio_button(
-            form_state: form_state,
-            name: :teachable_inheritance,
+          group.add_radio_button( # Changed from with_radio_button to add_radio_button
             value: "0",
             label: I18n.t("basics.without_inheritance"),
-            checked: false, # !with_inheritance_checked
+            checked: false,
             disabled: true,
             inline: true,
             stimulus: { radio_toggle: true, controls_select: false }

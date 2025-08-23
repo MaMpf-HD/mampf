@@ -29,19 +29,15 @@ module SearchForm
                  form_state: form_state,
                  name: :lecture_option
                )) do |group|
-          group.with_radio_button(
-            form_state: form_state,
-            name: :lecture_option,
+          group.add_radio_button(
             value: "0",
             label: I18n.t("search.media.lecture_options.all"),
-            checked: true, # all_checked default from LectureOptionsRadios
-            disabled: false, # disabled default from LectureOptionsRadios
-            inline: false,   # inline default from LectureOptionsRadios
+            checked: true,
+            disabled: false,
+            inline: false,
             stimulus: { radio_toggle: true, controls_select: false }
           )
-          group.with_radio_button(
-            form_state: form_state,
-            name: :lecture_option,
+          group.add_radio_button(
             value: "1",
             label: I18n.t("search.media.lecture_options.subscribed"),
             checked: false,
@@ -49,9 +45,7 @@ module SearchForm
             inline: false,
             stimulus: { radio_toggle: true, controls_select: false }
           )
-          group.with_radio_button(
-            form_state: form_state,
-            name: :lecture_option,
+          group.add_radio_button(
             value: "2",
             label: I18n.t("search.media.lecture_options.own_selection"),
             checked: false,

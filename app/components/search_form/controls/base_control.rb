@@ -1,7 +1,8 @@
 module SearchForm
   module Controls
     class BaseControl < ViewComponent::Base
-      attr_reader :form_state, :options, :stimulus_config
+      attr_accessor :form_state
+      attr_reader :options, :stimulus_config
 
       def initialize(form_state:, stimulus: {}, **options)
         super()

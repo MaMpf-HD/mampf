@@ -42,9 +42,7 @@ module SearchForm
                  form_state: form_state,
                  name: :tag_operator
                )) do |group|
-          group.with_radio_button(
-            form_state: form_state,
-            name: :tag_operator,
+          group.add_radio_button(
             value: "or",
             label: I18n.t("basics.OR"),
             checked: true,  # or_checked default from OperatorRadios
@@ -52,9 +50,7 @@ module SearchForm
             inline: true,
             stimulus: { radio_toggle: true, controls_select: false }
           )
-          group.with_radio_button(
-            form_state: form_state,
-            name: :tag_operator,
+          group.add_radio_button(
             value: "and",
             label: I18n.t("basics.AND"),
             checked: false, # !or_checked
