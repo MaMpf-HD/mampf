@@ -1,14 +1,14 @@
 <%= render(SearchForm::SearchForm.new(url: search_courses_path, context: "courses")) do |c| %>
-  <% c.with_field(SearchForm::Filters::EditorFilter.new) %>
+  <% c.add_editor_filter %>
 
-  <% c.with_field(SearchForm::Filters::ProgramFilter.new) %>
+  <% c.add_program_filter %>
 
-  <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
+  <% c.add_fulltext_filter %>
 
-  <% c.with_field(SearchForm::Filters::PerPageFilter.new(
+  <% c.add_per_page_filter(
        per_options: hits_per_page(true),
        default: default_hits_per_page(true)
-     )) %>
+     ) %>
 
-  <% c.with_field(SearchForm::Filters::TermIndependenceFilter.new) %>
+  <% c.add_term_independence_filter %>
 <% end %>

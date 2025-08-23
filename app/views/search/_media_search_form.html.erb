@@ -1,25 +1,26 @@
-<%= render(SearchForm::SearchForm.new(url: media_search_path, context: "media")) do |c| %>
-  <% c.with_field(SearchForm::Filters::MediumTypeFilter.new(current_user: current_user,purpose: purpose)) %>
+<%= render(SearchForm::SearchForm.new(url: media_search_path,
+                                      context: "media")) do |c| %>
+  <% c.add_medium_type_filter(current_user: current_user, purpose: purpose) %>
 
-  <% c.with_field(SearchForm::Filters::TeachableFilter.new.with_inheritance_radios) %>
+  <% c.add_teachable_filter_with_inheritance %>
 
-  <% c.with_field(SearchForm::Filters::TagFilter.new.with_operator_radios) %>
+  <% c.add_tag_filter_with_operators %>
 
-  <% c.with_field(SearchForm::Filters::EditorFilter.new) %>
+  <% c.add_editor_filter %>
 
-  <% c.with_field(SearchForm::Filters::MediumAccessFilter.new) %>
+  <% c.add_medium_access_filter %>
 
   <% unless purpose == 'import' %>
-    <% c.with_field(SearchForm::Filters::AnswerCountFilter.new(purpose: purpose)) %>
+    <% c.add_answer_count_filter(purpose: purpose) %>
   <% end %>
 
-  <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
+  <% c.add_fulltext_filter %>
 
-  <% c.with_field(SearchForm::Filters::PerPageFilter.new(
+  <% c.add_per_page_filter(
        per_options: hits_per_page(true),
        default: default_hits_per_page(true)
-     )) %>
+     ) %>
 
-  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :purpose, value: purpose)) %>
-  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :results_as_list, value: 'true')) %>
+  <% c.add_hidden_field(name: :purpose, value: purpose) %>
+  <% c.add_hidden_field(name: :results_as_list, value: 'true') %>
 <% end %>

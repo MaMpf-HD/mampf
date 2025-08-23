@@ -1,19 +1,18 @@
 <%= render(SearchForm::SearchForm.new(url: media_search_path, context: "media")) do |c| %>
-  <% c.with_field(SearchForm::Filters::MediumTypeFilter.new(
-       current_user: current_user, purpose: purpose)) %>
+  <% c.add_medium_type_filter(current_user: current_user, purpose: purpose) %>
 
-  <% c.with_field(SearchForm::Filters::TagFilter.new.with_operator_radios) %>
+  <% c.add_tag_filter_with_operators %>
 
-  <% c.with_field(SearchForm::Filters::LectureScopeFilter.new.with_lecture_options) %>
+  <% c.add_lecture_scope_filter_with_lecture_options %>
 
-  <% c.with_field(SearchForm::Filters::FulltextFilter.new) %>
+  <% c.add_fulltext_filter %>
 
-  <% c.with_field(SearchForm::Filters::PerPageFilter.new(
+  <% c.add_per_page_filter(
        per_options: hits_per_page(false),
        default: default_hits_per_page(false)
-     )) %>
+     ) %>
 
-  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :purpose, value: purpose)) %>
-  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :results_as_list, value: 'false')) %>
-  <% c.with_hidden_field(SearchForm::Fields::HiddenField.new(name: :from, value: 'start')) %>
+  <% c.add_hidden_field(name: :purpose, value: purpose) %>
+  <% c.add_hidden_field(name: :results_as_list, value: 'false') %>
+  <% c.add_hidden_field(name: :from, value: 'start') %>
 <% end %>

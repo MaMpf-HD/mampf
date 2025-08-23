@@ -5,17 +5,17 @@
               data: { controller: "search-form" } do |f| %>
   <div class="row mb-3 p-2">
     <% fields.each do |field| %>
-      <%= render field.with_form(f) if field.respond_to?(:with_form) %>
+      <%= render field.with_form(f) %>
     <% end %>
   </div>
 
-  <% hidden_fields.each do |field| %>
-    <%= f.hidden_field field.name, value: field.value %>
+  <% hidden_fields.each do |name, value| %>
+    <%= f.hidden_field name, value: value %>
   <% end %>
 
   <div class="row mb-3">
     <div class="col-12 text-center">
-      <%= f.submit submit_label || t('basics.search'), class: 'btn btn-primary' %>
+      <%= f.submit submit_label, class: 'btn btn-primary' %>
     </div>
   </div>
 <% end %>
