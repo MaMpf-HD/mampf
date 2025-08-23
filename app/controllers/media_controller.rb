@@ -31,7 +31,7 @@ class MediaController < ApplicationController
     authorize! :index, Medium.new
     @media = paginated_results
     if @lecture.sort == "vignettes"
-      render layout: "vignettes_navbar"
+      render layout: "vignettes/layouts/vignettes_navbar"
     else
       render layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
