@@ -18,7 +18,6 @@ module SearchForm
         extract_and_update_field_classes!(options)
 
         # Initialize service objects
-        @renderer = Services::MultiSelectRenderer.new(self)
         @checkbox_manager = Services::CheckboxManager.new(self)
         @data_builder = Services::DataAttributesBuilder.new(self)
       end
@@ -30,11 +29,6 @@ module SearchForm
 
         checkbox_manager.setup_default_checkbox
       end
-
-      # Delegate to renderer
-      delegate :options_html, to: :renderer
-
-      delegate :grouped_collection?, to: :renderer
 
       # Delegate to checkbox manager
       def show_checkbox?
