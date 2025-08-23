@@ -18,7 +18,6 @@ module SearchForm
         # Update options based on purpose
         @options[:multiple] = purpose.in?(["media", "import"])
         @options[:disabled] = purpose == "media"
-        @options[:id] = "search_media_types"
       end
 
       attr_reader :purpose, :current_user

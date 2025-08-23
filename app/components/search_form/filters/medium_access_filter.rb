@@ -2,7 +2,7 @@
 module SearchForm
   module Filters
     class MediumAccessFilter < Fields::SelectField
-      def initialize(**options)
+      def initialize(**)
         super(
           name: :access,
           label: I18n.t("basics.access_rights"), # Not 'basics.access'
@@ -14,11 +14,9 @@ module SearchForm
             [I18n.t("access.locked"), "locked"],
             [I18n.t("access.unpublished"), "unpublished"]
           ],
-          **options.reverse_merge(class: "form-select")
+          selected: "irrelevant",
+          **
         )
-
-        # Set the default selected value
-        @options[:selected] = "irrelevant" unless options.key?(:selected)
       end
     end
   end

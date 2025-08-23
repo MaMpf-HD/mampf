@@ -10,10 +10,6 @@ module SearchForm
           **
         )
 
-        @options.reverse_merge!(
-          prompt: I18n.t("basics.select")
-        )
-
         @show_radio_group = false
       end
 

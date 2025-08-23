@@ -1,7 +1,7 @@
 module SearchForm
   module Filters
     class AnswerCountFilter < Fields::SelectField
-      def initialize(purpose: "media", **options)
+      def initialize(purpose: "media", **)
         return if purpose == "import"
 
         super(
@@ -18,11 +18,9 @@ module SearchForm
             [6, 6],
             [">6", 7]
           ],
-          **options.reverse_merge(
-            selected: "irrelevant",
-            class: "form-select"
+          selected: "irrelevant",
+          **
           )
-        )
       end
 
       # Override call to conditionally render based on purpose
