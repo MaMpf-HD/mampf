@@ -23,6 +23,8 @@ module SearchForm
       end
 
       # Create the default checkbox in before_render
+      # Checkboxes need helpdesk which requires application helpers
+      # which are only available late.
       def before_render
         super
         return if respond_to?(:skip_all_checkbox?) && skip_all_checkbox?

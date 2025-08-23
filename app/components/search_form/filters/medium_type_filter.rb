@@ -7,7 +7,7 @@ module SearchForm
           name: :types,
           label: I18n.t("basics.types"), # Plural for media
           help_text: I18n.t("search.media.type"),
-          collection: [],
+          collection: media_sorts_select(current_user, purpose),
           selected: sort_preselect(purpose),
           **
         )
@@ -22,12 +22,6 @@ module SearchForm
 
       attr_reader :purpose, :current_user
 
-      def before_render
-        super
-        # Populate collection using the helper method (has access to current_user)
-        @collection = helpers.media_sorts_select(purpose)
-      end
-
       # Skip the "all" checkbox when purpose is "import"
       def skip_all_checkbox?
         purpose.in?(["import", "quiz"])
@@ -39,7 +33,7 @@ module SearchForm
         "Question"
       end
 
-      def media_sorts_select(purpose)
+      def media_sorts_select(current_user, purpose)
         return Medium.select_quizzables if purpose == "quiz"
         return Medium.select_importables if purpose == "import"
         return Medium.select_generic unless current_user.admin_or_editor?

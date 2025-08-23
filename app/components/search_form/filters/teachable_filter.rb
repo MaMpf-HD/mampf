@@ -6,7 +6,7 @@ module SearchForm
           name: :teachable_ids,
           label: I18n.t("basics.associated_to"),
           help_text: I18n.t("admin.medium.info.search_teachable"),
-          collection: [], # Will be populated by grouped_teachable_list_alternative later
+          collection: grouped_teachable_list,
           **
         )
 
@@ -58,10 +58,16 @@ module SearchForm
         }
       end
 
-      # Load grouped collection just in time (helpers available now)
-      def before_render
-        super
-        @collection = helpers.grouped_teachable_list_alternative
+      def grouped_teachable_list
+        list = []
+        Course.find_each do |c|
+          lectures = [["#{c.short_title} Modul", "Course-#{c.id}"]]
+          c.lectures.includes(:term).find_each do |l|
+            lectures.push([l.short_title, "Lecture-#{l.id}"])
+          end
+          list.push([c.title, lectures])
+        end
+        list
       end
     end
   end
