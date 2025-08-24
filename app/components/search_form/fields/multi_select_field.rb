@@ -64,7 +64,8 @@ module SearchForm
       private
 
         def generate_all_toggle_name(name)
-          :"all_#{name}"
+          base_name = name.to_s.delete_suffix("_ids").pluralize
+          :"all_#{base_name}"
         end
 
         def process_options(opts)
