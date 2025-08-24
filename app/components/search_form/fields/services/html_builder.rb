@@ -48,14 +48,7 @@ module SearchForm
           end
 
           def resolve_prompt_text
-            case @field.prompt
-            when true
-              I18n.t("basics.select")
-            when String
-              @field.prompt
-            else
-              I18n.t("basics.select")
-            end
+            @field.prompt.is_a?(String) ? @field.prompt : I18n.t("basics.select")
           end
       end
     end

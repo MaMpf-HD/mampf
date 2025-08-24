@@ -5,8 +5,11 @@ module SearchForm
       attr_reader :value, :label, :checked
       attr_accessor :name, :form_state
 
-      def initialize(value:, label:, checked: false, form_state: nil, name: nil, **)
-        super(form_state: form_state, **)
+      def initialize(value:, label:, checked: false, **options)
+        form_state = options.delete(:form_state)
+        name = options.delete(:name)
+
+        super(form_state: form_state, **options)
         @name = name
         @value = value
         @label = label
