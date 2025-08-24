@@ -1,7 +1,7 @@
 module SearchForm
   module Fields
     class Field < ViewComponent::Base
-      attr_reader :name, :label, :column_class, :field_class, :wrapper_class, :help_text, :options,
+      attr_reader :name, :label, :container_class, :field_class, :help_text, :options,
                   :content, :css, :html, :prompt, :include_blank
       attr_accessor :form_state
 
@@ -11,9 +11,9 @@ module SearchForm
         @label = label
 
         # Extract layout options with defaults
-        @column_class = options.delete(:column_class) || "col-6 col-lg-3"
+        @container_class = options.delete(:container_class) ||
+                           "col-6 col-lg-3 mb-3 form-field-group"
         @field_class = options.delete(:field_class) || ""
-        @wrapper_class = options.delete(:wrapper_class) || "mb-3 form-field-group"
         @help_text = options.delete(:help_text)
 
         # Extract prompt configuration with defaults

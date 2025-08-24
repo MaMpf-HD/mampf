@@ -1,10 +1,10 @@
-<div class="<%= css.container_classes %>">
+<div class="<%= container_class %>">
   <%= render checkbox_control %>
-  
+
   <% if show_help_text? %>
     <%= helpers.helpdesk(help_text, false) %>
   <% end %>
-  
+
   <% if show_content? %>
     <%= capture(self, &content) %>
   <% end %>

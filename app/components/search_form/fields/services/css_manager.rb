@@ -6,11 +6,6 @@ module SearchForm
           @field = field
         end
 
-        # Unified CSS class methods
-        def container_classes
-          [@field.column_class, @field.wrapper_class].compact.join(" ")
-        end
-
         def field_css_classes
           [@field.field_class, additional_field_classes].compact.join(" ").strip
         end
