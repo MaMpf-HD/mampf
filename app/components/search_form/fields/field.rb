@@ -2,7 +2,7 @@ module SearchForm
   module Fields
     class Field < ViewComponent::Base
       attr_reader :name, :label, :container_class, :field_class, :help_text, :options,
-                  :content, :css, :html, :prompt, :include_blank
+                  :content, :css, :html, :prompt
       attr_accessor :form_state
 
       def initialize(name:, label:, **options)
@@ -15,11 +15,7 @@ module SearchForm
                            "col-6 col-lg-3 mb-3 form-field-group"
         @field_class = options.delete(:field_class) || ""
         @help_text = options.delete(:help_text)
-
-        # Extract prompt configuration with defaults
         @prompt = options.delete(:prompt) { default_prompt }
-        @include_blank = options.delete(:include_blank)
-
         @options = process_options(options)
 
         # Make services accessible as public APIs
