@@ -111,7 +111,10 @@ class Term < ApplicationRecord
   def self.select_terms(independent: false)
     return ["bla", nil] if independent
 
-    Term.all.sort_by(&:begin_date).reverse.map { |t| [t.to_label, t.id] }
+    Term.select(:id, :season, :year)
+        .sort_by(&:begin_date)
+        .reverse
+        .map { |t| [t.to_label, t.id] }
   end
 
   def self.previous_by_date(date)

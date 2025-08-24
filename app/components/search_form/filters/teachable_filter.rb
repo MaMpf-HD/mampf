@@ -58,17 +58,25 @@ module SearchForm
         }
       end
 
-      def grouped_teachable_list
-        list = []
-        Course.find_each do |c|
-          lectures = [["#{c.short_title} Modul", "Course-#{c.id}"]]
-          c.lectures.includes(:term).find_each do |l|
-            lectures.push([l.short_title, "Lecture-#{l.id}"])
+      private
+
+        def grouped_teachable_list
+          course_label = I18n.t("basics.course")
+
+          # Single query with proper eager loading
+          courses_with_lectures = Course.includes(lectures: :term)
+                                        .order(:title)
+
+          courses_with_lectures.map do |course|
+            lectures = [["#{course.short_title} #{course_label}", "Course-#{course.id}"]]
+
+            course.lectures.natural_sort_by(&:short_title).each do |lecture|
+              lectures << [lecture.short_title, "Lecture-#{lecture.id}"]
+            end
+
+            [course.title, lectures]
           end
-          list.push([c.title, lectures])
         end
-        list
-      end
     end
   end
 end

@@ -6,9 +6,7 @@ module SearchForm
           name: :course_ids,
           label: I18n.t("basics.courses"),
           help_text: I18n.t("admin.tag.info.search_course"),
-          collection: options_for_select(
-            Course.pluck(:title, :id).natural_sort_by(&:first), nil
-          ),
+          collection: Course.order(:title).pluck(:title, :id),
           **
         )
 

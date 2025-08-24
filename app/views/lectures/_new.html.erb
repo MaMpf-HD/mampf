@@ -61,7 +61,7 @@
                     t('basics.type'),
                     class: "form-label" %>
         <%= f.select :sort,
-                     options_for_select(Lecture.sort_localized.invert.to_a,
+                     options_for_select(Lecture.select_sorts,
                                         'lecture'),
                      {},
                      { class: 'form-select'} %>

@@ -6,7 +6,7 @@ module SearchForm
           name: :lectures,
           label: I18n.t("basics.lectures"),
           help_text: I18n.t("search.media.lectures"),
-          collection: Lecture.select,
+          collection: lecture_options,
           **
         )
 
@@ -60,6 +60,14 @@ module SearchForm
       def show_checkbox?
         false
       end
+
+      private
+
+        def lecture_options
+          Lecture.includes(:course, :term)
+                 .map { |l| [l.title, l.id] }
+                 .natural_sort_by(&:first)
+        end
     end
   end
 end
