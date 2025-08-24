@@ -12,16 +12,14 @@ module SearchForm
       component
     }
 
-    attr_reader :url, :scope, :method, :remote, :submit_label, :context, :hidden_fields
+    attr_reader :url, :scope, :method, :remote, :context, :hidden_fields
 
-    def initialize(url:, scope: :search, method: :get, remote: true, submit_label: nil,
-                   context: nil)
+    def initialize(url:, scope: :search, method: :get, remote: true, context: nil)
       super()
       @url = url
       @scope = scope
       @method = method
       @remote = remote
-      @submit_label = submit_label || I18n.t("basics.search")
       @context = context
       @form_state = FormState.new(context: context)
       @hidden_fields = {}
@@ -33,6 +31,15 @@ module SearchForm
 
     def add_hidden_field(name:, value:)
       @hidden_fields[name] = value
+    end
+
+    # Manual method for submit field (not a filter)
+    def add_submit_field(label: nil, css_classes: "btn btn-primary", **)
+      with_field(Fields::SubmitField.new(
+                   label: label,
+                   css_classes: css_classes,
+                   **
+                 ))
     end
   end
 end

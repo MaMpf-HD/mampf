@@ -1,0 +1,13 @@
+<% if wrapper_classes %>
+  <div class="<%= wrapper_classes %>">
+    <% if column_classes %>
+      <div class="<%= column_classes %>">
+        <%= form.submit label, class: css_classes %>
+      </div>
+    <% else %>
+      <%= form.submit label, class: css_classes %>
+    <% end %>
+  </div>
+<% else %>
+  <%= form.submit label, class: css_classes %>
+<% end %>

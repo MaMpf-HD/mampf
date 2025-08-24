@@ -18,6 +18,7 @@
   <% c.add_field(SearchForm::Filters::CourseFilter.new.with_edited_courses_button(current_user)) %>
 
   <% c.add_field(SearchForm::Filters::PerPageFilter.new(id: "tags_per")) %>
+  <% c.add_submit_field %>
 <% end %>
 
 <div id="tag-search-results">

@@ -12,10 +12,4 @@
   <% hidden_fields.each do |name, value| %>
     <%= f.hidden_field name, value: value %>
   <% end %>
-
-  <div class="row mb-3">
-    <div class="col-12 text-center">
-      <%= f.submit submit_label, class: 'btn btn-primary' %>
-    </div>
-  </div>
 <% end %>
