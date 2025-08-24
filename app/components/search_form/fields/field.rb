@@ -1,5 +1,53 @@
+# Search Form Fields Module
+#
+# This module contains field components that represent individual form inputs
+# within the SearchForm system. Each field type provides specialized behavior
+# while inheriting common functionality from the base Field class.
+#
+# Field architecture:
+# - Field: Base class with common form field functionality
+# - TextField: Single-line text input
+# - SelectField: Dropdown selection
+# - MultiSelectField: Multiple selection dropdown
+# - CheckboxField: Single checkbox input
+# - SubmitField: Form submission button
+#
+# All fields integrate with:
+# - FormState for dependency injection and state management
+# - Service objects for HTML generation and CSS management
+# - ViewComponent architecture for Rails component rendering
+
 module SearchForm
   module Fields
+    # Base field class for all search form input types
+    #
+    # This class provides the foundational behavior that all field types inherit.
+    # It handles common concerns like form state management, CSS classes,
+    # help text, and integration with service objects.
+    #
+    # @param name [String, Symbol] The field name used for form parameters
+    # @param label [String] Display label for the field
+    # @param container_class [String] CSS classes for the field container
+    # @param field_class [String] CSS classes for the input element
+    # @param help_text [String] Optional help text displayed below the field
+    # @param prompt [String] Placeholder or prompt text for the field
+    # @param options [Hash] Additional options passed to the field
+    #
+    # @example Basic field usage
+    #   field = Field.new(
+    #     name: :search_term,
+    #     label: "Search Term",
+    #     help_text: "Enter keywords to search for"
+    #   )
+    #   field.form_state = form_state
+    #
+    # @example Field with custom CSS
+    #   field = Field.new(
+    #     name: :title,
+    #     label: "Title",
+    #     container_class: "col-md-6",
+    #     field_class: "form-control-lg"
+    #   )
     class Field < ViewComponent::Base
       attr_reader :name, :label, :container_class, :field_class, :help_text, :options,
                   :content, :css, :html, :prompt

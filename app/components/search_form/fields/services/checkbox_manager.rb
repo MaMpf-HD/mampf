@@ -1,6 +1,28 @@
 module SearchForm
   module Fields
     module Services
+      # Checkbox management service for multi-select fields
+      #
+      # This service object handles the creation and configuration of
+      # "All" toggle checkboxes for multi-select fields. It manages
+      # the checkbox setup, labeling, and data attributes needed for
+      # JavaScript toggle functionality.
+      #
+      # Features:
+      # - Automatic "All" checkbox creation for multi-select fields
+      # - Integration with data attributes for Stimulus behaviors
+      # - Checkbox state management (checked/unchecked)
+      # - Label generation and internationalization support
+      # - Conditional checkbox display logic
+      #
+      # @example Service usage
+      #   checkbox_manager = CheckboxManager.new(multi_select_field)
+      #   checkbox_manager.setup_default_checkbox
+      #   checkbox_manager.should_show_checkbox?
+      #   # => true
+      #
+      # The service works with DataAttributesBuilder to provide
+      # complete checkbox functionality for multi-select scenarios.
       class CheckboxManager
         def initialize(field)
           @field = field

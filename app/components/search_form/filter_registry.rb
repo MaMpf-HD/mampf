@@ -1,4 +1,38 @@
+# Filter Registry Module
+#
+# This module provides dynamic method generation for search form filters.
+# It maintains a centralized registry of all available filters and their
+# configuration, then generates convenience methods like `add_*_filter`
+# for each registered filter.
+#
+# Key features:
+# - Centralized filter configuration with FILTERS hash
+# - Auto-generation of standard add_*_filter methods
+# - Support for additional methods (e.g., with_operators, with_inheritance)
+# - Convention-based class name resolution
+# - Clean separation between standard and enhanced filter variants
+#
+# The registry eliminates the need to manually define dozens of similar
+# convenience methods while maintaining flexibility for special cases.
+
 module SearchForm
+  # Registry module that dynamically generates filter convenience methods
+  #
+  # This module is included in SearchForm::SearchForm to provide all the
+  # `add_*_filter` methods. It uses metaprogramming to generate methods
+  # based on the FILTERS configuration hash.
+  #
+  # @example Adding a new filter
+  #   # Add to FILTERS hash:
+  #   my_new_filter: {
+  #     additional_methods: {
+  #       with_special_option: :with_special_radios
+  #     }
+  #   }
+  #
+  #   # This automatically generates:
+  #   # - add_my_new_filter(**options)
+  #   # - add_my_new_filter_with_special_option(**options)
   module FilterRegistry
     # Filter configuration with optional additional methods
     FILTERS = {

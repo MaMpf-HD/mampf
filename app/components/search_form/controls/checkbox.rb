@@ -1,6 +1,37 @@
-# app/components/search_form/controls/checkbox.rb
 module SearchForm
   module Controls
+    # Checkbox control component for boolean input
+    #
+    # This control renders a single checkbox input with its associated label.
+    # It provides integration with Stimulus for dynamic behaviors like
+    # toggling other form elements or triggering JavaScript actions.
+    #
+    # Features:
+    # - Boolean state management (checked/unchecked)
+    # - Stimulus integration for toggle behaviors
+    # - Support for radio group toggle functionality
+    # - Bootstrap styling with form-check classes
+    # - Proper accessibility with label association
+    #
+    # @param name [String, Symbol] The checkbox name for form parameters
+    # @param label [String] Display label for the checkbox
+    # @param checked [Boolean] Initial checked state
+    #
+    # @example Basic checkbox
+    #   Checkbox.new(
+    #     form_state: form_state,
+    #     name: :include_archived,
+    #     label: "Include archived items",
+    #     checked: false
+    #   )
+    #
+    # @example Checkbox with toggle behavior
+    #   Checkbox.new(
+    #     form_state: form_state,
+    #     name: :select_all,
+    #     label: "Select All",
+    #     stimulus: { toggle: true, target: "course_ids" }
+    #   )
     class Checkbox < BaseControl
       attr_reader :name, :label, :checked
 

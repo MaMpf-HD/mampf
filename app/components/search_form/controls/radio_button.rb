@@ -1,6 +1,44 @@
-# app/components/search_form/controls/radio_button.rb
 module SearchForm
   module Controls
+    # Radio button control component for single selection from a group
+    #
+    # This control renders an individual radio button input with its label.
+    # Radio buttons are typically used in groups where only one option can
+    # be selected at a time. This component integrates with RadioGroup for
+    # proper grouping and shared name attributes.
+    #
+    # Features:
+    # - Single selection within a named group
+    # - Value-based option representation
+    # - Stimulus integration for dynamic behaviors
+    # - Support for inline and block layouts
+    # - Disabled state support
+    # - Proper accessibility with label association
+    #
+    # @param value [String, Integer] The value submitted when this radio is selected
+    # @param label [String] Display label for the radio button
+    # @param checked [Boolean] Whether this radio is initially selected
+    # @param name [String, Symbol] The shared name for the radio group
+    # @param inline [Boolean] Whether to display inline or as block
+    # @param disabled [Boolean] Whether the radio button is disabled
+    #
+    # @example Basic radio button
+    #   RadioButton.new(
+    #     form_state: form_state,
+    #     name: :sort_by,
+    #     value: "date",
+    #     label: "Sort by Date",
+    #     checked: false
+    #   )
+    #
+    # @example Inline radio button
+    #   RadioButton.new(
+    #     form_state: form_state,
+    #     name: :view_mode,
+    #     value: "grid",
+    #     label: "Grid View",
+    #     inline: true
+    #   )
     class RadioButton < BaseControl
       attr_reader :value, :label, :checked
       attr_accessor :name, :form_state

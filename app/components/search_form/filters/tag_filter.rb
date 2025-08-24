@@ -1,5 +1,29 @@
+# frozen_string_literal: true
+
 module SearchForm
   module Filters
+    # Tag filter for selecting content tags
+    #
+    # This filter provides a multi-select dropdown for choosing tags, with
+    # AJAX-powered dynamic loading of tag options. Tags are loaded on-demand
+    # to improve initial page load performance, especially when there are
+    # many available tags.
+    #
+    # Features:
+    # - Multi-select tag dropdown with AJAX loading
+    # - Dynamic tag search and filtering
+    # - Support for inheritance-based tag filtering
+    # - Internationalized labels and help text
+    # - Integration with tag model for content categorization
+    #
+    # @example Basic tag filter
+    #   add_tag_filter
+    #
+    # @example Tag filter with inheritance
+    #   add_tag_filter_with_inheritance
+    #
+    # The filter starts with an empty collection and uses AJAX to populate
+    # tag options based on user input or form context.
     class TagFilter < Fields::MultiSelectField
       def initialize(**)
         # Pass empty array for collection - tags will be loaded by AJAX

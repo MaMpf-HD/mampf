@@ -1,6 +1,25 @@
 module SearchForm
   module Fields
     module Services
+      # CSS management service for form field styling
+      #
+      # This service object handles CSS class management for form fields,
+      # combining default classes with custom classes and runtime additions.
+      # It provides a clean separation of concerns for styling logic.
+      #
+      # Features:
+      # - Combines default field classes with custom options
+      # - Handles runtime CSS class additions
+      # - Provides clean string output for HTML class attributes
+      # - Supports both static and dynamic class management
+      #
+      # @example Basic usage
+      #   css_manager = CssManager.new(field)
+      #   css_manager.field_css_classes
+      #   # => "form-control custom-class"
+      #
+      # The service is initialized with a field instance and provides
+      # methods to extract and combine CSS classes from various sources.
       class CssManager
         def initialize(field)
           @field = field

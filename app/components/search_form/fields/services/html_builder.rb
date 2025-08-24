@@ -1,6 +1,27 @@
 module SearchForm
   module Fields
     module Services
+      # HTML attribute building service for form fields
+      #
+      # This service object handles the construction of HTML attributes
+      # for form fields, including IDs, CSS classes, data attributes,
+      # and options for select fields. It provides consistent HTML
+      # generation across different field types.
+      #
+      # Features:
+      # - Consistent ID generation using form state
+      # - CSS class management integration
+      # - Select field options handling (prompts, selected values)
+      # - HTML attribute merging and validation
+      # - Accessibility attribute support
+      #
+      # @example Basic usage
+      #   html_builder = HtmlBuilder.new(field)
+      #   html_builder.field_html_options(data: { controller: "select2" })
+      #   # => { id: "search_term", class: "form-control", data: { controller: "select2" } }
+      #
+      # The service works closely with CssManager and form_state to
+      # provide complete HTML attribute management.
       class HtmlBuilder
         def initialize(field)
           @field = field

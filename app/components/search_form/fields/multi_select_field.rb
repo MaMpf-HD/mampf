@@ -1,5 +1,36 @@
 module SearchForm
   module Fields
+    # Multi-select field component for multiple value selection
+    #
+    # This field type renders a select dropdown that allows multiple selections.
+    # It typically includes an "All" toggle checkbox for selecting/deselecting
+    # all options at once. Used for filtering by multiple categories, tags,
+    # or other multi-value criteria.
+    #
+    # Features:
+    # - Multiple selection support
+    # - Optional "All" toggle checkbox
+    # - Integration with Stimulus for dynamic behavior
+    # - Service objects for checkbox and data attribute management
+    #
+    # @param collection [Array] Array of options for the multi-select
+    # @param all_toggle_name [String] Generated name for the "All" checkbox
+    #
+    # @example Basic multi-select field
+    #   add_multi_select_field(
+    #     name: :course_ids,
+    #     label: "Courses",
+    #     collection: courses_for_select,
+    #     help_text: "Select one or more courses"
+    #   )
+    #
+    # @example Multi-select without "All" checkbox
+    #   add_multi_select_field(
+    #     name: :tag_ids,
+    #     label: "Tags",
+    #     collection: tags_for_select,
+    #     skip_all_checkbox: true
+    #   )
     class MultiSelectField < Field
       attr_reader :collection, :all_toggle_name, :renderer, :checkbox_manager, :data_builder
 
