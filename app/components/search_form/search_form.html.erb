@@ -2,8 +2,9 @@
               scope: scope,
               method: method,
               remote: remote,
-              data: { controller: "search-form" },
-              role: "search" do |f| %>
+              html: { 
+                role: "search",
+                data: { controller: "search-form" } } do |f| %>
   <div class="row mb-3 p-2">
     <% fields.each do |field| %>
       <%= render field.with_form(f) %>
