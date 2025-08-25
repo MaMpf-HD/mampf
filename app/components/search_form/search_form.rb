@@ -28,12 +28,25 @@
 # configuration, providing a consistent API for all filter types.
 module SearchForm
   class SearchForm < ViewComponent::Base
+    # ViewComponent's `renders_many` allows passing a `lambda`, which we use here
+    # as a hook to intercept every field component before it's rendered. This
+    # lambda's primary purpose is to automatically inject the shared @form_state
+    # instance into each field.
+    #
+    # This dependency injection is crucial because it provides every field with:
+    # - Access to the form builder (`form_with` instance).
+    # - The shared context for generating unique and accessible HTML IDs.
+    #
+    # By handling this automatically, we avoid having to manually pass the
+    # form_state to every `add_*_filter` or `with_field` call, simplifying the
+    # public API of the component.
     renders_many :fields, lambda { |component, &block|
       # Auto-inject form_state if needed
       if component.respond_to?(:form_state=) && component.form_state.nil?
         component.form_state = @form_state
       end
 
+      # Pass along any content block to the field component.
       component.with_content(&block) if block
       component
     }

@@ -1,4 +1,3 @@
-# spec/components/search_form/search_form_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::SearchForm, type: :component) do
@@ -79,6 +78,51 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
       rendered = render_inline(search_form)
       user_id_field = rendered.css('input[name="search[user_id]"]').first
       expect(user_id_field["value"]).to eq("123")
+    end
+  end
+
+  describe "field injection via renders_many" do
+    let(:mock_field) { instance_double(SearchForm::Fields::Field, "MockField") }
+    let(:form_state_instance) { search_form.instance_variable_get(:@form_state) }
+
+    before do
+      allow(mock_field).to receive(:with_content)
+      allow(mock_field).to receive(:respond_to?).and_return(false)
+      allow(mock_field).to receive(:respond_to?).with(:with_content).and_return(true)
+    end
+
+    context "when a field supports form_state injection" do
+      before do
+        allow(mock_field).to receive(:respond_to?).with(:form_state=).and_return(true)
+        allow(mock_field).to receive(:respond_to?).with(:form_state).and_return(true)
+      end
+
+      it "injects the form_state if it is nil" do
+        allow(mock_field).to receive(:form_state).and_return(nil)
+        expect(mock_field).to receive(:form_state=).with(form_state_instance)
+
+        # Calling with_field triggers the renders_many lambda
+        search_form.with_field(mock_field)
+      end
+
+      it "does NOT inject the form_state if it is already set" do
+        allow(mock_field).to receive(:form_state).and_return("already_set")
+        expect(mock_field).not_to receive(:form_state=)
+
+        search_form.with_field(mock_field)
+      end
+    end
+
+    context "when a field does not support form_state injection" do
+      before do
+        allow(mock_field).to receive(:respond_to?).with(:form_state=).and_return(false)
+      end
+
+      it "does not attempt to inject the form_state" do
+        expect(mock_field).not_to receive(:form_state=)
+
+        search_form.with_field(mock_field)
+      end
     end
   end
 end
