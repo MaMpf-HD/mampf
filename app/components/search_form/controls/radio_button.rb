@@ -5,16 +5,15 @@ module SearchForm
       attr_reader :value, :label, :checked
       attr_accessor :name, :form_state
 
-      def initialize(value:, label:, checked: false, **options)
-        form_state = options.delete(:form_state)
-        name = options.delete(:name)
-
-        super(form_state: form_state, **options)
+      # rubocop:disable Metrics/ParameterLists
+      def initialize(form_state:, name:, value:, label:, checked: false, **)
+        super(form_state: form_state, **)
         @name = name
         @value = value
         @label = label
         @checked = checked
       end
+      # rubocop:enable Metrics/ParameterLists
 
       # Override to provide radio button specific data attributes
       def data_attributes
