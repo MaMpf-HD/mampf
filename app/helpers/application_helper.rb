@@ -329,7 +329,7 @@ module ApplicationHelper
   end
 
   def render_search_form(url:, context: nil, **, &_block)
-    form_state = SearchForm::FormState.new(context: context)
+    form_state = SearchForm::Services::FormState.new(context: context)
     builder = SearchForm::Builders::FormBuilder.new(form_state)
     yield(builder) if block_given?
     render(builder.build_form(url: url, **))

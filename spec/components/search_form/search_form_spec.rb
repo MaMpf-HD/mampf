@@ -17,7 +17,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
       end
 
       it "initializes form_state with context" do
-        expect(SearchForm::FormState).to receive(:new).with(context: nil)
+        expect(SearchForm::Services::FormState).to receive(:new).with(context: nil)
         described_class.new(url: url)
       end
     end
@@ -86,7 +86,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
 
   describe "#filter_registry" do
     it "returns and memoizes a FilterRegistry instance" do
-      expect(search_form.filter_registry).to be_a(SearchForm::FilterRegistry)
+      expect(search_form.filter_registry).to be_a(SearchForm::Services::FilterRegistry)
       expect(search_form.filter_registry).to be(search_form.filter_registry)
     end
   end

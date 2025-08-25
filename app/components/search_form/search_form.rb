@@ -54,7 +54,7 @@ module SearchForm
       @method = method
       @remote = remote
       @context = context
-      @form_state = FormState.new(context: context)
+      @form_state = Services::FormState.new(context: context)
       @hidden_fields = {}
     end
 
@@ -84,10 +84,10 @@ module SearchForm
     # The registry handles dynamic filter method generation and filter creation.
     # @return [FilterRegistry] The registry instance
     def filter_registry
-      @filter_registry ||= FilterRegistry.new(self)
+      @filter_registry ||= Services::FilterRegistry.new(self)
     end
 
     # Generate filter methods at class level
-    FilterRegistry.generate_methods_for(self)
+    Services::FilterRegistry.generate_methods_for(self)
   end
 end
