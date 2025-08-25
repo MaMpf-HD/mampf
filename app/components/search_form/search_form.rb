@@ -24,10 +24,6 @@ module SearchForm
       @hidden_fields = {}
     end
 
-    def add_field(component, &)
-      with_field(component, &)
-    end
-
     def add_hidden_field(name:, value:)
       @hidden_fields[name] = value
     end
