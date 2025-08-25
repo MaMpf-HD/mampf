@@ -14,7 +14,10 @@ module SearchForm
         # Common method for building HTML options with field CSS classes
         def field_html_options(additional_options = {})
           default_options = { class: css_manager.field_css_classes }
-          html_options_with_id(default_options.merge(additional_options))
+          accessibility_options = build_accessibility_attributes
+
+          html_options_with_id(default_options.merge(accessibility_options)
+                                              .merge(additional_options))
         end
 
         # Standardized select tag options that handle prompts
@@ -35,6 +38,11 @@ module SearchForm
           @field.form_state.label_for(@field.name)
         end
 
+        # Generate aria-describedby ID for help text
+        def help_text_id
+          "#{element_id}_help"
+        end
+
         private
 
           attr_reader :field
@@ -49,6 +57,25 @@ module SearchForm
 
           def resolve_prompt_text
             @field.prompt.is_a?(String) ? @field.prompt : I18n.t("basics.select")
+          end
+
+          def build_accessibility_attributes
+            attributes = {}
+
+            # Add aria-describedby for help text
+            attributes[:"aria-describedby"] = help_text_id if @field.show_help_text?
+
+            # Add aria-required for required fields
+            attributes[:"aria-required"] = "true" if field_required?
+
+            # Add aria-label for submit buttons
+            attributes[:"aria-label"] = @field.label if @field.is_a?(Fields::SubmitField)
+
+            attributes
+          end
+
+          def field_required?
+            [true, "required"].include?(@field.options[:required])
           end
       end
     end

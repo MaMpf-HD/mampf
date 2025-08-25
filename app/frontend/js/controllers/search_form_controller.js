@@ -61,6 +61,7 @@ export default class extends Controller {
     const select = this.findAssociatedSelect(element);
     if (select?.tomselect) {
       select.tomselect.enable();
+      select.setAttribute("aria-disabled", "false");
     }
   }
 
@@ -68,6 +69,7 @@ export default class extends Controller {
     const select = this.findAssociatedSelect(element);
     if (select?.tomselect) {
       select.tomselect.disable();
+      select.setAttribute("aria-disabled", "true");
     }
   }
 

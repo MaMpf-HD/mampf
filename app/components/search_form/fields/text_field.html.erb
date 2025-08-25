@@ -2,7 +2,9 @@
   <%= form.label html.label_for, label, class: "form-label" %>
 
   <% if show_help_text? %>
-    <%= helpers.helpdesk(help_text, false) %>
+    <div id="<%= html.help_text_id %>" class="form-text">
+      <%= helpers.helpdesk(help_text, false) %>
+    </div>
   <% end %>
 
   <%= form.text_field name, html.field_html_options %>
