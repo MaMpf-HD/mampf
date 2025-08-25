@@ -1,7 +1,6 @@
+# app/components/search_form/search_form.rb
 module SearchForm
   class SearchForm < ViewComponent::Base
-    include FilterRegistry
-
     renders_many :fields, lambda { |component, &block|
       # Auto-inject form_state if needed
       if component.respond_to?(:form_state=) && component.form_state.nil?
@@ -41,5 +40,13 @@ module SearchForm
                    **
                  ))
     end
+
+    # Access to the filter registry
+    def filter_registry
+      @filter_registry ||= FilterRegistry.new(self)
+    end
+
+    # Generate filter methods at class level
+    FilterRegistry.generate_methods_for(self)
   end
 end

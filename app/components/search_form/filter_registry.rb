@@ -1,5 +1,5 @@
 module SearchForm
-  module FilterRegistry
+  class FilterRegistry
     # Filter configuration with optional additional methods
     FILTERS = {
       medium_type: {},
@@ -36,17 +36,19 @@ module SearchForm
       }
     }.freeze
 
-    def self.included(base)
-      generate_filter_methods(base)
+    def initialize(search_form)
+      @search_form = search_form
     end
 
-    def self.generate_filter_methods(klass)
+    def self.generate_methods_for(klass)
       FILTERS.each do |filter_name, config|
         filter_class = "SearchForm::Filters::#{filter_name.to_s.camelize}Filter"
 
         # Standard add_*_filter method
         klass.define_method("add_#{filter_name}_filter") do |**options|
-          with_field(filter_class.constantize.new(**options))
+          filter = filter_class.constantize.new(**options)
+          with_field(filter)
+          filter # Return for testing
         end
 
         # Generate additional methods if specified
@@ -55,18 +57,17 @@ module SearchForm
         config[:additional_methods].each do |method_suffix, chain_method|
           klass.define_method("add_#{filter_name}_filter_#{method_suffix}") do |*args, **options|
             filter = filter_class.constantize.new(**options)
-
-            # Handle both symbol methods and lambda methods
-            enhanced_filter = if chain_method.is_a?(Proc)
-              chain_method.call(*args).call(filter)
-            else
-              filter.send(chain_method, *args)
-            end
-
+            enhanced_filter = filter.send(chain_method, *args)
             with_field(enhanced_filter)
+            enhanced_filter # Return for testing
           end
         end
       end
+    end
+
+    # Utility method for testing
+    def available_filters
+      FILTERS.keys
     end
   end
 end

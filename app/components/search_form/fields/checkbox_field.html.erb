@@ -2,9 +2,9 @@
   <%= render checkbox_control %>
 
   <% if show_help_text? %>
-    <div id="<%= html.help_text_id %>" class="form-text">
+    <span id="<%= html.help_text_id %>">
       <%= helpers.helpdesk(help_text, false) %>
-    </div>
+    </span>
   <% end %>
 
   <% if show_content? %>

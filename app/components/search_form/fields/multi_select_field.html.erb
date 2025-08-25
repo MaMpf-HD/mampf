@@ -2,9 +2,9 @@
   <%= form.label html.label_for, label, class: "form-label" %>
 
   <% if show_help_text? %>
-    <div id="<%= html.help_text_id %>" class="form-text">
+    <span id="<%= html.help_text_id %>">
       <%= helpers.helpdesk(help_text, true) %>
-    </div>
+    </span>
   <% end %>
 
   <%= form.select name, collection, html.select_tag_options, field_html_options %>
