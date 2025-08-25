@@ -33,7 +33,8 @@ module SearchForm
 
       # Initializes a new FormState instance.
       #
-      # @param form [ActionView::Helpers::FormBuilder, nil] The form builder, optional at initialization.
+      # @param form [ActionView::Helpers::FormBuilder, nil]
+      # The form builder, optional at initialization.
       # @param context [String, nil] A unique context string for the form (e.g., "media_search").
       def initialize(form: nil, context: nil)
         @form = form
