@@ -61,13 +61,11 @@ RSpec.describe(SearchForm::Filters::EditorFilter, type: :component) do
 
   describe "collection generation logic" do
     it "uses the tutorial name when present" do
-      user_with_tutorial_name = user_data.find { |u| u[0] == 2 }
       formatted_user = filter.collection.find { |c| c[1] == 2 }
       expect(formatted_user.first).to eq("Tutor B (beta@example.com)")
     end
 
     it "uses the full name when tutorial name is not present" do
-      user_without_tutorial_name = user_data.find { |u| u[0] == 1 }
       formatted_user = filter.collection.find { |c| c[1] == 1 }
       expect(formatted_user.first).to eq("Alpha User (alpha@example.com)")
     end
