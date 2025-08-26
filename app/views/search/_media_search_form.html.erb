@@ -10,9 +10,7 @@
 
   <% c.add_medium_access_filter %>
 
-  <% unless purpose == 'import' %>
-    <% c.add_answer_count_filter(purpose: purpose) %>
-  <% end %>
+  <% c.add_answer_count_filter(purpose: purpose) %>
 
   <% c.add_fulltext_filter %>
 
