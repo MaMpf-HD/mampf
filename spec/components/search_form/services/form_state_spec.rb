@@ -1,4 +1,3 @@
-# spec/components/search_form/services/form_state_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Services::FormState, type: :component) do

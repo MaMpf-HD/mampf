@@ -1,4 +1,3 @@
-# spec/components/search_form/fields/services/checkbox_manager_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::Services::CheckboxManager, type: :component) do

@@ -1,4 +1,3 @@
-# spec/components/search_form/services/filter_registry_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Services::FilterRegistry, type: :component) do

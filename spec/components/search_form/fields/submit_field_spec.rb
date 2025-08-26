@@ -1,4 +1,3 @@
-# spec/components/search_form/fields/submit_field_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::SubmitField, type: :component) do

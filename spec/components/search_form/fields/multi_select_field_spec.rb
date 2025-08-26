@@ -1,4 +1,3 @@
-# spec/components/search_form/fields/multi_select_field_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::MultiSelectField, type: :component) do

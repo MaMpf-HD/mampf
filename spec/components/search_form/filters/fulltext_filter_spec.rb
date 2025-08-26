@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/fulltext_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::FulltextFilter, type: :component) do

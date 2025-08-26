@@ -1,5 +1,3 @@
-# app/components/search_form/form_state.rb
-
 # FormState is a service object that manages state related to HTML form rendering.
 # It has two primary, highly-cohesive responsibilities:
 #

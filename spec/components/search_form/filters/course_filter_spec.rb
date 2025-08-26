@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/course_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::CourseFilter, type: :component) do

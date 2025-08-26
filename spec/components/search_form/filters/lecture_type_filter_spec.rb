@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/lecture_type_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::LectureTypeFilter, type: :component) do

@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/answer_count_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::AnswerCountFilter, type: :component) do

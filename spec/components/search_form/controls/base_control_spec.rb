@@ -1,4 +1,3 @@
-# spec/components/search_form/controls/base_control_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Controls::BaseControl, type: :component) do

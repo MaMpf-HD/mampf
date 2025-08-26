@@ -1,4 +1,3 @@
-# spec/components/search_form/fields/services/data_attributes_builder_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::Services::DataAttributesBuilder, type: :component) do

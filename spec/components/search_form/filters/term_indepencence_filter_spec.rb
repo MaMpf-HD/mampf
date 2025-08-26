@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/term_independence_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::TermIndependenceFilter, type: :component) do

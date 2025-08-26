@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/tag_title_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::TagTitleFilter, type: :component) do

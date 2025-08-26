@@ -1,4 +1,3 @@
-# app/components/search_form/filters/medium_type_filter.rb
 module SearchForm
   module Filters
     # Renders a multi-select field for filtering by medium type (e.g., WorkedExample",

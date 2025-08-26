@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/editor_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::EditorFilter, type: :component) do

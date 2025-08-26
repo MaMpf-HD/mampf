@@ -1,5 +1,3 @@
-# app/components/search_form/search_form.rb
-
 # SearchForm is a flexible ViewComponent for building search interfaces.
 #
 # This component provides a declarative API for creating search forms with various

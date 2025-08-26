@@ -1,4 +1,3 @@
-# spec/components/search_form/controls/radio_group_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Controls::RadioGroup, type: :component) do

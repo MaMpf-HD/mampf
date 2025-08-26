@@ -1,4 +1,3 @@
-# spec/components/search_form/filters/teachable_filter_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Filters::TeachableFilter, type: :component) do

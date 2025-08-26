@@ -1,5 +1,3 @@
-# app/components/search_form/services/filter_registry.rb
-
 # FilterRegistry is responsible for managing and dynamically generating filter methods
 # for SearchForm components.
 #

@@ -1,4 +1,3 @@
-# spec/components/search_form/fields/services/html_builder_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do

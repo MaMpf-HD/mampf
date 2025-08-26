@@ -1,4 +1,3 @@
-# spec/components/search_form/controls/checkbox_spec.rb
 require "rails_helper"
 
 RSpec.describe(SearchForm::Controls::Checkbox, type: :component) do
