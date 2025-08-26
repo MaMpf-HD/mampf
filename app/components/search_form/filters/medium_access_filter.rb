@@ -1,7 +1,18 @@
-# app/components/search_form/filters/medium_access_filter.rb
 module SearchForm
   module Filters
+    # Renders a select field for filtering by medium access rights.
+    # This component is a simple specialization of `SelectField`, pre-configured
+    # with a specific name, label, and a static collection of access levels
+    # (e.g., "All", "Users", "Subscribers").
     class MediumAccessFilter < Fields::SelectField
+      # Initializes the MediumAccessFilter.
+      #
+      # This component is specialized and hard-codes its own options for the
+      # underlying `SelectField`.
+      #
+      # @param ** [Hash] Catches any other keyword arguments, which are passed
+      #   to the superclass (`SelectField`). This can be used to pass options like
+      #   `:container_class`.
       def initialize(**)
         super(
           name: :access,
