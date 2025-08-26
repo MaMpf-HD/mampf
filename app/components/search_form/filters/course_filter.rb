@@ -1,6 +1,18 @@
 module SearchForm
   module Filters
+    # Renders a multi-select field for filtering by courses. This component
+    # extends `MultiSelectField` and adds an optional "Edited Courses" button.
+    # This button, when clicked, uses JavaScript to pre-select the courses that
+    # a given user has edited.
     class CourseFilter < Fields::MultiSelectField
+      # Initializes the CourseFilter.
+      #
+      # This component is specialized and hard-codes its own options for the
+      # underlying `MultiSelectField`, such as `:name`, `:label`, and `:collection`.
+      # It also initializes the state for the optional "Edited Courses" button.
+      #
+      # @param ** [Hash] Catches any other keyword arguments, which are passed
+      #   to the superclass.
       def initialize(**)
         super(
           name: :course_ids,
@@ -14,6 +26,12 @@ module SearchForm
         @current_user = nil
       end
 
+      # A configuration method to enable and render the "Edited Courses" button.
+      # It stores the user, sets a flag, and populates the field's `content`
+      # slot with the button's HTML.
+      #
+      # @param current_user [User] The user whose edited courses should be pre-selected.
+      # @return [self] Returns the component instance to allow for method chaining.
       def with_edited_courses_button(current_user)
         @show_edited_courses_button = true
         @current_user = current_user
@@ -26,6 +44,10 @@ module SearchForm
         self
       end
 
+      # A helper method for the template to determine if the content area
+      # (containing the "Edited Courses" button) should be rendered.
+      #
+      # @return [Boolean] `true` if the button has been enabled.
       def show_edited_courses_button?
         @show_edited_courses_button
       end
