@@ -101,7 +101,7 @@ module SearchForm
           klass.define_method("add_#{filter_name}_filter") do |**options|
             filter = filter_class.constantize.new(**options)
             with_field(filter)
-            # Return for testing
+            # Return the filter instance to allow for method chaining and for inspection in tests.
             filter
           end
 
@@ -113,7 +113,7 @@ module SearchForm
               filter = filter_class.constantize.new(**options)
               enhanced_filter = filter.send(chain_method, *args)
               with_field(enhanced_filter)
-              # Return for testing
+              # Return the filter instance to allow for method chaining and for inspection in tests.
               enhanced_filter
             end
           end

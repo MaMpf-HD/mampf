@@ -4,7 +4,6 @@ export default class extends Controller {
   static targets = ["select", "allToggle", "radioToggle"];
 
   connect() {
-    console.log("Search form controller connected");
     this.initializeState();
   }
 
