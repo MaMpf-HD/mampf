@@ -55,8 +55,10 @@ RSpec.describe(SearchForm::Fields::TextField, type: :component) do
       allow(html_builder).to receive(:field_html_options).and_return({ class: "form-control" })
 
       # Mock the underlying Rails form helpers
-      allow(form_builder).to receive(:label).and_return('<label for="search_query_label">Search</label>'.html_safe)
-      allow(form_builder).to receive(:text_field).and_return('<input type="text" class="form-control">'.html_safe)
+      allow(form_builder).to receive(:label)
+        .and_return('<label for="search_query_label">Search</label>'.html_safe)
+      allow(form_builder).to receive(:text_field)
+        .and_return('<input type="text" class="form-control">'.html_safe)
     end
 
     it "renders a text input field with its label and container" do

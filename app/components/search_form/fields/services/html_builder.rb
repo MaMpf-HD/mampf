@@ -1,17 +1,32 @@
 module SearchForm
   module Fields
     module Services
+      # A service class that centralizes the logic for building HTML attribute hashes
+      # for form field elements. It is responsible for generating unique IDs,
+      # consolidating CSS classes, adding accessibility (ARIA) attributes, and
+      # preparing options for select tags.
       class HtmlBuilder
+        # Initializes a new HtmlBuilder.
+        #
+        # @param field [SearchForm::Fields::Field] The field component that this builder serves.
         def initialize(field)
           @field = field
         end
 
-        # Common method for building HTML options with ID
+        # A base method for creating an options hash that always includes a unique ID.
+        #
+        # @param additional_options [Hash] Extra options to merge.
+        # @return [Hash] An options hash guaranteed to contain a unique `id` attribute.
         def html_options_with_id(additional_options = {})
           @field.options.merge(id: element_id).merge(additional_options)
         end
 
-        # Common method for building HTML options with field CSS classes
+        # Builds the main HTML options hash for a field element (e.g., `<input>`, `<select>`).
+        # It combines CSS classes from the `CssManager`, accessibility attributes,
+        # a unique ID, and any additional options passed in.
+        #
+        # @param additional_options [Hash] Extra options to merge into the final hash.
+        # @return [Hash] The final HTML options hash for the field element.
         def field_html_options(additional_options = {})
           default_options = { class: css_manager.field_css_classes }
           accessibility_options = build_accessibility_attributes
@@ -20,7 +35,10 @@ module SearchForm
                                               .merge(additional_options))
         end
 
-        # Standardized select tag options that handle prompts
+        # Builds the options hash for the Rails `form.select` helper (its 3rd argument),
+        # specifically handling the `:prompt` and `:selected` keys.
+        #
+        # @return [Hash] An options hash containing `:prompt` and/or `:selected` if applicable.
         def select_tag_options
           options = {}
           options[:prompt] = resolve_prompt_text if should_add_prompt?
@@ -28,17 +46,23 @@ module SearchForm
           options
         end
 
-        # Generate a unique ID using form_state
+        # Generates a unique ID for the field element by delegating to the `form_state`.
+        #
+        # @return [String] A unique HTML ID for the field element.
         def element_id
           @field.form_state.element_id_for(@field.name)
         end
 
-        # Public ID for the <label for="..."> attribute
+        # Generates the value for the `<label>` tag's `for` attribute.
+        #
+        # @return [String] The ID to be used in the `for` attribute.
         def label_for
           @field.form_state.label_for(@field.name)
         end
 
-        # Generate aria-describedby ID for help text
+        # Generates the ID for the help text element, used for `aria-describedby`.
+        #
+        # @return [String] The unique ID for the help text `<span>`.
         def help_text_id
           "#{element_id}_help"
         end
@@ -62,13 +86,8 @@ module SearchForm
           def build_accessibility_attributes
             attributes = {}
 
-            # Add aria-describedby for help text
             attributes[:"aria-describedby"] = help_text_id if @field.show_help_text?
-
-            # Add aria-required for required fields
             attributes[:"aria-required"] = "true" if field_required?
-
-            # Add aria-label for submit buttons
             attributes[:"aria-label"] = @field.label if @field.is_a?(Fields::SubmitField)
 
             attributes
