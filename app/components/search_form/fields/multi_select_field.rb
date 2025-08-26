@@ -29,11 +29,12 @@ module SearchForm
       # @param label [String] The label text for the field.
       # @param collection [Array] The collection of options for the select tag.
       # @param options [Hash] A hash of options passed to the base `Field`. This class
-      #   uses the `process_options` hook to set its own defaults for the select tag:
+      #   uses the `process_options` hook and `default_prompt` method to set its own defaults:
       #   - `:multiple` defaults to `true`.
-      #   - `:disabled` defaults to `true`. This is because the "All" checkbox is checked
-      #     by default, and unchecking it is what enables the select field via JavaScript.
+      #   - `:disabled` defaults to `true` (because the "All" checkbox is checked by default).
       #   - `:required` defaults to `true`.
+      #   - `:prompt` defaults to `true` (overriding the base `Field` behavior).
+      #   - `:selected` has no default.
       #   These can be overridden by passing them explicitly in the options hash.
       def initialize(name:, label:, collection:, **options)
         @collection = collection
