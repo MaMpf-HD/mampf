@@ -96,8 +96,11 @@ RSpec.describe(SearchForm::Controls::Checkbox, type: :component) do
       end
 
       it "combines both actions in the action string" do
-        expected_action = "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup"
-        expect(control.data_attributes[:action]).to eq(expected_action)
+        expected_actions = [
+          "change->search-form#toggleFromCheckbox",
+          "change->search-form#toggleRadioGroup"
+        ]
+        expect(control.data_attributes[:action]).to eq(expected_actions.join(" "))
       end
     end
   end

@@ -102,7 +102,8 @@ RSpec.describe(SearchForm::Services::FilterRegistry, type: :component) do
         end
 
         it "returns the enhanced filter instance" do
-          expect(search_form_instance.add_teachable_filter_with_inheritance).to eq(enhanced_filter_double)
+          expect(search_form_instance.add_teachable_filter_with_inheritance)
+            .to eq(enhanced_filter_double)
         end
       end
     end
