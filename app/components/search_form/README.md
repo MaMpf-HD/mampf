@@ -103,8 +103,8 @@ class FulltextFilter < Fields::TextField
     super(
       name: :fulltext,
       # Change the default label here
-      label: I18n.t("basics.keyword_search"),
-      help_text: I18n.t("admin.lecture.info.search_fulltext"),
+      label: I18n.t("basics.tag"),
+      help_text: I18n.t("basics.fulltext"),
       **
     )
   end
@@ -202,7 +202,7 @@ First, create a new class in `app/components/search_form/filters/`. This class s
 
 In the `initialize` method, call `super` with the hard-coded options for your filter, such as its `:name` and `:label`. It's crucial to accept and pass `**options` to `super` to ensure that your new filter supports the runtime customizations described in Section 3.
 
-**Example:** Let's create a simple text filter for searching by an author's name.
+**Example:** Let's create a simple text filter for searching by an teacher's name.
 
 ```ruby
 # app/components/search_form/filters/author_filter.rb
@@ -211,8 +211,8 @@ module SearchForm
     class AuthorFilter < Fields::TextField
       def initialize(**options)
         super(
-          name: :author_name,
-          label: I18n.t("basics.author"),
+          name: :teacher_name,
+          label: I18n.t("basics.teacher"),
           **options
         )
       end
