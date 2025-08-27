@@ -16,7 +16,7 @@ module Search
 
         count = params[:answers_count].to_i
 
-        if count == 7
+        if count >= 7
           scope.where("answers_count > ?", 6)
         else
           scope.where(answers_count: count)
