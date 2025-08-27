@@ -14,7 +14,7 @@
 module Search
   module Filters
     class TagFilter < BaseFilter
-      def call
+      def filter
         return scope unless scope.klass.reflect_on_association(:tags)
         return scope if skip_filter?(all_param: :all_tags, ids_param: :tag_ids)
 

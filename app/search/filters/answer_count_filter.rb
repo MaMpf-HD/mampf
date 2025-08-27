@@ -8,7 +8,7 @@
 module Search
   module Filters
     class AnswerCountFilter < BaseFilter
-      def call
+      def filter
         # This filter is skipped unless the search is exclusively for Questions
         # AND a relevant answer count is provided. This check is based on the
         # original params, making it independent of filter order.
@@ -16,7 +16,7 @@ module Search
 
         count = params[:answers_count].to_i
 
-        if count == 7
+        if count >= 7
           scope.where("answers_count > ?", 6)
         else
           scope.where(answers_count: count)

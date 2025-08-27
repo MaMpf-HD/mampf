@@ -5,8 +5,8 @@ RSpec.describe(Search::Filters::BaseFilter) do
   let(:dummy_class) do
     Class.new(described_class) do
       # A dummy implementation for testing.
-      def call
-        "call method was executed"
+      def filter
+        "filter method was executed"
       end
     end
   end
@@ -41,7 +41,7 @@ RSpec.describe(Search::Filters::BaseFilter) do
   end
 
   describe ".filter" do
-    it "initializes a new instance and calls #call" do
+    it "initializes a new instance and calls #filter" do
       filter_instance = instance_spy(dummy_class)
       allow(dummy_class).to receive(:new).and_return(filter_instance)
 
@@ -49,17 +49,17 @@ RSpec.describe(Search::Filters::BaseFilter) do
 
       expect(dummy_class).to have_received(:new)
         .with(scope: scope, params: params, user: user)
-      expect(filter_instance).to have_received(:call)
+      expect(filter_instance).to have_received(:filter)
     end
   end
 
-  describe "#call" do
+  describe "#filter" do
     subject(:filter) { described_class.new(scope: scope, params: params, user: user) }
 
     it "raises NotImplementedError" do
-      expect { filter.call }.to raise_error(
+      expect { filter.filter }.to raise_error(
         NotImplementedError,
-        "Subclasses must implement #call"
+        "Subclasses must implement #filter"
       )
     end
   end

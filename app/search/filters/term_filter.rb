@@ -10,7 +10,7 @@
 module Search
   module Filters
     class TermFilter < BaseFilter
-      def call
+      def filter
         return scope if skip_filter?(all_param: :all_terms, ids_param: :term_ids)
 
         ids_to_filter = params[:term_ids].dup

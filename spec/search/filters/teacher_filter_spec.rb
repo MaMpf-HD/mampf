@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::TeacherFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let!(:teacher1) { create(:user) }
     let!(:teacher2) { create(:user) }
     let!(:teacher_with_no_lectures) { create(:user) }

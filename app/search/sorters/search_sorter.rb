@@ -7,7 +7,7 @@ module Search
   module Sorters
     class SearchSorter < BaseSorter
       # Applies the sorting logic.
-      def call
+      def sort
         return scope if fulltext_search? || !orderable?
 
         apply_default_order

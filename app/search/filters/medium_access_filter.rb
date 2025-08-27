@@ -8,7 +8,7 @@
 module Search
   module Filters
     class MediumAccessFilter < BaseFilter
-      def call
+      def filter
         access_param = params[:access]
         return scope if access_param.blank? || access_param == "irrelevant"
 

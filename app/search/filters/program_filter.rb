@@ -9,7 +9,7 @@
 module Search
   module Filters
     class ProgramFilter < BaseFilter
-      def call
+      def filter
         return scope if skip_filter?(all_param: :all_programs, ids_param: :program_ids)
 
         join_path = case scope.klass.name

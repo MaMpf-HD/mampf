@@ -1,9 +1,8 @@
-# This is the abstract base class for all search sorters.
+# Abstract base class for all search sorters.
 #
 # It establishes a common interface and initialization logic that all concrete
-# sorter classes should inherit. Each sorter is initialized with a scope,
-# the model class, and the search parameters. It is expected to implement a
-# `call` method that returns a modified, sorted scope.
+# sorter classes should inherit from. Each sorter is expected to implement a
+# `sort` method that returns a modified, sorted scope.
 module Search
   module Sorters
     class BaseSorter
@@ -18,7 +17,7 @@ module Search
       def self.sort(scope:, model_class:, search_params:)
         # Get the ordered scope from the specific sorter subclass.
         sorted_scope = new(scope: scope, model_class: model_class,
-                           search_params: search_params).call
+                           search_params: search_params).sort
 
         return sorted_scope.reverse_order if search_params[:reverse]
 
@@ -32,7 +31,7 @@ module Search
       end
 
       # Subclasses must implement this method to apply sorting logic.
-      def call
+      def sort
         raise(NotImplementedError, "#{self.class} has not implemented method '#{__method__}'")
       end
     end

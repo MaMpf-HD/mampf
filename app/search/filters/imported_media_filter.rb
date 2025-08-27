@@ -2,7 +2,7 @@
 module Search
   module Filters
     class ImportedMediaFilter < BaseFilter
-      def call
+      def filter
         lecture_id = params[:id]
         project = params[:project]
 

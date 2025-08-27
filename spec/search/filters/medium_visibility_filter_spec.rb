@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let(:user) { create(:user) }
     let(:admin) { create(:user, admin: true) }
     let(:editor) { create(:user) }
@@ -32,7 +32,7 @@ RSpec.describe(Search::Filters::MediumVisibilityFilter, type: :filter) do
     end
 
     context "for a regular user" do
-      subject(:filtered_scope) { described_class.new(scope: scope, params: {}, user: user).call }
+      subject(:filtered_scope) { described_class.filter(scope: scope, params: {}, user: user) }
 
       it "includes media from subscribed lectures" do
         expect(filtered_scope).to include(media_in_subscribed_lecture)

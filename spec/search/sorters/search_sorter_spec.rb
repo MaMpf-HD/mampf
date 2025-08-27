@@ -13,7 +13,7 @@ RSpec.describe(Search::Sorters::SearchSorter) do
     )
   end
 
-  describe "#call" do
+  describe "#sort" do
     context "when performing a full-text search" do
       let(:search_params) { { fulltext: "search term" } }
 

@@ -12,7 +12,7 @@
 module Search
   module Filters
     class LectureVisibilityFilter < BaseFilter
-      def call
+      def filter
         return scope if user&.admin?
 
         # A left_outer_join is necessary because a lecture might not have an

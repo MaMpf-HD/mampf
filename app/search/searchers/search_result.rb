@@ -1,7 +1,7 @@
 module Search
   module Searchers
     # Provides a consistent data object for the results of a paginated search.
-    # It holds the pagy metadata object and the paginated collection of records
+    # Holds the pagy metadata object and the paginated collection of records
     # for the current page.
     class SearchResult
       attr_reader :pagy, :results

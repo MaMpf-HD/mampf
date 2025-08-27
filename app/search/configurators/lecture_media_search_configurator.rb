@@ -27,7 +27,7 @@ module Search
         end
 
         # Processes the raw search parameters to handle cookie-based persistence
-        # and normalization for pagination and ordering.
+        # and normalization for pagination and sorting.
         def processed_params
           processed = search_params.deep_dup
 

@@ -2,10 +2,7 @@
 class SearchController < ApplicationController
   authorize_resource class: false
   before_action :check_for_consent
-  # The search string is now set and sanitized in one place.
-  before_action :set_and_sanitize_search_string, only: [:index]
 
-  # Gracefully handle cases where the search parameter is missing entirely.
   rescue_from ActionController::ParameterMissing do |_exception|
     redirect_back fallback_location: root_path,
                   alert: I18n.t("controllers.no_search_term")
@@ -16,6 +13,8 @@ class SearchController < ApplicationController
   end
 
   def index
+    return unless set_search_string
+
     @tags = Tag.search_by_title(@search_string)
 
     # Determine which of the found tags can be seen by the user
@@ -29,19 +28,20 @@ class SearchController < ApplicationController
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    # Use strong parameters to require the search param. This is safer and
-    # raises an exception if the parameter is missing, which we handle above.
     def search_param
       params.expect(:search)
     end
 
-    # This single before_action now handles setting the search string and
-    # validating its length.
-    def set_and_sanitize_search_string
+    # Returns true on success and false on failure to allow the calling action
+    # to halt execution.
+    def set_search_string
       @search_string = search_param
-      return if @search_string.length > 1
-
-      redirect_back fallback_location: root_path,
-                    alert: I18n.t("controllers.search_term_short")
+      if @search_string.length > 1
+        true
+      else
+        redirect_back fallback_location: root_path,
+                      alert: I18n.t("controllers.search_term_short")
+        false
+      end
     end
 end

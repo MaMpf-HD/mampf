@@ -6,7 +6,7 @@
 module Search
   module Filters
     class TermIndependenceFilter < BaseFilter
-      def call
+      def filter
         return scope unless params[:term_independent] == "1"
 
         scope.where(term_independent: true)

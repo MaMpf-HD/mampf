@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::LectureScopeFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let(:user) { create(:confirmed_user) }
     let(:scope) { Medium.all }
 
