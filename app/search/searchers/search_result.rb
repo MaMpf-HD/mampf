@@ -1,8 +1,6 @@
 module Search
   module Searchers
     # Provides a consistent data object for the results of a paginated search.
-    # It holds the paginated array of records and the total number of unpaginated
-    # records.
     class SearchResult
       attr_reader :results, :total_count
 
