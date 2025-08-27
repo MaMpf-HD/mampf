@@ -12,6 +12,8 @@ The core architectural components are:
 - **`Services::FilterRegistry`:** A service that dynamically generates `add_*_filter` methods on the `SearchForm` component for each registered filter.
 - **`Filters`:** Specialized components in `app/components/search_form/filters/` that define the behavior for a specific search criterion (e.g., `CourseFilter`, `FulltextFilter`).
 - **`Fields`:** The base UI components in `app/components/search_form/fields/` that the filters inherit from (e.g., `TextField`, `MultiSelectField`). They control the final HTML rendering.
+- **Automatic ID Generation:** The framework automatically generates unique `id` attributes for every form field. To ensure uniqueness across multiple forms on the same page, it uses a `context`. If you do not provide a `context` when initializing the `SearchForm`, a random one will be generated. For predictable and debuggable IDs, it is highly recommended to provide an explicit context (e.g., `SearchForm.new(context: "media", ...)`).
+- **Accessible by Default:** Building on the unique IDs, the framework automatically associates every `<label>` with its corresponding `<input>` using the `for` attribute. This provides a baseline of accessibility for free, without requiring any extra developer effort.
 
 ## 2. Basic Usage
 

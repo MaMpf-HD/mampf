@@ -64,8 +64,8 @@ module SearchForm
       @scope = scope
       @method = method
       @remote = remote
-      @context = context
-      @form_state = Services::FormState.new(context: context)
+      @context = context || SecureRandom.hex(4)
+      @form_state = Services::FormState.new(context: @context)
       @hidden_fields = {}
     end
 
