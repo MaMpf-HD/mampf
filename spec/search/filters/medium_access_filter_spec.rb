@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::MediumAccessFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let(:user) { create(:user) }
     let(:published_lecture) { create(:lecture, :released_for_all) }
 

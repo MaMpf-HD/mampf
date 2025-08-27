@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::ProperFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let(:user) { create(:user) }
     subject(:filtered_scope) { described_class.filter(scope: scope, params: {}, user: user) }
 

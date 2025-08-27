@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::CourseFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let(:user) { create(:user) }
     let!(:course1) { create(:course) }
     let!(:course2) { create(:course) }

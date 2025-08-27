@@ -10,7 +10,7 @@
 module Search
   module Filters
     class LectureScopeFilter < BaseFilter
-      def call
+      def filter
         option = params[:lecture_scope]
         return scope if option.blank? || option == "0"
 

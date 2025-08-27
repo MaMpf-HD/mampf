@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::EditorFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let!(:editor1) { create(:confirmed_user) }
     let!(:editor2) { create(:confirmed_user) }
     let!(:editor3) { create(:confirmed_user) }

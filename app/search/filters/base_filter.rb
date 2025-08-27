@@ -10,7 +10,7 @@ module Search
       attr_reader :scope, :params, :user
 
       def self.filter(scope:, params:, user:)
-        new(scope: scope, params: params, user: user).call
+        new(scope: scope, params: params, user: user).filter
       end
 
       def initialize(scope:, params:, user:)
@@ -19,8 +19,8 @@ module Search
         @user = user
       end
 
-      def call
-        raise(NotImplementedError, "Subclasses must implement #call")
+      def filter
+        raise(NotImplementedError, "Subclasses must implement #filter")
       end
 
       private

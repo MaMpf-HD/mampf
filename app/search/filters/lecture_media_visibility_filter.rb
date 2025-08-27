@@ -5,7 +5,7 @@
 module Search
   module Filters
     class LectureMediaVisibilityFilter < BaseFilter
-      def call
+      def filter
         lecture_id = params[:id]
         visibility = params[:visibility]
 

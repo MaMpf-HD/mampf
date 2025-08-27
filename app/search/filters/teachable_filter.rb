@@ -8,7 +8,7 @@
 module Search
   module Filters
     class TeachableFilter < BaseFilter
-      def call
+      def filter
         teachable_ids = params[:teachable_ids].to_a.compact_blank
         all_teachables = params[:all_teachables] == "1"
         inheritance = params[:teachable_inheritance] == "1"

@@ -8,7 +8,7 @@
 module Search
   module Filters
     class CourseFilter < BaseFilter
-      def call
+      def filter
         return scope if skip_filter?(all_param: :all_courses, ids_param: :course_ids)
 
         scope.joins(:courses)

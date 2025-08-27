@@ -8,7 +8,7 @@
 module Search
   module Filters
     class EditorFilter < BaseFilter
-      def call
+      def filter
         return scope if skip_filter?(all_param: :all_editors, ids_param: :editor_ids)
 
         scope.joins(:editors)

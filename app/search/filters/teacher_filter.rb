@@ -7,7 +7,7 @@
 module Search
   module Filters
     class TeacherFilter < BaseFilter
-      def call
+      def filter
         return scope if skip_filter?(all_param: :all_teachers, ids_param: :teacher_ids)
 
         scope.where(teacher_id: params[:teacher_ids])

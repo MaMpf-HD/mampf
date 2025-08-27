@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::TermIndependenceFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let(:user) { create(:user) }
     # The Course model has a `term_independent` attribute.
     let!(:term_independent_course) { create(:course, term_independent: true) }

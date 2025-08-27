@@ -8,7 +8,7 @@
 module Search
   module Filters
     class FulltextFilter < BaseFilter
-      def call
+      def filter
         search_term = params[:fulltext]
         return scope if search_term.blank?
 

@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe(Search::Filters::TagFilter, type: :filter) do
-  describe "#call" do
+  describe "#filter" do
     let(:user) { create(:user) }
     let!(:tag1) { create(:tag) }
     let!(:tag2) { create(:tag) }

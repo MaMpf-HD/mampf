@@ -5,7 +5,7 @@
 module Search
   module Filters
     class LectureMediaScopeFilter < BaseFilter
-      def call
+      def filter
         lecture_id = params[:id]
         project = params[:project]
 

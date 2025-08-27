@@ -7,7 +7,7 @@
 module Search
   module Filters
     class ProperFilter < BaseFilter
-      def call
+      def filter
         # Only apply the scope if the model defines it.
         scope.respond_to?(:proper) ? scope.proper : scope
       end

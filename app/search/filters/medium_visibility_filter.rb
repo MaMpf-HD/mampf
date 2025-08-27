@@ -7,7 +7,7 @@
 module Search
   module Filters
     class MediumVisibilityFilter < BaseFilter
-      def call
+      def filter
         # This filter applies the user-specific visibility rules.
         user.filter_visible_media(scope)
       end
