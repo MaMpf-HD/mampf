@@ -5,7 +5,7 @@
               html: { 
                 role: "search",
                 data: { controller: "search-form" } } do |f| %>
-  <div class="row mb-3 p-2">
+  <div class="<%= container_class %>">
     <% fields.each do |field| %>
       <%= render field.with_form(f) %>
     <% end %>

@@ -29,6 +29,10 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
         expect(search_form.remote).to be(true)
         expect(search_form.hidden_fields).to eq({})
       end
+
+      it "sets the default container class" do
+        expect(search_form.container_class).to eq("row mb-3 p-2")
+      end
     end
 
     context "when a context is provided" do
@@ -38,7 +42,8 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
           scope: :media_search,
           method: :post,
           remote: false,
-          context: "media"
+          context: "media",
+          container_class: "custom-class"
         }
       end
       subject(:custom_search_form) { described_class.new(**custom_options) }
@@ -57,6 +62,10 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
         expect(custom_search_form.scope).to eq(:media_search)
         expect(custom_search_form.method).to eq(:post)
         expect(custom_search_form.remote).to be(false)
+      end
+
+      it "sets the custom container class" do
+        expect(custom_search_form.container_class).to eq("custom-class")
       end
     end
   end

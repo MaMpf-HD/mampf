@@ -34,6 +34,19 @@ To render a search form, instantiate the `SearchForm` component in a view and pa
 <% end %>
 ```
 
+You can also provide options to the `SearchForm` component itself, such as a `context` for predictable IDs or a `container_class` to customize the main container that wraps all the fields.
+
+```erb
+<%# Example with custom options for the form itself %>
+<%= render(SearchForm::SearchForm.new(
+      url: media_search_path,
+      context: "media",
+      container_class: "d-flex flex-wrap gap-3"
+    )) do |c| %>
+  <%# ... filters ... %>
+<% end %>
+```
+
 ## 3. Customizing Filters
 
 There are three levels at which you can customize the behavior and appearance of filters, each with a different scope of impact.

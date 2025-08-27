@@ -49,7 +49,7 @@ module SearchForm
       component
     }
 
-    attr_reader :url, :scope, :method, :remote, :context, :hidden_fields
+    attr_reader :url, :scope, :method, :remote, :context, :hidden_fields, :container_class
 
     # Initializes a new SearchForm component.
     #
@@ -58,7 +58,10 @@ module SearchForm
     # @param method [Symbol] HTTP method for form submission (default: :get)
     # @param remote [Boolean] Whether to submit via AJAX (default: true)
     # @param context [String, nil] Context identifier for styling and behavior
-    def initialize(url:, scope: :search, method: :get, remote: true, context: nil)
+    # @param container_class [String] CSS classes for the main container div
+    # rubocop:disable Metrics/ParameterLists
+    def initialize(url:, scope: :search, method: :get, remote: true, context: nil,
+                   container_class: "row mb-3 p-2")
       super()
       @url = url
       @scope = scope
@@ -67,7 +70,9 @@ module SearchForm
       @context = context || SecureRandom.hex(4)
       @form_state = Services::FormState.new(context: @context)
       @hidden_fields = {}
+      @container_class = container_class
     end
+    # rubocop:enable Metrics/ParameterLists
 
     # Adds a hidden field to the form.
     #
