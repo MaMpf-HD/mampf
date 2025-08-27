@@ -3,7 +3,7 @@ require "rails_helper"
 # A dummy sorter for testing the BaseSorter's class-level sort method.
 # Defined at the top level to avoid linter warnings (Lint/ConstantDefinitionInBlock).
 class DummySorter < Search::Sorters::BaseSorter
-  def call
+  def sort
     scope.order(created_at: :asc)
   end
 end
@@ -32,13 +32,13 @@ RSpec.describe(Search::Sorters::BaseSorter) do
     end
   end
 
-  describe "#call" do
+  describe "#sort" do
     subject(:sorter) do
       described_class.new(scope: scope, model_class: model_class, search_params: search_params)
     end
 
     it "raises a NotImplementedError" do
-      expect { sorter.call }.to raise_error(NotImplementedError)
+      expect { sorter.sort }.to raise_error(NotImplementedError)
     end
   end
 

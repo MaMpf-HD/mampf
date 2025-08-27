@@ -10,7 +10,7 @@
 module Search
   module Sorters
     class LectureMediaSorter < BaseSorter
-      def call
+      def sort
         lecture = Lecture.find_by(id: search_params[:id])
         return scope.order(model_class.default_search_order) unless lecture
 

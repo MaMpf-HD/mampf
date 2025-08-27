@@ -17,7 +17,7 @@ module Search
       def self.sort(scope:, model_class:, search_params:)
         # Get the ordered scope from the specific sorter subclass.
         sorted_scope = new(scope: scope, model_class: model_class,
-                           search_params: search_params).call
+                           search_params: search_params).sort
 
         return sorted_scope.reverse_order if search_params[:reverse]
 
@@ -31,7 +31,7 @@ module Search
       end
 
       # Subclasses must implement this method to apply sorting logic.
-      def call
+      def sort
         raise(NotImplementedError, "#{self.class} has not implemented method '#{__method__}'")
       end
     end
