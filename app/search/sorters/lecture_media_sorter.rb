@@ -1,89 +1,20 @@
-# Applies the complex, multi-stage sorting logic used by media_controller#index
-#
-# The desired order is:
-# 1. "Native" media, sorted by their teachable type:
-#    - Media on the Lecture itself (by creation date)
-#    - Media on Lessons (by lesson date, then position)
-#    - Media on Talks (by talk position)
-#    - Media on the Course (by description)
-# 2. Imported media, appended at the end.
 module Search
   module Sorters
     class LectureMediaSorter < BaseSorter
       def sort
-        lecture = Lecture.find_by(id: search_params[:id])
-        return scope.order(model_class.default_search_order) unless lecture
+        # Use a local variable for the initial lookup.
+        found_lecture = Lecture.find_by(id: search_params[:id])
+        return scope.order(model_class.default_search_order) unless found_lecture
 
-        media_table = Medium.arel_table
+        # Set up the instance variables that the private readers will expose.
+        @lecture = found_lecture
+        @media_table = Medium.arel_table
+        @lessons_table = Lesson.arel_table.alias("_search_lessons_media")
+        @talks_table = Talk.arel_table.alias("_search_talks_media")
+        @imported_media_ids = lecture.imported_media.pluck(:id)
 
-        # Create aliased table references to ensure stable names in the query.
-        lessons_table = Lesson.arel_table.alias("_search_lessons_media")
-        talks_table = Talk.arel_table.alias("_search_talks_media")
-
-        # Build the join nodes manually using the aliased tables.
-        lessons_join = Arel::Nodes::OuterJoin.new(
-          lessons_table,
-          Arel::Nodes::On.new(
-            media_table[:teachable_type].eq("Lesson")
-            .and(media_table[:teachable_id].eq(lessons_table[:id]))
-          )
-        )
-        talks_join = Arel::Nodes::OuterJoin.new(
-          talks_table,
-          Arel::Nodes::On.new(
-            media_table[:teachable_type].eq("Talk")
-            .and(media_table[:teachable_id].eq(talks_table[:id]))
-          )
-        )
-
-        # Pre-fetch the imported media IDs into an array to avoid subquery
-        # issues with bind parameters when ActiveRecord builds its COUNT query.
-        imported_media_ids = lecture.imported_media.pluck(:id)
-
-        lesson_sort_dir = determine_lesson_sort_direction(lecture)
-
-        # Define the complex sorting expressions using Arel's CASE statements.
-        # These will be used for both SELECTing and ORDERING.
-        sort_expressions = {
-          sort_group1: Arel::Nodes::Case.new
-                                        .when(media_table[:id].in(imported_media_ids)).then(2)
-                                        .else(1),
-          sort_group2: Arel::Nodes::Case.new(media_table[:teachable_type])
-                                        .when("Lecture").then(1)
-                                        .when("Lesson").then(2)
-                                        .when("Talk").then(3)
-                                        .when("Course").then(4)
-                                        .else(5),
-          sort_lecture_created_at: Arel::Nodes::Case.new
-                                                    .when(media_table[:teachable_type]
-                                                    .eq("Lecture")).then(media_table[:created_at]),
-          sort_lesson_date: Arel::Nodes::Case.new
-                                             .when(media_table[:teachable_type]
-                                             .eq("Lesson")).then(lessons_table[:date]),
-          sort_lesson_id: Arel::Nodes::Case.new
-                                           .when(media_table[:teachable_type]
-                                           .eq("Lesson")).then(lessons_table[:id]),
-          sort_lesson_position: Arel::Nodes::Case.new
-                                                 .when(media_table[:teachable_type]
-                                                 .eq("Lesson")).then(media_table[:position]),
-          sort_talk_position: Arel::Nodes::Case.new
-                                               .when(media_table[:teachable_type]
-                                               .eq("Talk")).then(talks_table[:position]),
-          sort_course_description: Arel::Nodes::Case.new
-                                                    .when(media_table[:teachable_type]
-                                                    .eq("Course")).then(media_table[:description])
-        }
-
-        order_clause = [
-          sort_expressions[:sort_group1].asc,
-          sort_expressions[:sort_group2].asc,
-          sort_expressions[:sort_lecture_created_at].desc,
-          sort_expressions[:sort_lesson_date].send(lesson_sort_dir),
-          sort_expressions[:sort_lesson_id].send(lesson_sort_dir),
-          sort_expressions[:sort_lesson_position].asc,
-          sort_expressions[:sort_talk_position].asc,
-          sort_expressions[:sort_course_description].asc
-        ]
+        sort_expressions = build_sort_expressions
+        order_clause = build_order_clause(sort_expressions)
 
         scope
           .joins(lessons_join)
@@ -93,6 +24,86 @@ module Search
       end
 
       private
+
+        attr_reader :lecture, :media_table, :lessons_table, :talks_table, :imported_media_ids
+
+        # Builds the Arel node for the outer join on the lessons table.
+        def lessons_join
+          Arel::Nodes::OuterJoin.new(
+            lessons_table,
+            Arel::Nodes::On.new(
+              media_table[:teachable_type].eq("Lesson")
+              .and(media_table[:teachable_id].eq(lessons_table[:id]))
+            )
+          )
+        end
+
+        # Builds the Arel node for the outer join on the talks table.
+        def talks_join
+          Arel::Nodes::OuterJoin.new(
+            talks_table,
+            Arel::Nodes::On.new(
+              media_table[:teachable_type].eq("Talk")
+              .and(media_table[:teachable_id].eq(talks_table[:id]))
+            )
+          )
+        end
+
+        # Constructs a hash of named Arel CASE statements that will be used
+        # for both SELECTing the sort values and for ordering.
+        def build_sort_expressions
+          {
+            sort_group1: sort_group1_expression,
+            sort_group2: sort_group2_expression,
+            sort_lecture_created_at: sort_by_teachable_expression("Lecture",
+                                                                  media_table[:created_at]),
+            sort_lesson_date: sort_by_teachable_expression("Lesson", lessons_table[:date]),
+            sort_lesson_id: sort_by_teachable_expression("Lesson", lessons_table[:id]),
+            sort_lesson_position: sort_by_teachable_expression("Lesson", media_table[:position]),
+            sort_talk_position: sort_by_teachable_expression("Talk", talks_table[:position]),
+            sort_course_description: sort_by_teachable_expression("Course",
+                                                                  media_table[:description])
+          }
+        end
+
+        # Assembles the final ORDER BY clause from the sort expressions.
+        def build_order_clause(sort_expressions)
+          lesson_sort_dir = determine_lesson_sort_direction(lecture)
+          [
+            sort_expressions[:sort_group1].asc,
+            sort_expressions[:sort_group2].asc,
+            sort_expressions[:sort_lecture_created_at].desc,
+            sort_expressions[:sort_lesson_date].send(lesson_sort_dir),
+            sort_expressions[:sort_lesson_id].send(lesson_sort_dir),
+            sort_expressions[:sort_lesson_position].asc,
+            sort_expressions[:sort_talk_position].asc,
+            sort_expressions[:sort_course_description].asc
+          ]
+        end
+
+        # CASE statement to separate imported media (group 2) from native media (group 1).
+        def sort_group1_expression
+          Arel::Nodes::Case.new
+                           .when(media_table[:id].in(imported_media_ids)).then(2)
+                           .else(1)
+        end
+
+        # CASE statement to group media by their teachable type.
+        def sort_group2_expression
+          Arel::Nodes::Case.new(media_table[:teachable_type])
+                           .when("Lecture").then(1)
+                           .when("Lesson").then(2)
+                           .when("Talk").then(3)
+                           .when("Course").then(4)
+                           .else(5)
+        end
+
+        # Generic helper to create a CASE statement that returns a specific
+        # column's value only when the teachable_type matches.
+        def sort_by_teachable_expression(type, column)
+          Arel::Nodes::Case.new
+                           .when(media_table[:teachable_type].eq(type)).then(column)
+        end
 
         # Determines the sort direction for lessons. For the active term or for
         # term-independent lectures, lessons are sorted newest-first (desc).
