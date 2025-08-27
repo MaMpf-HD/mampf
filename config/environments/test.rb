@@ -94,9 +94,8 @@ Rails.application.configure do
   # Logging
   logger           = ActiveSupport::Logger.new($stdout)
   logger.formatter = config.log_formatter
-  config.logger    = ActiveSupport::TaggedLogging.new(logger)
-  if ENV["CI"]
-    Rails.logger.level = Logger::WARN
-    ActiveRecord::Base.logger.level = Logger::WARN
-  end
+  logger.level = Logger::WARN if ENV["CI"]
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
+
+  ActiveRecord::Base.logger = logger if ENV["CI"]
 end
