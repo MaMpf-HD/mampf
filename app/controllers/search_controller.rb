@@ -3,7 +3,6 @@ class SearchController < ApplicationController
   authorize_resource class: false
   before_action :check_for_consent
 
-  # Gracefully handle cases where the search parameter is missing entirely.
   rescue_from ActionController::ParameterMissing do |_exception|
     redirect_back fallback_location: root_path,
                   alert: I18n.t("controllers.no_search_term")
@@ -14,7 +13,7 @@ class SearchController < ApplicationController
   end
 
   def index
-    return unless set_and_sanitize_search_string
+    return unless set_search_string
 
     @tags = Tag.search_by_title(@search_string)
 
@@ -35,7 +34,7 @@ class SearchController < ApplicationController
 
     # Returns true on success and false on failure to allow the calling action
     # to halt execution.
-    def set_and_sanitize_search_string
+    def set_search_string
       @search_string = search_param
       if @search_string.length > 1
         true
