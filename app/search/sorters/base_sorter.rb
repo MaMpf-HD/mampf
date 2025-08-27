@@ -1,9 +1,8 @@
-# This is the abstract base class for all search sorters.
+# Abstract base class for all search sorters.
 #
 # It establishes a common interface and initialization logic that all concrete
-# sorter classes should inherit. Each sorter is initialized with a scope,
-# the model class, and the search parameters. It is expected to implement a
-# `call` method that returns a modified, sorted scope.
+# sorter classes should inherit from. Each sorter is expected to implement a
+# `sort` method that returns a modified, sorted scope.
 module Search
   module Sorters
     class BaseSorter
