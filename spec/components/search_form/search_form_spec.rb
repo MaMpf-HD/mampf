@@ -2,27 +2,36 @@ require "rails_helper"
 
 RSpec.describe(SearchForm::SearchForm, type: :component) do
   let(:url) { "/search" }
-  subject(:search_form) { described_class.new(url: url) }
 
   describe "#initialize" do
-    context "with default parameters" do
-      it "sets default values correctly" do
+    context "when no context is provided" do
+      subject(:search_form) { described_class.new(url: url) }
+
+      # Stub SecureRandom to test the fallback mechanism
+      before do
+        allow(SecureRandom).to receive(:hex).with(4).and_return("random_hex")
+      end
+
+      it "generates a random context" do
+        expect(search_form.context).to eq("random_hex")
+      end
+
+      it "initializes FormState with the generated context" do
+        # We need to control the instantiation to check the arguments
+        expect(SearchForm::Services::FormState).to receive(:new).with(context: "random_hex")
+        described_class.new(url: url)
+      end
+
+      it "sets other default values correctly" do
         expect(search_form.url).to eq("/search")
         expect(search_form.scope).to eq(:search)
         expect(search_form.method).to eq(:get)
         expect(search_form.remote).to be(true)
-        expect(search_form.context).to be_nil
         expect(search_form.hidden_fields).to eq({})
-      end
-
-      it "initializes form_state with context" do
-        expect(SearchForm::Services::FormState).to receive(:new).with(context: nil)
-        search_form
       end
     end
 
-    context "with custom parameters" do
-      let(:url) { "/custom_search" }
+    context "when a context is provided" do
       let(:custom_options) do
         {
           url: url,
@@ -34,17 +43,27 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
       end
       subject(:custom_search_form) { described_class.new(**custom_options) }
 
-      it "sets custom values correctly" do
-        expect(custom_search_form.url).to eq("/custom_search")
+      it "uses the provided context" do
+        expect(custom_search_form.context).to eq("media")
+      end
+
+      it "initializes FormState with the provided context" do
+        expect(SearchForm::Services::FormState).to receive(:new).with(context: "media")
+        described_class.new(**custom_options)
+      end
+
+      it "sets other custom values correctly" do
+        expect(custom_search_form.url).to eq(url)
         expect(custom_search_form.scope).to eq(:media_search)
         expect(custom_search_form.method).to eq(:post)
         expect(custom_search_form.remote).to be(false)
-        expect(custom_search_form.context).to eq("media")
       end
     end
   end
 
+  # All other tests remain the same
   describe "#add_hidden_field" do
+    subject(:search_form) { described_class.new(url: url, context: "test") }
     it "adds a hidden field to the hash" do
       search_form.add_hidden_field(name: :user_id, value: "123")
       expect(search_form.hidden_fields).to eq({ user_id: "123" })
@@ -52,6 +71,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
   end
 
   describe "#add_submit_field" do
+    subject(:search_form) { described_class.new(url: url, context: "test") }
     it "creates and adds a submit field" do
       expect(SearchForm::Fields::SubmitField).to receive(:new)
       expect(search_form).to receive(:with_field)
@@ -60,6 +80,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
   end
 
   describe "#filter_registry" do
+    subject(:search_form) { described_class.new(url: url, context: "test") }
     it "returns and memoizes a FilterRegistry instance" do
       expect(search_form.filter_registry).to be_a(SearchForm::Services::FilterRegistry)
       expect(search_form.filter_registry).to be(search_form.filter_registry)
@@ -67,6 +88,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
   end
 
   describe "component rendering" do
+    subject(:search_form) { described_class.new(url: url, context: "test") }
     it "renders a form with correct default attributes" do
       rendered = render_inline(search_form)
       expect(rendered.to_html).to include('role="search"')
@@ -82,6 +104,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
   end
 
   describe "field injection via renders_many" do
+    subject(:search_form) { described_class.new(url: url, context: "test") }
     let(:mock_field) { instance_double(SearchForm::Fields::Field, "MockField") }
     let(:form_state_instance) { search_form.instance_variable_get(:@form_state) }
 
