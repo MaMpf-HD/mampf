@@ -25,16 +25,14 @@ module Search
           lessons_table,
           Arel::Nodes::On.new(
             media_table[:teachable_type].eq("Lesson")
-            .and(media_table[:teachable_id]
-            .eq(lessons_table[:id]))
+            .and(media_table[:teachable_id].eq(lessons_table[:id]))
           )
         )
         talks_join = Arel::Nodes::OuterJoin.new(
           talks_table,
           Arel::Nodes::On.new(
             media_table[:teachable_type].eq("Talk")
-            .and(media_table[:teachable_id]
-            .eq(talks_table[:id]))
+            .and(media_table[:teachable_id].eq(talks_table[:id]))
           )
         )
 
