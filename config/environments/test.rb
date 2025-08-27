@@ -92,14 +92,10 @@ Rails.application.configure do
   # config.generators.apply_rubocop_autocorrect_after_generate!
 
   # Logging
-  if ENV["CI"]
-    # In CI, set the log level to :warn to reduce noise from SQL queries.
-    # This will suppress DEBUG and INFO level messages, including database transactions.
-    config.log_level = :warn
-  else
-    # For local testing, keep the existing verbose logger setup.
-    logger           = ActiveSupport::Logger.new($stdout)
-    logger.formatter = config.log_formatter
-    config.logger    = ActiveSupport::TaggedLogging.new(logger)
-  end
+  logger           = ActiveSupport::Logger.new($stdout)
+  logger.formatter = config.log_formatter
+  logger.level = Logger::WARN if ENV["CI"]
+  config.logger = ActiveSupport::TaggedLogging.new(logger)
+
+  ActiveRecord::Base.logger = logger if ENV["CI"]
 end
