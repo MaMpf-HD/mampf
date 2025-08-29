@@ -29,3 +29,14 @@ Further rules:
 - Historically, we have many `.coffee` files. New code should avoid CoffeeScript. Use JavaScript instead. See #698 for more details.
 - Historically, we have many `.js.erb` files. New code should avoid `.js.erb` files (see also [this disclaimer](https://github.com/ElMassimo/vite-plugin-erb?tab=readme-ov-file#disclaimer-%EF%B8%8F)). Use `.js` files instead. Favor sending HTML responses from the backend instead of JS or CoffeScript responses.
 - Use `.scss` files for stylesheets. Avoid `.css` files. [Might rethink this as nowadays pure CSS has gotten quite powerful.]
+
+
+---
+
+> Why don't we use a folder structure based on file extensions as is usual in Rails apps?
+
+In the official Rails asset pipeline (even with Propshaft), the folder structure is based on file extensions, e.g. `app/assets/javascripts`, `app/assets/stylesheets`, `app/views` etc. However, we oftentimes find ourselves in the situation of needing to create or modify an existing _feature_.<br>Instead of recreating our entire feature hierarchy in three different folders, we acknowledge that frontend development is more often than not about the trinity of JS/CSS/HTML files. Therefore, it makes sense to place them together and group files _per user view_ (which usually corresponds to a controller action).
+
+In the proposed structure, a subfolder corresponds to a controller action. This drastically limits the scope such that you will usually find only a handful of files per folder. This makes it easy to discover related files, e.g. `index.html.erb`, `index.js` and `index.scss` for the `vignettes/questionnaires/index` action.
+
+That being said, in your favorite IDE, every file is actually only one search away. However, for this, you oftentimes need to know how files are called and having them close together per feature eases this process.
