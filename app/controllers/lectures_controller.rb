@@ -141,16 +141,22 @@ class LecturesController < ApplicationController
     @lecture.touch
     @lecture.forum&.update(name: @lecture.forum_title)
 
+    @errors = @lecture.errors
+
     # Redirect to the correct subpage
     if @lecture.valid?
       if params[:subpage].present?
+        # TODO: #860
         redirect_to "#{edit_lecture_path(@lecture)}##{params[:subpage]}"
       else
         redirect_to edit_lecture_path(@lecture)
       end
+      return
     end
 
-    @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/update/update" }
+    end
   end
 
   def publish
