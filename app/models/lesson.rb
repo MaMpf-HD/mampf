@@ -1,6 +1,6 @@
 # Lesson class
 class Lesson < ApplicationRecord
-  belongs_to :lecture, touch: true
+  belongs_to :lecture
 
   # a lesson has many tags
   has_many :lesson_tag_joins, dependent: :destroy
@@ -22,17 +22,17 @@ class Lesson < ApplicationRecord
   validates :date, presence: true
   validates :sections, presence: true
 
-  before_destroy :touch_media
-  before_destroy :touch_siblings
-  before_destroy :touch_sections, prepend: true
-  # media are cached in several places
-  # media are touched in order to find out whether cache is out of date
-  after_save :touch_media
-  # same for sections and lessons in the same lecture (their numbering changes)
-  after_save :touch_sections
-  after_save :touch_siblings
-  after_save :touch_self
-  after_save :touch_tags
+  # before_destroy :touch_media
+  # before_destroy :touch_siblings
+  # before_destroy :touch_sections, prepend: true
+  # # media are cached in several places
+  # # media are touched in order to find out whether cache is out of date
+  # after_save :touch_media
+  # # same for sections and lessons in the same lecture (their numbering changes)
+  # after_save :touch_sections
+  # after_save :touch_siblings
+  # after_save :touch_self
+  # after_save :touch_tags
 
   delegate :editors_with_inheritance, to: :lecture, allow_nil: true
 

@@ -1,7 +1,7 @@
 # Section class
 class Section < ApplicationRecord
   # a section belongs to a chapter (of a lecture)
-  belongs_to :chapter, touch: true
+  belongs_to :chapter
 
   # sections are ordered within a chapter
   acts_as_list scope: :chapter
@@ -23,17 +23,17 @@ class Section < ApplicationRecord
   # a section has many items, do not execute callbacks when section is destroyed
   has_many :items, dependent: :nullify
 
-  before_destroy :touch_toc
-  before_destroy :touch_lecture
-  before_destroy :touch_media
-  # after saving or updating, touch lecture/media/self to keep cache up to date
-  after_save :touch_lecture
-  after_save :touch_media
-  after_save :touch_self
+  # before_destroy :touch_toc
+  # before_destroy :touch_lecture
+  # before_destroy :touch_media
+  # # after saving or updating, touch lecture/media/self to keep cache up to date
+  # #  after_save :touch_lecture
+  # # after_save :touch_media
+  # after_save :touch_self
 
   # if absolute numbering is enabled for the lecture, all chapters
   # and sections need to be touched because of possibly changed references
-  after_save :touch_toc
+  # after_save :touch_toc
 
   def lecture
     chapter&.lecture

@@ -18,6 +18,8 @@ class Lecture < ApplicationRecord
            dependent: :destroy,
            inverse_of: :lecture
 
+  has_many :tags, -> { distinct }, through: :chapters
+
   # during the term, a lot of lessons take place for this lecture
   has_many :lessons, -> { order(date: :asc, id: :asc) },
            dependent: :destroy,
@@ -122,10 +124,10 @@ class Lecture < ApplicationRecord
 
   # some information about media and lessons are cached
   # to find out whether the cache is out of date, always touch'em after saving
-  after_save :touch_media
-  after_save :touch_lessons
-  after_save :touch_chapters
-  after_save :touch_sections
+  # after_save :touch_media
+  # after_save :touch_lessons
+  # after_save :touch_chapters
+  # after_save :touch_sections
 
   # scopes
   scope :published, -> { where.not(released: nil) }
@@ -256,17 +258,6 @@ class Lecture < ApplicationRecord
   # the next methods deal with the lecture's tags
   # tags are associated to courses, sections, media and lessons
   # in this context, tags associated to courses and to sections are relevant
-  # the first ones refer to a kind of top-down-tagging, the second ones
-  # refer to a bottom-up-tagging
-
-  # lecture tags are all tags that are associated to sections within chapters
-  # associated to the lecture
-  def tags
-    Rails.cache.fetch("#{cache_key_with_version}/tags") do
-      chapters.includes(sections: [tags: [:notions]]).map(&:sections).flatten.collect(&:tags)
-              .flatten.uniq
-    end
-  end
 
   def tags_including_media_tags
     (tags +
@@ -1001,9 +992,9 @@ class Lecture < ApplicationRecord
         "miscellaneous" => ["Miscellaneous"] }
     end
 
-    def touch_media
-      media_with_inheritance.touch_all
-    end
+    # def touch_media
+    #   media_with_inheritance.touch_all
+    # end
 
     def touch_lessons
       lessons.touch_all

@@ -1,16 +1,18 @@
 # Chapter class
 class Chapter < ApplicationRecord
-  belongs_to :lecture, touch: true
+  belongs_to :lecture
   # the chapters of a lecture form an ordered list
   acts_as_list scope: :lecture
   has_many :sections, -> { order(position: :asc) },
            dependent: :destroy,
            inverse_of: :chapter
+  has_many :lessons, -> { distinct }, through: :sections
+  has_many :tags, -> { distinct }, through: :sections
   validates :title, presence: true
-  before_destroy :touch_sections
-  before_destroy :touch_chapters
-  after_save :touch_sections
-  after_save :touch_chapters
+  # before_destroy :touch_sections
+  # before_destroy :touch_chapters
+  # after_save :touch_sections
+  # after_save :touch_chapters
 
   def to_label
     unless hidden
@@ -41,16 +43,6 @@ class Chapter < ApplicationRecord
     return position.to_s if lecture.start_chapter.blank?
 
     (lecture.start_chapter + position - 1).to_s
-  end
-
-  # Returns all tags that are associated to sections within this chapter.
-  def tags
-    Tag.where(id: sections.map { |s| s.tags.pluck(:id) }.flatten)
-  end
-
-  # Returns all lessons that are associated to sections within this chapter.
-  def lessons
-    Lesson.where(id: sections.map { |s| s.lessons.pluck(:id) }.flatten)
   end
 
   #  Returns the last section of the chapter, based on the position.

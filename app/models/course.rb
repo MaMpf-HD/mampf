@@ -42,8 +42,8 @@ class Course < ApplicationRecord
 
   # some information about media and lectures are cached
   # to find out whether the cache is out of date, always touch'em after saving
-  after_save :touch_media
-  after_save :touch_lectures_and_lessons
+  # after_save :touch_media
+  # after_save :touch_lectures_and_lessons
 
   # include uploader to realize screenshot upload
   # this makes use of the shrine gem

@@ -60,8 +60,8 @@ class Tag < ApplicationRecord
 
   # touch related lectures and sections after saving because lecture tags
   # are cached
-  after_save :touch_lectures
-  after_save :touch_sections
+  # after_save :touch_lectures
+  # after_save :touch_sections
 
   searchable do
     text :titles do

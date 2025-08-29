@@ -105,7 +105,7 @@ class Medium < ApplicationRecord
   before_destroy :delete_vertices
   # some information about media are cached
   # to find out whether the cache is out of date, always touch'em after saving
-  after_save :touch_teachable
+  # after_save :touch_teachable
 
   # keep track of copies (in particular for Questions, Remarks)
   acts_as_tree
@@ -715,22 +715,15 @@ class Medium < ApplicationRecord
     true
   end
 
-  def course
+  delegate :course, :lecture, :lesson, to: :teachable, allow_nil: true
+
+  # The :talk method is not delegated because not all teachables respond to it.
+  # We keep the manual implementation for safety.
+  def talk
     return if teachable.nil?
+    return unless teachable.respond_to?(:talk)
 
-    teachable.course
-  end
-
-  def lecture
-    return if teachable.nil?
-
-    teachable.lecture
-  end
-
-  def lesson
-    return if teachable.nil?
-
-    teachable.lesson
+    teachable.talk
   end
 
   # only irrelevant media can be deleted
@@ -1108,12 +1101,12 @@ class Medium < ApplicationRecord
       "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"
     end
 
-    def touch_teachable
-      return if teachable.nil?
+    # def touch_teachable
+    #   return if teachable.nil?
 
-      teachable.course.touch if teachable.course.present? && teachable.course.persisted?
-      optional_touches
-    end
+    #   teachable.course.touch if teachable.course.present? && teachable.course.persisted?
+    #   optional_touches
+    # end
 
     def reset_released_status
       return if teachable.nil? || teachable.published?
@@ -1121,13 +1114,13 @@ class Medium < ApplicationRecord
       self.released = nil
     end
 
-    def optional_touches
-      teachable.lecture.touch if teachable.lecture.present? && teachable.lecture.persisted?
-      teachable.lesson.touch if teachable.lesson.present? && teachable.lesson.persisted?
-      return unless teachable.talk.present? && teachable.talk.persisted?
+    # def optional_touches
+    #   teachable.lecture.touch if teachable.lecture.present? && teachable.lecture.persisted?
+    #   teachable.lesson.touch if teachable.lesson.present? && teachable.lesson.persisted?
+    #   return unless teachable.talk.present? && teachable.talk.persisted?
 
-      teachable.talk.touch
-    end
+    #   teachable.talk.touch
+    # end
 
     def vtt_start
       "WEBVTT\n\n"

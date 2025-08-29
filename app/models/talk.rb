@@ -1,6 +1,6 @@
 # Talk class
 class Talk < ApplicationRecord
-  belongs_to :lecture, touch: true
+  belongs_to :lecture
 
   has_many :speaker_talk_joins, dependent: :destroy
   has_many :speakers, through: :speaker_talk_joins
@@ -18,7 +18,7 @@ class Talk < ApplicationRecord
   has_many :tags, through: :talk_tag_joins
 
   before_save :remove_duplicate_dates
-  after_save :touch_lecture
+  #  after_save :touch_lecture
 
   # the talks of a lecture form an ordered list
   acts_as_list scope: :lecture
