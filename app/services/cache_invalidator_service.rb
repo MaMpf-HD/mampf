@@ -56,6 +56,17 @@ class CacheInvalidatorService
     ]
   }.freeze
 
+  TYPE_TO_CLASS = {
+    "Course" => Course,
+    "Lecture" => Lecture,
+    "Chapter" => Chapter,
+    "Section" => Section,
+    "Lesson" => Lesson,
+    "Talk" => Talk,
+    "Medium" => Medium,
+    "Tag" => Tag
+  }.freeze
+
   class << self
     def run(model)
       # Get all dependent items in a single query.
@@ -167,8 +178,8 @@ class CacheInvalidatorService
           [start_type, start_id]
         )
 
-        # Group the results by class name.
-        rows.group_by { |row| row["type"]&.constantize }.compact
+        # Group the results by class name using a safe whitelist.
+        rows.group_by { |row| TYPE_TO_CLASS[row["type"]] }.compact
             .transform_values { |value| value.map { |row| row["id"] } }
       end
   end
