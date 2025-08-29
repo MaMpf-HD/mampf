@@ -1,79 +1,60 @@
 class CacheInvalidatorService
-  # This single SQL statement defines all directed edges in the dependency graph.
-  # It replaces the RESOLVERS hash. Each SELECT represents a relationship.
-  # The structure is: SELECT 'SourceModel', source_id, 'DestinationModel', destination_id FROM ...
-  EDGES_SQL = <<-SQL.freeze
-    -- Course dependencies
-    SELECT 'Course' AS src_type, courses.id AS src_id, 'Lecture' AS dst_type, lectures.id AS dst_id FROM courses JOIN lectures ON lectures.course_id = courses.id
-    UNION ALL
-    SELECT 'Course' AS src_type, courses.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM courses JOIN media ON media.teachable_id = courses.id AND media.teachable_type = 'Course'
-    UNION ALL
-    SELECT 'Course' AS src_type, course_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM course_tag_joins
-
-    -- Lecture dependencies
-    UNION ALL
-    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Course' AS dst_type, course_id AS dst_id FROM lectures
-    UNION ALL
-    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Chapter' AS dst_type, chapters.id AS dst_id FROM lectures JOIN chapters ON chapters.lecture_id = lectures.id
-    UNION ALL
-    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Lesson' AS dst_type, lessons.id AS dst_id FROM lectures JOIN lessons ON lessons.lecture_id = lectures.id
-    UNION ALL
-    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Talk' AS dst_type, talks.id AS dst_id FROM lectures JOIN talks ON talks.lecture_id = lectures.id
-    UNION ALL
-    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM lectures JOIN media ON media.teachable_id = lectures.id AND media.teachable_type = 'Lecture'
-
-    -- Chapter dependencies
-    UNION ALL
-    SELECT 'Chapter' AS src_type, chapters.id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM chapters
-    UNION ALL
-    SELECT 'Chapter' AS src_type, chapters.id AS src_id, 'Section' AS dst_type, sections.id AS dst_id FROM chapters JOIN sections ON sections.chapter_id = chapters.id
-
-    -- Section dependencies
-    UNION ALL
-    SELECT 'Section' AS src_type, sections.id AS src_id, 'Chapter' AS dst_type, chapter_id AS dst_id FROM sections
-    UNION ALL
-    SELECT 'Section' AS src_type, section_id AS src_id, 'Lesson' AS dst_type, lesson_id AS dst_id FROM lesson_section_joins
-    UNION ALL
-    SELECT 'Section' AS src_type, section_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM section_tag_joins
-
-    -- Lesson dependencies
-    UNION ALL
-    SELECT 'Lesson' AS src_type, lessons.id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM lessons
-    UNION ALL
-    SELECT 'Lesson' AS src_type, lesson_id AS src_id, 'Section' AS dst_type, section_id AS dst_id FROM lesson_section_joins
-    UNION ALL
-    SELECT 'Lesson' AS src_type, lessons.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM lessons JOIN media ON media.teachable_id = lessons.id AND media.teachable_type = 'Lesson'
-    UNION ALL
-    SELECT 'Lesson' AS src_type, lesson_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM lesson_tag_joins
-
-    -- Talk dependencies
-    UNION ALL
-    SELECT 'Talk' AS src_type, talks.id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM talks
-    UNION ALL
-    SELECT 'Talk' AS src_type, talks.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM talks JOIN media ON media.teachable_id = talks.id AND media.teachable_type = 'Talk'
-    UNION ALL
-    SELECT 'Talk' AS src_type, talk_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM talk_tag_joins
-
-    -- Medium dependencies
-    UNION ALL
-    SELECT 'Medium' AS src_type, media.id AS src_id, teachable_type AS dst_type, teachable_id AS dst_id FROM media WHERE teachable_id IS NOT NULL
-    UNION ALL
-    SELECT 'Medium' AS src_type, medium_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM medium_tag_joins
-
-    -- Tag dependencies
-    UNION ALL
-    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Course' AS dst_type, course_id AS dst_id FROM course_tag_joins
-    UNION ALL
-    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Section' AS dst_type, section_id AS dst_id FROM section_tag_joins
-    UNION ALL
-    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Lesson' AS dst_type, lesson_id AS dst_id FROM lesson_tag_joins
-    UNION ALL
-    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Talk' AS dst_type, talk_id AS dst_id FROM talk_tag_joins
-    UNION ALL
-    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Medium' AS dst_type, medium_id AS dst_id FROM medium_tag_joins
-    UNION ALL
-    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Tag' AS dst_type, related_tag_id AS dst_id FROM relations
-  SQL
+  # Declarative map of all dependencies. This is now the single source of truth.
+  # The SQL query is generated from this map.
+  #
+  # Format:
+  # SourceModel => [
+  #   { to: DestinationModel, type: :belongs_to, fk: :foreign_key_on_source },
+  #   { to: DestinationModel, type: :has_many, fk: :foreign_key_on_destination },
+  #   { to: DestinationModel, type: :has_many, through: :join_table_name },
+  #   { to: DestinationModel, type: :polymorphic_has_many, as: :teachable },
+  # ]
+  DEPENDENCY_MAP = {
+    Course => [
+      { to: Lecture, type: :has_many, fk: :course_id },
+      { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      { to: Tag, type: :has_many, through: :course_tag_joins }
+    ],
+    Lecture => [
+      { to: Course, type: :belongs_to, fk: :course_id },
+      { to: Chapter, type: :has_many, fk: :lecture_id },
+      { to: Lesson, type: :has_many, fk: :lecture_id },
+      { to: Talk, type: :has_many, fk: :lecture_id },
+      { to: Medium, type: :polymorphic_has_many, as: :teachable }
+    ],
+    Chapter => [
+      { to: Lecture, type: :belongs_to, fk: :lecture_id },
+      { to: Section, type: :has_many, fk: :chapter_id }
+    ],
+    Section => [
+      { to: Chapter, type: :belongs_to, fk: :chapter_id },
+      { to: Lesson, type: :has_many, through: :lesson_section_joins },
+      { to: Tag, type: :has_many, through: :section_tag_joins }
+    ],
+    Lesson => [
+      { to: Lecture, type: :belongs_to, fk: :lecture_id },
+      { to: Section, type: :has_many, through: :lesson_section_joins },
+      { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      { to: Tag, type: :has_many, through: :lesson_tag_joins }
+    ],
+    Talk => [
+      { to: Lecture, type: :belongs_to, fk: :lecture_id },
+      { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      { to: Tag, type: :has_many, through: :talk_tag_joins }
+    ],
+    Medium => [
+      { to: :teachable, type: :polymorphic_belongs_to, as: :teachable },
+      { to: Tag, type: :has_many, through: :medium_tag_joins }
+    ],
+    Tag => [
+      { to: Course, type: :has_many, through: :course_tag_joins },
+      { to: Section, type: :has_many, through: :section_tag_joins },
+      { to: Lesson, type: :has_many, through: :lesson_tag_joins },
+      { to: Talk, type: :has_many, through: :talk_tag_joins },
+      { to: Medium, type: :has_many, through: :medium_tag_joins },
+      { to: Tag, type: :has_many, through: :relations, fk: :tag_id, assoc_fk: :related_tag_id }
+    ]
+  }.freeze
 
   class << self
     def run(model)
@@ -95,6 +76,75 @@ class CacheInvalidatorService
 
     private
 
+      # Generates the large EDGES_SQL string from the DEPENDENCY_MAP and memoizes it.
+      def edges_sql
+        @edges_sql ||= DEPENDENCY_MAP.flat_map do |src_model, dependencies|
+          dependencies.map do |dep|
+            generate_sql_for_dependency(src_model, dep)
+          end
+        end.compact.join("\nUNION ALL\n")
+      end
+
+      def generate_sql_for_dependency(src_model, dep)
+        src_table = src_model.table_name
+        dst_model = dep[:to]
+
+        case dep[:type]
+        when :belongs_to
+          <<~SQL.squish
+            SELECT '#{src_model}' AS src_type,
+                   #{src_table}.id AS src_id,
+                   '#{dst_model}' AS dst_type,
+                   #{src_table}.#{dep[:fk]} AS dst_id
+            FROM #{src_table}
+          SQL
+        when :has_many
+          if dep[:through]
+            join_table = dep[:through]
+            src_fk = dep[:fk] || "#{src_model.name.underscore}_id"
+            dst_fk = dep[:assoc_fk] || "#{dst_model.name.underscore}_id"
+            <<~SQL.squish
+              SELECT '#{src_model}' AS src_type,
+                     #{src_fk} AS src_id,
+                     '#{dst_model}' AS dst_type,
+                     #{dst_fk} AS dst_id
+              FROM #{join_table}
+            SQL
+          else
+            dst_table = dst_model.table_name
+            <<~SQL.squish
+              SELECT '#{src_model}' AS src_type,
+                     #{src_table}.id AS src_id,
+                     '#{dst_model}' AS dst_type,
+                     #{dst_table}.id AS dst_id
+              FROM #{src_table}
+              JOIN #{dst_table} ON #{dst_table}.#{dep[:fk]} = #{src_table}.id
+            SQL
+          end
+        when :polymorphic_has_many
+          dst_table = dst_model.table_name
+          <<~SQL.squish
+            SELECT '#{src_model}' AS src_type,
+                   #{src_table}.id AS src_id,
+                   '#{dst_model}' AS dst_type,
+                   #{dst_table}.id AS dst_id
+            FROM #{src_table}
+            JOIN #{dst_table}
+              ON #{dst_table}.#{dep[:as]}_id = #{src_table}.id
+             AND #{dst_table}.#{dep[:as]}_type = '#{src_model}'
+          SQL
+        when :polymorphic_belongs_to
+          <<~SQL.squish
+            SELECT '#{src_model}' AS src_type,
+                   #{src_table}.id AS src_id,
+                   #{src_table}.#{dep[:as]}_type AS dst_type,
+                   #{src_table}.#{dep[:as]}_id AS dst_id
+            FROM #{src_table}
+            WHERE #{src_table}.#{dep[:as]}_id IS NOT NULL
+          SQL
+        end
+      end
+
       # Executes the recursive CTE to find all dependencies.
       def closure_from(start_type, start_id)
         sql = <<~SQL
@@ -105,9 +155,7 @@ class CacheInvalidatorService
             -- Recursive step: join dependencies with the edges
             SELECT edges.dst_type, edges.dst_id
             FROM dependencies
-            JOIN (
-              SELECT src_type, src_id, dst_type, dst_id FROM (#{EDGES_SQL}) AS all_edges
-            ) AS edges ON edges.src_type = dependencies.type AND edges.src_id = dependencies.id
+            JOIN (#{edges_sql}) AS edges ON edges.src_type = dependencies.type AND edges.src_id = dependencies.id
           )
           SELECT type, id FROM dependencies;
         SQL
@@ -120,7 +168,7 @@ class CacheInvalidatorService
         )
 
         # Group the results by class name.
-        rows.group_by { |row| row["type"].constantize }
+        rows.group_by { |row| row["type"]&.constantize }.compact
             .transform_values { |value| value.map { |row| row["id"] } }
       end
   end
