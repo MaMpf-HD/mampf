@@ -12,7 +12,7 @@ class CacheInvalidatorService
 
     -- Lecture dependencies
     UNION ALL
-    SELECT 'Lecture' AS src_type, id AS src_id, 'Course' AS dst_type, course_id AS dst_id FROM lectures
+    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Course' AS dst_type, course_id AS dst_id FROM lectures
     UNION ALL
     SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Chapter' AS dst_type, chapters.id AS dst_id FROM lectures JOIN chapters ON chapters.lecture_id = lectures.id
     UNION ALL
@@ -24,13 +24,13 @@ class CacheInvalidatorService
 
     -- Chapter dependencies
     UNION ALL
-    SELECT 'Chapter' AS src_type, id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM chapters
+    SELECT 'Chapter' AS src_type, chapters.id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM chapters
     UNION ALL
     SELECT 'Chapter' AS src_type, chapters.id AS src_id, 'Section' AS dst_type, sections.id AS dst_id FROM chapters JOIN sections ON sections.chapter_id = chapters.id
 
     -- Section dependencies
     UNION ALL
-    SELECT 'Section' AS src_type, id AS src_id, 'Chapter' AS dst_type, chapter_id AS dst_id FROM sections
+    SELECT 'Section' AS src_type, sections.id AS src_id, 'Chapter' AS dst_type, chapter_id AS dst_id FROM sections
     UNION ALL
     SELECT 'Section' AS src_type, section_id AS src_id, 'Lesson' AS dst_type, lesson_id AS dst_id FROM lesson_section_joins
     UNION ALL
@@ -38,7 +38,7 @@ class CacheInvalidatorService
 
     -- Lesson dependencies
     UNION ALL
-    SELECT 'Lesson' AS src_type, id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM lessons
+    SELECT 'Lesson' AS src_type, lessons.id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM lessons
     UNION ALL
     SELECT 'Lesson' AS src_type, lesson_id AS src_id, 'Section' AS dst_type, section_id AS dst_id FROM lesson_section_joins
     UNION ALL
@@ -48,7 +48,7 @@ class CacheInvalidatorService
 
     -- Talk dependencies
     UNION ALL
-    SELECT 'Talk' AS src_type, id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM talks
+    SELECT 'Talk' AS src_type, talks.id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM talks
     UNION ALL
     SELECT 'Talk' AS src_type, talks.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM talks JOIN media ON media.teachable_id = talks.id AND media.teachable_type = 'Talk'
     UNION ALL
@@ -56,7 +56,7 @@ class CacheInvalidatorService
 
     -- Medium dependencies
     UNION ALL
-    SELECT 'Medium' AS src_type, id AS src_id, teachable_type AS dst_type, teachable_id AS dst_id FROM media WHERE teachable_id IS NOT NULL
+    SELECT 'Medium' AS src_type, media.id AS src_id, teachable_type AS dst_type, teachable_id AS dst_id FROM media WHERE teachable_id IS NOT NULL
     UNION ALL
     SELECT 'Medium' AS src_type, medium_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM medium_tag_joins
 
