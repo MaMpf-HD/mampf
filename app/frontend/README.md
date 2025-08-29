@@ -11,7 +11,8 @@ A topic folder (e.g. `lectures`)
 
 - Contains (including subfolders) all frontend-related code for a specific controller (e.g. `lectures_controller.rb`). This includes views, partials, JavaScript, Stylesheets, ViewComponents etc.
 - **Has subfolders corresponding to controller actions** (e.g. `edit`, `show`, `index`, `search` etc.). Shorter names may be used for folder names, e.g. `announcements` instead of `show_announcements` or `subscribe` instead of `subscribe_page`.
-  - Inside these subfolders, the trinity of html, css and js should be placed together by naming convention, e.g. `index.html.erb`, `index.js`, `index.scss` for the `index` action. [Additional files can be added as needed, e.g. `do_something_specific.js`. However, if the folder is getting too big and too messy, consider splitting it up into more folders.]
+  - Inside these subfolders, the trinity of html, css and js should be placed together by naming convention, e.g. `index.html.erb`, `index.js`, `index.scss` for the `index` action. For partials, it can be beneficial to also include a `_` as prefix for related JS/CSS files in order to have related files displayed right next to each other in the file tree.
+  [Additional files can be added as needed, e.g. `do_something_specific.js`. However, if the folder is getting too big and too messy, consider splitting it up into more folders.]
   - May contain further subfolders, consider for example `vignettes/slides/form/answer_types/`. However, deeply nesting should be avoided.
   - [for very big topics] These subfolders can also refer to "user-like boundaries", e.g. `info_slides` vs. `slides` for Vignettes. However, inside these folders, we follow the same structure, i.e. subfolders for controller actions.
 - May contain one of the following special subfolders:
@@ -27,3 +28,4 @@ Further rules:
 - JS Stimulus Controllers end in `.controller.js`.
 - Historically, we have many `.coffee` files. New code should avoid CoffeeScript. Use JavaScript instead. See #698 for more details.
 - Historically, we have many `.js.erb` files. New code should avoid `.js.erb` files (see also [this disclaimer](https://github.com/ElMassimo/vite-plugin-erb?tab=readme-ov-file#disclaimer-%EF%B8%8F)). Use `.js` files instead. Favor sending HTML responses from the backend instead of JS or CoffeScript responses.
+- Use `.scss` files for stylesheets. Avoid `.css` files. [Might rethink this as nowadays pure CSS has gotten quite powerful.]
