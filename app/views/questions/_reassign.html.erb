@@ -2,10 +2,10 @@
 <% quiz_ids -= [quiz_id] if in_quiz %>
 <% quiz_ids = [] if no_rights %>
 <div id="reassign-question-<%= question.id %>">
-  <%= bootstrap_form_with model: question,
-                          url: { action: "reassign",
-                                 controller: "questions",
-                                 id: question.id } do |f| %>
+  <%= form_with model: question,
+                url: { action: "reassign",
+                       controller: "questions",
+                       id: question.id } do |f| %>
     <%= t('admin.question.copy_created') %>
     <% if in_quiz %>
       <%= f.hidden_field 'quiz-' + quiz_id.to_s,
@@ -19,8 +19,10 @@
       <%= t('admin.question.checked_only_html') %>
     <% end %>
     <% quiz_ids.each do |q| %>
-      <%= f.check_box 'quiz-' + q.to_s,
-                      label: Quiz.find_by_id(q).label %>
+      <div class="form-check">
+        <%= f.check_box 'quiz-' + q.to_s, class: 'form-check-input' %>
+        <%= f.label 'quiz-' + q.to_s, Quiz.find_by_id(q).label, class: 'form-check-label' %>
+      </div>
     <% end %>
     <%= f.hidden_field :type,
                        id: 'reassign_type',

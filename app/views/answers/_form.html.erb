@@ -1,21 +1,21 @@
 <% id = answer.id || 0 %>
-<%= bootstrap_form_with model: answer do |f| %>
+<%= form_with model: answer do |f| %>
   <div id="answer-value-<%= id %>" data-id="<%= id %>">
-    <%= f.form_group :value,
-                     label: { text: t('admin.answer.correctness') + ':' } do %>
-      <%= f.radio_button :value, true,
-                         label: t('admin.answer.true_lc'),
-                         inline: true,
-                         id: 'answer-true-' + id.to_s %>
-      <%= f.radio_button :value,
-                         false,
-                         label: t('admin.answer.false_lc'),
-                         inline: true,
-                         id: 'answer-false-' + id.to_s %>
-    <% end %>
+    <div class="mb-3">
+      <label class="form-label"><%= t('admin.answer.correctness') %>:</label>
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :value, true, class: 'form-check-input', id: 'answer-true-' + id.to_s %>
+        <%= f.label :value, t('admin.answer.true_lc'), value: true, class: 'form-check-label', for: 'answer-true-' + id.to_s %>
+      </div>
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :value, false, class: 'form-check-input', id: 'answer-false-' + id.to_s %>
+        <%= f.label :value, t('admin.answer.false_lc'), value: false, class: 'form-check-label', for: 'answer-false-' + id.to_s %>
+      </div>
+    </div>
   </div>
   <%= f.text_area :text,
-                  id: 'tex-area-answer-' + id.to_s  %>
+                  id: 'tex-area-answer-' + id.to_s,
+                  class: 'form-control' %>
   <% if id == 0 %>
     <%= t('admin.answer.preview_text') %>:
     <div  class="border bg-correct border-secondary rounded py-2 mb-2"
@@ -26,9 +26,12 @@
       <span id='tex-preview-answer-0'></span>
     </div>
   <% end %>
-  <%= f.text_area :explanation,
-                  label: { text: t('admin.answer.explanation') },
-                  id: 'tex-area-explanation-' + id.to_s %>
+  <div class="mb-3">
+    <%= f.label :explanation, t('admin.answer.explanation'), class: 'form-label' %>
+    <%= f.text_area :explanation,
+                    id: 'tex-area-explanation-' + id.to_s,
+                    class: 'form-control' %>
+  </div>
   <% if id == 0 %>
     <%= t('admin.answer.preview_explanation') %>:
     <div  class="border border-secondary rounded bg-light py-2">

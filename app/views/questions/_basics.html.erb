@@ -1,4 +1,4 @@
-<%= bootstrap_form_with model: question do |f| %>
+<%= form_with model: question do |f| %>
   <div class="card-header">
     <div class="row">
       <div class="col-3">
@@ -40,53 +40,55 @@
     </div>
     <div class="mb-3">
     </div>
-    <%= f.text_area :text,
-                    id: 'tex-area-question-' + question.id.to_s,
-                    label: t('basics.latex'),
-                    rows: 5,
-                    data: { parse: true, id: question.id } %>
-    <%= f.form_group :question_sort,
-                     label: { text: t('basics.type') + ':' } do %>
+    <div class="mb-3">
+      <%= f.label :text, t('basics.latex'), class: 'form-label' %>
+      <%= f.text_area :text,
+                      id: 'tex-area-question-' + question.id.to_s,
+                      class: 'form-control',
+                      rows: 5,
+                      data: { parse: true, id: question.id } %>
+    </div>
+    <div class="mb-3">
+      <label class="form-label"><%= t('basics.type') %>:</label>
       <span id="questionSort" class="ms-2">
-        <%= f.radio_button :question_sort,
-                           'mc',
-                           label: t('basics.multiple_choice'),
-                           inline: true,
-                           custom: true %>
-        <%= f.radio_button :question_sort,
-                           'free',
-                           label: t('basics.free'),
-                           inline: true,
-                           custom: true %>
+        <div class="form-check form-check-inline">
+          <%= f.radio_button :question_sort, 'mc', class: 'form-check-input' %>
+          <%= f.label :question_sort, t('basics.multiple_choice'), value: 'mc', class: 'form-check-label' %>
+        </div>
+        <div class="form-check form-check-inline">
+          <%= f.radio_button :question_sort, 'free', class: 'form-check-input' %>
+          <%= f.label :question_sort, t('basics.free'), value: 'free', class: 'form-check-label' %>
+        </div>
       </span>
-    <% end %>
-    <%= f.form_group :level,
-                     label: { text: t('basics.level') + ':' } do %>
+    </div>
+    <div class="mb-3">
+      <label class="form-label"><%= t('basics.level') %>:</label>
       <span id="level" class="ms-2">
-        <%= f.radio_button :level,
-                           0,
-                           label: t('basics.level_easy'),
-                           inline: true,
-                           custom: true %>
-        <%= f.radio_button :level,
-                           1,
-                           label: t('basics.level_medium'),
-                           inline: true,
-                           custom: true %>
-        <%= f.radio_button :level,
-                           2,
-                           label: t('basics.level_hard'),
-                           inline: true,
-                           custom: true %>
+        <div class="form-check form-check-inline">
+          <%= f.radio_button :level, 0, class: 'form-check-input' %>
+          <%= f.label :level, t('basics.level_easy'), value: 0, class: 'form-check-label' %>
+        </div>
+        <div class="form-check form-check-inline">
+          <%= f.radio_button :level, 1, class: 'form-check-input' %>
+          <%= f.label :level, t('basics.level_medium'), value: 1, class: 'form-check-label' %>
+        </div>
+        <div class="form-check form-check-inline">
+          <%= f.radio_button :level, 2, class: 'form-check-input' %>
+          <%= f.label :level, t('basics.level_hard'), value: 2, class: 'form-check-label' %>
+        </div>
       </span>
-    <% end %>
-    <%= f.form_group :independent do %>
-      <%= f.check_box :independent,
-                      label: t('admin.question.independent'),
-                      custom: true %>
-    <% end %>
-    <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
-                    label: t('admin.question.hint') %>
+    </div>
+    <div class="mb-3">
+      <div class="form-check">
+        <%= f.check_box :independent, class: 'form-check-input' %>
+        <%= f.label :independent, t('admin.question.independent'), class: 'form-check-label' %>
+      </div>
+    </div>
+    <div class="mb-3">
+      <%= f.label :hint, t('admin.question.hint'), class: 'form-label' %>
+      <%= f.text_area :hint, id: 'tex-area-hint-' + question.id.to_s,
+                      class: 'form-control' %>
+    </div>
     <div id="tex-preview-hint-<%= question.id %>"
          class="p-2 mb-3">
       <%= question.hint %>

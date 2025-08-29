@@ -1,4 +1,4 @@
-<%= bootstrap_form_with model: remark do |f| %>
+<%= form_with model: remark do |f| %>
   <div class="card-header">
     <div class="row">
       <div class="col-3">
@@ -32,14 +32,19 @@
          class="bg-remark border p-2 mb-3">
       <%= remark.text %>
     </div>
-    <%= f.text_area :text, id: 'tex-area-remark-' + remark.id.to_s,
-                           label: t('basics.latex'),
-                           rows: 6 %>
+    <div class="mb-3">
+      <%= f.label :text, t('basics.latex'), class: 'form-label' %>
+      <%= f.text_area :text, id: 'tex-area-remark-' + remark.id.to_s,
+                             class: 'form-control',
+                             rows: 6 %>
+    </div>
     <% if current_user.admin %>
       <div class="row mb-3">
         <div class="col-12">
-          <%= f.check_box :text_input,
-                          label: t('admin.remark.text_input') %>
+          <div class="form-check">
+            <%= f.check_box :text_input, class: 'form-check-input' %>
+            <%= f.label :text_input, t('admin.remark.text_input'), class: 'form-check-label' %>
+          </div>
         </div>
       </div>
     <% end %>
