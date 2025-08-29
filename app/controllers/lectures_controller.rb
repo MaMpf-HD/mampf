@@ -58,13 +58,18 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new
     authorize! :new, @lecture
     @from = params[:from]
-    return unless @from == "course"
 
-    # if new action was triggered from inside a course view, add the course
-    # info to the lecture
-    @lecture.course = Course.find_by(id: params[:course])
-    I18n.locale = @lecture.course.locale
-    @lecture.annotations_status = 0
+    if @from == "course"
+      # if new action was triggered from inside a course view, add the course
+      # info to the lecture
+      @lecture.course = Course.find_by(id: params[:course])
+      I18n.locale = @lecture.course.locale
+      @lecture.annotations_status = 0
+    end
+
+    respond_to do |format|
+      format.js { render template: "lectures/new/new" }
+    end
   end
 
   def edit
@@ -81,6 +86,7 @@ class LecturesController < ApplicationController
     @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
     @lecture.save
+
     if @lecture.valid?
       @lecture.update(sort: "special") if @lecture.course.term_independent
       # set organizational_concept to default
@@ -100,7 +106,11 @@ class LecturesController < ApplicationController
                                  lecture: @lecture.title_with_teacher)
       return
     end
+
     @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/create/create" }
+    end
   end
 
   def update
