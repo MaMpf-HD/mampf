@@ -1,92 +1,149 @@
 class CacheInvalidatorService
-  # The dependency graph. Maps a model class to a lambda that returns
-  # an array of dependent objects. We will populate this incrementally.
-  DEPENDENCY_MAP = {
-    Course => ->(course) { course.lectures + course.media + course.tags },
-    Lecture => lambda { |lecture|
-      [lecture.course] + lecture.chapters + lecture.lessons + lecture.talks + lecture.media
+  # Each resolver now takes an array of IDs and returns a hash mapping a
+  # dependent class to an array of its IDs.
+  # Queries are optimized to use join tables directly and fetch IDs in bulk.
+  RESOLVERS = {
+    Course => lambda { |ids|
+      {
+        Lecture => Lecture.where(course_id: ids).reorder(nil).pluck(:id),
+        Medium => Medium.where(teachable_type: "Course", teachable_id: ids)
+                        .reorder(nil).pluck(:id),
+        Tag => CourseTagJoin.where(course_id: ids).reorder(nil).pluck(:tag_id)
+      }
     },
-    Chapter => ->(chapter) { [chapter.lecture] + chapter.sections },
-    Section => ->(section) { [section.chapter] + section.lessons + section.tags },
-    Lesson => ->(lesson) { [lesson.lecture] + lesson.sections + lesson.media + lesson.tags },
-    Talk => ->(talk) { [talk.lecture] + talk.media + talk.tags },
-    Medium => ->(medium) { [medium.teachable] + medium.tags },
-    Tag => lambda { |tag|
-      tag.courses + tag.sections + tag.lessons + tag.talks + tag.media + tag.related_tags
+    Lecture => lambda { |ids|
+      {
+        Course => Lecture.where(id: ids).reorder(nil).pluck(:course_id).compact,
+        Chapter => Chapter.where(lecture_id: ids).reorder(nil).pluck(:id),
+        Lesson => Lesson.where(lecture_id: ids).reorder(nil).pluck(:id),
+        Talk => Talk.where(lecture_id: ids).reorder(nil).pluck(:id),
+        Medium => Medium.where(teachable_type: "Lecture", teachable_id: ids)
+                        .reorder(nil).pluck(:id)
+      }
+    },
+    Chapter => lambda { |ids|
+      {
+        Lecture => Chapter.where(id: ids).reorder(nil).pluck(:lecture_id).compact,
+        Section => Section.where(chapter_id: ids).reorder(nil).pluck(:id)
+      }
+    },
+    Section => lambda { |ids|
+      {
+        Chapter => Section.where(id: ids).reorder(nil).pluck(:chapter_id).compact,
+        Lesson => LessonSectionJoin.where(section_id: ids).reorder(nil).pluck(:lesson_id),
+        Tag => SectionTagJoin.where(section_id: ids).reorder(nil).pluck(:tag_id)
+      }
+    },
+    Lesson => lambda { |ids|
+      {
+        Lecture => Lesson.where(id: ids).reorder(nil).pluck(:lecture_id).compact,
+        Section => LessonSectionJoin.where(lesson_id: ids).reorder(nil).pluck(:section_id),
+        Medium => Medium.where(teachable_type: "Lesson", teachable_id: ids)
+                        .reorder(nil).pluck(:id),
+        Tag => LessonTagJoin.where(lesson_id: ids).reorder(nil).pluck(:tag_id)
+      }
+    },
+    Talk => lambda { |ids|
+      {
+        Lecture => Talk.where(id: ids).reorder(nil).pluck(:lecture_id).compact,
+        Medium => Medium.where(teachable_type: "Talk", teachable_id: ids)
+                        .reorder(nil).pluck(:id),
+        Tag => TalkTagJoin.where(talk_id: ids).reorder(nil).pluck(:tag_id)
+      }
+    },
+    Medium => lambda { |ids|
+      # Group teachables by their class
+      teachables = Medium.where(id: ids).reorder(nil)
+                         .pluck(:teachable_type, :teachable_id)
+      deps = teachables.group_by(&:first)
+                       .transform_values { |v| v.map(&:second) }
+                       .transform_keys(&:constantize)
+
+      # Get associated tags
+      deps[Tag] = MediumTagJoin.where(medium_id: ids).reorder(nil).pluck(:tag_id)
+      deps
+    },
+    Tag => lambda { |ids|
+      {
+        Course => CourseTagJoin.where(tag_id: ids).reorder(nil).pluck(:course_id),
+        Section => SectionTagJoin.where(tag_id: ids).reorder(nil).pluck(:section_id),
+        Lesson => LessonTagJoin.where(tag_id: ids).reorder(nil).pluck(:lesson_id),
+        Talk => TalkTagJoin.where(tag_id: ids).reorder(nil).pluck(:talk_id),
+        Medium => MediumTagJoin.where(tag_id: ids).reorder(nil).pluck(:medium_id),
+        # NOTE: `relations` is the join table for a self-referential association
+        Tag => Relation.where(tag_id: ids).reorder(nil).pluck(:related_tag_id)
+      }
     }
   }.freeze
 
   FAN_OUT_LOG_THRESHOLD = 50
+  BATCH_SIZE = 1000
 
   class << self
-    # The main public method.
-    # It orchestrates the gathering of all dependencies and then invalidates them
-    # in a single, efficient batch.
     def run(model, event_name: "unknown")
-      # 1. Gather all unique dependents recursively.
-      all_dependents = gather_all_dependents(model, event_name: event_name)
-      return if all_dependents.empty?
+      # visited stores all nodes seen during traversal: { Klass => Set[id] }
+      visited = Hash.new { |h, k| h[k] = Set.new }
+      # frontier stores nodes to be processed in the current iteration
+      frontier = Hash.new { |h, k| h[k] = Set.new }
+      frontier[model.class] << model.id
 
-      # 2. Invalidate the collected dependents in batches.
-      timestamp = Time.current # Keep full microsecond precision
-      dependents_by_class = all_dependents.group_by(&:class)
+      loop do
+        # next_frontier will collect nodes for the *next* iteration
+        next_frontier = Hash.new { |h, k| h[k] = Set.new }
 
-      dependents_by_class.each do |klass, records|
-        if records.size > FAN_OUT_LOG_THRESHOLD
-          Rails.logger.warn("[CacheInvalidator] Large fan-out from #{model.class.name}##{model.id} " \
-                            "(#{event_name}): Invalidating #{records.size} #{klass.name} records.")
+        frontier.each do |klass, ids_set|
+          # From the current frontier, select only the IDs we haven't processed yet
+          new_ids = ids_set.to_a - visited[klass].to_a
+          next if new_ids.empty?
+
+          # Add these new IDs to the global visited set
+          visited[klass].merge(new_ids)
+
+          resolver = resolver_for(klass)
+          next unless resolver
+
+          # Process in batches to keep `IN (...)` clauses of a reasonable size
+          new_ids.each_slice(BATCH_SIZE) do |slice|
+            # buckets is a hash like { Klass => [ids] }
+            buckets = resolver.call(slice)
+            buckets.each do |dep_klass, dep_ids|
+              # Add newly found dependencies to the next frontier,
+              # but only if they haven't been visited at all yet.
+              unseen_deps = dep_ids.compact.uniq - visited[dep_klass].to_a
+              next_frontier[dep_klass].merge(unseen_deps)
+            end
+          end
         end
-        # We intentionally skip callbacks and validations for performance and to prevent
-        # an infinite loop of after_commit hooks.
+
+        # If the next frontier is empty, we're done traversing
+        break if next_frontier.values.all?(&:empty?)
+
+        # The next frontier becomes the current frontier for the next iteration
+        frontier = next_frontier
+      end
+
+      # Batch invalidate all collected IDs for each class with a single timestamp
+      timestamp = Time.current
+      visited.each do |klass, ids|
+        next if ids.empty?
+
         # rubocop:disable Rails/SkipsModelValidations
-        klass.where(id: records.map!(&:id)).update_all(updated_at: timestamp)
+        klass.where(id: ids.to_a).update_all(updated_at: timestamp)
         # rubocop:enable Rails/SkipsModelValidations
       end
     end
 
     private
 
-      # Helper to find a dependency rule, walking up the inheritance chain for STI.
-      def dependents_proc_for(klass)
+      # Helper to find a resolver, walking up the inheritance chain for STI.
+      def resolver_for(klass)
         k = klass
         while k && k <= ActiveRecord::Base
-          proc = DEPENDENCY_MAP[k]
-          return proc if proc
+          return RESOLVERS[k] if RESOLVERS.key?(k)
 
           k = k.superclass
         end
         nil
-      end
-
-      # This private method walks the dependency graph and returns a Set of all
-      # unique objects that need to be invalidated.
-      def gather_all_dependents(initial_model, event_name:, visited: Set.new)
-        # Use a queue for graph traversal.
-        queue = [initial_model]
-        all_deps = Set.new
-
-        while (model = queue.shift)
-          model_key = [model.class.name, model.id]
-          next if visited.include?(model_key)
-
-          visited.add(model_key)
-
-          dependents_proc = dependents_proc_for(model.class)
-          next unless dependents_proc
-
-          begin
-            dependents = Array(dependents_proc.call(model)).compact.uniq
-            unless dependents.empty?
-              all_deps.merge(dependents)
-              queue.concat(dependents)
-            end
-          rescue StandardError => e
-            Rails.logger.error("[CacheInvalidator] Failed resolving dependents for #{model.class.name}##{model.id} (#{event_name}): #{e.full_message}")
-            # Continue with the next item in the queue, halting this branch.
-          end
-        end
-
-        all_deps
       end
   end
 end
