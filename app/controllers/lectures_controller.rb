@@ -209,7 +209,8 @@ class LecturesController < ApplicationController
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
     I18n.locale = @lecture.locale_with_inheritance
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/announcements/show_announcements",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def organizational
@@ -217,7 +218,7 @@ class LecturesController < ApplicationController
       render layout: "vignettes_navbar"
     else
       I18n.locale = @lecture.locale_with_inheritance
-      render template: "lectures/organizational/organizational",
+      render template: "lectures/organizational/_organizational",
              layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
@@ -321,7 +322,8 @@ class LecturesController < ApplicationController
   def display_course
     @course = @lecture.course
     I18n.locale = @course.locale || @lecture.locale
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/course/display_course",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def subscribe_page
@@ -422,7 +424,7 @@ class LecturesController < ApplicationController
 
     # fill organizational_concept with default view
     def set_organizational_defaults
-      partial_path = "lectures/organizational/"
+      partial_path = "lectures/organizational/defaults/"
       partial_path += @lecture.seminar? ? "seminar" : "lecture"
       @lecture.update(organizational_concept:
                         render_to_string(partial: partial_path,
