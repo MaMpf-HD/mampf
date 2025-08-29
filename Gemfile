@@ -13,7 +13,7 @@ gem "acts_as_tree", "~> 2.9"
 gem "acts_as_votable", "~> 0.14"
 gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
-gem "bootstrap_form", "~> 5.4"
+
 gem "cancancan", "~> 3.6"
 gem "coffee-rails", "~> 5.0"
 gem "commontator", "~> 7.0.1"

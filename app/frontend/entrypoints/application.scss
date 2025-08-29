@@ -24,7 +24,6 @@ $container-max-widths: (
 );
 
 /* override the !default vars with the values we set above */
-@import "gems/bootstrap_form/app/assets/stylesheets/rails_bootstrap_forms.css";
 @import "~/styles/annotations.scss";
 @import "~/styles/chapters.scss";
 @import "~/styles/colors.scss";

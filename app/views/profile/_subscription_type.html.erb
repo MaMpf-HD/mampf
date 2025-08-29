@@ -1,30 +1,38 @@
 <div class="row">
   <div class="col-12">
-    <%= f.form_group :locale,
-                    label: { text: t('profile.locale'), class: 'fw-bold' } do %>
+    <div class="mb-3">
+      <label class="form-label fw-bold"><%= t('profile.locale') %></label>
       <% I18n.available_locales.each do |locale| %>
         <% cy_label = "locale-#{locale}-checkbox" %>
-        <%= f.radio_button :locale,
-                           locale.to_s,
-                           label: t('locales.' + locale.to_s,
-                                    locale: current_user.locale),
-                           "data-cy": cy_label %>
+        <div class="form-check">
+          <%= f.radio_button :locale, locale.to_s, class: 'form-check-input', "data-cy": cy_label %>
+          <%= f.label :locale, t('locales.' + locale.to_s, locale: current_user.locale), 
+                      value: locale.to_s, class: 'form-check-label', "data-cy": cy_label %>
+        </div>
       <% end %>
-    <% end %>
+    </div>
   </div>
   <div class="col-12">
-    <%= f.form_group :subscription_type,
-                      label: { text: t('profile.content_info') } do %>
-      <%= f.radio_button :subscription_type, 2,
-                         label: t('profile.subscription_all'),
-                         checked: @user.subscription_type == 2 %>
-      <%= f.radio_button :subscription_type, 3,
-                         label: t('profile.subscription_strict'),
-                         checked: @user.subscription_type == 3 %>
-      <%= f.radio_button :subscription_type, 1,
-            label: (t('profile.subscription_mixed') + helpdesk(t('profile.subscription_mixed_example'), false)).html_safe,
-            checked: @user.subscription_type == 1 ||
-                    @user.subscription_type.nil? %>
-    <% end %>
+    <div class="mb-3">
+      <label class="form-label"><%= t('profile.content_info') %></label>
+      <div class="form-check">
+        <%= f.radio_button :subscription_type, 2, class: 'form-check-input',
+                           checked: @user.subscription_type == 2 %>
+        <%= f.label :subscription_type, t('profile.subscription_all'), 
+                    value: 2, class: 'form-check-label' %>
+      </div>
+      <div class="form-check">
+        <%= f.radio_button :subscription_type, 3, class: 'form-check-input',
+                           checked: @user.subscription_type == 3 %>
+        <%= f.label :subscription_type, t('profile.subscription_strict'), 
+                    value: 3, class: 'form-check-label' %>
+      </div>
+      <div class="form-check">
+        <%= f.radio_button :subscription_type, 1, class: 'form-check-input',
+                           checked: @user.subscription_type == 1 || @user.subscription_type.nil? %>
+        <%= f.label :subscription_type, (t('profile.subscription_mixed') + helpdesk(t('profile.subscription_mixed_example'), false)).html_safe,
+                    value: 1, class: 'form-check-label' %>
+      </div>
+    </div>
   </div>
 </div>

@@ -1,16 +1,15 @@
 <% remark = Remark.find(@quiz_round.vertex[:id]) %>
 <div class="card bg-remark mt-2 border-secondary">
   <div class="card-body">
-    <%= bootstrap_form_with model: @quiz_round.quiz,
-                            url: {action: "proceed"} do |f| %>
+    <%= form_with model: @quiz_round.quiz,
+                  url: {action: "proceed"} do |f| %>
       <div class="row p-2 mb-2">
         <div class="col-12">
           <%= remark.text %>
           <% if remark.text_input %>
             <%= f.text_area :input_text,
-                            class: 'type-it mt-2',
-                            id: "tex-area-quiz_input-#{@quiz_round.round_id}",
-                            hide_label: true %>
+                            class: 'type-it mt-2 form-control',
+                            id: "tex-area-quiz_input-#{@quiz_round.round_id}" %>
             <div class="type-it-label">
               <%= t('admin.remark.preview') %>
               <%= helpdesk(t('admin.remark.info.preview'), true) %>

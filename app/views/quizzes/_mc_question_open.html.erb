@@ -1,15 +1,17 @@
-<%= bootstrap_form_with model: quiz_round.quiz,
-                        url: {action: "proceed"} do |f| %>
+<%= form_with model: quiz_round.quiz,
+              url: {action: "proceed"} do |f| %>
   <% answers.each do |a| %>
     <div class="row p-2 mb-2 border-bottom">
       <div class="col-12">
-        <%= f.check_box :crosses,
-                        { multiple: true,
-                          id: answer_id(a.id),
-                          class: "click-it",
-                          label: a.text },
-                        a.id,
-                        false %>
+        <div class="form-check">
+          <%= f.check_box :crosses,
+                          { multiple: true,
+                            id: answer_id(a.id),
+                            class: "click-it form-check-input" },
+                          a.id,
+                          false %>
+          <%= f.label :crosses, a.text, for: answer_id(a.id), class: "form-check-label" %>
+        </div>
       </div>
     </div>
   <% end %>
