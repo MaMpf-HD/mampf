@@ -11,9 +11,9 @@ Rails.application.reloader.to_prepare do
   event_pattern = /model\..*\.(created|updated|destroying)/
 
   @cache_invalidator_subscription =
-    ActiveSupport::Notifications.subscribe(event_pattern) do |name, _start, _finish, _id, payload|
+    ActiveSupport::Notifications.subscribe(event_pattern) do |_name, _start, _finish, _id, payload|
       model = payload[:model]
       # The service might not be loaded yet during initialization, so we check.
-      CacheInvalidatorService.run(model, event_name: name) if defined?(CacheInvalidatorService)
+      CacheInvalidatorService.run(model) if defined?(CacheInvalidatorService)
     end
 end

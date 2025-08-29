@@ -1,149 +1,127 @@
 class CacheInvalidatorService
-  # Each resolver now takes an array of IDs and returns a hash mapping a
-  # dependent class to an array of its IDs.
-  # Queries are optimized to use join tables directly and fetch IDs in bulk.
-  RESOLVERS = {
-    Course => lambda { |ids|
-      {
-        Lecture => Lecture.where(course_id: ids).reorder(nil).pluck(:id),
-        Medium => Medium.where(teachable_type: "Course", teachable_id: ids)
-                        .reorder(nil).pluck(:id),
-        Tag => CourseTagJoin.where(course_id: ids).reorder(nil).pluck(:tag_id)
-      }
-    },
-    Lecture => lambda { |ids|
-      {
-        Course => Lecture.where(id: ids).reorder(nil).pluck(:course_id).compact,
-        Chapter => Chapter.where(lecture_id: ids).reorder(nil).pluck(:id),
-        Lesson => Lesson.where(lecture_id: ids).reorder(nil).pluck(:id),
-        Talk => Talk.where(lecture_id: ids).reorder(nil).pluck(:id),
-        Medium => Medium.where(teachable_type: "Lecture", teachable_id: ids)
-                        .reorder(nil).pluck(:id)
-      }
-    },
-    Chapter => lambda { |ids|
-      {
-        Lecture => Chapter.where(id: ids).reorder(nil).pluck(:lecture_id).compact,
-        Section => Section.where(chapter_id: ids).reorder(nil).pluck(:id)
-      }
-    },
-    Section => lambda { |ids|
-      {
-        Chapter => Section.where(id: ids).reorder(nil).pluck(:chapter_id).compact,
-        Lesson => LessonSectionJoin.where(section_id: ids).reorder(nil).pluck(:lesson_id),
-        Tag => SectionTagJoin.where(section_id: ids).reorder(nil).pluck(:tag_id)
-      }
-    },
-    Lesson => lambda { |ids|
-      {
-        Lecture => Lesson.where(id: ids).reorder(nil).pluck(:lecture_id).compact,
-        Section => LessonSectionJoin.where(lesson_id: ids).reorder(nil).pluck(:section_id),
-        Medium => Medium.where(teachable_type: "Lesson", teachable_id: ids)
-                        .reorder(nil).pluck(:id),
-        Tag => LessonTagJoin.where(lesson_id: ids).reorder(nil).pluck(:tag_id)
-      }
-    },
-    Talk => lambda { |ids|
-      {
-        Lecture => Talk.where(id: ids).reorder(nil).pluck(:lecture_id).compact,
-        Medium => Medium.where(teachable_type: "Talk", teachable_id: ids)
-                        .reorder(nil).pluck(:id),
-        Tag => TalkTagJoin.where(talk_id: ids).reorder(nil).pluck(:tag_id)
-      }
-    },
-    Medium => lambda { |ids|
-      # Group teachables by their class
-      teachables = Medium.where(id: ids).reorder(nil)
-                         .pluck(:teachable_type, :teachable_id)
-      deps = teachables.group_by(&:first)
-                       .transform_values { |v| v.map(&:second) }
-                       .transform_keys(&:constantize)
+  # This single SQL statement defines all directed edges in the dependency graph.
+  # It replaces the RESOLVERS hash. Each SELECT represents a relationship.
+  # The structure is: SELECT 'SourceModel', source_id, 'DestinationModel', destination_id FROM ...
+  EDGES_SQL = <<-SQL.freeze
+    -- Course dependencies
+    SELECT 'Course' AS src_type, courses.id AS src_id, 'Lecture' AS dst_type, lectures.id AS dst_id FROM courses JOIN lectures ON lectures.course_id = courses.id
+    UNION ALL
+    SELECT 'Course' AS src_type, courses.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM courses JOIN media ON media.teachable_id = courses.id AND media.teachable_type = 'Course'
+    UNION ALL
+    SELECT 'Course' AS src_type, course_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM course_tag_joins
 
-      # Get associated tags
-      deps[Tag] = MediumTagJoin.where(medium_id: ids).reorder(nil).pluck(:tag_id)
-      deps
-    },
-    Tag => lambda { |ids|
-      {
-        Course => CourseTagJoin.where(tag_id: ids).reorder(nil).pluck(:course_id),
-        Section => SectionTagJoin.where(tag_id: ids).reorder(nil).pluck(:section_id),
-        Lesson => LessonTagJoin.where(tag_id: ids).reorder(nil).pluck(:lesson_id),
-        Talk => TalkTagJoin.where(tag_id: ids).reorder(nil).pluck(:talk_id),
-        Medium => MediumTagJoin.where(tag_id: ids).reorder(nil).pluck(:medium_id),
-        # NOTE: `relations` is the join table for a self-referential association
-        Tag => Relation.where(tag_id: ids).reorder(nil).pluck(:related_tag_id)
-      }
-    }
-  }.freeze
+    -- Lecture dependencies
+    UNION ALL
+    SELECT 'Lecture' AS src_type, id AS src_id, 'Course' AS dst_type, course_id AS dst_id FROM lectures
+    UNION ALL
+    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Chapter' AS dst_type, chapters.id AS dst_id FROM lectures JOIN chapters ON chapters.lecture_id = lectures.id
+    UNION ALL
+    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Lesson' AS dst_type, lessons.id AS dst_id FROM lectures JOIN lessons ON lessons.lecture_id = lectures.id
+    UNION ALL
+    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Talk' AS dst_type, talks.id AS dst_id FROM lectures JOIN talks ON talks.lecture_id = lectures.id
+    UNION ALL
+    SELECT 'Lecture' AS src_type, lectures.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM lectures JOIN media ON media.teachable_id = lectures.id AND media.teachable_type = 'Lecture'
 
-  FAN_OUT_LOG_THRESHOLD = 50
-  BATCH_SIZE = 1000
+    -- Chapter dependencies
+    UNION ALL
+    SELECT 'Chapter' AS src_type, id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM chapters
+    UNION ALL
+    SELECT 'Chapter' AS src_type, chapters.id AS src_id, 'Section' AS dst_type, sections.id AS dst_id FROM chapters JOIN sections ON sections.chapter_id = chapters.id
+
+    -- Section dependencies
+    UNION ALL
+    SELECT 'Section' AS src_type, id AS src_id, 'Chapter' AS dst_type, chapter_id AS dst_id FROM sections
+    UNION ALL
+    SELECT 'Section' AS src_type, section_id AS src_id, 'Lesson' AS dst_type, lesson_id AS dst_id FROM lesson_section_joins
+    UNION ALL
+    SELECT 'Section' AS src_type, section_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM section_tag_joins
+
+    -- Lesson dependencies
+    UNION ALL
+    SELECT 'Lesson' AS src_type, id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM lessons
+    UNION ALL
+    SELECT 'Lesson' AS src_type, lesson_id AS src_id, 'Section' AS dst_type, section_id AS dst_id FROM lesson_section_joins
+    UNION ALL
+    SELECT 'Lesson' AS src_type, lessons.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM lessons JOIN media ON media.teachable_id = lessons.id AND media.teachable_type = 'Lesson'
+    UNION ALL
+    SELECT 'Lesson' AS src_type, lesson_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM lesson_tag_joins
+
+    -- Talk dependencies
+    UNION ALL
+    SELECT 'Talk' AS src_type, id AS src_id, 'Lecture' AS dst_type, lecture_id AS dst_id FROM talks
+    UNION ALL
+    SELECT 'Talk' AS src_type, talks.id AS src_id, 'Medium' AS dst_type, media.id AS dst_id FROM talks JOIN media ON media.teachable_id = talks.id AND media.teachable_type = 'Talk'
+    UNION ALL
+    SELECT 'Talk' AS src_type, talk_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM talk_tag_joins
+
+    -- Medium dependencies
+    UNION ALL
+    SELECT 'Medium' AS src_type, id AS src_id, teachable_type AS dst_type, teachable_id AS dst_id FROM media WHERE teachable_id IS NOT NULL
+    UNION ALL
+    SELECT 'Medium' AS src_type, medium_id AS src_id, 'Tag' AS dst_type, tag_id AS dst_id FROM medium_tag_joins
+
+    -- Tag dependencies
+    UNION ALL
+    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Course' AS dst_type, course_id AS dst_id FROM course_tag_joins
+    UNION ALL
+    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Section' AS dst_type, section_id AS dst_id FROM section_tag_joins
+    UNION ALL
+    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Lesson' AS dst_type, lesson_id AS dst_id FROM lesson_tag_joins
+    UNION ALL
+    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Talk' AS dst_type, talk_id AS dst_id FROM talk_tag_joins
+    UNION ALL
+    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Medium' AS dst_type, medium_id AS dst_id FROM medium_tag_joins
+    UNION ALL
+    SELECT 'Tag' AS src_type, tag_id AS src_id, 'Tag' AS dst_type, related_tag_id AS dst_id FROM relations
+  SQL
 
   class << self
-    def run(model, event_name: "unknown")
-      # visited stores all nodes seen during traversal: { Klass => Set[id] }
-      visited = Hash.new { |h, k| h[k] = Set.new }
-      # frontier stores nodes to be processed in the current iteration
-      frontier = Hash.new { |h, k| h[k] = Set.new }
-      frontier[model.class] << model.id
+    def run(model)
+      # Get all dependent items in a single query.
+      buckets = closure_from(model.class.base_class.name, model.id)
 
-      loop do
-        # next_frontier will collect nodes for the *next* iteration
-        next_frontier = Hash.new { |h, k| h[k] = Set.new }
+      # Add the initial model to the list of items to be updated.
+      buckets.fetch(model.class.base_class, []) << model.id
 
-        frontier.each do |klass, ids_set|
-          # From the current frontier, select only the IDs we haven't processed yet
-          new_ids = ids_set.to_a - visited[klass].to_a
-          next if new_ids.empty?
-
-          # Add these new IDs to the global visited set
-          visited[klass].merge(new_ids)
-
-          resolver = resolver_for(klass)
-          next unless resolver
-
-          # Process in batches to keep `IN (...)` clauses of a reasonable size
-          new_ids.each_slice(BATCH_SIZE) do |slice|
-            # buckets is a hash like { Klass => [ids] }
-            buckets = resolver.call(slice)
-            buckets.each do |dep_klass, dep_ids|
-              # Add newly found dependencies to the next frontier,
-              # but only if they haven't been visited at all yet.
-              unseen_deps = dep_ids.compact.uniq - visited[dep_klass].to_a
-              next_frontier[dep_klass].merge(unseen_deps)
-            end
-          end
-        end
-
-        # If the next frontier is empty, we're done traversing
-        break if next_frontier.values.all?(&:empty?)
-
-        # The next frontier becomes the current frontier for the next iteration
-        frontier = next_frontier
-      end
-
-      # Batch invalidate all collected IDs for each class with a single timestamp
       timestamp = Time.current
-      visited.each do |klass, ids|
+      buckets.each do |klass, ids|
         next if ids.empty?
 
         # rubocop:disable Rails/SkipsModelValidations
-        klass.where(id: ids.to_a).update_all(updated_at: timestamp)
+        klass.where(id: ids.uniq).update_all(updated_at: timestamp)
         # rubocop:enable Rails/SkipsModelValidations
       end
     end
 
     private
 
-      # Helper to find a resolver, walking up the inheritance chain for STI.
-      def resolver_for(klass)
-        k = klass
-        while k && k <= ActiveRecord::Base
-          return RESOLVERS[k] if RESOLVERS.key?(k)
+      # Executes the recursive CTE to find all dependencies.
+      def closure_from(start_type, start_id)
+        sql = <<~SQL
+          WITH RECURSIVE dependencies(type, id) AS (
+            -- Base case: the starting object
+            SELECT $1::text, $2::bigint
+            UNION
+            -- Recursive step: join dependencies with the edges
+            SELECT edges.dst_type, edges.dst_id
+            FROM dependencies
+            JOIN (
+              SELECT src_type, src_id, dst_type, dst_id FROM (#{EDGES_SQL}) AS all_edges
+            ) AS edges ON edges.src_type = dependencies.type AND edges.src_id = dependencies.id
+          )
+          SELECT type, id FROM dependencies;
+        SQL
 
-          k = k.superclass
-        end
-        nil
+        # exec_query returns an array of hashes, e.g. [{'type' => 'Course', 'id' => 1}, ...]
+        rows = ActiveRecord::Base.connection.exec_query(
+          sql,
+          "cache_invalidator_closure",
+          [start_type, start_id]
+        )
+
+        # Group the results by class name.
+        rows.group_by { |row| row["type"].constantize }
+            .transform_values { |value| value.map { |row| row["id"] } }
       end
   end
 end
