@@ -332,7 +332,8 @@ class LecturesController < ApplicationController
   end
 
   def subscribe_page
-    render layout: "application_no_sidebar"
+    render template: "lectures/subscribe/subscribe_page",
+           layout: "application_no_sidebar"
   end
 
   def import_toc
