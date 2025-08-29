@@ -316,7 +316,8 @@ class LecturesController < ApplicationController
 
   def show_random_quizzes
     @course = @lecture.course
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/quizzes/show_random_quizzes",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def display_course
