@@ -308,10 +308,14 @@ class LecturesController < ApplicationController
     @lectures = Kaminari.paginate_array(results, total_count: @total)
                         .page(params[:page]).per(search_params[:per])
     @results_as_list = search_params[:results_as_list] == "true"
-    return unless @total.zero?
-    return unless search_params[:fulltext]&.length.to_i > 1
 
-    @similar_titles = Course.similar_courses(search_params[:fulltext])
+    if @total.zero? && search_params[:fulltext]&.length.to_i > 1
+      @similar_titles = Course.similar_courses(search_params[:fulltext])
+    end
+
+    respond_to do |format|
+      format.js { render template: "lectures/search/search" }
+    end
   end
 
   def show_random_quizzes
