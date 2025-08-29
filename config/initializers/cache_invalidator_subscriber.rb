@@ -1,19 +1,31 @@
-Rails.application.reloader.to_prepare do
-  # Unsubscribe the old listener before subscribing a new one to prevent
-  # duplicate subscriptions during development code reloads.
-  if defined?(@cache_invalidator_subscription) && @cache_invalidator_subscription
-    ActiveSupport::Notifications.unsubscribe(@cache_invalidator_subscription)
+# This module ensures that the ActiveSupport::Notifications subscription for the
+# cache invalidator is only created once, even during code reloads in development.
+module CacheInvalidatorSubscriptionHandler
+  # mattr_accessor creates a class-level variable that persists across reloads.
+  mattr_accessor :subscription, default: nil
+
+  # This method is idempotent. It will only subscribe if no subscription exists.
+  def self.subscribe!
+    # Do nothing if we already have a subscription object.
+    return if subscription
+
+    # The pattern of model events we want to listen for.
+    event_pattern = /model\..*\.(created|updated|destroying)/
+
+    # Subscribe and store the subscription object in our persistent class variable.
+    self.subscription =
+      ActiveSupport::Notifications.subscribe(event_pattern) do |_name, _start,
+        _finish, _id, payload|
+        model = payload[:model]
+        # The service might not be loaded yet during initialization, so we check.
+        CacheInvalidatorService.run(model) if defined?(CacheInvalidatorService)
+      end
   end
+end
 
-  # Subscribe to the events that should trigger a cache cascade.
-  # We listen for create, update, and the pre-destroy `destroying` event,
-  # as this is when associations are guaranteed to still exist.
-  event_pattern = /model\..*\.(created|updated|destroying)/
-
-  @cache_invalidator_subscription =
-    ActiveSupport::Notifications.subscribe(event_pattern) do |_name, _start, _finish, _id, payload|
-      model = payload[:model]
-      # The service might not be loaded yet during initialization, so we check.
-      CacheInvalidatorService.run(model) if defined?(CacheInvalidatorService)
-    end
+# The to_prepare block runs before every request in development and once in production.
+# Calling our idempotent subscribe! method here ensures that the subscription is
+# always active without creating duplicates.
+Rails.application.reloader.to_prepare do
+  CacheInvalidatorSubscriptionHandler.subscribe!
 end

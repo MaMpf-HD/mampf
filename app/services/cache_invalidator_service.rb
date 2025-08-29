@@ -84,31 +84,41 @@ class CacheInvalidatorService
 
   class << self
     def run(model)
+      # Re-entrancy Guard: Prevent the service from running if it's already
+      # active in the current thread. This stops loops caused by our own updates.
+      return if Thread.current[:_cache_invalidator_running]
+
       # Immediately exit if the model is not part of the dependency graph.
       # This prevents running expensive queries for unrelated models like User.
       return unless WHITELISTED_MODELS.include?(model.class.base_class)
 
-      # Get all dependent items in a single query.
-      buckets = closure_from(model.class.base_class.name, model.id)
-      timestamp = Time.current
+      Thread.current[:_cache_invalidator_running] = true
+      begin
+        # Get all dependent items in a single query.
+        buckets = closure_from(model.class.base_class.name, model.id)
+        timestamp = Time.current
 
-      # Consolidate STI classes into their base class to prevent redundant updates.
-      # For example, merge Question IDs into the Medium bucket.
-      buckets.each_key do |klass|
-        next if klass.nil? || klass.base_class == klass || !buckets.key?(klass.base_class)
+        # Consolidate STI classes into their base class to prevent redundant updates.
+        # For example, merge Question IDs into the Medium bucket.
+        buckets.each_key do |klass|
+          next if klass.nil? || klass.base_class == klass || !buckets.key?(klass.base_class)
 
-        base_class = klass.base_class
-        ids_to_merge = buckets.delete(klass)
-        buckets[base_class].concat(ids_to_merge).uniq!
-      end
+          base_class = klass.base_class
+          ids_to_merge = buckets.delete(klass)
+          buckets[base_class].concat(ids_to_merge).uniq!
+        end
 
-      # Update all items in each bucket
-      buckets.each do |klass, ids|
-        next if ids.empty?
+        # Update all items in each bucket
+        buckets.each do |klass, ids|
+          next if ids.empty?
 
-        # rubocop:disable Rails/SkipsModelValidations
-        klass.where(id: ids.uniq).update_all(updated_at: timestamp)
-        # rubocop:enable Rails/SkipsModelValidations
+          # rubocop:disable Rails/SkipsModelValidations
+          klass.where(id: ids.uniq).update_all(updated_at: timestamp)
+          # rubocop:enable Rails/SkipsModelValidations
+        end
+      ensure
+        # Always clear the flag, even if an error occurs.
+        Thread.current[:_cache_invalidator_running] = false
       end
     end
 
