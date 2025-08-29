@@ -20,6 +20,9 @@ module CacheInvalidatorSubscriptionHandler
         # The service might not be loaded yet during initialization, so we check.
         CacheInvalidatorService.run(model) if defined?(CacheInvalidatorService)
       end
+
+    # This should only appear once per server boot, confirming idempotency.
+    Rails.logger.info("=> Cache invalidator subscribed with object_id: #{subscription.object_id}")
   end
 end
 
