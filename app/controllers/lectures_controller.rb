@@ -219,6 +219,10 @@ class LecturesController < ApplicationController
     media.each { |m| Import.create(teachable: @lecture, medium: m) }
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/import_media" }
+    end
   end
 
   def remove_imported_medium
@@ -227,6 +231,10 @@ class LecturesController < ApplicationController
     import&.destroy
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/remove_imported_medium" }
+    end
   end
 
   def show_subscribers
