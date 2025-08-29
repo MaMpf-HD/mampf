@@ -9,10 +9,6 @@ class Chapter < ApplicationRecord
   has_many :lessons, -> { distinct }, through: :sections
   has_many :tags, -> { distinct }, through: :sections
   validates :title, presence: true
-  # before_destroy :touch_sections
-  # before_destroy :touch_chapters
-  # after_save :touch_sections
-  # after_save :touch_chapters
 
   def to_label
     unless hidden
@@ -60,17 +56,5 @@ class Chapter < ApplicationRecord
 
   def cache_key
     "#{super}-#{I18n.locale}"
-  end
-
-  def touch_chapters
-    lecture.chapters.touch_all
-  end
-
-  def touch_sections
-    unless lecture.absolute_numbering
-      sections.touch_all
-      return
-    end
-    Section.where(chapter: lecture.chapters).touch_all
   end
 end

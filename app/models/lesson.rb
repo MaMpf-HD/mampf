@@ -22,18 +22,6 @@ class Lesson < ApplicationRecord
   validates :date, presence: true
   validates :sections, presence: true
 
-  # before_destroy :touch_media
-  # before_destroy :touch_siblings
-  # before_destroy :touch_sections, prepend: true
-  # # media are cached in several places
-  # # media are touched in order to find out whether cache is out of date
-  # after_save :touch_media
-  # # same for sections and lessons in the same lecture (their numbering changes)
-  # after_save :touch_sections
-  # after_save :touch_siblings
-  # after_save :touch_self
-  # after_save :touch_tags
-
   delegate :editors_with_inheritance, to: :lecture, allow_nil: true
 
   # The next methods coexist for lectures and lessons as well.
@@ -294,34 +282,5 @@ class Lesson < ApplicationRecord
     # path for show lesson action
     def lesson_path
       Rails.application.routes.url_helpers.lesson_path(self)
-    end
-
-    # used for after save callback
-    def touch_media
-      lecture.media_with_inheritance.touch_all
-    end
-
-    def touch_siblings
-      lecture.lessons.touch_all
-    end
-
-    def touch_sections
-      sections.touch_all
-      sections.map(&:chapter)
-      sections.map(&:chapter).each(&:touch)
-      lecture.touch
-    end
-
-    def touch_self
-      touch
-    end
-
-    def touch_tags
-      tags.touch_all
-    end
-
-    def touch_section(section)
-      section.touch
-      section.chapter.touch
     end
 end

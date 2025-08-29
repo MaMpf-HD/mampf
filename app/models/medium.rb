@@ -103,9 +103,6 @@ class Medium < ApplicationRecord
   after_create :create_self_item
   # if medium is a question or remark, delete all quiz vertices that refer to it
   before_destroy :delete_vertices
-  # some information about media are cached
-  # to find out whether the cache is out of date, always touch'em after saving
-  # after_save :touch_teachable
 
   # keep track of copies (in particular for Questions, Remarks)
   acts_as_tree
@@ -1101,26 +1098,11 @@ class Medium < ApplicationRecord
       "#{sort_localized}, #{I18n.t("admin.medium.local_info.no_title")}"
     end
 
-    # def touch_teachable
-    #   return if teachable.nil?
-
-    #   teachable.course.touch if teachable.course.present? && teachable.course.persisted?
-    #   optional_touches
-    # end
-
     def reset_released_status
       return if teachable.nil? || teachable.published?
 
       self.released = nil
     end
-
-    # def optional_touches
-    #   teachable.lecture.touch if teachable.lecture.present? && teachable.lecture.persisted?
-    #   teachable.lesson.touch if teachable.lesson.present? && teachable.lesson.persisted?
-    #   return unless teachable.talk.present? && teachable.talk.persisted?
-
-    #   teachable.talk.touch
-    # end
 
     def vtt_start
       "WEBVTT\n\n"

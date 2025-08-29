@@ -122,14 +122,6 @@ class Lecture < ApplicationRecord
   # list of editors
   after_save :remove_teacher_as_editor
 
-  # some information about media and lessons are cached
-  # to find out whether the cache is out of date, always touch'em after saving
-  # after_save :touch_media
-  # after_save :touch_lessons
-  # after_save :touch_chapters
-  # after_save :touch_sections
-
-  # scopes
   scope :published, -> { where.not(released: nil) }
 
   scope :no_term, -> { where(term: nil) }
@@ -992,25 +984,9 @@ class Lecture < ApplicationRecord
         "miscellaneous" => ["Miscellaneous"] }
     end
 
-    # def touch_media
-    #   media_with_inheritance.touch_all
-    # end
-
-    def touch_lessons
-      lessons.touch_all
-    end
-
     def touch_siblings(_lesson)
       lessons.touch_all
       Medium.where(teachable: lessons).touch_all
-    end
-
-    def touch_chapters
-      chapters.touch_all
-    end
-
-    def touch_sections
-      Section.where(chapter: chapters).touch_all
     end
 
     def destroy_forum

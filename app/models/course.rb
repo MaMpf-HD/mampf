@@ -40,11 +40,6 @@ class Course < ApplicationRecord
   validates :title, presence: true, uniqueness: true
   validates :short_title, presence: true, uniqueness: true
 
-  # some information about media and lectures are cached
-  # to find out whether the cache is out of date, always touch'em after saving
-  # after_save :touch_media
-  # after_save :touch_lectures_and_lessons
-
   # include uploader to realize screenshot upload
   # this makes use of the shrine gem
   include ScreenshotUploader[:image]
@@ -321,18 +316,9 @@ class Course < ApplicationRecord
 
   private
 
-    def touch_media
-      media_with_inheritance.touch_all
-    end
-
     def touch_tag(tag)
       tag.touch
       Sunspot.index!(tag)
-    end
-
-    def touch_lectures_and_lessons
-      lectures.touch_all
-      Lesson.where(lecture: lectures).touch_all
     end
 
     def create_quiz_by_questions!(question_ids)

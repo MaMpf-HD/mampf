@@ -58,11 +58,6 @@ class Tag < ApplicationRecord
 
   validates_associated :aliases
 
-  # touch related lectures and sections after saving because lecture tags
-  # are cached
-  # after_save :touch_lectures
-  # after_save :touch_sections
-
   searchable do
     text :titles do
       title_join
@@ -332,18 +327,6 @@ class Tag < ApplicationRecord
     "#{super}-#{I18n.locale}"
   end
 
-  def touch_lectures
-    Lecture.where(id: sections.map { |section| section.lecture.id }).touch_all
-  end
-
-  def touch_sections
-    sections.touch_all
-  end
-
-  def touch_chapters
-    Chapter.where(id: sections.map { |section| section.chapter.id }).touch_all
-  end
-
   def identify_with!(tag)
     courses << (tag.courses - courses)
     lessons << (tag.lessons - lessons)
@@ -384,9 +367,6 @@ class Tag < ApplicationRecord
       return unless persisted?
 
       touch
-      touch_lectures
-      touch_sections
-      touch_chapters
     end
 
     # simulates the after_destroy callback for relations

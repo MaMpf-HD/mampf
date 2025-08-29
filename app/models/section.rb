@@ -23,18 +23,6 @@ class Section < ApplicationRecord
   # a section has many items, do not execute callbacks when section is destroyed
   has_many :items, dependent: :nullify
 
-  # before_destroy :touch_toc
-  # before_destroy :touch_lecture
-  # before_destroy :touch_media
-  # # after saving or updating, touch lecture/media/self to keep cache up to date
-  # #  after_save :touch_lecture
-  # # after_save :touch_media
-  # after_save :touch_self
-
-  # if absolute numbering is enabled for the lecture, all chapters
-  # and sections need to be touched because of possibly changed references
-  # after_save :touch_toc
-
   def lecture
     chapter&.lecture
   end
@@ -180,28 +168,6 @@ class Section < ApplicationRecord
   end
 
   private
-
-    def touch_lecture
-      return unless lecture.present? && lecture.persisted?
-
-      lecture.touch
-    end
-
-    def touch_media
-      lecture.media_with_inheritance.touch_all
-      touch
-    end
-
-    def touch_self
-      touch
-    end
-
-    def touch_toc
-      return unless lecture.absolute_numbering
-
-      lecture.chapters.touch_all
-      lecture.sections.touch_all
-    end
 
     def relative_position
       "#{chapter.displayed_number}.#{position}"
