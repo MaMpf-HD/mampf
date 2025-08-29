@@ -1,9 +1,8 @@
 class Answer < ApplicationRecord
-  belongs_to :question, touch: true
+  belongs_to :question
   after_create :update_quizzes
   before_destroy :question_not_orphaned?
   after_destroy :update_quizzes
-  after_save :touch_medium
 
   def conditional_explanation(correct)
     return explanation unless /\(korrekt:.*\):\(inkorrekt:.*\)/.match?(explanation)
@@ -38,9 +37,5 @@ class Answer < ApplicationRecord
         end
         quiz.update(quiz_graph: quiz_graph)
       end
-    end
-
-    def touch_medium
-      question.becomes(Medium).touch
     end
 end

@@ -10,6 +10,15 @@ class CacheInvalidatorService
   #   { to: DestinationModel, type: :polymorphic_has_many, as: :teachable },
   # ]
   DEPENDENCY_MAP = {
+    Answer => [
+      { to: Question, type: :belongs_to, fk: :question_id }
+    ],
+    Question => [
+      # Use the optimized STI identity mapping. This tells the graph that a
+      # Question is also a Medium, but limits the generated SQL edge to only
+      # records of type 'Question', which is much more efficient.
+      { to: Medium, type: :sti_identity }
+    ],
     Course => [
       { to: Lecture, type: :has_many, fk: :course_id },
       { to: Medium, type: :polymorphic_has_many, as: :teachable },
@@ -56,7 +65,13 @@ class CacheInvalidatorService
     ]
   }.freeze
 
+  # A set of all models that can trigger a cache invalidation.
+  # This is derived directly from the DEPENDENCY_MAP for efficient lookups.
+  WHITELISTED_MODELS = DEPENDENCY_MAP.keys.to_set.freeze
+
   TYPE_TO_CLASS = {
+    "Answer" => Answer,
+    "Question" => Question,
     "Course" => Course,
     "Lecture" => Lecture,
     "Chapter" => Chapter,
@@ -69,13 +84,25 @@ class CacheInvalidatorService
 
   class << self
     def run(model)
+      # Immediately exit if the model is not part of the dependency graph.
+      # This prevents running expensive queries for unrelated models like User.
+      return unless WHITELISTED_MODELS.include?(model.class.base_class)
+
       # Get all dependent items in a single query.
       buckets = closure_from(model.class.base_class.name, model.id)
-
-      # Add the initial model to the list of items to be updated.
-      buckets.fetch(model.class.base_class, []) << model.id
-
       timestamp = Time.current
+
+      # Consolidate STI classes into their base class to prevent redundant updates.
+      # For example, merge Question IDs into the Medium bucket.
+      buckets.each_key do |klass|
+        next if klass.nil? || klass.base_class == klass || !buckets.key?(klass.base_class)
+
+        base_class = klass.base_class
+        ids_to_merge = buckets.delete(klass)
+        buckets[base_class].concat(ids_to_merge).uniq!
+      end
+
+      # Update all items in each bucket
       buckets.each do |klass, ids|
         next if ids.empty?
 
@@ -101,6 +128,19 @@ class CacheInvalidatorService
         dst_model = dep[:to]
 
         case dep[:type]
+        when :sti_identity
+          # Generates a highly efficient edge for STI inheritance.
+          # Instead of scanning the entire base table (e.g., media), this
+          # creates an edge only for rows of the specific subclass (e.g., Question).
+          base_table = src_model.base_class.table_name
+          <<~SQL.squish
+            SELECT '#{src_model}' AS src_type,
+                   #{base_table}.id AS src_id,
+                   '#{dst_model}' AS dst_type,
+                   #{base_table}.id AS dst_id
+            FROM #{base_table}
+            WHERE #{base_table}.type = '#{src_model}'
+          SQL
         when :belongs_to
           <<~SQL.squish
             SELECT '#{src_model}' AS src_type,
@@ -179,7 +219,11 @@ class CacheInvalidatorService
         )
 
         # Group the results by class name using a safe whitelist.
-        rows.group_by { |row| TYPE_TO_CLASS[row["type"]] }.compact
+        # We reject any groups where the class (the key) could not be resolved,
+        # preventing `nil.where` errors for models outside the dependency map.
+        # This is crucial for polymorphic relations that might point to an unmapped model.
+        rows.group_by { |row| TYPE_TO_CLASS[row["type"]] }
+            .reject { |klass, _ids| klass.nil? }
             .transform_values { |value| value.map { |row| row["id"] } }
       end
   end
