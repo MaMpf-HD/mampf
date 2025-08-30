@@ -195,6 +195,7 @@ class CacheInvalidatorService
                    '#{dst_model}' AS dst_type,
                    #{src_table}.#{dep[:fk]} AS dst_id
             FROM #{src_table}
+            WHERE #{src_table}.#{dep[:fk]} IS NOT NULL
           SQL
         when :has_many
           if dep[:through]
@@ -205,20 +206,17 @@ class CacheInvalidatorService
             src_fk_on_join = dep[:fk] || "#{src_model.name.underscore}_id"
             dst_fk_on_join = dep[:assoc_fk] || "#{dst_model.name.underscore}_id"
 
-            # Auto-detect polymorphic associations on the join table.
+            # Auto-detect polymorphic associations and build robust WHERE clauses.
             src_type_col = type_column_for(join_model, src_fk_on_join)
             dst_type_col = type_column_for(join_model, dst_fk_on_join)
 
-            src_type_filter = if src_type_col
-              "WHERE #{join_table}.#{src_type_col} = '#{src_model.name}'"
-            else
-              ""
-            end
-            dst_type_filter = if dst_type_col
-              "WHERE #{join_table}.#{dst_type_col} = '#{dst_model.name}'"
-            else
-              ""
-            end
+            src_conditions = ["#{join_table}.#{src_fk_on_join} IS NOT NULL"]
+            src_conditions << "#{join_table}.#{src_type_col} = '#{src_model.name}'" if src_type_col
+            src_where_clause = "WHERE #{src_conditions.join(" AND ")}"
+
+            dst_conditions = ["#{join_table}.#{dst_fk_on_join} IS NOT NULL"]
+            dst_conditions << "#{join_table}.#{dst_type_col} = '#{dst_model.name}'" if dst_type_col
+            dst_where_clause = "WHERE #{dst_conditions.join(" AND ")}"
 
             [
               # Edge from source to join model
@@ -228,7 +226,7 @@ class CacheInvalidatorService
                        '#{join_model}' AS dst_type,
                        id AS dst_id
                 FROM #{join_table}
-                #{src_type_filter}
+                #{src_where_clause}
               SQL
               # Edge from join model to destination
               <<~SQL.squish
@@ -237,7 +235,7 @@ class CacheInvalidatorService
                        '#{dst_model}' AS dst_type,
                        #{dst_fk_on_join} AS dst_id
                 FROM #{join_table}
-                #{dst_type_filter}
+                #{dst_where_clause}
               SQL
             ]
           else
@@ -250,6 +248,7 @@ class CacheInvalidatorService
                      '#{dst_model}' AS dst_type,
                      #{dst_table}.id AS dst_id
               FROM #{dst_table}
+              WHERE #{dst_table}.#{dep[:fk]} IS NOT NULL
             SQL
           end
         when :polymorphic_has_many
