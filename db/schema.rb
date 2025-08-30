@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_29_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_29_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -409,6 +409,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_29_000000) do
     t.integer "annotations_status", default: -1, null: false
     t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
+    t.index ["type"], name: "index_media_on_type"
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|

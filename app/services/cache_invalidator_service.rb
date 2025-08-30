@@ -146,7 +146,7 @@ class CacheInvalidatorService
 
         # Update all items in each bucket
         buckets.each do |klass, ids|
-          next if ids.empty?
+          next if ids.empty? || klass.column_names.exclude?("updated_at")
 
           # rubocop:disable Rails/SkipsModelValidations
           klass.where(id: ids.uniq).update_all(updated_at: timestamp)
@@ -179,13 +179,14 @@ class CacheInvalidatorService
           # Instead of scanning the entire base table (e.g., media), this
           # creates an edge only for rows of the specific subclass (e.g., Question).
           base_table = src_model.base_class.table_name
+          inheritance_col = src_model.inheritance_column # usually "type"
           <<~SQL.squish
             SELECT '#{src_model}' AS src_type,
                    #{base_table}.id AS src_id,
                    '#{dst_model}' AS dst_type,
                    #{base_table}.id AS dst_id
             FROM #{base_table}
-            WHERE #{base_table}.type = '#{src_model}'
+            WHERE #{base_table}.#{inheritance_col} = '#{src_model.name}'
           SQL
         when :belongs_to
           <<~SQL.squish
@@ -204,6 +205,21 @@ class CacheInvalidatorService
             src_fk_on_join = dep[:fk] || "#{src_model.name.underscore}_id"
             dst_fk_on_join = dep[:assoc_fk] || "#{dst_model.name.underscore}_id"
 
+            # Auto-detect polymorphic associations on the join table.
+            src_type_col = type_column_for(join_model, src_fk_on_join)
+            dst_type_col = type_column_for(join_model, dst_fk_on_join)
+
+            src_type_filter = if src_type_col
+              "WHERE #{join_table}.#{src_type_col} = '#{src_model.name}'"
+            else
+              ""
+            end
+            dst_type_filter = if dst_type_col
+              "WHERE #{join_table}.#{dst_type_col} = '#{dst_model.name}'"
+            else
+              ""
+            end
+
             [
               # Edge from source to join model
               <<~SQL.squish,
@@ -212,6 +228,7 @@ class CacheInvalidatorService
                        '#{join_model}' AS dst_type,
                        id AS dst_id
                 FROM #{join_table}
+                #{src_type_filter}
               SQL
               # Edge from join model to destination
               <<~SQL.squish
@@ -220,6 +237,7 @@ class CacheInvalidatorService
                        '#{dst_model}' AS dst_type,
                        #{dst_fk_on_join} AS dst_id
                 FROM #{join_table}
+                #{dst_type_filter}
               SQL
             ]
           else
@@ -258,17 +276,29 @@ class CacheInvalidatorService
         end
       end
 
+      # Checks for the existence of a corresponding `_type` column for a given
+      # foreign key, which indicates a polymorphic association.
+      def type_column_for(model_class, fk_name)
+        type_col_name = fk_name.to_s.sub(/_id$/, "_type")
+        model_class.column_names.include?(type_col_name) ? type_col_name : nil
+      end
+
       # Executes the recursive CTE to find all dependencies.
       def closure_from(start_type, start_id)
         sql = <<~SQL
-          WITH RECURSIVE dependencies(type, id) AS (
+          WITH RECURSIVE
+          edges AS MATERIALIZED (
+            #{edges_sql}
+          ),
+          dependencies(type, id) AS (
             -- Base case: the starting object
             SELECT $1::text, $2::bigint
             UNION
-            -- Recursive step: join dependencies with the edges
-            SELECT edges.dst_type, edges.dst_id
-            FROM dependencies
-            JOIN (#{edges_sql}) AS edges ON edges.src_type = dependencies.type AND edges.src_id = dependencies.id
+            -- Recursive step: join dependencies with the materialized edges
+            SELECT e.dst_type, e.dst_id
+            FROM dependencies d
+            JOIN edges e
+              ON e.src_type = d.type AND e.src_id = d.id
           )
           SELECT type, id FROM dependencies;
         SQL
