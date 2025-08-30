@@ -10,9 +10,7 @@ class Course < ApplicationRecord
   # e.g.: vector space, linear map are tags for the course 'Linear Algebra 1'
   has_many :course_tag_joins, dependent: :destroy
   has_many :tags,
-           through: :course_tag_joins,
-           after_remove: :touch_tag,
-           after_add: :touch_tag
+           through: :course_tag_joins
 
   has_many :media, -> { order(position: :asc) },
            as: :teachable,
@@ -317,7 +315,6 @@ class Course < ApplicationRecord
   private
 
     def touch_tag(tag)
-      tag.touch
       Sunspot.index!(tag)
     end
 

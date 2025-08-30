@@ -8,15 +8,21 @@ class CacheInvalidatorService
   #   { to: DestinationModel, type: :has_many, fk: :foreign_key_on_destination },
   #   { to: DestinationModel, type: :has_many, through: :join_table_name },
   #   { to: DestinationModel, type: :polymorphic_has_many, as: :teachable },
+  #   { to: :polymorphic_assoc, type: :polymorphic_belongs_to, as: :association_name },
+  #   { to: BaseModel, type: :sti_identity } # For Single Table Inheritance
   # ]
+  #
+  # NOTE: Join tables (e.g., CourseTagJoin) do not need to be listed as a main
+  # key in this map. They are automatically detected and processed if they appear
+  # in a `:through` option in another entry.
   DEPENDENCY_MAP = {
     Answer => [
       { to: Question, type: :belongs_to, fk: :question_id }
     ],
+    Assignment => [
+      { to: Lecture, type: :belongs_to, fk: :lecture_id }
+    ],
     Question => [
-      # Use the optimized STI identity mapping. This tells the graph that a
-      # Question is also a Medium, but limits the generated SQL edge to only
-      # records of type 'Question', which is much more efficient.
       { to: Medium, type: :sti_identity }
     ],
     Course => [
@@ -29,7 +35,8 @@ class CacheInvalidatorService
       { to: Chapter, type: :has_many, fk: :lecture_id },
       { to: Lesson, type: :has_many, fk: :lecture_id },
       { to: Talk, type: :has_many, fk: :lecture_id },
-      { to: Medium, type: :polymorphic_has_many, as: :teachable }
+      { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      { to: Assignment, type: :has_many, fk: :lecture_id }
     ],
     Chapter => [
       { to: Lecture, type: :belongs_to, fk: :lecture_id },
@@ -38,7 +45,8 @@ class CacheInvalidatorService
     Section => [
       { to: Chapter, type: :belongs_to, fk: :chapter_id },
       { to: Lesson, type: :has_many, through: :lesson_section_joins },
-      { to: Tag, type: :has_many, through: :section_tag_joins }
+      { to: Tag, type: :has_many, through: :section_tag_joins },
+      { to: Item, type: :has_many, fk: :section_id }
     ],
     Lesson => [
       { to: Lecture, type: :belongs_to, fk: :lecture_id },
@@ -53,7 +61,11 @@ class CacheInvalidatorService
     ],
     Medium => [
       { to: :teachable, type: :polymorphic_belongs_to, as: :teachable },
-      { to: Tag, type: :has_many, through: :medium_tag_joins }
+      { to: Tag, type: :has_many, through: :medium_tag_joins },
+      { to: Item, type: :has_many, fk: :medium_id },
+      { to: Item, type: :has_many, through: :referrals },
+      { to: Medium, type: :has_many, through: :links, fk: :medium_id,
+        assoc_fk: :linked_medium_id }
     ],
     Tag => [
       { to: Course, type: :has_many, through: :course_tag_joins },
@@ -61,26 +73,64 @@ class CacheInvalidatorService
       { to: Lesson, type: :has_many, through: :lesson_tag_joins },
       { to: Talk, type: :has_many, through: :talk_tag_joins },
       { to: Medium, type: :has_many, through: :medium_tag_joins },
-      { to: Tag, type: :has_many, through: :relations, fk: :tag_id, assoc_fk: :related_tag_id }
+      { to: Tag, type: :has_many, through: :relations, fk: :tag_id, assoc_fk: :related_tag_id },
+      { to: Notion, type: :has_many, fk: :tag_id },
+      { to: Notion, type: :has_many, fk: :aliased_tag_id }
+    ],
+    Item => [
+      { to: Section, type: :belongs_to, fk: :section_id },
+      { to: Medium, type: :belongs_to, fk: :medium_id },
+      { to: Item, type: :has_many, through: :item_self_joins, fk: :item_id,
+        assoc_fk: :related_item_id },
+      { to: Medium, type: :has_many, through: :referrals }
+    ],
+    Notion => [
+      { to: Tag, type: :belongs_to, fk: :tag_id },
+      { to: Tag, type: :belongs_to, fk: :aliased_tag_id }
     ]
   }.freeze
 
-  # A set of all models that can trigger a cache invalidation.
-  # This is derived directly from the DEPENDENCY_MAP for efficient lookups.
-  WHITELISTED_MODELS = DEPENDENCY_MAP.keys.to_set.freeze
+  # Dynamically add join table dependencies
+  #
+  # A change to a join model (e.g., CourseTagJoin) must invalidate both of its
+  # parent models (Course and Tag). Manually adding every join model to the
+  # DEPENDENCY_MAP is repetitive and error-prone. A developer might add a new
+  # `has_many :through` association but forget to update this service.
+  #
+  # This code automates the process. It treats the `has_many :through`
+  # definitions in the DEPENDENCY_MAP as the single source of truth. It iterates
+  # through them and programmatically generates the correct dependency entries
+  # for the underlying join models (e.g., CourseTagJoin => [belongs_to :course, ...]).
+  generated_join_deps = {}
+  DEPENDENCY_MAP.each do |src_model, dependencies|
+    dependencies.each do |dep|
+      next unless dep[:type] == :has_many && dep[:through]
 
-  TYPE_TO_CLASS = {
-    "Answer" => Answer,
-    "Question" => Question,
-    "Course" => Course,
-    "Lecture" => Lecture,
-    "Chapter" => Chapter,
-    "Section" => Section,
-    "Lesson" => Lesson,
-    "Talk" => Talk,
-    "Medium" => Medium,
-    "Tag" => Tag
-  }.freeze
+      join_table_name = dep[:through].to_s
+      join_model = join_table_name.classify.constantize
+      dst_model = dep[:to]
+
+      # Define the foreign keys for the join model's belongs_to associations
+      src_fk = dep[:fk] || "#{src_model.name.underscore}_id"
+      dst_fk = dep[:assoc_fk] || "#{dst_model.name.underscore}_id"
+
+      # Create the dependency entries for the join model
+      generated_join_deps[join_model] = [
+        { to: src_model, type: :belongs_to, fk: src_fk },
+        { to: dst_model, type: :belongs_to, fk: dst_fk }
+      ]
+    end
+  end
+
+  # Create the final, complete, and frozen map by merging the initial map
+  # with the auto-generated join dependencies. This is now the single source
+  # of truth for all subsequent logic.
+  FINAL_DEPENDENCY_MAP = DEPENDENCY_MAP.merge(generated_join_deps).freeze
+
+  # A set of all models that can trigger a cache invalidation.
+  # This is derived directly from the FINAL_DEPENDENCY_MAP for efficient lookups.
+  WHITELISTED_MODELS = FINAL_DEPENDENCY_MAP.keys.to_set.freeze
+  TYPE_TO_CLASS = FINAL_DEPENDENCY_MAP.keys.index_by(&:name).freeze
 
   class << self
     def run(model)
@@ -126,7 +176,7 @@ class CacheInvalidatorService
 
       # Generates the large EDGES_SQL string from the DEPENDENCY_MAP and memoizes it.
       def edges_sql
-        @edges_sql ||= DEPENDENCY_MAP.flat_map do |src_model, dependencies|
+        @edges_sql ||= FINAL_DEPENDENCY_MAP.flat_map do |src_model, dependencies|
           dependencies.map do |dep|
             generate_sql_for_dependency(src_model, dep)
           end

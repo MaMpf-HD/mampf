@@ -23,8 +23,6 @@ class Lecture < ApplicationRecord
   # during the term, a lot of lessons take place for this lecture
   has_many :lessons, -> { order(date: :asc, id: :asc) },
            dependent: :destroy,
-           after_add: :touch_siblings,
-           after_remove: :touch_siblings,
            inverse_of: :lecture
 
   # a lecture has many talks, which have positions
@@ -982,11 +980,6 @@ class Lecture < ApplicationRecord
         "erdbeere" => ["Erdbeere"],
         "script" => ["Script"],
         "miscellaneous" => ["Miscellaneous"] }
-    end
-
-    def touch_siblings(_lesson)
-      lessons.touch_all
-      Medium.where(teachable: lessons).touch_all
     end
 
     def destroy_forum

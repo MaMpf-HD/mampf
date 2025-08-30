@@ -48,11 +48,6 @@ class Item < ApplicationRecord
   validate :no_duplicate_start_time
   validate :nonempty_link_or_explanation
 
-  before_destroy :touch_medium
-  # media are cached in several places
-  # items are touched in order to find out whether cache is out of date
-  after_save :touch_medium
-
   scope :unquarantined, -> { where(quarantine: [nil, false]) }
   scope :content, -> { where(sort: Item.content_sorts) }
   scope :unhidden, -> { where(hidden: [nil, false]) }
@@ -477,13 +472,6 @@ class Item < ApplicationRecord
 
       errors.add(:link, :blank)
       errors.add(:explanation, :blank)
-    end
-
-    # is used for after save and before destroy callbacks
-    def touch_medium
-      return unless medium.present? && medium.persisted?
-
-      medium.touch
     end
 
     # simulates the after_destroy callback for item_self_joins

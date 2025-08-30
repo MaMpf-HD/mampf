@@ -1,5 +1,5 @@
 class Assignment < ApplicationRecord
-  belongs_to :lecture, touch: true
+  belongs_to :lecture
   belongs_to :medium, optional: true
   has_many :submissions, dependent: :destroy
 

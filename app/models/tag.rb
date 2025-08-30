@@ -30,8 +30,6 @@ class Tag < ApplicationRecord
 
   # a tag has different notions in different languages
   has_many :notions,
-           after_remove: :touch_relations,
-           after_add: :touch_relations,
            dependent: :destroy,
            inverse_of: :tag
   has_many :aliases,
@@ -362,12 +360,6 @@ class Tag < ApplicationRecord
   end
 
   private
-
-    def touch_relations(_notion)
-      return unless persisted?
-
-      touch
-    end
 
     # simulates the after_destroy callback for relations
     def destroy_relations(related_tag)
