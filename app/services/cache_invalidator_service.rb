@@ -22,8 +22,9 @@ class CacheInvalidatorService
     Assignment => [
       { to: Lecture, type: :belongs_to, fk: :lecture_id }
     ],
-    Question => [
-      { to: Medium, type: :sti_identity }
+    Chapter => [
+      { to: Lecture, type: :belongs_to, fk: :lecture_id },
+      { to: Section, type: :has_many, fk: :chapter_id }
     ],
     Course => [
       { to: Lecture, type: :has_many, fk: :course_id },
@@ -31,8 +32,20 @@ class CacheInvalidatorService
       { to: Tag, type: :has_many, through: :course_tag_joins },
       { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
     ],
+    Item => [
+      { to: Section, type: :belongs_to, fk: :section_id },
+      { to: Medium, type: :belongs_to, fk: :medium_id },
+      { to: Item, type: :has_many, through: :item_self_joins, fk: :item_id,
+        assoc_fk: :related_item_id },
+      { to: Medium, type: :has_many, through: :referrals }
+    ],
     Lecture => [
       { to: Course, type: :belongs_to, fk: :course_id },
+      # The `belongs_to :term` dependency is deliberately not listed here
+      # to prevent a change in one lecture from invalidating all other lectures
+      # in the same term (a "mass invalidation" event).
+      # The Term -> Lecture dependency is defined in the Term entry, which
+      # correctly handles invalidation when a Term itself is updated.
       { to: Chapter, type: :has_many, fk: :lecture_id },
       { to: Lesson, type: :has_many, fk: :lecture_id },
       { to: Talk, type: :has_many, fk: :lecture_id },
@@ -40,26 +53,11 @@ class CacheInvalidatorService
       { to: Assignment, type: :has_many, fk: :lecture_id },
       { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
     ],
-    Chapter => [
-      { to: Lecture, type: :belongs_to, fk: :lecture_id },
-      { to: Section, type: :has_many, fk: :chapter_id }
-    ],
-    Section => [
-      { to: Chapter, type: :belongs_to, fk: :chapter_id },
-      { to: Lesson, type: :has_many, through: :lesson_section_joins },
-      { to: Tag, type: :has_many, through: :section_tag_joins },
-      { to: Item, type: :has_many, fk: :section_id }
-    ],
     Lesson => [
       { to: Lecture, type: :belongs_to, fk: :lecture_id },
       { to: Section, type: :has_many, through: :lesson_section_joins },
       { to: Medium, type: :polymorphic_has_many, as: :teachable },
       { to: Tag, type: :has_many, through: :lesson_tag_joins }
-    ],
-    Talk => [
-      { to: Lecture, type: :belongs_to, fk: :lecture_id },
-      { to: Medium, type: :polymorphic_has_many, as: :teachable },
-      { to: Tag, type: :has_many, through: :talk_tag_joins }
     ],
     Medium => [
       { to: :teachable, type: :polymorphic_belongs_to, as: :teachable },
@@ -71,6 +69,25 @@ class CacheInvalidatorService
       { to: Course, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id },
       { to: Lecture, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id }
     ],
+    Notion => [
+      { to: Tag, type: :belongs_to, fk: :tag_id },
+      { to: Tag, type: :belongs_to, fk: :aliased_tag_id }
+    ],
+    Question => [
+      { to: Medium, type: :sti_identity }
+    ],
+    Quiz => [
+      { to: Medium, type: :sti_identity }
+    ],
+    Remark => [
+      { to: Medium, type: :sti_identity }
+    ],
+    Section => [
+      { to: Chapter, type: :belongs_to, fk: :chapter_id },
+      { to: Lesson, type: :has_many, through: :lesson_section_joins },
+      { to: Tag, type: :has_many, through: :section_tag_joins },
+      { to: Item, type: :has_many, fk: :section_id }
+    ],
     Tag => [
       { to: Course, type: :has_many, through: :course_tag_joins },
       { to: Section, type: :has_many, through: :section_tag_joins },
@@ -80,61 +97,46 @@ class CacheInvalidatorService
       { to: Tag, type: :has_many, through: :relations, fk: :tag_id, assoc_fk: :related_tag_id },
       { to: Notion, type: :has_many, fk: :tag_id },
       { to: Notion, type: :has_many, fk: :aliased_tag_id }
-      # The `belongs_to :term` dependency is deliberately not listed here
-      # to prevent a change in one lecture from invalidating all other lectures
-      # in the same term (a "mass invalidation" event).
-      # The Term -> Lecture dependency is defined in the Term entry, which
-      # correctly handles invalidation when a Term itself is updated.
     ],
-    Item => [
-      { to: Section, type: :belongs_to, fk: :section_id },
-      { to: Medium, type: :belongs_to, fk: :medium_id },
-      { to: Item, type: :has_many, through: :item_self_joins, fk: :item_id,
-        assoc_fk: :related_item_id },
-      { to: Medium, type: :has_many, through: :referrals }
-    ],
-    Notion => [
-      { to: Tag, type: :belongs_to, fk: :tag_id },
-      { to: Tag, type: :belongs_to, fk: :aliased_tag_id }
-    ],
-    Quiz => [
-      { to: Medium, type: :sti_identity }
-    ],
-    Remark => [
-      { to: Medium, type: :sti_identity }
+    Talk => [
+      { to: Lecture, type: :belongs_to, fk: :lecture_id },
+      { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      { to: Tag, type: :has_many, through: :talk_tag_joins }
     ],
     Term => [
       { to: Lecture, type: :has_many, fk: :term_id }
     ]
   }.freeze
 
-  ALL_MODELS = (DEPENDENCY_MAP.keys +
-                DEPENDENCY_MAP.values.flatten.filter_map do |d|
-                  d[:through]&.to_s&.classify&.constantize
-                end).uniq
-  FINAL_DEPENDENCY_MAP = DEPENDENCY_MAP.freeze
+  # The set of all models that act as nodes in our dependency graph.
+  GRAPH_MODELS = (DEPENDENCY_MAP.keys +
+                  DEPENDENCY_MAP.values.flatten.filter_map do |d|
+                    d[:through]&.to_s&.classify&.constantize
+                  end).uniq.freeze
 
-  # A set of all models that can trigger a cache invalidation.
-  WHITELISTED_MODELS = ALL_MODELS.to_set.freeze
-  TYPE_TO_CLASS = ALL_MODELS.index_by(&:name).freeze
+  # A fast Set for checking if a model is part of the invalidation graph.
+  GRAPH_MODEL_SET = GRAPH_MODELS.to_set.freeze
+
+  # A fast lookup hash to get a class constant from its name string.
+  GRAPH_MODEL_LOOKUP = GRAPH_MODELS.index_by(&:name).freeze
 
   class << self
     def run(model)
       # Immediately exit if the model is not part of the dependency graph.
-      return unless WHITELISTED_MODELS.include?(model.class.base_class)
+      return unless GRAPH_MODEL_SET.include?(model.class.base_class)
 
       # Use a request-scoped set to track processed records.
-      # This is the crucial guard against cascading callbacks from `touch` or
-      # `dependent: :destroy`, which cause redundant runs.
+      # The key is normalized to [ClassNameString, id] to be safe across reloads.
       Current.invalidation_processed ||= Set.new
-      return if Current.invalidation_processed.include?([model.class.base_class, model.id])
+      seed_key = [model.class.base_class.name, model.id]
+      return if Current.invalidation_processed.include?(seed_key)
 
       # Get all dependent items in a single query.
       buckets = closure_from(model.class.base_class.name, model.id)
       timestamp = Time.current
 
-      # Add all items from the closure to the tracker *before* updating,
-      # to prevent any possible re-entrancy loops.
+      # Add all items from the closure to the tracker *before* updating.
+      # The key is normalized to [BaseClassNameString, id].
       buckets.each do |klass, ids|
         ids.each { |id| Current.invalidation_processed.add([klass.base_class.name, id]) }
       end
@@ -163,7 +165,7 @@ class CacheInvalidatorService
 
       # Generates the large EDGES_SQL string from the DEPENDENCY_MAP and memoizes it.
       def edges_sql
-        @edges_sql ||= FINAL_DEPENDENCY_MAP.flat_map do |src_model, dependencies|
+        @edges_sql ||= DEPENDENCY_MAP.flat_map do |src_model, dependencies|
           dependencies.map do |dep|
             generate_sql_for_dependency(src_model, dep)
           end
@@ -314,7 +316,7 @@ class CacheInvalidatorService
         # We reject any groups where the class (the key) could not be resolved,
         # preventing `nil.where` errors for models outside the dependency map.
         # This is crucial for polymorphic relations that might point to an unmapped model.
-        rows.group_by { |row| TYPE_TO_CLASS[row["type"]] }
+        rows.group_by { |row| GRAPH_MODEL_LOOKUP[row["type"]] }
             .reject { |klass, _ids| klass.nil? }
             .transform_values { |value| value.map { |row| row["id"] } }
       end
