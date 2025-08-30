@@ -15,11 +15,6 @@ class Term < ApplicationRecord
   # only one term can be active
   validates :active, uniqueness: { if: :active }
 
-  # some information about lectures, lessons and media are cached
-  # to find out whether the cache is out of date, always touch'em after saving
-  after_save :touch_lectures_and_lessons
-  after_save :touch_media
-
   paginates_per 8
 
   def self.active
@@ -134,15 +129,5 @@ class Term < ApplicationRecord
       return (year % 100).to_s unless season == "WS"
 
       "#{year % 100}/#{(year % 100) + 1}"
-    end
-
-    def touch_lectures_and_lessons
-      lectures.touch_all
-      Lesson.where(lecture: lectures).touch_all
-    end
-
-    def touch_media
-      Medium.where(teachable: lectures).touch_all
-      Medium.where(teachable: Lesson.where(lecture: lectures)).touch_all
     end
 end

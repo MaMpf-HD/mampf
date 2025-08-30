@@ -28,7 +28,8 @@ class CacheInvalidatorService
     Course => [
       { to: Lecture, type: :has_many, fk: :course_id },
       { to: Medium, type: :polymorphic_has_many, as: :teachable },
-      { to: Tag, type: :has_many, through: :course_tag_joins }
+      { to: Tag, type: :has_many, through: :course_tag_joins },
+      { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
     ],
     Lecture => [
       { to: Course, type: :belongs_to, fk: :course_id },
@@ -36,7 +37,8 @@ class CacheInvalidatorService
       { to: Lesson, type: :has_many, fk: :lecture_id },
       { to: Talk, type: :has_many, fk: :lecture_id },
       { to: Medium, type: :polymorphic_has_many, as: :teachable },
-      { to: Assignment, type: :has_many, fk: :lecture_id }
+      { to: Assignment, type: :has_many, fk: :lecture_id },
+      { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
     ],
     Chapter => [
       { to: Lecture, type: :belongs_to, fk: :lecture_id },
@@ -65,7 +67,9 @@ class CacheInvalidatorService
       { to: Item, type: :has_many, fk: :medium_id },
       { to: Item, type: :has_many, through: :referrals },
       { to: Medium, type: :has_many, through: :links, fk: :medium_id,
-        assoc_fk: :linked_medium_id }
+        assoc_fk: :linked_medium_id },
+      { to: Course, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id },
+      { to: Lecture, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id }
     ],
     Tag => [
       { to: Course, type: :has_many, through: :course_tag_joins },
@@ -76,6 +80,11 @@ class CacheInvalidatorService
       { to: Tag, type: :has_many, through: :relations, fk: :tag_id, assoc_fk: :related_tag_id },
       { to: Notion, type: :has_many, fk: :tag_id },
       { to: Notion, type: :has_many, fk: :aliased_tag_id }
+      # The `belongs_to :term` dependency is deliberately not listed here
+      # to prevent a change in one lecture from invalidating all other lectures
+      # in the same term (a "mass invalidation" event).
+      # The Term -> Lecture dependency is defined in the Term entry, which
+      # correctly handles invalidation when a Term itself is updated.
     ],
     Item => [
       { to: Section, type: :belongs_to, fk: :section_id },
@@ -87,50 +96,27 @@ class CacheInvalidatorService
     Notion => [
       { to: Tag, type: :belongs_to, fk: :tag_id },
       { to: Tag, type: :belongs_to, fk: :aliased_tag_id }
+    ],
+    Quiz => [
+      { to: Medium, type: :sti_identity }
+    ],
+    Remark => [
+      { to: Medium, type: :sti_identity }
+    ],
+    Term => [
+      { to: Lecture, type: :has_many, fk: :term_id }
     ]
   }.freeze
 
-  # Dynamically add join table dependencies
-  #
-  # A change to a join model (e.g., CourseTagJoin) must invalidate both of its
-  # parent models (Course and Tag). Manually adding every join model to the
-  # DEPENDENCY_MAP is repetitive and error-prone. A developer might add a new
-  # `has_many :through` association but forget to update this service.
-  #
-  # This code automates the process. It treats the `has_many :through`
-  # definitions in the DEPENDENCY_MAP as the single source of truth. It iterates
-  # through them and programmatically generates the correct dependency entries
-  # for the underlying join models (e.g., CourseTagJoin => [belongs_to :course, ...]).
-  generated_join_deps = {}
-  DEPENDENCY_MAP.each do |src_model, dependencies|
-    dependencies.each do |dep|
-      next unless dep[:type] == :has_many && dep[:through]
-
-      join_table_name = dep[:through].to_s
-      join_model = join_table_name.classify.constantize
-      dst_model = dep[:to]
-
-      # Define the foreign keys for the join model's belongs_to associations
-      src_fk = dep[:fk] || "#{src_model.name.underscore}_id"
-      dst_fk = dep[:assoc_fk] || "#{dst_model.name.underscore}_id"
-
-      # Create the dependency entries for the join model
-      generated_join_deps[join_model] = [
-        { to: src_model, type: :belongs_to, fk: src_fk },
-        { to: dst_model, type: :belongs_to, fk: dst_fk }
-      ]
-    end
-  end
-
-  # Create the final, complete, and frozen map by merging the initial map
-  # with the auto-generated join dependencies. This is now the single source
-  # of truth for all subsequent logic.
-  FINAL_DEPENDENCY_MAP = DEPENDENCY_MAP.merge(generated_join_deps).freeze
+  ALL_MODELS = (DEPENDENCY_MAP.keys +
+                DEPENDENCY_MAP.values.flatten.filter_map do |d|
+                  d[:through]&.to_s&.classify&.constantize
+                end).uniq
+  FINAL_DEPENDENCY_MAP = DEPENDENCY_MAP.freeze
 
   # A set of all models that can trigger a cache invalidation.
-  # This is derived directly from the FINAL_DEPENDENCY_MAP for efficient lookups.
-  WHITELISTED_MODELS = FINAL_DEPENDENCY_MAP.keys.to_set.freeze
-  TYPE_TO_CLASS = FINAL_DEPENDENCY_MAP.keys.index_by(&:name).freeze
+  WHITELISTED_MODELS = ALL_MODELS.to_set.freeze
+  TYPE_TO_CLASS = ALL_MODELS.index_by(&:name).freeze
 
   class << self
     def run(model)
@@ -211,38 +197,54 @@ class CacheInvalidatorService
           SQL
         when :has_many
           if dep[:through]
-            join_table = dep[:through]
-            src_fk = dep[:fk] || "#{src_model.name.underscore}_id"
-            dst_fk = dep[:assoc_fk] || "#{dst_model.name.underscore}_id"
-            <<~SQL.squish
-              SELECT '#{src_model}' AS src_type,
-                     #{src_fk} AS src_id,
-                     '#{dst_model}' AS dst_type,
-                     #{dst_fk} AS dst_id
-              FROM #{join_table}
-            SQL
+            # For a has_many :through, we return an array of two SQL fragments.
+            # The main `edges_sql` method will join them with UNION ALL.
+            join_model = dep[:through].to_s.classify.constantize
+            join_table = join_model.table_name
+            src_fk_on_join = dep[:fk] || "#{src_model.name.underscore}_id"
+            dst_fk_on_join = dep[:assoc_fk] || "#{dst_model.name.underscore}_id"
+
+            [
+              # Edge from source to join model
+              <<~SQL.squish,
+                SELECT '#{src_model}' AS src_type,
+                       #{src_fk_on_join} AS src_id,
+                       '#{join_model}' AS dst_type,
+                       id AS dst_id
+                FROM #{join_table}
+              SQL
+              # Edge from join model to destination
+              <<~SQL.squish
+                SELECT '#{join_model}' AS src_type,
+                       id AS src_id,
+                       '#{dst_model}' AS dst_type,
+                       #{dst_fk_on_join} AS dst_id
+                FROM #{join_table}
+              SQL
+            ]
           else
+            # Corrected logic for :has_many (without :through).
+            # This selects from the destination table, which is more efficient.
             dst_table = dst_model.table_name
             <<~SQL.squish
               SELECT '#{src_model}' AS src_type,
-                     #{src_table}.id AS src_id,
+                     #{dst_table}.#{dep[:fk]} AS src_id,
                      '#{dst_model}' AS dst_type,
                      #{dst_table}.id AS dst_id
-              FROM #{src_table}
-              JOIN #{dst_table} ON #{dst_table}.#{dep[:fk]} = #{src_table}.id
+              FROM #{dst_table}
             SQL
           end
         when :polymorphic_has_many
+          # Corrected logic for :polymorphic_has_many.
+          # This selects from the destination table, which is more efficient.
           dst_table = dst_model.table_name
           <<~SQL.squish
             SELECT '#{src_model}' AS src_type,
-                   #{src_table}.id AS src_id,
+                   #{dst_table}.#{dep[:as]}_id AS src_id,
                    '#{dst_model}' AS dst_type,
                    #{dst_table}.id AS dst_id
-            FROM #{src_table}
-            JOIN #{dst_table}
-              ON #{dst_table}.#{dep[:as]}_id = #{src_table}.id
-             AND #{dst_table}.#{dep[:as]}_type = '#{src_model}'
+            FROM #{dst_table}
+            WHERE #{dst_table}.#{dep[:as]}_type = '#{src_model}'
           SQL
         when :polymorphic_belongs_to
           <<~SQL.squish
