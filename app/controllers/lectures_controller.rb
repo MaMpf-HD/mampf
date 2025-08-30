@@ -225,6 +225,7 @@ class LecturesController < ApplicationController
     else
       I18n.locale = @lecture.locale_with_inheritance
       render template: "lectures/organizational/_organizational",
+             locals: { lecture: @lecture },
              layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
