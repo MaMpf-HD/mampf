@@ -120,41 +120,42 @@ class CacheInvalidatorService
 
   class << self
     def run(model)
-      # Re-entrancy Guard: Prevent the service from running if it's already
-      # active in the current thread. This stops loops caused by our own updates.
-      return if Thread.current[:_cache_invalidator_running]
-
       # Immediately exit if the model is not part of the dependency graph.
-      # This prevents running expensive queries for unrelated models like User.
       return unless WHITELISTED_MODELS.include?(model.class.base_class)
 
-      Thread.current[:_cache_invalidator_running] = true
-      begin
-        # Get all dependent items in a single query.
-        buckets = closure_from(model.class.base_class.name, model.id)
-        timestamp = Time.current
+      # Use a request-scoped set to track processed records.
+      # This is the crucial guard against cascading callbacks from `touch` or
+      # `dependent: :destroy`, which cause redundant runs.
+      Current.invalidation_processed ||= Set.new
+      return if Current.invalidation_processed.include?([model.class.base_class, model.id])
 
-        # Consolidate STI classes into their base class to prevent redundant updates.
-        # For example, merge Question IDs into the Medium bucket.
-        buckets.each_key do |klass|
-          next if klass.nil? || klass.base_class == klass || !buckets.key?(klass.base_class)
+      # Get all dependent items in a single query.
+      buckets = closure_from(model.class.base_class.name, model.id)
+      timestamp = Time.current
 
-          base_class = klass.base_class
-          ids_to_merge = buckets.delete(klass)
-          buckets[base_class].concat(ids_to_merge).uniq!
-        end
+      # Add all items from the closure to the tracker *before* updating,
+      # to prevent any possible re-entrancy loops.
+      buckets.each do |klass, ids|
+        ids.each { |id| Current.invalidation_processed.add([klass, id]) }
+      end
 
-        # Update all items in each bucket
-        buckets.each do |klass, ids|
-          next if ids.empty? || klass.column_names.exclude?("updated_at")
+      # Consolidate STI classes into their base class to prevent redundant updates.
+      # For example, merge Question IDs into the Medium bucket.
+      buckets.each_key do |klass|
+        next if klass.nil? || klass.base_class == klass || !buckets.key?(klass.base_class)
 
-          # rubocop:disable Rails/SkipsModelValidations
-          klass.where(id: ids.uniq).update_all(updated_at: timestamp)
-          # rubocop:enable Rails/SkipsModelValidations
-        end
-      ensure
-        # Always clear the flag, even if an error occurs.
-        Thread.current[:_cache_invalidator_running] = false
+        base_class = klass.base_class
+        ids_to_merge = buckets.delete(klass)
+        buckets[base_class].concat(ids_to_merge).uniq!
+      end
+
+      # Update all items in each bucket
+      buckets.each do |klass, ids|
+        next if ids.empty? || klass.column_names.exclude?("updated_at")
+
+        # rubocop:disable Rails/SkipsModelValidations
+        klass.where(id: ids.uniq).update_all(updated_at: timestamp)
+        # rubocop:enable Rails/SkipsModelValidations
       end
     end
 

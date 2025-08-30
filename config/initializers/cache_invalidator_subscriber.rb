@@ -9,20 +9,21 @@ module CacheInvalidatorSubscriptionHandler
     # Do nothing if we already have a subscription object.
     return if subscription
 
-    # The pattern of model events we want to listen for.
-    event_pattern = /model\..*\.(created|updated|destroying)/
+    # Listen for created, updated, and our special destroying_root event.
+    # This prevents the subscriber from firing for every object in a destroy cascade.
+    event_pattern = /model\..*\.(created|updated|destroying_root)/
 
     # Subscribe and store the subscription object in our persistent class variable.
     self.subscription =
       ActiveSupport::Notifications.subscribe(event_pattern) do |_name, _start,
         _finish, _id, payload|
+        # DO NOT reset Current here. Rails handles this per-request. Resetting
+        # here breaks the cascading guard logic.
+
         model = payload[:model]
         # The service might not be loaded yet during initialization, so we check.
         CacheInvalidatorService.run(model) if defined?(CacheInvalidatorService)
       end
-
-    # This should only appear once per server boot, confirming idempotency.
-    Rails.logger.info("=> Cache invalidator subscribed with object_id: #{subscription.object_id}")
   end
 end
 
