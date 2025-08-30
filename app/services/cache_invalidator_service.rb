@@ -136,7 +136,7 @@ class CacheInvalidatorService
       # Add all items from the closure to the tracker *before* updating,
       # to prevent any possible re-entrancy loops.
       buckets.each do |klass, ids|
-        ids.each { |id| Current.invalidation_processed.add([klass, id]) }
+        ids.each { |id| Current.invalidation_processed.add([klass.base_class.name, id]) }
       end
 
       # Consolidate STI classes into their base class to prevent redundant updates.
@@ -262,7 +262,7 @@ class CacheInvalidatorService
                    '#{dst_model}' AS dst_type,
                    #{dst_table}.id AS dst_id
             FROM #{dst_table}
-            WHERE #{dst_table}.#{dep[:as]}_type = '#{src_model}'
+            WHERE #{dst_table}.#{dep[:as]}_type = '#{src_model.name}'
           SQL
         when :polymorphic_belongs_to
           <<~SQL.squish
