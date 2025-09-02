@@ -58,7 +58,6 @@ module SearchForm
         program: {},
         teacher: {},
         term_independence: {},
-        tag_title: {},
         course: {
           additional_methods: {
             with_edited_courses: :with_edited_courses_button

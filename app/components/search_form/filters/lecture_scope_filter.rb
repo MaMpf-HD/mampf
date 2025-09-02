@@ -58,7 +58,7 @@ module SearchForm
                )) do |group|
           group.add_radio_button(
             value: "0",
-            label: I18n.t("search.media.lecture_options.all"),
+            label: I18n.t("search.media.lecture_scope.all"),
             checked: true,
             disabled: false,
             inline: false,
@@ -66,7 +66,7 @@ module SearchForm
           )
           group.add_radio_button(
             value: "1",
-            label: I18n.t("search.media.lecture_options.subscribed"),
+            label: I18n.t("search.media.lecture_scope.subscribed"),
             checked: false,
             disabled: false,
             inline: false,
@@ -74,7 +74,7 @@ module SearchForm
           )
           group.add_radio_button(
             value: "2",
-            label: I18n.t("search.media.lecture_options.own_selection"),
+            label: I18n.t("search.media.lecture_scope.own_selection"),
             checked: false,
             disabled: false,
             inline: false,

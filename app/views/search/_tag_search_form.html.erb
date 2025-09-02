@@ -1,5 +1,5 @@
-<%= render(SearchForm::SearchForm.new(url: tags_search_path, context: "tags")) do |c| %>
-  <% c.add_tag_title_filter %>
+<%= render(SearchForm::SearchForm.new(url: search_tags_path, context: "tags")) do |c| %>
+  <% c.add_fulltext_filter %>
 
   <% c.add_course_filter_with_edited_courses(current_user) %>
 

@@ -1,4 +1,4 @@
-<%= render(SearchForm::SearchForm.new(url: lecture_search_path, context: "lectures")) do |c| %>
+<%= render(SearchForm::SearchForm.new(url: search_lectures_path, context: "lectures")) do |c| %>
   <% c.add_lecture_type_filter %>
 
   <% c.add_term_filter %>

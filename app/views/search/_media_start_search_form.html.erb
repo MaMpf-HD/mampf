@@ -1,4 +1,4 @@
-<%= render(SearchForm::SearchForm.new(url: media_search_path, context: "media")) do |c| %>
+<%= render(SearchForm::SearchForm.new(url: search_media_path, context: "media")) do |c| %>
   <% c.add_medium_type_filter(current_user: current_user, purpose: purpose) %>
 
   <% c.add_tag_filter_with_operators %>
