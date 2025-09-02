@@ -2598,6 +2598,9 @@ de:
 
   vignettes:
     vignettes: 'Vignettes'
+    questionnaire_not_created: >
+      Ein neuer Fragebogen konnte nicht erstellt werden. Bitte versuche es
+      später erneut.
     slide: 'Folie'
     slides: 'Folien'
     info_slides: 'Info-Folien'

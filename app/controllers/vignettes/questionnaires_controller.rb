@@ -177,7 +177,8 @@ module Vignettes
         @questionnaire.lecture.touch
         redirect_to edit_questionnaire_path(@questionnaire)
       else
-        render :new, status: :unprocessable_entity
+        redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
+                    alert: t("vignettes.questionnaire_not_created")
       end
     end
 
