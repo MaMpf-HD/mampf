@@ -12,6 +12,8 @@ module Vignettes
 
     def index
       @questionnaires = @lecture.vignettes_questionnaires.where(published: true).order(title: :desc)
+
+      render template: "vignettes/questionnaires/index/index"
     end
 
     def take
