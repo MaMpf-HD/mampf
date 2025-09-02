@@ -2,7 +2,7 @@
 import { Application } from "@hotwired/stimulus";
 window.Stimulus = Application.start();
 
-import LectureSidebarController from "~/lectures/show/lecture_sidebar.controller";
+import LectureSidebarController from "~/lectures/show/_sidebar.controller";
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller";
@@ -14,3 +14,4 @@ import "@hotwired/turbo-rails";
 // They might not be needed with Turbo anymore.
 import "~/js/_turbo_fix_bootstrap_modal";
 import "~/js/_turbo_fix_selectize";
+

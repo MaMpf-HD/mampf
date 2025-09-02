@@ -1,7 +1,7 @@
 # render new lecture partial to the corresponding area,
 # activate selectize and popovers
 $('#new-lecture-area').empty()
-  .append('<%= j render partial: "lectures/new",
+  .append('<%= j render partial: "lectures/new/new",
                         locals: { lecture: @lecture,
                                   from: @from,
                                   modal: @from == "course" } %>').show()

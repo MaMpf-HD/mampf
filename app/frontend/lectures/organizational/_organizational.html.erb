@@ -1,4 +1,4 @@
-<% if @lecture.sort == "vignettes" %>
+<% if lecture.sort == "vignettes" %>
   <div class="container-md small-width mt-4 mb-4">
 <% else %>
   <div class="row mb-2">
@@ -11,7 +11,7 @@
           </h4>
         </div>
         <div class="card-body" id="organizationalCardBody">
-          <%= @lecture.organizational_concept&.html_safe %>
+          <%= lecture.organizational_concept&.html_safe %>
         </div>
       </div>
     </div>
