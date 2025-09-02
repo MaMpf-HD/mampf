@@ -15,6 +15,7 @@ export default class extends Controller {
   onTabFocus(event) {
     const tabName = event.currentTarget.dataset.tabName;
     const url = new URL(window.location);
+    // keep in sync with controller params[:subpage] handling in LecturesController
     url.searchParams.set("tab", tabName);
 
     history.replaceState({ turbo: true, url: url.toString() }, "", url.toString());
