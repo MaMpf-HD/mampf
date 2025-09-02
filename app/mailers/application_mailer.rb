@@ -35,11 +35,11 @@ class ApplicationMailer < ActionMailer::Base
     #   (instead of "feedback_mailer"), therefore obtaining the correct path:
     #   `app/frontend/feedbacks/new_user_feedback_email.text.erb`.
     def mail(headers = {}, &)
-      usual_rails_template_path = self.class.name.underscore
-      custom_template_path = usual_rails_template_path.delete_suffix("_mailer").pluralize
+      usual_rails_path = self.class.name.underscore
+      custom_path = "#{usual_rails_path.delete_suffix("_mailer").pluralize}/mails"
 
       headers[:template_path] = [headers[:template_path],
-                                 usual_rails_template_path, custom_template_path]
+                                 usual_rails_path, custom_path]
                                 .flatten.compact
       super
     end
