@@ -1,4 +1,4 @@
-<%= vite_javascript_tag "vignettes/slides/question_type" %>
+<%= vite_javascript_tag "vignettes/slides/form/_question.js" %>
 
 <%= form.fields_for :question do |f| %>
 
@@ -58,7 +58,8 @@
 
     <div id="vignette-multiple-choice-options">
         <%= f.fields_for :options do |option_form| %>
-            <%= render partial: "multiple_choice_fields", locals: { f: option_form, editable: form.object.questionnaire.editable } %>
+            <%= render partial: "vignettes/slides/form/multiple_choice_fields",
+                       locals: { f: option_form, editable: form.object.questionnaire.editable } %>
         <% end %>
     </div>
 
@@ -67,7 +68,8 @@
     <template id="vignette-multiple-choice-options-template" class="d-none">
         <%= f.fields_for :options, f.object.options.build,
                          child_index: 'NEW_RECORD' do |option_form| %>
-            <%= render partial: "multiple_choice_fields", locals: { f: option_form, editable: form.object.questionnaire.editable } %>
+            <%= render partial: "vignettes/slides/form/multiple_choice_fields",
+                       locals: { f: option_form, editable: form.object.questionnaire.editable } %>
         <% end %>
     </template>
     

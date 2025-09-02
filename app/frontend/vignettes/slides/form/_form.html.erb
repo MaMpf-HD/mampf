@@ -1,4 +1,4 @@
-<%= vite_javascript_tag "vignettes/slides/edit" %>
+<%= vite_javascript_tag "vignettes/slides/form/_form.js" %>
 
 <%= form_with(
       model: [@questionnaire, @slide],
@@ -29,9 +29,9 @@
     <%= form.label :info_slides, "Linked Info Slides" %>
   </div>
 
-  <%= render partial: 'form_content', locals: { form: form } %>
+  <%= render partial: 'vignettes/slides/form/content', locals: { form: form } %>
   <br>
-  <%= render partial: 'form_question', locals: { form: form } %>
+  <%= render partial: 'vignettes/slides/form/question', locals: { form: form } %>
 
   <div class="d-flex justify-content-end align-items-center mt-3">
     <div class="me-auto">
