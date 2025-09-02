@@ -46,7 +46,8 @@ module Vignettes
       @answer = @slide.answers.build
       @answer.build_slide_statistic
 
-      render layout: "application_no_sidebar"
+      render template: "vignettes/questionnaires/take/take",
+             layout: "application_no_sidebar"
     end
 
     def preview
