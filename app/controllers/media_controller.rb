@@ -12,7 +12,6 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :sanitize_params, only: [:index]
   before_action :check_for_consent, except: [:play, :display]
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
@@ -29,7 +28,20 @@ class MediaController < ApplicationController
 
   def index
     authorize! :index, Medium.new
-    @media = paginated_results
+
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Medium,
+      configurator_class: Search::Configurators::LectureMediaSearchConfigurator,
+      options: {
+        params_method_name: :lecture_media_search_params,
+        default_per_page: 8
+      }
+    )
+
+    @media = search_result.results
+    @total = search_result.total_count
+
     if @lecture.sort == "vignettes"
       render layout: "vignettes_navbar"
     else
@@ -218,43 +230,32 @@ class MediaController < ApplicationController
   def inspect
   end
 
-  # return all media that match the search parameters
   def search
     authorize! :search, Medium.new
 
-    # get all media, then set them to only those that are visible to the current user
-    if !current_user.active_teachable_editor? || search_params[:access].blank?
-      filter_media = true
-      params["search"]["access"] = "irrelevant"
-    end
-    if search_params[:answers_count].blank?
-      params["search"]["answers_count"] =
-        "irrelevant"
-    end
+    @purpose = params.dig(:search, :purpose)
+    @results_as_list = params.dig(:search, :results_as_list) == "true"
 
-    search = Medium.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Medium,
+      configurator_class: Search::Configurators::MediaSearchConfigurator,
+      options: { default_per_page: 10 }
+    )
 
-    if filter_media
-      search_arel = Medium.where(id: results.pluck(:id))
-      visible_search_results = current_user.filter_visible_media(search_arel)
-      results &= visible_search_results
-      @total = results.size
+    @media = search_result.results
+    @total = search_result.total_count
+
+    respond_to do |format|
+      format.js do
+        # For the special cases of quiz/import, a different template is rendered.
+        render template: "media/catalog/import_preview" if @purpose.in?(["quiz", "import"])
+        # Otherwise, the default media/search.coffee is rendered implicitly.
+      end
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
     end
-
-    @media = Kaminari.paginate_array(results, total_count: @total)
-                     .page(params[:page]).per(search_params[:per])
-    @purpose = search_params[:purpose]
-    @results_as_list = search_params[:results_as_list] == "true"
-    if @purpose.in?(["quiz", "import"])
-      render template: "media/catalog/import_preview"
-      return
-    end
-    return unless @total.zero?
-
-    nil unless search_params[:fulltext]&.length.to_i > 1
   end
 
   # play the video using thyme player
@@ -541,8 +542,7 @@ class MediaController < ApplicationController
                              :geogebra, :geogebra_app_name,
                              :teachable_type, :teachable_id,
                              :released, :text, :locale,
-                             :content, :boost,
-                             :annotations_status,
+                             :content, :annotations_status,
                              { editor_ids: [],
                                tag_ids: [],
                                linked_medium_ids: [] }])
@@ -594,117 +594,24 @@ class MediaController < ApplicationController
       @medium.update(manuscript: nil)
     end
 
-    def sanitize_params
-      reveal_contradictions
-      sanitize_page!
-      sanitize_per!
-      params[:all] = (params[:all] == "true") || (cookies[:all] == "true")
-      cookies[:all] = params[:all]
-      cookies[:per] = false if cookies[:all]
-      params[:reverse] = params[:reverse] == "true"
-    end
-
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
     end
 
-    # paginate results obtained by the search_results method
-    def paginated_results
-      if params[:all]
-        total_count = search_results.count
-        # without the total count parameter, kaminary will consider only only the
-        # first 25 entries
-        return Kaminari.paginate_array(search_results,
-                                       total_count: total_count + 1)
-      end
-      Kaminari.paginate_array(search_results).page(params[:page])
-              .per(params[:per])
-    end
-
-    # search is done in search class method for Medium
-    def search_results
-      search_results = Medium.search_all(params)
-      # search_results are ordered in a certain way
-      # the next lines ensure that filtering for visible media does not
-      # mess up the ordering
-      search_arel = Medium.where(id: search_results.pluck(:id))
-      visible_search_results = current_user.filter_visible_media(search_arel)
-      search_results &= visible_search_results
-      total = search_results.size
-      @lecture = Lecture.find_by(id: params[:id])
-      # filter out stuff from course level for generic users
-      if params[:visibility] == "lecture"
-        search_results.reject! { |m| m.teachable_type == "Course" }
-        # yields only lecture media and course media
-      elsif params[:visibility] == "all"
-        # yields all lecture media and course media
-      else
-        # this is the default setting: 'thematic' selection of media
-        # yields all lecture media and course media whose tags have
-        # already been dealt with in the lecture
-        unless current_user.admin || @lecture.edited_by?(current_user)
-          lecture_tags = @lecture.tags_including_media_tags
-          search_results.reject! do |m|
-            m.teachable_type == "Course" && !m.tags.to_a.intersect?(lecture_tags)
-          end
-        end
-      end
-      sort = params[:project]&.capitalize
-      search_results += @lecture.imported_media
-                                .where(sort: sort)
-                                .locally_visible
-      search_results.uniq!
-      @hidden = search_results.empty? && total.positive?
-      return search_results unless params[:reverse]
-
-      search_results.reverse
-    end
-
-    def reveal_contradictions
-      return if params[:lecture_id].blank?
-      return if params[:lecture_id].to_i.in?(@course.lecture_ids)
-
-      redirect_to :root, alert: I18n.t("controllers.contradiction")
-    end
-
-    def sanitize_page!
-      params[:page] = params[:page].to_i.positive? ? params[:page].to_i : 1
-    end
-
-    def sanitize_per!
-      cookies[:all] = "false" if params[:per] || cookies[:per].to_i.positive?
-      params[:per] = if params[:per].to_i.in?([3, 4, 8, 12, 24, 48])
-        params[:per].to_i
-      elsif cookies[:per].to_i.positive?
-        cookies[:per].to_i
-      else
-        8
-      end
-      cookies[:per] = params[:per]
-    end
-
     def search_params
-      types = params[:search][:types] || []
-      types = [types] if types && !types.is_a?(Array)
-      types -= [""] if types
-      types = nil if types == []
-      params[:search][:types] = types
-      params[:search][:user_id] = current_user.id
-      params
-        .expect(search: [:all_types, :all_teachables, :all_tags,
-                         :all_editors, :tag_operator, :quiz, :access,
-                         :teachable_inheritance, :fulltext, :per,
-                         :purpose, :answers_count,
-                         :results_as_list, :all_terms, :all_teachers,
-                         :lecture_option, :user_id, :from,
-                         { types: [],
-                           teachable_ids: [],
-                           tag_ids: [],
-                           editor_ids: [],
-                           term_ids: [],
-                           teacher_ids: [],
-                           media_lectures: [] }])
-      # .with_defaults(access: 'all')
+      params.expect(search: [:all_types, :all_teachables, :all_tags,
+                             :all_editors, :tag_operator, :access,
+                             :teachable_inheritance, :fulltext, :per,
+                             :answers_count, :lecture_scope, :from,
+                             { types: [],
+                               teachable_ids: [],
+                               tag_ids: [],
+                               editor_ids: [],
+                               media_lectures: [] }])
+    end
+
+    def lecture_media_search_params
+      params.permit(:project, :visibility, :reverse, :id, :all, :page, :per)
     end
 
     # destroy all notifications related to this medium

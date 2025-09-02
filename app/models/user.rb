@@ -592,9 +592,6 @@ class User < ApplicationRecord
 
     lectures << lecture
 
-    # make sure subscribed_users is updated in media
-    Sunspot.index!(lecture.media)
-
     true
   end
 
@@ -605,8 +602,6 @@ class User < ApplicationRecord
     lectures.delete(lecture)
     favorite_lectures.delete(lecture)
 
-    # make sure subscribed_users is updated in media
-    Sunspot.index!(lecture.media)
     true
   end
 

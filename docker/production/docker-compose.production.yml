@@ -7,7 +7,6 @@ x-mampf:
   environment:
     PRODUCTION_NAME:
   networks:
-    - solr
     - mampf
     - postgres
   restart: always
@@ -78,21 +77,8 @@ services:
     networks:
       - default
 
-  solr:
-    image: solr:8.11
-    container_name: solr
-    ports:
-      - "127.0.0.1:8983:8983"
-    volumes:
-      - /path/to/persistent/var_solr:/var/solr
-    networks:
-      - default
-    restart: always
-
 networks:
   postgres:
-    external: true
-  solr:
     external: true
   mampf:
     external: true

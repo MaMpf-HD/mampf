@@ -73,7 +73,6 @@
         "node_modules/": true,
         "pdfcomprezzor/": true,
         "coverage/": true,
-        "solr/": true,
         ".docker/": true
     },
     "files.associations": {
@@ -128,6 +127,7 @@
         "erdbeere",
         "Erdbeere",
         "factorybot",
+        "Fulltext",
         "helpdesk",
         "javascripts",
         "justfile",

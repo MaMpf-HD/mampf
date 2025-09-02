@@ -18,17 +18,3 @@
     </div>
   </div>
 <% end %>
-<% if @tags.empty? %>
-  <% if @filtered_similar_tags.present? %>
-    <%= t('search.alternative') %>
-    <div class="row">
-      <div class="col-12 col-lg-8 pt-3 pb-3">
-        <%= render partial: 'tags/tags',
-                   locals: { related_tags: @filtered_similar_tags,
-                             tags_description: t('search.similar',
-                                                 search_string: @search_string),
-                             small: true } %>
-      </div>
-    </div>
-  <% end %>
-<% end %>
