@@ -72,14 +72,17 @@
 
         <% case @slide.question.type %>
             <% when "Vignettes::TextQuestion" %>
-                <%= render partial: 'vignettes/answer_types/text', locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/text',
+                           locals: { f: form } %>
             <% when "Vignettes::NumberQuestion" %>
-                <%= render partial: 'vignettes/answer_types/number', locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/number',
+                           locals: { f: form } %>
             <% when "Vignettes::MultipleChoiceQuestion" %>
-                <%= render partial: 'vignettes/answer_types/multiple_choice',
-                                    locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/multiple_choice',
+                           locals: { f: form } %>
             <% when "Vignettes::LikertScaleQuestion" %>
-                <%= render partial: 'vignettes/answer_types/likert_scale', locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/likert_scale',  
+                           locals: { f: form } %>
         <% end %>
 
         <!-- Navigation -->
