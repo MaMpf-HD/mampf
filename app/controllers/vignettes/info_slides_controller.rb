@@ -15,7 +15,7 @@ module Vignettes
     end
 
     def edit
-      render partial: "vignettes/info_slides/form" if request.xhr?
+      render partial: "vignettes/info_slides/form/form" if request.xhr?
     end
 
     def create
@@ -33,7 +33,7 @@ module Vignettes
         redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.info_slide_updated")
       elsif request.xhr?
-        render partial: "vignettes/info_slides/form"
+        render partial: "vignettes/info_slides/form/form"
       else
         redirect_to edit_questionnaire_path(@questionnaire),
                     alert: t("vignettes.info_slide_not_updated")

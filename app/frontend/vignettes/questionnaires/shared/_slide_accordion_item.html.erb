@@ -57,7 +57,11 @@
         </div>
         <% else %>
         <div class="accordion-body">
-            <%= render partial: 'vignettes/slides/new/new' %>
+            <% if slide.is_a?(Vignettes::InfoSlide) %>
+              <%= render partial: "vignettes/info_slides/form/form" %>
+            <% else %>
+              <%= render partial: "vignettes/slides/form/form" %>
+            <% end %>
         </div>
         <% end %>
 

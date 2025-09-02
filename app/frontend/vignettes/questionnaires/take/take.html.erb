@@ -3,7 +3,7 @@
 
 <!-- Info Slide Modals -->
 <% @slide.info_slides.each_with_index do |info_slide, index| %>
-    <%= render partial: 'vignettes/info_slides/take_modal',
+    <%= render partial: 'vignettes/info_slides/take/take_modal',
                         locals: { index: index, info_slide: info_slide } %>
 <% end %>
 

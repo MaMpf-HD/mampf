@@ -22,7 +22,7 @@ module Vignettes
       @slide.build_question unless @slide.question
       @slide.question.options.build unless @slide.question.options.any?
 
-      render partial: "vignettes/slides/form" if request.xhr?
+      render partial: "vignettes/slides/form/form" if request.xhr?
     end
 
     def create
@@ -56,7 +56,7 @@ module Vignettes
         redirect_to edit_questionnaire_path(@questionnaire),
                     notice: t("vignettes.slide_updated")
       elsif request.xhr?
-        render partial: "vignettes/slides/form"
+        render partial: "vignettes/slides/form/form"
       else
         redirect_to edit_questionnaire_path(@questionnaire),
                     alert: t("vignettes.slide_not_updated")
