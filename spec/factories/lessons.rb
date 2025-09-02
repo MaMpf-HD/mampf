@@ -11,8 +11,14 @@ FactoryBot.define do
     trait :with_lecture_and_date do
       association :lecture, factory: :lecture_with_sparse_toc
       date do
-        Faker::Date.between(from: lecture.term.begin_date,
-                            to: lecture.term.end_date)
+        # Handle term-independent lectures that have no term.
+        if lecture.term.present?
+          Faker::Date.between(from: lecture.term.begin_date,
+                              to: lecture.term.end_date)
+        else
+          # Provide a default date for term-independent lessons.
+          Faker::Date.forward(days: 30)
+        end
       end
     end
 

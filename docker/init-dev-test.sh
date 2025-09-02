@@ -83,10 +83,6 @@ if ! [ -f /completed_initial_run ]; then
       bundle exec rails db:schema:load
   fi
 
-  echo "🕖  Waiting for SOLR to come online"
-  wait-for-it ${SOLR_HOST}:${SOLR_PORT} -t 30 || exit 1
-  bundle exec rake sunspot:solr:reindex
-
   echo "✅  Finished initialization of MaMpf in environment: $RAILS_ENV"
   touch /completed_initial_run
 fi

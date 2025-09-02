@@ -130,8 +130,6 @@ namespace :db do
         Rake::Task["db:create"].invoke
         puts cmd
         system cmd
-        Rake::Task["sunspot:reindex"].invoke
-        puts ""
         puts "Restored from file: #{file}"
         puts ""
       end
