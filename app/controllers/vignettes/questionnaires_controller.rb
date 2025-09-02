@@ -165,7 +165,7 @@ module Vignettes
     def edit
       @slides = @questionnaire.slides.order(:position)
 
-      render layout: "administration"
+      render template: "vignettes/questionnaires/edit/edit", layout: "administration"
     end
 
     def create
