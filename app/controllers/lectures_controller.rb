@@ -306,20 +306,23 @@ class LecturesController < ApplicationController
 
   def search
     authorize! :search, Lecture.new
-    search = Lecture.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @lectures = Kaminari.paginate_array(results, total_count: @total)
-                        .page(params[:page]).per(search_params[:per])
-    @results_as_list = search_params[:results_as_list] == "true"
 
-    if @total.zero? && search_params[:fulltext]&.length.to_i > 1
-      @similar_titles = Course.similar_courses(search_params[:fulltext])
-    end
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Lecture,
+      configurator_class: Search::Configurators::LectureSearchConfigurator
+    )
+
+    @lectures = search_result.results
+    @total = search_result.total_count
+
+    @results_as_list = params.dig(:search, :results_as_list) == "true"
 
     respond_to do |format|
       format.js { render template: "lectures/search/search" }
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
     end
   end
 
@@ -481,15 +484,8 @@ class LecturesController < ApplicationController
     end
 
     def search_params
-      types = params[:search][:types]
-      types = [types] if types && !types.is_a?(Array)
-      types -= [""] if types
-      types = nil if types == []
-      params[:search][:types] = types
-      params[:search][:user_id] = current_user.id
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per, :user_id,
-                             :results_as_list,
+                             :all_teachers, :fulltext, :per,
                              { types: [],
                                term_ids: [],
                                program_ids: [],

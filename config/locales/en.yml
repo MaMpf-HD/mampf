@@ -138,9 +138,10 @@ en:
       main: 'Overview'
       current_lecture: 'Current event series'
       logout: 'Logout'
-      media_search: 'Search media'
-      tags: 'Search tags'
-      teachables: 'Search lectures'
+      media_search: 'Media Search'
+      lecture_search: 'Lecture Search'
+      course_search: 'Course Search'
+      tag_search: 'Tag search'
       terms: 'Terms'
       classification: 'Classification'
       news: 'News'
@@ -629,7 +630,7 @@ en:
           Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>,
           <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is the inclusive <i>OR</i>.
         search_program: >
-          Here you have to select (in the sense of
+          Here you can select (in the sense of
           <i>
           OR
           </i>
@@ -649,8 +650,7 @@ en:
           ).
         search_fulltext: >
           Here you can enter text that will be searched for in the title of the
-          event series. If you leave the text field empty (or enter less than two letters),
-          it will be ignored.
+          event series. If you leave the text field empty it will be ignored.
         disable_teacher_display: >
           If you check this box, the teacher's name will be omitted from the
           lecture card on the start page and from the lecture page for generic
@@ -737,6 +737,10 @@ en:
         title: >
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
+        search_fulltext: >
+          Here you can enter text that will be searched for in the course
+          titles and short titles. If you leave the text field empty it will be
+          ignored.
         short_title: >
           The short title will be used as abbreviation in several places.
         editors: >
@@ -744,6 +748,18 @@ en:
           in particular they can create event series within the course. Every course
           editor inherits editing access for all event series belonging to the
           course.
+        search_editors: >
+          Here you can select the editor of the course (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        search_program: >
+          Here you can select (in the sense of
+          <i>
+          OR
+          </i>
+          ) to which program the course belongs to.
         no_right_to_change_editors: >
           Course editors can only be changed by administrators.
           Please contact %{project_email} by email if you want a change to be made
@@ -779,7 +795,7 @@ en:
           Here you can choose to which divisions of which subjects the course is
           associated to.
         programs: >
-          Here you can select to ehich study paths of which subjects this course
+          Here you can select to which study paths of which subjects this course
           is associated to.
         term_independent: >
           Check this box for courses that do not match the usual pattern of
@@ -1027,7 +1043,6 @@ en:
       lock_comments: 'Disable comments for this medium'
       comments_locked: 'Comments disabled'
       release_date: 'Publication date'
-      boost: 'Boost'
       invalid_publish_date: This is not a valid datetime in the future.
       scheduled_for_release: >
         This medium is scheduled for release on %{release_date}.
@@ -1307,12 +1322,6 @@ en:
           editor.
         details_warning: >
           Details have been changed that have not yet been imported.
-        boost: >
-          Via the boost you can override the way in ehich media are ordered
-          by default (for media that belong to a course or an event series,
-          it does not affect media associated to a session). The default value
-          is 0, Media with a higher boost will be displayed in the first places,
-          media with lower boost at the end.
         scheduled_release: >
           The publication will not precisely occur at the right second, but it
           should not be later than around a minute after the given time.
@@ -1370,9 +1379,10 @@ en:
           Here you can select the sections that this tag is associated to.
         list: >
           This is the list of all associated tags.
-        search_title: >
-          Here you can enter the title of the tag that you are searching for.
-          The list of all tags will be filtered correspondingly.
+        search_fulltext: >
+          Here you can enter text that will be searched for in the title of
+          tags and aliases. If you leave the text field empty it will be
+          ignored.
         search_course: >
           Here you can enter the courses that the tag is associated to (in
           the sense of <i>OR</i>).
@@ -2698,23 +2708,18 @@ en:
       %{count} additional results from the database are not shown because of
       your %{profile}.
     settings: 'profile settings'
-    alternative: 'Did you mean something else?'
-    similar: 'Tags similar to %{search_string}'
-    courses_with_similar_titles: >
-      You might try the following fulltext terms and start the search again.
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
     media:
       title: >
         You can search the titles of media or related sessions. If you do not wantto use
         this criterion, leave the input box empty.
-      title_placeholder: leave free or enter at least 2 letters
       lectures: >
         Select the event series you want to search. You can choose all event series, the
         ones you are subscribed to, or make up your own selection. If you opt for your own
         selection, you can choose one or several event series. The operator used is the
         inclusive <i>OR</i>.
-      lecture_options:
+      lecture_scope:
         subscribed: 'subscribed'
         all: 'all'
         own_selection: 'custom selection'
@@ -2724,8 +2729,6 @@ en:
         Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
         <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
         The operator used is the inclusive <i>OR</i>.
-    tag_title: >
-      enter at least 2 letters (or leave free for all tags)
   errors:
     not_subscribed: You are currently not subscribed to this lecture.
     profile:
@@ -3741,6 +3744,8 @@ en:
     no_remark: 'There is no remark with this id.'
     no_search_term: >
       You have searched without a search term. That does not work.
+    search_only_js: >
+      Directly accessing search results is not possible. Please use the search field.
     search_term_short: >
       Your search term should have at least two letters.
     no_section: 'There is no section with this id.'
