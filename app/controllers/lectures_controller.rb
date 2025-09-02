@@ -143,7 +143,6 @@ class LecturesController < ApplicationController
 
     @errors = @lecture.errors
 
-    # Redirect to the correct subpage
     if @lecture.valid?
       if params[:subpage].present?
         redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
