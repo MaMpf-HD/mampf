@@ -1,10 +1,8 @@
-<%= vite_stylesheet_tag "styles/feedback.scss" %>
-
 <%# Main Modal %>
 <div id="submit-feedback" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Submit feedback" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content p-4">
-      <%= render partial: 'feedbacks/feedback_form' %>
+      <%= render partial: 'feedbacks/form/feedback_form' %>
     </div>
   </div>
 </div>
