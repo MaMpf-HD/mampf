@@ -7,10 +7,10 @@
          id="editorSearch">
       <%= f.label :editor_ids, t('basics.editors'),
                   class: 'form-label' %>
-      <%= helpdesk(t('admin.lecture.info.search_teacher'), true) %>
+      <%= helpdesk(t('admin.course.info.search_editors'), true) %>
 
       <%= f.select :editor_ids,
-                   options_for_select(add_prompt(User.select_teachers)),
+                   options_for_select(add_prompt(User.select_course_editors)),
                    {},
                    { multiple: true,
                      class: 'selectize',
@@ -30,7 +30,7 @@
       <%= f.label :course_program_ids,
                   t('basics.programs'),
                   class: 'form-label' %>
-      <%= helpdesk(t('admin.lecture.info.search_program'), true) %>
+      <%= helpdesk(t('admin.course.info.search_program'), true) %>
       <%= f.select :program_ids,
                    options_for_select(Program.select_programs),
                    { prompt: t('basics.select') },
@@ -53,7 +53,7 @@
     <div class="col-6 col-lg-3 mb-3">
       <%= f.label :fulltext, t('basics.fulltext'),
                   class: 'form-label' %>
-      <%= helpdesk(t('admin.lecture.info.search_fulltext'), false) %>
+      <%= helpdesk(t('admin.course.info.search_fulltext'), false) %>
       <%= f.text_field :fulltext,
                         class: 'form-control' %>
     </div>

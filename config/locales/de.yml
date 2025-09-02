@@ -152,8 +152,9 @@ de:
       current_lecture: 'Aktuelle Veranstaltung'
       logout: 'Logout'
       media_search: 'Mediensuche'
-      tags: 'Tagsuche'
-      teachables: 'Veranstaltungssuche'
+      lecture_search: 'Veranstaltungssuche'
+      course_search: 'Modulsuche'
+      tag_search: 'Tagsuche'
       terms: 'Semester'
       classification: 'Systematik'
       news: 'News'
@@ -690,7 +691,7 @@ de:
           <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i>. Dabei wird der Operator inklusives
           <i>ODER</i> verwendet.
         search_program: >
-          Hier musst Du (im Sinne von
+          Hier kannst Du (im Sinne von
           <i>
           ODER
           </i>
@@ -710,8 +711,8 @@ de:
           oder stattfinden.
         search_fulltext: >
           Hier kannst Du Text eingeben, nach dem im Titel der Veranstaltung
-          gesucht wird. Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
-          eingibst), wird es bei der Suche ignoriert.
+          gesucht wird. Wenn Du dieses Feld leer lässt, wird es bei
+          der Suche ignoriert.
         disable_teacher_display: >
           Wenn Du dieses Feld aktivierst, wird auf der Vorlesungs-Karten auf der
           Startseite und auf der Vorlesungsseite für generische Nutzer
@@ -805,6 +806,10 @@ de:
           Hier musst Du den Titel des Moduls eintragen.
           Typischerweise sollte das der Titel aus dem Modulhandbuch sein.
           Modulnamen dürfen nur einmal vergeben werden.
+        search_fulltext: >
+          Hier kannst Du Text eingeben, nach dem im Titel und Kurztitel
+          des Moduls gesucht wird. Wenn Du dieses Feld leer lässt, wird es bei
+          der Suche ignoriert.
         short_title: >
           Der Kurztitel wird an mehreren Stellen als Abkürzung verwendet.
         editors: >
@@ -812,6 +817,18 @@ de:
           das Modul bearbeiten, insbesondere können sie Veranstaltungen innerhalb
           des Moduls anlegen. ModuleditorInnen erben die Bearbeitungsrechte für
           alle Veranstaltungen innerhalb des Moduls.
+        search_editors: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, wer ModulEditorIn ist.
+        search_program: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, zu welchen Studiengängen das Modul gehören soll.
         no_right_to_change_editors: >
           ModuleditorInnen können nur von AdministratorInnen geändert werden.
           Bitte wende Dich per Email an %{project_email}, wenn hier
@@ -1116,7 +1133,6 @@ de:
       lock_comments: Kommentare für dieses Medium deaktivieren
       comments_locked: Kommentare deaktiviert
       release_date: 'Veröffentlichungsdatum'
-      boost: Boost
       invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
       scheduled_for_release: >
         Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
@@ -1420,13 +1436,6 @@ de:
           die mit dem THymE-Editor bearbeitet wurden).
         details_warning: >
           Es wurden Details geändert, die noch nicht übernommen wurden.
-        boost: >
-          Über den Boost kannst Du die Reihenfolge überschreiben, in der
-          standardmäßig Medien angeordnet werden, die zu Modulen bzw.
-          Veranstaltungen gehören (der Boost wirkt sich nicht auf Medien aus,
-          die zu einer Sitzung assoziiert sind). Der Standardwert ist 0,
-          Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
-          niedrigerem Boost weiter hinten.
         scheduled_release: >
           Die Veröffentlichung erfolgt nicht sekundengenau, sollte jedoch
           spätestens etwa eine Minute nach der angegebenen Uhrzeit erfolgen.
@@ -1490,10 +1499,10 @@ de:
           assoziiert sein soll.
         list: >
           Das ist die Liste aller assoziierten Tags.
-        search_title: >
-          Hier kannst Du den Titel des gesuchten Tags eingeben.
-          Die Liste der angezeigten Tags wird dann entsprechend
-          gefiltert.
+        search_fulltext: >
+          Hier kannst Du Text eingeben, nach dem in den Titeln und Aliassen der
+          Tags gesucht werden soll. Wenn Du dieses Feld leer lässt, wird es bei
+          der Suche ignoriert.
         search_course: >
           Hier kannst Du (im Sinne von <i>ODER</i>)
           auswählen, zu welchen Modulen das Tag assoziiert sein soll.
@@ -2885,24 +2894,18 @@ de:
       Aufgrund Deiner %{profile} wurde(n) %{count} Treffer aus der
       Datenbank nicht berücksichtigt.
     settings: 'Profileinstellungen'
-    alternative: 'Meintest Du vielleicht etwas anderes?'
-    similar: 'Zum Suchbegriff %{search_string} ähnliche Begriffe'
-    courses_with_similar_titles: >
-      Du könntest es mit folgenden Volltext-Suchbegriffen probieren und die
-      Suche anschließend neu starten:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
     media:
       title: >
         Hier kannst Du den Medien- bzw. Sitzungstitel in die Suche miteinbeziehen. Lass das Feld
         frei, falls Du dieses Suchkriterium nicht verwenden möchtest.
-      title_placeholder: frei lassen oder mind. 2 Zeichen eingeben
       lectures: >
         Hier kannst Du bestimmen, aus welcher Veranstaltung das Medium stammen soll. Dabei kannst
         Du alle, nur die von Dir abonnierten oder eine eigene Auswahl an Veranstaltungen berücksichtigen
         lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator
         inklusives <i>ODER</i> verwendet.
-      lecture_options:
+      lecture_scope:
         subscribed: 'abonnierte'
         all: 'alle'
         own_selection: 'eigene Auswahl'
@@ -2912,8 +2915,6 @@ de:
         Hier kannst Du einen,   mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
         <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i> und
         <i>Sonstiges</i>. Dabei wird der Operator inklusives <i>ODER</i> verwendet.
-    tag_title: >
-      mind. 2 Zeichen eingeben (frei lassen für alle Tags)
   errors:
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
@@ -3970,6 +3971,8 @@ de:
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
     no_search_term: >
       Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
+    search_only_js: >
+      Der direkte Aufruf von Suchergebnissen ist nicht möglich. Bitte benutze das Suchfeld.
     search_term_short: >
       Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
     no_section: 'Ein Abschnitt mit der angeforderten id existiert nicht.'
