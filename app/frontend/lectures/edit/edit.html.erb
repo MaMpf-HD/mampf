@@ -75,7 +75,7 @@
       <% if @lecture.sort == "vignettes" %>
         <% component.with_tab(name: "vignettes", label: t("vignettes.vignettes")) do %>
           <div class="container small-width lecture-pane mb-3">
-            <%= render partial: 'vignettes/questionnaires/manage_questionnaires',
+            <%= render partial: 'vignettes/questionnaires/manage/manage',
                        locals: { lecture: @lecture } %>
           </div>
           <div class="container small-width lecture-pane mb-3">
@@ -94,7 +94,7 @@
 
   <!-- Modals -->
   <%= render partial: 'media/modal' %>
-  <%= render 'vignettes/questionnaires/vignette_modal', lecture: @lecture %>
+  <%= render 'vignettes/questionnaires/new/vignette_modal', lecture: @lecture %>
   <%= render partial: 'sections/content_modal' %>
   <%= render partial: 'announcements/modal' %>
   <%= render partial: 'lectures/edit/publish',

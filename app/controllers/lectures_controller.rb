@@ -219,7 +219,7 @@ class LecturesController < ApplicationController
 
   def organizational
     if @lecture.sort == "vignettes"
-      render layout: "vignettes_navbar"
+      render layout: "vignettes/layouts/vignettes_navbar"
     else
       I18n.locale = @lecture.locale_with_inheritance
       render template: "lectures/organizational/_organizational",

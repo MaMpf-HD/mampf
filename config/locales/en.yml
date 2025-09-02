@@ -2436,6 +2436,8 @@ en:
 
   vignettes:
     vignettes: 'Vignettes'
+    questionnaire_not_created: >
+      A new questionnaire could not be created. Please try again later.
     slide: 'Slide'
     slides: 'Slides'
     info_slides: 'Info Slides'

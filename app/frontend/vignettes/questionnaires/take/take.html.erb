@@ -1,9 +1,9 @@
-<%= vite_stylesheet_tag "styles/vignettes-take.scss" %>
-<%= vite_javascript_tag "js/vignettes/take_questionnaire" %>
+<%= vite_javascript_tag "vignettes/questionnaires/take/take.js" %>
+<%= vite_stylesheet_tag "vignettes/questionnaires/take/take.scss" %>
 
 <!-- Info Slide Modals -->
 <% @slide.info_slides.each_with_index do |info_slide, index| %>
-    <%= render partial: 'vignettes/info_slides/take_modal',
+    <%= render partial: 'vignettes/info_slides/take/take_modal',
                         locals: { index: index, info_slide: info_slide } %>
 <% end %>
 
@@ -72,14 +72,17 @@
 
         <% case @slide.question.type %>
             <% when "Vignettes::TextQuestion" %>
-                <%= render partial: 'vignettes/answer_types/text', locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/text',
+                           locals: { f: form } %>
             <% when "Vignettes::NumberQuestion" %>
-                <%= render partial: 'vignettes/answer_types/number', locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/number',
+                           locals: { f: form } %>
             <% when "Vignettes::MultipleChoiceQuestion" %>
-                <%= render partial: 'vignettes/answer_types/multiple_choice',
-                                    locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/multiple_choice',
+                           locals: { f: form } %>
             <% when "Vignettes::LikertScaleQuestion" %>
-                <%= render partial: 'vignettes/answer_types/likert_scale', locals: { f: form } %>
+                <%= render partial: 'vignettes/questionnaires/take/answer_types/likert_scale',  
+                           locals: { f: form } %>
         <% end %>
 
         <!-- Navigation -->
