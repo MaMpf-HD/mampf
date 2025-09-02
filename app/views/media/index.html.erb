@@ -6,7 +6,7 @@
                       lecture_material_path(@lecture,
                                         params: { project: params[:project],
                                                   lecture_id: params[:lecture_id],
-                                                  reverse: (params[:reverse] != "true").to_s,
+                                                  reverse: params[:reverse] != "true",
                                                   all: params[:all],
                                                   per: params[:per],
                                                   visibility: params[:visibility] }),

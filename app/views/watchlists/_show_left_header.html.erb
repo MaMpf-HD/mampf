@@ -59,7 +59,7 @@
   <%# Reverse order button%>
   <li class="nav-item ps-2 pr-1">
     <%= link_to t('reverse_order'),
-          watchlist_path(@watchlist, params: { reverse: !params[:reverse],
+          watchlist_path(@watchlist, params: { reverse: params[:reverse] != "true",
                         all: params[:all],
                         per: params[:per] }),
           class: 'nav-link btn btn-sm text-primary bg-light text-dark',
