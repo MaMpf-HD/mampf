@@ -73,7 +73,8 @@ module Vignettes
       @slide = @questionnaire.slides.find_by(position: @position)
       @answer = @slide.answers.build
 
-      render :take, layout: "application_no_sidebar"
+      render :take, template: "vignettes/questionnaires/take/take",
+                    layout: "application_no_sidebar"
     end
 
     def submit_answer
@@ -96,7 +97,8 @@ module Vignettes
 
       unless @answer.save
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
-        render :take, status: :unprocessable_entity
+        render :take, template: "vignettes/questionnaires/take/take",
+                      status: :unprocessable_entity
         return
       end
 
