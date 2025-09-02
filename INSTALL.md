@@ -20,7 +20,6 @@ git submodule update --init
 You now have the following things ready:
 * The MaMpf server on [localhost:3000](http://localhost:3000/)
 * The mailcatcher service on [localhost:1080](http://localhost:1080/)
-* The webinterface for ApacheSolr on [localhost:8983](http://localhost:8983/)
 * A test mailserver instance on Ports 1025, 10143, 10993
 * A webpacker dev server on [localhost:3035](http://localhost:3035/)
 

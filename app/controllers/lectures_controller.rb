@@ -49,7 +49,8 @@ class LecturesController < ApplicationController
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
 
-      render layout: turbo_frame_request? ? "turbo_frame" : "application"
+      render template: "lectures/show/show",
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
 
@@ -57,13 +58,18 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new
     authorize! :new, @lecture
     @from = params[:from]
-    return unless @from == "course"
 
-    # if new action was triggered from inside a course view, add the course
-    # info to the lecture
-    @lecture.course = Course.find_by(id: params[:course])
-    I18n.locale = @lecture.course.locale
-    @lecture.annotations_status = 0
+    if @from == "course"
+      # if new action was triggered from inside a course view, add the course
+      # info to the lecture
+      @lecture.course = Course.find_by(id: params[:course])
+      I18n.locale = @lecture.course.locale
+      @lecture.annotations_status = 0
+    end
+
+    respond_to do |format|
+      format.js { render template: "lectures/new/new" }
+    end
   end
 
   def edit
@@ -71,6 +77,7 @@ class LecturesController < ApplicationController
               last_modified: [current_user.updated_at, @lecture.updated_at,
                               Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       eager_load_stuff
+      render template: "lectures/edit/edit"
     end
   end
 
@@ -79,6 +86,7 @@ class LecturesController < ApplicationController
     @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
     @lecture.save
+
     if @lecture.valid?
       @lecture.update(sort: "special") if @lecture.course.term_independent
       # set organizational_concept to default
@@ -98,7 +106,11 @@ class LecturesController < ApplicationController
                                  lecture: @lecture.title_with_teacher)
       return
     end
+
     @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/create/create" }
+    end
   end
 
   def update
@@ -129,16 +141,20 @@ class LecturesController < ApplicationController
     @lecture.touch
     @lecture.forum&.update(name: @lecture.forum_title)
 
-    # Redirect to the correct subpage
+    @errors = @lecture.errors
+
     if @lecture.valid?
       if params[:subpage].present?
-        redirect_to "#{edit_lecture_path(@lecture)}##{params[:subpage]}"
+        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
       else
         redirect_to edit_lecture_path(@lecture)
       end
+      return
     end
 
-    @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/update/update" }
+    end
   end
 
   def publish
@@ -197,7 +213,8 @@ class LecturesController < ApplicationController
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
     I18n.locale = @lecture.locale_with_inheritance
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/announcements/show_announcements",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def organizational
@@ -205,7 +222,9 @@ class LecturesController < ApplicationController
       render layout: "vignettes/layouts/vignettes_navbar"
     else
       I18n.locale = @lecture.locale_with_inheritance
-      render layout: turbo_frame_request? ? "turbo_frame" : "application"
+      render template: "lectures/organizational/_organizational",
+             locals: { lecture: @lecture },
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
 
@@ -216,6 +235,10 @@ class LecturesController < ApplicationController
     media.each { |m| Import.create(teachable: @lecture, medium: m) }
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/import_media" }
+    end
   end
 
   def remove_imported_medium
@@ -224,6 +247,10 @@ class LecturesController < ApplicationController
     import&.destroy
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/remove_imported_medium" }
+    end
   end
 
   def show_subscribers
@@ -279,32 +306,42 @@ class LecturesController < ApplicationController
 
   def search
     authorize! :search, Lecture.new
-    search = Lecture.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @lectures = Kaminari.paginate_array(results, total_count: @total)
-                        .page(params[:page]).per(search_params[:per])
-    @results_as_list = search_params[:results_as_list] == "true"
-    return unless @total.zero?
-    return unless search_params[:fulltext]&.length.to_i > 1
 
-    @similar_titles = Course.similar_courses(search_params[:fulltext])
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Lecture,
+      configurator_class: Search::Configurators::LectureSearchConfigurator
+    )
+
+    @lectures = search_result.results
+    @total = search_result.total_count
+
+    @results_as_list = params.dig(:search, :results_as_list) == "true"
+
+    respond_to do |format|
+      format.js { render template: "lectures/search/search" }
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
+    end
   end
 
   def show_random_quizzes
     @course = @lecture.course
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/quizzes/show_random_quizzes",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def display_course
     @course = @lecture.course
     I18n.locale = @course.locale || @lecture.locale
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/course/display_course",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def subscribe_page
-    render layout: "application_no_sidebar"
+    render template: "lectures/subscribe/subscribe_page",
+           layout: "application_no_sidebar"
   end
 
   def import_toc
@@ -401,7 +438,7 @@ class LecturesController < ApplicationController
 
     # fill organizational_concept with default view
     def set_organizational_defaults
-      partial_path = "lectures/organizational/"
+      partial_path = "lectures/organizational/defaults/"
       partial_path += @lecture.seminar? ? "seminar" : "lecture"
       @lecture.update(organizational_concept:
                         render_to_string(partial: partial_path,
@@ -447,15 +484,8 @@ class LecturesController < ApplicationController
     end
 
     def search_params
-      types = params[:search][:types]
-      types = [types] if types && !types.is_a?(Array)
-      types -= [""] if types
-      types = nil if types == []
-      params[:search][:types] = types
-      params[:search][:user_id] = current_user.id
       params.expect(search: [:all_types, :all_terms, :all_programs,
-                             :all_teachers, :fulltext, :per, :user_id,
-                             :results_as_list,
+                             :all_teachers, :fulltext, :per,
                              { types: [],
                                term_ids: [],
                                program_ids: [],
