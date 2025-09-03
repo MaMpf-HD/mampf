@@ -295,11 +295,6 @@ $(document).on 'turbo:load', ->
           console.log("AJAX Error: #{textStatus}")
     return
 
-  $(document).on 'click', '#import-media-button', ->
-    $(this).hide()
-    $('#importedMediaArea').show()
-    return
-
   $(document).on 'click', '#editMediumTags', ->
     $.ajax Routes.render_medium_tags_path($(this).data('medium')),
       type: 'GET'
@@ -400,7 +395,6 @@ $(document).on 'turbo:before-cache', ->
   $(document).off 'click', '[id^="row-medium-"]'
   $(document).off 'click', '#cancel-import-media'
   $(document).off 'click', '#submit-import-media'
-  $(document).off 'click', '#import-media-button'
   $(document).off 'click', '#cancel-medium-actions'
   $(document).off 'click', '#editMediumTags'
   $(document).off 'click', '#cancelMediumTags'

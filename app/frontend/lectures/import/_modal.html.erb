@@ -1,0 +1,51 @@
+<div class="modal fade"
+     id="importMediaModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="importMediaModalLabel" aria-hidden="true"
+     data-keyboard="false"
+     data-backdrop="static">
+  <div class="modal-dialog modal-xxl"
+       role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="importMediaModalLabel">
+          <%= t('buttons.import_media') %>
+          <span id="section-title-modal">
+          </span>
+        </h5>
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close">
+        </button>
+      </div>
+      <div class="modal-body" id="section-content-modal-content">
+        <h3 class="lecture-pane-header">
+        <%= t('admin.lecture.imported_media') %>
+        <span id="importMedia" data-lecture="<%= lecture.id %>">
+            <span id="importedMediaCount">
+            ( <%= lecture.imported_media.size %>)
+            </span>
+        </span>
+        </h3>
+
+      <div id="importedMediaTable"
+           data-nomedia="<%= t('admin.lecture.no_imported_media') %>">
+            <%= render partial: 'lectures/import/imported_media',
+                       locals: { media: lecture.imported_media,
+                                 lecture: lecture } %>
+      </div>
+
+    <hr class="lecture-pane-separator">
+
+      <div id="importedMediaArea">
+           <%= render partial: 'media/catalog/search_form',
+               locals: { purpose: 'import' } %>
+        <div id="media-search-results">
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+</div>

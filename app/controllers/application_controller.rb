@@ -1,4 +1,8 @@
 class ApplicationController < ActionController::Base
+  # TODO: Change to `prepend_view_path` once the majority of view files
+  # live somewhere in app/frontend/ instead of app/views/
+  append_view_path "app/frontend/"
+
   include Turbo::Redirection
   include Pagy::Backend
 
