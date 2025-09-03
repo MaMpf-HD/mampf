@@ -25,12 +25,14 @@ module SearchForm
       # @param label [String] The text to display in the label associated with the checkbox.
       # @param checked [Boolean] The initial checked state of the checkbox.
       # @param ** [Hash] Additional options passed to the `BaseControl` initializer.
-      def initialize(form_state:, name:, label:, checked: false, help_desk: nil, **)
+      # rubocop:disable Metrics/ParameterLists
+      def initialize(form_state:, name:, label:, checked: false, help_text: nil, **)
         super(form_state: form_state, help_text: help_text, **)
         @name = name
         @label = label
         @checked = checked
       end
+      # rubocop:enable Metrics/ParameterLists
 
       # Overrides the base method to add Stimulus-driven data attributes.
       # It calls `super` to get any data attributes from the options, then merges
