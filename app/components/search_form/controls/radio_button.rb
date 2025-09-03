@@ -34,8 +34,8 @@ module SearchForm
       # @param checked [Boolean] The initial checked state of the radio button.
       # @param ** [Hash] Additional options passed to the `BaseControl` initializer.
       # rubocop:disable Metrics/ParameterLists
-      def initialize(form_state:, name:, value:, label:, checked: false, **)
-        super(form_state: form_state, **)
+      def initialize(form_state:, name:, value:, label:, checked: false, help_text: nil, **)
+        super(form_state: form_state, help_text: help_text, **)
         @name = name
         @value = value
         @label = label
@@ -74,6 +74,7 @@ module SearchForm
           id: element_id
         }
 
+        html_opts["aria-describedby"] = help_text_id if show_inline_help_text?
         html_opts[:disabled] = options[:disabled] if options.key?(:disabled)
         html_opts[:data] = data_attributes if data_attributes.any?
 

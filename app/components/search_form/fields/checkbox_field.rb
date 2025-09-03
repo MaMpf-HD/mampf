@@ -35,6 +35,7 @@ module SearchForm
           name: name,
           label: label,
           checked: checked,
+          help_text: help_text,
           container_class: "form-check mb-2" # Match the existing checkbox styling
         )
       end

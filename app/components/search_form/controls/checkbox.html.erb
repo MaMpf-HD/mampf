@@ -1,4 +1,9 @@
 <div class="<%= container_class %>">
   <%= form.check_box name, checkbox_html_options %>
   <%= form.label label_for, label, class: "form-check-label" %>
+  <% if show_inline_help_text? %>
+    <span id="<%= help_text_id %>">
+      <%= helpers.helpdesk(help_text, false) %>
+    </span>
+  <% end %>
 </div>

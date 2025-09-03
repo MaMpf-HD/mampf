@@ -13,17 +13,18 @@ module SearchForm
     # Stimulus-related functionality.
     class BaseControl < ViewComponent::Base
       attr_accessor :form_state
-      attr_reader :options, :stimulus_config
+      attr_reader :options, :stimulus_config, :help_text
 
       # Initializes a new BaseControl instance.
       #
       # @param form_state [SearchForm::Services::FormState] The shared form state object.
       # @param stimulus [Hash] Configuration for Stimulus.js controllers, to be used by subclasses.
       # @param options [Hash] A hash of standard HTML options (e.g., class, data).
-      def initialize(form_state:, stimulus: {}, **options)
+      def initialize(form_state:, stimulus: {}, help_text: nil, **options)
         super()
         @form_state = form_state
         @stimulus_config = stimulus
+        @help_text = help_text
         @options = options
       end
 
@@ -87,6 +88,16 @@ module SearchForm
       def with_form(form)
         form_state.with_form(form)
         self
+      end
+
+      # @return [Boolean] True if help text should be displayed inline
+      def show_inline_help_text?
+        help_text.present?
+      end
+
+      # @return [String] The help text ID for accessibility
+      def help_text_id
+        "#{element_id}_help"
       end
 
       private

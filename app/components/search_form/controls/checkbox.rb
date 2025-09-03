@@ -25,8 +25,8 @@ module SearchForm
       # @param label [String] The text to display in the label associated with the checkbox.
       # @param checked [Boolean] The initial checked state of the checkbox.
       # @param ** [Hash] Additional options passed to the `BaseControl` initializer.
-      def initialize(form_state:, name:, label:, checked: false, **)
-        super(form_state: form_state, **)
+      def initialize(form_state:, name:, label:, checked: false, help_desk: nil, **)
+        super(form_state: form_state, help_text: help_text, **)
         @name = name
         @label = label
         @checked = checked
@@ -55,6 +55,8 @@ module SearchForm
           checked: checked,
           id: element_id
         }
+
+        html_opts["aria-describedby"] = help_text_id if show_inline_help_text?
         html_opts[:data] = data_attributes if data_attributes.any?
         html_opts.merge(options.except(:container_class))
       end
