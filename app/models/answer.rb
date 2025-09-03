@@ -1,5 +1,5 @@
 class Answer < ApplicationRecord
-  belongs_to :question
+  belongs_to :question, counter_cache: true
   after_create :update_quizzes
   before_destroy :question_not_orphaned?
   after_destroy :update_quizzes

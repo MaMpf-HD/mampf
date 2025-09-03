@@ -2,24 +2,6 @@ services:
   redis:
     image: "redis:6.2.6-alpine"
 
-  solr:
-    image: "solr:8.11.1"
-    ports:
-      - "127.0.0.1:8983:8983"
-    volumes:
-      - type: volume
-        source: solr-data
-        target: /var/solr
-      - type: bind
-        source: ../../solr/development/conf/
-        target: /solrconfig/
-        read_only: true
-    # command: ["bash -c \"solr-precreate development /solrconfig ; solr-precreate test /solrconfig \""]
-    entrypoint:
-      - bash
-      - "-c"
-      - "precreate-core development /solrconfig; precreate-core test /solrconfig; exec solr -f"
-
   db:
     image: postgres:17-bookworm
     environment:
@@ -112,9 +94,6 @@ services:
       ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
       INSTANCE_PATH: mampf
       REDIS_URL: redis://redis:6379/1
-      SOLR_HOST: solr
-      SOLR_PORT: 8983
-      SOLR_PATH: /solr/development
       SPROCKETS_CACHE: /cache
       VITE_RUBY_HOST: 0.0.0.0
       MAMPF_REGISTRATION_TIMEFRAME: 25
@@ -140,7 +119,6 @@ services:
       - bundle_cache:/usr/local/bundle/
     depends_on:
       - db
-      - solr
       - redis
       - mailcatcher
     extra_hosts:
@@ -177,6 +155,5 @@ volumes:
   public:
   db-data:
   pgadmin:
-  solr-data:
   sprockets-cache:
   bundle_cache:
