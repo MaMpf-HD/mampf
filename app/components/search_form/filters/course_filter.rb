@@ -17,7 +17,7 @@ module SearchForm
         super(
           name: :course_ids,
           label: I18n.t("basics.courses"),
-          help_text: I18n.t("admin.tag.info.search_course"),
+          help_text: I18n.t("search.filters.helpdesks.course_filter"),
           collection: Course.order(:title).pluck(:title, :id),
           **
         )

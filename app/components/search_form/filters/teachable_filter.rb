@@ -21,7 +21,7 @@ module SearchForm
         super(
           name: :teachable_ids,
           label: I18n.t("basics.associated_to"),
-          help_text: I18n.t("search.filters.teachable_filter"),
+          help_text: I18n.t("search.filters.helpdesks.teachable_filter"),
           collection: grouped_teachable_list,
           **
         )

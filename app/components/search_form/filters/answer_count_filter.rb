@@ -23,7 +23,7 @@ module SearchForm
         super(
           name: :answers_count,
           label: I18n.t("basics.answer_count"),
-          help_text: I18n.t("admin.medium.info.answer_count"),
+          help_text: I18n.t("search.filters.helpdesks.answer_count_filter"),
           collection: [
             [I18n.t("access.irrelevant"), "irrelevant"],
             [1, 1],

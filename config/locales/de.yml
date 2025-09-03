@@ -1423,10 +1423,6 @@ de:
           Veranstaltung gelten, wie die Teamgröße für Abgaben und die
           Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
           einstellen.
-        answer_count: >
-          Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
-          wieviele Antworten die Quizfrage haben soll. Bei allen anderen
-          Medientypen wird diese Einstellung ignoriert.
     tag:
       index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
@@ -1482,9 +1478,6 @@ de:
           Hier kannst Du Text eingeben, nach dem in den Titeln und Aliassen der
           Tags gesucht werden soll. Wenn Du dieses Feld leer lässt, wird es bei
           der Suche ignoriert.
-        search_course: >
-          Hier kannst Du (im Sinne von <i>ODER</i>)
-          auswählen, zu welchen Modulen das Tag assoziiert sein soll.
         section_association: >
           Da nicht klar ist, welche der verknüpften Tags
           zu welchem Abschnitt der Veranstaltung gehören, kannst Du hier
@@ -2879,26 +2872,37 @@ de:
     click_and_paste: >
       Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
     filters:
-      medium_type_filter: >
-        Hier kannst Du den Typ des Mediums auswählen. Dabei wird der Operator <i>ODER</i> verwendet.
-      teachable_filter: >
-        Hier kannst Du (im Sinne von
-        <i>
-        ODER
-        </i>
-        ) auswählen, zu welchen Modulen bzw. Veranstaltungen das Medium
-        assoziiert sein soll, und zwar
-        <i>
-        mit Vererbung / ohne Vererbung.
-        </i>
-        Im Falle der Auswahl von "mit Vererbung" werden bei Auswahl eines
-        Moduls auch alle Medien angezeigt,
-        die zu dazugehörigen Veranstaltungen oder Sitzungen verknüpft sind;
-        bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
-        die mit Sitzungen dieser Veranstaltung verknüpft sind.
-      tag_filter: >
-        Verknüpfte Begriffe werden als <span class="badge text-dark lecture-tag">Beispielbegriff</span> angezeigt. Hier kannst Du Begriffe, mit denen eine Verknüpfung bestehen soll,
-        aus der Datenbank auswählen. Außerdem kannst Du entscheiden, ob die Verknüpfung mit mindestens einem der gewählten Begriffe (<i>ODER</i>) oder mit allen gewählten Begriffen (<i>UND</i>) versehen sein soll.
+      helpdesks:
+        answer_count_filter: >
+          Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
+          wieviele Antworten die Quizfrage haben soll. Bei allen anderen
+          Medientypen wird diese Einstellung ignoriert.
+        course_filter: >
+          Hier kannst Du (im Sinne von <i>ODER</i>)
+          auswählen, zu welchen Modulen eine Assoziation bestehen soll.
+        editor_filter: >
+          Hier kannst Du (im Sinne von <i>ODER</i>)
+          auswählen, zu welchen Editoren eine Assoziation bestehen soll.
+        medium_type_filter: >
+          Hier kannst Du den Typ des Mediums auswählen. Dabei wird der Operator <i>ODER</i> verwendet.
+        tag_filter: >
+          Verknüpfte Begriffe werden als <span class="badge text-dark lecture-tag">Beispielbegriff</span> angezeigt. Hier kannst Du Begriffe, mit denen eine Verknüpfung bestehen soll,
+          aus der Datenbank auswählen. Außerdem kannst Du entscheiden, ob die Verknüpfung mit mindestens einem der gewählten Begriffe (<i>ODER</i>) oder mit allen gewählten Begriffen (<i>UND</i>) versehen sein soll.
+        teachable_filter: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, zu welchen Modulen bzw. Veranstaltungen das Medium
+          assoziiert sein soll, und zwar
+          <i>
+          mit Vererbung / ohne Vererbung.
+          </i>
+          Im Falle der Auswahl von "mit Vererbung" werden bei Auswahl eines
+          Moduls auch alle Medien angezeigt,
+          die zu dazugehörigen Veranstaltungen oder Sitzungen verknüpft sind;
+          bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
+          die mit Sitzungen dieser Veranstaltung verknüpft sind.
     media:
       title: >
         Hier kannst Du den Medien- bzw. Sitzungstitel in die Suche miteinbeziehen. Lass das Feld
