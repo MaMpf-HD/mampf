@@ -19,6 +19,7 @@ module SearchForm
       #
       # @param form_state [SearchForm::Services::FormState] The shared form state object.
       # @param stimulus [Hash] Configuration for Stimulus.js controllers, to be used by subclasses.
+      # @param help_text [String] Help text to be displayed alongside the control.
       # @param options [Hash] A hash of standard HTML options (e.g., class, data).
       def initialize(form_state:, stimulus: {}, help_text: nil, **options)
         super()

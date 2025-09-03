@@ -24,6 +24,7 @@ module SearchForm
       # @param name [Symbol] The name of the checkbox, used for ID generation and form submission.
       # @param label [String] The text to display in the label associated with the checkbox.
       # @param checked [Boolean] The initial checked state of the checkbox.
+      # @param help_text [String] Help text to be displayed alongside the checkbox.
       # @param ** [Hash] Additional options passed to the `BaseControl` initializer.
       # rubocop:disable Metrics/ParameterLists
       def initialize(form_state:, name:, label:, checked: false, help_text: nil, **)

@@ -32,6 +32,7 @@ module SearchForm
       # @param value [String, Symbol] The value submitted when this radio button is selected.
       # @param label [String] The text to display in the label.
       # @param checked [Boolean] The initial checked state of the radio button.
+      # @param help_text [String] Help text to be displayed alongside the radio button.
       # @param ** [Hash] Additional options passed to the `BaseControl` initializer.
       # rubocop:disable Metrics/ParameterLists
       def initialize(form_state:, name:, value:, label:, checked: false, help_text: nil, **)
