@@ -2724,11 +2724,8 @@ en:
           ).
         term_independence_filter: >
           Here you can choose whether the course is independent of terms.
-    media:
-      title: >
-        You can search the titles of media or related sessions. If you do not wantto use
-        this criterion, leave the input box empty.
-      lecture_scope:
+    radio_buttons:
+      lecture_scope_filter:
         subscribed: 'subscribed'
         all: 'all'
         own_selection: 'custom selection'

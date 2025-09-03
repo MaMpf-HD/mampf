@@ -2905,11 +2905,8 @@ de:
           ) Semester auswählen.
         term_independence_filter: >
           Hier kannst du auswählen, ob es sich um ein semesterunabhängiges Modul handelt.
-    media:
-      title: >
-        Hier kannst Du den Medien- bzw. Sitzungstitel in die Suche miteinbeziehen. Lass das Feld
-        frei, falls Du dieses Suchkriterium nicht verwenden möchtest.
-      lecture_scope:
+    radio_buttons:
+      lecture_scope_filter:
         subscribed: 'abonnierte'
         all: 'alle'
         own_selection: 'eigene Auswahl'
