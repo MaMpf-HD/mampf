@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_02_000012) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_000001) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -335,6 +335,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000012) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
+    t.index ["course_id"], name: "index_lectures_on_course_id"
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -425,6 +426,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_02_000012) do
     t.index ["sort"], name: "index_media_on_sort"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
     t.index ["text"], name: "index_media_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["type"], name: "index_media_on_type"
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|
