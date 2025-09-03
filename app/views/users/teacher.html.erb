@@ -44,7 +44,7 @@
   </div>
   <% unless @teacher.lectures.empty? %>
     <div class="col-12 col-md-6 col-lg-4 pt-3">
-      <%= render partial: 'lectures/lectures',
+      <%= render partial: 'lectures/extern/teacher_lectures',
                  locals: { lectures: @teacher.given_lectures_by_date,
                            type: 'lecture_info'} %>
     </div>

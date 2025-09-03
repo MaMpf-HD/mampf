@@ -11,19 +11,18 @@
                 id: 'create-new-tag' %>
   </div>
 </div>
-<%= form_with url: tags_search_path,
+<%= form_with url: search_tags_path,
               scope: 'search',
               remote: true,
               method: :get do |f| %>
 
   <div class="row mb-3 p-2">
     <div class="col-4">
-      <%= f.label :title, t('basics.title'),
+      <%= f.label :fulltext, t('basics.fulltext'),
                   class: 'form-label' %>
-      <%= helpdesk(t('admin.tag.info.search_title'), false) %>
-      <%= f.text_field :title,
-                       { class: 'form-control',
-                         placeholder: t('search.tag_title') } %>
+      <%= helpdesk(t('admin.tag.info.search_fulltext'), false) %>
+      <%= f.text_field :fulltext,
+                       { class: 'form-control' } %>
     </div>
     <div class="col-5">
       <%= f.label :course_ids, t('basics.courses'),
