@@ -17,7 +17,7 @@ module SearchForm
         super(
           name: :term_ids,
           label: I18n.t("basics.term"),
-          help_text: I18n.t("admin.lecture.info.search_term"),
+          help_text: I18n.t("search.filters.helpdesks.term_filter"),
           collection: Term.select_terms,
           **
         )

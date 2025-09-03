@@ -17,7 +17,7 @@ module SearchForm
         super(
           name: :program_ids,
           label: I18n.t("basics.programs"),
-          help_text: I18n.t("admin.lecture.info.search_program"),
+          help_text: I18n.t("search.filters.helpdesks.program_filter"),
           collection: program_options,
           **
         )

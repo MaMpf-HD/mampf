@@ -17,7 +17,7 @@ module SearchForm
         super(
           name: :fulltext,
           label: I18n.t("basics.fulltext"),
-          help_text: I18n.t("admin.lecture.info.search_fulltext"),
+          help_text: I18n.t("search.filters.helpdesks.fulltext_filter"),
           **
         )
       end

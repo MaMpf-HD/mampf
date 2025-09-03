@@ -17,7 +17,7 @@ module SearchForm
         super(
           name: :teacher_ids,
           label: I18n.t("basics.teachers"),
-          help_text: I18n.t("admin.lecture.info.search_teacher"),
+          help_text: I18n.t("search.filters.helpdesks.teacher_filter"),
           collection: User.select_teachers,
           **
         )

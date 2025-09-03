@@ -16,7 +16,8 @@ module SearchForm
       def initialize(**)
         super(
           name: :access,
-          label: I18n.t("basics.access_rights"), # Not 'basics.access'
+          label: I18n.t("basics.access_rights"),
+          help_text: I18n.t("search.filters.helpdesks.medium_access_filter"),
           collection: [
             [I18n.t("access.irrelevant"), "irrelevant"],
             [I18n.t("access.all"), "all"],

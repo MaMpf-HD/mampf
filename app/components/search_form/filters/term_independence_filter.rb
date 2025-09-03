@@ -16,6 +16,7 @@ module SearchForm
         super(
           name: :term_independent,
           label: I18n.t("admin.course.term_independent"),
+          help_text: I18n.t("search.filters.helpdesks.term_independence_filter"),
           checked: false,
           **
         )

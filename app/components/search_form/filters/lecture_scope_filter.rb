@@ -20,7 +20,7 @@ module SearchForm
         super(
           name: :lectures,
           label: I18n.t("basics.lectures"),
-          help_text: I18n.t("search.media.lectures"),
+          help_text: I18n.t("search.filters.helpdesks.lecture_scope_filter"),
           collection: lecture_options,
           **
         )

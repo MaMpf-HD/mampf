@@ -626,31 +626,6 @@ en:
         comments_disabled: >
           By default, comments for newly published media are enabled, and you
           can disable them upon publishing. Here you can reverse this.
-        search_type: >
-          Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>,
-          <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is the inclusive <i>OR</i>.
-        search_program: >
-          Here you can select (in the sense of
-          <i>
-          OR
-          </i>
-          ) to which program the event series belongs to.
-        search_teacher: >
-          Here you can select the teacher of the event series (in the sense of
-          <i>
-          OR
-          </i>
-          ).
-        search_term: >
-          Here you can select in which term the event series took places or
-          takes place, respectively (in the sense of
-          <i>
-          OR
-          </i>
-          ).
-        search_fulltext: >
-          Here you can enter text that will be searched for in the title of the
-          event series. If you leave the text field empty it will be ignored.
         disable_teacher_display: >
           If you check this box, the teacher's name will be omitted from the
           lecture card on the start page and from the lecture page for generic
@@ -2697,9 +2672,26 @@ en:
           the sense of <i>OR</i>).
         editor_filter: >
           Here you can select which editors are associated (in the sense of <i>OR</i>).
+        fulltext_filter: >
+          Here you can enter text that will be searched for.
+        lecture_scope_filter: >
+          Select the event series you want to search. You can choose all event series, the
+          ones you are subscribed to, or make up your own selection. If you opt for your own
+          selection, you can choose one or several event series. The operator used is the
+          inclusive <i>OR</i>.
+        lecture_type_filter: >
+          Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>, <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is <i>OR</i>.
+        medium_access_filter: >
+          Select the access rights for the medium.
         medium_type_filter: >
           Here you can select the type of media you want to search.
           The operator used is <i>OR</i>.
+        program_filter: >
+          Here you can select the program (in the sense of
+          <i>
+          OR
+          </i>
+          ).
         tag_filter: >
           Related tags are displayed as <span class="badge text-dark lecture-tag">example tag</span>.
           Here you can select related tags from the data base. Moreover, you can decide whether the medium has to be related to either at least one
@@ -2718,15 +2710,24 @@ en:
           and sessions will be shown as well;
           if you select a event series, media that are associated to the event series's
           sessions will be shown as well.
+        teacher_filter: >
+          Here you can select the teacher (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        term_filter: >
+          Here you can select in a term (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        term_independence_filter: >
+          Here you can choose whether the course is independent of terms.
     media:
       title: >
         You can search the titles of media or related sessions. If you do not wantto use
         this criterion, leave the input box empty.
-      lectures: >
-        Select the event series you want to search. You can choose all event series, the
-        ones you are subscribed to, or make up your own selection. If you opt for your own
-        selection, you can choose one or several event series. The operator used is the
-        inclusive <i>OR</i>.
       lecture_scope:
         subscribed: 'subscribed'
         all: 'all'

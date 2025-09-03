@@ -17,7 +17,7 @@ module SearchForm
         super(
           name: :types,
           label: I18n.t("basics.type"),
-          help_text: I18n.t("admin.lecture.info.search_type"),
+          help_text: I18n.t("search.filters.helpdesks.lecture_type_filter"),
           collection: Lecture.select_sorts,
           **
         )
