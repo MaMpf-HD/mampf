@@ -22,7 +22,7 @@ module SearchForm
         super(
           name: :tag_ids,
           label: I18n.t("basics.tags"),
-          help_text: I18n.t("admin.medium.info.search_tags"),
+          help_text: I18n.t("search.filters.tag_filter"),
           collection: [],
           **
         )

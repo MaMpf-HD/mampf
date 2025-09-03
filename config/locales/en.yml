@@ -1270,25 +1270,6 @@ en:
           Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
           <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i>,
           <i>example</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
-        search_teachable: >
-          Here you have to select (in the sense of
-          <i>
-          OR
-          </i>
-          ), to which courses or event series this medium is associated to
-          <i>
-          with inheritance (without inheritance.
-          </i>
-          If "with inheritance" is chosen, this means that if you select a
-          course, media that are associated to the course's event series
-          and sessions will be shown as well;
-          if you select a event series, media that are associated to the event series's
-          sessions will be shown as well.
-        search_tags: >
-          Tags related to a medium are displayed as <span class="badge text-dark lecture-tag">example tag</span> on the media card.
-          If you are looking for media with specific tags, you can select tags from the data base. You can choose one,
-          several, or all of them. Moreover, you can decide whether the medium has to be related to either at least one
-          of the selected tags (inclusive <i>OR</i>) or all of them (<i>AND</i>).
         search_editors: >
           Here you can select the editors of the medium (in the sense of
           <i>
@@ -2712,6 +2693,28 @@ en:
     settings: 'profile settings'
     click_and_paste: >
       If you click this term, it will be copied to the "fulltext" field.
+    filters:
+      medium_type_filter: >
+        Here you can select the type of media you want to search.
+        The operator used is <i>OR</i>.
+      tag_filter: >
+        Related tags are displayed as <span class="badge text-dark lecture-tag">example tag</span>.
+        Here you can select related tags from the data base. Moreover, you can decide whether the medium has to be related to either at least one
+        of the selected tags (<i>OR</i>) or all of them (<i>AND</i>).
+      teachable_filter: >
+        Here you can select (in the sense of
+        <i>
+        OR
+        </i>
+        ), to which courses or event series this medium is associated to
+        <i>
+        with inheritance (without inheritance.
+        </i>
+        If "with inheritance" is chosen, this means that if you select a
+        course, media that are associated to the course's event series
+        and sessions will be shown as well;
+        if you select a event series, media that are associated to the event series's
+        sessions will be shown as well.
     media:
       title: >
         You can search the titles of media or related sessions. If you do not wantto use
@@ -2727,10 +2730,6 @@ en:
         own_selection: 'custom selection'
         all_media: 'all media'
         only_extras: 'only extra material'
-      type: >
-        Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
-        <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
-        The operator used is the inclusive <i>OR</i>.
   errors:
     not_subscribed: You are currently not subscribed to this lecture.
     profile:

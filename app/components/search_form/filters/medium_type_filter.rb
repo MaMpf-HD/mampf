@@ -21,7 +21,7 @@ module SearchForm
         super(
           name: :types,
           label: I18n.t("basics.types"), # Plural for media
-          help_text: I18n.t("search.media.type"),
+          help_text: I18n.t("search.filters.medium_type_filter"),
           collection: media_sorts_select(current_user, purpose),
           selected: sort_preselect(purpose),
           **
