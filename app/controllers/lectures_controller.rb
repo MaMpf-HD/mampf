@@ -49,7 +49,8 @@ class LecturesController < ApplicationController
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
 
-      render layout: turbo_frame_request? ? "turbo_frame" : "application"
+      render template: "lectures/show/show",
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
 
@@ -57,13 +58,18 @@ class LecturesController < ApplicationController
     @lecture = Lecture.new
     authorize! :new, @lecture
     @from = params[:from]
-    return unless @from == "course"
 
-    # if new action was triggered from inside a course view, add the course
-    # info to the lecture
-    @lecture.course = Course.find_by(id: params[:course])
-    I18n.locale = @lecture.course.locale
-    @lecture.annotations_status = 0
+    if @from == "course"
+      # if new action was triggered from inside a course view, add the course
+      # info to the lecture
+      @lecture.course = Course.find_by(id: params[:course])
+      I18n.locale = @lecture.course.locale
+      @lecture.annotations_status = 0
+    end
+
+    respond_to do |format|
+      format.js { render template: "lectures/new/new" }
+    end
   end
 
   def edit
@@ -71,6 +77,7 @@ class LecturesController < ApplicationController
               last_modified: [current_user.updated_at, @lecture.updated_at,
                               Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       eager_load_stuff
+      render template: "lectures/edit/edit"
     end
   end
 
@@ -79,6 +86,7 @@ class LecturesController < ApplicationController
     @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
     @lecture.save
+
     if @lecture.valid?
       @lecture.update(sort: "special") if @lecture.course.term_independent
       # set organizational_concept to default
@@ -98,7 +106,11 @@ class LecturesController < ApplicationController
                                  lecture: @lecture.title_with_teacher)
       return
     end
+
     @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/create/create" }
+    end
   end
 
   def update
@@ -129,16 +141,20 @@ class LecturesController < ApplicationController
     @lecture.touch
     @lecture.forum&.update(name: @lecture.forum_title)
 
-    # Redirect to the correct subpage
+    @errors = @lecture.errors
+
     if @lecture.valid?
       if params[:subpage].present?
-        redirect_to "#{edit_lecture_path(@lecture)}##{params[:subpage]}"
+        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
       else
         redirect_to edit_lecture_path(@lecture)
       end
+      return
     end
 
-    @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/update/update" }
+    end
   end
 
   def publish
@@ -197,15 +213,18 @@ class LecturesController < ApplicationController
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
     I18n.locale = @lecture.locale_with_inheritance
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/announcements/show_announcements",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def organizational
     if @lecture.sort == "vignettes"
-      render layout: "vignettes_navbar"
+      render layout: "vignettes/layouts/vignettes_navbar"
     else
       I18n.locale = @lecture.locale_with_inheritance
-      render layout: turbo_frame_request? ? "turbo_frame" : "application"
+      render template: "lectures/organizational/_organizational",
+             locals: { lecture: @lecture },
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
 
@@ -216,6 +235,10 @@ class LecturesController < ApplicationController
     media.each { |m| Import.create(teachable: @lecture, medium: m) }
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/import_media" }
+    end
   end
 
   def remove_imported_medium
@@ -224,6 +247,10 @@ class LecturesController < ApplicationController
     import&.destroy
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/remove_imported_medium" }
+    end
   end
 
   def show_subscribers
@@ -292,7 +319,7 @@ class LecturesController < ApplicationController
     @results_as_list = params.dig(:search, :results_as_list) == "true"
 
     respond_to do |format|
-      format.js
+      format.js { render template: "lectures/search/search" }
       format.html do
         redirect_to :root, alert: I18n.t("controllers.search_only_js")
       end
@@ -301,17 +328,20 @@ class LecturesController < ApplicationController
 
   def show_random_quizzes
     @course = @lecture.course
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/quizzes/show_random_quizzes",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def display_course
     @course = @lecture.course
     I18n.locale = @course.locale || @lecture.locale
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
+    render template: "lectures/course/display_course",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def subscribe_page
-    render layout: "application_no_sidebar"
+    render template: "lectures/subscribe/subscribe_page",
+           layout: "application_no_sidebar"
   end
 
   def import_toc
@@ -408,7 +438,7 @@ class LecturesController < ApplicationController
 
     # fill organizational_concept with default view
     def set_organizational_defaults
-      partial_path = "lectures/organizational/"
+      partial_path = "lectures/organizational/defaults/"
       partial_path += @lecture.seminar? ? "seminar" : "lecture"
       @lecture.update(organizational_concept:
                         render_to_string(partial: partial_path,

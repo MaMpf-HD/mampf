@@ -1,9 +1,14 @@
 // Hotwire: Stimulus
 import { Application } from "@hotwired/stimulus";
-import LectureSidebarController from "~/js/lecture_sidebar.controller";
-import SearchFormController from "~/js/controllers/search_form_controller";
 window.Stimulus = Application.start();
+
+import LectureSidebarController from "~/lectures/show/_sidebar.controller";
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
+
+import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller";
+window.Stimulus.register("lecture-tabs", LectureTabsController);
+
+import SearchFormController from "~/js/controllers/search_form_controller";
 window.Stimulus.register("search-form", SearchFormController);
 
 // Hotwire: Turbo
