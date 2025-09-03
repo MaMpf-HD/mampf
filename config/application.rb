@@ -10,9 +10,9 @@ module Mampf
   class Application < Rails::Application
     config.load_defaults(8.0)
 
-    # Autoload subfolders of modules (recursively)
+    # Autoload more paths
     # https://stackoverflow.com/a/4794775/
-    additional_paths = Rails.root.glob("app/models/**/")
+    additional_paths = Rails.root.glob("app/models/**/") + Rails.root.glob("app/frontend/**/")
     namespace_paths = Rails.root.glob("app/models/vignettes/**/")
     config.autoload_paths += additional_paths
     config.eager_load_paths += additional_paths

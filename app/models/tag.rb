@@ -61,12 +61,18 @@ class Tag < ApplicationRecord
   after_save :touch_lectures
   after_save :touch_sections
 
-  searchable do
-    text :titles do
-      title_join
-    end
-    integer :course_ids, multiple: true
-  end
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title,
+                  associated_against: {
+                    notions: :title,
+                    aliases: :title
+                  },
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: { word_similarity: true,
+                               threshold: 0.3 }
+                  }
 
   def title
     Rails.cache.fetch("#{cache_key_with_version}/title") do
@@ -129,27 +135,10 @@ class Tag < ApplicationRecord
   end
 
   def self.select_with_substring(search_string)
-    return {} unless search_string
-    return {} unless search_string.length >= 2
+    return {} if search_string.blank? || search_string.length < 2
 
-    search = Sunspot.new_search(Tag)
-    search.build do
-      fulltext(search_string)
-    end
-    search.execute
-    search.results
-          .map { |t| { value: t.id, text: t.title } }
-  end
-
-  # returns all tags whose title is close to the given search string
-  # wrt to the JaroWinkler metric
-  def self.similar_tags(search_string)
-    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
-    Tag.where(id: Tag.all.select do |t|
-                    jarowinkler.getDistance(t.title.downcase,
-                                            search_string.downcase) > 0.9
-                  end
-                  .map(&:id))
+    search_by_title(search_string)
+      .map { |t| { value: t.id, text: t.title } }
   end
 
   def self.select_by_title_cached
@@ -379,12 +368,5 @@ class Tag < ApplicationRecord
     def destroy_relations(related_tag)
       Relation.where(tag: [self, related_tag],
                      related_tag: [self, related_tag]).delete_all
-    end
-
-    def title_join
-      result = notions.pluck(:title).join(" ")
-      return result unless aliases.any?
-
-      "#{result} #{aliases.pluck(:title).join(" ")}"
     end
 end

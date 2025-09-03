@@ -63,7 +63,8 @@
     "rubyTestExplorer.rspecDirectory": "./spec/",
     "rubyTestExplorer.logpanel": true,
     "rubyTestExplorer.filePattern": [
-        "*_spec.rb"
+        "*_spec.rb",
+        "**/*_spec.rb"
     ],
     //////////////////////////////////////
     // Files
@@ -72,7 +73,6 @@
         "node_modules/": true,
         "pdfcomprezzor/": true,
         "coverage/": true,
-        "solr/": true,
         ".docker/": true
     },
     "files.associations": {
@@ -125,6 +125,7 @@
         "datetime",
         "dockerfiles",
         "factorybot",
+        "Fulltext",
         "helpdesk",
         "javascripts",
         "justfile",

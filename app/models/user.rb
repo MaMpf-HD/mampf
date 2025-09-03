@@ -145,6 +145,16 @@ class User < ApplicationRecord
     User.teachers.pluck(:name, :id).natural_sort_by(&:first)
   end
 
+  # returns the array of all course editors
+  def self.course_editors
+    User.where(id: EditableUserJoin.where(editable_type: "Course")
+                                   .distinct.select(:user_id))
+  end
+
+  def self.select_course_editors
+    User.course_editors.pluck(:name, :id).natural_sort_by(&:first)
+  end
+
   # returns the array of all editors
   def self.editors
     User.where(id: EditableUserJoin.distinct.select(:user_id))
@@ -164,16 +174,6 @@ class User < ApplicationRecord
   # Is used in options_for_select in form helpers.
   def self.only_editors_selection
     User.editors.map { |e| [e.info, e.id] }.natural_sort_by(&:first)
-  end
-
-  # returns the ARel of all users that are editors or whose id is among a
-  # given array of ids
-  # search params is a hash having keys :all_editors, :editor_ids
-  def self.search_editors(search_params)
-    return User.editors unless search_params[:all_editors] == "0"
-
-    editor_ids = search_params[:editor_ids] || []
-    User.where(id: editor_ids)
   end
 
   # array of all users together with their ids for use in options_for_select
@@ -620,9 +620,6 @@ class User < ApplicationRecord
 
     lectures << lecture
 
-    # make sure subscribed_users is updated in media
-    Sunspot.index!(lecture.media)
-
     true
   end
 
@@ -633,8 +630,6 @@ class User < ApplicationRecord
     lectures.delete(lecture)
     favorite_lectures.delete(lecture)
 
-    # make sure subscribed_users is updated in media
-    Sunspot.index!(lecture.media)
     true
   end
 

@@ -3,7 +3,6 @@ Rails.application.routes.draw do
 
   require "sidekiq/web"
   require "sidekiq/cron/web"
-
   authenticate :user, ->(u) { u.admin? } do
     mount Sidekiq::Web => "/sidekiq"
   end
@@ -223,7 +222,7 @@ Rails.application.routes.draw do
 
   get "lectures/search",
       to: "lectures#search",
-      as: "lecture_search"
+      as: "search_lectures"
 
   get "lectures/:id/course",
       to: "lectures#display_course",
@@ -279,7 +278,7 @@ Rails.application.routes.draw do
 
   get "media/search",
       to: "media#search",
-      as: "media_search"
+      as: "search_media"
 
   get "media/:id/inspect",
       to: "media#inspect",
@@ -718,7 +717,7 @@ Rails.application.routes.draw do
 
   get "tags/search",
       to: "tags#search",
-      as: "tags_search"
+      as: "search_tags"
 
   get "tags/:id/take_random_quiz",
       to: "tags#take_random_quiz",
