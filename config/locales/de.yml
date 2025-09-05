@@ -1368,7 +1368,7 @@ de:
         search_type: >
           Hier kannst Du einen, mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
           <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i>,
-          <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i>, <i>Beispiel-Datenbank</i> und <i>Sonstiges</i>.
+          <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i> und <i>Sonstiges</i>.
           Dabei wird der Operator inklusives <i>ODER</i> verwendet.
         search_teachable: >
           Hier musst Du (im Sinne von

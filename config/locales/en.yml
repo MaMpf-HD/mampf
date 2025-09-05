@@ -1260,8 +1260,7 @@ en:
           to MaMpf.
         search_type: >
           Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
-          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i>,
-          <i>example</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
+          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
         search_teachable: >
           Here you have to select (in the sense of
           <i>
