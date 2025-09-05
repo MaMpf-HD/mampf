@@ -1,4 +1,4 @@
-class RemoveTagRealizationsAndLectureStructureIdsAndErdbeereMedia < ActiveRecord::Migration[8.0]
+class RemoveErdbeere < ActiveRecord::Migration[8.0]
   def up
     # Remove columns
     remove_column :tags, :realizations, :text
