@@ -1,6 +1,6 @@
 module PagyHelper
-  # Override the default pagy_bootstrap_nav to prevent it from rendering
-  # when there is only one page. This keeps the views cleaner.
+  # Overrides the default pagy_bootstrap_nav to prevent it from rendering
+  # when there is only one page.
   def pagy_bootstrap_nav(pagy, **vars)
     return if pagy.pages <= 1
 
