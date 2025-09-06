@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:take_random_quiz, :render_question_counter]
   before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
-  before_action :check_for_consent
+  
   authorize_resource except: [:create, :search]
   layout "administration"
 
@@ -150,7 +150,5 @@ class CoursesController < ApplicationController
       redirect_to :root, alert: I18n.t("controllers.no_test")
     end
 
-    def check_for_consent
-      redirect_to consent_profile_path unless current_user.consents
-    end
+
 end

@@ -12,7 +12,7 @@ class MediaController < ApplicationController
                                       :cancel_import_vertex]
   before_action :set_lecture, only: [:index]
   before_action :set_teachable, only: [:new]
-  before_action :check_for_consent, except: [:play, :display]
+  before_action :sanitize_params, only: [:index]
   after_action :store_access, only: [:play, :display]
   after_action :store_download, only: [:register_download]
   authorize_resource except: [:index, :new, :create, :search,
@@ -594,9 +594,23 @@ class MediaController < ApplicationController
       @medium.update(manuscript: nil)
     end
 
+<<<<<<< HEAD
     def check_for_consent
       redirect_to consent_profile_path unless current_user.consents
     end
+=======
+    def sanitize_params
+      reveal_contradictions
+      sanitize_page!
+      sanitize_per!
+      params[:all] = (params[:all] == "true") || (cookies[:all] == "true")
+      cookies[:all] = params[:all]
+      cookies[:per] = false if cookies[:all]
+      params[:reverse] = params[:reverse] == "true"
+    end
+
+
+>>>>>>> 3b2682516 (Remove check_for before action)
 
     def search_params
       params.expect(search: [:all_types, :all_teachables, :all_tags,

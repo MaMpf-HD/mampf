@@ -1,12 +1,9 @@
 # SearchController
 class SearchController < ApplicationController
   authorize_resource class: false
-  before_action :check_for_consent
 
-  rescue_from ActionController::ParameterMissing do |_exception|
-    redirect_back fallback_location: root_path,
-                  alert: I18n.t("controllers.no_search_term")
-  end
+  before_action :set_search_string, only: [:index]
+  before_action :sanitize_search_string, only: [:index]
 
   def current_ability
     @current_ability ||= SearchAbility.new(current_user)
@@ -24,9 +21,7 @@ class SearchController < ApplicationController
 
   private
 
-    def check_for_consent
-      redirect_to consent_profile_path unless current_user.consents
-    end
+
 
     def search_param
       params.expect(:search)

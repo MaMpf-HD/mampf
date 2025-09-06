@@ -11,10 +11,7 @@ class ProfileController < ApplicationController
   end
 
   def edit
-    unless @user.consents
-      redirect_to consent_profile_path
-      return
-    end
+
     # destroy the notifications related to new lectures and courses
     current_user.notifications.where(notifiable_type: ["Lecture", "Course"])
                 .destroy_all
@@ -44,24 +41,10 @@ class ProfileController < ApplicationController
     end
   end
 
-  # this is triggered after every sign in
-  # if profile has never been edited user is redirected
-  def check_for_consent
-    if @user.consents
-      redirect_to :root
-      return
-    end
-    return unless @user.consents
+ 
 
-    redirect_to edit_profile_path,
-                notice: t("profile.please_update")
-  end
 
-  # DSGVO consent action
-  def add_consent
-    @user.update(consents: true, consented_at: Time.zone.now)
-    redirect_to :root, notice: t("profile.consent")
-  end
+
 
   def toggle_thread_subscription
     @thread = Commontator::Thread.find(params[:id])

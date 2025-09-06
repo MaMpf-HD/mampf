@@ -1,5 +1,5 @@
 class MainController < ApplicationController
-  before_action :check_for_consent
+  
   authorize_resource class: false, only: :start
   layout "application_no_sidebar"
 
@@ -52,11 +52,7 @@ class MainController < ApplicationController
 
   private
 
-    def check_for_consent
-      return unless user_signed_in?
 
-      redirect_to consent_profile_path unless current_user.consents
-    end
 
     def announcements
       @announcements = Announcement.where(on_main_page: true, lecture: nil)

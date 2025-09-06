@@ -5,7 +5,7 @@ class LecturesController < ApplicationController
   before_action :set_lecture_cookie, only: [:show, :organizational,
                                             :show_announcements]
   authorize_resource except: [:new, :create, :search]
-  before_action :check_for_consent
+  
   before_action :check_for_subscribe, only: [:show]
   before_action :set_view_locale, only: [:edit, :show, :subscribe_page,
                                          :show_random_quizzes]
@@ -337,9 +337,7 @@ class LecturesController < ApplicationController
                     I18n.default_locale
     end
 
-    def check_for_consent
-      redirect_to consent_profile_path unless current_user.consents
-    end
+
 
     def check_for_subscribe
       return if @lecture.in?(current_user.lectures)

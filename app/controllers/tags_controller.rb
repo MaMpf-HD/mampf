@@ -4,7 +4,7 @@ class TagsController < ApplicationController
                                  :display_cyto, :identify, :take_random_quiz]
   before_action :set_related_tags_for_user, only: [:show, :display_cyto]
   before_action :set_related_tags, only: [:edit]
-  before_action :check_for_consent
+
   before_action :check_permissions, only: [:update]
   before_action :check_creation_permission, only: [:create]
   authorize_resource except: [:new, :modal, :search, :postprocess,
@@ -275,9 +275,7 @@ class TagsController < ApplicationController
       I18n.locale = talk.lecture.locale || current_user.locale
     end
 
-    def check_for_consent
-      redirect_to consent_profile_path unless current_user.consents
-    end
+
 
     def tag_params
       params.expect(tag: [related_tag_ids: [],
