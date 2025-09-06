@@ -72,6 +72,7 @@ gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbolinks", "~> 5.2" # make navigating the app faster
 gem "webpacker", "~> 5.4"
 
+
 group :development do
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
@@ -83,6 +84,7 @@ group :development do
   gem "spring", "~> 4.3" # app preloader, keeps app running in background for development
   gem "spring-watcher-listen", "~> 2.0"
   gem "web-console", "~> 4.2" # interactive console on exception pages
+
 end
 
 group :test do

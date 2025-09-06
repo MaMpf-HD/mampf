@@ -12,7 +12,7 @@
     github_mampf: link_to('GitHub', 'https://github.com/MaMpf-HD/mampf/issues', {target: '_blank'}),
     feedback_mail: mail_to(DefaultSetting::FEEDBACK_EMAIL, t('basics.mail_noun'))) %>
 
-  <%= form_with model: Feedback.new, remote: true do |f| %>
+  <%= form_with model: Feedback.new, data: { turbo_frame: "_top" } do |f| %>
     <!-- Title -->
     <div class="form-floating mb-3">
       <%= f.text_field :title, class: 'form-control', placeholder: '_' %>

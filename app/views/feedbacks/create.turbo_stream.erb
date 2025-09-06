@@ -1,0 +1,45 @@
+<% if @feedback_success %>
+  <script>
+    // Hide modal and reset form
+    const modal = bootstrap.Modal.getInstance(document.getElementById('submit-feedback'));
+    if (modal) {
+      modal.hide();
+    }
+    // Reset form
+    document.querySelector('#submit-feedback form').reset();
+    
+    // Show success toast
+    const successToast = document.getElementById('toast-successfully-sent');
+    successToast.innerHTML = `
+      <div class="toast-header text-success">
+        <i class="bi bi-check-square-fill pe-1"></i>
+        <strong class="me-auto"><%= t('feedback.success_short') %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <%= t('feedback.success') %>
+      </div>
+    `;
+    successToast.classList.add('show');
+    const toast = new bootstrap.Toast(successToast);
+    toast.show();
+  </script>
+<% else %>
+  <script>
+    // Show error toast
+    const errorToast = document.getElementById('toast-could-not-send');
+    errorToast.innerHTML = `
+      <div class="toast-header text-danger">
+        <i class="bi bi-x-square-fill pe-1"></i>
+        <strong class="me-auto"><%= t('feedback.error_short') %></strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <%= t('feedback.error') %>
+      </div>
+    `;
+    errorToast.classList.add('show');
+    const toast = new bootstrap.Toast(errorToast);
+    toast.show();
+  </script>
+<% end %>

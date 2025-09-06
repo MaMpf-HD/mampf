@@ -672,6 +672,9 @@ GEM
       rails (> 4.1)
     ttfunk (1.8.0)
       bigdecimal (~> 3.1)
+    turbo-rails (2.0.16)
+      actionpack (>= 7.1.0)
+      railties (>= 7.1.0)
     turbolinks (5.2.1)
       turbolinks-source (~> 5.2)
     turbolinks-source (5.2.0)
@@ -795,6 +798,7 @@ DEPENDENCIES
   thredded-markdown_katex!
   timecop (~> 0.9.10)
   trix-rails (~> 2.4)
+  turbo-rails (~> 2.0)
   turbolinks (~> 5.2)
   web-console (~> 4.2)
   webpacker (~> 5.4)

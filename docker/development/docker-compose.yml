@@ -126,8 +126,8 @@ services:
       # DB Preseeding with initial data.
       # We don't specify a value here to let docker compose look up the values
       # in the current environment/shell. This is used in the docker.justfile.
-      DB_SQL_PRESEED_URL:
-      UPLOADS_PRESEED_URL:
+      DB_SQL_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql"
+      UPLOADS_PRESEED_URL: "https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     ports:
       - "127.0.0.1:3035:3035"  # webpacker dev server
       - "127.0.0.1:13254:13254" # for debug gem communication with host

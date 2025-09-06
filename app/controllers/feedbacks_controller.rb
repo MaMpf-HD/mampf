@@ -10,7 +10,9 @@ class FeedbacksController < ApplicationController
       FeedbackMailer.with(feedback: feedback).new_user_feedback_email.deliver_later
     end
 
-    respond_to(&:js)
+    respond_to do |format|
+      format.turbo_stream
+    end
   end
 
   private

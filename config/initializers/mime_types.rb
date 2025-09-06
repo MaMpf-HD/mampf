@@ -6,3 +6,5 @@
 Rack::Mime::MIME_TYPES[".vtt"] = "text/vtt"
 Rack::Mime::MIME_TYPES[".zip"] = "application/zip"
 Rack::Mime::MIME_TYPES[".wasm"] = "application/wasm"
+# Register turbo_stream MIME type
+Mime::Type.register "text/vnd.turbo-stream.html", :turbo_stream
