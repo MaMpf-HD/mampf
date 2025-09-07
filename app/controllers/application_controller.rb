@@ -13,7 +13,6 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   before_action :set_locale
-  before_action :set_pagy_locale
   before_action :set_current_user
 
   etag { current_user.try(:id) }
@@ -100,6 +99,7 @@ class ApplicationController < ActionController::Base
     def set_locale
       I18n.locale = current_user.try(:locale) || locale_param ||
                     cookie_locale_param || I18n.default_locale
+      set_pagy_locale
       return if user_signed_in?
 
       cookies[:locale] = I18n.locale
