@@ -5,7 +5,7 @@ class RemoveErdbeere < ActiveRecord::Migration[8.0]
     remove_column :lectures, :structure_ids, :text
 
     # Remove all media with sort == "Erdbeere"
-    Medium.where(sort: "Erdbeere").delete_all
+    Medium.where(sort: "Erdbeere").destroy_all
   end
 
   def down
