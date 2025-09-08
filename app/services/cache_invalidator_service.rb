@@ -23,51 +23,47 @@ class CacheInvalidatorService
       { to: Lecture, type: :belongs_to, fk: :lecture_id }
     ],
     Chapter => [
-      { to: Lecture, type: :belongs_to, fk: :lecture_id },
-      { to: Section, type: :has_many, fk: :chapter_id }
+      { to: Lecture, type: :belongs_to, fk: :lecture_id } # ,
+      #  { to: Section, type: :has_many, fk: :chapter_id }
     ],
     Course => [
-      { to: Lecture, type: :has_many, fk: :course_id },
-      { to: Medium, type: :polymorphic_has_many, as: :teachable },
-      { to: Tag, type: :has_many, through: :course_tag_joins },
-      { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
+      #  { to: Lecture, type: :has_many, fk: :course_id },
+      #  { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      #  { to: Tag, type: :has_many, through: :course_tag_joins },
+      #  { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
     ],
     Item => [
       { to: Section, type: :belongs_to, fk: :section_id },
       { to: Medium, type: :belongs_to, fk: :medium_id },
-      { to: Item, type: :has_many, through: :item_self_joins, fk: :item_id,
-        assoc_fk: :related_item_id },
+      #  { to: Item, type: :has_many, through: :item_self_joins, fk: :item_id,
+      #    assoc_fk: :related_item_id },
       { to: Medium, type: :has_many, through: :referrals }
     ],
     Lecture => [
       { to: Course, type: :belongs_to, fk: :course_id },
-      # The `belongs_to :term` dependency is deliberately not listed here
-      # to prevent a change in one lecture from invalidating all other lectures
-      # in the same term (a "mass invalidation" event).
-      # The Term -> Lecture dependency is defined in the Term entry, which
-      # correctly handles invalidation when a Term itself is updated.
-      { to: Chapter, type: :has_many, fk: :lecture_id },
-      { to: Lesson, type: :has_many, fk: :lecture_id },
-      { to: Talk, type: :has_many, fk: :lecture_id },
-      { to: Medium, type: :polymorphic_has_many, as: :teachable },
-      { to: Assignment, type: :has_many, fk: :lecture_id },
-      { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
+      { to: Term, type: :belongs_to, fk: :term_id }
+      # { to: Chapter, type: :has_many, fk: :lecture_id },
+      # { to: Lesson, type: :has_many, fk: :lecture_id },
+      # { to: Talk, type: :has_many, fk: :lecture_id },
+      # { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      # { to: Assignment, type: :has_many, fk: :lecture_id },
+      # { to: Medium, type: :has_many, through: :imports, fk: :teachable_id, assoc_fk: :medium_id }
     ],
     Lesson => [
-      { to: Lecture, type: :belongs_to, fk: :lecture_id },
-      { to: Section, type: :has_many, through: :lesson_section_joins },
-      { to: Medium, type: :polymorphic_has_many, as: :teachable },
-      { to: Tag, type: :has_many, through: :lesson_tag_joins }
+      { to: Lecture, type: :belongs_to, fk: :lecture_id }
+      # { to: Section, type: :has_many, through: :lesson_section_joins },
+      #  { to: Medium, type: :polymorphic_has_many, as: :teachable },
+      # { to: Tag, type: :has_many, through: :lesson_tag_joins }
     ],
     Medium => [
-      { to: :teachable, type: :polymorphic_belongs_to, as: :teachable },
-      { to: Tag, type: :has_many, through: :medium_tag_joins },
-      { to: Item, type: :has_many, fk: :medium_id },
-      { to: Item, type: :has_many, through: :referrals },
-      { to: Medium, type: :has_many, through: :links, fk: :medium_id,
-        assoc_fk: :linked_medium_id },
-      { to: Course, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id },
-      { to: Lecture, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id }
+      { to: :teachable, type: :polymorphic_belongs_to, as: :teachable }
+      # { to: Tag, type: :has_many, through: :medium_tag_joins },
+      # { to: Item, type: :has_many, fk: :medium_id },
+      # { to: Item, type: :has_many, through: :referrals },
+      # { to: Medium, type: :has_many, through: :links, fk: :medium_id,
+      #  assoc_fk: :linked_medium_id },
+      # { to: Course, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id },
+      # { to: Lecture, type: :has_many, through: :imports, fk: :medium_id, assoc_fk: :teachable_id }
     ],
     Notion => [
       { to: Tag, type: :belongs_to, fk: :tag_id },
@@ -85,8 +81,8 @@ class CacheInvalidatorService
     Section => [
       { to: Chapter, type: :belongs_to, fk: :chapter_id },
       { to: Lesson, type: :has_many, through: :lesson_section_joins },
-      { to: Tag, type: :has_many, through: :section_tag_joins },
-      { to: Item, type: :has_many, fk: :section_id }
+      { to: Tag, type: :has_many, through: :section_tag_joins }
+      # { to: Item, type: :has_many, fk: :section_id }
     ],
     Tag => [
       { to: Course, type: :has_many, through: :course_tag_joins },
@@ -94,9 +90,9 @@ class CacheInvalidatorService
       { to: Lesson, type: :has_many, through: :lesson_tag_joins },
       { to: Talk, type: :has_many, through: :talk_tag_joins },
       { to: Medium, type: :has_many, through: :medium_tag_joins },
-      { to: Tag, type: :has_many, through: :relations, fk: :tag_id, assoc_fk: :related_tag_id },
-      { to: Notion, type: :has_many, fk: :tag_id },
-      { to: Notion, type: :has_many, fk: :aliased_tag_id }
+      { to: Tag, type: :has_many, through: :relations, fk: :tag_id, assoc_fk: :related_tag_id }
+      #  { to: Notion, type: :has_many, fk: :tag_id },
+      # { to: Notion, type: :has_many, fk: :aliased_tag_id }
     ],
     Talk => [
       { to: Lecture, type: :belongs_to, fk: :lecture_id },
