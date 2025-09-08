@@ -76,6 +76,7 @@ module SearchForm
       #   receive the generated filter instances
       def initialize(search_form)
         @search_form = search_form
+        @form_state = search_form.form_state
       end
 
       # Dynamically generates filter methods on the provided class.
@@ -98,7 +99,7 @@ module SearchForm
 
           # Standard add_*_filter method
           klass.define_method("add_#{filter_name}_filter") do |**options|
-            filter = filter_class.constantize.new(**options)
+            filter = filter_class.constantize.new(form_state: @form_state, **options)
             with_field(filter)
             # Return the filter instance to allow for method chaining and for inspection in tests.
             filter
@@ -109,7 +110,7 @@ module SearchForm
 
           config[:additional_methods].each do |method_suffix, chain_method|
             klass.define_method("add_#{filter_name}_filter_#{method_suffix}") do |*args, **options|
-              filter = filter_class.constantize.new(**options)
+              filter = filter_class.constantize.new(form_state: @form_state, **options)
               enhanced_filter = filter.send(chain_method, *args)
               with_field(enhanced_filter)
               # Return the filter instance to allow for method chaining and for inspection in tests.

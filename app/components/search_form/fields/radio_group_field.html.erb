@@ -1,0 +1,27 @@
+<div class="<%= container_class %>">
+  <% if label.present? %>
+    <%= form.label html.label_for, label, class: "form-label" %>
+  <% end %>
+
+  <% if show_help_text? %>
+    <span id="<%= html.help_text_id %>">
+      <%= helpers.helpdesk(help_text, false) %>
+    </span>
+  <% end %>
+
+  <fieldset role="radiogroup" <% if label.present? %>aria-labelledby="<%= html.label_for %>"<% end %>>
+    <% if label.present? %>
+      <legend class="visually-hidden"><%= label %> options</legend>
+    <% end %>
+
+    <%# Render radios added via the renders_many slot API %>
+    <% radio_buttons.each do |radio| %>
+      <%= render(radio) %>
+    <% end %>
+
+    <%# Fallback: render captured content if someone uses a content block instead of slots %>
+    <% if content? %>
+      <%= content %>
+    <% end %>
+  </fieldset>
+</div>

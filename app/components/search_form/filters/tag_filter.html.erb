@@ -1,0 +1,33 @@
+<div class="col-6 col-lg-3 mb-3 form-field-group">
+  <%= render(select_field) %>
+  
+  <% if show_radio_group? %>
+    <%= radio_group_fieldset(name: :tag_operator, legend: t("basics.tags"), form_state: form_state) do %>
+      <%= render SearchForm::Fields::RadioButtonField.new(
+            name: :tag_operator,
+            value: "or",
+            label: t("basics.OR"),
+            checked: true,
+            disabled: true,
+            inline: true,
+            form_state: form_state,
+            stimulus: { radio_toggle: true, controls_select: false }
+          ).with_form(form) %>
+
+      <%= render SearchForm::Fields::RadioButtonField.new(
+            name: :tag_operator,
+            value: "and",
+            label: t("basics.AND"),
+            checked: false,
+            disabled: true,
+            inline: true,
+            form_state: form_state,
+            stimulus: { radio_toggle: true, controls_select: false }
+          ).with_form(form) %>
+    <% end %>
+
+    <%# --- DEBUGGING: You can keep or remove this now --- %>
+    <%= render(test_radio_button_1) %>
+    <%= render(test_radio_button_2) %>
+  <% end %>
+</div>

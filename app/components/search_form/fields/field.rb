@@ -15,7 +15,7 @@ module SearchForm
     # - Integrating with `FormState` to access the form builder and context.
     # - Defining a contract for subclasses to implement (`default_field_classes`, etc.).
     class Field < ViewComponent::Base
-      attr_reader :name, :label, :container_class, :field_class, :help_text, :options,
+      attr_reader :name, :label, :field_class, :help_text, :options,
                   :content, :css, :html, :prompt
       attr_accessor :form_state
 
@@ -46,10 +46,9 @@ module SearchForm
         super()
         @name = name
         @label = label
+        @form_state = options.delete(:form_state)
 
-        # Extract layout options with defaults
-        @container_class = options.delete(:container_class) ||
-                           "col-6 col-lg-3 mb-3 form-field-group"
+        @provided_container_class = options.delete(:container_class)
         @field_class = options.delete(:field_class) || ""
         @help_text = options.delete(:help_text)
         @prompt = options.delete(:prompt) { default_prompt }
@@ -83,6 +82,16 @@ module SearchForm
       def with_content(&block)
         @content = block if block
         self
+      end
+
+      # Lazily resolve container class so subclasses can override defaults
+      def container_class
+        @provided_container_class.presence || default_container_class
+      end
+
+      # Default wrapper class; children can override
+      def default_container_class
+        "col-6 col-lg-3 mb-3 form-field-group"
       end
 
       # Common conditional methods
