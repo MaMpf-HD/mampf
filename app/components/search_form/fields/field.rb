@@ -46,6 +46,7 @@ module SearchForm
         super()
         @name = name
         @label = label
+        @form_state = options.delete(:form_state)
 
         # Extract layout options with defaults
         @container_class = options.delete(:container_class) ||

@@ -1,45 +1,23 @@
 module SearchForm
   module Filters
-    # Renders a multi-select field for filtering by tags. This is a complex
-    # component that extends `MultiSelectField` with several key features:
-    # - The tag collection is loaded dynamically via an AJAX request.
-    # - It can optionally display an "AND/OR" radio button group to control
-    #   the search logic.
-    # - It provides custom data attributes for the "All" checkbox to interact
-    #   with the radio button group.
-    class TagFilter < Fields::MultiSelectField
-      # Initializes the TagFilter.
-      #
-      # The component is initialized with an empty collection, as the tags are
-      # intended to be fetched via an AJAX call handled by JavaScript. It merges
-      # a set of `data` attributes into the field's options to configure the
-      # AJAX behavior.
-      #
-      # @param ** [Hash] Catches any other keyword arguments, which are passed
-      #   to the superclass.
-      def initialize(**)
-        # Pass empty array for collection - tags will be loaded by AJAX
-        super(
-          name: :tag_ids,
-          label: I18n.t("basics.tags"),
-          help_text: I18n.t("search.filters.helpdesks.tag_filter"),
-          collection: [],
-          **
-        )
+    # Renders a multi-select field for filtering by tags. This component
+    # now uses composition instead of inheritance - it coordinates a
+    # MultiSelectField and RadioButtonFields rather than inheriting from MultiSelectField.
+    class TagFilter < ViewComponent::Base
+      attr_accessor :form_state
 
-        # Add AJAX-specific options
-        @options.reverse_merge!(
-          data: {
-            filled: false,
-            ajax: true,
-            model: "tag",
-            locale: I18n.locale,
-            placeholder: I18n.t("basics.select"),
-            no_results: I18n.t("basics.no_results")
-          }
-        )
-
+      def initialize(form_state:, **options)
+        super()
+        @form_state = form_state
+        @options = options
         @show_radio_group = false
+      end
+
+      delegate :form, to: :form_state
+
+      def with_form(form)
+        form_state.with_form(form)
+        self
       end
 
       # A configuration method to enable the rendering of the "AND/OR" operator
@@ -51,58 +29,77 @@ module SearchForm
         self
       end
 
-      # A hook for the parent template to determine if the radio button group
-      # should be rendered.
-      #
-      # @return [Boolean] `true` if the radio group has been enabled.
-      def show_radio_group?
-        @show_radio_group
-      end
-
-      # Implements the parent's `render_radio_group` hook to render the
-      # "AND/OR" radio buttons using the `Controls::RadioGroup` component.
-      #
-      # @return [String, nil] The rendered HTML for the radio group, or `nil`.
-      def render_radio_group
-        return unless show_radio_group?
-
-        render(Controls::RadioGroup.new(
-                 form_state: form_state,
-                 name: :tag_operator
-               )) do |group|
-          group.add_radio_button(
-            value: "or",
-            label: I18n.t("basics.OR"),
-            checked: true,  # or_checked default from OperatorRadios
-            disabled: true,
-            inline: true,
-            stimulus: { radio_toggle: true, controls_select: false }
-          )
-          group.add_radio_button(
-            value: "and",
-            label: I18n.t("basics.AND"),
-            checked: false, # !or_checked
-            disabled: true,
-            inline: true,
-            stimulus: { radio_toggle: true, controls_select: false }
-          )
+      # The main render method that composes the filter from multiple fields
+      def call
+        content_tag(:div, class: "col-6 col-lg-3 mb-3 form-field-group") do
+          safe_join([
+            render_select_field,
+            render_radio_group
+          ].compact)
         end
       end
 
-      # Overrides a hook from the `DataAttributesBuilder` to provide custom
-      # `data` attributes for the "All" checkbox. These attributes are used by
-      # the Stimulus controller to show/hide and enable/disable the "AND/OR"
-      # radio group when the "All" checkbox is toggled.
-      #
-      # @return [Hash] A hash of data attributes.
-      def all_toggle_data_attributes
-        {
-          search_form_target: "allToggle",
-          action: "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup",
-          toggle_radio_group: "tag_operator",
-          default_radio_value: "or"
-        }
-      end
+      private
+
+        def render_select_field
+          render(Fields::MultiSelectField.new(
+            name: :tag_ids,
+            label: I18n.t("basics.tags"),
+            help_text: I18n.t("search.filters.helpdesks.tag_filter"),
+            collection: [], # Empty - will be loaded via AJAX
+            form_state: form_state,
+            data: {
+              filled: false,
+              ajax: true,
+              model: "tag",
+              locale: I18n.locale,
+              placeholder: I18n.t("basics.select"),
+              no_results: I18n.t("basics.no_results")
+            }
+          ).with_form(form))
+        end
+
+        def render_radio_group
+          return unless @show_radio_group
+
+          wrapper = Utilities::RadioGroupWrapper.new(
+            name: :tag_operator,
+            legend: nil # No legend needed for this group
+          )
+
+          wrapper.render(helpers) do
+            safe_join([
+                        render_or_radio_button,
+                        render_and_radio_button
+                      ])
+          end
+        end
+
+        def render_or_radio_button
+          render(Fields::RadioButtonField.new(
+            name: :tag_operator,
+            value: "or",
+            label: I18n.t("basics.OR"),
+            checked: true,
+            form_state: form_state,
+            disabled: true,
+            inline: true,
+            stimulus: { radio_toggle: true, controls_select: false }
+          ).with_form(form))
+        end
+
+        def render_and_radio_button
+          render(Fields::RadioButtonField.new(
+            name: :tag_operator,
+            value: "and",
+            label: I18n.t("basics.AND"),
+            checked: false,
+            form_state: form_state,
+            disabled: true,
+            inline: true,
+            stimulus: { radio_toggle: true, controls_select: false }
+          ).with_form(form))
+        end
     end
   end
 end
