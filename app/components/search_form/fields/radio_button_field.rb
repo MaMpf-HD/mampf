@@ -1,7 +1,5 @@
 module SearchForm
   module Fields
-    # RadioButtonField is now a first-class Field component.
-    # Promoted from Controls::RadioButton with minimal changes.
     class RadioButtonField < Field
       attr_reader :value, :checked
       attr_accessor :name, :form_state
@@ -21,7 +19,6 @@ module SearchForm
         default_container_class
       end
 
-      # Keep the original data_attributes method from Controls::RadioButton
       def data_attributes
         data = options[:data] || {}
         add_radio_toggle_attributes(data)

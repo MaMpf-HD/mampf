@@ -1,8 +1,6 @@
 module SearchForm
   module Fields
     # Renders a single checkbox control within the standard field layout.
-    # This component is now standalone and no longer depends on Controls::Checkbox,
-    # providing its own checkbox rendering logic while maintaining the same API.
     class CheckboxField < Field
       attr_reader :checked, :stimulus_config
 
