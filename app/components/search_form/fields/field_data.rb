@@ -3,7 +3,7 @@ module SearchForm
     # Simple data class that holds field attributes and can be used by existing service objects
     class FieldData
       attr_reader :name, :label, :help_text, :options, :prompt,
-                  :multiple, :disabled, :required, :selected, :content, :css, :html
+                  :multiple, :disabled, :required, :selected, :css, :html
       attr_accessor :container_class, :field_class, :form_state
 
       def initialize(name:, label:, form_state:, help_text: nil, options: {},
@@ -19,7 +19,7 @@ module SearchForm
         @selected = selected
         @content_block = nil
 
-        # Extract layout options with defaults (mimicking Field class)
+        # Extract layout options with defaults (exactly like Field class)
         @container_class = options.delete(:container_class) ||
                            "col-6 col-lg-3 mb-3 form-field-group"
         @field_class = options.delete(:field_class) || ""
@@ -28,9 +28,7 @@ module SearchForm
         @options = options
 
         # Make services accessible as public APIs (exactly like Field class)
-        # CssManager only takes the field object, not options
         @css = Services::CssManager.new(self)
-        # HtmlBuilder only takes the field object, not options (based on the constructor I see)
         @html = Services::HtmlBuilder.new(self)
       end
 
@@ -48,6 +46,11 @@ module SearchForm
       def with_content(&block)
         @content_block = block if block
         self
+      end
+
+      # Expose content for the template (like Field class)
+      def content
+        @content_block
       end
 
       # Hook for subclasses to provide default CSS classes (like Field class)
