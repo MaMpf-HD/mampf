@@ -24,6 +24,7 @@ module SearchForm
 
         def setup_fields
           setup_multi_select_field
+          setup_checkbox_group
           setup_radio_group
         end
 
@@ -43,18 +44,30 @@ module SearchForm
               placeholder: I18n.t("basics.select"),
               no_results: I18n.t("basics.no_results")
             }
-          )
+          ).with_form(form)
+        end
 
-          # Add custom checkbox with radio group toggle attributes
-          @multi_select_field.with_checkbox(
+        def setup_checkbox_group
+          setup_checkboxes
+          @checkbox_group_wrapper = Utilities::CheckboxGroupWrapper.new(
+            parent_field: @multi_select_field,
+            checkboxes: [@all_checkbox]
+          )
+        end
+
+        def setup_checkboxes
+          @all_checkbox = Fields::CheckboxField.new(
             name: generate_all_toggle_name(:tag_ids),
             label: I18n.t("basics.all"),
             checked: true,
             form_state: form_state,
-            data: all_toggle_data_attributes
-          )
-
-          @multi_select_field.with_form(form)
+            container_class: "form-check mb-2",
+            stimulus: {
+              toggle: true,
+              toggle_radio_group: "tag_operator",
+              default_radio_value: "or"
+            }
+          ).with_form(form)
         end
 
         def setup_radio_group
@@ -90,15 +103,6 @@ module SearchForm
             container_class: "form-check form-check-inline",
             stimulus: { radio_toggle: true, controls_select: false }
           ).with_form(form)
-        end
-
-        def all_toggle_data_attributes
-          {
-            search_form_target: "allToggle",
-            action: "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup",
-            toggle_radio_group: "tag_operator",
-            default_radio_value: "or"
-          }
         end
 
         def generate_all_toggle_name(name)

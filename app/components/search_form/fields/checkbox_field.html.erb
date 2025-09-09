@@ -1,5 +1,11 @@
 <div class="<%= container_class %>">
-  <%= render checkbox_control %>
+  <%= form.check_box name, checkbox_html_options %>
+  <%= form.label label_for, label, class: "form-check-label" %>
+  <% if show_help_text? %>
+    <span id="<%= help_text_id %>">
+      <%= helpers.helpdesk(help_text, false) %>
+    </span>
+  <% end %>
 
   <% if show_content? %>
     <%= capture(self, &content) %>
