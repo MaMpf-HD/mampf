@@ -10,23 +10,20 @@ module SearchForm
       class CssManager
         # Initializes a new CssManager.
         #
-        # @param field [SearchForm::Fields::Field] The field component that this manager serves.
-        def initialize(field)
-          @field = field
+        # @param field_data [SearchForm::Fields::FieldData] The field data object that this manager serves.
+        def initialize(field_data)
+          @field_data = field_data
         end
 
-        # This method is intended to be the primary interface for getting the final
-        # CSS class string at render time. However, due to the current implementation
-        # where classes are fully resolved during initialization, this method is not
-        # actively used.
+        # This method is the primary interface for getting the final CSS class string at render time.
         #
         # @return [String] The combined CSS class string.
         def field_css_classes
-          [@field.field_class, additional_field_classes].compact.join(" ").strip
+          [@field_data.field_class, additional_field_classes].compact.join(" ").strip
         end
 
         # Extracts and combines CSS classes from the provided options hash.
-        # This is a helper method called by `Field#extract_and_update_field_classes!`
+        # This is a helper method called by `FieldData#extract_and_update_field_classes!`
         # during initialization. It merges the field's `default_field_classes` with
         # any classes passed in the `:class` option.
         #
@@ -38,19 +35,19 @@ module SearchForm
 
         private
 
-          attr_reader :field
+          attr_reader :field_data
 
           # A private helper that re-evaluates the field's main options hash at runtime.
           # This is used by the public `field_css_classes` method.
           def additional_field_classes
-            build_field_classes_from_options(@field.options)
+            build_field_classes_from_options(@field_data.options)
           end
 
           # The core logic for building a class string. It takes an options hash,
           # retrieves the field's default classes, appends the value of the `:class`
           # key from the hash, and returns a space-separated string.
           def build_field_classes_from_options(opts)
-            classes = Array(@field.default_field_classes)
+            classes = Array(@field_data.default_field_classes)
             classes << opts[:class] if opts[:class]
             classes.compact.join(" ")
           end

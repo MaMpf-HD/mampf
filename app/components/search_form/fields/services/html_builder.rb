@@ -8,9 +8,9 @@ module SearchForm
       class HtmlBuilder
         # Initializes a new HtmlBuilder.
         #
-        # @param field [SearchForm::Fields::Field] The field component that this builder serves.
-        def initialize(field)
-          @field = field
+        # @param field_data [SearchForm::Fields::FieldData] The field data object that this builder serves.
+        def initialize(field_data)
+          @field_data = field_data
         end
 
         # A base method for creating an options hash that always includes a unique ID.
@@ -18,7 +18,7 @@ module SearchForm
         # @param additional_options [Hash] Extra options to merge.
         # @return [Hash] An options hash guaranteed to contain a unique `id` attribute.
         def html_options_with_id(additional_options = {})
-          @field.options.merge(id: element_id).merge(additional_options)
+          @field_data.options.merge(id: element_id).merge(additional_options)
         end
 
         # Builds the main HTML options hash for a field element (e.g., `<input>`, `<select>`).
@@ -42,7 +42,7 @@ module SearchForm
         def select_tag_options
           options = {}
           options[:prompt] = resolve_prompt_text if should_add_prompt?
-          options[:selected] = @field.selected if @field.selected.present?
+          options[:selected] = @field_data.selected if @field_data.selected.present?
           options
         end
 
@@ -50,24 +50,14 @@ module SearchForm
         #
         # @return [String] A unique HTML ID for the field element.
         def element_id
-          # For radio buttons, we need both name and value for unique IDs
-          if @field.is_a?(Fields::RadioButtonField)
-            @field.form_state.element_id_for(@field.name, @field.value)
-          else
-            @field.form_state.element_id_for(@field.name)
-          end
+          @field_data.form_state.element_id_for(@field_data.name)
         end
 
         # Generates the value for the `<label>` tag's `for` attribute.
         #
         # @return [String] The ID to be used in the `for` attribute.
         def label_for
-          # For radio buttons, we need both name and value for unique label associations
-          if @field.is_a?(Fields::RadioButtonField)
-            @field.form_state.label_for(@field.name, @field.value)
-          else
-            @field.form_state.label_for(@field.name)
-          end
+          @field_data.form_state.label_for(@field_data.name)
         end
 
         # Generates the ID for the help text element, used for `aria-describedby`.
@@ -79,32 +69,31 @@ module SearchForm
 
         private
 
-          attr_reader :field
+          attr_reader :field_data
 
           def css_manager
-            @css_manager ||= CssManager.new(@field)
+            @css_manager ||= CssManager.new(@field_data)
           end
 
           def should_add_prompt?
-            @field.prompt.present?
+            @field_data.prompt.present?
           end
 
           def resolve_prompt_text
-            @field.prompt.is_a?(String) ? @field.prompt : I18n.t("basics.select")
+            @field_data.prompt.is_a?(String) ? @field_data.prompt : I18n.t("basics.select")
           end
 
           def build_accessibility_attributes
             attributes = {}
 
-            attributes[:"aria-describedby"] = help_text_id if @field.show_help_text?
+            attributes[:"aria-describedby"] = help_text_id if @field_data.show_help_text?
             attributes[:"aria-required"] = "true" if field_required?
-            attributes[:"aria-label"] = @field.label if @field.is_a?(Fields::SubmitField)
 
             attributes
           end
 
           def field_required?
-            [true, "required"].include?(@field.options[:required])
+            [true, "required"].include?(@field_data.options[:required])
           end
       end
     end

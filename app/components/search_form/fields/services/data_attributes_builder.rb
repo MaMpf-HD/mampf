@@ -8,9 +8,9 @@ module SearchForm
       class DataAttributesBuilder
         # Initializes a new DataAttributesBuilder.
         #
-        # @param field [SearchForm::Fields::Field] The field component that this manager serves.
-        def initialize(field)
-          @field = field
+        # @param field_data [SearchForm::Fields::FieldData] The field data object that this manager serves.
+        def initialize(field_data)
+          @field_data = field_data
         end
 
         # Builds the data attributes for the `<select>` element of a `MultiSelectField`.
@@ -19,25 +19,19 @@ module SearchForm
         #
         # @return [Hash] The final data attributes hash for the select element.
         def select_data_attributes
-          base_data = @field.options[:data] || {}
+          base_data = @field_data.options[:data] || {}
           base_data.merge(search_form_target: "select")
         end
 
         # Builds the data attributes for the "All" checkbox of a `MultiSelectField`.
-        # It allows for customization by first checking if the field implements a
-        # custom `all_toggle_data_attributes` method. If not, it provides a default
-        # hash with the necessary Stimulus target and action.
+        # It provides the necessary Stimulus target and action for the checkbox functionality.
         #
         # @return [Hash] The final data attributes hash for the checkbox.
         def checkbox_data_attributes
-          if @field.respond_to?(:all_toggle_data_attributes)
-            @field.all_toggle_data_attributes
-          else
-            {
-              search_form_target: "allToggle",
-              action: "change->search-form#toggleFromCheckbox"
-            }
-          end
+          {
+            search_form_target: "allToggle",
+            action: "change->search-form#toggleFromCheckbox"
+          }
         end
       end
     end
