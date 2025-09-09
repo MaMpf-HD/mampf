@@ -75,13 +75,7 @@ module SearchForm
       def create_filter(filter_class_name, **)
         filter_class = filter_class_name.constantize
 
-        # Check if this filter extends Field (old inheritance-based approach)
-        if filter_class < Fields::Field
-          filter_class.new(**)
-        else
-          # New composition-based filters need form_state
-          filter_class.new(form_state: @search_form.instance_variable_get(:@form_state), **)
-        end
+        filter_class.new(form_state: @search_form.instance_variable_get(:@form_state), **)
       end
     end
   end

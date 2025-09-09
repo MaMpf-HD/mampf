@@ -63,6 +63,12 @@ module SearchForm
         extracted_classes = css.extract_field_classes(options)
         @field_class = [field_class, extracted_classes].compact.join(" ").strip
       end
+
+      # A ViewComponent lifecycle callback that runs before rendering.
+      # Ensures that the form builder has been set, preventing runtime errors.
+      def before_render
+        raise("Form not set for #{self.class.name}. Call with_form before rendering.") unless form
+      end
     end
   end
 end

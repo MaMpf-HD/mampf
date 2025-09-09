@@ -1,8 +1,8 @@
 module SearchForm
   module Fields
     # Renders a single checkbox control within the standard field layout.
-    class CheckboxField < Field
-      attr_reader :checked, :stimulus_config
+    class CheckboxField < ViewComponent::Base
+      attr_reader :checked, :stimulus_config, :field_data
 
       # Initializes a new CheckboxField.
       #
@@ -11,17 +11,53 @@ module SearchForm
       # @param checked [Boolean] The initial checked state of the checkbox. Defaults to `false`.
       # @param stimulus [Hash] Configuration for Stimulus.js controllers.
       # @param options [Hash] A hash of options passed to the base `Field` class.
-      def initialize(name:, label:, checked: false, stimulus: {}, **options)
+      def initialize(name:, label:, form_state:, checked: false, stimulus: {}, **options)
+        super()
         @checked = checked
         @stimulus_config = stimulus
 
-        super(
+        # Process options
+        processed_options = options.dup
+
+        # Create field data object
+        @field_data = FieldData.new(
           name: name,
           label: label,
-          **options
+          help_text: options[:help_text],
+          form_state: form_state,
+          options: processed_options
         )
 
-        extract_and_update_field_classes!(options)
+        # Override the default_field_classes method (checkboxes don't have field classes)
+        field_data.define_singleton_method(:default_field_classes) do
+          []
+        end
+
+        # Extract and update field classes
+        field_data.extract_and_update_field_classes!(processed_options)
+      end
+
+      # Delegate common methods to field_data
+      delegate :name, :label, :help_text, :form, :container_class, :show_help_text?,
+               :show_content?, :content, :options, to: :field_data
+
+      # Add form_state interface for SearchForm auto-injection
+      def form_state
+        field_data.form_state
+      end
+
+      def form_state=(new_form_state)
+        field_data.form_state = new_form_state
+      end
+
+      def with_form(form)
+        field_data.form_state.with_form(form)
+        self
+      end
+
+      def with_content(&block)
+        field_data.with_content(&block)
+        self
       end
 
       # Generates the full, unique HTML ID for the checkbox element.
@@ -75,6 +111,12 @@ module SearchForm
       # @return [Array] An empty array.
       def default_field_classes
         []
+      end
+
+      # A ViewComponent lifecycle callback that runs before rendering.
+      # Ensures that the form builder has been set, preventing runtime errors.
+      def before_render
+        raise("Form not set for #{self.class.name}. Call with_form before rendering.") unless form
       end
 
       private
