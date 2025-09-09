@@ -1,16 +1,18 @@
 module SearchForm
   module Fields
     # Renders a multi-select field, typically enhanced with a JavaScript library
-    # like Selectize.
-    class MultiSelectField < Field
-      attr_reader :collection, :data_builder
+    # like Selectize. This component now focuses solely on rendering the select
+    # element itself, with any associated controls (checkboxes, radio buttons)
+    # being handled by the parent filter components through composition.
+    class MultiSelectField < ViewComponent::Base
+      attr_reader :collection, :data_builder, :field_data
 
       # Initializes a new MultiSelectField.
       #
       # @param name [Symbol] The name of the field.
       # @param label [String] The label text for the field.
       # @param collection [Array] The collection of options for the select tag.
-      # @param options [Hash] A hash of options passed to the base `Field`. This class
+      # @param options [Hash] A hash of options passed to the field. This class
       #   uses the `process_options` method to set its own defaults:
       #   - `:multiple` defaults to `true`.
       #   - `:disabled` defaults to `true` (to be controlled by external components).
@@ -18,20 +20,50 @@ module SearchForm
       #   - `:prompt` defaults to `true` (overriding the base `Field` behavior).
       #   - `:selected` has no default.
       #   These can be overridden by passing them explicitly in the options hash.
-      def initialize(name:, label:, collection:, **options)
+      def initialize(name:, label:, collection:, form_state:, **options)
+        super()
         @collection = collection
 
-        super(
+        # Process options with defaults
+        processed_options = process_options(options)
+
+        # Create field data object
+        @field_data = FieldData.new(
           name: name,
           label: label,
-          **options
+          help_text: options[:help_text],
+          form_state: form_state,
+          options: processed_options,
+          multiple: processed_options[:multiple],
+          disabled: processed_options[:disabled],
+          required: processed_options[:required],
+          prompt: processed_options[:prompt],
+          selected: processed_options[:selected]
         )
 
-        extract_and_update_field_classes!(options)
+        field_data.extract_and_update_field_classes!(processed_options)
 
         # Initialize service objects
-        @data_builder = Services::DataAttributesBuilder.new(self)
+        @data_builder = Services::DataAttributesBuilder.new(field_data)
       end
+
+      # Delegate common methods to field_data
+      delegate :name, :label, :help_text, :form, :container_class, :show_help_text?,
+               :show_content?, :html, to: :field_data
+
+      def with_form(form)
+        field_data.form_state.with_form(form)
+        self
+      end
+
+      def with_content(&)
+        field_data.with_content(&)
+        self
+      end
+
+      delegate :form_state, to: :field_data
+
+      delegate :form_state=, to: :field_data
 
       # Builds the HTML options hash for the `<select>` tag itself (the 4th
       # parameter to `form.select`). It merges in the necessary Stimulus
@@ -61,6 +93,10 @@ module SearchForm
         ["selectize"] # Base selectize class for multi-select
       end
 
+      def content
+        field_data.instance_variable_get(:@content_block)
+      end
+
       private
 
         # Merges default options required for a multi-select field.
@@ -69,7 +105,8 @@ module SearchForm
           opts.reverse_merge(
             multiple: true,
             disabled: true,
-            required: true
+            required: true,
+            prompt: true
           )
         end
     end
