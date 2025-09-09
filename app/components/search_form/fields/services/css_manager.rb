@@ -10,12 +10,14 @@ module SearchForm
       class CssManager
         # Initializes a new CssManager.
         #
-        # @param field_data [SearchForm::Fields::FieldData] The field data object that this manager serves.
+        # @param field_data [SearchForm::Fields::FieldData] The field data object
+        # that this manager serves.
         def initialize(field_data)
           @field_data = field_data
         end
 
-        # This method is the primary interface for getting the final CSS class string at render time.
+        # This method is the primary interface for getting the final CSS class string
+        # at render time.
         #
         # @return [String] The combined CSS class string.
         def field_css_classes

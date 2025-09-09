@@ -8,7 +8,8 @@ module SearchForm
       class DataAttributesBuilder
         # Initializes a new DataAttributesBuilder.
         #
-        # @param field_data [SearchForm::Fields::FieldData] The field data object that this manager serves.
+        # @param field_data [SearchForm::Fields::FieldData] The field data object
+        # that this manager serves.
         def initialize(field_data)
           @field_data = field_data
         end

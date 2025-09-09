@@ -1,55 +1,65 @@
 module SearchForm
   module Fields
     # Renders a standard HTML `<input type="text">` field. This is a general-purpose
-    # component for free-text input, styled with the standard Bootstrap class.
+    # component for free-text input, styled with Bootstrap form controls.
+    #
+    # The component supports all standard HTML input attributes including placeholder,
+    # maxlength, pattern, and data attributes for client-side behavior.
+    #
+    # @example Basic text field
+    #   TextField.new(
+    #     name: :search_query,
+    #     label: "Search",
+    #     form_state: form_state
+    #   )
+    #
+    # @example Text field with placeholder and validation
+    #   TextField.new(
+    #     name: :email,
+    #     label: "Email Address",
+    #     form_state: form_state,
+    #     placeholder: "Enter your email",
+    #     required: true,
+    #     pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+    #   )
     class TextField < ViewComponent::Base
+      include FieldMixins
+
       attr_reader :field_data
 
-      def initialize(name:, label:, form_state:, **options)
+      # Initializes a new TextField component.
+      #
+      # This component uses standard Bootstrap form-control styling and supports
+      # all HTML input attributes through the options hash.
+      #
+      # @param name [Symbol] The field name for form binding and ID generation
+      # @param label [String] The human-readable label text
+      # @param form_state [FormState] The form state object for context
+      # @param options [Hash] Additional HTML attributes and configuration including:
+      #   - placeholder: Placeholder text for the input
+      #   - maxlength: Maximum number of characters allowed
+      #   - pattern: HTML5 validation pattern (regex)
+      #   - required: Whether the field is required
+      #   - disabled: Whether the field is disabled
+      #   - readonly: Whether the field is read-only
+      #   - data: Hash of data attributes for client-side behavior
+      def initialize(name:, label:, form_state:, **)
         super()
 
-        # Create field data object
-        @field_data = FieldData.new(
+        initialize_field_data(
           name: name,
           label: label,
-          help_text: options[:help_text],
           form_state: form_state,
-          options: options.dup
+          default_classes: ["form-control"], # Bootstrap text input styling
+          **
         )
-
-        # Override the default_field_classes method to provide Bootstrap classes
-        field_data.define_singleton_method(:default_field_classes) do
-          ["form-control"]
-        end
-
-        # Extract and update field classes
-        field_data.extract_and_update_field_classes!(options)
       end
 
-      # Delegate common methods to field_data
-      delegate :name, :label, :help_text, :form, :container_class, :show_help_text?,
-               :show_content?, :content, :options, :html, to: :field_data
-
-      # Form state interface for SearchForm auto-injection
-      delegate :form_state, to: :field_data
-      
-      def form_state=(new_form_state)
-        field_data.form_state = new_form_state
-      end
-
-      def with_form(form)
-        field_data.form_state.with_form(form)
-        self
-      end
-
-      def with_content(&block)
-        field_data.with_content(&block)
-        self
-      end
-
-      def before_render
-        raise("Form not set for #{self.class.name}. Call with_form before rendering.") unless form
-      end
+      # Provides access to the HTML builder service for generating form attributes.
+      # This enables the template to call methods like `html.field_html_options`.
+      #
+      # @return [Services::HtmlBuilder] The HTML builder service instance
+      delegate :html, to: :field_data
     end
   end
 end
