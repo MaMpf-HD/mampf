@@ -9,21 +9,6 @@
 
   <%= form.select name, collection, html.select_tag_options, field_html_options %>
 
-  <% if show_checkbox? %>
-    <div role="group" aria-labelledby="<%= html.label_for %>">
-      <%= render(checkbox) %>
-    </div>
-  <% end %>
-
-  <% if show_radio_group? %>
-    <fieldset role="radiogroup" aria-labelledby="<%= html.label_for %>">
-      <legend class="visually-hidden"><%= label %>
-        options
-      </legend>
-      <%= render_radio_group %>
-    </fieldset>
-  <% end %>
-
   <% if show_content? %>
     <%= capture(self, &content) %>
   <% end %>

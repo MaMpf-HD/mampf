@@ -1,0 +1,7 @@
+<% @multi_select_field.with_content do %>
+  <% if show_radio_group? %>
+    <%= @radio_group_wrapper.wrap(self) %>
+  <% end %>
+<% end %>
+
+<%= render(@multi_select_field) %>

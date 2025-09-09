@@ -35,7 +35,6 @@ module SearchForm
             help_text: I18n.t("search.filters.helpdesks.tag_filter"),
             collection: [],
             form_state: form_state,
-            skip_all_checkbox: true,
             data: {
               filled: false,
               ajax: true,

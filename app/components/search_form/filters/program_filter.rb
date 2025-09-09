@@ -1,9 +1,12 @@
 module SearchForm
   module Filters
     # Renders a multi-select field for filtering by programs.
-    # This component extends `MultiSelectField` and populates its collection
-    # by querying for all `Program` records.
-    class ProgramFilter < Fields::MultiSelectField
+    # This component uses composition to build a multi-select field with an
+    # "All" toggle checkbox, pre-configured with a specific name, label, and
+    # a collection of programs sourced from the database.
+    class ProgramFilter < ViewComponent::Base
+      attr_accessor :form_state
+
       # Initializes the ProgramFilter.
       #
       # This component is specialized and hard-codes its own options for the
@@ -11,19 +14,69 @@ module SearchForm
       # programs, formatting their display name as "Subject Name: Program Name",
       # and then sorting the list alphabetically.
       #
-      # @param ** [Hash] Catches any other keyword arguments, which are passed
-      #   to the superclass.
-      def initialize(**)
-        super(
-          name: :program_ids,
-          label: I18n.t("basics.programs"),
-          help_text: I18n.t("search.filters.helpdesks.program_filter"),
-          collection: program_options,
-          **
-        )
+      # @param form_state [SearchForm::FormState] The form state object.
+      # @param options [Hash] Additional options passed to the multi-select field.
+      def initialize(form_state:, **options)
+        super()
+        @form_state = form_state
+        @options = options
+      end
+
+      delegate :form, to: :form_state
+
+      def with_form(form)
+        form_state.with_form(form)
+        self
+      end
+
+      def before_render
+        setup_fields
       end
 
       private
+
+        def setup_fields
+          setup_multi_select_field
+          setup_checkbox_group
+        end
+
+        def setup_multi_select_field
+          @multi_select_field = Fields::MultiSelectField.new(
+            name: :program_ids,
+            label: I18n.t("basics.programs"),
+            help_text: I18n.t("search.filters.helpdesks.program_filter"),
+            collection: program_options,
+            form_state: form_state,
+            skip_all_checkbox: true,
+            **@options
+          ).with_form(form)
+        end
+
+        def setup_checkbox_group
+          setup_checkboxes
+          @checkbox_group_wrapper = Utilities::CheckboxGroupWrapper.new(
+            parent_field: @multi_select_field,
+            checkboxes: [@all_checkbox]
+          )
+        end
+
+        def setup_checkboxes
+          @all_checkbox = Fields::CheckboxField.new(
+            name: generate_all_toggle_name(:program_ids),
+            label: I18n.t("basics.all"),
+            checked: true,
+            form_state: form_state,
+            container_class: "form-check mb-2",
+            stimulus: {
+              toggle: true
+            }
+          ).with_form(form)
+        end
+
+        def generate_all_toggle_name(name)
+          base_name = name.to_s.delete_suffix("_ids").pluralize
+          :"all_#{base_name}"
+        end
 
         # This private method is responsible for building the collection.
         # Its logic is described in the initialize method's documentation.

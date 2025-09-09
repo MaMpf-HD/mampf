@@ -47,8 +47,7 @@ module SearchForm
             label: I18n.t("basics.associated_to"),
             help_text: I18n.t("search.filters.helpdesks.teachable_filter"),
             collection: grouped_teachable_list,
-            form_state: form_state,
-            skip_all_checkbox: true
+            form_state: form_state
           ).with_form(form)
         end
 
