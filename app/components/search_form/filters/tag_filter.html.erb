@@ -1,14 +1,5 @@
-<%# Use the MultiSelectField's with_content method to add the radio group %>
-<% if @show_radio_group %>
-  <% @multi_select_field.with_content do %>
-    <fieldset role="radiogroup" aria-labelledby="<%= fieldset_aria_labelledby %>">
-      <legend class="visually-hidden"><%= legend_text %></legend>
-      <div class="mt-2">
-        <%= render(@or_radio_button) %>
-        <%= render(@and_radio_button) %>
-      </div>
-    </fieldset>
-  <% end %>
+<% @multi_select_field.with_content do %>
+   <%= @radio_group_wrapper.wrap(self) %>
 <% end %>
 
 <%= render(@multi_select_field) %>

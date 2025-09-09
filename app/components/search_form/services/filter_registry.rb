@@ -9,11 +9,7 @@ module SearchForm
             with_inheritance: :with_inheritance_radios
           }
         },
-        tag: {
-          additional_methods: {
-            with_operators: :with_operator_radios
-          }
-        },
+        tag: {},
         tag_old: {
           additional_methods: {
             with_operators: :with_operator_radios

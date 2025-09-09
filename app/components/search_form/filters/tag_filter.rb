@@ -7,18 +7,12 @@ module SearchForm
         super()
         @form_state = form_state
         @options = options
-        @show_radio_group = false
       end
 
       delegate :form, to: :form_state
 
       def with_form(form)
         form_state.with_form(form)
-        self
-      end
-
-      def with_operator_radios
-        @show_radio_group = true
         self
       end
 
@@ -30,7 +24,7 @@ module SearchForm
 
         def setup_fields
           setup_multi_select_field
-          setup_radio_buttons if @show_radio_group
+          setup_radio_group
         end
 
         def setup_multi_select_field
@@ -63,6 +57,15 @@ module SearchForm
           @multi_select_field.with_form(form)
         end
 
+        def setup_radio_group
+          setup_radio_buttons
+          @radio_group_wrapper = Utilities::RadioGroupWrapper.new(
+            name: :tag_operator,
+            parent_field: @multi_select_field,
+            radio_buttons: [@or_radio_button, @and_radio_button]
+          )
+        end
+
         def setup_radio_buttons
           @or_radio_button = Fields::RadioButtonField.new(
             name: :tag_operator,
@@ -87,14 +90,6 @@ module SearchForm
             container_class: "form-check form-check-inline",
             stimulus: { radio_toggle: true, controls_select: false }
           ).with_form(form)
-        end
-
-        def fieldset_aria_labelledby
-          form_state.element_id_for(:tag_ids)
-        end
-
-        def legend_text
-          "#{I18n.t("basics.tags")}\n        options\n      "
         end
 
         def all_toggle_data_attributes

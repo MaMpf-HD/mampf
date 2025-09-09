@@ -1,7 +1,7 @@
 <%= render(SearchForm::SearchForm.new(url: search_media_path, context: "media")) do |c| %>
   <% c.add_medium_type_filter(current_user: current_user, purpose: purpose) %>
 
-  <% c.add_tag_filter_with_operators %>
+  <% c.add_tag_filter %>
 
   <% c.add_lecture_scope_filter_with_lecture_options %>
 
