@@ -22,20 +22,25 @@ module SearchForm
         self
       end
 
-      def call
-        render_select_field
+      def before_render
+        setup_fields
       end
 
       private
 
-        def render_select_field
-          multi_select = Fields::MultiSelectField.new(
+        def setup_fields
+          setup_multi_select_field
+          setup_radio_buttons if @show_radio_group
+        end
+
+        def setup_multi_select_field
+          @multi_select_field = Fields::MultiSelectField.new(
             name: :tag_ids,
             label: I18n.t("basics.tags"),
             help_text: I18n.t("search.filters.helpdesks.tag_filter"),
             collection: [],
             form_state: form_state,
-            skip_all_checkbox: true, # We'll add our own custom checkbox
+            skip_all_checkbox: true,
             data: {
               filled: false,
               ajax: true,
@@ -47,7 +52,7 @@ module SearchForm
           )
 
           # Add custom checkbox with radio group toggle attributes
-          multi_select.with_checkbox(
+          @multi_select_field.with_checkbox(
             name: generate_all_toggle_name(:tag_ids),
             label: I18n.t("basics.all"),
             checked: true,
@@ -55,33 +60,11 @@ module SearchForm
             data: all_toggle_data_attributes
           )
 
-          # Add the radio group content using the RadioGroupWrapper
-          if @show_radio_group
-            multi_select.with_content do
-              wrapper = Utilities::RadioGroupWrapper.new(
-                name: :tag_operator,
-                legend: "#{I18n.t("basics.tags")}\n        options\n      ",
-                legend_class: "visually-hidden",
-                "aria-labelledby": form_state.element_id_for(:tag_ids)
-              )
-
-              wrapper.render(helpers) do
-                content_tag(:div, class: "mt-2") do
-                  safe_join([
-                              render_or_radio_button,
-                              render_and_radio_button
-                            ])
-                end
-              end
-            end
-          end
-
-          multi_select.with_form(form)
-          render(multi_select)
+          @multi_select_field.with_form(form)
         end
 
-        def render_or_radio_button
-          render(Fields::RadioButtonField.new(
+        def setup_radio_buttons
+          @or_radio_button = Fields::RadioButtonField.new(
             name: :tag_operator,
             value: "or",
             label: I18n.t("basics.OR"),
@@ -89,13 +72,11 @@ module SearchForm
             form_state: form_state,
             disabled: true,
             inline: true,
-            container_class: "form-check form-check-inline", # Override to match old version
+            container_class: "form-check form-check-inline",
             stimulus: { radio_toggle: true, controls_select: false }
-          ).with_form(form))
-        end
+          ).with_form(form)
 
-        def render_and_radio_button
-          render(Fields::RadioButtonField.new(
+          @and_radio_button = Fields::RadioButtonField.new(
             name: :tag_operator,
             value: "and",
             label: I18n.t("basics.AND"),
@@ -103,12 +84,19 @@ module SearchForm
             form_state: form_state,
             disabled: true,
             inline: true,
-            container_class: "form-check form-check-inline", # Override to match old version
+            container_class: "form-check form-check-inline",
             stimulus: { radio_toggle: true, controls_select: false }
-          ).with_form(form))
+          ).with_form(form)
         end
 
-        # Copy the exact data attributes from the old TagFilter
+        def fieldset_aria_labelledby
+          form_state.element_id_for(:tag_ids)
+        end
+
+        def legend_text
+          "#{I18n.t("basics.tags")}\n        options\n      "
+        end
+
         def all_toggle_data_attributes
           {
             search_form_target: "allToggle",
