@@ -6,10 +6,19 @@ module SearchForm
       attr_reader :value, :checked
       attr_accessor :name, :form_state
 
-      def initialize(name:, value:, label:, checked: false, help_text: nil, **)
+      def initialize(name:, value:, label:, checked: false, help_text: nil, container_class: nil,
+                     **)
         super(name: name, label: label, help_text: help_text, **)
         @value = value
         @checked = checked
+        @custom_container_class = container_class # Store custom container class
+      end
+
+      # Update the container class method to use the override if provided
+      def container_class
+        return @custom_container_class if @custom_container_class
+
+        default_container_class
       end
 
       # Keep the original data_attributes method from Controls::RadioButton
@@ -37,15 +46,10 @@ module SearchForm
         html_opts[:disabled] = options[:disabled] if options.key?(:disabled)
         html_opts[:data] = data_attributes if data_attributes.any?
 
-        html_opts.merge(options.except(:inline, :container_class))
+        html_opts.merge(options.except(:inline, :container_class, :stimulus))
       end
 
       private
-
-        # Radio buttons need both name and value for unique IDs
-        def generate_element_id
-          form_state.element_id_for(name, value)
-        end
 
         # Keep original stimulus helper methods
         def add_radio_toggle_attributes(data)

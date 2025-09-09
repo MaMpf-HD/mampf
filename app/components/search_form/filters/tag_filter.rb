@@ -1,8 +1,5 @@
 module SearchForm
   module Filters
-    # Renders a multi-select field for filtering by tags. This component
-    # now uses composition instead of inheritance - it coordinates a
-    # MultiSelectField and RadioButtonFields rather than inheriting from MultiSelectField.
     class TagFilter < ViewComponent::Base
       attr_accessor :form_state
 
@@ -20,34 +17,25 @@ module SearchForm
         self
       end
 
-      # A configuration method to enable the rendering of the "AND/OR" operator
-      # radio button group.
-      #
-      # @return [self] Returns the component instance to allow for method chaining.
       def with_operator_radios
         @show_radio_group = true
         self
       end
 
-      # The main render method that composes the filter from multiple fields
       def call
-        content_tag(:div, class: "col-6 col-lg-3 mb-3 form-field-group") do
-          safe_join([
-            render_select_field,
-            render_radio_group
-          ].compact)
-        end
+        render_select_field
       end
 
       private
 
         def render_select_field
-          render(Fields::MultiSelectField.new(
+          multi_select = Fields::MultiSelectField.new(
             name: :tag_ids,
             label: I18n.t("basics.tags"),
             help_text: I18n.t("search.filters.helpdesks.tag_filter"),
-            collection: [], # Empty - will be loaded via AJAX
+            collection: [],
             form_state: form_state,
+            skip_all_checkbox: true, # We'll add our own custom checkbox
             data: {
               filled: false,
               ajax: true,
@@ -56,23 +44,40 @@ module SearchForm
               placeholder: I18n.t("basics.select"),
               no_results: I18n.t("basics.no_results")
             }
-          ).with_form(form))
-        end
-
-        def render_radio_group
-          return unless @show_radio_group
-
-          wrapper = Utilities::RadioGroupWrapper.new(
-            name: :tag_operator,
-            legend: nil # No legend needed for this group
           )
 
-          wrapper.render(helpers) do
-            safe_join([
-                        render_or_radio_button,
-                        render_and_radio_button
-                      ])
+          # Add custom checkbox with radio group toggle attributes
+          multi_select.with_checkbox(
+            name: generate_all_toggle_name(:tag_ids),
+            label: I18n.t("basics.all"),
+            checked: true,
+            form_state: form_state,
+            data: all_toggle_data_attributes
+          )
+
+          # Add the radio group content using the RadioGroupWrapper
+          if @show_radio_group
+            multi_select.with_content do
+              wrapper = Utilities::RadioGroupWrapper.new(
+                name: :tag_operator,
+                legend: "#{I18n.t("basics.tags")}\n        options\n      ",
+                legend_class: "visually-hidden",
+                "aria-labelledby": form_state.element_id_for(:tag_ids)
+              )
+
+              wrapper.render(helpers) do
+                content_tag(:div, class: "mt-2") do
+                  safe_join([
+                              render_or_radio_button,
+                              render_and_radio_button
+                            ])
+                end
+              end
+            end
           end
+
+          multi_select.with_form(form)
+          render(multi_select)
         end
 
         def render_or_radio_button
@@ -84,6 +89,7 @@ module SearchForm
             form_state: form_state,
             disabled: true,
             inline: true,
+            container_class: "form-check form-check-inline", # Override to match old version
             stimulus: { radio_toggle: true, controls_select: false }
           ).with_form(form))
         end
@@ -97,8 +103,24 @@ module SearchForm
             form_state: form_state,
             disabled: true,
             inline: true,
+            container_class: "form-check form-check-inline", # Override to match old version
             stimulus: { radio_toggle: true, controls_select: false }
           ).with_form(form))
+        end
+
+        # Copy the exact data attributes from the old TagFilter
+        def all_toggle_data_attributes
+          {
+            search_form_target: "allToggle",
+            action: "change->search-form#toggleFromCheckbox change->search-form#toggleRadioGroup",
+            toggle_radio_group: "tag_operator",
+            default_radio_value: "or"
+          }
+        end
+
+        def generate_all_toggle_name(name)
+          base_name = name.to_s.delete_suffix("_ids").pluralize
+          :"all_#{base_name}"
         end
     end
   end

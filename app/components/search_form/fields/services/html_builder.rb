@@ -50,14 +50,24 @@ module SearchForm
         #
         # @return [String] A unique HTML ID for the field element.
         def element_id
-          @field.form_state.element_id_for(@field.name)
+          # For radio buttons, we need both name and value for unique IDs
+          if @field.is_a?(Fields::RadioButtonField)
+            @field.form_state.element_id_for(@field.name, @field.value)
+          else
+            @field.form_state.element_id_for(@field.name)
+          end
         end
 
         # Generates the value for the `<label>` tag's `for` attribute.
         #
         # @return [String] The ID to be used in the `for` attribute.
         def label_for
-          @field.form_state.label_for(@field.name)
+          # For radio buttons, we need both name and value for unique label associations
+          if @field.is_a?(Fields::RadioButtonField)
+            @field.form_state.label_for(@field.name, @field.value)
+          else
+            @field.form_state.label_for(@field.name)
+          end
         end
 
         # Generates the ID for the help text element, used for `aria-describedby`.

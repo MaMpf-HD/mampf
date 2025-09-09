@@ -14,6 +14,11 @@ module SearchForm
             with_operators: :with_operator_radios
           }
         },
+        tag_old: {
+          additional_methods: {
+            with_operators: :with_operator_radios
+          }
+        },
         editor: {},
         medium_access: {},
         answer_count: {},

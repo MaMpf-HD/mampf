@@ -36,9 +36,10 @@ module SearchForm
       #   - `:prompt` defaults to `true` (overriding the base `Field` behavior).
       #   - `:selected` has no default.
       #   These can be overridden by passing them explicitly in the options hash.
-      def initialize(name:, label:, collection:, **options)
+      def initialize(name:, label:, collection:, skip_all_checkbox: false, **options)
         @collection = collection
         @all_toggle_name = generate_all_toggle_name(name)
+        @skip_all_checkbox = skip_all_checkbox
 
         super(
           name: name,
@@ -110,6 +111,10 @@ module SearchForm
       # @return [Array<String>] An array containing the "selectize" class.
       def default_field_classes
         ["selectize"] # Base selectize class for multi-select
+      end
+
+      def skip_all_checkbox?
+        @skip_all_checkbox
       end
 
       private
