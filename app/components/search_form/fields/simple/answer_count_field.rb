@@ -1,15 +1,15 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a select field for filtering by the number of associated answers
     # of questions for quizzes.
     # This component has a special behavior based on the `purpose` parameter:
     # it will not render itself at all if the purpose is "import", making it
     # suitable for contexts where this filter is not applicable.
-    class AnswerCountFilter < ViewComponent::Base
+    class AnswerCountField < ViewComponent::Base
       attr_accessor :form_state
       attr_reader :purpose
 
-      # Initializes the AnswerCountFilter.
+      # Initializes the AnswerCountField.
       #
       # This component is specialized and does not accept most standard field
       # options. Instead, it hard-codes its own options for the underlying

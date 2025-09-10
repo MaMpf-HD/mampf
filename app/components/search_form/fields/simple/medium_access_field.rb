@@ -1,13 +1,13 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a select field for filtering by medium access rights.
     # This component uses composition to build a select field, pre-configured
     # with a specific name, label, and a static collection of access levels
     # (e.g., "All", "Users", "Subscribers").
-    class MediumAccessFilter < ViewComponent::Base
+    class MediumAccessField < ViewComponent::Base
       attr_accessor :form_state
 
-      # Initializes the MediumAccessFilter.
+      # Initializes the MediumAccessField.
       #
       # This component is specialized and hard-codes its own options for the
       # underlying `SelectField`.

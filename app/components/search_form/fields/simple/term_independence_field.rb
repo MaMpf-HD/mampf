@@ -1,12 +1,12 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a checkbox for filtering by term independence.
     # This component uses composition to build a checkbox field, pre-configured
     # with a specific name, label, and a default unchecked state.
-    class TermIndependenceFilter < ViewComponent::Base
+    class TermIndependenceField < ViewComponent::Base
       attr_accessor :form_state
 
-      # Initializes the TermIndependenceFilter.
+      # Initializes the TermIndependenceField.
       #
       # This component is specialized and hard-codes its own options for the
       # underlying `CheckboxField`.

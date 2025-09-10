@@ -1,14 +1,14 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a multi-select field for filtering by medium type (e.g., WorkedExample",
     # "Quiz"). This component is highly contextual and dynamically alters its
     # behavior, collection, and appearance based on the `purpose` of the search
     # form and the `current_user`'s permissions.
-    class MediumTypeFilter < ViewComponent::Base
+    class MediumTypeField < ViewComponent::Base
       attr_accessor :form_state
       attr_reader :purpose, :current_user
 
-      # Initializes the MediumTypeFilter.
+      # Initializes the MediumTypeField.
       #
       # The component's behavior is determined by the `purpose` and `current_user`
       # arguments. It dynamically sets its collection, pre-selected values, and
@@ -62,7 +62,7 @@ module SearchForm
 
         def setup_checkbox_group
           setup_checkboxes
-          @checkbox_group_wrapper = Utilities::CheckboxGroupWrapper.new(
+          @checkbox_group_wrapper = Fields::Utilities::CheckboxGroupWrapper.new(
             parent_field: @multi_select_field,
             checkboxes: [@all_checkbox]
           )

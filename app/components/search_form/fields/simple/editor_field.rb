@@ -1,21 +1,11 @@
 module SearchForm
-  module Filters
-    # Renders a multi-select field for filtering by lecture type.
-    # This component is a simple specialization that uses composition to build
-    # a multi-select field with an "All" toggle checkbox, pre-configured
-    # with a specific name, label, and a collection of lecture types sourced
-    # from the `Lecture.select_sorts` method.
-    class LectureTypeFilter < ViewComponent::Base
+  module Fields
+    # Renders a multi-select field for filtering by users who are editors.
+    # This component uses composition to build a multi-select field with an
+    # "All" toggle checkbox for selecting/deselecting all editors.
+    class EditorField < ViewComponent::Base
       attr_accessor :form_state
 
-      # Initializes the LectureTypeFilter.
-      #
-      # This component is specialized and hard-codes its own options for the
-      # underlying `MultiSelectField`. The collection of lecture types is
-      # provided by the `Lecture.select_sorts` class method.
-      #
-      # @param form_state [SearchForm::FormState] The form state object.
-      # @param options [Hash] Additional options passed to the multi-select field.
       def initialize(form_state:, **options)
         super()
         @form_state = form_state
@@ -42,10 +32,10 @@ module SearchForm
 
         def setup_multi_select_field
           @multi_select_field = Fields::MultiSelectField.new(
-            name: :types,
-            label: I18n.t("basics.type"),
-            help_text: I18n.t("search.filters.helpdesks.lecture_type_filter"),
-            collection: Lecture.select_sorts,
+            name: :editor_ids,
+            label: I18n.t("basics.editors"),
+            help_text: I18n.t("search.filters.helpdesks.editor_filter"),
+            collection: editor_options,
             form_state: form_state,
             skip_all_checkbox: true,
             **@options
@@ -54,7 +44,7 @@ module SearchForm
 
         def setup_checkbox_group
           setup_checkboxes
-          @checkbox_group_wrapper = Utilities::CheckboxGroupWrapper.new(
+          @checkbox_group_wrapper = Fields::Utilities::CheckboxGroupWrapper.new(
             parent_field: @multi_select_field,
             checkboxes: [@all_checkbox]
           )
@@ -62,7 +52,7 @@ module SearchForm
 
         def setup_checkboxes
           @all_checkbox = Fields::CheckboxField.new(
-            name: generate_all_toggle_name(:types),
+            name: generate_all_toggle_name(:editor_ids),
             label: I18n.t("basics.all"),
             checked: true,
             form_state: form_state,
@@ -76,6 +66,21 @@ module SearchForm
         def generate_all_toggle_name(name)
           base_name = name.to_s.delete_suffix("_ids").pluralize
           :"all_#{base_name}"
+        end
+
+        # This private method is responsible for building the collection.
+        # Its logic generates a list of all distinct users who are editors,
+        # formatting their display name as "Tutorial Name (email)" or "Full Name (email)",
+        # and then sorting the list alphabetically.
+        def editor_options
+          User.joins(:editable_user_joins)
+              .distinct
+              .pluck(:id, :name, :name_in_tutorials, :email)
+              .map do |id, name, name_in_tutorials, email|
+                display_name = "#{name_in_tutorials.presence || name} (#{email})"
+                [display_name, id]
+              end
+              .natural_sort_by(&:first)
         end
     end
   end

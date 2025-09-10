@@ -1,6 +1,6 @@
 module SearchForm
-  module Filters
-    class TagFilter < ViewComponent::Base
+  module Fields
+    class TagField < ViewComponent::Base
       attr_accessor :form_state
 
       def initialize(form_state:, **options)
@@ -48,7 +48,7 @@ module SearchForm
 
         def setup_checkbox_group
           setup_checkboxes
-          @checkbox_group_wrapper = Utilities::CheckboxGroupWrapper.new(
+          @checkbox_group_wrapper = Fields::Utilities::CheckboxGroupWrapper.new(
             parent_field: @multi_select_field,
             checkboxes: [@all_checkbox]
           )
@@ -71,7 +71,7 @@ module SearchForm
 
         def setup_radio_group
           setup_radio_buttons
-          @radio_group_wrapper = Utilities::RadioGroupWrapper.new(
+          @radio_group_wrapper = Fields::Utilities::RadioGroupWrapper.new(
             name: :tag_operator,
             parent_field: @multi_select_field,
             radio_buttons: [@or_radio_button, @and_radio_button]

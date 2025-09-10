@@ -1,13 +1,13 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a text input field specifically for full-text search.
     # This component uses composition to build a text field, pre-configured
     # with a specific name, label, and help text suitable for a full-text
     # search query.
-    class FulltextFilter < ViewComponent::Base
+    class FulltextField < ViewComponent::Base
       attr_accessor :form_state
 
-      # Initializes the FulltextFilter.
+      # Initializes the FulltextField.
       #
       # This component is specialized and hard-codes its own options for the
       # underlying `TextField`, such as `:name`, `:label`, and `:help_text`.

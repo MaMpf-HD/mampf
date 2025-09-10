@@ -1,18 +1,18 @@
 module SearchForm
-  module Filters
-    # Renders a multi-select field for filtering by terms.
+  module Fields
+    # Renders a multi-select field for filtering by lecture type.
     # This component is a simple specialization that uses composition to build
     # a multi-select field with an "All" toggle checkbox, pre-configured
-    # with a specific name, label, and a collection of terms sourced
-    # from the `Term.select_terms` method.
-    class TermFilter < ViewComponent::Base
+    # with a specific name, label, and a collection of lecture types sourced
+    # from the `Lecture.select_sorts` method.
+    class LectureTypeField < ViewComponent::Base
       attr_accessor :form_state
 
-      # Initializes the TermFilter.
+      # Initializes the LectureTypeFilter.
       #
       # This component is specialized and hard-codes its own options for the
-      # underlying `MultiSelectField`. The collection of terms is
-      # provided by the `Term.select_terms` class method.
+      # underlying `MultiSelectField`. The collection of lecture types is
+      # provided by the `Lecture.select_sorts` class method.
       #
       # @param form_state [SearchForm::FormState] The form state object.
       # @param options [Hash] Additional options passed to the multi-select field.
@@ -42,10 +42,10 @@ module SearchForm
 
         def setup_multi_select_field
           @multi_select_field = Fields::MultiSelectField.new(
-            name: :term_ids,
-            label: I18n.t("basics.term"),
-            help_text: I18n.t("search.filters.helpdesks.term_filter"),
-            collection: Term.select_terms,
+            name: :types,
+            label: I18n.t("basics.type"),
+            help_text: I18n.t("search.filters.helpdesks.lecture_type_filter"),
+            collection: Lecture.select_sorts,
             form_state: form_state,
             skip_all_checkbox: true,
             **@options
@@ -54,7 +54,7 @@ module SearchForm
 
         def setup_checkbox_group
           setup_checkboxes
-          @checkbox_group_wrapper = Utilities::CheckboxGroupWrapper.new(
+          @checkbox_group_wrapper = Fields::Utilities::CheckboxGroupWrapper.new(
             parent_field: @multi_select_field,
             checkboxes: [@all_checkbox]
           )
@@ -62,7 +62,7 @@ module SearchForm
 
         def setup_checkboxes
           @all_checkbox = Fields::CheckboxField.new(
-            name: generate_all_toggle_name(:term_ids),
+            name: generate_all_toggle_name(:types),
             label: I18n.t("basics.all"),
             checked: true,
             form_state: form_state,

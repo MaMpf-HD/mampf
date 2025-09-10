@@ -1,11 +1,9 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a multi-select field for filtering by lectures. This component
     # uses composition to build a multi-select field with optional radio button groups
     # for different lecture selection modes (All, Subscribed, Own Selection).
-    #
-    # Unlike other filters, this one doesn't include an "All" checkbox by default.
-    class LectureScopeFilter < ViewComponent::Base
+    class LectureScopeField < ViewComponent::Base
       attr_accessor :form_state
 
       def initialize(form_state:, **options)
@@ -62,7 +60,7 @@ module SearchForm
 
         def setup_radio_group
           setup_radio_buttons
-          @radio_group_wrapper = Utilities::RadioGroupWrapper.new(
+          @radio_group_wrapper = Fields::Utilities::RadioGroupWrapper.new(
             name: :lecture_option,
             parent_field: @multi_select_field,
             radio_buttons: [@all_radio, @subscribed_radio, @own_selection_radio]

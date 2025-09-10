@@ -1,12 +1,12 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a select field for controlling pagination (items per page).
     # This component uses composition to build a select field that allows for easy
     # configuration of the available page size options and a default value.
-    class PerPageFilter < ViewComponent::Base
+    class PerPageField < ViewComponent::Base
       attr_accessor :form_state
 
-      # Initializes the PerPageFilter.
+      # Initializes the PerPageField.
       #
       # @param form_state [SearchForm::FormState] The form state object.
       # @param per_options [Array<Array>] An array of [text, value] pairs for the

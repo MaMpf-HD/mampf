@@ -1,9 +1,9 @@
 module SearchForm
-  module Filters
+  module Fields
     # Renders a multi-select field for filtering by courses. This component
     # uses composition to build a multi-select field with an all toggle checkbox
     # and an optional "Edited Courses" button.
-    class CourseFilter < ViewComponent::Base
+    class CourseField < ViewComponent::Base
       attr_accessor :form_state
 
       def initialize(form_state:, **options)
@@ -64,7 +64,7 @@ module SearchForm
 
         def setup_checkbox_group
           setup_checkboxes
-          @checkbox_group_wrapper = Utilities::CheckboxGroupWrapper.new(
+          @checkbox_group_wrapper = Fields::Utilities::CheckboxGroupWrapper.new(
             parent_field: @multi_select_field,
             checkboxes: [@all_checkbox]
           )
