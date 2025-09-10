@@ -9,7 +9,7 @@ The `SearchForm` is a component-based system for building complex, reusable sear
 The core architectural components are:
 - **`SearchForm`:** The main component that wraps the entire form. It is responsible for the `<form>` tag and managing the collection of fields.
 - **`Services::FormState`:** A state object that is automatically injected into every field, providing access to the form builder and a shared context.
-- **`Services::FiledRegistry`:** A service that dynamically generates `add_*_filter` methods on the `SearchForm` component for each registered filter.
+- **`Services::FieldRegistry`:** A service that dynamically generates `add_*_filter` methods on the `SearchForm` component for each registered filter.
 - **`Filters`:** Specialized components in `app/components/search_form/filters/` that define the behavior for a specific search criterion (e.g., `CourseFilter`, `FulltextFilter`).
 - **`Fields`:** The base UI components in `app/components/search_form/fields/` that the filters inherit from (e.g., `TextField`, `MultiSelectField`). They control the final HTML rendering.
 - **Automatic ID Generation:** The framework automatically generates unique `id` attributes for every form field. To ensure uniqueness across multiple forms on the same page, it uses a `context`. If you do not provide a `context` when initializing the `SearchForm`, a random one will be generated. For predictable and debuggable IDs, it is highly recommended to provide an explicit context (e.g., `SearchForm.new(context: "media", ...)`).
@@ -223,14 +223,14 @@ end
 
 ### Step 2: Register the Filter
 
-The system will not recognize your new filter until it is registered. Open the `FiledRegistry` service and add your new filter to the `FILTERS` hash.
+The system will not recognize your new filter until it is registered. Open the `FieldRegistry` service and add your new filter to the `FILTERS` hash.
 
 The key should be the symbol you want to use for the method name (e.g., `:author`), and the value should be the class constant of the filter you just created.
 
 ```ruby
 # app/components/search_form/services/filter_registry.rb
 # ...
-class FiledRegistry
+class FieldRegistry
   FILTERS = {
     # ... existing filters
     answer_count: Filters::AnswerCountFilter,
@@ -244,7 +244,7 @@ end
 
 ### Step 3: Use the New Filter in a View
 
-Once registered, the `FiledRegistry` will automatically generate a corresponding `add_*_filter` method on the `SearchForm` component. You can now use it in any search form partial.
+Once registered, the `FieldRegistry` will automatically generate a corresponding `add_*_filter` method on the `SearchForm` component. You can now use it in any search form partial.
 
 ```erb
 <%# In a search form partial %>

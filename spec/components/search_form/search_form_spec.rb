@@ -90,8 +90,8 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
 
   describe "#filter_registry" do
     subject(:search_form) { described_class.new(url: url, context: "test") }
-    it "returns and memoizes a FilterRegistry instance" do
-      expect(search_form.filter_registry).to be_a(SearchForm::Services::FilterRegistry)
+    it "returns and memoizes a FieldRegistry instance" do
+      expect(search_form.filter_registry).to be_a(SearchForm::Services::FieldRegistry)
       expect(search_form.filter_registry).to be(search_form.filter_registry)
     end
   end

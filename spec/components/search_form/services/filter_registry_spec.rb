@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchForm::Services::FilterRegistry, type: :component) do
+RSpec.describe(SearchForm::Services::FieldRegistry, type: :component) do
   # Create a mock class that behaves like SearchForm for testing method generation
   let!(:mock_search_form_class) do
     Class.new do
