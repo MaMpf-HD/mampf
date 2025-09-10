@@ -37,7 +37,6 @@ module SearchForm
             help_text: I18n.t("search.filters.helpdesks.editor_filter"),
             collection: editor_options,
             form_state: form_state,
-            skip_all_checkbox: true,
             **@options
           ).with_form(form)
         end

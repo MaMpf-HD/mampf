@@ -47,7 +47,6 @@ module SearchForm
             help_text: I18n.t("search.filters.helpdesks.term_filter"),
             collection: Term.select_terms,
             form_state: form_state,
-            skip_all_checkbox: true,
             **@options
           ).with_form(form)
         end
