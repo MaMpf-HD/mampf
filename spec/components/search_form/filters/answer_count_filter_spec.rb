@@ -44,7 +44,7 @@ RSpec.describe(SearchForm::Filters::AnswerCountFilter, type: :component) do
         # This is important to ensure the object is valid even if it won't render.
         expect(filter.name).to eq(:answers_count)
         expect(filter.label).to eq("Answer Count")
-        expect(filter).to be_a(SearchForm::Fields::SelectField)
+        expect(filter).to be_a(SearchForm::Fields::Primitives::SelectField)
       end
     end
   end

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchForm::Fields::SelectField, type: :component) do
+RSpec.describe(SearchForm::Fields::Primitives::SelectField, type: :component) do
   let(:name) { :category_id }
   let(:label) { "Category" }
   let(:collection) { [["Category A", 1], ["Category B", 2]] }

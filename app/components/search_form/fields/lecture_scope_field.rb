@@ -48,7 +48,7 @@ module SearchForm
         end
 
         def setup_multi_select_field
-          @multi_select_field = Fields::MultiSelectField.new(
+          @multi_select_field = Fields::Primitives::MultiSelectField.new(
             name: :lectures,
             label: I18n.t("basics.lectures"),
             help_text: I18n.t("search.filters.helpdesks.lecture_scope_filter"),
@@ -68,7 +68,7 @@ module SearchForm
         end
 
         def setup_radio_buttons
-          @all_radio = Fields::RadioButtonField.new(
+          @all_radio = Fields::Primitives::RadioButtonField.new(
             name: :lecture_option,
             value: "0",
             label: I18n.t("search.radio_buttons.lecture_scope_filter.all"),
@@ -80,7 +80,7 @@ module SearchForm
             stimulus: { radio_toggle: true, controls_select: false }
           ).with_form(form)
 
-          @subscribed_radio = Fields::RadioButtonField.new(
+          @subscribed_radio = Fields::Primitives::RadioButtonField.new(
             name: :lecture_option,
             value: "1",
             label: I18n.t("search.radio_buttons.lecture_scope_filter.subscribed"),
@@ -92,7 +92,7 @@ module SearchForm
             stimulus: { radio_toggle: true, controls_select: false }
           ).with_form(form)
 
-          @own_selection_radio = Fields::RadioButtonField.new(
+          @own_selection_radio = Fields::Primitives::RadioButtonField.new(
             name: :lecture_option,
             value: "2",
             label: I18n.t("search.radio_buttons.lecture_scope_filter.own_selection"),

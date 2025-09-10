@@ -82,7 +82,7 @@ RSpec.describe(SearchForm::SearchForm, type: :component) do
   describe "#add_submit_field" do
     subject(:search_form) { described_class.new(url: url, context: "test") }
     it "creates and adds a submit field" do
-      expect(SearchForm::Fields::SubmitField).to receive(:new)
+      expect(SearchForm::Fields::Primitives::SubmitField).to receive(:new)
       expect(search_form).to receive(:with_field)
       search_form.add_submit_field
     end

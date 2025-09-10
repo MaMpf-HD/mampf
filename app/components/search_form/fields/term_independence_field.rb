@@ -34,7 +34,7 @@ module SearchForm
       private
 
         def setup_fields
-          @checkbox_field = Fields::CheckboxField.new(
+          @checkbox_field = Fields::Primitives::CheckboxField.new(
             name: :term_independent,
             label: I18n.t("admin.course.term_independent"),
             help_text: I18n.t("search.filters.helpdesks.term_independence_filter"),

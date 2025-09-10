@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::Services::CheckboxManager, type: :component) do
   # The field that the manager serves. It needs to act like a MultiSelectField.
-  let(:field) { instance_double(SearchForm::Fields::MultiSelectField, "field") }
+  let(:field) { instance_double(SearchForm::Fields::Primitives::MultiSelectField, "field") }
 
   # The DataAttributesBuilder that gets instantiated inside the manager.
   let(:data_builder) { instance_double(SearchForm::Fields::Services::DataAttributesBuilder, "data_builder") }

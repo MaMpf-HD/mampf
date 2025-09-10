@@ -24,7 +24,7 @@ RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
       allow(css_manager).to receive(:field_css_classes).and_return("form-control")
       allow(field).to receive(:options).and_return({})
       allow(field).to receive(:show_help_text?).and_return(false)
-      allow(field).to receive(:is_a?).with(SearchForm::Fields::SubmitField).and_return(false)
+      allow(field).to receive(:is_a?).with(SearchForm::Fields::Primitives::SubmitField).and_return(false)
     end
 
     it "includes the id and class" do
@@ -52,7 +52,7 @@ RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
       end
 
       it "adds aria-label for a SubmitField" do
-        allow(field).to receive(:is_a?).with(SearchForm::Fields::SubmitField).and_return(true)
+        allow(field).to receive(:is_a?).with(SearchForm::Fields::Primitives::SubmitField).and_return(true)
         allow(field).to receive(:label).and_return("Search Button")
         expect(builder.field_html_options).to include({ "aria-label": "Search Button" })
       end

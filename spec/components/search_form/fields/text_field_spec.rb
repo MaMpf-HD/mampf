@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchForm::Fields::TextField, type: :component) do
+RSpec.describe(SearchForm::Fields::Primitives::TextField, type: :component) do
   let(:name) { :query }
   let(:label) { "Search" }
   let(:options) { {} }

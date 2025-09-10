@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchForm::Fields::SubmitField, type: :component) do
+RSpec.describe(SearchForm::Fields::Primitives::SubmitField, type: :component) do
   let(:label) { nil }
   let(:button_class) { nil }
   let(:container_class) { nil }

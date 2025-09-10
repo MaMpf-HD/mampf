@@ -1,18 +1,18 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by lecture type.
+    # Renders a multi-select field for filtering by terms.
     # This component is a simple specialization that uses composition to build
     # a multi-select field with an "All" toggle checkbox, pre-configured
-    # with a specific name, label, and a collection of lecture types sourced
-    # from the `Lecture.select_sorts` method.
-    class LectureTypeField < ViewComponent::Base
+    # with a specific name, label, and a collection of terms sourced
+    # from the `Term.select_terms` method.
+    class TermField < ViewComponent::Base
       attr_accessor :form_state
 
-      # Initializes the LectureTypeFilter.
+      # Initializes the TermField.
       #
       # This component is specialized and hard-codes its own options for the
-      # underlying `MultiSelectField`. The collection of lecture types is
-      # provided by the `Lecture.select_sorts` class method.
+      # underlying `MultiSelectField`. The collection of terms is
+      # provided by the `Term.select_terms` class method.
       #
       # @param form_state [SearchForm::FormState] The form state object.
       # @param options [Hash] Additional options passed to the multi-select field.
@@ -42,10 +42,10 @@ module SearchForm
 
         def setup_multi_select_field
           @multi_select_field = Fields::Primitives::MultiSelectField.new(
-            name: :types,
-            label: I18n.t("basics.type"),
-            help_text: I18n.t("search.filters.helpdesks.lecture_type_filter"),
-            collection: Lecture.select_sorts,
+            name: :term_ids,
+            label: I18n.t("basics.term"),
+            help_text: I18n.t("search.filters.helpdesks.term_filter"),
+            collection: Term.select_terms,
             form_state: form_state,
             skip_all_checkbox: true,
             **@options
@@ -62,7 +62,7 @@ module SearchForm
 
         def setup_checkboxes
           @all_checkbox = Fields::Primitives::CheckboxField.new(
-            name: generate_all_toggle_name(:types),
+            name: generate_all_toggle_name(:term_ids),
             label: I18n.t("basics.all"),
             checked: true,
             form_state: form_state,

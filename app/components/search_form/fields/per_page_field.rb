@@ -37,7 +37,7 @@ module SearchForm
       private
 
         def setup_fields
-          @select_field = Fields::SelectField.new(
+          @select_field = Fields::Primitives::SelectField.new(
             name: :per,
             label: I18n.t("basics.hits_per_page"),
             collection: @per_options,

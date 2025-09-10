@@ -47,7 +47,7 @@ module SearchForm
         end
 
         def setup_multi_select_field
-          @multi_select_field = Fields::MultiSelectField.new(
+          @multi_select_field = Fields::Primitives::MultiSelectField.new(
             name: :types,
             label: I18n.t("basics.types"), # Plural for media
             help_text: I18n.t("search.filters.helpdesks.medium_type_filter"),
@@ -69,7 +69,7 @@ module SearchForm
         end
 
         def setup_checkboxes
-          @all_checkbox = Fields::CheckboxField.new(
+          @all_checkbox = Fields::Primitives::CheckboxField.new(
             name: generate_all_toggle_name(:types),
             label: I18n.t("basics.all"),
             checked: true,

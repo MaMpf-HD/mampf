@@ -35,7 +35,7 @@ module SearchForm
       private
 
         def setup_fields
-          @select_field = Fields::SelectField.new(
+          @select_field = Fields::Primitives::SelectField.new(
             name: :access,
             label: I18n.t("basics.access_rights"),
             help_text: I18n.t("search.filters.helpdesks.medium_access_filter"),

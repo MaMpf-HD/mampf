@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchForm::Fields::MultiSelectField, type: :component) do
+RSpec.describe(SearchForm::Fields::Primitives::MultiSelectField, type: :component) do
   let(:name) { :tag_ids }
   let(:label) { "Tags" }
   let(:collection) { [["Tag 1", 1], ["Tag 2", 2]] }

@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(SearchForm::Fields::CheckboxField, type: :component) do
+RSpec.describe(SearchForm::Fields::Primitives::CheckboxField, type: :component) do
   let(:name) { :is_active }
   let(:label) { "Is Active" }
   let(:checked) { false }

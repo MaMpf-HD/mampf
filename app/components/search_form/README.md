@@ -98,7 +98,7 @@ Let's change the default label for the `FulltextFilter` everywhere it is used.
 ```ruby
 # filepath: app/components/search_form/filters/fulltext_filter.rb
 
-class FulltextFilter < Fields::TextField
+class FulltextFilter < Fields::Primitives::TextField
   def initialize(**)
     super(
       name: :fulltext,
@@ -208,7 +208,7 @@ In the `initialize` method, call `super` with the hard-coded options for your fi
 # app/components/search_form/filters/author_filter.rb
 module SearchForm
   module Filters
-    class AuthorFilter < Fields::TextField
+    class AuthorFilter < Fields::Primitives::TextField
       def initialize(**options)
         super(
           name: :teacher_name,
