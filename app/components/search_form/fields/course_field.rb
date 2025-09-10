@@ -10,8 +10,6 @@ module SearchForm
         super()
         @form_state = form_state
         @options = options
-        @show_edited_courses_button = false
-        @current_user = nil
       end
 
       delegate :form, to: :form_state
@@ -19,25 +17,6 @@ module SearchForm
       def with_form(form)
         form_state.with_form(form)
         self
-      end
-
-      # A configuration method to enable and render the "Edited Courses" button.
-      # It stores the user and sets a flag to show the button in the content area.
-      #
-      # @param current_user [User] The user whose edited courses should be pre-selected.
-      # @return [self] Returns the component instance to allow for method chaining.
-      def with_edited_courses_button(current_user)
-        @show_edited_courses_button = true
-        @current_user = current_user
-        self
-      end
-
-      # A helper method for the template to determine if the content area
-      # (containing the "Edited Courses" button) should be rendered.
-      #
-      # @return [Boolean] `true` if the button has been enabled.
-      def show_edited_courses_button?
-        @show_edited_courses_button
       end
 
       def before_render
@@ -86,21 +65,6 @@ module SearchForm
         def generate_all_toggle_name(name)
           base_name = name.to_s.delete_suffix("_ids").pluralize
           :"all_#{base_name}"
-        end
-
-        def render_edited_courses_button
-          return unless @current_user
-
-          tag.button(
-            I18n.t("buttons.edited_courses"),
-            id: "tags-edited-courses",
-            type: "button",
-            class: "btn btn-sm btn-outline-info",
-            data: {
-              courses: @current_user.edited_courses.map(&:id).to_json,
-              action: "click->search-form#fillCourses"
-            }
-          )
         end
     end
   end

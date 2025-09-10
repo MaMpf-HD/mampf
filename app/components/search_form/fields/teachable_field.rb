@@ -6,10 +6,9 @@ module SearchForm
     class TeachableField < ViewComponent::Base
       attr_accessor :form_state
 
-      def initialize(form_state:, with_inheritance_radios: false, **options)
+      def initialize(form_state:, **options)
         super()
         @form_state = form_state
-        @with_inheritance_radios = with_inheritance_radios
         @options = options
       end
 
@@ -17,15 +16,6 @@ module SearchForm
 
       def with_form(form)
         form_state.with_form(form)
-        self
-      end
-
-      # A configuration method to enable the rendering of the "with/without
-      # inheritance" radio button group.
-      #
-      # @return [self] Returns the component instance to allow for method chaining.
-      def with_inheritance_radios
-        @with_inheritance_radios = true
         self
       end
 
@@ -38,7 +28,7 @@ module SearchForm
         def setup_fields
           setup_multi_select_field
           setup_checkbox_group
-          setup_radio_group if @with_inheritance_radios
+          setup_radio_group
         end
 
         def setup_multi_select_field
@@ -64,11 +54,8 @@ module SearchForm
             toggle: true
           }
 
-          # Add radio group toggle if inheritance radios are enabled
-          if @with_inheritance_radios
-            stimulus_config[:toggle_radio_group] = "teachable_inheritance"
-            stimulus_config[:default_radio_value] = "1" # "with_inheritance" by default
-          end
+          stimulus_config[:toggle_radio_group] = "teachable_inheritance"
+          stimulus_config[:default_radio_value] = "1" # "with_inheritance" by default
 
           @all_checkbox = Fields::Primitives::CheckboxField.new(
             name: generate_all_toggle_name(:teachable_ids),

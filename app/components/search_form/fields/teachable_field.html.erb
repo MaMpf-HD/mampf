@@ -1,8 +1,6 @@
 <% @multi_select_field.with_content do %>
   <%= @checkbox_group_wrapper.wrap(self) %>
-  <% if @with_inheritance_radios %>
-    <%= @radio_group_wrapper.wrap(self) %>
-  <% end %>
+  <%= @radio_group_wrapper.wrap(self) %>
 <% end %>
 
 <%= render(@multi_select_field) %>

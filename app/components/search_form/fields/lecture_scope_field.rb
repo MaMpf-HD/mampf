@@ -10,7 +10,6 @@ module SearchForm
         super()
         @form_state = form_state
         @options = options
-        @show_radio_group = false
       end
 
       delegate :form, to: :form_state
@@ -18,22 +17,6 @@ module SearchForm
       def with_form(form)
         form_state.with_form(form)
         self
-      end
-
-      # A configuration method to enable the rendering of the radio button group.
-      #
-      # @return [self] Returns the component instance to allow for method chaining.
-      def with_lecture_options
-        @show_radio_group = true
-        self
-      end
-
-      # A helper method for the template to determine if the radio button group
-      # should be rendered.
-      #
-      # @return [Boolean] `true` if the radio group has been enabled via `with_lecture_options`.
-      def show_radio_group?
-        @show_radio_group
       end
 
       def before_render
@@ -44,7 +27,7 @@ module SearchForm
 
         def setup_fields
           setup_multi_select_field
-          setup_radio_group if @show_radio_group
+          setup_radio_group
         end
 
         def setup_multi_select_field
