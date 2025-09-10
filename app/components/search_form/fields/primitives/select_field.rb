@@ -27,7 +27,7 @@ module SearchForm
       #     selected: "active"
       #   )
       class SelectField < ViewComponent::Base
-        include FieldMixins
+        include PrimitivesMixins
 
         attr_reader :collection, :field_data
 

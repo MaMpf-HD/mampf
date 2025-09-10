@@ -23,7 +23,7 @@ module SearchForm
       #     stimulus: { toggle: true }
       #   )
       class CheckboxField < ViewComponent::Base
-        include FieldMixins
+        include PrimitivesMixins
 
         attr_reader :checked, :stimulus_config, :field_data
 

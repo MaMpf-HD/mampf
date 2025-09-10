@@ -28,7 +28,7 @@ module SearchForm
       #     selected: [1, 3]
       #   )
       class MultiSelectField < ViewComponent::Base
-        include FieldMixins
+        include PrimitivesMixins
 
         attr_reader :collection, :data_builder, :field_data
 

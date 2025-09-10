@@ -30,7 +30,7 @@ module SearchForm
       #     stimulus: { radio_toggle: true }
       #   )
       class RadioButtonField < ViewComponent::Base
-        include FieldMixins
+        include PrimitivesMixins
 
         attr_reader :value, :checked, :custom_container_class, :field_data
 
