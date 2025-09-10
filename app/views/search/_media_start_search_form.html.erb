@@ -1,13 +1,13 @@
 <%= render(SearchForm::SearchForm.new(url: search_media_path, context: "media")) do |c| %>
-  <% c.add_medium_type_filter(current_user: current_user, purpose: purpose) %>
+  <% c.add_medium_type_field(current_user: current_user, purpose: purpose) %>
 
-  <% c.add_tag_filter %>
+  <% c.add_tag_field %>
 
-  <% c.add_lecture_scope_filter_with_lecture_options %>
+  <% c.add_lecture_scope_field_with_lecture_options %>
 
-  <% c.add_fulltext_filter %>
+  <% c.add_fulltext_field %>
 
-  <% c.add_per_page_filter(
+  <% c.add_per_page_field(
        per_options: hits_per_page(false),
        default: default_hits_per_page(false)
      ) %>

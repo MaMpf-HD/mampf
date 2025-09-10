@@ -1,15 +1,15 @@
 <%= render(SearchForm::SearchForm.new(url: search_lectures_path, context: "lectures")) do |c| %>
-  <% c.add_lecture_type_filter %>
+  <% c.add_lecture_type_field %>
 
-  <% c.add_term_filter %>
+  <% c.add_term_field %>
 
-  <% c.add_program_filter %>
+  <% c.add_program_field %>
 
-  <% c.add_teacher_filter %>
+  <% c.add_teacher_field %>
 
-  <% c.add_fulltext_filter %>
+  <% c.add_fulltext_field %>
 
-  <% c.add_per_page_filter(
+  <% c.add_per_page_field(
        id: "hitsPerPage",
        per_options: hits_per_page(results_as_list),
        default: default_hits_per_page(results_as_list)

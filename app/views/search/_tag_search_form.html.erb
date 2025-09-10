@@ -1,8 +1,8 @@
 <%= render(SearchForm::SearchForm.new(url: search_tags_path, context: "tags")) do |c| %>
-  <% c.add_fulltext_filter %>
+  <% c.add_fulltext_field %>
 
-  <% c.add_course_filter_with_edited_courses(current_user) %>
+  <% c.add_course_field_with_edited_courses(current_user) %>
 
-  <% c.add_per_page_filter(id: "tags_per") %>
+  <% c.add_per_page_field(id: "tags_per") %>
   <% c.add_submit_field %>
 <% end %>

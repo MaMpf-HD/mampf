@@ -22,7 +22,7 @@
 #     <% c.add_tag_filter_with_operators %>
 #   <% end %>
 #
-# The component automatically generates filter methods based on the FilterRegistry
+# The component automatically generates filter methods based on the FiledRegistry
 # configuration, providing a consistent API for all filter types.
 module SearchForm
   class SearchForm < ViewComponent::Base
@@ -98,12 +98,12 @@ module SearchForm
     # Returns the filter registry instance for this form.
     #
     # The registry handles dynamic filter method generation and filter creation.
-    # @return [FilterRegistry] The registry instance
+    # @return [FiledRegistry] The registry instance
     def filter_registry
-      @filter_registry ||= Services::FilterRegistry.new(self)
+      @filter_registry ||= Services::FiledRegistry.new(self)
     end
 
     # Generate filter methods at class level
-    Services::FilterRegistry.generate_methods_for(self)
+    Services::FiledRegistry.generate_methods_for(self)
   end
 end
