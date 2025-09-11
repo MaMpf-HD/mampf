@@ -18,7 +18,7 @@ module SearchForm
     #     container_class: "col-md-6"
     #   )
     class TermIndependenceField < ViewComponent::Base
-      include Mixin::FieldSetupMixin
+      include Mixins::CompositeFieldMixin
 
       attr_reader :options
 

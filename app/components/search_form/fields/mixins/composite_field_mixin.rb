@@ -1,8 +1,8 @@
 module SearchForm
   module Fields
-    module Mixin
+    module Mixins
       # Very lightweight mixin for common field setup patterns
-      module FieldSetupMixin
+      module CompositeFieldMixin
         def self.included(base)
           base.attr_accessor(:form_state)
           base.delegate(:form, to: :form_state)

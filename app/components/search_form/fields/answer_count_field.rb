@@ -15,7 +15,7 @@ module SearchForm
     # @example Usage with import context (will not render)
     #   AnswerCountField.new(form_state: form_state, purpose: "import")
     class AnswerCountField < ViewComponent::Base
-      include Mixin::FieldSetupMixin
+      include Mixins::CompositeFieldMixin
 
       attr_reader :purpose, :options
 

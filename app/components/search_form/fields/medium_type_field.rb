@@ -27,7 +27,7 @@ module SearchForm
     #     purpose: "quiz"
     #   )
     class MediumTypeField < ViewComponent::Base
-      include Mixin::FieldSetupMixin
+      include Mixins::CompositeFieldMixin
 
       attr_reader :purpose, :current_user, :options
 

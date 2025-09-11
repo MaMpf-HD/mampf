@@ -17,7 +17,7 @@ module SearchForm
     #     container_class: "col-md-4"
     #   )
     class MediumAccessField < ViewComponent::Base
-      include Mixin::FieldSetupMixin
+      include Mixins::CompositeFieldMixin
 
       attr_reader :options
 

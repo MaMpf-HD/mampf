@@ -18,7 +18,7 @@ module SearchForm
     #     placeholder: "Enter search terms..."
     #   )
     class FulltextField < ViewComponent::Base
-      include Mixin::FieldSetupMixin
+      include Mixins::CompositeFieldMixin
 
       attr_reader :options
 

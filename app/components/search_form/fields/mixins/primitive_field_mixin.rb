@@ -1,6 +1,6 @@
 module SearchForm
   module Fields
-    module Primitives
+    module Mixins
       # A lightweight mixin module providing common functionality for form field components.
       # This module eliminates repetitive code across field classes without introducing
       # complex inheritance hierarchies or Rails concerns.
@@ -14,7 +14,7 @@ module SearchForm
       #
       # @example Including in a field class
       #   class TextField < ViewComponent::Base
-      #     include PrimitivesMixins
+      #     include PrimitiveFieldMixin
       #
       #     def initialize(name:, label:, form_state:, **options)
       #       super()
@@ -22,7 +22,7 @@ module SearchForm
       #                            default_classes: ["form-control"], **options)
       #     end
       #   end
-      module PrimitivesMixins
+      module PrimitiveFieldMixin
         # Rails hook that runs when the module is included.
         # Automatically sets up the common delegations for the including class.
         #

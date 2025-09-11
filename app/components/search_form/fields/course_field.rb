@@ -19,7 +19,7 @@ module SearchForm
     #     data: { custom_attribute: "value" }
     #   )
     class CourseField < ViewComponent::Base
-      include Mixin::FieldSetupMixin
+      include Mixins::CompositeFieldMixin
 
       attr_reader :options
 

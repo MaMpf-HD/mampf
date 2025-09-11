@@ -24,8 +24,7 @@ module SearchForm
       #     pattern: "[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
       #   )
       class TextField < ViewComponent::Base
-        include PrimitivesMixins
-
+        include Fields::Mixins::PrimitiveFieldMixin
         attr_reader :field_data
 
         # Initializes a new TextField component.

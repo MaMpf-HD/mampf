@@ -19,7 +19,7 @@ module SearchForm
     #     default: 15
     #   )
     class PerPageField < ViewComponent::Base
-      include Mixin::FieldSetupMixin
+      include Mixins::CompositeFieldMixin
 
       attr_reader :per_options, :default, :options
 
