@@ -21,9 +21,9 @@ module SearchForm
       #
       # @example Inline radio button with stimulus
       #   RadioButtonField.new(
-      #     name: :filter_type,
+      #     name: :field_type,
       #     value: "advanced",
-      #     label: "Advanced Filter",
+      #     label: "Advanced field",
       #     form_state: form_state,
       #     checked: true,
       #     inline: true,

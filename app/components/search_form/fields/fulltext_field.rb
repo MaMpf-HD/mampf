@@ -1,47 +1,50 @@
 module SearchForm
   module Fields
-    # Renders a text input field specifically for full-text search.
-    # This component uses composition to build a text field, pre-configured
-    # with a specific name, label, and help text suitable for a full-text
-    # search query.
+    # Renders a text input field specifically for full-text search queries.
+    # This component provides a pre-configured text field optimized for
+    # free-text search functionality with appropriate labels and help text.
+    #
+    # The field is designed for users to enter search terms that will be
+    # matched against content using full-text search capabilities. It uses
+    # standard text input styling and can accept additional HTML attributes
+    # for customization.
+    #
+    # @example Basic fulltext search field
+    #   FulltextField.new(form_state: form_state)
+    #
+    # @example Fulltext field with placeholder
+    #   FulltextField.new(
+    #     form_state: form_state,
+    #     placeholder: "Enter search terms..."
+    #   )
     class FulltextField < ViewComponent::Base
-      attr_accessor :form_state
+      include Mixin::FieldSetupMixin
 
-      # Initializes the FulltextField.
+      attr_reader :options
+
+      # Initializes a new FulltextField component.
       #
-      # This component is specialized and hard-codes its own options for the
-      # underlying `TextField`, such as `:name`, `:label`, and `:help_text`.
+      # This component is specialized for full-text search and uses predefined
+      # field name, label, and help text appropriate for search functionality.
       #
-      # @param form_state [SearchForm::FormState] The form state object.
-      # @param options [Hash] Additional options passed to the text field.
-      #   This can be used to pass options like `:placeholder` or `:container_class`.
+      # @param form_state [SearchForm::FormState] The form state object for context
+      # @param options [Hash] Additional options passed to the underlying text field,
+      #   such as placeholder, maxlength, or custom styling attributes
       def initialize(form_state:, **options)
         super()
         @form_state = form_state
         @options = options
       end
 
-      delegate :form, to: :form_state
-
-      def with_form(form)
-        form_state.with_form(form)
-        self
-      end
-
-      def before_render
-        setup_fields
-      end
-
       private
 
         def setup_fields
-          @text_field = Fields::Primitives::TextField.new(
+          @text_field = create_text_field(
             name: :fulltext,
             label: I18n.t("basics.fulltext"),
-            help_text: I18n.t("search.filters.helpdesks.fulltext_filter"),
-            form_state: form_state,
-            **@options
-          ).with_form(form)
+            help_text: I18n.t("search.fields.helpdesks.fulltext_field"),
+            **options
+          )
         end
     end
   end

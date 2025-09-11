@@ -9,10 +9,10 @@ module SearchForm
     # particularly useful when users want to quickly toggle between viewing
     # content from all courses or from a specific subset.
     #
-    # @example Basic course filter
+    # @example Basic course field
     #   CourseField.new(form_state: form_state)
     #
-    # @example Course filter with additional options
+    # @example Course field with additional options
     #   CourseField.new(
     #     form_state: form_state,
     #     disabled: false,
@@ -39,7 +39,7 @@ module SearchForm
           @multi_select_field = create_multi_select_field(
             name: :course_ids,
             label: I18n.t("basics.courses"),
-            help_text: I18n.t("search.filters.helpdesks.course_filter"),
+            help_text: I18n.t("search.fields.helpdesks.course_field"),
             collection: Course.order(:title).pluck(:title, :id),
             **options
           )

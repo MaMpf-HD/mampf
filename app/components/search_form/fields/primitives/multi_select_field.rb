@@ -4,7 +4,7 @@ module SearchForm
       # Renders a multi-select field, typically enhanced with a JavaScript library
       # like Selectize. This component focuses on rendering the select element itself,
       # with any associated controls (checkboxes, radio buttons) being handled by
-      # parent filter components through composition.
+      # parent field components through composition.
       #
       # The component provides extensive customization through options and supports
       # Stimulus.js data attributes for client-side behavior.

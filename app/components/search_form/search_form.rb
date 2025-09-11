@@ -1,13 +1,13 @@
 # SearchForm is a flexible ViewComponent for building search interfaces.
 #
 # This component provides a declarative API for creating search forms with various
-# filter types (text, select, multi-select, etc.) and handles form state management,
+# field types (text, select, multi-select, etc.) and handles form state management,
 # accessibility, and styling automatically.
 #
 # @example Basic usage
 #   <%= render(SearchForm::SearchForm.new(url: search_path)) do |c| %>
-#     <% c.add_fulltext_filter %>
-#     <% c.add_medium_type_filter %>
+#     <% c.add_fulltext_field %>
+#     <% c.add_medium_type_field %>
 #     <% c.add_submit_field %>
 #   <% end %>
 #
@@ -18,12 +18,12 @@
 #         scope: :media_search,
 #         method: :post
 #       )) do |c| %>
-#     <% c.add_teacher_filter(prompt: "Choose instructor") %>
-#     <% c.add_tag_filter_with_operators %>
+#     <% c.add_teacher_field(prompt: "Choose instructor") %>
+#     <% c.add_tag_field_with_operators %>
 #   <% end %>
 #
-# The component automatically generates filter methods based on the FieldRegistry
-# configuration, providing a consistent API for all filter types.
+# The component automatically generates field methods based on the FieldRegistry
+# configuration, providing a consistent API for all field types.
 module SearchForm
   class SearchForm < ViewComponent::Base
     # ViewComponent's `renders_many` allows passing a `lambda`, which we use here
@@ -36,7 +36,7 @@ module SearchForm
     # - The shared context for generating unique and accessible HTML IDs.
     #
     # By handling this automatically, we avoid having to manually pass the
-    # form_state to every `add_*_filter` or `with_field` call, simplifying the
+    # form_state to every `add_*_field` or `with_field` call, simplifying the
     # public API of the component.
     renders_many :fields, lambda { |component, &block|
       # Auto-inject form_state if needed
@@ -95,9 +95,9 @@ module SearchForm
                  ))
     end
 
-    # Returns the filter registry instance for this form.
+    # Returns the field registry instance for this form.
     #
-    # The registry handles dynamic filter method generation and filter creation.
+    # The registry handles dynamic field method generation and field creation.
     # @return [FieldRegistry] The registry instance
     def field_registry
       @field_registry ||= Services::FieldRegistry.new(self)

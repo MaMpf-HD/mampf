@@ -3,45 +3,49 @@ module SearchForm
     # Renders a checkbox for filtering by term independence.
     # This component uses composition to build a checkbox field, pre-configured
     # with a specific name, label, and a default unchecked state.
+    #
+    # The field allows users to filter for content that is independent of
+    # academic terms. When checked, it will show only term-independent content,
+    # which is useful for finding evergreen materials that don't belong to
+    # specific academic periods.
+    #
+    # @example Basic term independence field
+    #   TermIndependenceField.new(form_state: form_state)
+    #
+    # @example Term independence field with custom container
+    #   TermIndependenceField.new(
+    #     form_state: form_state,
+    #     container_class: "col-md-6"
+    #   )
     class TermIndependenceField < ViewComponent::Base
-      attr_accessor :form_state
+      include Mixin::FieldSetupMixin
 
-      # Initializes the TermIndependenceField.
+      attr_reader :options
+
+      # Initializes a new TermIndependenceField component.
       #
-      # This component is specialized and hard-codes its own options for the
-      # underlying `CheckboxField`.
+      # This component is specialized for term independence filtering and uses
+      # predefined field configuration without requiring additional setup.
       #
-      # @param form_state [SearchForm::FormState] The form state object.
-      # @param options [Hash] Additional options passed to the checkbox field.
-      #   This can be used to pass options like `:container_class`.
+      # @param form_state [SearchForm::FormState] The form state object for context
+      # @param options [Hash] Additional options passed to the underlying checkbox field,
+      #   such as container_class or other styling attributes
       def initialize(form_state:, **options)
         super()
         @form_state = form_state
         @options = options
       end
 
-      delegate :form, to: :form_state
-
-      def with_form(form)
-        form_state.with_form(form)
-        self
-      end
-
-      def before_render
-        setup_fields
-      end
-
       private
 
         def setup_fields
-          @checkbox_field = Fields::Primitives::CheckboxField.new(
+          @checkbox_field = create_checkbox_field(
             name: :term_independent,
             label: I18n.t("admin.course.term_independent"),
-            help_text: I18n.t("search.filters.helpdesks.term_independence_filter"),
+            help_text: I18n.t("search.fields.helpdesks.term_independence_field"),
             checked: false,
-            form_state: form_state,
-            **@options
-          ).with_form(form)
+            **options
+          )
         end
     end
   end

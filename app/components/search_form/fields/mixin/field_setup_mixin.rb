@@ -45,7 +45,7 @@ module SearchForm
 
           # Helper to create text fields
           def create_text_field(**config)
-            Fields::Primitive::TextField.new(
+            Fields::Primitives::TextField.new(
               form_state: form_state,
               **config
             ).with_form(form)
@@ -54,6 +54,22 @@ module SearchForm
           # Helper to create select fields
           def create_select_field(**config)
             Fields::Primitives::SelectField.new(
+              form_state: form_state,
+              **config
+            ).with_form(form)
+          end
+
+          # Helper to create radio button fields
+          def create_radio_button_field(**config)
+            Fields::Primitives::RadioButtonField.new(
+              form_state: form_state,
+              **config
+            ).with_form(form)
+          end
+
+          # Helper to create checkbox fields
+          def create_checkbox_field(**config)
+            Fields::Primitives::CheckboxField.new(
               form_state: form_state,
               **config
             ).with_form(form)

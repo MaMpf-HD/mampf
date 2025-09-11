@@ -1,80 +1,56 @@
 module SearchForm
   module Fields
     # Renders a multi-select field for filtering by lecture type.
-    # This component is a simple specialization that uses composition to build
-    # a multi-select field with an "All" toggle checkbox, pre-configured
-    # with a specific name, label, and a collection of lecture types sourced
-    # from the `Lecture.select_sorts` method.
+    # This component uses composition to build a multi-select field with an
+    # "All" toggle checkbox that controls the selection state of all lecture
+    # type options.
+    #
+    # The field displays lecture types sourced from `Lecture.select_sorts` and
+    # provides a convenient checkbox to select or deselect all types at once.
+    # This is particularly useful for quickly switching between viewing content
+    # from all lecture types or from a specific subset.
+    #
+    # @example Basic lecture type field
+    #   LectureTypeField.new(form_state: form_state)
+    #
+    # @example Lecture type field with additional options
+    #   LectureTypeField.new(
+    #     form_state: form_state,
+    #     disabled: false,
+    #     data: { custom_attribute: "value" }
+    #   )
     class LectureTypeField < ViewComponent::Base
-      attr_accessor :form_state
+      include Mixin::FieldSetupMixin
 
-      # Initializes the LectureTypeFilter.
+      attr_reader :options
+
+      # Initializes a new LectureTypeField component.
       #
-      # This component is specialized and hard-codes its own options for the
-      # underlying `MultiSelectField`. The collection of lecture types is
-      # provided by the `Lecture.select_sorts` class method.
-      #
-      # @param form_state [SearchForm::FormState] The form state object.
-      # @param options [Hash] Additional options passed to the multi-select field.
+      # @param form_state [SearchForm::FormState] The form state object for context
+      # @param options [Hash] Additional options passed to the underlying multi-select field
       def initialize(form_state:, **options)
         super()
         @form_state = form_state
         @options = options
       end
 
-      delegate :form, to: :form_state
-
-      def with_form(form)
-        form_state.with_form(form)
-        self
-      end
-
-      def before_render
-        setup_fields
-      end
-
       private
 
         def setup_fields
-          setup_multi_select_field
-          setup_checkbox_group
-        end
-
-        def setup_multi_select_field
-          @multi_select_field = Fields::Primitives::MultiSelectField.new(
+          @multi_select_field = create_multi_select_field(
             name: :types,
             label: I18n.t("basics.type"),
-            help_text: I18n.t("search.filters.helpdesks.lecture_type_filter"),
+            help_text: I18n.t("search.fields.helpdesks.lecture_type_field"),
             collection: Lecture.select_sorts,
-            form_state: form_state,
-            **@options
-          ).with_form(form)
-        end
+            **options
+          )
 
-        def setup_checkbox_group
-          setup_checkboxes
+          @all_checkbox = create_all_checkbox(for_field_name: :types)
+
           @checkbox_group_wrapper = Fields::Utilities::CheckboxGroupWrapper.new(
             parent_field: @multi_select_field,
             checkboxes: [@all_checkbox]
           )
-        end
-
-        def setup_checkboxes
-          @all_checkbox = Fields::Primitives::CheckboxField.new(
-            name: generate_all_toggle_name(:types),
-            label: I18n.t("basics.all"),
-            checked: true,
-            form_state: form_state,
-            container_class: "form-check mb-2",
-            stimulus: {
-              toggle: true
-            }
-          ).with_form(form)
-        end
-
-        def generate_all_toggle_name(name)
-          base_name = name.to_s.delete_suffix("_ids").pluralize
-          :"all_#{base_name}"
         end
     end
   end
