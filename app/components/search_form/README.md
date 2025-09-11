@@ -83,6 +83,12 @@ end
 class MyMultiField < ViewComponent::Base
   include Mixins::CompositeFieldMixin
 
+  def initialize(form_state:, **options)
+    super()
+    @form_state = form_state
+    @options = options
+  end
+
   private
 
     def setup_fields
