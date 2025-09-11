@@ -54,10 +54,7 @@ module SearchForm
         end
 
         # Submit buttons only need basic delegations (no help_text, content, etc.)
-        delegate :name, :label, :form, :container_class, to: :field_data
-
-        # Form state interface for SearchForm auto-injection
-        delegate :form_state, :form_state=, to: :field_data
+        delegate :name, :label, :form, :container_class, :form_state, :form_state=, to: :field_data
 
         def with_form(form)
           field_data.form_state.with_form(form)

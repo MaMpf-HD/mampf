@@ -31,8 +31,7 @@ module SearchForm
         def self.included(base)
           super
           base.delegate(:name, :label, :help_text, :form, :container_class, :show_help_text?,
-                        :show_content?, :content, :options, to: :field_data)
-          base.delegate(:form_state, to: :field_data)
+                        :show_content?, :content, :options, :form_state, to: :field_data)
         end
 
         # Initializes the FieldData object with standard configuration.

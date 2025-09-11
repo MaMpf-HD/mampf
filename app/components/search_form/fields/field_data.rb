@@ -1,7 +1,6 @@
 module SearchForm
   module Fields
-    # A data object that encapsulates field attributes and provides access to field services.
-    # This class serves as the composition root for field components, holding all field-specific
+    # Serves as the composition root for field components, holding all field-specific
     # data and providing access to CSS management and HTML building services.
     #
     # FieldData replaces inheritance-based field architecture with a composition pattern,

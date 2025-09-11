@@ -57,9 +57,6 @@ module SearchForm
             default_classes: ["selectize"], # Selectize CSS class for JavaScript enhancement
             **processed_options
           )
-
-          # Initialize service objects for data attribute building
-          @data_builder = Services::DataAttributesBuilder.new(field_data)
         end
 
         # Additional delegations specific to select fields
@@ -72,7 +69,8 @@ module SearchForm
         # @param additional_options [Hash] Extra options to merge into the final hash
         # @return [Hash] Complete HTML options hash for the select element
         def field_html_options(additional_options = {})
-          html.field_html_options(additional_options.merge(data: data_builder.select_data_attributes))
+          data_attrs = build_select_data_attributes
+          html.field_html_options(additional_options.merge(data: data_attrs))
         end
 
         # Delegates to the HTML builder for Rails select helper options.
@@ -96,6 +94,16 @@ module SearchForm
               required: true,    # Required by default
               prompt: true       # Show prompt by default
             )
+          end
+
+          # Builds the data attributes for the `<select>` element of a `MultiSelectField`.
+          # It merges a default `search_form_target: "select"` with any custom `data`
+          # attributes provided in the field's options.
+          #
+          # @return [Hash] The final data attributes hash for the select element.
+          def build_select_data_attributes
+            base_data = field_data.options[:data] || {}
+            base_data.merge(search_form_target: "select")
           end
       end
     end
