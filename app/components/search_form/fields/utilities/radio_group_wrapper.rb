@@ -11,13 +11,17 @@ module SearchForm
 
         # Initializes the wrapper.
         #
-        # @param name [Symbol, String] The name for the radio button group, used to generate a default legend.
+        # @param name [Symbol, String] The name for the radio button group, used
+        # to generate a default legend.
         # @param parent_field [Field] The parent field component that this group is associated with.
         #   Used to automatically resolve the `aria-labelledby` attribute.
-        # @param radio_buttons [Array<RadioButtonField>] A list of radio button component instances to be wrapped.
+        # @param radio_buttons [Array<RadioButtonField>] A list of radio button
+        # component instances to be wrapped.
         # @param legend [String] The text for the fieldset's legend. If nil, a default is generated.
-        # @param legend_class [String] The CSS class for the legend element. Defaults to "visually-hidden".
+        # @param legend_class [String] The CSS class for the legend element.
+        # Defaults to "visually-hidden".
         # @param options [Hash] A hash of additional HTML attributes to be applied to the fieldset.
+        # rubocop:disable Metrics/ParameterLists
         def initialize(name: nil, parent_field: nil, radio_buttons: [], legend: nil,
                        legend_class: "visually-hidden", **options)
           @name = name
@@ -27,6 +31,7 @@ module SearchForm
           @legend_class = legend_class
           @options = options
         end
+        # rubocop:enable Metrics/ParameterLists
 
         # Sets the radio buttons to be rendered by the wrapper.
         #

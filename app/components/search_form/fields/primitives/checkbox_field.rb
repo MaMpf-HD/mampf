@@ -34,6 +34,7 @@ module SearchForm
         # @param checked [Boolean] Whether the checkbox should be initially checked
         # @param stimulus [Hash] Stimulus.js configuration for dynamic behavior
         # @param options [Hash] Additional HTML attributes and configuration
+        # rubocop:disable Metrics/ParameterLists
         def initialize(name:, label:, form_state:, checked: false, stimulus: {}, **)
           super()
           @checked = checked
@@ -47,6 +48,7 @@ module SearchForm
             **
           )
         end
+        # rubocop:enable Metrics/ParameterLists
 
         # Generates the unique HTML ID for the checkbox input element.
         #
