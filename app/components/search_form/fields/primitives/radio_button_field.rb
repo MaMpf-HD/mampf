@@ -47,6 +47,10 @@ module SearchForm
         #   - disabled: Whether this radio button is disabled
         #   - stimulus: Hash of Stimulus.js configuration options
         #   - data: Hash of additional data attributes
+        #
+        # This initializer intentionally accepts several parameters to provide a clear and
+        # explicit API for configuring a radio button component.
+        # rubocop:disable Metrics/ParameterLists
         def initialize(name:, value:, label:, form_state:, checked: false, help_text: nil,
                        container_class: nil, **)
           super()
@@ -63,6 +67,7 @@ module SearchForm
             **
           )
         end
+        # rubocop:enable Metrics/ParameterLists
 
         # Additional delegations specific to radio buttons
         delegate :html, to: :field_data
