@@ -64,7 +64,8 @@ RSpec.describe(SearchForm::Fields::Mixins::PrimitiveFieldMixin, type: :component
     it "defines a singleton method for default_field_classes on the FieldData instance" do
       expect(field_data_double).to receive(:define_singleton_method).with(:default_field_classes)
       field_instance.initialize_field_data(name: :test, label: "Test",
-                                           form_state: form_state_double, default_classes: ["form-control"])
+                                           form_state: form_state_double,
+                                           default_classes: ["form-control"])
     end
 
     it "calls extract_and_update_field_classes! on the FieldData instance" do

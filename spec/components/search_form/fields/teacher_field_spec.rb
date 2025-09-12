@@ -31,7 +31,8 @@ RSpec.describe(SearchForm::Fields::TeacherField, type: :component) do
       # Spy on the factory methods and wrapper to verify they are called correctly.
       allow(field).to receive(:create_multi_select_field).and_return(multi_select_double)
       allow(field).to receive(:create_all_checkbox).and_return(checkbox_double)
-      allow(SearchForm::Fields::Utilities::CheckboxGroupWrapper).to receive(:new).and_return(wrapper_double)
+      allow(SearchForm::Fields::Utilities::CheckboxGroupWrapper).to receive(:new)
+        .and_return(wrapper_double)
 
       # Stub the class method that provides the collection data.
       allow(User).to receive(:select_teachers).and_return(teachers_collection)
@@ -66,7 +67,8 @@ RSpec.describe(SearchForm::Fields::TeacherField, type: :component) do
 
     it "passes through additional options to the multi-select field" do
       field_with_options = described_class.new(**minimal_args, disabled: true)
-      allow(field_with_options).to receive(:create_multi_select_field).and_return(multi_select_double)
+      allow(field_with_options).to receive(:create_multi_select_field)
+        .and_return(multi_select_double)
       allow(field_with_options).to receive(:form_state).and_return(form_state_double)
 
       expect(field_with_options).to receive(:create_multi_select_field)

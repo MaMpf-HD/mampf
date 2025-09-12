@@ -35,8 +35,10 @@ RSpec.describe(SearchForm::Fields::TagField, type: :component) do
       allow(field).to receive(:create_all_checkbox).and_return(all_checkbox_double)
       allow(field).to receive(:create_radio_button_field).and_return(or_radio_double,
                                                                      and_radio_double)
-      allow(SearchForm::Fields::Utilities::CheckboxGroupWrapper).to receive(:new).and_return(checkbox_wrapper_double)
-      allow(SearchForm::Fields::Utilities::RadioGroupWrapper).to receive(:new).and_return(radio_wrapper_double)
+      allow(SearchForm::Fields::Utilities::CheckboxGroupWrapper).to receive(:new)
+        .and_return(checkbox_wrapper_double)
+      allow(SearchForm::Fields::Utilities::RadioGroupWrapper).to receive(:new)
+        .and_return(radio_wrapper_double)
     end
 
     it "calls create_multi_select_field with the correct arguments" do
@@ -84,7 +86,8 @@ RSpec.describe(SearchForm::Fields::TagField, type: :component) do
 
     it "passes through additional options to the multi-select field" do
       field_with_options = described_class.new(**minimal_args, required: true)
-      allow(field_with_options).to receive(:create_multi_select_field).and_return(multi_select_double)
+      allow(field_with_options).to receive(:create_multi_select_field)
+        .and_return(multi_select_double)
       allow(field_with_options).to receive(:form_state).and_return(form_state_double)
 
       expect(field_with_options).to receive(:create_multi_select_field)

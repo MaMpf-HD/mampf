@@ -80,8 +80,9 @@ RSpec.describe(SearchForm::Fields::Utilities::GroupWrapperShared, type: :compone
     context "when a collection is provided without a block" do
       let(:collection) { [double("Item1"), double("Item2")] }
       let(:rendered_items) { ["<span>Item 1</span>", "<span>Item 2</span>"] }
+      # rubocop:disable Rails/OutputSafety
       let(:joined_items) { rendered_items.join.html_safe }
-
+      # rubocop:enable Rails/OutputSafety
       before do
         # Stub the individual render calls
         allow(view_context).to receive(:render).with(collection[0]).and_return(rendered_items[0])

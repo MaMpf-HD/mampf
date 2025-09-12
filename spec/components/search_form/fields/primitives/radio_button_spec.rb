@@ -109,7 +109,8 @@ RSpec.describe(SearchForm::Fields::Primitives::RadioButtonField, type: :componen
 
     it "includes aria-describedby when help text is shown" do
       allow(field).to receive(:show_help_text?).and_return(true)
-      expect(field.radio_button_html_options).to include("aria-describedby": "form_test_radio_option1_help")
+      expect(field.radio_button_html_options)
+        .to include("aria-describedby": "form_test_radio_option1_help")
     end
 
     it "includes data attributes when they are present" do

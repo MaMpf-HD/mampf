@@ -33,10 +33,13 @@ RSpec.describe(SearchForm::Fields::TeachableField, type: :component) do
       # Spy on the factory methods and wrappers to verify they are called correctly.
       allow(field).to receive(:create_multi_select_field).and_return(multi_select_double)
       allow(field).to receive(:create_all_checkbox).and_return(all_checkbox_double)
-      allow(field).to receive(:create_radio_button_field).and_return(with_inheritance_radio_double,
-                                                                     without_inheritance_radio_double)
-      allow(SearchForm::Fields::Utilities::CheckboxGroupWrapper).to receive(:new).and_return(checkbox_wrapper_double)
-      allow(SearchForm::Fields::Utilities::RadioGroupWrapper).to receive(:new).and_return(radio_wrapper_double)
+      allow(field).to receive(:create_radio_button_field)
+        .and_return(with_inheritance_radio_double,
+                    without_inheritance_radio_double)
+      allow(SearchForm::Fields::Utilities::CheckboxGroupWrapper).to receive(:new)
+        .and_return(checkbox_wrapper_double)
+      allow(SearchForm::Fields::Utilities::RadioGroupWrapper).to receive(:new)
+        .and_return(radio_wrapper_double)
 
       # Stub the private method that hits the DB to keep this test focused on composition.
       allow(field).to receive(:grouped_teachable_list).and_return([["Course A",

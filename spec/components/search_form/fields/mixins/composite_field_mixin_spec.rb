@@ -106,7 +106,8 @@ RSpec.describe(SearchForm::Fields::Mixins::CompositeFieldMixin, type: :component
       let(:config) { { for_field_name: :course_ids, stimulus: { toggle: true } } }
 
       before do
-        allow(SearchForm::Fields::Primitives::CheckboxField).to receive(:new).and_return(checkbox_double)
+        allow(SearchForm::Fields::Primitives::CheckboxField).to receive(:new)
+          .and_return(checkbox_double)
         allow(checkbox_double).to receive(:with_form).and_return(checkbox_double)
       end
 
@@ -119,7 +120,8 @@ RSpec.describe(SearchForm::Fields::Mixins::CompositeFieldMixin, type: :component
           container_class: "form-check mb-2",
           stimulus: { toggle: true } # Merged from extra_config
         }
-        expect(SearchForm::Fields::Primitives::CheckboxField).to receive(:new).with(**expected_config)
+        expect(SearchForm::Fields::Primitives::CheckboxField).to receive(:new)
+          .with(**expected_config)
         field_instance.send(:create_all_checkbox, **config)
       end
 
