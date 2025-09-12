@@ -36,20 +36,20 @@ module SearchForm
         # @param form_state [FormState] The form state object for context
         # @param options [Hash] Additional HTML attributes and configuration
         def initialize(label: nil, button_class: "btn btn-primary",
-                       container_class: "row mb-3", inner_class: "col-12 text-center",
+                       inner_class: "col-12 text-center",
                        form_state: nil, **options)
           super()
           @button_class = button_class
           @inner_class = inner_class
 
-          processed_options = options.merge(container_class: container_class)
+          options[:container_class] ||= "row mb-3"
 
           initialize_field_data(
             name: :submit,
             label: label || I18n.t("basics.search"),
             form_state: form_state,
             default_classes: [],
-            **processed_options
+            **options
           )
         end
 
