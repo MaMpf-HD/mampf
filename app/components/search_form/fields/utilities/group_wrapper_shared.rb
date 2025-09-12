@@ -1,18 +1,23 @@
 module SearchForm
   module Fields
     module Utilities
-      # Shared functionality for group wrapper classes
+      # Provides shared functionality for wrapper components that group other form
+      # fields, such as `CheckboxGroupWrapper` and `RadioGroupWrapper`. It handles
+      # rendering collections of child components and resolving ARIA attributes.
       module GroupWrapperShared
         attr_reader :parent_field, :options
 
-        # Allow the wrapper to be used with <%= %> in templates
+        # Provides an alias for #render, allowing the wrapper to be used directly
+        # with `<%= %>` syntax in ERB templates.
         def wrap(view_context, &)
           render(view_context, &)
         end
 
         private
 
-          # Resolve aria-labelledby from explicit value or parent field
+          # Resolves the ID to be used for `aria-labelledby`.
+          # It prioritizes an explicitly passed `:aria_labelledby` option. If not
+          # present, it falls back to generating an ID based on the parent field's name.
           def resolved_aria_labelledby
             return @options[:aria_labelledby] if @options[:aria_labelledby]
             return @parent_field.form_state.element_id_for(@parent_field.name) if @parent_field
@@ -20,7 +25,8 @@ module SearchForm
             nil
           end
 
-          # Auto-render a collection of components if no block is provided
+          # Renders a collection of components, either from a passed block or from
+          # a collection of component instances.
           #
           # SECURITY: This method uses `safe_join` to concatenate rendered components.
           # The output of `view_context.render(item)` is already an HTML-safe string
