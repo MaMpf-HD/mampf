@@ -1,16 +1,16 @@
 require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::Services::CssManager, type: :component) do
-  # The field that the manager serves.
-  let(:field) { instance_double(SearchForm::Fields::Field, "field") }
+  # The FieldData object that the manager serves.
+  let(:field_data) { instance_double(SearchForm::Fields::Services::FieldData, "field_data") }
 
   # The manager instance under test.
-  subject(:manager) { described_class.new(field) }
+  subject(:manager) { described_class.new(field_data) }
 
   describe "#extract_field_classes" do
-    context "when the field has default classes" do
+    context "when the field_data has default classes" do
       before do
-        allow(field).to receive(:default_field_classes).and_return(["default-class"])
+        allow(field_data).to receive(:default_field_classes).and_return(["default-class"])
       end
 
       it "returns only the default classes when no user class is provided" do
@@ -24,9 +24,9 @@ RSpec.describe(SearchForm::Fields::Services::CssManager, type: :component) do
       end
     end
 
-    context "when the field has no default classes" do
+    context "when the field_data has no default classes" do
       before do
-        allow(field).to receive(:default_field_classes).and_return([])
+        allow(field_data).to receive(:default_field_classes).and_return([])
       end
 
       it "returns an empty string when no classes are provided" do
@@ -42,7 +42,7 @@ RSpec.describe(SearchForm::Fields::Services::CssManager, type: :component) do
 
     context "when the user-provided class is nil" do
       it "returns only the default classes" do
-        allow(field).to receive(:default_field_classes).and_return(["default-class"])
+        allow(field_data).to receive(:default_field_classes).and_return(["default-class"])
         options = { class: nil }
         expect(manager.extract_field_classes(options)).to eq("default-class")
       end
@@ -51,10 +51,10 @@ RSpec.describe(SearchForm::Fields::Services::CssManager, type: :component) do
 
   describe "#field_css_classes" do
     before do
-      # This method relies on both `field_class` and `options` from the field.
-      allow(field).to receive(:field_class).and_return(field_class_value)
-      allow(field).to receive(:options).and_return(options_value)
-      allow(field).to receive(:default_field_classes).and_return(default_classes_value)
+      # This method relies on `field_class`, `options`, and `default_field_classes` from field_data.
+      allow(field_data).to receive(:field_class).and_return(field_class_value)
+      allow(field_data).to receive(:options).and_return(options_value)
+      allow(field_data).to receive(:default_field_classes).and_return(default_classes_value)
     end
 
     let(:field_class_value) { "base-class" }

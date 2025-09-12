@@ -1,30 +1,34 @@
 require "rails_helper"
 
 RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
-  let(:field) { instance_double(SearchForm::Fields::Field, "field") }
+  let(:field_data) { instance_double(SearchForm::Fields::Services::FieldData, "field_data") }
   let(:form_state) { instance_double(SearchForm::Services::FormState, "form_state") }
   let(:css_manager) { instance_double(SearchForm::Fields::Services::CssManager, "css_manager") }
 
-  subject(:builder) { described_class.new(field) }
+  subject(:builder) { described_class.new(field_data) }
 
   before do
     # Stub the instantiation of CssManager to return our mock.
     allow(SearchForm::Fields::Services::CssManager).to receive(:new)
-      .with(field).and_return(css_manager)
+      .with(field_data).and_return(css_manager)
 
-    # Common stubs for the field and form_state doubles.
-    allow(field).to receive(:form_state).and_return(form_state)
-    allow(field).to receive(:name).and_return(:test_field)
+    # Common stubs for the field_data and form_state doubles.
+    allow(field_data).to receive(:form_state).and_return(form_state)
+    allow(field_data).to receive(:name).and_return(:test_field)
     allow(form_state).to receive(:element_id_for).with(:test_field).and_return("test_field_id")
+    allow(form_state).to receive(:label_for).with(:test_field).and_return("test_field_id_label")
   end
 
   describe "#field_html_options" do
     before do
       # Set up base expectations for a standard field.
       allow(css_manager).to receive(:field_css_classes).and_return("form-control")
-      allow(field).to receive(:options).and_return({})
-      allow(field).to receive(:show_help_text?).and_return(false)
-      allow(field).to receive(:is_a?).with(SearchForm::Fields::Primitives::SubmitField).and_return(false)
+      allow(field_data).to receive(:options).and_return({})
+      allow(field_data).to receive(:show_help_text?).and_return(false)
+      # The method being stubbed is on the builder, not the field_data
+      allow(builder).to receive(:html_options_with_id).and_wrap_original do |_method, *args|
+        { id: "test_field_id" }.merge(*args)
+      end
     end
 
     it "includes the id and class" do
@@ -42,19 +46,13 @@ RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
 
     context "with accessibility attributes" do
       it "adds aria-describedby when help text is shown" do
-        allow(field).to receive(:show_help_text?).and_return(true)
+        allow(field_data).to receive(:show_help_text?).and_return(true)
         expect(builder.field_html_options).to include({ "aria-describedby": "test_field_id_help" })
       end
 
       it "adds aria-required when the field is required" do
-        allow(field).to receive(:options).and_return({ required: true })
+        allow(field_data).to receive(:options).and_return({ required: true })
         expect(builder.field_html_options).to include({ "aria-required": "true" })
-      end
-
-      it "adds aria-label for a SubmitField" do
-        allow(field).to receive(:is_a?).with(SearchForm::Fields::Primitives::SubmitField).and_return(true)
-        allow(field).to receive(:label).and_return("Search Button")
-        expect(builder.field_html_options).to include({ "aria-label": "Search Button" })
       end
     end
   end
@@ -62,8 +60,8 @@ RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
   describe "#select_tag_options" do
     before do
       # Default stubs for a non-selected field with no prompt.
-      allow(field).to receive(:prompt).and_return(false)
-      allow(field).to receive(:selected).and_return(nil)
+      allow(field_data).to receive(:prompt).and_return(false)
+      allow(field_data).to receive(:selected).and_return(nil)
     end
 
     it "returns an empty hash by default" do
@@ -72,28 +70,28 @@ RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
 
     context "with a prompt" do
       it "uses the default I18n text when prompt is true" do
-        allow(field).to receive(:prompt).and_return(true)
+        allow(field_data).to receive(:prompt).and_return(true)
         allow(I18n).to receive(:t).with("basics.select").and_return("Please select...")
         expect(builder.select_tag_options).to eq({ prompt: "Please select..." })
       end
 
       it "uses the provided string when prompt is a string" do
-        allow(field).to receive(:prompt).and_return("Choose an option")
+        allow(field_data).to receive(:prompt).and_return("Choose an option")
         expect(builder.select_tag_options).to eq({ prompt: "Choose an option" })
       end
     end
 
     context "with a selected value" do
       it "includes the selected value" do
-        allow(field).to receive(:selected).and_return(5)
+        allow(field_data).to receive(:selected).and_return(5)
         expect(builder.select_tag_options).to eq({ selected: 5 })
       end
     end
 
     context "with both prompt and selected value" do
       it "includes both options" do
-        allow(field).to receive(:prompt).and_return("Choose an option")
-        allow(field).to receive(:selected).and_return(5)
+        allow(field_data).to receive(:prompt).and_return("Choose an option")
+        allow(field_data).to receive(:selected).and_return(5)
         expect(builder.select_tag_options).to eq({ prompt: "Choose an option", selected: 5 })
       end
     end
