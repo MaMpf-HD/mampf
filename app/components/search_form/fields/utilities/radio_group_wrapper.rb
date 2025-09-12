@@ -21,6 +21,12 @@ module SearchForm
           self
         end
 
+        # Renders the fieldset and its contents.
+        #
+        # SECURITY: This method uses `safe_join` to concatenate the legend and the
+        # rendered radio buttons. Both `content_tag` and `auto_render_collection`
+        # return HTML-safe strings. The security of this method therefore relies
+        # on the security of the individual radio button components being rendered.
         def render(view_context = nil, &block)
           context = view_context || self
           context.content_tag(:fieldset, fieldset_options) do

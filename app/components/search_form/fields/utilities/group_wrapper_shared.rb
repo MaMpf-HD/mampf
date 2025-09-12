@@ -21,6 +21,13 @@ module SearchForm
           end
 
           # Auto-render a collection of components if no block is provided
+          #
+          # SECURITY: This method uses `safe_join` to concatenate rendered components.
+          # The output of `view_context.render(item)` is already an HTML-safe string
+          # (`ActiveSupport::SafeBuffer`). `safe_join` trusts these pre-marked strings.
+          # Therefore, the security of this method relies on the individual components
+          # (`item` in the collection) being secure and not misusing `raw()` or
+          # `.html_safe` on untrusted user input.
           def auto_render_collection(view_context, collection, wrapper_class: nil, &block)
             content = []
 

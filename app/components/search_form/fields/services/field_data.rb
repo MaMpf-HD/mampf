@@ -47,7 +47,8 @@ module SearchForm
         # @param form_state [FormState] The form state object providing form context
         # @param help_text [String, nil] Optional help text for user guidance
         # @param options [Hash] HTML attributes and field configuration options
-        # @param multiple [Boolean, nil] Whether the field allows multiple selections (select fields)
+        # @param multiple [Boolean, nil] Whether the field allows multiple selections
+        # (select fields)
         # @param disabled [Boolean, nil] Whether the field is disabled
         # @param required [Boolean, nil] Whether the field is required for form submission
         # @param prompt [String, Boolean, nil] Prompt text or boolean for select fields
