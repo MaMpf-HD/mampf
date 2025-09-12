@@ -10,7 +10,7 @@ module SearchForm
       class CssManager
         # Initializes a new CssManager.
         #
-        # @param field_data [SearchForm::Fields::FieldData] The field data object
+        # @param field_data [SearchForm::Fields::Services::FieldData] The field data object
         # that this manager serves.
         def initialize(field_data)
           @field_data = field_data

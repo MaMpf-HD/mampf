@@ -8,7 +8,7 @@ module SearchForm
       class HtmlBuilder
         # Initializes a new HtmlBuilder.
         #
-        # @param field_data [SearchForm::Fields::FieldData] The field data object
+        # @param field_data [SearchForm::Fields::Services::FieldData] The field data object
         # that this builder serves.
         def initialize(field_data)
           @field_data = field_data

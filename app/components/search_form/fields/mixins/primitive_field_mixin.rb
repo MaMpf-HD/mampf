@@ -43,9 +43,8 @@ module SearchForm
         # @param form_state [FormState] The form state object for context and ID generation
         # @param default_classes [Array<String>] CSS classes specific to this field type
         # @param options [Hash] Additional options passed through to FieldData
-        # @return [void]
         def initialize_field_data(name:, label:, form_state:, default_classes: [], **options)
-          @field_data = FieldData.new(
+          @field_data = Services::FieldData.new(
             name: name,
             label: label,
             help_text: options[:help_text],
