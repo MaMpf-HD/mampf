@@ -53,6 +53,11 @@ module SearchForm
         # @param required [Boolean, nil] Whether the field is required for form submission
         # @param prompt [String, Boolean, nil] Prompt text or boolean for select fields
         # @param selected [Object, nil] Pre-selected value(s) for the field
+        #
+        # This method intentionally accepts many parameters because this class acts as a
+        # Parameter Object. Each keyword argument represents a distinct, core configuration
+        # option for a field, and keeping them explicit improves API discoverability.
+        # rubocop:disable Metrics/ParameterLists
         def initialize(name:, label:, form_state:, help_text: nil, options: {},
                        multiple: nil, disabled: nil, required: nil, prompt: nil, selected: nil)
           @name = name
@@ -75,6 +80,7 @@ module SearchForm
           # Initialize service objects for CSS and HTML management
           initialize_services
         end
+        # rubocop:enable Metrics/ParameterLists
 
         # Delegates form builder access to the form state
         delegate :form, to: :form_state
