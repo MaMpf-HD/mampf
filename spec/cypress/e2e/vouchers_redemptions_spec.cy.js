@@ -246,9 +246,8 @@ describe("User & Redemption deletion", () => {
     });
 
     cy.then(() => {
-      helpers.visitEditPage(this, "tutorial").then(() => {
-        helpers.verifyNoTutorialsButUserEligibleAsTutor(this, false);
-      });
+      helpers.visitEditPage(this, "tutorial");
+      helpers.verifyNoTutorialsButUserEligibleAsTutor(this, false);
     });
   });
 });

@@ -229,7 +229,8 @@ export function visitEditPage(context, type) {
   if (type !== "talk") {
     url += "?tab=people";
   }
-  return cy.visit(url);
+  cy.visit(url);
+  return cy.getBySelector("lecture-area").should("be.visible");
 }
 
 export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
