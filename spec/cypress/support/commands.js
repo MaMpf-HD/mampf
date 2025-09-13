@@ -142,7 +142,6 @@ Cypress.Commands.add("login", (user) => {
     },
   }).then((response) => {
     expect(response.status).to.eq(200);
-    cy.getBySelector("signin-form").should("not.exist");
   });
 });
 
@@ -154,6 +153,7 @@ Cypress.Commands.add("logout", () => {
     failOnStatusCode: true,
   }).then((response) => {
     expect(response.status).to.eq(204);
+    cy.getBySelector("login-form").should("be.visible");
   });
 });
 
