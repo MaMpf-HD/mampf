@@ -142,7 +142,16 @@ Cypress.Commands.add("login", (user) => {
     },
   }).then((response) => {
     expect(response.status).to.eq(200);
-    cy.getBySelector("login-form").should("not.exist");
+
+    if (!response.body) {
+      throw new Error("Login failed, no response body. See commands.js");
+    }
+
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(response.body, "text/html");
+    if (dom.querySelector("[data-cy=login-form]")) {
+      throw new Error("Login failed, login form still present. See commands.js");
+    }
   });
 });
 
