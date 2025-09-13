@@ -4,7 +4,6 @@ class LecturesController < ApplicationController
   before_action :set_lecture, except: [:new, :create, :search]
   before_action :set_lecture_cookie, only: [:show, :organizational,
                                             :show_announcements]
-  before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
   authorize_resource except: [:new, :create, :search]
   before_action :check_for_consent
   before_action :check_for_subscribe, only: [:show]
@@ -133,11 +132,6 @@ class LecturesController < ApplicationController
     end
 
     @lecture.update(lecture_params)
-    if structure_params.present?
-      structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys
-                                      .map(&:to_i)
-      @lecture.update(structure_ids: structure_ids)
-    end
     @lecture.touch
     @lecture.forum&.update(name: @lecture.forum_title)
 
@@ -258,34 +252,6 @@ class LecturesController < ApplicationController
     render json: user_data
   end
 
-  def show_structures
-    render layout: turbo_frame_request? ? "turbo_frame" : "application"
-  end
-
-  def edit_structures
-    render layout: "application"
-  end
-
-  def search_examples
-    if @lecture.structure_ids.any?
-      response = Clients::ErdbeereClient.get("search")
-      if response.status != 200
-        @erdbeere_error = true
-        render layout: "application"
-        return
-      end
-      @form = JSON.parse(response.body)["embedded_html"]
-      # rubocop:disable Style/StringConcatenation
-      @form.gsub!("token_placeholder",
-                  '<input type="hidden" name="authenticity_token" ' \
-                  'value="' + form_authenticity_token + '">')
-      # rubocop:enable Style/StringConcatenation
-    else
-      @form = I18n.t("erdbeere.no_structures")
-    end
-    render layout: "application"
-  end
-
   def close_comments
     @lecture.close_comments!(current_user)
     # disable annotation button
@@ -397,10 +363,6 @@ class LecturesController < ApplicationController
       params.expect(lecture: allowed_params)
     end
 
-    def structure_params
-      params.permit(structures: {})[:structures]
-    end
-
     def import_toc_params
       params.permit(:imported_lecture_id, :import_sections, :import_tags)
     end
@@ -466,21 +428,6 @@ class LecturesController < ApplicationController
       @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
       @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
       @terms = Term.select_terms
-    end
-
-    def set_erdbeere_data
-      @structure_ids = @lecture.structure_ids
-      response = Clients::ErdbeereClient.get("structures")
-      if response.status != 200
-        @erdbeere_error = true
-        return
-      end
-      response_hash = JSON.parse(response.body)
-      @all_structures = response_hash["data"]
-      @structures = @all_structures.select do |s|
-        s["id"].to_i.in?(@structure_ids)
-      end
-      @properties = response_hash["included"]
     end
 
     def search_params

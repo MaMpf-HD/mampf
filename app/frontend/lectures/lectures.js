@@ -1,23 +1,3 @@
-// Load example data (erdbeere) for structures
-function loadExampleStructures() {
-  const structuresBody = $("#erdbeereStructuresBody");
-  const lectureId = structuresBody.data("lecture");
-  if (lectureId === undefined) {
-    return;
-  }
-  const loading = structuresBody.data("loading");
-  structuresBody.empty().append(loading);
-  $.ajax(Routes.edit_structures_path(lectureId), {
-    type: "GET",
-    dataType: "script",
-    complete: () => {
-      $("#erdbeere-structures-cancel").on("click", () => {
-        loadExampleStructures();
-      });
-    },
-  });
-};
-
 function disableExceptOrganizational() {
   $("#lecture-organizational-warning").show();
   $(".fa-edit").hide();
@@ -329,30 +309,6 @@ $(document).on("turbo:load", function () {
   match_normal.addListener(function (result) {
     if (result.matches) {
       largeDisplay();
-    }
-  });
-
-  let structures;
-  loadExampleStructures();
-
-  const $lectureStructures = $("#lectureStructuresInfo");
-  if ($lectureStructures.length > 0) {
-    structures = $lectureStructures.data("structures");
-    for (const s of structures) {
-      $("#structure-item-" + s).show();
-    }
-  }
-
-  $("#switchGlobalStructureSearch").on("click", function () {
-    if ($(this).is(":checked")) {
-      $('[id^="structure-item-"]').show();
-    }
-    else {
-      $('[id^="structure-item-"]').hide();
-      structures = $lectureStructures.data("structures");
-      for (const s of structures) {
-        $("#structure-item-" + s).show();
-      }
     }
   });
 
