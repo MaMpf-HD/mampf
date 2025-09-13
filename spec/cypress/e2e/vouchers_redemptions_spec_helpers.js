@@ -227,7 +227,7 @@ export function verifyAlreadyTeacherMessage(context) {
 export function visitEditPage(context, type) {
   let url = `/lectures/${context.lecture.id}/edit`;
   if (type !== "talk") {
-    url += "#people";
+    url += "?tab=people";
   }
   cy.visit(url);
 }
