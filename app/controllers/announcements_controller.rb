@@ -1,4 +1,3 @@
-# AnnouncementsController
 class AnnouncementsController < ApplicationController
   layout "administration"
   before_action :set_announcement, except: [:new, :create, :index]
@@ -10,10 +9,10 @@ class AnnouncementsController < ApplicationController
 
   def index
     authorize! :index, Announcement.new
-    @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
-                                                         .order(:created_at)
-                                                         .reverse)
-                             .page(params[:page]).per(10)
+    announcements_scope = Announcement.where(lecture: nil)
+                                      .order(:created_at)
+                                      .reverse_order
+    @pagy, @announcements = pagy(announcements_scope, limit: 10)
   end
 
   def new

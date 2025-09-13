@@ -140,8 +140,8 @@ class TagsController < ApplicationController
       options: { default_per_page: 10 }
     )
 
+    @pagy = search_result.pagy
     @tags = search_result.results
-    @total = search_result.total_count
 
     respond_to do |format|
       format.js

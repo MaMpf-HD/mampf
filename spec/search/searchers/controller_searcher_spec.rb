@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe(Search::Searchers::ControllerSearcher) do
-  # --- Test Doubles & Setup ---
   let(:controller) { instance_spy(ApplicationController, "Controller") }
   let(:user) { create(:user) }
   let(:model_class) { class_spy(Course, "ModelClass") }
@@ -9,23 +8,20 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   let(:options) { { default_per_page: 15 } }
   let(:cookies) { { "some_cookie" => "some_value" } }
 
-  # The hash returned by the controller's #search_params method
   let(:permitted_search_params) { { fulltext: "Ruby", per: 15 } }
-  # The top-level params hash, containing :page
   let(:top_level_params) { ActionController::Parameters.new(page: 2) }
-  # The final merged params we expect to be passed to the configurator
   let(:expected_merged_params) { { fulltext: "Ruby", per: 15, page: 2 } }
 
-  # The Configuration object returned by the configurator
   let(:configurator_result) do
     instance_double(Search::Configurators::Configuration)
   end
-  # The SearchResult object returned by the paginated searcher
+
+  let(:pagy_object) { instance_double(Pagy) }
   let(:paginated_search_result) do
     instance_double(
       Search::Searchers::SearchResult,
       results: [double("Result1")],
-      total_count: 42
+      pagy: pagy_object
     )
   end
 
@@ -40,7 +36,6 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
   end
 
   before do
-    # Stub controller methods
     allow(controller).to receive(:current_user).and_return(user)
     allow(controller).to receive(:params).and_return(top_level_params)
     allow(controller).to receive(:send).with(:search_params).and_return(permitted_search_params)
@@ -80,9 +75,11 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
 
     context "when the configurator returns nil" do
       let(:empty_scope) { double("EmptyScope") }
+      let(:empty_pagy) { instance_double(Pagy) }
       before do
         allow(configurator_class).to receive(:configure).and_return(nil)
         allow(model_class).to receive(:none).and_return(empty_scope)
+        allow(Pagy).to receive(:new).and_return(empty_pagy)
       end
 
       it "does not call the PaginatedSearcher" do
@@ -94,7 +91,7 @@ RSpec.describe(Search::Searchers::ControllerSearcher) do
         result = search
         expect(result).to be_a(Search::Searchers::SearchResult)
         expect(result.results).to eq(empty_scope)
-        expect(result.total_count).to eq(0)
+        expect(result.pagy).to eq(empty_pagy)
       end
     end
 
