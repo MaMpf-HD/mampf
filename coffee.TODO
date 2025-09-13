@@ -44,10 +44,6 @@ D0 ./app/views/submissions/error.coffee (⚠️ haven't checked manually)
 D2 ./app/views/quizzes/new.coffee
 2 ./app/views/quizzes/update_default_target.coffee (same as delete_edge.coffee)
 
-1 ./app/views/erdbeere/cancel_edit_tags.coffee
-1 ./app/views/erdbeere/edit_tags.coffee
-1 ./app/views/erdbeere/display_info.coffee (⚠️ could not find where it is used)
-
 # Tutorials as tutor
 2 ./app/views/tutorials/cancel_edit.coffee
 3 ./app/views/tutorials/validate_certificate.coffee
@@ -93,14 +89,12 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 
 5 ./app/views/answers/destroy.coffee
 5 ./app/views/answers/new.coffee
-5 ./app/views/erdbeere/fill_realizations_select.coffee
 5 ./app/views/media/destination_warning.coffee
 5 ./app/views/submissions/enter_code.coffee
 5 ./app/views/tutorials/edit.coffee
 5 ./app/views/tutorials/new.coffee
 5 ./app/views/watchlists/new.coffee
 
-6 ./app/assets/javascripts/erdbeere.coffee
 6 ./app/views/announcements/create.coffee
 6 ./app/views/announcements/new.coffee
 6 ./app/views/courses/search.coffee
@@ -125,7 +119,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 8 ./app/views/submissions/leave.coffee
 8 ./app/views/terms/new.coffee
 
-9 ./app/views/erdbeere/find_tags.coffee
 9 ./app/views/lectures/import_media.coffee
 9 ./app/views/profile/unstar_lecture.coffee
 9 ./app/views/quizzes/update.coffee
@@ -195,7 +188,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 32 ./app/views/media/fill_medium_preview.coffee
 32 ./app/views/profile/update.coffee
 32 ./app/views/questions/reassign.coffee
-33 ./app/views/lectures/edit_structures.coffee
 33 ./app/views/media/fill_quizzable_area.coffee
 33 ./app/views/media/publish.coffee
 33 ./app/views/questions/cancel_solution_edit.coffee

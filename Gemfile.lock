@@ -316,9 +316,6 @@ GEM
       activerecord
       kaminari-core (= 1.2.2)
     kaminari-core (1.2.2)
-    kaminari-i18n (0.5.0)
-      kaminari
-      rails
     katex (0.10.0)
       execjs (~> 2.8)
     kramdown (2.5.1)
@@ -394,6 +391,7 @@ GEM
       sanitize
     options (2.3.2)
     orm_adapter (0.5.0)
+    pagy (9.4.0)
     pairing_heap (3.1.0)
     parallel (1.27.0)
     parser (3.3.8.0)
@@ -719,14 +717,13 @@ DEPENDENCIES
   image_processing (~> 1.13)
   jbuilder (~> 2.12)
   js-routes (~> 2.3)
-  kaminari (~> 1.2)
-  kaminari-i18n (~> 0.5)
   kramdown-parser-gfm (~> 1.1)
   listen (~> 3.9)
   marcel (~> 1.0)
   mini_magick (~> 4.13)
   mobility (~> 1.2)
   net-smtp (~> 0.5)
+  pagy (~> 9.4)
   pdf-reader (~> 2.12)
   pg (~> 1.5)
   pg_search (~> 2.3)

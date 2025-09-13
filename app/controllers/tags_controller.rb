@@ -32,7 +32,6 @@ class TagsController < ApplicationController
                              description: @tag.notions.pluck(:title) +
                                             @tag.aliases.pluck(:title))
                       .where.not(pdf_destination: [nil, ""])
-    @realizations = @tag.realizations
     render layout: "application_no_sidebar"
   end
 
@@ -78,7 +77,6 @@ class TagsController < ApplicationController
 
     @tag.update(tag_params)
     if @tag.valid?
-      @tag.update(realizations: realization_params)
       # make sure the tag is touched even if only some relations have been
       # modified (important for caching)
       @tag.touch
@@ -142,8 +140,8 @@ class TagsController < ApplicationController
       options: { default_per_page: 10 }
     )
 
+    @pagy = search_result.pagy
     @tags = search_result.results
-    @total = search_result.total_count
 
     respond_to do |format|
       format.js
@@ -290,12 +288,6 @@ class TagsController < ApplicationController
                           lesson_ids: [],
                           talk_ids: [],
                           media_ids: []])
-    end
-
-    def realization_params
-      (params.expect(tag: [realizations: []])[:realizations] - [""])
-        .map { |r| r.split("-") }
-        .map { |x| [x.first, x.second.to_i] }
     end
 
     def check_permissions

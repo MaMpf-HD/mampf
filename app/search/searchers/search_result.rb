@@ -1,16 +1,18 @@
 module Search
   module Searchers
     # Provides a consistent data object for the results of a paginated search.
+    # Holds the pagy metadata object and the paginated collection of records
+    # for the current page.
     class SearchResult
-      attr_reader :results, :total_count
+      attr_reader :pagy, :results
 
       # Initializes a new SearchResult object.
       #
-      # @param results [Kaminari::PaginatableArray] The paginated results.
-      # @param total_count [Integer] The total number of unpaginated results.
-      def initialize(results:, total_count:)
+      # @param pagy [Pagy] The Pagy metadata object, containing pagination info.
+      # @param results [ActiveRecord::Relation] The paginated collection of results.
+      def initialize(pagy:, results:)
+        @pagy = pagy
         @results = results
-        @total_count = total_count
       end
     end
   end

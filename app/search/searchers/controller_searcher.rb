@@ -8,8 +8,8 @@
 # Example usage in a controller:
 #
 #   search_result = Search::Searchers::ControllerSearcher.search(...)
+#   @pagy = search_result.pagy
 #   @courses = search_result.results
-#   @total = search_result.total_count
 #
 # The calling controller is expected to implement a private `search_params` method
 # that uses `params.permit` to permit the search form parameters.
@@ -23,8 +23,8 @@ module Search
       #   - default_per_page [Integer]
       #   - params_method_name [Symbol] The method to call on the controller to get
       #     the permitted search parameters. Defaults to :search_params.
-      # @return [Search::Searchers::SearchResult] An object containing the paginated
-      #   results and the total count.
+      # @return [Search::Searchers::SearchResult] An object containing the pagy
+      #   metadata object and the paginated collection of results
       def self.search(controller:, model_class:, configurator_class:, options: {})
         default_per_page = options.fetch(:default_per_page, 10)
         params_method_name = options.fetch(:params_method_name, :search_params)
@@ -36,8 +36,9 @@ module Search
         )
 
         unless config
-          return Searchers::SearchResult.new(results: model_class.none,
-                                             total_count: 0)
+          empty_pagy = Pagy.new(count: 0, page: 1)
+          return Searchers::SearchResult.new(pagy: empty_pagy,
+                                             results: model_class.none)
         end
 
         PaginatedSearcher.search(

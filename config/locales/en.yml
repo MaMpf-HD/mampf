@@ -45,10 +45,6 @@ en:
       singular: 'Quiz Remark'
       plural: 'Quiz Remarks'
       short: 'Rem'
-    erdbeere:
-      singular: 'Example'
-      plural: 'Examples'
-      short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
     comments: 'Comments'
@@ -1112,10 +1108,6 @@ en:
           successive questions in more complex quizzes (e.g. in guided proofs)
           </li>
           <li>
-          Example: Example from ErDBeere-Database
-          (currently only prototype)
-          </li>
-          <li>
           Miscellaneous: Here you can put anything that does not fit into
           the other categories.
           </li>
@@ -1243,8 +1235,7 @@ en:
           to MaMpf.
         search_type: >
           Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
-          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i>,
-          <i>example</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
+          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
         search_editors: >
           Here you can select the editors of the medium (in the sense of
           <i>
@@ -3334,23 +3325,6 @@ en:
     date: 'Date'
     count: 'Count'
     plays: 'Plays'
-  erdbeere:
-    show_structures: 'Structures, properties and examples'
-    select_structures: Select Structures
-    structure_index: 'Structure Index'
-    info:
-      structures:
-        Here you can select which structures from the ErDBeere database
-        are displayed for this lecture.
-    structures: 'Structures'
-    properties: 'Properties'
-    edit_realizations: 'Edit Realizations'
-    no_realizations: 'There are no realizations.'
-    search_examples: 'Search for Examples'
-    no_structures: >
-      There are no structures associated to this lecture.
-    error: >
-      An error has occurred. Please try again later.
   basics:
     division: 'Division'
     error: Error
@@ -3487,7 +3461,6 @@ en:
     optional: 'optional'
     statistics: 'Statistics'
     loading_data: 'Loading data...'
-    realizations: 'Realizations'
     comments: 'Comments'
     comment: 'Comment'
     comments_for: 'Comments for %{subject}'

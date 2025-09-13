@@ -1,4 +1,3 @@
-# WatchlistsController
 class WatchlistsController < ApplicationController
   before_action :set_watchlist, only: [:update, :destroy, :show, :edit,
                                        :update_order, :change_visibility]
@@ -26,7 +25,7 @@ class WatchlistsController < ApplicationController
     @watchlists = current_user.watchlists
     return if @watchlist.watchlist_entries.empty?
 
-    @watchlist_entries = paginated_results
+    @pagy, @watchlist_entries = paginated_results
     @media = @watchlist_entries.pluck(:medium_id)
   end
 
@@ -114,22 +113,19 @@ class WatchlistsController < ApplicationController
     end
 
     def paginated_results
+      entries = filter_results
       if params[:all]
-        total_count = filter_results.count
-        # without the total count parameter, kaminari will consider only the
-        # first 25 entries
-        return Kaminari.paginate_array(filter_results,
-                                       total_count: total_count + 1)
+        pagy = Pagy.new(count: entries.count, limit: entries.count, page: 1)
+        [pagy, entries]
+      else
+        per = (params[:per] || 10).to_i
+        pagy(entries, limit: per)
       end
-      Kaminari.paginate_array(filter_results).page(params[:page])
-              .per(params[:per])
     end
 
     def filter_results
-      filter_results = @watchlist.watchlist_entries
-      return filter_results unless params[:reverse]
-
-      filter_results.reverse
+      results = @watchlist.watchlist_entries
+      params[:reverse] ? results.reverse_order : results
     end
 
     def update_params

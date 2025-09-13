@@ -84,10 +84,6 @@ class Lecture < ApplicationRecord
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
 
-  # a lecture has many structure_ids, referring to the ids of structures
-  # in the erdbeere database
-  serialize :structure_ids, type: Array, coder: YAML
-
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
   validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
@@ -348,10 +344,6 @@ class Lecture < ApplicationRecord
 
   def quiz?(user)
     project?("quiz", user) || imported_any?("quiz")
-  end
-
-  def erdbeere?(user)
-    project?("erdbeere", user) || imported_any?("erdbeere")
   end
 
   def repetition?(user)
@@ -897,7 +889,6 @@ class Lecture < ApplicationRecord
         "repetition" => ["Repetition"],
         "quiz" => ["Quiz"],
         "exercise" => ["Exercise"],
-        "erdbeere" => ["Erdbeere"],
         "script" => ["Script"],
         "miscellaneous" => ["Miscellaneous"] }
     end

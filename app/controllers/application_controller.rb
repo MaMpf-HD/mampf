@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   append_view_path "app/frontend/"
 
   include Turbo::Redirection
+  include Pagy::Backend
 
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you
@@ -98,9 +99,14 @@ class ApplicationController < ActionController::Base
     def set_locale
       I18n.locale = current_user.try(:locale) || locale_param ||
                     cookie_locale_param || I18n.default_locale
+      set_pagy_locale
       return if user_signed_in?
 
       cookies[:locale] = I18n.locale
+    end
+
+    def set_pagy_locale
+      @pagy_locale = I18n.locale.to_s
     end
 
     def locale_param
