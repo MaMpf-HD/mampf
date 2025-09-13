@@ -111,8 +111,7 @@ export function verifyClaimsContainUserName(context, claimType, claimIds, totalC
 }
 
 export function logoutAndLoginAsTeacher(context) {
-  cy.logout();
-  cy.then(() => {
+  cy.logout().then(() => {
     cy.login(context.teacher);
   });
 }
