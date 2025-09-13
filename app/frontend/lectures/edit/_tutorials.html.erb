@@ -3,6 +3,7 @@
   <%= t('basics.tutorials') %>
 </h3>
 
+<% if current_user.can_update_personell?(lecture) %>
   <div class="mb-3">
     <div class="col-12 text-center">
       <%= link_to t('admin.tutorial.new'),
@@ -42,3 +43,7 @@
                   locals: { tutorial: t } %>
     <% end %>
   </div>
+<% else %>
+    <%= t('admin.lecture.no_access_to_users_html',
+          project_mail: mail_to(DefaultSetting::PROJECT_EMAIL, nil)) %>
+<% end %>
