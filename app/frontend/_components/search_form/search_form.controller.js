@@ -4,10 +4,6 @@ export default class extends Controller {
   static targets = ["select", "allToggle", "radioToggle"];
 
   connect() {
-    this.initializeState();
-  }
-
-  initializeState() {
     // Set initial state for all toggles
     this.allToggleTargets.forEach((toggle) => {
       if (toggle.checked) {
