@@ -240,12 +240,9 @@ describe("User & Redemption deletion", () => {
     cy.intercept("POST", "/users*").as("deleteUserRequest");
     cy.getBySelector("delete-account-confirm-btn").click();
     cy.wait("@deleteUserRequest");
+    cy.getBySelector("login-form").should("be.visible");
 
-    cy.then(() => {
-      helpers.logoutAndLoginAsTeacher(this);
-    });
-
-    cy.then(() => {
+    cy.login(this.teacher).then(() => {
       helpers.visitEditPage(this, "tutorial");
       helpers.verifyNoTutorialsButUserEligibleAsTutor(this, false);
     });

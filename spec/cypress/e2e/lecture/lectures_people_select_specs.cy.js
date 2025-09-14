@@ -64,7 +64,7 @@ describe("Lecture people edit page: teacher & editor", () => {
       FactoryBot.create("lecture", { teacher_id: this.teacher.id }).as("lecture");
     });
     cy.then(() => {
-      cy.wrap(`/lectures/${this.lecture.id}/edit#people`).as("lecturePeopleUrl");
+      cy.wrap(`/lectures/${this.lecture.id}/edit?tab=people`).as("lecturePeopleUrl");
     });
   });
 

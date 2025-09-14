@@ -12,7 +12,7 @@ function createLectureScenario(context, type = "lecture") {
   });
 
   cy.then(() => {
-    cy.visit(`/lectures/${context.lecture.id}/edit#people`);
+    cy.visit(`/lectures/${context.lecture.id}/edit?tab=people`);
     cy.getBySelector("vouchers-header").should("be.visible");
   });
 
