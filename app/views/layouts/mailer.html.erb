@@ -8,7 +8,9 @@
   <body>
     <div class='container text-center'>
       <%= email_image_tag("/images/mampf-logo.png",
-                          class: 'img-fluid mb-2 pt-4 pb-3') %>
+                          size: "96x96",
+                          alt: "MaMpf Logo",
+                          class: "img-fluid mb-2 pt-4 pb-3") %>
       <div class="jumbotron">
 
         <%= yield %>
