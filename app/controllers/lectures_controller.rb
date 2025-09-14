@@ -177,28 +177,28 @@ class LecturesController < ApplicationController
       forum.save
       @lecture.update(forum_id: forum.id) if forum.valid?
     end
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # lock forum for this lecture
   def lock_forum
     @lecture.forum.update(locked: true) if @lecture.forum?
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # unlock forum for this lecture
   def unlock_forum
     @lecture.forum.update(locked: false) if @lecture.forum?
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # destroy forum for this lecture
   def destroy_forum
     @lecture.forum.destroy if @lecture.forum?
     @lecture.update(forum_id: nil)
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # show all announcements for this lecture
@@ -261,13 +261,13 @@ class LecturesController < ApplicationController
       lesson.media.update(annotations_status: -1)
     end
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   def open_comments
     @lecture.open_comments!(current_user)
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   def search

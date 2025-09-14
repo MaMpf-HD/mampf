@@ -69,7 +69,7 @@ module TalksHelper
                     }
                   })
     else
-      seminar_edit_people_link = "#{edit_lecture_path(talk.lecture)}#people"
+      seminar_edit_people_link = "#{edit_lecture_path(talk.lecture)}?tab=people"
 
       form.select(:speaker_ids, speakers_preselection(talk), {},
                   class: "selectize",
