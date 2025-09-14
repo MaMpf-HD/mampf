@@ -12,7 +12,7 @@ install-dependencies:
 rspec:
     #!/usr/bin/env bash
     cd {{justfile_directory()}}/docker/test
-    docker compose run --entrypoint="" mampf sh -c "bundle install && RAILS_ENV=test bundle exec rspec --format documentation"
+    docker compose run --entrypoint="" --rm mampf sh -c "bundle install && RAILS_ENV=test bundle exec rspec --format documentation"
 
 # Starts the interactive Cypress test runner UI
 cypress:

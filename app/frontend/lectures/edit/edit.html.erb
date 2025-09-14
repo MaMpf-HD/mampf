@@ -2,7 +2,7 @@
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
 <% cache @lecture do %>
-  <div id="lecture-area">
+  <div id="lecture-area" data-cy="lecture-area">
     <!-- Header -->
     <div class="container small-width">
       <%= render partial: "lectures/edit/header",

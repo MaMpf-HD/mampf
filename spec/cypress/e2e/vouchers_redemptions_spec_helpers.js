@@ -111,8 +111,7 @@ export function verifyClaimsContainUserName(context, claimType, claimIds, totalC
 }
 
 export function logoutAndLoginAsTeacher(context) {
-  cy.logout();
-  cy.then(() => {
+  cy.logout().then(() => {
     cy.login(context.teacher);
   });
 }
@@ -227,9 +226,10 @@ export function verifyAlreadyTeacherMessage(context) {
 export function visitEditPage(context, type) {
   let url = `/lectures/${context.lecture.id}/edit`;
   if (type !== "talk") {
-    url += "#people";
+    url += "?tab=people";
   }
   cy.visit(url);
+  return cy.getBySelector("lecture-area").should("be.visible");
 }
 
 export function verifyNoTalksYetButUserEligibleAsSpeaker(context) {
