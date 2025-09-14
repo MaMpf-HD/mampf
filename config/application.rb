@@ -10,14 +10,15 @@ module Mampf
   class Application < Rails::Application
     config.load_defaults(8.0)
 
-    # Autoload more paths
-    # https://stackoverflow.com/a/4794775/
-    additional_paths = Rails.root.glob("app/models/**/") + Rails.root.glob("app/frontend/**/")
-    namespace_paths = Rails.root.glob("app/models/vignettes/**/")
-    config.autoload_paths += additional_paths
-    config.eager_load_paths += additional_paths
-    config.autoload_paths -= namespace_paths
-    config.eager_load_paths -= namespace_paths
+    # General Zeitwerk Autoloading
+    backend_paths = Rails.root.glob("app/models/**/")
+    backend_paths -= Rails.root.glob("app/models/vignettes/**/")
+    frontend_paths = Rails.root.glob("app/frontend/**/")
+    frontend_paths -= Rails.root.glob("app/frontend/_components/**/")
+    frontend_paths += [Rails.root.join("app/frontend/_components/")]
+    load_paths = backend_paths + frontend_paths
+    config.autoload_paths += load_paths
+    config.eager_load_paths += load_paths
 
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])
