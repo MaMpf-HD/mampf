@@ -49,7 +49,7 @@ module SearchForm
           @multi_select_field = create_multi_select_field(
             name: :tag_ids,
             label: I18n.t("basics.tags"),
-            help_text: I18n.t("search.fields.helpdesks.tag_field"),
+            help_text: I18n.t("search.helpdesks.tag_field"),
             collection: [],
             data: ajax_data_attributes,
             **options

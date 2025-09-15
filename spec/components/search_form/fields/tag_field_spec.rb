@@ -45,7 +45,7 @@ RSpec.describe(SearchForm::Fields::TagField, type: :component) do
       expected_args = {
         name: :tag_ids,
         label: I18n.t("basics.tags"),
-        help_text: I18n.t("search.fields.helpdesks.tag_field"),
+        help_text: I18n.t("search.helpdesks.tag_field"),
         collection: [],
         data: field.send(:ajax_data_attributes)
       }

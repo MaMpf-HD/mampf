@@ -39,7 +39,7 @@ module SearchForm
           @multi_select_field = create_multi_select_field(
             name: :teacher_ids,
             label: I18n.t("basics.teachers"),
-            help_text: I18n.t("search.fields.helpdesks.teacher_field"),
+            help_text: I18n.t("search.helpdesks.teacher_field"),
             collection: User.select_teachers,
             **options
           )

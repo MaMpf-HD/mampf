@@ -42,7 +42,7 @@ RSpec.describe(SearchForm::Fields::LectureTypeField, type: :component) do
       expected_args = {
         name: :types,
         label: I18n.t("basics.type"),
-        help_text: I18n.t("search.fields.helpdesks.lecture_type_field"),
+        help_text: I18n.t("search.helpdesks.lecture_type_field"),
         collection: lecture_types_collection
       }
 

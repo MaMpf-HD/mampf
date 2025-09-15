@@ -40,7 +40,7 @@ module SearchForm
           @multi_select_field = create_multi_select_field(
             name: :types,
             label: I18n.t("basics.type"),
-            help_text: I18n.t("search.fields.helpdesks.lecture_type_field"),
+            help_text: I18n.t("search.helpdesks.lecture_type_field"),
             collection: Lecture.select_sorts,
             **options
           )

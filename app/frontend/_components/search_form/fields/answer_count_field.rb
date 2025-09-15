@@ -44,7 +44,7 @@ module SearchForm
           @select_field = create_select_field(
             name: :answers_count,
             label: I18n.t("basics.answer_count"),
-            help_text: I18n.t("search.fields.helpdesks.answer_count_field"),
+            help_text: I18n.t("search.helpdesks.answer_count_field"),
             collection: build_answer_count_collection,
             selected: "irrelevant",
             **options

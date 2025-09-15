@@ -49,7 +49,7 @@ module SearchForm
           @multi_select_field = create_multi_select_field(
             name: :teachable_ids,
             label: I18n.t("basics.associated_to"),
-            help_text: I18n.t("search.fields.helpdesks.teachable_field"),
+            help_text: I18n.t("search.helpdesks.teachable_field"),
             collection: grouped_teachable_list,
             **options
           )

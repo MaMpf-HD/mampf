@@ -42,7 +42,7 @@ module SearchForm
           @text_field = create_text_field(
             name: :fulltext,
             label: I18n.t("basics.fulltext"),
-            help_text: I18n.t("search.fields.helpdesks.fulltext_field"),
+            help_text: I18n.t("search.helpdesks.fulltext_field"),
             **options
           )
         end

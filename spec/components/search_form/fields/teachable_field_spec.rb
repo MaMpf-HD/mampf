@@ -50,7 +50,7 @@ RSpec.describe(SearchForm::Fields::TeachableField, type: :component) do
       expected_args = {
         name: :teachable_ids,
         label: I18n.t("basics.associated_to"),
-        help_text: I18n.t("search.fields.helpdesks.teachable_field"),
+        help_text: I18n.t("search.helpdesks.teachable_field"),
         collection: [["Course A", [["Lecture 1", 1]]]]
       }
       expect(field).to receive(:create_multi_select_field).with(hash_including(expected_args))

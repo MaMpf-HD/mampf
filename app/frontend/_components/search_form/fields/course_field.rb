@@ -39,7 +39,7 @@ module SearchForm
           @multi_select_field = create_multi_select_field(
             name: :course_ids,
             label: I18n.t("basics.courses"),
-            help_text: I18n.t("search.fields.helpdesks.course_field"),
+            help_text: I18n.t("search.helpdesks.course_field"),
             collection: Course.order(:title).pluck(:title, :id),
             **options
           )

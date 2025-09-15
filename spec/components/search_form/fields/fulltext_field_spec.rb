@@ -32,7 +32,7 @@ RSpec.describe(SearchForm::Fields::FulltextField, type: :component) do
       expected_args = {
         name: :fulltext,
         label: I18n.t("basics.fulltext"),
-        help_text: I18n.t("search.fields.helpdesks.fulltext_field")
+        help_text: I18n.t("search.helpdesks.fulltext_field")
       }
 
       expect(field).to receive(:create_text_field).with(hash_including(expected_args))

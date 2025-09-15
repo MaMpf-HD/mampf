@@ -42,7 +42,7 @@ module SearchForm
           @checkbox_field = create_checkbox_field(
             name: :term_independent,
             label: I18n.t("admin.course.term_independent"),
-            help_text: I18n.t("search.fields.helpdesks.term_independence_field"),
+            help_text: I18n.t("search.helpdesks.term_independence_field"),
             checked: false,
             **options
           )

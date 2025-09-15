@@ -41,7 +41,7 @@ RSpec.describe(SearchForm::Fields::ProgramField, type: :component) do
       expected_args = {
         name: :program_ids,
         label: I18n.t("basics.programs"),
-        help_text: I18n.t("search.fields.helpdesks.program_field"),
+        help_text: I18n.t("search.helpdesks.program_field"),
         collection: [["CompSci: Program 1", 1]]
       }
 

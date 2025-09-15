@@ -40,7 +40,7 @@ RSpec.describe(SearchForm::Fields::EditorField, type: :component) do
       expected_args = {
         name: :editor_ids,
         label: I18n.t("basics.editors"),
-        help_text: I18n.t("search.fields.helpdesks.editor_field"),
+        help_text: I18n.t("search.helpdesks.editor_field"),
         collection: [["Editor A", 1]]
       }
 

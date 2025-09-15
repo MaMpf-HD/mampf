@@ -38,7 +38,7 @@ RSpec.describe(SearchForm::Fields::CourseField, type: :component) do
       expected_args = {
         name: :course_ids,
         label: I18n.t("basics.courses"),
-        help_text: I18n.t("search.fields.helpdesks.course_field"),
+        help_text: I18n.t("search.helpdesks.course_field"),
         collection: expected_collection
       }
 

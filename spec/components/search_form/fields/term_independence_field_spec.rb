@@ -31,7 +31,7 @@ RSpec.describe(SearchForm::Fields::TermIndependenceField, type: :component) do
       expect(field).to receive(:create_checkbox_field) do |args|
         expect(args[:name]).to eq(:term_independent)
         expect(args[:label]).to eq(I18n.t("admin.course.term_independent"))
-        expect(args[:help_text]).to eq(I18n.t("search.fields.helpdesks.term_independence_field"))
+        expect(args[:help_text]).to eq(I18n.t("search.helpdesks.term_independence_field"))
         expect(args[:checked]).to be(false)
       end
 

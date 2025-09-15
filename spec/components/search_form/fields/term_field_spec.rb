@@ -42,7 +42,7 @@ RSpec.describe(SearchForm::Fields::TermField, type: :component) do
       expected_args = {
         name: :term_ids,
         label: I18n.t("basics.term"),
-        help_text: I18n.t("search.fields.helpdesks.term_field"),
+        help_text: I18n.t("search.helpdesks.term_field"),
         collection: terms_collection
       }
 

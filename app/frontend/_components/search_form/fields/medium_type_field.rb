@@ -57,7 +57,7 @@ module SearchForm
           @multi_select_field = create_multi_select_field(
             name: :types,
             label: I18n.t("basics.types"),
-            help_text: I18n.t("search.fields.helpdesks.medium_type_field"),
+            help_text: I18n.t("search.helpdesks.medium_type_field"),
             collection: media_sorts_select(current_user, purpose),
             selected: sort_preselect(purpose),
             multiple: purpose.in?(["media", "import"]),

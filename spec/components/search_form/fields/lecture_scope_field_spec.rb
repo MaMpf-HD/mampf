@@ -44,7 +44,7 @@ RSpec.describe(SearchForm::Fields::LectureScopeField, type: :component) do
       expected_args = {
         name: :lectures,
         label: I18n.t("basics.lectures"),
-        help_text: I18n.t("search.fields.helpdesks.lecture_scope_field"),
+        help_text: I18n.t("search.helpdesks.lecture_scope_field"),
         collection: [["Lecture A", 1]]
       }
       expect(field).to receive(:create_multi_select_field).with(hash_including(expected_args))

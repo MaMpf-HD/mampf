@@ -41,7 +41,7 @@ module SearchForm
           @select_field = create_select_field(
             name: :access,
             label: I18n.t("basics.access_rights"),
-            help_text: I18n.t("search.fields.helpdesks.medium_access_field"),
+            help_text: I18n.t("search.helpdesks.medium_access_field"),
             collection: access_level_options,
             selected: "irrelevant",
             **options
