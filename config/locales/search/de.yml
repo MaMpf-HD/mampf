@@ -1,0 +1,80 @@
+de:
+  search:
+    results: 'Suchergebnisse für den Begriff %{search_string}'
+    info: >
+      Deine Suche nach dem Begriff %{search_string} hat %{count} Treffer
+      ergeben.
+    omitted_html: >
+      Aufgrund Deiner %{profile} wurde(n) %{count} Treffer aus der
+      Datenbank nicht berücksichtigt.
+    settings: 'Profileinstellungen'
+    click_and_paste: >
+      Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
+    fields:
+      helpdesks:
+        answer_count_field: >
+          Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
+          wieviele Antworten die Quizfrage haben soll. Bei allen anderen
+          Medientypen wird diese Einstellung ignoriert.
+        course_field: >
+          Hier kannst Du (im Sinne von <i>ODER</i>)
+          auswählen, zu welchen Modulen eine Assoziation bestehen soll.
+        editor_field: >
+          Hier kannst Du (im Sinne von <i>ODER</i>)
+          auswählen, zu welchen Editoren eine Assoziation bestehen soll.
+        fulltext_field: >
+          Hier kannst Du Text eingeben, nach dem gesucht werden soll.
+        lecture_scope_field: >
+          Hier kannst Du bestimmen, zu welcher Veranstaltung eine Assoziation bestehen soll.
+          Dabei kannst Du alle, nur die von Dir abonnierten oder eine eigene Auswahl an Veranstaltungen berücksichtigen lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator <i>ODER</i> verwendet.
+        lecture_type_field: >
+          Hier kannst Du einen, mehrere oder alle der folgenden Veranstaltungstypen auswählen: <i>Lektion</i>, <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i>. Dabei wird der Operator <i>ODER</i> verwendet.
+        medium_access_field: >
+          Wähle die Zugriffsrechte für das Medium aus.
+        medium_type_field: >
+          Hier kannst Du den Typ des Mediums auswählen. Dabei wird der Operator <i>ODER</i> verwendet.
+        program_field: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) Studiengänge auswählen.
+        tag_field: >
+          Verknüpfte Begriffe werden als <span class="badge text-dark lecture-tag">Beispielbegriff</span> angezeigt. Hier kannst Du Begriffe, mit denen eine Verknüpfung bestehen soll,
+          aus der Datenbank auswählen. Außerdem kannst Du entscheiden, ob die Verknüpfung mit mindestens einem der gewählten Begriffe (<i>ODER</i>) oder mit allen gewählten Begriffen (<i>UND</i>) versehen sein soll.
+        teachable_field: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, zu welchen Modulen bzw. Veranstaltungen das Medium
+          assoziiert sein soll, und zwar
+          <i>
+          mit Vererbung / ohne Vererbung.
+          </i>
+          Im Falle der Auswahl von "mit Vererbung" werden bei Auswahl eines
+          Moduls auch alle Medien angezeigt,
+          die zu dazugehörigen Veranstaltungen oder Sitzungen verknüpft sind;
+          bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
+          die mit Sitzungen dieser Veranstaltung verknüpft sind.
+        teacher_field: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) DozentInnen auswählen.
+        term_field: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) Semester auswählen.
+        term_independence_field: >
+          Hier kannst du auswählen, ob es sich um ein semesterunabhängiges Modul handelt.
+    radio_buttons:
+      lecture_scope_field:
+        subscribed: 'abonnierte'
+        all: 'alle'
+        own_selection: 'eigene Auswahl'
+        all_media: 'alle Medien'
+        only_extras: 'nur Zusatzmaterialien'
