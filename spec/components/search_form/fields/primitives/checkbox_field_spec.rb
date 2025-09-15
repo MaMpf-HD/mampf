@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe(SearchForm::Fields::Primitives::CheckboxField, type: :component) do
   let(:form_state_double) { instance_double(SearchForm::Services::FormState, "form_state") }
   let(:field_data_double) { instance_double(SearchForm::Fields::Services::FieldData, "field_data") }
+  let(:html_builder_double) { instance_double(SearchForm::Fields::Services::HtmlBuilder, "html_builder") }
   let(:minimal_args) do
     {
       name: :test_box,
@@ -20,16 +21,19 @@ RSpec.describe(SearchForm::Fields::Primitives::CheckboxField, type: :component) 
     allow(field_data_double).to receive(:define_singleton_method)
     allow(field_data_double).to receive(:extract_and_update_field_classes!)
 
+    # Stub the html delegation
+    allow(field_data_double).to receive(:html).and_return(html_builder_double)
+
     # Stub delegations from the mixin that are used by the component's methods.
     allow(field).to receive(:form_state).and_return(form_state_double)
     allow(field).to receive(:name).and_return(:test_box)
     allow(field).to receive(:options).and_return({})
     allow(field).to receive(:show_help_text?).and_return(false)
 
-    # Stub ID generation methods that rely on form_state
-    allow(form_state_double).to receive(:element_id_for).with(:test_box).and_return("form_test_box")
-    allow(form_state_double).to receive(:label_for).with(:test_box)
-                                                   .and_return("form_test_box_label")
+    # Stub ID generation methods on the html builder
+    allow(html_builder_double).to receive(:element_id).and_return("form_test_box")
+    allow(html_builder_double).to receive(:label_for).and_return("form_test_box_label")
+    allow(html_builder_double).to receive(:help_text_id).and_return("form_test_box_help")
   end
 
   describe "#initialize" do
@@ -59,20 +63,17 @@ RSpec.describe(SearchForm::Fields::Primitives::CheckboxField, type: :component) 
           label: "Test Checkbox",
           form_state: form_state_double,
           help_text: nil,
-          options: {}
+          options: {},
+          value: nil,
+          use_value_in_id: false
         )
 
       # Initialize the component to trigger the call.
       described_class.new(**minimal_args)
     end
 
-    # Helper to create a dummy class for spying on the mixin's method call
-    let(:dummy_field_class) do
-      Class.new(described_class) do
-        # Suppress original method
-        def initialize_field_data(**)
-        end
-      end
+    it "delegates html to field_data" do
+      expect(field.html).to eq(html_builder_double)
     end
   end
 

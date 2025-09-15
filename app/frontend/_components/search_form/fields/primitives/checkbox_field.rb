@@ -50,26 +50,7 @@ module SearchForm
         end
         # rubocop:enable Metrics/ParameterLists
 
-        # Generates the unique HTML ID for the checkbox input element.
-        #
-        # @return [String] The complete element ID including form scope
-        def element_id
-          form_state.element_id_for(name)
-        end
-
-        # Generates the label's `for` attribute value.
-        #
-        # @return [String] The ID that the label should reference
-        def label_for
-          form_state.label_for(name)
-        end
-
-        # Generates the help text element ID for ARIA accessibility.
-        #
-        # @return [String] The help text element ID
-        def help_text_id
-          "#{element_id}_help"
-        end
+        delegate :html, to: :field_data
 
         # Builds the data attributes hash for the checkbox input.
         # Combines custom data attributes with Stimulus.js controller attributes
@@ -91,8 +72,8 @@ module SearchForm
           {
             class: "form-check-input",
             checked: checked,
-            id: element_id,
-            "aria-describedby": (help_text_id if show_help_text?),
+            id: html.element_id,
+            "aria-describedby": (html.help_text_id if show_help_text?),
             data: (data_attributes if data_attributes.any?)
           }.compact.merge(options.except(:container_class, :data))
         end

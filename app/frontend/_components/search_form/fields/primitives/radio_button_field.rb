@@ -84,13 +84,6 @@ module SearchForm
           options[:inline] ? "form-check form-check-inline" : "form-check mb-2"
         end
 
-        # Generates the help text element ID for ARIA accessibility.
-        #
-        # @return [String] The help text element ID
-        def help_text_id
-          "#{html.element_id}_help"
-        end
-
         # Builds the data attributes hash for the radio button input.
         # Combines custom data attributes with Stimulus.js controller attributes
         # based on the stimulus configuration.
@@ -112,7 +105,7 @@ module SearchForm
             class: "form-check-input",
             checked: checked,
             id: html.element_id,
-            "aria-describedby": (help_text_id if show_help_text?),
+            "aria-describedby": (html.help_text_id if show_help_text?),
             disabled: options[:disabled],
             data: (data_attributes if data_attributes.any?)
           }.compact.merge(options.except(:inline, :container_class, :stimulus))

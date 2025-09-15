@@ -24,6 +24,7 @@ RSpec.describe(SearchForm::Fields::Primitives::RadioButtonField, type: :componen
     # Stub the html builder and its methods
     allow(field_data_double).to receive(:html).and_return(html_builder_double)
     allow(html_builder_double).to receive(:element_id).and_return("form_test_radio_option1")
+    allow(html_builder_double).to receive(:help_text_id).and_return("form_test_radio_option1_help")
 
     # Stub delegations from the mixin that are used by the component's methods.
     allow(field).to receive(:form_state).and_return(form_state_double)
