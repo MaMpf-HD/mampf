@@ -43,26 +43,29 @@ module SearchForm
         # @param form_state [FormState] The form state object for context and ID generation
         # @param default_classes [Array<String>] CSS classes specific to this field type
         # @param options [Hash] Additional options passed through to FieldData
-        def initialize_field_data(name:, label:, form_state:, default_classes: [], **options)
-          # Define the list of keywords that the FieldData initializer accepts explicitly.
-          known_keys = [:help_text, :value, :use_value_in_id]
-
-          # Separate the options hash into two parts.
-          known_options = options.slice(*known_keys)
-          pass_through_options = options.except(*known_keys)
-
+        # rubocop:disable Metrics/ParameterLists
+        def initialize_field_data(name:, label:, form_state:, default_classes: [],
+                                  value: nil, use_value_in_id: false, **options)
           @field_data = Services::FieldData.new(
             name: name,
             label: label,
+            help_text: options[:help_text],
             form_state: form_state,
-            options: pass_through_options, # Pass the remaining options to the `options` hash
-            **known_options # Splat the known options into their respective keywords
+            value: value,
+            use_value_in_id: use_value_in_id,
+            options: options.dup
           )
 
           # Set field-type-specific default CSS classes
           field_data.define_singleton_method(:default_field_classes) { default_classes }
           field_data.extract_and_update_field_classes!(options)
+
+          # Allow subclasses to add specialized handling
+          configure_specialized_attributes(options) if respond_to?(
+            :configure_specialized_attributes, true
+          )
         end
+        # rubocop:enable Metrics/ParameterLists
 
         # Sets the form state for this field component.
         # This is part of the SearchForm's auto-injection interface.
