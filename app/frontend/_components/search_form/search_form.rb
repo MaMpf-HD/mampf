@@ -87,10 +87,10 @@ module SearchForm
     # @param label [String, nil] Button text (defaults to I18n lookup)
     # @param css_classes [String] CSS classes for the button
     # @param options [Hash] Additional options passed to the submit field
-    def add_submit_field(label: nil, css_classes: "btn btn-primary", **)
+    def add_submit_field(label: nil, button_class: "btn btn-primary", **)
       with_field(Fields::Primitives::SubmitField.new(
                    label: label,
-                   css_classes: css_classes,
+                   button_class: button_class,
                    **
                  ))
     end
