@@ -48,7 +48,9 @@ RSpec.describe(SearchForm::Fields::Mixins::PrimitiveFieldMixin, type: :component
         label: "Test Label",
         help_text: "Help me",
         form_state: form_state_double,
-        options: options
+        value: nil, # New parameter with default value
+        use_value_in_id: false, # New parameter with default value
+        options: { class: "custom-class", help_text: "Help me" } # help_text remains in options
       )
 
       field_instance.initialize_field_data(
@@ -59,6 +61,27 @@ RSpec.describe(SearchForm::Fields::Mixins::PrimitiveFieldMixin, type: :component
       )
 
       expect(field_instance.field_data).to be(field_data_double)
+    end
+
+    it "passes custom value and use_value_in_id parameters when provided" do
+      expect(SearchForm::Fields::Services::FieldData).to receive(:new).with(
+        name: :test_field,
+        label: "Test Label",
+        help_text: "Help me",
+        form_state: form_state_double,
+        value: "custom_value",
+        use_value_in_id: true,
+        options: { class: "custom-class", help_text: "Help me" } # help_text remains in options
+      )
+
+      field_instance.initialize_field_data(
+        name: :test_field,
+        label: "Test Label",
+        form_state: form_state_double,
+        value: "custom_value",
+        use_value_in_id: true,
+        **options
+      )
     end
 
     it "defines a singleton method for default_field_classes on the FieldData instance" do

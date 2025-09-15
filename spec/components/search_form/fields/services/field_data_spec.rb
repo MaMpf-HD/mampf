@@ -44,7 +44,9 @@ RSpec.describe(SearchForm::Fields::Services::FieldData, type: :component) do
         disabled: true,
         required: true,
         prompt: "Choose",
-        selected: "value"
+        selected: "value",
+        value: "OR",
+        use_value_in_id: true
       )
       data = described_class.new(**all_args)
 
@@ -54,6 +56,8 @@ RSpec.describe(SearchForm::Fields::Services::FieldData, type: :component) do
       expect(data.required).to be(true)
       expect(data.prompt).to eq("Choose")
       expect(data.selected).to eq("value")
+      expect(data.value).to eq("OR")
+      expect(data.use_value_in_id).to be(true)
     end
   end
 

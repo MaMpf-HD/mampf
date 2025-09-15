@@ -3,6 +3,7 @@ require "rails_helper"
 RSpec.describe(SearchForm::Fields::Primitives::RadioButtonField, type: :component) do
   let(:form_state_double) { instance_double(SearchForm::Services::FormState, "form_state") }
   let(:field_data_double) { instance_double(SearchForm::Fields::Services::FieldData, "field_data") }
+  let(:html_builder_double) { instance_double(SearchForm::Fields::Services::HtmlBuilder, "html_builder") }
   let(:minimal_args) do
     {
       name: :test_radio,
@@ -20,17 +21,15 @@ RSpec.describe(SearchForm::Fields::Primitives::RadioButtonField, type: :componen
     allow(field_data_double).to receive(:define_singleton_method)
     allow(field_data_double).to receive(:extract_and_update_field_classes!)
 
+    # Stub the html builder and its methods
+    allow(field_data_double).to receive(:html).and_return(html_builder_double)
+    allow(html_builder_double).to receive(:element_id).and_return("form_test_radio_option1")
+
     # Stub delegations from the mixin that are used by the component's methods.
     allow(field).to receive(:form_state).and_return(form_state_double)
     allow(field).to receive(:name).and_return(:test_radio)
     allow(field).to receive(:options).and_return({})
     allow(field).to receive(:show_help_text?).and_return(false)
-
-    # Stub ID generation methods that rely on form_state. Radio buttons include the value.
-    allow(form_state_double).to receive(:element_id_for).with(:test_radio, value: "option1")
-                                                        .and_return("form_test_radio_option1")
-    allow(form_state_double).to receive(:label_for).with(:test_radio, value: "option1")
-                                                   .and_return("form_test_radio_option1_label")
   end
 
   describe "#initialize" do
@@ -53,7 +52,8 @@ RSpec.describe(SearchForm::Fields::Primitives::RadioButtonField, type: :componen
           label: "Option 1",
           form_state: form_state_double,
           help_text: "Help!",
-          # The mixin collects all remaining kwargs, including help_text, into the options hash.
+          value: "option1",
+          use_value_in_id: true,
           options: { help_text: "Help!", inline: true }
         )
 

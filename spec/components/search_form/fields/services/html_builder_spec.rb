@@ -25,6 +25,8 @@ RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
       allow(css_manager).to receive(:field_css_classes).and_return("form-control")
       allow(field_data).to receive(:options).and_return({})
       allow(field_data).to receive(:show_help_text?).and_return(false)
+      allow(field_data).to receive(:use_value_in_id).and_return(false)
+      allow(field_data).to receive(:value).and_return(nil)
       # The method being stubbed is on the builder, not the field_data
       allow(builder).to receive(:html_options_with_id).and_wrap_original do |_method, *args|
         { id: "test_field_id" }.merge(*args)
@@ -97,19 +99,89 @@ RSpec.describe(SearchForm::Fields::Services::HtmlBuilder, type: :component) do
     end
   end
 
-  describe "ID generation methods" do
-    it "#element_id delegates to form_state" do
-      expect(form_state).to receive(:element_id_for).with(:test_field)
-      builder.element_id
+  describe "ID generation methods with values" do
+    context "when use_value_in_id is false" do
+      before do
+        allow(field_data).to receive(:use_value_in_id).and_return(false)
+        allow(field_data).to receive(:value).and_return("some_value")
+      end
+
+      it "#element_id does not include value" do
+        expect(form_state).to receive(:element_id_for).with(:test_field)
+        builder.element_id
+      end
+
+      it "#label_for does not include value" do
+        expect(form_state).to receive(:label_for).with(:test_field)
+        builder.label_for
+      end
     end
 
-    it "#label_for delegates to form_state" do
-      expect(form_state).to receive(:label_for).with(:test_field)
-      builder.label_for
+    context "when use_value_in_id is true" do
+      before do
+        allow(field_data).to receive(:use_value_in_id).and_return(true)
+      end
+
+      context "with a present value" do
+        before do
+          allow(field_data).to receive(:value).and_return("option_a")
+        end
+
+        it "#element_id includes the value" do
+          expect(form_state).to receive(:element_id_for).with(:test_field, "option_a")
+          builder.element_id
+        end
+
+        it "#label_for includes the value" do
+          expect(form_state).to receive(:label_for).with(:test_field, "option_a")
+          builder.label_for
+        end
+      end
+
+      context "with a blank value" do
+        before do
+          allow(field_data).to receive(:value).and_return("")
+        end
+
+        it "#element_id does not include blank value" do
+          expect(form_state).to receive(:element_id_for).with(:test_field)
+          builder.element_id
+        end
+
+        it "#label_for does not include blank value" do
+          expect(form_state).to receive(:label_for).with(:test_field)
+          builder.label_for
+        end
+      end
+
+      context "with a nil value" do
+        before do
+          allow(field_data).to receive(:value).and_return(nil)
+        end
+
+        it "#element_id does not include nil value" do
+          expect(form_state).to receive(:element_id_for).with(:test_field)
+          builder.element_id
+        end
+
+        it "#label_for does not include nil value" do
+          expect(form_state).to receive(:label_for).with(:test_field)
+          builder.label_for
+        end
+      end
     end
 
-    it "#help_text_id constructs the correct ID" do
-      expect(builder.help_text_id).to eq("test_field_id_help")
+    context "#help_text_id with value-based IDs" do
+      before do
+        allow(field_data).to receive(:use_value_in_id).and_return(true)
+        allow(field_data).to receive(:value).and_return("option_b")
+        allow(form_state).to receive(:element_id_for).with(:test_field, "option_b")
+                                                     .and_return("test_field_option_b_id")
+      end
+
+      it "constructs help text ID from value-based element ID" do
+        expect(builder.help_text_id).to eq("test_field_option_b_id_help")
+      end
     end
   end
 end
