@@ -59,11 +59,6 @@ module SearchForm
           # Set field-type-specific default CSS classes
           field_data.define_singleton_method(:default_field_classes) { default_classes }
           field_data.extract_and_update_field_classes!(options)
-
-          # Allow subclasses to add specialized handling
-          configure_specialized_attributes(options) if respond_to?(
-            :configure_specialized_attributes, true
-          )
         end
         # rubocop:enable Metrics/ParameterLists
 
