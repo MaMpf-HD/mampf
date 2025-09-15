@@ -76,7 +76,7 @@ module SearchForm
           @or_radio_button = create_radio_button_field(
             name: :tag_operator,
             value: "or",
-            label: I18n.t("basics.OR"),
+            label: I18n.t("search.radio_buttons.tag_field.OR"),
             checked: true,
             disabled: true,
             inline: true,
@@ -87,7 +87,7 @@ module SearchForm
           @and_radio_button = create_radio_button_field(
             name: :tag_operator,
             value: "and",
-            label: I18n.t("basics.AND"),
+            label: I18n.t("search.radio_buttons.tag_field.AND"),
             checked: false,
             disabled: true,
             inline: true,

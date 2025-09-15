@@ -181,7 +181,7 @@ module SearchForm
           #   create_radio_button_field(
           #     name: :tag_operator,
           #     value: "or",
-          #     label: I18n.t("basics.OR"),
+          #     label: I18n.t("search.radio_buttons.tag_field.OR"),
           #     inline: true,
           #     container_class: "form-check form-check-inline"
           #   )

@@ -75,7 +75,7 @@ module SearchForm
           @with_inheritance_radio = create_radio_button_field(
             name: :teachable_inheritance,
             value: "1",
-            label: I18n.t("basics.with_inheritance"),
+            label: I18n.t("search.radio_buttons.teachable_field.with_inheritance"),
             checked: true,
             disabled: true,
             inline: true,
@@ -86,7 +86,7 @@ module SearchForm
           @without_inheritance_radio = create_radio_button_field(
             name: :teachable_inheritance,
             value: "0",
-            label: I18n.t("basics.without_inheritance"),
+            label: I18n.t("search.radio_buttons.teachable_field.without_inheritance"),
             checked: false,
             disabled: true,
             inline: true,

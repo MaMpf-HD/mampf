@@ -67,7 +67,7 @@ RSpec.describe(SearchForm::Fields::TeachableField, type: :component) do
 
     it "calls create_radio_button_field for the 'with inheritance' option" do
       expected_args = {
-        name: :teachable_inheritance, value: "1", label: I18n.t("basics.with_inheritance"),
+        name: :teachable_inheritance, value: "1", label: I18n.t("search.radio_buttons.teachable_field.with_inheritance"),
         checked: true, disabled: true, stimulus: { radio_toggle: true, controls_select: false }
       }
       expect(field).to receive(:create_radio_button_field).with(hash_including(expected_args)).once
@@ -76,7 +76,7 @@ RSpec.describe(SearchForm::Fields::TeachableField, type: :component) do
 
     it "calls create_radio_button_field for the 'without inheritance' option" do
       expected_args = {
-        name: :teachable_inheritance, value: "0", label: I18n.t("basics.without_inheritance"),
+        name: :teachable_inheritance, value: "0", label: I18n.t("search.radio_buttons.teachable_field.without_inheritance"),
         checked: false, disabled: true, stimulus: { radio_toggle: true, controls_select: false }
       }
       expect(field).to receive(:create_radio_button_field).with(hash_including(expected_args)).once

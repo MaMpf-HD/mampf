@@ -77,3 +77,9 @@ en:
         subscribed: 'subscribed'
         all: 'all'
         own_selection: 'custom selection'
+      tag_field:
+        OR: 'OR'
+        AND: 'AND'
+      teachable_field:
+        with_inheritance: 'with inheritance'
+        without_inheritance: 'without inheritance'        
