@@ -88,7 +88,7 @@ module SearchForm
         #
         # @return [String] The help text element ID
         def help_text_id
-          "#{element_id}_help"
+          "#{html.element_id}_help"
         end
 
         # Builds the data attributes hash for the radio button input.
