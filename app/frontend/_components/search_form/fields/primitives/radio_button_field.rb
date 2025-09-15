@@ -63,6 +63,8 @@ module SearchForm
             label: label,
             form_state: form_state,
             help_text: help_text,
+            value: value,
+            use_value_in_id: true,
             default_classes: [], # Radio buttons don't use field-level CSS classes
             **
           )
@@ -80,21 +82,6 @@ module SearchForm
           return custom_container_class if custom_container_class
 
           options[:inline] ? "form-check form-check-inline" : "form-check mb-2"
-        end
-
-        # Generates the unique HTML ID for this specific radio button.
-        # Radio buttons need value-specific IDs to distinguish between options.
-        #
-        # @return [String] The complete element ID including form scope and value
-        def element_id
-          form_state.element_id_for(name, value: value)
-        end
-
-        # Generates the label's `for` attribute value for this radio button.
-        #
-        # @return [String] The ID that the label should reference
-        def label_for
-          form_state.label_for(name, value: value)
         end
 
         # Generates the help text element ID for ARIA accessibility.
@@ -124,7 +111,7 @@ module SearchForm
           {
             class: "form-check-input",
             checked: checked,
-            id: element_id,
+            id: html.element_id,
             "aria-describedby": (help_text_id if show_help_text?),
             disabled: options[:disabled],
             data: (data_attributes if data_attributes.any?)

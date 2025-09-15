@@ -48,17 +48,23 @@ module SearchForm
         end
 
         # Generates a unique ID for the field element by delegating to the `form_state`.
+        # If `use_value_in_id` is true, it appends the field's value.
         #
         # @return [String] A unique HTML ID for the field element.
         def element_id
-          @field_data.form_state.element_id_for(@field_data.name)
+          parts = [@field_data.name]
+          parts << @field_data.value if @field_data.use_value_in_id && @field_data.value.present?
+          @field_data.form_state.element_id_for(*parts)
         end
 
         # Generates the value for the `<label>` tag's `for` attribute.
+        # If `use_value_in_id` is true, it appends the field's value.
         #
         # @return [String] The ID to be used in the `for` attribute.
         def label_for
-          @field_data.form_state.label_for(@field_data.name)
+          parts = [@field_data.name]
+          parts << @field_data.value if @field_data.use_value_in_id && @field_data.value.present?
+          @field_data.form_state.label_for(*parts)
         end
 
         # Generates the ID for the help text element, used for `aria-describedby`.

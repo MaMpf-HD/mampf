@@ -44,12 +44,19 @@ module SearchForm
         # @param default_classes [Array<String>] CSS classes specific to this field type
         # @param options [Hash] Additional options passed through to FieldData
         def initialize_field_data(name:, label:, form_state:, default_classes: [], **options)
+          # Define the list of keywords that the FieldData initializer accepts explicitly.
+          known_keys = [:help_text, :value, :use_value_in_id]
+
+          # Separate the options hash into two parts.
+          known_options = options.slice(*known_keys)
+          pass_through_options = options.except(*known_keys)
+
           @field_data = Services::FieldData.new(
             name: name,
             label: label,
-            help_text: options[:help_text],
             form_state: form_state,
-            options: options.dup
+            options: pass_through_options, # Pass the remaining options to the `options` hash
+            **known_options # Splat the known options into their respective keywords
           )
 
           # Set field-type-specific default CSS classes

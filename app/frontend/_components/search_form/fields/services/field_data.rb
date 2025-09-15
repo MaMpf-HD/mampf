@@ -35,7 +35,8 @@ module SearchForm
       class FieldData
         # Core field identification and display attributes
         attr_reader :name, :label, :help_text, :options, :prompt,
-                    :multiple, :disabled, :required, :selected, :css, :html
+                    :multiple, :disabled, :required, :selected,
+                    :value, :use_value_in_id, :css, :html
 
         # Layout and styling attributes that can be modified after initialization
         attr_accessor :container_class, :field_class, :form_state
@@ -53,13 +54,17 @@ module SearchForm
         # @param required [Boolean, nil] Whether the field is required for form submission
         # @param prompt [String, Boolean, nil] Prompt text or boolean for select fields
         # @param selected [Object, nil] Pre-selected value(s) for the field
+        # @param value [String, Symbol, nil] The value for a specific option (e.g., a radio button)
+        # @param use_value_in_id [Boolean] If true, the `value` will be included
+        # in the generated ID.
         #
         # This method intentionally accepts many parameters because this class acts as a
         # Parameter Object. Each keyword argument represents a distinct, core configuration
         # option for a field, and keeping them explicit improves API discoverability.
         # rubocop:disable Metrics/ParameterLists
         def initialize(name:, label:, form_state:, help_text: nil, options: {},
-                       multiple: nil, disabled: nil, required: nil, prompt: nil, selected: nil)
+                       multiple: nil, disabled: nil, required: nil, prompt: nil,
+                       selected: nil, value: nil, use_value_in_id: false)
           @name = name
           @label = label
           @help_text = help_text
@@ -69,6 +74,8 @@ module SearchForm
           @required = required
           @prompt = prompt
           @selected = selected
+          @value = value
+          @use_value_in_id = use_value_in_id
           @content_block = nil
 
           # Extract and set layout options with Bootstrap-friendly defaults
