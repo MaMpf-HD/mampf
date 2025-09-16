@@ -21,8 +21,6 @@ class SearchController < ApplicationController
 
   private
 
-
-
     def search_param
       params.expect(:search)
     end

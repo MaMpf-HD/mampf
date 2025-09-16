@@ -11,7 +11,6 @@ class ProfileController < ApplicationController
   end
 
   def edit
-
     # destroy the notifications related to new lectures and courses
     current_user.notifications.where(notifiable_type: ["Lecture", "Course"])
                 .destroy_all
@@ -41,11 +40,6 @@ class ProfileController < ApplicationController
     end
   end
 
- 
-
-
-
-
   def toggle_thread_subscription
     @thread = Commontator::Thread.find(params[:id])
     return unless @thread&.can_subscribe?(@user)
@@ -60,10 +54,9 @@ class ProfileController < ApplicationController
 
   def add_consent
     @user.update(consented_at: Time.zone.now)
-    # Note: We can remove 'consents: true' since it's redundant with consented_at
+    # NOTE: We can remove 'consents: true' since it's redundant with consented_at
     redirect_to edit_profile_path, notice: "Consent updated successfully"
   end
-
 
   def subscribe_lecture
     @success = false

@@ -275,8 +275,6 @@ class TagsController < ApplicationController
       I18n.locale = talk.lecture.locale || current_user.locale
     end
 
-
-
     def tag_params
       params.expect(tag: [related_tag_ids: [],
                           notions_attributes: [[:title, :locale, :id, :_destroy]],

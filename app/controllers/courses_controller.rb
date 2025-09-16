@@ -3,7 +3,7 @@ class CoursesController < ApplicationController
   before_action :set_course, only: [:take_random_quiz, :render_question_counter]
   before_action :set_course_admin, only: [:edit, :update, :destroy]
   before_action :check_if_enough_questions, only: [:take_random_quiz]
-  
+
   authorize_resource except: [:create, :search]
   layout "administration"
 
@@ -149,6 +149,4 @@ class CoursesController < ApplicationController
 
       redirect_to :root, alert: I18n.t("controllers.no_test")
     end
-
-
 end

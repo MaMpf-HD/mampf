@@ -1,5 +1,4 @@
 class MainController < ApplicationController
-  
   authorize_resource class: false, only: :start
   layout "application_no_sidebar"
 
@@ -51,8 +50,6 @@ class MainController < ApplicationController
   end
 
   private
-
-
 
     def announcements
       @announcements = Announcement.where(on_main_page: true, lecture: nil)
