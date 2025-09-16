@@ -58,6 +58,13 @@ class ProfileController < ApplicationController
     @result = !!@thread.subscription_for(@user)
   end
 
+  def add_consent
+    @user.update(consented_at: Time.zone.now)
+    # Note: We can remove 'consents: true' since it's redundant with consented_at
+    redirect_to edit_profile_path, notice: "Consent updated successfully"
+  end
+
+
   def subscribe_lecture
     @success = false
     if !@lecture.published? && !current_user.admin &&
