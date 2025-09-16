@@ -19,7 +19,7 @@ module Cypress
                          # Note that some Cypress tests rely on the username
                          # beginning with "cy" (!)
                          name_in_tutorials: "cy-#{role}-#{random_hash}",
-                         password: CYPRESS_PASSWORD, consents: true, admin: is_admin,
+                         password: CYPRESS_PASSWORD, admin: is_admin,
                          locale: I18n.default_locale)
       user.confirm
 

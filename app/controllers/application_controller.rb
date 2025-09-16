@@ -74,7 +74,7 @@ class ApplicationController < ActionController::Base
 
     def configure_permitted_parameters
       # add additional paramters to registration
-      devise_parameter_sanitizer.permit(:sign_up, keys: [:locale, :consents])
+      devise_parameter_sanitizer.permit(:sign_up, keys: [:locale])
     end
 
   private

@@ -54,7 +54,6 @@ class ProfileController < ApplicationController
 
   def add_consent
     @user.update(consented_at: Time.zone.now)
-    # NOTE: We can remove 'consents: true' since it's redundant with consented_at
     redirect_to edit_profile_path, notice: t("profile.consent_success")
   end
 

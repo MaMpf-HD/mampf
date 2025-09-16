@@ -873,7 +873,6 @@ class User < ApplicationRecord
       User.create(name: archive_name,
                   email: archive_email,
                   password: SecureRandom.base58(12),
-                  consents: true,
                   consented_at: Time.zone.now,
                   confirmed_at: Time.zone.now,
                   archived: true)
