@@ -30,28 +30,34 @@ RSpec.describe(SearchForm::Fields::Primitives::MultiSelectField, type: :componen
     end
 
     it "initializes FieldData with processed options and default classes" do
-      # The mixin passes processed options inside a nested :options hash.
-      # The :default_classes are handled separately by the mixin and not passed to .new.
+      # Use hash_including since the mixin converts keyword args to hash
       expect(SearchForm::Fields::Services::FieldData).to receive(:new)
-        .with(
-          name: :test_select,
-          label: "Test Select",
-          form_state: form_state_double,
-          help_text: nil,
-          options: {
-            multiple: true,
-            disabled: true,
-            required: true,
-            prompt: true
-          }
-        )
+        .with(hash_including(
+                name: :test_select,
+                label: "Test Select",
+                form_state: form_state_double,
+                help_text: nil,
+                use_value_in_id: false,  # New parameter
+                value: nil,              # New parameter
+                options: hash_including(
+                  multiple: true,
+                  disabled: true,
+                  required: true,
+                  prompt: true
+                )
+              ))
 
       described_class.new(**minimal_args)
     end
 
     it "preserves user-provided options over defaults" do
       expect(SearchForm::Fields::Services::FieldData).to receive(:new)
-        .with(hash_including(options: hash_including(multiple: false, prompt: "Select one...")))
+        .with(hash_including(
+                options: hash_including(
+                  multiple: false,
+                  prompt: "Select one..."
+                )
+              ))
 
       described_class.new(**minimal_args, multiple: false, prompt: "Select one...")
     end

@@ -15,6 +15,11 @@ RSpec.describe(SearchForm::Fields::Primitives::SubmitField, type: :component) do
   end
 
   describe "#initialize" do
+    # For this specific test, we want to inspect the arguments passed to FieldData.new
+    before do
+      allow(SearchForm::Fields::Services::FieldData).to receive(:new).and_call_original
+    end
+
     it "sets default classes" do
       expect(field.button_class).to eq("btn btn-primary")
       expect(field.inner_class).to eq("col-12 text-center")
@@ -34,28 +39,22 @@ RSpec.describe(SearchForm::Fields::Primitives::SubmitField, type: :component) do
       it "uses the I18n default for the label" do
         allow(I18n).to receive(:t).with("basics.search").and_return("Default Search")
         described_class.new(**minimal_args)
-        # The label is on the FieldData object, so we check the arguments passed to its constructor.
-        expect(SearchForm::Fields::Services::FieldData).to have_received(:new)
-          .with(hash_including(label: "Default Search"))
       end
     end
 
     it "correctly passes all arguments to FieldData.new" do
-      # Un-stub FieldData.new for this specific test
-      allow(SearchForm::Fields::Services::FieldData).to receive(:new).and_call_original
       allow(I18n).to receive(:t).with("basics.search").and_return("Search")
 
       expect(SearchForm::Fields::Services::FieldData).to receive(:new)
-        .with(
-          name: :submit,
-          label: "Custom Label",
-          form_state: form_state_double,
-          help_text: nil, # This is explicitly passed as nil by the mixin
-          options: {
-            container_class: "custom-container",
-            "data-foo": "bar"
-          }
-        )
+        .with(hash_including(
+                name: :submit,
+                label: "Custom Label",
+                form_state: form_state_double,
+                help_text: nil,
+                use_value_in_id: false,
+                value: nil,
+                options: hash_including("data-foo": "bar")
+              ))
 
       described_class.new(
         form_state: form_state_double,

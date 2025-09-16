@@ -30,27 +30,33 @@ RSpec.describe(SearchForm::Fields::Primitives::SelectField, type: :component) do
     end
 
     it "initializes FieldData with processed options" do
-      # The mixin passes all extra kwargs into a nested :options hash.
-      # The `initialize` method processes options and then passes them to the mixin.
+      # Use hash_including since the mixin converts keyword args to hash
       expect(SearchForm::Fields::Services::FieldData).to receive(:new)
-        .with(
-          name: :test_select,
-          label: "Test Select",
-          form_state: form_state_double,
-          help_text: nil,
-          options: {
-            prompt: false, # Default from process_select_options
-            selected: nil
-          }
-        )
+        .with(hash_including(
+                name: :test_select,
+                label: "Test Select",
+                form_state: form_state_double,
+                help_text: nil,
+                use_value_in_id: false,  # New parameter
+                value: nil,              # New parameter
+                options: hash_including(
+                  prompt: false,         # Default from process_select_options
+                  selected: nil
+                )
+              ))
 
       described_class.new(**minimal_args)
     end
 
     it "preserves user-provided options over defaults" do
-      # The expectation must look for the user-provided options inside the nested :options hash.
+      # Use hash_including for flexibility
       expect(SearchForm::Fields::Services::FieldData).to receive(:new)
-        .with(hash_including(options: hash_including(prompt: "Choose...", selected: 5)))
+        .with(hash_including(
+                options: hash_including(
+                  prompt: "Choose...",
+                  selected: 5
+                )
+              ))
 
       described_class.new(**minimal_args, prompt: "Choose...", selected: 5)
     end

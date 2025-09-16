@@ -27,25 +27,28 @@ RSpec.describe(SearchForm::Fields::Primitives::TextField, type: :component) do
     end
 
     it "correctly passes minimal arguments to FieldData.new" do
-      # The mixin passes all extra kwargs into a nested :options hash and explicitly
-      # passes `help_text: nil` if it's not provided.
+      # Updated expectation to include the new parameters
       expect(SearchForm::Fields::Services::FieldData).to receive(:new)
         .with(
           name: :test_field,
           label: "Test Field",
           form_state: form_state_double,
           help_text: nil,
-          options: {}
+          options: {},
+          use_value_in_id: false,  # New parameter
+          value: nil               # New parameter
         )
 
       described_class.new(**minimal_args)
     end
 
     it "correctly passes additional options to FieldData.new" do
-      # The expectation must look for the user-provided options inside the nested :options hash.
+      # Updated expectation to include the new parameters
       expect(SearchForm::Fields::Services::FieldData).to receive(:new)
         .with(hash_including(
                 help_text: "Some help",
+                use_value_in_id: false,  # New parameter
+                value: nil,              # New parameter
                 options: hash_including(
                   help_text: "Some help",
                   placeholder: "Enter text...",
