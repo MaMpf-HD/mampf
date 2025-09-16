@@ -427,7 +427,8 @@ Rails.application.routes.draw do
 
   post "profile/update"
 
-
+  post "profile/add_consent",
+       as: "add_consent"
 
   post "profile/toggle_thread_subscription",
        as: "toggle_thread_subscription"
