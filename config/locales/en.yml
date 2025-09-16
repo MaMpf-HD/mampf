@@ -1943,6 +1943,7 @@ en:
       news about MaMpf
     update: 'Update profile'
     success: 'Profil was updated successfully.'
+    consent_success: 'Consent updated successfully.'
     please_update: >
       Please take some time to edit your profile settings.
     consent: >

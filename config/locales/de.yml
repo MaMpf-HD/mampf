@@ -2101,6 +2101,7 @@ de:
       Neuigkeiten über MaMpf
     update: 'Profil updaten'
     success: 'Profil erfolgreich upgedatet.'
+    consent_success: 'Einverständnis erfolgreich aktualisiert.'
     please_update: >
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
