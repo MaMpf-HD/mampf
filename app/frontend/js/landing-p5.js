@@ -15,29 +15,47 @@ const frag = `
   uniform vec2 uResolution;
   uniform vec2 uPointer;
 
+  // Helper for soft circles
+  float softCircle(vec2 uv, vec2 center, float radius, float edge) {
+    float d = length(uv - center);
+    return smoothstep(radius, radius - edge, d);
+  }
+
   void main() {
     vec2 st = gl_FragCoord.xy / uResolution.xy; // normalize 0..1
     st = st * 2.0 - 1.0; // center at (0,0)
     st.x *= uResolution.x / uResolution.y; // fix aspect
 
-    // Distance to pointer (also normalized to [-1,1])
-    vec2 p = (uPointer / uResolution) * 2.0 - 1.0;
-    float d = distance(st, p);
+    // Animate blob centers
+    vec2 c1 = vec2(0.5 * sin(uTime * 0.4), 0.5 * cos(uTime * 0.3));
+    vec2 c2 = vec2(0.7 * cos(uTime * 0.2), 0.7 * sin(uTime * 0.5));
+    vec2 c3 = vec2(0.3 * sin(uTime * 0.6 + 1.0), 0.3 * cos(uTime * 0.7 + 2.0));
 
-    // Interference pattern (waves + pointer effect)
-    float wave = sin(10.0 * st.x + uTime * 0.8) *
-                 cos(10.0 * st.y + uTime * 0.6);
+    // Blob radii
+    float r1 = 0.6 + 0.1 * sin(uTime * 0.5);
+    float r2 = 0.4 + 0.1 * cos(uTime * 0.3);
+    float r3 = 0.3 + 0.05 * sin(uTime * 0.7);
 
-    float ripple = sin(20.0 * d - uTime * 2.0);
+    // Soft blobs
+    float b1 = softCircle(st, c1, r1, 0.2);
+    float b2 = softCircle(st, c2, r2, 0.15);
+    float b3 = softCircle(st, c3, r3, 0.12);
 
-    float intensity = 0.5 + 0.5 * (wave * 0.6 + ripple * 0.4);
+    // Combine blobs
+    float blobs = b1 + b2 * 0.8 + b3 * 0.6;
 
-    // Hue-like coloring
-    vec3 color = vec3(
-      0.4 + 0.4 * intensity,
-      0.6 + 0.4 * sin(uTime + intensity * 3.14),
-      0.8 + 0.2 * cos(uTime * 0.7 + intensity * 2.0)
-    );
+    // Background gradient
+    float grad = 0.5 + 0.5 * st.y;
+
+    // Color palette
+    vec3 base = mix(vec3(0.18, 0.22, 0.32), vec3(0.32, 0.38, 0.48), grad);
+    vec3 accent = vec3(0.7 + 0.2 * sin(uTime), 0.5 + 0.2 * cos(uTime * 0.7), 0.6 + 0.1 * sin(uTime * 0.3));
+
+    vec3 color = base + accent * blobs * 0.5;
+
+    // Subtle vignette
+    float vignette = smoothstep(1.2, 0.7, length(st));
+    color *= vignette;
 
     gl_FragColor = vec4(color, 1.0);
   }
