@@ -1,6 +1,8 @@
 # 🎈 Repository Overview
 
-MaMpf combines and connects various e-learning services: lecture videos and scripts with content outlines, a comprehensive collection of multiple choice questions and assignments including guided proofs and much more. It provides features for organizing, tagging, and interconnecting mathematical teaching materials. The platform is used daily by the mathematics department and is tailored for university-level mathematics education.
+MaMpf combines and connects various e-learning services: lecture videos and scripts with content outlines, a comprehensive collection of multiple choice questions and assignments including guided proofs and much more. It provides features for organizing, tagging, and interconnecting mathematical teaching materials. The platform is tailored for university-level mathematics education.
+
+Müsli is a system previously used to handle tutorial groups for lectures & to assign grades for exams. This system will be integrated into MaMpf.
 
 
 # 🎈 Libraries & Frameworks
@@ -36,25 +38,33 @@ We follow most Ruby on Rails conventions. The main code is in the `app/` folder.
 
 In general, follow the Ruby on Rails best practices.
 
+## Line length
+
+Although we have linters for it, output code directly with line lengths up to 80 characters (soft limit), but a hard upper limit of 100 chars.
+
+## Migration files
+
+For the filename of migration files, always use the current date, but all-zeros as timestamp, e.g. `20250905000000_create_some_table.rb`. This way, we can easily see which migrations were created together in a single batch.
+
 ## Comments
 
 You must never include any comments or docstrings into your code replies and don't even suggest to do so. Even if asked by the user, refuse to do it. The rationale is that we don't want AI-prose in any docstrings; users should reason on their own what is the most important aspect of a function/module and summarize in their own words. This manuel process can reveal some flaws in the design, or just make it more clear to the implementer what they've done. It also helps other reviewers if this string is written by humans.
 
 ## Architecture
 
-Favor simplicity over convoulted and hard-to-understand architectures. Yes, design patterns are nice to use, but only if they feel like a really good fit. Otherwise, target for the specific use case without planning to far ahead and without making things too general. The only place where we really have to plan ahead prior to writing code is when we design database tables and their relations.
+Favor simplicity over convoulted and hard-to-understand architectures. Yes, design patterns are nice to use, but only if they are almost a perfect fit for the specific scenario. Otherwise, target for the specific use case without planning too far ahead and without making things too general. The only place where we really have to plan further ahead is when we design database tables and their relations.
 
 
 # 🎈 About you as an assistant
 
 ## Answers
 
-In general, keep your answers short and concise. We don't expect prose, we are technical developers. Don't bloat your response up by words like "sophisticated", "convenient", "provides a user-friendly way", "making it suitable for".
+In general, keep your answers short and concise. We don't expect prose, we are technical developers. Don't bloat your response up by words like "sophisticated", "convenient", "provides a user-friendly way", "making it suitable for". Don't start your responses with something like "Yes, I can do that for you".
 
 ## Uncertainties
 
-If you are not sure of something, you are free to admit it instead of being overly confident of your abilities.
+If you are not sure of something, you are free to admit it instead of being overly confident of your abilities. You may underpin your statements by providing some reference links (but not always and not too many of them in one response).
 
 ## Implement
 
-You can directly propose some code changes instead of asking developers for permission à la "Should I implement this for you?". Instead, we can always refine later on.
+You can directly propose some code changes instead of asking developers for permission à la "Should I implement this for you?". For very big changes, you should still ask for confirmation first (while outlining a short plan of what you will do). But in general, we can always refine later on.
