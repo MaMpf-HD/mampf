@@ -18,18 +18,22 @@
     z-index: 2;
     padding: 70px 40px;
     backdrop-filter: blur(30px) saturate(170%);
-    background-color: #1B2E4344;
+    background-color: #13233444;
+    border: 1px solid rgba(255 255 255 / 0.14);
     color: white;
 
     & a {
         color: white;
     }
-
-    input[type="submit"] {
-        background-color: #3F395C;
-        border: 2px solid white;
-    }
 }
+
+#login-btn {
+    // background-color: #231D41;
+    border: 1.5px solid white;
+    font-weight: bold;
+    width: 100%;
+}
+
 
 #announcement-box {
     z-index: 1;
@@ -94,21 +98,6 @@ footer {
     @include media-breakpoint-down(sm) {
         opacity: 0.4;
     }
-}
-
-.remember-me-box {
-    white-space: nowrap;
-}
-
-#user_remember_me {
-    vertical-align: top;
-    position: relative;
-    top: 6px;
-}
-
-#remember-me-text {
-    white-space: normal;
-    display: contents;
 }
 
 #p5-background {
