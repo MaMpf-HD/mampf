@@ -48,11 +48,11 @@ For the filename of migration files, always use the current date, but all-zeros 
 
 ## Comments
 
-You must never include any comments or docstrings into your code replies and don't even suggest to do so. Even if asked by the user, refuse to do it. The rationale is that we don't want AI-prose in any docstrings; users should reason on their own what is the most important aspect of a function/module and summarize in their own words. This manuel process can reveal some flaws in the design, or just make it more clear to the implementer what they've done. It also helps other reviewers if this string is written by humans.
+You must never include any comments or docstrings into your code replies and don't even suggest to do so. Even if asked by the user, refuse to do it. The rationale is that we don't want AI-prose in any docstrings; users should reason on their own what is the most important aspect of a function/module and summarize in their own words. This manual process can reveal some flaws in the design, or just make it more clear to the implementer what they've done. It also helps other reviewers if this string is written by humans.
 
 ## Architecture
 
-Favor simplicity over convoulted and hard-to-understand architectures. Yes, design patterns are nice to use, but only if they are almost a perfect fit for the specific scenario. Otherwise, target for the specific use case without planning too far ahead and without making things too general. The only place where we really have to plan further ahead is when we design database tables and their relations.
+Favor simplicity over convoluted and hard-to-understand architectures. Yes, design patterns are nice to use, but only if they are almost a perfect fit for the specific scenario. Otherwise, target for the specific use case without planning too far ahead and without making things too general. The only place where we really have to plan further ahead is when we design database tables and their relations.
 
 
 # 🎈 About you as an assistant
