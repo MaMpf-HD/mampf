@@ -4,7 +4,7 @@
 
 .landing-box {
     background-color: white;
-    max-width: 1100px;
+    max-width: 800px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 1px 4px 7px rgba(0, 0, 0, 0.13);
@@ -17,8 +17,18 @@
 #signin-box {
     z-index: 2;
     padding: 70px 40px;
-    background: linear-gradient(7deg,
-            rgba(255, 255, 255, 0.85) 0%, white 70%);
+    backdrop-filter: blur(30px) saturate(170%);
+    background-color: #1B2E4344;
+    color: white;
+
+    & a {
+        color: white;
+    }
+
+    input[type="submit"] {
+        background-color: #3F395C;
+        border: 2px solid white;
+    }
 }
 
 #announcement-box {
@@ -39,7 +49,7 @@
     width: auto;
     padding: 10px 20px;
     font-size: 1.2rem;
-    background-color: #00243db8;
+    background-color: #223e62b8;
     border-radius: 0 8px;
     box-shadow: inset 1px 4px 5px rgba(0, 0, 0, 0.03);
 
