@@ -2,14 +2,23 @@ import p5 from "p5";
 
 export const backgroundSketch = (containerId) => {
   const sketch = (s) => {
+    // Grid settings
+    const GRID_SPACING = 48;
     let t = 0;
+
+    function getPointer() {
+      if (s.mouseX >= 0 && s.mouseY >= 0 && s.mouseX < s.width && s.mouseY < s.height) {
+        return { x: s.mouseX, y: s.mouseY };
+      }
+      else {
+        return { x: s.width / 2, y: s.height / 2 };
+      }
+    }
 
     s.setup = () => {
       const container = document.getElementById(containerId);
       s.createCanvas(s.windowWidth, s.windowHeight).parent(container);
-      s.noFill();
-      s.stroke(0, 255, 200, 150);
-      s.strokeWeight(1.5);
+      s.noStroke();
     };
 
     s.windowResized = () => {
@@ -18,18 +27,24 @@ export const backgroundSketch = (containerId) => {
     };
 
     s.draw = () => {
-      s.background(10, 10, 30, 20); // translucent background for trails
-      s.translate(s.width / 2, s.height / 2);
+      s.background(12, 14, 32, 22); // calm, dark background
+      let pointer = getPointer();
+      let phaseX = (pointer.x / s.width) * s.TWO_PI;
+      let phaseY = (pointer.y / s.height) * s.TWO_PI;
 
-      s.beginShape();
-      for (let angle = 0; angle < s.TWO_PI; angle += 0.01) {
-        let x = 200 * s.sin(3 * angle + t * 0.01);
-        let y = 200 * s.cos(2 * angle + t * 0.01);
-        s.vertex(x, y);
+      // Draw grid of circles with math-inspired movement
+      for (let x = GRID_SPACING / 2; x < s.width; x += GRID_SPACING) {
+        for (let y = GRID_SPACING / 2; y < s.height; y += GRID_SPACING) {
+          // Abstract movement: combine sine/cosine and noise
+          let wave = s.sin(t * 0.012 + x * 0.02 + phaseX) * s.cos(t * 0.008 + y * 0.018 + phaseY);
+          let noiseVal = s.noise(x * 0.01, y * 0.01, t * 0.003);
+          let r = 12 + 10 * wave * noiseVal;
+          let col = s.color(120 + 60 * wave, 180 + 40 * noiseVal, 220, 110 + 60 * Math.abs(wave));
+          s.fill(col);
+          s.ellipse(x, y, r, r);
+        }
       }
-      s.endShape(s.CLOSE);
-
-      t++;
+      t += 1;
     };
   };
 
