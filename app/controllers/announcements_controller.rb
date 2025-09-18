@@ -36,7 +36,7 @@ class AnnouncementsController < ApplicationController
         redirect_to announcements_path
         return
       end
-      redirect_to "#{edit_lecture_path(@announcement.lecture)}#communication"
+      redirect_to "#{edit_lecture_path(@announcement.lecture)}?tab=communication"
       return
     end
     @errors = @announcement.errors[:details].join(", ")
