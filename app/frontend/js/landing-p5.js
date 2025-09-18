@@ -54,7 +54,7 @@ const frag = `
     vec3 color = base + accent * blobs * 0.5;
 
     // Subtle vignette
-    float vignette = smoothstep(1.2, 0.7, length(st));
+    float vignette = smoothstep(1.2, 0.7, 0.7 * length(st));
     color *= vignette;
 
     gl_FragColor = vec4(color, 1.0);
