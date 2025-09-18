@@ -1,13 +1,13 @@
 module SearchForm
   module Fields
-    # Renders a select field for filtering by the number of associated answers
+    # Select field for filtering by the number of associated answers
     # for quiz questions. This component provides predefined answer count ranges
     # and has conditional rendering based on the form's purpose.
     #
-    # The field offers options from "irrelevant" (no filtering) through specific
+    # Offers options from "irrelevant" (no filtering) through specific
     # counts (1-6) and a ">6" option for questions with many answers. It will
-    # not render at all when the purpose is "import", making it suitable for
-    # contexts where answer count filtering is not applicable.
+    # not render at all when the purpose is "import" (there, answer count filtering
+    # would not make sense).
     #
     # @example Basic usage for media search
     #   AnswerCountField.new(form_state: form_state)

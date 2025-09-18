@@ -1,6 +1,6 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by lectures with radio button controls
+    # Multi-select field for filtering by lectures with radio button controls
     # for different selection modes. This component combines a multi-select dropdown
     # with radio buttons that control how lecture filtering behaves.
     #
@@ -8,9 +8,6 @@ module SearchForm
     # - "All": Shows content from all lectures (multi-select is disabled)
     # - "Subscribed": Shows content from user's subscribed lectures (multi-select is disabled)
     # - "Own Selection": Enables the multi-select for manual lecture selection
-    #
-    # This pattern allows users to quickly switch between common filtering scenarios
-    # while still providing the flexibility of manual selection when needed.
     #
     # @example Basic lecture scope field
     #   LectureScopeField.new(form_state: form_state)

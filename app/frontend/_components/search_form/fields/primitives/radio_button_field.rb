@@ -1,15 +1,14 @@
 module SearchForm
   module Fields
     module Primitives
-      # Renders a single radio button control within the standard field layout.
+      # Single radio button control.
       #
-      # Radio buttons are typically used in groups where only one option can be selected.
-      # This component handles individual radio button rendering with support for custom
+      # Handles individual radio button rendering with support for custom
       # container styling, Stimulus.js integration, and accessibility features.
       #
-      # Unlike other field components, radio buttons require both a name (for grouping)
-      # and a value (for the individual option), and can have custom container classes
-      # for inline vs. block layouts.
+      # Unlike other field components, radio buttons require both a name
+      # (for grouping) and a value (for the individual option), and can have
+      # custom container classes for inline vs. block layouts.
       #
       # @example Basic radio button
       #   RadioButtonField.new(

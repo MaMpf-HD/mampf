@@ -1,18 +1,12 @@
 module SearchForm
   module Fields
-    # Renders a grouped multi-select field for filtering by teachables (Courses
-    # and their associated Lectures). This component uses composition to build
-    # a multi-select field with checkbox and radio button groups for inheritance options.
+    # Grouped multi-select field for filtering by teachables (Courses
+    # and their associated Lectures).
     #
-    # The field provides sophisticated filtering with three interactive elements:
     # - Grouped multi-select dropdown showing courses and their lectures
     # - "All" checkbox that toggles all selections and controls radio button state
     # - Inheritance radio buttons (with/without) that determine how course selections
     #   are treated (whether to include associated lectures automatically)
-    #
-    # The component uses advanced Stimulus integration where the "All" checkbox
-    # can toggle the radio button group and set inheritance defaults, providing
-    # intuitive control over complex hierarchical filtering.
     #
     # @example Basic teachable field
     #   TeachableField.new(form_state: form_state)

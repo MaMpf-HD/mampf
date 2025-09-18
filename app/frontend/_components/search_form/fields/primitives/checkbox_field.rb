@@ -1,12 +1,10 @@
 module SearchForm
   module Fields
     module Primitives
-      # Renders a single checkbox control within the standard field layout.
+      # Checkbox input field.
       #
-      # This component provides a styled checkbox input with optional Stimulus.js
-      # integration for dynamic behavior like toggling other form elements or
-      # controlling radio button groups. It supports both simple toggle actions
-      # and complex radio group management.
+      # Provides an optional Stimulus.js integration for dynamic behavior
+      # like toggling other form elements or controlling radio button groups.
       #
       # @example Basic checkbox
       #   CheckboxField.new(

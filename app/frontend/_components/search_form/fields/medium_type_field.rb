@@ -1,11 +1,10 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by medium type (e.g., "WorkedExample",
-    # "Quiz"). This component is highly contextual and dynamically alters its
-    # behavior, collection, and appearance based on the `purpose` of the search
-    # form and the `current_user`'s permissions.
+    # Multi-select field for filtering by medium type (e.g., "WorkedExample",
+    # "Quiz").
     #
-    # The field adapts its configuration based on three main contexts:
+    # Alters its behavior and appearance based on the `purpose` of the search
+    # and the `current_user`'s permissions.
     # - "media": Shows all medium types with multi-select and "All" checkbox
     # - "import": Shows importable types only, multi-select enabled, no "All" checkbox
     # - "quiz": Shows quiz types only, single-select, pre-selects "Question", no "All" checkbox

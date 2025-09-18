@@ -1,14 +1,8 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by lecture type.
-    # This component uses composition to build a multi-select field with an
-    # "All" toggle checkbox that controls the selection state of all lecture
-    # type options.
+    # Multi-select field for filtering by lecture type.
     #
-    # The field displays lecture types sourced from `Lecture.select_sorts` and
-    # provides a convenient checkbox to select or deselect all types at once.
-    # This is particularly useful for quickly switching between viewing content
-    # from all lecture types or from a specific subset.
+    # Displays lecture types sourced from `Lecture.select_sorts`.
     #
     # @example Basic lecture type field
     #   LectureTypeField.new(form_state: form_state)

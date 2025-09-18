@@ -1,8 +1,7 @@
 module SearchForm
   module Fields
     module Primitives
-      # Renders a submit button for the search form. This component provides
-      # a styled button with flexible wrapper divs for layout control.
+      # Submit button for the search form.
       #
       # Unlike other field components, this doesn't represent a data input but
       # rather the form submission action. It supports custom button styling,

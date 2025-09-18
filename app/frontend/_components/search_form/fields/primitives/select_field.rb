@@ -1,13 +1,10 @@
 module SearchForm
   module Fields
     module Primitives
-      # Renders a standard HTML `<select>` dropdown field. This component provides
-      # a simple, non-JavaScript-enhanced dropdown menu, suitable for basic
-      # selection tasks. It uses Bootstrap form-select styling.
+      # Standard HTML `<select>` dropdown field.
       #
       # The component supports all standard select options including prompts,
-      # pre-selected values, and disabled states. It's designed for straightforward
-      # single-selection scenarios without client-side enhancements.
+      # pre-selected values, and disabled states.
       #
       # @example Basic select field
       #   SelectField.new(

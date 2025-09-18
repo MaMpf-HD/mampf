@@ -1,13 +1,8 @@
 module SearchForm
   module Fields
-    # Renders a text input field specifically for full-text search queries.
-    # This component provides a pre-configured text field optimized for
-    # free-text search functionality with appropriate labels and help text.
+    # Text input field for full-text search queries.
     #
-    # The field is designed for users to enter search terms that will be
-    # matched against content using full-text search capabilities. It uses
-    # standard text input styling and can accept additional HTML attributes
-    # for customization.
+    # User input will be matched against content using full-text search capabilities.
     #
     # @example Basic fulltext search field
     #   FulltextField.new(form_state: form_state)

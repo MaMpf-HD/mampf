@@ -1,12 +1,9 @@
 module SearchForm
   module Fields
-    # Renders a checkbox for filtering by term independence.
-    # This component uses composition to build a checkbox field, pre-configured
-    # with a specific name, label, and a default unchecked state.
+    # Checkbox for filtering by term independence.
     #
-    # The field allows users to filter for content that is independent of
-    # academic terms. When checked, it will show only term-independent content,
-    # which is useful for finding evergreen materials that don't belong to
+    # This allows users to filter for content independent of academic terms like
+    # "Wintersemester <year>", i.e. "evergreen" content that is not tied to
     # specific academic periods.
     #
     # @example Basic term independence field

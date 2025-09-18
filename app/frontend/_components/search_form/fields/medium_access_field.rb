@@ -1,12 +1,9 @@
 module SearchForm
   module Fields
-    # Renders a select field for filtering by medium access rights.
-    # This component provides predefined access level options including
-    # "irrelevant", "all", "users", "subscribers", "locked", and "unpublished".
+    # Select field for filtering by medium access rights.
     #
-    # The field is specialized for content access control and offers a complete
-    # range of access levels from public visibility to restricted content. It
-    # defaults to "irrelevant" which effectively disables access-based filtering.
+    # Provides predefined access level options including
+    # "irrelevant", "all", "users", "subscribers", "locked", and "unpublished".
     #
     # @example Basic medium access field
     #   MediumAccessField.new(form_state: form_state)

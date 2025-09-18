@@ -1,13 +1,8 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by teachers.
-    # This component uses composition to build a multi-select field with an
-    # "All" toggle checkbox that controls the selection state of all teacher options.
+    # Multi-select field for filtering by teachers.
     #
-    # The field displays teachers from the `User.select_teachers` collection and
-    # provides a convenient checkbox to select or deselect all teachers at once.
-    # This is particularly useful for quickly switching between viewing content
-    # from all teachers or from a specific subset.
+    # Displays teachers from the `User.select_teachers` collection.
     #
     # @example Basic teacher field
     #   TeacherField.new(form_state: form_state)

@@ -1,13 +1,8 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by terms.
-    # This component uses composition to build a multi-select field with an
-    # "All" toggle checkbox that controls the selection state of all term options.
+    # Multi-select field for filtering by terms.
     #
-    # The field displays terms sourced from the `Term.select_terms` method and
-    # provides a convenient checkbox to select or deselect all terms at once.
-    # This is particularly useful for quickly switching between viewing content
-    # from all terms or from a specific subset of academic terms.
+    # Displays terms sourced from the `Term.select_terms` method.
     #
     # @example Basic term field
     #   TermField.new(form_state: form_state)

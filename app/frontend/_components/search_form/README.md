@@ -12,13 +12,13 @@ The system is built around composition using three main layers:
 
 ## Field Structure
 
-```
+```sh
 fields/
-├── primitives/          # Basic HTML inputs
+├── primitives/         # Basic HTML inputs
 ├── mixins/             # Shared functionality  
 ├── services/           # CSS and HTML building
 ├── utilities/          # Field grouping wrappers
-└── *.rb               # Composite field components
+└── *.rb                # Composite field components
 ```
 
 **Primitives**: `TextField`, `SelectField`, `MultiSelectField`, `CheckboxField`, `RadioButtonField`, `SubmitField`

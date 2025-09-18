@@ -1,11 +1,10 @@
 module SearchForm
   module Fields
     module Primitives
-      # Renders a standard HTML `<input type="text">` field. This is a general-purpose
-      # component for free-text input, styled with Bootstrap form controls.
+      # Standard HTML `<input type="text">` field for free-text input.
       #
-      # The component supports all standard HTML input attributes including placeholder,
-      # maxlength, pattern, and data attributes for client-side behavior.
+      # The component supports all standard HTML input attributes including
+      # placeholder, maxlength, pattern, and data attributes.
       #
       # @example Basic text field
       #   TextField.new(

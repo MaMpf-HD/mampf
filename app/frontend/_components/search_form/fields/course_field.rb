@@ -1,13 +1,8 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by courses. This component
-    # uses composition to build a multi-select field with an "All" toggle checkbox
-    # that controls the selection state of all course options.
+    # Multi-select field for filtering by courses.
     #
-    # The field displays courses ordered alphabetically by title and provides
-    # a convenient checkbox to select or deselect all courses at once. This is
-    # particularly useful when users want to quickly toggle between viewing
-    # content from all courses or from a specific subset.
+    # Displays courses ordered alphabetically by title.
     #
     # @example Basic course field
     #   CourseField.new(form_state: form_state)

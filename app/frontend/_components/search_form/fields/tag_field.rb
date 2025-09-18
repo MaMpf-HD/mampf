@@ -1,18 +1,10 @@
 module SearchForm
   module Fields
-    # Renders a complex tag filtering component with multi-select dropdown,
-    # "All" toggle checkbox, and radio buttons for tag operator selection.
-    # This component provides sophisticated tag-based filtering with both
-    # selection control and logical operator choice.
+    # Tag filtering component.
     #
-    # The field combines three interactive elements:
-    # - Multi-select dropdown for tag selection (with AJAX loading)
+    # - Multi-select dropdown tag selection (with AJAX loading)
     # - "All" checkbox that toggles all tags and controls radio button state
     # - OR/AND radio buttons to specify how multiple tags should be matched
-    #
-    # The component uses advanced Stimulus integration where the "All" checkbox
-    # can toggle the radio button group and set default values, providing
-    # a smooth user experience for complex filtering scenarios.
     #
     # @example Basic tag field
     #   TagField.new(form_state: form_state)

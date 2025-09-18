@@ -1,8 +1,6 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by programs.
-    # This component uses composition to build a multi-select field with an
-    # "All" toggle checkbox that controls the selection state of all program options.
+    # Multi-select field for filtering by programs.
     #
     # The field displays programs with their associated subjects formatted as
     # "Subject Name: Program Name" and sorted alphabetically. This provides clear

@@ -1,13 +1,9 @@
 module SearchForm
   module Fields
-    # Renders a select field for controlling pagination (items per page).
-    # This component provides predefined options for page sizes with a configurable
-    # default selection. It's designed to give users control over how many search
-    # results are displayed per page.
+    # Select field for controlling pagination (items per page).
     #
-    # The field offers common pagination options (10, 20, 50 items per page) by
-    # default, but can be customized with different options and default values
-    # to suit specific use cases.
+    # Provides predefined options for page sizes and number of items shown
+    # per page (common pagiation options by default: 10, 20, 50 items per page).
     #
     # @example Basic per-page field with defaults
     #   PerPageField.new(form_state: form_state)

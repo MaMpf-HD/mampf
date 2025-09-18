@@ -1,13 +1,10 @@
 module SearchForm
   module Fields
-    # Renders a multi-select field for filtering by users who are editors.
-    # This component uses composition to build a multi-select field with an
-    # "All" toggle checkbox that controls the selection state of all editor options.
+    # Multi-select field for filtering by users who are editors.
     #
-    # The field displays editors with their display names formatted as either
-    # "Tutorial Name (email)" or "Full Name (email)", sorted alphabetically.
-    # This provides a user-friendly way to filter content by specific editors
-    # while offering a convenient toggle to select or deselect all editors.
+    # Displays editors ordered alphabetically by their display names.
+    # This name is formatted as either
+    # "Tutorial Name (email)" or "Full Name (email)".
     #
     # @example Basic editor field
     #   EditorField.new(form_state: form_state)
