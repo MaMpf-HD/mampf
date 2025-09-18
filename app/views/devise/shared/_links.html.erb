@@ -1,16 +1,3 @@
-<div class="form-group text-center">
-  <% links = [] %>
-  <% if controller_name != 'sessions' %>
-    <% links << link_to(t('.login'), new_session_path(resource_name, params: { locale: I18n.locale })) %>
-  <% end %>
-  <% if devise_mapping.registerable? && controller_name != 'registrations' %>
-    <% links << link_to(t('devise.registrations.new.sign_up'), new_registration_path(resource_name, params: { locale: I18n.locale })) %>
-  <% end %>
-  <% if devise_mapping.confirmable? && controller_name != 'confirmations' %>
-    <% links << link_to(t('.didn_t_receive_confirmation_instructions', default: "Didn't receive confirmation instructions?"), new_confirmation_path(resource_name, params: { locale: I18n.locale })) %>
-  <% end %>
-  <% if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
-    <% links << link_to(t('.didn_t_receive_unlock_instructions'), new_unlock_path(resource_name)) %>
-  <% end %>
-  <%= safe_join(links, ' &middot; '.html_safe) %>
+<div class="form-group text-center mt-4">
+  <%= safe_join(devise_links(resource_name, devise_mapping, resource_class, controller_name), ' &middot; '.html_safe) %>
 </div>
