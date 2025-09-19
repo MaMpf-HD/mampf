@@ -145,21 +145,6 @@ class User < ApplicationRecord
     User.teachers.pluck(:name, :id).natural_sort_by(&:first)
   end
 
-  # returns the array of all course editors
-  def self.course_editors
-    User.where(id: EditableUserJoin.where(editable_type: "Course")
-                                   .distinct.select(:user_id))
-  end
-
-  def self.select_course_editors
-    User.course_editors.pluck(:name, :id).natural_sort_by(&:first)
-  end
-
-  # returns the array of all editors
-  def self.editors
-    User.where(id: EditableUserJoin.distinct.select(:user_id))
-  end
-
   # returns the array of all editors minus those that are only editors of talks
   def self.proper_editors
     talk_media_ids = Medium.where(teachable_type: "Talk").pluck(:id)
@@ -167,20 +152,6 @@ class User < ApplicationRecord
                                               editable_id: talk_media_ids)
     User.where(id: EditableUserJoin.where.not(id: talk_media_joins.pluck(:id))
                                    .pluck(:user_id).uniq)
-  end
-
-  # Returns the array of all editors (of courses, lectures, media), together
-  # with their ids
-  # Is used in options_for_select in form helpers.
-  def self.only_editors_selection
-    User.editors.map { |e| [e.info, e.id] }.natural_sort_by(&:first)
-  end
-
-  # array of all users together with their ids for use in options_for_select
-  # (e.g. in a select editors form)
-  def self.select_editors
-    User.pluck(:name, :email, :id, :name_in_tutorials)
-        .map { |u| ["#{u.fourth.presence || u.first} (#{u.second})", u.third] }
   end
 
   def self.name_or_email_like(search_string)
