@@ -77,7 +77,7 @@
     },
     "files.associations": {
         "*.js.erb": "javascript",
-        "*.html.erb": "html"
+        "*.html.erb": "erb"
     },
     //////////////////////////////////////
     // Editor
