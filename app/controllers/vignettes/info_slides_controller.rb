@@ -15,7 +15,7 @@ module Vignettes
     end
 
     def edit
-      render partial: "vignettes/info_slides/form/form" if request.xhr?
+      render partial: "vignettes/info_slides/form/form"
     end
 
     def create

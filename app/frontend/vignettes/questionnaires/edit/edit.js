@@ -13,9 +13,9 @@ $(document).ready(function () {
   if (editable) {
     createSortableVignetteSlides(slideList);
   }
-  registerVignetteSlideOpenListener();
-  registerVignetteEditSlideListener();
-  registerNewSlideButtonListener(slideList);
+  // registerVignetteSlideOpenListener();
+  // registerVignetteEditSlideListener();
+  // registerNewSlideButtonListener(slideList);
 
   $("#discard-changes-btn").on("click", function () {
     discardCurrentChanges();
@@ -122,29 +122,18 @@ function registerVignetteEditSlideListener() {
   });
 
   function handleEdit(url, $list, isInfoSlide, questionnaireId, slideId) {
-    const prefix = getInfoSlidePrefix(isInfoSlide);
-    const loadingSpinner = $(`#${prefix}vignette-slide-loading-${slideId}`);
-    let spinnerTimeout = setTimeout(function () {
-      loadingSpinner.show();
-    }, 100); // avoid flickering when loading is fast
+    // const prefix = getInfoSlidePrefix(isInfoSlide);
 
     $.ajax({
       url: url,
       method: "GET",
       dataType: "html",
       success: function (response) {
-        $list.find(".slides-edit-form-container").html("");
-        const currentContainer = $list.find(`.vignette-body-container-${slideId}`);
-        currentContainer.hide().html(response).ready(function () {
-          clearTimeout(spinnerTimeout);
-          loadingSpinner.hide();
-          currentContainer.show();
-          setupChangeDetection(isInfoSlide);
-        });
-        fixVideoAttachments();
+        // TODO: Vignettes
+        // setupChangeDetection(isInfoSlide);
+        // fixVideoAttachments();
       },
       error: function (xhr, status, error) {
-        clearTimeout(spinnerTimeout);
         console.error(`Failed to load slide edit form: ${error}`);
       },
     });
@@ -199,35 +188,34 @@ function registerNewSlideButtonListener($slideList) {
     return;
   }
 
-  $("#vignettes-new-slide-btn").click(function () {
-    handleNew($(this), Routes.new_questionnaire_slide_path(questionnaireId),
-      $("#vignettes-slides-accordion"), false);
-  });
+  // $("#vignettes-new-slide-btn").click(function () {
+  //   handleNew($(this), Routes.new_questionnaire_slide_path(questionnaireId),
+  //     $("#vignettes-slides-accordion"), false);
+  // });
 
-  $("#info-vignettes-new-slide-btn").click(function () {
-    handleNew($(this), Routes.new_questionnaire_info_slide_path(questionnaireId),
-      $("#info-vignettes-slides-accordion"), true);
-  });
+  // $("#info-vignettes-new-slide-btn").click(function () {
+  //   handleNew($(this), Routes.new_questionnaire_info_slide_path(questionnaireId),
+  //     $("#info-vignettes-slides-accordion"), true);
+  // });
 
-  function handleNew($this, url, $list, isInfoSlide) {
-    $this.prop("disabled", true);
+  // function handleNew($this, url, $list, isInfoSlide) {
+  //   $this.prop("disabled", true);
 
-    $.ajax({
-      url: url,
-      method: "GET",
-      dataType: "html",
-      success: function (response) {
-        $list.find(".slides-edit-form-container").html("");
-        $list.append(response);
-        const newSlide = $list.children().last();
-        openAccordionItem(newSlide);
-        setupChangeDetection(isInfoSlide);
-      },
-      error: function (xhr, status, error) {
-        console.error(`Failed to load new slide form: ${error}`);
-      },
-    });
-  }
+  //   $.ajax({
+  //     url: url,
+  //     method: "GET",
+  //     dataType: "html",
+  //     success: function (response) {
+  //       $list.append(response);
+  //       const newSlide = $list.children().last();
+  //       openAccordionItem(newSlide);
+  //       setupChangeDetection(isInfoSlide);
+  //     },
+  //     error: function (xhr, status, error) {
+  //       console.error(`Failed to load new slide form: ${error}`);
+  //     },
+  //   });
+  // }
 }
 
 function openAccordionItem($item) {

@@ -22,7 +22,7 @@ module Vignettes
       @slide.build_question unless @slide.question
       @slide.question.options.build unless @slide.question.options.any?
 
-      render partial: "vignettes/slides/form/form" if request.xhr?
+      render partial: "vignettes/slides/form/form"
     end
 
     def create

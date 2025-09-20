@@ -1,9 +1,8 @@
+<%= turbo_frame_tag @info_slide do %>
 <%= form_with(
     model: @info_slide,
     local: true,
-    url: @info_slide.new_record? ? questionnaire_info_slides_path(@questionnaire) : questionnaire_info_slide_path(@questionnaire, @info_slide),
-    id: "info-slide-form"
-    ) do |form| %>
+    url: @info_slide.new_record? ? questionnaire_info_slides_path(@questionnaire) : questionnaire_info_slide_path(@questionnaire, @info_slide)) do |form| %>
 
   <div class="form-floating mb-3">
     <%= form.text_field :title, class: 'form-control',
@@ -75,4 +74,5 @@
       </div>
     </div>
   </div>
+<% end %>
 <% end %>

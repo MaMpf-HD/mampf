@@ -20,51 +20,51 @@
 
 <div class="accordion-item">
 
-    <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button"
-                data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
-                aria-expanded="false" aria-controls="<%= collapse_id %>">
-            <% if slide.is_a?(Vignettes::InfoSlide) %>
-                <span class="me-2 text-secondary">#<%= slide.id %></span>
-                <%= slide.title %>
-            <% else %>
-                <%= slide.title %>
-            <% end %>
-        </button>
-    </h2>
+  <h2 class="accordion-header">
+    <button class="accordion-button collapsed" type="button"
+            data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
+            aria-expanded="false" aria-controls="<%= collapse_id %>">
+      <% if slide.is_a?(Vignettes::InfoSlide) %>
+        <span class="me-2 text-secondary">#<%= slide.id %></span>
+        <%= slide.title %>
+      <% else %>
+        <%= slide.title %>
+      <% end %>
+    </button>
+  </h2>
 
-    <div id="<%= collapse_id %>"
-         data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
-         data-slide-id="<%= slide.id %>"
-         class="accordion-collapse collapse vignette-accordion-collapse"
-         data-bs-parent="#<%= info_prefix %>vignettes-slides-accordion">
+  <div id="<%= collapse_id %>"
+        data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
+        data-slide-id="<%= slide.id %>"
+        class="accordion-collapse collapse vignette-accordion-collapse"
+        data-bs-parent="#<%= info_prefix %>vignettes-slides-accordion">
 
-        <% unless slide.new_record? %>
-        <div id="<%= info_prefix %>vignette-slide-loading-<%= slide.id %>" 
-             class="d-flex justify-content-center mt-3 mb-3">
-            <div class="spinner-border text-secondary" role="status">
+    <div class="accordion-body">
+      <!-- Existing slide -->
+      <% if slide.id %>
+
+        <%= turbo_frame_tag slide, loading: "lazy", src: turbo_slide_edit_url(slide) do %>
+          <% unless slide.new_record? %>
+            <!-- Loading spinner -->
+            <div class="d-flex justify-content-center mt-3 mb-3">
+              <div class="spinner-border text-secondary" role="status">
                 <span class="visually-hidden">Loading...</span>
+              </div>
             </div>
-        </div>
+          <% end %>
         <% end %>
 
-        <% if slide.id %>
-        <!-- Note that vignette-body-container is a class and not an ID -->
-        <!-- since it might occur multiple times: once at an info slide -->
-        <!-- and once at a "normal" slide -->
-        <div class="accordion-body slides-edit-form-container vignette-body-container-<%= slide.id %>">
-            <!-- The slide edit form will be dynamically loaded here -->
-        </div>
+      <!-- New slide -->
+      <% else %>
+
+        <% if slide.is_a?(Vignettes::InfoSlide) %>
+          <%= render partial: "vignettes/info_slides/form/form" %>
         <% else %>
-        <div class="accordion-body">
-            <% if slide.is_a?(Vignettes::InfoSlide) %>
-              <%= render partial: "vignettes/info_slides/form/form" %>
-            <% else %>
-              <%= render partial: "vignettes/slides/form/form" %>
-            <% end %>
-        </div>
+          <%= render partial: "vignettes/slides/form/form" %>
         <% end %>
 
+      <% end %>
+    
     </div>
-
+  </div>
 </div>

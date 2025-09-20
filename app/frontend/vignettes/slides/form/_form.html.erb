@@ -1,11 +1,10 @@
 <%= vite_javascript_tag "vignettes/slides/form/_form.js" %>
 
+<%= turbo_frame_tag @slide do %>
 <%= form_with(
       model: [@questionnaire, @slide],
       local: true,
-      url: @slide.new_record? ? questionnaire_slides_path(@questionnaire) : questionnaire_slide_path(@questionnaire, @slide),
-      id: "slide-form"
-    ) do |form| %>
+      url: @slide.new_record? ? questionnaire_slides_path(@questionnaire) : questionnaire_slide_path(@questionnaire, @slide)) do |form| %>
 
   <div class="form-floating mb-3">
     <%= form.text_field :title, 
@@ -74,4 +73,5 @@
       </div>
     </div>
   </div>
+<% end %>
 <% end %>
