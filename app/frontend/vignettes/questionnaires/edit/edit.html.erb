@@ -1,6 +1,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15/Sortable.min.js"></script>
 <%= vite_javascript_tag "vignettes/questionnaires/edit/edit.js" %>
-<%=vite_stylesheet_tag "vignettes/questionnaires/edit/edit.scss" %>
+<%= vite_stylesheet_tag "vignettes/questionnaires/edit/edit.scss" %>
 
 <% lecture_edit_path = edit_lecture_path(@questionnaire.lecture, anchor: 'vignettes') %>
 
@@ -73,44 +73,48 @@
     </div>
   </div>
 
-  <!-- Info Slides -->
+  <!-- 🎈 Info Slides -->
   <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h1>
 
-  <div class="accordion" id="info-vignettes-slides-accordion">
+  <div class="accordion" id="info_slides">
     <% @questionnaire.info_slides.each() do |info_slide| %>
       <%= render partial: "vignettes/questionnaires/shared/slide_accordion_item",
                  locals: { slide: info_slide } %>
     <% end %>
   </div>
 
-  <button type="button" id="info-vignettes-new-slide-btn"
-          class="btn btn-outline-primary mt-2" 
-          <%= 'disabled' unless @questionnaire.editable %>>
+  <%= button_to new_questionnaire_info_slide_path(@questionnaire),
+      method: :get,
+      data: { "turbo-stream": true },
+      class: "btn btn-outline-primary mt-2",
+      disabled: !@questionnaire.editable do %>
     <i class="bi bi-plus-circle"></i>
     <%= t("vignettes.create_new_info_slide") %>
-  </button>
+  <% end %>
 
-  <!-- Slides -->
+  <!-- 🎈 Slides -->
   <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.slides") %></h1>
   <% if @questionnaire.editable && @slides.size > 1%>
   <p><%= t("vignettes.drag_slides_tip") %></p>
   <% end %>
 
-  <div class="accordion" id="vignettes-slides-accordion"
-        data-questionnaire-id="<%= @questionnaire.id %>"
-        data-questionnaire-editable="<%= @questionnaire.editable %>">
+  <div class="accordion" id="slides"
+       data-questionnaire-id="<%= @questionnaire.id %>"
+       data-questionnaire-editable="<%= @questionnaire.editable %>">
     <% @slides.each() do |slide| %>
       <%= render partial: "vignettes/questionnaires/shared/slide_accordion_item",
                  locals: { slide: slide } %>
     <% end %>
   </div>
 
-  <button type="button" id="vignettes-new-slide-btn" 
-          class="btn btn-outline-primary mt-2" 
-          <%= 'disabled' unless @questionnaire.editable %>>
+  <%= button_to new_questionnaire_slide_path(@questionnaire),
+      method: :get,
+      data: { "turbo-stream": true },
+      class: "btn btn-outline-primary mt-2",
+      disabled: !@questionnaire.editable do %>
     <i class="bi bi-plus-circle"></i>
     <%= t("vignettes.create_new_slide") %>
-  </button>
+  <% end %>
 </div>
 
 <!-- Delete Confirmation Modal -->

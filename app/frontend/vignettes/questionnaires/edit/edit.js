@@ -1,4 +1,3 @@
-import { Collapse } from "bootstrap";
 
 let currentUnsavedSlideForm = null;
 let pendingSlideId = null;
@@ -8,14 +7,13 @@ let formSubmit = false;
 
 // When using turbo, the event is not fired on redirect
 $(document).ready(function () {
-  const slideList = $("#vignettes-slides-accordion");
-  const editable = slideList.data("questionnaire-editable");
+  const $slideList = $("#slides");
+  const editable = $slideList.data("questionnaire-editable");
   if (editable) {
-    createSortableVignetteSlides(slideList);
+    createSortableVignetteSlides($slideList);
   }
   // registerVignetteSlideOpenListener();
   // registerVignetteEditSlideListener();
-  // registerNewSlideButtonListener(slideList);
 
   $("#discard-changes-btn").on("click", function () {
     discardCurrentChanges();
@@ -98,7 +96,7 @@ function saveCurrentChanges() {
 }
 
 function registerVignetteEditSlideListener() {
-  const $slideList = $("#vignettes-slides-accordion");
+  const $slideList = $("#slides");
 
   $(".vignette-accordion-collapse").on("shown.bs.collapse", function (evt) {
     const slideId = evt.target.dataset.slideId;
@@ -116,7 +114,7 @@ function registerVignetteEditSlideListener() {
 
     const isInfoSlide = $(this).attr("data-is-info-slide") === "true";
     const prefix = getInfoSlidePrefix(isInfoSlide);
-    const $list = $(`#${prefix}vignettes-slides-accordion`);
+    const $list = $(`#${prefix}slides`);
     const url = isInfoSlide ? Routes.edit_questionnaire_info_slide_path(questionnaireId, slideId) : Routes.edit_questionnaire_slide_path(questionnaireId, slideId);
     handleEdit(url, $list, isInfoSlide, questionnaireId, slideId);
   });
@@ -179,49 +177,6 @@ function setupChangeDetection(isInfoSlide) {
       hasUnsavedChanges = false;
     }
   }
-}
-
-function registerNewSlideButtonListener($slideList) {
-  const questionnaireId = $slideList.attr("data-questionnaire-id");
-  if (questionnaireId === undefined) {
-    console.error("Questionnaire id is missing");
-    return;
-  }
-
-  // $("#vignettes-new-slide-btn").click(function () {
-  //   handleNew($(this), Routes.new_questionnaire_slide_path(questionnaireId),
-  //     $("#vignettes-slides-accordion"), false);
-  // });
-
-  // $("#info-vignettes-new-slide-btn").click(function () {
-  //   handleNew($(this), Routes.new_questionnaire_info_slide_path(questionnaireId),
-  //     $("#info-vignettes-slides-accordion"), true);
-  // });
-
-  // function handleNew($this, url, $list, isInfoSlide) {
-  //   $this.prop("disabled", true);
-
-  //   $.ajax({
-  //     url: url,
-  //     method: "GET",
-  //     dataType: "html",
-  //     success: function (response) {
-  //       $list.append(response);
-  //       const newSlide = $list.children().last();
-  //       openAccordionItem(newSlide);
-  //       setupChangeDetection(isInfoSlide);
-  //     },
-  //     error: function (xhr, status, error) {
-  //       console.error(`Failed to load new slide form: ${error}`);
-  //     },
-  //   });
-  // }
-}
-
-function openAccordionItem($item) {
-  new Collapse($item.find(".collapse"), {
-    toggle: true,
-  });
 }
 
 function closeAllOpenSlides() {

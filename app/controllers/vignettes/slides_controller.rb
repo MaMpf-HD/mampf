@@ -11,10 +11,15 @@ module Vignettes
       @slide.build_question
       @slide.question.options.build
 
-      return unless request.xhr?
-
-      render partial: "vignettes/questionnaires/shared/slide_accordion_item",
-             locals: { slide: @slide }
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.append(
+            :slides,
+            partial: "vignettes/questionnaires/shared/slide_accordion_item",
+            locals: { slide: @slide }
+          )
+        end
+      end
     end
 
     def edit

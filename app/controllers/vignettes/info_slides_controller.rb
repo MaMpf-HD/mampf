@@ -8,10 +8,15 @@ module Vignettes
     def new
       @info_slide = InfoSlide.new
 
-      return unless request.xhr?
-
-      render partial: "vignettes/questionnaires/shared/slide_accordion_item",
-             locals: { slide: @info_slide }
+      respond_to do |format|
+        format.turbo_stream do
+          render turbo_stream: turbo_stream.append(
+            :info_slides,
+            partial: "vignettes/questionnaires/shared/slide_accordion_item",
+            locals: { slide: @info_slide }
+          )
+        end
+      end
     end
 
     def edit

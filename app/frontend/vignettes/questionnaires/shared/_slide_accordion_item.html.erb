@@ -33,15 +33,24 @@
     </button>
   </h2>
 
+  <% is_new_slide = slide.new_record? %>
+
   <div id="<%= collapse_id %>"
         data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
         data-slide-id="<%= slide.id %>"
-        class="accordion-collapse collapse vignette-accordion-collapse"
-        data-bs-parent="#<%= info_prefix %>vignettes-slides-accordion">
+        class="accordion-collapse <%= "collapse" if not is_new_slide %> vignette-accordion-collapse"
+        data-bs-parent="#<%= info_prefix %>slides">
 
     <div class="accordion-body">
-      <!-- Existing slide -->
-      <% if slide.id %>
+      <% if is_new_slide %>
+
+        <% if slide.is_a?(Vignettes::InfoSlide) %>
+          <%= render partial: "vignettes/info_slides/form/form" %>
+        <% else %>
+          <%= render partial: "vignettes/slides/form/form" %>
+        <% end %>
+
+      <% else %>
 
         <%= turbo_frame_tag slide, loading: "lazy", src: turbo_slide_edit_url(slide) do %>
           <% unless slide.new_record? %>
@@ -52,15 +61,6 @@
               </div>
             </div>
           <% end %>
-        <% end %>
-
-      <!-- New slide -->
-      <% else %>
-
-        <% if slide.is_a?(Vignettes::InfoSlide) %>
-          <%= render partial: "vignettes/info_slides/form/form" %>
-        <% else %>
-          <%= render partial: "vignettes/slides/form/form" %>
         <% end %>
 
       <% end %>
