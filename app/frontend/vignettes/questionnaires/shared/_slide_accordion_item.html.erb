@@ -38,7 +38,7 @@
   <div id="<%= collapse_id %>"
         data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
         data-slide-id="<%= slide.id %>"
-        class="accordion-collapse <%= "collapse" if not is_new_slide %> vignette-accordion-collapse"
+        class="accordion-collapse <%= is_new_slide ? "show" : "collapse" %> vignette-accordion-collapse"
         data-bs-parent="#<%= info_prefix %>slides">
 
     <div class="accordion-body">

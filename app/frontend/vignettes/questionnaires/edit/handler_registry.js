@@ -21,6 +21,6 @@ export class HandlerRegistry {
         handler.element.off(handler.events, handler.handler);
       }
     });
-    this.changeDetectionHandlers = [];
+    this.handlers = [];
   }
 }

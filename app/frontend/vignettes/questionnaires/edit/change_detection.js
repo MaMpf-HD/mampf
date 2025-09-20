@@ -24,6 +24,12 @@ $(document).ready(function () {
 });
 
 function registerChangeHandlers() {
+  // New slide appended
+  $(document).on("turbo:stream-render", function () {
+    setupChangeDetection(false);
+  });
+
+  // Accordion button clicked to open slide
   $(document).on("shown.bs.collapse", COLLAPSE_CLASS, function () {
     setupChangeDetection(false);
   });
@@ -52,6 +58,8 @@ function registerChangeHandlers() {
 }
 
 function setupChangeDetection(isInfoSlide) {
+  registry.deregisterAll();
+
   const visibleAccordionBody = $(`${COLLAPSE_CLASS}.show .accordion-body`);
   const form = visibleAccordionBody.find(`.${isInfoSlide ? "info-" : ""}slide-form`);
   if (form.length !== 1) return;
