@@ -29,6 +29,12 @@ function registerChangeHandlers() {
     setupChangeDetection(false);
   });
 
+  // e.g. after update of a slide
+  $(document).on("turbo:frame-render", function () {
+    console.log("in frame render");
+    setupChangeDetection(false);
+  });
+
   // Accordion button clicked to open slide
   $(document).on("shown.bs.collapse", COLLAPSE_CLASS, function () {
     setupChangeDetection(false);
@@ -40,7 +46,7 @@ function registerChangeHandlers() {
 
   $(document).on("hide.bs.collapse", COLLAPSE_CLASS, function (event) {
     registry.deregisterAll();
-    currentUnsavedSlideForm = null;
+    resetUnsavedChangesState();
     return handleUnsavedChanges(event, "hide");
   });
 
@@ -57,8 +63,17 @@ function registerChangeHandlers() {
   }
 }
 
+function resetUnsavedChangesState() {
+  $("#unsaved-changes-warning").addClass("d-none");
+  hasUnsavedChanges = false;
+  currentUnsavedSlideForm = null;
+  pendingAction = null;
+  pendingSlideId = null;
+}
+
 function setupChangeDetection(isInfoSlide) {
   registry.deregisterAll();
+  resetUnsavedChangesState();
 
   const visibleAccordionBody = $(`${COLLAPSE_CLASS}.show .accordion-body`);
   const form = visibleAccordionBody.find(`.${isInfoSlide ? "info-" : ""}slide-form`);
