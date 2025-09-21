@@ -1,7 +1,5 @@
-const POSITION_ID = "loginViewTransitionClick";
-
 /**
- * Animates a circular reveal on page load based on the stored click position.
+ * Animates a circular reveal on page load (starting from the center of the screen).
  *
  * Adapted from:
  * https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using#a_javascript-powered_custom_same-document_spa_transition
@@ -16,17 +14,6 @@ window.addEventListener("pagereveal", async (e) => {
 
   let x = window.innerWidth / 2;
   let y = window.innerHeight / 2;
-  const stored = sessionStorage.getItem(POSITION_ID);
-  if (stored) {
-    const pos = JSON.parse(stored);
-    if (typeof pos.x === "number" && typeof pos.y === "number") {
-      if (pos.x !== 0 && pos.y !== 0) {
-        x = pos.x;
-        y = pos.y;
-      }
-    }
-    sessionStorage.removeItem(POSITION_ID);
-  }
 
   // distance to farthest corner
   const endRadius = Math.hypot(
