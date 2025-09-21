@@ -35,7 +35,6 @@ window.addEventListener("pagereveal", async (e) => {
   );
 
   await e.viewTransition.ready;
-
   document.documentElement.animate(
     {
       clipPath: [
