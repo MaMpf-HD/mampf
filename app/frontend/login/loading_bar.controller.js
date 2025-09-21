@@ -1,67 +1,86 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  progress = 0;
-  animationFrame = null;
-  targetProgress = 0;
-
   connect() {
-    console.log("loading bar controller connected");
-    setInterval(() => this.readAndUpdateProgress(), 200);
+    this.startProgressOnceProgressBarExists();
   }
 
-  readAndUpdateProgress() {
-    const bar = document.querySelector(".turbo-progress-bar");
-    if (!bar) return;
+  startProgressOnceProgressBarExists() {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node.nodeType !== Node.ELEMENT_NODE) {
+            continue;
+          }
 
-    const width = bar.style.width;
-    if (!width.endsWith("%")) return;
-    this.targetProgress = parseFloat(width);
-    console.log("progress:", this.targetProgress);
-    this.animateProgress();
+          if (node.classList && node.classList.contains("turbo-progress-bar")) {
+            observer.disconnect();
+            this.startProgress();
+          }
+        }
+      }
+    });
+
+    observer.observe(document.documentElement, { childList: true, subtree: false });
   }
 
   disconnect() {
+    clearInterval(this.interval);
+
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
     }
   }
 
-  animateProgress() {
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
+  startProgress() {
+    const styleObserver = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        this.targetProgress = parseFloat(mutation.target.style.width);
+        if (this.targetProgress >= 100) {
+          styleObserver.disconnect();
+          clearInterval(this.interval);
+          this.animateToCompletion();
+        }
+      }
+    });
+
+    const target = document.getElementsByClassName("turbo-progress-bar")[0];
+    styleObserver.observe(target, { attributes: true, attributeFilter: ["style"] });
+
+    this.progress = 0;
+    clearInterval(this.interval);
+    this.interval = setInterval(() => this.updateProgress(), 35);
+  }
+
+  updateProgress() {
+    this.progress += Math.random() * 0.8;
+    if (this.progress >= 100) {
+      this.progress = 100;
+      clearInterval(this.interval);
     }
+    this.updateProgressInUI(this.progress);
+  }
 
+  animateToCompletion() {
     const step = () => {
-      const diff = this.targetProgress - this.progress;
+      const diff = Math.min(14, 100 - this.progress);
+      const cap = Math.max(0.02, 1 - Math.exp(-10 * Math.pow(diff / 100, 2)));
+      this.progress += 0.09 * diff * cap;
 
-      if (diff < 1.0) {
-        this.setProgress(this.targetProgress);
+      if (this.progress >= 100) {
+        this.progress = 100;
+        this.updateProgressInUI(this.progress);
         return;
       }
 
-      let updateStep = 0.0;
-
-      if (this.targetProgress >= 99.0) {
-        console.log("100% REACHED in real life");
-        const slowFactor = Math.max(1 - Math.exp(-40 * diff / 100), 0.1);
-        updateStep = Math.min(diff * slowFactor, 0.3);
-      }
-      else {
-        console.log(`not yet there, diff: ${diff}`);
-        updateStep = Math.min(diff, 0.1);
-      }
-
-      console.log(`--> Update Step: ${updateStep.toFixed(2)}`);
-      this.setProgress(this.progress + updateStep);
+      this.updateProgressInUI(this.progress);
       this.animationFrame = requestAnimationFrame(step);
     };
 
     this.animationFrame = requestAnimationFrame(step);
   }
 
-  setProgress(value) {
-    this.progress = value;
+  updateProgressInUI(value) {
     document.documentElement.style.setProperty("--login-progress", `${value}%`);
   }
 }
