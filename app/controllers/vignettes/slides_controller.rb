@@ -58,9 +58,6 @@ module Vignettes
       end
 
       if @slide.update(slide_params)
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_updated")
-      elsif request.xhr?
         render partial: "vignettes/slides/form/form"
       else
         redirect_to edit_questionnaire_path(@questionnaire),
