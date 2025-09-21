@@ -2,11 +2,14 @@
 import { Application } from "@hotwired/stimulus";
 window.Stimulus = Application.start();
 
-import LectureSidebarController from "~/lectures/show/_sidebar.controller";
+import LectureSidebarController from "~/lectures/show/_sidebar.controller.js";
 window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 
-import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller";
+import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
+
+import LoadingBarController from "~/login/loading_bar.controller.js";
+window.Stimulus.register("loading-bar", LoadingBarController);
 
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
