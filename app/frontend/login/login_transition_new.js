@@ -1,37 +1,42 @@
 /**
- * Animates a circular reveal on page load (starting from the center of the screen).
+ * Animates a fade & reveal effect.
  *
- * Adapted from:
- * https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using#a_javascript-powered_custom_same-document_spa_transition
- * and https://developer.chrome.com/docs/web-platform/view-transitions/cross-document
- *
- * See more examples here:
- * https://view-transitions.chrome.dev/
+ * Further ressources:
+ * - https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using
+ * - https://developer.chrome.com/docs/web-platform/view-transitions/cross-document
+ * - https://view-transitions.chrome.dev/
  */
 window.addEventListener("pagereveal", async (e) => {
   if (!navigation.activation.from) return;
   if (!e.viewTransition) return;
 
-  let x = window.innerWidth / 2;
-  let y = window.innerHeight / 2;
-
-  // distance to farthest corner
-  const endRadius = Math.hypot(
-    Math.max(x, window.innerWidth - x),
-    Math.max(y, window.innerHeight - y),
-  );
-
   await e.viewTransition.ready;
+
+  const duration = 700;
+  const easing = "cubic-bezier(0.4,0,0.2,1)";
+
   document.documentElement.animate(
     {
-      clipPath: [
-          `circle(0 at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-      ],
+      filter: ["none", "blur(8px)"],
+      opacity: [1, 0.3],
+      transform: ["scale(1)", "scale(1.07)"],
     },
     {
-      duration: 500,
-      easing: "ease-in",
+      duration,
+      easing,
+      pseudoElement: "::view-transition-old(root)",
+    },
+  );
+
+  document.documentElement.animate(
+    {
+      filter: ["blur(8px)", "none"],
+      opacity: [0.3, 1],
+      transform: ["scale(0.93)", "scale(1)"],
+    },
+    {
+      duration,
+      easing,
       pseudoElement: "::view-transition-new(root)",
     },
   );
