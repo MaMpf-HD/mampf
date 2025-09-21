@@ -25,8 +25,6 @@ export default class extends Controller {
   }
 
   disconnect() {
-    clearInterval(this.interval);
-
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
     }
@@ -38,7 +36,7 @@ export default class extends Controller {
         this.targetProgress = parseFloat(mutation.target.style.width);
         if (this.targetProgress >= 100) {
           styleObserver.disconnect();
-          clearInterval(this.interval);
+          cancelAnimationFrame(this.animationFrame);
           this.animateToCompletion();
         }
       }
@@ -48,22 +46,17 @@ export default class extends Controller {
     styleObserver.observe(target, { attributes: true, attributeFilter: ["style"] });
 
     this.progress = 0;
-    clearInterval(this.interval);
-    this.interval = setInterval(() => this.updateProgress(), 35);
-  }
-
-  updateProgress() {
-    this.progress += Math.random() * 0.8;
-    if (this.progress >= 100) {
-      this.progress = 100;
-      clearInterval(this.interval);
-    }
-    this.updateProgressInUI(this.progress);
+    const step = () => {
+      this.progress += 0.02 + Math.random() * 0.2;
+      this.updateProgressInUI(this.progress);
+      this.animationFrame = requestAnimationFrame(step);
+    };
+    this.animationFrame = requestAnimationFrame(step);
   }
 
   animateToCompletion() {
     const step = () => {
-      const diff = Math.min(14, 100 - this.progress);
+      const diff = Math.min(15, 100 - this.progress);
       const cap = Math.max(0.02, 1 - Math.exp(-10 * Math.pow(diff / 100, 2)));
       this.progress += 0.09 * diff * cap;
 
