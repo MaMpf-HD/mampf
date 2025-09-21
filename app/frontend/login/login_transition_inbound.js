@@ -6,6 +6,9 @@ const POSITION_ID = "loginViewTransitionClick";
  * Adapted from:
  * https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API/Using#a_javascript-powered_custom_same-document_spa_transition
  * and https://developer.chrome.com/docs/web-platform/view-transitions/cross-document
+ *
+ * See more examples here:
+ * https://view-transitions.chrome.dev/
  */
 window.addEventListener("pagereveal", async (e) => {
   if (!navigation.activation.from) return;
@@ -25,7 +28,7 @@ window.addEventListener("pagereveal", async (e) => {
     sessionStorage.removeItem(POSITION_ID);
   }
 
-  // furthest corner
+  // distance to farthest corner
   const endRadius = Math.hypot(
     Math.max(x, window.innerWidth - x),
     Math.max(y, window.innerHeight - y),
