@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%= vite_stylesheet_tag "styles/view_transition.css" %>
-    <%= vite_javascript_tag "login/login_transition_new.css" %>
-    <%= vite_javascript_tag "login/login_transition_new.js", blocking: "render" %>
+    <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
+    <%= vite_javascript_tag "login/login_transition.css", blocking: "render" %>
     <%= render partial: 'layouts/head' %>
   </head>
   <body class="d-flex flex-column min-vh-100" data-locale="<%= I18n.locale %>"

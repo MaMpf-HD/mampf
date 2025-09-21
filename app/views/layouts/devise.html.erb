@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%= vite_stylesheet_tag "styles/view_transition.css" %>
+    <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
+    <%= vite_javascript_tag "login/login_transition.css", blocking: "render" %>
     <%= render partial: 'layouts/head' %>
     <%= vite_stylesheet_tag "styles/landing.scss" %>
     <%= vite_javascript_tag "js/landing-p5.js", "data-turbo-track": "reload" %>
