@@ -17,7 +17,6 @@ RSpec::Matchers.define(:include_in_html_body) do |expected_text|
   match do |mail|
     return false unless mail&.html_part&.body
 
-    # Parse the HTML body and get the clean text content
     body_text = Nokogiri::HTML(mail.html_part.body.to_s).text
 
     # Normalize whitespace in both strings before comparison.
@@ -25,7 +24,6 @@ RSpec::Matchers.define(:include_in_html_body) do |expected_text|
     normalized_body = body_text.squish
     normalized_expected = expected_text.squish
 
-    # Perform the check on the normalized text
     normalized_body.include?(normalized_expected)
   end
 
