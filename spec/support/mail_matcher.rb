@@ -19,11 +19,11 @@ RSpec::Matchers.define(:include_in_html_body) do |expected_text|
   match do |mail|
     return false unless mail&.html_part&.body
 
-    body_text = Nokogiri::HTML(mail.html_part.body.to_s).text
+    @body_text = Nokogiri::HTML(mail.html_part.body.to_s).text
 
     # Normalize whitespace in both strings before comparison.
     # This replaces all newline/tab/multiple-space sequences with a single space.
-    normalized_body = body_text.squish
+    normalized_body = @body_text.squish
     normalized_expected = expected_text.squish
 
     normalized_body.include?(normalized_expected)
@@ -31,11 +31,10 @@ RSpec::Matchers.define(:include_in_html_body) do |expected_text|
 
   failure_message do |mail|
     if mail&.html_part&.body
-      body_text = Nokogiri::HTML(mail.html_part.body.to_s).text
       "Expected the HTML body's text to include:\n  " \
         "\"#{expected_text}\"\n\n" \
         "But the parsed text was:\n  " \
-        "\"#{body_text.strip}\""
+        "\"#{@body_text.strip}\""
     else
       "Expected email to have an HTML part, but it was nil."
     end
