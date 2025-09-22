@@ -1,3 +1,5 @@
+require "nokogiri"
+
 RSpec::Matchers.define(:enqueue_mail_including_params) do |mailer, method, params|
   supports_block_expectations
 
