@@ -10,9 +10,10 @@ RSpec.describe(Redeemer, type: :model) do
 
     before :each do
       allow(Current).to receive(:user).and_return(user)
-      allow(File).to receive(:read).and_call_original
-      allow(File).to receive(:read).with(a_string_matching(/mampf-logo\.png$/))
-                                   .and_return("fake-image-data")
+      # Stub the specific helper method to prevent it from accessing the filesystem.
+      # Since image tags are not relevant for our tests, we replace
+      # them by empty strings
+      allow_any_instance_of(EmailHelper).to receive(:email_image_tag).and_return("")
     end
 
     shared_examples "common voucher processing" do
