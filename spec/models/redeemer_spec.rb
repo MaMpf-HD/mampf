@@ -10,6 +10,9 @@ RSpec.describe(Redeemer, type: :model) do
 
     before :each do
       allow(Current).to receive(:user).and_return(user)
+      allow(File).to receive(:read).and_call_original
+      allow(File).to receive(:read).with(a_string_matching(/mampf-logo\.png$/))
+                                   .and_return("fake-image-data")
     end
 
     shared_examples "common voucher processing" do

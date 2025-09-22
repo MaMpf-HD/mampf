@@ -13,17 +13,37 @@ RSpec::Matchers.define(:enqueue_mail_including_params) do |mailer, method, param
   end
 end
 
-RSpec::Matchers.define(:include_in_html_body) do |expected|
-  # ignore \r and \n in the comparison
-  mail_body_stripped = ->(mail) { mail.html_part.body.decoded.gsub(/[\r\n]/, "") }
-  expected_stripped = expected.gsub(/[\r\n]/, "")
-
+RSpec::Matchers.define(:include_in_html_body) do |expected_text|
   match do |mail|
-    mail_body_stripped.call(mail).include?(expected_stripped)
+    return false unless mail&.html_part&.body
+
+    # Parse the HTML body and get the clean text content
+    body_text = Nokogiri::HTML(mail.html_part.body.to_s).text
+
+    # Normalize whitespace in both strings before comparison.
+    # This replaces all newline/tab/multiple-space sequences with a single space.
+    normalized_body = body_text.squish
+    normalized_expected = expected_text.squish
+
+    # Perform the check on the normalized text
+    normalized_body.include?(normalized_expected)
   end
 
   failure_message do |mail|
-    "Expected that the HTML body would include:\n#{expected_stripped}\n" \
-      + "But got:\n#{mail_body_stripped.call(mail)}"
+    if mail&.html_part&.body
+      body_text = Nokogiri::HTML(mail.html_part.body.to_s).text
+      "Expected the HTML body's text to include:\n  " \
+        "\"#{expected_text}\"\n\n" \
+        "But the parsed text was:\n  " \
+        "\"#{body_text.strip}\""
+    else
+      "Expected email to have an HTML part, but it was nil."
+    end
+  end
+
+  failure_message_when_negated do
+    "Expected the HTML body's text not to include:\n  " \
+      "\"#{expected_text}\"\n\n" \
+      "But it was found in the parsed text."
   end
 end
