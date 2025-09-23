@@ -1,5 +1,5 @@
 /* Mermaid bootstrap: assumes local mermaid.min.js already loaded via additional-js. */
-(function () {
+function start() {
   if (window.__MERMAID_INIT__) return;
   window.__MERMAID_INIT__ = true;
 
@@ -21,4 +21,6 @@
   else {
     init();
   }
-})();
+}
+
+start();

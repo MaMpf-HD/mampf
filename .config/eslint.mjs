@@ -52,6 +52,8 @@ const customGlobals = {
 
   fillOptionsByAjax: "readable",
   previewTrixTalkContent: "readable",
+
+  mermaid: "readable",
 };
 
 export default [
@@ -71,6 +73,7 @@ export default [
       "public/pdfcomprezzor/",
       ...ignoreFilesWithSprocketRequireSyntax,
       ...ignoreCypressArchivedTests,
+      "architecture/src/js/mermaid.min.js",
     ],
   },
   {
