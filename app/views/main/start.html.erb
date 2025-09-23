@@ -154,7 +154,7 @@
          data-bs-parent="#subscriptionsAccordion"
          data-link="#lectureSearchLink">
       <div class="accordion-body">
-        <%= render partial: 'main/start/lecture_search',
+        <%= render partial: 'search/lecture_search_form',
                    locals: { results_as_list: false } %>
         <div id="lecture-search-results">
         </div>
@@ -179,7 +179,7 @@
          data-bs-parent="#subscriptionsAccordion"
          data-link="#mediaSearchLink">
       <div class="accordion-body">
-        <%= render partial: 'main/start/media_search',
+        <%= render partial: 'search/media_start_search_form',
                    locals: { results_as_list: false,
                              purpose: 'media' } %>
         <div id="media-search-results">
