@@ -12,15 +12,13 @@ Install tools:
 cargo install mdbook mdbook-mermaid mdbook-mermaid
 ```
 
-Build and serve locally (auto-reload):
+Build and serve locally with auto-reload (note that we use port 3003 because port 3000 is used for serving MaMpf locally)
 
 ```
 cd architecture
 mdbook build
 mdbook serve --port 3003
 ```
-
-Build static site (output goes to book/book/):
 
 ## Structure
 - book/book.toml : mdBook config 
