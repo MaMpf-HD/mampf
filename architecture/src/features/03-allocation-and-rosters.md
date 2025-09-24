@@ -3,7 +3,7 @@
 ## Problem Overview
 - After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
 - Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
-- Non-goals: rerunning the solver or reopening the campaign; the campaign remains archival.
+- Non-goals: This system does not re-run the automated solver (`RegistrationAssignmentService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
 
 ## Solution Architecture
 - Canonical source: domain rosters on registerables (e.g., Tutorial.students, Talk.speakers).
@@ -180,6 +180,11 @@ Examples:
 
 ```admonish note "Think of it as"
 - An admin “move/add/remove” service with capacity checks and logging.
+```
+
+```admonish note "How this is different from RegistrationAssignmentService"
+- `RegistrationAssignmentService` is the **automated solver** that runs once to create the initial allocation during a campaign.
+- `RegisterableRosterService` is the **manual tool** for staff to make individual changes to rosters *after* the campaign is finished.
 ```
 
 Key methods:
