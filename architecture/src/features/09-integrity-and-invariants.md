@@ -4,8 +4,8 @@ Aggregated rules ensuring durable correctness. When feasible, enforce with DB co
 
 ## 1. Registration & Allocation
 Logical
-- ≤ 1 confirmed UserRegistration per (user, registration_campaign).
-- UserRegistration.status ∈ {pending, confirmed, rejected}.
+- ≤ 1 confirmed Registration::UserRegistration per (user, registration_campaign).
+- Registration::UserRegistration.status ∈ {pending, confirmed, rejected}.
 - preference_based campaigns: every pending registration has preference_rank (1..N) unique per (user, campaign).
 - Capacity never exceeded at allocation (solver respects caps; FCFS checks).
 - Campaign finalized exactly once (finalize! idempotent).
@@ -17,7 +17,7 @@ Indexes (suggested)
 
 ## 2. Rosters & Materialization
 - materialize_allocation! overwrites roster to match confirmed set (initial snapshot).
-- Post-allocation roster changes do not mutate historical UserRegistration decisions.
+- Post-allocation roster changes do not mutate historical Registration::UserRegistration decisions.
 - Roster operations atomic (RegisterableRosterService transactions).
 - Capacity enforcement except when explicit override.
 
@@ -106,5 +106,5 @@ Metrics / checks:
 - Random sample item: confirmed IDs == roster_user_ids (if still initial).
 - Random sample assessment: points_total matches sum(task_points).
 - Eligibility overrides present? Verify override_reason non-null.
-- RegistrationPolicy ordering continuous (no gaps) & deterministic.
+- Registration::Policy ordering continuous (no gaps) & deterministic.
 

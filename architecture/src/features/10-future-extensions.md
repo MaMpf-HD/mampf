@@ -87,13 +87,13 @@ Long-term
 - Grade distribution histogram overlays (scheme preview).
 
 ## 13. Migration Strategy (Legacy → New)
-- Step 1: Dual-write policies & legacy eligibility flags.
+- Step 1: Dual-write Registration::Policy & legacy eligibility flags.
 - Step 2: Backfill ExamEligibilityRecords.
 - Step 3: Read switch; monitor parity metrics.
 - Step 4: Remove deprecated columns.
 
 ## 14. Sunset / Cleanup Targets
-- Legacy policy fields on RegistrationCampaign (folded into policies table).
+- Legacy policy fields on Registration::Campaign (folded into Registration::Policy table).
 - Manual per-assessment roster seeds replaced by generic roster seeding service.
 - Obsolete submission fields after Submittable adoption.
 

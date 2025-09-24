@@ -1,7 +1,7 @@
 # Assignment Algorithm Details
 
 ## Purpose
-This chapter details the algorithm for assigning users to `RegistrationItem`s (tutorials, talks, etc.) based on ranked preferences while respecting item capacities.
+This chapter details the algorithm for assigning users to `Registration::Item`s (tutorials, talks, etc.) based on ranked preferences while respecting item capacities.
 
 The initial implementation uses a **Min-Cost Flow** algorithm for its speed and simplicity. The system is designed with a pluggable service interface, allowing a more powerful **CP-SAT** solver to be used in the future when advanced constraints are needed.
 
@@ -12,7 +12,7 @@ The initial implementation uses a **Min-Cost Flow** algorithm for its speed and 
 The system uses a **Strategy Pattern** to separate the high-level assignment process from the low-level solver implementation. A single service entry point is exposed:
 
 ```ruby
-RegistrationAssignmentService.new(campaign, strategy: :min_cost_flow).assign!
+Registration::AssignmentService.new(campaign, strategy: :min_cost_flow).assign!
 ```
 
 This allows different solver strategies to be added (e.g., `strategy: :cp_sat`) without changing any calling code.
@@ -54,7 +54,7 @@ Typical wall time for a campaign with 1,000 users, 50 items, and 3–10 preferen
 ### Graph Components
 - **Source (S):** The starting point for all "flow" (users).
 - **User Nodes (U):** One node for each participating user.
-- **Item Nodes (I):** One node for each available `RegistrationItem`.
+- **Item Nodes (I):** One node for each available `Registration::Item`.
 - **Dummy Node (D):** An optional node representing the "unassigned" state.
 - **Sink (T):** The final destination for all flow.
 
@@ -81,134 +81,133 @@ With the dummy node enabled, the model should always find a feasible solution. A
 ## Service Implementation (Strategy Pattern Skeleton)
 
 ```ruby
-# filepath: app/services/registration_assignment_service.rb
-class RegistrationAssignmentService
-    def initialize(campaign, strategy: :min_cost_flow, **opts)
-        @campaign = campaign
-        @strategy = strategy
-        @opts = opts
-    end
+# filepath: app/services/registration/assignment_service.rb
+module Registration
+    class AssignmentService
+        def initialize(campaign, strategy: :min_cost_flow, **opts)
+            @campaign = campaign
+            @strategy = strategy
+            @opts = opts
+        end
 
-    def assign!
-        solver =
-            case @strategy
-            when :min_cost_flow then Solvers::MinCostFlow.new(@campaign, **@opts)
-            # when :cp_sat then Solvers::CpSat.new(@campaign, **@opts)  # future
-            else
-                raise ArgumentError, "Unknown strategy #{@strategy}"
-            end
-        solver.run
+        def assign!
+            solver =
+                case @strategy
+                when :min_cost_flow
+                    Registration::Solvers::MinCostFlow.new(@campaign, **@opts)
+                # when :cp_sat then Registration::Solvers::CpSat.new(@campaign, **@opts)
+                else
+                    raise ArgumentError, "Unknown strategy #{@strategy}"
+                end
+            solver.run
+        end
     end
 end
 
 # Solvers are placed in their own module for organization.
-module Solvers
-    class MinCostFlow
-        BIG_PENALTY = 10_000
+module Registration
+    module Solvers
+        class MinCostFlow
+            BIG_PENALTY = 10_000
 
-        def initialize(campaign, fill_unlisted: false, allow_unassigned: true)
-            @campaign = campaign
-            @fill_unlisted = fill_unlisted
-            @allow_unassigned = allow_unassigned
-            @prefs = campaign.user_registrations.where.not(preference_rank: nil)
-                                                    .includes(:registration_item)
-            @users = @prefs.map(&:user_id).uniq
-            @items = campaign.registration_items.includes(:registerable)
-            @prefs_by_user = @prefs.group_by(&:user_id)
-            @max_rank = (@prefs.map(&:preference_rank).max || 1)
-            @fallback_cost = @max_rank + 2
-        end
-
-        def run
-            return finalize_empty if @users.empty?
-            build_and_solve
-        end
-
-        private
-
-        def finalize_empty
-            @campaign.update!(status: 'completed')
-        end
-
-        def build_and_solve
-            mcf = ORTools::SimpleMinCostFlow.new
-
-            source = 0
-            user_offset = 1
-            item_offset = user_offset + @users.size
-            sink_real = item_offset + @items.size
-            dummy_node = sink_real + 1 if @allow_unassigned
-            sink_final = @allow_unassigned ? dummy_node + 1 : sink_real
-
-            idx_user = {}
-            idx_item = {}
-
-            @users.each_with_index { |uid, i| idx_user[uid] = user_offset + i }
-            @items.each_with_index { |item, i| idx_item[item.id] = item_offset + i }
-
-            # Supplies
-            mcf.set_node_supply(source, @users.size)
-            mcf.set_node_supply(sink_final, -@users.size)
-            (user_offset...item_offset).each { |n| mcf.set_node_supply(n, 0) }
-            (item_offset...sink_real).each { |n| mcf.set_node_supply(n, 0) }
-            if @allow_unassigned
-                mcf.set_node_supply(sink_real, 0)
-                mcf.set_node_supply(dummy_node, 0)
+            def initialize(campaign, fill_unlisted: false, allow_unassigned: true)
+                @campaign = campaign
+                @fill_unlisted = fill_unlisted
+                @allow_unassigned = allow_unassigned
+                @prefs = campaign.user_registrations.where.not(preference_rank: nil)
+                                                                                        .includes(:registration_item)
+                @users = @prefs.map(&:user_id).uniq
+                @items = campaign.registration_items.includes(:registerable)
+                @prefs_by_user = @prefs.group_by(&:user_id)
+                @max_rank = (@prefs.map(&:preference_rank).max || 1)
+                @fallback_cost = @max_rank + 2
             end
 
-            # Source -> users
-            @users.each do |uid|
-                mcf.add_arc_with_capacity_and_unit_cost(source, idx_user[uid], 1, 0)
+            def run
+                return finalize_empty if @users.empty?
+                build_and_solve
             end
 
-            # Preferences
-            @prefs.each do |reg|
-                mcf.add_arc_with_capacity_and_unit_cost(
-                    idx_user[reg.user_id],
-                    idx_item[reg.registration_item_id],
-                    1,
-                    reg.preference_rank.to_i <= 0 ? 1 : reg.preference_rank.to_i
-                )
+            private
+
+            def finalize_empty
+                @campaign.update!(status: 'completed')
             end
 
-            # Optional fallback edges
-            if @fill_unlisted
+            def build_and_solve
+                mcf = ORTools::SimpleMinCostFlow.new
+
+                source = 0
+                user_offset = 1
+                item_offset = user_offset + @users.size
+                sink_real = item_offset + @items.size
+                dummy_node = sink_real + 1 if @allow_unassigned
+                sink_final = @allow_unassigned ? dummy_node + 1 : sink_real
+
+                idx_user = {}
+                idx_item = {}
+
+                @users.each_with_index { |uid, i| idx_user[uid] = user_offset + i }
+                @items.each_with_index { |item, i| idx_item[item.id] = item_offset + i }
+
+                mcf.set_node_supply(source, @users.size)
+                mcf.set_node_supply(sink_final, -@users.size)
+                (user_offset...item_offset).each { |n| mcf.set_node_supply(n, 0) }
+                (item_offset...sink_real).each { |n| mcf.set_node_supply(n, 0) }
+                if @allow_unassigned
+                    mcf.set_node_supply(sink_real, 0)
+                    mcf.set_node_supply(dummy_node, 0)
+                end
+
                 @users.each do |uid|
-                    listed = (@prefs_by_user[uid] || []).map(&:registration_item_id)
-                    (@items.map(&:id) - listed).each do |iid|
-                        mcf.add_arc_with_capacity_and_unit_cost(
-                            idx_user[uid],
-                            idx_item[iid],
-                            1,
-                            @fallback_cost
-                        )
+                    mcf.add_arc_with_capacity_and_unit_cost(source, idx_user[uid], 1, 0)
+                end
+
+                @prefs.each do |reg|
+                    mcf.add_arc_with_capacity_and_unit_cost(
+                        idx_user[reg.user_id],
+                        idx_item[reg.registration_item_id],
+                        1,
+                        reg.preference_rank.to_i <= 0 ? 1 : reg.preference_rank.to_i
+                    )
+                end
+
+                if @fill_unlisted
+                    @users.each do |uid|
+                        listed = (@prefs_by_user[uid] || []).map(&:registration_item_id)
+                        (@items.map(&:id) - listed).each do |iid|
+                            mcf.add_arc_with_capacity_and_unit_cost(
+                                idx_user[uid],
+                                idx_item[iid],
+                                1,
+                                @fallback_cost
+                            )
+                        end
                     end
                 end
-            end
 
-            # Items -> sink_real (or sink_final if no dummy)
-            @items.each do |item|
-                cap = [item.registerable.capacity.to_i, 0].max
-                mcf.add_arc_with_capacity_and_unit_cost(
-                    idx_item[item.id],
-                    (@allow_unassigned ? sink_real : sink_final),
-                    cap,
-                    0
-                )
-            end
-
-            if @allow_unassigned
-                # Dummy path
-                mcf.add_arc_with_capacity_and_unit_cost(dummy_node, sink_final, @users.size, 0)
-                @users.each do |uid|
-                    mcf.add_arc_with_capacity_and_unit_cost(idx_user[uid], dummy_node, 1, BIG_PENALTY)
+                @items.each do |item|
+                    cap = [item.registerable.capacity.to_i, 0].max
+                    mcf.add_arc_with_capacity_and_unit_cost(
+                        idx_item[item.id],
+                        (@allow_unassigned ? sink_real : sink_final),
+                        cap,
+                        0
+                    )
                 end
+
+                if @allow_unassigned
+                    mcf.add_arc_with_capacity_and_unit_cost(dummy_node, sink_final, @users.size, 0)
+                    @users.each do |uid|
+                        mcf.add_arc_with_capacity_and_unit_cost(idx_user[uid], dummy_node, 1, BIG_PENALTY)
+                    end
+                end
+
+                status = mcf.solve
+                return fail_solver unless status == ORTools::SimpleMinCostFlow::OPTIMAL
+
+                apply_solution(mcf, idx_user, idx_item, dummy_node)
             end
-
-            status = mcf.solve
-            return fail_solver unless status == ORTools::SimpleMinCostFlow::OPTIMAL
-
-            apply_solution(mcf, idx_user, idx_item, dummy_node)
         end
     end
 end

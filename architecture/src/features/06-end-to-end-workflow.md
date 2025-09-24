@@ -6,7 +6,7 @@
 - Optional initial enrollment campaign populates the lecture roster.
 
 ## Phase 1 — Campaign-Based Registration
-- Create a RegistrationCampaign (assignment_mode: first_come_first_serve or preference_based).
+- Create a Registration::Campaign (assignment_mode: first_come_first_serve or preference_based).
 - Create RegistrationItems (one per Tutorial, Talk, Exam session, etc.).
 - Attach ordered RegistrationPolicies (exam_eligibility, prerequisite_campaign, institutional_email, etc.).
 - Users submit UserRegistrations:
@@ -15,18 +15,18 @@
 
 ## Phase 2 — Preference-Based Allocation (If Used)
 - At/after deadline, run assignment strategy (e.g., min_cost_flow).
-- Service sets one confirmed UserRegistration per user (others rejected).
+- Service sets one confirmed Registration::UserRegistration per user (others rejected).
 - Campaign transitions to processing then completed.
 
 ## Phase 3 — Allocation Materialization
-- AllocationMaterializer iterates confirmed registrations per RegistrationItem.
+- Registration::AllocationMaterializer iterates confirmed registrations per Registration::Item.
 - Calls registerable.materialize_allocation!(user_ids:, campaign:) to set authoritative rosters (Tutorial: student_ids, Talk: speaker_ids).
 - Idempotent: re-running with same data produces no changes.
 
 ## Phase 4 — Post-Allocation Administration
 - Staff adjust rosters (swap, add, remove) via roster services.
 - Adjustments do not alter historical allocation; they reflect current truth only.
-- Optional sync back to UserRegistration for audit (manual_override flag).
+- Optional sync back to Registration::UserRegistration for audit (manual_override flag).
 
 ## Phase 5 — Assessments & Grading (Pre-Exam Coursework)
 - For each Assignment/Talk needing grading:
@@ -47,8 +47,8 @@
 - Apply overrides (override_status, override_reason, override_by, override_at) where justified.
 
 ## Phase 8 — Exam Registration (Policy-Gated)
-- Create exam RegistrationCampaign (items may represent sessions/rooms if multiple).
-- Attach RegistrationPolicy(kind: exam_eligibility) and any additional constraints (institutional_email, prerequisite_campaign).
+- Create exam Registration::Campaign (items may represent sessions/rooms if multiple).
+- Attach Registration::Policy(kind: exam_eligibility) and any additional constraints (institutional_email, prerequisite_campaign).
 - Users attempt registration; RegistrationPolicyEngine evaluates policies in order.
 
 ## Phase 9 — Exam Assessment Creation & Grading
@@ -74,7 +74,7 @@
 ## Phase 11 — Ongoing Administration & Reporting
 - Continue roster adjustments (tutorials, talks) independent of finalized eligibility.
 - Generate reports combining:
-	- Registration outcomes (UserRegistration)
+	- Registration outcomes (Registration::UserRegistration)
 	- Current rosters (domain models)
 	- Eligibility snapshots (ExamEligibilityRecord.rule_details)
 	- Grading data (AssessmentParticipations, TaskPoints)
@@ -83,15 +83,15 @@
 - One active ExamEligibilityPolicy per lecture.
 - One ExamEligibilityRecord per (lecture, user).
 - One AssessmentParticipation per (assessment, user); one TaskPoint per (participation, task).
-- One confirmed UserRegistration per user per campaign.
+- One confirmed Registration::UserRegistration per user per campaign.
 - materialize_allocation! replaces roster in a single idempotent step.
 - Policy evaluation is ordered and short-circuits on first failure.
 - Eligibility excludes the exam itself (exam Assessment created only after registration).
 - Overrides supersede computed eligibility until cleared.
 
 ## Phase 13 — Extension Points
-- Add new eligibility rule: create new RegistrationPolicy.kind + evaluator method.
-- Add solver strategies: plug into RegistrationAssignmentService.
+- Add new eligibility rule: create new Registration::Policy.kind + evaluator method.
+- Add solver strategies: plug into Registration::AssignmentService.
 - Enhance exam/course grading: introduce CourseGrade aggregation service.
 - Expand policy knobs: drop-lowest-k assignments, minimum published participations, weighting schemes.
 - Introduce per-task submissions fully via Submittable (Assessment/Task polymorphic attachment).

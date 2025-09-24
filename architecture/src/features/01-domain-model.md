@@ -4,13 +4,13 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 ## Registration Layer
 
-- RegistrationCampaign: time‑bounded process (modes: FCFS, preference_based).
-- RegistrationItem: wrapper exposing a registerable option under a campaign.
-- UserRegistration: (user, item) intent + status (pending/confirmed/rejected) + optional preference_rank.
-- Campaignable (concern): enables a model to host registration campaigns.
-- Registerable (concern): enables a model to be an option within a campaign.
-- RegistrationPolicy: ordered eligibility rule (exam_eligibility, institutional_email, prerequisite_campaign, custom_script).
-- RegistrationPolicyEngine: executes ordered active policies; short‑circuits on first failure.
+- Registration::Campaign: time‑bounded process (modes: FCFS, preference_based).
+- Registration::Item: wrapper exposing a registerable option under a campaign.
+- Registration::UserRegistration: (user, item) intent + status (pending/confirmed/rejected) + optional preference_rank.
+- Registration::Campaignable (concern): enables a model to host registration campaigns.
+- Registration::Registerable (concern): enables a model to be an option within a campaign.
+- Registration::Policy: ordered eligibility rule (exam_eligibility, institutional_email, prerequisite_campaign, custom_script).
+- Registration::PolicyEngine: executes ordered active policies; short‑circuits on first failure.
 
 ## Materialization & Rosters
 
@@ -30,15 +30,15 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 ## Eligibility & Exam Schemes
 
-- ExamEligibilityPolicy (config stored in RegistrationPolicy or dedicated model) & service computing ExamEligibilityRecords.
+- ExamEligibilityPolicy (config stored in Registration::Policy or dedicated model) & service computing ExamEligibilityRecords.
 - ExamEligibilityRecord: cached points, percentage, computed_status, overrides (override_status/reason/by/at).
 - GradeScheme (future / lightweight): JSON config describing mapping raw → grade_value.
 
 ## Algorithm
 
-- RegistrationAssignmentService: strategy dispatcher.
-- MinCostFlowAssignment: current solver implementation (OR-Tools).
-- (Future) CPSatAssignment: advanced constraints.
+- Registration::AssignmentService: strategy dispatcher.
+- Registration::Solvers::MinCostFlow: current solver implementation (OR-Tools).
+- (Future) Registration::Solvers::CpSat: advanced constraints.
 
 ## Achievements
 
@@ -46,7 +46,7 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 ## Linking Concepts
 
-- User: links to UserRegistrations and AssessmentParticipations.
+- User: links to Registration::UserRegistrations and AssessmentParticipations.
 - Lecture/Tutorial/Talk/Assignment/Exam: domain models that can become registerable and/or assessable.
 
 ## High-Level ERD (Simplified)

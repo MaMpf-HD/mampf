@@ -47,7 +47,7 @@ ri_map = tut_campaign.registration_items.index_by(&:registerable_id)
 eligible_submitters.each_with_index do |user, idx|
     shuffled = tutorials.shuffle
     shuffled.each_with_index do |tut, rank|
-        UserRegistration.create!(
+        Registration::UserRegistration.create!(
             user: user,
             registration_campaign: tut_campaign,
             registration_item: ri_map[tut.id],
@@ -170,7 +170,7 @@ exam_item = exam_campaign.registration_items.first
 
 eligible_submitters.each do |user|
     next unless exam_campaign.eligible_user?(user)
-    UserRegistration.create!(
+    Registration::UserRegistration.create!(
         user: user,
         registration_campaign: exam_campaign,
         registration_item: exam_item,

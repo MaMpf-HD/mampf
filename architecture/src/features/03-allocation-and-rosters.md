@@ -3,15 +3,15 @@
 ## Problem Overview
 - After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
 - Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
-- Non-goals: This system does not re-run the automated solver (`RegistrationAssignmentService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
+- Non-goals: This system does not re-run the automated solver (`Registration::AssignmentService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
 
 ## Solution Architecture
 - Canonical source: domain rosters on registerables (e.g., Tutorial.students, Talk.speakers).
 - Uniform API: Rosterable concern providing roster_user_ids, replace_roster!, add/remove helpers.
 - Single service: RegisterableRosterService for atomic move/add/remove with capacity checks and logging.
 - Campaign-independent: actions operate directly on registerables; no campaign required.
-- Fast dashboards: maintenance service updates RegistrationItem.assigned_count to reflect current roster sizes.
-- Optional reflection: synchronize changes back to UserRegistration for reporting/auditing; not required for daily maintenance.
+- Fast dashboards: maintenance service updates Registration::Item.assigned_count to reflect current roster sizes.
+- Optional reflection: synchronize changes back to Registration::UserRegistration for reporting/auditing; not required for daily maintenance.
 
 ## 1) Domain Rosters — Source of Truth
 
@@ -109,7 +109,7 @@ Behavior highlights:
 ```ruby
 # filepath: app/models/talk.rb
 class Talk < ApplicationRecord
-	include Registerable
+	include Registration::Registerable
 	include Rosterable
 
 	# speakers: has_many association via speaker_ids (or similar)
@@ -150,7 +150,7 @@ Behavior highlights:
 ```ruby
 # filepath: app/models/tutorial.rb
 class Tutorial < ApplicationRecord
-	include Registerable
+	include Registration::Registerable
 	include Rosterable
 
 	# Example: HABTM students or a membership table
@@ -182,8 +182,8 @@ Examples:
 - An admin “move/add/remove” service with capacity checks and logging.
 ```
 
-```admonish note "How this is different from RegistrationAssignmentService"
-- `RegistrationAssignmentService` is the **automated solver** that runs once to create the initial allocation during a campaign.
+```admonish note "How this is different from Registration::AssignmentService"
+- `Registration::AssignmentService` is the **automated solver** that runs once to create the initial allocation during a campaign.
 - `RegisterableRosterService` is the **manual tool** for staff to make individual changes to rosters *after* the campaign is finished.
 ```
 
@@ -224,8 +224,8 @@ class RegisterableRosterService
 ```mermaid
 sequenceDiagram
 	participant S as Solver/Finalize
-	participant M as AllocationMaterializer
-	participant R as Registerable (Tutorial/Talk)
+	participant M as Registration::AllocationMaterializer
+	participant R as Registration::Registerable (Tutorial/Talk)
 	participant A as Admin
 	S->>M: finalize!
 	M->>R: materialize_allocation!(user_ids)
