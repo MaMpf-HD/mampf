@@ -10,7 +10,7 @@
 - [Assessments & Grading](features/04-assessments-and-grading.md)
 - [Exam Eligibility & Grading Schemes](features/05-exam-eligibility-and-grading-schemes.md)
 - [End-to-End Workflow](features/06-end-to-end-workflow.md)
-- [Algorithm Details](features/07-algorithm-details.md)
+- [Assignment Algorithm Details](features/07-algorithm-details.md)
 - [Examples & Demos](features/08-examples-and-demos.md)
 - [Integrity & Invariants](features/09-integrity-and-invariants.md)
 - [Future Extensions](features/10-future-extensions.md)

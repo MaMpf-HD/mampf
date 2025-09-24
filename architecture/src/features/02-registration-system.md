@@ -23,11 +23,11 @@ We use a unified system with:
 **_The Registration Process Orchestrator_**
 
 ```admonish info "What it represents"
-- A time-bounded administrative process where users can register for specific items under a chosen mode.
+A time-bounded administrative process where users can register for specific items under a chosen mode.
 ```
 
 ```admonish tip "Think of it as"
-- “Tutorial Registration Week”, “Seminar Talk Selection Period”, “Exam Slot Signup”
+“Tutorial Registration Week”, “Seminar Talk Selection Period”, “Exam Signup”
 ```
 
 The main fields and methods of `RegistrationCampaign` are:
@@ -62,66 +62,113 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 ### Example Implementation
 
 ```ruby
-belongs_to :campaignable, polymorphic: true
-has_many :registration_items, dependent: :destroy
-has_many :user_registrations, dependent: :destroy
-has_many :registration_policies, dependent: :destroy
+class RegistrationCampaign < ApplicationRecord
+  belongs_to :campaignable, polymorphic: true
+  has_many :registration_items, dependent: :destroy
+  has_many :user_registrations, dependent: :destroy
+  has_many :registration_policies, dependent: :destroy
 
-enum assignment_mode: { first_come_first_serve: 0, preference_based: 1 }
-enum status: { draft: 0, open: 1, processing: 2, completed: 3 }
+  enum assignment_mode: { first_come_first_serve: 0, preference_based: 1 }
+  enum status: { draft: 0, open: 1, processing: 2, completed: 3 }
 
-validates :title, :registration_deadline, presence: true
+  validates :title, :registration_deadline, presence: true
 
-# Unified eligibility
-def eligible_user?(user)
-  return RegistrationPolicyEngine::Result.new(pass: false, code: :campaign_not_open) unless open?
-  engine = RegistrationPolicyEngine.new(self)
-  engine.eligible?(user)
-end
+  # Unified eligibility
+  def eligible_user?(user)
+    return RegistrationPolicyEngine::Result.new(pass: false, code: :campaign_not_open) unless open?
+    engine = RegistrationPolicyEngine.new(self)
+    engine.eligible?(user)
+  end
 
-def open_for_submissions?
-  open?
-end
+  def open_for_submissions?
+    open?
+  end
 
-def finalize!
-  return false unless open? || processing?
-  AllocationMaterializer.new(self).materialize!
-  update!(status: :completed)
-end
+  def finalize!
+    return false unless open? || processing?
+    AllocationMaterializer.new(self).materialize!
+    update!(status: :completed)
+  end
 
-def run_assignment!
-  return false unless preference_based? && open? && Time.current >= registration_deadline
-  update!(status: :processing)
-  RegistrationAssignmentService.new(self, strategy: :min_cost_flow).assign!
-  finalize!
+  def run_assignment!
+    return false unless preference_based? && open? && Time.current >= registration_deadline
+    update!(status: :processing)
+    RegistrationAssignmentService.new(self, strategy: :min_cost_flow).assign!
+    finalize!
+  end
 end
 ```
 
 ### Usage Scenarios
 
-- **Lecture** is campaignable for “Tutorial Registration” campaign for its tutorials
-- **Seminar** is campaignable for “Talk Assignment” campaign for its talks
-- **Exam** is campaignable for “Exam Registration” campaign with `exam_eligibility` and `institutional_email` policies
+- A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots.
+- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_serve` to quickly fill the limited seminar seats.
+- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and is protected by an `exam_eligibility` policy.
 
 ---
 
-## 2) RegistrationItem — Available Options Within a Campaign
+## Campaignable (Concern)
+**_The Campaign Host_**
 
 ```admonish info "What it represents"
-- One selectable option inside a campaign (e.g., a specific tutorial group, talk, slot).
+A role for domain models (like `Lecture`) that allows them to 'host' or own registration campaigns.
 ```
 
 ```admonish note "Think of it as"
-- The individual “choice” that users can target with a registration
+The 'container' for a set of related registration campaigns. A lecture 'contains' the campaign for its tutorials.
 ```
 
-Key fields:
-- registration_campaign_id
-- registerable_type, registerable_id (polymorphic)
-- assigned_count (optional, denormalized counter for confirmed users)
+#### Responsibilities
 
-Relationships and helpers:
-- Capacity is provided by the underlying registerable (e.g., tutorial.capacity).
+- Provides a central point for grouping related campaigns.
+- Simplifies finding campaigns related to a specific object (e.g., all registrations for a given lecture).
+
+#### Example Implementation
+
+```ruby
+# app/models/concerns/campaignable.rb
+module Campaignable
+  extend ActiveSupport::Concern
+
+  included do
+    has_many :registration_campaigns, as: :campaignable, dependent: :destroy
+  end
+end
+```
+
+#### Implementations Here
+- **`Lecture`**: Hosts campaigns for its tutorials or talks.
+- **`Exam`**: Hosts a campaign for exam seat registration.
+
+---
+
+## RegistrationItem (ActiveRecord Model)
+**_The Selectable Catalog Entry_**
+
+```admonish info "What it represents"
+A selectable entry in a `RegistrationCampaign`'s "catalog". Each entry points to a real-world `Registerable` object (like a `Tutorial` or `Talk`).
+```
+
+```admonish note "Think of it as"
+- **Restaurant Analogy:** An item on a restaurant menu. The `Registerable` is the actual dish prepared in the kitchen. The `RegistrationItem` is the line on the menu for a specific day (the campaign). You order from the menu, not by pointing at the dish in the kitchen.
+
+- **Teaching Analogy:** A slot in the registration system. The `Registerable` is the actual tutorial group that meets every Monday at 10am. The `RegistrationItem` is the entry for that tutorial in this semester's "Linear Algebra" registration (the campaign). Students sign up for the slot in the system, not by walking into the classroom.
+```
+
+The main fields and methods of `RegistrationItem` are:
+
+| Name/Field                | Type/Kind         | Description                                                              |
+|---------------------------|-------------------|--------------------------------------------------------------------------|
+| `registration_campaign_id`| DB column         | Foreign key for the parent campaign.                                     |
+| `registerable_type`       | DB column         | Polymorphic type for the registerable object (e.g., `Tutorial`).         |
+| `registerable_id`         | DB column         | Polymorphic ID for the registerable object.                              |
+| `assigned_count`          | DB column         | Optional denormalized counter for confirmed users.                       |
+| `registration_campaign`   | Association       | The parent `RegistrationCampaign`.                                       |
+| `registerable`            | Association       | The underlying domain object (e.g., a `Tutorial` instance).              |
+| `user_registrations`      | Association       | All user submissions for this item.                                      |
+| `assigned_users`          | Method            | Returns a list of users confirmed for this item.                         |
+| `capacity`                | Method            | The maximum number of users, delegated from the `registerable`.          |
+
 
 ```ruby
 class RegistrationItem < ApplicationRecord
@@ -136,51 +183,60 @@ class RegistrationItem < ApplicationRecord
 end
 ```
 
-Examples:
-- “Tutorial A (Mon 10:00)”, “Tutorial B (Wed 14:00)”
-- “Talk: Machine Learning Advances”
-- “Exam: Morning Session”
+### Usage Scenarios
+
+- **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
+- **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
+- **For a "Lecture Registration" campaign:** A `RegistrationItem` is created for the lecture itself. The `registerable` association points to the `Lecture` record. This will be useful mostly when the lecture is a seminar. `Lecture` then has a dual role: as campaignable and as registerable.
+- **For an "Exam Registration" campaign:** A `RegistrationItem` is created for the exam itself. The `registerable` association points to the `Exam` record. `Exam` then has a dual role: as campaignable and as registerable.
+
+```admonish warning "RegistrationItem vs. Registerable"
+It's crucial to understand the difference between these two concepts:
+
+- **`Registerable`** is the **actual domain object** that a user is ultimately assigned to. Think of it as the real-world entity, like a `Tutorial` or a `Talk`. It's a role provided by a concern.
+
+- **`RegistrationItem`** is a **proxy or wrapper** that makes a `Registerable` object available *within a specific campaign*. Think of it as a "listing in a catalog." If you have a "Tutorial Registration" campaign, you create one `RegistrationItem` for each `Tutorial` that students can sign up for in that campaign.
+
+Users register for a `RegistrationItem`, not directly for a `Registerable`. This separation allows the same `Tutorial` to potentially be part of different campaigns over time without conflict.
+```
 
 ---
 
-## 3) Registerable Concern (Polymorphic Target)
+## Registerable (Concern)
+**_The Registration Target_**
 
 ```admonish info "What it represents"
-A lightweight concern mixed into any domain model that can be the target of a `RegistrationItem` (i.e. something users are ultimately allocated to).
+A role for domain models (like `Tutorial` or `Talk`) that allows them to be the ultimate target of a registration.
 ```
 
 ```admonish note "Think of it as"
-“The domain object the infrastructure points at” — tutorials, talks, (optionally) the lecture itself, future exam slots, etc.
+The actual group or event a user is enrolled in, such as a specific tutorial group or being assigned as the speaker for a talk.
 ```
 
 #### Responsibilities
 - Provide a capacity (fixed column or computed).
-- Optionally expose current allocated users (for reporting).
 - Implement `materialize_allocation!(user_ids:, campaign:)` to apply confirmed results idempotently.
-- Remain agnostic of solver / eligibility logic (those live in policies & services).
+- Remain agnostic of solver or eligibility logic.
 
 #### Not Responsibilities
 - Eligibility checks (policies handle that).
 - Storing pending registrations (that’s `UserRegistration`).
-- Orchestrating allocation (campaign + assignment service).
+- Orchestrating allocation (that's the `RegistrationCampaign`).
 
-#### Minimal Interface (conventional)
-| Method | Purpose | Required |
-|--------|---------|----------|
-| `capacity` | Integer seat count | Yes |
-| `materialize_allocation!(user_ids:, campaign:)` | Persist authoritative roster for this campaign | Yes |
-| `allocated_user_ids` | Current materialized users (for diffing / reporting) | Optional |
-| `remaining_capacity`, `full?` | Convenience derived helpers | Optional |
+#### Public Interface
+| Method                                      | Purpose                                                | Required |
+|---------------------------------------------|--------------------------------------------------------|----------|
+| `capacity`                                  | Integer seat count.                                    | Yes      |
+| `materialize_allocation!(user_ids:, campaign:)` | Persists the authoritative roster for this campaign.   | Yes      |
+| `allocated_user_ids`                        | Current materialized users (for diffing/reporting).    | Optional |
+| `remaining_capacity`, `full?`               | Convenience derived helpers.                           | Optional |
 
-#### Example Concern
+#### Example Implementation
 
 ```ruby
 # app/models/concerns/registerable.rb
 module Registerable
   extend ActiveSupport::Concern
-
-  # Optionally add reverse relation if needed:
-  # included { has_many :registration_items, as: :registerable, dependent: :restrict_with_error }
 
   def capacity
     self[:capacity] || raise(NotImplementedError, "#{self.class} must define #capacity")
@@ -198,348 +254,232 @@ module Registerable
     remaining_capacity.zero?
   end
 
-  # Must be overridden per model; should be idempotent (replace prior state from this campaign).
+  # Must be overridden per model; should be idempotent.
   def materialize_allocation!(user_ids:, campaign:)
     raise NotImplementedError, "#{self.class} must implement #materialize_allocation!"
   end
 end
 ```
 
-#### How This Fits the Polymorphic Association
-`RegistrationItem` uses `belongs_to :registerable, polymorphic: true`. Any model including `Registerable` (e.g., `Tutorial`, `Talk`, `Lecture`) becomes a valid target. No extra schema per model is required—only the shared polymorphic columns on `registration_items`.
+#### Implementation Details
 
-#### Materialization Pattern (Concrete Model Example)
+The `RegistrationItem` model uses `belongs_to :registerable, polymorphic: true`. Any model that includes the `Registerable` concern (e.g., `Tutorial`, `Talk`) becomes a valid target for this association.
 
-```ruby
-def materialize_allocation!(user_ids:, campaign:)
-  transaction do
-    # Example (HABTM or join model based):
-    # self.student_ids = user_ids
-    # save! if changed?
-    #
-    # Or with provenance:
-    # memberships.where(source_campaign_id: campaign.id).delete_all
-    # user_ids.each { |uid| memberships.create!(user_id: uid, source_campaign_id: campaign.id) }
-  end
-end
-```
+The `materialize_allocation!` method is the most critical part of the interface. It is responsible for taking the final list of `user_ids` from the allocation process and persisting them into the domain model's own roster.
 
-#### Implementations Here
-- `Lecture` (when directly enrollable, e.g., seminar)
-- `Tutorial` (tutorial rosters)
-- `Talk` (speaker assignment)
-- Future: `ExamSlot` (session seat selection)
+This method **must be idempotent**, meaning running it multiple times with the same `user_ids` and `campaign` produces the same result. A common pattern is to first remove all roster entries associated with the given `campaign` and then add the new ones, all within a single database transaction. Concrete examples are shown in the `Tutorial` and `Talk` sections later in this document.
+
+
+#### Usage Scenarios
+- A **`Tutorial`** includes `Registerable` to manage its student roster.
+- A **`Talk`** includes `Registerable` to designate students as its speakers.
+- A **`Lecture`** (acting as a seminar) includes `Registerable` to manage direct enrollment.
+- A future **`Exam`** model would include `Registerable` to manage allocation for an exam.
 
 ---
 
-## 4) Campaignable Concern (Polymorphic Host)
+## UserRegistration (ActiveRecord Model)
+**_A User's Application for an Item_**
 
 ```admonish info "What it represents"
-A lightweight concern mixed into any domain model that can serve as the context or "campaignable" for a `RegistrationCampaign`.
-```
-
-#### Responsibilities
-
-- Provides a central point for grouping related campaigns.
-- Simplifies finding campaigns related to a specific object (e.g., all registrations for a given lecture).
-
-#### Example Concern
-
-```ruby
-# app/models/concerns/campaignable.rb
-module Campaignable
-  extend ActiveSupport::Concern
-
-  included do
-	has_many :registration_campaigns, as: :campaignable, dependent: :destroy
-  end
-end
-```
-
----
-
-## 5) UserRegistration — Individual User Submissions
-
-```admonish info "What it represents"
-- A user’s intent/application for one item within a specific campaign.
+A record of a single user's application for a specific item within a campaign.
 ```
 
 ```admonish note "Think of it as"
-- One row per (user, item) with an optional rank in preference-based mode.
+A user's 'ballot' or 'application form' for one specific choice. In preference-based mode, it's one ranked choice on their list.
 ```
 
-Key fields:
-- user_id
-- registration_campaign_id
-- registration_item_id
-- status (enum): pending, confirmed, rejected
-- preference_rank (nullable integer; only for preference-based)
+The main fields and methods of `UserRegistration` are:
 
-Status semantics:
-- pending: stored preference awaiting allocation
-- confirmed: user allocated this item (allocation result or FCFS accept)
-- rejected: user not allocated to this item
+| Name/Field                | Type/Kind         | Description                                                      |
+|---------------------------|-------------------|------------------------------------------------------------------|
+| `user_id`                 | DB column         | Foreign key for the user submitting.                             |
+| `registration_campaign_id`| DB column         | Foreign key for the parent campaign.                             |
+| `registration_item_id`    | DB column         | Foreign key for the selected item.                               |
+| `status`                  | DB column (Enum)  | `pending`, `confirmed`, `rejected`.                              |
+| `preference_rank`         | DB column         | Nullable integer for preference-based mode.                      |
+| `user`                    | Association       | The user who submitted.                                          |
+| `registration_campaign`   | Association       | The parent campaign.                                             |
+| `registration_item`       | Association       | The selected item.                                               |
 
-Constraints:
-- At most one confirmed per user per campaign (logic + optional DB index).
-- Unique (user, campaign, preference_rank) to ensure ranks are unique per user.
+### Behavior Highlights
+- The `status` tracks the lifecycle: `pending` (awaiting allocation), `confirmed` (successful), or `rejected` (unsuccessful).
+- The `preference_rank` is only used in `preference_based` campaigns and must be unique per user within a campaign.
+- In `first_come_first_serve` mode, a registration is typically created directly with `confirmed` status if capacity allows.
+- Business logic should enforce that a user can only have one `confirmed` registration per campaign.
 
+### Example Implementation
 ```ruby
 class UserRegistration < ApplicationRecord
-	belongs_to :user
-	belongs_to :registration_campaign
-	belongs_to :registration_item
+    belongs_to :user
+    belongs_to :registration_campaign
+    belongs_to :registration_item
 
-	enum status: { pending: 0, confirmed: 1, rejected: 2 }
+    enum status: { pending: 0, confirmed: 1, rejected: 2 }
 
-	validates :preference_rank,
-						presence: true,
-						if: -> { registration_campaign.preference_based? }
-	validates :preference_rank,
-						uniqueness: { scope: [:user_id, :registration_campaign_id] },
-						allow_nil: true
+    validates :preference_rank,
+                        presence: true,
+                        if: -> { registration_campaign.preference_based? }
+    validates :preference_rank,
+                        uniqueness: { scope: [:user_id, :registration_campaign_id] },
+                        allow_nil: true
 end
 ```
 
-Examples:
-- Alice ranks Tutorial A (1), Tutorial B (2).
-- Bob registers FCFS for “Exam Morning Session” and is confirmed immediately.
+### Usage Scenarios
+- **Preference-based:** Alice submits two `UserRegistration` records for a campaign: one for "Tutorial A" with `preference_rank: 1`, and one for "Tutorial B" with `preference_rank: 2`. Both have `status: :pending`.
+- **First-Come-First-Serve:** Bob registers for the "Seminar Algebraic Geometry". A single `UserRegistration` record is created with `status: :confirmed` immediately, as long as there is capacity.
 
 ---
 
-## 6) User — Enhanced
+## RegistrationPolicy (ActiveRecord Model)
+**_A Composable Eligibility Rule_**
 
 ```admonish info "What it represents"
-- Existing MaMpf user; no schema changes required.
-```
-
-```ruby
-class User < ApplicationRecord
-	has_many :user_registrations, dependent: :destroy
-	has_many :registration_campaigns, through: :user_registrations
-	has_many :registration_items, through: :user_registrations
-end
-```
-
----
-
-## 7) Lecture — Enhanced
-
-```admonish info "What it represents"
-- Existing MaMpf lecture model that can both be campaignable (host campaigns) AND be registered for.
-```
-
-Dual role:
-
-- As Campaignable: Can organize tutorial registration, talk assignment campaigns
-- As Registerable: Students can register for the lecture itself (seminars)
-
-```ruby
-class Lecture < ApplicationRecord
-	include Campaignable      # Can host campaigns for tutorials/talks
-	include Registerable      # Can be registered for (seminar enrollment)
-	# ... existing code ...
-end
-```
-
-Examples:
-- Lecture is campaignable for "Tutorial Registration" for students to pick tutorial sections
-- Seminar is campaignable for "Talk Assignment" campaign for students to pick presentation topics
-- Seminar itself becomes registerable item in "Seminar Enrollment" campaign
-
----
-
-## 8) Tutorial — Enhanced
-
-```admonish info "What it represents"
-- Existing MaMpf tutorial model that students can register for.
-```
-
-```ruby
-class Tutorial < ApplicationRecord
-	include Registerable
-	# ... existing code ...
-
-	# Materialize allocated students (adapt to your model)
-	# Example if you use TutorialMemberships or a has_many :students relation:
-	def materialize_allocation!(user_ids:, campaign:)
-		# Example 1: replace a membership join table
-		# TutorialMembership.transaction do
-		#   tutorial_memberships.where(source_campaign_id: campaign.id).delete_all
-		#   user_ids.each { |uid| tutorial_memberships.create!(user_id: uid, source_campaign_id: campaign.id) }
-		# end
-
-		# Example 2: direct HABTM list
-		# self.student_ids = user_ids
-		# save! if changed?
-	end
-end
-```
-
-Examples:
-- "Tutorial A (Monday 10am)" - capacity: 25 students
-- "Tutorial B (Wednesday 2pm)" - capacity: 30 students
-
----
-
-## 9) Talk — Enhanced
-
-```admonish info "What it represents"
-- Existing MaMpf talk model that can be assigned to students.
-```
-
-```ruby
-class Talk < ApplicationRecord
-	include Registerable
-	# ... existing code ...
-
-	# Materialize allocated speakers from confirmed registrations
-	def materialize_allocation!(user_ids:, campaign:)
-		self.speaker_ids = user_ids
-		save! if changed?
-	end
-end
-```
-
-Examples:
-- "Machine Learning Advances" - capacity: 1 speaker
-- "Quantum Computing Basics" - capacity: 1 speaker
-
----
-
-## 10) RegistrationPolicy — Composable Eligibility Rule
-
-```admonish info "What it represents"
-- A single, configurable eligibility condition attached to a campaign.
+A single, configurable eligibility condition attached to a campaign.
 ```
 
 ```admonish note "Think of it as"
-- “One rule card” (exam qualification, email domain restriction, prerequisite confirmation).
+“One rule card” (exam qualification, email domain restriction, prerequisite confirmation).
 ```
 
-Key fields:
-- registration_campaign_id
-- kind (string / enum): exam_eligibility, institutional_email, prerequisite_campaign, custom_script (extensible)
-- config (jsonb): per-kind parameters (e.g., { "lecture_id": 42 }, { "allowed_domains": [...] })
-- position (integer): evaluation order
-- active (boolean)
+The main fields and methods of `RegistrationPolicy` are:
 
-Behavior highlights:
-- Evaluated in ascending position.
-- Returns structured outcome (pass/fail + code + optional details).
-- Short-circuit on first failure.
-- Adding a new rule = insert new row; no schema change.
+| Name/Field                | Type/Kind         | Description                                                      |
+|---------------------------|-------------------|------------------------------------------------------------------|
+| `registration_campaign_id`| DB column         | Foreign key for the parent campaign.                             |
+| `kind`                    | DB column (Enum)  | The type of rule to apply (e.g., `exam_eligibility`).            |
+| `config`                  | DB column (JSONB) | Parameters for the rule (e.g., `{ "allowed_domains": ["uni-heidelberg.de "] }`).          |
+| `position`                | DB column         | The evaluation order for policies within a campaign.             |
+| `active`                  | DB column         | A boolean to enable or disable the policy.                       |
+| `registration_campaign`   | Association       | The parent `RegistrationCampaign`.                               |
+| `evaluate(user)`          | Method            | Evaluates the policy for a given user and returns a result hash. |
 
+
+### Behavior Highlights
+- Policies are evaluated in ascending `position` order.
+- The `PolicyEngine` short-circuits on the first policy that fails.
+- Returns a structured outcome (`{ pass: true/false, ... }`) for clear feedback.
+- Adding a new rule type involves adding to the `kind` enum and implementing its logic in `evaluate`, with no schema changes required.
+
+### Example Implementation
 ```ruby
 class RegistrationPolicy < ApplicationRecord
-	belongs_to :registration_campaign
-	acts_as_list scope: :registration_campaign
+    belongs_to :registration_campaign
+    acts_as_list scope: :registration_campaign
 
-	enum kind: {
-		exam_eligibility: "exam_eligibility",
-		institutional_email: "institutional_email",
-		prerequisite_campaign: "prerequisite_campaign",
-		custom_script: "custom_script"
-	}
+   # Backed by a string column for db readability and stability
+    enum kind: {
+        exam_eligibility: "exam_eligibility",
+        institutional_email: "institutional_email",
+        prerequisite_campaign: "prerequisite_campaign",
+        custom_script: "custom_script"
+    }
 
-	scope :active, -> { where(active: true) }
+    scope :active, -> { where(active: true) }
 
-	def evaluate(user)
-		case kind.to_sym
-		when :exam_eligibility      then eval_exam(user)
-		when :institutional_email   then eval_email(user)
-		when :prerequisite_campaign then eval_prereq(user)
-		when :custom_script         then eval_custom(user)
-		else fail_result(:unknown_kind, "Unknown policy kind")
-		end
-	end
+    def evaluate(user)
+        case kind.to_sym
+        when :exam_eligibility      then eval_exam(user)
+        when :institutional_email   then eval_email(user)
+        when :prerequisite_campaign then eval_prereq(user)
+        when :custom_script         then eval_custom(user)
+        else fail_result(:unknown_kind, "Unknown policy kind")
+        end
+    end
 
-	private
+    private
 
-	def pass_result(code=:ok, details={}); { pass: true, code: code, details: details }; end
-	def fail_result(code, message, details={}); { pass: false, code: code, message: message, details: details }; end
+    def pass_result(code=:ok, details={}); { pass: true, code: code, details: details }; end
+    def fail_result(code, message, details={}); { pass: false, code: code, message: message, details: details }; end
 
-		lecture_id = config["lecture_id"] || registration_campaign.campaignable_id
-		rec = ExamEligibilityRecord.find_by(lecture_id: lecture_id, user_id: user.id)
-		return fail_result(:no_record, "No eligibility record") unless rec
-		rec.eligible_final? ? pass_result(:eligible) : fail_result(:not_eligible, "Exam eligibility failed")
-	end
+    def eval_exam(user)
+        lecture_id = config["lecture_id"] || registration_campaign.campaignable_id
+        rec = ExamEligibilityRecord.find_by(lecture_id: lecture_id, user_id: user.id)
+        return fail_result(:no_record, "No eligibility record") unless rec
+        rec.eligible_final? ? pass_result(:eligible) : fail_result(:not_eligible, "Exam eligibility failed")
+    end
 
-	def eval_email(user)
-		allowed = Array(config["allowed_domains"])
-		return pass_result(:no_constraint) if allowed.empty?
-		domain = user.email.to_s.split("@").last
-		allowed.include?(domain) ? pass_result(:domain_ok) :
-															 fail_result(:domain_blocked, "Email domain not allowed",
-																					 domain: domain, allowed: allowed)
-	end
+    def eval_email(user)
+        allowed = Array(config["allowed_domains"])
+        return pass_result(:no_constraint) if allowed.empty?
+        domain = user.email.to_s.split("@").last
+        allowed.include?(domain) ? pass_result(:domain_ok) :
+                                                             fail_result(:domain_blocked, "Email domain not allowed",
+                                                                                     domain: domain, allowed: allowed)
+    end
 
-	def eval_prereq(user)
-		prereq_id = config["prerequisite_campaign_id"]
-		return fail_result(:missing_prerequisite_id, "No prerequisite specified") unless prereq_id
-		ok = UserRegistration.exists?(user_id: user.id,
-																	registration_campaign_id: prereq_id,
-																	status: :confirmed)
-		ok ? pass_result(:prerequisite_ok) :
-				 fail_result(:prerequisite_missing, "Prerequisite not confirmed")
-	end
+    def eval_prereq(user)
+        prereq_id = config["prerequisite_campaign_id"]
+        return fail_result(:missing_prerequisite_id, "No prerequisite specified") unless prereq_id
+        ok = UserRegistration.exists?(user_id: user.id,
+                                                                    registration_campaign_id: prereq_id,
+                                                                    status: :confirmed)
+        ok ? pass_result(:prerequisite_ok) :
+                 fail_result(:prerequisite_missing, "Prerequisite not confirmed")
+    end
 
-	def eval_custom(_user)
-		# Placeholder for future safe scripting / DSL
-		pass_result(:custom_not_implemented)
-	end
+    def eval_custom(_user)
+        # Placeholder for future safe scripting / DSL
+        pass_result(:custom_not_implemented)
+    end
 end
 ```
 
-Examples:
-- Email constraint: kind: institutional_email, config: { allowed_domains: ["uni.edu","student.uni.edu"] }
-- Exam gate: kind: exam_eligibility, config: { lecture_id: 42 }
-- Prerequisite: kind: prerequisite_campaign, config: { prerequisite_campaign_id: 55 }
+### Usage Scenarios
+- **Email constraint:** `kind: :institutional_email`, `config: { "allowed_domains": ["uni.edu"] }`
+- **Exam gate:** `kind: :exam_eligibility`, `config: { "lecture_id": 42 }`
+- **Prerequisite:** `kind: :prerequisite_campaign`, `config: { "prerequisite_campaign_id": 55 }`
 
 ---
 
-## 11) Policy Engine — Ordered Aggregation
+## PolicyEngine (Service Object)
+**_The Eligibility Pipeline_**
 
 ```admonish info "What it represents"
-- The orchestrator that evaluates all active policies for a campaign.
+A service that evaluates a user's eligibility by processing all of a campaign's active policies in order.
 ```
 
 ```admonish note "Think of it as"
-- “Eligibility pipeline” with tracing.
+An 'eligibility checklist' processor that stops at the first failed check and provides a trace.
 ```
 
-Key fields:
-- campaign (implicit) — supplies ordered active policies.
+### Public Interface
+| Method           | Purpose                                                              |
+|------------------|----------------------------------------------------------------------|
+| `initialize(campaign)` | Sets up the engine with the campaign whose policies will be used.    |
+| `eligible?(user)`| Evaluates policies for the user and returns a structured `Result`.   |
 
-Behavior highlights:
-- Iterates policies in position order.
-- Stops at first failure (fast fail).
-- Returns structured trace for UI (“why blocked”).
-- Stable interface used by RegistrationCampaign#eligible_user?.
+### Behavior Highlights
+- Iterates policies in `position` order.
+- Stops at the first failure (fast fail).
+- Returns a structured `Result` object containing the pass/fail status, the policy that failed (if any), and a full trace of all evaluations.
+- This `Result` object is used by `RegistrationCampaign#eligible_user?` to provide clear feedback to the UI.
 
+### Example Implementation
 ```ruby
 class RegistrationPolicyEngine
-	Result = Struct.new(:pass, :failed_policy, :trace, keyword_init: true)
+    Result = Struct.new(:pass, :failed_policy, :trace, keyword_init: true)
 
-	def initialize(campaign)
-		@campaign = campaign
-	end
+    def initialize(campaign)
+        @campaign = campaign
+    end
 
-	def eligible?(user)
-		trace = []
-		@campaign.registration_policies.active.order(:position).each do |policy|
-			outcome = policy.evaluate(user)
-			trace << { policy_id: policy.id, kind: policy.kind, outcome: outcome }
-			return Result.new(pass: false, failed_policy: policy, trace: trace) unless outcome[:pass]
-		end
-		Result.new(pass: true, failed_policy: nil, trace: trace)
-	end
+    def eligible?(user)
+        trace = []
+        @campaign.registration_policies.active.order(:position).each do |policy|
+            outcome = policy.evaluate(user)
+            trace << { policy_id: policy.id, kind: policy.kind, outcome: outcome }
+            return Result.new(pass: false, failed_policy: policy, trace: trace) unless outcome[:pass]
+        end
+        Result.new(pass: true, failed_policy: nil, trace: trace)
+    end
 end
 ```
 
-Examples:
-- Trace with two passes + one failure (institutional email blocked) used to show user-side message.
-- Engine reused for bulk audits (iterate all users, inspect failed_policy).
+### Usage Scenarios
+- A trace showing two passed policies and one failed policy is used to generate a user-facing error message like "You are not eligible because your email domain is not allowed."
+- The engine can be used in a batch process to audit the eligibility of all users for a campaign.
 
 ---
 
@@ -573,45 +513,206 @@ The 'brain' that solves the puzzle of who gets what in a preference-based campai
 
 - It does **not** materialize the results into the final domain models (e.g., `Tutorial` rosters). That is handled by the `AllocationMaterializer` called within `finalize!`. This keeps the concerns of "solving the assignment" and "persisting the results" separate.
 
+### Implementation Details
+
+The service uses a **Strategy Pattern** to delegate the actual solving to a dedicated class based on the chosen `strategy`. This allows for different solver implementations (e.g., Min-Cost Flow, CP-SAT) to be used interchangeably.
+
+For a detailed breakdown of the graph modeling and solver implementation, see the [Assignment Algorithm Details](07-algorithm-details.md) chapter.
+
 ### Example Implementation
 
 ```ruby
+# This service acts as a dispatcher for different solver strategies.
 class RegistrationAssignmentService
-  def initialize(campaign, strategy: :min_cost_flow)
+  def initialize(campaign, strategy: :min_cost_flow, **opts)
     @campaign = campaign
     @strategy = strategy
-    # The strategy could be a class or a symbol that maps to a solver
+    @opts = opts
   end
 
   def assign!
-    # 1. Gather data
-    users_with_preferences = gather_preferences
-    items_with_capacities = gather_items
+    solver =
+      case @strategy
+      when :min_cost_flow then Solvers::MinCostFlow.new(@campaign, **@opts)
+      # when :cp_sat then Solvers::CpSat.new(@campaign, **@opts) # Future
+      else
+        raise ArgumentError, "Unknown strategy: #{@strategy}"
+      end
+    solver.run
+  end
+end
 
-    # 2. Execute the chosen strategy
-    solver = "Solvers::#{@strategy.to_s.camelize}".constantize.new(
-      users: users_with_preferences,
-      items: items_with_capacities
-    )
-    allocation_result = solver.solve
+# Example of a concrete solver strategy class.
+# See 07-algorithm-details.md for the full implementation.
+module Solvers
+  class MinCostFlow
+    def initialize(campaign, **opts)
+      @campaign = campaign
+      # ... gather users, items, preferences ...
+    end
 
-    # 3. Persist the results back to UserRegistration statuses
-    persist_allocation(allocation_result)
+    def run
+      # 1. Build the graph model for the solver
+      # 2. Solve the model
+      # 3. Persist the results back to UserRegistration statuses
+    end
+  end
+end
+```
+
+### Usage Scenarios
+- After the deadline for a `preference_based` tutorial registration campaign, a background job calls `RegistrationAssignmentService.new(campaign).assign!`. The service runs the solver and updates thousands of `UserRegistration` records to either `:confirmed` or `:rejected`.
+- An administrator manually triggers the assignment for a seminar's talk selection via a button in the UI, which in turn calls this service.
+
+---
+
+## AllocationMaterializer (Service Object)
+**_The Roster Populator_**
+
+```admonish info "What it represents"
+A service that translates the final allocation results (`UserRegistration` statuses) into concrete domain rosters.
+```
+
+```admonish tip "Think of it as"
+The "secretary" that takes the list of confirmed attendees from the registration system and updates the official class lists.
+```
+
+### Public Interface
+| Method           | Purpose                                                              |
+|------------------|----------------------------------------------------------------------|
+| `initialize(campaign)` | Sets up the materializer with the campaign to be finalized.          |
+| `materialize!`   | Executes the materialization process.                                |
+
+### Responsibilities
+- Gathers all `confirmed` `UserRegistration` records for the campaign.
+- Groups them by their `RegistrationItem`.
+- For each `RegistrationItem`, it calls `materialize_allocation!` on the underlying `registerable` object, passing the final list of user IDs.
+- This process is the crucial hand-off from the temporary registration system to the permanent domain models.
+
+### Example Implementation
+```ruby
+class AllocationMaterializer
+  # Missing top-level docstring, please formulate one yourself 😁
+  def initialize(campaign)
+    @campaign = campaign
   end
 
-  private
+  def materialize!
+    registrations_by_item = @campaign.user_registrations
+                                     .confirmed
+                                     .includes(:registration_item)
+                                     .group_by(&:registration_item)
 
-  def gather_preferences
-    # Logic to query and structure user registrations
+    ActiveRecord::Base.transaction do
+      registrations_by_item.each do |item, registrations|
+        user_ids = registrations.map(&:user_id)
+        item.registerable.materialize_allocation!(user_ids: user_ids, campaign: @campaign)
+      end
+    end
   end
+end
+```
 
-  def gather_items
-    # Logic to query and structure registration items
-  end
+---
 
-  def persist_allocation(result)
-    # Logic to update UserRegistration statuses in a transaction
-  end
+## Enhanced Domain Models
+
+The following sections describe how existing MaMpf models will be enhanced to integrate with the registration system.
+
+### User (Enhanced)
+**_The Registrant_**
+
+```admonish info "What it represents"
+Existing MaMpf user; no schema changes required.
+```
+
+#### Example Implementation
+```ruby
+class User < ApplicationRecord
+    has_many :user_registrations, dependent: :destroy
+    has_many :registration_campaigns, through: :user_registrations
+    has_many :registration_items, through: :user_registrations
+end
+```
+
+### Lecture (Enhanced)
+**_The Primary Host and Seminar Target_**
+
+```admonish info "What it represents"
+- Existing MaMpf lecture model that can both host campaigns and be registered for.
+```
+
+#### Dual Role
+- **As `Campaignable`**: Can organize tutorial registration or talk selection campaigns.
+- **As `Registerable`**: Students can register for the lecture itself (common for seminars).
+
+#### Example Implementation
+```ruby
+class Lecture < ApplicationRecord
+    include Campaignable      # Can host campaigns for tutorials/talks
+    include Registerable      # Can be registered for (seminar enrollment)
+    # ... existing code ...
+
+    # Implements the contract from the Registerable concern
+    def materialize_allocation!(user_ids:, campaign:)
+        # This method is the hand-off point to the roster management system.
+        # Its responsibility is to take the final list of user IDs and
+        # persist them as the official roster for this lecture (seminar),
+        # sourced from this specific campaign.
+        #
+        # The concrete implementation using the Rosterable concern is detailed
+        # in the "Allocation & Rosters" chapter.
+    end
+end
+```
+
+### Tutorial (Enhanced)
+**_A Common Registration Target_**
+
+```admonish info "What it represents"
+Existing MaMpf tutorial model that students can register for.
+```
+
+#### Example Implementation
+```ruby
+class Tutorial < ApplicationRecord
+    include Registerable
+    # ... existing code ...
+
+    # Implements the contract from the Registerable concern
+    def materialize_allocation!(user_ids:, campaign:)
+        # This method is the hand-off point to the roster management system.
+        # Its responsibility is to take the final list of user IDs and
+        # persist them as the official roster for this tutorial, sourced
+        # from this specific campaign.
+        #
+        # The concrete implementation using the Rosterable concern is detailed
+        # in the "Allocation & Rosters" chapter.
+    end
+end
+```
+
+### Talk (Enhanced)
+**_A Target for Speaker Allocation_**
+
+```admonish info "What it represents"
+Existing MaMpf talk model that can be assigned to students.
+```
+
+#### Example Implementation
+```ruby
+class Talk < ApplicationRecord
+    include Registerable
+    # ... existing code ...
+
+    # Implements the contract from the Registerable concern
+    def materialize_allocation!(user_ids:, campaign:)
+        # Similar to the Tutorial, this method hands off the final list
+        # of speakers to the roster management system.
+        #
+        # The concrete implementation using the Rosterable concern is detailed
+        # in the "Allocation & Rosters" chapter.
+    end
 end
 ```
 
@@ -621,11 +722,11 @@ end
 
 ```mermaid
 stateDiagram-v2
-	[*] --> draft
-	draft --> open
-	open --> processing : deadline reached (pref-based)
-	open --> completed : finalize! (FCFS or manual)
-	processing --> completed : solver + materialize
+    [*] --> draft
+    draft --> open
+    open --> processing : run_assignment! (pref-based, after deadline)
+    open --> completed : finalize! (FCFS, after deadline)
+    processing --> completed : finalize! (called by run_assignment!)
 ```
 
 ## ERD
