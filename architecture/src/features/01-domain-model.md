@@ -4,13 +4,16 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 ## Registration Layer
 
-- Registration::Campaign: time‑bounded process (modes: FCFS, preference_based).
-- Registration::Item: wrapper exposing a registerable option under a campaign.
-- Registration::UserRegistration: (user, item) intent + status (pending/confirmed/rejected) + optional preference_rank.
-- Registration::Campaignable (concern): enables a model to host registration campaigns.
-- Registration::Registerable (concern): enables a model to be an option within a campaign.
-- Registration::Policy: ordered eligibility rule (exam_eligibility, institutional_email, prerequisite_campaign, custom_script).
-- Registration::PolicyEngine: executes ordered active policies; short‑circuits on first failure.
+| Component | Type | Description |
+|-----------|------|-------------|
+| Registration::Campaign | ActiveRecord | Time‑bounded process (modes: FCFS, preference_based) |
+| Registration::Item | ActiveRecord | Wrapper exposing a registerable option under a campaign |
+| Registration::UserRegistration | ActiveRecord | (user, item) intent + status (pending/confirmed/rejected) + optional preference_rank |
+| Registration::Policy | ActiveRecord | Ordered eligibility rule (exam_eligibility, institutional_email, prerequisite_campaign, custom_script) |
+| Registration::Campaignable | Concern | Enables a model to host registration campaigns |
+| Registration::Registerable | Concern | Enables a model to be an option within a campaign |
+| Registration::PolicyEngine | Service | Executes ordered active policies; short‑circuits on first failure |
+| Registration::AllocationMaterializer | Service | Applies confirmed assignments → registerable.materialize_allocation! |
 
 ## Materialization & Rosters
 
@@ -34,11 +37,14 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 - ExamEligibilityRecord: cached points, percentage, computed_status, overrides (override_status/reason/by/at).
 - GradeScheme (future / lightweight): JSON config describing mapping raw → grade_value.
 
-## Algorithm
+## Assignment Algorithm
 
-- Registration::AssignmentService: strategy dispatcher.
-- Registration::Solvers::MinCostFlow: current solver implementation (OR-Tools).
-- (Future) Registration::Solvers::CpSat: advanced constraints.
+| Component | Type | Description |
+|-----------|------|-------------|
+| Registration::AssignmentService | Service | Strategy dispatcher using pluggable solvers (Min-Cost Flow, future CP-SAT) |
+| Registration::Solvers::MinCostFlow | Service | OR-Tools SimpleMinCostFlow implementation for bipartite preference assignment |
+| Registration::Solvers::CpSat | Service | Future CP-SAT solver for advanced constraints (fairness, mutual exclusion, quotas) |
+
 
 ## Achievements
 
@@ -53,19 +59,19 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 ```mermaid
 erDiagram
-	USER ||--o{ USER_REGISTRATION : submits
-	REGISTRATION_CAMPAIGN ||--o{ REGISTRATION_ITEM : has
-	REGISTRATION_ITEM ||--o{ USER_REGISTRATION : options
-	REGISTRATION_CAMPAIGN ||--o{ REGISTRATION_POLICY : guards
-	REGISTRATION_ITEM }o--|| REGISTERABLE : polymorphic
-	ASSESSMENT ||--o{ ASSESSMENT_PARTICIPATION : has
-	ASSESSMENT ||--o{ TASK : has
-	TASK ||--o{ TASK_POINT : points
-	ASSESSMENT_PARTICIPATION ||--o{ TASK_POINT : aggregates
-	SUBMISSION ||--o{ TASK_POINT : optional
-	USER ||--o{ ASSESSMENT_PARTICIPATION : participates
-	EXAM_ELIGIBILITY_RECORD }o--|| USER : cached
-	EXAM_ELIGIBILITY_RECORD }o--|| LECTURE : scope
+    USER ||--o{ REGISTRATION_USER_REGISTRATION : submits
+    REGISTRATION_CAMPAIGN ||--o{ REGISTRATION_ITEM : has
+    REGISTRATION_ITEM ||--o{ REGISTRATION_USER_REGISTRATION : options
+    REGISTRATION_CAMPAIGN ||--o{ REGISTRATION_POLICY : guards
+    REGISTRATION_ITEM }o--|| REGISTERABLE : polymorphic
+    ASSESSMENT ||--o{ ASSESSMENT_PARTICIPATION : has
+    ASSESSMENT ||--o{ TASK : has
+    TASK ||--o{ TASK_POINT : points
+    ASSESSMENT_PARTICIPATION ||--o{ TASK_POINT : aggregates
+    SUBMISSION ||--o{ TASK_POINT : optional
+    USER ||--o{ ASSESSMENT_PARTICIPATION : participates
+    EXAM_ELIGIBILITY_RECORD }o--|| USER : cached
+    EXAM_ELIGIBILITY_RECORD }o--|| LECTURE : scope
 ```
 
 See details:
