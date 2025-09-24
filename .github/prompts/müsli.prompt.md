@@ -15,7 +15,7 @@ In every prompt, always attach as context the following files:
 - [Assessments and grading](../../architecture/src/features/04-assessments-and-grading.md)
 - [Exam eligibility and grading schemes](../../architecture/src/features/05-exam-eligibility-and-grading-schemes.md)
 - [End to end workflow](../../architecture/src/features/06-end-to-end-workflow.md)
-- [Algortihm details](../../architecture/src/features/07-algorithm-details.md)
+- [Algorithm details](../../architecture/src/features/07-algorithm-details.md)
 - [Examples and demos](../../architecture/src/features/08-examples-and-demos.md)
 - [Integrity and invariants](../../architecture/src/features/09-integrity-and-invariants.md)
 - [Future extensions](../../architecture/src/features/10-future-extensions.md)
