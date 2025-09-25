@@ -1,6 +1,6 @@
 <% if flash[:notice] %>
   <div class="alert alert-primary alert-dismissible fade show d-flex align-items-center"
-       role="alert" aria-live="polite" tabindex="-1">
+       role="alert" aria-live="polite" tabindex="-1" data-cy="flash-notice">
     <i class="bi bi-info-circle-fill flex-shrink-0 me-2"></i>
     <div><%= flash[:notice] %></div>
     <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
