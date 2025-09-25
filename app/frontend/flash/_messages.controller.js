@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
-const AUTO_DISMISS_TIMEOUT = 5000;
+const AUTO_DISMISS_TIMEOUT = 6000;
 
 /**
  * Handles flash messages auto-dismissal with a progress bar.
