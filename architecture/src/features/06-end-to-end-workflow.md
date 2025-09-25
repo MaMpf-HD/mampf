@@ -2,7 +2,7 @@
 
 ## Phase 0 — Domain & Roster Foundations
 - Core domain models exist: Lecture, Tutorial, Talk, Assignment, Exam.
-- Registerable models define capacity and (if roster-managed) include Rosterable (roster_user_ids, replace_roster!).
+- Registerable models define capacity and (if roster-managed) include Roster::Rosterable (roster_user_ids, replace_roster!).
 - Optional initial enrollment campaign populates the lecture roster.
 
 ## Phase 1 — Campaign-Based Registration

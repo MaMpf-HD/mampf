@@ -18,7 +18,7 @@ Indexes (suggested)
 ## 2. Rosters & Materialization
 - materialize_allocation! overwrites roster to match confirmed set (initial snapshot).
 - Post-allocation roster changes do not mutate historical Registration::UserRegistration decisions.
-- Roster operations atomic (RegisterableRosterService transactions).
+- Roster operations atomic (Roster::MaintenanceService transactions).
 - Capacity enforcement except when explicit override.
 
 ## 3. Assessments & Grading

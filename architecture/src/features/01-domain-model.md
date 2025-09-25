@@ -1,8 +1,8 @@
-# Domain Model (Summary)
+# Domain Model
 
 This chapter summarizes principal entities; authoritative behavioral details live in the referenced chapters.
 
-## Registration Layer
+## Registration
 
 | Component | Type | Description |
 |-----------|------|-------------|
@@ -15,11 +15,12 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | Registration::PolicyEngine | Service | Executes ordered active policies; short‑circuits on first failure |
 | Registration::AllocationMaterializer | Service | Applies confirmed assignments → registerable.materialize_allocation! |
 
-## Materialization & Rosters
+## Rosters
 
-- Rosterable (concern): unified roster API (roster_user_ids, replace_roster!, add/remove).
-- AllocationMaterializer (service, implied): applies confirmed assignments → registerable.materialize_allocation!.
-- RegisterableRosterService: post‑allocation admin (move/add/remove) with capacity enforcement.
+| Component | Type | Description |
+|-----------|------|-------------|
+| Roster::Rosterable | Concern | Unified roster API (`roster_user_ids`, `replace_roster!`, etc.) |
+| Roster::MaintenanceService | Service | Post-allocation admin (move/add/remove) with capacity enforcement |
 
 ## Assessments & Grading
 

@@ -64,7 +64,7 @@ graph TD
     ```
 
 5. **Materialization & Roster Operations**  
-   Action: Implement the backend `materialize_allocation!` method and `RegisterableRosterService`. Create a new admin-facing UI for post-allocation roster management (moves, swaps, etc.) that interacts with this new service.
+   Action: Implement the backend `materialize_allocation!` method and `Roster::MaintenanceService`. Create a new admin-facing UI for post-allocation roster management (moves, swaps, etc.) that interacts with this new service.
 
     ```admonish success "Non-Disruptive Impact"
     Adding a new, unused method to a model is a passive change. The new admin UI and backend service will only operate on rosters from new campaigns, leaving current semester rosters unaffected.

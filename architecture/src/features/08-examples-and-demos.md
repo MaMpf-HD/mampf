@@ -71,7 +71,7 @@ end
 
 # --- Phase 4: Post-Allocation Administration ---
 # Move one student from Tutorial 1 to Tutorial 2
-svc = RegisterableRosterService.new(actor: User.first)
+svc = Roster::MaintenanceService.new(actor: User.first)
 from_tut = tutorials.first
 to_tut   = tutorials.second
 mover_id = from_tut.roster_user_ids.first

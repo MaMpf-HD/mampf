@@ -252,7 +252,7 @@ Examples:
 
 Behavior highlights:
 - Adds has_one :assessment (polymorphic).
-- Helper to create/configure assessment and seed participations from rosters (Rosterable when available; lecture fallback otherwise).
+- Helper to create/configure assessment and seed participations from rosters (Roster::Rosterable when available; lecture fallback otherwise).
 
 ```ruby
 # filepath: app/models/concerns/assessable.rb

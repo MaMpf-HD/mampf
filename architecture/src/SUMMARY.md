@@ -5,8 +5,8 @@
 ## Core Architecture
 - [Overview](features/00-overview.md)
 - [Domain Model](features/01-domain-model.md)
-- [Registration System](features/02-registration-system.md)
-- [Allocation & Rosters](features/03-allocation-and-rosters.md)
+- [Registration](features/02-registration.md)
+- [Rosters](features/03-rosters.md)
 - [Assessments & Grading](features/04-assessments-and-grading.md)
 - [Exam Eligibility & Grading Schemes](features/05-exam-eligibility-and-grading-schemes.md)
 - [End-to-End Workflow](features/06-end-to-end-workflow.md)
