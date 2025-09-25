@@ -1,3 +1,18 @@
 :root {
     --content-max-width: 75%;
+    .pagetoc .pagetoc-H6 {
+        display: none;
+    }    
+}
+
+.nav-chapters {
+    display: none;
+}
+
+/* Hide page TOC entries for H4 and deeper */
+.pagetoc .pagetoc-H3,
+.pagetoc .pagetoc-H4,
+.pagetoc .pagetoc-H5,
+.pagetoc .pagetoc-H6 {
+    display: none;
 }
