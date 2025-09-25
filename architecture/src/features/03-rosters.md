@@ -318,4 +318,18 @@ sequenceDiagram
     end
 ```
 
+## Proposed Folder Structure
+
+To keep the new components organized, the new files would be placed as follows:
+
+```text
+app/
+├── models/
+│   └── concerns/
+│       └── roster/
+│           └── rosterable.rb
+│
+└── services/
+    └── roster/
+        └── maintenance_service.rb
 
