@@ -10,8 +10,11 @@ class FeedbacksController < ApplicationController
       FeedbackMailer.with(feedback: feedback).new_user_feedback_email.deliver_later
     end
 
+    flash.now[:success] = I18n.t("feedback.success")
     respond_to do |format|
-      format.js { render template: "feedbacks/create/create" }
+      format.turbo_stream do
+        render turbo_stream: turbo_stream.prepend("flash-messages", partial: "flash/message")
+      end
     end
   end
 
