@@ -129,4 +129,16 @@ class ApplicationController < ActionController::Base
     def set_current_user
       Current.user = current_user
     end
+
+    # Renders a flash message via Turbo Stream.
+    #
+    # Usage:
+    # You can use :notice, :success, :alert and :error, see flash/_message.html.erb
+    # > flash.now[:success] = "Profile updated"
+    # > render_flash
+    def render_flash
+      return if flash.empty?
+
+      render turbo_stream: turbo_stream.prepend("flash-messages", partial: "flash/message")
+    end
 end
