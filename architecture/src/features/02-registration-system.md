@@ -783,6 +783,54 @@ erDiagram
   "Registration::Campaign" }o--|| CAMPAIGNABLE : polymorphic
 ```
 
+## Sequence Diagram (Preference-Based Flow)
+
+This diagram shows the typical lifecycle for a preference-based campaign.
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Controller
+    participant Campaign as Registration::Campaign
+    participant UserReg as Registration::UserRegistration
+    actor Job as Background Job
+    participant AssignmentSvc as Registration::AssignmentService
+    participant Solver as Registration::Solvers::MinCostFlow
+    participant Materializer as Registration::AllocationMaterializer
+    participant RegTarget as Registerable (e.g., Tutorial)
+
+    rect rgb(235, 245, 255)
+    note over User,Controller: Registration phase (campaign is open)
+    User->>Controller: Submit preferences
+    Controller->>Campaign: eligible_user?(user)
+    alt eligible
+      loop for each preference
+        Controller->>UserReg: create(user_id, item_id, rank)
+      end
+    else not eligible
+      Controller-->>User: Show reason from PolicyEngine
+    end
+    end
+
+    note over User,Job: Deadline passes
+
+    rect rgb(255, 245, 235)
+    note over Job,RegTarget: Assignment & finalization
+    Job->>Campaign: run_assignment!
+    Campaign->>Campaign: update!(status: :processing)
+    Campaign->>AssignmentSvc: new(campaign).assign!
+    AssignmentSvc->>Solver: new(campaign).run()
+    note right of Solver: Build graph, solve, persist statuses
+    Solver->>UserReg: update_all(status: confirmed/rejected)
+    Campaign->>Campaign: finalize!
+    Campaign->>Materializer: new(campaign).materialize!
+    Materializer->>RegTarget: materialize_allocation!(user_ids, campaign)
+    note right of RegTarget: Update roster (idempotent)
+    Campaign->>Campaign: update!(status: :completed)
+    end
+```
+
+
 
 ---
 
