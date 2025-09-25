@@ -11,6 +11,9 @@ window.Stimulus.register("lecture-tabs", LectureTabsController);
 import SearchFormController from "~/_components/search_form/search_form.controller.js";
 window.Stimulus.register("search-form", SearchFormController);
 
+import FlashMessagesController from "~/flash/_messages.controller.js";
+window.Stimulus.register("flash-messages", FlashMessagesController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
