@@ -2,8 +2,8 @@ let scrollTimeout;
 
 const listenActive = () => {
   const elems = document.querySelector(".pagetoc").children;
-  [...elems].forEach(el => {
-    el.addEventListener("click", (event) => {
+  [...elems].forEach((el) => {
+    el.addEventListener("click", () => {
       clearTimeout(scrollTimeout);
       [...elems].forEach(el => el.classList.remove("active"));
       el.classList.add("active");
@@ -20,7 +20,7 @@ const getPagetoc = () => document.querySelector(".pagetoc") || autoCreatePagetoc
 const autoCreatePagetoc = () => {
   const main = document.querySelector("#content > main");
   const content = Object.assign(document.createElement("div"), {
-    className: "content-wrap"
+    className: "content-wrap",
   });
   content.append(...main.childNodes);
   main.prepend(content);
@@ -50,16 +50,16 @@ const updateFunction = () => {
   }
 };
 
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
   const pagetoc = getPagetoc();
   const headers = [...document.getElementsByClassName("header")];
-  headers.forEach(header => {
-    const parent = header.parentElement
+  headers.forEach((header) => {
+    const parent = header.parentElement;
     if (!parent.classList.contains("toc-ignore")) {
       const link = Object.assign(document.createElement("a"), {
         textContent: header.text,
         href: header.href,
-        className: `pagetoc-${parent.tagName}`
+        className: `pagetoc-${parent.tagName}`,
       });
       pagetoc.appendChild(link);
     }
@@ -68,4 +68,3 @@ window.addEventListener('load', () => {
   listenActive();
   window.addEventListener("scroll", updateFunction);
 });
-
