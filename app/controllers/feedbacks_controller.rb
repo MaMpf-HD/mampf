@@ -1,7 +1,7 @@
 class FeedbacksController < ApplicationController
-  authorize_resource except: [:form, :create]
+  authorize_resource except: [:new, :create]
 
-  def form
+  def new
     render partial: "feedbacks/form/form", locals: { feedback: Feedback.new }
   end
 
