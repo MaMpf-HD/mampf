@@ -3,13 +3,14 @@ import { Modal } from "bootstrap";
 
 export default class extends Controller {
   connect() {
-    this.modal = new Modal(this.element);
-    this.modal.show();
+    this.modal = Modal.getOrCreateInstance(this.element);
     this.element.addEventListener("turbo:submit-end", () => this.hideModalOnSuccess(event));
   }
 
   disconnect() {
-    this.modal.dispose();
+    if (this.modal) {
+      this.modal.dispose();
+    }
   }
 
   hideModalOnSuccess(event) {
