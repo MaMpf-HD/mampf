@@ -17,7 +17,7 @@ export default class extends Controller {
   }
 
   registerFormValidator() {
-    this.element.addEventListener("input", () => {
+    this.mainInputTarget.addEventListener("input", () => {
       this.validateMainInput(this.mainInputTarget);
     });
   }
