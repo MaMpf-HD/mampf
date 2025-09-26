@@ -1,76 +1,46 @@
-import { Toast } from "bootstrap";
+import { Controller } from "@hotwired/stimulus";
 
-$(document).on("turbo:load", () => {
-  if (!shouldRegisterFeedback()) {
-    return;
+export default class extends Controller {
+  static targets = ["mainInput", "submit"];
+
+  connect() {
+    this.registerEnterSubmitHandler();
+    this.registerFormValidator();
   }
-  registerToasts();
-  registerSubmitButtonHandler();
-  registerFeedbackBodyValidator();
-});
 
-var SUBMIT_FEEDBACK_ID = "#submit-feedback";
+  registerEnterSubmitHandler() {
+    document.addEventListener("keydown", (event) => {
+      const isModalOpen = true;
+      if (isModalOpen && event.ctrlKey && event.key === "Enter") {
+        this.submit();
+      }
+    });
+  }
 
-var TOAST_OPTIONS = {
-  animation: true,
-  autohide: true,
-  delay: 6000, // autohide after ... milliseconds
-};
+  registerFormValidator() {
+    this.element.addEventListener("input", () => {
+      this.validateMainInput(this.mainInputTarget);
+    });
+  }
 
-function shouldRegisterFeedback() {
-  return $(SUBMIT_FEEDBACK_ID).length > 0;
-}
+  validateMainInput(input) {
+    const validityState = input.validity;
 
-function registerToasts() {
-  const toastElements = document.querySelectorAll(".toast");
-  [...toastElements].map((toast) => {
-    new Toast(toast, TOAST_OPTIONS);
-  });
-}
-
-function registerSubmitButtonHandler() {
-  // Invoke the hidden submit button inside the actual Rails form
-  $("#submit-feedback-form-btn-outside").click(() => {
-    submitFeedback();
-  });
-
-  // Submit form by pressing Ctrl + Enter
-  document.addEventListener("keydown", (event) => {
-    const isModalOpen = $(SUBMIT_FEEDBACK_ID).is(":visible");
-    if (isModalOpen && event.ctrlKey && event.key == "Enter") {
-      submitFeedback();
+    if (validityState.tooShort) {
+      input.setCustomValidity(input.dataset.tooShortMessage);
     }
-  });
-}
+    else if (validityState.valueMissing) {
+      input.setCustomValidity(input.dataset.valueMissingMessage);
+    }
+    else {
+      input.setCustomValidity("");
+    }
 
-function registerFeedbackBodyValidator() {
-  const feedbackBody = document.getElementById("feedback_feedback");
-  feedbackBody.addEventListener("input", () => {
-    validateFeedback();
-  });
-}
-
-function validateFeedback() {
-  const feedbackBody = document.getElementById("feedback_feedback");
-  const validityState = feedbackBody.validity;
-  if (validityState.tooShort) {
-    const tooShortMessage = feedbackBody.dataset.tooShortMessage;
-    feedbackBody.setCustomValidity(tooShortMessage);
-  }
-  else if (validityState.valueMissing) {
-    const valueMissingMessage = feedbackBody.dataset.valueMissingMessage;
-    feedbackBody.setCustomValidity(valueMissingMessage);
-  }
-  else {
-    // render input valid, so that form will submit
-    feedbackBody.setCustomValidity("");
+    input.reportValidity();
   }
 
-  feedbackBody.reportValidity();
-}
-
-function submitFeedback() {
-  const submitButton = $("#submit-feedback-form-btn");
-  validateFeedback();
-  submitButton.click();
+  submit() {
+    this.validateMainInput(this.mainInputTarget);
+    this.submitTarget.click();
+  }
 }

@@ -1,4 +1,4 @@
- <%= turbo_frame_tag "feedback-form" do %>
+<%= turbo_frame_tag "feedback-form" do %>
 
 <div class="modal-header">
   <i class="bi bi-star-fill me-3"></i>
@@ -7,7 +7,7 @@
   </button>
 </div>
 
-<%= form_with model: feedback, data: { turbo: true} do |f| %>
+<%= form_with model: feedback, data: { turbo: true, controller: "feedback" } do |f| %>
 
 <div class="modal-body">
   <%= t('feedback.description_html',
@@ -28,9 +28,12 @@
             style: 'height: 200px',
             minlength: Feedback::BODY_MIN_LENGTH,
             maxlength: Feedback::BODY_MAX_LENGTH,
-            'data-too-short-message': t('feedback.body_too_short_error',
-                                min_length: Feedback::BODY_MIN_LENGTH),
-            'data-value-missing-message': t('feedback.body_missing_error') %>
+            data: {
+              "feedback-target": "mainInput",
+              "too-short-message": t('feedback.body_too_short_error',
+                                  min_length: Feedback::BODY_MIN_LENGTH),
+              "value-missing-message": t('feedback.body_missing_error')
+            } %>
       <%= f.label :feedback, t('feedback.comment') %>
     </div>
 
@@ -47,7 +50,7 @@
 
 <div class="modal-footer">
   <!-- Submit (Send) -->
-  <%= f.submit 'Submit', class: "btn btn-primary" do %>
+  <%= f.submit 'Submit', class: "btn btn-primary", data: { "feedback-target": "submit" } do %>
     <%= t('buttons.send_variant') %>
   <% end %>
 
