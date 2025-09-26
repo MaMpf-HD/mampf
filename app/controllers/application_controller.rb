@@ -141,4 +141,23 @@ class ApplicationController < ActionController::Base
 
       render turbo_stream: turbo_stream.prepend("flash-messages", partial: "flash/message")
     end
+
+    # Ensures that the current request is a Turbo Frame request.
+    # If not, sets a flash message and redirects to the root path.
+    #
+    # Usage:
+    # (1) call this method at the beginning of your action
+    # > require_turbo_frame
+    # > return if performed?
+    #
+    # OR
+    #
+    # (2) Use it as a before_action filter
+    # > before_action :require_turbo_frame, only: [:your_action]
+    def require_turbo_frame
+      return if turbo_frame_request?
+
+      flash.keep[:alert] = I18n.t("controllers.no_page")
+      redirect_to root_path
+    end
 end

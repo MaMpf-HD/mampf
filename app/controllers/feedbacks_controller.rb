@@ -1,5 +1,6 @@
 class FeedbacksController < ApplicationController
   authorize_resource except: [:new, :create]
+  before_action :require_turbo_frame, only: [:new]
 
   def new
     render partial: "feedbacks/form/form", locals: { feedback: Feedback.new }
