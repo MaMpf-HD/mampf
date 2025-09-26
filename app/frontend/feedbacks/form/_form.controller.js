@@ -9,9 +9,8 @@ export default class extends Controller {
   }
 
   registerEnterSubmitHandler() {
-    document.addEventListener("keydown", (event) => {
-      const isModalOpen = true;
-      if (isModalOpen && event.ctrlKey && event.key === "Enter") {
+    this.element.addEventListener("keydown", (event) => {
+      if (event.ctrlKey && event.key === "Enter") {
         this.submit();
       }
     });
