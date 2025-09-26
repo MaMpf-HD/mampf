@@ -12,17 +12,10 @@ class FeedbacksController < ApplicationController
 
     if @feedback.save
       FeedbackMailer.with(feedback: @feedback).new_user_feedback_email.deliver_later
-
-      flash.now[:success] = I18n.t("feedback.success")
-      respond_to do |format|
-        format.turbo_stream do
-          render_flash
-        end
-      end
+      respond_with_flash_success(I18n.t("feedback.success"))
     else
-      render partial: "feedbacks/form/form",
-             locals: { feedback: @feedback },
-             status: :unprocessable_entity
+      render partial: "feedbacks/form/form", locals: { feedback: @feedback },
+             status: :unprocessable_content
     end
   end
 

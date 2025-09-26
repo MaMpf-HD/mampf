@@ -142,6 +142,21 @@ class ApplicationController < ActionController::Base
       render turbo_stream: turbo_stream.prepend("flash-messages", partial: "flash/message")
     end
 
+    # Renders a flash success message for turbo_stream and html formats.
+    # Usage: respond_with_flash_success(I18n.t("feedback.success"))
+    def respond_with_flash_success(message)
+      respond_to do |format|
+        format.turbo_stream do
+          flash.now[:success] = message
+          render_flash
+        end
+        format.html do
+          flash.keep[:success] = message
+          redirect_back(fallback_location: fallback_location)
+        end
+      end
+    end
+
     # Ensures that the current request is a Turbo Frame request.
     # If not, sets a flash message and redirects to the root path.
     #
