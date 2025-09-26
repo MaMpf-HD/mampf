@@ -7,7 +7,7 @@
   </button>
 </div>
 
-<%= form_with model: Feedback.new, data: { turbo: true} do |f| %>
+<%= form_with model: feedback, data: { turbo: true} do |f| %>
 
 <div class="modal-body">
   <%= t('feedback.description_html',
@@ -26,7 +26,6 @@
             class: 'form-control',
             placeholder: '_',
             style: 'height: 200px',
-            required: '',
             minlength: Feedback::BODY_MIN_LENGTH,
             maxlength: Feedback::BODY_MAX_LENGTH,
             'data-too-short-message': t('feedback.body_too_short_error',

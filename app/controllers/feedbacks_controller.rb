@@ -2,7 +2,7 @@ class FeedbacksController < ApplicationController
   authorize_resource except: [:form, :create]
 
   def form
-    render partial: "feedbacks/form/feedback_form"
+    render partial: "feedbacks/form/feedback_form", locals: { feedback: Feedback.new }
   end
 
   def create
@@ -19,8 +19,9 @@ class FeedbacksController < ApplicationController
         end
       end
     else
-      # TODO
-      render partial: "feedbacks/form/feedback_form", status: :unprocessable_entity
+      render partial: "feedbacks/form/feedback_form",
+             locals: { feedback: @feedback },
+             status: :unprocessable_entity
     end
   end
 
