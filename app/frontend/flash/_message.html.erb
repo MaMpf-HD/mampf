@@ -2,7 +2,7 @@
   <div class="alert alert-primary alert-dismissible fade show d-flex align-items-center"
        role="alert" aria-live="polite" tabindex="-1" data-cy="flash-notice">
     <i class="bi bi-info-circle-fill flex-shrink-0 me-2"></i>
-    <div><%= flash[:notice] %></div>
+    <div><%= sanitize flash[:notice], :tags => %w(br) %></div>
     <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
   </div>
 <% end %>
@@ -11,7 +11,7 @@
   <div class="alert alert-success alert-dismissible fade show d-flex align-items-center"
        role="alert" aria-live="polite" tabindex="-1">
     <i class="bi bi-check-circle-fill flex-shrink-0 me-2"></i>
-    <div><%= flash[:success] %></div>
+    <div><%= sanitize flash[:success], :tags => %w(br) %></div>
     <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
   </div>
 <% end %>
@@ -20,7 +20,7 @@
   <div class="alert alert-warning alert-dismissible fade show d-flex align-items-center"
        role="alert" aria-live="assertive" tabindex="-1">
     <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
-    <div><%= flash[:warning] %></div>
+    <div><%= sanitize flash[:alert], :tags => %w(br) %></div>
     <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
   </div>
 <% end %>
@@ -29,7 +29,7 @@
   <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center"
        role="alert" aria-live="assertive" tabindex="-1">
     <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
-    <div><%= flash[:error] %></div>
+    <div><%= sanitize flash[:error], :tags => %w(br) %></div>
     <button type="button" class="btn-close" aria-label="Close" data-bs-dismiss="alert"></button>
   </div>
 <% end %>
