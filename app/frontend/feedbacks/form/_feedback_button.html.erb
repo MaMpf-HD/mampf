@@ -1,8 +1,9 @@
 <%= vite_stylesheet_tag "feedbacks/form/_feedback_button.scss" %>
 
-<%# Feedback button %>
-<button type="button" id="feedback-btn" class="btn ms-1 me-1" title="<%= t('feedback.tooltip') %>"
-    data-bs-toggle="modal"
-    data-bs-target="#submit-feedback">
+<!-- Feedback button in navbar -->
+<%= button_to feedback_modal_path,
+      method: :get, class: "btn ms-1 me-1",
+      id: "feedback-btn", title: t('feedback.tooltip'),
+      data: { turbo_frame: "feedback-modal" } do %>
   <i class="bi bi-star-fill"></i>
-</button>
+<% end %>

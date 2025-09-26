@@ -1,12 +1,15 @@
-<%# Main Modal %>
-<div id="submit-feedback" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="Submit feedback" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content p-4">
-      <%= render partial: 'feedbacks/form/feedback_form' %>
+<%= turbo_frame_tag "feedback-modal" do %>
+  <div id="submit-feedback" data-controller="modal" class="modal fade" tabindex="-1"
+       role="dialog" aria-label="<%= t('feedback.tooltip') %>" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content p-4">
+        <%= render partial: 'feedbacks/form/feedback_form' %>
+      </div>
     </div>
   </div>
-</div>
+<% end %>
 
+<!-- TODO
 <%# Messages toasts %>
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
   <%# Error %>
@@ -40,3 +43,4 @@
   </div>
 
 </div>
+-->

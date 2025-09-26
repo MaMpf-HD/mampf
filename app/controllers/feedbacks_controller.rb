@@ -1,20 +1,26 @@
 class FeedbacksController < ApplicationController
-  authorize_resource except: [:create]
+  authorize_resource except: [:modal, :create]
+
+  def modal
+    render partial: "feedbacks/form/feedback"
+  end
 
   def create
-    feedback = Feedback.new(feedback_params)
-    feedback.user_id = current_user.id
-    @feedback_success = feedback.save
+    @feedback = Feedback.new(feedback_params)
+    @feedback.user_id = current_user.id
 
-    if @feedback_success
+    if @feedback.save
       FeedbackMailer.with(feedback: feedback).new_user_feedback_email.deliver_later
-    end
 
-    flash.now[:success] = I18n.t("feedback.success")
-    respond_to do |format|
-      format.turbo_stream do
-        render turbo_stream: turbo_stream.prepend("flash-messages", partial: "flash/message")
+      flash.now[:success] = I18n.t("feedback.success")
+      respond_to do |format|
+        format.turbo_stream do
+          render_flash
+        end
       end
+    else
+      # TODO
+      render partial: "feedbacks/form/feedback", status: :unprocessable_entity
     end
   end
 
