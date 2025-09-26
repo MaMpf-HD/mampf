@@ -15,7 +15,7 @@ From Registration:
 
 ## 2. Exam Eligibility Policy (Registration Gate)
 ```admonish note "Think of it as"
-Implemented as a RegistrationPolicy (kind: exam_eligibility) evaluated inside the policy engine before allowing an Exam RegistrationCampaign submission (see [Registration System](02-registration-system.md)).
+Implemented as a Registration::Policy (kind: exam_eligibility) evaluated inside the policy engine before allowing an Exam Registration::Campaign submission (see [Registration System](02-registration-system.md)).
 ```
 
 Typical config
