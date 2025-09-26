@@ -1,3 +1,5 @@
+ <%= turbo_frame_tag "feedback-form" do %>
+
 <div class="modal-header">
   <i class="bi bi-star-fill me-3"></i>
   <h1 class="modal-title fs-5"><%= t('feedback.modal_title') %></h1>
@@ -55,5 +57,7 @@
     <%= t('buttons.cancel') %>
   </button>
 </div>
+
+<% end %>
 
 <% end %>

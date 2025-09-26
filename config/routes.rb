@@ -124,9 +124,9 @@ Rails.application.routes.draw do
   resources :divisions, except: [:show]
 
   # feedback routes
-  get "feedbacks/modal",
-      to: "feedbacks#modal",
-      as: "feedback_modal"
+  get "feedbacks/form",
+      to: "feedbacks#form",
+      as: "feedback_form"
   resources :feedbacks, only: [:create]
 
   # items routes

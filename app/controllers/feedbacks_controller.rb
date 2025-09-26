@@ -1,8 +1,8 @@
 class FeedbacksController < ApplicationController
-  authorize_resource except: [:modal, :create]
+  authorize_resource except: [:form, :create]
 
-  def modal
-    render partial: "feedbacks/form/feedback"
+  def form
+    render partial: "feedbacks/form/feedback_form"
   end
 
   def create
@@ -10,7 +10,7 @@ class FeedbacksController < ApplicationController
     @feedback.user_id = current_user.id
 
     if @feedback.save
-      FeedbackMailer.with(feedback: feedback).new_user_feedback_email.deliver_later
+      FeedbackMailer.with(feedback: @feedback).new_user_feedback_email.deliver_later
 
       flash.now[:success] = I18n.t("feedback.success")
       respond_to do |format|
@@ -20,7 +20,7 @@ class FeedbacksController < ApplicationController
       end
     else
       # TODO
-      render partial: "feedbacks/form/feedback", status: :unprocessable_entity
+      render partial: "feedbacks/form/feedback_form", status: :unprocessable_entity
     end
   end
 
