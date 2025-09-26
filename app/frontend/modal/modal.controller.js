@@ -17,6 +17,7 @@ export default class extends Controller {
     if (!event.detail.success) return;
 
     if (this.modal) {
+      this.element.querySelector("form")?.reset();
       this.modal.hide();
     }
   }
