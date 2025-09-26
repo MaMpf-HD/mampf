@@ -36,7 +36,7 @@ We follow most Ruby on Rails conventions. The main code is in the `app/` folder.
 
 # 🎈 Code standard
 
-In general, follow the Ruby on Rails best practices.
+In general, follow the Ruby on Rails best practices. Prefer `"` over `'` for strings, unless you need to use single quotes to avoid escaping.
 
 ## Line length
 
