@@ -17,6 +17,9 @@ window.Stimulus.register("modal", ModalController);
 import FlashMessagesController from "~/flash/_messages.controller.js";
 window.Stimulus.register("flash-messages", FlashMessagesController);
 
+import FeedbackFormController from "~/feedbacks/form/_form.controller.js";
+window.Stimulus.register("feedback", FeedbackFormController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
