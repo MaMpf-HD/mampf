@@ -6,8 +6,6 @@ const AUTO_DISMISS_TIMEOUT = 6000;
  * Handles flash messages auto-dismissal with a progress bar.
  */
 export default class extends Controller {
-  static targets = ["alert"];
-
   connect() {
     this.observeAlerts();
   }
