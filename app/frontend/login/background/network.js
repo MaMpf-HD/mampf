@@ -3,17 +3,14 @@ export class NetworkGraph {
     this.container = container;
     this.particles = particles;
 
-    this.connectionDistance = 200;
-    this.maxConnections = 80;
+    this.connectionDistance = 210;
+    this.maxNumConnections = 25;
     this.fadeSpeed = 0.02;
-    this.minOpacity = 0.2;
-    this.maxOpacity = 0.6;
+    this.minOpacity = 0.15;
+    this.maxOpacity = 0.65;
 
     this.connections = new Map();
     this.connectionId = 0;
-
-    this.lastConnectionUpdate = 0;
-    this.connectionUpdateInterval = 33;
 
     this.init();
   }
@@ -47,12 +44,14 @@ export class NetworkGraph {
 
     for (let i = 0; i < this.particles.length; i++) {
       for (let j = i + 1; j < this.particles.length; j++) {
+        if (activeConnections.size >= this.maxNumConnections) break;
+
         const p1 = this.particles[i];
         const p2 = this.particles[j];
         const distance = p1.getDistance(p2);
         const key = this.getConnectionKey(p1, p2);
 
-        if (distance < this.connectionDistance && activeConnections.size < this.maxConnections) {
+        if (distance < this.connectionDistance) {
           activeConnections.add(key);
 
           if (!this.connections.has(key)) {
@@ -61,7 +60,7 @@ export class NetworkGraph {
               p2,
               distance,
               targetOpacity: this.calculateOpacity(distance),
-              currentOpacity: 0, // Start faded out
+              currentOpacity: 0,
               element: this.createConnectionElement(),
               fadingIn: true,
               fadingOut: false,
@@ -142,14 +141,8 @@ export class NetworkGraph {
   }
 
   update() {
-    const now = performance.now();
-    if (now - this.lastConnectionUpdate > this.connectionUpdateInterval) {
-      this.updateConnections();
-      this.lastConnectionUpdate = now;
-    }
-    else {
-      this.updateConnectionElements();
-    }
+    this.updateConnections();
+    this.updateConnectionElements();
   }
 
   resize() {
