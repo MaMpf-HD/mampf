@@ -43,29 +43,32 @@ export class FloatingBubble {
     const wobble3 = this.noise(time * 0.8 + this.noiseOffsetX * 2) * 0.4;
     const wobble4 = this.noise(time * 2.1 + this.noiseOffsetY * 1.5) * 0.6;
 
-    const r1 = 40 + wobble1 * 30;
-    const r2 = 45 + wobble2 * 25;
-    const r3 = 50 + wobble3 * 35;
-    const r4 = 42 + wobble4 * 28;
+    const r1 = 40 + wobble1 * 30; // top-left
+    const r2 = 45 + wobble2 * 25; // top-right
+    const r3 = 50 + wobble3 * 35; // bottom-right
+    const r4 = 42 + wobble4 * 28; // bottom-left
 
-    this.wrapAround(this.baseSize);
+    // Wrap around screen edges
+    if (this.x < -this.baseSize) this.x = window.innerWidth + this.baseSize;
+    if (this.x > window.innerWidth + this.baseSize) this.x = -this.baseSize;
+    if (this.y < -this.baseSize) this.y = window.innerHeight + this.baseSize;
+    if (this.y > window.innerHeight + this.baseSize) this.y = -this.baseSize;
 
     const gradientX = 30 + wobble1 * 20;
     const gradientY = 30 + wobble2 * 20;
 
+    this.element.style.left = `${this.x - this.baseSize / 2}px`;
+    this.element.style.top = `${this.y - this.baseSize / 2}px`;
     this.element.style.width = `${this.baseSize}px`;
     this.element.style.height = `${this.baseSize}px`;
     this.element.style.borderRadius = `${r1}% ${r2}% ${r3}% ${r4}%`;
-    this.element.style.background = `radial-gradient(circle at ${gradientX}% ${gradientY}%, rgba(100, 150, 255, ${this.opacity * 0.8}), rgba(150, 100, 255, ${this.opacity * 0.5}), rgba(255, 100, 150, ${this.opacity * 0.3}), transparent)`;
+    this.element.style.background = `radial-gradient(circle at ${gradientX}% ${gradientY}%, 
+      rgba(100, 150, 255, ${this.opacity * 0.8}), 
+      rgba(150, 100, 255, ${this.opacity * 0.5}), 
+      rgba(255, 100, 150, ${this.opacity * 0.3}), 
+      transparent)`;
     this.element.style.filter = `blur(${8 + wobble3 * 4}px)`;
-    this.element.style.transform = `translate3d(${this.x - this.baseSize / 2}px, ${this.y - this.baseSize / 2}px, 0) scale(${1 + wobble4 * 0.1}) rotate(${time * 10}deg)`;
-  }
-
-  wrapAround(margin) {
-    if (this.x < -margin) this.x = window.innerWidth + margin;
-    if (this.x > window.innerWidth + margin) this.x = -margin;
-    if (this.y < -margin) this.y = window.innerHeight + margin;
-    if (this.y > window.innerHeight + margin) this.y = -margin;
+    this.element.style.transform = `scale(${1 + wobble4 * 0.1}) rotate(${time * 10}deg)`;
   }
 
   destroy() {
