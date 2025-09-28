@@ -2,6 +2,16 @@ import katex from "katex";
 
 const mathFormulas = [
   "\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}",
+  // Maxwell's equations (differential form)
+  "\\nabla \\cdot \\mathbf{E} = \\frac{\\rho}{\\epsilon_0}",
+  "\\nabla \\cdot \\mathbf{B} = 0",
+  "\\nabla \\times \\mathbf{E} = -\\frac{\\partial \\mathbf{B}}{\\partial t}",
+  "\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}",
+  // Maxwell's equations (integral form)
+  "\\oint_{S} \\mathbf{E} \\cdot d\\mathbf{A} = \\frac{Q_{\\text{enc}}}{\\epsilon_0}",
+  "\\oint_{S} \\mathbf{B} \\cdot d\\mathbf{A} = 0",
+  "\\oint_{C} \\mathbf{E} \\cdot d\\mathbf{l} = -\\frac{d\\Phi_B}{dt}",
+  "\\oint_{C} \\mathbf{B} \\cdot d\\mathbf{l} = \\mu_0 I_{\\text{enc}} + \\mu_0 \\epsilon_0 \\frac{d\\Phi_E}{dt}",
   "e^{i\\pi} + 1 = 0",
   "\\sum_{n=1}^{\\infty} \\frac{1}{n^2} = \\frac{\\pi^2}{6}",
   "\\frac{d}{dx}[\\sin(x)] = \\cos(x)",
