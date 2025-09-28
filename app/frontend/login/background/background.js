@@ -42,6 +42,21 @@ class MathBackground {
     this.network = new NetworkGraph(this.canvas, this.particles);
   }
 
+  adjustArrayCount(arr, desiredCount, factory) {
+    const current = arr.length;
+    if (desiredCount > current) {
+      for (let i = current; i < desiredCount; i++) {
+        arr.push(factory());
+      }
+    }
+    else if (desiredCount < current) {
+      for (let i = current - 1; i >= desiredCount; i--) {
+        if (arr[i] && typeof arr[i].destroy === "function") arr[i].destroy();
+        arr.splice(i, 1);
+      }
+    }
+  }
+
   animate() {
     this.particles.forEach(particle => particle.update());
     this.bubbles.forEach(bubble => bubble.update());
@@ -54,34 +69,10 @@ class MathBackground {
     this.network.resize();
 
     const newParticleCount = Math.floor(window.innerWidth / 60);
-    const currentCount = this.particles.length;
-
-    if (newParticleCount > currentCount) {
-      for (let i = currentCount; i < newParticleCount; i++) {
-        this.particles.push(new MathParticle(this.canvas));
-      }
-    }
-    else if (newParticleCount < currentCount) {
-      for (let i = currentCount - 1; i >= newParticleCount; i--) {
-        this.particles[i].destroy();
-        this.particles.splice(i, 1);
-      }
-    }
+    this.adjustArrayCount(this.particles, newParticleCount, () => new MathParticle(this.canvas));
 
     const newBubbleCount = Math.floor(window.innerWidth / 400) + 2;
-    const currentBubbleCount = this.bubbles.length;
-
-    if (newBubbleCount > currentBubbleCount) {
-      for (let i = currentBubbleCount; i < newBubbleCount; i++) {
-        this.bubbles.push(new FloatingBubble(this.canvas));
-      }
-    }
-    else if (newBubbleCount < currentBubbleCount) {
-      for (let i = currentBubbleCount - 1; i >= newBubbleCount; i--) {
-        this.bubbles[i].destroy();
-        this.bubbles.splice(i, 1);
-      }
-    }
+    this.adjustArrayCount(this.bubbles, newBubbleCount, () => new FloatingBubble(this.canvas));
   }
 
   destroy() {

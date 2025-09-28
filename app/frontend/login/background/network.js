@@ -12,9 +12,8 @@ export class NetworkGraph {
     this.connections = new Map();
     this.connectionId = 0;
 
-    // Performance optimization: throttle expensive connection calculations
     this.lastConnectionUpdate = 0;
-    this.connectionUpdateInterval = 33; // ~30fps for connection calculations
+    this.connectionUpdateInterval = 33;
 
     this.init();
   }
@@ -29,6 +28,12 @@ export class NetworkGraph {
     this.svg.style.pointerEvents = "none";
     this.svg.style.zIndex = "0";
     this.container.appendChild(this.svg);
+  }
+
+  setSvgSize() {
+    if (!this.svg) return;
+    this.svg.style.width = "100%";
+    this.svg.style.height = "100%";
   }
 
   getConnectionKey(p1, p2) {
@@ -138,23 +143,17 @@ export class NetworkGraph {
 
   update() {
     const now = performance.now();
-
-    // Throttle expensive connection distance calculations
     if (now - this.lastConnectionUpdate > this.connectionUpdateInterval) {
       this.updateConnections();
       this.lastConnectionUpdate = now;
     }
     else {
-      // Still update visual elements every frame for smooth transitions
       this.updateConnectionElements();
     }
   }
 
   resize() {
-    if (this.svg) {
-      this.svg.style.width = "100%";
-      this.svg.style.height = "100%";
-    }
+    this.setSvgSize();
   }
 
   destroy() {

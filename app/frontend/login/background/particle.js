@@ -67,13 +67,10 @@ export class MathParticle {
     this.vy = (Math.random() - 0.5) * 0.5;
     this.size = Math.random() * 0.8 + 0.4;
     this.opacity = Math.random() * 0.7 + 0.3;
-
-    // Use oscillating rotation within readable range
-    this.baseRotation = (Math.random() - 0.5) * Math.PI * 0.5; // Base rotation ±45°
-    this.rotationAmplitude = Math.PI * 0.3; // Oscillate ±54° around base (total ±99°, well under 150°)
-    this.rotationSpeed = (Math.random() - 0.5) * 0.005; // Slower oscillation
-    this.rotationTime = Math.random() * Math.PI * 2; // Random starting phase
-
+    this.baseRotation = (Math.random() - 0.5) * Math.PI * 0.5;
+    this.rotationAmplitude = Math.PI * 0.3;
+    this.rotationSpeed = (Math.random() - 0.5) * 0.005;
+    this.rotationTime = Math.random() * Math.PI * 2;
     this.lastTransform = "";
   }
 
@@ -88,19 +85,16 @@ export class MathParticle {
     div.style.opacity = this.opacity;
     div.style.textShadow = "0 0 10px rgba(255, 255, 255, 0.3)";
 
-    div.style.willChange = "transform"; // GPU acceleration hint
-    div.style.backfaceVisibility = "hidden"; // Prevent flickering
-    div.style.perspective = "1000px"; // Enable 3D transforms
+    div.style.willChange = "transform";
+    div.style.backfaceVisibility = "hidden";
+    div.style.perspective = "1000px";
 
     div.style.left = "0";
     div.style.top = "0";
     div.style.transformOrigin = "center center";
 
     try {
-      katex.render(this.formula, div, {
-        throwOnError: false,
-        displayMode: false,
-      });
+      katex.render(this.formula, div, { throwOnError: false, displayMode: false });
     }
     catch {
       div.textContent = this.formula;
@@ -114,35 +108,16 @@ export class MathParticle {
     const currentTime = performance.now();
     const deltaTime = currentTime - this.lastUpdateTime;
     this.lastUpdateTime = currentTime;
-
-    // Normalize movement based on time elapsed (frame-rate independent)
-    const timeMultiplier = Math.min(deltaTime / 16.67, 2); // Cap at 2x for stability
-
+    const timeMultiplier = Math.min(deltaTime / 16.67, 2);
     this.x += this.vx * timeMultiplier;
     this.y += this.vy * timeMultiplier;
-
-    // Update rotation time for oscillating motion
     this.rotationTime += this.rotationSpeed * timeMultiplier;
-
-    // Calculate final rotation: base rotation + oscillating component
-    // This ensures rotation stays within readable range (never > 150°)
     this.rotation = this.baseRotation + Math.sin(this.rotationTime) * this.rotationAmplitude;
-
-    // Wrap around screen edges
-    if (this.x < -200) this.x = window.innerWidth + 200;
-    if (this.x > window.innerWidth + 200) this.x = -200;
-    if (this.y < -200) this.y = window.innerHeight + 200;
-    if (this.y > window.innerHeight + 200) this.y = -200;
-
-    // Use translate3d for better performance (GPU acceleration)
-    // Round values to avoid sub-pixel rendering issues
+    this.wrapAround(200);
     const roundedX = Math.round(this.x * 100) / 100;
     const roundedY = Math.round(this.y * 100) / 100;
     const roundedRotation = Math.round(this.rotation * 1000) / 1000;
-
     const newTransform = `translate3d(${roundedX}px, ${roundedY}px, 0) rotate(${roundedRotation}rad) translate(-50%, -50%)`;
-
-    // Only update if transform actually changed (avoid unnecessary DOM updates)
     if (newTransform !== this.lastTransform) {
       this.element.style.transform = newTransform;
       this.lastTransform = newTransform;
@@ -159,5 +134,12 @@ export class MathParticle {
     if (this.element && this.element.parentNode) {
       this.element.parentNode.removeChild(this.element);
     }
+  }
+
+  wrapAround(margin) {
+    if (this.x < -margin) this.x = window.innerWidth + margin;
+    if (this.x > window.innerWidth + margin) this.x = -margin;
+    if (this.y < -margin) this.y = window.innerHeight + margin;
+    if (this.y > window.innerHeight + margin) this.y = -margin;
   }
 }
