@@ -1,0 +1,114 @@
+.math-particle {
+    user-select: none;
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
+    animation: mathFloat 25s infinite ease-in-out;
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    .katex {
+        color: inherit !important;
+        font-size: inherit !important;
+    }
+
+    .katex-display {
+        margin: 0 !important;
+    }
+
+    &:hover {
+        filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 20px rgba(100, 200, 255, 0.3));
+        transform: scale(1.15) !important;
+        z-index: 10;
+    }
+}
+
+.floating-bubble {
+    animation: bubbleFloat 40s infinite ease-in-out;
+    opacity: 0.8;
+    transition: all 0.1s ease-out;
+
+    &:nth-child(even) {
+        animation-direction: reverse;
+        animation-duration: 35s;
+    }
+
+    &:nth-child(3n) {
+        animation-duration: 45s;
+    }
+
+    &:nth-child(4n) {
+        animation-duration: 50s;
+        animation-direction: reverse;
+    }
+}
+
+@keyframes mathFloat {
+    0% {
+        opacity: 0.4;
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    25% {
+        opacity: 0.8;
+        transform: translateY(-10px) rotate(2deg);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translateY(0px) rotate(0deg);
+    }
+
+    75% {
+        opacity: 0.7;
+        transform: translateY(5px) rotate(-1deg);
+    }
+
+    100% {
+        opacity: 0.4;
+        transform: translateY(0px) rotate(0deg);
+    }
+}
+
+@keyframes bubbleFloat {
+    0% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.3;
+    }
+
+    25% {
+        transform: translateY(-20px) scale(1.05);
+        opacity: 0.6;
+    }
+
+    50% {
+        transform: translateY(-10px) scale(0.95);
+        opacity: 0.4;
+    }
+
+    75% {
+        transform: translateY(-15px) scale(1.02);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.3;
+    }
+}
+
+// Particle connection lines
+svg line {
+    animation: connectionPulse 3s infinite ease-in-out;
+    filter: drop-shadow(0 0 3px rgba(100, 200, 255, 0.4));
+}
+
+@keyframes connectionPulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1.0;
+    }
+}

@@ -16,10 +16,41 @@
 
 #signin-box {
     padding: 70px 40px;
-    backdrop-filter: blur(30px) saturate(170%);
-    background-color: #13233444;
-    border: 1.2px solid rgba(255 255 255 / 0.11);
+    backdrop-filter: blur(17px) saturate(130%) brightness(120%);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     color: white;
+    position: relative;
+    box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.01) 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%);
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.03), transparent, rgba(255, 255, 255, 0.04));
+        border-radius: inherit;
+        z-index: -2;
+        filter: blur(4px);
+    }
 
     & a {
         color: white;
@@ -99,12 +130,45 @@ footer {
     }
 }
 
-#p5-background {
+#landing-background {
     position: fixed;
     top: 0;
     left: 0;
     z-index: -1;
     width: 100%;
     height: 100%;
-    background: #0a0a1e;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(120, 20, 120, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(20, 120, 200, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(200, 200, 20, 0.1) 0%, transparent 30%),
+        radial-gradient(ellipse at center, #0f0f2e 0%, #0a0a1e 70%, #050510 100%);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.02) 50%, transparent 60%),
+            linear-gradient(-45deg, transparent 40%, rgba(255, 255, 255, 0.01) 50%, transparent 60%);
+        animation: lightReflection 20s infinite ease-in-out;
+        pointer-events: none;
+    }
+}
+
+@keyframes lightReflection {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translateX(-10px) translateY(-10px);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: translateX(10px) translateY(10px);
+    }
 }

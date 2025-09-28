@@ -3,9 +3,10 @@
   <head>
     <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
     <%= vite_javascript_tag "login/login_transition.css", blocking: "render" %>
-    <%= render partial: 'layouts/head' %>
     <%= vite_stylesheet_tag "styles/landing.scss" %>
-    <%= vite_javascript_tag "js/landing-p5.js", "data-turbo-track": "reload" %>
+    <%= vite_stylesheet_tag "login/background/background.scss" %>
+    <%= vite_javascript_tag "login/background/background.js", "data-turbo-track": "reload" %>
+    <%= render partial: 'layouts/head' %>
     <%= vite_stylesheet_tag "login/loading_bar.scss" %>
   </head>
 
@@ -14,8 +15,8 @@
     <main class="w-100 d-flex flex-column align-items-center justify-content-center"        
           style="min-height: 100vh; position: relative;">
 
-      <div id="p5-background" style="position: absolute; inset: 0;">
-        <!-- To be filled by P5 JS code -->
+      <div id="landing-background" style="position: absolute; inset: 0;">
+        <!-- To be filled by JS code: login/background/background.js -->
       </div>
 
       <div class="w-100 p-0 d-flex flex-column align-items-center justify-content-center flex-grow-1"
