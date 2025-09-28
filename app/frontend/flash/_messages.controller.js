@@ -19,13 +19,8 @@ export default class extends Controller {
       mutations.forEach((mutation) => {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType !== Node.ELEMENT_NODE) return;
-
-          if (node.classList.contains("alert")) {
-            this.setupAutoDismiss(node);
-          }
-          else {
-            node.querySelectorAll(".alert").forEach(alert => this.setupAutoDismiss(alert));
-          }
+          if (!node.classList.contains("alert")) return;
+          this.setupAutoDismiss(node);
         });
       });
     });
