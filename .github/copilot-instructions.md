@@ -54,6 +54,8 @@ If you produce any code for a file that does not have a top-level module/class d
 
 The exception to the "no comments & no docstrings" rule is that you may add a comment inside a function if it really adds value (that is not apparent by the code itself) to the understanding of complex code. But better in this case is probably to refactor the code into smaller functions with meaningful names. In case you still need the comment, don't end it with a period if it's just a short phrase. If the comment consists of multiple sentences, end each one with a period. Break comments at 80 chars hard limit.
 
+Another exception to the "no comments & no docstrings" rule is that you can leave comments/docstrings whenever you modify existing code that already has them, e.g. when you refactor a function.
+
 ## Architecture
 
 Favor simplicity over convoluted and hard-to-understand architectures. Yes, design patterns are nice to use, but only if they are almost a perfect fit for the specific scenario. Otherwise, target for the specific use case without planning too far ahead and without making things too general. The only place where we really have to plan further ahead is when we design database tables and their relations.
