@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
-const AUTO_DISMISS_TIMEOUT = 6000;
+const AUTO_DISMISS_TIMEOUT_MS = 6000;
 
 /**
  * Handles flash messages auto-dismissal with a progress bar.
@@ -48,9 +48,9 @@ export default class extends Controller {
         return;
       }
       elapsed = Date.now() - start;
-      let percent = Math.min(100, (elapsed / AUTO_DISMISS_TIMEOUT) * 100);
+      let percent = Math.min(100, (elapsed / AUTO_DISMISS_TIMEOUT_MS) * 100);
       bar.style.width = percent + "%";
-      if (elapsed < AUTO_DISMISS_TIMEOUT) {
+      if (elapsed < AUTO_DISMISS_TIMEOUT_MS) {
         animationFrameId = requestAnimationFrame(updateBar);
       }
       else {
