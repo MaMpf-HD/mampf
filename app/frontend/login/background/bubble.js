@@ -13,8 +13,8 @@ export class FloatingBubble {
     this.y = Math.random() * window.innerHeight;
     this.vx = (Math.random() - 0.5) * 0.2;
     this.vy = (Math.random() - 0.5) * 0.2;
-    this.baseSize = Math.random() * 200 + 100;
-    this.opacity = Math.random() * 0.15 + 0.2;
+    this.baseSize = Math.random() * 200 + 180;
+    this.opacity = Math.random() * 0.15 + 0.1;
   }
 
   createElement() {
@@ -29,7 +29,7 @@ export class FloatingBubble {
   }
 
   noise(x) {
-    return Math.sin(x * 0.5) * 0.5 + Math.sin(x * 1.3) * 0.3 + Math.sin(x * 2.7) * 0.2;
+    return Math.sin(x * 0.5) * 0.6 + Math.sin(x * 1.3) * 0.3 + Math.sin(x * 2.7) * 0.2;
   }
 
   update() {
@@ -38,10 +38,10 @@ export class FloatingBubble {
 
     const time = Date.now() * this.morphSpeed;
 
-    const wobble1 = this.noise(time + this.noiseOffsetX) * 0.3;
+    const wobble1 = this.noise(time + this.noiseOffsetX) * 0.4;
     const wobble2 = this.noise(time * 1.7 + this.noiseOffsetY) * 0.2;
     const wobble3 = this.noise(time * 0.8 + this.noiseOffsetX * 2) * 0.4;
-    const wobble4 = this.noise(time * 2.1 + this.noiseOffsetY * 1.5) * 1.6;
+    const wobble4 = this.noise(time * 2.1 + this.noiseOffsetY * 1.5) * 0.6;
 
     const r1 = 40 + wobble1 * 30; // top-left
     const r2 = 45 + wobble2 * 25; // top-right
