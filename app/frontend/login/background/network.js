@@ -1,4 +1,9 @@
 export class NetworkGraph {
+  /**
+   * Renders a network of interconnected particles in an SVG canvas.
+   * The connections between particles are dynamically created and faded based on
+   * their proximity, using a spatial grid for efficient neighbor detection.
+   */
   constructor(container, particles) {
     this.container = container;
     this.particles = particles;
@@ -9,8 +14,8 @@ export class NetworkGraph {
     this.minOpacity = 0.15;
     this.maxOpacity = 0.65;
 
+    this.frameCounter = 0;
     this.connections = new Map();
-    this.connectionId = 0;
 
     this.init();
   }
@@ -33,52 +38,57 @@ export class NetworkGraph {
     this.svg.style.height = "100%";
   }
 
-  getConnectionKey(p1, p2) {
-    const id1 = this.particles.indexOf(p1);
-    const id2 = this.particles.indexOf(p2);
-    return id1 < id2 ? `${id1}-${id2}` : `${id2}-${id1}`;
-  }
-
   updateConnections() {
-    const activeConnections = new Set();
+    const numParticles = this.particles.length;
+    if (numParticles === 0) return;
 
-    for (let i = 0; i < this.particles.length; i++) {
-      for (let j = i + 1; j < this.particles.length; j++) {
-        if (activeConnections.size >= this.maxNumConnections) break;
+    const connectionLimit = this.maxNumConnections;
+    const connectionDistance = this.connectionDistance;
+    const connectionDistanceSq = connectionDistance * connectionDistance;
 
-        const p1 = this.particles[i];
-        const p2 = this.particles[j];
-        const distance = p1.getDistance(p2);
-        const key = this.getConnectionKey(p1, p2);
+    const { positionsX, positionsY } = this._getParticlePositions(numParticles);
+    const grid = this._buildSpatialGrid(positionsX, positionsY, connectionDistance);
 
-        if (distance < this.connectionDistance) {
-          activeConnections.add(key);
+    const seenConnections = new Set();
+    let createdConnections = 0;
 
-          if (!this.connections.has(key)) {
-            this.connections.set(key, {
-              p1,
-              p2,
-              distance,
-              targetOpacity: this.calculateOpacity(distance),
-              currentOpacity: 0,
-              element: this.createConnectionElement(),
-              fadingIn: true,
-              fadingOut: false,
-            });
+    for (let i = 0; i < numParticles; i++) {
+      const gridX = Math.floor(positionsX[i] / connectionDistance);
+      const gridY = Math.floor(positionsY[i] / connectionDistance);
+
+      for (let offsetY = -1; offsetY <= 1; offsetY++) {
+        for (let offsetX = -1; offsetX <= 1; offsetX++) {
+          const cell = grid.get(`${gridX + offsetX},${gridY + offsetY}`);
+          if (!cell) continue;
+
+          for (const j of cell) {
+            if (i >= j) continue;
+
+            const key = `${i}-${j}`;
+            if (seenConnections.has(key)) continue;
+
+            const dx = positionsX[i] - positionsX[j];
+            const dy = positionsY[i] - positionsY[j];
+            const distSq = dx * dx + dy * dy;
+
+            if (distSq < connectionDistanceSq) {
+              this._createOrUpdateConnection(i, j, distSq, connectionDistanceSq, key);
+              seenConnections.add(key);
+              createdConnections++;
+              if (createdConnections >= connectionLimit) {
+                break;
+              }
+            }
           }
-          else {
-            const connection = this.connections.get(key);
-            connection.distance = distance;
-            connection.targetOpacity = this.calculateOpacity(distance);
-            connection.fadingIn = true;
-            connection.fadingOut = false;
-          }
+          if (createdConnections >= connectionLimit) break;
         }
+        if (createdConnections >= connectionLimit) break;
       }
+      if (createdConnections >= connectionLimit) break;
     }
 
     for (const [key, connection] of this.connections.entries()) {
-      if (!activeConnections.has(key)) {
+      if (!seenConnections.has(key)) {
         connection.fadingIn = false;
         connection.fadingOut = true;
         connection.targetOpacity = 0;
@@ -89,15 +99,75 @@ export class NetworkGraph {
     this.cleanupConnections();
   }
 
+  _getParticlePositions(numParticles) {
+    const positionsX = new Float32Array(numParticles);
+    const positionsY = new Float32Array(numParticles);
+    for (let i = 0; i < numParticles; i++) {
+      const p = this.particles[i];
+      positionsX[i] = p.x;
+      positionsY[i] = p.y;
+    }
+    return { positionsX, positionsY };
+  }
+
+  _buildSpatialGrid(positionsX, positionsY, cellSize) {
+    const numParticles = positionsX.length;
+    const grid = new Map();
+    for (let i = 0; i < numParticles; i++) {
+      const gridX = Math.floor(positionsX[i] / cellSize);
+      const gridY = Math.floor(positionsY[i] / cellSize);
+      const key = `${gridX},${gridY}`;
+      let cell = grid.get(key);
+      if (!cell) {
+        cell = [];
+        grid.set(key, cell);
+      }
+      cell.push(i);
+    }
+    return grid;
+  }
+
+  _createOrUpdateConnection(i, j, distSq, connectionDistanceSq, key) {
+    const particle1 = this.particles[i];
+    const particle2 = this.particles[j];
+    if (!this.connections.has(key)) {
+      const element = this.createConnectionElement();
+      this.connections.set(key, {
+        particle1,
+        particle2,
+        distSq,
+        targetOpacity: this.calculateOpacityFromSq(distSq, connectionDistanceSq),
+        currentOpacity: 0,
+        element,
+        fadingIn: true,
+        fadingOut: false,
+      });
+    }
+    else {
+      const connection = this.connections.get(key);
+      connection.distSq = distSq;
+      connection.targetOpacity = this.calculateOpacityFromSq(distSq, connectionDistanceSq);
+      connection.fadingIn = true;
+      connection.fadingOut = false;
+    }
+  }
+
   calculateOpacity(distance) {
     const normalizedDistance = (this.connectionDistance - distance) / this.connectionDistance;
     return Math.max(this.minOpacity, normalizedDistance * this.maxOpacity);
+  }
+
+  calculateOpacityFromSq(distSq, maxDistSq) {
+    const normalized = 1 - distSq / maxDistSq;
+    return Math.max(this.minOpacity, normalized * this.maxOpacity);
   }
 
   createConnectionElement() {
     const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
     line.setAttribute("stroke-width", "2.5");
     line.setAttribute("stroke-linecap", "round");
+    line.setAttribute("stroke", "rgb(100,200,255)");
+    line.setAttribute("stroke-opacity", "0");
     this.svg.appendChild(line);
     return line;
   }
@@ -117,13 +187,13 @@ export class NetworkGraph {
         );
       }
 
-      const { p1, p2, element, currentOpacity } = connection;
+      const { particle1, particle2, element, currentOpacity } = connection;
 
-      element.setAttribute("x1", p1.x);
-      element.setAttribute("y1", p1.y);
-      element.setAttribute("x2", p2.x);
-      element.setAttribute("y2", p2.y);
-      element.setAttribute("stroke", `rgba(100, 200, 255, ${currentOpacity})`);
+      element.setAttribute("x1", particle1.x);
+      element.setAttribute("y1", particle1.y);
+      element.setAttribute("x2", particle2.x);
+      element.setAttribute("y2", particle2.y);
+      element.setAttribute("stroke-opacity", String(currentOpacity));
 
       element.style.display = currentOpacity <= 0.001 ? "none" : "block";
     }
@@ -141,8 +211,14 @@ export class NetworkGraph {
   }
 
   update() {
-    this.updateConnections();
-    this.updateConnectionElements();
+    this.frameCounter++;
+    if (this.frameCounter > 50) {
+      this.frameCounter = 0;
+      this.updateConnections();
+    }
+    else {
+      this.updateConnectionElements();
+    }
   }
 
   resize() {

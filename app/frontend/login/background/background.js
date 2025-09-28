@@ -23,7 +23,7 @@ class MathBackground {
   }
 
   createParticles() {
-    const particleCount = Math.floor(window.innerWidth / 25);
+    const particleCount = Math.floor(window.innerWidth / 50);
 
     for (let i = 0; i < particleCount; i++) {
       this.particles.push(new MathParticle(this.canvas));
