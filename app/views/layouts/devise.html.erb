@@ -33,10 +33,11 @@
           </div>
         <% end %> -->
 
-        <div style="position: relative;">
+        <div class="d-flex justify-content-center position-relative w-100">
           <div class="progress-border"></div>
-          <div id="signin-box" class="landing-box d-flex justify-content-center" style="padding-top: 48px;">
-            <div class="w-100 d-flex justify-content-center" style="position: absolute; top: -48px; left: 0;">
+          <div id="signin-box" class="landing-box d-flex justify-content-center">
+            <div class="w-100 d-flex justify-content-center position-absolute"
+                 style="top: -48px; left: 0;">
               <%= image_tag "/images/mampf-logo.svg", class: 'img-fluid', id:'mampf-logo',
                 style: 'height: 120px; width: auto;' %>
             </div>
@@ -50,10 +51,13 @@
                 <% end %>
             </div>
 
-            <div class="signin-form col-lg-7 pr-2 pt-5">
-              <h5>
-                <%= t('main.welcome') %>
-              </h5>
+            <div>
+              <h1 class="text-center fw-bold mb-2">
+                <%= t('mampf') %>
+              </h1>
+              <p class="text-center fs-5">
+                <%= t('main.media_platform') %>
+              </p>
 
               <div class="alert alert-danger" id="js-messages" role="alert"
                   style="display: none;">

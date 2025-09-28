@@ -2654,9 +2654,7 @@ en:
   sign_up: 'sign up'
   announcements: 'Announcements'
   main:
-    welcome:
-      Welcome to MaMpf, the Mathematical
-      Media platform of Heidelberg University.
+    media_platform: Mathematical Media Platform of Heidelberg University
     about: >
       MaMpf combines and connects various e-learning services: lecture videos and scripts
       with content outlines, a comprehensive collection of multiple choice questions
