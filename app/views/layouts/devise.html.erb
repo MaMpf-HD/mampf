@@ -6,7 +6,7 @@
     <%= vite_stylesheet_tag "styles/landing.scss" %>
     <%= vite_stylesheet_tag "login/background/background.scss" %>
     <%= vite_javascript_tag "login/background/background.js", "data-turbo-track": "reload" %>
-    <%= render partial: 'layouts/head' %>
+    <%= render partial: 'layouts/head', locals: { minimal: true } %>
     <%= vite_stylesheet_tag "login/loading_bar.scss" %>
   </head>
 
