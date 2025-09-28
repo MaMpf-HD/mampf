@@ -1,16 +1,20 @@
 export class NetworkGraph {
-  constructor(container, particles, options = {}) {
+  constructor(container, particles) {
     this.container = container;
     this.particles = particles;
 
-    this.connectionDistance = options.connectionDistance || 200;
-    this.maxConnections = options.maxConnections || 80;
-    this.fadeSpeed = options.fadeSpeed || 0.02;
-    this.minOpacity = options.minOpacity || 0.4;
-    this.maxOpacity = options.maxOpacity || 0.8;
+    this.connectionDistance = 200;
+    this.maxConnections = 80;
+    this.fadeSpeed = 0.02;
+    this.minOpacity = 0.2;
+    this.maxOpacity = 0.6;
 
     this.connections = new Map();
     this.connectionId = 0;
+
+    // Performance optimization: throttle expensive connection calculations
+    this.lastConnectionUpdate = 0;
+    this.connectionUpdateInterval = 33; // ~30fps for connection calculations
 
     this.init();
   }
@@ -133,7 +137,17 @@ export class NetworkGraph {
   }
 
   update() {
-    this.updateConnections();
+    const now = performance.now();
+
+    // Throttle expensive connection distance calculations
+    if (now - this.lastConnectionUpdate > this.connectionUpdateInterval) {
+      this.updateConnections();
+      this.lastConnectionUpdate = now;
+    }
+    else {
+      // Still update visual elements every frame for smooth transitions
+      this.updateConnectionElements();
+    }
   }
 
   resize() {

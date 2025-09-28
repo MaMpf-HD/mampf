@@ -1,9 +1,12 @@
 .math-particle {
     user-select: none;
     filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.2));
-    animation: mathFloat 25s infinite ease-in-out;
-    transition: all 0.3s ease;
     cursor: pointer;
+    
+    // Performance optimizations
+    will-change: transform;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
 
     .katex {
         color: inherit !important;
@@ -18,6 +21,7 @@
         filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.4)) drop-shadow(0 0 20px rgba(100, 200, 255, 0.3));
         transform: scale(1.15) !important;
         z-index: 10;
+        transition: filter 0.2s ease, z-index 0s; // Only transition the filter, not transform
     }
 }
 

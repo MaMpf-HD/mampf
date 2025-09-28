@@ -20,7 +20,6 @@ class MathBackground {
   }
 
   init() {
-    // Basic initialization
   }
 
   createParticles() {
@@ -40,13 +39,7 @@ class MathBackground {
   }
 
   createNetwork() {
-    this.network = new NetworkGraph(this.canvas, this.particles, {
-      connectionDistance: 200,
-      maxConnections: 80,
-      fadeSpeed: 0.02,
-      minOpacity: 0.4,
-      maxOpacity: 0.8,
-    });
+    this.network = new NetworkGraph(this.canvas, this.particles);
   }
 
   animate() {
@@ -54,7 +47,7 @@ class MathBackground {
     this.bubbles.forEach(bubble => bubble.update());
     this.network.update();
 
-    requestAnimationFrame(() => this.animate());
+    this.animationId = requestAnimationFrame(() => this.animate());
   }
 
   handleResize() {
@@ -92,6 +85,10 @@ class MathBackground {
   }
 
   destroy() {
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+    }
+
     this.particles.forEach(particle => particle.destroy());
     this.particles = [];
     this.bubbles.forEach(bubble => bubble.destroy());
