@@ -28,7 +28,6 @@ import "~/js/thyme/attributes";
 // everything here. This is just a temporary solution during the Vite migration.
 import "~/js/copy_and_paste_button";
 import "~/js/mampf_routes";
-import "~/js/search_tags";
 import "~/js/talks";
 
 import "~/js/administration.coffee";

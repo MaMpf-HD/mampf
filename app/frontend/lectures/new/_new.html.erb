@@ -62,9 +62,9 @@
                     class: "form-label" %>
         <%= f.select :sort,
                      options_for_select(Lecture.sort_localized.invert.to_a,
-                                        'lecture'),
+                                        lecture.sort),
                      {},
-                     { class: 'form-select'} %>
+                     { class: "form-select"} %>
       </div>
     </div>
     <div class="row mt-4">

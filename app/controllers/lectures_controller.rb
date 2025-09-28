@@ -54,7 +54,7 @@ class LecturesController < ApplicationController
   end
 
   def new
-    @lecture = Lecture.new
+    @lecture = Lecture.new(sort: "lecture")
     authorize! :new, @lecture
     @from = params[:from]
 
