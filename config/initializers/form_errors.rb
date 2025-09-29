@@ -1,3 +1,9 @@
+# Customizes how validation errors are rendered in views.
+#
+# - Rails guide:
+#   https://guides.rubyonrails.org/active_record_validations.html#displaying-validation-errors-in-views
+# - My blog post:
+#   https://splines.me/blog/2025/server-side-validation-rails-turbo#customize-how-errors-are-rendered
 ActionView::Base.field_error_proc = proc do |html_tag, instance|
   fragment = Nokogiri::HTML.fragment(html_tag)
   field = fragment.at("input,select,textarea")
