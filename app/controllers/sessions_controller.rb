@@ -12,7 +12,7 @@ class SessionsController < Devise::SessionsController
   # we might want to consider using a custom authentication system instead of
   # Devise, see issue #887.
   def respond_with(resource, _opts = {})
-    if (action_name != "new") && (action_name != "create")
+    if action_name != "new" && action_name != "create"
       super
       return
     end
