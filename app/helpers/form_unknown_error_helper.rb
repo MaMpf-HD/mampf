@@ -27,7 +27,7 @@ module FormUnknownErrorHelper
 
       doc = Nokogiri::HTML::DocumentFragment.parse(form_html)
       submit_buttons = doc.css('button[type="submit"],input[type="submit"]')
-      return unless submit_buttons.any?
+      return form_html unless submit_buttons.any?
 
       last_submit = submit_buttons.last
       error_span = Nokogiri::HTML::DocumentFragment.parse(
