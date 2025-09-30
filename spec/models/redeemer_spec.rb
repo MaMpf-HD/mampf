@@ -142,11 +142,12 @@ RSpec.describe(Redeemer, type: :model) do
           I18n.t("mailer.previous_teacher_subject", title: lecture.title_for_viewers,
                                                     new_teacher: user.tutorial_name)
         )
-        expect(mail).to include_in_html_body(
-          I18n.t("mailer.previous_teacher",
-                 title: lecture.title_with_teacher,
-                 new_teacher: lecture.teacher.info, username: previous_teacher.tutorial_name)
-        )
+        expect(mail).to have_html_body.and(include_in_html_body(
+                                             I18n.t("mailer.previous_teacher",
+                                                    title: lecture.title_with_teacher,
+                                                    new_teacher: lecture.teacher.info,
+                                                    username: previous_teacher.tutorial_name)
+                                           ))
 
         # Mail to new teacher
         mail = ActionMailer::Base.deliveries[-2]
@@ -156,10 +157,11 @@ RSpec.describe(Redeemer, type: :model) do
         expect(mail.subject).to include(
           I18n.t("mailer.new_teacher_subject", title: lecture.title_for_viewers)
         )
-        expect(mail).to include_in_html_body(
-          I18n.t("mailer.new_teacher",
-                 title: lecture.title_with_teacher, username: user.tutorial_name)
-        )
+        expect(mail).to have_html_body.and(include_in_html_body(
+                                             I18n.t("mailer.new_teacher",
+                                                    title: lecture.title_with_teacher,
+                                                    username: user.tutorial_name)
+                                           ))
       end
     end
 
@@ -234,11 +236,13 @@ RSpec.describe(Redeemer, type: :model) do
           end
           expect(mail).not_to be_nil
           assert_from_notification_mailer(mail)
-          expect(mail).to include_in_html_body(
-            I18n.t("mailer.new_speaker",
-                   seminar: talk.lecture.title, title: talk.to_label,
-                   username: cospeaker.tutorial_name, speaker: user.info)
-          )
+          expect(mail).to have_html_body.and(include_in_html_body(
+                                               I18n.t("mailer.new_speaker",
+                                                      seminar: talk.lecture.title,
+                                                      title: talk.to_label,
+                                                      username: cospeaker.tutorial_name,
+                                                      speaker: user.info)
+                                             ))
         end
       end
     end
