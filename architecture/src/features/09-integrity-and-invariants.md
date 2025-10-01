@@ -4,8 +4,8 @@ Aggregated rules ensuring durable correctness. When feasible, enforce with DB co
 
 ## 1. Registration & Allocation
 Logical
-- ≤ 1 confirmed UserRegistration per (user, registration_campaign).
-- UserRegistration.status ∈ {pending, confirmed, rejected}.
+- ≤ 1 confirmed Registration::UserRegistration per (user, registration_campaign).
+- Registration::UserRegistration.status ∈ {pending, confirmed, rejected}.
 - preference_based campaigns: every pending registration has preference_rank (1..N) unique per (user, campaign).
 - Capacity never exceeded at allocation (solver respects caps; FCFS checks).
 - Campaign finalized exactly once (finalize! idempotent).
@@ -17,17 +17,44 @@ Indexes (suggested)
 
 ## 2. Rosters & Materialization
 - materialize_allocation! overwrites roster to match confirmed set (initial snapshot).
-- Post-allocation roster changes do not mutate historical UserRegistration decisions.
-- Roster operations atomic (RegisterableRosterService transactions).
+- Post-allocation roster changes do not mutate historical Registration::UserRegistration decisions.
+- Roster operations atomic (Roster::MaintenanceService transactions).
 - Capacity enforcement except when explicit override.
 
 ## 3. Assessments & Grading
-- One AssessmentParticipation per (assessment, user) (unique index).
-- One TaskPoint per (assessment_participation, task) (unique index).
-- points_total = Σ published (or all) TaskPoints.points (deterministic recompute).
-- Task exists only if assessment.requires_points.
-- TaskPoint.points ≤ task.max_points (validation).
-- Locked / published participations immutable (application guard).
+
+### Database-Level Constraints
+
+**Uniqueness constraints:**
+- One `AssessmentParticipation` per (assessment, user) — enforced via unique index on `(assessment_id, user_id)`
+- One `TaskPoint` per (participation, task) — enforced via unique index on `(assessment_participation_id, task_id)`
+
+**Foreign key integrity:**
+- `Task.assessment_id` must reference existing assessment
+- `TaskPoint.task_id` must reference existing task
+- `TaskPoint.assessment_participation_id` must reference existing participation
+- `Submission.assessment_id` must reference existing assessment (after migration)
+
+### Application-Level Invariants
+
+**Points consistency:**
+- `AssessmentParticipation.points_total` must equal `sum(task_points.points)` — recomputed automatically on TaskPoint save
+- `TaskPoint.points` should not exceed `Task.max_points` — validated on save
+- `Task` records exist only if `Assessment.requires_points = true` — validated on save
+
+**Grading fan-out pattern:**
+- One `Submission` can have many `users` (team members)
+- Grading service creates one `TaskPoint` per team member with identical points
+- All team members' `TaskPoint` records link back to same `submission_id`
+
+**Publication state:**
+- `Assessment.results_published` controls visibility for all associated task points
+- Students see results only when `results_published = true`
+- Locking mechanism: `AssessmentParticipation.locked = true` prevents further edits after publication
+
+**Submission tracking:**
+- `AssessmentParticipation.submitted_at` persists even after status transitions to `:graded`
+- Distinguishes "submitted but scored 0" from "never submitted"
 
 ## 4. Exam Eligibility
 - One ExamEligibilityRecord per (lecture, user).
@@ -106,5 +133,5 @@ Metrics / checks:
 - Random sample item: confirmed IDs == roster_user_ids (if still initial).
 - Random sample assessment: points_total matches sum(task_points).
 - Eligibility overrides present? Verify override_reason non-null.
-- RegistrationPolicy ordering continuous (no gaps) & deterministic.
+- Registration::Policy ordering continuous (no gaps) & deterministic.
 

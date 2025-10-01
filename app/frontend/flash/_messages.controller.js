@@ -7,7 +7,21 @@ const AUTO_DISMISS_TIMEOUT_MS = 6000;
  */
 export default class extends Controller {
   connect() {
+    this.resumeProgressBarsAlreadyOnPage();
     this.observeAlerts();
+  }
+
+  resumeProgressBarsAlreadyOnPage() {
+    this.element.querySelectorAll('.alert[data-auto-dismiss="true"]').forEach((alert) => {
+      const bar = alert.querySelector("div");
+      if (!bar || alert.classList.contains("hide")) return;
+
+      const widthPercent = parseFloat(bar.style.width);
+      if (!isNaN(widthPercent) && widthPercent > 0 && widthPercent < 100) {
+        delete alert.dataset.autoDismiss;
+        this.setupAutoDismiss(alert, widthPercent);
+      }
+    });
   }
 
   observeAlerts() {
@@ -18,7 +32,7 @@ export default class extends Controller {
         mutation.addedNodes.forEach((node) => {
           if (node.nodeType !== Node.ELEMENT_NODE) return;
           if (!node.classList.contains("alert")) return;
-          this.setupAutoDismiss(node);
+          this.setupAutoDismiss(node, 0);
         });
       });
     });
@@ -26,21 +40,40 @@ export default class extends Controller {
   }
 
   setupAllAlertsInitially() {
-    this.element.querySelectorAll(".alert").forEach(alert => this.setupAutoDismiss(alert));
+    this.element.querySelectorAll(".alert").forEach(alert => this.setupAutoDismiss(alert, 0));
   }
 
-  setupAutoDismiss(alert) {
+  /**
+   * Sets up auto-dismissal with progress bar for the given alert element.
+   *
+   * The `initialPercent` parameter should be 0 for new alerts, or a value
+   * between 0 and 100 to resume an existing progress bar.
+   */
+  setupAutoDismiss(alert, initialPercent) {
     if (alert.dataset.autoDismiss) return;
     alert.dataset.autoDismiss = "true";
 
+    let bar;
     alert.style.position = "relative";
-    const bar = this.createProgressBar();
-    alert.prepend(bar);
+    if (initialPercent > 0) {
+      bar = alert.querySelector("div");
+    }
+    else {
+      bar = this.createProgressBar();
+      alert.prepend(bar);
+    }
 
     let start = Date.now();
     let elapsed = 0;
     let paused = false;
     let animationFrameId;
+
+    if (initialPercent > 0) {
+      // Resume from existing progress
+      elapsed = (initialPercent / 100) * AUTO_DISMISS_TIMEOUT_MS;
+      start = Date.now() - elapsed;
+      bar.style.width = initialPercent + "%";
+    }
 
     const updateBar = () => {
       if (paused) {
