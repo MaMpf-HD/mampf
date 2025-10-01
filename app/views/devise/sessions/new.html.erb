@@ -1,6 +1,11 @@
+<h3>
+  <%= t('.login') %>
+</h3>
+
 <%= form_for(resource, as: resource_name,
                        url: session_path(resource_name),
-                       html: { role: 'form' }) do |f| %>
+                       html: { role: 'form' },
+                       data: { turbo: true }) do |f| %>
 
   <div class="form-floating mb-3">
     <%= f.email_field :email, autofocus: true,

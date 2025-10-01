@@ -12,6 +12,9 @@
 
   <body data-locale="<%= I18n.locale %>" class="d-flex flex-column" id="landing-body"
         data-controller="loading-bar">
+
+    <%= render partial: "flash/messages" %>
+
     <main class="w-100 d-flex flex-column align-items-center justify-content-center"        
           style="min-height: 100vh; position: relative;">
 
@@ -62,16 +65,13 @@
               <div class="alert alert-danger" id="js-messages" role="alert"
                   style="display: none;">
               </div>
-              <% if alert.present? %>
-                <div class="alert alert-danger" role="alert">
-                  <%= sanitize alert, :tags => %w(br) %>
-                </div>
-              <% end %>
-              <% if notice.present? %>
-                <div class="alert alert-secondary" role="alert">
-                  <%= sanitize notice, :tags => %w(br) %>
-                </div>
-              <% end %>
+            </div> 
+          </div>
+
+          <div class="signin-form col-lg-5 pr-2">
+            <div class="alert alert-danger" id="js-messages" role="alert"
+                style="display: none;">
+            </div>
 
               <!-- Actual login form -->
               <div id="login-form" data-cy="login-form">
