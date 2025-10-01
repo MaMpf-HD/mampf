@@ -50,21 +50,21 @@ graph TD
     ```
 
 3. **Open FCFS Tutorial Campaigns**  
-   Action: Implement the backend controllers, services (`RegistrationPolicyEngine`), and frontend UIs for the FCFS registration mode. This includes creating **admin UIs** to set up and manage campaigns and **student UIs** to view and register for items.
+    Action: Implement the backend controllers, services (`Registration::PolicyEngine`), and frontend UIs for the FCFS registration mode. This includes creating **admin UIs** to set up and manage campaigns and **student UIs** to view and register for items.
 
     ```admonish success "Non-Disruptive Impact"
-    This new workflow is only triggered when a `RegistrationCampaign` is created for a course. Since you will only create these campaigns for *next* semester's courses, the current semester's courses will continue to function entirely on the old logic.
+    This new workflow is only triggered when a `Registration::Campaign` is created for a course. Since you will only create these campaigns for *next* semester's courses, the current semester's courses will continue to function entirely on the old logic.
     ```
 
 4. **Preference-Based Mode**  
-   Action: Add the backend `RegistrationAssignmentService` and background job. On the frontend, modify the student registration UI to support preference ranking (e.g., via drag-and-drop or numbered inputs) instead of a simple selection.
+    Action: Add the backend `Registration::AssignmentService` and background job. On the frontend, modify the student registration UI to support preference ranking (e.g., via drag-and-drop or numbered inputs) instead of a simple selection.
 
     ```admonish success "Non-Disruptive Impact"
-    Like the FCFS mode, the preference-based solver and its UI are only invoked for new `RegistrationCampaigns`. It will have no knowledge of or interaction with courses from the current semester.
+    Like the FCFS mode, the preference-based solver and its UI are only invoked for new `Registration::Campaign`s. It will have no knowledge of or interaction with courses from the current semester.
     ```
 
 5. **Materialization & Roster Operations**  
-   Action: Implement the backend `materialize_allocation!` method and `RegisterableRosterService`. Create a new admin-facing UI for post-allocation roster management (moves, swaps, etc.) that interacts with this new service.
+   Action: Implement the backend `materialize_allocation!` method and `Roster::MaintenanceService`. Create a new admin-facing UI for post-allocation roster management (moves, swaps, etc.) that interacts with this new service.
 
     ```admonish success "Non-Disruptive Impact"
     Adding a new, unused method to a model is a passive change. The new admin UI and backend service will only operate on rosters from new campaigns, leaving current semester rosters unaffected.
