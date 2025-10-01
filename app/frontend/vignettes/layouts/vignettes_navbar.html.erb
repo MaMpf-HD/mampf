@@ -5,7 +5,8 @@
     <%= vite_stylesheet_tag "vignettes/layouts/vignettes_navbar.scss" %>
   </head>
   <body class="d-flex flex-column min-vh-100">
-    <%= render partial: 'shared/navbar' %>
+    <%= render partial: "flash/messages" %>
+    <%= render partial: "shared/navbar" %>
     
     <% lecture = @lecture || current_lecture %>
     <% if lecture && lecture.sort == "vignettes" %>
@@ -59,16 +60,6 @@
     
     <!-- Main Content -->
     <main class="container-fluid flex-grow-1" role="main">
-      <% if alert.present? %>
-        <div class="alert alert-danger" role="alert">
-          <%= sanitize alert, :tags => %w(br) %>
-        </div>
-      <% end %>
-      <% if notice.present? %>
-        <div class="alert alert-secondary" role="alert">
-          <%= sanitize notice, :tags => %w(br) %>
-        </div>
-      <% end %>
       <%= yield %>
     </main>
     
