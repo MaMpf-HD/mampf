@@ -39,6 +39,7 @@
         <div class="d-flex justify-content-center position-relative w-100">
           <div class="progress-border"></div>
           <div id="signin-box" class="landing-box d-flex justify-content-center">
+
             <div class="w-100 d-flex justify-content-center position-absolute"
                  style="top: -48px; left: 0;">
               <%= image_tag "/images/mampf-logo.svg", class: 'img-fluid', id:'mampf-logo',
@@ -65,19 +66,12 @@
               <div class="alert alert-danger" id="js-messages" role="alert"
                   style="display: none;">
               </div>
-            </div> 
-          </div>
 
-          <div class="signin-form col-lg-5 pr-2">
-            <div class="alert alert-danger" id="js-messages" role="alert"
-                style="display: none;">
-            </div>
-
-              <!-- Actual login form -->
               <div id="login-form" data-cy="login-form">
                 <%= yield %>
               </div>
-            </div>
+
+            </div> 
           </div>
         </div>
       </div>
