@@ -8,6 +8,10 @@ Devise.setup do |config|
   # by default. You can change it below and use your own secret key.
   config.secret_key = Rails.application.secret_key_base
 
+  # Hotwire conventions
+  config.responder.error_status = :unprocessable_entity
+  config.responder.redirect_status = :see_other
+
   # ==> Mailer Configuration
   # Configure the e-mail address which will be shown in Devise::Mailer,
   # note that it will be overwritten if you use your own mailer class
@@ -79,7 +83,7 @@ Devise.setup do |config|
   # It will change confirmation, password recovery and other workflows
   # to behave the same regardless if the e-mail provided was right or wrong.
   # Does not affect registerable.
-  # config.paranoid = true
+  config.paranoid = true
 
   # By default Devise will store the user in session. You can skip storage for
   # particular strategies by setting this option.

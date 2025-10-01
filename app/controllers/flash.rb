@@ -13,15 +13,15 @@ module Flash
   end
 
   # Renders a flash success message for turbo_stream and html formats.
-  # Usage: respond_with_flash_success(I18n.t("feedback.success"))
-  def respond_with_flash_success(message, fallback_location: root_path)
+  # Usage: respond_with_flash(:success, I18n.t("feedback.success"))
+  def respond_with_flash(flash_type, message, fallback_location: root_path)
     respond_to do |format|
       format.turbo_stream do
-        flash.now[:success] = message
+        flash.now[flash_type] = message
         render_flash
       end
       format.html do
-        flash.keep[:success] = message
+        flash.keep[flash_type] = message
         redirect_back(fallback_location: fallback_location)
       end
     end
