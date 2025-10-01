@@ -11,7 +11,8 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.3.8-bookworm
+ARG RUBY_VERSION
+FROM ruby:${RUBY_VERSION}-bookworm
 
 EXPOSE 3000
 EXPOSE 9394

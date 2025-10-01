@@ -54,6 +54,8 @@ services:
     build:
       context: ./../..
       dockerfile: docker/development/Dockerfile
+      args:
+        RUBY_VERSION: ${RUBY_VERSION:-$(cat ../../.ruby-version)}      
     image: mampf:dev-and-test
     # Only pull from local images, do not contact online registry
     # https://stackoverflow.com/questions/46032392/docker-compose-does-not-allow-to-use-local-images#comment135243253_57644157
