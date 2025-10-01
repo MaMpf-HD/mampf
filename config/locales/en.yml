@@ -2643,6 +2643,9 @@ en:
     external_reference: 'External reference:'
     internal_reference: 'Reference to %{ref}:'
   errors:
+    unknown: >
+      You filled out the form correctly, but unfortunately something went wrong
+      on the server. Please try again later and contact us if the problem persists.
     not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'

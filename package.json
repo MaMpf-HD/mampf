@@ -26,6 +26,7 @@
     "sass": "^1.89.2",
     "vite": "^5.0.0",
     "vite-plugin-coffee3": "^1.0.1",
+    "vite-plugin-full-reload": "^1.2.0",
     "vite-plugin-ruby": "^5.1.0"
   },
   "scripts": {
