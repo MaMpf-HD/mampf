@@ -2826,6 +2826,10 @@ de:
     external_reference: 'externe Referenz:'
     internal_reference: 'Verweis auf %{ref}:'
   errors:
+    unknown: >
+      Du hast das Formular korrekt ausgefüllt, aber leider ist auf dem Server
+      ein Fehler aufgetreten. Bitte versuche es später erneut und kontaktiere
+      uns, wenn das Problem weiterhin besteht.
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
       Um sie betrachten zu können, musst Du sie vorher abonnieren.
