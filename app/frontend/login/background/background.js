@@ -3,6 +3,9 @@ import { NetworkGraph } from "./network.js";
 import { MathParticle } from "./particle.js";
 
 class MathBackground {
+  PARTICLES_COUNT_FACTOR = 80;
+  BUBBLE_COUNT_FACTOR = 400;
+
   constructor() {
     this.canvas = document.getElementById("landing-background");
     if (!this.canvas) return;
@@ -10,7 +13,6 @@ class MathBackground {
     this.particles = [];
     this.bubbles = [];
 
-    this.init();
     this.createParticles();
     this.createBubbles();
     this.createNetwork();
@@ -19,11 +21,8 @@ class MathBackground {
     window.addEventListener("resize", () => this.handleResize());
   }
 
-  init() {
-  }
-
   createParticles() {
-    const particleCount = Math.floor(window.innerWidth / 50);
+    const particleCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
 
     for (let i = 0; i < particleCount; i++) {
       this.particles.push(new MathParticle(this.canvas));
@@ -31,7 +30,7 @@ class MathBackground {
   }
 
   createBubbles() {
-    const bubbleCount = Math.floor(window.innerWidth / 400) + 2;
+    const bubbleCount = Math.floor(window.innerWidth / this.BUBBLE_COUNT_FACTOR) + 2;
 
     for (let i = 0; i < bubbleCount; i++) {
       this.bubbles.push(new FloatingBubble(this.canvas));
@@ -68,10 +67,10 @@ class MathBackground {
   handleResize() {
     this.network.resize();
 
-    const newParticleCount = Math.floor(window.innerWidth / 60);
+    const newParticleCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
     this.adjustArrayCount(this.particles, newParticleCount, () => new MathParticle(this.canvas));
 
-    const newBubbleCount = Math.floor(window.innerWidth / 400) + 2;
+    const newBubbleCount = Math.floor(window.innerWidth / this.BUBBLE_COUNT_FACTOR) + 2;
     this.adjustArrayCount(this.bubbles, newBubbleCount, () => new FloatingBubble(this.canvas));
   }
 
