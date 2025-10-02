@@ -15,14 +15,14 @@ flowchart LR
 
 Core flow (see [End-to-End Workflow](06-end-to-end-workflow.md)):
 
-1. Campaign setup & user registrations ([Registration System](02-registration-system.md))
+1. Campaign setup & user registrations ([Registration System](02-registration.md))
 2. Preference assignment (if needed) ([Algorithm Details](07-algorithm-details.md))
-3. Allocation materialization to domain rosters ([Allocation & Rosters](03-allocation-and-rosters.md))
+3. Allocation materialization to domain rosters ([Rosters](03-rosters.md))
 4. Ongoing roster administration (swaps, late adds)
 5. Coursework assessments, submissions, points & grades ([Assessments & Grading](04-assessments-and-grading.md))
-6. Achievements & eligibility computation (exam gating) ([Exam Eligibility & Grading Schemes](05-exam-eligibility-and-grading-schemes.md))
+6. Achievements & eligibility computation (exam gating) ([Exam Eligibility](05-exam-eligibility-and-grading-schemes.md))
 7. Exam registration (policy gated)
-8. Exam assessment creation & grading
+8. Exam assessment creation & grading ([Grading Schemes](05b-grading-schemes.md))
 9. Dashboards for students & staff ([Student Dashboard](student_dashboard.md), [Teacher & Editor Dashboard](teacher_editor_dashboard.md))
 10. Reporting, integrity checks ([Integrity & Invariants](09-integrity-and-invariants.md))
 11. Roadmap & extensibility ([Future Extensions](10-future-extensions.md))
@@ -34,10 +34,11 @@ Core flow (see [End-to-End Workflow](06-end-to-end-workflow.md)):
 
 - [Overview](00-overview.md) (this)
 - [Domain Model](01-domain-model.md)
-- [Registration System](02-registration-system.md)
-- [Allocation & Rosters](03-allocation-and-rosters.md)
+- [Registration System](02-registration.md)
+- [Rosters](03-rosters.md)
 - [Assessments & Grading](04-assessments-and-grading.md)
-- [Exam Eligibility & Grading Schemes](05-exam-eligibility-and-grading-schemes.md)
+- [Exam Eligibility](05-exam-eligibility-and-grading-schemes.md)
+- [Grading Schemes](05b-grading-schemes.md)
 - [End-to-End Workflow](06-end-to-end-workflow.md)
 - [Algorithm Details](07-algorithm-details.md)
 - [Examples & Demos](08-examples-and-demos.md)
