@@ -57,6 +57,52 @@ const mathFormulas = [
   "\\forall", "\\exists", "\\nexists", "\\in", "\\notin", "\\ni", "\\subset", "\\subseteq", "\\supset", "\\supseteq", "\\cup", "\\cap", "\\setminus",
   "\\Rightarrow", "\\Leftarrow", "\\Leftrightarrow", "\\equiv", "\\approx", "\\sim", "\\simeq", "\\cong", "\\neq", "\\leq", "\\geq", "\\ll", "\\gg",
   "\\pm", "\\mp", "\\times", "\\div", "\\cdot", "\\ast", "\\star", "\\circ", "\\bullet", "\\diamond", "\\triangle", "\\square",
+  // Linear Algebra
+  "Ax = \\lambda x",
+  "\\det(A) = \\prod_{i=1}^n \\lambda_i",
+  "\\langle v, w \\rangle = v^T w",
+  "\\operatorname{rank}(A) = \\dim(\\operatorname{Im} A)",
+  "\\text{Tr}(A) = \\sum_{i=1}^n a_{ii}",
+  "\\text{If } AB = BA, \\text{ then } A, B \\text{ are simultaneously diagonalizable}",
+  // Analysis
+  "\\lim_{x \\to a} f(x) = L",
+  "\\int_a^b f(x)\\,dx",
+  "\\sum_{n=1}^\\infty \\frac{1}{n^2} = \\frac{\\pi^2}{6}",
+  "\\frac{d}{dx} \\left( e^{x^2} \\right) = 2x e^{x^2}",
+  "\\forall \\varepsilon > 0, \\exists N \\in \\mathbb{N} : \\forall n > N, |a_n - a| < \\varepsilon",
+  // Functional Analysis
+  "\\|T(x)\\| \\leq \\|T\\| \\cdot \\|x\\|",
+  "\\langle x, y \\rangle = \\int_\\Omega x(t) y(t)\\,dt",
+  "\\sigma(T) = \\{ \\lambda \\in \\mathbb{C} : T - \\lambda I \\text{ not invertible} \\}",
+  // Topology
+  "X \\text{ is compact} \\iff \\text{every open cover has a finite subcover}",
+  "\\pi_1(S^1) \\cong \\mathbb{Z}",
+  "f: X \\to Y \\text{ is continuous} \\iff \\forall U \\subset Y \\text{ open}, f^{-1}(U) \\text{ is open}",
+  // Homology
+  "H_n(X) = \\ker \\partial_n / \\operatorname{im} \\partial_{n+1}",
+  "\\partial_{n} \\circ \\partial_{n+1} = 0",
+  "\\cdots \\to H_n(X) \\xrightarrow{f_*} H_n(Y) \\xrightarrow{g_*} H_n(Z) \\to \\cdots",
+  // Algebra
+  "\\mathbb{C}[x] \\text{ is a principal ideal domain}",
+  "\\text{If } G \\text{ is a group, } |G| = n \\implies \\forall g \\in G, g^n = e",
+  "\\text{Every field is an integral domain}",
+  "\\text{If } R \\text{ is a ring, } \\operatorname{char}(R) = p \\implies p \\cdot 1_R = 0",
+  "\\text{If } V \\text{ is a vector space, } \\dim(V) = n \\implies V \\cong \\mathbb{K}^n",
+  // Commutative Diagrams
+  "\\begin{CD} V @>T>> W \\ @VfVV @VVgV \\ X @>S>> Y \\end{CD}",
+  "\\begin{CD} A @>f>> B \\ @VgVV @VVhV \\ C @>k>> D \\end{CD}",
+  "\\begin{CD} H_n(X) @>f_*>> H_n(Y) \\ @V\\partial VV @VV\\partial V \\ H_{n-1}(X) @>f_*>> H_{n-1}(Y) \\end{CD}",
+  // Miscellaneous
+  "E = mc^2",
+  "a^2 + b^2 = c^2",
+  "\\binom{n}{k} = \\frac{n!}{k!(n-k)!}",
+  "\\sqrt[n]{x}",
+  "\\int_{-\\infty}^{\\infty} e^{-x^2} dx = \\sqrt{\\pi}",
+  "\\frac{\\partial f}{\\partial x}",
+  "\\oint_C f(z) dz = 0",
+  "\\sum_{k=0}^n \\binom{n}{k} = 2^n",
+  "\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\varepsilon_0}",
+  "\\Delta x \\cdot \\Delta p \\geq \\frac{\\hbar}{2}",
 ];
 
 export class MathParticle {
