@@ -22,7 +22,8 @@ class MathBackground {
   }
 
   createParticles() {
-    const particleCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
+    const desiredCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
+    const particleCount = Math.min(desiredCount, MathParticle.getAvailableCount());
 
     for (let i = 0; i < particleCount; i++) {
       this.particles.push(new MathParticle(this.canvas));
@@ -67,7 +68,8 @@ class MathBackground {
   handleResize() {
     this.network.resize();
 
-    const newParticleCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
+    const desiredParticleCount = Math.floor(window.innerWidth / this.PARTICLES_COUNT_FACTOR);
+    const newParticleCount = Math.min(desiredParticleCount, MathParticle.getAvailableCount() + this.particles.length);
     this.adjustArrayCount(this.particles, newParticleCount, () => new MathParticle(this.canvas));
 
     const newBubbleCount = Math.floor(window.innerWidth / this.BUBBLE_COUNT_FACTOR) + 2;

@@ -149,16 +149,35 @@ const mathFormulasByCategory = {
 };
 
 const mathFormulas = Object.values(mathFormulasByCategory).flat();
+const usedFormulas = new Set();
 
 export class MathParticle {
+  static getAvailableCount() {
+    return mathFormulas.length - usedFormulas.size;
+  }
+
+  static reset() {
+    usedFormulas.clear();
+  }
+
   constructor(canvas) {
     this.canvas = canvas;
     this.reset();
-    this.formula = mathFormulas[Math.floor(Math.random() * mathFormulas.length)];
+    this.formula = this.pickUnusedFormula();
     this.element = this.createElement();
     this.connections = [];
 
     this.lastUpdateTime = performance.now();
+  }
+
+  pickUnusedFormula() {
+    const availableFormulas = mathFormulas.filter(f => !usedFormulas.has(f));
+    if (availableFormulas.length === 0) {
+      return mathFormulas[Math.floor(Math.random() * mathFormulas.length)];
+    }
+    const formula = availableFormulas[Math.floor(Math.random() * availableFormulas.length)];
+    usedFormulas.add(formula);
+    return formula;
   }
 
   reset() {
@@ -234,6 +253,9 @@ export class MathParticle {
   destroy() {
     if (this.element && this.element.parentNode) {
       this.element.parentNode.removeChild(this.element);
+    }
+    if (this.formula) {
+      usedFormulas.delete(this.formula);
     }
   }
 
