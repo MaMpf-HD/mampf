@@ -90,6 +90,6 @@ class MathBackground {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("turbo:load", () => {
   new MathBackground();
 });

@@ -5,7 +5,7 @@
     <%= vite_javascript_tag "login/login_transition.css", blocking: "render" %>
     <%= vite_stylesheet_tag "styles/landing.scss" %>
     <%= vite_stylesheet_tag "login/background/background.scss" %>
-    <%= vite_javascript_tag "login/background/background.js", "data-turbo-track": "reload" %>
+    <%= vite_javascript_tag "login/background/background.js" %>
     <%= render partial: 'layouts/head', locals: { minimal: true } %>
     <%= vite_stylesheet_tag "login/loading_bar.scss" %>
   </head>
@@ -49,8 +49,7 @@
             <div id="language-switch" title="language switch">
                 <% I18n.available_locales.each do |l| %>
                   <% unless l == I18n.locale %>
-                    <%= link_to l.to_s,
-                                { locale: l } %>
+                    <%= link_to l.to_s, { locale: l } %>
                   <% end %>
                 <% end %>
             </div>
