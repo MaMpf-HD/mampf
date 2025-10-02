@@ -1,5 +1,12 @@
 # Registration System
 
+```admonish question "What is a 'Registration System'?"
+A registration system manages time-bounded processes where users sign up for course-related activities with constraints and preferences.
+
+- **Common Examples:** "Tutorial signup for Linear Algebra", "Seminar talk selection", "Exam registration with eligibility checks"
+- **In this context:** A flexible campaign-based system supporting direct assignment, preference-based allocation, and composable eligibility policies with automated domain materialization.
+```
+
 ## Problem Overview
 MaMpf needs a flexible registration system to handle:
 - **Regular courses:** Students register for tutorials within a lecture
@@ -854,10 +861,31 @@ app/
 └── services/
   └── registration/
     ├── solvers/
-    │   └── min_cost_flow.rb
-    ├── allocation_materializer.rb
+    │   ├── min_cost_flow.rb
+    │   └── cp_sat.rb (future)
     ├── assignment_service.rb
+    ├── allocation_materializer.rb
     └── policy_engine.rb
 ```
 
 This structure separates the ActiveRecord models, shared concerns, and business logic (service objects and solvers) into their conventional directories.
+
+### Key Files
+- `app/models/registration/campaign.rb` - Orchestrates the registration process
+- `app/models/registration/user_registration.rb` - Records user submissions
+- `app/models/registration/policy.rb` - Defines eligibility rules
+- `app/services/registration/assignment_service.rb` - Runs allocation solver
+- `app/services/registration/allocation_materializer.rb` - Persists results to domain models
+
+---
+
+## Database Tables
+
+- `registration_campaigns` - Campaign orchestration records
+- `registration_items` - Catalog entries linking campaigns to registerables
+- `registration_user_registrations` - User submission records with status and preference rank
+- `registration_policies` - Eligibility rules with kind, config, and position
+
+```admonish note
+Column details for each table are documented in the respective model sections above.
+```

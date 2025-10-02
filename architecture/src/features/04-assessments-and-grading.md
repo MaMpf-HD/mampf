@@ -1031,7 +1031,16 @@ app/
         └── submission_grader.rb
 ```
 
-### Database Tables
+**Key Files:**
+- **Models:** `app/models/assessment/` contains all namespaced models
+- **Concerns:** Assessable, Pointable, Gradable live within the namespace
+- **Services:** `app/services/assessment/submission_grader.rb` handles team grading
+- **Enhanced Models:** Assignment, Talk, Exam include the assessment concerns
+- **Migrations:** Will include changes to add `assessment_id` to submissions table
+
+---
+
+## Database Tables
 
 The following tables support the assessment system:
 
@@ -1044,12 +1053,4 @@ The following tables support the assessment system:
 | `submissions` | `Submission` | Existing model, extended with `assessment_id` |
 
 **Naming rationale:** Namespaced table names follow Rails conventions and prevent collisions with potential future models (e.g., `Quiz::Task`, `Exercise::Task`).
-
-### Key Files
-
-- **Models:** `app/models/assessment/` contains all namespaced models
-- **Concerns:** Assessable, Pointable, Gradable live within the namespace
-- **Services:** `app/services/assessment/submission_grader.rb` handles team grading
-- **Enhanced Models:** Assignment, Talk, Exam include the assessment concerns
-- **Migrations:** Will include changes to add `assessment_id` to submissions table
 ```

@@ -36,7 +36,7 @@ Long-term
 - Late policy engine (penalties computation abstraction).
 - Task dependency graph (unlock logic).
 
-## 5. Exam Eligibility & Grading Schemes
+## 5. Exam Eligibility & Grading Schemes Enhancements
 
 - Multiple concurrent eligibility policies (AND/OR logic expression builder).
 - Incremental eligibility recompute triggers (listen to TaskPoint changes).
