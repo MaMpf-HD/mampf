@@ -24,19 +24,33 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 ## Assessments & Grading
 
-- Assessment: grade/points container (assignment, exam, talk).
-- AssessmentParticipation: per user totals, grade, status.
-- Task: per‑assessment graded component (if requires_points).
-- TaskPoint: per (participation, task) points + grader + state.
-- Submission: artifact (team-capable) optionally linked to a task.
-- Concerns: Assessable, Pointable, Gradable.
-- GradeSubmissionService: submission-centered fan‑out to TaskPoints.
+| Component | Type | Description |
+|-----------|------|-------------|
+| Assessment::Assessment | ActiveRecord | Gradebook container for graded work (assignment, exam, talk) |
+| Assessment::Participation | ActiveRecord | Per-user totals, grade, status, submission timestamps |
+| Assessment::Task | ActiveRecord | Per-assessment graded component (only if requires_points) |
+| Assessment::TaskPoint | ActiveRecord | Per (participation, task) points + grader + submission link |
+| Assessment::Assessable | Concern | Enables a model to be linked to an Assessment::Assessment |
+| Assessment::Pointable | Concern | Extends Assessable to enable per-task point tracking |
+| Assessment::Gradable | Concern | Extends Assessable to enable final grade recording |
+| Assessment::SubmissionGrader | Service | Submission-centered fan-out to TaskPoints for team grading |
+| Submission | ActiveRecord | Team-capable artifact optionally linked to a task |
 
-## Eligibility & Exam Schemes
+## Exam Eligibility
 
-- ExamEligibilityPolicy (config stored in Registration::Policy or dedicated model) & service computing ExamEligibilityRecords.
-- ExamEligibilityRecord: cached points, percentage, computed_status, overrides (override_status/reason/by/at).
-- GradeScheme (future / lightweight): JSON config describing mapping raw → grade_value.
+| Component | Type | Description |
+|-----------|------|-------------|
+| ExamEligibility::Record | ActiveRecord | Materialized eligibility status per (lecture, user) with overrides and recomputation support |
+| ExamEligibility::Achievement | ActiveRecord | Qualitative accomplishments (e.g., blackboard presentations) for eligibility determination |
+| ExamEligibility::Service | Service | Computes eligibility from points and achievements; triggers recomputation before registration |
+| Registration::Policy (kind: exam_eligibility) | Integration | Queries materialized records and triggers recomputation during exam registration |
+
+## Grading Schemes
+
+| Component | Type | Description |
+|-----------|------|-------------|
+| GradeScheme::Scheme | ActiveRecord | Versioned configuration for converting assessment points to final grades |
+| GradeScheme::Applier | Service | Applies scheme to compute and persist final grades for all participations |
 
 ## Assignment Algorithm
 
@@ -46,15 +60,40 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | Registration::Solvers::MinCostFlow | Service | OR-Tools SimpleMinCostFlow implementation for bipartite preference assignment |
 | Registration::Solvers::CpSat | Service | Future CP-SAT solver for advanced constraints (fairness, mutual exclusion, quotas) |
 
-
-## Achievements
-
-- LectureAchievement: qualitative counts (e.g., blackboard_explanation) used in eligibility rules.
-
 ## Linking Concepts
 
-- User: links to Registration::UserRegistrations and AssessmentParticipations.
-- Lecture/Tutorial/Talk/Assignment/Exam: domain models that can become registerable and/or assessable.
+```admonish info "What are linking concepts?"
+These are the "glue" entities that connect the core domain models (User, Lecture, Tutorial, etc.) to the systems above. They enable domain models to participate in registration, assessment, and eligibility tracking.
+```
+
+**Core Domain Models:**
+- `User` - Students, teachers, tutors who participate in the system
+- `Lecture` - A course offering (e.g., "Linear Algebra WS 2024/25")
+- `Tutorial` - A tutorial group within a lecture
+- `Talk` - A student presentation or seminar talk
+- `Assignment` - A homework assignment
+- `Exam` - An exam assessment
+
+**How they link to the systems:**
+
+| Domain Model | Links To | Via | Purpose |
+|--------------|----------|-----|---------|
+| Lecture | Registration | `Registration::Campaignable` concern | Host exam registration campaigns |
+| Tutorial | Registration | `Registration::Registerable` concern | Become a registerable option in tutorial assignment |
+| Exam | Registration | `Registration::Campaignable` concern | Host exam registration campaigns |
+| Assignment | Assessment | `Assessment::Pointable` concern | Track per-task points for homework |
+| Exam | Assessment | `Assessment::Gradable` concern | Record final exam grades |
+| Talk | Assessment | `Assessment::Gradable` concern | Grade student presentations |
+| User | All Systems | Direct associations | Student participates in registrations, assessments, eligibility |
+| Lecture | Exam Eligibility | Direct association | Scope eligibility records to specific lecture |
+
+**Example Flows:**
+
+1. **Tutorial Registration:** `Lecture` (campaignable) → creates `Registration::Campaign` → contains `Registration::Item` wrapping `Tutorial` (registerable) → students submit `Registration::UserRegistration`
+
+2. **Homework Grading:** `Assignment` (pointable) → linked to `Assessment::Assessment` → contains `Assessment::Task` → tutors record `Assessment::TaskPoint` → aggregated into `Assessment::Participation`
+
+3. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `ExamEligibility::Service` aggregates points → creates `ExamEligibility::Record` → `Registration::Policy` (kind: exam_eligibility) checks records when student attempts `Exam` (campaignable) registration
 
 ## High-Level ERD (Simplified)
 
@@ -71,14 +110,18 @@ erDiagram
     ASSESSMENT_PARTICIPATION ||--o{ TASK_POINT : aggregates
     SUBMISSION ||--o{ TASK_POINT : optional
     USER ||--o{ ASSESSMENT_PARTICIPATION : participates
-    EXAM_ELIGIBILITY_RECORD }o--|| USER : cached
-    EXAM_ELIGIBILITY_RECORD }o--|| LECTURE : scope
+    EXAM_ELIGIBILITY_RECORD }o--|| USER : "tracks eligibility"
+    EXAM_ELIGIBILITY_RECORD }o--|| LECTURE : "scoped to"
+    EXAM_ELIGIBILITY_ACHIEVEMENT }o--|| USER : "accomplished by"
+    EXAM_ELIGIBILITY_ACHIEVEMENT }o--|| LECTURE : "belongs to"
+    GRADE_SCHEME_SCHEME ||--|| ASSESSMENT : "applies to"
 ```
 
 See details:
 
-- [Registration System](02-registration-system.md)
-- [Allocation & Rosters](03-allocation-and-rosters.md)
+- [Registration System](02-registration.md)
+- [Allocation & Rosters](03-rosters.md)
 - [Assessments & Grading](04-assessments-and-grading.md)
-- [Exam Eligibility & Schemes](05-exam-eligibility-and-grading-schemes.md)
+- [Exam Eligibility](05-exam-eligibility-and-grading-schemes.md)
+- [Grading Schemes](05b-grading-schemes.md)
 - [Algorithm Details](07-algorithm-details.md)
