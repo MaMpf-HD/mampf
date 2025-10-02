@@ -22,12 +22,39 @@ Indexes (suggested)
 - Capacity enforcement except when explicit override.
 
 ## 3. Assessments & Grading
-- One AssessmentParticipation per (assessment, user) (unique index).
-- One TaskPoint per (assessment_participation, task) (unique index).
-- points_total = Σ published (or all) TaskPoints.points (deterministic recompute).
-- Task exists only if assessment.requires_points.
-- TaskPoint.points ≤ task.max_points (validation).
-- Locked / published participations immutable (application guard).
+
+### Database-Level Constraints
+
+**Uniqueness constraints:**
+- One `AssessmentParticipation` per (assessment, user) — enforced via unique index on `(assessment_id, user_id)`
+- One `TaskPoint` per (participation, task) — enforced via unique index on `(assessment_participation_id, task_id)`
+
+**Foreign key integrity:**
+- `Task.assessment_id` must reference existing assessment
+- `TaskPoint.task_id` must reference existing task
+- `TaskPoint.assessment_participation_id` must reference existing participation
+- `Submission.assessment_id` must reference existing assessment (after migration)
+
+### Application-Level Invariants
+
+**Points consistency:**
+- `AssessmentParticipation.points_total` must equal `sum(task_points.points)` — recomputed automatically on TaskPoint save
+- `TaskPoint.points` should not exceed `Task.max_points` — validated on save
+- `Task` records exist only if `Assessment.requires_points = true` — validated on save
+
+**Grading fan-out pattern:**
+- One `Submission` can have many `users` (team members)
+- Grading service creates one `TaskPoint` per team member with identical points
+- All team members' `TaskPoint` records link back to same `submission_id`
+
+**Publication state:**
+- `Assessment.results_published` controls visibility for all associated task points
+- Students see results only when `results_published = true`
+- Locking mechanism: `AssessmentParticipation.locked = true` prevents further edits after publication
+
+**Submission tracking:**
+- `AssessmentParticipation.submitted_at` persists even after status transitions to `:graded`
+- Distinguishes "submitted but scored 0" from "never submitted"
 
 ## 4. Exam Eligibility
 - One ExamEligibilityRecord per (lecture, user).
