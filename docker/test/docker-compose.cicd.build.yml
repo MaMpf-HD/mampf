@@ -4,5 +4,6 @@ services:
       context: ../..
       dockerfile: docker/development/Dockerfile
       args:
-        IN_CI_CD: "true"      
+        IN_CI_CD: "true"
+        RUBY_VERSION: ${RUBY_VERSION:-$(cat ../../.ruby-version)}
     image: mampftest:image
