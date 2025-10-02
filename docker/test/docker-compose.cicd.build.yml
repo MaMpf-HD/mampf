@@ -5,5 +5,5 @@ services:
       dockerfile: docker/development/Dockerfile
       args:
         IN_CI_CD: "true"
-        RUBY_VERSION: ${RUBY_VERSION:-${cat .ruby-version:?error}}
+        RUBY_VERSION: ${RUBY_VERSION:?error}
     image: mampftest:image

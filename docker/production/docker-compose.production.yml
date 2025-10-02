@@ -4,7 +4,7 @@ x-mampf:
     context: https://github.com/MaMpf-HD/mampf.git#main
     dockerfile: docker/production/Dockerfile
     args:
-      RUBY_VERSION: ${RUBY_VERSION:-$(cat .ruby-version)}
+      RUBY_VERSION: ${RUBY_VERSION:?error}
   env_file: docker.env
   environment:
     PRODUCTION_NAME:
