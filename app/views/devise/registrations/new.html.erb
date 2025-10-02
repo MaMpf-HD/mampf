@@ -1,44 +1,53 @@
-<h3>
+<h3 class="mb-3">
   <%= t('.sign_up') %>
 </h3>
 
 <%= form_for(resource, as: resource_name,
                        url: registration_path(resource_name),
                        html: { role: 'form' }) do |f| %>
-  <div class="mb-3">
-    <%= f.label :email, t('.email'),
-                 class: "form-label" %>
-    <%= f.email_field :email, autofocus: true, class: 'form-control' %>
+
+  <div class="form-floating mb-3">
+    <%= f.email_field :email, autofocus: true,
+                      class: "form-control", placeholder: "" %>
+    <%= f.label :email, t('.email') %>
   </div>
-  <div class="mb-3">
-    <%= f.label :password, t('.password'),
-                class: "form-label" %>
-    <%= f.password_field :password, class: 'form-control' %>
+
+  <div class="form-floating mb-3">
+    <%= f.password_field :password, class: "form-control", placeholder: "" %>
+    <%= f.label :password, t('.password') %>
   </div>
-  <div class="mb-3">
-    <%= f.label :password_confirmation, t('.password_confirm'),
-                class: "form-label" %>
-    <%= f.password_field :password_confirmation, class: 'form-control' %>
+
+  <div class="form-floating mb-3">
+    <%= f.password_field :password_confirmation,
+                         class: "form-control", placeholder: "" %>
+    <%= f.label :password_confirmation, t('.password_confirm') %>
   </div>
-  <div class="mb-3 d-block">
-    <%= f.check_box :consents,
-                    id: 'dsgvo-consent',
+
+  <div class="form-check mb-3">
+    <%= f.check_box :consents, id: "dsgvo-consent", class: "form-check-input",
                     data: { noconsent: t('profile.no_consent') } %>
     <%= f.label :consents,
-                t('.consent_html',
-                  policy: link_to(t('.policy'),
+                t('.consent_html', policy: link_to(t('.policy'),
                                   'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
-                                  target: :_blank)), class: "d-inline", for: "dsgvo-consent" %>
+                                  target: :_blank)),
+                class: "form-check-label", for: "dsgvo-consent" %>
   </div>
+
   <%= f.hidden_field :locale, value: I18n.locale %>
   <% if ENV["USE_CAPTCHA_SERVICE"]%>
-  <p>
-  <div id="captcha-widget"  data-sitekey="YOUR_SITE_KEY" data-start="auto" data-captcha-url="<%=ENV.fetch('CAPTCHA_PUZZLE_URL') %>" data-lang="<%=I18n.locale %>"></div>
-  </p>
-  <%end %>
+    <p>
+      <div id="captcha-widget" data-sitekey="YOUR_SITE_KEY" data-start="auto"
+           data-captcha-url="<%=ENV.fetch('CAPTCHA_PUZZLE_URL') %>"
+           data-lang="<%=I18n.locale %>">
+      </div>
+    </p>
+  <% end %>
+
   <div class="mb-3">
-    <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'register-user', disabled:ENV.fetch("USE_CAPTCHA_SERVICE", false) %>
+    <%= f.submit t('.sign_up'), class: 'btn btn-primary', id: 'register-user',
+                                disabled:ENV.fetch("USE_CAPTCHA_SERVICE", false) %>
   </div>
+
 <% end %>
 
 <%= render 'devise/shared/links' %>
