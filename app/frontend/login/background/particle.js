@@ -166,10 +166,10 @@ export class MathParticle {
     this.y = Math.random() * window.innerHeight;
     this.vx = (Math.random() - 0.5) * 0.5;
     this.vy = (Math.random() - 0.5) * 0.5;
-    this.size = Math.random() * 0.9 + 0.6;
+    this.size = Math.random() * 0.7 + 0.55;
     this.opacity = Math.random() * 0.7 + 0.3;
-    this.baseRotation = (Math.random() - 0.5) * Math.PI * 0.5;
-    this.rotationAmplitude = Math.PI * 0.3;
+    this.baseRotation = (Math.random() - 0.5) * Math.PI * 0.4;
+    this.rotationAmplitude = Math.PI * 0.22;
     this.rotationSpeed = (Math.random() - 0.5) * 0.005;
     this.rotationTime = Math.random() * Math.PI * 2;
     this.lastTransform = "";
