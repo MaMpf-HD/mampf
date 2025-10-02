@@ -4,13 +4,13 @@
                        data: { turbo: true }) do |f| %>
 
   <div class="form-floating mb-3">
-    <%= f.email_field :email, autofocus: true,
+    <%= f.email_field :email, autofocus: true, required: true,
                       class: "form-control", placeholder: "" %>
     <%= f.label :email, t('.email') %>
   </div>
 
   <div class="form-floating mb-3">
-    <%= f.password_field :password, autocomplete: "off",
+    <%= f.password_field :password, autocomplete: "off", required: true,
                          class: "form-control", placeholder: "" %>
     <%= f.label :password, t('.password') %>
   </div>

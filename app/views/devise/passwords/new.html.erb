@@ -8,7 +8,7 @@
                        html: { method: :post, role: 'form' }) do |f| %>
 
   <div class="form-floating mb-3">
-    <%= f.email_field :email, autofocus: true,
+    <%= f.email_field :email, autofocus: true, required: true,
                       class: "form-control", placeholder: "" %>
     <%= f.label :email, t('.email') %>
   </div>

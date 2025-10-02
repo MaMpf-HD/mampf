@@ -7,24 +7,26 @@
                        html: { role: 'form' }) do |f| %>
 
   <div class="form-floating mb-3">
-    <%= f.email_field :email, autofocus: true,
+    <%= f.email_field :email, autofocus: true, required: true,
                       class: "form-control", placeholder: "" %>
     <%= f.label :email, t('.email') %>
   </div>
 
   <div class="form-floating mb-3">
-    <%= f.password_field :password, class: "form-control", placeholder: "" %>
+    <%= f.password_field :password, required: true,
+                         class: "form-control", placeholder: "" %>
     <%= f.label :password, t('.password') %>
   </div>
 
   <div class="form-floating mb-3">
-    <%= f.password_field :password_confirmation,
+    <%= f.password_field :password_confirmation, required: true,
                          class: "form-control", placeholder: "" %>
     <%= f.label :password_confirmation, t('.password_confirm') %>
   </div>
 
   <div class="form-check mb-3">
-    <%= f.check_box :consents, id: "dsgvo-consent", class: "form-check-input",
+    <%= f.check_box :consents, required: true,
+                    id: "dsgvo-consent", class: "form-check-input",
                     data: { noconsent: t('profile.no_consent') } %>
     <%= f.label :consents,
                 t('.consent_html', policy: link_to(t('.policy'),
