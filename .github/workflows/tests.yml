@@ -36,6 +36,7 @@ jobs:
             submodules: recursive
 
       - name: Set Ruby version from .ruby-version
+        shell: bash
         working-directory: .
         run: |
           if [ -f .ruby-version ]; then
