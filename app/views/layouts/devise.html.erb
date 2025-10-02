@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta name="view-transition" content="same-origin" />
     <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
-    <%= vite_javascript_tag "login/login_transition.css", blocking: "render" %>
+    <%= vite_stylesheet_tag "login/login_transition.css", blocking: "render" %>
+
     <%= vite_stylesheet_tag "styles/landing.scss" %>
     <%= vite_stylesheet_tag "login/background/background.scss" %>
     <%= vite_javascript_tag "login/background/background.js" %>
-    <%= render partial: 'layouts/head', locals: { minimal: true } %>
+    <%= render partial: 'layouts/head' %>
     <%= vite_stylesheet_tag "login/loading/loading_bar.scss" %>
   </head>
 
