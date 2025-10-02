@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta name="view-transition" content="same-origin" />
-    <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
-    <%= vite_stylesheet_tag "login/login_transition.css", blocking: "render" %>
+    <% if local_assigns[:is_main_start] %>
+      <meta name="view-transition" content="same-origin" />
+      <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
+      <%= vite_stylesheet_tag "login/login_transition.css", blocking: "render" %>
+    <% end %>
 
     <%= render partial: 'layouts/head' %>
   </head>
