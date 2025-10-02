@@ -1,0 +1,29 @@
+# Helpers for managing flash messages in controllers.
+module Flash
+  # Renders a flash message via Turbo Stream.
+  #
+  # Usage:
+  # You can use :notice, :success, :alert and :error, see flash/_message.html.erb
+  # > flash.now[:success] = "Profile updated"
+  # > render_flash
+  def render_flash
+    return if flash.empty?
+
+    render turbo_stream: turbo_stream.prepend("flash-messages", partial: "flash/message")
+  end
+
+  # Renders a flash success message for turbo_stream and html formats.
+  # Usage: respond_with_flash(:success, I18n.t("feedback.success"))
+  def respond_with_flash(flash_type, message, fallback_location: root_path)
+    respond_to do |format|
+      format.turbo_stream do
+        flash.now[flash_type] = message
+        render_flash
+      end
+      format.html do
+        flash.keep[flash_type] = message
+        redirect_back(fallback_location: fallback_location)
+      end
+    end
+  end
+end
