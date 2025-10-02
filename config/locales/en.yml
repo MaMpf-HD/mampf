@@ -1895,8 +1895,6 @@ en:
       Please take some time to edit your profile settings.
     consent: >
       You consented to our privacy policy.
-    no_consent: >
-      You have not consented to our privacy policy.
     locale: 'Language'
     subscribe_lecture: 'Subscribe event series'
     passphrase_required: >

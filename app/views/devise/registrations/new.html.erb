@@ -26,13 +26,12 @@
 
   <div class="form-check mb-3">
     <%= f.check_box :consents, required: true,
-                    id: "dsgvo-consent", class: "form-check-input",
-                    data: { noconsent: t('profile.no_consent') } %>
+                    class: "form-check-input" %>
     <%= f.label :consents,
                 t('.consent_html', policy: link_to(t('.policy'),
                                   'https://www.uni-heidelberg.de/datenschutzerklaerung_web.html',
                                   target: :_blank)),
-                class: "form-check-label", for: "dsgvo-consent" %>
+                class: "form-check-label" %>
   </div>
 
   <%= f.hidden_field :locale, value: I18n.locale %>

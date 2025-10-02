@@ -2049,8 +2049,6 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
-    no_consent:
-      Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
     subscribe_lecture: 'Veranstaltung abonnieren'
     passphrase_required: >
