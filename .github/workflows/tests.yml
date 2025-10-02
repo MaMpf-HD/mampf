@@ -36,7 +36,15 @@ jobs:
             submodules: recursive
 
       - name: Set Ruby version from .ruby-version
-        run: echo "RUBY_VERSION=$(cat .ruby-version)" >> $GITHUB_ENV
+        working-directory: .
+        run: |
+          if [ -f .ruby-version ]; then
+            echo "RUBY_VERSION=$(cat .ruby-version)" >> $GITHUB_ENV
+            echo "Ruby version set to: $RUBY_VERSION"
+          else
+            echo "Error: .ruby-version file not found"
+            exit 1
+          fi
 
       # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
