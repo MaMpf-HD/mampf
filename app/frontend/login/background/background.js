@@ -3,7 +3,7 @@ import { NetworkGraph } from "./network.js";
 import { MathParticle } from "./particle.js";
 
 class MathBackground {
-  PARTICLES_COUNT_FACTOR = 80;
+  PARTICLES_COUNT_FACTOR = 100;
   BUBBLE_COUNT_FACTOR = 400;
 
   constructor() {
