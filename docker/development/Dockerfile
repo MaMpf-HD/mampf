@@ -1,6 +1,8 @@
 # https://docs.docker.com/build/checks/#fail-build-on-check-violations
 # check=error=true
 
+ARG RUBY_VERSION
+
 # First build the PDF compressor Web assembly binary
 # this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
 FROM golang:1.20 AS build-pdfcomprezzor
@@ -11,7 +13,6 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual MaMpf application
 # https://hub.docker.com/_/ruby/
-ARG RUBY_VERSION
 FROM ruby:${RUBY_VERSION}-bookworm
 
 EXPOSE 3000
