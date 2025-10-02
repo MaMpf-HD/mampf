@@ -79,8 +79,8 @@ end
 
 ### Usage Scenarios
 - `Tutorial` and `Talk` both include `Roster::Rosterable`.
-- `Tutorial` implements `roster_user_ids` by reading from its `tutorial_memberships` join table.
-- `Talk` implements `replace_roster!` by setting its `speaker_ids` association.
+- `Tutorial` implements `roster_user_ids` by reading from a new `tutorial_memberships` join table (to be created).
+- `Talk` implements `replace_roster!` using its existing `speaker_talk_joins` association.
 
 ---
 
@@ -211,7 +211,7 @@ The `Tutorial` model includes the `Roster::Rosterable` concern to provide a stan
 
 | Method | Implementation Detail |
 |---|---|
-| `roster_user_ids` | Plucks `user_id`s from the `tutorial_memberships` join table. |
+| `roster_user_ids` | Plucks `user_id`s from the `tutorial_memberships` join table (to be created). |
 | `replace_roster!(user_ids:)` | Deletes existing memberships and creates new ones in a transaction. |
 
 #### Example Implementation
@@ -251,8 +251,8 @@ The `Talk` model includes the `Roster::Rosterable` concern to provide a standard
 
 | Method | Implementation Detail |
 |---|---|
-| `roster_user_ids` | Returns `speaker_ids` from its `has_many` association. |
-| `replace_roster!(user_ids:)` | Sets the `speaker_ids` association directly. |
+| `roster_user_ids` | Plucks `speaker_id`s from the `speaker_talk_joins` join table. |
+| `replace_roster!(user_ids:)` | Deletes existing joins and creates new ones in a transaction. |
 
 #### Example Implementation
 ```ruby
@@ -261,12 +261,18 @@ class Talk < ApplicationRecord
   include Registration::Registerable
   include Roster::Rosterable
 
+  has_many :speaker_talk_joins, dependent: :destroy
+  has_many :speakers, through: :speaker_talk_joins
+
   def roster_user_ids
-    speaker_ids
+    speaker_talk_joins.pluck(:speaker_id)
   end
 
   def replace_roster!(user_ids:)
-    self.speaker_ids = user_ids
+    SpeakerTalkJoin.transaction do
+      speaker_talk_joins.delete_all
+      user_ids.each { |uid| speaker_talk_joins.create!(speaker_id: uid) }
+    end
   end
 end
 ```
@@ -278,11 +284,11 @@ This diagram shows the concrete database relationships for the two example `Rost
 
 ```mermaid
 erDiagram
-    TUTORIAL ||--o{ TUTORIAL_MEMBERSHIP : "has"
+    TUTORIAL ||--o{ TUTORIAL_MEMBERSHIP : "has (to be created)"
     TUTORIAL_MEMBERSHIP }o--|| USER : "links to"
 
-    TALK ||--o{ TALK_SPEAKER : "has (example)"
-    TALK_SPEAKER }o--|| USER : "links to"
+    TALK ||--o{ SPEAKER_TALK_JOIN : "has (existing)"
+    SPEAKER_TALK_JOIN }o--|| USER : "links to"
 ```
 
 ---
@@ -332,4 +338,22 @@ app/
 └── services/
     └── roster/
         └── maintenance_service.rb
+```
+
+### Key Files
+- `app/models/concerns/roster/rosterable.rb` - Uniform roster API concern
+- `app/services/roster/maintenance_service.rb` - Manual roster modification service
+
+---
+
+## Database Tables
+
+The roster system doesn't introduce new database tables. Instead, it provides a uniform API over existing and to-be-created join tables:
+
+- `tutorial_memberships` (to be created) - Join table for tutorial student rosters
+- `speaker_talk_joins` (existing) - Join table for talk speaker assignments
+
+```admonish note
+The `Roster::Rosterable` concern provides a uniform interface (`roster_user_ids`, `replace_roster!`) regardless of the underlying table structure. Column details are shown in the example implementations above.
+```
 
