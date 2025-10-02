@@ -35,18 +35,6 @@ jobs:
         with:
             submodules: recursive
 
-      - name: Set Ruby version from .ruby-version
-        shell: bash
-        working-directory: .
-        run: |
-          if [ -f .ruby-version ]; then
-            echo "RUBY_VERSION=$(cat .ruby-version)" >> $GITHUB_ENV
-            echo "Ruby version set to: $RUBY_VERSION"
-          else
-            echo "Error: .ruby-version file not found"
-            exit 1
-          fi
-
       # see https://github.com/orgs/MaMpf-HD/packages?repo_name=mampf
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -60,8 +48,6 @@ jobs:
 
       - name: Build and push docker image to GHCR
         working-directory: docker/test
-        env:
-          RUBY_VERSION: ${{ env.RUBY_VERSION }}
         # We don't use the docker/build-push-action here since it doesn't
         # support passing custom docker compose files (just dockerfiles).
         #
@@ -80,6 +66,7 @@ jobs:
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
+          --set mampf.args.RUBY_VERSION=$(cat ../../.ruby-version)
           --set mampf.tags=ghcr.io/mampf-hd/mampftest:image
           --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
