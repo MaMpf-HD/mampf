@@ -8,7 +8,7 @@ window.Stimulus.register("lecture-sidebar", LectureSidebarController);
 import LectureTabsController from "~/lectures/edit/tabs/lecture_tabs.controller.js";
 window.Stimulus.register("lecture-tabs", LectureTabsController);
 
-import LoadingBarController from "~/login/loading_bar.controller.js";
+import LoadingBarController from "~/login/loading/loading_bar.controller.js";
 window.Stimulus.register("loading-bar", LoadingBarController);
 
 import SearchFormController from "~/_components/search_form/search_form.controller.js";
