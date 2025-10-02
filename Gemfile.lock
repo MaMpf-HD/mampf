@@ -764,8 +764,5 @@ DEPENDENCIES
   vite_rails (~> 3.0, >= 3.0.17)
   web-console (~> 4.2)
 
-RUBY VERSION
-   ruby 3.3.8p144
-
 BUNDLED WITH
    2.7.0
