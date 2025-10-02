@@ -195,7 +195,7 @@ export class MathParticle {
     div.style.transformOrigin = "center center";
 
     try {
-      katex.render(this.formula, div, { throwOnError: false, displayMode: false });
+      katex.render(this.formula, div, { throwOnError: false, displayMode: true });
     }
     catch {
       div.textContent = this.formula;
