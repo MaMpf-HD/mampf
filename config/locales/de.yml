@@ -2567,6 +2567,7 @@ de:
     create_new_info_slide: 'Neue Info-Folie erstellen'
     create_new_slide: 'Neue Folie erstellen'
     info_slide_created: 'Info-Folie wurde erstellt.'
+    info_slide_not_created: 'Info-Folie konnte nicht erstellt werden.'
     info_slide_updated: 'Info-Folie wurde aktualisiert.'
     slide_updated: 'Folie wurde erfolgreich aktualisiert.'
     slide_created: 'Folie wurde erfolgreich erstellt.'

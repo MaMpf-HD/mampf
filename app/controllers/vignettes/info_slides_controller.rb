@@ -9,15 +9,11 @@ module Vignettes
     def new
       @info_slide = InfoSlide.new
 
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.append(
-            :info_slides,
-            partial: "vignettes/questionnaires/shared/slide_accordion_item",
-            locals: { slide: @info_slide }
-          )
-        end
-      end
+      render turbo_stream: turbo_stream.append(
+        :info_slides,
+        partial: "vignettes/questionnaires/shared/slide_accordion_item",
+        locals: { slide: @info_slide }
+      )
     end
 
     def edit
@@ -28,10 +24,19 @@ module Vignettes
     def create
       @info_slide = @questionnaire.info_slides.new(info_slide_params)
       if @info_slide.save
-        respond_with_flash(:notice, t("vignettes.info_slide_created"),
-                           fallback_location: edit_questionnaire_path(@questionnaire))
+        flash.now[:notice] = t("vignettes.info_slide_created")
+        render turbo_stream: [
+          stream_flash,
+          turbo_stream.remove("new_vignettes_info_slide"),
+          turbo_stream.append(
+            :info_slides,
+            partial: "vignettes/questionnaires/shared/slide_accordion_item",
+            locals: { slide: @info_slide }
+          )
+        ]
       else
-        render :new
+        respond_with_flash(:alert, t("vignettes.info_slide_not_created"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 

@@ -1,6 +1,6 @@
 <% info_prefix = slide.is_a?(Vignettes::InfoSlide) ? 'info-' : '' %>
 <% collapse_id = "#{info_prefix}slides-collapse-#{slide.id}" %>
-<% is_update_action = controller.action_name == "update" %>
+<% is_update_action = ["update", "create"].include?(controller.action_name) %>
 
 <%= turbo_frame_tag slide do %>
 <div class="accordion-item">

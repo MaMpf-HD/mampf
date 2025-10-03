@@ -12,15 +12,11 @@ module Vignettes
       @slide.build_question
       @slide.question.options.build
 
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.append(
-            :slides,
-            partial: "vignettes/questionnaires/shared/slide_accordion_item",
-            locals: { slide: @slide }
-          )
-        end
-      end
+      render turbo_stream: turbo_stream.append(
+        :slides,
+        partial: "vignettes/questionnaires/shared/slide_accordion_item",
+        locals: { slide: @slide }
+      )
     end
 
     def edit
@@ -36,7 +32,16 @@ module Vignettes
       @slide = @questionnaire.slides.new(slide_params)
       @slide.position = @questionnaire.slides.maximum(:position).to_i + 1
       if @slide.save
-        render partial: "vignettes/slides/form/form"
+        flash.now[:notice] = t("vignettes.slide_created")
+        render turbo_stream: [
+          stream_flash,
+          turbo_stream.remove("new_vignettes_slide"),
+          turbo_stream.append(
+            :slides,
+            partial: "vignettes/questionnaires/shared/slide_accordion_item",
+            locals: { slide: @slide }
+          )
+        ]
       else
         respond_with_flash(:alert, t("vignettes.slide_not_created"),
                            fallback_location: edit_questionnaire_path(@questionnaire))
