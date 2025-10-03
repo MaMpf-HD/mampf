@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_05_000000) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -392,8 +392,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_000000) do
     t.text "manuscript_data"
     t.text "released"
     t.boolean "imported_manuscript"
-    t.string "quizzable_type"
-    t.bigint "quizzable_id"
     t.text "hint"
     t.integer "parent_id"
     t.text "quiz_graph"
@@ -419,7 +417,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_000000) do
     t.index ["content"], name: "index_media_on_content_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["description"], name: "index_media_on_description_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["external_link_description"], name: "index_media_on_external_link_description_trgm", opclass: :gin_trgm_ops, using: :gin
-    t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
     t.index ["released"], name: "index_media_on_released"
     t.index ["sort"], name: "index_media_on_sort"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
