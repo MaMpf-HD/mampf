@@ -3,7 +3,7 @@ module Vignettes
     before_action :set_questionnaire
     before_action :check_edit_accessibility, only: [:new, :create, :edit, :update, :destroy]
     before_action :check_empty_multiple_choice_option, only: [:update, :create]
-    before_action :require_turbo_frame, only: [:new, :edit]
+    before_action :require_turbo_frame, only: [:new, :edit, :update]
 
     def new
       return unless @questionnaire.editable
@@ -54,15 +54,15 @@ module Vignettes
           slide_params[:title].present? ||
           slide_params[:info_slide_ids].present? ||
           any_option_deleted?)
-        return redirect_to edit_questionnaire_path(@questionnaire),
-                           alert: t("vignettes.not_editable")
+        return respond_with_flash(:alert, t("vignettes.not_editable"),
+                                  fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       if @slide.update(slide_params)
         render partial: "vignettes/slides/form/form"
       else
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.slide_not_updated")
+        respond_with_flash(:alert, t("vignettes.slide_not_updated"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 

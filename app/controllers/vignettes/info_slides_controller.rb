@@ -4,7 +4,7 @@ module Vignettes
     before_action :set_info_slide, only: [:edit, :update]
     before_action :check_empty_title, only: [:create, :update]
     before_action :check_empty_icon, only: [:create, :update]
-    before_action :require_turbo_frame, only: [:new, :edit]
+    before_action :require_turbo_frame, only: [:new, :edit, :update]
 
     def new
       @info_slide = InfoSlide.new
@@ -36,13 +36,10 @@ module Vignettes
 
     def update
       if @info_slide.update(info_slide_params)
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.info_slide_updated")
-      elsif request.xhr?
         render partial: "vignettes/info_slides/form/form"
       else
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_not_updated")
+        respond_with_flash(:alert, t("vignettes.info_slide_not_updated"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 
