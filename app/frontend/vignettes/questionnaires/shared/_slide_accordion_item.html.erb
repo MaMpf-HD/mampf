@@ -1,23 +1,6 @@
 <% info_prefix = slide.is_a?(Vignettes::InfoSlide) ? 'info-' : '' %>
 <% collapse_id = "#{info_prefix}slides-collapse-#{slide.id}" %>
 
-<% question_type = if slide.is_a?(Vignettes::InfoSlide)
-                      nil
-                   else
-                      case slide.question.type
-                      when 'Vignettes::TextQuestion'
-                        t('vignettes.question_types.text_area')
-                      when 'Vignettes::NumberQuestion'
-                        t('vignettes.question_types.number_field')
-                      when 'Vignettes::MultipleChoiceQuestion'
-                        t('vignettes.question_types.multiple_choice')
-                      when 'Vignettes::LikertScaleQuestion'
-                        t('vignettes.question_types.likert_scale')
-                      else
-                        t('vignettes.question_types.none')
-                      end
-                   end %>
-
 <div class="accordion-item">
 
   <h2 class="accordion-header">
