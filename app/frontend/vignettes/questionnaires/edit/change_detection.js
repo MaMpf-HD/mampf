@@ -26,18 +26,18 @@ $(document).ready(function () {
 function registerChangeHandlers() {
   // New slide appended
   $(document).on("turbo:stream-render", function () {
-    setupChangeDetection(false);
+    setupChangeDetection();
   });
 
   // e.g. after update of a slide
   $(document).on("turbo:frame-render", function () {
     console.log("in frame render");
-    setupChangeDetection(false);
+    setupChangeDetection();
   });
 
   // Accordion button clicked to open slide
   $(document).on("shown.bs.collapse", COLLAPSE_CLASS, function () {
-    setupChangeDetection(false);
+    setupChangeDetection();
   });
 
   $(document).on("show.bs.collapse", COLLAPSE_CLASS, function (event) {
@@ -71,7 +71,12 @@ function resetUnsavedChangesState() {
   pendingSlideId = null;
 }
 
-function setupChangeDetection(isInfoSlide) {
+function setupChangeDetection() {
+  _setupChangeDetection(false);
+  _setupChangeDetection(true);
+}
+
+function _setupChangeDetection(isInfoSlide) {
   registry.deregisterAll();
   resetUnsavedChangesState();
 
