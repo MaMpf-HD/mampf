@@ -63,10 +63,9 @@ jobs:
         # does not support mode=max caching.
         # https://github.com/moby/buildkit?tab=readme-ov-file#registry-push-image-and-cache-separately
         run: >
-          docker buildx bake
+          RUBY_VERSION=$(cat ../../.ruby-version) docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
-          --set mampf.build.args.RUBY_VERSION=$(cat ../../.ruby-version)
           --set mampf.tags=ghcr.io/mampf-hd/mampftest:image
           --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
