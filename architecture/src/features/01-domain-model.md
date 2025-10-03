@@ -122,6 +122,7 @@ See details:
 - [Registration System](02-registration.md)
 - [Allocation & Rosters](03-rosters.md)
 - [Assessments & Grading](04-assessments-and-grading.md)
-- [Exam Eligibility](05-exam-eligibility-and-grading-schemes.md)
+- [Exam Model](05a-exam-model.md)
+- [Exam Eligibility](05-exam-eligibility.md)
 - [Grading Schemes](05b-grading-schemes.md)
 - [Algorithm Details](07-algorithm-details.md)

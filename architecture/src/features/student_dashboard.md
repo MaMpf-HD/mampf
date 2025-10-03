@@ -60,10 +60,10 @@ end
 ```
 
 Content:
--   **Open Registrations:** Shows active `RegistrationCampaigns` the user is eligible for.
+-   **Open Registrations:** Shows active `Registration::Campaign` records the user is eligible for.
     -   **Displays:** Campaign Title, Lecture, and "Closes on: [deadline]".
     -   **Action:** A "Register Now" button linking to the campaign page.
--   **Assignment Deadlines:** Shows upcoming `Assignments` from the user's subscribed lectures.
+-   **Assignment Deadlines:** Shows upcoming `Assignment` records from the user's subscribed lectures.
     -   **Displays:** Assignment Title, Lecture, and "Due: [deadline]".
     -   **Action:** A "View/Submit" button linking to the submission page.
 
@@ -90,7 +90,7 @@ Content:
 Content:
 -   **New Grades:** Once the new grading system is live, this will show recently published grades.
     -   **Displays:** "Grades for [Assignment Title] are now available."
-    -   **Action:** A "View Grade" button linking to the `AssessmentParticipation` details.
+    -   **Action:** A "View Grade" button linking to the `Assessment::Participation` details.
 -   **New Announcements:** Shows the 2-3 most recent announcements from the user's subscribed lectures.
     -   **Displays:** A snippet of the announcement text.
     -   **Action:** A link to view the full announcement.
