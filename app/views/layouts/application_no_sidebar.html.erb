@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <% if local_assigns[:is_main_start] %>
+    <% if session[:show_login_transition] %>
       <meta name="view-transition" content="same-origin" />
       <%= vite_stylesheet_tag "styles/view_transition.css", blocking: "render" %>
       <%= vite_stylesheet_tag "login/login_transition.css", blocking: "render" %>
+      <% session.delete(:show_login_transition) %>
     <% end %>
 
     <%= render partial: 'layouts/head' %>

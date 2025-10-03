@@ -2,6 +2,7 @@ class SessionsController < Devise::SessionsController
   # Removes the flash message that Devise sets on successful sign in
   def create
     super
+    session[:show_login_transition] = true
     flash.clear
   end
 

@@ -48,7 +48,6 @@ class MainController < ApplicationController
                            [-t.lecture.term.begin_date.jd,
                             t.position]
                          end
-    render locals: { is_main_start: "" }
   end
 
   private
