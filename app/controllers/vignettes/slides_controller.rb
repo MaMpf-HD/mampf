@@ -3,7 +3,7 @@ module Vignettes
     before_action :set_questionnaire
     before_action :check_edit_accessibility, only: [:new, :create, :edit, :update, :destroy]
     before_action :check_empty_multiple_choice_option, only: [:update, :create]
-    before_action :require_turbo_frame, only: [:new, :edit, :update]
+    before_action :require_turbo_frame, only: [:edit, :update]
 
     def new
       return unless @questionnaire.editable
@@ -28,18 +28,18 @@ module Vignettes
       @slide.build_question unless @slide.question
       @slide.question.options.build unless @slide.question.options.any?
 
-      render partial: "vignettes/slides/form/form"
+      render partial: "vignettes/questionnaires/shared/slide_accordion_item",
+             locals: { slide: @slide }
     end
 
     def create
       @slide = @questionnaire.slides.new(slide_params)
       @slide.position = @questionnaire.slides.maximum(:position).to_i + 1
       if @slide.save
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_created")
+        render partial: "vignettes/slides/form/form"
       else
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_not_created")
+        respond_with_flash(:alert, t("vignettes.slide_not_created"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 
@@ -59,7 +59,8 @@ module Vignettes
       end
 
       if @slide.update(slide_params)
-        render partial: "vignettes/slides/form/form"
+        render partial: "vignettes/questionnaires/shared/slide_accordion_item",
+               locals: { slide: @slide }
       else
         respond_with_flash(:alert, t("vignettes.slide_not_updated"),
                            fallback_location: edit_questionnaire_path(@questionnaire))

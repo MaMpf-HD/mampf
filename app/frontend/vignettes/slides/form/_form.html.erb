@@ -1,11 +1,10 @@
 <%= vite_javascript_tag "vignettes/slides/form/_form.js" %>
 
-<%= turbo_frame_tag @slide do %>
 <%= form_with(
-      model: [@questionnaire, @slide],
+      model: [@questionnaire, slide],
       local: true,
       class: "slide-form",
-      url: @slide.new_record? ? questionnaire_slides_path(@questionnaire) : questionnaire_slide_path(@questionnaire, @slide)) do |form| %>
+      url: slide.new_record? ? questionnaire_slides_path(@questionnaire) : questionnaire_slide_path(@questionnaire, slide)) do |form| %>
 
   <div class="form-floating mb-3">
     <%= form.text_field :title, 
@@ -20,7 +19,7 @@
     <%= form.select :info_slide_ids,
         options_for_select(
           @questionnaire.info_slides.map { |s| [s.title, s.id] },
-          @slide.info_slides.map(&:id)
+          slide.info_slides.map(&:id)
         ),
       { include_blank: true, multiple: true },
 
@@ -35,16 +34,16 @@
 
   <div class="d-flex justify-content-end align-items-center mt-3">
     <div class="me-auto">
-      <%= form.submit @slide.new_record? ? t("vignettes.create_slide") : t("vignettes.update_slide"), 
+      <%= form.submit slide.new_record? ? t("vignettes.create_slide") : t("vignettes.update_slide"), 
           class: "btn btn-primary slide-submit-btn d-none" %>
     </div>
     
-    <% unless @slide.new_record? %>
+    <% unless slide.new_record? %>
     <button type="button" 
             class="btn btn-danger" 
-            data-bs-toggle="<%= @slide.questionnaire.editable ? 'modal' : '' %>" 
-            data-bs-target="#deleteModal<%= @slide.id %>"
-            <%= 'disabled' unless @slide.questionnaire.editable %>>
+            data-bs-toggle="<%= slide.questionnaire.editable ? 'modal' : '' %>" 
+            data-bs-target="#deleteModal<%= slide.id %>"
+            <%= 'disabled' unless slide.questionnaire.editable %>>
       <%= t("vignettes.delete_slide") %>
     </button>
     <% end %>
@@ -52,8 +51,8 @@
 <% end %>
 
 <!-- Delete Confirmation Modal -->
-<% unless @slide.new_record? %>
-  <div class="modal fade" id="deleteModal<%= @slide.id %>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<% unless slide.new_record? %>
+  <div class="modal fade" id="deleteModal<%= slide.id %>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -66,7 +65,7 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t("buttons.cancel") %></button>
           <%= button_to "Delete Slide", 
-                questionnaire_slide_path(@questionnaire, @slide),
+                questionnaire_slide_path(@questionnaire, slide),
                 method: :delete,
                 class: "btn btn-danger"
           %>
@@ -74,5 +73,4 @@
       </div>
     </div>
   </div>
-<% end %>
 <% end %>

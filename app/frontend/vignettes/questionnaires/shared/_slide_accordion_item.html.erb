@@ -1,53 +1,37 @@
 <% info_prefix = slide.is_a?(Vignettes::InfoSlide) ? 'info-' : '' %>
 <% collapse_id = "#{info_prefix}slides-collapse-#{slide.id}" %>
+<% update_action = controller.action_name == "update" %>
 
 <div class="accordion-item">
 
-  <h2 class="accordion-header">
-    <button class="accordion-button collapsed" type="button"
-            data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
-            aria-expanded="false" aria-controls="<%= collapse_id %>">
-      <% if slide.is_a?(Vignettes::InfoSlide) %>
-        <span class="me-2 text-secondary">#<%= slide.id %></span>
-        <%= slide.title %>
-      <% else %>
-        <%= slide.title %>
-      <% end %>
-    </button>
-  </h2>
-
-  <% is_new_slide = slide.new_record? %>
-
-  <div id="<%= collapse_id %>"
-        data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
-        data-slide-id="<%= slide.id %>"
-        class="accordion-collapse <%= is_new_slide ? "show" : "collapse" %> vignette-accordion-collapse"
-        data-bs-parent="#<%= info_prefix %>slides">
-
-    <div class="accordion-body">
-      <% if is_new_slide %>
-
+  <%= turbo_frame_tag slide do %>
+    <h2 class="accordion-header">
+      <button class="accordion-button <%= "collapsed" if not update_action %>" type="button"
+              data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
+              aria-expanded="false" aria-controls="<%= collapse_id %>">
         <% if slide.is_a?(Vignettes::InfoSlide) %>
-          <%= render partial: "vignettes/info_slides/form/form" %>
+          <span class="me-2 text-secondary">#<%= slide.id %></span>
+          <%= slide.title %>
         <% else %>
-          <%= render partial: "vignettes/slides/form/form" %>
+          <%= slide.title %>
         <% end %>
+      </button>
+    </h2>
 
-      <% else %>
+    <div id="<%= collapse_id %>"
+          data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
+          data-slide-id="<%= slide.id %>"
+          class="accordion-collapse <%=  slide.new_record? || update_action ? "show" : "collapse" %> vignette-accordion-collapse"
+          data-bs-parent="#<%= info_prefix %>slides">
 
-        <%= turbo_frame_tag slide, src: turbo_slide_edit_url(slide) do %>
-          <% unless slide.new_record? %>
-            <!-- Loading spinner -->
-            <div class="d-flex justify-content-center mt-3 mb-3">
-              <div class="spinner-border text-secondary" role="status">
-                <span class="visually-hidden">Loading...</span>
-              </div>
-            </div>
-          <% end %>
+      <div class="accordion-body">
+        <% if slide.is_a?(Vignettes::InfoSlide) %>
+          <%= render partial: "vignettes/info_slides/form/form", locals: { info_slide: slide } %>
+        <% else %>
+          <%= render partial: "vignettes/slides/form/form", locals: { slide: slide } %>
         <% end %>
-
-      <% end %>
-    
+      </div>
     </div>
-  </div>
+  <% end %>
+
 </div>
