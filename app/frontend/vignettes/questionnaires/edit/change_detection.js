@@ -129,6 +129,16 @@ function _setupChangeDetection(isInfoSlide) {
 
 function saveCurrentChanges() {
   if (!currentUnsavedSlideForm) return;
+
+  // Store values since they are reset upon modal closing
+  const pendingSlide = $(`#${pendingSlideId}`);
+  const pendingActionStored = pendingAction;
+
+  $(document).one("turbo:frame-render", function () {
+    collapseAllSlides();
+    executePendingAction(pendingSlide, pendingActionStored);
+  });
+
   const submitButton = currentUnsavedSlideForm.find(".slide-submit-btn");
   submitButton.click();
 }
@@ -145,25 +155,16 @@ function discardCurrentChanges() {
   const pendingActionStored = pendingAction;
   const currentFrame = getVisibleAccordionBody().closest("turbo-frame");
 
-  $(COLLAPSE_CLASS).each(function () {
-    const $this = $(this);
-    if ($this.hasClass("show")) {
-      $this.collapse("hide");
-    }
-  });
-
   if (currentFrame.length === 1) {
-    // Reload to discard unsaved changes. Otherwise, the changes would still be
-    // visibile when reopening the slide, although the backend data is unchanged.
-    reloadTurboFrame(currentFrame.get(0));
+    $(document).one("hidden.bs.modal", function () {
+      // Reload to discard unsaved changes. Otherwise, the changes would still be
+      // visibile when reopening the slide, although the backend data is unchanged.
+      reloadTurboFrame(currentFrame.get(0));
+    });
   }
 
-  if (pendingActionStored === "show") {
-    pendingSlide.collapse("show");
-  }
-  else if (pendingActionStored === "hide") {
-    pendingSlide.collapse("hide");
-  }
+  collapseAllSlides();
+  executePendingAction(pendingSlide, pendingActionStored);
 }
 
 function preventLeavingSiteOnUnsavedChanges() {
@@ -206,5 +207,30 @@ function preventLeavingSiteOnUnsavedChanges() {
   function shouldAllowNavigatingAway() {
     const unsavedChangesModalOpen = $("#unsaved-changes-modal").hasClass("show");
     return !hasUnsavedChanges || unsavedChangesModalOpen || formSubmit;
+  }
+}
+
+/**
+ * Collapses all slides that are currently open.
+ *
+ * This may have side-effects like discarding previous state variables.
+ * Callers must ensure that their main action is triggered before calling this,
+ * or they must save the state locally.
+ */
+function collapseAllSlides() {
+  $(COLLAPSE_CLASS).each(function () {
+    const $this = $(this);
+    if ($this.hasClass("show")) {
+      $this.collapse("hide");
+    }
+  });
+}
+
+function executePendingAction(pendingSlide, pendingAction) {
+  if (pendingAction === "show") {
+    pendingSlide.collapse("show");
+  }
+  else if (pendingAction === "hide") {
+    pendingSlide.collapse("hide");
   }
 }
