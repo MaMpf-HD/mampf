@@ -42,9 +42,6 @@ class Medium < ApplicationRecord
   # DO NOT call this directly on an instance, as it will fail.
   has_many :_search_sections, through: :_search_lesson, source: :sections
 
-  # a teachable may belong to a quizzable (quiz/question/remark)
-  belongs_to :quizzable, polymorphic: true, optional: true
-
   # a medium has many tags
   has_many :medium_tag_joins, dependent: :destroy
   has_many :tags, through: :medium_tag_joins
