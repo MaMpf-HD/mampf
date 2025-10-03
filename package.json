@@ -10,6 +10,7 @@
     "friendly-challenge": "^0.9.1",
     "jquery": "^3.7.1",
     "sortablejs": "^1.15.6",
+    "tom-select": "^2.4.3",
     "trix": "^2.1.8"
   },
   "devDependencies": {
