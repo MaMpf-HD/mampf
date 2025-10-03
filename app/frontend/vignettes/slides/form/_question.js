@@ -1,105 +1,82 @@
-const QUESTION_TYPE_SELECT_ID = "vignettes-question-type-select";
+var QUESTION_TYPE_SELECT_ID = "#vignettes-question-type-select";
 
-function initializeQuestionForm(slideForm) {
-  const slideId = slideForm.getAttribute("data-slide-id");
-  if (!slideId) return;
+$(document).ready(function () {
+  handleQuestionTypes();
+  updateQuestionFieldState($(QUESTION_TYPE_SELECT_ID).val());
+  new TomSelect(QUESTION_TYPE_SELECT_ID, { allowEmptyOption: true });
+  handleMultipleChoiceEditor();
+  handleNumberOptions();
+});
 
-  const questionTypeSelect = slideForm.querySelector(`#${QUESTION_TYPE_SELECT_ID}-${slideId}`);
-  if (!questionTypeSelect) return;
+function handleQuestionTypes() {
+  const questionTypeDropdown = $(QUESTION_TYPE_SELECT_ID);
 
-  if (!questionTypeSelect.tomselect) {
-    new TomSelect(questionTypeSelect, { allowEmptyOption: true });
-  }
-
-  updateQuestionFieldState(slideForm, slideId, questionTypeSelect.value);
-  questionTypeSelect.addEventListener("change", function (event) {
-    updateQuestionFieldState(slideForm, slideId, event.target.value);
+  questionTypeDropdown.on("change", function (event) {
+    updateQuestionFieldState(event.target.value);
   });
-
-  handleMultipleChoiceEditor(slideForm, slideId);
-  handleNumberOptions(slideForm, slideId);
 }
 
-function updateQuestionFieldState(slideForm, slideId, selectedValue) {
-  console.log("update question field state");
-  const scopedId = name => `#${name}-${slideId}`;
+function updateQuestionFieldState(selectedName) {
+  const multipleChoiceField = $("#vignette-edit-multiple-choice");
+  const questionTextField = $("#vignette-question-text");
+  const questionLabel = questionTextField.find("label");
+  const numberQuestionOptionContainer = $("#vignette-number-question-options");
+  const likertScaleLanguageSelection = $("#vignette-likert-scale-language-selection");
+  const textArea = questionTextField.find("textarea");
 
-  const multipleChoiceField = slideForm.querySelector(scopedId("vignette-edit-multiple-choice"));
-  const questionTextField = slideForm.querySelector(scopedId("vignette-question-text"));
-  const questionLabel = questionTextField.querySelector("label");
-  const numberQuestionOptionContainer = slideForm.querySelector(scopedId("vignette-number-question-options"));
-  const likertScaleLanguageSelection = slideForm.querySelector(scopedId("vignette-likert-scale-language-selection"));
-  const textArea = questionTextField.querySelector("textarea");
-
-  // Type: "No answer"
-  if (selectedValue === "") {
-    questionLabel.textContent = "Your Question or leave empty";
-    textArea.removeAttribute("required");
+  // Type "No answer"
+  if (selectedName === "") {
+    questionLabel.text("Your Question or leave empty");
+    textArea.removeAttr("required");
   }
   else {
-    questionLabel.textContent = "Your Question";
-    textArea.setAttribute("required", true);
-    $(questionTextField).collapse("show");
+    questionLabel.text("Your Question");
+    textArea.attr("required", true);
+    questionTextField.collapse("show");
   }
 
-  if (selectedValue === "Vignettes::MultipleChoiceQuestion") {
-    $(multipleChoiceField).collapse("show");
-    multipleChoiceField.querySelectorAll("input").forEach((input) => {
-      input.removeAttribute("disabled");
-      input.setAttribute("required", true);
-    });
+  if (selectedName === "Vignettes::MultipleChoiceQuestion") {
+    multipleChoiceField.collapse("show");
+    multipleChoiceField.find("input").removeAttr("disabled");
+    multipleChoiceField.find("input").attr("required", true);
   }
   else {
-    $(multipleChoiceField).collapse("hide");
-    multipleChoiceField.querySelectorAll("input").forEach((input) => {
-      input.setAttribute("disabled", "disabled");
-      input.removeAttribute("required");
-    });
+    multipleChoiceField.collapse("hide");
+    multipleChoiceField.find("input").attr("disabled", "disabled");
+    multipleChoiceField.find("input").removeAttr("required");
   }
 
-  if (selectedValue === "Vignettes::NumberQuestion") {
-    $(numberQuestionOptionContainer).collapse("show");
-    numberQuestionOptionContainer.querySelectorAll("input")
-      .forEach(input => input.removeAttribute("disabled"));
+  if (selectedName === "Vignettes::NumberQuestion") {
+    numberQuestionOptionContainer.collapse("show");
+    numberQuestionOptionContainer.find("input").removeAttr("disabled");
   }
   else {
-    $(numberQuestionOptionContainer).collapse("hide");
-    numberQuestionOptionContainer.querySelectorAll("input")
-      .forEach(input => input.setAttribute("disabled", "disabled"));
+    numberQuestionOptionContainer.collapse("hide");
+    numberQuestionOptionContainer.find("input").attr("disabled", "disabled");
   }
 
-  if (selectedValue === "Vignettes::LikertScaleQuestion") {
-    $(likertScaleLanguageSelection).collapse("show");
-    likertScaleLanguageSelection.querySelectorAll("input")
-      .forEach(input => input.removeAttribute("disabled"));
+  if (selectedName === "Vignettes::LikertScaleQuestion") {
+    likertScaleLanguageSelection.collapse("show");
+    likertScaleLanguageSelection.find("input").removeAttr("disabled");
   }
   else {
-    $(likertScaleLanguageSelection).collapse("hide");
-    likertScaleLanguageSelection.querySelectorAll("input")
-      .forEach(input => input.setAttribute("disabled", "disabled"));
+    likertScaleLanguageSelection.collapse("hide");
+    likertScaleLanguageSelection.find("input").attr("disabled", "disabled");
   }
 }
 
-function handleMultipleChoiceEditor(slideForm, slideId) {
-  const scopedId = name => `#${name}-${slideId}`;
-  const addButton = slideForm.querySelector(scopedId("vignette-multiple-choice-add"));
-  const optionsContainer = slideForm.querySelector(scopedId("vignette-multiple-choice-options"));
-  const template = slideForm.querySelector(scopedId("vignette-multiple-choice-options-template"));
-
-  if (!addButton) return;
-
-  addButton.addEventListener("click", function (_evt) {
-    const newOptionHtml = template.innerHTML;
-    const uniqueId = `${slideId}-${new Date().getTime()}`;
+function handleMultipleChoiceEditor() {
+  // Adding an option
+  $("#vignette-multiple-choice-add").click(function (_evt) {
+    const template = $("#vignette-multiple-choice-options-template");
+    const newOptionHtml = template.html();
+    const uniqueId = new Date().getTime();
     const newBlockHtml = newOptionHtml.replace(/NEW_RECORD/g, uniqueId);
-    optionsContainer.insertAdjacentHTML("beforeend", newBlockHtml);
+    $("#vignette-multiple-choice-options").append(newBlockHtml);
   });
 
-  slideForm.addEventListener("click", function (evt) {
-    if (!evt.target.closest(".remove-vignette-mc-option")) {
-      return;
-    }
-
+  // Removing an option
+  $(document).on("click", ".remove-vignette-mc-option", function (evt) {
     const parentDiv = $(evt.target).closest("div");
     parentDiv.find("input").removeAttr("required");
     parentDiv.find(".vignette-mc-hidden-destroy").val("1");
@@ -107,42 +84,34 @@ function handleMultipleChoiceEditor(slideForm, slideId) {
   });
 }
 
-function handleNumberOptions(slideForm, slideId) {
-  const scopedId = name => `#${name}-${slideId}`;
-  const minField = slideForm.querySelector(scopedId("vignette-number-min"));
-  const maxField = slideForm.querySelector(scopedId("vignette-number-max"));
+function handleNumberOptions() {
+  const minField = $("#vignette-number-min");
+  const maxField = $("#vignette-number-max");
 
-  if (!minField || !maxField) {
+  if (!minField.length || !maxField.length) {
     return;
   }
 
   function validateMinMax() {
-    if (minField.value && maxField.value) {
-      const minValue = parseFloat(minField.value);
-      const maxValue = parseFloat(maxField.value);
+    if (minField.val() && maxField.val()) {
+      const minValue = parseFloat(minField.val());
+      const maxValue = parseFloat(maxField.val());
 
       if (minValue >= maxValue) {
-        minField.setCustomValidity("Minimum value must be less than maximum");
-        maxField.setCustomValidity("Maximum value must be greater than minimum");
+        minField[0].setCustomValidity("Minimum value must be less than maximum");
+        maxField[0].setCustomValidity("Maximum value must be greater than minimum");
       }
       else {
-        minField.setCustomValidity("");
-        maxField.setCustomValidity("");
+        minField[0].setCustomValidity("");
+        maxField[0].setCustomValidity("");
       }
     }
     else {
-      minField.setCustomValidity("");
-      maxField.setCustomValidity("");
+      minField[0].setCustomValidity("");
+      maxField[0].setCustomValidity("");
     }
   }
 
-  minField.addEventListener("input", validateMinMax);
-  maxField.addEventListener("input", validateMinMax);
+  minField.on("input", validateMinMax);
+  maxField.on("input", validateMinMax);
 }
-
-document.addEventListener("turbo:frame-render", function () {
-  const slideForms = document.querySelectorAll(".slide-form");
-  slideForms.forEach((slideForm) => {
-    initializeQuestionForm(slideForm);
-  });
-});

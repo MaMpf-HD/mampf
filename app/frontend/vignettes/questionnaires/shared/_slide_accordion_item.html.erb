@@ -21,6 +21,7 @@
   <% collapse_class = slide.new_record? || is_update_action ? "show" : "collapse" %>
   <div id="<%= collapse_id %>"
       data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
+      data-slide-id="<%= slide.id %>"
       class="accordion-collapse <%= collapse_class %> vignette-accordion-collapse"
       data-bs-parent="#<%= info_prefix %>slides">
 
