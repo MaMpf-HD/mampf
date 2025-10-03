@@ -124,7 +124,7 @@ Rails.application.routes.draw do
   resources :divisions, except: [:show]
 
   # feedback routes
-  resources :feedbacks, only: [:create]
+  resources :feedbacks, only: [:new, :create]
 
   # items routes
 

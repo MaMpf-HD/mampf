@@ -1,0 +1,18 @@
+[book]
+language = "en"
+src = "src"
+title = "MaMpf Architecture"
+
+[preprocessor.mermaid]
+# Requires: cargo install mdbook-mermaid
+disable_html_escape = true
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.1.0" # do not edit: managed by `mdbook-admonish install`
+
+[preprocessor.pagetoc]
+
+[output.html]
+additional-js = ["src/js/mermaid.min.js", "src/js/mermaid-init.js", "theme/pagetoc.js"]
+additional-css = ["src/css/custom.css", "src/css/mdbook-admonish.css", "theme/pagetoc.css"]
