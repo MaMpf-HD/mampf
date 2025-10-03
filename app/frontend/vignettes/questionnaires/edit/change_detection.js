@@ -40,7 +40,17 @@ function registerChangeHandlers() {
   });
 
   $(document).on("show.bs.collapse", COLLAPSE_CLASS, function (event) {
-    return handleUnsavedChanges(event, "show");
+    const allowed = handleUnsavedChanges(event, "show");
+    if (!allowed) return false;
+
+    const targetId = event.target.id;
+    $(`${COLLAPSE_CLASS}.show`).each(function () {
+      if (this.id !== targetId) {
+        $(this).collapse("hide");
+      }
+    });
+
+    return true;
   });
 
   $(document).on("hide.bs.collapse", COLLAPSE_CLASS, function (event) {
