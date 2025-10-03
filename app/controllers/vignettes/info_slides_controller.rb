@@ -47,8 +47,8 @@ module Vignettes
 
     def destroy
       unless @questionnaire.editable
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_not_deleted")
+        respond_with_flash(:alert, t("vignettes.info_slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
         return
       end
 
@@ -58,16 +58,13 @@ module Vignettes
         ActiveRecord::Base.transaction do
           # Remove associations with slides before destroying
           @info_slide.slides.clear
-
           @info_slide.destroy
         end
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.info_slide_deleted")
+        render turbo_stream: turbo_stream.remove(@info_slide)
       rescue StandardError => e
-        Rails.logger.error("Error deleting info slide: #{e.message}")
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_not_deleted")
+        respond_with_flash(:alert, t("vignettes.info_slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 

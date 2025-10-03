@@ -69,28 +69,29 @@ module Vignettes
 
     def destroy
       unless @questionnaire.editable
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.slide_not_deleted")
+        respond_with_flash(:alert, t("vignettes.slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
+        return
       end
+
       @slide = @questionnaire.slides.find(params[:id])
       position = @slide.position
 
-      # rubocop:disable Rails/SkipsModelValidations
       begin
         ActiveRecord::Base.transaction do
           @slide.destroy
 
+          # rubocop:disable Rails/SkipsModelValidations
           @questionnaire.slides.where("position > ?",
                                       position).update_all("position = position - 1")
+          # rubocop:enable Rails/SkipsModelValidations
         end
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_deleted")
+        render turbo_stream: turbo_stream.remove(@slide)
       rescue StandardError => _e
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.slide_not_deleted")
+        respond_with_flash(:alert, t("vignettes.slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
-      # rubocop:enable Rails/SkipsModelValidations
     end
 
     private

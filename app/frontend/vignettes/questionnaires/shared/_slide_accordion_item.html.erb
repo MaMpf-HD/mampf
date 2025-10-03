@@ -2,9 +2,9 @@
 <% collapse_id = "#{info_prefix}slides-collapse-#{slide.id}" %>
 <% is_update_action = controller.action_name == "update" %>
 
+<%= turbo_frame_tag slide do %>
 <div class="accordion-item">
 
-  <%= turbo_frame_tag slide do %>
     <h2 class="accordion-header">
       <button class="accordion-button <%= "collapsed" if not is_update_action %>" type="button"
               data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
@@ -32,6 +32,6 @@
         <% end %>
       </div>
     </div>
-  <% end %>
 
 </div>
+<% end %>

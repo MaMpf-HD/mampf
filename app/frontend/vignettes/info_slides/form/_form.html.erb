@@ -53,7 +53,8 @@
 
 <!-- Delete Confirmation Modal -->
 <% unless info_slide.new_record? %>
-  <div class="modal fade" id="deleteModal<%= info_slide.id %>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal fade" id="deleteModal<%= info_slide.id %>" tabindex="-1"
+       aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -68,7 +69,8 @@
           <%= button_to "Delete Info Slide", 
                 questionnaire_info_slide_path(@questionnaire, info_slide),
                 method: :delete,
-                class: "btn btn-danger"
+                class: "btn btn-danger",
+                data: { "bs-dismiss": "modal" }
           %>
         </div>
       </div>
