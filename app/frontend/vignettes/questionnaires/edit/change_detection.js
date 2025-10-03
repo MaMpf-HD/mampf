@@ -31,7 +31,6 @@ function registerChangeHandlers() {
 
   // e.g. after update of a slide
   $(document).on("turbo:frame-render", function () {
-    console.log("in frame render");
     setupChangeDetection();
   });
 
@@ -77,12 +76,12 @@ function setupChangeDetection() {
 }
 
 function _setupChangeDetection(isInfoSlide) {
-  registry.deregisterAll();
-  resetUnsavedChangesState();
-
   const visibleAccordionBody = $(`${COLLAPSE_CLASS}.show .accordion-body`);
   const form = visibleAccordionBody.find(`.${isInfoSlide ? "info-" : ""}slide-form`);
   if (form.length !== 1) return;
+
+  registry.deregisterAll();
+  resetUnsavedChangesState();
 
   const unsavedChangesWarning = $("#unsaved-changes-warning");
   const formSubmitButton = form.find(".slide-submit-btn");
