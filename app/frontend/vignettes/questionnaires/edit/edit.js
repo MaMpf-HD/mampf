@@ -1,4 +1,6 @@
-$(document).ready(function () {
+import Sortable from "sortablejs";
+
+$(document).on("turbo:load", function () {
   const $slideList = $("#slides");
   const editable = $slideList.data("questionnaire-editable");
   if (editable) {
@@ -6,6 +8,10 @@ $(document).ready(function () {
   }
 });
 
+/**
+ * Makes the Vignettes slides draggable, such that users can drag them around
+ * to change their order.
+ */
 function createSortableVignetteSlides(slideList) {
   Sortable.create(slideList.get(0), {
     animation: 150,
