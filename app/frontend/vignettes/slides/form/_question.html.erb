@@ -1,6 +1,7 @@
 <%= vite_javascript_tag "vignettes/slides/form/_question.js" %>
 
 <%= form.fields_for :question do |f| %>
+<% slide_id = form.object.id || "new" %>
 
 <!-- Question Type Selection -->
 <div class="form-floating">
@@ -15,14 +16,14 @@
         {},
         {
             class: "form-select",
-            id: "vignettes-question-type-select",
+            id: "vignettes-question-type-select-#{slide_id}",
             "aria-label": "Selection for question type",
             disabled: !form.object.questionnaire.editable
         } %>
     <%= f.label :type, t('vignettes.question_type') %>
 </div>
 
-<div id="vignette-question-text" class="form-floating mt-3 show">
+<div id="vignette-question-text-<%= slide_id %>" class="form-floating mt-3 show">
     <%= f.text_area :question_text,
         placeholder: '_',
         class: 'form-control',
@@ -36,7 +37,7 @@
     </div>
 </div>
 
-<div id="vignette-likert-scale-language-selection" class = "collapse mt-3">
+<div id="vignette-likert-scale-language-selection-<%= slide_id %>" class = "collapse mt-3">
   <div class="form-floating mb-3">
     <%= f.select :language,
         options_for_select([
@@ -47,16 +48,16 @@
         {},
         {
             class: "form-select",
-            id: "vignettes-likert-language-select",
+            id: "vignettes-likert-language-select-#{slide_id}",
             disabled: !form.object.questionnaire.editable
         } %>
     <%= f.label :language, t('vignettes.language_selection') %>
   </div>
 </div>
 
-<div id="vignette-edit-multiple-choice" class="collapse mt-3">
+<div id="vignette-edit-multiple-choice-<%= slide_id %>" class="collapse mt-3">
 
-    <div id="vignette-multiple-choice-options">
+    <div id="vignette-multiple-choice-options-<%= slide_id %>">
         <%= f.fields_for :options do |option_form| %>
             <%= render partial: "vignettes/slides/form/multiple_choice_fields",
                        locals: { f: option_form, editable: form.object.questionnaire.editable } %>
@@ -65,7 +66,7 @@
 
     <!-- later with Stimulus: -->
     <!-- https://jonathanyeong.com/rails-stimulus-dynamic-nested-form/ -->
-    <template id="vignette-multiple-choice-options-template" class="d-none">
+    <template id="vignette-multiple-choice-options-template-<%= slide_id %>" class="d-none">
         <%= f.fields_for :options, f.object.options.build,
                          child_index: 'NEW_RECORD' do |option_form| %>
             <%= render partial: "vignettes/slides/form/multiple_choice_fields",
@@ -73,7 +74,7 @@
         <% end %>
     </template>
     
-    <button type="button" id="vignette-multiple-choice-add"
+    <button type="button" id="vignette-multiple-choice-add-<%= slide_id %>"
             class="btn btn-outline-secondary"
             <%= form.object.questionnaire.editable ? '' : 'disabled' %>>
         <i class="bi bi-plus-circle"></i>
@@ -81,18 +82,18 @@
     </button>
 </div>
 
-<div id="vignette-number-question-options" class="collapse mt-3">
+<div id="vignette-number-question-options-<%= slide_id %>" class="collapse mt-3">
   <div class="card">
     <div class="card-header"><%= t('vignettes.number_question_settings') %></div>
     <div class="card-body">
       <div class="form-check mb-3">
         <%= f.check_box :only_integer, 
             class: 'form-check-input', 
-            id: 'vignette-number-only-integer',
+            id: "vignette-number-only-integer-#{slide_id}",
             disabled: !form.object.questionnaire.editable %>
         <%= f.label :only_integer, t('vignettes.only_integer'), 
             class: 'form-check-label',
-            for: 'vignette-number-only-integer' %>
+            for: "vignette-number-only-integer-#{slide_id}" %>
       </div>
       
       <!-- Min/Max controls -->
@@ -101,7 +102,7 @@
           <div class="form-floating">
             <%= f.number_field :min_number,
                 class: 'form-control',
-                id: 'vignette-number-min',
+                id: "vignette-number-min-#{slide_id}",
                 placeholder: 'Minimum value',
                 step: 'any',
                 disabled: !form.object.questionnaire.editable %>
@@ -112,7 +113,7 @@
           <div class="form-floating">
             <%= f.number_field :max_number,
                 class: 'form-control',
-                id: 'vignette-number-max',
+                id: "vignette-number-max-#{slide_id}",
                 placeholder: 'Maximum value',
                 step: 'any',
                 disabled: !form.object.questionnaire.editable %>

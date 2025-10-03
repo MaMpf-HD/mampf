@@ -4,6 +4,7 @@
       model: [@questionnaire, slide],
       local: true,
       class: "slide-form",
+      data: { "slide-id": slide.id },
       url: slide.new_record? ? questionnaire_slides_path(@questionnaire) : questionnaire_slide_path(@questionnaire, slide)) do |form| %>
 
   <div class="form-floating mb-3">
