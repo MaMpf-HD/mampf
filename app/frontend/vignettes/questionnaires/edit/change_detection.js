@@ -1,3 +1,4 @@
+import { reloadTurboFrame } from "~/entrypoints/initHotwire";
 import { HandlerRegistry } from "./handler_registry";
 
 const COLLAPSE_CLASS = ".vignette-accordion-collapse";
@@ -85,8 +86,12 @@ function setupChangeDetection() {
   _setupChangeDetection(true);
 }
 
+function getVisibleAccordionBody() {
+  return $(`${COLLAPSE_CLASS}.show .accordion-body`);
+}
+
 function _setupChangeDetection(isInfoSlide) {
-  const visibleAccordionBody = $(`${COLLAPSE_CLASS}.show .accordion-body`);
+  const visibleAccordionBody = getVisibleAccordionBody();
   const form = visibleAccordionBody.find(`.${isInfoSlide ? "info-" : ""}slide-form`);
   if (form.length !== 1) return;
 
@@ -138,6 +143,7 @@ function discardCurrentChanges() {
   // Store values since they are reset upon modal closing
   const pendingSlide = $(`#${pendingSlideId}`);
   const pendingActionStored = pendingAction;
+  const currentFrame = getVisibleAccordionBody().closest("turbo-frame");
 
   $(COLLAPSE_CLASS).each(function () {
     const $this = $(this);
@@ -145,6 +151,12 @@ function discardCurrentChanges() {
       $this.collapse("hide");
     }
   });
+
+  if (currentFrame.length === 1) {
+    // Reload to discard unsaved changes. Otherwise, the changes would still be
+    // visibile when reopening the slide, although the backend data is unchanged.
+    reloadTurboFrame(currentFrame.get(0));
+  }
 
   if (pendingActionStored === "show") {
     pendingSlide.collapse("show");

@@ -79,8 +79,7 @@
 
   <div class="accordion" id="info_slides">
     <% @questionnaire.info_slides.each() do |info_slide| %>
-      <%= render partial: "vignettes/questionnaires/shared/slide_accordion_item",
-                 locals: { slide: info_slide } %>
+      <%= turbo_frame_tag info_slide, src: turbo_slide_edit_url(info_slide) %>
     <% end %>
   </div>
 
@@ -103,8 +102,10 @@
        data-questionnaire-id="<%= @questionnaire.id %>"
        data-questionnaire-editable="<%= @questionnaire.editable %>">
     <% @slides.each() do |slide| %>
-      <%= render partial: "vignettes/questionnaires/shared/slide_accordion_item",
-                 locals: { slide: slide } %>
+      <!-- The div is needed such that slide drag animations work -->
+      <div>
+        <%= turbo_frame_tag slide, src: turbo_slide_edit_url(slide) %>
+      </div>
     <% end %>
   </div>
 

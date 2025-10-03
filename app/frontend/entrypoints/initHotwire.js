@@ -50,3 +50,25 @@ function addNewStreamRenderEvent() {
 }
 
 addNewStreamRenderEvent();
+
+/**
+ * Reloads a Turbo Frame by resetting its `src` attribute. Most of the time,
+ * you won't need this.
+ *
+ * We expect a normal HTML element here, not a jQuery object.
+ *
+ * Taken from: https://github.com/hotwired/turbo/issues/202#issuecomment-795540643
+ */
+export function reloadTurboFrame(element) {
+  if (!(element instanceof HTMLElement)) {
+    throw new Error("Element must be an instance of HTMLElement");
+  }
+
+  if (!element || !element.src) {
+    throw new Error("Element must be a Turbo Frame with a valid 'src' attribute");
+  }
+
+  const { src } = element;
+  element.src = null;
+  element.src = src;
+}

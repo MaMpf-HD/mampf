@@ -1,43 +1,38 @@
+<%= turbo_frame_tag slide do %>
+
 <% info_prefix = slide.is_a?(Vignettes::InfoSlide) ? 'info-' : '' %>
 <% collapse_id = "#{info_prefix}slides-collapse-#{slide.id}" %>
 <% is_update_action = ["update", "create"].include?(controller.action_name) %>
 
-<!-- The outer div is needed since slides are draggable and only divs
-     can properly receive the respective CSS transforms
-     (and NOT the turbo-frame-tag). -->
-<div>
-  <%= turbo_frame_tag slide do %>
-    <div class="accordion-item">
+<div class="accordion-item">
+  <h2 class="accordion-header">
+    <button class="accordion-button <%= "collapsed" if not is_update_action %>" type="button"
+            data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
+            aria-expanded="false" aria-controls="<%= collapse_id %>">
+      <% if slide.is_a?(Vignettes::InfoSlide) %>
+        <span class="me-2 text-secondary">#<%= slide.id %></span>
+        <%= slide.title %>
+      <% else %>
+        <%= slide.title %>
+      <% end %>
+    </button>
+  </h2>
 
-        <h2 class="accordion-header">
-          <button class="accordion-button <%= "collapsed" if not is_update_action %>" type="button"
-                  data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
-                  aria-expanded="false" aria-controls="<%= collapse_id %>">
-            <% if slide.is_a?(Vignettes::InfoSlide) %>
-              <span class="me-2 text-secondary">#<%= slide.id %></span>
-              <%= slide.title %>
-            <% else %>
-              <%= slide.title %>
-            <% end %>
-          </button>
-        </h2>
+  <% collapse_class = slide.new_record? || is_update_action ? "show" : "collapse" %>
+  <div id="<%= collapse_id %>"
+      data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
+      data-slide-id="<%= slide.id %>"
+      class="accordion-collapse <%= collapse_class %> vignette-accordion-collapse"
+      data-bs-parent="#<%= info_prefix %>slides">
 
-        <% collapse_class = slide.new_record? || is_update_action ? "show" : "collapse" %>
-        <div id="<%= collapse_id %>"
-            data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
-            data-slide-id="<%= slide.id %>"
-            class="accordion-collapse <%= collapse_class %> vignette-accordion-collapse"
-            data-bs-parent="#<%= info_prefix %>slides">
-
-          <div class="accordion-body">
-            <% if slide.is_a?(Vignettes::InfoSlide) %>
-              <%= render partial: "vignettes/info_slides/form/form", locals: { info_slide: slide } %>
-            <% else %>
-              <%= render partial: "vignettes/slides/form/form", locals: { slide: slide } %>
-            <% end %>
-          </div>
-        </div>
-
+    <div class="accordion-body">
+      <% if slide.is_a?(Vignettes::InfoSlide) %>
+        <%= render partial: "vignettes/info_slides/form/form", locals: { info_slide: slide } %>
+      <% else %>
+        <%= render partial: "vignettes/slides/form/form", locals: { slide: slide } %>
+      <% end %>
     </div>
-  <% end %>
+  </div>
 </div>
+
+<% end %>
