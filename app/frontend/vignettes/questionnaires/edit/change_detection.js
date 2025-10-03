@@ -135,21 +135,21 @@ function discardCurrentChanges() {
   $("#unsaved-changes-modal").modal("hide");
   $("#unsaved-changes-warning").addClass("d-none");
 
-  function closeAllOpenSlides() {
-    $(".vignette-accordion-collapse").each(function () {
-      const $this = $(this);
-      if ($this.hasClass("show")) {
-        $this.collapse("hide");
-      }
-    });
-  }
-  closeAllOpenSlides();
-
+  // Store values since they are reset upon modal closing
   const pendingSlide = $(`#${pendingSlideId}`);
-  if (pendingAction === "show") {
+  const pendingActionStored = pendingAction;
+
+  $(COLLAPSE_CLASS).each(function () {
+    const $this = $(this);
+    if ($this.hasClass("show")) {
+      $this.collapse("hide");
+    }
+  });
+
+  if (pendingActionStored === "show") {
     pendingSlide.collapse("show");
   }
-  else if (pendingAction === "hide") {
+  else if (pendingActionStored === "hide") {
     pendingSlide.collapse("hide");
   }
 }
