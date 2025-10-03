@@ -1,99 +1,169 @@
 # Future Extensions & Roadmap
 
-Curated list of planned or potential enhancements, grouped by domain.
+Collection of potential enhancements and ideas for future development.
 
-## 1. Solver & Allocation
-Near-term
-- CP-SAT strategy (fairness tiers, exclusions, group pairing).
-- Soft penalties (time-of-day, instructor load).
-- Diversity / quota constraints (e.g., track, campus).
-Medium
-- Multi-round capacity release (phased seats).
-- Waitlist modeling (flow with priority costs).
-Long-term
-- Multi-campaign global optimization (joint tutorial+lab balancing).
-- Audit trail for solver inputs/outputs (persisted JSON).
+```admonish note "Implementation Status"
+The core architecture documented in Chapters 1-9 represents the planned baseline. This chapter lists potential future enhancements.
+```
 
-## 2. Registration & Policies
+---
 
-- Policy trace persistence & user-facing explanation endpoints.
-- Rate limiting / throttling for FCFS hotspots.
-- Bulk eligibility preview UI (matrix: user × policy).
-- A/B style alternative policy sets (simulate impact).
+## 1. Allocation Algorithm
 
-## 3. Rosters & Administration
+- CP-SAT strategy (fairness tiers, exclusions, group pairing)
+- Soft penalties (time-of-day preferences, instructor load balancing)
+- Diversity/quota constraints (track distribution, campus location)
+- Multi-round capacity release (phased seat allocation)
+- Waitlist modeling (flow network with priority costs)
+- Multi-campaign global optimization (joint tutorial + lab balancing)
+- Solver audit trail (persist inputs/outputs as JSON for debugging)
+- Alternative algorithm comparison (min-cost flow vs. CP-SAT benchmarks)
 
-- Batch roster operations (CSV diff apply).
-- Capacity forecasting (suggest rebalancing moves).
-- Automatic balancing script (soft heuristic before manual tweaks).
-- Roster change history model (immutable log beyond application logs).
+---
 
-## 4. Assessments & Grading
+## 2. Registration & Policy System
 
-- Full Submittable concern (Assessment / Task polymorphic) replacing legacy assignment_id routing.
-- Inline annotation integration (external service).
-- Rubric templates per Task (structured criteria & auto-sum).
-- Late policy engine (penalties computation abstraction).
-- Task dependency graph (unlock logic).
+- Policy trace persistence (store evaluation results for audit)
+- User-facing explanations (API endpoint showing why ineligible)
+- Rate limiting for FCFS hotspots
+- Bulk eligibility preview (matrix: users × policies)
+- Policy simulation mode (test changes without affecting real data)
 
-## 5. Exam Eligibility & Grading Schemes Enhancements
+---
 
-- Multiple concurrent eligibility policies (AND/OR logic expression builder).
-- Incremental eligibility recompute triggers (listen to TaskPoint changes).
-- Advanced grade schemes:
-	- Parametric percentile buckets (automatic equal-size grouping).
-	- Curve normalization (mean target, std deviation scaling).
-	- Piecewise linear re-scaling editor with live histogram.
-- CourseGradeRecord aggregator (weighted composition + pass/fail rules).
+## 3. Roster Management
 
-## 6. Analytics & Reporting
+- Batch operations (CSV import/export)
+- Capacity forecasting and rebalancing suggestions
+- Automatic load balancing (heuristic-based)
+- Enhanced change history UI
 
-- Materialized views / summary tables for performance.
-- Export pipelines (CSV, JSON API) with snapshot version tags.
-- Instructor dashboards: variance heatmaps, allocation satisfaction metrics (average preference rank).
-- Student-facing “what if” grade projection.
+---
 
-## 7. Integrity & Ops
-- Automatic integrity auditor (scheduled job + report page).
-- mdBook link checker CI integration.
-- Background job instrumentation (duration, failure rate).
-- Chaos test mode for solver (inject capacity perturbations pre-prod).
+## 4. Assessment & Grading
 
-## 8. Performance / Scaling
-- Incremental solver rebuild (delta arcs) for minor preference edits pre-deadline.
-- Caching layers:
-	- Eligibility record memoization (versioned key).
-	- Points total cache invalidated per TaskPoint write.
-- Sharding strategy outline once user_registrations volume > threshold.
+- Inline annotation integration (external service)
+- Rubric templates per task (structured criteria + auto-sum)
+- Late policy engine (configurable penalty computation)
+- Task dependencies (unlock logic)
+- Peer review workflows
 
-## 9. API & Extensibility
-- Public GraphQL / REST endpoints (read-only) for allocation & grades.
-- Webhooks on finalize!, grade published, eligibility change.
-- Event bus (internal) to decouple downstream reactions (notifications, analytics).
+### Multiple Choice Extensions
 
-## 10. Security & Compliance
-- Policy evaluation audit trail (tamper-evident).
-- PII minimization in exported artifacts.
-- Configurable data retention (auto-archive old TaskPoints / submissions).
+- MC question bank (reusable question library)
+- Randomized exams (per-student variants)
+- Statistical analysis (item difficulty, discrimination indices)
 
-## 11. Developer Tooling
-- Reference seed script generating synthetic campaigns & grading scenarios.
-- Solver scenario visualizer (graph export to DOT / Mermaid).
-- Benchmark harness comparing strategies (min_cost_flow vs cp_sat) on sample loads.
+---
 
-## 12. UI Enhancements
-- Real-time capacity counters (WebSocket).
-- Preference rank drag/drop ordering with immediate validation.
-- Grade distribution histogram overlays (scheme preview).
+## 5. Exam Eligibility
 
-## 13. Migration Strategy (Legacy → New)
-- Step 1: Dual-write Registration::Policy & legacy eligibility flags.
-- Step 2: Backfill ExamEligibilityRecords.
-- Step 3: Read switch; monitor parity metrics.
-- Step 4: Remove deprecated columns.
+- Multiple concurrent policies (AND/OR logic expression builder)
+- Incremental recompute (listen to grade changes, trigger automatic update)
+- Eligibility preview for students (before registration opens)
+- Custom formula DSL (complex eligibility calculations)
 
-## 14. Sunset / Cleanup Targets
-- Legacy policy fields on Registration::Campaign (folded into Registration::Policy table).
-- Manual per-assessment roster seeds replaced by generic roster seeding service.
-- Obsolete submission fields after Submittable adoption.
+---
 
+## 6. Grade Schemes
+
+- Percentile buckets (automatic equal-size grouping)
+- Curve normalization (mean target, standard deviation scaling)
+- Piecewise linear editor with live histogram preview
+- Custom function DSL (arbitrary grade computations)
+- Course-level aggregation (weighted composition across assessments)
+- Pass/fail rules (configurable requirements)
+- Bonus points system (extra credit with caps)
+
+---
+
+## 7. Analytics & Reporting
+
+- Student grade projection ("what if" calculator)
+- Progress tracking dashboard
+- Historical trend comparison
+- Allocation satisfaction metrics (average preference rank achieved)
+- Grade distribution analysis (variance heatmaps, outliers)
+- Capacity utilization tracking
+- Tutor workload reports
+- CSV export with snapshot versioning
+- JSON API (read-only endpoints)
+- Materialized views for performance
+
+---
+
+## 8. Operational Tools
+
+- Automatic integrity auditor (scheduled job checking invariants)
+- Integrity dashboard (real-time constraint violations)
+- Performance metrics (query times, job durations, failure rates)
+- mdBook link checker CI integration
+- Chaos testing (inject perturbations in test environment)
+- Solver visualizer (export flow network to DOT/Mermaid)
+- Benchmark harness (compare algorithm performance)
+
+---
+
+## 9. Performance & Scalability
+
+- Incremental solver updates (delta changes for preference edits)
+- Eligibility caching (memoize with versioned keys)
+- Points total caching (invalidate per TaskPoint write)
+- Database sharding strategy
+
+---
+
+## 10. API & Extensibility
+
+- GraphQL endpoint (read-only access to allocations/grades)
+- REST API (standard CRUD for integrations)
+- Webhooks (events: finalize, grade published, eligibility change)
+- Internal event bus (decouple reactions)
+- Plugin system (custom policy types, grade schemes)
+
+---
+
+## 11. Security & Compliance
+
+- Policy audit trail (tamper-evident logs)
+- PII minimization (anonymize exports, configurable retention)
+- GDPR compliance (data export, deletion, consent management)
+
+---
+
+## 12. Developer Experience
+
+- Reference seed script (generate realistic test data)
+- Scenario generator (complex allocation/grading scenarios)
+- Solver visualizer (export flow network to DOT/Mermaid)
+- Benchmark harness (compare algorithm performance)
+- Documentation sync (CI check for broken mdbook links)
+
+---
+
+## 13. UI/UX
+
+- Real-time capacity counters (WebSocket updates)
+- Drag-drop preference ordering with validation
+- Grade histogram overlay (scheme preview)
+
+---
+
+## 14. Migration & Cleanup
+
+- Dual-write (new + legacy systems)
+- Backfill historical data
+- Read switch with parity monitoring
+- Remove deprecated code/columns
+- Legacy eligibility flags cleanup
+- Manual roster seeding code removal
+- Obsolete submission routing cleanup
+
+---
+
+## 15. Research Opportunities
+
+- Fairness metrics (study allocation algorithm properties)
+- Optimal grading curves (per-subject analysis)
+- Predictive modeling (early intervention for at-risk students)
+- Learning analytics (engagement vs. outcomes correlation)

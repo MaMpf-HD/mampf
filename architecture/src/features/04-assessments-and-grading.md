@@ -222,7 +222,10 @@ One graded component (problem, question, or rubric item) within an assessment th
 | `position`       | DB column        | Display order within the assessment                            |
 | `max_points`     | DB column        | Maximum achievable points for this task                        |
 | `description`    | DB column        | Optional detailed instructions or rubric text                  |
+| `is_multiple_choice` | DB column (Boolean) | Marks this task as a multiple choice part (for exam-specific grading) |
+| `grade_scheme_id` | DB column (FK, optional) | Links to a grade scheme specifically for this task (only for MC tasks) |
 | `task_points`    | Association      | All point records across all students for this task            |
+| `grade_scheme`   | Association      | Optional grade scheme for this task (MC exams only)            |
 
 ### Behavior Highlights
 
@@ -240,15 +243,66 @@ module Assessment
     self.table_name = "assessment_tasks"
 
     belongs_to :assessment, class_name: "Assessment::Assessment"
+    belongs_to :grade_scheme, class_name: "GradeScheme::Scheme",
+               optional: true
     has_many :task_points, dependent: :destroy,
       class_name: "Assessment::TaskPoint"
 
-  validates :title, presence: true
-  validates :max_points, numericality: { greater_than_or_equal_to: 0 }
-  validates :position, numericality: { only_integer: true }, allow_nil: true
+    validates :title, presence: true
+    validates :max_points, numericality: { greater_than_or_equal_to: 0 }
+    validates :position, numericality: { only_integer: true }, allow_nil: true
+    validates :is_multiple_choice, inclusion: { in: [true, false] }
 
-  acts_as_list scope: :assessment
+    validate :mc_flag_only_for_exams
+    validate :at_most_one_mc_task_per_assessment
+    validate :grade_scheme_only_for_mc_tasks
+
+    scope :multiple_choice, -> { where(is_multiple_choice: true) }
+    scope :regular, -> { where(is_multiple_choice: false) }
+
+    acts_as_list scope: :assessment
+
+    private
+
+    def mc_flag_only_for_exams
+      return unless is_multiple_choice?
+      return if assessment.assessable.is_a?(Exam)
+
+      errors.add(:is_multiple_choice,
+                 "can only be set for exam assessments")
+    end
+
+    def at_most_one_mc_task_per_assessment
+      return unless is_multiple_choice?
+      return unless assessment
+
+      other_mc_tasks = assessment.tasks.multiple_choice
+                                 .where.not(id: id)
+
+      if other_mc_tasks.exists?
+        errors.add(:is_multiple_choice,
+                   "only one MC task allowed per assessment")
+      end
+    end
+
+    def grade_scheme_only_for_mc_tasks
+      return unless grade_scheme_id.present?
+      return if is_multiple_choice?
+
+      errors.add(:grade_scheme,
+                 "can only be assigned to multiple choice tasks")
+    end
+  end
 end
+```
+
+```admonish note "Multiple Choice Support"
+The `is_multiple_choice` flag and `grade_scheme_id` are used for exams with MC parts that require special grading according to German examination law. See the [Exam Model](05a-exam-model.md) chapter for details on MC exam grading.
+
+Validations ensure:
+- MC flag can only be set for exam assessments
+- Only one MC task per assessment
+- Only MC tasks can have task-level grade schemes
 ```
 
 ### Usage Scenarios
@@ -288,7 +342,7 @@ The points and feedback assigned to a specific student for a specific task withi
 ### Behavior Highlights
 
 - Enforces uniqueness per (participation, task) via database constraint
-- Triggers recomputation of `AssessmentParticipation.points_total` on save
+- Triggers recomputation of `Assessment::Participation.points_total` on save
 - Visibility controlled by `assessment.results_published`, not per-task state
 - Links back to the specific submission that was graded for audit trails
 - Validation ensures points do not exceed task maximum
@@ -623,30 +677,34 @@ class Talk < ApplicationRecord
 end
 ```
 
-### Exam (Future)
+### Exam
 **_A Pointable and Gradable Target_**
 
-```admonish warning "Planned for future implementation"
-The `Exam` model does not yet exist in MaMpf. This section describes the planned integration once exams are added to the system.
+```admonish info "See Dedicated Chapter"
+The `Exam` model is fully documented in the [Exam Model](05a-exam-model.md) chapter, including registration, grading, and multiple choice exam support. This section provides a brief overview of its assessment integration.
 ```
 
-#### Planned Grading Implementation
-The future `Exam` model will include both `Assessment::Pointable` and `Assessment::Gradable` concerns for dual-mode grading.
+#### Assessment Integration
+The `Exam` model includes both `Assessment::Pointable` and `Assessment::Gradable` concerns for comprehensive exam grading.
 
 | Concern/Method | Implementation Detail |
 |---|---|
-| `Assessment::Pointable` | Will track points per exam question |
-| `Assessment::Gradable` | Will record final grade for transcripts |
-| Roster integration | Students will come from exam registration via `Registration::Registerable` → `Roster::Rosterable` |
-| Submission requirement | `requires_submission: false` since exams will be graded in person |
+| `Assessment::Pointable` | Tracks points per exam question/problem |
+| `Assessment::Gradable` | Records final grade for transcripts |
+| `Assessment::Assessable` | Base concern linking exam to Assessment::Assessment |
+| Roster integration | Students come from exam registration via `Registration::Registerable` → `Roster::Rosterable` |
+| Submission requirement | `requires_submission: false` since exams are graded in person (or scanned separately) |
 
-#### Planned Workflow
-1. Registration campaign runs, students register
+#### Grading Workflow
+1. Students register for exam via registration campaign
 2. Campaign materializes → exam roster is populated
-3. `seed_participations_from_roster!` creates participation records
-4. Tutors grade per-question points via tasks
-5. System computes `points_total` for each student
-6. Teacher calls `exam.set_grade!(user: student, value: "1.3", grader: professor)` to record official grade
+3. After exam is administered, staff creates `Assessment::Assessment` for the exam
+4. `seed_participations_from_roster!` creates participation records
+5. Tutors grade per-question points via tasks
+6. System computes `points_total` for each student
+7. Staff applies grade scheme to convert points to final grades
+
+For multiple choice exam support and legal compliance, see [Exam Model - Multiple Choice Exams](05a-exam-model.md#multiple-choice-exams).
 
 ---
 
@@ -691,7 +749,7 @@ To integrate with the grading system, the submission structure changes:
 ### Rationale for Key Decisions
 
 **Why change `assignment_id` to `assessment_id`:**
-- More general: future `Exam` model could also have submissions (scanned answer sheets)
+- More general: `Exam` model can also have submissions (scanned answer sheets)
 - Decouples submissions from specific domain models
 - Aligns with unified grading architecture
 
@@ -725,9 +783,9 @@ To integrate with the grading system, the submission structure changes:
 
 ### Usage Scenarios
 
-- **Team homework submission:** Alice, Bob, and Carol form a team for Homework 3. Alice uploads `HW3.pdf` via the submission interface. The system creates one `Submission` record linked to all three students via `user_submission_joins`, then updates each team member's `AssessmentParticipation` record: `status: :submitted` and `submitted_at: Time.current`. When a tutor grades this submission, `TaskPoint` records are created for all three team members with identical points.
+- **Team homework submission:** Alice, Bob, and Carol form a team for Homework 3. Alice uploads `HW3.pdf` via the submission interface. The system creates one `Submission` record linked to all three students via `user_submission_joins`, then updates each team member's `Assessment::Participation` record: `status: :submitted` and `submitted_at: Time.current`. When a tutor grades this submission, `TaskPoint` records are created for all three team members with identical points.
 
-- **Per-task uploads (new feature):** An assignment allows students to upload separate files for each problem. The team uploads `Problem1.pdf` with `task_id: 1`, `Problem2.pdf` with `task_id: 2`. Each upload updates the team members' `AssessmentParticipation.submitted_at` timestamp (idempotent if already set). Tutors can grade each problem independently, and the grading service still fans out points to all team members for each task.
+- **Per-task uploads (new feature):** An assignment allows students to upload separate files for each problem. The team uploads `Problem1.pdf` with `task_id: 1`, `Problem2.pdf` with `task_id: 2`. Each upload updates the team members' `Assessment::Participation.submitted_at` timestamp (idempotent if already set). Tutors can grade each problem independently, and the grading service still fans out points to all team members for each task.
 
 - **Audit trail for complaints:** A student complains about their grade on Problem 2. The teacher queries the `TaskPoint` record, follows the `submission_id` link, and retrieves the original `Problem2.pdf` file to review the grading decision.
 
@@ -825,30 +883,30 @@ erDiagram
     Assessment ||--o{ Participation : "has many"
     Assessment ||--o{ Task : "has many"
     Assessment }o--|| Assessable : "belongs to (polymorphic)"
-    
+
     Participation ||--o{ TaskPoint : "has many"
     Participation }o--|| User : "belongs to"
     Participation }o--|| Assessment : "belongs to"
-    
+
     Task ||--o{ TaskPoint : "has many"
     Task }o--|| Assessment : "belongs to"
-    
+
     TaskPoint }o--|| Participation : "belongs to"
     TaskPoint }o--|| Task : "belongs to"
     TaskPoint }o--|| Submission : "belongs to (optional)"
     TaskPoint }o--|| User : "graded by (optional)"
-    
+
     Submission ||--o{ TaskPoint : "generates (optional)"
     Submission ||--o{ UserSubmissionJoin : "has many"
     Submission }o--|| Assessment : "belongs to"
     Submission }o--|| Tutorial : "belongs to"
     Submission }o--|| Task : "for specific task (optional)"
-    
+
     UserSubmissionJoin }o--|| Submission : "belongs to"
     UserSubmissionJoin }o--|| User : "belongs to"
-    
+
     Assignment ||--|| Assessment : "assessable"
-    Exam ||--|| Assessment : "assessable (future)"
+    Exam ||--|| Assessment : "assessable"
     Talk ||--|| Assessment : "assessable"
 ```
 
@@ -866,48 +924,48 @@ sequenceDiagram
     participant Part as Assessment::Participation
     actor Student
     participant Sub as Submission
-    
+
     Teacher->>A: Create assignment
     A->>Assess: ensure_pointbook!(title, requires_submission: true)
     Assess->>Assess: Create/update assessment record
     Assess-->>A: Assessment created
-    
+
     Teacher->>A: seed_participations_from_roster!
     A->>L: lecture.tutorials
     L-->>A: [tutorial_1, tutorial_2, ...]
-    
+
     loop For each tutorial
         A->>Tut: tutorial.roster_user_ids
         Tut-->>A: [student_ids...]
     end
-    
+
     A->>A: user_ids.uniq (deduplicate)
-    
+
     loop For each unique student
         A->>Part: Create participation
         Part->>Part: Set status: :not_started
         Part->>Part: Set points_total: 0
     end
-    
+
     A-->>Teacher: Participations seeded
-    
+
     Teacher->>Assess: Add tasks (Problem 1, Problem 2, ...)
     Assess->>Assess: Create Assessment::Task records
-    
+
     Note over Teacher,Assess: Assessment is now ready for student work
-    
+
     Student->>Sub: Upload homework file
     Sub->>Sub: Create submission record
     Sub->>Sub: Link to team members via user_submission_joins
-    
+
     loop For each team member
         Sub->>Part: Find participation by user_id
         Part->>Part: Update status: :submitted
         Part->>Part: Set submitted_at: Time.current
     end
-    
+
     Sub-->>Student: Submission confirmed
-    
+
     Note over Student,Part: Participations track submission history<br/>even after grading
 ```
 
@@ -923,32 +981,32 @@ sequenceDiagram
     participant Sub as Submission
     participant Part as Assessment::Participation
     participant TP as Assessment::TaskPoint
-    
+
     Tutor->>UI: Select submission for Problem 1
     UI->>Sub: Fetch team members
     Sub-->>UI: [Alice, Bob, Carol]
-    
+
     Tutor->>UI: Enter points: 8/10
     UI->>SG: grade_task!(submission, task, 8, tutor)
-    
+
     SG->>Sub: submission.assessment
     Sub-->>SG: Assessment
     SG->>Sub: submission.users.pluck(:id)
     Sub-->>SG: [user_id_1, user_id_2, user_id_3]
-    
+
     SG->>Part: Find participations for team members
     Part-->>SG: [participation_1, participation_2, participation_3]
-    
+
     rect rgb(240, 248, 255)
         Note over SG,TP: Database Transaction
-        
+
         loop For each team member
             SG->>TP: find_or_initialize_by(participation, task)
             TP-->>SG: TaskPoint instance
             SG->>TP: Update points, grader, submission_id
             SG->>TP: save!
         end
-        
+
         loop For each participation
             SG->>Part: recompute_points_total!
             Part->>TP: sum(:points)
@@ -956,10 +1014,10 @@ sequenceDiagram
             Part->>Part: update!(points_total)
         end
     end
-    
+
     SG-->>UI: Grading complete
     UI-->>Tutor: Show success confirmation
-    
+
     Note over Tutor,TP: Points visible when<br/>assessment.results_published = true
 ```
 
@@ -970,35 +1028,35 @@ sequenceDiagram
 ```mermaid
 stateDiagram-v2
     [*] --> draft: Assessment created
-    
+
     draft --> open: Teacher opens for students
     draft --> archived: Cancelled before opening
-    
+
     open --> closed: Due date passed / manually closed
-    
+
     closed --> graded: All participations graded
     closed --> open: Reopened (deadline extended)
-    
+
     graded --> archived: Semester ends
     graded --> closed: Re-opened for re-grading
-    
+
     archived --> [*]
-    
+
     note right of draft
         Teacher configures tasks,
         not visible to students
     end note
-    
+
     note right of open
         Students can view/submit,
         results_published: false
     end note
-    
+
     note right of closed
         No more submissions,
         grading in progress
     end note
-    
+
     note right of graded
         All graded,
         results can be published
@@ -1023,7 +1081,7 @@ app/
 │   │
 │   ├── assignment.rb           # includes Assessment::Pointable
 │   ├── talk.rb                 # includes Assessment::Gradable
-│   ├── exam.rb                 # (future) includes both concerns
+│   ├── exam.rb                 # includes both concerns + Registration + Roster
 │   └── submission.rb           # extended with assessment_id
 │
 └── services/
@@ -1045,7 +1103,7 @@ app/
 The following tables support the assessment system:
 
 | Table Name | Namespace Model | Purpose |
-|------------|-----------------|----------|
+|------------|-----------------|---------|
 | `assessments` | `Assessment::Assessment` | Gradebook containers for graded work |
 | `assessment_participations` | `Assessment::Participation` | Per-student grade records |
 | `assessment_tasks` | `Assessment::Task` | Graded components within assessments |
@@ -1053,4 +1111,4 @@ The following tables support the assessment system:
 | `submissions` | `Submission` | Existing model, extended with `assessment_id` |
 
 **Naming rationale:** Namespaced table names follow Rails conventions and prevent collisions with potential future models (e.g., `Quiz::Task`, `Exercise::Task`).
-```
+
