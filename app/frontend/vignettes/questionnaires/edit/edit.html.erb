@@ -203,20 +203,29 @@
 </div>
 
 <!-- Unsaved Changes Modal -->
-<div class="modal fade" id="unsaved-changes-modal" tabindex="-1" aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
+<div class="modal fade" id="unsaved-changes-modal" tabindex="-1"
+     aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <div class="modal-header">
         <h5 class="modal-title" id="unsavedChangesModalLabel"><%= t("vignettes.unsaved_changes") %></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+
       <div class="modal-body">
         <%= t("vignettes.unsaved_changes_modal") %>
       </div>
+
       <div class="modal-footer">
-        <button type="button" id="save-changes-btn" class="btn btn-primary"><%= t("buttons.save_changes") %></button>
-        <button type="button" id="discard-changes-btn" class="btn btn-secondary"><%= t("buttons.discard_changes") %></button>
+        <button type="button" id="save-changes-btn" class="btn btn-primary">
+          <%= t("buttons.save_changes") %>
+        </button>
+        <button type="button" id="discard-changes-btn" class="btn btn-secondary">
+          <%= t("buttons.discard_changes") %>
+        </button>
       </div>
+
     </div>
   </div>
 </div>
