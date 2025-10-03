@@ -77,7 +77,7 @@
   <!-- 🎈 Info Slides -->
   <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h1>
 
-  <div class="accordion" id="info_slides">
+  <div class="accordion" id="info_slides" data-controller="frames-loader">
     <% @questionnaire.info_slides.each() do |info_slide| %>
       <%= turbo_frame_tag info_slide, src: turbo_slide_edit_url(info_slide) %>
     <% end %>
@@ -99,6 +99,7 @@
   <% end %>
 
   <div class="accordion" id="slides"
+       data-controller="frames-loader"
        data-questionnaire-id="<%= @questionnaire.id %>"
        data-questionnaire-editable="<%= @questionnaire.editable %>">
     <% @slides.each() do |slide| %>
