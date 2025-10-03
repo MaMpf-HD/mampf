@@ -35,7 +35,7 @@
 
       <% else %>
 
-        <%= turbo_frame_tag slide, loading: "lazy", src: turbo_slide_edit_url(slide) do %>
+        <%= turbo_frame_tag slide, src: turbo_slide_edit_url(slide) do %>
           <% unless slide.new_record? %>
             <!-- Loading spinner -->
             <div class="d-flex justify-content-center mt-3 mb-3">
