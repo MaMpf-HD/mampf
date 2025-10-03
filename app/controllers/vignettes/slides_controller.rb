@@ -3,6 +3,7 @@ module Vignettes
     before_action :set_questionnaire
     before_action :check_edit_accessibility, only: [:new, :create, :edit, :update, :destroy]
     before_action :check_empty_multiple_choice_option, only: [:update, :create]
+    before_action :require_turbo_frame, only: [:new, :edit]
 
     def new
       return unless @questionnaire.editable

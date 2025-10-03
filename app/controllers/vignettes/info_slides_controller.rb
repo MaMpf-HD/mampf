@@ -4,6 +4,7 @@ module Vignettes
     before_action :set_info_slide, only: [:edit, :update]
     before_action :check_empty_title, only: [:create, :update]
     before_action :check_empty_icon, only: [:create, :update]
+    before_action :require_turbo_frame, only: [:new, :edit]
 
     def new
       @info_slide = InfoSlide.new
