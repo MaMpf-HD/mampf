@@ -77,17 +77,18 @@ export default class extends Controller {
     this.loaded.add(frame);
     if (this.loaded.size >= this.total) {
       this.finish();
-      if (this.boundOnFrameRender) {
-        this.contentWrapper.removeEventListener("turbo:frame-render", this.boundOnFrameRender);
-      }
     }
   }
 
   finish() {
     if (this.spinner && this.spinner.parentNode) this.spinner.remove();
     if (this.contentWrapper) {
-      this.contentWrapper.classList.remove("d-none");
-      this.contentWrapper.removeAttribute("aria-hidden");
+      while (this.contentWrapper.firstChild) {
+        this.element.insertBefore(this.contentWrapper.firstChild, this.contentWrapper);
+      }
+      this.contentWrapper.remove();
+      this.contentWrapper = null;
     }
+    this.disconnect();
   }
 }
