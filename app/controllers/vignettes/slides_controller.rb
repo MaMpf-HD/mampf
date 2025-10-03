@@ -121,8 +121,8 @@ module Vignettes
         return if current_user.admin
         return if current_user.in?(@questionnaire.lecture.editors_with_inheritance)
 
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    alert: t("vignettes.not_accessible")
+        respond_with_flash(:alert, t("vignettes.not_accessible"),
+                           fallback_location: edit_questionnaire_path(@questionnaire.lecture))
       end
 
       def check_empty_multiple_choice_option
@@ -131,7 +131,8 @@ module Vignettes
                                         :type) == "Vignettes::MultipleChoiceQuestion"
 
         if slide_params.dig(:question_attributes, :options_attributes).empty?
-          redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_option")
+          respond_with_flash(:alert, t("vignettes.no_option"),
+                             fallback_location: edit_questionnaire_path(@questionnaire))
           return
         end
 
@@ -142,13 +143,15 @@ module Vignettes
           next unless option[:_destroy] == "false"
           next unless option[:text].empty?
 
-          redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.empty_option")
+          respond_with_flash(:alert, t("vignettes.empty_option"),
+                             fallback_location: edit_questionnaire_path(@questionnaire))
           break
         end
 
         return if exists_non_destroyed_option
 
-        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_option")
+        respond_with_flash(:alert, t("vignettes.no_option"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       def redirect_params

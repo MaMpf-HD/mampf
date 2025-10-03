@@ -78,8 +78,8 @@ module Vignettes
       def check_empty_title
         return if info_slide_params[:title].present? && info_slide_params[:title].length.positive?
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_empty_title")
+        respond_with_flash(:alert, t("vignettes.info_slide_empty_title"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       def check_empty_icon
@@ -87,8 +87,8 @@ module Vignettes
           return
         end
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_empty_icon")
+        respond_with_flash(:alert, t("vignettes.info_slide_empty_icon"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       def set_questionnaire
