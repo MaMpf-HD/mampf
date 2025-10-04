@@ -3,7 +3,7 @@ module DeviseHelper
     links = []
 
     if controller_name != "sessions"
-      links << link_to(t(".login"),
+      links << link_to(t("devise.shared.links.login"),
                        new_session_path(resource_name, params: { locale: I18n.locale }))
     end
 
@@ -14,7 +14,7 @@ module DeviseHelper
 
     if devise_mapping.confirmable? && controller_name != "confirmations"
       links << link_to(
-        t(".didn_t_receive_confirmation_instructions"),
+        t("devise.shared.links.didn_t_receive_confirmation_instructions"),
         new_confirmation_path(resource_name, params: { locale: I18n.locale })
       )
     end
@@ -22,7 +22,7 @@ module DeviseHelper
     if devise_mapping.lockable? \
         && resource_class.unlock_strategy_enabled?(:email) \
         && controller_name != "unlocks"
-      links << link_to(t(".didn_t_receive_unlock_instructions"),
+      links << link_to(t("devise.shared.links.didn_t_receive_unlock_instructions"),
                        new_unlock_path(resource_name))
     end
 
