@@ -45,7 +45,6 @@ import "~/js/notifications.coffee";
 import "~/js/questions.coffee";
 import "~/js/quizzes.coffee";
 import "~/js/referrals.coffee";
-import "~/js/registration.coffee";
 import "~/js/remarks.coffee";
 import "~/js/sections.coffee";
 import "~/js/submissions.coffee";
