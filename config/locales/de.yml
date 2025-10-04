@@ -2844,21 +2844,6 @@ de:
   announcements: 'Ankündigungen'
   main:
     media_platform: Mathematische Medienplattform der Universität Heidelberg
-    about: >
-      MaMpf bündelt und vernetzt verschiedene E-Learning-Angebote:
-      Vorlesungsvideos und Skripte mit inhaltlicher Gliederung,
-      Übungsblätter, eine umfangreiche Sammlung von Multiple-Choice-Fragen
-      und Quizaufgaben inklusive angeleiteter Beweise und vieles mehr.
-      Dank des Tagging-Systems findest Du schnell und einfach
-      alle für Dich relevanten Medien.
-    interested_html: >
-      Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
-      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere Dich
-      und probiere MaMpf einfach selbst aus.
-    resources: Ressourcen
-    blog: Blog
-    guided_tour: geführter Tour
-    researchgate: Researchgate
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
