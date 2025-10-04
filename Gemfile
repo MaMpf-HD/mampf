@@ -91,5 +91,8 @@ group :development, :test do
   gem "i18n-tasks", "~> 1.0.15"
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"
+  # https://github.com/Shopify/ruby-lsp/discussions/2965#discussioncomment-12225215
+  # https://github.com/st0012/ruby-lsp-rspec/issues/27#issuecomment-2634492195
+  gem "ruby-lsp-rspec", "~> 0.1", require: false
   gem "simplecov-cobertura", "~> 2.1"
 end
