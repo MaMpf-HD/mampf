@@ -25,6 +25,11 @@ Rails.application.configure do
     config.action_controller.perform_caching = false
   end
 
+  # We don't spin up nginx for tests, so we need to enable Rails's static file server
+  # Note that in the CI/CD pipeline however, assets are precompiled to have a
+  # scenario that is more close to production.
+  config.public_file_server.enabled = true
+
   # Change to :null_store to avoid any caching.
   config.cache_store = :memory_store
 

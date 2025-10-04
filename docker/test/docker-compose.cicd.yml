@@ -3,3 +3,6 @@ services:
     image: ghcr.io/mampf-hd/mampftest:image
     environment:
       RAILS_ENV: test
+    volumes:
+      # Anonymous volume for the public folder where the assets are compiled to
+      - "/usr/src/app/public/"
