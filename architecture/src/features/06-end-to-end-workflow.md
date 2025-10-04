@@ -1,128 +1,404 @@
-# End-to-End Workflow (Phases 0–13)
+# End-to-End Workflow
 
-## Phase 0 — Domain & Roster Foundations
-- Core domain models exist: Lecture, Tutorial, Talk, Assignment, Exam.
-- Registerable models define capacity and (if roster-managed) include Roster::Rosterable (roster_user_ids, replace_roster!).
-- Optional initial enrollment campaign populates the lecture roster.
+This chapter walks through a complete semester lifecycle, showing how all the components from previous chapters work together in practice.
 
-## Phase 1 — Campaign-Based Registration
-- Create a Registration::Campaign (assignment_mode: first_come_first_serve or preference_based).
-- Create RegistrationItems (one per Tutorial, Talk, Exam session, etc.).
-- Attach ordered RegistrationPolicies (exam_eligibility, prerequisite_campaign, institutional_email, etc.).
-- Users submit UserRegistrations:
-	- FCFS: immediate confirm/reject based on capacity.
-	- Preference-based: store ranked pending registrations.
-
-## Phase 2 — Preference-Based Allocation (If Used)
-- At/after deadline, run assignment strategy (e.g., min_cost_flow).
-- Service sets one confirmed Registration::UserRegistration per user (others rejected).
-- Campaign transitions to processing then completed.
-
-## Phase 3 — Allocation Materialization
-- Registration::AllocationMaterializer iterates confirmed registrations per Registration::Item.
-- Calls registerable.materialize_allocation!(user_ids:, campaign:) to set authoritative rosters (Tutorial: student_ids, Talk: speaker_ids).
-- Idempotent: re-running with same data produces no changes.
-
-## Phase 4 — Post-Allocation Administration
-- Staff adjust rosters (swap, add, remove) via roster services.
-- Adjustments do not alter historical allocation; they reflect current truth only.
-- Optional sync back to Registration::UserRegistration for audit (manual_override flag).
-
-## Phase 5 — Assessments & Grading (Pre-Exam Coursework)
-- For each Assignment/Talk needing grading:
-	- ensure_pointbook! (per-task points) or ensure_gradebook!.
-	- Seed AssessmentParticipations from current rosters.
-	- Define Tasks (if points).
-	- Students (possibly teams) submit Submissions.
-	- Tutors grade via GradeSubmissionService → TaskPoints fan out to all team members.
-	- Recompute and publish totals.
-
-## Phase 6 — Achievement & Eligibility Data Accumulation
-- Record qualitative achievements (LectureAchievement), e.g. blackboard_explanation.
-- Coursework TaskPoints stabilize; data ready for eligibility evaluation.
-
-## Phase 7 — Exam Eligibility Computation
-- Define ExamEligibilityPolicy (min_percentage, optional min_points_absolute, required achievement counts, included_assessment_types).
-- Run ExamEligibilityService.compute!(lecture: L) to upsert ExamEligibilityRecords (points, percentage, computed_status, rule_details).
-- Apply overrides (override_status, override_reason, override_by, override_at) where justified.
-
-## Phase 8 — Exam Registration (Policy-Gated)
-- Create exam Registration::Campaign (items may represent sessions/rooms if multiple).
-- Attach Registration::Policy(kind: exam_eligibility) and any additional constraints (institutional_email, prerequisite_campaign).
-- Users attempt registration; RegistrationPolicyEngine evaluates policies in order.
-
-## Phase 9 — Exam Assessment Creation & Grading
-- After exam registration closes:
-	- Create Exam (or Assignment with assessment_type: exam).
-	- ensure_pointbook! (and optionally ensure_gradebook!).
-	- Seed participations from confirmed exam registrants (not necessarily the full lecture).
-	- Define exam Tasks (problem sections).
-	- Enter or import scores via grading service (submissions optional).
-	- Recompute totals; optionally assign final exam grade values.
-	- (Optional) Apply a grading scheme (curve) after seeing the score distribution:
-		- Compute distribution (min/mean/percentiles) and show histogram in UI.
-		- Instructor selects scheme (absolute cutoffs / percentile / linear scaling / piecewise).
-		- Persist scheme (lightweight JSON config) and apply: populate `grade_value` for exam participations.
-		- Allow manual post-application overrides (exceptional adjustments) without re-running scheme.
-	- (Optional) Compute overall course grade (e.g., coursework weight + exam weight).
-
-## Phase 10 — Late Adjustments & Recomputes
-- If coursework points or achievements change before exam registration closes: recompute eligibility (full or targeted users).
-- Overrides remain persistent.
-- Exam grading changes affect final grade reporting but not prior eligibility.
-
-## Phase 11 — Ongoing Administration & Reporting
-- Continue roster adjustments (tutorials, talks) independent of finalized eligibility.
-- Generate reports combining:
-	- Registration outcomes (Registration::UserRegistration)
-	- Current rosters (domain models)
-	- Eligibility snapshots (ExamEligibilityRecord.rule_details)
-	- Grading data (AssessmentParticipations, TaskPoints)
-
-## Phase 12 — Integrity & Invariants
-- One active ExamEligibilityPolicy per lecture.
-- One ExamEligibilityRecord per (lecture, user).
-- One AssessmentParticipation per (assessment, user); one TaskPoint per (participation, task).
-- One confirmed Registration::UserRegistration per user per campaign.
-- materialize_allocation! replaces roster in a single idempotent step.
-- Policy evaluation is ordered and short-circuits on first failure.
-- Eligibility excludes the exam itself (exam Assessment created only after registration).
-- Overrides supersede computed eligibility until cleared.
-
-## Phase 13 — Extension Points
-- Add new eligibility rule: create new Registration::Policy.kind + evaluator method.
-- Add solver strategies: plug into Registration::AssignmentService.
-- Enhance exam/course grading: introduce CourseGrade aggregation service.
-- Expand policy knobs: drop-lowest-k assignments, minimum published participations, weighting schemes.
-- Introduce per-task submissions fully via Submittable (Assessment/Task polymorphic attachment).
-- Add caching/tracing layers (policy engine trace persisted if needed).
-
-## Chronological Summary
-Campaign setup → User registrations → (Optional solver) → Allocation materialization → Administrative roster tuning → Coursework assessments graded → Achievements logged → Eligibility computed + overrides → Exam registration (policy-gated) → Exam assessment seeded & graded → Optional late recomputes (pre-exam close) → Final reporting & grade aggregation.
-
-## Sequence Diagram (Placeholder)
-```mermaid
-sequenceDiagram
-	participant U as User
-	participant RC as Campaign
-	participant Solver as AssignmentService
-	participant Mat as Materializer
-	participant Reg as Registerables
-	participant Assess as Assessments
-	participant Elig as Eligibility
-	participant ExamRC as ExamCampaign
-	participant ExamAssess as ExamAssessment
-	U->>RC: submit registrations
-	RC->>Solver: run assignment (deadline)
-	Solver-->>RC: confirmed/rejected
-	RC->>Mat: finalize!
-	Mat->>Reg: materialize_allocation!
-	Reg->>Assess: seed participations
-	Assess->>Elig: provide totals
-	Elig-->>ExamRC: gate exam reg
-	ExamRC->>ExamAssess: seed exam assessment
+```admonish tip "Reading Guide"
+Each phase below shows the **Goal**, **Key Actions**, and **Technical Flow** for that stage of the semester. Follow the phases sequentially to understand how registration flows into grading, which then feeds into eligibility and exam registration.
 ```
 
-## Related
-Registration System (02), Allocation & Rosters (03), Assessments & Grading (04), Algorithm (07).
+## Phase 0: Semester Setup
+
+```admonish info "Setup Phase"
+At the start of the semester, staff configures the basic teaching structure.
+```
+
+**Staff Actions:**
+
+| Action | Details |
+|--------|---------|
+| Create Lecture | Set up the lecture record (e.g., "Linear Algebra WS 2024/25") |
+| Create Tutorials | Define tutorial groups with times, locations, and capacities |
+| (Optional) Create Talks | For seminars, define talk slots for student presentations |
+
+## Phase 1: Tutorial/Talk Registration Campaign
+
+```admonish success "Goal"
+Assign students to tutorial groups or seminar talks
+```
+
+**Staff Actions:**
+
+| Action | Details |
+|--------|---------|
+| Create Campaign | Staff creates a `Registration::Campaign` for the lecture |
+| Set Mode | Choose `assignment_mode`: `first_come_first_serve` or `preference_based` |
+| Add Items | Create one `Registration::Item` for each tutorial or talk |
+| Attach Policies | Add `Registration::Policy` records (e.g., `institutional_email`, `prerequisite_campaign`) |
+| Open Campaign | Make available for student submissions |
+
+**Student Experience:**
+
+```admonish note "Two Registration Modes"
+- **FCFS Mode:** Click to register, get immediate confirmation or rejection
+- **Preference Mode:** Rank options in order of preference, wait for allocation
+```
+
+**Technical Flow:**
+- Each submission creates a `Registration::UserRegistration` with status `pending` or `confirmed` (FCFS)
+- `Registration::PolicyEngine` evaluates all active policies in order
+- If any policy fails, registration is rejected with specific reason code
+
+## Phase 2: Preference-Based Allocation (if applicable)
+
+```admonish success "Goal"
+Compute optimal assignment respecting preferences and constraints
+```
+
+```admonish warning "Only for Preference-Based Campaigns"
+This phase is skipped if the campaign uses `first_come_first_serve` mode.
+```
+
+**Staff Actions:**
+- At or after registration deadline, staff triggers `campaign.run_assignment!`
+- Campaign status transitions: `open` → `processing` → `completed`
+
+**Technical Details:**
+
+| Aspect | Implementation |
+|--------|----------------|
+| Service | `Registration::AssignmentService` delegates to solver (e.g., Min-Cost Flow) |
+| Cost Model | Preferences treated as costs (rank 1 = cost 1, rank 2 = cost 2, etc.) |
+| Constraints | Respects capacity from `Registerable#capacity` |
+| Output | One confirmed `UserRegistration` per user, rejects others |
+| Idempotency | Operation can be re-run if needed with same results |
+
+## Phase 3: Allocation Materialization
+
+```admonish success "Goal"
+Apply confirmed registrations to domain model rosters
+```
+
+**Staff Actions:**
+- Staff calls `campaign.finalize!`
+- `Registration::AllocationMaterializer` iterates through all `Registration::Item` records
+- For each item, collects confirmed user IDs and calls `registerable.materialize_allocation!(user_ids:, campaign:)`
+
+**Domain Effects:**
+
+| Model | Effect |
+|-------|--------|
+| `Tutorial` | Student rosters updated |
+| `Talk` | Speaker assignments updated |
+| Authority | Rosters are now the authoritative source for course operations |
+| Idempotency | Same inputs produce same results (can be re-run safely) |
+
+---
+
+## Phase 4: Post-Allocation Roster Maintenance
+
+```admonish success "Goal"
+Handle late registrations, drops, and swaps
+```
+
+**Staff Operations via `Roster::MaintenanceService`:**
+
+| Operation | Method | Purpose |
+|-----------|--------|---------|
+| Transfer | `move_user!(from:, to:)` | Move student between tutorials |
+| Add | `add_user!(to:)` | Add late arrival |
+| Remove | `remove_user!(from:)` | Remove dropout |
+
+```admonish note "Guardrails"
+- Service enforces capacity limits (unless `allow_overfill: true`)
+- All operations are transactional (atomic)
+- Changes are logged for audit trail
+- Operates on domain rosters directly, independent of campaign
+```
+
+## Phase 5: Coursework Assessments & Grading
+
+```admonish success "Goal"
+Track student performance on assignments and presentations
+```
+
+**Setup Flow:**
+
+| Step | Action |
+|------|--------|
+| 1. Create Assessment | For each `Assignment`, create linked `Assessment::Assessment` with `requires_points: true` |
+| 2. Seed Participations | Call `assessment.seed_participations_from!(user_ids: tutorial.roster_user_ids)` |
+| 3. Define Tasks | Create `Assessment::Task` records for each problem/component |
+| 4. Student Submission | Students upload `Submission` records (possibly as teams) |
+| 5. Grading | Tutors grade via `Assessment::SubmissionGrader` |
+
+**Grading Flow:**
+
+```admonish note "Team Grading Fan-Out"
+Service creates `Assessment::TaskPoint` for each team member automatically. Points are validated against `Task#max_points`, and `Participation#points_total` is recomputed automatically.
+```
+
+**Publication:**
+- Staff publishes results by setting `assessment.results_published = true`
+
+**For Talks (Simplified):**
+
+| Aspect | Difference |
+|--------|------------|
+| Mode | `requires_points: false` (grade-only mode) |
+| Seeding | Seed from talk speaker roster |
+| Grading | Record final `grade_value` directly on `Assessment::Participation` |
+
+---
+
+## Phase 6: Achievement Tracking
+
+```admonish success "Goal"
+Record qualitative accomplishments for eligibility
+```
+
+**Staff Actions:**
+- Staff creates `ExamEligibility::Achievement` records for students
+- Examples: `blackboard_presentation`, `class_participation`, `peer_review`
+- These augment quantitative points for eligibility determination
+
+## Phase 7: Exam Eligibility Computation
+
+```admonish success "Goal"
+Determine who may register for the exam
+```
+
+**Staff Configuration:**
+- Configure eligibility rules (minimum percentage, achievement counts, included assessment types)
+- System runs `ExamEligibility::Service.compute!(lecture:)` before exam registration opens
+
+**Materialized Data in `ExamEligibility::Record`:**
+
+| Field | Content |
+|-------|---------|
+| `points_total_materialized` | Sum of relevant coursework points |
+| `percentage_materialized` | Percentage of maximum possible points |
+| `achievement_count` | Count of recorded achievements |
+| `computed_status` | System-computed: `eligible` or `ineligible` |
+| `rule_config_snapshot` | Copy of rules used (for audit trail) |
+
+**Override Capability:**
+
+```admonish note "Manual Overrides"
+Staff can manually set `override_status` with required `override_reason`. Overrides persist across recomputations. The `final_status` method returns override if present, else computed status.
+```
+
+---
+
+## Phase 8: Exam Registration Campaign
+
+```admonish success "Goal"
+Allow eligible students to register for exam
+```
+
+```admonish info "Complete Exam Documentation"
+For full details on the Exam model including multiple choice support, see [Exam Model](05a-exam-model.md).
+```
+
+**Campaign Setup:**
+
+| Step | Action |
+|------|--------|
+| 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity |
+| 2. Create Campaign | Staff creates `Registration::Campaign` for the exam |
+| 3. Attach Policy | Add `Registration::Policy` with `kind: :exam_eligibility` (see [Exam Eligibility](05-exam-eligibility.md)) |
+| 4. Optional Policies | May also attach other policies (e.g., `institutional_email`) |
+| 5. Open | Campaign opens for submissions |
+
+**Registration Flow:**
+
+```mermaid
+graph LR
+    A[Student Attempts Registration] --> B[PolicyEngine Evaluates]
+    B --> C{Exam Eligibility Policy}
+    C --> D[Recompute: ExamEligibility::Service]
+    D --> E[Query: ExamEligibility::Record]
+    E --> F{final_status?}
+    F -->|Eligible| G[Confirm Registration]
+    F -->|Ineligible| H[Reject with Reason]
+```
+
+```admonish tip "100% Accuracy Guarantee"
+Eligibility is recomputed at registration time to ensure absolute accuracy, even if grades changed after initial computation.
+```
+
+## Phase 9: Exam Grading & Grade Schemes
+
+```admonish success "Goal"
+Record exam scores and assign final grades
+```
+
+**Grading Setup:**
+
+| Step | Action |
+|------|--------|
+| 1. Create Assessment | After exam is administered, create `Assessment::Assessment` for the exam |
+| 2. Seed Participations | From confirmed exam registrants |
+| 3. Define Tasks | Create `Assessment::Task` records for each exam problem |
+| 4. Enter Points | Tutors enter points via grading interface |
+| 5. Aggregate | Points aggregate to `Participation#points_total` |
+
+**Grade Scheme Application:**
+
+```admonish note "Converting Points to Grades"
+Staff analyzes score distribution (histogram, percentiles), then creates and applies a `GradeScheme::Scheme`.
+```
+
+| Step | Process |
+|------|---------|
+| Analyze | View distribution statistics and histogram |
+| Configure | Create `GradeScheme::Scheme` with absolute point bands or percentage cutoffs |
+| Apply | Call `GradeScheme::Applier.apply!(scheme)` |
+| Result | Service computes `grade_value` for each participation based on points |
+| Override | Manual adjustments possible for exceptional cases |
+
+**Special Case: Multiple Choice Exams**
+
+```admonish warning "Legal Requirement"
+Exams with MC parts require separate grading schemes by law
+```
+
+For exams with `has_multiple_choice: true`:
+
+| Step | Action |
+|------|--------|
+| 1. Create Tasks | Create tasks as usual, marking one with `is_multiple_choice: true` |
+| 2. Configure MC Scheme | Create and assign a `GradeScheme::Scheme` to the MC task |
+| 3. Grade Normally | Tutors grade all tasks as usual |
+| 4. Apply MC Grader | Call `Assessment::McGrader.new(assessment).apply_legal_scheme!` |
+| 5. Automatic Computation | Service applies two-stage process: (1) MC threshold check with sliding clause determines pass/fail, (2) weighted mean computation for passing students using task-specific schemes |
+
+```admonish note "MC Task Grade Scheme"
+The MC task has its own grade scheme (can be relative/curve-based or absolute). Only MC tasks can have task-level schemes—this is enforced by validation. Regular tasks use the assessment-level scheme.
+```
+
+```admonish info "Complete MC Documentation"
+For full details on the two-stage MC grading process (threshold check + grade computation), see [Exam Model: Multiple Choice Support](05a-exam-model.md#multiple-choice-support).
+```
+
+**Final Result:**
+- Students have both granular points (`TaskPoint` records) and final grade (`Participation#grade_value`)
+- For MC exams, final grade is automatically computed as weighted mean of MC and written parts
+- Students failing the MC threshold (with sliding clause) automatically fail the entire exam
+
+---
+
+## Phase 10: Late Adjustments & Recomputation
+
+```admonish warning "Scenario"
+Coursework grades change after initial eligibility computation
+```
+
+**System Response:**
+
+| Trigger | Action |
+|---------|--------|
+| Grade Change | System automatically triggers `ExamEligibility::Service.compute!(lecture:, user_ids: [affected_ids])` |
+| Update | Materialized values update in `ExamEligibility::Record` |
+| Preserve | Overrides remain unchanged (manual decisions preserved) |
+| If Exam Open | Updated eligibility applies immediately |
+| If Exam Closed | Change only affects reporting/records |
+
+---
+
+## Phase 11: Reporting & Administration
+
+```admonish success "Goal"
+Ongoing monitoring and data integrity
+```
+
+**Ongoing Activities:**
+
+| Activity | Source |
+|----------|--------|
+| Participation Reports | `Assessment::Participation` data |
+| Eligibility Export | `ExamEligibility::Record` |
+| Registration Audit | `Registration::UserRegistration` |
+| Roster Adjustments | `Roster::MaintenanceService` as needed |
+| Data Integrity | Background jobs monitoring consistency |
+
+---
+
+## Key Invariants Throughout the Workflow
+
+```admonish warning "System Constraints"
+These constraints are maintained across all phases to ensure data integrity.
+```
+
+| Invariant | Description |
+|-----------|-------------|
+| One Record per (lecture, user) | `ExamEligibility::Record` uniqueness |
+| One Participation per (assessment, user) | `Assessment::Participation` uniqueness |
+| One Confirmed Registration per (user, campaign) | `Registration::UserRegistration` constraint |
+| One TaskPoint per (participation, task) | `Assessment::TaskPoint` uniqueness |
+| Idempotent Materialization | `materialize_allocation!` produces same results with same inputs |
+| Ordered Policy Evaluation | Short-circuits on first failure |
+| Persistent Overrides | Remain across recomputations until explicitly cleared |
+| Exam Assessment Timing | Created only after exam registration closes |
+
+---
+
+## Chronological Summary
+
+```admonish tip "High-Level Flow"
+A bird's-eye view of the complete workflow from setup to final grades.
+```
+
+| Phase | Summary |
+|-------|---------|
+| **Setup** | Create domain models → Configure registrables & rosters |
+| **Registration** | Open campaign → Students register → (Optional: Run solver) → Materialize to rosters |
+| **Coursework** | Seed participations → Define tasks → Students submit → Tutors grade → Publish results |
+| **Eligibility** | Record achievements → Compute eligibility → Apply overrides |
+| **Exam Registration** | Open exam campaign → Policies gate access (recompute eligibility) → Confirm registrations |
+| **Exam Grading** | Seed exam participations → Grade tasks → Apply grade scheme → Publish grades |
+| **Ongoing** | Maintain rosters → Update grades → Recompute eligibility → Generate reports |
+
+---
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Student
+    participant Campaign
+    participant Solver
+    participant Materializer
+    participant Rosterable
+    participant Assessment
+    participant Eligibility
+    participant ExamCampaign
+
+    Student->>Campaign: Submit registration (FCFS or preference)
+    Note over Campaign: If preference mode...
+    Campaign->>Solver: Run assignment at deadline
+    Solver-->>Campaign: Set confirmed/rejected
+
+    Campaign->>Materializer: finalize!
+    Materializer->>Rosterable: materialize_allocation!(user_ids)
+    Note over Rosterable: Tutorial/Talk rosters updated
+
+    Assessment->>Rosterable: Seed participations from roster
+    Student->>Assessment: Submit coursework
+    Note over Assessment: Tutors grade → TaskPoints created
+
+    Assessment->>Eligibility: Provide points & achievements
+    Eligibility->>Eligibility: compute!(lecture)
+    Note over Eligibility: Records materialized
+
+    Student->>ExamCampaign: Attempt exam registration
+    ExamCampaign->>Eligibility: Check eligibility (recompute)
+    Eligibility-->>ExamCampaign: Pass/Fail
+    ExamCampaign-->>Student: Confirm/Reject
+
+    Note over Assessment: After exam...
+    Assessment->>Assessment: Grade exam tasks
+    Assessment->>Assessment: Apply grade scheme
+    Assessment-->>Student: Final grades published
+```
+
 

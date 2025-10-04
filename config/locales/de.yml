@@ -76,7 +76,6 @@ de:
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
-      Aperiodic monotiles lizenziert unter BSD-3-Clause von %{background_photo_credit}.
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -2050,8 +2049,6 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
-    no_consent:
-      Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
     subscribe_lecture: 'Veranstaltung abonnieren'
     passphrase_required: >
@@ -2847,24 +2844,7 @@ de:
   sign_up: 'registrieren'
   announcements: 'Ankündigungen'
   main:
-    welcome:
-      Herzlich willkommen auf MaMpf, der Mathematischen
-      Medienplattform der Universität Heidelberg.
-    about: >
-      MaMpf bündelt und vernetzt verschiedene E-Learning-Angebote:
-      Vorlesungsvideos und Skripte mit inhaltlicher Gliederung,
-      Übungsblätter, eine umfangreiche Sammlung von Multiple-Choice-Fragen
-      und Quizaufgaben inklusive angeleiteter Beweise und vieles mehr.
-      Dank des Tagging-Systems findest Du schnell und einfach
-      alle für Dich relevanten Medien.
-    interested_html: >
-      Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
-      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere Dich
-      und probiere MaMpf einfach selbst aus.
-    resources: Ressourcen
-    blog: Blog
-    guided_tour: geführter Tour
-    researchgate: Researchgate
+    media_platform: Mathematische Medienplattform der Universität Heidelberg
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
@@ -3488,7 +3468,7 @@ de:
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     mail_noun: 'E-Mail'
-    email: 'E-Mail-Adresse'
+    email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
     date: 'Datum'

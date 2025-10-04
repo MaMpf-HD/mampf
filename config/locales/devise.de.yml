@@ -101,16 +101,15 @@ de:
       signed_in: "Du hast Dich erfolgreich angemeldet."
       signed_out: "Du hast Dich erfolgreich abgemeldet."
       already_signed_out: "Du hast Dich erfolgreich abgemeldet."
-      remember_me: "Erinnere Dich an mich (hierzu wird ein Cookie gesetzt)"
+      remember_me: "Erinnere Dich an mich"
       new:
         email: 'Email'
         password: 'Passwort'
-        remember: 'Erinnere Dich an mich (hierzu wird ein Cookie gesetzt)'
+        remember: 'Erinnere Dich an mich'
         login: 'Login'
     shared:
       links:
         login: 'Login'
-        sign_up: 'Registrieren'
         forgot_password: 'Passwort vergessen?'
         didn_t_receive_confirmation_instructions: 'Bestätigungsmail nicht erhalten?'
         didn_t_receive_unlock_instructions: 'Anleitung zum Entsperren nicht erhalten?'

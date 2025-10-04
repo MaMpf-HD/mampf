@@ -9,7 +9,7 @@ Prerequisites:
 
 Install tools:
 ```
-cargo install mdbook mdbook-mermaid mdbook-mermaid
+cargo install mdbook mdbook-mermaid mdbook-admonish mdbook-pagetoc
 ```
 
 Build and serve locally with auto-reload (note that we use port 3003 because port 3000 is used for serving MaMpf locally)
@@ -21,6 +21,6 @@ mdbook serve --port 3003
 ```
 
 ## Structure
-- book/book.toml : mdBook config 
+- book/book.toml : mdBook config
 - book/src/       : all chapter markdown + diagrams
 - src/features/   : original source planning docs (authoritative originals)

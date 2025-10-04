@@ -23,6 +23,7 @@
     "eslint-plugin-cypress": "^3.3.0",
     "eslint-plugin-erb": "^2.0.0",
     "globals": "^15.1.0",
+    "katex": "^0.16.22",
     "masonry-layout": "^4.2.2",
     "p5": "^2.0.3",
     "sass": "^1.89.2",

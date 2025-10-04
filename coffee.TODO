@@ -152,7 +152,6 @@ D3 ./app/views/lectures/render_sidebar.coffee (not actually used anymore:
 17 ./app/views/tags/modal.coffee
 17 ./app/views/tags/render_tag_title.coffee
 17 ./app/views/tutorials/create.coffee
-18 ./app/assets/javascripts/registration.coffee
 18 ./app/views/assignments/edit.coffee
 18 ./app/views/tutorials/bulk_upload.coffee
 19 ./app/views/lectures/create.coffee
