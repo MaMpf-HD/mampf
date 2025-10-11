@@ -45,6 +45,8 @@ function registerChangeHandlers() {
     if (!allowed) return false;
 
     const targetId = event.target.id;
+    if (!event.target.id) return true;
+
     $(`${COLLAPSE_CLASS}.show`).each(function () {
       if (this.id !== targetId) {
         $(this).collapse("hide");
