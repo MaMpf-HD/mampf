@@ -1,15 +1,9 @@
 import { Controller } from "@hotwired/stimulus";
-import { Collapse } from "bootstrap";
 
 export default class extends Controller {
   static targets = ["questionType", "text", "textLabel", "multipleChoice", "number", "likert"];
 
   connect() {
-    this.textCollapse = new Collapse(this.textTarget, { toggle: false });
-    this.multipleChoiceCollapse = new Collapse(this.multipleChoiceTarget, { toggle: false });
-    this.numberCollapse = new Collapse(this.numberTarget, { toggle: false });
-    this.likertCollapse = new Collapse(this.likertTarget, { toggle: false });
-
     this.showOnlyQuestionType(this.questionTypeTarget.value);
   }
 
@@ -27,7 +21,7 @@ export default class extends Controller {
     else {
       this.textLabelTarget.textContent = "Your Question";
       textArea.required = true;
-      this.textCollapse.show();
+      $(this.textLabelTarget).collapse("show");
     }
 
     const multipleChoiceInput = this.multipleChoiceTarget.querySelector("input");
@@ -36,32 +30,32 @@ export default class extends Controller {
         multipleChoiceInput.required = true;
         multipleChoiceInput.disabled = false;
       }
-      this.multipleChoiceCollapse.show();
+      $(this.multipleChoiceTarget).collapse("show");
     }
     else {
       if (multipleChoiceInput) {
         multipleChoiceInput.required = false;
         multipleChoiceInput.disabled = true;
       }
-      this.multipleChoiceCollapse.hide();
+      $(this.multipleChoiceTarget).collapse("hide");
     }
 
     if (questionType === "Vignettes::NumberQuestion") {
       this.numberTarget.querySelector("input").disabled = false;
-      this.numberCollapse.show();
+      $(this.numberTarget).collapse("show");
     }
     else {
       this.numberTarget.querySelector("input").disabled = true;
-      this.numberCollapse.hide();
+      $(this.numberTarget).collapse("hide");
     }
 
     if (questionType === "Vignettes::LikertScaleQuestion") {
       this.likertTarget.querySelector("select").disabled = false;
-      this.likertCollapse.show();
+      $(this.likertTarget).collapse("show");
     }
     else {
       this.likertTarget.querySelector("select").disabled = true;
-      this.likertCollapse.hide();
+      $(this.likertTarget).collapse("hide");
     }
   }
 }
