@@ -1,0 +1,13 @@
+<div id="vignette-question-text" class="form-floating mt-3">
+  <%= f.text_area :question_text,
+                  placeholder: '_',
+                  class: 'form-control',
+                  style: 'height: 120px',
+                  maxlength: Vignettes::Question::TEXT_MAX_LENGTH,
+                  required: f.object.question_text_required?
+  %>
+  <%= f.label :question_text, t('vignettes.your_question') %>
+  <div class="form-text small text-muted mt-1">
+    <%= t('vignettes.markdown_help') %>
+  </div>
+</div>

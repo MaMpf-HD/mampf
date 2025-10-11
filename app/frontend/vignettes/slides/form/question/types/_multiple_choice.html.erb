@@ -1,0 +1,25 @@
+<div id="vignette-edit-multiple-choice" class="mt-3">
+
+  <div id="vignette-multiple-choice-options">
+    <%= f.fields_for :options do |option_form| %>
+      <%= render partial: "vignettes/slides/form/question/types/multiple_choice_field",
+                 locals: { f: option_form, editable: form.object.questionnaire.editable } %>
+    <% end %>
+  </div>
+
+  <!-- later with Turbo: -->
+  <!-- https://jonathanyeong.com/rails-stimulus-dynamic-nested-form/ -->
+  <template id="vignette-multiple-choice-options-template" class="d-none">
+    <%= f.fields_for :options, f.object.options.build,
+                      child_index: 'NEW_RECORD' do |option_form| %>
+      <%= render partial: "vignettes/slides/form/question/types/multiple_choice_field",
+                 locals: { f: option_form, editable: form.object.questionnaire.editable } %>
+    <% end %>
+  </template>
+  
+  <button type="button" id="vignette-multiple-choice-add" class="btn btn-outline-secondary"
+          <%= form.object.questionnaire.editable ? '' : 'disabled' %>>
+    <i class="bi bi-plus-circle"></i>
+    <%= t("vignettes.add_multiple_choice_option") %>
+  </button>
+</div>

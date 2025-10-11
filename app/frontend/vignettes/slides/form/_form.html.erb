@@ -30,7 +30,8 @@
 
   <%= render partial: 'vignettes/slides/form/content', locals: { form: form } %>
   <br>
-  <%= render partial: 'vignettes/slides/form/question', locals: { form: form } %>
+  <%= render partial: 'vignettes/slides/form/question/question',
+             locals: { form: form, slide: slide } %>
 
   <div class="d-flex justify-content-end align-items-center mt-3">
     <div class="me-auto">
