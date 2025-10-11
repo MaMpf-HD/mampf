@@ -1,4 +1,4 @@
-<div id="vignette-likert-scale-language-selection" class="mt-3">
+<div class="mt-3 collapse" data-vignettes-question-target="likert">
   <div class="form-floating mb-3">
     <%= f.select :language,
         options_for_select([
@@ -9,7 +9,6 @@
         {},
         {
             class: "form-select",
-            id: "vignettes-likert-language-select",
             disabled: !form.object.questionnaire.editable
         } %>
     <%= f.label :language, t('vignettes.language_selection') %>

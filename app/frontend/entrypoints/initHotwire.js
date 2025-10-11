@@ -23,6 +23,9 @@ window.Stimulus.register("feedback", FeedbackFormController);
 import FramesLoaderController from "~/vignettes/questionnaires/edit/frames_loader.controller.js";
 window.Stimulus.register("frames-loader", FramesLoaderController);
 
+import VignettesQuestionController from "~/vignettes/slides/form/question/_question.controller.js";
+window.Stimulus.register("vignettes-question", VignettesQuestionController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
