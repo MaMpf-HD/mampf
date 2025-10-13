@@ -375,5 +375,5 @@ This demo follows the architecture defined in Chapters 1-5a. All model names, se
 ```
 
 ```admonish info "Multiple Choice Exams"
-This example uses a standard exam for simplicity. For exams with multiple choice components that require German legal compliance (Gleitklausel), see [Exam Model: Multiple Choice Support](05a-exam-model.md#multiple-choice-exams).
+This example uses a standard exam for simplicity. For exams with multiple choice components that require German legal compliance (Gleitklausel), see [Multiple Choice Exams](05c-multiple-choice-exams.md).
 ```

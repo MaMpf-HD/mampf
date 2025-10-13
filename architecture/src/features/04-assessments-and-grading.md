@@ -222,10 +222,7 @@ One graded component (problem, question, or rubric item) within an assessment th
 | `position`       | DB column        | Display order within the assessment                            |
 | `max_points`     | DB column        | Maximum achievable points for this task                        |
 | `description`    | DB column        | Optional detailed instructions or rubric text                  |
-| `is_multiple_choice` | DB column (Boolean) | Marks this task as a multiple choice part (for exam-specific grading) |
-| `grade_scheme_id` | DB column (FK, optional) | Links to a grade scheme specifically for this task (only for MC tasks) |
 | `task_points`    | Association      | All point records across all students for this task            |
-| `grade_scheme`   | Association      | Optional grade scheme for this task (MC exams only)            |
 
 ### Behavior Highlights
 
@@ -243,66 +240,20 @@ module Assessment
     self.table_name = "assessment_tasks"
 
     belongs_to :assessment, class_name: "Assessment::Assessment"
-    belongs_to :grade_scheme, class_name: "GradeScheme::Scheme",
-               optional: true
     has_many :task_points, dependent: :destroy,
       class_name: "Assessment::TaskPoint"
 
     validates :title, presence: true
     validates :max_points, numericality: { greater_than_or_equal_to: 0 }
     validates :position, numericality: { only_integer: true }, allow_nil: true
-    validates :is_multiple_choice, inclusion: { in: [true, false] }
-
-    validate :mc_flag_only_for_exams
-    validate :at_most_one_mc_task_per_assessment
-    validate :grade_scheme_only_for_mc_tasks
-
-    scope :multiple_choice, -> { where(is_multiple_choice: true) }
-    scope :regular, -> { where(is_multiple_choice: false) }
 
     acts_as_list scope: :assessment
-
-    private
-
-    def mc_flag_only_for_exams
-      return unless is_multiple_choice?
-      return if assessment.assessable.is_a?(Exam)
-
-      errors.add(:is_multiple_choice,
-                 "can only be set for exam assessments")
-    end
-
-    def at_most_one_mc_task_per_assessment
-      return unless is_multiple_choice?
-      return unless assessment
-
-      other_mc_tasks = assessment.tasks.multiple_choice
-                                 .where.not(id: id)
-
-      if other_mc_tasks.exists?
-        errors.add(:is_multiple_choice,
-                   "only one MC task allowed per assessment")
-      end
-    end
-
-    def grade_scheme_only_for_mc_tasks
-      return unless grade_scheme_id.present?
-      return if is_multiple_choice?
-
-      errors.add(:grade_scheme,
-                 "can only be assigned to multiple choice tasks")
-    end
   end
 end
 ```
 
-```admonish note "Multiple Choice Support"
-The `is_multiple_choice` flag and `grade_scheme_id` are used for exams with MC parts that require special grading according to German examination law. See the [Exam Model](05a-exam-model.md) chapter for details on MC exam grading.
-
-Validations ensure:
-- MC flag can only be set for exam assessments
-- Only one MC task per assessment
-- Only MC tasks can have task-level grade schemes
+```admonish note "Multiple Choice Exam Extension"
+For exams with multiple choice components requiring legal compliance, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter. That extension adds `is_multiple_choice` and `grade_scheme_id` fields with associated validations.
 ```
 
 ### Usage Scenarios
@@ -363,19 +314,10 @@ module Assessment
     belongs_to :submission, optional: true
 
   validates :points, numericality: { greater_than_or_equal_to: 0 }
-  validate :points_within_task_maximum
 
   after_commit :bubble_totals
 
   private
-
-  def points_within_task_maximum
-    return unless task && points
-
-    if points > task.max_points
-      errors.add(:points, "cannot exceed task maximum of #{task.max_points}")
-    end
-  end
 
   def bubble_totals
     assessment_participation.recompute_points_total!
@@ -383,9 +325,15 @@ module Assessment
 end
 ```
 
+```admonish note "Extra Points Allowed"
+Points are allowed to exceed task maximum to support extra credit and bonus points scenarios. There is no upper bound validation on the `points` field.
+```
+
 ### Usage Scenarios
 
 - **Grading a team submission:** A tutor grades Problem 1 of a team homework. The grading service creates or updates one `Assessment::TaskPoint` record per team member, all with the same points value (e.g., 8/10), linking each to `submission_id: 42` for audit purposes.
+
+- **Bonus points:** A tutor awards 12 points out of 10 for exceptional work on a problem. The system accepts this without validation errors, allowing the student's total to exceed the nominal maximum.
 
 - **Publishing results:** After completing all grading, the teacher sets `assessment.results_published = true`. Students can now see all their task points and comments at once.
 

@@ -196,7 +196,7 @@ Allow eligible students to register for exam
 ```
 
 ```admonish info "Complete Exam Documentation"
-For full details on the Exam model including multiple choice support, see [Exam Model](05a-exam-model.md).
+For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 ```
 
 **Campaign Setup:**
@@ -256,34 +256,12 @@ Staff analyzes score distribution (histogram, percentiles), then creates and app
 | Result | Service computes `grade_value` for each participation based on points |
 | Override | Manual adjustments possible for exceptional cases |
 
-**Special Case: Multiple Choice Exams**
-
-```admonish warning "Legal Requirement"
-Exams with MC parts require separate grading schemes by law
-```
-
-For exams with `has_multiple_choice: true`:
-
-| Step | Action |
-|------|--------|
-| 1. Create Tasks | Create tasks as usual, marking one with `is_multiple_choice: true` |
-| 2. Configure MC Scheme | Create and assign a `GradeScheme::Scheme` to the MC task |
-| 3. Grade Normally | Tutors grade all tasks as usual |
-| 4. Apply MC Grader | Call `Assessment::McGrader.new(assessment).apply_legal_scheme!` |
-| 5. Automatic Computation | Service applies two-stage process: (1) MC threshold check with sliding clause determines pass/fail, (2) weighted mean computation for passing students using task-specific schemes |
-
-```admonish note "MC Task Grade Scheme"
-The MC task has its own grade scheme (can be relative/curve-based or absolute). Only MC tasks can have task-level schemes—this is enforced by validation. Regular tasks use the assessment-level scheme.
-```
-
-```admonish info "Complete MC Documentation"
-For full details on the two-stage MC grading process (threshold check + grade computation), see [Exam Model: Multiple Choice Support](05a-exam-model.md#multiple-choice-support).
+```admonish note "Multiple Choice Exam Extension"
+For exams with multiple choice components requiring legal compliance, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter for the two-stage grading workflow.
 ```
 
 **Final Result:**
 - Students have both granular points (`TaskPoint` records) and final grade (`Participation#grade_value`)
-- For MC exams, final grade is automatically computed as weighted mean of MC and written parts
-- Students failing the MC threshold (with sliding clause) automatically fail the entire exam
 
 ---
 
