@@ -15,6 +15,11 @@
 - [Assignment Algorithm Details](features/07-algorithm-details.md)
 - [Examples & Demos](features/08-examples-and-demos.md)
 - [Integrity & Invariants](features/09-integrity-and-invariants.md)
+
+## Extensions (Optional Features)
+- [Multiple Choice Exams](features/05c-multiple-choice-exams.md)
+
+## Future Development
 - [Future Extensions](features/10-future-extensions.md)
 
 ## User-Facing Applications
@@ -23,3 +28,4 @@
 
 ## Project Planning
 - [Implementation Plan](features/plan.md)
+```
