@@ -541,13 +541,13 @@ A concern that extends `Assessment::Assessable` to enable recording a final grad
 
 | Method | Description |
 |--------|-------------|
-| `ensure_gradebook!(...)` | Creates or updates the linked Assessment::Assessment with `requires_points: false` |
+| `ensure_gradebook!(...)` | Creates or updates the linked Assessment::Assessment with `requires_points: false` by default while preserving an existing `requires_points: true` configuration |
 | `set_grade!(user:, value:, grader:)` | Records a final grade for a specific student |
 
 ### Behavior Highlights
 
 - Includes `Assessment::Assessable` and builds on its interface
-- Forces `requires_points: false` when creating the assessment
+- Defaults `requires_points` to `false` when creating the assessment, but retains `true` if it was already enabled (e.g., when combined with `Assessment::Pointable`)
 - No tasks or submissions are required
 - Directly updates `Assessment::Participation.grade_value` for each student
 - Can be combined with `Assessment::Pointable` for exams that need both points and final grades
@@ -562,9 +562,10 @@ module Assessment
     include Assessment::Assessable
 
   def ensure_gradebook!(title:, **opts)
+    requires_points = assessment&.requires_points
     ensure_assessment!(
       title: title,
-      requires_points: false,
+      requires_points: requires_points.nil? ? false : requires_points,
       requires_submission: false,
       **opts
     )
