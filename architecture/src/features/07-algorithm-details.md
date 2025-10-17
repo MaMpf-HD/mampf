@@ -1,7 +1,7 @@
-# Assignment Algorithm Details
+# Allocation Algorithm Details
 
 ## Purpose
-This chapter details the algorithm for assigning users to `Registration::Item`s (tutorials, talks, etc.) based on ranked preferences while respecting item capacities.
+This chapter details the algorithm for allocating users to `Registration::Item`s (tutorials, talks, etc.) based on ranked preferences while respecting item capacities.
 
 The initial implementation uses a **Min-Cost Flow** algorithm for its speed and simplicity. The system is designed with a pluggable service interface, allowing a more powerful **CP-SAT** solver to be used in the future when advanced constraints are needed.
 
@@ -9,10 +9,10 @@ The initial implementation uses a **Min-Cost Flow** algorithm for its speed and 
 
 ## The Strategy Pattern Approach
 
-The system uses a **Strategy Pattern** to separate the high-level assignment process from the low-level solver implementation. A single service entry point is exposed:
+The system uses a **Strategy Pattern** to separate the high-level allocation process from the low-level solver implementation. A single service entry point is exposed:
 
 ```ruby
-Registration::AssignmentService.new(campaign, strategy: :min_cost_flow).assign!
+Registration::AllocationService.new(campaign, strategy: :min_cost_flow).allocate!
 ```
 
 This allows different solver strategies to be added (e.g., `strategy: :cp_sat`) without changing any calling code.
@@ -81,16 +81,16 @@ With the dummy node enabled, the model should always find a feasible solution. A
 ## Service Implementation (Strategy Pattern Skeleton)
 
 ```ruby
-# filepath: app/services/registration/assignment_service.rb
+# filepath: app/services/registration/allocation_service.rb
 module Registration
-    class AssignmentService
+    class AllocationService
         def initialize(campaign, strategy: :min_cost_flow, **opts)
             @campaign = campaign
             @strategy = strategy
             @opts = opts
         end
 
-        def assign!
+    def allocate!
             solver =
                 case @strategy
                 when :min_cost_flow
@@ -107,7 +107,7 @@ end
 # Solvers are placed in their own module for organization.
 module Registration
     module Solvers
-        class MinCostFlow
+    class MinCostFlow
             BIG_PENALTY = 10_000
 
             def initialize(campaign, fill_unlisted: false, allow_unassigned: true)

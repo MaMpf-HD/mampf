@@ -67,6 +67,13 @@ Content:
     -   **Displays:** Assignment Title, Lecture, and "Due: [deadline]".
     -   **Action:** A "View/Submit" button linking to the submission page.
 
+```admonish tip "API at a glance (Student registration)"
+- campaign.open_for_registrations? → Boolean
+- campaign.policies_satisfied?(current_user) → Boolean
+- campaign.evaluate_policies_for(current_user) → Result (when you need reasons)
+- current_user.user_registrations.where(registration_campaign: campaign)
+```
+
 ---
 
 ## 3) "My Courses" Widget (Quick Access)
