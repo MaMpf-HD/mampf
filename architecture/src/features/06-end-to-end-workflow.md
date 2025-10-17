@@ -31,10 +31,10 @@ Assign students to tutorial groups or seminar talks
 | Action | Details |
 |--------|---------|
 | Create Campaign | Staff creates a `Registration::Campaign` for the lecture |
-| Set Mode | Choose `assignment_mode`: `first_come_first_serve` or `preference_based` |
+| Set Mode | Choose `allocation_mode`: `first_come_first_serve` or `preference_based` |
 | Add Items | Create one `Registration::Item` for each tutorial or talk |
 | Attach Policies | Add `Registration::Policy` records (e.g., `institutional_email`, `prerequisite_campaign`) |
-| Open Campaign | Make available for student submissions |
+| Open Campaign | Make available for student registrations (registration requests) |
 
 **Student Experience:**
 
@@ -44,7 +44,7 @@ Assign students to tutorial groups or seminar talks
 ```
 
 **Technical Flow:**
-- Each submission creates a `Registration::UserRegistration` with status `pending` or `confirmed` (FCFS)
+- Each registration request creates a `Registration::UserRegistration` with status `pending` or `confirmed` (FCFS)
 - `Registration::PolicyEngine` evaluates all active policies in order
 - If any policy fails, registration is rejected with specific reason code
 
@@ -59,14 +59,14 @@ This phase is skipped if the campaign uses `first_come_first_serve` mode.
 ```
 
 **Staff Actions:**
-- At or after registration deadline, staff triggers `campaign.run_assignment!`
+- At or after registration deadline, staff triggers `campaign.allocate_and_finalize!`
 - Campaign status transitions: `open` → `processing` → `completed`
 
 **Technical Details:**
 
 | Aspect | Implementation |
 |--------|----------------|
-| Service | `Registration::AssignmentService` delegates to solver (e.g., Min-Cost Flow) |
+| Service | `Registration::AllocationService` delegates to solver (e.g., Min-Cost Flow) |
 | Cost Model | Preferences treated as costs (rank 1 = cost 1, rank 2 = cost 2, etc.) |
 | Constraints | Respects capacity from `Registerable#capacity` |
 | Output | One confirmed `UserRegistration` per user, rejects others |
@@ -207,7 +207,7 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 | 2. Create Campaign | Staff creates `Registration::Campaign` for the exam |
 | 3. Attach Policy | Add `Registration::Policy` with `kind: :exam_eligibility` (see [Exam Eligibility](05-exam-eligibility.md)) |
 | 4. Optional Policies | May also attach other policies (e.g., `institutional_email`) |
-| 5. Open | Campaign opens for submissions |
+| 5. Open | Campaign opens for registrations (registration requests) |
 
 **Registration Flow:**
 

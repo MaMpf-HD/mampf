@@ -54,7 +54,7 @@ The exam equivalent of a Tutorial—it's both a thing students register for and 
 # An exam can host a registration campaign
 exam.registration_campaigns.create!(
   title: "Final Exam Registration",
-  assignment_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_serve,
   registration_deadline: exam.registration_deadline
 )
 ```
@@ -201,7 +201,7 @@ exam = lecture.exams.create!(
 
 campaign = exam.registration_campaigns.create!(
   title: "Final Exam Registration",
-  assignment_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_serve,
   registration_deadline: exam.registration_deadline
 )
 
@@ -227,7 +227,7 @@ retake_exam = lecture.exams.create!(
 
 campaign = lecture.registration_campaigns.create!(
   title: "Exam Date Selection",
-  assignment_mode: :preference_based
+  allocation_mode: :preference_based
 )
 
 campaign.registration_items.create!(registerable: regular_exam)

@@ -10,7 +10,7 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 ## Problem Overview
 - After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
 - Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
-- Non-goals: This system does not re-run the automated solver (`Registration::AssignmentService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
+- Non-goals: This system does not re-run the automated solver (`Registration::AllocationService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
 
 ## Solution Architecture
 - **Canonical Source:** Domain rosters on registerable models (e.g., `Tutorial.students`, `Talk.speakers`).
@@ -95,8 +95,8 @@ The single, safe entry point for all staff-initiated roster changes after an all
 An admin “move/add/remove” service with capacity checks and logging.
 ```
 
-```admonish note "How this is different from Registration::AssignmentService"
-- `Registration::AssignmentService` is the **automated solver** that runs once to create the initial allocation.
+```admonish note "How this is different from Registration::AllocationService"
+- `Registration::AllocationService` is the **automated solver** that runs once to create the initial allocation.
 - `Roster::MaintenanceService` is the **manual tool** for staff to make individual changes to rosters *after* the campaign is finished.
 ```
 

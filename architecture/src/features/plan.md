@@ -57,7 +57,7 @@ graph TD
     ```
 
 4. **Preference-Based Mode**
-    Action: Add the backend `Registration::AssignmentService` and background job. On the frontend, modify the student registration UI to support preference ranking (e.g., via drag-and-drop or numbered inputs) instead of a simple selection.
+    Action: Add the backend `Registration::AllocationService` and background job. On the frontend, modify the student registration UI to support preference ranking (e.g., via drag-and-drop or numbered inputs) instead of a simple selection.
 
     ```admonish success "Non-Disruptive Impact"
     Like the FCFS mode, the preference-based solver and its UI are only invoked for new `Registration::Campaign`s. It will have no knowledge of or interaction with courses from the current semester.

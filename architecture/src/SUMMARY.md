@@ -12,7 +12,7 @@
 - [Exam Eligibility](features/05-exam-eligibility.md)
 - [Grading Schemes](features/05b-grading-schemes.md)
 - [End-to-End Workflow](features/06-end-to-end-workflow.md)
-- [Assignment Algorithm Details](features/07-algorithm-details.md)
+- [Allocation Algorithm Details](features/07-algorithm-details.md)
 - [Examples & Demos](features/08-examples-and-demos.md)
 - [Integrity & Invariants](features/09-integrity-and-invariants.md)
 

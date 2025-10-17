@@ -26,6 +26,13 @@ We use a unified system with:
 
 ---
 
+```admonish tip "Glossary (Registration)"
+- Allocation mode: Enum selecting `first_come_first_serve` or `preference_based`.
+- AllocationService: Computes allocations (preference-based) via `allocate!`.
+- AllocationMaterializer: Applies confirmed allocations to domain rosters.
+- Campaign methods: `allocate!`, `finalize!`, `allocate_and_finalize!`.
+```
+
 ## Registration::Campaign (ActiveRecord Model)
 **_The Registration Process Orchestrator_**
 
@@ -41,27 +48,36 @@ The main fields and methods of `Registration::Campaign` are:
 
 | Name/Field                | Type/Kind         | Description                                                                                  |
 |---------------------------|-------------------|----------------------------------------------------------------------------------------------|
-| `campaignable_type`       | DB column         | Polymorphic type for the campaign host (e.g., Lecture, Seminar)                              |
+| `campaignable_type`       | DB column         | Polymorphic type for the campaign host (e.g., Lecture, Exam)                              |
 | `campaignable_id`         | DB column         | Polymorphic ID for the campaign host                                                         |
 | `title`                   | DB column         | Human-readable campaign title                                                                 |
-| `assignment_mode`         | DB column (Enum)  | Registration mode: `first_come_first_serve` or `preference_based`                            |
+| `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_serve` or `preference_based`                            |
 | `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `processing`, `completed`                                   |
-| `registration_deadline`   | DB column         | Deadline for user submissions                                                                |
+| `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
 | `registration_items`      | Association       | Items available for registration within this campaign                                        |
-| `user_registrations`      | Association       | User submissions for this campaign                                                           |
+| `user_registrations`      | Association       | User registrations (registration requests) for this campaign                                 |
 | `registration_policies`   | Association       | Eligibility and other policies attached to this campaign                                     |
-| `eligible_user?(user)`    | Method            | Returns eligibility result for a user (delegates to Policy Engine)                           |
-| `open_for_submissions?`   | Method            | Returns true if campaign is currently accepting submissions                                  |
-| `finalize!`               | Method            | Finalizes and materializes allocation                                                        |
-| `run_assignment!`         | Method            | Runs allocation solver and finalizes campaign                                                |
+| `evaluate_policies_for(user)` | Method      | Returns a structured eligibility result (delegates to Policy Engine)                         |
+| `policies_satisfied?(user)` | Method      | Boolean convenience that returns true when all policies pass                                 |
+| `open_for_registrations?` | Method            | Returns true if campaign is currently accepting registrations                                 |
+| `allocate!`               | Method            | Computes allocation (preference-based) without materialization                               |
+| `finalize!`               | Method            | Materializes the latest allocation into domain rosters                                       |
+| `allocate_and_finalize!`  | Method            | Convenience: computes allocation and then finalizes                                          |
 
 ```admonish note
-Eligibility is not a single field or method, but is determined dynamically by evaluating all active `registration_policies` for the campaign using the `eligible_user?(user)` method, which delegates to the policy engine.
+Eligibility is not a single field or method, but is determined dynamically by evaluating all active `registration_policies` for the campaign using the `evaluate_policies_for(user)` method, which delegates to the policy engine. Use `policies_satisfied?(user)` as a boolean convenience.
 ```
+
+```admonish tip "API at a glance"
+- `evaluate_policies_for(user)` → Result (fields: `pass`, `failed_policy`, `trace`)
+- `policies_satisfied?(user)` → Boolean (`true` when all policies pass)
+- `open_for_registrations?` → Boolean (campaign currently accepts registrations)
+```
+
 
 ### Behavior Highlights
 
-- Guards submission window (`open?`)
+- Guards registration window (`open?`)
 - Delegates fine-grained eligibility to ordered `RegistrationPolicies` via Policy Engine
 - Triggers solver (preference-based) at/after deadline
 - Finalizes and materializes allocation once only (idempotent)
@@ -82,18 +98,22 @@ module Registration
              class_name: "Registration::Policy",
              dependent: :destroy
 
-    enum assignment_mode: { first_come_first_serve: 0, preference_based: 1 }
+  enum allocation_mode: { first_come_first_serve: 0, preference_based: 1 }
     enum status: { draft: 0, open: 1, processing: 2, completed: 3 }
 
     validates :title, :registration_deadline, presence: true
 
-    def eligible_user?(user)
+    def evaluate_policies_for(user)
       return Registration::PolicyEngine::Result.new(pass: false, code: :campaign_not_open) unless open?
       engine = Registration::PolicyEngine.new(self)
       engine.eligible?(user)
     end
 
-    def open_for_submissions?
+    def policies_satisfied?(user)
+      evaluate_policies_for(user).pass
+    end
+
+    def open_for_registrations?
       open?
     end
 
@@ -103,10 +123,15 @@ module Registration
       update!(status: :completed)
     end
 
-    def run_assignment!
+    def allocate!
       return false unless preference_based? && open? && Time.current >= registration_deadline
       update!(status: :processing)
-      Registration::AssignmentService.new(self, strategy: :min_cost_flow).assign!
+      Registration::AllocationService.new(self, strategy: :min_cost_flow).allocate!
+      true
+    end
+
+    def allocate_and_finalize!
+      return false unless allocate!
       finalize!
     end
   end
@@ -115,9 +140,11 @@ end
 
 ### Usage Scenarios
 
-- A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots.
+- A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`.
+- A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_serve` and assigns talk slots. Items point to `Talk`.
+- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_serve` and enrolls students directly. The single item points to the `Lecture`.
 - A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_serve` to quickly fill the limited seminar seats.
-- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and is protected by an `exam_eligibility` policy.
+- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and is protected by an `exam_eligibility` policy. Items point to `Exam`.
 
 ---
 
@@ -184,7 +211,7 @@ The main fields and methods of `Registration::Item` are:
 | `assigned_count`          | DB column         | Optional denormalized counter for confirmed users.                       |
 | `registration_campaign`   | Association       | The parent `Registration::Campaign`.                                      |
 | `registerable`            | Association       | The underlying domain object (e.g., a `Tutorial` instance).              |
-| `user_registrations`      | Association       | All user submissions for this item.                                      |
+| `user_registrations`      | Association       | All user registrations (registration requests) for this item.            |
 | `assigned_users`          | Method            | Returns a list of users confirmed for this item.                         |
 | `capacity`                | Method            | The maximum number of users, delegated from the `registerable`.          |
 
@@ -207,6 +234,11 @@ end
 ```
 
 ### Usage Scenarios
+
+Each scenario below is the item-side view of the campaign types listed
+earlier. The `Registration::Item` belongs to the associated campaign and
+wraps the concrete `registerable` record that users ultimately get
+assigned to.
 
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
@@ -429,7 +461,10 @@ module Registration
 
     def eval_exam(user)
       lecture_id = config["lecture_id"] || registration_campaign.campaignable_id
-      rec = ExamEligibilityRecord.find_by(lecture_id: lecture_id, user_id: user.id)
+      rec = ExamEligibility::Record.find_by(
+        lecture_id: lecture_id,
+        user_id: user.id
+      )
       return fail_result(:no_record, "No eligibility record") unless rec
       rec.eligible_final? ? pass_result(:eligible) : fail_result(:not_eligible, "Exam eligibility failed")
     end
@@ -490,7 +525,7 @@ An 'eligibility checklist' processor that stops at the first failed check and pr
 - Iterates policies in `position` order.
 - Stops at the first failure (fast fail).
 - Returns a structured `Result` object containing the pass/fail status, the policy that failed (if any), and a full trace of all evaluations.
-- This `Result` object is used by `Registration::Campaign#eligible_user?` to provide clear feedback to the UI.
+- This `Result` object is used by `Registration::Campaign#evaluate_policies_for` to provide clear feedback to the UI.
 
 ### Example Implementation
 ```ruby
@@ -521,7 +556,7 @@ end
 
 ---
 
-## Registration::AssignmentService (Service Object)
+## Registration::AllocationService (Service Object)
 **_The Allocation Solver_**
 
 ```admonish info "What it represents"
@@ -537,7 +572,7 @@ The 'brain' that solves the puzzle of who gets what in a preference-based campai
 | Method                          | Purpose                                                              |
 |---------------------------------|----------------------------------------------------------------------|
 | `initialize(campaign, strategy:)` | Sets up the service with a campaign and a specific allocation strategy. |
-| `assign!`                       | Executes the allocation logic based on the chosen strategy.          |
+| `allocate!`                       | Executes the allocation logic based on the chosen strategy.          |
 
 ### Responsibilities
 
@@ -555,21 +590,21 @@ The 'brain' that solves the puzzle of who gets what in a preference-based campai
 
 The service uses a **Strategy Pattern** to delegate the actual solving to a dedicated class based on the chosen `strategy`. This allows for different solver implementations (e.g., Min-Cost Flow, CP-SAT) to be used interchangeably.
 
-For a detailed breakdown of the graph modeling and solver implementation, see the [Assignment Algorithm Details](07-algorithm-details.md) chapter.
+For a detailed breakdown of the graph modeling and solver implementation, see the [Allocation Algorithm Details](07-algorithm-details.md) chapter.
 
 ### Example Implementation
 
 ```ruby
 # This service acts as a dispatcher for different solver strategies.
 module Registration
-  class AssignmentService
+  class AllocationService
     def initialize(campaign, strategy: :min_cost_flow, **opts)
       @campaign = campaign
       @strategy = strategy
       @opts = opts
     end
 
-    def assign!
+    def allocate!
       solver =
         case @strategy
         when :min_cost_flow then Registration::Solvers::MinCostFlow.new(@campaign, **@opts)
@@ -603,7 +638,7 @@ end
 ```
 
 ### Usage Scenarios
-- After the deadline for a `preference_based` tutorial registration campaign, a background job calls `Registration::AssignmentService.new(campaign).assign!`. The service runs the solver and updates thousands of `Registration::UserRegistration` records to either `:confirmed` or `:rejected`.
+- After the deadline for a `preference_based` tutorial registration campaign, a background job calls `Registration::AllocationService.new(campaign).allocate!`. The service runs the solver and updates thousands of `Registration::UserRegistration` records to either `:confirmed` or `:rejected`.
 - An administrator manually triggers the assignment for a seminar's talk selection via a button in the UI, which in turn calls this service.
 
 ---
@@ -772,9 +807,9 @@ end
 stateDiagram-v2
     [*] --> draft
     draft --> open
-    open --> processing : run_assignment! (pref-based, after deadline)
+  open --> processing : allocate_and_finalize! (pref-based, after deadline)
     open --> completed : finalize! (FCFS, after deadline)
-    processing --> completed : finalize! (called by run_assignment!)
+  processing --> completed : finalize! (called by allocate_and_finalize!)
 ```
 
 ## ERD
@@ -801,7 +836,7 @@ sequenceDiagram
     participant Campaign as Registration::Campaign
     participant UserReg as Registration::UserRegistration
     actor Job as Background Job
-    participant AssignmentSvc as Registration::AssignmentService
+  participant AllocationSvc as Registration::AllocationService
     participant Solver as Registration::Solvers::MinCostFlow
     participant Materializer as Registration::AllocationMaterializer
     participant RegTarget as Registerable (e.g., Tutorial)
@@ -809,7 +844,7 @@ sequenceDiagram
     rect rgb(235, 245, 255)
     note over User,Controller: Registration phase (campaign is open)
     User->>Controller: Submit preferences
-    Controller->>Campaign: eligible_user?(user)
+  Controller->>Campaign: evaluate_policies_for(user)
     alt eligible
       loop for each preference
         Controller->>UserReg: create(user_id, item_id, rank)
@@ -821,12 +856,12 @@ sequenceDiagram
 
     note over User,Job: Deadline passes
 
-    rect rgb(255, 245, 235)
-    note over Job,RegTarget: Assignment & finalization
-    Job->>Campaign: run_assignment!
+  rect rgb(255, 245, 235)
+  note over Job,RegTarget: Allocation & finalization
+  Job->>Campaign: allocate_and_finalize!
     Campaign->>Campaign: update!(status: :processing)
-    Campaign->>AssignmentSvc: new(campaign).assign!
-    AssignmentSvc->>Solver: new(campaign).run()
+  Campaign->>AllocationSvc: new(campaign).allocate!
+  AllocationSvc->>Solver: new(campaign).run()
     note right of Solver: Build graph, solve, persist statuses
     Solver->>UserReg: update_all(status: confirmed/rejected)
     Campaign->>Campaign: finalize!
@@ -863,7 +898,7 @@ app/
     ├── solvers/
     │   ├── min_cost_flow.rb
     │   └── cp_sat.rb (future)
-    ├── assignment_service.rb
+    ├── allocation_service.rb
     ├── allocation_materializer.rb
     └── policy_engine.rb
 ```
@@ -872,9 +907,9 @@ This structure separates the ActiveRecord models, shared concerns, and business 
 
 ### Key Files
 - `app/models/registration/campaign.rb` - Orchestrates the registration process
-- `app/models/registration/user_registration.rb` - Records user submissions
+- `app/models/registration/user_registration.rb` - Records user registrations (registration requests)
 - `app/models/registration/policy.rb` - Defines eligibility rules
-- `app/services/registration/assignment_service.rb` - Runs allocation solver
+- `app/services/registration/allocation_service.rb` - Runs allocation solver
 - `app/services/registration/allocation_materializer.rb` - Persists results to domain models
 
 ---
@@ -883,7 +918,7 @@ This structure separates the ActiveRecord models, shared concerns, and business 
 
 - `registration_campaigns` - Campaign orchestration records
 - `registration_items` - Catalog entries linking campaigns to registerables
-- `registration_user_registrations` - User submission records with status and preference rank
+- `registration_user_registrations` - User registration request records with status and preference rank
 - `registration_policies` - Eligibility rules with kind, config, and position
 
 ```admonish note
