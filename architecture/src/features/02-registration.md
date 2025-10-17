@@ -72,6 +72,8 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 - `evaluate_policies_for(user)` → Result (fields: `pass`, `failed_policy`, `trace`)
 - `policies_satisfied?(user)` → Boolean (`true` when all policies pass)
 - `open_for_registrations?` → Boolean (campaign currently accepts registrations)
+ 
+ See also: Controller endpoints in [Controller Architecture → Registration Controllers](11-controllers.md#registration-controllers).
 ```
 
 
