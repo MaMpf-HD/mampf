@@ -125,6 +125,12 @@ function _setupChangeDetection(isInfoSlide) {
     form.find("input, select, textarea, trix-editor"), "change keyup", checkForChanges);
   registry.register(
     form.find("#vignette-multiple-choice-options"), "change keyup", checkForChanges, "input");
+  // Detect deletion of multiple-choice options: user clicking the remove
+  // button and changes to the hidden _destroy input should count as a change.
+  registry.register(
+    form.find("#vignette-multiple-choice-options"), "click", checkForChanges, ".btn-outline-danger");
+  registry.register(
+    form.find("#vignette-multiple-choice-options"), "change", checkForChanges, ".vignette-mc-hidden-destroy");
   registry.register($(document), "direct-upload:end", checkForChanges);
   registry.register($(document), "trix-attachment-remove", checkForChanges);
 }
