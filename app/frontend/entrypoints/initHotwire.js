@@ -20,9 +20,6 @@ window.Stimulus.register("flash-messages", FlashMessagesController);
 import FeedbackFormController from "~/feedbacks/form/_form.controller.js";
 window.Stimulus.register("feedback", FeedbackFormController);
 
-import FramesLoaderController from "~/vignettes/questionnaires/edit/frames_loader.controller.js";
-window.Stimulus.register("frames-loader", FramesLoaderController);
-
 import VignettesQuestionController from "~/vignettes/slides/form/question/_question.controller.js";
 window.Stimulus.register("vignettes-question", VignettesQuestionController);
 
