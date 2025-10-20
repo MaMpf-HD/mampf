@@ -1,4 +1,5 @@
 <div>
   <%= form.label :content, t("vignettes.slide_content") %><br>
-  <%= form.rich_text_area :content %>
+  <trix-toolbar id="vignette-content-toolbar"></trix-toolbar>
+  <%= form.rich_textarea :content, toolbar: "vignette-content-toolbar" %>
 </div>
