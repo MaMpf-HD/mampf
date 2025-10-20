@@ -9,6 +9,9 @@ export default class extends Controller {
 
   changeQuestionType(event) {
     this.showOnlyQuestionType(event.target.value);
+    const customEvent = new CustomEvent("vignettes:questionTypeChanged",
+      { detail: { value: event.target.value }, bubbles: true });
+    this.element.dispatchEvent(customEvent);
   }
 
   showOnlyQuestionType(questionType) {

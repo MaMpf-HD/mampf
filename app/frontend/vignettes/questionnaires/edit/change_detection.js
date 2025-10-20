@@ -36,11 +36,14 @@ function registerChangeHandlers() {
   });
 
   // Accordion button clicked to open slide
-  $(document).on("shown.bs.collapse", COLLAPSE_CLASS, function () {
+  $(document).on("shown.bs.collapse", COLLAPSE_CLASS, function (event) {
+    if (event.target !== this) return;
     setupChangeDetection();
   });
 
   $(document).on("show.bs.collapse", COLLAPSE_CLASS, function (event) {
+    if (event.target !== this) return;
+
     const allowed = handleUnsavedChanges(event, "show");
     if (!allowed) return false;
 
@@ -57,6 +60,7 @@ function registerChangeHandlers() {
   });
 
   $(document).on("hide.bs.collapse", COLLAPSE_CLASS, function (event) {
+    if (event.target !== this) return;
     registry.deregisterAll();
     resetUnsavedChangesState();
     return handleUnsavedChanges(event, "hide");
@@ -104,10 +108,14 @@ function _setupChangeDetection(isInfoSlide) {
   const formSubmitButton = form.find(".slide-submit-btn");
 
   const initialState = form.serialize();
+  // necessary since changing the question type only changes which elements
+  // are shown on-screen, but not the serialized form data
+  const initialQuestionType = form.find("#vignette-question-type").val();
 
   function checkForChanges() {
     const currentState = form.serialize();
-    if (currentState !== initialState) {
+    const currentQuestionType = form.find("#vignette-question-type").val();
+    if (currentState !== initialState || currentQuestionType !== initialQuestionType) {
       unsavedChangesWarning.removeClass("d-none");
       formSubmitButton.removeClass("d-none");
       currentUnsavedSlideForm = form;
@@ -124,9 +132,9 @@ function _setupChangeDetection(isInfoSlide) {
   registry.register(
     form.find("input, select, textarea, trix-editor"), "change keyup", checkForChanges);
   registry.register(
+    form, "vignettes:questionTypeChanged", checkForChanges);
+  registry.register(
     form.find("#vignette-multiple-choice-options"), "change keyup", checkForChanges, "input");
-  // Detect deletion of multiple-choice options: user clicking the remove
-  // button and changes to the hidden _destroy input should count as a change.
   registry.register(
     form.find("#vignette-multiple-choice-options"), "click", checkForChanges, ".btn-outline-danger");
   registry.register(
