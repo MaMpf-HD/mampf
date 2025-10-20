@@ -176,7 +176,7 @@ function discardCurrentChanges() {
   if (currentFrame.length === 1) {
     $(document).one("hidden.bs.modal", function () {
       // Reload to discard unsaved changes. Otherwise, the changes would still be
-      // visibile when reopening the slide, although the backend data is unchanged.
+      // visible when reopening the slide, although the backend data is unchanged.
       reloadTurboFrame(currentFrame.get(0));
     });
   }
