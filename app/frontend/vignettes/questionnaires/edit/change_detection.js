@@ -1,5 +1,6 @@
 import { reloadTurboFrame } from "~/entrypoints/initHotwire";
 import { HandlerRegistry } from "./handler_registry";
+import { fixVideoAttachments } from "./video_fix";
 
 const COLLAPSE_CLASS = ".vignette-accordion-collapse";
 
@@ -88,6 +89,7 @@ function resetUnsavedChangesState() {
 }
 
 function setupChangeDetection() {
+  fixVideoAttachments();
   _setupChangeDetection(false);
   _setupChangeDetection(true);
 }
