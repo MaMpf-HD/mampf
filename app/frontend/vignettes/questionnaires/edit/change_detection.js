@@ -124,7 +124,7 @@ function _setupChangeDetection(isInfoSlide) {
   registry.register(
     form.find("input, select, textarea, trix-editor"), "change keyup", checkForChanges);
   registry.register(
-    $("#vignette-multiple-choice-options"), "change keyup", checkForChanges, "input");
+    form.find("#vignette-multiple-choice-options"), "change keyup", checkForChanges, "input");
   registry.register($(document), "direct-upload:end", checkForChanges);
   registry.register($(document), "trix-attachment-remove", checkForChanges);
 }
