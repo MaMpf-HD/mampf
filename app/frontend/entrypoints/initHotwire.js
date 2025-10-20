@@ -29,6 +29,9 @@ window.Stimulus.register("vignettes-question", VignettesQuestionController);
 import VignettesMultipleChoiceController from "~/vignettes/slides/form/question/types/_multiple_choice.controller.js";
 window.Stimulus.register("vignettes-multiple-choice", VignettesMultipleChoiceController);
 
+import VignettesNumberController from "~/vignettes/slides/form/question/types/_number.controller.js";
+window.Stimulus.register("vignettes-number", VignettesNumberController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.
