@@ -61,6 +61,7 @@
 
       <%= button_to export_statistics_questionnaire_path(@questionnaire),
           class: 'btn btn-outline-secondary me-2',
+          data: { turbo: false },
           method: :get do %>
         <i class="bi bi-file-earmark-spreadsheet"></i>
         <%= t("vignettes.export_statistics") %>
