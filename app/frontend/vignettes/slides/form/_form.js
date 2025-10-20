@@ -1,6 +1,6 @@
 import TomSelect from "tom-select";
 
-$(document).on("turbo:load turbo:frame-load", function () {
+$(document).on("turbo:load turbo:frame-load turbo:stream-render", function () {
   document.querySelectorAll(".vignettes-linked-info-slides:not(.ts-wrapper)")
     .forEach((element) => {
       if (element.tomselect) {
