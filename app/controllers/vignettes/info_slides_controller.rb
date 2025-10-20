@@ -67,7 +67,7 @@ module Vignettes
         end
 
         render turbo_stream: turbo_stream.remove(@info_slide)
-      rescue StandardError => e
+      rescue StandardError
         respond_with_flash(:alert, t("vignettes.info_slide_not_deleted"),
                            fallback_location: edit_questionnaire_path(@questionnaire))
       end
