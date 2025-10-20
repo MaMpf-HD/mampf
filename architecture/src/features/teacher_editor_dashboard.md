@@ -69,6 +69,15 @@ Content:
     -   **Status:** e.g., "Open - 150/200 registered", "Awaiting Allocation", "Finalized".
     -   **Action:** A "View Details" button linking to the campaign's admin page.
 
+```admonish tip "API at a glance (Teacher)"
+- campaign.evaluate_policies_for(user) → Result (pass, failed_policy, trace)
+- campaign.policies_satisfied?(user) → Boolean
+- campaign.open_for_registrations? → Boolean
+- campaign.allocate_and_finalize! → Execute solver and finalize (preference-based)
+- campaign.finalize! → Materialize confirmed results to rosters
+- campaign.registration_policies / .registration_items / .user_registrations
+```
+
 ---
 
 ## 4) "Grading Queue" Widget

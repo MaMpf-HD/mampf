@@ -6,24 +6,23 @@ This demo walks through a complete semester lifecycle, from setup to final repor
 
 ```ruby
 # --- Phase 0: Semester Setup ---
-# Create lecture and configure capacity
-lecture = Lecture.find_or_create_by!(title: "Linear Algebra I", semester: "WS 2024/25") do |l|
-  l.capacity = 500
-end
+# Create lecture
+# NOTE: capacity/semester are not Lecture fields in MaMpf today
+lecture = FactoryBot.create(:lecture_with_sparse_toc, "with_title",
+                            title: "Linear Algebra I")
 
 # Create users simulating mixed email domains (valid + invalid)
 domains = %w[student.uni.edu uni.edu gmail.com]
 users = (1..12).map do |i|
-  User.find_or_create_by!(email: "user#{i}@#{domains[i % domains.size]}") do |u|
-    u.name = "User #{i}"
-  end
+  FactoryBot.create(:confirmed_user,
+                    email: "user#{i}@#{domains[i % domains.size]}",
+                    name: "User #{i}")
 end
 
 # Create tutorials
 tutorials = (1..3).map do |n|
-  Tutorial.find_or_create_by!(lecture: lecture, title: "Tutorial #{n}") do |t|
-    t.capacity = 5
-  end
+  FactoryBot.create(:tutorial, lecture: lecture, title: "Tutorial #{n}")
+  # NOTE: capacity is not a Tutorial field in MaMpf today
 end
 
 # --- Phase 1: Tutorial Registration ---
@@ -48,11 +47,18 @@ tut_campaign.registration_policies.create!(
 
 tut_campaign.update!(status: :open)
 
-# Users submit ranked preferences (gmail users will fail policy)
-eligible_submitters = users.reject { |u| u.email.end?("gmail.com") }
+# Users submit ranked preferences.
+# Prefilter via the campaign's policy predicate because this demo writes
+# registrations directly instead of calling the service. In production,
+# the controller/service would enforce policies server-side.
+eligible_submitters = users.select do |u|
+  tut_campaign.policies_satisfied?(u)
+end
 ri_map = tut_campaign.registration_items.index_by(&:registerable_id)
 
 eligible_submitters.each do |user|
+  # In production, guard each attempt via the PolicyEngine, e.g.:
+  # next unless tut_campaign.policies_satisfied?(user)
   shuffled = tutorials.shuffle
   shuffled.each_with_index do |tut, rank|
     Registration::UserRegistration.create!(
@@ -68,7 +74,7 @@ end
 # --- Phase 2: Tutorial Allocation ---
 # Close registration and run allocation algorithm
 tut_campaign.update!(registration_deadline: Time.current - 1.second)
-Registration::AllocationService.new(tut_campaign).run!
+tut_campaign.allocate_and_finalize!
 
 # --- Phase 3: Roster Materialization ---
 # Materialization happens automatically after allocation
@@ -238,7 +244,7 @@ exam_campaign.update!(status: :open)
 
 # Eligible students register for exam
 eligible_submitters.each do |user|
-  next unless exam_campaign.policies_satisfied_for?(user)
+  next unless exam_campaign.policies_satisfied?(user)
 
   Registration::UserRegistration.create!(
     user: user,
@@ -375,5 +381,5 @@ This demo follows the architecture defined in Chapters 1-5a. All model names, se
 ```
 
 ```admonish info "Multiple Choice Exams"
-This example uses a standard exam for simplicity. For exams with multiple choice components that require German legal compliance (Gleitklausel), see [Exam Model: Multiple Choice Support](05a-exam-model.md#multiple-choice-exams).
+This example uses a standard exam for simplicity. For exams with multiple choice components that require German legal compliance (Gleitklausel), see [Multiple Choice Exams](05c-multiple-choice-exams.md).
 ```

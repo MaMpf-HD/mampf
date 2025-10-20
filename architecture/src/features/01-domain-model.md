@@ -13,7 +13,7 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | Registration::Campaignable | Concern | Enables a model to host registration campaigns |
 | Registration::Registerable | Concern | Enables a model to be an option within a campaign |
 | Registration::PolicyEngine | Service | Executes ordered active policies; short‑circuits on first failure |
-| Registration::AllocationMaterializer | Service | Applies confirmed assignments → registerable.materialize_allocation! |
+| Registration::AllocationMaterializer | Service | Applies confirmed allocations → registerable.materialize_allocation! |
 
 ## Rosters
 
@@ -52,12 +52,12 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | GradeScheme::Scheme | ActiveRecord | Versioned configuration for converting assessment points to final grades |
 | GradeScheme::Applier | Service | Applies scheme to compute and persist final grades for all participations |
 
-## Assignment Algorithm
+## Allocation Algorithm
 
 | Component | Type | Description |
 |-----------|------|-------------|
-| Registration::AssignmentService | Service | Strategy dispatcher using pluggable solvers (Min-Cost Flow, future CP-SAT) |
-| Registration::Solvers::MinCostFlow | Service | OR-Tools SimpleMinCostFlow implementation for bipartite preference assignment |
+| Registration::AllocationService | Service | Strategy dispatcher using pluggable solvers (Min-Cost Flow, future CP-SAT) |
+| Registration::Solvers::MinCostFlow | Service | OR-Tools SimpleMinCostFlow implementation for bipartite preference allocation |
 | Registration::Solvers::CpSat | Service | Future CP-SAT solver for advanced constraints (fairness, mutual exclusion, quotas) |
 
 ## Linking Concepts
@@ -79,7 +79,7 @@ These are the "glue" entities that connect the core domain models (User, Lecture
 | Domain Model | Links To | Via | Purpose |
 |--------------|----------|-----|---------|
 | Lecture | Registration | `Registration::Campaignable` concern | Host exam registration campaigns |
-| Tutorial | Registration | `Registration::Registerable` concern | Become a registerable option in tutorial assignment |
+| Tutorial | Registration | `Registration::Registerable` concern | Become a registerable option in tutorial allocation |
 | Exam | Registration | `Registration::Campaignable` concern | Host exam registration campaigns |
 | Assignment | Assessment | `Assessment::Pointable` concern | Track per-task points for homework |
 | Exam | Assessment | `Assessment::Gradable` concern | Record final exam grades |

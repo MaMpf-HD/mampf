@@ -94,25 +94,9 @@ add_foreign_key :assessment_task_points, :assessment_participations, column: :pa
 | Results visible only when `Assessment.results_published = true` | Controller authorization |
 | `Participation.submitted_at` persists across status changes | Never overwritten after initial set |
 
-### Multiple Choice Exam Constraints
-
-```ruby
-# At most one MC task per assessment
-# Enforced via validation: at_most_one_mc_task_per_assessment
-
-# MC flag only for exams
-# Enforced via validation: mc_flag_only_for_exams
-
-# Grade scheme only for MC tasks
-# Enforced via validation: grade_scheme_only_for_mc_tasks
+```admonish note "Multiple Choice Extension"
+For MC exam-specific constraints, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter.
 ```
-
-| Invariant | Details |
-|-----------|---------|
-| `is_multiple_choice = true` only for exams | Application validation checks `assessable.is_a?(Exam)` |
-| At most one MC task per assessment | Scoped uniqueness validation |
-| Task-level grade scheme only for MC tasks | Validation ensures `grade_scheme_id` only set if `is_multiple_choice = true` |
-| MC threshold between 50% and 60% | Computed by `McGrader` with sliding clause |
 
 ---
 
@@ -235,17 +219,23 @@ These rules must be enforced via authorization layer (e.g., Pundit policies):
 ### Key Metrics
 
 ```admonish tip "Recommended Alerts"
-Set up monitoring for these conditions:
+Set up monitoring for these conditions to catch data inconsistencies early:
 ```
 
-| Metric | Threshold | Action |
-|--------|-----------|--------|
-| Orphan submissions (missing `registration_item`) | = 0 | Alert immediately |
-| Allocation failures in last 24h | > 0 | Alert staff |
-| Drift: `|assigned_count - confirmed_count|` | > 5 per item | Trigger recount job |
-| Eligibility computation age | > 24h during registration | Alert staff |
-| MC threshold computation failures | > 0 | Alert immediately |
-| Task points exceeding max points | > 0 | Alert graders |
+| Metric | Threshold | Action | Explanation |
+|--------|-----------|--------|-------------|
+| Orphan submissions | = 0 | Alert immediately | Submissions without a valid `registration_item_id` indicate broken foreign keys or data corruption |
+| Allocation failures (last 24h) | > 0 | Alert staff | Failed registration assignments need manual review; may indicate capacity or constraint issues |
+| Count drift per item | > 5 | Trigger recount job | Difference between `assigned_count` cache and actual roster count suggests cache staleness |
+| Eligibility computation age | > 24h during active registration | Alert staff | Stale eligibility data means students see outdated registration status; recompute needed |
+
+```admonish note "Count Drift Metric"
+The "count drift" metric compares the cached `assigned_count` field on registration items against the actual number of confirmed roster entries. A drift > 5 suggests the cache is out of sync with reality, which can happen after manual roster modifications or failed callbacks. The recount job refreshes these cached values.
+```
+
+```admonish info "Extra Points Allowed"
+Points exceeding task maximum are intentionally permitted to support extra credit scenarios and bonus points. This is not considered an error condition.
+```
 
 ---
 
@@ -257,8 +247,6 @@ Use this checklist for manual verification:
 - [ ] Random sample: `total_points` matches `sum(task_points.points)` for assessments
 - [ ] All eligibility overrides have non-null `override_reason`
 - [ ] Registration policy `position` values are continuous (no gaps) per campaign
-- [ ] No MC tasks exist for non-exam assessments
-- [ ] All MC tasks have associated grade schemes
 - [ ] Roster changes have audit trail entries
 - [ ] No orphan task points (all reference valid participation + task)
 
