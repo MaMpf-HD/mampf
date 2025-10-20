@@ -1,4 +1,6 @@
-<div class="mt-3 collapse" data-vignettes-question-target="multipleChoice">
+<div class="mt-3 collapse"
+     data-controller="vignettes-multiple-choice"
+     data-vignettes-question-target="multipleChoice">
 
   <div id="vignette-multiple-choice-options">
     <%= f.fields_for :options do |option_form| %>
@@ -17,7 +19,9 @@
     <% end %>
   </template>
   
-  <button type="button" id="vignette-multiple-choice-add" class="btn btn-outline-secondary"
+  <button type="button"
+          class="btn btn-outline-secondary"
+          data-action="vignettes-multiple-choice#addOption"
           <%= form.object.questionnaire.editable ? '' : 'disabled' %>>
     <i class="bi bi-plus-circle"></i>
     <%= t("vignettes.add_multiple_choice_option") %>
