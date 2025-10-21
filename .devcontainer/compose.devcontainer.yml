@@ -2,3 +2,10 @@ services:
   mampf:
     # Overrides default command so things don't shut down after the process ends
     command: sleep infinity
+    volumes:
+      # Persist bash history
+      # https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
+      - mampf-bashhistory:/home/mampf/commandhistory
+
+volumes:
+  mampf-bashhistory:

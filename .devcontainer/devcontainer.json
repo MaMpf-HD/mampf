@@ -26,7 +26,8 @@
             "version": "latest"
         },
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
-        "ghcr.io/jsburckhardt/devcontainer-features/just:1": {}
+        "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
+        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {}
     },
     "containerEnv": {
         "SHELL": "/bin/bash"
@@ -40,6 +41,7 @@
         5050 // pgAdmin
     ],
     "portsAttributes": {
+        // Main app
         "3000": {
             "label": "MaMpf App",
             "onAutoForward": "openBrowserOnce"
@@ -48,21 +50,27 @@
             "label": "Vite Dev Server",
             "onAutoForward": "silent"
         },
+        // Miscellaneous
         "1080": {
-            "label": "Mailcatcher",
+            "label": "mailcatcher",
             "onAutoForward": "silent"
         },
         "5050": {
             "label": "pgAdmin",
             "onAutoForward": "silent"
         },
-        "13254": {
-            "label": "Ruby Debug",
+        // Test ports
+        "3145": {
+            "label": "MaMpf Test App",
+            "onAutoForward": "silent"
+        },
+        "3037": {
+            "label": "Vite Test Server",
             "onAutoForward": "silent"
         }
     },
     "initializeCommand": "git submodule update --init --recursive",
-    "postCreateCommand": "git submodule update --init --recursive",
+    "postCreateCommand": ".devcontainer/boot.sh",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -73,7 +81,8 @@
                 // Other useful extensions
                 "streetsidesoftware.code-spell-checker",
                 "streetsidesoftware.code-spell-checker-german",
-                "nefrob.vscode-just-syntax"
+                "nefrob.vscode-just-syntax",
+                "timonwong.shellcheck"
             ]
         }
     },
