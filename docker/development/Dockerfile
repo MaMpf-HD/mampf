@@ -17,7 +17,7 @@ EXPOSE 3000
 EXPOSE 9394
 
 # use "--login" option, so that .bashrc is sourced in new shells
-SHELL ["/bin/bash", "--login", "-c"]
+SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 
 # Install Node.js
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
@@ -34,8 +34,7 @@ RUN source "${NVM_DIR}/nvm.sh" && nvm install "${NODE_VERSION}" && \
 ENV NODE_PATH="${NVM_DIR}/versions/node/v${NODE_VERSION}/bin/"
 ENV PATH="${NODE_PATH}:${PATH}"
 
-RUN nvm current
-RUN node --version
+RUN nvm current; node --version
 RUN npm --version
 
 # Install Yarn (see https://yarnpkg.com/getting-started/install)
@@ -49,9 +48,15 @@ RUN which yarn; yarn --version
 # yarn available instead of our specified version
 RUN yarn set version "${YARN_VERSION}"
 
+# Make Node.js tooling available for other users
+# see https://www.digitalocean.com/community/tutorials/how-to-install-node-js-with-nvm-node-version-manager-on-a-vps
+# this command copies the currently active nvm node tooling to /usr/local/
+# so that it can be used by the app user later
+RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/yarn; cp -r $n/{bin,lib,share} /usr/local
+
 # Install other dependencies
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
         libarchive-tools wget wait-for-it graphviz libvips42
 
@@ -66,10 +71,32 @@ RUN mkdir -p /usr/share/postgresql-common/pgdg \
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
 
+# 🎈 Users
+# https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user#_creating-a-nonroot-user
+ARG USERNAME=mampf
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+# Create the user
+RUN groupadd --gid $USER_GID $USERNAME \
+    && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && mkdir /cache && chown $USERNAME:$USERNAME /cache \
+    # [Optional] Add sudo support.
+    && apt-get update \
+    && apt-get install -y sudo \
+    && echo $USERNAME ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/$USERNAME \
+    && chmod 0440 /etc/sudoers.d/$USERNAME
+
+# 🎈 Finally, set up the app
 WORKDIR /usr/src/app
+USER $USERNAME
+
+# Log Node.js tooling versions
+RUN which node && node --version && which yarn && yarn --version
+
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
 
-COPY ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+COPY --chown=$USERNAME:USERNAME ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 ARG IN_CI_CD
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running bundle install"; \
@@ -78,12 +105,13 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 # https://stackoverflow.com/a/66158709/9655481
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
-        yarn install --frozen-lockfile; \
+        source "${NVM_DIR}/nvm.sh"; yarn install --frozen-lockfile; \
     fi
+
+COPY --chown=$USERNAME:USERNAME . /usr/src/app/
 
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
-COPY . /usr/src/app/
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
@@ -93,5 +121,5 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         bundle exec rails assets:precompile; \
     fi
 
-COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
-COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
+COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
+COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
