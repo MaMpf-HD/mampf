@@ -7,7 +7,7 @@ This chapter outlines the controllers needed to implement the MÜSLI integration
 ```admonish tip "How to read this chapter"
 We do not expose a public API. "Primary caller" refers to who invokes
 the controller actions inside MaMpf: HTML forms (Turbo), background
-jobs, or admin UIs. Use these sections to wire views, jobs, and
+jobs, or teacher/editor UIs. Use these sections to wire views, jobs, and
 service objects to the right endpoints.
 ```
 
@@ -15,11 +15,11 @@ service objects to the right endpoints.
 
 | Namespace   | Key controllers                                   | Primary caller            |
 |-------------|----------------------------------------------------|---------------------------|
-| Registration| Campaigns, UserRegistrations, Policies, Allocation | Admin UI, Student UI, Job |
-| Roster      | Maintenance                                        | Admin UI                  |
-| Assessment  | Assessments, Grading, Participations               | Admin UI, Tutor UI        |
-| Exam        | Exams, ExamEligibility::Records                    | Admin UI                  |
-| GradeScheme | Schemes                                            | Admin UI                  |
+| Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
+| Roster      | Maintenance                                        | Teacher/Editor UI         |
+| Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
+| Exam        | Exams, ExamEligibility::Records                    | Teacher/Editor UI         |
+| GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
 
 Controllers are grouped into the following namespaces:
@@ -49,7 +49,7 @@ Manage registration campaigns for lectures.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| Registration::CampaignsController | Admin UI | HTML, Turbo Frames/Streams |
+| Registration::CampaignsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -106,7 +106,7 @@ Admin interface for managing registration policies.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| Registration::PoliciesController | Admin UI | HTML, Turbo Frames/Streams |
+| Registration::PoliciesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -133,7 +133,7 @@ Trigger and monitor the allocation algorithm.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| Registration::AllocationController | Admin UI, Job | HTML, Turbo Frames/Streams |
+| Registration::AllocationController | Teacher/Editor UI, Job | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -164,7 +164,7 @@ Handle post-allocation roster changes.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| Roster::MaintenanceController | Admin UI | HTML, Turbo Frames/Streams |
+| Roster::MaintenanceController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -194,7 +194,7 @@ Configure assessments for lectures.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| Assessment::AssessmentsController | Admin UI | HTML, Turbo Frames/Streams |
+| Assessment::AssessmentsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -226,7 +226,7 @@ Enter and manage grades.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| Assessment::GradingController | Tutor UI, Admin UI | HTML, Turbo Frames/Streams |
+| Assessment::GradingController | Tutor UI, Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -277,7 +277,7 @@ Manage exam instances for lectures.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| ExamsController | Admin UI | HTML, Turbo Frames/Streams |
+| ExamsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -295,7 +295,6 @@ Manage exam instances for lectures.
 - Eligibility policy configuration
 - Registration deadline management
 - Export eligible student list
-```
 
 ### `ExamEligibility::RecordsController`
 
@@ -305,7 +304,7 @@ View and override eligibility status.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| ExamEligibility::RecordsController | Admin UI | HTML, Turbo Frames/Streams |
+| ExamEligibility::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -333,7 +332,7 @@ Configure grading schemes for courses.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| GradeScheme::SchemesController | Admin UI | HTML, Turbo Frames/Streams |
+| GradeScheme::SchemesController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 

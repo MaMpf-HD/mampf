@@ -50,7 +50,11 @@ graph TD
     ```
 
 3. **Open FCFS Tutorial Campaigns**
-    Action: Implement the backend controllers, services (`Registration::PolicyEngine`, `Registration::AllocationService`), and frontend UIs for the FCFS registration mode. This includes creating **admin UIs** to set up and manage campaigns and **student UIs** to view and register for items.
+    Action: Implement the backend controllers, services (`Registration::PolicyEngine`, `Registration::AllocationService`), and frontend UIs for the FCFS registration mode. This includes creating **teacher/editor UIs** to set up and manage campaigns and **student UIs** to view and register for items.
+
+    Controllers: Wire `Registration::CampaignsController`,
+    `Registration::UserRegistrationsController`, and
+    `Registration::PoliciesController` (HTML + Turbo Frames/Streams).
 
     ```admonish success "Non-Disruptive Impact"
     This new workflow is only triggered when a `Registration::Campaign` is created for a course. Since you will only create these campaigns for *next* semester's courses, the current semester's courses will continue to function entirely on the old logic.
@@ -59,6 +63,10 @@ graph TD
 4. **Preference-Based Mode**
     Action: Add the backend `Registration::AllocationService` and background job. On the frontend, modify the student registration UI to support preference ranking (e.g., via drag-and-drop or numbered inputs) instead of a simple selection.
 
+    Controllers: Add `Registration::AllocationController` for
+    trigger/preview/finalize and Turbo stream updates from background
+    jobs.
+
     ```admonish success "Non-Disruptive Impact"
     Like the FCFS mode, the preference-based solver and its UI are only invoked for new `Registration::Campaign`s. It will have no knowledge of or interaction with courses from the current semester.
     ```
@@ -66,8 +74,11 @@ graph TD
 5. **Materialization & Roster Operations**
    Action: Implement the backend `materialize_allocation!` method and `Roster::MaintenanceService`. Create a new admin-facing UI for post-allocation roster management (moves, swaps, etc.) that interacts with this new service.
 
+    Controllers: Introduce `Roster::MaintenanceController` for
+    post-allocation moves/add/remove/swap with capacity enforcement.
+
     ```admonish success "Non-Disruptive Impact"
-    Adding a new, unused method to a model is a passive change. The new admin UI and backend service will only operate on rosters from new campaigns, leaving current semester rosters unaffected.
+    Adding a new, unused method to a model is a passive change. The new teacher/editor UI and backend service will only operate on rosters from new campaigns, leaving current semester rosters unaffected.
     ```
 
 6. **Dashboard Implementation (Phase A)**
@@ -80,6 +91,10 @@ graph TD
 7. **Assessments (Formalize `Assignment` as Assessable)**
    Action: Add the new assessment-related models (`Assessment::Assessment`, `Assessment::Task`, `Assessment::Participation`, `Assessment::TaskPoint`). Run a background migration to create a corresponding `Assessment::Assessment` record for each existing `Assignment`. This step formalizes existing assignments as items that can be graded within the new system.
 
+    Controllers: Expose `Assessment::AssessmentsController` (CRUD).
+    Add initial read-only student views via
+    `Assessment::ParticipationsController` (fully enabled after Step 8).
+
     ```admonish success "Non-Disruptive Impact"
     The new assessment tables are created in parallel. The migration links existing `Assignment` records to the new system without altering any existing data or behavior for the current semester.
     ```
@@ -87,12 +102,19 @@ graph TD
 8. **Grading Flow & Submission Fan-out**
    Action: Introduce the backend `Assessment::GradingService`. Build new grading UIs for instructors and TAs where they can view submissions and enter points. This UI will call the new service to save points and grades to the new tables (`assessment_participations`, `assessment_task_points`).
 
+    Controllers: Enable `Assessment::GradingController` and
+    `Assessment::ParticipationsController`. Add `publish_results` and
+    `unpublish_results` actions on `Assessment::AssessmentsController`.
+
     ```admonish success "Non-Disruptive Impact"
     This is a completely new UI and backend service. It will be deployed but not made accessible for current semester courses. The existing submission viewing UI remains untouched for the live semester.
     ```
 
 9. **Eligibility & Exam Registration**
-   Action: Implement the `ExamEligibility::ComputationService` to compute `ExamEligibility::Record` by reading from the new assessment and point tables. On the frontend, update the student registration UI to display eligibility status and errors. Create a new admin UI to inspect and override eligibility records.
+    Action: Implement the `ExamEligibility::ComputationService` to compute `ExamEligibility::Record` by reading from the new assessment and point tables. On the frontend, update the student registration UI to display eligibility status and errors. Create a new teacher/editor UI to inspect and override eligibility records.
+
+    Controllers: Provide `ExamEligibility::RecordsController` for
+    viewing, override, and export of eligibility.
 
     ```admonish success "Non-Disruptive Impact"
     This is entirely new functionality that depends only on the new grading data. It has no interaction with the current semester.
@@ -100,6 +122,9 @@ graph TD
 
 10. **Exam Assessments & Grade Schemes**
    Action: Build the `Exam` model and its integration with the assessment system. Implement `GradeScheme::Applier` service to apply grading schemes. This step will use the new grading UI built in Step 8, potentially adding minor UI elements for scheme configuration.
+
+    Controllers: Introduce `ExamsController` (CRUD, scheduling) and
+    `GradeScheme::SchemesController` (preview/apply).
 
     ```admonish success "Non-Disruptive Impact"
     This is the final piece of the new grading workflow and is entirely dependent on the preceding steps. It will only be used for exams in the next semester.
