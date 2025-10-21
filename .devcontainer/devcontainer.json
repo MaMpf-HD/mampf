@@ -62,7 +62,7 @@
             "onAutoForward": "silent"
         }
     },
-    "postStartCommand": "./docker/entrypoint-dev-test.sh | tee /proc/1/fd/1",
+    "postStartCommand": "yarn run just-install && ./docker/entrypoint-dev-test.sh | tee /proc/1/fd/1",
     "customizations": {
         "vscode": {
             "extensions": [
