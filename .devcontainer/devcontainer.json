@@ -37,8 +37,7 @@
         3000, // Rails app (via nginx)
         3036, // Vite dev server
         1080, // Mailcatcher web interface
-        5050, // pgAdmin
-        13254 // Ruby debugger
+        5050 // pgAdmin
     ],
     "portsAttributes": {
         "3000": {
