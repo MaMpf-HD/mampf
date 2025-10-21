@@ -33,7 +33,6 @@ coverage
 /storage/*
 
 # Ignore environment variables
-completed_initial_run
 /public/uploads.zip
 /public/pdfcomprezzor/pdfcomprezzor.wasm
 /public/pdfcomprezzor/wasm_exec.js

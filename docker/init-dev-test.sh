@@ -43,46 +43,43 @@ fi
 
 cd /usr/src/app/
 
-if ! [ -f /completed_initial_run ]; then
-  echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
+echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 
-  echo "📦  Installing Ruby gems (via bundle)"
-  bundle install
+echo "📦  Installing Ruby gems (via bundle)"
+bundle install
 
-  echo "📦  Installing Node.js modules (via yarn)"
-  yarn install --production=false
+echo "📦  Installing Node.js modules (via yarn)"
+yarn install --production=false
 
-  echo "🕖  Waiting for Redis to come online"
-  wait-for-it redis:6379 -t 30 || exit 1
+echo "🕖  Waiting for Redis to come online"
+wait-for-it redis:6379 -t 30 || exit 1
 
-  # Wait for database to come online
-  echo "🕖  Waiting for database to come online"
-  if [ "$RAILS_ENV" = "development" ]; then
-      wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
-  fi
-  if [ "$RAILS_ENV" = "test" ]; then
-      wait-for-it ${TEST_DATABASE_HOST}:${TEST_DATABASE_PORT} -t 30 || exit 1
-  fi
-
-  echo "➕  Creating database (db:create)"
-  if [ "$RAILS_ENV" = "development" ]; then
-    # problem: https://github.com/rails/rails/issues/27299#issuecomment-295536459
-    # solution: https://github.com/rails/rails/issues/27299#issuecomment-1214684427
-    bundle exec rails db:create:interactions SKIP_TEST_DATABASE=true
-    bundle exec rails db:create SKIP_TEST_DATABASE=true
-  elif [ "$RAILS_ENV" = "test" ]; then
-      bundle exec rails db:create:interactions
-      bundle exec rails db:create
-  fi
-
-  if [ "$RAILS_ENV" = "development" ]; then
-      check_for_preseeds
-  fi
-  if [ "$RAILS_ENV" = "test" ]; then
-      echo "💾  Loading DB schema (in test env)"
-      bundle exec rails db:schema:load
-  fi
-
-  echo "✅  Finished initialization of MaMpf in environment: $RAILS_ENV"
-  touch /completed_initial_run
+# Wait for database to come online
+echo "🕖  Waiting for database to come online"
+if [ "$RAILS_ENV" = "development" ]; then
+    wait-for-it ${DEVELOPMENT_DATABASE_HOST}:${DEVELOPMENT_DATABASE_PORT} -t 30 || exit 1
 fi
+if [ "$RAILS_ENV" = "test" ]; then
+    wait-for-it ${TEST_DATABASE_HOST}:${TEST_DATABASE_PORT} -t 30 || exit 1
+fi
+
+echo "➕  Creating database (db:create)"
+if [ "$RAILS_ENV" = "development" ]; then
+  # problem: https://github.com/rails/rails/issues/27299#issuecomment-295536459
+  # solution: https://github.com/rails/rails/issues/27299#issuecomment-1214684427
+  bundle exec rails db:create:interactions SKIP_TEST_DATABASE=true
+  bundle exec rails db:create SKIP_TEST_DATABASE=true
+elif [ "$RAILS_ENV" = "test" ]; then
+    bundle exec rails db:create:interactions
+    bundle exec rails db:create
+fi
+
+if [ "$RAILS_ENV" = "development" ]; then
+    check_for_preseeds
+fi
+if [ "$RAILS_ENV" = "test" ]; then
+    echo "💾  Loading DB schema (in test env)"
+    bundle exec rails db:schema:load
+fi
+
+echo "✅  Finished initialization of MaMpf in environment: $RAILS_ENV"
