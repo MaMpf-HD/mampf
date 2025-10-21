@@ -89,6 +89,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # 🎈 Finally, set up the app
 WORKDIR /usr/src/app
+ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
 USER $USERNAME
 
 # Log Node.js tooling versions
@@ -96,6 +97,7 @@ RUN which node && node --version && which yarn && yarn --version
 
 COPY --chown=$USERNAME:USERNAME Gemfile Gemfile.lock package.json yarn.lock /usr/src/app/
 COPY --chown=$USERNAME:$USERNAME ./docker/entrypoint-dev-test.sh /usr/src/app/docker/entrypoint-dev-test.sh
+COPY --chown=$USERNAME:$USERNAME ./docker/init-dev-test.sh /usr/src/app/docker/init-dev-test.sh
 COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
@@ -120,5 +122,3 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         RAILS_ENV=test DATABASE_ADAPTER=nulldb \
         bundle exec rails assets:precompile; \
     fi
-
-ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
