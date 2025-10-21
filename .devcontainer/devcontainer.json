@@ -62,7 +62,7 @@
             "onAutoForward": "silent"
         }
     },
-    "postStartCommand": "yarn run just-install && ./docker/entrypoint-dev-test.sh | tee /proc/1/fd/1",
+    "postStartCommand": "yarn run just-install && DB_SQL_PRESEED_URL='https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql' UPLOADS_PRESEED_URL='https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip' ./docker/entrypoint-dev-test.sh | tee /proc/1/fd/1",
     "customizations": {
         "vscode": {
             "extensions": [
