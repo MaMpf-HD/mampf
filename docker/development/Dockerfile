@@ -107,7 +107,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 # https://stackoverflow.com/a/66158709/9655481
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
-        source "${NVM_DIR}/nvm.sh"; yarn install --frozen-lockfile; \
+        yarn install --frozen-lockfile; \
     fi
 
 # Precompile assets in CI/CD
