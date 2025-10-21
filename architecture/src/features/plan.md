@@ -50,7 +50,7 @@ graph TD
     ```
 
 3. **Open FCFS Tutorial Campaigns**
-    Action: Implement the backend controllers, services (`Registration::PolicyEngine`, `Registration::AllocationService`), and frontend UIs for the FCFS registration mode. This includes creating **admin UIs** to set up and manage campaigns and **student UIs** to view and register for items.
+    Action: Implement the backend controllers, services (`Registration::PolicyEngine`, `Registration::AllocationService`), and frontend UIs for the FCFS registration mode. This includes creating **teacher/editor UIs** to set up and manage campaigns and **student UIs** to view and register for items.
 
     Controllers: Wire `Registration::CampaignsController`,
     `Registration::UserRegistrationsController`, and
@@ -78,7 +78,7 @@ graph TD
     post-allocation moves/add/remove/swap with capacity enforcement.
 
     ```admonish success "Non-Disruptive Impact"
-    Adding a new, unused method to a model is a passive change. The new admin UI and backend service will only operate on rosters from new campaigns, leaving current semester rosters unaffected.
+    Adding a new, unused method to a model is a passive change. The new teacher/editor UI and backend service will only operate on rosters from new campaigns, leaving current semester rosters unaffected.
     ```
 
 6. **Dashboard Implementation (Phase A)**
@@ -111,7 +111,7 @@ graph TD
     ```
 
 9. **Eligibility & Exam Registration**
-   Action: Implement the `ExamEligibility::ComputationService` to compute `ExamEligibility::Record` by reading from the new assessment and point tables. On the frontend, update the student registration UI to display eligibility status and errors. Create a new admin UI to inspect and override eligibility records.
+    Action: Implement the `ExamEligibility::ComputationService` to compute `ExamEligibility::Record` by reading from the new assessment and point tables. On the frontend, update the student registration UI to display eligibility status and errors. Create a new teacher/editor UI to inspect and override eligibility records.
 
     Controllers: Provide `ExamEligibility::RecordsController` for
     viewing, override, and export of eligibility.

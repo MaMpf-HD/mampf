@@ -12,12 +12,12 @@ server-rendered ERB and minimal JS via Stimulus.
 
 | Area         | Key views/components                                 | Hotwire                 | Primary callers             |
 |--------------|-------------------------------------------------------|-------------------------|-----------------------------|
-| Registration | Campaigns (index/show/forms), Student Registration    | Frames + Streams        | Admin UI, Student UI        |
-| Roster       | Maintenance (index/show/edit/swap)                    | Frames                  | Admin UI                    |
-| Assessment   | Assessments (CRUD), Grading table, Participations     | Frames (+ Streams)      | Admin UI, Tutor UI, Student |
-| Exam         | Exams (CRUD), Eligibility table                       | Frames                  | Admin UI                    |
-| GradeScheme  | Schemes (preview/apply)                               | Streams (+ Frames)      | Admin UI                    |
-| Dashboard    | Student dashboard, Admin dashboard                    | Frames                  | Student UI, Teacher/Editor  |
+| Registration | Campaigns (index/show/forms), Student Registration    | Frames + Streams        | Teacher/Editor UI, Student UI |
+| Roster       | Maintenance (index/show/edit/swap)                    | Frames                  | Teacher/Editor UI           |
+| Assessment   | Assessments (CRUD), Grading table, Participations     | Frames (+ Streams)      | Teacher/Editor UI, Tutor UI, Student |
+| Exam         | Exams (CRUD), Eligibility table                       | Frames                  | Teacher/Editor UI           |
+| GradeScheme  | Schemes (preview/apply)                               | Streams (+ Frames)      | Teacher/Editor UI           |
+| Dashboard    | Student dashboard, Teacher/Editor dashboard           | Frames                  | Student UI, Teacher/Editor UI |
 
 ## Conventions
 
@@ -69,16 +69,21 @@ Keep the component API narrow and clear via initializer and slots.
 - Extract repeated frame shells (table headers, pagination) into partials.
 - Keep forms server-rendered; augment with Stimulus when needed.
 
-## Registration Screens
+## Mockups
 
 ```admonish example "Mockups"
-Preview static screens while wiring controllers and models. Mockup links
-also appear in the tables below.
+Preview static screens while wiring controllers and models. Mockup
+links also appear in the per-feature tables below. All mockups are
+styled with Bootstrap 5 (via CDN) to match the app's component library
+for faster transfer from mockup to real views.
 
-- Student Registration: [Mockup](../mockups/student_registration.html)
+- Student Registration (Index): [Mockup](../mockups/student_registration_index.html)
+- Student Registration (Show): [Mockup](../mockups/student_registration.html)
 ```
 
-### Campaigns (Admin)
+## Registration Screens
+
+### Campaigns (Teacher/Editor)
 
 | View   | Key elements                                          | Hotwire           | Mockup |
 |--------|--------------------------------------------------------|-------------------|--------|
@@ -90,11 +95,12 @@ also appear in the tables below.
 
 | View         | Key elements                                    | Hotwire           | Mockup |
 |--------------|--------------------------------------------------|-------------------|--------|
-| Index/Show   | Available campaigns; eligibility badges          | Frames            | [Mockup](../mockups/student_registration.html) |
+| Index        | Available campaigns for current user             | Frames            | [Mockup](../mockups/student_registration_index.html) |
+| Show         | Eligibility panel; campaign details; preferences | Frames            | [Mockup](../mockups/student_registration.html) |
 | Preferences  | Drag & drop or rank inputs within a frame        | Frames            | [Mockup](../mockups/student_registration.html) |
 | Confirmation | Post-submit confirmation; allocation result area | Streams (results) | [Mockup](../mockups/student_registration.html) |
 
-## Rosters (Admin)
+## Rosters (Teacher/Editor)
 
 | View     | Key elements                                       | Hotwire | Mockup |
 |----------|-----------------------------------------------------|---------|--------|
