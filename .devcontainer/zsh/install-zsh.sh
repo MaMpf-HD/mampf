@@ -2,9 +2,11 @@
 set -e
 
 # zsh
-sudo apt update && sudo apt install -y zsh
+sudo apt update \
+    && DEBIAN_FRONTEND=noninteractive sudo apt install -y \
+       -o Dpkg::Options::="--force-confnew" zsh
 
-# copy start zsh config
+# initial zsh config
 cp .devcontainer/zsh/.zshrc ~/.zshrc
 
 # Powerline fonts
