@@ -1,5 +1,17 @@
 // adapted from https://github.com/rails/rails/tree/main/.devcontainer
 // For format details, see https://containers.dev/implementors/json_reference/.
+
+// For ssh-related issues on WSL, see
+// https://github.com/microsoft/vscode-remote-release/issues/8666#issuecomment-2986483634
+// basically, add this to your ~/.profile inside WSL:
+// if [ -z "$SSH_AUTH_SOCK" ]; then
+//   eval "$(ssh-agent -s)"
+//   ssh-add ~/.ssh/your_github_key
+// fi
+// 
+// for pure-Windows users (no WSL), see this instead:
+// https://github.com/microsoft/vscode-remote-release/issues/11043#issuecomment-3005677524
+
 {
     "name": "MaMpf development",
     "dockerComposeFile": [
