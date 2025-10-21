@@ -94,9 +94,9 @@ USER $USERNAME
 # Log Node.js tooling versions
 RUN which node && node --version && which yarn && yarn --version
 
-ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
-
 COPY --chown=$USERNAME:USERNAME Gemfile Gemfile.lock package.json yarn.lock /usr/src/app/
+COPY --chown=$USERNAME:$USERNAME ./docker/entrypoint-dev-test.sh /usr/src/app/docker/entrypoint-dev-test.sh
+
 ARG IN_CI_CD
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running bundle install"; \
@@ -121,3 +121,5 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 
 COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
 COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
+
+ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
