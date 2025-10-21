@@ -50,7 +50,7 @@ end
 Content per card:
 -   Lecture Title and Term.
 -   Key administrative actions:
-    -   **"Manage Registrations"**: Links to the `Registration::Campaign` admin UI for that lecture. Shows status (Draft, Open, Closed, Finalized).
+    -   **"Manage Registrations"**: Links to the `Registration::Campaign` teacher/editor UI for that lecture. Shows status (Draft, Open, Closed, Finalized).
     -   **"Manage Rosters"**: Links to the `Roster::MaintenanceService` UI for managing tutorial/exam rosters post-allocation.
     -   **"Gradebook"**: Links to the new grading UI for the lecture's assessments.
     -   **"Announcements"**: Links to create/edit announcements for the lecture.
