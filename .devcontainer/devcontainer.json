@@ -1,6 +1,6 @@
 // adapted from https://github.com/rails/rails/tree/main/.devcontainer
 // For format details, see https://containers.dev/implementors/json_reference/.
-
+//
 // For ssh-related issues on WSL, see
 // https://github.com/microsoft/vscode-remote-release/issues/8666#issuecomment-2986483634
 // basically, add this to your ~/.profile inside WSL:
@@ -11,7 +11,6 @@
 // 
 // for pure-Windows users (no WSL), see this instead:
 // https://github.com/microsoft/vscode-remote-release/issues/11043#issuecomment-3005677524
-
 {
     "name": "MaMpf development",
     "dockerComposeFile": [
@@ -26,7 +25,8 @@
         "ghcr.io/devcontainers/features/github-cli:1": {
             "version": "latest"
         },
-        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/jsburckhardt/devcontainer-features/just:1": {}
     },
     "containerEnv": {
         "SHELL": "/bin/bash"
@@ -64,7 +64,6 @@
     },
     "initializeCommand": "git submodule update --init --recursive",
     "postCreateCommand": "git submodule update --init --recursive",
-    "postStartCommand": "yarn run just-install && DB_SQL_PRESEED_URL='https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql' UPLOADS_PRESEED_URL='https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip' ./docker/entrypoint-dev-test.sh | tee /proc/1/fd/1",
     "customizations": {
         "vscode": {
             "extensions": [
