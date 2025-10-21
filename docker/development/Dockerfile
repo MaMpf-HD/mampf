@@ -96,7 +96,7 @@ RUN which node && node --version && which yarn && yarn --version
 
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
 
-COPY --chown=$USERNAME:USERNAME ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
+COPY --chown=$USERNAME:USERNAME Gemfile Gemfile.lock package.json yarn.lock /usr/src/app/
 ARG IN_CI_CD
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running bundle install"; \
@@ -107,8 +107,6 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
         source "${NVM_DIR}/nvm.sh"; yarn install --frozen-lockfile; \
     fi
-
-COPY --chown=$USERNAME:USERNAME . /usr/src/app/
 
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)

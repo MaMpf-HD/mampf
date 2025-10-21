@@ -111,7 +111,7 @@ services:
       - "127.0.0.1:3036:3036"  # Vite dev server
       - "127.0.0.1:13254:13254" # for debug gem communication with host
     volumes:
-      - ../../:/usr/src/app/
+      - ../../:/usr/src/app/:cached
       - sprockets-cache:/cache
       # https://stackoverflow.com/a/62611202/
       - bundle_cache:/usr/local/bundle/
