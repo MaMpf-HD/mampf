@@ -33,8 +33,9 @@
     },
     "rubyLsp.formatter": "rubocop",
     "rubyLsp.rubyVersionManager": {
-        "identifier": "rbenv"
+        "identifier": "custom"
     },
+    "rubyLsp.customRubyCommand": "bundle exec ruby",
     "rubyLsp.enabledFeatures": {
         "codeActions": true,
         "diagnostics": true,
