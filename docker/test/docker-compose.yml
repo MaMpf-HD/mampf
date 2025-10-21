@@ -20,7 +20,7 @@ services:
     environment:
       RAILS_ENV: test
       NODE_ENV: test
-      MAMPF_PORT: 3001
+      MAMPF_PORT: 3145
       DATABASE_ADAPTER: postgresql
       TEST_DATABASE_DATABASE: mampf
       TEST_DATABASE_INTERACTIONS: interactions
@@ -44,7 +44,7 @@ services:
       VITE_RUBY_HOST: mampf
       BLOG: https://mampf.blog
     ports:
-      - '127.0.0.1:3001:3001'  # Rails test server
+      - '127.0.0.1:3145:3145'  # Rails test server
       - '127.0.0.1:3037:3037'  # Vite dev server
     volumes:
       - ../../:/usr/src/app/
