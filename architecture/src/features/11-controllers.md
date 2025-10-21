@@ -295,7 +295,6 @@ Manage exam instances for lectures.
 - Eligibility policy configuration
 - Registration deadline management
 - Export eligible student list
-```
 
 ### `ExamEligibility::RecordsController`
 
