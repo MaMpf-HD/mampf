@@ -43,7 +43,7 @@
     "portsAttributes": {
         "3000": {
             "label": "MaMpf App",
-            "onAutoForward": "notify"
+            "onAutoForward": "openBrowserOnce"
         },
         "3036": {
             "label": "Vite Dev Server",
