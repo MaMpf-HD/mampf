@@ -2,6 +2,18 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
+			"label": "Seed MaMpf database",
+			"type": "vscode-just",
+			"task": "just seed",
+			"isBackground": false,
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": true,
+			},
+			"problemMatcher": [],
+		},
+		{
 			"label": "Start MaMpf app",
 			"type": "vscode-just",
 			"task": "just up",
@@ -9,15 +21,13 @@
 			"presentation": {
 				"reveal": "always",
 				"panel": "shared",
-				"focus": true
+				"clear": true,
 			},
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
-			"options": {
-				"cwd": "${workspaceFolder}"
-			},
+			"problemMatcher": []
 		}
 	]
 }

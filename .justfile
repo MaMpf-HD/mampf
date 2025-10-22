@@ -5,7 +5,7 @@ help:
     @just --list
 
 # Preseeds the database
-fill-database:
+seed:
     #!/usr/bin/env bash
     export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
