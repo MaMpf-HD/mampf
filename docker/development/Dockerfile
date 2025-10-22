@@ -125,12 +125,3 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
         RAILS_ENV=test DATABASE_ADAPTER=nulldb \
         bundle exec rails assets:precompile; \
     fi
-
-# Persist bash history
-# adapted from https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
-# also see the respective docker compose volume
-RUN SNIPPET="export PROMPT_COMMAND='history -a' && export HISTFILE=/home/$USERNAME/commandhistory/.bash_history" \
-    && mkdir -p /home/$USERNAME/commandhistory \
-    && touch /home/$USERNAME/commandhistory/.bash_history \
-    && chown -R $USERNAME /home/$USERNAME/commandhistory \
-    && echo "$SNIPPET" >> "/home/$USERNAME/.bashrc"
