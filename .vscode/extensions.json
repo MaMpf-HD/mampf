@@ -4,7 +4,6 @@
         "dbaeumer.vscode-eslint",
         "streetsidesoftware.code-spell-checker",
         "streetsidesoftware.code-spell-checker-german",
-        "nefrob.vscode-just-syntax",
-        "connorshea.vscode-ruby-test-adapter"
+        "nefrob.vscode-just-syntax"
     ]
 }

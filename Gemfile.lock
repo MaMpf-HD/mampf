@@ -481,6 +481,8 @@ GEM
     rb-fsevent (0.11.2)
     rb-inotify (0.11.1)
       ffi (~> 1.0)
+    rbs (3.9.5)
+      logger
     rdoc (6.14.2)
       erb
       psych (>= 4.0.0)
@@ -554,6 +556,12 @@ GEM
       rubocop-ast (>= 1.44.0, < 2.0)
     ruby-graphviz (1.2.5)
       rexml
+    ruby-lsp (0.26.1)
+      language_server-protocol (~> 3.17.0)
+      prism (>= 1.2, < 2.0)
+      rbs (>= 3, < 5)
+    ruby-lsp-rspec (0.1.28)
+      ruby-lsp (~> 0.26.0)
     ruby-progressbar (1.13.0)
     ruby-rc4 (0.1.5)
     ruby-vips (2.2.4)
@@ -743,6 +751,7 @@ DEPENDENCIES
   rubocop (~> 1.65)
   rubocop-performance (~> 1.21)
   rubocop-rails (~> 2.24)
+  ruby-lsp-rspec (~> 0.1.28)
   rubyzip (~> 2.3)
   sass-rails (~> 6.0)
   shrine (~> 3.6)
