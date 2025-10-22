@@ -32,3 +32,10 @@ echo 'source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh' >> ~/.zshrc
 # https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md#in-your-zshrc
 git clone --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.zsh/zsh-syntax-highlighting
 echo "source ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" >> ~/.zshrc
+
+# zsh history substring search
+# https://github.com/zsh-users/zsh-history-substring-search
+git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search.git ~/.zsh/zsh-history-substring-search
+echo "source ~/.zsh/zsh-history-substring-search/zsh-history-substring-search.zsh" >> ~/.zshrc
+echo "bindkey ';2A' history-substring-search-up" >> ~/.zshrc    # Shift+Up
+echo "bindkey ';2B' history-substring-search-down" >> ~/.zshrc  # Shift+Down
