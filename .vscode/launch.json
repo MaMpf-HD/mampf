@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug Ruby in Docker",
+            "name": "Debug MaMpf Backend",
             "type": "ruby_lsp",
             "request": "attach",
             "debugPort": 13254,
