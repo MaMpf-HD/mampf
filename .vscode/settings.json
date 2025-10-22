@@ -32,10 +32,11 @@
         "editor.formatOnSave": true
     },
     "rubyLsp.formatter": "rubocop",
+    // https://shopify.github.io/ruby-lsp/version-managers.html#custom-activation
     "rubyLsp.rubyVersionManager": {
         "identifier": "custom"
     },
-    "rubyLsp.customRubyCommand": "bundle exec ruby",
+    "rubyLsp.rubyExecutablePath": "/usr/local/bin/ruby",
     "rubyLsp.enabledFeatures": {
         "codeActions": true,
         "diagnostics": true,
