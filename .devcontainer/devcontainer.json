@@ -20,7 +20,7 @@
     "service": "mampf",
     // https://github.com/orgs/community/discussions/15506
     "workspaceFolder": "/usr/src/app/",
-    // https://containers.dev/features
+    // https://containers.dev/features.
     "features": {
         "ghcr.io/devcontainers/features/github-cli:1": {
             "version": "latest"
@@ -38,8 +38,7 @@
         3000, // Rails app (via nginx)
         3036, // Vite dev server
         1080, // Mailcatcher web interface
-        5050, // pgAdmin
-        8060 // desktop (cypress)
+        5050 // pgAdmin
     ],
     "portsAttributes": {
         // Main app
@@ -68,10 +67,6 @@
         "3037": {
             "label": "Vite Test Server",
             "onAutoForward": "silent"
-        },
-        "8060": {
-            "label": "Desktop",
-            "onAutoForward": "openBrowserOnce"
         }
     },
     "initializeCommand": "git submodule update --init --recursive",
