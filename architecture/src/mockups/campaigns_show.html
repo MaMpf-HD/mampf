@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign – Show (Teacher/Editor)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./campaigns_index.html">Campaigns</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Exam Registration – Final</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-3">
+        <div>
+          <h1 class="h4 mb-1">Exam Registration – Final <span class="badge text-bg-primary">Open</span></h1>
+          <div class="text-muted small">Linear Algebra I · WS 2025/26</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-outline-primary">Finalize</button>
+          <button class="btn btn-outline-danger">Delete</button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Mode</div>
+                  <div class="fw-semibold">First-Come-First-Serve</div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Window</div>
+                  <div class="fw-semibold">Opens Oct 20, 08:00<br/>Closes Feb 1, 12:00</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Items</div>
+                  <div class="fw-semibold">1</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Policies</div>
+                  <div class="fw-semibold">1</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="fw-semibold">Registrations</div>
+                <span class="badge rounded-pill text-bg-success">Confirmed 180</span>
+              </div>
+              <div class="small text-muted mb-2">Pending 0 · Rejected 0</div>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar bg-success" style="width: 100%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs" id="campaignTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">Items</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="false">Policies</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="registrations-tab" data-bs-toggle="tab" data-bs-target="#registrations" type="button" role="tab" aria-controls="registrations" aria-selected="false">Registrations</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="allocation-tab" data-bs-toggle="tab" data-bs-target="#allocation" type="button" role="tab" aria-controls="allocation" aria-selected="false">Allocation</button>
+        </li>
+      </ul>
+
+      <div class="tab-content bg-white border border-top-0 rounded-bottom p-3" id="campaignTabsContent">
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Details</div>
+                  <dl class="row mb-0">
+                    <dt class="col-sm-4">Title</dt>
+                    <dd class="col-sm-8">Exam Registration – Final</dd>
+                    <dt class="col-sm-4">Lecture</dt>
+                    <dd class="col-sm-8">Linear Algebra I (WS 2025/26)</dd>
+                    <dt class="col-sm-4">Mode</dt>
+                    <dd class="col-sm-8">First-Come-First-Serve</dd>
+                    <dt class="col-sm-4">Window</dt>
+                    <dd class="col-sm-8">Oct 20, 08:00 → Feb 1, 12:00</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Recent activity</div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Allocation finalized for tutorials on Oct 10, 12:10</li>
+                    <li class="list-group-item">Eligibility policy updated on Oct 02, 09:30</li>
+                    <li class="list-group-item">Registration window opened on Oct 20, 08:00</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Items</div>
+            <button class="btn btn-sm btn-primary">Add item</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Capacity</th>
+                  <th scope="col">Notes</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Final Exam</td>
+                  <td>Unlimited</td>
+                  <td class="text-muted small">FCFS registration</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="policies" role="tabpanel" aria-labelledby="policies-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Policies</div>
+            <button class="btn btn-sm btn-primary">Add policy</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Policy</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Institutional email required</td>
+                  <td>Eligibility</td>
+                  <td><span class="badge rounded-pill text-bg-success">Active</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="registrations" role="tabpanel" aria-labelledby="registrations-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Registrations</div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary">Export</button>
+              <button class="btn btn-sm btn-outline-secondary">Refresh</button>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Student</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Registered</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Alex Example</td>
+                  <td>alex@example.edu</td>
+                  <td><span class="badge rounded-pill text-bg-success">Confirmed</span></td>
+                  <td>Oct 21, 11:03</td>
+                </tr>
+                <tr>
+                  <td>Sam Student</td>
+                  <td>sam@student.edu</td>
+                  <td><span class="badge rounded-pill text-bg-success">Confirmed</span></td>
+                  <td>Oct 22, 08:45</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="allocation" role="tabpanel" aria-labelledby="allocation-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-xl-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Allocation actions</div>
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary">Preview allocation</button>
+                    <button class="btn btn-outline-secondary">Run allocation</button>
+                    <button class="btn btn-outline-primary">Finalize</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-xl-8">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Progress</div>
+                  <div class="small text-muted mb-2">No job running</div>
+                  <div class="progress" style="height:6px;">
+                    <div class="progress-bar" style="width: 0%"></div>
+                  </div>
+                  <div class="mt-3">
+                    <div class="fw-semibold mb-1">Results</div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">No allocation performed yet</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>

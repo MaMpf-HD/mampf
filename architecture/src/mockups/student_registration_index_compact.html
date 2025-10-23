@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Student Registration – Compact List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Registrations (Compact)</h1>
+        <a class="small" href="./student_registration_index.html">Card view</a>
+      </div>
+
+      <div class="card">
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Course</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Closes</th>
+                  <th scope="col">Eligibility</th>
+                  <th scope="col" class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Linear Algebra I</td>
+                  <td>Tutorial</td>
+                  <td><span class="badge text-bg-primary">Open</span></td>
+                  <td>Oct 28, 18:00</td>
+                  <td><span class="badge rounded-pill text-bg-success">Eligible</span></td>
+                  <td class="text-end"><a class="btn btn-sm btn-primary" href="./student_registration.html">Register</a></td>
+                </tr>
+                <tr>
+                  <td>Analysis II</td>
+                  <td>Tutorial</td>
+                  <td><span class="badge text-bg-primary">Open</span></td>
+                  <td>Nov 3, 12:00</td>
+                  <td><span class="badge rounded-pill text-bg-warning">Action required</span></td>
+                  <td class="text-end"><a class="btn btn-sm btn-primary" href="./student_registration.html">Register</a></td>
+                </tr>
+                <tr class="text-muted">
+                  <td>Abstract Algebra</td>
+                  <td>Tutorial</td>
+                  <td><span class="badge text-bg-secondary">Closed</span></td>
+                  <td>Oct 10, 12:00</td>
+                  <td><span class="badge rounded-pill text-bg-secondary">Read-only</span></td>
+                  <td class="text-end"><a class="btn btn-sm btn-outline-secondary disabled" aria-disabled="true" href="#">View</a></td>
+                </tr>
+                <tr>
+                  <td>Introduction to Number Theory</td>
+                  <td>Seminar</td>
+                  <td><span class="badge text-bg-primary">Open</span></td>
+                  <td>Nov 5, 10:00</td>
+                  <td><span class="badge rounded-pill text-bg-warning">Action required</span></td>
+                  <td class="text-end"><a class="btn btn-sm btn-primary" href="#">Register</a></td>
+                </tr>
+                <tr class="text-muted">
+                  <td>Advanced Topology Reading Group</td>
+                  <td>Seminar</td>
+                  <td><span class="badge text-bg-secondary">Closed</span></td>
+                  <td>Oct 1, 16:00</td>
+                  <td><span class="badge rounded-pill text-bg-secondary">Read-only</span></td>
+                  <td class="text-end"><a class="btn btn-sm btn-outline-secondary disabled" aria-disabled="true" href="#">View</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
