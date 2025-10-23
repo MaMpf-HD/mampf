@@ -1,0 +1,52 @@
+FROM alpine:3.22.2
+
+# adapted from debian to alpine
+# https://github.com/Xpra-org/xpra/blob/master/docs/Build/Debian.md
+RUN apk add --no-cache \
+    # general
+    git gcc musl-dev py3-setuptools py3-pip cython xhost \
+    # xpra main dependencies
+    xvfb py3-cairo-dev py3-gobject3-dev py3-pillow \
+    # x11 (skipping libsystemd-dev as not available in alpine)
+    libx11-dev libxtst-dev libxcomposite-dev libxdamage-dev libxres-dev \
+    libxkbfile-dev python3-dev pandoc lz4-dev \
+    # x11 runtime (skipping x11-xkb-utils as not available in alpine)
+    xauth \
+    # xpra HTML5 client
+    # uglifyjs brotli libjs-jquery libjs-jquery-ui gnome-backgrounds \
+    # xpra client opengl acceleration
+    py3-opengl \
+    # additional (found out while building)
+    libxxhash xxhash-dev libxcursor-dev libxrandr-dev libgtk-3-dev \
+    gtk+3.0-dev dbus-x11 xorg-server xorg-server-dev xvfb xf86-video-dummy
+
+# to mitigate runtime error:
+# the python gobject introspection bindings are missing: 
+# No module named 'gi'
+RUN python3 -m pip install PyGObject --break-system-packages
+
+# xpra
+# https://pypi.org/project/xpra
+# https://github.com/Xpra-org/xpra/blob/master/docs/Build/Debian.md
+RUN git clone --depth=1 https://github.com/Xpra-org/xpra /tmp/xpra/ \
+    && cd /tmp/xpra/ && python3 ./setup.py install --prefix=/usr \
+    # the executable scripts may have been mangled, so overwrite them:
+    && cp fs/bin/* /bin/ \
+    && rm -rf /tmp/xpra/
+
+# xpra-html5
+# https://github.com/Xpra-org/xpra-html5
+RUN git clone --depth=1 https://github.com/Xpra-org/xpra-html5.git /tmp/xpra-html5/ \
+    && cd /tmp/xpra-html5/ && python3 ./setup.py install
+
+# ENTRYPOINT ["xpra", "start", ":80", \
+#     "--bind-tcp=0.0.0.0:8060", \
+#     "--auth=none", "--html=on", "--opengl=no", \
+#     "--pulseaudio=no", "--audio=no", \
+#     "--mdns=no", "--webcam=no", \
+#     "--daemon=no", "--exit-with-client=no", "--exit-with-children=no", "--exit-with-windows=no", \
+#     "--socket-dirs=/tmp/xpra-sockets", "--start=xhost +"]
+
+# xpra start :80 --bind-tcp=0.0.0.0:8060 --auth=none --html=on --opengl=no --pulseaudio=no --audio=no --mdns=no --webcam=no --daemon=no --exit-with-client=no --exit-with-children=no --exit-with-windows=no --socket-dirs=/tmp/xpra-sockets --start="xhost +"
+
+ENTRYPOINT ["sleep", "infinity"]
