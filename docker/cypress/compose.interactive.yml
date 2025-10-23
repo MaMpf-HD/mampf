@@ -1,0 +1,5 @@
+services:
+  cypress:
+    entrypoint: ["/usr/src/app/open-cypress-interactive.sh"]
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
