@@ -33,6 +33,14 @@ We use a unified system with:
 - Campaign methods: `allocate!`, `finalize!`, `allocate_and_finalize!`.
 ```
 
+```admonish tip "Related UI mockups"
+- Exam Registration (Show): [Exam Show](../mockups/campaigns_show_exam.html)
+- Tutorial Registration (preference-based, open): [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html)
+- Tutorial Registration (preference-based, completed): [Tutorial Show (completed)](../mockups/campaigns_show_tutorial.html)
+- Tutorial Registration (FCFS, open): [Tutorial FCFS Show (open)](../mockups/campaigns_show_tutorial_fcfs_open.html)
+- Interest Registration (planning-only, draft): [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html)
+```
+
 ## Registration::Campaign (ActiveRecord Model)
 **_The Registration Process Orchestrator_**
 
@@ -53,6 +61,7 @@ The main fields and methods of `Registration::Campaign` are:
 | `title`                   | DB column         | Human-readable campaign title                                                                 |
 | `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_serve` or `preference_based`                            |
 | `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `processing`, `completed`                                   |
+| `planning_only`           | DB column (Bool)  | Planning/reporting only; prevents materialization/finalization (default: false)              |
 | `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
 | `registration_items`      | Association       | Items available for registration within this campaign                                        |
 | `user_registrations`      | Association       | User registrations (registration requests) for this campaign                                 |
@@ -81,8 +90,20 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 
 - Guards registration window (`open?`)
 - Delegates fine-grained eligibility to ordered `RegistrationPolicies` via Policy Engine
-- Triggers solver (preference-based) at/after deadline
+- Triggers solver (preference-based) after close (often at/after deadline)
 - Finalizes and materializes allocation once only (idempotent)
+
+#### Close vs Finalize
+
+- Close registration: stops intake and edits; transitions `open → processing`.
+  Used to lock the window early or when the deadline passes automatically. Can
+  optionally be followed by reopen before finalization.
+- Finalize results: materializes confirmed results to domain rosters and locks
+  the campaign; transitions `processing → completed`. Runs after allocation for
+  preference-based campaigns.
+- Planning-only campaigns: close only; do not call `finalize!`. Results remain
+  in reporting tables and are not materialized.
+  When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
 
 ### Example Implementation
 
@@ -120,6 +141,7 @@ module Registration
     end
 
     def finalize!
+      return false if planning_only?
       return false unless open? || processing?
       Registration::AllocationMaterializer.new(self).materialize!
       update!(status: :completed)
@@ -133,6 +155,7 @@ module Registration
     end
 
     def allocate_and_finalize!
+      return false if planning_only?
       return false unless allocate!
       finalize!
     end
@@ -142,13 +165,33 @@ end
 
 ### Usage Scenarios
 
-- A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`.
+- A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`. (UI: [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html))
 - A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_serve` and assigns talk slots. Items point to `Talk`.
 - A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_serve` and enrolls students directly. The single item points to the `Lecture`.
 - A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_serve` to quickly fill the limited seminar seats.
-- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and is protected by an `exam_eligibility` policy. Items point to `Exam`.
+- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_serve` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
+- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and is protected by an `exam_eligibility` policy. Items point to `Exam`. (UI: [Exam Show](../mockups/campaigns_show_exam.html))
 
 ---
+
+### Planning-only campaigns (Interest Registration)
+
+```admonish example "Planning-only Interest Registration"
+Goal: Measure demand before a lecture starts to plan staffing (e.g., hire 
+tutors) without changing any rosters.
+
+- Host: `Lecture` (campaignable).
+- Items: Single item pointing to the `Lecture` (registerable).
+- Mode: `first_come_first_serve`.
+- Capacity: Very high (effectively unlimited) to capture demand signal.
+- Timing: Open well before the term; close before main registrations.
+- Finalization: Do not invoke `finalize!`. No domain materialization occurs.
+- Reporting: Use counts from `Registration::UserRegistration` (e.g., 
+  confirmed) for planning and exports.
+
+See also the Campaigns index mockups where the planning-only row appears as
+"Interest Registration" with a note like "Planning only; not materialized".
+```
 
 ## Registration::Campaignable (Concern)
 **_The Campaign Host_**
@@ -499,6 +542,19 @@ module Registration
 end
 ```
 
+```admonish tip "Policy config: typed UI, JSONB storage"
+`config` is stored as JSONB for flexibility, but the UI must present
+typed fields per policy kind (e.g., a domains textarea for
+`institutional_email`, numeric threshold and lecture selector for
+`exam_eligibility`, and a campaign selector for
+`prerequisite_campaign`). Do not expose raw JSON to end users. Normalize
+inputs (e.g., downcase domains, split by comma/whitespace) and validate
+per kind in the model. Controllers should whitelist per-kind config keys
+via strong parameters.
+```
+
+See UI: Policies tab in [Exam Show](../mockups/campaigns_show_exam.html).
+
 ### Usage Scenarios
 - **Email constraint:** `kind: :institutional_email`, `config: { "allowed_domains": ["uni.edu"] }`
 - **Exam gate:** `kind: :exam_eligibility`, `config: { "lecture_id": 42 }`
@@ -808,10 +864,10 @@ end
 ```mermaid
 stateDiagram-v2
     [*] --> draft
-    draft --> open
-  open --> processing : allocate_and_finalize! (pref-based, after deadline)
-    open --> completed : finalize! (FCFS, after deadline)
-  processing --> completed : finalize! (called by allocate_and_finalize!)
+    draft --> open : open
+    open --> processing : close (manual or at deadline)
+    processing --> completed : finalize!
+    note right of processing : Preference-based: run allocation before finalize.\nPlanning-only: skip finalize; mark completed after close.
 ```
 
 ## ERD

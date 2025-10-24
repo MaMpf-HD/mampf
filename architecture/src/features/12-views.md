@@ -133,12 +133,31 @@ for faster transfer from mockup to real views.
 
 See Table keys above for column meanings.
 
+```admonish tip "Settings live in Show"
+All campaign settings are edited inline on the Show page via the
+Settings tab. There is no separate Settings page.
+```
+
+```admonish note
+When a campaign is completed, the Settings tab is read-only. The
+"Planning-only" option is visible but disabled. In Draft/Open, the
+"Planning-only" option can be toggled; enabling it hides finalization
+paths in the UI (Allocation/Finalize).
+```
+
 | View   | Key elements                                          | Hotwire           | Mockup |
 |--------|--------------------------------------------------------|-------------------|--------|
 | Index (Lecture) | Minimal table for a single lecture; status chips       | Frames            | [Mockup](../mockups/campaigns_index.html) |
-| Show   | Summary panel; tabs: Items, Policies, Registrations, Allocation; Inline actions: Finalize, Delete | Frames + Streams  | [Mockup](../mockups/campaigns_show.html) |
-| Forms (Items & Policies tabs) | Inline create/edit for items and policies              | Frames            | TODO   |
-| Settings (Edit) | Edit metadata, dates, and open/close controls           | Frames            | TODO   |
+| Index (Current term, grouped) | Grouped by lecture for the teacher/editor; no search needed | Frames | [Mockup](../mockups/campaigns_index_current_term.html) |
+| Show  | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation; preference-based shows preferences, FCFS shows eligibility | Frames + Streams  | [Exam (FCFS)](../mockups/campaigns_show_exam.html), [Tutorials (FCFS, open)](../mockups/campaigns_show_tutorial_fcfs_open.html), [Tutorials (preference-based, open)](../mockups/campaigns_show_tutorial_open.html), [Tutorials (preference-based, completed)](../mockups/campaigns_show_tutorial.html), [Interest (draft)](../mockups/campaigns_show_interest_draft.html) |
+| Forms (Items & Policies tabs) | Inline create/edit for items and policies              | Frames            | See Show mockups (tabs) |
+
+```admonish note "Mockup legend"
+Yellow underlined rows in tables visualize an inline edit state of the
+preceding white row. They are shown side-by-side in mockups only to
+illustrate the edit UI; in the real UI, only one would be visible at a
+time.
+```
 
 #### Flow
 
@@ -147,10 +166,14 @@ flowchart LR
   subgraph "Teacher/Editor"
     CIDX[Index] --> CNEW[New]
     CIDX --> CSHW[Show]
-    CSHW --> EDIT[Edit]
-    CSHW --> ITM[Items]
+    CSHW --> OVW[Overview tab]
+    CSHW --> SET[Settings tab]
+    CSHW --> ITM[Items tab]
     CSHW --> POL[Policies tab]
-    CSHW --> ALLOC[Allocation]
+    CSHW --> REGS[Registrations tab]
+    CSHW --> ALLOCT[Allocation tab]
+    CSHW --> CLOSE[Close registration]
+    CLOSE --> ALLOC[Run allocation]
     ALLOC --> FIN[Finalize]
   end
 ```
@@ -162,8 +185,9 @@ flowchart LR
 | Show      | Registration::CampaignsController      | show                                        | Campaign overview with tabs |
 | New/Edit (Campaign settings) | Registration::CampaignsController      | new, create, edit, update, destroy          | Create/modify metadata and dates; destroy only if no registrations |
 | Open for registration (member action) | Registration::CampaignsController     | open                                        | Set status to open (draft → open) |
+| Close/Reopen (member actions) | Registration::CampaignsController     | close, reopen                               | Close stops intake (open → processing); reopen before finalization (processing → open) |
 | Policies tab (forms) | Registration::PoliciesController       | index, new, create, edit, update, destroy   | Manage eligibility policies within a campaign |
-| Allocation tab        | Registration::AllocationController    | show, create, retry, finalize, allocate_and_finalize | Trigger/monitor allocation; finalize moves confirmed users to rosters |
+| Allocation tab        | Registration::AllocationController    | show, create, retry, finalize, allocate_and_finalize | Trigger/monitor allocation; finalize moves confirmed users to rosters; hidden for planning-only |
 
 ### Student Registration
 
