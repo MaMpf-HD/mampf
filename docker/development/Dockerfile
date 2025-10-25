@@ -88,17 +88,17 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chmod 0440 /etc/sudoers.d/$USERNAME
 
 # 🎈 Finally, set up the app
-WORKDIR /usr/src/app
-ENTRYPOINT ["/usr/src/app/docker/entrypoint-dev-test.sh"]
+WORKDIR /workspaces/mampf/
+ENTRYPOINT ["/workspaces/mampf/docker/entrypoint-dev-test.sh"]
 USER $USERNAME
 
 # Log Node.js tooling versions
 RUN which node && node --version && which yarn && yarn --version
 
-COPY --chown=$USERNAME:USERNAME Gemfile Gemfile.lock package.json yarn.lock /usr/src/app/
-COPY --chown=$USERNAME:$USERNAME ./docker/entrypoint-dev-test.sh /usr/src/app/docker/entrypoint-dev-test.sh
-COPY --chown=$USERNAME:$USERNAME ./docker/init-dev-test.sh /usr/src/app/docker/init-dev-test.sh
-COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /usr/src/app/public/pdfcomprezzor/
+COPY --chown=$USERNAME:USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/mampf/
+COPY --chown=$USERNAME:$USERNAME ./docker/entrypoint-dev-test.sh /workspaces/mampf/docker/entrypoint-dev-test.sh
+COPY --chown=$USERNAME:$USERNAME ./docker/init-dev-test.sh /workspaces/mampf/docker/init-dev-test.sh
+COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/
 COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
 ARG IN_CI_CD

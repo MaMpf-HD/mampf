@@ -41,7 +41,7 @@ if [ "$RAILS_ENV" != "development" ] && [ "$RAILS_ENV" != "test" ]; then
     exit 1
 fi
 
-cd /usr/src/app/
+cd /workspaces/mampf/
 
 echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 

@@ -7,7 +7,7 @@ x-mampf-base: &mampf-base
   pull_policy: never
   env_file: .env
   volumes:
-    - ../../:/usr/src/app/:cached
+    - ../../:/workspaces/mampf
     - sprockets-cache:/cache
     # https://stackoverflow.com/a/62611202/
     - bundle_cache:/usr/local/bundle/
@@ -43,7 +43,7 @@ services:
       # Anonymous volume for the public folder where the assets are compiled to
       # since in this container, we start in RAILS_ENV=test and don't use
       # the nginx container
-      - "/usr/src/app/public/"
+      - "/workspaces/mampf/public/"
 
   nginx:
     image: openresty/openresty:alpine

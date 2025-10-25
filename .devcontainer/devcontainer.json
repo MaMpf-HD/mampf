@@ -19,7 +19,7 @@
     ],
     "service": "mampf",
     // https://github.com/orgs/community/discussions/15506
-    "workspaceFolder": "/usr/src/app/",
+    "workspaceFolder": "/workspaces/mampf/",
     // https://containers.dev/features
     "features": {
         "ghcr.io/devcontainers/features/github-cli:1": {
