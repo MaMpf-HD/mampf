@@ -2,8 +2,6 @@
 set -e
 cd /workspaces/mampf/
 
-./docker/init-dev-test.sh &> >(tee -a /workspaces/mampf/log/initialization.log)
-
 bundle exec rake js:recompile_routes
 echo "💫  Starting Vite dev server (in background)"
 echo "NODE_ENV: $NODE_ENV"

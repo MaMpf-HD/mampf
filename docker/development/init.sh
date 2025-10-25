@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -e
+cd /workspaces/mampf/
 
 check_for_preseeds() {
   echo "💾  Checking for preseeds (in development env)"
@@ -40,8 +41,6 @@ if [ "$RAILS_ENV" != "development" ] && [ "$RAILS_ENV" != "test" ]; then
     echo "❌  This script is only intended for usage with RAILS_ENV=development or RAILS_ENV=test. Aborting."
     exit 1
 fi
-
-cd /workspaces/mampf/
 
 echo "▶  Initializing MaMpf in environment: $RAILS_ENV"
 

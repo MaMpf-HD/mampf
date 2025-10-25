@@ -27,8 +27,10 @@ services:
       - NODE_ENV=development
       - MAMPF_PORT=3000
     ports:
-      # Rails app on port 3000 delivered by nginx
       - 3036:3036 # Vite server
+    labels:
+      # see nginx.tmpl, which is serving mampf on port 30
+      de.uni-heidelberg.mathi.mampf.container-type: worker
 
   mampf-for-cypress:
     <<: *mampf-base

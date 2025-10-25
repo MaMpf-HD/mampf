@@ -9,12 +9,12 @@ seed:
     #!/usr/bin/env bash
     export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
-    ./docker/init-dev-test.sh | tee /proc/1/fd/1
+    ./docker/development/init.sh | tee /proc/1/fd/1
 
 # Starts the app
 up:
     #!/usr/bin/env bash
-    ./docker/entrypoint-dev-test.sh | tee /proc/1/fd/1
+    ./docker/development/init-and-run.sh | tee /proc/1/fd/1
 
 # Commands to test the MaMpf codebase
 mod test ".config/commands/test.justfile"
