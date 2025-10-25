@@ -86,6 +86,7 @@
                 // Container & Remote
                 "ms-azuretools.vscode-containers",
                 "ms-vscode.remote-explorer",
+                "docker.docker",
                 // Ruby extensions
                 "Shopify.ruby-lsp",
                 // JavaScript/Node extensions
