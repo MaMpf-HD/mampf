@@ -11,7 +11,7 @@ services:
     volumes:
       # Persist bash history
       # https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
-      - mampf-command-history:/home/mampf/commandhistory
+      - mampf-command-history:/workspaces/commandhistory/
 
   mampf-for-cypress:
     command: "sleep infinity"

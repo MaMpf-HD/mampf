@@ -6,7 +6,7 @@ alias ll='eza -l --group-directories-first'
 alias ls="eza --group-directories-first"
 
 # zsh history
-HISTFILE=$HOME/commandhistory/.zsh_history
+HISTFILE=/workspaces/commandhistory/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 # write to history file immediately, but don't share between active sessions

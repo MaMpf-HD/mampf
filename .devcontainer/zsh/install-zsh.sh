@@ -6,12 +6,11 @@ sudo apt update \
     && DEBIAN_FRONTEND=noninteractive sudo apt install -y \
        -o Dpkg::Options::="--force-confnew" zsh
 
-# zsh history (~/commandhistory/ is preserved as a volume in docker-compose)
-# Persist bash history
+# zsh history
 # adapted from https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
-mkdir -p "$HOME/commandhistory"
-touch "$HOME/commandhistory/.zsh_history"
-chown -R "$(id -un):$(id -gn)" "$HOME/commandhistory" || true
+mkdir -p "/workspaces/commandhistory"
+touch "/workspaces/commandhistory/.zsh_history"
+chown -R "$(id -un):$(id -gn)" "/workspaces/commandhistory" || true
 
 # initial zsh config
 cp .devcontainer/zsh/.zshrc ~/.zshrc
