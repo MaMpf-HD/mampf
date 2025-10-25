@@ -1,9 +1,18 @@
 {
     "recommendations": [
-        "shopify.ruby-lsp",
+        // Container & Remote
+        "ms-azuretools.vscode-containers",
+        "ms-vscode.remote-explorer",
+        // Ruby extensions
+        "Shopify.ruby-lsp",
+        // JavaScript/Node extensions
         "dbaeumer.vscode-eslint",
+        // Other useful extensions
         "streetsidesoftware.code-spell-checker",
         "streetsidesoftware.code-spell-checker-german",
-        "nefrob.vscode-just-syntax"
+        "nefrob.vscode-just-syntax",
+        "timonwong.shellcheck",
+        "github.copilot",
+        "github.vscode-pull-request-github"
     ]
 }

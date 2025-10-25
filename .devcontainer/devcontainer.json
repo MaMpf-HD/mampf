@@ -83,6 +83,9 @@
     "customizations": {
         "vscode": {
             "extensions": [
+                // Container & Remote
+                "ms-azuretools.vscode-containers",
+                "ms-vscode.remote-explorer",
                 // Ruby extensions
                 "Shopify.ruby-lsp",
                 // JavaScript/Node extensions
@@ -91,7 +94,9 @@
                 "streetsidesoftware.code-spell-checker",
                 "streetsidesoftware.code-spell-checker-german",
                 "nefrob.vscode-just-syntax",
-                "timonwong.shellcheck"
+                "timonwong.shellcheck",
+                "github.copilot",
+                "github.vscode-pull-request-github"
             ]
         }
     },

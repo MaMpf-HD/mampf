@@ -94,6 +94,14 @@
     //////////////////////////////////////
     "terminal.integrated.defaultProfile.linux": "zsh",
     //////////////////////////////////////
+    // Container
+    //////////////////////////////////////
+    "containers.containers.description": [
+        "Image",
+        "Status"
+    ],
+    "containers.containers.label": "ContainerName",
+    //////////////////////////////////////
     // Git
     //////////////////////////////////////
     "git.inputValidation": true,
