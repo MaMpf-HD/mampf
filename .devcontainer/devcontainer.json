@@ -14,7 +14,7 @@
 {
     "name": "MaMpf development",
     "dockerComposeFile": [
-        "../docker/development/docker-compose.yml",
+        "../docker/development/compose.yml",
         "compose.devcontainer.yml"
     ],
     "service": "mampf",
@@ -30,16 +30,20 @@
         "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {}
     },
     "containerEnv": {
+        // in the container itself, we then install zsh
+        // (this just serves as a fallback)
         "SHELL": "/bin/bash"
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // This can be used to network with other containers or the host.
     "forwardPorts": [
-        3000, // Rails app (via nginx)
-        3036, // Vite dev server
+        3000, // MaMpf App
+        3145, // MaMpf App for Cypress tests
+        3036, // Vite server
+        3037, // Vite server for Cypress tests
         1080, // Mailcatcher web interface
         5050, // pgAdmin
-        8060 // desktop (cypress)
+        8069 // desktop (cypress)
     ],
     "portsAttributes": {
         // Main app
@@ -48,30 +52,30 @@
             "onAutoForward": "openBrowserOnce"
         },
         "3036": {
-            "label": "Vite Dev Server",
-            "onAutoForward": "silent"
-        },
-        // Miscellaneous
-        "1080": {
-            "label": "mailcatcher",
+            "label": "Vite Server",
             "onAutoForward": "silent"
         },
         "5050": {
             "label": "pgAdmin",
             "onAutoForward": "silent"
         },
-        // Test ports
+        // Test ports (for Cypress)
         "3145": {
-            "label": "MaMpf Test App",
+            "label": "MaMpf App for Cypress tests",
             "onAutoForward": "silent"
         },
         "3037": {
             "label": "Vite Test Server",
             "onAutoForward": "silent"
         },
-        "8060": {
-            "label": "Desktop",
+        "8069": {
+            "label": "Cypress",
             "onAutoForward": "openBrowserOnce"
+        },
+        // Miscellaneous
+        "1080": {
+            "label": "mailcatcher",
+            "onAutoForward": "silent"
         }
     },
     "initializeCommand": "git submodule update --init --recursive",

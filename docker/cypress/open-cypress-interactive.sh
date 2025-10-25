@@ -10,4 +10,4 @@
 
 # https://on.cypress.io/command-line#cypress-open
 # https://www.cypress.io/blog/2019/05/02/run-cypress-with-a-single-docker-command#Interactive-mode
-RAILS_ENV="test" cypress open --project /mampf-tests/ --e2e --browser chrome
+DISPLAY=":80" RAILS_ENV="test" cypress open --project /mampf-tests/ --e2e --browser chrome

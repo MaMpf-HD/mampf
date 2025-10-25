@@ -16,9 +16,6 @@ FROM ruby:3.3.8-bookworm
 ARG RAILS_DEVELOPMENT_HOSTS=".githubpreview.dev,.app.github.dev"
 ENV RAILS_DEVELOPMENT_HOSTS=${RAILS_DEVELOPMENT_HOSTS}
 
-EXPOSE 3000
-EXPOSE 9394
-
 # use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 

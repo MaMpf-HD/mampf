@@ -47,7 +47,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push docker image to GHCR
-        working-directory: docker/test
+        working-directory: docker/cypress
         # We don't use the docker/build-push-action here since it doesn't
         # support passing custom docker compose files (just dockerfiles).
         #
@@ -65,7 +65,7 @@ jobs:
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
-          -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
+          -f ./compose.yml -f ./docker-compose.cicd.build.yml
           --set mampf.tags=ghcr.io/mampf-hd/mampftest:image
           --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
           --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache

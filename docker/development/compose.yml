@@ -1,0 +1,129 @@
+x-mampf-base: &mampf-base
+  image: mampf:dev-and-test
+  # Only pull from local images, do not contact online registry
+  # https://stackoverflow.com/questions/46032392/docker-compose-does-not-allow-to-use-local-images#comment135243253_57644157
+  # -> did not work
+  # https://github.com/docker/compose/issues/3660
+  pull_policy: never
+  env_file: .env
+  volumes:
+    - ../../:/usr/src/app/:cached
+    - sprockets-cache:/cache
+    # https://stackoverflow.com/a/62611202/
+    - bundle_cache:/usr/local/bundle/
+  depends_on:
+      - db
+      - redis
+      - mailcatcher
+
+services:
+  mampf:
+    <<: *mampf-base
+    build:
+      context: ./../..
+      dockerfile: docker/development/Dockerfile
+    environment:
+      - RAILS_ENV=development
+      - NODE_ENV=development
+      - MAMPF_PORT=3000
+    ports:
+      # Rails app on port 3000 delivered by nginx
+      - 3036:3036 # Vite server
+
+  mampf-for-cypress:
+    <<: *mampf-base
+    environment:
+      - RAILS_ENV=test
+      - NODE_ENV=test
+      - MAMPF_PORT=3145
+    ports:
+      - 3145:3145 # Rails app for Cypress tests
+      - 3037:3037 # Vite server for Cypress tests
+    volumes:
+      # Anonymous volume for the public folder where the assets are compiled to
+      # since in this container, we start in RAILS_ENV=test and don't use
+      # the nginx container
+      - "/usr/src/app/public/"
+
+  nginx:
+    image: openresty/openresty:alpine
+    # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
+    container_name: mampf-docker-nginx
+    ports:
+      - 3000:80
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      # Submissions are served by nginx but are still authenticated by MaMpf. (accel_redirect)
+      - "submissions:/private/submissions:ro,nocopy"
+      - "public:/public"
+
+  db:
+    image: postgres:17-bookworm
+    environment:
+      - POSTGRES_USER=localroot
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    volumes:
+      - type: volume
+        source: db-data
+        target: /var/lib/postgresql/data
+      # https://docs.docker.com/guides/pre-seeding/#pre-seed-the-database-by-bind-mounting-a-sql-script
+      - ../../db/create-mampf-db.sql:/docker-entrypoint-initdb.d/create-mampf-db.sql
+
+  redis:
+    image: "redis:6.2.6-alpine"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mampf.edu
+      PGADMIN_DEFAULT_PASSWORD: pgmampf
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+      # Pre-load server definition into pgAdmin (so that no manual setup via
+      # the web interface is required). See "pgadmin4/servers.json" here:
+      # -> https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html#mapped-files-and-directories
+      # -> https://forums.docker.com/t/automatically-connect-pgadmin-to-a-postgresql-volume-on-which-there-is-a-database-and-automatically-load-a-schema-present-on-a-sql-file-with-docker-compose/124647/2
+      #
+      # This only loads once, see: https://github.com/pgadmin-org/pgadmin4/issues/8071
+      - type: bind
+        source: ../../config/db-pgadmin.json
+        target: /pgadmin4/servers.json
+
+  mailcatcher:
+    restart: on-failure:10
+    image: dockage/mailcatcher:latest
+    ports:
+      - 1080:1080
+
+  imap:
+    image: antespi/docker-imap-devel:latest
+    ports:
+      - 1025:25
+      - 10143:143
+      - 10993:993
+    environment:
+      - MAILNAME=localhost
+      - MAIL_ADDRESS=mampf@localhost
+      - MAIL_PASS=mampf
+
+  dockergen:
+    build:
+      context: ./../..
+      dockerfile: docker/Dockerfile.dockergen
+    command: -notify-sighup mampf-docker-nginx -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    restart: always
+    volumes:
+      - "nginx-conf-d:/etc/nginx/conf.d"
+      - "../nginx.tmpl:/etc/docker-gen/templates/nginx.tmpl"
+      - "/var/run/docker.sock:/tmp/docker.sock"
+
+volumes:
+  nginx-conf-d:
+  submissions:
+  public:
+  db-data:
+  pgadmin:
+  sprockets-cache:
+  bundle_cache:

@@ -39,7 +39,7 @@ Rails.application.configure do
   # Mail settings
   config.active_job.queue_adapter = :test
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.default_url_options = { host: "localhost", port: 3145 }
   config.action_mailer.delivery_method = :test
   config.action_mailer.smtp_settings = { address: ENV.fetch("MAILSERVER", "127.0.0.1"),
                                          port: 1025 }

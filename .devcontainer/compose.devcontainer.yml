@@ -11,16 +11,19 @@ services:
     volumes:
       # Persist bash history
       # https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
-      - mampf-bashhistory:/home/mampf/commandhistory
+      - mampf-command-history:/home/mampf/commandhistory
+
+  mampf-for-cypress:
+    command: "sleep infinity"
 
   xpra:
-    build: 
+    build:
       context: ../../
       dockerfile: docker/xpra/Dockerfile
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     ports:
-      - "127.0.0.1:8060:8060"
+      - 8069:8069
 
 volumes:
-  mampf-bashhistory:
+  mampf-command-history:
