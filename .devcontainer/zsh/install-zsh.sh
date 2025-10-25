@@ -9,8 +9,8 @@ sudo apt update \
 # zsh history
 # adapted from https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
 mkdir -p "/workspaces/commandhistory"
-touch "/workspaces/commandhistory/.zsh_history"
-chown -R "$(id -un):$(id -gn)" "/workspaces/commandhistory" || true
+sudo touch "/workspaces/commandhistory/.zsh_history"
+sudo chown -R "$(id -un):$(id -gn)" "/workspaces/commandhistory"
 
 # initial zsh config
 cp .devcontainer/zsh/.zshrc ~/.zshrc
