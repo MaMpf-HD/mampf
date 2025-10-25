@@ -23,7 +23,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     ports:
-      - 8061:8061
+      - 8060:8060
 
 volumes:
   mampf-command-history:

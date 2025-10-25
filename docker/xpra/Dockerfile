@@ -2,7 +2,7 @@ FROM ubuntu:24.04
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    git python3 python3-pip python3-dbus x11-xserver-utils \
+    git python3 python3-pip python3-dbus dbus-x11 x11-xserver-utils \
     libxcursor-dev libxrandr-dev libgtk-3-dev python3-cairo-dev \
     python-gi-dev liblz4-dev python3-xdg libpam-dev quilt xserver-xorg-dev \
     xutils-dev xserver-xorg-video-dummy xvfb keyboard-configuration \
@@ -14,6 +14,7 @@ RUN apt-get update \
 RUN git clone --depth=1 https://github.com/Xpra-org/xpra /tmp/xpra/ \
     && cd /tmp/xpra/ \
     && DEBIAN_FRONTEND=noninteractive yes | ./setup.py dev-env --minimal --x11 --with-openh264 \
+    && DEBIAN_FRONTEND=noninteractive ./setup.py install --prefix=/usr --install-layout=deb \
     && cp fs/bin/* /bin/ \
     && rm -rf /tmp/xpra/
 
@@ -24,12 +25,12 @@ RUN git clone --depth=1 https://github.com/Xpra-org/xpra-html5.git /tmp/xpra-htm
     && ./setup.py install \
     && rm -rf /tmp/xpra-html5/
 
-ENTRYPOINT ["xpra", "start", ":80", \
-    "--bind-tcp=0.0.0.0:8061", \
+ENTRYPOINT ["xpra", "start", ":79", \
+    "--bind-tcp=0.0.0.0:8060", \
     "--auth=none", "--html=on", "--opengl=on", \
     "--pulseaudio=no", "--audio=no", \
     "--mdns=no", "--webcam=no", \
-    "--daemon=no", "--exit-with-client=no", "--exit-with-children=no", "--exit-with-windows=no", \
+    "--daemon=no", "--exit-with-windows=no", \
     "--start=xhost +"]
 
 # Cypress
