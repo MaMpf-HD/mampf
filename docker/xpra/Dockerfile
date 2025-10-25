@@ -25,7 +25,7 @@ RUN git clone --depth=1 https://github.com/Xpra-org/xpra-html5.git /tmp/xpra-htm
     && rm -rf /tmp/xpra-html5/
 
 ENTRYPOINT ["xpra", "start", ":80", \
-    "--bind-tcp=0.0.0.0:8060", \
+    "--bind-tcp=0.0.0.0:8061", \
     "--auth=none", "--html=on", "--opengl=on", \
     "--pulseaudio=no", "--audio=no", \
     "--mdns=no", "--webcam=no", \

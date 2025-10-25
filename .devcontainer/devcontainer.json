@@ -43,7 +43,7 @@
         3037, // Vite server for Cypress tests
         1080, // Mailcatcher web interface
         5050, // pgAdmin
-        8069 // desktop (cypress)
+        8061 // desktop (cypress)
     ],
     "portsAttributes": {
         // Main app
@@ -68,7 +68,7 @@
             "label": "Vite Test Server",
             "onAutoForward": "silent"
         },
-        "8069": {
+        "8061": {
             "label": "Cypress",
             "onAutoForward": "openBrowserOnce"
         },
