@@ -55,7 +55,7 @@
             "onAutoForward": "openBrowserOnce"
         },
         "3036": {
-            "label": "Vite Server",
+            "label": "Vite Server (starts with MaMpf App)",
             "onAutoForward": "silent"
         },
         "5050": {
