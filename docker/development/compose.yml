@@ -41,11 +41,6 @@ services:
     ports:
       - 3145:3145 # Rails app for Cypress tests
       - 3037:3037 # Vite server for Cypress tests
-    volumes:
-      # Anonymous volume for the public folder where the assets are compiled to
-      # since in this container, we start in RAILS_ENV=test and don't use
-      # the nginx container
-      - "/workspaces/mampf/public/"
 
   nginx:
     image: openresty/openresty:alpine
