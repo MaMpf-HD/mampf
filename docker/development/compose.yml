@@ -1,4 +1,4 @@
-x-mampf-base: &mampf-base
+x-app-base: &app-base
   image: mampf:dev-and-test
   # Only pull from local images, do not contact online registry
   # https://stackoverflow.com/questions/46032392/docker-compose-does-not-allow-to-use-local-images#comment135243253_57644157
@@ -16,9 +16,11 @@ x-mampf-base: &mampf-base
       - redis
       - mailcatcher
 
+name: mampf
+
 services:
-  mampf:
-    <<: *mampf-base
+  app:
+    <<: *app-base
     build:
       context: ./../..
       dockerfile: docker/development/Dockerfile
@@ -32,8 +34,8 @@ services:
       # see nginx.tmpl, which is serving mampf on port 30
       de.uni-heidelberg.mathi.mampf.container-type: worker
 
-  mampf-for-cypress:
-    <<: *mampf-base
+  app-for-cypress:
+    <<: *app-base
     environment:
       - RAILS_ENV=test
       - NODE_ENV=test

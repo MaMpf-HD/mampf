@@ -5,14 +5,14 @@ include:
       - ../../docker/cypress/compose.interactive.yml
 
 services:
-  mampf:
+  app:
     entrypoint: "sleep infinity"
     volumes:
       # Persist bash history
       # https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
       - mampf-command-history:/workspaces/commandhistory/
 
-  mampf-for-cypress:
+  app-for-cypress:
     entrypoint: RUBY_DEBUG_ENABLE=false ./docker/development/init-and-run.sh | tee /proc/1/fd/1
 
   xpra:
