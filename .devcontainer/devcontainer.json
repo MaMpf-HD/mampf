@@ -27,7 +27,9 @@
         },
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
         "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
-        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {}
+        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {},
+        // for the architecture book that needs Rust
+        "ghcr.io/devcontainers/features/rust:1": {}
     },
     "containerEnv": {
         // in the container itself, we then install zsh
@@ -43,12 +45,13 @@
         3037, // Vite server for Cypress tests
         1080, // Mailcatcher web interface
         5050, // pgAdmin
-        8060 // desktop (cypress)
+        8060, // desktop (cypress),
+        3003 // architecture book
     ],
     "portsAttributes": {
         // Main app
         "3000": {
-            "label": "MaMpf App",
+            "label": "MaMpf App (needs manual start)",
             "onAutoForward": "openBrowserOnce"
         },
         "3036": {
@@ -76,6 +79,10 @@
         "1080": {
             "label": "mailcatcher",
             "onAutoForward": "silent"
+        },
+        "3003": {
+            "label": "Architecture Book (needs manual start)",
+            "onAutoForward": "openBrowser"
         }
     },
     "initializeCommand": "git submodule update --init --recursive",

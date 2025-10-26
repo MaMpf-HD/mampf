@@ -25,6 +25,18 @@
 			"presentation": {
 				"reveal": "always",
 				"panel": "shared",
+				"clear":  true,
+			},
+			"problemMatcher": [],
+		},
+		{
+			"label": "Start Architecture Book Server",
+			"type": "vscode-just",
+			"task": "just musli",
+			"isBackground": false,
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
 				"clear": true,
 			},
 			"problemMatcher": [],

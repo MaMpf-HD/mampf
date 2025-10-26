@@ -16,6 +16,13 @@ up:
     #!/usr/bin/env bash
     ./docker/development/init-and-run.sh | tee /proc/1/fd/1
 
+# Starts the architecture book server (Müsli integration)
+musli:
+    #!/usr/bin/env bash
+    cargo install mdbook mdbook-mermaid mdbook-admonish mdbook-pagetoc
+    cd architecture
+    mdbook serve --port 3003
+
 # Commands to test the MaMpf codebase
 mod test ".config/commands/test.justfile"
 # see https://github.com/casey/just/issues/2216
