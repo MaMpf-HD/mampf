@@ -76,6 +76,9 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@mampf.edu
       PGADMIN_DEFAULT_PASSWORD: pgmampf
+      # don't require a password for login to pgAdmin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
     volumes:
       - pgadmin:/var/lib/pgadmin
       # Pre-load server definition into pgAdmin (so that no manual setup via
