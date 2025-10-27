@@ -99,7 +99,7 @@ jobs:
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run --command="" app-for-cypress sh -c
+          run --entrypoint="" app-for-cypress sh -c
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov

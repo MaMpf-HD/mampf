@@ -6,4 +6,4 @@ services:
   app-for-cypress:
     image: ghcr.io/mampf-hd/mampftest:image
     # only used when Cypress is running tests in CI (and NOT for unit tests)
-    command: "RUBY_DEBUG_ENABLE=false DISABLE_VITE_IN_CI=true ./init-and-run.sh"
+    entrypoint: ["RUBY_DEBUG_ENABLE=false DISABLE_VITE_IN_CI=true ./init-and-run.sh"]
