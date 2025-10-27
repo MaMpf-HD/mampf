@@ -17,9 +17,9 @@ up:
     ./docker/development/init-and-run.sh | tee /proc/1/fd/1
 
 # Starts the architecture book server (Müsli integration)
+[working-directory: "architecture"]
 muesli:
     #!/usr/bin/env bash
-    cd architecture
     mdbook serve --port 3003
 
 # Commands to test the MaMpf codebase
