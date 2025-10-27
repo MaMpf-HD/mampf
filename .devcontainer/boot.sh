@@ -3,9 +3,9 @@ set -e
 
 git submodule update --init --recursive
 
-yarn run just-install
-.devcontainer/zsh/install-zsh.sh
-.devcontainer/install-mdbook.sh
+./bin/just-install install
+./.devcontainer/zsh/install-zsh.sh
+./.devcontainer/install-mdbook.sh
 
 echo -e "👋 Welcome to the MaMpf DevContainer.
 - To get started, use the command 'Run Task' in VSCode.
