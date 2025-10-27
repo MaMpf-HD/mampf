@@ -77,11 +77,12 @@ ARG USERNAME=mampf
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
 
-# Create the user
+# Create the user & setup permissions
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
-    && mkdir /cache && chown $USERNAME:$USERNAME /cache \
-    && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME:$USERNAME /workspaces/mampf/node_modules/ \
+    && mkdir -p /cache && chown -R $USERNAME /cache \
+    && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME /workspaces/mampf/node_modules/ \
+    && mkdir -p /workspaces/mampf/public/ && chown -R $USERNAME /workspaces/mampf/public/ \
     # [Optional] Add sudo support.
     && apt-get update \
     && apt-get install -y sudo \
@@ -96,12 +97,12 @@ USER $USERNAME
 # Log Node.js tooling versions
 RUN which node && node --version && which yarn && yarn --version
 
-COPY --chown=$USERNAME:USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/mampf/
-COPY --chown=$USERNAME:$USERNAME ./docker/development/init.sh /workspaces/mampf/docker/development/init.sh
-COPY --chown=$USERNAME:$USERNAME ./docker/development/run.sh /workspaces/mampf/docker/development/run.sh
-COPY --chown=$USERNAME:$USERNAME ./docker/development/init-and-run.sh /workspaces/mampf/docker/development/init-and-run.sh
-COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/
-COPY --chown=$USERNAME:USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
+COPY --chown=$USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/mampf/
+COPY --chown=$USERNAME ./docker/development/init.sh /workspaces/mampf/docker/development/init.sh
+COPY --chown=$USERNAME ./docker/development/run.sh /workspaces/mampf/docker/development/run.sh
+COPY --chown=$USERNAME ./docker/development/init-and-run.sh /workspaces/mampf/docker/development/init-and-run.sh
+COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/
+COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
 ARG IN_CI_CD
 RUN if [ "$IN_CI_CD" = "true" ]; then \
@@ -111,7 +112,6 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 # https://stackoverflow.com/a/66158709/9655481
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
-        chown -R $USERNAME: /workspaces/mampf/node_modules; \
         yarn install --frozen-lockfile; \
     fi
 
