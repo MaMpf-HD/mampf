@@ -71,7 +71,7 @@
         },
         "8060": {
             "label": "Cypress",
-            "onAutoForward": "openBrowserOnce"
+            "onAutoForward": "silent"
         },
         // Miscellaneous
         "1080": {
