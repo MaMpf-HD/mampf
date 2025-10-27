@@ -26,6 +26,7 @@ export default defineConfig({
     fs: {
       allow: Object.values(gemPaths),
     },
+    allowedHosts: process.env.NODE_ENV === "test" ? ["app-for-cypress"] : [],
   },
 
   // TODO (keep track).
