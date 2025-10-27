@@ -81,6 +81,7 @@ ARG USER_GID=$USER_UID
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     && mkdir /cache && chown $USERNAME:$USERNAME /cache \
+    && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME:$USERNAME /workspaces/mampf/node_modules/ \
     # [Optional] Add sudo support.
     && apt-get update \
     && apt-get install -y sudo \
@@ -110,6 +111,7 @@ RUN if [ "$IN_CI_CD" = "true" ]; then \
 # https://stackoverflow.com/a/66158709/9655481
 RUN if [ "$IN_CI_CD" = "true" ]; then \
         echo "Running yarn install"; \
+        chown -R $USERNAME: /workspaces/mampf/node_modules; \
         yarn install --frozen-lockfile; \
     fi
 
