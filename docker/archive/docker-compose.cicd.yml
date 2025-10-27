@@ -1,5 +1,0 @@
-services:
-  mampf:
-    image: ghcr.io/mampf-hd/mampftest:image
-    environment:
-      RAILS_ENV: test

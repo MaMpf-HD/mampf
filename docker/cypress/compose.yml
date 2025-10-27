@@ -3,6 +3,7 @@ services:
     build:
       context: ./../../
       dockerfile: docker/cypress/Dockerfile
+    entrypoint: ["/workspaces/mampf/run-cypress-cicd.sh"]
     environment:
       CYPRESS_baseUrl: http://app-for-cypress:3145
     volumes:

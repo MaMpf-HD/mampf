@@ -1,5 +1,9 @@
 services:
-  mampf:
+  # Remove the app and nginx services since we don't need them for tests
+  app: !reset null
+  nginx: !reset null
+
+  app-for-cypress:
     build:
       context: ../..
       dockerfile: docker/development/Dockerfile
