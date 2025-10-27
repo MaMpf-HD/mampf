@@ -3,9 +3,14 @@ set -e
 cd /workspaces/mampf/
 
 bundle exec rake js:recompile_routes
-echo "💫  Starting Vite dev server (in background)"
-echo "NODE_ENV: $NODE_ENV"
-bundle exec vite dev &
+
+if [ "$DISABLE_VITE_IN_CI" != "true" ]; then
+	echo "💫  Starting Vite dev server (in background)"
+	echo "NODE_ENV: $NODE_ENV"
+	bundle exec vite dev &
+else
+	echo "Vite dev server disabled due to DISABLE_VITE_IN_CI=true"
+fi
 
 rm -f tmp/pids/server.pid
 cp /pdfcomprezzor.wasm /wasm_exec.js public/pdfcomprezzor/
