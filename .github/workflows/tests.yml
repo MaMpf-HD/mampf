@@ -31,7 +31,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             submodules: recursive
 
@@ -79,7 +79,7 @@ jobs:
     needs: build-mampf
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             submodules: recursive
 
@@ -119,7 +119,7 @@ jobs:
     needs: build-mampf
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             submodules: recursive
 
