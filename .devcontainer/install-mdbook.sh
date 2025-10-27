@@ -2,7 +2,7 @@
 set -e
 
 # Install Rust (https://doc.rust-lang.org/cargo/getting-started/installation.html)
-curl https://sh.rustup.rs -sSf | sh
+curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 # Install cargo-binstall (https://github.com/cargo-bins/cargo-binstall?tab=readme-ov-file#installation)
 curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
