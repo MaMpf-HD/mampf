@@ -17,9 +17,8 @@ up:
     ./docker/development/init-and-run.sh | tee /proc/1/fd/1
 
 # Starts the architecture book server (Müsli integration)
-musli:
+muesli:
     #!/usr/bin/env bash
-    cargo install mdbook mdbook-mermaid mdbook-admonish mdbook-pagetoc
     cd architecture
     mdbook serve --port 3003
 

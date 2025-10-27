@@ -32,7 +32,7 @@
 		{
 			"label": "Start Architecture Book Server",
 			"type": "vscode-just",
-			"task": "just musli",
+			"task": "just muesli",
 			"isBackground": false,
 			"presentation": {
 				"reveal": "always",
