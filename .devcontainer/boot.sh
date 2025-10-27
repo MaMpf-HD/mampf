@@ -3,8 +3,13 @@ set -e
 
 git submodule update --init --recursive
 
+echo "🚀 Install Just"
 ./bin/just-install install
+
+echo "🚀 Install zsh"
 ./.devcontainer/zsh/install-zsh.sh
+
+echo "🚀 Install MdBook"
 ./.devcontainer/install-mdbook.sh
 
 echo -e "👋 Welcome to the MaMpf DevContainer.
