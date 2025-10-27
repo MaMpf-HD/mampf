@@ -10,4 +10,4 @@ curl https://sh.rustup.rs -sSf | sh -s -- -y
 curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
 
 # Install required dependencies
-cargo binstall mdbook mdbook-mermaid mdbook-admonish mdbook-pagetoc --no-confirm
+cargo binstall mdbook mdbook-mermaid mdbook-admonish mdbook-pagetoc --no-confirm --force
