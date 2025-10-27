@@ -47,7 +47,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push docker image to GHCR
-        working-directory: docker/
+        working-directory: docker/development/
         # We don't use the docker/build-push-action here since it doesn't
         # support passing custom docker compose files (just dockerfiles).
         #
@@ -65,11 +65,11 @@ jobs:
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
-          -f ./development/compose.yml -f ./cicd/compose.cicd.build.yml
-          --set mampf.tags=ghcr.io/mampf-hd/mampftest:image
-          --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
-          --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
-          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
+          -f ./compose.yml -f ../cicd/compose.cicd.build.yml
+          --set app-for-cypress.tags=ghcr.io/mampf-hd/mampftest:image
+          --set app-for-cypress.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
+          --set app-for-cypress.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
+          --set app-for-cypress.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
   unit-tests:
     name: Unit tests
@@ -91,15 +91,15 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull MaMpf image (from GHCR)
-        working-directory: docker/
+        working-directory: docker/development/
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
 
       - name: Run unit tests
-        working-directory: docker/
+        working-directory: docker/development/
         run: >
-          docker compose -f ./development/compose.yml -f ./cicd/compose.cicd.yml
-          run --entrypoint="" mampf sh -c
+          docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
+          run --command="" app-for-cypress sh -c
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
@@ -131,14 +131,15 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull MaMpf image (from GHCR)
-        working-directory: docker/
+        working-directory: docker/development/
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
 
       - name: Run Cypress tests
-        working-directory: docker/
-        run: > 
+        working-directory: docker/development/
+        run: >
           docker compose
-          -f ./development/compose.yml -f ./cicd/compose.cicd.yml
-          -f ./cypress/compose.yml
+          -f ./compose.yml
+          -f ../cicd/compsoe.cicd.yml
+          -f ../cypress/compose.yml
           run cypress
