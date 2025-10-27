@@ -12,12 +12,12 @@
 // for pure-Windows users (no WSL), see this instead:
 // https://github.com/microsoft/vscode-remote-release/issues/11043#issuecomment-3005677524
 {
-    "name": "MaMpf development",
+    "name": "MaMpf",
     "dockerComposeFile": [
         "../docker/development/compose.yml",
         "compose.devcontainer.yml"
     ],
-    "service": "mampf",
+    "service": "app",
     // https://github.com/orgs/community/discussions/15506
     "workspaceFolder": "/workspaces/mampf/",
     // https://containers.dev/features
