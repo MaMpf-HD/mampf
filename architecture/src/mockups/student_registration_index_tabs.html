@@ -23,8 +23,8 @@
 
       <div class="card mb-3">
         <div class="card-body">
-          <form class="row g-3 align-items-end">
-            <div class="col-md-4">
+          <form class="row g-3 align-items-start">
+            <div class="col-md-3">
               <label class="form-label">Filter</label>
               <input type="search" class="form-control" id="searchInput" placeholder="Filter by title or lecture" />
             </div>
@@ -36,7 +36,7 @@
                 <option>All</option>
               </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
               <label class="form-label">Registration</label>
               <select class="form-select">
                 <option selected>All</option>
@@ -44,16 +44,38 @@
                 <option>Not registered</option>
               </select>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-4">
               <label class="form-label">Semester</label>
-              <select class="form-select" id="semesterSelect">
-                <option>WS 2025/26</option>
-                <option selected>SS 2025 + WS 2025/26</option>
-                <option>Older…</option>
-              </select>
-              <div class="form-text" id="semesterHelp">Current term only</div>
+              <div class="row g-2">
+                <div class="col-12">
+                  <div class="d-flex flex-wrap gap-3">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="semCurrent" checked>
+                      <label class="form-check-label" for="semCurrent">Current (WS25/26)</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="semPrevious" checked>
+                      <label class="form-check-label" for="semPrevious">Previous (SS25)</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="semOther">
+                      <label class="form-check-label" for="semOther">Other</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12" id="olderSelectContainer" style="display: none;">
+                  <select id="olderSelect" class="form-select form-select-sm" multiple style="height: 45px;">
+                    <option>WS24/25</option>
+                    <option>SS24</option>
+                    <option>WS23/24</option>
+                    <option>SS23</option>
+                  </select>
+                  <div class="form-text">Select additional terms</div>
+                </div>
+              </div>
             </div>
-            <div class="col-md-1 text-end">
+            <div class="col-md-1">
+              <label class="form-label">Reset</label>
               <button type="button" class="btn btn-outline-secondary w-100" id="resetFiltersBtn">
                 <i class="bi bi-arrow-repeat"></i>
               </button>
@@ -84,13 +106,14 @@
         <div class="tab-pane fade show active" id="courses" role="tabpanel" aria-labelledby="courses-tab">
 
           <h2 class="h6 mb-2">Open registrations</h2>
-          <div class="table-wrap mb-2">
+          
+          <h3 class="h6 text-muted mb-2">WS25/26</h3>
+          <div class="table-wrap mb-3 term-group" data-term="WS25/26">
             <table class="table align-middle mb-0">
               <thead>
                 <tr>
                   <th>Title</th>
                   <th>Lecture</th>
-                  <th>Term</th>
                   <th>Mode</th>
                   <th>Closes</th>
                   <th>Eligibility</th>
@@ -101,7 +124,6 @@
                 <tr>
                   <td>Tutorial Registration</td>
                   <td>Linear Algebra I</td>
-                  <td>WS25/26</td>
                   <td><span class="badge badge-subtle-primary">Preference-based</span></td>
                   <td>Oct 20, 23:59</td>
                   <td><span class="badge badge-subtle-success">Eligible</span></td>
@@ -110,7 +132,6 @@
                 <tr>
                   <td>Seminar Enrollment</td>
                   <td>Formal Math (Seminar)</td>
-                  <td>WS25/26</td>
                   <td><span class="badge badge-subtle-secondary">FCFS</span></td>
                   <td>Oct 19, 12:00</td>
                   <td><span class="badge badge-subtle-warning">Action required</span></td>
@@ -119,25 +140,14 @@
                 <tr>
                   <td>Tutorial Registration</td>
                   <td>Analysis I</td>
-                  <td>WS25/26</td>
                   <td><span class="badge badge-subtle-primary">Preference-based</span></td>
                   <td>Oct 21, 12:00</td>
                   <td><span class="badge badge-subtle-success">Eligible</span></td>
                   <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
                 </tr>
                 <tr>
-                  <td>Seminar Enrollment</td>
-                  <td>Numerics Seminar</td>
-                  <td>WS25/26</td>
-                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
-                  <td>Oct 20, 10:00</td>
-                  <td><span class="badge badge-subtle-warning">Action required</span></td>
-                  <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
-                </tr>
-                <tr>
                   <td>Tutorial Registration</td>
                   <td>Discrete Mathematics</td>
-                  <td>WS25/26</td>
                   <td><span class="badge badge-subtle-primary">Preference-based</span></td>
                   <td>Oct 20, 12:00</td>
                   <td><span class="badge badge-subtle-success">Eligible</span></td>
@@ -146,62 +156,17 @@
                 <tr>
                   <td>Tutorial Registration</td>
                   <td>Partial Differential Equations</td>
-                  <td>WS25/26</td>
                   <td><span class="badge badge-subtle-primary">Preference-based</span></td>
                   <td>Oct 22, 14:00</td>
                   <td><span class="badge badge-subtle-success">Eligible</span></td>
                   <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
                 </tr>
-                <tr>
-                  <td>Seminar Enrollment</td>
-                  <td>Probability Theory</td>
-                  <td>WS25/26</td>
-                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
-                  <td>Oct 21, 09:00</td>
-                  <td><span class="badge badge-subtle-warning">Action required</span></td>
-                  <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
-                </tr>
-                <tr>
-                  <td>Tutorial Registration</td>
-                  <td>Topology</td>
-                  <td>WS25/26</td>
-                  <td><span class="badge badge-subtle-primary">Preference-based</span></td>
-                  <td>Oct 20, 18:00</td>
-                  <td><span class="badge badge-subtle-success">Eligible</span></td>
-                  <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
-                </tr>
-                <tr>
-                  <td>Tutorial Registration</td>
-                  <td>Abstract Algebra</td>
-                  <td>WS25/26</td>
-                  <td><span class="badge badge-subtle-primary">Preference-based</span></td>
-                  <td>Oct 22, 11:00</td>
-                  <td><span class="badge badge-subtle-success">Eligible</span></td>
-                  <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
-                </tr>
-                <tr>
-                  <td>Tutorial Registration</td>
-                  <td>Measure Theory</td>
-                  <td>WS25/26</td>
-                  <td><span class="badge badge-subtle-primary">Preference-based</span></td>
-                  <td>Oct 19, 16:00</td>
-                  <td><span class="badge badge-subtle-success">Eligible</span></td>
-                  <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
-                </tr>
-                <tr>
-                  <td>Seminar Enrollment</td>
-                  <td>Advanced Geometry</td>
-                  <td>WS25/26</td>
-                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
-                  <td>Oct 18, 10:00</td>
-                  <td><span class="badge badge-subtle-warning">Action required</span></td>
-                  <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
-                </tr>
               </tbody>
             </table>
           </div>
+          
           <div class="d-flex justify-content-between align-items-center mb-4">
-            <div class="small text-muted">Showing 1–50 of 240</div>
+            <div class="small text-muted">Showing 1–5 of 240</div>
             <nav>
               <ul class="pagination pagination-sm mb-0">
                 <li class="page-item disabled"><span class="page-link">Prev</span></li>
@@ -235,10 +200,18 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <tr data-term="WS25/26">
                         <td>Tutorial Registration</td>
                         <td>Analysis II</td>
                         <td>WS25/26</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View result</a></td>
+                      </tr>
+                      <tr data-term="SS25">
+                        <td>Seminar Enrollment</td>
+                        <td>Graph Theory</td>
+                        <td>SS25</td>
                         <td><span class="badge badge-subtle-success">Completed</span></td>
                         <td>Registered</td>
                         <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View result</a></td>
@@ -271,10 +244,18 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <tr data-term="WS25/26">
                         <td>Seminar Enrollment</td>
                         <td>Graph Theory</td>
                         <td>WS25/26</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Not registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                      <tr data-term="SS25">
+                        <td>Tutorial Registration</td>
+                        <td>Numerical Methods</td>
+                        <td>SS25</td>
                         <td><span class="badge badge-subtle-success">Completed</span></td>
                         <td>Not registered</td>
                         <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
@@ -292,13 +273,14 @@
         <div class="tab-pane fade" id="exams" role="tabpanel" aria-labelledby="exams-tab">
 
           <h2 class="h6 mb-2">Open registrations</h2>
-          <div class="table-wrap mb-4">
+
+          <h3 class="h6 text-muted mb-2">SS25</h3>
+          <div class="table-wrap mb-3 term-group" data-term="SS25">
             <table class="table align-middle mb-0">
               <thead>
                 <tr>
                   <th>Exam</th>
                   <th>Lecture</th>
-                  <th>Term</th>
                   <th>Mode</th>
                   <th>Closes</th>
                   <th>Eligibility</th>
@@ -309,7 +291,6 @@
                 <tr>
                   <td>Written Exam (Final)</td>
                   <td>Linear Algebra I</td>
-                  <td>SS25</td>
                   <td><span class="badge badge-subtle-secondary">FCFS</span></td>
                   <td>Oct 01, 12:00</td>
                   <td><span class="badge badge-subtle-success">Eligible</span></td>
@@ -318,7 +299,6 @@
                 <tr>
                   <td>Written Exam (second date)</td>
                   <td>Analysis II</td>
-                  <td>SS25</td>
                   <td><span class="badge badge-subtle-secondary">FCFS</span></td>
                   <td>Oct 02, 10:00</td>
                   <td><span class="badge badge-subtle-warning">Action required</span></td>
@@ -327,7 +307,6 @@
                 <tr>
                   <td>Written Exam (second date)</td>
                   <td>Algebra I</td>
-                  <td>SS25</td>
                   <td><span class="badge badge-subtle-secondary">FCFS</span></td>
                   <td>Sep 30, 09:00</td>
                   <td><span class="badge badge-subtle-success">Eligible</span></td>
@@ -336,7 +315,6 @@
                 <tr>
                   <td>Written Exam</td>
                   <td>Probability</td>
-                  <td>SS25</td>
                   <td><span class="badge badge-subtle-secondary">FCFS</span></td>
                   <td>Oct 03, 09:00</td>
                   <td><span class="badge badge-subtle-success">Eligible</span></td>
@@ -345,10 +323,35 @@
                 <tr>
                   <td>Oral Exam</td>
                   <td>Functional Analysis</td>
-                  <td>SS25</td>
                   <td><span class="badge badge-subtle-secondary">FCFS</span></td>
                   <td>Oct 01, 14:00</td>
                   <td><span class="badge badge-subtle-warning">Action required</span></td>
+                  <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3 class="h6 text-muted mb-2">WS25/26</h3>
+          <div class="table-wrap mb-3 term-group" data-term="WS25/26">
+            <table class="table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Exam</th>
+                  <th>Lecture</th>
+                  <th>Mode</th>
+                  <th>Closes</th>
+                  <th>Eligibility</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Written Exam</td>
+                  <td>Discrete Mathematics</td>
+                  <td><span class="badge badge-subtle-secondary">FCFS</span></td>
+                  <td>Nov 15, 12:00</td>
+                  <td><span class="badge badge-subtle-success">Eligible</span></td>
                   <td class="text-end"><a href="#" class="btn btn-sm btn-primary">Register</a></td>
                 </tr>
               </tbody>
@@ -376,9 +379,17 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <tr data-term="SS25">
                         <td>Written Exam (Final)</td>
                         <td>Analysis II</td>
+                        <td>SS25</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                      <tr data-term="SS25">
+                        <td>Written Exam (second date)</td>
+                        <td>Algebra I</td>
                         <td>SS25</td>
                         <td><span class="badge badge-subtle-success">Completed</span></td>
                         <td>Registered</td>
@@ -412,10 +423,18 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
+                      <tr data-term="SS25">
                         <td>Written Exam (Final)</td>
                         <td>Linear Algebra I</td>
                         <td>SS25</td>
+                        <td><span class="badge badge-subtle-success">Completed</span></td>
+                        <td>Not registered</td>
+                        <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
+                      </tr>
+                      <tr data-term="WS25/26">
+                        <td>Written Exam</td>
+                        <td>Discrete Mathematics</td>
+                        <td>WS25/26</td>
                         <td><span class="badge badge-subtle-success">Completed</span></td>
                         <td>Not registered</td>
                         <td class="text-end"><a href="#" class="btn btn-sm btn-outline-primary">View</a></td>
@@ -434,36 +453,31 @@
     <script>
       document.addEventListener('DOMContentLoaded', function() {
         var tabs = document.getElementById('regTabs');
-        var semesterHelp = document.getElementById('semesterHelp');
-        var semesterSelect = document.getElementById('semesterSelect');
         var searchInput = document.getElementById('searchInput');
         var filtersForm = searchInput.closest('form');
-        var userSetSemester = false;
-  var coursesCountBadge = document.getElementById('coursesCount');
-  var examsCountBadge = document.getElementById('examsCount');
-  var crossHint = document.getElementById('crossHint');
-  var resetBtn = document.getElementById('resetFiltersBtn');
+        var coursesCountBadge = document.getElementById('coursesCount');
+        var examsCountBadge = document.getElementById('examsCount');
+        var crossHint = document.getElementById('crossHint');
+        var resetBtn = document.getElementById('resetFiltersBtn');
+        var semCurrentCheck = document.getElementById('semCurrent');
+        var semPreviousCheck = document.getElementById('semPrevious');
+        var semOtherCheck = document.getElementById('semOther');
+        var olderSelect = document.getElementById('olderSelect');
+        var olderSelectContainer = document.getElementById('olderSelectContainer');
 
-        function setSelectByText(sel, text) {
-          for (var i = 0; i < sel.options.length; i++) {
-            if (sel.options[i].text === text) {
-              sel.selectedIndex = i;
-              break;
+        function getSelectedSemesters() {
+          var semesters = [];
+          if (semCurrentCheck && semCurrentCheck.checked) semesters.push('WS25/26');
+          if (semPreviousCheck && semPreviousCheck.checked) semesters.push('SS25');
+          if (olderSelect && semOtherCheck && semOtherCheck.checked) {
+            for (var i = 0; i < olderSelect.options.length; i++) {
+              if (olderSelect.options[i].selected) {
+                semesters.push(olderSelect.options[i].value);
+              }
             }
           }
+          return semesters;
         }
-
-        function applyTabDefaults(tab) {
-          if (tab === 'courses') {
-            semesterHelp.textContent = 'Current term only';
-            if (!userSetSemester) setSelectByText(semesterSelect, 'WS 2025/26');
-          } else if (tab === 'exams') {
-            semesterHelp.textContent = 'Includes previous term dates';
-            if (!userSetSemester) setSelectByText(semesterSelect, 'SS 2025 + WS 2025/26');
-          }
-        }
-
-        applyTabDefaults('courses');
 
         function getActivePaneIdFromTabId(tabId) {
           if (tabId === 'courses-tab') return 'courses';
@@ -475,22 +489,63 @@
           var pane = document.getElementById(paneId);
           if (!pane) return 0;
           var q = (searchInput.value || '').toLowerCase().trim();
-          var rows = pane.querySelectorAll('table tbody tr');
+          var selectedSemesters = getSelectedSemesters();
           var matches = 0;
-          rows.forEach(function(tr) {
+
+          // Filter term groups
+          var termGroups = pane.querySelectorAll('.term-group');
+          termGroups.forEach(function(group) {
+            var term = group.getAttribute('data-term');
+            var shouldShowGroup = selectedSemesters.length === 0 || selectedSemesters.indexOf(term) !== -1;
+            if (shouldShowGroup) {
+              group.style.display = '';
+              group.previousElementSibling.style.display = ''; // Show heading
+            } else {
+              group.style.display = 'none';
+              group.previousElementSibling.style.display = 'none'; // Hide heading
+              return;
+            }
+
+            // Filter rows within visible groups
+            var rows = group.querySelectorAll('table tbody tr');
+            rows.forEach(function(tr) {
+              if (!q) {
+                tr.classList.remove('d-none');
+                matches += 1;
+                return;
+              }
+              var text = tr.textContent.toLowerCase();
+              if (text.indexOf(q) !== -1) {
+                tr.classList.remove('d-none');
+                matches += 1;
+              } else {
+                tr.classList.add('d-none');
+              }
+            });
+          });
+
+          // Filter accordion rows by semester
+          var accordions = pane.querySelectorAll('.accordion tbody tr');
+          accordions.forEach(function(tr) {
+            var term = tr.getAttribute('data-term');
+            var shouldShow = selectedSemesters.length === 0 || selectedSemesters.indexOf(term) !== -1;
+            if (!shouldShow) {
+              tr.style.display = 'none';
+              return;
+            }
+            tr.style.display = '';
             if (!q) {
               tr.classList.remove('d-none');
-              matches += 1;
               return;
             }
             var text = tr.textContent.toLowerCase();
             if (text.indexOf(q) !== -1) {
               tr.classList.remove('d-none');
-              matches += 1;
             } else {
               tr.classList.add('d-none');
             }
           });
+
           return matches;
         }
 
@@ -503,8 +558,8 @@
           if (!crossHint) return;
           var otherPane = activePane === 'courses' ? 'exams' : 'courses';
           var otherCount = otherPane === 'courses' ? coursesMatches : examsMatches;
-          if ((activePane === 'courses' && coursesMatches === 0 && otherCount > 0) ||
-              (activePane === 'exams' && examsMatches === 0 && otherCount > 0)) {
+          var activeCount = activePane === 'courses' ? coursesMatches : examsMatches;
+          if (activeCount === 0 && otherCount > 0) {
             var otherLabel = otherPane === 'courses' ? 'Courses & seminars' : 'Exams';
             crossHint.innerHTML = 'No results here. Also found ' + otherCount + ' in ' + otherLabel + ' — <a href="#" id="switchLink">switch</a>';
             var link = document.getElementById('switchLink');
@@ -562,12 +617,26 @@
           });
         }
 
-        semesterSelect.addEventListener('change', function() { userSetSemester = true; });
+        // Semester filter changes
+        if (semCurrentCheck) semCurrentCheck.addEventListener('change', filterAllAndUpdate);
+        if (semPreviousCheck) semPreviousCheck.addEventListener('change', filterAllAndUpdate);
+        if (semOtherCheck) {
+          semOtherCheck.addEventListener('change', function() {
+            if (semOtherCheck.checked) {
+              olderSelectContainer.style.display = '';
+            } else {
+              olderSelectContainer.style.display = 'none';
+              // Clear selections when hiding
+              for (var i = 0; i < olderSelect.options.length; i++) {
+                olderSelect.options[i].selected = false;
+              }
+            }
+            filterAllAndUpdate();
+          });
+        }
+        if (olderSelect) olderSelect.addEventListener('change', filterAllAndUpdate);
 
         tabs.addEventListener('shown.bs.tab', function(event) {
-          var targetId = event.target.id;
-          if (targetId === 'courses-tab') applyTabDefaults('courses');
-          if (targetId === 'exams-tab') applyTabDefaults('exams');
           filterAllAndUpdate();
         });
 
@@ -576,15 +645,21 @@
         // Initial compute for counts and hint
         filterAllAndUpdate();
 
-        // Reset button clears filters and reapplies per-tab defaults
+        // Reset button clears filters and reapplies defaults
         if (resetBtn) {
           resetBtn.addEventListener('click', function() {
             if (searchInput) searchInput.value = '';
-            userSetSemester = false;
-            var activeTab = document.querySelector('#regTabs .nav-link.active');
-            var tabId = activeTab ? activeTab.id : 'courses-tab';
-            if (tabId === 'courses-tab') applyTabDefaults('courses');
-            if (tabId === 'exams-tab') applyTabDefaults('exams');
+            if (semCurrentCheck) semCurrentCheck.checked = true;
+            if (semPreviousCheck) semPreviousCheck.checked = true;
+            if (semOtherCheck) {
+              semOtherCheck.checked = false;
+              olderSelectContainer.style.display = 'none';
+            }
+            if (olderSelect) {
+              for (var i = 0; i < olderSelect.options.length; i++) {
+                olderSelect.options[i].selected = false;
+              }
+            }
             filterAllAndUpdate();
           });
         }
