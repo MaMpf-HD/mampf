@@ -83,6 +83,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && mkdir -p /cache && chown -R $USERNAME /cache \
     && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME /workspaces/mampf/node_modules/ \
     && mkdir -p /workspaces/mampf/public/ && chown -R $USERNAME /workspaces/mampf/public/ \
+    && mkdir -p /workspaces/mampf/public/uploads/ && chown -R $USERNAME /workspaces/mampf/public/uploads/ \
     # [Optional] Add sudo support.
     && apt-get update \
     && apt-get install -y sudo \
