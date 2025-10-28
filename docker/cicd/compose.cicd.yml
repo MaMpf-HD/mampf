@@ -5,11 +5,12 @@ services:
 
   app-for-cypress:
     image: ghcr.io/mampf-hd/mampftest:image
-    # only used when Cypress is running tests in CI (and NOT for unit tests)
+    # only used when Cypress is running tests in CI, NOT for unit tests. For unit
+    # tests, we overwrite the entrypoint to the empty string.
     entrypoint: ["CI=true RUBY_DEBUG_ENABLE=false DISABLE_VITE_IN_CI=true ./init-and-run.sh"]
     volumes:
       # (In addition to other volumes)
-      # Anonymous volume for the public folder, only needed in CI for asset compilation
-      # and to mitigate permission denied errors à la
-      # Permission denied @ dir_s_mkdir - /workspaces/mampf/public/uploads
-      - "/workspaces/mampf/public/"
+      # Anonymous volume for the uploads subfolder to mitigate permission errors
+      # à la: Permission denied @ dir_s_mkdir - /workspaces/mampf/public/uploads
+      # We don't mount the entire public/ folder to preserve precompiled assets
+      - "/workspaces/mampf/public/uploads/"
