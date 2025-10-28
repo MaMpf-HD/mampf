@@ -69,7 +69,7 @@ This model guarantees that exactly one unit of flow per user leaves the source, 
 
 ### Cost Calibration
 - **Preference Rank:** The cost is the rank itself (1, 2, 3...).
-- **Fallback Cost:** For optional "fill unlisted items" mode, the cost is `max_rank + 2`.
+- **Fallback Cost:** For "fill unlisted items" mode, the cost is `max_rank + 2`.
 - **Penalty Cost:** The cost for the "unassigned" dummy path is a large constant (e.g., `10_000`) to ensure it's only used as a last resort.
 
 ```admonish warning "Failure Modes"
@@ -77,6 +77,14 @@ With the dummy node enabled, the model should always find a feasible solution. A
 ```
 
 ---
+
+### Unassigned semantics and defaults
+
+- Defaults we use in tutorial campaigns:
+    - `fill_unlisted: true` at campaign level, no per-student opt-in. This adds edges from each user to all eligible, unranked items at cost `max_rank + 2`, ensuring a high chance of receiving a seat even beyond the ranked list.
+    - `allow_unassigned: true` with a large dummy penalty. This guarantees feasibility; the dummy path is used only if every eligible item is saturated.
+- After allocation and upon close-out/finalization, any remaining `pending` registrations must be normalized to `rejected`. A user is considered "assigned" if they have exactly one `confirmed` registration in the campaign; otherwise they are "unassigned".
+- The "unassigned" cohort is derived data: users who participated in the campaign but ended up with no `confirmed` registration. No extra tables are required.
 
 ## Service Implementation (Strategy Pattern Skeleton)
 
