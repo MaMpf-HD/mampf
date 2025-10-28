@@ -39,6 +39,7 @@ We use a unified system with:
 - Tutorial Registration (preference-based, completed): [Tutorial Show (completed)](../mockups/campaigns_show_tutorial.html)
 - Tutorial Registration (FCFS, open): [Tutorial FCFS Show (open)](../mockups/campaigns_show_tutorial_fcfs_open.html)
 - Interest Registration (planning-only, draft): [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html)
+- Student Registration (Index – tabs): [Student index](../mockups/student_registration_index_tabs.html)
 ```
 
 ## Registration::Campaign (ActiveRecord Model)

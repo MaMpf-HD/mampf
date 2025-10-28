@@ -110,8 +110,7 @@ links also appear in the per-feature tables below. All mockups are
 styled with Bootstrap 5 (via CDN) to match the app's component library
 for faster transfer from mockup to real views.
 
-- Student Registration (Index): [Mockup](../mockups/student_registration_index_compact.html)
-- Student Registration (Index, cards): [Mockup](../mockups/student_registration_index.html)
+- Student Registration (Index – tabs): [Mockup](../mockups/student_registration_index_tabs.html)
 - Student Registration (Show): [Mockup](../mockups/student_registration.html)
 ```
 
@@ -125,6 +124,10 @@ for faster transfer from mockup to real views.
 	allocation results once the job finishes.
 - Preferences: Frame-wrapped form. Save returns the updated panel or
 	validation errors within the frame.
+ 
+ - Eligibility on Index: Only open campaigns surface eligibility
+   badges. Closed campaigns emphasize the student's registration state
+   (registered vs not registered) instead of re-stating eligibility.
 ```
 
 ### Campaigns (Teacher/Editor)
@@ -210,7 +213,7 @@ flowchart LR
 #### Controller/action mapping (student)
 | View                     | Controller                                | Actions       | Scope/Notes                           |
 |--------------------------|-------------------------------------------|---------------|----------------------------------------|
-| [Index](../mockups/student_registration_index_compact.html) | Registration::UserRegistrationsController | index         | List available campaigns               |
+| [Index (tabs)](../mockups/student_registration_index_tabs.html) | Registration::UserRegistrationsController | index         | Tabs: Courses & seminars, Exams; per-tab filters: Status, Registration, Semester |
 | [Show](../mockups/student_registration.html)                | Registration::UserRegistrationsController | show          | Campaign registration page             |
 | [Preferences panel (Show)](../mockups/student_registration.html) | Registration::UserRegistrationsController | edit, update  | Frame; edit/update preferences         |
 | [Confirmation](../mockups/student_registration.html)        | Registration::UserRegistrationsController | show          | After submit; Streams for allocation   |
@@ -218,7 +221,7 @@ flowchart LR
 
 | View                     | Key elements                                    | Hotwire                | Mockup |
 |--------------------------|--------------------------------------------------|------------------------|--------|
-| Index                    | Available campaigns for current user             | Frames (filters)       | [Mockup](../mockups/student_registration_index_compact.html) |
+| Index (tabs)   | Tabs: Courses & seminars, Exams; each tab groups rows into Open, Closed (you registered), Closed (not registered) [collapsed]; eligibility badges only on open rows; exams tab can default semester to current + previous (makeups) | Frames (filters)       | [Mockup](../mockups/student_registration_index_tabs.html) |
 | Show                     | Eligibility; campaign details; preferences panel | Frames + Streams       | [Mockup](../mockups/student_registration.html) |
 | Preferences panel (Show) | Drag & drop or rank inputs within a frame        | Frame (edit/update)    | [Mockup](../mockups/student_registration.html) |
 | Confirmation             | Post-submit confirmation; allocation result area | Streams (results push) | [Mockup](../mockups/student_registration.html) |
@@ -301,8 +304,8 @@ flowchart LR
     OV --> EXP[Export list]
   end
   subgraph "Tutor"
-    RE[Read-only eligibility]
-    RED[Read-only exam details]
+    RE[Eligibility (view if permitted)]
+    RED[Exam details (view if permitted)]
   end
 ```
 
@@ -316,7 +319,7 @@ flowchart LR
 |------------|----------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
 | Exams      | Teacher/Editor | ExamsController                    | index, new, create, show, edit, update, destroy | Manage exams                            |
 | Eligibility| Teacher/Editor | ExamEligibility::RecordsController | index, show, update, export             | Eligibility management (override/export)      |
-| Eligibility| Tutor          | ExamEligibility::RecordsController | index, show                             | Read-only; no overrides                        |
+| Eligibility| Tutor          | ExamEligibility::RecordsController | index, show                             | View if permitted; no overrides                |
 | Exams      | Tutor          | ExamsController                    | index, show                             | Read-only (if permitted by abilities)         |
 | —          | Student        | —                                   | —                                       | No access here (registration handled elsewhere)|
 
