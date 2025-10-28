@@ -102,6 +102,7 @@ COPY --chown=$USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/m
 COPY --chown=$USERNAME ./docker/development/init.sh /workspaces/mampf/docker/development/init.sh
 COPY --chown=$USERNAME ./docker/development/run.sh /workspaces/mampf/docker/development/run.sh
 COPY --chown=$USERNAME ./docker/development/init-and-run.sh /workspaces/mampf/docker/development/init-and-run.sh
+COPY --chown=$USERNAME ./docker/production/docker.env /workspaces/mampf/docker/production/docker.env
 COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/
 COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
