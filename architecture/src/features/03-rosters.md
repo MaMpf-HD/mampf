@@ -9,6 +9,31 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 
 ## Problem Overview
 - After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
+
+```admonish tip "Sourcing candidates after allocation"
+When a preference-based campaign completes, some participants may remain
+unassigned. These are students with zero `confirmed` registrations in the
+campaign (pending entries are normalized to rejected on close). You can source
+these candidates directly from the campaign in roster tools without a separate
+waitlist table.
+```
+
+## Managing unassigned candidates
+
+- View unassigned candidates: from the completed Campaign Show or within the
+  roster screens via a filter "Candidates from campaign X".
+- Inspect context: show each student's top N original preferences to inform
+  manual placements.
+- Actions:
+  - Assign to group: place the student into a specific tutorial if capacity and
+    conflicts permit.
+  - Swap/move: standard roster operations continue to work across groups.
+
+```admonish note "Data model"
+Unassigned candidates are derived from `Registration::UserRegistration` records.
+No extra table is needed; use campaign-scoped queries to list users with zero
+confirmed entries.
+```
 - Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
 - Non-goals: This system does not re-run the automated solver (`Registration::AllocationService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
 

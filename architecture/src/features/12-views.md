@@ -110,8 +110,10 @@ links also appear in the per-feature tables below. All mockups are
 styled with Bootstrap 5 (via CDN) to match the app's component library
 for faster transfer from mockup to real views.
 
-- Student Registration (Index – tabs): [Mockup](../mockups/student_registration_index_tabs.html)
-- Student Registration (Show): [Mockup](../mockups/student_registration.html)
+Yellow underlined rows in tables visualize an inline edit state of the
+preceding white row. Mockups may show both side-by-side to illustrate
+the edit UI; in the real UI, only one would be visible at a time.
+
 ```
 
 ## Registration Screens
@@ -152,15 +154,14 @@ paths in the UI (Allocation/Finalize).
 |--------|--------------------------------------------------------|-------------------|--------|
 | Index (Lecture) | Minimal table for a single lecture; status chips       | Frames            | [Mockup](../mockups/campaigns_index.html) |
 | Index (Current term, grouped) | Grouped by lecture for the teacher/editor; no search needed | Frames | [Mockup](../mockups/campaigns_index_current_term.html) |
-| Show  | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation; preference-based shows preferences, FCFS shows eligibility | Frames + Streams  | [Exam (FCFS)](../mockups/campaigns_show_exam.html), [Tutorials (FCFS, open)](../mockups/campaigns_show_tutorial_fcfs_open.html), [Tutorials (preference-based, open)](../mockups/campaigns_show_tutorial_open.html), [Tutorials (preference-based, completed)](../mockups/campaigns_show_tutorial.html), [Interest (draft)](../mockups/campaigns_show_interest_draft.html) |
+| Show (Exam – FCFS) | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation; FCFS shows eligibility | Frames + Streams | [Mockup](../mockups/campaigns_show_exam.html) |
+| Show (Tutorials – FCFS, open) | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation; FCFS shows eligibility | Frames + Streams | [Mockup](../mockups/campaigns_show_tutorial_fcfs_open.html) |
+| Show (Tutorials – preference-based, open) | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation; preference-based shows preferences | Frames + Streams | [Mockup](../mockups/campaigns_show_tutorial_open.html) |
+| Show (Tutorials – preference-based, completed) | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation; preference-based shows preferences | Frames + Streams | [Mockup](../mockups/campaigns_show_tutorial.html) |
+| Show (Interest – draft) | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation | Frames + Streams | [Mockup](../mockups/campaigns_show_interest_draft.html) |
 | Forms (Items & Policies tabs) | Inline create/edit for items and policies              | Frames            | See Show mockups (tabs) |
 
-```admonish note "Mockup legend"
-Yellow underlined rows in tables visualize an inline edit state of the
-preceding white row. They are shown side-by-side in mockups only to
-illustrate the edit UI; in the real UI, only one would be visible at a
-time.
-```
+
 
 #### Flow
 
@@ -184,47 +185,93 @@ flowchart LR
 #### Controller/action mapping (teacher/editor)
 | View/Area | Controller                             | Actions                                     | Scope/Notes |
 |-----------|----------------------------------------|---------------------------------------------|-------------|
-| Index     | Registration::CampaignsController      | index                                       | List campaigns for a lecture |
-| Show      | Registration::CampaignsController      | show                                        | Campaign overview with tabs |
-| New/Edit (Campaign settings) | Registration::CampaignsController      | new, create, edit, update, destroy          | Create/modify metadata and dates; destroy only if no registrations |
-| Open for registration (member action) | Registration::CampaignsController     | open                                        | Set status to open (draft → open) |
-| Close/Reopen (member actions) | Registration::CampaignsController     | close, reopen                               | Close stops intake (open → processing); reopen before finalization (processing → open) |
-| Policies tab (forms) | Registration::PoliciesController       | index, new, create, edit, update, destroy   | Manage eligibility policies within a campaign |
-| Allocation tab        | Registration::AllocationController    | show, create, retry, finalize, allocate_and_finalize | Trigger/monitor allocation; finalize moves confirmed users to rosters; hidden for planning-only |
+| Index     | [Registration::CampaignsController](11-controllers.md#registration-controllers)      | index                                       | List campaigns for a lecture |
+| Show      | [Registration::CampaignsController](11-controllers.md#registration-controllers)      | show                                        | Campaign overview with tabs |
+| New/Edit (Campaign settings) | [Registration::CampaignsController](11-controllers.md#registration-controllers)      | new, create, edit, update, destroy          | Create/modify metadata and dates; destroy only if no registrations |
+| Open for registration (member action) | [Registration::CampaignsController](11-controllers.md#registration-controllers)     | open                                        | Set status to open (draft → open) |
+| Close/Reopen (member actions) | [Registration::CampaignsController](11-controllers.md#registration-controllers)     | close, reopen                               | Close stops intake (open → processing); reopen before finalization (processing → open) |
+| Policies tab (forms) | [Registration::PoliciesController](11-controllers.md#registration-controllers)       | index, new, create, edit, update, destroy   | Manage eligibility policies within a campaign |
+| Allocation tab        | [Registration::AllocationController](11-controllers.md#registration-controllers)    | show, create, retry, finalize, allocate_and_finalize | Trigger/monitor allocation; finalize moves confirmed users to rosters; hidden for planning-only |
+
+```admonish info "Actions map — Campaigns Show"
+| Control                  | Controller#action                              | Verb  | Turbo  | Preconditions                 |
+|--------------------------|-------------------------------------------------|-------|--------|-------------------------------|
+| Open registration        | Registration::Campaigns#open                    | POST  | Frame  | Draft only                    |
+| Close registration       | Registration::Campaigns#close                   | POST  | Frame  | Open only                     |
+| Reopen registration      | Registration::Campaigns#reopen                  | POST  | Frame  | Processing only               |
+| Run allocation           | Registration::Allocation#create                 | POST  | Stream | Processing; not planning-only |
+| Retry allocation         | Registration::Allocation#retry                  | POST  | Stream | After failure                 |
+| Finalize                 | Registration::Allocation#finalize               | POST  | Stream | Allocation ready; not planning-only |
+| Allocate and finalize    | Registration::Allocation#allocate_and_finalize  | POST  | Stream | Shortcut path                 |
+```
 
 ### Student Registration
+
+#### Screens
+
+| View | Key elements | Hotwire | Mockup |
+|------|---------------|---------|--------|
+| Index (tabs) | Tabs: Courses & seminars, Exams; global filters with per-tab scoping; groups: Open, Closed (you registered), Closed (not registered) | Frames (filters) | [Mockup](../mockups/student_registration_index_tabs.html) |
+| Show (preference-based) | Rank-first preferences (K=6, M=5), searchable catalog with pagination, add/remove/reorder ranks, save status | Frames + Streams | [Mockup](../mockups/student_registration.html) |
+| Show (FCFS) | Register/Withdraw for whole course (e.g., seminar), live seat counters, async save with status | Frames | [Mockup](../mockups/student_registration_fcfs.html) |
+| Show (FCFS – tutorials) | Choose a specific tutorial; per-group capacity/filled, disabled when full; async save with status | Frames | [Mockup](../mockups/student_registration_fcfs_tutorials.html) |
+| Show (FCFS – exam) | Exam seat registration; date/time/location details; register/withdraw; hall capacity info; async save with status | Frames | [Mockup](../mockups/student_registration_fcfs_exam.html) |
+| Show (FCFS – exam; action required: institutional email) | Registration gated by allowed email domain (policy: institutional_email); page links to Account settings to update email, then enables Register when the account email matches allowed domains | Frames | [Mockup](../mockups/student_registration_fcfs_exam_action_required_email.html) |
+| Show (FCFS – exam; action required) | Same as exam, but gated by required info (ID type/number, exam rules confirmation) before Register is enabled | Frames | [Mockup](../mockups/student_registration_fcfs_exam_action_required.html) |
+| Confirmation (result) | Completed registration outcome; shows assignment (e.g., Tutorial group C) and preference summary | Frames | [Mockup](../mockups/student_registration_confirmation.html) |
 
 #### Flow
 
 ```mermaid
 flowchart LR
-  subgraph "Student"
+  subgraph Student
     IDX[Index] --> SHW[Show]
-    SHW --> PREF[Preferences]
-    PREF --> CONF[Confirmation]
-    CONF -.-> ALLOC[Allocation results]
+    SHW --> GATE{Requirements met?}
+    GATE -->|No| REQS[Fulfill requirements]
+    REQS --> GATE
+    GATE -->|Yes| MODE{Mode}
+    MODE -->|Preference-based| PREF[Set preferences]
+    PREF --> SUBMIT[Submit]
+    SUBMIT --> CONF_PREF[Confirmation submitted]
+    CONF_PREF -.-> ALLOC[Allocation results after close]
+    MODE -->|FCFS| REG[Register or withdraw]
+    REG --> CONF_FCFS[Confirmation enrolled/withdrawn]
   end
-  subgraph "Teacher/Editor"
+
+  subgraph TeacherEditor
     MGT[Manage Campaigns]
   end
-  MGT -.-> SHW
+```
+
+
+```admonish note
+Teacher/Editor “Manage Campaigns” configures mode, policies, and dates
+that govern the Student flow. It does not imply a navigation path to the
+Student “Show”.
 ```
 
 #### Controller/action mapping (student)
 | View                     | Controller                                | Actions       | Scope/Notes                           |
 |--------------------------|-------------------------------------------|---------------|----------------------------------------|
-| [Index (tabs)](../mockups/student_registration_index_tabs.html) | Registration::UserRegistrationsController | index         | Tabs: Courses & seminars, Exams; per-tab filters: Status, Registration, Semester |
-| [Show](../mockups/student_registration.html)                | Registration::UserRegistrationsController | show          | Campaign registration page             |
-| [Preferences panel (Show)](../mockups/student_registration.html) | Registration::UserRegistrationsController | edit, update  | Frame; edit/update preferences         |
-| [Confirmation](../mockups/student_registration.html)        | Registration::UserRegistrationsController | show          | After submit; Streams for allocation   |
-| Withdraw                 | Registration::UserRegistrationsController | destroy       | Optional, if enabled                   |
+| Index (tabs)             | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | index         | Tabs: Courses & seminars, Exams; filters: Status, Registration, Semester |
+| Show (preference-based)  | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show          | Campaign registration page (rank-first) |
+| Preferences panel (Show) | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | edit, update  | Frame; edit/update preferences         |
+| Show (FCFS)              | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show          | FCFS enroll/withdraw                   |
+| Confirmation             | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show          | After submit; Streams for allocation   |
+| Withdraw                 | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | destroy       | Optional, if enabled                   |
 
-| View                     | Key elements                                    | Hotwire                | Mockup |
-|--------------------------|--------------------------------------------------|------------------------|--------|
-| Index (tabs)   | Tabs: Courses & seminars, Exams; each tab groups rows into Open, Closed (you registered), Closed (not registered) [collapsed]; eligibility badges only on open rows; exams tab can default semester to current + previous (makeups) | Frames (filters)       | [Mockup](../mockups/student_registration_index_tabs.html) |
-| Show                     | Eligibility; campaign details; preferences panel | Frames + Streams       | [Mockup](../mockups/student_registration.html) |
-| Preferences panel (Show) | Drag & drop or rank inputs within a frame        | Frame (edit/update)    | [Mockup](../mockups/student_registration.html) |
-| Confirmation             | Post-submit confirmation; allocation result area | Streams (results push) | [Mockup](../mockups/student_registration.html) |
+<!-- consolidated into Screens table above -->
+
+```admonish info "Actions map — Student Registration"
+| Control                              | Controller#action                               | Verb   | Turbo | Preconditions                               |
+|--------------------------------------|--------------------------------------------------|--------|-------|----------------------------------------------|
+| Save preferences                      | Registration::UserRegistrations#update           | PATCH  | Frame | Valid ranks only                             |
+| Register (FCFS course)                | Registration::UserRegistrations#update           | PATCH  | Frame | Eligibility satisfied; seats available       |
+| Choose tutorial + Register            | Registration::UserRegistrations#update           | PATCH  | Frame | FCFS tutorials; seats available              |
+| Register (exam)                       | Registration::UserRegistrations#update           | PATCH  | Frame | Requirements met                             |
+| Withdraw                              | Registration::UserRegistrations#destroy          | DELETE | Frame | Only when registered                         |
+| Fulfill requirements (email)          | Account settings (link-out)                      | GET    | n/a   | External; updates account email              |
+```
 
 ## Rosters (Teacher/Editor)
 
@@ -250,10 +297,10 @@ flowchart LR
 #### Controller/action mapping (role-specific)
 | View    | Role           | Controller                    | Actions              | Scope/Notes                                  |
 |---------|----------------|-------------------------------|----------------------|-----------------------------------------------|
-| Overview| Teacher/Editor | Roster::MaintenanceController | index                | Overview across rosters                       |
-| Detail  | Teacher/Editor | Roster::MaintenanceController | show, edit, update   | Single roster; inline edit frame; persist     |
-| Detail  | Teacher/Editor | Roster::MaintenanceController | swap                 | Perform swap; stream or frame update          |
-| Detail  | Tutor          | Roster::MaintenanceController | show                 | Read-only for own groups (if permitted)       |
+| Overview| Teacher/Editor | [Roster::MaintenanceController](11-controllers.md#roster-controllers) | index                | Overview across rosters                       |
+| Detail  | Teacher/Editor | [Roster::MaintenanceController](11-controllers.md#roster-controllers) | show, edit, update   | Single roster; inline edit frame; persist     |
+| Detail  | Teacher/Editor | [Roster::MaintenanceController](11-controllers.md#roster-controllers) | swap                 | Perform swap; stream or frame update          |
+| Detail  | Tutor          | [Roster::MaintenanceController](11-controllers.md#roster-controllers) | show                 | Read-only for own groups (if permitted)       |
 | —       | Student        | —                             | —                    | No access to roster maintenance               |
 
 ## Assessments
@@ -284,13 +331,13 @@ flowchart LR
 #### Controller/action mapping (role-specific)
 | Role          | Controller                          | Actions                                           | Scope                          |
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
-| Teacher/Editor| Assessment::AssessmentsController   | index, new, create, show, edit, update, destroy   | Setup                          |
-| Teacher/Editor| Assessment::AssessmentsController   | publish_results, unpublish_results                | Visibility lifecycle            |
-| Teacher/Editor| Assessment::GradingController       | show, update, export, import                      | Grading + bulk ops             |
-| Tutor         | Assessment::GradingController       | show, update                                      | Grading (enter/update points)  |
-| Tutor         | Assessment::GradingController       | export, import                                    | Optional if permitted           |
-| Tutor         | Assessment::AssessmentsController   | index, show                                       | Read-only                       |
-| Student       | Assessment::ParticipationsController| index, show                                       | Own results (when published)    |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | index, new, create, show, edit, update, destroy   | Setup                          |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | publish_results, unpublish_results                | Visibility lifecycle            |
+| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessment-controllers)       | show, update, export, import                      | Grading + bulk ops             |
+| Tutor         | [Assessment::GradingController](11-controllers.md#assessment-controllers)       | show, update                                      | Grading (enter/update points)  |
+| Tutor         | [Assessment::GradingController](11-controllers.md#assessment-controllers)       | export, import                                    | Optional if permitted           |
+| Tutor         | [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | index, show                                       | Read-only                       |
+| Student       | [Assessment::ParticipationsController](11-controllers.md#assessment-controllers)| index, show                                       | Own results (when published)    |
 
 ## Exams & Eligibility
 
@@ -317,10 +364,10 @@ flowchart LR
 #### Controller/action mapping (role-specific)
 | View       | Role           | Controller                        | Actions                                 | Scope/Notes                                  |
 |------------|----------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
-| Exams      | Teacher/Editor | ExamsController                    | index, new, create, show, edit, update, destroy | Manage exams                            |
-| Eligibility| Teacher/Editor | ExamEligibility::RecordsController | index, show, update, export             | Eligibility management (override/export)      |
-| Eligibility| Tutor          | ExamEligibility::RecordsController | index, show                             | View if permitted; no overrides                |
-| Exams      | Tutor          | ExamsController                    | index, show                             | Read-only (if permitted by abilities)         |
+| Exams      | Teacher/Editor | [ExamsController](11-controllers.md#exam-controllers)                    | index, new, create, show, edit, update, destroy | Manage exams                            |
+| Eligibility| Teacher/Editor | [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show, update, export             | Eligibility management (override/export)      |
+| Eligibility| Tutor          | [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show                             | View if permitted; no overrides                |
+| Exams      | Tutor          | [ExamsController](11-controllers.md#exam-controllers)                    | index, show                             | Read-only (if permitted by abilities)         |
 | —          | Student        | —                                   | —                                       | No access here (registration handled elsewhere)|
 
 ## Grade Schemes
@@ -346,10 +393,10 @@ flowchart LR
 #### Controller/action mapping (role-specific)
 | View    | Role           | Controller                      | Actions                               | Scope/Notes                                 |
 |---------|----------------|---------------------------------|---------------------------------------|----------------------------------------------|
-| Setup   | Teacher/Editor | GradeScheme::SchemesController  | index, new, create, edit, update      | Manage schemes                               |
-| Preview | Teacher/Editor | GradeScheme::SchemesController  | preview                               | Preview distribution                         |
-| Apply   | Teacher/Editor | GradeScheme::SchemesController  | apply                                 | Apply to results; stream updates             |
-| Preview | Tutor          | GradeScheme::SchemesController  | preview                               | Read-only (if permitted by abilities)        |
+| Setup   | Teacher/Editor | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | index, new, create, edit, update      | Manage schemes                               |
+| Preview | Teacher/Editor | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | preview                               | Preview distribution                         |
+| Apply   | Teacher/Editor | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | apply                                 | Apply to results; stream updates             |
+| Preview | Tutor          | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | preview                               | Read-only (if permitted by abilities)        |
 | —       | Student        | —                               | —                                     | No access to grading schemes                 |
 
 ## Notes

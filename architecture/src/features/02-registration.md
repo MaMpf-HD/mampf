@@ -34,6 +34,8 @@ We use a unified system with:
 ```
 
 ```admonish tip "Related UI mockups"
+- Campaigns index (lecture): [Campaigns index](../mockups/campaigns_index.html)
+- Campaigns index (current term): [Campaigns index (current term)](../mockups/campaigns_index_current_term.html)
 - Exam Registration (Show): [Exam Show](../mockups/campaigns_show_exam.html)
 - Tutorial Registration (preference-based, open): [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html)
 - Tutorial Registration (preference-based, completed): [Tutorial Show (completed)](../mockups/campaigns_show_tutorial.html)
@@ -94,6 +96,12 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 - Triggers solver (preference-based) after close (often at/after deadline)
 - Finalizes and materializes allocation once only (idempotent)
 
+#### Assigned vs Unassigned
+
+- Assigned: the student has exactly one `confirmed` `Registration::UserRegistration` in the campaign after allocation/close.
+- Unassigned: the student participated (has registrations) but has zero `confirmed` entries. On close/finalization, any remaining `pending` entries are normalized to `rejected` so the state is explicit.
+- No extra tables are required. Helper methods on `Registration::Campaign` can expose `unassigned_user_ids`, `unassigned_users`, and `unassigned_count` computed from `UserRegistration` records.
+
 #### Close vs Finalize
 
 - Close registration: stops intake and edits; transitions `open → processing`.
@@ -105,6 +113,13 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 - Planning-only campaigns: close only; do not call `finalize!`. Results remain
   in reporting tables and are not materialized.
   When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
+
+```admonish tip "UI hooks for unassigned"
+After completion, the Campaign Show can surface an "Unassigned registrants"
+table (name, matriculation, top preferences) with actions to place users into
+groups via Roster Maintenance. In roster screens, add a filter
+"Candidates from campaign X" that lists these unassigned users for quick moves.
+```
 
 ### Example Implementation
 
@@ -166,12 +181,17 @@ end
 
 ### Usage Scenarios
 
-- A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`. (UI: [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html))
+```admonish info
+Entry points: Teacher/Editor starts at Campaigns index; Student starts at
+Student Registration index.
+```
+
+- A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`. (Admin UI: [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html); Student UI: [Show – preference-based](../mockups/student_registration.html), [Confirmation](../mockups/student_registration_confirmation.html))
 - A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_serve` and assigns talk slots. Items point to `Talk`.
-- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_serve` and enrolls students directly. The single item points to the `Lecture`.
-- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_serve` to quickly fill the limited seminar seats.
-- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_serve` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
-- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and is protected by an `exam_eligibility` policy. Items point to `Exam`. (UI: [Exam Show](../mockups/campaigns_show_exam.html))
+- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_serve` and enrolls students directly. The single item points to the `Lecture`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_serve` to quickly fill the limited seminar seats. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_serve` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
+- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and is protected by an `exam_eligibility` policy. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
 
 ---
 
