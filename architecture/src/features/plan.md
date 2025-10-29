@@ -72,6 +72,11 @@ graph TD
     Grading- and exam-related tables are added later when those
     workstreams are active.
 
+    Also introduce core concerns for controllers to target in the next step:
+    - `Registration::Campaignable` for hosts of campaigns; include in `Lecture`.
+    - `Registration::Registerable` for assignable targets; include in `Tutorial`.
+    Provide interface stubs such as `materialize_allocation!`.
+
     ```admonish success "Non-Disruptive Impact"
     This step is purely additive. It creates new, unused tables and
     models scoped to the active workstream. It does not alter existing
@@ -86,6 +91,10 @@ graph TD
 
 3. **[Registration] Open FCFS Tutorial Campaigns**
     Action: Implement the backend controllers, services (`Registration::PolicyEngine`, `Registration::AllocationService`), and frontend UIs for the FCFS registration mode. This includes creating **teacher/editor UIs** to set up and manage campaigns and **student UIs** to view and register for items.
+    ```admonish tip
+    Prerequisites: Step 2 (schema, policy engine scaffolding, core concerns
+    included in `Lecture` and `Tutorial`).
+    ```
 
     Controllers: Wire `Registration::CampaignsController`,
     `Registration::UserRegistrationsController`, and
@@ -94,16 +103,22 @@ graph TD
     Also add minimal dashboard widget data endpoints (counts/status)
     and update hidden cards under feature flags.
 
+    ```admonish tip "Scope for MVP"
+    Initial FCFS rollout targets Tutorials. Support for Talks/Seminars
+    can follow post‑MVP (see PR‑2.4 in the PR Roadmap).
+    ```
+
     ```admonish success "Non-Disruptive Impact"
     This new workflow is only triggered when a `Registration::Campaign` is created for a course. Since you will only create these campaigns for *next* semester's courses, the current semester's courses will continue to function entirely on the old logic.
     ```
 
 4. **[Registration] Preference-Based Mode (incl. Solver & Finalization)**
-    Action: Add the backend `Registration::AllocationService` and jobs,
-    implement the production allocation solver (e.g., MCMF/CP-SAT), and
-    wire real `allocate!`, `finalize!`, and `allocate_and_finalize!`.
-    On the frontend, deliver the preference ranking UI and teacher
-    results/finalization views with basic progress reporting.
+    Action: Deliver preference-based registration in three slices:
+    - 4a Student ranking UI and persistence.
+    - 4b Roster foundations required by finalize: minimal
+      persistence/service so `materialize_allocation!` can replace
+      roster memberships for a registerable (e.g., Tutorial).
+    - 4c Solver integration and finalize wiring end-to-end.
 
     Controllers: Add `Registration::AllocationController` for
     trigger/retry/finalize and Turbo updates from background jobs.
@@ -111,23 +126,33 @@ graph TD
     Also update hidden dashboard cards to surface preference-based
     counters and latest results when enabled via feature flags.
 
+    ```admonish tip "Ordering"
+    Build roster foundations (4b) before implementing `finalize!` (4c),
+    since `materialize_allocation!` replaces roster memberships.
+    ```
+
     ```admonish success "Non-Disruptive Impact"
     Like FCFS, preference-based logic runs only for new
     `Registration::Campaign`s and does not affect the live semester.
     ```
 
 5. **[Registration] Roster Maintenance (UI & Operations)**
-   Action: Implement `Roster::MaintenanceService` and an admin-facing UI
-   for post-allocation roster management (moves, swaps, adds/removes)
-   with capacity enforcement and audit trail.
+     Action: Implement `Roster::MaintenanceService` and an admin-facing UI
+     for post-allocation roster management (moves, adds/removes) with
+     capacity enforcement and an auditing hook. Finalize the UX:
+     - Candidates panel lives on the Roster Overview (not on Detail)
+         and lists unassigned users from a selected, completed campaign.
+     - Provide a manual "Add student" action on Overview.
+     - No swap action. Use move instead.
+     - Tutor view is read-only; exams do not show a candidates panel.
 
-    Controllers: Introduce `Roster::MaintenanceController` for
-    post-allocation moves/add/remove/swap with capacity enforcement.
+        Controllers: Introduce `Roster::MaintenanceController` for
+        post-allocation move/add/remove operations with capacity guards.
 
-    ```admonish success "Non-Disruptive Impact"
-    Operates only on rosters materialized from new campaigns. Current
-    semester rosters remain untouched.
-    ```
+        ```admonish success "Non-Disruptive Impact"
+        Operates only on rosters materialized from new campaigns. Current
+        semester rosters remain untouched.
+        ```
 
 6. **[Dashboards] Dashboard Implementation (Phase A)**
    Action: Implement the initial versions of the Student Dashboard and Teacher/Editor Dashboard. This includes creating the new controllers, views, and routing. The dashboards will be populated with widgets that rely on existing data models (e.g., "My Courses", "Assignment Deadlines").
@@ -186,14 +211,27 @@ graph TD
     ```
 
 11. **[Grading] Exam Assessments & Grade Schemes**
-   Action: Build the `Exam` model and its integration with the assessment system. Implement `GradeScheme::Applier` service to apply grading schemes. This step will use the new grading UI built in Step 8, potentially adding minor UI elements for scheme configuration.
+    Action: Create the `Exam` model and include the cross-cutting
+    concerns to link it across registration, rosters, and grading:
+    - `Registration::Campaignable` (host campaigns)
+    - `Registration::Registerable` (be registered for)
+    - `Roster::Rosterable` (manage registrants)
+    - `Assessment::Assessable` (link to grading)
 
-    Controllers: Introduce `ExamsController` (CRUD, scheduling) and
-    `GradeScheme::SchemesController` (preview/apply).
+    Implement `materialize_allocation!` for exam rosters (delegating to
+    `replace_roster!`), and wire `ExamsController` to the assessment
+    system. Implement `GradeScheme::Applier` service to apply grading
+    schemes. This step builds on the grading UI from Step 8 and may add
+    minor UI elements for scheme configuration.
 
-    ```admonish success "Non-Disruptive Impact"
-    This is the final piece of the new grading workflow and is entirely dependent on the preceding steps. It will only be used for exams in the next semester.
-    ```
+     Controllers: Introduce `ExamsController` (CRUD, scheduling) and
+     `GradeScheme::SchemesController` (preview/apply).
+
+     ```admonish success "Non-Disruptive Impact"
+     This is the final piece of the new grading workflow and is entirely
+     dependent on the preceding steps. It will only be used for exams in
+     the next semester.
+     ```
 
 12. **[Grading] Extensions: Multiple Choice Exams** _(Optional, can be skipped for MVP)_
    Action: Extend `Exam` and `Assessment::Task` models with MC support fields (`has_multiple_choice`, `mc_weight`, `is_multiple_choice`, `grade_scheme_id`). Implement `Assessment::McGrader` service for German legal compliance (Gleitklausel). Add UI for MC task configuration and threshold visualization.

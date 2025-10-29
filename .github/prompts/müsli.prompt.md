@@ -23,6 +23,8 @@ In every prompt, always attach as context the following files:
 - [10 Future extensions](../../architecture/src/features/10-future-extensions.md)
 - [Controller architecture](../../architecture/src/features/11-controllers.md)
 - [View architecture](../../architecture/src/features/12-views.md)
+- [Mockups — index and conventions](../../architecture/src/features/mockups-index.md)
 - [Plan](../../architecture/src/features/plan.md)
+- [Implementation PR Roadmap](../../architecture/src/features/implementation-prs.md)
 - [Student dashboard](../../architecture/src/features/student_dashboard.md)
 - [Teacher editor dashboard](../../architecture/src/features/teacher_editor_dashboard.md)
