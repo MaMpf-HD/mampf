@@ -10,6 +10,16 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 ## Problem Overview
 - After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
 
+```admonish tip "Related UI mockups"
+- Roster Overview (tutorials): [Overview – tutorials](../mockups/roster_overview.html)
+- Roster Overview (seminar): [Overview – seminar](../mockups/roster_overview_seminar.html)
+- Roster Overview (exam): [Overview – exam](../mockups/roster_overview_exam.html)
+- Roster Detail (tutorial): [Detail – tutorial](../mockups/roster_detail.html)
+- Roster Detail (seminar): [Detail – seminar](../mockups/roster_detail_seminar.html)
+- Roster Detail (exam): [Detail – exam](../mockups/roster_detail_exam.html)
+- Roster Detail (tutor read-only): [Detail – tutor read-only](../mockups/roster_detail_tutor.html)
+```
+
 ```admonish tip "Sourcing candidates after allocation"
 When a preference-based campaign completes, some participants may remain
 unassigned. These are students with zero `confirmed` registrations in the

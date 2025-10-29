@@ -47,10 +47,49 @@ Registration — Step 2: Foundations (Schema)
 - Acceptance: Unit tests incl. doubles for `ExamEligibility::Record`; deterministic
 	pass/fail traces.
 - Out of scope: Policies UI.
+
+- Note: `exam_eligibility` uses test doubles/stubs for
+	`ExamEligibility::Record` until Step 10 introduces real records.
+	Stub lookups as ineligible by default and replace with real queries
+	in Step 10.
+	- Example: `ExamEligibility::Record.find_by(...)` → `nil`.
+```
+
+```admonish example "PR-2.3 — Core concerns (Campaignable, Registerable)"
+- Scope:
+	- Add `Registration::Campaignable` and `Registration::Registerable` concerns.
+	- Include `Campaignable` in `Lecture` so it can host campaigns.
+	- Include `Registerable` in `Tutorial` so items can point to it; define
+		interface stubs such as `materialize_allocation!`.
+- Refs: Concerns — [Campaignable](02-registration.md#campaignable-concern),
+	[Registerable](02-registration.md#registerable-concern).
+- Acceptance:
+	- `Tutorial` can be assigned as `registerable` for `Registration::Item`.
+	- Controllers planned in Step 3 compile against the concerns API.
+- Out of scope: Materialization logic and UI.
+```
+
+```admonish example "PR-2.4 — Talk as Registerable (optional for MVP)"
+- Scope:
+	- Include `Registration::Registerable` in `Talk`; provide interface
+		stubs such as `materialize_allocation!`.
+	- Allow `Registration::Item` to target a `Talk` registerable.
+- Refs: Concerns — [Registerable](02-registration.md#registerable-concern).
+- Acceptance:
+	- `Talk` can be assigned as `registerable` for `Registration::Item`.
+	- Controllers planned in Step 3 compile against the shared API.
+- Notes:
+	- Roster specifics for talks can be added with roster variants in
+		Step 5. If talks are deferred post‑MVP, this PR can be scheduled
+		later without affecting tutorials.
 ```
 
 ```admonish abstract
 Registration — Step 3: FCFS mode (Admin + Student)
+```
+
+```admonish tip
+Prerequisites: PR-2.1 (schema), PR-2.2 (policy engine), PR-2.3 (core concerns).
 ```
 
 ```admonish example "PR-3.1 — Admin: Campaigns + Policies scaffold"
@@ -113,6 +152,11 @@ Registration — Step 3: FCFS mode (Admin + Student)
 Registration — Step 4: Preference-based mode
 ```
 
+```admonish tip "Prerequisites"
+Step 3 complete (FCFS operational); PR-2.3 concerns provide
+`materialize_allocation!` interface.
+```
+
 ```admonish example "PR-4.1 — Student Show (preference-based)"
 - Scope: Show + preferences frame edit/update; rank add/remove/reorder.
 - Refs: Controller — [Registration controllers](11-controllers.md#registration-controllers).
@@ -123,18 +167,37 @@ Registration — Step 4: Preference-based mode
 - Out of scope: Allocation results.
 ```
 
-```admonish example "PR-4.2 — Production solver integration + finalize"
-- Scope: Integrate production solver (MCMF/CP-SAT) into
-  `Registration::AllocationService` and background job; implement
-  operator-visible progress (logs/streams) and wire real
-  `allocate!`/`finalize!`/`allocate_and_finalize!` end-to-end.
-- Refs: Services — [Allocation details](07-algorithm-details.md).
-  Controllers — [Registration controllers](11-controllers.md#registration-controllers).
-- Acceptance: Real solver runs on sample data; deterministic results for
-  tests; finalize persists to domain rosters; guardrails/flags in place.
+```admonish example "PR-4.2 — Roster foundations (models + service)"
+- Scope:
+	- Add minimal roster persistence for finalize to target:
+		- `tutorial_memberships` join table and associations, or equivalent.
+		- `Roster::Rosterable` concern included in `Tutorial` with
+			`roster_user_ids` and `replace_roster!`.
+		- `Roster::MaintenanceService.replace_roster!` with idempotent
+			semantics.
+	- Implement `Registration::Registerable#materialize_allocation!` to
+		delegate to `replace_roster!`.
+- Refs: Rosters — [Rosterable](03-rosters.md#rosterrosterable-concern),
+	[Solution Architecture](03-rosters.md#solution-architecture).
+- Acceptance:
+	- A registerable (Tutorial) can persist a list of assigned users via
+		`materialize_allocation!`.
+	- Basic unit specs cover idempotency and contract.
+- Out of scope: UI; maintenance actions beyond replace.
 ```
 
-```admonish example "PR-4.3 — Allocation controller + results (teacher)"
+```admonish example "PR-4.3 — Production solver integration + finalize"
+- Scope: Integrate production solver (MCMF/CP-SAT) into
+	`Registration::AllocationService` and background job; implement
+	operator-visible progress (logs/streams) and wire real
+	`allocate!`/`finalize!`/`allocate_and_finalize!` end-to-end.
+- Refs: Services — [Allocation details](07-algorithm-details.md).
+	Controllers — [Registration controllers](11-controllers.md#registration-controllers).
+- Acceptance: Real solver runs on sample data; deterministic results for
+	tests; finalize persists to domain rosters; guardrails/flags in place.
+```
+
+```admonish example "PR-4.4 — Allocation controller + results (teacher)"
 - Scope: `Registration::AllocationController` show/create/retry/finalize/
   allocate_and_finalize; views and stream slots; results tab surfaces
   assigned/unassigned and close‑out normalization.
@@ -145,14 +208,14 @@ Registration — Step 4: Preference-based mode
 - Out of scope: Roster maintenance (see Plan Step 5).
 ```
 
-```admonish example "PR-4.4 — Post-allocation wiring (student/index)"
+```admonish example "PR-4.5 — Post-allocation wiring (student/index)"
 - Scope: “View result” links from index; student confirmation screens.
 - Refs: Mockups — [Index (tabs)](../mockups/student_registration_index_tabs.html),
 	[Confirmation](../mockups/student_registration_confirmation.html)
 - Acceptance: Closed tables link to correct confirmation screens.
 ```
 
-```admonish example "PR-4.5 — Dashboard: Results summary widget (hidden)"
+```admonish example "PR-4.6 — Dashboard: Results summary widget (hidden)"
 - Scope: Add endpoints and a hidden dashboard card summarizing latest
 	allocation results (assigned/unassigned). Feature-flagged; minimal
 	view and test.
@@ -173,46 +236,7 @@ Beyond Plan Steps 2–4 (Registration)
 Rosters — Step 5: Maintenance (UI & Operations)
 ```
 
-```admonish example "PR-5.1 — Schema: tutorial_memberships join table"
-- Scope: Add `tutorial_memberships` join table for tutorial rosters
-	with FK indexes and uniqueness on `(tutorial_id, user_id)`. Wire
-	basic associations on `Tutorial` (read-only for now). Behind a
-	feature flag.
-- Migrations:
-	- 20251029000000_create_tutorial_memberships.rb
-- Refs: Rosters — [Tutorial (Enhanced)](03-rosters.md#tutorial-enhanced)
-- Acceptance: Can create/delete memberships via console/specs; DB
-	uniqueness enforced; no UI yet.
-- Out of scope: Roster service, controllers, views.
-```
-
-```admonish example "PR-5.2 — Concern: Roster::Rosterable + Tutorial"
-- Scope: Add `Roster::Rosterable` concern and include it in `Tutorial`.
-	Implement `roster_user_ids` and `replace_roster!` using
-	`tutorial_memberships`. Unit tests for idempotency
-	(`replace_roster!` with same set is a no-op) and contract errors on
-	missing overrides.
-- Files:
-	- app/models/concerns/roster/rosterable.rb
-- Refs: Rosters — [Rosterable](03-rosters.md#rosterrosterable-concern)
-- Acceptance: Green model specs; contract covered.
-- Out of scope: Talk implementation (can arrive later) and UI.
-```
-
-```admonish example "PR-5.3 — Service: Roster::MaintenanceService"
-- Scope: Implement `move_user!`, `add_user!`, `remove_user!` with
-	capacity enforcement (`full?`), transactions, and a stubbed
-	`touch_counts!` hook. Add request-free service specs (happy path +
-	capacity failure). Wire feature flag guardrails.
-- Files:
-	- app/services/roster/maintenance_service.rb
-- Refs: Rosters — [MaintenanceService](03-rosters.md#rostermaintenanceservice)
-- Acceptance: Service specs for move/add/remove pass; capacity guard
-	exercised; no controller yet.
-- Out of scope: UI and denormalized counters job.
-```
-
-```admonish example "PR-5.4 — Controller scaffold + read-only views"
+```admonish example "PR-5.1 — Controller scaffold + read-only views"
 - Scope: Introduce `Roster::MaintenanceController` with `index` and
 	`show` (read-only). `index` lists groups for a lecture with capacity
 	meters; `show` displays participants for a single group. Routes and
@@ -224,7 +248,7 @@ Rosters — Step 5: Maintenance (UI & Operations)
 - Out of scope: Edit operations and candidates panel.
 ```
 
-```admonish example "PR-5.5 — Edit ops on Detail (remove/move)"
+```admonish example "PR-5.2 — Edit ops on Detail (remove/move)"
 - Scope: Enable remove and move operations on the Detail view using the
 	service. Turbo-stream updates for participants list and capacity
 	meters. Enforce capacity in controller with proper error flash.
@@ -235,7 +259,7 @@ Rosters — Step 5: Maintenance (UI & Operations)
 - Out of scope: Manual add and candidates panel.
 ```
 
-```admonish example "PR-5.6 — Overview: Candidates panel + manual Add"
+```admonish example "PR-5.3 — Overview: Candidates panel + manual Add"
 - Scope: Add right-side "Candidates from campaign" panel on Overview
 	listing users unassigned in a selected completed campaign. Search and
 	assign-to-group action. Add a separate "Add student" manual action
@@ -249,7 +273,7 @@ Rosters — Step 5: Maintenance (UI & Operations)
 - Out of scope: Background recount; audit trail persistence.
 ```
 
-```admonish example "PR-5.7 — Counters + integrity job"
+```admonish example "PR-5.4 — Counters + integrity job"
 - Scope: Update denormalized `Registration::Item.assigned_count` inside
 	the maintenance service's `touch_counts!`. Add `RecountAssignedJob`
 	and a rake task to reconcile counts. Schedule a low-frequency cron
@@ -259,7 +283,7 @@ Rosters — Step 5: Maintenance (UI & Operations)
 	seeded dataset; schedule present (disabled by default in dev).
 ```
 
-```admonish example "PR-5.8 — Permissions + tutor read-only variant"
+```admonish example "PR-5.5 — Permissions + tutor read-only variant"
 - Scope: Finalize abilities so tutors see read-only Detail for their
 	groups; hide edit controls and candidates panel. Ensure exams do not
 	render candidates panel. Add request specs covering access rules.
@@ -269,7 +293,7 @@ Rosters — Step 5: Maintenance (UI & Operations)
 	tests green.
 ```
 
-```admonish example "PR-5.9 — Dashboard: Manage Rosters widget (hidden)"
+```admonish example "PR-5.6 — Dashboard: Manage Rosters widget (hidden)"
 - Scope: Add a hidden teacher/editor dashboard card exposing quick
 	links to Roster Overview plus simple counts (groups, participants,
 	capacity utilization). Feature-flagged.
