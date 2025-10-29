@@ -117,17 +117,22 @@ graph TD
     ```
 
 5. **[Registration] Roster Maintenance (UI & Operations)**
-   Action: Implement `Roster::MaintenanceService` and an admin-facing UI
-   for post-allocation roster management (moves, swaps, adds/removes)
-   with capacity enforcement and audit trail.
+     Action: Implement `Roster::MaintenanceService` and an admin-facing UI
+     for post-allocation roster management (moves, adds/removes) with
+     capacity enforcement and an auditing hook. Finalize the UX:
+     - Candidates panel lives on the Roster Overview (not on Detail)
+         and lists unassigned users from a selected, completed campaign.
+     - Provide a manual "Add student" action on Overview.
+     - No swap action. Use move instead.
+     - Tutor view is read-only; exams do not show a candidates panel.
 
-    Controllers: Introduce `Roster::MaintenanceController` for
-    post-allocation moves/add/remove/swap with capacity enforcement.
+        Controllers: Introduce `Roster::MaintenanceController` for
+        post-allocation move/add/remove operations with capacity guards.
 
-    ```admonish success "Non-Disruptive Impact"
-    Operates only on rosters materialized from new campaigns. Current
-    semester rosters remain untouched.
-    ```
+        ```admonish success "Non-Disruptive Impact"
+        Operates only on rosters materialized from new campaigns. Current
+        semester rosters remain untouched.
+        ```
 
 6. **[Dashboards] Dashboard Implementation (Phase A)**
    Action: Implement the initial versions of the Student Dashboard and Teacher/Editor Dashboard. This includes creating the new controllers, views, and routing. The dashboards will be populated with widgets that rely on existing data models (e.g., "My Courses", "Assignment Deadlines").

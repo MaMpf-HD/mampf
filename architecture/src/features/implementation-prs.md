@@ -162,9 +162,117 @@ Registration — Step 4: Preference-based mode
 
 ```admonish note
 Beyond Plan Steps 2–4 (Registration)
-- Roster maintenance (read-only, edit/swap) and unassigned sourcing.
+- Roster maintenance (read-only, edit/move) and unassigned sourcing.
 - Typed policy forms and full admin eligibility screens.
 - Dashboards integration polish, notifications, and background scheduling.
 - Reporting and integrity jobs.
 - Quality & hardening: tests, flags cleanup, metrics/logging, permissions, i18n.
+```
+
+```admonish abstract
+Rosters — Step 5: Maintenance (UI & Operations)
+```
+
+```admonish example "PR-5.1 — Schema: tutorial_memberships join table"
+- Scope: Add `tutorial_memberships` join table for tutorial rosters
+	with FK indexes and uniqueness on `(tutorial_id, user_id)`. Wire
+	basic associations on `Tutorial` (read-only for now). Behind a
+	feature flag.
+- Migrations:
+	- 20251029000000_create_tutorial_memberships.rb
+- Refs: Rosters — [Tutorial (Enhanced)](03-rosters.md#tutorial-enhanced)
+- Acceptance: Can create/delete memberships via console/specs; DB
+	uniqueness enforced; no UI yet.
+- Out of scope: Roster service, controllers, views.
+```
+
+```admonish example "PR-5.2 — Concern: Roster::Rosterable + Tutorial"
+- Scope: Add `Roster::Rosterable` concern and include it in `Tutorial`.
+	Implement `roster_user_ids` and `replace_roster!` using
+	`tutorial_memberships`. Unit tests for idempotency
+	(`replace_roster!` with same set is a no-op) and contract errors on
+	missing overrides.
+- Files:
+	- app/models/concerns/roster/rosterable.rb
+- Refs: Rosters — [Rosterable](03-rosters.md#rosterrosterable-concern)
+- Acceptance: Green model specs; contract covered.
+- Out of scope: Talk implementation (can arrive later) and UI.
+```
+
+```admonish example "PR-5.3 — Service: Roster::MaintenanceService"
+- Scope: Implement `move_user!`, `add_user!`, `remove_user!` with
+	capacity enforcement (`full?`), transactions, and a stubbed
+	`touch_counts!` hook. Add request-free service specs (happy path +
+	capacity failure). Wire feature flag guardrails.
+- Files:
+	- app/services/roster/maintenance_service.rb
+- Refs: Rosters — [MaintenanceService](03-rosters.md#rostermaintenanceservice)
+- Acceptance: Service specs for move/add/remove pass; capacity guard
+	exercised; no controller yet.
+- Out of scope: UI and denormalized counters job.
+```
+
+```admonish example "PR-5.4 — Controller scaffold + read-only views"
+- Scope: Introduce `Roster::MaintenanceController` with `index` and
+	`show` (read-only). `index` lists groups for a lecture with capacity
+	meters; `show` displays participants for a single group. Routes and
+	abilities in place. Minimal ERB with Turbo Frame shells.
+- Refs: Controllers — [Roster controllers](11-controllers.md#roster-controllers),
+	Views — [Rosters](12-views.md#rosters-teachereditor)
+- Acceptance: Navigation works for teacher/editor; no edit actions yet;
+	tutor role sees read-only own groups (ability stub acceptable).
+- Out of scope: Edit operations and candidates panel.
+```
+
+```admonish example "PR-5.5 — Edit ops on Detail (remove/move)"
+- Scope: Enable remove and move operations on the Detail view using the
+	service. Turbo-stream updates for participants list and capacity
+	meters. Enforce capacity in controller with proper error flash.
+- Refs: Controllers — [Roster controllers](11-controllers.md#roster-controllers),
+	Service — [MaintenanceService](03-rosters.md#rostermaintenanceservice)
+- Acceptance: Remove and move work end-to-end with optimistic UI; tests
+	cover controller happy path and capacity failure.
+- Out of scope: Manual add and candidates panel.
+```
+
+```admonish example "PR-5.6 — Overview: Candidates panel + manual Add"
+- Scope: Add right-side "Candidates from campaign" panel on Overview
+	listing users unassigned in a selected completed campaign. Search and
+	assign-to-group action. Add a separate "Add student" manual action
+	(by email/id). Panel is present for tutorials/seminars; not shown for
+	exams. No swap action (explicitly out-of-scope).
+- Refs: Rosters — [Managing unassigned candidates](03-rosters.md#managing-unassigned-candidates),
+	Views — [Rosters](12-views.md#rosters-teachereditor)
+- Acceptance: Selecting a completed campaign surfaces unassigned users;
+	Assign and Add place users into target group respecting capacity; UI
+	hidden for exams.
+- Out of scope: Background recount; audit trail persistence.
+```
+
+```admonish example "PR-5.7 — Counters + integrity job"
+- Scope: Update denormalized `Registration::Item.assigned_count` inside
+	the maintenance service's `touch_counts!`. Add `RecountAssignedJob`
+	and a rake task to reconcile counts. Schedule a low-frequency cron
+	entry. Unit tests for the job.
+- Refs: Rosters — [Solution Architecture](03-rosters.md#solution-architecture)
+- Acceptance: Service updates counters; job recomputes accurately on a
+	seeded dataset; schedule present (disabled by default in dev).
+```
+
+```admonish example "PR-5.8 — Permissions + tutor read-only variant"
+- Scope: Finalize abilities so tutors see read-only Detail for their
+	groups; hide edit controls and candidates panel. Ensure exams do not
+	render candidates panel. Add request specs covering access rules.
+- Refs: Views — [Tutor (read-only) mockup](../mockups/roster_detail_tutor.html),
+	Controllers — [Roster controllers](11-controllers.md#roster-controllers)
+- Acceptance: Access rules enforced; UI elements conditionally hidden;
+	tests green.
+```
+
+```admonish example "PR-5.9 — Dashboard: Manage Rosters widget (hidden)"
+- Scope: Add a hidden teacher/editor dashboard card exposing quick
+	links to Roster Overview plus simple counts (groups, participants,
+	capacity utilization). Feature-flagged.
+- Refs: Dashboards — [Teacher & Editor Dashboard](teacher_editor_dashboard.md)
+- Acceptance: Card renders when flag enabled; off by default.
 ```

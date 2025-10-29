@@ -20,14 +20,25 @@ waitlist table.
 
 ## Managing unassigned candidates
 
-- View unassigned candidates: from the completed Campaign Show or within the
-  roster screens via a filter "Candidates from campaign X".
-- Inspect context: show each student's top N original preferences to inform
-  manual placements.
+- View unassigned candidates: from the completed Campaign Show or on the
+  Roster Overview via a right-side panel "Candidates from campaign" showing
+  only users unassigned in that campaign.
+- Inspect context: for preference-based campaigns, show each student's top 3
+  original preferences inline, with a way to view the full list on demand.
 - Actions:
-  - Assign to group: place the student into a specific tutorial if capacity and
-    conflicts permit.
-  - Swap/move: standard roster operations continue to work across groups.
+  - Assign to group: place the student into a specific tutorial if capacity permits.
+  - Move: standard roster operations continue to work across groups.
+
+```admonish info "Placement"
+The Candidates panel lives on the Roster Overview to provide capacity context
+across all groups. The Roster Detail focuses on per-group maintenance
+(participants list, remove/move) and has no candidates panel.
+```
+
+```admonish tip
+No reason entry is required for remove, move, or add actions in roster
+maintenance. Keep actions fast; capacity constraints still apply.
+```
 
 ```admonish note "Data model"
 Unassigned candidates are derived from `Registration::UserRegistration` records.
