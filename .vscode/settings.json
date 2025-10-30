@@ -60,6 +60,11 @@
     "rubyLsp.featureFlags": {
         "fullTestDiscovery": true,
     },
+    "rubyLsp.addonSettings": {
+        "Ruby LSP RSpec": {
+            "rspecCommand": "RAILS_ENV=test bundle exec rspec --format documentation"
+        }
+    },
     //////////////////////////////////////
     // Files
     //////////////////////////////////////
@@ -71,7 +76,7 @@
     },
     "files.associations": {
         "*.js.erb": "javascript",
-        "*.html.erb": "html"
+        "*.html.erb": "erb"
     },
     //////////////////////////////////////
     // Editor
