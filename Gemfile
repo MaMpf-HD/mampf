@@ -2,7 +2,7 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.3.8"
+ruby "3.4.7"
 
 gem "active_model_serializers", "~> 0.10"
 gem "activerecord-import", "~>1.7"
