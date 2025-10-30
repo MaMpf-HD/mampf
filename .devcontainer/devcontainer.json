@@ -44,7 +44,7 @@
         1080, // Mailcatcher web interface
         5050, // pgAdmin
         8060, // desktop (cypress),
-        3003 // architecture Müsli book
+        3004 // architecture Müsli book
     ],
     "portsAttributes": {
         // Main app
@@ -78,7 +78,7 @@
             "label": "mailcatcher",
             "onAutoForward": "silent"
         },
-        "3003": {
+        "3004": {
             "label": "Architecture Book (needs manual start)",
             "onAutoForward": "openBrowser"
         }

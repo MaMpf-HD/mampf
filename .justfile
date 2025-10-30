@@ -20,7 +20,7 @@ up:
 [working-directory: "architecture"]
 muesli:
     #!/usr/bin/env bash
-    mdbook serve --port 3003
+    mdbook serve --port 3004 -n 0.0.0.0
 
 # Commands to test the MaMpf codebase
 mod test ".config/commands/test.justfile"
