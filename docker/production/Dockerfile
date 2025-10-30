@@ -1,6 +1,6 @@
 # First build the PDF compressor Web assembly binary
 # this is adapted from https://github.com/henrixapp/pdfcomprezzor/blob/master/Dockerfile
-FROM golang:1.20 AS build-pdfcomprezzor
+FROM golang:tip-bookworm AS build-pdfcomprezzor
 WORKDIR /go/src
 COPY pdfcomprezzor/go.mod pdfcomprezzor/go.sum pdfcomprezzor/main.go ./
 RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
