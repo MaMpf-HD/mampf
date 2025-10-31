@@ -72,7 +72,8 @@ graph TD
     Grading- and exam-related tables are added later when those
     workstreams are active.
 
-    Also introduce core concerns for controllers to target in the next step:
+    Also implement `Registration::PolicyEngine` with core policy kinds
+    and introduce core concerns for controllers to target in the next step:
     - `Registration::Campaignable` for hosts of campaigns; include in `Lecture`.
     - `Registration::Registerable` for assignable targets; include in `Tutorial`.
     Provide interface stubs such as `materialize_allocation!`.
@@ -90,9 +91,9 @@ graph TD
     ```
 
 3. **[Registration] Open FCFS Tutorial Campaigns**
-    Action: Implement the backend controllers, services (`Registration::PolicyEngine`, `Registration::AllocationService`), and frontend UIs for the FCFS registration mode. This includes creating **teacher/editor UIs** to set up and manage campaigns and **student UIs** to view and register for items.
+    Action: Implement the backend controllers and frontend UIs for the FCFS registration mode. This includes creating **teacher/editor UIs** to set up and manage campaigns and **student UIs** to view and register for items. FCFS logic uses simple capacity checks (no complex allocation).
     ```admonish tip
-    Prerequisites: Step 2 (schema, policy engine scaffolding, core concerns
+    Prerequisites: Step 2 (schema, policy engine, core concerns
     included in `Lecture` and `Tutorial`).
     ```
 
@@ -113,12 +114,7 @@ graph TD
     ```
 
 4. **[Registration] Preference-Based Mode (incl. Solver & Finalization)**
-    Action: Deliver preference-based registration in three slices:
-    - 4a Student ranking UI and persistence.
-    - 4b Roster foundations required by finalize: minimal
-      persistence/service so `materialize_allocation!` can replace
-      roster memberships for a registerable (e.g., Tutorial).
-    - 4c Solver integration and finalize wiring end-to-end.
+    Action: Deliver preference-based registration, building on FCFS foundations. Implement student ranking UI and persistence, roster foundations for finalize (minimal persistence/service so `materialize_allocation!` can replace roster memberships), and solver integration with finalize wiring end-to-end.
 
     Controllers: Add `Registration::AllocationController` for
     trigger/retry/finalize and Turbo updates from background jobs.
@@ -127,7 +123,7 @@ graph TD
     counters and latest results when enabled via feature flags.
 
     ```admonish tip "Ordering"
-    Build roster foundations (4b) before implementing `finalize!` (4c),
+    Build roster foundations before implementing `finalize!`,
     since `materialize_allocation!` replaces roster memberships.
     ```
 
@@ -137,17 +133,19 @@ graph TD
     ```
 
 5. **[Registration] Roster Maintenance (UI & Operations)**
-     Action: Implement `Roster::MaintenanceService` and an admin-facing UI
-     for post-allocation roster management (moves, adds/removes) with
-     capacity enforcement and an auditing hook. Finalize the UX:
+     Action: Implement `Roster::MaintenanceController` and
+     `Roster::MaintenanceService` with an admin-facing UI for
+     post-allocation roster management (moves, adds/removes) with
+     capacity enforcement. Finalize the UX:
      - Candidates panel lives on the Roster Overview (not on Detail)
          and lists unassigned users from a selected, completed campaign.
      - Provide a manual "Add student" action on Overview.
-     - No swap action. Use move instead.
      - Tutor view is read-only; exams do not show a candidates panel.
 
-        Controllers: Introduce `Roster::MaintenanceController` for
-        post-allocation move/add/remove operations with capacity guards.
+        Also update denormalized counters (`Registration::Item.assigned_count`)
+        and add `RecountAssignedJob` for integrity. Finalize abilities so
+        tutors see read-only Detail for their groups. Add a hidden
+        dashboard widget for teacher/editor with roster links and counts.
 
         ```admonish success "Non-Disruptive Impact"
         Operates only on rosters materialized from new campaigns. Current
