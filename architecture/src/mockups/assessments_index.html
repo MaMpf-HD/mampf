@@ -61,55 +61,51 @@
         <a class="nav-link" href="#">Communication</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" href="#">Assignments</a>
+        <a class="nav-link active" href="#">Assessments</a>
       </li>
     </ul>
 
     <!-- Assignments Tab Content with lecture-pane styling -->
     <div class="lecture-pane">
-      <!-- Assessments Section -->
-      <h3 class="lecture-pane-header">Assessments</h3>
+      <!-- Assignments Section -->
+      <h3 class="lecture-pane-header">Assignments</h3>
 
       <div class="row mb-3">
         <div class="col-12 text-center">
-          <a href="assessments_new.html" class="btn btn-sm btn-primary" id="newAssessmentButton">
-            <i class="fas fa-plus me-1"></i>New Assessment
+          <a href="assessments_new.html" class="btn btn-sm btn-primary" id="newAssignmentButton">
+            <i class="fas fa-plus me-1"></i>New Assignment
           </a>
         </div>
       </div>
 
       <div class="list-group">
-        <div class="list-group-item bg-light" id="assessmentListHeader">
+        <div class="list-group-item bg-light" id="assignmentListHeader">
           <div class="row">
             <div class="col-3"><h6>Title</h6></div>
-            <div class="col-2"><h6>Type</h6></div>
             <div class="col-2"><h6>Status</h6></div>
             <div class="col-1"><h6>Points</h6></div>
-            <div class="col-2"><h6>Due Date</h6></div>
-            <div class="col-2"><h6>Action</h6></div>
+            <div class="col-3"><h6>Due Date</h6></div>
+            <div class="col-3"><h6>Action</h6></div>
           </div>
         </div>
         <div class="list-group-item assignmentRow" data-id="101">
           <div class="row">
             <div class="col-3">
               <a href="assessments_show_assignment.html" class="text-dark" style="text-decoration: none;">
-                Homework 1
+                Homework 5
               </a>
               <div class="small text-muted">
                 <i class="fas fa-check-circle text-success me-1"></i>35/40 submitted
               </div>
             </div>
             <div class="col-2">
-              <span class="badge bg-info">Assignment</span>
-            </div>
-            <div class="col-2">
               <span class="badge bg-success">Open</span>
             </div>
-            <div class="col-1">30</div>
-            <div class="col-2">
+            <div class="col-1">20</div>
+            <div class="col-3">
               November 15, 2024, 18:00
             </div>
-            <div class="col-2">
+            <div class="col-3">
               <a href="assessments_show_assignment.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
@@ -126,23 +122,20 @@
           <div class="row">
             <div class="col-3">
               <a href="#" class="text-dark" style="text-decoration: none;">
-                Homework 2
+                Homework 4
               </a>
               <div class="small text-muted">
                 <i class="fas fa-hourglass-half text-warning me-1"></i>28/38 graded
               </div>
             </div>
             <div class="col-2">
-              <span class="badge bg-info">Assignment</span>
-            </div>
-            <div class="col-2">
               <span class="badge bg-warning text-dark">Closed</span>
             </div>
-            <div class="col-1">40</div>
-            <div class="col-2">
+            <div class="col-1">20</div>
+            <div class="col-3">
               October 30, 2024, 18:00
             </div>
-            <div class="col-2">
+            <div class="col-3">
               <a href="#" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
@@ -151,41 +144,129 @@
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Grade">
                 <i class="fas fa-lg fa-check-circle"></i>
+              </a>
             </div>
           </div>
         </div>
 
-        <div class="list-group-item assignmentRow" data-id="103">
+                <div class="list-group-item assignmentRow" data-id="103">
           <div class="row">
             <div class="col-3">
               <a href="#" class="text-dark" style="text-decoration: none;">
                 Homework 3
               </a>
-              <div class="small text-success">
-                <i class="fas fa-check-circle me-1"></i>Results published
-              </div>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-info">Assignment</span>
+              <div class="small text-muted"><i class="fas fa-check-circle text-success"></i> Results published</div>
             </div>
             <div class="col-2">
               <span class="badge bg-primary">Graded</span>
             </div>
-            <div class="col-1">35</div>
-            <div class="col-2">
+            <div class="col-1">20</div>
+            <div class="col-3">
               October 15, 2024, 18:00
             </div>
-            <div class="col-2">
+            <div class="col-3">
               <a href="#" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
                 <i class="far fa-lg fa-edit me-2"></i>
               </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Grade">
+                <i class="fas fa-lg fa-check-circle me-2"></i>
+              </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Statistics">
                 <i class="fas fa-lg fa-chart-bar"></i>
               </a>
             </div>
+          </div>
+        </div>
+
+        <div class="list-group-item assignmentRow" data-id="107">
+          <div class="row">
+            <div class="col-3">
+              <a href="#" class="text-dark" style="text-decoration: none;">
+                Homework 2
+              </a>
+              <div class="small text-muted"><i class="fas fa-check-circle text-success"></i> Results published</div>
+            </div>
+            <div class="col-2">
+              <span class="badge bg-primary">Graded</span>
+            </div>
+            <div class="col-1">20</div>
+            <div class="col-3">
+              September 30, 2024, 18:00
+            </div>
+            <div class="col-3">
+              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
+                <i class="far fa-lg fa-eye me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
+                <i class="far fa-lg fa-edit me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Grade">
+                <i class="fas fa-lg fa-check-circle me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Statistics">
+                <i class="fas fa-lg fa-chart-bar"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-group-item assignmentRow" data-id="108">
+          <div class="row">
+            <div class="col-3">
+              <a href="#" class="text-dark" style="text-decoration: none;">
+                Homework 1
+              </a>
+              <div class="small text-muted"><i class="fas fa-check-circle text-success"></i> Results published</div>
+            </div>
+            <div class="col-2">
+              <span class="badge bg-primary">Graded</span>
+            </div>
+            <div class="col-1">16</div>
+            <div class="col-3">
+              September 15, 2024, 18:00
+            </div>
+            <div class="col-3">
+              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
+                <i class="far fa-lg fa-eye me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
+                <i class="far fa-lg fa-edit me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Grade">
+                <i class="fas fa-lg fa-check-circle me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Statistics">
+                <i class="fas fa-lg fa-chart-bar"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <hr class="lecture-pane-separator">
+
+      <!-- Exams Section -->
+      <h3 class="lecture-pane-header">Exams</h3>
+      
+      <div class="row mb-3">
+        <div class="col-12 text-center">
+          <a href="assessments_new.html" class="btn btn-sm btn-primary" id="newExamButton">
+            <i class="fas fa-plus me-1"></i>New Exam
+          </a>
+        </div>
+      </div>
+
+      <div class="list-group">
+        <div class="list-group-item bg-light" id="examListHeader">
+          <div class="row">
+            <div class="col-3"><h6>Title</h6></div>
+            <div class="col-2"><h6>Status</h6></div>
+            <div class="col-1"><h6>Points</h6></div>
+            <div class="col-3"><h6>Date & Time</h6></div>
+            <div class="col-3"><h6>Action</h6></div>
           </div>
         </div>
 
@@ -195,21 +276,16 @@
               <a href="assessments_show_exam.html" class="text-dark" style="text-decoration: none;">
                 Midterm Exam
               </a>
-              <div class="small text-muted">
-                <i class="fas fa-pencil-alt text-muted me-1"></i>Draft — not yet open
-              </div>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-danger">Exam</span>
+              <div class="small text-muted">Draft — not yet open</div>
             </div>
             <div class="col-2">
               <span class="badge bg-secondary">Draft</span>
             </div>
             <div class="col-1">100</div>
-            <div class="col-2">
+            <div class="col-3">
               December 10, 2024, 14:00
             </div>
-            <div class="col-2">
+            <div class="col-3">
               <a href="assessments_show_exam.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
@@ -221,127 +297,40 @@
               </a>
             </div>
           </div>
-        </div>
-
-        <div class="list-group-item assignmentRow" data-id="105">
+        </div>        <div class="list-group-item assignmentRow" data-id="105">
           <div class="row">
             <div class="col-3">
               <a href="#" class="text-dark" style="text-decoration: none;">
                 Final Exam
               </a>
-              <div class="small text-muted">
-                <i class="fas fa-calendar-check text-primary me-1"></i>42 participants
-              </div>
+              <div class="small text-muted">Draft — not yet open</div>
             </div>
             <div class="col-2">
-              <span class="badge bg-danger">Exam</span>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-warning text-dark">Closed</span>
+              <span class="badge bg-secondary">Draft</span>
             </div>
             <div class="col-1">100</div>
-            <div class="col-2">
+            <div class="col-3">
               February 15, 2025, 09:00
             </div>
-            <div class="col-2">
+            <div class="col-3">
               <a href="#" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
                 <i class="far fa-lg fa-edit me-2"></i>
               </a>
-              <a href="#" class="text-dark" style="text-decoration: none;" title="Grade">
-                <i class="fas fa-lg fa-check-circle"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="list-group-item assignmentRow" data-id="106">
-          <div class="row">
-            <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;">
-                Seminar Talk: Topology Fundamentals
-              </a>
-              <div class="small text-muted">
-                <i class="fas fa-user text-info me-1"></i>Speaker: Alice Smith
-              </div>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-success">Talk</span>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-primary">Graded</span>
-            </div>
-            <div class="col-1">—</div>
-            <div class="col-2">
-              November 20, 2024
-            </div>
-            <div class="col-2">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
-                <i class="far fa-lg fa-eye me-2"></i>
-              </a>
-              <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
-                <i class="far fa-lg fa-edit"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="list-group-item assignmentRow" data-id="107" style="opacity: 0.7;">
-          <div class="row">
-            <div class="col-3">
-              <a href="#" class="text-muted" style="text-decoration: none;">
-                Homework 4
-              </a>
-              <div class="small text-muted">Archived</div>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-info">Assignment</span>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-dark">Archived</span>
-            </div>
-            <div class="col-1">30</div>
-            <div class="col-2">
-              September 30, 2024, 18:00
-            </div>
-            <div class="col-2">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
-                <i class="far fa-lg fa-eye"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <div class="list-group-item assignmentRow" data-id="108" style="opacity: 0.7;">
-          <div class="row">
-            <div class="col-3">
-              <a href="#" class="text-muted" style="text-decoration: none;">
-                Homework 5
-              </a>
-              <div class="small text-muted">Archived</div>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-info">Assignment</span>
-            </div>
-            <div class="col-2">
-              <span class="badge bg-dark">Archived</span>
-            </div>
-            <div class="col-1">25</div>
-            <div class="col-2">
-              September 15, 2024, 18:00
-            </div>
-            <div class="col-2">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
-                <i class="far fa-lg fa-eye"></i>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Delete">
+                <i class="far fa-lg fa-trash-alt"></i>
               </a>
             </div>
           </div>
         </div>
       </div>
+          
+
 
       <hr class="lecture-pane-separator">
+
 
       <!-- Legacy Assignments Section -->
       <h3 class="lecture-pane-header">Assignments (Legacy)</h3>

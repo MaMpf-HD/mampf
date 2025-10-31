@@ -343,6 +343,20 @@ Points are allowed to exceed task maximum to support extra credit and bonus poin
 
 - **Audit trail:** Months later, a student appeals their grade. The teacher queries `task_point.submission` to retrieve the original PDF that was graded, verifying the points awarded match the work submitted.
 
+### Re-grading and Corrections
+
+The grading interface remains available even after an assessment transitions to `graded` status. This supports corrections for:
+- Discovered grading mistakes
+- Student complaints requiring point adjustments
+- Late bonus point awards
+
+When accessing grading for a `graded` or published assessment, the UI should display a warning:
+
+> **Results already published**  
+> Changes will be visible to students immediately. Continue?
+
+This ensures teachers are aware that modifications affect published results. The `results_published` flag controls visibility, not editability—`TaskPoint` records remain mutable across all assessment states, and `recompute_points_total!` is idempotent.
+
 ---
 
 ## Assessment::Assessable (Concern)
