@@ -264,7 +264,7 @@ Rosters — Step 5: Maintenance (UI & Operations)
 	listing users unassigned in a selected completed campaign. Search and
 	assign-to-group action. Add a separate "Add student" manual action
 	(by email/id). Panel is present for tutorials/seminars; not shown for
-	exams. No swap action (explicitly out-of-scope).
+	exams.
 - Refs: Rosters — [Managing unassigned candidates](03-rosters.md#managing-unassigned-candidates),
 	Views — [Rosters](12-views.md#rosters-teachereditor)
 - Acceptance: Selecting a completed campaign surfaces unassigned users;

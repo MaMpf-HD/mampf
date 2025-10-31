@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midterm Exam — Linear Algebra I</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">MaMpf</a>
+      <span class="navbar-text text-white-50">Teacher/Editor View</span>
+    </div>
+  </nav>
+
+  <div class="container mt-4 mb-5">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="#">Linear Algebra I</a></li>
+        <li class="breadcrumb-item"><a href="assessments_index.html">Assessments</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Midterm Exam</li>
+      </ol>
+    </nav>
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-start mb-4">
+      <div>
+        <h1 class="h2 mb-1">Midterm Exam</h1>
+        <p class="text-muted mb-2">Linear Algebra I — WS 2024/25</p>
+        <div>
+          <span class="badge bg-danger me-2">Exam</span>
+          <span class="badge bg-secondary">Draft</span>
+        </div>
+      </div>
+      <div class="text-end">
+        <div class="btn-group mb-2" role="group">
+          <a href="#" class="btn btn-outline-secondary">
+            <i class="bi bi-pencil me-1"></i>Edit
+          </a>
+          <button type="button" class="btn btn-outline-success">
+            <i class="bi bi-unlock me-1"></i>Open for Participants
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alert: Draft Status -->
+    <div class="alert alert-secondary d-flex align-items-center mb-4">
+      <i class="bi bi-pencil-square me-2"></i>
+      <div>
+        <strong>Draft Status.</strong> This assessment is not yet visible to students. 
+        Configure all settings and tasks before opening it for participants.
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" 
+                data-bs-target="#overview" type="button" role="tab">
+          Overview
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" 
+                data-bs-target="#settings" type="button" role="tab">
+          Settings
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" 
+                data-bs-target="#tasks" type="button" role="tab">
+          Tasks <span class="badge bg-secondary ms-1">5</span>
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="exam-logistics-tab" data-bs-toggle="tab" 
+                data-bs-target="#exam-logistics" type="button" role="tab">
+          Exam Logistics
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="participants-tab" data-bs-toggle="tab" 
+                data-bs-target="#participants" type="button" role="tab">
+          Participants <span class="badge bg-secondary ms-1">—</span>
+        </button>
+      </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="assessmentTabsContent">
+      <!-- Overview Tab -->
+      <div class="tab-pane fade show active" id="overview" role="tabpanel">
+        <div class="row">
+          <!-- Left Column: Key Info -->
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Assessment Details</h5>
+              </div>
+              <div class="card-body">
+                <table class="table table-sm mb-0">
+                  <tbody>
+                    <tr>
+                      <th style="width: 40%">Type:</th>
+                      <td>Exam (Midterm)</td>
+                    </tr>
+                    <tr>
+                      <th>Mode:</th>
+                      <td>
+                        <span class="badge bg-info">Pointbook</span>
+                        Per-task point tracking
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Total Points:</th>
+                      <td>100 points</td>
+                    </tr>
+                    <tr>
+                      <th>Requires Submission:</th>
+                      <td><i class="bi bi-x-circle-fill text-danger"></i> No (in-person grading)</td>
+                    </tr>
+                    <tr>
+                      <th>Status:</th>
+                      <td><span class="badge bg-secondary">Draft</span></td>
+                    </tr>
+                    <tr>
+                      <th>Scheduled:</th>
+                      <td>
+                        <strong>Dec 10, 2024 09:00 - 11:00</strong>
+                        <div class="text-muted small">Duration: 2 hours</div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th>Location:</th>
+                      <td>Main Hall, Building A</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Tasks Summary</h5>
+              </div>
+              <div class="card-body">
+                <table class="table table-sm mb-0">
+                  <thead>
+                    <tr>
+                      <th>Task</th>
+                      <th class="text-end">Max Points</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Question 1</td>
+                      <td class="text-end">15</td>
+                    </tr>
+                    <tr>
+                      <td>Question 2</td>
+                      <td class="text-end">20</td>
+                    </tr>
+                    <tr>
+                      <td>Question 3</td>
+                      <td class="text-end">25</td>
+                    </tr>
+                    <tr>
+                      <td>Question 4</td>
+                      <td class="text-end">20</td>
+                    </tr>
+                    <tr>
+                      <td>Question 5</td>
+                      <td class="text-end">20</td>
+                    </tr>
+                    <tr class="table-light">
+                      <th>Total:</th>
+                      <th class="text-end">100</th>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Status & Actions -->
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Next Steps</h5>
+              </div>
+              <div class="card-body">
+                <div class="d-flex align-items-start mb-3">
+                  <div class="flex-shrink-0">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 1.5rem;"></i>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">Tasks configured</h6>
+                    <p class="mb-0 small text-muted">5 questions defined with point values</p>
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-start mb-3">
+                  <div class="flex-shrink-0">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 1.5rem;"></i>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">Exam logistics ready</h6>
+                    <p class="mb-0 small text-muted">Date, time, and location set</p>
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-start mb-3">
+                  <div class="flex-shrink-0">
+                    <i class="bi bi-circle text-secondary" style="font-size: 1.5rem;"></i>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">Pending: Open for participants</h6>
+                    <p class="mb-0 small text-muted">Make visible to registered students</p>
+                    <button type="button" class="btn btn-sm btn-success mt-2">
+                      <i class="bi bi-unlock me-1"></i>Open Assessment
+                    </button>
+                  </div>
+                </div>
+
+                <div class="d-flex align-items-start">
+                  <div class="flex-shrink-0">
+                    <i class="bi bi-circle text-secondary" style="font-size: 1.5rem;"></i>
+                  </div>
+                  <div class="flex-grow-1 ms-3">
+                    <h6 class="mb-1">Pending: Grade exam papers</h6>
+                    <p class="mb-0 small text-muted">After exam date (Dec 10)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Linked Exam Registration</h5>
+              </div>
+              <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                  <span>Campaign:</span>
+                  <a href="#" class="btn btn-sm btn-outline-primary">View Campaign</a>
+                </div>
+                <div class="text-muted small">
+                  Students must register for the exam through the campaign system before taking this assessment.
+                </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-1">
+                  <span>Registered Students:</span>
+                  <strong>— (not yet open)</strong>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Available Seats:</span>
+                  <strong>150</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="tab-pane fade" id="settings" role="tabpanel">
+        <div class="card">
+          <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Assessment Settings</h5>
+            <button type="button" class="btn btn-sm btn-primary">
+              <i class="bi bi-pencil me-1"></i>Edit Settings
+            </button>
+          </div>
+          <div class="card-body">
+            <form>
+              <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" class="form-control" value="Midterm Exam">
+              </div>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Type</label>
+                  <input type="text" class="form-control" value="Exam" readonly>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Mode</label>
+                  <input type="text" class="form-control" value="Pointbook (Per-task tracking)" readonly>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="requiresSubmissionSetting">
+                  <label class="form-check-label" for="requiresSubmissionSetting">
+                    Requires file submission
+                  </label>
+                  <div class="form-text">
+                    Most in-person exams don't require digital submissions. Enable if students submit scanned work.
+                  </div>
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Total Maximum Points</label>
+                <input type="number" class="form-control" value="100">
+                <div class="form-text">Calculated from sum of task max_points</div>
+              </div>
+
+              <hr>
+
+              <h6 class="mb-3">Schedule & Location</h6>
+
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label class="form-label">Exam Date</label>
+                  <input type="date" class="form-control" value="2024-12-10">
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label class="form-label">Start Time</label>
+                  <input type="time" class="form-control" value="09:00">
+                </div>
+                <div class="col-md-3 mb-3">
+                  <label class="form-label">End Time</label>
+                  <input type="time" class="form-control" value="11:00">
+                </div>
+              </div>
+
+              <div class="mb-3">
+                <label class="form-label">Location</label>
+                <input type="text" class="form-control" value="Main Hall, Building A">
+                <div class="form-text">Physical location where the exam takes place</div>
+              </div>
+
+              <div class="alert alert-info d-flex align-items-start">
+                <i class="bi bi-info-circle me-2 mt-1"></i>
+                <div>
+                  <strong>Exam Registration:</strong> Students must register through a separate exam registration campaign. 
+                  Create the registration campaign from the Exams section.
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tasks Tab -->
+      <div class="tab-pane fade" id="tasks" role="tabpanel">
+        <div class="card">
+          <div class="card-header bg-light d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Exam Questions</h5>
+            <button type="button" class="btn btn-sm btn-primary">
+              <i class="bi bi-plus-lg me-1"></i>Add Question
+            </button>
+          </div>
+          <div class="card-body p-0">
+            <div class="table-responsive">
+              <table class="table table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th style="width: 5%">#</th>
+                    <th style="width: 45%">Title</th>
+                    <th style="width: 15%">Max Points</th>
+                    <th style="width: 25%">Description</th>
+                    <th style="width: 10%" class="text-end">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>
+                      <strong>Question 1</strong>
+                      <div class="small text-muted">Definitions and basic concepts</div>
+                    </td>
+                    <td>15</td>
+                    <td>
+                      <span class="badge bg-secondary">Has description</span>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" title="Edit">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Up" disabled>
+                          <i class="bi bi-arrow-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Down">
+                          <i class="bi bi-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>
+                      <strong>Question 2</strong>
+                      <div class="small text-muted">Vector spaces and subspaces</div>
+                    </td>
+                    <td>20</td>
+                    <td>
+                      <span class="badge bg-secondary">Has description</span>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" title="Edit">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Up">
+                          <i class="bi bi-arrow-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Down">
+                          <i class="bi bi-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>
+                      <strong>Question 3</strong>
+                      <div class="small text-muted">Linear transformations</div>
+                    </td>
+                    <td>25</td>
+                    <td>
+                      <span class="badge bg-secondary">Has description</span>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" title="Edit">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Up">
+                          <i class="bi bi-arrow-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Down">
+                          <i class="bi bi-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>
+                      <strong>Question 4</strong>
+                      <div class="small text-muted">Matrix computations</div>
+                    </td>
+                    <td>20</td>
+                    <td>
+                      <span class="text-muted">—</span>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" title="Edit">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Up">
+                          <i class="bi bi-arrow-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Down">
+                          <i class="bi bi-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>
+                      <strong>Question 5</strong>
+                      <div class="small text-muted">Eigenvalues and diagonalization</div>
+                    </td>
+                    <td>20</td>
+                    <td>
+                      <span class="text-muted">—</span>
+                    </td>
+                    <td class="text-end">
+                      <div class="btn-group btn-group-sm">
+                        <button type="button" class="btn btn-outline-secondary" title="Edit">
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Up">
+                          <i class="bi bi-arrow-up"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" title="Move Down" disabled>
+                          <i class="bi bi-arrow-down"></i>
+                        </button>
+                        <button type="button" class="btn btn-outline-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+                <tfoot class="table-light">
+                  <tr>
+                    <th colspan="2" class="text-end">Total:</th>
+                    <th>100</th>
+                    <th colspan="2"></th>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Exam Logistics Tab -->
+      <div class="tab-pane fade" id="exam-logistics" role="tabpanel">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Schedule</h5>
+              </div>
+              <div class="card-body">
+                <table class="table table-sm mb-0">
+                  <tbody>
+                    <tr>
+                      <th style="width: 30%">Date:</th>
+                      <td>Tuesday, December 10, 2024</td>
+                    </tr>
+                    <tr>
+                      <th>Start Time:</th>
+                      <td>09:00</td>
+                    </tr>
+                    <tr>
+                      <th>End Time:</th>
+                      <td>11:00</td>
+                    </tr>
+                    <tr>
+                      <th>Duration:</th>
+                      <td>2 hours</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Location</h5>
+              </div>
+              <div class="card-body">
+                <h6 class="mb-2">Main Hall, Building A</h6>
+                <div class="text-muted small mb-3">
+                  <i class="bi bi-geo-alt me-1"></i>
+                  University Campus, Mathematics Department
+                </div>
+                <hr>
+                <table class="table table-sm mb-0">
+                  <tbody>
+                    <tr>
+                      <th style="width: 40%">Capacity:</th>
+                      <td>150 seats</td>
+                    </tr>
+                    <tr>
+                      <th>Facilities:</th>
+                      <td>
+                        <span class="badge bg-secondary me-1">Projector</span>
+                        <span class="badge bg-secondary me-1">Whiteboard</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="card mb-3">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Exam Materials</h5>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-info mb-3">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Upload exam materials that will be distributed to participants
+                </div>
+                <div class="list-group">
+                  <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                      <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                      <span>exam_paper.pdf</span>
+                      <div class="small text-muted">Uploaded Nov 15, 2024</div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm mt-3">
+                  <i class="bi bi-upload me-1"></i>Upload File
+                </button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header bg-light">
+                <h5 class="mb-0">Proctors & Staff</h5>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-warning mb-3">
+                  <i class="bi bi-exclamation-triangle me-1"></i>
+                  Assign proctors who will supervise the exam
+                </div>
+                <div class="text-muted text-center py-3">
+                  <i class="bi bi-person-plus" style="font-size: 2rem;"></i>
+                  <div class="mt-2">No proctors assigned yet</div>
+                </div>
+                <button type="button" class="btn btn-outline-primary btn-sm">
+                  <i class="bi bi-person-plus me-1"></i>Assign Proctor
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Participants Tab -->
+      <div class="tab-pane fade" id="participants" role="tabpanel">
+        <div class="card">
+          <div class="card-header bg-light">
+            <h5 class="mb-0">Registered Participants</h5>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-secondary d-flex align-items-center">
+              <i class="bi bi-info-circle me-2"></i>
+              <div>
+                <strong>No participants yet.</strong> This exam is in draft status. 
+                Open the assessment and participants will be listed here after they register through the exam campaign.
+              </div>
+            </div>
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-people" style="font-size: 3rem;"></i>
+              <div class="mt-3">Participant list will appear here once the exam is open and students have registered</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

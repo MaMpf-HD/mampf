@@ -298,7 +298,10 @@ flowchart LR
 
 | View        | Key elements                                        | Mockup |
 |-------------|------------------------------------------------------|--------|
-| Setup (CRUD)| Title, points/submission flags; tasks table          | TODO   |
+| Index       | List of assessments with status/type badges; filter tabs; progress indicators; action buttons | [Assessments Index](../mockups/assessments_index.html) |
+| Create      | Form with dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Create Assessment](../mockups/assessments_new.html) |
+| Show (Assignment) | Tabbed interface (Overview/Settings/Tasks/Statistics); submission and grading progress; task breakdown | [Show Assignment](../mockups/assessments_show_assignment.html) |
+| Show (Exam) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); schedule and location; exam materials | [Show Exam](../mockups/assessments_show_exam.html) |
 | Grading     | Sticky header table; per-task columns; bulk actions  | TODO   |
 | Results     | Compact totals; collapsible per-task breakdown       | TODO   |
 
