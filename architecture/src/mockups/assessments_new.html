@@ -5,8 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Create Assessment — Linear Algebra I</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .small-width {
+      max-width: 1200px;
+    }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 6em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    .lecture-pane-separator {
+      border-top: 3px dotted #555555;
+      margin-top: 2em;
+      margin-bottom: 2em;
+    }
+    h3.lecture-pane-header {
+      color: #838383;
+      font-size: 1.3em;
+    }
     .form-check-input:checked ~ .mode-description {
       font-weight: 500;
     }
@@ -16,37 +39,46 @@
   </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">MaMpf</a>
-      <span class="navbar-text text-white-50">Teacher/Editor View</span>
+  <div class="container small-width mt-4">
+    <!-- Lecture Header -->
+    <div class="mb-3">
+      <h1 class="h3 mb-1">Linear Algebra I</h1>
+      <p class="text-muted mb-0">WS 2024/25</p>
     </div>
-  </nav>
 
-  <div class="container mt-4 mb-5">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
-        <li class="breadcrumb-item"><a href="#">Linear Algebra I</a></li>
-        <li class="breadcrumb-item"><a href="assessments_index.html">Assessments</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Create</li>
-      </ol>
-    </nav>
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Content</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Preferences</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">People & Tutorials</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Orga</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Communication</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="#">Assessments</a>
+      </li>
+    </ul>
 
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1 class="h2 mb-1">Create Assessment</h1>
-        <p class="text-muted mb-0">Linear Algebra I — WS 2024/25</p>
+    <!-- Create Assessment Form in lecture-pane -->
+    <div class="lecture-pane">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="lecture-pane-header mb-0">Create Assessment</h3>
+        <a href="assessments_index.html" class="btn btn-outline-secondary btn-sm">
+          <i class="fas fa-times me-2"></i>Cancel
+        </a>
       </div>
-      <a href="assessments_index.html" class="btn btn-outline-secondary">
-        <i class="bi bi-x-lg me-2"></i>Cancel
-      </a>
-    </div>
 
-    <!-- Form -->
-    <form>
+      <!-- Form -->
+      <form>
       <div class="card">
         <div class="card-header bg-light">
           <h5 class="mb-0">Basic Information</h5>
@@ -64,79 +96,76 @@
             </div>
           </div>
 
-          <!-- Assessable Type & Assessable ID -->
-          <div class="row">
-            <div class="col-md-6 mb-3">
-              <label for="assessableType" class="form-label">
-                Type <span class="text-danger">*</span>
-              </label>
-              <select class="form-select" id="assessableType" name="assessable_type" required>
-                <option value="">Select type...</option>
-                <option value="Assignment" selected>Assignment (Homework)</option>
-                <option value="Exam">Exam</option>
-                <option value="Talk">Talk (Seminar Presentation)</option>
-              </select>
-              <div class="form-text">
-                What kind of work is being assessed?
-              </div>
-            </div>
-
-            <div class="col-md-6 mb-3">
-              <label for="assessableId" class="form-label">
-                Link to Existing Record
-              </label>
-              <select class="form-select" id="assessableId" name="assessable_id">
-                <option value="">Create standalone assessment</option>
-                <option value="1">Assignment: Homework 1</option>
-                <option value="2">Assignment: Homework 2</option>
-                <option value="3">Exam: Midterm</option>
-              </select>
-              <div class="form-text">
-                Optional: Link to an existing assignment/exam/talk record.
-              </div>
-            </div>
-          </div>
-
-          <!-- Assessment Mode (Pointbook vs Gradebook) -->
+          <!-- Assessable Type -->
           <div class="mb-3">
-            <label class="form-label d-block mb-2">
-              Assessment Mode <span class="text-danger">*</span>
+            <label for="assessableType" class="form-label">
+              Type <span class="text-danger">*</span>
             </label>
-            
-            <div class="card mb-2">
-              <div class="card-body py-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="requires_points" 
-                         id="pointbookMode" value="true" checked>
-                  <label class="form-check-label" for="pointbookMode">
-                    <strong>Pointbook Mode</strong> — Track points per task
-                    <div class="mode-description text-muted small mt-1">
-                      Use this for homework assignments and exams where you want to grade individual problems/questions 
-                      and aggregate points automatically. You'll define tasks below.
+            <select class="form-select" id="assessableType" name="assessable_type" required>
+              <option value="">Select type...</option>
+              <option value="Assignment" selected>Assignment (Homework)</option>
+              <option value="Exam">Exam</option>
+              <option value="Talk">Talk (Seminar Presentation)</option>
+            </select>
+            <div class="form-text">
+              The type determines available grading modes.
+            </div>
+          </div>
+
+          <!-- Exam Mode Selection (only visible for Exam type) -->
+          <div class="mb-3" id="examModeSelection" style="display: none;">
+            <label class="form-label">
+              Grading Mode <span class="text-danger">*</span>
+            </label>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="exam_mode" 
+                             id="examWithPointsMode" value="with_points" checked>
+                      <label class="form-check-label" for="examWithPointsMode">
+                        <strong>With Point Breakdown</strong>
+                        <div class="text-muted small mt-1">
+                          Grade per question/problem, compute final grade from points
+                        </div>
+                      </label>
                     </div>
-                  </label>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="card">
-              <div class="card-body py-3">
-                <div class="form-check">
-                  <input class="form-check-input" type="radio" name="requires_points" 
-                         id="gradebookMode" value="false">
-                  <label class="form-check-label" for="gradebookMode">
-                    <strong>Gradebook Mode</strong> — Record final grade only
-                    <div class="mode-description text-muted small mt-1">
-                      Use this for seminar talks or other work where you assign a single final grade 
-                      without breaking it down into sub-components.
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="exam_mode" 
+                             id="examWithoutPointsMode" value="without_points">
+                      <label class="form-check-label" for="examWithoutPointsMode">
+                        <strong>Final Grade Only</strong>
+                        <div class="text-muted small mt-1">
+                          Record final grade directly, no per-question breakdown
+                        </div>
+                      </label>
                     </div>
-                  </label>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Requires Submission -->
+          <!-- Grading Mode Info (Read-only, derived from type and exam mode) -->
+          <div class="alert alert-info d-flex align-items-start mb-3" id="gradingModeInfo">
+            <i class="fas fa-info-circle me-2 mt-1"></i>
+            <div>
+              <strong>Grading Mode: Pointbook</strong>
+              <div class="small mt-1">
+                This assessment will track points per task. You can define problems/questions below 
+                and grade each one individually. Points are automatically aggregated.
+              </div>
+            </div>
+          </div>
+
+          <!-- Requires Submission (Auto-set based on type, but can be toggled for flexibility) -->
           <div class="mb-3">
             <div class="form-check form-switch">
               <input class="form-check-input" type="checkbox" id="requiresSubmission" 
@@ -144,8 +173,7 @@
               <label class="form-check-label" for="requiresSubmission">
                 <strong>Requires file submission</strong>
                 <div class="text-muted small mt-1">
-                  Students must upload files (PDFs, code, etc.) for this assessment. 
-                  Uncheck for in-person exams or oral presentations.
+                  Students must upload files (PDFs, code, etc.) for this assessment.
                 </div>
               </label>
             </div>
@@ -190,7 +218,7 @@
         </div>
         <div class="card-body">
           <div class="alert alert-info d-flex align-items-start mb-3">
-            <i class="bi bi-info-circle me-2 mt-1"></i>
+            <i class="fas fa-info-circle me-2 mt-1"></i>
             <div>
               <strong>Note:</strong> You can configure the maximum total points here, or leave it blank 
               to auto-calculate from the sum of task max_points. Tasks can be added after creating the assessment.
@@ -213,7 +241,7 @@
             <div class="d-flex justify-content-between align-items-center mb-2">
               <label class="form-label mb-0">Tasks (Problems/Questions)</label>
               <button type="button" class="btn btn-sm btn-outline-primary" id="addTaskBtn">
-                <i class="bi bi-plus-lg me-1"></i>Add Task
+                <i class="fas fa-plus me-1"></i>Add Task
               </button>
             </div>
             <div class="form-text mb-3">
@@ -223,7 +251,7 @@
             <!-- Task Entry Area (Initially Empty) -->
             <div id="tasksContainer">
               <div class="alert alert-light text-center py-4">
-                <i class="bi bi-list-task text-muted" style="font-size: 2rem;"></i>
+                <i class="fas fa-tasks text-muted" style="font-size: 2rem;"></i>
                 <div class="text-muted mt-2">No tasks added yet. Click "Add Task" to define problems/questions.</div>
               </div>
             </div>
@@ -234,42 +262,96 @@
       <!-- Action Buttons -->
       <div class="d-flex justify-content-between mt-4">
         <a href="assessments_index.html" class="btn btn-outline-secondary">
-          <i class="bi bi-x-lg me-2"></i>Cancel
+          <i class="fas fa-times me-2"></i>Cancel
         </a>
         <div>
           <button type="submit" name="status" value="draft" class="btn btn-secondary me-2">
-            <i class="bi bi-floppy me-2"></i>Save as Draft
+            <i class="fas fa-save me-2"></i>Save as Draft
           </button>
           <button type="submit" name="status" value="open" class="btn btn-primary">
-            <i class="bi bi-check-lg me-2"></i>Create & Open for Students
+            <i class="fas fa-check me-2"></i>Create & Open for Students
           </button>
         </div>
       </div>
     </form>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Toggle task fields based on assessment mode
-    const pointbookRadio = document.getElementById('pointbookMode');
-    const gradebookRadio = document.getElementById('gradebookMode');
+    // Update grading mode and submission checkbox based on assessment type and exam mode
+    const typeSelect = document.getElementById('assessableType');
+    const examModeSelection = document.getElementById('examModeSelection');
+    const examWithPointsRadio = document.getElementById('examWithPointsMode');
+    const examWithoutPointsRadio = document.getElementById('examWithoutPointsMode');
+    const gradingModeInfo = document.getElementById('gradingModeInfo');
+    const requiresSubmissionCheckbox = document.getElementById('requiresSubmission');
     const taskFields = document.getElementById('taskFields');
 
-    function toggleTaskFields() {
-      if (pointbookRadio.checked) {
-        taskFields.style.display = 'block';
+    const typeConfig = {
+      'Assignment': {
+        mode: 'Pointbook',
+        description: 'This assessment will track points per task. You can define problems/questions below and grade each one individually. Points are automatically aggregated.',
+        requiresSubmission: true,
+        showTasks: true
+      },
+      'Exam': {
+        with_points: {
+          mode: 'Pointbook + Gradebook',
+          description: 'This assessment will track points per question/problem AND record a final grade. Define questions below for per-question grading, then assign final grades based on the grade scheme.',
+          requiresSubmission: false,
+          showTasks: true
+        },
+        without_points: {
+          mode: 'Gradebook',
+          description: 'This assessment will record only a final grade after the examination. No per-question breakdown needed.',
+          requiresSubmission: false,
+          showTasks: false
+        }
+      },
+      'Talk': {
+        mode: 'Gradebook',
+        description: 'This assessment will record only a final grade without task breakdown. No file submission required for oral presentations.',
+        requiresSubmission: false,
+        showTasks: false
+      }
+    };
+
+    function updateGradingMode() {
+      const selectedType = typeSelect.value;
+      let config;
+      
+      if (selectedType === 'Exam') {
+        examModeSelection.style.display = 'block';
+        const examMode = examWithPointsRadio.checked ? 'with_points' : 'without_points';
+        config = typeConfig.Exam[examMode];
       } else {
-        taskFields.style.display = 'none';
+        examModeSelection.style.display = 'none';
+        config = typeConfig[selectedType];
+      }
+      
+      if (config) {
+        gradingModeInfo.innerHTML = `
+          <i class="fas fa-info-circle me-2 mt-1"></i>
+          <div>
+            <strong>Grading Mode: ${config.mode}</strong>
+            <div class="small mt-1">${config.description}</div>
+          </div>
+        `;
+        
+        requiresSubmissionCheckbox.checked = config.requiresSubmission;
+        taskFields.style.display = config.showTasks ? 'block' : 'none';
       }
     }
 
-    pointbookRadio.addEventListener('change', toggleTaskFields);
-    gradebookRadio.addEventListener('change', toggleTaskFields);
-
+    typeSelect.addEventListener('change', updateGradingMode);
+    examWithPointsRadio.addEventListener('change', updateGradingMode);
+    examWithoutPointsRadio.addEventListener('change', updateGradingMode);
+    
     // Initialize on page load
-    toggleTaskFields();
+    updateGradingMode();
 
-    // Add Task functionality (simple demo)
+    // Add Task functionality
     let taskCount = 0;
     const addTaskBtn = document.getElementById('addTaskBtn');
     const tasksContainer = document.getElementById('tasksContainer');
@@ -287,7 +369,7 @@
             <div class="d-flex justify-content-between align-items-start mb-2">
               <h6 class="mb-0">Task ${taskCount}</h6>
               <button type="button" class="btn btn-sm btn-outline-danger remove-task-btn">
-                <i class="bi bi-trash"></i>
+                <i class="fas fa-trash"></i>
               </button>
             </div>
             <div class="row">
@@ -322,7 +404,7 @@
         if (taskCount === 0) {
           tasksContainer.innerHTML = `
             <div class="alert alert-light text-center py-4">
-              <i class="bi bi-list-task text-muted" style="font-size: 2rem;"></i>
+              <i class="fas fa-tasks text-muted" style="font-size: 2rem;"></i>
               <div class="text-muted mt-2">No tasks added yet. Click "Add Task" to define problems/questions.</div>
             </div>
           `;

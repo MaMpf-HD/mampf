@@ -299,9 +299,13 @@ flowchart LR
 | View        | Key elements                                        | Mockup |
 |-------------|------------------------------------------------------|--------|
 | Index       | List of assessments with status/type badges; filter tabs; progress indicators; action buttons | [Assessments Index](../mockups/assessments_index.html) |
-| Create      | Form with dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Create Assessment](../mockups/assessments_new.html) |
-| Show (Assignment) | Tabbed interface (Overview/Settings/Tasks/Statistics); submission and grading progress; task breakdown | [Show Assignment](../mockups/assessments_show_assignment.html) |
-| Show (Exam) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); schedule and location; exam materials | [Show Exam](../mockups/assessments_show_exam.html) |
+| New         | Form with dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [New Assessment](../mockups/assessments_new.html) |
+| Show (Assignment - Open) | Tabbed interface (Overview/Settings/Tasks/Participants); submission progress tracking; before grading starts | [Show Assignment (Open)](../mockups/assessments_show_assignment_open.html) |
+| Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Participants); submission and grading progress; task breakdown | [Show Assignment (Closed)](../mockups/assessments_show_assignment_closed.html) |
+| Show (Exam - Draft) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); configuration and setup phase | [Show Exam (Draft)](../mockups/assessments_show_exam_draft.html) |
+| Show (Exam - Closed) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); grading in progress; tutor assignment tracking | [Show Exam (Closed)](../mockups/assessments_show_exam_closed.html) |
+| Show (Exam - Graded) | Tabbed interface with Statistics tab; grade distribution; results publication status; average scores per question | [Show Exam (Graded)](../mockups/assessments_show_exam_graded.html) |
+| Show (Talk) | Tabbed interface (Overview/Settings/Participants); final grade display; speaker details; feedback notes | [Show Talk](../mockups/assessments_show_talk.html) |
 | Grading     | Sticky header table; per-task columns; bulk actions  | TODO   |
 | Results     | Compact totals; collapsible per-task breakdown       | TODO   |
 

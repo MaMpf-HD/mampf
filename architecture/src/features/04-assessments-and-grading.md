@@ -641,31 +641,57 @@ end
 ```
 
 ### Exam
-**_A Pointable and Gradable Target_**
+**_A Flexible Gradable Target_**
 
 ```admonish info "See Dedicated Chapter"
 The `Exam` model is fully documented in the [Exam Model](05a-exam-model.md) chapter, including registration, grading, and multiple choice exam support. This section provides a brief overview of its assessment integration.
 ```
 
 #### Assessment Integration
-The `Exam` model includes both `Assessment::Pointable` and `Assessment::Gradable` concerns for comprehensive exam grading.
+The `Exam` model includes both `Assessment::Pointable` and `Assessment::Gradable` concerns for flexible exam grading. The grading mode is configurable per exam instance.
 
 | Concern/Method | Implementation Detail |
 |---|---|
-| `Assessment::Pointable` | Tracks points per exam question/problem |
-| `Assessment::Gradable` | Records final grade for transcripts |
+| `Assessment::Pointable` | **Optional:** Tracks points per exam question/problem when needed |
+| `Assessment::Gradable` | **Always included:** Records final grade for transcripts |
 | `Assessment::Assessable` | Base concern linking exam to Assessment::Assessment |
 | Roster integration | Students come from exam registration via `Registration::Registerable` → `Roster::Rosterable` |
-| Submission requirement | `requires_submission: false` since exams are graded in person (or scanned separately) |
+| Submission requirement | `requires_submission: false` since exams are typically graded in person (or scanned separately) |
+
+#### Grading Modes
+
+**With Pointbook (Pointbook + Gradebook):**
+- Includes both `Assessment::Pointable` and `Assessment::Gradable`
+- Tutors grade per-question/problem points via tasks
+- System computes `points_total` for each student
+- Staff applies grade scheme to convert points to final grades
+- **Use cases:** Written exams with detailed point breakdown, oral exams with rubric scoring
+
+**Without Pointbook (Gradebook only):**
+- Includes only `Assessment::Gradable`
+- Examiner records final grade directly
+- No per-question breakdown needed
+- No points tracking, just final grade (e.g., "1.0", "2.3")
+- **Use cases:** Holistic oral exams, pass/fail written exams, interviews
 
 #### Grading Workflow
+
+**With per-question points:**
 1. Students register for exam via registration campaign
 2. Campaign materializes → exam roster is populated
-3. After exam is administered, staff creates `Assessment::Assessment` for the exam
+3. After exam is administered, staff creates `Assessment::Assessment` with `requires_points: true`
 4. `seed_participations_from_roster!` creates participation records
 5. Tutors grade per-question points via tasks
 6. System computes `points_total` for each student
 7. Staff applies grade scheme to convert points to final grades
+
+**Without per-question points:**
+1. Students register for exam via registration campaign
+2. Campaign materializes → exam roster is populated
+3. Staff creates `Assessment::Assessment` with `requires_points: false`
+4. `seed_participations_from_roster!` creates participation records
+5. Examiner records final grade directly after examination
+6. No point calculation needed
 
 For multiple choice exam support and legal compliance, see [Exam Model - Multiple Choice Exams](05a-exam-model.md#multiple-choice-exams).
 
