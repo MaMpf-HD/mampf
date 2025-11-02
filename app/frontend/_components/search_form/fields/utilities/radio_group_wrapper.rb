@@ -54,7 +54,7 @@ module SearchForm
         # rendered radio buttons. Both `content_tag` and `auto_render_collection`
         # return HTML-safe strings. The security of this method therefore relies
         # on the security of the individual radio button components being rendered.
-        def render(view_context = nil, &block)
+        def render(view_context = nil, &)
           context = view_context || self
           context.content_tag(:fieldset, fieldset_options) do
             content = []
@@ -62,8 +62,7 @@ module SearchForm
               content << context.content_tag(:legend, resolved_legend,
                                              class: @legend_class)
             end
-            content << auto_render_collection(context, @radio_buttons, wrapper_class: "mt-2",
-                                              &block)
+            content << auto_render_collection(context, @radio_buttons, wrapper_class: "mt-2", &)
             context.safe_join(content)
           end
         end
