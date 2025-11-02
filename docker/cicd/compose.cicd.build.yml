@@ -3,7 +3,7 @@ services:
   app: !reset null
   nginx: !reset null
 
-  app-for-cypress:
+  app-test:
     build:
       context: ../..
       dockerfile: docker/development/Dockerfile

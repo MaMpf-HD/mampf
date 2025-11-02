@@ -66,10 +66,10 @@ jobs:
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./compose.yml -f ../cicd/compose.cicd.build.yml
-          --set app-for-cypress.tags=ghcr.io/mampf-hd/mampftest:image
-          --set app-for-cypress.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
-          --set app-for-cypress.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
-          --set app-for-cypress.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
+          --set app-test.tags=ghcr.io/mampf-hd/mampftest:image
+          --set app-test.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
+          --set app-test.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
+          --set app-test.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
   unit-tests:
     name: Unit tests
@@ -99,7 +99,7 @@ jobs:
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run --entrypoint="" app-for-cypress sh -c
+          run --entrypoint="" app-test sh -c
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov

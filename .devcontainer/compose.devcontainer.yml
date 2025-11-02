@@ -12,7 +12,7 @@ services:
       # https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
       - mampf-command-history:/workspaces/commandhistory/
 
-  app-for-cypress:
+  app-test:
     command: "RUBY_DEBUG_ENABLE=false ./docker/development/init-and-run.sh | tee /proc/1/fd/1"
 
   xpra:

@@ -34,7 +34,7 @@ services:
       # see nginx.tmpl, which is serving mampf on port 30
       de.uni-heidelberg.mathi.mampf.container-type: worker
 
-  app-for-cypress:
+  app-test:
     <<: *app-base
     environment:
       - RAILS_ENV=test
