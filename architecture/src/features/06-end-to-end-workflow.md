@@ -97,7 +97,7 @@ Apply confirmed registrations to domain model rosters
 ## Phase 4: Post-Allocation Roster Maintenance
 
 ```admonish success "Goal"
-Handle late registrations, drops, and swaps
+Handle late registrations, drops, and moves
 ```
 
 **Staff Operations via `Roster::MaintenanceService`:**

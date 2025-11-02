@@ -9,6 +9,52 @@ A "roster" is a list of names of people belonging to a particular group, team, o
 
 ## Problem Overview
 - After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
+
+```admonish tip "Related UI mockups"
+- Roster Overview (tutorials): [Overview – tutorials](../mockups/roster_overview.html)
+- Roster Overview (seminar): [Overview – seminar](../mockups/roster_overview_seminar.html)
+- Roster Overview (exam): [Overview – exam](../mockups/roster_overview_exam.html)
+- Roster Detail (tutorial): [Detail – tutorial](../mockups/roster_detail.html)
+- Roster Detail (seminar): [Detail – seminar](../mockups/roster_detail_seminar.html)
+- Roster Detail (exam): [Detail – exam](../mockups/roster_detail_exam.html)
+- Roster Detail (tutor read-only): [Detail – tutor read-only](../mockups/roster_detail_tutor.html)
+```
+
+```admonish tip "Sourcing candidates after allocation"
+When a preference-based campaign completes, some participants may remain
+unassigned. These are students with zero `confirmed` registrations in the
+campaign (pending entries are normalized to rejected on close). You can source
+these candidates directly from the campaign in roster tools without a separate
+waitlist table.
+```
+
+## Managing unassigned candidates
+
+- View unassigned candidates: from the completed Campaign Show or on the
+  Roster Overview via a right-side panel "Candidates from campaign" showing
+  only users unassigned in that campaign.
+- Inspect context: for preference-based campaigns, show each student's top 3
+  original preferences inline, with a way to view the full list on demand.
+- Actions:
+  - Assign to group: place the student into a specific tutorial if capacity permits.
+  - Move: standard roster operations continue to work across groups.
+
+```admonish info "Placement"
+The Candidates panel lives on the Roster Overview to provide capacity context
+across all groups. The Roster Detail focuses on per-group maintenance
+(participants list, remove/move) and has no candidates panel.
+```
+
+```admonish tip
+No reason entry is required for remove, move, or add actions in roster
+maintenance. Keep actions fast; capacity constraints still apply.
+```
+
+```admonish note "Data model"
+Unassigned candidates are derived from `Registration::UserRegistration` records.
+No extra table is needed; use campaign-scoped queries to list users with zero
+confirmed entries.
+```
 - Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
 - Non-goals: This system does not re-run the automated solver (`Registration::AllocationService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
 

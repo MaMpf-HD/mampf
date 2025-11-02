@@ -172,13 +172,13 @@ Handle post-allocation roster changes.
 |--------|---------|
 | index  | Overview of all rosters for a lecture |
 | show   | View specific roster with participants |
-| edit   | Modify roster (add/remove students, change tutor) |
-| update | Save roster changes |
-| swap   | Swap students between rosters |
+| edit   | Modify roster metadata (e.g., tutor/time/place) |
+| update | Save roster metadata changes; perform move/add/remove |
+| move   | Move students between rosters |
 
 ```admonish example "Responsibilities"
 - Manual roster adjustments
-- Student swap requests
+- Move participants between groups
 - Tutor reassignment
 - Capacity override
 - Does not re-run the automated solver or reopen the campaign

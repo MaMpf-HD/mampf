@@ -18,7 +18,7 @@ Core flow (see [End-to-End Workflow](06-end-to-end-workflow.md)):
 1. Campaign setup & user registrations ([Registration System](02-registration.md))
 2. Preference assignment (if needed) ([Algorithm Details](07-algorithm-details.md))
 3. Allocation materialization to domain rosters ([Rosters](03-rosters.md))
-4. Ongoing roster administration (swaps, late adds)
+4. Ongoing roster administration (moves, late adds)
 5. Coursework assessments, submissions, points & grades ([Assessments & Grading](04-assessments-and-grading.md))
 6. Achievements & eligibility computation (exam gating) ([Exam Eligibility](05-exam-eligibility.md))
 7. Exam registration (policy gated)
