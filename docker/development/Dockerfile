@@ -58,7 +58,7 @@ RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/y
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
-        libarchive-tools wget wait-for-it graphviz libvips42
+        libarchive-tools wget wait-for-it graphviz libvips42 lsof
 
 # Install PostgreSQL client 17 (https://wiki.postgresql.org/wiki/Apt)
 RUN mkdir -p /usr/share/postgresql-common/pgdg \

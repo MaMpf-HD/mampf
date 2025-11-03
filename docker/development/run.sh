@@ -6,6 +6,15 @@ echo "RAILS_ENV: $RAILS_ENV"
 echo "NODE_ENV: $NODE_ENV"
 [ "$RAILS_ENV" != "$NODE_ENV" ] && echo "Error: RAILS_ENV and NODE_ENV must be the same!" && exit 1
 
+echo "🧹 Cleaning up stale Vite/Debugger port processes..."
+for port in 3036 13254; do
+	pid=$(lsof -ti:$port || true)
+	if [ -n "$pid" ]; then
+		echo "Killing process $pid on port $port"
+		kill -9 "$pid" || true
+	fi
+done
+
 bundle exec rake js:recompile_routes
 
 if [ "$DISABLE_VITE_IN_CI" != "true" ]; then
