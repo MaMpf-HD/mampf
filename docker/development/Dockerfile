@@ -106,20 +106,20 @@ COPY --chown=$USERNAME ./docker/production/docker.env /workspaces/mampf/docker/p
 COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/
 COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
-ARG IN_CI_CD
-RUN if [ "$IN_CI_CD" = "true" ]; then \
+ARG CI_BUILD
+RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Running bundle install"; \
         bundle install; \
     fi
 # https://stackoverflow.com/a/66158709/9655481
-RUN if [ "$IN_CI_CD" = "true" ]; then \
+RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Running yarn install"; \
         yarn install --frozen-lockfile; \
     fi
 
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
-RUN if [ "$IN_CI_CD" = "true" ]; then \
+RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
