@@ -9,8 +9,5 @@ services:
     # tests, we overwrite the entrypoint to the empty string.
     command: "CI=true RUBY_DEBUG_ENABLE=0 DISABLE_VITE_IN_CI=true /workspaces/mampf/docker/development/init-and-run.sh"
     volumes:
-      # (In addition to other volumes)
-      # Anonymous volume for the uploads subfolder to mitigate permission errors
-      # à la: Permission denied @ dir_s_mkdir - /workspaces/mampf/public/uploads
-      # We don't mount the entire public/ folder to preserve precompiled assets
-      - "/workspaces/mampf/public/uploads/"
+      # see compose.cicd.build.yml
+      - "/workspaces/mampf/public/"

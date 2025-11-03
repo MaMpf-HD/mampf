@@ -10,3 +10,6 @@ services:
       args:
         CI_BUILD: "true"      
     image: mampftest:image
+    volumes:
+      # Anonymous volume for the public folder where the assets are compiled to
+      - "/workspaces/mampf/public/"
