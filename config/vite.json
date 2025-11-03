@@ -10,8 +10,8 @@
     "publicOutputDir": "vite-dev",
     "port": 3036
   },
-  "test-e2e": {
-    "publicOutputDir": "vite-test-e2e",
+  "test": {
+    "publicOutputDir": "vite-test",
     "port": 3037
   }
 }

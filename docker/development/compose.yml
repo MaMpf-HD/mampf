@@ -38,7 +38,7 @@ services:
     <<: *app-base
     environment:
       - RAILS_ENV=test
-      - NODE_ENV=test-e2e
+      - NODE_ENV=test
       - MAMPF_PORT=3145
     ports:
       - 3145:3145 # Rails app for Cypress tests

@@ -7,7 +7,7 @@ bundle exec rake js:recompile_routes
 if [ "$DISABLE_VITE_IN_CI" != "true" ]; then
 	echo "💫  Starting Vite dev server (in background)"
 	echo "NODE_ENV: $NODE_ENV"
-	bundle exec vite dev &
+	bundle exec vite dev --mode="$NODE_ENV" &
 else
 	echo "Vite dev server disabled due to DISABLE_VITE_IN_CI=true"
 fi
