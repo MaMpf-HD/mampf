@@ -51,7 +51,7 @@
         // Main app
         "3000": {
             "label": "MaMpf App (needs manual start)",
-            "onAutoForward": "openBrowser"
+            "onAutoForward": "openBrowserOnce"
         },
         // Vite
         "3036": {
