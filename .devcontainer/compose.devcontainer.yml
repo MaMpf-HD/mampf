@@ -14,7 +14,7 @@ services:
 
   app-test:
     entrypoint: ["/bin/bash", "-c"]
-    command: ["RUBY_DEBUG_ENABLE=false /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"]
+    command: ["RUBY_DEBUG_ENABLE=0 /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"]
 
   xpra:
     build:
