@@ -13,7 +13,7 @@ services:
       - mampf-command-history:/workspaces/commandhistory/
 
   app-test:
-    command: "RUBY_DEBUG_ENABLE=false ./docker/development/init-and-run.sh | tee /proc/1/fd/1"
+    entrypoint: ["RUBY_DEBUG_ENABLE=false /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"]
 
   xpra:
     build:
