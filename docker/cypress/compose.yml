@@ -14,3 +14,5 @@ services:
       # Cypress video/screenshot output (only necessary locally)
       - ../../cypress/videos/:/mampf-tests/cypress/videos/
       - ../../cypress/screenshots/:/mampf-tests/cypress/screenshots/
+    depends_on:
+      - app-test
