@@ -23,10 +23,10 @@ SHELL ["/bin/bash", "--login", "-o", "pipefail", "-c"]
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
 # https://stackoverflow.com/a/57546198/
 # Unfortunately, we have to explicitly specify the node version here
-# and cannot use 20.x as we need to put the node binary into the PATH
+# and cannot use 24.x as we need to put the node binary into the PATH
 # and therefore require the exact version to find the folder
-ENV NODE_VERSION=20.10.0
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+ENV NODE_VERSION=24.11.0
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 ENV NVM_DIR=/root/.nvm
 RUN source "${NVM_DIR}/nvm.sh" && nvm install "${NODE_VERSION}" && \
     nvm use "${NODE_VERSION}" && nvm alias default "${NODE_VERSION}"
