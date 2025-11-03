@@ -92,6 +92,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
 
 # 🎈 Finally, set up the app
 WORKDIR /workspaces/mampf/
+ENTRYPOINT ["/workspaces/mampf/docker/development/init-and-run.sh"]
 USER $USERNAME
 
 # Log Node.js tooling versions
