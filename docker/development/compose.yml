@@ -54,7 +54,7 @@ services:
       - "nginx-conf-d:/etc/nginx/conf.d"
       # Submissions are served by nginx but are still authenticated by MaMpf. (accel_redirect)
       - "submissions:/private/submissions:ro,nocopy"
-      - "public:/public"
+      - ../../public:/public:ro,nocopy
 
   db:
     image: postgres:17-bookworm
@@ -124,7 +124,6 @@ services:
 volumes:
   nginx-conf-d:
   submissions:
-  public:
   db-data:
   pgadmin:
   sprockets-cache:
