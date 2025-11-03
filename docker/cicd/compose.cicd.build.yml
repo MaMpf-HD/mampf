@@ -1,7 +1,10 @@
 services:
-  # Remove the app and nginx services since we don't need them for tests
+  # Remove services that we don't need for CI
   app: !reset null
   nginx: !reset null
+  pgadmin: !reset null
+  mailcatcher: !reset null
+  dockergen: !reset null
 
   app-test:
     build:
