@@ -7,6 +7,7 @@ services:
     image: ghcr.io/mampf-hd/mampftest:image
     # only used when Cypress is running tests in CI, NOT for unit tests. For unit
     # tests, we overwrite the entrypoint to the empty string.
+    entrypoint: ["/bin/bash", "-c"]
     entrypoint: ["CI=true RUBY_DEBUG_ENABLE=false DISABLE_VITE_IN_CI=true ./init-and-run.sh"]
     volumes:
       # (In addition to other volumes)
