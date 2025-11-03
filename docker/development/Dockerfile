@@ -99,7 +99,6 @@ USER $USERNAME
 RUN which node && node --version && which yarn && yarn --version
 
 COPY --chown=$USERNAME Gemfile Gemfile.lock package.json yarn.lock /workspaces/mampf/
-COPY --chown=$USERNAME . /workspaces/mampf/
 COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /workspaces/mampf/public/pdfcomprezzor/
 COPY --chown=$USERNAME --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js /
 
@@ -116,6 +115,7 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
 
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
+COPY --chown=$USERNAME . /workspaces/mampf/
 RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
