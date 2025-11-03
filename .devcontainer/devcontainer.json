@@ -40,7 +40,6 @@
         3000, // MaMpf App
         3145, // MaMpf App for Cypress tests
         3036, // Vite server
-        3037, // Vite server for Cypress tests
         1080, // Mailcatcher web interface
         5050, // pgAdmin
         8060, // desktop (cypress),
@@ -53,7 +52,7 @@
             "onAutoForward": "openBrowser"
         },
         "3036": {
-            "label": "Vite Server (starts with MaMpf App)",
+            "label": "Vite Server",
             "onAutoForward": "silent"
         },
         "5050": {
@@ -63,10 +62,6 @@
         // Test ports (for Cypress)
         "3145": {
             "label": "MaMpf App for Cypress tests",
-            "onAutoForward": "silent"
-        },
-        "3037": {
-            "label": "Vite Test Server",
             "onAutoForward": "silent"
         },
         "8060": {

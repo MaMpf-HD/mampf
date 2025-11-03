@@ -26,7 +26,6 @@ services:
       dockerfile: docker/development/Dockerfile
     environment:
       - RAILS_ENV=development
-      - NODE_ENV=development
       - MAMPF_PORT=3000
     ports:
       - 3036:3036 # Vite server
@@ -38,11 +37,10 @@ services:
     <<: *app-base
     environment:
       - RAILS_ENV=test
-      - NODE_ENV=test
       - MAMPF_PORT=3145
     ports:
-      - 3145:3145 # Rails app for Cypress tests
-      - 3037:3037 # Vite server for Cypress tests
+      - 3145:3145 # Rails app for Cypress tests (no nginx used here)
+      - 3036:3036 # Vite server
 
   nginx:
     image: openresty/openresty:alpine

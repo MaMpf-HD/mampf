@@ -2,12 +2,15 @@
 set -e
 cd /workspaces/mampf/
 
+[ "$RAILS_ENV" != "$NODE_ENV" ] && echo "Error: RAILS_ENV and NODE_ENV must be the same!" && exit 1
+
 bundle exec rake js:recompile_routes
 
 if [ "$DISABLE_VITE_IN_CI" != "true" ]; then
 	echo "💫  Starting Vite dev server (in background)"
+	echo "RAILS_ENV: $RAILS_ENV"
 	echo "NODE_ENV: $NODE_ENV"
-	bundle exec vite dev --mode="$NODE_ENV" &
+	bundle exec vite dev &
 else
 	echo "Vite dev server disabled due to DISABLE_VITE_IN_CI=true"
 fi
