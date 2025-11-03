@@ -121,7 +121,7 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
 # (See the production Dockerfile for an explanation of the dummy env file)
 RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
-        set -o allexport; . ./docker/production/docker.env; set +o allexport; \
+        set -o allexport; . /workspaces/mampf/docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
         RAILS_ENV=test DATABASE_ADAPTER=nulldb \
