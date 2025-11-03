@@ -12,6 +12,6 @@
   },
   "test": {
     "publicOutputDir": "vite-public",
-    "port": 3037
+    "port": 3036
   }
 }

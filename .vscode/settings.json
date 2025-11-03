@@ -62,7 +62,7 @@
     },
     "rubyLsp.addonSettings": {
         "Ruby LSP RSpec": {
-            "rspecCommand": "RAILS_ENV=test bundle exec rspec --format documentation"
+            "rspecCommand": "VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec --format documentation"
         }
     },
     //////////////////////////////////////
