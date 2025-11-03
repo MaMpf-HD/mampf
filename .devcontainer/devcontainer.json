@@ -36,14 +36,16 @@
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // This can be used to network with other containers or the host.
+    // see the portsAttributes below for details
     "forwardPorts": [
-        3000, // MaMpf App
-        3145, // MaMpf App for Cypress tests
-        3036, // Vite server
-        1080, // Mailcatcher web interface
-        5050, // pgAdmin
-        8060, // desktop (cypress),
-        3004 // architecture Müsli book
+        3000,
+        3145,
+        3036,
+        3037,
+        1080,
+        5050,
+        8060,
+        3004
     ],
     "portsAttributes": {
         // Main app
@@ -51,17 +53,18 @@
             "label": "MaMpf App (needs manual start)",
             "onAutoForward": "openBrowser"
         },
+        // Vite
         "3036": {
-            "label": "Vite Server",
+            "label": "Vite Server (dev & unit tests, starts with MaMpf App)",
             "onAutoForward": "silent"
         },
-        "5050": {
-            "label": "pgAdmin",
+        "3037": {
+            "label": "Vite Server (e2e tests)",
             "onAutoForward": "silent"
         },
         // Test ports (for Cypress)
         "3145": {
-            "label": "MaMpf App for Cypress tests",
+            "label": "MaMpf App (for e2e tests)",
             "onAutoForward": "silent"
         },
         "8060": {
@@ -76,6 +79,10 @@
         "3004": {
             "label": "Architecture Book (needs manual start)",
             "onAutoForward": "openBrowser"
+        },
+        "5050": {
+            "label": "pgAdmin",
+            "onAutoForward": "silent"
         }
     },
     "initializeCommand": "git submodule update --init --recursive",
