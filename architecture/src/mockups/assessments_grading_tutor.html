@@ -111,6 +111,27 @@
         <strong>Grading Instructions:</strong> Enter points per task. Click "Save All Changes" at the bottom to save all modifications. Empty fields are saved as NULL (no points assigned). To give 0 points, explicitly enter 0.
       </div>
 
+      <!-- Search/Filter -->
+      <div class="mb-3">
+        <div class="input-group" style="max-width: 400px;">
+          <span class="input-group-text">
+            <i class="fas fa-search"></i>
+          </span>
+          <input type="text" 
+                 class="form-control" 
+                 id="studentFilter" 
+                 placeholder="Filter by student name..."
+                 autocomplete="off">
+          <button class="btn btn-outline-secondary" 
+                  type="button" 
+                  id="clearFilter"
+                  style="display: none;">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <small class="text-muted" id="filterStatus"></small>
+      </div>
+
       <!-- Grading Table -->
       <div class="table-responsive">
         <table class="table table-hover">
@@ -360,20 +381,57 @@
         </table>
       </div>
 
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center mt-3 mb-3">
+        <div class="d-flex align-items-center">
+          <label for="perPageSelect" class="me-2 mb-0 text-muted">Show:</label>
+          <select class="form-select form-select-sm" id="perPageSelect" style="width: auto;">
+            <option value="10">10</option>
+            <option value="25" selected>25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="all">All</option>
+          </select>
+          <span class="ms-2 text-muted">per page</span>
+        </div>
+        
+        <nav aria-label="Submissions pagination">
+          <ul class="pagination pagination-sm mb-0">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1" aria-disabled="true">
+                <i class="fas fa-chevron-left"></i>
+              </a>
+            </li>
+            <li class="page-item active" aria-current="page">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item"><a class="page-link" href="#">4</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">
+                <i class="fas fa-chevron-right"></i>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
+        <div class="text-muted small">
+          Showing <strong>1-8</strong> of <strong>89</strong> submissions
+        </div>
+      </div>
+
       <!-- Action Buttons -->
-      <div class="d-flex justify-content-between mt-4">
+      <div class="d-flex justify-content-between align-items-center mt-4">
         <a href="#" class="btn btn-outline-secondary">
           <i class="fas fa-arrow-left me-2"></i>Back to Tutorial
         </a>
         <div>
-          <button class="btn btn-outline-primary me-2">
-            <i class="fas fa-file-export me-2"></i>Export Grades
-          </button>
           <button class="btn btn-primary me-2" id="saveAllButton">
             <i class="fas fa-save me-2"></i>Save All Changes
           </button>
-          <button class="btn btn-success">
-            <i class="fas fa-check me-2"></i>Mark Tutorial as Complete
+          <button class="btn btn-success" id="publishResultsButton">
+            <i class="fas fa-paper-plane me-2"></i>Publish Results for This Tutorial
           </button>
         </div>
       </div>
@@ -426,6 +484,98 @@
         updateSaveStatus(false);
         alert('All grades saved successfully!');
       }, 500);
+    });
+
+    document.getElementById('publishResultsButton').addEventListener('click', function() {
+      if (hasUnsavedChanges) {
+        alert('Please save all changes before publishing results.');
+        return;
+      }
+      
+      if (confirm('Publish results for this tutorial? Students will immediately see their grades.')) {
+        setTimeout(() => {
+          alert('Results published! Students in this tutorial can now see their grades.');
+          this.disabled = true;
+          this.innerHTML = '<i class="fas fa-check me-2"></i>Results Published';
+        }, 500);
+      }
+    });
+
+    const filterInput = document.getElementById('studentFilter');
+    const clearFilterBtn = document.getElementById('clearFilter');
+    const filterStatus = document.getElementById('filterStatus');
+    const tableRows = document.querySelectorAll('tbody tr');
+
+    function filterStudents() {
+      const searchTerm = filterInput.value.toLowerCase().trim();
+      let visibleCount = 0;
+      
+      if (searchTerm === '') {
+        tableRows.forEach(row => {
+          row.style.display = '';
+        });
+        clearFilterBtn.style.display = 'none';
+        filterStatus.textContent = '';
+        return;
+      }
+
+      clearFilterBtn.style.display = 'block';
+      
+      tableRows.forEach(row => {
+        const studentNames = row.querySelector('td strong')?.textContent.toLowerCase() || '';
+        if (studentNames.includes(searchTerm)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      });
+
+      filterStatus.textContent = `Showing ${visibleCount} of ${tableRows.length} submissions`;
+    }
+
+    filterInput.addEventListener('input', filterStudents);
+    filterInput.addEventListener('keyup', function(e) {
+      if (e.key === 'Escape') {
+        filterInput.value = '';
+        filterStudents();
+        filterInput.blur();
+      }
+    });
+
+    clearFilterBtn.addEventListener('click', function() {
+      filterInput.value = '';
+      filterStudents();
+      filterInput.focus();
+    });
+
+    const perPageSelect = document.getElementById('perPageSelect');
+    perPageSelect.addEventListener('change', function() {
+      const selectedValue = this.value;
+      if (selectedValue === 'all') {
+        alert('Showing all 89 submissions on one page');
+      } else {
+        alert(`Showing ${selectedValue} submissions per page`);
+      }
+    });
+
+    document.querySelectorAll('.pagination .page-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (this.closest('.page-item').classList.contains('disabled')) {
+          return;
+        }
+        
+        document.querySelectorAll('.pagination .page-item').forEach(item => {
+          item.classList.remove('active');
+        });
+        
+        if (!this.querySelector('i')) {
+          this.closest('.page-item').classList.add('active');
+        }
+        
+        alert('Loading page: ' + (this.textContent.trim() || 'next/previous'));
+      });
     });
 
     function copyToClipboard(text, element) {

@@ -163,21 +163,34 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 |------------------|------------------|----------------------------------------------------------------|
 | `assessment_id`  | DB column (FK)   | The assessment this participation belongs to                   |
 | `user_id`        | DB column (FK)   | The student being graded                                       |
+| `tutorial_id`    | DB column (FK)   | Tutorial context at participation creation time (optional, null for exams/talks) |
 | `points_total`   | DB column        | Aggregate points across all tasks (denormalized)               |
 | `grade_value`    | DB column        | Final grade (e.g., "1.3", "Pass") - optional                   |
 | `status`         | DB column (Enum) | Workflow state: `not_started`, `in_progress`, `submitted`, `graded`, `exempt` |
 | `submitted_at`   | DB column        | Timestamp when submission was uploaded (persists after grading)|
 | `grader_id`      | DB column (FK)   | The tutor/teacher who graded this (optional)                   |
 | `graded_at`      | DB column        | Timestamp when grading was completed                           |
+| `results_published_at` | DB column  | Per-participation publication timestamp (optional)             |
 | `published`      | DB column        | Boolean: whether results are visible to the student            |
 | `locked`         | DB column        | Boolean: prevents further edits after publication              |
 | `task_points`    | Association      | All task-level point records for this student in this assessment |
+
+```admonish info "Tutorial Context"
+The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation** (when `seed_participations_from_roster!` runs during assessment setup). This field:
+- Is **set once** when participations are initialized from the roster
+- Is **never updated** if the student changes tutorials mid-semester
+- Is **nullable** for assessments without tutorial context (e.g., exams, talks)
+- Enables **per-tutorial publication** control for assignments
+- Provides **performance optimization** for tutor grading queries
+```
 
 ### Behavior Highlights
 
 - Enforces uniqueness per (assessment, user) via database constraint
 - Maintains `points_total` as the sum of all associated `TaskPoint` records
 - Preserves submission history via `submitted_at` even after status transitions to `:graded`
+- Tutorial context is historical (preserves roster at assessment setup time)
+- Per-participation publication timestamp enables tutorial-level result publishing
 - Can carry both granular points (via tasks) and a final grade (for exams)
 - Supports workflow states from initial submission through final grading
 - Provides locking mechanism to prevent post-publication tampering
@@ -192,6 +205,7 @@ module Assessment
 
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :user
+    belongs_to :tutorial, optional: true
     belongs_to :grader, class_name: "User", optional: true
 
     has_many :task_points, dependent: :destroy,
@@ -210,22 +224,53 @@ module Assessment
   def recompute_points_total!
     update!(points_total: task_points.sum(:points))
   end
+
+  def results_visible?
+    results_published_at.present?
+  end
 end
 ```
 
+### Tutorial ID Behavior
+
+```admonish warning "Historical Context, Not Current State"
+The `tutorial_id` on participation is **never updated** after creation. It represents which tutorial the student was in when participations were initialized during assessment setup, not their current tutorial assignment.
+```
+
+**When `tutorial_id` is set:**
+- **Assignments**: Set when `seed_participations_from_roster!` runs after assignment creation, capturing the tutorial each student belongs to at that moment
+- **Exams**: Set to `nil` (exams don't have tutorial context)
+- **Talks**: Set to `nil` (talks have speakers, not tutorial participants)
+
+**Why it doesn't update:**
+- Preserves historical grading context (which tutor graded this work)
+- Determines publication control (which tutorial can publish results)
+- Provides audit trail for grade complaints
+- Enables fast queries without roster joins
+
+**Edge case - student switches tutorials:**
+- Participation keeps original `tutorial_id`
+- Original tutorial's tutor still grades their work
+- Original tutorial's publication controls still apply
+- If manual reassignment is needed, teacher can update `tutorial_id` as admin action
+
 ### Usage Scenarios
 
-- **After roster seeding:** When an assignment's roster is seeded via `assignment.seed_participations_from_roster!`, the system creates one `Assessment::Participation` record for each student in the tutorial roster, all with `status: :not_started`, `points_total: 0`, and `submitted_at: nil`.
+- **After assessment setup:** When an assignment is created, `assignment.seed_participations_from_roster!` runs, creating one `Assessment::Participation` record for each student across all lecture tutorials. Each participation is initialized with `status: :not_started`, `points_total: 0`, `submitted_at: nil`, and `tutorial_id` set to the tutorial the student currently belongs to.
 
-- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading.
+- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
 
-- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` remains unchanged—preserving the submission history.
+- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
-- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:graded`. Students can now see their points breakdown and final grade (if `grade_value` is set).
+- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:graded`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
 
-- **Handling exemptions:** A student provides a medical certificate and is marked `status: :exempt`. Their participation record exists but no points are computed, no grade is assigned, and both `submitted_at` and `graded_at` remain `nil`.
+- **Per-tutorial publication (assignments):** Tutorial A completes grading on Monday. The tutor sets `results_published_at: Time.current` for all participations where `tutorial_id = tutorial_a.id`. Students in Tutorial A can now see their results. Tutorial B's students (with `tutorial_id = tutorial_b.id` and `results_published_at: nil`) still see "pending" status.
+
+- **Handling exemptions:** A student provides a medical certificate and is marked `status: :exempt`. Their participation record exists but no points are computed, no grade is assigned, and both `submitted_at` and `graded_at` remain `nil`. The `tutorial_id` is preserved for audit purposes.
 
 - **Distinguishing submission vs non-submission:** After grading is complete, the teacher can query `submitted_at.present?` to distinguish students who submitted work (even if they received 0 points for quality) from those who never submitted at all.
+
+- **Student switches tutorials mid-semester:** Alice is in Tutorial A when participations are initialized for Homework 3. Her participation has `tutorial_id: 1` (Tutorial A). In week 6, she switches to Tutorial B. When Tutorial A publishes results, Alice's Homework 3 results become visible because her participation's `tutorial_id` still points to Tutorial A. Her future assignments will have new participations with `tutorial_id: 2` (Tutorial B).
 
 ---
 
@@ -383,6 +428,68 @@ When accessing grading for a `graded` or published assessment, the UI should dis
 > Changes will be visible to students immediately. Continue?
 
 This ensures teachers are aware that modifications affect published results. The `results_published` flag controls visibility, not editability—`TaskPoint` records remain mutable across all assessment states, and `recompute_points_total!` is idempotent.
+
+### Per-Tutorial Result Publication (Assignments)
+
+```admonish info "Decentralized Publication Control"
+For assignments with multiple tutorials, results can be published independently per tutorial as grading completes. This eliminates coordination burden and provides faster feedback to students.
+```
+
+**Publication Model:**
+- Each `Assessment::Participation` has a `results_published_at` timestamp (nullable)
+- Tutor can publish results for their tutorial when grading is complete
+- Publication is per-tutorial, not lecture-wide
+- Students see results when `participation.results_visible?` returns true
+
+**Implementation:**
+
+```ruby
+def results_visible?
+  results_published_at.present?
+end
+```
+
+**Workflow:**
+1. Tutorial A completes grading on Monday
+2. Tutor clicks "Publish Results for Tutorial A"
+3. System sets `results_published_at = Time.current` for all participations where `tutorial_id = tutorial_a.id`
+4. Students in Tutorial A immediately see their points and grades
+5. Tutorial B continues grading, their students still see "pending"
+6. Tutorial B completes Thursday, publishes independently
+
+**Benefits:**
+- No waiting for slowest tutorial to finish
+- Tutors control their own publication timeline
+- Teacher oversight still possible (can hide results per tutorial)
+- Maintains audit trail of when results were released
+
+**Cross-Tutorial Teams (Edge Case):**
+When team members are in different tutorials:
+- Publish when *any* member's tutorial publishes (permissive)
+- OR: Require *all* members' tutorials to publish (strict)
+- Recommended: Use permissive model for simplicity
+
+**Query Examples:**
+
+```ruby
+# Publish results for Tutorial X
+tutorial_x_participations = assessment.participations
+  .where(tutorial_id: tutorial_x.id)
+tutorial_x_participations.update_all(results_published_at: Time.current)
+
+# Student view query
+participation.results_visible?  # true if results_published_at is set
+
+# Teacher dashboard: which tutorials have published?
+assessment.participations
+  .select(:tutorial_id, "COUNT(*) as total")
+  .where.not(results_published_at: nil)
+  .group(:tutorial_id)
+```
+
+```admonish note "Exam and Talk Publication"
+Exams and talks have `tutorial_id: nil` on their participations. Publication control uses the legacy `assessment.results_published` boolean instead of per-participation timestamps. Per-tutorial publication only applies to assignments.
+```
 
 ---
 
@@ -628,8 +735,14 @@ class Assignment < ApplicationRecord
     return unless assessment
 
     # Aggregate students from all tutorials in the lecture
-    user_ids = lecture.tutorials.flat_map(&:roster_user_ids).uniq
-    assessment.seed_participations_from!(user_ids: user_ids)
+    lecture.tutorials.each do |tutorial|
+      user_ids = tutorial.roster_user_ids
+      user_ids.each do |user_id|
+        assessment.participations.find_or_create_by!(user_id: user_id) do |part|
+          part.tutorial_id = tutorial.id
+        end
+      end
+    end
   end
 end
 ```
@@ -1184,4 +1297,42 @@ The following tables support the assessment system:
 | `submissions` | `Submission` | Existing model, extended with `assessment_id` |
 
 **Naming rationale:** Namespaced table names follow Rails conventions and prevent collisions with potential future models (e.g., `Quiz::Task`, `Exercise::Task`).
+
+### Schema Updates for Per-Tutorial Publication
+
+**New columns for `assessment_participations`:**
+
+```ruby
+# filepath: db/migrate/20250105000000_add_tutorial_and_publication_to_participations.rb
+class AddTutorialAndPublicationToParticipations < ActiveRecord::Migration[7.0]
+  def change
+    add_reference :assessment_participations, :tutorial,
+      foreign_key: true, null: true, index: true
+    add_column :assessment_participations, :results_published_at,
+      :datetime, null: true
+    add_index :assessment_participations, :results_published_at
+  end
+end
+```
+
+**Migration rationale:**
+- `tutorial_id`: Nullable to support exams and talks without tutorial context
+- `results_published_at`: Enables per-tutorial publication for assignments
+- Indexed for fast tutorial-scoped queries and publication status checks
+- Foreign key constraint maintains referential integrity
+
+**Backfill strategy for existing data:**
+```ruby
+# For existing assignment participations, backfill tutorial_id from submission
+Submission.includes(:users, :tutorial).find_each do |sub|
+  sub.users.each do |user|
+    participation = Assessment::Participation.find_by(
+      assessment_id: sub.assessment_id,
+      user_id: user.id
+    )
+    participation&.update_column(:tutorial_id, sub.tutorial_id)
+  end
+end
+```
+
 
