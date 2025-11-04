@@ -3,7 +3,7 @@ services:
     build:
       context: ./../../
       dockerfile: docker/cypress/Dockerfile
-    entrypoint: ["/workspaces/mampf/run-cypress-cicd.sh"]
+    command: "RAILS_ENV=test cypress run --project /mampf-tests/ --e2e --browser chrome"
     environment:
       CYPRESS_baseUrl: http://app-test:3145
     volumes:
@@ -15,4 +15,5 @@ services:
       - ../../cypress/videos/:/mampf-tests/cypress/videos/
       - ../../cypress/screenshots/:/mampf-tests/cypress/screenshots/
     depends_on:
-      - app-test
+      app-test:
+        condition: service_healthy
