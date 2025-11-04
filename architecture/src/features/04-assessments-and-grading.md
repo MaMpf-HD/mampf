@@ -113,11 +113,8 @@ module Assessment
 end
 ```
 
-### Assessment Creation Timing
-
-```admonish info "When Assessments Are Created"
+```admonish info collapsible=true title="Assessment Creation Timing (Implementation Details)"
 The timing of assessment creation differs by type to match real-world workflows:
-```
 
 **Assignments & Exams (Explicit Creation):**
 - Created explicitly via "New Assessment" UI in the Assessments tab
@@ -132,7 +129,7 @@ The timing of assessment creation differs by type to match real-world workflows:
 - Participations seeded from speakers immediately
 - Grading happens later via the Assessments tab (see [Grading Talks in Seminars](#grading-talks-in-seminars))
 
-```admonish tip "Why the difference?"
+**Why the difference:**
 Assignments and exams are created on-demand during the semester. Talks must exist early for registration campaigns, but grading happens much later—auto-creating the assessment ensures the grading infrastructure is ready when needed.
 ```
 
@@ -175,7 +172,7 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 | `locked`         | DB column        | Boolean: prevents further edits after publication              |
 | `task_points`    | Association      | All task-level point records for this student in this assessment |
 
-```admonish info "Tutorial Context"
+```admonish info collapsible=true title="Tutorial Context Details"
 The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation** (when `seed_participations_from_roster!` runs during assessment setup). This field:
 - Is **set once** when participations are initialized from the roster
 - Is **never updated** if the student changes tutorials mid-semester
@@ -189,8 +186,6 @@ The `tutorial_id` field captures which tutorial the student was in **at the time
 - Enforces uniqueness per (assessment, user) via database constraint
 - Maintains `points_total` as the sum of all associated `TaskPoint` records
 - Preserves submission history via `submitted_at` even after status transitions to `:graded`
-- Tutorial context is historical (preserves roster at assessment setup time)
-- Per-participation publication timestamp enables tutorial-level result publishing
 - Can carry both granular points (via tasks) and a final grade (for exams)
 - Supports workflow states from initial submission through final grading
 - Provides locking mechanism to prevent post-publication tampering
@@ -231,11 +226,8 @@ module Assessment
 end
 ```
 
-### Tutorial ID Behavior
-
-```admonish warning "Historical Context, Not Current State"
+```admonish warning collapsible=true title="Tutorial ID Behavior (Implementation Details)"
 The `tutorial_id` on participation is **never updated** after creation. It represents which tutorial the student was in when participations were initialized during assessment setup, not their current tutorial assignment.
-```
 
 **When `tutorial_id` is set:**
 - **Assignments**: Set when `seed_participations_from_roster!` runs after assignment creation, capturing the tutorial each student belongs to at that moment
@@ -253,6 +245,7 @@ The `tutorial_id` on participation is **never updated** after creation. It repre
 - Original tutorial's tutor still grades their work
 - Original tutorial's publication controls still apply
 - If manual reassignment is needed, teacher can update `tutorial_id` as admin action
+```
 
 ### Usage Scenarios
 
@@ -429,11 +422,8 @@ When accessing grading for a `graded` or published assessment, the UI should dis
 
 This ensures teachers are aware that modifications affect published results. The `results_published` flag controls visibility, not editability—`TaskPoint` records remain mutable across all assessment states, and `recompute_points_total!` is idempotent.
 
-### Per-Tutorial Result Publication (Assignments)
-
-```admonish info "Decentralized Publication Control"
+```admonish info collapsible=true title="Per-Tutorial Result Publication (Implementation Details)"
 For assignments with multiple tutorials, results can be published independently per tutorial as grading completes. This eliminates coordination burden and provides faster feedback to students.
-```
 
 **Publication Model:**
 - Each `Assessment::Participation` has a `results_published_at` timestamp (nullable)
@@ -487,7 +477,7 @@ assessment.participations
   .group(:tutorial_id)
 ```
 
-```admonish note "Exam and Talk Publication"
+**Exam and Talk Publication:**
 Exams and talks have `tutorial_id: nil` on their participations. Publication control uses the legacy `assessment.results_published` boolean instead of per-participation timestamps. Per-tutorial publication only applies to assignments.
 ```
 
