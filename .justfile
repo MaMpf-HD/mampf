@@ -20,7 +20,14 @@ up:
 [working-directory: "architecture"]
 muesli:
     #!/usr/bin/env bash
-    mdbook serve --port 3004 -n 0.0.0.0
+    # adapted from https://stackoverflow.com/a/9168553/
+    port=3004
+    pid=$(lsof -ti:$port) || true
+    if [ -n "$pid" ]; then
+        echo "Killing process $pid on port $port"
+        kill -TERM "$pid" || kill -KILL "$pid" || true
+    fi
+    mdbook serve --port $port -n 0.0.0.0
 
 # Commands to test the MaMpf codebase
 mod test ".config/commands/test.justfile"
