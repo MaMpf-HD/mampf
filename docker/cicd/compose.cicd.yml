@@ -14,3 +14,4 @@ services:
     volumes:
       # see compose.cicd.build.yml
       - "/workspaces/mampf/public/"
+      - ../../coverage/:/workspaces/mampf/coverage/
