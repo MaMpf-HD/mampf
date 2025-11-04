@@ -143,3 +143,12 @@ jobs:
           -f ../cicd/compose.cicd.yml
           -f ../cypress/compose.yml
           run cypress
+
+      - name: Show app-test logs on failure
+        if: failure()
+        working-directory: docker/development/
+        run: >
+          docker compose
+          -f ./compose.yml
+          -f ../cicd/compose.cicd.yml
+          logs app-test
