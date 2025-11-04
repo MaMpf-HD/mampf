@@ -4,4 +4,7 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     depends_on:
-      - xpra
+      xpra:
+        condition: service_started
+      app-test:
+        condition: service_started
