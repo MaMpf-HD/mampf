@@ -84,7 +84,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && mkdir -p /workspaces/mampf/node_modules/ && chown -R $USERNAME /workspaces/mampf/node_modules/ \
     && mkdir -p /workspaces/mampf/public/ && chown -R $USERNAME /workspaces/mampf/public/ \
     && mkdir -p /workspaces/mampf/public/uploads/ && chown -R $USERNAME /workspaces/mampf/public/uploads/ \
-    && mkdir -p /workspaces/mampf/coverage/ && chown -R $USERNAME /workspaces/mampf/coverage/ \
     # [Optional] Add sudo support
     && apt-get update \
     && apt-get install -y sudo \
@@ -119,6 +118,7 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
 COPY --chown=$USERNAME . /workspaces/mampf/
 RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
+        mkdir -p /workspaces/mampf/coverage/ && chown -R $USERNAME /workspaces/mampf/coverage/; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
