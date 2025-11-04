@@ -14,9 +14,8 @@ server-rendered ERB and minimal JS via Stimulus.
 |--------------|-------------------------------------------------------|-------------------------------------|
 | Registration | Campaigns (index/show/forms), Student Registration    | Teacher/Editor UI, Student UI       |
 | Roster       | Maintenance (index/show/edit)                         | Teacher/Editor UI                   |
-| Assessment   | Assessments (CRUD), Grading table, Participations     | Teacher/Editor UI, Tutor UI, Student|
+| Assessment   | Assessments (CRUD), Grading table, Grade schemes, Participations | Teacher/Editor UI, Tutor UI, Student|
 | Exam         | Exams (CRUD), Eligibility table                       | Teacher/Editor UI                   |
-| GradeScheme  | Schemes (preview/apply)                               | Teacher/Editor UI                   |
 | Dashboard    | Student dashboard, Teacher/Editor dashboard           | Student UI, Teacher/Editor UI       |
 
 The feature sections below (Registration Screens, Rosters, Assessments,
@@ -242,7 +241,7 @@ Student “Show”.
 | Confirmation (result)                  | [Registration::UserRegistrationsController](11-controllers.md#registration-controllers) | show       | After submit/close                    | Shows assignment and summary |
 | Fulfill requirements (policy)          | —                                                                                      | Policy-configured flow | External or internal                  | Follow instructions to satisfy policy, then retry |
 
-## Rosters (Teacher/Editor)
+## Rosters
 
 #### Flow
 
@@ -279,24 +278,32 @@ flowchart LR
 
 ## Assessments
 
-### Assessments (Teacher/Editor)
+```admonish info "Context-Specific Views"
+Assessment views differ between regular lectures and seminars:
+- **Lectures:** Show assignments and exams; "New Assessment" button with dropdown
+- **Seminars:** Show talks only; no "New Assessment" button (talks created via Content tab); inline grading interface
+```
+
+### Assessments (Lectures - Teacher/Editor)
 
 #### Screens
 
 See Table keys above for column meanings.
 
+```admonish note "Lecture Context Only"
+The views below apply to regular lectures. For seminar-specific views, see the [Seminars](#assessments-seminars---teachereditor) section.
+```
+
 | View        | Key elements                                        | Mockup |
 |-------------|------------------------------------------------------|--------|
-| Index       | List of assessments with status/type badges; filter tabs; progress indicators; action buttons | [Mockup](../mockups/assessments_index.html) |
-| New         | Form with dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Mockup](../mockups/assessments_new.html) |
+| Index       | List of assignments and exams with status/type badges; filter tabs; progress indicators; "New Assessment" button | [Mockup](../mockups/assessments_index.html) |
+| Index (End of Semester) | Same as Index, showing complete semester timeline: 8 graded assignments, midterm exam graded, final exam in progress | [Mockup](../mockups/assessments_index_end_of_semester.html) |
+| New         | Form with type dropdown (Assignment/Exam); dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Mockup](../mockups/assessments_new.html) |
 | Show (Assignment - Open) | Tabbed interface (Overview/Settings/Tasks/Participants); submission progress tracking; before grading starts | [Mockup](../mockups/assessments_show_assignment_open.html) |
-| Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Participants); submission and grading progress; task breakdown | [Mockup](../mockups/assessments_show_assignment_closed.html) |
+| Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Tutorials/Grading/Statistics); submission progress; tutorials publication management; grading table with filters and sorting | [Mockup](../mockups/assessments_show_assignment_closed.html) |
 | Show (Exam - Draft) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); configuration and setup phase | [Mockup](../mockups/assessments_show_exam_draft.html) |
 | Show (Exam - Closed) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); grading in progress; tutor assignment tracking | [Mockup](../mockups/assessments_show_exam_closed.html) |
 | Show (Exam - Graded) | Tabbed interface with Statistics tab; grade distribution; results publication status; average scores per question | [Mockup](../mockups/assessments_show_exam_graded.html) |
-| Show (Talk) | Tabbed interface (Overview/Settings/Participants); final grade display; speaker details; feedback notes | [Mockup](../mockups/assessments_show_talk.html) |
-| Grading     | Sticky header table; per-task columns; bulk actions  | TODO   |
-| Results     | Compact totals; collapsible per-task breakdown       | TODO   |
 
 #### Flow
 
@@ -318,79 +325,200 @@ flowchart LR
 #### Controller/action mapping (role-specific)
 | Role          | Controller                          | Actions                                           | Scope                          |
 |---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
-| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | index, new, create, show, edit, update, destroy   | Setup                          |
-| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | publish_results, unpublish_results                | Visibility lifecycle            |
-| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessment-controllers)       | show, update, export, import                      | Grading + bulk ops             |
-| Tutor         | [Assessment::GradingController](11-controllers.md#assessment-controllers)       | show, update                                      | Grading (enter/update points)  |
-| Tutor         | [Assessment::GradingController](11-controllers.md#assessment-controllers)       | export, import                                    | Optional if permitted           |
-| Tutor         | [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | index, show                                       | Read-only                       |
-| Student       | [Assessment::ParticipationsController](11-controllers.md#assessment-controllers)| index, show                                       | Own results (when published)    |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, new, create, show, edit, update, destroy   | Setup                          |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
+| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update, export, import                      | Grading + bulk ops             |
+| Tutor         | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | show, update                                      | Grading (enter/update points)  |
+| Tutor         | [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only                       |
+| Student       | [Assessment::ParticipationsController](11-controllers.md#assessmentparticipationscontroller)| index, show                                       | Own results (when published)    |
 
-## Exams & Eligibility
+### Assessments (Lectures - Tutor)
+
+#### Screens
+
+```admonish tip "Team-Based Grading"
+Tutors grade their tutorial's teams for assignments. Points entered once per team are automatically applied to all team members. The interface works for both digital and paper submissions.
+```
+
+| View        | Key elements                                        | Mockup |
+|-------------|------------------------------------------------------|--------|
+| Grading (Tutorial) | Team-based grading table; per-task point inputs; progress indicator; filter by graded/not graded; submission links; auto-calculated totals | [Mockup](../mockups/assessments_grading_tutor.html) |
+
+#### Flow
+
+```mermaid
+flowchart LR
+  subgraph TUTOR [Tutor]
+    TUT[Tutorial view] --> GRADE[Grading page]
+    GRADE --> ENTER[Enter points per task]
+    ENTER --> SAVE[Save team grade]
+    SAVE --> NEXT{More teams?}
+    NEXT -->|Yes| ENTER
+    NEXT -->|No| COMPLETE[Mark complete]
+  end
+```
+
+#### Controller/action mapping
+| Role  | Controller                          | Actions                    | Scope                          |
+|-------|-------------------------------------|----------------------------|--------------------------------|
+| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | show                       | Display grading table for tutorial |
+| Tutor | [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller) | update                     | Save points for one team (creates TaskPoints for all members) |
+
+```admonish note "Team Grading Service"
+The backend uses `Assessment::TeamGradingService` to propagate points from team input to individual `Assessment::TaskPoint` records for each team member. This ensures consistent grading within teams while maintaining per-user granularity for reporting.
+```
+
+### Assessments (Lectures - Exam Grading Workflow)
+
+```admonish important "Phase-Based Workflow"
+Exam grading uses a multi-phase workflow designed for paper-based exams where points are entered in batch, then a grade scheme is created based on the actual distribution.
+```
+
+```admonish tip "Backend Architecture"
+For grade scheme data models, services, algorithms, and implementation details, see [Grading Schemes](05b-grading-schemes.md).
+```
+
+The exam grading workflow progresses through four phases:
+
+1. **Phase 1: Point Entry** — Teachers enter task points for each student; grade column remains empty
+2. **Phase 2: Distribution Analysis** — View histogram, statistics, and percentiles of achieved points
+3. **Phase 3: Scheme Configuration** — Set excellence/passing thresholds or manually define grade boundaries
+4. **Phase 4: Scheme Applied** — Grades auto-computed; point edits auto-update grades
+
+#### Screens
+
+| View        | Key elements                                        | Mockup |
+|-------------|------------------------------------------------------|--------|
+| Phase 1: Point Entry | Editable task point inputs; empty grade column with "—"; Grade Scheme tab disabled (tooltip: "Complete point entry first"); progress alert showing X/N graded | [Mockup](../mockups/assessments_show_exam_grading_phase1.html) |
+| Phase 2: Distribution Analysis | Grade Scheme tab active with "New" badge; CSS histogram with 10 bars; statistics card (min/max/mean/median/std dev); percentiles card (10th-90th); "Create Grade Scheme" button | [Mockup](../mockups/assessments_show_exam_grading_phase2.html) |
+| Phase 3: Scheme Configuration | Inline configuration card; two-mode tabs (Two-Point Auto / Manual Curve); threshold inputs (Excellence: 1.0, Passing: 4.0); "Auto-Generate Bands" button; generated bands preview table with 9 grades; pass rate calculation; "Save as Draft" button | [Mockup](../mockups/assessments_show_exam_grading_phase3.html) |
+| Phase 4: Scheme Applied | Grading tab showing computed grades; grade cells have blue background with calculator icon; alert explaining auto-update behavior; all 145 students with final grades; success message with publish prompt | [Mockup](../mockups/assessments_show_exam_grading_phase4.html) |
+
+#### Two-Point Auto Algorithm
+
+The Two-Point Auto mode simplifies grade scheme creation:
+
+1. Set **Excellence threshold** (e.g., 54 pts = 1.0) — Students at or above this score receive grade 1.0
+2. Set **Passing threshold** (e.g., 30 pts = 4.0) — Minimum score to pass; below this is 5.0 (fail)
+3. System **auto-generates** intermediate bands (1.3, 1.7, 2.0, 2.3, 3.0, 3.7) with equal intervals
+4. Preview shows point ranges, student count, and percentage per grade band
+5. Pass rate calculated automatically (students with 4.0 or better / total)
+
+#### Grade Auto-Update Behavior
+
+After applying a grade scheme:
+- Grades are computed automatically from total points
+- If teacher edits any task points, grade **recalculates immediately**
+- Grade column shows blue background + calculator icon to indicate computed value
+- Manual override possible (triggers warning, marks as overridden)
 
 #### Flow
 
 ```mermaid
 flowchart LR
   subgraph TEACHER_EDITOR [Teacher/Editor]
-    CR[Create exam] --> REV[Review eligibility]
-    REV --> OV[Optional overrides]
-    OV --> EXP[Export list]
-  end
-  subgraph TUTOR [Tutor]
-    RE[Eligibility (view if permitted)]
-    RED[Exam details (view if permitted)]
+    P1[Phase 1: Enter points] --> P2[Phase 2: Analyze distribution]
+    P2 --> P3[Phase 3: Configure scheme]
+    P3 --> P4[Phase 4: Grades computed]
+    P4 --> PUB[Publish results]
   end
 ```
+
+```admonish note "Single Scheme Version"
+Only one active scheme exists per exam. No version history tracking. If teacher needs to adjust scheme, they edit the existing one.
+```
+
+```admonish tip "Manual Curve Mode"
+For advanced users, Manual Curve mode allows direct control of each grade boundary by dragging markers on the histogram or editing the boundary table directly.
+```
+
+```admonish note "Controller Reference"
+Grade scheme functionality is implemented in `GradeScheme::SchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
+```
+
+### Assessments (Seminars - Teacher/Editor)
+
+#### Screens
+
+```admonish tip "Streamlined Grading"
+Seminars show only talks with inline grading for fast workflow. Talks are created via the Content tab, not the Assessments tab.
+```
+
+| View        | Key elements                                        | Mockup |
+|-------------|------------------------------------------------------|--------|
+| Index (Seminar) | List of talks with inline grading; columns: Title, Speaker(s), Grade (inline dropdown), Status, Actions; no "New Assessment" button; help text: "Talks are created in the Content tab" | [Mockup](../mockups/assessments_index_seminar.html) |
+| Show (Talk) | Tabbed interface (Overview/Settings/Participants); final grade display; speaker details; feedback notes | [Mockup](../mockups/assessments_show_talk.html) |
+
+#### Flow
+
+```mermaid
+flowchart LR
+  subgraph TEACHER_EDITOR [Teacher/Editor]
+    CONTENT[Content tab: Create talk] --> AUTO[Auto-create assessment]
+    AUTO --> ASSESS[Assessments tab: View list]
+    ASSESS --> INLINE[Inline grade]
+    INLINE --> DETAIL[Optional: Click for details]
+    DETAIL --> FEEDBACK[Add feedback]
+  end
+```
+
+#### Controller/action mapping
+| Role          | Controller                          | Actions                                           | Scope                          |
+|---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | index, show                                       | Read-only list; inline grading |
+| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessmentgradingcontroller)       | update                                            | Save inline grade              |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | show (detail view)                                | Add feedback notes             |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessmentassessmentscontroller)   | publish_results                                   | Visibility lifecycle            |
+
+```admonish warning "No Creation Actions"
+Seminars do not expose `new`, `create`, or `destroy` actions in the Assessments tab. Talks (and their assessments) are managed via the Content tab.
+```
+
+## Exams & Eligibility
+
+```admonish info "Context"
+Exam eligibility depends on assignment grading (students must earn sufficient points from assignments). This section covers exam logistics and eligibility verification. For exam grading workflows, see [Exam Grading Workflow](#exam-grading-workflow) above.
+```
+
+### Exams & Eligibility (Teacher/Editor)
+
+#### Flow
+
+```mermaid
+flowchart LR
+  CR[Create exam] --> REV[Review eligibility]
+  REV --> OV[Optional overrides]
+  OV --> EXP[Export list]
+```
+
+#### Screens
 
 | View       | Key elements                                  | Mockup |
 |------------|-----------------------------------------------|--------|
 | Exams      | Date/location schedule; links to eligibility   | TODO   |
-| Eligibility| Filterable table; override modal in a frame    | TODO   |
+| Eligibility| Filterable table; override modal              | TODO   |
 
-#### Controller/action mapping (role-specific)
-| View       | Role           | Controller                        | Actions                                 | Scope/Notes                                  |
-|------------|----------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
-| Exams      | Teacher/Editor | [ExamsController](11-controllers.md#exam-controllers)                    | index, new, create, show, edit, update, destroy | Manage exams                            |
-| Eligibility| Teacher/Editor | [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show, update, export             | Eligibility management (override/export)      |
-| Eligibility| Tutor          | [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show                             | View if permitted; no overrides                |
-| Exams      | Tutor          | [ExamsController](11-controllers.md#exam-controllers)                    | index, show                             | Read-only (if permitted by abilities)         |
-| —          | Student        | —                                   | —                                       | No access here (registration handled elsewhere)|
+#### Controller/action mapping
 
-## Grade Schemes
+| View       | Controller                        | Actions                                 | Scope/Notes                                  |
+|------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
+| Exams      | [ExamsController](11-controllers.md#exam-controllers) | index, new, create, show, edit, update, destroy | Manage exams                            |
+| Eligibility| [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show, update, export | Eligibility management (override/export)      |
 
-#### Flow
+### Exams & Eligibility (Tutor)
 
-```mermaid
-flowchart LR
-  subgraph TEACHER_EDITOR [Teacher/Editor]
-    PRV[Preview] --> APP[Apply]
-    APP --> STR[Stream updates]
-  end
-  subgraph TUTOR [Tutor]
-    PRVT[Preview read only]
-  end
-```
+Tutors have read-only access if permitted by abilities.
 
-| View    | Key elements                                              | Mockup |
-|---------|-----------------------------------------------------------|--------|
-| Preview | Histogram; draggable boundaries; distribution table       | TODO   |
-| Apply   | Apply scheme and update results                           | TODO   |
+#### Screens
 
-#### Controller/action mapping (role-specific)
-| View    | Role           | Controller                      | Actions                               | Scope/Notes                                 |
-|---------|----------------|---------------------------------|---------------------------------------|----------------------------------------------|
-| Setup   | Teacher/Editor | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | index, new, create, edit, update      | Manage schemes                               |
-| Preview | Teacher/Editor | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | preview                               | Preview distribution                         |
-| Apply   | Teacher/Editor | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | apply                                 | Apply to results; stream updates             |
-| Preview | Tutor          | [GradeScheme::SchemesController](11-controllers.md#grade-scheme-controllers)  | preview                               | Read-only (if permitted by abilities)        |
-| —       | Student        | —                               | —                                     | No access to grading schemes                 |
+| View       | Key elements                                  | Mockup |
+|------------|-----------------------------------------------|--------|
+| Exams      | View exam details                             | TODO   |
+| Eligibility| View eligibility status                       | TODO   |
 
-## Notes
+#### Controller/action mapping
 
-```admonish note "Guidance"
-- Keep server responses small within frames.
-- Use Streams for background job progress (allocation/grades publish).
-- Avoid comments/docstrings in code per repository standards. Add
-	top-level docstrings when needed in actual source files.
-```
+| View       | Controller                        | Actions                                 | Scope/Notes                                  |
+|------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
+| Exams      | [ExamsController](11-controllers.md#exam-controllers) | index, show | Read-only (if permitted by abilities)         |
+| Eligibility| [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show | View if permitted; no overrides                |

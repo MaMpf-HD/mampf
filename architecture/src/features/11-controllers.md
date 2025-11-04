@@ -208,7 +208,6 @@ Configure assessments for lectures.
 | update  | Update assessment |
 | destroy | Delete assessment (if no grades exist) |
 | publish_results | Publish results to students |
-| unpublish_results | Hide results from students |
 
 ```admonish example "Responsibilities"
 - Create and configure assessments

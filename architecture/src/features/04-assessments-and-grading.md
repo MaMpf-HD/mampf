@@ -61,6 +61,10 @@ The main fields and methods of `Assessment` are:
 | `effective_total_points`  | Method            | Returns `total_points` or sum of task max_points                         |
 | `seed_participations_from!(user_ids:)` | Method | Creates participation records for given users                    |
 
+```admonish warning "Submission Support - Current Scope"
+The `requires_submission` field is currently only used for **Assignment** types. Submission interfaces (upload, view, grade) are only implemented for assignments. For Exams and Talks, this field should remain `false` as no submission workflow exists for these types yet. See [Future Extensions](10-future-extensions.md) for planned support.
+```
+
 ### Behavior Highlights
 
 - Acts as the single source of truth for grading configuration
@@ -109,13 +113,33 @@ module Assessment
 end
 ```
 
+```admonish info collapsible=true title="Assessment Creation Timing (Implementation Details)"
+The timing of assessment creation differs by type to match real-world workflows:
+
+**Assignments & Exams (Explicit Creation):**
+- Created explicitly via "New Assessment" UI in the Assessments tab
+- Teacher navigates to Lecture → Assessments → New Assessment → selects type
+- Both domain model (Assignment/Exam) and Assessment record created together in one transaction
+- Teacher controls exactly when the assessment is created during the semester
+
+**Talks (Automatic Creation):**
+- Created automatically when Talk is created in the Content tab (seminars only)
+- Talks are created early for campaign registration, often before the semester starts
+- Assessment record is auto-generated via `talk.ensure_gradebook!` after Talk save
+- Participations seeded from speakers immediately
+- Grading happens later via the Assessments tab (see [Grading Talks in Seminars](#grading-talks-in-seminars))
+
+**Why the difference:**
+Assignments and exams are created on-demand during the semester. Talks must exist early for registration campaigns, but grading happens much later—auto-creating the assessment ensures the grading infrastructure is ready when needed.
+```
+
 ### Usage Scenarios
 
-- **For a homework assignment:** A teacher creates an `Assignment` record (the actual course assignment). The system then creates a linked `Assessment::Assessment` record whose `assessable` is that assignment, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+- **For a homework assignment:** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
 
-- **For an exam:** A teacher creates an `Exam` record. The system creates a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
+- **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
 
-- **For a seminar talk:** A teacher creates a `Talk` record. The system creates a linked `Assessment::Assessment` whose `assessable` is that talk, with `requires_points: false`. The teacher records only a final grade for each speaker—no tasks or submissions are needed.
+- **For a seminar talk:** A teacher creates a `Talk` record in the Content tab. The system automatically creates a linked `Assessment::Assessment` whose `assessable` is that talk, with `requires_points: false`. Later, the teacher records only a final grade for each speaker via the Assessments tab—no tasks or submissions are needed.
 
 ---
 
@@ -136,15 +160,26 @@ One row in the gradebook spreadsheet for a specific student in a specific assess
 |------------------|------------------|----------------------------------------------------------------|
 | `assessment_id`  | DB column (FK)   | The assessment this participation belongs to                   |
 | `user_id`        | DB column (FK)   | The student being graded                                       |
+| `tutorial_id`    | DB column (FK)   | Tutorial context at participation creation time (optional, null for exams/talks) |
 | `points_total`   | DB column        | Aggregate points across all tasks (denormalized)               |
 | `grade_value`    | DB column        | Final grade (e.g., "1.3", "Pass") - optional                   |
 | `status`         | DB column (Enum) | Workflow state: `not_started`, `in_progress`, `submitted`, `graded`, `exempt` |
 | `submitted_at`   | DB column        | Timestamp when submission was uploaded (persists after grading)|
 | `grader_id`      | DB column (FK)   | The tutor/teacher who graded this (optional)                   |
 | `graded_at`      | DB column        | Timestamp when grading was completed                           |
+| `results_published_at` | DB column  | Per-participation publication timestamp (optional)             |
 | `published`      | DB column        | Boolean: whether results are visible to the student            |
 | `locked`         | DB column        | Boolean: prevents further edits after publication              |
 | `task_points`    | Association      | All task-level point records for this student in this assessment |
+
+```admonish info collapsible=true title="Tutorial Context Details"
+The `tutorial_id` field captures which tutorial the student was in **at the time of participation creation** (when `seed_participations_from_roster!` runs during assessment setup). This field:
+- Is **set once** when participations are initialized from the roster
+- Is **never updated** if the student changes tutorials mid-semester
+- Is **nullable** for assessments without tutorial context (e.g., exams, talks)
+- Enables **per-tutorial publication** control for assignments
+- Provides **performance optimization** for tutor grading queries
+```
 
 ### Behavior Highlights
 
@@ -165,6 +200,7 @@ module Assessment
 
     belongs_to :assessment, class_name: "Assessment::Assessment"
     belongs_to :user
+    belongs_to :tutorial, optional: true
     belongs_to :grader, class_name: "User", optional: true
 
     has_many :task_points, dependent: :destroy,
@@ -183,22 +219,51 @@ module Assessment
   def recompute_points_total!
     update!(points_total: task_points.sum(:points))
   end
+
+  def results_visible?
+    results_published_at.present?
+  end
 end
+```
+
+```admonish warning collapsible=true title="Tutorial ID Behavior (Implementation Details)"
+The `tutorial_id` on participation is **never updated** after creation. It represents which tutorial the student was in when participations were initialized during assessment setup, not their current tutorial assignment.
+
+**When `tutorial_id` is set:**
+- **Assignments**: Set when `seed_participations_from_roster!` runs after assignment creation, capturing the tutorial each student belongs to at that moment
+- **Exams**: Set to `nil` (exams don't have tutorial context)
+- **Talks**: Set to `nil` (talks have speakers, not tutorial participants)
+
+**Why it doesn't update:**
+- Preserves historical grading context (which tutor graded this work)
+- Determines publication control (which tutorial can publish results)
+- Provides audit trail for grade complaints
+- Enables fast queries without roster joins
+
+**Edge case - student switches tutorials:**
+- Participation keeps original `tutorial_id`
+- Original tutorial's tutor still grades their work
+- Original tutorial's publication controls still apply
+- If manual reassignment is needed, teacher can update `tutorial_id` as admin action
 ```
 
 ### Usage Scenarios
 
-- **After roster seeding:** When an assignment's roster is seeded via `assignment.seed_participations_from_roster!`, the system creates one `Assessment::Participation` record for each student in the tutorial roster, all with `status: :not_started`, `points_total: 0`, and `submitted_at: nil`.
+- **After assessment setup:** When an assignment is created, `assignment.seed_participations_from_roster!` runs, creating one `Assessment::Participation` record for each student across all lecture tutorials. Each participation is initialized with `status: :not_started`, `points_total: 0`, `submitted_at: nil`, and `tutorial_id` set to the tutorial the student currently belongs to.
 
-- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading.
+- **Student submits work:** A student uploads their homework file. The system sets their participation to `status: :submitted` and records `submitted_at: Time.current`. This timestamp persists even after grading. The `tutorial_id` remains unchanged.
 
-- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` remains unchanged—preserving the submission history.
+- **After grading a submission:** A tutor grades a team submission for Problem 1. The grading service creates or updates `Assessment::TaskPoint` records for each team member, then calls `recompute_points_total!` on their participation to update the aggregate score. The status transitions to `:graded` and `graded_at` is set, but `submitted_at` and `tutorial_id` remain unchanged—preserving the submission and tutorial history.
 
-- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:graded`. Students can now see their points breakdown and final grade (if `grade_value` is set).
+- **Publishing exam results:** After all exam tasks are graded, the teacher marks participations as `published: true` and their status is `:graded`. Students can now see their points breakdown and final grade (if `grade_value` is set). Exam participations have `tutorial_id: nil` since exams don't have tutorial context.
 
-- **Handling exemptions:** A student provides a medical certificate and is marked `status: :exempt`. Their participation record exists but no points are computed, no grade is assigned, and both `submitted_at` and `graded_at` remain `nil`.
+- **Per-tutorial publication (assignments):** Tutorial A completes grading on Monday. The tutor sets `results_published_at: Time.current` for all participations where `tutorial_id = tutorial_a.id`. Students in Tutorial A can now see their results. Tutorial B's students (with `tutorial_id = tutorial_b.id` and `results_published_at: nil`) still see "pending" status.
+
+- **Handling exemptions:** A student provides a medical certificate and is marked `status: :exempt`. Their participation record exists but no points are computed, no grade is assigned, and both `submitted_at` and `graded_at` remain `nil`. The `tutorial_id` is preserved for audit purposes.
 
 - **Distinguishing submission vs non-submission:** After grading is complete, the teacher can query `submitted_at.present?` to distinguish students who submitted work (even if they received 0 points for quality) from those who never submitted at all.
+
+- **Student switches tutorials mid-semester:** Alice is in Tutorial A when participations are initialized for Homework 3. Her participation has `tutorial_id: 1` (Tutorial A). In week 6, she switches to Tutorial B. When Tutorial A publishes results, Alice's Homework 3 results become visible because her participation's `tutorial_id` still points to Tutorial A. Her future assignments will have new participations with `tutorial_id: 2` (Tutorial B).
 
 ---
 
@@ -356,6 +421,65 @@ When accessing grading for a `graded` or published assessment, the UI should dis
 > Changes will be visible to students immediately. Continue?
 
 This ensures teachers are aware that modifications affect published results. The `results_published` flag controls visibility, not editability—`TaskPoint` records remain mutable across all assessment states, and `recompute_points_total!` is idempotent.
+
+````admonish info collapsible=true title="Per-Tutorial Result Publication (Implementation Details)"
+For assignments with multiple tutorials, results can be published independently per tutorial as grading completes. This eliminates coordination burden and provides faster feedback to students.
+
+**Publication Model:**
+- Each `Assessment::Participation` has a `results_published_at` timestamp (nullable)
+- Tutor can publish results for their tutorial when grading is complete
+- Publication is per-tutorial, not lecture-wide
+- Students see results when `participation.results_visible?` returns true
+
+**Implementation:**
+
+```ruby
+def results_visible?
+  results_published_at.present?
+end
+```
+
+**Workflow:**
+1. Tutorial A completes grading on Monday
+2. Tutor clicks "Publish Results for Tutorial A"
+3. System sets `results_published_at = Time.current` for all participations where `tutorial_id = tutorial_a.id`
+4. Students in Tutorial A immediately see their points and grades
+5. Tutorial B continues grading, their students still see "pending"
+6. Tutorial B completes Thursday, publishes independently
+
+**Benefits:**
+- No waiting for slowest tutorial to finish
+- Tutors control their own publication timeline
+- Teacher oversight still possible (can hide results per tutorial)
+- Maintains audit trail of when results were released
+
+**Cross-Tutorial Teams (Edge Case):**
+When team members are in different tutorials:
+- Publish when *any* member's tutorial publishes (permissive)
+- OR: Require *all* members' tutorials to publish (strict)
+- Recommended: Use permissive model for simplicity
+
+**Query Examples:**
+
+```ruby
+# Publish results for Tutorial X
+tutorial_x_participations = assessment.participations
+  .where(tutorial_id: tutorial_x.id)
+tutorial_x_participations.update_all(results_published_at: Time.current)
+
+# Student view query
+participation.results_visible?  # true if results_published_at is set
+
+# Teacher dashboard: which tutorials have published?
+assessment.participations
+  .select(:tutorial_id, "COUNT(*) as total")
+  .where.not(results_published_at: nil)
+  .group(:tutorial_id)
+```
+
+**Exam and Talk Publication:**
+Exams and talks have `tutorial_id: nil` on their participations. Publication control uses the legacy `assessment.results_published` boolean instead of per-participation timestamps. Per-tutorial publication only applies to assignments.
+````
 
 ---
 
@@ -601,8 +725,14 @@ class Assignment < ApplicationRecord
     return unless assessment
 
     # Aggregate students from all tutorials in the lecture
-    user_ids = lecture.tutorials.flat_map(&:roster_user_ids).uniq
-    assessment.seed_participations_from!(user_ids: user_ids)
+    lecture.tutorials.each do |tutorial|
+      user_ids = tutorial.roster_user_ids
+      user_ids.each do |user_id|
+        assessment.participations.find_or_create_by!(user_id: user_id) do |part|
+          part.tutorial_id = tutorial.id
+        end
+      end
+    end
   end
 end
 ```
@@ -638,6 +768,59 @@ class Talk < ApplicationRecord
     seed_participations_from_roster!
   end
 end
+```
+
+### Grading Talks in Seminars
+
+```admonish info "Seminar-Specific Workflow"
+Talks in seminars follow a different workflow than assignments and exams. Talks are created early (often before the semester starts) for campaign registration, but grading happens much later after presentations are delivered.
+```
+
+#### Workflow Overview
+
+1. **Talk Creation (Early):**
+   - Teacher creates talks in the Content tab of a seminar
+   - Each talk is created for registration campaign purposes (students sign up for presentation slots)
+   - Assessment record is automatically created via `after_create :setup_grading` hook
+   - Participations are seeded from speakers immediately
+
+2. **Campaign & Registration:**
+   - Students register for talk slots via registration campaign
+   - Talks exist with linked assessment records, but no grading yet
+
+3. **Presentation Delivery:**
+   - Semester progresses, students deliver presentations
+   - Assessment records are already in place, ready for grading
+
+4. **Grading (Late):**
+   - Teacher navigates to Assessments tab in seminar
+   - Tab shows read-only list of all talks with inline grading interface
+   - Teacher enters final grade directly in the list (no per-task breakdown)
+   - Optionally clicks talk title for detailed view to add feedback notes
+
+#### UI Design for Seminar Assessments
+
+**Assessments Tab (Seminar Context):**
+- Shows only talks (no assignments or exams in seminars)
+- **No "New Assessment" button** (talks are created via Content tab)
+- Inline grade input per row for fast grading workflow
+- Columns: Title | Speaker(s) | Grade (inline dropdown) | Status | Actions (view details)
+- Help text: "Talks are created in the Content tab"
+
+**Grading UX:**
+- One click to focus grade dropdown, one click to save
+- Grade range: 1.0 - 5.0 (German grading scale) or Pass/Fail
+- Auto-save on blur or explicit Save button
+- Click talk title → opens assessment show page for detailed feedback
+
+```admonish tip "Why Auto-Create Assessments?"
+Creating the assessment record early ensures the grading infrastructure is ready when needed. Teachers don't have to remember to "prepare talks for grading" later—the system handles it automatically.
+```
+
+```admonish warning "Seminar-Specific Constraints"
+- Talks have `requires_points: false` (no task breakdown)
+- Talks have `requires_submission: false` (no file uploads for presentations)
+- Assessments tab is read-only for talk creation (Content tab owns talk CRUD)
 ```
 
 ### Exam
@@ -738,9 +921,13 @@ To integrate with the grading system, the submission structure changes:
 ### Rationale for Key Decisions
 
 **Why change `assignment_id` to `assessment_id`:**
-- More general: `Exam` model can also have submissions (scanned answer sheets)
+- More general: Enables future support for exam and talk submissions (e.g., scanned answer sheets, presentation files)
 - Decouples submissions from specific domain models
 - Aligns with unified grading architecture
+
+```admonish info "Current Implementation Scope"
+The model uses `assessment_id` instead of `assignment_id` to enable future extensibility. However, **the current implementation is limited to assignments only**. Submission UI, upload workflows, and grading interfaces exist only for the Assignment type. Support for exam and talk submissions is documented in [Future Extensions](10-future-extensions.md).
+```
 
 **Why keep `tutorial_id`:**
 - **Performance:** Fast queries for "all submissions in Tutorial X" without user joins
@@ -1100,4 +1287,42 @@ The following tables support the assessment system:
 | `submissions` | `Submission` | Existing model, extended with `assessment_id` |
 
 **Naming rationale:** Namespaced table names follow Rails conventions and prevent collisions with potential future models (e.g., `Quiz::Task`, `Exercise::Task`).
+
+### Schema Updates for Per-Tutorial Publication
+
+**New columns for `assessment_participations`:**
+
+```ruby
+# filepath: db/migrate/20250105000000_add_tutorial_and_publication_to_participations.rb
+class AddTutorialAndPublicationToParticipations < ActiveRecord::Migration[7.0]
+  def change
+    add_reference :assessment_participations, :tutorial,
+      foreign_key: true, null: true, index: true
+    add_column :assessment_participations, :results_published_at,
+      :datetime, null: true
+    add_index :assessment_participations, :results_published_at
+  end
+end
+```
+
+**Migration rationale:**
+- `tutorial_id`: Nullable to support exams and talks without tutorial context
+- `results_published_at`: Enables per-tutorial publication for assignments
+- Indexed for fast tutorial-scoped queries and publication status checks
+- Foreign key constraint maintains referential integrity
+
+**Backfill strategy for existing data:**
+```ruby
+# For existing assignment participations, backfill tutorial_id from submission
+Submission.includes(:users, :tutorial).find_each do |sub|
+  sub.users.each do |user|
+    participation = Assessment::Participation.find_by(
+      assessment_id: sub.assessment_id,
+      user_id: user.id
+    )
+    participation&.update_column(:tutorial_id, sub.tutorial_id)
+  end
+end
+```
+
 
