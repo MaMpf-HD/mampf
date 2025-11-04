@@ -2,7 +2,6 @@
 set -e
 
 # Wait for xpra at most 60s by attempting an actual X11 connection
-start=$SECONDS
 
 # prefer xdpyinfo, fallback to xset
 if command -v xdpyinfo >/dev/null 2>&1; then
@@ -14,6 +13,7 @@ else
     exit 1
 fi
 
+start=$SECONDS
 while ! check_cmd; do
     if [ $((SECONDS - start)) -ge 60 ]; then
         echo "Timeout waiting for X display :79" >&2
