@@ -6,11 +6,11 @@ set -e
 # Wait for MaMpf container
 start_app=$SECONDS
 while ! curl -sS "$CYPRESS_baseUrl" >/dev/null; do
-    if [ $((SECONDS - start_app)) -ge 180 ]; then
+    if [ $((SECONDS - start_app)) -ge 120 ]; then
         echo "Timeout waiting for MaMpf at $CYPRESS_baseUrl" >&2
         exit 1
     fi
-    echo "Waiting (at most 3 minutes) for MaMpf to come online at $CYPRESS_baseUrl ..."
+    echo "Waiting (at most 2 minutes) for MaMpf to come online at $CYPRESS_baseUrl ..."
     sleep 1
 done
 
