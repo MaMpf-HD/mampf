@@ -61,6 +61,10 @@ The main fields and methods of `Assessment` are:
 | `effective_total_points`  | Method            | Returns `total_points` or sum of task max_points                         |
 | `seed_participations_from!(user_ids:)` | Method | Creates participation records for given users                    |
 
+```admonish warning "Submission Support - Current Scope"
+The `requires_submission` field is currently only used for **Assignment** types. Submission interfaces (upload, view, grade) are only implemented for assignments. For Exams and Talks, this field should remain `false` as no submission workflow exists for these types yet. See [Future Extensions](10-future-extensions.md) for planned support.
+```
+
 ### Behavior Highlights
 
 - Acts as the single source of truth for grading configuration
@@ -109,13 +113,36 @@ module Assessment
 end
 ```
 
+### Assessment Creation Timing
+
+```admonish info "When Assessments Are Created"
+The timing of assessment creation differs by type to match real-world workflows:
+```
+
+**Assignments & Exams (Explicit Creation):**
+- Created explicitly via "New Assessment" UI in the Assessments tab
+- Teacher navigates to Lecture → Assessments → New Assessment → selects type
+- Both domain model (Assignment/Exam) and Assessment record created together in one transaction
+- Teacher controls exactly when the assessment is created during the semester
+
+**Talks (Automatic Creation):**
+- Created automatically when Talk is created in the Content tab (seminars only)
+- Talks are created early for campaign registration, often before the semester starts
+- Assessment record is auto-generated via `talk.ensure_gradebook!` after Talk save
+- Participations seeded from speakers immediately
+- Grading happens later via the Assessments tab (see [Grading Talks in Seminars](#grading-talks-in-seminars))
+
+```admonish tip "Why the difference?"
+Assignments and exams are created on-demand during the semester. Talks must exist early for registration campaigns, but grading happens much later—auto-creating the assessment ensures the grading infrastructure is ready when needed.
+```
+
 ### Usage Scenarios
 
-- **For a homework assignment:** A teacher creates an `Assignment` record (the actual course assignment). The system then creates a linked `Assessment::Assessment` record whose `assessable` is that assignment, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
+- **For a homework assignment:** A teacher creates an `Assignment` record via the "New Assessment" UI. The system creates both the `Assignment` and a linked `Assessment::Assessment` record in one transaction, configured with `requires_points: true` and `requires_submission: true`. The teacher adds tasks for each problem (P1, P2, P3). Student records are seeded automatically from the tutorial roster.
 
-- **For an exam:** A teacher creates an `Exam` record. The system creates a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
+- **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
 
-- **For a seminar talk:** A teacher creates a `Talk` record. The system creates a linked `Assessment::Assessment` whose `assessable` is that talk, with `requires_points: false`. The teacher records only a final grade for each speaker—no tasks or submissions are needed.
+- **For a seminar talk:** A teacher creates a `Talk` record in the Content tab. The system automatically creates a linked `Assessment::Assessment` whose `assessable` is that talk, with `requires_points: false`. Later, the teacher records only a final grade for each speaker via the Assessments tab—no tasks or submissions are needed.
 
 ---
 
@@ -640,6 +667,59 @@ class Talk < ApplicationRecord
 end
 ```
 
+### Grading Talks in Seminars
+
+```admonish info "Seminar-Specific Workflow"
+Talks in seminars follow a different workflow than assignments and exams. Talks are created early (often before the semester starts) for campaign registration, but grading happens much later after presentations are delivered.
+```
+
+#### Workflow Overview
+
+1. **Talk Creation (Early):**
+   - Teacher creates talks in the Content tab of a seminar
+   - Each talk is created for registration campaign purposes (students sign up for presentation slots)
+   - Assessment record is automatically created via `after_create :setup_grading` hook
+   - Participations are seeded from speakers immediately
+
+2. **Campaign & Registration:**
+   - Students register for talk slots via registration campaign
+   - Talks exist with linked assessment records, but no grading yet
+
+3. **Presentation Delivery:**
+   - Semester progresses, students deliver presentations
+   - Assessment records are already in place, ready for grading
+
+4. **Grading (Late):**
+   - Teacher navigates to Assessments tab in seminar
+   - Tab shows read-only list of all talks with inline grading interface
+   - Teacher enters final grade directly in the list (no per-task breakdown)
+   - Optionally clicks talk title for detailed view to add feedback notes
+
+#### UI Design for Seminar Assessments
+
+**Assessments Tab (Seminar Context):**
+- Shows only talks (no assignments or exams in seminars)
+- **No "New Assessment" button** (talks are created via Content tab)
+- Inline grade input per row for fast grading workflow
+- Columns: Title | Speaker(s) | Grade (inline dropdown) | Status | Actions (view details)
+- Help text: "Talks are created in the Content tab"
+
+**Grading UX:**
+- One click to focus grade dropdown, one click to save
+- Grade range: 1.0 - 5.0 (German grading scale) or Pass/Fail
+- Auto-save on blur or explicit Save button
+- Click talk title → opens assessment show page for detailed feedback
+
+```admonish tip "Why Auto-Create Assessments?"
+Creating the assessment record early ensures the grading infrastructure is ready when needed. Teachers don't have to remember to "prepare talks for grading" later—the system handles it automatically.
+```
+
+```admonish warning "Seminar-Specific Constraints"
+- Talks have `requires_points: false` (no task breakdown)
+- Talks have `requires_submission: false` (no file uploads for presentations)
+- Assessments tab is read-only for talk creation (Content tab owns talk CRUD)
+```
+
 ### Exam
 **_A Flexible Gradable Target_**
 
@@ -738,9 +818,13 @@ To integrate with the grading system, the submission structure changes:
 ### Rationale for Key Decisions
 
 **Why change `assignment_id` to `assessment_id`:**
-- More general: `Exam` model can also have submissions (scanned answer sheets)
+- More general: Enables future support for exam and talk submissions (e.g., scanned answer sheets, presentation files)
 - Decouples submissions from specific domain models
 - Aligns with unified grading architecture
+
+```admonish info "Current Implementation Scope"
+The model uses `assessment_id` instead of `assignment_id` to enable future extensibility. However, **the current implementation is limited to assignments only**. Submission UI, upload workflows, and grading interfaces exist only for the Assignment type. Support for exam and talk submissions is documented in [Future Extensions](10-future-extensions.md).
+```
 
 **Why keep `tutorial_id`:**
 - **Performance:** Fast queries for "all submissions in Tutorial X" without user joins

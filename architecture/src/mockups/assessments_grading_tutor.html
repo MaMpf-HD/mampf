@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<!--
+  CONTEXT: Tutor grading interface for assignments.
+  Tutors grade their tutorial's teams, entering points per task.
+  Points are automatically applied to all team members.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade Homework 4 — Linear Algebra I</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .small-width {
+      max-width: 1200px;
+    }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 6em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    h3.lecture-pane-header {
+      color: #838383;
+      font-size: 1.3em;
+    }
+    .task-input {
+      width: 60px;
+      text-align: center;
+      background-color: #fff;
+      border: 1px solid #dee2e6;
+      color: #495057;
+    }
+    .task-input:focus {
+      border-color: #80bdff;
+      box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+    .total-cell {
+      font-weight: bold;
+    }
+    .copy-email-btn {
+      cursor: pointer;
+      opacity: 0.6;
+    }
+    .copy-email-btn:hover {
+      opacity: 1;
+    }
+    .clipboard-popup {
+      position: relative;
+      display: inline-block;
+    }
+    .clipboard-popup-text {
+      visibility: hidden;
+      background-color: #555;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 10px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -60px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .clipboard-popup-text.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="container small-width mt-4">
+    <!-- Header -->
+    <div class="mb-3">
+      <h1 class="h3 mb-1">Linear Algebra I — Homework 4 Grading</h1>
+      <p class="text-muted mb-0">Tutorial: Tuesday 10:00 (Room B101) — Tutor: Anna Schmidt</p>
+    </div>
+
+    <!-- Breadcrumb Navigation -->
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Assessments</a></li>
+        <li class="breadcrumb-item"><a href="#">Homework 4</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Grade Tutorial</li>
+      </ol>
+    </nav>
+
+    <!-- Grading Interface -->
+    <div class="lecture-pane">
+      <!-- Header and Status -->
+      <div class="mb-4">
+        <h3 class="lecture-pane-header mb-2">Tutorial Grading</h3>
+        <p class="text-muted mb-0">
+          <i class="fas fa-check-circle text-success me-1"></i> All changes saved
+        </p>
+      </div>
+
+      <!-- Info Alert -->
+      <div class="alert alert-info" role="alert">
+        <i class="fas fa-info-circle me-2"></i>
+        <strong>Grading Instructions:</strong> Enter points per task. Click "Save All Changes" at the bottom to save all modifications. Empty fields are saved as NULL (no points assigned). To give 0 points, explicitly enter 0.
+      </div>
+
+      <!-- Grading Table -->
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th style="width: 25%;">Team</th>
+              <th style="width: 13%;" class="text-center">
+                Task 1
+                <div class="small text-muted">(5 pts)</div>
+              </th>
+              <th style="width: 13%;" class="text-center">
+                Task 2
+                <div class="small text-muted">(10 pts)</div>
+              </th>
+              <th style="width: 13%;" class="text-center">
+                Task 3
+                <div class="small text-muted">(5 pts)</div>
+              </th>
+              <th style="width: 12%;" class="text-center">Total</th>
+              <th style="width: 12%;" class="text-center">Submission</th>
+              <th style="width: 12%;" class="text-center">Correction</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Team 1: Not graded yet, late submission -->
+            <tr>
+              <td>
+                <strong>Alice Schmidt, Bob Müller</strong>
+                <span class="clipboard-popup">
+                  <i class="far fa-copy copy-email-btn text-secondary ms-2" 
+                     onclick="copyToClipboard('alice.schmidt@example.com, bob.mueller@example.com', this)"
+                     data-bs-toggle="tooltip" 
+                     title="Copy emails to clipboard"></i>
+                  <span class="clipboard-popup-text">Emails copied!</span>
+                </span>
+                <i class="fas fa-exclamation-triangle text-warning ms-1" 
+                   data-bs-toggle="tooltip" 
+                   title="Submitted late (2 days after deadline)"></i>
+                <div class="small text-muted">2 members</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="1" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" placeholder="—" data-submission="1" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="1" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-1">—/20</span>
+              </td>
+              <td class="text-center">
+                <a href="#" class="text-decoration-none" title="Download submission">
+                  <i class="fas fa-download"></i> PDF
+                </a>
+              </td>
+              <td class="text-center">
+                <a href="#" class="text-primary" title="Upload correction">
+                  <i class="fas fa-upload fa-lg"></i>
+                </a>
+              </td>
+            </tr>
+
+            <!-- Individual: David Müller - saved with 0 points example -->
+            <tr>
+              <td>
+                <strong>David Müller</strong>
+                <div class="small text-muted">1 member</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="4" data-submission="2" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" value="9" data-submission="2" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="0" data-submission="2" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-2">13/20</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+            </tr>
+
+            <!-- Individual: Eva Fischer - graded (same submission as David) -->
+            <tr>
+              <td>
+                <strong>Eva Fischer</strong>
+                <div class="small text-muted">1 member</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="4" data-submission="3" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" value="9" data-submission="3" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="0" data-submission="3" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-3">13/20</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+
+            <!-- Team 4: Already graded (Emma, Felix, Greta) -->
+            <tr>
+              <td>
+                <strong>Emma Wagner, Felix Schneider, Greta Hoffmann</strong>
+                <div class="small text-muted">3 members</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="5" data-submission="4" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" value="10" data-submission="4" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="4" data-submission="4" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-4">19/20</span>
+              </td>
+              <td class="text-center">
+                <a href="#" class="text-decoration-none" title="Download submission">
+                  <i class="fas fa-download"></i> PDF
+                </a>
+              </td>
+              <td class="text-center">
+                <a href="#" class="text-decoration-none me-2" title="Download correction">
+                  <i class="fas fa-download"></i> PDF
+                </a>
+                <a href="#" class="text-danger" title="Remove correction" onclick="if(confirm('Remove correction file?')) { alert('Correction removed'); this.closest('td').innerHTML='<a href=\'#\' class=\'text-primary\' title=\'Upload correction\'><i class=\'fas fa-upload fa-lg\'></i></a>'; return false; }">
+                  <i class="fas fa-trash-alt"></i>
+                </a>
+              </td>
+
+            <!-- Team 5: Not graded yet (Frank, Grace, Hans) -->
+            <tr>
+              <td>
+                <strong>Frank Weber, Grace Meyer, Hans Becker</strong>
+                <div class="small text-muted">3 members</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="5" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" placeholder="—" data-submission="5" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="5" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-5">—/20</span>
+              </td>
+              <td class="text-center">
+                <a href="#" class="text-decoration-none" title="Download submission">
+                  <i class="fas fa-download"></i> PDF
+                </a>
+              </td>
+              <td class="text-center">
+                <a href="#" class="text-primary" title="Upload correction">
+                  <i class="fas fa-upload fa-lg"></i>
+                </a>
+              </td>
+
+            <!-- Individual: Irene Koch - graded -->
+            <tr>
+              <td>
+                <strong>Irene Koch</strong>
+                <div class="small text-muted">1 member</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="3" data-submission="6" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" value="7" data-submission="6" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" value="5" data-submission="6" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-6">15/20</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+
+            <!-- Individual: Julia Schneider - no digital submission -->
+            <tr>
+              <td>
+                <strong>Julia Schneider</strong>
+                <div class="small text-muted">1 member</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="7" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" placeholder="—" data-submission="7" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="7" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-7">—/20</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+              <td class="text-center">
+                <span class="text-muted">—</span>
+              </td>
+
+            <!-- Individual: Karl Wagner - no digital submission -->
+            <tr>
+              <td>
+                <strong>Karl Wagner</strong>
+                <div class="small text-muted">1 member</div>
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="8" data-task="1">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="10" placeholder="—" data-submission="8" data-task="2">
+              </td>
+              <td class="text-center">
+                <input type="number" class="form-control-sm task-input" min="0" max="5" placeholder="—" data-submission="8" data-task="3">
+              </td>
+              <td class="text-center total-cell">
+                <span id="total-8">—/20</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex justify-content-between mt-4">
+        <a href="#" class="btn btn-outline-secondary">
+          <i class="fas fa-arrow-left me-2"></i>Back to Tutorial
+        </a>
+        <div>
+          <button class="btn btn-outline-primary me-2">
+            <i class="fas fa-file-export me-2"></i>Export Grades
+          </button>
+          <button class="btn btn-primary me-2" id="saveAllButton">
+            <i class="fas fa-save me-2"></i>Save All Changes
+          </button>
+          <button class="btn btn-success">
+            <i class="fas fa-check me-2"></i>Mark Tutorial as Complete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let hasUnsavedChanges = false;
+
+    function updateSaveStatus(unsaved) {
+      hasUnsavedChanges = unsaved;
+      const statusElement = document.querySelector('.lecture-pane-header + p');
+      if (unsaved) {
+        statusElement.innerHTML = '<i class="fas fa-exclamation-circle text-warning me-1"></i> Unsaved changes';
+        statusElement.className = 'text-warning mb-0';
+      } else {
+        statusElement.innerHTML = '<i class="fas fa-check-circle text-success me-1"></i> All changes saved';
+        statusElement.className = 'text-muted mb-0';
+      }
+    }
+
+    document.querySelectorAll('.task-input').forEach(input => {
+      input.addEventListener('input', function() {
+        const submissionId = this.dataset.submission;
+        const inputs = document.querySelectorAll(`[data-submission="${submissionId}"]`);
+        let total = 0;
+        let hasValue = false;
+        
+        inputs.forEach(inp => {
+          if (inp.value) {
+            total += parseFloat(inp.value);
+            hasValue = true;
+          }
+        });
+        
+        const totalSpan = document.getElementById(`total-${submissionId}`);
+        if (hasValue) {
+          totalSpan.textContent = `${total}/20`;
+        } else {
+          totalSpan.textContent = '—/20';
+        }
+
+        updateSaveStatus(true);
+      });
+    });
+
+    document.getElementById('saveAllButton').addEventListener('click', function() {
+      setTimeout(() => {
+        updateSaveStatus(false);
+        alert('All grades saved successfully!');
+      }, 500);
+    });
+
+    function copyToClipboard(text, element) {
+      navigator.clipboard.writeText(text).then(() => {
+        const popup = element.nextElementSibling;
+        popup.classList.add('show');
+        setTimeout(() => {
+          popup.classList.remove('show');
+        }, 2000);
+      }).catch(err => {
+        alert('Failed to copy: ' + err);
+      });
+    }
+
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+  </script>
+</body>
+</html>

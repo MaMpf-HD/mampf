@@ -279,22 +279,32 @@ flowchart LR
 
 ## Assessments
 
-### Assessments (Teacher/Editor)
+```admonish info "Context-Specific Views"
+Assessment views differ between regular lectures and seminars:
+- **Lectures:** Show assignments and exams; "New Assessment" button with dropdown
+- **Seminars:** Show talks only; no "New Assessment" button (talks created via Content tab); inline grading interface
+```
+
+### Assessments (Teacher/Editor - Lectures)
 
 #### Screens
 
 See Table keys above for column meanings.
 
+```admonish note "Lecture Context Only"
+The views below apply to regular lectures. For seminar-specific views, see the [Seminars](#assessments-teachereditor---seminars) section.
+```
+
 | View        | Key elements                                        | Mockup |
 |-------------|------------------------------------------------------|--------|
-| Index       | List of assessments with status/type badges; filter tabs; progress indicators; action buttons | [Mockup](../mockups/assessments_index.html) |
-| New         | Form with dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Mockup](../mockups/assessments_new.html) |
+| Index       | List of assignments and exams with status/type badges; filter tabs; progress indicators; "New Assessment" button | [Mockup](../mockups/assessments_index.html) |
+| Index (End of Semester) | Same as Index, showing complete semester timeline: 8 graded assignments, midterm exam graded, final exam in progress | [Mockup](../mockups/assessments_index_end_of_semester.html) |
+| New         | Form with type dropdown (Assignment/Exam); dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Mockup](../mockups/assessments_new.html) |
 | Show (Assignment - Open) | Tabbed interface (Overview/Settings/Tasks/Participants); submission progress tracking; before grading starts | [Mockup](../mockups/assessments_show_assignment_open.html) |
 | Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Participants); submission and grading progress; task breakdown | [Mockup](../mockups/assessments_show_assignment_closed.html) |
 | Show (Exam - Draft) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); configuration and setup phase | [Mockup](../mockups/assessments_show_exam_draft.html) |
 | Show (Exam - Closed) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); grading in progress; tutor assignment tracking | [Mockup](../mockups/assessments_show_exam_closed.html) |
 | Show (Exam - Graded) | Tabbed interface with Statistics tab; grade distribution; results publication status; average scores per question | [Mockup](../mockups/assessments_show_exam_graded.html) |
-| Show (Talk) | Tabbed interface (Overview/Settings/Participants); final grade display; speaker details; feedback notes | [Mockup](../mockups/assessments_show_talk.html) |
 | Grading     | Sticky header table; per-task columns; bulk actions  | TODO   |
 | Results     | Compact totals; collapsible per-task breakdown       | TODO   |
 
@@ -325,6 +335,81 @@ flowchart LR
 | Tutor         | [Assessment::GradingController](11-controllers.md#assessment-controllers)       | export, import                                    | Optional if permitted           |
 | Tutor         | [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | index, show                                       | Read-only                       |
 | Student       | [Assessment::ParticipationsController](11-controllers.md#assessment-controllers)| index, show                                       | Own results (when published)    |
+
+### Assessments (Teacher/Editor - Seminars)
+
+#### Screens
+
+```admonish tip "Streamlined Grading"
+Seminars show only talks with inline grading for fast workflow. Talks are created via the Content tab, not the Assessments tab.
+```
+
+| View        | Key elements                                        | Mockup |
+|-------------|------------------------------------------------------|--------|
+| Index (Seminar) | List of talks with inline grading; columns: Title, Speaker(s), Grade (inline dropdown), Status, Actions; no "New Assessment" button; help text: "Talks are created in the Content tab" | [Mockup](../mockups/assessments_index_seminar.html) |
+| Show (Talk) | Tabbed interface (Overview/Settings/Participants); final grade display; speaker details; feedback notes | [Mockup](../mockups/assessments_show_talk.html) |
+
+#### Flow
+
+```mermaid
+flowchart LR
+  subgraph TEACHER_EDITOR [Teacher/Editor]
+    CONTENT[Content tab: Create talk] --> AUTO[Auto-create assessment]
+    AUTO --> ASSESS[Assessments tab: View list]
+    ASSESS --> INLINE[Inline grade]
+    INLINE --> DETAIL[Optional: Click for details]
+    DETAIL --> FEEDBACK[Add feedback]
+  end
+```
+
+#### Controller/action mapping
+| Role          | Controller                          | Actions                                           | Scope                          |
+|---------------|-------------------------------------|---------------------------------------------------|---------------------------------|
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | index, show                                       | Read-only list; inline grading |
+| Teacher/Editor| [Assessment::GradingController](11-controllers.md#assessment-controllers)       | update                                            | Save inline grade              |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | show (detail view)                                | Add feedback notes             |
+| Teacher/Editor| [Assessment::AssessmentsController](11-controllers.md#assessment-controllers)   | publish_results, unpublish_results                | Visibility lifecycle            |
+
+```admonish warning "No Creation Actions"
+Seminars do not expose `new`, `create`, or `destroy` actions in the Assessments tab. Talks (and their assessments) are managed via the Content tab.
+```
+
+### Assessments (Tutor)
+
+#### Screens
+
+```admonish tip "Team-Based Grading"
+Tutors grade their tutorial's teams for assignments. Points entered once per team are automatically applied to all team members. The interface works for both digital and paper submissions.
+```
+
+| View        | Key elements                                        | Mockup |
+|-------------|------------------------------------------------------|--------|
+| Grading (Tutorial) | Team-based grading table; per-task point inputs; progress indicator; filter by graded/not graded; submission links; auto-calculated totals | [Mockup](../mockups/assessments_grading_tutor.html) |
+
+#### Flow
+
+```mermaid
+flowchart LR
+  subgraph TUTOR [Tutor]
+    TUT[Tutorial view] --> GRADE[Grading page]
+    GRADE --> ENTER[Enter points per task]
+    ENTER --> SAVE[Save team grade]
+    SAVE --> NEXT{More teams?}
+    NEXT -->|Yes| ENTER
+    NEXT -->|No| COMPLETE[Mark complete]
+  end
+```
+
+#### Controller/action mapping
+| Role  | Controller                          | Actions                    | Scope                          |
+|-------|-------------------------------------|----------------------------|--------------------------------|
+| Tutor | [Assessment::TutorialGradingController](11-controllers.md#assessment-controllers) | show                       | Display grading table for tutorial |
+| Tutor | [Assessment::TutorialGradingController](11-controllers.md#assessment-controllers) | update                     | Save points for one team (creates TaskPoints for all members) |
+| Tutor | [Assessment::TutorialGradingController](11-controllers.md#assessment-controllers) | export                     | Export tutorial grades         |
+
+```admonish note "Team Grading Service"
+The backend uses `Assessment::TeamGradingService` to propagate points from team input to individual `Assessment::TaskPoint` records for each team member. This ensures consistent grading within teams while maintaining per-user granularity for reporting.
+```
 
 ## Exams & Eligibility
 

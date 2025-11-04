@@ -42,6 +42,41 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 4. Assessment & Grading
 
+### Submission Support for Exams and Talks
+
+```admonish info "Current Status"
+Currently, file submissions are only implemented for **Assignment** types. The underlying data model (`Submission` with `assessment_id` field) was designed to support submissions for all assessment types, but the UI and workflows are scoped to assignments only.
+```
+
+**Use Cases for Future Extension:**
+
+| Assessment Type | Submission Scenario | Example |
+|-----------------|---------------------|---------|
+| Exam (Online) | Students upload completed exam PDFs | Take-home exam, timed online exam |
+| Exam (In-Person) | Staff upload scanned answer sheets | Physical exam digitized for archival/grading |
+| Talk | Speakers upload presentation materials | Slides, handouts, supplementary files |
+
+**Infrastructure Ready:**
+- ✅ `Submission` model uses `assessment_id` (supports any assessment type)
+- ✅ `Assessment::Assessment` has `requires_submission` boolean field
+- ✅ `Assessment::Participation` tracks `submitted_at` timestamp
+- ✅ `Assessment::TaskPoint` can link to `submission_id` for audit trails
+
+**Requirements for Implementation:**
+- Design submission UI adapted for exam/talk contexts (different from assignment task-based interface)
+- Adapt grading workflows (exam submissions may need different grading patterns than assignment tasks)
+- Consider timing constraints (exam time windows, talk presentation schedules)
+- Define file type restrictions (exam PDFs vs presentation formats)
+- Handle team vs individual submissions (talks may have co-presenters)
+
+**Complexity:** Medium (model foundation exists, need UI and workflow design)
+
+**References:** See [Assessments & Grading - Submission Model](04-assessments-and-grading.md#submission-extended-model)
+
+---
+
+### Other Assessment Extensions
+
 - Inline annotation integration (external service)
 - Rubric templates per task (structured criteria + auto-sum)
 - Late policy engine (configurable penalty computation)
