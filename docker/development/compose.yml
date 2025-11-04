@@ -42,15 +42,6 @@ services:
     ports:
       - 3145:3145 # Rails app for Cypress tests (no nginx used here)
       - 3037:3037 # Vite server
-    healthcheck:
-      # see https://docs.docker.com/compose/how-tos/startup-order/#reference-information
-      # and https://docs.docker.com/reference/compose-file/services/#healthcheck
-      # and https://docs.docker.com/reference/dockerfile/#healthcheck
-      test: curl --fail http://localhost:3145 || exit 1
-      interval: 5s
-      retries: 10
-      start_period: 10s
-      timeout: 10s
 
   nginx:
     image: openresty/openresty:alpine
