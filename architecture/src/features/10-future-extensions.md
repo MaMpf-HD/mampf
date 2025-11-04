@@ -158,6 +158,40 @@ By default, tutors grade all tasks for their own tutorial's submissions. An alte
 - Task dependencies (unlock logic)
 - Peer review workflows
 
+### Grading Audit Trail (Teacher Override Tracking)
+
+**Use Case:** Track when teachers modify points after initial grading (e.g., complaint handling).
+
+**Current State:**
+- `Assessment::TaskPoint` has `grader_id` and `graded_at`
+- No explicit tracking of modifications after initial grading
+- Cannot distinguish "teacher graded initially" from "teacher overrode tutor grade"
+
+**Implementation:**
+
+Add modification tracking fields:
+```ruby
+add_column :assessment_task_points, :modified_by_id, :integer
+add_column :assessment_task_points, :modified_at, :datetime
+add_index :assessment_task_points, :modified_by_id
+```
+
+**Logic:**
+- Initially: `grader_id` = tutor, `modified_by_id` = nil
+- Teacher edits: `modified_by_id` = teacher, `modified_at` = Time.current
+- Keep original `grader_id` for audit trail
+
+**Benefits:**
+- Explicit tracking of override events
+- Preserves original grader context
+- Enables audit reports ("all teacher overrides for this assessment")
+- Simple to query and display in UI
+
+**UI Indicators:**
+- Warning icon on modified cells
+- Tooltip: "Modified by [Teacher Name] on [Date]"
+- Teacher grading details view shows "Last Changed" column
+
 ### Multiple Choice Extensions
 
 - MC question bank (reusable question library)

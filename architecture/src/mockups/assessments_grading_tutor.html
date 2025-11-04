@@ -111,32 +111,86 @@
         <strong>Grading Instructions:</strong> Enter points per task. Click "Save All Changes" at the bottom to save all modifications. Empty fields are saved as NULL (no points assigned). To give 0 points, explicitly enter 0.
       </div>
 
-      <!-- Search/Filter -->
-      <div class="mb-3">
-        <div class="input-group" style="max-width: 400px;">
-          <span class="input-group-text">
-            <i class="fas fa-search"></i>
-          </span>
-          <input type="text" 
-                 class="form-control" 
-                 id="studentFilter" 
-                 placeholder="Filter by student name..."
-                 autocomplete="off">
-          <button class="btn btn-outline-secondary" 
-                  type="button" 
-                  id="clearFilter"
-                  style="display: none;">
-            <i class="fas fa-times"></i>
-          </button>
+      <!-- Search/Filter and Batch Mode -->
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <div class="input-group" style="max-width: 400px;">
+            <span class="input-group-text">
+              <i class="fas fa-search"></i>
+            </span>
+            <input type="text" 
+                   class="form-control" 
+                   id="studentFilter" 
+                   placeholder="Filter by student name..."
+                   autocomplete="off">
+            <button class="btn btn-outline-secondary" 
+                    type="button" 
+                    id="clearFilter"
+                    style="display: none;">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <small class="text-muted" id="filterStatus"></small>
         </div>
-        <small class="text-muted" id="filterStatus"></small>
+        <div>
+          <button class="btn btn-outline-primary btn-sm" id="batchModeToggle">
+            <i class="fas fa-tasks me-2"></i>Enter Batch Mode
+          </button>
+          <div id="batchControls" class="d-none mt-2">
+            <span class="badge bg-info me-2" id="selectedCount">0 selected</span>
+            <button class="btn btn-secondary btn-sm" id="clearSelection">
+              Clear Selection
+            </button>
+          </div>
+        </div>
       </div>
 
-      <!-- Grading Table -->
+      <!-- Batch Grading Bar (sticky at bottom when students selected) -->
+      <div id="batchGradingBar" class="card bg-light border-primary d-none position-sticky mb-3" 
+           style="bottom: 0; z-index: 100;">
+        <div class="card-body">
+          <h6 class="mb-3">
+            <i class="fas fa-users me-2"></i>Batch Grade 
+            (<span id="batchSelectedCount">0</span> students)
+          </h6>
+          <div class="row g-2 align-items-end">
+            <div class="col-auto">
+              <label class="form-label small mb-1">Task 1 (5 pts)</label>
+              <input type="number" class="form-control form-control-sm" 
+                     id="batchTask1" min="0" max="5" placeholder="—" 
+                     style="width: 80px;">
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-1">Task 2 (10 pts)</label>
+              <input type="number" class="form-control form-control-sm" 
+                     id="batchTask2" min="0" max="10" placeholder="—" 
+                     style="width: 80px;">
+            </div>
+            <div class="col-auto">
+              <label class="form-label small mb-1">Task 3 (5 pts)</label>
+              <input type="number" class="form-control form-control-sm" 
+                     id="batchTask3" min="0" max="5" placeholder="—" 
+                     style="width: 80px;">
+            </div>
+            <div class="col-auto">
+              <button class="btn btn-primary btn-sm" id="applyBatchGrades">
+                <i class="fas fa-check me-1"></i>Apply to Selected
+              </button>
+              <button class="btn btn-outline-secondary btn-sm" id="exitBatchMode">
+                Exit Batch Mode
+              </button>
+            </div>
+          </div>
+          <small class="text-muted d-block mt-2">
+            <i class="fas fa-info-circle me-1"></i>Points will be filled into selected rows. Review before saving.
+          </small>
+        </div>
+      </div>
+
       <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table table-hover" id="gradingTable">
           <thead class="table-light">
-            <tr>
+            <tr id="tableHeader">
               <th style="width: 25%;">Team</th>
               <th style="width: 13%;" class="text-center">
                 Task 1
@@ -643,6 +697,152 @@
     tooltipTriggerList.map(function (tooltipTriggerEl) {
       return new bootstrap.Tooltip(tooltipTriggerEl);
     });
+
+    // Batch Grading Mode
+    let batchModeActive = false;
+    let selectedSubmissions = new Set();
+
+    document.getElementById('batchModeToggle').addEventListener('click', function() {
+      batchModeActive = !batchModeActive;
+      if (batchModeActive) {
+        enterBatchMode();
+      } else {
+        exitBatchMode();
+      }
+    });
+
+    function enterBatchMode() {
+      document.getElementById('batchModeToggle').innerHTML = 
+        '<i class="fas fa-times me-2"></i>Exit Batch Mode';
+      document.getElementById('batchModeToggle').classList.replace('btn-outline-primary', 'btn-warning');
+      document.getElementById('batchControls').classList.remove('d-none');
+      
+      // Add checkbox column header
+      const headerRow = document.getElementById('tableHeader');
+      const checkboxHeader = document.createElement('th');
+      checkboxHeader.style.width = '5%';
+      checkboxHeader.className = 'text-center batch-column';
+      checkboxHeader.innerHTML = '<input type="checkbox" class="form-check-input" id="selectAllCheckbox">';
+      headerRow.insertBefore(checkboxHeader, headerRow.firstChild);
+      
+      // Add checkbox to each row
+      document.querySelectorAll('#gradingTable tbody tr').forEach(row => {
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.className = 'form-check-input batch-checkbox';
+        
+        // Find submission ID from any input in this row
+        const submissionInput = row.querySelector('[data-submission]');
+        const submissionId = submissionInput?.dataset.submission;
+        checkbox.dataset.submission = submissionId;
+        
+        const cell = document.createElement('td');
+        cell.className = 'text-center batch-column';
+        cell.appendChild(checkbox);
+        row.insertBefore(cell, row.firstChild);
+        
+        checkbox.addEventListener('change', updateBatchSelection);
+      });
+
+      // Select all checkbox handler
+      document.getElementById('selectAllCheckbox').addEventListener('change', function() {
+        const isChecked = this.checked;
+        document.querySelectorAll('.batch-checkbox').forEach(cb => {
+          if (cb.closest('tr').style.display !== 'none') {
+            cb.checked = isChecked;
+          }
+        });
+        updateBatchSelection();
+      });
+    }
+
+    function exitBatchMode() {
+      batchModeActive = false;
+      selectedSubmissions.clear();
+      
+      document.getElementById('batchModeToggle').innerHTML = 
+        '<i class="fas fa-tasks me-2"></i>Enter Batch Mode';
+      document.getElementById('batchModeToggle').classList.replace('btn-warning', 'btn-outline-primary');
+      document.getElementById('batchControls').classList.add('d-none');
+      document.getElementById('batchGradingBar').classList.add('d-none');
+      
+      // Remove checkbox column
+      document.querySelectorAll('.batch-column').forEach(col => col.remove());
+      
+      // Clear batch input fields
+      document.getElementById('batchTask1').value = '';
+      document.getElementById('batchTask2').value = '';
+      document.getElementById('batchTask3').value = '';
+    }
+
+    function updateBatchSelection() {
+      selectedSubmissions.clear();
+      document.querySelectorAll('.batch-checkbox:checked').forEach(cb => {
+        selectedSubmissions.add(cb.dataset.submission);
+      });
+      
+      const count = selectedSubmissions.size;
+      document.getElementById('selectedCount').textContent = `${count} selected`;
+      document.getElementById('batchSelectedCount').textContent = count;
+      
+      if (count > 0) {
+        document.getElementById('batchGradingBar').classList.remove('d-none');
+      } else {
+        document.getElementById('batchGradingBar').classList.add('d-none');
+      }
+    }
+
+    document.getElementById('clearSelection').addEventListener('click', function() {
+      document.querySelectorAll('.batch-checkbox').forEach(cb => cb.checked = false);
+      document.getElementById('selectAllCheckbox').checked = false;
+      updateBatchSelection();
+    });
+
+    document.getElementById('applyBatchGrades').addEventListener('click', function() {
+      const task1 = document.getElementById('batchTask1').value;
+      const task2 = document.getElementById('batchTask2').value;
+      const task3 = document.getElementById('batchTask3').value;
+      
+      if (!task1 && !task2 && !task3) {
+        alert('Enter at least one task score');
+        return;
+      }
+      
+      selectedSubmissions.forEach(submissionId => {
+        if (task1) {
+          const input = document.querySelector(`[data-submission="${submissionId}"][data-task="1"]`);
+          if (input) {
+            input.value = task1;
+            input.dispatchEvent(new Event('input'));
+          }
+        }
+        if (task2) {
+          const input = document.querySelector(`[data-submission="${submissionId}"][data-task="2"]`);
+          if (input) {
+            input.value = task2;
+            input.dispatchEvent(new Event('input'));
+          }
+        }
+        if (task3) {
+          const input = document.querySelector(`[data-submission="${submissionId}"][data-task="3"]`);
+          if (input) {
+            input.value = task3;
+            input.dispatchEvent(new Event('input'));
+          }
+        }
+      });
+      
+      updateSaveStatus(true);
+      
+      // Clear batch fields
+      document.getElementById('batchTask1').value = '';
+      document.getElementById('batchTask2').value = '';
+      document.getElementById('batchTask3').value = '';
+      
+      alert(`Points applied to ${selectedSubmissions.size} selected submissions`);
+    });
+
+    document.getElementById('exitBatchMode').addEventListener('click', exitBatchMode);
   </script>
 </body>
 </html>

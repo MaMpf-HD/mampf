@@ -301,12 +301,10 @@ The views below apply to regular lectures. For seminar-specific views, see the [
 | Index (End of Semester) | Same as Index, showing complete semester timeline: 8 graded assignments, midterm exam graded, final exam in progress | [Mockup](../mockups/assessments_index_end_of_semester.html) |
 | New         | Form with type dropdown (Assignment/Exam); dual-mode support (Pointbook/Gradebook); dynamic task management; schedule settings | [Mockup](../mockups/assessments_new.html) |
 | Show (Assignment - Open) | Tabbed interface (Overview/Settings/Tasks/Participants); submission progress tracking; before grading starts | [Mockup](../mockups/assessments_show_assignment_open.html) |
-| Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Participants); submission and grading progress; task breakdown | [Mockup](../mockups/assessments_show_assignment_closed.html) |
+| Show (Assignment - Closed) | Tabbed interface (Overview/Settings/Tasks/Tutorials/Grading/Statistics); submission progress; tutorials publication management; grading table with filters and sorting | [Mockup](../mockups/assessments_show_assignment_closed.html) |
 | Show (Exam - Draft) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); configuration and setup phase | [Mockup](../mockups/assessments_show_exam_draft.html) |
 | Show (Exam - Closed) | Tabbed interface (Overview/Settings/Tasks/Exam Logistics/Participants); grading in progress; tutor assignment tracking | [Mockup](../mockups/assessments_show_exam_closed.html) |
 | Show (Exam - Graded) | Tabbed interface with Statistics tab; grade distribution; results publication status; average scores per question | [Mockup](../mockups/assessments_show_exam_graded.html) |
-| Grading     | Sticky header table; per-task columns; bulk actions  | TODO   |
-| Results     | Compact totals; collapsible per-task breakdown       | TODO   |
 
 #### Flow
 
