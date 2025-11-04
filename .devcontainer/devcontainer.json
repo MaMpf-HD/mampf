@@ -27,7 +27,15 @@
         },
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
         "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
-        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {}
+        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {},
+        "ghcr.io/devcontainers/features/desktop-lite:1": {
+            // https://github.com/devcontainers/features/tree/main/src/desktop-lite
+            "vncPort": "5933",
+            "password": "noPassword"
+        }
+    },
+    "remoteEnv": {
+        "VNC_RESOLUTION": "2048x1080x24"
     },
     "containerEnv": {
         // in the container itself, we then install zsh
@@ -45,7 +53,8 @@
         1080,
         5050,
         8060,
-        3004
+        3004,
+        5933
     ],
     "portsAttributes": {
         // Main app
@@ -83,6 +92,10 @@
         "5050": {
             "label": "pgAdmin",
             "onAutoForward": "silent"
+        },
+        "5933": {
+            "label": "VNC Desktop",
+            "onAutoForward": "openBrowser"
         }
     },
     "initializeCommand": "git submodule update --init --recursive",

@@ -60,7 +60,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
         libarchive-tools wget wait-for-it graphviz libvips42 lsof
 
-# Install Playwright dependencies
+# Playwright system dependencies
+RUN npx playwright install-deps
+
 RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get install -y --no-install-recommends \
         libatk1.0-0 libatk-bridge2.0-0 libatspi2.0-0 libxcomposite1 libxdamage1
@@ -117,6 +119,9 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Running yarn install"; \
         yarn install --frozen-lockfile; \
     fi
+
+# Playwright browsers
+RUN npx playwright install
 
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)
