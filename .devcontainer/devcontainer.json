@@ -89,6 +89,7 @@
     "postCreateCommand": ".devcontainer/boot.sh",
     "customizations": {
         "vscode": {
+            // 🎹 keep this in sync with extensions.json
             "extensions": [
                 // Container & Remote
                 "ms-azuretools.vscode-containers",
@@ -104,7 +105,8 @@
                 "nefrob.vscode-just-syntax",
                 "timonwong.shellcheck",
                 "github.copilot",
-                "github.vscode-pull-request-github"
+                "github.vscode-pull-request-github",
+                "ms-playwright.playwright"
             ]
         }
     },
