@@ -66,6 +66,8 @@ jobs:
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
           -f ./compose.yml -f ../cicd/compose.cicd.build.yml
+          --set app-test.args.USER_UID=$(id -u)
+          --set app-test.args.USER_GID=$(id -g)
           --set app-test.tags=ghcr.io/mampf-hd/mampftest:image
           --set app-test.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
           --set app-test.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
