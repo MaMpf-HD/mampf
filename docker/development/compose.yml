@@ -40,7 +40,7 @@ services:
       - NODE_ENV=test
       - MAMPF_PORT=3145
     ports:
-      - 3145:3145 # Rails app for Cypress tests (no nginx used here)
+      - '127.0.0.1:3145:3145' # Rails app for Cypress tests (no nginx used here)
       - 3037:3037 # Vite server
 
   nginx:
