@@ -6,14 +6,14 @@ include:
 
 services:
   app:
-    command: "sleep infinity"
+    entrypoint: ["sleep infinity"]
     volumes:
       # Persist bash history
       # https://code.visualstudio.com/remote/advancedcontainers/persist-bash-history
       - mampf-command-history:/workspaces/commandhistory/
 
   app-test:
-    command: "RUBY_DEBUG_ENABLE=0 /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"
+    entrypoint: ["RUBY_DEBUG_ENABLE=0 /workspaces/mampf/docker/development/init-and-run.sh | tee /proc/1/fd/1"]
 
   xpra:
     build:
