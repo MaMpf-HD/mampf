@@ -29,6 +29,11 @@ muesli:
     fi
     mdbook serve --port $port -n 0.0.0.0
 
+# Launch the Playwright UI mode
+playwright-ui:
+    #!/usr/bin/env bash
+    npx playwright test --ui-port=8070 --ui-host=0.0.0.0
+
 # Commands to test the MaMpf codebase
 mod test ".config/commands/test.justfile"
 # see https://github.com/casey/just/issues/2216
