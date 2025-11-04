@@ -422,7 +422,7 @@ When accessing grading for a `graded` or published assessment, the UI should dis
 
 This ensures teachers are aware that modifications affect published results. The `results_published` flag controls visibility, not editability—`TaskPoint` records remain mutable across all assessment states, and `recompute_points_total!` is idempotent.
 
-```admonish info collapsible=true title="Per-Tutorial Result Publication (Implementation Details)"
+````admonish info collapsible=true title="Per-Tutorial Result Publication (Implementation Details)"
 For assignments with multiple tutorials, results can be published independently per tutorial as grading completes. This eliminates coordination burden and provides faster feedback to students.
 
 **Publication Model:**
@@ -479,7 +479,7 @@ assessment.participations
 
 **Exam and Talk Publication:**
 Exams and talks have `tutorial_id: nil` on their participations. Publication control uses the legacy `assessment.results_published` boolean instead of per-participation timestamps. Per-tutorial publication only applies to assignments.
-```
+````
 
 ---
 

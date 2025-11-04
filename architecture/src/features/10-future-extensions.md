@@ -75,6 +75,81 @@ Currently, file submissions are only implemented for **Assignment** types. The u
 
 ---
 
+### Task-Wise Grading (Optional Workflow)
+
+```admonish info "Current Status"
+The default grading workflow is **tutorial-wise**: each tutor grades all tasks for their own tutorial's submissions. The data model already supports an alternative workflow where grading is distributed by task instead of by tutorial, but this requires additional UI and configuration features.
+```
+
+**Use Case:**
+
+By default, tutors grade all tasks for their own tutorial's submissions. An alternative workflow is **task-wise grading**, where each tutor specializes in grading a specific task across all tutorials.
+
+| Traditional (Tutorial-Wise) | Task-Wise Alternative |
+|----------------------------|----------------------|
+| Tutorial A tutor: grades Tasks 1-3 for 30 students | Tutor 1: grades Task 1 for all 60 students |
+| Tutorial B tutor: grades Tasks 1-3 for 30 students | Tutor 2: grades Task 2 for all 60 students |
+| Each tutor: 90 gradings (30 × 3) | Tutor 3: grades Task 3 for all 60 students |
+| | Each tutor: 60 gradings (specialization) |
+
+**Benefits:**
+- **Consistency:** Same tutor grades same problem for everyone (reduces grading variance)
+- **Efficiency:** Tutor becomes expert in one problem, grades faster with practice
+- **Fairness:** Eliminates "tough tutor vs. lenient tutor" differences per task
+- **Specialization:** Complex problems assigned to most experienced tutor
+
+**Infrastructure Already in Place:**
+- ✅ `Assessment::TaskPoint` has `grader_id` (can be any tutor)
+- ✅ `Submission` has `tutorial_id` for context but grading isn't restricted by it
+- ✅ `Assessment::SubmissionGrader` accepts any `grader:` parameter
+
+**Requirements for Implementation:**
+
+1. **Data Model Addition:**
+   - New model: `Assessment::TaskAssignment` linking `task_id` → `tutor_id`
+   - New enum on `Assessment::Assessment`: `grading_mode` (`:tutorial_wise` default, `:task_wise`)
+   - Migration for `assessment_task_assignments` table
+
+2. **Teacher Interface:**
+   - Assessment show page: grading mode selector
+   - When task-wise selected: UI to assign each task to a tutor
+   - Progress dashboard showing per-task completion across all tutorials
+
+3. **Modified Tutor Grading Interface:**
+   - Filter submissions by assigned tasks (not just by tutorial)
+   - Show all tutorials' submissions for assigned tasks
+   - Progress: "45/89 students graded for Task 1"
+   - Maintain existing grading UI, just change data scope
+
+4. **Controller Logic:**
+   ```ruby
+   if @assessment.task_wise?
+     @tasks = @assessment.tasks
+       .joins(:task_assignments)
+       .where(assessment_task_assignments: { tutor_id: current_user.id })
+     @submissions = @assessment.submissions  # all tutorials
+   else
+     @tasks = @assessment.tasks  # all tasks
+     @submissions = @tutorial.submissions  # current tutorial only
+   end
+   ```
+
+5. **Publication Control:**
+   - Recommend teacher-level publication when all tasks complete
+   - Per-tutorial publication doesn't make sense in task-wise mode
+   - Could offer per-task publication as alternative
+
+**Edge Cases to Handle:**
+- Reassignment mid-grading: keep existing `grader_id` on TaskPoints (historical record)
+- Cross-tutorial teams: team submission appears once, graded by task-assigned tutor
+- Mixed mode: initially all-or-nothing (can't mix modes per task)
+
+**Complexity:** Medium (model support exists, need UI and workflow adaptation)
+
+**References:** See [Assessments & Grading - TaskPoint Model](04-assessments-and-grading.md#assessmenttaskpoint-activerecord-model) for `grader_id` field
+
+---
+
 ### Other Assessment Extensions
 
 - Inline annotation integration (external service)
