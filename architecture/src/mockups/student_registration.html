@@ -3,115 +3,409 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Student Registration Mockup</title>
-    <style>
-      :root { --bg: #f8fafc; --card: #ffffff; --ink: #0f172a; --muted: #64748b; --brand: #5461c8; --ok: #16a34a; --warn: #f59e0b; }
-      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: var(--bg); color: var(--ink); }
-      .container { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
-      .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
-      h1 { font-size: 1.5rem; margin: 0; }
-      .badge { display: inline-block; padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.75rem; background: #eef2ff; color: #3730a3; }
-      .card { background: var(--card); border: 1px solid #e5e7eb; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; }
-      .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-      .list { list-style: none; padding: 0; margin: 0; }
-      .list li { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 8px; margin-bottom: 0.5rem; background: #fff; }
-      .status { font-size: 0.875rem; color: var(--muted); }
-      .btn { appearance: none; border: 0; background: var(--brand); color: #fff; padding: 0.5rem 0.75rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
-      .btn.secondary { background: #111827; }
-      .btn.ghost { background: transparent; color: var(--brand); border: 1px solid var(--brand); }
-      .muted { color: var(--muted); }
-      .pill { padding: 0.2rem 0.5rem; border-radius: 999px; font-size: 0.75rem; }
-      .pill.ok { background: #ecfdf5; color: #065f46; }
-      .pill.warn { background: #fffbeb; color: #92400e; }
-      .row { display: flex; gap: 0.5rem; align-items: center; }
-      .rank { width: 3rem; }
-    </style>
+  <title>Student Registration – Linear Algebra I</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
-  <body>
-    <div class="container">
-      <div class="header">
-        <h1>Tutorial Registration <span class="badge">Open</span></h1>
-        <div class="muted">Closes: Oct 28, 18:00</div>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./student_registration_index_tabs.html">Registrations</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Linear Algebra I</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h1 class="h4 mb-1">Linear Algebra I – Tutorial Registration <span class="badge text-bg-primary">Open</span></h1>
+          <div class="text-muted small">WS 2025/26 · Course code: LA1</div>
+        </div>
+        <div class="text-end">
+          <div class="text-muted small mb-1">Campaign: Main registration</div>
+          <span class="badge text-bg-danger">Closes: Oct 28, 18:00</span>
+        </div>
       </div>
 
-      <div class="grid">
-        <div class="card">
-          <h2 style="margin-top:0">Your Eligibility</h2>
-          <p class="status">Status: <span class="pill ok">Eligible</span></p>
-          <ul class="list">
-            <li>
+      <div class="row g-3">
+        <div class="col-12 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h5">Your Eligibility</h2>
+              <p class="mb-2 small text-muted">Status: <span class="badge rounded-pill text-bg-success">Eligible</span></p>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <div class="fw-semibold">Institutional email</div>
+                    <small class="text-muted">@uni.edu</small>
+                  </div>
+                  <span class="badge rounded-pill text-bg-success">Passed</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <h2 class="h5">Your Preferences</h2>
+              <form id="prefsForm">
+                <div class="row g-3">
+                  <div class="col-12 col-xl-7">
+                    <div class="border rounded p-2 h-100">
+                      <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                        <input id="catalogSearch" type="search" class="form-control form-control-sm" placeholder="Filter by weekday, time, tutor, room" />
+                        <span class="text-muted small" id="catalogCount">0 items</span>
+                        <div class="ms-auto d-flex align-items-center gap-1">
+                          <button type="button" class="btn btn-sm btn-outline-secondary" id="prevPage">«</button>
+                          <span class="small text-muted" id="pageInfo">1/1</span>
+                          <button type="button" class="btn btn-sm btn-outline-secondary" id="nextPage">»</button>
+                        </div>
+                      </div>
+                      <ul class="list-group" id="catalogList"></ul>
+                    </div>
+                  </div>
+                  <div class="col-12 col-xl-5">
+                    <div class="border rounded p-2 h-100">
+                      <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-semibold">Your ranked choices (1–6)</div>
+                        <div class="d-flex align-items-center gap-3">
+                          <div class="small text-muted" id="rankProgress">0/6</div>
+                          <div class="small" id="saveStatus"></div>
+                        </div>
+                      </div>
+                      <ol class="list-group mb-2" id="rankList"></ol>
+                      <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-outline-primary btn-sm" id="resetBtn">Reset</button>
+                        <button type="submit" class="btn btn-primary btn-sm" id="saveBtn" disabled>Save Preferences</button>
+                      </div>
+                      <div id="saveAlert" class="alert alert-success py-1 px-2 d-none mt-2" role="alert">Preferences saved</div>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h2 class="h5">After Allocation</h2>
+          <p class="text-muted mb-2">Results will appear here after the deadline.</p>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
               <div>
-                <div><strong>Institutional email</strong></div>
-                <div class="muted">@uni.edu</div>
+                <div class="fw-semibold">Assignment</div>
+                <small class="text-muted">Pending</small>
               </div>
-              <span class="pill ok">Passed</span>
-            </li>
-            <li>
-              <div>
-                <div><strong>Prerequisite campaign</strong></div>
-                <div class="muted">Seminar enrollment confirmed</div>
-              </div>
-              <span class="pill ok">Passed</span>
+              <span class="badge rounded-pill text-bg-warning">Not assigned yet</span>
             </li>
           </ul>
         </div>
-
-        <div class="card">
-          <h2 style="margin-top:0">Your Preferences</h2>
-          <form>
-            <ul class="list">
-              <li>
-                <div>
-                  <div><strong>Tutorial A</strong></div>
-                  <div class="muted">Mon 10:00 · 30 seats</div>
-                </div>
-                <div class="row">
-                  <label class="muted" for="rank_a">Rank</label>
-                  <input class="rank" id="rank_a" name="rank[a]" type="number" min="1" max="5" value="1" />
-                </div>
-              </li>
-              <li>
-                <div>
-                  <div><strong>Tutorial B</strong></div>
-                  <div class="muted">Tue 12:00 · 25 seats</div>
-                </div>
-                <div class="row">
-                  <label class="muted" for="rank_b">Rank</label>
-                  <input class="rank" id="rank_b" name="rank[b]" type="number" min="1" max="5" value="2" />
-                </div>
-              </li>
-              <li>
-                <div>
-                  <div><strong>Tutorial C</strong></div>
-                  <div class="muted">Wed 14:00 · 25 seats</div>
-                </div>
-                <div class="row">
-                  <label class="muted" for="rank_c">Rank</label>
-                  <input class="rank" id="rank_c" name="rank[c]" type="number" min="1" max="5" value="3" />
-                </div>
-              </li>
-            </ul>
-            <div class="row" style="justify-content:flex-end; margin-top:0.5rem">
-              <button type="button" class="btn ghost">Reset</button>
-              <button type="submit" class="btn">Save Preferences</button>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div class="card">
-        <h2 style="margin-top:0">After Allocation</h2>
-        <p class="muted">Results will appear here after the deadline. If unassigned, you'll see a waitlist option.</p>
-        <ul class="list">
-          <li>
-            <div>
-              <div><strong>Assignment</strong></div>
-              <div class="muted">Pending</div>
-            </div>
-            <span class="pill warn">Not assigned yet</span>
-          </li>
-        </ul>
       </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+      const K = 6
+      const M = 5
+  const PAGE_SIZE = 8
+      let page = 1
+      const PREFS_KEY = 'prefs:LA1'
+      const PREFS_TS_KEY = 'prefs_ts:LA1'
+      const items = [
+        { id: 'A', title: 'Tutorial A', info: 'Mon 10:00 · 30 seats' },
+        { id: 'B', title: 'Tutorial B', info: 'Tue 12:00 · 25 seats' },
+        { id: 'C', title: 'Tutorial C', info: 'Wed 14:00 · 25 seats' },
+        { id: 'D', title: 'Tutorial D', info: 'Thu 08:00 · 30 seats' },
+        { id: 'E', title: 'Tutorial E', info: 'Thu 10:00 · 30 seats' },
+        { id: 'F', title: 'Tutorial F', info: 'Fri 12:00 · 30 seats' },
+        { id: 'G', title: 'Tutorial G', info: 'Fri 14:00 · 25 seats' },
+        { id: 'H', title: 'Tutorial H', info: 'Fri 16:00 · 25 seats' },
+        { id: 'I', title: 'Tutorial I', info: 'Mon 12:00 · 25 seats' },
+        { id: 'J', title: 'Tutorial J', info: 'Mon 14:00 · 25 seats' },
+        { id: 'K', title: 'Tutorial K', info: 'Tue 08:00 · 30 seats' },
+        { id: 'L', title: 'Tutorial L', info: 'Tue 10:00 · 30 seats' },
+        { id: 'M', title: 'Tutorial M', info: 'Wed 08:00 · 25 seats' },
+        { id: 'N', title: 'Tutorial N', info: 'Wed 10:00 · 25 seats' },
+        { id: 'O', title: 'Tutorial O', info: 'Thu 12:00 · 30 seats' }
+      ]
+      const ranks = new Array(K).fill(null)
+      const catalogList = document.getElementById('catalogList')
+      const catalogSearch = document.getElementById('catalogSearch')
+      const catalogCount = document.getElementById('catalogCount')
+      const prevPageBtn = document.getElementById('prevPage')
+      const nextPageBtn = document.getElementById('nextPage')
+      const pageInfo = document.getElementById('pageInfo')
+  const rankList = document.getElementById('rankList')
+  const saveBtn = document.getElementById('saveBtn')
+  const resetBtn = document.getElementById('resetBtn')
+      const rankProgress = document.getElementById('rankProgress')
+  const saveStatus = document.getElementById('saveStatus')
+  const saveAlert = document.getElementById('saveAlert')
+  let lastSavedRanks = new Array(K).fill(null)
+  let isSaving = false
+
+      function renderCatalog() {
+        const q = catalogSearch.value.trim().toLowerCase()
+        const chosen = new Set(ranks.filter(Boolean))
+        const data = items.filter(i => (
+          i.title.toLowerCase().includes(q) || i.info.toLowerCase().includes(q)
+        ))
+        const total = data.length
+        const pages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+        if (page > pages) page = pages
+        if (page < 1) page = 1
+        const startIdx = (page - 1) * PAGE_SIZE
+        const endIdx = Math.min(startIdx + PAGE_SIZE, total)
+        const slice = data.slice(startIdx, endIdx)
+        catalogList.innerHTML = ''
+        slice.forEach(i => {
+          const li = document.createElement('li')
+          li.className = 'list-group-item d-flex justify-content-between align-items-center'
+          const left = document.createElement('div')
+          const t = document.createElement('div')
+          t.className = 'fw-semibold'
+          t.textContent = i.title
+          const s = document.createElement('small')
+          s.className = 'text-muted'
+          s.textContent = i.info
+          left.appendChild(t)
+          left.appendChild(s)
+          const isChosen = chosen.has(i.id)
+          const isFull = ranks.every(r => r)
+          if (isChosen) {
+            const badge = document.createElement('span')
+            badge.className = 'badge rounded-pill text-bg-success ms-2'
+            badge.textContent = 'In list'
+            t.appendChild(badge)
+            li.appendChild(left)
+          } else if (isFull) {
+            li.appendChild(left)
+            const hint = document.createElement('span')
+            hint.className = 'text-muted small'
+            hint.textContent = 'List full'
+            li.appendChild(hint)
+          } else {
+            const btn = document.createElement('button')
+            btn.type = 'button'
+            btn.className = 'btn btn-sm btn-outline-primary'
+            btn.textContent = 'Add'
+            btn.addEventListener('click', () => addToRanks(i.id))
+            li.appendChild(left)
+            li.appendChild(btn)
+          }
+          catalogList.appendChild(li)
+        })
+        catalogCount.textContent = `Showing ${total ? (startIdx + 1) : 0}–${endIdx} of ${total}`
+        pageInfo.textContent = `${page}/${pages}`
+        prevPageBtn.disabled = page <= 1
+        nextPageBtn.disabled = page >= pages
+      }
+
+      
+
+      function renderRanks() {
+        rankList.innerHTML = ''
+        let filled = 0
+        for (let idx = 0; idx < K; idx++) {
+          const li = document.createElement('li')
+          li.className = 'list-group-item d-flex justify-content-between align-items-center'
+          const left = document.createElement('div')
+          const no = document.createElement('span')
+          no.className = 'badge text-bg-secondary me-2'
+          no.textContent = idx + 1
+          left.appendChild(no)
+          if (ranks[idx]) {
+            filled++
+            const item = items.find(i => i.id === ranks[idx])
+            const t = document.createElement('span')
+            t.textContent = `${item.title} · ${item.info}`
+            left.appendChild(t)
+          } else {
+            const t = document.createElement('span')
+            t.className = 'text-muted'
+            t.textContent = 'Empty'
+            left.appendChild(t)
+          }
+          const right = document.createElement('div')
+          right.className = 'd-flex align-items-center gap-1'
+          const up = document.createElement('button')
+          up.type = 'button'
+          up.className = 'btn btn-sm btn-outline-secondary'
+          up.textContent = '↑'
+          up.disabled = !ranks[idx] || idx === 0
+          up.addEventListener('click', () => moveRank(idx, -1))
+          const down = document.createElement('button')
+          down.type = 'button'
+          down.className = 'btn btn-sm btn-outline-secondary'
+          down.textContent = '↓'
+          down.disabled = !ranks[idx] || idx === K - 1 || !ranks[idx + 1]
+          down.addEventListener('click', () => moveRank(idx, 1))
+          const rem = document.createElement('button')
+          rem.type = 'button'
+          rem.className = 'btn btn-sm btn-outline-danger'
+          rem.textContent = 'Remove'
+          rem.disabled = !ranks[idx]
+          rem.addEventListener('click', () => removeRank(idx))
+          right.appendChild(up)
+          right.appendChild(down)
+          right.appendChild(rem)
+          li.appendChild(left)
+          li.appendChild(right)
+          rankList.appendChild(li)
+        }
+        rankProgress.textContent = `${filled}/${K}`
+        updateSaveStatus()
+        validate()
+      }
+
+      function updateSaveStatus() {
+        if (isSaving) {
+          saveStatus.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Saving…'
+          saveStatus.className = 'small text-muted'
+          return
+        }
+        const ts = localStorage.getItem(PREFS_TS_KEY)
+        if (isDirty()) {
+          saveStatus.textContent = 'Unsaved changes'
+          saveStatus.className = 'small text-warning'
+        } else if (ts) {
+          const d = new Date(parseInt(ts, 10))
+          const hh = String(d.getHours()).padStart(2, '0')
+          const mm = String(d.getMinutes()).padStart(2, '0')
+          saveStatus.textContent = `Saved at ${hh}:${mm}`
+          saveStatus.className = 'small text-success'
+        } else {
+          saveStatus.textContent = ''
+          saveStatus.className = 'small'
+        }
+      }
+
+      function addToRanks(id) {
+        if (ranks.includes(id)) return
+        const idx = ranks.findIndex(x => x === null)
+        if (idx === -1) return
+        ranks[idx] = id
+        renderRanks()
+        renderCatalog()
+      }
+
+      function moveRank(idx, delta) {
+        const j = idx + delta
+        if (j < 0 || j >= K) return
+        if (!ranks[idx]) return
+        const tmp = ranks[j]
+        ranks[j] = ranks[idx]
+        ranks[idx] = tmp
+        renderRanks()
+      }
+
+      function removeRank(idx) {
+        ranks.splice(idx, 1)
+        ranks.push(null)
+        renderRanks()
+        renderCatalog()
+      }
+
+      function validate() {
+        let ok = true
+        for (let i = 0; i < M; i++) {
+          if (!ranks[i]) { ok = false; break }
+        }
+        if (ok && isDirty() && !isSaving) {
+          saveBtn.disabled = false
+        } else {
+          saveBtn.disabled = true
+        }
+      }
+
+      function setInteractiveEnabled(enabled) {
+        saveBtn.disabled = !enabled || saveBtn.disabled
+        resetBtn.disabled = !enabled
+        prevPageBtn.disabled = !enabled || prevPageBtn.disabled
+        nextPageBtn.disabled = !enabled || nextPageBtn.disabled
+        catalogSearch.disabled = !enabled
+        document.querySelectorAll('#catalogList button, #rankList button').forEach(btn => {
+          btn.disabled = !enabled || btn.disabled
+        })
+      }
+
+      function isDirty() {
+        for (let i = 0; i < K; i++) {
+          if (ranks[i] !== lastSavedRanks[i]) return true
+        }
+        return false
+      }
+
+      function normalizeRanks(arr) {
+        const allowed = new Set(items.map(i => i.id))
+        const out = []
+        for (const id of arr) {
+          if (!id) continue
+          if (allowed.has(id) && !out.includes(id)) out.push(id)
+          if (out.length === K) break
+        }
+        while (out.length < K) out.push(null)
+        return out
+      }
+
+      resetBtn.addEventListener('click', () => {
+        for (let i = 0; i < K; i++) ranks[i] = null
+        lastSavedRanks = new Array(K).fill(null)
+        localStorage.removeItem(PREFS_KEY)
+        localStorage.removeItem(PREFS_TS_KEY)
+        renderRanks()
+        renderCatalog()
+      })
+
+      document.getElementById('prefsForm').addEventListener('submit', e => {
+        e.preventDefault()
+        if (isSaving) return
+        isSaving = true
+        updateSaveStatus()
+        setInteractiveEnabled(false)
+        setTimeout(() => {
+          lastSavedRanks = ranks.slice()
+          localStorage.setItem(PREFS_KEY, JSON.stringify(lastSavedRanks))
+          const now = Date.now()
+          localStorage.setItem(PREFS_TS_KEY, String(now))
+          isSaving = false
+          updateSaveStatus()
+          setInteractiveEnabled(true)
+          saveAlert.classList.remove('d-none')
+          setTimeout(() => saveAlert.classList.add('d-none'), 2000)
+          validate()
+        }, 800)
+      })
+
+  catalogSearch.addEventListener('input', () => { page = 1; renderCatalog() })
+  prevPageBtn.addEventListener('click', () => { if (page > 1) { page--; renderCatalog() } })
+      nextPageBtn.addEventListener('click', () => { page++; renderCatalog() })
+
+      ;(function loadSaved() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(PREFS_KEY) || 'null')
+          if (Array.isArray(saved)) {
+            const norm = normalizeRanks(saved)
+            for (let i = 0; i < K; i++) ranks[i] = norm[i]
+            lastSavedRanks = norm.slice()
+          } else {
+            const defaults = ['A', 'C', 'G', 'K', 'N']
+            for (let i = 0; i < Math.min(K, defaults.length); i++) {
+              ranks[i] = defaults[i]
+            }
+          }
+        } catch (_) {
+          const defaults = ['A', 'C', 'G', 'K', 'N']
+          for (let i = 0; i < Math.min(K, defaults.length); i++) {
+            ranks[i] = defaults[i]
+          }
+        }
+      })()
+      renderRanks()
+      renderCatalog()
+    </script>
   </body>
 </html>
