@@ -118,7 +118,7 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
 COPY --chown=$USERNAME . /workspaces/mampf/
 RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Compiling MaMpf assets in pipeline"; \
-        mkdir -p /workspaces/mampf/coverage/ && chown -R $USERNAME /workspaces/mampf/coverage/; \
+        mkdir -p /workspaces/mampf/coverage/ && chown -R $USERNAME /workspaces/mampf/coverage/ && chmod -R 777 /workspaces/mampf/coverage/; \
         set -o allexport; . ./docker/production/docker.env; set +o allexport; \
         SECRET_KEY_BASE="$(bundle exec rails secret)" \
         VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
