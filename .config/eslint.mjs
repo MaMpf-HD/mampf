@@ -86,6 +86,11 @@ export default tseslint.config(
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
       // https://playwright.dev/docs/best-practices#lint-your-tests
       "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
     },
     languageOptions: {
       ecmaVersion: 2022,

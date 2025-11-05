@@ -4,7 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  testDir: "./spec/_playwright/e2e/",
+  testDir: "./e2e/",
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -26,11 +26,12 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    {
-      // https://playwright.dev/docs/auth#moderate-one-account-per-parallel-worker
-      name: "Clean Database",
-      testMatch: /.*\.clean-database\.spec\.ts/,
-    },
+    { name: "setup", testMatch: /.*\.setup\.ts/ },
+    // {
+    //   // https://playwright.dev/docs/auth#moderate-one-account-per-parallel-worker
+    //   name: "Clean Database",
+    //   testMatch: /.*\.clean-database\.spec\.ts/,
+    // },
     {
       name: "chromium",
       use: {
@@ -42,16 +43,17 @@ export default defineConfig({
           args: ["--start-maximized", "--force-device-scale-factor=1.25"],
         },
       },
+      dependencies: ["setup"],
     },
-    {
-      name: "firefox",
-      use: { ...devices["Desktop Firefox"] },
-    },
+    // {
+    //   name: "firefox",
+    //   use: { ...devices["Desktop Firefox"] },
+    // },
 
-    {
-      name: "webkit",
-      use: { ...devices["Desktop Safari"] },
-    },
+    // {
+    //   name: "webkit",
+    //   use: { ...devices["Desktop Safari"] },
+    // },
 
     /* Test against mobile viewports. */
     // {

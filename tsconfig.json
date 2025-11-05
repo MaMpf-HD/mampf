@@ -26,6 +26,6 @@
     "app/frontend/**/*.ts",
     "app/frontend/**/*.js",
     "./playwright.config.ts",
-    "spec/**/*.ts",
+    "e2e/**/*.ts",
   ],
 }
