@@ -13,10 +13,11 @@ module Cypress
       id = params[:id].to_i
       role = params[:role]
       is_admin = (role == "admin")
+      random_hash = SecureRandom.hex(6)
 
-      user = User.create(name: "#{id} - #{role}",
-                         email: "#{id}@play",
-                         name_in_tutorials: "#{id} - #{role}",
+      user = User.create(name: "#{role} (#{id})",
+                         email: "#{role}-#{id}-#{random_hash}@play",
+                         name_in_tutorials: "#{role} (public, #{id})",
                          password: PASSWORD,
                          consents: true,
                          admin: is_admin,
