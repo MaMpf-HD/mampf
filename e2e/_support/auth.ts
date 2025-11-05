@@ -1,8 +1,11 @@
 import { APIRequestContext, expect } from "@playwright/test";
 import { callBackend } from "./backend";
 
-export async function loginStudent(context: APIRequestContext) {
-  const user = await callBackend(context, "user_creator", { role: "student" });
+export async function useUser(
+  context: APIRequestContext,
+  role: "admin" | "teacher" | "student" | "tutor",
+) {
+  const user = await callBackend(context, "user_creator", { role: role });
   console.log("Created user:", user);
 
   const response = await context.post("/users/sign_in", {
