@@ -1,4 +1,4 @@
-import { APIRequestContext, expect } from "@playwright/test";
+import { APIRequestContext, Browser, expect, Page } from "@playwright/test";
 import { callBackend } from "./backend";
 
 export async function useUser(
@@ -19,4 +19,19 @@ export async function useUser(
   const responseBody = await response.text();
   expect(responseBody).toBeDefined();
   expect(responseBody).not.toMatch(/data-cy\s*=\s*["']?login-form["']?/);
+}
+
+/**
+ * Makes it possible to have multiple signed-in user roles in one test.
+ *
+ * See also https://playwright.dev/docs/auth#testing-multiple-roles-together
+ */
+export async function userPage(
+  browser: Browser,
+  role: "admin" | "teacher" | "student" | "tutor",
+): Promise<Page> {
+  const userContext = await browser.newContext();
+  const userPage = await userContext.newPage();
+  await useUser(userPage.request, role);
+  return userPage;
 }
