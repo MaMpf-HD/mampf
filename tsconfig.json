@@ -19,6 +19,7 @@
     "noImplicitReturns": true,
     "allowJs": true,
     "checkJs": true,
+    "esModuleInterop": true,
   },
   "include": [
     "app/frontend/**/*.d.ts",
