@@ -1,4 +1,4 @@
-import { test as base, expect, Page } from "@playwright/test";
+import { test as base, Page } from "@playwright/test";
 import { userPage } from "./auth";
 
 type UserFixtures = {
@@ -9,31 +9,35 @@ type UserFixtures = {
   tutorPage: Page;
 };
 
+export * from "@playwright/test";
 export const test = base.extend<UserFixtures>({
   page: async ({ browser }, use) => {
-    const page = await userPage(browser, "student");
+    const [page, browserContext] = await userPage(browser, "student");
     await use(page);
+    await browserContext.close();
   },
 
   student2Page: async ({ browser }, use) => {
-    const page = await userPage(browser, "student2");
+    const [page, browserContext] = await userPage(browser, "student2");
     await use(page);
+    await browserContext.close();
   },
 
   adminPage: async ({ browser }, use) => {
-    const page = await userPage(browser, "admin");
+    const [page, browserContext] = await userPage(browser, "admin");
     await use(page);
+    await browserContext.close();
   },
 
   teacherPage: async ({ browser }, use) => {
-    const page = await userPage(browser, "teacher");
+    const [page, browserContext] = await userPage(browser, "teacher");
     await use(page);
+    await browserContext.close();
   },
 
   tutorPage: async ({ browser }, use) => {
-    const page = await userPage(browser, "tutor");
+    const [page, browserContext] = await userPage(browser, "tutor");
     await use(page);
+    await browserContext.close();
   },
 });
-
-export { expect };

@@ -1,4 +1,4 @@
-import { APIRequestContext, Browser, expect, Page } from "@playwright/test";
+import { APIRequestContext, Browser, BrowserContext, expect, Page } from "@playwright/test";
 import { callBackend } from "./backend";
 
 async function useUser(
@@ -29,9 +29,9 @@ async function useUser(
 export async function userPage(
   browser: Browser,
   role: string,
-): Promise<Page> {
-  const userContext = await browser.newContext();
-  const userPage = await userContext.newPage();
+): Promise<[Page, BrowserContext]> {
+  const browserContext = await browser.newContext();
+  const userPage = await browserContext.newPage();
   await useUser(userPage.request, role);
-  return userPage;
+  return [userPage, browserContext];
 }
