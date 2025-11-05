@@ -1,11 +1,11 @@
 import { APIRequestContext, Browser, expect, Page } from "@playwright/test";
 import { callBackend } from "./backend";
 
-export async function useUser(
+async function useUser(
   context: APIRequestContext,
-  role: "admin" | "teacher" | "student" | "tutor",
+  role: string,
 ) {
-  const user = await callBackend(context, "user_creator", { role: role });
+  const user = await callBackend(context, "user_creator_playwright", { role: role });
   console.log("Created user:", user);
 
   const response = await context.post("/users/sign_in", {
@@ -28,7 +28,7 @@ export async function useUser(
  */
 export async function userPage(
   browser: Browser,
-  role: "admin" | "teacher" | "student" | "tutor",
+  role: string,
 ): Promise<Page> {
   const userContext = await browser.newContext();
   const userPage = await userContext.newPage();
