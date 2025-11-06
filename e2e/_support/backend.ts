@@ -2,7 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { APIRequestContext } from "@playwright/test";
 
-export async function callBackend(context: APIRequestContext, routeName: string, args: any) {
+export async function callBackend(
+  context: APIRequestContext, routeName: string, args: any): Promise<object> {
   const response = await context.post(`cypress/${routeName}`, {
     form: args,
     failOnStatusCode: false,
