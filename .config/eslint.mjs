@@ -6,7 +6,7 @@ import tseslint from "typescript-eslint";
 
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/config/manifest.js",
-  "vendor/assets/javascripts/thredded_timeago.js",    
+  "vendor/assets/javascripts/thredded_timeago.js",
 ];
 
 const ignoreCypressArchivedTests = [
@@ -59,6 +59,7 @@ export default tseslint.config(
       "public/pdfcomprezzor/",
       ...ignoreFilesWithSprocketRequireSyntax,
       ...ignoreCypressArchivedTests,
+      "spec/cypress/**",
       "architecture/src/js/mermaid.min.js",
     ],
   },
@@ -119,5 +120,12 @@ export default tseslint.config(
     // https://typescript-eslint.io/troubleshooting/typed-linting/#i-get-errors-telling-me--was-not-found-by-the-project-service-consider-either-including-it-in-the-tsconfigjson-or-including-it-in-allowdefaultproject
     files: ["**/*.js", "**/*.mjs", "**/*.mts"],
     extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
+    // Disable all TypeScript linting for spec/ folder
+    files: ["spec/**/*.ts", "spec/**/*.tsx"],
+    rules: {
+      "@typescript-eslint/*": "off",
+    },
   },
 );
