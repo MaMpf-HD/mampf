@@ -1,43 +1,58 @@
 import { test as base, Page } from "@playwright/test";
-import { userPage } from "./auth";
+import { User, userPage } from "./auth";
+
+class UserFixture {
+  page: Page;
+  user: User;
+
+  constructor(page: Page, user: User) {
+    this.page = page;
+    this.user = user;
+  }
+}
 
 type UserFixtures = {
-  // default page is for a student
-  student2Page: Page;
-  adminPage: Page;
-  teacherPage: Page;
-  tutorPage: Page;
+  student: UserFixture;
+  student2: UserFixture;
+  admin: UserFixture;
+  teacher: UserFixture;
+  tutor: UserFixture;
 };
 
 export * from "@playwright/test";
 export const test = base.extend<UserFixtures>({
-  page: async ({ browser }, use) => {
-    const [page, browserContext] = await userPage(browser, "student");
-    await use(page);
+  student: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "student");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
     await browserContext.close();
   },
 
-  student2Page: async ({ browser }, use) => {
-    const [page, browserContext] = await userPage(browser, "student2");
-    await use(page);
+  student2: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "student2");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
     await browserContext.close();
   },
 
-  adminPage: async ({ browser }, use) => {
-    const [page, browserContext] = await userPage(browser, "admin");
-    await use(page);
+  admin: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "admin");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
     await browserContext.close();
   },
 
-  teacherPage: async ({ browser }, use) => {
-    const [page, browserContext] = await userPage(browser, "teacher");
-    await use(page);
+  teacher: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "teacher");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
     await browserContext.close();
   },
 
-  tutorPage: async ({ browser }, use) => {
-    const [page, browserContext] = await userPage(browser, "tutor");
-    await use(page);
+  tutor: async ({ browser }, use) => {
+    const [user, page, browserContext] = await userPage(browser, "tutor");
+    const fixture = new UserFixture(page, user);
+    await use(fixture);
     await browserContext.close();
   },
 });

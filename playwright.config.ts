@@ -37,9 +37,12 @@ export default defineConfig({
         ...devices["Desktop Chrome"],
         // https://dev.to/muhendiskedibey/how-to-full-screen-a-browser-in-playwright-1np1
         deviceScaleFactor: undefined,
-        viewport: null,
+        viewport: {
+          width: 1920,
+          height: 1080,
+        },
         launchOptions: {
-          args: ["--start-maximized", "--force-device-scale-factor=1.25"],
+          args: ["--start-maximized"],
         },
       },
     },
