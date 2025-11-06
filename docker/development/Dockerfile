@@ -63,13 +63,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
 # Playwright system dependencies
 RUN npx playwright install-deps chromium
 
-# Playwright dependencies
-RUN npx playwright install chromium --with-deps
-
-RUN export DEBIAN_FRONTEND=noninteractive \
-    && apt-get install -y --no-install-recommends \
-        libatk1.0-0 libatk-bridge2.0-0 libatspi2.0-0 libxcomposite1 libxdamage1
-
 # Install PostgreSQL client 17 (https://wiki.postgresql.org/wiki/Apt)
 RUN mkdir -p /usr/share/postgresql-common/pgdg \
     && curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc \
