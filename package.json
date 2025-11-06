@@ -9,8 +9,7 @@
     "clipboard": "^2.0.11",
     "friendly-challenge": "^0.9.1",
     "jquery": "^3.7.1",
-    "trix": "^2.1.8",
-    "typescript": "^5.9.3"
+    "trix": "^2.1.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.56.1",
@@ -29,6 +28,7 @@
     "masonry-layout": "^4.2.2",
     "p5": "^2.0.3",
     "sass-embedded": "^1.93.3",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.3",
     "vite": "^7.0.0",
     "vite-plugin-coffee3": "^1.0.1",
