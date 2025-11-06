@@ -456,6 +456,46 @@ end
 - **Preference-based:** Alice submits two `Registration::UserRegistration` records for a campaign: one for "Tutorial A" with `preference_rank: 1`, and one for "Tutorial B" with `preference_rank: 2`. Both have `status: :pending`.
 - **First-Come-First-Serve:** Bob registers for the "Seminar Algebraic Geometry". A single `Registration::UserRegistration` record is created with `status: :confirmed` immediately, as long as there is capacity.
 
+### First-Come-First-Serve Workflow
+
+In FCFS mode, registration status is determined immediately upon submission:
+
+**Controller Logic (recommended):**
+```ruby
+# app/controllers/registration/user_registrations_controller.rb
+def create
+  campaign = Registration::Campaign.find(params[:campaign_id])
+  item = campaign.registration_items.find(params[:item_id])
+  
+  return unless campaign.policies_satisfied?(current_user)
+  
+  status = item.remaining_capacity > 0 ? :confirmed : :rejected
+  
+  Registration::UserRegistration.create!(
+    user: current_user,
+    registration_campaign: campaign,
+    registration_item: item,
+    status: status,
+    preference_rank: nil  # Not used in FCFS
+  )
+end
+```
+
+**Key Differences from Preference-Based:**
+
+| Aspect | FCFS | Preference-Based |
+|--------|------|------------------|
+| Initial status | `:confirmed` or `:rejected` | Always `:pending` |
+| When decided | Immediately on create | After allocation runs |
+| Multiple items | User registers for ONE item | User ranks MULTIPLE items |
+| Solver needed | No | Yes |
+| Finalization | Optional (roster may already be live) | Required |
+
+**Capacity Enforcement:**
+- Check `item.remaining_capacity` before creating the registration
+- If capacity exhausted, create with `status: :rejected` (no waitlist)
+- Alternatively, return error and don't create record at all
+
 ---
 
 ## Registration::Policy (ActiveRecord Model)

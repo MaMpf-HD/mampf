@@ -36,10 +36,22 @@ We use a materialized eligibility model with policy-based evaluation and on-dema
 
 ```admonish info "What it represents"
 A materialized database record of a student's eligibility to register for an exam in a specific lecture, computed from their coursework performance and achievements. This is not a cache—it's an authoritative computed record that can be recomputed on demand to guarantee correctness.
+
+**Records exist for all students enrolled in the lecture**, regardless of whether they register for the exam. This ensures legal compliance and transparency: every student's eligibility status is documented and auditable.
 ```
 
 ```admonish tip "Think of it as"
 "Alice has earned 58% of homework points and completed 2 presentations, making her eligible for the Linear Algebra exam"
+```
+
+```admonish warning "Eligibility Records vs Exam Roster"
+`ExamEligibility::Record` covers **all lecture students** (e.g., 150 students).
+
+The **exam roster** (materialized after registration) contains only **students who successfully registered** (e.g., 85 of 126 eligible students).
+
+These are two distinct lists serving different purposes:
+- Eligibility records: Legal/administrative verification before registration opens
+- Exam roster: Operational list for exam administration and grading
 ```
 
 The main fields and methods of `ExamEligibility::Record` are:

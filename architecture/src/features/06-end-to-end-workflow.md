@@ -164,7 +164,11 @@ Record qualitative accomplishments for eligibility
 ## Phase 7: Exam Eligibility Computation
 
 ```admonish success "Goal"
-Determine who may register for the exam
+Determine eligibility status for all lecture students
+```
+
+```admonish info "Scope"
+Eligibility is computed for **all students enrolled in the lecture** (e.g., 150 students), not just those who plan to register. This provides transparency and legal compliance: every student can verify their eligibility status.
 ```
 
 **Staff Configuration:**
@@ -181,6 +185,11 @@ Determine who may register for the exam
 | `computed_status` | System-computed: `eligible` or `ineligible` |
 | `rule_config_snapshot` | Copy of rules used (for audit trail) |
 
+**Staff Actions:**
+- Review **Eligibility Overview** screen showing all 150 lecture students
+- Verify eligibility computation is correct
+- Apply manual overrides if needed (with documented reasons)
+
 **Override Capability:**
 
 ```admonish note "Manual Overrides"
@@ -192,7 +201,7 @@ Staff can manually set `override_status` with required `override_reason`. Overri
 ## Phase 8: Exam Registration Campaign
 
 ```admonish success "Goal"
-Allow eligible students to register for exam
+Allow eligible students to register for exam (FCFS)
 ```
 
 ```admonish info "Complete Exam Documentation"
@@ -209,6 +218,12 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 | 4. Optional Policies | May also attach other policies (e.g., `institutional_email`) |
 | 5. Open | Campaign opens for registrations (registration requests) |
 
+**Student Experience:**
+- Students see their eligibility status (eligible students can proceed)
+- Only eligible students can successfully register
+- Registration is first-come-first-served until capacity is reached
+- Students receive immediate confirmation or rejection with reason
+
 **Registration Flow:**
 
 ```mermaid
@@ -224,6 +239,19 @@ graph LR
 
 ```admonish tip "100% Accuracy Guarantee"
 Eligibility is recomputed at registration time to ensure absolute accuracy, even if grades changed after initial computation.
+```
+
+**After Registration Closes:**
+- Staff calls `campaign.finalize!` to close registration
+- Campaign materializes confirmed registrations to exam roster
+- **Exam Roster** now contains subset of eligible students who registered (e.g., 85 of 126 eligible)
+- Staff views **Exam Roster** screen (distinct from Eligibility Overview) to manage participants
+
+```admonish warning "Two Distinct Lists"
+- **Eligibility Overview** (Phase 7): All 150 lecture students with eligibility status
+- **Exam Roster** (Phase 8+): Only 85 registered students who will take the exam
+
+The roster is used for exam administration (room assignments, grading), while eligibility records remain for audit/legal purposes.
 ```
 
 ## Phase 9: Exam Grading & Grade Schemes

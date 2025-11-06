@@ -76,6 +76,17 @@ Roster maintenance (teacher/editor)
 - Detail:
   [roster_detail.html](../mockups/roster_detail.html)
 
+```admonish abstract
+Exams & Eligibility (teacher/editor)
+```
+
+- Exams index:
+  [exams_index.html](../mockups/exams_index.html)
+- Eligibility overview (pre-registration, all lecture students):
+  [exams_eligibility.html](../mockups/exams_eligibility.html)
+- Exam roster (post-registration, registered students only):
+  [exam_roster.html](../mockups/exam_roster.html)
+
 ## Change policy
 
 - Keep mockups small and focused on one screen/variant.

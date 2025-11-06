@@ -436,6 +436,39 @@ For advanced users, Manual Curve mode allows direct control of each grade bounda
 Grade scheme functionality is implemented in `GradeScheme::SchemesController` with actions: index, new, create, edit, update, preview, and apply. See [Controller Architecture](11-controllers.md#grade-scheme-controllers) for details.
 ```
 
+### Assessments (Lectures - Student)
+
+```admonish tip "Student Results Views"
+Students can view their published assignment results, including overall progress toward exam eligibility and detailed feedback on individual assignments. Results are only visible after tutors publish grades.
+```
+
+#### Screens
+
+| View | Key elements | Mockup |
+|------|--------------|--------|
+| Results Overview | Two-column layout: left sidebar with progress summary (large 80% display, points 192/240, graded 6/8, average 24/30), exam eligibility card (green check indicator), filter buttons (All/Graded/Pending); right column with compact assignment list (condensed cards showing title, dates, score, view button), collapsible section for older assignments | [Mockup](../mockups/assessments_student_results_overview.html) |
+| Results Detail | Compact single-page layout with assignment header (title, dates, grader, score 28/30), condensed team info (single row), simple task breakdown table (just task numbers and points, no descriptions or percentages), optional short tutor comment, submitted files (student's submission + tutor's correction PDF), progress sidebar (overall points 192/240, exam eligibility status), action buttons | [Mockup](../mockups/assessments_student_results_detail.html) |
+
+#### Flow
+
+```mermaid
+flowchart LR
+  subgraph STUDENT [Student]
+    A[Results Overview<br/>Index Page] -->|Click View Details| B[Results Detail<br/>Show Page]
+    B -->|Back Button| A
+    A -->|Filter: All/Graded/Pending| A
+    A -->|Expand Older Assignments| A
+    B -->|Download Feedback PDF| B
+    B -->|View Assignment Page| C[Assignment Details]
+  end
+```
+
+#### Controller/action mapping
+
+| Role | Controller | Actions | Scope/Notes |
+|------|------------|---------|-------------|
+| Student | [Assessment::ParticipationsController](11-controllers.md#assessmentparticipationscontroller) | index, show | Own results (when published). Students can view their assignment results and detailed feedback only after tutors publish them. Results include overall progress tracking, exam eligibility status, per-task breakdown, and tutor feedback. |
+
 ### Assessments (Seminars - Teacher/Editor)
 
 #### Screens
@@ -482,28 +515,48 @@ Exam eligibility depends on assignment grading (students must earn sufficient po
 
 ### Exams & Eligibility (Teacher/Editor)
 
-#### Flow
+```admonish tip "Two Distinct Views"
+Exam management involves two separate lists:
+1. **Eligibility Overview** (pre-registration): Shows **all lecture students** with their computed eligibility status
+2. **Exam Roster** (post-registration): Shows **only registered students** who will take the exam
 
-```mermaid
-flowchart LR
-  CR[Create exam] --> REV[Review eligibility]
-  REV --> OV[Optional overrides]
-  OV --> EXP[Export list]
+The eligibility overview is used before and during registration to verify that eligibility rules are correctly applied. The exam roster is used after registration closes to manage actual exam participants, assign rooms, and enter grades.
 ```
 
 #### Screens
 
 | View       | Key elements                                  | Mockup |
 |------------|-----------------------------------------------|--------|
-| Exams      | Date/location schedule; links to eligibility   | TODO   |
-| Eligibility| Filterable table; override modal              | TODO   |
+| Exams Index | Compact table with exam name, date/time, location, registered count (clickable link to roster), eligibility count (clickable link to eligibility view), CRUD action buttons (edit/delete), summary cards (total exams, registered students count, eligible students count) | [Mockup](../mockups/exams_index.html) |
+| Eligibility Overview (Pre-Registration) | **Shows all lecture students (150)** with eligibility status. Summary cards (total students, eligible count, not eligible count, manual overrides), eligibility threshold info alert (50% = 120/240 points), filter buttons (All/Eligible/Not Eligible/Overrides), search by name/matriculation, tutorial group dropdown, table with columns (student name, matriculation, tutorial group, points with percentage, status badge, actions), override button for non-eligible students, remove override button for overridden entries, export list button, pagination | [Mockup](../mockups/exams_eligibility.html) |
+| Exam Roster (Post-Registration) | **Shows only registered students (e.g., 85 of 126 eligible)** who will take the exam. Summary cards (registered count, room assignments, grading progress), filter by tutorial group or room assignment, table with columns (student name, matriculation, tutorial group, seat/room assignment, grade entry link, status), assign rooms/seats action, export participant list, link to grading interface, pagination | [Mockup](../mockups/exam_roster.html) |
+
+#### Flow
+
+```mermaid
+flowchart LR
+  IX[Exams Index] -->|Click Eligibility Count| EO[Eligibility Overview]
+  IX -->|Click Registered Count| ER[Exam Roster]
+  EO -->|Filter: All/Eligible/Not/Overrides| EO
+  EO -->|Click Override Button| OM[Override Modal]
+  OM -->|Enter Reason + Confirm| EO
+  EO -->|Remove Override| EO
+  EO -->|Export List| DL1[Download CSV/PDF]
+  EO -->|Back| IX
+  ER -->|Filter by Tutorial/Room| ER
+  ER -->|Assign Room/Seat| ER
+  ER -->|Export Participant List| DL2[Download CSV/PDF]
+  ER -->|Enter Grades| GI[Grading Interface]
+  ER -->|Back| IX
+```
 
 #### Controller/action mapping
 
-| View       | Controller                        | Actions                                 | Scope/Notes                                  |
-|------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
-| Exams      | [ExamsController](11-controllers.md#exam-controllers) | index, new, create, show, edit, update, destroy | Manage exams                            |
-| Eligibility| [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show, update, export | Eligibility management (override/export)      |
+| Role           | Controller                        | Actions                                 | Scope/Notes                                  |
+|----------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
+| Teacher/Editor | [ExamsController](11-controllers.md#exam-controllers) | index, new, create, show, edit, update, destroy | Full CRUD on exams                            |
+| Teacher/Editor | [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show, update, export | View eligibility (all students), override status, export lists |
+| Teacher/Editor | [Exam::RostersController](11-controllers.md#exam-controllers) | show, update, export | View roster (registered students only), assign rooms, export |
 
 ### Exams & Eligibility (Tutor)
 
