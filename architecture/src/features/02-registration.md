@@ -81,11 +81,27 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 ```
 
 ```admonish tip "API at a glance"
-- `evaluate_policies_for(user)` → Result (fields: `pass`, `failed_policy`, `trace`)
+- `evaluate_policies_for(user)` → Result (fields: `pass`, `failed_policy`, `trace`, `details`)
 - `policies_satisfied?(user)` → Boolean (`true` when all policies pass)
 - `open_for_registrations?` → Boolean (campaign currently accepts registrations)
  
  See also: Controller endpoints in [Controller Architecture → Registration Controllers](11-controllers.md#registration-controllers).
+```
+
+```admonish info "Policy Result 'details' enrichment"
+The `details` hash is an extensible, read-only payload populated by individual
+policies. It never changes the top-level shape (`pass`, `failed_policy`,
+`trace`). Example for exam eligibility (`kind: :lecture_performance`):
+
+| Key | Meaning |
+|-----|---------|
+| `eligibility_now` | Final eligibility after override (`eligible` / `ineligible`). |
+| `stability` | `stable` if student cannot drop below threshold anymore; `volatile` otherwise. |
+| `current_percentage` | Materialized percentage at time of evaluation. |
+| `theoretical_max_percentage` | Percentage reachable if all remaining pending points were earned (computed, not stored). |
+| `threshold` | Required percentage configured in rule. |
+
+UI surfaces `stability` to differentiate “safe” vs “still subject to future grading” when early registrations open before all coursework is graded. No campaign statuses are affected; FCFS continues to use only `confirmed` / `rejected`.
 ```
 
 
@@ -101,6 +117,14 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 - Assigned: the student has exactly one `confirmed` `Registration::UserRegistration` in the campaign after allocation/close.
 - Unassigned: the student participated (has registrations) but has zero `confirmed` entries. On close/finalization, any remaining `pending` entries are normalized to `rejected` so the state is explicit.
 - No extra tables are required. Helper methods on `Registration::Campaign` can expose `unassigned_user_ids`, `unassigned_users`, and `unassigned_count` computed from `UserRegistration` records.
+
+```admonish note "Status semantics"
+Statuses are mode-specific:
+- First-come-first-serve (FCFS): registrations are immediately `confirmed` or `rejected`.
+- Preference-based: registrations are `pending` until allocation, then resolved to `confirmed` or `rejected` on finalize.
+
+Do not overload `pending` to represent eligibility uncertainty in FCFS; use policy `details` (e.g., `stability`) purely for UI messaging.
+```
 
 #### Close vs Finalize
 
@@ -575,6 +599,10 @@ module Registration
       rec.eligible_final? ? pass_result(:eligible) : fail_result(:not_eligible, "Exam eligibility failed")
     end
 
+    # NOTE: Detailed semantics (stability, theoretical_max_percentage, enriched
+    # details payload) are documented in Lecture Performance → Exam Registration.
+    # This chapter keeps only the dispatcher surface to avoid duplication.
+
     def eval_email(user)
       allowed = Array(config["allowed_domains"])
       return pass_result(:no_constraint) if allowed.empty?
@@ -614,6 +642,27 @@ per kind in the model. Controllers should whitelist per-kind config keys
 via strong parameters.
 ```
 
+#### Why JSONB for Policy.config?
+
+Policies are composable and heterogeneous. Each `kind` needs different
+parameters (domains list, lecture reference, prerequisite campaign id,
+future custom scripts). Using JSONB for `config` avoids schema churn and
+lets us:
+
+- Add new policy kinds without migrations.
+- Evolve per-kind parameters independently.
+- Keep the public API stable (`kind`, `config`), while the typed UI and
+  per-kind validations enforce structure.
+
+Constraints and guardrails:
+
+- The UI is typed per kind; users never edit raw JSON.
+- Models validate allowed keys and shapes per kind.
+- Index JSONB keys if needed for queries (e.g., `config ->> 'lecture_id'`).
+- Only minimal data belongs here. For exam eligibility, thresholds and
+  criteria live in `LecturePerformance::Rule`; the policy stores only
+  `{ "lecture_id": <id> }`.
+
 See UI: Policies tab in [Exam Show](../mockups/campaigns_show_exam.html).
 
 ### Usage Scenarios
@@ -645,6 +694,13 @@ An 'eligibility checklist' processor that stops at the first failed check and pr
 - Stops at the first failure (fast fail).
 - Returns a structured `Result` object containing the pass/fail status, the policy that failed (if any), and a full trace of all evaluations.
 - This `Result` object is used by `Registration::Campaign#evaluate_policies_for` to provide clear feedback to the UI.
+
+```admonish tip "Freshness before evaluation"
+Before the policy engine evaluates a lecture performance policy, a
+recomputation of lecture performance records is triggered to ensure
+fresh inputs. See Lecture Performance → Exam Registration for details
+about stability and theoretical max.
+```
 
 ### Example Implementation
 ```ruby

@@ -121,6 +121,7 @@ add_index :lecture_performance_records,
 | Override immutable once set | `override_at` timestamp prevents changes |
 | Recomputation preserves overrides | `ComputationService` only updates `computed_status` |
 | Override requires reason | Validation ensures `override_reason` present if `override_status` set |
+| Exam roster finalization revalidates eligibility | Finalization workflow recomputes and skips newly ineligible (unless override) |
 
 ---
 

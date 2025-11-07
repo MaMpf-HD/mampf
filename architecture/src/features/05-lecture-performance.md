@@ -40,6 +40,8 @@ We use a materialized eligibility model with policy-based evaluation and on-dema
 - **Audit Trail:** Override fields preserve who, when, and why manual adjustments were made
 - **Lifecycle Integration:** Fits between coursework completion (Phase 5-6) and exam registration (Phase 8)
 
+<!-- Stability & Early Registration sections relocated below core models/services -->
+
 ---
 
 ## LecturePerformance::Record (ActiveRecord Model)
@@ -80,7 +82,6 @@ The main fields and methods of `LecturePerformance::Record` are:
 | `override_reason`         | DB column         | Explanation for override (required if override_status present)           |
 | `override_by_id`          | DB column (FK)    | User who applied the override                                            |
 | `override_at`             | DB column         | Timestamp of override (immutable for audit)                              |
-| `rule_config_snapshot`    | DB column (JSONB) | Copy of policy config used for this computation                          |
 | `computed_at`             | DB column         | Timestamp of last computation                                            |
 | `final_status`            | Method            | Returns override_status if present, otherwise computed_status            |
 
@@ -90,7 +91,6 @@ The main fields and methods of `LecturePerformance::Record` are:
 - `final_status` method provides the authoritative eligibility answer
 - Overrides are immutable once set (audit trail)
 - Re-computation updates materialized values and `computed_at` but preserves overrides
-- `rule_config_snapshot` enables debugging: "What rule was used?"
 
 ### State Diagram: Record Lifecycle
 
@@ -147,6 +147,14 @@ module LecturePerformance
     end
   end
 end
+```
+
+```admonish note "Dispatcher difference"
+The `Registration::Policy#evaluate` in the Registration chapter uses a
+`case` dispatch to delegate to `eval_exam`, `eval_email`, etc. This
+chapter focuses only on the exam (lecture performance) branch and shows
+its internal logic. For the canonical dispatcher, see Registration →
+`Registration::Policy` and the `eval_exam` note that points back here.
 ```
 
 ### Usage Scenarios
@@ -268,7 +276,7 @@ end
 **_Eligibility Criteria Configuration_**
 
 ```admonish info "What it represents"
-A configuration record that defines the criteria a student must meet to be eligible for an exam. Each lecture can have one or more rules that are evaluated to determine eligibility.
+A configuration record that defines the criteria a student must meet to be eligible for an exam. Each lecture has at most one rule that is evaluated to determine eligibility.
 ```
 
 ```admonish tip "Think of it as"
@@ -292,7 +300,6 @@ A configuration record that defines the criteria a student must meet to be eligi
 
 - Stored as a database record (not just JSONB config) for better querying and validation
 - One lecture can have one active rule at a time
-- Historical rules are preserved (soft deletion or `active: false`) for audit trail
 - References multiple achievements via join table (`lecture_performance_rule_achievements`)
 - Database-level integrity prevents deletion of achievements still referenced by rules
 - Enforces mutual exclusivity of percentage vs absolute point thresholds
@@ -474,7 +481,7 @@ flowchart TD
     CheckAch -->|No| SetIneligible
     CheckAch -->|Yes| SetEligible[computed_status = :eligible]
     
-    SetIneligible --> BuildRecord[Build record data:<br/>- materialized values<br/>- computed_status<br/>- rule_config_snapshot<br/>- computed_at]
+  SetIneligible --> BuildRecord[Build record data:<br/>- materialized values<br/>- computed_status<br/>- computed_at]
     SetEligible --> BuildRecord
     
     BuildRecord --> Upsert[Upsert to database]
@@ -531,7 +538,6 @@ module LecturePerformance
         percentage_materialized: points_data[:percentage],
         all_required_achievements_met: all_achievements_met,
         computed_status: computed_status,
-        rule_config_snapshot: @rule.to_config,
         computed_at: Time.current
       }
     end
@@ -571,7 +577,6 @@ module LecturePerformance
           :percentage_materialized,
           :all_required_achievements_met,
           :computed_status,
-          :rule_config_snapshot,
           :computed_at
         ]
       )
@@ -652,14 +657,15 @@ The policy queries `LecturePerformance::Rule.find_by(lecture_id: 42, active: tru
 
 **Example:** A lecture has one `LecturePerformance::Rule` (50% points + presentation). Multiple exam campaigns (midterm, final, retake) all have `Registration::Policy` records with `kind: :lecture_performance, config: { lecture_id: 42 }`. All reference the same rule.
 
-#### Why JSONB for Config?
+#### Policy Config Reference
 
-The config is stored as JSONB (flexible key-value structure) rather than fixed columns because:
+Exam eligibility policies (`Registration::Policy` with `kind: :lecture_performance`) store only a minimal JSONB config:
 
-1. **Per-lecture customization:** Different lectures have different rules without schema migrations
-2. **Mid-semester adjustments:** Teachers can change thresholds (e.g., from 50% to 45%) by updating the JSON
-3. **Future extensibility:** New criteria types can be added without altering database structure
-4. **Rule snapshots:** `LecturePerformance::Record.rule_config_snapshot` preserves the exact config used for computation
+```json
+{ "lecture_id": 42 }
+```
+
+All threshold and achievement criteria live in `LecturePerformance::Rule` (regular columns, associations). Changing a threshold (e.g. 50 → 45) is done by updating the rule record, not the policy config. The JSONB usage rationale (generic policy kinds need flexible keyed configs) is documented centrally in the Registration chapter; this chapter only notes the minimal linkage.
 
 ### Evaluation Flow
 
@@ -930,7 +936,7 @@ The integration provides several guarantees:
 
 1. **Freshness:** Recomputation before evaluation ensures no stale data
 2. **Consistency:** All students evaluated against same criteria (from policy config)
-3. **Auditability:** `rule_config_snapshot` in record shows exact rules used
+3. **Auditability:** Rely on `computed_at` and overrides; no rule history or per-record rule snapshot is stored.
 4. **Override preservation:** Manual overrides survive recomputation
 5. **Idempotency:** Repeated evaluation with same data yields same result
 
@@ -951,72 +957,135 @@ Policies are evaluated in `position` order. First failure stops evaluation and r
 
 ---
 
+<!-- Sections moved below ERD to follow standard chapter order -->
+
+## Exam Registration
+
+```admonish info "Scope"
+How eligibility data is interpreted and surfaced when students register for an
+exam, for both fully graded and still-grading scenarios.
+```
+
+### Lecture model fields (persistence)
+
+These columns live on the `Lecture` model and support exam eligibility flows.
+
+| Field | Type | Required? | Purpose |
+|-------|------|-----------|---------|
+| `performance_total_points` | Integer | Optional (required for early registration) | Declared total points used as denominator for percentage and theoretical max computations. Must be set before opening exam registration early; not needed if registration opens after grading is complete. |
+| `grading_completed_at` | DateTime | Optional | Timestamp staff set when grading is fully complete for eligibility-relevant assessments. Null indicates grading may still change; used to derive stability. |
+
+Derived convenience (not persisted): `grading_completed? = grading_completed_at.present?`.
+
+### All grading completed (stable case)
+
+```admonish info "Definition"
+All assessments relevant to the eligibility rule have final published grading.
+Percentages and achievement completion are final; future recomputations can only
+incorporate overrides or rule changes, not new points.
+```
+
+When `grading_completed?` is true, policy evaluations treat all records as
+`stable` and omit theoretical projections.
+
+### Not all grading completed (early registration)
+
+```admonish info "Purpose"
+Support opening exam registration before grading is finalized while signaling
+whether eligibility is already safe.
+```
+
+Additional derived (not persisted) values:
+
+| Value | Definition | Persistence |
+|-------|------------|-------------|
+| `theoretical_max_percentage` | Current earned points + remaining unrealized max points for still-open assessments divided by `performance_total_points` | Not stored (computed per evaluation) |
+| `stability` | `stable` if `grading_completed?` or worst-case future points = 0 keeps student ≥ threshold; else `volatile` | Not stored |
+| `eligibility_now` | Immediate eligibility (`eligible` / `ineligible`) based on `final_status` (override first) | Derived from record |
+
+These appear in the `details` hash of the `Registration::Policy` result for
+`kind: :lecture_performance` only when early grading uncertainty exists
+(`grading_completed_at` is null).
+
+#### Roster finalization recheck
+Before exam roster materialization (campaign finalization) the system recomputes
+all affected records and filters out students who became ineligible since
+registration. Overrides remain authoritative.
+
+```admonish tip "Lean persistence"
+`performance_total_points` and `grading_completed_at` live on `Lecture`.
+Ephemeral planning data (`theoretical_max_percentage`, `stability`) is derived
+per evaluation; no new columns on `LecturePerformance::Record`.
+```
+
+---
+
 ## ERD
 
 ```mermaid
 erDiagram
-    LECTURE_PERFORMANCE_RECORD ||--|| LECTURE : "scoped to"
-    LECTURE_PERFORMANCE_RECORD ||--|| USER : "tracks"
-    LECTURE_PERFORMANCE_RECORD }o--|| USER_OVERRIDE_BY : "override by"
-    LECTURE_PERFORMANCE_RULE ||--|| LECTURE : "configures"
-    ACHIEVEMENT ||--|| LECTURE : "belongs to"
-    ACHIEVEMENT ||--|| USER : "accomplished by"
-    ACHIEVEMENT }o--|| USER_RECORDED_BY : "recorded by"
-    REGISTRATION_POLICY }o--|| LECTURE_PERFORMANCE_RECORD : "queries (kind: lecture_performance)"
-    LECTURE_PERFORMANCE_RECORD }o--|| LECTURE_PERFORMANCE_RULE : "computed using"
+  LECTURE_PERFORMANCE_RECORD ||--|| LECTURE : "scoped to"
+  LECTURE_PERFORMANCE_RECORD ||--|| USER : "tracks"
+  LECTURE_PERFORMANCE_RECORD }o--|| USER_OVERRIDE_BY : "override by"
+  LECTURE_PERFORMANCE_RULE ||--|| LECTURE : "configures"
+  ACHIEVEMENT ||--|| LECTURE : "belongs to"
+  ACHIEVEMENT ||--|| USER : "accomplished by"
+  ACHIEVEMENT }o--|| USER_RECORDED_BY : "recorded by"
+  REGISTRATION_POLICY }o--|| LECTURE_PERFORMANCE_RECORD : "queries (kind: lecture_performance)"
+  LECTURE_PERFORMANCE_RECORD }o--|| LECTURE_PERFORMANCE_RULE : "computed using"
 ```
-
+ 
 ---
 
 ## Sequence Diagram
 
 ```mermaid
 sequenceDiagram
-    actor Teacher
-    participant Rule as LecturePerformance::Rule
-    participant Coursework as Assessment System
-    participant Service as LecturePerformance::Service
-    participant Record as LecturePerformance::Record
-    participant Achievements as Achievement
-    participant Policy as Registration::Policy
-    actor Student
-    participant Campaign as Registration::Campaign
+  actor Teacher
+  participant Rule as LecturePerformance::Rule
+  participant Coursework as Assessment System
+  participant Service as LecturePerformance::Service
+  participant Record as LecturePerformance::Record
+  participant Achievements as Achievement
+  participant Policy as Registration::Policy
+  actor Student
+  participant Campaign as Registration::Campaign
 
-    rect rgb(235, 245, 255)
-    note over Teacher,Record: Phase 1: Initial Computation (after coursework grading)
-    Teacher->>Rule: create!(lecture, min_percentage: 50, ...)
-    Teacher->>Service: compute!(lecture, rule)
-    Service->>Coursework: aggregate points for all users
-    Service->>Achievements: count achievements per user
-    loop for each user
-        Service->>Record: upsert(computed_status, materialized values)
-    end
-    end
+  rect rgb(235, 245, 255)
+  note over Teacher,Record: Phase 1: Initial Computation (after coursework grading)
+  Teacher->>Rule: create!(lecture, min_percentage: 50, ...)
+  Teacher->>Service: compute!(lecture, rule)
+  Service->>Coursework: aggregate points for all users
+  Service->>Achievements: count achievements per user
+  loop for each user
+    Service->>Record: upsert(computed_status, materialized values)
+  end
+  end
 
-    rect rgb(255, 245, 235)
-    note over Student,Campaign: Phase 2: Registration (exam campaign opens)
-    Student->>Campaign: attempt registration
-    Campaign->>Rule: find_by(lecture, active: true)
-    Campaign->>Service: compute!(lecture, rule, user_ids: [student])
-    note right of Service: Recompute to guarantee 100% correctness
-    Service->>Record: update materialized values if changed
-    Campaign->>Policy: evaluate(student)
-    Policy->>Record: find_by(lecture, student)
-    Record-->>Policy: final_status (eligible/ineligible)
-    alt eligible
-        Policy-->>Campaign: pass: true
-        Campaign-->>Student: registration accepted
-    else ineligible
-        Policy-->>Campaign: pass: false, details
-        Campaign-->>Student: show eligibility requirements
-    end
-    end
+  rect rgb(255, 245, 235)
+  note over Student,Campaign: Phase 2: Registration (exam campaign opens)
+  Student->>Campaign: attempt registration
+  Campaign->>Rule: find_by(lecture, active: true)
+  Campaign->>Service: compute!(lecture, rule, user_ids: [student])
+  note right of Service: Recompute to guarantee 100% correctness
+  Service->>Record: update materialized values if changed
+  Campaign->>Policy: evaluate(student)
+  Policy->>Record: find_by(lecture, student)
+  Record-->>Policy: final_status (eligible/ineligible)
+  alt eligible
+    Policy-->>Campaign: pass: true
+    Campaign-->>Student: registration accepted
+  else ineligible
+    Policy-->>Campaign: pass: false, details
+    Campaign-->>Student: show eligibility requirements
+  end
+  end
 
-    rect rgb(245, 255, 245)
-    note over Teacher,Record: Phase 3: Override (exception handling)
-    Teacher->>Record: update!(override_status: eligible, reason: "...", override_by: teacher)
-    note right of Record: Preserves computed values, adds override
-    end
+  rect rgb(245, 255, 245)
+  note over Teacher,Record: Phase 3: Override (exception handling)
+  Teacher->>Record: update!(override_status: eligible, reason: "...", override_by: teacher)
+  note right of Record: Preserves computed values, adds override
+  end
 ```
 
 ---
@@ -1032,8 +1101,8 @@ app/
 │       └── rule.rb
 │
 └── services/
-    └── lecture_performance/
-        └── service.rb
+  └── lecture_performance/
+    └── service.rb
 ```
 
 ### Key Files
@@ -1054,4 +1123,6 @@ app/
 ```admonish note
 Column details for each table are documented in the respective model sections above.
 ```
+
+---
 

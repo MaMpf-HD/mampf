@@ -67,6 +67,7 @@ Manage registration campaigns for lectures.
 - CRUD operations for campaigns
 - Validate date ranges and capacity constraints
 - Display campaign status (draft, open, processing, completed)
+- For exam campaigns opened early: warn if `lecture.performance_total_points` is missing; optionally block open until set
 ```
 
 ### `Registration::UserRegistrationsController`
@@ -93,6 +94,7 @@ Handle the student registration flow.
 
 ```admonish example "Responsibilities"
 - Display eligibility status
+- Surface stability chip (`stable` / `volatile`) from policy `details` for exam eligibility (FCFS does not use `pending` for uncertainty)
 - Handle preference ranking (drag-and-drop or priority input)
 - Show allocation results after campaign completes
 - Validate registration constraints

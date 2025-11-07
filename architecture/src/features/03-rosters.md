@@ -65,6 +65,7 @@ confirmed entries.
 - **Campaign-Independent:** Actions operate directly on `Roster::Rosterable` models; no campaign context is needed for manual changes.
 - **Fast Dashboards:** The maintenance service can update denormalized counters like `Registration::Item.assigned_count` to keep UIs in sync.
 - **Auditing (Future Enhancement):** The service includes a `log()` method as a hook for future auditing. This can be implemented later to write to a dedicated audit trail (e.g., a `RosterChangeEvent` model or using a gem like PaperTrail). This would provide a full history of all manual roster modifications, separate from the immutable record of the initial automated assignment stored in `Registration::UserRegistration`.
+- **Exam-specific finalization:** When materializing exam rosters from a campaign, eligibility is revalidated at finalize-time; registrants who became ineligible are excluded unless an override exists.
 
 ---
 

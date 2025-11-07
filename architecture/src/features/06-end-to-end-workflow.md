@@ -44,7 +44,7 @@ Assign students to tutorial groups or seminar talks
 ```
 
 **Technical Flow:**
-- Each registration request creates a `Registration::UserRegistration` with status `pending` or `confirmed` (FCFS)
+- Each registration request creates a `Registration::UserRegistration` with status `pending` (preference-based) or `confirmed/rejected` (FCFS)
 - `Registration::PolicyEngine` evaluates all active policies in order
 - If any policy fails, registration is rejected with specific reason code
 
@@ -89,6 +89,7 @@ Apply confirmed registrations to domain model rosters
 |-------|--------|
 | `Tutorial` | Student rosters updated |
 | `Talk` | Speaker assignments updated |
+| `Exam` | Before writing roster, eligibility is revalidated; ineligible users are excluded |
 | Authority | Rosters are now the authoritative source for course operations |
 | Idempotency | Same inputs produce same results (can be re-run safely) |
 
@@ -220,6 +221,7 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 
 **Student Experience:**
 - Students see their eligibility status (eligible students can proceed)
+- UI may show stability chip (`stable` vs `volatile`) derived from policy `details` to indicate whether eligibility can still change before grading completes
 - Only eligible students can successfully register
 - Registration is first-come-first-served until capacity is reached
 - Students receive immediate confirmation or rejection with reason

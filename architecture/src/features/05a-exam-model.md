@@ -154,6 +154,8 @@ Exam registration typically requires students to meet certain criteria (e.g., ea
 | 2 | Create campaign | `exam.registration_campaigns.create!(...)` (exam as campaignable) |
 | 3 | Create item | `campaign.registration_items.create!(registerable: exam)` |
 | 4 | Add eligibility policy | `campaign.registration_policies.create!(kind: :lecture_performance)` - see [Lecture Performance](05-lecture-performance.md) |
+| 5 | Finalization safety | On finalize, eligibility recomputed; late ineligibles skipped |
+| Preconditions (early registration) | `lecture.performance_total_points` must be set; `lecture.grading_completed_at` may be null (yields volatile stability) |
 
 ### Student Experience
 
@@ -161,7 +163,7 @@ Exam registration typically requires students to meet certain criteria (e.g., ea
 2. System checks eligibility via `Registration::PolicyEngine` (queries `LecturePerformance::Record` - see [Lecture Performance](05-lecture-performance.md))
 3. If eligible, student submits registration
 4. Registration is confirmed immediately (FCFS) or after deadline (preference-based, if multiple exam dates)
-5. After registration closes, `materialize_allocation!` updates exam roster
+5. After registration closes, `materialize_allocation!` updates exam roster (pre-step: recompute eligibility; exclude any now ineligible unless override eligible)
 
 ---
 
