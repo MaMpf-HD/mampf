@@ -537,7 +537,7 @@ module Registration
     acts_as_list scope: :registration_campaign
 
     enum kind: {
-      exam_eligibility: "exam_eligibility",
+      exam_eligibility: "lecture_performance",
       institutional_email: "institutional_email",
       prerequisite_campaign: "prerequisite_campaign",
       custom_script: "custom_script"
@@ -547,7 +547,7 @@ module Registration
 
     def evaluate(user)
       case kind.to_sym
-      when :exam_eligibility then eval_exam(user)
+      when :lecture_performance then eval_exam(user)
       when :institutional_email then eval_email(user)
       when :prerequisite_campaign then eval_prereq(user)
       when :custom_script then eval_custom(user)
@@ -567,7 +567,7 @@ module Registration
 
     def eval_exam(user)
       lecture_id = config["lecture_id"] || registration_campaign.campaignable_id
-      rec = ExamEligibility::Record.find_by(
+      rec = LecturePerformance::Record.find_by(
         lecture_id: lecture_id,
         user_id: user.id
       )
@@ -618,7 +618,7 @@ See UI: Policies tab in [Exam Show](../mockups/campaigns_show_exam.html).
 
 ### Usage Scenarios
 - **Email constraint:** `kind: :institutional_email`, `config: { "allowed_domains": ["uni.edu"] }`
-- **Exam gate:** `kind: :exam_eligibility`, `config: { "lecture_id": 42 }`
+- **Exam gate:** `kind: :lecture_performance`, `config: { "lecture_id": 42 }`
 - **Prerequisite:** `kind: :prerequisite_campaign`, `config: { "prerequisite_campaign_id": 55 }`
 
 ---

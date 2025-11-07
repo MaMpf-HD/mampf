@@ -44,15 +44,15 @@ Registration — Step 2: Foundations (Schema)
 	`exam_eligibility`, `prerequisite_campaign`.
 - Refs: Service — [PolicyEngine](02-registration.md#registrationpolicyengine-service-object);
 	Admin mockup ref — [Exams & Eligibility](../mockups/campaigns_show_exam.html)
-- Acceptance: Unit tests incl. doubles for `ExamEligibility::Record`; deterministic
+- Acceptance: Unit tests incl. doubles for `LecturePerformance::Record`; deterministic
 	pass/fail traces.
 - Out of scope: Policies UI.
 
 - Note: `exam_eligibility` uses test doubles/stubs for
-	`ExamEligibility::Record` until Step 10 introduces real records.
+	`LecturePerformance::Record` until Step 10 introduces real records.
 	Stub lookups as ineligible by default and replace with real queries
 	in Step 10.
-	- Example: `ExamEligibility::Record.find_by(...)` → `nil`.
+	- Example: `LecturePerformance::Record.find_by(...)` → `nil`.
 ```
 
 ```admonish example "PR-2.3 — Core concerns (Campaignable, Registerable)"

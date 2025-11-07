@@ -18,7 +18,7 @@ service objects to the right endpoints.
 | Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
 | Roster      | Maintenance                                        | Teacher/Editor UI         |
 | Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
-| Exam        | Exams, ExamEligibility::Records                    | Teacher/Editor UI         |
+| Exam        | Exams, LecturePerformance::Records                    | Teacher/Editor UI         |
 | GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
 
@@ -295,7 +295,7 @@ Manage exam instances for lectures.
 - Registration deadline management
 - Export eligible student list
 
-### `ExamEligibility::RecordsController`
+### `LecturePerformance::RecordsController`
 
 ```admonish info "Purpose"
 View and override eligibility status.
@@ -303,7 +303,7 @@ View and override eligibility status.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| ExamEligibility::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| LecturePerformance::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 

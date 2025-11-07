@@ -172,7 +172,7 @@ puts "\nAchievements awarded to #{eligible_submitters.first(3).map(&:name).join(
 
 # --- Phase 7: Exam Eligibility Computation ---
 # Configure eligibility policy
-policy = ExamEligibility::Policy.find_or_create_by!(lecture: lecture)
+policy = LecturePerformance::Policy.find_or_create_by!(lecture: lecture)
 policy.update!(
   min_percentage: 50.0,
   required_achievement_kind: "blackboard_explanation",
@@ -182,17 +182,17 @@ policy.update!(
 )
 
 # Compute eligibility for all students
-ExamEligibility::ComputationService.new(lecture: lecture).compute!
+LecturePerformance::ComputationService.new(lecture: lecture).compute!
 
 # Check results
-eligible_count = ExamEligibility::Record.where(
+eligible_count = LecturePerformance::Record.where(
   lecture: lecture,
   final_status: :eligible
 ).count
 puts "\n#{eligible_count} students are eligible for the exam"
 
 # Override one ineligible student (e.g., medical certificate)
-ineligible_record = ExamEligibility::Record.where(
+ineligible_record = LecturePerformance::Record.where(
   lecture: lecture,
   computed_status: :ineligible
 ).first
@@ -230,7 +230,7 @@ exam_item = exam_campaign.registration_items.create!(registerable: exam)
 
 # Add policies: exam eligibility + institutional email
 exam_campaign.registration_policies.create!(
-  kind: :exam_eligibility,
+  kind: :lecture_performance,
   position: 1,
   config: { lecture_id: lecture.id }
 )
@@ -335,7 +335,7 @@ puts "\nLate adjustment: Student #{late_hw_part.user_id} HW1 points: #{old_point
 
 # Recompute eligibility if needed
 if late_hw_part.total_points > old_points
-  ExamEligibility::ComputationService.new(
+  LecturePerformance::ComputationService.new(
     lecture: lecture,
     user_ids: [late_hw_part.user_id]
   ).compute!
@@ -344,7 +344,7 @@ end
 
 # --- Phase 11: Reporting & Export ---
 # Generate eligibility report
-eligible_records = ExamEligibility::Record.where(
+eligible_records = LecturePerformance::Record.where(
   lecture: lecture,
   final_status: :eligible
 )

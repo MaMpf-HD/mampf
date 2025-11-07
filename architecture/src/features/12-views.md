@@ -555,7 +555,7 @@ flowchart LR
 | Role           | Controller                        | Actions                                 | Scope/Notes                                  |
 |----------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
 | Teacher/Editor | [ExamsController](11-controllers.md#exam-controllers) | index, new, create, show, edit, update, destroy | Full CRUD on exams                            |
-| Teacher/Editor | [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show, update, export | View eligibility (all students), override status, export lists |
+| Teacher/Editor | [LecturePerformance::RecordsController](11-controllers.md#exam-controllers) | index, show, update, export | View eligibility (all students), override status, export lists |
 | Teacher/Editor | [Exam::RostersController](11-controllers.md#exam-controllers) | show, update, export | View roster (registered students only), assign rooms, export |
 
 ### Exams & Eligibility (Tutor)
@@ -574,4 +574,4 @@ Tutors have read-only access if permitted by abilities.
 | View       | Controller                        | Actions                                 | Scope/Notes                                  |
 |------------|-----------------------------------|-----------------------------------------|-----------------------------------------------|
 | Exams      | [ExamsController](11-controllers.md#exam-controllers) | index, show | Read-only (if permitted by abilities)         |
-| Eligibility| [ExamEligibility::RecordsController](11-controllers.md#exam-controllers) | index, show | View if permitted; no overrides                |
+| Eligibility| [LecturePerformance::RecordsController](11-controllers.md#exam-controllers) | index, show | View if permitted; no overrides                |
