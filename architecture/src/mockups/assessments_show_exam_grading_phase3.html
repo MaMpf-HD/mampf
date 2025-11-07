@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midterm Exam — Phase 3: Scheme Configuration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .small-width { max-width: 1400px; }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 6em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    h3.lecture-pane-header { color: #838383; font-size: 1.3em; }
+    .workflow-badge {
+      background-color: #fd7e14;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .modal-lg { max-width: 900px; }
+    .histogram-mini {
+      height: 120px;
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 0.3rem;
+      padding: 0.5rem;
+      margin: 1rem 0;
+    }
+    .threshold-input { max-width: 120px; }
+  </style>
+</head>
+<body>
+  <div class="container small-width mt-4">
+    <div class="mb-3">
+      <h1 class="h3 mb-1">Linear Algebra I</h1>
+      <p class="text-muted mb-0">WS 2024/25</p>
+    </div>
+
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item"><a class="nav-link" href="#">Content</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Preferences</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">People & Tutorials</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Orga</a></li>
+      <li class="nav-item"><a class="nav-link" href="#">Communication</a></li>
+      <li class="nav-item"><a class="nav-link active" href="#">Assessments</a></li>
+    </ul>
+
+    <div class="lecture-pane">
+      <div class="workflow-badge">
+        <i class="fas fa-sliders-h me-2"></i>Phase 3: Scheme Configuration
+      </div>
+
+      <div class="mb-3">
+        <h3 class="lecture-pane-header mb-2">Midterm Exam</h3>
+        <div>
+          <span class="badge bg-warning text-dark me-2">Closed</span>
+          <span class="text-muted small">Exam</span>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item"><button class="nav-link">Overview</button></li>
+        <li class="nav-item"><button class="nav-link">Settings</button></li>
+        <li class="nav-item"><button class="nav-link">Tasks</button></li>
+        <li class="nav-item"><button class="nav-link">Grading</button></li>
+        <li class="nav-item"><button class="nav-link active">Grade Scheme</button></li>
+        <li class="nav-item"><button class="nav-link">Exam Logistics</button></li>
+      </ul>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active">
+          <!-- Modal is shown -->
+          <div class="card">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Configure Grade Scheme</h5>
+            </div>
+            <div class="card-body">
+              <ul class="nav nav-pills mb-3" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#two-point">
+                    <i class="fas fa-magic me-1"></i>Two-Point Auto
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" data-bs-toggle="pill" data-bs-target="#manual">
+                    <i class="fas fa-edit me-1"></i>Manual Curve
+                  </button>
+                </li>
+              </ul>
+
+              <div class="tab-content">
+                <!-- Two-Point Auto Mode -->
+                <div class="tab-pane fade show active" id="two-point">
+                  <p class="text-muted">
+                    Set two key thresholds, and the system will automatically generate intermediate grade bands.
+                  </p>
+
+                  <div class="histogram-mini mb-3">
+                    <p class="text-center text-muted mb-0" style="padding-top: 40px;">
+                      <i class="fas fa-chart-bar fa-2x"></i><br>
+                      <small>Interactive histogram with draggable thresholds</small>
+                    </p>
+                  </div>
+
+                  <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Excellence Threshold (Grade 1.0)</label>
+                      <div class="input-group">
+                        <input type="number" class="form-control threshold-input" value="54" min="0" max="100">
+                        <span class="input-group-text">points</span>
+                      </div>
+                      <small class="text-muted">Students at or above this score get 1.0</small>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label fw-bold">Passing Threshold (Grade 4.0)</label>
+                      <div class="input-group">
+                        <input type="number" class="form-control threshold-input" value="30" min="0" max="100">
+                        <span class="input-group-text">points</span>
+                      </div>
+                      <small class="text-muted">Minimum points to pass (below = 5.0)</small>
+                    </div>
+                  </div>
+
+                  <button class="btn btn-primary mb-3">
+                    <i class="fas fa-sync me-2"></i>Auto-Generate Bands
+                  </button>
+
+                  <h6 class="mb-2">Generated Bands (Preview):</h6>
+                  <div class="table-responsive">
+                    <table class="table table-sm table-hover">
+                      <thead class="table-light">
+                        <tr>
+                          <th style="width: 15%">Grade</th>
+                          <th style="width: 35%">Point Range</th>
+                          <th style="width: 25%" class="text-end">Students</th>
+                          <th style="width: 25%" class="text-end">Percentage</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="badge bg-success">1.0</span></td>
+                          <td>54-100 pts</td>
+                          <td class="text-end">12</td>
+                          <td class="text-end">8.3%</td>
+                        </tr>
+                        <tr>
+                          <td><span class="badge bg-success">1.3</span></td>
+                          <td>48-53 pts</td>
+                          <td class="text-end">18</td>
+                          <td class="text-end">12.4%</td>
+                        </tr>
+                        <tr>
+                          <td><span class="badge bg-success">1.7</span></td>
+                          <td>42-47 pts</td>
+                          <td class="text-end">22</td>
+                          <td class="text-end">15.2%</td>
+                        </tr>
+                        <tr>
+                          <td><span class="badge bg-primary">2.0</span></td>
+                          <td>36-41 pts</td>
+                          <td class="text-end">25</td>
+                          <td class="text-end">17.2%</td>
+                        </tr>
+                        <tr>
+                          <td><span class="badge bg-primary">2.3</span></td>
+                          <td>33-35 pts</td>
+                          <td class="text-end">15</td>
+                          <td class="text-end">10.3%</td>
+                        </tr>
+                        <tr>
+                          <td><span class="badge bg-warning text-dark">3.0</span></td>
+                          <td>30-32 pts</td>
+                          <td class="text-end">12</td>
+                          <td class="text-end">8.3%</td>
+                        </tr>
+                        <tr>
+                          <td><span class="badge bg-warning text-dark">3.7</span></td>
+                          <td>27-29 pts</td>
+                          <td class="text-end">8</td>
+                          <td class="text-end">5.5%</td>
+                        </tr>
+                        <tr>
+                          <td><span class="badge bg-warning text-dark">4.0</span></td>
+                          <td>24-26 pts</td>
+                          <td class="text-end">5</td>
+                          <td class="text-end">3.4%</td>
+                        </tr>
+                        <tr class="table-danger">
+                          <td><span class="badge bg-danger">5.0</span></td>
+                          <td>0-23 pts</td>
+                          <td class="text-end">3</td>
+                          <td class="text-end">2.1%</td>
+                        </tr>
+                      </tbody>
+                      <tfoot class="table-light">
+                        <tr>
+                          <th colspan="2">Pass Rate:</th>
+                          <th colspan="2" class="text-end">97.9% (142/145)</th>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+
+                  <div class="alert alert-info d-flex align-items-start mt-3">
+                    <i class="fas fa-info-circle me-2 mt-1"></i>
+                    <div>
+                      <strong>About Auto-Generation:</strong> The system divides the range between your two thresholds 
+                      into equal intervals for intermediate grades (1.3, 1.7, 2.0, 2.3, 3.0, 3.7, 4.0). 
+                      You can switch to Manual Curve mode for full control.
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-end gap-2 mt-4">
+                    <button class="btn btn-secondary">Cancel</button>
+                    <button class="btn btn-success">
+                      <i class="fas fa-save me-2"></i>Save as Draft
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Manual Curve Mode -->
+                <div class="tab-pane fade" id="manual">
+                  <p class="text-muted">
+                    Manually configure each grade band boundary for full control.
+                  </p>
+                  <p class="text-center text-muted py-5">
+                    <i class="fas fa-sliders-h fa-3x mb-3"></i><br>
+                    Manual configuration interface with individual band controls
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Next Phase Link -->
+          <div class="text-center mt-4 pt-4 border-top">
+            <p class="text-muted mb-2">
+              <i class="fas fa-arrow-down"></i> After saving draft scheme...
+            </p>
+            <a href="assessments_show_exam_grading_phase4.html" class="btn btn-outline-primary">
+              Continue to Phase 4: Apply Scheme
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
