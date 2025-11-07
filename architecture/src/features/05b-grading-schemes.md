@@ -1,5 +1,9 @@
 # Grading Schemes
 
+```admonish tip "View Documentation"
+For UI screens, mockups, and complete workflow documentation, see [View Architecture: Exam Grading Workflow](12-views.md#exam-grading-workflow).
+```
+
 ```admonish question "What is a 'Grading Scheme'?"
 A grading scheme is a systematic method for converting raw assessment points into final grade values.
 
@@ -476,6 +480,17 @@ The "grade calculator" that transforms points into grades according to the confi
 
 ### Scheme Application Workflow
 
+```admonish tip "UI Workflow"
+The exam grading workflow progresses through four distinct phases with dedicated UI screens. See [View Architecture: Exam Grading Workflow](12-views.md#exam-grading-workflow-grade-scheme-for-exams) for detailed mockups and phase-by-phase UI progression.
+```
+
+**High-level phases:**
+
+1. **Phase 1: Point Entry** — Teachers enter task points for each student; grade column remains empty
+2. **Phase 2: Distribution Analysis** — View histogram, statistics, and percentiles of achieved points  
+3. **Phase 3: Scheme Configuration** — Set excellence/passing thresholds (Two-Point Auto) or manually define grade boundaries (Manual Curve)
+4. **Phase 4: Scheme Applied** — Grades auto-computed; point edits trigger automatic grade recalculation
+
 ```mermaid
 flowchart TD
     Start([Exam grading complete]) --> CreateScheme[Professor creates draft scheme]
@@ -522,6 +537,10 @@ flowchart TD
     style Done fill:#d4edda
     style Apply fill:#fff3cd
     style Satisfied fill:#ffeaa7
+```
+
+```admonish note "Grade Auto-Update"
+After scheme application, if a teacher edits any task points for a student, the grade recalculates automatically based on the new total points. This prevents forgotten manual updates and keeps grades consistent with the configured scheme.
 ```
 
 ### Grade Computation Algorithm
