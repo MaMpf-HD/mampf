@@ -44,7 +44,7 @@ Assign students to tutorial groups or seminar talks
 ```
 
 **Technical Flow:**
-- Each registration request creates a `Registration::UserRegistration` with status `pending` or `confirmed` (FCFS)
+- Each registration request creates a `Registration::UserRegistration` with status `pending` (preference-based) or `confirmed/rejected` (FCFS)
 - `Registration::PolicyEngine` evaluates all active policies in order
 - If any policy fails, registration is rejected with specific reason code
 
@@ -89,6 +89,7 @@ Apply confirmed registrations to domain model rosters
 |-------|--------|
 | `Tutorial` | Student rosters updated |
 | `Talk` | Speaker assignments updated |
+| `Exam` | Before writing roster, eligibility is revalidated; ineligible users are excluded |
 | Authority | Rosters are now the authoritative source for course operations |
 | Idempotency | Same inputs produce same results (can be re-run safely) |
 
@@ -157,21 +158,25 @@ Record qualitative accomplishments for eligibility
 ```
 
 **Staff Actions:**
-- Staff creates `ExamEligibility::Achievement` records for students
+- Staff creates `Achievement` records for students
 - Examples: `blackboard_presentation`, `class_participation`, `peer_review`
 - These augment quantitative points for eligibility determination
 
 ## Phase 7: Exam Eligibility Computation
 
 ```admonish success "Goal"
-Determine who may register for the exam
+Determine eligibility status for all lecture students
+```
+
+```admonish info "Scope"
+Eligibility is computed for **all students enrolled in the lecture** (e.g., 150 students), not just those who plan to register. This provides transparency and legal compliance: every student can verify their eligibility status.
 ```
 
 **Staff Configuration:**
 - Configure eligibility rules (minimum percentage, achievement counts, included assessment types)
-- System runs `ExamEligibility::Service.compute!(lecture:)` before exam registration opens
+- System runs `LecturePerformance::Service.compute!(lecture:)` before exam registration opens
 
-**Materialized Data in `ExamEligibility::Record`:**
+**Materialized Data in `LecturePerformance::Record`:**
 
 | Field | Content |
 |-------|---------|
@@ -180,6 +185,11 @@ Determine who may register for the exam
 | `achievement_count` | Count of recorded achievements |
 | `computed_status` | System-computed: `eligible` or `ineligible` |
 | `rule_config_snapshot` | Copy of rules used (for audit trail) |
+
+**Staff Actions:**
+- Review **Eligibility Overview** screen showing all 150 lecture students
+- Verify eligibility computation is correct
+- Apply manual overrides if needed (with documented reasons)
 
 **Override Capability:**
 
@@ -192,7 +202,7 @@ Staff can manually set `override_status` with required `override_reason`. Overri
 ## Phase 8: Exam Registration Campaign
 
 ```admonish success "Goal"
-Allow eligible students to register for exam
+Allow eligible students to register for exam (FCFS)
 ```
 
 ```admonish info "Complete Exam Documentation"
@@ -205,9 +215,16 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 |------|--------|
 | 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity |
 | 2. Create Campaign | Staff creates `Registration::Campaign` for the exam |
-| 3. Attach Policy | Add `Registration::Policy` with `kind: :exam_eligibility` (see [Exam Eligibility](05-exam-eligibility.md)) |
+| 3. Attach Policy | Add `Registration::Policy` with `kind: :lecture_performance` (see [Lecture Performance](05-lecture-performance.md)) |
 | 4. Optional Policies | May also attach other policies (e.g., `institutional_email`) |
 | 5. Open | Campaign opens for registrations (registration requests) |
+
+**Student Experience:**
+- Students see their eligibility status (eligible students can proceed)
+- UI may show stability chip (`stable` vs `volatile`) derived from policy `details` to indicate whether eligibility can still change before grading completes
+- Only eligible students can successfully register
+- Registration is first-come-first-served until capacity is reached
+- Students receive immediate confirmation or rejection with reason
 
 **Registration Flow:**
 
@@ -215,8 +232,8 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 graph LR
     A[Student Attempts Registration] --> B[PolicyEngine Evaluates]
     B --> C{Exam Eligibility Policy}
-    C --> D[Recompute: ExamEligibility::Service]
-    D --> E[Query: ExamEligibility::Record]
+    C --> D[Recompute: LecturePerformance::Service]
+    D --> E[Query: LecturePerformance::Record]
     E --> F{final_status?}
     F -->|Eligible| G[Confirm Registration]
     F -->|Ineligible| H[Reject with Reason]
@@ -224,6 +241,19 @@ graph LR
 
 ```admonish tip "100% Accuracy Guarantee"
 Eligibility is recomputed at registration time to ensure absolute accuracy, even if grades changed after initial computation.
+```
+
+**After Registration Closes:**
+- Staff calls `campaign.finalize!` to close registration
+- Campaign materializes confirmed registrations to exam roster
+- **Exam Roster** now contains subset of eligible students who registered (e.g., 85 of 126 eligible)
+- Staff views **Exam Roster** screen (distinct from Eligibility Overview) to manage participants
+
+```admonish warning "Two Distinct Lists"
+- **Eligibility Overview** (Phase 7): All 150 lecture students with eligibility status
+- **Exam Roster** (Phase 8+): Only 85 registered students who will take the exam
+
+The roster is used for exam administration (room assignments, grading), while eligibility records remain for audit/legal purposes.
 ```
 
 ## Phase 9: Exam Grading & Grade Schemes
@@ -275,8 +305,8 @@ Coursework grades change after initial eligibility computation
 
 | Trigger | Action |
 |---------|--------|
-| Grade Change | System automatically triggers `ExamEligibility::Service.compute!(lecture:, user_ids: [affected_ids])` |
-| Update | Materialized values update in `ExamEligibility::Record` |
+| Grade Change | System automatically triggers `LecturePerformance::Service.compute!(lecture:, user_ids: [affected_ids])` |
+| Update | Materialized values update in `LecturePerformance::Record` |
 | Preserve | Overrides remain unchanged (manual decisions preserved) |
 | If Exam Open | Updated eligibility applies immediately |
 | If Exam Closed | Change only affects reporting/records |
@@ -294,7 +324,7 @@ Ongoing monitoring and data integrity
 | Activity | Source |
 |----------|--------|
 | Participation Reports | `Assessment::Participation` data |
-| Eligibility Export | `ExamEligibility::Record` |
+| Eligibility Export | `LecturePerformance::Record` |
 | Registration Audit | `Registration::UserRegistration` |
 | Roster Adjustments | `Roster::MaintenanceService` as needed |
 | Data Integrity | Background jobs monitoring consistency |
@@ -309,7 +339,7 @@ These constraints are maintained across all phases to ensure data integrity.
 
 | Invariant | Description |
 |-----------|-------------|
-| One Record per (lecture, user) | `ExamEligibility::Record` uniqueness |
+| One Record per (lecture, user) | `LecturePerformance::Record` uniqueness |
 | One Participation per (assessment, user) | `Assessment::Participation` uniqueness |
 | One Confirmed Registration per (user, campaign) | `Registration::UserRegistration` constraint |
 | One TaskPoint per (participation, task) | `Assessment::TaskPoint` uniqueness |

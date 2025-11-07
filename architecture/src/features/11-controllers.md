@@ -18,7 +18,7 @@ service objects to the right endpoints.
 | Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
 | Roster      | Maintenance                                        | Teacher/Editor UI         |
 | Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
-| Exam        | Exams, ExamEligibility::Records                    | Teacher/Editor UI         |
+| Exam        | Exams, LecturePerformance::Records                    | Teacher/Editor UI         |
 | GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
 
@@ -67,6 +67,7 @@ Manage registration campaigns for lectures.
 - CRUD operations for campaigns
 - Validate date ranges and capacity constraints
 - Display campaign status (draft, open, processing, completed)
+- For exam campaigns opened early: warn if `lecture.performance_total_points` is missing; optionally block open until set
 ```
 
 ### `Registration::UserRegistrationsController`
@@ -93,6 +94,7 @@ Handle the student registration flow.
 
 ```admonish example "Responsibilities"
 - Display eligibility status
+- Surface stability chip (`stable` / `volatile`) from policy `details` for exam eligibility (FCFS does not use `pending` for uncertainty)
 - Handle preference ranking (drag-and-drop or priority input)
 - Show allocation results after campaign completes
 - Validate registration constraints
@@ -295,7 +297,7 @@ Manage exam instances for lectures.
 - Registration deadline management
 - Export eligible student list
 
-### `ExamEligibility::RecordsController`
+### `LecturePerformance::RecordsController`
 
 ```admonish info "Purpose"
 View and override eligibility status.
@@ -303,7 +305,7 @@ View and override eligibility status.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| ExamEligibility::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| LecturePerformance::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 

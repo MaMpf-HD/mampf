@@ -81,11 +81,27 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 ```
 
 ```admonish tip "API at a glance"
-- `evaluate_policies_for(user)` → Result (fields: `pass`, `failed_policy`, `trace`)
+- `evaluate_policies_for(user)` → Result (fields: `pass`, `failed_policy`, `trace`, `details`)
 - `policies_satisfied?(user)` → Boolean (`true` when all policies pass)
 - `open_for_registrations?` → Boolean (campaign currently accepts registrations)
  
  See also: Controller endpoints in [Controller Architecture → Registration Controllers](11-controllers.md#registration-controllers).
+```
+
+```admonish info "Policy Result 'details' enrichment"
+The `details` hash is an extensible, read-only payload populated by individual
+policies. It never changes the top-level shape (`pass`, `failed_policy`,
+`trace`). Example for exam eligibility (`kind: :lecture_performance`):
+
+| Key | Meaning |
+|-----|---------|
+| `eligibility_now` | Final eligibility after override (`eligible` / `ineligible`). |
+| `stability` | `stable` if student cannot drop below threshold anymore; `volatile` otherwise. |
+| `current_percentage` | Materialized percentage at time of evaluation. |
+| `theoretical_max_percentage` | Percentage reachable if all remaining pending points were earned (computed, not stored). |
+| `threshold` | Required percentage configured in rule. |
+
+UI surfaces `stability` to differentiate “safe” vs “still subject to future grading” when early registrations open before all coursework is graded. No campaign statuses are affected; FCFS continues to use only `confirmed` / `rejected`.
 ```
 
 
@@ -101,6 +117,14 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 - Assigned: the student has exactly one `confirmed` `Registration::UserRegistration` in the campaign after allocation/close.
 - Unassigned: the student participated (has registrations) but has zero `confirmed` entries. On close/finalization, any remaining `pending` entries are normalized to `rejected` so the state is explicit.
 - No extra tables are required. Helper methods on `Registration::Campaign` can expose `unassigned_user_ids`, `unassigned_users`, and `unassigned_count` computed from `UserRegistration` records.
+
+```admonish note "Status semantics"
+Statuses are mode-specific:
+- First-come-first-serve (FCFS): registrations are immediately `confirmed` or `rejected`.
+- Preference-based: registrations are `pending` until allocation, then resolved to `confirmed` or `rejected` on finalize.
+
+Do not overload `pending` to represent eligibility uncertainty in FCFS; use policy `details` (e.g., `stability`) purely for UI messaging.
+```
 
 #### Close vs Finalize
 
@@ -456,6 +480,46 @@ end
 - **Preference-based:** Alice submits two `Registration::UserRegistration` records for a campaign: one for "Tutorial A" with `preference_rank: 1`, and one for "Tutorial B" with `preference_rank: 2`. Both have `status: :pending`.
 - **First-Come-First-Serve:** Bob registers for the "Seminar Algebraic Geometry". A single `Registration::UserRegistration` record is created with `status: :confirmed` immediately, as long as there is capacity.
 
+### First-Come-First-Serve Workflow
+
+In FCFS mode, registration status is determined immediately upon submission:
+
+**Controller Logic (recommended):**
+```ruby
+# app/controllers/registration/user_registrations_controller.rb
+def create
+  campaign = Registration::Campaign.find(params[:campaign_id])
+  item = campaign.registration_items.find(params[:item_id])
+  
+  return unless campaign.policies_satisfied?(current_user)
+  
+  status = item.remaining_capacity > 0 ? :confirmed : :rejected
+  
+  Registration::UserRegistration.create!(
+    user: current_user,
+    registration_campaign: campaign,
+    registration_item: item,
+    status: status,
+    preference_rank: nil  # Not used in FCFS
+  )
+end
+```
+
+**Key Differences from Preference-Based:**
+
+| Aspect | FCFS | Preference-Based |
+|--------|------|------------------|
+| Initial status | `:confirmed` or `:rejected` | Always `:pending` |
+| When decided | Immediately on create | After allocation runs |
+| Multiple items | User registers for ONE item | User ranks MULTIPLE items |
+| Solver needed | No | Yes |
+| Finalization | Optional (roster may already be live) | Required |
+
+**Capacity Enforcement:**
+- Check `item.remaining_capacity` before creating the registration
+- If capacity exhausted, create with `status: :rejected` (no waitlist)
+- Alternatively, return error and don't create record at all
+
 ---
 
 ## Registration::Policy (ActiveRecord Model)
@@ -497,7 +561,7 @@ module Registration
     acts_as_list scope: :registration_campaign
 
     enum kind: {
-      exam_eligibility: "exam_eligibility",
+      exam_eligibility: "lecture_performance",
       institutional_email: "institutional_email",
       prerequisite_campaign: "prerequisite_campaign",
       custom_script: "custom_script"
@@ -507,7 +571,7 @@ module Registration
 
     def evaluate(user)
       case kind.to_sym
-      when :exam_eligibility then eval_exam(user)
+      when :lecture_performance then eval_exam(user)
       when :institutional_email then eval_email(user)
       when :prerequisite_campaign then eval_prereq(user)
       when :custom_script then eval_custom(user)
@@ -527,13 +591,17 @@ module Registration
 
     def eval_exam(user)
       lecture_id = config["lecture_id"] || registration_campaign.campaignable_id
-      rec = ExamEligibility::Record.find_by(
+      rec = LecturePerformance::Record.find_by(
         lecture_id: lecture_id,
         user_id: user.id
       )
       return fail_result(:no_record, "No eligibility record") unless rec
       rec.eligible_final? ? pass_result(:eligible) : fail_result(:not_eligible, "Exam eligibility failed")
     end
+
+    # NOTE: Detailed semantics (stability, theoretical_max_percentage, enriched
+    # details payload) are documented in Lecture Performance → Exam Registration.
+    # This chapter keeps only the dispatcher surface to avoid duplication.
 
     def eval_email(user)
       allowed = Array(config["allowed_domains"])
@@ -574,11 +642,32 @@ per kind in the model. Controllers should whitelist per-kind config keys
 via strong parameters.
 ```
 
+#### Why JSONB for Policy.config?
+
+Policies are composable and heterogeneous. Each `kind` needs different
+parameters (domains list, lecture reference, prerequisite campaign id,
+future custom scripts). Using JSONB for `config` avoids schema churn and
+lets us:
+
+- Add new policy kinds without migrations.
+- Evolve per-kind parameters independently.
+- Keep the public API stable (`kind`, `config`), while the typed UI and
+  per-kind validations enforce structure.
+
+Constraints and guardrails:
+
+- The UI is typed per kind; users never edit raw JSON.
+- Models validate allowed keys and shapes per kind.
+- Index JSONB keys if needed for queries (e.g., `config ->> 'lecture_id'`).
+- Only minimal data belongs here. For exam eligibility, thresholds and
+  criteria live in `LecturePerformance::Rule`; the policy stores only
+  `{ "lecture_id": <id> }`.
+
 See UI: Policies tab in [Exam Show](../mockups/campaigns_show_exam.html).
 
 ### Usage Scenarios
 - **Email constraint:** `kind: :institutional_email`, `config: { "allowed_domains": ["uni.edu"] }`
-- **Exam gate:** `kind: :exam_eligibility`, `config: { "lecture_id": 42 }`
+- **Exam gate:** `kind: :lecture_performance`, `config: { "lecture_id": 42 }`
 - **Prerequisite:** `kind: :prerequisite_campaign`, `config: { "prerequisite_campaign_id": 55 }`
 
 ---
@@ -605,6 +694,13 @@ An 'eligibility checklist' processor that stops at the first failed check and pr
 - Stops at the first failure (fast fail).
 - Returns a structured `Result` object containing the pass/fail status, the policy that failed (if any), and a full trace of all evaluations.
 - This `Result` object is used by `Registration::Campaign#evaluate_policies_for` to provide clear feedback to the UI.
+
+```admonish tip "Freshness before evaluation"
+Before the policy engine evaluates a lecture performance policy, a
+recomputation of lecture performance records is triggered to ensure
+fresh inputs. See Lecture Performance → Exam Registration for details
+about stability and theoretical max.
+```
 
 ### Example Implementation
 ```ruby

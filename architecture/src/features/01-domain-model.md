@@ -9,7 +9,7 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | Registration::Campaign | ActiveRecord | Time‑bounded process (modes: FCFS, preference_based) |
 | Registration::Item | ActiveRecord | Wrapper exposing a registerable option under a campaign |
 | Registration::UserRegistration | ActiveRecord | (user, item) intent + status (pending/confirmed/rejected) + optional preference_rank |
-| Registration::Policy | ActiveRecord | Ordered eligibility rule (exam_eligibility, institutional_email, prerequisite_campaign, custom_script) |
+| Registration::Policy | ActiveRecord | Ordered eligibility rule (lecture_performance, institutional_email, prerequisite_campaign, custom_script) |
 | Registration::Campaignable | Concern | Enables a model to host registration campaigns |
 | Registration::Registerable | Concern | Enables a model to be an option within a campaign |
 | Registration::PolicyEngine | Service | Executes ordered active policies; short‑circuits on first failure |
@@ -26,7 +26,7 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 | Component | Type | Description |
 |-----------|------|-------------|
-| Assessment::Assessment | ActiveRecord | Gradebook container for graded work (assignment, exam, talk) |
+| Assessment::Assessment | ActiveRecord | Gradebook container for graded work (assignment, exam, talk, achievement) |
 | Assessment::Participation | ActiveRecord | Per-user totals, grade, status, submission timestamps |
 | Assessment::Task | ActiveRecord | Per-assessment graded component (only if requires_points) |
 | Assessment::TaskPoint | ActiveRecord | Per (participation, task) points + grader + submission link |
@@ -40,9 +40,10 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 
 | Component | Type | Description |
 |-----------|------|-------------|
-| ExamEligibility::Record | ActiveRecord | Materialized eligibility status per (lecture, user) with overrides and recomputation support |
-| ExamEligibility::Achievement | ActiveRecord | Qualitative accomplishments (e.g., blackboard presentations) for eligibility determination |
-| ExamEligibility::Service | Service | Computes eligibility from points and achievements; triggers recomputation before registration |
+| LecturePerformance::Record      | ActiveRecord | Materialized lecture performance per (lecture, user) with override support |
+| LecturePerformance::Rule        | ActiveRecord | Configuration for eligibility criteria (thresholds, required achievements) |
+| Achievement                     | ActiveRecord | Assessable type for qualitative accomplishments (e.g., blackboard presentations, attendance) with Assessment infrastructure |
+| LecturePerformance::Service | Service | Computes eligibility from points and achievements; triggers recomputation before registration |
 | Registration::Policy (kind: exam_eligibility) | Integration | Queries materialized records and triggers recomputation during exam registration |
 
 ## Grading Schemes
@@ -93,7 +94,7 @@ These are the "glue" entities that connect the core domain models (User, Lecture
 
 2. **Homework Grading:** `Assignment` (pointable) → linked to `Assessment::Assessment` → contains `Assessment::Task` → tutors record `Assessment::TaskPoint` → aggregated into `Assessment::Participation`
 
-3. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `ExamEligibility::Service` aggregates points → creates `ExamEligibility::Record` → `Registration::Policy` (kind: exam_eligibility) checks records when student attempts `Exam` (campaignable) registration
+3. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `LecturePerformance::Service` aggregates points → creates `LecturePerformance::Record` → `Registration::Policy` (kind: exam_eligibility) checks records when student attempts `Exam` (campaignable) registration
 
 ## High-Level ERD (Simplified)
 
@@ -110,10 +111,10 @@ erDiagram
     ASSESSMENT_PARTICIPATION ||--o{ TASK_POINT : aggregates
     SUBMISSION ||--o{ TASK_POINT : optional
     USER ||--o{ ASSESSMENT_PARTICIPATION : participates
-    EXAM_ELIGIBILITY_RECORD }o--|| USER : "tracks eligibility"
-    EXAM_ELIGIBILITY_RECORD }o--|| LECTURE : "scoped to"
-    EXAM_ELIGIBILITY_ACHIEVEMENT }o--|| USER : "accomplished by"
-    EXAM_ELIGIBILITY_ACHIEVEMENT }o--|| LECTURE : "belongs to"
+    LECTURE_PERFORMANCE_RECORD }o--|| USER : "tracks eligibility"
+    LECTURE_PERFORMANCE_RECORD }o--|| LECTURE : "scoped to"
+    LECTURE_PERFORMANCE_ACHIEVEMENT }o--|| USER : "accomplished by"
+    LECTURE_PERFORMANCE_ACHIEVEMENT }o--|| LECTURE : "belongs to"
     GRADE_SCHEME_SCHEME ||--|| ASSESSMENT : "applies to"
 ```
 
@@ -123,6 +124,6 @@ See details:
 - [Allocation & Rosters](03-rosters.md)
 - [Assessments & Grading](04-assessments-and-grading.md)
 - [Exam Model](05a-exam-model.md)
-- [Exam Eligibility](05-exam-eligibility.md)
+- [Lecture Performance](05-lecture-performance.md)
 - [Grading Schemes](05b-grading-schemes.md)
 - [Algorithm Details](07-algorithm-details.md)

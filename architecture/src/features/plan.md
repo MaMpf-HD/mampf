@@ -164,7 +164,7 @@ graph TD
     includes core assessment tables (`assessment_assessments`,
     `assessment_tasks`, `assessment_participations`,
     `assessment_task_points`), eligibility tables
-    (`exam_eligibility_records`), exam tables (`exams`), and grade scheme
+    (`lecture_performance_records`), exam tables (`exams`), and grade scheme
     tables. Optional multiple-choice support fields can also be added
     here to keep schema changes concentrated.
 
@@ -199,9 +199,9 @@ graph TD
     ```
 
 10. **[Grading] Eligibility & Exam Registration**
-    Action: Implement the `ExamEligibility::ComputationService` to compute `ExamEligibility::Record` by reading from the new assessment and point tables. On the frontend, update the student registration UI to display eligibility status and errors. Create a new teacher/editor UI to inspect and override eligibility records.
+    Action: Implement the `LecturePerformance::ComputationService` to compute `LecturePerformance::Record` by reading from the new assessment and point tables. On the frontend, update the student registration UI to display eligibility status and errors. Create a new teacher/editor UI to inspect and override eligibility records.
 
-    Controllers: Provide `ExamEligibility::RecordsController` for
+    Controllers: Provide `LecturePerformance::RecordsController` for
     viewing, override, and export of eligibility.
 
     ```admonish success "Non-Disruptive Impact"

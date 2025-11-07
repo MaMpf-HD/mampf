@@ -106,7 +106,7 @@ For MC exam-specific constraints, see the [Multiple Choice Exams](05c-multiple-c
 
 ```ruby
 # One eligibility record per (lecture, user)
-add_index :exam_eligibility_records,
+add_index :lecture_performance_records,
           [:lecture_id, :user_id],
           unique: true,
           name: "idx_unique_eligibility_record"
@@ -121,6 +121,7 @@ add_index :exam_eligibility_records,
 | Override immutable once set | `override_at` timestamp prevents changes |
 | Recomputation preserves overrides | `ComputationService` only updates `computed_status` |
 | Override requires reason | Validation ensures `override_reason` present if `override_status` set |
+| Exam roster finalization revalidates eligibility | Finalization workflow recomputes and skips newly ineligible (unless override) |
 
 ---
 
@@ -192,7 +193,7 @@ add_index :exam_eligibility_records,
 | `Campaign.finalize!` | Check `status != :finalized` before proceeding |
 | `materialize_allocation!` | Replace entire roster (not additive) |
 | `GradeScheme::Applier.apply!` | Compare `version_hash`; skip if unchanged |
-| `ExamEligibility::ComputationService.compute!` | Upsert pattern preserves overrides |
+| `LecturePerformance::ComputationService.compute!` | Upsert pattern preserves overrides |
 | `Roster::MaintenanceService` operations | Each operation atomic with validation |
 
 ---
