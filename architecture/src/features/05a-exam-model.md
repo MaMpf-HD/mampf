@@ -143,7 +143,7 @@ Enable students to register for an exam slot while enforcing eligibility and cap
 ```
 
 ```admonish info "Eligibility Requirement"
-Exam registration typically requires students to meet certain criteria (e.g., earning 50% of homework points). This is handled by the exam eligibility system documented in [Lecture Performance](05-lecture-performance.md). The eligibility check is enforced via a `Registration::Policy` with `kind: :lecture_performance`.
+Exam registration typically requires students to meet certain criteria (e.g., earning 50% of homework points). This is handled by the lecture performance certification system documented in [Lecture Performance](05-lecture-performance.md). The eligibility check is enforced via a `Registration::Policy` with `kind: :lecture_performance`.
 ```
 
 ### Setup (Staff Actions)
@@ -154,16 +154,18 @@ Exam registration typically requires students to meet certain criteria (e.g., ea
 | 2 | Create campaign | `exam.registration_campaigns.create!(...)` (exam as campaignable) |
 | 3 | Create item | `campaign.registration_items.create!(registerable: exam)` |
 | 4 | Add eligibility policy | `campaign.registration_policies.create!(kind: :lecture_performance)` - see [Lecture Performance](05-lecture-performance.md) |
-| 5 | Finalization safety | On finalize, eligibility recomputed; late ineligibles skipped |
-| Preconditions (early registration) | `lecture.performance_total_points` must be set; `lecture.grading_completed_at` may be null (yields volatile stability) |
+| 5 | Create certifications | Teacher creates `LecturePerformance::Certification` records for eligible students (see [Lecture Performance](05-lecture-performance.md)) |
+| 6 | Pre-flight check | Before opening, verify all active users have certifications (see [End-to-End Workflow Phase 7](06-end-to-end-workflow.md#phase-7-teacher-certification)) |
+| 7 | Finalization filtering | On finalize, only allocate students with `Certification.status IN (:passed, :forced_passed)` |
+| Preconditions | `lecture.performance_total_points` must be set; certifications must exist for all active lecture users |
 
 ### Student Experience
 
 1. Student views open exam registration campaigns
-2. System checks eligibility via `Registration::PolicyEngine` (queries `LecturePerformance::Record` - see [Lecture Performance](05-lecture-performance.md))
-3. If eligible, student submits registration
+2. System checks eligibility via `Registration::PolicyEngine` (queries `LecturePerformance::Certification.status`)
+3. If eligible (status IN passed/forced_passed), student submits registration
 4. Registration is confirmed immediately (FCFS) or after deadline (preference-based, if multiple exam dates)
-5. After registration closes, `materialize_allocation!` updates exam roster (pre-step: recompute eligibility; exclude any now ineligible unless override eligible)
+5. After registration closes, `materialize_allocation!` updates exam roster (allocation filtered to only certified students)
 
 ---
 
@@ -211,6 +213,23 @@ campaign.registration_policies.create!(
   kind: :lecture_performance,
   config: { lecture_id: lecture.id }
 )
+
+# Teacher creates certifications for eligible students
+lecture.active_users.find_each do |user|
+  evaluator = LecturePerformance::Evaluator.new(lecture: lecture, user: user)
+  proposal = evaluator.proposal
+
+  LecturePerformance::Certification.create!(
+    lecture: lecture,
+    user: user,
+    status: proposal[:status],  # :passed or :failed
+    rule_snapshot: proposal[:rule_snapshot],
+    notes: proposal[:notes]
+  )
+end
+
+# Pre-flight check before opening
+campaign.validate_certifications!  # raises if missing certifications
 ```
 
 ### Scenario 2: Multiple Exam Dates (Regular + Retake)
