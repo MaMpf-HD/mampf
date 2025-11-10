@@ -287,17 +287,26 @@
             <div class="card-body">
               <div class="fw-semibold mb-2">Add policy</div>
               <form class="row g-2 align-items-end">
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-3">
                   <label class="form-label">Type</label>
                   <select class="form-select">
                     <option selected>institutional_email</option>
-                    <option>exam_eligibility</option>
+                    <option>lecture_performance</option>
                     <option>prerequisite_campaign</option>
                     <option>custom_script</option>
                   </select>
                   <div class="form-text">Fields change by type; no JSON required.</div>
                 </div>
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-2">
+                  <label class="form-label">Phase</label>
+                  <select class="form-select">
+                    <option selected>registration</option>
+                    <option>finalization</option>
+                    <option>both</option>
+                  </select>
+                  <div class="form-text">When to enforce</div>
+                </div>
+                <div class="col-12 col-md-4">
                   <label class="form-label">Allowed domains</label>
                   <textarea class="form-control" rows="1" placeholder="uni.edu, math.uni.edu"></textarea>
                   <div class="form-text">Comma or space separated; normalized to lowercase.</div>
@@ -321,6 +330,7 @@
                 <tr>
                   <th scope="col">Policy</th>
                   <th scope="col">Type</th>
+                  <th scope="col">Phase</th>
                   <th scope="col">Status</th>
                   <th scope="col" class="text-end">Actions</th>
                 </tr>
@@ -337,8 +347,15 @@
                   <td>
                     <select class="form-select form-select-sm">
                       <option selected>institutional_email</option>
-                      <option>exam_eligibility</option>
+                      <option>lecture_performance</option>
                       <option>prerequisite_campaign</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-select form-select-sm">
+                      <option selected>registration</option>
+                      <option>finalization</option>
+                      <option>both</option>
                     </select>
                   </td>
                   <td>
@@ -353,7 +370,8 @@
                 </tr>
                 <tr>
                   <td>Institutional email required</td>
-                  <td>Eligibility</td>
+                  <td>Email Domain</td>
+                  <td><span class="badge text-bg-info">Registration</span></td>
                   <td><span class="badge rounded-pill text-bg-success">Active</span></td>
                   <td class="text-end">
                     <button class="btn btn-sm btn-outline-secondary">Edit</button>
@@ -362,29 +380,29 @@
                 </tr>
                 <tr class="table-warning">
                   <td>
-                    <input type="text" class="form-control form-control-sm" value="Exam eligibility (homework &gt;= 50%)" />
+                    <input type="text" class="form-control form-control-sm" value="Lecture performance certification" />
                     <div class="row mt-2 g-2">
-                      <div class="col-12 col-md-7">
+                      <div class="col-12">
                         <label class="form-label small mb-1">Lecture</label>
                         <select class="form-select form-select-sm">
                           <option selected>Linear Algebra I (WS 2025/26)</option>
                           <option>Analysis I (WS 2025/26)</option>
                         </select>
                       </div>
-                      <div class="col-6 col-md-5">
-                        <label class="form-label small mb-1">Threshold (%)</label>
-                        <div class="input-group input-group-sm">
-                          <input type="number" class="form-control" value="50" min="0" max="100" step="1" />
-                          <span class="input-group-text">%</span>
-                        </div>
-                      </div>
                     </div>
                   </td>
                   <td>
                     <select class="form-select form-select-sm">
                       <option>institutional_email</option>
-                      <option selected>exam_eligibility</option>
+                      <option selected>lecture_performance</option>
                       <option>prerequisite_campaign</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-select form-select-sm">
+                      <option>registration</option>
+                      <option selected>finalization</option>
+                      <option>both</option>
                     </select>
                   </td>
                   <td>
@@ -398,8 +416,15 @@
                   </td>
                 </tr>
                 <tr>
-                  <td>Exam eligibility (homework >= 50%)</td>
-                  <td>Eligibility</td>
+                  <td>
+                    <div>Lecture performance certification</div>
+                    <div class="small text-muted">Linear Algebra I (WS 2025/26)</div>
+                  </td>
+                  <td>Certification</td>
+                  <td>
+                    <span class="badge text-bg-warning">Finalization</span>
+                    <div class="small text-muted mt-1">Checked before materializing roster</div>
+                  </td>
                   <td><span class="badge rounded-pill text-bg-success">Active</span></td>
                   <td class="text-end">
                     <button class="btn btn-sm btn-outline-secondary">Edit</button>
@@ -410,6 +435,15 @@
             </table>
           </div>
           <p class="small text-muted mt-2">Rows highlighted in yellow represent the inline edit state of the row above. In the real UI only one of these would be visible at a time.</p>
+
+          <div class="alert alert-info mt-3" role="alert">
+            <div class="fw-bold mb-2"><i class="bi bi-info-circle me-2"></i>Policy Phases Explained</div>
+            <ul class="mb-0 small">
+              <li><strong>Registration:</strong> Checked when students try to register. Blocks registration if not satisfied. Use for hard requirements like email domain.</li>
+              <li><strong>Finalization:</strong> Checked before materializing roster. Prevents completion if any confirmed student fails. Standard for lecture performance: students can register freely, certification verified at finalization.</li>
+              <li><strong>Both:</strong> Checked in both phases. Rare; only use when you need advisory messaging during registration AND enforcement during finalization.</li>
+            </ul>
+          </div>
         </div>
 
         <div class="tab-pane fade" id="registrations" role="tabpanel" aria-labelledby="registrations-tab" tabindex="0">
