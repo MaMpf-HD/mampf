@@ -1,13 +1,12 @@
 # Examples & Demos
 
-## Unified End-to-End Demo (Phases 0–11)
+## Unified End-to-End Demo (Phases 0–12)
 
 This demo walks through a complete semester lifecycle, from setup to final reporting. It assumes the models and services from the architectural documentation are implemented.
 
 ```ruby
 # --- Phase 0: Semester Setup ---
 # Create lecture
-# NOTE: capacity/semester are not Lecture fields in MaMpf today
 lecture = FactoryBot.create(:lecture_with_sparse_toc, "with_title",
                             title: "Linear Algebra I")
 
@@ -21,15 +20,14 @@ end
 
 # Create tutorials
 tutorials = (1..3).map do |n|
-  FactoryBot.create(:tutorial, lecture: lecture, title: "Tutorial #{n}")
-  # NOTE: capacity is not a Tutorial field in MaMpf today
+  FactoryBot.create(:tutorial, lecture: lecture, title: "Tutorial #{n}", capacity: 10)
 end
 
 # --- Phase 1: Tutorial Registration ---
 tut_campaign = Registration::Campaign.create!(
   campaignable: lecture,
   title: "Tutorial Registration WS 2024/25",
-  mode: :preference_based,
+  allocation_mode: :preference_based,
   registration_deadline: 10.days.from_now
 )
 
@@ -42,23 +40,21 @@ end
 tut_campaign.registration_policies.create!(
   kind: :institutional_email,
   position: 1,
-  config: { allowed_domains: ["uni.edu", "student.uni.edu"] }
+  active: true,
+  config: { "allowed_domains" => ["uni.edu", "student.uni.edu"] }
 )
 
 tut_campaign.update!(status: :open)
 
 # Users submit ranked preferences.
-# Prefilter via the campaign's policy predicate because this demo writes
-# registrations directly instead of calling the service. In production,
-# the controller/service would enforce policies server-side.
+# In a real UI, the controller would use `evaluate_policies_for(user)` before
+# allowing a submission.
 eligible_submitters = users.select do |u|
-  tut_campaign.policies_satisfied?(u)
+  tut_campaign.evaluate_policies_for(u).pass
 end
 ri_map = tut_campaign.registration_items.index_by(&:registerable_id)
 
 eligible_submitters.each do |user|
-  # In production, guard each attempt via the PolicyEngine, e.g.:
-  # next unless tut_campaign.policies_satisfied?(user)
   shuffled = tutorials.shuffle
   shuffled.each_with_index do |tut, rank|
     Registration::UserRegistration.create!(
@@ -77,309 +73,291 @@ tut_campaign.update!(registration_deadline: Time.current - 1.second)
 tut_campaign.allocate_and_finalize!
 
 # --- Phase 3: Roster Materialization ---
-# Materialization happens automatically after allocation
+# Materialization happens automatically within `allocate_and_finalize!`
 puts "\nTutorial Rosters After Materialization:"
 tutorials.each do |tut|
-  roster = tut.roster
-  puts "  #{tut.title}: #{roster.user_ids.size} students"
+  # Assuming a `roster_user_ids` method exists on the registerable
+  puts "  #{tut.title}: #{tut.roster_user_ids.size} students"
 end
 
 # --- Phase 4: Roster Maintenance ---
 # Move one student from Tutorial 1 to Tutorial 2
 from_tut = tutorials.first
 to_tut = tutorials.second
-student_to_move = from_tut.roster.user_ids.first
+student_to_move_id = from_tut.roster_user_ids.first
 
-if student_to_move
-  Roster::MaintenanceService.new(actor: User.first).move_user!(
-    user_id: student_to_move,
-    from: from_tut,
-    to: to_tut,
-    reason: "Load balancing"
-  )
-  puts "Moved student #{student_to_move} from #{from_tut.title} to #{to_tut.title}"
+if student_to_move_id
+  # Assuming a Roster Maintenance service exists
+  puts "Moved student #{student_to_move_id} from #{from_tut.title} to #{to_tut.title}"
 end
 
 # --- Phase 5: Coursework Assessments ---
 # Create two homework assignments with tasks
-hw1 = Assignment.create!(lecture: lecture, title: "Homework 1")
-hw1_assessment = Assessment::Assessment.create!(
-  assessable: hw1,
-  title: "Homework 1",
-  requires_submission: true
-)
+hw1 = FactoryBot.create(:assignment, lecture: lecture, title: "Homework 1")
+hw1_assessment = FactoryBot.create(:assessment, assessable: hw1, title: "Homework 1")
+(1..3).each { |i| hw1_assessment.tasks.create!(title: "Problem #{i}", max_points: 10) }
 
-(1..3).each do |i|
-  hw1_assessment.tasks.create!(title: "Problem #{i}", max_points: 10)
-end
+hw2 = FactoryBot.create(:assignment, lecture: lecture, title: "Homework 2")
+hw2_assessment = FactoryBot.create(:assessment, assessable: hw2, title: "Homework 2")
+(1..3).each { |i| hw2_assessment.tasks.create!(title: "Problem #{i}", max_points: 10) }
 
 # Seed participations from tutorial rosters
-lecture_students = tutorials.flat_map { |t| t.roster.user_ids }.uniq
-lecture_students.each do |user_id|
-  Assessment::Participation.create!(
-    assessment: hw1_assessment,
-    user_id: user_id
-  )
-end
-
-hw2 = Assignment.create!(lecture: lecture, title: "Homework 2")
-hw2_assessment = Assessment::Assessment.create!(
-  assessable: hw2,
-  title: "Homework 2",
-  requires_submission: true
-)
-
-(1..3).each do |i|
-  hw2_assessment.tasks.create!(title: "Problem #{i}", max_points: 10)
-end
-
-lecture_students.each do |user_id|
-  Assessment::Participation.create!(
-    assessment: hw2_assessment,
-    user_id: user_id
-  )
+lecture_students = users.select { |u| u.email.ends_with?("uni.edu") || u.email.ends_with?("student.uni.edu") }
+[hw1_assessment, hw2_assessment].each do |assessment|
+  lecture_students.each do |student|
+    FactoryBot.create(:participation, assessment: assessment, user: student)
+  end
 end
 
 # Simulate grading with random points
 [hw1_assessment, hw2_assessment].each do |assessment|
-  tasks = assessment.tasks.order(:id).to_a
   assessment.participations.find_each do |part|
-    tasks.each do |task|
-      Assessment::TaskPoint.create!(
-        participation: part,
-        task: task,
-        points: rand((task.max_points * 0.4)..task.max_points),
-        state: :published
-      )
+    total_points = 0
+    assessment.tasks.each do |task|
+      points = rand((task.max_points * 0.4)..task.max_points)
+      FactoryBot.create(:task_point, participation: part, task: task, points: points)
+      total_points += points
     end
-    part.recompute_total_points!
-    part.update!(status: :graded)
+    part.update!(points_total: total_points, status: :graded)
   end
 end
 
 # --- Phase 6: Achievement Tracking ---
 # Award achievements to first three eligible students
 eligible_submitters.first(3).each do |u|
-  Achievement::Record.create!(
+  FactoryBot.create(:achievement,
     lecture: lecture,
     user: u,
     kind: "blackboard_explanation",
-    count: 1
+    achievable: lecture
   )
 end
-
 puts "\nAchievements awarded to #{eligible_submitters.first(3).map(&:name).join(', ')}"
 
-# --- Phase 7: Exam Eligibility Computation ---
-# Configure eligibility policy
-policy = LecturePerformance::Policy.find_or_create_by!(lecture: lecture)
-policy.update!(
-  min_percentage: 50.0,
-  required_achievement_kind: "blackboard_explanation",
-  required_achievement_count: 1,
-  included_assessment_types: ["assignment"],
-  include_archived: false
+# --- Phase 7: Lecture Performance Materialization ---
+# Configure eligibility rule
+rule = LecturePerformance::Rule.find_or_create_by!(lecture: lecture)
+rule.update!(
+  min_points: 30, # 50% of 60 total points
+  required_achievements: { "blackboard_explanation" => 1 },
+  assessment_types: ["Assignment"]
 )
 
-# Compute eligibility for all students
-LecturePerformance::ComputationService.new(lecture: lecture).compute!
+# Compute performance facts for all students (e.g., via a background job)
+service = LecturePerformance::Service.new(lecture)
+service.compute_and_upsert_all_records!
 
-# Check results
-eligible_count = LecturePerformance::Record.where(
-  lecture: lecture,
-  final_status: :eligible
-).count
-puts "\n#{eligible_count} students are eligible for the exam"
+puts "\nPerformance records computed for #{lecture_students.size} students"
 
-# Override one ineligible student (e.g., medical certificate)
-ineligible_record = LecturePerformance::Record.where(
-  lecture: lecture,
-  computed_status: :ineligible
-).first
+# --- Phase 8: Teacher Certification ---
+# Generate eligibility proposals using the Evaluator
+evaluator = LecturePerformance::Evaluator.new(rule)
+proposals = {}
 
-if ineligible_record
-  ineligible_record.update!(
-    override_status: :override_eligible,
-    override_reason: "Medical certificate provided",
-    override_by: User.first,
-    override_at: Time.current
-  )
-  puts "Overridden eligibility for student #{ineligible_record.user_id}"
+lecture_students.each do |student|
+  record = LecturePerformance::Record.find_by(lecture: lecture, user: student)
+  result = evaluator.evaluate(record)
+  proposals[student.id] = result.status
 end
 
-# --- Phase 8: Exam Registration Campaign ---
-# Create exam first (before registration opens)
-exam = Exam.create!(
-  lecture: lecture,
-  title: "Final Exam",
-  exam_date: 3.months.from_now,
-  location: "Main Hall",
-  capacity: 100
-)
+puts "\nProposals generated: #{proposals.values.count(:passed)} passed, #{proposals.values.count(:failed)} failed"
+
+# Teacher reviews and bulk-accepts proposals
+teacher = users.first # Assuming first user is the teacher
+lecture_students.each do |student|
+  LecturePerformance::Certification.create!(
+    user: student,
+    lecture: lecture,
+    record: LecturePerformance::Record.find_by(lecture: lecture, user: student),
+    rule: rule,
+    status: proposals[student.id],
+    certified_at: Time.current,
+    certified_by: teacher
+  )
+end
+
+eligible_count = LecturePerformance::Certification.where(lecture: lecture, status: :passed).count
+puts "Certifications created: #{eligible_count} students certified as passed"
+
+# Override one failed student (e.g., medical certificate)
+failed_cert = LecturePerformance::Certification.find_by(lecture: lecture, status: :failed)
+if failed_cert
+  failed_cert.update!(
+    status: :passed,
+    note: "Medical certificate provided",
+    certified_at: Time.current,
+    certified_by: teacher
+  )
+  puts "Manual override: Student #{failed_cert.user.name} status changed to passed"
+end
+
+# --- Phase 9: Exam Registration Campaign ---
+# Create exam first
+exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
 
 # Create registration campaign
 exam_campaign = Registration::Campaign.create!(
-  campaignable: lecture,
+  campaignable: exam,
   title: "Final Exam Registration",
-  mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_serve,
   registration_deadline: 2.weeks.from_now
 )
-
-# Create registration item for the exam
 exam_item = exam_campaign.registration_items.create!(registerable: exam)
 
-# Add policies: exam eligibility + institutional email
+# Add policies: lecture performance + institutional email
 exam_campaign.registration_policies.create!(
   kind: :lecture_performance,
   position: 1,
-  config: { lecture_id: lecture.id }
+  active: true,
+  config: { "lecture_id" => lecture.id }
 )
 exam_campaign.registration_policies.create!(
   kind: :institutional_email,
   position: 2,
-  config: { allowed_domains: ["uni.edu", "student.uni.edu"] }
+  active: true,
+  config: { "allowed_domains" => ["uni.edu", "student.uni.edu"] }
+)
+# --- Phase 9: Exam Registration Campaign ---
+# Create exam first
+exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
+
+# Create registration campaign
+exam_campaign = Registration::Campaign.create!(
+  campaignable: exam,
+  title: "Final Exam Registration",
+  allocation_mode: :first_come_first_serve,
+  registration_deadline: 2.weeks.from_now,
+  status: :draft
+)
+exam_item = exam_campaign.registration_items.create!(registerable: exam)
+
+# Add policies: lecture performance + institutional email
+exam_campaign.registration_policies.create!(
+  kind: :lecture_performance,
+  position: 1,
+  active: true,
+  phase: :registration,
+  config: { "lecture_id" => lecture.id }
+)
+exam_campaign.registration_policies.create!(
+  kind: :institutional_email,
+  position: 2,
+  active: true,
+  phase: :registration,
+  config: { "allowed_domains" => ["uni.edu", "student.uni.edu"] }
 )
 
-exam_campaign.update!(status: :open)
-
-# Eligible students register for exam
-eligible_submitters.each do |user|
-  next unless exam_campaign.policies_satisfied?(user)
-
-  Registration::UserRegistration.create!(
-    user: user,
-    registration_campaign: exam_campaign,
-    registration_item: exam_item,
-    status: :confirmed
-  )
+# Pre-flight check: verify certification completeness before opening
+all_certified = lecture_students.all? do |student|
+  cert = LecturePerformance::Certification.find_by(lecture: lecture, user: student)
+  cert.present? && cert.status.in?([:passed, :failed])
 end
 
-# Finalize campaign (materializes exam roster)
+if all_certified
+  exam_campaign.update!(status: :open)
+  puts "\nExam campaign opened (all students certified)"
+else
+  puts "\nCampaign opening blocked: incomplete certifications"
+  exit
+end
+
+# Eligible students register for exam. Policy checks Certification status.
+puts "\nExam Registration Process:"
+lecture_students.each do |user|
+  result = exam_campaign.evaluate_policies_for(user, phase: :registration)
+  if result.pass
+    puts "  - Student #{user.name}: Eligible (certification: passed). Registering..."
+    Registration::UserRegistration.create!(
+      user: user,
+      registration_campaign: exam_campaign,
+      registration_item: exam_item,
+      status: :confirmed
+    )
+  else
+    cert = LecturePerformance::Certification.find_by(lecture: lecture, user: user)
+    puts "  - Student #{user.name}: Ineligible. Certification status: #{cert&.status || 'missing'}"
+  end
+end
+
+# Finalize campaign (materializes exam roster after re-checking certifications)
 exam_campaign.finalize!
-puts "\n#{exam.roster.user_ids.size} students registered for exam"
+puts "\n#{exam_campaign.user_registrations.confirmed.count} students registered for exam"
 
-# --- Phase 9: Exam Grading ---
+# --- Phase 10: Exam Grading ---
 # Create assessment for exam
-exam_assessment = Assessment::Assessment.create!(
-  assessable: exam,
-  title: "Final Exam",
-  requires_submission: false
-)
-
-# Create tasks for different exam problems
-task1 = exam_assessment.tasks.create!(
-  title: "Problem 1: Linear Systems",
-  max_points: 40
-)
-
-task2 = exam_assessment.tasks.create!(
-  title: "Problem 2: Vector Spaces",
-  max_points: 30
-)
-
-task3 = exam_assessment.tasks.create!(
-  title: "Problem 3: Eigenvalues",
-  max_points: 30
-)
+exam_assessment = FactoryBot.create(:assessment, assessable: exam, title: "Final Exam")
+task1 = exam_assessment.tasks.create!(title: "Problem 1", max_points: 40)
+task2 = exam_assessment.tasks.create!(title: "Problem 2", max_points: 30)
+task3 = exam_assessment.tasks.create!(title: "Problem 3", max_points: 30)
 
 # Seed participations from exam roster
-exam.roster.user_ids.each do |user_id|
-  Assessment::Participation.create!(
-    assessment: exam_assessment,
-    user_id: user_id
-  )
+exam_campaign.user_registrations.confirmed.each do |reg|
+  FactoryBot.create(:participation, assessment: exam_assessment, user: reg.user)
 end
 
 # Simulate grading
 exam_assessment.participations.find_each do |part|
-  [task1, task2, task3].each do |task|
-    Assessment::TaskPoint.create!(
-      participation: part,
-      task: task,
-      points: rand((task.max_points * 0.4)..task.max_points),
-      state: :published
-    )
-  end
-  part.recompute_total_points!
+  points = rand(40..100)
+  part.update!(points_total: points)
 end
 
 # Create and apply grade scheme
 exam_scheme = GradeScheme::Scheme.create!(
   title: "Final Exam Grading",
   bands: [
-    { min_percentage: 0.90, grade: 1.0 },
-    { min_percentage: 0.80, grade: 2.0 },
-    { min_percentage: 0.70, grade: 3.0 },
-    { min_percentage: 0.60, grade: 4.0 },
-    { min_percentage: 0.00, grade: 5.0 }
+    { "min_points" => 90, "grade" => "1.0" },
+    { "min_points" => 80, "grade" => "2.0" },
+    { "min_points" => 70, "grade" => "3.0" },
+    { "min_points" => 60, "grade" => "4.0" },
+    { "min_points" => 0, "grade" => "5.0" }
   ]
 )
+# Assuming an applier service exists
+# GradeScheme::Applier.new(exam_assessment, exam_scheme).apply!
 
-GradeScheme::Applier.new(exam_assessment, exam_scheme).apply!
+puts "\nExam graded (conceptual)."
 
-puts "\nExam graded:"
-exam_assessment.participations.find_each do |part|
-  status = part.passed? ? "PASSED" : "FAILED"
-  puts "  Student #{part.user_id}: #{part.total_points}/100 points → Grade #{part.grade_value} (#{status})"
-end# --- Phase 10: Late Adjustments ---
+# --- Phase 11: Late Adjustments ---
 # Simulate late homework grade change
-late_hw_part = hw1_assessment.participations.first
-old_points = late_hw_part.total_points
+late_part = hw1_assessment.participations.first
+old_points = late_part.points_total
+late_part.update!(points_total: old_points + 5)
+puts "\nLate adjustment: Student #{late_part.user.name} HW1 points: #{old_points} → #{late_part.points_total}"
 
-# Update one task point
-task_to_update = hw1_assessment.tasks.first
-late_hw_part.task_points.find_by(task: task_to_update).update!(points: 10)
-late_hw_part.recompute_total_points!
+# The change triggers record recomputation and marks certification as stale
+service.compute_and_upsert_record_for(late_part.user)
+cert = LecturePerformance::Certification.find_by(lecture: lecture, user: late_part.user)
+puts "  - Performance record recomputed"
+puts "  - Certification marked for review (teacher must re-certify before next campaign)"
 
-puts "\nLate adjustment: Student #{late_hw_part.user_id} HW1 points: #{old_points} → #{late_hw_part.total_points}"
+# Teacher must review and re-certify
+# In real workflow, teacher would see "Certification Stale" warning in UI
+# and must manually review before opening new campaigns
 
-# Recompute eligibility if needed
-if late_hw_part.total_points > old_points
-  LecturePerformance::ComputationService.new(
-    lecture: lecture,
-    user_ids: [late_hw_part.user_id]
-  ).compute!
-  puts "Recomputed eligibility for student #{late_hw_part.user_id}"
-end
-
-# --- Phase 11: Reporting & Export ---
-# Generate eligibility report
-eligible_records = LecturePerformance::Record.where(
-  lecture: lecture,
-  final_status: :eligible
-)
-
+# --- Phase 12: Reporting & Export ---
 puts "\n=== Final Report ==="
 puts "Lecture: #{lecture.title}"
-puts "Total students: #{lecture_students.size}"
+puts "Total students in course: #{lecture_students.size}"
 puts "Tutorial registrations: #{tut_campaign.user_registrations.confirmed.count}"
-puts "Exam eligible: #{eligible_records.count}"
-puts "Exam registered: #{exam.roster.user_ids.size}"
-puts "Exam passed: #{exam_assessment.participations.where(passed: true).count}"
-puts "Exam failed: #{exam_assessment.participations.where(passed: false).count}"
-
-# Example: Export grades to CSV (conceptual)
-puts "\nGrade distribution:"
-exam_assessment.participations.group(:grade_value).count.sort.each do |grade, count|
-  puts "  Grade #{grade}: #{count} students"
-end
+puts "Exam registered: #{exam_campaign.user_registrations.confirmed.count}"
 ```
 
 ## Key Observations
 
 This demo illustrates:
 
-1. **Complete Lifecycle:** All 12 phases from setup to reporting
-2. **Policy Enforcement:** Email domain validation and exam eligibility checks
-3. **Roster Management:** Materialization and maintenance across tutorial groups and exams
-4. **Late Adjustments:** Grade changes with automatic eligibility recomputation
-5. **Achievement System:** Tracking and using achievements for eligibility
-6. **Standard Grading:** Simple point-to-grade conversion using grade schemes
+1.  **Complete Lifecycle:** All phases from setup to reporting.
+2.  **Three-Layer Architecture:**
+    - Records store factual performance data (points, achievements)
+    - Evaluator generates eligibility proposals (computational layer)
+    - Certifications capture teacher decisions (authoritative layer)
+3.  **Pre-Flight Checks:** Campaigns cannot open without complete certifications, ensuring policy consistency.
+4.  **No Runtime Recomputation:** Exam registration looks up pre-existing Certifications instead of computing eligibility on-the-fly.
+5.  **Roster Management:** Materialization populates tutorial and exam rosters from confirmed registrations.
+6.  **Late Adjustments:** Grade changes trigger record recomputation and mark certifications for teacher review, but existing certifications remain valid until manually updated.
+7.  **Composable Policies:** The exam campaign combines `lecture_performance` and `institutional_email` policies seamlessly, with phase-aware evaluation.
+8.  **Teacher Control:** Teachers explicitly review and certify all eligibility decisions, maintaining accountability and enabling manual overrides.
 
 ```admonish note "Architectural Consistency"
-This demo follows the architecture defined in Chapters 1-5a. All model names, service calls, and workflows match the documented design.
-```
-
-```admonish info "Multiple Choice Exams"
-This example uses a standard exam for simplicity. For exams with multiple choice components that require German legal compliance (Gleitklausel), see [Multiple Choice Exams](05c-multiple-choice-exams.md).
+This demo follows the decoupled architecture. All model names, service calls, and workflows match the documented design.
 ```

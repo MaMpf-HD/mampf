@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<!-- 
+<!--
   CONTEXT: This view applies to regular lectures only, showing state at end of semester (mid-February).
   For seminars, see assessments_index_seminar.html which shows talks with inline grading.
-  
+
   Timeline snapshot (mid-February 2025):
   - 8 homework assignments completed and graded
   - Midterm exam graded, results published
@@ -73,6 +73,22 @@
         <a class="nav-link active" href="#">Assessments</a>
       </li>
     </ul>
+
+    <!-- Lecture Performance Summary Card -->
+    <div class="alert alert-info mb-3" role="alert">
+      <div class="d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <i class="fas fa-award fs-4 me-3"></i>
+          <div>
+            <div class="fw-bold">Lecture Performance Certifications</div>
+            <div class="small">Students meeting requirements: <strong>126/150 (84%)</strong></div>
+          </div>
+        </div>
+        <a href="#" class="btn btn-sm btn-outline-primary">
+          <i class="fas fa-list-check me-1"></i>View Certification Dashboard
+        </a>
+      </div>
+    </div>
 
     <!-- Assignments Tab Content with lecture-pane styling -->
     <div class="lecture-pane">
@@ -367,7 +383,7 @@
 
       <!-- Exams Section -->
       <h3 class="lecture-pane-header">Exams</h3>
-      
+
       <div class="row mb-3">
         <div class="col-12 text-center">
           <a href="assessments_new.html" class="btn btn-sm btn-primary" id="newExamButton">
@@ -382,7 +398,7 @@
           <div class="row">
             <div class="col-3"><h6>Title</h6></div>
             <div class="col-2"><h6>Status</h6></div>
-            <div class="col-1"><h6>Eligible</h6></div>
+            <div class="col-1"><h6>Certified</h6></div>
             <div class="col-2"><h6>Date & Time</h6></div>
             <div class="col-1"><h6>Location</h6></div>
             <div class="col-3"><h6>Action</h6></div>
@@ -413,8 +429,8 @@
               <small>HS 2</small>
             </div>
             <div class="col-3">
-              <a href="exams_eligibility.html" class="text-dark" style="text-decoration: none;" title="View eligibility">
-                <i class="fas fa-lg fa-user-check me-2"></i>
+              <a href="exams_eligibility.html" class="text-dark" style="text-decoration: none;" title="View certifications">
+                <i class="fas fa-lg fa-award me-2"></i>
               </a>
               <a href="assessments_show_exam_grading.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
@@ -450,8 +466,8 @@
               <small>HS 1</small>
             </div>
             <div class="col-3">
-              <a href="exams_eligibility.html" class="text-dark" style="text-decoration: none;" title="View eligibility">
-                <i class="fas fa-lg fa-user-check me-2"></i>
+              <a href="exams_eligibility.html" class="text-dark" style="text-decoration: none;" title="View certifications">
+                <i class="fas fa-lg fa-award me-2"></i>
               </a>
               <a href="assessments_show_exam_graded.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
@@ -488,8 +504,8 @@
               <small class="text-muted">TBA</small>
             </div>
             <div class="col-3">
-              <a href="#" class="text-dark text-muted" style="text-decoration: none; pointer-events: none;" title="Eligibility not yet determined">
-                <i class="fas fa-lg fa-user-check me-2"></i>
+              <a href="#" class="text-dark text-muted" style="text-decoration: none; pointer-events: none;" title="Certifications not yet determined">
+                <i class="fas fa-lg fa-award me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
                 <i class="far fa-lg fa-edit me-2"></i>

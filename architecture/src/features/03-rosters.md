@@ -86,12 +86,18 @@ The “contract” required by the maintenance service, defining how to read and
 |---|---|---|
 | `roster_user_ids` | **Required (Override)** | Returns the current list of user IDs on the roster as an `Array<Integer>`. |
 | `replace_roster!(user_ids:)` | **Required (Override)** | Atomically replaces the entire roster with the given list of user IDs. |
+| `roster_entries` | **Required (Override)** | Returns an ActiveRecord relation to the join table for campaign tracking. |
+| `mark_campaign_source!(user_ids, campaign)` | **Required (Override)** | Marks the given user roster entries as sourced from the specified campaign. |
+| `allocated_user_ids` | Provided | Delegates to `roster_user_ids` to satisfy `Registration::Registerable` contract. |
+| `materialize_allocation!(user_ids:, campaign:)` | Provided | Implements the allocation materialization from `Registration::Registerable`. |
 | `add_user_to_roster!(user_id)` | Provided (private) | Adds a single user to the roster if not already present. |
 | `remove_user_from_roster!(user_id)` | Provided (private) | Removes a single user from the roster. |
 
 ### Behavior Highlights
-- **Explicit Contract:** The concern raises a `NotImplementedError` if an including class fails to override `#roster_user_ids` or `#replace_roster!`, ensuring the contract is met.
+- **Explicit Contract:** The concern raises a `NotImplementedError` if an including class fails to override required methods (`#roster_user_ids`, `#replace_roster!`, `#roster_entries`, `#mark_campaign_source!`), ensuring the contract is met.
 - **Idempotent:** Calling `replace_roster!` with the same set of IDs should result in no change.
+- **Registration Integration:** Provides `allocated_user_ids` and `materialize_allocation!` to satisfy the `Registration::Registerable` interface, allowing rosters to be managed by the registration system.
+- **Campaign Tracking:** The `materialize_allocation!` method preserves manually-added roster entries while replacing campaign-sourced entries, using the `source_campaign` field on join table records.
 // ...existing code...
 ### Example Implementation
 ```ruby
@@ -100,13 +106,31 @@ module Roster
   module Rosterable
     extend ActiveSupport::Concern
 
-    # The including class MUST override the following public methods.
     def roster_user_ids
       raise NotImplementedError, "#{self.class.name} must implement #roster_user_ids"
     end
 
     def replace_roster!(user_ids:)
       raise NotImplementedError, "#{self.class.name} must implement #replace_roster!"
+    end
+
+    def allocated_user_ids
+      roster_user_ids
+    end
+
+    def materialize_allocation!(user_ids:, campaign:)
+      transaction do
+        current_ids = roster_user_ids
+        campaign_sourced_ids = current_ids.select do |uid|
+          roster_entries.exists?(user_id: uid, source_campaign: campaign)
+        end
+
+        other_ids = current_ids - campaign_sourced_ids
+        new_ids = (other_ids + user_ids).uniq
+
+        replace_roster!(user_ids: new_ids)
+        mark_campaign_source!(user_ids, campaign)
+      end
     end
 
     private
@@ -120,6 +144,14 @@ module Roster
     def remove_user_from_roster!(user_id)
       replace_roster!(user_ids: roster_user_ids - [user_id])
     end
+
+    def roster_entries
+      raise NotImplementedError, "#{self.class.name} must implement #roster_entries for campaign tracking"
+    end
+
+    def mark_campaign_source!(user_ids, campaign)
+      raise NotImplementedError, "#{self.class.name} must implement #mark_campaign_source! for campaign tracking"
+    end
   end
 end
 ```
@@ -131,7 +163,7 @@ end
 
 ---
 
-## Roster::MaintenanceService 
+## Roster::MaintenanceService
 **_Staff Maintenance_**
 
 ```admonish info "What it represents"
@@ -281,8 +313,19 @@ class Tutorial < ApplicationRecord
       user_ids.each { |uid| tutorial_memberships.create!(user_id: uid) }
     end
   end
+
+  def roster_entries
+    tutorial_memberships
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    tutorial_memberships.where(user_id: user_ids)
+                       .update_all(source_campaign_id: campaign.id)
+  end
 end
 ```
+
+The `tutorial_memberships` table should include a `source_campaign_id` column (nullable) to track which campaign materialized each roster entry.
 
 ---
 
@@ -321,8 +364,19 @@ class Talk < ApplicationRecord
       user_ids.each { |uid| speaker_talk_joins.create!(speaker_id: uid) }
     end
   end
+
+  def roster_entries
+    speaker_talk_joins
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    speaker_talk_joins.where(speaker_id: user_ids)
+                      .update_all(source_campaign_id: campaign.id)
+  end
 end
 ```
+
+The `speaker_talk_joins` table should include a `source_campaign_id` column (nullable) to track which campaign materialized each speaker assignment.
 ---
 
 ## ERD for Roster Implementations
@@ -350,24 +404,28 @@ sequenceDiagram
     participant Campaign as Registration::Campaign
     participant Materializer as Registration::AllocationMaterializer
     participant RosterService as Roster::MaintenanceService
-    participant RosterableModel as Roster::Rosterable (e.g., Tutorial)
+    participant Rosterable as Roster::Rosterable (e.g., Tutorial)
 
     rect rgb(235, 245, 255)
-    note over Campaign,RosterableModel: Phase 1: Automated Materialization
+    note over Campaign,Rosterable: Phase 1: Automated Materialization
     Campaign->>Materializer: new(campaign).materialize!
-    Materializer->>RosterableModel: materialize_allocation!(user_ids:, campaign:)
-    note right of RosterableModel: Implements contract from Registration::Registerable
-    RosterableModel->>RosterableModel: (internally calls replace_roster!)
+    Materializer->>Rosterable: materialize_allocation!(user_ids:, campaign:)
+    note right of Rosterable: From Registration::Registerable
+    Rosterable->>Rosterable: 1. Query current roster_user_ids
+    Rosterable->>Rosterable: 2. Identify campaign-sourced entries
+    Rosterable->>Rosterable: 3. Merge with new user_ids
+    Rosterable->>Rosterable: 4. Call replace_roster!(merged_ids)
+    Rosterable->>Rosterable: 5. Mark new entries with source_campaign_id
     end
 
-    note over Admin, RosterableModel: ... time passes ...
+    note over Admin, Rosterable: ... time passes ...
 
     rect rgb(255, 245, 235)
-    note over Admin,RosterableModel: Phase 2: Manual Roster Maintenance
+    note over Admin,Rosterable: Phase 2: Manual Roster Maintenance
     Admin->>RosterService: new(actor: admin).move_user!(...)
-    RosterService->>RosterableModel: from.remove_user_from_roster!(user_id)
-    RosterService->>RosterableModel: to.add_user_to_roster!(user_id)
-    note right of RosterableModel: Uses private methods from Roster::Rosterable concern
+    RosterService->>Rosterable: from.remove_user_from_roster!(user_id)
+    RosterService->>Rosterable: to.add_user_to_roster!(user_id)
+    note right of Rosterable: Uses private methods from Roster::Rosterable concern
     end
 ```
 

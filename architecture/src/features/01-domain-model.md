@@ -36,15 +36,17 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | Assessment::SubmissionGrader | Service | Submission-centered fan-out to TaskPoints for team grading |
 | Submission | ActiveRecord | Team-capable artifact optionally linked to a task |
 
-## Exam Eligibility
+## Lecture Performance & Certification
 
 | Component | Type | Description |
 |-----------|------|-------------|
-| LecturePerformance::Record      | ActiveRecord | Materialized lecture performance per (lecture, user) with override support |
-| LecturePerformance::Rule        | ActiveRecord | Configuration for eligibility criteria (thresholds, required achievements) |
-| Achievement                     | ActiveRecord | Assessable type for qualitative accomplishments (e.g., blackboard presentations, attendance) with Assessment infrastructure |
-| LecturePerformance::Service | Service | Computes eligibility from points and achievements; triggers recomputation before registration |
-| Registration::Policy (kind: exam_eligibility) | Integration | Queries materialized records and triggers recomputation during exam registration |
+| LecturePerformance::Record | ActiveRecord | Materialized factual performance data per (lecture, user): points_total, achievements_met |
+| LecturePerformance::Rule | ActiveRecord | Configuration for eligibility criteria (min_points, required_achievements, assessment_types) |
+| LecturePerformance::Certification | ActiveRecord | Teacher's eligibility decision per (lecture, user) with status (passed/failed/pending) |
+| Achievement | ActiveRecord | Assessable type for qualitative accomplishments (e.g., blackboard presentations) with Assessment infrastructure |
+| LecturePerformance::Service | Service | Computes and upserts Records from coursework points and achievements |
+| LecturePerformance::Evaluator | Service | Generates eligibility proposals by evaluating Records against Rules |
+| Registration::Policy (kind: lecture_performance) | Integration | Checks Certification.status during exam registration (no runtime recomputation) |
 
 ## Grading Schemes
 
@@ -94,7 +96,7 @@ These are the "glue" entities that connect the core domain models (User, Lecture
 
 2. **Homework Grading:** `Assignment` (pointable) → linked to `Assessment::Assessment` → contains `Assessment::Task` → tutors record `Assessment::TaskPoint` → aggregated into `Assessment::Participation`
 
-3. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `LecturePerformance::Service` aggregates points → creates `LecturePerformance::Record` → `Registration::Policy` (kind: exam_eligibility) checks records when student attempts `Exam` (campaignable) registration
+3. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `LecturePerformance::Service` aggregates points into `LecturePerformance::Record` → `LecturePerformance::Evaluator` generates proposals → teacher creates `LecturePerformance::Certification` → `Registration::Policy` (kind: lecture_performance) checks `Certification.status` when student attempts `Exam` registration
 
 ## High-Level ERD (Simplified)
 
@@ -111,10 +113,13 @@ erDiagram
     ASSESSMENT_PARTICIPATION ||--o{ TASK_POINT : aggregates
     SUBMISSION ||--o{ TASK_POINT : optional
     USER ||--o{ ASSESSMENT_PARTICIPATION : participates
-    LECTURE_PERFORMANCE_RECORD }o--|| USER : "tracks eligibility"
+    LECTURE_PERFORMANCE_RECORD }o--|| USER : "factual data"
     LECTURE_PERFORMANCE_RECORD }o--|| LECTURE : "scoped to"
-    LECTURE_PERFORMANCE_ACHIEVEMENT }o--|| USER : "accomplished by"
-    LECTURE_PERFORMANCE_ACHIEVEMENT }o--|| LECTURE : "belongs to"
+    LECTURE_PERFORMANCE_CERTIFICATION }o--|| USER : "decision for"
+    LECTURE_PERFORMANCE_CERTIFICATION }o--|| LECTURE : "scoped to"
+    LECTURE_PERFORMANCE_CERTIFICATION }o--|| LECTURE_PERFORMANCE_RECORD : "based on (optional)"
+    ACHIEVEMENT }o--|| USER : "accomplished by"
+    ACHIEVEMENT }o--|| LECTURE : "belongs to"
     GRADE_SCHEME_SCHEME ||--|| ASSESSMENT : "applies to"
 ```
 
