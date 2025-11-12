@@ -1,34 +1,74 @@
 # Monitoring
 
-## Getting started (development mode): Setting up prometheus & grafana
+## Prometheus & Grafana Stack einrichten (Development)
 
-0. Start prometheus_exporter in the mampf container
-`sudo docker-compose exec mampf prometheus_exporter -b 0.0.0.0 -a lib/collectors/mampf_collector.rb `
-1. Setup prometheus in development
+Ziel ist es Prometheus Server- und Grafana Kontainer außhalb des Mampf-Developments Kontainer-Stacks zu haben. Im Development können die Kontainer über Ports und das Network `mampf_development`die Daten abfragen. Wie das dann in Produktion ist, muss noch geschaut werden.
 
-```sh
-cd docker/development
-sudo docker run -d \
--p 9090:9090 \
---name prometheus -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml \
-prom/prometheus
-# Add to mampf dev network
-sudo docker network connect development_default prometheus
+### 1. Monitoring-Verzeichnis erstellen
+
+Erstelle **außerhalb** deines `mampf`-Projektordners ein neues Verzeichnis namens `Monitoring`. und erstelel folgende Dateinen:
+
+### 2. Datei 1: `docker-compose.yml`
+
+Diese Datei definiert deine Prometheus- und Grafana-Dienste.
+
+```yaml
+version: "3.8"
+services:
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - mampf_development
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "2345:2345"
+    networks:
+      - mampf_development
+    environment:
+      - GF_SERVER_HTTP_PORT=2345
+    restart: unless-stopped
+
+networks:
+  mampf_development:
+    external: true
 ```
-2. setup Grafana:
+    
+### 3. Datei 2: `prometheus.yml`
 
-```sh
-sudo docker run -d \                                      
--p 2345:2345 \
---name grafana \
--e "GF_SERVER_HTTP_PORT=2345" \
-grafana/grafana
+Diese Datei teilt Prometheus mit, was es überwachen soll.
+
+```yaml
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# A scrape configuration containing exactly one endpoint to scrape:
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'mampf'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+    scrape_timeout:  5s
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ['app:9394']
 ```
-3. Now visit localhost:2345 and configure the datasource (`prometheus:9090`)
-4.  Setup the dashboard, interisting metrics:
-  - `rate(ruby_collector_sessions_total[5m])`
-  - `rate(ruby_http_requests_total[5m])`
-  - `ruby_user_count`: Number of users in the DB
-  - `ruby_uploaded_medium_count`: Number of Media
-  - `ruby_tag_count`: Number of Tags
-  - `ruby_submissions_count`: Number of Submissions
+### 4. Wichtig!
+
+Damit die Network Verbindung funktioniert muss der Monitoring Kontainer Stack nach dem Mapf Stack gestartet werden. Dies geht mit ´cd ../Monitoring `cd ../Monitoring` und `docker compose up -d`.

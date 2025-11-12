@@ -29,6 +29,7 @@ services:
       - MAMPF_PORT=3000
     ports:
       - 3036:3036 # Vite server
+      - 9394:9394 # Prometheus server
     labels:
       # see nginx.tmpl, which is serving mampf on port 30
       de.uni-heidelberg.mathi.mampf.container-type: worker
@@ -127,3 +128,8 @@ volumes:
   pgadmin:
   sprockets-cache:
   bundle_cache:
+  
+networks:
+  default:
+    name: mampf_development
+    driver: bridge
