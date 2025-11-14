@@ -527,18 +527,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_28_000003) do
   end
 
   create_table "registration_items", force: :cascade do |t|
-    t.bigint "campaign_id", null: false
+    t.bigint "registration_campaign_id", null: false
     t.string "registerable_type", null: false
     t.bigint "registerable_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
-    t.index ["campaign_id"], name: "index_registration_items_on_campaign_id"
     t.index ["registerable_type", "registerable_id"], name: "index_registration_items_on_registerable"
+    t.index ["registration_campaign_id", "registerable_type", "registerable_id"], name: "index_registration_items_uniqueness", unique: true
+    t.index ["registration_campaign_id"], name: "index_registration_items_on_registration_campaign_id"
   end
 
   create_table "registration_policies", force: :cascade do |t|
-    t.bigint "campaign_id", null: false
+    t.bigint "registration_campaign_id", null: false
     t.integer "kind", null: false
     t.integer "phase", default: 0, null: false
     t.integer "position", null: false
@@ -547,23 +547,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_28_000003) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["active"], name: "index_registration_policies_on_active"
-    t.index ["campaign_id", "position"], name: "index_registration_policies_uniqueness", unique: true
-    t.index ["campaign_id"], name: "index_registration_policies_on_campaign_id"
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
+    t.index ["registration_campaign_id", "position"], name: "index_registration_policies_uniqueness", unique: true
+    t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
   create_table "registration_user_registrations", force: :cascade do |t|
-    t.bigint "campaign_id", null: false
+    t.bigint "registration_campaign_id", null: false
     t.bigint "user_id", null: false
-    t.bigint "item_id"
+    t.bigint "registration_item_id"
     t.integer "preference_rank"
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["campaign_id", "user_id"], name: "index_registration_user_registrations_uniqueness", unique: true
-    t.index ["campaign_id"], name: "index_registration_user_registrations_on_campaign_id"
-    t.index ["item_id"], name: "index_registration_user_registrations_on_item_id"
+    t.index ["registration_campaign_id", "user_id", "preference_rank"], name: "index_reg_user_regs_unique_ranked", unique: true, where: "(preference_rank IS NOT NULL)"
+    t.index ["registration_campaign_id", "user_id"], name: "index_reg_user_regs_unique_unranked", unique: true, where: "(preference_rank IS NULL)"
+    t.index ["registration_campaign_id"], name: "idx_on_registration_campaign_id_5f8ca153cb"
+    t.index ["registration_item_id"], name: "index_registration_user_registrations_on_registration_item_id"
     t.index ["status"], name: "index_registration_user_registrations_on_status"
     t.index ["user_id"], name: "index_registration_user_registrations_on_user_id"
   end
@@ -1199,10 +1200,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_28_000003) do
   add_foreign_key "redemptions", "vouchers"
   add_foreign_key "referrals", "items"
   add_foreign_key "referrals", "media"
-  add_foreign_key "registration_items", "registration_campaigns", column: "campaign_id"
-  add_foreign_key "registration_policies", "registration_campaigns", column: "campaign_id"
-  add_foreign_key "registration_user_registrations", "registration_campaigns", column: "campaign_id"
-  add_foreign_key "registration_user_registrations", "registration_items", column: "item_id"
+  add_foreign_key "registration_items", "registration_campaigns"
+  add_foreign_key "registration_policies", "registration_campaigns"
+  add_foreign_key "registration_user_registrations", "registration_campaigns"
+  add_foreign_key "registration_user_registrations", "registration_items"
   add_foreign_key "registration_user_registrations", "users"
   add_foreign_key "speaker_talk_joins", "talks"
   add_foreign_key "speaker_talk_joins", "users", column: "speaker_id"

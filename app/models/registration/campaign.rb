@@ -5,59 +5,47 @@ module Registration
     has_many :registration_items,
              class_name: "Registration::Item",
              dependent: :destroy,
-             inverse_of: :campaign
+             inverse_of: :registration_campaign
 
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy,
-             inverse_of: :campaign
+             inverse_of: :registration_campaign
 
     has_many :registration_policies,
              class_name: "Registration::Policy",
              dependent: :destroy,
-             inverse_of: :campaign
+             inverse_of: :registration_campaign
 
-    enum :allocation_mode, {
-      first_come_first_serve: 0,
-      preference_based: 1
-    }
+    enum :allocation_mode, { first_come_first_serve: 0,
+                             preference_based: 1 }
 
-    enum :status, {
-      draft: 0,
-      open: 1,
-      processing: 2,
-      completed: 3
-    }
+    enum :status, { draft: 0,
+                    open: 1,
+                    processing: 2,
+                    completed: 3 }
 
-    validates :title, presence: true
-    validates :allocation_mode, presence: true
-    validates :status, presence: true
+    validates :title, :registration_deadline, :allocation_mode, :status, presence: true
+    validate :valid_status_transition, on: :update
 
-    def evaluate_policies_for(user, phase: :registration)
-      raise(NotImplementedError, "PolicyEngine integration pending (PR 2.2)")
-    end
+    private
 
-    def policies_satisfied?(user, phase: :registration)
-      evaluate_policies_for(user, phase: phase)[:pass]
-    rescue NotImplementedError
-      true
-    end
+      def valid_status_transition
+        return unless will_save_change_to_status?
 
-    def open_for_registrations?
-      open?
-    end
+        from = status_before_last_save
+        to = status
 
-    def allocate!
-      raise(NotImplementedError, "Allocation logic pending (PR 4.x)")
-    end
+        valid_transitions = {
+          "draft" => ["open"],
+          "open" => ["processing"],
+          "processing" => ["completed"]
+        }
 
-    def finalize!
-      raise(NotImplementedError, "Finalization logic pending (PR 4.x)")
-    end
+        allowed = valid_transitions[from] || []
+        return if allowed.include?(to)
 
-    def allocate_and_finalize!
-      allocate!
-      finalize!
-    end
+        errors.add(:status, "cannot transition from #{from} to #{to}")
+      end
   end
 end
