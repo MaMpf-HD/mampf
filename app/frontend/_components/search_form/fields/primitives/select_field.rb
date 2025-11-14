@@ -25,6 +25,7 @@ module SearchForm
       #   )
       class SelectField < ViewComponent::Base
         include Fields::Mixins::PrimitiveFieldMixin
+
         attr_reader :collection, :field_data
 
         # Initializes a new SelectField component.

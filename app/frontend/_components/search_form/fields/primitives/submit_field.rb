@@ -20,6 +20,7 @@ module SearchForm
       #   )
       class SubmitField < ViewComponent::Base
         include Fields::Mixins::PrimitiveFieldMixin
+
         attr_reader :button_class, :inner_class, :field_data
 
         # Initializes a new SubmitField component.

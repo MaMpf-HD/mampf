@@ -1,6 +1,7 @@
 # LecturesController
 class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
+
   before_action :set_lecture, except: [:new, :create, :search]
   before_action :set_lecture_cookie, only: [:show, :organizational,
                                             :show_announcements]

@@ -30,6 +30,7 @@ module SearchForm
       #   )
       class RadioButtonField < ViewComponent::Base
         include Fields::Mixins::PrimitiveFieldMixin
+
         attr_reader :value, :checked, :custom_container_class, :field_data
 
         # Initializes a new RadioButtonField component.

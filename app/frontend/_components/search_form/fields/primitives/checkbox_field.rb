@@ -22,6 +22,7 @@ module SearchForm
       #   )
       class CheckboxField < ViewComponent::Base
         include Fields::Mixins::PrimitiveFieldMixin
+
         attr_reader :checked, :stimulus_config, :field_data
 
         # Initializes a new CheckboxField component.
