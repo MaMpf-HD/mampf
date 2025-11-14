@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: 'Implement Müsli architecture in MaMpf'
 ---
 In the [Architecture folder](../../architecture/), we make a proposal for the architecture to integrate MÜSLI into MaMpf. Your goal is to help me understand, improve and implement this architecture in the MaMpf codebase. Take into account our whole system. Only do one architectural change at a time, such that PRs are small and easy to review. Try to guide developers when they want to implement too many changes at once.
