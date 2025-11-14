@@ -18,7 +18,8 @@ service objects to the right endpoints.
 | Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
 | Roster      | Maintenance                                        | Teacher/Editor UI         |
 | Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
-| Exam        | Exams, ExamEligibility::Records                    | Teacher/Editor UI         |
+| LecturePerformance | Records, Certifications, Evaluator           | Teacher/Editor UI         |
+| Exam        | Exams                                              | Teacher/Editor UI         |
 | GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
 
@@ -26,7 +27,8 @@ Controllers are grouped into the following namespaces:
 - Registration: Campaign setup, student registration, allocation
 - Roster: Post-allocation roster maintenance
 - Assessment: Assessment setup, grading, result viewing
-- Exam: Exam management and eligibility
+- LecturePerformance: Performance records, teacher certification, evaluator proposals
+- Exam: Exam management
 - GradeScheme: Grading scheme configuration
 - Dashboard: Student and teacher/editor views
 
@@ -67,6 +69,14 @@ Manage registration campaigns for lectures.
 - CRUD operations for campaigns
 - Validate date ranges and capacity constraints
 - Display campaign status (draft, open, processing, completed)
+- **Pre-flight checks:** Before opening campaigns with `lecture_performance` policies:
+  - Verify all lecture students have `LecturePerformance::Certification` records
+  - Ensure all certifications have `status: :passed` or `:failed` (no `pending`)
+  - Block campaign opening with clear error message if checks fail
+- **Pre-finalization checks:** Before finalizing campaigns:
+  - Re-validate certification completeness
+  - Check for stale certifications (due to rule changes or record updates)
+  - Prompt remediation workflow if issues exist
 ```
 
 ### `Registration::UserRegistrationsController`
@@ -92,10 +102,12 @@ Handle the student registration flow.
 | destroy | Withdraw from campaign |
 
 ```admonish example "Responsibilities"
-- Display eligibility status
+- Display eligibility status based on `LecturePerformance::Certification`
+- Show certification status (passed/failed) for exam campaigns
 - Handle preference ranking (drag-and-drop or priority input)
 - Show allocation results after campaign completes
 - Validate registration constraints
+- Display clear rejection reasons when policies fail
 ```
 
 ### `Registration::PoliciesController`
@@ -151,7 +163,8 @@ Trigger and monitor the allocation algorithm.
 - Allow parameter adjustments before finalization
 - Create rosters from allocation results
 - Support single-step allocate_and_finalize flow when desired
- - Delegate to Campaign API: allocate!, finalize!, allocate_and_finalize!
+- Delegate to Campaign API: `allocate!`, `finalize!`, `allocate_and_finalize!`
+- Validate certification completeness before finalization
 ```
 
 ## Roster Controllers
@@ -285,40 +298,104 @@ Manage exam instances for lectures.
 | index   | List all exams for a lecture |
 | new     | Create exam form |
 | create  | Create exam |
-| show    | View exam details and eligibility summary |
+| show    | View exam details and certification summary |
 | edit    | Modify exam settings |
 | update  | Update exam |
 | destroy | Delete exam |
 
+```admonish example "Responsibilities"
 - Exam scheduling (date, location)
-- Eligibility policy configuration
 - Registration deadline management
-- Export eligible student list
+- Display certification summary (number of students passed/failed)
+- Link to certification dashboard for detailed review
+- Export eligible student list (students with `status: :passed`)
+```
 
-### `ExamEligibility::RecordsController`
+## Lecture Performance Controllers
+
+### `LecturePerformance::RecordsController`
 
 ```admonish info "Purpose"
-View and override eligibility status.
+View and manage performance records (factual data only).
 ```
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| ExamEligibility::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| LecturePerformance::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
 | Action | Purpose |
 |--------|---------|
-| index  | List eligibility for all students |
-| show   | Detailed eligibility calculation for one student |
-| update | Override eligibility status |
-| export | Export eligibility list |
+| index  | List performance records for all students |
+| show   | Detailed performance breakdown for one student |
+| recompute | Trigger recomputation for specific student(s) |
+| export | Export performance data |
 
 ```admonish example "Responsibilities"
-- Display eligibility table with pass/fail per student
-- Show breakdown of eligibility calculation
-- Manual override with reason tracking
-- Bulk eligibility export for exam registration systems
+- Display factual performance data (points, achievements)
+- Show computation timestamp and rule version
+- Trigger manual recomputation when needed
+- Export performance data for analysis
+- **No eligibility interpretation** - pure factual data display
+```
+
+### `LecturePerformance::CertificationsController`
+
+```admonish info "Purpose"
+Teacher certification workflow for eligibility decisions.
+```
+
+| Controller | Primary callers | Responses |
+|------------|------------------|-----------|
+| LecturePerformance::CertificationsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+
+**Actions**
+
+| Action  | Purpose |
+|---------|---------|
+| index   | Certification dashboard showing all students |
+| create  | Bulk create certifications from proposals |
+| update  | Manual override of individual certification |
+| bulk_accept | Accept all proposals in one action |
+| remediate | Handle stale/pending certifications before campaign operations |
+| export  | Export certification list |
+
+```admonish example "Responsibilities"
+- Display certification dashboard with proposals
+- Show proposed status (passed/failed) for each student
+- Bulk accept proposals (common case)
+- Manual override with required note field
+- Handle rule change diff: "12 students would change: failed → passed"
+- Remediation workflow for pending/stale certifications
+- Verify completeness before allowing campaign operations
+- Track certification history (certified_at, certified_by)
+```
+
+### `LecturePerformance::EvaluatorController`
+
+```admonish info "Purpose"
+Generate eligibility proposals using the Evaluator service.
+```
+
+| Controller | Primary callers | Responses |
+|------------|------------------|-----------|
+| LecturePerformance::EvaluatorController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+
+**Actions**
+
+| Action | Purpose |
+|--------|---------|
+| bulk_proposals | Generate proposals for all lecture students |
+| preview_rule_change | Show impact of rule modifications before saving |
+| single_proposal | Generate proposal for specific student (review case) |
+
+```admonish example "Responsibilities"
+- Call `LecturePerformance::Evaluator.bulk_proposals(lecture)`
+- Display proposals in reviewable format
+- Show rule change preview: affected students and status changes
+- Generate single proposal for manual review cases
+- **Does not create Certifications** - only generates proposals for teacher review
 ```
 
 ## Grade Scheme Controllers

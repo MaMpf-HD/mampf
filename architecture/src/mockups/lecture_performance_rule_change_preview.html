@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rule Change Preview - Lecture Performance</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="bg-light">
+    <div class="container-fluid py-4">
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Lectures</a></li>
+          <li class="breadcrumb-item"><a href="#">Linear Algebra I (WS 2025/26)</a></li>
+          <li class="breadcrumb-item"><a href="#">Settings</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Rule Change Preview</li>
+        </ol>
+      </nav>
+
+      <div class="card">
+        <div class="card-header bg-warning bg-opacity-10 border-warning">
+          <div class="d-flex align-items-start">
+            <i class="bi bi-exclamation-triangle-fill text-warning me-2 fs-4"></i>
+            <div>
+              <h5 class="mb-1">Performance Rule Change Preview</h5>
+              <p class="mb-0 small text-muted">
+                Review how the new rule affects current proposals before applying changes.
+                Existing manual overrides are preserved and not shown here.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <div class="row g-3 mb-4">
+            <div class="col-12">
+              <h6 class="mb-2">Rule Comparison</h6>
+              <div class="row g-2">
+                <div class="col-12 col-md-6">
+                  <div class="border rounded p-3 bg-light">
+                    <div class="small text-muted mb-1">Current Rule</div>
+                    <div class="fw-bold">50% points AND all 3 achievements</div>
+                    <div class="small mt-1">
+                      • Blackboard Presentation (boolean)<br/>
+                      • Lab Participation ≥65% (percentage)<br/>
+                      • Attendance ≥11/15 (count)
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12 col-md-6">
+                  <div class="border border-primary rounded p-3 bg-primary bg-opacity-10">
+                    <div class="small text-muted mb-1">New Rule</div>
+                    <div class="fw-bold text-primary">45% points AND 2 achievements</div>
+                    <div class="small mt-1">
+                      • Blackboard Presentation (boolean)<br/>
+                      • Lab Participation ≥65% (percentage)<br/>
+                      <span class="text-decoration-line-through text-muted">• Attendance ≥11/15 (removed)</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+              <div class="card border-0 bg-light h-100">
+                <div class="card-body text-center">
+                  <div class="display-6 fw-bold">150</div>
+                  <div class="text-muted small">Total Students</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="card border-success h-100">
+                <div class="card-body text-center">
+                  <div class="display-6 fw-bold text-success">138</div>
+                  <div class="text-muted small">Would Pass</div>
+                  <div class="badge text-bg-success mt-1">+12 from current</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="card border-danger h-100">
+                <div class="card-body text-center">
+                  <div class="display-6 fw-bold text-danger">12</div>
+                  <div class="text-muted small">Would Fail</div>
+                  <div class="badge text-bg-danger mt-1">-12 from current</div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="card border-warning h-100">
+                <div class="card-body text-center">
+                  <div class="display-6 fw-bold text-warning">12</div>
+                  <div class="text-muted small">Status Changes</div>
+                  <div class="small text-muted mt-1">Failed → Passed</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="alert alert-warning" role="alert">
+            <div class="fw-bold mb-2">
+              <i class="bi bi-exclamation-triangle me-2"></i>12 students would change status
+            </div>
+            <div class="small">
+              Review affected students below. Applying this change will regenerate proposals for all students.
+              You must review updated proposals in the <a href="lecture_performance_certifications_index.html" class="alert-link">Certification Dashboard</a>.
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <h6>Affected Students (12)</h6>
+            <p class="text-muted small">
+              Students whose proposed certification status would change under the new rule.
+              Students with manual overrides are excluded from this list.
+            </p>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-sm table-hover align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Student</th>
+                  <th scope="col">Matric.</th>
+                  <th scope="col">Points</th>
+                  <th scope="col">%</th>
+                  <th scope="col">Achievements</th>
+                  <th scope="col">Current Proposal</th>
+                  <th scope="col">New Proposal</th>
+                  <th scope="col">Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="table-success table-success-subtle">
+                  <td>Emma Evans</td>
+                  <td class="font-monospace small">3890123</td>
+                  <td class="font-monospace small">115/240</td>
+                  <td><span class="badge text-bg-danger">48%</span></td>
+                  <td class="small">
+                    <i class="bi bi-check-circle-fill text-success" title="Blackboard Presentation"></i>
+                    <i class="bi bi-check-circle-fill text-success" title="Lab Participation 72%"></i>
+                    <i class="bi bi-x-circle-fill text-danger" title="Attendance 8/15"></i>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                  <td>
+                    <i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+                    <span class="badge text-bg-success">Failed → Passed</span>
+                  </td>
+                </tr>
+                <tr class="table-success table-success-subtle">
+                  <td>Grace Green</td>
+                  <td class="font-monospace small">4012345</td>
+                  <td class="font-monospace small">108/240</td>
+                  <td><span class="badge text-bg-danger">45%</span></td>
+                  <td class="small">
+                    <i class="bi bi-check-circle-fill text-success" title="Blackboard Presentation"></i>
+                    <i class="bi bi-check-circle-fill text-success" title="Lab Participation 68%"></i>
+                    <i class="bi bi-x-circle-fill text-danger" title="Attendance 9/15"></i>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                  <td>
+                    <i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+                    <span class="badge text-bg-success">Failed → Passed</span>
+                  </td>
+                </tr>
+                <tr class="table-success table-success-subtle">
+                  <td>Henry Harris</td>
+                  <td class="font-monospace small">4123456</td>
+                  <td class="font-monospace small">112/240</td>
+                  <td><span class="badge text-bg-danger">47%</span></td>
+                  <td class="small">
+                    <i class="bi bi-check-circle-fill text-success" title="Blackboard Presentation"></i>
+                    <i class="bi bi-check-circle-fill text-success" title="Lab Participation 70%"></i>
+                    <i class="bi bi-x-circle-fill text-danger" title="Attendance 7/15"></i>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                  <td>
+                    <i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+                    <span class="badge text-bg-success">Failed → Passed</span>
+                  </td>
+                </tr>
+                <tr class="table-success table-success-subtle">
+                  <td>Isabella Irving</td>
+                  <td class="font-monospace small">4234567</td>
+                  <td class="font-monospace small">118/240</td>
+                  <td><span class="badge text-bg-danger">49%</span></td>
+                  <td class="small">
+                    <i class="bi bi-check-circle-fill text-success" title="Blackboard Presentation"></i>
+                    <i class="bi bi-check-circle-fill text-success" title="Lab Participation 75%"></i>
+                    <i class="bi bi-x-circle-fill text-danger" title="Attendance 10/15"></i>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                  <td>
+                    <i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+                    <span class="badge text-bg-success">Failed → Passed</span>
+                  </td>
+                </tr>
+                <tr class="table-success table-success-subtle">
+                  <td>Jack Johnson</td>
+                  <td class="font-monospace small">4345678</td>
+                  <td class="font-monospace small">110/240</td>
+                  <td><span class="badge text-bg-danger">46%</span></td>
+                  <td class="small">
+                    <i class="bi bi-check-circle-fill text-success" title="Blackboard Presentation"></i>
+                    <i class="bi bi-check-circle-fill text-success" title="Lab Participation 66%"></i>
+                    <i class="bi bi-x-circle-fill text-danger" title="Attendance 8/15"></i>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                  <td>
+                    <i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+                    <span class="badge text-bg-success">Failed → Passed</span>
+                  </td>
+                </tr>
+                <tr class="table-success table-success-subtle">
+                  <td>Karen King</td>
+                  <td class="font-monospace small">4456789</td>
+                  <td class="font-monospace small">109/240</td>
+                  <td><span class="badge text-bg-danger">45%</span></td>
+                  <td class="small">
+                    <i class="bi bi-check-circle-fill text-success" title="Blackboard Presentation"></i>
+                    <i class="bi bi-check-circle-fill text-success" title="Lab Participation 69%"></i>
+                    <i class="bi bi-x-circle-fill text-danger" title="Attendance 9/15"></i>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                  <td>
+                    <i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+                    <span class="badge text-bg-success">Failed → Passed</span>
+                  </td>
+                </tr>
+                <tr class="table-success table-success-subtle">
+                  <td>Liam Lewis</td>
+                  <td class="font-monospace small">4567890</td>
+                  <td class="font-monospace small">114/240</td>
+                  <td><span class="badge text-bg-danger">48%</span></td>
+                  <td class="small">
+                    <i class="bi bi-check-circle-fill text-success" title="Blackboard Presentation"></i>
+                    <i class="bi bi-check-circle-fill text-success" title="Lab Participation 71%"></i>
+                    <i class="bi bi-x-circle-fill text-danger" title="Attendance 7/15"></i>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                  <td>
+                    <i class="bi bi-arrow-up-circle-fill text-success me-1"></i>
+                    <span class="badge text-bg-success">Failed → Passed</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="alert alert-info mt-3" role="alert">
+            <i class="bi bi-info-circle me-2"></i>
+            <strong>Note:</strong> Showing 7 of 12 affected students. All changes shown here are Failed → Passed transitions.
+            This reflects the more lenient criteria (45% instead of 50%, and removing the attendance requirement).
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
+            <a href="lecture_performance_rule_configuration.html" class="btn btn-outline-secondary">
+              <i class="bi bi-arrow-left me-1"></i>Back to Rule Configuration
+            </a>
+            <div class="d-flex gap-2">
+              <button class="btn btn-secondary">Cancel</button>
+              <button class="btn btn-primary">
+                <i class="bi bi-check-lg me-1"></i>Apply Changes
+              </button>
+            </div>
+          </div>
+
+          <div class="alert alert-warning mt-3" role="alert">
+            <div class="small">
+              <strong>After applying:</strong>
+              <ul class="mb-0 mt-2">
+                <li>New proposals will be generated for all 150 students</li>
+                <li>Existing manual overrides (8 students) will be preserved</li>
+                <li>You must review updated proposals in the Certification Dashboard</li>
+                <li>No certifications are automatically changed - teacher review required</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

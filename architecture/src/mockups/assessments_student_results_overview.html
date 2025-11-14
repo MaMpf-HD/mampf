@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Assignment Results - Linear Algebra WS 2024/25</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1">
+      <i class="bi bi-mortarboard-fill me-2"></i>
+      MaMpf - My Results
+    </span>
+  </div>
+</nav>
+
+<div class="container">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="#">Linear Algebra WS 2024/25</a></li>
+      <li class="breadcrumb-item active" aria-current="page">My Results</li>
+    </ol>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h4 class="mb-0">
+        <i class="bi bi-list-check me-2"></i>
+        My Assignment Results
+      </h4>
+      <small class="text-muted">Linear Algebra WS 2024/25 - Tutorial Group C</small>
+    </div>
+    <a href="#" class="btn btn-outline-primary btn-sm">
+      <i class="bi bi-box-arrow-up me-2"></i>
+      Submit Work
+    </a>
+  </div>
+
+  <div class="row">
+    <!-- Left Column: Progress Summary -->
+    <div class="col-lg-4">
+
+      <!-- Overall Progress Card -->
+      <div class="card mb-3">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-graph-up me-2"></i>
+            Your Progress
+          </h6>
+        </div>
+        <div class="card-body">
+          <div class="text-center mb-3">
+            <div class="display-4 fw-bold">72%</div>
+            <div class="text-muted small">of total points</div>
+          </div>
+
+          <div class="mb-2 small">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="text-muted">Total Points</span>
+              <span class="fw-bold">173 / 240</span>
+            </div>
+            <div class="progress" style="height: 6px;">
+              <div class="progress-bar bg-primary" role="progressbar" style="width: 72%"></div>
+            </div>
+          </div>
+
+          <div class="row g-2 mt-3 small">
+            <div class="col-6">
+              <div class="text-muted">Assignments</div>
+              <div class="fw-bold">8 total</div>
+            </div>
+            <div class="col-6">
+              <div class="text-muted">Graded</div>
+              <div class="fw-bold">6 / 8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Certification Status Card -->
+      <div class="card mb-3 border-success">
+        <div class="card-header bg-light">
+          <h6 class="mb-0">
+            <i class="bi bi-award-fill me-2"></i>
+            Certification Status
+          </h6>
+        </div>
+        <div class="card-body py-3">
+          <div class="d-flex align-items-center mb-2">
+            <i class="bi bi-check-circle-fill text-success fs-3 me-3"></i>
+            <div>
+              <div class="fw-bold text-success">Passed</div>
+              <div class="small text-muted">You meet the lecture performance requirements</div>
+            </div>
+          </div>
+          <div class="small mt-2">
+            <div class="text-muted mb-1">Performance: 173/240 points (72%)</div>
+            <div class="text-muted">Threshold: 120 points (50%)</div>
+          </div>
+          <a href="#" class="small text-decoration-none mt-2 d-inline-block">
+            View Performance Overview →
+          </a>
+        </div>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="card mb-3">
+        <div class="card-body py-2">
+          <div class="btn-group btn-group-sm w-100" role="group">
+            <input type="radio" class="btn-check" name="filter" id="filter-all" checked>
+            <label class="btn btn-outline-secondary" for="filter-all">All (8)</label>
+
+            <input type="radio" class="btn-check" name="filter" id="filter-graded">
+            <label class="btn btn-outline-secondary" for="filter-graded">Graded (6)</label>
+
+            <input type="radio" class="btn-check" name="filter" id="filter-pending">
+            <label class="btn btn-outline-secondary" for="filter-pending">Pending (2)</label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Assignment List -->
+    <div class="col-lg-8">
+
+      <!-- Assignment 7 - Pending Grading (Most recent) -->
+      <div class="card mb-2 border-warning">
+        <div class="card-body py-2">
+          <div class="row align-items-center">
+            <div class="col-md-7">
+              <div class="d-flex align-items-center">
+                <span class="badge bg-warning text-dark me-2">
+                  <i class="bi bi-clock"></i>
+                </span>
+                <div>
+                  <span class="fw-semibold">Assignment 7: Diagonalization</span>
+                  <div class="small text-muted">
+                    Due: Nov 22, 2024 • Submitted: Nov 21
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center small mt-2 mt-md-0">
+              <div class="text-warning">
+                <i class="bi bi-hourglass-split"></i>
+              </div>
+              <div class="text-muted">Pending</div>
+            </div>
+            <div class="col-md-2 text-end mt-2 mt-md-0">
+              <button class="btn btn-outline-secondary btn-sm" disabled>
+                View
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignment 6 - Latest graded -->
+      <div class="card mb-2">
+        <div class="card-body py-2">
+          <div class="row align-items-center">
+            <div class="col-md-7">
+              <div class="d-flex align-items-center">
+                <span class="badge bg-secondary me-2">
+                  <i class="bi bi-check-circle"></i>
+                </span>
+                <div>
+                  <a href="#" class="text-decoration-none text-dark fw-semibold">
+                    Assignment 6: Eigenvalues and Eigenvectors
+                  </a>
+                  <div class="small text-muted">
+                    Due: Nov 15, 2024 • Graded: Nov 20
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center small mt-2 mt-md-0">
+              <div class="fw-bold">28 / 30</div>
+              <div class="text-muted">93%</div>
+            </div>
+            <div class="col-md-2 text-end mt-2 mt-md-0">
+              <a href="#" class="btn btn-outline-primary btn-sm">
+                View
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignment 5 - Graded -->
+      <div class="card mb-2">
+        <div class="card-body py-2">
+          <div class="row align-items-center">
+            <div class="col-md-7">
+              <div class="d-flex align-items-center">
+                <span class="badge bg-secondary me-2">
+                  <i class="bi bi-check-circle"></i>
+                </span>
+                <div>
+                  <a href="#" class="text-decoration-none text-dark">
+                    Assignment 5: Linear Transformations
+                  </a>
+                  <div class="small text-muted">
+                    Due: Nov 8, 2024 • Graded: Nov 13
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center small mt-2 mt-md-0">
+              <div class="fw-bold">26 / 30</div>
+              <div class="text-muted">87%</div>
+            </div>
+            <div class="col-md-2 text-end mt-2 mt-md-0">
+              <a href="#" class="btn btn-outline-primary btn-sm">
+                View
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignment 4 - Graded, Lower Score -->
+      <div class="card mb-2">
+        <div class="card-body py-2">
+          <div class="row align-items-center">
+            <div class="col-md-7">
+              <div class="d-flex align-items-center">
+                <span class="badge bg-secondary me-2">
+                  <i class="bi bi-check-circle"></i>
+                </span>
+                <div>
+                  <a href="#" class="text-decoration-none text-dark">
+                    Assignment 4: Orthogonality
+                  </a>
+                  <div class="small text-muted">
+                    Due: Nov 1, 2024 • Graded: Nov 6
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 text-center small mt-2 mt-md-0">
+              <div class="fw-bold">20 / 30</div>
+              <div class="text-muted">67%</div>
+            </div>
+            <div class="col-md-2 text-end mt-2 mt-md-0">
+              <a href="#" class="btn btn-outline-primary btn-sm">
+                View
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Collapsed older assignments -->
+      <div class="text-center my-2">
+        <button class="btn btn-outline-secondary btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#olderAssignments">
+          <i class="bi bi-chevron-down me-1"></i>
+          Show 4 Earlier Assignments
+        </button>
+      </div>
+
+      <div class="collapse" id="olderAssignments">
+
+        <!-- Assignment 3 -->
+        <div class="card mb-2">
+          <div class="card-body py-2">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-secondary me-2">
+                    <i class="bi bi-check-circle"></i>
+                  </span>
+                  <div>
+                    <a href="#" class="text-decoration-none text-dark">Assignment 3: Determinants</a>
+                    <div class="small text-muted">Due: Oct 25 • Graded: Oct 30</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center small mt-2 mt-md-0">
+                <div class="fw-bold">27 / 30</div>
+                <div class="text-muted">90%</div>
+              </div>
+              <div class="col-md-2 text-end mt-2 mt-md-0">
+                <a href="#" class="btn btn-outline-primary btn-sm">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assignment 2 -->
+        <div class="card mb-2">
+          <div class="card-body py-2">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-secondary me-2">
+                    <i class="bi bi-check-circle"></i>
+                  </span>
+                  <div>
+                    <a href="#" class="text-decoration-none text-dark">Assignment 2: Matrix Operations</a>
+                    <div class="small text-muted">Due: Oct 18 • Graded: Oct 23</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center small mt-2 mt-md-0">
+                <div class="fw-bold">25 / 30</div>
+                <div class="text-muted">83%</div>
+              </div>
+              <div class="col-md-2 text-end mt-2 mt-md-0">
+                <a href="#" class="btn btn-outline-primary btn-sm">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assignment 1 -->
+        <div class="card mb-2">
+          <div class="card-body py-2">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-secondary me-2">
+                    <i class="bi bi-check-circle"></i>
+                  </span>
+                  <div>
+                    <a href="#" class="text-decoration-none text-dark">Assignment 1: Vector Spaces</a>
+                    <div class="small text-muted">Due: Oct 11 • Graded: Oct 16</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center small mt-2 mt-md-0">
+                <div class="fw-bold">26 / 30</div>
+                <div class="text-muted">87%</div>
+              </div>
+              <div class="col-md-2 text-end mt-2 mt-md-0">
+                <a href="#" class="btn btn-outline-primary btn-sm">View</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assignment 8 - Not yet available -->
+        <div class="card mb-2 bg-light">
+          <div class="card-body py-2">
+            <div class="row align-items-center">
+              <div class="col-md-7">
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-light text-muted me-2">
+                    <i class="bi bi-circle"></i>
+                  </span>
+                  <div>
+                    <span class="text-muted">Assignment 8: Jordan Normal Form</span>
+                    <div class="small text-muted">Due: Nov 29, 2024</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 text-center small mt-2 mt-md-0">
+                <div class="text-muted">Not yet available</div>
+              </div>
+              <div class="col-md-2 text-end mt-2 mt-md-0">
+                <button class="btn btn-outline-secondary btn-sm" disabled>View</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

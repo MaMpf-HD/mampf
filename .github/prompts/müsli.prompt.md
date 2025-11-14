@@ -13,7 +13,7 @@ In every prompt, always attach as context the following files:
 - [3 Rosters](../../architecture/src/features/03-rosters.md)
 - [4 Assessments and grading](../../architecture/src/features/04-assessments-and-grading.md)
 - [5a Exam model](../../architecture/src/features/05a-exam-model.md)
-- [5 Exam eligibility](../../architecture/src/features/05-exam-eligibility.md)
+- [5 Lecture performance](../../architecture/src/features/05-lecture-performance.md)
 - [5b Grading schemes](../../architecture/src/features/05b-grading-schemes.md)
 - [5c Multiple choice exams](../../architecture/src/features/05c-multiple-choice-exams.md)
 - [6 End to end workflow](../../architecture/src/features/06-end-to-end-workflow.md)

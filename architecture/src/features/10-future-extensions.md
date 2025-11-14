@@ -28,6 +28,9 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 - Rate limiting for FCFS hotspots
 - Bulk eligibility preview (matrix: users × policies)
 - Policy simulation mode (test changes without affecting real data)
+- Automated certification proposals (ML-based predictions from partial semester data)
+- Certification templates (pre-fill common override scenarios)
+- Certification bulk operations (approve/reject multiple students at once)
 
 ---
 
@@ -200,12 +203,22 @@ add_index :assessment_task_points, :modified_by_id
 
 ---
 
-## 5. Exam Eligibility
+## 5. Lecture Performance & Certification
 
-- Multiple concurrent policies (AND/OR logic expression builder)
-- Incremental recompute (listen to grade changes, trigger automatic update)
-- Eligibility preview for students (before registration opens)
-- Custom formula DSL (complex eligibility calculations)
+```admonish success "Recently Implemented"
+The core certification workflow (teacher-approved eligibility decisions, Evaluator proposals, pre-flight checks) is now part of the baseline architecture documented in Chapter 5.
+```
+
+**Future Extensions:**
+
+- Multiple concurrent certification policies (AND/OR logic expression builder)
+- Incremental recompute (listen to grade changes, auto-update stale certifications)
+- Student-facing certification preview (before registration opens, show provisional status)
+- Custom formula DSL (complex eligibility calculations beyond simple point thresholds)
+- Certification history (track changes over time, audit teacher decisions)
+- Automated ML proposals (predict eligibility from partial semester data)
+- Bulk certification UI (approve/reject multiple students with filters)
+- Certification analytics (pass rate trends, override frequency analysis)
 
 ---
 

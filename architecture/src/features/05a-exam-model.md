@@ -9,7 +9,7 @@ An exam is a scheduled assessment event where students demonstrate their knowled
 
 ## Problem Overview
 MaMpf needs a formal representation of exams that can:
-- Manage exam registration with capacity limits and eligibility checks (see [Exam Eligibility](05-exam-eligibility.md))
+- Manage exam registration with capacity limits and eligibility checks (see [Lecture Performance](05-lecture-performance.md))
 - Track which students are registered for which exam dates/locations
 - Link to the assessment system for grading
 - Support multiple exam dates (e.g., regular exam vs. retake)
@@ -143,7 +143,7 @@ Enable students to register for an exam slot while enforcing eligibility and cap
 ```
 
 ```admonish info "Eligibility Requirement"
-Exam registration typically requires students to meet certain criteria (e.g., earning 50% of homework points). This is handled by the exam eligibility system documented in [Exam Eligibility](05-exam-eligibility.md). The eligibility check is enforced via a `Registration::Policy` with `kind: :exam_eligibility`.
+Exam registration typically requires students to meet certain criteria (e.g., earning 50% of homework points). This is handled by the lecture performance certification system documented in [Lecture Performance](05-lecture-performance.md). The eligibility check is enforced via a `Registration::Policy` with `kind: :lecture_performance`.
 ```
 
 ### Setup (Staff Actions)
@@ -153,15 +153,19 @@ Exam registration typically requires students to meet certain criteria (e.g., ea
 | 1 | Create exam | `Exam.create!(lecture: lecture, date: ..., capacity: 150)` |
 | 2 | Create campaign | `exam.registration_campaigns.create!(...)` (exam as campaignable) |
 | 3 | Create item | `campaign.registration_items.create!(registerable: exam)` |
-| 4 | Add eligibility policy | `campaign.registration_policies.create!(kind: :exam_eligibility)` - see [Exam Eligibility](05-exam-eligibility.md) |
+| 4 | Add eligibility policy | `campaign.registration_policies.create!(kind: :lecture_performance)` - see [Lecture Performance](05-lecture-performance.md) |
+| 5 | Create certifications | Teacher creates `LecturePerformance::Certification` records for eligible students (see [Lecture Performance](05-lecture-performance.md)) |
+| 6 | Pre-flight check | Before opening, verify all active users have certifications (see [End-to-End Workflow Phase 7](06-end-to-end-workflow.md#phase-7-teacher-certification)) |
+| 7 | Finalization filtering | On finalize, only allocate students with `Certification.status IN (:passed, :forced_passed)` |
+| Preconditions | `lecture.performance_total_points` must be set; certifications must exist for all active lecture users |
 
 ### Student Experience
 
 1. Student views open exam registration campaigns
-2. System checks eligibility via `Registration::PolicyEngine` (queries `ExamEligibility::Record` - see [Exam Eligibility](05-exam-eligibility.md))
-3. If eligible, student submits registration
+2. System checks eligibility via `Registration::PolicyEngine` (queries `LecturePerformance::Certification.status`)
+3. If eligible (status IN passed/forced_passed), student submits registration
 4. Registration is confirmed immediately (FCFS) or after deadline (preference-based, if multiple exam dates)
-5. After registration closes, `materialize_allocation!` updates exam roster
+5. After registration closes, `materialize_allocation!` updates exam roster (allocation filtered to only certified students)
 
 ---
 
@@ -206,9 +210,26 @@ campaign = exam.registration_campaigns.create!(
 )
 
 campaign.registration_policies.create!(
-  kind: :exam_eligibility,
+  kind: :lecture_performance,
   config: { lecture_id: lecture.id }
 )
+
+# Teacher creates certifications for eligible students
+lecture.active_users.find_each do |user|
+  evaluator = LecturePerformance::Evaluator.new(lecture: lecture, user: user)
+  proposal = evaluator.proposal
+
+  LecturePerformance::Certification.create!(
+    lecture: lecture,
+    user: user,
+    status: proposal[:status],  # :passed or :failed
+    rule_snapshot: proposal[:rule_snapshot],
+    notes: proposal[:notes]
+  )
+end
+
+# Pre-flight check before opening
+campaign.validate_certifications!  # raises if missing certifications
 ```
 
 ### Scenario 2: Multiple Exam Dates (Regular + Retake)

@@ -1,0 +1,308 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign Pre-flight Error Modal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+      body { padding-top: 4rem; background-color: #f8f9fa; }
+      .demo-backdrop { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1040; }
+    </style>
+  </head>
+  <body>
+    <!-- Demo backdrop -->
+    <div class="demo-backdrop"></div>
+
+    <!-- Modal -->
+    <div class="modal d-block" tabindex="-1" style="z-index: 1050;">
+      <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              Cannot Open Campaign
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-danger mb-3" role="alert">
+              <div class="fw-bold mb-1">Pre-flight check failed</div>
+              <p class="mb-0 small">
+                <strong>24 students</strong> have incomplete lecture performance certifications.
+                All students must have approved or rejected certifications before this exam registration campaign can be opened.
+              </p>
+            </div>
+
+            <div class="mb-3">
+              <div class="fw-semibold mb-2">Affected Students</div>
+              <p class="small text-muted mb-2">
+                The following students need certification decisions:
+              </p>
+            </div>
+
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+              <table class="table table-sm table-hover align-middle">
+                <thead class="table-light sticky-top">
+                  <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Matriculation</th>
+                    <th scope="col">Performance</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Pending students (meet requirements but not approved) -->
+                  <tr>
+                    <td>Alice Schmidt</td>
+                    <td class="text-muted small">3456789</td>
+                    <td>
+                      <span class="small">156/240 (65%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Bob Müller</td>
+                    <td class="text-muted small">3456790</td>
+                    <td>
+                      <span class="small">168/240 (70%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Carol Fischer</td>
+                    <td class="text-muted small">3456791</td>
+                    <td>
+                      <span class="small">144/240 (60%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>David Weber</td>
+                    <td class="text-muted small">3456792</td>
+                    <td>
+                      <span class="small">132/240 (55%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Emma Wagner</td>
+                    <td class="text-muted small">3456793</td>
+                    <td>
+                      <span class="small">180/240 (75%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Frank Becker</td>
+                    <td class="text-muted small">3456794</td>
+                    <td>
+                      <span class="small">156/240 (65%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+
+                  <!-- Missing certification students -->
+                  <tr>
+                    <td>Grace Hoffmann</td>
+                    <td class="text-muted small">3456795</td>
+                    <td>
+                      <span class="small">96/240 (40%)</span>
+                      <i class="bi bi-x-circle-fill text-danger ms-1" title="Below threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Missing</span></td>
+                  </tr>
+                  <tr>
+                    <td>Hans Schulz</td>
+                    <td class="text-muted small">3456796</td>
+                    <td>
+                      <span class="small">108/240 (45%)</span>
+                      <i class="bi bi-x-circle-fill text-danger ms-1" title="Below threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Missing</span></td>
+                  </tr>
+                  <tr>
+                    <td>Iris Schneider</td>
+                    <td class="text-muted small">3456797</td>
+                    <td>
+                      <span class="small">84/240 (35%)</span>
+                      <i class="bi bi-x-circle-fill text-danger ms-1" title="Below threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Missing</span></td>
+                  </tr>
+                  <tr>
+                    <td>Julia Koch</td>
+                    <td class="text-muted small">3456798</td>
+                    <td>
+                      <span class="small">120/240 (50%)</span>
+                      <i class="bi bi-dash-circle-fill text-warning ms-1" title="Exactly at threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Missing</span></td>
+                  </tr>
+                  <tr>
+                    <td>Klaus Bauer</td>
+                    <td class="text-muted small">3456799</td>
+                    <td>
+                      <span class="small">72/240 (30%)</span>
+                      <i class="bi bi-x-circle-fill text-danger ms-1" title="Below threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Missing</span></td>
+                  </tr>
+                  <tr>
+                    <td>Laura Braun</td>
+                    <td class="text-muted small">3456800</td>
+                    <td>
+                      <span class="small">60/240 (25%)</span>
+                      <i class="bi bi-x-circle-fill text-danger ms-1" title="Below threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-secondary">Missing</span></td>
+                  </tr>
+
+                  <!-- More pending students to show scrolling -->
+                  <tr>
+                    <td>Michael Zimmermann</td>
+                    <td class="text-muted small">3456801</td>
+                    <td>
+                      <span class="small">192/240 (80%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Nina Krause</td>
+                    <td class="text-muted small">3456802</td>
+                    <td>
+                      <span class="small">168/240 (70%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Oliver Klein</td>
+                    <td class="text-muted small">3456803</td>
+                    <td>
+                      <span class="small">144/240 (60%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Paula Wolf</td>
+                    <td class="text-muted small">3456804</td>
+                    <td>
+                      <span class="small">156/240 (65%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Quentin Schröder</td>
+                    <td class="text-muted small">3456805</td>
+                    <td>
+                      <span class="small">132/240 (55%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Rita Neumann</td>
+                    <td class="text-muted small">3456806</td>
+                    <td>
+                      <span class="small">180/240 (75%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Stefan Schwarz</td>
+                    <td class="text-muted small">3456807</td>
+                    <td>
+                      <span class="small">168/240 (70%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Tina Zimmermann</td>
+                    <td class="text-muted small">3456808</td>
+                    <td>
+                      <span class="small">144/240 (60%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Uwe Hartmann</td>
+                    <td class="text-muted small">3456809</td>
+                    <td>
+                      <span class="small">120/240 (50%)</span>
+                      <i class="bi bi-dash-circle-fill text-warning ms-1" title="Exactly at threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Vera Lang</td>
+                    <td class="text-muted small">3456810</td>
+                    <td>
+                      <span class="small">156/240 (65%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Werner Huber</td>
+                    <td class="text-muted small">3456811</td>
+                    <td>
+                      <span class="small">132/240 (55%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Xenia Herrmann</td>
+                    <td class="text-muted small">3456812</td>
+                    <td>
+                      <span class="small">168/240 (70%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                  <tr>
+                    <td>Yvonne König</td>
+                    <td class="text-muted small">3456813</td>
+                    <td>
+                      <span class="small">144/240 (60%)</span>
+                      <i class="bi bi-check-circle-fill text-success ms-1" title="Meets threshold"></i>
+                    </td>
+                    <td><span class="badge text-bg-warning">Pending</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="small text-muted mt-2">
+              <i class="bi bi-info-circle me-1"></i>
+              Icons indicate whether students meet the performance threshold (50%). Final certification decision requires teacher approval.
+            </div>
+          </div>
+          <div class="modal-footer bg-light">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <a href="#" class="btn btn-primary">
+              <i class="bi bi-award me-1"></i>
+              Go to Certification Dashboard
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
