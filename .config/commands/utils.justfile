@@ -23,54 +23,54 @@ erd:
 
     # 🌟 Overview with attributes (warnings will be printed only here)
     docker compose exec -it mampf rake erd \
-        title=false filename=/usr/src/app/tmp/erd/mampf-erd-overview-with-attributes \
+        title=false filename=/workspaces/mampf/tmp/erd/mampf-erd-overview-with-attributes \
         inheritance=false polymorphism=true indirect=false attributes=content \
         exclude="${exclude_default}"
 
     # 🌟 Generic Overview
     docker compose exec -it mampf rake erd warn=false \
-        title=false filename=/usr/src/app/tmp/erd/mampf-erd-overview \
+        title=false filename=/workspaces/mampf/tmp/erd/mampf-erd-overview \
         inheritance=false polymorphism=true indirect=false attributes=false \
         exclude="${exclude_default}"
 
     # 🌟 Vouchers
     docker compose exec -it mampf rake erd warn=false \
-        title="Vouchers" filename=/usr/src/app/tmp/erd/mampf-erd-vouchers \
+        title="Vouchers" filename=/workspaces/mampf/tmp/erd/mampf-erd-vouchers \
         inheritance=true polymorphism=true indirect=true attributes=content \
         exclude="${exclude_default},Teachable,Editable" \
         only="User,Claim,Voucher,Redemption,Lecture,Tutorial,Talk"
 
     # 🌟 Tutorials
     docker compose exec -it mampf rake erd warn=false \
-        title="Tutorials" filename=/usr/src/app/tmp/erd/mampf-erd-tutorials \
+        title="Tutorials" filename=/workspaces/mampf/tmp/erd/mampf-erd-tutorials \
         inheritance=true polymorphism=true indirect=true attributes=content \
         exclude="${exclude_default},Claimable,Editable,Teachable" \
         only="User,Lecture,Tutorial,Submission,Assignment,TutorTutorialJoin,UserSubmissionJoin"
 
     # 🌟 Courses
     docker compose exec -it mampf rake erd warn=false \
-        title="Courses" filename=/usr/src/app/tmp/erd/mampf-erd-courses \
+        title="Courses" filename=/workspaces/mampf/tmp/erd/mampf-erd-courses \
         inheritance=true polymorphism=true indirect=true attributes=content \
         exclude="${exclude_default},Claimable,Editable" \
         only="Subject,Program,Division,DivisionCourseJoin,Course,Lecture,CourseSelfJoin,Lesson"
 
     # 🌟 Lectures
     docker compose exec -it mampf rake erd warn=false \
-        title="Lectures" filename=/usr/src/app/tmp/erd/mampf-erd-lectures \
+        title="Lectures" filename=/workspaces/mampf/tmp/erd/mampf-erd-lectures \
         inheritance=true polymorphism=true indirect=true attributes=content \
         exclude="${exclude_default},Claimable,Editable,Teachable" \
         only="Lecture,Lesson,Chapter,Section,Item,LessonSectionJoin,Term"
 
     # 🌟 Submissions
     docker compose exec -it mampf rake erd warn=false \
-        title="Submissions" filename=/usr/src/app/tmp/erd/mampf-erd-submissions \
+        title="Submissions" filename=/workspaces/mampf/tmp/erd/mampf-erd-submissions \
         inheritance=true polymorphism=true indirect=true attributes=content \
         exclude="${exclude_default},Claimable,Editable,Teachable,Notifiable,Record" \
         only="Submission,Tutorial,Assignment,User,UserSubmissionJoin"
 
     # 🌟 Vignettes
     docker compose exec -it mampf rake erd warn=false \
-        title="Vignettes" filename=/usr/src/app/tmp/erd/mampf-erd-vignettes \
+        title="Vignettes" filename=/workspaces/mampf/tmp/erd/mampf-erd-vignettes \
         inheritance=true polymorphism=true indirect=true attributes=content \
         exclude="${exclude_default},Claimable,Editable,Teachable,Notifiable,Record" \
         only="Vignettes::Questionnaire, Vignettes::Slide, Vignettes::InfoSlide, Vignettes::Answer, Vignettes::UserAnswer, Vignettes::Question, Vignettes::SlideStatistic, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextQuestion, Vignettes::TextAnswer, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextAnswer, Vignettes::Option, Vignettes::Codename, Vignettes::CompletionMessage, Vignettes::NumberQuestion, Vignettes::NumberAnswer, Lecture, User"

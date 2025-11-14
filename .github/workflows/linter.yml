@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -27,7 +27,7 @@ jobs:
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.3.8
+          ruby-version: 3.4.7
           bundler-cache: true
 
       - name: Run RuboCop
@@ -41,7 +41,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Checkout code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
           with:
             fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 

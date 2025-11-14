@@ -1,6 +1,7 @@
 # service model for quizzes_controller
 class QuizRound
   include ActiveModel::Validations
+
   attr_reader :quiz, :counter, :progress, :crosses, :vertex, :is_question,
               :answer_scheme, :progress_old, :counter_old, :round_id_old,
               :input, :correct, :hide_solution, :vertex_old, :question_id,

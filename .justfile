@@ -4,6 +4,31 @@
 help:
     @just --list
 
+# Preseeds the database
+seed:
+    #!/usr/bin/env bash
+    export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql"
+    export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
+    ./docker/development/init.sh | tee /proc/1/fd/1
+
+# Starts the app
+up:
+    #!/usr/bin/env bash
+    ./docker/development/init-and-run.sh | tee /proc/1/fd/1
+
+# Starts the architecture book server (Müsli integration)
+[working-directory: "architecture"]
+muesli:
+    #!/usr/bin/env bash
+    # adapted from https://stackoverflow.com/a/9168553/
+    port=3004
+    pid=$(lsof -ti:$port) || true
+    if [ -n "$pid" ]; then
+        echo "Killing process $pid on port $port"
+        kill -TERM "$pid" || kill -KILL "$pid" || true
+    fi
+    mdbook serve --port $port -n 0.0.0.0
+
 # Commands to test the MaMpf codebase
 mod test ".config/commands/test.justfile"
 # see https://github.com/casey/just/issues/2216
