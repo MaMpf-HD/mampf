@@ -2,6 +2,7 @@
 # represents the quizzes' internal logic as is stored in active record
 class QuizGraph
   include ActiveModel::Model
+
   attr_accessor :vertices, :edges, :root, :default_table, :hide_solution
 
   def self.load(text)

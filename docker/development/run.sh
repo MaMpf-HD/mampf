@@ -7,7 +7,11 @@ echo "NODE_ENV: $NODE_ENV"
 [ "$RAILS_ENV" != "$NODE_ENV" ] && echo "Error: RAILS_ENV and NODE_ENV must be the same!" && exit 1
 
 echo "🧹 Cleaning up stale Vite/Debugger port processes..."
-for port in 3036 13254; do
+ports_to_clean="3036 13254"
+if [ "$RAILS_ENV" = "test" ]; then
+	ports_to_clean="$ports_to_clean 3145"
+fi
+for port in $ports_to_clean; do
 	# adapted from https://stackoverflow.com/a/9168553/
     pid=$(lsof -ti:$port) || true
     if [ -n "$pid" ]; then

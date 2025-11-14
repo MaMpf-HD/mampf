@@ -29,7 +29,7 @@ muesli:
     fi
     mdbook serve --port $port -n 0.0.0.0
 
-# Launch the Playwright UI mode
+# Launches the Playwright UI mode
 playwright-ui:
     #!/usr/bin/env bash
     npx playwright test --ui-port=8070 --ui-host=0.0.0.0

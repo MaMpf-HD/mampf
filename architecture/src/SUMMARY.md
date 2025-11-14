@@ -9,7 +9,7 @@
 - [Rosters](features/03-rosters.md)
 - [Assessments & Grading](features/04-assessments-and-grading.md)
 - [Exam Model](features/05a-exam-model.md)
-- [Exam Eligibility](features/05-exam-eligibility.md)
+- [Lecture Performance](features/05-lecture-performance.md)
 - [Grading Schemes](features/05b-grading-schemes.md)
 - [End-to-End Workflow](features/06-end-to-end-workflow.md)
 - [Allocation Algorithm Details](features/07-algorithm-details.md)

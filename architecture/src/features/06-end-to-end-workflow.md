@@ -44,7 +44,7 @@ Assign students to tutorial groups or seminar talks
 ```
 
 **Technical Flow:**
-- Each registration request creates a `Registration::UserRegistration` with status `pending` or `confirmed` (FCFS)
+- Each registration request creates a `Registration::UserRegistration` with status `pending` (preference-based) or `confirmed/rejected` (FCFS)
 - `Registration::PolicyEngine` evaluates all active policies in order
 - If any policy fails, registration is rejected with specific reason code
 
@@ -89,6 +89,7 @@ Apply confirmed registrations to domain model rosters
 |-------|--------|
 | `Tutorial` | Student rosters updated |
 | `Talk` | Speaker assignments updated |
+| `Exam` | Before writing roster, eligibility is revalidated; ineligible users are excluded |
 | Authority | Rosters are now the authoritative source for course operations |
 | Idempotency | Same inputs produce same results (can be re-run safely) |
 
@@ -157,42 +158,110 @@ Record qualitative accomplishments for eligibility
 ```
 
 **Staff Actions:**
-- Staff creates `ExamEligibility::Achievement` records for students
+- Staff creates `Achievement` records for students
 - Examples: `blackboard_presentation`, `class_participation`, `peer_review`
 - These augment quantitative points for eligibility determination
 
-## Phase 7: Exam Eligibility Computation
+## Phase 7: Lecture Performance Materialization
 
 ```admonish success "Goal"
-Determine who may register for the exam
+Materialize student performance facts for all lecture students.
+```
+
+```admonish info "Scope"
+Performance data is computed for **all students enrolled in the lecture** (e.g., 150 students), not just those who plan to register. This provides transparency and legal compliance: every student can verify their eligibility status.
 ```
 
 **Staff Configuration:**
-- Configure eligibility rules (minimum percentage, achievement counts, included assessment types)
-- System runs `ExamEligibility::Service.compute!(lecture:)` before exam registration opens
+- Staff configures the `LecturePerformance::Rule` for the lecture (minimum points, required achievements, etc.).
+- A background job runs `LecturePerformance::Service.compute_and_upsert_all_records!(lecture)`, which populates or updates the `LecturePerformance::Record` for every student in the lecture.
 
-**Materialized Data in `ExamEligibility::Record`:**
+**Materialized Data in `LecturePerformance::Record`:**
 
 | Field | Content |
 |-------|---------|
-| `points_total_materialized` | Sum of relevant coursework points |
-| `percentage_materialized` | Percentage of maximum possible points |
-| `achievement_count` | Count of recorded achievements |
-| `computed_status` | System-computed: `eligible` or `ineligible` |
-| `rule_config_snapshot` | Copy of rules used (for audit trail) |
+| `points_total` | Sum of relevant coursework points earned so far. |
+| `achievements_met` | A set of `Achievement` IDs the student has earned. |
+| `computed_at` | Timestamp of last factual recomputation. |
+| `rule_id` | Foreign key to the `LecturePerformance::Rule` used. |
 
-**Override Capability:**
-
-```admonish note "Manual Overrides"
-Staff can manually set `override_status` with required `override_reason`. Overrides persist across recomputations. The `final_status` method returns override if present, else computed status.
+```admonish note "Factual Data Only"
+The `Record` stores only raw factual data (points, achievements). It does NOT store eligibility status or interpretations. Those are determined later during teacher certification.
 ```
+
+**Staff Actions:**
+- Staff reviews the materialized records to verify correctness
+- Staff can trigger manual recomputation if needed
+- Records are ready for teacher certification (next phase)
+
+**Staff Actions:**
+- Staff reviews the materialized records to verify correctness
+- Staff can trigger manual recomputation if needed
+- Records are ready for teacher certification (next phase)
 
 ---
 
-## Phase 8: Exam Registration Campaign
+## Phase 8: Teacher Certification
 
 ```admonish success "Goal"
-Allow eligible students to register for exam
+Teachers review materialized performance data and certify eligibility decisions for all students.
+```
+
+```admonish info "The Certification Step"
+This is where human judgment enters the process. Teachers use the `LecturePerformance::Evaluator` to generate eligibility proposals, then review and certify them, creating persistent `LecturePerformance::Certification` records.
+```
+
+**Staff Workflow:**
+
+| Step | Action | Technical Detail |
+|------|--------|------------------|
+| 1. Generate Proposals | Staff triggers `LecturePerformance::Evaluator.bulk_proposals(lecture)` | Creates proposals for all students based on Record + Rule |
+| 2. Review Proposals | Staff reviews the **Certification Dashboard** | Shows proposed status (passed/failed) for each student |
+| 3. Bulk Accept | Staff clicks "Accept All Proposals" (common case) | Creates Certification records with `status: :passed` or `:failed` |
+| 4. Manual Overrides | For exceptional cases, staff manually overrides individual certifications | Sets custom status with required `note` field |
+| 5. Verify Completeness | System checks all lecture students have certifications | Required before campaigns can open |
+
+**Certification Data (`LecturePerformance::Certification`):**
+
+| Field | Content |
+|-------|---------|
+| `user_id` | Foreign key to student |
+| `lecture_id` | Foreign key to lecture |
+| `record_id` | Foreign key to the performance Record (optional) |
+| `rule_id` | Foreign key to Rule used (optional, for audit) |
+| `status` | Enum: `passed`, `failed`, or `pending` |
+| `note` | Teacher's note (required for manual overrides) |
+| `certified_at` | Timestamp of certification |
+| `certified_by_id` | Foreign key to teacher who certified |
+
+```admonish warning "Pending Status"
+Certifications with `status: :pending` are considered incomplete. Campaigns cannot open or finalize until all certifications are resolved to `passed` or `failed`.
+```
+
+**Rule Change Handling:**
+
+```admonish note "Rule Updates After Certification"
+If staff modifies the `LecturePerformance::Rule` after certifications exist:
+- System shows a "Rule Changed" warning
+- Staff can view diff: "12 students would change: failed → passed"
+- Staff must review and re-certify affected students
+- System marks old certifications as stale
+```
+
+**Recomputation Triggers:**
+
+| Trigger | Effect |
+|---------|--------|
+| Grade Change | Record recomputed, Certification marked for review |
+| Achievement Added | Record recomputed, Certification marked for review |
+| Rule Modified | All certifications marked for review |
+
+---
+
+## Phase 9: Exam Registration Campaign
+
+```admonish success "Goal"
+Allow eligible students to register for the exam (FCFS).
 ```
 
 ```admonish info "Complete Exam Documentation"
@@ -203,30 +272,129 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 
 | Step | Action |
 |------|--------|
-| 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity |
-| 2. Create Campaign | Staff creates `Registration::Campaign` for the exam |
-| 3. Attach Policy | Add `Registration::Policy` with `kind: :exam_eligibility` (see [Exam Eligibility](05-exam-eligibility.md)) |
-| 4. Optional Policies | May also attach other policies (e.g., `institutional_email`) |
-| 5. Open | Campaign opens for registrations (registration requests) |
+| 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity. |
+| 2. Create Campaign | Staff creates a `Registration::Campaign` for the exam. |
+| 3. Attach Policy | Add a `Registration::Policy` with `kind: :lecture_performance`. |
+| 4. Optional Policies | May also attach other policies (e.g., `institutional_email`). |
+| 5. Open | The campaign opens for registrations. |
+
+## Phase 9: Exam Registration Campaign
+
+```admonish success "Goal"
+Allow eligible students to register for the exam (FCFS).
+```
+
+```admonish info "Complete Exam Documentation"
+For full details on the Exam model, see [Exam Model](05a-exam-model.md).
+```
+
+**Pre-Flight Checks:**
+
+```admonish warning "Campaign Cannot Open Without Complete Certifications"
+Before staff can transition a campaign to `open` status:
+1. System verifies all lecture students have `LecturePerformance::Certification` records
+2. All certifications must have `status: :passed` or `:failed` (no `pending`)
+3. If checks fail, campaign opening is blocked with clear error message
+```
+
+**Campaign Setup:**
+
+| Step | Action |
+|------|--------|
+| 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity. |
+| 2. Create Campaign | Staff creates a `Registration::Campaign` for the exam. |
+| 3. Attach Policy | Add a `Registration::Policy` with `kind: :lecture_performance`, `phase: :registration`. |
+| 4. Optional Policies | May also attach other policies (e.g., `institutional_email`). |
+| 5. Pre-Flight Check | System validates certification completeness. |
+| 6. Open | The campaign opens for registrations (only if pre-flight passes). |
+
+**Student Experience:**
+- Students see their eligibility status based on their `Certification.status`
+- Only students with `status: :passed` certifications can successfully register
+- Registration is first-come-first-served until capacity is reached
+- Students receive immediate confirmation or rejection with a reason
 
 **Registration Flow:**
 
 ```mermaid
 graph LR
     A[Student Attempts Registration] --> B[PolicyEngine Evaluates]
-    B --> C{Exam Eligibility Policy}
-    C --> D[Recompute: ExamEligibility::Service]
-    D --> E[Query: ExamEligibility::Record]
-    E --> F{final_status?}
-    F -->|Eligible| G[Confirm Registration]
-    F -->|Ineligible| H[Reject with Reason]
+    B --> C{Lecture Performance Policy}
+    C --> D[Lookup Certification]
+    D --> E{Certification.status}
+    E -->|:passed| F[Continue to next policy]
+    E -->|:failed| G[Reject: Not eligible]
+    E -->|:pending| H[Reject: Certification incomplete]
+    F --> I[All Policies Pass]
+    I --> J[Confirm Registration]
 ```
 
-```admonish tip "100% Accuracy Guarantee"
-Eligibility is recomputed at registration time to ensure absolute accuracy, even if grades changed after initial computation.
+```admonish tip "No Runtime Recomputation"
+Unlike the old approach, the registration flow does NOT trigger any recomputation. It simply looks up the pre-existing `Certification` record and checks its status. This ensures consistency and prevents race conditions.
 ```
 
-## Phase 9: Exam Grading & Grade Schemes
+**After Registration Phase:**
+- Campaign remains `open` while students register
+- When registration deadline is reached, staff calls `campaign.close!`
+- Campaign transitions to `processing` status
+- Staff then proceeds to finalization (Phase 10)
+
+**After Registration Phase:**
+- Campaign remains `open` while students register
+- When registration deadline is reached, staff calls `campaign.close!`
+- Campaign transitions to `processing` status
+- Staff then proceeds to finalization (Phase 10)
+
+---
+
+## Phase 10: Exam Registration Finalization
+
+```admonish success "Goal"
+Materialize confirmed exam registrations to the exam roster.
+```
+
+**Pre-Finalization Checks:**
+
+```admonish warning "Finalization Requires Complete Certifications"
+Before staff can finalize the campaign:
+1. System re-validates that all lecture students have certifications
+2. All certifications must still be `passed` or `failed` (no `pending`)
+3. System checks if any certifications are marked as stale (due to rule changes or record updates)
+4. If any issues exist, finalization is blocked with a remediation prompt
+```
+
+**Remediation Workflow:**
+
+| Issue | Resolution |
+|-------|-----------|
+| Pending Certifications | Staff must resolve to `passed` or `failed` |
+| Stale Certifications | Staff must review and re-certify affected students |
+| Missing Certifications | System auto-generates proposals, staff must certify |
+
+**Finalization Process:**
+
+| Step | Action |
+|------|--------|
+| 1. Validation | System runs pre-finalization checks |
+| 2. Eligibility Filter | Only confirmed registrants with `Certification.status: :passed` are included |
+| 3. Materialization | Calls `exam.materialize_allocation!(user_ids:, campaign:)` |
+| 4. Status Update | Campaign transitions to `completed` |
+
+**Post-Finalization State:**
+- **Exam Roster** now contains subset of eligible students who registered (e.g., 85 of 126 eligible)
+- Staff views **Exam Roster** screen to manage participants
+- Roster is ready for exam administration (room assignments, grading)
+
+```admonish warning "Two Distinct Lists"
+- **Certification Dashboard** (Phase 8): All 150 lecture students with eligibility status
+- **Exam Roster** (Phase 10+): Only 85 registered students who will take the exam
+
+The roster is used for exam administration, while certifications remain for audit/legal purposes.
+```
+
+---
+
+## Phase 11: Exam Grading & Grade Schemes
 
 ```admonish success "Goal"
 Record exam scores and assign final grades
@@ -265,25 +433,85 @@ For exams with multiple choice components requiring legal compliance, see the [M
 
 ---
 
-## Phase 10: Late Adjustments & Recomputation
+## Phase 11: Exam Grading & Grade Schemes
+
+```admonish success "Goal"
+Record exam scores and assign final grades
+```
+
+**Grading Setup:**
+
+| Step | Action |
+|------|--------|
+| 1. Create Assessment | After exam is administered, create `Assessment::Assessment` for the exam |
+| 2. Seed Participations | From confirmed exam registrants |
+| 3. Define Tasks | Create `Assessment::Task` records for each exam problem |
+| 4. Enter Points | Tutors enter points via grading interface |
+| 5. Aggregate | Points aggregate to `Participation#points_total` |
+
+**Grade Scheme Application:**
+
+```admonish note "Converting Points to Grades"
+Staff analyzes score distribution (histogram, percentiles), then creates and applies a `GradeScheme::Scheme`.
+```
+
+| Step | Process |
+|------|---------|
+| Analyze | View distribution statistics and histogram |
+| Configure | Create `GradeScheme::Scheme` with absolute point bands or percentage cutoffs |
+| Apply | Call `GradeScheme::Applier.apply!(scheme)` |
+| Result | Service computes `grade_value` for each participation based on points |
+| Override | Manual adjustments possible for exceptional cases |
+
+```admonish note "Multiple Choice Exam Extension"
+For exams with multiple choice components requiring legal compliance, see the [Multiple Choice Exams](05c-multiple-choice-exams.md) chapter for the two-stage grading workflow.
+```
+
+**Final Result:**
+- Students have both granular points (`TaskPoint` records) and final grade (`Participation#grade_value`)
+
+---
+
+## Phase 12: Late Adjustments & Recomputation
 
 ```admonish warning "Scenario"
-Coursework grades change after initial eligibility computation
+A student's coursework grade changes after the initial bulk computation.
 ```
 
 **System Response:**
 
 | Trigger | Action |
 |---------|--------|
-| Grade Change | System automatically triggers `ExamEligibility::Service.compute!(lecture:, user_ids: [affected_ids])` |
-| Update | Materialized values update in `ExamEligibility::Record` |
-| Preserve | Overrides remain unchanged (manual decisions preserved) |
-| If Exam Open | Updated eligibility applies immediately |
-| If Exam Closed | Change only affects reporting/records |
+| Grade Change | The system automatically triggers `LecturePerformance::Service.compute_and_upsert_record_for(user)`. |
+| Update | The factual data (`points_total`, `achievements_met`) in the student's `LecturePerformance::Record` is updated. |
+| Preserve | Any manual `override_status` on the record remains untouched. |
+| Effect | The next time the student's eligibility is checked (e.g., on the overview screen or during an exam registration attempt), the `Evaluator` will use the new factual data, providing an up-to-date status. |
 
 ---
 
-## Phase 11: Reporting & Administration
+## Phase 12: Late Adjustments & Recomputation
+
+```admonish warning "Scenario"
+A student's coursework grade changes after certifications have been created.
+```
+
+**System Response:**
+
+| Trigger | Action |
+|---------|--------|
+| Grade Change | The system automatically triggers `LecturePerformance::Service.compute_and_upsert_record_for(user)`. |
+| Update | The factual data (`points_total`, `achievements_met`) in the student's `LecturePerformance::Record` is updated. |
+| Mark Stale | The associated `Certification` is marked for review (e.g., `needs_review: true` flag). |
+| Notify | System alerts staff that certifications need re-review. |
+| Re-Certify | Staff must review and re-certify before any new campaigns can open. |
+
+```admonish note "Certification Stability"
+Once a certification is created, it remains valid until explicitly updated by staff, even if the underlying Record changes. This ensures consistency during active registration campaigns.
+```
+
+---
+
+## Phase 13: Reporting & Administration
 
 ```admonish success "Goal"
 Ongoing monitoring and data integrity
@@ -294,7 +522,33 @@ Ongoing monitoring and data integrity
 | Activity | Source |
 |----------|--------|
 | Participation Reports | `Assessment::Participation` data |
-| Eligibility Export | `ExamEligibility::Record` |
+| Eligibility Export | `LecturePerformance::Record` |
+| Registration Audit | `Registration::UserRegistration` |
+| Roster Adjustments | `Roster::MaintenanceService` as needed |
+| Data Integrity | Background jobs monitoring consistency |
+
+---
+
+## Key Invariants Throughout the Workflow
+
+```admonish warning "System Constraints"
+These constraints are maintained across all phases to ensure data integrity.
+```
+
+---
+
+## Phase 13: Reporting & Administration
+
+```admonish success "Goal"
+Ongoing monitoring and data integrity
+```
+
+**Ongoing Activities:**
+
+| Activity | Source |
+|----------|--------|
+| Participation Reports | `Assessment::Participation` data |
+| Eligibility Export | `LecturePerformance::Certification` |
 | Registration Audit | `Registration::UserRegistration` |
 | Roster Adjustments | `Roster::MaintenanceService` as needed |
 | Data Integrity | Background jobs monitoring consistency |
@@ -309,14 +563,17 @@ These constraints are maintained across all phases to ensure data integrity.
 
 | Invariant | Description |
 |-----------|-------------|
-| One Record per (lecture, user) | `ExamEligibility::Record` uniqueness |
-| One Participation per (assessment, user) | `Assessment::Participation` uniqueness |
-| One Confirmed Registration per (user, campaign) | `Registration::UserRegistration` constraint |
-| One TaskPoint per (participation, task) | `Assessment::TaskPoint` uniqueness |
-| Idempotent Materialization | `materialize_allocation!` produces same results with same inputs |
-| Ordered Policy Evaluation | Short-circuits on first failure |
-| Persistent Overrides | Remain across recomputations until explicitly cleared |
-| Exam Assessment Timing | Created only after exam registration closes |
+| One Record per (lecture, user) | `LecturePerformance::Record` uniqueness. |
+| One Certification per (lecture, user) | `LecturePerformance::Certification` uniqueness. |
+| One Participation per (assessment, user) | `Assessment::Participation` uniqueness. |
+| One Confirmed Registration per (user, campaign) | `Registration::UserRegistration` constraint. |
+| One TaskPoint per (participation, task) | `Assessment::TaskPoint` uniqueness. |
+| Idempotent Materialization | `materialize_allocation!` produces the same results with the same inputs. |
+| Ordered Policy Evaluation | Short-circuits on the first failure. |
+| Certification Completeness | Campaigns cannot open or finalize without complete, non-pending certifications. |
+| Certification Stability | Existing certifications remain valid until explicitly updated by staff. |
+| Phase-Aware Policies | Only policies matching the current phase are evaluated. |
+| Exam Assessment Timing | Created only after exam registration closes. |
 
 ---
 
@@ -331,10 +588,12 @@ A bird's-eye view of the complete workflow from setup to final grades.
 | **Setup** | Create domain models → Configure registrables & rosters |
 | **Registration** | Open campaign → Students register → (Optional: Run solver) → Materialize to rosters |
 | **Coursework** | Seed participations → Define tasks → Students submit → Tutors grade → Publish results |
-| **Eligibility** | Record achievements → Compute eligibility → Apply overrides |
-| **Exam Registration** | Open exam campaign → Policies gate access (recompute eligibility) → Confirm registrations |
+| **Performance** | Record achievements → Compute performance records |
+| **Certification** | Generate proposals → Teachers review → Create certifications → Verify completeness |
+| **Exam Registration** | Pre-flight checks → Open campaign → Students register → Close campaign |
+| **Finalization** | Validate certifications → Materialize to exam roster → Complete campaign |
 | **Exam Grading** | Seed exam participations → Grade tasks → Apply grade scheme → Publish grades |
-| **Ongoing** | Maintain rosters → Update grades → Recompute eligibility → Generate reports |
+| **Ongoing** | Maintain rosters → Update grades → Recompute records → Re-certify as needed |
 
 ---
 
@@ -348,8 +607,13 @@ sequenceDiagram
     participant Materializer
     participant Rosterable
     participant Assessment
-    participant Eligibility
+    participant PerfService as LecturePerformance::Service
+    participant PerfRecord as LecturePerformance::Record
+    participant Teacher
+    participant Evaluator as LecturePerformance::Evaluator
+    participant Certification as LecturePerformance::Certification
     participant ExamCampaign
+    participant Policy as Registration::Policy
 
     Student->>Campaign: Submit registration (FCFS or preference)
     Note over Campaign: If preference mode...
@@ -364,14 +628,43 @@ sequenceDiagram
     Student->>Assessment: Submit coursework
     Note over Assessment: Tutors grade → TaskPoints created
 
-    Assessment->>Eligibility: Provide points & achievements
-    Eligibility->>Eligibility: compute!(lecture)
-    Note over Eligibility: Records materialized
+    Assessment->>PerfService: Grading events trigger updates
+    PerfService->>PerfRecord: compute_and_upsert_record_for(user)
+    Note over PerfRecord: Factual record updated (points, achievements)
+
+    rect rgb(255, 245, 235)
+    note over Teacher,Certification: Teacher Certification Phase
+    Teacher->>Evaluator: bulk_proposals(lecture)
+    Evaluator->>PerfRecord: Read all records
+    Evaluator-->>Teacher: Generate eligibility proposals
+    Teacher->>Teacher: Review proposals
+    Teacher->>Certification: Create certifications (passed/failed)
+    Note over Certification: All students certified
+    end
+
+    rect rgb(235, 245, 255)
+    note over Student,Policy: Exam Registration Phase
+    Teacher->>ExamCampaign: Attempt to open campaign
+    ExamCampaign->>Certification: Pre-flight: verify completeness
+    Certification-->>ExamCampaign: All certifications complete
+    ExamCampaign->>ExamCampaign: Transition to open
 
     Student->>ExamCampaign: Attempt exam registration
-    ExamCampaign->>Eligibility: Check eligibility (recompute)
-    Eligibility-->>ExamCampaign: Pass/Fail
+    ExamCampaign->>Policy: Evaluate lecture_performance policy
+    Policy->>Certification: Lookup certification for student
+    Certification-->>Policy: Return status (passed/failed)
+    Policy-->>ExamCampaign: Pass/Fail result
     ExamCampaign-->>Student: Confirm/Reject
+    end
+
+    rect rgb(245, 255, 245)
+    note over Teacher,Rosterable: Finalization Phase
+    Teacher->>ExamCampaign: Trigger finalize!
+    ExamCampaign->>Certification: Validate completeness again
+    Certification-->>ExamCampaign: All complete
+    ExamCampaign->>Rosterable: materialize_allocation!(eligible_user_ids)
+    Note over Rosterable: Exam roster materialized
+    end
 
     Note over Assessment: After exam...
     Assessment->>Assessment: Grade exam tasks

@@ -17,7 +17,7 @@ After registrations and allocations are finalized, MaMpf needs to:
 
 ## Solution Architecture
 We use a unified grading model with clear separation of concerns:
-- **Canonical Source:** `Assessment::Assessment` acts as the single gradebook for any graded work (Assignment, Exam, Talk).
+- **Canonical Source:** `Assessment::Assessment` acts as the single gradebook for any graded work (Assignment, Exam, Talk, Achievement).
 - **Dual Capability Model:** Two concerns provide orthogonal features:
   - `Assessment::Pointable`: Enables per-task point tracking ("pointbook" mode).
   - `Assessment::Gradable`: Enables final grade recording without tasks ("gradebook" mode).
@@ -33,7 +33,7 @@ We use a unified grading model with clear separation of concerns:
 **_The Gradebook Container_**
 
 ```admonish info "What it represents"
-The central grading record for a single piece of graded work (assignment, exam, or talk). It holds configuration, tasks, and aggregates all student participations.
+The central grading record for a single piece of graded work (assignment, exam, talk, or achievement). It holds configuration, tasks, and aggregates all student participations.
 ```
 
 ```admonish tip "Think of it as"
@@ -44,7 +44,7 @@ The main fields and methods of `Assessment` are:
 
 | Name/Field                | Type/Kind         | Description                                                              |
 |---------------------------|-------------------|--------------------------------------------------------------------------|
-| `assessable_type`         | DB column         | Polymorphic type for the graded work (e.g., `Assignment`, `Exam`, `Talk`) |
+| `assessable_type`         | DB column         | Polymorphic type for the graded work (e.g., `Assignment`, `Exam`, `Talk`, `Achievement`) |
 | `assessable_id`           | DB column         | Polymorphic ID for the graded work                                       |
 | `lecture_id`              | DB column         | Optional foreign key for fast scoping to a lecture                       |
 | `title`                   | DB column         | Human-readable assessment title                                          |
@@ -140,6 +140,8 @@ Assignments and exams are created on-demand during the semester. Talks must exis
 - **For an exam:** A teacher creates an `Exam` record via the "New Assessment" UI. The system creates both the `Exam` and a linked `Assessment::Assessment` whose `assessable` is that exam, with `requires_points: true` to track per-question scores. After the teacher defines all tasks and grades them, a final `grade_value` can be computed and stored for each student to represent the official exam grade.
 
 - **For a seminar talk:** A teacher creates a `Talk` record in the Content tab. The system automatically creates a linked `Assessment::Assessment` whose `assessable` is that talk, with `requires_points: false`. Later, the teacher records only a final grade for each speaker via the Assessments tab—no tasks or submissions are needed.
+
+- **For an achievement:** A teacher creates an `Achievement` record via the "New Assessment" UI (e.g., "Blackboard Presentation" with `value_type: boolean`). The system creates both the `Achievement` and a linked `Assessment::Assessment`, configured with `requires_points: false` and `requires_submission: false`. Participations are seeded for all students in the lecture. Tutors mark completion by setting each participation's `grade_value` to "Pass" or "Fail" (for boolean), or entering a count/percentage (for numeric/percentage types).
 
 ---
 
@@ -487,7 +489,7 @@ Exams and talks have `tutorial_id: nil` on their participations. Publication con
 **_Base Contract for Gradeable Models_**
 
 ```admonish info "What it represents"
-A concern that enables any domain model (Assignment, Exam, Talk) to be linked to an Assessment::Assessment record and manage its grading lifecycle.
+A concern that enables any domain model (Assignment, Exam, Talk, Achievement) to be linked to an Assessment::Assessment record and manage its grading lifecycle.
 ```
 
 ```admonish note "Think of it as"
