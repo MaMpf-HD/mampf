@@ -3,6 +3,7 @@ class Program < ApplicationRecord
   has_many :divisions, dependent: :destroy
   extend Mobility
   extend I18nLocaleAccessors
+
   translates :name
 
   def name_with_subject

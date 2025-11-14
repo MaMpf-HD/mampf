@@ -5,6 +5,7 @@ RSpec.describe(SearchForm::Fields::Mixins::PrimitiveFieldMixin, type: :component
   let(:dummy_field_class) do
     Class.new do
       include SearchForm::Fields::Mixins::PrimitiveFieldMixin
+
       attr_reader :field_data # Expose for inspection
     end
   end
