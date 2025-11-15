@@ -2562,7 +2562,7 @@ de:
     no_lecture: 'Die angeforderte Vorlesung wurde nicht gefunden'
     not_vignettes_lecture: 'Die Vorlesung kann nicht für Vignetten verwendet werden'
     create_new_info_slide: 'Neue Info-Folie erstellen'
-    create_new_slide: 'Neue Folie erstellen'
+    create_new_slide: 'Neue Folie'
     info_slide_created: 'Info-Folie wurde erstellt.'
     info_slide_not_created: 'Info-Folie konnte nicht erstellt werden.'
     info_slide_updated: 'Info-Folie wurde aktualisiert.'
