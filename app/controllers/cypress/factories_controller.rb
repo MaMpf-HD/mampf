@@ -26,7 +26,11 @@ module Cypress
       id = params["instance_id"].to_i
       method_name = params["method_name"]
       method_args = params["method_args"]
-      method_args, _validate = params_to_attributes(method_args) if method_args.present?
+      if method_args.present?
+        method_args, _validate = params_to_attributes(method_args)
+      else
+        method_args = []
+      end
 
       # Find the instance
       begin

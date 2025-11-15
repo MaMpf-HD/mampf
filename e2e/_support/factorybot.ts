@@ -2,7 +2,7 @@ import { APIRequestContext } from "@playwright/test";
 import { callBackend } from "./backend";
 
 /**
- * Helper to access FactoryBot factories from Cypress tests.
+ * Helper to access FactoryBot factories from within Playwright tests.
  */
 export class FactoryBot {
   context: APIRequestContext;
@@ -17,22 +17,58 @@ export class FactoryBot {
    * @param args The arguments to pass to FactoryBot.create(), e.g.
    * factory name, traits, and attributes. Pass them in as separated
    * string arguments. Attributes should be passed as an object.
-   * You are also able to call instance methods on the created record later.
+   * You can call instance methods on the created record directly.
    *
-   * @returns The FactoryBot.create() response.
+   * @returns A FactoryBotObject representing the created record.
    *
    * @examples
-   * FactoryBot.create("factory_name", "with_trait", { another_attribute: ".pdf"})
-   * FactoryBot.create("factory_name").then(res => {res.call.any_rails_method(42)})
-   * FactoryBot.create("tutorial",
-   *  { lecture_id: this.lecture.id, tutor_ids: [this.tutor1.id, this.tutor2.id] })
+   * const lecture = await factory.create("lecture", "released_for_all");
+   * const tutorial = await factory.create("tutorial",
+   *  { lecture_id: lecture.id, tutor_ids: [tutor1.id, tutor2.id] });
    */
-  async create(...args: any[]): Promise<any> {
-    return await callBackend(this.context, "factories", args);
+  async create(...args: any[]): Promise<FactoryBotObject> {
+    const data = await callBackend(this.context, "factories", args);
+    return new FactoryBotObject(this.context, args[0], data);
   }
 
-  async createNoValidate(...args: any[]): Promise<any> {
+  async createNoValidate(...args: any[]): Promise<FactoryBotObject> {
     args.push({ validate: false });
     return await this.create(...args);
+  }
+}
+
+export class FactoryBotObject {
+  private context: APIRequestContext;
+  private factoryName: string;
+  private factoryId: number;
+  [key: string]: any; // for dynamic property access without TypeScript errors
+
+  constructor(context: APIRequestContext, factoryName: string, data: any) {
+    this.context = context;
+    this.factoryName = factoryName;
+    this.factoryId = data.id;
+    Object.assign(this, data);
+  }
+
+  /**
+   * Calls a method on a remote factory instance via the backend API.
+   *
+   * @param methodName The name of the instance method to invoke on the factory.
+   * @param args Arguments to pass to the remote method.
+   * @returns A promise that resolves with the backend's result for the invoked method.
+   * @throws Will reject if the backend call fails or the backend returns an error.
+   * @example
+   * const lecture = await factory.create("lecture", "released_for_all");
+   * const title = await lecture.__call("title");
+   */
+  async __call(methodName: string, ...args: any[]): Promise<any> {
+    const payload = {
+      factory_name: this.factoryName,
+      instance_id: this.factoryId,
+      method_name: methodName,
+      method_args: args,
+    };
+    const result = await callBackend(this.context, "factories/call_instance_method", payload);
+    return result;
   }
 }
