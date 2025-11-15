@@ -45,7 +45,7 @@
       <li class="nav-item">
         <%= link_to '', destroy_user_session_path,
                   class: 'nav-link bi bi-box-arrow-right',
-                  data: { 'bs-toggle': 'tooltip', method: 'delete' },
+                  data: { 'bs-toggle': 'tooltip', method: 'delete', turbo: false },
                   title: t('admin.navbar.logout') %>
       </li>
     </ul>

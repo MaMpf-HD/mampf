@@ -20,7 +20,7 @@ class SmartSortAtom
 
   def self.parse(string)
     # Loosely based on http://stackoverflow.com/a/4079031
-    string.scan(/[^\d\.]+|[\d\.]+/).collect do |atom|
+    string.scan(/[^\d.]+|[\d.]+/).collect do |atom|
       atom = if /\d+(\.\d+)?/.match?(atom)
         atom.to_f
       else

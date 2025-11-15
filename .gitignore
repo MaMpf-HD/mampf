@@ -33,7 +33,6 @@ coverage
 /storage/*
 
 # Ignore environment variables
-completed_initial_run
 /public/uploads.zip
 /public/pdfcomprezzor/pdfcomprezzor.wasm
 /public/pdfcomprezzor/wasm_exec.js
@@ -58,3 +57,12 @@ node_modules
 # Vite uses dotenv and suggests to ignore local-only env files. See
 # https://vitejs.dev/guide/env-and-mode.html#env-files
 *.local
+
+/architecture/book/
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

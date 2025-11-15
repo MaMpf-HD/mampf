@@ -7,11 +7,11 @@
     "autoBuild": false
   },
   "development": {
-    "publicOutputDir": "vite-dev",
+    "publicOutputDir": "vite-public",
     "port": 3036
   },
   "test": {
-    "publicOutputDir": "vite-test",
+    "publicOutputDir": "vite-public",
     "port": 3037
   }
 }

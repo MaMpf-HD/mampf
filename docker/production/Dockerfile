@@ -8,7 +8,7 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
 # https://hub.docker.com/_/ruby/
-FROM ruby:3.3.8-bookworm
+FROM ruby:3.4.7-bookworm
 
 ENV RAILS_ENV=production
 

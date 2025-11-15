@@ -3,6 +3,7 @@ import "~/entrypoints/jQueryGlobal";
 // Bootstrap must be imported AFTER jQuery for Bootstrap-jQuery plugins to work,
 // e.g. $(".modal").modal("show")
 import "bootstrap";
+import "~/js/bootstrapModals";
 import "~/js/bootstrapPopovers";
 
 // Rails UJS in principle not needed for Turbo anymore. We keep it in the
@@ -44,7 +45,6 @@ import "~/js/notifications.coffee";
 import "~/js/questions.coffee";
 import "~/js/quizzes.coffee";
 import "~/js/referrals.coffee";
-import "~/js/registration.coffee";
 import "~/js/remarks.coffee";
 import "~/js/sections.coffee";
 import "~/js/submissions.coffee";

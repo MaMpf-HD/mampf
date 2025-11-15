@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       post "factories/call_instance_method", to: "factories#call_instance_method"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
+      resources :user_creator_playwright, only: :create
       resources :i18n, only: :create
       post "timecop/travel", to: "timecop#travel"
       post "timecop/reset", to: "timecop#reset"
@@ -124,7 +125,7 @@ Rails.application.routes.draw do
   resources :divisions, except: [:show]
 
   # feedback routes
-  resources :feedbacks, only: [:create]
+  resources :feedbacks, only: [:new, :create]
 
   # items routes
 

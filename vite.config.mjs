@@ -1,6 +1,7 @@
 import inject from "@rollup/plugin-inject";
 import { defineConfig } from "vite";
 import { coffee } from "vite-plugin-coffee3";
+import FullReload from "vite-plugin-full-reload";
 import RubyPlugin from "vite-plugin-ruby";
 
 // also see config/vite.rb
@@ -13,6 +14,7 @@ export default defineConfig({
       jQuery: "jquery",
       include: ["**/*.js", "**/*.ts", "**/*.coffee"],
     }),
+    FullReload(["config/routes.rb", "app/frontend/**/*"]),
     RubyPlugin(),
   ],
 
@@ -24,6 +26,7 @@ export default defineConfig({
     fs: {
       allow: Object.values(gemPaths),
     },
+    allowedHosts: process.env.NODE_ENV === "test" ? ["app-test"] : [],
   },
 
   // TODO (keep track).

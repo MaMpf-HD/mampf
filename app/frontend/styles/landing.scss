@@ -4,7 +4,7 @@
 
 .landing-box {
     background-color: white;
-    max-width: 1100px;
+    max-width: 630px;
     width: 100%;
     border-radius: 8px;
     box-shadow: 1px 4px 7px rgba(0, 0, 0, 0.13);
@@ -15,11 +15,55 @@
 }
 
 #signin-box {
-    z-index: 2;
-    padding: 70px 40px;
-    background: linear-gradient(7deg,
-            rgba(255, 255, 255, 0.85) 0%, white 70%);
+    padding: 80px 50px 50px 50px;
+    backdrop-filter: blur(17px) saturate(130%) brightness(120%);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    position: relative;
+    box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.01) 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%);
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.03), transparent, rgba(255, 255, 255, 0.04));
+        border-radius: inherit;
+        z-index: -2;
+        filter: blur(4px);
+    }
+
+    & a {
+        color: white;
+    }
 }
+
+.devise-button {
+    // background-color: #231D41;
+    border: 1.5px solid white !important;
+    font-weight: bold !important;
+    width: 100% !important;
+}
+
 
 #announcement-box {
     z-index: 1;
@@ -39,7 +83,7 @@
     width: auto;
     padding: 10px 20px;
     font-size: 1.2rem;
-    background-color: #00243db8;
+    background-color: #223E62C6;
     border-radius: 0 8px;
     box-shadow: inset 1px 4px 5px rgba(0, 0, 0, 0.03);
 
@@ -71,6 +115,8 @@ footer {
 
 #login-form {
     margin-top: 20px;
+    max-width: 400px;
+    width: 100%;
 }
 
 #logo-area {
@@ -86,47 +132,45 @@ footer {
     }
 }
 
-.remember-me-box {
-    white-space: nowrap;
-}
-
-#user_remember_me {
-    vertical-align: top;
-    position: relative;
-    top: 6px;
-}
-
-#remember-me-text {
-    white-space: normal;
-    display: contents;
-}
-
-#einstein-monotile-canvas {
-    position: fixed;
+#landing-background {
+    position: absolute;
     top: 0;
     left: 0;
-    z-index: 0;
-    cursor: grab;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(120, 20, 120, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(20, 120, 200, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(200, 200, 20, 0.1) 0%, transparent 30%),
+        radial-gradient(ellipse at center, #0f0f2e 0%, #0a0a1e 70%, #050510 100%);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.02) 50%, transparent 60%),
+            linear-gradient(-45deg, transparent 40%, rgba(255, 255, 255, 0.01) 50%, transparent 60%);
+        animation: lightReflection 20s infinite ease-in-out;
+        pointer-events: none;
+    }
 }
 
-.monotile-btn {
-    background-color: rgba(255, 255, 255, 0.4);
-    height: 35px !important;
-    font-weight: 400;
+@keyframes lightReflection {
 
-    &:hover {
-        background-color: white;
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translateX(-10px) translateY(-10px);
     }
 
-    &.disabled {
-        background-color: rgba(255, 255, 255, 0.6);
-        font-weight: 350;
-    }
-}
-
-// Disable monotile buttons on "small" devices
-@include media-breakpoint-down(xxl) {
-    .monotile-btn {
-        display: none;
+    50% {
+        opacity: 0.7;
+        transform: translateX(10px) translateY(10px);
     }
 }

@@ -1,8 +1,0 @@
-services:
-  mampf:
-    build:
-      context: ../..
-      dockerfile: docker/development/Dockerfile
-      args:
-        IN_CI_CD: "true"      
-    image: mampftest:image

@@ -1,10 +1,21 @@
 {
+    // 🎹 keep this in sync with devcontainer.json
     "recommendations": [
-        "shopify.ruby-lsp",
+        // Container & Remote
+        "ms-azuretools.vscode-containers",
+        "ms-vscode.remote-explorer",
+        "docker.docker",
+        // Ruby extensions
+        "Shopify.ruby-lsp",
+        // JavaScript/Node extensions
         "dbaeumer.vscode-eslint",
+        // Other useful extensions
         "streetsidesoftware.code-spell-checker",
         "streetsidesoftware.code-spell-checker-german",
         "nefrob.vscode-just-syntax",
-        "connorshea.vscode-ruby-test-adapter"
+        "timonwong.shellcheck",
+        "github.copilot",
+        "github.vscode-pull-request-github",
+        "ms-playwright.playwright"
     ]
 }

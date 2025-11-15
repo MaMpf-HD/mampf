@@ -7,13 +7,15 @@ Rails.application.configure do
   config.enable_reloading = true
 
   # Do not eager load code on boot.
-  config.eager_load = ENV["CI"].present?
+  config.eager_load = ENV.fetch("CI", "false") == "true"
 
   # Show full error reports.
   config.consider_all_requests_local = true
 
   # Enable server timing.
   config.server_timing = true
+
+  config.public_file_server.enabled = true
 
   # Enable/disable Action Controller caching. By default Action Controller caching is disabled.
   # Run rails dev:cache to toggle Action Controller caching.
@@ -39,7 +41,7 @@ Rails.application.configure do
   # Mail settings
   config.active_job.queue_adapter = :test
   config.action_mailer.perform_deliveries = true
-  config.action_mailer.default_url_options = { host: "localhost", port: 3000 }
+  config.action_mailer.default_url_options = { host: "localhost", port: 3145 }
   config.action_mailer.delivery_method = :test
   config.action_mailer.smtp_settings = { address: ENV.fetch("MAILSERVER", "127.0.0.1"),
                                          port: 1025 }

@@ -1,3 +1,6 @@
+$primary: #223e62;
+// $secondary: #3F395C;
+
 @import "bootstrap/scss/bootstrap";
 
 /* set the overriding variables */
@@ -51,6 +54,10 @@ trix-toolbar .trix-button-row {
   flex-wrap: wrap;
 }
 
+.turbo-progress-bar {
+  height: 3px;
+  background-color: #ffc107;
+}
 
 .bg-light {
   background-color: #dae0e5;
@@ -261,6 +268,14 @@ a {
 
 .toast {
   background-color: white;
+}
+
+#flash-messages {
+  z-index: 100000;
+  position: fixed;
+  top: 5%;
+  left: 50%;
+  transform: translate(-50%, -5%);
 }
 
 .small-width {

@@ -76,7 +76,6 @@ de:
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
-      Aperiodic monotiles lizenziert unter BSD-3-Clause von %{background_photo_credit}.
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -2050,8 +2049,6 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
-    no_consent:
-      Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
     subscribe_lecture: 'Veranstaltung abonnieren'
     passphrase_required: >
@@ -2826,6 +2823,10 @@ de:
     external_reference: 'externe Referenz:'
     internal_reference: 'Verweis auf %{ref}:'
   errors:
+    unknown: >
+      Du hast das Formular korrekt ausgefüllt, aber leider ist auf dem Server
+      ein Fehler aufgetreten. Bitte versuche es später erneut und kontaktiere
+      uns, wenn das Problem weiterhin besteht.
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
       Um sie betrachten zu können, musst Du sie vorher abonnieren.
@@ -2842,24 +2843,7 @@ de:
   sign_up: 'registrieren'
   announcements: 'Ankündigungen'
   main:
-    welcome:
-      Herzlich willkommen auf MaMpf, der Mathematischen
-      Medienplattform der Universität Heidelberg.
-    about: >
-      MaMpf bündelt und vernetzt verschiedene E-Learning-Angebote:
-      Vorlesungsvideos und Skripte mit inhaltlicher Gliederung,
-      Übungsblätter, eine umfangreiche Sammlung von Multiple-Choice-Fragen
-      und Quizaufgaben inklusive angeleiteter Beweise und vieles mehr.
-      Dank des Tagging-Systems findest Du schnell und einfach
-      alle für Dich relevanten Medien.
-    interested_html: >
-      Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
-      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere Dich
-      und probiere MaMpf einfach selbst aus.
-    resources: Ressourcen
-    blog: Blog
-    guided_tour: geführter Tour
-    researchgate: Researchgate
+    media_platform: Mathematische Medienplattform der Universität Heidelberg
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
@@ -3483,7 +3467,7 @@ de:
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     mail_noun: 'E-Mail'
-    email: 'E-Mail-Adresse'
+    email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
     date: 'Datum'
@@ -4143,31 +4127,3 @@ de:
             name:
               taken:
                 'Eine Watchlist mit diesem Namen existiert bereits.'
-  feedback:
-    tooltip: Feedback geben
-    modal_title: Feedback geben
-    title: Titel (optional)
-    comment: Dein Kommentar
-    description_html: >
-      <p>Wir freuen uns über Dein Feedack zu MaMpf, sei es Lob, Kritik oder
-      Anregungen, wie wir als Entwickler:innen-Team die Plattform voranbringen
-      können. Falls Du einen Bug gefunden hast und einen GitHub-Account hast,
-      dann erstelle am besten direkt auf %{github_mampf} ein Issue. Ansonsten
-      gerne auch über dieses Formular oder direkt per %{feedback_mail}.</p>
-    body_too_short_error: >
-      Dein Feedback ist zu kurz. Bitte gib mindestens %{min_length} Zeichen ein.
-    body_missing_error: >
-      Bitte gib hier Dein Feedback ein.
-    mail_checkbox: >
-      Erlaube es uns, Dich per E-Mail (%{user_mail}) zu kontaktieren, falls es
-      Rückfragen zu Deinem Feedback gibt.
-    success_short: >
-      Feedback erfolgreich gesendet
-    success: >
-      Vielen Dank für Dein Feedback! Wir werden es in Kürze bearbeiten.
-    error_short: >
-      Fehler beim Senden des Feedbacks
-    error: >
-      Entschuldigung, leider ist beim Speichern ein Fehler aufgetreten.
-      Bitte speichere Dein Feedback händisch, indem Du es kopierst,
-      und versuche es später noch einmal.
