@@ -1,4 +1,5 @@
 {
+    // 🎹 keep this in sync with devcontainer.json
     "recommendations": [
         // Container & Remote
         "ms-azuretools.vscode-containers",
@@ -14,6 +15,7 @@
         "nefrob.vscode-just-syntax",
         "timonwong.shellcheck",
         "github.copilot",
-        "github.vscode-pull-request-github"
+        "github.vscode-pull-request-github",
+        "ms-playwright.playwright"
     ]
 }
