@@ -1,4 +1,5 @@
 import { APIRequestContext } from "@playwright/test";
+import { User } from "./auth";
 import { callBackend } from "./backend";
 
 /**
@@ -61,12 +62,13 @@ export class FactoryBotObject {
    * const lecture = await factory.create("lecture", "released_for_all");
    * const title = await lecture.__call("title");
    */
-  async __call(methodName: string, ...args: any[]): Promise<any> {
+  async __call(methodName: string, user?: User, ...args: any[]): Promise<any> {
     const payload = {
       factory_name: this.factoryName,
       instance_id: this.factoryId,
       method_name: methodName,
       method_args: args,
+      user_id: user ? user.id : null,
     };
     const result = await callBackend(this.context, "factories/call_instance_method", payload);
     return result;

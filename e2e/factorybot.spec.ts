@@ -15,3 +15,13 @@ test("can create records and call instance methods", async ({ factory }) => {
   expect(compactTitle).toBeTruthy();
   console.log("Compact title:", compactTitle);
 });
+
+test("can call methods that need a user as parameter", async ({ factory, student }) => {
+  const lecture = await factory.create("lecture", "released_for_all");
+  const visibleForUser = await lecture.__call("visible_for_user?", student.user);
+  expect(visibleForUser).toBe(true);
+
+  const lectureNonReleased = await factory.create("lecture");
+  const notVisibleForUser = await lectureNonReleased.__call("visible_for_user?", student.user);
+  expect(notVisibleForUser).toBe(false);
+});

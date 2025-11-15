@@ -32,6 +32,21 @@ module Cypress
         method_args = []
       end
 
+      # If user_id is present and valid, prepend the user object to method_args
+      user_id_param = params["user_id"]
+      if user_id_param.present?
+        uid = user_id_param.to_i
+        if uid > 0
+          begin
+            user_obj = User.find(uid)
+            method_args.unshift(user_obj)
+          rescue ActiveRecord::RecordNotFound
+            result = { error: "User id #{uid} not found" }
+            return render json: result.to_json, status: :bad_request
+          end
+        end
+      end
+
       # Find the instance
       begin
         instance = factory_name.constantize.find(id)
