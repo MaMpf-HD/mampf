@@ -20,7 +20,7 @@ function createSortableVignetteSlides(slideList) {
     onEnd: function (evt) {
       if (evt.oldIndex == evt.newIndex) return;
 
-      let questionnaire_id = evt.target.dataset.questionnaireId;
+      const questionnaire_id = evt.target.dataset.questionnaireId;
       $.ajax({
         url: `/questionnaires/${questionnaire_id}/update_slide_position`,
         method: "PATCH",

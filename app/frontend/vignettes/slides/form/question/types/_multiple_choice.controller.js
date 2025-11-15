@@ -1,7 +1,7 @@
 import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  addOption(_event) {
+  addOption() {
     const template = this.element.querySelector("#vignette-multiple-choice-options-template");
     const newOptionHtml = template.innerHTML;
     const uniqueId = new Date().getTime();

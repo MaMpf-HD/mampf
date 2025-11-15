@@ -10,7 +10,7 @@ let pendingAction = null;
 let hasUnsavedChanges = false;
 let formSubmit = false;
 
-let registry = new HandlerRegistry();
+const registry = new HandlerRegistry();
 
 $(document).ready(function () {
   registerChangeHandlers();
