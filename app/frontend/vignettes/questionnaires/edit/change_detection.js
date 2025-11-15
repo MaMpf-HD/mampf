@@ -28,11 +28,18 @@ $(document).ready(function () {
 function registerChangeHandlers() {
   // New slide appended
   $(document).on("turbo:stream-render", function () {
+    $(COLLAPSE_CLASS).not(":last").each(function () {
+      const $this = $(this);
+      if ($this.hasClass("show")) {
+        $this.collapse("hide");
+      }
+    });
     setupChangeDetection();
   });
 
   // e.g. after update of a slide
   $(document).on("turbo:frame-render", function () {
+    resetUnsavedChangesState();
     setupChangeDetection();
   });
 
@@ -63,8 +70,9 @@ function registerChangeHandlers() {
   $(document).on("hide.bs.collapse", COLLAPSE_CLASS, function (event) {
     if (event.target !== this) return;
     registry.deregisterAll();
+    const allowed = handleUnsavedChanges(event, "hide");
     resetUnsavedChangesState();
-    return handleUnsavedChanges(event, "hide");
+    return allowed;
   });
 
   function handleUnsavedChanges(event, action) {
