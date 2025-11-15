@@ -65,24 +65,9 @@
     <!-- Assignment Detail in lecture-pane -->
     <div class="lecture-pane">
       <!-- Header -->
-      <div class="d-flex justify-content-between align-items-start mb-3">
-        <div>
-          <h3 class="lecture-pane-header mb-2">Homework 5</h3>
-          <div>
-            <span class="badge bg-success me-2">Open</span>
-            <span class="text-muted small">Assignment</span>
-          </div>
-        </div>
-        <div class="text-end">
-          <div class="btn-group mb-2" role="group">
-            <a href="#" class="btn btn-outline-secondary btn-sm">
-              <i class="far fa-edit me-1"></i>Edit
-            </a>
-            <button type="button" class="btn btn-outline-danger btn-sm">
-              <i class="fas fa-times-circle me-1"></i>Close Submission
-            </button>
-          </div>
-        </div>
+      <div class="mb-3">
+        <h3 class="lecture-pane-header mb-2">Homework 5</h3>
+        <span class="text-muted small">Assignment</span>
       </div>
 
       <!-- Alert: Submission Open -->
@@ -157,7 +142,12 @@
                     </tr>
                     <tr>
                       <th>Status:</th>
-                      <td><span class="badge bg-success">Open</span></td>
+                      <td>
+                        <span class="badge bg-success me-2">Open</span>
+                        <button type="button" class="btn btn-outline-danger btn-sm">
+                          <i class="fas fa-times-circle me-1"></i>Close Submission
+                        </button>
+                      </td>
                     </tr>
                     <tr>
                       <th>Visible From:</th>
@@ -174,45 +164,11 @@
                 </table>
               </div>
             </div>
-
-            <div class="card">
-              <div class="card-header bg-light">
-                <h5 class="mb-0">Tasks Summary</h5>
-              </div>
-              <div class="card-body">
-                <table class="table table-sm mb-0">
-                  <thead>
-                    <tr>
-                      <th>Task</th>
-                      <th class="text-end">Max Points</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>Problem 1</td>
-                      <td class="text-end">10</td>
-                    </tr>
-                    <tr>
-                      <td>Problem 2</td>
-                      <td class="text-end">10</td>
-                    </tr>
-                    <tr>
-                      <td>Problem 3</td>
-                      <td class="text-end">10</td>
-                    </tr>
-                    <tr class="table-light">
-                      <th>Total:</th>
-                      <th class="text-end">30</th>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
           </div>
 
           <!-- Right Column: Progress Stats -->
           <div class="col-md-6">
-            <div class="card mb-3">
+            <div class="card">
               <div class="card-header bg-light">
                 <h5 class="mb-0">Submission Progress</h5>
               </div>
@@ -225,34 +181,10 @@
                   <div class="text-muted small">37 students involved in submissions</div>
                 </div>
 
-                <div class="alert alert-info">
+                <div class="alert alert-info mb-0">
                   <i class="fas fa-info-circle me-2"></i>
                   <strong>Grading starts after submission closes.</strong>
                   Students can reupload until November 15, 2024, 18:00.
-                </div>
-              </div>
-            </div>
-
-            <div class="card">
-              <div class="card-header bg-light">
-                <h5 class="mb-0">Quick Actions</h5>
-              </div>
-              <div class="card-body">
-                <div class="d-grid gap-2">
-                  <button class="btn btn-outline-primary" disabled>
-                    <i class="fas fa-eye me-2"></i>View All Submissions
-                  </button>
-                  <button class="btn btn-outline-secondary" disabled>
-                    <i class="fas fa-download me-2"></i>Download All Submissions
-                  </button>
-                  <hr>
-                  <button class="btn btn-outline-danger">
-                    <i class="fas fa-times-circle me-2"></i>Close Submission Now
-                  </button>
-                </div>
-                <div class="text-muted small mt-2">
-                  <i class="fas fa-info-circle me-1"></i>
-                  Grading features available after closing submission
                 </div>
               </div>
             </div>

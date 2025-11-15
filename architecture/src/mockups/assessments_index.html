@@ -1,4 +1,8 @@
 <!DOCTYPE html>
+<!-- 
+  CONTEXT: This view applies to regular lectures only.
+  For seminars, see assessments_index_seminar.html which shows talks with inline grading.
+-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -91,7 +95,7 @@
         <div class="list-group-item assignmentRow" data-id="101">
           <div class="row">
             <div class="col-3">
-              <a href="assessments_show_assignment.html" class="text-dark" style="text-decoration: none;">
+              <a href="assessments_show_assignment_open.html" class="text-dark" style="text-decoration: none;">
                 Homework 5
               </a>
               <div class="small text-muted">
@@ -106,7 +110,7 @@
               November 15, 2024, 18:00
             </div>
             <div class="col-3">
-              <a href="assessments_show_assignment.html" class="text-dark" style="text-decoration: none;" title="View">
+              <a href="assessments_show_assignment_open.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
@@ -121,7 +125,7 @@
         <div class="list-group-item assignmentRow" data-id="102">
           <div class="row">
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;">
                 Homework 4
               </a>
               <div class="small text-muted">
@@ -136,7 +140,7 @@
               October 30, 2024, 18:00
             </div>
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
@@ -152,7 +156,7 @@
                 <div class="list-group-item assignmentRow" data-id="103">
           <div class="row">
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;">
                 Homework 3
               </a>
               <div class="small text-muted"><i class="fas fa-check-circle text-success"></i> Results published</div>
@@ -165,7 +169,7 @@
               October 15, 2024, 18:00
             </div>
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
@@ -184,7 +188,7 @@
         <div class="list-group-item assignmentRow" data-id="107">
           <div class="row">
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;">
                 Homework 2
               </a>
               <div class="small text-muted"><i class="fas fa-check-circle text-success"></i> Results published</div>
@@ -197,7 +201,7 @@
               September 30, 2024, 18:00
             </div>
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
@@ -216,7 +220,7 @@
         <div class="list-group-item assignmentRow" data-id="108">
           <div class="row">
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;">
                 Homework 1
               </a>
               <div class="small text-muted"><i class="fas fa-check-circle text-success"></i> Results published</div>
@@ -229,7 +233,7 @@
               September 15, 2024, 18:00
             </div>
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
+              <a href="assessments_show_assignment_closed.html" class="text-dark" style="text-decoration: none;" title="View">
                 <i class="far fa-lg fa-eye me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
@@ -264,30 +268,37 @@
           <div class="row">
             <div class="col-3"><h6>Title</h6></div>
             <div class="col-2"><h6>Status</h6></div>
-            <div class="col-1"><h6>Points</h6></div>
-            <div class="col-3"><h6>Date & Time</h6></div>
+            <div class="col-1"><h6>Eligible</h6></div>
+            <div class="col-2"><h6>Date & Time</h6></div>
+            <div class="col-1"><h6>Location</h6></div>
             <div class="col-3"><h6>Action</h6></div>
           </div>
         </div>
 
-        <div class="list-group-item assignmentRow" data-id="104">
+        <div class="list-group-item examRow" data-id="201">
           <div class="row">
             <div class="col-3">
-              <a href="assessments_show_exam.html" class="text-dark" style="text-decoration: none;">
+              <a href="assessments_show_exam_draft.html" class="text-dark" style="text-decoration: none;">
                 Midterm Exam
               </a>
-              <div class="small text-muted">Draft — not yet open</div>
+              <div class="small text-muted">50 points</div>
             </div>
             <div class="col-2">
               <span class="badge bg-secondary">Draft</span>
             </div>
-            <div class="col-1">100</div>
-            <div class="col-3">
-              December 10, 2024, 14:00
+            <div class="col-1">
+              <span class="text-muted">—</span>
+            </div>
+            <div class="col-2">
+              Dec 15, 2024<br>
+              <small class="text-muted">10:00 - 12:00</small>
+            </div>
+            <div class="col-1">
+              <small>HS 1</small>
             </div>
             <div class="col-3">
-              <a href="assessments_show_exam.html" class="text-dark" style="text-decoration: none;" title="View">
-                <i class="far fa-lg fa-eye me-2"></i>
+              <a href="#" class="text-dark text-muted" style="text-decoration: none; pointer-events: none;" title="Eligibility not yet determined">
+                <i class="fas fa-lg fa-user-check me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
                 <i class="far fa-lg fa-edit me-2"></i>
@@ -297,24 +308,67 @@
               </a>
             </div>
           </div>
-        </div>        <div class="list-group-item assignmentRow" data-id="105">
+        </div>
+
+        <div class="list-group-item examRow" data-id="202">
           <div class="row">
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;">
+              <a href="assessments_show_exam_draft.html" class="text-dark" style="text-decoration: none;">
                 Final Exam
               </a>
-              <div class="small text-muted">Draft — not yet open</div>
+              <div class="small text-muted">100 points</div>
             </div>
             <div class="col-2">
               <span class="badge bg-secondary">Draft</span>
             </div>
-            <div class="col-1">100</div>
-            <div class="col-3">
-              February 15, 2025, 09:00
+            <div class="col-1">
+              <span class="text-muted">—</span>
+            </div>
+            <div class="col-2">
+              Feb 20, 2025<br>
+              <small class="text-muted">14:00 - 17:00</small>
+            </div>
+            <div class="col-1">
+              <small>HS 2</small>
             </div>
             <div class="col-3">
-              <a href="#" class="text-dark" style="text-decoration: none;" title="View">
-                <i class="far fa-lg fa-eye me-2"></i>
+              <a href="#" class="text-dark text-muted" style="text-decoration: none; pointer-events: none;" title="Eligibility not yet determined">
+                <i class="fas fa-lg fa-user-check me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
+                <i class="far fa-lg fa-edit me-2"></i>
+              </a>
+              <a href="#" class="text-dark" style="text-decoration: none;" title="Delete">
+                <i class="far fa-lg fa-trash-alt"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="list-group-item examRow" data-id="203">
+          <div class="row">
+            <div class="col-3">
+              <a href="assessments_show_exam_draft.html" class="text-dark" style="text-decoration: none;">
+                Retake Exam
+              </a>
+              <div class="small text-muted">100 points</div>
+            </div>
+            <div class="col-2">
+              <span class="badge bg-secondary">Draft</span>
+            </div>
+            <div class="col-1">
+              <span class="text-muted">—</span>
+            </div>
+            <div class="col-2">
+              Mar 15, 2025<br>
+              <small class="text-muted">14:00 - 17:00</small>
+            </div>
+            <div class="col-1">
+              <small class="text-muted">TBA</small>
+            </div>
+            <div class="col-3">
+              <a href="#" class="text-dark text-muted" style="text-decoration: none; pointer-events: none;" title="Eligibility not yet determined">
+                <i class="fas fa-lg fa-user-check me-2"></i>
               </a>
               <a href="#" class="text-dark" style="text-decoration: none;" title="Edit">
                 <i class="far fa-lg fa-edit me-2"></i>

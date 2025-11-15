@@ -72,7 +72,7 @@ module Vignettes
 
       text = text.to_s.dup
       text.gsub!(/\*\*(.*?)\*\*/, '<strong>\1</strong>') # Bold
-      text.gsub!(/\*([^\*]+)\*/, '<em>\1</em>') # Italic
+      text.gsub!(/\*([^*]+)\*/, '<em>\1</em>') # Italic
 
       simple_format(text, {}, sanitize: false)
     end

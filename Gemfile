@@ -2,7 +2,7 @@ source "https://rubygems.org"
 # We only pin versions to specific Git commits when they are "problem childs"
 # and we want to review each commit before updating to the latest version.
 
-ruby "3.3.8"
+ruby "3.4.7"
 
 gem "active_model_serializers", "~> 0.10"
 gem "activerecord-import", "~>1.7"
@@ -91,5 +91,6 @@ group :development, :test do
   gem "i18n-tasks", "~> 1.0.15"
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"
+  gem "ruby-lsp-rspec", "~> 0.1.28", require: false
   gem "simplecov-cobertura", "~> 2.1"
 end

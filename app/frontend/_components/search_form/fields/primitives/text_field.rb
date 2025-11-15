@@ -24,6 +24,7 @@ module SearchForm
       #   )
       class TextField < ViewComponent::Base
         include Fields::Mixins::PrimitiveFieldMixin
+
         attr_reader :field_data
 
         # Initializes a new TextField component.

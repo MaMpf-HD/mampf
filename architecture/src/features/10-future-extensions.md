@@ -28,6 +28,9 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 - Rate limiting for FCFS hotspots
 - Bulk eligibility preview (matrix: users × policies)
 - Policy simulation mode (test changes without affecting real data)
+- Automated certification proposals (ML-based predictions from partial semester data)
+- Certification templates (pre-fill common override scenarios)
+- Certification bulk operations (approve/reject multiple students at once)
 
 ---
 
@@ -42,11 +45,155 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 4. Assessment & Grading
 
+### Submission Support for Exams and Talks
+
+```admonish info "Current Status"
+Currently, file submissions are only implemented for **Assignment** types. The underlying data model (`Submission` with `assessment_id` field) was designed to support submissions for all assessment types, but the UI and workflows are scoped to assignments only.
+```
+
+**Use Cases for Future Extension:**
+
+| Assessment Type | Submission Scenario | Example |
+|-----------------|---------------------|---------|
+| Exam (Online) | Students upload completed exam PDFs | Take-home exam, timed online exam |
+| Exam (In-Person) | Staff upload scanned answer sheets | Physical exam digitized for archival/grading |
+| Talk | Speakers upload presentation materials | Slides, handouts, supplementary files |
+
+**Infrastructure Ready:**
+- ✅ `Submission` model uses `assessment_id` (supports any assessment type)
+- ✅ `Assessment::Assessment` has `requires_submission` boolean field
+- ✅ `Assessment::Participation` tracks `submitted_at` timestamp
+- ✅ `Assessment::TaskPoint` can link to `submission_id` for audit trails
+
+**Requirements for Implementation:**
+- Design submission UI adapted for exam/talk contexts (different from assignment task-based interface)
+- Adapt grading workflows (exam submissions may need different grading patterns than assignment tasks)
+- Consider timing constraints (exam time windows, talk presentation schedules)
+- Define file type restrictions (exam PDFs vs presentation formats)
+- Handle team vs individual submissions (talks may have co-presenters)
+
+**Complexity:** Medium (model foundation exists, need UI and workflow design)
+
+**References:** See [Assessments & Grading - Submission Model](04-assessments-and-grading.md#submission-extended-model)
+
+---
+
+### Task-Wise Grading (Optional Workflow)
+
+```admonish info "Current Status"
+The default grading workflow is **tutorial-wise**: each tutor grades all tasks for their own tutorial's submissions. The data model already supports an alternative workflow where grading is distributed by task instead of by tutorial, but this requires additional UI and configuration features.
+```
+
+**Use Case:**
+
+By default, tutors grade all tasks for their own tutorial's submissions. An alternative workflow is **task-wise grading**, where each tutor specializes in grading a specific task across all tutorials.
+
+| Traditional (Tutorial-Wise) | Task-Wise Alternative |
+|----------------------------|----------------------|
+| Tutorial A tutor: grades Tasks 1-3 for 30 students | Tutor 1: grades Task 1 for all 60 students |
+| Tutorial B tutor: grades Tasks 1-3 for 30 students | Tutor 2: grades Task 2 for all 60 students |
+| Each tutor: 90 gradings (30 × 3) | Tutor 3: grades Task 3 for all 60 students |
+| | Each tutor: 60 gradings (specialization) |
+
+**Benefits:**
+- **Consistency:** Same tutor grades same problem for everyone (reduces grading variance)
+- **Efficiency:** Tutor becomes expert in one problem, grades faster with practice
+- **Fairness:** Eliminates "tough tutor vs. lenient tutor" differences per task
+- **Specialization:** Complex problems assigned to most experienced tutor
+
+**Infrastructure Already in Place:**
+- ✅ `Assessment::TaskPoint` has `grader_id` (can be any tutor)
+- ✅ `Submission` has `tutorial_id` for context but grading isn't restricted by it
+- ✅ `Assessment::SubmissionGrader` accepts any `grader:` parameter
+
+**Requirements for Implementation:**
+
+1. **Data Model Addition:**
+   - New model: `Assessment::TaskAssignment` linking `task_id` → `tutor_id`
+   - New enum on `Assessment::Assessment`: `grading_mode` (`:tutorial_wise` default, `:task_wise`)
+   - Migration for `assessment_task_assignments` table
+
+2. **Teacher Interface:**
+   - Assessment show page: grading mode selector
+   - When task-wise selected: UI to assign each task to a tutor
+   - Progress dashboard showing per-task completion across all tutorials
+
+3. **Modified Tutor Grading Interface:**
+   - Filter submissions by assigned tasks (not just by tutorial)
+   - Show all tutorials' submissions for assigned tasks
+   - Progress: "45/89 students graded for Task 1"
+   - Maintain existing grading UI, just change data scope
+
+4. **Controller Logic:**
+   ```ruby
+   if @assessment.task_wise?
+     @tasks = @assessment.tasks
+       .joins(:task_assignments)
+       .where(assessment_task_assignments: { tutor_id: current_user.id })
+     @submissions = @assessment.submissions  # all tutorials
+   else
+     @tasks = @assessment.tasks  # all tasks
+     @submissions = @tutorial.submissions  # current tutorial only
+   end
+   ```
+
+5. **Publication Control:**
+   - Recommend teacher-level publication when all tasks complete
+   - Per-tutorial publication doesn't make sense in task-wise mode
+   - Could offer per-task publication as alternative
+
+**Edge Cases to Handle:**
+- Reassignment mid-grading: keep existing `grader_id` on TaskPoints (historical record)
+- Cross-tutorial teams: team submission appears once, graded by task-assigned tutor
+- Mixed mode: initially all-or-nothing (can't mix modes per task)
+
+**Complexity:** Medium (model support exists, need UI and workflow adaptation)
+
+**References:** See [Assessments & Grading - TaskPoint Model](04-assessments-and-grading.md#assessmenttaskpoint-activerecord-model) for `grader_id` field
+
+---
+
+### Other Assessment Extensions
+
 - Inline annotation integration (external service)
 - Rubric templates per task (structured criteria + auto-sum)
 - Late policy engine (configurable penalty computation)
 - Task dependencies (unlock logic)
 - Peer review workflows
+
+### Grading Audit Trail (Teacher Override Tracking)
+
+**Use Case:** Track when teachers modify points after initial grading (e.g., complaint handling).
+
+**Current State:**
+- `Assessment::TaskPoint` has `grader_id` and `graded_at`
+- No explicit tracking of modifications after initial grading
+- Cannot distinguish "teacher graded initially" from "teacher overrode tutor grade"
+
+**Implementation:**
+
+Add modification tracking fields:
+```ruby
+add_column :assessment_task_points, :modified_by_id, :integer
+add_column :assessment_task_points, :modified_at, :datetime
+add_index :assessment_task_points, :modified_by_id
+```
+
+**Logic:**
+- Initially: `grader_id` = tutor, `modified_by_id` = nil
+- Teacher edits: `modified_by_id` = teacher, `modified_at` = Time.current
+- Keep original `grader_id` for audit trail
+
+**Benefits:**
+- Explicit tracking of override events
+- Preserves original grader context
+- Enables audit reports ("all teacher overrides for this assessment")
+- Simple to query and display in UI
+
+**UI Indicators:**
+- Warning icon on modified cells
+- Tooltip: "Modified by [Teacher Name] on [Date]"
+- Teacher grading details view shows "Last Changed" column
 
 ### Multiple Choice Extensions
 
@@ -56,12 +203,22 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ---
 
-## 5. Exam Eligibility
+## 5. Lecture Performance & Certification
 
-- Multiple concurrent policies (AND/OR logic expression builder)
-- Incremental recompute (listen to grade changes, trigger automatic update)
-- Eligibility preview for students (before registration opens)
-- Custom formula DSL (complex eligibility calculations)
+```admonish success "Recently Implemented"
+The core certification workflow (teacher-approved eligibility decisions, Evaluator proposals, pre-flight checks) is now part of the baseline architecture documented in Chapter 5.
+```
+
+**Future Extensions:**
+
+- Multiple concurrent certification policies (AND/OR logic expression builder)
+- Incremental recompute (listen to grade changes, auto-update stale certifications)
+- Student-facing certification preview (before registration opens, show provisional status)
+- Custom formula DSL (complex eligibility calculations beyond simple point thresholds)
+- Certification history (track changes over time, audit teacher decisions)
+- Automated ML proposals (predict eligibility from partial semester data)
+- Bulk certification UI (approve/reject multiple students with filters)
+- Certification analytics (pass rate trends, override frequency analysis)
 
 ---
 

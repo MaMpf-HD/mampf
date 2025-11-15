@@ -133,6 +133,7 @@ class Lecture < ApplicationRecord
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
 
   include PgSearch::Model
+
   pg_search_scope :search_by_title,
                   associated_against: {
                     course: [:title, :short_title]

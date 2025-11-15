@@ -24,7 +24,7 @@ class TutorialsController < ApplicationController
 
   def index
     authorize! :index, Tutorial.new, @lecture
-    @assignments = @lecture.assignments.order("deadline DESC")
+    @assignments = @lecture.assignments.order(deadline: :desc)
     @assignment = Assignment.find_by(id: params[:assignment]) ||
                   @assignments&.first
     @tutorials = if current_user.editor_or_teacher_in?(@lecture)
@@ -39,7 +39,7 @@ class TutorialsController < ApplicationController
 
   def overview
     authorize! :overview, Tutorial.new, @lecture
-    @assignments = @lecture.assignments.order("deadline DESC")
+    @assignments = @lecture.assignments.order(deadline: :desc)
     @assignment = Assignment.find_by(id: params[:assignment]) ||
                   @assignments&.first
     @tutorials = @lecture.tutorials

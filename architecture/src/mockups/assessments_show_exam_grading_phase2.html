@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Midterm Exam — Phase 2: Distribution Analysis</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .small-width {
+      max-width: 1400px;
+    }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 6em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    h3.lecture-pane-header {
+      color: #838383;
+      font-size: 1.3em;
+    }
+    .workflow-badge {
+      background-color: #198754;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.3rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+    .histogram {
+      height: 300px;
+      background: linear-gradient(to top, #f8f9fa 0%, #f8f9fa 100%);
+      border: 1px solid #dee2e6;
+      border-radius: 0.3rem;
+      padding: 1rem;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+    .histogram-bars {
+      display: flex;
+      align-items: flex-end;
+      height: 250px;
+      gap: 4px;
+      padding: 0 10px;
+    }
+    .histogram-bar {
+      flex: 1;
+      background: #0d6efd;
+      border-radius: 3px 3px 0 0;
+      transition: background 0.2s;
+      position: relative;
+    }
+    .histogram-bar:hover {
+      background: #0b5ed7;
+    }
+    .histogram-labels {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 10px 0 10px;
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+    .stat-card {
+      border: 1px solid #dee2e6;
+      border-radius: 0.3rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container small-width mt-4">
+    <!-- Lecture Header -->
+    <div class="mb-3">
+      <h1 class="h3 mb-1">Linear Algebra I</h1>
+      <p class="text-muted mb-0">WS 2024/25</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Content</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Preferences</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">People & Tutorials</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Orga</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Communication</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="assessments_index.html">Assessments</a>
+      </li>
+    </ul>
+
+    <!-- Exam Detail -->
+    <div class="lecture-pane">
+      <!-- Workflow Indicator -->
+      <div class="workflow-badge">
+        <i class="fas fa-chart-bar me-2"></i>Phase 2: Distribution Analysis
+      </div>
+
+      <!-- Header -->
+      <div class="mb-3">
+        <h3 class="lecture-pane-header mb-2">Midterm Exam</h3>
+        <div>
+          <span class="badge bg-warning text-dark me-2">Closed</span>
+          <span class="text-muted small">Exam</span>
+        </div>
+      </div>
+
+      <!-- Alert -->
+      <div class="alert alert-success d-flex align-items-center mb-4">
+        <i class="fas fa-check-circle me-2"></i>
+        <div>
+          <strong>All students graded!</strong> 145 out of 145 students have points entered. 
+          You can now analyze the distribution and create a grade scheme.
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="overview-tab" data-bs-toggle="tab" 
+                  data-bs-target="#overview" type="button" role="tab">
+            Overview
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" 
+                  data-bs-target="#settings" type="button" role="tab">
+            Settings
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="tasks-tab" data-bs-toggle="tab" 
+                  data-bs-target="#tasks" type="button" role="tab">
+            Tasks
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="grading-tab" data-bs-toggle="tab" 
+                  data-bs-target="#grading" type="button" role="tab">
+            Grading
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="grade-scheme-tab" data-bs-toggle="tab" 
+                  data-bs-target="#grade-scheme" type="button" role="tab">
+            Grade Scheme
+            <span class="badge bg-warning text-dark ms-1">New</span>
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="exam-logistics-tab" data-bs-toggle="tab" 
+                  data-bs-target="#exam-logistics" type="button" role="tab">
+            Exam Logistics
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content" id="assessmentTabsContent">
+        <!-- Grade Scheme Tab -->
+        <div class="tab-pane fade show active" id="grade-scheme" role="tabpanel">
+          <h4 class="mb-3">Point Distribution Analysis</h4>
+
+          <!-- Histogram -->
+          <div class="card mb-4">
+            <div class="card-body">
+              <h5 class="card-title mb-3">Student Score Distribution</h5>
+              <div class="histogram">
+                <div class="histogram-bars">
+                  <div class="histogram-bar" style="height: 10%;" title="0-9 points: 2 students"></div>
+                  <div class="histogram-bar" style="height: 15%;" title="10-19 points: 3 students"></div>
+                  <div class="histogram-bar" style="height: 25%;" title="20-29 points: 5 students"></div>
+                  <div class="histogram-bar" style="height: 35%;" title="30-39 points: 7 students"></div>
+                  <div class="histogram-bar" style="height: 60%;" title="40-49 points: 12 students"></div>
+                  <div class="histogram-bar" style="height: 80%;" title="50-59 points: 16 students"></div>
+                  <div class="histogram-bar" style="height: 100%;" title="60-69 points: 25 students"></div>
+                  <div class="histogram-bar" style="height: 95%;" title="70-79 points: 38 students"></div>
+                  <div class="histogram-bar" style="height: 75%;" title="80-89 points: 28 students"></div>
+                  <div class="histogram-bar" style="height: 45%;" title="90-100 points: 9 students"></div>
+                </div>
+                <div class="histogram-labels">
+                  <span>0</span>
+                  <span>10</span>
+                  <span>20</span>
+                  <span>30</span>
+                  <span>40</span>
+                  <span>50</span>
+                  <span>60</span>
+                  <span>70</span>
+                  <span>80</span>
+                  <span>90</span>
+                  <span>100</span>
+                </div>
+              </div>
+              <p class="text-center text-muted mb-0">
+                <small><i class="fas fa-info-circle me-1"></i>Hover over bars to see student counts</small>
+              </p>
+            </div>
+          </div>
+
+          <!-- Statistics -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="stat-card">
+                <h6 class="mb-3">Basic Statistics</h6>
+                <table class="table table-sm mb-0">
+                  <tbody>
+                    <tr>
+                      <th style="width: 60%">Students graded:</th>
+                      <td class="text-end"><strong>145 / 145</strong></td>
+                    </tr>
+                    <tr>
+                      <th>Minimum:</th>
+                      <td class="text-end">15 points</td>
+                    </tr>
+                    <tr>
+                      <th>Maximum:</th>
+                      <td class="text-end">98 points</td>
+                    </tr>
+                    <tr>
+                      <th>Mean:</th>
+                      <td class="text-end"><strong>72.3 points</strong></td>
+                    </tr>
+                    <tr>
+                      <th>Median:</th>
+                      <td class="text-end">74 points</td>
+                    </tr>
+                    <tr>
+                      <th>Standard deviation:</th>
+                      <td class="text-end">14.2</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <div class="stat-card">
+                <h6 class="mb-3">Percentiles</h6>
+                <table class="table table-sm mb-0">
+                  <tbody>
+                    <tr>
+                      <th style="width: 60%">10th percentile:</th>
+                      <td class="text-end">45 points</td>
+                    </tr>
+                    <tr>
+                      <th>25th percentile:</th>
+                      <td class="text-end">60 points</td>
+                    </tr>
+                    <tr>
+                      <th>50th percentile (median):</th>
+                      <td class="text-end"><strong>74 points</strong></td>
+                    </tr>
+                    <tr>
+                      <th>75th percentile:</th>
+                      <td class="text-end">85 points</td>
+                    </tr>
+                    <tr>
+                      <th>90th percentile:</th>
+                      <td class="text-end">91 points</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info Box -->
+          <div class="alert alert-info d-flex align-items-start mt-4">
+            <i class="fas fa-lightbulb me-2 mt-1"></i>
+            <div>
+              <strong>Next Step:</strong> Review the distribution above to determine appropriate grade boundaries. 
+              Consider factors like exam difficulty, student performance expectations, and university grading policies. 
+              Click "Create Grade Scheme" below to configure grade bands.
+            </div>
+          </div>
+
+          <!-- Action Button -->
+          <div class="d-flex justify-content-between align-items-center mt-4">
+            <a href="assessments_show_exam_grading_phase1.html" class="btn btn-outline-secondary">
+              <i class="fas fa-arrow-left me-2"></i>Back to Point Entry
+            </a>
+            <button type="button" class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#createSchemeModal">
+              <i class="fas fa-plus me-2"></i>Create Grade Scheme
+            </button>
+          </div>
+
+          <!-- Next Phase Link -->
+          <div class="text-center mt-4 pt-4 border-top">
+            <p class="text-muted mb-2">
+              <i class="fas fa-arrow-down"></i> After creating grade scheme...
+            </p>
+            <a href="assessments_show_exam_grading_phase3.html" class="btn btn-outline-primary">
+              Continue to Phase 3: Scheme Configuration
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Scheme Modal -->
+  <div class="modal fade" id="createSchemeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Create Grade Scheme</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted">
+            This modal will open in Phase 3. Choose between Two-Point Auto or Manual Curve configuration.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <a href="assessments_show_exam_grading_phase3.html" class="btn btn-primary">
+            Continue to Configuration
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
