@@ -2,7 +2,7 @@ import { reloadTurboFrame } from "~/entrypoints/initHotwire";
 import { HandlerRegistry } from "./handler_registry";
 import { fixVideoAttachments } from "./video_fix";
 
-const COLLAPSE_CLASS = ".vignette-accordion-collapse";
+const COLLAPSE_CLASS = ".vignette-accordion-collapse-change-detection";
 
 let currentUnsavedSlideForm = null;
 let pendingSlideId = null;
