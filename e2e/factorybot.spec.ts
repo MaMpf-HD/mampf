@@ -41,3 +41,11 @@ test("can call methods that need a user as parameter", async ({ factory, student
   const visibleForUserAgain = await lectureNonReleased.__call("visible_for_user?", student.user);
   expect(visibleForUserAgain).toBe(false);
 });
+
+test("can use factories and interact with page", async ({ factory, student: { page } }) => {
+  const lecture = await factory.create("lecture", ["released_for_all", "with_sparse_toc"]);
+  await page.goto(`/lectures/${lecture.id}`);
+
+  const title = await lecture.__call("title_term_info_no_type");
+  await expect(page.getByText(title)).toBeVisible();
+});
