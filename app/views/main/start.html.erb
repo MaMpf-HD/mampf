@@ -64,7 +64,8 @@
       <div class="accordion-body">
         <div class="row row-cols-1 row-cols-xs-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"
              id="collapseInactiveLecturesContent"
-             data-cy="subscribed-inactive-lectures-collapse">
+             data-cy="subscribed-inactive-lectures-collapse"
+             data-testid="further-subscribed">
           <% if @current_stuff.empty? %>
             <%= render partial: 'main/start/lecture',
                        collection: @inactive_lectures,

@@ -60,12 +60,13 @@ Mobility.configure do
     # dirty false
 
     # Fallbacks
+    # see https://github.com/shioyama/mobility?tab=readme-ov-file#fallbacks
     #
     # Uncomment line below to enable fallbacks, using +I18n.fallbacks+.
     # fallbacks
     #
     # Or uncomment this line to enable fallbacks with a global default.
-    # fallbacks { :pt => :en }
+    fallbacks(en: :de)
 
     # Presence
     #

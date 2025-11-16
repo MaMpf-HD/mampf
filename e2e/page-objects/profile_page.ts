@@ -9,7 +9,7 @@ export class ProfilePage {
   }
 
   async goto() {
-    await this.page.goto(this.link, { waitUntil: "domcontentloaded" });
+    await this.page.goto(this.link);
   }
 
   async save() {

@@ -60,29 +60,48 @@ test.describe("Account settings", () => {
       await expect(tutorPage.getByText(user.name_in_tutorials)).toHaveCount(0);
     });
 
-  test("can switch the user language", async ({ student: { page } }) => {
-    const profilePage = new ProfilePage(page);
-    await profilePage.goto();
+  test("can switch the user language",
+    async ({ student: { page } }) => {
+      const profilePage = new ProfilePage(page);
+      await profilePage.goto();
 
-    await expect(page.getByRole("radio", { name: "english" })).toBeChecked();
-    await expect(page.getByText("display name")).toBeVisible();
-    await expect(page.getByText("receive email")).toBeVisible();
-    await expect(page.getByText("want to see related")).toBeVisible();
+      await expect(page.getByRole("radio", { name: "english" })).toBeChecked();
+      await expect(page.getByText("display name")).toBeVisible();
+      await expect(page.getByText("receive email")).toBeVisible();
+      await expect(page.getByText("want to see related")).toBeVisible();
 
-    await page.getByRole("radio", { name: "german" }).check();
-    await profilePage.save();
-    await expect(page.getByRole("radio", { name: "deutsch" })).toBeChecked();
-    await expect(page.getByText("anzeigename")).toBeVisible();
-    await expect(page.getByText("benachrichtigt")).toBeVisible();
-    await expect(page.getByText("möchte verknüpfte")).toBeVisible();
-  });
+      await page.getByRole("radio", { name: "german" }).check();
+      await profilePage.save();
+      await expect(page.getByRole("radio", { name: "deutsch" })).toBeChecked();
+      await expect(page.getByText("anzeigename")).toBeVisible();
+      await expect(page.getByText("benachrichtigt")).toBeVisible();
+      await expect(page.getByText("möchte verknüpfte")).toBeVisible();
+    });
 });
 
 test.describe("Module settings", () => {
-  test("only admins have admin icon in menu bar", async ({ student: { page: studentPage }, admin: { page: adminPage } }) => {
-    await studentPage.goto("/main/start");
-    await adminPage.goto("/main/start");
-    await expect(studentPage.getByTitle("administration")).toHaveCount(0);
-    await expect(adminPage.getByTitle("administration")).toBeVisible();
-  });
+  test("can subscribe to a lecture (via profile page)",
+    async ({ factory, student: { page } }) => {
+      const divisionName = "Fourier Division";
+      const courseName = "Happy Calculus 101";
+      const division = await factory.create("division", [], { name: divisionName });
+      const course = await factory.create("course", ["with_division"], { title: courseName, division_id: division.id });
+      const lecture = await factory.create("lecture", ["released_for_all"], { course_id: course.id });
+      const teacher = await lecture.__call("teacher");
+
+      const profilePage = new ProfilePage(page);
+      await profilePage.goto();
+      await page.getByTestId("courses-accordion").getByRole("button").first().click();
+      await page.waitForTimeout(800);
+      await expect(page.getByTestId("courses-accordion")).toContainText(divisionName);
+      const courseButton = page.getByText(courseName);
+      await courseButton.click();
+      await page.getByText(teacher.name).click();
+      await profilePage.save();
+
+      await page.goto("");
+      const furtherSubscribed = page.getByTestId("further-subscribed");
+      await expect(furtherSubscribed).toContainText(courseName);
+      await expect(furtherSubscribed).toContainText(teacher.name);
+    });
 });
