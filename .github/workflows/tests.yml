@@ -136,12 +136,12 @@ jobs:
         working-directory: docker/development/
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
-          
+
       - name: Run Playwright tests
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run --entrypoint="" app-test sh -c "npx playwright test"
+          exec -t app-test bash -c "npx playwright test"
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v5
@@ -159,7 +159,6 @@ jobs:
           -f ./compose.yml
           -f ../cicd/compose.cicd.yml
           logs app-test
-
 
   # Cypress end-to-end (e2e) tests
   e2e-tests:
