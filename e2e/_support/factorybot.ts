@@ -15,16 +15,15 @@ export class FactoryBot {
   /**
    * Creates (builds and saves) a record/mock using FactoryBot.
    *
-   * @param args The arguments to pass to FactoryBot.create(), e.g.
-   * factory name, traits, and attributes. Pass them in as separated
-   * string arguments. Attributes should be passed as an object.
-   * You can call instance methods on the created record directly.
+   * @param factoryName The name of the factory to create, e.g. "lecture".
+   * @param traits Optional array of traits to apply to the factory, e.g. ["released_for_all"].
+   * @param args Optional attributes to override on the factory, passed as an object.
    *
    * @returns A FactoryBotObject representing the created record.
    *
    * @examples
-   * const lecture = await factory.create("lecture", "released_for_all");
-   * const tutorial = await factory.create("tutorial",
+   * const lecture = await factory.create("lecture", ["released_for_all"]);
+   * const tutorial = await factory.create("tutorial", [],
    *  { lecture_id: lecture.id, tutor_ids: [tutor1.id, tutor2.id] });
    */
   async create(factoryName: string, traits?: string[], args?: Record<string, any>): Promise<FactoryBotObject> {
@@ -63,11 +62,14 @@ export class FactoryBotObject {
    * Calls a method on a remote factory instance via the backend API.
    *
    * @param methodName The name of the instance method to invoke on the factory.
+   * @param user Optional user to pass as the first argument to the method.
    * @param args Arguments to pass to the remote method.
+   *
    * @returns A promise that resolves with the backend's result for the invoked method.
    * @throws Will reject if the backend call fails or the backend returns an error.
+   *
    * @example
-   * const lecture = await factory.create("lecture", "released_for_all");
+   * const lecture = await factory.create("lecture", ["released_for_all"]);
    * const title = await lecture.__call("title");
    */
   async __call(methodName: string, user?: User, ...args: any[]): Promise<any> {
