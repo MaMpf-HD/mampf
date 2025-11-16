@@ -6,7 +6,8 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       user_registration = FactoryBot.create(:registration_user_registration)
       expect(user_registration).to be_valid
       expect(user_registration.preference_rank).to be_nil
-      expect(user_registration.registration_campaign.allocation_mode).to eq("first_come_first_serve")
+      expect(user_registration.registration_campaign.allocation_mode)
+        .to eq("first_come_first_serve")
     end
 
     it "creates a valid FCFS user registration" do
@@ -14,7 +15,8 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       expect(user_registration).to be_valid
       expect(user_registration.preference_rank).to be_nil
       expect(user_registration.status).to eq("confirmed")
-      expect(user_registration.registration_campaign.allocation_mode).to eq("first_come_first_serve")
+      expect(user_registration.registration_campaign.allocation_mode)
+        .to eq("first_come_first_serve")
     end
 
     it "creates a valid preference-based user registration" do
