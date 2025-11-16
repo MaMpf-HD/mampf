@@ -59,19 +59,12 @@ export const test = base.extend<MaMpfFixtures>({
     await browserContext.close();
   },
 
-  factory: async ({ browser }, use) => {
-    const browserContext = await browser.newContext();
-    const page = await browserContext.newPage();
-    await use(new FactoryBot(page.request));
-    await browserContext.close();
+  factory: async ({ request }, use) => {
+    await use(new FactoryBot(request));
   },
 });
 
-test.beforeEach(async ({ browser }) => {
-  // Clean database before every test
-  // (brutal, but effective for good test isolation)
-  const browserContext = await browser.newContext();
-  const page = await browserContext.newPage();
-  await callBackend(page.request, "database_cleaner", {});
-  await browserContext.close();
+test.beforeEach(async ({ request }) => {
+  // Clean database before every test (brutal, but effective for good test isolation)
+  await callBackend(request, "database_cleaner", {});
 });
