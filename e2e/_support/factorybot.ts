@@ -1,8 +1,9 @@
 import { APIRequestContext } from "@playwright/test";
+import { User } from "./auth";
 import { callBackend } from "./backend";
 
 /**
- * Helper to access FactoryBot factories from Cypress tests.
+ * Helper to access FactoryBot factories from within Playwright tests.
  */
 export class FactoryBot {
   context: APIRequestContext;
@@ -14,25 +15,74 @@ export class FactoryBot {
   /**
    * Creates (builds and saves) a record/mock using FactoryBot.
    *
-   * @param args The arguments to pass to FactoryBot.create(), e.g.
-   * factory name, traits, and attributes. Pass them in as separated
-   * string arguments. Attributes should be passed as an object.
-   * You are also able to call instance methods on the created record later.
+   * @param factoryName The name of the factory to create, e.g. "lecture".
+   * @param traits Optional array of traits to apply to the factory, e.g. ["released_for_all"].
+   * @param args Optional attributes to override on the factory, passed as an object.
    *
-   * @returns The FactoryBot.create() response.
+   * @returns A FactoryBotObject representing the created record.
    *
    * @examples
-   * FactoryBot.create("factory_name", "with_trait", { another_attribute: ".pdf"})
-   * FactoryBot.create("factory_name").then(res => {res.call.any_rails_method(42)})
-   * FactoryBot.create("tutorial",
-   *  { lecture_id: this.lecture.id, tutor_ids: [this.tutor1.id, this.tutor2.id] })
+   * const lecture = await factory.create("lecture", ["released_for_all"]);
+   * const tutorial = await factory.create("tutorial", [],
+   *  { lecture_id: lecture.id, tutor_ids: [tutor1.id, tutor2.id] });
    */
-  async create(...args: any[]): Promise<any> {
-    return await callBackend(this.context, "factories", args);
+  async create(factoryName: string, traits?: string[], args?: Record<string, any>):
+  Promise<FactoryBotObject> {
+    const payload = {
+      factory_name: factoryName,
+      traits: traits || [],
+      args: args || {},
+    };
+    const data = await callBackend(this.context, "factories_playwright", payload);
+    return new FactoryBotObject(this.context, factoryName, data);
   }
 
-  async createNoValidate(...args: any[]): Promise<any> {
-    args.push({ validate: false });
-    return await this.create(...args);
+  async createNoValidate(factoryName: string, traits?: string[], args?: Record<string, any>):
+  Promise<FactoryBotObject> {
+    if (!args) {
+      args = {};
+    }
+    args.validate = false;
+    return await this.create(factoryName, traits, args);
+  }
+}
+
+export class FactoryBotObject {
+  private context: APIRequestContext;
+  private factoryName: string;
+  private factoryId: number;
+  [key: string]: any; // for dynamic property access without TypeScript errors
+
+  constructor(context: APIRequestContext, factoryName: string, data: any) {
+    this.context = context;
+    this.factoryName = factoryName;
+    this.factoryId = data.id;
+    Object.assign(this, data);
+  }
+
+  /**
+   * Calls a method on a remote factory instance via the backend API.
+   *
+   * @param methodName The name of the instance method to invoke on the factory.
+   * @param user Optional user to pass as the first argument to the method.
+   *
+   * @returns A promise that resolves with the backend's result for the invoked method.
+   * @throws Will reject if the backend call fails or the backend returns an error.
+   *
+   * @examples
+   * const lecture = await factory.create("lecture", ["released_for_all"]);
+   * const title = await lecture.__call("title");
+   * const visibleForUser = await lecture.__call("visible_for_user?", student.user);
+   */
+  async __call(methodName: string, user?: User): Promise<any> {
+    const payload = {
+      factory_name: this.factoryName,
+      instance_id: this.factoryId,
+      method_name: methodName,
+      user_id: user ? user.id : null,
+    };
+    const result = await callBackend(this.context,
+      "factories_playwright/call_instance_method", payload);
+    return result;
   }
 }

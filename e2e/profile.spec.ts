@@ -28,11 +28,3 @@ test("only admins have admin icon in menu bar", async ({ student: { page: studen
   await expect(studentPage.getByTitle("administration")).toHaveCount(0);
   await expect(adminPage.getByTitle("administration")).toBeVisible();
 });
-
-test("first factory bot calls", async ({ factory, student: { page } }) => {
-  const lecture = await factory.create("lecture_with_sparse_toc", "released_for_all");
-  console.log("Created lecture:", lecture);
-  await page.goto(`/lectures/${lecture.id}`);
-  // TODO: extend FactoryBot such that we can call something like lecture.getTitle()
-  // await expect(page.getByText(lecture.getTitle())).toBeVisible();
-});

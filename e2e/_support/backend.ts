@@ -3,9 +3,12 @@
 import { APIRequestContext } from "@playwright/test";
 
 export async function callBackend(
-  context: APIRequestContext, routeName: string, args: any): Promise<object> {
+  context: APIRequestContext, routeName: string, payload: object): Promise<object> {
   const response = await context.post(`cypress/${routeName}`, {
-    form: args,
+    data: payload,
+    headers: {
+      "content-type": "application/json",
+    },
     failOnStatusCode: false,
   });
 
