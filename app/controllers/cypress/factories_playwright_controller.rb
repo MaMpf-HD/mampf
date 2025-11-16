@@ -18,12 +18,7 @@ module Cypress
       factory_name = validate_factory_name(params["factory_name"]).capitalize
       id = params["instance_id"].to_i
       method_name = params["method_name"]
-      method_args = params["method_args"]
-      if method_args.present?
-        method_args, _validate = params_to_attributes(method_args)
-      else
-        method_args = []
-      end
+      method_args = []
 
       # If user_id is present and valid, prepend the user object to method_args
       user_id_param = params["user_id"]
@@ -32,7 +27,7 @@ module Cypress
         if uid.positive?
           begin
             user_obj = User.find(uid)
-            method_args.unshift(user_obj)
+            method_args << user_obj
           rescue ActiveRecord::RecordNotFound
             result = { error: "User id #{uid} not found" }
             return render json: result.to_json, status: :bad_request

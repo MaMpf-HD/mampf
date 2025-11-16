@@ -65,21 +65,20 @@ export class FactoryBotObject {
    *
    * @param methodName The name of the instance method to invoke on the factory.
    * @param user Optional user to pass as the first argument to the method.
-   * @param args Arguments to pass to the remote method.
    *
    * @returns A promise that resolves with the backend's result for the invoked method.
    * @throws Will reject if the backend call fails or the backend returns an error.
    *
-   * @example
+   * @examples
    * const lecture = await factory.create("lecture", ["released_for_all"]);
    * const title = await lecture.__call("title");
+   * const visibleForUser = await lecture.__call("visible_for_user?", student.user);
    */
-  async __call(methodName: string, user?: User, ...args: any[]): Promise<any> {
+  async __call(methodName: string, user?: User): Promise<any> {
     const payload = {
       factory_name: this.factoryName,
       instance_id: this.factoryId,
       method_name: methodName,
-      method_args: args,
       user_id: user ? user.id : null,
     };
     const result = await callBackend(this.context,
