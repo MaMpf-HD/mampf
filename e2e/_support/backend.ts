@@ -4,7 +4,6 @@ import { APIRequestContext } from "@playwright/test";
 
 export async function callBackend(
   context: APIRequestContext, routeName: string, payload: object): Promise<object> {
-  console.log("route name:", routeName);
   const response = await context.post(`cypress/${routeName}`, {
     data: payload,
     headers: {

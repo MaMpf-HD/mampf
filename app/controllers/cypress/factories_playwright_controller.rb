@@ -6,9 +6,7 @@ module Cypress
   class FactoriesPlaywrightController < CypressController
     # Creates an instance of the factory (via FactoryBot) and returns it as JSON.
     def create
-      Rails.logger.error("------------ Params: #{params.inspect}")
       attributes, should_validate = to_attribute_list(params)
-      Rails.logger.error("------------ Attributes: #{attributes.inspect}")
       data = create_class_instance_via_factorybot(attributes, should_validate)
       render json: data.as_json, status: :created
     end
