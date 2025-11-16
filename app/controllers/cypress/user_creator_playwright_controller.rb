@@ -6,7 +6,7 @@ module Cypress
     def create
       unless params[:role].is_a?(String)
         msg = "Role argument must be a string indicating the user role."
-        msg += " But we got: '#{params["0"]}'"
+        msg += " But we got: '#{params[:role]}'"
         raise(ArgumentError, msg)
       end
 
