@@ -32,7 +32,7 @@ test("can call instance methods", async ({ factory, tutor, student }) => {
   expect(tutorNames).toContain(student.user.name_in_tutorials);
 });
 
-test("can call methods that need a user as parameter", async ({ factory, student }) => {
+test("can call methods that need a user as single parameter", async ({ factory, student }) => {
   const lecture = await factory.create("lecture", ["released_for_all"]);
   const visibleForUser = await lecture.__call("visible_for_user?", student.user);
   expect(visibleForUser).toBe(true);
