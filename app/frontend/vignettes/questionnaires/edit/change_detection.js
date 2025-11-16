@@ -2,7 +2,7 @@ import { reloadTurboFrame } from "~/entrypoints/initHotwire";
 import { HandlerRegistry } from "./handler_registry";
 import { fixVideoAttachments } from "./video_fix";
 
-const COLLAPSE_CLASS = ".vignette-accordion-collapse-change-detection";
+const COLLAPSE_CLASS = ".vignette-accordion-collapse";
 
 let currentUnsavedSlideForm = null;
 let pendingSlideId = null;
@@ -28,12 +28,16 @@ $(document).ready(function () {
 function registerChangeHandlers() {
   // New slide appended
   $(document).on("turbo:stream-render", function () {
-    $(COLLAPSE_CLASS).not(":last").each(function () {
-      const $this = $(this);
-      if ($this.hasClass("show")) {
-        $this.collapse("hide");
-      }
-    });
+    function collapseAllExceptLast($element) {
+      $element.find(COLLAPSE_CLASS).not(":last").each(function () {
+        const $this = $(this);
+        if ($this.hasClass("show")) {
+          $this.collapse("hide");
+        }
+      });
+    }
+    collapseAllExceptLast($("#info_slides"));
+    collapseAllExceptLast($("#slides"));
     setupChangeDetection();
   });
 

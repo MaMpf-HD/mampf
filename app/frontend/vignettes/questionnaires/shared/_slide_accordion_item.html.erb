@@ -19,11 +19,10 @@
   </h2>
 
   <% collapse_class = slide.new_record? || is_update_action ? "show" : "collapse" %>
-  <% change_detection_class = slide.is_a?(Vignettes::InfoSlide) ? "" : "vignette-accordion-collapse-change-detection" %> 
   <div id="<%= collapse_id %>" 
       data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
       data-slide-id="<%= slide.id %>"
-      class="accordion-collapse <%= collapse_class %> <%= change_detection_class %>"
+      class="accordion-collapse <%= collapse_class %> vignette-accordion-collapse"
       data-bs-parent="#<%= info_prefix %>slides">
 
     <div class="accordion-body">
