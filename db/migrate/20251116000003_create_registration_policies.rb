@@ -7,7 +7,7 @@ class CreateRegistrationPolicies < ActiveRecord::Migration[8.0]
                    index: true
       t.integer :kind, null: false
       t.integer :phase, null: false, default: 0
-      t.integer :position, null: false
+      t.integer :position
       t.boolean :active, null: false, default: true
       t.jsonb :config, default: {}
 

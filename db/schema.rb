@@ -541,7 +541,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.bigint "registration_campaign_id", null: false
     t.integer "kind", null: false
     t.integer "phase", default: 0, null: false
-    t.integer "position", null: false
+    t.integer "position"
     t.boolean "active", default: true, null: false
     t.jsonb "config", default: {}
     t.datetime "created_at", null: false
