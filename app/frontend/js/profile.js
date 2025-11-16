@@ -1,4 +1,4 @@
-$(document).on("turbo:load", function () {
+$(document).on("ready turbo:load", function () {
   $("#profileForm").on("change input", function () {
     $("#profileChange").removeClass("d-none");
     $("#profileChangeBottom").removeClass("d-none");

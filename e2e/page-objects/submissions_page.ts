@@ -25,7 +25,6 @@ export class SubmissionsPage {
     await this.page.getByRole("button", { name: "files" }).click();
     const fileChooser = await fileChooserPromise;
     await fileChooser.setFiles(filePath);
-    await this.page.waitForTimeout(500); // let browser correctly process the file
 
     await expect(this.page.getByText("correct size")).toBeVisible();
     await this.page.getByRole("checkbox", { name: "I assure that" }).check();
