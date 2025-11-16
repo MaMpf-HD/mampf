@@ -26,26 +26,5 @@ module Registration
                     completed: 3 }
 
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
-    validate :valid_status_transition, on: :update
-
-    private
-
-      def valid_status_transition
-        return unless will_save_change_to_status?
-
-        from = status_before_last_save
-        to = status
-
-        valid_transitions = {
-          "draft" => ["open"],
-          "open" => ["processing"],
-          "processing" => ["completed"]
-        }
-
-        allowed = valid_transitions[from] || []
-        return if allowed.include?(to)
-
-        errors.add(:status, "cannot transition from #{from} to #{to}")
-      end
   end
 end
