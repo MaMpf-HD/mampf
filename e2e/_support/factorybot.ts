@@ -30,7 +30,7 @@ export class FactoryBot {
   Promise<FactoryBotObject> {
     if (factoryName === "user") {
       throw new Error("Creating users via factory.create() is not supported. "
-        + "Please use the Playwright Fixtures instead.");
+        + "Please use the Playwright Fixtures (student, teacher, admin, etc.) instead.");
     }
 
     const payload = {
