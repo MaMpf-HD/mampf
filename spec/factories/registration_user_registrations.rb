@@ -5,7 +5,7 @@ FactoryBot.define do
     association :registration_campaign
     association :registration_item
     status { :pending }
-    preference_rank { 1 }
+    preference_rank { nil }
 
     trait :pending do
       status { :pending }

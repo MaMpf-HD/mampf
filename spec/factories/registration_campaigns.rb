@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :registration_campaign, class: "Registration::Campaign" do
     association :campaignable, factory: :lecture
     title { "#{Faker::Company.buzzword} Registration" }
-    allocation_mode { :preference_based }
+    allocation_mode { :first_come_first_serve }
     registration_deadline { 2.weeks.from_now }
     status { :draft }
     planning_only { false }

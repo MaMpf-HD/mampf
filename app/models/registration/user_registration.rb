@@ -25,9 +25,6 @@ module Registration
     # FCFS campaigns: no rank allowed, one row per user+campaign
     validates :preference_rank,
               absence: true,
-              uniqueness: {
-                scope: :registration_campaign_id
-              },
               if: -> { registration_campaign.first_come_first_serve? }
 
     validates :user_id,
