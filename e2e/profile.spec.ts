@@ -98,7 +98,7 @@ test.describe("Module settings", () => {
       await page.getByText(teacher.name).click();
       await profilePage.save();
 
-      await page.goto("");
+      await page.goto("/");
       const furtherSubscribed = page.getByTestId("further-subscribed");
       await expect(furtherSubscribed).toContainText(courseName);
       await expect(furtherSubscribed).toContainText(teacher.name);
