@@ -137,11 +137,17 @@ jobs:
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
 
+      - name: Start app-test service
+        working-directory: docker/development/
+        run: >
+          docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
+          up app-test -d --wait
+
       - name: Run Playwright tests
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run app-test bash -c "npx playwright test"
+          exec app-test bash -c "npx playwright test"
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v5
