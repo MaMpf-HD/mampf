@@ -12,7 +12,9 @@ module Registration
                    finalization: 1,
                    both: 2 }
 
-    validates :kind, :phase, :position, presence: true
+    validates :kind, :phase, presence: true
     validates :position, uniqueness: { scope: :registration_campaign_id }
+
+    acts_as_list scope: :registration_campaign
   end
 end
