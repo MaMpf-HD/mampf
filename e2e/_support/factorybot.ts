@@ -28,6 +28,11 @@ export class FactoryBot {
    */
   async create(factoryName: string, traits?: string[], args?: Record<string, any>):
   Promise<FactoryBotObject> {
+    if (factoryName === "user") {
+      throw new Error("Creating users via factory.create() is not supported. "
+        + "Please use the Playwright Fixtures instead.");
+    }
+
     const payload = {
       factory_name: factoryName,
       traits: traits || [],
