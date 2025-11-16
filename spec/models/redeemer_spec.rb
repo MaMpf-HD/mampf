@@ -141,7 +141,8 @@ RSpec.describe(Redeemer, type: :model) do
         expect(mail).to include_in_html_body(
           I18n.t("mailer.previous_teacher",
                  title: lecture.title_with_teacher,
-                 new_teacher: lecture.teacher.info, username: previous_teacher.tutorial_name)
+                 new_teacher: lecture.teacher.info,
+                 username: previous_teacher.tutorial_name)
         )
 
         # Mail to new teacher
@@ -154,7 +155,8 @@ RSpec.describe(Redeemer, type: :model) do
         )
         expect(mail).to include_in_html_body(
           I18n.t("mailer.new_teacher",
-                 title: lecture.title_with_teacher, username: user.tutorial_name)
+                 title: lecture.title_with_teacher,
+                 username: user.tutorial_name)
         )
       end
     end
@@ -232,8 +234,10 @@ RSpec.describe(Redeemer, type: :model) do
           assert_from_notification_mailer(mail)
           expect(mail).to include_in_html_body(
             I18n.t("mailer.new_speaker",
-                   seminar: talk.lecture.title, title: talk.to_label,
-                   username: cospeaker.tutorial_name, speaker: user.info)
+                   seminar: talk.lecture.title,
+                   title: talk.to_label,
+                   username: cospeaker.tutorial_name,
+                   speaker: user.info)
           )
         end
       end
