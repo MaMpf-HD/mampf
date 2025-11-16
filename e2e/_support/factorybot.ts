@@ -26,7 +26,8 @@ export class FactoryBot {
    * const tutorial = await factory.create("tutorial", [],
    *  { lecture_id: lecture.id, tutor_ids: [tutor1.id, tutor2.id] });
    */
-  async create(factoryName: string, traits?: string[], args?: Record<string, any>): Promise<FactoryBotObject> {
+  async create(factoryName: string, traits?: string[], args?: Record<string, any>):
+  Promise<FactoryBotObject> {
     const payload = {
       factory_name: factoryName,
       traits: traits || [],
@@ -36,7 +37,8 @@ export class FactoryBot {
     return new FactoryBotObject(this.context, factoryName, data);
   }
 
-  async createNoValidate(factoryName: string, traits?: string[], args?: Record<string, any>): Promise<FactoryBotObject> {
+  async createNoValidate(factoryName: string, traits?: string[], args?: Record<string, any>):
+  Promise<FactoryBotObject> {
     if (!args) {
       args = {};
     }
@@ -80,7 +82,8 @@ export class FactoryBotObject {
       method_args: args,
       user_id: user ? user.id : null,
     };
-    const result = await callBackend(this.context, "factories_playwright/call_instance_method", payload);
+    const result = await callBackend(this.context,
+      "factories_playwright/call_instance_method", payload);
     return result;
   }
 }
