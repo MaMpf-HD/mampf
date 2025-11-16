@@ -2,7 +2,8 @@
     <%= f.text_field :text, class: "form-control me-2", required: true,
         maxlength: Vignettes::Question::TEXT_MAX_LENGTH %>
     <%= f.hidden_field :_destroy, class: "vignette-mc-hidden-destroy" %>
-    <button class="btn btn-outline-danger remove-vignette-mc-option" type="button"
+    <button class="btn btn-outline-danger" type="button"
+            data-action="vignettes-multiple-choice#removeOption"
             <%= editable ? '' : 'disabled' %>>
         <i class="bi bi-trash3-fill"></i>
     </button>
