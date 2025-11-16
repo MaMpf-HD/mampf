@@ -23,6 +23,48 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 2. Registration & Policy System
 
+### Scheduled Campaign Opening
+
+**Current State:** Campaigns require manual teacher action to transition `draft → open`.
+
+**Proposed Enhancement:** Automatic opening via background job.
+
+**Implementation:**
+```ruby
+add_column :registration_campaigns, :registration_start, :datetime
+
+# Validation
+validates :registration_start, presence: true
+validate :start_before_deadline
+
+# Background job (every 5 minutes)
+Registration::CampaignOpenerJob.perform_async
+  Registration::Campaign.where(status: :draft)
+    .where("registration_start <= ?", Time.current)
+    .find_each(&:open!)
+end
+```
+
+**Benefits:**
+- Symmetry: auto-open + auto-close provides full automation
+- Teacher workflow: set up campaign in advance, forget about it
+- Reduces manual intervention during high-traffic registration windows
+
+**Trade-offs:**
+- Adds complexity (another background job, another timestamp)
+- Teachers lose last-minute verification opportunity before going live
+- Current manual flow forces review before opening
+
+**Recommendation:** Defer to post-MVP. Current workaround (manual open) is acceptable. Implement if teachers report frequent "forgot to open" incidents during beta testing.
+
+**Complexity:** Low (additive change, no schema conflicts)
+
+**References:** See [Registration - Campaign Lifecycle](02-registration.md#campaign-lifecycle-state-diagram)
+
+---
+
+### Other Registration Extensions
+
 - Policy trace persistence (store evaluation results for audit)
 - User-facing explanations (API endpoint showing why ineligible)
 - Rate limiting for FCFS hotspots

@@ -126,6 +126,10 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 
 See also: Lecture Performance → Certification (`05-lecture-performance.md`).
 
+```admonish info "Future Extension: Scheduled Campaign Opening"
+Currently, campaigns transition `draft → open` via manual teacher action. A future enhancement could add automatic opening via `registration_start` timestamp and background job. See [Future Extensions - Scheduled Opening](10-future-extensions.md#scheduled-campaign-opening) for details.
+```
+
 ```admonish tip "UI hooks for unassigned"
 After completion, the Campaign Show can surface an "Unassigned registrants"
 table (name, matriculation, top preferences) with actions to place users into
