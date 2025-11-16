@@ -1,4 +1,4 @@
-$(document).ready(function () {
+function handleComplectionMessagesChanges() {
   const completionSaveButton = $("#completion-message-save-button");
   const changesWarningDiv = $("#unsaved-changes-warning");
   const trixEditor = document.querySelector("trix-editor");
@@ -9,4 +9,8 @@ $(document).ready(function () {
     completionSaveButton.removeClass("d-none");
     changesWarningDiv.removeClass("d-none");
   });
+}
+
+$(document).on("turbo:load", function () {
+  handleComplectionMessagesChanges();
 });

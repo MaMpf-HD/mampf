@@ -1,9 +1,8 @@
 <%= form_with(
-    model: @info_slide,
+    model: info_slide,
     local: true,
-    url: @info_slide.new_record? ? questionnaire_info_slides_path(@questionnaire) : questionnaire_info_slide_path(@questionnaire, @info_slide),
-    id: "info-slide-form"
-    ) do |form| %>
+    class: "info-slide-form",
+    url: info_slide.new_record? ? questionnaire_info_slides_path(@questionnaire) : questionnaire_info_slide_path(@questionnaire, info_slide)) do |form| %>
 
   <div class="form-floating mb-3">
     <%= form.text_field :title, class: 'form-control',
@@ -36,16 +35,16 @@
 
   <div class="d-flex justify-content-end align-items-center mt-3">
     <div class="me-auto">
-      <%= form.submit @info_slide.new_record? ? t("vignettes.create_info_slide") : t("vignettes.update_info_slide"),
+      <%= form.submit info_slide.new_record? ? t("vignettes.create_info_slide") : t("vignettes.update_info_slide"),
           class: "btn btn-primary slide-submit-btn d-none" %>
     </div>
 
-    <% unless @info_slide.new_record? %>
+    <% unless info_slide.new_record? %>
     <button type="button" 
             class="btn btn-danger" 
-            data-bs-toggle="<%= @info_slide.questionnaire.editable ? 'modal' : '' %>" 
-            data-bs-target="#deleteModal<%= @info_slide.id %>"
-            <%= 'disabled' unless @info_slide.questionnaire.editable %>>
+            data-bs-toggle="<%= info_slide.questionnaire.editable ? 'modal' : '' %>" 
+            data-bs-target="#deleteModal<%= info_slide.id %>"
+            <%= 'disabled' unless info_slide.questionnaire.editable %>>
       <%= t("vignettes.delete_slide") %>
     </button>
     <% end %>
@@ -53,8 +52,9 @@
 <% end %>
 
 <!-- Delete Confirmation Modal -->
-<% unless @info_slide.new_record? %>
-  <div class="modal fade" id="deleteModal<%= @info_slide.id %>" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<% unless info_slide.new_record? %>
+  <div class="modal fade" id="deleteModal<%= info_slide.id %>" tabindex="-1"
+       aria-labelledby="deleteModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
         <div class="modal-header">
@@ -67,9 +67,10 @@
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= t("buttons.cancel") %></button>
           <%= button_to "Delete Info Slide", 
-                questionnaire_info_slide_path(@questionnaire, @info_slide),
+                questionnaire_info_slide_path(@questionnaire, info_slide),
                 method: :delete,
-                class: "btn btn-danger"
+                class: "btn btn-danger",
+                data: { "bs-dismiss": "modal" }
           %>
         </div>
       </div>
