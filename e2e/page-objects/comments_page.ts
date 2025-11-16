@@ -4,9 +4,9 @@ export class MediumCommentsPage {
   readonly page: Page;
   readonly link: string;
 
-  constructor(page: Page, id: number) {
+  constructor(page: Page, mediumId: number) {
     this.page = page;
-    this.link = `/media/${id}/show_comments`;
+    this.link = `/media/${mediumId}/show_comments`;
   }
 
   async goto() {

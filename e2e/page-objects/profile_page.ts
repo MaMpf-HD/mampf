@@ -9,6 +9,10 @@ export class ProfilePage {
   }
 
   async goto() {
-    await this.page.goto(this.link);
+    await this.page.goto(this.link, { waitUntil: "domcontentloaded" });
+  }
+
+  async save() {
+    await this.page.getByRole("button", { name: "save your changes" }).click();
   }
 }

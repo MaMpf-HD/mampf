@@ -7,7 +7,10 @@
 
 import { expect, test } from "./_support/fixtures";
 import { MediumCommentsPage } from "./page-objects/comments_page";
+import { LecturePage } from "./page-objects/lecture_page";
 import { ProfilePage } from "./page-objects/profile_page";
+import { SubmissionsPage } from "./page-objects/submissions_page";
+import { TutorialsPage } from "./page-objects/tutorials_page";
 
 test.describe("Account settings", () => {
   test("can change user name & reflects it in user comments",
@@ -37,6 +40,32 @@ test.describe("Account settings", () => {
       await expect(page.getByText(COMMENT)).toBeVisible();
     });
 
+  test("can change user name in tutorials & reflects it in submissions",
+    async ({ factory, student: { page, user }, tutor: { page: tutorPage, user: tutorUser } }) => {
+      const lecture = await factory.create("lecture", ["released_for_all", "with_sparse_toc"]);
+      await factory.create("assignment", [], { lecture_id: lecture.id });
+
+      const profilePage = new ProfilePage(page);
+      await profilePage.goto();
+      const originalNameInTutorials = user.name_in_tutorials;
+      await expect(page.getByRole("textbox", { name: "name in tutorials" })).toHaveValue(originalNameInTutorials);
+      const newName = "Voltaire";
+      await page.getByRole("textbox", { name: "name in tutorials" }).fill(newName);
+      await profilePage.save();
+
+      await factory.create("tutorial", ["with_tutor_by_id"],
+        { lecture_id: lecture.id, tutor_id: tutorUser.id });
+      await new LecturePage(page, lecture.id).subscribe();
+      const submissionsPage = new SubmissionsPage(page, lecture.id);
+      await submissionsPage.goto();
+      await submissionsPage.createSubmission();
+
+      const tutorialPage = new TutorialsPage(tutorPage, lecture.id);
+      await tutorialPage.goto();
+      await expect(tutorPage.getByText(newName)).toBeVisible();
+      await expect(tutorPage.getByText(originalNameInTutorials)).toHaveCount(0);
+      await expect(tutorPage.getByText(user.name)).toHaveCount(0);
+    });
 });
 
 test.describe("Module settings", () => {
