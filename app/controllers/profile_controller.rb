@@ -177,6 +177,8 @@ class ProfileController < ApplicationController
 
     # extracts all lecture ids from user params
     def lecture_ids
+      return [] if params[:user][:lecture].blank?
+
       params[:user][:lecture].select { |_k, v| v["subscribed"] == "1" }.keys.map(&:to_i)
     end
 

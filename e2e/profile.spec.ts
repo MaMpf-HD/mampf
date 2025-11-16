@@ -1,10 +1,3 @@
-/**
- * This is just a dummy test file to see how we can use Playwright.
- *
- * See also one bug due to which the browser closes immediately after launching:
- * https://github.com/microsoft/playwright/issues/27046#issuecomment-3493081155
- */
-
 import { expect, test } from "./_support/fixtures";
 import { MediumCommentsPage } from "./page-objects/comments_page";
 import { LecturePage } from "./page-objects/lecture_page";
@@ -32,9 +25,8 @@ test.describe("Account settings", () => {
 
       const newName = "Jean-Jacques Rousseau";
       await profilePage.goto();
-      await page.getByRole("textbox", { name: "display name" }).clear();
       await page.getByRole("textbox", { name: "display name" }).fill(newName);
-      await page.getByRole("button", { name: "save your changes" }).click();
+      await profilePage.save();
       await commentsPage.goto();
       await expect(page.getByText(newName)).toBeVisible();
       await expect(page.getByText(COMMENT)).toBeVisible();
@@ -60,19 +52,37 @@ test.describe("Account settings", () => {
       await submissionsPage.goto();
       await submissionsPage.createSubmission();
 
-      const tutorialPage = new TutorialsPage(tutorPage, lecture.id);
-      await tutorialPage.goto();
+      await new TutorialsPage(tutorPage, lecture.id).goto();
       await expect(tutorPage.getByText(newName)).toBeVisible();
       await expect(tutorPage.getByText(originalNameInTutorials)).toHaveCount(0);
       await expect(tutorPage.getByText(user.name)).toHaveCount(0);
+      // because user name was changed
+      await expect(tutorPage.getByText(user.name_in_tutorials)).toHaveCount(0);
     });
+
+  test("can switch the user language", async ({ student: { page } }) => {
+    const profilePage = new ProfilePage(page);
+    await profilePage.goto();
+
+    await expect(page.getByRole("radio", { name: "english" })).toBeChecked();
+    await expect(page.getByText("display name")).toBeVisible();
+    await expect(page.getByText("receive email")).toBeVisible();
+    await expect(page.getByText("want to see related")).toBeVisible();
+
+    await page.getByRole("radio", { name: "german" }).check();
+    await profilePage.save();
+    await expect(page.getByRole("radio", { name: "deutsch" })).toBeChecked();
+    await expect(page.getByText("anzeigename")).toBeVisible();
+    await expect(page.getByText("benachrichtigt")).toBeVisible();
+    await expect(page.getByText("möchte verknüpfte")).toBeVisible();
+  });
 });
 
 test.describe("Module settings", () => {
-
-test("only admins have admin icon in menu bar", async ({ student: { page: studentPage }, admin: { page: adminPage } }) => {
-  await studentPage.goto("/main/start");
-  await adminPage.goto("/main/start");
-  await expect(studentPage.getByTitle("administration")).toHaveCount(0);
-  await expect(adminPage.getByTitle("administration")).toBeVisible();
+  test("only admins have admin icon in menu bar", async ({ student: { page: studentPage }, admin: { page: adminPage } }) => {
+    await studentPage.goto("/main/start");
+    await adminPage.goto("/main/start");
+    await expect(studentPage.getByTitle("administration")).toHaveCount(0);
+    await expect(adminPage.getByTitle("administration")).toBeVisible();
+  });
 });

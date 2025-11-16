@@ -14,5 +14,7 @@ export class ProfilePage {
 
   async save() {
     await this.page.getByRole("button", { name: "save your changes" }).click();
+    // go back to profile page after redirect
+    await this.goto();
   }
 }
