@@ -1,5 +1,6 @@
 import { test as base, Page } from "@playwright/test";
 import { User, userPage } from "./auth";
+import { callBackend } from "./backend";
 import { FactoryBot } from "./factorybot";
 
 class UserFixture {
@@ -64,4 +65,13 @@ export const test = base.extend<MaMpfFixtures>({
     await use(new FactoryBot(page.request));
     await browserContext.close();
   },
+});
+
+test.beforeEach(async ({ browser }) => {
+  // Clean database before every test
+  // (brutal, but effective for good test isolation)
+  const browserContext = await browser.newContext();
+  const page = await browserContext.newPage();
+  await callBackend(page.request, "database_cleaner", {});
+  await browserContext.close();
 });
