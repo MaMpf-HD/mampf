@@ -141,7 +141,7 @@ jobs:
         working-directory: docker/development/
         run: >
           docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
-          run -t app-test bash -c "npx playwright test"
+          run app-test bash -c "npx playwright test"
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v5
