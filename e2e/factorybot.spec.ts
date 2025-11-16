@@ -5,7 +5,19 @@
 
 import { expect, test } from "./_support/fixtures";
 
-test("can create records and call instance methods", async ({ factory }) => {
+test("can create factories with traits and arguments", async ({ factory, tutor }) => {
+  const CONTENT_MODE = "playwright";
+  const lecture = await factory.createNoValidate("lecture", [], { content_mode: CONTENT_MODE });
+  expect(lecture.content_mode).toBe(CONTENT_MODE);
+
+  const lectureForAll = await factory.create("lecture", ["released_for_all", "with_sparse_toc"]);
+  const tutorial = await factory.create("tutorial", [], { lecture_id: lectureForAll.id });
+  expect(tutorial.lecture_id).toBe(lectureForAll.id);
+});
+
+test("can call instance methods", async ({ factory }) => {
+  // const tutorial = await factory.create("tutorial", [], { lecture_id: lectureForAll.id, tutor_ids: [tutor.user.id] });
+//
   const lecture = await factory.create("lecture", "with_sparse_toc", "released_for_all");
   const title = await lecture.__call("title");
   expect(title).toBeTruthy();
@@ -22,6 +34,6 @@ test("can call methods that need a user as parameter", async ({ factory, student
   expect(visibleForUser).toBe(true);
 
   const lectureNonReleased = await factory.create("lecture");
-  const notVisibleForUser = await lectureNonReleased.__call("visible_for_user?", student.user);
-  expect(notVisibleForUser).toBe(false);
+  const visibleForUserAgain = await lectureNonReleased.__call("visible_for_user?", student.user);
+  expect(visibleForUserAgain).toBe(false);
 });
