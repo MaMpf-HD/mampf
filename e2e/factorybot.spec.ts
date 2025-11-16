@@ -19,11 +19,9 @@ test("can call instance methods", async ({ factory, tutor, student }) => {
   const lecture = await factory.create("lecture", ["released_for_all"]);
   const title = await lecture.__call("title");
   expect(title).toBeTruthy();
-  console.log("Lecture title:", title);
 
   const compactTitle = await lecture.__call("compact_title");
   expect(compactTitle).toBeTruthy();
-  console.log("Compact title:", compactTitle);
 
   const tutorial = await factory.create("tutorial", [],
     { lecture_id: lecture.id, tutor_ids: [tutor.user.id, student.user.id] });
