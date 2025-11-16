@@ -92,7 +92,6 @@ test.describe("Module settings", () => {
       const profilePage = new ProfilePage(page);
       await profilePage.goto();
       await page.getByTestId("courses-accordion").getByRole("button").first().click();
-      await page.waitForTimeout(800);
       await expect(page.getByTestId("courses-accordion")).toContainText(divisionName);
       const courseButton = page.getByText(courseName);
       await courseButton.click();

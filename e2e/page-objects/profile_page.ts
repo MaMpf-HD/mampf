@@ -13,7 +13,12 @@ export class ProfilePage {
   }
 
   async save() {
+    const responsePromise = this.page.waitForResponse(response =>
+      response.url().includes("main/start"),
+    );
     await this.page.getByRole("button", { name: "save your changes" }).click();
+    await responsePromise;
+
     // go back to profile page after redirect
     await this.goto();
   }
