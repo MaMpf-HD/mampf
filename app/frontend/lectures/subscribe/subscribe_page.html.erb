@@ -52,7 +52,7 @@
                          "data-cy": "subscribe-to-lecture" %>
           <% end %>
         <% else %>
-          <%= link_to t("profile.subscribe_lecture"),
+          <%= button_to t("profile.subscribe_lecture"),
                       subscribe_lecture_path(params:
                                                { lecture:
                                                    { id: @lecture.id,

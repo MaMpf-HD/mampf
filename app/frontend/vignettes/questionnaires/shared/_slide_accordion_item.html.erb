@@ -1,70 +1,38 @@
+<%= turbo_frame_tag slide do %>
+
 <% info_prefix = slide.is_a?(Vignettes::InfoSlide) ? 'info-' : '' %>
 <% collapse_id = "#{info_prefix}slides-collapse-#{slide.id}" %>
-
-<% question_type = if slide.is_a?(Vignettes::InfoSlide)
-                      nil
-                   else
-                      case slide.question.type
-                      when 'Vignettes::TextQuestion'
-                        t('vignettes.question_types.text_area')
-                      when 'Vignettes::NumberQuestion'
-                        t('vignettes.question_types.number_field')
-                      when 'Vignettes::MultipleChoiceQuestion'
-                        t('vignettes.question_types.multiple_choice')
-                      when 'Vignettes::LikertScaleQuestion'
-                        t('vignettes.question_types.likert_scale')
-                      else
-                        t('vignettes.question_types.none')
-                      end
-                   end %>
+<% is_update_action = ["update", "create"].include?(controller.action_name) %>
 
 <div class="accordion-item">
+  <h2 class="accordion-header">
+    <button class="accordion-button <%= "collapsed" if not is_update_action %>" type="button"
+            data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
+            aria-expanded="false" aria-controls="<%= collapse_id %>">
+      <% if slide.is_a?(Vignettes::InfoSlide) %>
+        <span class="me-2 text-secondary">#<%= slide.id %></span>
+        <%= slide.title %>
+      <% else %>
+        <%= slide.title %>
+      <% end %>
+    </button>
+  </h2>
 
-    <h2 class="accordion-header">
-        <button class="accordion-button collapsed" type="button"
-                data-bs-toggle="collapse" data-bs-target="#<%= collapse_id %>"
-                aria-expanded="false" aria-controls="<%= collapse_id %>">
-            <% if slide.is_a?(Vignettes::InfoSlide) %>
-                <span class="me-2 text-secondary">#<%= slide.id %></span>
-                <%= slide.title %>
-            <% else %>
-                <%= slide.title %>
-            <% end %>
-        </button>
-    </h2>
+  <% collapse_class = slide.new_record? || is_update_action ? "show" : "collapse" %>
+  <div id="<%= collapse_id %>" 
+      data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
+      data-slide-id="<%= slide.id %>"
+      class="accordion-collapse <%= collapse_class %> vignette-accordion-collapse"
+      data-bs-parent="#<%= info_prefix %>slides">
 
-    <div id="<%= collapse_id %>"
-         data-is-info-slide="<%= slide.is_a?(Vignettes::InfoSlide) %>"
-         data-slide-id="<%= slide.id %>"
-         class="accordion-collapse collapse vignette-accordion-collapse"
-         data-bs-parent="#<%= info_prefix %>vignettes-slides-accordion">
-
-        <% unless slide.new_record? %>
-        <div id="<%= info_prefix %>vignette-slide-loading-<%= slide.id %>" 
-             class="d-flex justify-content-center mt-3 mb-3">
-            <div class="spinner-border text-secondary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-        <% end %>
-
-        <% if slide.id %>
-        <!-- Note that vignette-body-container is a class and not an ID -->
-        <!-- since it might occur multiple times: once at an info slide -->
-        <!-- and once at a "normal" slide -->
-        <div class="accordion-body slides-edit-form-container vignette-body-container-<%= slide.id %>">
-            <!-- The slide edit form will be dynamically loaded here -->
-        </div>
-        <% else %>
-        <div class="accordion-body">
-            <% if slide.is_a?(Vignettes::InfoSlide) %>
-              <%= render partial: "vignettes/info_slides/form/form" %>
-            <% else %>
-              <%= render partial: "vignettes/slides/form/form" %>
-            <% end %>
-        </div>
-        <% end %>
-
+    <div class="accordion-body">
+      <% if slide.is_a?(Vignettes::InfoSlide) %>
+        <%= render partial: "vignettes/info_slides/form/form", locals: { info_slide: slide } %>
+      <% else %>
+        <%= render partial: "vignettes/slides/form/form", locals: { slide: slide } %>
+      <% end %>
     </div>
-
+  </div>
 </div>
+
+<% end %>
