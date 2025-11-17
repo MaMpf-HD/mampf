@@ -30,7 +30,7 @@ module Registration
       when :prerequisite_campaign
         evaluate_prerequisite_campaign(user)
       else
-        { pass: true }
+        { pass: true, code: :ok }
       end
     end
 
@@ -41,7 +41,7 @@ module Registration
           (domain || "").strip.downcase
         end.reject(&:empty?)
 
-        return { pass: true } if domains.empty?
+        return { pass: true, code: :ok } if domains.empty?
 
         email = user.email.to_s.downcase
         allowed = domains.any? do |domain|
@@ -53,7 +53,7 @@ module Registration
 
       def evaluate_prerequisite_campaign(user)
         campaign_id = config&.fetch("prerequisite_campaign_id", nil)
-        return { pass: true } if campaign_id.blank?
+        return { pass: true, code: :ok } if campaign_id.blank?
 
         prereq_campaign = Registration::Campaign.find_by(id: campaign_id)
         return { pass: false, code: :prerequisite_campaign_not_found } unless prereq_campaign
