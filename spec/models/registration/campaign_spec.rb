@@ -90,4 +90,58 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.registration_policies.first.kind).to eq("institutional_email")
     end
   end
+
+  describe "#user_registered?" do
+    let(:campaign) { FactoryBot.create(:registration_campaign) }
+    let(:user) { FactoryBot.create(:user) }
+
+    it "returns false when user has no confirmed registration" do
+      FactoryBot.create(
+        :registration_user_registration,
+        registration_campaign: campaign,
+        user: user,
+        status: :pending
+      )
+
+      expect(campaign.user_registered?(user)).to be(false)
+    end
+
+    it "returns true when user has a confirmed registration" do
+      FactoryBot.create(
+        :registration_user_registration,
+        registration_campaign: campaign,
+        user: user,
+        status: :confirmed
+      )
+
+      expect(campaign.user_registered?(user)).to be(true)
+    end
+  end
+
+  describe "policy engine delegation" do
+    let(:campaign) { FactoryBot.create(:registration_campaign) }
+    let(:user) { FactoryBot.create(:user) }
+
+    it "delegates evaluate_policies_for to PolicyEngine and returns its result" do
+      engine = instance_double(Registration::PolicyEngine)
+      result = Registration::PolicyEngine::Result.new(
+        pass: true,
+        failed_policy: nil,
+        trace: []
+      )
+
+      allow(Registration::PolicyEngine).to receive(:new)
+        .with(campaign)
+        .and_return(engine)
+
+      allow(engine).to receive(:eligible?)
+        .with(user, phase: :registration)
+        .and_return(result)
+
+      returned = campaign.evaluate_policies_for(user, phase: :registration)
+
+      expect(returned).to eq(result)
+      expect(campaign.policies_satisfied?(user, phase: :registration)).to be(true)
+    end
+  end
 end

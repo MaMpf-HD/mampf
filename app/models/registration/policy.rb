@@ -58,13 +58,7 @@ module Registration
         prereq_campaign = Registration::Campaign.find_by(id: campaign_id)
         return { pass: false, code: :prerequisite_campaign_not_found } unless prereq_campaign
 
-        # For PR 2.2 we do not yet integrate with real rosters.
-        # Tests can stub this method or the call below.
-        registered = if prereq_campaign.respond_to?(:user_registered?)
-          prereq_campaign.user_registered?(user)
-        else
-          false
-        end
+        registered = prereq_campaign.user_registered?(user)
 
         { pass: registered, code: registered ? :ok : :prerequisite_not_met }
       end
