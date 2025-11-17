@@ -16,5 +16,57 @@ module Registration
     validates :position, uniqueness: { scope: :registration_campaign_id }
 
     acts_as_list scope: :registration_campaign
+
+    scope :active, -> { where(active: true) }
+
+    scope :for_phase, lambda { |phase|
+      where(phase: [phases[:both], phases[phase]])
+    }
+
+    def evaluate(user)
+      case kind.to_sym
+      when :institutional_email
+        evaluate_institutional_email(user)
+      when :prerequisite_campaign
+        evaluate_prerequisite_campaign(user)
+      else
+        { pass: true }
+      end
+    end
+
+    private
+
+      def evaluate_institutional_email(user)
+        domains = Array(config&.fetch("allowed_domains", nil)).map do |domain|
+          (domain || "").strip.downcase
+        end.reject(&:empty?)
+
+        return { pass: true } if domains.empty?
+
+        email = user.email.to_s.downcase
+        allowed = domains.any? do |domain|
+          email.end_with?("@#{domain}")
+        end
+
+        { pass: allowed, code: allowed ? :ok : :institutional_email_mismatch }
+      end
+
+      def evaluate_prerequisite_campaign(user)
+        campaign_id = config&.fetch("prerequisite_campaign_id", nil)
+        return { pass: true } if campaign_id.blank?
+
+        prereq_campaign = Registration::Campaign.find_by(id: campaign_id)
+        return { pass: false, code: :prerequisite_campaign_not_found } unless prereq_campaign
+
+        # For PR 2.2 we do not yet integrate with real rosters.
+        # Tests can stub this method or the call below.
+        registered = if prereq_campaign.respond_to?(:user_registered?)
+          prereq_campaign.user_registered?(user)
+        else
+          false
+        end
+
+        { pass: registered, code: registered ? :ok : :prerequisite_not_met }
+      end
   end
 end

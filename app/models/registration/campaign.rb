@@ -26,5 +26,13 @@ module Registration
                     completed: 3 }
 
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
+
+    def evaluate_policies_for(user, phase: :registration)
+      Registration::PolicyEngine.new(self).eligible?(user, phase: phase)
+    end
+
+    def policies_satisfied?(user, phase: :registration)
+      evaluate_policies_for(user, phase: phase).pass
+    end
   end
 end
