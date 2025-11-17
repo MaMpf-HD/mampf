@@ -11,16 +11,36 @@ module Registration
 
       policies_for_phase(phase).each do |policy|
         outcome = policy.evaluate(user)
-        trace << outcome
+        trace << {
+          policy_id: policy.id,
+          kind: policy.kind,
+          phase: policy.phase,
+          outcome: outcome
+        }
 
         unless outcome[:pass]
-          return Result.new(pass: false,
-                            failed_policy: policy,
-                            trace: trace)
+          return Result.new(
+            pass: false,
+            failed_policy: policy,
+            trace: trace
+          )
         end
       end
 
       Result.new(pass: true, failed_policy: nil, trace: trace)
+    end
+
+    def full_trace_for(user, phase: :registration)
+      policies_for_phase(phase).map do |policy|
+        outcome = policy.evaluate(user)
+
+        {
+          policy_id: policy.id,
+          kind: policy.kind,
+          phase: policy.phase,
+          outcome: outcome
+        }
+      end
     end
 
     private
