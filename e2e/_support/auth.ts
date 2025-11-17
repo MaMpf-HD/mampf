@@ -7,7 +7,7 @@ export type User = {
   email: string;
   password: string;
   name: string;
-  name_in_tutorials: string | null;
+  name_in_tutorials: string;
   created_at: string;
   updated_at: string;
   admin: boolean;
