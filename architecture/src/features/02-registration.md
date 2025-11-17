@@ -1090,15 +1090,9 @@ stateDiagram-v2
         Regular campaigns: run allocation, then finalize.
         Planning-only: close only, skip finalize (stays processing).
     end note
+```
 
-    draft --> archived : archive (planning-only)
-    processing --> archived : archive (planning-only alternative)
-
-    note right of archived
-        Planning-only campaigns can be archived
-        instead of completed (no materialization).
-    end note
-```## ERD
+## ERD
 
 ```mermaid
 erDiagram
