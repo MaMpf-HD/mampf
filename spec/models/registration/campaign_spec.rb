@@ -118,6 +118,9 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  # This example only verifies delegation to PolicyEngine; both methods
+  # evaluate_policies_for and policies_satisfied_for? are only thin wrappers.
+  # Engine behavior is already tested in the policy_engine spec.
   describe "policy engine delegation" do
     let(:campaign) { FactoryBot.create(:registration_campaign) }
     let(:user) { FactoryBot.create(:user) }
