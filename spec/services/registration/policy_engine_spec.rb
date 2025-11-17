@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe(Registration::PolicyEngine, type: :service) do
   describe "#eligible?" do
     let(:campaign) { FactoryBot.create(:registration_campaign) }
-    let(:user) { FactoryBot.create(:user) }
+    let(:user) { FactoryBot.create(:user, email: "student@uni.example") }
 
     it "returns pass: true when all policies pass" do
       policy1 = FactoryBot.create(
