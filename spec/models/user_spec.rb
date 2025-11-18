@@ -182,9 +182,9 @@ RSpec.describe(User, type: :model) do
     end
 
     it "can access campaigns through user_registrations" do
-      user_reg = FactoryBot.create(:registration_user_registration,
-                                   user: user,
-                                   registration_campaign: campaign)
+      FactoryBot.create(:registration_user_registration,
+                        user: user,
+                        registration_campaign: campaign)
 
       expect(user.registration_campaigns).to include(campaign)
     end
