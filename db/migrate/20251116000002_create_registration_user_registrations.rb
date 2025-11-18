@@ -7,7 +7,7 @@ class CreateRegistrationUserRegistrations < ActiveRecord::Migration[8.0]
                    index: true
       t.references :user, null: false, foreign_key: true, index: true
       t.references :registration_item,
-                   null: true,
+                   null: false,
                    foreign_key: true,
                    index: true
       t.integer :preference_rank

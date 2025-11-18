@@ -556,7 +556,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
   create_table "registration_user_registrations", force: :cascade do |t|
     t.bigint "registration_campaign_id", null: false
     t.bigint "user_id", null: false
-    t.bigint "registration_item_id"
+    t.bigint "registration_item_id", null: false
     t.integer "preference_rank"
     t.integer "status", default: 0, null: false
     t.datetime "created_at", null: false
