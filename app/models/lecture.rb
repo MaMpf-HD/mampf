@@ -1,6 +1,7 @@
 # Lecture class
 class Lecture < ApplicationRecord
   include ApplicationHelper
+  include Registration::Campaignable
 
   belongs_to :course
 
