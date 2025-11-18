@@ -1104,15 +1104,9 @@ stateDiagram-v2
         Regular campaigns: run allocation, then finalize.
         Planning-only: close only, skip finalize (stays processing).
     end note
+```
 
-    draft --> archived : archive (planning-only)
-    processing --> archived : archive (planning-only alternative)
-
-    note right of archived
-        Planning-only campaigns can be archived
-        instead of completed (no materialization).
-    end note
-```## ERD
+## ERD
 
 ```mermaid
 erDiagram
@@ -1123,6 +1117,36 @@ erDiagram
   USER ||--o{ "Registration::UserRegistration" : submits
   "Registration::Item" }o--|| REGISTERABLE : polymorphic
   "Registration::Campaign" }o--|| CAMPAIGNABLE : polymorphic
+```
+
+## Preference-Based State Diagram
+
+```mermaid
+stateDiagram-v2
+    [*] --> draft: Campaign created
+    draft --> open: Admin opens campaign
+    open --> processing: Admin closes OR deadline reached
+    processing --> completed: Admin finalizes
+    
+    note right of draft
+        Admin configures items,
+        policies, deadline
+    end note
+    
+    note right of open
+        Users submit preferences;
+        all status: pending
+    end note
+    
+    note right of processing
+        Registration closed;
+        run allocation solver
+    end note
+    
+    note right of completed
+        Allocation finalized;
+        rosters materialized
+    end note
 ```
 
 ## Sequence Diagram (Preference-Based Flow)
@@ -1172,7 +1196,118 @@ sequenceDiagram
     end
 ```
 
+## FCFS State Diagram
 
+```mermaid
+stateDiagram-v2
+    [*] --> draft: Campaign created
+    draft --> open: Admin opens campaign
+    open --> processing: Admin closes OR deadline reached
+    processing --> completed: Admin finalizes (optional)
+    
+    note right of draft
+        Admin configures items,
+        policies, deadline
+    end note
+    
+    note right of open
+        Users submit registrations;
+        immediate confirm/reject
+    end note
+    
+    note right of processing
+        Registration closed;
+        results visible
+    end note
+    
+    note right of completed
+        For planning-only:
+        skip finalize!
+        
+        For materialization:
+        finalize! applies to rosters
+    end note
+```
+
+## Sequence Diagram (FCFS Flow)
+
+This diagram shows the lifecycle for a first-come-first-serve campaign.
+
+```mermaid
+sequenceDiagram
+    actor Student
+    participant UI as Student UI
+    participant Controller as UserRegistrationsController
+    participant Campaign
+    participant Item
+    participant UserReg as UserRegistration
+    participant PolicyEngine
+    participant Roster as Domain Roster
+
+    rect rgb(235, 245, 255)
+    note over Student,PolicyEngine: Registration phase (campaign is open)
+    Student->>UI: Click "Register for Item X"
+    UI->>Controller: POST /campaigns/:id/user_registrations
+    
+    Controller->>Campaign: find(campaign_id)
+    Controller->>Campaign: open_for_registrations?
+    Campaign-->>Controller: true
+    
+    Controller->>Campaign: evaluate_policies_for(user, phase: :registration)
+    Campaign->>PolicyEngine: eligible?(user, phase: :registration)
+    PolicyEngine-->>Campaign: Result(pass: true/false, ...)
+    Campaign-->>Controller: Result
+    
+    alt policies fail
+        Controller-->>UI: Error: "Not eligible (reason)"
+        UI-->>Student: Show error message
+    else policies pass
+        Controller->>Item: find(item_id)
+        Controller->>Item: remaining_capacity
+        Item-->>Controller: capacity count
+        
+        alt capacity available
+            Controller->>UserReg: create!(status: :confirmed, ...)
+            UserReg-->>Controller: registration record
+            Controller-->>UI: Success
+            UI-->>Student: "Registered successfully"
+        else capacity exhausted
+            Controller->>UserReg: create!(status: :rejected, ...)
+            UserReg-->>Controller: registration record
+            Controller-->>UI: Info: "No capacity"
+            UI-->>Student: "Item full, registration rejected"
+        end
+    end
+    end
+    
+    note over Student,Roster: Later: Admin closes campaign
+    
+    rect rgb(255, 245, 235)
+    note over Student,Roster: View results (processing state)
+    Student->>UI: View results
+    UI->>Controller: GET /campaigns/:id
+    Controller->>Campaign: status
+    Campaign-->>Controller: :processing or :completed
+    Controller-->>UI: Show campaign with status
+    UI-->>Student: Display confirmed/rejected
+    end
+    
+    rect rgb(245, 255, 235)
+    note over Controller,Roster: Optional: Admin finalizes (materialization)
+    Controller->>Campaign: finalize!
+    Campaign->>Campaign: evaluate_policies_for(confirmed_users, phase: :finalization)
+    alt finalization policies fail
+        Campaign-->>Controller: Error (stays in :processing)
+    else finalization policies pass
+        Campaign->>Item: materialize_allocation!(confirmed_user_ids)
+        Item->>Roster: Update domain roster
+        Roster-->>Item: Done
+        Item-->>Campaign: Done
+        Campaign->>Campaign: update!(status: :completed)
+        Campaign-->>Controller: Success
+    end
+    end
+```
 
 ---
 
