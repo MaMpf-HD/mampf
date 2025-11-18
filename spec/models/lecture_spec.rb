@@ -243,6 +243,7 @@ RSpec.describe(Lecture, type: :model) do
       expect(campaign.campaignable).to eq(lecture)
     end
   end
+
   describe "Registration::Registerable" do
     subject { FactoryBot.create(:lecture) }
 
