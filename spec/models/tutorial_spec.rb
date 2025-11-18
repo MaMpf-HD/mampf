@@ -37,39 +37,8 @@ RSpec.describe(Tutorial, type: :model) do
   end
 
   describe "Registration::Registerable" do
-    let(:tutorial) { FactoryBot.create(:tutorial) }
-    let(:campaign) { FactoryBot.create(:registration_campaign) }
+    subject { FactoryBot.create(:tutorial) }
 
-    it "responds to capacity" do
-      expect(tutorial).to respond_to(:capacity)
-    end
-
-    it "responds to allocated_user_ids" do
-      expect(tutorial).to respond_to(:allocated_user_ids)
-    end
-
-    it "responds to materialize_allocation!" do
-      expect(tutorial).to respond_to(:materialize_allocation!)
-    end
-
-    it "raises NotImplementedError for capacity" do
-      expect do
-        tutorial.capacity
-      end.to raise_error(NotImplementedError, "Registerable must implement #capacity")
-    end
-
-    it "raises NotImplementedError for allocated_user_ids" do
-      expect do
-        tutorial.allocated_user_ids
-      end.to raise_error(NotImplementedError,
-                         "Registerable must implement #allocated_user_ids")
-    end
-
-    it "raises NotImplementedError for materialize_allocation!" do
-      expect do
-        tutorial.materialize_allocation!(user_ids: [1, 2], campaign: campaign)
-      end.to raise_error(NotImplementedError,
-                         "Registerable must implement #materialize_allocation!")
-    end
+    it_behaves_like "a registerable model"
   end
 end
