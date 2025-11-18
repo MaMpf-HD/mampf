@@ -164,4 +164,29 @@ RSpec.describe(User, type: :model) do
       end
     end
   end
+
+  describe "Registration associations" do
+    let(:user) { FactoryBot.create(:confirmed_user) }
+    let(:campaign) { FactoryBot.create(:registration_campaign) }
+
+    it "has many user_registrations" do
+      expect(user).to respond_to(:user_registrations)
+    end
+
+    it "has many registration_campaigns through user_registrations" do
+      expect(user).to respond_to(:registration_campaigns)
+    end
+
+    it "has many registration_items through user_registrations" do
+      expect(user).to respond_to(:registration_items)
+    end
+
+    it "can access campaigns through user_registrations" do
+      user_reg = FactoryBot.create(:registration_user_registration,
+                                   user: user,
+                                   registration_campaign: campaign)
+
+      expect(user.registration_campaigns).to include(campaign)
+    end
+  end
 end
