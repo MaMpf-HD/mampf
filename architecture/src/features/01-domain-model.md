@@ -94,9 +94,11 @@ These are the "glue" entities that connect the core domain models (User, Lecture
 
 1. **Tutorial Registration:** `Lecture` (campaignable) → creates `Registration::Campaign` → contains `Registration::Item` wrapping `Tutorial` (registerable) → students submit `Registration::UserRegistration`
 
-2. **Homework Grading:** `Assignment` (pointable) → linked to `Assessment::Assessment` → contains `Assessment::Task` → tutors record `Assessment::TaskPoint` → aggregated into `Assessment::Participation`
+2. **Exam Registration:** `Lecture` (campaignable) → creates `Registration::Campaign` → contains `Registration::Item` wrapping `Exam` (registerable) → students submit `Registration::UserRegistration` → policies check eligibility
 
-3. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `LecturePerformance::Service` aggregates points into `LecturePerformance::Record` → `LecturePerformance::Evaluator` generates proposals → teacher creates `LecturePerformance::Certification` → `Registration::Policy` (kind: lecture_performance) checks `Certification.status` when student attempts `Exam` registration
+3. **Homework Grading:** `Assignment` (pointable) → linked to `Assessment::Assessment` → contains `Assessment::Task` → tutors record `Assessment::TaskPoint` → aggregated into `Assessment::Participation`
+
+4. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `LecturePerformance::Service` aggregates points into `LecturePerformance::Record` → `LecturePerformance::Evaluator` generates proposals → teacher creates `LecturePerformance::Certification` → `Registration::Policy` (kind: lecture_performance) checks `Certification.status` when student attempts `Exam` registration via the lecture's exam campaign
 
 ## High-Level ERD (Simplified)
 
