@@ -63,7 +63,7 @@ The main fields and methods of `Registration::Campaign` are:
 
 | Name/Field                | Type/Kind         | Description                                                                                  |
 |---------------------------|-------------------|----------------------------------------------------------------------------------------------|
-| `campaignable_type`       | DB column         | Polymorphic type for the campaign host (e.g., Lecture, Exam)                              |
+| `campaignable_type`       | DB column         | Polymorphic type for the campaign host (e.g., Lecture)                                     |
 | `campaignable_id`         | DB column         | Polymorphic ID for the campaign host                                                         |
 | `title`                   | DB column         | Human-readable campaign title                                                                 |
 | `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_serve` or `preference_based`                            |
@@ -333,7 +333,7 @@ assigned to.
 - **For a "Tutorial Registration" campaign:** A `RegistrationItem` is created for each `Tutorial` (e.g., "Tutorial A (Mon 10:00)"). The `registerable` association points to the `Tutorial` record.
 - **For a "Talk Assignment" campaign:** A `RegistrationItem` is created for each `Talk` (e.g., "Talk: Machine Learning Advances"). The `registerable` association points to the `Talk` record.
 - **For a "Lecture Registration" campaign:** A `RegistrationItem` is created for the lecture itself. The `registerable` association points to the `Lecture` record. This will be useful mostly when the lecture is a seminar. `Lecture` then has a dual role: as campaignable and as registerable.
-- **For an "Exam Registration" campaign:** A `RegistrationItem` is created for the exam itself. The `registerable` association points to the `Exam` record. `Exam` then has a dual role: as campaignable and as registerable.
+- **For an "Exam Registration" campaign:** A `RegistrationItem` is created for the exam itself. The `registerable` association points to the `Exam` record. The campaign's `campaignable` is the parent `Lecture`. Each exam (Hauptklausur, Nachklausur, Wiederholungsklausur) gets its own campaign hosted by the lecture, with that exam as the sole registerable item.
 
 ```admonish warning "Registration::Item vs. Registration::Registerable"
 It's crucial to understand the difference between these two concepts:
