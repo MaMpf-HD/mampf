@@ -610,9 +610,6 @@ GEM
       docile (~> 1.1)
       simplecov-html (~> 0.11)
       simplecov_json_formatter (~> 0.1)
-    simplecov-cobertura (3.1.0)
-      rexml
-      simplecov (~> 0.19)
     simplecov-html (0.13.2)
     simplecov_json_formatter (0.1.4)
     sorbet-runtime (0.6.12780)
@@ -771,7 +768,6 @@ DEPENDENCIES
   sidekiq (~> 7.3)
   sidekiq-cron (~> 1.12)
   simplecov (~> 0.22)
-  simplecov-cobertura (~> 3.1)
   spring (~> 4.3)
   spring-watcher-listen (~> 2.0)
   sprockets-rails (~> 3.5)
