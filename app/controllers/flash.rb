@@ -39,7 +39,7 @@ module Flash
       end
       format.html do
         flash.keep[flash_type] = message
-        redirect_back(fallback_location: fallback_location)
+        redirect_back_or_to(fallback_location)
       end
     end
   end
