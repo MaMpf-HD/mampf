@@ -869,6 +869,11 @@ Rails.application.routes.draw do
 
   resources :watchlist_entries
 
+  # registration routes
+  scope module: "registration", path: "" do
+    resources :user_registrations, only: [:show], path: "registration"
+  end
+
   # main routes
 
   # Ruby set root based on whether user is authenticated or not
