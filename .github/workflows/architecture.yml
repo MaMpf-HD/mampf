@@ -33,6 +33,10 @@ jobs:
       - name: Install mdBook (and deps)
         run: . "$HOME/.cargo/env" && cargo binstall mdbook mdbook-mermaid mdbook-admonish mdbook-pagetoc --no-confirm --force
 
+      - name: Install mdbook-admonish assets
+        working-directory: ./architecture/
+        run: . "$HOME/.cargo/env" && mdbook-admonish install
+
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
