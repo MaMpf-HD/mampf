@@ -92,4 +92,5 @@ group :development, :test do
   gem "rspec-github", "~> 2.4"
   gem "rspec-rails", "~> 6.1"
   gem "ruby-lsp-rspec", "~> 0.1.28", require: false
+  gem "simplecov-cobertura", "~> 3.1"
 end
