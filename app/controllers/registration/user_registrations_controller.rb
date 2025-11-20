@@ -1,12 +1,34 @@
 module Registration
   class UserRegistrationsController < ApplicationController
+    # This class handles student registrations for registration campaigns.
+    # Although its name is UserRegistrations, but isn’t just CRUD for UserRegistration.
+    # It’s orchestrating the entire registration process
+    #
+    # In FCFS mode, students register item by item 
+    # -> create action per item registration + destroy action for deregistration
+    # In preference-based mode, students register by batch
+    # -> update action for batch registration + deregistration
+
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
+
+    def show
+      @registration_campaign = Campaign.find(params[:campaign_id])
+      @eligibility = @registration_campaign.evaluate_policies_for(current_user,
+                                                                  phase: :certification)
+      @items = @registration_campaign.registration_items.includes(:user_registrations)
+
+      if @registration_campaign.allocation_mode == Campaign.allocation_modes[:preference_based]
+        render :show_preference_based
+      else
+        render :show_first_come_first_serve
+      end
+    end
 
     def create
       campaign = Campaign.find(params[:campaign_id])
       item = Item.find(params[:item_id])
-
       allocation_mode = campaign.allocation_mode
+
       if allocation_mode == Campaign.allocation_modes[:preference_based]
         raise(NotImplementedError, "Preference-based allocation is not implemented yet")
       else
@@ -14,14 +36,10 @@ module Registration
       end
     end
 
-    def update
-      # Update registration logic goes here
-    end
-
     def destroy
-      user_registration = UserRegistration.find(id)
+      user_registration = UserRegistration.find(params[:id])
       user_registration.destroy
-      render json: { message: "Registration cancelled successfully" }, status: :ok
+      # -> update status and then update action
     end
 
     def render_not_found(exception)
@@ -31,20 +49,14 @@ module Registration
     private
 
       def register_user_for_first_come_first_serve(campaign, item)
-        # Same campaign, same user -> only 1 registration, regardless of item
-        user_registered = check_user_register_selected_campaign_fcfs(campaign, current_user)
-        if user_registered
-          render json: { error: "User has already registered for this campaign" }, 
-                 status: :unprocessable_entity
-          return
-        end
+        @user_registered = check_user_register_selected_campaign_fcfs(campaign, current_user)
+        # if user_registered -> error
 
-        # only register if item has remaining capacity
-        unless check_item_remaining_capacity(item)
-          render json: { error: "Selected item has no remaining capacity" }, 
-                 status: :unprocessable_entity
-          return
-        end
+        @slot_availbled = check_item_remaining_capacity(item)
+        # if !slot_available -> error
+
+        @policies_satisfied = campaign.policies_satisfied?(current_user, phase: :registration)
+        #if !policies_satisfied -> error
 
         @user_registration = UserRegistration.new(
           registration_campaign_id: campaign.id,
