@@ -13,11 +13,8 @@ RSpec.shared_examples("a registerable model") do
     expect(subject).to respond_to(:materialize_allocation!)
   end
 
-  it "raises NotImplementedError for capacity" do
-    expect do
-      subject.capacity
-    end.to raise_error(NotImplementedError,
-                       "Registerable must implement #capacity")
+  it "has nil capacity by default" do
+    expect(subject.capacity).to be_nil
   end
 
   it "raises NotImplementedError for allocated_user_ids" do

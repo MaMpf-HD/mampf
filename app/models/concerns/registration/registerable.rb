@@ -2,9 +2,10 @@ module Registration
   module Registerable
     extend ActiveSupport::Concern
 
-    def capacity
-      raise(NotImplementedError, "Registerable must implement #capacity")
-    end
+    # Models including this concern must:
+    # - Have a `capacity` integer column (nullable: nil = infinite capacity)
+    # - Implement #allocated_user_ids (returns array of user IDs)
+    # - Implement #materialize_allocation!(user_ids:, campaign:)
 
     def allocated_user_ids
       raise(NotImplementedError, "Registerable must implement #allocated_user_ids")
