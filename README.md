@@ -104,7 +104,7 @@ MaMpf is a **Ruby on Rails** application with a **PostgreSQL** database. For our
 
 MaMpf is actively developed & maintained. If you are interested in using MaMpf at your university, get [in touch](mailto:mampf@mathi.uni-heidelberg.de). But please note that we're a very small team and can't provide support for setting up your own instance of MaMpf at the moment.
 
-If you want to develop MaMpf, checkout our [Contribution guide](./CONTRIBUTING.md) (for external users that are not employed through the MaMpf team) and the [Setup Wiki](https://github.com/MaMpf-HD/mampf/wiki/Setup) (we make use of Dev Containers).
+If you want to develop MaMpf, check out our [Contribution guide](./CONTRIBUTING.md) (for external users that are not employed through the MaMpf team) and the [Setup Wiki](https://github.com/MaMpf-HD/mampf/wiki/Setup) (we make use of Dev Containers).
 
 <a href="https://mampf.mathi.uni-heidelberg.de/">
   <img src="https://github.com/user-attachments/assets/35268bae-a7d4-4a7b-b81a-3fd5aed5fe71"
