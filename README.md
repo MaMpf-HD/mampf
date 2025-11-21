@@ -20,6 +20,7 @@
   </div>
 </div>
 
+
 ## 💡 About / Motivation
 
 MaMpf is an innovative open source e-learning platform for the mathematical sciences developed at the [Institute for Mathematics at Heidelberg University](https://www.math.uni-heidelberg.de/en). It's actively used in teaching and learning; you can [register for free here](https://mampf.mathi.uni-heidelberg.de/) (no student email required). Our platform is fully available in English & German.
@@ -40,7 +41,7 @@ This is just a brief overview of the feature set. You may think of MaMpf as a mi
 
 ## 📷 Screenshots
 
-To give you a closer look, here are some **screenshots** taken from our live system:
+To give you a closer look, here are some **screenshots** taken from our live system (those screenshots typically get outdated quickly as MaMpf is actively developed):
 
 <details>
   <summary>Video player</summary>
@@ -97,24 +98,13 @@ To give you a closer look, here are some **screenshots** taken from our live sys
 </details>
 
 
-
-
-
-## 💻 Installation
+## 💻 Development
 
 MaMpf is a **Ruby on Rails** application with a **PostgreSQL** database. For our frontend styling, we rely on **Bootstrap**. Our [website](https://mampf.mathi.uni-heidelberg.de/) is hosted on a server at Heidelberg University. We use docker (compose) for development and deployment.
 
-MaMpf is actively developed & maintained. If you are interested in using MaMpf at your university, please get [in touch](mailto:mampf@mathi.uni-heidelberg.de). But please note that we're a very small team and can't provide support for setting up your own instance of MaMpf at the moment. Our [installation guide](./INSTALL.md) should be a good starting point. We have to admit, though, that getting your own instance up and running might involve quite some effort including setting up a mail server, the database, SSL certificates, an nginx web server / proxy, deploying the Ruby on Rails application, and more.
+MaMpf is actively developed & maintained. If you are interested in using MaMpf at your university, get [in touch](mailto:mampf@mathi.uni-heidelberg.de). But please note that we're a very small team and can't provide support for setting up your own instance of MaMpf at the moment.
 
-To clone the source code and build MaMpf locally with `docker compose`, run these commands:
-
-```bash
-git clone -b main --recursive https://github.com/MaMpf-HD/mampf.git
-cd mampf/docker/development/
-docker compose up -d
-```
-
-See the full installation guide [here](./INSTALL.md). There you will also find out how to init your local database with some sample data.
+If you want to develop MaMpf, checkout our [Contribution guide](./CONTRIBUTING.md) (for external users that are not employed through the MaMpf team) and the [Setup Wiki](https://github.com/MaMpf-HD/mampf/wiki/Setup) (we make use of Dev Containers).
 
 <a href="https://mampf.mathi.uni-heidelberg.de/">
   <img src="https://github.com/user-attachments/assets/35268bae-a7d4-4a7b-b81a-3fd5aed5fe71"
