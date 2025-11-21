@@ -11,22 +11,49 @@ module Registration
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
 
-    def show
-      render template: "registration/student/show", layout: "application"
+    def index
+      render template: "registration/student/index", layout: "application"
     end
 
-    def show_2
-      @registration_campaign = Campaign.find(params[:campaign_id])
+    def random_campaign
+      campaign1 = Campaign.new(
+        title: "Lecture Enrollment",
+        campaignable_type: "Lecture",
+        allocation_mode: 0,
+        campaignable_id: 1,
+        status: 1,
+        registration_deadline: 7.days.from_now
+      )
+      campaign1.save!
+      item = Item.new(
+        registration_campaign_id: campaign1.id,
+        registerable_type: "Lecture",
+        registerable_id: 1
+      )
+      item.save!
+    end
+
+    def show
+      @registration_campaign = Campaign.find(params[:id])
+      if @registration_campaign.campaignable_type == "Lecture"
+        show_campaign_host_by_lecture
+      elsif @registration_campaign.campaignable_type == "Exam"
+        show_campaign_host_by_exam
+      else
+        raise(NotImplementedError, "Unsupported campaignable_type")
+      end
+    end
+
+    def show_campaign_host_by_lecture
       @eligibility = @registration_campaign.evaluate_policies_for(current_user,
                                                                   phase: :certification)
       @items = @registration_campaign.registration_items.includes(:user_registrations)
       @campaignable_host = get_campaignable_host(@registration_campaign)
+      render template: "registration/student/show", layout: "application"
+    end
 
-      if @registration_campaign.allocation_mode == Campaign.allocation_modes[:preference_based]
-        # render :show_preference_based
-      else
-        render :show_first_come_first_serve
-      end
+    def show_campaign_host_by_exam
+      raise(NotImplementedError, "Exam campaignable_type not supported yet")
     end
 
     def create
@@ -41,6 +68,25 @@ module Registration
       register_user_for_first_come_first_serve(campaign, item)
     end
 
+    def register_user_for_first_come_first_serve(campaign, item)
+      @user_registered = check_user_register_selected_campaign_fcfs(campaign, current_user)
+      # if user_registered -> error
+
+      @slot_availbled = check_item_remaining_capacity(item)
+      # if !slot_available -> error
+
+      @policies_satisfied = campaign.policies_satisfied?(current_user, phase: :registration)
+      # if !policies_satisfied -> error
+
+      @user_registration = UserRegistration.new(
+        registration_campaign_id: campaign.id,
+        registration_item_id: item.id,
+        user_id: current_user.id,
+        status: :confirmed
+      )
+      @user_registration.save
+    end
+
     def destroy
       user_registration = UserRegistration.find(params[:id])
       user_registration.destroy
@@ -52,25 +98,6 @@ module Registration
     end
 
     private
-
-      def register_user_for_first_come_first_serve(campaign, item)
-        @user_registered = check_user_register_selected_campaign_fcfs(campaign, current_user)
-        # if user_registered -> error
-
-        @slot_availbled = check_item_remaining_capacity(item)
-        # if !slot_available -> error
-
-        @policies_satisfied = campaign.policies_satisfied?(current_user, phase: :registration)
-        # if !policies_satisfied -> error
-
-        @user_registration = UserRegistration.new(
-          registration_campaign_id: campaign.id,
-          registration_item_id: item.id,
-          user_id: current_user.id,
-          status: :confirmed
-        )
-        @user_registration.save
-      end
 
       def check_user_register_selected_campaign_fcfs(campaign, user)
         exist_regist = UserRegistration.find_by(registration_campaign_id: campaign.id,
@@ -87,7 +114,13 @@ module Registration
 
       def get_campaignable_host(campaign)
         host = campaign.campaignable
-        CampaignablePORO.new(id: host.id, title: host.title)
+        Registration::CampaignablePoro.new(
+          id: host.id,
+          title: host.course.title,
+          term_year: host.term.year,
+          term_season: host.term.season,
+          course_short_title: host.course.short_title
+        )
       end
   end
 end

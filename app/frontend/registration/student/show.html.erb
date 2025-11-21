@@ -4,34 +4,22 @@
       <li class="breadcrumb-item">
         <a href="./student_registration_index_tabs.html">Registrations</a></li>
       <li class="breadcrumb-item active" aria-current="page">
-        registration_campaign.title (Seminar)</li>
+        <%= @registration_campaign.title %> (<%= @registration_campaign.campaignable_type %>)</li>
     </ol>
   </nav>
 
-  <div class="d-flex justify-content-between align-items-start mb-3">
-    <div>
-      <h1 class="h4 mb-1">Formal Math (Seminar) – Seminar Enrollment 
-        <span class="badge text-bg-primary">Open</span>
-      </h1>
-      <div class="text-muted small">WS 2025/26 · Course code: FM-Sem
-      </div>
-    </div>
-    <div class="text-end">
-      <div class="text-muted small mb-1">Campaign: Main registration</div>
-      <span class="badge text-bg-danger">Closes: Oct 19, 12:00</span>
-    </div>
-  </div>
+  <%= render partial:'registration/student/campaign_info', campaignable_host: @campaignable_host, registration_campaign: @registration_campaign%>
 
   <div class="row g-3">
       <div class="col-12 col-lg-4">
         <div class="card h-100">
-          <%= render 'eligibility' %>
+          <%= render partial:'registration/student/eligibility' %>
         </div>
       </div>
 
       <div class="col-12 col-lg-8">
         <div class="card h-100">
-          <%= render 'select_fcfs_single' %>
+          <%= render partial:'registration/student/select_fcfs_single' %>
         </div>
       </div>
     </div>

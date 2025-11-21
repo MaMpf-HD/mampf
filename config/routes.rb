@@ -871,7 +871,11 @@ Rails.application.routes.draw do
 
   # registration routes
   scope module: "registration", path: "" do
-    resources :user_registrations, only: [:show], path: "registration"
+    resources :user_registrations, only: [:index, :show], path: "registration" do
+      collection do
+        post :random_campaign
+      end
+    end
   end
 
   # main routes
