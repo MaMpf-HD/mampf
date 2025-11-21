@@ -109,8 +109,7 @@ class VouchersController < ApplicationController
       error_message = I18n.t("controllers.no_voucher")
       respond_to do |format|
         format.html do
-          redirect_back(alert: error_message,
-                        fallback_location: root_path)
+          redirect_back_or_to(root_path, alert: error_message)
         end
         format.js do
           render "error",
