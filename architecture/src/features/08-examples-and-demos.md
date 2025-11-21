@@ -149,6 +149,28 @@ service.compute_and_upsert_all_records!
 
 puts "\nPerformance records computed for #{lecture_students.size} students"
 
+# --- Phase 8: Exam Registration ---
+# Create an exam belonging to the lecture
+exam = FactoryBot.create(:exam,
+  lecture: lecture,
+  title: "Hauptklausur",
+  date: 4.weeks.from_now,
+  capacity: 100
+)
+
+# The lecture (campaignable) hosts the exam registration campaign
+exam_campaign = lecture.registration_campaigns.create!(
+  title: "Hauptklausur Registration",
+  allocation_mode: :first_come_first_serve,
+  registration_deadline: 2.weeks.from_now,
+  status: :open
+)
+
+# The exam is the sole registerable item
+exam_campaign.registration_items.create!(registerable: exam)
+
+puts "\nExam campaign created: #{exam_campaign.title} (deadline: #{exam_campaign.registration_deadline})"
+
 # --- Phase 8: Teacher Certification ---
 # Generate eligibility proposals using the Evaluator
 evaluator = LecturePerformance::Evaluator.new(rule)
@@ -192,16 +214,17 @@ if failed_cert
 end
 
 # --- Phase 9: Exam Registration Campaign ---
-# Create exam first
+# Create exam belonging to the lecture
 exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
 
-# Create registration campaign
+# The lecture (campaignable) hosts the exam registration campaign
 exam_campaign = Registration::Campaign.create!(
-  campaignable: exam,
-  title: "Final Exam Registration",
+  campaignable: lecture,
+  title: "Hauptklausur Registration",
   allocation_mode: :first_come_first_serve,
   registration_deadline: 2.weeks.from_now
 )
+# The exam is the sole registerable item
 exam_item = exam_campaign.registration_items.create!(registerable: exam)
 
 # Add policies: lecture performance + institutional email

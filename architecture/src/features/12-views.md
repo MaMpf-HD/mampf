@@ -109,6 +109,8 @@ Yellow underlined rows in tables visualize an inline edit state of the
 preceding white row. Mockups may show both side-by-side to illustrate
 the edit UI; in the real UI, only one would be visible at a time.
 
+For a complete index of all mockups organized by feature area, see
+[Mockups Index](mockups-index.md).
 ```
 
 ## Registration Screens
