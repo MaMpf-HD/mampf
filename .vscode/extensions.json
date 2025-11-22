@@ -16,7 +16,6 @@
         "timonwong.shellcheck",
         "github.copilot",
         "github.vscode-pull-request-github",
-        "ms-playwright.playwright",
-        "emeraldwalk.runonsave"
+        "ms-playwright.playwright"
     ]
 }

@@ -41,16 +41,6 @@
         "editor.indentSize": 2,
         "editor.tabSize": 2,
     },
-    "emeraldwalk.runonsave": {
-        "autoClearConsole": true,
-        "commands": [
-            {
-                "match": "\\.(html|text|js).erb$",
-                "cmd": "just lint erb ${file}",
-                "isAsync": true
-            }
-        ]
-    },
     //////////////////////////////////////
     // Ruby (RuboCop)
     //////////////////////////////////////
