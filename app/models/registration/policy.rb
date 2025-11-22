@@ -79,7 +79,7 @@ module Registration
                              "Prerequisite campaign missing")
         end
 
-        if prereq_campaign.user_confirmed?(user)
+        if prereq_campaign.user_registration_confirmed?(user)
           pass_result(:prerequisite_met)
         else
           fail_result(:prerequisite_not_met,

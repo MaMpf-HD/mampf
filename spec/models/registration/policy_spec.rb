@@ -40,7 +40,7 @@ RSpec.describe(Registration::Policy, type: :model) do
         result = policy.evaluate(user)
 
         expect(result[:pass]).to be(true)
-        expect(result[:code]).to eq(:ok)
+        expect(result[:code]).to eq(:domain_ok)
       end
 
       it "fails institutional_email when domain is not allowed" do
@@ -69,7 +69,7 @@ RSpec.describe(Registration::Policy, type: :model) do
         result = policy.evaluate(user)
 
         expect(result[:pass]).to be(true)
-        expect(result[:code]).to eq(:ok)
+        expect(result[:code]).to eq(:prerequisite_met)
       end
 
       it "fails prerequisite_campaign when user_registration_confirmed? returns false" do
@@ -101,6 +101,39 @@ RSpec.describe(Registration::Policy, type: :model) do
 
         expect(result[:pass]).to be(false)
         expect(result[:code]).to eq(:prerequisite_campaign_not_found)
+      end
+
+      it "fails institutional_email when config is missing" do
+        policy = FactoryBot.build(
+          :registration_policy,
+          :institutional_email,
+          config: {}
+        )
+
+        result = policy.evaluate(user)
+
+        expect(result[:pass]).to be(false)
+        expect(result[:code]).to eq(:configuration_error)
+      end
+
+      it "fails prerequisite_campaign when config is missing" do
+        policy = FactoryBot.build(
+          :registration_policy,
+          :prerequisite_campaign,
+          config: {}
+        )
+
+        result = policy.evaluate(user)
+
+        expect(result[:pass]).to be(false)
+        expect(result[:code]).to eq(:configuration_error)
+      end
+
+      it "raises error for unknown policy kind" do
+        policy = FactoryBot.build(:registration_policy)
+        allow(policy).to receive(:kind).and_return("unknown_kind")
+
+        expect { policy.evaluate(user) }.to raise_error(ArgumentError, /Unknown policy kind/)
       end
     end
   end
