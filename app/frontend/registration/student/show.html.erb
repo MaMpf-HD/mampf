@@ -4,48 +4,41 @@
       <li class="breadcrumb-item">
         <a href="./student_registration_index_tabs.html">Registrations</a></li>
       <li class="breadcrumb-item active" aria-current="page">
-        <%= @registration_campaign.title %> (<%= @registration_campaign.campaignable_type %>)</li>
+      <%= @campaign.title %> (<%= @campaign.campaignable_type %>)</li>
     </ol>
   </nav>
 
   <%= render partial:'registration/student/campaign_info', 
-              campaignable_host: @campaignable_host, 
-              registration_campaign: @registration_campaign %>
+            locals: { campaignable_host: @campaignable_host, 
+                      campaign: @campaign }%>
 
   <div class="row g-3">
       <div class="col-12 col-lg-4">
         <div class="card h-100">
-          <%= render partial:'registration/student/eligibility' %>
+          <%= render partial:'registration/student/eligibility',
+                    locals: { eligibility: @eligibility}%>
         </div>
       </div>
 
       <div class="col-12 col-lg-8">
         <div class="card h-100">
-          <%= render partial:'registration/student/select_fcfs_single' %>
+          <% if @campaign.allocation_mode == 0 %>
+            <%= render partial:'registration/student/select_fcfs',
+                        locals: {campaign: @campaign,
+                                  campaignable_host: @campaignable_host
+                                  items: @items } %>
+          <% else %>
+            <%= render partial:'registration/student/select_preference',
+                        locals: {campaign: @campaign,
+                                  campaignable_host: @campaignable_host
+                                  items: @items } %>
+          <% end %>
         </div>
       </div>
     </div>
 
     <div class="card mt-3">
-      <div class="card-body">
-        <h2 class="h5">Details</h2>
-        
-        <ul class="list-group">
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <div class="fw-semibold">Mode</div>
-              <small class="text-muted">First-come, first-served</small>
-            </div>
-            <span class="badge rounded-pill text-bg-secondary">FCFS</span>
-          </li>
-          <li class="list-group-item d-flex justify-content-between align-items-center">
-            <div>
-              <div class="fw-semibold">Capacity</div>
-              <small class="text-muted">25 seats</small>
-            </div>
-            <span class="badge rounded-pill text-bg-info" id="capacityInfo">18/25 filled</span>
-          </li>
-        </ul>
-      </div>
+      <%= render partial:'registration/student/campaign_details',
+                  locals: { campaign: @campaign } %>
     </div>
   </div>

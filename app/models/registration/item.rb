@@ -14,5 +14,19 @@ module Registration
               uniqueness: {
                 scope: [:registration_campaign_id, :registerable_type]
               }
+
+    delegate :capacity, to: :registerable
+
+    def capacity_used
+      user_registrations.where(status: :confirmed).count
+    end
+
+    def capacity_remained
+      capacity - capacity_used
+    end
+
+    def still_have_capacity?
+      capacity_remained.positive?
+    end
   end
 end

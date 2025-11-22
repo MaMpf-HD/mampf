@@ -2,18 +2,36 @@
   <h2 class="h5">Your Eligibility</h2>
   
   <p class="mb-2 small text-muted">
-    Status: <span class="badge rounded-pill text-bg-success">Eligible</span>
+    <% pass = eligibility.all? {|policy| policy[:outcome][:pass] } %>
+    Status: 
+    <% if pass %>
+      <span class="badge rounded-pill text-bg-success">Eligible</span>
+    <% else %>
+      <span class="badge rounded-pill text-bg-warning">Not eligible</span>
+    <% end %>
   </p>
   
   <ul class="list-group list-group-flush">
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      <div>
-        <div class="fw-semibold">Institutional email</div>
-        <small class="text-muted">uni.edu</small>
-      </div>
-      <span class="badge rounded-pill text-bg-success">
-        Passed
-      </span>
-    </li>
+    <% eligibility.each do |policy| %>
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+
+        <div>
+          <div class="fw-semibold"> <%= policy.kind.humanize %> </div>
+          <% policy_info = get_policy_config_info(policy) %>
+          <% if get_details_render_type_policy(policy.kind) == 'link'%>
+            <!-- TODO: update link here -->
+            <%= link_to "Prerequisite Campaign ##{policy_info.info}", user_registrations_path(policy_info.id) %> 
+          <% else %>
+            <small class="text-muted"> <%= policy_info %> </small>
+          <% end %>
+        </div>
+
+        <% if policy[:outcome][:pass]%>
+          <span class="badge rounded-pill text-bg-success">Passed</span>
+        <% else %>
+          <span class="badge rounded-pill text-bg-danger">Failed</span>
+        <% end %>
+      </li>
+    <% end %>
   </ul>
 </div>

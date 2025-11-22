@@ -35,6 +35,10 @@ module Registration
       evaluate_policies_for(user, phase: phase).pass
     end
 
+    def evaluate_full_trace_for(user, phase: :registration)
+      Registration::PolicyEngine.new(self).full_trace_for(user, phase: phase)
+    end
+
     def user_registered?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end

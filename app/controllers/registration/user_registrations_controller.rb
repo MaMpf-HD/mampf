@@ -1,12 +1,13 @@
 module Registration
   class UserRegistrationsController < ApplicationController
     # This class handles student registrations for registration campaigns.
-    # Although its name is UserRegistrations, but isn’t just CRUD for UserRegistration.
-    # It’s orchestrating the entire registration process
+    # Although its name is UserRegistrations, but it isn’t just CRUD for UserRegistration model
+    # It orchestrates the entire registration process from student perspective.
     #
-    # In FCFS mode, students register item by item
+    # In FCFS mode, students register per item
     # -> create action per item registration + destroy action for deregistration
-    # In preference-based mode, students register by batch
+    #
+    # In preference-based mode, students register by batch of selected items
     # -> update action for batch registration + deregistration
 
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
@@ -25,19 +26,41 @@ module Registration
         registration_deadline: 7.days.from_now
       )
       campaign1.save!
-      item = Item.new(
+      item1 = Item.new(
         registration_campaign_id: campaign1.id,
         registerable_type: "Lecture",
         registerable_id: 1
       )
-      item.save!
+      item1.save!
+
+      campaign2 = Campaign.new(
+        title: "Tutorial Enrollment",
+        campaignable_type: "Lecture",
+        allocation_mode: 0,
+        campaignable_id: 1,
+        status: 1,
+        registration_deadline: 7.days.from_now
+      )
+      campaign2.save!
+      item21 = Item.new(
+        registration_campaign_id: campaign2.id,
+        registerable_type: "Tutorial",
+        registerable_id: 1
+      )
+      item21.save!
+      item22 = Item.new(
+        registration_campaign_id: campaign2.id,
+        registerable_type: "Tutorial",
+        registerable_id: 2
+      )
+      item22.save!
     end
 
     def show
-      @registration_campaign = Campaign.find(params[:id])
-      if @registration_campaign.campaignable_type == "Lecture"
+      @campaign = Campaign.find(params[:id])
+      if @campaign.campaignable_type == "Lecture"
         show_campaign_host_by_lecture
-      elsif @registration_campaign.campaignable_type == "Exam"
+      elsif @campaign.campaignable_type == "Exam"
         show_campaign_host_by_exam
       else
         raise(NotImplementedError, "Unsupported campaignable_type")
@@ -45,10 +68,9 @@ module Registration
     end
 
     def show_campaign_host_by_lecture
-      @eligibility = @registration_campaign.evaluate_policies_for(current_user,
-                                                                  phase: :certification)
-      @items = @registration_campaign.registration_items.includes(:user_registrations)
-      @campaignable_host = get_campaignable_host(@registration_campaign)
+      @eligibility = get_eligibility(@campaign)
+      @items = @campaign.registration_items.includes(:user_registrations)
+      @campaignable_host = get_campaignable_host(@campaign)
       render template: "registration/student/show", layout: "application"
     end
 
@@ -63,28 +85,33 @@ module Registration
 
       if allocation_mode == Campaign.allocation_modes[:preference_based]
         raise(NotImplementedError, "Preference-based allocation is not implemented yet")
+      else
+        register_user_for_first_come_first_serve(campaign, item)
       end
-
-      register_user_for_first_come_first_serve(campaign, item)
     end
 
     def register_user_for_first_come_first_serve(campaign, item)
-      @user_registered = check_user_register_selected_campaign_fcfs(campaign, current_user)
-      # if user_registered -> error
+      ActiveRecord::Base.transaction do
+        item.lock!
 
-      @slot_availbled = check_item_remaining_capacity(item)
-      # if !slot_available -> error
+        user_registered = user_has_confirmed_registration_selected_campaign(campaign, current_user)
+        # if user_registered -> error
 
-      @policies_satisfied = campaign.policies_satisfied?(current_user, phase: :registration)
-      # if !policies_satisfied -> error
+        slot_availbled = item.still_have_capacity?
+        # if !slot_available -> error
 
-      @user_registration = UserRegistration.new(
-        registration_campaign_id: campaign.id,
-        registration_item_id: item.id,
-        user_id: current_user.id,
-        status: :confirmed
-      )
-      @user_registration.save
+        #TODO: check policies and phase
+        policies_satisfied = campaign.policies_satisfied?(current_user, phase: :registration)
+        # if !policies_satisfied -> error
+
+        @user_registration = UserRegistration.new(
+          registration_campaign_id: campaign.id,
+          registration_item_id: item.id,
+          user_id: current_user.id,
+          status: :confirmed
+        )
+        @user_registration.save
+      end
     end
 
     def destroy
@@ -99,17 +126,10 @@ module Registration
 
     private
 
-      def check_user_register_selected_campaign_fcfs(campaign, user)
+      def user_has_confirmed_registration_selected_campaign(campaign, user)
         exist_regist = UserRegistration.find_by(registration_campaign_id: campaign.id,
                                                 user_id: user.id)
-        exist_regist.present?
-      end
-
-      def check_item_remaining_capacity(item)
-        total_capacity = item.capacity
-        confirmed_registrations_count = item.user_registrations.where(status: :confirmed).count
-        remaining_capacity = total_capacity - confirmed_registrations_count
-        remaining_capacity.positive?
+        exist_regist.present && exist_regist.status == UserRegistration.statuses[:confirmed]
       end
 
       def get_campaignable_host(campaign)
@@ -121,6 +141,22 @@ module Registration
           term_season: host.term.season,
           course_short_title: host.course.short_title
         )
+      end
+
+      # lecture_performance and institutional_email policies has cleared info in config
+      # optional: prerequisite_campaign can have additional check for name of prerequisite campaign
+      def get_eligibility(campaign, phase: :registration)
+        eligibility = campaign.full_trace_with_config_for(current_user, phase)
+        eligibility.each do |policy|
+          if policy.kind == "prerequisite_campaign"
+            prereq_campaign_id = policy.config[:prerequisite_campaign_id]
+            prereq_campaign = Campaign.find_by(id: prereq_campaign_id)
+            if (prereq_campaign)
+              policy.config["prerequisite_campaign_info"] = get_campaignable_host(prereq_campaign)
+            end
+          end
+        end
+        eligibility
       end
   end
 end

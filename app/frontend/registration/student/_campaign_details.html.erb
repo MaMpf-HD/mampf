@@ -1,0 +1,36 @@
+<div class="card-body">
+  <h2 class="h5">Details</h2>
+  
+  <ul class="list-group">
+
+    <!-- Allocation mode detail -->
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <div class="fw-semibold">Mode</div>
+        <% mode_info = get_mode_info(campaign[:allocation_mode]) %>
+        <small class="text-muted"><%= mode_info.mode_name %></small>
+      </div>
+      <span class="badge rounded-pill text-bg-secondary"><%= mode_info.abbr %></span>
+    </li>
+
+
+    <!-- Capacity detail -->
+    <% total_capacity = item.sum { |item| item[:capacity] }%>
+    <% total_capacity_used = item.sum { |item| item[:capacity_used] }%>
+    <% multi_items = item.size > 1%>
+
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <div class="fw-semibold">Capacity</div>
+        <small class="text-muted"><%= total_capacity %> seats</small>
+      </div>
+      <span class="badge rounded-pill text-bg-info" id="capacityInfo">
+        <%= total_capacity_used %>/<%= total_capacity %> filled 
+        <% if multi_items %>
+          accross group
+        <% end %>
+      </span>
+    </li>
+    
+  </ul>
+</div>
