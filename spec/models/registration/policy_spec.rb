@@ -56,8 +56,8 @@ RSpec.describe(Registration::Policy, type: :model) do
         expect(result[:code]).to eq(:institutional_email_mismatch)
       end
 
-      it "passes prerequisite_campaign when user_registered? returns true" do
-        campaign = instance_double(Registration::Campaign, user_registered?: true)
+      it "passes prerequisite_campaign when user_registration_confirmed? returns true" do
+        campaign = instance_double(Registration::Campaign, user_registration_confirmed?: true)
         allow(Registration::Campaign).to receive(:find_by).and_return(campaign)
 
         policy = FactoryBot.build(
@@ -72,8 +72,8 @@ RSpec.describe(Registration::Policy, type: :model) do
         expect(result[:code]).to eq(:ok)
       end
 
-      it "fails prerequisite_campaign when user_registered? returns false" do
-        campaign = instance_double(Registration::Campaign, user_registered?: false)
+      it "fails prerequisite_campaign when user_registration_confirmed? returns false" do
+        campaign = instance_double(Registration::Campaign, user_registration_confirmed?: false)
         allow(Registration::Campaign).to receive(:find_by).and_return(campaign)
 
         policy = FactoryBot.build(

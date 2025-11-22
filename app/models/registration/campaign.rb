@@ -35,7 +35,7 @@ module Registration
       evaluate_policies_for(user, phase: phase).pass
     end
 
-    def user_registered?(user)
+    def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
   end

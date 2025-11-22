@@ -58,7 +58,7 @@ module Registration
         prereq_campaign = Registration::Campaign.find_by(id: campaign_id)
         return { pass: false, code: :prerequisite_campaign_not_found } unless prereq_campaign
 
-        registered = prereq_campaign.user_registered?(user)
+        registered = prereq_campaign.user_registration_confirmed?(user)
 
         { pass: registered, code: registered ? :ok : :prerequisite_not_met }
       end

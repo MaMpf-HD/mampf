@@ -91,7 +91,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
-  describe "#user_registered?" do
+  describe "#user_registration_confirmed?" do
     let(:campaign) { FactoryBot.create(:registration_campaign) }
     let(:user) { FactoryBot.create(:user) }
 
@@ -103,7 +103,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
         status: :pending
       )
 
-      expect(campaign.user_registered?(user)).to be(false)
+      expect(campaign.user_registration_confirmed?(user)).to be(false)
     end
 
     it "returns true when user has a confirmed registration" do
@@ -114,7 +114,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
         status: :confirmed
       )
 
-      expect(campaign.user_registered?(user)).to be(true)
+      expect(campaign.user_registration_confirmed?(user)).to be(true)
     end
   end
 
