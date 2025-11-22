@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign – Show (Teacher/Editor)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      .reg-table-container { max-height: 360px; overflow: auto; }
+      .table-sticky thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./campaigns_index.html">Campaigns</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Exam Registration – Final</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-3">
+        <div>
+          <h1 class="h4 mb-1">Exam Registration – Final <span class="badge text-bg-primary">Open</span></h1>
+          <div class="text-muted small">Linear Algebra I · WS 2025/26</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-secondary">Close now</button>
+          <button class="btn btn-outline-primary" disabled>Finalize</button>
+          <button class="btn btn-outline-danger">Delete</button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Mode</div>
+                  <div class="fw-semibold">First-Come-First-Serve</div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Window</div>
+                  <div class="fw-semibold">Opens Oct 20, 08:00<br/>Closes Feb 1, 12:00</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Items</div>
+                  <div class="fw-semibold">1</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Policies</div>
+                  <div class="fw-semibold">2</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="fw-semibold">Registrations</div>
+                <span class="badge rounded-pill text-bg-success">Confirmed 176</span>
+              </div>
+              <div class="small text-muted mb-2">Pending 0 · Rejected 4</div>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar bg-success" style="width: 98%"></div>
+                <div class="progress-bar bg-danger" style="width: 2%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs" id="campaignTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">Items</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="false">Policies</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="registrations-tab" data-bs-toggle="tab" data-bs-target="#registrations" type="button" role="tab" aria-controls="registrations" aria-selected="false">Registrations</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="allocation-tab" data-bs-toggle="tab" data-bs-target="#allocation" type="button" role="tab" aria-controls="allocation" aria-selected="false">Allocation</button>
+        </li>
+      </ul>
+
+      <div class="tab-content bg-white border border-top-0 rounded-bottom p-3" id="campaignTabsContent">
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Details</div>
+                  <dl class="row mb-0">
+                    <dt class="col-sm-4">Title</dt>
+                    <dd class="col-sm-8">Exam Registration – Final</dd>
+                    <dt class="col-sm-4">Lecture</dt>
+                    <dd class="col-sm-8">Linear Algebra I (WS 2025/26)</dd>
+                    <dt class="col-sm-4">Mode</dt>
+                    <dd class="col-sm-8">First-Come-First-Serve</dd>
+                    <dt class="col-sm-4">Window</dt>
+                    <dd class="col-sm-8">Oct 20, 08:00 → Feb 1, 12:00</dd>
+                  </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-xl-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-3">Edit settings</div>
+                  <form>
+                    <div class="mb-3">
+                      <label class="form-label">Title</label>
+                      <input type="text" class="form-control" value="Exam Registration – Final" />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Lecture</label>
+                      <input type="text" class="form-control" value="Linear Algebra I (WS 2025/26)" disabled />
+                      <div class="form-text">Lecture is fixed for the campaign.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Mode</label>
+                      <select class="form-select" disabled>
+                        <option selected>First-Come-First-Serve</option>
+                        <option>Preference-Based</option>
+                      </select>
+                      <div class="form-text">Mode cannot be changed after opening.</div>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <div class="fw-semibold">Registration window</div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Opens</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" value="2025-10-20" />
+                          <input type="time" class="form-control" value="08:00" />
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Closes</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" value="2026-02-01" />
+                          <input type="time" class="form-control" value="12:00" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-text">Times are in Europe/Berlin.</div>
+                      </div>
+                    </div>
+
+                    <hr />
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <div class="fw-semibold">Options</div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="planningOnly" />
+                          <label class="form-check-label" for="planningOnly">Planning-only (no finalization/materialization)</label>
+                        </div>
+                        <div class="form-text">Can be turned on while draft/open; disables finalization.</div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="withdrawals" checked />
+                          <label class="form-check-label" for="withdrawals">Allow withdrawals until close</label>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="notify" checked />
+                          <label class="form-check-label" for="notify">Send email confirmation</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary" disabled>Open now</button>
+                        <button type="button" class="btn btn-outline-secondary" disabled>Reopen</button>
+                        <button type="button" class="btn btn-secondary" disabled>Close now</button>
+                      </div>
+                      <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Items</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="fw-semibold mb-2">Add item</div>
+              <form class="row g-2 align-items-end">
+                <div class="col-12 col-md-5">
+                  <label class="form-label">Title</label>
+                  <input type="text" class="form-control" placeholder="e.g., Final Exam" value="Final Exam" />
+                </div>
+                <div class="col-6 col-md-3">
+                  <label class="form-label">Capacity</label>
+                  <input type="number" class="form-control" placeholder="Unlimited" />
+                </div>
+                <div class="col-6 col-md-2">
+                  <label class="form-label">Notes</label>
+                  <input type="text" class="form-control" placeholder="FCFS" />
+                </div>
+                <div class="col-12 col-md-2 d-flex gap-2">
+                  <button type="button" class="btn btn-outline-secondary flex-fill">Cancel</button>
+                  <button type="button" class="btn btn-primary flex-fill">Add</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Title</th>
+                  <th scope="col">Capacity</th>
+                  <th scope="col">Notes</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="table-warning">
+                  <td>
+                    <input type="text" class="form-control form-control-sm" value="Final Exam" />
+                  </td>
+                  <td>
+                    <input type="number" class="form-control form-control-sm" placeholder="Unlimited" />
+                  </td>
+                  <td>
+                    <input type="text" class="form-control form-control-sm" value="FCFS registration" />
+                  </td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-2">
+                      <button class="btn btn-sm btn-outline-secondary">Cancel</button>
+                      <button class="btn btn-sm btn-primary">Save</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Final Exam</td>
+                  <td>Unlimited</td>
+                  <td class="text-muted small">FCFS registration</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small text-muted mt-2">Rows highlighted in yellow represent the inline edit state of the row above. In the real UI only one of these would be visible at a time.</p>
+        </div>
+
+        <div class="tab-pane fade" id="policies" role="tabpanel" aria-labelledby="policies-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Policies</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="fw-semibold mb-2">Add policy</div>
+              <form class="row g-2 align-items-end">
+                <div class="col-12 col-md-3">
+                  <label class="form-label">Type</label>
+                  <select class="form-select">
+                    <option selected>institutional_email</option>
+                    <option>lecture_performance</option>
+                    <option>prerequisite_campaign</option>
+                    <option>custom_script</option>
+                  </select>
+                  <div class="form-text">Fields change by type; no JSON required.</div>
+                </div>
+                <div class="col-12 col-md-2">
+                  <label class="form-label">Phase</label>
+                  <select class="form-select">
+                    <option selected>registration</option>
+                    <option>finalization</option>
+                    <option>both</option>
+                  </select>
+                  <div class="form-text">When to enforce</div>
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Allowed domains</label>
+                  <textarea class="form-control" rows="1" placeholder="uni.edu, math.uni.edu"></textarea>
+                  <div class="form-text">Comma or space separated; normalized to lowercase.</div>
+                </div>
+                <div class="col-6 col-md-1">
+                  <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="policyActive" checked />
+                    <label class="form-check-label" for="policyActive">Active</label>
+                  </div>
+                </div>
+                <div class="col-6 col-md-2 d-flex gap-2">
+                  <button type="button" class="btn btn-outline-secondary flex-fill">Cancel</button>
+                  <button type="button" class="btn btn-primary flex-fill">Add</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Policy</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Phase</th>
+                  <th scope="col">Status</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="table-warning">
+                  <td>
+                    <input type="text" class="form-control form-control-sm" value="Institutional email required" />
+                    <div class="mt-2">
+                      <label class="form-label small mb-1">Allowed domains</label>
+                      <textarea class="form-control form-control-sm" rows="1" placeholder="uni.edu, math.uni.edu"></textarea>
+                    </div>
+                  </td>
+                  <td>
+                    <select class="form-select form-select-sm">
+                      <option selected>institutional_email</option>
+                      <option>lecture_performance</option>
+                      <option>prerequisite_campaign</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-select form-select-sm">
+                      <option selected>registration</option>
+                      <option>finalization</option>
+                      <option>both</option>
+                    </select>
+                  </td>
+                  <td>
+                    <span class="small text-muted">Editing…</span>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-2">
+                      <button class="btn btn-sm btn-outline-secondary">Cancel</button>
+                      <button class="btn btn-sm btn-primary">Save</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Institutional email required</td>
+                  <td>Email Domain</td>
+                  <td><span class="badge text-bg-info">Registration</span></td>
+                  <td><span class="badge rounded-pill text-bg-success">Active</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+                <tr class="table-warning">
+                  <td>
+                    <input type="text" class="form-control form-control-sm" value="Lecture performance certification" />
+                    <div class="row mt-2 g-2">
+                      <div class="col-12">
+                        <label class="form-label small mb-1">Lecture</label>
+                        <select class="form-select form-select-sm">
+                          <option selected>Linear Algebra I (WS 2025/26)</option>
+                          <option>Analysis I (WS 2025/26)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <select class="form-select form-select-sm">
+                      <option>institutional_email</option>
+                      <option selected>lecture_performance</option>
+                      <option>prerequisite_campaign</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="form-select form-select-sm">
+                      <option>registration</option>
+                      <option selected>finalization</option>
+                      <option>both</option>
+                    </select>
+                  </td>
+                  <td>
+                    <span class="small text-muted">Editing…</span>
+                  </td>
+                  <td class="text-end">
+                    <div class="d-inline-flex gap-2">
+                      <button class="btn btn-sm btn-outline-secondary">Cancel</button>
+                      <button class="btn btn-sm btn-primary">Save</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <div>Lecture performance certification</div>
+                    <div class="small text-muted">Linear Algebra I (WS 2025/26)</div>
+                  </td>
+                  <td>Certification</td>
+                  <td>
+                    <span class="badge text-bg-warning">Finalization</span>
+                    <div class="small text-muted mt-1">Checked before materializing roster</div>
+                  </td>
+                  <td><span class="badge rounded-pill text-bg-success">Active</span></td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary">Edit</button>
+                    <button class="btn btn-sm btn-outline-danger">Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="small text-muted mt-2">Rows highlighted in yellow represent the inline edit state of the row above. In the real UI only one of these would be visible at a time.</p>
+
+          <div class="alert alert-info mt-3" role="alert">
+            <div class="fw-bold mb-2"><i class="bi bi-info-circle me-2"></i>Policy Phases Explained</div>
+            <ul class="mb-0 small">
+              <li><strong>Registration:</strong> Checked when students try to register. Blocks registration if not satisfied. Use for hard requirements like email domain.</li>
+              <li><strong>Finalization:</strong> Checked before materializing roster. Prevents completion if any confirmed student fails. Standard for lecture performance: students can register freely, certification verified at finalization.</li>
+              <li><strong>Both:</strong> Checked in both phases. Rare; only use when you need advisory messaging during registration AND enforcement during finalization.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="registrations" role="tabpanel" aria-labelledby="registrations-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Registrations</div>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label small mb-0">Rows per page</label>
+                <select class="form-select form-select-sm" style="width:auto">
+                  <option>10</option>
+                  <option selected>20</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+              </div>
+              <div class="btn-group btn-group-sm" role="group" aria-label="Density">
+                <button type="button" class="btn btn-outline-secondary">Default</button>
+                <button type="button" class="btn btn-secondary">Compact</button>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary">Export</button>
+              <button class="btn btn-sm btn-outline-secondary">Refresh</button>
+            </div>
+          </div>
+          <div class="table-responsive reg-table-container">
+            <table class="table table-sm align-middle table-sticky">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Student</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Registered</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Alex Example</td><td>alex@example.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span><br/><span class="text-muted small">Institutional email required</span></td><td>Oct 21, 11:03</td></tr>
+                <tr><td>Sam Student</td><td>sam@student.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span><br/><span class="text-muted small">Institutional email required</span></td><td>Oct 22, 08:45</td></tr>
+                <tr><td>Jamie Lee</td><td>jamie@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 09:12</td></tr>
+                <tr><td>Pat Taylor</td><td>pat@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 10:04</td></tr>
+                <tr><td>Riley Chen</td><td>riley@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 10:55</td></tr>
+                <tr><td>Taylor Kim</td><td>t.kim@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 11:21</td></tr>
+                <tr><td>Jordan Park</td><td>j.park@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 11:59</td></tr>
+                <tr><td>Casey Morgan</td><td>casey@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 12:07</td></tr>
+                <tr><td>Alexis Gomez</td><td>a.gomez@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 12:43</td></tr>
+                <tr><td>Chris Patel</td><td>c.patel@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 13:10</td></tr>
+                <tr><td>Robin Singh</td><td>r.singh@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 13:35</td></tr>
+                <tr><td>Drew Müller</td><td>d.mueller@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 14:02</td></tr>
+                <tr><td>Avery Rossi</td><td>a.rossi@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 14:18</td></tr>
+                <tr><td>Lee Novak</td><td>l.novak@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 14:55</td></tr>
+                <tr><td>Quinn Silva</td><td>q.silva@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span><br/><span class="text-muted small">Not eligible (homework &lt; 50%)</span></td><td>Oct 22, 15:11</td></tr>
+                <tr><td>Morgan Alvarez</td><td>m.alvarez@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 15:48</td></tr>
+                <tr><td>Noah Fischer</td><td>n.fischer@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 16:05</td></tr>
+                <tr><td>Skyler Braun</td><td>s.braun@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 16:29</td></tr>
+                <tr><td>Parker Schmid</td><td>p.schmid@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td>Oct 22, 16:47</td></tr>
+                <tr><td>Harper Weiss</td><td>h.weiss@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span><br/><span class="text-muted small">Not eligible (homework &lt; 50%)</span></td><td>Oct 22, 17:03</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="small text-muted">Showing 1–20 of 180</div>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item disabled"><span class="page-link">Prev</span></li>
+                <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><span class="page-link">…</span></li>
+                <li class="page-item"><a class="page-link" href="#">9</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="allocation" role="tabpanel" aria-labelledby="allocation-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-xl-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Allocation actions</div>
+                  <div class="small text-muted mb-2">Enabled after close</div>
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary" disabled>Preview allocation</button>
+                    <button class="btn btn-outline-secondary" disabled>Run allocation</button>
+                    <button class="btn btn-outline-primary" disabled>Finalize</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-xl-8">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Progress</div>
+                  <div class="small text-muted mb-2">No job running</div>
+                  <div class="progress" style="height:6px;">
+                    <div class="progress-bar" style="width: 0%"></div>
+                  </div>
+                  <div class="mt-3">
+                    <div class="fw-semibold mb-1">Results</div>
+                    <ul class="list-group list-group-flush">
+                      <li class="list-group-item">No allocation performed yet</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+  </html>

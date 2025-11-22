@@ -1,6 +1,4 @@
-<%= bootstrap_devise_error_messages! %>
-
-<h1><%= t('.resend_unlock_instructions', default: 'Resend unlock instructions') %></h1>
+<h1><%= t('.resend_unlock_instructions') %></h1>
 
 <%= form_for(resource, as: resource_name, url: unlock_path(resource_name), html: { method: :post, html: { role: 'form' } }) do |f| %>
   <div class="mb-3">
@@ -10,7 +8,7 @@
   </div>
 
   <div class="mb-3">
-    <%= f.submit t('.resend_unlock_instructions', default: 'Resend unlock instructions'), class: 'btn btn-primary'%>
+    <%= f.submit t('.resend_unlock_instructions'), class: 'btn btn-primary'%>
   </div>
 <% end %>
 

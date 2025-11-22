@@ -1,10 +1,10 @@
 # LecturesController
 class LecturesController < ApplicationController
   include ActionController::RequestForgeryProtection
+
   before_action :set_lecture, except: [:new, :create, :search]
   before_action :set_lecture_cookie, only: [:show, :organizational,
                                             :show_announcements]
-  before_action :set_erdbeere_data, only: [:show_structures, :edit_structures]
   authorize_resource except: [:new, :create, :search]
   before_action :check_for_consent
   before_action :check_for_subscribe, only: [:show]
@@ -18,6 +18,15 @@ class LecturesController < ApplicationController
   end
 
   def show
+    if @lecture.sort == "vignettes"
+      if @lecture.organizational
+        redirect_to organizational_path(@lecture)
+        return
+      end
+      redirect_to lecture_questionnaires_path(@lecture)
+      return
+    end
+
     # deactivate http caching for the moment
     if stale?(etag: @lecture,
               last_modified: [current_user.updated_at,
@@ -39,21 +48,28 @@ class LecturesController < ApplicationController
                         .find_by(id: params[:id])
       @notifications = current_user.active_notifications(@lecture)
       @new_topics_count = @lecture.unread_forum_topics_count(current_user) || 0
-      render layout: "application"
+
+      render template: "lectures/show/show",
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
     end
   end
 
   def new
-    @lecture = Lecture.new
+    @lecture = Lecture.new(sort: "lecture")
     authorize! :new, @lecture
     @from = params[:from]
-    return unless @from == "course"
 
-    # if new action was triggered from inside a course view, add the course
-    # info to the lecture
-    @lecture.course = Course.find_by(id: params[:course])
-    I18n.locale = @lecture.course.locale
-    @lecture.annotations_status = 0
+    if @from == "course"
+      # if new action was triggered from inside a course view, add the course
+      # info to the lecture
+      @lecture.course = Course.find_by(id: params[:course])
+      I18n.locale = @lecture.course.locale
+      @lecture.annotations_status = 0
+    end
+
+    respond_to do |format|
+      format.js { render template: "lectures/new/new" }
+    end
   end
 
   def edit
@@ -61,6 +77,7 @@ class LecturesController < ApplicationController
               last_modified: [current_user.updated_at, @lecture.updated_at,
                               Time.zone.parse(ENV.fetch("RAILS_CACHE_ID", nil))].max)
       eager_load_stuff
+      render template: "lectures/edit/edit"
     end
   end
 
@@ -69,6 +86,7 @@ class LecturesController < ApplicationController
     @lecture.teacher = current_user unless current_user.admin?
     authorize! :create, @lecture
     @lecture.save
+
     if @lecture.valid?
       @lecture.update(sort: "special") if @lecture.course.term_independent
       # set organizational_concept to default
@@ -88,7 +106,11 @@ class LecturesController < ApplicationController
                                  lecture: @lecture.title_with_teacher)
       return
     end
+
     @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/create/create" }
+    end
   end
 
   def update
@@ -111,24 +133,23 @@ class LecturesController < ApplicationController
     end
 
     @lecture.update(lecture_params)
-    if structure_params.present?
-      structure_ids = structure_params.select { |_k, v| v.to_i == 1 }.keys
-                                      .map(&:to_i)
-      @lecture.update(structure_ids: structure_ids)
-    end
     @lecture.touch
     @lecture.forum&.update(name: @lecture.forum_title)
 
-    # Redirect to the correct subpage
+    @errors = @lecture.errors
+
     if @lecture.valid?
       if params[:subpage].present?
-        redirect_to "#{edit_lecture_path(@lecture)}##{params[:subpage]}"
+        redirect_to edit_lecture_path(@lecture, tab: params[:subpage])
       else
         redirect_to edit_lecture_path(@lecture)
       end
+      return
     end
 
-    @errors = @lecture.errors
+    respond_to do |format|
+      format.js { render template: "lectures/update/update" }
+    end
   end
 
   def publish
@@ -157,28 +178,28 @@ class LecturesController < ApplicationController
       forum.save
       @lecture.update(forum_id: forum.id) if forum.valid?
     end
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # lock forum for this lecture
   def lock_forum
     @lecture.forum.update(locked: true) if @lecture.forum?
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # unlock forum for this lecture
   def unlock_forum
     @lecture.forum.update(locked: false) if @lecture.forum?
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # destroy forum for this lecture
   def destroy_forum
     @lecture.forum.destroy if @lecture.forum?
     @lecture.update(forum_id: nil)
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   # show all announcements for this lecture
@@ -187,12 +208,19 @@ class LecturesController < ApplicationController
     @active_notification_count = current_user.active_notifications(@lecture)
                                              .size
     I18n.locale = @lecture.locale_with_inheritance
-    render layout: "application"
+    render template: "lectures/announcements/show_announcements",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def organizational
-    I18n.locale = @lecture.locale_with_inheritance
-    render layout: "application"
+    if @lecture.sort == "vignettes"
+      render layout: "vignettes/layouts/vignettes_navbar"
+    else
+      I18n.locale = @lecture.locale_with_inheritance
+      render template: "lectures/organizational/_organizational",
+             locals: { lecture: @lecture },
+             layout: turbo_frame_request? ? "turbo_frame" : "application"
+    end
   end
 
   def import_media
@@ -202,6 +230,10 @@ class LecturesController < ApplicationController
     media.each { |m| Import.create(teachable: @lecture, medium: m) }
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/import_media" }
+    end
   end
 
   def remove_imported_medium
@@ -210,39 +242,15 @@ class LecturesController < ApplicationController
     import&.destroy
     @lecture.reload
     @lecture.touch
+
+    respond_to do |format|
+      format.js { render template: "lectures/import/remove_imported_medium" }
+    end
   end
 
   def show_subscribers
     user_data = @lecture.users.pluck(:name, :email)
     render json: user_data
-  end
-
-  def show_structures
-    render layout: "application"
-  end
-
-  def edit_structures
-    render layout: "application"
-  end
-
-  def search_examples
-    if @lecture.structure_ids.any?
-      response = Clients::ErdbeereClient.get("search")
-      if response.status != 200
-        @erdbeere_error = true
-        render layout: "application"
-        return
-      end
-      @form = JSON.parse(response.body)["embedded_html"]
-      # rubocop:disable Style/StringConcatenation
-      @form.gsub!("token_placeholder",
-                  '<input type="hidden" name="authenticity_token" ' \
-                  'value="' + form_authenticity_token + '">')
-      # rubocop:enable Style/StringConcatenation
-    else
-      @form = I18n.t("erdbeere.no_structures")
-    end
-    render layout: "application"
   end
 
   def close_comments
@@ -254,43 +262,53 @@ class LecturesController < ApplicationController
       lesson.media.update(annotations_status: -1)
     end
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   def open_comments
     @lecture.open_comments!(current_user)
     @lecture.touch
-    redirect_to "#{edit_lecture_path(@lecture)}#communication"
+    redirect_to "#{edit_lecture_path(@lecture)}?tab=communication"
   end
 
   def search
     authorize! :search, Lecture.new
-    search = Lecture.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @lectures = Kaminari.paginate_array(results, total_count: @total)
-                        .page(params[:page]).per(search_params[:per])
-    @results_as_list = search_params[:results_as_list] == "true"
-    return unless @total.zero?
-    return unless search_params[:fulltext]&.length.to_i > 1
 
-    @similar_titles = Course.similar_courses(search_params[:fulltext])
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Lecture,
+      configurator_class: Search::Configurators::LectureSearchConfigurator
+    )
+
+    @pagy = search_result.pagy
+    @lectures = search_result.results
+
+    @results_as_list = params.dig(:search, :results_as_list) == "true"
+
+    respond_to do |format|
+      format.js { render template: "lectures/search/search" }
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
+    end
   end
 
   def show_random_quizzes
     @course = @lecture.course
-    render layout: "application"
+    render template: "lectures/quizzes/show_random_quizzes",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def display_course
     @course = @lecture.course
     I18n.locale = @course.locale || @lecture.locale
-    render layout: "application"
+    render template: "lectures/course/display_course",
+           layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def subscribe_page
-    render layout: "application_no_sidebar"
+    render template: "lectures/subscribe/subscribe_page",
+           layout: "application_no_sidebar"
   end
 
   def import_toc
@@ -343,15 +361,7 @@ class LecturesController < ApplicationController
       end
       allowed_params.push(:course_id, { editor_ids: [] }) if action_name == "create"
       allowed_params.push(:teacher_id) if current_user.admin?
-      params.require(:lecture).permit(allowed_params)
-    end
-
-    def structure_params
-      params.require(:lecture).permit(structures: {})[:structures]
-    end
-
-    def comment_params
-      params.require(:lecture).permit(:close_comments)
+      params.expect(lecture: allowed_params)
     end
 
     def import_toc_params
@@ -391,7 +401,7 @@ class LecturesController < ApplicationController
 
     # fill organizational_concept with default view
     def set_organizational_defaults
-      partial_path = "lectures/organizational/"
+      partial_path = "lectures/organizational/defaults/"
       partial_path += @lecture.seminar? ? "seminar" : "lecture"
       @lecture.update(organizational_concept:
                         render_to_string(partial: partial_path,
@@ -417,43 +427,17 @@ class LecturesController < ApplicationController
                                                                  :lessons]] }])
                         .find_by(id: params[:id])
       @media = @lecture.media_with_inheritance_uncached_eagerload_stuff
-      lecture_tags = @lecture.tags
-      @course_tags = @lecture.course_tags(lecture_tags: lecture_tags)
-      @extra_tags = @lecture.extra_tags(lecture_tags: lecture_tags)
-      @deferred_tags = @lecture.deferred_tags(lecture_tags: lecture_tags)
       @announcements = @lecture.announcements.includes(:announcer).order(:created_at).reverse
       @terms = Term.select_terms
     end
 
-    def set_erdbeere_data
-      @structure_ids = @lecture.structure_ids
-      response = Clients::ErdbeereClient.get("structures")
-      if response.status != 200
-        @erdbeere_error = true
-        return
-      end
-      response_hash = JSON.parse(response.body)
-      @all_structures = response_hash["data"]
-      @structures = @all_structures.select do |s|
-        s["id"].to_i.in?(@structure_ids)
-      end
-      @properties = response_hash["included"]
-    end
-
     def search_params
-      types = params[:search][:types]
-      types = [types] if types && !types.is_a?(Array)
-      types -= [""] if types
-      types = nil if types == []
-      params[:search][:types] = types
-      params[:search][:user_id] = current_user.id
-      params.require(:search).permit(:all_types, :all_terms, :all_programs,
-                                     :all_teachers, :fulltext, :per, :user_id,
-                                     :results_as_list,
-                                     types: [],
-                                     term_ids: [],
-                                     program_ids: [],
-                                     teacher_ids: [])
+      params.expect(search: [:all_types, :all_terms, :all_programs,
+                             :all_teachers, :fulltext, :per,
+                             { types: [],
+                               term_ids: [],
+                               program_ids: [],
+                               teacher_ids: [] }])
     end
 
     def check_if_enough_questions

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seminar Talk: Topology — Seminar: Advanced Topics in Mathematics</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .small-width {
+      max-width: 1200px;
+    }
+    .lecture-pane {
+      background-color: white;
+      padding: 1.5em;
+      margin-bottom: 6em;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+      border: gray 1px solid;
+      border-radius: 0.4em;
+    }
+    .lecture-pane-separator {
+      border-top: 3px dotted #555555;
+      margin-top: 2em;
+      margin-bottom: 2em;
+    }
+    h3.lecture-pane-header {
+      color: #838383;
+      font-size: 1.3em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container small-width mt-4">
+    <!-- Lecture Header -->
+    <div class="mb-3">
+      <h1 class="h3 mb-1">Seminar: Advanced Topics in Mathematics</h1>
+      <p class="text-muted mb-0">WS 2024/25</p>
+    </div>
+
+    <!-- Tab Navigation -->
+    <ul class="nav nav-tabs mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Content</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Preferences</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">People & Tutorials</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Orga</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Communication</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="assessments_index_seminar.html">Assessments</a>
+      </li>
+    </ul>
+
+    <!-- Talk Detail in lecture-pane -->
+    <div class="lecture-pane">
+      <!-- Header -->
+      <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+          <h3 class="lecture-pane-header mb-2">Seminar Talk: Topology</h3>
+          <div>
+            <span class="badge bg-primary me-2">Graded</span>
+            <span class="text-muted small">Talk</span>
+          </div>
+        </div>
+        <div class="text-end">
+          <div class="btn-group mb-2" role="group">
+            <a href="#" class="btn btn-outline-secondary btn-sm">
+              <i class="far fa-edit me-1"></i>Edit
+            </a>
+            <button type="button" class="btn btn-outline-success btn-sm">
+              <i class="fas fa-check-circle me-1"></i>Enter Grade
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alert: Graded Status -->
+      <div class="alert alert-success d-flex align-items-center mb-4">
+        <i class="fas fa-check-circle me-2"></i>
+        <div>
+          <strong>Grade recorded.</strong> Final grades have been assigned to all speakers. 
+          Grades are visible to students.
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <ul class="nav nav-tabs mb-3" id="assessmentTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" 
+                  data-bs-target="#overview" type="button" role="tab">
+            Overview
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" 
+                  data-bs-target="#settings" type="button" role="tab">
+            Settings
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="participant-tab" data-bs-toggle="tab" 
+                  data-bs-target="#participant" type="button" role="tab">
+            Participants <span class="badge bg-secondary ms-1">2</span>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <!-- Overview Tab -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+          <div class="row">
+            <!-- Left Column: Basic Info -->
+            <div class="col-md-6">
+              <div class="card mb-3">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Assessment Information</h5>
+                </div>
+                <div class="card-body">
+                  <table class="table table-sm mb-0">
+                    <tbody>
+                      <tr>
+                        <th style="width: 40%;">Title:</th>
+                        <td>Seminar Talk: Topology</td>
+                      </tr>
+                      <tr>
+                        <th>Type:</th>
+                        <td><span class="badge bg-secondary">Talk</span></td>
+                      </tr>
+                      <tr>
+                        <th>Grading Mode:</th>
+                        <td>
+                          <span class="badge bg-warning text-dark">Gradebook</span>
+                          Final grade only
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Status:</th>
+                        <td><span class="badge bg-primary">Graded</span></td>
+                      </tr>
+                      <tr>
+                        <th>Scheduled Date:</th>
+                        <td>
+                          <strong>December 5, 2024, 14:00</strong>
+                          <div class="text-muted small">Presentation completed</div>
+                        </td>
+                      </tr>
+                      <tr>
+                        <th>Speakers:</th>
+                        <td>Alice Müller, Bob Schmidt</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Talk Details</h5>
+                </div>
+                <div class="card-body">
+                  <table class="table table-sm mb-0">
+                    <tbody>
+                      <tr>
+                        <th style="width: 40%;">Topic:</th>
+                        <td>Topology</td>
+                      </tr>
+                      <tr>
+                        <th>Duration:</th>
+                        <td>45 minutes</td>
+                      </tr>
+                      <tr>
+                        <th>Location:</th>
+                        <td>Seminar Room A</td>
+                      </tr>
+                      <tr>
+                        <th>Materials:</th>
+                        <td>
+                          <a href="#" class="text-decoration-none">
+                            <i class="far fa-file-pdf me-1"></i>Slides.pdf
+                          </a>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Grading Info -->
+            <div class="col-md-6">
+              <div class="card mb-3">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Grades</h5>
+                </div>
+                <div class="card-body">
+                  <table class="table table-sm mb-0">
+                    <thead>
+                      <tr>
+                        <th>Speaker</th>
+                        <th>Grade</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Alice Müller</td>
+                        <td>
+                          <span style="font-size: 1.5rem; font-weight: bold; color: #198754;">1.0</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Bob Schmidt</td>
+                        <td>
+                          <span style="font-size: 1.5rem; font-weight: bold; color: #198754;">1.3</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div class="text-muted small mt-2">
+                    Graded by Prof. Schmidt on Dec 5, 2024
+                  </div>
+
+                  <hr>
+
+                  <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-success">
+                      <i class="fas fa-check-circle me-2"></i>Enter/Edit Grades
+                    </button>
+                    <button type="button" class="btn btn-outline-warning">
+                      <i class="fas fa-eye-slash me-2"></i>Hide Grades from Students
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-header bg-light">
+                  <h5 class="mb-0">Feedback Notes</h5>
+                </div>
+                <div class="card-body">
+                  <div class="alert alert-info d-flex align-items-start mb-0">
+                    <i class="fas fa-info-circle me-2 mt-1"></i>
+                    <div>
+                      <strong>Optional feedback</strong>
+                      <div class="small mt-1">
+                        You can add private notes or feedback for the speakers. 
+                        These are visible only to teaching staff.
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <textarea class="form-control" rows="4" 
+                              placeholder="Add feedback notes (optional)...">Excellent presentation by both speakers. Clear structure and good time management. Strong understanding of the topic demonstrated. Alice handled the introduction and theoretical parts well, Bob's examples were particularly helpful.</textarea>
+                  </div>
+                  <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-primary">
+                      <i class="fas fa-save me-1"></i>Save Notes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div class="tab-pane fade" id="settings" role="tabpanel">
+          <div class="card">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+              <h5 class="mb-0">Assessment Settings</h5>
+              <button type="button" class="btn btn-sm btn-primary">
+                <i class="far fa-edit me-1"></i>Edit Settings
+              </button>
+            </div>
+            <div class="card-body">
+              <form>
+                <div class="mb-3">
+                  <label for="title" class="form-label">Title</label>
+                  <input type="text" class="form-control" id="title" 
+                         value="Seminar Talk: Topology" readonly>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="scheduledDate" class="form-label">Scheduled Date & Time</label>
+                    <input type="datetime-local" class="form-control" id="scheduledDate" 
+                           value="2024-12-05T14:00" readonly>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="duration" class="form-label">Duration (minutes)</label>
+                    <input type="number" class="form-control" id="duration" 
+                           value="45" readonly>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="location" class="form-label">Location</label>
+                  <input type="text" class="form-control" id="location" 
+                         value="Seminar Room A" readonly>
+                </div>
+
+                <div class="mb-3">
+                  <label for="topic" class="form-label">Topic</label>
+                  <input type="text" class="form-control" id="topic" 
+                         value="Topology" readonly>
+                </div>
+
+                <div class="mb-3">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="resultsPublished" 
+                           checked disabled>
+                    <label class="form-check-label" for="resultsPublished">
+                      <strong>Grade visible to student</strong>
+                      <div class="text-muted small">Student can see their final grade</div>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="alert alert-secondary d-flex align-items-start">
+                  <i class="fas fa-info-circle me-2 mt-1"></i>
+                  <div>
+                    <strong>Grading Mode: Gradebook</strong>
+                    <div class="small mt-1">
+                      This assessment records only a final grade. No task breakdown or file submission.
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Participants Tab -->
+        <div class="tab-pane fade" id="participant" role="tabpanel">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Speakers</h5>
+            </div>
+            <div class="card-body">
+              <table class="table table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Final Grade</th>
+                    <th>Graded At</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Alice Müller</td>
+                    <td>alice.mueller@uni-heidelberg.de</td>
+                    <td><span class="badge bg-primary">Graded</span></td>
+                    <td><strong>1.0</strong></td>
+                    <td>Dec 5, 2024, 15:30</td>
+                  </tr>
+                  <tr>
+                    <td>Bob Schmidt</td>
+                    <td>bob.schmidt@uni-heidelberg.de</td>
+                    <td><span class="badge bg-primary">Graded</span></td>
+                    <td><strong>1.3</strong></td>
+                    <td>Dec 5, 2024, 15:30</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="alert alert-info d-flex align-items-center mt-3 mb-0">
+                <i class="fas fa-info-circle me-2"></i>
+                <div>
+                  <strong>Multiple speakers.</strong> Each speaker receives an individual grade for this talk.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

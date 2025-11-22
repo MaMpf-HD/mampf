@@ -1,8 +1,9 @@
 <% I18n.with_locale(current_user.try(:locale)) do %>
-<%= stylesheet_link_tag 'navbar' %>
+<%= vite_stylesheet_tag "styles/navbar.scss" %>
+
 <div class="admin-navbars-container">
   <nav class="navbar navbar-expand" id="first-admin-nav">
-    <%= link_to image_tag('MaMpf-Logo.svg',
+    <%= link_to image_tag("/images/mampf-logo.svg",
                           class: 'me-2',
                           id: 'mampf-logo'),
                 exit_administration_path,
@@ -44,7 +45,7 @@
       <li class="nav-item">
         <%= link_to '', destroy_user_session_path,
                   class: 'nav-link bi bi-box-arrow-right',
-                  data: { 'bs-toggle': 'tooltip', method: 'delete' },
+                  data: { 'bs-toggle': 'tooltip', method: 'delete', turbo: false },
                   title: t('admin.navbar.logout') %>
       </li>
     </ul>
@@ -83,12 +84,6 @@
                   data: { 'bs-toggle': 'tooltip' },
                   title: t('admin.navbar.stats'),
                   target: :_blank %>
-        </li>
-        <li>
-          <%= link_to '', interactions_path,
-                  class: 'nav-link bi-cloud-arrow-down-fill ' + get_class_for_path(interactions_path()),
-                  data: { 'bs-toggle': 'tooltip' },
-                  title: t('admin.navbar.export_stats') %>
         </li>
       <% end %>
     </ul>

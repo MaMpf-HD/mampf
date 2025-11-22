@@ -10,10 +10,50 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_000000) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
   enable_extension "pgcrypto"
-  enable_extension "plpgsql"
+  enable_extension "unaccent"
+
+  create_table "action_text_rich_texts", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "body"
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["record_type", "record_id", "name"], name: "index_action_text_rich_texts_uniqueness", unique: true
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "annotations", force: :cascade do |t|
     t.bigint "medium_id", null: false
@@ -49,7 +89,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "question_id"
+    t.index ["explanation"], name: "index_answers_on_explanation_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["question_id"], name: "index_answers_on_question_id"
+    t.index ["text"], name: "index_answers_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "assignments", force: :cascade do |t|
@@ -85,26 +127,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.datetime "updated_at", null: false
     t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
-  end
-
-  create_table "clicker_votes", force: :cascade do |t|
-    t.integer "value"
-    t.integer "clicker_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "clickers", force: :cascade do |t|
-    t.integer "editor_id"
-    t.integer "question_id"
-    t.text "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "title"
-    t.boolean "open"
-    t.integer "alternatives"
-    t.text "instance"
-    t.index ["editor_id"], name: "index_clickers_on_editor_id"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
@@ -179,6 +201,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.text "locale"
     t.boolean "term_independent", default: false
     t.text "image_data"
+    t.index "to_tsvector('simple'::regconfig, (title)::text)", name: "index_courses_on_title_tsearch", using: :gin
+    t.index ["short_title"], name: "index_courses_on_short_title_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["term_independent"], name: "index_courses_on_term_independent"
+    t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "division_course_joins", force: :cascade do |t|
@@ -301,7 +327,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.text "locale"
     t.text "sort"
     t.integer "forum_id"
-    t.text "structure_ids"
     t.boolean "comments_disabled"
     t.boolean "organizational_on_top"
     t.boolean "disable_teacher_display", default: false
@@ -309,6 +334,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
+    t.index ["released"], name: "index_lectures_on_released"
+    t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -365,8 +392,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.text "manuscript_data"
     t.text "released"
     t.boolean "imported_manuscript"
-    t.string "quizzable_type"
-    t.bigint "quizzable_id"
     t.text "hint"
     t.integer "parent_id"
     t.text "quiz_graph"
@@ -374,7 +399,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.text "type"
     t.text "text"
     t.boolean "independent"
-    t.integer "keks_id"
     t.text "locale"
     t.text "solution"
     t.text "question_sort"
@@ -383,14 +407,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.text "geogebra_app_name"
     t.integer "position"
     t.boolean "text_input", default: false
-    t.float "boost", default: 0.0
     t.datetime "released_at", precision: nil
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
     t.text "external_link_description"
     t.integer "annotations_status", default: -1, null: false
-    t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
+    t.integer "answers_count", default: 0, null: false
+    t.index ["answers_count"], name: "index_media_on_answers_count"
+    t.index ["content"], name: "index_media_on_content_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["description"], name: "index_media_on_description_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["external_link_description"], name: "index_media_on_external_link_description_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["released"], name: "index_media_on_released"
+    t.index ["sort"], name: "index_media_on_sort"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
+    t.index ["text"], name: "index_media_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|
@@ -420,8 +450,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.text "locale"
     t.integer "tag_id"
     t.integer "aliased_tag_id"
+    t.index "to_tsvector('simple'::regconfig, title)", name: "index_notions_on_title_tsearch", using: :gin
     t.index ["aliased_tag_id"], name: "index_notions_on_aliased_tag_id"
     t.index ["tag_id"], name: "index_notions_on_tag_id"
+    t.index ["title"], name: "index_notions_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "program_translations", force: :cascade do |t|
@@ -510,6 +542,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.text "tags_order"
     t.text "details"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
+    t.index ["title"], name: "index_sections_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "speaker_talk_joins", force: :cascade do |t|
@@ -555,7 +588,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
   create_table "tags", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.text "realizations"
   end
 
   create_table "talk_tag_joins", force: :cascade do |t|
@@ -589,6 +621,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.datetime "submission_deletion_mail", precision: nil
     t.datetime "submission_deletion_reminder", precision: nil
     t.datetime "submissions_deleted_at", precision: nil
+    t.index ["year", "season"], name: "index_terms_on_year_and_season"
   end
 
   create_table "thredded_categories", force: :cascade do |t|
@@ -883,7 +916,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.boolean "unread_comments", default: false
-    t.boolean "study_participant", default: false
     t.boolean "email_for_submission_upload"
     t.boolean "email_for_submission_removal"
     t.boolean "email_for_submission_join"
@@ -903,6 +935,124 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
+  create_table "vignettes_answers", force: :cascade do |t|
+    t.string "type"
+    t.bigint "vignettes_question_id", null: false
+    t.bigint "vignettes_slide_id", null: false
+    t.bigint "vignettes_user_answer_id", null: false
+    t.text "text"
+    t.string "likert_scale_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_question_id"], name: "index_vignettes_answers_on_vignettes_question_id"
+    t.index ["vignettes_slide_id"], name: "index_vignettes_answers_on_vignettes_slide_id"
+    t.index ["vignettes_user_answer_id"], name: "index_vignettes_answers_on_vignettes_user_answer_id"
+  end
+
+  create_table "vignettes_answers_options", id: false, force: :cascade do |t|
+    t.bigint "vignettes_answer_id", null: false
+    t.bigint "vignettes_option_id", null: false
+    t.index ["vignettes_answer_id", "vignettes_option_id"], name: "index_answers_options_on_answer_id_and_option_id"
+    t.index ["vignettes_option_id", "vignettes_answer_id"], name: "index_answers_options_on_option_id_and_answer_id"
+  end
+
+  create_table "vignettes_codenames", force: :cascade do |t|
+    t.string "pseudonym"
+    t.bigint "user_id"
+    t.bigint "lecture_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vignettes_codenames_on_lecture_id"
+    t.index ["user_id"], name: "index_vignettes_codenames_on_user_id"
+  end
+
+  create_table "vignettes_completion_messages", force: :cascade do |t|
+    t.bigint "lecture_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vignettes_completion_messages_on_lecture_id"
+  end
+
+  create_table "vignettes_info_slides", force: :cascade do |t|
+    t.string "title", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
+    t.string "icon_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_info_slides_on_vignettes_questionnaire_id"
+  end
+
+  create_table "vignettes_info_slides_slides", id: false, force: :cascade do |t|
+    t.bigint "vignettes_info_slide_id", null: false
+    t.bigint "vignettes_slide_id", null: false
+    t.index ["vignettes_info_slide_id", "vignettes_slide_id"], name: "idx_on_vignettes_info_slide_id_vignettes_slide_id_2bdc65ab76"
+    t.index ["vignettes_slide_id", "vignettes_info_slide_id"], name: "idx_on_vignettes_slide_id_vignettes_info_slide_id_c74f04e951"
+  end
+
+  create_table "vignettes_options", force: :cascade do |t|
+    t.string "text"
+    t.bigint "vignettes_question_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_question_id"], name: "index_vignettes_options_on_vignettes_question_id"
+  end
+
+  create_table "vignettes_questionnaires", force: :cascade do |t|
+    t.string "title"
+    t.bigint "lecture_id", null: false
+    t.boolean "published"
+    t.boolean "editable", default: true
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lecture_id"], name: "index_vignettes_questionnaires_on_lecture_id"
+  end
+
+  create_table "vignettes_questions", force: :cascade do |t|
+    t.string "type"
+    t.text "question_text"
+    t.bigint "vignettes_slide_id", null: false
+    t.boolean "only_integer", default: false
+    t.decimal "min_number", precision: 10
+    t.decimal "max_number", precision: 10
+    t.string "language", default: "en"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["vignettes_slide_id"], name: "index_vignettes_questions_on_vignettes_slide_id"
+  end
+
+  create_table "vignettes_slide_statistics", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "vignettes_answer_id"
+    t.integer "time_on_slide"
+    t.integer "total_time_on_slide"
+    t.text "time_on_info_slides"
+    t.text "info_slides_access_count"
+    t.text "info_slides_first_access_time"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_vignettes_slide_statistics_on_user_id"
+    t.index ["vignettes_answer_id"], name: "index_vignettes_slide_statistics_on_vignettes_answer_id"
+  end
+
+  create_table "vignettes_slides", force: :cascade do |t|
+    t.string "title", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
+    t.integer "position", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["position"], name: "index_vignettes_slides_on_position"
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_slides_on_vignettes_questionnaire_id"
+  end
+
+  create_table "vignettes_user_answers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "vignettes_questionnaire_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_vignettes_user_answers_on_user_id"
+    t.index ["vignettes_questionnaire_id"], name: "index_vignettes_user_answers_on_vignettes_questionnaire_id"
   end
 
   create_table "votes", force: :cascade do |t|
@@ -962,6 +1112,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
     t.index ["watchlist_entry_id"], name: "index_watchlists_on_watchlist_entry_id"
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "annotations", "media"
   add_foreign_key "annotations", "users"
   add_foreign_key "announcements", "lectures"
@@ -1007,6 +1159,20 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_21_221000) do
   add_foreign_key "user_favorite_lecture_joins", "lectures"
   add_foreign_key "user_favorite_lecture_joins", "users"
   add_foreign_key "user_submission_joins", "users"
+  add_foreign_key "vignettes_answers", "vignettes_questions"
+  add_foreign_key "vignettes_answers", "vignettes_slides"
+  add_foreign_key "vignettes_answers", "vignettes_user_answers"
+  add_foreign_key "vignettes_codenames", "lectures"
+  add_foreign_key "vignettes_codenames", "users"
+  add_foreign_key "vignettes_completion_messages", "lectures"
+  add_foreign_key "vignettes_options", "vignettes_questions"
+  add_foreign_key "vignettes_questionnaires", "lectures"
+  add_foreign_key "vignettes_questions", "vignettes_slides"
+  add_foreign_key "vignettes_slide_statistics", "users"
+  add_foreign_key "vignettes_slide_statistics", "vignettes_answers"
+  add_foreign_key "vignettes_slides", "vignettes_questionnaires"
+  add_foreign_key "vignettes_user_answers", "users"
+  add_foreign_key "vignettes_user_answers", "vignettes_questionnaires"
   add_foreign_key "vouchers", "lectures"
   add_foreign_key "watchlist_entries", "media"
   add_foreign_key "watchlist_entries", "watchlists"

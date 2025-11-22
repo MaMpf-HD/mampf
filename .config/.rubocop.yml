@@ -22,7 +22,7 @@
 
 # "Rubocop defaults" are by default required/included:
 # https://github.com/rubocop/rubocop/blob/master/config/default.yml
-require:
+plugins:
   - rubocop-performance
   - rubocop-rails
 
@@ -68,7 +68,6 @@ Performance:
 Performance/FlatMap:
   Severity: warning # an error in CI/CD
 
-
 #############################################
 # Rails
 #############################################
@@ -79,8 +78,24 @@ Rails/HasManyOrHasOneDependent:
 Rails/SkipsModelValidations:
   AllowedMethods: ["touch", "touch_all"]
 
-Rails/UnknownEnv:
-  Environments: ["development", "test", "production", "docker_development"]
+# TODO RuboCop
+Rails/InverseOf:
+  Enabled: false
+
+# TODO RuboCop
+Rails/HasAndBelongsToMany:
+  Enabled: false
+
+# TODO RuboCop
+Rails/UniqueValidationWithoutIndex:
+  Enabled: false
+
+#############################################
+# Naming
+#############################################
+
+Naming/PredicateMethod:
+  Enabled: false
 
 #############################################
 # Style

@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :course do
     title do
-      "#{Faker::Book.title} #{Faker::Number.between(from: 1, to: 9999)}"
+      "#{Faker::Book.title.gsub("&", "and")} #{Faker::Number.between(from: 1, to: 9999)}"
     end
     short_title do
-      "#{Faker::Book.title} #{Faker::Number.between(from: 1, to: 9999)}"
+      "#{Faker::Book.title.gsub("&", "and")} #{Faker::Number.between(from: 1, to: 9999)}"
     end
 
     transient do
@@ -58,6 +58,16 @@ FactoryBot.define do
           division = FactoryBot.create(:division)
           FactoryBot.create(:division_course_join, course: course, division: division)
         end
+      end
+    end
+
+    trait :with_editor_by_id do
+      transient do
+        editor_id { nil }
+      end
+
+      after(:build) do |course, evaluator|
+        course.editors << User.find(evaluator.editor_id)
       end
     end
   end

@@ -3,7 +3,7 @@
     role="tablist">
   <% media_sorts.each do |s| %>
     <li class="nav-item">
-      <a class="nav-link <%= active(s == 'kaviar') %>"
+      <a class="nav-link <%= active(s == 'lesson_material') %>"
          id="<%= s %>-tab"
          data-bs-toggle="tab"
          href="#<%= s %>-media"
@@ -19,7 +19,7 @@
 <div class="tab-content"
      id="edited-media-tabContent">
   <% media_sorts.each do |s| %>
-    <div class="tab-pane fade <%= show_tab(s == 'kaviar') %>"
+    <div class="tab-pane fade <%= show_tab(s == 'lesson_material') %>"
          id="<%= s %>-media"
          role="tabpanel"
          aria-labelledby="<%= s %>-tab">

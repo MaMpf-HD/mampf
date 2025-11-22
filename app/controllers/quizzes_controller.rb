@@ -1,4 +1,3 @@
-# Quizzes controller
 class QuizzesController < ApplicationController
   skip_before_action :authenticate_user!, only: [:take, :proceed]
   before_action :set_quiz, except: [:new, :update_branching]
@@ -112,9 +111,6 @@ class QuizzesController < ApplicationController
       else
         params
       end
-      if user_signed_in? && current_user.study_participant
-        quiz_round_params[:study_participant] = current_user.anonymized_id
-      end
 
       quiz_round_params[:save_probe] =
         if user_signed_in?
@@ -128,7 +124,7 @@ class QuizzesController < ApplicationController
     end
 
     def quiz_params
-      params.require(:quiz).permit(:label, :root, :level, :id_js)
+      params.expect(quiz: [:label, :root, :level, :id_js])
     end
 
     def check_accessibility

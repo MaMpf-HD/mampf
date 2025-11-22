@@ -4,6 +4,7 @@ class Division < ApplicationRecord
   has_many :courses, through: :division_course_joins
   extend Mobility
   extend I18nLocaleAccessors
+
   translates :name
 
   def name_with_program

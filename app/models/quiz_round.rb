@@ -1,13 +1,12 @@
-# QuizRound class
 # service model for quizzes_controller
 class QuizRound
   include ActiveModel::Validations
+
   attr_reader :quiz, :counter, :progress, :crosses, :vertex, :is_question,
               :answer_scheme, :progress_old, :counter_old, :round_id_old,
               :input, :correct, :hide_solution, :vertex_old, :question_id,
               :answer_shuffle, :answer_shuffle_old, :solution_input, :result,
-              :session_id, :study_participant, :is_remark, :remark_id,
-              :input_text, :certificate, :save_probe
+              :attempt_token, :certificate, :save_probe
 
   def initialize(params)
     @quiz = Quiz.find(params[:id])
@@ -21,11 +20,9 @@ class QuizRound
     @vertex = @quiz.vertices[@progress]
     @vertex_old = @vertex
     question_details(params) if @vertex.present? && @vertex[:type] == "Question"
-    remark_details(params) if @vertex.present? && @vertex[:type] == "Remark"
     @answer_scheme ||= {}
     @answer_shuffle ||= []
     @answer_shuffle_old = []
-    @study_participant = params[:study_participant]
     @save_probe = params[:save_probe]
   end
 
@@ -33,7 +30,6 @@ class QuizRound
     @input = @quiz.crosses_to_input(@progress, @crosses)
     @correct = (@input == @answer_scheme)
     create_question_probe if @is_question
-    create_remark_probe if @is_remark && @study_participant
     @progress = @quiz.next_vertex(@progress, @input)
     create_certificate_final_probe if @progress == -1 && @quiz.sort == "Quiz"
     @counter += 1
@@ -84,11 +80,11 @@ class QuizRound
       if params[:quiz].present?
         @counter = params[:quiz][:counter].to_i
         @progress = params[:quiz][:progress].to_i
-        @session_id = params[:quiz][:session_id]
+        @attempt_token = params[:quiz][:attempt_token]
       end
       @progress ||= @quiz.root
       @counter ||= 0
-      @session_id ||= SecureRandom.uuid.first(13).remove("-")
+      @attempt_token ||= SecureRandom.uuid.first(13).remove("-")
       @progress_old = @progress
       @counter_old = @counter
       @round_id_old = round_id
@@ -105,11 +101,6 @@ class QuizRound
       end
     end
 
-    def remark_details(_params)
-      @is_remark = true
-      @remark_id = @vertex[:id]
-    end
-
     def update_answer_shuffle
       @answer_shuffle = Question.find_by(id: @vertex[:id])&.answers&.map(&:id)
                                 &.shuffle
@@ -119,24 +110,14 @@ class QuizRound
       return unless @save_probe
 
       quiz_id = @quiz.id unless @quiz.sort == "RandomQuiz"
-      input = @solution_input || @input.to_s if @study_participant
-      ProbeSaver.perform_async(quiz_id, @question_id, nil, @correct, @progress,
-                               @session_id, @study_participant, input)
-    end
-
-    def create_remark_probe
-      return unless @save_probe
-
-      quiz_id = @quiz.id unless @quiz.sort == "RandomQuiz"
-      ProbeSaver.perform_async(quiz_id, nil, @remark_id, nil, @progress,
-                               @session_id, @study_participant, @input_text)
+      ProbeSaver.perform_async(quiz_id, @question_id, @correct, @progress,
+                               @attempt_token)
     end
 
     def create_certificate_final_probe
       return unless @save_probe
 
       @certificate = QuizCertificate.create(quiz: @quiz)
-      ProbeSaver.perform_async(@quiz.id, nil, nil, nil, -1, @session_id,
-                               @study_participant, nil)
+      ProbeSaver.perform_async(@quiz.id, nil, nil, -1, @attempt_token)
     end
 end

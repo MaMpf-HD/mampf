@@ -22,6 +22,23 @@ up-logs *args:
     cd {{justfile_directory()}}/docker/development/
     docker compose logs -f {{name}}
 
+# Recreates the MaMpf docker container (without reusing containers)
+recreate *args:
+    #!/usr/bin/env bash
+    # This is the same as deleting the MaMpf container via Docker Desktop,
+    # then running `just docker up`. It will enforce that the container is
+    # recreated, thus also dependencies will be rechecked.
+    cd {{justfile_directory()}}/docker/development/
+    docker compose up mampf --force-recreate {{args}}
+
+# Restarts the MaMpf docker container (might reuse a stopped container) — Also see `recreate`
+restart:
+    #!/usr/bin/env bash
+    # This is the same as restarting the MaMpf container via Docker Desktop.
+    # It may reuse a stopped container, thus dependencies won't be rechecked.
+    cd {{justfile_directory()}}/docker/development/
+    docker compose restart mampf
+
 # Starts the dev docker containers and preseeds the database
 [confirm("This will reset all your data in the database locally. Continue? (y/n)")]
 up-reseed *args:
@@ -32,7 +49,7 @@ up-reseed *args:
     just --yes docker db-tear-down
 
     cd {{justfile_directory()}}/docker/development/
-    export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/20220923120841_mampf.sql"
+    export DB_SQL_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/mampf.sql"
     export UPLOADS_PRESEED_URL="https://github.com/MaMpf-HD/mampf-init-data/raw/main/data/uploads.zip"
     docker compose rm --stop --force mampf && just docker up {{args}}
 
@@ -118,7 +135,7 @@ db-tear-down:
     echo -e "\033[33mIgnore the error 'Resource is still in use' for the development_default network\033[0m"
     cd {{justfile_directory()}}/docker/development/
     docker compose down db --volumes
-    docker-compose up -d --force-recreate db
+    docker compose up -d --force-recreate db
     just docker wait-for-postgres
 
 # Removes the development docker containers
@@ -151,7 +168,7 @@ db-tear-down:
     cd {{justfile_directory()}}/docker/development/
     docker compose exec mampf bundle exec rails c {{args}}
 
-# Rebuilds the MaMpf container (in the dev or test environment)
+# Rebuilds the MaMpf container (in the dev or test env) — Favor the `recreate` command over this
 rebuild env="dev":
     #!/usr/bin/env bash
     environment={{ if env == "test" {"test"} else {"development"} }}
@@ -219,6 +236,16 @@ ensure-db-container-running:
         docker compose up -d db
     fi
 
+# Ensures that the MaMpf container is running
+[private]
+ensure-mampf-container-running:
+    #!/usr/bin/env bash
+    cd {{justfile_directory()}}/docker/development/
+
+    if [ -z "$(docker compose ps --services --filter 'status=running' | grep mampf)" ]; then
+        echo "The mampf dev container is not running. Please start it first (use 'just docker')."
+        exit 1
+    fi
 
 # Ensures that the db container is running and postgres is ready (if not, starts the db container and waits for postgres)
 [private]

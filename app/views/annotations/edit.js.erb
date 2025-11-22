@@ -39,6 +39,8 @@ function constructWarningMessage() {
     return message;
   }
 
+  const thyme = document.getElementById("thyme");
+
   // Mistake specific warnings
   $.ajax(Routes.num_nearby_posted_mistake_annotations_path(), {
     type: "GET",
@@ -46,7 +48,7 @@ function constructWarningMessage() {
     async: false,
     data: {
       mediumId: thyme.dataset.medium,
-      timestamp: video.currentTime,
+      timestamp: thymeAttributes.video.currentTime,
     },
     success: function (count) {
       const locale = $("#annotation-locales");
@@ -82,16 +84,16 @@ var categoryRadios = document.getElementById("category-radios");
 categoryRadios.addEventListener("click", function (evt) {
   if (evt.target && event.target.matches("input[type='radio']")) {
     switch (evt.target.value) {
-      case Category.NOTE.name:
+      case "note":
         note();
         break;
-      case Category.CONTENT.name:
+      case "content":
         content();
         break;
-      case Category.MISTAKE.name:
+      case "mistake":
         mistake();
         break;
-      case Category.PRESENTATION.name:
+      case "presentation":
         presentation();
         break;
     }
@@ -186,8 +188,32 @@ function initModalBackgroundAnnotationColor() {
   }
 }
 
+/**
+ * Converts a given integer between 0 and 255 into a hexadecimal representation.
+ *
+ * TODO: avoid code duplication of this method.
+ */
+function toHexaDecimal(integer) {
+  return integer.toString(16).padStart(2, "0");
+}
+
+/**
+ * Lightens up a given color (given in a string in hexadecimal),
+ * such that e.g. black becomes dark grey.
+ *
+ * The higher the value of "factor" the brighter the colors become.
+ *
+ * TODO: avoid code duplication of this method.
+ */
+function lightenUp(color, factor) {
+  const red = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(5, 2))) / factor);
+  const green = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(3, 2))) / factor);
+  const blue = Math.floor(((factor - 1) * 255 + Number("0x" + color.substr(1, 2))) / factor);
+  return "#" + toHexaDecimal(blue) + toHexaDecimal(green) + toHexaDecimal(red);
+}
+
 function setModalColor(hexColorString) {
-  const color = thymeUtility.lightenUp(hexColorString, 2);
+  const color = lightenUp(hexColorString, 2);
   $(".modal-header").css("background-color", color);
 }
 
@@ -250,13 +276,13 @@ if (contentRadio.is(":checked")) {
   submitButton.disabled = false;
   var subcategory = document.getElementById("annotation_subcategory").textContent.replace(/[^a-z]/g, "");
   switch (subcategory) {
-    case Subcategory.DEFINITION.name:
+    case "definition":
       document.getElementById("content-category-definition").checked = true;
       break;
-    case Subcategory.ARGUMENT.name:
+    case "argument":
       document.getElementById("content-category-argument").checked = true;
       break;
-    case Subcategory.STRATEGY.name:
+    case "strategy":
       document.getElementById("content-category-strategy").checked = true;
       break;
   }

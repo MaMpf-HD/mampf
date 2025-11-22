@@ -1,4 +1,4 @@
-<%= stylesheet_link_tag 'comments' %>
+<%= vite_stylesheet_tag "styles/comments.scss" %>
 
 <%
   # Views that use this partial must provide the following variable:
@@ -38,8 +38,7 @@
 
   <div class="field">
     <%=
-      form.text_area :body, rows: '7',
-        "data-cy": "comment-textarea",
+      form.text_area :body, rows: '7', "data-testid": "comment-new-textarea",
         class: 'form-control commentForm comment-field', id: new_record ?
         comment.parent.nil? ? "commontator-thread-#{@commontator_thread.id}-new-comment-body" :
                               "commontator-comment-#{comment.parent.id}-reply" :
@@ -50,8 +49,7 @@
 
   <div class="submit">
     <%= form.submit t("commontator.comment.actions.#{new_record ? 'create' : 'update'}"),
-                    class: 'btn btn-primary btn-sm',
-                    "data-cy": "submit-new-comment" %>
+                    class: 'btn btn-primary btn-sm' %>
     <%=
       form.submit(
         t('commontator.comment.actions.cancel'), name: 'cancel',

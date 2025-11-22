@@ -1,3 +1,6 @@
+> [!warning]
+> This guide is not up to date, please refer to the [MaMpf Wiki](https://github.com/MaMpf-HD/mampf/wiki/Installation-&-Setup) in addition to this document, until information from here is fully migrated to the Wiki.
+
 ## Installation (with docker compose)
 
 To simply try out mampf you can use `docker compose` (needs [Docker](https://docs.docker.com/engine/install/) and [Docker Compose](https://docs.docker.com/compose/install/)). Simply clone the MaMpf repository and run docker compose by executing
@@ -17,7 +20,6 @@ git submodule update --init
 You now have the following things ready:
 * The MaMpf server on [localhost:3000](http://localhost:3000/)
 * The mailcatcher service on [localhost:1080](http://localhost:1080/)
-* The webinterface for ApacheSolr on [localhost:8983](http://localhost:8983/)
 * A test mailserver instance on Ports 1025, 10143, 10993
 * A webpacker dev server on [localhost:3035](http://localhost:3035/)
 
@@ -41,7 +43,7 @@ If that for some reason does not work, open a [new issue](https://github.com/MaM
 ##### Prefilled database: Manual setup
 
 1. Download the latest version of the docker development database from <a href="https://heibox.uni-heidelberg.de/d/6fb4a9d2e7f54d8b9931/" target="_blank">here</a>
-and put it in the `db/backups/docker_development` folder in your project directory. The file should have a timestamp in its name, e.g. `20220923120841_mampf.sql`
+and put it in the `db/backups/development` folder in your project directory. The file should have a timestamp in its name, e.g. `20220923120841_mampf.sql`
 2. Restore the data from the downloaded database using the appropriate timestamp, e.g.:
    ```
    # docker compose exec mampf rails db:restore pattern=20220923120841

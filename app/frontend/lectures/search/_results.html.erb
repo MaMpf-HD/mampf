@@ -1,0 +1,33 @@
+<% if pagy.count.positive? %>
+  <div class="row mx-2 py-3">
+    <div class="col-12 col-lg-2">
+      <strong>
+        <%= t('basics.hits') %>:
+      </strong>
+      <%= pagy.count %>
+    </div>
+    <div class="col-12 col-lg-10">
+      <%== pagy_bootstrap_nav(pagy, anchor_string: 'data-remote="true"') %>
+    </div>
+  </div>
+  <% if @results_as_list %>
+    <%= render partial: 'lectures/search/list',
+               locals: { lectures: lectures } %>
+  <% else %>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-4 row-cols-xxl-6">
+      <% lectures.each do |l| %>
+        <%= render partial: 'main/start/lecture',
+                   locals: { lecture: l,
+                             current: false,
+                             subscribed: l.subscribed_by?(current_user),
+                             parent: 'lectureSearch' } %>
+      <% end %>
+    </div>
+  <% end %>
+<% else %>
+  <div class="row">
+    <div class="col-12 text-center">
+      <%= t('basics.no_hits') %>
+    </div>
+  </div>
+<% end %>

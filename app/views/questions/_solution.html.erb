@@ -88,21 +88,27 @@
       <%= render partial: 'questions/tex_solution',
                  locals: { solution: solution } %>
     </div>
-    <%= f.hidden_field 'solution_content[nerd]',
+
+    <%= f.fields_for :solution_content do |content_fields| %>
+
+    <%= content_fields.hidden_field :nerd,
                        value: solution.content.nerd,
                        id: 'solution_content_nerd' %>
     <div class="row">
       <div class="col-12">
-        <%= f.label 'solution_content[explanation]',
+        <%= content_fields.label :explanation,
                    t('admin.answer.explanation'),
                    class: "form-label" %>
-        <%= f.text_area 'solution_content[explanation]',
+        <%= content_fields.text_area :explanation,
                         class: 'form-control',
                         id: 'tex-area-explanation-s-' +
                               question.answers.first.id.to_s,
                         value: question.answers.first.explanation %>
       </div>
     </div>
+
+    <% end %>
+
     <div class="row">
       <div class="col-8 py-2">
         <span id="tex-preview-explanation-s-<%= question.answers.first.id %>">

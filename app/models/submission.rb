@@ -112,10 +112,10 @@ class Submission < ApplicationRecord
     end_of_file_str = "#{end_of_file}#{assignment.accepted_file_type}"
 
     "#{start_str}#{too_late_str}#{id_str}#{end_of_file_str}"
-      .gsub(%r{[\x00/\\:\*\?\"<>\|]}, "_")
+      .gsub(%r{[\x00/\\:*?"<>|]}, "_")
       .gsub(%r{^.*(\\|/)}, "")
       # Strip out the non-ascii characters
-      .gsub(/[^0-9A-Za-z.\-]/, "_")
+      .gsub(/[^0-9A-Za-z.-]/, "_")
   end
 
   def self.zip(submissions, downloadables, end_of_file = "")
@@ -212,8 +212,8 @@ class Submission < ApplicationRecord
     if (!assignment.accepted_file_type.in?([".cc", ".hh", ".m"]) &&
       !metadata["mime_type"].in?(assignment.accepted_mime_types)) ||
        (assignment.accepted_file_type.in?([".cc", ".hh", ".m"]) &&
-         (!metadata["mime_type"].starts_with?("text/") &&
-          metadata["mime_type"] != "application/octet-stream"))
+         !metadata["mime_type"].starts_with?("text/") &&
+          metadata["mime_type"] != "application/octet-stream")
       errors.push(I18n.t("submission.wrong_mime_type",
                          mime_type: metadata["mime_type"],
                          accepted_mime_types: assignment.accepted_mime_types

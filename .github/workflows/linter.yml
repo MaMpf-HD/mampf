@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 
@@ -27,21 +27,21 @@ jobs:
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.1.4
+          ruby-version: 3.4.7
           bundler-cache: true
 
       - name: Run RuboCop
         if: ${{ steps.rb-changed.outputs.changed-files != ''}}
         run: |
           echo "🚨 Running RuboCop version: $(bundle info rubocop | head -1)"
-          bundle exec rubocop --format github --fail-level 'convention' --force-exclusion -- $CHANGED_FILES
+          bundle exec rubocop --config ./.config/.rubocop.yml --format github --fail-level 'convention' --force-exclusion -- $CHANGED_FILES
 
   eslint:
       name: ESLint (JS)
       runs-on: ubuntu-latest
       steps:
         - name: Checkout code
-          uses: actions/checkout@v4
+          uses: actions/checkout@v5
           with:
             fetch-depth: 2 # to also fetch parent of PR (used to get changed files)
 

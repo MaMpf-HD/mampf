@@ -6,6 +6,7 @@ de:
       last: "Letzte &raquo;"
       previous: "&lsaquo; Vorige"
       next: "Nächste &rsaquo;"
+      truncate: "Abkürzen"
   activerecord:
     errors:
       models:
@@ -14,34 +15,30 @@ de:
             teacher:
               required: "Es muss ein(e) Dozent(in) angegeben werden."
   categories:
-    kaviar:
+    lesson_material:
       singular: 'Lektion'
       plural: 'Lektionen'
       short: 'Lek'
-    exercises:
+    exercise:
       singular: 'Übung'
       singular_updated: 'Übung (aktualisiert)'
       plural: 'Übungen'
       short: 'Ü'
-    examples:
-      plural: 'Beispiele'
-      short: 'Bsp'
     script:
       singular: 'Skript'
       short: 'Skr'
-    nuesse: 'Blätter'
-    sesam:
+    worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
       short: 'WEx'
-    kiwi:
+    repetition:
       singular: 'Wiederholung'
       short: 'Wdh'
     quiz:
       singular: 'Quiz'
       plural: 'Quizzes'
       short: 'Q'
-    randomquiz:
+    random_quiz:
       singular: 'Zufallsquiz'
       short: 'ZufQ'
     test:
@@ -55,16 +52,12 @@ de:
       singular: 'Quiz-Erläuterung'
       plural: 'Quiz-Erläuterungen'
       short: 'Erl'
-    erdbeere:
-      singular: 'Beispiel'
-      plural: 'Beispiele'
-      short: 'DB'
     muesli: 'MÜSLI'
     board: 'Forum'
     comments: 'Kommentare'
     organizational_html: 'Organisa&shy;torisches'
     announcements: 'Mitteilungen'
-    reste:
+    miscellaneous:
       singular: 'Sonstiges'
       short: 'Sns'
     course: 'Modul'
@@ -78,12 +71,11 @@ de:
       Deiner Profilseite Zugriff erhalten.
   footer:
     text_html: >
-      &copy; MaMpf Team 2024. MaMpf ist auf %{github}.
+      &copy; MaMpf Team. MaMpf ist auf %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs meldest Du am besten %{bugs}.
       Weiteres Feedback kannst Du gerne auch an %{feedback} schicken.
-      Aperiodic monotiles lizenziert unter BSD-3-Clause von %{background_photo_credit}.
   sponsors:
     sponsorships: 'Projektförderungen'
     hse: 'Heidelberg School of Education (HSE)'
@@ -155,8 +147,9 @@ de:
       current_lecture: 'Aktuelle Veranstaltung'
       logout: 'Logout'
       media_search: 'Mediensuche'
-      tags: 'Tagsuche'
-      teachables: 'Veranstaltungssuche'
+      lecture_search: 'Veranstaltungssuche'
+      course_search: 'Modulsuche'
+      tag_search: 'Tagsuche'
       terms: 'Semester'
       classification: 'Systematik'
       news: 'News'
@@ -199,9 +192,6 @@ de:
         eingetragen bist.
       my_courses: 'Meine Module'
       create_course: 'Modul anlegen'
-      my_clickers: 'Meine Clicker'
-      create_clicker: 'Clicker anlegen'
-      no_edited_clickers: 'Du hast aktuell keine Clicker angelegt.'
       no_edited_courses: >
         Es gibt keine Module, für die Du als EditorIn eingetragen bist.
       my_media: 'Meine Medien'
@@ -299,17 +289,6 @@ de:
           ein Quiz.
           </li>
           </ul>
-        clicker_definition: >
-          Dies ist eine Liste aller Deiner
-          <i>Clicker</i>,
-          </br>
-          Ein <i>Clicker</i> im Sinne von MaMpf ist hierbei
-          ein Feedbackkanal in Form einer speziellen Webseite.
-          Personen mit dem EditorInnen-Link können Feedback zu einer
-          Fragestellung erbitten und Personen mit dem TeilnehmerInnen-Link
-          können dieses Feedback liefern.
-          Pro Clicker ist zu jedem Zeitpunkt genau eine Fragestellung
-          möglich, aber Clicker können wiederverwendet werden.
         other_lectures: >
           Dies ist eine Liste aller Veranstaltungen, für die Du keine
           Bearbeitungsrechte hast. (Es sei denn, Du bist Admin :-P )
@@ -322,6 +301,7 @@ de:
       title: 'Titel'
       teacher: 'DozentIn'
       editors: 'EditorInnen'
+
     annotation:
       your_annotations: 'Deine Annotationen'
       students_annotations: 'Annotationen der Studierenden'
@@ -451,6 +431,9 @@ de:
       oberseminar: 'Oberseminar'
       oberseminar_short: 'OS'
       oberseminar_content: 'Oberseminarinhalt'
+      vignettes: 'Vignettes'
+      vignettes_short: 'V'
+      vignettes_content: 'Vignettes Inhalt'
       special: 'Special'
       special_short: ''
       special_content: 'Inhalt'
@@ -475,13 +458,13 @@ de:
       no_imported_media: 'Es sind keine importierten Medien vorhanden.'
       comments_disabled: >
         Kommentare für neu veröffentlichte Medien sind standardmäßig deaktiviert
-      enable_annotation_button: 'Dürfen Studierende Annotationen für Sie sichtbar machen?'
+      enable_annotation_button: 'Dürfen Studierende Annotationen für Dich sichtbar machen?'
       enable_annotation_button_helpdesk: >
-        Wenn Sie "ja" anwählen, dann haben Studierende die Möglichkeit,
+        Wenn Du "ja" auswählst, dann haben Studierende die Möglichkeit,
         ihre Annotationen für den/die Dozent*in bzw. alle Editor*innen
-        der Vorlesung sichtbar machen. Sie können diese dann entweder
+        der Vorlesung sichtbar machen. Du kannst diese dann entweder
         im normalen Thyme-Player oder im Thyme-Feedback-Player einsehen
-        und dadurch Rückmeldung zu Ihren Vorlesungsvideos erhalten.
+        und dadurch Rückmeldung zu Deinen Vorlesungsvideos erhalten.
       enable_annotation_button_inherit_helpdesk: >
         Ist die Option "von Vorlesung erben" ausgewählt, dann wird die
         globale Option aus den Vorlesungseinstellungen (Kommentare) übernommen.
@@ -611,18 +594,6 @@ de:
           gesperrt.
           Sollte es Medien geben, die auf der Ebene des zugehörigen Moduls
           angesiedelt sind, so wird darauf hingewiesen.
-        course_tags: >
-          Hier werden diejenigen Tags aus dem zugeordneten
-          Modul angezeigt, die in mindestens einem Abschnitt dieser
-          Veranstaltung vorkommen.
-        additional_tags: >
-          Hier werden diejenigen Tags angezeigt, die
-          in mindestens einem Abschnitt dieser Veranstaltung vorkommen,
-          jedoch kein Tag des zugeordneten Moduls sind.
-        untreated_tags: >
-          Hier werden diejenigen Tags aus dem zugeordneten
-          Modul angezeigt, die in keinem Abschnitt dieser Veranstaltung
-          vorkommen.
         course_editors: >
           ModuleditorInnen haben das Bearbeitungsrecht
           für das zugeordnete Modul. Dieses vererbt sich auf jede
@@ -710,33 +681,6 @@ de:
           Standardmäßig sind Kommentare für neu veröffentlichte Medien erlaubt,
           Du kannst bei der Veröffentlichung aber Kommentare deaktivieren.
           Hier kannst Du dises Verhaltenb umdrehen.
-        search_type: >
-          Hier kannst Du einen, mehrere oder alle der folgenden Veranstaltungstypen auswählen: <i>Lektion</i>,
-          <i>Seminar</i>, <i>Proseminar</i> und <i>Oberseminar</i>. Dabei wird der Operator inklusives
-          <i>ODER</i> verwendet.
-        search_program: >
-          Hier musst Du (im Sinne von
-          <i>
-          ODER
-          </i>
-          ) auswählen, zu welchen Studiengängen die Veranstaltung gehören soll.
-        search_teacher: >
-          Hier kannst Du (im Sinne von
-          <i>
-          ODER
-          </i>
-          ) auswählen, wer die DozentInnen der Veranstaltung sein sollen.
-        search_term: >
-          Hier kannst Du (im Sinne von
-          <i>
-          ODER
-          </i>
-          ) auswählen, in welchem Semester die Veranstaltungen stattgefunden
-          oder stattfinden.
-        search_fulltext: >
-          Hier kannst Du Text eingeben, nach dem im Titel der Veranstaltung
-          gesucht wird. Wenn Du dieses Feld leer lässt (bzw. weniger als zwei Buchstaben
-          eingibst), wird es bei der Suche ignoriert.
         disable_teacher_display: >
           Wenn Du dieses Feld aktivierst, wird auf der Vorlesungs-Karten auf der
           Startseite und auf der Vorlesungsseite für generische Nutzer
@@ -782,11 +726,6 @@ de:
       no_talks: Es sind noch keine Vorträge vorhanden.
       orphaned_lessons: 'Verwaiste Sitzungen'
       related_tags: 'Verknüpfte Begriffe'
-      course_tags_html: >
-        (Bisher) behandelte Begriffe aus dem zugehörigen Modul %{course}
-        (%{count})
-      no_course_tags: >
-        Es sind noch keine Begriffe vorhanden.
       additional_tags: >
         Zusätzlich behandelte Begriffe (%{count})
       untreated_tags: >
@@ -812,33 +751,10 @@ de:
         nur die DozentIn und ModuleditorInnen an dieser Stelle Änderungen
         vornehmen. Sollten aus wichtigem Grund noch Änderungen an dieser Stelle
         gemacht werden, kannst Du Dich per Email an %{project_mail} wenden.
-    clicker:
-      new_clicker: 'Neuen Clicker anlegen'
-      user_link: 'Link für NutzerInnen'
-      editor_link: 'Link für EditorInnen (ohne Authentifizierung)'
-      close: 'Clicker schließen'
-      open: 'Clicker freischalten'
-      reset: 'Clicker zurücksetzen'
-      delete: 'Clicker löschen'
-      alternatives: 'Anzahl der Auswahlmöglichkeiten'
-      is_open: 'Der Clicker ist offen.'
-      is_closed: 'Der Clicker ist geschlossen.'
-      thank_vote: 'Danke für Dein Votum.'
-      voted_already: 'Du hast schon abgestimmt.'
-      show_qr: 'QR-Code zeigen'
-      hide_qr: 'QR-Code verstecken'
-      remove_question: 'Assoziierung zu Quizfrage aufheben'
-      last_poll_results: 'Ergebnis der letzten Abstimmung'
-      number_of_votes: 'Anzahl der Voten'
-      associated_to_question: >
-        Dieser Clicker ist zu einer Frage aus der Datenbank assoziiert:
-      change_associated_question: >
-        Andere Quizfrage assoziieren
-      associate_question: 'Quizfrage assoziieren'
-      info:
-        title: >
-          Hier musst Du den Titel des Clickers eintragen.
-          Du darfst jeden Titel nur einmal vergeben.
+      subscribe_link: "Link zum Modul abonnieren"
+      subscribe_link_info: >
+        Dieser Link kann mit Studenten geteilt werden um darüber das Modul
+        zu abonnieren.
     course:
       new_course: 'Neues Modul anlegen'
       preceding_courses: 'Module, auf denen das vorliegende Modul aufbaut'
@@ -858,6 +774,10 @@ de:
           Hier musst Du den Titel des Moduls eintragen.
           Typischerweise sollte das der Titel aus dem Modulhandbuch sein.
           Modulnamen dürfen nur einmal vergeben werden.
+        search_fulltext: >
+          Hier kannst Du Text eingeben, nach dem im Titel und Kurztitel
+          des Moduls gesucht wird. Wenn Du dieses Feld leer lässt, wird es bei
+          der Suche ignoriert.
         short_title: >
           Der Kurztitel wird an mehreren Stellen als Abkürzung verwendet.
         editors: >
@@ -865,6 +785,18 @@ de:
           das Modul bearbeiten, insbesondere können sie Veranstaltungen innerhalb
           des Moduls anlegen. ModuleditorInnen erben die Bearbeitungsrechte für
           alle Veranstaltungen innerhalb des Moduls.
+        search_editors: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, wer ModulEditorIn ist.
+        search_program: >
+          Hier kannst Du (im Sinne von
+          <i>
+          ODER
+          </i>
+          ) auswählen, zu welchen Studiengängen das Modul gehören soll.
         no_right_to_change_editors: >
           ModuleditorInnen können nur von AdministratorInnen geändert werden.
           Bitte wende Dich per Email an %{project_email}, wenn hier
@@ -1027,7 +959,7 @@ de:
         media: >
           Hier siehst Du die Liste der Medien, die zu diesem Vortrag assoziiert
           sind. Du kannst neue Medien hinzufügen.
-        tags: >
+        talks: >
           Das ist die Liste der Tags, die zu diesem Vortrag assoziiert sind.
           Diese kann nicht von den Vortragenden bearbeitet werden.
         by_speakers: >
@@ -1169,7 +1101,6 @@ de:
       lock_comments: Kommentare für dieses Medium deaktivieren
       comments_locked: Kommentare deaktiviert
       release_date: 'Veröffentlichungsdatum'
-      boost: Boost
       invalid_publish_date: Dies ist kein gültiges Datum in der Zukunft.
       scheduled_for_release: >
         Dieses Medium wird planmäßig am %{release_date} veröffentlicht.
@@ -1268,10 +1199,6 @@ de:
           Quiz-Erläuterung: einzelne Quiz-Erläuterung. Quiz-Erläuterungen
           dienen als Bindeglied zwischen Quiz-Fragen in komplexeren Quizzes
           (z.B. angeleiteten Beweisen)
-          </li>
-          <li>
-          Beispiel-Datenbank: Beispiel aus der ErDBeere-Datenbank
-          (z.Zt. nur Prototyp)
           </li>
           <li>
           Sonstiges: Hier kannst Du alles unterbringen, was in keine andere
@@ -1413,29 +1340,8 @@ de:
         search_type: >
           Hier kannst Du einen, mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
           <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i>,
-          <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i>, <i>Beispiel-Datenbank</i> und <i>Sonstiges</i>.
+          <i>Quiz-Frage</i>, <i>Quiz-Erläuterung</i> und <i>Sonstiges</i>.
           Dabei wird der Operator inklusives <i>ODER</i> verwendet.
-        search_teachable: >
-          Hier musst Du (im Sinne von
-          <i>
-          ODER
-          </i>
-          ) auswählen, zu welchen Modulen bzw.
-          Veranstaltungen das Medium assoziiert sein soll, und zwar
-          <i>
-          mit Vererbung / ohne Vererbung.
-          </i>
-          Im Falle der Auswahl von "mit Vererbung" werden bei Auswahl eines
-          Moduls auch alle Medien angezeigt,
-          die zu dazugehörigen Veranstaltungen oder Sitzungen verknüpft sind;
-          bei Auswahl einer Veranstaltung werden auch alle Medien angezeigt,
-          die mit Sitzungen dieser Veranstaltung verknüpft sind.
-        search_tags: >
-          Mit einem Medium verknüpfte Begriffe werden als <span class="badge text-dark lecture-tag">Beispielbegriff</span>
-          auf der Medienkachel angezeigt. Hier kannst Du Begriffe, mit denen das Medium verknüpft sein soll, aus
-          der Datenbank auswählen. Dabei kannst Du einen, mehrere oder alle dieser Begriffe in die Auswahl aufnehmen.
-          Außerdem kannst Du entscheiden, ob das Medium entweder mit mindestens einem der gewählten Begriffe
-          (inklusives <i>ODER</i>) oder mit allen gewählten Begriffen (<i>UND</i>) versehen sein soll.
         search_editors: >
           Hier kannst Du (im Sinne von
           <i>
@@ -1473,13 +1379,6 @@ de:
           die mit dem THymE-Editor bearbeitet wurden).
         details_warning: >
           Es wurden Details geändert, die noch nicht übernommen wurden.
-        boost: >
-          Über den Boost kannst Du die Reihenfolge überschreiben, in der
-          standardmäßig Medien angeordnet werden, die zu Modulen bzw.
-          Veranstaltungen gehören (der Boost wirkt sich nicht auf Medien aus,
-          die zu einer Sitzung assoziiert sind). Der Standardwert ist 0,
-          Medien mit höherem Boost werden weiter vorn angezeigt, Medien mit
-          niedrigerem Boost weiter hinten.
         scheduled_release: >
           Die Veröffentlichung erfolgt nicht sekundengenau, sollte jedoch
           spätestens etwa eine Minute nach der angegebenen Uhrzeit erfolgen.
@@ -1488,10 +1387,6 @@ de:
           Veranstaltung gelten, wie die Teamgröße für Abgaben und die
           Kulanzfrist, kannst Du auf der Vorlesungsseite unter "Hausaufgaben"
           einstellen.
-        answer_count: >
-          Falls Du nach Quizfragen suchst, kannst Du hier einstellen,
-          wieviele Antworten die Quizfrage haben soll. Bei allen anderen
-          Medientypen wird diese Einstellung ignoriert.
     tag:
       index: 'Tagsuche'
       related_tags: 'Verknüpfte Tags'
@@ -1543,13 +1438,10 @@ de:
           assoziiert sein soll.
         list: >
           Das ist die Liste aller assoziierten Tags.
-        search_title: >
-          Hier kannst Du den Titel des gesuchten Tags eingeben.
-          Die Liste der angezeigten Tags wird dann entsprechend
-          gefiltert.
-        search_course: >
-          Hier kannst Du (im Sinne von <i>ODER</i>)
-          auswählen, zu welchen Modulen das Tag assoziiert sein soll.
+        search_fulltext: >
+          Hier kannst Du Text eingeben, nach dem in den Titeln und Aliassen der
+          Tags gesucht werden soll. Wenn Du dieses Feld leer lässt, wird es bei
+          der Suche ignoriert.
         section_association: >
           Da nicht klar ist, welche der verknüpften Tags
           zu welchem Abschnitt der Veranstaltung gehören, kannst Du hier
@@ -1635,7 +1527,6 @@ de:
           Ist das Medium zu einer Veranstaltung oder einer Sitzung assoziiert,
           kannst Du einen von den Abschnitten auswählen, die zu dieser
           Veranstaltung bzw. Sitzung assoziiert sind.
-          Dies ist im Wesentlichen für KaViaR-Videos gedacht.
           </li>
           <li>
           Du möchtest keinen Abschnitt aus der Datenbank assoziieren.
@@ -2095,11 +1986,6 @@ de:
       name: 'Bezeichnung'
       new: 'Teilbereich anlegen'
       no_courses: 'In diesem Teilbereich gibt es noch keine Module.'
-    interaction:
-      export_interactions: Interaktionen exportieren
-      export_probes: Quizdaten exportieren
-      start: Startdatum
-      end: Enddatum
     tutorial:
       new: 'Neues Tutorium anlegen'
     assignment:
@@ -2163,8 +2049,6 @@ de:
       Bitte nimm Dir ein paar Minuten Zeit, um Dein Profil zu bearbeiten.
     consent: >
       Einwilligung zur Speicherung und Verarbeitung von Daten wurde erklärt.
-    no_consent:
-      Du hast der Speicherung und Verarbeitung Deiner Daten nicht zugestimmt.
     locale: 'Sprache'
     subscribe_lecture: 'Veranstaltung abonnieren'
     passphrase_required: >
@@ -2475,6 +2359,7 @@ de:
     creation_confirm: >
       Das Textfeld zur Erstellung einer Watchlist ist nicht leer.
       Bist Du sicher, dass Du das Medium zu folgender Watchlist hinzufügen willst:
+      "%{watchlist}"?
     creation_success: 'Die Watchlist wurde erfolgreich erstellt.'
     creation_fail: 'Die Watchlist konnte nicht erstellt werden.'
     change: 'Bearbeiten'
@@ -2653,6 +2538,184 @@ de:
       reduced_questions: >
         Die Zahl der Fragen reduziert sich entsprechend, wenn für die
         gewählten Inhalte weniger Fragen zur Verfügung stehen als ausgewählt.
+
+  vignettes:
+    vignettes: 'Vignettes'
+    questionnaire_not_created: >
+      Ein neuer Fragebogen konnte nicht erstellt werden. Bitte versuche es
+      später erneut.
+    slide: 'Folie'
+    slides: 'Folien'
+    info_slides: 'Info-Folien'
+    info_slide_not_updated: "Info-Folie konnte nicht aktualisiert werden"
+    questionnaire: 'Fragebogen'
+    questionnaires: 'Fragebogen'
+    no_active_questionnaires: 'Kein Fragebogen verfügbar'
+    slide_content: 'Inhalt'
+    create_new: "Neue Vignette erstellen"
+    duplicate_new_questionnaire_title: "Neuer Fragebogentitel"
+    destroy_answer: 'Antwort wurde gelöscht'
+    answered: 'Fragebogen wurde erfolgreich beantwortet'
+    already_answered: 'Du hast diesen Fragebogen bereits beantwortet'
+    no_slides: 'Keine Folien zum Beantworten'
+    not_found: 'Der angeforderte Fragebogen wurde nicht gefunden'
+    no_lecture: 'Die angeforderte Vorlesung wurde nicht gefunden'
+    not_vignettes_lecture: 'Die Vorlesung kann nicht für Vignetten verwendet werden'
+    create_new_info_slide: 'Neue Info-Folie'
+    create_new_slide: 'Neue Folie'
+    info_slide_created: 'Info-Folie wurde erstellt.'
+    info_slide_not_created: 'Info-Folie konnte nicht erstellt werden.'
+    info_slide_updated: 'Info-Folie wurde aktualisiert.'
+    slide_updated: 'Folie wurde erfolgreich aktualisiert.'
+    slide_created: 'Folie wurde erfolgreich erstellt.'
+    slide_not_created: 'Folie konnte nicht erstellt werden.'
+    published: 'Vignette wurde erfolgreich veröffentlicht.'
+    unpublished: 'Vignette wurde erfolgreich zurückgezogen.'
+    publish_modal: |
+      Bist Du sicher, dass Du diese Vignette veröffentlichen möchtest?
+
+      Wichtig: Nach der Veröffentlichung kannst Du den Inhalt und die Fragen der Vignette nicht mehr bearbeiten.
+
+      Du kannst die Vignette später zwar wieder zurückziehen, um sie vor Studierenden zu verbergen, aber der Inhalt bleibt für die Bearbeitung gesperrt.
+    unpublish_modal: |
+      Bist Du sicher, dass Du diese Vignette zurückziehen möchten?
+
+      Durch das Zurückziehen wird diese Vignette für Studierende unsichtbar, aber alle Antworten und Statistiken bleiben erhalten.
+
+      Wichtig: Die Vignette bleibt für die Bearbeitung gesperrt. Wenn Du Änderungen vornehmen möchtest, dupliziere bitte die Vignette.
+
+    not_published: 'Vignette konnte nicht veröffentlicht werden.'
+    not_unpublished: 'Vignette konnte nicht zurückgezogen werden.'
+    not_accessible: 'Fragebogen ist nicht zugänglich.'
+    not_editable: 'Vignette kann nicht bearbeitet werden, da sie bereits veröffentlicht wurde.'
+    no_slides: "Vignette ist leer"
+    not_deleted: 'Vignette konnte nicht gelöscht werden'
+    slide_not_updated: 'Folie konnte nicht aktualisiert werden'
+    slide_deleted: 'Folie wurde erfolgreich gelöscht.'
+    slide_not_deleted: 'Folie konnte nicht gelöscht werden.'
+    slide_confirm_delete: >
+      Bist Du sicher, dass Du diese Folie löschen möchtest?
+      Diese Aktion kann nicht rückgängig gemacht werden.'
+    deleted: 'Vignette erfolgreich gelöscht'
+    confirm_delete: >
+      Bist Du sicher, dass Du diese Vignette löschen möchtest?
+      Dadurch werden auch alle zugehörigen Folien, Antworten und Statistiken gelöscht.
+    duplicated: 'Vignette wurde erfolgreich dupliziert'
+    not_duplicated: 'Vignette konnte nicht dupliziert werden'
+    body_too_short_error: 'Der Text ist zu kurz'
+    body_missing_error: 'Der Text fehlt'
+    not_a_number_error: "Bitte gib eine gültige Zahl ein"
+    number_missing_error: "Bitte gib eine Zahl ein"
+    number_too_large_error: "Bitte gib eine Zahl kleiner oder gleich %{max} ein"
+    number_too_small_error: "Bitte gib eine Zahl größer oder gleich %{min} ein"
+    no_option: "Mindestens eine Option muss angegeben werden"
+    multiple_choice_at_least_one: "Wähle mindestens eine Antwortmöglichkeit aus"
+    empty_option: "Alle Optionen müssen Text enthalten"
+    publish: "Veröffentlichen"
+    unpublish: "Zurückziehen"
+    editing_locked: "Bearbeitung gesperrt"
+    editing_locked_info: >
+      Diese Vignette ist bereits (mindestens einmal) veröffentlicht worden
+      und kann daher nicht mehr bearbeitet werden (bzw. nur noch wenige Elemente
+      stehen weiterhin zur Bearbeitung zur Verfügung). Falls Du Änderungen
+      vornehmen möchtest, dupliziere bitte die Vignette.
+    create_slide: "Folie erstellen"
+    update_slide: "Folie aktualisieren"
+    delete_slide: "Folie löschen"
+    add_multiple_choice_option: "Multiple choice option hinzufügen"
+    additional_information: "Zusätzliche Informationen"
+    submit_answer: "Antwort absenden"
+    next_slide: "Nächste Folie"
+    return_to_edit: "Zurück zur Bearbeitung"
+
+    info_slide_empty_title: "Titel fehlt"
+    info_slide_empty_icon: "Symbol fehlt"
+    info_slide_deleted: "Info-Folie wurde erfolgreich gelöscht"
+    info_slide_not_deleted: "Info-Folie konnte nicht gelöscht werden"
+    info_slide_confirm_delete: >
+      Bist Du sicher, dass Du diese Info-Folie löschen möchtest?
+      Diese Aktion kann nicht rückgängig gemacht werden.'
+    create_info_slide: "Info-Folie erstellen"
+    update_info_slide: "Info-Folie aktualisieren"
+
+    drag_slides_tip: "Ziehe die Folien, um deren Reihenfolge zu ändern."
+    unsaved_changes_warning: "Du hast ungespeicherte Änderungen."
+    unsaved_changes: "Ungespeicherte Änderungen"
+    unsaved_changes_navigation: >
+      You have unsaved changes. Are you sure you want to leave this page?
+    unsaved_changes_modal: >
+      Du hast ungespeicherte Änderungen in der aktuellen Folie.
+      Möchtest Du diese speichern oder verwerfen, bevor Du eine neue bearbeitest?
+
+    preview: "Vorschau"
+    duplicate: "Duplizieren"
+    export_statistics: "Statistiken exportieren"
+    delete: "Vignette löschen"
+    confirm_publication: "Vignette veröffentlichen"
+
+    question_type: "Fragetyp"
+    question_type_selection: "Auswahl für Fragetyp"
+    your_question: "Deine Frage"
+    question_types:
+      none: "Keine Antwort"
+      text_area: "Textfeld"
+      number_field: "Zahlenfeld"
+      multiple_choice: "Multiple Choice"
+      likert_scale: "Likert-Skala"
+
+    language_selection: "Sprachauswahl"
+
+    locales:
+      en: "Englisch"
+      de: "Deutsch"
+      nl: "Niederländisch"
+
+    number_question_settings: "Optionen für Zahlenfragen"
+    only_integer: "Nur ganze Zahlen erlauben"
+    min_number: "Minimalwert"
+    max_number: "Maximalwert"
+    number_range_help: "Min/Max-Felder leer lassen für unbegrenzten Bereich"
+    your_answer: "Deine Antwort"
+    your_numeric_answer: "Deine Antwort"
+    number_range_between: "Gib eine Zahl zwischen %{min} und %{max} ein"
+    number_range_min: "Gib eine Zahl größer oder gleich %{min} ein"
+    number_range_max: "Gib eine Zahl kleiner oder gleich %{max} ein"
+
+    completed: "Abgeschlossen"
+    in_progress: "In Bearbeitung"
+    not_started: "Nicht begonnen"
+    active_questionnaires: "Verfügbare Fragebogen"
+    completed_questionnaires: "Abgeschlossene Fragebogen"
+    no_completed_questionnaires: "Du hast noch keine Fragebogen ausgefüllt."
+    take: "Ausfüllen"
+    continue: "Fortsetzen"
+    markdown_help: "Unterstützt Markdown: **fett** & *kursiv*"
+
+    information: "Informationen"
+
+    codenames:
+      codename: "Persönlicher code"
+      your_codename: "Dein persönlicher Code"
+      set_success: "Persönlicher Code wurde erfolgreich geändert"
+      set_error: "Persönlicher Code konnte nicht gesetzt werden"
+      please_set_codename: >
+        Bitte setze deinen persönlichen Code bevor du einen Fragebogen ausfüllst.
+      not_empty: "Persönlicher Code darf nicht leer sein"
+      min_length: "Persönlicher Code muss mindestens %{min} Zeichen lang sein"
+      max_length: "Personlicher Code darf maximal %{max} Zeichen lang sein"
+
+    completion_message:
+      label: "Abschlussnachricht"
+      help_text: >
+        Diese Nachricht wird Studierenden gezeigt, nachdem diese alle
+        verfügbaren Vignetten ausgefüllt haben.
+      delete: "Willst du diese Nachricht wirklich löschen?"
+      set_success: "Abschlussnachricht erfolgreich gespeichert"
+      set_failure: "Abschlussnachricht konnte nicht gespeichert werden"
+      delete_success: "Abschlussnachricht erfolgreich gelöscht"
+      delete_failure: "Abschlussnachricht konnte nicht gelöscht werden"
+      all_completed: "Alle Fragebogen wurden ausgefüllt"
+
   external_link_lc: 'externer Link'
   no_announcements: 'Es liegen keine Mitteilungen vor.'
   click_here: 'Hier klicken'
@@ -2760,45 +2823,11 @@ de:
   item:
     external_reference: 'externe Referenz:'
     internal_reference: 'Verweis auf %{ref}:'
-  search:
-    results: 'Suchergebnisse für den Begriff %{search_string}'
-    info: >
-      Deine Suche nach dem Begriff %{search_string} hat %{count} Treffer
-      ergeben.
-    omitted_html: >
-      Aufgrund Deiner %{profile} wurde(n) %{count} Treffer aus der
-      Datenbank nicht berücksichtigt.
-    settings: 'Profileinstellungen'
-    alternative: 'Meintest Du vielleicht etwas anderes?'
-    similar: 'Zum Suchbegriff %{search_string} ähnliche Begriffe'
-    courses_with_similar_titles: >
-      Du könntest es mit folgenden Volltext-Suchbegriffen probieren und die
-      Suche anschließend neu starten:
-    click_and_paste: >
-      Wenn Du den Begriff anklickst, wird er in das Suchfeld "Volltext" kopiert.
-    media:
-      title: >
-        Hier kannst Du den Medien- bzw. Sitzungstitel in die Suche miteinbeziehen. Lass das Feld
-        frei, falls Du dieses Suchkriterium nicht verwenden möchtest.
-      title_placeholder: frei lassen oder mind. 2 Zeichen eingeben
-      lectures: >
-        Hier kannst Du bestimmen, aus welcher Veranstaltung das Medium stammen soll. Dabei kannst
-        Du alle, nur die von Dir abonnierten oder eine eigene Auswahl an Veranstaltungen berücksichtigen
-        lassen. In eine eigene Auswahl kannst Du eine oder mehrere aufnehmen. Dabei wird der Operator
-        inklusives <i>ODER</i> verwendet.
-      lecture_options:
-        subscribed: 'abonnierte'
-        all: 'alle'
-        own_selection: 'eigene Auswahl'
-        all_media: 'alle Medien'
-        only_extras: 'nur Zusatzmaterialien'
-      type: >
-        Hier kannst Du einen,   mehrere oder alle der folgenden Medientypen auswählen: <i>Lektion</i>,
-        <i>Worked Example</i>, <i>Übung</i>, <i>Skript</i>, <i>Wiederholung</i>, <i>Quiz</i> und
-        <i>Sonstiges</i>. Dabei wird der Operator inklusives <i>ODER</i> verwendet.
-    tag_title: >
-      mind. 2 Zeichen eingeben (frei lassen für alle Tags)
   errors:
+    unknown: >
+      Du hast das Formular korrekt ausgefüllt, aber leider ist auf dem Server
+      ein Fehler aufgetreten. Bitte versuche es später erneut und kontaktiere
+      uns, wenn das Problem weiterhin besteht.
     not_subscribed: >
       Aktuell hast Du diese Veranstaltung nicht abonniert.
       Um sie betrachten zu können, musst Du sie vorher abonnieren.
@@ -2815,24 +2844,7 @@ de:
   sign_up: 'registrieren'
   announcements: 'Ankündigungen'
   main:
-    welcome:
-      Herzlich willkommen auf MaMpf, der Mathematischen
-      Medienplattform der Universität Heidelberg.
-    about: >
-      MaMpf bündelt und vernetzt verschiedene E-Learning-Angebote:
-      Vorlesungsvideos und Skripte mit inhaltlicher Gliederung,
-      Übungsblätter, eine umfangreiche Sammlung von Multiple-Choice-Fragen
-      und Quizaufgaben inklusive angeleiteter Beweise und vieles mehr.
-      Dank des Tagging-Systems findest Du schnell und einfach
-      alle für Dich relevanten Medien.
-    interested_html: >
-      Neugierig geworden? Dann schau auf unseren %{blog} (inklusive %{guided_tour}
-      durch MaMpf und weiteren %{resources} für EditorInnen). Oder registriere Dich
-      und probiere MaMpf einfach selbst aus.
-    resources: Ressourcen
-    blog: Blog
-    guided_tour: geführter Tour
-    researchgate: Researchgate
+    media_platform: Mathematische Medienplattform der Universität Heidelberg
   math:
     number: 'Zahl'
     complex_number: 'komplexe Zahl'
@@ -2889,8 +2901,10 @@ de:
     no_comments: Es liegen keine neuen Kommentare vor.
     media_comments: >
       Anzahl der Medien in von den von Dir abonnierten
-      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt:
+      Veranstaltungen bzw. Modulen, in denen es neue Kommentare gibt: %{count}
   submission:
+    invited: Du wurdest von '%{inviter}' für diese Abgabe eingeladen.
+    accept_invitation: Einladung annehmen
     invalid_code: Der eingegebene Code ist ungültig.
     invalid_code_for_assignment: >
       Der eingegebene Code ist ungültig für %{assignment}.
@@ -3124,8 +3138,7 @@ de:
       Du kannst entscheiden, ob Du sie akzeptierst oder ablehnst.
     own_tutorials: >
       Eigene Tutorien
-    other_tutorials: >
-      Sonstige Tutorien
+    other_tutorials: 'Sonstige Tutorien'
     deadline_warning: >
       Bis %{deadline} läuft noch die Abgabefrist. Erst nach Ablauf der Abgabefrist
       können Korrekturen hochgeladen werden.
@@ -3201,7 +3214,7 @@ de:
         Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
-    to_big: Die Datei ist zu groß.
+    too_big: Die Datei ist zu groß.
   locales:
     en: 'Englisch'
     de: 'Deutsch'
@@ -3375,7 +3388,6 @@ de:
       Emails für Vorlesungen: %{email_for_teachable}<br>
       Emails für Neuigkeiten: %{email_for_news}<br>
       Ungelesene Kommentare: %{unread_comments}<br>
-      Studien-Teilnehmer: %{study_participant}<br>
       Emails für Abgaben-Upload: %{email_for_submission_upload}<br>
       Emails für Abgaben-Löschung: %{email_for_submission_removal}<br>
       Emails für Abgaben-Beitritt: %{email_for_submission_join}<br>
@@ -3399,7 +3411,6 @@ de:
       -Vorträge<br>
       -erhaltene Notifications (z.B. über neue Medien etc.)<br>
       -erstellte Announcements<br>
-      -registrierte Clicker<br>
       -Zettelabgaben<br>
       -Watchlists<br>
       -Quizzertifikate<br>
@@ -3435,25 +3446,8 @@ de:
     date: 'Datum'
     count: 'Anzahl'
     plays: 'Aufrufe'
-  erdbeere:
-    show_structures: Strukturen, Eigenschaften und Beispiele
-    select_structures: Strukturen auswählen
-    info:
-      structures:
-        Hier kannst Du wählen, welche Strukturen aus der ErDBeere-Datenbank
-        für diese Vorlesung angezeigt werden sollen.
-    structures: 'Strukturen'
-    structure_index: 'zur Strukturenübersicht'
-    properties: 'Eigenschaften'
-    edit_realizations: 'Realisierungen bearbeiten'
-    no_realizations: 'Es sind keine Realisierungen vorhanden.'
-    search_examples: 'Beispiele suchen'
-    no_structures: >
-      Zu dieser Vorlesung sind keine Strukturen aus der Beispieldatenbank
-      assoziiert.
-    error: >
-      Es ist ein Fehler aufgetreten. Bitte versuche es später noch einmal.
   basics:
+    division: 'Teilbereich'
     error: Fehler
     course: 'Modul'
     courses: 'Module'
@@ -3474,7 +3468,7 @@ de:
     lecture_editors: 'zusätzliche VeranstaltungseditorInnen'
     display_name: 'Anzeigename'
     mail_noun: 'E-Mail'
-    email: 'E-Mail-Adresse'
+    email: 'E-Mail'
     preferences: 'Einstellungen'
     language: 'Sprache'
     date: 'Datum'
@@ -3532,8 +3526,6 @@ de:
     referenced_from: 'referenziert von'
     inspect: 'Ansehen'
     all: 'alle'
-    OR: 'ODER'
-    AND: 'UND'
     number: 'Nummer'
     hide: 'verstecken'
     link: 'Link'
@@ -3567,8 +3559,6 @@ de:
     enlarge: 'vergrößern'
     hits: 'Treffer'
     no_hits: 'Die Suche hat keine Treffer ergeben.'
-    with_inheritance: 'mit Vererbung'
-    without_inheritance: 'ohne Vererbung'
     fulltext: 'Volltext'
     hits_per_page: 'Treffer pro Seite'
     selection: 'Auswahl'
@@ -3589,7 +3579,6 @@ de:
     optional: 'optional'
     statistics: 'Statistik'
     loading_data: 'Lade Daten...'
-    realizations: 'Realisierungen'
     comments: 'Kommentare'
     comment: 'Kommentar'
     comments_for: 'Kommentare für %{subject}'
@@ -3664,6 +3653,8 @@ de:
     save: 'Speichern'
     save_and_exit: 'Speichern und zurück'
     save_and_edit: 'Speichern und bearbeiten'
+    save_changes: "Änderungen speichern"
+    discard_changes: "Änderungen verwerfen"
     cancel: 'Abbrechen'
     delete: 'Löschen'
     publish: 'Veröffentlichen'
@@ -3731,7 +3722,6 @@ de:
     default_target: 'Standard-Ziel'
     ramification: 'Verzweigung'
     edit_tags: 'Tags bearbeiten'
-    vote: 'Abstimmen'
     show: 'Anzeigen'
     hide: 'Verbergen'
     interpret: 'Interpretieren'
@@ -3818,6 +3808,11 @@ de:
       Eine Liste der unterstützten Symbole gibt es
       <a href="https://katex.org/docs/supported.html">
       hier</a>.
+    nav:
+      moderation: "Moderation"
+      moderation_activity: "Moderationsaktivität"
+      moderation_history: "Moderationsverlauf"
+      moderation_pending: "Ausstehende Moderation"
   controllers:
     no_answer: 'Eine Antwort mit der angeforderten id existiert nicht'
     session_expired: 'Deine Sitzung ist abgelaufen. Bitte melde Dich wieder an.'
@@ -3848,6 +3843,8 @@ de:
     no_remark: 'Eine Bemerkung mit der angeforderten id existiert nicht.'
     no_search_term: >
       Du hast eine Suche ohne Suchbegriff gestartet. Das funktioniert nicht.
+    search_only_js: >
+      Der direkte Aufruf von Suchergebnissen ist nicht möglich. Bitte benutze das Suchfeld.
     search_term_short: >
       Dein Suchbegriff sollte aus mindestens zwei Buchstaben bestehen.
     no_section: 'Ein Abschnitt mit der angeforderten id existiert nicht.'
@@ -3860,8 +3857,6 @@ de:
       Editorenrechte für das Hinzufügen von Tags.
     no_term: 'Ein Semester mit der angeforderten id existiert nicht.'
     no_teacher: 'Ein(e) DozentIn mit der angeforderten id existiert nicht.'
-    no_clicker: 'Ein Clicker mit der angeforderten id existiert nicht.'
-    no_clicker_access: 'Du hast keine Berechtigung, den Clicker zu bearbeiten.'
     no_subject: 'Ein Fach mit der angeforderten id existiert nicht.'
     no_program: 'Ein Studiengang mit der angeforderten id existiert nicht.'
     no_division: 'Ein Teilbereich mit der angeforderten id existiert nicht.'
@@ -3897,6 +3892,7 @@ de:
         Die Hausaufgabe konnte nicht gelöscht werden. Das kann z.B. daran
         liegen, dass es dafür bereits Abgaben gibt, für die Dateien hochgeladen
         wurden.
+    no_certificate: 'Ein Zertifikat mit der angeforderten id existiert nicht.'
     certificate_already_claimed: >
       Das Zertifikat wurde bereits auf eine andere NutzerIn ausgestellt.
     no_announcement: >
@@ -3946,17 +3942,6 @@ de:
           attributes:
             title:
               blank: 'Es muss ein Titel angegeben werden.'
-        clicker:
-          attributes:
-            title:
-              blank: 'Es muss ein Titel angegeben werden.'
-              taken: 'Dieser Titel ist bereits vergeben.'
-        clicker_vote:
-          attributes:
-            clicker:
-              clicker_closed: 'Der zugehörige Clicker ist geschlossen.'
-            value:
-              out_of_range: 'Der Wert ist außerhalb des zulässigen Bereichs.'
         course:
           attributes:
             title:
@@ -4120,14 +4105,12 @@ de:
           team_size: >
             Du kannst nicht beitreten, da das Abgabeteam sonst mehr Mitglieder
             hätte als erlaubt.
-        vote:
+                vignettes/question:
+        vignettes/question:
+          format: '%{message}'
           attributes:
-            clicker:
-              closed: 'Der Clicker ist leider geschlossen.'
-            value:
-              out_of_range: >
-                Das abgegebene Votum ist leider außerhalb des zulässingen
-                Bereiches.
+            question_text:
+              blank: 'darf nicht leer sein'
         voucher:
           attributes:
             role:
@@ -4145,31 +4128,3 @@ de:
             name:
               taken:
                 'Eine Watchlist mit diesem Namen existiert bereits.'
-  feedback:
-    tooltip: Feedback geben
-    modal_title: Feedback geben
-    title: Titel (optional)
-    comment: Dein Kommentar
-    description_html: >
-      <p>Wir freuen uns über Dein Feedack zu MaMpf, sei es Lob, Kritik oder
-      Anregungen, wie wir als Entwickler:innen-Team die Plattform voranbringen
-      können. Falls Du einen Bug gefunden hast und einen GitHub-Account hast,
-      dann erstelle am besten direkt auf %{github_mampf} ein Issue. Ansonsten
-      gerne auch über dieses Formular oder direkt per %{feedback_mail}.</p>
-    body_too_short_error: >
-      Dein Feedback ist zu kurz. Bitte gib mindestens %{min_length} Zeichen ein.
-    body_missing_error: >
-      Bitte gib hier Dein Feedback ein.
-    mail_checkbox: >
-      Erlaube es uns, Dich per E-Mail (%{user_mail}) zu kontaktieren, falls es
-      Rückfragen zu Deinem Feedback gibt.
-    success_short: >
-      Feedback erfolgreich gesendet
-    success: >
-      Vielen Dank für Dein Feedback! Wir werden es in Kürze bearbeiten.
-    error_short: >
-      Fehler beim Senden des Feedbacks
-    error: >
-      Entschuldigung, leider ist beim Speichern ein Fehler aufgetreten.
-      Bitte speichere Dein Feedback händisch, indem Du es kopierst,
-      und versuche es später noch einmal.

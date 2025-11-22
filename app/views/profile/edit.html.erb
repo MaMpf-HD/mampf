@@ -1,4 +1,4 @@
-<%= stylesheet_link_tag 'profile' %>
+<%= vite_stylesheet_tag "styles/profile.scss" %>
 
 <div class="container-md">
 
@@ -95,7 +95,8 @@
 
     <!-- 🌟 Courses -->
     <div class="col">
-      <div class="card profile-card" id="courses-accordion" data-cy="courses-accordion">
+      <div class="card profile-card" id="courses-accordion"
+           data-cy="courses-accordion" data-testid="courses-accordion">
         <div class="card-header">
           <h5 class="mb-0">
             <%= t('profile.courses') %>
@@ -130,4 +131,4 @@
 <!-- 🔘 User Request Data Modal -->
 <%= render partial: 'profile/request_data_modal' %>
 
-<%= javascript_include_tag 'profile' %>
+<%= vite_javascript_tag "js/profile" %>

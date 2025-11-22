@@ -8,15 +8,19 @@ Bundler.require(*Rails.groups)
 
 module Mampf
   class Application < Rails::Application
-    # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults(7.1)
-    config.autoloader = :zeitwerk
+    config.load_defaults(8.0)
 
-    # Autoload subfolders of modules (recursively)
-    # https://stackoverflow.com/a/4794775/
-    additional_paths = Rails.root.glob("app/models/**/")
-    config.autoload_paths += additional_paths
-    config.eager_load_paths += additional_paths
+    # General Zeitwerk Autoloading
+    backend_paths = Rails.root.glob("app/models/**/")
+    backend_paths -= Rails.root.glob("app/models/vignettes/**/")
+    frontend_paths = Rails.root.glob("app/frontend/**/")
+    # For ViewComponents to work correctly with namespaces, we only load the
+    # main components directory, but not any subdirectories.
+    frontend_paths -= Rails.root.glob("app/frontend/_components/**/")
+    frontend_paths += [Rails.root.join("app/frontend/_components/")]
+    load_paths = backend_paths + frontend_paths
+    config.autoload_paths += load_paths
+    config.eager_load_paths += load_paths
 
     # Autoload lib extensions path
     config.autoload_lib(ignore: ["assets", "collectors", "core_ext", "scrapers", "tasks"])

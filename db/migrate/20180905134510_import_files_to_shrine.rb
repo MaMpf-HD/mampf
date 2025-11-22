@@ -1,4 +1,4 @@
-# rubocop:disable Style/StringConcatenation, Security/Open, Rails/
+# rubocop:disable Style/StringConcatenation, Security/Open, Rails
 class ImportFilesToShrine < ActiveRecord::Migration[5.2]
   def change
     Medium.all.each do |m|
@@ -29,4 +29,4 @@ class ImportFilesToShrine < ActiveRecord::Migration[5.2]
     end
   end
 end
-# rubocop:enable Style/StringConcatenation, Security/Open, Rails/
+# rubocop:enable Style/StringConcatenation, Security/Open, Rails

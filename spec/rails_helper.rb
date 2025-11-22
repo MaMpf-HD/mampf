@@ -6,7 +6,8 @@ abort("The Rails env is running in production mode!") if Rails.env.production?
 require "rspec/rails"
 require "devise"
 # Add additional requires below this line. Rails is not loaded until this point!
-require "support/database_cleaner"
+require "database_cleaner/active_record"
+require "view_component/test_helpers"
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
 # run as spec files by default. This means that files in spec/support that end
@@ -38,6 +39,8 @@ RSpec.configure do |config|
   # e.g. make have_enqueued_mail matchers available
   # see https://stackoverflow.com/a/57077395/
   config.include ActiveJob::TestHelper
+
+  config.include ViewComponent::TestHelpers, type: :component
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false

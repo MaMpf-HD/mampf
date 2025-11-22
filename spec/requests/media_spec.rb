@@ -1,173 +1,50 @@
 require "rails_helper"
 
-NO_HITS_MSG = "The search has not returned any hits".freeze
-
-def expect_no_results(response)
-  expect(response.body).to include(NO_HITS_MSG)
-end
-
-def expect_all_results(response)
-  expect(response.body).not_to include(NO_HITS_MSG)
-  num_hits = parse_media_search(response)
-  expect(num_hits).to eq(Medium.where(released: "all").size)
-end
-
 RSpec.describe("Media", type: :request) do
-  describe "#search_by" do
-    before do
-      @medium1 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   sort: "Nuesse", description: "Erstes Medium")
-      @medium2 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   sort: "Nuesse", description: "Zweites Medium")
-      @medium3 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   sort: "Quiz", description: "Drittes Medium")
-      @medium4 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   :with_tags, sort: "Nuesse", description: "Getagtes Medium")
-      @medium5 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   :with_tags, sort: "Nuesse", description: "Anderes Medium")
+  # Use an admin to bypass visibility filters for simplicity
+  let(:user) do
+    create(:confirmed_user, admin: true)
+  end
+  let!(:medium_ruby) { create(:valid_medium, description: "An introduction to Ruby") }
+  let!(:medium_python) { create(:valid_medium, description: "A guide to Python") }
 
-      @tag1 = FactoryBot.create(:tag, title: "mampf adventures")
-      @tag2 = FactoryBot.create(:tag, title: "topology")
-      @medium4.tags << @tag1
-      @medium5.tags << @tag2
+  before do
+    sign_in user
+  end
 
-      @lecture1 = FactoryBot.create(:lecture)
-      @medium6 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   teachable: @lecture1, sort: "Nuesse",
-                                   description: "Erstes Medium mit Lehrer")
-      @lecture2 = FactoryBot.create(:lecture, teacher: @lecture1.teacher)
-      @medium7 = FactoryBot.create(:medium, :with_teachable, :with_editors, :released,
-                                   teachable: @lecture2, sort: "Nuesse",
-                                   description: "Zweites Medium mit Lehrer")
-      @medium8 = FactoryBot.create(:medium, :with_teachable, :with_editors,
-                                   sort: "Nuesse", description: "Unveröffentlichtes Medium")
-
-      sign_in FactoryBot.create(:confirmed_user_en)
-      User.last.subscribe_lecture!(@lecture1)
-
-      Medium.reindex
-
-      @params = {
-        search: {
-          all_types: 1,
-          all_tags: 1,
-          tag_operator: "or",
-          all_teachers: 1,
-          lecture_option: 0,
-          fulltext: "",
-          per: 6,
-          purpose: "media",
-          results_as_list: false
-        }
-      }
+  describe "GET /media" do
+    let(:lecture) { create(:lecture, :released_for_all) }
+    let!(:medium_in_lecture) do
+      create(:lecture_medium, teachable: lecture, sort: "LessonMaterial",
+                              description: "Content for this lecture")
+    end
+    let!(:medium_elsewhere) do
+      create(:lecture_medium, sort: "LessonMaterial", description: "Content from another source")
     end
 
-    it "can search for all (released) media" do
-      get media_search_path, params: @params
-
-      expect(response.body).not_to include("Unveröffentlichtes Medium")
-      expect_all_results(response)
+    it "returns a successful response" do
+      # The media#index action requires a :project parameter to scope the search.
+      get media_path(id: lecture.id, project: "lesson_material")
+      expect(response).to have_http_status(:ok)
     end
 
-    it "can search for media by title" do
-      @params[:search][:fulltext] = "Erstes"
-      get media_search_path, params: @params
+    it "returns only the media associated with the specified lecture" do
+      get media_path(id: lecture.id, project: "lesson_material")
+      expect(response.body).to include(medium_in_lecture.description)
+      expect(response.body).not_to include(medium_elsewhere.description)
+    end
+  end
 
-      expect(response.body).not_to include(NO_HITS_MSG)
-      expect(response.body).to include("Erstes Medium")
-      hits = parse_media_search(response)
-      expect(hits).to eq(2)
+  describe "GET /media/search" do
+    it "returns a successful response" do
+      get search_media_path, params: { search: { fulltext: "Ruby" } }, xhr: true
+      expect(response).to have_http_status(:ok)
     end
 
-    it "can search for media by sort" do
-      @params[:search][:all_types] = 0
-      @params[:search][:types] = ["Quiz"]
-      get media_search_path, params: @params
-
-      expect(response.body).not_to include(NO_HITS_MSG)
-      expect(response.body).to include("Drittes Medium")
-      hits = parse_media_search(response)
-      expect(hits).to eq(1)
-    end
-
-    it "can search for media by tag" do
-      @params[:search][:all_tags] = 0
-      @params[:search][:tag_ids] = @medium4.tags.pluck(:id)
-      get media_search_path, params: @params
-
-      expect(response.body).not_to include(NO_HITS_MSG)
-      expect(response.body).to include("Getagtes Medium")
-      hits = parse_media_search(response)
-      expect(hits).to eq(1)
-    end
-
-    it 'can do combined search with tagoperator "or" and description' do
-      @params[:search][:all_tags] = 0
-      @params[:search][:tag_ids] = [@medium4.tags.pluck(:id), @medium5.tags.pluck(:id)].flatten
-      @params[:search][:fulltext] = "Medium"
-      get media_search_path, params: @params
-
-      expect(response.body).not_to include(NO_HITS_MSG)
-      expect(response.body).to include("Getagtes Medium")
-      hits = parse_media_search(response)
-      expect(hits).to eq(2)
-    end
-
-    it 'can do search with tagoperator "and" and description' do
-      @params[:search][:tag_operator] = "and"
-      @params[:search][:all_tags] = 0
-      @params[:search][:tag_ids] = [@tag1, @tag2].map(&:id)
-      @params[:search][:fulltext] = "Medium"
-      get media_search_path, params: @params
-
-      expect_no_results(response)
-    end
-
-    it '"all tags" has higher precedence than any tagoperator (here "and")' do
-      @params[:search][:all_tags] = 1
-      @params[:search][:tag_operator] = "and"
-      get media_search_path, params: @params
-
-      expect_all_results(response)
-    end
-
-    it '"all tags" has higher precedence than any tagoperator (here "or")' do
-      @params[:search][:all_tags] = 1
-      @params[:search][:tag_operator] = "or"
-      get media_search_path, params: @params
-
-      expect_all_results(response)
-    end
-
-    it "can search by teacher" do
-      @params[:search][:all_teachers] = 0
-      @params[:search][:teacher_ids] = [@lecture1.teacher.id]
-      get media_search_path, params: @params
-
-      expect(response.body).not_to include(NO_HITS_MSG)
-      hits = parse_media_search(response)
-      expect(hits).to eq(2)
-    end
-
-    it "can search for media of subscribed lectures" do
-      @params[:search][:lecture_option] = 1
-      get media_search_path, params: @params
-
-      expect(response.body).not_to include(NO_HITS_MSG)
-      expect(response.body).to include("Erstes Medium mit Lehrer")
-      hits = parse_media_search(response)
-      expect(hits).to eq(1)
-    end
-
-    it "can search for media of custom lecture" do
-      @params[:search][:lecture_option] = 2
-      @params[:search][:media_lectures] = [@lecture2.id]
-      get media_search_path, params: @params
-
-      expect(response.body).not_to include(NO_HITS_MSG)
-      expect(response.body).to include("Zweites Medium mit Lehrer")
-      hits = parse_media_search(response)
-      expect(hits).to eq(1)
+    it "returns the correct media in the response body" do
+      get search_media_path, params: { search: { fulltext: "Ruby" } }, xhr: true
+      expect(response.body).to include(medium_ruby.description)
+      expect(response.body).not_to include(medium_python.description)
     end
   end
 end

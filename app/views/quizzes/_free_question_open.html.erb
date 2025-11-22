@@ -29,22 +29,19 @@
                  id: 'submit-solution',
                  style: 'display: none;'  %>
   </div>
-  <%= f.hidden_field 'quiz[progress]',
-                     value: quiz_round.progress %>
-  <%= f.hidden_field 'quiz[counter]',
-                     value: quiz_round.counter %>
-  <%= f.hidden_field 'quiz[answer_shuffle]',
-                     value: quiz_round.answer_shuffle.to_json %>
-  <%= f.hidden_field 'quiz[crosses]',
-                     multiple: true,
-                     data: { answer: answers.first.id },
-                     id: 'quiz_question_crosses' %>
-  <%= f.hidden_field 'quiz[solution_input]',
-                     id: 'question_quiz_solution_input' %>
-  <%= f.hidden_field 'quiz[result]',
-                     id: 'question_quiz_result' %>
-  <%= f.hidden_field 'quiz[session_id]',
-                     value: quiz_round.session_id %>
-  <%= f.hidden_field :id,
-                     value: quiz_round.quiz.id %>
+
+  <%= f.fields_for :quiz do |quiz_fields| %>
+    <%= quiz_fields.hidden_field :progress, value: quiz_round.progress %>
+    <%= quiz_fields.hidden_field :counter, value: quiz_round.counter %>
+    <%= quiz_fields.hidden_field :answer_shuffle, value: quiz_round.answer_shuffle.to_json %>
+    <%= quiz_fields.hidden_field :crosses,
+                      multiple: true,
+                      data: { answer: answers.first.id },
+                      id: 'quiz_question_crosses' %>
+    <%= quiz_fields.hidden_field :solution_input, id: 'question_quiz_solution_input' %>
+    <%= quiz_fields.hidden_field :result, id: 'question_quiz_result' %>
+    <%= quiz_fields.hidden_field :attempt_token, value: quiz_round.attempt_token %>
+  <% end %>
+
+  <%= f.hidden_field :id, value: quiz_round.quiz.id %>
 <% end %>

@@ -1,8 +1,8 @@
 {
     "editor.formatOnSave": false, // autosave configured via options below
-    ///////////////////////////////////////
+    //////////////////////////////////////
     // ESLint: JS, HTML & ERB
-    ///////////////////////////////////////
+    //////////////////////////////////////
     // https://eslint.style/guide/faq#how-to-auto-format-on-save
     // https://github.com/microsoft/vscode-eslint#settings-options
     "editor.codeActionsOnSave": {
@@ -52,7 +52,7 @@
         ]
     },
     //////////////////////////////////////
-    // Ruby (Rubocop)
+    // Ruby (RuboCop)
     //////////////////////////////////////
     "[ruby]": {
         "editor.defaultFormatter": "Shopify.ruby-lsp",
@@ -61,9 +61,11 @@
         "editor.tabSize": 2,
     },
     "rubyLsp.formatter": "rubocop",
+    // https://shopify.github.io/ruby-lsp/version-managers.html#custom-activation
     "rubyLsp.rubyVersionManager": {
-        "identifier": "rbenv"
+        "identifier": "custom"
     },
+    "rubyLsp.rubyExecutablePath": "/usr/local/bin/ruby",
     "rubyLsp.enabledFeatures": {
         "codeActions": true,
         "diagnostics": true,
@@ -84,13 +86,14 @@
     //////////////////////////////////////
     // Ruby Test Explorer
     //////////////////////////////////////
-    "rubyTestExplorer.testFramework": "rspec",
-    "rubyTestExplorer.rspecCommand": "python3 ./spec/rspec_inside_docker.py",
-    "rubyTestExplorer.rspecDirectory": "./spec/",
-    "rubyTestExplorer.logpanel": true,
-    "rubyTestExplorer.filePattern": [
-        "*_spec.rb"
-    ],
+    "rubyLsp.featureFlags": {
+        "fullTestDiscovery": true,
+    },
+    "rubyLsp.addonSettings": {
+        "Ruby LSP RSpec": {
+            "rspecCommand": "VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec --format documentation"
+        }
+    },
     //////////////////////////////////////
     // Files
     //////////////////////////////////////
@@ -98,7 +101,6 @@
         "node_modules/": false,
         "pdfcomprezzor/": true,
         "coverage/": true,
-        "solr/": true,
         ".docker/": true
     },
     "files.associations": {
@@ -112,6 +114,7 @@
         // .html.erb files are treated as ERB language and HTML syntax
         // highlighting works fine there.
         "*.js.erb": "javascript",
+        "*.html.erb": "erb",
         "*.coffee.erb": "coffeescript" // currently only for 1 single file
     },
     // due to "emeraldwalk.runonsave" option above, which calls an external
@@ -136,6 +139,18 @@
         }
     ],
     //////////////////////////////////////
+    // Terminal
+    //////////////////////////////////////
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    //////////////////////////////////////
+    // Container
+    //////////////////////////////////////
+    "containers.containers.description": [
+        "Image",
+        "Status"
+    ],
+    "containers.containers.label": "ContainerName",
+    //////////////////////////////////////
     // Git
     //////////////////////////////////////
     "git.inputValidation": true,
@@ -145,6 +160,8 @@
     // Spell Checker
     //////////////////////////////////////
     "cSpell.enabled": true,
+    "cSpell.diagnosticLevel": "Hint",
+    "cSpell.maxNumberOfProblems": 10000,
     "cSpell.ignorePaths": [
         "node_modules",
         ".git"
@@ -156,21 +173,29 @@
         "autocorrect",
         "buildcache",
         "cicd",
+        "clipboardpopup",
+        "codenames",
         "commontator",
         "cospeaker",
         "cospeakers",
         "datetime",
         "dockerfiles",
-        "Erdbeere",
         "factorybot",
+        "Fulltext",
         "helpdesk",
+        "hotwired",
+        "imap",
+        "javascripts",
         "justfile",
         "katex",
         "lightgray",
+        "likert",
         "localroot",
         "mailcatcher",
         "mampf",
         "mampftest",
+        "pagy",
+        "Pagy",
         "pdfcomprezzor",
         "pgadmin",
         "preseed",
@@ -179,18 +204,19 @@
         "Rubocop",
         "psql",
         "realpath",
+        "rubocop",
+        "RuboCop",
         "selectize",
+        "stylesheet",
         "Timecop",
-        "turbolinks",
+        "tomselect",
+        "trix",
+        "turbo",
         "uncached",
         "Unsets",
-        "Unsets",
+        "vite",
+        "Vite",
         "webpacker",
         "whitespaces"
     ],
-    "cSpell.enableFiletypes": [
-        "ruby"
-        // Other filetypes are handled by the default spell checker
-    ],
-    "cSpell.maxNumberOfProblems": 10000
 }

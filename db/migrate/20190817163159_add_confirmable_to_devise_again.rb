@@ -1,4 +1,4 @@
-# rubocop:disable Rails/
+# rubocop:disable Rails
 class AddConfirmableToDeviseAgain < ActiveRecord::Migration[6.0]
   # NOTE: You can't use change, as User.update_all will fail in the down migration
   def up
@@ -18,4 +18,4 @@ class AddConfirmableToDeviseAgain < ActiveRecord::Migration[6.0]
     remove_columns :users, :unconfirmed_email # Only if using reconfirmable
   end
 end
-# rubocop:enable Rails/
+# rubocop:enable Rails

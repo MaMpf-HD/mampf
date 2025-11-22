@@ -2,7 +2,7 @@
 searchResults = document.getElementById('media-search-results')
 searchResults.innerHTML = '<%= j render partial: "media/search/results",
                                  locals: { media: @media,
-                                           total: @total,
+                                           pagy: @pagy,
                                            purpose: @purpose } %>'
 
 # run katex on search results

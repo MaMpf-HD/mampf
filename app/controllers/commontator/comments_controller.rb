@@ -7,6 +7,8 @@ module Commontator
     before_action :commontator_set_thread_variables,
                   only: [:show, :update, :delete, :undelete]
 
+    helper MediaHelper
+
     # GET /comments/1
     def show
       respond_to do |format|

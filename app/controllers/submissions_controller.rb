@@ -22,10 +22,12 @@ class SubmissionsController < ApplicationController
     @assignments = @lecture.assignments
     @current_assignments = @lecture.current_assignments
     @previous_assignments = @lecture.previous_assignments
-    @old_assignments = @assignments.expired.order("deadline DESC") -
+    @old_assignments = @assignments.expired.order(deadline: :desc) -
                        @previous_assignments
     @future_assignments = @assignments.active.order(:deadline) -
                           @current_assignments
+
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def new
@@ -131,7 +133,7 @@ class SubmissionsController < ApplicationController
   def leave
     return if @too_late
 
-    if @submission.users.count == 1
+    if @submission.users.one?
       @error = I18n.t("submission.no_partners_no_leave")
       return
     end
@@ -256,17 +258,17 @@ class SubmissionsController < ApplicationController
     end
 
     def submission_create_params
-      params.require(:submission).permit(:tutorial_id, :assignment_id)
+      params.expect(submission: [:tutorial_id, :assignment_id])
     end
 
     # disallow modification of assignment
     def submission_update_params
-      params.require(:submission).permit(:tutorial_id)
+      params.expect(submission: [:tutorial_id])
     end
 
     # disallow modification of assignment
     def submission_manuscript_params
-      params.require(:submission).permit(:manuscript)
+      params.expect(submission: [:manuscript])
     end
 
     def set_assignment
@@ -297,19 +299,19 @@ class SubmissionsController < ApplicationController
     end
 
     def join_params
-      params.require(:join).permit(:code, :assignment_id)
+      params.expect(join: [:code, :assignment_id])
     end
 
     def invitation_params
-      params.require(:submission).permit(invitee_ids: [])
+      params.expect(submission: [invitee_ids: []])
     end
 
     def correction_params
-      params.require(:submission).permit(:correction)
+      params.expect(submission: [:correction])
     end
 
     def move_params
-      params.require(:submission).permit(:tutorial_id)
+      params.expect(submission: [:tutorial_id])
     end
 
     def send_invitation_emails

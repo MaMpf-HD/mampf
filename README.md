@@ -1,8 +1,9 @@
 <div align="center">
   <a href="https://mampf.mathi.uni-heidelberg.de/">
-    <img src="https://user-images.githubusercontent.com/37160523/228801673-236a081f-40e9-47ca-add6-da1b2d6de3fa.png"
+    <img src="https://github.com/user-attachments/assets/85ef92e1-f37d-4a67-b721-f103abb7c7c6"
       width="130px" alt="MaMpf Logo"/>
   </a>
+
   <div align="center">
     <h3 align="center">MaMpf</h3>
     <p>
@@ -24,7 +25,7 @@
 MaMpf is an innovative open source e-learning platform for the mathematical sciences developed at the [Institute for Mathematics at Heidelberg University](https://www.math.uni-heidelberg.de/en). It's actively used in teaching and learning; you can [register for free here](https://mampf.mathi.uni-heidelberg.de/) (no student email required). Our platform is fully available in English & German.
 
 <a href="https://mampf.mathi.uni-heidelberg.de/">
-    <img width="1178" alt="MaMpf landing page used to log in" src="https://github.com/MaMpf-HD/mampf/assets/37160523/4a671aa4-134c-4d4a-9f00-aeeacd3ccebd">
+    <img alt="MaMpf landing page used to log in" src="https://github.com/user-attachments/assets/1787ba6a-6807-4cd2-ac26-37cbf5267348">
 </a>
 
 MaMpf aims to be a hypermedia system for mathematical content. Like _moodle_, it provides a platform for lecturers to upload & organize their teaching material including videos and scripts. But MaMpf goes beyond that and eases learning through interconnected contents:
@@ -116,6 +117,6 @@ docker compose up -d
 See the full installation guide [here](./INSTALL.md). There you will also find out how to init your local database with some sample data.
 
 <a href="https://mampf.mathi.uni-heidelberg.de/">
-  <img src="https://github.com/MaMpf-HD/mampf/assets/37160523/c3454b01-a3cb-4fab-90f7-cb097075c56f"
+  <img src="https://github.com/user-attachments/assets/35268bae-a7d4-4a7b-b81a-3fd5aed5fe71"
     alt="MaMpf footer"/>
 </a>

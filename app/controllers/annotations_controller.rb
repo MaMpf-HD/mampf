@@ -129,14 +129,14 @@ class AnnotationsController < ApplicationController
   private
 
     def annotation_params
-      params.require(:annotation).permit(
-        :category, :color, :comment, :medium_id, :subcategory, :visible_for_teacher
+      params.expect(
+        annotation: [:category, :color, :comment, :medium_id, :subcategory, :visible_for_teacher]
       )
     end
 
     def annotation_auxiliary_params
-      params.require(:annotation).permit(
-        :total_seconds, :post_as_comment
+      params.expect(
+        annotation: [:total_seconds, :post_as_comment]
       )
     end
 
@@ -151,7 +151,7 @@ class AnnotationsController < ApplicationController
 
     def valid_time?(annotation)
       time = annotation.timestamp.total_seconds
-      time >= 0 and time <= annotation.medium.video["duration"]
+      time.between?(0, annotation.medium.video["duration"])
     end
 
     # checks that the subcategory is non-nil if the category is "content" and

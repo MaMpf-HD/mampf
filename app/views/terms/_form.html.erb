@@ -2,7 +2,7 @@
   <div class="row py-2">
     <div class="col-2">
       <%= f.select :year,
-                   (2016...2025).to_a,
+                   ((Time.current.year - 5)..(Time.current.year + 2)).to_a,
                    {}, { class: 'form-select' }%>
     </div>
     <div class="col-2">

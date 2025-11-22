@@ -24,7 +24,7 @@
     </div>
     <% unless submission.persisted? %>
       <div class="row">
-        <div class="col-12">
+        <div class="col-12" data-cy="submission-invites">
           <%= f.label :invitee_ids,
                      t('submission.invitations_to') %>
           <%= f.select :invitee_ids,
@@ -151,10 +151,12 @@
           </div>
         </div>
         <div class="col-12 my-1" id="file-permission-field">
-          <input type="checkbox"
-                 id="file-permission-checkbox"
-                 data-cy="file-permission-accept"/>
-          <%= t('submission.assure_third_party') %>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="0" id="file-permission-checkbox">
+            <label class="form-check-label" for="file-permission-checkbox">
+              <%= t('submission.assure_third_party') %>
+            </label>
+          </div>
         </div>
         <div class="col-12" id="submission-final-upload-dialogue">
           <div class="col-12">
@@ -193,18 +195,14 @@
       </div>
     </div>
   </div>
-  <div class="card-footer submissionFooter"
+  <div class="card-footer submissionFooter text-center p-2"
        data-id="<%= assignment.id %>">
-    <div class="row">
-      <div class="col-12 text-center">
-        <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary',
-                     "data-cy": "save-submission" %>
-        <%= link_to t('buttons.cancel'),
-                    cancel_editing_submission_path(submission),
-                    class: 'btn btn-sm btn-secondary',
-                    remote: true %>
-      </div>
-    </div>
+    <%= f.submit t('buttons.save'),
+                  class: 'btn btn-primary',
+                  "data-cy": "save-submission" %>
+    <%= link_to t('buttons.cancel'),
+                cancel_editing_submission_path(submission),
+                class: 'btn btn-secondary',
+                remote: true %>
   </div>
 <% end %>

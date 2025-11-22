@@ -1,0 +1,176 @@
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
+
+.landing-box {
+    background-color: white;
+    max-width: 630px;
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 1px 4px 7px rgba(0, 0, 0, 0.13);
+
+    @include media-breakpoint-down(sm) {
+        border-radius: 0;
+    }
+}
+
+#signin-box {
+    padding: 80px 50px 50px 50px;
+    backdrop-filter: blur(17px) saturate(130%) brightness(120%);
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    position: relative;
+    box-shadow:
+        0 8px 32px 0 rgba(31, 38, 135, 0.37),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.05);
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.01) 0%, rgba(255, 255, 255, 0.02) 50%, transparent 100%);
+        border-radius: inherit;
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        background: linear-gradient(45deg, rgba(255, 255, 255, 0.03), transparent, rgba(255, 255, 255, 0.04));
+        border-radius: inherit;
+        z-index: -2;
+        filter: blur(4px);
+    }
+
+    & a {
+        color: white;
+    }
+}
+
+.devise-button {
+    // background-color: #231D41;
+    border: 1.5px solid white !important;
+    font-weight: bold !important;
+    width: 100% !important;
+}
+
+
+#announcement-box {
+    z-index: 1;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    padding: 15px;
+    background-color: rgba(255, 255, 255, 0.96);
+}
+
+#language-switch {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: auto;
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    background-color: #223E62C6;
+    border-radius: 0 8px;
+    box-shadow: inset 1px 4px 5px rgba(0, 0, 0, 0.03);
+
+    a {
+        color: white;
+        font-size: medium;
+    }
+
+    @include media-breakpoint-down(sm) {
+        border-radius: 0;
+    }
+}
+
+footer {
+    z-index: 1;
+}
+
+#footer-bar {
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+.ul-no-indentation {
+    padding-left: 1.1rem;
+}
+
+#mampf-logo {
+    width: 100px;
+}
+
+#login-form {
+    margin-top: 20px;
+    max-width: 400px;
+    width: 100%;
+}
+
+#logo-area {
+    color: inherit;
+    text-decoration: none;
+}
+
+#github-corner-svg {
+    filter: drop-shadow(1px 4px 7px rgba(0, 0, 0, 0.13));
+
+    @include media-breakpoint-down(sm) {
+        opacity: 0.4;
+    }
+}
+
+#landing-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(120, 20, 120, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(20, 120, 200, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(200, 200, 20, 0.1) 0%, transparent 30%),
+        radial-gradient(ellipse at center, #0f0f2e 0%, #0a0a1e 70%, #050510 100%);
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background:
+            linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.02) 50%, transparent 60%),
+            linear-gradient(-45deg, transparent 40%, rgba(255, 255, 255, 0.01) 50%, transparent 60%);
+        animation: lightReflection 20s infinite ease-in-out;
+        pointer-events: none;
+    }
+}
+
+@keyframes lightReflection {
+
+    0%,
+    100% {
+        opacity: 0.3;
+        transform: translateX(-10px) translateY(-10px);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: translateX(10px) translateY(10px);
+    }
+}

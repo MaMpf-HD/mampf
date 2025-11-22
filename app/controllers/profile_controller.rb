@@ -153,14 +153,14 @@ class ProfileController < ApplicationController
     end
 
     def email_params
-      params.require(:user).permit(:email_for_medium, :email_for_announcement,
-                                   :email_for_teachable, :email_for_news,
-                                   :email_for_submission_upload,
-                                   :email_for_submission_removal,
-                                   :email_for_submission_join,
-                                   :email_for_submission_leave,
-                                   :email_for_correction_upload,
-                                   :email_for_submission_decision)
+      params.expect(user: [:email_for_medium, :email_for_announcement,
+                           :email_for_teachable, :email_for_news,
+                           :email_for_submission_upload,
+                           :email_for_submission_removal,
+                           :email_for_submission_join,
+                           :email_for_submission_leave,
+                           :email_for_correction_upload,
+                           :email_for_submission_decision])
     end
 
     def set_lecture
@@ -172,12 +172,14 @@ class ProfileController < ApplicationController
     end
 
     def lecture_params
-      params.require(:lecture).permit(:id, :passphrase, :parent)
+      params.expect(lecture: [:id, :passphrase, :parent])
     end
 
     # extracts all lecture ids from user params
     def lecture_ids
-      params[:user][:lecture].select { |_k, v| v == "1" }.keys.map(&:to_i)
+      return [] if params[:user][:lecture].blank?
+
+      params[:user][:lecture].select { |_k, v| v["subscribed"] == "1" }.keys.map(&:to_i)
     end
 
     def clean_up_notifications
@@ -209,7 +211,7 @@ class ProfileController < ApplicationController
                .to_be_authorized_lectures(current_user))
       end
       restricted_lectures.each do |l|
-        given_passphrase = params[:user][:pass_lecture][l.id.to_s]
+        given_passphrase = params[:user][:lecture][l.id.to_s][:passphrase]
         unless given_passphrase == l.passphrase
           @errors[:passphrase] ||= []
           @errors[:passphrase].push(l.id)

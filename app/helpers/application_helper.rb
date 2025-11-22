@@ -1,5 +1,6 @@
-# ApplicationHelper module
 module ApplicationHelper
+  include Pagy::Frontend
+
   # returns the path that is associated to the MaMpf brand in the navbar
   def home_path
     return start_path if user_signed_in?
@@ -85,32 +86,38 @@ module ApplicationHelper
 
   # media_sort -> database fields
   def media_types
-    { "kaviar" => ["Kaviar"], "sesam" => ["Sesam"],
-      "keks" => ["Quiz"],
-      "kiwi" => ["Kiwi"],
-      "erdbeere" => ["Erdbeere"], "nuesse" => ["Nuesse"],
-      "script" => ["Script"], "questions" => ["Question"],
-      "remarks" => ["Remark"], "reste" => ["Reste"] }
+    { "lesson_material" => ["LessonMaterial"],
+      "worked_example" => ["WorkedExample"],
+      "quiz" => ["Quiz"],
+      "repetition" => ["Repetition"],
+      "exercise" => ["Exercise"],
+      "script" => ["Script"],
+      "questions" => ["Question"],
+      "remarks" => ["Remark"],
+      "miscellaneous" => ["Miscellaneous"] }
   end
 
   # media_sorts
-  def media_sorts
-    ["kaviar", "sesam", "keks", "kiwi", "erdbeere", "nuesse", "script", "questions", "remarks",
-     "reste"]
+  def media_sorts(lecture = nil)
+    if lecture && lecture.sort == "vignettes"
+      ["miscellaneous"]
+    else
+      ["lesson_material", "worked_example", "quiz", "repetition",
+       "exercise", "script", "questions", "remarks", "miscellaneous"]
+    end
   end
 
   # media_sort -> acronym
   def media_names
-    { "kaviar" => t("categories.kaviar.plural"),
-      "sesam" => t("categories.sesam.plural"),
-      "keks" => t("categories.quiz.plural"),
-      "kiwi" => t("categories.kiwi.singular"),
-      "erdbeere" => t("categories.erdbeere.singular"),
-      "nuesse" => t("categories.exercises.plural"),
+    { "lesson_material" => t("categories.lesson_material.plural"),
+      "worked_example" => t("categories.worked_example.plural"),
+      "quiz" => t("categories.quiz.plural"),
+      "repetition" => t("categories.repetition.singular"),
+      "exercise" => t("categories.exercise.plural"),
       "script" => t("categories.script.singular"),
       "questions" => t("categories.question.plural"),
       "remarks" => t("categories.remark.plural"),
-      "reste" => t("categories.reste.singular") }
+      "miscellaneous" => t("categories.miscellaneous.singular") }
   end
 
   # Selects all media associated to lectures and lessons from a given list
@@ -196,20 +203,6 @@ module ApplicationHelper
                [[t("admin.referral.external_all"), "external-0"]]])
   end
 
-  # Returns the grouped list of all courses/lectures together with their ids.
-  # Is used in grouped_options_for_select in form helpers
-  def grouped_teachable_list_alternative
-    list = []
-    Course.find_each do |c|
-      lectures = [["#{c.short_title} Modul", "Course-#{c.id}"]]
-      c.lectures.includes(:term).find_each do |l|
-        lectures.push([l.short_title, "Lecture-#{l.id}"])
-      end
-      list.push([c.title, lectures])
-    end
-    list
-  end
-
   # Returns the path for the show or edit action of a given lecture,
   # depending on  whether the current user has editor rights for the course.
   # Editor rights are determined by inheritance, e.g. module editors
@@ -283,10 +276,6 @@ module ApplicationHelper
           "data-bs-content": text,
           "data-bs-html": html,
           title: title)
-  end
-
-  def realization_path(realization)
-    "/#{realization.first.downcase.pluralize}/#{realization.second}"
   end
 
   def first_course_independent?

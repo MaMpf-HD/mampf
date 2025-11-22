@@ -1,27 +1,13 @@
-// Starting with v9, this config will be deprecated in favor of the new
-// configuration files [1]. @stylistic is already ready for the new "flat config",
-// when it's time, copy the new config from [2].
-// [1] https://eslint.org/docs/latest/use/configure/configuration-files-new
-// [2] https://eslint.style/guide/config-presets#configuration-factory
-
-// Stylistic Plugin for ESLint
-// see the rules in [3] and [4].
-// [3] https://eslint.style/packages/js#rules
-// [4] https://eslint.org/docs/rules/
-import js from "@eslint/js";
+import eslint from "@eslint/js";
 import html from "@html-eslint/eslint-plugin";
 import htmlParser, { TEMPLATE_ENGINE_SYNTAX } from "@html-eslint/parser";
 import stylistic from "@stylistic/eslint-plugin";
-import pluginCypress from "eslint-plugin-cypress/flat";
 import erb from "eslint-plugin-erb";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 const ignoreFilesWithSprocketRequireSyntax = [
-  "app/assets/javascripts/application.js",
   "app/assets/config/manifest.js",
-  "app/assets/javascripts/edit_clicker_assets.js",
-  "app/assets/javascripts/show_clicker_assets.js",
-  "app/assets/javascripts/geogebra_assets.js",
   "vendor/assets/javascripts/thredded_timeago.js",
 ];
 
@@ -44,72 +30,25 @@ const customGlobals = {
   Routes: "readable",
   App: "readable",
   ActionCable: "readable",
+  ActiveStorage: "readable",
+
+  thymeAttributes: "readable",
 
   // Common global methods
   initBootstrapPopovers: "readable",
-  initMasonryGridSystem: "readable",
-
-  // Thyme & Annotation tool globals
-  // TODO: This is a "hack" right now to get rid of "xy is not defined" error
-  // messages in ESLint.
-  // In an ideal world, we would use the new ES6 module syntax, but that is a
-  // bigger undertaking as we have to get rid of rails webpacker and use
-  // webpack itself or even better try to use the new import maps.
-  // See the links in this issue: https://github.com/MaMpf-HD/mampf/issues/454
-  thyme: "readable",
-  video: "readable",
-  thymeAttributes: "readable",
-  thymeKeyShortcuts: "readable",
-  thymeUtility: "readable",
-  Resizer: "readable",
-
-  ControlBarHider: "readable",
-
-  ChapterManager: "readable",
-  DisplayManager: "readable",
-  MetadataManager: "readable",
-
-  Component: "readable",
-  Category: "readable",
-  CategoryEnum: "readable",
-  Subcategory: "readable",
-  VolumeBar: "readable",
-  TimeButton: "readable",
-  MuteButton: "readable",
-  PlayButton: "readable",
-  SeekBar: "readable",
-  FullScreenButton: "readable",
-  NextChapterButton: "readable",
-  PreviousChapterButton: "readable",
-  SpeedSelector: "readable",
-  AddItemButton: "readable",
-  AddReferenceButton: "readable",
-  AddScreenshotButton: "readable",
-  IaBackButton: "readable",
-  IaButton: "readable",
-  IaCloseButton: "readable",
-
-  seekBar: "writable",
-
-  Annotation: "readable",
-  AnnotationManager: "readable",
-  AnnotationArea: "readable",
-  AnnotationsToggle: "readable",
-  AnnotationCategoryToggle: "readable",
-  AnnotationButton: "readable",
-  Heatmap: "readable",
 
   // KaTeX
   renderMathInElement: "readable",
 
-  openAnnotationIfSpecifiedInUrl: "readable",
+  Sortable: "readable",
+
+  fillOptionsByAjax: "readable",
+  previewTrixTalkContent: "readable",
+
+  mermaid: "readable",
 };
 
-export default [
-  js.configs.recommended,
-  // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
-  erb.configs.recommended,
-  pluginCypress.configs.recommended,
+export default tseslint.config(
   {
     // Globally ignore the following paths
     ignores: [
@@ -122,12 +61,22 @@ export default [
       "public/pdfcomprezzor/",
       ...ignoreFilesWithSprocketRequireSyntax,
       ...ignoreCypressArchivedTests,
+      "spec/cypress/**",
+      "architecture/src/js/mermaid.min.js",
     ],
   },
   {
+    files: ["**/*.ts", "**/*.js"],
     plugins: {
       "@stylistic": stylistic,
     },
+    extends: [
+      eslint.configs.recommended,
+      // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
+      erb.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.strictTypeChecked,
+    ],
     rules: {
       ...stylistic.configs.customize({
         "indent": 2,
@@ -138,6 +87,14 @@ export default [
       }).rules,
       "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      // https://playwright.dev/docs/best-practices#lint-your-tests
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-explicit-any": "off",
     },
     languageOptions: {
       ecmaVersion: 2022,
@@ -148,15 +105,26 @@ export default [
         ...globals.jquery,
         ...globals.node,
       },
+      parserOptions: {
+        // https://typescript-eslint.io/blog/project-service
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     linterOptions: {
       // see https://github.com/Splines/eslint-plugin-erb/releases/tag/v2.0.1
       reportUnusedDisableDirectives: "off",
     },
-    ignores: ["**/*.html**"],
   },
   {
-    // HTML linting (aside from erb_lint)
+    // Disable type-checked linting
+    // https://typescript-eslint.io/troubleshooting/typed-linting/#how-do-i-disable-type-checked-linting-for-a-file
+    // https://typescript-eslint.io/troubleshooting/typed-linting/#i-get-errors-telling-me--was-not-found-by-the-project-service-consider-either-including-it-in-the-tsconfigjson-or-including-it-in-allowdefaultproject
+    files: ["**/*.js", "**/*.mjs", "**/*.mts"],
+    extends: [tseslint.configs.disableTypeChecked],
+  },
+  {
+    // HTML linting
     files: ["**/*.html", "**/*.html.erb"],
     ...html.configs["flat/recommended"],
     plugins: {
@@ -178,8 +146,7 @@ export default [
       // 🎈 Best Practices
       "@html-eslint/no-extra-spacing-text": "error",
       "@html-eslint/no-script-style-type": "error",
-      // we should add this rule later
-      // "@html-eslint/no-target-blank": "error",
+      "@html-eslint/no-target-blank": "error",
       // 🎈 Accessibility
       "@html-eslint/no-abstract-roles": "error",
       "@html-eslint/no-accesskey-attrs": "error",
@@ -193,7 +160,7 @@ export default [
         ifAttrsMoreThan: 5,
       }],
       // activate once all other rules are in place (otherwise ESLint throws errors)
-      "@html-eslint/element-newline": "off",
+      // "@html-eslint/element-newline": "error",
       // something for the long run
       // "@html-eslint/id-naming-convention": ["error", "kebab-case"],
       "@html-eslint/indent": ["error", 2],
@@ -205,5 +172,5 @@ export default [
         disallowInAssignment: true,
       }],
     },
-  },
-];
+  }
+);

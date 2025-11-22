@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaign – Show (Tutorial Registration, Preference-Based)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+      .reg-table-container { max-height: 360px; overflow: auto; }
+      .table-sticky thead th { position: sticky; top: 0; background: #f8f9fa; z-index: 1; }
+    </style>
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./campaigns_index.html">Campaigns</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Tutorial Registration (Main)</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-3">
+        <div>
+          <h1 class="h4 mb-1">Tutorial Registration (Main)
+            <span class="badge bg-success-subtle text-success-emphasis">Completed</span>
+          </h1>
+          <div class="text-muted small">Linear Algebra I · WS 2025/26</div>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button class="btn btn-outline-primary" disabled>Finalize</button>
+          <button class="btn btn-outline-danger">Delete</button>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-12 col-lg-8">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="row g-3">
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Mode</div>
+                  <div class="fw-semibold">Preference-Based</div>
+                </div>
+                <div class="col-6 col-md-4">
+                  <div class="text-muted small">Window</div>
+                  <div class="fw-semibold">Opened Sep 30, 08:00<br/>Closed Oct 10, 12:00</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Items</div>
+                  <div class="fw-semibold">8</div>
+                </div>
+                <div class="col-6 col-md-2">
+                  <div class="text-muted small">Policies</div>
+                  <div class="fw-semibold">0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <div class="fw-semibold">Registrations</div>
+                <span class="badge rounded-pill text-bg-success">Confirmed 210</span>
+              </div>
+              <div class="small text-muted mb-2">Pending 0 · Rejected 24</div>
+              <div class="progress" style="height:6px;">
+                <div class="progress-bar bg-success" style="width: 90%"></div>
+                <div class="progress-bar bg-danger" style="width: 10%"></div>
+              </div>
+              <div class="mt-3">
+                <a class="link-secondary small" href="./roster_overview.html#candidates">View unassigned candidates</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="nav nav-tabs" id="campaignTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false">Settings</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="items-tab" data-bs-toggle="tab" data-bs-target="#items" type="button" role="tab" aria-controls="items" aria-selected="false">Items</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="false">Policies</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="registrations-tab" data-bs-toggle="tab" data-bs-target="#registrations" type="button" role="tab" aria-controls="registrations" aria-selected="false">Registrations</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="allocation-tab" data-bs-toggle="tab" data-bs-target="#allocation" type="button" role="tab" aria-controls="allocation" aria-selected="false">Allocation</button>
+        </li>
+      </ul>
+
+      <div class="tab-content bg-white border border-top-0 rounded-bottom p-3" id="campaignTabsContent">
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Details</div>
+                  <dl class="row mb-0">
+                    <dt class="col-sm-4">Title</dt>
+                    <dd class="col-sm-8">Tutorial Registration (Main)</dd>
+                    <dt class="col-sm-4">Lecture</dt>
+                    <dd class="col-sm-8">Linear Algebra I (WS 2025/26)</dd>
+                    <dt class="col-sm-4">Mode</dt>
+                    <dd class="col-sm-8">Preference-Based</dd>
+                    <dt class="col-sm-4">Window</dt>
+                    <dd class="col-sm-8">Sep 30, 08:00 → Oct 10, 12:00</dd>
+                  </dl>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-lg-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Recent activity</div>
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Allocation finalized on Oct 10, 12:10</li>
+                    <li class="list-group-item">Registration window closed on Oct 10, 12:00</li>
+                    <li class="list-group-item">Registration window opened on Sep 30, 08:00</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-xl-6">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="alert alert-warning mb-3">
+                    Settings are locked after completion. View-only.
+                  </div>
+                  <div class="fw-semibold mb-3">Settings</div>
+                  <form>
+                    <fieldset disabled>
+                    <div class="mb-3">
+                      <label class="form-label">Title</label>
+                      <input type="text" class="form-control" value="Tutorial Registration (Main)" />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Lecture</label>
+                      <input type="text" class="form-control" value="Linear Algebra I (WS 2025/26)" disabled />
+                      <div class="form-text">Lecture is fixed for the campaign.</div>
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label">Mode</label>
+                      <select class="form-select" disabled>
+                        <option>First-Come-First-Serve</option>
+                        <option selected>Preference-Based</option>
+                      </select>
+                      <div class="form-text">Mode cannot be changed after opening.</div>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <div class="fw-semibold">Registration window</div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Opens</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" value="2025-09-30" />
+                          <input type="time" class="form-control" value="08:00" />
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label">Closes</label>
+                        <div class="input-group">
+                          <input type="date" class="form-control" value="2025-10-10" />
+                          <input type="time" class="form-control" value="12:00" />
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-text">Times are in Europe/Berlin.</div>
+                      </div>
+                    </div>
+
+                    <hr />
+                    <div class="row g-3">
+                      <div class="col-12">
+                        <div class="fw-semibold">Options</div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="planningOnly" />
+                          <label class="form-check-label" for="planningOnly">Planning-only (no finalization/materialization)</label>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="withdrawals" checked />
+                          <label class="form-check-label" for="withdrawals">Allow withdrawals until close</label>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="notify" checked />
+                          <label class="form-check-label" for="notify">Send email confirmation</label>
+                        </div>
+                      </div>
+                    </div>
+
+                    <hr />
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary" disabled>Open now</button>
+                        <button type="button" class="btn btn-outline-secondary" disabled>Reopen</button>
+                        <button type="button" class="btn btn-secondary" disabled>Close now</button>
+                      </div>
+                      <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary">Cancel</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                      </div>
+                    </div>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="items" role="tabpanel" aria-labelledby="items-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Items</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="fw-semibold mb-2">Add tutorial</div>
+              <fieldset disabled>
+                <form class="row g-2 align-items-end">
+                  <div class="col-12 col-md-4">
+                    <label class="form-label">Title</label>
+                    <input type="text" class="form-control" placeholder="e.g., Tutorial I" />
+                  </div>
+                  <div class="col-6 col-md-2">
+                    <label class="form-label">Capacity</label>
+                    <input type="number" class="form-control" value="28" />
+                  </div>
+                  <div class="col-6 col-md-3">
+                    <label class="form-label">Time</label>
+                    <input type="text" class="form-control" placeholder="Mon 10:00" />
+                  </div>
+                  <div class="col-12 col-md-3 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary flex-fill">Cancel</button>
+                    <button type="button" class="btn btn-primary flex-fill">Add</button>
+                  </div>
+                </form>
+              </fieldset>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Tutorial</th>
+                  <th scope="col">Capacity</th>
+                  <th scope="col">Confirmed</th>
+                  <th scope="col">Time</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Tutorial A</td>
+                  <td>28</td>
+                  <td>26</td>
+                  <td>Mon 10:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tutorial B</td>
+                  <td>28</td>
+                  <td>27</td>
+                  <td>Mon 12:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tutorial C</td>
+                  <td>28</td>
+                  <td>25</td>
+                  <td>Tue 10:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tutorial D</td>
+                  <td>28</td>
+                  <td>26</td>
+                  <td>Tue 12:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tutorial E</td>
+                  <td>28</td>
+                  <td>27</td>
+                  <td>Wed 10:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tutorial F</td>
+                  <td>28</td>
+                  <td>26</td>
+                  <td>Wed 12:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tutorial G</td>
+                  <td>28</td>
+                  <td>26</td>
+                  <td>Thu 10:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Tutorial H</td>
+                  <td>28</td>
+                  <td>27</td>
+                  <td>Thu 12:00</td>
+                  <td class="text-end">
+                    <button class="btn btn-sm btn-outline-secondary" disabled>Edit</button>
+                    <button class="btn btn-sm btn-outline-danger" disabled>Remove</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="policies" role="tabpanel" aria-labelledby="policies-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Policies</div>
+          </div>
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="fw-semibold mb-2">Add policy</div>
+              <fieldset disabled>
+                <form class="row g-2 align-items-end">
+                  <div class="col-12 col-md-4">
+                    <label class="form-label">Type</label>
+                    <select class="form-select">
+                      <option>institutional_email</option>
+                      <option selected>prerequisite_campaign</option>
+                      <option>custom_script</option>
+                    </select>
+                    <div class="form-text">Fields change by type; no JSON required.</div>
+                  </div>
+                  <div class="col-12 col-md-5">
+                    <label class="form-label">Prerequisite campaign</label>
+                    <input type="number" class="form-control" placeholder="Campaign ID" />
+                  </div>
+                  <div class="col-6 col-md-1">
+                    <div class="form-check mt-4">
+                      <input class="form-check-input" type="checkbox" id="policyActiveTutCompleted" checked />
+                      <label class="form-check-label" for="policyActiveTutCompleted">Active</label>
+                    </div>
+                  </div>
+                  <div class="col-6 col-md-2 d-flex gap-2">
+                    <button type="button" class="btn btn-outline-secondary flex-fill">Cancel</button>
+                    <button type="button" class="btn btn-primary flex-fill">Add</button>
+                  </div>
+                </form>
+              </fieldset>
+            </div>
+          </div>
+          <div class="alert alert-light border mb-0">No active policies.</div>
+        </div>
+
+        <div class="tab-pane fade" id="registrations" role="tabpanel" aria-labelledby="registrations-tab" tabindex="0">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <div class="fw-semibold">Registrations</div>
+            <div class="d-flex gap-2 align-items-center flex-wrap">
+              <div class="d-flex align-items-center gap-2">
+                <label class="form-label small mb-0">Rows per page</label>
+                <select class="form-select form-select-sm" style="width:auto">
+                  <option>10</option>
+                  <option selected>20</option>
+                  <option>50</option>
+                  <option>100</option>
+                </select>
+              </div>
+              <div class="btn-group btn-group-sm" role="group" aria-label="Density">
+                <button type="button" class="btn btn-outline-secondary">Default</button>
+                <button type="button" class="btn btn-secondary">Compact</button>
+              </div>
+              <button class="btn btn-sm btn-outline-secondary">Export</button>
+              <button class="btn btn-sm btn-outline-secondary">Refresh</button>
+            </div>
+          </div>
+          <div class="table-responsive reg-table-container">
+            <table class="table table-sm align-middle table-sticky">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Student</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Preferences</th>
+                  <th scope="col">Registered</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Alex Example</td><td>alex@example.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">A(1), B(2), C(3)</td><td>Oct 05, 11:03</td></tr>
+                <tr><td>Sam Student</td><td>sam@student.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span></td><td class="small text-muted">D(1), H(2), G(3)</td><td>Oct 06, 08:45</td></tr>
+                <tr><td>Jamie Lee</td><td>jamie@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">B(1), A(2), C(3)</td><td>Oct 06, 09:12</td></tr>
+                <tr><td>Pat Taylor</td><td>pat@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span></td><td class="small text-muted">C(1), D(2), E(3)</td><td>Oct 06, 10:04</td></tr>
+                <tr><td>Riley Chen</td><td>riley@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">E(1), F(2), A(3)</td><td>Oct 06, 10:55</td></tr>
+                <tr><td>Taylor Kim</td><td>t.kim@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">A(1), C(2), D(3)</td><td>Oct 06, 11:21</td></tr>
+                <tr><td>Jordan Park</td><td>j.park@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span></td><td class="small text-muted">H(1), G(2), F(3)</td><td>Oct 06, 11:59</td></tr>
+                <tr><td>Casey Morgan</td><td>casey@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">B(1), D(2), E(3)</td><td>Oct 06, 12:07</td></tr>
+                <tr><td>Alexis Gomez</td><td>a.gomez@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">G(1), H(2), F(3)</td><td>Oct 06, 12:43</td></tr>
+                <tr><td>Chris Patel</td><td>c.patel@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span></td><td class="small text-muted">D(1), C(2), B(3)</td><td>Oct 06, 13:10</td></tr>
+                <tr><td>Robin Singh</td><td>r.singh@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">C(1), A(2), H(3)</td><td>Oct 06, 13:35</td></tr>
+                <tr><td>Drew Müller</td><td>d.mueller@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">A(1), B(2), H(3)</td><td>Oct 06, 14:02</td></tr>
+                <tr><td>Avery Rossi</td><td>a.rossi@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span></td><td class="small text-muted">F(1), E(2), D(3)</td><td>Oct 06, 14:18</td></tr>
+                <tr><td>Lee Novak</td><td>l.novak@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">H(1), E(2), A(3)</td><td>Oct 06, 14:55</td></tr>
+                <tr><td>Quinn Silva</td><td>q.silva@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">B(1), E(2), G(3)</td><td>Oct 06, 15:11</td></tr>
+                <tr><td>Morgan Alvarez</td><td>m.alvarez@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span></td><td class="small text-muted">E(1), F(2), B(3)</td><td>Oct 06, 15:48</td></tr>
+                <tr><td>Noah Fischer</td><td>n.fischer@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">G(1), C(2), D(3)</td><td>Oct 06, 16:05</td></tr>
+                <tr><td>Skyler Braun</td><td>s.braun@uni.edu</td><td><span class="badge rounded-pill text-bg-danger">Rejected</span></td><td class="small text-muted">H(1), B(2), A(3)</td><td>Oct 06, 16:29</td></tr>
+                <tr><td>Parker Schmid</td><td>p.schmid@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">C(1), D(2), F(3)</td><td>Oct 06, 16:47</td></tr>
+                <tr><td>Harper Weiss</td><td>h.weiss@uni.edu</td><td><span class="badge rounded-pill text-bg-success">Confirmed</span></td><td class="small text-muted">A(1), G(2), H(3)</td><td>Oct 06, 17:03</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mt-2">
+            <div class="small text-muted">Showing 1–20 of 234</div>
+            <nav>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item disabled"><span class="page-link">Prev</span></li>
+                <li class="page-item active" aria-current="page"><span class="page-link">1</span></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item"><span class="page-link">…</span></li>
+                <li class="page-item"><a class="page-link" href="#">12</a></li>
+                <li class="page-item"><a class="page-link" href="#">Next</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="allocation" role="tabpanel" aria-labelledby="allocation-tab" tabindex="0">
+          <div class="row g-3">
+            <div class="col-12 col-xl-4">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Allocation</div>
+                  <div class="small text-muted mb-2">Finalized Oct 10, 12:10</div>
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-outline-secondary" disabled>Preview allocation</button>
+                    <button class="btn btn-outline-secondary" disabled>Run allocation</button>
+                    <button class="btn btn-outline-primary" disabled>Finalize</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-xl-8">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="fw-semibold mb-2">Results summary</div>
+                  <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex justify-content-between">
+                      <span>Confirmed</span><span class="fw-semibold">210</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                      <span>Rejected</span><span class="fw-semibold">24</span>
+                    </li>
+                  </ul>
+                  <div class="fw-semibold mb-2">Per tutorial</div>
+                  <div class="table-responsive">
+                    <table class="table table-sm align-middle mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Tutorial</th>
+                          <th>Capacity</th>
+                          <th>Confirmed</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr><td>A</td><td>28</td><td>26</td></tr>
+                        <tr><td>B</td><td>28</td><td>27</td></tr>
+                        <tr><td>C</td><td>28</td><td>25</td></tr>
+                        <tr><td>D</td><td>28</td><td>26</td></tr>
+                        <tr><td>E</td><td>28</td><td>27</td></tr>
+                        <tr><td>F</td><td>28</td><td>26</td></tr>
+                        <tr><td>G</td><td>28</td><td>26</td></tr>
+                        <tr><td>H</td><td>28</td><td>27</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>

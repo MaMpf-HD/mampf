@@ -1,4 +1,4 @@
-<%= javascript_include_tag :footer_modal %>
+<%= vite_javascript_tag "js/footer_modal" %>
 
 <% I18n.with_locale(current_user.try(:locale)) do %>
 
@@ -18,7 +18,7 @@
       <%= t('footer.text_html',
              github: link_to('GitHub',
                              'https://github.com/MaMpf-HD/mampf',
-                             target: :blank),
+                             target: "_blank"),
              rails:  link_to('Rails',
                              'http://rubyonrails.org/',
                              target: :_blank),
@@ -46,10 +46,7 @@
              bugs: link_to(t('here'),
                             'https://github.com/MaMpf-HD/mampf/issues',
                             target: :_blank),
-             feedback: mail_to(DefaultSetting::FEEDBACK_EMAIL, nil),
-             background_photo_credit: link_to('Craig S. Kaplan',
-                            'https://github.com/isohedral/hatviz',
-                            target: :_blank)) %>
+             feedback: mail_to(DefaultSetting::FEEDBACK_EMAIL, nil)) %>
     </div>
     <div class="col text-md-end">
       <a href="#sponsors" data-toggle="modal"

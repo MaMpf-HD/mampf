@@ -11,7 +11,8 @@ class TimeStamp
     return if text.blank?
 
     YAML.safe_load(text, permitted_classes: [TimeStamp,
-                                             ActiveModel::Errors],
+                                             ActiveModel::Errors,
+                                             ActiveModel::ValidationContext],
                          aliases: true)
   end
 

@@ -17,7 +17,13 @@ Cypress.Commands.add("clickExpectNewTab", { prevSubject: true }, ($subject, args
   expect($subject.is("a"), errMsg).to.be.true;
 
   cy.wrap($subject).should("have.attr", "target", "_blank");
-  return cy.wrap($subject).invoke("removeAttr", "target").click(args);
+  cy.wrap($subject).invoke("removeAttr", "target").click(args);
+  // TODO: Unfortunately, due to how the Thyme player loads its components,
+  // we need a small wait here to ensure the new page is correctly rendered.
+  // This should be improved by a more robust Thyme player implementation.
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(500);
+  cy.reload();
 });
 
 /**
@@ -114,12 +120,16 @@ beforeEach(() => {
 });
 
 Cypress.Commands.add("createUser", (role) => {
-  if (!["admin", "editor", "teacher", "generic", "tutor"].includes(role)) {
-    throw new Error(`Invalid role: ${role}`);
-  }
-  return BackendCaller.callCypressRoute("user_creator", "cy.createUser()", { role: role });
+  return BackendCaller.callCypressRoute("user_creator", "cy.createUser()", { role: role })
+    .then((user) => {
+      console.log("Created user:", user);
+    });
 });
 
+/**
+ * Logs in a user via the API. Note that you must log out the previous user
+ * before, otherwise the session will not be cleared.
+ */
 Cypress.Commands.add("login", (user) => {
   return cy.request({
     method: "POST",
@@ -132,6 +142,16 @@ Cypress.Commands.add("login", (user) => {
     },
   }).then((response) => {
     expect(response.status).to.eq(200);
+
+    if (!response.body) {
+      throw new Error("Login failed, no response body. See commands.js");
+    }
+
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(response.body, "text/html");
+    if (dom.querySelector("[data-cy=login-form]")) {
+      throw new Error("Login failed, login form still present. See commands.js");
+    }
   });
 });
 

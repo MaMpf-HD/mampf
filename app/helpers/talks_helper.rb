@@ -18,7 +18,7 @@ module TalksHelper
   end
 
   def speaker_icon_class(talk)
-    return "bi bi-person-fill" unless talk.speakers.count > 1
+    return "bi bi-person-fill" unless talk.speakers.many?
 
     "bi bi-people-fill"
   end
@@ -69,7 +69,7 @@ module TalksHelper
                     }
                   })
     else
-      seminar_edit_people_link = "#{edit_lecture_path(talk.lecture)}#people"
+      seminar_edit_people_link = "#{edit_lecture_path(talk.lecture)}?tab=people"
 
       form.select(:speaker_ids, speakers_preselection(talk), {},
                   class: "selectize",

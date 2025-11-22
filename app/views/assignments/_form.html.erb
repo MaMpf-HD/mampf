@@ -1,4 +1,4 @@
-<%= javascript_include_tag 'datetimepicker' %>
+<%= vite_javascript_tag 'js/datetimepicker' %>
 
 <div class="list-group-item assignmentRow"
        data-id="<%= assignment.id.to_i %>">
@@ -42,7 +42,7 @@
       <div class="form-group col-2">
         <%= f.select :medium_id,
                      options_for_select(Medium.where(teachable: assignment.lecture,
-                                                    sort: 'Nuesse')
+                                                    sort: 'Exercise')
                                               .map { |m| [m.local_title_for_viewers, m.id] },
                                         assignment.medium_id ),
                      { include_blank: true },

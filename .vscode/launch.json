@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug MaMpf Backend",
+            "type": "ruby_lsp",
+            "request": "attach",
+            "debugPort": 13254,
+            "localfsMap": "/workspaces/mampf/:${workspaceFolder}",
+        },
+    ]
+}

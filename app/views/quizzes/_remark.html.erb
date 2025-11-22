@@ -23,8 +23,8 @@
                              value: @quiz_round.progress %>
           <%= f.hidden_field :counter,
                              value: @quiz_round.counter %>
-          <%= f.hidden_field :session_id,
-                             value: @quiz_round.session_id %>
+          <%= f.hidden_field :attempt_token,
+                             value: @quiz_round.attempt_token %>
         </div>
         <% if remark.video || remark.manuscript || remark.geogebra %>
           <div class="col-12 text-center my-2 remark-infotainment-text">
@@ -36,7 +36,7 @@
                           class: 'mx-2' %>
             <% end %>
             <% if remark.manuscript %>
-              <%= link_to t('admin.quiz.manuskript'),
+              <%= link_to t('admin.quiz.manuscript'),
                           display_medium_path(remark),
                           target: :_blank,
                           class: 'mx-2' %>

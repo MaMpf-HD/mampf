@@ -35,6 +35,21 @@ class Lecture < ApplicationRecord
            as: :teachable,
            inverse_of: :teachable
 
+  has_many :vignettes_questionnaires, -> { order(id: :asc) },
+           class_name: "Vignettes::Questionnaire",
+           dependent: :destroy,
+           inverse_of: :lecture
+
+  has_many :vignettes_codenames,
+           class_name: "Vignettes::Codename",
+           dependent: :destroy,
+           inverse_of: :lecture
+
+  has_one :vignettes_completion_message,
+          class_name: "Vignettes::CompletionMessage",
+          dependent: :destroy,
+          inverse_of: :lecture
+
   # in a lecture, you can import other media
   has_many :imports, as: :teachable, dependent: :destroy
   has_many :imported_media, through: :imports, source: :medium
@@ -69,20 +84,14 @@ class Lecture < ApplicationRecord
   # users to tutors, editors or teachers
   has_many :vouchers, dependent: :destroy
 
-  # a lecture has many structure_ids, referring to the ids of structures
-  # in the erdbeere database
-  serialize :structure_ids, type: Array, coder: YAML
-
   # we do not allow that a teacher gives a certain lecture in a given term
   # of the same sort twice
-  # rubocop:todo Rails/UniqueValidationWithoutIndex
   validates :course, uniqueness: { scope: [:teacher_id, :term_id, :sort] }
-  # rubocop:enable Rails/UniqueValidationWithoutIndex
 
   validates :content_mode, inclusion: { in: ["video", "manuscript"] }
 
   validates :sort, inclusion: { in: ["lecture", "seminar", "oberseminar",
-                                     "proseminar", "special"] }
+                                     "proseminar", "special", "vignettes"] }
 
   validates :term, presence: { unless: :term_independent? }
 
@@ -123,33 +132,25 @@ class Lecture < ApplicationRecord
 
   scope :seminar, -> { where(sort: ["seminar", "oberseminar", "proseminar"]) }
 
-  searchable do
-    integer :term_id do
-      term_id || 0
-    end
-    integer :teacher_id
-    string :sort
-    text :text do
-      "#{course.title} #{course.short_title}"
-    end
-    integer :program_ids, multiple: true do
-      course.divisions.pluck(:program_id).uniq
-    end
-    integer :editor_ids, multiple: true
-    boolean :is_published do
-      published?
-    end
-    # these two are for ordering
-    time :sort_date do
-      begin_date
-    end
-    string :sort_title do
-      ActiveSupport::Inflector.transliterate(course.title).downcase
-    end
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title,
+                  associated_against: {
+                    course: [:title, :short_title]
+                  },
+                  using: {
+                    tsearch: { prefix: true, any_word: true },
+                    trigram: {  word_similarity: true,
+                                threshold: 0.3 }
+                  }
+
+  def self.default_search_order
+    # NOTE: This requires the query to join :course and :term
+    Arel.sql("terms.year DESC, terms.season DESC, LOWER(unaccent(courses.title)) ASC")
   end
 
-  def self.select
-    Lecture.all.map { |l| [l.title, l.id] }
+  def self.default_search_order_joins
+    [:course, :term]
   end
 
   # The next methods coexist for lectures and lessons as well.
@@ -255,22 +256,6 @@ class Lecture < ApplicationRecord
     end
   end
 
-  # course tags are all tags that are lecture tags as well as tags that are
-  # associated to the lecture's course
-  def course_tags(lecture_tags: tags)
-    lecture_tags & course.tags
-  end
-
-  # extra tags are tags that are lecture tags but not course tags
-  def extra_tags(lecture_tags: tags)
-    lecture_tags - course.tags
-  end
-
-  # deferred tags are tags that are course tags but not lecture tags
-  def deferred_tags(lecture_tags: tags)
-    course.tags.includes(:notions) - lecture_tags
-  end
-
   def tags_including_media_tags
     (tags +
        lessons.includes(media: :tags)
@@ -346,40 +331,42 @@ class Lecture < ApplicationRecord
     !released.nil?
   end
 
-  # The next methods return if there are any media in the Kaviar, Sesam etc.
+  # The next methods return if there are any media in the LessonMaterial, WorkedExample etc.
   # projects that are associated to this lecture *with inheritance*
   # These methods make use of caching.
 
-  def kaviar?(user)
-    project?("kaviar", user) || imported_any?("kaviar")
+  def lesson_material?(user)
+    project?("lesson_material", user) || imported_any?("lesson_material")
   end
 
-  def sesam?(user)
-    project?("sesam", user) || imported_any?("sesam")
+  def worked_example?(user)
+    project?("worked_example", user) || imported_any?("worked_example")
   end
 
-  def keks?(user)
-    project?("keks", user)  || imported_any?("keks")
+  def quiz?(user)
+    project?("quiz", user) || imported_any?("quiz")
   end
 
-  def erdbeere?(user)
-    project?("erdbeere", user) || imported_any?("erdbeere")
+  def repetition?(user)
+    project?("repetition", user) || imported_any?("repetition")
   end
 
-  def kiwi?(user)
-    project?("kiwi", user) || imported_any?("kiwi")
-  end
-
-  def nuesse?(user)
-    project?("nuesse", user) || imported_any?("nuesse")
+  def exercise?(user)
+    project?("exercise", user) || imported_any?("exercise")
   end
 
   def script?(user)
-    project?("script", user) || imported_any?("nuesse")
+    project?("script", user) || imported_any?("exercise")
   end
 
-  def reste?(user)
-    project?("reste", user) || imported_any?("reste")
+  def miscellaneous?(user)
+    project?("miscellaneous", user) || imported_any?("miscellaneous")
+  end
+
+  def questionnaire?
+    Rails.cache.fetch("#{cache_key_with_version}/has_questionnaire") do
+      Vignettes::Questionnaire.exists?(lecture_id: id)
+    end
   end
 
   # the next methods put together some information on the lecture (teacher,
@@ -552,36 +539,6 @@ class Lecture < ApplicationRecord
            .select { |l| l.sections.blank? }
   end
 
-  # for a given list of media, sorts them as follows:
-  # 1) media associated to the lecture, sorted first by boost and second
-  # by creation date
-  # 2) media associated to lessons of the lecture, sorted by lesson numbers
-  def lecture_lesson_results(filtered_media)
-    lecture_results = filtered_media.where(teachable: self)
-                                    .order(boost: :desc, created_at: :desc)
-    lesson_results = filtered_media.where(teachable:
-                                            Lesson.where(lecture: self))
-    talk_results = filtered_media.where(teachable:
-                                            Talk.where(lecture: self))
-    lecture_results +
-      lesson_results.includes(:teachable)
-                    .sort_by do |m|
-                      [order_factor * m.lesson.date.jd,
-                       order_factor * m.lesson.id,
-                       m.position]
-                    end +
-      talk_results.includes(:teachable).sort_by do |m|
-        m.teachable.position
-      end
-  end
-
-  def order_factor
-    return -1 if lecture.term.blank?
-    return -1 if lecture.term.active
-
-    1
-  end
-
   def begin_date
     Rails.cache.fetch("#{cache_key_with_version}/begin_date") do
       term&.begin_date || Term.active.begin_date || Time.zone.today
@@ -627,7 +584,7 @@ class Lecture < ApplicationRecord
   end
 
   def self.sorts
-    ["lecture", "seminar", "proseminar", "oberseminar"]
+    ["lecture", "seminar", "proseminar", "oberseminar", "vignettes"]
   end
 
   def self.sort_localized
@@ -685,66 +642,6 @@ class Lecture < ApplicationRecord
     in?(user.lectures)
   end
 
-  def self.search_by(search_params, page)
-    if search_params[:all_types] == "1" || search_params[:types].nil?
-      search_params[:types] =
-        []
-    end
-    if search_params[:all_terms] == "1" || search_params[:term_ids].nil?
-      search_params[:term_ids] =
-        []
-    end
-    if search_params[:all_teachers] == "1" || search_params[:teacher_ids].nil?
-      search_params[:teacher_ids] =
-        []
-    end
-    if search_params[:all_programs] == "1" || search_params[:program_ids].nil?
-      search_params[:program_ids] =
-        []
-    end
-    search = Sunspot.new_search(Lecture)
-    # add lectures without term to current term
-    if Term.active.try(:id).to_i.to_s.in?(search_params[:term_ids])
-      search_params[:term_ids].push("0")
-    end
-    search.build do
-      with(:sort, search_params[:types]) unless search_params[:types].empty?
-      unless search_params[:teacher_ids].empty?
-        with(:teacher_id,
-             search_params[:teacher_ids])
-      end
-      unless search_params[:program_ids].empty?
-        with(:program_ids,
-             search_params[:program_ids])
-      end
-      unless search_params[:term_ids].empty?
-        with(:term_id,
-             search_params[:term_ids])
-      end
-    end
-    admin = User.find_by(id: search_params[:user_id])&.admin
-    unless admin
-      search.build do
-        any_of do
-          with(:is_published, true)
-          with(:teacher_id, search_params[:user_id])
-          with(:editor_ids, search_params[:user_id])
-        end
-      end
-    end
-    if search_params[:fulltext].present?
-      search.build do
-        fulltext(search_params[:fulltext])
-      end
-    end
-    search.build do
-      order_by(:sort_date, :desc)
-      order_by(:sort_title, :asc)
-      paginate(page: page, per_page: search_params[:per])
-    end
-    search
-  end
-
   def term_to_label
     return term.to_label if term
 
@@ -783,12 +680,12 @@ class Lecture < ApplicationRecord
   end
 
   def scheduled_assignments?
-    media.where(sort: "Nuesse").where.not(publisher: nil)
+    media.where(sort: "Exercise").where.not(publisher: nil)
          .any? { |m| m.publisher.create_assignment }
   end
 
   def scheduled_assignments
-    media.where(sort: "Nuesse").where.not(publisher: nil)
+    media.where(sort: "Exercise").where.not(publisher: nil)
          .select { |m| m.publisher.create_assignment }
          .map { |m| m.publisher.assignment }
   end
@@ -930,6 +827,10 @@ class Lecture < ApplicationRecord
     talks.where.not(id: talk_ids_for_speaker(speaker))
   end
 
+  def vignettes?
+    vignettes_questionnaires.any?
+  end
+
   private
 
     # used for after save callback
@@ -938,7 +839,7 @@ class Lecture < ApplicationRecord
     end
 
     # looks in the cache if there are any media associated *with inheritance*
-    # to this lecture and a given project (kaviar, sesam etc.)
+    # to this lecture and a given project (lesson_material, worked_example etc.)
     def project_as_user?(project)
       Rails.cache.fetch("#{cache_key_with_version}/#{project}") do
         Medium.exists?(sort: medium_sort[project],
@@ -984,9 +885,13 @@ class Lecture < ApplicationRecord
     end
 
     def medium_sort
-      { "kaviar" => ["Kaviar"], "sesam" => ["Sesam"], "kiwi" => ["Kiwi"],
-        "keks" => ["Quiz"], "nuesse" => ["Nuesse"],
-        "erdbeere" => ["Erdbeere"], "script" => ["Script"], "reste" => ["Reste"] }
+      { "lesson_material" => ["LessonMaterial"],
+        "worked_example" => ["WorkedExample"],
+        "repetition" => ["Repetition"],
+        "quiz" => ["Quiz"],
+        "exercise" => ["Exercise"],
+        "script" => ["Script"],
+        "miscellaneous" => ["Miscellaneous"] }
     end
 
     def touch_media

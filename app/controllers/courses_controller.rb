@@ -69,12 +69,23 @@ class CoursesController < ApplicationController
 
   def search
     authorize! :search, Course.new
-    search = Course.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @courses = Kaminari.paginate_array(results, total_count: @total)
-                       .page(params[:page]).per(search_params[:per])
+
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Course,
+      configurator_class: Search::Configurators::CourseSearchConfigurator,
+      options: { default_per_page: 20 }
+    )
+
+    @pagy = search_result.pagy
+    @courses = search_result.results
+
+    respond_to do |format|
+      format.js
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
+    end
   end
 
   private
@@ -99,7 +110,7 @@ class CoursesController < ApplicationController
                         :term_independent, :image,
                         { tag_ids: [], preceding_course_ids: [], division_ids: [] }]
       allowed_params.push(editor_ids: []) if current_user.admin?
-      params.require(:course).permit(allowed_params)
+      params.expect(course: allowed_params)
     end
 
     def tag_params
@@ -107,15 +118,15 @@ class CoursesController < ApplicationController
     end
 
     def search_params
-      params.require(:search).permit(:all_editors, :all_programs, :fulltext,
-                                     :term_independent, :per,
-                                     editor_ids: [],
-                                     program_ids: [])
+      params.expect(search: [:all_editors, :all_programs, :fulltext,
+                             :term_independent, :per,
+                             { editor_ids: [],
+                               program_ids: [] }])
     end
 
     def random_quiz_params
-      params.require(:quiz).permit(:random_quiz_count,
-                                   search_course_tag_ids: [])
+      params.expect(quiz: [:random_quiz_count,
+                           { search_course_tag_ids: [] }])
     end
 
     # destroy all notifications related to this course

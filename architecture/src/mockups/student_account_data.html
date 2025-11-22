@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Account settings — Student</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./student_registration_index_tabs.html">Registrations</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Account settings</li>
+        </ol>
+      </nav>
+
+      <h1 class="h4 mb-3">Account settings</h1>
+
+      <div class="card">
+        <div class="card-body">
+          <form id="accountForm" novalidate>
+            <div class="row g-3 align-items-end">
+              <div class="col-12 col-md-6">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" placeholder="e.g., alice@stud.uni-heidelberg.de" />
+                <div class="form-text">Use your institutional email if required by registrations.</div>
+              </div>
+              <div class="col-12 col-md-6 d-flex gap-2">
+                <button type="button" class="btn btn-primary" id="saveBtn" disabled>Save</button>
+                <a class="btn btn-outline-secondary" href="./student_registration_fcfs_exam_action_required_email.html">Back to registration</a>
+              </div>
+            </div>
+          </form>
+          <div id="saveAlert" class="alert alert-success d-none mt-3 py-2 px-3">Saved</div>
+        </div>
+      </div>
+
+      <div class="mt-3 small text-muted">This is a mockup. Changes persist only in your browser.</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script>
+      const ACCOUNT_EMAIL_KEY = 'account:email'
+      const email = document.getElementById('email')
+      const saveBtn = document.getElementById('saveBtn')
+      const saveAlert = document.getElementById('saveAlert')
+
+      function validEmail(v) {
+        return !!v && v.includes('@')
+      }
+
+      function updateUI() {
+        const v = (email.value || '').trim()
+        saveBtn.disabled = !validEmail(v)
+      }
+
+      function save() {
+        const v = (email.value || '').trim()
+        if (!validEmail(v)) return
+        localStorage.setItem(ACCOUNT_EMAIL_KEY, v)
+        saveAlert.classList.remove('d-none')
+        setTimeout(() => saveAlert.classList.add('d-none'), 1200)
+      }
+
+      email.addEventListener('input', updateUI)
+      saveBtn.addEventListener('click', save)
+
+      ;(function init() {
+        const v = localStorage.getItem(ACCOUNT_EMAIL_KEY) || ''
+        email.value = v
+        updateUI()
+      })()
+    </script>
+  </body>
+</html>

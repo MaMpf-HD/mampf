@@ -7,14 +7,13 @@ class Notification < ApplicationRecord
   belongs_to :recipient, class_name: "User", touch: true
   belongs_to :notifiable, polymorphic: true, optional: true
 
-  paginates_per 12
-
   # returns the lecture associated to a notification of type announcement,
   # and teachable for a notification of type medium, nil otherwise
   def teachable
     return if notifiable.blank?
     return if lecture_or_course?
-    return notifiable.lecture if announcement_or_redemption?
+    return notifiable.lecture if announcement?
+    return notifiable.voucher.lecture if redemption?
 
     # notifiable will be a medium, so return its teachable
     notifiable.teachable
@@ -81,9 +80,5 @@ class Notification < ApplicationRecord
 
     def lecture_or_course?
       notifiable_type.in?(["Lecture", "Course"])
-    end
-
-    def announcement_or_redemption?
-      notifiable_type.in?(["Announcement", "Redemption"])
     end
 end

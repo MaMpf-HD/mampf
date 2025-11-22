@@ -1,4 +1,3 @@
-# MainController
 class MainController < ApplicationController
   before_action :check_for_consent
   authorize_resource class: false, only: :start
@@ -32,8 +31,7 @@ class MainController < ApplicationController
             &.updated_at || 1000.years.ago) < m[:latest_comment].created_at &&
         m[:medium].visible_for_user?(current_user)
     end
-    @media_array = Kaminari.paginate_array(@media_comments)
-                           .page(params[:page]).per(10)
+    @pagy, @media_array = pagy_array(@media_comments, limit: 10)
   end
 
   def start

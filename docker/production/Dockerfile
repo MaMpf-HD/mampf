@@ -7,7 +7,8 @@ RUN GOOS=js GOARCH=wasm go build -o pdfcomprezzor.wasm
 RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 
 # Now build the actual mampf application
-FROM ruby:3.1.4
+# https://hub.docker.com/_/ruby/
+FROM ruby:3.4.7-bookworm
 
 ENV RAILS_ENV=production
 
@@ -17,7 +18,7 @@ EXPOSE 9394
 ENTRYPOINT ["/usr/src/app/docker/entrypoint-worker.sh"]
 
 # use "--login" option, so that .bashrc is sourced in new shells
-SHELL ["/bin/bash", "--login", "-c"] 
+SHELL ["/bin/bash", "--login", "-c"]
 
 # Install Node.js
 # https://github.com/nodesource/distributions/issues/1583#issuecomment-1597489401
@@ -57,7 +58,7 @@ RUN n=$(which node); n=${n%/bin/node}; chmod 755 $n/bin/node; chmod 755 $n/bin/y
 # Install other dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info
+        ffmpeg imagemagick pdftk ghostscript rsync shared-mime-info libvips42
 
 # Setup ImageMagick
 RUN sed -i '/disable ghostscript format types/,+6d' /etc/ImageMagick-6/policy.xml
@@ -78,7 +79,7 @@ COPY --from=build-pdfcomprezzor /go/src/pdfcomprezzor.wasm /go/src/wasm_exec.js 
 
 COPY --chown=app:app ./Gemfile ./Gemfile.lock ./yarn.lock ./package.json /usr/src/app/
 RUN bundle install
-RUN yarn install --production=true
+RUN yarn install --frozen-lockfile
 
 COPY --chown=app:app . /usr/src/app
 
@@ -106,11 +107,14 @@ COPY --chown=app:app . /usr/src/app
 # file and source it here in the Dockerfile just to have the precompile task run
 # successfully (this task doesn't even rely on the actual values, so despite
 # being a hack, it should be fine).
-# 
+#
 # I've written down more details in this question on StackOverflow:
 # https://stackoverflow.com/q/78098380/
 COPY ./docker/production/docker.env ./docker-dummy.env
 
 RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq && \
     set -o allexport && . ./docker-dummy.env && set +o allexport && \
-    SECRET_KEY_BASE="$(bundle exec rails secret)" DB_ADAPTER=nulldb bundle exec rails assets:precompile
+    SECRET_KEY_BASE="$(bundle exec rails secret)" \
+    VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
+    RAILS_ENV=production DATABASE_ADAPTER=nulldb \
+    bundle exec rails assets:precompile

@@ -1,34 +1,3 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# Use `I18n.t` for locales:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# If you want to use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This uses the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   'true': 'foo'
-#
-# For more information, please read the Rails Internationalization guide
-# available at https://guides.rubyonrails.org/i18n.html.
-
 en:
   mampf: 'MaMpf'
   views:
@@ -37,35 +6,32 @@ en:
       last: "Last &raquo;"
       previous: "&lsaquo; Previous"
       next: "Next &rsaquo;"
+      truncate: "Truncate"
   categories:
-    kaviar:
+    lesson_material:
       singular: 'Lesson'
       plural: 'Lessons'
       short: 'Les'
-    exercises:
+    exercise:
       singular: 'Exercise'
       singular_updated: 'Exercise (updated)'
       plural: 'Exercises'
       short: 'Exc'
-    examples:
-      plural: 'Examples'
-      short: 'Exa'
     script:
       singular: 'Manuscript'
       short: 'Man'
-    nuesse: 'Worksheets'
-    sesam:
+    worked_example:
       singular: 'Worked Example'
       plural: 'Worked Examples'
       short: 'WEx'
-    kiwi:
+    repetition:
       singular: 'Repetition'
       short: 'Rep'
     quiz:
       singular: 'Quiz'
       plural: 'Quizzes'
       short: 'Quiz'
-    randomquiz:
+    random_quiz:
       singular: 'Random Quiz'
       short: 'RanQ'
     test:
@@ -79,16 +45,12 @@ en:
       singular: 'Quiz Remark'
       plural: 'Quiz Remarks'
       short: 'Rem'
-    erdbeere:
-      singular: 'Example'
-      plural: 'Examples'
-      short: 'Exa'
     muesli: 'MUESLI'
     board: 'Board'
     comments: 'Comments'
     organizational_html: 'General Information'
     announcements: 'Announcements'
-    reste:
+    miscellaneous:
       singular: 'Miscellaneous'
       short: 'Misc'
     course: 'Course'
@@ -101,12 +63,11 @@ en:
       You may get access by modifying your account settings.
   footer:
     text_html: >
-      &copy; MaMpf Team 2024. MaMpf is on %{github}.
+      &copy; MaMpf Team. MaMpf is on %{github}.
       Powered by %{rails}, %{bootstrap}, %{cytoscape},
       %{nerdamer}, %{katex}, %{thredded}, %{docker}, %{basecamp}.
       Bugs can be reported %{bugs}.
       We encourage you to send further feedback to %{feedback}.
-      Aperiodic monotiles licensed under BSD-3-Clause by %{background_photo_credit}.
   sponsors:
     sponsorships: 'Projekt funding'
     hse: 'Heidelberg School of Education (HSE)'
@@ -172,9 +133,10 @@ en:
       main: 'Overview'
       current_lecture: 'Current event series'
       logout: 'Logout'
-      media_search: 'Search media'
-      tags: 'Search tags'
-      teachables: 'Search lectures'
+      media_search: 'Media Search'
+      lecture_search: 'Lecture Search'
+      course_search: 'Course Search'
+      tag_search: 'Tag search'
       terms: 'Terms'
       classification: 'Classification'
       news: 'News'
@@ -213,9 +175,6 @@ en:
         You are not listed as a teacher or an editor for any event series.
       my_courses: 'My Courses'
       create_course: 'Create Course'
-      my_clickers: 'My Clickers'
-      create_clicker: 'Create Clicker'
-      no_edited_clickers: 'Currently, you do not have any clickers.'
       no_edited_courses: >
         You are not listed as a course editor for any courses.
       my_media: 'My Media'
@@ -303,15 +262,6 @@ en:
           a quiz.
           </li>
           </ul>
-        clicker_definition: >
-          This is the list of all your
-          <i>Clickers</i>,
-          </br>
-          A <i>Clicker</i> in the sense of MaMpf is
-          a feedback channel in the form of a special website.
-          People who have the editor link can ask for feedback for a question,
-          and people with the user link can give feedback.
-          You can associate one question to a clicker, but clickers can be reused.
         other_lectures: >
           This is the list of event series you cannot edit.
           (Except if you are an admin :-P )
@@ -450,6 +400,9 @@ en:
       oberseminar: 'Research Seminar'
       oberseminar_short: 'RS'
       oberseminar_content: 'Research Seminar Contents'
+      vignettes: 'Vignettes'
+      vignettes_short: 'V'
+      vignettes_content: 'Vignettes Contents'
       special: 'Special'
       special_short: ''
       special_content: 'Content'
@@ -597,15 +550,6 @@ en:
           or its sessions. Media in red are unpublished or locked.
           If there are media on course level of the same course as this event
           series, you are informed about them.
-        course_tags: >
-          These are the tags associated with the parent course that appear in at
-          least one section of this event series.
-        additional_tags: >
-          These are the tags that appear in at least one section of this
-          event series, but are not associated with the parent course.
-        untreated_tags: >
-          These are the tags associated with the parent course that do
-          not appear in any section of this event series.
         course_editors: >
           Course editors have editing access to the parent course. They inherit
           editing access to any event series that belongs to this course.
@@ -677,32 +621,6 @@ en:
         comments_disabled: >
           By default, comments for newly published media are enabled, and you
           can disable them upon publishing. Here you can reverse this.
-        search_type: >
-          Select one, several, or all of the following lecture types: <i>Lecture</i>, <i>Seminar</i>,
-          <i>Proseminar</i> and <i>Research Seminar</i>. The operator used is the inclusive <i>OR</i>.
-        search_program: >
-          Here you have to select (in the sense of
-          <i>
-          OR
-          </i>
-          ) to which program the event series belongs to.
-        search_teacher: >
-          Here you can select the teacher of the event series (in the sense of
-          <i>
-          OR
-          </i>
-          ).
-        search_term: >
-          Here you can select in which term the event series took places or
-          takes place, respectively (in the sense of
-          <i>
-          OR
-          </i>
-          ).
-        search_fulltext: >
-          Here you can enter text that will be searched for in the title of the
-          event series. If you leave the text field empty (or enter less than two letters),
-          it will be ignored.
         disable_teacher_display: >
           If you check this box, the teacher's name will be omitted from the
           lecture card on the start page and from the lecture page for generic
@@ -744,11 +662,6 @@ en:
       no_talks: 'There are no talks yet.'
       orphaned_lessons: 'Orphaned Sessions'
       related_tags: 'Related tags'
-      course_tags_html: >
-        Tags from the parent course %{course} that have (already) been treated
-        (%{count})
-      no_course_tags: >
-        There are no tags yet.
       additional_tags:
         Additional tags (%{count})
       untreated_tags:
@@ -773,33 +686,9 @@ en:
         only the teacher and course editors can make changes here.
         If changes are necessary for some reason, you can contact the
         site administrators by mail: %{project_mail}.
-    clicker:
-      new_clicker: 'Create new Clicker'
-      user_link: 'Link for users'
-      editor_link: 'Link for editors (without authentification)'
-      open: 'Enable Clicker'
-      close: 'Close Clicker'
-      reset: 'Reset Clicker'
-      delete: 'Delete Clicker'
-      is_open: 'Clicker is open.'
-      is_closed: 'Clicker is closed.'
-      thank_vote: 'Thank you for your vote.'
-      voted_already: 'You have voted already.'
-      alternatives: 'Number of alternatives'
-      show_qr: 'Show QR Code'
-      hide_qr: 'Hide QR Code'
-      remove_question: 'Remove association to Question'
-      last_poll_results: 'Result of the last poll'
-      number_of_votes: 'Number of votes'
-      associated_to_question: >
-        This clicker is associated to a question from the database:
-      change_associated_question: >
-        Associate different Question
-      associate_question: 'Associate Question'
-      info:
-        title: >
-          Here you have to enter the title of the clicker.
-          The title has to be unique among your clickers.
+      subscribe_link: "Lecture subscription link"
+      subscribe_link_info: >
+        This URL can be shared with students for lecture subscription.
     course:
       new_course: 'Create new course'
       preceding_courses: 'Preceding courses'
@@ -818,6 +707,10 @@ en:
         title: >
           Here you can enter the title of the course. Typically, this should be
           the title form the module handbook. Course titles have to be unique.
+        search_fulltext: >
+          Here you can enter text that will be searched for in the course
+          titles and short titles. If you leave the text field empty it will be
+          ignored.
         short_title: >
           The short title will be used as abbreviation in several places.
         editors: >
@@ -825,6 +718,18 @@ en:
           in particular they can create event series within the course. Every course
           editor inherits editing access for all event series belonging to the
           course.
+        search_editors: >
+          Here you can select the editor of the course (in the sense of
+          <i>
+          OR
+          </i>
+          ).
+        search_program: >
+          Here you can select (in the sense of
+          <i>
+          OR
+          </i>
+          ) to which program the course belongs to.
         no_right_to_change_editors: >
           Course editors can only be changed by administrators.
           Please contact %{project_email} by email if you want a change to be made
@@ -860,7 +765,7 @@ en:
           Here you can choose to which divisions of which subjects the course is
           associated to.
         programs: >
-          Here you can select to ehich study paths of which subjects this course
+          Here you can select to which study paths of which subjects this course
           is associated to.
         term_independent: >
           Check this box for courses that do not match the usual pattern of
@@ -1108,7 +1013,6 @@ en:
       lock_comments: 'Disable comments for this medium'
       comments_locked: 'Comments disabled'
       release_date: 'Publication date'
-      boost: 'Boost'
       invalid_publish_date: This is not a valid datetime in the future.
       scheduled_for_release: >
         This medium is scheduled for release on %{release_date}.
@@ -1201,10 +1105,6 @@ en:
           <li>
           Quiz Remark: single Quiz Remark. Quiz Remarks serve as link between
           successive questions in more complex quizzes (e.g. in guided proofs)
-          </li>
-          <li>
-          Example: Example from ErDBeere-Database
-          (currently only prototype)
           </li>
           <li>
           Miscellaneous: Here you can put anything that does not fit into
@@ -1334,27 +1234,7 @@ en:
           to MaMpf.
         search_type: >
           Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
-          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i>,
-          <i>example</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
-        search_teachable: >
-          Here you have to select (in the sense of
-          <i>
-          OR
-          </i>
-          ), to which courses or event series this medium is associated to
-          <i>
-          with inheritance (without inheritance.
-          </i>
-          If "with inheritance" is chosen, this means that if you select a
-          course, media that are associated to the course's event series
-          and sessions will be shown as well;
-          if you select a event series, media that are associated to the event series's
-          sessions will be shown as well.
-        search_tags: >
-          Tags related to a medium are displayed as <span class="badge text-dark lecture-tag">example tag</span> on the media card.
-          If you are looking for media with specific tags, you can select tags from the data base. You can choose one,
-          several, or all of them. Moreover, you can decide whether the medium has to be related to either at least one
-          of the selected tags (inclusive <i>OR</i>) or all of them (<i>AND</i>).
+          <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, <i>question</i>, <i>quiz remark</i> and <i>miscellaneous</i>. The operator used is the inclusive <i>OR</i>.
         search_editors: >
           Here you can select the editors of the medium (in the sense of
           <i>
@@ -1388,22 +1268,12 @@ en:
           editor.
         details_warning: >
           Details have been changed that have not yet been imported.
-        boost: >
-          Via the boost you can override the way in ehich media are ordered
-          by default (for media that belong to a course or an event series,
-          it does not affect media associated to a session). The default value
-          is 0, Media with a higher boost will be displayed in the first places,
-          media with lower boost at the end.
         scheduled_release: >
           The publication will not precisely occur at the right second, but it
           should not be later than around a minute after the given time.
         assignment_settings: >
           Settings that will hold for <i>all</i> assignments in this lecture
           can be adjusted on the lecture page under "Assignments".
-        answer_count: >
-          If you are searching for (quiz) questions, you can select here how
-          many anwers the equestions is supposed to have. This option
-          will not be considered for other media types.
     tag:
       index: 'Search Tags'
       related_tags: 'Related Tags'
@@ -1451,12 +1321,10 @@ en:
           Here you can select the sections that this tag is associated to.
         list: >
           This is the list of all associated tags.
-        search_title: >
-          Here you can enter the title of the tag that you are searching for.
-          The list of all tags will be filtered correspondingly.
-        search_course: >
-          Here you can enter the courses that the tag is associated to (in
-          the sense of <i>OR</i>).
+        search_fulltext: >
+          Here you can enter text that will be searched for in the title of
+          tags and aliases. If you leave the text field empty it will be
+          ignored.
         section_association: >
           As it is unclear which of the given tags belong to which
           section of the event series, you can make an assignment here;
@@ -1967,11 +1835,6 @@ en:
       name: 'Title'
       new: 'Create new division'
       no_courses: 'There are no courses in this division yet.'
-    interaction:
-      export_interactions: Export Interactions
-      export_probes: Export Probes
-      start: Start Date
-      end: End Date
     tutorial:
       new: 'Add tutorial'
     assignment:
@@ -2032,8 +1895,6 @@ en:
       Please take some time to edit your profile settings.
     consent: >
       You consented to our privacy policy.
-    no_consent: >
-      You have not consented to our privacy policy.
     locale: 'Language'
     subscribe_lecture: 'Subscribe event series'
     passphrase_required: >
@@ -2333,11 +2194,13 @@ en:
     empty: 'This watchlist is empty'
     none_added: 'You have not added any media to this watchlist yet.'
     create: 'Create'
-    creation_confirm: 'The textfield for creating a watchlist is not empty.
-                       Are you sure you want to add the medium to the watchlist "%{watchlist}"?'
+    creation_confirm: >
+      The textfield for creating a watchlist is not empty.
+      Are you sure you want to add the medium to the watchlist "%{watchlist}"?
     creation_success: 'Watchlist was successfully created'
     creation_fail: 'Watchlist could not be created'
     change: 'Change'
+    save_change: 'Save changes'
     change_success: 'Watchlist was changed'
     new: 'New'
     delete: 'Delete'
@@ -2507,6 +2370,180 @@ en:
       reduced_questions: >
         The number of questions will be reduced accordingly if there are
         fewer questions availabale for your specified content than you selected.
+
+  vignettes:
+    vignettes: 'Vignettes'
+    questionnaire_not_created: >
+      A new questionnaire could not be created. Please try again later.
+    slide: 'Slide'
+    slides: 'Slides'
+    info_slides: 'Info Slides'
+    info_slide_not_updated: "Info slide could not be updated"
+    questionnaire: 'Questionnaire'
+    questionnaires: 'Questionnaires'
+    no_active_questionnaires: 'No questionnaires available'
+    slide_content: 'Content'
+    create_new: "Create new vignette"
+    duplicate_new_questionnaire_title: "New questionnaire title"
+    destroy_answer: 'Answer was destroyed'
+    answered: 'Questionnaire was successfully answered'
+    already_answered: 'You have already answered this questionnaire'
+    no_slides: 'No slides to answer'
+    not_found: 'The requested questionnaire was not found'
+    no_lecture: 'The requested lecture was not found'
+    not_vignettes_lecture: 'The lecture cannot be used for vignettes'
+    create_new_info_slide: 'New info slide'
+    create_new_slide: 'New slide'
+    info_slide_created: 'Info slide created.'
+    info_slide_not_created: 'Info slide could not be created.'
+    info_slide_updated: 'Info slide updated.'
+    slide_updated: 'Slide was successfully updated.'
+    slide_created: 'Slide was successfully created.'
+    slide_not_created: 'Slide could not be created.'
+    published: 'Vignette was successfully published.'
+    unpublished: 'Vignette was successfully unpublished.'
+    publish_modal: |
+      Are you sure you want to publish this vignette?
+
+      Important: After publishing, you will no longer be able to edit the vignette's content or questions.
+
+      While you can unpublish it later to hide it from students, the content will remain locked for editing.
+    unpublish_modal: |
+      Are you sure you want to unpublish this vignette?
+
+      Unpublishing will hide this vignette from students, but all student responses and statistics will be preserved.
+
+      Important: The vignette will remain locked for editing. If you need to make changes, please duplicate the vignette instead.
+
+    not_published: 'Vignette could not be published.'
+    not_unpublished: 'Vignette could not be unpublished.'
+    not_accessible: 'Questionnaire is not accessible.'
+    not_editable: 'Vignette is not editable, because it was already published.'
+    no_slides: "Vignette is empty"
+    not_deleted: 'Vignette could not be deleted'
+    slide_not_updated: 'Slide could not be updated'
+    slide_deleted: 'Slide was successfully deleted.'
+    slide_not_deleted: 'Slide could not be deleted.'
+    slide_confirm_delete: >
+      Are you sure you want to delete this slide? This action cannot be undone.
+    deleted: 'Vignette successfully deleted'
+    confirm_delete: >
+      Are you sure you want to delete this vignette?
+      This will also delete all associated slides, answers and statistics.
+    duplicated: 'Vignette was successfully duplicated'
+    not_duplicated: 'Vignette could not be duplicated'
+    body_too_short_error: 'The body is too short'
+    body_missing_error: 'The body is missing'
+    not_a_number_error: "Please enter a valid number"
+    number_missing_error: "Please provide a numeric answer"
+    number_too_large_error: "Please enter a number less than or equal to %{max}"
+    number_too_small_error: "Please enter a number greater than or equal to %{min}"
+    no_option: "At least one option must be specified"
+    multiple_choice_at_least_one: "Select at least one option"
+    empty_option: "All options must have text"
+    publish: "Publish"
+    unpublish: "Unpublish"
+    editing_locked: "Editing locked"
+    editing_locked_info: >
+      This vignette has already been published (at least once) and can therefore
+      no longer be edited (or only few elements remain available for editing).
+      If you want to make changes, please duplicate the vignette.
+    create_slide: "Create Slide"
+    update_slide: "Update Slide"
+    delete_slide: "Delete Slide"
+    add_multiple_choice_option: "Add Multiple Choice Option"
+    additional_information: "Additional information"
+    submit_answer: "Submit answer"
+    next_slide: "Next Slide"
+    return_to_edit: "Return to edit"
+
+    info_slide_empty_title: "Title is missing"
+    info_slide_empty_icon: "Icon is missing"
+    info_slide_deleted: "Info slide was successfully deleted"
+    info_slide_not_deleted: "Info slide could not be deleted"
+    info_slide_confirm_delete: >
+      Are you sure you want to delete this info slide? This action cannot be undone.
+    create_info_slide: "Create Info Slide"
+    update_info_slide: "Update Info Slide"
+
+    drag_slides_tip: 'Drag slides to change their order.'
+    unsaved_changes_warning: "You have unsaved changes."
+    unsaved_changes: "Unsaved Changes"
+    unsaved_changes_navigation: >
+      You have unsaved changes. Are you sure you want to leave this page?
+    unsaved_changes_modal: >
+      You have unsaved changes in the current slide.
+      Do you want to save or discard them before editing a new one?
+
+    preview: "Preview"
+    duplicate: "Duplicate"
+    export_statistics: "Export statistics"
+    delete: "Delete Vignette"
+    confirm_publication: "Confirm publication"
+
+    question_type: "Question Type"
+    question_type_selection: "Selection for question type"
+    your_question: "Your question"
+    question_types:
+      none: "No Answer"
+      text_area: "Text Area"
+      number_field: "Number field"
+      multiple_choice: "Multiple Choice"
+      likert_scale: "Likert Scale"
+
+    language_selection: "Language Selection"
+
+    locales:
+      en: "English"
+      de: "German"
+      nl: "Dutch"
+
+    number_question_settings: "Number Question Settings"
+    only_integer: "Allow integers only (no decimals)"
+    min_number: "Minimum value"
+    max_number: "Maximum value"
+    number_range_help: "Leave min/max fields empty for unlimited range"
+    your_answer: "Your answer"
+    your_numeric_answer: "Your numeric answer"
+    number_range_between: "Enter a number between %{min} and %{max}"
+    number_range_min: "Enter a number greater than or equal to %{min}"
+    number_range_max: "Enter a number less than or equal to %{max}"
+
+    completed: "Completed"
+    in_progress: "In progress"
+    not_started: "Not started"
+    active_questionnaires: "Available Questionnaires"
+    completed_questionnaires: "Completed Questionnaires"
+    no_completed_questionnaires: "You have not completed any questionnaires yet."
+    take: "Take"
+    continue: "Continue"
+    markdown_help: "Supports Markdown: **bold** & *italic*"
+
+    information: "Information"
+
+    codenames:
+      codename: "Personal code"
+      your_codename: "Your personal code"
+      set_success: "Personal code successfully updated"
+      set_error: "Personal code could not be updated"
+      please_set_codename: >
+        Please set your personal code before taking a questionnaire.
+      not_empty: "Personal code can't be empty"
+      min_length: "Personal code must have at least %{min} characters"
+      max_length: "Personal code must have at most %{max} characters"
+
+    completion_message:
+      label: "Completion Message"
+      help_text: >
+        This message will be shown to users after they complete all
+        available questionnaires.
+      delete: "Are you sure you want to delete this completion message?"
+      set_success: "Completion message saved successfully"
+      set_failure: "Could not save completion message"
+      delete_success: "Completion message deleted successfully"
+      delete_failure: "Could not delete completion message"
+      all_completed: "All questionnaires completed"
+
   external_link_lc: 'external link'
   no_announcements: 'There are no announcements.'
   click_here: 'Click here'
@@ -2603,43 +2640,10 @@ en:
   item:
     external_reference: 'External reference:'
     internal_reference: 'Reference to %{ref}:'
-  search:
-    results: 'Search results for the tag %{search_string}'
-    info: >
-      Your search for the tag %{search_string} has returned %{count} results.
-    omitted_html: >
-      %{count} additional results from the database are not shown because of
-      your %{profile}.
-    settings: 'profile settings'
-    alternative: 'Did you mean something else?'
-    similar: 'Tags similar to %{search_string}'
-    courses_with_similar_titles: >
-      You might try the following fulltext terms and start the search again.
-    click_and_paste: >
-      If you click this term, it will be copied to the "fulltext" field.
-    media:
-      title: >
-        You can search the titles of media or related sessions. If you do not wantto use
-        this criterion, leave the input box empty.
-      title_placeholder: leave free or enter at least 2 letters
-      lectures: >
-        Select the event series you want to search. You can choose all event series, the
-        ones you are subscribed to, or make up your own selection. If you opt for your own
-        selection, you can choose one or several event series. The operator used is the
-        inclusive <i>OR</i>.
-      lecture_options:
-        subscribed: 'subscribed'
-        all: 'all'
-        own_selection: 'custom selection'
-        all_media: 'all media'
-        only_extras: 'only extra material'
-      type: >
-        Select one, several, or all of the following media types: <i>lesson</i>, <i>worked example</i>,
-        <i>exercise</i>, <i>manuscript</i>, <i>repetition</i>, <i>quiz</i>, and <i>miscellaneous</i>.
-        The operator used is the inclusive <i>OR</i>.
-    tag_title: >
-      enter at least 2 letters (or leave free for all tags)
   errors:
+    unknown: >
+      You filled out the form correctly, but unfortunately something went wrong
+      on the server. Please try again later and contact us if the problem persists.
     not_subscribed: You are currently not subscribed to this lecture.
     profile:
       passphrase: 'Incorrect pass phrase'
@@ -2651,21 +2655,7 @@ en:
   sign_up: 'sign up'
   announcements: 'Announcements'
   main:
-    welcome:
-      Welcome to MaMpf, the Mathematical
-      Media platform of Heidelberg University.
-    about: >
-      MaMpf combines and connects various e-learning services: lecture videos and scripts
-      with content outlines, a comprehensive collection of multiple choice questions
-      and assignments including guided proofs and much more. Thanks to the
-      tagging system, you can easily find all the media relevant to you.
-    interested_html: >
-      Curious? Then take a look at our %{blog} (including a %{guided_tour} of MaMpf
-      and additional %{resources} for editors). Or register now to try MaMpf on your own.
-    resources: resources
-    blog: Blog
-    guided_tour: guided tour
-    researchgate: Researchgate
+    media_platform: Mathematical Media Platform of Heidelberg University
   math:
     number: 'number'
     complex_number: 'complex number'
@@ -2727,15 +2717,17 @@ en:
     en: 'English'
     de: 'German'
   submission:
+    invited: You have been invited by '%{inviter}' for this submission.
+    accept_invitation: Accept invitation
     invalid_code_for_assignment: >
       The code you entered is invalid for %{assignment}.
     invalid_code: The code you entered is invalid.
     assignment_expired: >
       The due date for this homework assignment has already
       expired.
-    already_in: You are already a partner for this assgnment.
+    already_in: You are already a partner for this assignment.
     lecture_not_subscribed: >
-      You are not subscribed to the coresponding event series.
+      You are not subscribed to the corresponding event series.
     no_partners_no_leave: >
       You cannot leave as you are the only person in this group (but you
       you can delete this submission).
@@ -2745,7 +2737,7 @@ en:
       Nothing was submitted for this assignment.
     invitations_to: Invitations to
     joined_successfully: >
-      You successfully joind the submission to %{assignment}.
+      You successfully joined the submission to %{assignment}.
     failed_redemption: >
       Redemption of submission code failed: %{message}.
     current: Current Submission
@@ -2807,7 +2799,7 @@ en:
     move_to_tutorial: move to tutorial
     manuscript_no_pdf: The uploaded file is not a valid pdf file.
     manuscript_size_too_big: >
-      The uploaded file is too big (maximum allowed size is 10 MB).
+      The uploaded file is too big (maximum allowed size is %{max_size}).
     wrong_file_type: >
       This file has the wrong file type %{file_type}.Expected file type:
       %{accepted_file_type}.
@@ -2943,6 +2935,7 @@ en:
       You can decide whether you accept it or reject it.
     own_tutorials: >
       Own Tutorials
+    other_tutorials: 'Other Tutorials'
     deadline_warning: >
       The deadline for submission is still %{deadline}. Only after the deadline
       corrections can be uploaded.
@@ -3014,7 +3007,7 @@ en:
         In case of repeated occurrence please contact the MaMpf team.
   package:
     no_zip: This file is not a .zip archive.
-    to_big: This file is too big.
+    too_big: This file is too big.
   mailer:
     warning: "MaMpf Warning"
     pending_deletion_subject: "%{num_days_until_deletion} days before your
@@ -3181,7 +3174,6 @@ en:
       Emails for lectures: %{email_for_teachable}<br>
       Emails for news: %{email_for_news}<br>
       Unread comments: %{unread_comments}<br>
-      Study participant: %{study_participant}<br>
       Emails for submission Upload: %{email_for_submission_upload}<br>
       Emails for submission deletion: %{email_for_submission_removal}<br>
       Emails for submission joining: %{email_for_submission_join}<br>
@@ -3205,7 +3197,6 @@ en:
       -lectures<br>
       -received notifications (e.g. about new media etc.)<br>
       -created Announcements<br>
-      -registered clickers<br>
       -Note submissions<br>
       -watchlists<br>
       -quizzes certificates<br>
@@ -3241,24 +3232,8 @@ en:
     date: 'Date'
     count: 'Count'
     plays: 'Plays'
-  erdbeere:
-    show_structures: 'Structures, properties and examples'
-    select_structures: Select Structures
-    structure_index: 'Structure Index'
-    info:
-      structures:
-        Here you can select which structures from the ErDBeere database
-        are displayed for this lecture.
-    structures: 'Structures'
-    properties: 'Properties'
-    edit_realizations: 'Edit Realizations'
-    no_realizations: 'There are no realizations.'
-    search_examples: 'Search for Examples'
-    no_structures: >
-      There are no structures associated to this lecture.
-    error: >
-      An error has occurred. Please try again later.
   basics:
+    division: 'Division'
     error: Error
     course: 'Course'
     courses: 'Courses'
@@ -3279,7 +3254,7 @@ en:
     lecture_editors: 'Additional Event Series Editors'
     display_name: 'Display Name'
     mail_noun: 'email'
-    email: 'Email address'
+    email: 'Email'
     preferences: 'Preferences'
     language: 'Language'
     date: 'Date'
@@ -3337,8 +3312,6 @@ en:
     referenced_from: 'referenced from'
     inspect: 'Inspect'
     all: 'all'
-    OR: 'OR'
-    AND: 'AND'
     number: 'Number'
     hide: 'Hide'
     link: 'Link'
@@ -3371,8 +3344,6 @@ en:
     enlarge: 'Enlarge'
     hits: 'Hits'
     no_hits: 'The search has not returned any hits.'
-    with_inheritance: 'with inheritance'
-    without_inheritance: 'without inheritance'
     fulltext: 'Full text'
     hits_per_page: 'Hits per page'
     selection: 'Selection'
@@ -3393,7 +3364,6 @@ en:
     optional: 'optional'
     statistics: 'Statistics'
     loading_data: 'Loading data...'
-    realizations: 'Realizations'
     comments: 'Comments'
     comment: 'Comment'
     comments_for: 'Comments for %{subject}'
@@ -3471,6 +3441,8 @@ en:
     cancel: 'Cancel'
     save_and_exit: 'Save and Exit'
     save_and_edit: 'Save and Edit'
+    save_changes: "Save Changes"
+    discard_changes: "Discard Changes"
     delete: 'Delete'
     publish: 'Publish'
     parent_course: 'Parent Course'
@@ -3537,7 +3509,6 @@ en:
     default_target: 'Default Target'
     ramification: 'Ramification'
     edit_tags: 'Edit tags'
-    vote: 'Vote'
     show: 'Show'
     hide: 'Hide'
     interpret: 'Interpret'
@@ -3618,6 +3589,11 @@ en:
       A list of supported symbols can be found
       <a href="https://katex.org/docs/supported.html">
       here</a>.
+    nav:
+      moderation: "Moderation"
+      moderation_activity: "Moderation Activity"
+      moderation_history: "Moderation History"
+      moderation_pending: "Pending Moderation"
   controllers:
     no_answer: 'There is no answer with this id.'
     session_expired: 'Your session has expired. Please login again.'
@@ -3646,6 +3622,8 @@ en:
     no_remark: 'There is no remark with this id.'
     no_search_term: >
       You have searched without a search term. That does not work.
+    search_only_js: >
+      Directly accessing search results is not possible. Please use the search field.
     search_term_short: >
       Your search term should have at least two letters.
     no_section: 'There is no section with this id.'
@@ -3658,8 +3636,6 @@ en:
       the necessary editing rights for the adding of tags.
     no_term: 'There is no term for this id.'
     no_teacher: 'There is no teacher with this id.'
-    no_clicker: 'There is no clicker with this id.'
-    no_clicker_access: 'You cannot to edit this clicker.'
     no_subject: 'There is no subject with this id.'
     no_program: 'There is no program with this id.'
     no_division: 'There is no division with this id.'
@@ -3697,9 +3673,11 @@ en:
       destruction_failed: >
         The assignment could not be deleted. That may be because there are
         already submissions for it that include uploaded files.
+    no_certificate: 'There is no quiz certificate with this id.'
     certificate_already_claimed: >
       The certificate has already been claimed by another user.
     no_announcement: There is no announcement with this id.
+    no_watchlist: 'Watchlist does not exist or is private.'
     created_lecture_success: >
       The lecture %{lecture} has been successfully created.
     created_course_success: >
@@ -3739,17 +3717,6 @@ en:
           attributes:
             title:
               blank: 'You need to give a title.'
-        clicker:
-          attributes:
-            title:
-              blank: 'You need to give a title.'
-              taken: 'This title is already taken.'
-        clicker_vote:
-          attributes:
-            clicker:
-              clicker_closed: 'The associated clicker is closed.'
-            value:
-              out_of_range: 'The value is out of the admissible range.'
         course:
           attributes:
             title:
@@ -3835,7 +3802,7 @@ en:
           attributes:
             title:
               taken:  >
-                This title is already taken in the chosen language.
+                The title %{value} is already taken in the chosen language.
               blank: 'The title cannot be blank.'
             tag:
               no_tag: 'A related tag has to be given.'
@@ -3904,13 +3871,11 @@ en:
           team_size: >
             You are not allowed to join as otherwise the submission team would
             have more members than allowed.
-        vote:
+        vignettes/question:
+          format: '%{message}'
           attributes:
-            clicker:
-              closed: 'The Clicker is closed.'
-            value:
-              out_of_range: >
-                Your vote is outside of the allowed range.
+            question_text:
+              blank: 'cannot be empty'
         voucher:
           attributes:
             role:
@@ -3928,30 +3893,3 @@ en:
             name:
               taken:
                 'A watchlist with that name already exists.'
-  feedback:
-    tooltip: Submit feedback
-    modal_title: Submit feedback
-    title: Title (optional)
-    comment: Your comment
-    description_html: >
-      <p>We are looking forward to your feedback on MaMpf, be it praise, criticism
-      or suggestions on how we as a team of developers can advance the platform.
-      If you have found a bug and have a GitHub account, then create an issue
-      directly on %{github_mampf}. Otherwise, you are welcome to use this
-      form or send an %{feedback_mail} directly.</p>
-    body_too_short_error: >
-      Your feedback is too short. Please enter at least %{min_length} characters.
-    body_missing_error: >
-      Please enter your feedback here.
-    mail_checkbox: >
-      Allow us to contact you via email (%{user_mail}) if there are questions
-      about your feedback.
-    success_short: >
-      Feedback successfully sent
-    success: >
-      Thanks a lot for your feedback! We will review it soon.
-    error_short: >
-      Error while sending feedback
-    error: >
-      We're sorry, something went wrong while submitting your feedback.
-      Please save your feedback by copying it manually and try again later.

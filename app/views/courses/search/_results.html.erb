@@ -1,13 +1,13 @@
-<% if total.positive? %>
+<% if pagy.count.positive? %>
   <div class="row mx-2 py-3">
     <div class="col-12 col-lg-2">
       <strong>
         <%= t('basics.hits') %>:
       </strong>
-      <%= total %>
+      <%= pagy.count %>
     </div>
     <div class="col-12 col-lg-10">
-      <%= paginate courses, remote: true %>
+      <%== pagy_bootstrap_nav(pagy, anchor_string: 'data-remote="true"') %>
     </div>
   </div>
   <%= render partial: 'courses/search/list',

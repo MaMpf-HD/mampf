@@ -165,14 +165,6 @@
         <% end %>
       </div>
     </div>
-    <% if current_user.admin || current_user.editor? %>
-      <div class="mb-3">
-        <%= t('admin.medium.boost') %>
-        <%= helpdesk(t('admin.medium.info.boost'), false) %>
-        <%= f.text_field :boost,
-                         class: 'form-control' %>
-      </div>
-    <% end %>
     <!--- ANNOTATION BUTTON -->
     <% if medium.video.present? %>
       <div class="form-group">

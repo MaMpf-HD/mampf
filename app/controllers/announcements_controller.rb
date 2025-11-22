@@ -1,4 +1,3 @@
-# AnnouncementsController
 class AnnouncementsController < ApplicationController
   layout "administration"
   before_action :set_announcement, except: [:new, :create, :index]
@@ -10,10 +9,10 @@ class AnnouncementsController < ApplicationController
 
   def index
     authorize! :index, Announcement.new
-    @announcements = Kaminari.paginate_array(Announcement.where(lecture: nil)
-                                                         .order(:created_at)
-                                                         .reverse)
-                             .page(params[:page]).per(10)
+    announcements_scope = Announcement.where(lecture: nil)
+                                      .order(:created_at)
+                                      .reverse_order
+    @pagy, @announcements = pagy(announcements_scope, limit: 10)
   end
 
   def new
@@ -37,7 +36,7 @@ class AnnouncementsController < ApplicationController
         redirect_to announcements_path
         return
       end
-      redirect_to "#{edit_lecture_path(@announcement.lecture)}#communication"
+      redirect_to "#{edit_lecture_path(@announcement.lecture)}?tab=communication"
       return
     end
     @errors = @announcement.errors[:details].join(", ")
@@ -56,7 +55,7 @@ class AnnouncementsController < ApplicationController
   private
 
     def announcement_params
-      params.require(:announcement).permit(:details, :lecture_id, :on_main_page)
+      params.expect(announcement: [:details, :lecture_id, :on_main_page])
     end
 
     def create_notifications

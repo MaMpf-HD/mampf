@@ -133,7 +133,7 @@
             <% if @medium.video.present? %>
               <%= link_to 'Thyme', play_medium_path(@medium),
                           class: 'btn btn-outline-secondary btn-sm',
-                          target: :blank %>
+                          target: "_blank" %>
             <% end %>
           </div>
         </div>
@@ -241,7 +241,7 @@
                             class: 'img-fluid',
                             id: 'manuscript-preview'),
                   @medium.manuscript_url_with_host,
-                  target: :blank %>
+                  target: "_blank" %>
       <% else %>
         <%= t('manuscript.no_manuscript') %>
       <% end %>

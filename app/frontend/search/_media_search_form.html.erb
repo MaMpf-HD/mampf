@@ -1,0 +1,26 @@
+<%= render(SearchForm::SearchForm.new(url: search_media_path,
+                                      context: "media")) do |c| %>
+  <% c.add_medium_type_field(current_user: current_user, purpose: purpose) %>
+
+  <% c.add_teachable_field %>
+
+  <% c.add_tag_field %>
+
+  <% c.add_editor_field %>
+
+  <% c.add_medium_access_field %>
+
+  <% c.add_answer_count_field(purpose: purpose) %>
+
+  <% c.add_fulltext_field %>
+
+  <% c.add_per_page_field(
+       per_options: hits_per_page(true),
+       default: default_hits_per_page(true)
+     ) %>
+
+  <% c.add_hidden_field(name: :purpose, value: purpose) %>
+  <% c.add_hidden_field(name: :results_as_list, value: 'true') %>
+
+  <% c.add_submit_field %>
+  <% end %>

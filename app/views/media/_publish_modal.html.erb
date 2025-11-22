@@ -1,4 +1,4 @@
-<%= javascript_include_tag 'datetimepicker' %>
+<%= vite_javascript_tag "js/datetimepicker" %>
 
 <div class="modal fade"
      id="publishMediumModal"
@@ -78,7 +78,7 @@
             </div>
           </div>
 
-          <% if medium.sort == 'Nuesse' && medium.teachable.is_a?(Lecture) %>
+          <% if medium.sort == 'Exercise' && medium.teachable.is_a?(Lecture) %>
             <div class="mb-1">
               <%= t('basics.assignment') %>
             </div>

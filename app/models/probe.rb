@@ -1,9 +1,4 @@
 class Probe < InteractionsRecord
-  scope :created_between, lambda { |start_date, end_date|
-                            where(created_at: start_date.beginning_of_day..end_date.end_of_day)
-                          }
-  require "csv"
-
   def self.finished_quizzes(quiz)
     Probe.where(quiz_id: quiz.id, progress: -1).count
   end
@@ -43,18 +38,5 @@ class Probe < InteractionsRecord
                      rel_incorrect: rel_incorrect }
     end
     results
-  end
-
-  def self.to_csv
-    attributes = ["id", "session_id", "created_at", "quiz_id", "question_id", "remark_id",
-                  "correct", "progress", "success", "study_participant", "input"]
-
-    CSV.generate(headers: true) do |csv|
-      csv << attributes
-
-      all.each do |probe|
-        csv << attributes.map { |attr| probe.send(attr) }
-      end
-    end
   end
 end

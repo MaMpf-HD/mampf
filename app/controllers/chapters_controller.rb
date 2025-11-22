@@ -76,8 +76,8 @@ class ChaptersController < ApplicationController
     end
 
     def chapter_params
-      params.require(:chapter).permit(:title, :display_number, :lecture_id,
-                                      :hidden, :details)
+      params.expect(chapter: [:title, :display_number, :lecture_id,
+                              :hidden, :details])
     end
 
     def set_view_locale

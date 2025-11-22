@@ -32,7 +32,7 @@ class MampfMatrix
     coefficients = []
     (1..row_count).each do |i|
       (1..column_count).each do |j|
-        coefficients.push(content["#{i},#{j}"])
+        coefficients.push(content[:dynamic]["#{i},#{j}"][:content])
       end
     end
     MampfMatrix.new(row_count, column_count, coefficients, tex, nerd)
