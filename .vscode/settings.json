@@ -95,21 +95,11 @@
     },
     "files.associations": {
         "*.erb": "erb",
-        // With this option, we loose syntax highlighting for the Ruby part
-        // in .js.erb files. Linting of the Ruby part in these files still works
-        // via the "emeraldwalk.runonsave" option above. This is a tradeoff since
-        // otherwise, the pure JavaScript part in .js.erb files is not properly
-        // syntax highlighted (although still linted). Luckily, we don't have
-        // too many .js.erb files (mostly purely .js files).
-        // .html.erb files are treated as ERB language and HTML syntax
-        // highlighting works fine there.
+        // want to get rid of those files in the long run
         "*.js.erb": "javascript",
         "*.html.erb": "erb",
         "*.coffee.erb": "coffeescript" // currently only for 1 single file
     },
-    // due to "emeraldwalk.runonsave" option above, which calls an external
-    // script and needs some time to finish
-    "files.saveConflictResolution": "overwriteFileOnDisk",
     //////////////////////////////////////
     // Editor
     //////////////////////////////////////
