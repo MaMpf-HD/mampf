@@ -16,6 +16,7 @@ module Registration
                    both: 2 }
 
     validates :kind, :phase, presence: true
+    validates :active, inclusion: { in: [true, false] }
     validates :position, uniqueness: { scope: :registration_campaign_id }
 
     acts_as_list scope: :registration_campaign

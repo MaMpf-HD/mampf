@@ -29,5 +29,6 @@ module Registration
                     completed: 3 }
 
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
+    validates :planning_only, inclusion: { in: [true, false] }
   end
 end
