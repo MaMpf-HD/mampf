@@ -88,7 +88,7 @@
     // Files
     //////////////////////////////////////
     "files.exclude": {
-        "node_modules/": false,
+        "node_modules/": true,
         "pdfcomprezzor/": true,
         "coverage/": true,
         ".docker/": true
