@@ -20,7 +20,7 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_campaign
 
-    enum :allocation_mode, { first_come_first_serve: 0,
+    enum :allocation_mode, { first_come_first_served: 0,
                              preference_based: 1 }
 
     enum :status, { draft: 0,

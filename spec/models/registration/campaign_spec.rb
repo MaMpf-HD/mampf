@@ -5,15 +5,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
     it "creates a valid default campaign" do
       campaign = FactoryBot.create(:registration_campaign)
       expect(campaign).to be_valid
-      expect(campaign.allocation_mode).to eq("first_come_first_serve")
+      expect(campaign.allocation_mode).to eq("first_come_first_served")
       expect(campaign.status).to eq("draft")
       expect(campaign.registration_items).to be_empty
     end
 
-    it "creates a valid first_come_first_serve campaign" do
-      campaign = FactoryBot.create(:registration_campaign, :first_come_first_serve)
+    it "creates a valid first_come_first_served campaign" do
+      campaign = FactoryBot.create(:registration_campaign, :first_come_first_served)
       expect(campaign).to be_valid
-      expect(campaign.allocation_mode).to eq("first_come_first_serve")
+      expect(campaign.allocation_mode).to eq("first_come_first_served")
     end
 
     it "creates a valid preference_based campaign" do
