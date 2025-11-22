@@ -136,5 +136,35 @@ RSpec.describe(Registration::Policy, type: :model) do
         expect { policy.evaluate(user) }.to raise_error(ArgumentError, /Unknown policy kind/)
       end
     end
+
+    describe "scopes" do
+      describe ".for_phase" do
+        let(:campaign) { create(:registration_campaign) }
+        let!(:registration_policy) do
+          create(:registration_policy, registration_campaign: campaign,
+                                       phase: :registration)
+        end
+        let!(:finalization_policy) do
+          create(:registration_policy, registration_campaign: campaign,
+                                       phase: :finalization)
+        end
+        let!(:both_policy) do
+          create(:registration_policy, registration_campaign: campaign,
+                                       phase: :both)
+        end
+
+        it "includes policies for the requested phase and 'both'" do
+          policies = described_class.for_phase(:registration)
+          expect(policies).to include(registration_policy, both_policy)
+          expect(policies).not_to include(finalization_policy)
+        end
+
+        it "includes policies for finalization phase and 'both'" do
+          policies = described_class.for_phase(:finalization)
+          expect(policies).to include(finalization_policy, both_policy)
+          expect(policies).not_to include(registration_policy)
+        end
+      end
+    end
   end
 end
