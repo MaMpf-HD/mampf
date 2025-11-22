@@ -1,4 +1,7 @@
 module Registration
+  # Represents a time-bounded registration event (e.g. "Tutorial Registration").
+  # Acts as a container for configuration (deadlines, allocation mode),
+  # rules (policies), and the resulting user registrations.
   class Campaign < ApplicationRecord
     belongs_to :campaignable, polymorphic: true
 

@@ -1,4 +1,7 @@
 module Registration
+  # Represents a rule or constraint that a user must satisfy to register.
+  # Acts as a gatekeeper (e.g. "Must have passed Exam X") that can be applied
+  # at different phases (registration or finalization).
   class Policy < ApplicationRecord
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
