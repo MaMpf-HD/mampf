@@ -66,7 +66,6 @@ gem "view_component", "~> 4.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"
 
 group :development do
-  gem "erb_lint", "~> 0.7.0"
   gem "listen", "~> 3.9"
   gem "marcel", "~> 1.0"
   gem "pgreset", "~> 0.4"
