@@ -45,9 +45,6 @@ mod docker ".config/commands/docker.justfile"
 # Commands to manage dependencies
 mod deps ".config/commands/deps.justfile"
 
-# Commands to lint code
-mod lint ".config/commands/lint.justfile"
-
 # Some utils, e.g. ERD-generation etc.
 mod utils ".config/commands/utils.justfile"
 
