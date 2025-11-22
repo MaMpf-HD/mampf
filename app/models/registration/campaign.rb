@@ -28,7 +28,7 @@ module Registration
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
 
     def evaluate_policies_for(user, phase: :registration)
-      Registration::PolicyEngine.new(self).eligible?(user, phase: phase)
+      policy_engine.eligible?(user, phase: phase)
     end
 
     def policies_satisfied?(user, phase: :registration)
@@ -38,5 +38,11 @@ module Registration
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
+
+    private
+
+      def policy_engine
+        @policy_engine ||= Registration::PolicyEngine.new(self)
+      end
   end
 end
