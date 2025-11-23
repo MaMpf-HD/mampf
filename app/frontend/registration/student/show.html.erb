@@ -22,15 +22,17 @@
 
       <div class="col-12 col-lg-8">
         <div class="card h-100">
-          <% if @campaign.allocation_mode == 0 %>
-            <%= render partial:'registration/student/select_fcfs',
+          <% if @campaign.allocation_mode_before_type_cast == 0 %>
+            <turbo-frame id="items_frame">
+              <%= render partial:'registration/student/select_fcfs',
                         locals: {campaign: @campaign,
-                                  campaignable_host: @campaignable_host
+                                  campaignable_host: @campaignable_host,
                                   items: @items } %>
+            </turbo-frame>
           <% else %>
             <%= render partial:'registration/student/select_preference',
                         locals: {campaign: @campaign,
-                                  campaignable_host: @campaignable_host
+                                  campaignable_host: @campaignable_host,
                                   items: @items } %>
           <% end %>
         </div>
@@ -39,6 +41,6 @@
 
     <div class="card mt-3">
       <%= render partial:'registration/student/campaign_details',
-                  locals: { campaign: @campaign } %>
+                  locals: { campaign: @campaign, items: @items } %>
     </div>
   </div>

@@ -876,6 +876,10 @@ Rails.application.routes.draw do
         post :random_campaign
       end
     end
+    post "registrations/:campaign_id/items/:item_id/register", to: "user_registrations#create",
+                                                               as: :register_item
+    delete "registrations/:campaign_id/items/:item_id/withdraw", to: "user_registrations#destroy",
+                                                                 as: :withdraw_item
   end
 
   # main routes

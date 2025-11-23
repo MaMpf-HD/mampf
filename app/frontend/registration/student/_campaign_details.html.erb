@@ -7,17 +7,16 @@
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
         <div class="fw-semibold">Mode</div>
-        <% mode_info = get_mode_info(campaign[:allocation_mode]) %>
-        <small class="text-muted"><%= mode_info.mode_name %></small>
+        <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
+        <small class="text-muted"><%= mode_info[:mode_name] %></small>
       </div>
-      <span class="badge rounded-pill text-bg-secondary"><%= mode_info.abbr %></span>
+      <span class="badge rounded-pill text-bg-secondary"><%= mode_info[:abbr] %></span>
     </li>
 
-
     <!-- Capacity detail -->
-    <% total_capacity = item.sum { |item| item[:capacity] }%>
-    <% total_capacity_used = item.sum { |item| item[:capacity_used] }%>
-    <% multi_items = item.size > 1%>
+    <% total_capacity = items.sum { |item| item.capacity }%>
+    <% total_capacity_used = items.sum { |item| item.capacity_used }%>
+    <% multi_items = items.size > 1%>
 
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
@@ -31,6 +30,9 @@
         <% end %>
       </span>
     </li>
+
+
+    
     
   </ul>
 </div>

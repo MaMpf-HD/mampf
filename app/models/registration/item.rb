@@ -8,6 +8,8 @@ module Registration
 
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
+             foreign_key: :registration_item_id,
+             inverse_of: :registration_item,
              dependent: :destroy
 
     validates :registerable_id,
@@ -27,6 +29,14 @@ module Registration
 
     def still_have_capacity?
       capacity_remained.positive?
+    end
+
+    def user_registered?(user)
+      user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registration_confirmed_for_item(user)
+      user_registrations.find_by(user_id: user.id, status: :confirmed)
     end
   end
 end
