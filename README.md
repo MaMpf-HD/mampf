@@ -11,12 +11,14 @@
     </p>
   </div>
   <div align="center">
-    <a href="https://mampf.mathi.uni-heidelberg.de">Website (🇩🇪/🇺🇸)</a>
-    | <a href="https://mampf.blog/">Blog (🇩🇪)</a>
-    | <a href="https://mampf-hd.github.io/mampf/">User docs (🇩🇪)</a>
-    | <a href="https://github.com/MaMpf-HD/mampf/wiki">Dev wiki (🇺🇸)</a>
-    <br><sub>Create your own free account <a href="https://mampf.mathi.uni-heidelberg.de">here</a>.
-    Note the <a href="https://mampf-hd.github.io/mampf/">user docs</a> are outdated with respect to the screenshots showcased over there.</sub>
+    <a href="https://mampf.mathi.uni-heidelberg.de">Website</a>
+    | <a href="https://mampf.blog/">Blog</a>
+    | <a href="https://mampf-hd.github.io/mampf/">Müsli Architecture Book</a>
+    | <a href="https://github.com/MaMpf-HD/mampf/wiki">Dev wiki</a>
+    <br>
+    <sub>
+      Create your own free account <a href="https://mampf.mathi.uni-heidelberg.de">here</a>.
+    </sub>
   </div>
 </div>
 
