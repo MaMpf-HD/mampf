@@ -1,0 +1,30 @@
+en:
+  registration:
+    campaign:
+      created: "Campaign created successfully."
+      updated: "Campaign updated successfully."
+      destroyed: "Campaign deleted successfully."
+      cannot_delete: "Campaign cannot be deleted."
+      confirm_delete: "Are you sure you want to delete this campaign?"
+      opened: "Campaign opened."
+      closed: "Campaign closed."
+      reopened: "Campaign reopened."
+      index:
+        title: "Registrations"
+        new_campaign: "New Campaign"
+        none: "No campaigns found."
+      new:
+        title: "New Campaign"
+      edit:
+        title: "Edit Campaign"
+      form:
+        title: "Title"
+        allocation_mode: "Allocation Mode"
+        registration_opens_at: "Registration Opens At"
+        registration_deadline: "Registration Deadline"
+        planning_only: "Planning Only"
+        submit: "Save"
+      status:
+        open: "Open"
+        closed: "Closed"
+        planning: "Planning"

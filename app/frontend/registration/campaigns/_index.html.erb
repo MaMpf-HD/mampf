@@ -1,0 +1,44 @@
+<div class="card">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h5 class="card-title mb-0"><%= t("registration.campaign.index.title") %></h5>
+    <%= link_to t("registration.campaign.index.new_campaign"),
+                new_lecture_registration_campaign_path(lecture),
+                class: "btn btn-sm btn-primary" %>
+  </div>
+  <div class="card-body">
+    <% if lecture.registration_campaigns.any? %>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th><%= t("registration.campaign.form.title") %></th>
+            <th><%= t("registration.campaign.form.allocation_mode") %></th>
+            <th><%= t("registration.campaign.form.registration_opens_at") %></th>
+            <th><%= t("registration.campaign.form.registration_deadline") %></th>
+            <th><%= t("registration.campaign.form.status.open") %></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
+            <tr>
+              <td><%= link_to campaign.title, registration_campaign_path(campaign) %></td>
+              <td><%= campaign.allocation_mode %></td>
+              <td><%= l(campaign.registration_opens_at, format: :short) if campaign.registration_opens_at %></td>
+              <td><%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %></td>
+              <td>
+                <span class="badge bg-<%= campaign.open? ? 'success' : (campaign.closed? ? 'secondary' : 'warning') %>">
+                  <%= t("registration.campaign.status.#{campaign.status}") %>
+                </span>
+              </td>
+              <td>
+                <%= link_to t("buttons.edit"), edit_registration_campaign_path(campaign), class: "btn btn-sm btn-outline-secondary" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% else %>
+      <p class="text-muted"><%= t("registration.campaign.index.none", default: "No items found") %></p>
+    <% end %>
+  </div>
+</div>

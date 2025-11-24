@@ -272,7 +272,23 @@ Rails.application.routes.draw do
        to: "lectures#import_toc",
        as: "import_lecture_toc"
 
-  resources :lectures, except: [:index]
+  resources :lectures, except: [:index] do
+    resources :campaigns,
+              controller: "registration/campaigns",
+              only: [:index, :new, :create],
+              as: :registration_campaigns
+  end
+
+  resources :campaigns,
+            controller: "registration/campaigns",
+            only: [:show, :edit, :update, :destroy],
+            as: :registration_campaigns do
+    member do
+      patch :open
+      patch :close
+      patch :reopen
+    end
+  end
 
   # lessons routes
 

@@ -1,0 +1,55 @@
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><%= @campaign.title %></h1>
+    <div>
+      <% if @campaign.open? %>
+        <%= button_to t("registration.campaign.status.closed"),
+                      close_registration_campaign_path(@campaign),
+                      method: :patch,
+                      class: "btn btn-warning" %>
+      <% elsif @campaign.closed? %>
+        <%= button_to t("registration.campaign.status.reopened"),
+                      reopen_registration_campaign_path(@campaign),
+                      method: :patch,
+                      class: "btn btn-success" %>
+      <% else %>
+        <%= button_to t("registration.campaign.status.open"),
+                      open_registration_campaign_path(@campaign),
+                      method: :patch,
+                      class: "btn btn-success" %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="card mb-4">
+    <div class="card-body">
+      <dl class="row">
+        <dt class="col-sm-3"><%= t("registration.campaign.form.allocation_mode") %></dt>
+        <dd class="col-sm-9"><%= @campaign.allocation_mode %></dd>
+
+        <dt class="col-sm-3"><%= t("registration.campaign.form.registration_opens_at") %></dt>
+        <dd class="col-sm-9"><%= l(@campaign.registration_opens_at, format: :long) if @campaign.registration_opens_at %></dd>
+
+        <dt class="col-sm-3"><%= t("registration.campaign.form.registration_deadline") %></dt>
+        <dd class="col-sm-9"><%= l(@campaign.registration_deadline, format: :long) if @campaign.registration_deadline %></dd>
+
+        <dt class="col-sm-3"><%= t("registration.campaign.form.status.open") %></dt>
+        <dd class="col-sm-9">
+          <span class="badge bg-<%= @campaign.open? ? 'success' : (@campaign.closed? ? 'secondary' : 'warning') %>">
+            <%= t("registration.campaign.status.#{@campaign.status}") %>
+          </span>
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= link_to t("buttons.edit"), edit_registration_campaign_path(@campaign), class: "btn btn-primary" %>
+    <%= link_to t("back"), lecture_registration_campaigns_path(@campaign.campaignable), class: "btn btn-secondary" %>
+    <%= button_to t("buttons.delete"),
+                  registration_campaign_path(@campaign),
+                  method: :delete,
+                  data: { confirm: t("registration.campaign.confirm_delete", default: "Are you sure?") },
+                  class: "btn btn-danger float-end" %>
+  </div>
+</div>

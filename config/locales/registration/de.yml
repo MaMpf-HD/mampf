@@ -1,0 +1,30 @@
+de:
+  registration:
+    campaign:
+      created: "Anmeldeverfahren erfolgreich erstellt."
+      updated: "Anmeldeverfahren erfolgreich aktualisiert."
+      destroyed: "Anmeldeverfahren erfolgreich gelöscht."
+      cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
+      confirm_delete: "Sind Sie sicher, dass Sie dieses Anmeldeverfahren löschen wollen?"
+      opened: "Anmeldung geöffnet."
+      closed: "Anmeldung geschlossen."
+      reopened: "Anmeldung wiedereröffnet."
+      index:
+        title: "Anmeldungen"
+        new_campaign: "Neues Anmeldeverfahren"
+        none: "Keine Anmeldeverfahren vorhanden."
+      new:
+        title: "Neues Anmeldeverfahren"
+      edit:
+        title: "Anmeldeverfahren bearbeiten"
+      form:
+        title: "Titel"
+        allocation_mode: "Zuteilungsmodus"
+        registration_opens_at: "Registrierungsbeginn"
+        registration_deadline: "Registrierungsende"
+        planning_only: "Nur Planung"
+        submit: "Speichern"
+      status:
+        open: "Offen"
+        closed: "Geschlossen"
+        planning: "Planung"

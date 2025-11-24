@@ -64,11 +64,15 @@ Manage registration campaigns for lectures.
 | edit    | Edit campaign settings (before allocation) |
 | update  | Update campaign |
 | destroy | Delete campaign (if no registrations exist) |
+| open    | Open campaign for registration |
+| close   | Close campaign (stop registration) |
+| reopen  | Reopen a closed campaign |
 
 ```admonish example "Responsibilities"
 - CRUD operations for campaigns
 - Validate date ranges and capacity constraints
 - Display campaign status (draft, open, processing, completed)
+- **Lifecycle management:** Open, close, and reopen campaigns
 - **Pre-flight checks:** Before opening campaigns with `lecture_performance` policies:
   - Verify all lecture students have `LecturePerformance::Certification` records
   - Ensure all certifications have `status: :passed` or `:failed` (no `pending`)
