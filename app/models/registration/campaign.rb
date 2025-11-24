@@ -38,5 +38,9 @@ module Registration
     def user_registered?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
+
+    def closed?
+      processing? || completed?
+    end
   end
 end

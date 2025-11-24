@@ -13,6 +13,12 @@ en:
         title: "Registrations"
         new_campaign: "New Campaign"
         none: "No campaigns found."
+        columns:
+          title_column: "Title"
+          mode: "Allocation Mode"
+          opens_at: "Opens At"
+          deadline: "Deadline"
+          status: "Status"
       new:
         title: "New Campaign"
       edit:
@@ -25,6 +31,13 @@ en:
         planning_only: "Planning Only"
         submit: "Save"
       status:
+        draft: "Draft"
         open: "Open"
+        processing: "Processing"
+        completed: "Completed"
         closed: "Closed"
         planning: "Planning"
+      actions:
+        open: "Open"
+        close: "Close"
+        reopen: "Reopen"

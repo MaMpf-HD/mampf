@@ -13,6 +13,12 @@ de:
         title: "Anmeldungen"
         new_campaign: "Neues Anmeldeverfahren"
         none: "Keine Anmeldeverfahren vorhanden."
+        columns:
+          title_column: "Titel"
+          mode: "Zuteilungsmodus"
+          opens_at: "Registrierungsbeginn"
+          deadline: "Registrierungsende"
+          status: "Status"
       new:
         title: "Neues Anmeldeverfahren"
       edit:
@@ -25,6 +31,13 @@ de:
         planning_only: "Nur Planung"
         submit: "Speichern"
       status:
+        draft: "Entwurf"
         open: "Offen"
+        processing: "In Bearbeitung"
+        completed: "Abgeschlossen"
         closed: "Geschlossen"
         planning: "Planung"
+  actions:
+    open: "Öffnen"
+    close: "Schließen"
+    reopen: "Wiedereröffnen"

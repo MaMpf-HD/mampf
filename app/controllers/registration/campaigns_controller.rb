@@ -9,7 +9,7 @@ module Registration
     end
 
     def index
-      authorize! :index, @lecture.registration_campaigns.build
+      authorize! :index, Registration::Campaign.new(campaignable: @lecture)
       @campaigns = @lecture.registration_campaigns.order(created_at: :desc)
     end
 
@@ -98,7 +98,7 @@ module Registration
 
       def campaign_params
         params.expect(
-          registration_campaign: [:title, :allocation_mode, :registration_opens_at,
+          registration_campaign: [:title, :allocation_mode,
                                   :registration_deadline, :planning_only]
         )
       end

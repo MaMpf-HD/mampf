@@ -26,11 +26,6 @@
   </div>
 
   <div class="mb-3">
-    <%= f.label :registration_opens_at, t("registration.campaign.form.registration_opens_at"), class: "form-label" %>
-    <%= f.datetime_field :registration_opens_at, class: "form-control" %>
-  </div>
-
-  <div class="mb-3">
     <%= f.label :registration_deadline, t("registration.campaign.form.registration_deadline"), class: "form-label" %>
     <%= f.datetime_field :registration_deadline, class: "form-control" %>
   </div>
@@ -42,6 +37,7 @@
 
   <%= f.submit t("registration.campaign.form.submit"), class: "btn btn-primary" %>
   <%= link_to t("buttons.cancel"),
-              campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
-              class: "btn btn-secondary" %>
+              lecture_registration_campaigns_path(lecture),
+              class: "btn btn-secondary",
+              data: { turbo_frame: "registration_campaigns_content" } %>
 <% end %>
