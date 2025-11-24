@@ -1,7 +1,6 @@
 <%= vite_javascript_tag "lectures/lectures.js" %>
 <%= vite_javascript_tag "lectures/edit/edit.js" %>
 
-<% cache @lecture do %>
   <div id="lecture-area" data-cy="lecture-area">
     <!-- Header -->
     <div class="container small-width">
@@ -128,4 +127,3 @@
               locals: { lecture: @lecture } %>
   <% end %>
 
-<% end %>
