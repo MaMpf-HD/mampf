@@ -1,8 +1,8 @@
 module Registration
+  # Represents a single user's application within a campaign.
+  # Tracks the status (pending/confirmed) and, for preference-based campaigns,
+  # the specific ranking of an item.
   class UserRegistration < ApplicationRecord
-    # Represents a single user's application within a campaign.
-    # Tracks the status (pending/confirmed) and, for preference-based campaigns,
-    # the specific ranking of an item.
     belongs_to :user
 
     belongs_to :registration_campaign,
