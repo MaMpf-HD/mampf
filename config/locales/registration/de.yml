@@ -37,7 +37,37 @@ de:
         completed: "Abgeschlossen"
         closed: "Geschlossen"
         planning: "Planung"
-  actions:
-    open: "Öffnen"
-    close: "Schließen"
-    reopen: "Wiedereröffnen"
+      actions:
+        open: "Öffnen"
+        close: "Schließen"
+        reopen: "Wiedereröffnen"
+    policy:
+      index:
+        title: "Richtlinien"
+        add: "Richtlinie hinzufügen"
+        none: "Keine Richtlinien konfiguriert."
+      new:
+        title: "Neue Richtlinie"
+      edit:
+        title: "Richtlinie bearbeiten"
+      kind: "Typ"
+      phase: "Phase"
+      config: "Konfiguration"
+      position: "Position"
+      created: "Richtlinie erfolgreich erstellt."
+      updated: "Richtlinie erfolgreich aktualisiert."
+      destroyed: "Richtlinie erfolgreich gelöscht."
+      configs:
+        allowed_domains: "Erlaubte Domains (kommagetrennt)"
+        prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"
+        lecture_id: "Veranstaltung"
+      hints:
+        allowed_domains: "z.B. uni-heidelberg.de, mathi.uni-heidelberg.de"
+      kinds:
+        institutional_email: "Institutionelle E-Mail"
+        prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
+        lecture_performance: "Veranstaltungsleistung"
+      phases:
+        registration: "Registrierung"
+        finalization: "Finalisierung"
+        both: "Beide"

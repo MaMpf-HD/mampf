@@ -288,6 +288,9 @@ Rails.application.routes.draw do
       patch :close
       patch :reopen
     end
+    resources :policies,
+              controller: "registration/policies",
+              only: [:new, :create, :edit, :update, :destroy]
   end
 
   # lessons routes

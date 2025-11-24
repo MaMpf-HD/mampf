@@ -41,3 +41,33 @@ en:
         open: "Open"
         close: "Close"
         reopen: "Reopen"
+    policy:
+      index:
+        title: "Policies"
+        add: "Add Policy"
+        none: "No policies configured."
+      new:
+        title: "New Policy"
+      edit:
+        title: "Edit Policy"
+      kind: "Type"
+      phase: "Phase"
+      config: "Configuration"
+      position: "Position"
+      created: "Policy created successfully."
+      updated: "Policy updated successfully."
+      destroyed: "Policy deleted successfully."
+      configs:
+        allowed_domains: "Allowed Domains (comma separated)"
+        prerequisite_campaign_id: "Prerequisite Campaign"
+        lecture_id: "Lecture"
+      hints:
+        allowed_domains: "e.g. uni-heidelberg.de, mathi.uni-heidelberg.de"
+      kinds:
+        institutional_email: "Institutional Email"
+        prerequisite_campaign: "Prerequisite Campaign"
+        lecture_performance: "Lecture Performance"
+      phases:
+        registration: "Registration"
+        finalization: "Finalization"
+        both: "Both"
