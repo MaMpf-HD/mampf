@@ -35,6 +35,8 @@ class TutorialsController < ApplicationController
     @tutorial = Tutorial.find_by(id: params[:tutorial]) || current_user.tutorials(@lecture).first
     @stack = @assignment&.submissions&.where(tutorial: @tutorial)&.proper
                         &.order(:last_modification_by_users_at)
+
+    render layout: turbo_frame_request? ? "turbo_frame" : "application"
   end
 
   def overview
