@@ -1,0 +1,38 @@
+<div>
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <div class="small text-muted">
+      Seats remaining: 
+      <span id="seatsRemaining">
+        <%= item.capacity_remained %>
+      </span>
+    </div>
+    <div class="small" id="saveStatus">
+    </div>
+  </div>
+  
+  <% registered = item.user_registered?(current_user)%>
+  <div id="statusPanel" class="mb-3">
+    <span class="badge rounded-pill text-bg-secondary" id="regState">
+      <% if registered %>
+        Registered
+      <% else %>
+        Not registered
+      <% end %>
+    </span>
+  </div>
+  
+  <div class="d-flex gap-2">
+    <%= button_to "Register now",
+              register_item_path(@campaign.id, item.id),
+              method: :post,
+              data: { turbo: false },
+              class: "btn btn-primary btn-sm #{'d-none' if registered}" %>
+
+    <%= button_to "Withdraw",
+              withdraw_item_path(@campaign.id, item.id),
+              method: :delete,
+              data: { turbo: false },
+              class: "btn btn-outline-danger btn-sm #{'d-none' unless registered}" %>
+    
+  </div>
+</div> 

@@ -100,23 +100,8 @@ module Registration
       end
 
       register_user_for_first_come_first_serve(@campaign, @item)
-
-      @items = @campaign.registration_items.includes(:user_registrations)
-      @campaignable_host = get_campaignable_host(@campaign)
-
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "items_frame",
-            partial: "registration/student/select_fcfs",
-            locals: {
-              campaign: @campaign,
-              campaignable_host: @campaignable_host,
-              items: @items
-            }
-          )
-        end
-      end
+      redirect_back fallback_location: user_registrations_path(@campaign.id),
+                    notice: "You have registered."
     end
 
     def register_user_for_first_come_first_serve(campaign, item)
@@ -124,14 +109,38 @@ module Registration
         item.lock!
 
         user_registered = user_has_confirmed_registration_selected_campaign(campaign, current_user)
-        # if user_registered -> error
+        if user_registered
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "campaign_regist_noti",
+              partial: "registration/student/select_fcfs",
+              locals: { message: "User has registered this Campaign!" }
+            )
+          end
+        end
 
         slot_availbled = item.still_have_capacity?
-        # if !slot_available -> error
+        unless slot_availbled
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "campaign_regist_noti",
+              partial: "registration/student/select_fcfs",
+              locals: { message: "No available slot!" }
+            )
+          end
+        end
 
         # TODO: check policies and phase
         policies_satisfied = campaign.policies_satisfied?(current_user, phase: :registration)
-        # if !policies_satisfied -> error
+        unless policies_satisfied
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(
+              "campaign_regist_noti",
+              partial: "registration/student/select_fcfs",
+              locals: { message: "User doed not satify requirements!" }
+            )
+          end
+        end
 
         @user_registration = UserRegistration.new(
           registration_campaign_id: campaign.id,
@@ -144,29 +153,13 @@ module Registration
     end
 
     def destroy
-      @campaign = Campaign.find(params[:campaign_id])
       @item = Item.find(params[:item_id])
-      @items = @campaign.registration_items.includes(:user_registrations)
-      @campaignable_host = get_campaignable_host(@campaign)
-
       user_registration = @item.user_registrations.find_by!(user_id: current_user.id,
                                                             status: :confirmed)
-
+      @campaign = user_registration.registration_campaign
       user_registration.destroy if user_registration.present?
-
-      respond_to do |format|
-        format.turbo_stream do
-          render turbo_stream: turbo_stream.replace(
-            "items_frame",
-            partial: "registration/student/select_fcfs",
-            locals: {
-              campaign: @campaign,
-              campaignable_host: @campaignable_host,
-              items: @items
-            }
-          )
-        end
-      end
+      redirect_back fallback_location: user_registrations_path(@campaign.id),
+                    notice: "You have withdrawn."
     end
 
     def render_not_found(exception)

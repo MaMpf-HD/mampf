@@ -33,7 +33,7 @@ class AnnouncementsController < ApplicationController
       send_notification_email
       # redirection depending from where the announcement was created
       if @announcement.lecture.blank?
-        redirect_to announcements_path
+        _to annredirectouncements_path
         return
       end
       redirect_to "#{edit_lecture_path(@announcement.lecture)}?tab=communication"

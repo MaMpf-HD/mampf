@@ -12,6 +12,7 @@
             locals: { campaignable_host: @campaignable_host, 
                       campaign: @campaign }%>
 
+  
   <div class="row g-3">
       <div class="col-12 col-lg-4">
         <div class="card h-100">
@@ -23,7 +24,7 @@
       <div class="col-12 col-lg-8">
         <div class="card h-100">
           <% if @campaign.allocation_mode_before_type_cast == 0 %>
-            <turbo-frame id="items_frame">
+            <turbo-frame id="campaign_items">
               <%= render partial:'registration/student/select_fcfs',
                         locals: {campaign: @campaign,
                                   campaignable_host: @campaignable_host,
@@ -43,4 +44,5 @@
       <%= render partial:'registration/student/campaign_details',
                   locals: { campaign: @campaign, items: @items } %>
     </div>
+  
   </div>

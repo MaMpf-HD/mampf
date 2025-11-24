@@ -1,44 +1,8 @@
 <div class="card-body">
   <h2 class="h5">Your Registration</h2>
   
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <div class="small text-muted">
-      Seats remaining: 
-      <span id="seatsRemaining">
-        <%items[0].capacity_remained%>
-      </span>
-    </div>
-    <div class="small" id="saveStatus">
-    </div>
-  </div>
-  
-  <% registered = items[0].user_registered?(current_user)%>
-  <div id="statusPanel" class="mb-3">
-    <span class="badge rounded-pill text-bg-secondary" id="regState">
-      <% if registered %>
-        Registered
-      <% else %>
-        Not registered
-      <% end %>
-    </span>
-  </div>
-  
-  <div class="d-flex gap-2">
-    <%= button_to "Register now",
-              register_item_path(@campaign.id, items[0].id),
-              method: :post,
-              form: { data: { turbo_frame: "items_frame" } },
-              class: "btn btn-primary btn-sm #{'d-none' if registered}" %>
-
-<%= button_to "Withdraw",
-              withdraw_item_path(@campaign.id, items[0].id),
-              method: :delete,
-              form: { data: { turbo_frame: "items_frame" } },
-              class: "btn btn-outline-danger btn-sm #{'d-none' unless registered}" %>
-    
-  </div>
-  
-  <div id="saveAlert" class="alert alert-success py-1 px-2 d-none mt-3" role="alert">
-    Registration updated
-  </div>
+  <%= render partial: 'registration/student/select_single_item',
+              locals: {campaign: campaign,
+                      campaignable_host: campaignable_host,
+                      item: items[0] } %>
 </div>
