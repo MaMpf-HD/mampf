@@ -169,11 +169,13 @@ Exam registration typically requires students to meet certain criteria (e.g., ea
 
 ### Student Experience
 
-1. Student views open exam registration campaigns
+1. Student visits exam registration campaign page
 2. System checks eligibility via `Registration::PolicyEngine` (queries `StudentPerformance::Certification.status`)
-3. If eligible (status IN passed/forced_passed), student submits registration
-4. Registration is confirmed immediately (FCFS) or after deadline (preference-based, if multiple exam dates)
-5. After registration closes, `materialize_allocation!` updates exam roster (allocation filtered to only certified students)
+3. If ineligible, student sees error message explaining why (e.g., "Certification pending" or "Certification failed")
+4. If eligible (status IN passed/forced_passed), student sees registration interface
+5. Student submits registration
+6. Registration is confirmed immediately (FCFS) or after deadline (preference-based, if multiple exam dates)
+7. After registration closes, `materialize_allocation!` updates exam roster (allocation filtered to only certified students)
 
 ---
 

@@ -1236,32 +1236,35 @@ sequenceDiagram
     participant Campaign as Registration::Campaign
     participant UserReg as Registration::UserRegistration
     actor Job as Background Job
-  participant AllocationSvc as Registration::AllocationService
+    participant AllocationSvc as Registration::AllocationService
     participant Solver as Registration::Solvers::MinCostFlow
     participant Materializer as Registration::AllocationMaterializer
     participant RegTarget as Registerable (e.g., Tutorial)
 
     rect rgb(235, 245, 255)
     note over User,Controller: Registration phase (campaign is open)
-    User->>Controller: Submit preferences
-  Controller->>Campaign: evaluate_policies_for(user, phase: :registration)
+    User->>Controller: Visit campaign page
+    Controller->>Campaign: evaluate_policies_for(user, phase: :registration)
     alt eligible
-      loop for each preference
-        Controller->>UserReg: create(user_id, item_id, rank)
-      end
+        Controller-->>User: Show preference ranking form
+        User->>Controller: Submit preferences
+        loop for each preference
+            Controller->>UserReg: create(user_id, item_id, rank)
+        end
+        Controller-->>User: Preferences saved
     else not eligible
-      Controller-->>User: Show reason from PolicyEngine
+        Controller-->>User: Show reason from PolicyEngine
     end
     end
 
     note over User,Job: Deadline passes
 
-  rect rgb(255, 245, 235)
-  note over Job,RegTarget: Allocation & finalization
-  Job->>Campaign: allocate_and_finalize!
+    rect rgb(255, 245, 235)
+    note over Job,RegTarget: Allocation & finalization
+    Job->>Campaign: allocate_and_finalize!
     Campaign->>Campaign: update!(status: :closed)
-  Campaign->>AllocationSvc: new(campaign).allocate!
-  AllocationSvc->>Solver: new(campaign).run()
+    Campaign->>AllocationSvc: new(campaign).allocate!
+    AllocationSvc->>Solver: new(campaign).run()
     note right of Solver: Build graph, solve, persist statuses
     Solver->>UserReg: update_all(status: confirmed/rejected)
     Campaign->>Campaign: update!(status: :processing)
@@ -1280,8 +1283,7 @@ stateDiagram-v2
     [*] --> draft: Campaign created
     draft --> open: Admin opens campaign
     open --> closed: Admin closes OR deadline reached
-    note right of closed: No finalization
-    note right of closed: Stays in closed
+    closed --> completed: Admin finalizes (optional)
     
     note right of draft
         Admin configures items,
@@ -1324,9 +1326,8 @@ sequenceDiagram
 
     rect rgb(235, 245, 255)
     note over Student,PolicyEngine: Registration phase (campaign is open)
-    Student->>UI: Click "Register for Item X"
-    UI->>Controller: POST /campaigns/:id/user_registrations
-    
+    Student->>UI: Visit campaign page
+    UI->>Controller: GET /campaigns/:id
     Controller->>Campaign: find(campaign_id)
     Controller->>Campaign: open_for_registrations?
     Campaign-->>Controller: true
@@ -1337,9 +1338,15 @@ sequenceDiagram
     Campaign-->>Controller: Result
     
     alt policies fail
-        Controller-->>UI: Error: "Not eligible (reason)"
-        UI-->>Student: Show error message
+        Controller-->>UI: Ineligible state
+        UI-->>Student: Show error: "Not eligible (reason)"
     else policies pass
+        Controller-->>UI: Show register buttons
+        UI-->>Student: Display available items
+        
+        Student->>UI: Click "Register for Item X"
+        UI->>Controller: POST /campaigns/:id/user_registrations
+        
         Controller->>Item: find(item_id)
         Controller->>Item: remaining_capacity
         Item-->>Controller: capacity count

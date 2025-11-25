@@ -39,14 +39,16 @@ Assign students to tutorial groups or seminar talks
 **Student Experience:**
 
 ```admonish note "Two Registration Modes"
-- **FCFS Mode:** Click to register, get immediate confirmation or rejection
-- **Preference Mode:** Rank options in order of preference, wait for allocation
+- **FCFS Mode:** Visit page, check eligibility, register if eligible (immediate confirmation/rejection)
+- **Preference Mode:** Visit page, check eligibility, rank options if eligible, wait for allocation
 ```
 
 **Technical Flow:**
+- Eligibility check via `Campaign#evaluate_policies_for` happens when user visits the campaign page
+- Ineligible users see an error message explaining the reason
+- Eligible users see the registration interface (register buttons for FCFS, preference form for preference-based)
 - Each registration request creates a `Registration::UserRegistration` with status `pending` (preference-based) or `confirmed/rejected` (FCFS)
-- `Registration::PolicyEngine` evaluates all active policies in order
-- If any policy fails, registration is rejected with specific reason code
+- `Registration::PolicyEngine` evaluates all active policies in order during the initial eligibility check
 
 ## Phase 2: Preference-Based Allocation (if applicable)
 
@@ -615,7 +617,14 @@ sequenceDiagram
     participant ExamCampaign
     participant Policy as Registration::Policy
 
-    Student->>Campaign: Submit registration (FCFS or preference)
+    Student->>Campaign: Visit campaign page
+    Campaign->>Policy: Evaluate eligibility (registration phase)
+    alt Not eligible
+        Campaign-->>Student: Show error with reason
+    else Eligible
+        Campaign-->>Student: Show registration interface
+        Student->>Campaign: Submit registration (FCFS or preference)
+    end
     Note over Campaign: If preference mode...
     Campaign->>Solver: Run assignment at deadline
     Solver-->>Campaign: Set confirmed/rejected
@@ -649,12 +658,19 @@ sequenceDiagram
     Certification-->>ExamCampaign: All certifications complete
     ExamCampaign->>ExamCampaign: Transition to open
 
-    Student->>ExamCampaign: Attempt exam registration
+    Student->>ExamCampaign: Visit exam registration page
     ExamCampaign->>Policy: Evaluate student_performance policy
     Policy->>Certification: Lookup certification for student
     Certification-->>Policy: Return status (passed/failed)
-    Policy-->>ExamCampaign: Pass/Fail result
-    ExamCampaign-->>Student: Confirm/Reject
+    alt Passed certification
+        Policy-->>ExamCampaign: Pass result
+        ExamCampaign-->>Student: Show register button
+        Student->>ExamCampaign: Click register
+        ExamCampaign-->>Student: Confirm registration
+    else Failed/pending certification
+        Policy-->>ExamCampaign: Fail result
+        ExamCampaign-->>Student: Show error (not eligible)
+    end
     end
 
     rect rgb(245, 255, 245)

@@ -208,16 +208,20 @@ flowchart LR
 ```mermaid
 flowchart LR
   subgraph Student
-    IDX[Index] --> SHW[Show]
-    SHW --> GATE{Requirements met?}
-    GATE -->|No| REQS[Fulfill requirements]
-    REQS --> GATE
-    GATE -->|Yes| MODE{Mode}
-    MODE -->|Preference-based| PREF[Set preferences]
-    PREF --> SUBMIT[Submit]
+    IDX[Index] --> SHW[Visit campaign page]
+    SHW --> ELIG{Eligible?}
+    ELIG -->|No - Policy failed| ERR[Show error with reason]
+    ELIG -->|No - Action required| REQS[Show action required page]
+    REQS --> FULFILL[Fulfill requirement]
+    FULFILL --> SHW
+    ELIG -->|Yes| MODE{Mode}
+    MODE -->|Preference-based| FORM_PREF[Show preference form]
+    FORM_PREF --> RANK[Rank preferences]
+    RANK --> SUBMIT[Submit]
     SUBMIT --> CONF_PREF[Confirmation submitted]
     CONF_PREF -.-> ALLOC[Allocation results after close]
-    MODE -->|FCFS| REG[Register or withdraw]
+    MODE -->|FCFS| FORM_FCFS[Show register buttons]
+    FORM_FCFS --> REG[Click register/withdraw]
     REG --> CONF_FCFS[Confirmation enrolled/withdrawn]
   end
 

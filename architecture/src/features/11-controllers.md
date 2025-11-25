@@ -94,20 +94,22 @@ Handle the student registration flow.
 | Action  | Purpose |
 |---------|---------|
 | index   | Show available campaigns for current user |
-| new     | Registration form with division preferences |
-| create  | Submit registration with ranked preferences |
+| new     | Pre-flight eligibility check; show registration form if eligible, error message if not |
+| create  | Submit registration with ranked preferences (preference-based) or direct registration (FCFS) |
 | show    | View registration status and assigned roster |
 | edit    | Modify preferences (before allocation deadline) |
 | update  | Update preferences |
 | destroy | Withdraw from campaign |
 
 ```admonish example "Responsibilities"
+- Pre-flight eligibility check on page load via `campaign.evaluate_policies_for(user, phase: :registration)`
+- Conditionally render registration interface based on eligibility result
+- Display clear rejection reasons when policies fail (before user invests effort)
 - Display eligibility status based on `StudentPerformance::Certification`
 - Show certification status (passed/failed) for exam campaigns
 - Handle preference ranking (drag-and-drop or priority input)
 - Show allocation results after campaign completes
 - Validate registration constraints
-- Display clear rejection reasons when policies fail
 ```
 
 ### `Registration::PoliciesController`
