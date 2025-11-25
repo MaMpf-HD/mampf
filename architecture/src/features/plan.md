@@ -5,9 +5,9 @@ The core principle of this plan is to build the entire new registration and grad
 ### Workstreams and step repetition
 
 We implement major areas as separate workstreams (Registration, Grading,
-Dashboards, Lecture Performance). Each workstream has a Foundations
+Dashboards, Student Performance). Each workstream has a Foundations
 phase. In this plan: Registration foundations are at Step 2; Grading
-foundations are at Step 7; Lecture Performance foundations are at
+foundations are at Step 7; Student Performance foundations are at
 Step 11. Dashboards have partial integration at Step 10 and complete
 integration at Step 13. Foundations are schema-only for each workstream;
 controllers/services and UI arrive in subsequent steps. The PR Roadmap
@@ -35,8 +35,8 @@ graph TD
         S9 --> S10["10. Dashboard Impl. (Partial)"];
     end
 
-    subgraph "Phase 4: Lecture Performance & Exam Registration"
-        S10 --> S11["11. Lecture Performance System"];
+    subgraph "Phase 4: Student Performance & Exam Registration"
+        S10 --> S11["11. Student Performance System"];
         S11 --> S12["12. Exam Registration"];
         S12 --> S13["13. Dashboard Extension"];
     end
@@ -83,7 +83,7 @@ graph TD
     `allocated_user_ids`.
 
     ```admonish warning "Exam registration deferred"
-    Exam registration and lecture performance policies are deferred to
+    Exam registration and student performance policies are deferred to
     Steps 11-12. This step focuses on tutorial/talk registration only.
     ```
 
@@ -174,8 +174,8 @@ graph TD
     changes concentrated.
 
      ```admonish warning "Exam and performance tables deferred"
-     Exam-related tables (`exams`) and lecture performance tables
-     (`lecture_performance_records`, `lecture_performance_certifications`,
+     Exam-related tables (`exams`) and student performance tables
+     (`student_performance_records`, `student_performance_certifications`,
      etc.) are deferred to Steps 11-12. This step focuses on assignment
      grading only.
      ```
@@ -242,23 +242,23 @@ graph TD
     features show data from new tables only.
     ```
 
-11. **[Lecture Performance] System Foundations**
-    Action: Create lecture performance tables and models:
-    `lecture_performance_records`, `lecture_performance_rules`,
-    `lecture_performance_achievements`, and
-    `lecture_performance_certifications`. Implement
-    `LecturePerformance::ComputationService` to materialize Records from
-    assessment data. Implement `LecturePerformance::Evaluator` to
+11. **[Student Performance] System Foundations**
+    Action: Create student performance tables and models:
+    `student_performance_records`, `student_performance_rules`,
+    `student_performance_achievements`, and
+    `student_performance_certifications`. Implement
+    `StudentPerformance::ComputationService` to materialize Records from
+    assessment data. Implement `StudentPerformance::Evaluator` to
     generate certification proposals. Build teacher certification
     workflow UI.
 
-    Controllers: `LecturePerformance::RecordsController` (factual data
-    display), `LecturePerformance::CertificationsController` (teacher
-    certification workflow), and `LecturePerformance::EvaluatorController`
+    Controllers: `StudentPerformance::RecordsController` (factual data
+    display), `StudentPerformance::CertificationsController` (teacher
+    certification workflow), and `StudentPerformance::EvaluatorController`
     (proposal generation).
 
     ```admonish warning "No policy integration yet"
-    The `lecture_performance` policy kind is added in Step 12 when exam
+    The `student_performance` policy kind is added in Step 12 when exam
     registration is implemented.
     ```
 
@@ -274,7 +274,7 @@ graph TD
     - `Roster::Rosterable` (manage registrants)
     - `Assessment::Assessable` (link to grading)
 
-    Add `lecture_performance` policy kind to `Registration::PolicyEngine`.
+    Add `student_performance` policy kind to `Registration::PolicyEngine`.
     Implement pre-flight certification checks in
     `Registration::CampaignsController` (before open) and
     `Registration::AllocationController` (before finalize). Wire exam
@@ -295,7 +295,7 @@ graph TD
     ```
 
 13. **[Dashboards] Dashboard Extension (Complete)**
-   Action: Add lecture performance and exam registration widgets to dashboards. Connect "Exam Eligibility Status", "Certification Pending List", and "Performance Overview" to backend services from Steps 11-12.
+   Action: Add student performance and exam registration widgets to dashboards. Connect "Exam Eligibility Status", "Certification Pending List", and "Performance Overview" to backend services from Steps 11-12.
 
     Controllers: Extend `DashboardsController` with widgets for lecture
     performance and exam registration.

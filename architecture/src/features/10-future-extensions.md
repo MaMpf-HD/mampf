@@ -203,7 +203,7 @@ add_index :assessment_task_points, :modified_by_id
 
 ---
 
-## 5. Lecture Performance & Certification
+## 5. Student Performance & Certification
 
 ```admonish success "Recently Implemented"
 The core certification workflow (teacher-approved eligibility decisions, Evaluator proposals, pre-flight checks) is now part of the baseline architecture documented in Chapter 5.

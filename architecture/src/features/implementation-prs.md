@@ -47,7 +47,7 @@ Registration — Step 2: Foundations (Schema)
   prerequisite campaigns.
 - Refs: [PolicyEngine](02-registration.md#registrationpolicyengine-service),
   [Policy#evaluate](02-registration.md#policy-evaluation-interface)
-- Acceptance: Policy engine evaluates ordered policies with short-circuit; tests pass with doubled roster data; `lecture_performance` policy kind deferred to Step 11.
+- Acceptance: Policy engine evaluates ordered policies with short-circuit; tests pass with doubled roster data; `student_performance` policy kind deferred to Step 11.
 ```
 
 ```admonish example "PR-2.3 — Core concerns (Campaignable, Registerable)"
@@ -304,39 +304,39 @@ Dashboards — Step 10: Partial Integration
 ```
 
 ```admonish abstract
-Lecture Performance — Step 11: System Foundations
+Student Performance — Step 11: System Foundations
 ```
 
 ```admonish example "PR-11.1 — Performance schema (Record, Rule, Achievement, Certification)"
-- Scope: Create `lecture_performance_records`, `lecture_performance_rules`,
-  `lecture_performance_achievements`, `lecture_performance_certifications`.
+- Scope: Create `student_performance_records`, `student_performance_rules`,
+  `student_performance_achievements`, `student_performance_certifications`.
 - Migrations:
-  - `20251120000000_create_lecture_performance_records.rb`
-  - `20251120000001_create_lecture_performance_rules.rb`
-  - `20251120000002_create_lecture_performance_achievements.rb`
-  - `20251120000003_create_lecture_performance_certifications.rb`
-- Refs: [Lecture Performance models](05-lecture-performance.md#solution-architecture)
+  - `20251120000000_create_student_performance_records.rb`
+  - `20251120000001_create_student_performance_rules.rb`
+  - `20251120000002_create_student_performance_achievements.rb`
+  - `20251120000003_create_student_performance_certifications.rb`
+- Refs: [Student Performance models](05-student-performance.md#solution-architecture)
 - Acceptance: Migrations run; models have correct associations; unique constraints on certifications.
 ```
 
 ```admonish example "PR-11.2 — Computation service (materialize Records)"
-- Scope: `LecturePerformance::ComputationService` to aggregate performance data.
+- Scope: `StudentPerformance::ComputationService` to aggregate performance data.
 - Implementation: Reads from `assessment_participations` and
-  `assessment_task_points`; writes to `lecture_performance_records`.
-- Refs: [ComputationService](05-lecture-performance.md#lectureperformancecomputationservice-service)
+  `assessment_task_points`; writes to `student_performance_records`.
+- Refs: [ComputationService](05-student-performance.md#lectureperformancecomputationservice-service)
 - Acceptance: Service computes points and achievements; upserts Records; handles missing data gracefully.
 ```
 
 ```admonish example "PR-11.3 — Evaluator (proposal generator)"
-- Scope: `LecturePerformance::Evaluator` to generate certification proposals.
+- Scope: `StudentPerformance::Evaluator` to generate certification proposals.
 - Implementation: Reads Records and Rules; returns proposed status
   (passed/failed) per student.
-- Refs: [Evaluator](05-lecture-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator)
+- Refs: [Evaluator](05-student-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator)
 - Acceptance: Evaluator generates proposals; does NOT create Certifications; used for bulk UI only.
 ```
 
 ```admonish example "PR-11.4 — Records controller (factual data display)"
-- Scope: `LecturePerformance::RecordsController` for viewing performance data.
+- Scope: `StudentPerformance::RecordsController` for viewing performance data.
 - Controllers: Index/show actions for Records.
 - UI: Table view with points, achievements, computed_at timestamp.
 - Refs: [RecordsController](11-controllers.md#lectureperformancerecordscontroller)
@@ -344,7 +344,7 @@ Lecture Performance — Step 11: System Foundations
 ```
 
 ```admonish example "PR-11.5 — Certifications controller (teacher workflow)"
-- Scope: `LecturePerformance::CertificationsController` for teacher certification.
+- Scope: `StudentPerformance::CertificationsController` for teacher certification.
 - Controllers: Index (dashboard), create (bulk), update (override),
   bulk_accept.
 - UI: Certification dashboard with proposals; bulk accept/reject; manual override with notes.
@@ -353,7 +353,7 @@ Lecture Performance — Step 11: System Foundations
 ```
 
 ```admonish example "PR-11.6 — Evaluator controller (proposal endpoints)"
-- Scope: `LecturePerformance::EvaluatorController` for proposal generation.
+- Scope: `StudentPerformance::EvaluatorController` for proposal generation.
 - Controllers: `bulk_proposals`, `preview_rule_change`, `single_proposal`.
 - UI: Modal for rule change preview showing diff of affected students.
 - Refs: [EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller)
@@ -375,9 +375,9 @@ Exam — Step 12: Registration & Certification Integration
 ```
 
 ```admonish example "PR-12.2 — Lecture performance policy (add to engine)"
-- Scope: Add `lecture_performance` policy kind to `Registration::PolicyEngine`.
-- Implementation: `Registration::Policy#eval_lecture_performance` checks
-  `LecturePerformance::Certification.find_by(...).status`.
+- Scope: Add `student_performance` policy kind to `Registration::PolicyEngine`.
+- Implementation: `Registration::Policy#eval_student_performance` checks
+  `StudentPerformance::Certification.find_by(...).status`.
 - Phase awareness: Returns different errors for registration
   (missing/pending) vs finalization (failed).
 - Refs: [Policy evaluation](02-registration.md#policy-evaluation-interface)
@@ -390,12 +390,12 @@ Exam — Step 12: Registration & Certification Integration
   for missing/pending certifications; block if incomplete.
 - Update `Registration::AllocationController#finalize` to check for
   missing/pending; auto-reject failed certifications.
-- Refs: [Pre-flight validation](05-lecture-performance.md#policy-integration)
+- Refs: [Pre-flight validation](05-student-performance.md#policy-integration)
 - Acceptance: Campaigns cannot open without complete certifications; finalization blocked if pending; failed certifications auto-rejected.
 ```
 
 ```admonish example "PR-12.4 — Exam FCFS registration"
-- Scope: Exam registration with lecture_performance policy.
+- Scope: Exam registration with student_performance policy.
 - Controllers: Extend `Registration::UserRegistrationsController` for
   exam context.
 - UI: Registration button with eligibility status display.
@@ -416,7 +416,7 @@ Dashboards — Step 13: Complete Integration
 ```
 
 ```admonish example "PR-13.1 — Student dashboard extension"
-- Scope: Add lecture performance and exam registration widgets.
+- Scope: Add student performance and exam registration widgets.
 - Widgets: "Exam Eligibility Status", "Performance Overview".
 - Refs: [Student dashboard complete](12-views.md#student-dashboard)
 - Acceptance: Students see eligibility status; performance summary; links to certification details.
@@ -434,7 +434,7 @@ Quality — Step 14: Hardening & Integrity
 ```
 
 ```admonish example "PR-14.1 — Background jobs (performance/certification)"
-- Scope: Create integrity jobs for lecture performance.
+- Scope: Create integrity jobs for student performance.
 - Jobs: `PerformanceRecordUpdateJob` (recompute Records after grading),
   `CertificationStaleCheckJob` (flag stale certifications),
   `AllocatedAssignedMatchJob` (verify roster consistency).

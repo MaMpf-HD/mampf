@@ -21,8 +21,8 @@ We use a unified system with:
 - **Allocation Persistence:** Store the final allocation (confirmed vs rejected) and optional per-item counters
 - **Strategy Layer:** Pluggable solver for preference-based allocation (Min-Cost Flow now; CP-SAT later)
 - **Domain Materialization (mandatory):** After allocation, propagate confirmed assignments back into domain models (e.g., populate talk speakers, tutorial rosters)
-- **Registration Policies:** Composable eligibility rules (lecture performance, institutional email, prerequisite, etc.)
-- **Policy Phases:** Policies declare a phase: `registration`, `finalization`, or `both`. Only policies applicable to the current phase are evaluated/enforced. See Lecture Performance → Certification (`05-lecture-performance.md`) for how finalization uses Certification.
+- **Registration Policies:** Composable eligibility rules (student performance, institutional email, prerequisite, etc.)
+- **Policy Phases:** Policies declare a phase: `registration`, `finalization`, or `both`. Only policies applicable to the current phase are evaluated/enforced. See Student Performance → Certification (`05-student-performance.md`) for how finalization uses Certification.
 - **Policy Engine:** Phase-aware evaluation of ordered active policies; short-circuits on first failure
 
 ---
@@ -119,14 +119,14 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
   Used to lock the window early or when the deadline passes automatically.
 - **Run allocation (preference-based only):** triggers solver; transitions `closed → processing`.
   FCFS campaigns skip this step (results already determined).
-- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `lecture_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`.
+- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`.
 - **Planning-only campaigns:** close only; do not call `finalize!`. Results remain in reporting tables and are not materialized. When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
 - **Lecture performance completeness checks:**
-  - **Campaign save:** Warns if any students lack certifications (any phase with lecture_performance policy)
+  - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
   - **Campaign open:** Hard-fails if any students have missing/pending certifications (registration or both phase)
   - **Campaign finalize:** Hard-fails if any confirmed registrants have missing/pending certifications (finalization or both phase); auto-rejects students with failed certifications
 
-See also: Lecture Performance → Certification (`05-lecture-performance.md`).
+See also: Student Performance → Certification (`05-student-performance.md`).
 
 ```admonish tip "UI hooks for unassigned"
 After completion, the Campaign Show can surface an "Unassigned registrants"
@@ -305,7 +305,7 @@ Student Registration index.
 - A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_served` and enrolls students directly. The single item points to the `Lecture`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
 - A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_served` to quickly fill the limited seminar seats. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
 - An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_served` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
-- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_served` and may include a `lecture_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `lecture_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
+- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_served` and may include a `student_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `student_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
 
 ---
 
@@ -621,7 +621,7 @@ A single, configurable eligibility condition attached to a campaign.
 ```
 
 ```admonish note "Think of it as"
-“One rule card” (lecture performance gate, email domain restriction, prerequisite confirmation).
+“One rule card” (student performance gate, email domain restriction, prerequisite confirmation).
 ```
 
 The main fields and methods of `Registration::Policy` are:
@@ -629,7 +629,7 @@ The main fields and methods of `Registration::Policy` are:
 | Name/Field                | Type/Kind         | Description                                                      |
 |---------------------------|-------------------|------------------------------------------------------------------|
 | `registration_campaign_id`| DB column         | Foreign key for the parent campaign.                             |
-| `kind`                    | DB column (Enum)  | The type of rule to apply (e.g., `lecture_performance`).         |
+| `kind`                    | DB column (Enum)  | The type of rule to apply (e.g., `student_performance`).         |
 | `phase`                   | DB column (Enum)  | `registration`, `finalization`, or `both`.                       |
 | `config`                  | DB column (JSONB) | Parameters for the rule (e.g., `{ "allowed_domains": ["uni-heidelberg.de "] }`).          |
 | `position`                | DB column         | The evaluation order for policies within a campaign.             |
@@ -644,10 +644,10 @@ The main fields and methods of `Registration::Policy` are:
 - Returns a structured outcome (`{ pass: true/false, ... }`) for clear feedback.
 - Adding a new rule type involves adding to the `kind` enum and implementing its logic in `evaluate`, with no schema changes required.
 
-The `evaluate` method of a policy returns a hash. While the top-level structure is consistent (containing a boolean `pass` key), individual policies can enrich the result with a `details` hash, providing context-specific information. This is particularly useful for complex rules like lecture performance eligibility.
+The `evaluate` method of a policy returns a hash. While the top-level structure is consistent (containing a boolean `pass` key), individual policies can enrich the result with a `details` hash, providing context-specific information. This is particularly useful for complex rules like student performance eligibility.
 
 ```admonish info "Lecture performance advisory payload"
-For early exam registration messaging, the `lecture_performance` policy attaches a concise `details` hash (points, required_points, stability). Rich progress and "may still become eligible" guidance lives in the Lecture Performance views, not here.
+For early exam registration messaging, the `student_performance` policy attaches a concise `details` hash (points, required_points, stability). Rich progress and "may still become eligible" guidance lives in the Student Performance views, not here.
 ```
 
 ### Example Implementation
@@ -659,7 +659,7 @@ module Registration
     acts_as_list scope: :registration_campaign
 
     enum kind: {
-      lecture_performance: "lecture_performance",
+      student_performance: "student_performance",
       institutional_email: "institutional_email",
       prerequisite_campaign: "prerequisite_campaign",
       custom_script: "custom_script"
@@ -676,7 +676,7 @@ module Registration
 
     def evaluate(user)
   case kind.to_sym
-  when :lecture_performance then eval_lecture_performance(user)
+  when :student_performance then eval_student_performance(user)
       when :institutional_email then eval_email(user)
       when :prerequisite_campaign then eval_prereq(user)
       when :custom_script then eval_custom(user)
@@ -694,10 +694,10 @@ module Registration
       { pass: false, code: code, message: message, details: details }
     end
 
-    def eval_lecture_performance(user)
+    def eval_student_performance(user)
       lecture = Lecture.find(config["lecture_id"])
 
-      cert = LecturePerformance::Certification.find_by(lecture: lecture, user: user)
+      cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
 
       if cert&.passed?
         pass_result(:certification_passed)
@@ -754,7 +754,7 @@ Each policy kind returns a standardized result hash with optional `details`. The
 
 | Policy Kind | Success `details` Keys | Failure `details` Keys | Example |
 |-------------|----------------------|----------------------|---------|
-| `lecture_performance` | None | `certification_status` (`:missing`, `:pending`, `:failed`) | `{ certification_status: :pending }` |
+| `student_performance` | None | `certification_status` (`:missing`, `:pending`, `:failed`) | `{ certification_status: :pending }` |
 | `institutional_email` | None | `domain` (string), `allowed` (array of strings) | `{ domain: "gmail.com", allowed: ["uni.edu"] }` |
 | `prerequisite_campaign` | None | `prerequisite_campaign_id` (integer) | `{ prerequisite_campaign_id: 42 }` |
 | `custom_script` | Defined by script | Defined by script | N/A (implementation-specific) |
@@ -783,14 +783,14 @@ Constraints and guardrails:
 - Models validate allowed keys and shapes per kind.
 - Index JSONB keys if needed for queries (e.g., `config ->> 'lecture_id'`).
 - Only minimal data belongs here. For exam eligibility, thresholds and
-  criteria live in `LecturePerformance::Rule`; the policy stores only
+  criteria live in `StudentPerformance::Rule`; the policy stores only
   `{ "lecture_id": <id> }`.
 
 See UI: Policies tab in [Exam Show](../mockups/campaigns_show_exam.html).
 
 ### Usage Scenarios
 - **Email constraint:** `kind: :institutional_email`, `phase: :registration`, `config: { "allowed_domains": ["uni.edu"] }`
-- **Lecture performance gate (advisory + enforcement):** `kind: :lecture_performance`, `phase: :both`, `config: { "lecture_id": 42 }`
+- **Lecture performance gate (advisory + enforcement):** `kind: :student_performance`, `phase: :both`, `config: { "lecture_id": 42 }`
 - **Prerequisite:** `kind: :prerequisite_campaign`, `phase: :registration`, `config: { "prerequisite_campaign_id": 55 }`
 
 ---
@@ -819,11 +819,11 @@ An 'eligibility checklist' processor that stops at the first failed check and pr
 - This `Result` object is used by `Registration::Campaign#evaluate_policies_for` to provide clear feedback to the UI.
 
 ```admonish tip "Lecture performance: data completeness requirement"
-Unlike other policies, `lecture_performance` requires data preparation before the phase starts. Campaign save/open/finalize will validate that all required certifications exist and are non-pending. See Lecture Performance chapter (05-lecture-performance.md) for pre-flight validation details.
+Unlike other policies, `student_performance` requires data preparation before the phase starts. Campaign save/open/finalize will validate that all required certifications exist and are non-pending. See Student Performance chapter (05-student-performance.md) for pre-flight validation details.
 ```
 
 ```admonish tip "Freshness vs certification"
-The `lecture_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are updated by background jobs or teacher-triggered recomputation. This keeps registration fast and deterministic.
+The `student_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are updated by background jobs or teacher-triggered recomputation. This keeps registration fast and deterministic.
 ```
 
 ### Example Implementation
@@ -998,14 +998,14 @@ end
 **_The Finalization Gatekeeper_**
 
 ```admonish info "What it represents"
-Ensures every confirmed user passes all finalization-phase policies before roster materialization. For lecture_performance policies, enforces certification completeness and auto-rejects failed certifications.
+Ensures every confirmed user passes all finalization-phase policies before roster materialization. For student_performance policies, enforces certification completeness and auto-rejects failed certifications.
 ```
 
 ### Public Interface
 | Method           | Purpose |
 |------------------|---------|
 | `initialize(campaign)` | Prepare guard for a campaign. |
-| `check!`         | Raises on first violation; returns true when all confirmed users pass. Auto-rejects students with failed lecture performance certifications. |
+| `check!`         | Raises on first violation; returns true when all confirmed users pass. Auto-rejects students with failed student performance certifications. |
 
 ### Example Implementation
 ```ruby
@@ -1024,9 +1024,9 @@ module Registration
       confirmed.each do |ur|
         user = ur.user
         policies.each do |policy|
-          if policy.kind == "lecture_performance"
+          if policy.kind == "student_performance"
             lecture = Lecture.find(policy.config["lecture_id"])
-            cert = LecturePerformance::Certification.find_by(lecture: lecture, user: user)
+            cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
 
             if cert.nil? || cert.pending?
               raise StandardError, "Finalization blocked: certification missing or pending for user #{user.id}"
@@ -1050,12 +1050,12 @@ end
 
 ### Behavior Highlights
 
-- **Auto-reject failed certifications:** Students with `LecturePerformance::Certification.status == :failed` are automatically moved to `rejected` status
+- **Auto-reject failed certifications:** Students with `StudentPerformance::Certification.status == :failed` are automatically moved to `rejected` status
 - **Hard-fail on missing/pending:** If any confirmed student has no certification or `status: :pending`, raise error and block finalization
 - **Remediation UI trigger:** The error message should trigger UI showing which students need certification resolution
 - **Other policies:** Evaluated normally; any failure blocks finalization
 
-See also: Lecture Performance → Certification and Pre-flight Validation (`05-lecture-performance.md`).
+See also: Student Performance → Certification and Pre-flight Validation (`05-student-performance.md`).
 
 ---
 

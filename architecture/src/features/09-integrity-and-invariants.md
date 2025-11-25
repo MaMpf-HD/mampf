@@ -103,30 +103,30 @@ For MC exam-specific constraints, see the [Multiple Choice Exams](05c-multiple-c
 
 ---
 
-## 4. Lecture Performance & Certification
+## 4. Student Performance & Certification
 
 ### Database Constraints
 
 ```ruby
 # One performance record per (lecture, user)
-add_index :lecture_performance_records,
+add_index :student_performance_records,
           [:lecture_id, :user_id],
           unique: true,
           name: "idx_unique_performance_record"
 
 # One certification per (lecture, user)
-add_index :lecture_performance_certifications,
+add_index :student_performance_certifications,
           [:lecture_id, :user_id],
           unique: true,
           name: "idx_unique_certification"
 
 # Foreign key integrity
-add_foreign_key :lecture_performance_certifications,
-                :lecture_performance_records,
+add_foreign_key :student_performance_certifications,
+                :student_performance_records,
                 column: :record_id,
                 optional: true
-add_foreign_key :lecture_performance_certifications,
-                :lecture_performance_rules,
+add_foreign_key :student_performance_certifications,
+                :student_performance_rules,
                 column: :rule_id,
                 optional: true
 ```
@@ -228,7 +228,7 @@ add_foreign_key :lecture_performance_certifications,
 | `Campaign.finalize!` | Check `status != :finalized` before proceeding |
 | `materialize_allocation!` | Replace entire roster (not additive) |
 | `GradeScheme::Applier.apply!` | Compare `version_hash`; skip if unchanged |
-| `LecturePerformance::ComputationService.compute!` | Upsert pattern preserves overrides |
+| `StudentPerformance::ComputationService.compute!` | Upsert pattern preserves overrides |
 | `Roster::MaintenanceService` operations | Each operation atomic with validation |
 
 ---

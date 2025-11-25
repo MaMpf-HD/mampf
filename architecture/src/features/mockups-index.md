@@ -157,21 +157,21 @@ Assessments (teacher/editor/tutor/student)
   [assessments_student_results_detail.html](../mockups/assessments_student_results_detail.html)
 
 ```admonish abstract
-Lecture Performance (teacher/editor/student)
+Student Performance (teacher/editor/student)
 ```
 
 - Certifications index:
-  [lecture_performance_certifications_index.html](../mockups/lecture_performance_certifications_index.html)
+  [student_performance_certifications_index.html](../mockups/student_performance_certifications_index.html)
 - Certification remediation:
-  [lecture_performance_certification_remediation.html](../mockups/lecture_performance_certification_remediation.html)
+  [student_performance_certification_remediation.html](../mockups/student_performance_certification_remediation.html)
 - Records index:
-  [lecture_performance_records_index.html](../mockups/lecture_performance_records_index.html)
+  [student_performance_records_index.html](../mockups/student_performance_records_index.html)
 - Rule configuration:
-  [lecture_performance_rule_configuration.html](../mockups/lecture_performance_rule_configuration.html)
+  [student_performance_rule_configuration.html](../mockups/student_performance_rule_configuration.html)
 - Rule change preview:
-  [lecture_performance_rule_change_preview.html](../mockups/lecture_performance_rule_change_preview.html)
+  [student_performance_rule_change_preview.html](../mockups/student_performance_rule_change_preview.html)
 - Student overview:
-  [lecture_performance_student_overview.html](../mockups/lecture_performance_student_overview.html)
+  [student_performance_student_overview.html](../mockups/student_performance_student_overview.html)
 
 ```admonish abstract
 Dashboards
