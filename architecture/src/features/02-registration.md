@@ -28,7 +28,7 @@ We use a unified system with:
 ---
 
 ```admonish tip "Glossary (Registration)"
-- **Allocation mode:** Enum selecting `first_come_first_serve` or `preference_based`.
+- **Allocation mode:** Enum selecting `first_come_first_served` or `preference_based`.
 - **AllocationService:** Computes allocations (preference-based) via `allocate!`.
 - **AllocationMaterializer:** Applies confirmed allocations to domain rosters.
 - **Campaign methods:** `allocate!`, `finalize!`, `allocate_and_finalize!`.
@@ -66,7 +66,7 @@ The main fields and methods of `Registration::Campaign` are:
 | `campaignable_type`       | DB column         | Polymorphic type for the campaign host (e.g., Lecture)                                     |
 | `campaignable_id`         | DB column         | Polymorphic ID for the campaign host                                                         |
 | `title`                   | DB column         | Human-readable campaign title                                                                 |
-| `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_serve` or `preference_based`                            |
+| `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_served` or `preference_based`                            |
 | `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `closed`, `processing`, `completed`                        |
 | `planning_only`           | DB column (Bool)  | Planning/reporting only; prevents materialization/finalization (default: false)              |
 | `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
@@ -107,7 +107,7 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 
 ```admonish note "Status semantics"
 Statuses are mode-specific:
-- First-come-first-serve (FCFS): registrations are immediately `confirmed` or `rejected`.
+- First-come-first-served (FCFS): registrations are immediately `confirmed` or `rejected`.
 - Preference-based: registrations are `pending` until allocation, then resolved to `confirmed` or `rejected` on finalize.
 
 Do not overload `pending` to represent eligibility uncertainty in FCFS; use policy `details` (e.g., `stability`) purely for UI messaging.
@@ -223,7 +223,7 @@ module Registration
              class_name: "Registration::Policy",
              dependent: :destroy
 
-    enum allocation_mode: { first_come_first_serve: 0, preference_based: 1 }
+    enum allocation_mode: { first_come_first_served: 0, preference_based: 1 }
     enum status: { draft: 0, open: 1, closed: 2, processing: 3, completed: 4 }
 
     validates :title, :registration_deadline, presence: true
@@ -301,11 +301,11 @@ Student Registration index.
 ```
 
 - A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`. (Admin UI: [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html); Student UI: [Show – preference-based](../mockups/student_registration.html), [Confirmation](../mockups/student_registration_confirmation.html))
-- A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_serve` and assigns talk slots. Items point to `Talk`.
-- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_serve` and enrolls students directly. The single item points to the `Lecture`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
-- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_serve` to quickly fill the limited seminar seats. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
-- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_serve` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
-- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and may include a `lecture_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `lecture_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
+- A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_served` and assigns talk slots. Items point to `Talk`.
+- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_served` and enrolls students directly. The single item points to the `Lecture`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_served` to quickly fill the limited seminar seats. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_served` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
+- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_served` and may include a `lecture_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `lecture_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
 
 ---
 
@@ -317,7 +317,7 @@ tutors) without changing any rosters.
 
 - Host: `Lecture` (campaignable).
 - Items: Single item pointing to the `Lecture` (registerable).
-- Mode: `first_come_first_serve`.
+- Mode: `first_come_first_served`.
 - Capacity: Very high (effectively unlimited) to capture demand signal.
 - Timing: Open well before the term; close before main registrations.
 - Finalization: Do not invoke `finalize!`. No domain materialization occurs.
@@ -542,7 +542,7 @@ The main fields and methods of `Registration::UserRegistration` are:
 ### Behavior Highlights
 - The `status` tracks the lifecycle: `pending` (awaiting allocation), `confirmed` (successful), or `rejected` (unsuccessful).
 - The `preference_rank` is only used in `preference_based` campaigns and must be unique per user within a campaign.
-- In `first_come_first_serve` mode, a registration is typically created directly with `confirmed` status if capacity allows.
+- In `first_come_first_served` mode, a registration is typically created directly with `confirmed` status if capacity allows.
 - Business logic should enforce that a user can only have one `confirmed` registration per campaign.
 
 ### Example Implementation
@@ -569,9 +569,9 @@ end
 
 ### Usage Scenarios
 - **Preference-based:** Alice submits two `Registration::UserRegistration` records for a campaign: one for "Tutorial A" with `preference_rank: 1`, and one for "Tutorial B" with `preference_rank: 2`. Both have `status: :pending`.
-- **First-Come-First-Serve:** Bob registers for the "Seminar Algebraic Geometry". A single `Registration::UserRegistration` record is created with `status: :confirmed` immediately, as long as there is capacity.
+- **First-Come-First-Served:** Bob registers for the "Seminar Algebraic Geometry". A single `Registration::UserRegistration` record is created with `status: :confirmed` immediately, as long as there is capacity.
 
-### First-Come-First-Serve Workflow
+### First-Come-First-Served Workflow
 
 In FCFS mode, registration status is determined immediately upon submission:
 
@@ -1309,7 +1309,7 @@ stateDiagram-v2
 
 ## Sequence Diagram (FCFS Flow)
 
-This diagram shows the lifecycle for a first-come-first-serve campaign.
+This diagram shows the lifecycle for a first-come-first-served campaign.
 
 ```mermaid
 sequenceDiagram

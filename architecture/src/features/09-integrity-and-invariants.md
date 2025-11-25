@@ -182,7 +182,7 @@ add_foreign_key :lecture_performance_certifications,
 | Unassigned users get dummy edge | If `allow_unassigned = true` |
 | No partial writes on failure | Transaction rollback on solver error |
 
-### First-Come-First-Serve
+### First-Come-First-Served
 
 | Invariant | Details |
 |-----------|---------|

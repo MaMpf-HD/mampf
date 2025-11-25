@@ -161,7 +161,7 @@ exam = FactoryBot.create(:exam,
 # The lecture (campaignable) hosts the exam registration campaign
 exam_campaign = lecture.registration_campaigns.create!(
   title: "Hauptklausur Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: 2.weeks.from_now,
   status: :open
 )
@@ -221,7 +221,7 @@ exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
 exam_campaign = Registration::Campaign.create!(
   campaignable: lecture,
   title: "Hauptklausur Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: 2.weeks.from_now
 )
 # The exam is the sole registerable item
@@ -248,7 +248,7 @@ exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
 exam_campaign = Registration::Campaign.create!(
   campaignable: exam,
   title: "Final Exam Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: 2.weeks.from_now,
   status: :draft
 )

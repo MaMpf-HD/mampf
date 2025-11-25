@@ -54,7 +54,7 @@ The exam equivalent of a Tutorial—it's both a thing students register for and 
 lecture = Lecture.find(123)
 campaign = lecture.registration_campaigns.create!(
   title: "Hauptklausur Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: 2.weeks.from_now
 )
 
@@ -213,7 +213,7 @@ exam = lecture.exams.create!(
 
 campaign = exam.registration_campaigns.create!(
   title: "Final Exam Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: exam.registration_deadline
 )
 

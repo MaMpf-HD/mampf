@@ -31,7 +31,7 @@ Assign students to tutorial groups or seminar talks
 | Action | Details |
 |--------|---------|
 | Create Campaign | Staff creates a `Registration::Campaign` for the lecture |
-| Set Mode | Choose `allocation_mode`: `first_come_first_serve` or `preference_based` |
+| Set Mode | Choose `allocation_mode`: `first_come_first_served` or `preference_based` |
 | Add Items | Create one `Registration::Item` for each tutorial or talk |
 | Attach Policies | Add `Registration::Policy` records (e.g., `institutional_email`, `prerequisite_campaign`) |
 | Open Campaign | Make available for student registrations (registration requests) |
@@ -55,7 +55,7 @@ Compute optimal assignment respecting preferences and constraints
 ```
 
 ```admonish warning "Only for Preference-Based Campaigns"
-This phase is skipped if the campaign uses `first_come_first_serve` mode.
+This phase is skipped if the campaign uses `first_come_first_served` mode.
 ```
 
 **Staff Actions:**
