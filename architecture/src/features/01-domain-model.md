@@ -9,7 +9,7 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | Registration::Campaign | ActiveRecord | Time‑bounded process (modes: FCFS, preference_based) |
 | Registration::Item | ActiveRecord | Wrapper exposing a registerable option under a campaign |
 | Registration::UserRegistration | ActiveRecord | (user, item) intent + status (pending/confirmed/rejected) + optional preference_rank |
-| Registration::Policy | ActiveRecord | Ordered eligibility rule (lecture_performance, institutional_email, prerequisite_campaign, custom_script) |
+| Registration::Policy | ActiveRecord | Ordered eligibility rule (student_performance, institutional_email, prerequisite_campaign, custom_script) |
 | Registration::Campaignable | Concern | Enables a model to host registration campaigns |
 | Registration::Registerable | Concern | Enables a model to be an option within a campaign |
 | Registration::PolicyEngine | Service | Executes ordered active policies; short‑circuits on first failure |
@@ -36,17 +36,17 @@ This chapter summarizes principal entities; authoritative behavioral details liv
 | Assessment::SubmissionGrader | Service | Submission-centered fan-out to TaskPoints for team grading |
 | Submission | ActiveRecord | Team-capable artifact optionally linked to a task |
 
-## Lecture Performance & Certification
+## Student Performance & Certification
 
 | Component | Type | Description |
 |-----------|------|-------------|
-| LecturePerformance::Record | ActiveRecord | Materialized factual performance data per (lecture, user): points_total, achievements_met |
-| LecturePerformance::Rule | ActiveRecord | Configuration for eligibility criteria (min_points, required_achievements, assessment_types) |
-| LecturePerformance::Certification | ActiveRecord | Teacher's eligibility decision per (lecture, user) with status (passed/failed/pending) |
+| StudentPerformance::Record | ActiveRecord | Materialized factual performance data per (lecture, user): points_total, achievements_met |
+| StudentPerformance::Rule | ActiveRecord | Configuration for eligibility criteria (min_points, required_achievements, assessment_types) |
+| StudentPerformance::Certification | ActiveRecord | Teacher's eligibility decision per (lecture, user) with status (passed/failed/pending) |
 | Achievement | ActiveRecord | Assessable type for qualitative accomplishments (e.g., blackboard presentations) with Assessment infrastructure |
-| LecturePerformance::Service | Service | Computes and upserts Records from coursework points and achievements |
-| LecturePerformance::Evaluator | Service | Generates eligibility proposals by evaluating Records against Rules |
-| Registration::Policy (kind: lecture_performance) | Integration | Checks Certification.status during exam registration (no runtime recomputation) |
+| StudentPerformance::Service | Service | Computes and upserts Records from coursework points and achievements |
+| StudentPerformance::Evaluator | Service | Generates eligibility proposals by evaluating Records against Rules |
+| Registration::Policy (kind: student_performance) | Integration | Checks Certification.status during exam registration (no runtime recomputation) |
 
 ## Grading Schemes
 
@@ -98,7 +98,7 @@ These are the "glue" entities that connect the core domain models (User, Lecture
 
 3. **Homework Grading:** `Assignment` (pointable) → linked to `Assessment::Assessment` → contains `Assessment::Task` → tutors record `Assessment::TaskPoint` → aggregated into `Assessment::Participation`
 
-4. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `LecturePerformance::Service` aggregates points into `LecturePerformance::Record` → `LecturePerformance::Evaluator` generates proposals → teacher creates `LecturePerformance::Certification` → `Registration::Policy` (kind: lecture_performance) checks `Certification.status` when student attempts `Exam` registration via the lecture's exam campaign
+4. **Exam Eligibility:** `Lecture` → students complete `Assignment` assessments → `StudentPerformance::Service` aggregates points into `StudentPerformance::Record` → `StudentPerformance::Evaluator` generates proposals → teacher creates `StudentPerformance::Certification` → `Registration::Policy` (kind: student_performance) checks `Certification.status` when student attempts `Exam` registration via the lecture's exam campaign
 
 ## High-Level ERD (Simplified)
 
@@ -131,6 +131,6 @@ See details:
 - [Allocation & Rosters](03-rosters.md)
 - [Assessments & Grading](04-assessments-and-grading.md)
 - [Exam Model](05a-exam-model.md)
-- [Lecture Performance](05-lecture-performance.md)
+- [Student Performance](05-student-performance.md)
 - [Grading Schemes](05b-grading-schemes.md)
 - [Algorithm Details](07-algorithm-details.md)
