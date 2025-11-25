@@ -15,7 +15,7 @@ server-rendered ERB and minimal JS via Stimulus.
 | Registration | Campaigns (index/show/forms), Student Registration    | Teacher/Editor UI, Student UI       |
 | Roster       | Maintenance (index/show/edit)                         | Teacher/Editor UI                   |
 | Assessment   | Assessments (CRUD), Grading table, Grade schemes, Participations | Teacher/Editor UI, Tutor UI, Student|
-| Lecture Performance | Certification Dashboard, Performance Records, Evaluator | Teacher/Editor UI, Student UI       |
+| Student Performance | Certification Dashboard, Performance Records, Evaluator | Teacher/Editor UI, Student UI       |
 | Exam         | Exams (CRUD), Exam Roster                            | Teacher/Editor UI                   |
 | Dashboard    | Student dashboard, Teacher/Editor dashboard           | Student UI, Teacher/Editor UI       |
 
@@ -148,7 +148,7 @@ paths in the UI (Allocation/Finalize).
 | Show (Tutorials – preference-based, completed) | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation; preference-based shows preferences | [Mockup](../mockups/campaigns_show_tutorial.html) |
 | Show (Interest – draft) | Summary panel; tabs: Overview, Settings, Items, Policies, Registrations, Allocation | [Mockup](../mockups/campaigns_show_interest_draft.html) |
 | Forms (Items & Policies tabs) | Inline create/edit for items and policies              | See Show mockups (tabs) |
-| Pre-flight error modal (exam campaign, registration-phase policy) | Modal shown when attempting to open exam campaign with registration-phase lecture_performance policy and incomplete certifications; blocks opening until all lecture students have finalized certification status; scrollable table of 24 affected students with names, matriculation numbers, performance points/percentage, status (pending/missing); links to Certification Dashboard for batch resolution | [Mockup](../mockups/campaigns_preflight_error_modal.html) |
+| Pre-flight error modal (exam campaign, registration-phase policy) | Modal shown when attempting to open exam campaign with registration-phase student_performance policy and incomplete certifications; blocks opening until all lecture students have finalized certification status; scrollable table of 24 affected students with names, matriculation numbers, performance points/percentage, status (pending/missing); links to Certification Dashboard for batch resolution | [Mockup](../mockups/campaigns_preflight_error_modal.html) |
 
 
 
@@ -177,7 +177,7 @@ flowchart LR
 | Index                           | [Registration::CampaignsController](11-controllers.md#registration-controllers)        | index                                   | —                                     | List campaigns for a lecture |
 | Show                            | [Registration::CampaignsController](11-controllers.md#registration-controllers)        | show                                    | —                                     | Overview with tabs |
 | New/Edit/Delete (campaign)      | [Registration::CampaignsController](11-controllers.md#registration-controllers)        | new, create, edit, update, destroy      | Destroy only if no registrations      | Manage metadata and dates |
-| Open registration               | [Registration::CampaignsController](11-controllers.md#registration-controllers)        | open                                    | Draft only                            | Status: draft → open |
+| Open registration               | [Registration::CampaignsController](11-controllers.md#registration-controllers)        | open                                    | Draft only                            | Status: draft → open → closed → processing → completed |
 | Close registration              | [Registration::CampaignsController](11-controllers.md#registration-controllers)        | close                                   | Open only                             | Stop intake: open → processing |
 | Reopen registration             | [Registration::CampaignsController](11-controllers.md#registration-controllers)        | reopen                                  | Processing only                       | Before finalization: processing → open |
 | Policies tab (CRUD)             | [Registration::PoliciesController](11-controllers.md#registration-controllers)         | index, new, create, edit, update, destroy | —                                   | Manage registration policies |
@@ -199,7 +199,7 @@ flowchart LR
 | Show (FCFS – tutorials) | Choose a specific tutorial; per-group capacity/filled, disabled when full; async save with status | [Mockup](../mockups/student_registration_fcfs_tutorials.html) |
 | Show (FCFS – exam) | Exam seat registration; date/time/location details; register/withdraw; hall capacity info; async save with status; certification status badge (passed/failed/pending) | [Mockup](../mockups/student_registration_fcfs_exam.html) |
 | Show (FCFS – exam; action required: institutional email) | Registration gated by campaign policy; example shown: institutional email domain. Page links to fulfill the requirement; Register enabled once satisfied | [Mockup](../mockups/student_registration_fcfs_exam_action_required_email.html) |
-| Show (FCFS – exam; failed certification) | Registration blocked by failed certification. Error message: "Cannot register: You have not met the lecture performance requirements." Link to Performance Overview. No Register button. | [Mockup](../mockups/student_registration_fcfs_exam_failed_certification.html) |
+| Show (FCFS – exam; failed certification) | Registration blocked by failed certification. Error message: "Cannot register: You have not met the student performance requirements." Link to Performance Overview. No Register button. | [Mockup](../mockups/student_registration_fcfs_exam_failed_certification.html) |
 | Show (FCFS – exam; pending certification) | Registration blocked by pending certification. Warning message: "Cannot register yet: Your certification is pending teacher review." Check back message. No Register button. | [Mockup](../mockups/student_registration_fcfs_exam_pending_certification.html) |
 | Confirmation (result) | Completed registration outcome; shows assignment (e.g., Tutorial group C) and preference summary | [Mockup](../mockups/student_registration_confirmation.html) |
 
@@ -208,16 +208,20 @@ flowchart LR
 ```mermaid
 flowchart LR
   subgraph Student
-    IDX[Index] --> SHW[Show]
-    SHW --> GATE{Requirements met?}
-    GATE -->|No| REQS[Fulfill requirements]
-    REQS --> GATE
-    GATE -->|Yes| MODE{Mode}
-    MODE -->|Preference-based| PREF[Set preferences]
-    PREF --> SUBMIT[Submit]
+    IDX[Index] --> SHW[Visit campaign page]
+    SHW --> ELIG{Eligible?}
+    ELIG -->|No - Policy failed| ERR[Show error with reason]
+    ELIG -->|No - Action required| REQS[Show action required page]
+    REQS --> FULFILL[Fulfill requirement]
+    FULFILL --> SHW
+    ELIG -->|Yes| MODE{Mode}
+    MODE -->|Preference-based| FORM_PREF[Show preference form]
+    FORM_PREF --> RANK[Rank preferences]
+    RANK --> SUBMIT[Submit]
     SUBMIT --> CONF_PREF[Confirmation submitted]
     CONF_PREF -.-> ALLOC[Allocation results after close]
-    MODE -->|FCFS| REG[Register or withdraw]
+    MODE -->|FCFS| FORM_FCFS[Show register buttons]
+    FORM_FCFS --> REG[Click register/withdraw]
     REG --> CONF_FCFS[Confirmation enrolled/withdrawn]
   end
 
@@ -515,7 +519,7 @@ flowchart LR
 Seminars do not expose `new`, `create`, or `destroy` actions in the Assessments tab. Talks (and their assessments) are managed via the Content tab.
 ```
 
-## Lecture Performance & Certification
+## Student Performance & Certification
 
 ```admonish info "Context"
 Lecture performance certification is a three-layer system:
@@ -526,7 +530,7 @@ Lecture performance certification is a three-layer system:
 Students can only register for exams if they have a **passed** certification.
 ```
 
-### Lecture Performance (Teacher/Editor)
+### Student Performance (Teacher/Editor)
 
 ```admonish tip "Three Distinct Views"
 Teachers interact with three separate interfaces:
@@ -539,11 +543,11 @@ Teachers interact with three separate interfaces:
 
 | View | Key elements | Mockup |
 |------|--------------|--------|
-| Performance Records Index | Read-only factual data view. Table showing all lecture students (150) with columns: student name, matriculation, tutorial group, total points (computed), percentage, achievements completed (checkmarks), last computed timestamp. Filter by tutorial group. Search by name/matriculation. Recompute button (triggers background job). No override or status columns (this is pure data). Export list button. Pagination. | [Mockup](../mockups/lecture_performance_records_index.html) |
-| Certification Dashboard | Decision-making interface. Summary cards (total students, passed count, failed count, pending count, stale count). Rule info alert (current thresholds: 50% points + 2 achievements). Filter buttons (All/Passed/Failed/Pending/Stale). Search by name. Table with columns: student name, matriculation, current points/achievements (from Records), proposed status (from Evaluator), certification status (from Certification table), override note (if manual), actions (Accept Proposal/Override). Bulk actions: "Accept All Proposals" button, "Mark Selected as Passed/Failed". Remediation alert if pending certifications block campaign. Export list button. Pagination. Includes manual override modal. | [Mockup](../mockups/lecture_performance_certifications_index.html) |
-| Rule Configuration (inline on Lecture Settings) | Configuration card with tabs: "Percentage-based (Recommended)" and "Absolute Points". Percentage tab: min percentage input (e.g., 50%), required achievements checkboxes (with type badges). Absolute tab: min points input, achievement checkboxes. Preview button shows impact modal with summary stats. Save button. Alert: "Changing criteria will generate new proposals. Review in Certification Dashboard." | [Mockup](../mockups/lecture_performance_rule_configuration.html) |
-| Rule Change Preview Modal | Triggered when saving rule changes. Side-by-side rule comparison (current vs new). Summary cards: total students, would pass (+12), would fail (-12), status changes (12). Alert: "12 students would change status". Diff table showing affected students: columns (student name, matriculation, current points/achievements, current proposal, new proposal, change indicator with arrow icon). Actions: "Apply Changes" (updates proposals only, teacher must review), "Cancel". Warning: manual overrides preserved, proposals regenerated, teacher review required. | [Mockup](../mockups/lecture_performance_rule_change_preview.html) |
-| Certification Remediation Modal (finalization) | Triggered when teacher tries to finalize campaign **that has a finalization-phase lecture_performance policy** with pending certifications among confirmed registrants. Allows inline resolution of pending certifications during finalization workflow. Warning alert: "6 students have pending certifications. Resolve to continue finalization." Table showing only confirmed registrants with pending status, columns: checkbox, student name, matriculation, points, percentage, achievements, proposed status (from Evaluator), quick-resolve dropdown (pre-filled based on proposal: passed/failed), note field (optional). Bulk resolve buttons: "Mark All as Passed", "Mark All as Failed". Info alert explaining consequences (passed → added to roster, failed → auto-rejected from exam). Confirmation checkbox required to enable submit. Actions: "Cancel Finalization" (blocks finalization, returns to campaign), "Apply & Retry Finalization" (saves certifications, re-runs finalization check with auto-rejection of failed students). | [Mockup](../mockups/lecture_performance_certification_remediation.html) |
+| Performance Records Index | Read-only factual data view. Table showing all lecture students (150) with columns: student name, matriculation, tutorial group, total points (computed), percentage, achievements completed (checkmarks), last computed timestamp. Filter by tutorial group. Search by name/matriculation. Recompute button (triggers background job). No override or status columns (this is pure data). Export list button. Pagination. | [Mockup](../mockups/student_performance_records_index.html) |
+| Certification Dashboard | Decision-making interface. Summary cards (total students, passed count, failed count, pending count, stale count). Rule info alert (current thresholds: 50% points + 2 achievements). Filter buttons (All/Passed/Failed/Pending/Stale). Search by name. Table with columns: student name, matriculation, current points/achievements (from Records), proposed status (from Evaluator), certification status (from Certification table), override note (if manual), actions (Accept Proposal/Override). Bulk actions: "Accept All Proposals" button, "Mark Selected as Passed/Failed". Remediation alert if pending certifications block campaign. Export list button. Pagination. Includes manual override modal. | [Mockup](../mockups/student_performance_certifications_index.html) |
+| Rule Configuration (inline on Lecture Settings) | Configuration card with tabs: "Percentage-based (Recommended)" and "Absolute Points". Percentage tab: min percentage input (e.g., 50%), required achievements checkboxes (with type badges). Absolute tab: min points input, achievement checkboxes. Preview button shows impact modal with summary stats. Save button. Alert: "Changing criteria will generate new proposals. Review in Certification Dashboard." | [Mockup](../mockups/student_performance_rule_configuration.html) |
+| Rule Change Preview Modal | Triggered when saving rule changes. Side-by-side rule comparison (current vs new). Summary cards: total students, would pass (+12), would fail (-12), status changes (12). Alert: "12 students would change status". Diff table showing affected students: columns (student name, matriculation, current points/achievements, current proposal, new proposal, change indicator with arrow icon). Actions: "Apply Changes" (updates proposals only, teacher must review), "Cancel". Warning: manual overrides preserved, proposals regenerated, teacher review required. | [Mockup](../mockups/student_performance_rule_change_preview.html) |
+| Certification Remediation Modal (finalization) | Triggered when teacher tries to finalize campaign **that has a finalization-phase student_performance policy** with pending certifications among confirmed registrants. Allows inline resolution of pending certifications during finalization workflow. Warning alert: "6 students have pending certifications. Resolve to continue finalization." Table showing only confirmed registrants with pending status, columns: checkbox, student name, matriculation, points, percentage, achievements, proposed status (from Evaluator), quick-resolve dropdown (pre-filled based on proposal: passed/failed), note field (optional). Bulk resolve buttons: "Mark All as Passed", "Mark All as Failed". Info alert explaining consequences (passed → added to roster, failed → auto-rejected from exam). Confirmation checkbox required to enable submit. Actions: "Cancel Finalization" (blocks finalization, returns to campaign), "Apply & Retry Finalization" (saves certifications, re-runs finalization check with auto-rejection of failed students). | [Mockup](../mockups/student_performance_certification_remediation.html) |
 
 #### Flow
 
@@ -586,16 +590,16 @@ flowchart LR
 
 | Role | Controller | Actions | Scope/Notes |
 |------|------------|---------|-------------|
-| Teacher/Editor | [LecturePerformance::RecordsController](11-controllers.md#lectureperformancerecordscontroller) | index, show, recompute | Read-only factual data; trigger background recomputation |
-| Teacher/Editor | [LecturePerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | index, create, update, bulk_accept | Certification dashboard; bulk accept proposals; manual override with notes; remediation workflow for pending |
-| Teacher/Editor | [LecturePerformance::EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller) | bulk_proposals, preview_rule_change, single_proposal | Generate proposals (does NOT create Certifications); preview rule change impact |
-| Teacher/Editor | [LecturePerformance::RulesController](11-controllers.md#lectureperformancerulescontroller) | edit, update | Configure thresholds; preview shows diff before save |
+| Teacher/Editor | [StudentPerformance::RecordsController](11-controllers.md#lectureperformancerecordscontroller) | index, show, recompute | Read-only factual data; trigger background recomputation |
+| Teacher/Editor | [StudentPerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | index, create, update, bulk_accept | Certification dashboard; bulk accept proposals; manual override with notes; remediation workflow for pending |
+| Teacher/Editor | [StudentPerformance::EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller) | bulk_proposals, preview_rule_change, single_proposal | Generate proposals (does NOT create Certifications); preview rule change impact |
+| Teacher/Editor | [StudentPerformance::RulesController](11-controllers.md#lectureperformancerulescontroller) | edit, update | Configure thresholds; preview shows diff before save |
 
 ```admonish warning "Evaluator Does Not Create Certifications"
 The Evaluator only generates proposals. Teachers must explicitly accept or override via the Certification Dashboard. This ensures teacher accountability for certification decisions.
 ```
 
-### Lecture Performance (Student)
+### Student Performance (Student)
 
 ```admonish tip "Read-Only Performance View"
 Students can view their own performance data and certification status. They cannot edit or challenge certification decisions (this must go through normal administrative channels).
@@ -605,7 +609,7 @@ Students can view their own performance data and certification status. They cann
 
 | View | Key elements | Mockup |
 |------|--------------|--------|
-| Performance Overview | Single-student view. Summary card: total points (192/240), percentage (80%), achievements completed (3/3). Certification status badge: "Passed ✓" (green) or "Failed ✗" (red) or "Pending ⏳" (yellow). Certification date and note from teacher (if manual override). Assignment breakdown table: columns (assignment title, points earned, max points, percentage). Achievements breakdown table: columns (achievement title, status). Link to detailed assignment results. No edit actions. | [Mockup](../mockups/lecture_performance_student_overview.html) |
+| Performance Overview | Single-student view. Summary card: total points (192/240), percentage (80%), achievements completed (3/3). Certification status badge: "Passed ✓" (green) or "Failed ✗" (red) or "Pending ⏳" (yellow). Certification date and note from teacher (if manual override). Assignment breakdown table: columns (assignment title, points earned, max points, percentage). Achievements breakdown table: columns (achievement title, status). Link to detailed assignment results. No edit actions. | [Mockup](../mockups/student_performance_student_overview.html) |
 
 #### Flow
 
@@ -624,13 +628,13 @@ flowchart LR
 
 | Role | Controller | Actions | Scope/Notes |
 |------|------------|---------|-------------|
-| Student | [LecturePerformance::RecordsController](11-controllers.md#lectureperformancerecordscontroller) | show | View own performance data (points, achievements) |
-| Student | [LecturePerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | show | View own certification status (passed/failed/pending) and teacher note |
+| Student | [StudentPerformance::RecordsController](11-controllers.md#lectureperformancerecordscontroller) | show | View own performance data (points, achievements) |
+| Student | [StudentPerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | show | View own certification status (passed/failed/pending) and teacher note |
 
 ## Exams
 
 ```admonish info "Context"
-Exam registration and roster management. Certification (from Lecture Performance) gates exam registration. For exam grading workflows, see [Exam Grading Workflow](#assessments-lectures---exam-grading-workflow) above.
+Exam registration and roster management. Certification (from Student Performance) gates exam registration. For exam grading workflows, see [Exam Grading Workflow](#assessments-lectures---exam-grading-workflow) above.
 ```
 
 ### Exams (Teacher/Editor)
@@ -651,7 +655,7 @@ Most exams use finalization-phase policies (students register freely, certificat
 |------|--------------|--------|
 | Exams Index | Compact table with exam name, date/time, location, registered count (clickable link to roster), certification summary (passed/pending/failed counts with clickable link to Certification Dashboard), CRUD action buttons (edit/delete), summary cards (total exams, registered students count, certification status breakdown) | [Mockup](../mockups/exams_index.html) |
 | Exam Roster (Post-Registration) | **Shows only registered students** who will take the exam. Summary cards (registered count: 85/150, grading progress: 12/85, auto-rejected: 3). Warning alert for auto-rejected students with link to details. Filter by tutorial group or grading status. Table with columns for each exam task showing individual points and max points, total points, student name, matriculation, tutorial group, certification status badge with manual override icon if applicable, grade, actions (Enter/Edit). View grading scheme link (opens modal showing task structure and points-to-grade conversion table). Export participant list. Link to grading interface. Pagination. Info alert clarifying this shows exam participants only, not all lecture students. | [Mockup](../mockups/exams_roster.html) |
-| Campaign Pre-Flight Error Modal | Triggered when teacher tries to open campaign **that has a registration-phase lecture_performance policy** with incomplete certifications. Blocks campaign opening until all lecture students have finalized certifications. Red modal header. Danger alert: "24 students have incomplete lecture performance certifications" with explanation that all students need approved/rejected status before opening. Scrollable table (max-height 400px) showing affected students with columns (name, matriculation, performance points/percentage with icon indicating if meets threshold, status badge: Pending/Missing). Info note explaining threshold icons. Modal footer with Cancel button and "Go to Certification Dashboard" primary button linking to certification management where teacher can batch-resolve all pending certifications. | [Mockup](../mockups/campaigns_preflight_error_modal.html) |
+| Campaign Pre-Flight Error Modal | Triggered when teacher tries to open campaign **that has a registration-phase student_performance policy** with incomplete certifications. Blocks campaign opening until all lecture students have finalized certifications. Red modal header. Danger alert: "24 students have incomplete student performance certifications" with explanation that all students need approved/rejected status before opening. Scrollable table (max-height 400px) showing affected students with columns (name, matriculation, performance points/percentage with icon indicating if meets threshold, status badge: Pending/Missing). Info note explaining threshold icons. Modal footer with Cancel button and "Go to Certification Dashboard" primary button linking to certification management where teacher can batch-resolve all pending certifications. | [Mockup](../mockups/campaigns_preflight_error_modal.html) |
 
 #### Flow
 
@@ -701,7 +705,7 @@ flowchart LR
 | Teacher/Editor | [ExamsController](11-controllers.md#examscontroller) | index, new, create, show, edit, update, destroy | Full CRUD on exams |
 | Teacher/Editor | [Registration::CampaignsController](11-controllers.md#registrationcampaignscontroller) | open, finalize | Pre-flight checks for certification completeness; auto-reject failed certifications |
 | Teacher/Editor | [Roster::MaintenanceController](11-controllers.md#rostermaintenancecontroller) | show, update, export | View roster (registered students only), assign rooms, export |
-| Teacher/Editor | [LecturePerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | index | View certification status for campaign pre-flight checks |
+| Teacher/Editor | [StudentPerformance::CertificationsController](11-controllers.md#lectureperformancecertificationscontroller) | index | View certification status for campaign pre-flight checks |
 
 ### Exams (Tutor)
 
@@ -786,7 +790,7 @@ flowchart LR
     DASH[Teacher Dashboard] --> CAMPAIGNS[Manage Campaigns]
     DASH --> ROSTERS[Manage Rosters]
     DASH --> GRADEBOOK[Gradebook]
-    DASH --> CERT[Lecture Performance]
+    DASH --> CERT[Student Performance]
     DASH --> ANNOUNCE[Announcements]
     DASH --> GRADE[Start Grading]
     DASH --> ALLOC[Allocate & Finalize]

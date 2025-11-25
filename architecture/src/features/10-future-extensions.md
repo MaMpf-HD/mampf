@@ -23,6 +23,8 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 2. Registration & Policy System
 
+- **Roster membership policy (`on_roster`)**: Restrict registration to users on a specific lecture/course roster. Alternative to campaign chaining via `prerequisite_campaign` policy (e.g., seminar talk registration restricted to students on seminar enrollment roster). Config: `{ "roster_source_id": <lecture_id> }`. Check: `source.roster.include?(user)`.
+- **Item-level capacity**: Add `capacity` column to `registration_items` to enable capacity partitioning across campaigns (e.g., same tutorial in two campaigns with split capacity: 20 seats for CS students, 10 for Physics). Items have independent capacity from domain objects. Soft validation warns if `sum(items.capacity) > tutorial.capacity`.
 - Policy trace persistence (store evaluation results for audit)
 - User-facing explanations (API endpoint showing why ineligible)
 - Rate limiting for FCFS hotspots
@@ -203,7 +205,7 @@ add_index :assessment_task_points, :modified_by_id
 
 ---
 
-## 5. Lecture Performance & Certification
+## 5. Student Performance & Certification
 
 ```admonish success "Recently Implemented"
 The core certification workflow (teacher-approved eligibility decisions, Evaluator proposals, pre-flight checks) is now part of the baseline architecture documented in Chapter 5.

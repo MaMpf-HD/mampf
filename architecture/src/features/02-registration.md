@@ -21,14 +21,14 @@ We use a unified system with:
 - **Allocation Persistence:** Store the final allocation (confirmed vs rejected) and optional per-item counters
 - **Strategy Layer:** Pluggable solver for preference-based allocation (Min-Cost Flow now; CP-SAT later)
 - **Domain Materialization (mandatory):** After allocation, propagate confirmed assignments back into domain models (e.g., populate talk speakers, tutorial rosters)
-- **Registration Policies:** Composable eligibility rules (lecture performance, institutional email, prerequisite, etc.)
-- **Policy Phases:** Policies declare a phase: `registration`, `finalization`, or `both`. Only policies applicable to the current phase are evaluated/enforced. See Lecture Performance → Certification (`05-lecture-performance.md`) for how finalization uses Certification.
+- **Registration Policies:** Composable eligibility rules (student performance, institutional email, prerequisite, etc.)
+- **Policy Phases:** Policies declare a phase: `registration`, `finalization`, or `both`. Only policies applicable to the current phase are evaluated/enforced. See Student Performance → Certification (`05-student-performance.md`) for how finalization uses Certification.
 - **Policy Engine:** Phase-aware evaluation of ordered active policies; short-circuits on first failure
 
 ---
 
 ```admonish tip "Glossary (Registration)"
-- **Allocation mode:** Enum selecting `first_come_first_serve` or `preference_based`.
+- **Allocation mode:** Enum selecting `first_come_first_served` or `preference_based`.
 - **AllocationService:** Computes allocations (preference-based) via `allocate!`.
 - **AllocationMaterializer:** Applies confirmed allocations to domain rosters.
 - **Campaign methods:** `allocate!`, `finalize!`, `allocate_and_finalize!`.
@@ -66,8 +66,8 @@ The main fields and methods of `Registration::Campaign` are:
 | `campaignable_type`       | DB column         | Polymorphic type for the campaign host (e.g., Lecture)                                     |
 | `campaignable_id`         | DB column         | Polymorphic ID for the campaign host                                                         |
 | `title`                   | DB column         | Human-readable campaign title                                                                 |
-| `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_serve` or `preference_based`                            |
-| `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `processing`, `completed`                                   |
+| `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_served` or `preference_based`                            |
+| `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `closed`, `processing`, `completed`                        |
 | `planning_only`           | DB column (Bool)  | Planning/reporting only; prevents materialization/finalization (default: false)              |
 | `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
 | `registration_items`      | Association       | Items available for registration within this campaign                                        |
@@ -107,7 +107,7 @@ Eligibility is not a single field or method, but is determined dynamically by ev
 
 ```admonish note "Status semantics"
 Statuses are mode-specific:
-- First-come-first-serve (FCFS): registrations are immediately `confirmed` or `rejected`.
+- First-come-first-served (FCFS): registrations are immediately `confirmed` or `rejected`.
 - Preference-based: registrations are `pending` until allocation, then resolved to `confirmed` or `rejected` on finalize.
 
 Do not overload `pending` to represent eligibility uncertainty in FCFS; use policy `details` (e.g., `stability`) purely for UI messaging.
@@ -115,22 +115,96 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 
 #### Close vs Finalize
 
-- **Close registration:** stops intake and edits; transitions `open → processing`.
+- **Close registration:** stops intake and edits; transitions `open → closed`.
   Used to lock the window early or when the deadline passes automatically.
-- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `lecture_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` for remediation. After passing guards, materializes confirmed results and transitions `processing → completed`.
+- **Run allocation (preference-based only):** triggers solver; transitions `closed → processing`.
+  FCFS campaigns skip this step (results already determined).
+- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `student_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`.
 - **Planning-only campaigns:** close only; do not call `finalize!`. Results remain in reporting tables and are not materialized. When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
 - **Lecture performance completeness checks:**
-  - **Campaign save:** Warns if any students lack certifications (any phase with lecture_performance policy)
+  - **Campaign save:** Warns if any students lack certifications (any phase with student_performance policy)
   - **Campaign open:** Hard-fails if any students have missing/pending certifications (registration or both phase)
   - **Campaign finalize:** Hard-fails if any confirmed registrants have missing/pending certifications (finalization or both phase); auto-rejects students with failed certifications
 
-See also: Lecture Performance → Certification (`05-lecture-performance.md`).
+See also: Student Performance → Certification (`05-student-performance.md`).
 
 ```admonish tip "UI hooks for unassigned"
 After completion, the Campaign Show can surface an "Unassigned registrants"
 table (name, matriculation, top preferences) with actions to place users into
 groups via Roster Maintenance. In roster screens, add a filter
 "Candidates from campaign X" that lists these unassigned users for quick moves.
+```
+
+### Campaign Lifecycle & Freezing Rules
+
+Campaigns transition through several states to ensure data integrity and fair user experience. Certain attributes freeze at specific lifecycle points to prevent inconsistent or unfair changes.
+
+
+
+**State Definitions:**
+- **draft**: Campaign is being configured, not visible to students
+- **open**: Registration window is active, students can register
+- **closed**: Registration window ended (automatically at deadline or manually)
+- **processing**: Allocation algorithm running (preference-based only)
+- **completed**: Results published, rosters materialized
+
+#### Freezing Rules
+
+##### Campaign Attributes
+
+| Attribute | Freeze Point | Modification Rules |
+|-----------|--------------|-------------------|
+| `allocation_mode` | After `draft` | Cannot change once opened. Students make decisions based on mode (early registration for FCFS vs. preference ranking). |
+| `registration_opens_at` | After `draft` | Cannot change once opened. Opening time is in the past. |
+| `registration_deadline` | Never | Can be extended anytime. Shortening is allowed but discouraged (confusing UX). |
+| `planning_only` | Never | Can be toggled anytime. Affects internal behavior, not student-facing. |
+
+##### Policies
+
+| Action | Freeze Point | Modification Rules |
+|--------|--------------|-------------------|
+| Add/Edit/Remove | After `draft` | Cannot add, edit, or remove policies once opened. New policies could invalidate existing registrations (especially in FCFS where spots are already confirmed). |
+
+##### Items
+
+| Action | Freeze Point | Modification Rules |
+|--------|--------------|-------------------|
+| Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
+| Remove item | After `draft` | Cannot remove items with existing registrations. Students may have registered for (FCFS) or ranked (preference) that item. |
+
+##### Capacity Constraints
+
+| Mode | Freeze Point | Modification Rules |
+|------|--------------|-------------------|
+| FCFS | Constrained | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. Cannot revoke confirmed spots. |
+| Preference-based | After `completed` | Can change freely while `draft`, `open`, or `closed` (allocation hasn't run). Freezes once `completed` (results published). |
+
+#### Implementation Notes
+
+**Validation Example:**
+```ruby
+validate :allocation_mode_frozen_after_open, on: :update
+validate :policies_frozen_after_open, on: :update
+validate :capacity_decrease_respects_confirmed, on: :update
+
+def allocation_mode_frozen_after_open
+  if allocation_mode_changed? && !draft?
+    errors.add(:allocation_mode, "cannot be changed after campaign opens")
+  end
+end
+```
+
+**Item Removal:**
+- Check `item.user_registrations.exists?` before allowing deletion
+- Alternative: Soft-delete (set `active: false`) instead of destroying
+
+**UI Feedback:**
+- Disable/gray out frozen fields in forms
+- Show tooltips explaining why changes are blocked
+- Display warning before opening campaign: "Settings will be locked after opening"
+
+```admonish warning "Reopening Campaigns"
+When reopening a `completed` campaign (transitioning back to `open`), all freezing rules still apply. The campaign returns to accepting registrations, but fundamental settings (mode, policies, items) remain locked.
 ```
 
 ### Example Implementation (Phase-aware planned state)
@@ -149,8 +223,8 @@ module Registration
              class_name: "Registration::Policy",
              dependent: :destroy
 
-    enum allocation_mode: { first_come_first_serve: 0, preference_based: 1 }
-    enum status: { draft: 0, open: 1, processing: 2, completed: 3 }
+    enum allocation_mode: { first_come_first_served: 0, preference_based: 1 }
+    enum status: { draft: 0, open: 1, closed: 2, processing: 3, completed: 4 }
 
     validates :title, :registration_deadline, presence: true
     validate :valid_status_transition, on: :update
@@ -173,14 +247,14 @@ module Registration
 
     def finalize!
       return false if planning_only?
-      return false unless open? || processing?
+      return false unless closed? || processing?
       Registration::FinalizationGuard.new(self).check!
       Registration::AllocationMaterializer.new(self).materialize!
       update!(status: :completed)
     end
 
     def allocate!
-      return false unless preference_based? && open? && Time.current >= registration_deadline
+      return false unless preference_based? && closed?
       update!(status: :processing)
       Registration::AllocationService.new(self, strategy: :min_cost_flow).allocate!
       true
@@ -193,7 +267,7 @@ module Registration
     end
 
     def close!
-      update!(status: :processing) if status == "open"
+      update!(status: :closed) if status == "open"
     end
 
     private
@@ -203,8 +277,9 @@ module Registration
 
       valid_transitions = {
         "draft" => ["open"],
-        "open" => ["processing"],
-        "processing" => ["completed"]
+        "open" => ["closed"],
+        "closed" => ["processing", "completed", "open"],
+        "processing" => ["completed", "open"]
       }
 
       allowed = valid_transitions[status_was]
@@ -226,11 +301,11 @@ Student Registration index.
 ```
 
 - A **"Tutorial Registration" campaign** is created for a `Lecture`. It's `preference_based` and allows students to rank their preferred tutorial slots. Items point to `Tutorial`. (Admin UI: [Tutorial Show (open)](../mockups/campaigns_show_tutorial_open.html); Student UI: [Show – preference-based](../mockups/student_registration.html), [Confirmation](../mockups/student_registration_confirmation.html))
-- A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_serve` and assigns talk slots. Items point to `Talk`.
-- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_serve` and enrolls students directly. The single item points to the `Lecture`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
-- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_serve` to quickly fill the limited seminar seats. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
-- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_serve` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
-- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_serve` and may include a `lecture_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `lecture_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
+- A **"Talk Assignment" campaign** is created for a `Lecture` (often a seminar). It's `preference_based` or `first_come_first_served` and assigns talk slots. Items point to `Talk`.
+- A **"Lecture Registration" campaign** is created for a `Lecture` (commonly seminars). It's typically `first_come_first_served` and enrolls students directly. The single item points to the `Lecture`. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- A **"Seminar Enrollment" campaign** is created for a `Lecture` (acting as a seminar). It's `first_come_first_served` to quickly fill the limited seminar seats. (Student UI: [Show – FCFS](../mockups/student_registration_fcfs.html))
+- An **"Interest Registration" campaign** is created for a `Lecture` before the term to gauge demand (planning-only). It's `first_come_first_served` with a very high capacity; when it ends, you do not call `finalize!`. Results are used for hiring/planning and are not materialized to rosters. (Admin UI: [Interest Show (draft)](../mockups/campaigns_show_interest_draft.html))
+- An **"Exam Registration" campaign** is created for an `Exam`. It is `first_come_first_served` and may include a `student_performance` policy (phase: `registration` or `both`) for advisory eligibility messaging; finalization enforces Certification=passed only if a finalization-phase `student_performance` policy exists. Items point to `Exam`. (Admin UI: [Exam Show](../mockups/campaigns_show_exam.html); Student UI: [Show – exam (FCFS)](../mockups/student_registration_fcfs_exam.html); see also [action required: institutional email](../mockups/student_registration_fcfs_exam_action_required_email.html))
 
 ---
 
@@ -242,7 +317,7 @@ tutors) without changing any rosters.
 
 - Host: `Lecture` (campaignable).
 - Items: Single item pointing to the `Lecture` (registerable).
-- Mode: `first_come_first_serve`.
+- Mode: `first_come_first_served`.
 - Capacity: Very high (effectively unlimited) to capture demand signal.
 - Timing: Open well before the term; close before main registrations.
 - Finalization: Do not invoke `finalize!`. No domain materialization occurs.
@@ -467,7 +542,7 @@ The main fields and methods of `Registration::UserRegistration` are:
 ### Behavior Highlights
 - The `status` tracks the lifecycle: `pending` (awaiting allocation), `confirmed` (successful), or `rejected` (unsuccessful).
 - The `preference_rank` is only used in `preference_based` campaigns and must be unique per user within a campaign.
-- In `first_come_first_serve` mode, a registration is typically created directly with `confirmed` status if capacity allows.
+- In `first_come_first_served` mode, a registration is typically created directly with `confirmed` status if capacity allows.
 - Business logic should enforce that a user can only have one `confirmed` registration per campaign.
 
 ### Example Implementation
@@ -494,9 +569,9 @@ end
 
 ### Usage Scenarios
 - **Preference-based:** Alice submits two `Registration::UserRegistration` records for a campaign: one for "Tutorial A" with `preference_rank: 1`, and one for "Tutorial B" with `preference_rank: 2`. Both have `status: :pending`.
-- **First-Come-First-Serve:** Bob registers for the "Seminar Algebraic Geometry". A single `Registration::UserRegistration` record is created with `status: :confirmed` immediately, as long as there is capacity.
+- **First-Come-First-Served:** Bob registers for the "Seminar Algebraic Geometry". A single `Registration::UserRegistration` record is created with `status: :confirmed` immediately, as long as there is capacity.
 
-### First-Come-First-Serve Workflow
+### First-Come-First-Served Workflow
 
 In FCFS mode, registration status is determined immediately upon submission:
 
@@ -546,7 +621,7 @@ A single, configurable eligibility condition attached to a campaign.
 ```
 
 ```admonish note "Think of it as"
-“One rule card” (lecture performance gate, email domain restriction, prerequisite confirmation).
+“One rule card” (student performance gate, email domain restriction, prerequisite confirmation).
 ```
 
 The main fields and methods of `Registration::Policy` are:
@@ -554,7 +629,7 @@ The main fields and methods of `Registration::Policy` are:
 | Name/Field                | Type/Kind         | Description                                                      |
 |---------------------------|-------------------|------------------------------------------------------------------|
 | `registration_campaign_id`| DB column         | Foreign key for the parent campaign.                             |
-| `kind`                    | DB column (Enum)  | The type of rule to apply (e.g., `lecture_performance`).         |
+| `kind`                    | DB column (Enum)  | The type of rule to apply (e.g., `student_performance`).         |
 | `phase`                   | DB column (Enum)  | `registration`, `finalization`, or `both`.                       |
 | `config`                  | DB column (JSONB) | Parameters for the rule (e.g., `{ "allowed_domains": ["uni-heidelberg.de "] }`).          |
 | `position`                | DB column         | The evaluation order for policies within a campaign.             |
@@ -569,10 +644,10 @@ The main fields and methods of `Registration::Policy` are:
 - Returns a structured outcome (`{ pass: true/false, ... }`) for clear feedback.
 - Adding a new rule type involves adding to the `kind` enum and implementing its logic in `evaluate`, with no schema changes required.
 
-The `evaluate` method of a policy returns a hash. While the top-level structure is consistent (containing a boolean `pass` key), individual policies can enrich the result with a `details` hash, providing context-specific information. This is particularly useful for complex rules like lecture performance eligibility.
+The `evaluate` method of a policy returns a hash. While the top-level structure is consistent (containing a boolean `pass` key), individual policies can enrich the result with a `details` hash, providing context-specific information. This is particularly useful for complex rules like student performance eligibility.
 
 ```admonish info "Lecture performance advisory payload"
-For early exam registration messaging, the `lecture_performance` policy attaches a concise `details` hash (points, required_points, stability). Rich progress and "may still become eligible" guidance lives in the Lecture Performance views, not here.
+For early exam registration messaging, the `student_performance` policy attaches a concise `details` hash (points, required_points, stability). Rich progress and "may still become eligible" guidance lives in the Student Performance views, not here.
 ```
 
 ### Example Implementation
@@ -584,7 +659,7 @@ module Registration
     acts_as_list scope: :registration_campaign
 
     enum kind: {
-      lecture_performance: "lecture_performance",
+      student_performance: "student_performance",
       institutional_email: "institutional_email",
       prerequisite_campaign: "prerequisite_campaign",
       custom_script: "custom_script"
@@ -601,7 +676,7 @@ module Registration
 
     def evaluate(user)
   case kind.to_sym
-  when :lecture_performance then eval_lecture_performance(user)
+  when :student_performance then eval_student_performance(user)
       when :institutional_email then eval_email(user)
       when :prerequisite_campaign then eval_prereq(user)
       when :custom_script then eval_custom(user)
@@ -619,10 +694,10 @@ module Registration
       { pass: false, code: code, message: message, details: details }
     end
 
-    def eval_lecture_performance(user)
+    def eval_student_performance(user)
       lecture = Lecture.find(config["lecture_id"])
 
-      cert = LecturePerformance::Certification.find_by(lecture: lecture, user: user)
+      cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
 
       if cert&.passed?
         pass_result(:certification_passed)
@@ -679,7 +754,7 @@ Each policy kind returns a standardized result hash with optional `details`. The
 
 | Policy Kind | Success `details` Keys | Failure `details` Keys | Example |
 |-------------|----------------------|----------------------|---------|
-| `lecture_performance` | None | `certification_status` (`:missing`, `:pending`, `:failed`) | `{ certification_status: :pending }` |
+| `student_performance` | None | `certification_status` (`:missing`, `:pending`, `:failed`) | `{ certification_status: :pending }` |
 | `institutional_email` | None | `domain` (string), `allowed` (array of strings) | `{ domain: "gmail.com", allowed: ["uni.edu"] }` |
 | `prerequisite_campaign` | None | `prerequisite_campaign_id` (integer) | `{ prerequisite_campaign_id: 42 }` |
 | `custom_script` | Defined by script | Defined by script | N/A (implementation-specific) |
@@ -708,14 +783,14 @@ Constraints and guardrails:
 - Models validate allowed keys and shapes per kind.
 - Index JSONB keys if needed for queries (e.g., `config ->> 'lecture_id'`).
 - Only minimal data belongs here. For exam eligibility, thresholds and
-  criteria live in `LecturePerformance::Rule`; the policy stores only
+  criteria live in `StudentPerformance::Rule`; the policy stores only
   `{ "lecture_id": <id> }`.
 
 See UI: Policies tab in [Exam Show](../mockups/campaigns_show_exam.html).
 
 ### Usage Scenarios
 - **Email constraint:** `kind: :institutional_email`, `phase: :registration`, `config: { "allowed_domains": ["uni.edu"] }`
-- **Lecture performance gate (advisory + enforcement):** `kind: :lecture_performance`, `phase: :both`, `config: { "lecture_id": 42 }`
+- **Lecture performance gate (advisory + enforcement):** `kind: :student_performance`, `phase: :both`, `config: { "lecture_id": 42 }`
 - **Prerequisite:** `kind: :prerequisite_campaign`, `phase: :registration`, `config: { "prerequisite_campaign_id": 55 }`
 
 ---
@@ -744,11 +819,11 @@ An 'eligibility checklist' processor that stops at the first failed check and pr
 - This `Result` object is used by `Registration::Campaign#evaluate_policies_for` to provide clear feedback to the UI.
 
 ```admonish tip "Lecture performance: data completeness requirement"
-Unlike other policies, `lecture_performance` requires data preparation before the phase starts. Campaign save/open/finalize will validate that all required certifications exist and are non-pending. See Lecture Performance chapter (05-lecture-performance.md) for pre-flight validation details.
+Unlike other policies, `student_performance` requires data preparation before the phase starts. Campaign save/open/finalize will validate that all required certifications exist and are non-pending. See Student Performance chapter (05-student-performance.md) for pre-flight validation details.
 ```
 
 ```admonish tip "Freshness vs certification"
-The `lecture_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are updated by background jobs or teacher-triggered recomputation. This keeps registration fast and deterministic.
+The `student_performance` policy checks the Certification table at runtime (no JIT recomputation during registration). Facts (Record) are updated by background jobs or teacher-triggered recomputation. This keeps registration fast and deterministic.
 ```
 
 ### Example Implementation
@@ -923,14 +998,14 @@ end
 **_The Finalization Gatekeeper_**
 
 ```admonish info "What it represents"
-Ensures every confirmed user passes all finalization-phase policies before roster materialization. For lecture_performance policies, enforces certification completeness and auto-rejects failed certifications.
+Ensures every confirmed user passes all finalization-phase policies before roster materialization. For student_performance policies, enforces certification completeness and auto-rejects failed certifications.
 ```
 
 ### Public Interface
 | Method           | Purpose |
 |------------------|---------|
 | `initialize(campaign)` | Prepare guard for a campaign. |
-| `check!`         | Raises on first violation; returns true when all confirmed users pass. Auto-rejects students with failed lecture performance certifications. |
+| `check!`         | Raises on first violation; returns true when all confirmed users pass. Auto-rejects students with failed student performance certifications. |
 
 ### Example Implementation
 ```ruby
@@ -949,9 +1024,9 @@ module Registration
       confirmed.each do |ur|
         user = ur.user
         policies.each do |policy|
-          if policy.kind == "lecture_performance"
+          if policy.kind == "student_performance"
             lecture = Lecture.find(policy.config["lecture_id"])
-            cert = LecturePerformance::Certification.find_by(lecture: lecture, user: user)
+            cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
 
             if cert.nil? || cert.pending?
               raise StandardError, "Finalization blocked: certification missing or pending for user #{user.id}"
@@ -975,12 +1050,12 @@ end
 
 ### Behavior Highlights
 
-- **Auto-reject failed certifications:** Students with `LecturePerformance::Certification.status == :failed` are automatically moved to `rejected` status
+- **Auto-reject failed certifications:** Students with `StudentPerformance::Certification.status == :failed` are automatically moved to `rejected` status
 - **Hard-fail on missing/pending:** If any confirmed student has no certification or `status: :pending`, raise error and block finalization
 - **Remediation UI trigger:** The error message should trigger UI showing which students need certification resolution
 - **Other policies:** Evaluated normally; any failure blocks finalization
 
-See also: Lecture Performance → Certification and Pre-flight Validation (`05-lecture-performance.md`).
+See also: Student Performance → Certification and Pre-flight Validation (`05-student-performance.md`).
 
 ---
 
@@ -1097,12 +1172,12 @@ end
 stateDiagram-v2
     [*] --> draft
     draft --> open : open
-    open --> processing : close (manual or at deadline)
-    processing --> completed : finalize!
+    open --> closed : close (manual or at deadline)
+    closed --> completed : finalize! (optional)
 
-    note right of processing
-        Regular campaigns: run allocation, then finalize.
-        Planning-only: close only, skip finalize (stays processing).
+    note right of closed
+        Regular FCFS campaigns: finalize to materialize rosters.
+        Planning-only: stay in closed, skip finalize.
     end note
 ```
 
@@ -1125,7 +1200,8 @@ erDiagram
 stateDiagram-v2
     [*] --> draft: Campaign created
     draft --> open: Admin opens campaign
-    open --> processing: Admin closes OR deadline reached
+    open --> closed: Admin closes OR deadline reached
+    closed --> processing: Allocation runs
     processing --> completed: Admin finalizes
     
     note right of draft
@@ -1160,34 +1236,38 @@ sequenceDiagram
     participant Campaign as Registration::Campaign
     participant UserReg as Registration::UserRegistration
     actor Job as Background Job
-  participant AllocationSvc as Registration::AllocationService
+    participant AllocationSvc as Registration::AllocationService
     participant Solver as Registration::Solvers::MinCostFlow
     participant Materializer as Registration::AllocationMaterializer
     participant RegTarget as Registerable (e.g., Tutorial)
 
     rect rgb(235, 245, 255)
     note over User,Controller: Registration phase (campaign is open)
-    User->>Controller: Submit preferences
-  Controller->>Campaign: evaluate_policies_for(user, phase: :registration)
+    User->>Controller: Visit campaign page
+    Controller->>Campaign: evaluate_policies_for(user, phase: :registration)
     alt eligible
-      loop for each preference
-        Controller->>UserReg: create(user_id, item_id, rank)
-      end
+        Controller-->>User: Show preference ranking form
+        User->>Controller: Submit preferences
+        loop for each preference
+            Controller->>UserReg: create(user_id, item_id, rank)
+        end
+        Controller-->>User: Preferences saved
     else not eligible
-      Controller-->>User: Show reason from PolicyEngine
+        Controller-->>User: Show reason from PolicyEngine
     end
     end
 
     note over User,Job: Deadline passes
 
-  rect rgb(255, 245, 235)
-  note over Job,RegTarget: Allocation & finalization
-  Job->>Campaign: allocate_and_finalize!
-    Campaign->>Campaign: update!(status: :processing)
-  Campaign->>AllocationSvc: new(campaign).allocate!
-  AllocationSvc->>Solver: new(campaign).run()
+    rect rgb(255, 245, 235)
+    note over Job,RegTarget: Allocation & finalization
+    Job->>Campaign: allocate_and_finalize!
+    Campaign->>Campaign: update!(status: :closed)
+    Campaign->>AllocationSvc: new(campaign).allocate!
+    AllocationSvc->>Solver: new(campaign).run()
     note right of Solver: Build graph, solve, persist statuses
     Solver->>UserReg: update_all(status: confirmed/rejected)
+    Campaign->>Campaign: update!(status: :processing)
     Campaign->>Campaign: finalize!
     Campaign->>Materializer: new(campaign).materialize!
     Materializer->>RegTarget: materialize_allocation!(user_ids, campaign)
@@ -1202,8 +1282,8 @@ sequenceDiagram
 stateDiagram-v2
     [*] --> draft: Campaign created
     draft --> open: Admin opens campaign
-    open --> processing: Admin closes OR deadline reached
-    processing --> completed: Admin finalizes (optional)
+    open --> closed: Admin closes OR deadline reached
+    closed --> completed: Admin finalizes (optional)
     
     note right of draft
         Admin configures items,
@@ -1215,7 +1295,7 @@ stateDiagram-v2
         immediate confirm/reject
     end note
     
-    note right of processing
+    note right of closed
         Registration closed;
         results visible
     end note
@@ -1231,7 +1311,7 @@ stateDiagram-v2
 
 ## Sequence Diagram (FCFS Flow)
 
-This diagram shows the lifecycle for a first-come-first-serve campaign.
+This diagram shows the lifecycle for a first-come-first-served campaign.
 
 ```mermaid
 sequenceDiagram
@@ -1246,9 +1326,8 @@ sequenceDiagram
 
     rect rgb(235, 245, 255)
     note over Student,PolicyEngine: Registration phase (campaign is open)
-    Student->>UI: Click "Register for Item X"
-    UI->>Controller: POST /campaigns/:id/user_registrations
-    
+    Student->>UI: Visit campaign page
+    UI->>Controller: GET /campaigns/:id
     Controller->>Campaign: find(campaign_id)
     Controller->>Campaign: open_for_registrations?
     Campaign-->>Controller: true
@@ -1259,9 +1338,15 @@ sequenceDiagram
     Campaign-->>Controller: Result
     
     alt policies fail
-        Controller-->>UI: Error: "Not eligible (reason)"
-        UI-->>Student: Show error message
+        Controller-->>UI: Ineligible state
+        UI-->>Student: Show error: "Not eligible (reason)"
     else policies pass
+        Controller-->>UI: Show register buttons
+        UI-->>Student: Display available items
+        
+        Student->>UI: Click "Register for Item X"
+        UI->>Controller: POST /campaigns/:id/user_registrations
+        
         Controller->>Item: find(item_id)
         Controller->>Item: remaining_capacity
         Item-->>Controller: capacity count
@@ -1287,7 +1372,7 @@ sequenceDiagram
     Student->>UI: View results
     UI->>Controller: GET /campaigns/:id
     Controller->>Campaign: status
-    Campaign-->>Controller: :processing or :completed
+    Campaign-->>Controller: :closed, :processing, or :completed
     Controller-->>UI: Show campaign with status
     UI-->>Student: Display confirmed/rejected
     end

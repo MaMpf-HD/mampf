@@ -47,7 +47,7 @@ Registration — Step 2: Foundations (Schema)
   prerequisite campaigns.
 - Refs: [PolicyEngine](02-registration.md#registrationpolicyengine-service),
   [Policy#evaluate](02-registration.md#policy-evaluation-interface)
-- Acceptance: Policy engine evaluates ordered policies with short-circuit; tests pass with doubled roster data; `lecture_performance` policy kind deferred to Step 11.
+- Acceptance: Policy engine evaluates ordered policies with short-circuit; tests pass with doubled roster data; `student_performance` policy kind deferred to Step 11.
 ```
 
 ```admonish example "PR-2.3 — Core concerns (Campaignable, Registerable)"
@@ -75,30 +75,35 @@ Registration — Step 3: FCFS Mode
 ```
 
 ```admonish example "PR-3.1 — Admin: Campaigns scaffold (CRUD + open/close)"
-- Scope: Teacher/editor UI for campaign lifecycle (draft → open → processing → completed).
+- Scope: Teacher/editor UI for campaign lifecycle (draft → open → closed → processing → completed).
 - Controllers: `Registration::CampaignsController` (new/create/edit/update/show/destroy).
-- Actions: `open` (validates policies, updates status to :open), `close` (background job triggers status → :processing), `reopen` (reverts to :open if allocation not started).
-- UI: Turbo Frames for inline editing; flash messages for validation errors; feature flag `registration_campaigns_enabled`.
-- Refs: [Campaign lifecycle](02-registration.md#campaign-lifecycle),
+- Actions: `open` (validates policies, updates status to :open), `close` (background job triggers status → :closed), `reopen` (reverts to :open if allocation not started).
+- Freezing: Campaign-level attributes freeze on lifecycle transitions (`allocation_mode`, `registration_opens_at` after draft; policies freeze on open).
+- UI: Turbo Frames for inline editing; flash messages for validation errors and freeze violations; feature flag `registration_campaigns_enabled`; disabled fields for frozen attributes.
+- Refs: [Campaign lifecycle & freezing](02-registration.md#campaign-lifecycle--freezing-rules),
   [State diagram](02-registration.md#campaign-state-diagram)
-- Acceptance: Teachers can create draft campaigns, add policies, open campaigns (with policy validation); campaigns cannot be deleted when open/processing; feature flag gates UI.
+- Acceptance: Teachers can create draft campaigns, add policies, open campaigns (with policy validation); campaigns cannot be deleted when open/processing; freezing rules enforced with clear error messages; frozen fields disabled in UI; feature flag gates UI.
 ```
 
 ```admonish example "PR-3.2 — Admin: Items CRUD (nested under Campaign)"
 - Scope: Manage registerable items within a campaign.
 - Controllers: `Registration::ItemsController` (nested routes under campaigns).
-- UI: Turbo Frames for inline item addition/removal; capacity editing.
-- Refs: [Item model](02-registration.md#registrationitem-activerecord-model)
-- Acceptance: Teachers can add/remove tutorials as items; capacity edits validated; items cannot be removed if campaign is open.
+- Freezing: Items cannot be removed when `status != :draft` (prevents invalidating existing registrations); adding items always allowed.
+- UI: Turbo Frames for inline item addition/removal; capacity editing; delete button disabled for items when campaign is open.
+- Refs: [Item model](02-registration.md#registrationitem-activerecord-model),
+  [Freezing rules](02-registration.md#campaign-lifecycle--freezing-rules)
+- Acceptance: Teachers can add items anytime; items cannot be removed if campaign is open or has registrations for that item; capacity edits validated.
 ```
 
 ```admonish example "PR-3.3 — Student: Register (single-item FCFS)"
 - Scope: Student registration for single-item campaigns (e.g., one tutorial per lecture).
 - Controllers: `Registration::UserRegistrationsController` (create/destroy).
 - Logic: FCFS mode with capacity checks; policy evaluation on create.
-- UI: Registration button; Turbo Stream updates for immediate feedback.
-- Refs: [FCFS mode](02-registration.md#fcfs-mode-direct-assignment)
-- Acceptance: Students can register for open campaigns; capacity enforced; policy violations shown with error messages; confirmed status set immediately.
+- Freezing: Item capacity can increase anytime; can decrease only if `new_capacity >= confirmed_count` (prevents revoking confirmed spots).
+- UI: Registration button; Turbo Stream updates for immediate feedback; capacity editing validates against confirmed count.
+- Refs: [FCFS mode](02-registration.md#fcfs-mode-direct-assignment),
+  [Freezing rules](02-registration.md#campaign-lifecycle--freezing-rules)
+- Acceptance: Students can register for open campaigns; capacity enforced; policy violations shown with error messages; confirmed status set immediately; capacity decrease blocked if it would revoke spots.
 ```
 
 ```admonish example "PR-3.4 — Student: Register (multi-item FCFS)"
@@ -140,9 +145,11 @@ Registration — Step 4: Preference-Based Mode
 - Controllers: `Registration::AllocationController` (trigger/retry/finalize actions).
 - Background: `AllocationJob` runs solver and updates UserRegistration statuses via Turbo Streams.
 - Logic: On finalize, call `FinalizationGuard#check!`, then `materialize_allocation!` for each confirmed user.
+- Freezing: Item capacity freezes once `status == :completed` (results published); can be adjusted freely during `draft`, `open`, `closed` states.
 - Refs: [Solver](02-registration.md#registrationallocation-namespace),
-  [Finalization](02-registration.md#finalization-materialization)
-- Acceptance: Teachers can trigger allocation; results streamed to UI; finalize materializes rosters; unconfirmed users stay in limbo; confirmed users added to rosters via `materialize_allocation!`.
+  [Finalization](02-registration.md#finalization-materialization),
+  [Freezing rules](02-registration.md#campaign-lifecycle--freezing-rules)
+- Acceptance: Teachers can trigger allocation; results streamed to UI; finalize materializes rosters; capacity changes blocked after completion; unconfirmed users stay in limbo; confirmed users added to rosters via `materialize_allocation!`.
 ```
 
 ```admonish abstract
@@ -297,39 +304,39 @@ Dashboards — Step 10: Partial Integration
 ```
 
 ```admonish abstract
-Lecture Performance — Step 11: System Foundations
+Student Performance — Step 11: System Foundations
 ```
 
 ```admonish example "PR-11.1 — Performance schema (Record, Rule, Achievement, Certification)"
-- Scope: Create `lecture_performance_records`, `lecture_performance_rules`,
-  `lecture_performance_achievements`, `lecture_performance_certifications`.
+- Scope: Create `student_performance_records`, `student_performance_rules`,
+  `student_performance_achievements`, `student_performance_certifications`.
 - Migrations:
-  - `20251120000000_create_lecture_performance_records.rb`
-  - `20251120000001_create_lecture_performance_rules.rb`
-  - `20251120000002_create_lecture_performance_achievements.rb`
-  - `20251120000003_create_lecture_performance_certifications.rb`
-- Refs: [Lecture Performance models](05-lecture-performance.md#solution-architecture)
+  - `20251120000000_create_student_performance_records.rb`
+  - `20251120000001_create_student_performance_rules.rb`
+  - `20251120000002_create_student_performance_achievements.rb`
+  - `20251120000003_create_student_performance_certifications.rb`
+- Refs: [Student Performance models](05-student-performance.md#solution-architecture)
 - Acceptance: Migrations run; models have correct associations; unique constraints on certifications.
 ```
 
 ```admonish example "PR-11.2 — Computation service (materialize Records)"
-- Scope: `LecturePerformance::ComputationService` to aggregate performance data.
+- Scope: `StudentPerformance::ComputationService` to aggregate performance data.
 - Implementation: Reads from `assessment_participations` and
-  `assessment_task_points`; writes to `lecture_performance_records`.
-- Refs: [ComputationService](05-lecture-performance.md#lectureperformancecomputationservice-service)
+  `assessment_task_points`; writes to `student_performance_records`.
+- Refs: [ComputationService](05-student-performance.md#lectureperformancecomputationservice-service)
 - Acceptance: Service computes points and achievements; upserts Records; handles missing data gracefully.
 ```
 
 ```admonish example "PR-11.3 — Evaluator (proposal generator)"
-- Scope: `LecturePerformance::Evaluator` to generate certification proposals.
+- Scope: `StudentPerformance::Evaluator` to generate certification proposals.
 - Implementation: Reads Records and Rules; returns proposed status
   (passed/failed) per student.
-- Refs: [Evaluator](05-lecture-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator)
+- Refs: [Evaluator](05-student-performance.md#lectureperformanceevaluator-teacher-facing-proposal-generator)
 - Acceptance: Evaluator generates proposals; does NOT create Certifications; used for bulk UI only.
 ```
 
 ```admonish example "PR-11.4 — Records controller (factual data display)"
-- Scope: `LecturePerformance::RecordsController` for viewing performance data.
+- Scope: `StudentPerformance::RecordsController` for viewing performance data.
 - Controllers: Index/show actions for Records.
 - UI: Table view with points, achievements, computed_at timestamp.
 - Refs: [RecordsController](11-controllers.md#lectureperformancerecordscontroller)
@@ -337,7 +344,7 @@ Lecture Performance — Step 11: System Foundations
 ```
 
 ```admonish example "PR-11.5 — Certifications controller (teacher workflow)"
-- Scope: `LecturePerformance::CertificationsController` for teacher certification.
+- Scope: `StudentPerformance::CertificationsController` for teacher certification.
 - Controllers: Index (dashboard), create (bulk), update (override),
   bulk_accept.
 - UI: Certification dashboard with proposals; bulk accept/reject; manual override with notes.
@@ -346,7 +353,7 @@ Lecture Performance — Step 11: System Foundations
 ```
 
 ```admonish example "PR-11.6 — Evaluator controller (proposal endpoints)"
-- Scope: `LecturePerformance::EvaluatorController` for proposal generation.
+- Scope: `StudentPerformance::EvaluatorController` for proposal generation.
 - Controllers: `bulk_proposals`, `preview_rule_change`, `single_proposal`.
 - UI: Modal for rule change preview showing diff of affected students.
 - Refs: [EvaluatorController](11-controllers.md#lectureperformanceevaluatorcontroller)
@@ -368,9 +375,9 @@ Exam — Step 12: Registration & Certification Integration
 ```
 
 ```admonish example "PR-12.2 — Lecture performance policy (add to engine)"
-- Scope: Add `lecture_performance` policy kind to `Registration::PolicyEngine`.
-- Implementation: `Registration::Policy#eval_lecture_performance` checks
-  `LecturePerformance::Certification.find_by(...).status`.
+- Scope: Add `student_performance` policy kind to `Registration::PolicyEngine`.
+- Implementation: `Registration::Policy#eval_student_performance` checks
+  `StudentPerformance::Certification.find_by(...).status`.
 - Phase awareness: Returns different errors for registration
   (missing/pending) vs finalization (failed).
 - Refs: [Policy evaluation](02-registration.md#policy-evaluation-interface)
@@ -383,12 +390,12 @@ Exam — Step 12: Registration & Certification Integration
   for missing/pending certifications; block if incomplete.
 - Update `Registration::AllocationController#finalize` to check for
   missing/pending; auto-reject failed certifications.
-- Refs: [Pre-flight validation](05-lecture-performance.md#policy-integration)
+- Refs: [Pre-flight validation](05-student-performance.md#policy-integration)
 - Acceptance: Campaigns cannot open without complete certifications; finalization blocked if pending; failed certifications auto-rejected.
 ```
 
 ```admonish example "PR-12.4 — Exam FCFS registration"
-- Scope: Exam registration with lecture_performance policy.
+- Scope: Exam registration with student_performance policy.
 - Controllers: Extend `Registration::UserRegistrationsController` for
   exam context.
 - UI: Registration button with eligibility status display.
@@ -409,7 +416,7 @@ Dashboards — Step 13: Complete Integration
 ```
 
 ```admonish example "PR-13.1 — Student dashboard extension"
-- Scope: Add lecture performance and exam registration widgets.
+- Scope: Add student performance and exam registration widgets.
 - Widgets: "Exam Eligibility Status", "Performance Overview".
 - Refs: [Student dashboard complete](12-views.md#student-dashboard)
 - Acceptance: Students see eligibility status; performance summary; links to certification details.
@@ -427,7 +434,7 @@ Quality — Step 14: Hardening & Integrity
 ```
 
 ```admonish example "PR-14.1 — Background jobs (performance/certification)"
-- Scope: Create integrity jobs for lecture performance.
+- Scope: Create integrity jobs for student performance.
 - Jobs: `PerformanceRecordUpdateJob` (recompute Records after grading),
   `CertificationStaleCheckJob` (flag stale certifications),
   `AllocatedAssignedMatchJob` (verify roster consistency).
