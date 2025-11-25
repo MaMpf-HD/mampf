@@ -25,8 +25,9 @@ module Registration
 
     enum :status, { draft: 0,
                     open: 1,
-                    processing: 2,
-                    completed: 3 }
+                    closed: 2,
+                    processing: 3,
+                    completed: 4 }
 
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
     validates :planning_only, inclusion: { in: [true, false] }

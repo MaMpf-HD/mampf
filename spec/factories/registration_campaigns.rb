@@ -19,6 +19,11 @@ FactoryBot.define do
       status { :open }
     end
 
+    trait :closed do
+      status { :closed }
+      registration_deadline { 1.day.ago }
+    end
+
     trait :processing do
       status { :processing }
       registration_deadline { 1.day.ago }

@@ -28,6 +28,12 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.status).to eq("open")
     end
 
+    it "creates a valid closed campaign" do
+      campaign = FactoryBot.create(:registration_campaign, :closed)
+      expect(campaign).to be_valid
+      expect(campaign.status).to eq("closed")
+    end
+
     it "creates a valid processing campaign" do
       campaign = FactoryBot.create(:registration_campaign, :processing)
       expect(campaign).to be_valid
