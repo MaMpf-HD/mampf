@@ -60,7 +60,7 @@ This phase is skipped if the campaign uses `first_come_first_serve` mode.
 
 **Staff Actions:**
 - At or after registration deadline, staff triggers `campaign.allocate_and_finalize!`
-- Campaign status transitions: `open` → `processing` → `completed`
+- Campaign status transitions: `open` → `closed` → `processing` → `completed`
 
 **Technical Details:**
 

@@ -68,7 +68,7 @@ Manage registration campaigns for lectures.
 ```admonish example "Responsibilities"
 - CRUD operations for campaigns
 - Validate date ranges and capacity constraints
-- Display campaign status (draft, open, processing, completed)
+- Display campaign status (draft, open, closed, processing, completed)
 - **Pre-flight checks:** Before opening campaigns with `lecture_performance` policies:
   - Verify all lecture students have `LecturePerformance::Certification` records
   - Ensure all certifications have `status: :passed` or `:failed` (no `pending`)

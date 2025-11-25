@@ -75,30 +75,35 @@ Registration — Step 3: FCFS Mode
 ```
 
 ```admonish example "PR-3.1 — Admin: Campaigns scaffold (CRUD + open/close)"
-- Scope: Teacher/editor UI for campaign lifecycle (draft → open → processing → completed).
+- Scope: Teacher/editor UI for campaign lifecycle (draft → open → closed → processing → completed).
 - Controllers: `Registration::CampaignsController` (new/create/edit/update/show/destroy).
-- Actions: `open` (validates policies, updates status to :open), `close` (background job triggers status → :processing), `reopen` (reverts to :open if allocation not started).
-- UI: Turbo Frames for inline editing; flash messages for validation errors; feature flag `registration_campaigns_enabled`.
-- Refs: [Campaign lifecycle](02-registration.md#campaign-lifecycle),
+- Actions: `open` (validates policies, updates status to :open), `close` (background job triggers status → :closed), `reopen` (reverts to :open if allocation not started).
+- Freezing: Campaign-level attributes freeze on lifecycle transitions (`allocation_mode`, `registration_opens_at` after draft; policies freeze on open).
+- UI: Turbo Frames for inline editing; flash messages for validation errors and freeze violations; feature flag `registration_campaigns_enabled`; disabled fields for frozen attributes.
+- Refs: [Campaign lifecycle & freezing](02-registration.md#campaign-lifecycle--freezing-rules),
   [State diagram](02-registration.md#campaign-state-diagram)
-- Acceptance: Teachers can create draft campaigns, add policies, open campaigns (with policy validation); campaigns cannot be deleted when open/processing; feature flag gates UI.
+- Acceptance: Teachers can create draft campaigns, add policies, open campaigns (with policy validation); campaigns cannot be deleted when open/processing; freezing rules enforced with clear error messages; frozen fields disabled in UI; feature flag gates UI.
 ```
 
 ```admonish example "PR-3.2 — Admin: Items CRUD (nested under Campaign)"
 - Scope: Manage registerable items within a campaign.
 - Controllers: `Registration::ItemsController` (nested routes under campaigns).
-- UI: Turbo Frames for inline item addition/removal; capacity editing.
-- Refs: [Item model](02-registration.md#registrationitem-activerecord-model)
-- Acceptance: Teachers can add/remove tutorials as items; capacity edits validated; items cannot be removed if campaign is open.
+- Freezing: Items cannot be removed when `status != :draft` (prevents invalidating existing registrations); adding items always allowed.
+- UI: Turbo Frames for inline item addition/removal; capacity editing; delete button disabled for items when campaign is open.
+- Refs: [Item model](02-registration.md#registrationitem-activerecord-model),
+  [Freezing rules](02-registration.md#campaign-lifecycle--freezing-rules)
+- Acceptance: Teachers can add items anytime; items cannot be removed if campaign is open or has registrations for that item; capacity edits validated.
 ```
 
 ```admonish example "PR-3.3 — Student: Register (single-item FCFS)"
 - Scope: Student registration for single-item campaigns (e.g., one tutorial per lecture).
 - Controllers: `Registration::UserRegistrationsController` (create/destroy).
 - Logic: FCFS mode with capacity checks; policy evaluation on create.
-- UI: Registration button; Turbo Stream updates for immediate feedback.
-- Refs: [FCFS mode](02-registration.md#fcfs-mode-direct-assignment)
-- Acceptance: Students can register for open campaigns; capacity enforced; policy violations shown with error messages; confirmed status set immediately.
+- Freezing: Item capacity can increase anytime; can decrease only if `new_capacity >= confirmed_count` (prevents revoking confirmed spots).
+- UI: Registration button; Turbo Stream updates for immediate feedback; capacity editing validates against confirmed count.
+- Refs: [FCFS mode](02-registration.md#fcfs-mode-direct-assignment),
+  [Freezing rules](02-registration.md#campaign-lifecycle--freezing-rules)
+- Acceptance: Students can register for open campaigns; capacity enforced; policy violations shown with error messages; confirmed status set immediately; capacity decrease blocked if it would revoke spots.
 ```
 
 ```admonish example "PR-3.4 — Student: Register (multi-item FCFS)"
@@ -140,9 +145,11 @@ Registration — Step 4: Preference-Based Mode
 - Controllers: `Registration::AllocationController` (trigger/retry/finalize actions).
 - Background: `AllocationJob` runs solver and updates UserRegistration statuses via Turbo Streams.
 - Logic: On finalize, call `FinalizationGuard#check!`, then `materialize_allocation!` for each confirmed user.
+- Freezing: Item capacity freezes once `status == :completed` (results published); can be adjusted freely during `draft`, `open`, `closed` states.
 - Refs: [Solver](02-registration.md#registrationallocation-namespace),
-  [Finalization](02-registration.md#finalization-materialization)
-- Acceptance: Teachers can trigger allocation; results streamed to UI; finalize materializes rosters; unconfirmed users stay in limbo; confirmed users added to rosters via `materialize_allocation!`.
+  [Finalization](02-registration.md#finalization-materialization),
+  [Freezing rules](02-registration.md#campaign-lifecycle--freezing-rules)
+- Acceptance: Teachers can trigger allocation; results streamed to UI; finalize materializes rosters; capacity changes blocked after completion; unconfirmed users stay in limbo; confirmed users added to rosters via `materialize_allocation!`.
 ```
 
 ```admonish abstract

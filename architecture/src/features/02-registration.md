@@ -67,7 +67,7 @@ The main fields and methods of `Registration::Campaign` are:
 | `campaignable_id`         | DB column         | Polymorphic ID for the campaign host                                                         |
 | `title`                   | DB column         | Human-readable campaign title                                                                 |
 | `allocation_mode`         | DB column (Enum)  | Registration mode: `first_come_first_serve` or `preference_based`                            |
-| `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `processing`, `completed`                                   |
+| `status`                  | DB column (Enum)  | Campaign state: `draft`, `open`, `closed`, `processing`, `completed`                        |
 | `planning_only`           | DB column (Bool)  | Planning/reporting only; prevents materialization/finalization (default: false)              |
 | `registration_deadline`   | DB column         | Deadline for user registrations (registration requests)                                      |
 | `registration_items`      | Association       | Items available for registration within this campaign                                        |
@@ -115,9 +115,11 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 
 #### Close vs Finalize
 
-- **Close registration:** stops intake and edits; transitions `open → processing`.
+- **Close registration:** stops intake and edits; transitions `open → closed`.
   Used to lock the window early or when the deadline passes automatically.
-- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `lecture_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` for remediation. After passing guards, materializes confirmed results and transitions `processing → completed`.
+- **Run allocation (preference-based only):** triggers solver; transitions `closed → processing`.
+  FCFS campaigns skip this step (results already determined).
+- **Finalize results:** before materialization, evaluates all active policies whose phase is `finalization` or `both` for each confirmed user (via a `Registration::FinalizationGuard`). A `lecture_performance` policy in finalization phase requires `Certification=passed` for all confirmed users. If any user fails a finalization-phase policy (or has missing/pending certification) the process aborts and status remains `processing` (or `closed` for FCFS) for remediation. After passing guards, materializes confirmed results and transitions to `completed`.
 - **Planning-only campaigns:** close only; do not call `finalize!`. Results remain in reporting tables and are not materialized. When `planning_only` is true, `finalize!`/`allocate_and_finalize!` are no-ops.
 - **Lecture performance completeness checks:**
   - **Campaign save:** Warns if any students lack certifications (any phase with lecture_performance policy)
@@ -131,6 +133,78 @@ After completion, the Campaign Show can surface an "Unassigned registrants"
 table (name, matriculation, top preferences) with actions to place users into
 groups via Roster Maintenance. In roster screens, add a filter
 "Candidates from campaign X" that lists these unassigned users for quick moves.
+```
+
+### Campaign Lifecycle & Freezing Rules
+
+Campaigns transition through several states to ensure data integrity and fair user experience. Certain attributes freeze at specific lifecycle points to prevent inconsistent or unfair changes.
+
+
+
+**State Definitions:**
+- **draft**: Campaign is being configured, not visible to students
+- **open**: Registration window is active, students can register
+- **closed**: Registration window ended (automatically at deadline or manually)
+- **processing**: Allocation algorithm running (preference-based only)
+- **completed**: Results published, rosters materialized
+
+#### Freezing Rules
+
+##### Campaign Attributes
+
+| Attribute | Freeze Point | Modification Rules |
+|-----------|--------------|-------------------|
+| `allocation_mode` | After `draft` | Cannot change once opened. Students make decisions based on mode (early registration for FCFS vs. preference ranking). |
+| `registration_opens_at` | After `draft` | Cannot change once opened. Opening time is in the past. |
+| `registration_deadline` | Never | Can be extended anytime. Shortening is allowed but discouraged (confusing UX). |
+| `planning_only` | Never | Can be toggled anytime. Affects internal behavior, not student-facing. |
+
+##### Policies
+
+| Action | Freeze Point | Modification Rules |
+|--------|--------------|-------------------|
+| Add/Edit/Remove | After `draft` | Cannot add, edit, or remove policies once opened. New policies could invalidate existing registrations (especially in FCFS where spots are already confirmed). |
+
+##### Items
+
+| Action | Freeze Point | Modification Rules |
+|--------|--------------|-------------------|
+| Add item | Never | Can always add new items. Gives students more options without invalidating existing choices. |
+| Remove item | After `draft` | Cannot remove items with existing registrations. Students may have registered for (FCFS) or ranked (preference) that item. |
+
+##### Capacity Constraints
+
+| Mode | Freeze Point | Modification Rules |
+|------|--------------|-------------------|
+| FCFS | Constrained | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. Cannot revoke confirmed spots. |
+| Preference-based | After `completed` | Can change freely while `draft`, `open`, or `closed` (allocation hasn't run). Freezes once `completed` (results published). |
+
+#### Implementation Notes
+
+**Validation Example:**
+```ruby
+validate :allocation_mode_frozen_after_open, on: :update
+validate :policies_frozen_after_open, on: :update
+validate :capacity_decrease_respects_confirmed, on: :update
+
+def allocation_mode_frozen_after_open
+  if allocation_mode_changed? && !draft?
+    errors.add(:allocation_mode, "cannot be changed after campaign opens")
+  end
+end
+```
+
+**Item Removal:**
+- Check `item.user_registrations.exists?` before allowing deletion
+- Alternative: Soft-delete (set `active: false`) instead of destroying
+
+**UI Feedback:**
+- Disable/gray out frozen fields in forms
+- Show tooltips explaining why changes are blocked
+- Display warning before opening campaign: "Settings will be locked after opening"
+
+```admonish warning "Reopening Campaigns"
+When reopening a `completed` campaign (transitioning back to `open`), all freezing rules still apply. The campaign returns to accepting registrations, but fundamental settings (mode, policies, items) remain locked.
 ```
 
 ### Example Implementation (Phase-aware planned state)
@@ -150,7 +224,7 @@ module Registration
              dependent: :destroy
 
     enum allocation_mode: { first_come_first_serve: 0, preference_based: 1 }
-    enum status: { draft: 0, open: 1, processing: 2, completed: 3 }
+    enum status: { draft: 0, open: 1, closed: 2, processing: 3, completed: 4 }
 
     validates :title, :registration_deadline, presence: true
     validate :valid_status_transition, on: :update
@@ -173,14 +247,14 @@ module Registration
 
     def finalize!
       return false if planning_only?
-      return false unless open? || processing?
+      return false unless closed? || processing?
       Registration::FinalizationGuard.new(self).check!
       Registration::AllocationMaterializer.new(self).materialize!
       update!(status: :completed)
     end
 
     def allocate!
-      return false unless preference_based? && open? && Time.current >= registration_deadline
+      return false unless preference_based? && closed?
       update!(status: :processing)
       Registration::AllocationService.new(self, strategy: :min_cost_flow).allocate!
       true
@@ -193,7 +267,7 @@ module Registration
     end
 
     def close!
-      update!(status: :processing) if status == "open"
+      update!(status: :closed) if status == "open"
     end
 
     private
@@ -203,8 +277,9 @@ module Registration
 
       valid_transitions = {
         "draft" => ["open"],
-        "open" => ["processing"],
-        "processing" => ["completed"]
+        "open" => ["closed"],
+        "closed" => ["processing", "completed", "open"],
+        "processing" => ["completed", "open"]
       }
 
       allowed = valid_transitions[status_was]
@@ -1097,12 +1172,12 @@ end
 stateDiagram-v2
     [*] --> draft
     draft --> open : open
-    open --> processing : close (manual or at deadline)
-    processing --> completed : finalize!
+    open --> closed : close (manual or at deadline)
+    closed --> completed : finalize! (optional)
 
-    note right of processing
-        Regular campaigns: run allocation, then finalize.
-        Planning-only: close only, skip finalize (stays processing).
+    note right of closed
+        Regular FCFS campaigns: finalize to materialize rosters.
+        Planning-only: stay in closed, skip finalize.
     end note
 ```
 
@@ -1125,7 +1200,8 @@ erDiagram
 stateDiagram-v2
     [*] --> draft: Campaign created
     draft --> open: Admin opens campaign
-    open --> processing: Admin closes OR deadline reached
+    open --> closed: Admin closes OR deadline reached
+    closed --> processing: Allocation runs
     processing --> completed: Admin finalizes
     
     note right of draft
@@ -1183,11 +1259,12 @@ sequenceDiagram
   rect rgb(255, 245, 235)
   note over Job,RegTarget: Allocation & finalization
   Job->>Campaign: allocate_and_finalize!
-    Campaign->>Campaign: update!(status: :processing)
+    Campaign->>Campaign: update!(status: :closed)
   Campaign->>AllocationSvc: new(campaign).allocate!
   AllocationSvc->>Solver: new(campaign).run()
     note right of Solver: Build graph, solve, persist statuses
     Solver->>UserReg: update_all(status: confirmed/rejected)
+    Campaign->>Campaign: update!(status: :processing)
     Campaign->>Campaign: finalize!
     Campaign->>Materializer: new(campaign).materialize!
     Materializer->>RegTarget: materialize_allocation!(user_ids, campaign)
@@ -1202,8 +1279,9 @@ sequenceDiagram
 stateDiagram-v2
     [*] --> draft: Campaign created
     draft --> open: Admin opens campaign
-    open --> processing: Admin closes OR deadline reached
-    processing --> completed: Admin finalizes (optional)
+    open --> closed: Admin closes OR deadline reached
+    note right of closed: No finalization
+    note right of closed: Stays in closed
     
     note right of draft
         Admin configures items,
@@ -1215,7 +1293,7 @@ stateDiagram-v2
         immediate confirm/reject
     end note
     
-    note right of processing
+    note right of closed
         Registration closed;
         results visible
     end note
@@ -1287,7 +1365,7 @@ sequenceDiagram
     Student->>UI: View results
     UI->>Controller: GET /campaigns/:id
     Controller->>Campaign: status
-    Campaign-->>Controller: :processing or :completed
+    Campaign-->>Controller: :closed, :processing, or :completed
     Controller-->>UI: Show campaign with status
     UI-->>Student: Display confirmed/rejected
     end
