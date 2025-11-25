@@ -1,0 +1,48 @@
+<div class="card-body">
+  <h2 class="h5">Select a tutorial</h2>
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    
+    <input id="catalogSearch" type="search" class="form-control form-control-sm" placeholder="Filter by weekday, time, tutor, room" style="max-width: 22rem" />
+
+    <div class="small" id="saveStatus"></div>
+  </div>
+
+  <div id="switchInfo" class="alert alert-info py-1 px-2 d-none" role="alert">
+    Currently registered: <span id="currentTutorialName"></span>. Withdraw to switch to a different group.
+  </div>
+
+  <div class="table-responsive">
+    <table class="table align-middle mb-2" id="tutorialsTable">
+      <thead>
+        <tr>
+          <th>Tutorial</th>
+          <th>Time</th>
+          <th>Seats</th>
+          <th>Status</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% items.each do |item| %>
+          <tr>
+            <td><%= item.tutorial_name %></td>
+            <td><%= item.tutorial_time_info %></td>
+            <td>
+              <span id="seatsRemaining_<%= item.id %>">
+                <%= item.capacity_remained %>
+              </span>
+              / <%= item.capacity %>
+            </td>
+            <td>
+              <% if item.user_registered?(current_user) %>
+                <span class="badge rounded-pill text-bg-secondary">Registered</span>
+              <% else %>
+                <span class="badge rounded-pill text-bg-light text-dark">Not registered</span>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

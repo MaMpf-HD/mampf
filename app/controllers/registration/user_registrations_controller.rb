@@ -14,7 +14,7 @@ module Registration
     helper UserRegistrationsHelper
 
     def index
-      render template: "registration/student/index", layout: "application"
+      render template: "registration/index", layout: "application_no_sidebar"
     end
 
     def random_campaign
@@ -68,12 +68,12 @@ module Registration
       item22.save!
     end
 
-    def show
-      @campaign = Campaign.find(params[:id])
+    def registrations_for_campaign
+      @campaign = Campaign.find(params[:campaign_id])
       if @campaign.campaignable_type == "Lecture"
         show_campaign_host_by_lecture
       elsif @campaign.campaignable_type == "Exam"
-        show_campaign_host_by_exam
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
       else
         raise(NotImplementedError, "Unsupported campaignable_type")
       end
@@ -82,64 +82,33 @@ module Registration
     def show_campaign_host_by_lecture
       @eligibility = get_eligibility(@campaign)
       @items = @campaign.registration_items.includes(:user_registrations)
-      @campaignable_host = get_campaignable_host(@campaign)
-      render template: "registration/student/show", layout: "application"
-    end
-
-    def show_campaign_host_by_exam
-      raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      @campaignable_host = UserRegistrationsHelper.get_campaignable_poro(@campaign.campaignable)
+      render template: "registration/main/show_main_campaign", layout: "application_no_sidebar"
     end
 
     def create
       @item = Item.find(params[:item_id])
       @campaign = Campaign.find(params[:campaign_id])
-      allocation_mode = @campaign.allocation_mode
+      if @campaign.campaignable_type == "Lecture"
+        create_registration_lecture_campaign
+      elsif @campaign.campaignable_type == "Exam"
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
+      end
+    end
 
-      if allocation_mode == Campaign.allocation_modes[:preference_based]
+    def create_registration_lecture_campaign
+      if @campaign.allocation_mode == Campaign.allocation_modes[:preference_based]
         raise(NotImplementedError, "Preference-based allocation is not implemented yet")
       end
 
       register_user_for_first_come_first_serve(@campaign, @item)
-      redirect_back fallback_location: user_registrations_path(@campaign.id),
-                    notice: "You have registered."
     end
 
     def register_user_for_first_come_first_serve(campaign, item)
       ActiveRecord::Base.transaction do
         item.lock!
-
-        user_registered = user_has_confirmed_registration_selected_campaign(campaign, current_user)
-        if user_registered
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "campaign_regist_noti",
-              partial: "registration/student/select_fcfs",
-              locals: { message: "User has registered this Campaign!" }
-            )
-          end
-        end
-
-        slot_availbled = item.still_have_capacity?
-        unless slot_availbled
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "campaign_regist_noti",
-              partial: "registration/student/select_fcfs",
-              locals: { message: "No available slot!" }
-            )
-          end
-        end
-
-        # TODO: check policies and phase
-        policies_satisfied = campaign.policies_satisfied?(current_user, phase: :registration)
-        unless policies_satisfied
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(
-              "campaign_regist_noti",
-              partial: "registration/student/select_fcfs",
-              locals: { message: "User doed not satify requirements!" }
-            )
-          end
+        if (redirect = validate_registration(campaign, item, current_user))
+          return redirect
         end
 
         @user_registration = UserRegistration.new(
@@ -148,18 +117,44 @@ module Registration
           user_id: current_user.id,
           status: :confirmed
         )
-        @user_registration.save
+        if @user_registration.save
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
+                      notice: "You have registered."
+        else
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
+                      alert: "Registration failed."
+        end
       end
+    end
+
+    def validate_registration(campaign, item, user)
+      if user_has_confirmed_registration_selected_campaign(campaign, user)
+        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
+                           notice: "User has already registered this Campaign!"
+      end
+
+      unless item.still_have_capacity?
+        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
+                           notice: "No available slot!"
+      end
+
+      unless [campaign.policies_satisfied?(user, phase: :registration),
+              campaign.policies_satisfied?(user, phase: :both)].all?
+        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
+                           notice: "User does not satisfy requirements!"
+      end
+
+      nil
     end
 
     def destroy
       @item = Item.find(params[:item_id])
-      user_registration = @item.user_registrations.find_by!(user_id: current_user.id,
-                                                            status: :confirmed)
-      @campaign = user_registration.registration_campaign
-      user_registration.destroy if user_registration.present?
-      redirect_back fallback_location: user_registrations_path(@campaign.id),
-                    notice: "You have withdrawn."
+      @user_registration = @item.user_registrations.find_by!(user_id: current_user.id,
+                                                             status: :confirmed)
+      @campaign = @user_registration.registration_campaign
+      @user_registration.destroy
+      redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                  notice: "You have withdrawn."
     end
 
     def render_not_found(exception)
@@ -174,19 +169,6 @@ module Registration
         exist_regist.present? && exist_regist.status == UserRegistration.statuses[:confirmed]
       end
 
-      def get_campaignable_host(campaign)
-        host = campaign.campaignable
-        Registration::CampaignablePoro.new(
-          id: host.id,
-          title: host.course.title,
-          term_year: host.term.year,
-          term_season: host.term.season,
-          course_short_title: host.course.short_title
-        )
-      end
-
-      # lecture_performance and institutional_email policies has cleared info in config
-      # optional: prerequisite_campaign can have additional check for name of prerequisite campaign
       def get_eligibility(campaign, phase: :registration)
         eligibility = PolicyEngine.new(campaign).full_trace_with_config_for(current_user,
                                                                             phase: phase)
@@ -196,7 +178,8 @@ module Registration
           prereq_campaign_id = policy.config[:prerequisite_campaign_id]
           prereq_campaign = Campaign.find_by(id: prereq_campaign_id)
           if prereq_campaign
-            policy.config["prerequisite_campaign_info"] = get_campaignable_host(prereq_campaign)
+            policy.config["prerequisite_campaign_info"] =
+              UserRegistrationsHelper.get_campaignable_poro(prereq_campaign.campaignable)
           end
         end
         eligibility

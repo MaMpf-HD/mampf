@@ -2,13 +2,13 @@
   <nav aria-label="breadcrumb" class="mb-2">
     <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item">
-        <a href="./student_registration_index_tabs.html">Registrations</a></li>
+        <a href="./index.html">Registrations</a></li>
       <li class="breadcrumb-item active" aria-current="page">
       <%= @campaign.title %> (<%= @campaign.campaignable_type %>)</li>
     </ol>
   </nav>
 
-  <%= render partial:'registration/student/campaign_info', 
+  <%= render partial:'registration/main/campaign_info', 
             locals: { campaignable_host: @campaignable_host, 
                       campaign: @campaign }%>
 
@@ -16,7 +16,7 @@
   <div class="row g-3">
       <div class="col-12 col-lg-4">
         <div class="card h-100">
-          <%= render partial:'registration/student/eligibility',
+          <%= render partial:'registration/main/eligibility',
                     locals: { eligibility: @eligibility}%>
         </div>
       </div>
@@ -24,14 +24,12 @@
       <div class="col-12 col-lg-8">
         <div class="card h-100">
           <% if @campaign.allocation_mode_before_type_cast == 0 %>
-            <turbo-frame id="campaign_items">
-              <%= render partial:'registration/student/select_fcfs',
+            <%= render partial:'registration/main/select_fcfs',
                         locals: {campaign: @campaign,
                                   campaignable_host: @campaignable_host,
                                   items: @items } %>
-            </turbo-frame>
           <% else %>
-            <%= render partial:'registration/student/select_preference',
+            <%= render partial:'registration/main/select_preference',
                         locals: {campaign: @campaign,
                                   campaignable_host: @campaignable_host,
                                   items: @items } %>
@@ -41,7 +39,7 @@
     </div>
 
     <div class="card mt-3">
-      <%= render partial:'registration/student/campaign_details',
+      <%= render partial:'registration/main/campaign_details',
                   locals: { campaign: @campaign, items: @items } %>
     </div>
   

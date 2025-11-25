@@ -44,5 +44,15 @@ module Registration
         "text"
       end
     end
+
+    def get_campaignable_poro(host)
+      Registration::CampaignablePoro.new(
+        id: host.id,
+        title: host.course.title,
+        term_year: host.term.year,
+        term_season: host.term.season,
+        course_short_title: host.course.short_title
+      )
+    end
   end
 end

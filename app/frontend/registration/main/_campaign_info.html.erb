@@ -1,6 +1,5 @@
 <div class="d-flex justify-content-between align-items-start mb-3">
   <div>
-
     <h1 class="h4 mb-1">
       <%= campaignable_host.title %> - <%= campaign.title %> 
       <span class="badge text-bg-primary">Open</span>
@@ -12,9 +11,9 @@
   </div>
 
   <div class="text-end">
-    <div class="text-muted small mb-1">#TODO</div>
+    <div class="text-muted small mb-1">Campaign: Main registration</div>
     <span class="badge text-bg-danger">
-      Closes: <%= campaign.registration_deadline %>
+      Closes: <%= campaign.registration_deadline.to_formatted_s(:long) %>
     </span>
   </div>
   
