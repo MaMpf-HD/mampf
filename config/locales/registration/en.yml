@@ -41,6 +41,19 @@ en:
         open: "Open"
         close: "Close"
         reopen: "Reopen"
+      overview:
+        registrations: "Registrations"
+        total: "Total"
+        confirmed_count:
+          one: "Confirmed %{count}"
+          other: "Confirmed %{count}"
+        pending_count:
+          one: "Pending %{count}"
+          other: "Pending %{count}"
+        rejected_count:
+          one: "Rejected %{count}"
+          other: "Rejected %{count}"
+        items: "Items"
     policy:
       index:
         title: "Policies"

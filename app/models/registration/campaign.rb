@@ -42,5 +42,9 @@ module Registration
     def closed?
       processing? || completed?
     end
+
+    def can_be_deleted?
+      draft?
+    end
   end
 end

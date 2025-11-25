@@ -41,7 +41,7 @@ module Registration
         redirect_to registration_campaign_path(@campaign),
                     notice: t("registration.campaign.updated")
       else
-        render :edit, status: :unprocessable_entity
+        render :show, status: :unprocessable_entity
       end
     end
 

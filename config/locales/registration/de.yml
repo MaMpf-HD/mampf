@@ -41,6 +41,19 @@ de:
         open: "Öffnen"
         close: "Schließen"
         reopen: "Wiedereröffnen"
+      overview:
+        registrations: "Anmeldungen"
+        total: "Gesamt"
+        confirmed_count:
+          one: "Bestätigt %{count}"
+          other: "Bestätigt %{count}"
+        pending_count:
+          one: "Ausstehend %{count}"
+          other: "Ausstehend %{count}"
+        rejected_count:
+          one: "Abgelehnt %{count}"
+          other: "Abgelehnt %{count}"
+        items: "Elemente"
     policy:
       index:
         title: "Richtlinien"

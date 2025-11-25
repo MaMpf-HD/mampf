@@ -3357,6 +3357,8 @@ en:
     solution: 'Solution'
     parametrized: 'parametrized'
     synonyms: 'Synonyms'
+    details: 'Details'
+    settings: 'Settings'
     status: 'Status'
     sponsors: 'Funded by'
     since: 'since'

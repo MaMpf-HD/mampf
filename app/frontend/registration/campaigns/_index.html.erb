@@ -32,7 +32,7 @@
                   </span>
                 </td>
                 <td>
-                  <%= link_to t("buttons.edit"), edit_registration_campaign_path(campaign), { class: "btn btn-sm btn-outline-secondary", data: { turbo_frame: "registration_campaigns_content" } } %>
+                  <%= link_to t("buttons.edit"), registration_campaign_path(campaign), { class: "btn btn-sm btn-outline-secondary", data: { turbo_frame: "registration_campaigns_content" } } %>
                 </td>
               </tr>
             <% end %>
