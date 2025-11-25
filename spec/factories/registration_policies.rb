@@ -8,8 +8,8 @@ FactoryBot.define do
       kind { :institutional_email }
     end
 
-    trait :lecture_performance do
-      kind { :lecture_performance }
+    trait :student_performance do
+      kind { :student_performance }
     end
 
     trait :prerequisite_campaign do

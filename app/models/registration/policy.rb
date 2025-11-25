@@ -9,7 +9,7 @@ module Registration
 
     enum :kind, { institutional_email: 0,
                   prerequisite_campaign: 1,
-                  lecture_performance: 2 }
+                  student_performance: 2 }
 
     enum :phase, { registration: 0,
                    finalization: 1,
