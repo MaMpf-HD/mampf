@@ -53,6 +53,7 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       duplicate = FactoryBot.build(:registration_user_registration,
                                    registration_campaign: campaign,
                                    user: user,
+                                   registration_item: item,
                                    preference_rank: 1)
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:preference_rank]).to be_present
@@ -124,6 +125,7 @@ RSpec.describe(Registration::UserRegistration, type: :model) do
       duplicate = FactoryBot.build(:registration_user_registration,
                                    registration_campaign: campaign,
                                    user: user,
+                                   registration_item: item,
                                    preference_rank: nil)
       expect(duplicate).not_to be_valid
       expect(duplicate.errors[:user_id]).to be_present
