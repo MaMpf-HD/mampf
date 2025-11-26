@@ -1,0 +1,9 @@
+<div class="<%= container_class %>">
+  <% if inner_class %>
+    <div class="<%= inner_class %>">
+      <%= form.submit label, class: button_class %>
+    </div>
+  <% else %>
+    <%= form.submit label, class: button_class %>
+  <% end %>
+</div>

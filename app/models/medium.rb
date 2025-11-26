@@ -9,8 +9,38 @@ class Medium < ApplicationRecord
   belongs_to :teachable, polymorphic: true, optional: true
   acts_as_list scope: [:teachable_id, :teachable_type], top_of_list: 0
 
-  # a teachable may belong to a quizzable (quiz/question/remark)
-  belongs_to :quizzable, polymorphic: true, optional: true
+  # This private association is ONLY for pg_search's JOIN query.
+  # It provides a queryable path to a medium's answers if it is a Question.
+  # DO NOT call this directly on an instance, as it will fail.
+  # The Question subclass has its own public `has_many :answers` association
+  # which is used in regular application code.
+  has_many :_search_answers,
+           -> { where(media: { type: "Question" }) },
+           class_name: "Answer",
+           foreign_key: "question_id"
+
+  # This private association is ONLY for pg_search's JOIN query.
+  # The string scope correctly adds the type check to the JOIN's ON clause.
+  # DO NOT call this directly on an instance, as it will fail.
+  # Use the public `lesson` method for direct access.
+  has_one :_search_lesson,
+          -> { where(media: { teachable_type: "Lesson" }) },
+          class_name: "Lesson",
+          primary_key: "teachable_id",
+          foreign_key: "id"
+
+  # This private association is ONLY for sorting in LectureMediaSorter.
+  has_one :_search_talk,
+          -> { where(media: { teachable_type: "Talk" }) },
+          class_name: "Talk",
+          primary_key: "teachable_id",
+          foreign_key: "id"
+
+  # This private association is ONLY for pg_search's JOIN query.
+  # It provides a direct path from Medium to Section for pg_search
+  # to traverse the has_many :through relationship on the Lesson model.
+  # DO NOT call this directly on an instance, as it will fail.
+  has_many :_search_sections, through: :_search_lesson, source: :sections
 
   # a medium has many tags
   has_many :medium_tag_joins, dependent: :destroy
@@ -126,44 +156,32 @@ class Medium < ApplicationRecord
                     where(sort: "RandomQuiz").where(created_at: ...1.day.ago)
                   }
 
-  searchable do
-    text :description do
-      caption
-    end
-    text :text do
-      text_join
-    end
-    string :sort
-    string :teachable_compact do
-      "#{teachable_type}-#{teachable_id}"
-    end
-    string :release_state do
-      release_state
-    end
-    boolean :clickerizable do
-      clickerizable?
-    end
-    integer :id
-    integer :teachable_id
-    integer :tag_ids, multiple: true
-    integer :editor_ids, multiple: true
-    integer :answers_count
-    integer :term_id do
-      term_id || 0
-    end
-    integer :teacher_id do
-      supervising_teacher_id
-    end
-    integer :subscribed_users, multiple: true
-    integer :lecture do
-      lecture&.id
-    end
+  include PgSearch::Model
+
+  pg_search_scope :search_by_title,
+                  against: [:description, :content, :external_link_description, :text],
+                  associated_against: {
+                    _search_answers: [:text, :explanation],
+                    _search_sections: [:title]
+                  },
+                  using: {
+                    tsearch: { prefix: true, any_word: true, dictionary: "simple" },
+                    trigram: { word_similarity: true,
+                               threshold: 0.3 }
+                  }
+
+  def self.default_search_order
+    Arel.sql("media.created_at DESC")
+  end
+
+  def self.default_search_order_joins
+    []
   end
 
   # these are all the sorts of projects we currently serve
   def self.sort_enum
-    ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Erdbeere",
-     "Exercise", "Script", "Question", "Remark", "Miscellaneous", "RandomQuiz"]
+    ["LessonMaterial", "WorkedExample", "Quiz", "Repetition", "Exercise", "Script", "Question",
+     "Remark", "Miscellaneous", "RandomQuiz"]
   end
 
   # media sorts and their descriptions
@@ -185,7 +203,7 @@ class Medium < ApplicationRecord
   end
 
   def self.advanced_sorts
-    ["Question", "Remark", "Erdbeere"]
+    ["Question", "Remark"]
   end
 
   def self.generic_sorts
@@ -204,169 +222,11 @@ class Medium < ApplicationRecord
     Medium.sort_localized.except("RandomQuiz", "Question", "Remark").map { |k, v| [v, k] }
   end
 
-  def self.select_question
-    Medium.sort_localized.slice("Question").map { |k, v| [v, k] }
-  end
-
-  # returns the array of all media subject to the conditions
-  # provided by the params hash (keys: :id, :project)
-  # :id represents the lecture id
-  def self.search_all(params)
-    lecture = Lecture.find_by(id: params[:id])
-    return Medium.none if lecture.nil?
-
-    media_in_project = Medium.media_in_project(params[:project])
-    # media sitting at course level
-    course_media_in_project = media_in_project.includes(:tags)
-                                              .where(teachable: lecture.course)
-                                              .order(boost: :desc,
-                                                     description: :asc)
-    # media sitting at lecture level
-    # append results at course level to lecture/lesson level results
-    lecture.lecture_lesson_results(media_in_project) + course_media_in_project
-  end
-
-  # returns the ARel of all media for the given project
-  def self.media_in_project(project)
-    return Medium.none if project.blank?
-
-    Medium.where(sort: project.camelize)
-  end
-
   # returns the array of all media (by title), together with their ids
   # is used in options_for_select in form helpers.
   def self.select_by_name
     Medium.where.not(sort: ["Question", "Remark", "RandomQuiz"])
           .map { |m| [m.title_for_viewers, m.id] }
-  end
-
-  # returns the array of media sorts specified by the search params
-  # search_params is a hash with keys :all_types, :types
-  # value for :types is an array of integers which correspond to indices
-  # in the sort_enum array
-  def self.search_sorts(search_params)
-    return (Medium.sort_enum - ["RandomQuiz"]) unless search_params[:all_types] == "0"
-
-    search_params[:types] || []
-  end
-
-  def self.lecture_search_option
-    {
-      "0" => "all",
-      "1" => "subscribed",
-      "2" => "custom"
-    }
-  end
-
-  # returns search results for the media search with search_params provided
-  # by the controller
-  def self.search_by(search_params, _page)
-    # If the search is initiated from the start page, you can only get
-    # generic media sorts as results even if the 'all' radio button
-    # is seleted
-    if search_params[:all_types] == "1"
-      search_params[:types] =
-        if search_params[:from] == "start"
-          Medium.generic_sorts
-        else
-          []
-        end
-    end
-    search_params[:teachable_ids] = TeachableParser.new(search_params)
-                                                   .teachables_as_strings
-    if search_params[:all_editors] == "1" || search_params[:all_editors].nil?
-      search_params[:editor_ids] =
-        []
-    end
-    # add media without term to current term
-
-    search_params[:all_terms] = "1" if search_params[:all_terms].blank?
-    search_params[:all_teachers] = "1" if search_params[:all_teachers].blank?
-    search_params[:term_ids].push("0") if search_params[:term_ids].present?
-    user = User.find_by(id: search_params[:user_id])
-    search = Sunspot.new_search(Medium)
-    search.build do
-      with(:sort, search_params[:types])
-      without(:sort, "RandomQuiz")
-      without(:sort, Medium.advanced_sorts) unless user&.admin_or_editor?
-      with(:editor_ids, search_params[:editor_ids])
-      with(:teachable_compact, search_params[:teachable_ids])
-      unless search_params[:all_terms] == "1"
-        with(:term_id,
-             search_params[:term_ids])
-      end
-      unless search_params[:all_teachers] == "1"
-        with(:teacher_id,
-             search_params[:teacher_ids])
-      end
-    end
-    if search_params[:purpose] == "clicker"
-      search.build do
-        with(:clickerizable, true)
-      end
-    end
-    unless search_params[:answers_count] == "irrelevant"
-      search.build do
-        with(:answers_count, [-1, search_params[:answers_count].to_i])
-      end
-    end
-    unless search_params[:access] == "irrelevant"
-      search.build do
-        with(:release_state, search_params[:access])
-      end
-    end
-    if search_params[:all_tags] == "0" && search_params[:tag_ids].any?
-      search.build do
-        if search_params[:tag_operator] == "and"
-          with(:tag_ids).all_of(search_params[:tag_ids])
-        else
-          with(:tag_ids).any_of(search_params[:tag_ids])
-        end
-      end
-    end
-    if search_params[:fulltext].present?
-      search.build do
-        fulltext(search_params[:fulltext]) do
-          boost_fields(description: 2.0)
-        end
-      end
-    end
-    if search_params[:lecture_option].present?
-      case Medium.lecture_search_option[search_params[:lecture_option]]
-      when "subscribed"
-        search.build do
-          with(:subscribed_users, search_params[:user_id])
-        end
-      when "custom"
-        search.build do
-          with(:lecture, search_params[:media_lectures])
-        end
-      end
-    end
-    # this is needed for kaminari to function correctly
-    search.build do
-      paginate(page: 1, per_page: Medium.count)
-    end
-    search
-  end
-
-  def self.search_questions_by_tags(search_params)
-    search = Sunspot.new_search(Medium)
-    search.build do
-      with(:sort, "Question")
-      with(:teachable_compact, search_params[:teachable_ids])
-      with(:tag_ids).all_of(search_params[:tag_ids])
-      paginate(per_page: Question.count)
-    end
-    search
-  end
-
-  def self.similar_courses(search_string)
-    jarowinkler = FuzzyStringMatch::JaroWinkler.create(:pure)
-    titles = Medium.pluck(:description)
-    titles.select do |t|
-      jarowinkler.getDistance(t.downcase, search_string.downcase) > 0.8
-    end
   end
 
   # protected items are items of type 'pdf_destination' inside associated to
@@ -905,16 +765,14 @@ class Medium < ApplicationRecord
   def select_sorts
     result = if new_record?
       Medium.sort_localized.except("RandomQuiz")
-    elsif sort.in?(["LessonMaterial", "WorkedExample", "Erdbeere", "Repetition", "Exercise",
+    elsif sort.in?(["LessonMaterial", "WorkedExample", "Repetition", "Exercise",
                     "Miscellaneous"])
       Medium.sort_localized.except("RandomQuiz", "Script", "Quiz",
                                    "Question", "Remark")
     else
       Medium.sort_localized.slice(sort)
     end
-    if teachable_type == "Talk"
-      result.except!("RandomQuiz", "Question", "Remark", "Erdbeere", "Script")
-    end
+    result.except!("RandomQuiz", "Question", "Remark", "Script") if teachable_type == "Talk"
     result.map { |k, v| [v, k] }
   end
 
@@ -1237,20 +1095,5 @@ class Medium < ApplicationRecord
       return released unless released.nil?
 
       "unpublished"
-    end
-
-    def clickerizable?
-      return false unless type == "Question"
-
-      question = becomes(Question)
-      return false unless question.answers.count.in?(2..6)
-
-      question.answers.pluck(:value).count(true) == 1
-    end
-
-    def answers_count
-      return -1 unless type == "Question"
-
-      becomes(Question).answers.count
     end
 end

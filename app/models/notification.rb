@@ -7,8 +7,6 @@ class Notification < ApplicationRecord
   belongs_to :recipient, class_name: "User", touch: true
   belongs_to :notifiable, polymorphic: true, optional: true
 
-  paginates_per 12
-
   # returns the lecture associated to a notification of type announcement,
   # and teachable for a notification of type medium, nil otherwise
   def teachable

@@ -8,10 +8,12 @@ module Vignettes
     before_action :check_edit_accessibility,
                   only: [:edit, :preview, :destroy, :publish, :update_slide_position, :duplicate]
     before_action :check_empty, only: [:publish, :take, :submit_answer]
-    layout "vignettes_navbar"
+    layout "vignettes/layouts/vignettes_navbar"
 
     def index
       @questionnaires = @lecture.vignettes_questionnaires.where(published: true).order(title: :desc)
+
+      render template: "vignettes/questionnaires/index/index"
     end
 
     def take
@@ -44,7 +46,8 @@ module Vignettes
       @answer = @slide.answers.build
       @answer.build_slide_statistic
 
-      render layout: "application_no_sidebar"
+      render template: "vignettes/questionnaires/take/take",
+             layout: "application_no_sidebar"
     end
 
     def preview
@@ -70,7 +73,8 @@ module Vignettes
       @slide = @questionnaire.slides.find_by(position: @position)
       @answer = @slide.answers.build
 
-      render :take, layout: "application_no_sidebar"
+      render :take, template: "vignettes/questionnaires/take/take",
+                    layout: "application_no_sidebar"
     end
 
     def submit_answer
@@ -93,7 +97,8 @@ module Vignettes
 
       unless @answer.save
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
-        render :take, status: :unprocessable_entity
+        render :take, template: "vignettes/questionnaires/take/take",
+                      status: :unprocessable_content
         return
       end
 
@@ -119,7 +124,7 @@ module Vignettes
 
     def update_slide_position
       unless @questionnaire.editable
-        render json: { error: t("vignettes.not_editable") }, status: :unprocessable_entity
+        render json: { error: t("vignettes.not_editable") }, status: :unprocessable_content
         return
       end
       old_position = params[:old_position].to_i + 1
@@ -128,7 +133,7 @@ module Vignettes
       @slide = @questionnaire.slides.find_by(position: old_position)
 
       if new_position < 1 || new_position > @questionnaire.slides.maximum(:position)
-        render json: { error: "Invalid position" }, status: :unprocessable_entity
+        render json: { error: "Invalid position" }, status: :unprocessable_content
         return
       end
 
@@ -150,7 +155,7 @@ module Vignettes
       render json: { success: true }
     rescue StandardError => e
       Rails.logger.error("Slide position update failed: #{e.message}")
-      render json: { error: e.message }, status: :unprocessable_entity
+      render json: { error: e.message }, status: :unprocessable_content
     end
 
     def export_statistics
@@ -165,7 +170,7 @@ module Vignettes
     def edit
       @slides = @questionnaire.slides.order(:position)
 
-      render layout: "administration"
+      render template: "vignettes/questionnaires/edit/edit", layout: "administration"
     end
 
     def create
@@ -174,7 +179,8 @@ module Vignettes
         @questionnaire.lecture.touch
         redirect_to edit_questionnaire_path(@questionnaire)
       else
-        render :new, status: :unprocessable_entity
+        redirect_to edit_lecture_path(@lecture, anchor: "vignettes"),
+                    alert: t("vignettes.questionnaire_not_created")
       end
     end
 

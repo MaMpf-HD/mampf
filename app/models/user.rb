@@ -62,12 +62,6 @@ class User < ApplicationRecord
            dependent: :destroy,
            inverse_of: :announcer
 
-  # a user has many clickers as editor
-  has_many :clickers,
-           foreign_key: "editor_id",
-           dependent: :destroy,
-           inverse_of: :editor
-
   # a user has many submissions (of assignments)
   has_many :user_submission_joins, dependent: :destroy
   has_many :submissions, through: :user_submission_joins
@@ -151,11 +145,6 @@ class User < ApplicationRecord
     User.teachers.pluck(:name, :id).natural_sort_by(&:first)
   end
 
-  # returns the array of all editors
-  def self.editors
-    User.where(id: EditableUserJoin.distinct.select(:user_id))
-  end
-
   # returns the array of all editors minus those that are only editors of talks
   def self.proper_editors
     talk_media_ids = Medium.where(teachable_type: "Talk").pluck(:id)
@@ -163,30 +152,6 @@ class User < ApplicationRecord
                                               editable_id: talk_media_ids)
     User.where(id: EditableUserJoin.where.not(id: talk_media_joins.pluck(:id))
                                    .pluck(:user_id).uniq)
-  end
-
-  # Returns the array of all editors (of courses, lectures, media), together
-  # with their ids
-  # Is used in options_for_select in form helpers.
-  def self.only_editors_selection
-    User.editors.map { |e| [e.info, e.id] }.natural_sort_by(&:first)
-  end
-
-  # returns the ARel of all users that are editors or whose id is among a
-  # given array of ids
-  # search params is a hash having keys :all_editors, :editor_ids
-  def self.search_editors(search_params)
-    return User.editors unless search_params[:all_editors] == "0"
-
-    editor_ids = search_params[:editor_ids] || []
-    User.where(id: editor_ids)
-  end
-
-  # array of all users together with their ids for use in options_for_select
-  # (e.g. in a select editors form)
-  def self.select_editors
-    User.pluck(:name, :email, :id, :name_in_tutorials)
-        .map { |u| ["#{u.fourth.presence || u.first} (#{u.second})", u.third] }
   end
 
   def self.name_or_email_like(search_string)
@@ -566,8 +531,7 @@ class User < ApplicationRecord
 
   def subscribed_commentable_media_with_comments
     lessons = Lesson.where(lecture: lectures)
-    filter_media(Medium.where.not(sort: ["RandomQuiz", "Question", "Erdbeere",
-                                         "Remark"])
+    filter_media(Medium.where.not(sort: ["RandomQuiz", "Question", "Remark"])
                        .where(teachable: courses + lectures + lessons))
       .includes(commontator_thread: :comments)
       .select { |m| m.commontator_thread.comments.any? }
@@ -621,18 +585,11 @@ class User < ApplicationRecord
     Lecture.where.not(id: lectures.pluck(:id))
   end
 
-  def anonymized_id
-    Digest::SHA2.hexdigest(id.to_s + created_at.to_s).first(20)
-  end
-
   def subscribe_lecture!(lecture)
     return false unless lecture.is_a?(Lecture)
     return false if lecture.in?(lectures)
 
     lectures << lecture
-
-    # make sure subscribed_users is updated in media
-    Sunspot.index!(lecture.media)
 
     true
   end
@@ -644,8 +601,6 @@ class User < ApplicationRecord
     lectures.delete(lecture)
     favorite_lectures.delete(lecture)
 
-    # make sure subscribed_users is updated in media
-    Sunspot.index!(lecture.media)
     true
   end
 

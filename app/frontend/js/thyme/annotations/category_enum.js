@@ -1,0 +1,38 @@
+export class CategoryEnum {
+  constructor(name) {
+    this.name = name;
+  }
+
+  /*
+   * Returns the correct locale for the given category.
+   * This method will only work if the given thyme player
+   * has a div-tag with the id "annotation-locales" which
+   * includes the name of the categories as data sets, e.g.
+   * data-note="< Rails code to get translation >".
+   */
+  locale() {
+    return document.getElementById("annotation-locales").dataset[this.name];
+  }
+
+  /*
+   * Return the object with the given name in the given array.
+   *
+   * Override in subclasses.
+   */
+  static getByName(name, array) {
+    for (const a of array) {
+      if (a.name === name) {
+        return a;
+      }
+    }
+  }
+
+  /*
+   * Returns an array with all objects of this enum.
+   *
+   * Override in subclasses.
+   */
+  static all(array) {
+    return array.slice();
+  }
+}

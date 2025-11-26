@@ -69,12 +69,23 @@ class CoursesController < ApplicationController
 
   def search
     authorize! :search, Course.new
-    search = Course.search_by(search_params, params[:page])
-    search.execute
-    results = search.results
-    @total = search.total
-    @courses = Kaminari.paginate_array(results, total_count: @total)
-                       .page(params[:page]).per(search_params[:per])
+
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Course,
+      configurator_class: Search::Configurators::CourseSearchConfigurator,
+      options: { default_per_page: 20 }
+    )
+
+    @pagy = search_result.pagy
+    @courses = search_result.results
+
+    respond_to do |format|
+      format.js
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
+    end
   end
 
   private

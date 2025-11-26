@@ -1,5 +1,6 @@
-# ApplicationHelper module
 module ApplicationHelper
+  include Pagy::Frontend
+
   # returns the path that is associated to the MaMpf brand in the navbar
   def home_path
     return start_path if user_signed_in?
@@ -89,7 +90,6 @@ module ApplicationHelper
       "worked_example" => ["WorkedExample"],
       "quiz" => ["Quiz"],
       "repetition" => ["Repetition"],
-      "erdbeere" => ["Erdbeere"],
       "exercise" => ["Exercise"],
       "script" => ["Script"],
       "questions" => ["Question"],
@@ -102,7 +102,7 @@ module ApplicationHelper
     if lecture && lecture.sort == "vignettes"
       ["miscellaneous"]
     else
-      ["lesson_material", "worked_example", "quiz", "repetition", "erdbeere",
+      ["lesson_material", "worked_example", "quiz", "repetition",
        "exercise", "script", "questions", "remarks", "miscellaneous"]
     end
   end
@@ -113,7 +113,6 @@ module ApplicationHelper
       "worked_example" => t("categories.worked_example.plural"),
       "quiz" => t("categories.quiz.plural"),
       "repetition" => t("categories.repetition.singular"),
-      "erdbeere" => t("categories.erdbeere.singular"),
       "exercise" => t("categories.exercise.plural"),
       "script" => t("categories.script.singular"),
       "questions" => t("categories.question.plural"),
@@ -204,20 +203,6 @@ module ApplicationHelper
                [[t("admin.referral.external_all"), "external-0"]]])
   end
 
-  # Returns the grouped list of all courses/lectures together with their ids.
-  # Is used in grouped_options_for_select in form helpers
-  def grouped_teachable_list_alternative
-    list = []
-    Course.find_each do |c|
-      lectures = [["#{c.short_title} Modul", "Course-#{c.id}"]]
-      c.lectures.includes(:term).find_each do |l|
-        lectures.push([l.short_title, "Lecture-#{l.id}"])
-      end
-      list.push([c.title, lectures])
-    end
-    list
-  end
-
   # Returns the path for the show or edit action of a given lecture,
   # depending on  whether the current user has editor rights for the course.
   # Editor rights are determined by inheritance, e.g. module editors
@@ -291,10 +276,6 @@ module ApplicationHelper
           "data-bs-content": text,
           "data-bs-html": html,
           title: title)
-  end
-
-  def realization_path(realization)
-    "/#{realization.first.downcase.pluralize}/#{realization.second}"
   end
 
   def first_course_independent?

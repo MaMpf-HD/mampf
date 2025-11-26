@@ -31,7 +31,7 @@ jobs:
       packages: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             submodules: recursive
 
@@ -47,7 +47,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Build and push docker image to GHCR
-        working-directory: docker/test
+        working-directory: docker/development/
         # We don't use the docker/build-push-action here since it doesn't
         # support passing custom docker compose files (just dockerfiles).
         #
@@ -65,11 +65,13 @@ jobs:
         run: >
           docker buildx bake
           --allow=fs.read=/home/runner/work/mampf/mampf
-          -f ./docker-compose.yml -f ./docker-compose.cicd.build.yml
-          --set mampf.tags=ghcr.io/mampf-hd/mampftest:image
-          --set mampf.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
-          --set mampf.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
-          --set mampf.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
+          -f ./compose.yml -f ../cicd/compose.cicd.build.yml
+          --set app-test.args.USER_UID=$(id -u)
+          --set app-test.args.USER_GID=$(id -g)
+          --set app-test.tags=ghcr.io/mampf-hd/mampftest:image
+          --set app-test.output=type=image,name=ghcr.io/mampf-hd/mampftest:image,push=true
+          --set app-test.cache-from=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache
+          --set app-test.cache-to=type=registry,ref=ghcr.io/mampf-hd/mampftest:buildcache,mode=max
 
   unit-tests:
     name: Unit tests
@@ -79,7 +81,7 @@ jobs:
     needs: build-mampf
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             submodules: recursive
 
@@ -91,24 +93,78 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull MaMpf image (from GHCR)
-        working-directory: docker/test
+        working-directory: docker/development/
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
 
       - name: Run unit tests
-        working-directory: docker/test
+        working-directory: docker/development/
         run: >
-          docker compose -f docker-compose.yml -f docker-compose.cicd.yml
-          run --entrypoint="" mampf sh -c
+          docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
+          run --entrypoint="" app-test sh -c
           "RAILS_ENV=test bundle exec rspec --format RSpec::Github::Formatter"
 
       - name: Report test coverage to codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
           fail_ci_if_error: true
           files: ./coverage/coverage.xml
           token: ${{ secrets.CODECOV_TOKEN }}
           verbose: true
+
+  # Playwright end-to-end (e2e) tests
+  playwright:
+    name: "e2e (Playwright)"
+    environment: testing
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: build-mampf
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          submodules: recursive
+      
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull MaMpf image (from GHCR)
+        working-directory: docker/development/
+        run: >
+          docker pull ghcr.io/mampf-hd/mampftest:image
+
+      - name: Start app-test service
+        working-directory: docker/development/
+        run: >
+          docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
+          up app-test -d --wait
+
+      - name: Run Playwright tests
+        working-directory: docker/development/
+        run: >
+          docker compose -f ./compose.yml -f ../cicd/compose.cicd.yml
+          exec app-test bash -c "PLAYWRIGHT_HTML_OPEN=never npx playwright test"
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
+
+      - name: Show app-test logs on failure
+        if: failure()
+        working-directory: docker/development/
+        run: >
+          docker compose
+          -f ./compose.yml
+          -f ../cicd/compose.cicd.yml
+          logs app-test
 
   # Cypress end-to-end (e2e) tests
   e2e-tests:
@@ -119,7 +175,7 @@ jobs:
     needs: build-mampf
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             submodules: recursive
 
@@ -131,14 +187,24 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pull MaMpf image (from GHCR)
-        working-directory: docker/test
+        working-directory: docker/development/
         run: >
           docker pull ghcr.io/mampf-hd/mampftest:image
 
       - name: Run Cypress tests
-        working-directory: docker/test
-        run: > 
+        working-directory: docker/development/
+        run: >
           docker compose
-          -f ./docker-compose.yml -f docker-compose.cicd.yml
-          -f ./cypress.yml
+          -f ./compose.yml
+          -f ../cicd/compose.cicd.yml
+          -f ../cypress/compose.yml
           run cypress
+
+      - name: Show app-test logs on failure
+        if: failure()
+        working-directory: docker/development/
+        run: >
+          docker compose
+          -f ./compose.yml
+          -f ../cicd/compose.cicd.yml
+          logs app-test

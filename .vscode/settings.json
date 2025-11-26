@@ -1,26 +1,30 @@
 {
-    "editor.formatOnSave": false, // it still autosaves with the options below
+    "editor.formatOnSave": false, // autosave configured via options below
     //////////////////////////////////////
-    // JS (ESLint)
+    // ESLint: JS, HTML & ERB
     //////////////////////////////////////
     // https://eslint.style/guide/faq#how-to-auto-format-on-save
     // https://github.com/microsoft/vscode-eslint#settings-options
-    "[javascript]": {
-        "editor.formatOnSave": false, // to avoid formatting twice (ESLint + VSCode)
-        "editor.defaultFormatter": "dbaeumer.vscode-eslint"
-    },
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": "explicit"
     },
-    "eslint.format.enable": true, // use ESLint as formatter
-    // this disables VSCode built-in formatter (instead we want to use ESLint)
-    "javascript.validate.enable": false,
+    "eslint.format.enable": true,
     "eslint.options": {
         "overrideConfigFile": ".config/eslint.mjs"
     },
-    //////////////////////////////////////
-    // HTML
-    //////////////////////////////////////
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+    ],
+    "[javascript]": {
+        "editor.formatOnSave": false,
+        "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+        "editor.indentSize": 2,
+        "editor.tabSize": 2,
+    },
+    // Disable VSCode-native JS validation since our JS files might include
+    // ERB syntax, that would otherwise be flagged as invalid
+    "javascript.validate.enable": false,
     "[html]": {
         "editor.formatOnSave": false // TODO: activate once HTML formatter installed
     },
@@ -32,9 +36,11 @@
         "editor.formatOnSave": true
     },
     "rubyLsp.formatter": "rubocop",
+    // https://shopify.github.io/ruby-lsp/version-managers.html#custom-activation
     "rubyLsp.rubyVersionManager": {
-        "identifier": "rbenv"
+        "identifier": "custom"
     },
+    "rubyLsp.rubyExecutablePath": "/usr/local/bin/ruby",
     "rubyLsp.enabledFeatures": {
         "codeActions": true,
         "diagnostics": true,
@@ -56,15 +62,13 @@
     // Ruby Test Explorer
     //////////////////////////////////////
     "rubyLsp.featureFlags": {
-        "fullTestDiscovery": false,
+        "fullTestDiscovery": true,
     },
-    "rubyTestExplorer.testFramework": "rspec",
-    "rubyTestExplorer.rspecCommand": "python3 ./spec/rspec_inside_docker.py",
-    "rubyTestExplorer.rspecDirectory": "./spec/",
-    "rubyTestExplorer.logpanel": true,
-    "rubyTestExplorer.filePattern": [
-        "*_spec.rb"
-    ],
+    "rubyLsp.addonSettings": {
+        "Ruby LSP RSpec": {
+            "rspecCommand": "VITE_RUBY_PORT=3036 RAILS_ENV=test bundle exec rspec --format documentation"
+        }
+    },
     //////////////////////////////////////
     // Files
     //////////////////////////////////////
@@ -72,12 +76,11 @@
         "node_modules/": true,
         "pdfcomprezzor/": true,
         "coverage/": true,
-        "solr/": true,
         ".docker/": true
     },
     "files.associations": {
         "*.js.erb": "javascript",
-        "*.html.erb": "html"
+        "*.html.erb": "erb"
     },
     //////////////////////////////////////
     // Editor
@@ -95,6 +98,18 @@
             "color": "#c9c9c9"
         }
     ],
+    //////////////////////////////////////
+    // Terminal
+    //////////////////////////////////////
+    "terminal.integrated.defaultProfile.linux": "zsh",
+    //////////////////////////////////////
+    // Container
+    //////////////////////////////////////
+    "containers.containers.description": [
+        "Image",
+        "Status"
+    ],
+    "containers.containers.label": "ContainerName",
     //////////////////////////////////////
     // Git
     //////////////////////////////////////
@@ -124,10 +139,11 @@
         "cospeakers",
         "datetime",
         "dockerfiles",
-        "erdbeere",
-        "Erdbeere",
         "factorybot",
+        "Fulltext",
         "helpdesk",
+        "hotwired",
+        "imap",
         "javascripts",
         "justfile",
         "katex",
@@ -137,6 +153,8 @@
         "mailcatcher",
         "mampf",
         "mampftest",
+        "pagy",
+        "Pagy",
         "pdfcomprezzor",
         "pgadmin",
         "preseed",
@@ -147,11 +165,15 @@
         "rubocop",
         "RuboCop",
         "selectize",
+        "stylesheet",
         "Timecop",
+        "tomselect",
         "trix",
-        "turbolinks",
+        "turbo",
         "uncached",
         "Unsets",
+        "vite",
+        "Vite",
         "webpacker",
         "whitespaces"
     ],

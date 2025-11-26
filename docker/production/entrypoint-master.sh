@@ -5,8 +5,6 @@ then
   echo 'Initialization mampf master container'
   echo 'running: bundle exec rails db:migrate'
   bundle exec rails db:migrate
-  echo 'running: bundle exec rake sunspot:solr:reindex'
-  bundle exec rake sunspot:solr:reindex
   echo 'finished initialization'
   touch completed_initial_run
 fi

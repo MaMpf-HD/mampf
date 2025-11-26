@@ -1,4 +1,3 @@
-# TermsController
 class TermsController < ApplicationController
   before_action :set_term, except: [:index, :new, :create, :cancel, :set_active]
   layout "administration"
@@ -11,7 +10,7 @@ class TermsController < ApplicationController
 
   def index
     authorize! :index, Term.new
-    @terms = Term.order(:year, :season).reverse_order.page(params[:page])
+    @pagy, @terms = pagy(Term.order(:year, :season).reverse_order)
   end
 
   def new

@@ -1,0 +1,109 @@
+<% cache media do%>
+<div class="card bg-mdb-color-lighten-6">
+  <div class="card-header">
+    <div class="row">
+      <div class="col-3">
+        <h5>
+          <%= t('basics.media') %>
+          <%= helpdesk(t('admin.lecture.info.media'), false) %>
+        </h5>
+      </div>
+      <div class="col-7">
+        <%= link_to t('buttons.create_medium'),
+                    new_medium_path(params:
+                                    { 
+                                      sort: 'LessonMaterial',
+                                      teachable_id: lecture.id,
+                                      teachable_type: 'Lecture'
+                                    }),
+                    class: 'btn btn-sm btn-secondary new-in-lecture',
+                    id: 'create-new-medium',
+                    remote: true %>
+        <button type="button"
+                class="btn btn-sm btn-outline-secondary mt-2 mt-sm-0"
+                data-bs-toggle="modal"
+                data-bs-target="#importMediaModal">
+          <%= t('buttons.import_media') %>
+        </button>        
+      </div>
+      <div class="col-2 text-end">
+        <i id="hide-media-button"
+           class="far fa-window-close clickable"
+           data-bs-toggle="tooltip"
+           title="<%= t('buttons.hide_media') %>">
+        </i>
+      </div>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-5">
+        <ul class="nav flex-column nav-pills"
+            id="edited-media-tab"
+            role="tablist">
+          <% media_sorts(lecture).each do |s| %>
+            <li class="nav-item w-100">
+              <a class="nav-link <%= active(s == 'lesson_material') %>"
+                 id="<%= s %>-tab"
+                 data-bs-toggle="tab" href="#<%= s %>-media" role="tab"
+                 aria-controls="<%= s%>-media" aria-selected="true"
+                 data-sort="<%= media_types[s].first %>">
+                <%= media_names[s] %>
+                (<%= media.select { |m| m.sort.in?(media_types[s]) }.size %>)
+              </a>
+           </li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="col-7">
+        <div class="tab-content" id="edited-media-tabContent">
+          <% media_sorts(lecture).each do |s| %>
+            <div class="tab-pane fade <%= show_tab(s == 'lesson_material') %>"
+                 id="<%= s %>-media"
+                 role="tabpanel"
+                 aria-labelledby="<%= s %>-tab">
+              <ul class="pl-2">
+                <% media.select { |m| m.sort.in?(media_types[s]) }
+                        .sort_by(&:created_at)
+                        .reverse
+                        .first(50)
+                        .each do |m| %>
+                  <li>
+                    <%= link_to m.local_info_for_admins,
+                                inspect_or_edit_medium_path(m, false),
+                                id: "lecture-#{dom_id(m)}",
+                                class: textcolor(m),
+                                title: release_date_info(m),
+                                data: { type: m.teachable.class.to_s,
+                                        id: m.teachable.id,
+                                        tags: m.tags.pluck(:id),
+                                        toggle: 'tooltip' } %>
+                  </li>
+                <% end %>
+              </ul>
+              <% if media.select { |m| m.sort.in?(media_types[s]) }
+                         .size > 50 %>
+                <%= t('admin.medium.use_search_html',
+                      media_search: link_to(t('admin.main.media_search'),
+                                            administration_search_path)) %>
+              <% end %>
+              <% course_material = Medium.where(teachable: lecture.course,
+                                                sort: media_types[s]).load %>
+              <% if course_material.any? %>
+                <% if course_material.size == 1 %>
+                  <%= t('admin.medium.course_medium_html',
+                        course: course_link_or_text(lecture.course, current_user)) %>
+                <% else %>
+                  <%= t('admin.medium.course_media_html',
+                        count: course_material.size,
+                        course: course_link_or_text(lecture.course, current_user)) %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>

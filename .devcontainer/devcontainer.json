@@ -1,0 +1,127 @@
+// adapted from https://github.com/rails/rails/tree/main/.devcontainer
+// For format details, see https://containers.dev/implementors/json_reference/.
+//
+// For ssh-related issues on WSL, see
+// https://github.com/microsoft/vscode-remote-release/issues/8666#issuecomment-2986483634
+// basically, add this to your ~/.profile inside WSL:
+// if [ -z "$SSH_AUTH_SOCK" ]; then
+//   eval "$(ssh-agent -s)"
+//   ssh-add ~/.ssh/your_github_key
+// fi
+// 
+// for pure-Windows users (no WSL), see this instead:
+// https://github.com/microsoft/vscode-remote-release/issues/11043#issuecomment-3005677524
+{
+    "name": "MaMpf",
+    "dockerComposeFile": [
+        "../docker/development/compose.yml",
+        "compose.devcontainer.yml"
+    ],
+    "service": "app",
+    // https://github.com/orgs/community/discussions/15506
+    "workspaceFolder": "/workspaces/mampf/",
+    // https://containers.dev/features
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+        "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
+        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {},
+        "ghcr.io/devcontainers/features/desktop-lite:1": {
+            // https://github.com/devcontainers/features/tree/main/src/desktop-lite
+            "vncPort": "5933",
+            "password": "noPassword"
+        }
+    },
+    "containerEnv": {
+        // in the container itself, we then install zsh
+        // (this just serves as a fallback)
+        "SHELL": "/bin/bash",
+        "VNC_RESOLUTION": "1920x1080x24",
+        "VNC_DPI": "144"
+    },
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // This can be used to network with other containers or the host.
+    // see the portsAttributes below for details
+    "forwardPorts": [
+        3000,
+        3145,
+        3036,
+        3037,
+        1080,
+        5050,
+        8060,
+        3004,
+        5933
+    ],
+    "portsAttributes": {
+        // Main app
+        "3000": {
+            "label": "MaMpf App (needs manual start)",
+            "onAutoForward": "openBrowserOnce"
+        },
+        // Vite
+        "3036": {
+            "label": "Vite Server (dev & unit tests, starts with MaMpf App)",
+            "onAutoForward": "silent"
+        },
+        "3037": {
+            "label": "Vite Server (e2e tests)",
+            "onAutoForward": "silent"
+        },
+        // Test ports (for Cypress)
+        "3145": {
+            "label": "MaMpf App (for e2e tests)",
+            "onAutoForward": "silent"
+        },
+        "8060": {
+            "label": "Cypress",
+            "onAutoForward": "silent"
+        },
+        // Miscellaneous
+        "1080": {
+            "label": "mailcatcher",
+            "onAutoForward": "silent"
+        },
+        "3004": {
+            "label": "Architecture Book (needs manual start)",
+            "onAutoForward": "openBrowser"
+        },
+        "5050": {
+            "label": "pgAdmin",
+            "onAutoForward": "silent"
+        },
+        "5933": {
+            "label": "VNC Desktop",
+            "onAutoForward": "openBrowser"
+        }
+    },
+    "initializeCommand": "git submodule update --init --recursive",
+    "postCreateCommand": ".devcontainer/boot.sh",
+    "customizations": {
+        "vscode": {
+            // 🎹 keep this in sync with extensions.json
+            "extensions": [
+                // Container & Remote
+                "ms-azuretools.vscode-containers",
+                "ms-vscode.remote-explorer",
+                "docker.docker",
+                // Ruby extensions
+                "Shopify.ruby-lsp",
+                // JavaScript/Node extensions
+                "dbaeumer.vscode-eslint",
+                // Other useful extensions
+                "streetsidesoftware.code-spell-checker",
+                "streetsidesoftware.code-spell-checker-german",
+                "nefrob.vscode-just-syntax",
+                "timonwong.shellcheck",
+                "github.copilot",
+                "github.vscode-pull-request-github",
+                "ms-playwright.playwright"
+            ]
+        }
+    },
+    "overrideCommand": true, // see docker-compose.devcontainer.yml
+    "remoteUser": "mampf"
+}

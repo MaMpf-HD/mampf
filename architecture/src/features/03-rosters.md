@@ -1,0 +1,464 @@
+# Rosters
+
+```admonish question "What is a 'Roster'?"
+A "roster" is a list of names of people belonging to a particular group, team, or event.
+
+- **Common Examples:** A class roster (a list of all students in a class), a team roster (a list of all players on a sports team), or a duty roster (a schedule showing who is working at what time).
+- **In this context:** It refers to the official list of students enrolled in a tutorial or the list of speakers assigned to a seminar talk.
+```
+
+## Problem Overview
+- After campaigns are completed and allocations are materialized into domain models, staff must maintain real rosters.
+
+```admonish tip "Related UI mockups"
+- Roster Overview (tutorials): [Overview – tutorials](../mockups/roster_overview.html)
+- Roster Overview (seminar): [Overview – seminar](../mockups/roster_overview_seminar.html)
+- Roster Overview (exam): [Overview – exam](../mockups/roster_overview_exam.html)
+- Roster Detail (tutorial): [Detail – tutorial](../mockups/roster_detail.html)
+- Roster Detail (seminar): [Detail – seminar](../mockups/roster_detail_seminar.html)
+- Roster Detail (exam): [Detail – exam](../mockups/roster_detail_exam.html)
+- Roster Detail (tutor read-only): [Detail – tutor read-only](../mockups/roster_detail_tutor.html)
+```
+
+```admonish tip "Sourcing candidates after allocation"
+When a preference-based campaign completes, some participants may remain
+unassigned. These are students with zero `confirmed` registrations in the
+campaign (pending entries are normalized to rejected on close). You can source
+these candidates directly from the campaign in roster tools without a separate
+waitlist table.
+```
+
+## Managing unassigned candidates
+
+- View unassigned candidates: from the completed Campaign Show or on the
+  Roster Overview via a right-side panel "Candidates from campaign" showing
+  only users unassigned in that campaign.
+- Inspect context: for preference-based campaigns, show each student's top 3
+  original preferences inline, with a way to view the full list on demand.
+- Actions:
+  - Assign to group: place the student into a specific tutorial if capacity permits.
+  - Move: standard roster operations continue to work across groups.
+
+```admonish info "Placement"
+The Candidates panel lives on the Roster Overview to provide capacity context
+across all groups. The Roster Detail focuses on per-group maintenance
+(participants list, remove/move) and has no candidates panel.
+```
+
+```admonish tip
+No reason entry is required for remove, move, or add actions in roster
+maintenance. Keep actions fast; capacity constraints still apply.
+```
+
+```admonish note "Data model"
+Unassigned candidates are derived from `Registration::UserRegistration` records.
+No extra table is needed; use campaign-scoped queries to list users with zero
+confirmed entries.
+```
+- Typical actions: move users between tutorials/talks, add late-comers, remove dropouts, apply exceptional overrides.
+- Non-goals: This system does not re-run the automated solver (`Registration::AllocationService`) or reopen the campaign. It is strictly for manual roster adjustments after the initial allocation is complete.
+
+## Solution Architecture
+- **Canonical Source:** Domain rosters on registerable models (e.g., `Tutorial.students`, `Talk.speakers`).
+- **Uniform API:** A `Roster::Rosterable` concern provides a consistent interface (`roster_user_ids`, `replace_roster!`, etc.).
+- **Single Service:** A `Roster::MaintenanceService` handles atomic moves, adds, and removals with capacity checks and logging.
+- **Campaign-Independent:** Actions operate directly on `Roster::Rosterable` models; no campaign context is needed for manual changes.
+- **Fast Dashboards:** The maintenance service can update denormalized counters like `Registration::Item.assigned_count` to keep UIs in sync.
+- **Auditing (Future Enhancement):** The service includes a `log()` method as a hook for future auditing. This can be implemented later to write to a dedicated audit trail (e.g., a `RosterChangeEvent` model or using a gem like PaperTrail). This would provide a full history of all manual roster modifications, separate from the immutable record of the initial automated assignment stored in `Registration::UserRegistration`.
+- **Exam-specific finalization:** When materializing exam rosters from a campaign, eligibility is revalidated at finalize-time; registrants who became ineligible are excluded unless an override exists.
+
+---
+
+## Roster::Rosterable (Concern)
+**_The Universal Roster API_**
+
+```admonish info "What it represents"
+A concern that gives any `Registration::Registerable` model a uniform roster management interface.
+```
+
+```admonish note "Think of it as"
+The “contract” required by the maintenance service, defining how to read and write to a model's roster.
+```
+
+### Public Interface & Contract
+
+| Method | Provided/Required | Description |
+|---|---|---|
+| `roster_user_ids` | **Required (Override)** | Returns the current list of user IDs on the roster as an `Array<Integer>`. |
+| `replace_roster!(user_ids:)` | **Required (Override)** | Atomically replaces the entire roster with the given list of user IDs. |
+| `roster_entries` | **Required (Override)** | Returns an ActiveRecord relation to the join table for campaign tracking. |
+| `mark_campaign_source!(user_ids, campaign)` | **Required (Override)** | Marks the given user roster entries as sourced from the specified campaign. |
+| `allocated_user_ids` | Provided | Delegates to `roster_user_ids` to satisfy `Registration::Registerable` contract. |
+| `materialize_allocation!(user_ids:, campaign:)` | Provided | Implements the allocation materialization from `Registration::Registerable`. |
+| `add_user_to_roster!(user_id)` | Provided (private) | Adds a single user to the roster if not already present. |
+| `remove_user_from_roster!(user_id)` | Provided (private) | Removes a single user from the roster. |
+
+### Behavior Highlights
+- **Explicit Contract:** The concern raises a `NotImplementedError` if an including class fails to override required methods (`#roster_user_ids`, `#replace_roster!`, `#roster_entries`, `#mark_campaign_source!`), ensuring the contract is met.
+- **Idempotent:** Calling `replace_roster!` with the same set of IDs should result in no change.
+- **Registration Integration:** Provides `allocated_user_ids` and `materialize_allocation!` to satisfy the `Registration::Registerable` interface, allowing rosters to be managed by the registration system.
+- **Campaign Tracking:** The `materialize_allocation!` method preserves manually-added roster entries while replacing campaign-sourced entries, using the `source_campaign` field on join table records.
+// ...existing code...
+### Example Implementation
+```ruby
+# filepath: app/models/concerns/roster/rosterable.rb
+module Roster
+  module Rosterable
+    extend ActiveSupport::Concern
+
+    def roster_user_ids
+      raise NotImplementedError, "#{self.class.name} must implement #roster_user_ids"
+    end
+
+    def replace_roster!(user_ids:)
+      raise NotImplementedError, "#{self.class.name} must implement #replace_roster!"
+    end
+
+    def allocated_user_ids
+      roster_user_ids
+    end
+
+    def materialize_allocation!(user_ids:, campaign:)
+      transaction do
+        current_ids = roster_user_ids
+        campaign_sourced_ids = current_ids.select do |uid|
+          roster_entries.exists?(user_id: uid, source_campaign: campaign)
+        end
+
+        other_ids = current_ids - campaign_sourced_ids
+        new_ids = (other_ids + user_ids).uniq
+
+        replace_roster!(user_ids: new_ids)
+        mark_campaign_source!(user_ids, campaign)
+      end
+    end
+
+    private
+
+    def add_user_to_roster!(user_id)
+      ids = roster_user_ids
+      return if ids.include?(user_id)
+      replace_roster!(user_ids: ids + [user_id])
+    end
+
+    def remove_user_from_roster!(user_id)
+      replace_roster!(user_ids: roster_user_ids - [user_id])
+    end
+
+    def roster_entries
+      raise NotImplementedError, "#{self.class.name} must implement #roster_entries for campaign tracking"
+    end
+
+    def mark_campaign_source!(user_ids, campaign)
+      raise NotImplementedError, "#{self.class.name} must implement #mark_campaign_source! for campaign tracking"
+    end
+  end
+end
+```
+
+### Usage Scenarios
+- `Tutorial` and `Talk` both include `Roster::Rosterable`.
+- `Tutorial` implements `roster_user_ids` by reading from a new `tutorial_memberships` join table (to be created).
+- `Talk` implements `replace_roster!` using its existing `speaker_talk_joins` association.
+
+---
+
+## Roster::MaintenanceService
+**_Staff Maintenance_**
+
+```admonish info "What it represents"
+The single, safe entry point for all staff-initiated roster changes after an allocation is complete.
+```
+
+```admonish note "Think of it as"
+An admin “move/add/remove” service with capacity checks and logging.
+```
+
+```admonish note "How this is different from Registration::AllocationService"
+- `Registration::AllocationService` is the **automated solver** that runs once to create the initial allocation.
+- `Roster::MaintenanceService` is the **manual tool** for staff to make individual changes to rosters *after* the campaign is finished.
+```
+
+### Public Interface
+
+| Method | Description |
+|---|---|
+| `initialize(actor:)` | Sets up the service with the acting user for auditing. |
+| `move_user!(user_id:, from:, to:, ...)` | Atomically moves a user from one `Roster::Rosterable` to another. |
+| `add_user!(user_id:, to:, ...)` | Adds a user to a `Roster::Rosterable`. |
+| `remove_user!(user_id:, from:, ...)` | Removes a user from a `Roster::Rosterable`. |
+
+### Behavior Highlights
+- **Transactional:** All operations, especially `move_user!`, are performed within a database transaction to ensure atomicity.
+- **Capacity Enforcement:** Enforces the `capacity` of the target `Roster::Rosterable` unless an `allow_overfill: true` flag is passed.
+- **Auditing Hook:** Calls a `log()` method to provide a hook for future audit trail implementation.
+- **Denormalization:** Can update denormalized counters like `Registration::Item.assigned_count` to keep dashboards in sync.
+
+### Example Implementation
+```ruby
+# filepath: app/services/roster/maintenance_service.rb
+class Roster::MaintenanceService
+  def initialize(actor:)
+    @actor = actor
+  end
+
+  def move_user!(user_id:, from:, to:, allow_overfill: false, reason: nil)
+    raise ArgumentError, "type mismatch" unless from.class == to.class
+    ActiveRecord::Base.transaction do
+      enforce_capacity!(to) unless allow_overfill
+      from.send(:remove_user_from_roster!, user_id)
+      to.send(:add_user_to_roster!, user_id)
+      touch_counts!(from, to)
+      log(:move, user_id: user_id, from: from, to: to, reason: reason)
+    end
+  end
+
+  def add_user!(user_id:, to:, allow_overfill: false, reason: nil)
+    ActiveRecord::Base.transaction do
+      enforce_capacity!(to) unless allow_overfill
+      to.send(:add_user_to_roster!, user_id)
+      touch_counts!(to)
+      log(:add, user_id: user_id, to: to, reason: reason)
+    end
+  end
+
+  def remove_user!(user_id:, from:, reason: nil)
+    ActiveRecord::Base.transaction do
+      from.send(:remove_user_from_roster!, user_id)
+      touch_counts!(from)
+      log(:remove, user_id: user_id, from: from, reason: reason)
+    end
+  end
+
+  private
+
+  def enforce_capacity!(rosterable)
+    raise "Capacity reached" if rosterable.full?
+  end
+
+  def touch_counts!(*rosterables)
+    # Logic to find associated Registration::Items and update assigned_count
+  end
+
+  def log(action, **data)
+    # Hook for future auditing (e.g., create RosterChangeEvent record)
+  end
+end
+```
+
+### Usage Scenarios
+- **Moving a student:** An administrator moves a student from a full tutorial to one with free space.
+  ```ruby
+  service = Roster::MaintenanceService.new(actor: current_admin)
+  tutorial_from = Tutorial.find(1)
+  tutorial_to = Tutorial.find(2)
+  student_id = 123
+  service.move_user!(user_id: student_id, from: tutorial_from, to: tutorial_to, reason: "Balancing class sizes")
+  ```
+
+- **Adding a late-comer:** A student who missed the deadline is manually added to a tutorial.
+  ```ruby
+  service = Roster::MaintenanceService.new(actor: current_admin)
+  tutorial = Tutorial.find(5)
+  student_id = 456
+  service.add_user!(user_id: student_id, to: tutorial, reason: "Late registration approved by professor")
+  ```
+
+- **Removing a dropout:** A student officially drops the course.
+  ```ruby
+  service = Roster::MaintenanceService.new(actor: current_admin)
+  tutorial = Tutorial.find(3)
+  student_id = 789
+  service.remove_user!(user_id: student_id, from: tutorial, reason: "Student dropped course")
+  ```
+
+---
+
+## Enhanced Domain Models
+
+The following sections describe how existing MaMpf models are enhanced to integrate with the roster management system by implementing the `Rosterable` concern.
+
+### Tutorial (Enhanced)
+**_A Rosterable Target_**
+
+```admonish info "What it represents"
+An existing MaMpf tutorial model, enhanced to manage its student list.
+```
+
+#### Rosterable Implementation
+The `Tutorial` model includes the `Roster::Rosterable` concern to provide a standard interface for managing its student roster via a join table.
+
+| Method | Implementation Detail |
+|---|---|
+| `roster_user_ids` | Plucks `user_id`s from the `tutorial_memberships` join table (to be created). |
+| `replace_roster!(user_ids:)` | Deletes existing memberships and creates new ones in a transaction. |
+
+#### Example Implementation
+```ruby
+# filepath: app/models/tutorial.rb
+class Tutorial < ApplicationRecord
+  include Registration::Registerable
+  include Roster::Rosterable
+
+  has_many :tutorial_memberships, dependent: :destroy
+  has_many :students, through: :tutorial_memberships, source: :user
+
+  def roster_user_ids
+    tutorial_memberships.pluck(:user_id)
+  end
+
+  def replace_roster!(user_ids:)
+    TutorialMembership.transaction do
+      tutorial_memberships.delete_all
+      user_ids.each { |uid| tutorial_memberships.create!(user_id: uid) }
+    end
+  end
+
+  def roster_entries
+    tutorial_memberships
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    tutorial_memberships.where(user_id: user_ids)
+                       .update_all(source_campaign_id: campaign.id)
+  end
+end
+```
+
+The `tutorial_memberships` table should include a `source_campaign_id` column (nullable) to track which campaign materialized each roster entry.
+
+---
+
+### Talk (Enhanced)
+**_A Rosterable Target_**
+
+```admonish info "What it represents"
+An existing MaMpf talk model, enhanced to manage its speaker list.
+```
+
+#### Rosterable Implementation
+The `Talk` model includes the `Roster::Rosterable` concern to provide a standard interface for managing its speakers.
+
+| Method | Implementation Detail |
+|---|---|
+| `roster_user_ids` | Plucks `speaker_id`s from the `speaker_talk_joins` join table. |
+| `replace_roster!(user_ids:)` | Deletes existing joins and creates new ones in a transaction. |
+
+#### Example Implementation
+```ruby
+# filepath: app/models/talk.rb
+class Talk < ApplicationRecord
+  include Registration::Registerable
+  include Roster::Rosterable
+
+  has_many :speaker_talk_joins, dependent: :destroy
+  has_many :speakers, through: :speaker_talk_joins
+
+  def roster_user_ids
+    speaker_talk_joins.pluck(:speaker_id)
+  end
+
+  def replace_roster!(user_ids:)
+    SpeakerTalkJoin.transaction do
+      speaker_talk_joins.delete_all
+      user_ids.each { |uid| speaker_talk_joins.create!(speaker_id: uid) }
+    end
+  end
+
+  def roster_entries
+    speaker_talk_joins
+  end
+
+  def mark_campaign_source!(user_ids, campaign)
+    speaker_talk_joins.where(speaker_id: user_ids)
+                      .update_all(source_campaign_id: campaign.id)
+  end
+end
+```
+
+The `speaker_talk_joins` table should include a `source_campaign_id` column (nullable) to track which campaign materialized each speaker assignment.
+---
+
+## ERD for Roster Implementations
+
+This diagram shows the concrete database relationships for the two example `Roster::Rosterable` implementations. The `Roster::Rosterable` concern provides a uniform API over these different underlying structures.
+
+```mermaid
+erDiagram
+    TUTORIAL ||--o{ TUTORIAL_MEMBERSHIP : "has (to be created)"
+    TUTORIAL_MEMBERSHIP }o--|| USER : "links to"
+
+    TALK ||--o{ SPEAKER_TALK_JOIN : "has (existing)"
+    SPEAKER_TALK_JOIN }o--|| USER : "links to"
+```
+
+---
+
+## Sequence Diagram
+
+This diagram shows the two distinct phases: the initial, automated materialization of the roster, followed by ongoing manual maintenance by staff.
+
+```mermaid
+sequenceDiagram
+    actor Admin
+    participant Campaign as Registration::Campaign
+    participant Materializer as Registration::AllocationMaterializer
+    participant RosterService as Roster::MaintenanceService
+    participant Rosterable as Roster::Rosterable (e.g., Tutorial)
+
+    rect rgb(235, 245, 255)
+    note over Campaign,Rosterable: Phase 1: Automated Materialization
+    Campaign->>Materializer: new(campaign).materialize!
+    Materializer->>Rosterable: materialize_allocation!(user_ids:, campaign:)
+    note right of Rosterable: From Registration::Registerable
+    Rosterable->>Rosterable: 1. Query current roster_user_ids
+    Rosterable->>Rosterable: 2. Identify campaign-sourced entries
+    Rosterable->>Rosterable: 3. Merge with new user_ids
+    Rosterable->>Rosterable: 4. Call replace_roster!(merged_ids)
+    Rosterable->>Rosterable: 5. Mark new entries with source_campaign_id
+    end
+
+    note over Admin, Rosterable: ... time passes ...
+
+    rect rgb(255, 245, 235)
+    note over Admin,Rosterable: Phase 2: Manual Roster Maintenance
+    Admin->>RosterService: new(actor: admin).move_user!(...)
+    RosterService->>Rosterable: from.remove_user_from_roster!(user_id)
+    RosterService->>Rosterable: to.add_user_to_roster!(user_id)
+    note right of Rosterable: Uses private methods from Roster::Rosterable concern
+    end
+```
+
+## Proposed Folder Structure
+
+To keep the new components organized, the new files would be placed as follows:
+
+```text
+app/
+├── models/
+│   └── concerns/
+│       └── roster/
+│           └── rosterable.rb
+│
+└── services/
+    └── roster/
+        └── maintenance_service.rb
+```
+
+### Key Files
+- `app/models/concerns/roster/rosterable.rb` - Uniform roster API concern
+- `app/services/roster/maintenance_service.rb` - Manual roster modification service
+
+---
+
+## Database Tables
+
+The roster system doesn't introduce new database tables. Instead, it provides a uniform API over existing and to-be-created join tables:
+
+- `tutorial_memberships` (to be created) - Join table for tutorial student rosters
+- `speaker_talk_joins` (existing) - Join table for talk speaker assignments
+
+```admonish note
+The `Roster::Rosterable` concern provides a uniform interface (`roster_user_ids`, `replace_roster!`) regardless of the underlying table structure. Column details are shown in the example implementations above.
+```
+

@@ -1,0 +1,31 @@
+<%= vite_javascript_tag "vignettes/questionnaires/manage/_manage" %>
+
+<h3 class="lecture-pane-header">
+  Vignettes
+</h3>
+
+<div class="d-flex justify-content-center mt-2 mb-2">
+  <button type="button"
+          class="btn btn-outline-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#vignetteModal"
+          data-bs-tooltip="tooltip">
+    <i class="bi bi-plus-circle"></i>
+    <%= t('vignettes.create_new') %>
+  </button>
+</div>
+
+<% questionnaires = lecture.vignettes_questionnaires %>
+<% if questionnaires.present? %>
+<ul class="list-group"> 
+  <% questionnaires.each do |questionnaire| %>
+    <%= link_to edit_questionnaire_path(questionnaire),
+        class: "list-group-item list-group-item-action" do %>
+        <%= questionnaire.title %>
+        <% if !questionnaire.editable %>
+          <i class="bi bi-lock-fill text-secondary fs-6 m-0"></i>
+        <% end %>
+    <% end %>
+  <% end %>
+</ul>
+<% end %>

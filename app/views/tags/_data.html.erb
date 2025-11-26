@@ -65,15 +65,6 @@
                                      from: from } %>
               </div>
             </div>
-            <div class="col-12">
-              <div class="card mb-2 bg-light">
-                <%= render partial: 'tags/realizations',
-                           locals: { tag: tag,
-                                     f: f,
-                                     new_tag: false,
-                                     from: from } %>
-              </div>
-            </div>
           </div>
         </div>
         <div class="col-6 col-xxl-8">
@@ -87,22 +78,12 @@
                     style="display: none;">
                 <%= t('admin.tag.edit_related_tags') %>
               </span>
-              <span id="tagActionTypeRealizations"
-                    style="display: none;">
-                <%= t('erdbeere.edit_realizations') %>
-              </span>
             </div>
             <div class="card-body"
                  id="tagEditActionBody">
               <div id="selectRelatedTagsForm"
                    style="display: none;">
                 <%= render partial: 'tags/select_related_tags',
-                           locals: { tag: tag, f: f } %>
-              </div>
-              <div id="selectTagRealizationsForm"
-                   style="display: none;"
-                   data-id="<%= tag.id %>">
-                <%= render partial: 'tags/edit/select_realizations',
                            locals: { tag: tag, f: f } %>
               </div>
             </div>

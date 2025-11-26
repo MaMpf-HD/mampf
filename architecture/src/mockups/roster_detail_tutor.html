@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Roster — Detail (Tutor)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+  </head>
+  <body class="bg-light">
+    <div class="container my-4">
+      <nav aria-label="breadcrumb" class="mb-2">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="./roster_overview.html">Roster overview</a></li>
+          <li class="breadcrumb-item active" aria-current="page" id="crumb">Tutorial</li>
+        </ol>
+      </nav>
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0" id="title">Tutorial — Detail (Tutor view)</h1>
+        <div class="small text-muted" id="cap">Capacity: —</div>
+      </div>
+
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="card mb-3">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2 class="h6 mb-0">Participants</h2>
+                <div class="d-flex align-items-center gap-3">
+                  <div class="small text-muted" id="count">—</div>
+                </div>
+              </div>
+              <div class="row g-2 mb-2">
+                <div class="col-12 col-md-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text">Search</span>
+                    <input type="search" class="form-control" id="psearch" placeholder="Name or matric…" />
+                  </div>
+                </div>
+                <div class="col-12 col-md-6 text-md-end">
+                  <small class="text-muted" id="pmeta">—</small>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function makePeople(n, start) {
+        const first = ['Alice','Bela','Chun','Daria','Eren','Farah','Gao','Hana','Ilya','Jan','Kim','Luca','Mia','Noah','Omar','Pia','Quinn','Ravi']
+        const last = ['Anders','Bauer','Chen','Dorn','Er','Fischer','Gu','Hansen','Ivanov','Jansen','Klein','Lang','Meier','Neumann','Öztürk','Pohl','Quast','Reuter']
+        const arr = []
+        for (let i = 0; i < n; i++) {
+          const name = `${first[i % first.length]} ${last[i % last.length]}`
+          const matric = String(start + i)
+          arr.push([name, matric])
+        }
+        return arr
+      }
+
+      const allGroups = {}
+      ;['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O'].forEach((id, idx) => {
+        allGroups[id] = {
+          id,
+          title: `Tutorial ${id}`,
+          capacity: 25,
+          people: makePeople(10 + ((idx + 3) % 8), 100001 + idx * 100)
+        }
+      })
+
+      function byId(id) { return document.getElementById(id) }
+      function qs(name) { return new URLSearchParams(location.search).get(name) }
+
+      const gid = (qs('g') || 'A').toUpperCase()
+      const current = allGroups[gid] || allGroups.A
+      if (!current.people || current.people.length === 0) current.people = makePeople(12, 200001)
+
+      function renderHeader(group) {
+        byId('crumb').textContent = group.title
+        byId('title').textContent = `${group.title} — Detail (Tutor view)`
+        byId('cap').textContent = `Capacity: ${group.people.length}/${group.capacity}`
+      }
+
+      function renderTable(group) {
+        const tb = byId('tbody')
+        tb.innerHTML = ''
+        const q = byId('psearch').value.trim().toLowerCase()
+        const rows = (group.people || [])
+          .map((p, idx) => ({ p, idx }))
+          .filter(r => !q || r.p[0].toLowerCase().includes(q) || r.p[1].toLowerCase().includes(q))
+        rows.forEach(({p}, i) => {
+          const tr = document.createElement('tr')
+          tr.innerHTML = `
+            <th scope="row">${i + 1}</th>
+            <td>${p[0]}</td>
+          `
+          tb.appendChild(tr)
+        })
+        byId('count').textContent = `${group.people.length} participants`
+        byId('pmeta').textContent = `${rows.length} shown`
+      }
+
+      function render() {
+        renderHeader(current)
+        renderTable(current)
+      }
+
+      byId('psearch').addEventListener('input', render)
+      render()
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+  </body>
+</html>

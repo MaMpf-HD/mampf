@@ -17,7 +17,13 @@ Cypress.Commands.add("clickExpectNewTab", { prevSubject: true }, ($subject, args
   expect($subject.is("a"), errMsg).to.be.true;
 
   cy.wrap($subject).should("have.attr", "target", "_blank");
-  return cy.wrap($subject).invoke("removeAttr", "target").click(args);
+  cy.wrap($subject).invoke("removeAttr", "target").click(args);
+  // TODO: Unfortunately, due to how the Thyme player loads its components,
+  // we need a small wait here to ensure the new page is correctly rendered.
+  // This should be improved by a more robust Thyme player implementation.
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(500);
+  cy.reload();
 });
 
 /**
@@ -136,6 +142,16 @@ Cypress.Commands.add("login", (user) => {
     },
   }).then((response) => {
     expect(response.status).to.eq(200);
+
+    if (!response.body) {
+      throw new Error("Login failed, no response body. See commands.js");
+    }
+
+    const parser = new DOMParser();
+    const dom = parser.parseFromString(response.body, "text/html");
+    if (dom.querySelector("[data-cy=login-form]")) {
+      throw new Error("Login failed, login form still present. See commands.js");
+    }
   });
 });
 

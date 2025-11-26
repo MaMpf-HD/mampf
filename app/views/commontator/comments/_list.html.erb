@@ -1,4 +1,4 @@
-<%= stylesheet_link_tag 'comments' %>
+<%= vite_stylesheet_tag "styles/comments.scss" %>
 <%#
   Controllers that use this partial must supply the following variables:
   user
@@ -6,8 +6,7 @@
 %>
 
 <% nested_comments.each do |comment, nested_children| %>
-  <div id="commontator-comment-<%= comment.id %>" class="comment comment-field"
-      data-cy="comment">
+  <div id="commontator-comment-<%= comment.id %>" class="comment comment-field">
     <%=
       render partial: 'commontator/comments/show', formats: [ :html ], locals: {
         user: user, comment: comment, nested_children: nested_children

@@ -1,14 +1,21 @@
-# ApplicationController
 class ApplicationController < ActionController::Base
+  # TODO: Change to `prepend_view_path` once the majority of view files
+  # live somewhere in app/frontend/ instead of app/views/
+  append_view_path "app/frontend/"
+
+  include Turbo::Redirection
+  include Pagy::Backend
+  include Flash
+
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you
   # authenticate the user as `authenticate_user!` (or whatever your resource is)
   # will halt the filter chain and redirect before the location can be stored.
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
-  before_action :set_locale
-  after_action :store_interaction, if: :user_signed_in?
   before_action :set_current_user
+
+  include LocaleSetter
 
   etag { current_user.try(:id) }
 
@@ -20,7 +27,6 @@ class ApplicationController < ActionController::Base
                                                   associations:
                                                     [:lectures,
                                                      :edited_media,
-                                                     :clickers,
                                                      { edited_courses:
                                                        [:editors,
                                                         { lectures: [:term,
@@ -92,53 +98,27 @@ class ApplicationController < ActionController::Base
       store_location_for(:user, request.fullpath)
     end
 
-    def set_locale
-      I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookie_locale_param || I18n.default_locale
-      return if user_signed_in?
-
-      cookies[:locale] = I18n.locale
-    end
-
-    def store_interaction
-      return if controller_name.in?(["sessions", "administration", "users",
-                                     "events", "interactions", "profile",
-                                     "clickers", "clicker_votes", "registrations"])
-      return if controller_name == "main" && action_name == "home"
-      return if controller_name == "tags" && action_name.in?(["fill_tag_select",
-                                                              "fill_course_tags"])
-
-      study_participant = current_user.anonymized_id if current_user.study_participant
-      # as of Rack 2.0.8, the session_id is wrapped in a class of its own
-      # it is not a string anymore
-      # see https://github.com/rack/rack/issues/1433
-
-      return if request.session_options[:id].nil?
-
-      InteractionSaver.perform_async(request.session_options[:id].public_id,
-                                     request.original_fullpath,
-                                     request.referer,
-                                     study_participant)
-    end
-
-    def locale_param
-      return unless params[:locale].in?(available_locales)
-
-      params[:locale]
-    end
-
-    def cookie_locale_param
-      return unless cookies[:locale].in?(available_locales)
-
-      cookies[:locale]
-    end
-
-    def available_locales
-      I18n.available_locales.map(&:to_s)
-    end
-
     # https://stackoverflow.com/a/69313330/
     def set_current_user
       Current.user = current_user
+    end
+
+    # Ensures that the current request is a Turbo Frame request.
+    # If not, sets a flash message and redirects to the root path.
+    #
+    # Usage:
+    # (1) call this method at the beginning of your action
+    # > require_turbo_frame
+    # > return if performed?
+    #
+    # OR
+    #
+    # (2) Use it as a before_action filter
+    # > before_action :require_turbo_frame, only: [:your_action]
+    def require_turbo_frame
+      return if turbo_frame_request?
+
+      flash.keep[:alert] = I18n.t("controllers.no_page")
+      redirect_to root_path
     end
 end

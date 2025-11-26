@@ -20,7 +20,7 @@ runs:
     # This has to be done in the main workflow, not in the action, because
     # otherwise this reusable action is not available in the workflow.
     # - name: "Checkout code (on a PR branch)"
-    #   uses: actions/checkout@v4
+    #   uses: actions/checkout@v5
     #   with:
     #     fetch-depth: 2 # to also fetch parent of PR
 

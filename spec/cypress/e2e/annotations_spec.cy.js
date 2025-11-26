@@ -30,7 +30,7 @@ describe("Annotations visibility", () => {
           { medium_id: this.medium.id, user_id: this.user.id }).as("annotation");
 
         // Disable annotation sharing in lecture settings
-        cy.visit(`/lectures/${this.lecture.id}/edit#communication`);
+        cy.visit(`/lectures/${this.lecture.id}/edit?tab=communication`);
         cy.getBySelector("annotation-lecture-settings")
           .should("be.visible")
           .find("input[value=0]").should("have.length", 1).click();

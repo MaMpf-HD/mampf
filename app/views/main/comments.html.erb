@@ -21,7 +21,7 @@
   </div>
   <div class="row mediaCommentsDecoration">
     <div class="col-12">
-      <%= paginate @media_array, window: 2 %>
+      <%== pagy_bootstrap_nav(@pagy) %>
     </div>
   </div>
   <% if @media_array.size.positive? %>

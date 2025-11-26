@@ -10,10 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_21_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+  enable_extension "pg_trgm"
   enable_extension "pgcrypto"
+  enable_extension "unaccent"
 
   create_table "action_text_rich_texts", force: :cascade do |t|
     t.string "name", null: false
@@ -87,7 +89,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.integer "question_id"
+    t.index ["explanation"], name: "index_answers_on_explanation_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["question_id"], name: "index_answers_on_question_id"
+    t.index ["text"], name: "index_answers_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "assignments", force: :cascade do |t|
@@ -123,26 +127,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.datetime "updated_at", null: false
     t.index ["claimable_type", "claimable_id"], name: "index_claims_on_claimable"
     t.index ["redemption_id"], name: "index_claims_on_redemption_id"
-  end
-
-  create_table "clicker_votes", force: :cascade do |t|
-    t.integer "value"
-    t.integer "clicker_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "clickers", force: :cascade do |t|
-    t.integer "editor_id"
-    t.integer "question_id"
-    t.text "code"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.text "title"
-    t.boolean "open"
-    t.integer "alternatives"
-    t.text "instance"
-    t.index ["editor_id"], name: "index_clickers_on_editor_id"
   end
 
   create_table "commontator_comments", force: :cascade do |t|
@@ -217,6 +201,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.text "locale"
     t.boolean "term_independent", default: false
     t.text "image_data"
+    t.index "to_tsvector('simple'::regconfig, (title)::text)", name: "index_courses_on_title_tsearch", using: :gin
+    t.index ["short_title"], name: "index_courses_on_short_title_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["term_independent"], name: "index_courses_on_term_independent"
+    t.index ["title"], name: "index_courses_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "division_course_joins", force: :cascade do |t|
@@ -339,7 +327,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.text "locale"
     t.text "sort"
     t.integer "forum_id"
-    t.text "structure_ids"
     t.boolean "comments_disabled"
     t.boolean "organizational_on_top"
     t.boolean "disable_teacher_display", default: false
@@ -347,6 +334,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
+    t.index ["released"], name: "index_lectures_on_released"
+    t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
     t.index ["term_id"], name: "index_lectures_on_term_id"
   end
@@ -403,8 +392,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.text "manuscript_data"
     t.text "released"
     t.boolean "imported_manuscript"
-    t.string "quizzable_type"
-    t.bigint "quizzable_id"
     t.text "hint"
     t.integer "parent_id"
     t.text "quiz_graph"
@@ -420,14 +407,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.text "geogebra_app_name"
     t.integer "position"
     t.boolean "text_input", default: false
-    t.float "boost", default: 0.0
     t.datetime "released_at", precision: nil
     t.text "publisher"
     t.datetime "file_last_edited", precision: nil
     t.text "external_link_description"
     t.integer "annotations_status", default: -1, null: false
-    t.index ["quizzable_type", "quizzable_id"], name: "index_media_on_quizzable_type_and_quizzable_id"
+    t.integer "answers_count", default: 0, null: false
+    t.index ["answers_count"], name: "index_media_on_answers_count"
+    t.index ["content"], name: "index_media_on_content_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["description"], name: "index_media_on_description_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["external_link_description"], name: "index_media_on_external_link_description_trgm", opclass: :gin_trgm_ops, using: :gin
+    t.index ["released"], name: "index_media_on_released"
+    t.index ["sort"], name: "index_media_on_sort"
     t.index ["teachable_type", "teachable_id"], name: "index_media_on_teachable_type_and_teachable_id"
+    t.index ["text"], name: "index_media_on_text_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "medium_tag_joins", force: :cascade do |t|
@@ -457,8 +450,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.text "locale"
     t.integer "tag_id"
     t.integer "aliased_tag_id"
+    t.index "to_tsvector('simple'::regconfig, title)", name: "index_notions_on_title_tsearch", using: :gin
     t.index ["aliased_tag_id"], name: "index_notions_on_aliased_tag_id"
     t.index ["tag_id"], name: "index_notions_on_tag_id"
+    t.index ["title"], name: "index_notions_on_title_trigram", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "program_translations", force: :cascade do |t|
@@ -547,6 +542,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.text "tags_order"
     t.text "details"
     t.index ["chapter_id"], name: "index_sections_on_chapter_id"
+    t.index ["title"], name: "index_sections_on_title_trgm", opclass: :gin_trgm_ops, using: :gin
   end
 
   create_table "speaker_talk_joins", force: :cascade do |t|
@@ -592,7 +588,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
   create_table "tags", force: :cascade do |t|
     t.datetime "created_at", precision: nil, null: false
     t.datetime "updated_at", precision: nil, null: false
-    t.text "realizations"
   end
 
   create_table "talk_tag_joins", force: :cascade do |t|
@@ -626,6 +621,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.datetime "submission_deletion_mail", precision: nil
     t.datetime "submission_deletion_reminder", precision: nil
     t.datetime "submissions_deleted_at", precision: nil
+    t.index ["year", "season"], name: "index_terms_on_year_and_season"
   end
 
   create_table "thredded_categories", force: :cascade do |t|
@@ -920,7 +916,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_000002) do
     t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.boolean "unread_comments", default: false
-    t.boolean "study_participant", default: false
     t.boolean "email_for_submission_upload"
     t.boolean "email_for_submission_removal"
     t.boolean "email_for_submission_join"

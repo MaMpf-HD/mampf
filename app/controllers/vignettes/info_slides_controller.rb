@@ -4,46 +4,56 @@ module Vignettes
     before_action :set_info_slide, only: [:edit, :update]
     before_action :check_empty_title, only: [:create, :update]
     before_action :check_empty_icon, only: [:create, :update]
+    before_action :require_turbo_frame, only: [:edit, :update]
 
     def new
       @info_slide = InfoSlide.new
 
-      return unless request.xhr?
-
-      render partial: "vignettes/questionnaires/slide_accordion_item",
-             locals: { slide: @info_slide }
+      render turbo_stream: turbo_stream.append(
+        :info_slides,
+        partial: "vignettes/questionnaires/shared/slide_accordion_item",
+        locals: { slide: @info_slide }
+      )
     end
 
     def edit
-      render partial: "vignettes/info_slides/form" if request.xhr?
+      render partial: "vignettes/questionnaires/shared/slide_accordion_item",
+             locals: { slide: @info_slide }
     end
 
     def create
       @info_slide = @questionnaire.info_slides.new(info_slide_params)
       if @info_slide.save
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.info_slide_created")
+        flash.now[:notice] = t("vignettes.info_slide_created")
+        render turbo_stream: [
+          stream_flash,
+          turbo_stream.remove("new_vignettes_info_slide"),
+          turbo_stream.append(
+            :info_slides,
+            partial: "vignettes/questionnaires/shared/slide_accordion_item",
+            locals: { slide: @info_slide }
+          )
+        ]
       else
-        render :new
+        respond_with_flash(:alert, t("vignettes.info_slide_not_created"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 
     def update
       if @info_slide.update(info_slide_params)
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.info_slide_updated")
-      elsif request.xhr?
-        render partial: "vignettes/info_slides/form"
+        render partial: "vignettes/questionnaires/shared/slide_accordion_item",
+               locals: { slide: @info_slide }
       else
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_not_updated")
+        respond_with_flash(:alert, t("vignettes.info_slide_not_updated"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 
     def destroy
       unless @questionnaire.editable
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_not_deleted")
+        respond_with_flash(:alert, t("vignettes.info_slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
         return
       end
 
@@ -53,16 +63,13 @@ module Vignettes
         ActiveRecord::Base.transaction do
           # Remove associations with slides before destroying
           @info_slide.slides.clear
-
           @info_slide.destroy
         end
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.info_slide_deleted")
-      rescue StandardError => e
-        Rails.logger.error("Error deleting info slide: #{e.message}")
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_not_deleted")
+        render turbo_stream: turbo_stream.remove(@info_slide)
+      rescue StandardError
+        respond_with_flash(:alert, t("vignettes.info_slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 
@@ -71,8 +78,8 @@ module Vignettes
       def check_empty_title
         return if info_slide_params[:title].present? && info_slide_params[:title].length.positive?
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_empty_title")
+        respond_with_flash(:alert, t("vignettes.info_slide_empty_title"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       def check_empty_icon
@@ -80,8 +87,8 @@ module Vignettes
           return
         end
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.info_slide_empty_icon")
+        respond_with_flash(:alert, t("vignettes.info_slide_empty_icon"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       def set_questionnaire

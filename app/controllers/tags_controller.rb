@@ -32,7 +32,6 @@ class TagsController < ApplicationController
                              description: @tag.notions.pluck(:title) +
                                             @tag.aliases.pluck(:title))
                       .where.not(pdf_destination: [nil, ""])
-    @realizations = @tag.realizations
     render layout: "application_no_sidebar"
   end
 
@@ -78,7 +77,6 @@ class TagsController < ApplicationController
 
     @tag.update(tag_params)
     if @tag.valid?
-      @tag.update(realizations: realization_params)
       # make sure the tag is touched even if only some relations have been
       # modified (important for caching)
       @tag.touch
@@ -134,25 +132,23 @@ class TagsController < ApplicationController
 
   def search
     authorize! :search, Tag.new
-    per_page = search_params[:per] || 10
-    search = Sunspot.new_search(Tag)
-    search.build do
-      fulltext(search_params[:title])
+
+    search_result = Search::Searchers::ControllerSearcher.search(
+      controller: self,
+      model_class: Tag,
+      configurator_class: Search::Configurators::TagSearchConfigurator,
+      options: { default_per_page: 10 }
+    )
+
+    @pagy = search_result.pagy
+    @tags = search_result.results
+
+    respond_to do |format|
+      format.js
+      format.html do
+        redirect_to :root, alert: I18n.t("controllers.search_only_js")
+      end
     end
-    course_ids = if search_params[:all_courses] == "1"
-      []
-    elsif search_params[:course_ids] != [""]
-      search_params[:course_ids]
-    end
-    search.build do
-      with(:course_ids, course_ids)
-      paginate(page: params[:page], per_page: per_page)
-    end
-    search.execute
-    results = search.results
-    @total = search.total
-    @tags = Kaminari.paginate_array(results, total_count: @total)
-                    .page(params[:page]).per(per_page)
   end
 
   def take_random_quiz
@@ -294,12 +290,6 @@ class TagsController < ApplicationController
                           media_ids: []])
     end
 
-    def realization_params
-      (params.expect(tag: [realizations: []])[:realizations] - [""])
-        .map { |r| r.split("-") }
-        .map { |x| [x.first, x.second.to_i] }
-    end
-
     def check_permissions
       @errors = {}
       return if current_user.admin?
@@ -359,6 +349,7 @@ class TagsController < ApplicationController
     end
 
     def search_params
-      params.expect(search: [:title, :all_courses, :per, { course_ids: [] }])
+      params.expect(search: [:fulltext, :all_courses, :per,
+                             { course_ids: [] }])
     end
 end

@@ -1,3 +1,5 @@
+<%= vite_javascript_tag "js/thyme/thyme_editor" %>
+
 <div id="thyme-edit" data-medium="<%= @medium.id %>">
   <div id="video-area-edit">
     <video id="video-edit" crossorigin="anonymous">
@@ -98,7 +100,7 @@
         <%= link_to t('thyme_editor.thyme_preview'),
                     play_medium_path(@medium),
                     class: 'btn btn-outline-light btn-sm',
-                    target: :blank %>
+                    target: "_blank" %>
         <%= link_to t('thyme_editor.back_to_medium'),
                     edit_medium_path(@medium),
                     class: 'btn btn-outline-light btn-sm ms-2' %>

@@ -1,0 +1,15 @@
+<%= render(SearchForm::SearchForm.new(url: search_courses_path, context: "courses")) do |c| %>
+  <% c.add_editor_field %>
+
+  <% c.add_program_field %>
+
+  <% c.add_fulltext_field %>
+
+  <% c.add_per_page_field(
+       per_options: hits_per_page(true),
+       default: default_hits_per_page(true)
+     ) %>
+
+  <% c.add_term_independence_field %>
+  <% c.add_submit_field %>
+<% end %>

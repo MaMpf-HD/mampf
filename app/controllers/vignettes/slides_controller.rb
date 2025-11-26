@@ -3,6 +3,7 @@ module Vignettes
     before_action :set_questionnaire
     before_action :check_edit_accessibility, only: [:new, :create, :edit, :update, :destroy]
     before_action :check_empty_multiple_choice_option, only: [:update, :create]
+    before_action :require_turbo_frame, only: [:edit, :update]
 
     def new
       return unless @questionnaire.editable
@@ -11,10 +12,11 @@ module Vignettes
       @slide.build_question
       @slide.question.options.build
 
-      return unless request.xhr?
-
-      render partial: "vignettes/questionnaires/slide_accordion_item",
-             locals: { slide: @slide }
+      render turbo_stream: turbo_stream.append(
+        :slides,
+        partial: "vignettes/questionnaires/shared/slide_accordion_item",
+        locals: { slide: @slide }
+      )
     end
 
     def edit
@@ -22,18 +24,27 @@ module Vignettes
       @slide.build_question unless @slide.question
       @slide.question.options.build unless @slide.question.options.any?
 
-      render partial: "vignettes/slides/form" if request.xhr?
+      render partial: "vignettes/questionnaires/shared/slide_accordion_item",
+             locals: { slide: @slide }
     end
 
     def create
       @slide = @questionnaire.slides.new(slide_params)
       @slide.position = @questionnaire.slides.maximum(:position).to_i + 1
       if @slide.save
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_created")
+        flash.now[:notice] = t("vignettes.slide_created")
+        render turbo_stream: [
+          stream_flash,
+          turbo_stream.remove("new_vignettes_slide"),
+          turbo_stream.append(
+            :slides,
+            partial: "vignettes/questionnaires/shared/slide_accordion_item",
+            locals: { slide: @slide }
+          )
+        ]
       else
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_not_created")
+        respond_with_flash(:alert, t("vignettes.slide_not_created"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 
@@ -48,45 +59,44 @@ module Vignettes
           slide_params[:title].present? ||
           slide_params[:info_slide_ids].present? ||
           any_option_deleted?)
-        return redirect_to edit_questionnaire_path(@questionnaire),
-                           alert: t("vignettes.not_editable")
+        return respond_with_flash(:alert, t("vignettes.not_editable"),
+                                  fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       if @slide.update(slide_params)
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_updated")
-      elsif request.xhr?
-        render partial: "vignettes/slides/form"
+        render partial: "vignettes/questionnaires/shared/slide_accordion_item",
+               locals: { slide: @slide }
       else
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.slide_not_updated")
+        respond_with_flash(:alert, t("vignettes.slide_not_updated"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
     end
 
     def destroy
       unless @questionnaire.editable
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.slide_not_deleted")
+        respond_with_flash(:alert, t("vignettes.slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
+        return
       end
+
       @slide = @questionnaire.slides.find(params[:id])
       position = @slide.position
 
-      # rubocop:disable Rails/SkipsModelValidations
       begin
         ActiveRecord::Base.transaction do
           @slide.destroy
 
+          # rubocop:disable Rails/SkipsModelValidations
           @questionnaire.slides.where("position > ?",
                                       position).update_all("position = position - 1")
+          # rubocop:enable Rails/SkipsModelValidations
         end
 
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    notice: t("vignettes.slide_deleted")
+        render turbo_stream: turbo_stream.remove(@slide)
       rescue StandardError => _e
-        redirect_to edit_questionnaire_path(@questionnaire),
-                    alert: t("vignettes.slide_not_deleted")
+        respond_with_flash(:alert, t("vignettes.slide_not_deleted"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
-      # rubocop:enable Rails/SkipsModelValidations
     end
 
     private
@@ -111,8 +121,8 @@ module Vignettes
         return if current_user.admin
         return if current_user.in?(@questionnaire.lecture.editors_with_inheritance)
 
-        redirect_to lecture_questionnaires_path(@questionnaire.lecture),
-                    alert: t("vignettes.not_accessible")
+        respond_with_flash(:alert, t("vignettes.not_accessible"),
+                           fallback_location: edit_questionnaire_path(@questionnaire.lecture))
       end
 
       def check_empty_multiple_choice_option
@@ -121,7 +131,8 @@ module Vignettes
                                         :type) == "Vignettes::MultipleChoiceQuestion"
 
         if slide_params.dig(:question_attributes, :options_attributes).empty?
-          redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_option")
+          respond_with_flash(:alert, t("vignettes.no_option"),
+                             fallback_location: edit_questionnaire_path(@questionnaire))
           return
         end
 
@@ -132,13 +143,15 @@ module Vignettes
           next unless option[:_destroy] == "false"
           next unless option[:text].empty?
 
-          redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.empty_option")
+          respond_with_flash(:alert, t("vignettes.empty_option"),
+                             fallback_location: edit_questionnaire_path(@questionnaire))
           break
         end
 
         return if exists_non_destroyed_option
 
-        redirect_to edit_questionnaire_path(@questionnaire), alert: t("vignettes.no_option")
+        respond_with_flash(:alert, t("vignettes.no_option"),
+                           fallback_location: edit_questionnaire_path(@questionnaire))
       end
 
       def redirect_params

@@ -105,17 +105,10 @@ module MediaHelper
 
   def media_sorts_select(purpose)
     return add_prompt(Medium.select_quizzables) if purpose == "quiz"
-    return Medium.select_question if purpose == "clicker"
     return add_prompt(Medium.select_importables) if purpose == "import"
     return add_prompt(Medium.select_generic) unless current_user.admin_or_editor?
 
     add_prompt(Medium.select_sorts)
-  end
-
-  def sort_preselect(purpose)
-    return "" unless purpose == "quiz"
-
-    "Question"
   end
 
   def related_media_hash(references, media)

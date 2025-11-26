@@ -3,7 +3,6 @@ Rails.application.routes.draw do
 
   require "sidekiq/web"
   require "sidekiq/cron/web"
-
   authenticate :user, ->(u) { u.admin? } do
     mount Sidekiq::Web => "/sidekiq"
   end
@@ -12,8 +11,12 @@ Rails.application.routes.draw do
     namespace :cypress do
       resources :factories, only: :create
       post "factories/call_instance_method", to: "factories#call_instance_method"
+      resources :factories_playwright, only: :create
+      post "factories_playwright/call_instance_method",
+           to: "factories_playwright#call_instance_method"
       resources :database_cleaner, only: :create
       resources :user_creator, only: :create
+      resources :user_creator_playwright, only: :create
       resources :i18n, only: :create
       post "timecop/travel", to: "timecop#travel"
       post "timecop/reset", to: "timecop#reset"
@@ -104,45 +107,6 @@ Rails.application.routes.draw do
 
   resources :chapters, except: [:index, :show]
 
-  # clickers routes
-
-  get "clickers/:id/open",
-      to: "clickers#open",
-      as: "open_clicker"
-
-  get "clickers/:id/close",
-      to: "clickers#close",
-      as: "close_clicker"
-
-  post "clickers/:id/set_alternatives",
-       to: "clickers#set_alternatives",
-       as: "set_clicker_alternatives"
-
-  post "clickers/:id/associate_question",
-       to: "clickers#associate_question",
-       as: "associate_question"
-
-  get "clickers/:id/votes_count",
-      to: "clickers#votes_count",
-      as: "votes_count"
-
-  delete "clickers/:id/remove_question",
-         to: "clickers#remove_question",
-         as: "remove_question"
-
-  get "clickers/:id/render_clickerizable_actions",
-      to: "clickers#render_clickerizable_actions",
-      as: "render_clickerizable_actions"
-
-  get "c/:id",
-      to: "clickers#show"
-
-  resources :clickers, except: [:index, :update]
-
-  # clickervotes routes
-
-  resources :clicker_votes, only: :create
-
   # courses routes
 
   post "courses/:id/take_random_quiz",
@@ -164,17 +128,7 @@ Rails.application.routes.draw do
   resources :divisions, except: [:show]
 
   # feedback routes
-  resources :feedbacks, only: [:create]
-
-  # interactions routes
-
-  get "interactions/export_interactions",
-      as: "export_interactions"
-
-  get "interactions/export_probes",
-      as: "export_probes"
-
-  resources :interactions, only: [:index]
+  resources :feedbacks, only: [:new, :create]
 
   # items routes
 
@@ -254,13 +208,13 @@ Rails.application.routes.draw do
       to: "lectures#destroy_forum",
       as: "destroy_forum"
 
-  get "lectures/:id/show_announcements",
+  get "lectures/:id/announcements",
       to: "lectures#show_announcements",
-      as: "show_announcements"
+      as: "lecture_announcements"
 
   get "lectures/:id/organizational",
       to: "lectures#organizational",
-      as: "organizational"
+      as: "lecture_organizational"
 
   get "lectures/:id/show_random_quizzes",
       to: "lectures#show_random_quizzes",
@@ -270,25 +224,13 @@ Rails.application.routes.draw do
       to: "lectures#show_subscribers",
       as: "show_subscribers"
 
-  get "lectures/:id/show_structures",
-      to: "lectures#show_structures",
-      as: "show_structures"
-
-  get "lectures/:id/edit_structures",
-      to: "lectures#edit_structures",
-      as: "edit_structures"
-
-  get "lectures/:id/search_examples",
-      to: "lectures#search_examples",
-      as: "search_examples"
-
   get "lectures/search",
       to: "lectures#search",
-      as: "lecture_search"
+      as: "search_lectures"
 
-  get "lectures/:id/display_course",
+  get "lectures/:id/course",
       to: "lectures#display_course",
-      as: "display_course"
+      as: "lecture_course"
 
   post "lectures/:id/publish",
        to: "lectures#publish",
@@ -340,7 +282,7 @@ Rails.application.routes.draw do
 
   get "media/search",
       to: "media#search",
-      as: "media_search"
+      as: "search_media"
 
   get "media/:id/inspect",
       to: "media#inspect",
@@ -779,7 +721,7 @@ Rails.application.routes.draw do
 
   get "tags/search",
       to: "tags#search",
-      as: "tags_search"
+      as: "search_tags"
 
   get "tags/:id/take_random_quiz",
       to: "tags#take_random_quiz",
@@ -926,47 +868,6 @@ Rails.application.routes.draw do
   resources :watchlists
 
   resources :watchlist_entries
-
-  # erdbeere routes
-
-  get "examples/:id",
-      to: "erdbeere#show_example",
-      as: "erdbeere_example"
-
-  post "examples/find",
-       to: "erdbeere#find_example"
-
-  get "properties/:id",
-      to: "erdbeere#show_property",
-      as: "erdbeere_property"
-
-  get "structures/:id",
-      to: "erdbeere#show_structure",
-      as: "erdbeere_structure"
-
-  get "find_erdbeere_tags",
-      to: "erdbeere#find_tags",
-      as: "find_erdbeere_tags"
-
-  post "update_erdbeere_tags",
-       to: "erdbeere#update_tags",
-       as: "update_erdbeere_tags"
-
-  get "edit_erdbeere_tags",
-      to: "erdbeere#edit_tags",
-      as: "edit_erdbeere_tags"
-
-  get "cancel_edit_erdbeere_tags",
-      to: "erdbeere#cancel_edit_tags",
-      as: "cancel_edit_erdbeere_tags"
-
-  get "display_erdbeere_info",
-      to: "erdbeere#display_info",
-      as: "display_erdbeere_info"
-
-  get "fill_realizations_select",
-      to: "erdbeere#fill_realizations_select",
-      as: "fill_realizations_select"
 
   # main routes
 
