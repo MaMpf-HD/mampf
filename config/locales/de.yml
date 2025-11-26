@@ -3213,6 +3213,7 @@ de:
         - lade die Dateien einzeln hoch.<br>
         Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
   registration:
+    registrations: "Anmeldungen"
     title: "Ihre Anmeldung"
     planning: "Planung"
     course_code: "Kurscode"

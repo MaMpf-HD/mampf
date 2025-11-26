@@ -35,8 +35,8 @@ module Registration
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
-    def user_registration_confirmed_for_item(user)
-      user_registrations.find_by(user_id: user.id, status: :confirmed)
+    def user_registrations_confirmed(user)
+      user_registrations.where(user_id: user.id, status: :confirmed)
     end
   end
 end

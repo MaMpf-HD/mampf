@@ -3006,6 +3006,7 @@ en:
         - upload the files one by one.<br>
         In case of repeated occurrence please contact the MaMpf team.
   registration:
+    registrations: "Registrations"
     title: "Your Registration"
     planning: "Planning"
     course_code: "Course code"

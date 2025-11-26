@@ -6,7 +6,8 @@
         <%= item.capacity_remained %>
       </span>
     </div>
-    <div class="small" id="saveStatus">
+    <div class="small">
+      <%= campaign.user_registrations_last_updated(current_user) %>
     </div>
   </div>
   
@@ -25,13 +26,13 @@
     <%= button_to t('registration.register_now'),
               register_item_path(campaign.id, item.id),
               method: :post,
-              disable: !campaign.open_for_registrations?
+              disable: !campaign.open_for_registrations? || item.capacity_remained == 0
               class: "btn btn-primary btn-sm #{'d-none' if registered}" %>
 
     <%= button_to t('registration.withdraw'),
               withdraw_item_path(campaign.id, item.id),
               method: :delete,
-              disable: !campaign.open_for_registrations?  
+              disable: !campaign.open_for_registrations?
               class: "btn btn-outline-danger btn-sm #{'d-none' unless registered}" %>
     
   </div>

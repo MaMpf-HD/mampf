@@ -2,9 +2,11 @@
   <nav aria-label="breadcrumb" class="mb-2">
     <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item">
-        <a href="./index.html">Registrations</a></li>
+        <%= link_to t('registration.registrations'), campaign_registrations_index_path %>
+      </li>
       <li class="breadcrumb-item active" aria-current="page">
-      <%= @campaign.title %> (<%= @campaign.campaignable_type %>)</li>
+        <%= @campaign.title %> (<%= @campaign.campaignable_type %>)
+      </li>
     </ol>
   </nav>
 
@@ -23,7 +25,7 @@
 
       <div class="col-12 col-lg-8">
         <div class="card h-100">
-          <% if @campaign.allocation_mode_before_type_cast == 0 %>
+          <% if @campaign.fcfs? %>
             <%= render partial:'registration/main/select_fcfs',
                         locals: {campaign: @campaign,
                                   campaignable_host: @campaignable_host,

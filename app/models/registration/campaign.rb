@@ -39,11 +39,21 @@ module Registration
       Registration::PolicyEngine.new(self).full_trace_for(user, phase: phase)
     end
 
+    def open_for_registrations?
+      DateTime.current < registration_deadline
+    end
+
     def user_registered?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
-    def open_for_registrations?
-      return DateTime.now().before?(:registration_deadline)
+    def user_registrations_confirmed(user)
+      user_registrations.where(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registrations_last_updated(user)
+      user_registrations.where(user_id: user.id).maximum(:updated_at)
+    end
+
   end
 end
