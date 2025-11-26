@@ -4,8 +4,7 @@ class SearchController < ApplicationController
   before_action :check_for_consent
 
   rescue_from ActionController::ParameterMissing do |_exception|
-    redirect_back fallback_location: root_path,
-                  alert: I18n.t("controllers.no_search_term")
+    redirect_back_or_to root_path, alert: I18n.t("controllers.no_search_term")
   end
 
   def current_ability
@@ -39,8 +38,7 @@ class SearchController < ApplicationController
       if @search_string.length > 1
         true
       else
-        redirect_back fallback_location: root_path,
-                      alert: I18n.t("controllers.search_term_short")
+        redirect_back_or_to root_path, alert: I18n.t("controllers.search_term_short")
         false
       end
     end

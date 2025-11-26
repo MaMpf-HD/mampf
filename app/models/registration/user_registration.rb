@@ -1,4 +1,7 @@
 module Registration
+  # Represents a single user's application within a campaign.
+  # Tracks the status (pending/confirmed) and, for preference-based campaigns,
+  # the specific ranking of an item.
   class UserRegistration < ApplicationRecord
     belongs_to :user
 
@@ -25,12 +28,12 @@ module Registration
     # FCFS campaigns: no rank allowed, one row per user+campaign
     validates :preference_rank,
               absence: true,
-              if: -> { registration_campaign.first_come_first_serve? }
+              if: -> { registration_campaign.first_come_first_served? }
 
     validates :user_id,
               uniqueness: {
                 scope: :registration_campaign_id
               },
-              if: -> { registration_campaign.first_come_first_serve? }
+              if: -> { registration_campaign.first_come_first_served? }
   end
 end

@@ -519,7 +519,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.integer "allocation_mode", default: 0, null: false
     t.integer "status", default: 0, null: false
     t.boolean "planning_only", default: false, null: false
-    t.datetime "registration_deadline"
+    t.datetime "registration_deadline", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["allocation_mode"], name: "index_registration_campaigns_on_allocation_mode"

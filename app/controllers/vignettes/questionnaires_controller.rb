@@ -98,7 +98,7 @@ module Vignettes
       unless @answer.save
         Rails.logger.debug { "Answer save failed: #{@answer.errors.full_messages.join(", ")}" }
         render :take, template: "vignettes/questionnaires/take/take",
-                      status: :unprocessable_entity
+                      status: :unprocessable_content
         return
       end
 
@@ -124,7 +124,7 @@ module Vignettes
 
     def update_slide_position
       unless @questionnaire.editable
-        render json: { error: t("vignettes.not_editable") }, status: :unprocessable_entity
+        render json: { error: t("vignettes.not_editable") }, status: :unprocessable_content
         return
       end
       old_position = params[:old_position].to_i + 1
@@ -133,7 +133,7 @@ module Vignettes
       @slide = @questionnaire.slides.find_by(position: old_position)
 
       if new_position < 1 || new_position > @questionnaire.slides.maximum(:position)
-        render json: { error: "Invalid position" }, status: :unprocessable_entity
+        render json: { error: "Invalid position" }, status: :unprocessable_content
         return
       end
 
@@ -155,7 +155,7 @@ module Vignettes
       render json: { success: true }
     rescue StandardError => e
       Rails.logger.error("Slide position update failed: #{e.message}")
-      render json: { error: e.message }, status: :unprocessable_entity
+      render json: { error: e.message }, status: :unprocessable_content
     end
 
     def export_statistics
