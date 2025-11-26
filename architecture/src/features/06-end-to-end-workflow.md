@@ -31,7 +31,7 @@ Assign students to tutorial groups or seminar talks
 | Action | Details |
 |--------|---------|
 | Create Campaign | Staff creates a `Registration::Campaign` for the lecture |
-| Set Mode | Choose `allocation_mode`: `first_come_first_serve` or `preference_based` |
+| Set Mode | Choose `allocation_mode`: `first_come_first_served` or `preference_based` |
 | Add Items | Create one `Registration::Item` for each tutorial or talk |
 | Attach Policies | Add `Registration::Policy` records (e.g., `institutional_email`, `prerequisite_campaign`) |
 | Open Campaign | Make available for student registrations (registration requests) |
@@ -39,14 +39,16 @@ Assign students to tutorial groups or seminar talks
 **Student Experience:**
 
 ```admonish note "Two Registration Modes"
-- **FCFS Mode:** Click to register, get immediate confirmation or rejection
-- **Preference Mode:** Rank options in order of preference, wait for allocation
+- **FCFS Mode:** Visit page, check eligibility, register if eligible (immediate confirmation/rejection)
+- **Preference Mode:** Visit page, check eligibility, rank options if eligible, wait for allocation
 ```
 
 **Technical Flow:**
+- Eligibility check via `Campaign#evaluate_policies_for` happens when user visits the campaign page
+- Ineligible users see an error message explaining the reason
+- Eligible users see the registration interface (register buttons for FCFS, preference form for preference-based)
 - Each registration request creates a `Registration::UserRegistration` with status `pending` (preference-based) or `confirmed/rejected` (FCFS)
-- `Registration::PolicyEngine` evaluates all active policies in order
-- If any policy fails, registration is rejected with specific reason code
+- `Registration::PolicyEngine` evaluates all active policies in order during the initial eligibility check
 
 ## Phase 2: Preference-Based Allocation (if applicable)
 
@@ -55,12 +57,12 @@ Compute optimal assignment respecting preferences and constraints
 ```
 
 ```admonish warning "Only for Preference-Based Campaigns"
-This phase is skipped if the campaign uses `first_come_first_serve` mode.
+This phase is skipped if the campaign uses `first_come_first_served` mode.
 ```
 
 **Staff Actions:**
 - At or after registration deadline, staff triggers `campaign.allocate_and_finalize!`
-- Campaign status transitions: `open` → `processing` → `completed`
+- Campaign status transitions: `open` → `closed` → `processing` → `completed`
 
 **Technical Details:**
 
@@ -162,7 +164,7 @@ Record qualitative accomplishments for eligibility
 - Examples: `blackboard_presentation`, `class_participation`, `peer_review`
 - These augment quantitative points for eligibility determination
 
-## Phase 7: Lecture Performance Materialization
+## Phase 7: Student Performance Materialization
 
 ```admonish success "Goal"
 Materialize student performance facts for all lecture students.
@@ -173,17 +175,17 @@ Performance data is computed for **all students enrolled in the lecture** (e.g.,
 ```
 
 **Staff Configuration:**
-- Staff configures the `LecturePerformance::Rule` for the lecture (minimum points, required achievements, etc.).
-- A background job runs `LecturePerformance::Service.compute_and_upsert_all_records!(lecture)`, which populates or updates the `LecturePerformance::Record` for every student in the lecture.
+- Staff configures the `StudentPerformance::Rule` for the lecture (minimum points, required achievements, etc.).
+- A background job runs `StudentPerformance::Service.compute_and_upsert_all_records!(lecture)`, which populates or updates the `StudentPerformance::Record` for every student in the lecture.
 
-**Materialized Data in `LecturePerformance::Record`:**
+**Materialized Data in `StudentPerformance::Record`:**
 
 | Field | Content |
 |-------|---------|
 | `points_total` | Sum of relevant coursework points earned so far. |
 | `achievements_met` | A set of `Achievement` IDs the student has earned. |
 | `computed_at` | Timestamp of last factual recomputation. |
-| `rule_id` | Foreign key to the `LecturePerformance::Rule` used. |
+| `rule_id` | Foreign key to the `StudentPerformance::Rule` used. |
 
 ```admonish note "Factual Data Only"
 The `Record` stores only raw factual data (points, achievements). It does NOT store eligibility status or interpretations. Those are determined later during teacher certification.
@@ -208,20 +210,20 @@ Teachers review materialized performance data and certify eligibility decisions 
 ```
 
 ```admonish info "The Certification Step"
-This is where human judgment enters the process. Teachers use the `LecturePerformance::Evaluator` to generate eligibility proposals, then review and certify them, creating persistent `LecturePerformance::Certification` records.
+This is where human judgment enters the process. Teachers use the `StudentPerformance::Evaluator` to generate eligibility proposals, then review and certify them, creating persistent `StudentPerformance::Certification` records.
 ```
 
 **Staff Workflow:**
 
 | Step | Action | Technical Detail |
 |------|--------|------------------|
-| 1. Generate Proposals | Staff triggers `LecturePerformance::Evaluator.bulk_proposals(lecture)` | Creates proposals for all students based on Record + Rule |
+| 1. Generate Proposals | Staff triggers `StudentPerformance::Evaluator.bulk_proposals(lecture)` | Creates proposals for all students based on Record + Rule |
 | 2. Review Proposals | Staff reviews the **Certification Dashboard** | Shows proposed status (passed/failed) for each student |
 | 3. Bulk Accept | Staff clicks "Accept All Proposals" (common case) | Creates Certification records with `status: :passed` or `:failed` |
 | 4. Manual Overrides | For exceptional cases, staff manually overrides individual certifications | Sets custom status with required `note` field |
 | 5. Verify Completeness | System checks all lecture students have certifications | Required before campaigns can open |
 
-**Certification Data (`LecturePerformance::Certification`):**
+**Certification Data (`StudentPerformance::Certification`):**
 
 | Field | Content |
 |-------|---------|
@@ -241,7 +243,7 @@ Certifications with `status: :pending` are considered incomplete. Campaigns cann
 **Rule Change Handling:**
 
 ```admonish note "Rule Updates After Certification"
-If staff modifies the `LecturePerformance::Rule` after certifications exist:
+If staff modifies the `StudentPerformance::Rule` after certifications exist:
 - System shows a "Rule Changed" warning
 - Staff can view diff: "12 students would change: failed → passed"
 - Staff must review and re-certify affected students
@@ -274,7 +276,7 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 |------|--------|
 | 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity. |
 | 2. Create Campaign | Staff creates a `Registration::Campaign` for the exam. |
-| 3. Attach Policy | Add a `Registration::Policy` with `kind: :lecture_performance`. |
+| 3. Attach Policy | Add a `Registration::Policy` with `kind: :student_performance`. |
 | 4. Optional Policies | May also attach other policies (e.g., `institutional_email`). |
 | 5. Open | The campaign opens for registrations. |
 
@@ -292,7 +294,7 @@ For full details on the Exam model, see [Exam Model](05a-exam-model.md).
 
 ```admonish warning "Campaign Cannot Open Without Complete Certifications"
 Before staff can transition a campaign to `open` status:
-1. System verifies all lecture students have `LecturePerformance::Certification` records
+1. System verifies all lecture students have `StudentPerformance::Certification` records
 2. All certifications must have `status: :passed` or `:failed` (no `pending`)
 3. If checks fail, campaign opening is blocked with clear error message
 ```
@@ -303,7 +305,7 @@ Before staff can transition a campaign to `open` status:
 |------|--------|
 | 1. Create Exam | Staff creates the `Exam` record with date, location, and capacity. |
 | 2. Create Campaign | Staff creates a `Registration::Campaign` for the exam. |
-| 3. Attach Policy | Add a `Registration::Policy` with `kind: :lecture_performance`, `phase: :registration`. |
+| 3. Attach Policy | Add a `Registration::Policy` with `kind: :student_performance`, `phase: :registration`. |
 | 4. Optional Policies | May also attach other policies (e.g., `institutional_email`). |
 | 5. Pre-Flight Check | System validates certification completeness. |
 | 6. Open | The campaign opens for registrations (only if pre-flight passes). |
@@ -319,7 +321,7 @@ Before staff can transition a campaign to `open` status:
 ```mermaid
 graph LR
     A[Student Attempts Registration] --> B[PolicyEngine Evaluates]
-    B --> C{Lecture Performance Policy}
+    B --> C{Student Performance Policy}
     C --> D[Lookup Certification]
     D --> E{Certification.status}
     E -->|:passed| F[Continue to next policy]
@@ -482,8 +484,8 @@ A student's coursework grade changes after the initial bulk computation.
 
 | Trigger | Action |
 |---------|--------|
-| Grade Change | The system automatically triggers `LecturePerformance::Service.compute_and_upsert_record_for(user)`. |
-| Update | The factual data (`points_total`, `achievements_met`) in the student's `LecturePerformance::Record` is updated. |
+| Grade Change | The system automatically triggers `StudentPerformance::Service.compute_and_upsert_record_for(user)`. |
+| Update | The factual data (`points_total`, `achievements_met`) in the student's `StudentPerformance::Record` is updated. |
 | Preserve | Any manual `override_status` on the record remains untouched. |
 | Effect | The next time the student's eligibility is checked (e.g., on the overview screen or during an exam registration attempt), the `Evaluator` will use the new factual data, providing an up-to-date status. |
 
@@ -499,8 +501,8 @@ A student's coursework grade changes after certifications have been created.
 
 | Trigger | Action |
 |---------|--------|
-| Grade Change | The system automatically triggers `LecturePerformance::Service.compute_and_upsert_record_for(user)`. |
-| Update | The factual data (`points_total`, `achievements_met`) in the student's `LecturePerformance::Record` is updated. |
+| Grade Change | The system automatically triggers `StudentPerformance::Service.compute_and_upsert_record_for(user)`. |
+| Update | The factual data (`points_total`, `achievements_met`) in the student's `StudentPerformance::Record` is updated. |
 | Mark Stale | The associated `Certification` is marked for review (e.g., `needs_review: true` flag). |
 | Notify | System alerts staff that certifications need re-review. |
 | Re-Certify | Staff must review and re-certify before any new campaigns can open. |
@@ -522,7 +524,7 @@ Ongoing monitoring and data integrity
 | Activity | Source |
 |----------|--------|
 | Participation Reports | `Assessment::Participation` data |
-| Eligibility Export | `LecturePerformance::Record` |
+| Eligibility Export | `StudentPerformance::Record` |
 | Registration Audit | `Registration::UserRegistration` |
 | Roster Adjustments | `Roster::MaintenanceService` as needed |
 | Data Integrity | Background jobs monitoring consistency |
@@ -548,7 +550,7 @@ Ongoing monitoring and data integrity
 | Activity | Source |
 |----------|--------|
 | Participation Reports | `Assessment::Participation` data |
-| Eligibility Export | `LecturePerformance::Certification` |
+| Eligibility Export | `StudentPerformance::Certification` |
 | Registration Audit | `Registration::UserRegistration` |
 | Roster Adjustments | `Roster::MaintenanceService` as needed |
 | Data Integrity | Background jobs monitoring consistency |
@@ -563,8 +565,8 @@ These constraints are maintained across all phases to ensure data integrity.
 
 | Invariant | Description |
 |-----------|-------------|
-| One Record per (lecture, user) | `LecturePerformance::Record` uniqueness. |
-| One Certification per (lecture, user) | `LecturePerformance::Certification` uniqueness. |
+| One Record per (lecture, user) | `StudentPerformance::Record` uniqueness. |
+| One Certification per (lecture, user) | `StudentPerformance::Certification` uniqueness. |
 | One Participation per (assessment, user) | `Assessment::Participation` uniqueness. |
 | One Confirmed Registration per (user, campaign) | `Registration::UserRegistration` constraint. |
 | One TaskPoint per (participation, task) | `Assessment::TaskPoint` uniqueness. |
@@ -607,15 +609,22 @@ sequenceDiagram
     participant Materializer
     participant Rosterable
     participant Assessment
-    participant PerfService as LecturePerformance::Service
-    participant PerfRecord as LecturePerformance::Record
+    participant PerfService as StudentPerformance::Service
+    participant PerfRecord as StudentPerformance::Record
     participant Teacher
-    participant Evaluator as LecturePerformance::Evaluator
-    participant Certification as LecturePerformance::Certification
+    participant Evaluator as StudentPerformance::Evaluator
+    participant Certification as StudentPerformance::Certification
     participant ExamCampaign
     participant Policy as Registration::Policy
 
-    Student->>Campaign: Submit registration (FCFS or preference)
+    Student->>Campaign: Visit campaign page
+    Campaign->>Policy: Evaluate eligibility (registration phase)
+    alt Not eligible
+        Campaign-->>Student: Show error with reason
+    else Eligible
+        Campaign-->>Student: Show registration interface
+        Student->>Campaign: Submit registration (FCFS or preference)
+    end
     Note over Campaign: If preference mode...
     Campaign->>Solver: Run assignment at deadline
     Solver-->>Campaign: Set confirmed/rejected
@@ -649,12 +658,19 @@ sequenceDiagram
     Certification-->>ExamCampaign: All certifications complete
     ExamCampaign->>ExamCampaign: Transition to open
 
-    Student->>ExamCampaign: Attempt exam registration
-    ExamCampaign->>Policy: Evaluate lecture_performance policy
+    Student->>ExamCampaign: Visit exam registration page
+    ExamCampaign->>Policy: Evaluate student_performance policy
     Policy->>Certification: Lookup certification for student
     Certification-->>Policy: Return status (passed/failed)
-    Policy-->>ExamCampaign: Pass/Fail result
-    ExamCampaign-->>Student: Confirm/Reject
+    alt Passed certification
+        Policy-->>ExamCampaign: Pass result
+        ExamCampaign-->>Student: Show register button
+        Student->>ExamCampaign: Click register
+        ExamCampaign-->>Student: Confirm registration
+    else Failed/pending certification
+        Policy-->>ExamCampaign: Fail result
+        ExamCampaign-->>Student: Show error (not eligible)
+    end
     end
 
     rect rgb(245, 255, 245)

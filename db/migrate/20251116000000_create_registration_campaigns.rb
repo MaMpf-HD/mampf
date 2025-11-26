@@ -7,7 +7,7 @@ class CreateRegistrationCampaigns < ActiveRecord::Migration[8.0]
       t.integer :allocation_mode, null: false, default: 0
       t.integer :status, null: false, default: 0
       t.boolean :planning_only, null: false, default: false
-      t.datetime :registration_deadline
+      t.datetime :registration_deadline, null: false
 
       t.timestamps
     end
