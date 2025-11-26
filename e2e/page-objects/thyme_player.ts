@@ -13,7 +13,9 @@ export class ThymePlayer {
     const videoPromise = this.page.waitForResponse(response =>
       response.url().includes("uploads/store/medium"),
     );
-    await this.page.goto(this.link);
+    // Usually, you should avoid "networkidle". However, here it is hard to
+    // determine when the video player is fully loaded.
+    await this.page.goto(this.link, { waitUntil: "networkidle" });
     await videoPromise;
   }
 }
