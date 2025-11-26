@@ -8,7 +8,7 @@ function resetSelectized(index, select) {
       ? selectedValue
       : (selectedValue ? [selectedValue] : []);
     for (const val of values) {
-      if (!val) continue;
+      if (val === "") continue;
       $(select).find("option").filter(function () {
         return this.value === val;
       }).attr("selected", true);
