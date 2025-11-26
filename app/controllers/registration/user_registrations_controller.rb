@@ -10,8 +10,6 @@ module Registration
     # In preference-based mode, students register by batch of selected items
     # -> update action for batch registration + deregistration
 
-    # TODO: support translation
-
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
 
@@ -103,10 +101,6 @@ module Registration
     end
 
     def create_registration_lecture_campaign
-      if @campaign.open_for_registrations? == false
-        redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                      notice: t('registration.messages.campaign_not_opened')
-
       if @campaign.allocation_mode == Campaign.allocation_modes[:preference_based]
         raise(NotImplementedError, "Preference-based allocation is not implemented yet")
       else
@@ -119,7 +113,7 @@ module Registration
         item.lock!
 
         # error redirect if any validation fails
-        if (redirect = validate_registration(campaign, item, current_user))
+        if (redirect = validate_create_registration(campaign, item, current_user))
           return redirect
         end
 
@@ -140,23 +134,27 @@ module Registration
       end
     end
 
-    # Validation for first-come-first-serve registration
+    # Validation for creating registration in lecture based registration
+    # 0. Check open for registration
     # 1. Check if user has already registered for this campaign
     # 2. Check if item still has capacity
     # 3. Check if user satisfies all policies (registration and both)
-    def validate_registration(campaign, item, user)
-      if user_has_confirmed_registration_selected_campaign(campaign, user)
-        return rredirect_to_campaign_with_message(campaign.id,
+    def validate_create_registration(campaign, item, user)
+      if campaign.open_for_registrations? == false
+        return redirect_to_campaign_with_message(campaign.id, t('registration.messages.campaign_not_opened')
+
+      if user_has_confirmed_registration_selected_campaign?(campaign, user)
+        return redirect_to_campaign_with_message(campaign.id,
                                                   t('registration.messages.already_registered'))
       end
 
       unless item.still_have_capacity?
-        return rredirect_to_campaign_with_message(campaign.id, t('registration.messages.no_slots'))
+        return redirect_to_campaign_with_message(campaign.id, t('registration.messages.no_slots'))
       end
 
       unless [campaign.policies_satisfied?(user, phase: :registration),
               campaign.policies_satisfied?(user, phase: :both)].all?
-        return rredirect_to_campaign_with_message(campaign.id,
+        return redirect_to_campaign_with_message(campaign.id,
                                                   t('registration.messages.requirements_not_met'))
       end
 
@@ -168,12 +166,28 @@ module Registration
       @user_registration = @item.user_registrations.find_by!(user_id: current_user.id,
                                                              status: :confirmed)
       @campaign = @user_registration.registration_campaign
+
+      # error redirect if any validation fails
+      if (redirect = validate_widthdraw_registration(campaign, item, current_user))
+        return redirect
+      end
+
       @user_registration.destroy
       redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                   notice: t('registration.messages.withdrawn')
     end
 
+    # Validation for widthdrawing registration in lecture based registration
+    # 0. Check open for registration
+    def validate_widthdraw_registration(campaign, item, user)
+      if campaign.open_for_registrations? == false
+        return redirect_to_campaign_with_message(campaign.id, t('registration.messages.campaign_not_opened')
+
+      nil
+    end
+
     def render_not_found(exception)
+      # TODO: redirect to dashboard, and maybe also with error message
       render json: { error: exception.message }, status: :unprocessable_entity
     end
 
@@ -184,7 +198,7 @@ module Registration
 
     private
 
-      def user_has_confirmed_registration_selected_campaign(campaign, user)
+      def user_has_confirmed_registration_selected_campaign?(campaign, user)
         exist_regist = UserRegistration.find_by(registration_campaign_id: campaign.id,
                                                 user_id: user.id)
         exist_regist.present? && exist_regist.status == UserRegistration.statuses[:confirmed]

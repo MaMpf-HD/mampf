@@ -23,13 +23,15 @@
   
   <div class="d-flex gap-2">
     <%= button_to t('registration.register_now'),
-              register_item_path(@campaign.id, item.id),
-              method: :post,         
+              register_item_path(campaign.id, item.id),
+              method: :post,
+              disable: !campaign.open_for_registrations?
               class: "btn btn-primary btn-sm #{'d-none' if registered}" %>
 
     <%= button_to t('registration.withdraw'),
-              withdraw_item_path(@campaign.id, item.id),
-              method: :delete,             
+              withdraw_item_path(campaign.id, item.id),
+              method: :delete,
+              disable: !campaign.open_for_registrations?  
               class: "btn btn-outline-danger btn-sm #{'d-none' unless registered}" %>
     
   </div>
