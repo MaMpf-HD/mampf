@@ -6,7 +6,6 @@ class ApplicationController < ActionController::Base
   include Turbo::Redirection
   include Pagy::Backend
   include Flash
-  include LocaleSetter
 
   before_action :store_user_location!, if: :storable_location?
   # The callback which stores the current location must be added before you
@@ -15,6 +14,8 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
   before_action :set_current_user
+
+  include LocaleSetter
 
   etag { current_user.try(:id) }
 
