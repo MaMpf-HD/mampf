@@ -1,17 +1,17 @@
 // transfer knowledge about selected items from selectize to html options
-const resetSelectized;
-
-resetSelectized = function (index, select) {
-  const i, len, selectedValue, val;
-  selectedValue = select.tomselect.getValue();
+function resetSelectized(index, select) {
+  const selectedValue = select.tomselect.getValue();
   select.tomselect.destroy();
   $(select).find("option").attr("selected", null);
   if ($(select).prop("multiple")) {
-    for (i = 0, len = selectedValue.length; i < len; i++) {
-      val = selectedValue[i];
-      if (val !== "") {
-        $(select).find("option[value='" + val + "']").attr("selected", true);
-      }
+    const values = Array.isArray(selectedValue)
+      ? selectedValue
+      : (selectedValue ? [selectedValue] : []);
+    for (const val of values) {
+      if (!val) continue;
+      $(select).find("option").filter(function () {
+        return this.value === val;
+      }).attr("selected", true);
     }
   }
   else {
@@ -128,7 +128,7 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
       const noResultsMessage = this.dataset.noResults;
       if (noResultsMessage) {
         renderOptions = {
-          no_results: function () {
+          no_results: function (_data, _escape) {
             return '<div class="no-results">' + noResultsMessage + "</div>";
           },
         };
