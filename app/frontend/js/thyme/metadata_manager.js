@@ -1,4 +1,4 @@
-import { renderLatex } from "./utility";
+import { renderLatex, onVideoMetadataLoaded } from "./utility";
 
 /**
   This file wraps up most functionality of the thyme player(s) concerning metadata.
@@ -23,7 +23,7 @@ export class MetadataManager {
      only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
      i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
      for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-    thymeAttributes.video.addEventListener("loadedmetadata", function () {
+    onVideoMetadataLoaded(thymeAttributes.video, function () {
       if (initialMetadata && metadata.readyState === 2) {
         metadataManager.#displayMetadata();
         initialMetadata = false;

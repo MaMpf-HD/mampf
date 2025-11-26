@@ -21,7 +21,7 @@ import { DisplayManager } from "./display_manager";
 import { addGeneralShortcuts, addPlayerShortcuts } from "./key_shortcuts";
 import { MetadataManager } from "./metadata_manager";
 import { resizeThymeContainer } from "./resizer";
-import { playOnClick, setUpMaxTime } from "./utility";
+import { onVideoMetadataLoaded, playOnClick, setUpMaxTime } from "./utility";
 
 $(document).on("turbo:load", function () {
   /*
@@ -161,12 +161,13 @@ $(document).on("turbo:load", function () {
   thymeAttributes.metadataManager = metadataManager;
 
   let hasChapters = undefined;
+  let hasMetadata = undefined;
+
   chapterManager.load((_hasChapters) => {
     hasChapters = _hasChapters;
     onVideoDataReady();
   });
 
-  let hasMetadata = undefined;
   metadataManager.load((_hasMetadata) => {
     hasMetadata = _hasMetadata;
     onVideoDataReady();
@@ -210,7 +211,7 @@ $(document).on("turbo:load", function () {
   }
 
   window.onresize = resizeContainer;
-  video.onloadedmetadata = resizeContainer;
+  onVideoMetadataLoaded(video, resizeContainer);
 
   /*
     KEYBOARD SHORTCUTS
