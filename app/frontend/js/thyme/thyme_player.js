@@ -151,6 +151,27 @@ $(document).on("turbo:load", function () {
   });
 
   /*
+    INTERACTIVE AREA
+   */
+  iaButton.toHide = [$("#caption"), annotationArea];
+  iaButton.add();
+  (new IaCloseButton("ia-close", iaButton)).add();
+
+  /*
+    RESIZE
+   */
+  // Manage large and small display
+  function onEnlarge() {
+    iaButton.plus();
+  }
+
+  const elements = [$("#caption"), $("#annotation-caption"), $("#video-controlBar")];
+  const displayManager = new DisplayManager(elements, onEnlarge);
+
+  // Initialize display manager first before loading chapters/metadata
+  displayManager.updateControlBarType();
+
+  /*
     CHAPTERS & METADATA MANAGER
    */
   const iaBackButton = new IaBackButton("back-button", "chapters");
@@ -184,24 +205,6 @@ $(document).on("turbo:load", function () {
     }
   }
 
-  /*
-    INTERACTIVE AREA
-   */
-  iaButton.toHide = [$("#caption"), annotationArea];
-  iaButton.add();
-  (new IaCloseButton("ia-close", iaButton)).add();
-
-  /*
-    RESIZE
-   */
-  // Manage large and small display
-  function onEnlarge() {
-    iaButton.plus();
-  }
-
-  const elements = [$("#caption"), $("#annotation-caption"), $("#video-controlBar")];
-  const displayManager = new DisplayManager(elements, onEnlarge);
-
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
@@ -224,7 +227,6 @@ $(document).on("turbo:load", function () {
    */
   const controlBarHider = new ControlBarHider("video-controlBar", 3000);
   controlBarHider.install();
-  displayManager.updateControlBarType();
   playOnClick();
   setUpMaxTime("max-time");
 
