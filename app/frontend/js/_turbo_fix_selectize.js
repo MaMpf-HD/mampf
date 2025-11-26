@@ -1,8 +1,8 @@
 // transfer knowledge about selected items from selectize to html options
-var resetSelectized;
+const resetSelectized;
 
 resetSelectized = function (index, select) {
-  var i, len, selectedValue, val;
+  const i, len, selectedValue, val;
   selectedValue = select.tomselect.getValue();
   select.tomselect.destroy();
   $(select).find("option").attr("selected", null);
@@ -38,6 +38,7 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
       plugins = ["remove_button"];
     }
     if (this.dataset.ajax === "true" && this.dataset.filled === "false") {
+      // eslint-disable-next-line @typescript-eslint/no-this-alias
       const model_select = this;
       courseId = 0;
       const placeholder = this.dataset.placeholder;
@@ -71,7 +72,7 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
       (function () {
         class MinimumLengthSelect extends TomSelect {
           refreshOptions(triggerDropdown = true) {
-            var query = this.inputValue();
+            const query = this.inputValue();
             if (query.length < 2) {
               this.close(false);
               return;
@@ -89,7 +90,7 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
           placeholder: placeholder,
           closeAfterSelect: true,
           load: function (query, callback) {
-            var url;
+            let url;
             if (send_data || !loaded) {
               url = fill_path + "?course_id=" + courseId + "&q=" + encodeURIComponent(query);
               fetch(url).then(function (response) {
@@ -125,10 +126,10 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
     else {
       let renderOptions = {};
 
-      let noResultsMessage = this.dataset.noResults;
+      const noResultsMessage = this.dataset.noResults;
       if (noResultsMessage) {
         renderOptions = {
-          no_results: function (_data, _escape) {
+          no_results: function () {
             return '<div class="no-results">' + noResultsMessage + "</div>";
           },
         };

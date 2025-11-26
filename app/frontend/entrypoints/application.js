@@ -66,7 +66,7 @@ import { WidgetInstance } from "friendly-challenge";
 import "~/js/masonry_grid";
 
 document.addEventListener("turbo:load", function () {
-  var doneCallback, element, options;
+  const doneCallback, element, options;
 
   doneCallback = function (solution) {
     console.log(solution);
