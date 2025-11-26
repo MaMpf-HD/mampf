@@ -11,6 +11,7 @@ en:
       reopened: "Campaign reopened."
       index:
         title: "Registrations"
+        card_title: "Registration Campaigns"
         new_campaign: "New Campaign"
         none: "No campaigns found."
         columns:
@@ -30,6 +31,9 @@ en:
         registration_deadline: "Registration Deadline"
         planning_only: "Planning Only"
         submit: "Save"
+      allocation_mode:
+        first_come_first_serve: "First-Come-First-Served"
+        preference_based: "Preference-Based"
       status:
         draft: "Draft"
         open: "Open"

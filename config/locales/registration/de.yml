@@ -11,6 +11,7 @@ de:
       reopened: "Anmeldung wiedereröffnet."
       index:
         title: "Anmeldungen"
+        card_title: "Anmeldeverfahren"
         new_campaign: "Neues Anmeldeverfahren"
         none: "Keine Anmeldeverfahren vorhanden."
         columns:
@@ -30,6 +31,9 @@ de:
         registration_deadline: "Registrierungsende"
         planning_only: "Nur Planung"
         submit: "Speichern"
+      allocation_mode:
+        first_come_first_serve: "Direktanmeldung"
+        preference_based: "Präferenzbasiert"
       status:
         draft: "Entwurf"
         open: "Offen"
