@@ -1,4 +1,5 @@
 import { Component } from "~/js/thyme/components/component";
+import { onVideoMetadataLoaded } from "~/js/thyme/utility";
 
 export class VolumeBar extends Component {
   add() {
@@ -10,7 +11,7 @@ export class VolumeBar extends Component {
       video.volume = element.value;
     });
 
-    video.addEventListener("loadedmetadata", function () {
+    onVideoMetadataLoaded(video, function () {
       element.value = video.volume;
       element.style.backgroundImage = "linear-gradient(to right,"
         + " #2497E3, #2497E3 "

@@ -21,7 +21,7 @@ import { DisplayManager } from "./display_manager";
 import { addGeneralShortcuts, addPlayerShortcuts } from "./key_shortcuts";
 import { MetadataManager } from "./metadata_manager";
 import { resizeThymeContainer } from "./resizer";
-import { playOnClick, setUpMaxTime } from "./utility";
+import { onVideoMetadataLoaded, playOnClick, setUpMaxTime } from "./utility";
 
 $(document).on("turbo:load", function () {
   /*
@@ -151,39 +151,6 @@ $(document).on("turbo:load", function () {
   });
 
   /*
-    CHAPTERS & METADATA MANAGER
-   */
-  const iaBackButton = new IaBackButton("back-button", "chapters");
-  iaBackButton.add();
-  const chapterManager = new ChapterManager("chapters", iaBackButton);
-  const metadataManager = new MetadataManager("metadata");
-  thymeAttributes.chapterManager = chapterManager;
-  thymeAttributes.metadataManager = metadataManager;
-
-  let hasChapters = undefined;
-  chapterManager.load((_hasChapters) => {
-    hasChapters = _hasChapters;
-    onVideoDataReady();
-  });
-
-  let hasMetadata = undefined;
-  metadataManager.load((_hasMetadata) => {
-    hasMetadata = _hasMetadata;
-    onVideoDataReady();
-  });
-
-  function onVideoDataReady() {
-    if (hasChapters === undefined || hasMetadata === undefined) {
-      return;
-    }
-
-    if (hasChapters || hasMetadata) {
-      // Open the interactive area
-      $("#ia-active").trigger("click");
-    }
-  }
-
-  /*
     INTERACTIVE AREA
    */
   iaButton.toHide = [$("#caption"), annotationArea];
@@ -201,6 +168,43 @@ $(document).on("turbo:load", function () {
   const elements = [$("#caption"), $("#annotation-caption"), $("#video-controlBar")];
   const displayManager = new DisplayManager(elements, onEnlarge);
 
+  // Initialize display manager first before loading chapters/metadata
+  displayManager.updateControlBarType();
+
+  /*
+    CHAPTERS & METADATA MANAGER
+   */
+  const iaBackButton = new IaBackButton("back-button", "chapters");
+  iaBackButton.add();
+  const chapterManager = new ChapterManager("chapters", iaBackButton);
+  const metadataManager = new MetadataManager("metadata");
+  thymeAttributes.chapterManager = chapterManager;
+  thymeAttributes.metadataManager = metadataManager;
+
+  let hasChapters = undefined;
+  let hasMetadata = undefined;
+
+  chapterManager.load((_hasChapters) => {
+    hasChapters = _hasChapters;
+    onVideoDataReady();
+  });
+
+  metadataManager.load((_hasMetadata) => {
+    hasMetadata = _hasMetadata;
+    onVideoDataReady();
+  });
+
+  function onVideoDataReady() {
+    if (hasChapters === undefined || hasMetadata === undefined) {
+      return;
+    }
+
+    if (hasChapters || hasMetadata) {
+      // Open the interactive area
+      $("#ia-active").trigger("click");
+    }
+  }
+
   // resizes the thyme container to the window dimensions, taking into account
   // whether the interactive area is displayed or hidden
   function resizeContainer() {
@@ -210,7 +214,7 @@ $(document).on("turbo:load", function () {
   }
 
   window.onresize = resizeContainer;
-  video.onloadedmetadata = resizeContainer;
+  onVideoMetadataLoaded(video, resizeContainer);
 
   /*
     KEYBOARD SHORTCUTS
@@ -223,7 +227,6 @@ $(document).on("turbo:load", function () {
    */
   const controlBarHider = new ControlBarHider("video-controlBar", 3000);
   controlBarHider.install();
-  displayManager.updateControlBarType();
   playOnClick();
   setUpMaxTime("max-time");
 

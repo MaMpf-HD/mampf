@@ -1,4 +1,5 @@
 import { Component } from "~/js/thyme/components/component";
+import { onVideoMetadataLoaded } from "~/js/thyme/utility";
 import { secondsToTime } from "../utility";
 
 export class SeekBar extends Component {
@@ -32,7 +33,11 @@ export class SeekBar extends Component {
       currentTime.innerHTML = secondsToTime(video.currentTime);
     });
 
-    function setupSeekBar() {
+    onVideoMetadataLoaded(video, function () {
+      if (!video.duration) {
+        return;
+      }
+
       if (video.dataset.time) {
         video.currentTime = video.dataset.time;
         element.value = video.dataset.time / video.duration * 100;
@@ -40,11 +45,7 @@ export class SeekBar extends Component {
       else {
         element.value = 0;
       }
-    }
-    video.addEventListener("loadedmetadata", setupSeekBar);
-    if (video.readyState >= 1 && video.duration) {
-      setupSeekBar();
-    }
+    });
 
     // Pause the video when the seek handle is being dragged
     element.addEventListener("mousedown", function () {
