@@ -30,7 +30,7 @@ FactoryBot.define do
     trait :with_toc do
       after(:build) do |lecture, evaluator|
         lecture.chapters = create_list(:chapter, evaluator.chapter_count,
-                                       :with_sections)
+                                       :with_sections, lecture: lecture)
       end
     end
 
@@ -38,7 +38,7 @@ FactoryBot.define do
     trait :with_sparse_toc do
       after(:build) do |lecture|
         lecture.chapters = create_list(:chapter, 1,
-                                       :with_sections, section_count: 1)
+                                       :with_sections, section_count: 1, lecture: lecture)
       end
     end
 
