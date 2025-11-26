@@ -1,13 +1,13 @@
 <div class="card-body">
-  <h2 class="h5">Your Eligibility</h2>
+  <h2 class="h5"><%= t('registration.eligibility_title') %></h2>
   
   <p class="mb-2 small text-muted">
     <% pass = eligibility.all? {|policy| policy[:outcome][:pass] } %>
-    Status: 
+    <%= t('basics.status') %>: 
     <% if pass %>
-      <span class="badge rounded-pill text-bg-success">Eligible</span>
+      <span class="badge rounded-pill text-bg-success"><%= t('registration.eligible') %></span>
     <% else %>
-      <span class="badge rounded-pill text-bg-warning">Not eligible</span>
+      <span class="badge rounded-pill text-bg-warning"><%= t('registration.not_eligible') %></span>
     <% end %>
   </p>
   
@@ -16,20 +16,19 @@
       <li class="list-group-item d-flex justify-content-between align-items-center">
 
         <div>
-          <div class="fw-semibold"> <%= policy.kind.humanize %> </div>
+          <div class="fw-semibold"><%= policy.kind&.humanize %></div>
           <% policy_info = get_policy_config_info(policy) %>
-          <% if get_details_render_type_policy(policy.kind) == 'link'%>
-            <!-- TODO: update link here -->
-            <%= link_to "Prerequisite Campaign ##{policy_info.info}", user_registrations_path(policy_info.id) %> 
+          <% if get_details_render_type_policy(policy.kind) == 'link' %>
+            <%= link_to "#{t('registration.prerequisite_campaign')} ##{policy_info.info}", user_registrations_path(policy_info.id) %> 
           <% else %>
-            <small class="text-muted"> <%= policy_info %> </small>
+            <small class="text-muted"><%= policy_info %></small>
           <% end %>
         </div>
 
-        <% if policy[:outcome][:pass]%>
-          <span class="badge rounded-pill text-bg-success">Passed</span>
+        <% if policy[:outcome][:pass] %>
+          <span class="badge rounded-pill text-bg-success"><%= t('basics.passed') %></span>
         <% else %>
-          <span class="badge rounded-pill text-bg-danger">Failed</span>
+          <span class="badge rounded-pill text-bg-danger"><%= t('basics.failed') %></span>
         <% end %>
       </li>
     <% end %>

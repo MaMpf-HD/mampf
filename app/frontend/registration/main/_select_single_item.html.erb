@@ -1,7 +1,7 @@
 <div>
   <div class="d-flex justify-content-between align-items-center mb-2">
     <div class="small text-muted">
-      Seats remaining: 
+      <%= t('registration.seats_remaining') %>: 
       <span id="seatsRemaining">
         <%= item.capacity_remained %>
       </span>
@@ -10,27 +10,27 @@
     </div>
   </div>
   
-  <% registered = item.user_registered?(current_user)%>
+  <% registered = item.user_registered?(current_user) %>
   <div id="statusPanel" class="mb-3">
     <span class="badge rounded-pill text-bg-secondary" id="regState">
       <% if registered %>
-        Registered
+        <%= t('registration.registered') %>
       <% else %>
-        Not registered
+        <%= t('registration.not_registered') %>
       <% end %>
     </span>
   </div>
   
   <div class="d-flex gap-2">
-    <%= button_to "Register now",
+    <%= button_to t('registration.register_now'),
               register_item_path(@campaign.id, item.id),
               method: :post,         
               class: "btn btn-primary btn-sm #{'d-none' if registered}" %>
 
-    <%= button_to "Withdraw",
+    <%= button_to t('registration.withdraw'),
               withdraw_item_path(@campaign.id, item.id),
               method: :delete,             
               class: "btn btn-outline-danger btn-sm #{'d-none' unless registered}" %>
     
   </div>
-</div> 
+</div>

@@ -2,19 +2,22 @@
   <div>
     <h1 class="h4 mb-1">
       <%= campaignable_host.title %> - <%= campaign.title %> 
-      <span class="badge text-bg-primary">Open</span>
+      <span class="badge text-bg-primary"><%= campaign.status&.humanize %></span>
+      <% unless campaign.planning_only %>
+        <span class="badge text-bg-primary"><%= t('registration.planning') %></span>
+      <% end %>
     </h1>
 
     <div class="text-muted small">
-      <%= campaignable_host.term_season%> <%= campaignable_host.term_year%> · Course code: <%= campaignable_host.course_short_title%>
+      <%= campaignable_host.term_season %> <%= campaignable_host.term_year %> · 
+      <%= t('registration.course_code') %>: <%= campaignable_host.course_short_title %>
     </div>
   </div>
 
   <div class="text-end">
-    <div class="text-muted small mb-1">Campaign: Main registration</div>
+    <div class="text-muted small mb-1"><%= t('registration.campaign_main') %></div>
     <span class="badge text-bg-danger">
-      Closes: <%= campaign.registration_deadline.to_formatted_s(:long) %>
+      <%= t('basics.closes') %>: <%= campaign.registration_deadline&.to_formatted_s(:long) %>
     </span>
   </div>
-  
 </div>

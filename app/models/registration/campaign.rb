@@ -42,5 +42,8 @@ module Registration
     def user_registered?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
+
+    def open_for_registrations?
+      return DateTime.now().before?(:registration_deadline)
   end
 end

@@ -3005,6 +3005,30 @@ en:
         - shut down your device, restart it and try again.<br>
         - upload the files one by one.<br>
         In case of repeated occurrence please contact the MaMpf team.
+  registration:
+    title: "Your Registration"
+    planning: "Planning"
+    course_code: "Course code"
+    campaign_main: "Campaign: Main registration"
+    eligibility_title: "Your Eligibility"
+    eligible: "Eligible"
+    not_eligible: "Not eligible"
+    prerequisite_campaign: "Prerequisite Campaign"
+    seats_remaining: "Seats remaining"
+    registered: "Registered"
+    not_registered: "Not registered"
+    register_now: "Register now"
+    withdraw: "Withdraw"
+    messages:
+      campaign_unavailable: "This campaign is not accessible right now."
+      campaign_not_opened: "Registration for this campaign is not opened."
+      registration_success: "Registration completed successfully."
+      registration_failed: "Registration could not be completed."
+      already_registered: "You are already registered for this campaign."
+      no_slots: "No seats available."
+      requirements_not_met: "You do not meet the requirements."
+      withdrawn: "You have withdrawn your registration."
+    
   package:
     no_zip: This file is not a .zip archive.
     too_big: This file is too big.
@@ -3424,6 +3448,14 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    mode: "Allocation Mode"
+    capacity: "Capacity"
+    seats: "seats"
+    filled: "filled"
+    across_group: "across group"
+    closes: "Closes"
+    passed: "Passed"
+    failed: "Failed"
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

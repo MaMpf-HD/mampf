@@ -1,12 +1,12 @@
 <div class="card-body">
-  <h2 class="h5">Details</h2>
+  <h2 class="h5"><%= t('basics.details') %></h2>
   
   <ul class="list-group">
 
     <!-- Allocation mode detail -->
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
-        <div class="fw-semibold">Mode</div>
+        <div class="fw-semibold"><%= t('basics.mode') %></div>
         <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
         <small class="text-muted"><%= mode_info[:mode_name] %></small>
       </div>
@@ -20,19 +20,16 @@
 
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
-        <div class="fw-semibold">Capacity</div>
-        <small class="text-muted"><%= total_capacity %> seats</small>
+        <div class="fw-semibold"><%= t('basics.capacity') %></div>
+        <small class="text-muted"><%= total_capacity %> <%= t('basics.seats') %></small>
       </div>
       <span class="badge rounded-pill text-bg-info" id="capacityInfo">
-        <%= total_capacity_used %>/<%= total_capacity %> filled 
+        <%= total_capacity_used %>/<%= total_capacity %> <%= t('basics.filled') %>
         <% if multi_items %>
-          accross group
+          <%= t('basics.across_group') %>
         <% end %>
       </span>
     </li>
 
-
-    
-    
   </ul>
 </div>

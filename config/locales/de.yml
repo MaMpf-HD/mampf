@@ -3212,6 +3212,30 @@ de:
         - fahre Dein Gerät herunter, starte es erneut und versuch es nochmal.<br>
         - lade die Dateien einzeln hoch.<br>
         Bei wiederholtem Auftreten kontaktiere bitte das MaMpf-Team.
+  registration:
+    title: "Ihre Anmeldung"
+    planning: "Planung"
+    course_code: "Kurscode"
+    campaign_main: "Kampagne: Hauptanmeldung"
+    eligibility_title: "Ihre Berechtigung"
+    eligible: "Berechtigt"
+    not_eligible: "Nicht berechtigt"
+    prerequisite_campaign: "Voraussetzungskampagne"
+    seats_remaining: "Verbleibende Plätze"
+    registered: "Registriert"
+    not_registered: "Nicht registriert"
+    register_now: "Jetzt registrieren"
+    withdraw: "Zurückziehen"
+    messages:
+      campaign_unavailable: "Diese Kampagne ist derzeit nicht verfügbar."
+      campaign_closed: "Die Registrierung für diese Kampagne ist geschlossen."
+      registration_success: "Registrierung erfolgreich abgeschlossen."
+      registration_failed: "Registrierung konnte nicht abgeschlossen werden."
+      already_registered: "Sie sind bereits für diese Kampagne registriert."
+      no_slots: "Keine Plätze verfügbar."
+      requirements_not_met: "Sie erfüllen die Voraussetzungen nicht."
+      withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
+    
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
     too_big: Die Datei ist zu groß.
@@ -3641,6 +3665,14 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    mode: "Zuteilungsmodus"
+    capacity: "Kapazität"
+    seats: "Sitze"
+    filled: "belegt"
+    across_group: "über die Gruppe hinweg"
+    closes: "Schließt"
+    passed: "Bestanden"
+    failed: "Nicht bestanden"
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

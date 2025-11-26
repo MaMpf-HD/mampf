@@ -10,6 +10,8 @@ module Registration
     # In preference-based mode, students register by batch of selected items
     # -> update action for batch registration + deregistration
 
+    # TODO: support translation
+
     rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
 
@@ -68,8 +70,12 @@ module Registration
       item22.save!
     end
 
+    # Get campaigns info + registrations info for current user
+    # Not allow draft campaign
     def registrations_for_campaign
       @campaign = Campaign.find(params[:campaign_id])
+      if (campaign[:status] == Campaign.status[:draft])
+        redirect_to user_registrations_index_path, notice: t('registration.messages.campaign_unavailable')
       if @campaign.campaignable_type == "Lecture"
         show_campaign_host_by_lecture
       elsif @campaign.campaignable_type == "Exam"
@@ -89,28 +95,35 @@ module Registration
     def create
       @item = Item.find(params[:item_id])
       @campaign = Campaign.find(params[:campaign_id])
-      if @campaign.campaignable_type == "Lecture"
+      if @campaign.campaignable_type == "Lecture" #TODO: compare campaignable type here with lecturer mode
         create_registration_lecture_campaign
-      elsif @campaign.campaignable_type == "Exam"
+      elsif @campaign.campaignable_type == "Exam" #TODO: compare campaignable type here with lecturer mode
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       end
     end
 
     def create_registration_lecture_campaign
+      if @campaign.open_for_registrations? == false
+        redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
+                      notice: t('registration.messages.campaign_not_opened')
+
       if @campaign.allocation_mode == Campaign.allocation_modes[:preference_based]
         raise(NotImplementedError, "Preference-based allocation is not implemented yet")
+      else
+        register_user_for_first_come_first_serve(@campaign, @item)
       end
-
-      register_user_for_first_come_first_serve(@campaign, @item)
     end
 
     def register_user_for_first_come_first_serve(campaign, item)
       ActiveRecord::Base.transaction do
         item.lock!
+
+        # error redirect if any validation fails
         if (redirect = validate_registration(campaign, item, current_user))
           return redirect
         end
 
+        # if all validations pass, create the registration with status confirmed
         @user_registration = UserRegistration.new(
           registration_campaign_id: campaign.id,
           registration_item_id: item.id,
@@ -119,29 +132,32 @@ module Registration
         )
         if @user_registration.save
           redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                      notice: "You have registered."
+                      notice: t('registration.messages.registration_success')
         else
           redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                      alert: "Registration failed."
+                      alert: t('registration.messages.registration_failed')
         end
       end
     end
 
+    # Validation for first-come-first-serve registration
+    # 1. Check if user has already registered for this campaign
+    # 2. Check if item still has capacity
+    # 3. Check if user satisfies all policies (registration and both)
     def validate_registration(campaign, item, user)
       if user_has_confirmed_registration_selected_campaign(campaign, user)
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                           notice: "User has already registered this Campaign!"
+        return rredirect_to_campaign_with_message(campaign.id,
+                                                  t('registration.messages.already_registered'))
       end
 
       unless item.still_have_capacity?
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                           notice: "No available slot!"
+        return rredirect_to_campaign_with_message(campaign.id, t('registration.messages.no_slots'))
       end
 
       unless [campaign.policies_satisfied?(user, phase: :registration),
               campaign.policies_satisfied?(user, phase: :both)].all?
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                           notice: "User does not satisfy requirements!"
+        return rredirect_to_campaign_with_message(campaign.id,
+                                                  t('registration.messages.requirements_not_met'))
       end
 
       nil
@@ -154,11 +170,16 @@ module Registration
       @campaign = @user_registration.registration_campaign
       @user_registration.destroy
       redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                  notice: "You have withdrawn."
+                  notice: t('registration.messages.withdrawn')
     end
 
     def render_not_found(exception)
       render json: { error: exception.message }, status: :unprocessable_entity
+    end
+
+    def redirect_to_campaign_with_message(campaign_id, message)
+      redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign_id),
+                  notice: message
     end
 
     private
