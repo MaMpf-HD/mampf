@@ -101,7 +101,7 @@ function hasUserChangedDate(oldDate, newDate) {
 function registerFocusHandlers(datetimePicker, element) {
   // Show datetimepicker when user clicks in text field next to button
   // or when input field receives focus
-  var isButtonInvokingFocus = false;
+  let isButtonInvokingFocus = false;
 
   element.find(".td-input").on("click focusin", (_e) => {
     try {

@@ -97,7 +97,7 @@ export class MetadataManager {
     }
 
     track.mode = "hidden";
-    let times = [];
+    const times = [];
     // read out the metadata track cues and generate html elements for
     // metadata, run katex on them
     for (let i = 0; i < track.cues.length; i++) {
@@ -184,7 +184,7 @@ export class MetadataManager {
       });
       const $details = $("<div/>");
       $details.append($link).append($description).append($explanation);
-      let $icons = $("<div/>", {
+      const $icons = $("<div/>", {
         style: "flex-shrink: 3; display: flex; flex-direction: column;",
       });
       $icons.append($videoRef).append($manRef).append($scriptRef).append($quizRef).append($extRef);
@@ -203,7 +203,7 @@ export class MetadataManager {
         // displayBackButton();
         video.currentTime = this.id.replace("l-", "");
       });
-      let metaElement = $listItem.get(0);
+      const metaElement = $listItem.get(0);
       renderLatex(metaElement);
     }
     // store metadata start times as data attribute
@@ -221,7 +221,7 @@ export class MetadataManager {
       $("#" + metadataListId + " li").removeClass("current");
       while (j < this.activeCues.length) {
         const activeStart = this.activeCues[j].startTime;
-        let metalink = document.getElementById("m-" + activeStart);
+        const metalink = document.getElementById("m-" + activeStart);
         if (metalink) {
           $(metalink).show();
           $(metalink).addClass("current");

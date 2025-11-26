@@ -208,13 +208,13 @@ $(document).on("turbo:load", function () {
           $("#lectureUserModalButton").hide();
         }
         for (const res of result) {
-          var row = document.createElement("div");
+          const row = document.createElement("div");
           row.className = "row mx-2 border-left border-right border-bottom";
-          var colName = document.createElement("div");
+          const colName = document.createElement("div");
           colName.className = "col-6";
           colName.innerHTML = res[0];
           row.appendChild(colName);
-          var colMail = document.createElement("div");
+          const colMail = document.createElement("div");
           colMail.className = "col-6";
           colMail.innerHTML = res[1];
           row.appendChild(colMail);

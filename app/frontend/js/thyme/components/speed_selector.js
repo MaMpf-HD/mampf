@@ -1,10 +1,6 @@
 import { Component } from "~/js/thyme/components/component";
 
 export class SpeedSelector extends Component {
-  constructor(element) {
-    super(element);
-  }
-
   /* This method should add the button functionality to the given player.
      Override it in the given subclass! */
   add() {

@@ -66,7 +66,7 @@ $(document).on("turbo:load", function () {
   }
 
   function isValid(annotation) {
-    for (let toggle of annotationCategoryToggles) {
+    for (const toggle of annotationCategoryToggles) {
       if (annotation.category === toggle.category && toggle.isChecked()) {
         return true;
       }
