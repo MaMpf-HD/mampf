@@ -11,10 +11,14 @@ module LocaleSetter
     def set_locale
       I18n.locale = current_user.try(:locale) || locale_param ||
                     cookie_locale_param || I18n.default_locale
-      set_pagy_locale if respond_to?(:set_pagy_locale, true)
+      set_pagy_locale
       return if respond_to?(:user_signed_in?) && user_signed_in?
 
       cookies[:locale] = I18n.locale
+    end
+
+    def set_pagy_locale
+      @pagy_locale = I18n.locale.to_s
     end
 
     def locale_param
