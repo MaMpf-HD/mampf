@@ -38,7 +38,6 @@ window.fillOptionsByAjax = function ($selectizedSelection) {
       plugins = ["remove_button"];
     }
     if (this.dataset.ajax === "true" && this.dataset.filled === "false") {
-      // eslint-disable-next-line @typescript-eslint/no-this-alias
       const model_select = this;
       courseId = 0;
       const placeholder = this.dataset.placeholder;

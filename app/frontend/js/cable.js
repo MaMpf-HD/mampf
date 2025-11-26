@@ -9,6 +9,7 @@
 /* eslint-enable */
 
 (function () {
+  // eslint-disable-next-line @typescript-eslint/no-unused-expressions
   this.App || (this.App = {});
 
   App.cable = ActionCable.createConsumer();

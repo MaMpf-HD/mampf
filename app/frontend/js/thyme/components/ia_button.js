@@ -66,7 +66,12 @@ export class IaButton extends Component {
     this.element.dataset.status = status;
     this.element.innerHTML = innerHTML;
     for (const e of this.toHide) {
-      sh ? e.show() : e.hide();
+      if (sh) {
+        e.show();
+      }
+      else {
+        e.hide();
+      }
     }
     for (const e of this.toShrink) {
       e.css("width", size);
