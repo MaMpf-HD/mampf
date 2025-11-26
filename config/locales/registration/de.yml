@@ -32,7 +32,7 @@ de:
         planning_only: "Nur Planung"
         submit: "Speichern"
       allocation_mode:
-        first_come_first_serve: "Direktanmeldung"
+        first_come_first_served: "Direktanmeldung"
         preference_based: "Präferenzbasiert"
       status:
         draft: "Entwurf"

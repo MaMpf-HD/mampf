@@ -44,14 +44,14 @@ module Registration
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
+    def can_be_deleted?
+      draft?
+    end
+
     private
 
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)
-      end
-
-      def can_be_deleted?
-        draft?
       end
   end
 end
