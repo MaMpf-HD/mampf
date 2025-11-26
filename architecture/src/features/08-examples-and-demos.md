@@ -134,9 +134,9 @@ eligible_submitters.first(3).each do |u|
 end
 puts "\nAchievements awarded to #{eligible_submitters.first(3).map(&:name).join(', ')}"
 
-# --- Phase 7: Lecture Performance Materialization ---
+# --- Phase 7: Student Performance Materialization ---
 # Configure eligibility rule
-rule = LecturePerformance::Rule.find_or_create_by!(lecture: lecture)
+rule = StudentPerformance::Rule.find_or_create_by!(lecture: lecture)
 rule.update!(
   min_points: 30, # 50% of 60 total points
   required_achievements: { "blackboard_explanation" => 1 },
@@ -144,7 +144,7 @@ rule.update!(
 )
 
 # Compute performance facts for all students (e.g., via a background job)
-service = LecturePerformance::Service.new(lecture)
+service = StudentPerformance::Service.new(lecture)
 service.compute_and_upsert_all_records!
 
 puts "\nPerformance records computed for #{lecture_students.size} students"
@@ -161,7 +161,7 @@ exam = FactoryBot.create(:exam,
 # The lecture (campaignable) hosts the exam registration campaign
 exam_campaign = lecture.registration_campaigns.create!(
   title: "Hauptklausur Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: 2.weeks.from_now,
   status: :open
 )
@@ -173,11 +173,11 @@ puts "\nExam campaign created: #{exam_campaign.title} (deadline: #{exam_campaign
 
 # --- Phase 8: Teacher Certification ---
 # Generate eligibility proposals using the Evaluator
-evaluator = LecturePerformance::Evaluator.new(rule)
+evaluator = StudentPerformance::Evaluator.new(rule)
 proposals = {}
 
 lecture_students.each do |student|
-  record = LecturePerformance::Record.find_by(lecture: lecture, user: student)
+  record = StudentPerformance::Record.find_by(lecture: lecture, user: student)
   result = evaluator.evaluate(record)
   proposals[student.id] = result.status
 end
@@ -187,10 +187,10 @@ puts "\nProposals generated: #{proposals.values.count(:passed)} passed, #{propos
 # Teacher reviews and bulk-accepts proposals
 teacher = users.first # Assuming first user is the teacher
 lecture_students.each do |student|
-  LecturePerformance::Certification.create!(
+  StudentPerformance::Certification.create!(
     user: student,
     lecture: lecture,
-    record: LecturePerformance::Record.find_by(lecture: lecture, user: student),
+    record: StudentPerformance::Record.find_by(lecture: lecture, user: student),
     rule: rule,
     status: proposals[student.id],
     certified_at: Time.current,
@@ -198,11 +198,11 @@ lecture_students.each do |student|
   )
 end
 
-eligible_count = LecturePerformance::Certification.where(lecture: lecture, status: :passed).count
+eligible_count = StudentPerformance::Certification.where(lecture: lecture, status: :passed).count
 puts "Certifications created: #{eligible_count} students certified as passed"
 
 # Override one failed student (e.g., medical certificate)
-failed_cert = LecturePerformance::Certification.find_by(lecture: lecture, status: :failed)
+failed_cert = StudentPerformance::Certification.find_by(lecture: lecture, status: :failed)
 if failed_cert
   failed_cert.update!(
     status: :passed,
@@ -221,15 +221,15 @@ exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
 exam_campaign = Registration::Campaign.create!(
   campaignable: lecture,
   title: "Hauptklausur Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: 2.weeks.from_now
 )
 # The exam is the sole registerable item
 exam_item = exam_campaign.registration_items.create!(registerable: exam)
 
-# Add policies: lecture performance + institutional email
+# Add policies: student performance + institutional email
 exam_campaign.registration_policies.create!(
-  kind: :lecture_performance,
+  kind: :student_performance,
   position: 1,
   active: true,
   config: { "lecture_id" => lecture.id }
@@ -248,15 +248,15 @@ exam = FactoryBot.create(:exam, lecture: lecture, capacity: 100)
 exam_campaign = Registration::Campaign.create!(
   campaignable: exam,
   title: "Final Exam Registration",
-  allocation_mode: :first_come_first_serve,
+  allocation_mode: :first_come_first_served,
   registration_deadline: 2.weeks.from_now,
   status: :draft
 )
 exam_item = exam_campaign.registration_items.create!(registerable: exam)
 
-# Add policies: lecture performance + institutional email
+# Add policies: student performance + institutional email
 exam_campaign.registration_policies.create!(
-  kind: :lecture_performance,
+  kind: :student_performance,
   position: 1,
   active: true,
   phase: :registration,
@@ -272,7 +272,7 @@ exam_campaign.registration_policies.create!(
 
 # Pre-flight check: verify certification completeness before opening
 all_certified = lecture_students.all? do |student|
-  cert = LecturePerformance::Certification.find_by(lecture: lecture, user: student)
+  cert = StudentPerformance::Certification.find_by(lecture: lecture, user: student)
   cert.present? && cert.status.in?([:passed, :failed])
 end
 
@@ -297,7 +297,7 @@ lecture_students.each do |user|
       status: :confirmed
     )
   else
-    cert = LecturePerformance::Certification.find_by(lecture: lecture, user: user)
+    cert = StudentPerformance::Certification.find_by(lecture: lecture, user: user)
     puts "  - Student #{user.name}: Ineligible. Certification status: #{cert&.status || 'missing'}"
   end
 end
@@ -349,7 +349,7 @@ puts "\nLate adjustment: Student #{late_part.user.name} HW1 points: #{old_points
 
 # The change triggers record recomputation and marks certification as stale
 service.compute_and_upsert_record_for(late_part.user)
-cert = LecturePerformance::Certification.find_by(lecture: lecture, user: late_part.user)
+cert = StudentPerformance::Certification.find_by(lecture: lecture, user: late_part.user)
 puts "  - Performance record recomputed"
 puts "  - Certification marked for review (teacher must re-certify before next campaign)"
 
@@ -378,7 +378,7 @@ This demo illustrates:
 4.  **No Runtime Recomputation:** Exam registration looks up pre-existing Certifications instead of computing eligibility on-the-fly.
 5.  **Roster Management:** Materialization populates tutorial and exam rosters from confirmed registrations.
 6.  **Late Adjustments:** Grade changes trigger record recomputation and mark certifications for teacher review, but existing certifications remain valid until manually updated.
-7.  **Composable Policies:** The exam campaign combines `lecture_performance` and `institutional_email` policies seamlessly, with phase-aware evaluation.
+7.  **Composable Policies:** The exam campaign combines `student_performance` and `institutional_email` policies seamlessly, with phase-aware evaluation.
 8.  **Teacher Control:** Teachers explicitly review and certify all eligibility decisions, maintaining accountability and enabling manual overrides.
 
 ```admonish note "Architectural Consistency"

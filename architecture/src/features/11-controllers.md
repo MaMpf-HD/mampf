@@ -18,7 +18,7 @@ service objects to the right endpoints.
 | Registration| Campaigns, UserRegistrations, Policies, Allocation | Teacher/Editor UI, Student UI, Job |
 | Roster      | Maintenance                                        | Teacher/Editor UI         |
 | Assessment  | Assessments, Grading, Participations               | Teacher/Editor UI, Tutor UI |
-| LecturePerformance | Records, Certifications, Evaluator           | Teacher/Editor UI         |
+| StudentPerformance | Records, Certifications, Evaluator           | Teacher/Editor UI         |
 | Exam        | Exams                                              | Teacher/Editor UI         |
 | GradeScheme | Schemes                                            | Teacher/Editor UI         |
 | Dashboard   | Dashboard, Admin::Dashboard                        | Student UI, Teacher/Editor UI |
@@ -27,7 +27,7 @@ Controllers are grouped into the following namespaces:
 - Registration: Campaign setup, student registration, allocation
 - Roster: Post-allocation roster maintenance
 - Assessment: Assessment setup, grading, result viewing
-- LecturePerformance: Performance records, teacher certification, evaluator proposals
+- StudentPerformance: Performance records, teacher certification, evaluator proposals
 - Exam: Exam management
 - GradeScheme: Grading scheme configuration
 - Dashboard: Student and teacher/editor views
@@ -68,9 +68,9 @@ Manage registration campaigns for lectures.
 ```admonish example "Responsibilities"
 - CRUD operations for campaigns
 - Validate date ranges and capacity constraints
-- Display campaign status (draft, open, processing, completed)
-- **Pre-flight checks:** Before opening campaigns with `lecture_performance` policies:
-  - Verify all lecture students have `LecturePerformance::Certification` records
+- Display campaign status (draft, open, closed, processing, completed)
+- **Pre-flight checks:** Before opening campaigns with `student_performance` policies:
+  - Verify all lecture students have `StudentPerformance::Certification` records
   - Ensure all certifications have `status: :passed` or `:failed` (no `pending`)
   - Block campaign opening with clear error message if checks fail
 - **Pre-finalization checks:** Before finalizing campaigns:
@@ -94,20 +94,22 @@ Handle the student registration flow.
 | Action  | Purpose |
 |---------|---------|
 | index   | Show available campaigns for current user |
-| new     | Registration form with division preferences |
-| create  | Submit registration with ranked preferences |
+| new     | Pre-flight eligibility check; show registration form if eligible, error message if not |
+| create  | Submit registration with ranked preferences (preference-based) or direct registration (FCFS) |
 | show    | View registration status and assigned roster |
 | edit    | Modify preferences (before allocation deadline) |
 | update  | Update preferences |
 | destroy | Withdraw from campaign |
 
 ```admonish example "Responsibilities"
-- Display eligibility status based on `LecturePerformance::Certification`
+- Pre-flight eligibility check on page load via `campaign.evaluate_policies_for(user, phase: :registration)`
+- Conditionally render registration interface based on eligibility result
+- Display clear rejection reasons when policies fail (before user invests effort)
+- Display eligibility status based on `StudentPerformance::Certification`
 - Show certification status (passed/failed) for exam campaigns
 - Handle preference ranking (drag-and-drop or priority input)
 - Show allocation results after campaign completes
 - Validate registration constraints
-- Display clear rejection reasons when policies fail
 ```
 
 ### `Registration::PoliciesController`
@@ -311,9 +313,9 @@ Manage exam instances for lectures.
 - Export eligible student list (students with `status: :passed`)
 ```
 
-## Lecture Performance Controllers
+## Student Performance Controllers
 
-### `LecturePerformance::RecordsController`
+### `StudentPerformance::RecordsController`
 
 ```admonish info "Purpose"
 View and manage performance records (factual data only).
@@ -321,7 +323,7 @@ View and manage performance records (factual data only).
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| LecturePerformance::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| StudentPerformance::RecordsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -340,7 +342,7 @@ View and manage performance records (factual data only).
 - **No eligibility interpretation** - pure factual data display
 ```
 
-### `LecturePerformance::CertificationsController`
+### `StudentPerformance::CertificationsController`
 
 ```admonish info "Purpose"
 Teacher certification workflow for eligibility decisions.
@@ -348,7 +350,7 @@ Teacher certification workflow for eligibility decisions.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| LecturePerformance::CertificationsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| StudentPerformance::CertificationsController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -372,7 +374,7 @@ Teacher certification workflow for eligibility decisions.
 - Track certification history (certified_at, certified_by)
 ```
 
-### `LecturePerformance::EvaluatorController`
+### `StudentPerformance::EvaluatorController`
 
 ```admonish info "Purpose"
 Generate eligibility proposals using the Evaluator service.
@@ -380,7 +382,7 @@ Generate eligibility proposals using the Evaluator service.
 
 | Controller | Primary callers | Responses |
 |------------|------------------|-----------|
-| LecturePerformance::EvaluatorController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
+| StudentPerformance::EvaluatorController | Teacher/Editor UI | HTML, Turbo Frames/Streams |
 
 **Actions**
 
@@ -391,7 +393,7 @@ Generate eligibility proposals using the Evaluator service.
 | single_proposal | Generate proposal for specific student (review case) |
 
 ```admonish example "Responsibilities"
-- Call `LecturePerformance::Evaluator.bulk_proposals(lecture)`
+- Call `StudentPerformance::Evaluator.bulk_proposals(lecture)`
 - Display proposals in reviewable format
 - Show rule change preview: affected students and status changes
 - Generate single proposal for manual review cases

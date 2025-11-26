@@ -13,12 +13,10 @@ update-bundler:
 
 # Updates Ruby gems
 update-gems:
-    bundle update
+    bundle update --all
 
 # Updates Node.js packages
 update-nodejs:
-    # You may have to run this command beforehand:
-    # sudo chown your_user_name -R ./node_modules/
     yarn upgrade
 
 # Simulates a production asset build

@@ -6,6 +6,7 @@ class CreateRegistrationPolicies < ActiveRecord::Migration[8.0]
                    foreign_key: true,
                    index: true
       t.integer :kind, null: false
+      # no presence validation on position, as acts_as_list manages it
       t.integer :phase, null: false, default: 0
       t.integer :position
       t.boolean :active, null: false, default: true

@@ -1,4 +1,7 @@
 module Registration
+  # Represents a time-bounded registration event (e.g. "Tutorial Registration").
+  # Acts as a container for configuration (deadlines, allocation mode),
+  # rules (policies), and the resulting user registrations.
   class Campaign < ApplicationRecord
     belongs_to :campaignable, polymorphic: true
 
@@ -17,15 +20,17 @@ module Registration
              dependent: :destroy,
              inverse_of: :registration_campaign
 
-    enum :allocation_mode, { first_come_first_serve: 0,
+    enum :allocation_mode, { first_come_first_served: 0,
                              preference_based: 1 }
 
     enum :status, { draft: 0,
                     open: 1,
-                    processing: 2,
-                    completed: 3 }
+                    closed: 2,
+                    processing: 3,
+                    completed: 4 }
 
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
+    validates :planning_only, inclusion: { in: [true, false] }
 
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)

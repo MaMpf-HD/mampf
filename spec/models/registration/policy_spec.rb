@@ -15,10 +15,10 @@ RSpec.describe(Registration::Policy, type: :model) do
       expect(policy.kind).to eq("institutional_email")
     end
 
-    it "creates a valid lecture_performance policy" do
-      policy = FactoryBot.create(:registration_policy, :lecture_performance)
+    it "creates a valid student_performance policy" do
+      policy = FactoryBot.create(:registration_policy, :student_performance)
       expect(policy).to be_valid
-      expect(policy.kind).to eq("lecture_performance")
+      expect(policy.kind).to eq("student_performance")
     end
 
     it "creates a valid prerequisite_campaign policy" do
