@@ -3,43 +3,10 @@
     <h5 class="card-title mb-0"><%= t("registration.campaign.index.card_title") %></h5>
     <%= link_to t("registration.campaign.index.new_campaign"),
                 new_lecture_registration_campaign_path(lecture),
-                { data: { turbo_frame: "registration_campaigns_content" },
-                  class: "btn btn-sm btn-primary" } %>
+                class: "btn btn-sm btn-primary",
+                data: { turbo_stream: true } %>
   </div>
   <div class="card-body">
-    <%= turbo_frame_tag "registration_campaigns_content" do %>
-      <% if lecture.registration_campaigns.any? %>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th><%= t("registration.campaign.index.columns.title_column") %></th>
-              <th><%= t("registration.campaign.index.columns.mode") %></th>
-              <th><%= t("registration.campaign.index.columns.deadline") %></th>
-              <th><%= t("basics.status") %></th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
-              <tr>
-                <td><%= link_to campaign.title, registration_campaign_path(campaign), { data: { turbo_frame: "registration_campaigns_content" } } %></td>
-                <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>
-                <td><%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %></td>
-                <td>
-                  <span class="badge bg-<%= campaign.open? ? 'success' : (campaign.closed? ? 'secondary' : 'warning') %>">
-                    <%= t("registration.campaign.status.#{campaign.status}") %>
-                  </span>
-                </td>
-                <td>
-                  <%= link_to t("buttons.edit"), registration_campaign_path(campaign), { class: "btn btn-sm btn-outline-secondary", data: { turbo_frame: "registration_campaigns_content" } } %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      <% else %>
-        <p class="text-muted"><%= t("registration.campaign.index.none", default: "No items found") %></p>
-      <% end %>
-    <% end %>
+    <%= render "registration/campaigns/card_body_index", lecture: lecture %>
   </div>
 </div>

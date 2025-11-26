@@ -11,17 +11,57 @@ module Registration
     def index
       authorize! :index, Registration::Campaign.new(campaignable: @lecture)
       @campaigns = @lecture.registration_campaigns.order(created_at: :desc)
+
+      respond_to do |format|
+        format.html
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_index",
+                               locals: { lecture: @lecture })
+        end
+      end
     end
 
     def show
+      respond_to do |format|
+        format.html
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_show",
+                               locals: { campaign: @campaign })
+        end
+      end
     end
 
     def new
       @campaign = @lecture.registration_campaigns.build
       authorize! :new, @campaign
+
+      respond_to do |format|
+        format.html
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_form",
+                               locals: { campaign: @campaign,
+                                         lecture: @lecture })
+        end
+      end
     end
 
     def edit
+      respond_to do |format|
+        format.html
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_form",
+                               locals: { campaign: @campaign,
+                                         lecture: @campaign.campaignable })
+        end
+      end
     end
 
     def create
@@ -29,19 +69,39 @@ module Registration
       authorize! :create, @campaign
 
       if @campaign.save
-        redirect_to registration_campaign_path(@campaign),
-                    notice: t("registration.campaign.created")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        notice: t("registration.campaign.created")
+          end
+          format.turbo_stream do
+            render turbo_stream:
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_show",
+                                 locals: { campaign: @campaign })
+          end
+        end
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
     def update
       if @campaign.update(campaign_params)
-        redirect_to registration_campaign_path(@campaign),
-                    notice: t("registration.campaign.updated")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        notice: t("registration.campaign.updated")
+          end
+          format.turbo_stream do
+            render turbo_stream:
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_show",
+                                 locals: { campaign: @campaign })
+          end
+        end
       else
-        render :show, status: :unprocessable_entity
+        render :show, status: :unprocessable_content
       end
     end
 
@@ -51,15 +111,37 @@ module Registration
                            alert: t("registration.campaign.cannot_delete")
       end
 
+      lecture = @campaign.campaignable
       @campaign.destroy
-      redirect_to lecture_registration_campaigns_path(@campaign.campaignable),
-                  notice: t("registration.campaign.destroyed")
+
+      respond_to do |format|
+        format.html do
+          redirect_to lecture_registration_campaigns_path(lecture),
+                      notice: t("registration.campaign.destroyed")
+        end
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_index",
+                               locals: { lecture: lecture })
+        end
+      end
     end
 
     def open
       if @campaign.update(status: :open)
-        redirect_to registration_campaign_path(@campaign),
-                    notice: t("registration.campaign.opened")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        notice: t("registration.campaign.opened")
+          end
+          format.turbo_stream do
+            render turbo_stream:
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_show",
+                                 locals: { campaign: @campaign })
+          end
+        end
       else
         redirect_to registration_campaign_path(@campaign),
                     alert: @campaign.errors.full_messages.join(", ")
@@ -68,8 +150,18 @@ module Registration
 
     def close
       if @campaign.update(status: :closed)
-        redirect_to registration_campaign_path(@campaign),
-                    notice: t("registration.campaign.closed")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        notice: t("registration.campaign.closed")
+          end
+          format.turbo_stream do
+            render turbo_stream:
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_show",
+                                 locals: { campaign: @campaign })
+          end
+        end
       else
         redirect_to registration_campaign_path(@campaign),
                     alert: @campaign.errors.full_messages.join(", ")
@@ -78,8 +170,18 @@ module Registration
 
     def reopen
       if @campaign.update(status: :open)
-        redirect_to registration_campaign_path(@campaign),
-                    notice: t("registration.campaign.reopened")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        notice: t("registration.campaign.reopened")
+          end
+          format.turbo_stream do
+            render turbo_stream:
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_show",
+                                 locals: { campaign: @campaign })
+          end
+        end
       else
         redirect_to registration_campaign_path(@campaign),
                     alert: @campaign.errors.full_messages.join(", ")

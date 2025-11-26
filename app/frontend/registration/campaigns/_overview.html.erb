@@ -1,0 +1,73 @@
+<% campaign ||= @campaign %>
+<div class="row g-3 mb-3">
+  <div class="col-12 col-lg-8">
+    <div class="card h-100">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-3 text-muted"><%= t("basics.details") %></h6>
+        <dl class="row mb-0">
+          <dt class="col-sm-4"><%= t("registration.campaign.form.title") %></dt>
+          <dd class="col-sm-8"><%= campaign.title %></dd>
+
+          <dt class="col-sm-4"><%= t("registration.campaign.form.allocation_mode") %></dt>
+          <dd class="col-sm-8"><%= campaign.allocation_mode.humanize %></dd>
+
+          <dt class="col-sm-4"><%= t("registration.campaign.form.registration_deadline") %></dt>
+          <dd class="col-sm-8"><%= l(campaign.registration_deadline, format: :long) if campaign.registration_deadline %></dd>
+
+          <dt class="col-sm-4"><%= t("basics.status") %></dt>
+          <dd class="col-sm-8">
+            <span class="badge bg-<%= campaign.open? ? 'success' : (campaign.closed? ? 'secondary' : 'warning') %>">
+              <%= t("registration.campaign.status.#{campaign.status}") %>
+            </span>
+          </dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.campaign.overview.registrations") %></h6>
+        <% confirmed_count = campaign.user_registrations.where(status: :confirmed).count %>
+        <% pending_count = campaign.user_registrations.where(status: :pending).count %>
+        <% rejected_count = campaign.user_registrations.where(status: :rejected).count %>
+        <% total_count = confirmed_count + pending_count + rejected_count %>
+        
+        <div class="d-flex justify-content-between align-items-center mb-1">
+          <div class="fw-semibold"><%= t("registration.campaign.overview.total") %></div>
+          <span class="badge rounded-pill text-bg-success"><%= t("registration.campaign.overview.confirmed_count", count: confirmed_count) %></span>
+        </div>
+        <div class="small text-muted mb-2">
+          <%= t("registration.campaign.overview.pending_count", count: pending_count) %> · 
+          <%= t("registration.campaign.overview.rejected_count", count: rejected_count) %>
+        </div>
+        <% if total_count > 0 %>
+          <div class="progress" style="height:6px;">
+            <div class="progress-bar bg-success" style="width: <%= (confirmed_count.to_f / total_count * 100).round %>%"></div>
+            <div class="progress-bar bg-warning" style="width: <%= (pending_count.to_f / total_count * 100).round %>%"></div>
+            <div class="progress-bar bg-danger" style="width: <%= (rejected_count.to_f / total_count * 100).round %>%"></div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-12 col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.campaign.overview.items") %></h6>
+        <div class="fw-semibold"><%= campaign.registration_items.count %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-md-6">
+    <div class="card">
+      <div class="card-body">
+        <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.policy.index.title") %></h6>
+        <div class="fw-semibold"><%= campaign.registration_policies.count %></div>
+      </div>
+    </div>
+  </div>
+</div>

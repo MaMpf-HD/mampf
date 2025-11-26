@@ -1,0 +1,13 @@
+<div id="campaigns_card_body">
+  <div class="mb-3">
+    <%= link_to lecture_registration_campaigns_path(lecture),
+                class: "btn btn-sm btn-outline-secondary",
+                data: { turbo_stream: true } do %>
+      <i class="bi bi-arrow-left"></i> <%= t("back") %>
+    <% end %>
+  </div>
+
+  <h3><%= campaign.persisted? ? t("registration.campaign.form.edit_title") : t("registration.campaign.form.new_title") %></h3>
+
+  <%= render "registration/campaigns/form", campaign: campaign, lecture: lecture %>
+</div>

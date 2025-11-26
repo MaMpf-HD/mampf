@@ -39,5 +39,5 @@
   <%= link_to t("buttons.cancel"),
               campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
               class: "btn btn-secondary",
-              data: { turbo_frame: "registration_campaigns_content" } %>
+              data: { turbo_stream: true } %>
 <% end %>

@@ -1,0 +1,65 @@
+<div id="campaigns_card_body">
+  <div class="mb-3">
+    <%= link_to lecture_registration_campaigns_path(campaign.campaignable),
+                class: "btn btn-sm btn-outline-secondary",
+                data: { turbo_stream: true } do %>
+      <i class="bi bi-arrow-left"></i> <%= t("back") %>
+    <% end %>
+  </div>
+  
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3><%= campaign.title %></h3>
+    <div class="d-flex gap-2">
+      <% if campaign.open? %>
+        <%= button_to t("registration.campaign.actions.close"),
+                      close_registration_campaign_path(campaign),
+                      method: :patch,
+                      class: "btn btn-warning" %>
+      <% elsif campaign.closed? %>
+        <%= button_to t("registration.campaign.actions.reopen"),
+                      reopen_registration_campaign_path(campaign),
+                      method: :patch,
+                      class: "btn btn-success" %>
+      <% else %>
+        <%= button_to t("registration.campaign.actions.open"),
+                      open_registration_campaign_path(campaign),
+                      method: :patch,
+                      class: "btn btn-success" %>
+      <% end %>
+
+      <% if campaign.can_be_deleted? %>
+        <%= button_to t("buttons.delete"),
+                      registration_campaign_path(campaign),
+                      method: :delete,
+                      data: { confirm: t("registration.campaign.confirm_delete", default: "Are you sure?") },
+                      class: "btn btn-outline-danger" %>
+      <% end %>
+    </div>
+  </div>
+
+  <ul class="nav nav-tabs mb-3" id="campaignTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true"><%= t("basics.overview") %></button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false"><%= t("basics.settings", default: "Settings") %></button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="false"><%= t("registration.policy.index.title") %></button>
+    </li>
+  </ul>
+
+  <div class="tab-content" id="campaignTabsContent">
+    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+      <%= render "registration/campaigns/overview", campaign: campaign %>
+    </div>
+
+    <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+      <%= render "registration/campaigns/form", campaign: campaign, lecture: campaign.campaignable %>
+    </div>
+
+    <div class="tab-pane fade" id="policies" role="tabpanel" aria-labelledby="policies-tab">
+      <%= render "registration/policies/index" %>
+    </div>
+  </div>
+</div>
