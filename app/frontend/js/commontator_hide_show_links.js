@@ -15,7 +15,7 @@ $(document).ready(function () {
   });
 
   $(`#commontator-thread-${threadId}-show-link`).click(function () {
-    const commontatorThread = $("#commontator-thread-${threadId}-content").fadeIn();
+    const commontatorThread = $(`#commontator-thread-${threadId}-content`).fadeIn();
     $("html, body").animate(
       { scrollTop: commontatorThread.offset().top - window.innerHeight / 2 }, "fast",
     );
