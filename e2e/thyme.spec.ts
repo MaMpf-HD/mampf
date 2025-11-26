@@ -5,12 +5,10 @@ const REMARK_TEXT = "Test Remark";
 
 test("opens content sidebar when TOC item exists, keeps it hidden otherwise",
   async ({ factory, student: { page } }) => {
-    const lecture = await factory.create("lecture", ["released_for_all", "with_sparse_toc"]);
-    const lesson = await factory.create("valid_lesson", [], { lecture_id: lecture.id });
     const mediumWithToc = await factory.create("lesson_medium",
-      ["released", "with_lesson_by_id", "with_video", "with_toc_item"], { lesson_id: lesson.id });
+      ["released", "with_video", "with_toc_item"]);
     const mediumWithoutToc = await factory.create("lesson_medium",
-      ["released", "with_lesson_by_id", "with_video"], { lesson_id: lesson.id });
+      ["released", "with_video"]);
 
     await new ThymePlayer(page, mediumWithToc.id).goto();
     const sidebar = page.getByTestId("thyme-content-sidebar");
