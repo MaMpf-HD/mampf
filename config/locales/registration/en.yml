@@ -83,7 +83,7 @@ en:
       kinds:
         institutional_email: "Institutional Email"
         prerequisite_campaign: "Prerequisite Campaign"
-        lecture_performance: "Lecture Performance"
+        student_performance: "Student Performance"
       phases:
         registration: "Registration"
         finalization: "Finalization"

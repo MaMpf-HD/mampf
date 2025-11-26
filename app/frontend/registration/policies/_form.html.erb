@@ -45,7 +45,7 @@
           <label class="form-label"><%= t("registration.policy.configs.allowed_domains") %></label>
           <input type="text"
                  name="registration_policy[config][allowed_domains]"
-                 value="<%= @policy.config&.fetch("allowed_domains", [])&.join(", ") %>"
+                 value="<%= Array(@policy.config&.fetch("allowed_domains", [])).join(", ") %>"
                  class="form-control"
                  placeholder="uni-heidelberg.de, mathi.uni-heidelberg.de">
           <div class="form-text"><%= t("registration.policy.hints.allowed_domains") %></div>
@@ -68,7 +68,7 @@
         <div class="mb-3">
           <label class="form-label"><%= t("registration.policy.configs.lecture_id") %></label>
           <%= select_tag "registration_policy[config][lecture_id]",
-                         options_from_collection_for_select(Lecture.all, :id, :title_with_term, @policy.config&.fetch("lecture_id", nil)),
+                         options_from_collection_for_select(Lecture.all, :id, :title, @policy.config&.fetch("lecture_id", nil)),
                          include_blank: true,
                          class: "form-select" %>
         </div>
@@ -78,7 +78,7 @@
   </div>
 
   <div class="mb-3">
-    <%= f.submit t("basics.save"), class: "btn btn-primary" %>
-    <%= link_to t("basics.cancel"), registration_campaign_path(@campaign), class: "btn btn-secondary" %>
+    <%= f.submit t("buttons.save"), class: "btn btn-primary" %>
+    <%= link_to t("buttons.cancel"), registration_campaign_path(@campaign, anchor: "policies-tab"), class: "btn btn-secondary" %>
   </div>
 <% end %>

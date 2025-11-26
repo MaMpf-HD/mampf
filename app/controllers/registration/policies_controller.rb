@@ -14,29 +14,58 @@ module Registration
     def create
       @policy = @campaign.registration_policies.build(policy_params)
       if @policy.save
-        redirect_to registration_campaign_path(@campaign), notice: t("registration.policy.created")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
+                        notice: t("registration.policy.created")
+          end
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace("policy_form",
+                                   partial: "registration/policies/empty_form"),
+              turbo_stream.replace("policies_list",
+                                   partial: "registration/policies/list",
+                                   locals: { campaign: @campaign })
+            ]
+          end
+        end
       else
-        render :new, status: :unprocessable_entity
+        render :new, status: :unprocessable_content
       end
     end
 
     def update
       if @policy.update(policy_params)
-        redirect_to registration_campaign_path(@campaign), notice: t("registration.policy.updated")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
+                        notice: t("registration.policy.updated")
+          end
+          format.turbo_stream do
+            render turbo_stream: [
+              turbo_stream.replace("policy_form",
+                                   partial: "registration/policies/empty_form"),
+              turbo_stream.replace("policies_list",
+                                   partial: "registration/policies/list",
+                                   locals: { campaign: @campaign })
+            ]
+          end
+        end
       else
-        render :edit, status: :unprocessable_entity
+        render :edit, status: :unprocessable_content
       end
     end
 
     def destroy
       @policy.destroy
-      redirect_to registration_campaign_path(@campaign), notice: t("registration.policy.destroyed")
+      redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
+                  notice: t("registration.policy.destroyed")
     end
 
     private
 
       def set_campaign
-        @campaign = Registration::Campaign.find(params[:campaign_id])
+        @campaign = Registration::Campaign.find(params[:registration_campaign_id])
       end
 
       def set_policy
@@ -44,7 +73,7 @@ module Registration
       end
 
       def policy_params
-        params.require(:registration_policy).permit(:kind, :phase, :position, config: {})
+        params.expect(registration_policy: [:kind, :phase, :position, { config: {} }])
       end
 
       def current_ability

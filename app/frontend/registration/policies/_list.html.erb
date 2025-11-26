@@ -1,0 +1,41 @@
+<% campaign ||= @campaign %>
+<%= turbo_frame_tag "policies_list" do %>
+  <% if campaign.registration_policies.any? %>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th><%= t("registration.policy.kind") %></th>
+          <th><%= t("registration.policy.phase") %></th>
+          <th><%= t("registration.policy.config") %></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% campaign.registration_policies.order(:position).each do |policy| %>
+          <tr>
+            <td><%= t("registration.policy.kinds.#{policy.kind}") %></td>
+            <td><%= t("registration.policy.phases.#{policy.phase}") %></td>
+            <td>
+              <small class="text-muted">
+                <%= policy.config.to_json %>
+              </small>
+            </td>
+            <td class="text-end">
+              <%= link_to t("buttons.edit"),
+                          edit_registration_campaign_policy_path(campaign, policy),
+                          class: "btn btn-sm btn-outline-secondary",
+                          data: { turbo_frame: "policy_form" } %>
+              <%= button_to t("buttons.delete"),
+                            registration_campaign_policy_path(campaign, policy),
+                            method: :delete,
+                            class: "btn btn-sm btn-outline-danger",
+                            data: { confirm: t("confirmation.generic") } %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <p class="text-muted"><%= t("registration.policy.index.none") %></p>
+  <% end %>
+<% end %>

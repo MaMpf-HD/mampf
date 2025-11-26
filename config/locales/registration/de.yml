@@ -83,7 +83,7 @@ de:
       kinds:
         institutional_email: "Institutionelle E-Mail"
         prerequisite_campaign: "Vorausgesetztes Anmeldeverfahren"
-        lecture_performance: "Veranstaltungsleistung"
+        student_performance: "Studierendenleistung"
       phases:
         registration: "Registrierung"
         finalization: "Finalisierung"

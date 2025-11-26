@@ -8,5 +8,10 @@ class CampaignAbility
         Registration::Campaign do |campaign|
       user.can_edit?(campaign.campaignable)
     end
+
+    can [:new, :create, :edit, :update, :destroy],
+        Registration::Policy do |policy|
+      user.can_edit?(policy.registration_campaign.campaignable)
+    end
   end
 end
