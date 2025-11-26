@@ -8,7 +8,7 @@ $(document).on("turbo:load", function () {
   $(document).on("click", ".clipboard-button", function () {
     $(".token-clipboard-popup").removeClass("show");
 
-    let dataId = $(this).data("id");
+    const dataId = $(this).data("id");
     let popup;
     if (dataId) {
       popup = `.token-clipboard-popup[data-id="${$(this).data("id")}"]`;

@@ -23,11 +23,11 @@ export class SeekBar extends Component {
       const value = 100 / video.duration * video.currentTime;
       element.value = value;
       element.style.backgroundImage = "linear-gradient(to right,"
-      + " #2497E3, #2497E3 "
-      + value
-      + "%, #ffffff "
-      + value
-      + "%, #ffffff)";
+        + " #2497E3, #2497E3 "
+        + value
+        + "%, #ffffff "
+        + value
+        + "%, #ffffff)";
       const currentTime = document.getElementById("current-time");
       currentTime.innerHTML = secondsToTime(video.currentTime);
     });

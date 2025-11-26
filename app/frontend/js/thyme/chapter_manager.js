@@ -98,7 +98,7 @@ export class ChapterManager {
     }
 
     track.mode = "hidden";
-    let times = [];
+    const times = [];
     // read out the chapter track cues and generate html elements for chapters,
     // run katex on them
     for (let i = 0; i < track.cues.length; i++) {

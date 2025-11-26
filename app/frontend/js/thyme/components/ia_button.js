@@ -65,10 +65,10 @@ export class IaButton extends Component {
   #aux(status, innerHTML, sh, size) {
     this.element.dataset.status = status;
     this.element.innerHTML = innerHTML;
-    for (let e of this.toHide) {
+    for (const e of this.toHide) {
       sh ? e.show() : e.hide();
     }
-    for (let e of this.toShrink) {
+    for (const e of this.toShrink) {
       e.css("width", size);
     }
     $(window).trigger("resize");

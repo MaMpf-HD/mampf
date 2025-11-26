@@ -2,7 +2,7 @@ import { Category } from "~/js/thyme/annotations/category";
 
 function colorAnnotationCardsSharedByStudents() {
   const annotationCards = $("[data-annotation-card-category]");
-  for (let card of annotationCards) {
+  for (const card of annotationCards) {
     const category = card.dataset.annotationCardCategory;
     if (!category) {
       continue;
