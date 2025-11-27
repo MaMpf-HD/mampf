@@ -1,4 +1,4 @@
-import { renderLatex } from "./utility";
+import { renderLatex, onVideoMetadataLoaded } from "./utility";
 
 /**
   This file wraps up most functionality of the thyme player(s) concerning metadata.
@@ -23,7 +23,7 @@ export class MetadataManager {
      only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
      i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
      for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-    thymeAttributes.video.addEventListener("loadedmetadata", function () {
+    onVideoMetadataLoaded(thymeAttributes.video, function () {
       if (initialMetadata && metadata.readyState === 2) {
         metadataManager.#displayMetadata();
         initialMetadata = false;
@@ -97,7 +97,7 @@ export class MetadataManager {
     }
 
     track.mode = "hidden";
-    let times = [];
+    const times = [];
     // read out the metadata track cues and generate html elements for
     // metadata, run katex on them
     for (let i = 0; i < track.cues.length; i++) {
@@ -184,7 +184,7 @@ export class MetadataManager {
       });
       const $details = $("<div/>");
       $details.append($link).append($description).append($explanation);
-      let $icons = $("<div/>", {
+      const $icons = $("<div/>", {
         style: "flex-shrink: 3; display: flex; flex-direction: column;",
       });
       $icons.append($videoRef).append($manRef).append($scriptRef).append($quizRef).append($extRef);
@@ -203,7 +203,7 @@ export class MetadataManager {
         // displayBackButton();
         video.currentTime = this.id.replace("l-", "");
       });
-      let metaElement = $listItem.get(0);
+      const metaElement = $listItem.get(0);
       renderLatex(metaElement);
     }
     // store metadata start times as data attribute
@@ -221,7 +221,7 @@ export class MetadataManager {
       $("#" + metadataListId + " li").removeClass("current");
       while (j < this.activeCues.length) {
         const activeStart = this.activeCues[j].startTime;
-        let metalink = document.getElementById("m-" + activeStart);
+        const metalink = document.getElementById("m-" + activeStart);
         if (metalink) {
           $(metalink).show();
           $(metalink).addClass("current");

@@ -1,6 +1,6 @@
-var VIGNETTE_FORM_ID = "#vignettes-answer-form";
-var CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
-var TEXT_ANSWER_ID = "vignettes_answer_text";
+const VIGNETTE_FORM_ID = "#vignettes-answer-form";
+const CHECK_BOXES_ID = "input[type='checkbox'][name='vignettes_answer[option_ids][]']";
+const TEXT_ANSWER_ID = "vignettes_answer_text";
 
 function shouldRegisterVignette() {
   return $(VIGNETTE_FORM_ID).length > 0;
@@ -123,7 +123,7 @@ function validateMultipleChoiceAnswer(checkboxes) {
 // Statistics
 ////////////////////////////////////////////////////////////////////////////////
 
-var VignetteSlideStatistics = class {
+class VignetteSlideStatistics {
   slideAccessDate = Date.now();
   slideStartTime = new Date();
   slideTime = 0;
@@ -177,10 +177,10 @@ var VignetteSlideStatistics = class {
   }
 
   postProcessTimes() {
-    for (let key in this.infoSlideTimes) {
+    for (const key in this.infoSlideTimes) {
       this.infoSlideTimes[key] = Math.floor(this.infoSlideTimes[key] / 1000);
     }
-    for (let key in this.infoSlideFirstAccessTimes) {
+    for (const key in this.infoSlideFirstAccessTimes) {
       this.infoSlideFirstAccessTimes[key] = Math.floor(this.infoSlideFirstAccessTimes[key] / 1000);
     }
     this.slideTime = Math.floor(this.slideTime / 1000);
