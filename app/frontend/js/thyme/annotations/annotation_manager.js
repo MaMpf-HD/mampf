@@ -109,7 +109,7 @@ export class AnnotationManager {
         if (!annotations) {
           return;
         }
-        for (let a of annotations) {
+        for (const a of annotations) {
           thymeAttributes.annotations.push(new Annotation(a));
         }
         // update visual representation on the seek bar
@@ -145,7 +145,7 @@ export class AnnotationManager {
     if (!annotations) {
       return null;
     }
-    for (let a of annotations) {
+    for (const a of annotations) {
       if (a.id === id) {
         return a;
       }
