@@ -5,9 +5,6 @@ help:
 # Generates entity-relationship diagrams (ERD) of the database
 erd:
     #!/usr/bin/env bash
-    just docker ensure-mampf-container-running
-
-    cd {{justfile_directory()}}/docker/development/
     mkdir -p {{justfile_directory()}}/tmp/erd/
 
     # ▶ Generate ERDs
@@ -22,57 +19,57 @@ erd:
     exclude_default="${ignored_thredded},${ignored_translation},${ignored_commontator},${other_ignored}"
 
     # 🌟 Overview with attributes (warnings will be printed only here)
-    docker compose exec -it mampf rake erd \
+    bundle exec rake erd \
         title=false filename=/workspaces/mampf/tmp/erd/mampf-erd-overview-with-attributes \
         inheritance=false polymorphism=true indirect=false attributes=content \
-        exclude="${exclude_default}"
+        exclude="$exclude_default"
 
     # 🌟 Generic Overview
-    docker compose exec -it mampf rake erd warn=false \
+    bundle exec rake erd warn=false \
         title=false filename=/workspaces/mampf/tmp/erd/mampf-erd-overview \
         inheritance=false polymorphism=true indirect=false attributes=false \
-        exclude="${exclude_default}"
+        exclude="$exclude_default"
 
     # 🌟 Vouchers
-    docker compose exec -it mampf rake erd warn=false \
+    bundle exec rake erd warn=false \
         title="Vouchers" filename=/workspaces/mampf/tmp/erd/mampf-erd-vouchers \
         inheritance=true polymorphism=true indirect=true attributes=content \
-        exclude="${exclude_default},Teachable,Editable" \
+        exclude="$exclude_default,Teachable,Editable" \
         only="User,Claim,Voucher,Redemption,Lecture,Tutorial,Talk"
 
     # 🌟 Tutorials
-    docker compose exec -it mampf rake erd warn=false \
+    bundle exec rake erd warn=false \
         title="Tutorials" filename=/workspaces/mampf/tmp/erd/mampf-erd-tutorials \
         inheritance=true polymorphism=true indirect=true attributes=content \
-        exclude="${exclude_default},Claimable,Editable,Teachable" \
+        exclude="$exclude_default,Claimable,Editable,Teachable" \
         only="User,Lecture,Tutorial,Submission,Assignment,TutorTutorialJoin,UserSubmissionJoin"
 
     # 🌟 Courses
-    docker compose exec -it mampf rake erd warn=false \
+    bundle exec rake erd warn=false \
         title="Courses" filename=/workspaces/mampf/tmp/erd/mampf-erd-courses \
         inheritance=true polymorphism=true indirect=true attributes=content \
-        exclude="${exclude_default},Claimable,Editable" \
+        exclude="$exclude_default,Claimable,Editable" \
         only="Subject,Program,Division,DivisionCourseJoin,Course,Lecture,CourseSelfJoin,Lesson"
 
     # 🌟 Lectures
-    docker compose exec -it mampf rake erd warn=false \
+    bundle exec rake erd warn=false \
         title="Lectures" filename=/workspaces/mampf/tmp/erd/mampf-erd-lectures \
         inheritance=true polymorphism=true indirect=true attributes=content \
-        exclude="${exclude_default},Claimable,Editable,Teachable" \
+        exclude="$exclude_default,Claimable,Editable,Teachable" \
         only="Lecture,Lesson,Chapter,Section,Item,LessonSectionJoin,Term"
 
     # 🌟 Submissions
-    docker compose exec -it mampf rake erd warn=false \
+    bundle exec rake erd warn=false \
         title="Submissions" filename=/workspaces/mampf/tmp/erd/mampf-erd-submissions \
         inheritance=true polymorphism=true indirect=true attributes=content \
-        exclude="${exclude_default},Claimable,Editable,Teachable,Notifiable,Record" \
+        exclude="$exclude_default,Claimable,Editable,Teachable,Notifiable,Record" \
         only="Submission,Tutorial,Assignment,User,UserSubmissionJoin"
 
     # 🌟 Vignettes
-    docker compose exec -it mampf rake erd warn=false \
+    bundle exec rake erd warn=false \
         title="Vignettes" filename=/workspaces/mampf/tmp/erd/mampf-erd-vignettes \
         inheritance=true polymorphism=true indirect=true attributes=content \
-        exclude="${exclude_default},Claimable,Editable,Teachable,Notifiable,Record" \
+        exclude="$exclude_default,Claimable,Editable,Teachable,Notifiable,Record" \
         only="Vignettes::Questionnaire, Vignettes::Slide, Vignettes::InfoSlide, Vignettes::Answer, Vignettes::UserAnswer, Vignettes::Question, Vignettes::SlideStatistic, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextQuestion, Vignettes::TextAnswer, Vignettes::LikertScaleAnswer, Vignettes::LikertScaleQuestion, Vignettes::MultipleChoiceAnswer, Vignettes::MultipleChoiceQuestion, Vignettes::TextAnswer, Vignettes::Option, Vignettes::Codename, Vignettes::CompletionMessage, Vignettes::NumberQuestion, Vignettes::NumberAnswer, Lecture, User"
 
     echo "📂 Diagrams are ready for you in the folder {{justfile_directory()}}/tmp/erd/"
