@@ -7,33 +7,41 @@
       </span>
     </div>
     <div class="small">
-      <%= campaign.user_registrations_last_updated(current_user) %>
+      Saved <%= campaign.user_registrations_last_updated(current_user)&.to_formatted_s(:long) %>
     </div>
   </div>
   
   <% registered = item.user_registered?(current_user) %>
-  <div id="statusPanel" class="mb-3">
-    <span class="badge rounded-pill text-bg-secondary" id="regState">
-      <% if registered %>
-        <%= t('registration.registered') %>
-      <% else %>
-        <%= t('registration.not_registered') %>
-      <% end %>
-    </span>
-  </div>
   
-  <div class="d-flex gap-2">
-    <%= button_to t('registration.register_now'),
-              register_item_path(campaign.id, item.id),
-              method: :post,
-              disable: !campaign.open_for_registrations? || item.capacity_remained == 0
-              class: "btn btn-primary btn-sm #{'d-none' if registered}" %>
+  
+  <div class="d-flex gap-2 justify-content-between flex-wrap">
+    <div class="mb-3">
+      <% if registered %>
+        <span class="badge rounded-pill text-bg-success">
+          <%= t('registration.registered') %>
+        </span>
+      <% else %>
+        <span class="badge rounded-pill text-bg-secondary">
+          <%= t('registration.not_registered') %>
+          </span>
+      <% end %>
+      
+    </div>
 
-    <%= button_to t('registration.withdraw'),
+    <%if registered %>
+      <%= button_to t('registration.withdraw'),
               withdraw_item_path(campaign.id, item.id),
               method: :delete,
-              disable: !campaign.open_for_registrations?
-              class: "btn btn-outline-danger btn-sm #{'d-none' unless registered}" %>
+              disable: !campaign.open_for_registrations?,
+              class: "btn btn-outline-danger btn-sm" %>
+    <%else%>
+      <%= button_to t('registration.register_now'),
+              register_item_path(campaign.id, item.id),
+              method: :post,
+              disable: !campaign.open_for_registrations? || item.capacity_remained == 0,
+              class: "btn btn-primary btn-sm" %>
+    <%end%>
+    
     
   </div>
 </div>

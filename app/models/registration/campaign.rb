@@ -55,5 +55,8 @@ module Registration
       user_registrations.where(user_id: user.id).maximum(:updated_at)
     end
 
+    def registerable_type
+      registration_items.first&.registerable_type
+    end
   end
 end

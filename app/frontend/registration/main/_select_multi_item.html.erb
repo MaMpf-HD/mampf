@@ -1,39 +1,39 @@
 <div class="card-body">
-  <h2 class="h5">Select a tutorial</h2>
+  <h2 class="h5">Select a <%=campaign.registerable_type%></h2>
   
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    
-    <%= render "./item_search_form/search_form",
-           controller: "registration-item-search",
-           placeholder: "Filter by weekday, time, tutor" %>
-
-    <div class="small">
-      <%= campaign.user_registrations_last_updated(current_user) %>
+  <div data-controller="registration-item-search">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <%= render partial: "registration/item_search_form/search_form",
+                locals: { controller: "registration-item-search",
+                          placeholder: "Filter by weekday, time, tutor"} %>
+      <div class="small">
+        Saved <%= campaign.user_registrations_last_updated(current_user)&.to_formatted_s(:long) %>
+      </div>
     </div>
-  </div>
 
-  <% if campaign.user_registered? %>
-    <div class="alert alert-info py-1 px-2 d-none">
-      Currently registered: 
-      <span><%= campaign&.user_registrations_confirmed(current_user)&.first&.registration_item&.title %></span>. 
-      Withdraw to switch to a different group.
-    </div>
-  <%end%>
+    <% if campaign.user_registered?(current_user) %>
+      <div class="alert alert-info py-1 px-2 d-none">
+        Currently registered: 
+        <span><%= campaign&.user_registrations_confirmed(current_user)&.first&.registration_item&.title %></span>. 
+        Withdraw to switch to a different group.
+      </div>
+    <%end%>
 
-  <div class="table-responsive">
-    <table class="table align-middle mb-2" id="tutorialsTable">
-      <thead>
-        <tr>
-          <th>Tutorial</th>
-          <th>Time</th>
-          <th>Seats</th>
-          <th>Status</th>
-          <th class="text-end">Action</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div class="table-responsive">
+      <table class="table align-middle mb-2" id="itemsTable">
+        <thead>
+          <tr>
+            <th><%=campaign.registerable_type%></th>
+            <th>Time</th>
+            <th>Seats</th>
+            <th>Status</th>
+            <th class="text-end">Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
         <% items.each do |item| %>
-          <tr data-search-target="row">
+          <tr data-registration-item-search-target="row">
             <td><%= item.title %></td>
             <td>TODO</td>
             <td>
@@ -52,18 +52,18 @@
 
             <td>
               <!--case campaign has not been registered -->
-              <%if !campaign.user_registered?%>
+              <%if !campaign.user_registered?(current_user)%>
               <% if item.user_registered?(current_user) %>
                 <%= button_to t('registration.withdraw'),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
-                    disable: !campaign.open_for_registrations?
+                    disable: !campaign.open_for_registrations?,
                     class: "btn btn-outline-danger btn-sm" %>
               <% else %>
                 <%= button_to t('registration.register_now'),
                     register_item_path(campaign.id, item.id),
                     method: :post,
-                    disable: !campaign.open_for_registrations? || item.capacity_remained == 0
+                    disable: !campaign.open_for_registrations? || item.capacity_remained == 0,
                     class: "btn btn-primary btn-sm" %>
               <% end %>
 
@@ -73,7 +73,7 @@
                 <%= button_to t('registration.withdraw'),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
-                    disable: !campaign.open_for_registrations?
+                    disable: !campaign.open_for_registrations?,
                     class: "btn btn-outline-danger btn-sm" %>
               <% else %>
                 <span class="text-muted small">Withdraw first</span>
@@ -83,7 +83,9 @@
 
           </tr>
         <% end %>
-      </tbody>
-    </table>
+        </tbody>
+        
+      </table>
+    </div>
   </div>
 </div>

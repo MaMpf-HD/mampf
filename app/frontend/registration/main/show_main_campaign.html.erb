@@ -2,7 +2,7 @@
   <nav aria-label="breadcrumb" class="mb-2">
     <ol class="breadcrumb mb-0">
       <li class="breadcrumb-item">
-        <%= link_to t('registration.registrations'), campaign_registrations_index_path %>
+        <%= link_to t('registration.registrations'), user_registrations_path %>
       </li>
       <li class="breadcrumb-item active" aria-current="page">
         <%= @campaign.title %> (<%= @campaign.campaignable_type %>)
@@ -25,7 +25,7 @@
 
       <div class="col-12 col-lg-8">
         <div class="card h-100">
-          <% if @campaign.fcfs? %>
+          <% if @campaign.first_come_first_serve? %>
             <%= render partial:'registration/main/select_fcfs',
                         locals: {campaign: @campaign,
                                   campaignable_host: @campaignable_host,

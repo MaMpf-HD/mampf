@@ -38,5 +38,7 @@ module Registration
     def user_registrations_confirmed(user)
       user_registrations.where(user_id: user.id, status: :confirmed)
     end
+
+    delegate :title, to: :registerable
   end
 end

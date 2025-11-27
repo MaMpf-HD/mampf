@@ -1,16 +1,16 @@
 module Registration
   class UserRegistrationsController < ApplicationController
     # This class handles student registrations for registration campaigns.
-    # Although its name is UserRegistrations, but it isn’t just CRUD for UserRegistration model
-    # It orchestrates the entire registration process from student perspective.
     #
     # In FCFS mode, students register per item
     # -> create action per item registration + destroy action for deregistration
     #
     # In preference-based mode, students register by batch of selected items
     # -> update action for batch registration + deregistration
+    #
+    # In Exam registration
+    # -> linkely the same as FCFS single mode
 
-    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
 
     def index
@@ -22,7 +22,7 @@ module Registration
       lecture1.capacity = 100
       lecture1.save!
 
-      campaign1 = Registration::Campaign.new(
+      campaign_lecture = Registration::Campaign.new(
         title: "Lecture Enrollment",
         campaignable_type: "Lecture",
         allocation_mode: 0,
@@ -30,22 +30,43 @@ module Registration
         status: 1,
         registration_deadline: 7.days.from_now
       )
-      campaign1.save!
-      item1 = Registration::Item.new(
-        registration_campaign_id: campaign1.id,
+      campaign_lecture.save!
+      item_lecture = Registration::Item.new(
+        registration_campaign_id: campaign_lecture.id,
         registerable_type: "Lecture",
         registerable_id: 1
       )
-      item1.save!
+      item_lecture.save!
 
-      tutorrial1 = Tutorial.find(1)
-      tutorrial1.capacity = 30
-      tutorrial1.save!
-      tutorrial2 = Tutorial.find(2)
-      tutorrial2.capacity = 30
-      tutorrial2.save!
+      # Notice that 1 type
+      # campaign_lecture_planning = Registration::Campaign.new(
+      #   title: "Lecture Enrollment",
+      #   campaignable_type: "Lecture",
+      #   allocation_mode: 0,
+      #   campaignable_id: 1,
+      #   status: 1,
+      #   registration_deadline: 7.days.from_now,
+      #   planning_only: true
+      # )
+      # campaign_lecture.save!
+      # item_lecture_planning = Registration::Item.new(
+      #   registration_campaign_id: campaign_lecture_planning.id,
+      #   registerable_type: "Lecture",
+      #   registerable_id: 1
+      # )
+      # item_lecture_planning.save!
 
-      campaign2 = Registration::Campaign.new(
+      tutorial1 = Tutorial.find(1)
+      tutorial1.capacity = 30
+      tutorial1.save!
+      tutorial2 = Tutorial.new(
+        title: "Di 14-19",
+        lecture: lecture1,
+        capacity: 60
+      )
+      tutorial2.save!
+
+      campaign_tutorial = Registration::Campaign.new(
         title: "Tutorial Enrollment",
         campaignable_type: "Lecture",
         allocation_mode: 0,
@@ -53,17 +74,17 @@ module Registration
         status: 1,
         registration_deadline: 7.days.from_now
       )
-      campaign2.save!
+      campaign_tutorial.save!
       item21 = Registration::Item.new(
-        registration_campaign_id: campaign2.id,
+        registration_campaign_id: campaign_tutorial.id,
         registerable_type: "Tutorial",
-        registerable_id: 1
+        registerable_id: tutorial1.id
       )
       item21.save!
       item22 = Registration::Item.new(
-        registration_campaign_id: campaign2.id,
+        registration_campaign_id: campaign_tutorial.id,
         registerable_type: "Tutorial",
-        registerable_id: 2
+        registerable_id: tutorial2.id
       )
       item22.save!
     end
@@ -72,8 +93,10 @@ module Registration
     # Not allow draft campaign
     def registrations_for_campaign
       @campaign = Registration::Campaign.find(params[:campaign_id])
-      if campaign.draft?
-        redirect_to user_registrations_index_path, notice: t('registration.messages.campaign_unavailable')
+      if @campaign.draft?
+        redirect_to user_registrations_index_path,
+                    notice: t("registration.messages.campaign_unavailable")
+      end
       if @campaign.campaignable_type == "Lecture"
         show_campaign_host_by_lecture
       elsif @campaign.campaignable_type == "Exam"
@@ -93,74 +116,26 @@ module Registration
     def create
       @item = Registration::Item.find(params[:item_id])
       @campaign = Registration::Campaign.find(params[:campaign_id])
-      if @campaign.campaignable_type == "Lecture" #TODO: compare campaignable type here with lecturer mode
-        create_registration_lecture_campaign
-      elsif @campaign.campaignable_type == "Exam" #TODO: compare campaignable type here with lecturer mode
+
+      if @campaign.campaignable_type == "Lecture"
+        # TODO: compare campaignable type here with lecturer mode
+        case @campaign.allocation_mode.to_sym
+        when :first_come_first_serve
+          begin
+            Registration::LectureFcfsService.new(@campaign, @item, current_user).register!
+            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                        success: t("registration.messages.registration_success")
+          rescue RegistrationError => e
+            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                        alert: e.message.to_s
+          end
+        else
+          raise(NotImplementedError)
+        end
+      elsif @campaign.campaignable_type == "Exam"
+        # TODO: compare campaignable type here with lecturer mode
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       end
-    end
-
-    def create_registration_lecture_campaign
-      if @campaign.preference_based?
-        raise(NotImplementedError, "Preference-based allocation is not implemented yet")
-      else
-        register_user_for_first_come_first_serve(@campaign, @item)
-      end
-    end
-
-    def register_user_for_first_come_first_serve(campaign, item)
-      ActiveRecord::Base.transaction do
-        item.lock!
-
-        # error redirect if any validation fails
-        if (redirect = validate_create_registration(campaign, item, current_user))
-          return redirect
-        end
-
-        # if all validations pass, create the registration with status confirmed
-        @user_registration = Registration::UserRegistration.new(
-          registration_campaign_id: campaign.id,
-          registration_item_id: item.id,
-          user_id: current_user.id,
-          status: :confirmed
-        )
-        if @user_registration.save
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                      success: t('registration.messages.registration_success')
-        else
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                      error: t('registration.messages.registration_failed')
-        end
-      end
-    end
-
-    # Validation for creating registration in lecture based registration
-    # 0. Check open for registration
-    # 1. Check if user has already registered for this campaign
-    # 2. Check if item still has capacity
-    # 3. Check if user satisfies all policies (registration and both)
-    def validate_create_registration(campaign, item, user)
-      if campaign.open_for_registrations? == false
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                  alert: t('registration.messages.campaign_not_opened')
-
-      if user_has_confirmed_registration_selected_campaign?(campaign, user)
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                  alert: t('registration.messages.already_registered')
-      end
-
-      unless item.still_have_capacity?
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                  alert: t('registration.messages.no_slots')
-      end
-
-      unless [campaign.policies_satisfied?(user, phase: :registration),
-              campaign.policies_satisfied?(user, phase: :both)].all?
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                  alert: t('registration.messages.requirements_not_met')
-      end
-
-      nil
     end
 
     def destroy
@@ -169,40 +144,28 @@ module Registration
                                                              status: :confirmed)
       @campaign = @user_registration.registration_campaign
 
-      # error redirect if any validation fails
-      if (redirect = validate_widthdraw_registration(campaign, item, current_user))
-        return redirect
+      if @campaign.campaignable_type == "Lecture"
+        # TODO: compare campaignable type here with lecturer mode
+        case @campaign.allocation_mode.to_sym
+        when :first_come_first_serve
+          begin
+            Registration::LectureFcfsService.new(@campaign, @item, current_user).withdraw!
+            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                        success: t("registration.messages.withdrawn")
+          rescue RegistrationError => e
+            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                        alert: e.message.to_s
+          end
+        else
+          raise(NotImplementedError)
+        end
+      elsif @campaign.campaignable_type == "Exam"
+        # TODO: compare campaignable type here with lecturer mode
+        raise(NotImplementedError, "Exam campaignable_type not supported yet")
       end
-
-      # soft delete user_registration due to tracing purpose
-      @user_registration.update(status: :rejected)
-      
-      redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                  success: t('registration.messages.withdrawn')
-    end
-
-    # Validation for widthdrawing registration in lecture based registration
-    # 0. Check open for registration
-    def validate_widthdraw_registration(campaign, item, user)
-      if campaign.open_for_registrations? == false
-        return redirect_to campaign_registrations_for_campaign_path(campaign_id: campaign.id),
-                  alert: t('registration.messages.campaign_not_opened')
-
-      nil
-    end
-
-    def render_not_found(exception)
-      # TODO: redirect to dashboard, and maybe also with error message
-      render json: { error: exception.message }, status: :unprocessable_entity
     end
 
     private
-
-      def user_has_confirmed_registration_selected_campaign?(campaign, user)
-        exist_regist = Registration::UserRegistration.find_by(registration_campaign_id: campaign.id,
-                                                user_id: user.id)
-        exist_regist.present? && exist_regist.confirmed?
-      end
 
       def get_eligibility(campaign, phase: :registration)
         eligibility = PolicyEngine.new(campaign).full_trace_with_config_for(current_user,
@@ -212,9 +175,7 @@ module Registration
 
           prereq_campaign_id = policy.config[:prerequisite_campaign_id]
           prereq_campaign = Registration::Campaign.find_by(id: prereq_campaign_id)
-          if prereq_campaign
-            policy.config["prerequisite_campaign_info"] = "TODO"
-          end
+          policy.config["prerequisite_campaign_info"] = "TODO" if prereq_campaign
         end
         eligibility
       end

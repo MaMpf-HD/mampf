@@ -3,7 +3,7 @@
     <h1 class="h4 mb-1">
       <%= campaignable_host.title %> - <%= campaign.title %> 
       <span class="badge text-bg-primary"><%= campaign.status&.humanize %></span>
-      <% unless campaign.planning_only %>
+      <% if campaign.planning_only %>
         <span class="badge text-bg-primary"><%= t('registration.planning') %></span>
       <% end %>
     </h1>

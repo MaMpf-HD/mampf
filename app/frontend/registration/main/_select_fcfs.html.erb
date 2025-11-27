@@ -1,8 +1,15 @@
 <div class="card-body">
   <h2 class="h5"><%= t('registration.title') %></h2>
   
+  <% if items.size == 1%>
   <%= render partial: 'registration/main/select_single_item',
               locals: {campaign: campaign,
                       campaignable_host: campaignable_host,
                       item: items[0] } %>
+  <%else%>
+  <%= render partial: 'registration/main/select_multi_item',
+              locals: {campaign: campaign,
+                      campaignable_host: campaignable_host,
+                      items: items } %>
+  <%end%>
 </div>
