@@ -17,7 +17,7 @@ export class DisplayManager {
 
   // on small display, fall back to standard browser player
   adaptToSmallDisplay() {
-    for (let e of this.elements) {
+    for (const e of this.elements) {
       e.hide();
     }
     thymeAttributes.video.style.width = "100%";
@@ -27,7 +27,7 @@ export class DisplayManager {
   // on large display, use anything thyme has to offer, disable native player
   adaptToLargeDisplay() {
     thymeAttributes.video.controls = false;
-    for (let e of this.elements) {
+    for (const e of this.elements) {
       e.show();
     }
     this.onEnlarge();
