@@ -6,7 +6,7 @@ import { PlayButton } from "./components/play_button";
 import { SeekBar } from "./components/seek_bar";
 import { TimeButton } from "./components/time_button";
 import { VolumeBar } from "./components/volume_bar";
-import { setUpMaxTime } from "./utility";
+import { setUpMaxTime, onVideoMetadataLoaded } from "./utility";
 
 $(document).ready(function () {
   /*
@@ -26,7 +26,7 @@ $(document).ready(function () {
 
   // Adjust the width of the canvas according to the video
   // such that screenshot generation is performed with the same ratio.
-  video.addEventListener("loadedmetadata", () => {
+  onVideoMetadataLoaded(video, () => {
     this.canvas = document.getElementById(canvasId);
     this.canvas.width = Math.floor($(video).width());
     this.canvas.height = Math.floor($(video).height());

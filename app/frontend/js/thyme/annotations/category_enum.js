@@ -20,7 +20,7 @@ export class CategoryEnum {
    * Override in subclasses.
    */
   static getByName(name, array) {
-    for (let a of array) {
+    for (const a of array) {
       if (a.name === name) {
         return a;
       }

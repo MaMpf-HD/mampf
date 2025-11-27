@@ -67,6 +67,16 @@ FactoryBot.define do
       end
     end
 
+    trait :with_toc_item do
+      after(:create) do |m|
+        m.items.create!(
+          sort: "remark",
+          description: "Test Remark",
+          start_time: TimeStamp.new(total_seconds: 10.5)
+        )
+      end
+    end
+
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
       sort { "LessonMaterial" }
