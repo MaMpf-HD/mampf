@@ -39,10 +39,10 @@ module Registration
       # 3. Check if user satisfies all policies (phase: registration and both)
       def validate_register!
         unless @campaign.open_for_registrations?
-          raise(RegistrationError, I18n.t("registration.messages.campaign_not_opened"))
+          raise(Registration::RegistrationError, I18n.t("registration.messages.campaign_not_opened"))
         end
         if @campaign.user_registrations.exists?(user_id: @user.id, status: :confirmed)
-          raise(RegistrationError, I18n.t("registration.messages.already_registered"))
+          raise(Registration::RegistrationError, I18n.t("registration.messages.already_registered"))
         end
 
         unless @item.still_have_capacity?
@@ -51,7 +51,7 @@ module Registration
         end
         unless [@campaign.policies_satisfied?(@user, phase: :registration),
                 @campaign.policies_satisfied?(@user, phase: :both)].all?
-          raise(RegistrationError, I18n.t("registration.messages.requirements_not_met"))
+          raise(Registration::RegistrationError, I18n.t("registration.messages.requirements_not_met"))
         end
       end
 
@@ -60,7 +60,7 @@ module Registration
       def validate_withdraw!
         return if @campaign.open_for_registrations?
 
-        raise(RegistrationError, I18n.t("registration.messages.campaign_not_opened"))
+        raise(Registration::RegistrationError, I18n.t("registration.messages.campaign_not_opened"))
       end
   end
 end

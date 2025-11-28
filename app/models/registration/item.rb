@@ -21,7 +21,9 @@ module Registration
                 scope: [:registration_campaign_id, :registerable_type]
               }
 
-    delegate :capacity, to: :registerable
+    def capacity
+      registerable.capacity || 0
+    end
 
     def capacity_used
       user_registrations.where(status: :confirmed).count

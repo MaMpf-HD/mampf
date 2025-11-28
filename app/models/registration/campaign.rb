@@ -45,10 +45,10 @@ module Registration
     end
 
     def open_for_registrations?
-      DateTime.current < registration_deadline
+      open?
     end
 
-    #TODO: remove this
+    # TODO: remove this
     def user_registered?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
@@ -74,6 +74,5 @@ module Registration
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)
       end
-
   end
 end

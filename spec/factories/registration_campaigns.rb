@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :registration_campaign, class: "Registration::Campaign" do
-    association :campaignable, factory: :lecture
+    association :campaignable, factory: :lecture, capacity: 100
     title { "#{Faker::Company.buzzword} Registration" }
     allocation_mode { :first_come_first_served }
     registration_deadline { 2.weeks.from_now }
@@ -83,8 +83,8 @@ FactoryBot.define do
       after(:create) do |campaign|
         lecture = campaign.campaignable
 
-        tutorial1 = create(:tutorial, lecture: lecture)
-        tutorial2 = create(:tutorial, lecture: lecture)
+        tutorial1 = create(:tutorial, lecture: lecture, capacity: 100)
+        tutorial2 = create(:tutorial, lecture: lecture, capacity: 100)
 
         item1 = create(:registration_item,
                        registration_campaign: campaign,

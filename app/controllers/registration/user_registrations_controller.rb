@@ -67,9 +67,11 @@ module Registration
           lecture: lecture1,
           capacity: 60
         )
+        tutorial2.save!
+      else
+        tutorial2.capacity = 60
+        tutorial2.save!
       end
-      tutorial2.capacity = 60
-      tutorial2.save!
 
       campaign_tutorial = Registration::Campaign.new(
         title: "Tutorial Enrollment",
@@ -117,8 +119,8 @@ module Registration
     def registrations_for_campaign
       @campaign = Registration::Campaign.find(params[:campaign_id])
       if @campaign.draft?
-        redirect_to user_registrations_index_path,
-                    notice: I18n.t("registration.messages.campaign_unavailable")
+        return redirect_to user_registrations_path,
+                           notice: I18n.t("registration.messages.campaign_unavailable")
       end
       if @campaign.campaignable_type == "Lecture"
         show_campaign_host_by_lecture
@@ -141,20 +143,18 @@ module Registration
       @campaign = Registration::Campaign.find(params[:campaign_id])
 
       if @campaign.campaignable_type == "Lecture"
+        raise(NotImplementedError) unless @campaign.first_come_first_served?
+
         # TODO: compare campaignable type here with lecturer mode
-        case @campaign.allocation_mode.to_sym
-        when :first_come_first_serve
-          begin
-            Registration::LectureFcfsService.new(@campaign, @item, current_user).register!
-            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        success: I18n.t("registration.messages.registration_success")
-          rescue RegistrationError => e
-            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        alert: e.message.to_s
-          end
-        else
-          raise(NotImplementedError)
+        begin
+          Registration::LectureFcfsService.new(@campaign, @item, current_user).register!
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      success: I18n.t("registration.messages.registration_success")
+        rescue Registration::RegistrationError => e
+          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                      alert: e.message.to_s
         end
+
       elsif @campaign.campaignable_type == "Exam"
         # TODO: compare campaignable type here with lecturer mode
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
@@ -170,12 +170,12 @@ module Registration
       if @campaign.campaignable_type == "Lecture"
         # TODO: compare campaignable type here with lecturer mode
         case @campaign.allocation_mode.to_sym
-        when :first_come_first_serve
+        when :first_come_first_served
           begin
             Registration::LectureFcfsService.new(@campaign, @item, current_user).withdraw!
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                         success: I18n.t("registration.messages.withdrawn")
-          rescue RegistrationError => e
+          rescue Registration::RegistrationError => e
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                         alert: e.message.to_s
           end
