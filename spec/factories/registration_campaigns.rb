@@ -72,6 +72,24 @@ FactoryBot.define do
       end
     end
 
+    trait :for_tutorial_enrollment do
+      title { "Tutorial Enrollment" }
+
+      after(:create) do |campaign|
+        lecture = campaign.campaignable
+
+        tutorial1 = create(:tutorial, lecture: lecture)
+        tutorial2 = create(:tutorial, lecture: lecture)
+
+        item1 = create(:registration_item,
+                       registration_campaign: campaign,
+                       registerable: tutorial1)
+        item2 = create(:registration_item,
+                       registration_campaign: campaign,
+                       registerable: tutorial2)
+      end
+    end
+
     trait :with_policies do
       after(:create) do |campaign|
         create(:registration_policy, :institutional_email,

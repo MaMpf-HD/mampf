@@ -1,4 +1,5 @@
 <div>
+  <h2 class="h5"><%= t('registration.title') %></h2>
   <div class="d-flex justify-content-between align-items-center mb-2">
     <div class="small text-muted">
       <%= t('registration.seats_remaining') %>: 
@@ -6,9 +7,12 @@
         <%= item.capacity_remained %>
       </span>
     </div>
-    <div class="small">
-      Saved <%= campaign.user_registrations_last_updated(current_user)&.to_formatted_s(:long) %>
-    </div>
+    <%last_updated = campaign.user_registrations_last_updated(current_user)%>
+    <% if last_updated%>
+      <div class="small">
+        Saved <%= last_updated.to_formatted_s(:long) %>
+      </div>
+    <%end%>
   </div>
   
   <% registered = item.user_registered?(current_user) %>

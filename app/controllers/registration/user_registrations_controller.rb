@@ -9,7 +9,7 @@ module Registration
     # -> update action for batch registration + deregistration
     #
     # In Exam registration
-    # -> linkely the same as FCFS single mode
+    # -> likely the same as FCFS single mode
 
     helper UserRegistrationsHelper
 
@@ -59,11 +59,16 @@ module Registration
       tutorial1 = Tutorial.find(1)
       tutorial1.capacity = 30
       tutorial1.save!
-      tutorial2 = Tutorial.new(
-        title: "Di 14-19",
-        lecture: lecture1,
-        capacity: 60
-      )
+
+      tutorial2 = Tutorial.find(2)
+      if tutorial2.nil?
+        tutorial2 = Tutorial.new(
+          title: "Di 14-19",
+          lecture: lecture1,
+          capacity: 60
+        )
+      end
+      tutorial2.capacity = 60
       tutorial2.save!
 
       campaign_tutorial = Registration::Campaign.new(
@@ -87,6 +92,24 @@ module Registration
         registerable_id: tutorial2.id
       )
       item22.save!
+      policy_email = Registration::Policy.new(
+        registration_campaign_id: campaign_tutorial.id,
+        kind: :institutional_email,
+        phase: :registration,
+        config: { allowed_domains: ["mampf.edu"] },
+        position: 1,
+        active: true
+      )
+      policy_email.save!
+      policy_prereq = Registration::Policy.new(
+        registration_campaign_id: campaign_tutorial.id,
+        kind: :prerequisite_campaign,
+        phase: :registration,
+        config: { prerequisite_campaign_id: campaign_lecture.id },
+        position: 3,
+        active: true
+      )
+      policy_prereq.save!
     end
 
     # Get campaigns info + registrations info for current user
@@ -95,7 +118,7 @@ module Registration
       @campaign = Registration::Campaign.find(params[:campaign_id])
       if @campaign.draft?
         redirect_to user_registrations_index_path,
-                    notice: t("registration.messages.campaign_unavailable")
+                    notice: I18n.t("registration.messages.campaign_unavailable")
       end
       if @campaign.campaignable_type == "Lecture"
         show_campaign_host_by_lecture
@@ -124,7 +147,7 @@ module Registration
           begin
             Registration::LectureFcfsService.new(@campaign, @item, current_user).register!
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        success: t("registration.messages.registration_success")
+                        success: I18n.t("registration.messages.registration_success")
           rescue RegistrationError => e
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                         alert: e.message.to_s
@@ -151,7 +174,7 @@ module Registration
           begin
             Registration::LectureFcfsService.new(@campaign, @item, current_user).withdraw!
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        success: t("registration.messages.withdrawn")
+                        success: I18n.t("registration.messages.withdrawn")
           rescue RegistrationError => e
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                         alert: e.message.to_s
@@ -170,12 +193,12 @@ module Registration
       def get_eligibility(campaign, phase: :registration)
         eligibility = PolicyEngine.new(campaign).full_trace_with_config_for(current_user,
                                                                             phase: phase)
-        eligibility.each do |policy|
-          next unless policy.kind == "prerequisite_campaign"
+        eligibility.each do |policy_trace|
+          next unless policy_trace[:kind] == "prerequisite_campaign"
 
-          prereq_campaign_id = policy.config[:prerequisite_campaign_id]
+          prereq_campaign_id = policy_trace[:config][:prerequisite_campaign_id]
           prereq_campaign = Registration::Campaign.find_by(id: prereq_campaign_id)
-          policy.config["prerequisite_campaign_info"] = "TODO" if prereq_campaign
+          policy_trace[:config]["prerequisite_campaign_info"] = "TODO" if prereq_campaign
         end
         eligibility
       end

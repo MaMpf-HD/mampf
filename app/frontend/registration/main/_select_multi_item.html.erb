@@ -1,21 +1,31 @@
-<div class="card-body">
+<div>
   <h2 class="h5">Select a <%=campaign.registerable_type%></h2>
   
   <div data-controller="registration-item-search">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <%= render partial: "registration/item_search_form/search_form",
+    <div class="d-flex justify-content-between align-items-center mb-2 gap-3">
+      
+        <%= render partial: "registration/item_search_form/search_form",
                 locals: { controller: "registration-item-search",
                           placeholder: "Filter by weekday, time, tutor"} %>
-      <div class="small">
-        Saved <%= campaign.user_registrations_last_updated(current_user)&.to_formatted_s(:long) %>
-      </div>
+      
+      
+        <%last_updated = campaign.user_registrations_last_updated(current_user)%>
+        
+        <% if last_updated%>
+          <div class="small">
+            Saved <%= last_updated.to_formatted_s(:long) %>
+          </div>
+        <%end%>
+      
     </div>
 
     <% if campaign.user_registered?(current_user) %>
-      <div class="alert alert-info py-1 px-2 d-none">
+      <div class="alert alert-info py-1 px-2">
         Currently registered: 
-        <span><%= campaign&.user_registrations_confirmed(current_user)&.first&.registration_item&.title %></span>. 
-        Withdraw to switch to a different group.
+        <span>
+          <%= campaign.user_registrations_confirmed(current_user)&.first&.registration_item.title %>
+        </span>
+        . Withdraw to switch to a different group.
       </div>
     <%end%>
 
@@ -43,41 +53,49 @@
               / <%= item.capacity %>
             </td>
             <td>
-              <%if item.still_have_capacity?%>
-                <span class="badge rounded-pill text-bg-secondary">Available</span>
-              <% else %>
-                <span class="badge rounded-pill text-bg-light text-dark">Full</span>
-              <% end %>
+              <!--case item has not been registered -->
+              <%if !item.user_registered?(current_user)%>
+                <%if item.still_have_capacity?%>
+                  <span class="badge rounded-pill text-bg-info">Available</span>
+                <% else %>
+                  <span class="badge rounded-pill text-bg-light text-dark">Full</span>
+                <% end %>
+
+              <!--case has been registered -->
+              <%else %>
+                <span class="badge rounded-pill text-bg-success">Registered</span>
+              <%end%>
+              
             </td>
 
-            <td>
+            <td class="d-flex justify-content-end">
               <!--case campaign has not been registered -->
               <%if !campaign.user_registered?(current_user)%>
-              <% if item.user_registered?(current_user) %>
-                <%= button_to t('registration.withdraw'),
+                <% if item.user_registered?(current_user) %>
+                  <%= button_to t('registration.withdraw'),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
                     disable: !campaign.open_for_registrations?,
                     class: "btn btn-outline-danger btn-sm" %>
-              <% else %>
-                <%= button_to t('registration.register_now'),
+                <% else %>
+                  <%= button_to t('registration.register_now'),
                     register_item_path(campaign.id, item.id),
                     method: :post,
                     disable: !campaign.open_for_registrations? || item.capacity_remained == 0,
                     class: "btn btn-primary btn-sm" %>
-              <% end %>
+                <% end %>
 
               <!--case has been registered -->
               <%else %>
-              <% if item.user_registered?(current_user) %>
-                <%= button_to t('registration.withdraw'),
+                <% if item.user_registered?(current_user) %>
+                  <%= button_to t('registration.withdraw'),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
                     disable: !campaign.open_for_registrations?,
                     class: "btn btn-outline-danger btn-sm" %>
-              <% else %>
-                <span class="text-muted small">Withdraw first</span>
-              <% end %>
+                <% else %>
+                  <span class="text-muted small">Withdraw first</span>
+                <% end %>
               <%end%>
             </td>
 
