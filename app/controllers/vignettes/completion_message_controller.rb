@@ -9,11 +9,11 @@ module Vignettes
       @completion_message.content = completion_message_params[:content]
 
       if @completion_message.save
-        redirect_back(fallback_location: edit_lecture_path(@lecture),
-                      notice: t("vignettes.completion_message.set_success"))
+        redirect_back_or_to(edit_lecture_path(@lecture),
+                            notice: t("vignettes.completion_message.set_success"))
       else
-        redirect_back(fallback_location: edit_lecture_path(@lecture),
-                      alert: t("vignettes.completion_message.set_failure"))
+        redirect_back_or_to(edit_lecture_path(@lecture),
+                            alert: t("vignettes.completion_message.set_failure"))
       end
     end
 
@@ -22,11 +22,11 @@ module Vignettes
 
       @completion_message = @lecture.vignettes_completion_message
       if @completion_message&.destroy
-        redirect_back(fallback_location: edit_lecture_path(@lecture),
-                      notice: t("vignettes.completion_message.delete_success"))
+        redirect_back_or_to(edit_lecture_path(@lecture),
+                            notice: t("vignettes.completion_message.delete_success"))
       else
-        redirect_back(fallback_location: edit_lecture_path(@lecture),
-                      alert: t("vignettes.completion_message.delete_failure"))
+        redirect_back_or_to(edit_lecture_path(@lecture),
+                            alert: t("vignettes.completion_message.delete_failure"))
       end
     end
 

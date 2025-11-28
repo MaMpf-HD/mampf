@@ -1,4 +1,7 @@
 module Registration
+  # Evaluates the ordered set of policies defined for a campaign.
+  # Acts as the decision maker that checks if a user satisfies all constraints
+  # (e.g. prerequisites, status) required for a specific phase.
   class PolicyEngine
     Result = Struct.new(:pass, :failed_policy, :trace, keyword_init: true)
 

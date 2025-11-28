@@ -10,11 +10,16 @@ export class MediumCommentsPage {
   }
 
   async goto() {
-    await this.page.goto(this.link, { waitUntil: "domcontentloaded" });
+    await this.page.goto(this.link);
   }
 
   async postComment(comment: string) {
+    const newCommentPromise = this.page.waitForResponse(response =>
+      response.url().includes("comments/new"),
+    );
     await this.page.getByRole("button", { name: "new comment" }).click();
+    await newCommentPromise;
+
     const textarea = this.page.getByTestId("comment-new-textarea");
     await textarea.waitFor({ state: "visible" });
     await textarea.fill(comment);

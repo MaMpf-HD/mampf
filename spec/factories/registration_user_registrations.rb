@@ -21,7 +21,7 @@ FactoryBot.define do
 
     trait :fcfs do
       association :registration_campaign,
-                  factory: [:registration_campaign, :first_come_first_serve]
+                  factory: [:registration_campaign, :first_come_first_served]
       preference_rank { nil }
       status { :confirmed }
     end

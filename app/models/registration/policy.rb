@@ -1,4 +1,7 @@
 module Registration
+  # Represents a rule or constraint that a user must satisfy to register.
+  # Acts as a gatekeeper (e.g. "Must have passed Exam X") that can be applied
+  # at different phases (registration or finalization).
   class Policy < ApplicationRecord
     belongs_to :registration_campaign,
                class_name: "Registration::Campaign",
@@ -6,13 +9,14 @@ module Registration
 
     enum :kind, { institutional_email: 0,
                   prerequisite_campaign: 1,
-                  lecture_performance: 2 }
+                  student_performance: 2 }
 
     enum :phase, { registration: 0,
                    finalization: 1,
                    both: 2 }
 
     validates :kind, :phase, presence: true
+    validates :active, inclusion: { in: [true, false] }
     validates :position, uniqueness: { scope: :registration_campaign_id }
 
     acts_as_list scope: :registration_campaign
@@ -30,37 +34,61 @@ module Registration
       when :prerequisite_campaign
         evaluate_prerequisite_campaign(user)
       else
-        { pass: true, code: :ok }
+        raise(ArgumentError, "Unknown policy kind: #{kind}")
       end
     end
 
     private
+
+      def pass_result(code = :ok, details = {})
+        { pass: true, code: code, details: details }
+      end
+
+      def fail_result(code, message, details = {})
+        { pass: false, code: code, message: message, details: details }
+      end
 
       def evaluate_institutional_email(user)
         domains = Array(config&.fetch("allowed_domains", nil)).map do |domain|
           (domain || "").strip.downcase
         end.reject(&:empty?)
 
-        return { pass: true, code: :ok } if domains.empty?
+        return fail_result(:configuration_error, "No allowed domains configured") if domains.empty?
 
         email = user.email.to_s.downcase
         allowed = domains.any? do |domain|
           email.end_with?("@#{domain}")
         end
 
-        { pass: allowed, code: allowed ? :ok : :institutional_email_mismatch }
+        if allowed
+          pass_result(:domain_ok)
+        else
+          fail_result(:institutional_email_mismatch, "Email domain not allowed",
+                      allowed_domains: domains)
+        end
       end
 
       def evaluate_prerequisite_campaign(user)
         campaign_id = config&.fetch("prerequisite_campaign_id", nil)
-        return { pass: true, code: :ok } if campaign_id.blank?
+
+        if campaign_id.blank?
+          return fail_result(:configuration_error,
+                             "Prerequisite campaign not configured")
+        end
 
         prereq_campaign = Registration::Campaign.find_by(id: campaign_id)
-        return { pass: false, code: :prerequisite_campaign_not_found } unless prereq_campaign
 
-        registered = prereq_campaign.user_registered?(user)
+        unless prereq_campaign
+          return fail_result(:prerequisite_campaign_not_found,
+                             "Prerequisite campaign missing")
+        end
 
-        { pass: registered, code: registered ? :ok : :prerequisite_not_met }
+        if prereq_campaign.user_registration_confirmed?(user)
+          pass_result(:prerequisite_met)
+        else
+          fail_result(:prerequisite_not_met,
+                      "Prerequisite campaign not completed")
+        end
       end
   end
 end

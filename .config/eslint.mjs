@@ -93,6 +93,9 @@ export default tseslint.config(
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unsafe-argument": "off",
       "@typescript-eslint/no-explicit-any": "off",
+      // annotation tools make heavy use of this unfortunately
+      "@typescript-eslint/no-this-alias": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
     languageOptions: {
       ecmaVersion: 2022,

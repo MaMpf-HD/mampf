@@ -1,4 +1,4 @@
-import { renderLatex } from "./utility";
+import { onVideoMetadataLoaded, renderLatex } from "./utility";
 
 /**
   This file wraps up most functionality of the thyme player(s) concerning chapters.
@@ -23,7 +23,7 @@ export class ChapterManager {
      only the 'loadedmetadata' event was used. However, Firefox triggers this event too soon,
      i.e. when the readyStates for chapters and elements are 1 (loading) instead of 2 (loaded)
      for the events, see https://www.w3schools.com/jsref/event_oncanplay.asp */
-    thymeAttributes.video.addEventListener("loadedmetadata", function () {
+    onVideoMetadataLoaded(thymeAttributes.video, function () {
       if (initialChapters && chapters.readyState === 2) {
         chapterManager.#displayChapters();
         initialChapters = false;
@@ -98,7 +98,7 @@ export class ChapterManager {
     }
 
     track.mode = "hidden";
-    let times = [];
+    const times = [];
     // read out the chapter track cues and generate html elements for chapters,
     // run katex on them
     for (let i = 0; i < track.cues.length; i++) {

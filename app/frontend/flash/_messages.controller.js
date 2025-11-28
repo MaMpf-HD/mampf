@@ -81,7 +81,7 @@ export default class extends Controller {
         return;
       }
       elapsed = Date.now() - start;
-      let percent = Math.min(100, (elapsed / AUTO_DISMISS_TIMEOUT_MS) * 100);
+      const percent = Math.min(100, (elapsed / AUTO_DISMISS_TIMEOUT_MS) * 100);
       bar.style.width = percent + "%";
       if (elapsed < AUTO_DISMISS_TIMEOUT_MS) {
         animationFrameId = requestAnimationFrame(updateBar);
