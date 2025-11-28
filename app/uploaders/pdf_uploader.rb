@@ -15,7 +15,7 @@ class PdfUploader < Shrine
   # - named destinations
   # - bookmarks with details (created by mampf.sty LATeX package)
   add_metadata do |io, context|
-    if context[:action] == :upload
+    if [:cache, :store].include?(context[:action])
       Shrine.with_file(io) do |file|
         temp_file = Tempfile.new
         temp_folder = Dir.mktmpdir
