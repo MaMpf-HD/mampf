@@ -367,9 +367,6 @@ window.directUpload = (
   hiddenInputElement
   single
   ) ->
-    console.log("Hidden input element")
-    console.log(hiddenInputElement)
-
     initBootstrapPopovers()
     hiddenInput = document.getElementById(hiddenInputElement)
     hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
