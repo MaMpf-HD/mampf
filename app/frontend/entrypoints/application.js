@@ -66,19 +66,19 @@ import { WidgetInstance } from "friendly-challenge";
 import "~/js/masonry_grid";
 
 document.addEventListener("turbo:load", function () {
-  let doneCallback, element, options;
-
-  doneCallback = function (solution) {
+  const doneCallback = function (solution) {
     console.log(solution);
     document.querySelector("#register-user").disabled = false;
   };
+
   const errorCallback = (err) => {
     console.log("There was an error when trying to solve the Captcha.");
     console.log(err);
   };
-  element = document.querySelector("#captcha-widget");
+
+  const element = document.querySelector("#captcha-widget");
   if (element != null) {
-    options = {
+    const options = {
       doneCallback: doneCallback,
       errorCallback,
       puzzleEndpoint: $("#captcha-widget").data("captcha-url"),

@@ -11,7 +11,7 @@ import { VolumeBar } from "./components/volume_bar";
 import { Heatmap } from "./heatmap";
 import { addFeedbackShortcuts, addGeneralShortcuts } from "./key_shortcuts";
 import { resizeThymeContainer } from "./resizer";
-import { playOnClick, setUpMaxTime } from "./utility";
+import { playOnClick, setUpMaxTime, onVideoMetadataLoaded } from "./utility";
 
 $(document).on("turbo:load", function () {
   /*
@@ -66,7 +66,7 @@ $(document).on("turbo:load", function () {
   }
 
   function isValid(annotation) {
-    for (let toggle of annotationCategoryToggles) {
+    for (const toggle of annotationCategoryToggles) {
       if (annotation.category === toggle.category && toggle.isChecked()) {
         return true;
       }
@@ -122,7 +122,7 @@ $(document).on("turbo:load", function () {
   }
 
   window.onresize = resizeContainer;
-  video.onloadedmetadata = resizeContainer;
+  onVideoMetadataLoaded(video, resizeContainer);
 
   $("#video").width("82%");
   resizeContainer();

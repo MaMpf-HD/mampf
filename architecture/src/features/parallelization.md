@@ -547,9 +547,9 @@ graph TD
 
 ---
 
-### Steps 11-13: Lecture Performance & Exam Registration
+### Steps 11-13: Student Performance & Exam Registration
 
-#### Step 11: Lecture Performance System (Very High Parallelization)
+#### Step 11: Student Performance System (Very High Parallelization)
 
 **Parallelization level:** Up to 4 developers
 
@@ -790,7 +790,7 @@ flowchart TD
     Step8{{"Step 8: Assignment Grading<br/>(Parallel - up to 3 devs)"}}
     Step9{{"Step 9: Participation<br/>(Parallel - 2 devs)"}}
     Step10{{"Step 10: Dashboard Partial<br/>(Parallel - 2 devs)"}}
-    Step11{{"Step 11: Lecture Performance<br/>(Parallel - up to 4 devs)"}}
+    Step11{{"Step 11: Student Performance<br/>(Parallel - up to 4 devs)"}}
     Step12{{"Step 12: Exam Registration<br/>(Mixed - 2-3 devs)"}}
     Step13{{"Step 13: Dashboard Extension<br/>(Parallel - 2 devs)"}}
     Step14{{"Step 14: Quality & Hardening<br/>(Parallel - 2 devs)"}}
