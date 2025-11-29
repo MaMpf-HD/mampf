@@ -106,7 +106,8 @@ manuscriptUpload = (fileInput) ->
         uploadedFileData = JSON.stringify(data)
         # set hidden field value to the uploaded file data so that it is
         # submitted with the form as the attachment
-        hiddenInput.value = uploadedFileData
+        hiddenInputElement = document.getElementById(hiddenInput)
+        hiddenInputElement.value = uploadedFileData
 
         manuscriptFile = document.getElementById('manuscript-file')
         manuscriptSize = document.getElementById('manuscript-size')
@@ -366,6 +367,9 @@ window.directUpload = (
   hiddenInputElement
   single
   ) ->
+    console.log("Hidden input element")
+    console.log(hiddenInputElement)
+
     initBootstrapPopovers()
     hiddenInput = document.getElementById(hiddenInputElement)
     hiddenInput2 = document.getElementById('upload-userManuscript-hidden2')
