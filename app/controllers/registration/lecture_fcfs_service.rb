@@ -39,7 +39,8 @@ module Registration
       # 3. Check if user satisfies all policies (phase: registration and both)
       def validate_register!
         unless @campaign.open_for_registrations?
-          raise(Registration::RegistrationError, I18n.t("registration.messages.campaign_not_opened"))
+          raise(Registration::RegistrationError,
+                I18n.t("registration.messages.campaign_not_opened"))
         end
         if @campaign.user_registrations.exists?(user_id: @user.id, status: :confirmed)
           raise(Registration::RegistrationError, I18n.t("registration.messages.already_registered"))
@@ -51,16 +52,36 @@ module Registration
         end
         unless [@campaign.policies_satisfied?(@user, phase: :registration),
                 @campaign.policies_satisfied?(@user, phase: :both)].all?
-          raise(Registration::RegistrationError, I18n.t("registration.messages.requirements_not_met"))
+          raise(Registration::RegistrationError,
+                I18n.t("registration.messages.requirements_not_met"))
         end
       end
 
       # Validation for widthdrawing registration in lecture based registration
       # 0. Check open for registration
+      # 1. Check if withdrawing current campaign may lead to fail in another "confirmed" campaign
       def validate_withdraw!
-        return if @campaign.open_for_registrations?
+        unless @campaign.open_for_registrations?
+          raise(Registration::RegistrationError,
+                I18n.t("registration.messages.campaign_not_opened"))
+        end
 
-        raise(Registration::RegistrationError, I18n.t("registration.messages.campaign_not_opened"))
+        # prereq_query = "{ prerequisite_campaign_id: #{@campaign.id} }"
+        prereq_policies = Registration::Policy.where(
+          kind: Registration::Policy.kinds[:prerequisite_campaign],
+          config: { "prerequisite_campaign_id" => @campaign.id }
+        )
+        dependent_campaigns_confirmed = Campaign
+                                        .where(id: prereq_policies.map(&:registration_campaign_id))
+                                        .joins(:user_registrations)
+                                        .where(user_registrations: { status: UserRegistration.statuses[:confirmed] })
+                                        .distinct
+        return unless dependent_campaigns_confirmed.size.positive?
+
+        names = dependent_campaigns_confirmed.pluck(:title)
+        raise(Registration::RegistrationError,
+              I18n.t("registration.messages.dependent_campaigns_block_withdrawal",
+                     names: names.join(", ")))
       end
   end
 end

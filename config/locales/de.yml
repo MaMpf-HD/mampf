@@ -3227,6 +3227,8 @@ de:
     not_registered: "Nicht registriert"
     register_now: "Jetzt registrieren"
     withdraw: "Zurückziehen"
+    withdraw_first: "Zuerst zurückziehen"
+    filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
     messages:
       campaign_unavailable: "Diese Kampagne ist derzeit nicht verfügbar."
       campaign_closed: "Die Registrierung für diese Kampagne ist geschlossen."
@@ -3236,6 +3238,7 @@ de:
       no_slots: "Keine Plätze verfügbar."
       requirements_not_met: "Sie erfüllen die Voraussetzungen nicht."
       withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
+      dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
     
   package:
     no_zip: Die Datei ist kein .zip-Archiv.
@@ -3674,6 +3677,10 @@ de:
     closes: "Schließt"
     passed: "Bestanden"
     failed: "Nicht bestanden"
+    select_type: "Wählen Sie ein(e) %{type}"
+    saved_at: "Gespeichert %{time}"
+    available: "Verfügbar"
+    full: "Ausgebucht"
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

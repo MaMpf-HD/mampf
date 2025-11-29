@@ -95,6 +95,24 @@ FactoryBot.define do
       end
     end
 
+    trait :for_talk_enrollment do
+      title { "Talk Enrollment" }
+
+      after(:create) do |campaign|
+        lecture = campaign.campaignable
+
+        talk1 = create(:talk, lecture: lecture, capacity: 2)
+        talk2 = create(:talk, lecture: lecture, capacity: 2)
+
+        item1 = create(:registration_item,
+                       registration_campaign: campaign,
+                       registerable: talk1)
+        item2 = create(:registration_item,
+                       registration_campaign: campaign,
+                       registerable: talk2)
+      end
+    end
+
     trait :with_policies do
       after(:create) do |campaign|
         create(:registration_policy, :institutional_email,

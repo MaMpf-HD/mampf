@@ -11,6 +11,7 @@ module Registration
     # In Exam registration
     # -> likely the same as FCFS single mode
 
+    rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
     helper UserRegistrationsHelper
 
     def index
@@ -89,6 +90,10 @@ module Registration
         # TODO: compare campaignable type here with lecturer mode
         raise(NotImplementedError, "Exam campaignable_type not supported yet")
       end
+    end
+
+    def render_not_found(exception)
+      render json: { error: exception.message }, status: :unprocessable_content
     end
 
     private
