@@ -30,9 +30,9 @@
       <table class="table align-middle mb-2" id="itemsTable">
         <thead>
           <tr>
-            <th><%= campaign.registerable_type %></th>
-            <th><%= t("basics.time") %></th>
-            <th><%= t("basics.seats") %></th>
+            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
+              <th><%= col[:header] %></th>
+            <% end %>
             <th><%= t("basics.status") %></th>
             <th class="text-end"><%= t("basics.action") %></th>
           </tr>
@@ -41,14 +41,9 @@
         <tbody>
         <% items.each do |item| %>
           <tr data-registration-item-search-target="row">
-            <td><%= item.title %></td>
-            <td>TODO</td>
-            <td>
-              <span id="seatsRemaining_<%= item.id %>">
-                <%= item.capacity_remained %>
-              </span>
-              / <%= item.capacity %>
-            </td>
+            <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
+              <td><%= col[:field].call(item) %></td>
+            <% end %>
             <td>
               <% if !item.user_registered?(current_user) %>
                 <% if item.still_have_capacity? %>

@@ -20,7 +20,6 @@ module Registration
     # Notice config here is JSON object, so keys are string types
     # policy here is also hash, not policy object
     def get_policy_config_info(policy)
-      c = current_user
       case policy[:kind]
       when "lecture_performance"
         cert_status = policy[:config]["certification_status"]
@@ -51,5 +50,26 @@ module Registration
       regist_type = registerable_type.downcase
       ["lecture"].include?(regist_type)
     end
+
+    TABLE_CONFIG = {
+      "Tutorial" => [
+        { header: I18n.t("basics.tutorial"),
+          field: ->(item) { item.title } },
+        { header: I18n.t("basics.tutor"),
+          field: ->(item) { item.registerable.tutor_names } },
+        { header: I18n.t("basics.seats"),
+          field: ->(item) { "#{item.capacity_remained}/#{item.capacity}" } }
+      ],
+      "Talk" => [
+        { header: I18n.t("basics.talk"),
+          field: ->(item) { item.title } },
+        { header: I18n.t("basics.position"),
+          field: ->(item) { item.registerable.position } },
+        { header: I18n.t("basics.date"),
+          field: ->(item) { l(item.registerable.date, format: :long) } },
+        { header: I18n.t("basics.seats"),
+          field: ->(item) { "#{item.capacity_remained}/#{item.capacity}" } }
+      ]
+    }
   end
 end

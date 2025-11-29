@@ -3019,6 +3019,8 @@ en:
     registered: "Registered"
     not_registered: "Not registered"
     register_now: "Register now"
+    currently_registered: "Currently registered"
+    withdraw_to_switch: "Withdraw to switch to a different group."
     withdraw: "Withdraw"
     withdraw_first: "Withdraw first"
     filter_placeholder: "Filter by weekday, time, tutor"
@@ -3464,6 +3466,7 @@ en:
     saved_at: "Saved %{time}"
     available: "Available"
     full: "Full"
+    position: "Position"
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

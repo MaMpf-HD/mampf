@@ -3226,6 +3226,8 @@ de:
     registered: "Registriert"
     not_registered: "Nicht registriert"
     register_now: "Jetzt registrieren"
+    currently_registered: "Aktuell registriert"
+    withdraw_to_switch: "Zum Wechsel in eine andere Gruppe zurückziehen."
     withdraw: "Zurückziehen"
     withdraw_first: "Zuerst zurückziehen"
     filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
@@ -3681,6 +3683,7 @@ de:
     saved_at: "Gespeichert %{time}"
     available: "Verfügbar"
     full: "Ausgebucht"
+    position: "Position"
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
