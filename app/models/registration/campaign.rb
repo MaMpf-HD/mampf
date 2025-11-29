@@ -31,5 +31,23 @@ module Registration
 
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
     validates :planning_only, inclusion: { in: [true, false] }
+
+    def evaluate_policies_for(user, phase: :registration)
+      policy_engine.eligible?(user, phase: phase)
+    end
+
+    def policies_satisfied?(user, phase: :registration)
+      evaluate_policies_for(user, phase: phase).pass
+    end
+
+    def user_registration_confirmed?(user)
+      user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    private
+
+      def policy_engine
+        @policy_engine ||= Registration::PolicyEngine.new(self)
+      end
   end
 end
