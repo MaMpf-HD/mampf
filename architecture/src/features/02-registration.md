@@ -128,6 +128,10 @@ Do not overload `pending` to represent eligibility uncertainty in FCFS; use poli
 
 See also: Student Performance → Certification (`05-student-performance.md`).
 
+```admonish info "Future Extension: Scheduled Campaign Opening"
+Currently, campaigns transition `draft → open` via manual teacher action. A future enhancement could add automatic opening via `registration_start` timestamp and background job. See [Future Extensions - Scheduled Opening](10-future-extensions.md#scheduled-campaign-opening) for details.
+```
+
 ```admonish tip "UI hooks for unassigned"
 After completion, the Campaign Show can surface an "Unassigned registrants"
 table (name, matriculation, top preferences) with actions to place users into
@@ -227,7 +231,6 @@ module Registration
     enum status: { draft: 0, open: 1, closed: 2, processing: 3, completed: 4 }
 
     validates :title, :registration_deadline, presence: true
-    validate :valid_status_transition, on: :update
 
     def evaluate_policies_for(user, phase: :registration)
       if phase == :registration
@@ -268,24 +271,6 @@ module Registration
 
     def close!
       update!(status: :closed) if status == "open"
-    end
-
-    private
-
-    def valid_status_transition
-      return unless status_changed?
-
-      valid_transitions = {
-        "draft" => ["open"],
-        "open" => ["closed"],
-        "closed" => ["processing", "completed", "open"],
-        "processing" => ["completed", "open"]
-      }
-
-      allowed = valid_transitions[status_was]
-      return if allowed&.include?(status)
-
-      errors.add(:status, "cannot transition from #{status_was} to #{status}")
     end
   end
 end

@@ -96,6 +96,13 @@ FactoryBot.define do
             aliases: [:valid_medium] do
       sort { "WorkedExample" }
       after(:build) { |m| m.editors << m.teachable.teacher }
+
+      trait :with_lecture_by_id do
+        transient do
+          lecture_id { nil }
+        end
+        teachable { Lecture.find(lecture_id) }
+      end
     end
 
     factory :course_medium,
