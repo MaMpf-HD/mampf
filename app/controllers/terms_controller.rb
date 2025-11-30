@@ -1,7 +1,7 @@
 class TermsController < ApplicationController
-  before_action :set_term, except: [:index, :new, :create, :cancel, :set_active]
+  before_action :set_term, except: [:index, :new, :create, :set_active]
   layout "administration"
-  authorize_resource except: [:index, :new, :create, :cancel, :set_active]
+  authorize_resource except: [:index, :new, :create, :set_active]
   layout "administration"
 
   def current_ability
@@ -24,30 +24,30 @@ class TermsController < ApplicationController
   def create
     @term = Term.new(term_params)
     authorize! :create, @term
-    @term.save
-    if @term.valid?
-      redirect_to terms_path
-      return
+    if @term.save
+      respond_to do |format|
+        format.html { redirect_to terms_path }
+        format.turbo_stream
+      end
+    else
+      render :new, status: :unprocessable_content
     end
-    @errors = @term.errors[:season].join(", ")
-    render :update
   end
 
   def update
-    @term.update(term_params)
-    @errors = @term.errors[:season].join(", ") unless @term.valid?
+    if @term.update(term_params)
+      redirect_to terms_path
+    else
+      render :edit, status: :unprocessable_content
+    end
   end
 
   def destroy
     @term.destroy
-    redirect_to terms_path
-  end
-
-  def cancel
-    @id = params[:id]
-    @term = Term.find_by(id: @id)
-    authorize! :cancel, @term
-    @new_action = params[:new] == "true"
+    respond_to do |format|
+      format.html { redirect_to terms_path }
+      format.turbo_stream
+    end
   end
 
   def set_active

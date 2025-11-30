@@ -20,16 +20,16 @@ export class TermsPage {
     await newTermsPromises;
     await this.page.selectOption("#term_year", termName.toString());
     await this.page.selectOption("#term_season", season);
-    await this.page.locator("#row-new-term").getByRole("button", { name: "Save" }).click();
+    await this.page.locator("#new_term").getByRole("button", { name: "Save" }).click();
   }
 
   async deleteTerm(termName: number, season: "SS" | "WS") {
     this.page.on("dialog", dialog => dialog.accept());
-    const row = this.page.locator(`div.row:has(div:text-is("${termName}")):has(div:text-is("${season}")):has(a:text-is("Delete"))`);
-    await row.getByRole("link", { name: "Delete" }).click();
+    const row = this.page.locator(`div.row:has(div.col-2:text-is("${termName}")):has(div.col-2:text-is("${season}"))`);
+    await row.getByRole("button", { name: "Delete" }).click();
   }
 
   getTermRow(termName: number, season: "SS" | "WS") {
-    return this.page.locator(`div.row:has(div:text-is("${termName}")):has(div:text-is("${season}")):has(a:text-is("Delete"))`);
+    return this.page.locator(`div.row:has(div.col-2:text-is("${termName}")):has(div.col-2:text-is("${season}"))`);
   }
 }
