@@ -1,6 +1,7 @@
 module Registration
   class PoliciesController < ApplicationController
     before_action :set_campaign
+    before_action :set_locale
     before_action :set_policy, only: [:edit, :update, :destroy]
     authorize_resource class: "Registration::Policy"
 
@@ -20,13 +21,11 @@ module Registration
                         notice: t("registration.policy.created")
           end
           format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.replace("policy_form",
-                                   partial: "registration/policies/empty_form"),
-              turbo_stream.replace("policies_list",
-                                   partial: "registration/policies/list",
-                                   locals: { campaign: @campaign })
-            ]
+            render turbo_stream:
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_show",
+                                 locals: { campaign: @campaign,
+                                           tab: "policies" })
           end
         end
       else
@@ -42,13 +41,11 @@ module Registration
                         notice: t("registration.policy.updated")
           end
           format.turbo_stream do
-            render turbo_stream: [
-              turbo_stream.replace("policy_form",
-                                   partial: "registration/policies/empty_form"),
-              turbo_stream.replace("policies_list",
-                                   partial: "registration/policies/list",
-                                   locals: { campaign: @campaign })
-            ]
+            render turbo_stream:
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_show",
+                                 locals: { campaign: @campaign,
+                                           tab: "policies" })
           end
         end
       else
@@ -58,8 +55,19 @@ module Registration
 
     def destroy
       @policy.destroy
-      redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
-                  notice: t("registration.policy.destroyed")
+      respond_to do |format|
+        format.html do
+          redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
+                      notice: t("registration.policy.destroyed")
+        end
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_show",
+                               locals: { campaign: @campaign,
+                                         tab: "policies" })
+        end
+      end
     end
 
     private
@@ -70,6 +78,10 @@ module Registration
 
       def set_policy
         @policy = @campaign.registration_policies.find(params[:id])
+      end
+
+      def set_locale
+        I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
       end
 
       def policy_params

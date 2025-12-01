@@ -153,4 +153,20 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.policies_satisfied?(user, phase: :registration)).to be(true)
     end
   end
+
+  describe "#locale_with_inheritance" do
+    let(:lecture) { FactoryBot.create(:lecture) }
+    let(:campaign) { FactoryBot.create(:registration_campaign, campaignable: lecture) }
+
+    it "returns the locale of the campaignable" do
+      allow(lecture).to receive(:locale_with_inheritance).and_return("de")
+      expect(campaign.locale_with_inheritance).to eq("de")
+    end
+
+    it "falls back to locale if locale_with_inheritance is missing" do
+      allow(lecture).to receive(:locale_with_inheritance).and_return(nil)
+      allow(lecture).to receive(:locale).and_return("en")
+      expect(campaign.locale_with_inheritance).to eq("en")
+    end
+  end
 end

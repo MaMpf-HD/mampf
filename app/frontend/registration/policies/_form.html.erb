@@ -46,8 +46,7 @@
           <input type="text"
                  name="registration_policy[config][allowed_domains]"
                  value="<%= Array(@policy.config&.fetch("allowed_domains", [])).join(", ") %>"
-                 class="form-control"
-                 placeholder="uni-heidelberg.de, mathi.uni-heidelberg.de">
+                 class="form-control">
           <div class="form-text"><%= t("registration.policy.hints.allowed_domains") %></div>
         </div>
       </div>

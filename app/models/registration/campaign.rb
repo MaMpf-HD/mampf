@@ -29,6 +29,10 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
+    def locale_with_inheritance
+      campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
+    end
+
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
     validates :planning_only, inclusion: { in: [true, false] }
 

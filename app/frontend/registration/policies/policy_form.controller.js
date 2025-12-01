@@ -14,7 +14,8 @@ export default class extends Controller {
         section.classList.remove("d-none");
         // Enable inputs inside
         section.querySelectorAll("input, select").forEach(input => input.disabled = false);
-      } else {
+      }
+      else {
         section.classList.add("d-none");
         // Disable inputs inside to prevent submission
         section.querySelectorAll("input, select").forEach(input => input.disabled = true);

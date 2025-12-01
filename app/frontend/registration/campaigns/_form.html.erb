@@ -21,7 +21,7 @@
   <div class="mb-3">
     <%= f.label :allocation_mode, t("registration.campaign.form.allocation_mode"), class: "form-label" %>
     <%= f.select :allocation_mode,
-                 Registration::Campaign.allocation_modes.keys.map { |k| [k.humanize, k] },
+                 Registration::Campaign.allocation_modes.keys.map { |k| [t("registration.campaign.allocation_mode.#{k}"), k] },
                  {}, class: "form-select" %>
   </div>
 

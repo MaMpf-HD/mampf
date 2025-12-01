@@ -2,6 +2,7 @@ module Registration
   class CampaignsController < ApplicationController
     before_action :set_lecture, only: [:index, :new, :create]
     before_action :set_campaign, except: [:index, :new, :create]
+    before_action :set_locale
     authorize_resource class: "Registration::Campaign", except: [:index, :new, :create]
 
     def current_ability
@@ -196,6 +197,12 @@ module Registration
 
       def set_campaign
         @campaign = Registration::Campaign.find(params[:id])
+      end
+
+      def set_locale
+        I18n.locale = @campaign&.locale_with_inheritance ||
+                      @lecture&.locale_with_inheritance ||
+                      I18n.locale
       end
 
       def campaign_params

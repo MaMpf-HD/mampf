@@ -37,28 +37,29 @@
     </div>
   </div>
 
+  <% tab ||= "overview" %>
   <ul class="nav nav-tabs mb-3" id="campaignTabs" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true"><%= t("basics.overview") %></button>
+      <button class="nav-link <%= 'active' if tab == 'overview' %>" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="<%= tab == 'overview' %>"><%= t("basics.overview") %></button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="false"><%= t("basics.settings", default: "Settings") %></button>
+      <button class="nav-link <%= 'active' if tab == 'settings' %>" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="<%= tab == 'settings' %>"><%= t("basics.settings", default: "Settings") %></button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="false"><%= t("registration.policy.index.title") %></button>
+      <button class="nav-link <%= 'active' if tab == 'policies' %>" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="<%= tab == 'policies' %>"><%= t("registration.policy.index.title") %></button>
     </li>
   </ul>
 
   <div class="tab-content" id="campaignTabsContent">
-    <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+    <div class="tab-pane fade <%= 'show active' if tab == 'overview' %>" id="overview" role="tabpanel" aria-labelledby="overview-tab">
       <%= render "registration/campaigns/overview", campaign: campaign %>
     </div>
 
-    <div class="tab-pane fade" id="settings" role="tabpanel" aria-labelledby="settings-tab">
+    <div class="tab-pane fade <%= 'show active' if tab == 'settings' %>" id="settings" role="tabpanel" aria-labelledby="settings-tab">
       <%= render "registration/campaigns/form", campaign: campaign, lecture: campaign.campaignable %>
     </div>
 
-    <div class="tab-pane fade" id="policies" role="tabpanel" aria-labelledby="policies-tab">
+    <div class="tab-pane fade <%= 'show active' if tab == 'policies' %>" id="policies" role="tabpanel" aria-labelledby="policies-tab">
       <%= render "registration/policies/index" %>
     </div>
   </div>

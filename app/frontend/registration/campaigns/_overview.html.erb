@@ -1,4 +1,5 @@
 <% campaign ||= @campaign %>
+<div id="campaign_overview">
 <div class="row g-3 mb-3">
   <div class="col-12 col-lg-8">
     <div class="card h-100">
@@ -9,7 +10,7 @@
           <dd class="col-sm-8"><%= campaign.title %></dd>
 
           <dt class="col-sm-4"><%= t("registration.campaign.form.allocation_mode") %></dt>
-          <dd class="col-sm-8"><%= campaign.allocation_mode.humanize %></dd>
+          <dd class="col-sm-8"><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></dd>
 
           <dt class="col-sm-4"><%= t("registration.campaign.form.registration_deadline") %></dt>
           <dd class="col-sm-8"><%= l(campaign.registration_deadline, format: :long) if campaign.registration_deadline %></dd>
@@ -70,4 +71,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>
