@@ -2,7 +2,9 @@ de:
   registration:
     campaign:
       created: "Anmeldeverfahren erfolgreich erstellt."
+      create_failed: "Anmeldeverfahren konnte nicht erstellt werden."
       updated: "Anmeldeverfahren erfolgreich aktualisiert."
+      update_failed: "Anmeldeverfahren konnte nicht aktualisiert werden."
       destroyed: "Anmeldeverfahren erfolgreich gelöscht."
       cannot_delete: "Anmeldeverfahren kann nicht gelöscht werden."
       confirm_delete: "Sind Sie sicher, dass Sie dieses Anmeldeverfahren löschen wollen?"
@@ -96,6 +98,7 @@ de:
         registration/campaign:
           attributes:
             registration_deadline:
-              must_be_in_future: "muss in der Zukunft liegen, wenn die Kampagne offen ist"
+              must_be_in_future: 
+                "muss in der Zukunft liegen, wenn die Kampagne offen ist"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem die Kampagne geöffnet wurde"

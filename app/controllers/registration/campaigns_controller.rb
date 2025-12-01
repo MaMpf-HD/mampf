@@ -76,14 +76,29 @@ module Registration
                         notice: t("registration.campaign.created")
           end
           format.turbo_stream do
-            render turbo_stream:
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_show",
-                                 locals: { campaign: @campaign })
+            flash.now[:notice] = t("registration.campaign.created")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_show",
+                                   locals: { campaign: @campaign }),
+              stream_flash
+            ]
           end
         end
       else
-        render :new, status: :unprocessable_content
+        respond_to do |format|
+          format.html { render :new, status: :unprocessable_content }
+          format.turbo_stream do
+            flash.now[:alert] = t("registration.campaign.create_failed")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_form",
+                                   locals: { campaign: @campaign,
+                                             lecture: @lecture }),
+              stream_flash
+            ]
+          end
+        end
       end
     end
 
@@ -95,14 +110,29 @@ module Registration
                         notice: t("registration.campaign.updated")
           end
           format.turbo_stream do
-            render turbo_stream:
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_show",
-                                 locals: { campaign: @campaign })
+            flash.now[:notice] = t("registration.campaign.updated")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_show",
+                                   locals: { campaign: @campaign }),
+              stream_flash
+            ]
           end
         end
       else
-        render :show, status: :unprocessable_content
+        respond_to do |format|
+          format.html { render :edit, status: :unprocessable_content }
+          format.turbo_stream do
+            flash.now[:alert] = t("registration.campaign.update_failed")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_form",
+                                   locals: { campaign: @campaign,
+                                             lecture: @campaign.campaignable }),
+              stream_flash
+            ]
+          end
+        end
       end
     end
 
@@ -121,10 +151,13 @@ module Registration
                       notice: t("registration.campaign.destroyed")
         end
         format.turbo_stream do
-          render turbo_stream:
-          turbo_stream.replace("campaigns_card_body",
-                               partial: "registration/campaigns/card_body_index",
-                               locals: { lecture: lecture })
+          flash.now[:notice] = t("registration.campaign.destroyed")
+          render turbo_stream: [
+            turbo_stream.replace("campaigns_card_body",
+                                 partial: "registration/campaigns/card_body_index",
+                                 locals: { lecture: lecture }),
+            stream_flash
+          ]
         end
       end
     end
@@ -137,15 +170,26 @@ module Registration
                         notice: t("registration.campaign.opened")
           end
           format.turbo_stream do
-            render turbo_stream:
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_show",
-                                 locals: { campaign: @campaign })
+            flash.now[:notice] = t("registration.campaign.opened")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_show",
+                                   locals: { campaign: @campaign }),
+              stream_flash
+            ]
           end
         end
       else
-        redirect_to registration_campaign_path(@campaign),
-                    alert: @campaign.errors.full_messages.join(", ")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        alert: @campaign.errors.full_messages.join(", ")
+          end
+          format.turbo_stream do
+            flash.now[:alert] = @campaign.errors.full_messages.join(", ")
+            render turbo_stream: stream_flash
+          end
+        end
       end
     end
 
@@ -157,15 +201,26 @@ module Registration
                         notice: t("registration.campaign.closed")
           end
           format.turbo_stream do
-            render turbo_stream:
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_show",
-                                 locals: { campaign: @campaign })
+            flash.now[:notice] = t("registration.campaign.closed")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_show",
+                                   locals: { campaign: @campaign }),
+              stream_flash
+            ]
           end
         end
       else
-        redirect_to registration_campaign_path(@campaign),
-                    alert: @campaign.errors.full_messages.join(", ")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        alert: @campaign.errors.full_messages.join(", ")
+          end
+          format.turbo_stream do
+            flash.now[:alert] = @campaign.errors.full_messages.join(", ")
+            render turbo_stream: stream_flash
+          end
+        end
       end
     end
 
@@ -177,15 +232,26 @@ module Registration
                         notice: t("registration.campaign.reopened")
           end
           format.turbo_stream do
-            render turbo_stream:
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_show",
-                                 locals: { campaign: @campaign })
+            flash.now[:notice] = t("registration.campaign.reopened")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_show",
+                                   locals: { campaign: @campaign }),
+              stream_flash
+            ]
           end
         end
       else
-        redirect_to registration_campaign_path(@campaign),
-                    alert: @campaign.errors.full_messages.join(", ")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        alert: @campaign.errors.full_messages.join(", ")
+          end
+          format.turbo_stream do
+            flash.now[:alert] = @campaign.errors.full_messages.join(", ")
+            render turbo_stream: stream_flash
+          end
+        end
       end
     end
 

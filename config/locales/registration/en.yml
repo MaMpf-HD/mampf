@@ -2,7 +2,9 @@ en:
   registration:
     campaign:
       created: "Campaign created successfully."
+      create_failed: "Campaign could not be created."
       updated: "Campaign updated successfully."
+      update_failed: "Campaign could not be updated."
       destroyed: "Campaign deleted successfully."
       cannot_delete: "Campaign cannot be deleted."
       confirm_delete: "Are you sure you want to delete this campaign?"

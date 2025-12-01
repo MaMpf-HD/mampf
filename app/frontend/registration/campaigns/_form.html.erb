@@ -2,14 +2,9 @@
               url: campaign.persisted? ? registration_campaign_path(campaign) : lecture_registration_campaigns_path(lecture),
               local: true) do |f| %>
 
-  <% if campaign.errors.any? %>
+  <% if campaign.errors[:base].present? %>
     <div class="alert alert-danger">
-      <h4><%= t("basics.error", default: "Error") %></h4>
-      <ul>
-        <% campaign.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+      <%= campaign.errors[:base].join(", ") %>
     </div>
   <% end %>
 
@@ -22,7 +17,7 @@
     <%= f.label :allocation_mode, t("registration.campaign.form.allocation_mode"), class: "form-label" %>
     <%= f.select :allocation_mode,
                  Registration::Campaign.allocation_modes.keys.map { |k| [t("registration.campaign.allocation_mode.#{k}"), k] },
-                 {}, class: "form-select" %>
+                 {}, class: "form-select", disabled: !campaign.draft? %>
   </div>
 
   <div class="mb-3">

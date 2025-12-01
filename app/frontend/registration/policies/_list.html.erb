@@ -21,21 +21,23 @@
               </small>
             </td>
             <td class="text-end">
-              <div class="d-flex justify-content-end gap-1">
-                <%= link_to edit_registration_campaign_policy_path(campaign, policy),
-                            class: "btn btn-sm btn-outline-secondary",
-                            data: { turbo_frame: "policy_form" },
-                            title: t("buttons.edit") do %>
-                  <i class="bi bi-pencil"></i>
-                <% end %>
-                <%= button_to registration_campaign_policy_path(campaign, policy),
-                              method: :delete,
-                              class: "btn btn-sm btn-outline-danger",
-                              data: { confirm: t("confirmation.generic") },
-                              title: t("buttons.delete") do %>
-                  <i class="bi bi-trash"></i>
-                <% end %>
-              </div>
+              <% if campaign.draft? %>
+                <div class="d-flex justify-content-end gap-1">
+                  <%= link_to edit_registration_campaign_policy_path(campaign, policy),
+                              class: "btn btn-sm btn-outline-secondary",
+                              data: { turbo_frame: "policy_form" },
+                              title: t("buttons.edit") do %>
+                    <i class="bi bi-pencil"></i>
+                  <% end %>
+                  <%= button_to registration_campaign_policy_path(campaign, policy),
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger",
+                                data: { confirm: t("confirmation.generic") },
+                                title: t("buttons.delete") do %>
+                    <i class="bi bi-trash"></i>
+                  <% end %>
+                </div>
+              <% end %>
             </td>
           </tr>
         <% end %>
