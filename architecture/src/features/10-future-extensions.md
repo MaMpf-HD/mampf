@@ -63,6 +63,19 @@ end
 
 ---
 
+### Full Trace for Policy Evaluation
+
+**Context:** The current policy engine stops at the first failure (`eligible?` returns false immediately).
+
+**Proposed Enhancement:** Implement a `full_trace` method that evaluates all policies and returns all failures.
+
+**Reference:** [Original Implementation Draft](https://github.com/MaMpf-HD/mampf/blob/4e06fc07ead65e05b11a30f7c1a3a4ec7eab91c5/app/services/registration/policy_engine.rb#L36-L47)
+
+**Reasoning:**
+For a student, it might be beneficial to see all reasons for ineligibility at once. Currently, if they fix one violation (e.g., "Policy X violated"), they might immediately encounter the next one ("Policy Y violated"). A full trace allows them to resolve all issues in parallel.
+
+---
+
 ### Other Registration Extensions
 
 ### Scheduled Campaign Opening
@@ -408,3 +421,9 @@ The core certification workflow (teacher-approved eligibility decisions, Evaluat
 - Optimal grading curves (per-subject analysis)
 - Predictive modeling (early intervention for at-risk students)
 - Learning analytics (engagement vs. outcomes correlation)
+
+---
+
+## 16. Full Trace for Policy Evaluation
+
+(Moved to Section 2: Registration & Policy System)
