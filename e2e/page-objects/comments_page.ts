@@ -23,6 +23,17 @@ export class MediumCommentsPage {
     const textarea = this.page.getByTestId("comment-new-textarea");
     await textarea.waitFor({ state: "visible" });
     await textarea.fill(comment);
-    await this.page.getByRole("button", { name: "post comment" }).click();
+
+    const postButtons = [
+      this.page.getByRole("button", { name: "post comment" }),
+      this.page.getByRole("button", { name: "Kommentar speichern" }),
+    ];
+
+    for (const btn of postButtons) {
+      if (await btn.isVisible()) {
+        await btn.click();
+        return;
+      }
+    }
   }
 }
