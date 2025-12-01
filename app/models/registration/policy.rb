@@ -27,6 +27,9 @@ module Registration
       where(phase: [phases[:both], phases[phase]])
     }
 
+    validate :campaign_is_draft, on: [:create, :update]
+    before_destroy :ensure_campaign_is_draft
+
     def evaluate(user)
       case kind.to_sym
       when :institutional_email
@@ -89,6 +92,19 @@ module Registration
           fail_result(:prerequisite_not_met,
                       "Prerequisite campaign not completed")
         end
+      end
+
+      def campaign_is_draft
+        return unless registration_campaign && !registration_campaign.draft?
+
+        errors.add(:base, :frozen)
+      end
+
+      def ensure_campaign_is_draft
+        return unless registration_campaign && !registration_campaign.draft?
+
+        errors.add(:base, :frozen)
+        throw(:abort)
       end
   end
 end

@@ -90,3 +90,12 @@ en:
         registration: "Registration"
         finalization: "Finalization"
         both: "Both"
+  activerecord:
+    errors:
+      models:
+        registration/campaign:
+          attributes:
+            registration_deadline:
+              must_be_in_future: "must be in the future when campaign is open"
+            allocation_mode:
+              frozen: "cannot be changed after campaign is opened"

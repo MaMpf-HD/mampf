@@ -36,12 +36,19 @@ module Registration
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
     validates :planning_only, inclusion: { in: [true, false] }
 
+    validate :allocation_mode_frozen, on: :update
+    validate :registration_deadline_future_if_open
+
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
     end
 
     def policies_satisfied?(user, phase: :registration)
       evaluate_policies_for(user, phase: phase).pass
+    end
+
+    def open_for_registrations?
+      open? && registration_deadline > Time.current
     end
 
     def user_registration_confirmed?(user)
@@ -53,6 +60,22 @@ module Registration
     end
 
     private
+
+      def allocation_mode_frozen
+        return unless allocation_mode_changed? && status_was != "draft"
+
+        errors.add(:allocation_mode, :frozen)
+      end
+
+      def registration_deadline_future_if_open
+        return unless open?
+        return unless registration_deadline_changed? || status_changed?
+        return if registration_deadline.blank?
+
+        return unless registration_deadline <= Time.current
+
+        errors.add(:registration_deadline, :must_be_in_future)
+      end
 
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)
