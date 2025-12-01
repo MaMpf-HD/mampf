@@ -46,9 +46,13 @@ en:
         closed: "Closed"
         planning: "Planning"
       actions:
-        open: "Open"
-        close: "Close"
-        reopen: "Reopen"
+        open: "Start Registration"
+        close: "End Registration"
+        reopen: "Reopen Registration"
+      confirmations:
+        open: "Are you sure you want to open registration? Students will be able to register immediately."
+        close: "Are you sure you want to end registration? No new registrations will be accepted."
+        reopen: "Are you sure you want to reopen registration?"
       overview:
         registrations: "Registrations"
         total: "Total"
@@ -84,6 +88,9 @@ en:
         lecture_id: "Lecture"
       hints:
         allowed_domains: "e.g. uni-heidelberg.de, mathi.uni-heidelberg.de"
+      helpdesk:
+        allocation_mode_frozen: "Allocation mode cannot be changed once the campaign is not in draft mode."
+        policies_frozen: "Policies cannot be added, modified, or removed once the campaign is not in draft mode."
       kinds:
         institutional_email: "Institutional Email"
         prerequisite_campaign: "Prerequisite Campaign"

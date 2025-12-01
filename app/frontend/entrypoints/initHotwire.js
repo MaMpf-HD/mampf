@@ -32,6 +32,9 @@ window.Stimulus.register("vignettes-number", VignettesNumberController);
 import RegistrationPolicyFormController from "~/registration/policies/policy_form.controller.js";
 window.Stimulus.register("registration-policy-form", RegistrationPolicyFormController);
 
+import BsPopoverController from "~/controllers/bs_popover_controller.js";
+window.Stimulus.register("bs-popover", BsPopoverController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

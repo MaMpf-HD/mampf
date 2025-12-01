@@ -15,6 +15,9 @@
 
   <div class="mb-3">
     <%= f.label :allocation_mode, t("registration.campaign.form.allocation_mode"), class: "form-label" %>
+    <% unless campaign.draft? %>
+      <%= helpdesk(t("registration.policy.helpdesk.allocation_mode_frozen"), false) %>
+    <% end %>
     <%= f.select :allocation_mode,
                  Registration::Campaign.allocation_modes.keys.map { |k| [t("registration.campaign.allocation_mode.#{k}"), k] },
                  {}, class: "form-select", disabled: !campaign.draft? %>

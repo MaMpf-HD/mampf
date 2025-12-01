@@ -14,16 +14,19 @@
         <%= button_to t("registration.campaign.actions.close"),
                       close_registration_campaign_path(campaign),
                       method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.close") },
                       class: "btn btn-warning" %>
       <% elsif campaign.closed? %>
         <%= button_to t("registration.campaign.actions.reopen"),
                       reopen_registration_campaign_path(campaign),
                       method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.reopen") },
                       class: "btn btn-success" %>
       <% else %>
         <%= button_to t("registration.campaign.actions.open"),
                       open_registration_campaign_path(campaign),
                       method: :patch,
+                      data: { confirm: t("registration.campaign.confirmations.open") },
                       class: "btn btn-success" %>
       <% end %>
 
@@ -46,7 +49,12 @@
       <button class="nav-link <%= 'active' if tab == 'settings' %>" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab" aria-controls="settings" aria-selected="<%= tab == 'settings' %>"><%= t("basics.settings", default: "Settings") %></button>
     </li>
     <li class="nav-item" role="presentation">
-      <button class="nav-link <%= 'active' if tab == 'policies' %>" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="<%= tab == 'policies' %>"><%= t("registration.policy.index.title") %></button>
+      <button class="nav-link <%= 'active' if tab == 'policies' %>" id="policies-tab" data-bs-toggle="tab" data-bs-target="#policies" type="button" role="tab" aria-controls="policies" aria-selected="<%= tab == 'policies' %>">
+        <%= t("registration.policy.index.title") %>
+        <span class="badge rounded-pill bg-secondary ms-1">
+          <%= campaign.registration_policies.count %>
+        </span>
+      </button>
     </li>
   </ul>
 

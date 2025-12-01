@@ -1,6 +1,11 @@
 <div class="card mb-3">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <h5 class="card-title mb-0"><%= t("registration.policy.index.title") %></h5>
+    <h5 class="card-title mb-0">
+      <%= t("registration.policy.index.title") %>
+      <% unless @campaign.draft? %>
+        <%= helpdesk(t("registration.policy.helpdesk.policies_frozen"), false) %>
+      <% end %>
+    </h5>
     <% if @campaign.draft? %>
       <%= link_to t("registration.policy.index.add"),
                   new_registration_campaign_policy_path(@campaign),
