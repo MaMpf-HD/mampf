@@ -25,6 +25,8 @@ de:
       edit:
         title: "Anmeldeverfahren bearbeiten"
       form:
+        new_title: "Neues Anmeldeverfahren"
+        edit_title: "Anmeldeverfahren bearbeiten"
         title: "Titel"
         allocation_mode: "Zuteilungsmodus"
         registration_opens_at: "Registrierungsbeginn"

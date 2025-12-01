@@ -25,6 +25,8 @@ en:
       edit:
         title: "Edit Campaign"
       form:
+        new_title: "New Campaign"
+        edit_title: "Edit Campaign"
         title: "Title"
         allocation_mode: "Allocation Mode"
         registration_opens_at: "Registration Opens At"
