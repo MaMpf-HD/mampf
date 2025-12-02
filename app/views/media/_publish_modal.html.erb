@@ -62,6 +62,7 @@
             <%= f.text_field :release_date,
                              class: 'form-control td-input',
                              id: 'release_date',
+                             "data-testid": 'release-date-datetimepicker',
                              autocomplete: 'off',
                              value: medium.planned_release_date,
                             'data-td-target': '#release-date-picker'%>
