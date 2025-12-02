@@ -1,4 +1,5 @@
-/* global tempusDominus */
+import { TempusDominus, Namespace } from "@eonasdan/tempus-dominus";
+import "@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css";
 
 // Initialize on page load (when js file is dynamically loaded)
 $(document).ready(startInitialization);
@@ -44,7 +45,7 @@ function getDateTimePickerIcons() {
 
 function initDatetimePicker(element) {
   // see https://getdatepicker.com
-  return new tempusDominus.TempusDominus(
+  return new TempusDominus(
     element.get(0),
     {
       display: {
@@ -77,7 +78,7 @@ function registerErrorHandlers(datetimePicker, element) {
     }
   };
 
-  datetimePicker.subscribe(tempusDominus.Namespace.events.change, (e) => {
+  datetimePicker.subscribe(Namespace.events.change, (e) => {
     // see https://getdatepicker.com/6/namespace/events.html#change
 
     // Clear error message
