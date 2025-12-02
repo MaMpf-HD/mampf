@@ -12,7 +12,7 @@
       </thead>
       <tbody>
         <% campaign.registration_policies.order(:position).each do |policy| %>
-          <tr>
+          <tr <%= 'data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;"'.html_safe if campaign.draft? %>>
             <td><%= t("registration.policy.kinds.#{policy.kind}") %></td>
             <td><%= t("registration.policy.phases.#{policy.phase}") %></td>
             <td>
@@ -22,6 +22,9 @@
             </td>
             <td class="text-end">
               <% if campaign.draft? %>
+                <%= link_to "", edit_registration_campaign_policy_path(campaign, policy),
+                            class: "d-none",
+                            data: { turbo_frame: "policy_form", row_link: true } %>
                 <div class="d-flex justify-content-end gap-1">
                   <% unless policy.first? %>
                     <%= button_to move_up_registration_campaign_policy_path(campaign, policy),
@@ -38,12 +41,6 @@
                                   title: t("buttons.move_down") do %>
                       <i class="bi bi-arrow-down"></i>
                     <% end %>
-                  <% end %>
-                  <%= link_to edit_registration_campaign_policy_path(campaign, policy),
-                              class: "btn btn-sm btn-outline-secondary",
-                              data: { turbo_frame: "policy_form" },
-                              title: t("buttons.edit") do %>
-                    <i class="bi bi-pencil"></i>
                   <% end %>
                   <%= button_to registration_campaign_policy_path(campaign, policy),
                                 method: :delete,
