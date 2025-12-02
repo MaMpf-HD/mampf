@@ -23,47 +23,24 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 2. Registration & Policy System
 
-### Scheduled Campaign Opening
-
-**Current State:** Campaigns require manual teacher action to transition `draft → open`.
-
-**Proposed Enhancement:** Automatic opening via background job.
-
-**Implementation:**
-```ruby
-add_column :registration_campaigns, :registration_start, :datetime
-
-# Validation
-validates :registration_start, presence: true
-validate :start_before_deadline
-
-# Background job (every 5 minutes)
-Registration::CampaignOpenerJob.perform_async
-  Registration::Campaign.where(status: :draft)
-    .where("registration_start <= ?", Time.current)
-    .find_each(&:open!)
-end
-```
-
-**Benefits:**
-- Symmetry: auto-open + auto-close provides full automation
-- Teacher workflow: set up campaign in advance, forget about it
-- Reduces manual intervention during high-traffic registration windows
-
-**Trade-offs:**
-- Adds complexity (another background job, another timestamp)
-- Teachers lose last-minute verification opportunity before going live
-- Current manual flow forces review before opening
-
-**Recommendation:** Defer to post-MVP. Current workaround (manual open) is acceptable. Implement if teachers report frequent "forgot to open" incidents during beta testing.
-
-**Complexity:** Low (additive change, no schema conflicts)
-
-**References:** See [Registration - Campaign Lifecycle](02-registration.md#campaign-lifecycle-state-diagram)
+- **Roster membership policy (`on_roster`)**: Restrict registration to users on a specific lecture/course roster. Alternative to campaign chaining via `prerequisite_campaign` policy (e.g., seminar talk registration restricted to students on seminar enrollment roster). Config: `{ "roster_source_id": <lecture_id> }`. Check: `source.roster.include?(user)`.
+- **Item-level capacity**: Add `capacity` column to `registration_items` to enable capacity partitioning across campaigns (e.g., same tutorial in two campaigns with split capacity: 20 seats for CS students, 10 for Physics). Items have independent capacity from domain objects. Soft validation warns if `sum(items.capacity) > tutorial.capacity`.
+- Policy trace persistence (store evaluation results for audit)
+- User-facing explanations (API endpoint showing why ineligible)
+- Rate limiting for FCFS hotspots
+- Bulk eligibility preview (matrix: users × policies)
+- Policy simulation mode (test changes without affecting real data)
+- Automated certification proposals (ML-based predictions from partial semester data)
+- Certification templates (pre-fill common override scenarios)
+- Certification bulk operations (approve/reject multiple students at once)
 
 ---
 
-### Full Trace for Policy Evaluation
+## 3. Roster Management
+
+- Batch operations (CSV import/export)
+- Capacity forecasting and rebalancing suggestions
+- Automatic load ### Full Trace for Policy Evaluation
 
 **Context:** The current policy engine stops at the first failure (`eligible?` returns false immediately).
 
@@ -115,6 +92,20 @@ end
 **Complexity:** Low (additive change, no schema conflicts)
 
 **References:** See [Registration - Campaign Lifecycle](02-registration.md#campaign-lifecycle-state-diagram)
+
+---
+
+### Relaxed Policy Freezing
+
+**Current State:** All policies are frozen once a campaign leaves the `draft` state.
+
+**Proposed Enhancement:** Allow adding or editing policies with `phase: :finalization` even when the campaign is `open`.
+
+**Rationale:**
+Finalization policies (e.g., "Min/Max Credits") are only evaluated during the allocation algorithm and do not affect a student's ability to register. Changing them mid-flight does not invalidate existing registration records.
+
+**Implementation Challenges:**
+Requires conditional UI logic to show the "Add Policy" button but restrict the form to only allow the `finalization` phase, preventing accidental addition of `registration` policies which *must* remain frozen.
 
 ---
 
