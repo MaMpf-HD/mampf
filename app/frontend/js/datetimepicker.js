@@ -1,10 +1,9 @@
 import { TempusDominus, Namespace } from "@eonasdan/tempus-dominus";
 import "@eonasdan/tempus-dominus/dist/css/tempus-dominus.min.css";
 
-function initializeDatetimePickers(container = document) {
+export function initializeDatetimePickers(container = document) {
   const pickerElements = $(container).find(".td-picker");
   if (pickerElements.length == 0) {
-    console.error("No datetimepicker element found on page, although requested.");
     return;
   }
 
