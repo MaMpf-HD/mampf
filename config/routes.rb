@@ -273,27 +273,31 @@ Rails.application.routes.draw do
        as: "import_lecture_toc"
 
   resources :lectures, except: [:index] do
-    resources :campaigns,
-              controller: "registration/campaigns",
-              only: [:index, :new, :create],
-              as: :registration_campaigns
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns_enabled) } do
+      resources :campaigns,
+                controller: "registration/campaigns",
+                only: [:index, :new, :create],
+                as: :registration_campaigns
+    end
   end
 
-  resources :campaigns,
-            controller: "registration/campaigns",
-            only: [:show, :edit, :update, :destroy],
-            as: :registration_campaigns do
-    member do
-      patch :open
-      patch :close
-      patch :reopen
-    end
-    resources :policies,
-              controller: "registration/policies",
-              only: [:new, :create, :edit, :update, :destroy] do
+  constraints ->(_req) { Flipper.enabled?(:registration_campaigns_enabled) } do
+    resources :campaigns,
+              controller: "registration/campaigns",
+              only: [:show, :edit, :update, :destroy],
+              as: :registration_campaigns do
       member do
-        patch :move_up
-        patch :move_down
+        patch :open
+        patch :close
+        patch :reopen
+      end
+      resources :policies,
+                controller: "registration/policies",
+                only: [:new, :create, :edit, :update, :destroy] do
+        member do
+          patch :move_up
+          patch :move_down
+        end
       end
     end
   end
