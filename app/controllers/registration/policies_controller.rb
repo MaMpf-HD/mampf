@@ -117,7 +117,8 @@ module Registration
       end
 
       def policy_params
-        params.expect(registration_policy: [:kind, :phase, { config: {} }])
+        params.expect(registration_policy: [:kind, :phase, :allowed_domains,
+                                            :prerequisite_campaign_id])
       end
 
       def current_ability

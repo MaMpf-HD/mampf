@@ -2,18 +2,14 @@
               url: @policy.persisted? ? registration_campaign_policy_path(@campaign, @policy) : registration_campaign_policies_path(@campaign),
               data: { controller: "registration-policy-form" }) do |f| %>
 
-  <% if @policy.errors.any? %>
+  <% if @policy.errors[:base].present? %>
     <div class="alert alert-danger">
-      <ul>
-        <% @policy.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+      <%= @policy.errors[:base].join(", ") %>
     </div>
   <% end %>
 
   <div class="row g-2 align-items-end mb-3">
-    <div class="col-12 col-md-3">
+    <div class="col-12 col-md-6">
       <%= f.label :kind, t("registration.policy.kind"), class: "form-label" %>
       <%= f.select :kind,
                    Registration::Policy.kinds.keys.map { |k| [t("registration.policy.kinds.#{k}"), k] },
@@ -21,7 +17,7 @@
                    class: "form-select",
                    data: { action: "registration-policy-form#changeKind", registration_policy_form_target: "kindSelect" } %>
     </div>
-    <div class="col-12 col-md-3">
+    <div class="col-12 col-md-6">
       <%= f.label :phase, t("registration.policy.phase"), class: "form-label" %>
       <%= f.select :phase,
                    Registration::Policy.phases.keys.map { |k| [t("registration.policy.phases.#{k}"), k] },
@@ -38,11 +34,8 @@
       <!-- Institutional Email -->
       <div data-registration-policy-form-target="configSection" data-kind="institutional_email" class="d-none">
         <div class="mb-3">
-          <label class="form-label"><%= t("registration.policy.configs.allowed_domains") %></label>
-          <input type="text"
-                 name="registration_policy[config][allowed_domains]"
-                 value="<%= Array(@policy.config&.fetch("allowed_domains", [])).join(", ") %>"
-                 class="form-control">
+          <%= f.label :allowed_domains, t("registration.policy.configs.allowed_domains"), class: "form-label" %>
+          <%= f.text_field :allowed_domains, class: "form-control" %>
           <div class="form-text"><%= t("registration.policy.hints.allowed_domains") %></div>
         </div>
       </div>
@@ -50,11 +43,13 @@
       <!-- Prerequisite Campaign -->
       <div data-registration-policy-form-target="configSection" data-kind="prerequisite_campaign" class="d-none">
         <div class="mb-3">
-          <label class="form-label"><%= t("registration.policy.configs.prerequisite_campaign_id") %></label>
-          <%= select_tag "registration_policy[config][prerequisite_campaign_id]",
-                         options_from_collection_for_select(Registration::Campaign.where.not(id: @campaign.id), :id, :title, @policy.config&.fetch("prerequisite_campaign_id", nil)),
-                         include_blank: true,
-                         class: "form-select" %>
+          <%= f.label :prerequisite_campaign_id, t("registration.policy.configs.prerequisite_campaign_id"), class: "form-label" %>
+          <%= f.collection_select :prerequisite_campaign_id,
+                                  Registration::Campaign.where.not(id: @campaign.id),
+                                  :id,
+                                  :title,
+                                  { include_blank: true },
+                                  class: "form-select" %>
         </div>
       </div>
 

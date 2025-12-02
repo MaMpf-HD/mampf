@@ -26,6 +26,28 @@ module Registration
       where(phase: [phases[:both], phases[phase]])
     }
 
+    # Virtual attributes for form handling and validation
+    def allowed_domains
+      val = config&.fetch("allowed_domains", nil)
+      return val if val.is_a?(String)
+
+      Array(val).join(", ")
+    end
+
+    def allowed_domains=(value)
+      self.config ||= {}
+      self.config["allowed_domains"] = value
+    end
+
+    def prerequisite_campaign_id
+      config&.fetch("prerequisite_campaign_id", nil)
+    end
+
+    def prerequisite_campaign_id=(value)
+      self.config ||= {}
+      self.config["prerequisite_campaign_id"] = value
+    end
+
     validate :campaign_is_draft, on: [:create, :update]
     validate :validate_config
     before_destroy :ensure_campaign_is_draft
@@ -117,6 +139,7 @@ module Registration
 
       def validate_institutional_email_config
         raw_domains = config&.fetch("allowed_domains", nil)
+        # Handle comma-separated string from form or array from JSON
         domains = if raw_domains.is_a?(String)
           raw_domains.split(",")
         else
@@ -125,15 +148,17 @@ module Registration
 
         return unless domains.map(&:strip).reject(&:empty?).empty?
 
-        errors.add(:base, I18n.t("registration.policy.errors.missing_domains"))
+        errors.add(:allowed_domains, I18n.t("registration.policy.errors.missing_domains"))
       end
 
       def validate_prerequisite_campaign_config
         campaign_id = config&.fetch("prerequisite_campaign_id", nil)
         if campaign_id.blank?
-          errors.add(:base, I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
+          errors.add(:prerequisite_campaign_id,
+                     I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
         elsif !Registration::Campaign.exists?(campaign_id)
-          errors.add(:base, I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
+          errors.add(:prerequisite_campaign_id,
+                     I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
         end
       end
 
