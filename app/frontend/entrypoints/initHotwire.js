@@ -35,6 +35,9 @@ window.Stimulus.register("registration-policy-form", RegistrationPolicyFormContr
 import BsPopoverController from "~/controllers/bs_popover_controller.js";
 window.Stimulus.register("bs-popover", BsPopoverController);
 
+import RowClickController from "~/controllers/row_click.controller.js";
+window.Stimulus.register("row-click", RowClickController);
+
 // Hotwire: Turbo
 import "@hotwired/turbo-rails";
 // These two fixes were originally used with Turbolinks.

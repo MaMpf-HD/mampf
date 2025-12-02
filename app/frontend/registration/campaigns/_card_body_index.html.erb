@@ -11,8 +11,13 @@
       </thead>
       <tbody>
         <% lecture.registration_campaigns.order(created_at: :desc).each do |campaign| %>
-          <tr>
-            <td><%= link_to campaign.title, registration_campaign_path(campaign), data: { turbo_stream: true } %></td>
+          <tr data-controller="row-click" data-action="click->row-click#visit" style="cursor: pointer;">
+            <td>
+              <%= link_to campaign.title,
+                          registration_campaign_path(campaign),
+                          class: "text-decoration-none text-reset",
+                          data: { turbo_stream: true, row_link: true } %>
+            </td>
             <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>
             <td><%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %></td>
             <td>
