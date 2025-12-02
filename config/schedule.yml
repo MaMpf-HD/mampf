@@ -20,3 +20,8 @@ user_cleaner_job:
   cron: "0 4 * * *" 
   class: "UserCleanerJob"
   queue: critical
+
+campaign_status_worker:
+  cron: "*/1 * * * *"
+  class: "CampaignStatusWorker"
+  queue: critical
