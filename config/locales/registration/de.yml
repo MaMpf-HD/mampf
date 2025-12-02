@@ -82,6 +82,10 @@ de:
       created: "Richtlinie erfolgreich erstellt."
       updated: "Richtlinie erfolgreich aktualisiert."
       destroyed: "Richtlinie erfolgreich gelöscht."
+      errors:
+        missing_domains: "Es muss mindestens eine erlaubte Domain angegeben werden."
+        missing_prerequisite_campaign: "Es muss ein vorausgesetztes Anmeldeverfahren ausgewählt werden."
+        prerequisite_campaign_not_found: "Das ausgewählte vorausgesetzte Anmeldeverfahren existiert nicht."
       configs:
         allowed_domains: "Erlaubte Domains (kommagetrennt)"
         prerequisite_campaign_id: "Vorausgesetztes Anmeldeverfahren"

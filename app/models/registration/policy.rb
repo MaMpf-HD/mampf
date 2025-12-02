@@ -27,6 +27,7 @@ module Registration
     }
 
     validate :campaign_is_draft, on: [:create, :update]
+    validate :validate_config
     before_destroy :ensure_campaign_is_draft
 
     def evaluate(user)
@@ -51,9 +52,15 @@ module Registration
       end
 
       def evaluate_institutional_email(user)
-        domains = Array(config&.fetch("allowed_domains", nil)).map do |domain|
-          (domain || "").strip.downcase
-        end.reject(&:empty?)
+        raw_domains = config&.fetch("allowed_domains", nil)
+        # Handle comma-separated string from form or array from JSON
+        domains = if raw_domains.is_a?(String)
+          raw_domains.split(",")
+        else
+          Array(raw_domains)
+        end
+
+        domains = domains.map { |d| (d || "").strip.downcase }.reject(&:empty?)
 
         return fail_result(:configuration_error, "No allowed domains configured") if domains.empty?
 
@@ -97,6 +104,37 @@ module Registration
         return unless registration_campaign && !registration_campaign.draft?
 
         errors.add(:base, :frozen)
+      end
+
+      def validate_config
+        case kind.to_sym
+        when :institutional_email
+          validate_institutional_email_config
+        when :prerequisite_campaign
+          validate_prerequisite_campaign_config
+        end
+      end
+
+      def validate_institutional_email_config
+        raw_domains = config&.fetch("allowed_domains", nil)
+        domains = if raw_domains.is_a?(String)
+          raw_domains.split(",")
+        else
+          Array(raw_domains)
+        end
+
+        return unless domains.map(&:strip).reject(&:empty?).empty?
+
+        errors.add(:base, I18n.t("registration.policy.errors.missing_domains"))
+      end
+
+      def validate_prerequisite_campaign_config
+        campaign_id = config&.fetch("prerequisite_campaign_id", nil)
+        if campaign_id.blank?
+          errors.add(:base, I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
+        elsif !Registration::Campaign.exists?(campaign_id)
+          errors.add(:base, I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
+        end
       end
 
       def ensure_campaign_is_draft
