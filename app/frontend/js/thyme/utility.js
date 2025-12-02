@@ -1,4 +1,19 @@
 /**
+ * Adds an event listener for the loadedmetadata event on a video element.
+ * If the video metadata is already loaded (readyState >= 1), the callback
+ * is executed immediately and no event listener is attached. Otherwise,
+ * it attaches a one-time event listener that waits for the event to fire.
+ */
+export function onVideoMetadataLoaded(video, callback) {
+  if (video.readyState >= 1) {
+    callback();
+  }
+  else {
+    video.addEventListener("loadedmetadata", callback, { once: true });
+  }
+}
+
+/**
  * Mixes all colors in the array "colors"
  * (write colors as hexadecimal, e.g. "#1fe67d").
  */
@@ -6,7 +21,7 @@ export function mixColors(colors) {
   let red = 0;
   let green = 0;
   let blue = 0;
-  for (let color of colors) {
+  for (const color of colors) {
     red += Number("0x" + color.substr(5, 2));
     green += Number("0x" + color.substr(3, 2));
     blue += Number("0x" + color.substr(1, 2));
@@ -27,7 +42,7 @@ export function dataURLtoBlob(dataURL) {
   // Decode the dataURL
   const binary = atob(dataURL.split(",")[1]);
   // Create 8-bit unsigned array
-  let array = [];
+  const array = [];
   for (let i = 0; i < binary.length; i++) {
     array.push(binary.charCodeAt(i));
   }
@@ -97,7 +112,7 @@ export function renderLatex(element) {
  * Converts time in seconds to a string of the form H:MM:SS.
  */
 export function secondsToTime(seconds) {
-  let date = new Date(null);
+  const date = new Date(null);
   date.setSeconds(seconds);
   return date.toISOString().substr(12, 7);
 }
@@ -111,7 +126,7 @@ export function secondsToTime(seconds) {
  */
 export function setUpMaxTime(maxTimeId) {
   const video = thymeAttributes.video;
-  video.addEventListener("loadedmetadata", function () {
+  onVideoMetadataLoaded(video, function () {
     const maxTime = document.getElementById(maxTimeId);
     maxTime.innerHTML = secondsToTime(video.duration);
     if (video.dataset.time) {

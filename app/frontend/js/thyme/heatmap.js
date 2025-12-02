@@ -41,15 +41,15 @@ export class Heatmap {
     /* An array for each pixel on the timeline. The indices of this array should be thought
        of the x-axis of the heatmap's graph, while its entries should be thought of its
        values on the y-axis. */
-    let pixels = new Array(numDivisons).fill(0);
+    const pixels = new Array(numDivisons).fill(0);
     /* amplitude should be calculated with respect to all annotations
        (even those which are not shown). Otherwise the peaks increase
        when turning off certain annotations because the graph has to be
        normed. Therefore we need this additional "pixelsAll" array. */
-    let pixelsAll = new Array(numDivisons).fill(0);
+    const pixelsAll = new Array(numDivisons).fill(0);
     /* for any visible annotation, this array contains its color (needed for the calculation
        of the heatmap color) */
-    let colors = [];
+    const colors = [];
 
     /*
        data calculation
@@ -64,7 +64,7 @@ export class Heatmap {
       const time = a.seconds;
       const position = Math.round(stretch * width * (time / thymeAttributes.video.duration));
       for (let x = position - Heatmap.RADIUS; x <= position + Heatmap.RADIUS; x++) {
-        let y = Heatmap.#sinX(x, position, Heatmap.RADIUS);
+        const y = Heatmap.#sinX(x, position, Heatmap.RADIUS);
         pixelsAll[x + Heatmap.RADIUS] += y;
         if (valid) {
           pixels[x + Heatmap.RADIUS] += y;

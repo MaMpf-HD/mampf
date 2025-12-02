@@ -13,8 +13,9 @@ class ApplicationController < ActionController::Base
   # will halt the filter chain and redirect before the location can be stored.
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :authenticate_user!
-  before_action :set_locale
   before_action :set_current_user
+
+  include LocaleSetter
 
   etag { current_user.try(:id) }
 
@@ -95,35 +96,6 @@ class ApplicationController < ActionController::Base
     def store_user_location!
       # :user is the scope we are authenticating
       store_location_for(:user, request.fullpath)
-    end
-
-    def set_locale
-      I18n.locale = current_user.try(:locale) || locale_param ||
-                    cookie_locale_param || I18n.default_locale
-      set_pagy_locale
-      return if user_signed_in?
-
-      cookies[:locale] = I18n.locale
-    end
-
-    def set_pagy_locale
-      @pagy_locale = I18n.locale.to_s
-    end
-
-    def locale_param
-      return unless params[:locale].in?(available_locales)
-
-      params[:locale]
-    end
-
-    def cookie_locale_param
-      return unless cookies[:locale].in?(available_locales)
-
-      cookies[:locale]
-    end
-
-    def available_locales
-      I18n.available_locales.map(&:to_s)
     end
 
     # https://stackoverflow.com/a/69313330/
