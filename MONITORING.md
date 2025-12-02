@@ -6,7 +6,7 @@ Ziel ist es Prometheus Server- und Grafana Kontainer außhalb des Mampf-Developm
 
 ### 1. Monitoring-Verzeichnis erstellen
 
-Erstelle **außerhalb** deines `mampf`-Projektordners ein neues Verzeichnis namens `Monitoring`. und erstelel folgende Dateinen:
+Erstelle **außerhalb** deines `mampf`-Projektordners ein neues Verzeichnis namens `Monitoring`. und erstelle folgende Dateinen:
 
 ### 2. Datei 1: `docker-compose.yml`
 
@@ -71,4 +71,8 @@ scrape_configs:
 ```
 ### 4. Wichtig!
 
-Damit die Network Verbindung funktioniert muss der Monitoring Kontainer Stack nach dem Mapf Stack gestartet werden. Dies geht mit ´cd ../Monitoring `cd ../Monitoring` und `docker compose up -d`.
+Damit die Network Verbindung funktioniert muss der Monitoring Container Stack nach dem Mampf Stack gestartet werden. Dies geht mit ´cd ../Monitoring `cd ../Monitoring` und `docker compose up -d`.
+
+Standard Grafana Login
+  Username: admin
+  Password: admin
