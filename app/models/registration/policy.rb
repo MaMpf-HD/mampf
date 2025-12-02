@@ -48,6 +48,20 @@ module Registration
       self.config["prerequisite_campaign_id"] = value
     end
 
+    def config_summary
+      case kind.to_sym
+      when :institutional_email
+        val = allowed_domains
+        val.is_a?(Array) ? val.join(", ") : val.to_s
+      when :prerequisite_campaign
+        Registration::Campaign.find_by(id: prerequisite_campaign_id)&.title
+      else
+        return "-" if config.blank?
+
+        config.to_json
+      end
+    end
+
     validate :campaign_is_draft, on: [:create, :update]
     validate :validate_config
     before_destroy :ensure_campaign_is_draft
