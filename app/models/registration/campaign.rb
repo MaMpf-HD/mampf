@@ -39,6 +39,8 @@ module Registration
     validate :allocation_mode_frozen, on: :update
     validate :registration_deadline_future_if_open
 
+    before_destroy :ensure_campaign_is_draft
+
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
     end
@@ -60,6 +62,13 @@ module Registration
     end
 
     private
+
+      def ensure_campaign_is_draft
+        return if draft?
+
+        errors.add(:base, :cannot_delete_active_campaign)
+        throw(:abort)
+      end
 
       def allocation_mode_frozen
         return unless allocation_mode_changed? && status_was != "draft"

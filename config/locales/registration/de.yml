@@ -108,6 +108,8 @@ de:
       models:
         registration/campaign:
           attributes:
+            base:
+              cannot_delete_active_campaign: "Eine Kampagne, die nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
             registration_deadline:
               must_be_in_future: 
                 "muss in der Zukunft liegen, wenn die Kampagne offen ist"
