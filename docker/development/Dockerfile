@@ -60,6 +60,9 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         ffmpeg imagemagick pdftk ghostscript shared-mime-info \
         libarchive-tools wget wait-for-it graphviz libvips42 lsof
 
+# Playwright system dependencies
+RUN npx playwright install-deps chromium
+
 # Install PostgreSQL client 17 (https://wiki.postgresql.org/wiki/Apt)
 RUN mkdir -p /usr/share/postgresql-common/pgdg \
     && curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc \
@@ -112,6 +115,9 @@ RUN if [ "$CI_BUILD" = "true" ]; then \
         echo "Running yarn install"; \
         yarn install --frozen-lockfile; \
     fi
+
+# Playwright browser
+RUN npx playwright install chromium
 
 # Precompile assets in CI/CD
 # (See the production Dockerfile for an explanation of the dummy env file)

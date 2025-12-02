@@ -1,5 +1,5 @@
 ---
-mode: agent
+agent: agent
 description: 'Implement Müsli architecture in MaMpf'
 ---
 In the [Architecture folder](../../architecture/), we make a proposal for the architecture to integrate MÜSLI into MaMpf. Your goal is to help me understand, improve and implement this architecture in the MaMpf codebase. Take into account our whole system. Only do one architectural change at a time, such that PRs are small and easy to review. Try to guide developers when they want to implement too many changes at once.
@@ -13,7 +13,7 @@ In every prompt, always attach as context the following files:
 - [3 Rosters](../../architecture/src/features/03-rosters.md)
 - [4 Assessments and grading](../../architecture/src/features/04-assessments-and-grading.md)
 - [5a Exam model](../../architecture/src/features/05a-exam-model.md)
-- [5 Exam eligibility](../../architecture/src/features/05-exam-eligibility.md)
+- [5 Lecture performance](../../architecture/src/features/05-lecture-performance.md)
 - [5b Grading schemes](../../architecture/src/features/05b-grading-schemes.md)
 - [5c Multiple choice exams](../../architecture/src/features/05c-multiple-choice-exams.md)
 - [6 End to end workflow](../../architecture/src/features/06-end-to-end-workflow.md)
@@ -26,5 +26,6 @@ In every prompt, always attach as context the following files:
 - [Mockups — index and conventions](../../architecture/src/features/mockups-index.md)
 - [Plan](../../architecture/src/features/plan.md)
 - [Implementation PR Roadmap](../../architecture/src/features/implementation-prs.md)
+- [Implementation PR Roadmap](../../architecture/src/features/parallelization.md)
 - [Student dashboard](../../architecture/src/features/student_dashboard.md)
 - [Teacher editor dashboard](../../architecture/src/features/teacher_editor_dashboard.md)

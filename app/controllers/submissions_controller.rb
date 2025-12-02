@@ -22,7 +22,7 @@ class SubmissionsController < ApplicationController
     @assignments = @lecture.assignments
     @current_assignments = @lecture.current_assignments
     @previous_assignments = @lecture.previous_assignments
-    @old_assignments = @assignments.expired.order("deadline DESC") -
+    @old_assignments = @assignments.expired.order(deadline: :desc) -
                        @previous_assignments
     @future_assignments = @assignments.active.order(:deadline) -
                           @current_assignments

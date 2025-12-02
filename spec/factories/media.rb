@@ -67,6 +67,16 @@ FactoryBot.define do
       end
     end
 
+    trait :with_toc_item do
+      after(:create) do |m|
+        m.items.create!(
+          sort: "remark",
+          description: "Test Remark",
+          start_time: TimeStamp.new(total_seconds: 10.5)
+        )
+      end
+    end
+
     factory :lesson_medium,
             traits: [:with_description, :with_teachable] do
       sort { "LessonMaterial" }
@@ -86,6 +96,13 @@ FactoryBot.define do
             aliases: [:valid_medium] do
       sort { "WorkedExample" }
       after(:build) { |m| m.editors << m.teachable.teacher }
+
+      trait :with_lecture_by_id do
+        transient do
+          lecture_id { nil }
+        end
+        teachable { Lecture.find(lecture_id) }
+      end
     end
 
     factory :course_medium,

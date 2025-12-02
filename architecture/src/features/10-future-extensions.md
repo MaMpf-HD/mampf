@@ -23,11 +23,111 @@ The core architecture documented in Chapters 1-9 represents the planned baseline
 
 ## 2. Registration & Policy System
 
+### Scheduled Campaign Opening
+
+**Current State:** Campaigns require manual teacher action to transition `draft → open`.
+
+**Proposed Enhancement:** Automatic opening via background job.
+
+**Implementation:**
+```ruby
+add_column :registration_campaigns, :registration_start, :datetime
+
+# Validation
+validates :registration_start, presence: true
+validate :start_before_deadline
+
+# Background job (every 5 minutes)
+Registration::CampaignOpenerJob.perform_async
+  Registration::Campaign.where(status: :draft)
+    .where("registration_start <= ?", Time.current)
+    .find_each(&:open!)
+end
+```
+
+**Benefits:**
+- Symmetry: auto-open + auto-close provides full automation
+- Teacher workflow: set up campaign in advance, forget about it
+- Reduces manual intervention during high-traffic registration windows
+
+**Trade-offs:**
+- Adds complexity (another background job, another timestamp)
+- Teachers lose last-minute verification opportunity before going live
+- Current manual flow forces review before opening
+
+**Recommendation:** Defer to post-MVP. Current workaround (manual open) is acceptable. Implement if teachers report frequent "forgot to open" incidents during beta testing.
+
+**Complexity:** Low (additive change, no schema conflicts)
+
+**References:** See [Registration - Campaign Lifecycle](02-registration.md#campaign-lifecycle-state-diagram)
+
+---
+
+### Full Trace for Policy Evaluation
+
+**Context:** The current policy engine stops at the first failure (`eligible?` returns false immediately).
+
+**Proposed Enhancement:** Implement a `full_trace` method that evaluates all policies and returns all failures.
+
+**Reference:** [Original Implementation Draft](https://github.com/MaMpf-HD/mampf/blob/4e06fc07ead65e05b11a30f7c1a3a4ec7eab91c5/app/services/registration/policy_engine.rb#L36-L47)
+
+**Reasoning:**
+For a student, it might be beneficial to see all reasons for ineligibility at once. Currently, if they fix one violation (e.g., "Policy X violated"), they might immediately encounter the next one ("Policy Y violated"). A full trace allows them to resolve all issues in parallel.
+
+---
+
+### Other Registration Extensions
+
+### Scheduled Campaign Opening
+
+**Current State:** Campaigns require manual teacher action to transition `draft → open`.
+
+**Proposed Enhancement:** Automatic opening via background job.
+
+**Implementation:**
+```ruby
+add_column :registration_campaigns, :registration_start, :datetime
+
+# Validation
+validates :registration_start, presence: true
+validate :start_before_deadline
+
+# Background job (every 5 minutes)
+Registration::CampaignOpenerJob.perform_async
+  Registration::Campaign.where(status: :draft)
+    .where("registration_start <= ?", Time.current)
+    .find_each(&:open!)
+end
+```
+
+**Benefits:**
+- Symmetry: auto-open + auto-close provides full automation
+- Teacher workflow: set up campaign in advance, forget about it
+- Reduces manual intervention during high-traffic registration windows
+
+**Trade-offs:**
+- Adds complexity (another background job, another timestamp)
+- Teachers lose last-minute verification opportunity before going live
+- Current manual flow forces review before opening
+
+**Recommendation:** Defer to post-MVP. Current workaround (manual open) is acceptable. Implement if teachers report frequent "forgot to open" incidents during beta testing.
+
+**Complexity:** Low (additive change, no schema conflicts)
+
+**References:** See [Registration - Campaign Lifecycle](02-registration.md#campaign-lifecycle-state-diagram)
+
+---
+
+- **Roster membership policy (`on_roster`)**: Restrict registration to users on a specific lecture/course roster. Alternative to campaign chaining via `prerequisite_campaign` policy (e.g., seminar talk registration restricted to students on seminar enrollment roster). Config: `{ "roster_source_id": <lecture_id> }`. Check: `source.roster.include?(user)`.
+- **Item-level capacity**: Add `capacity` column to `registration_items` to enable capacity partitioning across campaigns (e.g., same tutorial in two campaigns with split capacity: 20 seats for CS students, 10 for Physics). Items have independent capacity from domain objects. Soft validation warns if `sum(items.capacity) > tutorial.capacity`.
 - Policy trace persistence (store evaluation results for audit)
 - User-facing explanations (API endpoint showing why ineligible)
 - Rate limiting for FCFS hotspots
 - Bulk eligibility preview (matrix: users × policies)
 - Policy simulation mode (test changes without affecting real data)
+- Automated certification proposals (ML-based predictions from partial semester data)
+- Certification templates (pre-fill common override scenarios)
+- Certification bulk operations (approve/reject multiple students at once)
 
 ---
 
@@ -200,12 +300,22 @@ add_index :assessment_task_points, :modified_by_id
 
 ---
 
-## 5. Exam Eligibility
+## 5. Student Performance & Certification
 
-- Multiple concurrent policies (AND/OR logic expression builder)
-- Incremental recompute (listen to grade changes, trigger automatic update)
-- Eligibility preview for students (before registration opens)
-- Custom formula DSL (complex eligibility calculations)
+```admonish success "Recently Implemented"
+The core certification workflow (teacher-approved eligibility decisions, Evaluator proposals, pre-flight checks) is now part of the baseline architecture documented in Chapter 5.
+```
+
+**Future Extensions:**
+
+- Multiple concurrent certification policies (AND/OR logic expression builder)
+- Incremental recompute (listen to grade changes, auto-update stale certifications)
+- Student-facing certification preview (before registration opens, show provisional status)
+- Custom formula DSL (complex eligibility calculations beyond simple point thresholds)
+- Certification history (track changes over time, audit teacher decisions)
+- Automated ML proposals (predict eligibility from partial semester data)
+- Bulk certification UI (approve/reject multiple students with filters)
+- Certification analytics (pass rate trends, override frequency analysis)
 
 ---
 
@@ -311,3 +421,9 @@ add_index :assessment_task_points, :modified_by_id
 - Optimal grading curves (per-subject analysis)
 - Predictive modeling (early intervention for at-risk students)
 - Learning analytics (engagement vs. outcomes correlation)
+
+---
+
+## 16. Full Trace for Policy Evaluation
+
+(Moved to Section 2: Registration & Policy System)

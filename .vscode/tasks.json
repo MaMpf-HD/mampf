@@ -3,8 +3,8 @@
 	"tasks": [
 		{
 			"label": "Start MaMpf app",
-			"type": "vscode-just",
-			"task": "just up",
+			"type": "shell",
+			"command": "just up",
 			"isBackground": true,
 			"presentation": {
 				"reveal": "always",
@@ -19,8 +19,8 @@
 		},
 		{
 			"label": "Seed MaMpf database",
-			"type": "vscode-just",
-			"task": "just seed",
+			"type": "shell",
+			"command": "just seed",
 			"isBackground": false,
 			"presentation": {
 				"reveal": "always",
@@ -31,8 +31,20 @@
 		},
 		{
 			"label": "Start Architecture Book Server",
-			"type": "vscode-just",
-			"task": "just muesli",
+			"type": "shell",
+			"command": "just muesli",
+			"isBackground": false,
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared",
+				"clear": true,
+			},
+			"problemMatcher": [],
+		},
+		{
+			"label": "Launch Playwright UI",
+			"type": "shell",
+			"command": "just playwright-ui",
 			"isBackground": false,
 			"presentation": {
 				"reveal": "always",

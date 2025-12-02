@@ -10,9 +10,10 @@
        id="manuscript-uploadButton"
        data-choosefiles="<%= t('basics.file') %>">
     <div id="manuscript-uploadButton-button"
-       class="btn btn-sm btn-outline-secondary"
-       >
-       <%= t('basics.file')%></div>
+         data-testid="manuscript-upload-file"
+         class="btn btn-sm btn-outline-secondary">
+       <%= t('basics.file') %>
+    </div>
     <input type="hidden"
            name="medium[manuscript]"
            value="<%= medium.cached_manuscript_data %>"
@@ -23,6 +24,7 @@
            accept="application/pdf">
   
       <div id="manuscript-uploadButton-button-actual"
+           data-testid="manuscript-upload"
             class="btn btn-sm btn-outline-secondary"
             style="display:none"
             data-tr-success="<%= t('buttons.upload_success') %>"

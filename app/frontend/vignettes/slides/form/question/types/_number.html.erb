@@ -1,0 +1,47 @@
+<div class="mt-3 collapse"
+     data-vignettes-question-target="number"
+     data-controller="vignettes-number">
+  <div class="card">
+    <div class="card-header"><%= t('vignettes.number_question_settings') %></div>
+    <div class="card-body">
+      <div class="form-check mb-3">
+        <%= f.check_box :only_integer, 
+            class: 'form-check-input',
+            disabled: !form.object.questionnaire.editable %>
+        <%= f.label :only_integer, t('vignettes.only_integer'), 
+            class: 'form-check-label' %>
+      </div>
+      
+      <!-- Min/Max controls -->
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="form-floating">
+            <%= f.number_field :min_number,
+                class: 'form-control',
+                "data-vignettes-number-target": "min",
+                id: 'vignette-number-min',
+                placeholder: 'Minimum value',
+                step: 'any',
+                disabled: !form.object.questionnaire.editable %>
+            <%= f.label :min_number, t('vignettes.min_number') %>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-floating">
+            <%= f.number_field :max_number,
+                class: 'form-control',
+                "data-vignettes-number-target": "max",
+                placeholder: 'Maximum value',
+                step: 'any',
+                disabled: !form.object.questionnaire.editable %>
+            <%= f.label :max_number, t('vignettes.max_number') %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-text mt-2">
+        <%= t('vignettes.number_range_help') %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15/Sortable.min.js"></script>
 <%= vite_javascript_tag "vignettes/questionnaires/edit/edit.js" %>
-<%=vite_stylesheet_tag "vignettes/questionnaires/edit/edit.scss" %>
+<%= vite_javascript_tag "vignettes/questionnaires/edit/change_detection.js" %>
+<%= vite_stylesheet_tag "vignettes/questionnaires/edit/edit.scss" %>
 
 <% lecture_edit_path = edit_lecture_path(@questionnaire.lecture, anchor: 'vignettes') %>
 
@@ -60,6 +61,7 @@
 
       <%= button_to export_statistics_questionnaire_path(@questionnaire),
           class: 'btn btn-outline-secondary me-2',
+          data: { turbo: false },
           method: :get do %>
         <i class="bi bi-file-earmark-spreadsheet"></i>
         <%= t("vignettes.export_statistics") %>
@@ -73,44 +75,49 @@
     </div>
   </div>
 
-  <!-- Info Slides -->
+  <!-- 🎈 Info Slides -->
   <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.info_slides") %></h1>
 
-  <div class="accordion" id="info-vignettes-slides-accordion">
+  <div class="accordion" id="info_slides">
     <% @questionnaire.info_slides.each() do |info_slide| %>
-      <%= render partial: "vignettes/questionnaires/shared/slide_accordion_item",
-                 locals: { slide: info_slide } %>
+      <%= turbo_frame_tag info_slide, src: turbo_slide_edit_url(info_slide) %>
     <% end %>
   </div>
 
-  <button type="button" id="info-vignettes-new-slide-btn"
-          class="btn btn-outline-primary mt-2" 
-          <%= 'disabled' unless @questionnaire.editable %>>
+  <%= button_to new_questionnaire_info_slide_path(@questionnaire),
+      method: :get,
+      data: { "turbo-stream": true },
+      class: "btn btn-outline-primary mt-2",
+      disabled: !@questionnaire.editable do %>
     <i class="bi bi-plus-circle"></i>
     <%= t("vignettes.create_new_info_slide") %>
-  </button>
+  <% end %>
 
-  <!-- Slides -->
+  <!-- 🎈 Slides -->
   <h2 class="fs-4 fw-bold mt-4 mb-0"><%= t("vignettes.slides") %></h1>
   <% if @questionnaire.editable && @slides.size > 1%>
   <p><%= t("vignettes.drag_slides_tip") %></p>
   <% end %>
 
-  <div class="accordion" id="vignettes-slides-accordion"
-        data-questionnaire-id="<%= @questionnaire.id %>"
-        data-questionnaire-editable="<%= @questionnaire.editable %>">
+  <div class="accordion" id="slides"
+       data-questionnaire-id="<%= @questionnaire.id %>"
+       data-questionnaire-editable="<%= @questionnaire.editable %>">
     <% @slides.each() do |slide| %>
-      <%= render partial: "vignettes/questionnaires/shared/slide_accordion_item",
-                 locals: { slide: slide } %>
+      <!-- The div is needed such that slide drag animations work -->
+      <div>
+        <%= turbo_frame_tag slide, src: turbo_slide_edit_url(slide) %>
+      </div>
     <% end %>
   </div>
 
-  <button type="button" id="vignettes-new-slide-btn" 
-          class="btn btn-outline-primary mt-2" 
-          <%= 'disabled' unless @questionnaire.editable %>>
+  <%= button_to new_questionnaire_slide_path(@questionnaire),
+      method: :get,
+      data: { "turbo-stream": true },
+      class: "btn btn-outline-primary mt-2",
+      disabled: !@questionnaire.editable do %>
     <i class="bi bi-plus-circle"></i>
     <%= t("vignettes.create_new_slide") %>
-  </button>
+  <% end %>
 </div>
 
 <!-- Delete Confirmation Modal -->
@@ -198,20 +205,31 @@
 </div>
 
 <!-- Unsaved Changes Modal -->
-<div class="modal fade" id="unsaved-changes-modal" tabindex="-1" aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
+<div class="modal fade" id="unsaved-changes-modal" tabindex="-1"
+     aria-labelledby="unsavedChangesModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
+
       <div class="modal-header">
         <h5 class="modal-title" id="unsavedChangesModalLabel"><%= t("vignettes.unsaved_changes") %></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+
       <div class="modal-body">
         <%= t("vignettes.unsaved_changes_modal") %>
       </div>
+
       <div class="modal-footer">
-        <button type="button" id="save-changes-btn" class="btn btn-primary"><%= t("buttons.save_changes") %></button>
-        <button type="button" id="discard-changes-btn" class="btn btn-secondary"><%= t("buttons.discard_changes") %></button>
+        <button type="button" id="save-changes-btn" class="btn btn-primary"
+                data-bs-dismiss="modal">
+          <%= t("buttons.save_changes") %>
+        </button>
+        <button type="button" id="discard-changes-btn" class="btn btn-secondary"
+                data-bs-dismiss="modal">
+          <%= t("buttons.discard_changes") %>
+        </button>
       </div>
+
     </div>
   </div>
 </div>

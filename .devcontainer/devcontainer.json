@@ -27,16 +27,21 @@
         },
         "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
         "ghcr.io/jsburckhardt/devcontainer-features/just:1": {},
-        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {}
+        "ghcr.io/mikaello/devcontainer-features/modern-shell-utils:2": {},
+        "ghcr.io/devcontainers/features/desktop-lite:1": {
+            // https://github.com/devcontainers/features/tree/main/src/desktop-lite
+            "vncPort": "5933",
+            "password": "noPassword"
+        }
     },
     "containerEnv": {
         // in the container itself, we then install zsh
         // (this just serves as a fallback)
-        "SHELL": "/bin/bash"
+
+        "SHELL": "/bin/bash",
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // This can be used to network with other containers or the host.
-    // see the portsAttributes below for details
     "forwardPorts": [
         3000,
         3145,
@@ -45,7 +50,8 @@
         1080,
         5050,
         8060,
-        3004
+        3004,
+        5933
     ],
     "portsAttributes": {
         // Main app
@@ -83,12 +89,17 @@
         "5050": {
             "label": "pgAdmin",
             "onAutoForward": "silent"
+        },
+        "5933": {
+            "label": "VNC Desktop",
+            "onAutoForward": "openBrowser"
         }
     },
     "initializeCommand": "git submodule update --init --recursive",
     "postCreateCommand": ".devcontainer/boot.sh",
     "customizations": {
         "vscode": {
+            // 🎹 keep this in sync with extensions.json
             "extensions": [
                 // Container & Remote
                 "ms-azuretools.vscode-containers",
@@ -104,7 +115,8 @@
                 "nefrob.vscode-just-syntax",
                 "timonwong.shellcheck",
                 "github.copilot",
-                "github.vscode-pull-request-github"
+                "github.vscode-pull-request-github",
+                "ms-playwright.playwright"
             ]
         }
     },

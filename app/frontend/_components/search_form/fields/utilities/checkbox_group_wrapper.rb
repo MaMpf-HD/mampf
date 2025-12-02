@@ -7,6 +7,7 @@ module SearchForm
       # It can also render the checkboxes without the wrapper if needed.
       class CheckboxGroupWrapper
         include GroupWrapperShared
+
         attr_reader :checkboxes
 
         # Initializes the wrapper.

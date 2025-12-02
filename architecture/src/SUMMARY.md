@@ -9,7 +9,7 @@
 - [Rosters](features/03-rosters.md)
 - [Assessments & Grading](features/04-assessments-and-grading.md)
 - [Exam Model](features/05a-exam-model.md)
-- [Exam Eligibility](features/05-exam-eligibility.md)
+- [Student Performance](features/05-student-performance.md)
 - [Grading Schemes](features/05b-grading-schemes.md)
 - [End-to-End Workflow](features/06-end-to-end-workflow.md)
 - [Allocation Algorithm Details](features/07-algorithm-details.md)
@@ -17,6 +17,7 @@
 - [Integrity & Invariants](features/09-integrity-and-invariants.md)
 - [Controller Architecture](features/11-controllers.md)
 - [View Architecture](features/12-views.md)
+- [Mockups Index](features/mockups-index.md)
 
 ## Extensions (Optional Features)
 - [Multiple Choice Exams](features/05c-multiple-choice-exams.md)

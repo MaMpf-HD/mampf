@@ -5,6 +5,7 @@ RSpec.describe(SearchForm::Fields::Utilities::GroupWrapperShared, type: :compone
   let(:dummy_wrapper_class) do
     Class.new do
       include SearchForm::Fields::Utilities::GroupWrapperShared
+
       attr_accessor :parent_field, :options
 
       def initialize(parent_field: nil, **options)

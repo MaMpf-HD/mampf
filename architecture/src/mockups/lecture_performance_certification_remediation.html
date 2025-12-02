@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Certification Remediation - Finalization</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body class="bg-light">
+    <!-- Modal triggered during finalization -->
+    <div class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+      <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header bg-warning bg-opacity-10 border-warning">
+            <div class="d-flex align-items-start w-100">
+              <i class="bi bi-exclamation-triangle-fill text-warning me-2 fs-4"></i>
+              <div class="flex-grow-1">
+                <h5 class="modal-title mb-1">Certification Remediation Required</h5>
+                <p class="mb-0 small text-muted">
+                  Finalization cannot proceed until all confirmed registrants have approved certifications.
+                  Resolve pending certifications below to continue.
+                </p>
+              </div>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+          </div>
+          <div class="modal-body">
+            <div class="alert alert-warning" role="alert">
+              <div class="fw-bold mb-2">
+                <i class="bi bi-exclamation-triangle me-2"></i>6 students have pending certifications
+              </div>
+              <div class="small">
+                These students are confirmed in the exam registration but lack approved certifications.
+                You must resolve all pending certifications (passed or failed) before finalizing the roster.
+                Students marked as failed will be automatically rejected.
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <div>
+                <h6 class="mb-0">Pending Certifications (6)</h6>
+                <p class="text-muted small mb-0">Confirmed exam registrants requiring certification approval</p>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-success">
+                  <i class="bi bi-check-circle me-1"></i>Mark All as Passed
+                </button>
+                <button class="btn btn-sm btn-danger">
+                  <i class="bi bi-x-circle me-1"></i>Mark All as Failed
+                </button>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="table table-sm table-hover align-middle">
+                <thead class="table-light">
+                  <tr>
+                    <th scope="col">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAll" />
+                      </div>
+                    </th>
+                    <th scope="col">Student</th>
+                    <th scope="col">Matric.</th>
+                    <th scope="col">Points</th>
+                    <th scope="col">%</th>
+                    <th scope="col">Achievements</th>
+                    <th scope="col">Proposed</th>
+                    <th scope="col">Quick Resolve</th>
+                    <th scope="col">Note (optional)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="table-warning">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>Bob Baker</td>
+                    <td class="font-monospace small">3567890</td>
+                    <td class="font-monospace small">98/240</td>
+                    <td><span class="badge text-bg-danger">41%</span></td>
+                    <td class="small">
+                      <i class="bi bi-x-circle-fill text-danger" title="Missing achievements"></i>
+                      1/3
+                    </td>
+                    <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                    <td>
+                      <select class="form-select form-select-sm" style="width: 120px;">
+                        <option value="">— Select —</option>
+                        <option value="passed">✓ Passed</option>
+                        <option value="failed" selected>✗ Failed</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control form-control-sm" placeholder="Optional reason..." />
+                    </td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>Emma Evans</td>
+                    <td class="font-monospace small">3890123</td>
+                    <td class="font-monospace small">115/240</td>
+                    <td><span class="badge text-bg-danger">48%</span></td>
+                    <td class="small">
+                      <i class="bi bi-x-circle-fill text-danger" title="Missing 1 achievement"></i>
+                      2/3
+                    </td>
+                    <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                    <td>
+                      <select class="form-select form-select-sm" style="width: 120px;">
+                        <option value="">— Select —</option>
+                        <option value="passed">✓ Passed</option>
+                        <option value="failed" selected>✗ Failed</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control form-control-sm" placeholder="Optional reason..." />
+                    </td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>Grace Green</td>
+                    <td class="font-monospace small">4012345</td>
+                    <td class="font-monospace small">144/240</td>
+                    <td><span class="badge text-bg-warning">60%</span></td>
+                    <td class="small">
+                      <i class="bi bi-x-circle-fill text-danger" title="Missing 1 achievement"></i>
+                      2/3
+                    </td>
+                    <td><span class="badge rounded-pill text-bg-danger">Failed</span></td>
+                    <td>
+                      <select class="form-select form-select-sm" style="width: 120px;">
+                        <option value="">— Select —</option>
+                        <option value="passed">✓ Passed</option>
+                        <option value="failed" selected>✗ Failed</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control form-control-sm" placeholder="Optional reason..." />
+                    </td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>Henry Harris</td>
+                    <td class="font-monospace small">4123456</td>
+                    <td class="font-monospace small">122/240</td>
+                    <td><span class="badge text-bg-warning">51%</span></td>
+                    <td class="small">
+                      <i class="bi bi-check-circle-fill text-success" title="All achievements met"></i>
+                      3/3
+                    </td>
+                    <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                    <td>
+                      <select class="form-select form-select-sm" style="width: 120px;">
+                        <option value="">— Select —</option>
+                        <option value="passed" selected>✓ Passed</option>
+                        <option value="failed">✗ Failed</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control form-control-sm" placeholder="Optional reason..." />
+                    </td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>Isabella Irving</td>
+                    <td class="font-monospace small">4234567</td>
+                    <td class="font-monospace small">126/240</td>
+                    <td><span class="badge text-bg-warning">53%</span></td>
+                    <td class="small">
+                      <i class="bi bi-check-circle-fill text-success" title="All achievements met"></i>
+                      3/3
+                    </td>
+                    <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                    <td>
+                      <select class="form-select form-select-sm" style="width: 120px;">
+                        <option value="">— Select —</option>
+                        <option value="passed" selected>✓ Passed</option>
+                        <option value="failed">✗ Failed</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control form-control-sm" placeholder="Optional reason..." />
+                    </td>
+                  </tr>
+                  <tr class="table-warning">
+                    <td>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" />
+                      </div>
+                    </td>
+                    <td>Jack Johnson</td>
+                    <td class="font-monospace small">4345678</td>
+                    <td class="font-monospace small">132/240</td>
+                    <td><span class="badge text-bg-success">55%</span></td>
+                    <td class="small">
+                      <i class="bi bi-check-circle-fill text-success" title="All achievements met"></i>
+                      3/3
+                    </td>
+                    <td><span class="badge rounded-pill text-bg-success">Passed</span></td>
+                    <td>
+                      <select class="form-select form-select-sm" style="width: 120px;">
+                        <option value="">— Select —</option>
+                        <option value="passed" selected>✓ Passed</option>
+                        <option value="failed">✗ Failed</option>
+                      </select>
+                    </td>
+                    <td>
+                      <input type="text" class="form-control form-control-sm" placeholder="Optional reason..." />
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="alert alert-info mt-3" role="alert">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>After resolving:</strong>
+              <ul class="mb-0 mt-2 small">
+                <li>Students marked as <strong>Passed</strong> will remain confirmed and be materialized to the exam roster</li>
+                <li>Students marked as <strong>Failed</strong> will be automatically rejected and removed from the roster</li>
+                <li>All certifications will be saved with your decision and timestamp for audit trail</li>
+                <li>Finalization will re-run to verify all certifications are resolved</li>
+              </ul>
+            </div>
+
+            <div class="border-top pt-3 mt-3">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="confirmRemediation" />
+                  <label class="form-check-label small" for="confirmRemediation">
+                    I have reviewed all pending certifications and confirm the decisions above
+                  </label>
+                </div>
+                <div class="text-muted small">
+                  <i class="bi bi-info-circle me-1"></i>
+                  Dropdowns pre-populated based on current proposals
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              Cancel Finalization
+            </button>
+            <button type="button" class="btn btn-primary" disabled>
+              <i class="bi bi-check-lg me-1"></i>Apply & Retry Finalization
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Enable submit button when confirmation checkbox is checked
+      document.getElementById('confirmRemediation').addEventListener('change', function(e) {
+        document.querySelector('.modal-footer .btn-primary').disabled = !e.target.checked;
+      });
+    </script>
+  </body>
+</html>

@@ -1,18 +1,8 @@
-// Starting with v9, this config will be deprecated in favor of the new
-// configuration files [1]. @stylistic is already ready for the new "flat config",
-// when it's time, copy the new config from [2].
-// [1] https://eslint.org/docs/latest/use/configure/configuration-files-new
-// [2] https://eslint.style/guide/config-presets#configuration-factory
-
-// Stylistic Plugin for ESLint
-// see the rules in [3] and [4].
-// [3] https://eslint.style/packages/js#rules
-// [4] https://eslint.org/docs/rules/
-import js from "@eslint/js";
+import eslint from "@eslint/js";
 import stylistic from "@stylistic/eslint-plugin";
-import pluginCypress from "eslint-plugin-cypress/flat";
 import erb from "eslint-plugin-erb";
 import globals from "globals";
+import tseslint from "typescript-eslint";
 
 const ignoreFilesWithSprocketRequireSyntax = [
   "app/assets/config/manifest.js",
@@ -56,13 +46,9 @@ const customGlobals = {
   mermaid: "readable",
 };
 
-export default [
-  js.configs.recommended,
-  // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
-  erb.configs.recommended,
-  pluginCypress.configs.recommended,
-  // Globally ignore the following paths
+export default tseslint.config(
   {
+    // Globally ignore the following paths
     ignores: [
       "node_modules/",
       "pdfcomprezzor/",
@@ -73,13 +59,22 @@ export default [
       "public/pdfcomprezzor/",
       ...ignoreFilesWithSprocketRequireSyntax,
       ...ignoreCypressArchivedTests,
+      "spec/cypress/**",
       "architecture/src/js/mermaid.min.js",
     ],
   },
   {
+    files: ["**/*.ts", "**/*.js"],
     plugins: {
       "@stylistic": stylistic,
     },
+    extends: [
+      eslint.configs.recommended,
+      // Allow linting of ERB files, see https://github.com/Splines/eslint-plugin-erb
+      erb.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.strictTypeChecked,
+    ],
     rules: {
       ...stylistic.configs.customize({
         "indent": 2,
@@ -90,6 +85,17 @@ export default [
       }).rules,
       "@stylistic/quotes": ["error", "double", { avoidEscape: true }],
       "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      // https://playwright.dev/docs/best-practices#lint-your-tests
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/restrict-template-expressions": ["error", { allowNumber: true }],
+      "@typescript-eslint/no-unsafe-member-access": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/no-unsafe-assignment": "off",
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      // annotation tools make heavy use of this unfortunately
+      "@typescript-eslint/no-this-alias": "off",
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
     languageOptions: {
       ecmaVersion: 2022,
@@ -100,10 +106,22 @@ export default [
         ...globals.jquery,
         ...globals.node,
       },
+      parserOptions: {
+        // https://typescript-eslint.io/blog/project-service
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     linterOptions: {
       // see https://github.com/Splines/eslint-plugin-erb/releases/tag/v2.0.1
       reportUnusedDisableDirectives: "off",
     },
   },
-];
+  {
+    // Disable type-checked linting
+    // https://typescript-eslint.io/troubleshooting/typed-linting/#how-do-i-disable-type-checked-linting-for-a-file
+    // https://typescript-eslint.io/troubleshooting/typed-linting/#i-get-errors-telling-me--was-not-found-by-the-project-service-consider-either-including-it-in-the-tsconfigjson-or-including-it-in-allowdefaultproject
+    files: ["**/*.js", "**/*.mjs", "**/*.mts"],
+    extends: [tseslint.configs.disableTypeChecked],
+  }
+);
