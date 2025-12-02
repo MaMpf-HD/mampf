@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
+ActiveRecord::Schema[8.0].define(version: 2025_12_02_000000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
@@ -550,7 +550,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.index ["active"], name: "index_registration_policies_on_active"
     t.index ["kind"], name: "index_registration_policies_on_kind"
     t.index ["phase"], name: "index_registration_policies_on_phase"
-    t.index ["registration_campaign_id", "position"], name: "index_registration_policies_uniqueness", unique: true
+    t.index ["registration_campaign_id", "position"], name: "index_registration_policies_position"
     t.index ["registration_campaign_id"], name: "index_registration_policies_on_registration_campaign_id"
   end
 
@@ -997,7 +997,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
-  
+
   create_table "vignettes_answers", force: :cascade do |t|
     t.string "type"
     t.bigint "vignettes_question_id", null: false

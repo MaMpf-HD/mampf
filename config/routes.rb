@@ -290,7 +290,12 @@ Rails.application.routes.draw do
     end
     resources :policies,
               controller: "registration/policies",
-              only: [:new, :create, :edit, :update, :destroy]
+              only: [:new, :create, :edit, :update, :destroy] do
+      member do
+        patch :move_up
+        patch :move_down
+      end
+    end
   end
 
   # lessons routes

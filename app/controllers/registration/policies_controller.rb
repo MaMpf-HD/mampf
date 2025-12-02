@@ -2,7 +2,7 @@ module Registration
   class PoliciesController < ApplicationController
     before_action :set_campaign
     before_action :set_locale
-    before_action :set_policy, only: [:edit, :update, :destroy]
+    before_action :set_policy, only: [:edit, :update, :destroy, :move_up, :move_down]
     authorize_resource class: "Registration::Policy"
 
     def new
@@ -70,6 +70,38 @@ module Registration
       end
     end
 
+    def move_up
+      @policy.move_higher
+      respond_to do |format|
+        format.html do
+          redirect_to registration_campaign_path(@campaign, anchor: "policies-tab")
+        end
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_show",
+                               locals: { campaign: @campaign,
+                                         tab: "policies" })
+        end
+      end
+    end
+
+    def move_down
+      @policy.move_lower
+      respond_to do |format|
+        format.html do
+          redirect_to registration_campaign_path(@campaign, anchor: "policies-tab")
+        end
+        format.turbo_stream do
+          render turbo_stream:
+          turbo_stream.replace("campaigns_card_body",
+                               partial: "registration/campaigns/card_body_show",
+                               locals: { campaign: @campaign,
+                                         tab: "policies" })
+        end
+      end
+    end
+
     private
 
       def set_campaign
@@ -85,7 +117,7 @@ module Registration
       end
 
       def policy_params
-        params.expect(registration_policy: [:kind, :phase, :position, { config: {} }])
+        params.expect(registration_policy: [:kind, :phase, { config: {} }])
       end
 
       def current_ability

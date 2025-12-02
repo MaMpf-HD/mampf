@@ -3446,6 +3446,8 @@ en:
     save_changes: "Save Changes"
     discard_changes: "Discard Changes"
     delete: 'Delete'
+    move_up: 'Move Up'
+    move_down: 'Move Down'
     publish: 'Publish'
     parent_course: 'Parent Course'
     parent_lecture: 'Parent Event Series'
