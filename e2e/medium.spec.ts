@@ -1,5 +1,6 @@
 import { expect, test } from "./_support/fixtures";
 import { selectDate } from "./page-objects/datepicker";
+import { MediumPage } from "./page-objects/medium_page";
 
 test("can schedule medium publication with datetimepicker",
   async ({ factory, teacher: { page, user } }) => {
@@ -8,7 +9,7 @@ test("can schedule medium publication with datetimepicker",
     const medium = await factory.create("lecture_medium", ["with_lecture_by_id"],
       { lecture_id: lecture.id });
 
-    await page.goto(`/media/${medium.id}/edit`);
+    await new MediumPage(page, medium.id).gotoEdit();
     await page.getByRole("button", { name: "publish" }).click();
     await page.getByTestId("release-date-datetimepicker").click();
     const dayName = await selectDate(page);
