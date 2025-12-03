@@ -36,13 +36,15 @@ RSpec.describe(Registration::Policy::PrerequisiteCampaignHandler, type: :model) 
     it "adds error if campaign id is missing" do
       policy.config = {}
       handler.validate
-      expect(policy.errors[:prerequisite_campaign_id]).to include(I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
+      expect(policy.errors[:prerequisite_campaign_id])
+        .to include(I18n.t("registration.policy.errors.missing_prerequisite_campaign"))
     end
 
     it "adds error if campaign does not exist" do
       policy.config["prerequisite_campaign_id"] = 99_999
       handler.validate
-      expect(policy.errors[:prerequisite_campaign_id]).to include(I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
+      expect(policy.errors[:prerequisite_campaign_id])
+        .to include(I18n.t("registration.policy.errors.prerequisite_campaign_not_found"))
     end
   end
 

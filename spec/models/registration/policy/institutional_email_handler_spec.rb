@@ -34,7 +34,8 @@ RSpec.describe(Registration::Policy::InstitutionalEmailHandler, type: :model) do
     it "adds error if domains are missing" do
       policy.config = {}
       handler.validate
-      expect(policy.errors[:allowed_domains]).to include(I18n.t("registration.policy.errors.missing_domains"))
+      expect(policy.errors[:allowed_domains])
+        .to include(I18n.t("registration.policy.errors.missing_domains"))
     end
   end
 
