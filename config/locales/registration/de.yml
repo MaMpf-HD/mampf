@@ -111,6 +111,7 @@ de:
             base:
               cannot_delete_active_campaign: "Ein Anmeldeverfahren, das nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für ein anderes Anmeldeverfahren ist."
+              prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{title}' noch im Entwurfsmodus ist."
             registration_deadline:
               must_be_in_future: 
                 "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"

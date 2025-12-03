@@ -34,6 +34,7 @@ module Registration
 
     validate :allocation_mode_frozen, on: :update
     validate :registration_deadline_future_if_open
+    validate :prerequisites_not_draft, if: :open?
 
     before_destroy :ensure_campaign_is_draft
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -63,6 +64,18 @@ module Registration
     end
 
     private
+
+      def prerequisites_not_draft
+        registration_policies.each do |policy|
+          next unless policy.kind == "prerequisite_campaign"
+
+          prereq_id = policy.prerequisite_campaign_id
+          next if prereq_id.blank?
+
+          prereq = Registration::Campaign.find_by(id: prereq_id)
+          errors.add(:base, :prerequisite_is_draft, title: prereq.title) if prereq&.draft?
+        end
+      end
 
       def ensure_not_referenced_as_prerequisite
         # NOTE: We use Postgres JSON operator ->> to query the config column
