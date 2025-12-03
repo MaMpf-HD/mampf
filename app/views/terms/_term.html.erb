@@ -1,5 +1,5 @@
 <%= turbo_frame_tag term do %>
-  <div class="row mx-2 px-4 border-bottom">
+  <div class="row mx-2 px-4 border-bottom" data-testid="term-row-<%= term.year %>-<%= term.season %>">
     <div class="col-2">
       <%= term.year %>
     </div>

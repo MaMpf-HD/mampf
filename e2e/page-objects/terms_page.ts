@@ -25,11 +25,10 @@ export class TermsPage {
 
   async deleteTerm(termName: number, season: "SS" | "WS") {
     this.page.on("dialog", dialog => dialog.accept());
-    const row = this.page.locator(`div.row:has(div.col-2:text-is("${termName}")):has(div.col-2:text-is("${season}"))`);
-    await row.getByRole("button", { name: "Delete" }).click();
+    await this.getTermRow(termName, season).getByRole("button", { name: "Delete" }).click();
   }
 
   getTermRow(termName: number, season: "SS" | "WS") {
-    return this.page.locator(`div.row:has(div.col-2:text-is("${termName}")):has(div.col-2:text-is("${season}"))`);
+    return this.page.getByTestId(`term-row-${termName}-${season}`);
   }
 }
