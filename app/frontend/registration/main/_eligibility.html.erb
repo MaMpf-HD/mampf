@@ -3,12 +3,7 @@
   
   <p class="mb-2 small text-muted">
     <% pass = eligibility.all? {|policy| policy[:outcome][:pass] } %>
-    <%= t('basics.status') %>: 
-    <% if pass %>
-      <span class="badge rounded-pill text-bg-success"><%= t('registration.eligible') %></span>
-    <% else %>
-      <span class="badge rounded-pill text-bg-warning"><%= t('registration.not_eligible') %></span>
-    <% end %>
+    <%= t('basics.status') %>: <%= eligibility_badge(pass) %>
   </p>
   
   <ul class="list-group list-group-flush">
@@ -26,11 +21,8 @@
           <% end %>
         </div>
 
-        <% if policy[:outcome][:pass] %>
-          <span class="badge rounded-pill text-bg-success"><%= t('basics.passed') %></span>
-        <% else %>
-          <span class="badge rounded-pill text-bg-danger"><%= t('basics.failed') %></span>
-        <% end %>
+        <% info = get_outcome_info(policy[:outcome]) %>
+        <span class="<%= info[:badge_class] %>"><%= info[:text] %></span>
       </li>
     <% end %>
   </ul>

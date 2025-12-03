@@ -15,6 +15,7 @@ module Registration
     helper UserRegistrationsHelper
 
     def index
+      @courses_seminars_campaigns = Registration::Campaign.all
       render template: "registration/index", layout: "application_no_sidebar"
     end
 

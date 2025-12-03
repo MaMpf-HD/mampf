@@ -9,8 +9,8 @@
     </div>
     <%last_updated = campaign.user_registrations_last_updated(current_user)%>
     <% if last_updated%>
-      <div class="small">
-        Saved <%= last_updated.to_formatted_s(:long) %>
+      <div class="small text-success">
+        Saved <%= format_date(last_updated) %>
       </div>
     <%end%>
   </div>

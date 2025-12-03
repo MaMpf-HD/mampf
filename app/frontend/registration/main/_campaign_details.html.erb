@@ -4,13 +4,13 @@
   <ul class="list-group">
 
     <!-- Allocation mode detail -->
+    <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
     <li class="list-group-item d-flex justify-content-between align-items-center">
       <div>
         <div class="fw-semibold"><%= t('basics.mode') %></div>
-        <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
         <small class="text-muted"><%= mode_info[:mode_name] %></small>
       </div>
-      <span class="badge rounded-pill text-bg-secondary"><%= mode_info[:abbr] %></span>
+      <span class="<%= mode_info[:badge_class] %>"><%= mode_info[:abbr] %></span>
     </li>
 
     <!-- Capacity detail -->
@@ -25,9 +25,7 @@
       </div>
       <span class="badge rounded-pill text-bg-info" id="capacityInfo">
         <%= total_capacity_used %>/<%= total_capacity %> <%= t('basics.filled') %>
-        <% if multi_items %>
-          <%= t('basics.across_group') %>
-        <% end %>
+        <%= t('basics.across_group') if multi_items %>
       </span>
     </li>
 

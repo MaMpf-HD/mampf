@@ -1,1 +1,42 @@
 This page now only for testing the show view of a user registration.
+
+            Courses & seminars 
+
+<div class="table-wrap mb-3 term-group" data-term="WS25/26">
+  <table class="table align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Lecture</th>
+        <th>Mode</th>
+        <th>Closes</th>
+        <th>Eligibility</th>
+        <th class="text-end">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @courses_seminars_campaigns.each do |campaign| %>
+        <tr>
+          <td><%= campaign.title %></td>
+          <td><%= campaign.campaignable.title %></td>
+          <td>
+            <% mode_info = get_mode_info(campaign.allocation_mode_before_type_cast) %>
+            <span class="<%= mode_info[:badge_class] %>"><%= mode_info[:abbr] %></span>
+          </td>
+          <td>
+            <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
+          </td>
+          <td>
+            <% pass = eligibility.all? {|policy| policy[:outcome][:pass] } %>
+            <%= t('basics.status') %>: <%= eligibility_badge(pass) %>
+          </td>
+          <td class="text-end">
+            <%= link_to "Register", campaign.campaign_registrations_for_campaign_path(campaign_id: campaign.id), class: "btn btn-sm btn-primary" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+

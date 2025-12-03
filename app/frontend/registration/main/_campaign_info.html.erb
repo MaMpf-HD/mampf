@@ -16,7 +16,7 @@
   <div class="text-end">
     <div class="text-muted small mb-1"><%= t('registration.campaign_main') %></div>
     <span class="badge text-bg-danger">
-      <%= t('basics.closes') %>: <%= campaign.registration_deadline&.to_formatted_s(:long) %>
+      <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
     </span>
   </div>
 </div>

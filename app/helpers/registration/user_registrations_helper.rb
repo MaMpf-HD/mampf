@@ -1,22 +1,19 @@
 module Registration
   module UserRegistrationsHelper
     MODE_MAP = {
-      -1 => { mode_name: "Unknown", abbr: "UNK" },
-      0 => { mode_name: "First-come, first-served", abbr: "FCFS" },
-      1 => { mode_name: "Preference Based", abbr: "PB" }
-    }
+  -1 => { mode_name: "Unknown", abbr: "UNK", badge_class: "badge rounded-pill text-bg-secondary" },
+   0 => { mode_name: "First-come, first-served", abbr: "FCFS", badge_class: "badge rounded-pill text-bg-info" },
+   1 => { mode_name: "Preference Based", abbr: "PB", badge_class: "badge rounded-pill text-bg-primary" }
+}
     def get_mode_info(mode)
-      if (mode == 1) || (mode == 0)
-        MODE_MAP[mode]
-      else
-        MODE_MAP[-1]
-      end
-    end
+  MODE_MAP.fetch(mode, MODE_MAP[-1])
+end
 
     # Examples of policy config:
     # lecture_performance -> config: { certification_status: :pending }
     # institutional_email	-> config:	{ allowed_domains: ["uni-heidelberg.de "] }
     # prerequisite_campaign	-> config:	{ prerequisite_campaign_id: 42 }
+    # 
     # Notice config here is JSON object, so keys are string types
     # policy here is also hash, not policy object
     def get_policy_config_info(policy)
@@ -51,10 +48,14 @@ module Registration
       ["lecture"].include?(regist_type)
     end
 
+    # TODO in the future
+    # when tutorial field change (eg: tutorial.title), also adjust this
     TABLE_CONFIG = {
       "Tutorial" => [
         { header: I18n.t("basics.tutorial"),
           field: ->(item) { item.title } },
+        { header: I18n.t("basics.time"),
+          field: ->(item) { item.time || item.title } }, # in old implementation, title is time
         { header: I18n.t("basics.tutor"),
           field: ->(item) { item.registerable.tutor_names } },
         { header: I18n.t("basics.seats"),
@@ -71,5 +72,29 @@ module Registration
           field: ->(item) { "#{item.capacity_remained}/#{item.capacity}" } }
       ]
     }
+
+    def format_date(time)
+      return "" if time.nil?
+      time.strftime("%b %d, %H:%M")
+    end
+
+    OUTCOME_MAP = {
+  true  => { text: I18n.t('basics.passed'), badge_class: "badge rounded-pill text-bg-success" },
+  false => { text: I18n.t('basics.failed'), badge_class: "badge rounded-pill text-bg-danger" }
+}
+
+def get_outcome_info(outcome)
+  OUTCOME_MAP[outcome[:pass]]
+end
+
+def eligibility_badge(pass)
+    if pass
+      content_tag(:span, I18n.t('registration.eligible'),
+                  class: "badge rounded-pill text-bg-success")
+    else
+      content_tag(:span, I18n.t('registration.not_eligible'),
+                  class: "badge rounded-pill text-bg-warning")
+    end
+  end
   end
 end
