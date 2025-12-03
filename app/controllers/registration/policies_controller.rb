@@ -15,19 +15,7 @@ module Registration
     def create
       @policy = @campaign.registration_policies.build(policy_params)
       if @policy.save
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
-                        notice: t("registration.policy.created")
-          end
-          format.turbo_stream do
-            render turbo_stream:
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_show",
-                                 locals: { campaign: @campaign,
-                                           tab: "policies" })
-          end
-        end
+        respond_with_success(t("registration.policy.created"))
       else
         render :new, status: :unprocessable_content
       end
@@ -35,19 +23,7 @@ module Registration
 
     def update
       if @policy.update(policy_params)
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
-                        notice: t("registration.policy.updated")
-          end
-          format.turbo_stream do
-            render turbo_stream:
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_show",
-                                 locals: { campaign: @campaign,
-                                           tab: "policies" })
-          end
-        end
+        respond_with_success(t("registration.policy.updated"))
       else
         render :edit, status: :unprocessable_content
       end
@@ -55,51 +31,15 @@ module Registration
 
     def destroy
       @policy.destroy
-      respond_to do |format|
-        format.html do
-          redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
-                      notice: t("registration.policy.destroyed")
-        end
-        format.turbo_stream do
-          render turbo_stream:
-          turbo_stream.replace("campaigns_card_body",
-                               partial: "registration/campaigns/card_body_show",
-                               locals: { campaign: @campaign,
-                                         tab: "policies" })
-        end
-      end
+      respond_with_success(t("registration.policy.destroyed"))
     end
 
     def move_up
-      @policy.move_higher
-      respond_to do |format|
-        format.html do
-          redirect_to registration_campaign_path(@campaign, anchor: "policies-tab")
-        end
-        format.turbo_stream do
-          render turbo_stream:
-          turbo_stream.replace("campaigns_card_body",
-                               partial: "registration/campaigns/card_body_show",
-                               locals: { campaign: @campaign,
-                                         tab: "policies" })
-        end
-      end
+      move(:higher)
     end
 
     def move_down
-      @policy.move_lower
-      respond_to do |format|
-        format.html do
-          redirect_to registration_campaign_path(@campaign, anchor: "policies-tab")
-        end
-        format.turbo_stream do
-          render turbo_stream:
-          turbo_stream.replace("campaigns_card_body",
-                               partial: "registration/campaigns/card_body_show",
-                               locals: { campaign: @campaign,
-                                         tab: "policies" })
-        end
-      end
+      move(:lower)
     end
 
     private
@@ -123,6 +63,29 @@ module Registration
 
       def current_ability
         @current_ability ||= CampaignAbility.new(current_user)
+      end
+
+      def move(direction)
+        @policy.public_send("move_#{direction}")
+        respond_with_success(nil)
+      end
+
+      def respond_with_success(message)
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
+                        notice: message
+          end
+          format.turbo_stream do
+            flash.now[:notice] = message if message
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_show",
+                                   locals: { campaign: @campaign, tab: "policies" }),
+              stream_flash
+            ].compact
+          end
+        end
       end
   end
 end
