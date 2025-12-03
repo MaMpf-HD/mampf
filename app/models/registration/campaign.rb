@@ -78,9 +78,8 @@ module Registration
       end
 
       def ensure_not_referenced_as_prerequisite
-        # NOTE: We use Postgres JSON operator ->> to query the config column
         referencing_policies = Registration::Policy
-                               .where("config->>'prerequisite_campaign_id' = ?", id.to_s)
+                               .referencing_campaign(id)
                                .where.not(registration_campaign_id: id)
                                .includes(:registration_campaign)
 
