@@ -79,8 +79,12 @@ module Registration
       end
 
       lecture = @campaign.campaignable
-      @campaign.destroy
-      respond_with_destroy_success(lecture)
+
+      if @campaign.destroy
+        respond_with_destroy_success(lecture)
+      else
+        respond_with_error(@campaign.errors.full_messages.join(", "))
+      end
     end
 
     def open

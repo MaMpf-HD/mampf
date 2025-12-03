@@ -36,6 +36,7 @@ module Registration
     validate :registration_deadline_future_if_open
 
     before_destroy :ensure_campaign_is_draft
+    before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
 
     def locale_with_inheritance
       campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
@@ -62,6 +63,16 @@ module Registration
     end
 
     private
+
+      def ensure_not_referenced_as_prerequisite
+        # NOTE: We use Postgres JSON operator ->> to query the config column
+        if Registration::Policy.where("config->>'prerequisite_campaign_id' = ?", id.to_s)
+                               .where.not(registration_campaign_id: id)
+                               .exists?
+          errors.add(:base, :referenced_as_prerequisite)
+          throw(:abort)
+        end
+      end
 
       def ensure_campaign_is_draft
         return if draft?
