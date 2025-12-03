@@ -138,8 +138,17 @@ module Registration
 
     def destroy
       unless @campaign.can_be_deleted?
-        return redirect_to registration_campaign_path(@campaign),
-                           alert: t("registration.campaign.cannot_delete")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign),
+                        alert: t("registration.campaign.cannot_delete")
+          end
+          format.turbo_stream do
+            flash.now[:alert] = t("registration.campaign.cannot_delete")
+            render turbo_stream: stream_flash
+          end
+        end
+        return
       end
 
       lecture = @campaign.campaignable

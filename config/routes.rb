@@ -273,7 +273,7 @@ Rails.application.routes.draw do
        as: "import_lecture_toc"
 
   resources :lectures, except: [:index] do
-    constraints ->(_req) { Flipper.enabled?(:registration_campaigns_enabled) } do
+    constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
       resources :campaigns,
                 controller: "registration/campaigns",
                 only: [:index, :new, :create],
@@ -281,7 +281,7 @@ Rails.application.routes.draw do
     end
   end
 
-  constraints ->(_req) { Flipper.enabled?(:registration_campaigns_enabled) } do
+  constraints ->(_req) { Flipper.enabled?(:registration_campaigns) } do
     resources :campaigns,
               controller: "registration/campaigns",
               only: [:show, :edit, :update, :destroy],

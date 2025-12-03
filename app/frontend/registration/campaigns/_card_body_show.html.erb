@@ -34,7 +34,7 @@
         <%= button_to t("buttons.delete"),
                       registration_campaign_path(campaign),
                       method: :delete,
-                      data: { confirm: t("registration.campaign.confirm_delete", default: "Are you sure?") },
+                      data: { confirm: t("registration.campaign.confirm_delete", default: "Are you sure?"), turbo_stream: true },
                       class: "btn btn-outline-danger" %>
       <% end %>
     </div>
