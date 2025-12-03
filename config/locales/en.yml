@@ -3467,6 +3467,8 @@ en:
     available: "Available"
     full: "Full"
     position: "Position"
+    room: "Room"
+    confirmed: "Confirmed"
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

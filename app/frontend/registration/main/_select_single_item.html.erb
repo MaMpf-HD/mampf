@@ -36,7 +36,7 @@
       <%= button_to t('registration.withdraw'),
               withdraw_item_path(campaign.id, item.id),
               method: :delete,
-              disable: !campaign.open_for_registrations?,
+              disable: !campaign.open_for_withdrawals?,
               class: "btn btn-outline-danger btn-sm" %>
     <%else%>
       <%= button_to t('registration.register_now'),

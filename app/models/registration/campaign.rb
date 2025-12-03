@@ -48,6 +48,10 @@ module Registration
       open?
     end
 
+    def open_for_withdrawals?
+      open?
+    end
+
     # TODO: remove this
     def user_registered?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)

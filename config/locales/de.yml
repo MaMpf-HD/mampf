@@ -3684,6 +3684,8 @@ de:
     available: "Verfügbar"
     full: "Ausgebucht"
     position: "Position"
+    room: "Raum"
+    confirmed: "Bestätigt"
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

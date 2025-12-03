@@ -2,17 +2,18 @@
   <h2 class="h5"><%= t("basics.select_type", type: campaign.registerable_type) %></h2>
   
   <div data-controller="registration-item-search">
-    <div class="d-flex justify-content-between align-items-center mb-2 gap-3">
-      
+    <div class="row mb-2 align-items-center">
       <!-- search form -->
-      <%= render partial: "registration/item_search_form/search_form",
-                 locals: { controller: "registration-item-search",
-                           placeholder: t("registration.filter_placeholder") } %>
-      
+      <div class="col-8">
+        <%= render partial: "registration/item_search_form/search_form",
+               locals: { controller: "registration-item-search",
+                         placeholder: t("registration.filter_placeholder") } %>
+      </div>
+
       <!-- saved time -->
       <% last_updated = campaign.user_registrations_last_updated(current_user) %>
       <% if last_updated %>
-        <div class="small text-success">
+        <div class="col-4 small text-success text-end">
           <%= t("basics.saved_at", time: format_date(last_updated)) %>
         </div>
       <% end %>
@@ -72,7 +73,7 @@
                   <%= button_to t("registration.withdraw"),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
-                    disable: !campaign.open_for_registrations?,
+                    disable: !campaign.open_for_withdrawals?,
                     class: "btn btn-outline-danger btn-sm" %>
                 <% else %>
                   <%= button_to t("registration.register_now"),
@@ -86,7 +87,7 @@
                   <%= button_to t("registration.withdraw"),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
-                    disable: !campaign.open_for_registrations?,
+                    disable: !campaign.open_for_withdrawals?,
                     class: "btn btn-outline-danger btn-sm" %>
                 <% else %>
                   <span class="text-muted small"><%= t("registration.withdraw_first") %></span>

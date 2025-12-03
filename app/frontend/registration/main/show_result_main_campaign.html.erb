@@ -1,0 +1,27 @@
+<div class="container my-4">
+  <nav aria-label="breadcrumb" class="mb-2">
+    <ol class="breadcrumb mb-0">
+      <li class="breadcrumb-item">
+        <%= link_to t('registration.registrations'), user_registrations_path %>
+      </li>
+      <li class="breadcrumb-item active" aria-current="page">
+        <%= @campaign.title %> (<%= @campaign.campaignable_type %>)
+      </li>
+    </ol>
+  </nav>
+
+  <%= render partial:'registration/main/campaign_info', 
+            locals: { campaignable_host: @campaignable_host, 
+                      campaign: @campaign }%>
+
+  
+  <div class="row g-3">
+
+    <div class="card mt-3">
+      <%= render partial:'registration/main/result',
+                  locals: { campaign: @campaign, 
+                            item_succeed: @item_succeed, 
+                            items_selected: @items_selected } %>
+    </div>
+  
+  </div>

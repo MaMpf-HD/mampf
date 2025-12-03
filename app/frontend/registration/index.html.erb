@@ -27,11 +27,11 @@ This page now only for testing the show view of a user registration.
             <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
           </td>
           <td>
-            <% pass = eligibility.all? {|policy| policy[:outcome][:pass] } %>
+            <% pass = @eligibilities[campaign].all? {|policy| policy[:outcome][:pass] } %>
             <%= t('basics.status') %>: <%= eligibility_badge(pass) %>
           </td>
           <td class="text-end">
-            <%= link_to "Register", campaign.campaign_registrations_for_campaign_path(campaign_id: campaign.id), class: "btn btn-sm btn-primary" %>
+            <%= link_to "Register", campaign_registrations_for_campaign_path(campaign_id: campaign.id), class: "btn btn-sm btn-primary" %>
           </td>
         </tr>
       <% end %>

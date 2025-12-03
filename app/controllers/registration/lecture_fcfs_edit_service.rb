@@ -1,5 +1,5 @@
 module Registration
-  class LectureFcfsService
+  class LectureFcfsEditService
     def initialize(campaign, item, user)
       @campaign = campaign
       @item = item
@@ -24,10 +24,12 @@ module Registration
       end
     end
 
+    # must hard delete the result, or else cannot trace the "submitted options"
+    # the downside effect is that we cannot trace the withdraw time of user
     def withdraw!
       validate_withdraw!
       registration = @item.user_registrations.find_by!(user: @user, status: :confirmed)
-      registration.update!(status: :rejected)
+      registration.destroy!
     end
 
     private
@@ -58,10 +60,10 @@ module Registration
       end
 
       # Validation for widthdrawing registration in lecture based registration
-      # 0. Check open for registration
+      # 0. Check open to withdraw
       # 1. Check if withdrawing current campaign may lead to fail in another "confirmed" campaign
       def validate_withdraw!
-        unless @campaign.open_for_registrations?
+        unless @campaign.open_for_withdrawals?
           raise(Registration::RegistrationError,
                 I18n.t("registration.messages.campaign_not_opened"))
         end
