@@ -110,7 +110,7 @@ en:
           attributes:
             base:
               cannot_delete_active_campaign: "Cannot delete a campaign that is not in draft mode."
-              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for another campaign."
+              referenced_as_prerequisite: "Cannot delete campaign because it is a prerequisite for the following campaigns: %{titles}."
               prerequisite_is_draft: "Cannot open campaign because the prerequisite campaign '%{title}' is still in draft mode."
             registration_deadline:
               must_be_in_future: "must be in the future when campaign is open"

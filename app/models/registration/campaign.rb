@@ -79,12 +79,17 @@ module Registration
 
       def ensure_not_referenced_as_prerequisite
         # NOTE: We use Postgres JSON operator ->> to query the config column
-        if Registration::Policy.where("config->>'prerequisite_campaign_id' = ?", id.to_s)
+        referencing_policies = Registration::Policy
+                               .where("config->>'prerequisite_campaign_id' = ?", id.to_s)
                                .where.not(registration_campaign_id: id)
-                               .exists?
-          errors.add(:base, :referenced_as_prerequisite)
-          throw(:abort)
-        end
+                               .includes(:registration_campaign)
+
+        return unless referencing_policies.any?
+
+        titles = referencing_policies.filter_map { |p| p.registration_campaign&.title }
+                                     .uniq.join(", ")
+        errors.add(:base, :referenced_as_prerequisite, titles: titles)
+        throw(:abort)
       end
 
       def ensure_campaign_is_draft
