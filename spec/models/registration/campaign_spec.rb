@@ -97,6 +97,62 @@ RSpec.describe(Registration::Campaign, type: :model) do
     end
   end
 
+  describe "validations" do
+    it "validates registration_deadline is in the future if open" do
+      campaign = build(:registration_campaign, :open, registration_deadline: 1.day.ago)
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
+    end
+
+    it "validates prerequisites are not draft if open" do
+      prereq = create(:registration_campaign, :draft)
+      campaign = create(:registration_campaign, :draft)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: campaign,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      campaign.status = :open
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:base, :prerequisite_is_draft, title: prereq.title)).to be(true)
+    end
+  end
+
+  describe "deletion protection" do
+    it "prevents deletion if not draft" do
+      campaign = create(:registration_campaign, :open)
+      expect { campaign.destroy }.not_to change(Registration::Campaign, :count)
+      expect(campaign.errors.added?(:base, :cannot_delete_active_campaign)).to be(true)
+    end
+
+    it "prevents deletion if referenced as prerequisite" do
+      prereq = create(:registration_campaign, :draft)
+      dependent = create(:registration_campaign, :draft)
+      create(:registration_policy, :prerequisite_campaign,
+             registration_campaign: dependent,
+             config: { "prerequisite_campaign_id" => prereq.id })
+
+      expect { prereq.destroy }.not_to change(Registration::Campaign, :count)
+      expect(prereq.errors.added?(:base, :referenced_as_prerequisite,
+                                  titles: dependent.title)).to be(true)
+    end
+  end
+
+  describe "freezing" do
+    let(:campaign) { create(:registration_campaign, :open) }
+
+    it "prevents changing allocation_mode if not draft" do
+      campaign.allocation_mode = :preference_based
+      expect(campaign).not_to be_valid
+      expect(campaign.errors.added?(:allocation_mode, :frozen)).to be(true)
+    end
+
+    it "allows changing allocation_mode if draft" do
+      draft_campaign = create(:registration_campaign, :draft)
+      draft_campaign.allocation_mode = :preference_based
+      expect(draft_campaign).to be_valid
+    end
+  end
+
   describe "#user_registration_confirmed?" do
     let(:campaign) { FactoryBot.create(:registration_campaign) }
     let(:user) { FactoryBot.create(:user) }

@@ -68,8 +68,10 @@ module Registration
                      Registration::Policy::InstitutionalEmailHandler.new(self)
                    when :prerequisite_campaign
                      Registration::Policy::PrerequisiteCampaignHandler.new(self)
-                   else
+                   when :student_performance
                      Registration::Policy::Handler.new(self)
+                   else
+                     raise(ArgumentError, "Unknown policy kind: #{kind}")
       end
     end
 
