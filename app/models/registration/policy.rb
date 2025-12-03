@@ -17,6 +17,10 @@ module Registration
 
     validates :kind, :phase, presence: true
     validates :active, inclusion: { in: [true, false] }
+    validate :campaign_is_draft, on: [:create, :update]
+    validate :validate_config
+
+    before_destroy :ensure_campaign_is_draft
 
     acts_as_list scope: :registration_campaign
 
@@ -61,10 +65,6 @@ module Registration
         config.to_json
       end
     end
-
-    validate :campaign_is_draft, on: [:create, :update]
-    validate :validate_config
-    before_destroy :ensure_campaign_is_draft
 
     def evaluate(user)
       case kind.to_sym

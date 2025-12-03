@@ -80,22 +80,7 @@ module Registration
 
       lecture = @campaign.campaignable
       @campaign.destroy
-
-      respond_to do |format|
-        format.html do
-          redirect_to lecture_registration_campaigns_path(lecture),
-                      notice: t("registration.campaign.destroyed")
-        end
-        format.turbo_stream do
-          flash.now[:notice] = t("registration.campaign.destroyed")
-          render turbo_stream: [
-            turbo_stream.replace("campaigns_card_body",
-                                 partial: "registration/campaigns/card_body_index",
-                                 locals: { lecture: lecture }),
-            stream_flash
-          ].compact
-        end
-      end
+      respond_with_destroy_success(lecture)
     end
 
     def open
@@ -158,6 +143,25 @@ module Registration
               turbo_stream.replace("campaigns_card_body",
                                    partial: "registration/campaigns/card_body_show",
                                    locals: { campaign: @campaign }),
+              stream_flash
+            ].compact
+          end
+        end
+      end
+
+      def respond_with_destroy_success(lecture)
+        message = t("registration.campaign.destroyed")
+        respond_to do |format|
+          format.html do
+            redirect_to lecture_registration_campaigns_path(lecture),
+                        notice: message
+          end
+          format.turbo_stream do
+            flash.now[:notice] = message
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_index",
+                                   locals: { lecture: lecture }),
               stream_flash
             ].compact
           end

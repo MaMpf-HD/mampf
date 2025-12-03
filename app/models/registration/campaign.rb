@@ -29,10 +29,6 @@ module Registration
                     processing: 3,
                     completed: 4 }
 
-    def locale_with_inheritance
-      campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
-    end
-
     validates :title, :registration_deadline, :allocation_mode, :status, presence: true
     validates :planning_only, inclusion: { in: [true, false] }
 
@@ -40,6 +36,10 @@ module Registration
     validate :registration_deadline_future_if_open
 
     before_destroy :ensure_campaign_is_draft
+
+    def locale_with_inheritance
+      campaignable.try(:locale_with_inheritance) || campaignable.try(:locale)
+    end
 
     def evaluate_policies_for(user, phase: :registration)
       policy_engine.eligible?(user, phase: phase)
