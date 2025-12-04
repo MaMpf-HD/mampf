@@ -51,15 +51,6 @@ $(document).on("turbo:load", function () {
 
   const trixElement = document.querySelector("#lecture-concept-trix");
   if (trixElement) {
-    const { content } = trixElement.dataset;
-    const { editor } = trixElement;
-    if (!editor) {
-      return;
-    }
-    editor.setSelectedRange([0, 65535]);
-    editor.deleteInDirection("forward");
-    editor.insertHTML(content);
-    document.activeElement.blur();
     trixElement.addEventListener("trix-change", function () {
       disableExceptOrganizational();
     });
@@ -183,16 +174,7 @@ $(document).on("turbo:load", function () {
     }
   });
 
-  $('#edited-media-tab a[data-bs-toggle="tab"]').on("shown.bs.tab", function (e) {
-    const {
-      sort,
-    } = e.target.dataset; // newly activated tab
-    const path = $("#create-new-medium").prop("href");
-    if (path) {
-      const new_path = path.replace(/\?sort=.+?&/, "?sort=" + sort + "&");
-      $("#create-new-medium").prop("href", new_path);
-    }
-  });
+  handleNewMediaButtonSort();
 
   const userModalContent = document.getElementById("lectureUserModalContent");
   if (userModalContent && (userModalContent.dataset.filled === "false")) {
@@ -352,6 +334,28 @@ $(document).on("turbo:load", function () {
     }
   });
 });
+
+/**
+ * Handles updating the "Create New Medium" button's href
+ * to include the current sort parameter when switching tabs.
+ *
+ * This is such that when a user clicks the "Create New Medium" button,
+ * the new medium will be created with the same sort as the currently active tab.
+ */
+function handleNewMediaButtonSort() {
+  $('#edited-media-tab a[data-bs-toggle="tab"]').on("show.bs.tab", function (e) {
+    const button = $("#create-new-medium");
+    const type = e.target.dataset.sort;
+    if (!type) {
+      console.error("No sort type found on tab!");
+      return;
+    }
+    const currentHref = button.prop("href");
+    const url = new URL(currentHref, window.location.origin);
+    url.searchParams.set("sort", type);
+    button.prop("href", url.pathname + url.search);
+  });
+}
 
 $(document).on("turbo:before-cache", function () {
   $(".lecture-tag").removeClass("bg-warning");
