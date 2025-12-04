@@ -18,6 +18,8 @@ Rails.application.routes.draw do
       resources :user_creator, only: :create
       resources :user_creator_playwright, only: :create
       resources :i18n, only: :create
+      post "feature_flags/enable", to: "feature_flags#enable"
+      post "feature_flags/disable", to: "feature_flags#disable"
       post "timecop/travel", to: "timecop#travel"
       post "timecop/reset", to: "timecop#reset"
     end
