@@ -1,4 +1,4 @@
-<div id="media_accordion" role="tablist">
+<div id="media_accordion" role="tablist" data-controller="media-button-sort">
   <div class="card bg-light">
     <div class="card-header" role="tab" id="media_heading" >
       <div class="row">
@@ -17,7 +17,7 @@
                                             teachable_type: teachable_type }),
                         class: "fas fa-plus-circle fa-lg new-in-lecture text-dark",
                         style: "text-decoration: none; ",
-                        data: { toggle: 'tooltip' },
+                        data: { toggle: 'tooltip', media_button_sort_target: "newMedium" },
                         title: t('buttons.create_medium'),
                         id: 'create-new-medium',
                         remote: true %>
