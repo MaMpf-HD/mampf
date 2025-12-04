@@ -345,14 +345,14 @@ $(document).on("turbo:load", function () {
 function handleNewMediaButtonSort() {
   $('#edited-media-tab a[data-bs-toggle="tab"]').on("show.bs.tab", function (e) {
     const button = $("#create-new-medium");
-    const type = e.target.dataset.sort;
-    if (!type) {
+    const sort = e.target.dataset.sort;
+    if (!sort) {
       console.error("No sort type found on tab!");
       return;
     }
     const currentHref = button.prop("href");
     const url = new URL(currentHref, window.location.origin);
-    url.searchParams.set("sort", type);
+    url.searchParams.set("sort", sort);
     button.prop("href", url.pathname + url.search);
   });
 }
