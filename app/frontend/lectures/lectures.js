@@ -174,8 +174,6 @@ $(document).on("turbo:load", function () {
     }
   });
 
-  handleNewMediaButtonSort();
-
   const userModalContent = document.getElementById("lectureUserModalContent");
   if (userModalContent && (userModalContent.dataset.filled === "false")) {
     const lectureId = userModalContent.dataset.lecture;
@@ -334,28 +332,6 @@ $(document).on("turbo:load", function () {
     }
   });
 });
-
-/**
- * Handles updating the "Create New Medium" button's href
- * to include the current sort parameter when switching tabs.
- *
- * This is such that when a user clicks the "Create New Medium" button,
- * the new medium will be created with the same sort as the currently active tab.
- */
-function handleNewMediaButtonSort() {
-  $('#edited-media-tab a[data-bs-toggle="tab"]').on("show.bs.tab", function (e) {
-    const button = $("#create-new-medium");
-    const sort = e.target.dataset.sort;
-    if (!sort) {
-      console.error("No sort type found on tab!");
-      return;
-    }
-    const currentHref = button.prop("href");
-    const url = new URL(currentHref, window.location.origin);
-    url.searchParams.set("sort", sort);
-    button.prop("href", url.pathname + url.search);
-  });
-}
 
 $(document).on("turbo:before-cache", function () {
   $(".lecture-tag").removeClass("bg-warning");
