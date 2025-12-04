@@ -4,6 +4,11 @@ export default class extends Controller {
   static targets = ["newMedium"];
 
   changeNewMediumSort(event) {
+    if (!this.hasNewMediumTarget) {
+      // on some conditions in views/media/_card.html.erb, e.g. if "inspection"
+      return;
+    }
+
     const sort = event.target.dataset.sort;
     if (!sort) {
       console.error("No sort type found on tab!");
