@@ -63,6 +63,8 @@ module Registration
     delegate :evaluate, to: :handler
 
     def handler
+      return Registration::Policy::Handler.new(self) if kind.blank?
+
       @handler ||= case kind.to_sym
                    when :institutional_email
                      Registration::Policy::InstitutionalEmailHandler.new(self)

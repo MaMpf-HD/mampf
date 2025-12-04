@@ -3,10 +3,15 @@ module Registration
     before_action :set_campaign
     before_action :set_locale
     before_action :set_policy, only: [:edit, :update, :destroy, :move_up, :move_down]
-    authorize_resource class: "Registration::Policy"
+    authorize_resource class: "Registration::Policy", except: [:new, :create]
+
+    def current_ability
+      @current_ability ||= RegistrationPolicyAbility.new(current_user)
+    end
 
     def new
       @policy = @campaign.registration_policies.build
+      authorize! :new, @policy
     end
 
     def edit
@@ -14,6 +19,8 @@ module Registration
 
     def create
       @policy = @campaign.registration_policies.build(policy_params)
+      authorize! :create, @policy
+
       if @policy.save
         respond_with_success(t("registration.policy.created"))
       else
@@ -30,8 +37,11 @@ module Registration
     end
 
     def destroy
-      @policy.destroy
-      respond_with_success(t("registration.policy.destroyed"))
+      if @policy.destroy
+        respond_with_success(t("registration.policy.destroyed"))
+      else
+        respond_with_error(@policy.errors.full_messages.join(", "))
+      end
     end
 
     def move_up
@@ -61,10 +71,6 @@ module Registration
                                             :prerequisite_campaign_id])
       end
 
-      def current_ability
-        @current_ability ||= CampaignAbility.new(current_user)
-      end
-
       def move(direction)
         @policy.public_send("move_#{direction}")
         respond_with_success(nil)
@@ -84,6 +90,19 @@ module Registration
                                    locals: { campaign: @campaign, tab: "policies" }),
               stream_flash
             ].compact
+          end
+        end
+      end
+
+      def respond_with_error(message)
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, anchor: "policies-tab"),
+                        alert: message
+          end
+          format.turbo_stream do
+            flash.now[:alert] = message
+            render turbo_stream: stream_flash
           end
         end
       end

@@ -109,6 +109,7 @@ de:
         registration/campaign:
           attributes:
             base:
+              frozen: "Die Kampagnenkonfiguration kann nicht mehr geändert werden, sobald sie nicht mehr im Entwurfsmodus ist."
               cannot_delete_active_campaign: "Ein Anmeldeverfahren, das nicht im Entwurfsmodus ist, kann nicht gelöscht werden."
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{titles}."
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{title}' noch im Entwurfsmodus ist."
@@ -117,3 +118,7 @@ de:
                 "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
+        registration/policy:
+          attributes:
+            base:
+              frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."

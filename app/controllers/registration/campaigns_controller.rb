@@ -6,7 +6,7 @@ module Registration
     authorize_resource class: "Registration::Campaign", except: [:index, :new, :create]
 
     def current_ability
-      @current_ability ||= CampaignAbility.new(current_user)
+      @current_ability ||= RegistrationCampaignAbility.new(current_user)
     end
 
     def index
