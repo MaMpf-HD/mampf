@@ -17,9 +17,10 @@
                                             teachable_type: teachable_type }),
                         class: "fas fa-plus-circle fa-lg new-in-lecture text-dark",
                         style: "text-decoration: none; ",
-                        data: { toggle: 'tooltip', media_button_sort_target: "newMedium" },
-                        title: t('buttons.create_medium'),
+                        role: "button",
                         id: 'create-new-medium',
+                        title: t('buttons.create_medium'),
+                        data: { toggle: 'tooltip', media_button_sort_target: "newMedium" },
                         remote: true %>
           <% end %>
           <% if collapsible %>

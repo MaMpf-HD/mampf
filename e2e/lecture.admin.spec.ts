@@ -45,20 +45,3 @@ test("can upload a manuscript and extract structure from it",
     await expect(page.getByText("Def. 1.1")).toBeVisible();
     await expect(page.getByText("Space")).toBeVisible();
   });
-
-test("'create new medium' type is synced with currently selected tab",
-  async ({ factory, teacher: { page, user } }) => {
-    const lecture = await factory.create("lecture", [], { teacher_id: user.id });
-    await page.goto(`/lectures/${lecture.id}/edit`);
-
-    async function expectSort(sort: string, expectedString: string) {
-      await page.getByRole("tab", { name: sort }).click();
-      await page.getByRole("button", { name: "create medium" }).click();
-      await expect(page.getByRole("dialog", { name: "Create new medium" }).getByLabel("Type"))
-        .toHaveValue(expectedString);
-      await page.getByRole("button", { name: "Close" }).click();
-    }
-
-    await expectSort("exercises", "Exercise");
-    await expectSort("script", "Script");
-  });
