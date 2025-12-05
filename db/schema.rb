@@ -334,6 +334,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.integer "submission_grace_period", default: 15
     t.boolean "legacy_seminar", default: false
     t.integer "annotations_status", default: 1, null: false
+    t.integer "capacity"
     t.index ["released"], name: "index_lectures_on_released"
     t.index ["sort"], name: "index_lectures_on_sort"
     t.index ["teacher_id"], name: "index_lectures_on_teacher_id"
@@ -667,6 +668,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.date "dates", default: [], array: true
     t.text "description"
     t.boolean "display_description", default: false
+    t.integer "capacity"
     t.index ["lecture_id"], name: "index_talks_on_lecture_id"
   end
 
@@ -927,6 +929,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.bigint "lecture_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "capacity"
     t.index ["lecture_id"], name: "index_tutorials_on_lecture_id"
   end
 
@@ -994,7 +997,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_16_000003) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
-
+  
   create_table "vignettes_answers", force: :cascade do |t|
     t.string "type"
     t.bigint "vignettes_question_id", null: false
