@@ -6,7 +6,7 @@ FactoryBot.define do
     short_title do
       "#{Faker::Book.title.gsub("&", "and")} #{Faker::Number.between(from: 1, to: 9999)}"
     end
-    locale { "en" }
+    locale { :en }
 
     transient do
       tag_count { 3 }
