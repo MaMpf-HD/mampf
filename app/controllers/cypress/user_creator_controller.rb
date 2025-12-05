@@ -20,7 +20,7 @@ module Cypress
                          # beginning with "cy" (!)
                          name_in_tutorials: "cy-#{role}-#{random_hash}",
                          password: CYPRESS_PASSWORD, consents: true, admin: is_admin,
-                         locale: I18n.default_locale)
+                         locale: :en)
       user.confirm
 
       render json: user.as_json.merge({ password: CYPRESS_PASSWORD }), status: :created
