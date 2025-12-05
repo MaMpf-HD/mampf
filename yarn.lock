@@ -17,6 +17,11 @@
   resolved "https://registry.yarnpkg.com/@davepagurek/bezier-path/-/bezier-path-0.0.2.tgz#7c9d3bc6ba62bbf4e78259463280a268309ac1c4"
   integrity sha512-4L9ddgzZc9DRGyl1RrS3z5nwnVJoyjsAelVG4X1jh4tVxryEHr4H9QavhxW/my6Rn3669Qz6mhv8gd5O/WeFTA==
 
+"@eonasdan/tempus-dominus@^6.10.4":
+  version "6.10.4"
+  resolved "https://registry.yarnpkg.com/@eonasdan/tempus-dominus/-/tempus-dominus-6.10.4.tgz#693da2c6be7de65ead5be9d302eaaaa9e7ea0b05"
+  integrity sha512-aR1QkKUEFyfpqKuRs3ZnIfMhhB4aAS6WO3CpHn4FTLABe2ia3tm4pb7w+ium3w5b/d+mIKSi6VcbDukU+dtnYA==
+
 "@esbuild/aix-ppc64@0.25.12":
   version "0.25.12"
   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.25.12.tgz#80fcbe36130e58b7670511e888b8e88a259ed76c"
