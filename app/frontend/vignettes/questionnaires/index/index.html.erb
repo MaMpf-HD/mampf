@@ -111,7 +111,8 @@
                     <% sort_questionnaires_by_completion_status(grouped[:incomplete], current_user).each do |questionnaire| %>
                         <%= link_to take_questionnaire_path(questionnaire),
                                     class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center",
-                                    disabled: !user_has_codename?(current_user, @lecture) do %>
+                                    disabled: !user_has_codename?(current_user, @lecture),
+                                    data: { turbo_prefetch: false } do %>
                             <h6 class="mb-0 fw-bold"><%= questionnaire.title %></h6>
                             <span class="badge bg-primary rounded-pill" style="cursor: pointer;">
                                 <%= questionnaire_take_text(current_user, questionnaire) %>
