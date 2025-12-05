@@ -114,8 +114,7 @@ de:
               referenced_as_prerequisite: "Anmeldeverfahren kann nicht gelöscht werden, da es Voraussetzung für folgende Anmeldeverfahren ist: %{titles}."
               prerequisite_is_draft: "Das Anmeldeverfahren kann nicht geöffnet werden, da das vorausgesetzte Anmeldeverfahren '%{title}' noch im Entwurfsmodus ist."
             registration_deadline:
-              must_be_in_future: 
-                "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
+              must_be_in_future: "muss in der Zukunft liegen, wenn das Anmeldeverfahren offen ist"
             allocation_mode:
               frozen: "kann nicht geändert werden, nachdem das Anmeldeverfahren geöffnet wurde"
         registration/policy:
