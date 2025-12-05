@@ -10,6 +10,7 @@
       <%= link_to t("registration.policy.index.add"),
                   new_registration_campaign_policy_path(@campaign),
                   class: "btn btn-sm btn-primary",
+                  role: "button",
                   data: { turbo_frame: "policy_form" } %>
     <% end %>
   </div>

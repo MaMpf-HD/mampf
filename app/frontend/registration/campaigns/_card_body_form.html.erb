@@ -2,6 +2,7 @@
   <div class="mb-3">
     <%= link_to lecture_registration_campaigns_path(lecture),
                 class: "btn btn-sm btn-outline-secondary",
+                role: "button",
                 data: { turbo_stream: true } do %>
       <i class="bi bi-arrow-left"></i> <%= t("back") %>
     <% end %>
