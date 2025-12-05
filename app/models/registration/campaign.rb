@@ -66,14 +66,13 @@ module Registration
     private
 
       def prerequisites_not_draft
-        registration_policies.each do |policy|
-          next unless policy.kind == "prerequisite_campaign"
+        prereq_ids = registration_policies.select { |p| p.kind == "prerequisite_campaign" }
+                                          .filter_map { |p| p.prerequisite_campaign_id.presence }
 
-          prereq_id = policy.prerequisite_campaign_id
-          next if prereq_id.blank?
+        return if prereq_ids.empty?
 
-          prereq = Registration::Campaign.find_by(id: prereq_id)
-          errors.add(:base, :prerequisite_is_draft, title: prereq.title) if prereq&.draft?
+        Registration::Campaign.where(id: prereq_ids, status: :draft).find_each do |prereq|
+          errors.add(:base, :prerequisite_is_draft, title: prereq.title)
         end
       end
 
