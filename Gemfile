@@ -64,6 +64,7 @@ gem "trix-rails", "~> 2.4", require: "trix"
 gem "turbo-rails", "~> 2.0"
 gem "view_component", "~> 4.0"
 gem "vite_rails", "~> 3.0", ">= 3.0.17"
+gem 'connection_pool', '< 3.0' # ActiveSupport currently breaks with connection_pool 3.x
 
 group :development do
   gem "listen", "~> 3.9"
