@@ -1,32 +1,30 @@
-<%= turbo_frame_tag term do %>
-  <%= form_with model: term do |f| %>
-    <div class="row mx-2 px-4 py-1 border-bottom">
-      <div class="col-2">
-        <%= f.select :year,
-                     ((Time.current.year - 5)..(Time.current.year + 2)).to_a,
-                     {}, { class: "form-select #{'is-invalid' if term.errors.any?}" } %>
-      </div>
-      <div class="col-2">
-        <%= f.select :season,
-                     ['WS', 'SS'],
-                     {}, { class: "form-select #{'is-invalid' if term.errors.any?}" } %>
-      </div>
-      <div class="col-4">
-        <ul class="list-unstyled">
-          <% term.lectures.each do |l| %>
-            <li>
-              <%= l.title_teacher_info %>
-            </li>
-          <% end %>
-        </ul>
-      </div>
-      <div class="col-4">
-        <%= f.submit t('buttons.save'),
-                     class: 'btn btn-sm btn-primary' %>
-        <%= link_to t('buttons.cancel'),
-                    terms_path,
-                    class: 'btn btn-sm btn-secondary' %>
-      </div>
+<%= form_with model: term do |f| %>
+  <div class="row mx-2 px-4 py-1 border-bottom">
+    <div class="col-2">
+      <%= f.select :year,
+                    ((Time.current.year - 5)..(Time.current.year + 2)).to_a,
+                    {}, { class: "form-select #{'is-invalid' if term.errors.any?}" } %>
     </div>
-  <% end %>
+    <div class="col-2">
+      <%= f.select :season,
+                    ['WS', 'SS'],
+                    {}, { class: "form-select #{'is-invalid' if term.errors.any?}" } %>
+    </div>
+    <div class="col-4">
+      <ul class="list-unstyled">
+        <% term.lectures.each do |l| %>
+          <li>
+            <%= l.title_teacher_info %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+    <div class="col-4">
+      <%= f.submit t('buttons.save'),
+                    class: 'btn btn-sm btn-primary' %>
+      <%= link_to t('buttons.cancel'),
+                  terms_path,
+                  class: 'btn btn-sm btn-secondary' %>
+    </div>
+  </div>
 <% end %>
