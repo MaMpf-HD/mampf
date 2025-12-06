@@ -17,7 +17,7 @@ gem "bootstrap_form", "~> 5.4"
 gem "cancancan", "~> 3.6"
 gem "coffee-rails", "~> 5.0"
 gem "commontator", "~> 7.0.1"
-gem "connection_pool ", "< 3.0" # ActiveSupport currently breaks with connection_pool 3.x
+gem "connection_pool", "< 3.0" # ActiveSupport currently breaks with connection_pool 3.x
 gem "coveralls", "~> 0.7", require: false
 gem "csv", "~> 3.3", require: false
 gem "dalli", "~> 3.2" # caching to memcached in production
