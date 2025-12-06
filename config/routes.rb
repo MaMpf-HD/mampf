@@ -790,10 +790,6 @@ Rails.application.routes.draw do
 
   # terms routes
 
-  get "terms/cancel_term_edit",
-      to: "terms#cancel",
-      as: "cancel_term_edit"
-
   post "terms/set_active_term",
        to: "terms#set_active",
        as: "set_active_term"
