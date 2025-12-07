@@ -1,0 +1,71 @@
+<% service = Registration::AvailableItemsService.new(campaign) %>
+<% available_items = service.items %>
+
+<% if available_items.empty? %>
+  <div class="alert alert-secondary">
+    <%= t("registration.item.add.none_available") %>
+  </div>
+<% else %>
+  <div class="row g-4">
+    <% if available_items[:tutorials].present? %>
+      <div class="col-12">
+        <h6><%= t("registration.item.groups.tutorials") %></h6>
+        <div class="list-group">
+          <% available_items[:tutorials].each do |tutorial| %>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <%= tutorial.title_with_tutors %>
+                <span class="badge bg-secondary ms-2"><%= tutorial.capacity %> <%= t("basics.seats") %></span>
+              </div>
+              <%= button_to t("basics.add"),
+                            registration_campaign_items_path(campaign),
+                            params: { registration_item: { registerable_id: tutorial.id, registerable_type: "Tutorial" } },
+                            class: "btn btn-sm btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if available_items[:talks].present? %>
+      <div class="col-12">
+        <h6><%= t("registration.item.groups.talks") %></h6>
+        <div class="list-group">
+          <% available_items[:talks].each do |talk| %>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <%= talk.to_label %>
+                <% if talk.speaker_names.present? %>
+                  <span class="text-muted ms-2">(<%= talk.speaker_names %>)</span>
+                <% end %>
+              </div>
+              <%= button_to t("basics.add"),
+                            registration_campaign_items_path(campaign),
+                            params: { registration_item: { registerable_id: talk.id, registerable_type: "Talk" } },
+                            class: "btn btn-sm btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if available_items[:lecture].present? %>
+      <div class="col-12">
+        <h6><%= t("registration.item.groups.general") %></h6>
+        <div class="list-group">
+          <% available_items[:lecture].each do |lecture| %>
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <%= t("registration.item.types.lecture_signup") %>
+              </div>
+              <%= button_to t("basics.add"),
+                            registration_campaign_items_path(campaign),
+                            params: { registration_item: { registerable_id: lecture.id, registerable_type: "Lecture" } },
+                            class: "btn btn-sm btn-primary" %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

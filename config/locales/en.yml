@@ -3258,6 +3258,8 @@ en:
     preferences: 'Preferences'
     language: 'Language'
     date: 'Date'
+    seats: 'Seats'
+    add: 'Add'
     section: 'Section'
     sections: 'Sections'
     at_the_beginning: 'At the beginning'

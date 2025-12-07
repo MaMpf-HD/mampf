@@ -11,7 +11,8 @@ module Registration
 
     belongs_to :registration_item,
                class_name: "Registration::Item",
-               optional: true
+               optional: true,
+               inverse_of: :user_registrations
 
     enum :status, { pending: 0, confirmed: 1, rejected: 2 }
 

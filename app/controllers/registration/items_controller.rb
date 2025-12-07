@@ -2,9 +2,15 @@ module Registration
   class ItemsController < ApplicationController
     before_action :set_campaign
     before_action :set_item, only: [:destroy, :update]
+    authorize_resource class: "Registration::Item", except: [:create]
+
+    def current_ability
+      @current_ability ||= RegistrationItemAbility.new(current_user)
+    end
 
     def create
       @item = @campaign.registration_items.build(item_params)
+      authorize! :create, @item
 
       if @item.save
         redirect_to registration_campaign_path(@campaign, tab: "items"),
@@ -55,8 +61,7 @@ module Registration
     private
 
       def set_campaign
-        @campaign = Registration::Campaign.find(params[:campaign_id])
-        authorize! :update, @campaign
+        @campaign = Registration::Campaign.find(params[:registration_campaign_id])
       end
 
       def set_item

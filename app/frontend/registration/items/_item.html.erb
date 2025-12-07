@@ -1,0 +1,44 @@
+<%= turbo_frame_tag item do %>
+  <tr>
+    <td>
+      <%= item.title %>
+      <div class="text-muted small">
+        <%= t("registration.item.types.#{item.registerable_type.underscore}") %>
+      </div>
+    </td>
+    <td>
+      <%= form_with(model: item,
+                    url: registration_campaign_item_path(item.registration_campaign, item),
+                    method: :patch,
+                    data: { turbo: true }) do |f| %>
+        <div class="input-group input-group-sm" style="max-width: 150px;">
+          <%= f.number_field :capacity,
+                             class: "form-control",
+                             min: 0,
+                             disabled: !item.registration_campaign.draft? && item.registration_campaign.allocation_mode == "first_come_first_served" %>
+          <button class="btn btn-outline-secondary" type="submit">
+            <i class="bi bi-check-lg"></i>
+          </button>
+        </div>
+        <% if item.registerable.errors[:capacity].any? %>
+          <div class="text-danger small mt-1">
+            <%= item.registerable.errors[:capacity].join(", ") %>
+          </div>
+        <% end %>
+      <% end %>
+    </td>
+    <td>
+      <%= item.user_registrations.count %>
+    </td>
+    <td class="text-end">
+      <% if item.registration_campaign.draft? %>
+        <%= button_to registration_campaign_item_path(item.registration_campaign, item),
+                      method: :delete,
+                      class: "btn btn-sm btn-outline-danger",
+                      data: { confirm: t("registration.item.confirm_delete") } do %>
+          <i class="bi bi-trash"></i>
+        <% end %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>

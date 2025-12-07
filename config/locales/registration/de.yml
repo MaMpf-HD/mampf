@@ -112,6 +112,31 @@ de:
         registration: "Registrierung"
         finalization: "Finalisierung"
         both: "Beide"
+    item:
+      index:
+        title: "Elemente"
+        none: "Noch keine Elemente hinzugefügt."
+      add:
+        title: "Elemente hinzufügen"
+        none_available: "Keine Elemente verfügbar."
+      columns:
+        title: "Titel"
+        capacity: "Kapazität"
+        registrations: "Anmeldungen"
+      groups:
+        tutorials: "Tutorien"
+        talks: "Vorträge"
+        general: "Allgemein"
+      types:
+        tutorial: "Tutorium"
+        talk: "Vortrag"
+        lecture: "Vorlesung"
+        lecture_signup: "Allgemeine Anmeldung"
+      created: "Element erfolgreich hinzugefügt."
+      destroyed: "Element erfolgreich entfernt."
+      updated: "Element erfolgreich aktualisiert."
+      cannot_destroy: "Element kann nicht entfernt werden, da das Anmeldeverfahren nicht im Entwurfsmodus ist."
+      confirm_delete: "Sind Sie sicher, dass Sie dieses Element entfernen möchten?"
   activerecord:
     errors:
       models:

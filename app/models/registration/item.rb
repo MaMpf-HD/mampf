@@ -14,7 +14,9 @@ module Registration
 
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
-             dependent: :destroy
+             foreign_key: :registration_item_id,
+             dependent: :destroy,
+             inverse_of: :registration_item
 
     validates :registerable_id,
               uniqueness: {

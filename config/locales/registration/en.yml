@@ -112,6 +112,31 @@ en:
         registration: "Registration"
         finalization: "Finalization"
         both: "Both"
+    item:
+      index:
+        title: "Items"
+        none: "No items added yet."
+      add:
+        title: "Add Items"
+        none_available: "No items available to add."
+      columns:
+        title: "Title"
+        capacity: "Capacity"
+        registrations: "Registrations"
+      groups:
+        tutorials: "Tutorials"
+        talks: "Talks"
+        general: "General"
+      types:
+        tutorial: "Tutorial"
+        talk: "Talk"
+        lecture: "Lecture"
+        lecture_signup: "General Signup"
+      created: "Item added successfully."
+      destroyed: "Item removed successfully."
+      updated: "Item updated successfully."
+      cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
+      confirm_delete: "Are you sure you want to remove this item?"
   activerecord:
     errors:
       models:
