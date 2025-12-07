@@ -3233,7 +3233,7 @@ de:
     filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
     messages:
       campaign_unavailable: "Diese Kampagne ist derzeit nicht verfügbar."
-      campaign_closed: "Die Registrierung für diese Kampagne ist geschlossen."
+      campaign_not_opened: "Die Registrierung für diese Kampagne ist geschlossen."
       registration_success: "Registrierung erfolgreich abgeschlossen."
       registration_failed: "Registrierung konnte nicht abgeschlossen werden."
       already_registered: "Sie sind bereits für diese Kampagne registriert."

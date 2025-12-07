@@ -120,7 +120,7 @@ module Registration
     end
 
     def render_not_found(exception)
-      render json: { error: exception.message }, status: :unprocessable_content
+      render json: { error: exception.message }, status: :unprocessable_entity
     end
 
     private

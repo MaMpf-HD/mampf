@@ -16,7 +16,7 @@ module Registration
       phases = case @phase_scope.to_sym
                when :registration then [:registration, :both]
                when :finalization then [:finalization, :both]
-               else [phase_scope]
+               else [@phase_scope]
       end
       eligibility = phases.flat_map do |ph|
         PolicyEngine.new(@campaign).full_trace_with_config_for(@user, phase: ph)

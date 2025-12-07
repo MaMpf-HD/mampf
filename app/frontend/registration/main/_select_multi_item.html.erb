@@ -73,13 +73,13 @@
                   <%= button_to t("registration.withdraw"),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
-                    disable: !campaign.open_for_withdrawals?,
+                    disabled: !campaign.open_for_withdrawals?,
                     class: "btn btn-outline-danger btn-sm" %>
                 <% else %>
                   <%= button_to t("registration.register_now"),
                     register_item_path(campaign.id, item.id),
                     method: :post,
-                    disable: !campaign.open_for_registrations? || item.capacity_remained == 0,
+                    disabled: !campaign.open_for_registrations? || item.capacity_remained == 0,
                     class: "btn btn-primary btn-sm" %>
                 <% end %>
               <% else %>
@@ -87,7 +87,7 @@
                   <%= button_to t("registration.withdraw"),
                     withdraw_item_path(campaign.id, item.id),
                     method: :delete,
-                    disable: !campaign.open_for_withdrawals?,
+                    disabled: !campaign.open_for_withdrawals?,
                     class: "btn btn-outline-danger btn-sm" %>
                 <% else %>
                   <span class="text-muted small"><%= t("registration.withdraw_first") %></span>
