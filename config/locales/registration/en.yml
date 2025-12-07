@@ -159,3 +159,8 @@ en:
           attributes:
             base:
               frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."
+        registration/item:
+          attributes:
+            base:
+              capacity_too_low: "Capacity cannot be lower than the number of confirmed registrations (%{count})."
+              frozen: "Configuration cannot be changed because the registration campaign is no longer in draft mode."

@@ -6,23 +6,31 @@
       </div>
     </td>
     <td>
-      <%= form_with(model: item,
-                    url: registration_campaign_item_path(item.registration_campaign, item),
-                    method: :patch,
-                    data: { turbo: true }) do |f| %>
-        <div class="input-group input-group-sm" style="max-width: 150px;">
-          <%= f.number_field :capacity,
-                             class: "form-control",
-                             min: 0,
-                             disabled: !item.registration_campaign.draft? && item.registration_campaign.allocation_mode == "first_come_first_served" %>
-          <button class="btn btn-outline-secondary" type="submit">
-            <i class="bi bi-check-lg"></i>
-          </button>
-        </div>
-        <% if item.registerable.errors[:capacity].any? %>
-          <div class="text-danger small mt-1">
-            <%= item.registerable.errors[:capacity].join(", ") %>
+      <% if item.registration_campaign.completed? || item.registration_campaign.processing? %>
+        <%= item.capacity %>
+      <% else %>
+        <%= form_with(model: item,
+                      url: registration_campaign_item_path(item.registration_campaign, item),
+                      method: :patch,
+                      data: { turbo: true }) do |f| %>
+          <div class="input-group input-group-sm" style="max-width: 150px;">
+            <%= f.number_field :capacity,
+                               class: "form-control",
+                               min: 0 %>
+            <button class="btn btn-outline-success" type="submit">
+              <i class="bi bi-check-lg"></i>
+            </button>
           </div>
+          <% if item.errors[:base].any? %>
+            <div class="text-danger small mt-1">
+              <%= item.errors[:base].join(", ") %>
+            </div>
+          <% end %>
+          <% if item.registerable.errors[:capacity].any? %>
+            <div class="text-danger small mt-1">
+              <%= item.registerable.errors[:capacity].join(", ") %>
+            </div>
+          <% end %>
         <% end %>
       <% end %>
     </td>
