@@ -53,7 +53,7 @@
             <%= helpdesk(t('admin.medium.info.scheduled_release'), true) %>
           </div>
 
-          <%# Datetimepicker for release date %>
+          <!-- Datetimepicker for release date -->
           <div
             class="mb-3 input-group td-picker"
             id="release-date-picker"
@@ -62,6 +62,7 @@
             <%= f.text_field :release_date,
                              class: 'form-control td-input',
                              id: 'release_date',
+                             "data-testid": 'release-date-datetimepicker',
                              autocomplete: 'off',
                              value: medium.planned_release_date,
                             'data-td-target': '#release-date-picker'%>
