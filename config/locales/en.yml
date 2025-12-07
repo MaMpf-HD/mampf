@@ -3024,6 +3024,8 @@ en:
     withdraw: "Withdraw"
     withdraw_first: "Withdraw first"
     filter_placeholder: "Filter by weekday, time, tutor"
+    status_for_registration: "Current statuses of your submitted preferences"
+    submitted_pref: "Your submitted preferences"
     messages:
       campaign_unavailable: "This campaign is not accessible right now."
       campaign_not_opened: "Registration for this campaign is not opened."
@@ -3034,6 +3036,8 @@ en:
       requirements_not_met: "You do not meet the requirements."
       withdrawn: "You have withdrawn your registration."
       dependent_campaigns_block_withdrawal: "Withdrawal is blocked because the following campaigns are confirmed: %{names}"
+      cannot_secure_slot: "We are unable to secure a slot for you at this time."
+      course_admin_help: "Need help? Please contact the Course Administrator."
     
   package:
     no_zip: This file is not a .zip archive.
