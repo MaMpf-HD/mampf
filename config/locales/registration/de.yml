@@ -11,6 +11,7 @@ de:
       opened: "Anmeldung geöffnet."
       closed: "Anmeldung geschlossen."
       reopened: "Anmeldung wiedereröffnet."
+      cannot_reopen_allocated: "Anmeldung kann nicht wiedereröffnet werden, da die Platzvergabe bereits begonnen hat."
       index:
         title: "Anmeldungen"
         card_title: "Anmeldeverfahren"
@@ -42,7 +43,7 @@ de:
         draft: "Entwurf"
         open: "Offen"
         processing: "In Bearbeitung"
-        completed: "Abgeschlossen"
+        completed: "Erledigt"
         closed: "Geschlossen"
         planning: "Planung"
       actions:

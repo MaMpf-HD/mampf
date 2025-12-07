@@ -21,7 +21,7 @@
             <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>
             <td><%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %></td>
             <td>
-              <span class="badge bg-<%= campaign.open? ? 'success' : (campaign.closed? ? 'secondary' : 'warning') %>">
+              <span class="badge bg-<%= campaign_badge_color(campaign) %>">
                 <%= t("registration.campaign.status.#{campaign.status}") %>
               </span>
             </td>

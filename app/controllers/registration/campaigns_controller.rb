@@ -96,6 +96,11 @@ module Registration
     end
 
     def reopen
+      if @campaign.processing? || @campaign.completed?
+        respond_with_error(t("registration.campaign.cannot_reopen_allocated"))
+        return
+      end
+
       update_status(:open, t("registration.campaign.reopened"))
     end
 

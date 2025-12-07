@@ -11,6 +11,7 @@ en:
       opened: "Campaign opened."
       closed: "Campaign closed."
       reopened: "Campaign reopened."
+      cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
       index:
         title: "Registrations"
         card_title: "Registration Campaigns"

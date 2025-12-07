@@ -262,6 +262,19 @@ RSpec.describe("Registration::Campaigns", type: :request) do
         expect(campaign).to be_open
         expect(response).to redirect_to(registration_campaign_path(campaign))
       end
+
+      context "when campaign is completed" do
+        before { campaign.update!(status: :completed) }
+
+        it "does not reopen the campaign" do
+          patch reopen_registration_campaign_path(campaign)
+
+          campaign.reload
+          expect(campaign).to be_completed
+          expect(response).to redirect_to(registration_campaign_path(campaign))
+          expect(flash[:alert]).to be_present
+        end
+      end
     end
 
     context "as a student" do

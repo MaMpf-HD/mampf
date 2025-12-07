@@ -18,7 +18,7 @@
 
           <dt class="col-sm-4"><%= t("basics.status") %></dt>
           <dd class="col-sm-8">
-            <span class="badge bg-<%= campaign.open? ? 'success' : (campaign.closed? ? 'secondary' : 'warning') %>">
+            <span class="badge bg-<%= campaign_badge_color(campaign) %>">
               <%= t("registration.campaign.status.#{campaign.status}") %>
             </span>
           </dd>
@@ -31,13 +31,13 @@
       <div class="card h-100">
         <div class="card-body">
           <h6 class="card-subtitle mb-2 text-muted"><%= t("registration.campaign.overview.registrations") %></h6>
-          
+
           <div class="d-flex justify-content-between align-items-center mb-1">
             <div class="fw-semibold"><%= t("registration.campaign.overview.total") %></div>
             <span class="badge rounded-pill text-bg-success"><%= t("registration.campaign.overview.confirmed_count", count: 0) %></span>
           </div>
           <div class="small text-muted mb-2">
-            <%= t("registration.campaign.overview.pending_count", count: 0) %> · 
+            <%= t("registration.campaign.overview.pending_count", count: 0) %> ·
             <%= t("registration.campaign.overview.rejected_count", count: 0) %>
           </div>
           <div class="text-muted bg-light rounded py-1 px-2 mb-0 small">

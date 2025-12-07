@@ -7,7 +7,7 @@
       <i class="bi bi-arrow-left"></i> <%= t("back") %>
     <% end %>
   </div>
-  
+
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h3><%= campaign.title %></h3>
     <div class="d-flex gap-2">
@@ -23,7 +23,7 @@
                       method: :patch,
                       data: { confirm: t("registration.campaign.confirmations.reopen") },
                       class: "btn btn-success" %>
-      <% else %>
+      <% elsif campaign.draft? %>
         <%= button_to t("registration.campaign.actions.open"),
                       open_registration_campaign_path(campaign),
                       method: :patch,
