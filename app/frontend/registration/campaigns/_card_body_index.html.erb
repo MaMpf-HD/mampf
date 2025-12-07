@@ -4,6 +4,7 @@
       <thead>
         <tr>
           <th><%= t("registration.campaign.index.columns.title_column") %></th>
+          <th><%= t("registration.campaign.index.columns.type") %></th>
           <th><%= t("registration.campaign.index.columns.mode") %></th>
           <th><%= t("registration.campaign.index.columns.deadline") %></th>
           <th><%= t("basics.status") %></th>
@@ -18,6 +19,7 @@
                           class: "text-decoration-none text-reset",
                           data: { turbo_stream: true, row_link: true } %>
             </td>
+            <td><%= campaign_item_type_label(campaign) %></td>
             <td><%= t("registration.campaign.allocation_mode.#{campaign.allocation_mode}") %></td>
             <td><%= l(campaign.registration_deadline, format: :short) if campaign.registration_deadline %></td>
             <td>

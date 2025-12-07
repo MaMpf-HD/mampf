@@ -25,6 +25,7 @@ de:
         none: "Keine Anmeldeverfahren vorhanden."
         columns:
           title_column: "Titel"
+          type: "Typ"
           mode: "Zuteilungsmodus"
           opens_at: "Registrierungsbeginn"
           deadline: "Registrierungsende"
