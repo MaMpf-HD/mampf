@@ -1,85 +1,137 @@
 import { test, expect } from "./_support/fixtures";
 import { CampaignRegistrationPage } from "./page-objects/campaign_registrations_page";
 
-test.describe("register lecture campaign", () => {
-  test("creates a confirmed registration when validations pass, case no user registration", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
-    const page = new CampaignRegistrationPage(student.page, campaign.id);
-    await page.goto();
-
-    await page.register();
-    await expect(student.page.getByText(/Seats 1\/100/)).toBeVisible();
-  });
-
-  test("raises error if campaign is draft", async ({ factory, student }) => {
+test.describe("draft campaign", () => {
+  test("redirect and raise error if campaign is draft", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment"]);
-    await campaign.__call("update!");
-
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
 
-    await expect(page.register()).rejects.toThrow();
-  });
-
-  test("raises error if item has no capacity", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
-    const item = campaign.registration_items[0];
-    await item.registerable.__call("update!", { capacity: 0 });
-
-    const page = new CampaignRegistrationPage(student.page, campaign.id);
-    await page.goto();
-
-    await expect(page.register()).rejects.toThrow();
+    await expect(student.page.getByText("This campaign is not accessible right now.")).toBeVisible();
   });
 });
 
-test.describe("withdraw lecture campaign", () => {
-  test("updates to rejected registration when validations pass", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
+test.describe("processing campaign", () => {
+  test("should render campaign but not allow to interact, lecture campaign", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "processing"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
 
-    await page.register();
-    await page.withdraw();
-    await expect(student.page.getByText(/Seats 0\/100/)).toBeVisible();
+    await expect(student.page.getByText("Processing")).toBeVisible();
+    await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
+  });
+
+  test("should render campaign but not allow to interact, tutorial campaign", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["processing", "for_tutorial_enrollment"]);
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+
+    await expect(student.page.getByText("Processing")).toBeVisible();
+    const buttons = student.page.locator('button:has-text("Register now")');
+    await expect(buttons.nth(0)).toBeDisabled();
+    await expect(buttons.nth(1)).toBeDisabled();
   });
 });
 
-test.describe("register tutorial campaign", () => {
-  test("creates a confirmed registration when validations pass", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment"]);
+test.describe("closed campaign", () => {
+  test("should render campaign but not allow to interact, lecture campaign", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "closed"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
     await page.goto();
 
-    await page.register();
-    await expect(student.page.getByText(/Seats 1\/100/)).toBeVisible();
+    await expect(student.page.getByText("Closed")).toBeVisible();
+    await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
   });
 
-  test("raises error if user already registered for another item", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment"]);
-    const item2 = campaign.registration_items[1];
-    await factory.create("user_registration", [], {
-      registration_campaign_id: campaign.id,
-      registration_item_id: item2.id,
-      user_id: student.user.id,
-      status: "confirmed",
+  test("should render campaign but not allow to interact, tutorial campaign", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["closed", "for_tutorial_enrollment"]);
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+
+    await expect(student.page.getByText("Closed")).toBeVisible();
+    const buttons = student.page.locator('button:has-text("Register now")');
+    await expect(buttons.nth(0)).toBeDisabled();
+    await expect(buttons.nth(1)).toBeDisabled();
+  });
+});
+
+test.describe("open lecture campaign", () => {
+  test.describe("register open lecture campaign", () => {
+    test("creates a confirmed registration when validations pass, case no user registration", async ({ factory, student }) => {
+      const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
+      const page = new CampaignRegistrationPage(student.page, campaign.id);
+      await page.goto();
+
+      await page.register();
+      await expect(student.page.getByText(/\/100 filled/)).toContainText("1/100");
+      await expect(student.page.getByText("Open")).toBeVisible();
     });
 
-    const page = new CampaignRegistrationPage(student.page, campaign.id);
-    await page.goto();
+    test("cannot click register button if item has no capacity", async ({ factory, student }) => {
+      const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment", "no_capacity_remained_first_item"]);
+      const page = new CampaignRegistrationPage(student.page, campaign.id);
+      await page.goto();
+      await expect(student.page.getByRole("button", { name: "Register now" }).nth(0)).toBeDisabled();
+    });
+  });
 
-    await expect(page.register()).rejects.toThrow();
+  test.describe("withdraw open lecture campaign", () => {
+    test("updates to rejected registration when validations pass", async ({ factory, student }) => {
+      const campaign = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
+      const page = new CampaignRegistrationPage(student.page, campaign.id);
+      await page.goto();
+
+      await page.register();
+      await expect(student.page.getByRole("button", { name: "Withdraw" })).toBeEnabled();
+      await page.withdraw();
+      await expect(student.page.getByText(/\/100 filled/)).toContainText("0/100");
+      await expect(student.page.getByRole("button", { name: "Register now" })).toBeEnabled();
+    });
   });
 });
 
-test.describe("withdraw tutorial campaign", () => {
-  test("updates to rejected registration when validations pass", async ({ factory, student }) => {
-    const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment"]);
-    const page = new CampaignRegistrationPage(student.page, campaign.id);
-    await page.goto();
+test.describe("open tutorial campaign", () => {
+  test.describe("register open tutorial campaign", () => {
+    test("creates a confirmed registration when validations pass", async ({ factory, student }) => {
+      const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment"]);
+      const page = new CampaignRegistrationPage(student.page, campaign.id);
+      await page.goto();
 
-    await page.register();
-    await page.withdraw();
-    await expect(student.page.getByText(/Seats 0\/100/)).toBeVisible();
+      await expect(student.page.getByText(/\/200 filled/)).toContainText("0/200");
+      let buttons = student.page.locator('button:has-text("Register now")');
+      await expect(buttons).toHaveCount(2);
+      await expect(buttons.nth(0)).toBeEnabled();
+      await expect(buttons.nth(1)).toBeEnabled();
+
+      await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
+
+      buttons = student.page.locator('button:has-text("Register now")');
+      await expect(buttons).toHaveCount(0);
+      buttons = student.page.locator('button:has-text("Withdraw")');
+      await expect(buttons).toHaveCount(1);
+
+      await expect(student.page.getByText(/\/200 filled/)).toContainText("1/200");
+    });
+
+    test("cannot click register button if item has no capacity", async ({ factory, student }) => {
+      const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "no_capacity_remained_first_item"]);
+      const page = new CampaignRegistrationPage(student.page, campaign.id);
+      await page.goto();
+      const buttons = student.page.locator('button:has-text("Register now")');
+      await expect(buttons.nth(0)).toBeDisabled();
+      await expect(buttons.nth(1)).toBeEnabled();
+    });
+  });
+
+  test.describe("withdraw open tutorial campaign", () => {
+    test("updates to rejected registration when validations pass", async ({ factory, student }) => {
+      const campaign = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment"]);
+      const page = new CampaignRegistrationPage(student.page, campaign.id);
+      await page.goto();
+
+      await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
+      await page.withdraw();
+      await expect(student.page.getByText(/\/200 filled/)).toContainText("0/200");
+    });
   });
 });

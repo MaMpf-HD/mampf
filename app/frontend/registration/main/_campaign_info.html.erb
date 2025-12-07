@@ -19,7 +19,7 @@
       <span class="badge text-bg-info">
         <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
       </span>
-    <% else%>
+    <% elsif campaign.completed?%>
       <%if assigned%>
         <span class="badge text-bg-success">
           <%= t('basics.assigned') %>

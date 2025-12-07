@@ -65,6 +65,12 @@ FactoryBot.define do
       allocation_mode { :first_come_first_served }
     end
 
+    trait :no_capacity_remained_first_item do
+      after(:create) do |campaign|
+        campaign.registration_items.first.registerable.update!(capacity: 0)
+      end
+    end
+
     trait :for_lecture_enrollment do
       title { "Lecture Enrollment" }
       allocation_mode { :first_come_first_served }
