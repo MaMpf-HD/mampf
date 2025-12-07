@@ -10,6 +10,8 @@ module Registration
 
     belongs_to :registerable, polymorphic: true
 
+    delegate :title, :capacity, :capacity=, to: :registerable, allow_nil: true
+
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
              dependent: :destroy
@@ -18,5 +20,27 @@ module Registration
               uniqueness: {
                 scope: [:registration_campaign_id, :registerable_type]
               }
+
+    validate :registerable_type_consistency, on: :create
+    before_destroy :ensure_campaign_is_draft
+
+    private
+
+      def registerable_type_consistency
+        existing_item = registration_campaign.registration_items.where.not(id: nil).first
+        return unless existing_item
+
+        existing_type = existing_item.registerable_type
+        return unless registerable_type != existing_type
+
+        errors.add(:base, :mixed_types)
+      end
+
+      def ensure_campaign_is_draft
+        return if registration_campaign.draft?
+
+        errors.add(:base, :frozen)
+        throw(:abort)
+      end
   end
 end

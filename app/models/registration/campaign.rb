@@ -35,6 +35,7 @@ module Registration
     validate :allocation_mode_frozen, on: :update
     validate :registration_deadline_future_if_open
     validate :prerequisites_not_draft, if: :open?
+    validate :items_present_before_open, if: -> { status_changed? && open? }
 
     before_destroy :ensure_campaign_is_draft
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
@@ -111,6 +112,12 @@ module Registration
         return unless registration_deadline <= Time.current
 
         errors.add(:registration_deadline, :must_be_in_future)
+      end
+
+      def items_present_before_open
+        return unless registration_items.empty?
+
+        errors.add(:base, :no_items)
       end
 
       def policy_engine

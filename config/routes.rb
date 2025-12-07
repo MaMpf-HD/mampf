@@ -301,6 +301,10 @@ Rails.application.routes.draw do
           patch :move_down
         end
       end
+
+      resources :items,
+                controller: "registration/items",
+                only: [:create, :destroy, :update]
     end
   end
 
