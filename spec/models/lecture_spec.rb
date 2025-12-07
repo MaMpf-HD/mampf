@@ -234,7 +234,7 @@ RSpec.describe(Lecture, type: :model) do
     it "can create a registration_campaign" do
       campaign = lecture.registration_campaigns.create(
         title: "Test Campaign",
-        allocation_mode: :first_come_first_serve,
+        allocation_mode: :first_come_first_served,
         status: :draft,
         registration_deadline: 1.week.from_now
       )

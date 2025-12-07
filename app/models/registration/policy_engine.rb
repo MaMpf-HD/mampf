@@ -33,33 +33,6 @@ module Registration
       Result.new(pass: true, failed_policy: nil, trace: trace)
     end
 
-    def full_trace_for(user, phase: :registration)
-      policies_for_phase(phase).map do |policy|
-        outcome = policy.evaluate(user)
-
-        {
-          policy_id: policy.id,
-          kind: policy.kind,
-          phase: policy.phase,
-          outcome: outcome
-        }
-      end
-    end
-
-    def full_trace_with_config_for(user, phase: :registration)
-      policies_for_phase(phase).map do |policy|
-        outcome = policy.evaluate(user)
-
-        {
-          policy_id: policy.id,
-          kind: policy.kind,
-          phase: policy.phase,
-          config: policy.config,
-          outcome: outcome
-        }
-      end
-    end
-
     private
 
       attr_reader :campaign
