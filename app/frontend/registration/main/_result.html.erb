@@ -1,9 +1,12 @@
 <div class="row g-3">
+
+  <!--case student receive assignment -->
+  <%if item_succeed%>
   <div class="col-12 col-lg-8">
     <div class="card">
       <div class="card-body">
         <h2 class="h5"><%= t("basics.assignment") %></h2>
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-2">          
           <div>
             <div class="fs-6 fw-semibold">
               <%= item_succeed.title %> — <%= item_succeed.try(:time) || item_succeed.try(:title) %>
@@ -17,13 +20,13 @@
               <!--add tutor link -->
               <% if item_succeed.registerable.try(:tutors).present? %>
                 <%= t("basics.tutor") %>: 
-                <%= item_succeed.tutors.map { |e| link_to e.name, teacher_path(e) }.join(", ").html_safe %>
+                <%= item_succeed.registerable.tutors.map { |e| link_to e.name, teacher_path(e) }.join(", ").html_safe %>
                 <br>
               <% end %>
 
               <% if item_succeed.registerable.try(:position).present? %>
                 <%= t("basics.position") %>: <%= item_succeed.registerable.position %>
-              <% end 
+              <% end %>
             </div>
           </div>
           <span class="badge rounded-pill text-bg-success mt-2 mt-md-0">
@@ -46,13 +49,46 @@
   <div class="col-12 col-lg-4">
     <div class="card">
       <div class="card-body">
-        <h3 class="h6"><%= t("basics.preferences") %></h3>
+        <h3 class="h6">Your submitted preferences</h3>
         <ol class="small mb-0">
           <% items_selected.each do |item| %>
-            <li><%= item.title %> — <%= item.schedule %></li>
+            <li>
+              <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <%= item.title %> — <%= item.try(:time) || item.try(:title) %>
+                <%= confirm_status_badge(status_items_selected[item]) %>
+              </div>
+            </li>
           <% end %>
         </ol>
       </div>
     </div>
   </div>
+
+  <!--case all preferences are rejected -->
+  <%else%>
+  <div class="col-12 col-lg-8">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="h6">Your submitted preferences</h3>
+        <ol class="small mb-0">
+          <% items_selected.each do |item| %>
+            <li>
+              <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <%= item.title %> — <%= item.try(:time) || item.try(:title) %>
+                <%= confirm_status_badge(status_items_selected[item]) %>
+              </div>
+            </li>
+          <% end %>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        Some sorrow message #TODO
+      </div>
+    </div>
+  </div>
+  <%end%>
 </div>

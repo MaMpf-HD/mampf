@@ -3686,6 +3686,10 @@ de:
     position: "Position"
     room: "Raum"
     confirmed: "Bestätigt"
+    rejected: Abgelehnt
+    pending: Pending
+    assigned: "Zugewiesen"
+    dismissed: "Abgelehnt"
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'

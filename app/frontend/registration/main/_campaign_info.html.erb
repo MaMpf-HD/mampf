@@ -1,12 +1,12 @@
 <div class="d-flex justify-content-between align-items-start mb-3">
   <div>
-    <h1 class="h4 mb-1">
+    <div class="h4 mb-1 d-flex align-items-center gap-2">
       <%= campaignable_host.title %> - <%= campaign.title %> 
-      <span class="badge text-bg-primary"><%= campaign.status&.humanize %></span>
+      <span class="badge text-bg-primary fs-6"><%= campaign.status&.humanize %></span>
       <% if campaign.planning_only %>
-        <span class="badge text-bg-primary"><%= t('registration.planning') %></span>
+        <span class="badge text-bg-primary fs-6"><%= t('registration.planning') %></span>
       <% end %>
-    </h1>
+    </div>
 
     <div class="text-muted small">
       <%= campaignable_host.title_term_short %>
@@ -15,8 +15,21 @@
 
   <div class="text-end">
     <div class="text-muted small mb-1"><%= t('registration.campaign_main') %></div>
-    <span class="badge text-bg-danger">
-      <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
-    </span>
+    <%if campaign.open_for_registrations?%>
+      <span class="badge text-bg-info">
+        <%= t('basics.closes') %>: <%= format_date(campaign.registration_deadline) %>
+      </span>
+    <% else%>
+      <%if assigned%>
+        <span class="badge text-bg-success">
+          <%= t('basics.assigned') %>
+        </span>
+      <%else%>
+        <span class="badge text-bg-danger">
+          <%= t('basics.dismissed') %>
+        </span>
+      <%end%>
+    <%end%>
+
   </div>
 </div>

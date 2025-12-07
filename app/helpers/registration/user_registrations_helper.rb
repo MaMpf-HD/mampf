@@ -2,11 +2,11 @@ module Registration
   module UserRegistrationsHelper
     MODE_MAP = {
       -1 => { mode_name: "Unknown", abbr: "UNK",
-              badge_class: "badge rounded-pill text-bg-secondary" },
+              badge_class: "badge rounded-pill w-auto text-bg-secondary" },
       0 => { mode_name: "First-come, first-served", abbr: "FCFS",
-             badge_class: "badge rounded-pill text-bg-info" },
+             badge_class: "badge rounded-pill w-auto text-bg-info" },
       1 => { mode_name: "Preference Based", abbr: "PB",
-             badge_class: "badge rounded-pill text-bg-primary" }
+             badge_class: "badge rounded-pill w-auto text-bg-primary" }
     }
     def get_mode_info(mode)
       MODE_MAP.fetch(mode, MODE_MAP[-1])
@@ -90,8 +90,10 @@ module Registration
     module_function :format_date
 
     OUTCOME_MAP = {
-      true => { text: I18n.t("basics.passed"), badge_class: "badge rounded-pill text-bg-success" },
-      false => { text: I18n.t("basics.failed"), badge_class: "badge rounded-pill text-bg-danger" }
+      true => { text: I18n.t("basics.passed"),
+                badge_class: "badge rounded-pill w-auto text-bg-success" },
+      false => { text: I18n.t("basics.failed"),
+                 badge_class: "badge rounded-pill w-auto text-bg-danger" }
     }
 
     def get_outcome_info(outcome)
@@ -101,10 +103,23 @@ module Registration
     def eligibility_badge(pass)
       if pass
         content_tag(:span, I18n.t("registration.eligible"),
-                    class: "badge rounded-pill text-bg-success")
+                    class: "badge rounded-pill w-auto text-bg-success")
       else
         content_tag(:span, I18n.t("registration.not_eligible"),
-                    class: "badge rounded-pill text-bg-warning")
+                    class: "badge rounded-pill w-auto text-bg-warning")
+      end
+    end
+
+    def confirm_status_badge(status)
+      if status == "confirmed"
+        content_tag(:span, I18n.t("basics.confirmed"),
+                    class: "badge rounded-pill w-auto text-bg-success")
+      elsif status == "pending"
+        content_tag(:span, I18n.t("basics.pending"),
+                    class: "badge rounded-pill w-auto text-bg-warning")
+      elsif status == "rejected"
+        content_tag(:span, I18n.t("basics.rejected"),
+                    class: "badge rounded-pill w-auto text-bg-danger")
       end
     end
   end

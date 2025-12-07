@@ -1,5 +1,5 @@
 <div class="card-body">
-  <h2 class="h5"><%= t('registration.eligibility_title') %></h2>
+  <div class="h5"><%= t('registration.eligibility_title') %></div>
   
   <p class="mb-2 small text-muted">
     <% pass = eligibility.all? {|policy| policy[:outcome][:pass] } %>

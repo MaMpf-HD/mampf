@@ -3469,6 +3469,10 @@ en:
     position: "Position"
     room: "Room"
     confirmed: "Confirmed"
+    rejected: Rejected
+    pending: Pending
+    assigned: "Assigned"
+    dismissed: "Dismissed"
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

@@ -11,17 +11,15 @@
   </nav>
 
   <%= render partial:'registration/main/campaign_info', 
-            locals: { campaignable_host: @campaignable_host, 
+            locals: { campaignable_host: @campaignable_host,
+                      assigned: !!@item_succeed,
                       campaign: @campaign }%>
-
+    
+  <%= render partial:'registration/main/result',
+            locals: { campaign: @campaign, 
+                      item_succeed: @item_succeed, 
+                      status_items_selected: @status_items_selected,
+                      items_selected: @items_selected } %>
+    
   
-  <div class="row g-3">
-
-    <div class="card mt-3">
-      <%= render partial:'registration/main/result',
-                  locals: { campaign: @campaign, 
-                            item_succeed: @item_succeed, 
-                            items_selected: @items_selected } %>
-    </div>
   
-  </div>
