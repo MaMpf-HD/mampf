@@ -11,7 +11,8 @@ module Registration
 
     def index
       authorize! :index, Registration::Campaign.new(campaignable: @lecture)
-      @campaigns = @lecture.registration_campaigns.includes(:registration_items).order(created_at: :desc)
+      @campaigns = @lecture.registration_campaigns.includes(:registration_items)
+                           .order(created_at: :desc)
 
       respond_to do |format|
         format.html
