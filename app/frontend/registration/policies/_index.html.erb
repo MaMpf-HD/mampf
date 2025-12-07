@@ -2,7 +2,9 @@
   <div class="card-header d-flex justify-content-between align-items-center">
     <h5 class="card-title mb-0">
       <%= t("registration.policy.index.title") %>
-      <% unless @campaign.draft? %>
+      <% if @campaign.draft? %>
+        <%= helpdesk(t("registration.policy.helpdesk.policies"), false) %>
+      <% else %>
         <%= helpdesk(t("registration.policy.helpdesk.policies_frozen"), false) %>
       <% end %>
     </h5>

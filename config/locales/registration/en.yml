@@ -12,6 +12,12 @@ en:
       closed: "Campaign closed."
       reopened: "Campaign reopened."
       cannot_reopen_allocated: "Cannot reopen campaign because allocation has already started."
+      helpdesk:
+        campaigns: "Campaigns manage the registration process for tutorials, seminars, or exams. They define deadlines, allocation modes, and eligibility rules."
+        allocation_mode: "Determines the registration process. 'First-Come-First-Served': Users register for a specific item and are immediately confirmed or rejected based on capacity. 'Preference-Based': Users submit preferences for multiple items. The final distribution is calculated globally after the deadline."
+        registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
+        planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed."
+        allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
       index:
         title: "Registrations"
         card_title: "Registration Campaigns"
@@ -68,6 +74,11 @@ en:
           other: "Rejected %{count}"
         items: "Items"
     policy:
+      helpdesk:
+        policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
+        policies_frozen: "Policies cannot be modified once the campaign has been opened or is no longer a draft."
+        kind: "The type of rule to enforce. For example, 'Institutional Email' requires users to have an email address from a specific domain."
+        phase: "When the rule is checked. 'Registration': Checked when the student tries to register. 'Finalization': Checked when the final assignment is calculated (after the registration deadline has passed). 'Both': Checked at both times."
       index:
         title: "Policies"
         add: "Add Policy"
@@ -93,9 +104,6 @@ en:
         lecture_id: "Lecture"
       hints:
         allowed_domains: "e.g. uni-heidelberg.de, mathi.uni-heidelberg.de"
-      helpdesk:
-        allocation_mode_frozen: "Allocation mode cannot be changed once the campaign is not in draft mode."
-        policies_frozen: "Policies cannot be added, modified, or removed once the campaign is not in draft mode."
       kinds:
         institutional_email: "Institutional Email"
         prerequisite_campaign: "Prerequisite Campaign"

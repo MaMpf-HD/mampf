@@ -11,6 +11,7 @@
   <div class="row g-2 align-items-end mb-3">
     <div class="col-12 col-md-6">
       <%= f.label :kind, t("registration.policy.kind"), class: "form-label" %>
+      <%= helpdesk(t("registration.policy.helpdesk.kind"), false) %>
       <%= f.select :kind,
                    Registration::Policy.kinds.keys.map { |k| [t("registration.policy.kinds.#{k}"), k] },
                    {},
@@ -19,6 +20,7 @@
     </div>
     <div class="col-12 col-md-6">
       <%= f.label :phase, t("registration.policy.phase"), class: "form-label" %>
+      <%= helpdesk(t("registration.policy.helpdesk.phase"), false) %>
       <%= f.select :phase,
                    Registration::Policy.phases.keys.map { |k| [t("registration.policy.phases.#{k}"), k] },
                    {},
