@@ -95,3 +95,5 @@ group :development, :test do
   gem "ruby-lsp-rspec", "~> 0.1.28", require: false
   gem "simplecov-cobertura", "~> 3.1"
 end
+
+gem "kamal", "~> 2.9"
