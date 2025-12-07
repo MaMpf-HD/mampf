@@ -14,8 +14,8 @@
           <div class="fw-semibold"><%= policy[:kind]&.humanize %></div>
           <% policy_info = get_policy_config_info(policy) %>
           <% if get_details_render_type_policy_kind(policy[:kind]) == 'link' %>
-            
-            <small class="text-muted"><%= policy_info %></small>
+            <small class="text-muted"><%= link_to "Prerequisite Campaign",
+              campaign_registrations_for_campaign_path(campaign_id: policy_info), target: :_blank %></small>        
           <% else %>
             <small class="text-muted"><%= policy_info %></small>
           <% end %>

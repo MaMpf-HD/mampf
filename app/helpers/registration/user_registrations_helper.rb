@@ -28,10 +28,7 @@ module Registration
         domains = Array(policy[:config]["allowed_domains"])
         domains.join(", ")
       when "prerequisite_campaign"
-        {
-          id: policy[:config]["prerequisite_campaign_id"],
-          info: policy[:config]["prerequisite_campaign_info"]
-        }
+        policy[:config]["prerequisite_campaign_id"]
       else
         "No configuration available"
       end

@@ -18,18 +18,9 @@ module Registration
                when :finalization then [:finalization, :both]
                else [@phase_scope]
       end
-      eligibility = phases.flat_map do |ph|
+      phases.flat_map do |ph|
         PolicyEngine.new(@campaign).full_trace_with_config_for(@user, phase: ph)
       end
-
-      eligibility.each do |policy_trace|
-        next unless policy_trace[:kind] == "prerequisite_campaign"
-
-        prereq_campaign_id = policy_trace[:config][:prerequisite_campaign_id]
-        prereq_campaign = Registration::Campaign.find_by(id: prereq_campaign_id)
-        policy_trace[:config]["prerequisite_campaign_info"] = "TODO" if prereq_campaign
-      end
-      eligibility
     end
   end
 end
