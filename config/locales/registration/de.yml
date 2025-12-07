@@ -73,6 +73,8 @@ de:
           one: "Abgelehnt %{count}"
           other: "Abgelehnt %{count}"
         items: "Elemente"
+      warnings:
+        no_items: "Dieses Anmeldeverfahren hat noch keine Einträge. Studierende können sich für nichts anmelden."
     policy:
       helpdesk:
         policies: "Richtlinien sind Regeln, die einschränken, wer sich anmelden darf (z.B. nur Nutzende mit bestimmten E-Mail-Domains oder Studierende, die bestimmte Leistungen erbracht haben)."

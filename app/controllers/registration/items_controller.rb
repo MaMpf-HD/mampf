@@ -24,6 +24,7 @@ module Registration
               turbo_stream.replace("registration_items_container",
                                    partial: "registration/campaigns/card_body_items",
                                    locals: { campaign: @campaign }),
+              turbo_stream.update("items-tab-count", @campaign.registration_items.count),
               stream_flash
             ]
           end
@@ -54,8 +55,8 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = t("registration.item.updated")
             render turbo_stream: [
-              turbo_stream.replace(dom_id(@item), partial: "registration/items/item",
-                                                  locals: { item: @item }),
+              turbo_stream.replace(@item, partial: "registration/items/item",
+                                          locals: { item: @item }),
               stream_flash
             ]
           end
@@ -67,8 +68,8 @@ module Registration
                         alert: registerable.errors.full_messages.to_sentence
           end
           format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(dom_id(@item), partial: "registration/items/item",
-                                                                     locals: { item: @item })
+            render turbo_stream: turbo_stream.replace(@item, partial: "registration/items/item",
+                                                             locals: { item: @item })
           end
         end
       end
@@ -93,6 +94,7 @@ module Registration
             turbo_stream.replace("registration_items_container",
                                  partial: "registration/campaigns/card_body_items",
                                  locals: { campaign: @campaign }),
+            turbo_stream.update("items-tab-count", @campaign.registration_items.count),
             stream_flash
           ]
         end

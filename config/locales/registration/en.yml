@@ -73,6 +73,8 @@ en:
           one: "Rejected %{count}"
           other: "Rejected %{count}"
         items: "Items"
+      warnings:
+        no_items: "This campaign has no items yet. Students won't be able to register for anything."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."

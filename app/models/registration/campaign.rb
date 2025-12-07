@@ -37,7 +37,7 @@ module Registration
     validate :prerequisites_not_draft, if: :open?
     validate :items_present_before_open, if: -> { status_changed? && open? }
 
-    before_destroy :ensure_campaign_is_draft
+    before_destroy :ensure_campaign_is_draft, prepend: true
     before_destroy :ensure_not_referenced_as_prerequisite, prepend: true
 
     def locale_with_inheritance

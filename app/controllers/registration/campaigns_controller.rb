@@ -58,7 +58,21 @@ module Registration
       authorize! :create, @campaign
 
       if @campaign.save
-        respond_with_success(t("registration.campaign.created"))
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, tab: "items"),
+                        notice: t("registration.campaign.created")
+          end
+          format.turbo_stream do
+            flash.now[:notice] = t("registration.campaign.created")
+            render turbo_stream: [
+              turbo_stream.replace("campaigns_card_body",
+                                   partial: "registration/campaigns/card_body_show",
+                                   locals: { campaign: @campaign, tab: "items" }),
+              stream_flash
+            ]
+          end
+        end
       else
         respond_with_form_error(t("registration.campaign.create_failed"), :new)
       end
