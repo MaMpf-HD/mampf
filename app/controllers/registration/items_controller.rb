@@ -13,11 +13,32 @@ module Registration
       authorize! :create, @item
 
       if @item.save
-        redirect_to registration_campaign_path(@campaign, tab: "items"),
-                    notice: t("registration.item.created")
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, tab: "items"),
+                        notice: t("registration.item.created")
+          end
+          format.turbo_stream do
+            flash.now[:notice] = t("registration.item.created")
+            render turbo_stream: [
+              turbo_stream.replace("registration_items_container",
+                                   partial: "registration/campaigns/card_body_items",
+                                   locals: { campaign: @campaign }),
+              stream_flash
+            ]
+          end
+        end
       else
-        redirect_to registration_campaign_path(@campaign, tab: "items"),
-                    alert: @item.errors.full_messages.to_sentence
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, tab: "items"),
+                        alert: @item.errors.full_messages.to_sentence
+          end
+          format.turbo_stream do
+            flash.now[:alert] = @item.errors.full_messages.to_sentence
+            render turbo_stream: stream_flash
+          end
+        end
       end
     end
 
@@ -26,21 +47,28 @@ module Registration
 
       if registerable.update(capacity_params)
         respond_to do |format|
-          format.turbo_stream
           format.html do
             redirect_to registration_campaign_path(@campaign, tab: "items"),
                         notice: t("registration.item.updated")
           end
+          format.turbo_stream do
+            flash.now[:notice] = t("registration.item.updated")
+            render turbo_stream: [
+              turbo_stream.replace(dom_id(@item), partial: "registration/items/item",
+                                                  locals: { item: @item }),
+              stream_flash
+            ]
+          end
         end
       else
         respond_to do |format|
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(@item, partial: "registration/items/item",
-                                                             locals: { item: @item })
-          end
           format.html do
             redirect_to registration_campaign_path(@campaign, tab: "items"),
                         alert: registerable.errors.full_messages.to_sentence
+          end
+          format.turbo_stream do
+            render turbo_stream: turbo_stream.replace(dom_id(@item), partial: "registration/items/item",
+                                                                     locals: { item: @item })
           end
         end
       end
@@ -54,8 +82,21 @@ module Registration
       end
 
       @item.destroy
-      redirect_to registration_campaign_path(@campaign, tab: "items"),
-                  notice: t("registration.item.destroyed")
+      respond_to do |format|
+        format.html do
+          redirect_to registration_campaign_path(@campaign, tab: "items"),
+                      notice: t("registration.item.destroyed")
+        end
+        format.turbo_stream do
+          flash.now[:notice] = t("registration.item.destroyed")
+          render turbo_stream: [
+            turbo_stream.replace("registration_items_container",
+                                 partial: "registration/campaigns/card_body_items",
+                                 locals: { campaign: @campaign }),
+            stream_flash
+          ]
+        end
+      end
     end
 
     private

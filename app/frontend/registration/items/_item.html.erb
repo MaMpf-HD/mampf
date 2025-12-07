@@ -1,5 +1,4 @@
-<%= turbo_frame_tag item do %>
-  <tr>
+<tr id="<%= dom_id(item) %>">
     <td>
       <%= item.title %>
       <div class="text-muted small">
@@ -41,4 +40,3 @@
       <% end %>
     </td>
   </tr>
-<% end %>
