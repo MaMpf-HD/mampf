@@ -10,7 +10,11 @@ module Registration
 
     belongs_to :registerable, polymorphic: true, autosave: true
 
-    delegate :title, :capacity, :capacity=, to: :registerable, allow_nil: true
+    delegate :capacity, :capacity=, to: :registerable, allow_nil: true
+
+    def title
+      registerable&.registration_title || registerable&.title
+    end
 
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",

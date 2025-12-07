@@ -1,6 +1,7 @@
 module Registration
   class ItemsController < ApplicationController
     before_action :set_campaign
+    before_action :set_locale
     before_action :set_item, only: [:destroy, :update]
     authorize_resource class: "Registration::Item", except: [:create]
 
@@ -105,6 +106,10 @@ module Registration
 
       def set_campaign
         @campaign = Registration::Campaign.find(params[:registration_campaign_id])
+      end
+
+      def set_locale
+        I18n.locale = @campaign&.locale_with_inheritance || I18n.locale
       end
 
       def set_item
