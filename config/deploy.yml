@@ -18,7 +18,14 @@
 # echo 'username ALL=(ALL:ALL) NOPASSWD: ALL' | tee /etc/sudoers.d/username
 # chmod 0440 /etc/sudoers.d/username
 # visudo -c -f /etc/sudoers.d/username
-# usermod -aG docker username
+# usermod -aG docker username  # (probably not necessary to do this)
+
+# 🎈 Only allow users to login via ssh keys, not passwords
+# https://itsfoss.gitlab.io/post/disable-ssh-password-authentication-for-specific-user-or-group/
+# sudo nano /etc/ssh/sshd_config
+# Set `PasswordAuthentication no`
+# Then restart the ssh service:
+# sudo systemctl restart sshd
 
 # 🎈 Create a GitHub Access Token (classic)
 # see https://kurtpeniket.co.uk/blog/kamal_with_ghcr
