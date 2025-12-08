@@ -45,9 +45,11 @@ module Registration
     end
 
     def update
-      registerable = @item.registerable
-
-      if registerable.update(capacity_params)
+      # Update capacity via item, not via registerable, otherwise
+      # item's validations like :capacity_respects_confirmed_count won't run
+      # This works because we delegated :capacity to :registerable in the model
+      # and have autosave: true on the registerable association
+      if @item.update(capacity_params)
         respond_to do |format|
           format.html do
             redirect_to registration_campaign_path(@campaign, tab: "items"),
@@ -66,7 +68,7 @@ module Registration
         respond_to do |format|
           format.html do
             redirect_to registration_campaign_path(@campaign, tab: "items"),
-                        alert: registerable.errors.full_messages.to_sentence
+                        alert: @item.errors.full_messages.to_sentence
           end
           format.turbo_stream do
             render turbo_stream: turbo_stream.replace(@item, partial: "registration/items/item",
