@@ -23,8 +23,6 @@
 # 🎈 Create a GitHub Access Token (classic)
 # see https://kurtpeniket.co.uk/blog/kamal_with_ghcr
 
-# <% require "dotenv"; Dotenv.load(".env") %>
-
 service: mampf
 image: splines/mampf
 
