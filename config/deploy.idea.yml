@@ -1,0 +1,128 @@
+# see also
+# https://kamal-deploy.org/docs/
+# https://kurtpeniket.co.uk/blog/kamal_with_ghcr
+# https://jetthoughts.com/blog/kamal-2.0-complete-rails-deployment-guide-deploy-without-heroku-in-2025/
+# https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/app/templates/config/deploy.yml.tt
+
+service: mampf
+image: mampf
+
+servers:
+  web:
+    hosts:
+      - 91.98.178.89
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: web
+    options:
+      network: "mampf"
+  job:
+    hosts:
+      - 91.98.178.89
+    cmd: bundle exec sidekiq
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: worker
+    options:
+      network: "mampf"
+
+proxy:
+  ssl: true
+  host: mampf.media
+  app_port: 3000
+
+registry:
+  server: ghcr.io
+  username: mampf-hd
+  password:
+    - KAMAL_REGISTRY_PASSWORD
+
+builder:
+  arch: amd64
+  dockerfile: docker/production/Dockerfile
+  context: .
+
+env:
+  clear:
+    RAILS_ENV: production
+    REDIS_URL: redis://mampf-redis:6379/0
+    MEMCACHED_SERVER: mampf-cache
+    GIT_BRANCH: main
+    INSTANCE_NAME: mampf
+    BLOG: https://mampf.blog
+    MEDIA_SERVER: https://media.mathi.uni-heidelberg.de
+    MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
+    FROM_ADDRESS: mampf@mathi.uni-heidelberg.de
+    MAILSERVER: mail.mathi.uni-heidelberg.de
+    PROJECT_EMAIL: mampf@mathi.uni-heidelberg.de
+    MAILID_DOMAIN: mathi.uni-heidelberg.de
+    ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
+    IMAPSERVER: mail.mathi.uni-heidelberg.de
+    MAX_DELETIONS_PER_RUN: 50
+  secret:
+    - RAILS_MASTER_KEY
+    - PRODUCTION_DATABASE_URL
+    - PROJECT_EMAIL_USERNAME
+    - PROJECT_EMAIL_PASSWORD
+    - PROJECT_EMAIL_MAILBOX
+    - MAMPF_EMAIL_USERNAME
+    - MAMPF_EMAIL_PASSWORD
+    - FEEDBACK_EMAIL
+    - PROJECT_NOTIFICATION_EMAIL
+
+ssh:
+  user: root
+
+volumes:
+  - "/mnt/nfs/mampf/media:/private/media"
+  - "/mnt/nfs/mampf/submissions:/private/submissions"
+  - "/mnt/nfs/mampf/caches:/caches"
+  - "mampf-public:/usr/src/app/public"
+
+asset_path: /usr/src/app/public/assets
+
+boot:
+  limit: 25%
+  wait: 10
+
+healthcheck:
+  path: /health
+  port: 3000
+  max_attempts: 7
+  interval: 20s
+
+aliases:
+  console: app exec --interactive --reuse "bin/rails console"
+  shell: app exec --interactive --reuse "bash"
+  logs: app logs --follow
+  dbconsole: app exec "bin/rails dbconsole"
+
+accessories:
+  redis:
+    image: redis:6-alpine
+    host: 91.98.178.89
+    port: 6379
+    directories:
+      - data:/data
+    options:
+      network: "mampf"
+
+  cache:
+    image: memcached:alpine
+    host: 91.98.178.89
+    port: 11211
+    options:
+      network: "mampf"
+
+  db:
+    image: postgres:14-alpine
+    host: 91.98.178.89
+    port: "127.0.0.1:5432:5432"
+    env:
+      clear:
+        POSTGRES_USER: mampf
+        POSTGRES_DB: mampf
+      secret:
+        - POSTGRES_PASSWORD
+    directories:
+      - data:/var/lib/postgresql/data
+    options:
+      network: "postgres"
