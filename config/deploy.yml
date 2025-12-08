@@ -1,16 +1,29 @@
-# see also
+# 🔗 See also
 # https://kamal-deploy.org/docs/
 # https://kurtpeniket.co.uk/blog/kamal_with_ghcr
 # https://jetthoughts.com/blog/kamal-2.0-complete-rails-deployment-guide-deploy-without-heroku-in-2025/
 # https://github.com/rails/rails/blob/main/railties/lib/rails/generators/rails/app/templates/config/deploy.yml.tt
 
-# Name of your application. Used to uniquely configure containers.
-service: mampf
+# 🎈 Create a `kamal` user on the server:
+# https://nts.strzibny.name/using-non-root-users-kamal/
+#
+# useradd --create-home username
+# usermod -s /bin/bash username
+#
+# su - username -c 'mkdir -p ~/.ssh'
+# su - username -c 'touch ~/.ssh/authorized_keys'
+# Add your SSH public key to the new user's authorized_keys file. Then:
+# chmod 700 /home/username/.ssh
+# chmod 600 /home/username/.ssh/authorized_keys
+#
+# echo 'username ALL=(ALL:ALL) NOPASSWD: ALL' | tee /etc/sudoers.d/username
+# chmod 0440 /etc/sudoers.d/username
+# visudo -c -f /etc/sudoers.d/username
+# usermod -aG docker username
 
-# Name of the container image.
+service: mampf
 image: mampf
 
-# Deploy to these servers.
 servers:
   web:
     - 91.98.178.89
@@ -58,10 +71,8 @@ builder:
 # aliases:
 #   shell: app exec --interactive --reuse "bash"
 
-# Use a different ssh user than root
-#
-# ssh:
-#   user: app
+ssh:
+  user: kamal
 
 # Use a persistent storage volume.
 #
