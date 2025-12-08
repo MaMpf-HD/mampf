@@ -10,11 +10,11 @@ module Registration
 
     belongs_to :registerable, polymorphic: true, autosave: true
 
+    # NOTE: Always update capacity via item, not directly via registerable,
+    # otherwise item's validations like :capacity_respects_confirmed_count
+    # won't run. This works because we delegated :capacity to :registerable
+    # in the model and have autosave: true on the registerable association
     delegate :capacity, :capacity=, to: :registerable, allow_nil: true
-
-    def title
-      registerable&.registration_title || registerable&.title
-    end
 
     has_many :user_registrations,
              class_name: "Registration::UserRegistration",
@@ -30,6 +30,10 @@ module Registration
     validate :registerable_type_consistency, on: :create
     validate :capacity_respects_confirmed_count, on: :update
     before_destroy :ensure_campaign_is_draft
+
+    def title
+      registerable&.registration_title || registerable&.title
+    end
 
     private
 

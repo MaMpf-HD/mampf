@@ -45,10 +45,6 @@ module Registration
     end
 
     def update
-      # Update capacity via item, not via registerable, otherwise
-      # item's validations like :capacity_respects_confirmed_count won't run
-      # This works because we delegated :capacity to :registerable in the model
-      # and have autosave: true on the registerable association
       if @item.update(capacity_params)
         respond_to do |format|
           format.html do
