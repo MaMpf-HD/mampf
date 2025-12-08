@@ -21,12 +21,31 @@
 # visudo -c -f /etc/sudoers.d/username
 # usermod -aG docker username
 
+# Multiple container deployment
+# https://github.com/basecamp/kamal/issues/1505
+
 service: mampf
 image: mampf
 
 servers:
   web:
-    - 91.98.178.89
+    hosts:
+      - 91.98.178.89
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: master
+    options:
+      network: "mampf"
+    cmd: /usr/src/app/docker/production/entrypoint-master.sh
+  
+  worker:
+    hosts:
+      - 91.98.178.89
+    count: 3
+    labels:
+      de.uni-heidelberg.mathi.mampf.container-type: worker
+    options:
+      network: "mampf"
+    cmd: /usr/src/app/docker/production/entrypoint-worker.sh
 
 # Enable SSL auto certification via Let's Encrypt and allow for multiple apps on a single web server.
 # Remove this section when using multiple web servers and ensure you terminate SSL at your load balancer.
@@ -36,7 +55,7 @@ proxy:
   ssl: true
   host: mampf.media
   # Proxy connects to your container on port 80 by default.
-  # app_port: 3000
+  app_port: 3000
 
 # Credentials for your image host.
 registry:
