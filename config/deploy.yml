@@ -23,6 +23,8 @@
 # 🎈 Create a GitHub Access Token (classic)
 # see https://kurtpeniket.co.uk/blog/kamal_with_ghcr
 
+# <% require "dotenv"; Dotenv.load(".env") %>
+
 service: mampf
 image: splines/mampf
 
@@ -32,8 +34,6 @@ servers:
       - 91.98.178.89
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: master
-    options:
-      network: "mampf"
     cmd: /usr/src/app/docker/production/entrypoint-master.sh
   
   worker:
@@ -42,8 +42,6 @@ servers:
     count: 3
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: worker
-    options:
-      network: "mampf"
     cmd: /usr/src/app/docker/production/entrypoint-worker.sh
 
 proxy:
@@ -61,17 +59,52 @@ builder:
   arch: amd64
   dockerfile:
     docker/production/Dockerfile
-  # Pass in additional build args needed for your Dockerfile.
-  # args:
-  #   RUBY_VERSION: <%= ENV["RBENV_VERSION"] || ENV["rvm_ruby_string"] || "#{RUBY_ENGINE}-#{RUBY_ENGINE_VERSION}" %>
 
-# Inject ENV variables into containers (secrets come from .kamal/secrets).
-#
-# env:
-#   clear:
-#     DB_HOST: mampf-db
-#   secret:
-#     - RAILS_MASTER_KEY
+env:
+  clear:
+    BLOG: https://mampf.blog
+    MEDIA_SERVER: https://media.mathi.uni-heidelberg.de
+    MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
+    MEMCACHED_SERVER: cache
+    MAX_DELETIONS_PER_RUN: 50
+    FROM_ADDRESS: mampf@mathi.uni-heidelberg.de
+    MAILSERVER: mail.mathi.uni-heidelberg.de
+    PROJECT_EMAIL: mampf@mathi.uni-heidelberg.de
+    MAILID_DOMAIN: mathi.uni-heidelberg.de
+    ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
+    IMAPSERVER: mail.mathi.uni-heidelberg.de
+    PROJECT_EMAIL_MAILBOX: "Other Users/mampf"
+    FEEDBACK_EMAIL: mampf-feedback-email
+    DOWNLOAD_LOCATION: https://mampf.mathi.uni-heidelberg.de/mediaforward
+    REWRITE_ENABLED: 1
+    USE_CAPTCHA_SERVICE: 1
+    CAPTCHA_VERIFY_URL: https://captcha2go.mathi.uni-heidelberg.de/v1/verify
+    CAPTCHA_PUZZLE_URL: https://captcha2go.mathi.uni-heidelberg.de/v1/puzzle
+    MEDIA_PATH: /private/media
+    SUBMISSION_PATH: /private/submissions
+    PRODUCTION_DATABASE_ADAPTER: postgresql
+    PRODUCTION_DATABASE_DATABASE: mampf
+    PRODUCTION_DATABASE_INTERACTIONS: mampf_interactions
+    PRODUCTION_DATABASE_HOST: db
+    PRODUCTION_DATABASE_PORT: 5432
+    RAILS_ENV: production
+    URL_HOST: mampf.mathi.uni-heidelberg.de
+    MAMPF_PORT: 3000
+    REDIS_URL: redis://redis:6379/0
+    RAILS_SERVE_STATIC_FILES: true
+    RAILS_LOG_TO_STDOUT: true
+  secret:
+    - RAILS_MASTER_KEY
+    - SECRET_KEY_BASE
+    - PROJECT_NOTIFICATION_EMAIL
+    - PROJECT_EMAIL_USERNAME
+    - PROJECT_EMAIL_PASSWORD
+    - MAMPF_EMAIL_USERNAME
+    - MAMPF_EMAIL_PASSWORD
+    - CAPTCHA_APPLICATION_TOKEN
+    - PRODUCTION_DATABASE_USERNAME
+    - PRODUCTION_DATABASE_PASSWORD
+    - PRODUCTION_DATABASE_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
@@ -82,28 +115,25 @@ builder:
 ssh:
   user: kamal
 
-# Use a persistent storage volume.
-#
-# volumes:
-#   - "app_storage:/app/storage"
+volumes:
+  - "/mnt/media:/private/media"
+  - "/mnt/submissions:/private/submissions"
+  - "/mnt/caches:/caches"
 
-# Bridge fingerprinted assets, like JS and CSS, between versions to avoid
-# hitting 404 on in-flight requests. Combines all files from new and old
-# version inside the asset_path.
-#
-# asset_path: /app/public/assets
-
-# Configure rolling deploys by setting a wait time between batches of restarts.
-#
-# boot:
-#   limit: 10 # Can also specify as a percentage of total hosts, such as "25%"
-#   wait: 2
+# for asset bridging across deploys
+asset_path: /usr/src/app/public/assets
 
 accessories:
   db:
     image: postgres:17-bookworm
     host: 91.98.178.89
-    port: "127.0.0.1:3306:3306"
+    port: "127.0.0.1:5432:5432"
+    env:
+      clear:
+        POSTGRES_DB: mampf
+      secret:
+        - POSTGRES_USER
+        - POSTGRES_PASSWORD
     files:
       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
@@ -111,9 +141,11 @@ accessories:
 
   redis:
     image: redis:6-alpine
+    host: 91.98.178.89
 
   cache:
     image: memcached:alpine
+    host: 91.98.178.89
 
   nginx:
     image: openresty/openresty:alpine
