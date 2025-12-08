@@ -18,7 +18,12 @@
 # echo 'username ALL=(ALL:ALL) NOPASSWD: ALL' | tee /etc/sudoers.d/username
 # chmod 0440 /etc/sudoers.d/username
 # visudo -c -f /etc/sudoers.d/username
-# usermod -aG docker username  # (probably not necessary to do this)
+
+# The following command can only be run after docker is installed.
+# Kamal installs docker automatically when you run `kamal setup`.
+# Afterwards, you will get permission denied errors on the docker.sock.
+# To fix those, add the user to the docker group:
+# usermod -aG docker username
 
 # 🎈 Only allow users to login via ssh keys, not passwords
 # https://itsfoss.gitlab.io/post/disable-ssh-password-authentication-for-specific-user-or-group/
@@ -33,7 +38,7 @@
 # 🎈 Deploy
 # (sourcing the .env file in your terminal does not work)
 # bundle exec dotenv kamal setup
-# kamal deploy
+# bundle exec dotenv kamal deploy
 
 service: mampf
 image: splines/mampf
