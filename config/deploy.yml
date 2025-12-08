@@ -31,8 +31,8 @@
 # see https://kurtpeniket.co.uk/blog/kamal_with_ghcr
 
 # 🎈 Deploy
-# source .env
-# kamal setup
+# (sourcing the .env file in your terminal does not work)
+# bundle exec dotenv kamal setup
 # kamal deploy
 
 service: mampf
