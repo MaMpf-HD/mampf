@@ -53,16 +53,10 @@ production:
     adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
     encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
     database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
-    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
-    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
-    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
-    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+    url: <%= ENV['PRODUCTION_DATABASE_URL'] %>
   interactions:
     adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
     encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
     database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
-    username: <%= ENV['PRODUCTION_DATABASE_USERNAME'] %>
-    password: <%= ENV['PRODUCTION_DATABASE_PASSWORD'] %>
-    host: <%= ENV['PRODUCTION_DATABASE_HOST'] %>
-    port: <%= ENV['PRODUCTION_DATABASE_PORT'] %>
+    url: <%= ENV['PRODUCTION_DATABASE_URL'] %>
     migrations_paths: db/interactions_migrate

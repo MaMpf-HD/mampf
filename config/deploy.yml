@@ -5,6 +5,7 @@
 
 # 🎈 Create a `kamal` user on the server:
 # https://nts.strzibny.name/using-non-root-users-kamal/
+# Replace `username` by `kamal` in the following.
 #
 # useradd --create-home username
 # usermod -s /bin/bash username
@@ -109,7 +110,6 @@ env:
     PRODUCTION_DATABASE_ADAPTER: postgresql
     PRODUCTION_DATABASE_DATABASE: mampf
     PRODUCTION_DATABASE_INTERACTIONS: mampf_interactions
-    PRODUCTION_DATABASE_HOST: db
     RAILS_ENV: production
     URL_HOST: mampf.mathi.uni-heidelberg.de
     MAMPF_PORT: 3000
@@ -125,9 +125,8 @@ env:
     - MAMPF_EMAIL_USERNAME
     - MAMPF_EMAIL_PASSWORD
     - CAPTCHA_APPLICATION_TOKEN
-    - PRODUCTION_DATABASE_USERNAME
-    - PRODUCTION_DATABASE_PASSWORD
     - PRODUCTION_DATABASE_PORT
+    - PRODUCTION_DATABASE_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
