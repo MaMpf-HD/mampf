@@ -25,6 +25,13 @@
 # To fix those, add the user to the docker group:
 # usermod -aG docker username
 
+# 🎈 Folders
+# Create the folders `/mnt/caches/`, `/mnt/media/` and `/mnt/submissions/` on the
+# server and make the `kamal` user the owner:
+# sudo mkdir -p /mnt/caches /mnt/caches/medien_uploads /mnt/media /mnt/submissions
+# sudo chown -R kamal:kamal /mnt/caches /mnt/caches/medien_uploads /mnt/media /mnt/submissions
+
+
 # 🎈 Only allow users to login via ssh keys, not passwords
 # https://itsfoss.gitlab.io/post/disable-ssh-password-authentication-for-specific-user-or-group/
 # sudo nano /etc/ssh/sshd_config
@@ -34,6 +41,7 @@
 
 # 🎈 Create a GitHub Access Token (classic)
 # see https://kurtpeniket.co.uk/blog/kamal_with_ghcr
+# Use that one in the .env file as `KAMAL_REGISTRY_PASSWORD`.
 
 # 🎈 Deploy
 # (sourcing the .env file in your terminal does not work)
