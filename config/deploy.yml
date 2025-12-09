@@ -125,7 +125,6 @@ env:
     - MAMPF_EMAIL_USERNAME
     - MAMPF_EMAIL_PASSWORD
     - CAPTCHA_APPLICATION_TOKEN
-    - DB_PORT
     - PRODUCTION_DATABASE_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
@@ -158,7 +157,7 @@ accessories:
       secret:
         - POSTGRES_USER
         - POSTGRES_PASSWORD
-        - DB_PORT
+        - PGPORT
     files:
       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
