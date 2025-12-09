@@ -162,4 +162,6 @@ de:
         registration/item:
           attributes:
             base:
+              mixed_types: "Alle Elemente müssen vom gleichen Typ sein."
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
+              frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."

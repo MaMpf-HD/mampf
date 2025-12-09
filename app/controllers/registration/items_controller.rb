@@ -77,7 +77,7 @@ module Registration
     def destroy
       unless @campaign.draft?
         redirect_to registration_campaign_path(@campaign, tab: "items"),
-                    alert: t("registration.item.cannot_destroy")
+                    alert: t("activerecord.errors.models.registration/item.attributes.base.frozen")
         return
       end
 

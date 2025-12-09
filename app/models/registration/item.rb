@@ -28,16 +28,36 @@ module Registration
               }
 
     validate :registerable_type_consistency, on: :create
-    validate :capacity_respects_confirmed_count, on: :update
+    validate :validate_capacity_frozen, on: :update
+    validate :validate_capacity_reduction, on: :update
     before_destroy :ensure_campaign_is_draft
 
     def title
       registerable&.registration_title || registerable&.title
     end
 
+    def capacity_editable?
+      return true if registration_campaign.draft?
+
+      if registration_campaign.completed? ||
+         (registration_campaign.processing? && registration_campaign.preference_based?)
+        return false
+      end
+
+      true
+    end
+
     private
 
-      def capacity_respects_confirmed_count
+      def validate_capacity_frozen
+        return unless registerable&.will_save_change_to_capacity?
+        return if capacity_editable?
+
+        errors.add(:base, :frozen)
+      end
+
+      def validate_capacity_reduction
+        return unless registerable&.will_save_change_to_capacity?
         return if registration_campaign.draft?
         return unless registration_campaign.first_come_first_served?
 

@@ -6,7 +6,7 @@
       </div>
     </td>
     <td>
-      <% if item.registration_campaign.completed? || item.registration_campaign.processing? %>
+      <% unless item.capacity_editable? %>
         <%= item.capacity %>
       <% else %>
         <%= form_with(model: item,
