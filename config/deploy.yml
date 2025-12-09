@@ -125,7 +125,7 @@ env:
     - MAMPF_EMAIL_USERNAME
     - MAMPF_EMAIL_PASSWORD
     - CAPTCHA_APPLICATION_TOKEN
-    - PRODUCTION_DATABASE_PORT
+    - DB_PORT
     - PRODUCTION_DATABASE_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
@@ -147,16 +147,18 @@ volumes:
 asset_path: /usr/src/app/public/assets
 
 accessories:
+  # https://railsboilerplate.com/articles/how-to-configure-postgres-accessory-kamal-2-rails-8
   db:
     image: postgres:17-bookworm
     host: 91.98.178.89
-    port: "127.0.0.1:<%= ENV['PRODUCTION_DATABASE_PORT'] %>:<%= ENV['PRODUCTION_DATABASE_PORT'] %>"
     env:
       clear:
         POSTGRES_DB: mampf
+        DB_HOST: 127.0.0.1
       secret:
         - POSTGRES_USER
         - POSTGRES_PASSWORD
+        - DB_PORT
     files:
       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
     directories:
