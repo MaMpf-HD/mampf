@@ -49,14 +49,16 @@ servers:
       - 91.98.178.89
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: master
-    cmd: /usr/src/app/docker/production/entrypoint-master.sh
+    options:
+      entrypoint: /usr/src/app/docker/production/entrypoint-master.sh
   
   worker:
     hosts:
       - 91.98.178.89
     labels:
       de.uni-heidelberg.mathi.mampf.container-type: worker
-    cmd: /usr/src/app/docker/production/entrypoint-worker.sh
+    options:
+      entrypoint: /usr/src/app/docker/production/entrypoint-worker.sh
 
 proxy:
   ssl: true
