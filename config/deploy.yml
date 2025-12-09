@@ -155,8 +155,9 @@ accessories:
         POSTGRES_DB: mampf
         DB_HOST: 127.0.0.1
       secret:
-        - POSTGRES_USER
-        - POSTGRES_PASSWORD
+        # https://www.postgresql.org/docs/current/libpq-envars.html
+        - PGUSER
+        - PGPASSWORD
         - PGPORT
     files:
       - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
