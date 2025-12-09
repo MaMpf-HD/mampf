@@ -47,7 +47,28 @@ module Registration
       true
     end
 
+    # Validates if a capacity change initiated by the registerable (e.g. on a Tutorial
+    # in the tutorial GUI) is permissible under the current campaign rules.
+    def validate_capacity_change_from_registerable!(new_capacity)
+      return [:base, :frozen] unless capacity_editable?
+
+      unless valid_capacity_reduction?(new_capacity)
+        confirmed_count = user_registrations.confirmed.count
+        return [:base, :capacity_too_low, { count: confirmed_count }]
+      end
+
+      nil
+    end
+
     private
+
+      def valid_capacity_reduction?(new_capacity)
+        return true if registration_campaign.draft?
+        return true unless registration_campaign.first_come_first_served?
+
+        confirmed_count = user_registrations.confirmed.count
+        new_capacity >= confirmed_count
+      end
 
       def validate_capacity_frozen
         return unless registerable&.will_save_change_to_capacity?
@@ -58,12 +79,10 @@ module Registration
 
       def validate_capacity_reduction
         return unless registerable&.will_save_change_to_capacity?
-        return if registration_campaign.draft?
-        return unless registration_campaign.first_come_first_served?
+
+        return if valid_capacity_reduction?(capacity)
 
         confirmed_count = user_registrations.confirmed.count
-        return unless capacity < confirmed_count
-
         errors.add(:base, :capacity_too_low, count: confirmed_count)
       end
 

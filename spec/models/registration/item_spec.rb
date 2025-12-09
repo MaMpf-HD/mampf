@@ -150,6 +150,43 @@ RSpec.describe(Registration::Item, type: :model) do
     end
   end
 
+  describe "#validate_capacity_change_from_registerable!" do
+    let(:campaign) { create(:registration_campaign, :draft, :first_come_first_served) }
+    let(:item) { create(:registration_item, registration_campaign: campaign) }
+
+    context "when capacity is editable" do
+      it "returns nil" do
+        expect(item.validate_capacity_change_from_registerable!(10)).to be_nil
+      end
+    end
+
+    context "when capacity is frozen" do
+      before do
+        item # ensure item exists
+        campaign.update!(status: :completed)
+      end
+
+      it "returns frozen error" do
+        expect(item.validate_capacity_change_from_registerable!(10)).to eq([:base, :frozen])
+      end
+    end
+
+    context "when capacity reduction is invalid" do
+      before do
+        item # ensure item exists
+        campaign.update!(status: :open)
+        create_list(:registration_user_registration, 3, :confirmed, registration_item: item)
+        item.capacity = 5
+        item.save
+      end
+
+      it "returns capacity_too_low error" do
+        expect(item.validate_capacity_change_from_registerable!(2))
+          .to eq([:base, :capacity_too_low, { count: 3 }])
+      end
+    end
+  end
+
   describe "callbacks" do
     describe "#ensure_campaign_is_draft" do
       let(:item) { create(:registration_item, registration_campaign: campaign) }
