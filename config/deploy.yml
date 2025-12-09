@@ -44,8 +44,8 @@
 # Use that one in the .env file as `KAMAL_REGISTRY_PASSWORD`.
 
 # 🎈 Deploy
-# (sourcing the .env file in your terminal does not work)
 # bundle exec dotenv kamal setup
+# bundle exec dotenv kamal accessory boot all
 # bundle exec dotenv kamal deploy
 
 service: mampf
@@ -139,9 +139,10 @@ ssh:
   user: kamal
 
 volumes:
-  - "/mnt/media:/private/media"
-  - "/mnt/submissions:/private/submissions"
-  - "/mnt/caches:/caches"
+  - /mnt/media:/private/media
+  - /mnt/submissions:/private/submissions
+  - /mnt/caches:/caches
+  - public:/usr/src/app/public
 
 # for asset bridging across deploys
 asset_path: /usr/src/app/public/assets
@@ -173,21 +174,14 @@ accessories:
   nginx:
     image: openresty/openresty:alpine
     host: 91.98.178.89
+    port: "127.0.0.1:3000:80"
+    volumes:
+      - nginx-conf-d:/etc/nginx/conf.d
     options:
-      ports:
-        - "127.0.0.1:3000:80"
       # Until https://github.com/nginx-proxy/docker-gen/pull/311 is merged, use hardcoded name
-      container_name: mampf-docker-proxy
-      volumes:
-        - "nginx-conf-d:/etc/nginx/conf.d"
-        - "media:/private/media:ro,nocopy"  # nginx only accesses /private/media/vignettes/ here
-        - "submissions:/private/submissions:ro,nocopy"
-        - "public:/public:ro"
+      name: mampf-docker-proxy
 
   dockergen:
+    image: nginxproxy/docker-gen
     host: 91.98.178.89
-    options:
-      build:
-        dockerfile: docker/Dockerfile.dockergen
-        context: https://github.com/MaMpf-HD/mampf.git#main
-      command: -notify-sighup mampf-docker-proxy -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
+    cmd: -notify-sighup mampf-docker-proxy -watch /etc/docker-gen/templates/nginx.tmpl /etc/nginx/conf.d/default.conf
