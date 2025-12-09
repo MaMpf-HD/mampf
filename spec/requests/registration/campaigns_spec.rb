@@ -83,10 +83,10 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
 
     context "when campaign is open" do
+      let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
+
       before do
         sign_in editor
-        create(:registration_item, registration_campaign: campaign)
-        campaign.update!(status: :open)
       end
 
       it "prevents updating frozen attributes (allocation_mode)" do
@@ -151,10 +151,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
     end
 
     describe "PATCH /campaigns/:id/close" do
-      before do
-        create(:registration_item, registration_campaign: campaign)
-        campaign.update!(status: :open)
-      end
+      let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
 
       context "as an editor" do
         before { sign_in editor }
@@ -194,10 +191,7 @@ RSpec.describe("Registration::Campaigns", type: :request) do
       end
 
       context "when campaign is open" do
-        before do
-          create(:registration_item, registration_campaign: campaign)
-          campaign.update!(status: :open)
-        end
+        let!(:campaign) { create(:registration_campaign, :open, campaignable: lecture) }
 
         it "does not destroy the campaign" do
           expect do
@@ -261,9 +255,9 @@ RSpec.describe("Registration::Campaigns", type: :request) do
   end
 
   describe "PATCH /campaigns/:id/reopen" do
-    before do
-      create(:registration_item, registration_campaign: campaign)
-      campaign.update!(status: :closed)
+    let!(:campaign) do
+      create(:registration_campaign, :closed, campaignable: lecture,
+                                              registration_deadline: 1.week.from_now)
     end
 
     context "as an editor" do
