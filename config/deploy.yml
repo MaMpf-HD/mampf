@@ -110,7 +110,6 @@ env:
     PRODUCTION_DATABASE_DATABASE: mampf
     PRODUCTION_DATABASE_INTERACTIONS: mampf_interactions
     PRODUCTION_DATABASE_HOST: db
-    PRODUCTION_DATABASE_PORT: 5432
     RAILS_ENV: production
     URL_HOST: mampf.mathi.uni-heidelberg.de
     MAMPF_PORT: 3000
@@ -128,7 +127,7 @@ env:
     - CAPTCHA_APPLICATION_TOKEN
     - PRODUCTION_DATABASE_USERNAME
     - PRODUCTION_DATABASE_PASSWORD
-    - PRODUCTION_DATABASE_URL
+    - PRODUCTION_DATABASE_PORT
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
 # "bin/kamal app logs -r job" will tail logs from the first server in the job section.
@@ -151,7 +150,7 @@ accessories:
   db:
     image: postgres:17-bookworm
     host: 91.98.178.89
-    port: "127.0.0.1:5432:5432"
+    port: "127.0.0.1:<%= ENV['PRODUCTION_DATABASE_PORT'] %>:<%= ENV['PRODUCTION_DATABASE_PORT'] %>"
     env:
       clear:
         POSTGRES_DB: mampf
