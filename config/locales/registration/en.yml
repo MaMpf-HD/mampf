@@ -121,6 +121,8 @@ en:
         none: "No items added yet."
       add:
         title: "Add Items"
+        existing: "Add Existing"
+        new: "Create New"
         none_available: "No items available to add."
       columns:
         title: "Title"

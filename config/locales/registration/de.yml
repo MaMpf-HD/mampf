@@ -121,6 +121,8 @@ de:
         none: "Noch keine Elemente hinzugefügt."
       add:
         title: "Elemente hinzufügen"
+        existing: "Vorhandene hinzufügen"
+        new: "Neue erstellen"
         none_available: "Keine Elemente verfügbar."
       columns:
         title: "Titel"

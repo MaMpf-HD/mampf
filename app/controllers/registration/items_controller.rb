@@ -10,22 +10,24 @@ module Registration
     end
 
     def create
-      @item = @campaign.registration_items.build(item_params)
-      authorize! :create, @item
+      if params[:registration_item][:new_registerable].present?
+        create_new_registerable
+      else
+        create_existing_item
+      end
+    end
 
-      if @item.save
+    def update
+      if @item.update(capacity_params)
         respond_to do |format|
           format.html do
             redirect_to registration_campaign_path(@campaign, tab: "items"),
-                        notice: t("registration.item.created")
+                        notice: t("registration.item.updated")
           end
           format.turbo_stream do
-            flash.now[:notice] = t("registration.item.created")
+            flash.now[:notice] = t("registration.item.updated")
             render turbo_stream: [
-              turbo_stream.replace("registration_items_container",
-                                   partial: "registration/campaigns/card_body_items",
-                                   locals: { campaign: @campaign }),
-              turbo_stream.update("items-tab-count", @campaign.registration_items.count),
+              turbo_stream.replace(@item, partial: "registration/items/item", locals: { item: @item }),
               stream_flash
             ]
           end
@@ -44,10 +46,95 @@ module Registration
       end
     end
 
-    def update
-      if @item.update(capacity_params)
+    private
+
+      def create_existing_item
+        @item = @campaign.registration_items.build(item_params)
+        authorize! :create, @item
+
+        if @item.save
+          respond_to_success
+        else
+          respond_to_failure
+        end
+      end
+
+      def create_new_registerable
+        authorize! :update, @campaign.campaignable # Ensure user can edit the lecture
+
+        type = params[:registration_item][:registerable_type]
+        title = params[:registration_item][:title]
+        capacity = params[:registration_item][:capacity]
+
+        unless ["Tutorial", "Talk"].include?(type)
+          @item = @campaign.registration_items.build
+          @item.errors.add(:base, "Invalid type")
+          return respond_to_failure
+        end
+
+        ActiveRecord::Base.transaction do
+          registerable = type.constantize.new(
+            lecture: @campaign.campaignable,
+            title: title,
+            capacity: capacity
+          )
+
+          unless registerable.save
+            @item = @campaign.registration_items.build
+            registerable.errors.full_messages.each { |m| @item.errors.add(:base, m) }
+            raise ActiveRecord::Rollback
+          end
+
+          @item = @campaign.registration_items.build(
+            registerable: registerable,
+            registerable_type: type
+          )
+
+          unless @item.save
+            raise ActiveRecord::Rollback
+          end
+        end
+
+        if @item.persisted?
+          respond_to_success
+        else
+          respond_to_failure
+        end
+      end
+
+      def respond_to_success
         respond_to do |format|
           format.html do
+            redirect_to registration_campaign_path(@campaign, tab: "items"),
+                        notice: t("registration.item.created")
+          end
+          format.turbo_stream do
+            flash.now[:notice] = t("registration.item.created")
+            render turbo_stream: [
+              turbo_stream.replace("registration_items_container",
+                                   partial: "registration/campaigns/card_body_items",
+                                   locals: { campaign: @campaign }),
+              turbo_stream.update("items-tab-count", @campaign.registration_items.count),
+              stream_flash
+            ]
+          end
+        end
+      end
+
+      def respond_to_failure
+        respond_to do |format|
+          format.html do
+            redirect_to registration_campaign_path(@campaign, tab: "items"),
+                        alert: @item.errors.full_messages.to_sentence
+          end
+          format.turbo_stream do
+            flash.now[:alert] = @item.errors.full_messages.to_sentence
+            render turbo_stream: stream_flash
+          end
+        end
+      end
+
+      def set_campaign
             redirect_to registration_campaign_path(@campaign, tab: "items"),
                         notice: t("registration.item.updated")
           end
