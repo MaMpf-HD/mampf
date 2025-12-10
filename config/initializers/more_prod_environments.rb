@@ -1,3 +1,5 @@
-Rails.application.configure do
-  config.add_production_environment_name(:production_vignette)
+Rails::Env.class_eval do
+  def production?
+    super || production_vignette?
+  end
 end
