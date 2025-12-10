@@ -69,6 +69,10 @@ proxy:
   ssl: true
   host: mampf.media
   app_port: 3139
+  healthcheck:
+    interval: 5
+    path: /up
+    timeout: 2000
 
 registry:
   server: ghcr.io
@@ -172,7 +176,7 @@ accessories:
     host: 91.98.178.89
 
   nginx:
-    image: openresty/openresty:alpine
+    image: nginx:1.29-alpine
     host: 91.98.178.89
     port: 127.0.0.1:3139:3139
     files:
