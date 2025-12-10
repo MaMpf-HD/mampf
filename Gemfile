@@ -40,7 +40,6 @@ gem "pdf-reader", "~> 2.12"
 gem "pg", "~> 1.5"
 gem "pg_search", "~> 2.3"
 gem "progress_bar", "~> 1.3"
-gem "prometheus_exporter", "~> 2.1"
 gem "puma", "~> 6.4" # app server
 gem "rack", "~> 3.1"
 gem "rails", "~> 8.0.2"
