@@ -45,8 +45,7 @@
   </altcha-widget>
 
   <div class="mb-3">
-    <%= f.submit t('.sign_up'), class: "devise-button btn btn-primary", id: 'register-user',
-                                disabled:ENV.fetch("USE_CAPTCHA_SERVICE", false) %>
+    <%= f.submit t('.sign_up'), class: "devise-button btn btn-primary", id: 'register-user' %>
   </div>
 
 <% end %>
