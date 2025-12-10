@@ -1,5 +1,8 @@
-Rails::Env.class_eval do
-  def production?
-    super || production_vignette?
+# Extend the behavior of Rails.env.production?
+Rails.env.singleton_class.prepend(
+  Module.new do
+    def production?
+      super || self == "production_vignette"
+    end
   end
-end
+)
