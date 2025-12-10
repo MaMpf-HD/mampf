@@ -154,13 +154,15 @@ accessories:
       clear:
         POSTGRES_DB: mampf
         DB_HOST: 127.0.0.1
+      # https://hub.docker.com/_/postgres/#environment-variables
       secret:
-        # https://hub.docker.com/_/postgres/#environment-variables
         - POSTGRES_USER
         - POSTGRES_PASSWORD
+        # used in production-init.sh script
+        - MAMPF_DB_PASSWORD
         - PGPORT
     files:
-      - db/production.sql:/docker-entrypoint-initdb.d/setup.sql
+      - db/production-init.sh:/docker-entrypoint-initdb.d/setup.sh
     directories:
       - data:/var/lib/postgresql/data
 
