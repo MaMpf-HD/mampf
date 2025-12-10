@@ -61,7 +61,7 @@ production:
     url: <%= ENV['PRODUCTION_DATABASE_URL'] %>
     migrations_paths: db/interactions_migrate
 
-production-vignette:
+production_vignette:
   primary:
     adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
     encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
