@@ -81,7 +81,7 @@ env:
     MEMCACHED_SERVER: mampf-cache
     MAX_DELETIONS_PER_RUN: 50
     FROM_ADDRESS: mampf@mathi.uni-heidelberg.de
-    MAILSERVER: mail.mathi.uni-heidelberg.de
+    MAILSERVER: in-v3.mailjet.com
     PROJECT_EMAIL: mampf@mathi.uni-heidelberg.de
     MAILID_DOMAIN: mathi.uni-heidelberg.de
     ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de

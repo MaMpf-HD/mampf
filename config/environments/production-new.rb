@@ -86,7 +86,7 @@ Rails.application.configure do
 
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("MAILSERVER"),
-    port: 25,
+    port: 587,
     user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
     password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
   }
