@@ -58,7 +58,7 @@ servers:
 
 proxy:
   ssl: true
-  host: vignettes.mampf.media
+  host: mampf.media
   app_port: 3000
 
 registry:
@@ -99,7 +99,7 @@ env:
     PRODUCTION_DATABASE_DATABASE: mampf
     PRODUCTION_DATABASE_INTERACTIONS: mampf_interactions
     RAILS_ENV: production-new
-    URL_HOST: vignettes.mampf.media
+    URL_HOST: mampf.media
     MAMPF_PORT: 3000
     REDIS_URL: redis://mampf-redis:6379/0
     RAILS_LOG_TO_STDOUT: true
