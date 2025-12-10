@@ -90,7 +90,7 @@ env:
     BLOG: https://mampf.blog
     MEDIA_SERVER: https://media.mathi.uni-heidelberg.de
     MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
-    MEMCACHED_SERVER: cache
+    MEMCACHED_SERVER: mampf-cache
     MAX_DELETIONS_PER_RUN: 50
     FROM_ADDRESS: mampf@mathi.uni-heidelberg.de
     MAILSERVER: mail.mathi.uni-heidelberg.de
@@ -113,7 +113,7 @@ env:
     RAILS_ENV: production
     URL_HOST: mampf.mathi.uni-heidelberg.de
     MAMPF_PORT: 3000
-    REDIS_URL: redis://redis:6379/0
+    REDIS_URL: redis://mampf-redis:6379/0
     RAILS_SERVE_STATIC_FILES: true
     RAILS_LOG_TO_STDOUT: true
   secret:
