@@ -125,5 +125,20 @@ FactoryBot.define do
                registration_campaign: campaign)
       end
     end
+
+    trait :with_prerequisite_policy do
+      transient do
+        parent_campaign { nil }
+      end
+
+      after(:create) do |child_campaign, evaluator|
+        raise ArgumentError, "parent_campaign must be provided" unless evaluator.parent_campaign
+
+        create(:registration_policy,
+               :prerequisite_campaign,
+               registration_campaign: child_campaign,
+               config: { "prerequisite_campaign_id" => evaluator.parent_campaign.id })
+      end
+    end
   end
 end

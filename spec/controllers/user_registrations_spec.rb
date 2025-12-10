@@ -6,6 +6,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
 
   let(:item) { campaign.registration_items.first }
 
+  let(:stub_success) {Registration::UserRegistration::Handler::Result.new(true, [])}
+
+
   before { sign_in user }
 
   context "lecture FCFS campaign" do
@@ -22,9 +25,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       it "POST create" do
         service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
         expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
-          .with(campaign, item, an_instance_of(User))
+          .with(campaign, an_instance_of(User), item)
           .and_return(service_double)
-        expect(service_double).to receive(:register!)
+        expect(service_double).to receive(:register!).and_return(stub_success)
 
         post :create, params: { campaign_id: campaign.id, item_id: item.id }
       end
@@ -42,9 +45,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       it "calls LectureFcfsEditService.withdraw! for lecture FCFS campaign" do
         service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
         expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
-          .with(campaign, item, user)
+          .with(campaign, user, item)
           .and_return(service_double)
-        expect(service_double).to receive(:withdraw!)
+        expect(service_double).to receive(:withdraw!).and_return(stub_success)
 
         delete :destroy, params: { campaign_id: campaign.id, item_id: item.id }
       end
@@ -65,9 +68,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       it "POST create" do
         service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
         expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
-          .with(campaign, item, an_instance_of(User))
+          .with(campaign, an_instance_of(User), item)
           .and_return(service_double)
-        expect(service_double).to receive(:register!)
+        expect(service_double).to receive(:register!).and_return(stub_success)
 
         post :create, params: { campaign_id: campaign.id, item_id: item.id }
       end
@@ -85,9 +88,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       it "calls LectureFcfsEditService.withdraw! for lecture FCFS campaign" do
         service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
         expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
-          .with(campaign, item, user)
+          .with(campaign, user, item)
           .and_return(service_double)
-        expect(service_double).to receive(:withdraw!)
+        expect(service_double).to receive(:withdraw!).and_return(stub_success)
 
         delete :destroy, params: { campaign_id: campaign.id, item_id: item.id }
       end
@@ -108,9 +111,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       it "POST create" do
         service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
         expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
-          .with(campaign, item, an_instance_of(User))
+          .with(campaign, an_instance_of(User), item)
           .and_return(service_double)
-        expect(service_double).to receive(:register!)
+        expect(service_double).to receive(:register!).and_return(stub_success)
 
         post :create, params: { campaign_id: campaign.id, item_id: item.id }
       end
@@ -128,9 +131,9 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       it "calls LectureFcfsEditService.withdraw! for lecture FCFS campaign" do
         service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
         expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
-          .with(campaign, item, user)
+          .with(campaign, user, item)
           .and_return(service_double)
-        expect(service_double).to receive(:withdraw!)
+        expect(service_double).to receive(:withdraw!).and_return(stub_success)
 
         delete :destroy, params: { campaign_id: campaign.id, item_id: item.id }
       end

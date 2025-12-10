@@ -85,8 +85,7 @@ module Registration
       if @campaign.campaignable_type == "Lecture"
         case @campaign.allocation_mode.to_sym
         when :first_come_first_served
-          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user,
-                                                            @item).register!
+          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user, @item).register!
 
           if result.success?
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
@@ -113,8 +112,7 @@ module Registration
       if @campaign.campaignable_type == "Lecture"
         case @campaign.allocation_mode.to_sym
         when :first_come_first_served
-          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user,
-                                                            @item).withdraw!
+          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user, @item).withdraw!
 
           if result.success?
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),

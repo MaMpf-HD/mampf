@@ -95,6 +95,15 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.registration_policies.count).to eq(1)
       expect(campaign.registration_policies.first.kind).to eq("institutional_email")
     end
+
+    it "creates campaign with prerequisite_campaign_id match" do
+      parent = create(:registration_campaign, :open, :with_items)
+      child  = create(:registration_campaign, :open, :with_items, :with_prerequisite_policy,
+                      parent_campaign: parent)
+
+      policy = child.registration_policies.find_by(kind: :prerequisite_campaign)
+      expect(policy.config["prerequisite_campaign_id"]).to eq(parent.id)
+    end
   end
 
   describe "#user_registration_confirmed?" do
