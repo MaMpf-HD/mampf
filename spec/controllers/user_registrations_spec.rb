@@ -11,7 +11,7 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
 
   before { sign_in user }
 
-  context "lecture FCFS campaign" do
+  context "lecture FCFS campaign open" do
     let(:campaign) do
       FactoryBot.create(
         :registration_campaign,
@@ -54,7 +54,7 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
     end
   end
 
-  context "tutorial FCFS campaign" do
+  context "tutorial FCFS campaign open" do
     let(:campaign) do
       FactoryBot.create(
         :registration_campaign,
@@ -97,7 +97,7 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
     end
   end
 
-  context "talk FCFS campaign" do
+  context "talk FCFS campaign open" do
     let(:campaign) do
       FactoryBot.create(
         :registration_campaign,

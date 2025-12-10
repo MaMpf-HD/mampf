@@ -59,5 +59,19 @@ RSpec.describe("Registration::UserRegistrations", type: :request) do
         expect(doc.at_css('[data-test="multi-item-fcfs"]')).not_to be_nil
       end
     end
+
+    context "should display result with completed campaign" do
+      let(:campaign) do
+        FactoryBot.create(:registration_campaign, :first_come_first_served, :completed,
+                          :with_policies, :for_talk_enrollment)
+      end
+      it "return success response" do
+        get campaign_registrations_for_campaign_path(campaign_id: campaign.id)
+        expect(campaign.campaignable_type).to eq("Lecture")
+        expect(response).to have_http_status(:ok)
+        doc = Nokogiri::HTML(response.body)
+        expect(doc.at_css('[data-test="result"]')).not_to be_nil
+      end
+    end
   end
 end

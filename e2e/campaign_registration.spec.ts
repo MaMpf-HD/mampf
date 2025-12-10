@@ -11,7 +11,39 @@ test.describe("draft campaign", () => {
   });
 });
 
+test.describe("planning campaign", () => {
+  test("redirect and raise error if campaign is draft", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "open", "planning_only"]);
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+
+    await expect(student.page.getByText("Planning")).toBeVisible();
+  });
+});
+
 test.describe("processing campaign", () => {
+  test("should render campaign but not allow to interact, lecture campaign", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "processing"]);
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+
+    await expect(student.page.getByText("Processing")).toBeVisible();
+    await expect(student.page.getByRole("button", { name: "Register now" })).toBeDisabled();
+  });
+
+  test("should render campaign but not allow to interact, tutorial campaign", async ({ factory, student }) => {
+    const campaign = await factory.create("registration_campaign", ["processing", "for_tutorial_enrollment"]);
+    const page = new CampaignRegistrationPage(student.page, campaign.id);
+    await page.goto();
+
+    await expect(student.page.getByText("Processing")).toBeVisible();
+    const buttons = student.page.locator('button:has-text("Register now")');
+    await expect(buttons.nth(0)).toBeDisabled();
+    await expect(buttons.nth(1)).toBeDisabled();
+  });
+});
+
+test.describe("completed campaign", () => {
   test("should render campaign but not allow to interact, lecture campaign", async ({ factory, student }) => {
     const campaign = await factory.create("registration_campaign", ["for_lecture_enrollment", "processing"]);
     const page = new CampaignRegistrationPage(student.page, campaign.id);
@@ -133,5 +165,44 @@ test.describe("open tutorial campaign", () => {
       await page.withdraw();
       await expect(student.page.getByText(/\/200 filled/)).toContainText("0/200");
     });
+  });
+});
+
+test.describe("integration between child and parent campaign", () => {
+  test("expect page of child campaign to have link to parent campaign", async ({ factory, student }) => {
+    const parent = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
+    const child = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "with_prerequisite_policy"], { parent_campaign_id: parent.id });
+    const page = new CampaignRegistrationPage(student.page, child.id);
+    await page.goto();
+    const link = student.page.getByRole("link", { name: "Prerequisite Campaign" });
+    await expect(link).toHaveAttribute("href", `/campaign_registrations/${parent.id}`);
+  });
+
+  test("cannot register child if parent has not been registered", async ({ factory, student }) => {
+    const parent = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
+    const child = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "with_prerequisite_policy"], { parent_campaign_id: parent.id });
+    const page = new CampaignRegistrationPage(student.page, child.id);
+    await page.goto();
+    await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
+    await expect(student.page.getByText("You do not meet the requirements.")).toBeVisible();
+  });
+
+  test("cannot withdraw parent if child has been registered", async ({ factory, student }) => {
+    const parent = await factory.create("registration_campaign", ["open", "for_lecture_enrollment"]);
+    const child = await factory.create("registration_campaign", ["open", "for_tutorial_enrollment", "with_prerequisite_policy"], { parent_campaign_id: parent.id });
+
+    // Register parent -> child
+    const parentPage = new CampaignRegistrationPage(student.page, parent.id);
+    await parentPage.goto();
+    await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
+    let childPage = new CampaignRegistrationPage(student.page, child.id);
+    await childPage.goto();
+    await student.page.getByRole("button", { name: "Register now" }).nth(0).click();
+
+    // Try to withdraw child
+    childPage = new CampaignRegistrationPage(student.page, child.id);
+    await parentPage.goto();
+    await parentPage.withdraw();
+    await expect(student.page.getByText(/Withdrawal is blocked because the following campaigns are confirmed/i)).toBeVisible();
   });
 });
