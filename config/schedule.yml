@@ -20,3 +20,9 @@ user_cleaner_job:
   cron: "0 4 * * *" 
   class: "UserCleanerJob"
   queue: critical
+
+altcha_solutions_cleaner_job:
+  # at midnight, every 3 days
+  cron: "0 0 */3 * *"
+  class: "AltchaSolutionsCleaner"
+  queue: critical
