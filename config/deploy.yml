@@ -153,7 +153,7 @@ accessories:
     env:
       clear:
         POSTGRES_DB: mampf
-        DB_HOST: 127.0.0.1
+        PGHOST: 127.0.0.1
       # https://hub.docker.com/_/postgres/#environment-variables
       secret:
         - POSTGRES_USER
