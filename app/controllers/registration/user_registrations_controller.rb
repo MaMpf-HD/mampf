@@ -83,15 +83,20 @@ module Registration
       @campaign = Registration::Campaign.find(params[:campaign_id])
 
       if @campaign.campaignable_type == "Lecture"
-        raise(NotImplementedError) unless @campaign.first_come_first_served?
+        case @campaign.allocation_mode.to_sym
+        when :first_come_first_served
+          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user,
+                                                            @item).register!
 
-        begin
-          Registration::LectureFcfsEditService.new(@campaign, @item, current_user).register!
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      success: I18n.t("registration.messages.registration_success")
-        rescue Registration::RegistrationError => e
-          redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                      alert: e.message.to_s
+          if result.success?
+            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                        success: I18n.t("registration.messages.registration_success")
+          else
+            redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
+                        alert: result.errors.join(", ")
+          end
+        else
+          raise(NotImplementedError)
         end
 
       elsif @campaign.campaignable_type == "Exam"
@@ -108,13 +113,15 @@ module Registration
       if @campaign.campaignable_type == "Lecture"
         case @campaign.allocation_mode.to_sym
         when :first_come_first_served
-          begin
-            Registration::LectureFcfsEditService.new(@campaign, @item, current_user).withdraw!
+          result = Registration::UserRegistration::LectureFcfsEditService.new(@campaign, current_user,
+                                                            @item).withdraw!
+
+          if result.success?
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
                         success: I18n.t("registration.messages.withdrawn")
-          rescue Registration::RegistrationError => e
+          else
             redirect_to campaign_registrations_for_campaign_path(campaign_id: @campaign.id),
-                        alert: e.message.to_s
+                        alert: result.errors.join(", ")
           end
         else
           raise(NotImplementedError)

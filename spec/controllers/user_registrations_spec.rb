@@ -20,8 +20,8 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
     let(:item) { campaign.registration_items.first }
     describe "calls LectureFcfsEditService for lecture FCFS campaign" do
       it "POST create" do
-        service_double = instance_double(Registration::LectureFcfsEditService)
-        expect(Registration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
+        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
           .with(campaign, item, an_instance_of(User))
           .and_return(service_double)
         expect(service_double).to receive(:register!)
@@ -40,8 +40,8 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       end
 
       it "calls LectureFcfsEditService.withdraw! for lecture FCFS campaign" do
-        service_double = instance_double(Registration::LectureFcfsEditService)
-        expect(Registration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
+        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
           .with(campaign, item, user)
           .and_return(service_double)
         expect(service_double).to receive(:withdraw!)
@@ -63,8 +63,8 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
     let(:item) { campaign.registration_items.first }
     describe "calls LectureFcfsEditService for lecture FCFS campaign" do
       it "POST create" do
-        service_double = instance_double(Registration::LectureFcfsEditService)
-        expect(Registration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
+        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
           .with(campaign, item, an_instance_of(User))
           .and_return(service_double)
         expect(service_double).to receive(:register!)
@@ -83,8 +83,8 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       end
 
       it "calls LectureFcfsEditService.withdraw! for lecture FCFS campaign" do
-        service_double = instance_double(Registration::LectureFcfsEditService)
-        expect(Registration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
+        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
           .with(campaign, item, user)
           .and_return(service_double)
         expect(service_double).to receive(:withdraw!)
@@ -106,8 +106,8 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
     let(:item) { campaign.registration_items.first }
     describe "calls LectureFcfsEditService for lecture FCFS campaign" do
       it "POST create" do
-        service_double = instance_double(Registration::LectureFcfsEditService)
-        expect(Registration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
+        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
           .with(campaign, item, an_instance_of(User))
           .and_return(service_double)
         expect(service_double).to receive(:register!)
@@ -126,8 +126,8 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
       end
 
       it "calls LectureFcfsEditService.withdraw! for lecture FCFS campaign" do
-        service_double = instance_double(Registration::LectureFcfsEditService)
-        expect(Registration::LectureFcfsEditService).to receive(:new)
+        service_double = instance_double(Registration::UserRegistration::LectureFcfsEditService)
+        expect(Registration::UserRegistration::LectureFcfsEditService).to receive(:new)
           .with(campaign, item, user)
           .and_return(service_double)
         expect(service_double).to receive(:withdraw!)

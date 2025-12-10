@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe(Registration::LectureFcfsEditService, type: :service) do
+RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :service) do
   let(:user) { FactoryBot.create(:user, email: "student@mampf.edu") }
   let(:lecture) { FactoryBot.create(:lecture, teacher: teacher) }
 
@@ -40,10 +40,9 @@ RSpec.describe(Registration::LectureFcfsEditService, type: :service) do
       campaign.update!(status: :draft)
       service = described_class.new(campaign, item, user)
 
-      expect do
-        service.register!
-      end.to raise_error(Registration::RegistrationError,
-                         I18n.t("registration.messages.campaign_not_opened"))
+      result = service.register!
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.messages.campaign_not_opened"))
     end
 
     it "raises error if user already registered" do
@@ -56,19 +55,18 @@ RSpec.describe(Registration::LectureFcfsEditService, type: :service) do
 
       service = described_class.new(campaign, item, user)
 
-      expect do
-        service.register!
-      end.to raise_error(Registration::RegistrationError,
-                         I18n.t("registration.messages.already_registered"))
+      result = service.register!
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.messages.already_registered"))
     end
 
     it "raises error if item has no capacity" do
       item.registerable.update!(capacity: 0)
       service = described_class.new(campaign, item, user)
 
-      expect do
-        service.register!
-      end.to raise_error(Registration::RegistrationError, I18n.t("registration.messages.no_slots"))
+      result = service.register!
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.messages.no_slots"))
     end
   end
 
@@ -96,10 +94,9 @@ RSpec.describe(Registration::LectureFcfsEditService, type: :service) do
       campaign.update!(status: :draft)
       service = described_class.new(campaign, item, user)
 
-      expect do
-        service.withdraw!
-      end.to raise_error(Registration::RegistrationError,
-                         I18n.t("registration.messages.campaign_not_opened"))
+      result = service.withdraw!
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.messages.campaign_not_opened"))
     end
   end
 
@@ -144,10 +141,9 @@ RSpec.describe(Registration::LectureFcfsEditService, type: :service) do
       campaign.update!(status: :draft)
       service = described_class.new(campaign, item, user)
 
-      expect do
-        service.register!
-      end.to raise_error(Registration::RegistrationError,
-                         I18n.t("registration.messages.campaign_not_opened"))
+      result = service.register!
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.messages.campaign_not_opened"))
     end
 
     it "raises error if user already registered for another item" do
@@ -160,20 +156,18 @@ RSpec.describe(Registration::LectureFcfsEditService, type: :service) do
 
       service = described_class.new(campaign, item, user)
 
-      expect do
-        service.register!
-      end.to raise_error(Registration::RegistrationError,
-                         I18n.t("registration.messages.already_registered"))
+      result = service.register!
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.messages.already_registered"))
     end
 
     it "raises error if item has no capacity" do
       item.registerable.update!(capacity: 0)
       service = described_class.new(campaign, item, user)
 
-      expect do
-        service.register!
-      end.to raise_error(Registration::RegistrationError,
-                         I18n.t("registration.messages.no_slots"))
+      result = service.register!
+      expect(result.success?).to be(false)
+      expect(result.errors).to include(I18n.t("registration.messages.no_slots"))
     end
   end
 
@@ -203,10 +197,9 @@ RSpec.describe(Registration::LectureFcfsEditService, type: :service) do
         campaign.update!(status: :draft)
         service = described_class.new(campaign, item, user)
 
-        expect do
-          service.withdraw!
-        end.to raise_error(Registration::RegistrationError,
-                           I18n.t("registration.messages.campaign_not_opened"))
+        result = service.withdraw!
+        expect(result.success?).to be(false)
+        expect(result.errors).to include(I18n.t("registration.messages.campaign_not_opened"))
       end
     end
 

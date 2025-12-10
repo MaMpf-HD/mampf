@@ -75,6 +75,20 @@ module Registration
 
     private
 
+      def ensure_not_referenced_as_prerequisite
+        referencing_policies = Registration::Policy
+                               .referencing_campaign(id)
+                               .where.not(registration_campaign_id: id)
+                               .includes(:registration_campaign)
+
+        return unless referencing_policies.any?
+
+        titles = referencing_policies.filter_map { |p| p.registration_campaign&.title }
+                                     .uniq.join(", ")
+        errors.add(:base, :referenced_as_prerequisite, titles: titles)
+        throw(:abort)
+      end
+
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)
       end

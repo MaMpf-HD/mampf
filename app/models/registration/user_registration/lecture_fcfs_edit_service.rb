@@ -1,89 +1,66 @@
 module Registration
-  class LectureFcfsEditService
-    def initialize(campaign, item, user)
-      @campaign = campaign
-      @item = item
-      @user = user
-    end
+  class UserRegistration
+    class LectureFcfsEditService < UserRegistration::Handler
+      def register!
+        ActiveRecord::Base.transaction do
+          @item.lock!
+          errors = validate_register
+          return Result.new(false, errors) unless errors.empty?
 
-    def register!
-      ActiveRecord::Base.transaction do
-        @item.lock!
-        validate_register!
+          # hard delete all registrations of current user in current campaign
+          registrations_current_campaign = @campaign.user_registrations.where(user_id: @user.id)
 
-        # hard delete all registrations of current user in current campaign
-        registrations_current_campaign = @campaign.user_registrations.where(user_id: @user.id)
-        registrations_current_campaign.destroy_all
+          registrations_current_campaign.destroy_all
 
-        Registration::UserRegistration.create!(
-          registration_campaign: @campaign,
-          registration_item: @item,
-          user: @user,
-          status: :confirmed
-        )
-      end
-    end
-
-    # must hard delete the result, or else cannot trace the "submitted options"
-    # the downside effect is that we cannot trace the withdraw time of user
-    def withdraw!
-      validate_withdraw!
-      registration = @item.user_registrations.find_by!(user: @user, status: :confirmed)
-      registration.destroy!
-    end
-
-    private
-
-      # Validation for creating registration in lecture based registration
-      # 0. Check open for registration
-      # 1. Check if user has already registered for this campaign
-      # 2. Check if item still has capacity
-      # 3. Check if user satisfies all policies (phase: registration and both)
-      def validate_register!
-        unless @campaign.open_for_registrations?
-          raise(Registration::RegistrationError,
-                I18n.t("registration.messages.campaign_not_opened"))
+          Registration::UserRegistration.create!(
+            registration_campaign: @campaign,
+            registration_item: @item,
+            user: @user,
+            status: :confirmed
+          )
         end
-        if @campaign.user_registrations.exists?(user_id: @user.id, status: :confirmed)
-          raise(Registration::RegistrationError, I18n.t("registration.messages.already_registered"))
-        end
-
-        unless @item.still_have_capacity?
-          raise(RegistrationError,
-                I18n.t("registration.messages.no_slots"))
-        end
-        unless [@campaign.policies_satisfied?(@user, phase: :registration),
-                @campaign.policies_satisfied?(@user, phase: :both)].all?
-          raise(Registration::RegistrationError,
-                I18n.t("registration.messages.requirements_not_met"))
-        end
+        Result.new(true, [])
       end
 
-      # Validation for widthdrawing registration in lecture based registration
-      # 0. Check open to withdraw
-      # 1. Check if withdrawing current campaign may lead to fail in another "confirmed" campaign
-      def validate_withdraw!
-        unless @campaign.open_for_withdrawals?
-          raise(Registration::RegistrationError,
-                I18n.t("registration.messages.campaign_not_opened"))
+      # must hard delete the result, or else cannot trace the "submitted options"
+      # the downside effect is that we cannot trace the withdraw time of user
+      def withdraw!
+        ActiveRecord::Base.transaction do
+          @item.lock!
+          errors = validate_withdraw
+          return Result.new(false, errors) unless errors.empty?
+
+          registration = @item.user_registrations.find_by!(user: @user, status: :confirmed)
+          registration.destroy!
+        end
+        Result.new(true, [])
+      end
+
+      private
+
+        # Validation for creating registration in lecture based registration
+        # 0. Check open for registration
+        # 1. Check if user has already registered for this campaign
+        # 2. Check if item still has capacity
+        # 3. Check if user satisfies all policies (phase: registration and both)
+        def validate_register
+          [
+            check_campaign_open_for_registrations,
+            check_already_registered,
+            check_capacity,
+            check_policies
+          ].compact
         end
 
-        # prereq_query = "{ prerequisite_campaign_id: #{@campaign.id} }"
-        prereq_policies = Registration::Policy.where(
-          kind: Registration::Policy.kinds[:prerequisite_campaign],
-          config: { "prerequisite_campaign_id" => @campaign.id }
-        )
-        dependent_campaigns_confirmed = Campaign
-                                        .where(id: prereq_policies.map(&:registration_campaign_id))
-                                        .joins(:user_registrations)
-                                        .where(user_registrations: { status: UserRegistration.statuses[:confirmed] })
-                                        .distinct
-        return unless dependent_campaigns_confirmed.size.positive?
-
-        names = dependent_campaigns_confirmed.pluck(:title)
-        raise(Registration::RegistrationError,
-              I18n.t("registration.messages.dependent_campaigns_block_withdrawal",
-                     names: names.join(", ")))
-      end
+        # Validation for widthdrawing registration in lecture based registration
+        # 0. Check open to withdraw
+        # 1. Check if withdrawing current campaign may lead to fail in another "confirmed" campaign
+        def validate_withdraw
+          [
+            check_campaign_open_for_withdraw,
+            check_not_referenced_as_prerequisite
+          ].compact
+        end
+    end
   end
 end
