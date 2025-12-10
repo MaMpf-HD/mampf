@@ -59,12 +59,7 @@ servers:
 proxy:
   ssl: true
   host: mampf.media
-  app_port: 3139
-  response_timeout: 60
-  healthcheck:
-    interval: 5
-    path: /up
-    timeout: 2000
+  app_port: 3000
 
 registry:
   server: ghcr.io
@@ -109,6 +104,7 @@ env:
     REDIS_URL: redis://mampf-redis:6379/0
     RAILS_SERVE_STATIC_FILES: true
     RAILS_LOG_TO_STDOUT: true
+    RAILS_SERVE_STATIC_FILES: true
   secret:
     - RAILS_MASTER_KEY
     - SECRET_KEY_BASE
@@ -166,10 +162,3 @@ accessories:
   cache:
     image: memcached:alpine
     host: 91.98.178.89
-
-  nginx:
-    image: nginx:1.29-alpine
-    host: 91.98.178.89
-    port: 127.0.0.1:3139:3139
-    files:
-      - config/nginx.conf:/etc/nginx/nginx.conf
