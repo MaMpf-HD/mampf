@@ -102,9 +102,7 @@ env:
     URL_HOST: vignettes.mampf.media
     MAMPF_PORT: 3000
     REDIS_URL: redis://mampf-redis:6379/0
-    RAILS_SERVE_STATIC_FILES: true
     RAILS_LOG_TO_STDOUT: true
-    RAILS_SERVE_STATIC_FILES: true
   secret:
     - RAILS_MASTER_KEY
     - SECRET_KEY_BASE

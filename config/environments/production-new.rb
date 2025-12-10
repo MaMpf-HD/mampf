@@ -21,7 +21,12 @@ Rails.application.configure do
   config.require_master_key = true
 
   # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
+  # TODO: maybe serve from nginx on subdomain, but is difficult with kamal-proxy...
+  # see also:
+  # - https://github.com/basecamp/kamal/discussions/1216
+  # - https://github.com/basecamp/kamal/discussions/232
+  # - https://github.com/basecamp/kamal/issues/1278
+  config.public_file_server.enabled = true
 
   # Compress CSS using a preprocessor.
   config.assets.css_compressor = :sass
