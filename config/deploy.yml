@@ -83,6 +83,7 @@ builder:
 
 env:
   clear:
+    PRODUCTION_NAME: mampf
     BLOG: https://mampf.blog
     MEDIA_SERVER: https://media.mathi.uni-heidelberg.de
     MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
