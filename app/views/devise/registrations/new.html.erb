@@ -37,7 +37,12 @@
   </div>
 
   <%= f.hidden_field :locale, value: I18n.locale %>
-  <altcha-widget challengeurl="<%= altcha_url() %>"></altcha-widget>
+  <altcha-widget
+    hidefooter
+    class="d-flex mb-3"
+    style="--altcha-border-radius:5px;"
+    challengeurl="<%= altcha_url() %>">
+  </altcha-widget>
 
   <div class="mb-3">
     <%= f.submit t('.sign_up'), class: "devise-button btn btn-primary", id: 'register-user',
