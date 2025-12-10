@@ -1,3 +1,5 @@
+<%= vite_javascript_tag "js/registration" %>
+
 <h3 class="mb-3">
   <%= t('.sign_up') %>
 </h3>
@@ -35,14 +37,7 @@
   </div>
 
   <%= f.hidden_field :locale, value: I18n.locale %>
-  <% if ENV["USE_CAPTCHA_SERVICE"]%>
-    <p>
-      <div id="captcha-widget" data-sitekey="YOUR_SITE_KEY" data-start="auto"
-           data-captcha-url="<%=ENV.fetch('CAPTCHA_PUZZLE_URL') %>"
-           data-lang="<%=I18n.locale %>">
-      </div>
-    </p>
-  <% end %>
+  <altcha-widget challengeurl="<%= altcha_url() %>"></altcha-widget>
 
   <div class="mb-3">
     <%= f.submit t('.sign_up'), class: "devise-button btn btn-primary", id: 'register-user',
