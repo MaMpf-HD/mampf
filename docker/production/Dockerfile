@@ -116,3 +116,5 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
     RAILS_ENV=production DATABASE_ADAPTER=nulldb \
     bundle exec rails assets:precompile
+
+ENTRYPOINT [ "/usr/src/app/docker/production/start-mampf.sh" ]

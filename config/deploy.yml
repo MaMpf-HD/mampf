@@ -53,22 +53,13 @@ service: mampf
 image: splines/mampf
 
 servers:
-  web:
-    hosts:
-      - 91.98.178.89
-    options:
-      entrypoint: /usr/src/app/docker/production/entrypoint-master.sh
-  
-  worker:
-    hosts:
-      - 91.98.178.89
-    options:
-      entrypoint: /usr/src/app/docker/production/entrypoint-worker.sh
+  - 91.98.178.89
 
 proxy:
   ssl: true
   host: mampf.media
-  app_port: 3139
+  app_port: 3000
+  response_timeout: 60
   healthcheck:
     interval: 5
     path: /up
