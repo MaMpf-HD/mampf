@@ -25,7 +25,7 @@ class AltchaSolution < ApplicationRecord
 
   def self.cleanup
     # Replay attacks are protected by the time stamp in the salt of the challenge for
-    # the duration configured in the timeout. All solutions in the database that older
+    # the duration configured in the timeout. All solutions in the database that are older
     # can be deleted.
     AltchaSolution.where(created_at: ...(Time.zone.now - Altcha.timeout)).delete_all
   end
