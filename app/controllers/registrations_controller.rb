@@ -6,7 +6,8 @@ class RegistrationsController < Devise::RegistrationsController
   prepend_before_action :check_registration_limit, only: [:create]
 
   def create
-    if AltchaSolution.verify_and_save(params.permit(:altcha)[:altcha])
+    altcha_param = params.permit(:altcha)[:altcha]
+    if altcha_param.present? && AltchaSolution.verify_and_save(altcha_param)
       super
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
