@@ -1,5 +1,6 @@
 class AltchaSolution < ApplicationRecord
   validates :algorithm, :challenge, :salt, :signature, :number, presence: true
+  # The Altcha Rails library needs this attr_accessor, don't remove
   attr_accessor :took
 
   def self.verify_and_save(base64encoded)
