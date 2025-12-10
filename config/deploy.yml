@@ -53,12 +53,13 @@ service: mampf
 image: splines/mampf
 
 servers:
-  - 91.98.178.89
+  web:
+    - 91.98.178.89
 
 proxy:
   ssl: true
   host: mampf.media
-  app_port: 3000
+  app_port: 3139
   response_timeout: 60
   healthcheck:
     interval: 5

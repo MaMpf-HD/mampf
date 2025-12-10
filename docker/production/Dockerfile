@@ -12,9 +12,6 @@ FROM ruby:3.4.7-bookworm
 
 ENV RAILS_ENV=production
 
-EXPOSE 3000
-EXPOSE 9394
-
 # use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-c"]
 
