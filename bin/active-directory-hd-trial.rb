@@ -1,5 +1,5 @@
 # Try out this file by running
-# $ rails runner bin/active-directory-hd-trial.rb
+# $ UNI_ID=abc123 UNI_PASSWORD=my-uni-password rails runner bin/active-directory-hd-trial.rb
 
 require "net/ldap"
 
@@ -28,6 +28,6 @@ def authenticate_uni_heidelberg_user(uni_id, password)
   end
 end
 
-UNI_ID = "ab123"
-PASSWORD = "secret-password"
-authenticate_uni_heidelberg_user(UNI_ID, "")
+uni_id =  ENV.fetch("UNI_ID")
+password = ENV.fetch("UNI_PASSWORD")
+authenticate_uni_heidelberg_user(uni_id, password)
