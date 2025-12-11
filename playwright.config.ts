@@ -39,6 +39,10 @@ export default defineConfig({
         launchOptions: {
           args: [
             "--start-maximized",
+            // Required for the Altcha Captcha to work in the test environment
+            // (HTTP, not HTTPS). Browsers usually only consider localhost
+            // or HTTPS are secure origins. The secure context is needed, such that
+            // Playwright can use the browser's Web Crypto API to solve the captcha.
             "--unsafely-treat-insecure-origin-as-secure=http://app-test:3145",
           ],
         },
