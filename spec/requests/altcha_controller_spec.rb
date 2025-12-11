@@ -34,11 +34,7 @@ RSpec.describe("Altcha", type: :request) do
           expect(response).to have_http_status(:ok)
         end
 
-        # 16th request should be allowed (count is 15, 15 > 15 is false)
-        get "/altcha"
-        expect(response).to have_http_status(:ok)
-
-        # 17th request should be blocked (count is 16, 16 > 15 is true)
+        # next request should be blocked
         get "/altcha"
         expect(response).to have_http_status(:too_many_requests)
         expect(JSON.parse(response.body)["error"]).to eq("Rate limit exceeded")

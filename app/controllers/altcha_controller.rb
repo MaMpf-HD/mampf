@@ -6,7 +6,7 @@ class AltchaController < ApplicationController
     key = "altcha_rate_limit:#{ip}"
     count = Rails.cache.read(key) || 0
 
-    if count.to_i > 15
+    if count.to_i >= 15
       render json: { error: "Rate limit exceeded" }, status: :too_many_requests
       return
     end
