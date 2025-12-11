@@ -12,8 +12,8 @@ class RegistrationsController < Devise::RegistrationsController
     else
       build_resource(devise_parameter_sanitizer.sanitize(:sign_up))
       clean_up_passwords(resource)
-      set_flash_message(:alert, :captcha_error)
-      render :new
+      flash.now[:alert] = I18n.t("devise.registrations.user.captcha_error")
+      render_flash
     end
   end
 

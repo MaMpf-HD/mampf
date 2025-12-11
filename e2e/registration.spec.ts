@@ -22,5 +22,5 @@ test("cannot sign up without solving captcha", async ({ page }) => {
   await signUpPage.disableCaptcha();
   await signUpPage.submit();
 
-  await expect(page.getByText("The captcha test failed.")).toBeVisible();
+  await expect(page.getByText("captcha test failed")).toBeVisible();
 });
