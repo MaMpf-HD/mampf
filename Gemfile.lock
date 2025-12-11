@@ -360,6 +360,9 @@ GEM
     net-imap (0.5.12)
       date
       net-protocol
+    net-ldap (0.20.0)
+      base64
+      ostruct
     net-pop (0.1.2)
       net-protocol
     net-protocol (0.2.2)
@@ -393,6 +396,7 @@ GEM
       sanitize
     options (2.3.2)
     orm_adapter (0.5.0)
+    ostruct (0.6.3)
     pagy (9.4.0)
     pairing_heap (3.1.0)
     parallel (1.27.0)
@@ -744,6 +748,7 @@ DEPENDENCIES
   marcel (~> 1.0)
   mini_magick (~> 4.13)
   mobility (~> 1.2)
+  net-ldap (~> 0.20.0)
   net-smtp (~> 0.5)
   pagy (~> 9.4)
   pdf-reader (~> 2.12)
