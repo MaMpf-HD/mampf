@@ -30,6 +30,12 @@ export default defineConfig({
       name: "chromium",
       use: {
         ...devices["Desktop Chrome"],
+        // Use new Chromium headless mode:
+        // https://playwright.dev/docs/browsers#chromium-new-headless-mode
+        // We need this since the old headless mode has this bug
+        // https://issues.chromium.org/issues/40168268
+        // see also: https://github.com/microsoft/playwright/issues/22944
+        channel: "chromium",
         // https://dev.to/muhendiskedibey/how-to-full-screen-a-browser-in-playwright-1np1
         deviceScaleFactor: undefined,
         viewport: {
