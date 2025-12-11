@@ -11,7 +11,7 @@ class AltchaController < ApplicationController
       return
     end
 
-    Rails.cache.write(key, count.to_i + 1, expires_in: 2.minutes)
+    Rails.cache.write(key, count.to_i + 1, expires_in: 3.minutes)
     render json: Altcha::Challenge.create.to_json
   end
 end
