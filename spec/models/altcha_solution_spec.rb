@@ -113,11 +113,13 @@ RSpec.describe(AltchaSolution, type: :model) do
 
   describe ".cleanup" do
     let!(:old_solution) do
-      AltchaSolution.create!(algorithm: "A", challenge: "C1", salt: "S1", signature: "SIG1", number: 1,
+      AltchaSolution.create!(algorithm: "A", challenge: "C1", salt: "S1",
+                             signature: "SIG1", number: 1,
                              created_at: 5.minutes.ago)
     end
     let!(:new_solution) do
-      AltchaSolution.create!(algorithm: "A", challenge: "C2", salt: "S2", signature: "SIG2", number: 2,
+      AltchaSolution.create!(algorithm: "A", challenge: "C2", salt: "S2",
+                             signature: "SIG2", number: 2,
                              created_at: 1.minute.ago)
     end
 
