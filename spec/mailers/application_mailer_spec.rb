@@ -32,14 +32,9 @@ RSpec.describe(ApplicationMailer, type: :mailer) do
       target_dir = File.join(temp_view_path, "special_location")
       FileUtils.mkdir_p(target_dir)
       File.write(File.join(target_dir, "test_email.html.erb"), "Content from special location")
-
-      # Add the temp dir to the view paths so Rails can find the file
       mailer_class.prepend_view_path(temp_view_path)
-
-      # Execute
       email = mailer_class.test_email
 
-      # Verify that the template was found in the 'special_location'
       expect(email.body.encoded).to include("Content from special location")
     end
 
