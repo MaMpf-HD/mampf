@@ -37,7 +37,10 @@ export default defineConfig({
           height: 1080,
         },
         launchOptions: {
-          args: ["--start-maximized"],
+          args: [
+            "--start-maximized",
+            "--unsafely-treat-insecure-origin-as-secure=http://app-test:3145",
+          ],
         },
       },
     },

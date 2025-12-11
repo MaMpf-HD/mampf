@@ -19,21 +19,19 @@ export class SignUpPage {
   }
 
   async solveCaptcha() {
-    // Wait for the widget to be ready
-    await this.page.waitForSelector("altcha-widget");
+    await this.page.getByRole("checkbox", { name: "robot" }).click();
 
-    // Use Playwright's locator which pierces Shadow DOM automatically
-    const checkbox = this.page.locator("altcha-widget input[type='checkbox']");
-
-    await checkbox.waitFor({ state: "visible" });
-    await checkbox.click();
-
-    // Wait for verification to complete
-    // The widget usually shows a "Verified" state or similar
-    // We can check if the hidden input has a value
+    // Wait for verification to complete (wait for hidden input to be populated)
     await this.page.waitForFunction(() => {
       const input = document.querySelector('input[name="altcha"]');
       return input && (input as HTMLInputElement).value.length > 0;
+    });
+  }
+
+  async disableCaptcha() {
+    const checkbox = this.page.getByRole("checkbox", { name: "robot" });
+    await checkbox.evaluate((el) => {
+      el.removeAttribute("required");
     });
   }
 
