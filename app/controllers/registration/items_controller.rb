@@ -27,7 +27,8 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = t("registration.item.updated")
             render turbo_stream: [
-              turbo_stream.replace(@item, partial: "registration/items/item", locals: { item: @item }),
+              turbo_stream.replace(@item, partial: "registration/items/item",
+                                          locals: { item: @item }),
               stream_flash
             ]
           end
@@ -42,6 +43,32 @@ module Registration
             flash.now[:alert] = @item.errors.full_messages.to_sentence
             render turbo_stream: stream_flash
           end
+        end
+      end
+    end
+
+    def destroy
+      unless @campaign.draft?
+        redirect_to registration_campaign_path(@campaign, tab: "items"),
+                    alert: t("activerecord.errors.models.registration/item.attributes.base.frozen")
+        return
+      end
+
+      @item.destroy
+      respond_to do |format|
+        format.html do
+          redirect_to registration_campaign_path(@campaign, tab: "items"),
+                      notice: t("registration.item.destroyed")
+        end
+        format.turbo_stream do
+          flash.now[:notice] = t("registration.item.destroyed")
+          render turbo_stream: [
+            turbo_stream.replace("registration_items_container",
+                                 partial: "registration/campaigns/card_body_items",
+                                 locals: { campaign: @campaign }),
+            turbo_stream.update("items-tab-count", @campaign.registration_items.count),
+            stream_flash
+          ]
         end
       end
     end
@@ -82,7 +109,7 @@ module Registration
           unless registerable.save
             @item = @campaign.registration_items.build
             registerable.errors.full_messages.each { |m| @item.errors.add(:base, m) }
-            raise ActiveRecord::Rollback
+            raise(ActiveRecord::Rollback)
           end
 
           @item = @campaign.registration_items.build(
@@ -90,9 +117,7 @@ module Registration
             registerable_type: type
           )
 
-          unless @item.save
-            raise ActiveRecord::Rollback
-          end
+          raise(ActiveRecord::Rollback) unless @item.save
         end
 
         if @item.persisted?
@@ -133,61 +158,6 @@ module Registration
           end
         end
       end
-
-      def set_campaign
-            redirect_to registration_campaign_path(@campaign, tab: "items"),
-                        notice: t("registration.item.updated")
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t("registration.item.updated")
-            render turbo_stream: [
-              turbo_stream.replace(@item, partial: "registration/items/item",
-                                          locals: { item: @item }),
-              stream_flash
-            ]
-          end
-        end
-      else
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_path(@campaign, tab: "items"),
-                        alert: @item.errors.full_messages.to_sentence
-          end
-          format.turbo_stream do
-            render turbo_stream: turbo_stream.replace(@item, partial: "registration/items/item",
-                                                             locals: { item: @item })
-          end
-        end
-      end
-    end
-
-    def destroy
-      unless @campaign.draft?
-        redirect_to registration_campaign_path(@campaign, tab: "items"),
-                    alert: t("activerecord.errors.models.registration/item.attributes.base.frozen")
-        return
-      end
-
-      @item.destroy
-      respond_to do |format|
-        format.html do
-          redirect_to registration_campaign_path(@campaign, tab: "items"),
-                      notice: t("registration.item.destroyed")
-        end
-        format.turbo_stream do
-          flash.now[:notice] = t("registration.item.destroyed")
-          render turbo_stream: [
-            turbo_stream.replace("registration_items_container",
-                                 partial: "registration/campaigns/card_body_items",
-                                 locals: { campaign: @campaign }),
-            turbo_stream.update("items-tab-count", @campaign.registration_items.count),
-            stream_flash
-          ]
-        end
-      end
-    end
-
-    private
 
       def set_campaign
         @campaign = Registration::Campaign.find(params[:registration_campaign_id])
