@@ -21,6 +21,34 @@ def authenticate_uni_heidelberg_user(uni_id, password)
   ldap.auth "#{uni_id}@uni-heidelberg.de", password
   if ldap.bind
     puts "Authentication successful for user #{uni_id}"
+
+    default_naming_context = nil
+    ldap.search(base: "",
+      scope: Net::LDAP::SearchScope_BaseObject,
+      attributes: ["defaultNamingContext"]) do |entry|
+      if entry["defaultNamingContext"] && entry["defaultNamingContext"].any?
+        default_naming_context = entry["defaultNamingContext"].first
+      end
+    end
+
+    base = default_naming_context || ""
+    filter = Net::LDAP::Filter.eq("userPrincipalName", "#{uni_id}@uni-heidelberg.de") | Net::LDAP::Filter.eq("sAMAccountName", uni_id)
+    entries = []
+
+    ldap.search(base: base, filter: filter, attributes: ['*', '+']) do |entry|
+      entries << entry
+    end
+
+    if entries.empty?
+      puts "No LDAP entries found for user #{uni_id}"
+    else
+      entries.each do |entry|
+        puts "LDAP entry: #{entry.dn}"
+        entry.each do |attribute, values|
+          puts "#{attribute}: #{values.join(', ')}"
+        end
+      end
+    end
     true
   else
     puts "Authentication failed for user #{uni_id}"
