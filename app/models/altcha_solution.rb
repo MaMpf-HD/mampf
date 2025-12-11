@@ -24,10 +24,13 @@ class AltchaSolution < ApplicationRecord
     end
   end
 
+  # To prevent replay attacks, a unique index is enforced on the combination
+  # of the fields: algorithm, challenge, salt, signature, and number.
+  # This guarantees that each solution can only be saved once (in the given
+  # time window). However, to prevent the table from growing indefinitely,
+  # we need to periodically delete old solutions. See also the corresponding
+  # scheduled job defined in config/schedule.yml.
   def self.cleanup
-    # Replay attacks are protected by the time stamp in the salt of the challenge for
-    # the duration configured in the timeout. All solutions in the database that are older
-    # can be deleted.
     AltchaSolution.where(created_at: ...(Time.zone.now - Altcha.timeout)).delete_all
   end
 end
