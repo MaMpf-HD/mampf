@@ -1,6 +1,19 @@
+# Try out this file by running
+# $ rails runner bin/active-directory-hd-trial.rb
+
 require "net/ldap"
 
+# Authenticates a user against Heidelberg University's Active Directory.
+#
+# For more information, refer to:
+# https://www.urz.uni-heidelberg.de/de/service-katalog/identity-management/active-directory 
 def authenticate_uni_heidelberg_user(uni_id, password)
+  # otherwise, the authentication would succeed for empty passwords (!)
+  if password.nil? || password.strip.empty?
+    puts "Password cannot be empty"
+    return false
+  end
+
   ldap = Net::LDAP.new
   # https://www.urz.uni-heidelberg.de/de/service-katalog/identity-management/active-directory
   ldap.host = "ad.uni-heidelberg.de"
@@ -17,7 +30,4 @@ end
 
 UNI_ID = "ab123"
 PASSWORD = "secret-password"
-authenticate_uni_heidelberg_user(UNI_ID, PASSWORD)
-
-# Run via
-# $ rails runner bin/active-directory-hd-trial.rb
+authenticate_uni_heidelberg_user(UNI_ID, "")
