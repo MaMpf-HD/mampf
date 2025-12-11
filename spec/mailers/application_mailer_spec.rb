@@ -42,5 +42,52 @@ RSpec.describe(ApplicationMailer, type: :mailer) do
       # Verify that the template was found in the 'special_location'
       expect(email.body.encoded).to include("Content from special location")
     end
+
+    it "includes the custom path (pluralized folder/mails) in the view lookup" do
+      # custom_path = "unique_tests/mails"
+      target_dir = File.join(temp_view_path, "unique_tests", "mails")
+      FileUtils.mkdir_p(target_dir)
+      File.write(File.join(target_dir, "test_email.html.erb"), "Content from custom path")
+
+      mailer_class.prepend_view_path(temp_view_path)
+      email = mailer_class.test_email
+      expect(email.body.encoded).to include("Content from custom path")
+    end
+
+    it "includes the usual rails path in the view lookup" do
+      # usual_rails_path = "unique_test_mailer"
+      target_dir = File.join(temp_view_path, "unique_test_mailer")
+      FileUtils.mkdir_p(target_dir)
+      File.write(File.join(target_dir, "test_email.html.erb"), "Content from usual path")
+
+      mailer_class.prepend_view_path(temp_view_path)
+      email = mailer_class.test_email
+      expect(email.body.encoded).to include("Content from usual path")
+    end
+  end
+
+  describe "defaults" do
+    let(:mailer_class) do
+      Class.new(ApplicationMailer) do
+        def test_email
+          mail(to: "test@example.org", subject: "Test", body: "Test Body") # rubocop:disable Rails/I18nLocaleTexts
+        end
+
+        def self.name
+          "UniqueTestMailer"
+        end
+      end
+    end
+
+    it "sets the default from address" do
+      email = mailer_class.test_email
+      expect(email.from).to eq([DefaultSetting::PROJECT_EMAIL])
+    end
+
+    it "sets a custom Message-ID with the configured domain" do
+      stub_const("ENV", ENV.to_hash.merge("MAILID_DOMAIN" => "mampf.test"))
+      email = mailer_class.test_email
+      expect(email.message_id).to end_with("@mampf.test")
+    end
   end
 end
