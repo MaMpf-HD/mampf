@@ -22,7 +22,7 @@ user_cleaner_job:
   queue: critical
 
 altcha_solutions_cleaner_job:
-  # at midnight, every 3 days
-  cron: "0 0 */3 * *"
+  # at midnight, every 2 days
+  cron: "0 0 */2 * *"
   class: "AltchaSolutionsCleaner"
   queue: critical
