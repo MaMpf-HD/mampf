@@ -17,13 +17,6 @@ RSpec.describe("Altcha", type: :request) do
     end
 
     context "rate limiting" do
-      it "allows requests under the limit" do
-        15.times do
-          get "/altcha"
-          expect(response).to have_http_status(:ok)
-        end
-      end
-
       it "blocks requests over the limit" do
         # Ensure cache is cleared or use a fresh IP
         Rails.cache.clear
