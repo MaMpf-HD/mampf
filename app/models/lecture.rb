@@ -208,6 +208,10 @@ class Lecture < ApplicationRecord
     end
   end
 
+  def registration_title
+    title_for_viewers
+  end
+
   def locale_with_inheritance
     locale || course.locale
   end

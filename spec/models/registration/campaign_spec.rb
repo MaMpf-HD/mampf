@@ -26,6 +26,7 @@ RSpec.describe(Registration::Campaign, type: :model) do
       campaign = FactoryBot.create(:registration_campaign, :open)
       expect(campaign).to be_valid
       expect(campaign.status).to eq("open")
+      expect(campaign.registration_items).not_to be_empty
     end
 
     it "creates a valid closed campaign" do
@@ -99,7 +100,8 @@ RSpec.describe(Registration::Campaign, type: :model) do
 
   describe "validations" do
     it "validates registration_deadline is in the future if open" do
-      campaign = build(:registration_campaign, :open, registration_deadline: 1.day.ago)
+      campaign = create(:registration_campaign, :open)
+      campaign.registration_deadline = 1.day.ago
       expect(campaign).not_to be_valid
       expect(campaign.errors.added?(:registration_deadline, :must_be_in_future)).to be(true)
     end

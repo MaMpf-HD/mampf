@@ -1,6 +1,15 @@
 <% campaign ||= @campaign %>
 <% show_stats = !campaign.draft? %>
 <div id="campaign_overview">
+  <% if campaign.registration_items.empty? %>
+    <div class="alert alert-warning d-flex align-items-center" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"></i>
+      <div>
+        <%= t("registration.campaign.warnings.no_items") %>
+      </div>
+    </div>
+  <% end %>
+
 <div class="row g-3 mb-3">
   <div class="col-12 <%= show_stats ? 'col-lg-8' : '' %>">
     <div class="card h-100">

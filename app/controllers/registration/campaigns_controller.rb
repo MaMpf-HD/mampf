@@ -6,12 +6,21 @@ module Registration
     authorize_resource class: "Registration::Campaign", except: [:index, :new, :create]
 
     def current_ability
-      @current_ability ||= RegistrationCampaignAbility.new(current_user)
+      @current_ability ||= begin
+        ability = RegistrationCampaignAbility.new(current_user)
+        # We need to merge TutorialAbility and TalkAbility because the view renders
+        # registration items which delegate permission checks to their registerables
+        # (Tutorials/Talks). Without this, can?(:destroy, item.registerable) fails.
+        ability.merge(TutorialAbility.new(current_user))
+        ability.merge(TalkAbility.new(current_user))
+        ability
+      end
     end
 
     def index
       authorize! :index, Registration::Campaign.new(campaignable: @lecture)
-      @campaigns = @lecture.registration_campaigns.order(created_at: :desc)
+      @campaigns = @lecture.registration_campaigns.includes(:registration_items)
+                           .order(created_at: :desc)
 
       respond_to do |format|
         format.html
@@ -58,7 +67,7 @@ module Registration
       authorize! :create, @campaign
 
       if @campaign.save
-        respond_with_success(t("registration.campaign.created"))
+        respond_with_success(t("registration.campaign.created"), tab: "items")
       else
         respond_with_form_error(t("registration.campaign.create_failed"), :new)
       end
@@ -141,19 +150,22 @@ module Registration
                                                  locals: locals)
       end
 
-      def respond_with_success(message)
+      def render_turbo_update(partial, locals)
+        render turbo_stream: [
+          turbo_stream.update("campaigns_container", partial: partial, locals: locals),
+          stream_flash
+        ].compact
+      end
+
+      def respond_with_success(message, tab: nil)
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign), notice: message
+            redirect_to registration_campaign_path(@campaign, tab: tab), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_show",
-                                  locals: { campaign: @campaign }),
-              stream_flash
-            ].compact
+            render_turbo_update("registration/campaigns/card_body_show",
+                                campaign: @campaign, tab: tab)
           end
         end
       end
@@ -167,12 +179,8 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_index",
-                                  locals: { lecture: lecture }),
-              stream_flash
-            ].compact
+            render_turbo_update("registration/campaigns/card_body_index",
+                                lecture: lecture)
           end
         end
       end
@@ -182,13 +190,9 @@ module Registration
           format.html { render action, status: :unprocessable_content }
           format.turbo_stream do
             flash.now[:alert] = message
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_form",
-                                  locals: { campaign: @campaign,
-                                            lecture: @campaign.campaignable }),
-              stream_flash
-            ].compact
+            render_turbo_update("registration/campaigns/card_body_form",
+                                campaign: @campaign,
+                                lecture: @campaign.campaignable)
           end
         end
       end

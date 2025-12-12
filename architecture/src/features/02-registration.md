@@ -180,8 +180,8 @@ Campaigns transition through several states to ensure data integrity and fair us
 
 | Mode | Freeze Point | Modification Rules |
 |------|--------------|-------------------|
-| FCFS | Constrained | Can increase anytime. Can decrease only if `new_capacity >= confirmed_count` for that item. Cannot revoke confirmed spots. |
-| Preference-based | After `completed` | Can change freely while `draft`, `open`, or `closed` (allocation hasn't run). Freezes once `completed` (results published). |
+| FCFS | After `completed` | Can increase anytime while active. Can decrease only if `new_capacity >= confirmed_count` for that item. Freezes once `completed` (rosters materialized). |
+| Preference-based | After `completed` | Can change freely while `draft`, `open`, or `closed` (allocation hasn't run). Freezes once `processing` or `completed` (results published). |
 
 #### Implementation Notes
 
@@ -1188,22 +1188,22 @@ stateDiagram-v2
     open --> closed: Admin closes OR deadline reached
     closed --> processing: Allocation runs
     processing --> completed: Admin finalizes
-    
+
     note right of draft
         Admin configures items,
         policies, deadline
     end note
-    
+
     note right of open
         Users submit preferences;
         all status: pending
     end note
-    
+
     note right of processing
         Registration closed;
         run allocation solver
     end note
-    
+
     note right of completed
         Allocation finalized;
         rosters materialized
@@ -1269,26 +1269,26 @@ stateDiagram-v2
     draft --> open: Admin opens campaign
     open --> closed: Admin closes OR deadline reached
     closed --> completed: Admin finalizes (optional)
-    
+
     note right of draft
         Admin configures items,
         policies, deadline
     end note
-    
+
     note right of open
         Users submit registrations;
         immediate confirm/reject
     end note
-    
+
     note right of closed
         Registration closed;
         results visible
     end note
-    
+
     note right of completed
         For planning-only:
         skip finalize!
-        
+
         For materialization:
         finalize! applies to rosters
     end note
@@ -1316,26 +1316,26 @@ sequenceDiagram
     Controller->>Campaign: find(campaign_id)
     Controller->>Campaign: open_for_registrations?
     Campaign-->>Controller: true
-    
+
     Controller->>Campaign: evaluate_policies_for(user, phase: :registration)
     Campaign->>PolicyEngine: eligible?(user, phase: :registration)
     PolicyEngine-->>Campaign: Result(pass: true/false, ...)
     Campaign-->>Controller: Result
-    
+
     alt policies fail
         Controller-->>UI: Ineligible state
         UI-->>Student: Show error: "Not eligible (reason)"
     else policies pass
         Controller-->>UI: Show register buttons
         UI-->>Student: Display available items
-        
+
         Student->>UI: Click "Register for Item X"
         UI->>Controller: POST /campaigns/:id/user_registrations
-        
+
         Controller->>Item: find(item_id)
         Controller->>Item: remaining_capacity
         Item-->>Controller: capacity count
-        
+
         alt capacity available
             Controller->>UserReg: create!(status: :confirmed, ...)
             UserReg-->>Controller: registration record
@@ -1349,9 +1349,9 @@ sequenceDiagram
         end
     end
     end
-    
+
     note over Student,Roster: Later: Admin closes campaign
-    
+
     rect rgb(255, 245, 235)
     note over Student,Roster: View results (processing state)
     Student->>UI: View results
@@ -1361,7 +1361,7 @@ sequenceDiagram
     Controller-->>UI: Show campaign with status
     UI-->>Student: Display confirmed/rejected
     end
-    
+
     rect rgb(245, 255, 235)
     note over Controller,Roster: Optional: Admin finalizes (materialization)
     Controller->>Campaign: finalize!
