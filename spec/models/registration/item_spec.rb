@@ -36,21 +36,46 @@ RSpec.describe(Registration::Item, type: :model) do
 
     describe "#registerable_type_consistency" do
       let(:campaign) { create(:registration_campaign) }
-      let!(:tutorial_item) do
-        create(:registration_item, :for_tutorial, registration_campaign: campaign)
+
+      context "when existing item is a tutorial" do
+        let!(:tutorial_item) do
+          create(:registration_item, :for_tutorial, registration_campaign: campaign)
+        end
+
+        it "allows adding another item of the same type" do
+          new_item = build(:registration_item, :for_tutorial, registration_campaign: campaign)
+          expect(new_item).to be_valid
+        end
+
+        it "does not allow adding an item of a different type" do
+          new_item = build(:registration_item, :for_talk, registration_campaign: campaign)
+          expect(new_item).not_to be_valid
+          expect(new_item.errors[:base])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                               ".mixed_types"))
+        end
       end
 
-      it "allows adding another item of the same type" do
-        new_item = build(:registration_item, :for_tutorial, registration_campaign: campaign)
-        expect(new_item).to be_valid
-      end
+      context "when existing item is a lecture" do
+        let!(:lecture_item) do
+          create(:registration_item, :for_lecture, registration_campaign: campaign)
+        end
 
-      it "does not allow adding an item of a different type" do
-        new_item = build(:registration_item, :for_talk, registration_campaign: campaign)
-        expect(new_item).not_to be_valid
-        expect(new_item.errors[:base])
-          .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
-                             ".mixed_types"))
+        it "does not allow adding another lecture item" do
+          new_item = build(:registration_item, :for_lecture, registration_campaign: campaign)
+          expect(new_item).not_to be_valid
+          expect(new_item.errors[:base])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                               ".lecture_unique"))
+        end
+
+        it "does not allow adding an item of a different type" do
+          new_item = build(:registration_item, :for_tutorial, registration_campaign: campaign)
+          expect(new_item).not_to be_valid
+          expect(new_item.errors[:base])
+            .to include(I18n.t("activerecord.errors.models.registration/item.attributes.base" \
+                               ".lecture_unique"))
+        end
       end
     end
 
