@@ -60,16 +60,3 @@ production:
     database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
     url: <%= ENV['PRODUCTION_DATABASE_URL'] %>
     migrations_paths: db/interactions_migrate
-
-production_vignette:
-  primary:
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
-    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
-    database: <%= ENV['PRODUCTION_DATABASE_DATABASE'] %>
-    url: <%= ENV['PRODUCTION_DATABASE_URL'] %>
-  interactions:
-    adapter: <%= ENV['PRODUCTION_DATABASE_ADAPTER'] ||= 'postgresql' %>
-    encoding: <%= ENV['PRODUCTION_DATABASE_ENCODING'] %>
-    database: <%= ENV['PRODUCTION_DATABASE_INTERACTIONS'] %>
-    url: <%= ENV['PRODUCTION_DATABASE_URL'] %>
-    migrations_paths: db/interactions_migrate

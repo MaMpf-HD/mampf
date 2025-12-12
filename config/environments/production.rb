@@ -20,7 +20,11 @@ Rails.application.configure do
   # This key is used to decrypt credentials (and other encrypted files).
   config.require_master_key = true
 
-  # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
+  # TODO: maybe serve from nginx on subdomain, but it's not trivial with kamal-proxy...
+  # see also:
+  # - https://github.com/basecamp/kamal/discussions/1216
+  # - https://github.com/basecamp/kamal/discussions/232
+  # - https://github.com/basecamp/kamal/issues/1278
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Compress CSS using a preprocessor.
@@ -34,8 +38,9 @@ Rails.application.configure do
   config.public_file_server.headers = { "cache-control" => "public, max-age=#{1.year.to_i}" }
 
   # Specifies the header that your server uses for sending files.
-  # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for Apache
-  config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
+  if ENV.fetch("PRODUCTION_NAME") != "mampf-vignettes"
+    config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
+  end
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :production
@@ -46,7 +51,8 @@ Rails.application.configure do
   # config.assume_ssl = true
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  # we don't want this for mampf-vignettes, as the kamal-proxy terminates SSL there already
+  config.force_ssl = true if ENV.fetch("PRODUCTION_NAME") != "mampf-vignettes"
 
   # Skip http-to-https redirect for the default health check endpoint.
   # config.ssl_options = { redirect: { exclude: ->(request) { request.path == "/up" } } }
@@ -86,7 +92,7 @@ Rails.application.configure do
 
   config.action_mailer.smtp_settings = {
     address: ENV.fetch("MAILSERVER"),
-    port: 25,
+    port: ENV.fetch("MAIL_PORT").to_i,
     user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
     password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
   }
@@ -100,7 +106,7 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   config.after_initialize do
-    production_name = ENV.fetch("PRODUCTION_NAME", nil)
+    production_name = ENV.fetch("PRODUCTION_NAME")
     Rails.logger.info("PRODUCTION_NAME: #{production_name}")
   end
 

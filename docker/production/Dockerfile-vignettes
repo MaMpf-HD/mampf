@@ -10,7 +10,7 @@ RUN cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
 # https://hub.docker.com/_/ruby/
 FROM ruby:3.4.7-bookworm
 
-ENV RAILS_ENV=production_vignette
+ENV RAILS_ENV=production
 
 # use "--login" option, so that .bashrc is sourced in new shells
 SHELL ["/bin/bash", "--login", "-c"]
@@ -111,7 +111,7 @@ RUN cp -r $(bundle info --path sidekiq)/web/assets /usr/src/app/public/sidekiq &
     set -o allexport && . ./docker-dummy.env && set +o allexport && \
     SECRET_KEY_BASE="$(bundle exec rails secret)" \
     VITE_RUBY_SKIP_ASSETS_PRECOMPILE_INSTALL=true \
-    RAILS_ENV=production_vignette DATABASE_ADAPTER=nulldb \
+    RAILS_ENV=production DATABASE_ADAPTER=nulldb \
     bundle exec rails assets:precompile
 
 ENTRYPOINT [ "/usr/src/app/docker/production/start-mampf.sh" ]

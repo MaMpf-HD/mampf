@@ -15,7 +15,7 @@ class UserCleanerJob
     # Note that Rails.env.production? is not sufficient in this context
     # as both mampf-experimental and mampf-next also run in production mode.
     production_name = ENV.fetch("PRODUCTION_NAME", nil)
-    return if production_name != "mampf" && production_name != "mampf-vignette"
+    return if production_name != "mampf" && production_name != "mampf-vignettes"
 
     UserCleaner.new.handle_inactive_users!
   end
