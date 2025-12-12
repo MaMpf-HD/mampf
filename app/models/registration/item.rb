@@ -88,6 +88,9 @@ module Registration
       end
 
       def registerable_type_consistency
+        # We use where.not(id: nil) to ensure we only look at persisted items
+        # and ignore the current item (which is not yet persisted) or other
+        # items currently being built in the same transaction/request.
         existing_item = registration_campaign.registration_items.where.not(id: nil).first
         return unless existing_item
 
