@@ -134,6 +134,11 @@ RSpec.describe(Registration::Item, type: :model) do
           expect(item).to be_valid
         end
 
+        it "allows setting capacity to unlimited (nil)" do
+          item.capacity = nil
+          expect(item).to be_valid
+        end
+
         it "does not allow reducing capacity below confirmed count" do
           item.capacity = 2
           expect(item).not_to be_valid

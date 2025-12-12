@@ -65,6 +65,7 @@ module Registration
       def valid_capacity_reduction?(new_capacity)
         return true if registration_campaign.draft?
         return true unless registration_campaign.first_come_first_served?
+        return true if new_capacity.nil?
 
         confirmed_count = user_registrations.confirmed.count
         new_capacity >= confirmed_count
