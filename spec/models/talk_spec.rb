@@ -226,4 +226,10 @@ RSpec.describe(Talk, type: :model) do
       end
     end
   end
+
+  describe "Registration::Registerable" do
+    subject { FactoryBot.create(:valid_talk) }
+
+    it_behaves_like "a registerable model"
+  end
 end
