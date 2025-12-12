@@ -59,21 +59,7 @@ module Registration
       authorize! :create, @campaign
 
       if @campaign.save
-        respond_to do |format|
-          format.html do
-            redirect_to registration_campaign_path(@campaign, tab: "items"),
-                        notice: t("registration.campaign.created")
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t("registration.campaign.created")
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_show",
-                                  locals: { campaign: @campaign, tab: "items" }),
-              stream_flash
-            ]
-          end
-        end
+        respond_with_success(t("registration.campaign.created"), tab: "items")
       else
         respond_with_form_error(t("registration.campaign.create_failed"), :new)
       end
@@ -156,19 +142,22 @@ module Registration
                                                  locals: locals)
       end
 
-      def respond_with_success(message)
+      def render_turbo_update(partial, locals)
+        render turbo_stream: [
+          turbo_stream.update("campaigns_container", partial: partial, locals: locals),
+          stream_flash
+        ].compact
+      end
+
+      def respond_with_success(message, tab: nil)
         respond_to do |format|
           format.html do
-            redirect_to registration_campaign_path(@campaign), notice: message
+            redirect_to registration_campaign_path(@campaign, tab: tab), notice: message
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_show",
-                                  locals: { campaign: @campaign }),
-              stream_flash
-            ].compact
+            render_turbo_update("registration/campaigns/card_body_show",
+                                campaign: @campaign, tab: tab)
           end
         end
       end
@@ -182,12 +171,8 @@ module Registration
           end
           format.turbo_stream do
             flash.now[:notice] = message
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_index",
-                                  locals: { lecture: lecture }),
-              stream_flash
-            ].compact
+            render_turbo_update("registration/campaigns/card_body_index",
+                                lecture: lecture)
           end
         end
       end
@@ -197,13 +182,9 @@ module Registration
           format.html { render action, status: :unprocessable_content }
           format.turbo_stream do
             flash.now[:alert] = message
-            render turbo_stream: [
-              turbo_stream.update("campaigns_container",
-                                  partial: "registration/campaigns/card_body_form",
-                                  locals: { campaign: @campaign,
-                                            lecture: @campaign.campaignable }),
-              stream_flash
-            ].compact
+            render_turbo_update("registration/campaigns/card_body_form",
+                                campaign: @campaign,
+                                lecture: @campaign.campaignable)
           end
         end
       end
