@@ -126,7 +126,8 @@ RSpec.describe("Registration::Items", type: :request) do
           follow_redirect!
           expect(response.body)
             .to include(I18n.t(
-                          "activerecord.errors.models.registration/item.attributes.base.capacity_too_low",
+                          "activerecord.errors.models.registration/item" \
+                          ".attributes.base.capacity_too_low",
                           count: 5
                         ))
         end
@@ -184,7 +185,8 @@ RSpec.describe("Registration::Items", type: :request) do
 
           expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
           follow_redirect!
-          expect(response.body).to include(I18n.t("activerecord.errors.models.registration/item" + ".attributes.base.frozen"))
+          expect(response.body).to
+          include(I18n.t("activerecord.errors.models.registration/item.attributes.base.frozen"))
         end
       end
     end
