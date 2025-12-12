@@ -9,8 +9,12 @@
             <tr>
               <th><%= t("registration.item.columns.title") %></th>
               <th><%= t("registration.item.columns.capacity") %></th>
-              <th><%= t("registration.item.columns.registrations") %></th>
-              <th class="text-end"><%= t("basics.actions") %></th>
+              <% unless campaign.draft? %>
+                <th><%= t("registration.item.columns.registrations") %></th>
+              <% end %>
+              <% if campaign.draft? %>
+                <th class="text-end"><%= t("basics.actions") %></th>
+              <% end %>
             </tr>
           </thead>
           <tbody>

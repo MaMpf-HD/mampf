@@ -35,11 +35,13 @@
         <% end %>
       <% end %>
     </td>
-    <td>
-      <%= item.user_registrations.count %>
-    </td>
-    <td class="text-end">
-      <% if item.registration_campaign.draft? %>
+    <% unless item.registration_campaign.draft? %>
+      <td>
+        <%= item.confirmed_registrations_count %>
+      </td>
+    <% end %>
+    <% if item.registration_campaign.draft? %>
+      <td class="text-end">
         <div class="dropdown">
           <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" data-bs-boundary="viewport" data-bs-popper-config='{"strategy":"fixed"}'>
             <i class="bi bi-gear"></i>
@@ -64,6 +66,6 @@
             <% end %>
           </ul>
         </div>
-      <% end %>
-    </td>
+      </td>
+    <% end %>
   </tr>
