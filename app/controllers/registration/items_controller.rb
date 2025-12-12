@@ -39,23 +39,13 @@ module Registration
           end
         end
       else
-        respond_to do |format|
-          format.html do
-            redirect_to after_action_path,
-                        alert: @item.errors.full_messages.to_sentence
-          end
-          format.turbo_stream do
-            flash.now[:alert] = @item.errors.full_messages.to_sentence
-            render turbo_stream: stream_flash
-          end
-        end
+        respond_with_error(@item.errors.full_messages.to_sentence)
       end
     end
 
     def destroy
       unless @campaign.draft?
-        redirect_to after_action_path,
-                    alert: t("activerecord.errors.models.registration/item.attributes.base.frozen")
+        respond_with_error(t("activerecord.errors.models.registration/item.attributes.base.frozen"))
         return
       end
 
@@ -70,65 +60,28 @@ module Registration
 
       def destroy_item_only
         @item.destroy
-        respond_to do |format|
-          format.html do
-            redirect_to after_action_path,
-                        notice: t("registration.item.destroyed")
-          end
-          format.turbo_stream do
-            flash.now[:notice] = t("registration.item.destroyed")
-            render turbo_stream: [
-              turbo_stream.replace("registration_items_container",
-                                   partial: "registration/campaigns/card_body_items",
-                                   locals: { campaign: @campaign }),
-              turbo_stream.update("items-tab-count", @campaign.registration_items.count),
-              stream_flash
-            ]
-          end
-        end
+        respond_with_success(t("registration.item.destroyed"))
       end
 
       def destroy_cascading
         registerable = @item.registerable
         authorize! :destroy, registerable
 
+        if perform_cascading_destroy(registerable)
+          message = t("registration.item.registerable_destroyed",
+                      type: t("registration.item.types.#{registerable.class.name.underscore}"))
+          respond_with_success(message)
+        else
+          respond_with_error(registerable.errors.full_messages.to_sentence)
+        end
+      end
+
+      def perform_cascading_destroy(registerable)
         ActiveRecord::Base.transaction do
           @item.destroy
           raise(ActiveRecord::Rollback) unless registerable.destroy
-        end
 
-        if registerable.destroyed?
-          respond_to do |format|
-            format.html do
-              redirect_to after_action_path,
-                          notice: t("registration.item.registerable_destroyed",
-                                    type: t("registration.item.types" \
-                                            ".#{registerable.class.name.underscore}"))
-            end
-            format.turbo_stream do
-              flash.now[:notice] = t("registration.item.registerable_destroyed",
-                                     type: t("registration.item.types" \
-                                             ".#{registerable.class.name.underscore}"))
-              render turbo_stream: [
-                turbo_stream.replace("registration_items_container",
-                                     partial: "registration/campaigns/card_body_items",
-                                     locals: { campaign: @campaign }),
-                turbo_stream.update("items-tab-count", @campaign.registration_items.count),
-                stream_flash
-              ]
-            end
-          end
-        else
-          respond_to do |format|
-            format.html do
-              redirect_to after_action_path,
-                          alert: registerable.errors.full_messages.to_sentence
-            end
-            format.turbo_stream do
-              flash.now[:alert] = registerable.errors.full_messages.to_sentence
-              render turbo_stream: stream_flash
-            end
-          end
+          true
         end
       end
 
@@ -137,64 +90,71 @@ module Registration
         authorize! :create, @item
 
         if @item.save
-          respond_to_success
+          respond_with_success(t("registration.item.created"))
         else
-          respond_to_failure
+          respond_with_error(@item.errors.full_messages.to_sentence)
         end
       end
 
       def create_new_registerable
         type = params[:registration_item][:registerable_type]
-        title = params[:registration_item][:title]
-        capacity = params[:registration_item][:capacity]
+        return respond_with_error("Invalid type") unless ["Tutorial", "Talk"].include?(type)
 
-        unless ["Tutorial", "Talk"].include?(type)
-          @item = @campaign.registration_items.build
-          @item.errors.add(:base, "Invalid type")
-          return respond_to_failure
-        end
-
-        registerable = type.constantize.new(
-          lecture: @campaign.campaignable,
-          title: title,
-          capacity: capacity
-        )
-        authorize! :create, registerable
-
-        ActiveRecord::Base.transaction do
-          unless registerable.save
-            @item = @campaign.registration_items.build
-            registerable.errors.full_messages.each { |m| @item.errors.add(:base, m) }
-            raise(ActiveRecord::Rollback)
-          end
-
-          @item = @campaign.registration_items.build(
-            registerable: registerable,
-            registerable_type: type
-          )
-          # We need to authorize the item creation here, because we are building it manually
-          # and `authorize_resource` only handles the `create` action generally, but not
-          # the specific instance we are building here.
-          authorize! :create, @item
-
-          raise(ActiveRecord::Rollback) unless @item.save
-        end
-
-        if @item&.persisted?
-          respond_to_success
+        if save_new_registerable_item(type)
+          respond_with_success(t("registration.item.created"))
         else
-          respond_to_failure
+          respond_with_error(@item.errors.full_messages.to_sentence)
         end
       end
 
-      def respond_to_success
+      def save_new_registerable_item(type)
+        registerable = build_registerable(type)
+        authorize! :create, registerable
+
+        persist_registerable_and_item(registerable, type)
+      end
+
+      def build_registerable(type)
+        type.constantize.new(
+          lecture: @campaign.campaignable,
+          title: params[:registration_item][:title],
+          capacity: params[:registration_item][:capacity]
+        )
+      end
+
+      def persist_registerable_and_item(registerable, type)
+        ActiveRecord::Base.transaction do
+          unless registerable.save
+            build_item_with_errors(registerable)
+            raise(ActiveRecord::Rollback)
+          end
+
+          build_and_authorize_item(registerable, type)
+          raise(ActiveRecord::Rollback) unless @item.save
+        end
+        @item&.persisted?
+      end
+
+      def build_item_with_errors(registerable)
+        @item = @campaign.registration_items.build
+        registerable.errors.full_messages.each { |m| @item.errors.add(:base, m) }
+      end
+
+      def build_and_authorize_item(registerable, type)
+        @item = @campaign.registration_items.build(
+          registerable: registerable,
+          registerable_type: type
+        )
+        authorize! :create, @item
+      end
+
+      def respond_with_success(message)
         respond_to do |format|
           format.html do
-            redirect_to after_action_path,
-                        notice: t("registration.item.created")
+            redirect_to after_action_path, notice: message
           end
           format.turbo_stream do
-            flash.now[:notice] = t("registration.item.created")
+            flash.now[:notice] = message
             render turbo_stream: [
               turbo_stream.replace("registration_items_container",
                                    partial: "registration/campaigns/card_body_items",
@@ -206,14 +166,13 @@ module Registration
         end
       end
 
-      def respond_to_failure
+      def respond_with_error(message)
         respond_to do |format|
           format.html do
-            redirect_to after_action_path,
-                        alert: @item.errors.full_messages.to_sentence
+            redirect_to after_action_path, alert: message
           end
           format.turbo_stream do
-            flash.now[:alert] = @item.errors.full_messages.to_sentence
+            flash.now[:alert] = message
             render turbo_stream: stream_flash
           end
         end
