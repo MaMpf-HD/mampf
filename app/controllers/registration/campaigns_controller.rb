@@ -151,9 +151,9 @@ module Registration
       end
 
       def render_card_body(partial, locals)
-        render turbo_stream: turbo_stream.replace("campaigns_card_body",
-                                                  partial: partial,
-                                                  locals: locals)
+        render turbo_stream: turbo_stream.update("campaigns_container",
+                                                 partial: partial,
+                                                 locals: locals)
       end
 
       def respond_with_success(message)
@@ -164,9 +164,9 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = message
             render turbo_stream: [
-              turbo_stream.replace("campaigns_card_body",
-                                   partial: "registration/campaigns/card_body_show",
-                                   locals: { campaign: @campaign }),
+              turbo_stream.update("campaigns_container",
+                                  partial: "registration/campaigns/card_body_show",
+                                  locals: { campaign: @campaign }),
               stream_flash
             ].compact
           end
@@ -183,9 +183,9 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = message
             render turbo_stream: [
-              turbo_stream.replace("campaigns_card_body",
-                                   partial: "registration/campaigns/card_body_index",
-                                   locals: { lecture: lecture }),
+              turbo_stream.update("campaigns_container",
+                                  partial: "registration/campaigns/card_body_index",
+                                  locals: { lecture: lecture }),
               stream_flash
             ].compact
           end
@@ -198,10 +198,10 @@ module Registration
           format.turbo_stream do
             flash.now[:alert] = message
             render turbo_stream: [
-              turbo_stream.replace("campaigns_card_body",
-                                   partial: "registration/campaigns/card_body_form",
-                                   locals: { campaign: @campaign,
-                                             lecture: @campaign.campaignable }),
+              turbo_stream.update("campaigns_container",
+                                  partial: "registration/campaigns/card_body_form",
+                                  locals: { campaign: @campaign,
+                                            lecture: @campaign.campaignable }),
               stream_flash
             ].compact
           end
