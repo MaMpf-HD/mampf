@@ -11,6 +11,7 @@ gem "active_storage_validations", "~> 2.0.2"
 gem "acts_as_list", "~> 1.2"
 gem "acts_as_tree", "~> 2.9"
 gem "acts_as_votable", "~> 0.14"
+gem "altcha-rails", "~> 0.0.6"
 gem "barby", "~> 0.6"
 gem "bootsnap", "~> 1.18", require: false # reduces boot times through caching
 gem "bootstrap_form", "~> 5.4"

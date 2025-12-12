@@ -98,7 +98,7 @@ en:
           %{policy} of Heidelberg University.
         policy: "Privacy Policy"
       user:
-        captcha_error: The captcha test failed.
+        captcha_error: Captcha test failed. Please try again.
         too_many_registrations: There were too many registrations in the last few minutes. Please try again later.
     sessions:
       signed_in: "Signed in successfully."
