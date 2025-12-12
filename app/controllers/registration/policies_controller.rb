@@ -85,9 +85,9 @@ module Registration
           format.turbo_stream do
             flash.now[:notice] = message if message
             render turbo_stream: [
-              turbo_stream.replace("campaigns_card_body",
-                                   partial: "registration/campaigns/card_body_show",
-                                   locals: { campaign: @campaign, tab: "policies" }),
+              turbo_stream.update("campaigns_container",
+                                  partial: "registration/campaigns/card_body_show",
+                                  locals: { campaign: @campaign, tab: "policies" }),
               stream_flash
             ].compact
           end
