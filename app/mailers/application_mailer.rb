@@ -37,10 +37,11 @@ class ApplicationMailer < ActionMailer::Base
     def mail(headers = {}, &)
       usual_rails_path = self.class.name.underscore
       custom_path = "#{usual_rails_path.delete_suffix("_mailer").pluralize}/mails"
+      default_path = self.class.default_params[:template_path]
 
       headers[:template_path] = [headers[:template_path],
-                                 usual_rails_path, custom_path]
-                                .flatten.compact
+                                 usual_rails_path, custom_path, default_path]
+                                .flatten.compact.uniq
       super
     end
 end
