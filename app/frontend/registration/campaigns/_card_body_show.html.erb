@@ -24,10 +24,16 @@
                       data: { confirm: t("registration.campaign.confirmations.reopen") },
                       class: "btn btn-success" %>
       <% elsif campaign.draft? %>
+        <% 
+           confirm_msg = t("registration.campaign.confirmations.open")
+           if campaign.registration_items.any? { |i| i.capacity.nil? }
+             confirm_msg += "\n\n" + t("registration.campaign.warnings.unlimited_items")
+           end
+        %>
         <%= button_to t("registration.campaign.actions.open"),
                       open_registration_campaign_path(campaign),
                       method: :patch,
-                      data: { confirm: t("registration.campaign.confirmations.open") },
+                      data: { confirm: confirm_msg },
                       class: "btn btn-success" %>
       <% end %>
 

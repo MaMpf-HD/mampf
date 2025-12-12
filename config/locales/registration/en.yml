@@ -76,6 +76,7 @@ en:
         items: "Items"
       warnings:
         no_items: "This campaign has no items yet. Students won't be able to register for anything."
+        unlimited_items: "Warning: Some items have unlimited capacity (∞). This means there is no limit on how many students can be assigned to them."
     policy:
       helpdesk:
         policies: "Policies are rules that restrict who can register or when registrations are accepted (e.g. users with specific email domains or students who have achieved certain performance criteria)."
