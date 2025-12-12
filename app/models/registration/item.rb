@@ -91,6 +91,12 @@ module Registration
         return unless existing_item
 
         existing_type = existing_item.registerable_type
+
+        if existing_type == "Lecture"
+          errors.add(:base, :lecture_unique)
+          return
+        end
+
         return unless registerable_type != existing_type
 
         errors.add(:base, :mixed_types)

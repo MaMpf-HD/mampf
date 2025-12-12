@@ -124,6 +124,7 @@ de:
         existing: "Vorhandene hinzufügen"
         new: "Neue erstellen"
         none_available: "Keine Elemente verfügbar."
+        lecture_unique: "Dieses Anmeldeverfahren enthält bereits eine Vorlesung. Es können keine weiteren Elemente hinzugefügt werden."
       columns:
         title: "Titel"
         capacity: "Kapazität"
@@ -171,5 +172,6 @@ de:
           attributes:
             base:
               mixed_types: "Alle Elemente müssen vom gleichen Typ sein."
+              lecture_unique: "Ein Anmeldeverfahren kann nur eine Vorlesung enthalten."
               capacity_too_low: "Kapazität darf nicht niedriger sein als die Anzahl der bestätigten Anmeldungen (%{count})."
               frozen: "Die Konfiguration kann nicht geändert werden, da das Anmeldeverfahren nicht mehr im Entwurfsmodus ist."
