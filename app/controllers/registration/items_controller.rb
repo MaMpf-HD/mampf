@@ -8,6 +8,9 @@ module Registration
     def current_ability
       @current_ability ||= begin
         ability = RegistrationItemAbility.new(current_user)
+        # We need to merge TutorialAbility and TalkAbility because the view renders
+        # registration items which delegate permission checks to their registerables
+        # (Tutorials/Talks). Without this, can?(:destroy, item.registerable) fails.
         ability.merge(TutorialAbility.new(current_user))
         ability.merge(TalkAbility.new(current_user))
         ability
