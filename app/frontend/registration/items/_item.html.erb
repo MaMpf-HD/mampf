@@ -7,7 +7,7 @@
     </td>
     <td>
       <% unless item.capacity_editable? %>
-        <%= item.capacity %>
+        <%= item.capacity || "∞" %>
       <% else %>
         <%= form_with(model: item,
                       url: registration_campaign_item_path(item.registration_campaign, item),
@@ -16,7 +16,8 @@
           <div class="input-group input-group-sm" style="max-width: 150px;">
             <%= f.number_field :capacity,
                                class: "form-control",
-                               min: 0 %>
+                               min: 0,
+                               placeholder: "∞" %>
             <button class="btn btn-outline-success" type="submit">
               <i class="bi bi-check-lg"></i>
             </button>
