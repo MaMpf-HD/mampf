@@ -137,11 +137,17 @@ en:
         talk: "Talk"
         lecture: "Lecture"
         lecture_signup: "General Signup"
+      actions:
+        remove_from_campaign: "Remove from campaign"
+        delete_registerable: "Delete %{type}"
       created: "Item added successfully."
       destroyed: "Item removed successfully."
+      registerable_destroyed: "%{type} deleted successfully."
       updated: "Item updated successfully."
       cannot_destroy: "Cannot remove item because the campaign is not in draft mode."
       confirm_delete: "Are you sure you want to remove this item?"
+      confirm_remove: "Are you sure you want to remove this item from the campaign?"
+      confirm_delete_registerable: "Are you sure you want to delete this %{type}? This action cannot be undone."
   activerecord:
     errors:
       models:

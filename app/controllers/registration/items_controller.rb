@@ -59,26 +59,78 @@ module Registration
         return
       end
 
-      @item.destroy
-      respond_to do |format|
-        format.html do
-          redirect_to after_action_path,
-                      notice: t("registration.item.destroyed")
-        end
-        format.turbo_stream do
-          flash.now[:notice] = t("registration.item.destroyed")
-          render turbo_stream: [
-            turbo_stream.replace("registration_items_container",
-                                 partial: "registration/campaigns/card_body_items",
-                                 locals: { campaign: @campaign }),
-            turbo_stream.update("items-tab-count", @campaign.registration_items.count),
-            stream_flash
-          ]
-        end
+      if params[:cascade] == "true"
+        destroy_cascading
+      else
+        destroy_item_only
       end
     end
 
     private
+
+      def destroy_item_only
+        @item.destroy
+        respond_to do |format|
+          format.html do
+            redirect_to after_action_path,
+                        notice: t("registration.item.destroyed")
+          end
+          format.turbo_stream do
+            flash.now[:notice] = t("registration.item.destroyed")
+            render turbo_stream: [
+              turbo_stream.replace("registration_items_container",
+                                   partial: "registration/campaigns/card_body_items",
+                                   locals: { campaign: @campaign }),
+              turbo_stream.update("items-tab-count", @campaign.registration_items.count),
+              stream_flash
+            ]
+          end
+        end
+      end
+
+      def destroy_cascading
+        registerable = @item.registerable
+        authorize! :destroy, registerable
+
+        ActiveRecord::Base.transaction do
+          @item.destroy
+          raise(ActiveRecord::Rollback) unless registerable.destroy
+        end
+
+        if registerable.destroyed?
+          respond_to do |format|
+            format.html do
+              redirect_to after_action_path,
+                          notice: t("registration.item.registerable_destroyed",
+                                    type: t("registration.item.types" \
+                                            ".#{registerable.class.name.underscore}"))
+            end
+            format.turbo_stream do
+              flash.now[:notice] = t("registration.item.registerable_destroyed",
+                                     type: t("registration.item.types" \
+                                             ".#{registerable.class.name.underscore}"))
+              render turbo_stream: [
+                turbo_stream.replace("registration_items_container",
+                                     partial: "registration/campaigns/card_body_items",
+                                     locals: { campaign: @campaign }),
+                turbo_stream.update("items-tab-count", @campaign.registration_items.count),
+                stream_flash
+              ]
+            end
+          end
+        else
+          respond_to do |format|
+            format.html do
+              redirect_to after_action_path,
+                          alert: registerable.errors.full_messages.to_sentence
+            end
+            format.turbo_stream do
+              flash.now[:alert] = registerable.errors.full_messages.to_sentence
+              render turbo_stream: stream_flash
+            end
+          end
+        end
+      end
 
       def create_existing_item
         @item = @campaign.registration_items.build(item_params)
