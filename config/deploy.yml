@@ -90,9 +90,6 @@ env:
     FEEDBACK_EMAIL: mampf-feedback-email
     DOWNLOAD_LOCATION: https://mampf.mathi.uni-heidelberg.de/mediaforward
     REWRITE_ENABLED: 1
-    USE_CAPTCHA_SERVICE: 1
-    CAPTCHA_VERIFY_URL: https://captcha2go.mathi.uni-heidelberg.de/v1/verify
-    CAPTCHA_PUZZLE_URL: https://captcha2go.mathi.uni-heidelberg.de/v1/puzzle
     MEDIA_PATH: /private/media
     SUBMISSION_PATH: /private/submissions
     PRODUCTION_DATABASE_ADAPTER: postgresql
@@ -111,7 +108,7 @@ env:
     - PROJECT_EMAIL_PASSWORD
     - MAMPF_EMAIL_USERNAME
     - MAMPF_EMAIL_PASSWORD
-    - CAPTCHA_APPLICATION_TOKEN
+    - CAPTCHA_HMAC_KEY
     - PRODUCTION_DATABASE_URL
 
 # Aliases are triggered with "bin/kamal <alias>". You can overwrite arguments on invocation:
