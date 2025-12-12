@@ -31,9 +31,33 @@ RSpec.describe("Registration::Items", type: :request) do
           post(registration_campaign_items_path(campaign), params: valid_params)
         end.to change(Registration::Item, :count).by(1)
 
-        expect(response).to redirect_to(registration_campaign_path(campaign, tab: "items"))
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
         follow_redirect!
         expect(response.body).to include(I18n.t("registration.item.created"))
+      end
+
+      context "when creating a new registerable" do
+        let(:new_params) do
+          {
+            registration_item: {
+              new_registerable: "true",
+              registerable_type: "Tutorial",
+              title: "New Tutorial",
+              capacity: 20
+            }
+          }
+        end
+
+        it "creates a new tutorial and item" do
+          expect do
+            post(registration_campaign_items_path(campaign), params: new_params)
+          end.to change(Registration::Item, :count).by(1)
+             .and(change(Tutorial, :count).by(1))
+
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+          follow_redirect!
+          expect(response.body).to include(I18n.t("registration.item.created"))
+        end
       end
 
       context "with invalid parameters" do
@@ -44,7 +68,7 @@ RSpec.describe("Registration::Items", type: :request) do
                  })
           end.not_to change(Registration::Item, :count)
 
-          expect(response).to redirect_to(registration_campaign_path(campaign, tab: "items"))
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
         end
       end
     end
@@ -73,7 +97,16 @@ RSpec.describe("Registration::Items", type: :request) do
         }
 
         expect(item.reload.capacity).to eq(42)
-        expect(response).to redirect_to(registration_campaign_path(campaign, tab: "items"))
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+      end
+
+      it "allows setting capacity to unlimited (nil)" do
+        patch registration_campaign_item_path(campaign, item), params: {
+          registration_item: { capacity: nil }
+        }
+
+        expect(item.reload.capacity).to be_nil
+        expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
       end
 
       context "when update fails (e.g. capacity too low)" do
@@ -89,12 +122,11 @@ RSpec.describe("Registration::Items", type: :request) do
           }
 
           expect(item.reload.capacity).to eq(10)
-          expect(response).to redirect_to(registration_campaign_path(campaign, tab: "items"))
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
           follow_redirect!
           expect(response.body)
             .to include(I18n.t(
-                          "activerecord.errors.models.registration/item.attributes.base" \
-                          ".capacity_too_low",
+                          "activerecord.errors.models.registration/item.attributes.base.capacity_too_low",
                           count: 5
                         ))
         end
@@ -127,7 +159,18 @@ RSpec.describe("Registration::Items", type: :request) do
             delete(registration_campaign_item_path(campaign, item))
           end.to change(Registration::Item, :count).by(-1)
 
-          expect(response).to redirect_to(registration_campaign_path(campaign, tab: "items"))
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+        end
+
+        context "with cascade delete" do
+          it "deletes the item and the registerable" do
+            expect do
+              delete(registration_campaign_item_path(campaign, item), params: { cascade: "true" })
+            end.to change(Registration::Item, :count).by(-1)
+               .and(change(Tutorial, :count).by(-1))
+
+            expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
+          end
         end
       end
 
@@ -139,10 +182,9 @@ RSpec.describe("Registration::Items", type: :request) do
             delete(registration_campaign_item_path(campaign, item))
           end.not_to change(Registration::Item, :count)
 
-          expect(response).to redirect_to(registration_campaign_path(campaign, tab: "items"))
+          expect(response).to redirect_to(edit_lecture_path(lecture, tab: "campaigns"))
           follow_redirect!
-          expect(response.body).to include(I18n.t("activerecord.errors.models.registration/item" \
-                                                  ".attributes.base.frozen"))
+          expect(response.body).to include(I18n.t("activerecord.errors.models.registration/item" + ".attributes.base.frozen"))
         end
       end
     end
