@@ -136,10 +136,10 @@ accessories:
   db:
     image: postgres:17-bookworm
     host: 91.98.178.89
+    port: "127.0.0.1:<%= ENV['PGPORT'] %>:<%= ENV['PGPORT'] %>"
     env:
       clear:
         POSTGRES_DB: mampf
-        PGHOST: 127.0.0.1
       # https://hub.docker.com/_/postgres/#environment-variables
       secret:
         - POSTGRES_USER
