@@ -23,6 +23,9 @@ Rails.application.routes.draw do
     end
   end
 
+  # Captcha
+  get "/altcha", to: "altcha#new"
+
   # Reveal health status on /up that returns 200 if the app boots with no exceptions,
   # otherwise 500. Used for Kamal.
   get "up" => "rails/health#show", as: :rails_health_check
