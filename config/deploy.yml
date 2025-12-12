@@ -84,7 +84,7 @@ env:
     MAILSERVER: in-v3.mailjet.com
     PROJECT_EMAIL: mampf@mathi.uni-heidelberg.de
     MAILID_DOMAIN: mathi.uni-heidelberg.de
-    ERROR_EMAIL: mampf-error@mathi.uni-heidelberg.de
+    ERROR_EMAIL: mampf-error-vignettes@mathi.uni-heidelberg.de
     IMAPSERVER: mail.mathi.uni-heidelberg.de
     PROJECT_EMAIL_MAILBOX: "Other Users/mampf"
     FEEDBACK_EMAIL: mampf-feedback-email
