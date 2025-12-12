@@ -136,17 +136,17 @@ accessories:
   db:
     image: postgres:17-bookworm
     host: 91.98.178.89
-    port: "127.0.0.1:<%= ENV['PGPORT'] %>:<%= ENV['PGPORT'] %>"
+    port: 127.0.0.1:5363:5363
     env:
       clear:
         POSTGRES_DB: mampf
+        PGPORT: 5363
       # https://hub.docker.com/_/postgres/#environment-variables
       secret:
         - POSTGRES_USER
         - POSTGRES_PASSWORD
         # used in production-init.sh script
         - DB_MAMPFUSER_PASSWORD
-        - PGPORT
     files:
       - db/production-init.sh:/docker-entrypoint-initdb.d/setup.sh
     directories:
