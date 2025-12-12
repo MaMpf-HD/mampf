@@ -70,7 +70,7 @@ registry:
 builder:
   arch: amd64
   dockerfile:
-    docker/production/Dockerfile
+    docker/production/Dockerfile-vignette
 
 env:
   clear:
