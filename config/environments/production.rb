@@ -94,7 +94,9 @@ Rails.application.configure do
     address: ENV.fetch("MAILSERVER"),
     port: ENV.fetch("MAIL_PORT").to_i,
     user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
-    password: ENV.fetch("MAMPF_EMAIL_PASSWORD")
+    password: ENV.fetch("MAMPF_EMAIL_PASSWORD"),
+    authentication: :plain,
+    enable_starttls_auto: true
   }
 
   config.i18n.default_locale = :de
