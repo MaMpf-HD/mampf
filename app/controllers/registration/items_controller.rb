@@ -103,7 +103,9 @@ module Registration
 
       def create_new_registerable
         type = params[:registration_item][:registerable_type]
-        return respond_with_error("Invalid type") unless ["Tutorial", "Talk"].include?(type)
+        return respond_with_error(t("registration.item.invalid_type")) unless ["Tutorial",
+                                                                               "Talk"]
+                                                                              .include?(type)
 
         if save_new_registerable_item(type)
           respond_with_success(t("registration.item.created"))

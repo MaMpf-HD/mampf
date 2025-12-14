@@ -149,6 +149,7 @@ de:
       destroyed: "Element erfolgreich entfernt."
       registerable_destroyed: "%{type} erfolgreich gelöscht."
       updated: "Element erfolgreich aktualisiert."
+      invalid_type: "Ungültiger Typ."
       cannot_destroy: "Element kann nicht entfernt werden, da das Anmeldeverfahren nicht im Entwurfsmodus ist."
       confirm_delete: "Sind Sie sicher, dass Sie dieses Element entfernen möchten?"
       confirm_remove: "Sind Sie sicher, dass Sie dieses Element aus dem Anmeldeverfahren entfernen möchten?"
