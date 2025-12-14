@@ -5,6 +5,11 @@ module Registration
     before_action :set_item, only: [:destroy, :update]
     authorize_resource class: "Registration::Item", except: [:create]
 
+    REGISTERABLE_CLASSES = {
+      "Tutorial" => Tutorial,
+      "Talk" => Talk
+    }.freeze
+
     def current_ability
       @current_ability ||= begin
         ability = RegistrationItemAbility.new(current_user)
@@ -103,9 +108,9 @@ module Registration
 
       def create_new_registerable
         type = params[:registration_item][:registerable_type]
-        return respond_with_error(t("registration.item.invalid_type")) unless ["Tutorial",
-                                                                               "Talk"]
-                                                                              .include?(type)
+        unless REGISTERABLE_CLASSES.key?(type)
+          return respond_with_error(t("registration.item.invalid_type"))
+        end
 
         if save_new_registerable_item(type)
           respond_with_success(t("registration.item.created"))
@@ -122,7 +127,7 @@ module Registration
       end
 
       def build_registerable(type)
-        type.constantize.new(
+        REGISTERABLE_CLASSES[type].new(
           lecture: @campaign.campaignable,
           title: params[:registration_item][:title],
           capacity: params[:registration_item][:capacity]
