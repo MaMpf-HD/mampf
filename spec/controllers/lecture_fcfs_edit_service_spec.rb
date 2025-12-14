@@ -8,7 +8,8 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
     let(:campaign) { FactoryBot.create(:registration_campaign, :open, :for_lecture_enrollment) }
     let(:item) { campaign.registration_items.first }
 
-    it "creates a confirmed registration when validations pass, case no user registration" do
+    it "creates a confirmed registration when validations pass, " \
+       "case no user registration" do
       service = described_class.new(campaign, user, item)
       expect do
         service.register!
@@ -20,7 +21,8 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(registration.status).to eq("confirmed")
     end
 
-    it "creates a confirmed registration when validations pass when rejected registration existed" do
+    it "creates a confirmed registration when validations pass" \
+       "when rejected registration existed" do
       Registration::UserRegistration.create!(
         registration_campaign: campaign,
         registration_item: item,
@@ -119,7 +121,8 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(registration.status).to eq("confirmed")
     end
 
-    it "creates a confirmed registration when validations pass, case has rejected user registration" do
+    it "creates a confirmed registration when validations pass, " \
+       "case has rejected user registration" do
       Registration::UserRegistration.create!(
         registration_campaign: campaign,
         registration_item: item2,
@@ -254,7 +257,9 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       expect(result.success?).to be(true)
     end
 
-    it "cannot withdraw parent if child has been registered + freely to deregister child + freely to deregister parent if child has not been registered" do
+    it "cannot withdraw parent if child has been registered + " \
+       "freely to deregister child + " \
+       "freely to deregister parent if child has not been registered" do
       service_parent = described_class.new(campaign_parent, user, item_parent)
       service_parent.register!
       service_child = described_class.new(campaign_child, user, item_child)
@@ -264,13 +269,16 @@ RSpec.describe(Registration::UserRegistration::LectureFcfsEditService, type: :se
       service_parent1 = described_class.new(campaign_parent, user, item_parent)
       result1 = service_parent1.withdraw!
       expect(result1.success?).to be(false)
-      expect(result1.errors).to include(I18n.t("registration.messages.dependent_campaigns_block_withdrawal", names: campaign_parent.title))
+      expect(result1.errors).to include(
+        I18n.t("registration.messages.dependent_campaigns_block_withdrawal",
+               names: campaign_parent.title)
+      )
 
       # freely to withdraw child
       service_child1 = described_class.new(campaign_child, user, item_child)
       result2 = service_child1.withdraw!
       expect(result2.success?).to be(true)
-      
+
       # freely to withdraw parent if child has not been registered
       service_parent2 = described_class.new(campaign_parent, user, item_parent)
       result3 = service_parent2.withdraw!

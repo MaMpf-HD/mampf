@@ -6,8 +6,7 @@ RSpec.describe(Registration::UserRegistrationsController, type: :controller) do
 
   let(:item) { campaign.registration_items.first }
 
-  let(:stub_success) {Registration::UserRegistration::Handler::Result.new(true, [])}
-
+  let(:stub_success) { Registration::UserRegistration::Handler::Result.new(true, []) }
 
   before { sign_in user }
 

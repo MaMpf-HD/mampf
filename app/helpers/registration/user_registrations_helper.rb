@@ -7,7 +7,7 @@ module Registration
              badge_class: "badge rounded-pill w-auto text-bg-info" },
       1 => { mode_name: "Preference Based", abbr: "PB",
              badge_class: "badge rounded-pill w-auto text-bg-primary" }
-    }
+    }.freeze
     def get_mode_info(mode)
       MODE_MAP.fetch(mode, MODE_MAP[-1])
     end
@@ -77,7 +77,7 @@ module Registration
         { header: I18n.t("basics.seats"),
           field: ->(item) { "#{item.capacity_remained}/#{item.capacity}" } }
       ]
-    }
+    }.freeze
 
     def format_date(time)
       return "" if time.nil?
@@ -91,7 +91,7 @@ module Registration
                 badge_class: "badge rounded-pill w-auto text-bg-success" },
       false => { text: I18n.t("basics.failed"),
                  badge_class: "badge rounded-pill w-auto text-bg-danger" }
-    }
+    }.freeze
 
     def get_outcome_info(outcome)
       OUTCOME_MAP[outcome[:pass]]
@@ -108,15 +108,18 @@ module Registration
     end
 
     def confirm_status_badge(status)
-      if status == "confirmed"
+      case status
+      when "confirmed"
         content_tag(:span, I18n.t("basics.confirmed"),
                     class: "badge rounded-pill w-auto text-bg-success")
-      elsif status == "pending"
+      when "pending"
         content_tag(:span, I18n.t("basics.pending"),
                     class: "badge rounded-pill w-auto text-bg-warning")
-      elsif status == "rejected"
+      when "rejected"
         content_tag(:span, I18n.t("basics.rejected"),
                     class: "badge rounded-pill w-auto text-bg-danger")
+      else
+        content_tag(:span, "")
       end
     end
   end
