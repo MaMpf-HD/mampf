@@ -40,11 +40,54 @@ module Registration
       evaluate_policies_for(user, phase: phase).pass
     end
 
+    def evaluate_full_trace_for(user, phase: :registration)
+      Registration::PolicyEngine.new(self).full_trace_for(user, phase: phase)
+    end
+
+    def open_for_registrations?
+      open?
+    end
+
+    def open_for_withdrawals?
+      open?
+    end
+
+    # TODO: remove this
+    def user_registered?(user)
+      user_registrations.exists?(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registrations_confirmed(user)
+      user_registrations.where(user_id: user.id, status: :confirmed)
+    end
+
+    def user_registrations_last_updated(user)
+      user_registrations.where(user_id: user.id).maximum(:updated_at)
+    end
+
+    def registerable_type
+      registration_items.first&.registerable_type
+    end
+
     def user_registration_confirmed?(user)
       user_registrations.exists?(user_id: user.id, status: :confirmed)
     end
 
     private
+
+      def ensure_not_referenced_as_prerequisite
+        referencing_policies = Registration::Policy
+                               .referencing_campaign(id)
+                               .where.not(registration_campaign_id: id)
+                               .includes(:registration_campaign)
+
+        return unless referencing_policies.any?
+
+        titles = referencing_policies.filter_map { |p| p.registration_campaign&.title }
+                                     .uniq.join(", ")
+        errors.add(:base, :referenced_as_prerequisite, titles: titles)
+        throw(:abort)
+      end
 
       def policy_engine
         @policy_engine ||= Registration::PolicyEngine.new(self)
