@@ -42,7 +42,9 @@ module Registration
           end
         end
       else
-        respond_with_error(@item.errors.full_messages.to_sentence)
+        messages = @item.errors.full_messages
+        messages += @item.registerable.errors.full_messages if @item.registerable&.errors&.any?
+        respond_with_error(messages.uniq.to_sentence)
       end
     end
 
