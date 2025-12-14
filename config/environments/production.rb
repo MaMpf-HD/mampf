@@ -91,7 +91,7 @@ Rails.application.configure do
   config.action_mailer.default(charset: "utf-8")
 
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("MAIL_ADDRESS"),
+    address: ENV.fetch("MAIL_SERVER"),
     host: ENV.fetch("MAIL_HOST"),
     port: ENV.fetch("MAIL_PORT"),
     user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),

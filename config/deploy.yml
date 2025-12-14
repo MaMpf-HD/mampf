@@ -81,7 +81,7 @@ env:
     MEMCACHED_SERVER: mampf-cache
     MAX_DELETIONS_PER_RUN: 50
     FROM_ADDRESS: mampf@mathi.uni-heidelberg.de
-    MAIL_ADDRESS: live.smtp.mailtrap.io
+    MAIL_SERVER: live.smtp.mailtrap.io
     MAIL_HOST: live.smtp.mailtrap.io
     MAIL_AUTHENTICATION: login
     MAIL_PORT: 587
