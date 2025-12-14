@@ -33,5 +33,27 @@ module Registration
         item.user_registrations.where(preference_rank: 1).count
       end
     end
+
+    def item_capacity_percentage(item)
+      return 0 if item.capacity.to_i.zero?
+
+      (item.confirmed_registrations_count.to_f / item.capacity * 100).clamp(0, 100)
+    end
+
+    def item_capacity_progress_color(item)
+      percentage = item_capacity_percentage(item)
+
+      if percentage >= 100
+        "danger"
+      elsif percentage >= 80
+        "warning"
+      else
+        "success"
+      end
+    end
+
+    def show_item_capacity_progress?(item)
+      item.registration_campaign.first_come_first_served? && item.capacity.to_i.positive?
+    end
   end
 end

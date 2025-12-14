@@ -37,7 +37,21 @@
     </td>
     <% unless item.registration_campaign.draft? %>
       <td>
-        <%= item_stats_count(item) %>
+        <div class="d-flex align-items-center">
+          <div class="<%= 'me-2' if show_item_capacity_progress?(item) %>">
+            <%= item_stats_count(item) %>
+          </div>
+          <% if show_item_capacity_progress?(item) %>
+            <div class="progress" style="height: 6px; width: 60px;">
+              <div class="progress-bar bg-<%= item_capacity_progress_color(item) %>"
+                   role="progressbar"
+                   style="width: <%= item_capacity_percentage(item) %>%;"
+                   aria-valuenow="<%= item_capacity_percentage(item) %>"
+                   aria-valuemin="0"
+                   aria-valuemax="100"></div>
+            </div>
+          <% end %>
+        </div>
       </td>
     <% end %>
     <% if item.registration_campaign.draft? %>
