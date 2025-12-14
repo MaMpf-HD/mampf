@@ -227,4 +227,121 @@ RSpec.describe(Registration::Campaign, type: :model) do
       expect(campaign.locale_with_inheritance).to eq("en")
     end
   end
+
+  describe "registration counts" do
+    context "with preference based campaign" do
+      let(:campaign) { create(:registration_campaign, :with_items, :preference_based) }
+      let(:item1) { campaign.registration_items.first }
+      let(:item2) { campaign.registration_items.second }
+      let(:user) { create(:user) }
+
+      it "counts confirmed users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :confirmed,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts pending users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts rejected users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :rejected,
+                                                preference_rank: 1)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(1)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "prioritizes confirmed status over pending and rejected" do
+        # Confirmed on item 1
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :confirmed,
+                                                preference_rank: 1)
+        # Pending on item 2
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :pending,
+                                                preference_rank: 2)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "prioritizes pending status over rejected" do
+        # Pending on item 1
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+        # Rejected on item 2
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :rejected,
+                                                preference_rank: 2)
+
+        expect(campaign.confirmed_count).to eq(0)
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+
+      it "counts distinct users only" do
+        # Two pending registrations for same user
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item1,
+                                                status: :pending,
+                                                preference_rank: 1)
+        create(:registration_user_registration, user: user,
+                                                registration_campaign: campaign,
+                                                registration_item: item2,
+                                                status: :pending,
+                                                preference_rank: 2)
+
+        expect(campaign.pending_count).to eq(1)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+    end
+
+    context "with FCFS campaign" do
+      let(:campaign) { create(:registration_campaign, :with_items, :first_come_first_served) }
+      let(:item1) { campaign.registration_items.first }
+
+      it "counts confirmed users correctly" do
+        create(:registration_user_registration, registration_campaign: campaign,
+                                                registration_item: item1, status: :confirmed)
+
+        expect(campaign.confirmed_count).to eq(1)
+        expect(campaign.pending_count).to eq(0)
+        expect(campaign.rejected_count).to eq(0)
+        expect(campaign.total_registrations_count).to eq(1)
+      end
+    end
+  end
 end

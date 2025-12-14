@@ -60,6 +60,10 @@ module Registration
       nil
     end
 
+    def first_choice_count
+      user_registrations.where(preference_rank: 1).count
+    end
+
     private
 
       def valid_capacity_reduction?(new_capacity)

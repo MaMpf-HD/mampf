@@ -30,7 +30,7 @@ module Registration
       if campaign.first_come_first_served? || campaign.processing? || campaign.completed?
         item.confirmed_registrations_count
       else
-        item.user_registrations.where(preference_rank: 1).count
+        item.first_choice_count
       end
     end
 

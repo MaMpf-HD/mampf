@@ -321,4 +321,22 @@ RSpec.describe(Registration::Item, type: :model) do
       end
     end
   end
+
+  describe "#first_choice_count" do
+    let(:campaign) { create(:registration_campaign, :preference_based) }
+    let(:item) { create(:registration_item, registration_campaign: campaign) }
+
+    before do
+      # Create 2 first choices
+      create_list(:registration_user_registration, 2, registration_item: item, preference_rank: 1,
+                                                      registration_campaign: campaign)
+      # Create 1 second choice
+      create(:registration_user_registration, registration_item: item, preference_rank: 2,
+                                              registration_campaign: campaign)
+    end
+
+    it "counts only registrations with preference rank 1" do
+      expect(item.first_choice_count).to eq(2)
+    end
+  end
 end
