@@ -80,15 +80,14 @@ env:
     MUESLI_SERVER: https://muesli.mathi.uni-heidelberg.de
     MEMCACHED_SERVER: mampf-cache
     MAX_DELETIONS_PER_RUN: 50
-    FROM_ADDRESS: mampf@mathi.uni-heidelberg.de
+    FROM_ADDRESS: info@vignettes.mampf.media
     MAIL_SERVER: live.smtp.mailtrap.io
     MAIL_HOST: live.smtp.mailtrap.io
     MAIL_AUTHENTICATION: login
     MAIL_PORT: 587
     PROJECT_EMAIL: mampf@mathi.uni-heidelberg.de
-    MAILID_DOMAIN: mathi.uni-heidelberg.de
+    MAILID_DOMAIN: vignettes.mampf.media
     ERROR_EMAIL: mampf-error-vignettes@mathi.uni-heidelberg.de
-    IMAPSERVER: mail.mathi.uni-heidelberg.de
     PROJECT_EMAIL_MAILBOX: "Other Users/mampf"
     FEEDBACK_EMAIL: mampf-feedback-email
     DOWNLOAD_LOCATION: https://mampf.mathi.uni-heidelberg.de/mediaforward
