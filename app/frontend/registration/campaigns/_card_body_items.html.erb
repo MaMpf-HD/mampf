@@ -10,7 +10,12 @@
               <th><%= t("registration.item.columns.title") %></th>
               <th><%= t("registration.item.columns.capacity") %></th>
               <% unless campaign.draft? %>
-                <th><%= t("registration.item.columns.registrations") %></th>
+                <th>
+                  <%= item_stats_label(campaign) %>
+                  <% unless campaign.first_come_first_served? || campaign.processing? || campaign.completed? %>
+                    <%= helpdesk(t("registration.campaign.helpdesk.first_choice"), false) %>
+                  <% end %>
+                </th>
               <% end %>
               <% if campaign.draft? %>
                 <th class="text-end"><%= t("basics.actions") %></th>

@@ -37,7 +37,7 @@
     </td>
     <% unless item.registration_campaign.draft? %>
       <td>
-        <%= item.confirmed_registrations_count %>
+        <%= item_stats_count(item) %>
       </td>
     <% end %>
     <% if item.registration_campaign.draft? %>

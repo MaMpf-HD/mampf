@@ -18,6 +18,7 @@ en:
         registration_deadline: "The date and time when the registration period ends. After this deadline, students can no longer register or change their preferences."
         planning_only: "If enabled, the campaign is used for planning purposes only (e.g. to gauge demand). Registrations are collected but no final assignment to tutorials or seminars is performed."
         allocation_mode_frozen: "The allocation mode cannot be changed once the campaign has been opened or is no longer a draft."
+        first_choice: "Shows the number of students who selected this item as their first priority. This helps to gauge demand before the final allocation is calculated."
       index:
         title: "Registrations"
         card_title: "Registration Campaigns"
@@ -30,6 +31,7 @@ en:
           opens_at: "Opens At"
           deadline: "Deadline"
           status: "Status"
+          registrations: "Registrations"
       new:
         title: "New Campaign"
       edit:
@@ -130,6 +132,7 @@ en:
         title: "Title"
         capacity: "Capacity"
         registrations: "Registrations"
+        first_choice: "1st Choice"
       groups:
         tutorials: "Tutorials"
         talks: "Talks"

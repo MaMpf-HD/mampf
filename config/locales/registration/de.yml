@@ -18,6 +18,7 @@ de:
         registration_deadline: "Der Zeitpunkt, an dem die Registrierungsphase endet. Danach sind für Studierende keine Anmeldungen oder Änderungen mehr möglich."
         planning_only: "Wenn aktiviert, dient die Kampagne nur Planungszwecken (z.B. Bedarfserhebung). Es werden Registrierungen gesammelt, aber keine Zuteilungen vorgenommen."
         allocation_mode_frozen: "Der Zuteilungsmodus kann nicht mehr geändert werden, sobald das Verfahren eröffnet wurde oder kein Entwurf mehr ist."
+        first_choice: "Zeigt die Anzahl der Studierenden, die dieses Element als erste Priorität gewählt haben. Dies hilft, die Nachfrage abzuschätzen, bevor die endgültige Zuteilung berechnet wird."
       index:
         title: "Anmeldungen"
         card_title: "Anmeldeverfahren"
@@ -30,6 +31,7 @@ de:
           opens_at: "Registrierungsbeginn"
           deadline: "Registrierungsende"
           status: "Status"
+          registrations: "Anmeldungen"
       new:
         title: "Neues Anmeldeverfahren"
       edit:
@@ -130,6 +132,7 @@ de:
         title: "Titel"
         capacity: "Kapazität"
         registrations: "Anmeldungen"
+        first_choice: "1. Wahl"
       groups:
         tutorials: "Tutorien"
         talks: "Vorträge"

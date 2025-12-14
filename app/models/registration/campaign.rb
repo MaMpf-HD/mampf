@@ -64,6 +64,10 @@ module Registration
       draft?
     end
 
+    def total_registrations_count
+      user_registrations.distinct.count(:user_id)
+    end
+
     private
 
       def prerequisites_not_draft
