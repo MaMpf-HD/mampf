@@ -3428,6 +3428,7 @@ en:
     voucher_for: Voucher for %{role}
     speaker: Speaker
     speakers: Speakers
+    unlimited: unlimited
   warnings:
     save_before: 'Before you continue, you need to save or discard your changes'
     unsaved_changes: >

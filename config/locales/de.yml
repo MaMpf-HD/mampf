@@ -3645,6 +3645,7 @@ de:
     voucher_for: Gutschein für %{role}
     speaker: Vortragender
     speakers: Vortragende
+    unlimited: unbegrenzt
   access:
     unpublished: 'unveröffentlicht'
     all: 'frei'
