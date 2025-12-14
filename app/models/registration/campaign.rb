@@ -68,6 +68,33 @@ module Registration
       user_registrations.distinct.count(:user_id)
     end
 
+    def confirmed_count
+      user_registrations.confirmed.distinct.count(:user_id)
+    end
+
+    def pending_count
+      # Users with at least one pending registration, but no confirmed registration.
+      # This covers:
+      # - Preference mode: All applicants before allocation (since none are confirmed).
+      # - FCFS mode: Users on the waitlist who haven't secured a spot elsewhere in this campaign.
+      user_registrations.pending
+                        .where.not(user_id: user_registrations.confirmed.select(:user_id))
+                        .distinct
+                        .count(:user_id)
+    end
+
+    def rejected_count
+      # Users with at least one rejected registration, but no confirmed or pending registration.
+      # This explicitly queries for :rejected state, ensuring we don't count possibly other future
+      # states.
+      user_registrations.rejected
+                        .where.not(user_id: user_registrations
+                        .where(status: [:confirmed,
+                                        :pending]).select(:user_id))
+                        .distinct
+                        .count(:user_id)
+    end
+
     private
 
       def prerequisites_not_draft
