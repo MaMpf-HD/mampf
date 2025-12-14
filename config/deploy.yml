@@ -85,7 +85,7 @@ env:
     MAIL_HOST: live.smtp.mailtrap.io
     MAIL_AUTHENTICATION: login
     MAIL_PORT: 587
-    PROJECT_EMAIL: mampf@mathi.uni-heidelberg.de
+    PROJECT_EMAIL: info@vignettes.mampf.media
     MAILID_DOMAIN: vignettes.mampf.media
     ERROR_EMAIL: mampf-error-vignettes@mathi.uni-heidelberg.de
     PROJECT_EMAIL_MAILBOX: "Other Users/mampf"
