@@ -91,13 +91,12 @@ Rails.application.configure do
   config.action_mailer.default(charset: "utf-8")
 
   config.action_mailer.smtp_settings = {
-    address: ENV.fetch("MAILSERVER"),
-    port: ENV.fetch("MAIL_PORT").to_i,
-    domain: ENV.fetch("URL_HOST"),
+    address: ENV.fetch("MAIL_ADDRESS"),
+    host: ENV.fetch("MAIL_HOST"),
+    port: ENV.fetch("MAIL_PORT"),
     user_name: ENV.fetch("MAMPF_EMAIL_USERNAME"),
     password: ENV.fetch("MAMPF_EMAIL_PASSWORD"),
-    authentication: :plain,
-    enable_starttls_auto: true
+    authentication: ENV.fetch("MAIL_AUTHENTICATION")
   }
 
   config.i18n.default_locale = :de
