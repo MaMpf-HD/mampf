@@ -87,12 +87,14 @@ module Registration
       end
 
       def perform_cascading_destroy(registerable)
+        success = false
         ActiveRecord::Base.transaction do
           @item.destroy
           raise(ActiveRecord::Rollback) unless registerable.destroy
 
-          true
+          success = true
         end
+        success
       end
 
       def create_existing_item
