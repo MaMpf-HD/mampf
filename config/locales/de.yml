@@ -3232,7 +3232,8 @@ de:
     withdraw_first: "Zuerst zurückziehen"
     filter_placeholder: "Nach Wochentag, Uhrzeit, Tutor filtern"
     status_for_registration: "Aktueller Status Ihrer eingereichten Präferenzen"
-    submitted_pref: "Ihre eingereichten Präferenzen"
+    submitted_pref: "Ihre eingereichte Auswahl"
+    confirmed_assignment_pref: "Ihre bestätigte %{type}-Zuweisung"
     messages:
       campaign_unavailable: "Diese Kampagne ist derzeit nicht verfügbar."
       campaign_not_opened: "Die Registrierung für diese Kampagne ist geschlossen."
@@ -3243,8 +3244,8 @@ de:
       requirements_not_met: "Sie erfüllen die Voraussetzungen nicht."
       withdrawn: "Sie haben Ihre Registrierung zurückgezogen."
       dependent_campaigns_block_withdrawal: "Der Rücktritt ist blockiert, da abhängige Kampagnen bestätigt sind: %{names}"
-      cannot_secure_slot: "Wir konnten Ihnen derzeit keinen Platz sichern."
-      course_admin_help: "Brauchen Sie Hilfe? Bitte wenden Sie sich an die Kursadministration."
+      cannot_secure_slot: "Leider konnte keiner Ihrer gewählten Optionen zugeteilt werden. Alle Veranstaltungen sind derzeit voll."
+      course_admin_help: "Wir verstehen, dass dies enttäuschend ist. Bitte wenden Sie sich an den Kursadministrator, um Alternativen zu besprechen."
     
   package:
     no_zip: Die Datei ist kein .zip-Archiv.

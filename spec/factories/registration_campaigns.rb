@@ -92,12 +92,12 @@ FactoryBot.define do
         tutorial1 = create(:tutorial, lecture: lecture, capacity: 100)
         tutorial2 = create(:tutorial, lecture: lecture, capacity: 100)
 
-        item1 = create(:registration_item,
-                       registration_campaign: campaign,
-                       registerable: tutorial1)
-        item2 = create(:registration_item,
-                       registration_campaign: campaign,
-                       registerable: tutorial2)
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: tutorial1)
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: tutorial2)
       end
     end
 
@@ -110,12 +110,12 @@ FactoryBot.define do
         talk1 = create(:talk, lecture: lecture, capacity: 2)
         talk2 = create(:talk, lecture: lecture, capacity: 2)
 
-        item1 = create(:registration_item,
-                       registration_campaign: campaign,
-                       registerable: talk1)
-        item2 = create(:registration_item,
-                       registration_campaign: campaign,
-                       registerable: talk2)
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: talk1)
+        create(:registration_item,
+               registration_campaign: campaign,
+               registerable: talk2)
       end
     end
 

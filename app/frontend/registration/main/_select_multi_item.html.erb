@@ -36,12 +36,12 @@
           <tr>
             <!-- attribute data columns -->
             <% Registration::UserRegistrationsHelper::TABLE_CONFIG[campaign.registerable_type].each do |col| %>
-              <th><%= col[:header] %></th>
+              <th class="fw-semibold"><%= col[:header] %></th>
             <% end %>
 
             <!-- seats + action columns -->
-            <th><%= t("basics.status") %></th>
-            <th class="text-end"><%= t("basics.action") %></th>
+            <th class="fw-semibold"><%= t("basics.status") %></th>
+            <th class="text-end fw-semibold"><%= t("basics.action") %></th>
           </tr>
         </thead>
 
